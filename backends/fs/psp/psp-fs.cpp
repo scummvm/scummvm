@@ -35,6 +35,9 @@
 
 #define	ROOT_PATH	"ms0:/"
 
+//#define __PSP_PRINT_TO_FILE__
+//#define __PSP_DEBUG_FUNCS__ /* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 #include "backends/platform/psp/trace.h"
 
 /**
@@ -63,6 +66,7 @@ public:
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify = true);
 
+	const char *getObjectName() const { return "PSPFileSystemNode"; }
 	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
@@ -87,6 +91,7 @@ PSPFilesystemNode::PSPFilesystemNode() {
 }
 
 PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
+	DEBUG_ENTER_FUNC();
 	assert(p.size() > 0);
 
 	_path = p;
@@ -94,54 +99,70 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 	_isValid = true;
 	_isDirectory = true;
 
+	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
+	
 	if (verify) {
 		struct stat st;
 		if (PowerMan.beginCriticalSection()==PowerManager::Blocked)
-			PSPDebugSuspend("Suspended in PSPFilesystemNode::PSPFilesystemNode\n");
+			PSP_DEBUG_PRINT_FUNC("Suspended\n");
 		_isValid = (0 == stat(_path.c_str(), &st));
 		PowerMan.endCriticalSection();
 		_isDirectory = S_ISDIR(st.st_mode);
 	}
+	DEBUG_EXIT_FUNC();
 }
 
 bool PSPFilesystemNode::exists() const {
+	DEBUG_ENTER_FUNC();
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPFilesystemNode::exists()\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
 
+	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
+		
 	ret = access(_path.c_str(), F_OK);
 	PowerMan.endCriticalSection();
 
-	return ret == 0;
+	DEBUG_EXIT_FUNC();
+	return (ret == 0);
 }
 
 bool PSPFilesystemNode::isReadable() const {
+	DEBUG_ENTER_FUNC();
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-			PSPDebugSuspend("Suspended in PSPFilesystemNode::isReadable()\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
 
+	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());	
+		
 	ret = access(_path.c_str(), R_OK);
 	PowerMan.endCriticalSection();
 
-	return ret == 0;
+	DEBUG_EXIT_FUNC();
+	return (ret == 0);
 }
 
 bool PSPFilesystemNode::isWritable() const {
+	DEBUG_ENTER_FUNC();
 	int ret = 0;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPFilesystemNode::isWritable()\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
 
+	PSP_DEBUG_PRINT_FUNC("path [%s]\n", _path.c_str());
+		
 	ret = access(_path.c_str(), W_OK);
 	PowerMan.endCriticalSection();
 
+	DEBUG_EXIT_FUNC();
 	return ret == 0;
 }
 
 
 AbstractFSNode *PSPFilesystemNode::getChild(const Common::String &n) const {
+	DEBUG_ENTER_FUNC();
 	// FIXME: Pretty lame implementation! We do no error checking to speak
 	// of, do not check if this is a special node, etc.
 	assert(_isDirectory);
@@ -151,10 +172,16 @@ AbstractFSNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 		newPath += '/';
 	newPath += n;
 
-	return new PSPFilesystemNode(newPath, true);
+	PSP_DEBUG_PRINT_FUNC("child [%s]\n", newPath.c_str());
+	
+	AbstractFSNode *node = new PSPFilesystemNode(newPath, true);
+	
+	DEBUG_EXIT_FUNC();
+	return node;
 }
 
 bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
+	DEBUG_ENTER_FUNC();
 	assert(_isDirectory);
 
 	//TODO: honor the hidden flag
@@ -162,8 +189,10 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 	bool ret = true;
 
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPFilesystemNode::getChildren\n");	// Make sure to block in case of suspend
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");	// Make sure to block in case of suspend
 
+	PSP_DEBUG_PRINT_FUNC("Current path[%s]\n", _path.c_str());	
+		
 	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
 		SceIoDirent dir;
@@ -186,7 +215,9 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 			entry._path = newPath;
 			entry._isDirectory = dir.d_stat.st_attr & FIO_SO_IFDIR;
-
+			
+			PSP_DEBUG_PRINT_FUNC("Child[%s], %s\n", entry._path.c_str(), entry._isDirectory ? "dir" : "file");	
+			
 			// Honor the chosen mode
 			if ((mode == Common::FSNode::kListFilesOnly && entry._isDirectory) ||
 			   (mode == Common::FSNode::kListDirectoriesOnly && !entry._isDirectory))
@@ -202,17 +233,24 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 	}
 
 	PowerMan.endCriticalSection();
+	
+	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 AbstractFSNode *PSPFilesystemNode::getParent() const {
+	DEBUG_ENTER_FUNC();
 	if (_path == ROOT_PATH)
 		return 0;
 
+	PSP_DEBUG_PRINT_FUNC("current[%s]\n", _path.c_str());	
+		
 	const char *start = _path.c_str();
 	const char *end = lastPathComponent(_path, '/');
 
-	return new PSPFilesystemNode(Common::String(start, end - start), false);
+	AbstractFSNode *node = new PSPFilesystemNode(Common::String(start, end - start), false);
+	DEBUG_EXIT_FUNC();
+	return node;
 }
 
 Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {

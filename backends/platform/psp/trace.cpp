@@ -23,47 +23,33 @@
  *
  */
 
+#define TRACE_C
+#include <pspkernel.h>
+#include <pspdebug.h>
+#include "backends/platform/psp/trace.h"
 
-#include "./trace.h"
 
+int psp_debug_indent = 0;
 
-
-void PSPDebugTrace (const char *format, ...) {
-#ifdef __PSP_DEBUG__
+void PSPDebugTrace (bool alsoToScreen, const char *format, ...) {
 	va_list	opt;
-	char		buff[2048];
-	int			bufsz, fd;
+	char		buffer[2048];
+	int			bufsz;
+	FILE *fd = 0;
 
 	va_start(opt, format);
-	bufsz = vsnprintf( buff, (size_t) sizeof(buff), format, opt);
+	bufsz = vsnprintf( buffer, (size_t) sizeof(buffer), format, opt);
 	va_end(opt);
 
-	fd = sceIoOpen("MS0:/DTRACE.TXT", PSP_O_RDWR | PSP_O_CREAT | PSP_O_APPEND, 0777);
-
-	if (fd <= 0)
+	//fd = fopen("MS0:/SCUMMTRACE.TXT", "ab");
+	fd = fopen("SCUMMTRACE.TXT", "ab");
+	
+	if (fd == 0)
 		return;
 
-	sceIoWrite(fd, (const void*)buff, bufsz);
-	sceIoClose(fd);
-#endif /* __PSP_DEBUG__ */
-}
-
-void PSPDebugTrace (const char * filename, const char *format, ...) {
-#ifdef __PSP_DEBUG__
-	va_list	opt;
-	char		buff[2048];
-	int			bufsz, fd;
-
-	va_start(opt, format);
-	bufsz = vsnprintf( buff, (size_t) sizeof(buff), format, opt);
-	va_end(opt);
-
-	fd = sceIoOpen(filename, PSP_O_RDWR | PSP_O_CREAT | PSP_O_APPEND, 0777);
-
-	if (fd <= 0)
-		return;
-
-	sceIoWrite(fd, (const void*)buff, bufsz);
-	sceIoClose(fd);
-#endif /* __PSP_DEBUG__ */
+	fwrite(buffer, 1, bufsz, fd);
+	fclose(fd);
+	
+	if (alsoToScreen)
+		fprintf(stderr, buffer);
 }

@@ -32,139 +32,123 @@
 #include "sound/mixer_intern.h"
 #include "backends/base-backend.h"
 #include "backends/fs/psp/psp-fs-factory.h"
+#include "backends/platform/psp/display_client.h"
+#include "backends/platform/psp/default_display_client.h"
+#include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/display_manager.h"
+#include "backends/platform/psp/input.h"
 
 #include <SDL.h>
 
-#include <pspctrl.h>
-
-enum GraphicModeID {
-	CENTERED_320X200,
-	CENTERED_435X272,
-	STRETCHED_480X272,
-	CENTERED_362X272
-};
-
 class OSystem_PSP : public BaseBackend {
-public:
-	static const OSystem::GraphicsMode s_supportedGraphicsModes[];
-	static OSystem *instance();
-
-protected:
-	struct Vertex {
-		float u,v;
-		float x,y,z;
-	};
-
-	uint16	_screenWidth;
-	uint16	_screenHeight;
-	uint16  _overlayWidth;
-	uint16  _overlayHeight;
-	byte	*_offscreen;
-	OverlayColor  *_overlayBuffer;
-	uint16  _palette[256];
-	bool	_overlayVisible;
-	uint32	_shakePos;
-	uint32	_lastScreenUpdate;
-
-	Graphics::Surface _framebuffer;
-
-	bool	_mouseVisible;
-	int	_mouseX, _mouseY;
-	int _dpadX, _dpadY;
-	int	_mouseWidth, _mouseHeight;
-	int	_mouseHotspotX, _mouseHotspotY;
-	byte	_mouseKeyColour;
-	byte	*_mouseBuf;
-	bool	_cursorPaletteDisabled;
-
-	int _graphicMode;
-	unsigned short* _clut;
-	PSPKeyboard *_keyboard;
-
-	uint32	_prevButtons;
-	uint32	_lastPadCheck;
-	uint32	_padAccel;
-
-	SceCtrlData pad;
-
+private:
+	
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
 
-	Common::KeyCode getDpadEvent(int x, int y);
+	// All needed sub-members
+	Screen _screen;
+	Overlay _overlay;
+	Cursor _cursor;
+	DisplayManager _displayManager;
+	PSPKeyboard _keyboard;
+	InputHandler _inputHandler;
+
+	void initSDL();
 
 public:
-	OSystem_PSP();
-	virtual ~OSystem_PSP();
+	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0) {}
+	~OSystem_PSP();
 
-	virtual void initBackend();
-
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
-
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
+	static OSystem *instance();
+	
+	void initBackend();
+	
+	// Feature related
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
+	
+	// Graphics related
+	const GraphicsMode *getSupportedGraphicsModes() const;
+	int getDefaultGraphicsMode() const;
+	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
-	virtual int getGraphicsMode() const;
+	int getGraphicsMode() const;
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+#endif
+	
+	// Screen size
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format);
+	int16 getWidth();
+	int16 getHeight();
+	
+	// Palette related
+	void setPalette(const byte *colors, uint start, uint num);
+	void grabPalette(byte *colors, uint start, uint num);
+	void setCursorPalette(const byte *colors, uint start, uint num);
+	void disableCursorPalette(bool disable);
+	
+	// Screen related
+	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
+	Graphics::Surface *lockScreen();
+	void unlockScreen();
+	void updateScreen();
+	void setShakePos(int shakeOffset);
+	
+	// Overlay related
+	void showOverlay();
+	void hideOverlay();
+	void clearOverlay();
+	void grabOverlay(OverlayColor *buf, int pitch);
+	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	int16 getOverlayHeight();
+	int16 getOverlayWidth();
+	Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
+	
+	// Mouse related
+	bool showMouse(bool visible);
+	void warpMouse(int x, int y);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
-	virtual int16 getWidth();
-	virtual int16 getHeight();
+	// Events and input
+	bool pollEvent(Common::Event &event);
+	bool processInput(Common::Event &event);
 
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
-	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-	virtual void updateScreen();
-	virtual void setShakePos(int shakeOffset);
+	// Time
+	uint32 getMillis();
+	void delayMillis(uint msecs);
 
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
-
-	virtual bool showMouse(bool visible);
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
-
-	virtual bool pollEvent(Common::Event &event);
-	virtual bool processInput(Common::Event &event);
-
-	virtual uint32 getMillis();
-	virtual void delayMillis(uint msecs);
-
+	// Timer
 	typedef int (*TimerProc)(int interval);
-	virtual void setTimerCallback(TimerProc callback, int interval);
-
-	virtual MutexRef createMutex(void);
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
-
-	static void mixCallback(void *sys, byte *samples, int len);
-	virtual void setupMixer(void);
-
-	Common::SaveFileManager *getSavefileManager() { return _savefile; }
-	Audio::Mixer *getMixer() { return _mixer; }
+	void setTimerCallback(TimerProc callback, int interval);
 	Common::TimerManager *getTimerManager() { return _timer; }
+
+	// Mutex
+	MutexRef createMutex(void);
+	void lockMutex(MutexRef mutex);
+	void unlockMutex(MutexRef mutex);
+	void deleteMutex(MutexRef mutex);
+
+	// Sound
+	static void mixCallback(void *sys, byte *samples, int len);
+	void setupMixer(void);
+	Audio::Mixer *getMixer() { return _mixer; }
+	
+	// Misc
+	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
 	void getTimeAndDate(TimeDate &t) const;
 
-	virtual void quit();
+	void quit();
 
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	Common::SeekableReadStream *createConfigReadStream();
+	Common::WriteStream *createConfigWriteStream();
+
 };
-
 
 #endif /* OSYS_PSP_H */

@@ -118,7 +118,6 @@ public:
 		kDoneSignallingSuspendedThreadsResume,
 		kDoneResume
 	};
-#ifdef __PSP_DEBUG_SUSPEND__
 
 	volatile int _listCounter;						/* How many people are in the list - just for debugging */
 
@@ -129,11 +128,9 @@ public:
  public:
  	int getPMStatus() { return _PMStatus; }
 
-#endif /* __PSP_DEBUG_SUSPEND__ */
-
  };
 
  // For easy access
 #define PowerMan	PowerManager::instance()
 
- #endif /* POWERMAN_H */
+#endif /* POWERMAN_H */

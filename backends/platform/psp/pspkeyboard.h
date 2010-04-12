@@ -28,13 +28,14 @@
 
 #include "common/events.h"
 #include "common/stream.h"
+#include "backends/platform/psp/display_client.h"
 #include <pspctrl.h>
 
 //number of modes
 #define MODE_COUNT 4
 #define guiStringsSize 8 /* size of guistrings array */
 
-class PSPKeyboard {
+class PSPKeyboard : public DisplayClient {
 
 private:
 	enum State {
@@ -49,58 +50,20 @@ private:
 public:
 	PSPKeyboard();
 	~PSPKeyboard();
+	
 	bool load();												// Load keyboard into memory
 	bool isInit() { return _init; }								// Check for initialization
 	bool isDirty() { return _dirty; }							// Check if needs redrawing
+	void setDirty() { _dirty = true; }
+	void setClean() { _dirty = false; }
 	bool isVisible() { return _state != kInvisible; }			// Check if visible
-	bool processInput(Common::Event &event, SceCtrlData &pad, bool &usedInput);	// Process input
+	void setVisible(bool val);
+	bool processInput(Common::Event &event, SceCtrlData &pad);	// Process input
 	void moveTo(const int newX, const int newY);				// Move keyboard
 	void render();												// Draw the keyboard onscreen
 
 private:
-	struct gu_surface {
-		u32		surface_width;
-		u32		surface_height;
-		u32		texture_width;
-		u32		texture_height;
-		u8		*texture;
-		u32		*palette;
-		u32		paletteSize;
-	};
-
-
-// structures used for drawing the keyboard
-	struct Vertex {
-		float u, v;
-		unsigned int color;
-		float x,y,z;
-	};
-
-	void surface_draw_offset(struct gu_surface* surface,
-				int screenX, int screenY, int offsetX, int offsetY, int intWidth, int intHeight);
-	void block_copy(gu_surface* surface, u8 *texture);
-	int load_png_image(Common::SeekableReadStream *, unsigned char *ImageBuffer, uint32 *palette);
-	int get_png_image_size(Common::SeekableReadStream *, uint32 *png_width, uint32 *png_height, u32 *paletteSize);
-	uint32 convert_pow2(uint32 size);
-	void flipNibbles(gu_surface* surface);		// Convert to PSP 4-bit format
-	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
-	void increaseKeyboardLocationY(int amount);
-
-	static short _modeChar[MODE_COUNT][5][6];
-	static const char *_guiStrings[];
-	bool _init;
-	unsigned int _prevButtons;	// A bit pattern.
-	bool _dirty;        		// keyboard needs redrawing
-	int _mode;          		// charset selected. (0 - letters or 1 - numbers)
-	int _moved_x;				// location we've moved the KB to onscreen
-	int _moved_y;
-	bool _moved;				// whether the keyboard was moved
-	gu_surface	_keyTextures[guiStringsSize];
-
-	State _state;				// State of keyboard Keyboard state machine
-	State _lastState;
-
-	enum Cursor {
+	enum CursorDirections {
 		kUp = 0,
 		kRight,
 		kDown,
@@ -108,7 +71,41 @@ private:
 		kCenter
 	};
 
-	Cursor _oldCursor;			// Point to place of last cursor
+	Buffer _buffers[guiStringsSize];
+	Palette _palettes[guiStringsSize];
+	GuRenderer _renderer;
+
+	int loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, Palette &palette);
+	int getPngImageSize(Common::SeekableReadStream *, uint32 *png_width, uint32 *png_height, u32 *paletteSize);
+	uint32 convert_pow2(uint32 size);
+	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
+	void increaseKeyboardLocationY(int amount);
+	void convertCursorToXY(CursorDirections cur, int &x, int &y);
+
+	void handleMoveState(SceCtrlData &pad);
+	bool handleDefaultState(Common::Event &event, SceCtrlData &pad);
+	bool handleCornersSelectedState(Common::Event &event, SceCtrlData &pad);
+	bool getInputChoice(Common::Event &event, SceCtrlData &pad);
+	void getCursorMovement(SceCtrlData &pad);
+	void handleRTriggerDownState(SceCtrlData &pad);
+	void handleLTriggerDownState(SceCtrlData &pad);
+	
+	static short _modeChar[MODE_COUNT][5][6];
+	static const char *_guiStrings[];
+	bool _init;
+	uint32 _prevButtons;	// A bit pattern.
+	uint32 _buttonsChanged;
+	
+	bool _dirty;        		// keyboard needs redrawing
+	int _mode;          		// charset selected. (0 - letters or 1 - numbers)
+	int _movedX;				// location we've moved the KB to onscreen
+	int _movedY;
+	bool _moved;				// whether the keyboard was moved
+	
+	State _state;				// State of keyboard Keyboard state machine
+	State _lastState;
+
+	CursorDirections _oldCursor;			// Point to place of last cursor
 
 };
 

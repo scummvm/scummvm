@@ -66,7 +66,7 @@ endif
 #CC	 = psp-gcc
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
-DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -DDISABLE_DOSBOX_OPL
+DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -DDISABLE_DOSBOX_OPL -DUSE_RGB_COLOR
 LDFLAGS  :=
 INCDIR   := $(srcdir) . $(srcdir)/engines/ $(PSPSDK)/include
 INCLUDES := $(addprefix -I, $(INCDIR))
@@ -133,6 +133,13 @@ LIBS     += -lpng -lSDL -lz $(findstring -lGL,$(SDLLIBS)) -lstdc++ -lc -lm $(fil
 OBJS := powerman.o \
 	psp_main.o \
 	osys_psp.o \
+	psppixelformat.o \
+	memory.o \
+	display_manager.o \
+	display_client.o \
+	default_display_client.o \
+	input.o \
+	cursor.o \
 	trace.o \
 	psploader.o \
 	pspkeyboard.o

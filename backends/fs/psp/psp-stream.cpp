@@ -27,15 +27,20 @@
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
 
-#include "backends/platform/psp/trace.h"
 #include "backends/platform/psp/powerman.h"
 #include "backends/fs/psp/psp-stream.h"
 
 #include <errno.h>
 
+//#define __PSP_PRINT_TO_FILE__
+//#define __PSP_DEBUG_FUNCS__ /* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+#include "backends/platform/psp/trace.h"
+
 PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 : StdioStream((void *)1), _path(path), _writeMode(writeMode) {
-
+	DEBUG_ENTER_FUNC();
+	
 	assert(!path.empty());
 
 	_handle = (void *)0;		// Need to do this since base class asserts not 0.
@@ -43,34 +48,40 @@ PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 	_feof = false;
 	_pos = 0;
 
-#ifdef __PSP_DEBUG_SUSPEND__
+	/* for error checking */
 	_errorSuspend = 0;
 	_errorSource = 0;
 	_errorPos = 0;
 	_errorHandle = 0;
 	_suspendCount = 0;
-#endif
+	
+	DEBUG_EXIT_FUNC();
 }
 
 PSPIoStream::~PSPIoStream() {
+	DEBUG_ENTER_FUNC();
+	
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::~PSPIoStream()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	PowerMan.unregisterSuspend(this); // Unregister with powermanager to be suspended
-								 // Must do this before fclose() or resume() will reopen.
+									  // Must do this before fclose() or resume() will reopen.
 
 	fclose((FILE *)_handle);	// We don't need a critical section(?). Worst case, the handle gets closed on its own
 
 	PowerMan.endCriticalSection();
+	
+	DEBUG_EXIT_FUNC();
 }
 
-// Function to open the file pointed to by the path.
-//
-//
+/* Function to open the file pointed to by the path.
+ *
+ */
 void *PSPIoStream::open() {
+	DEBUG_ENTER_FUNC();
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked) {
 		// No need to open. Just return the _handle resume() already opened.
-		PSPDebugSuspend("Suspended in PSPIoStream::open\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 	}
 
 	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb"); 	// open
@@ -79,20 +90,22 @@ void *PSPIoStream::open() {
 
 	PowerMan.endCriticalSection();
 
+	DEBUG_EXIT_FUNC();
 	return _handle;
 }
 
 bool PSPIoStream::err() const {
+	DEBUG_ENTER_FUNC();
 	if (_ferror)
-		PSPDebugSuspend("In PSPIoStream::err - mem_ferror=%d, source=%d, suspend error=%d, pos=%d, _errorPos=%d, _errorHandle=%p, suspendCount=%d _handle\n",
+		PSP_ERROR("mem_ferror[%d], source[%d], suspend error[%d], pos[%d], _errorPos[%d], _errorHandle[%p], suspendCount[%d]\n",
 			_ferror, _errorSource, _errorSuspend, _pos, _errorPos, _errorHandle, _suspendCount);
 
+	DEBUG_EXIT_FUNC();
 	return _ferror;
 }
 
 void PSPIoStream::clearErr() {
 	_ferror = false;	// Remove regular error bit
-
 }
 
 bool PSPIoStream::eos() const {
@@ -105,45 +118,43 @@ int32 PSPIoStream::pos() const {
 
 
 int32 PSPIoStream::size() const {
+	DEBUG_ENTER_FUNC();
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::size()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	fseek((FILE *)_handle, 0, SEEK_END);
 	int32 length = ftell((FILE *)_handle);
 	fseek((FILE *)_handle, _pos, SEEK_SET);
 
 	if (_pos < 0 || length < 0) {	// Check for errors
-		PSPDebugSuspend("In PSPIoStream::size(). encountered an error!\n");
+		_errorSource = 2;
+		PSP_ERROR("pos[%d] or length[%d] < 0!\n", _pos, length);
 		_ferror = true;
 		length = -1;				// If our oldPos is bad, we want length to be bad too to signal
 		clearerr((FILE *)_handle);
-
-#ifdef __PSP_DEBUG_SUSPEND__
-		_errorSource = 2;
-#endif
 	}
 
 	PowerMan.endCriticalSection();
 
+	DEBUG_EXIT_FUNC();
 	return length;
 }
 
 bool PSPIoStream::seek(int32 offs, int whence) {
+	DEBUG_ENTER_FUNC();
+	
 	// Check if we can access the file
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::seek()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	int ret = fseek((FILE *)_handle, offs, whence);
 
 	if (ret != 0) {
 		_ferror = true;
-		PSPDebugSuspend("In PSPIoStream::seek(). encountered an error!\n");
+		PSP_ERROR("fseek returned with [%d], non-zero\n", ret);
 		clearerr((FILE *)_handle);
 		_feof = feof((FILE *)_handle);
-
-#ifdef __PSP_DEBUG_SUSPEND__
 		_errorSource = 3;
-#endif
 	}
 	else {					// everything ok
 		_feof = false;		// Reset eof flag since we know it was ok
@@ -153,13 +164,17 @@ bool PSPIoStream::seek(int32 offs, int whence) {
 
 	PowerMan.endCriticalSection();
 
-	return ret == 0;
+	DEBUG_EXIT_FUNC();
+	return (ret == 0);
 }
 
 uint32 PSPIoStream::read(void *ptr, uint32 len) {
+	DEBUG_ENTER_FUNC();
 	// Check if we can access the file
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::read()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
+		
+	PSP_DEBUG_PRINT_FUNC("filename[%s], len[%d]\n", _path.c_str(), len);
 
 	size_t ret = fread((byte *)ptr, 1, len, (FILE *)_handle);
 
@@ -171,24 +186,25 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 			_ferror = true;
 			clearerr((FILE *)_handle);
 			_pos = ftell((FILE *)_handle);	// Update our position
-			PSPDebugSuspend("In PSPIoStream::read(). encountered an error!\n");
-
-#ifdef __PSP_DEBUG_SUSPEND__
 			_errorSource = 4;
-#endif
+			PSP_ERROR("fread returned ret[%d] instead of len[%d]\n", ret, len);
 		}
 	}
 
 	PowerMan.endCriticalSection();
 
+	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 uint32 PSPIoStream::write(const void *ptr, uint32 len) {
+	DEBUG_ENTER_FUNC();
 	// Check if we can access the file
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::read()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
+	PSP_DEBUG_PRINT_FUNC("filename[%s], len[%d]\n", _path.c_str(), len);	
+		
 	size_t ret = fwrite(ptr, 1, len, (FILE *)_handle);
 
 	_pos += ret;
@@ -197,73 +213,73 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 		_ferror = true;
 		clearerr((FILE *)_handle);
 		_pos = ftell((FILE *)_handle);	// Update pos
-		PSPDebugTrace("In PSPIoStream::write(). encountered an error!\n");
-
-#ifdef __PSP_DEBUG_SUSPEND__
 		_errorSource = 5;
-#endif
+		PSP_ERROR("fwrite returned[%d] instead of len[%d]\n", ret, len);
 	}
 
 	PowerMan.endCriticalSection();
 
+	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 bool PSPIoStream::flush() {
+	DEBUG_ENTER_FUNC();
 	// Enter critical section
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
-		PSPDebugSuspend("Suspended in PSPIoStream::read()\n");
+		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	int ret = fflush((FILE *)_handle);
 
 	if (ret != 0) {
 		_ferror = true;
 		clearerr((FILE *)_handle);
-		PSPDebugSuspend("In PSPIoStream::flush(). encountered an error!\n");
-
-#ifdef __PSP_DEBUG_SUSPEND__
 		_errorSource = 6;
-#endif
+		PSP_ERROR("fflush returned ret[%u]\n", ret);
 	}
 
 	PowerMan.endCriticalSection();
 
-	return ret == 0;
+	DEBUG_EXIT_FUNC();
+	return (ret == 0);
 }
 
 // For the PSP, since we're building in suspend support, we moved opening
 // the actual file to an open function since we need an actual PSPIoStream object to suspend.
 //
 PSPIoStream *PSPIoStream::makeFromPath(const Common::String &path, bool writeMode) {
+	DEBUG_ENTER_FUNC();
 	PSPIoStream *stream = new PSPIoStream(path, writeMode);
 
-	if (stream->open() > 0) {
-		return stream;
-	} else {
+	if (stream->open() <= 0) {
 		delete stream;
-		return 0;
+		stream = 0;
 	}
+	
+	DEBUG_EXIT_FUNC();
+	return stream;
 }
 
 /*
  *  Function to suspend the IO stream (called by PowerManager)
+ *  we can have no output here
  */
 int PSPIoStream::suspend() {
-#ifdef __PSP_DEBUG_SUSPEND__
+	DEBUG_ENTER_FUNC();
 	_suspendCount++;
 
-	if (_handle > 0 && _pos < 0) {
+	if (_handle > 0 && _pos < 0) {	/* check for error */
 		_errorSuspend = SuspendError;
 		_errorPos = _pos;
 		_errorHandle = _handle;
 	}
-#endif /* __PSP_DEBUG_SUSPEND__ */
 
 	if (_handle > 0) {
 		fclose((FILE *)_handle);		// close our file descriptor
 		_handle = (void *)0xFFFFFFFF;	// Set handle to non-null invalid value so makeFromPath doesn't return error
 	}
 
+	DEBUG_EXIT_FUNC();
 	return 0;
 }
 
@@ -271,31 +287,27 @@ int PSPIoStream::suspend() {
  *  Function to resume the IO stream (called by Power Manager)
  */
 int PSPIoStream::resume() {
+	DEBUG_ENTER_FUNC();
 	int ret = 0;
-#ifdef __PSP_DEBUG_SUSPEND__
 	_suspendCount--;
-#endif
 
 	// We reopen our file descriptor
 	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb");
 	if (_handle <= 0) {
-		PSPDebugSuspend("PSPIoStream::resume(): Couldn't reopen file %s\n", _path.c_str());
+		PSP_ERROR("Couldn't reopen file %s\n", _path.c_str());
 	}
 
 	// Resume our previous position
 	if (_handle > 0 && _pos > 0) {
 		ret = fseek((FILE *)_handle, _pos, SEEK_SET);
 
-#ifdef __PSP_DEBUG_SUSPEND__
 		if (ret != 0) {		// Check for problem
 			_errorSuspend = ResumeError;
 			_errorPos = _pos;
 			_errorHandle = _handle;
 		}
-#endif
-
 	}
-
+	DEBUG_EXIT_FUNC();
 	return ret;
 }
 

@@ -35,6 +35,7 @@
  */
 class PSPFilesystemFactory : public FilesystemFactory, public Common::Singleton<PSPFilesystemFactory> {
 public:
+	const char *getObjectName() const { return "PSPFilesystemFactory"; }
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;

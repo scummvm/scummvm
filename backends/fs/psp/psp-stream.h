@@ -49,13 +49,14 @@ protected:
 	int _errorSuspend;
 	mutable int _errorSource;
 
-#ifdef __PSP_DEBUG_SUSPEND__
+	// Error checking
 	int _errorPos;
 	void * _errorHandle;
 	int _suspendCount;
-#endif /* __PSP_DEBUG_SUSPEND__ */
 
 public:
+	
+	const char *getObjectName() const { return "PSPIoStream"; }
 	/**
 	 * Given a path, invoke fopen on that path and wrap the result in a
 	 * PSPIoStream instance.
