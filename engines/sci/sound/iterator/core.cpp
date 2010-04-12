@@ -639,7 +639,7 @@ static int sfx_play_iterator_pcm(SongIterator *it, SongHandle handle) {
 	if (g_system->getMixer()->isReady()) {
 		Audio::AudioStream *newfeed = it->getAudioStream();
 		if (newfeed) {
-			g_system->getMixer()->playInputStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
+			g_system->getMixer()->playStream(Audio::Mixer::kSFXSoundType, 0, newfeed);
 			return 1;
 		}
 	}

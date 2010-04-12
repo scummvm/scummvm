@@ -1068,7 +1068,7 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 	} while (hasNextCmd);
 
 	if (startSound && _soundEnabled) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
 		_skipFrames = 0;
 		_soundStage = 2;
 	}
@@ -2033,7 +2033,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 
 	if (startSound && _soundEnabled) {
 		if (_hasSound && _audioStream) {
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
 			_skipFrames = 0;
 			_soundStage = 2;
 		} else

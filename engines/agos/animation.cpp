@@ -313,7 +313,7 @@ void MoviePlayerDXA::startSound() {
 
 	if (_bgSoundStream != NULL) {
 		_vm->_mixer->stopHandle(_bgSound);
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSound, _bgSoundStream);
 	}
 }
 

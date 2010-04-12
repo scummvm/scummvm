@@ -954,7 +954,7 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 
 	if (stream) {
 		_mixer->stopHandle(*handle);
-		_mixer->playInputStream(type, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1),
+		_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1),
 		                        -1, scaleMixerVolume(volume, kMaxSoundVolume));
 	}
 }

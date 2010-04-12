@@ -74,7 +74,7 @@ void AdLib::init() {
 		_pollNotes[i] = 0;
 	setFreqs();
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_handle,
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_handle,
 			this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 

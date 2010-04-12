@@ -570,7 +570,7 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 	_end = true;
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType,
 			&_handle, this, -1, _volume, 0, DisposeAfterUse::NO, true);
 }
 

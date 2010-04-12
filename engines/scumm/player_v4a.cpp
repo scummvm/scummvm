@@ -154,7 +154,7 @@ void Player_V4A::startSound(int nr) {
 
 		// the Tfmx-player never "ends" the output by itself, so this should be threadsafe
 		if (!_mixer->isSoundHandleActive(_sfxHandle))
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, &_tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, &_tfmxSfx, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	} else {	// Song
 		debug(3, "player_v4a: play %d: song %i - %02X", nr, index, type);
@@ -166,7 +166,7 @@ void Player_V4A::startSound(int nr) {
 
 		// the Tfmx-player never "ends" the output by itself, so this should be threadsafe
 		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 		_musicId = nr;
 	}
 }

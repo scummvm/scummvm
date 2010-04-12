@@ -590,7 +590,7 @@ void ToucheEngine::res_loadSound(int priority, int num) {
 		_fData.seek(offs);
 		Audio::AudioStream *stream = Audio::makeVOCStream(&_fData, Audio::FLAG_UNSIGNED);
 		if (stream) {
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
 	}
 }
@@ -672,7 +672,7 @@ void ToucheEngine::res_loadSpeechSegment(int num) {
 		}
 		if (stream) {
 			_speechPlaying = true;
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream);
 		}
 	}
 }

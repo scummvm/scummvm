@@ -433,7 +433,7 @@ Common::Error TeenAgentEngine::run() {
 	syncSoundSettings();
 
 	music->load(1);
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 	music->start();
 
 	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
@@ -925,7 +925,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	//debug(0, "playing %u samples...", size);
 
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, 11025, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream); //dispose is YES by default
 }
 
 

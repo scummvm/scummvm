@@ -61,7 +61,7 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);
 
 	if (audioStream) {
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
 	}
 

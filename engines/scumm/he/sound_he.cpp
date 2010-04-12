@@ -575,7 +575,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 
 		if (_vm->_game.heversion == 70) {
 			stream = Audio::makeRawStream(spoolPtr, size, 11025, flags, DisposeAfterUse::NO);
-			_mixer->playInputStream(type, &_heSoundChannels[heChannel], stream, soundID);
+			_mixer->playStream(type, &_heSoundChannels[heChannel], stream, soundID);
 			return;
 		}
 	}
@@ -671,7 +671,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		} else {
 			stream = Audio::makeRawStream(ptr + memStream.pos() + heOffset, size - heOffset, rate, flags, DisposeAfterUse::NO);
 		}
-		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
+		_mixer->playStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for sound in Humongous Entertainment games
@@ -730,7 +730,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		_mixer->stopHandle(_heSoundChannels[heChannel]);
 
 		stream = Audio::makeRawStream(ptr + heOffset + 8, size, rate, flags, DisposeAfterUse::NO);
-		_mixer->playInputStream(type, &_heSoundChannels[heChannel],
+		_mixer->playStream(type, &_heSoundChannels[heChannel],
 						Audio::makeLoopingAudioStream(stream, (heFlags & 1) ? 0 : 1), soundID);
 	}
 	// Support for PCM music in 3DO versions of Humongous Entertainment games
@@ -751,7 +751,7 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 		_currentMusic = soundID;
 
 		stream = Audio::makeRawStream(sound, size, rate, 0);
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, NULL, stream, soundID);
 	}
 	else if (READ_BE_UINT32(ptr) == MKID_BE('MIDI')) {
 		if (_vm->_imuse) {

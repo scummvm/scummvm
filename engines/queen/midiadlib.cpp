@@ -132,7 +132,7 @@ int AdLibMidiDriver::open() {
 		adlibSetNoteVolume(i, 0);
 		adlibTurnNoteOff(i);
 	}
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 	return 0;
 }
 

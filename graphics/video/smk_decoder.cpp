@@ -584,7 +584,7 @@ bool SmackerDecoder::decodeNextFrame() {
 			}
 
 			if (!_audioStarted) {
-				_mixer->playInputStream(_soundType, &_audioHandle, _audioStream, -1, 255);
+				_mixer->playStream(_soundType, &_audioHandle, _audioStream, -1, 255);
 				_audioStarted = true;
 			}
 		} else {

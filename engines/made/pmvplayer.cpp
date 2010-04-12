@@ -175,7 +175,7 @@ bool PmvPlayer::play(const char *filename) {
 		decompressMovieImage(imageData, *_surface, cmdOffs, pixelOffs, maskOffs, lineSize);
 
 		if (firstTime) {
-			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+			_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 			soundStartTime = g_system->getMillis();
 			skipFrames = 0;
 			firstTime = false;

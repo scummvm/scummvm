@@ -245,7 +245,7 @@ AdLibSoundDriver::AdLibSoundDriver(Audio::Mixer *mixer)
 	memset(_channelsVolumeTable, 0, sizeof(_channelsVolumeTable));
 	memset(_instrumentsTable, 0, sizeof(_instrumentsTable));
 	initCard();
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 AdLibSoundDriver::~AdLibSoundDriver() {
@@ -802,7 +802,7 @@ void PaulaSound::playMusic() {
 	debugC(5, kCineDebugSound, "PaulaSound::playMusic()");
 	_mixer->stopHandle(_moduleHandle);
 	if (_moduleStream) {
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_moduleHandle, _moduleStream);
 	}
 }
 
@@ -846,7 +846,7 @@ void PaulaSound::playSoundChannel(int channel, int frequency, uint8 *data, int s
 	assert(frequency > 0);
 	frequency = PAULA_FREQ / frequency;
 	Audio::AudioStream *stream = Audio::makeRawStream(data, size, frequency, 0);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channelsTable[channel], stream);
 	_mixer->setChannelVolume(_channelsTable[channel], volume * Audio::Mixer::kMaxChannelVolume / 63);
 }
 

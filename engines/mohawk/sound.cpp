@@ -140,7 +140,7 @@ Audio::SoundHandle *Sound::playSound(uint16 id, bool mainSoundFile, byte volume,
 		if (loop)
 			audStream = Audio::makeLoopingAudioStream((Audio::RewindableAudioStream *)audStream, 0);
 
-		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &handle->handle, audStream, -1, volume);
 		return &handle->handle;
 	}
 
@@ -308,7 +308,7 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 
 	// TODO: Handle fading, possibly just raise the volume of the channel in increments?
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, volume, convertBalance(balance));
+	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, sndHandle.handle, audStream, -1, volume, convertBalance(balance));
 }
 
 void Sound::stopSLSTSound(uint16 index, bool fade) {

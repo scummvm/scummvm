@@ -242,7 +242,7 @@ Audio::AudioStream *WavSound::makeAudioStream(uint sound) {
 
 void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
+	_mixer->playStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -265,7 +265,7 @@ Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 
 void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	convertVolume(vol);
-	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
+	_mixer->playStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -297,7 +297,7 @@ Audio::AudioStream *RawSound::makeAudioStream(uint sound) {
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol) {
 	// Sound looping and volume are ignored.
-	_mixer->playInputStream(type, handle, makeAudioStream(sound));
+	_mixer->playStream(type, handle, makeAudioStream(sound));
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -324,7 +324,7 @@ public:
 
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, bool loop, int vol = 0) {
 		convertVolume(vol);
-		_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
+		_mixer->playStream(type, handle, new LoopingAudioStream(this, sound, loopSound, loop), -1, vol);
 	}
 };
 
@@ -738,7 +738,7 @@ void Sound::playRawData(byte *soundData, uint sound, uint size, uint freq) {
 		flags = Audio::FLAG_UNSIGNED;
 
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, size, freq, flags);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_effectsHandle, stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_effectsHandle, stream);
 }
 
 // Feeble Files specific
@@ -783,7 +783,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	convertVolume(vol);
 	convertPan(pan);
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
 }
 
 void Sound::stopSfx5() {

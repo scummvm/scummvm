@@ -1263,7 +1263,7 @@ Player_SID::Player_SID(ScummEngine *scumm, Audio::Mixer *mixer) {
 	initSID();
 	resetSID();
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_SID::~Player_SID() {

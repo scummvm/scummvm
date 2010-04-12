@@ -53,7 +53,7 @@ SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mix
 	_fadeSamples = 0;
 	_curFadeSamples = 0;
 
-	_mixer->playInputStream(type, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(type, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundMixer::~SoundMixer() {

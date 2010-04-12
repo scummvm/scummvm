@@ -115,7 +115,7 @@ public:
 	 *                  not stop this particular stream
 	 * @param reverseStereo	a flag indicating whether left and right channels shall be swapped
 	 */
-	virtual void playInputStream(
+	virtual void playStream(
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,

@@ -75,7 +75,7 @@ public:
 
 	virtual bool isReady() const { return _mixerReady; }
 
-	virtual void playInputStream(
+	virtual void playStream(
 		SoundType type,
 		SoundHandle *handle,
 		AudioStream *input,

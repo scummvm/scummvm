@@ -188,7 +188,7 @@ void DrasculaEngine::playFile(const char *fname) {
 
 		Audio::AudioStream *sound = Audio::makeRawStream(soundData, soundSize - 64,
 						11025, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, sound);
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_soundHandle, sound);
 	} else
 		warning("playFile: Could not open %s", fname);
 }

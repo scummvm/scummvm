@@ -735,12 +735,12 @@ bool Intro::nextPart(uint16 *&data) {
 			return false;
 		vData = _skyDisk->loadFile(*data++);
 		// HACK: Fill the header with silence. We should
-		// probably use _skySound instead of calling playInputStream()
+		// probably use _skySound instead of calling playStream()
 		// directly, but this will have to do for now.
 		memset(vData, 127, sizeof(DataFileHeader));
 
 		stream = Audio::makeRawStream(vData, _skyDisk->_lastLoadedFileSize, 11025, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_voice, stream, SOUND_VOICE);
+		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_voice, stream, SOUND_VOICE);
 		return true;
 	case WAITVOICE:
 		while (_mixer->isSoundHandleActive(_voice))
@@ -756,12 +756,12 @@ bool Intro::nextPart(uint16 *&data) {
 	case LOOPBG:
 		_mixer->stopID(SOUND_BG);
 		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, Audio::makeLoopingAudioStream(stream, 0), SOUND_BG);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSfx, Audio::makeLoopingAudioStream(stream, 0), SOUND_BG);
 		return true;
 	case PLAYBG:
 		_mixer->stopID(SOUND_BG);
 		stream = Audio::makeRawStream(_bgBuf + 256, _bgSize - 768, 11025, Audio::FLAG_UNSIGNED, DisposeAfterUse::NO);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_bgSfx, stream, SOUND_BG);
 		return true;
 	case STOPBG:
 		_mixer->stopID(SOUND_BG);

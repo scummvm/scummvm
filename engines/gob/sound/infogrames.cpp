@@ -66,7 +66,7 @@ bool Infogrames::loadSong(const char *fileName) {
 void Infogrames::play() {
 	if (_song && !_mixer->isSoundHandleActive(_handle)) {
 		_song->restart();
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+		_mixer->playStream(Audio::Mixer::kMusicSoundType,
 				&_handle, _song, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 	}
 }

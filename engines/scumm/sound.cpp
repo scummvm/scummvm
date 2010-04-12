@@ -204,7 +204,7 @@ void Sound::playSound(int soundID) {
 		memcpy(sound, ptr, size);
 
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// WORKAROUND bug # 1311447
 	else if (READ_BE_UINT32(ptr) == 0x460e200d) {
@@ -227,7 +227,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	// Support for sampled sound effects in Monkey Island 1 and 2
 	else if (READ_BE_UINT32(ptr) == MKID_BE('SBL ')) {
@@ -299,7 +299,7 @@ void Sound::playSound(int soundID) {
 		sound = (byte *)malloc(size);
 		memcpy(sound, ptr + 6, size);
 		stream = Audio::makeRawStream(sound, size, rate, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID);
 	}
 	else if ((_vm->_game.platform == Common::kPlatformFMTowns && _vm->_game.version == 3) || READ_BE_UINT32(ptr) == MKID_BE('SOUN') || READ_BE_UINT32(ptr) == MKID_BE('TOWS')) {
 
@@ -355,7 +355,7 @@ void Sound::playSound(int soundID) {
 				} else {
 					stream = Audio::makeRawStream(sound, waveSize, rate, Audio::FLAG_UNSIGNED);
 				}
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, 255, 0);
 			}
 			break;
 		case 1:
@@ -450,7 +450,7 @@ void Sound::playSound(int soundID) {
 			stream = plainStream;
 		}
 
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, NULL, stream, soundID, vol, 0);
 	}
 	else {
 
@@ -677,7 +677,7 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 			_vm->_imuseDigital->startVoice(kTalkSoundID, input);
 #endif
 		} else {
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, handle, input, id);
 		}
 	}
 }

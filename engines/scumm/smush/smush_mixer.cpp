@@ -124,7 +124,7 @@ bool SmushMixer::handleFrame() {
 					// Stream the data
 					if (!_channels[i].stream) {
 						_channels[i].stream = Audio::makeQueuingAudioStream(_channels[i].chan->getRate(), stereo);
-						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
+						_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[i].handle, _channels[i].stream);
 					}
 					_mixer->setChannelVolume(_channels[i].handle, vol);
 					_mixer->setChannelBalance(_channels[i].handle, pan);

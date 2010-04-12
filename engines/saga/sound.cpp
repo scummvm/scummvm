@@ -102,7 +102,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 	}
 
 	if (stream != NULL)
-		_mixer->playInputStream(soundType, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, volume);
+		_mixer->playStream(soundType, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, volume);
 }
 
 void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {

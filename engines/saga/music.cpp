@@ -280,7 +280,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	for (int i = 0; i < 2; ++i) {
 		stream = Audio::SeekableAudioStream::openStreamFile(trackName[i]);
 		if (stream) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
 			                        Audio::makeLoopingAudioStream(stream, (flags == MUSIC_LOOP) ? 0 : 1));
 			_digitalMusic = true;
 			return;
@@ -343,13 +343,13 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (audioStream) {
 		debug(2, "Playing digitized music");
 		if (loopStart) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
 			                        new Audio::SubLoopingAudioStream(audioStream,
 			                        (flags == MUSIC_LOOP ? 0 : 1),
 			                        Audio::Timestamp(0, loopStart, audioStream->getRate()),
 			                        audioStream->getLength()));
 		} else {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle,
 			                        Audio::makeLoopingAudioStream(audioStream, (flags == MUSIC_LOOP ? 0 : 1)));
 		}
 		_digitalMusic = true;

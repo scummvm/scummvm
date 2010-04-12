@@ -118,7 +118,7 @@ void PreAgiEngine::initialize() {
 	//_sound->initSound();
 
 	_speakerStream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_speakerHandle,
 							_speakerStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 

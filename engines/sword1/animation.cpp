@@ -147,7 +147,7 @@ bool MoviePlayer::load(uint32 id) {
 
 void MoviePlayer::play() {
 	if (_bgSoundStream) {
-		_snd->playInputStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
+		_snd->playStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
 	}
 	bool terminated = false;
 

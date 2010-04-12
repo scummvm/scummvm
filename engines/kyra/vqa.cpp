@@ -649,7 +649,7 @@ void VQAMovie::play() {
 		}
 	}
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
+	_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sound, _stream);
 	Common::EventManager *eventMan = _vm->getEventManager();
 
 	for (uint i = 0; i < _header.numFrames; i++) {

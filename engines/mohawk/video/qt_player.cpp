@@ -191,7 +191,7 @@ void QTPlayer::startAudio() {
 	if (!_audStream) // No audio/audio not supported
 		return;
 
-	g_system->getMixer()->playInputStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
+	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
 }
 
 void QTPlayer::pauseAudio() {

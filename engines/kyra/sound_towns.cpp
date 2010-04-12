@@ -624,7 +624,7 @@ int Towns_EuphonyDriver::open() {
 		return MERR_ALREADY_OPEN;
 	MidiDriver_Emulated::open();
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle,
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_mixerSoundHandle,
 		this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return 0;
@@ -2977,7 +2977,7 @@ bool TownsPC98_OpnCore::init() {
 		_prc->init(_percussionData);
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType,
+	_mixer->playStream(Audio::Mixer::kMusicSoundType,
 		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_ready = true;
@@ -3927,7 +3927,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 
 	_currentSFX = Audio::makeRawStream(sfxPlaybackBuffer, playbackBufferSize,
 							outputRate, Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, _currentSFX);
 }
 
 void SoundTowns::beginFadeOut() {
@@ -4299,7 +4299,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 
 	_currentSFX = Audio::makeRawStream(sfx, outsize, outputRate,
 							Audio::FLAG_UNSIGNED | Audio::FLAG_LITTLE_ENDIAN);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundChannels[h], _currentSFX);
 	if (handle)
 		*handle = _soundChannels[h];
 

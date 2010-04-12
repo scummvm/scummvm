@@ -366,7 +366,7 @@ Player_V2::Player_V2(ScummEngine *scumm, Audio::Mixer *mixer, bool pcjr) {
 	set_pcjr(pcjr);
 	setMusicVolume(255);
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_V2::~Player_V2() {

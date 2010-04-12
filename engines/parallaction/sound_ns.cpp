@@ -406,7 +406,7 @@ void AmigaSoundMan_ns::playSfx(const char *filename, uint channel, bool looping,
 		volume = ch->volume;
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void AmigaSoundMan_ns::stopSfx(uint channel) {
@@ -431,7 +431,7 @@ void AmigaSoundMan_ns::playMusic() {
 
 	debugC(3, kDebugAudio, "AmigaSoundMan_ns::playMusic(): created new music stream");
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 }
 
 void AmigaSoundMan_ns::stopMusic() {

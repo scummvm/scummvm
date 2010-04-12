@@ -30,7 +30,7 @@ namespace Gob {
 PCSpeaker::PCSpeaker(Audio::Mixer &mixer) : _mixer(&mixer) {
 
 	_stream = new Audio::PCSpeaker(_mixer->getOutputRate());
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType,
+	_mixer->playStream(Audio::Mixer::kSFXSoundType,
 			&_handle, _stream, -1, 50, 0, DisposeAfterUse::NO, true);
 }
 

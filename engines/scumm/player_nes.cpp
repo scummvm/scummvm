@@ -621,7 +621,7 @@ Player_NES::Player_NES(ScummEngine *scumm, Audio::Mixer *mixer) {
 
 	APU_writeControl(0);
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_NES::~Player_NES() {

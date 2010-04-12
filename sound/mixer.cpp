@@ -212,7 +212,7 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 		*handle = chanHandle;
 }
 
-void MixerImpl::playInputStream(
+void MixerImpl::playStream(
 			SoundType type,
 			SoundHandle *handle,
 			AudioStream *input,

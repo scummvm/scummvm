@@ -221,7 +221,7 @@ int MidiDriver_PCJr::open(int channels) {
 
 	MidiDriver_Emulated::open();
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_mixerSoundHandle, this, -1, _mixer->kMaxChannelVolume, 0, DisposeAfterUse::NO);
 
 	return 0;
 }

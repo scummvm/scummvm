@@ -726,7 +726,7 @@ Player_PCE::Player_PCE(ScummEngine *scumm, Audio::Mixer *mixer) {
 
 	_psg = new PSG_HuC6280(PSG_CLOCK, _sampleRate);
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_PCE::~Player_PCE() {

@@ -261,7 +261,7 @@ void Sound::playSample(QueueElement *elem) {
 					if (SwordEngine::isPsx()) {
 						uint32 size = READ_LE_UINT32(sampleData);
 						Audio::AudioStream *audStream = Audio::makeLoopingAudioStream(Audio::makeVagStream(new Common::MemoryReadStream(sampleData + 4, size-4)), (_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
-						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
+						_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, audStream, elem->id, volume, pan);
 					} else {
 						uint32 size = READ_LE_UINT32(sampleData + 0x28);
 						uint8 flags;
@@ -274,7 +274,7 @@ void Sound::playSample(QueueElement *elem) {
 						Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 									Audio::makeRawStream(sampleData + 0x2C, size, 11025, flags, DisposeAfterUse::NO),
 									(_fxList[elem->id].type == FX_LOOP) ? 0 : 1);
-						_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
+						_mixer->playStream(Audio::Mixer::kSFXSoundType, &elem->handle, stream, elem->id, volume, pan);
 					}
 			}
 		} else
@@ -362,14 +362,14 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
 			if (data) {
 				stream = Audio::makeRawStream((byte *)data, size, 11025, SPEECH_FLAGS);
-				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
+				_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			}
 		} else if (_cowMode == CowPSX && sampleSize != 0xffffffff) {
 			_cowFile.seek(index * 2048);
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeVagStream(tmp);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -382,7 +382,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -396,7 +396,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)
@@ -410,7 +410,7 @@ bool Sound::startSpeech(uint16 roomNo, uint16 localNo) {
 			Common::MemoryReadStream *tmp = _cowFile.readStream(sampleSize);
 			assert(tmp);
 			stream = Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
-			_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
+			_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_speechHandle, stream, SOUND_SPEECH_ID, speechVol, speechPan);
 			// with compressed audio, we can't calculate the wave volume.
 			// so default to talking.
 			for (int cnt = 0; cnt < 480; cnt++)

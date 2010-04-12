@@ -121,7 +121,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, DisposeAfterUse::YES)));
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeMP3Stream(tmp, DisposeAfterUse::YES)));
 	}
 };
 #endif
@@ -134,7 +134,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, DisposeAfterUse::YES)));
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeVorbisStream(tmp, DisposeAfterUse::YES)));
 	}
 };
 #endif
@@ -147,7 +147,7 @@ protected:
 	void playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *soundHandle) {
 		Common::MemoryReadStream *tmp = f->readStream(size);
 		assert(tmp);
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, soundHandle, new AudioStreamWrapper(Audio::makeFLACStream(tmp, DisposeAfterUse::YES)));
 	}
 };
 #endif // #ifdef USE_FLAC
@@ -331,7 +331,7 @@ void SBSound::playSoundData(Common::File *f, uint32 size, Audio::SoundHandle *so
 		Audio::Mixer::SoundType type = (soundHandle == &_speechHandle) ? Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 		Audio::AudioStream *stream = Audio::makeRawStream(sound, size, 11840, Audio::FLAG_UNSIGNED);
-		_mixer->playInputStream(type, soundHandle, stream);
+		_mixer->playStream(type, soundHandle, stream);
 	}
 }
 
@@ -615,7 +615,7 @@ void AmigaSound::playSound(const char *base) {
 			f->read(soundData, soundSize);
 
 			Audio::AudioStream *stream = Audio::makeRawStream(soundData, soundSize, 11025, 0);
-			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
+			_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, stream);
 		}
 	}
 }
@@ -648,7 +648,7 @@ void AmigaSound::playModule(const char *base, int song) {
 	_mixer->stopHandle(_modHandle);
 	Audio::AudioStream *stream = loadModule(base, song);
 	if (stream) {
-		_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, stream);
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, stream);
 	}
 	_fanfareCount = 0;
 }
@@ -657,7 +657,7 @@ void AmigaSound::playPattern(const char *base, int pattern) {
 	_mixer->stopHandle(_patHandle);
 	Audio::AudioStream *stream = loadModule(base, -pattern);
 	if (stream) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_patHandle, stream);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_patHandle, stream);
 	}
 }
 

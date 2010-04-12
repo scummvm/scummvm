@@ -459,7 +459,7 @@ void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 
 	if (currentSoundFrame == ADVANCE_SOUND) {
 		if (!audioStarted) {
-			_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType,
+			_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType,
 					&_audioHandle, _audioStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO);
 			audioStarted = true;
 		}

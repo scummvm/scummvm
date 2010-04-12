@@ -118,7 +118,7 @@ bool Sound::playVoiceStream(Audio::AudioStream *stream, Audio::SoundHandle *hand
 	if (h >= kNumChannelHandles)
 		return false;
 
-	_mixer->playInputStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h], stream, -1, volume);
+	_mixer->playStream(isSfx ? Audio::Mixer::kSFXSoundType : Audio::Mixer::kSpeechSoundType, &_soundChannels[h], stream, -1, volume);
 	if (handle)
 		*handle = _soundChannels[h];
 

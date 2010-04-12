@@ -204,7 +204,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 			Audio::makeRawStream(buffer._data, buffer._length, buffer._frequency, flags, DisposeAfterUse::NO),
 			loop ? 0 : 1);
-	_mixer->playInputStream(soundType, handle, stream, -1, volume);
+	_mixer->playStream(soundType, handle, stream, -1, volume);
 }
 
 void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {

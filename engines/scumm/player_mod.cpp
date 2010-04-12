@@ -49,7 +49,7 @@ Player_MOD::Player_MOD(Audio::Mixer *mixer)
 	_playproc = NULL;
 	_playparam = NULL;
 
-	_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 Player_MOD::~Player_MOD() {

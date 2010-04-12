@@ -245,7 +245,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 	// Initialize the video stuff too
 	_audStream = createAudioStream();
 	if (_audStream)
-		_mixer->playInputStream(_soundType, _audHandle, _audStream);
+		_mixer->playStream(_soundType, _audHandle, _audStream);
 
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
 	debug (0, "Frame Rate = %d", getFrameRate());

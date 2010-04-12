@@ -117,7 +117,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
 		// Play the audio stream
-		_vm->_mixer->playInputStream(type, &curChan.handle, vagStream);
+		_vm->_mixer->playStream(type, &curChan.handle, vagStream);
 	} else {
 		// allocate a buffer
 		byte *sampleBuf = (byte *)malloc(sampleLen);
@@ -158,7 +158,7 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 			break;
 		}
 		if (sampleStream) {
-			_vm->_mixer->playInputStream(type, &curChan.handle, sampleStream);
+			_vm->_mixer->playStream(type, &curChan.handle, sampleStream);
 		}
 	}
 
@@ -324,7 +324,7 @@ bool SoundManager::playSample(int id, int sub, bool bLooped, int x, int y, int p
 	//curChan->timeDuration = (((sampleLen * 64) / 25) * 1000) / (22050 * 2);
 
 	// Play it
-	_vm->_mixer->playInputStream(type, &curChan->handle, sampleStream);
+	_vm->_mixer->playStream(type, &curChan->handle, sampleStream);
 
 	_vm->_mixer->setChannelVolume(curChan->handle, sndVol);
 	_vm->_mixer->setChannelBalance(curChan->handle, getPan(x));

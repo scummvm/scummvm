@@ -616,7 +616,7 @@ void AnimationSequencePlayer::loadSounds(int num) {
 	if (_soundSeqDataList[num].musicVolume != 0) {
 		Audio::AudioStream *s;
 		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
+			_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
 		}
 	}
 	_soundSeqDataIndex = 0;
@@ -631,12 +631,12 @@ void AnimationSequencePlayer::updateSounds() {
 		switch (p->opcode) {
 		case 0:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 1:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], Audio::makeLoopingAudioStream(s, 0),
 				                        -1, scaleMixerVolume(p->volume));
 			}
 			break;
@@ -649,18 +649,18 @@ void AnimationSequencePlayer::updateSounds() {
 		case 4:
 			_mixer->stopHandle(_musicHandle);
 			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
+				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
 			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
+				_mixer->playStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
 			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != 0) {
-				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
+				_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		default:

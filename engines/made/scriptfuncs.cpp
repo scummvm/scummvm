@@ -239,7 +239,7 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 	}
 	if (soundNum > 0) {
 		SoundResource *soundRes = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
 			soundRes->getAudioStream(_vm->_soundRate, false));
 		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
 		_vm->_soundEnergyIndex = 0;
@@ -586,7 +586,7 @@ int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 	stopSound();
 	if (soundNum > 0) {
 		_soundResource = _vm->_res->getSound(soundNum);
-		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
+		_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
 			_soundResource->getAudioStream(_vm->_soundRate, false));
 		_vm->_autoStopSound = true;
 		_soundStarted = true;

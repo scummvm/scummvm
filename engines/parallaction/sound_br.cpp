@@ -432,7 +432,7 @@ void DosSoundMan_br::playSfx(const char *filename, uint channel, bool looping, i
 
 	Channel *ch = &_channels[channel];
 	Audio::AudioStream *input = loadChannelData(filename, ch, looping);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void DosSoundMan_br::playMusic() {
@@ -509,7 +509,7 @@ void AmigaSoundMan_br::playSfx(const char *filename, uint channel, bool looping,
 		volume = ch->volume;
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &ch->handle, input, -1, volume);
 }
 
 void AmigaSoundMan_br::playMusic() {
@@ -531,7 +531,7 @@ void AmigaSoundMan_br::playMusic() {
 
 	debugC(3, kDebugAudio, "AmigaSoundMan_ns::playMusic(): created new music stream");
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, _musicStream, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
 }
 
 void AmigaSoundMan_br::stopMusic() {

@@ -471,7 +471,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 
 					if (!_IACTstream) {
 						_IACTstream = Audio::makeQueuingAudioStream(22050, true);
-						_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
+						_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_IACTchannel, _IACTstream);
 					}
 					_IACTstream->queueBuffer(output_data, 0x1000, DisposeAfterUse::YES, Audio::FLAG_STEREO | Audio::FLAG_16BITS);
 
@@ -1111,7 +1111,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	strcpy(fname + (i - filename), ".ogg");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, DisposeAfterUse::YES));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeVorbisStream(file, DisposeAfterUse::YES));
 		return;
 	}
 #endif
@@ -1120,7 +1120,7 @@ void SmushPlayer::tryCmpFile(const char *filename) {
 	strcpy(fname + (i - filename), ".mp3");
 	if (file->open(fname)) {
 		_compressedFileMode = true;
-		_vm->_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, DisposeAfterUse::YES));
+		_vm->_mixer->playStream(Audio::Mixer::kSFXSoundType, &_compressedFileSoundHandle, Audio::makeMP3Stream(file, DisposeAfterUse::YES));
 		return;
 	}
 #endif

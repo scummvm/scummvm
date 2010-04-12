@@ -221,7 +221,7 @@ void AGOSEngine::playModule(uint16 music) {
 		audioStream = Audio::makeProtrackerStream(&f);
 	}
 
-	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
 }
 
 void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {

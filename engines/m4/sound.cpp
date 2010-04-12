@@ -96,7 +96,7 @@ void Sound::playSound(const char *soundName, int volume, bool loop, int channel)
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 				Audio::makeRawStream(buffer, bufferSize, 11025, Audio::FLAG_UNSIGNED),
 				loop ? 0 : 1);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
 void Sound::playSound(int soundNum) { 
@@ -151,7 +151,7 @@ void Sound::playVoice(const char *soundName, int volume) {
 
 	// Voice format is 8bit mono, unsigned, 11025kHz
 	Audio::AudioStream *stream = Audio::makeRawStream(buffer, soundStream->size(), 11025, Audio::FLAG_UNSIGNED);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 }
 
 void Sound::pauseVoice() {
@@ -267,7 +267,7 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 					_dsrFile.dsrEntries[soundIndex]->uncompSize,
 					_dsrFile.dsrEntries[soundIndex]->frequency, Audio::FLAG_UNSIGNED),
 				loop ? 0 : 1);
-	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 
 	/*
 	// Dump the sound file
