@@ -20,7 +20,7 @@ namespace CxxTest
     {
     public:
         virtual ~OutputStream() {}
-        virtual void flush() {};
+        virtual void flush() {}
         virtual OutputStream &operator<<( unsigned /*number*/ ) { return *this; }
         virtual OutputStream &operator<<( const char * /*string*/ ) { return *this; }
 
