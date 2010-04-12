@@ -31,25 +31,25 @@
 
 int psp_debug_indent = 0;
 
-void PSPDebugTrace (bool alsoToScreen, const char *format, ...) {
+void PSPDebugTrace(bool alsoToScreen, const char *format, ...) {
 	va_list	opt;
 	char		buffer[2048];
 	int			bufsz;
 	FILE *fd = 0;
 
 	va_start(opt, format);
-	bufsz = vsnprintf( buffer, (size_t) sizeof(buffer), format, opt);
+	bufsz = vsnprintf(buffer, (size_t) sizeof(buffer), format, opt);
 	va_end(opt);
 
 	//fd = fopen("MS0:/SCUMMTRACE.TXT", "ab");
 	fd = fopen("SCUMMTRACE.TXT", "ab");
-	
+
 	if (fd == 0)
 		return;
 
 	fwrite(buffer, 1, bufsz, fd);
 	fclose(fd);
-	
+
 	if (alsoToScreen)
 		fprintf(stderr, buffer);
 }

@@ -26,7 +26,7 @@
 //#define PSP_KB_SHELL	/* Need a hack to properly load the keyboard from the PSP shell */
 
 #ifdef PSP_KB_SHELL
-	#define PSP_KB_SHELL_PATH 	"ms0:/psp/game4xx/scummvm-solid/"	/* path to kbd.zip */
+#define PSP_KB_SHELL_PATH 	"ms0:/psp/game4xx/scummvm-solid/"	/* path to kbd.zip */
 #endif
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
@@ -80,7 +80,7 @@ short PSPKeyboard::_modeChar[MODE_COUNT][5][6] = {
 	},
 	{	//symbols
 		{ K('!'),  K(')'), K('?'), K('('), K('<'), K('>') },
-		{ K('+'),  K('/'), K('='), K('\\'),K('\''),K('"') },
+		{ K('+'),  K('/'), K('='), K('\\'), K('\''), K('"') },
 		{ K(':'),  K(']'), K(';'), K('['), K('@'), K('#') },
 		{ K('-'),  K('}'), K('_'), K('{'), K('*'), K('$') },
 		{ K('\b'), K('.'), K(' '), K(','), K(0),   K(0)   }
@@ -108,7 +108,7 @@ const char *PSPKeyboard::_guiStrings[] = {
 // Constructor
 PSPKeyboard::PSPKeyboard() {
 	DEBUG_ENTER_FUNC();
-	
+
 	_init = false;			// we're not initialized yet
 	_prevButtons = 0;		// Reset previous buttons
 	_dirty = false;        	// keyboard needs redrawing
@@ -119,19 +119,19 @@ PSPKeyboard::PSPKeyboard() {
 	_moved = false;			// Keyboard wasn't moved recently
 	_state = kInvisible;	// We start invisible
 	_lastState = kInvisible;
-	
+
 	// Constant renderer settings
 	_renderer.setAlphaBlending(true);
 	_renderer.setColorTest(false);
-	_renderer.setUseGlobalScaler(false);	
-	
+	_renderer.setUseGlobalScaler(false);
+
 	DEBUG_EXIT_FUNC();
 }
 
 // Destructor
 PSPKeyboard::~PSPKeyboard() {
 	DEBUG_ENTER_FUNC();
-	
+
 	if (!_init) {
 		DEBUG_EXIT_FUNC();
 		return;
@@ -142,18 +142,17 @@ PSPKeyboard::~PSPKeyboard() {
 		_palettes[i].deallocate();
 	}
 	_init = false;
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
-void PSPKeyboard::setVisible(bool val) { 
+void PSPKeyboard::setVisible(bool val) {
 	if (val && _state == kInvisible && _init) {	// Check also that were loaded correctly
 		_lastState = _state;
-		_state = kMove; 
-	}
-	else if ( !val && _state != kInvisible) {
+		_state = kMove;
+	} else if (!val && _state != kInvisible) {
 		_lastState = _state;
-		_state = kInvisible; 
+		_state = kInvisible;
 	}
 	setDirty();
 }
@@ -161,34 +160,34 @@ void PSPKeyboard::setVisible(bool val) {
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::moveTo(const int newX, const int newY) {
 	DEBUG_ENTER_FUNC();
-	
+
 	_movedX = newX;
 	_movedY = newY;
 	setDirty();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::increaseKeyboardLocationX(int amount) {
 	DEBUG_ENTER_FUNC();
-	
+
 	int newX = _movedX + amount;
 
 	if (newX > PSP_SCREEN_WIDTH - 5 || newX < 0 - 140) {	// clamp
 		DEBUG_EXIT_FUNC();
 		return;
-	}	
+	}
 	_movedX = newX;
 	setDirty();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
 /* move the position the keyboard is currently drawn at */
 void PSPKeyboard::increaseKeyboardLocationY(int amount) {
 	DEBUG_ENTER_FUNC();
-	
+
 	int newY = _movedY + amount;
 
 	if (newY > PSP_SCREEN_HEIGHT - 5 || newY < 0 - 140)	{ // clamp
@@ -197,7 +196,7 @@ void PSPKeyboard::increaseKeyboardLocationY(int amount) {
 	}
 	_movedY = newY;
 	setDirty();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -205,8 +204,8 @@ void PSPKeyboard::increaseKeyboardLocationY(int amount) {
 void PSPKeyboard::render() {
 	DEBUG_ENTER_FUNC();
 
-	unsigned int currentBuffer = _mode<<1;
-	
+	unsigned int currentBuffer = _mode << 1;
+
 	// Draw the background letters
 	// Set renderer to current buffer & palette
 	_renderer.setBuffer(&_buffers[currentBuffer]);
@@ -215,14 +214,14 @@ void PSPKeyboard::render() {
 	_renderer.setOffsetInBuffer(0, 0);
 	_renderer.setDrawWholeBuffer();
 	_renderer.render();
-	
+
 	// Get X and Y coordinates for the orange block
 	int x, y;
 	convertCursorToXY(_oldCursor, x, y);
-	
+
 	const int OrangeBlockSize = 64;
 	const int GrayBlockSize = 43;
-	
+
 	// Draw the current Highlighted Selector (orange block)
 	_renderer.setBuffer(&_buffers[currentBuffer + 1]);
 	_renderer.setPalette(&_palettes[currentBuffer + 1]);
@@ -230,12 +229,12 @@ void PSPKeyboard::render() {
 	_renderer.setOffsetInBuffer(x * OrangeBlockSize, y * OrangeBlockSize);
 	_renderer.setDrawSize(OrangeBlockSize, OrangeBlockSize);
 	_renderer.render();
-	
-	DEBUG_EXIT_FUNC();		
+
+	DEBUG_EXIT_FUNC();
 }
 
 inline void PSPKeyboard::convertCursorToXY(CursorDirections cur, int &x, int &y) {
-	switch(cur) {
+	switch (cur) {
 	case kUp:
 		x = 1;
 		y = 0;
@@ -291,7 +290,7 @@ bool PSPKeyboard::load() {
 	}
 
 	int i;
-	
+
 	// Loop through all png images
 	for (i = 0; i < guiStringsSize; i++) {
 		uint32 height = 0, width = 0, paletteSize = 0;
@@ -326,13 +325,13 @@ bool PSPKeyboard::load() {
 			// Allocate memory for image
 			PSP_DEBUG_PRINT("width[%d], height[%d], paletteSize[%d]\n", width, height, paletteSize);
 			_buffers[i].setSize(width, height, Buffer::kSizeByTextureSize);
-			
+
 			if (paletteSize) {	// 8 or 4-bit image
 				if (paletteSize <= 16) { // 4 bit
 					_buffers[i].setPixelFormat(PSPPixelFormat::Type_Palette_4bit);
 					_palettes[i].setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_4bit);
-					paletteSize = 16;					
-				} else if (paletteSize <= 256){			// 8-bit image
+					paletteSize = 16;
+				} else if (paletteSize <= 256) {			// 8-bit image
 					paletteSize = 256;
 					_buffers[i].setPixelFormat(PSPPixelFormat::Type_Palette_8bit);
 					_palettes[i].setPixelFormats(PSPPixelFormat::Type_4444, PSPPixelFormat::Type_Palette_8bit);
@@ -340,11 +339,11 @@ bool PSPKeyboard::load() {
 					PSP_ERROR("palette of %d too big!\n", paletteSize);
 					goto ERROR;
 				}
-				
+
 			} else {				// 32-bit image
 				_buffers[i].setPixelFormat(PSPPixelFormat::Type_8888);
 			}
-			
+
 			_buffers[i].allocate();
 			_palettes[i].allocate();
 
@@ -361,13 +360,12 @@ bool PSPKeyboard::load() {
 
 				delete file;
 			}
-		}
-		else {
+		} else {
 			PSP_ERROR("couldn't obtain PNG image size\n");
 			goto ERROR;
 		}
 	} /* for loop */
-	
+
 	_init = true;
 
 	delete fileArchive;
@@ -387,7 +385,7 @@ ERROR:
 		_palettes[j].deallocate();
 	}
 	_init = false;
-	
+
 	DEBUG_EXIT_FUNC();
 	return false;
 }
@@ -399,7 +397,7 @@ static void user_warning_fn(png_structp png_ptr, png_const_charp warning_msg) {
 /* Get the width and height of a png image */
 int PSPKeyboard::getPngImageSize(Common::SeekableReadStream *file, uint32 *png_width, uint32 *png_height, u32 *paletteSize) {
 	DEBUG_ENTER_FUNC();
-	
+
 	png_structp png_ptr;
 	png_infop info_ptr;
 	unsigned int sig_read = 0;
@@ -433,7 +431,7 @@ int PSPKeyboard::getPngImageSize(Common::SeekableReadStream *file, uint32 *png_w
 
 	*png_width = width;
 	*png_height = height;
-	
+
 	DEBUG_EXIT_FUNC();
 	return 0;
 }
@@ -442,7 +440,7 @@ int PSPKeyboard::getPngImageSize(Common::SeekableReadStream *file, uint32 *png_w
 //
 int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, Palette &palette) {
 	DEBUG_ENTER_FUNC();
-	
+
 	png_structp png_ptr;
 	png_infop info_ptr;
 	unsigned int sig_read = 0;
@@ -480,7 +478,7 @@ int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, 
 	if (color_type == PNG_COLOR_TYPE_PALETTE) {
 		// Copy the palette
 		png_colorp srcPal = info_ptr->palette;
-		for(int i=0; i < info_ptr->num_palette; i++) {
+		for (int i = 0; i < info_ptr->num_palette; i++) {
 			unsigned char alphaVal = (i < info_ptr->num_trans) ? info_ptr->trans[i] : 0xFF;	// Load alpha if it's there
 			palette.setSingleColorRGBA(i, srcPal->red, srcPal->green, srcPal->blue, alphaVal);
 			srcPal++;
@@ -492,7 +490,7 @@ int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, 
 		if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
 		// Filler for alpha?
 		png_set_filler(png_ptr, 0xff, PNG_FILLER_AFTER);
-	}	
+	}
 
 	unsigned char *line = (unsigned char*) malloc(info_ptr->rowbytes);
 	if (!line) {
@@ -509,7 +507,7 @@ int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, 
 	}
 
 	free(line);
-	
+
 	png_read_end(png_ptr, info_ptr);
 	png_destroy_read_struct(&png_ptr, &info_ptr, png_infopp_NULL);
 
@@ -533,21 +531,20 @@ int PSPKeyboard::loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, 
  */
 bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
-	
+
 	bool haveEvent = false;		// Whether we have an event for the event manager to process
 	event.kbd.flags = 0;
-	
+
 	_buttonsChanged = _prevButtons ^ pad.Buttons;
 
 	if (!_init)					// In case we never had init
 		return false;
 	if (_state == kInvisible)	// Return if we're invisible
-		return false;	
+		return false;
 	if (_state != kMove && PRESSED(PSP_CTRL_SELECT)) {
 		_lastState = _state;
 		_state = kMove;			// Check for move or visible state
-	}
-	else if (CHANGED(PSP_CTRL_START)) {		// Handle start button: enter, make KB invisible
+	} else if (CHANGED(PSP_CTRL_START)) {		// Handle start button: enter, make KB invisible
 		event.kbd.ascii = '\r';
 		event.kbd.keycode = Common::KEYCODE_RETURN;
 		event.type = DOWN(PSP_CTRL_START) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
@@ -555,7 +552,7 @@ bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
 		_dirty = true;
 		if (UP(PSP_CTRL_START))
 			_state = kInvisible;			// Make us invisible if unpressed
-	}	
+	}
 	// Check for being in state of moving the keyboard onscreen or pressing select
 	else if (_state == kMove)
 		handleMoveState(pad);
@@ -569,7 +566,7 @@ bool PSPKeyboard::processInput(Common::Event &event, SceCtrlData &pad) {
 		handleLTriggerDownState(pad);	// Deal with trigger states
 
 	_prevButtons = pad.Buttons;
-	
+
 	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
@@ -578,7 +575,7 @@ void PSPKeyboard::handleMoveState(SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 	if (UP(PSP_CTRL_SELECT)) {
 		// Toggle between visible and invisible
-		_state = (_lastState == kInvisible) ? kDefault : kInvisible;		
+		_state = (_lastState == kInvisible) ? kDefault : kInvisible;
 		_dirty = true;
 
 		if (_moved) {					// We moved the keyboard. Keep the keyboard onscreen anyway
@@ -598,22 +595,22 @@ void PSPKeyboard::handleMoveState(SceCtrlData &pad) {
 		else  /* DOWN(PSP_CTRL_RIGHT) */
 			increaseKeyboardLocationX(5);
 	}
-	DEBUG_EXIT_FUNC();	
+	DEBUG_EXIT_FUNC();
 }
 
 bool PSPKeyboard::handleDefaultState(Common::Event &event, SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 	bool haveEvent = false;
-	
+
 	if (PRESSED(PSP_CTRL_LTRIGGER)) 			// Don't say we used up the input
-		_state = kLTriggerDown;		
+		_state = kLTriggerDown;
 	else if (PRESSED(PSP_CTRL_RTRIGGER)) 	// Don't say we used up the input
-		_state = kRTriggerDown;		
+		_state = kRTriggerDown;
 	else if (CHANGED(PSP_4BUTTONS))			// We only care about the 4 buttons
 		haveEvent = getInputChoice(event, pad);
 	else if (!DOWN(PSP_4BUTTONS))				// Must be up to move cursor
 		getCursorMovement(pad);
-	
+
 	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
@@ -622,13 +619,13 @@ bool PSPKeyboard::handleCornersSelectedState(Common::Event &event, SceCtrlData &
 	DEBUG_ENTER_FUNC();
 	// We care about 4 buttons + triggers (for letter selection)
 	bool haveEvent = false;
-	
+
 	if (CHANGED(PSP_4BUTTONS | PSP_CTRL_RTRIGGER | PSP_CTRL_LTRIGGER))
 		haveEvent = getInputChoice(event, pad);
 	if (!DOWN(PSP_4BUTTONS | PSP_CTRL_RTRIGGER | PSP_CTRL_LTRIGGER)) // Must be up to move cursor
 		getCursorMovement(pad)
-	
-	DEBUG_EXIT_FUNC();	
+
+		DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
 
@@ -670,13 +667,13 @@ bool PSPKeyboard::getInputChoice(Common::Event &event, SceCtrlData &pad) {
 	} else if (PRESSED(PSP_CTRL_LTRIGGER) && _state == kCornersSelected) {
 		innerChoice = 4;
 		event.type = Common::EVENT_KEYDOWN;			// We give priority to key_up
-	} else  /* (PRESSED(PSP_CTRL_RTRIGGER)) && _state == kCornersSelected */ {
+	} else { /* (PRESSED(PSP_CTRL_RTRIGGER)) && _state == kCornersSelected */
 		innerChoice = 5;
 		event.type = Common::EVENT_KEYDOWN;			// We give priority to key_up
 	}
 
-	#define IS_UPPERCASE(x)	((x) >= (unsigned short)'A' && (x) <= (unsigned short)'Z')
-	#define TO_LOWER(x)		((x) += 'a'-'A')
+#define IS_UPPERCASE(x)	((x) >= (unsigned short)'A' && (x) <= (unsigned short)'Z')
+#define TO_LOWER(x)		((x) += 'a'-'A')
 
 	//Now grab the value out of the array
 	short choice = _modeChar[_mode][_oldCursor][innerChoice];
@@ -699,13 +696,13 @@ bool PSPKeyboard::getInputChoice(Common::Event &event, SceCtrlData &pad) {
 void PSPKeyboard::getCursorMovement(SceCtrlData &pad) {
 	DEBUG_ENTER_FUNC();
 	CursorDirections cursor;
-	
+
 	// Find where the cursor is pointing
 	cursor = kCenter;
 	_state = kDefault;
 
 	if (DOWN(PSP_DPAD)) {
-		_state = kCornersSelected;			
+		_state = kCornersSelected;
 
 		if (DOWN(PSP_CTRL_UP))
 			cursor = kUp;
@@ -716,7 +713,7 @@ void PSPKeyboard::getCursorMovement(SceCtrlData &pad) {
 		else if (DOWN(PSP_CTRL_LEFT))
 			cursor = kLeft;
 	}
-	
+
 	if (cursor != _oldCursor) { //If we've moved, update dirty and return
 		_dirty = true;
 		_oldCursor = cursor;
@@ -729,7 +726,7 @@ void PSPKeyboard::handleLTriggerDownState(SceCtrlData &pad) {
 	if (UNPRESSED(PSP_CTRL_LTRIGGER)) {
 		_dirty = true;
 
-		if(_mode < 2)
+		if (_mode < 2)
 			_mode = 2;
 		else
 			_mode = (_mode == 2) ? 3 : 2;
@@ -744,7 +741,7 @@ void PSPKeyboard::handleRTriggerDownState(SceCtrlData &pad) {
 	if (UNPRESSED(PSP_CTRL_RTRIGGER)) {
 		_dirty = true;
 
-		if(_mode > 1)
+		if (_mode > 1)
 			_mode = 0;
 		else
 			_mode = (_mode == 0) ? 1 : 0;

@@ -55,7 +55,7 @@ protected:
 	int _suspendCount;
 
 public:
-	
+
 	const char *getObjectName() const { return "PSPIoStream"; }
 	/**
 	 * Given a path, invoke fopen on that path and wrap the result in a

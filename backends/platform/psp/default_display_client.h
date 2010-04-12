@@ -24,7 +24,7 @@
  */
 
 #ifndef PSP_DEF_DISPLAY_CLIENT_H
-#define PSP_DEF_DISPLAY_CLIENT_H 
+#define PSP_DEF_DISPLAY_CLIENT_H
 
 /**
  *	Default display client that is useful for most purposes.
@@ -32,7 +32,7 @@
 class DefaultDisplayClient : public DisplayClient {
 public:
 	DefaultDisplayClient() : _visible(false), _dirty(true) {}
-	
+
 	bool isVisible() { return _visible; }
 	void setVisible(bool v) { _visible = v; setDirty(); }
 	Buffer &buffer() { return _buffer; }
@@ -46,8 +46,8 @@ public:
 	uint32 getWidth() { return _buffer.getSourceWidth(); }
 	uint32 getHeight() { return _buffer.getSourceHeight(); }
 	void setPartialPalette(const byte *colors, uint start, uint num) { setDirty(); return _palette.setPartial(colors, start, num); }
-	void getPartialPalette(byte *colors, uint start, uint num) { 
-		return _palette.getPartial(colors, start, num); 
+	void getPartialPalette(byte *colors, uint start, uint num) {
+		return _palette.getPartial(colors, start, num);
 	}
 	void copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight);
 	void copyToArray(byte *dst, int pitch);
@@ -70,13 +70,13 @@ class Overlay : public DefaultDisplayClient {
 public:
 	Overlay() {}
 	~Overlay() { }
-	
+
 	void init();
 	bool allocate();
 	void setBytesPerPixel(uint32 size);
 	void setSize(uint32 width, uint32 height);
 	void copyToArray(OverlayColor *buf, int pitch);
-	void copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h);	
+	void copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 };
 
 /**
@@ -89,16 +89,16 @@ public:
 		memset(&_frameBuffer, 0, sizeof(_frameBuffer));
 	}
 	~Screen() {}
-	
+
 	void init();
 	bool allocate();
 	void setShakePos(int pos);
 	void setScummvmPixelFormat(const Graphics::PixelFormat *format);
 	const Graphics::PixelFormat &getScummvmPixelFormat() const { return _pixelFormat; }
 	Graphics::Surface *lockAndGetForEditing();
-	void unlock() { setDirty(); } // set dirty here because of changes 
-	void setSize(uint32 width, uint32 height);	
-	
+	void unlock() { setDirty(); } // set dirty here because of changes
+	void setSize(uint32 width, uint32 height);
+
 private:
 	uint32 _shakePos;
 	Graphics::PixelFormat _pixelFormat;

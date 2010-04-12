@@ -134,7 +134,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 
 		case R_MIPS_HI16:						// Absolute addressing.
 			if (sym->st_shndx < SHN_LOPROC &&		// Only shift for plugin section (ie. has a real section index)
-					firstHi16 < 0 ) {				// Only process first in block of HI16s
+			        firstHi16 < 0) {				// Only process first in block of HI16s
 				firstHi16 = i;						// Keep the first Hi16 we saw
 				seenHi16 = true;
 				ahl = (*target & 0xffff) << 16;		// Take lower 16 bits shifted up
@@ -174,8 +174,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				// Fix: we can have LO16 access to the short segment sometimes
 				if (lo16InShorts) {
 					relocation = ahl + _shortsSegment->getOffset();		// Add in the short segment offset
-				}
-				else	// It's in the regular segment
+				} else	// It's in the regular segment
 					relocation = ahl + (Elf32_Addr)_segment;			// Add in the new offset for the segment
 
 				if (firstHi16 >= 0) {					// We haven't treated the HI16s yet so do it now

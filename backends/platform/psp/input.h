@@ -21,7 +21,7 @@
  * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/osys_psp.cpp $
  * $Id: osys_psp.cpp 43618 2009-08-21 22:44:49Z joostp $
  *
- */ 
+ */
 
 #ifndef PSP_INPUT_H
 #define PSP_INPUT_H
@@ -37,7 +37,7 @@
 class InputHandler {
 public:
 	InputHandler() : _cursor(0), _keyboard(0), _prevButtons(0), _lastPadCheckTime(0), _buttonsChanged(0), _dpadX(0), _dpadY(0) {}
-	
+
 	void init();
 	bool getAllInputs(Common::Event &event);
 	void setKeyboard(PSPKeyboard *keyboard) { _keyboard = keyboard; }
@@ -51,11 +51,11 @@ private:
 	uint32 _buttonsChanged;
 	int32 _dpadX, _dpadY;
 	int32 _accelX, _accelY;
-	
+
 	bool getEvent(Common::Event &event, SceCtrlData &pad);
 	bool getDpadEvent(Common::Event &event, SceCtrlData &pad);
 	bool getButtonEvent(Common::Event &event, SceCtrlData &pad);
-	bool getNubEvent(Common::Event &event, SceCtrlData &pad);	
+	bool getNubEvent(Common::Event &event, SceCtrlData &pad);
 	int32 modifyNubAxisMotion(int32 input);
 	Common::KeyCode translateDpad(int x, int y);
 };

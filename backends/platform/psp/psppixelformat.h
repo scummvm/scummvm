@@ -23,19 +23,19 @@
  *
  */
 
-#ifndef PSP_PIXEL_FORMAT_H 
+#ifndef PSP_PIXEL_FORMAT_H
 #define PSP_PIXEL_FORMAT_H
- 
+
 #include "graphics/pixelformat.h"
 #include "backends/platform/psp/trace.h"
- 
+
 /**
  *	Specialized PixelFormat class
  *  Supports only those formats which the PSP allows, including 4 bit palettes.
  *  Also provides accurate color conversion (needed for color masking)
  *  As well as swapping of red and blue channels (needed by HE games, for example)
  */
-struct PSPPixelFormat{
+struct PSPPixelFormat {
 	enum Type {
 		Type_None,
 		Type_4444,
@@ -44,9 +44,9 @@ struct PSPPixelFormat{
 		Type_8888,
 		Type_Palette_8bit,
 		Type_Palette_4bit,
-		Type_Unknown		
+		Type_Unknown
 	};
-	
+
 	Type format;
 	uint32 bitsPerPixel;					///< Must match bpp of selected type
 	bool swapRB;							///< Swap red and blue values when reading and writing
@@ -54,16 +54,16 @@ struct PSPPixelFormat{
 	PSPPixelFormat() : format(Type_Unknown), bitsPerPixel(0), swapRB(false) {}
 	void set(Type type, bool swap = false);
 	static void convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
-												PSPPixelFormat::Type &bufferType,
-												PSPPixelFormat::Type &paletteType,
-												bool &swapRedBlue);
+	        PSPPixelFormat::Type &bufferType,
+	        PSPPixelFormat::Type &paletteType,
+	        bool &swapRedBlue);
 	static Graphics::PixelFormat convertToScummvmPixelFormat(PSPPixelFormat::Type type);
 	uint32 convertTo32BitColor(uint32 color);
 
 	inline uint32 rgbaToColor(uint32 r, uint32 g, uint32 b, uint32 a) {
 		uint32 color;
-		
-		switch(format) {
+
+		switch (format) {
 		case Type_4444:
 			color = (((b >> 4) << 8) | ((g >> 4) << 4) | ((r >> 4) << 0) | ((a >> 4) << 12));
 			break;
@@ -84,7 +84,7 @@ struct PSPPixelFormat{
 	}
 
 	inline void colorToRgba(uint32 color, uint32 &r, uint32 &g, uint32 &b, uint32 &a) {
-		switch(format) {
+		switch (format) {
 		case Type_4444:
 			a = (color >> 12) & 0xF; // Interpolate to get true colors
 			b = (color >> 8)  & 0xF;
@@ -126,7 +126,7 @@ struct PSPPixelFormat{
 	}
 
 	inline uint32 setColorAlpha(uint32 color, byte alpha) {
-		switch(format) {
+		switch (format) {
 		case Type_4444:
 			color = (color & 0x0FFF) | (((uint32)alpha >> 4) << 12);
 			break;
@@ -134,7 +134,7 @@ struct PSPPixelFormat{
 			color = (color & 0x7FFF) | (((uint32)alpha >> 7) << 15);
 			break;
 		case Type_8888:
-			color = (color & 0x00FFFFFF) | ((uint32)alpha << 24); 
+			color = (color & 0x00FFFFFF) | ((uint32)alpha << 24);
 			break;
 		case Type_5650:
 		default:
@@ -142,7 +142,7 @@ struct PSPPixelFormat{
 		}
 		return color;
 	}
-	
+
 	inline uint32 pixelsToBytes(uint32 pixels) {
 		switch (bitsPerPixel) {
 		case 4:
@@ -165,51 +165,51 @@ struct PSPPixelFormat{
 
 	inline uint16 swapRedBlue16(uint16 color) {
 		uint16 output;
-		
+
 		switch (format) {
-			case Type_4444:
-				output = (color & 0xf0f0) | ((color & 0x000f)<<8)  | ((color & 0x0f00)>>8);
-				break;
-			case Type_5551:
-				output = (color & 0x83e0) | ((color & 0x001f)<<10) | ((color & 0x7c00)>>10);
-				break;
-			case Type_5650:
-				output = (color & 0x07e0) | ((color & 0x001f)<<11) | ((color & 0xf800)>>11);
-				break;
-			default:
-				PSP_ERROR("invalid format[%u] for swapping\n", format);
-				output = 0;
-				break;
+		case Type_4444:
+			output = (color & 0xf0f0) | ((color & 0x000f) << 8)  | ((color & 0x0f00) >> 8);
+			break;
+		case Type_5551:
+			output = (color & 0x83e0) | ((color & 0x001f) << 10) | ((color & 0x7c00) >> 10);
+			break;
+		case Type_5650:
+			output = (color & 0x07e0) | ((color & 0x001f) << 11) | ((color & 0xf800) >> 11);
+			break;
+		default:
+			PSP_ERROR("invalid format[%u] for swapping\n", format);
+			output = 0;
+			break;
 		}
 		return output;
 	}
 
 	inline uint32 swapRedBlue32(uint32 color) {
 		uint32 output;
-	
+
 		switch (format) {
-			case Type_4444:
-				output = (color & 0xf0f0f0f0) | 
-						((color & 0x000f000f)<<8)  | ((color & 0x0f000f00)>>8);
-				break;
-			case Type_5551:
-				output = (color & 0x83e083e0) | 
-						((color & 0x001f001f)<<10) | ((color & 0x7c007c00)>>10);
-				break;
-			case Type_5650:
-				output = (color & 0x07e007e0) | 
-						((color & 0x001f001f)<<11) | ((color & 0xf800f800)>>11);
-				break;
-			case Type_8888:
-				output = (color & 0xff00ff00) | 
-						((color & 0x000000ff)<<16) | ((color & 0x00ff0000)>>16);
-				break;			
-			default:
-				PSP_ERROR("invalid format[%u] for swapping\n", format);
-				output = 0;
-				break;
+		case Type_4444:
+			output = (color & 0xf0f0f0f0) |
+			         ((color & 0x000f000f) << 8)  | ((color & 0x0f000f00) >> 8);
+			break;
+		case Type_5551:
+			output = (color & 0x83e083e0) |
+			         ((color & 0x001f001f) << 10) | ((color & 0x7c007c00) >> 10);
+			break;
+		case Type_5650:
+			output = (color & 0x07e007e0) |
+			         ((color & 0x001f001f) << 11) | ((color & 0xf800f800) >> 11);
+			break;
+		case Type_8888:
+			output = (color & 0xff00ff00) |
+			         ((color & 0x000000ff) << 16) | ((color & 0x00ff0000) >> 16);
+			break;
+		default:
+			PSP_ERROR("invalid format[%u] for swapping\n", format);
+			output = 0;
+			break;
 		}
-		
+
 		return output;
 	}
 
@@ -220,10 +220,10 @@ struct PSPPixelFormat{
 		switch (bitsPerPixel) {
 		case 4:	// We can't distinguish a 4 bit color with a pointer
 		case 8:
-			result = (uint32)*pointer;
+			result = (uint32) * pointer;
 			break;
 		case 16:
-			result = (uint32)*(uint16 *)pointer;
+			result = (uint32) * (uint16 *)pointer;
 			break;
 		case 32:
 			result = *(uint32 *)pointer;
@@ -234,7 +234,7 @@ struct PSPPixelFormat{
 			break;
 		}
 		return result;
-	}	
+	}
 };
- 
-#endif /* PSP_PIXEL_FORMAT_H */ 
+
+#endif /* PSP_PIXEL_FORMAT_H */

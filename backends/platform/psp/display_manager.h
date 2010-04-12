@@ -24,7 +24,7 @@
  */
 
 #ifndef PSP_DISPLAY_MAN_H
-#define PSP_DISPLAY_MAN_H 
+#define PSP_DISPLAY_MAN_H
 
 /**
  *	Class used only by DisplayManager to start/stop GU rendering
@@ -60,13 +60,13 @@ public:
 	};
 	DisplayManager() : _screen(0), _cursor(0), _overlay(0), _keyboard(0), _lastUpdateTime(0), _graphicsMode(0) {}
 	~DisplayManager();
-	
+
 	void init();
 	void renderAll();
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
-    uint32 getDefaultGraphicsMode() const { return STRETCHED_480X272; }
+	uint32 getDefaultGraphicsMode() const { return STRETCHED_480X272; }
 	const OSystem::GraphicsMode* getSupportedGraphicsModes() const { return _supportedModes; }
 
 	// Setters
@@ -99,15 +99,15 @@ private:
 	Cursor *_cursor;
 	Overlay *_overlay;
 	PSPKeyboard *_keyboard;
-	
+
 	MasterGuRenderer _masterGuRenderer;
 	uint32 _lastUpdateTime;					// For limiting FPS
 	int _graphicsMode;
 	GlobalDisplayParams _displayParams;
 	static const OSystem::GraphicsMode _supportedModes[];
-	
+
 	void calculateScaleParams();	// calculates scaling factor
-	bool isTimeToUpdate();			// should we update the screen now	
+	bool isTimeToUpdate();			// should we update the screen now
 };
 
 

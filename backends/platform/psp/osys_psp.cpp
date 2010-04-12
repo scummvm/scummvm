@@ -23,7 +23,7 @@
  *
  */
 
-#include <pspuser.h> 
+#include <pspuser.h>
 #include <pspgu.h>
 #include <pspdisplay.h>
 
@@ -70,7 +70,7 @@ void OSystem_PSP::initBackend() {
 
 	_cursor.enableCursorPalette(false);
 	_cursor.setXY(PSP_SCREEN_WIDTH >> 1, PSP_SCREEN_HEIGHT >> 1);	// Mouse in the middle of the screen
-	
+
 	// Set pointers for display manager
 	_displayManager.setCursor(&_cursor);
 	_displayManager.setScreen(&_screen);
@@ -83,7 +83,7 @@ void OSystem_PSP::initBackend() {
 	_inputHandler.setKeyboard(&_keyboard);
 	_inputHandler.init();
 
-	initSDL();		
+	initSDL();
 
 	_savefile = new PSPSaveFileManager;
 
@@ -91,13 +91,13 @@ void OSystem_PSP::initBackend() {
 
 	PSP_DEBUG_PRINT("calling keyboard.load()\n");
 	_keyboard.load();	// Load virtual keyboard files into memory
-	
+
 	setTimerCallback(&timer_handler, 10);
 
 	setupMixer();
 
 	OSystem::initBackend();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -127,27 +127,27 @@ int OSystem_PSP::getDefaultGraphicsMode() const {
 
 bool OSystem_PSP::setGraphicsMode(int mode) {
 	DEBUG_ENTER_FUNC();
-	
+
 	int ret = _displayManager.setGraphicsMode(mode);
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 bool OSystem_PSP::setGraphicsMode(const char *name) {
 	DEBUG_ENTER_FUNC();
-	
+
 	int ret = _displayManager.setGraphicsMode(name);
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 int OSystem_PSP::getGraphicsMode() const {
 	DEBUG_ENTER_FUNC();
-	
+
 	int ret = _displayManager.getGraphicsMode();
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
@@ -166,7 +166,7 @@ Common::List<Graphics::PixelFormat> OSystem_PSP::getSupportedFormats() {
 
 void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
-	
+
 	_displayManager.setSizeAndPixelFormat(width, height, format);
 
 	_cursor.setVisible(false);
@@ -179,7 +179,7 @@ int16 OSystem_PSP::getWidth() {
 	DEBUG_ENTER_FUNC();
 
 	int16 ret = (int16)_screen.getWidth();
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
@@ -188,14 +188,14 @@ int16 OSystem_PSP::getHeight() {
 	DEBUG_ENTER_FUNC();
 
 	int16 ret = (int16)_screen.getHeight();
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
 void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
-	
+
 	_screen.setPartialPalette(colors, start, num);
 	_cursor.setScreenPalette(colors, start, num);
 	_cursor.clearKeyColor();
@@ -217,7 +217,7 @@ void OSystem_PSP::disableCursorPalette(bool disable) {
 	DEBUG_ENTER_FUNC();
 
 	_cursor.enableCursorPalette(!disable);
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -232,8 +232,8 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 Graphics::Surface *OSystem_PSP::lockScreen() {
 	DEBUG_ENTER_FUNC();
 
-	Graphics::Surface *ret = _screen.lockAndGetForEditing();	
-	
+	Graphics::Surface *ret = _screen.lockAndGetForEditing();
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
@@ -242,7 +242,7 @@ void OSystem_PSP::unlockScreen() {
 	DEBUG_ENTER_FUNC();
 	// The screen is always completely updated anyway, so we don't have to force a full update here.
 	_screen.unlock();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -250,16 +250,16 @@ void OSystem_PSP::updateScreen() {
 	DEBUG_ENTER_FUNC();
 
 	_displayManager.renderAll();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::setShakePos(int shakeOffset) {
-	DEBUG_ENTER_FUNC();	
+	DEBUG_ENTER_FUNC();
 
 	_screen.setShakePos(shakeOffset);
-	
-	DEBUG_EXIT_FUNC();	
+
+	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::showOverlay() {
@@ -268,7 +268,7 @@ void OSystem_PSP::showOverlay() {
 	_overlay.setVisible(true);
 	_cursor.setLimits(_overlay.getWidth(), _overlay.getHeight());
 	_cursor.useGlobalScaler(false);	// mouse with overlay is 1:1
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -278,7 +278,7 @@ void OSystem_PSP::hideOverlay() {
 	_overlay.setVisible(false);
 	_cursor.setLimits(_screen.getWidth(), _screen.getHeight());
 	_cursor.useGlobalScaler(true);	// mouse needs to be scaled with screen
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -318,7 +318,7 @@ void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
 
 	_screen.getPartialPalette(colors, start, num);
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -328,17 +328,17 @@ bool OSystem_PSP::showMouse(bool v) {
 	PSP_DEBUG_PRINT("%s\n", v ? "true" : "false");
 	bool last = _cursor.isVisible();
 	_cursor.setVisible(v);
-	
+
 	DEBUG_EXIT_FUNC();
-	
+
 	return last;
 }
 
 void OSystem_PSP::warpMouse(int x, int y) {
 	DEBUG_ENTER_FUNC();
 
-	_cursor.setXY(x,y);
-	
+	_cursor.setXY(x, y);
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -349,14 +349,14 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	if (format) {
 		PSP_DEBUG_PRINT("format: bpp[%d], rLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d], rShift[%d], gShift[%d], bShift[%d], aShift[%d]\n", format->bytesPerPixel, format->rLoss, format->gLoss, format->bLoss, format->aLoss, format->rShift, format->gShift, format->bShift, format->aShift);
 	}
-	
-	_cursor.setKeyColor(keycolor);	
+
+	_cursor.setKeyColor(keycolor);
 	_cursor.setCursorTargetScale(cursorTargetScale);
 	_cursor.setSizeAndScummvmPixelFormat(w, h, format);
 	_cursor.setHotspot(hotspotX, hotspotY);
 	_cursor.clearKeyColor();
 	_cursor.copyFromArray(buf);
-	
+
 	DEBUG_EXIT_FUNC();
 }
 

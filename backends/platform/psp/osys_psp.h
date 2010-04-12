@@ -43,7 +43,7 @@
 
 class OSystem_PSP : public BaseBackend {
 private:
-	
+
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
@@ -63,14 +63,14 @@ public:
 	~OSystem_PSP();
 
 	static OSystem *instance();
-	
+
 	void initBackend();
-	
+
 	// Feature related
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
 	bool getFeatureState(Feature f);
-	
+
 	// Graphics related
 	const GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
@@ -81,25 +81,25 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 #endif
-	
+
 	// Screen size
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	int16 getWidth();
 	int16 getHeight();
-	
+
 	// Palette related
 	void setPalette(const byte *colors, uint start, uint num);
 	void grabPalette(byte *colors, uint start, uint num);
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void disableCursorPalette(bool disable);
-	
+
 	// Screen related
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	Graphics::Surface *lockScreen();
 	void unlockScreen();
 	void updateScreen();
 	void setShakePos(int shakeOffset);
-	
+
 	// Overlay related
 	void showOverlay();
 	void hideOverlay();
@@ -109,7 +109,7 @@ public:
 	int16 getOverlayHeight();
 	int16 getOverlayWidth();
 	Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
-	
+
 	// Mouse related
 	bool showMouse(bool visible);
 	void warpMouse(int x, int y);
@@ -138,7 +138,7 @@ public:
 	static void mixCallback(void *sys, byte *samples, int len);
 	void setupMixer(void);
 	Audio::Mixer *getMixer() { return _mixer; }
-	
+
 	// Misc
 	Common::SaveFileManager *getSavefileManager() { return _savefile; }
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }

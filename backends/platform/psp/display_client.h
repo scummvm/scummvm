@@ -22,7 +22,7 @@
  * $Id: osys_psp.cpp 46126 2009-11-24 14:18:46Z fingolfin $
  *
  */
- 
+
 #ifndef PSP_GRAPHICS_H
 #define PSP_GRAPHICS_H
 
@@ -31,8 +31,8 @@
 #include "common/system.h"
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/memory.h"
- 
-#define MAX_TEXTURE_SIZE 512 
+
+#define MAX_TEXTURE_SIZE 512
 
 class DisplayManager;
 class GuRenderer;
@@ -50,13 +50,13 @@ public:
 	void render() {}
 	virtual ~DisplayClient() {}
 };
- 
+
 /**
  * Vertex used for GU rendering
  */
 struct Vertex {
-	float u,v;
-	float x,y,z;
+	float u, v;
+	float x, y, z;
 };
 
 struct Point {
@@ -101,7 +101,7 @@ public:
 	bool isAllocated() { return (_values != 0); }
 	PSPPixelFormat::Type getPixelFormat() { return _pixelFormat.format; }
 	void print(uint32 numToPrint = 0);					// print to screen
-	
+
 protected:
 	byte *_values;					///< array of palette data
 	uint32 _numOfEntries;			///< number of palette entries
@@ -122,9 +122,9 @@ public:
 
 	Buffer() : _pixels(0), _width(0), _height(0)  {}
 	virtual ~Buffer() { deallocate(); }
-	
+
 	// setters
-	void setSize(uint32 width, uint32 height, HowToSize textureOrSource=kSizeByTextureSize);
+	void setSize(uint32 width, uint32 height, HowToSize textureOrSource = kSizeByTextureSize);
 	void setBitsPerPixel(uint32 bits) { _pixelFormat.bitsPerPixel = bits; }
 	void setBytesPerPixel(uint32 bytes) { setBitsPerPixel(bytes << 3); }
 	void setPixelFormat(PSPPixelFormat::Type type, bool swapRedBlue = false);
@@ -135,7 +135,7 @@ public:
 	uint32 getHeight() { return _height; }
 	uint32 getSourceWidth() { return _sourceSize.width; }
 	uint32 getSourceWidthInBytes() { return _pixelFormat.pixelsToBytes(_sourceSize.width); }
-	uint32 getSourceHeight() { return _sourceSize.height; }	
+	uint32 getSourceHeight() { return _sourceSize.height; }
 	uint32 getTextureWidth() { return _textureSize.width; }
 	uint32 getTextureHeight() { return _textureSize.height; }
 	PSPPixelFormat::Type getPixelFormat() { return _pixelFormat.format; }
@@ -143,7 +143,7 @@ public:
 	uint32 getBytesPerPixel() { return getBitsPerPixel() >> 3; } /* won't work for 4-bit */
 	byte *getPixels() { return _pixels; }
 	uint32 getSizeInBytes() { return _pixelFormat.pixelsToBytes(_width * _height); }
-	
+
 	bool hasPalette();
 	void copyFromArray(const byte *buffer, int pitch);
 	void copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, uint32 recWidth, uint32 recHeight);
@@ -155,7 +155,7 @@ public:
 	void flipNibbles();		// To handle peculiarities of PSP's 4 bit textures
 	static uint32 scaleUpToPowerOfTwo(uint32 size);
 	void print(uint32 mask, uint32 numToPrint = 0);
-	
+
 protected:
 	friend class GuRenderer;
 	byte *_pixels;
@@ -163,7 +163,7 @@ protected:
 	uint32 _height;					///< True allocated height
 	Dimensions _textureSize;		///< Size rounded up to power of 2. Used for drawing
 	Dimensions _sourceSize;			///< Original size of the buffer
-	PSPPixelFormat _pixelFormat;	///< Format of the buffer	
+	PSPPixelFormat _pixelFormat;	///< Format of the buffer
 };
 
 /**
@@ -177,19 +177,19 @@ public:
 	GuRenderer() : _useGlobalScaler(false), _buffer(0), _palette(0), _blending(false), _alphaReverse(false), _colorTest(false), _keyColor(0), _fullScreen(false) {}
 	GuRenderer(Buffer *buffer, Palette *palette) : _useGlobalScaler(false), _buffer(buffer), _palette(palette), _blending(false), _alphaReverse(false), _colorTest(false), _keyColor(0), _fullScreen(false) {}
 	static void setDisplayManager(DisplayManager *dm) { _displayManager = dm; } // Called by the Display Manager
-	
+
 	// Setters
 	void setDrawSize(uint32 width, uint32 height) {	// How big of an area to draw
-			_drawSize.width = width;
-			_drawSize.height = height;
+		_drawSize.width = width;
+		_drawSize.height = height;
 	}
 	void setDrawWholeBuffer() {						// Draw the full size of the current buffer
 		assert(_buffer);
 		_drawSize.width = _buffer->getSourceWidth();
 		_drawSize.height = _buffer->getSourceHeight();
 	}
-    void setBuffer(Buffer *buffer) { _buffer = buffer; }
-    void setPalette(Palette *palette) { _palette = palette; }
+	void setBuffer(Buffer *buffer) { _buffer = buffer; }
+	void setPalette(Palette *palette) { _palette = palette; }
 	void setMaxTextureOffsetByIndex(uint32 x, uint32 y);	// For drawing multiple textures
 	void setOffsetOnScreen(uint32 x, uint32 y) { _offsetOnScreen.x = x; _offsetOnScreen.y = y; }
 	void setOffsetInBuffer(uint32 x, uint32 y) { _offsetInBuffer.x = x; _offsetInBuffer.y = y; }
@@ -199,9 +199,9 @@ public:
 	void setAlphaReverse(bool value) { _alphaReverse = value; }
 	void setFullScreen(bool value) { _fullScreen = value; }		// Shortcut for rendering
 	void setUseGlobalScaler(bool value) { _useGlobalScaler = value; }	// Scale to screen
-	
+
 	static void cacheInvalidate(void *pointer, uint32 size);
-	
+
 	void render();							// Default rendering function. This should be good enough for most purposes
 
 protected:
@@ -209,7 +209,7 @@ protected:
 	void fillVertices(Vertex *vertices);	// Fill in vertices with coordinates
 	void guProgramDrawBehavior();
 	Vertex *guGetVertices();
-	void guLoadTexture();	
+	void guLoadTexture();
 	void guLoadPalette();
 	void guProgramTextureFormat();
 	void guProgramTextureBitDepth();
@@ -218,7 +218,7 @@ protected:
 	uint32 convertToGuPixelFormat(PSPPixelFormat::Type format);
 	float scaleSourceToOutputX(float offset);
 	float scaleSourceToOutputY(float offset);
-	
+
 	friend class MasterGuRenderer;
 	Point _maxTextureOffset;		///> For rendering textures > 512 pixels
 	Point _offsetOnScreen;			///> Where on screen to draw

@@ -25,11 +25,11 @@
  */
 
 #ifndef PSP_MEMORY_H
-#define PSP_MEMORY_H 
+#define PSP_MEMORY_H
 
 #define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
 #define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
- 
+
 /**
  *	Class that does memory copying and swapping if needed
  */
@@ -50,10 +50,10 @@ public:
 	void deallocate(void *pointer);
 
 	static inline bool isAddressInVram(void *address) {
-	if ((uint32)(CACHED(address)) >= VRAM_START_ADDRESS && (uint32)(CACHED(address)) < VRAM_END_ADDRESS)
-		return true;
-	return false;
-}
+		if ((uint32)(CACHED(address)) >= VRAM_START_ADDRESS && (uint32)(CACHED(address)) < VRAM_END_ADDRESS)
+			return true;
+		return false;
+	}
 
 
 private:
@@ -71,10 +71,10 @@ private:
 	enum {
 		VRAM_START_ADDRESS = 0x04000000,
 		VRAM_END_ADDRESS   = 0x04200000,
-		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4*1024)	// 4K in the end for small allocations
+		VRAM_SMALL_ADDRESS = VRAM_END_ADDRESS - (4 * 1024)	// 4K in the end for small allocations
 	};
 	Common::List <Allocation> _allocList;		// List of allocations
 	uint32 _bytesAllocated;
 };
- 
+
 #endif /* PSP_MEMORY_H */

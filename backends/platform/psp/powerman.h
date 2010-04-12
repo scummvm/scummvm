@@ -31,25 +31,25 @@
 #include "common/singleton.h"
 #include "common/list.h"
 
- /*
-  *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
-  *
-  */
- class Suspendable {
- public:
+/*
+ *  Implement this class (interface) if you want to use PowerManager's suspend callback functionality
+ *
+ */
+class Suspendable {
+public:
 	virtual ~Suspendable() {}
 	virtual int suspend() = 0;
 	virtual int resume() = 0;
- };
+};
 
- /******************************************************************************************************
- *
- *  This class will call a Suspendable when the PSP goes to suspend/resumes. It also provides the ability to block
- *  a thread when the PSP is going to suspend/suspending, and to wake it up when the PSP is resumed.
- *	This ability is very useful for managing the PSPIoStream class, but may be found useful by other classes as well.
- *
- *******************************************************************************************************/
- class PowerManager: public Common::Singleton<PowerManager> {
+/******************************************************************************************************
+*
+*  This class will call a Suspendable when the PSP goes to suspend/resumes. It also provides the ability to block
+*  a thread when the PSP is going to suspend/suspending, and to wake it up when the PSP is resumed.
+*	This ability is very useful for managing the PSPIoStream class, but may be found useful by other classes as well.
+*
+*******************************************************************************************************/
+class PowerManager: public Common::Singleton<PowerManager> {
 
 public:
 	int blockOnSuspend();								/* block if suspending */
@@ -76,7 +76,7 @@ public:
 		Paused
 	};
 
- private:
+private:
 	friend class Common::Singleton<PowerManager>;
 	PowerManager();
 	~PowerManager();
@@ -125,12 +125,12 @@ public:
 	void PMStatusSet(PMState s) { _PMStatus = s; }
 	volatile int _PMStatus;							/* What the PM is doing */
 
- public:
- 	int getPMStatus() { return _PMStatus; }
+public:
+	int getPMStatus() { return _PMStatus; }
 
- };
+};
 
- // For easy access
+// For easy access
 #define PowerMan	PowerManager::instance()
 
 #endif /* POWERMAN_H */

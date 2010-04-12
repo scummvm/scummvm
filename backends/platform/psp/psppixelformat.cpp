@@ -23,8 +23,8 @@
  *
  */
 
-#include "common/scummsys.h" 
-#include "backends/platform/psp/psppixelformat.h" 
+#include "common/scummsys.h"
+#include "backends/platform/psp/psppixelformat.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -36,10 +36,10 @@
 void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("type = %d\n", type);
-	
+
 	format = type;
 	swapRB = swap;
-	
+
 	switch (type) {
 	case Type_4444:
 	case Type_5551:
@@ -71,12 +71,12 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 // Convert from ScummVM general PixelFormat to our pixel format
 // For buffer and palette.
 void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *pf,
-												PSPPixelFormat::Type &bufferType,
-												PSPPixelFormat::Type &paletteType,
-												bool &swapRedBlue) {
+        PSPPixelFormat::Type &bufferType,
+        PSPPixelFormat::Type &paletteType,
+        bool &swapRedBlue) {
 	swapRedBlue = false;	 // no red-blue swap by default
 	PSPPixelFormat::Type *target = 0;	// which one we'll be filling
-	
+
 	if (!pf) {	// Default, pf is NULL
 		bufferType = Type_Palette_8bit;
 		paletteType = Type_5551;
@@ -92,7 +92,7 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 			bufferType = Type_Palette_8bit;
 			target = &paletteType;	// The type describes the palette
 		}
-	
+
 		// Find out the exact type of the target
 		if (pf->rLoss == 3 && pf->bLoss == 3) {
 			if (pf->gLoss == 3)
@@ -104,13 +104,13 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 		} else if (pf->gLoss == 0 && pf->gShift == 8) {
 			*target = Type_8888;
 		} else if ((pf->gLoss == 0 && pf->gShift == 0) ||
-				   (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
+		           (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
 			*target = Type_5551;
 		} else {
 			PSP_ERROR("Unknown Scummvm pixel format.\n");
 			PSP_ERROR("\trLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d]\n\trShift[%d], gShift[%d], bShift[%d], aShift[%d]\n",
-			pf->rLoss, pf->gLoss, pf->bLoss, pf->aLoss,
-			pf->rShift, pf->gShift, pf->bShift, pf->aShift);		
+			          pf->rLoss, pf->gLoss, pf->bLoss, pf->aLoss,
+			          pf->rShift, pf->gShift, pf->bShift, pf->aShift);
 			*target = Type_Unknown;
 		}
 
@@ -123,44 +123,68 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 
 Graphics::PixelFormat PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type type) {
 	Graphics::PixelFormat pf;
-	
-	switch(type) {
+
+	switch (type) {
 	case Type_4444:
 		pf.bytesPerPixel = 2;
-		pf.aLoss = 4; 	 pf.rLoss = 4;   pf.gLoss = 4;   pf.bLoss = 4;
-		pf.aShift = 12; pf.rShift = 0;  pf.gShift = 4;  pf.bShift = 8; 
+		pf.aLoss = 4;
+		pf.rLoss = 4;
+		pf.gLoss = 4;
+		pf.bLoss = 4;
+		pf.aShift = 12;
+		pf.rShift = 0;
+		pf.gShift = 4;
+		pf.bShift = 8;
 		break;
 	case Type_5551:
 		pf.bytesPerPixel = 2;
-		pf.aLoss = 7; 	 pf.rLoss = 3;    pf.gLoss = 3;    pf.bLoss = 3;
-		pf.aShift = 15; pf.rShift = 0;   pf.gShift = 5;   pf.bShift = 10; 
+		pf.aLoss = 7;
+		pf.rLoss = 3;
+		pf.gLoss = 3;
+		pf.bLoss = 3;
+		pf.aShift = 15;
+		pf.rShift = 0;
+		pf.gShift = 5;
+		pf.bShift = 10;
 		break;
 	case Type_5650:
 		pf.bytesPerPixel = 2;
-		pf.aLoss = 8; 	  pf.rLoss = 3;    pf.gLoss = 2;    pf.bLoss = 3;
-		pf.aShift = 0;   pf.rShift = 0;   pf.gShift = 5;   pf.bShift = 11; 
+		pf.aLoss = 8;
+		pf.rLoss = 3;
+		pf.gLoss = 2;
+		pf.bLoss = 3;
+		pf.aShift = 0;
+		pf.rShift = 0;
+		pf.gShift = 5;
+		pf.bShift = 11;
 		break;
 	case Type_8888:
 		pf.bytesPerPixel = 4;
-		pf.aLoss = 0; 	  pf.rLoss = 0;    pf.gLoss = 0;    pf.bLoss = 0;
-		pf.aShift = 24;  pf.rShift = 0;   pf.gShift = 8;   pf.bShift = 16; 
- 		break;
+		pf.aLoss = 0;
+		pf.rLoss = 0;
+		pf.gLoss = 0;
+		pf.bLoss = 0;
+		pf.aShift = 24;
+		pf.rShift = 0;
+		pf.gShift = 8;
+		pf.bShift = 16;
+		break;
 	default:
 		PSP_ERROR("Unhandled PSPPixelFormat[%u]\n", type);
 		break;
 	}
-	
+
 	return pf;
 }
 
 uint32 PSPPixelFormat::convertTo32BitColor(uint32 color) {
 	DEBUG_ENTER_FUNC();
-	uint32 r,g,b,a, output;
-	
+	uint32 r, g, b, a, output;
+
 	colorToRgba(color, r, g, b, a);
 	output = ((b << 16) | (g << 8) | (r << 0) | (a << 24));
 	PSP_DEBUG_PRINT_FUNC("input color[%x], output[%x]\n", color, output);
-	
+
 	DEBUG_EXIT_FUNC();
 	return output;
 }

@@ -26,10 +26,10 @@
 #define	USERSPACE_ONLY	//don't use kernel mode features
 
 #ifndef USERSPACE_ONLY
-	#include <pspkernel.h>
-	#include <pspdebug.h>
+#include <pspkernel.h>
+#include <pspdebug.h>
 #else
-	#include <pspuser.h>
+#include <pspuser.h>
 #endif
 
 #include <psppower.h>
@@ -87,7 +87,7 @@ void MyExceptionHandler(PspDebugRegBlock *regs) {
  * Function that is called from _init in kernelmode before the
  * main thread is started in usermode.
  */
-__attribute__ ((constructor))
+__attribute__((constructor))
 void loaderInit() {
 	pspKernelSetKernelPC();
 	pspDebugInstallErrorHandler(MyExceptionHandler);
@@ -150,7 +150,7 @@ int main(void) {
 	SetupCallbacks();
 
 	static const char *argv[] = { "scummvm", NULL };
-	static int argc = sizeof(argv)/sizeof(char *)-1;
+	static int argc = sizeof(argv) / sizeof(char *) - 1;
 
 	g_system = new OSystem_PSP();
 	assert(g_system);

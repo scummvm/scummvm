@@ -36,15 +36,14 @@
 
 bool DefaultDisplayClient::allocate(bool bufferInVram /* = false */, bool paletteInVram /* = false */) {
 	DEBUG_ENTER_FUNC();
-	
-	if (!_buffer.allocate(bufferInVram)) {
-			PSP_ERROR("Couldn't allocate buffer.\n");
-			DEBUG_EXIT_FUNC();
-			return false;
-		}
 
-	if (_buffer.hasPalette())
-	{
+	if (!_buffer.allocate(bufferInVram)) {
+		PSP_ERROR("Couldn't allocate buffer.\n");
+		DEBUG_EXIT_FUNC();
+		return false;
+	}
+
+	if (_buffer.hasPalette()) {
 		PSP_DEBUG_PRINT("_palette[%p]\n", &_palette);
 
 		if (!_palette.allocate()) {
@@ -53,7 +52,7 @@ bool DefaultDisplayClient::allocate(bool bufferInVram /* = false */, bool palett
 			return false;
 		}
 	}
-	
+
 	DEBUG_EXIT_FUNC();
 	return true;
 }
@@ -88,12 +87,12 @@ void DefaultDisplayClient::init() {
 
 void DefaultDisplayClient::copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight) {
 	DEBUG_ENTER_FUNC();
-	_buffer.copyFromRect(buf, pitch, destX, destY, recWidth, recHeight); 
+	_buffer.copyFromRect(buf, pitch, destX, destY, recWidth, recHeight);
 	setDirty();
 	DEBUG_EXIT_FUNC();
 }
 
-void DefaultDisplayClient::copyToArray(byte *dst, int pitch) { 
+void DefaultDisplayClient::copyToArray(byte *dst, int pitch) {
 	DEBUG_ENTER_FUNC();
 	_buffer.copyToArray(dst, pitch);
 	DEBUG_EXIT_FUNC();
@@ -115,7 +114,7 @@ void Overlay::init() {
 
 void Overlay::setBytesPerPixel(uint32 size) {
 	DEBUG_ENTER_FUNC();
-	
+
 	switch (size) {
 	case 1:
 		_buffer.setPixelFormat(PSPPixelFormat::Type_Palette_8bit);
@@ -128,7 +127,7 @@ void Overlay::setBytesPerPixel(uint32 size) {
 		_buffer.setPixelFormat(PSPPixelFormat::Type_8888);
 		break;
 	}
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -147,7 +146,7 @@ void Overlay::copyToArray(OverlayColor *buf, int pitch) {
 
 void Overlay::copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
-	
+
 	_buffer.copyFromRect((byte *)buf, pitch * sizeof(OverlayColor), x, y, w, h);	// Change to bytes
 	// debug
 	//_buffer.print(0xFF);
@@ -157,9 +156,9 @@ void Overlay::copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int
 
 bool Overlay::allocate() {
 	DEBUG_ENTER_FUNC();
-	
+
 	bool ret = DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
-	
+
 	DEBUG_EXIT_FUNC();
 	return ret;
 }
@@ -179,7 +178,7 @@ void Screen::init() {
 }
 
 void Screen::setShakePos(int pos) {
-	_shakePos = pos; 
+	_shakePos = pos;
 	_renderer.setOffsetOnScreen(0, pos);
 	setDirty();
 }
@@ -189,7 +188,7 @@ void Screen::setSize(uint32 width, uint32 height) {
 
 	_buffer.setSize(width, height, Buffer::kSizeBySourceSize);
 	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -203,36 +202,36 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	} else {
 		_pixelFormat = *format;
 	}
-	
+
 	PSPPixelFormat::Type bufferFormat, paletteFormat;
 	bool swapRedBlue = false;
-	
+
 	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, swapRedBlue);
 	_buffer.setPixelFormat(bufferFormat, swapRedBlue);
 	_palette.setPixelFormats(paletteFormat, bufferFormat, swapRedBlue);
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
 Graphics::Surface *Screen::lockAndGetForEditing() {
 	DEBUG_ENTER_FUNC();
-	
+
 	_frameBuffer.pixels = _buffer.getPixels();
 	_frameBuffer.w = _buffer.getSourceWidth();
 	_frameBuffer.h = _buffer.getSourceHeight();
 	_frameBuffer.pitch = _buffer.getBytesPerPixel() * _buffer.getWidth();
 	_frameBuffer.bytesPerPixel = _buffer.getBytesPerPixel();
 	// We'll set to dirty once we unlock the screen
-	
+
 	DEBUG_EXIT_FUNC();
-	
+
 	return &_frameBuffer;
 }
 
 bool Screen::allocate() {
 	DEBUG_ENTER_FUNC();
-	
+
 	return DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
-	
+
 	DEBUG_EXIT_FUNC();
 }

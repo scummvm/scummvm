@@ -50,7 +50,7 @@ private:
 public:
 	PSPKeyboard();
 	~PSPKeyboard();
-	
+
 	bool load();												// Load keyboard into memory
 	bool isInit() { return _init; }								// Check for initialization
 	bool isDirty() { return _dirty; }							// Check if needs redrawing
@@ -89,19 +89,19 @@ private:
 	void getCursorMovement(SceCtrlData &pad);
 	void handleRTriggerDownState(SceCtrlData &pad);
 	void handleLTriggerDownState(SceCtrlData &pad);
-	
+
 	static short _modeChar[MODE_COUNT][5][6];
 	static const char *_guiStrings[];
 	bool _init;
 	uint32 _prevButtons;	// A bit pattern.
 	uint32 _buttonsChanged;
-	
+
 	bool _dirty;        		// keyboard needs redrawing
 	int _mode;          		// charset selected. (0 - letters or 1 - numbers)
 	int _movedX;				// location we've moved the KB to onscreen
 	int _movedY;
 	bool _moved;				// whether the keyboard was moved
-	
+
 	State _state;				// State of keyboard Keyboard state machine
 	State _lastState;
 

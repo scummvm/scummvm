@@ -48,7 +48,7 @@
 
 uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
- const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
+const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{ "320x200 (centered)", "320x200 16-bit centered", CENTERED_320X200 },
 	{ "435x272 (best-fit, centered)", "435x272 16-bit centered", CENTERED_435X272 },
 	{ "480x272 (full screen)", "480x272 16-bit stretched", STRETCHED_480X272 },
@@ -61,13 +61,13 @@ uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
 void MasterGuRenderer::guInit() {
 	DEBUG_ENTER_FUNC();
-	
+
 	sceGuInit();
 	sceGuStart(0, _displayList);
-	
+
 	guProgramDisplayBufferSizes();
-	
-	sceGuOffset(2048 - (PSP_SCREEN_WIDTH/2), 2048 - (PSP_SCREEN_HEIGHT/2));
+
+	sceGuOffset(2048 - (PSP_SCREEN_WIDTH / 2), 2048 - (PSP_SCREEN_HEIGHT / 2));
 	sceGuViewport(2048, 2048, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	sceGuDepthRange(0xC350, 0x2710);
 	sceGuDisable(GU_DEPTH_TEST);	// We'll use depth buffer area
@@ -77,13 +77,13 @@ void MasterGuRenderer::guInit() {
 	sceGuFrontFace(GU_CW);
 	sceGuEnable(GU_TEXTURE_2D);
 
-	sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
+	sceGuClear(GU_COLOR_BUFFER_BIT | GU_DEPTH_BUFFER_BIT);
 	sceGuFinish();
-	sceGuSync(0,0);
+	sceGuSync(0, 0);
 
 	sceDisplayWaitVblankStart();
 	sceGuDisplay(1);
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -91,7 +91,7 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 	DEBUG_ENTER_FUNC();
 
 	PSP_DEBUG_PRINT("Outputbits[%u]\n", GuRenderer::_displayManager->getOutputBitsPerPixel());
-	
+
 	switch (GuRenderer::_displayManager->getOutputBitsPerPixel()) {
 	case 16:
 		sceGuDrawBuffer(GU_PSM_4444, (void *)0, PSP_BUFFER_WIDTH);
@@ -106,7 +106,7 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 		VramAllocator::instance().allocate(PSP_FRAME_SIZE * sizeof(uint32) * 2);
 		break;
 	}
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -116,38 +116,38 @@ inline void MasterGuRenderer::guPreRender() {
 
 #ifdef ENABLE_RENDER_MEASURE
 	_lastRenderTime = g_system->getMillis();
-#endif /* ENABLE_RENDER_MEASURE */	
-	
+#endif /* ENABLE_RENDER_MEASURE */
+
 	sceGuStart(0, _displayList);
 
 	sceGuClearColor(0xFF000000);
 	sceGuClear(GU_COLOR_BUFFER_BIT);
-	
+
 	sceGuAmbientColor(0xFFFFFFFF);
 	sceGuColor(0xFFFFFFFF);
-	sceGuTexOffset(0,0);
+	sceGuTexOffset(0, 0);
 	sceGuTexFilter(GU_LINEAR, GU_LINEAR);
-	
+
 	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA); // Also good enough for all purposes
 	sceGuAlphaFunc(GU_GREATER, 0, 0xFF);	   // Also good enough for all purposes
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
 inline void MasterGuRenderer::guPostRender() {
 	DEBUG_ENTER_FUNC();
-	
+
 	sceGuFinish();
-	sceGuSync(0,0);
+	sceGuSync(0, 0);
 
 #ifdef ENABLE_RENDER_MEASURE
 	uint32 now = g_system->getMillis();
 	PSP_INFO_PRINT("Render took %d milliseconds\n", now - _lastRenderTime);
 #endif /* ENABLE_RENDER_MEASURE */
-	
+
 	sceDisplayWaitVblankStart();
 	sceGuSwapBuffers();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -164,16 +164,16 @@ DisplayManager::~DisplayManager() {
 
 void DisplayManager::init() {
 	DEBUG_ENTER_FUNC();
-	
+
 	_displayParams.outputBitsPerPixel = 32;	// can be changed to produce 16-bit output
-	
+
 	GuRenderer::setDisplayManager(this);
 	_screen->init();
 	_overlay->init();
 	_cursor->init();
-	
+
 	_masterGuRenderer.guInit();				// start up the renderer
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -184,21 +184,21 @@ void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphi
 
 	_overlay->deallocate();
 	_screen->deallocate();
-	
+
 	_screen->setScummvmPixelFormat(format);
 	_screen->setSize(width, height);
 	_screen->allocate();
-	
+
 	_cursor->setScreenPaletteScummvmPixelFormat(format);
 
 	_overlay->setBytesPerPixel(sizeof(OverlayColor));
 	_overlay->setSize(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
 	_overlay->allocate();
-	
+
 	_displayParams.screenSource.width = width;
 	_displayParams.screenSource.height = height;
 	calculateScaleParams();
-	
+
 	DEBUG_EXIT_FUNC();
 }
 
@@ -245,16 +245,16 @@ bool DisplayManager::setGraphicsMode(int mode) {
 	default:
 		PSP_ERROR("Unsupported graphics mode[%d].\n", _graphicsMode);
 	}
-	
+
 	calculateScaleParams();
-	
+
 	DEBUG_EXIT_FUNC();
 	return true;
 }
 
 void DisplayManager::calculateScaleParams() {
 	if (_displayParams.screenOutput.width && _displayParams.screenSource.width &&
-	    _displayParams.screenOutput.height && _displayParams.screenSource.height) {
+	        _displayParams.screenOutput.height && _displayParams.screenSource.height) {
 		_displayParams.scaleX = ((float)_displayParams.screenOutput.width) / _displayParams.screenSource.width;
 		_displayParams.scaleY = ((float)_displayParams.screenOutput.height) / _displayParams.screenSource.height;
 	}
@@ -268,43 +268,43 @@ void DisplayManager::renderAll() {
 		return;
 	}
 
-	if (!_screen->isDirty() && 
-		(!_overlay->isDirty()) && 
-		(!_cursor->isDirty()) && 
-		(!_keyboard->isDirty())) {
+	if (!_screen->isDirty() &&
+	        (!_overlay->isDirty()) &&
+	        (!_cursor->isDirty()) &&
+	        (!_keyboard->isDirty())) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
 		DEBUG_EXIT_FUNC();
 		return;
 	}
-	
+
 	PSP_DEBUG_PRINT("screen[%s], overlay[%s], cursor[%s], keyboard[%s]\n",
-		_screen->isDirty() ? "true" : "false",
-		_overlay->isDirty() ? "true" : "false",
-		_cursor->isDirty() ? "true" : "false",
-		_keyboard->isDirty() ? "true" : "false"
-		);
+	                _screen->isDirty() ? "true" : "false",
+	                _overlay->isDirty() ? "true" : "false",
+	                _cursor->isDirty() ? "true" : "false",
+	                _keyboard->isDirty() ? "true" : "false"
+	               );
 
 	_masterGuRenderer.guPreRender();	// Set up rendering
 
 	_screen->render();
-	
+
 	_screen->setClean();				// clean out dirty bit
 
 	if (_overlay->isVisible())
 		_overlay->render();
-		
+
 	_overlay->setClean();
-		
+
 	if (_cursor->isVisible())
 		_cursor->render();
-		
+
 	_cursor->setClean();
 
 	if (_keyboard->isVisible())
 		_keyboard->render();
-		
+
 	_keyboard->setClean();
-		
+
 	_masterGuRenderer.guPostRender();
 
 	DEBUG_EXIT_FUNC();
@@ -321,16 +321,16 @@ inline bool DisplayManager::isTimeToUpdate() {
 	_lastUpdateTime = now;
 	return true;
 }
-	
+
 Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() {
 	Common::List<Graphics::PixelFormat> list;
-	
+
 	// In order of preference
 	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5650));
 	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_5551));
 	list.push_back(PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat::Type_4444));
 	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
-	
+
 	return list;
 }
 

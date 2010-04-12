@@ -22,7 +22,7 @@
  * $Id: osys_psp.h 46120 2009-11-24 10:33:30Z Bluddy $
  *
  */
- 
+
 #ifndef MOUSE_H
 #define MOUSE_H
 
@@ -37,16 +37,16 @@ private:
 	uint32	_mouseLimitHeight;
 	int32	_x, _y;
 	Palette _screenPalette;			// separate palette for screen. default 'palette' is cursor palette.
-	
+
 	void updateRendererOffset();
 
 public:
-	Cursor() : _hotspotX(0), _hotspotY(0), _keyColor(0), _cursorTargetScale(0), 
-		_useCursorPalette(false), _hasCursorPalette(false), _mouseLimitWidth(0),
-		_mouseLimitHeight(0), _x(0), _y(0) { }
+	Cursor() : _hotspotX(0), _hotspotY(0), _keyColor(0), _cursorTargetScale(0),
+			_useCursorPalette(false), _hasCursorPalette(false), _mouseLimitWidth(0),
+			_mouseLimitHeight(0), _x(0), _y(0) { }
 	virtual ~Cursor() { deallocate(); }
-	
-	void setKeyColor(uint32 color); 
+
+	void setKeyColor(uint32 color);
 	void setCursorTargetScale(int scale) { _cursorTargetScale = scale; }
 	void setScreenPalette(const byte *colors, uint start, uint num);
 	void copyFromArray(const byte *array);
@@ -54,7 +54,7 @@ public:
 	Buffer &buffer() { return _buffer; }
 	void setCursorPalette(const byte *colors, uint start, uint num);
 	void enableCursorPalette(bool enable);
-	void setLimits(uint32 width, uint32 height); 
+	void setLimits(uint32 width, uint32 height);
 	void setXY(int x, int y);
 	int32 getX() { return _x; }
 	int32 getY() { return _y; }
@@ -68,14 +68,14 @@ public:
 	void useGlobalScaler(bool val) { _renderer.setUseGlobalScaler(val); }
 	bool allocate();
 	void deallocate();
-	
+
 private:
 	void setSize(uint32 width, uint32 height);
 	void getPixelFormatsFromScummvmPixelFormat(const Graphics::PixelFormat *format,
-													PSPPixelFormat::Type &bufferFormat,
-													PSPPixelFormat::Type &paletteFormat,
-													uint32 &numOfEntries);
-	void setRendererModePalettized(bool palettized);													
+	        PSPPixelFormat::Type &bufferFormat,
+	        PSPPixelFormat::Type &paletteFormat,
+	        uint32 &numOfEntries);
+	void setRendererModePalettized(bool palettized);
 };
 
 #endif /* MOUSE_H */

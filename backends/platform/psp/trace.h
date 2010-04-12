@@ -38,7 +38,7 @@
 //#define __PSP_DEBUG_FUNCS__	/* can put this locally too */
 //#define __PSP_DEBUG_PRINT__
 
-void PSPDebugTrace (bool alsoToScreen, const char *format, ...);
+void PSPDebugTrace(bool alsoToScreen, const char *format, ...);
 
 #ifndef TRACE_C
 extern int psp_debug_indent;
@@ -62,19 +62,19 @@ extern int psp_debug_indent;
 
 /* Choose to print to file/screen/both */
 #ifdef __PSP_PRINT_TO_FILE__
-	#define __PSP_PRINT__(format,...)			PSPDebugTrace(false, format, ## __VA_ARGS__)
+#define __PSP_PRINT__(format,...)			PSPDebugTrace(false, format, ## __VA_ARGS__)
 #elif defined __PSP_PRINT_TO_FILE_AND_SCREEN__
-	#define __PSP_PRINT__(format,...)			PSPDebugTrace(true, format, ## __VA_ARGS__)
+#define __PSP_PRINT__(format,...)			PSPDebugTrace(true, format, ## __VA_ARGS__)
 #else /* default - print to screen */
- 	#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)
+#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)
 #endif /* PSP_PRINT_TO_FILE/SCREEN */
-	
+
 /* Error function */
 #define PSP_ERROR(format,...)					__PSP_PRINT__("Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
 
 /* Do the indent */
 #define __PSP_INDENT__							for(int _i=psp_debug_indent; _i>0; _i--) \
-													__PSP_PRINT__( "   ") 
+													__PSP_PRINT__( "   ")
 
 /* always print */
 #define PSP_INFO_PRINT(format,...)				__PSP_PRINT__(format, ## __VA_ARGS__)
@@ -83,36 +83,36 @@ extern int psp_debug_indent;
 												__PSP_PRINT__(format, ## __VA_ARGS__); }
 
 #ifdef __PSP_DEBUG_PRINT__
-	/* printf with indents */
-	#define PSP_DEBUG_PRINT_SAMELN(format,...)	__PSP_PRINT__(format, ## __VA_ARGS__)
-	#define PSP_DEBUG_PRINT(format,...)			{ __PSP_INDENT__; \
+/* printf with indents */
+#define PSP_DEBUG_PRINT_SAMELN(format,...)	__PSP_PRINT__(format, ## __VA_ARGS__)
+#define PSP_DEBUG_PRINT(format,...)			{ __PSP_INDENT__; \
 												__PSP_PRINT__(format, ## __VA_ARGS__); }
-	#define PSP_DEBUG_PRINT_FUNC(format,...)	{ __PSP_INDENT__; \
+#define PSP_DEBUG_PRINT_FUNC(format,...)	{ __PSP_INDENT__; \
 												__PSP_PRINT__("In %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__); }
-	#define PSP_DEBUG_DO(x)						(x)						
+#define PSP_DEBUG_DO(x)						(x)
 
 #else	/* no debug print */
-	#define PSP_DEBUG_PRINT_SAMELN(format,...)
-	#define PSP_DEBUG_PRINT(format,...)	
-	#define PSP_DEBUG_PRINT_FUNC(format,...)
-	#define PSP_DEBUG_DO(x)	
+#define PSP_DEBUG_PRINT_SAMELN(format,...)
+#define PSP_DEBUG_PRINT(format,...)
+#define PSP_DEBUG_PRINT_FUNC(format,...)
+#define PSP_DEBUG_DO(x)
 #endif /* __PSP_DEBUG_PRINT__ */
 
 /* Debugging function calls */
 #ifdef __PSP_DEBUG_FUNCS__
-	#define DEBUG_ENTER_FUNC()					PSP_INFO_PRINT_INDENT("++ %s\n", __PRETTY_FUNCTION__); \
-												psp_debug_indent++ 
-							
-	#define DEBUG_EXIT_FUNC()					psp_debug_indent--; \
+#define DEBUG_ENTER_FUNC()					PSP_INFO_PRINT_INDENT("++ %s\n", __PRETTY_FUNCTION__); \
+												psp_debug_indent++
+
+#define DEBUG_EXIT_FUNC()					psp_debug_indent--; \
 												if (psp_debug_indent < 0) PSP_ERROR("debug indent < 0\n"); \
 												PSP_INFO_PRINT_INDENT("-- %s\n", __PRETTY_FUNCTION__)
 
-	#define INLINE			/* don't want to inline so we get function names properly */
-							
+#define INLINE			/* don't want to inline so we get function names properly */
+
 #else /* Don't debug function calls */
-	#define DEBUG_ENTER_FUNC()
-	#define DEBUG_EXIT_FUNC()
-	#define INLINE						inline
+#define DEBUG_ENTER_FUNC()
+#define DEBUG_EXIT_FUNC()
+#define INLINE						inline
 #endif /* __PSP_DEBUG_FUNCS__ */
 
 // Undef the main defines for next time

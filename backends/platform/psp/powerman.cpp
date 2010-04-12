@@ -26,7 +26,7 @@
 //#define __PSP_DEBUG_FUNCS__	/* can put this locally too */
 //#define __PSP_DEBUG_PRINT__
 #include "backends/platform/psp/trace.h"
- 
+
 #include <psppower.h>
 #include <pspthreadman.h>
 
@@ -37,19 +37,19 @@ DECLARE_SINGLETON(PowerManager)
 
 // Function to debug the Power Manager (we have no output to screen)
 inline void PowerManager::debugPM() {
-	PSP_DEBUG_PRINT("PM status[%d]. Listcount[%d]. CriticalCount[%d]. ThreadId[%x]. Error[%d]\n", 
-					_PMStatus, _listCounter, _criticalCounter, sceKernelGetThreadId(), _error);
+	PSP_DEBUG_PRINT("PM status[%d]. Listcount[%d]. CriticalCount[%d]. ThreadId[%x]. Error[%d]\n",
+	                _PMStatus, _listCounter, _criticalCounter, sceKernelGetThreadId(), _error);
 }
 
 
- /*******************************************
+/*******************************************
 *
 *	Constructor
 *
 ********************************************/
 PowerManager::PowerManager() {
 	DEBUG_ENTER_FUNC();
-	
+
 	_flagMutex = NULL;					/* Init mutex handle */
 	_listMutex = NULL;					/* Init mutex handle */
 	_condSuspendable = NULL;			/* Init condition variable */
@@ -78,14 +78,14 @@ PowerManager::PowerManager() {
 	_suspendFlag = false;
 	_criticalCounter = 0;	// How many are in the critical section
 	_pauseFlag = 0;
-	_pauseFlagOld = 0; 
+	_pauseFlagOld = 0;
 	_pauseClientState = 0;
 	_listCounter = 0;
 	PMStatusSet(kInitDone);
 	_error = 0;
 
 	DEBUG_EXIT_FUNC();
- }
+}
 
 /*******************************************
 *
@@ -107,7 +107,7 @@ int PowerManager::registerSuspend(Suspendable *item) {
 	if (SDL_mutexV(_listMutex) != 0) {
 		PSP_ERROR("Couldn't unlock _listMutex[%p]\n", _listMutex);
 	}
-	
+
 	debugPM();
 
 	DEBUG_EXIT_FUNC();
@@ -123,7 +123,7 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 	DEBUG_ENTER_FUNC();
 	debugPM();
 
-	 // Unregister from stream list
+	// Unregister from stream list
 	if (SDL_mutexP(_listMutex) != 0) {
 		PSP_ERROR("Couldn't unlock _listMutex[%p]\n", _listMutex);
 	}
@@ -140,16 +140,16 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 
 	DEBUG_EXIT_FUNC();
 	return 0;
- }
+}
 
- /*******************************************
+/*******************************************
 *
 *	Destructor
 *
 ********************************************/
- PowerManager::~PowerManager() {
+PowerManager::~PowerManager() {
 	DEBUG_ENTER_FUNC();
- 
+
 	PMStatusSet(kDestroyPM);
 
 	SDL_DestroyCond(_condSuspendable);
@@ -163,9 +163,9 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 
 	SDL_DestroyMutex(_listMutex);
 	_listMutex = 0;
-	
+
 	DEBUG_EXIT_FUNC();
- }
+}
 
 /*******************************************
 *
@@ -186,8 +186,7 @@ void PowerManager::pollPauseEngine() {
 			g_engine->pauseEngine(true);
 			PSP_DEBUG_PRINT_FUNC("Pausing engine\n");
 			_pauseClientState = PowerManager::Paused;		// Tell PM we're done pausing
-		}
-		else if (!pause && _pauseClientState == PowerManager::Paused) {
+		} else if (!pause && _pauseClientState == PowerManager::Paused) {
 			g_engine->pauseEngine(false);
 			PSP_DEBUG_PRINT_FUNC("Unpausing for resume\n");
 			_pauseClientState = PowerManager::Unpaused;	// Tell PM we're in the middle of pausing
@@ -216,7 +215,7 @@ int PowerManager::blockOnSuspend()  {
 
 int PowerManager::beginCriticalSection(bool justBlock) {
 	DEBUG_ENTER_FUNC();
-	
+
 	int ret = NotBlocked;
 
 	if (SDL_mutexP(_flagMutex) != 0) {
@@ -290,7 +289,7 @@ int PowerManager::endCriticalSection() {
 	return ret;
 }
 
- /*******************************************
+/*******************************************
 *
 *	Callback function to be called to put every Suspendable to suspend
 *
