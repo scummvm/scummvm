@@ -708,6 +708,7 @@ begin_credits("Credits");
 
 	  begin_section("PSP (PlayStation Portable)");
 		  add_person("Joost Peters", "joostp", "");
+		  add_person("Yotam Barnoy", "bluddy", "");
 	  end_section();
 
 	  begin_section("SDL (Win/Linux/OS X/etc.)");
@@ -872,7 +873,6 @@ begin_credits("Credits");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
-		  add_person("Yotam Barnoy", "bluddy", "PSP port suspend/resume support");
 		  add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
 		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
 		  add_person("Mikesch Nepomuk", "mnepomuk", "MI1 VGA floppy patches");
