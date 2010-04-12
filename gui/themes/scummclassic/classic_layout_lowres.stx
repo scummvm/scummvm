@@ -111,30 +111,30 @@
 			</layout>
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
-				<widget name = 'LoadGameButton' 
-						height = '12' 
-				/>
-				<widget name = 'AddGameButton' 
+				<widget name = 'LoadGameButton'
 						height = '12'
 				/>
-				<widget name = 'EditGameButton' 
+				<widget name = 'AddGameButton'
 						height = '12'
 				/>
-				<widget name = 'RemoveGameButton' 
+				<widget name = 'EditGameButton'
+						height = '12'
+				/>
+				<widget name = 'RemoveGameButton'
 						height = '12'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
-				<widget name = 'QuitButton' 
+				<widget name = 'QuitButton'
 						height = '12'
 				/>
-				<widget name = 'AboutButton' 
+				<widget name = 'AboutButton'
 						height = '12'
 				/>
-				<widget name = 'OptionsButton' 
-						height = '12' 
+				<widget name = 'OptionsButton'
+						height = '12'
 				/>
-				<widget name = 'StartButton' 
+				<widget name = 'StartButton'
 						height = '12'
 				/>
 			</layout>
@@ -158,11 +158,11 @@
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>
-				
+
 				<widget name = 'Choose'
 						type = 'Button'
-				/>	
-			</layout>			
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
@@ -174,8 +174,8 @@
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>
-				
-				<widget name = 'Ok' 
+
+				<widget name = 'Ok'
 						type = 'Button'
 				/>
 			</layout>
@@ -314,7 +314,7 @@
 				<widget name = 'mcFontClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
-				/>		
+				/>
 			</layout>
 			<widget name = 'mcMixedCheckbox'
 					type = 'Checkbox'
@@ -407,34 +407,34 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<widget name='KeysButton' 
- 				     type='Button' 
-			/> 
+			<widget name='KeysButton'
+ 				     type='Button'
+			/>
 		</layout>
 	</dialog>
 
-	<dialog name='KeysDialog' overlays='Dialog.GlobalOptions' shading='dim'> 
-		<layout type='vertical' padding='8,8,8,8' center='true'> 
-			<widget name='Action' 
-					height='Globals.Line.Height' 
-			/> 
-			<widget name='List'/> 
-			<widget name='Mapping' 
-					height='Globals.Line.Height' 
-			/> 
+	<dialog name='KeysDialog' overlays='Dialog.GlobalOptions' shading='dim'>
+		<layout type='vertical' padding='8,8,8,8' center='true'>
+			<widget name='Action'
+					height='Globals.Line.Height'
+			/>
+			<widget name='List'/>
+			<widget name='Mapping'
+					height='Globals.Line.Height'
+			/>
 			<space size='Globals.Line.Height'/>
-			<layout type='horizontal'> 
-				<widget name='Map' 
-						type='Button' 
-				/> 
-				<space/> 
-				<widget name='Cancel' 
-						type='Button' 
-				/> 
-				<widget name='Ok' 
-						type='Button' 
-				/> 
-			</layout> 
+			<layout type='horizontal'>
+				<widget name='Map'
+						type='Button'
+				/>
+				<space/>
+				<widget name='Cancel'
+						type='Button'
+				/>
+				<widget name='Ok'
+						type='Button'
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
@@ -446,7 +446,7 @@
 				<widget name = 'Cancel'
 						type = 'Button'
 				/>
-				<widget name = 'Ok' 
+				<widget name = 'Ok'
 						type = 'Button'
 				/>
 			</layout>
@@ -563,7 +563,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 4, 6' center = 'true'>
 			<widget name = 'Title'
@@ -719,7 +719,7 @@
 				<widget name = 'Ok'
 						type = 'Button'
 				/>
-			</layout>		
+			</layout>
 		</layout>
 	</dialog>
 
@@ -738,8 +738,8 @@
 				/>
 				<widget name = 'Choose'
 						type = 'Button'
-				/>	
-			</layout>	
+				/>
+			</layout>
 		</layout>
 	</dialog>
 
@@ -766,7 +766,7 @@
 			</layout>
 		</layout>
 	</dialog>
-	
+
 	<dialog name = 'MassAdd' overlays = 'screen_center' shading = 'dim'>
 		<layout type = 'vertical' padding = '4, 4, 16, 4' center = 'true'>
 			<widget name = 'DirProgressText'

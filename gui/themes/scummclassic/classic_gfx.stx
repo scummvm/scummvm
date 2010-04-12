@@ -223,7 +223,7 @@
 					fill = 'none'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'slider_disabled' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
@@ -244,14 +244,14 @@
 					fg_color = 'green2'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'widget_small' cache = 'false'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
 					fill = 'none'
 		/>
 	</drawdata>
-		
+
 	<drawdata id = 'popup_idle' cache = 'false'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
@@ -321,7 +321,7 @@
 					fill = 'none'
 		/>
 	</drawdata>
-	
+
 	<drawdata id = 'plain_bg' cache = 'false'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
