@@ -52,11 +52,11 @@ public:
 	~PSPKeyboard();
 
 	bool load();												// Load keyboard into memory
-	bool isInit() { return _init; }								// Check for initialization
-	bool isDirty() { return _dirty; }							// Check if needs redrawing
+	bool isInit() const { return _init; }								// Check for initialization
+	bool isDirty() const { return _dirty; }							// Check if needs redrawing
 	void setDirty() { _dirty = true; }
 	void setClean() { _dirty = false; }
-	bool isVisible() { return _state != kInvisible; }			// Check if visible
+	bool isVisible() const { return _state != kInvisible; }			// Check if visible
 	void setVisible(bool val);
 	bool processInput(Common::Event &event, SceCtrlData &pad);	// Process input
 	void moveTo(const int newX, const int newY);				// Move keyboard

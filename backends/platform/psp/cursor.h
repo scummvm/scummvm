@@ -56,8 +56,8 @@ public:
 	void enableCursorPalette(bool enable);
 	void setLimits(uint32 width, uint32 height);
 	void setXY(int x, int y);
-	int32 getX() { return _x; }
-	int32 getY() { return _y; }
+	int32 getX() const { return _x; }
+	int32 getY() const { return _y; }
 	bool increaseXY(int32 incX, int32 incY); // returns true if there's a change in x or y
 	void adjustXYForScreenSize(int32 &x, int32 &y);
 	void init();

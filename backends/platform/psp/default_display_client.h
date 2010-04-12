@@ -33,7 +33,7 @@ class DefaultDisplayClient : public DisplayClient {
 public:
 	DefaultDisplayClient() : _visible(false), _dirty(true) {}
 
-	bool isVisible() { return _visible; }
+	bool isVisible() const { return _visible; }
 	void setVisible(bool v) { _visible = v; setDirty(); }
 	Buffer &buffer() { return _buffer; }
 	Palette &palette() { return _palette; }
@@ -53,7 +53,7 @@ public:
 	void copyToArray(byte *dst, int pitch);
 	void setDirty() { _dirty = true; }
 	void setClean() { _dirty = false; }
-	bool isDirty() { return _dirty; }
+	bool isDirty() const { return _dirty; }
 
 protected:
 	Buffer _buffer;

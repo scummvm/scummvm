@@ -126,7 +126,7 @@ private:
 	volatile int _PMStatus;							/* What the PM is doing */
 
 public:
-	int getPMStatus() { return _PMStatus; }
+	int getPMStatus() const { return _PMStatus; }
 
 };
 
