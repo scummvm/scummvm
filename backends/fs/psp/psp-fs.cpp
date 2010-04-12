@@ -66,7 +66,6 @@ public:
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify = true);
 
-	const char *getObjectName() const { return "PSPFileSystemNode"; }
 	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
