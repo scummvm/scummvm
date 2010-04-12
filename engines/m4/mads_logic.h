@@ -35,9 +35,14 @@ class MadsSceneLogic {
 private:
 	// Library interface methods
 	uint16 loadSpriteSet(uint16 suffixNum, uint16 sepChar);
+	uint16 startSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
+	uint16 startSpriteSequence2(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
+	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
+	void activateHotspot(int idx, bool active);
+	void lowRoomsEntrySound();
 private:
 	int _sceneNumber;
-	uint16 _spriteIndexes[50];
+	int16 _spriteIndexes[50];
 
 	// Support functions
 	const char *formAnimName(char sepChar, int16 suffixNum);

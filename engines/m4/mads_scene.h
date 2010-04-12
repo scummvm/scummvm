@@ -65,21 +65,10 @@ public:
 };
 
 #define TIMED_TEXT_SIZE 10
-#define OLD_TEXT_DISPLAY_SIZE 40
 #define TEXT_4A_SIZE 30
 
 enum TalkTextFlags {TEXTFLAG_2 = 2, TEXTFLAG_4 = 4, TEXTFLAG_8 = 8, TEXTFLAG_40 = 0x40,
 		TEXTFLAG_ACTIVE = 0x80};
-
-struct TextDisplay {
-	bool active;
-	int spacing;
-	int16 active2;
-	Common::Rect bounds;
-	int colour1, colour2;
-	Font *font;
-	char message[100];
-};
 
 struct TimedText {
 	uint8 flags;
@@ -87,7 +76,7 @@ struct TimedText {
 	int colour2;
 	Common::Point position;
 	int textDisplayIndex;
-	int unk4AIndex;
+	int timerIndex;
 	uint32 timeout;
 	uint32 frameTimer;
 	bool field_1C;
@@ -96,30 +85,58 @@ struct TimedText {
 	char message[100];
 };
 
-struct Text4A {
-	uint8 active;
-	uint8 field25;
+#define TIMER_ENTRY_SUBSET_MAX 5
+
+struct MadsTimerEntry {
+	int8 active;
+	int8 spriteListIndex;
+	
+	int field_2;
+	
+	int frameIndex;
+	int spriteNum;
+	int numSprites;
+	
+	int field_A;
+	int field_C;
+
+	int depth;
+	int scale;
+	int walkObjectIndex;
+
+	int field_12;
+	int field_13;
+	
+	int width;
+	int height;
+	
+	int field_24;
+	int field_25;
+	int len27;
+	int8 fld27[TIMER_ENTRY_SUBSET_MAX];
+	int16 fld2C[TIMER_ENTRY_SUBSET_MAX];
+	int8 field36;
+	int field_3B;
+
+	uint16 actionNouns[3];
+	int numTicks;
+	int extraTicks;
+	int32 timeout;
 };
 
-class MadsScreenText {
+#define TIMER_LIST_SIZE 30
+
+class MadsTimerList {
 private:
-	TextDisplay _textDisplay[OLD_TEXT_DISPLAY_SIZE];
-	TimedText _timedText[TIMED_TEXT_SIZE];
-	Text4A _text4A[TEXT_4A_SIZE];
-	bool _abortTimedText;
-
-	void addTimedText(TimedText *entry);
+	Common::Array<MadsTimerEntry> _entries;
 public:
-	MadsScreenText();
+	MadsTimerList();
 
-	// TextDisplay list
-	int add(const Common::Point &destPos, uint fontColours, int widthAdjust, const char *msg, Font *font);
-	void setActive2(int16 idx) { _textDisplay[idx].active2 = -1; }
-	// TimedText list
-	int addTimed(const Common::Point &destPos, uint fontColours, uint flags, int vUnknown, uint32 timeout, const char *message);
-
-	void draw(M4Surface *surface);
-	void timedDisplay();
+	MadsTimerEntry &operator[](int index) { return _entries[index]; }	
+	bool unk2(int index, int v1, int v2, int v3);
+	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, 
+		int numSprites, int spriteNum);
 };
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
@@ -157,9 +174,6 @@ public:
 	const char *statusText() const { return _statusText; }
 };
 
-typedef Common::Array<SpriteAsset *> SpriteAssetArray;
-
-#define SPRITE_SLOTS_SIZE 50
 #define DIRTY_AREA_SIZE 90
 
 class MadsScene : public Scene {
@@ -170,11 +184,7 @@ private:
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
-	SpriteAssetArray _sceneSprites;
-	SpriteSlot _spriteSlots[50];
-	MadsScreenText _textDisplay;
 	DirtyArea _dirtyAreas[DIRTY_AREA_SIZE];
-	int _spriteSlotsStart;
 
 	void drawElements();
 	void loadScene2(const char *aaName);
@@ -186,6 +196,7 @@ private:
 public:
 	char _aaName[100];
 	uint16 actionNouns[3];
+	MadsTimerList _timerList;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

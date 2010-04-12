@@ -76,7 +76,7 @@ class M4Engine;
 class MadsEngine;
 class InterfaceView;
 
-class Scene : public View {
+class Scene : public MadsView {
 private:
 	HotSpotList _sceneHotspots;
 protected:
@@ -113,6 +113,7 @@ public:
 	void hideInterface();
 	GameInterfaceView *getInterface() { return _interfaceSurface; }
 	SceneResources &getSceneResources() { return *_sceneResources; }
+	M4Surface *getWalkSurface() const { return _walkSurface; }
 
 	void onRefresh(RectList *rects, M4Surface *destSurface);
 	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);

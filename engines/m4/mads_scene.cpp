@@ -44,7 +44,6 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 	_vm = vm;
 
 	_interfaceSurface = new MadsInterfaceView(vm);
-	_spriteSlotsStart = 0;
 	for (int i = 0; i < 3; ++i)
 		actionNouns[i] = 0;
 }
@@ -158,11 +157,6 @@ void MadsScene::leaveScene() {
 
 	delete _sceneResources.hotspots;
 	delete _sceneResources.props;
-
-	// Delete the sprites
-	for (uint i = 0; i <_sceneSprites.size(); ++i) delete _sceneSprites[i];
-	_sceneSprites.clear();
-
 	delete _walkSurface;
 
 	Scene::leaveScene();
@@ -269,12 +263,8 @@ void MadsScene::setAction(int action, int objectId) {
  * Draws all the elements of the scene
  */
 void MadsScene::drawElements() {
-	
 	// Display animations
-	for (int idx = 0; idx < _spriteSlotsStart; ++idx) {
-		
-	}
-
+	_spriteSlots.draw(this);
 
 	// Text display 
 	_textDisplay.draw(this);
@@ -283,17 +273,6 @@ void MadsScene::drawElements() {
 	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
 
 /*
-	// At this point, in the original engine, the dirty/changed areas were copied to the screen. At the moment,
-	// the current M4 engine framework doesn't support dirty areas, but this is being kept in case that ever changes
-	for (int idx = 0; idx < DIRTY_AREA_SIZE; ++idx) {
-		if (_dirtyAreas[idx].active && _dirtyAreas[idx].active2 && 
-			(_dirtyAreas[idx].bounds.width() > 0) && (_dirtyAreas[idx].bounds.height() > 0)) {
-			// Copy changed area to screen
-
-		}
-	}
-*/
-
 	// Some kind of copying over of slot entries
 	for (int idx = 0, idx2 = 0; idx < _spriteSlotsStart; ++idx) {
 		if (_spriteSlots[idx].spriteId >= 0) {
@@ -303,7 +282,7 @@ void MadsScene::drawElements() {
 			}
 			++idx2;
 		}
-	}
+	}*/
 }
 
 
@@ -330,7 +309,7 @@ void MadsScene::update() {
 	}
 
 	//***DEBUG***
-	_sceneSprites[0]->getFrame(1)->copyTo(this, 120, 90, 0);
+	_spriteSlots.getSprite(0).getFrame(1)->copyTo(this, 120, 90, 0);
 }
 
 int MadsScene::loadSceneSpriteSet(const char *setName) {
@@ -341,13 +320,7 @@ int MadsScene::loadSceneSpriteSet(const char *setName) {
 	if (!strchr(resName, '.'))
 		strcat(resName, ".SS");
 
-	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
-	spriteSet->translate(_vm->_palette);
-	_vm->res()->toss(resName);
-
-	_sceneSprites.push_back(spriteSet);
-	return _sceneSprites.size() - 1;
+	return _spriteSlots.addSprites(resName);
 }
 
 void MadsScene::loadPlayerSprites(const char *prefix) {
@@ -646,6 +619,79 @@ void MadsAction::set() {
 
 /*--------------------------------------------------------------------------*/
 
+MadsTimerList::MadsTimerList() {
+	for (int i = 0; i < TIMER_LIST_SIZE; ++i) {
+		MadsTimerEntry rec;
+		rec.active = 0;
+		rec.walkObjectIndex = -1;
+		_entries.push_back(rec);
+	}
+}
+
+bool MadsTimerList::unk2(int index, int v1, int v2, int v3) {
+	if (_entries[index].len27 >= TIMER_ENTRY_SUBSET_MAX)
+		return true;
+
+	int subIndex = _entries[index].len27++;
+	_entries[index].fld27[subIndex] = v1;
+	_entries[index].fld2C[subIndex] = v2;
+	_entries[index].field36 = v3;
+
+	return false;
+}
+
+int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, int numSprites, 
+		int spriteNum) {
+
+	// Find a free slot
+	uint timerIndex = 0;
+	while ((timerIndex < _entries.size()) && (_entries[timerIndex].active))
+		++timerIndex;
+	if (timerIndex == _entries.size())
+		error("TimerList full");
+
+	if (spriteNum <= 0)
+		spriteNum = 1;
+	if (numSprites == 0)
+		numSprites = _madsVm->scene()->_spriteSlots.getSprite(spriteListIndex).getCount();
+	if (spriteNum == numSprites)
+		field_C = 0;
+
+	// Set the list entry fields
+	_entries[timerIndex].active = true;
+	_entries[timerIndex].spriteListIndex = spriteListIndex;
+	_entries[timerIndex].field_2 = v0;
+	_entries[timerIndex].frameIndex = frameIndex;
+	_entries[timerIndex].spriteNum = spriteNum;
+	_entries[timerIndex].numSprites = numSprites;
+	_entries[timerIndex].field_A = field_A;
+	_entries[timerIndex].field_C = field_C;
+	_entries[timerIndex].depth = depth;
+	_entries[timerIndex].scale = scale;
+	_entries[timerIndex].field_12 = field_12;
+	_entries[timerIndex].width = width;
+	_entries[timerIndex].height = height;
+	_entries[timerIndex].numTicks = numTicks;
+	_entries[timerIndex].extraTicks = extraTicks;
+
+	_entries[timerIndex].timeout = g_system->getMillis() + timeoutTicks * GAME_FRAME_DELAY;
+
+	_entries[timerIndex].field_24 = field_24;
+	_entries[timerIndex].field_25 = 0;
+	_entries[timerIndex].field_13 = 0;
+	_entries[timerIndex].walkObjectIndex = -1;
+	_entries[timerIndex].len27 = 0;
+	_entries[timerIndex].field_3B = 0; //word_84206
+
+	for (int i = 0; i < 3; ++i)
+		_entries[timerIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+
+	return timerIndex;
+}
+
+/*--------------------------------------------------------------------------*/
+
 void MadsSceneResources::load(int sId) {
 	const char *sceneInfoStr = MADSResourceManager::getResourceName(RESPREFIX_RM, sId, ".DAT");
 	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneInfoStr);
@@ -687,45 +733,10 @@ void MadsSceneResources::load(int sId) {
 
 /*--------------------------------------------------------------------------*/
 
-MadsScreenText::MadsScreenText() {
-	for (int i = 0; i < OLD_TEXT_DISPLAY_SIZE; ++i)
-		_textDisplay[i].active = false;
-	for (int i = 0; i < TIMED_TEXT_SIZE; ++i)
-		_timedText[i].flags = 0;
-	_abortTimedText = false;
-}
-
-/**
- * Adds the specified string to the list of on-screen display text
- */
-int MadsScreenText::add(const Common::Point &destPos, uint fontColours, int widthAdjust, const char *msg, Font *font) {
-	// Find a free slot
-	int idx = 0;
-	while ((idx < OLD_TEXT_DISPLAY_SIZE) && _textDisplay[idx].active)
-		++idx;
-	if (idx == OLD_TEXT_DISPLAY_SIZE)
-		error("Ran out of text display slots");
-
-	// Set up the entry values
-	_textDisplay[idx].active = true;
-	_textDisplay[idx].active2 = 1;
-	_textDisplay[idx].bounds.left = destPos.x;
-	_textDisplay[idx].bounds.top = destPos.y;
-	_textDisplay[idx].bounds.setWidth(font->getWidth(msg, widthAdjust));
-	_textDisplay[idx].bounds.setHeight(font->getHeight());
-	_textDisplay[idx].font = font;
-	strncpy(_textDisplay[idx].message, msg, 100);
-	_textDisplay[idx].message[99] = '\0';
-	_textDisplay[idx].colour1 = fontColours & 0xff;
-	_textDisplay[idx].colour2 = fontColours >> 8;
-	_textDisplay[idx].spacing = widthAdjust;
-
-	return idx;
-}
-
 /**
  * Adds a new entry to the timed on-screen text display list
  */
+/*
 int MadsScreenText::addTimed(const Common::Point &destPos, uint fontColours, uint flags, int vUnknown, uint32 timeout, const char *message) {
 	// Find a free slot
 	int idx = 0;
@@ -749,7 +760,7 @@ int MadsScreenText::addTimed(const Common::Point &destPos, uint fontColours, uin
 	_timedText[idx].timeout = timeout;
 	_timedText[idx].frameTimer = g_system->getMillis();
 	_timedText[idx].field_1C = vUnknown;
-	_timedText[idx].field_1D = 0; /* word_84206 */
+	_timedText[idx].field_1D = 0; // word_84206
 
 	// Copy the current action noun list
 	for (int i = 0; i < 3; ++i)
@@ -762,9 +773,6 @@ int MadsScreenText::addTimed(const Common::Point &destPos, uint fontColours, uin
 	return idx;
 }
 
-/**
- * Draws any text display entries to the screen
- */
 void MadsScreenText::draw(M4Surface *surface) {
 }
 
@@ -811,5 +819,6 @@ void MadsScreenText::addTimedText(TimedText *entry) {
 
 	// TODO: code from 'loc_244ec' onwards
 }
+*/
 
 } // End of namespace M4

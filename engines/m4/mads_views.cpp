@@ -47,7 +47,7 @@ int MadsSpriteSlots::getIndex() {
 	return startIndex++;
 }
 
-void MadsSpriteSlots::addSprites(const char *resName) {
+int MadsSpriteSlots::addSprites(const char *resName) {
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
 	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
@@ -56,7 +56,7 @@ void MadsSpriteSlots::addSprites(const char *resName) {
 	_sprites.push_back(SpriteList::value_type(spriteSet));
 	_vm->res()->toss(resName);
 
-	// Translate the sprite set to the current palette
+	return _sprites.size() - 1;
 }
 
 class DepthEntry {

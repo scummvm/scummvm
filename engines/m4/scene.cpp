@@ -39,7 +39,7 @@
 
 namespace M4 {
 
-Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0, vm->_screen->width(), 
+Scene::Scene(MadsM4Engine *vm, SceneResources *res): MadsView(vm, Common::Rect(0, 0, vm->_screen->width(), 
 			vm->_screen->height())), _sceneResources(res) {
 	_screenType = VIEWID_SCENE;
 

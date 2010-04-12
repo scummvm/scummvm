@@ -76,7 +76,7 @@ public:
 	}
 
 	int getIndex();
-	void addSprites(const char *resName);
+	int addSprites(const char *resName);
 	void clear() {
 		startIndex = 0;
 		_sprites.clear();
@@ -155,7 +155,7 @@ public:
 
 
 class MadsView: public View {
-protected:
+public:
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	ScreenObjects _screenObjects;

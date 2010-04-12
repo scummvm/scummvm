@@ -77,6 +77,74 @@ uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
 	return _madsVm->scene()->loadSceneSpriteSet(resName);
 }
 
+uint16 MadsSceneLogic::startSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
+	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2));
+
+	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+		-1, 100, (int)pixel - 1, 1, 1, 0, 0);
+}
+
+uint16 MadsSceneLogic::startSpriteSequence2(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
+	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2));
+
+	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+		-1, 100, (int)pixel - 1, 1, 2, 0, 0);
+}
+
+uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
+	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2));
+
+	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+		-1, 100, (int)pixel - 1, -1, 1, 0, 0);
+}
+
+void MadsSceneLogic::activateHotspot(int idx, bool active) {
+	// TODO:
+}
+
+void MadsSceneLogic::lowRoomsEntrySound() {
+	if (!_madsVm->globals()->_config.musicFlag) {
+		_madsVm->_sound->playSound(2);
+	} else {
+		// Play different sounds for each of the rooms
+		switch (_madsVm->globals()->sceneNumber) {
+		case 101:
+			_madsVm->_sound->playSound(11);
+			break;
+		case 102:
+			_madsVm->_sound->playSound(12);
+			break;
+		case 103:
+			_madsVm->_sound->playSound(3);
+			_madsVm->_sound->playSound(25);
+			break;
+		case 104:
+			_madsVm->_sound->playSound(10);
+			break;
+		case 105:
+			if ((_madsVm->globals()->previousScene < 104) || (_madsVm->globals()->previousScene > 108))
+				_madsVm->_sound->playSound(10);
+			break;
+		case 106:
+			_madsVm->_sound->playSound(13);
+			break;
+		case 107:
+			_madsVm->_sound->playSound(3);
+			break;
+		case 108:
+			_madsVm->_sound->playSound(15);
+			break;
+		default:
+			break;
+		}
+	}
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -114,6 +182,33 @@ void MadsSceneLogic::enterScene() {
 	_spriteIndexes[11] = loadSpriteSet(1, 'a');
 	_spriteIndexes[12] = loadSpriteSet(8, 'x');
 	_spriteIndexes[13] = loadSpriteSet(0, 'x');
+
+	_spriteIndexes[15] = startSpriteSequence(_spriteIndexes[0], 0, 5, 0, 0, 25);
+	_spriteIndexes[16] = startSpriteSequence(_spriteIndexes[1], 0, 4, 0, 1, 0);
+	_spriteIndexes[17] = startSpriteSequence(_spriteIndexes[2], 0, 4, 0, 1, 0);
+
+	_madsVm->scene()->_timerList.unk2(0, 2, 7, 0x46);
+
+	_spriteIndexes[18] = startSpriteSequence2(_spriteIndexes[3], 0, 10, 0, 0, 60);
+	_spriteIndexes[19] = startSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);
+	_spriteIndexes[20] = startSpriteSequence(_spriteIndexes[5], 0, 10, 0, 2, 0);
+	_spriteIndexes[21] = startSpriteSequence(_spriteIndexes[6], 0, 6, 0, 0, 0);
+
+	_spriteIndexes[23] = startSpriteSequence(_spriteIndexes[8], 0, 6, 0, 10, 4);
+	_spriteIndexes[24] = startSpriteSequence(_spriteIndexes[9], 0, 6, 0, 32, 47);
+
+	activateHotspot(0x137, false);		// SHIELD MODULATOR
+	// shield_panel_opened = 0;
+
+	if (_madsVm->globals()->previousScene != -1)
+		_madsVm->globals()->_globals[10] = 0;
+	if (_madsVm->globals()->previousScene != -2) {
+		//playerPos = (100, 152);
+	}
+	
+	// TODO: EXTRA STUFF
+
+	lowRoomsEntrySound();
 }
 
 void MadsSceneLogic::doAction() {
