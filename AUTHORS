@@ -2,227 +2,227 @@ ScummVM Team
 ************
   Project Leaders
   ---------------
-     Max Horn             
-     Eugene Sandulenko    
+     Max Horn
+     Eugene Sandulenko
 
   Retired Project Leaders
   -----------------------
-     James Brown          
+     James Brown
      Vincent Hamm          - ScummVM co-founder, Original Cruise/CinE author
      Ludvig Strigeus       - Original ScummVM and SimonVM author
 
   Engine Teams
   ------------
     SCUMM:
-       Torbjorn Andersson   
+       Torbjorn Andersson
        James Brown           - (retired)
        Jonathan Gray         - (retired)
        Vincent Hamm          - (retired)
-       Max Horn             
-       Travis Howell        
+       Max Horn
+       Travis Howell
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
-       Gregory Montoir      
+       Gregory Montoir
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
                                Herc/CGA
        Ludvig Strigeus       - (retired)
 
     HE:
        Jonathan Gray         - (retired)
-       Travis Howell        
-       Gregory Montoir      
-       Eugene Sandulenko    
+       Travis Howell
+       Gregory Montoir
+       Eugene Sandulenko
 
     AGI:
-       Stuart George        
-       Matthew Hoops        
-       Filippos Karapetis   
-       Pawel Kolodziejski   
-       Walter van Niftrik   
-       Kari Salminen        
-       Eugene Sandulenko    
+       Stuart George
+       Matthew Hoops
+       Filippos Karapetis
+       Pawel Kolodziejski
+       Walter van Niftrik
+       Kari Salminen
+       Eugene Sandulenko
        David Symonds         - (retired)
 
     AGOS:
-       Torbjorn Andersson   
-       Paul Gilbert         
-       Travis Howell        
+       Torbjorn Andersson
+       Paul Gilbert
+       Travis Howell
        Oliver Kiehl          - (retired)
        Ludvig Strigeus       - (retired)
 
     BASS:
        Robert Goeffringmann  - (retired)
        Oliver Kiehl          - (retired)
-       Joost Peters         
+       Joost Peters
 
     Broken Sword:
        Fabio Battaglia       - PSX version support
        Robert Goeffringmann  - (retired)
 
     Broken Sword II:
-       Torbjorn Andersson   
+       Torbjorn Andersson
        Fabio Battaglia       - PSX version support
        Jonathan Gray         - (retired)
 
     Cinematique evo 1:
        Vincent Hamm          - (retired)
-       Pawel Kolodziejski   
-       Gregory Montoir      
-       Kari Salminen        
-       Eugene Sandulenko    
+       Pawel Kolodziejski
+       Gregory Montoir
+       Kari Salminen
+       Eugene Sandulenko
 
     Cinematique evo 2:
-       Paul Gilbert         
+       Paul Gilbert
        Vincent Hamm          - (retired)
 
     Draci:
-       Denis Kasak          
-       Robert Spalek        
+       Denis Kasak
+       Robert Spalek
 
     Drascula:
-       Filippos Karapetis   
-       Pawel Kolodziejski   
+       Filippos Karapetis
+       Pawel Kolodziejski
 
     FOTAQ:
        David Eriksson        - (retired)
-       Gregory Montoir      
-       Joost Peters         
+       Gregory Montoir
+       Joost Peters
 
     Gob:
-       Torbjorn Andersson   
-       Arnaud Boutonne      
-       Sven Hesse           
-       Eugene Sandulenko    
+       Torbjorn Andersson
+       Arnaud Boutonne
+       Sven Hesse
+       Eugene Sandulenko
 
     Groovie:
-       Henry Bush           
-       Scott Thomas         
-       Jordi Vilalta Prat   
+       Henry Bush
+       Scott Thomas
+       Jordi Vilalta Prat
 
     Kyra:
        Torbjorn Andersson    - VQA Player
-       Oystein Eftevaag     
-       Florian Kagerer      
-       Gregory Montoir      
-       Johannes Schickel    
+       Oystein Eftevaag
+       Florian Kagerer
+       Gregory Montoir
+       Johannes Schickel
 
     Lure:
-       Paul Gilbert         
+       Paul Gilbert
 
     M4:
-       Torbjorn Andersson   
-       Paul Gilbert         
-       Benjamin Haisch      
-       Filippos Karapetis   
+       Torbjorn Andersson
+       Paul Gilbert
+       Benjamin Haisch
+       Filippos Karapetis
 
     MADE:
-       Benjamin Haisch      
-       Filippos Karapetis   
+       Benjamin Haisch
+       Filippos Karapetis
 
     Mohawk:
-       Matthew Hoops        
-       Filippos Karapetis   
-       Eugene Sandulenko    
-       David Turner         
+       Matthew Hoops
+       Filippos Karapetis
+       Eugene Sandulenko
+       David Turner
 
     Parallaction:
-       peres                
+       peres
 
     SAGA:
-       Torbjorn Andersson   
-       Filippos Karapetis   
-       Andrew Kurushin      
-       Eugene Sandulenko    
+       Torbjorn Andersson
+       Filippos Karapetis
+       Andrew Kurushin
+       Eugene Sandulenko
 
     SCI:
-       Greg Frieger         
-       Paul Gilbert         
-       Max Horn             
-       Filippos Karapetis   
-       Martin Kiewitz       
-       Walter van Niftrik   
+       Greg Frieger
+       Paul Gilbert
+       Max Horn
+       Filippos Karapetis
+       Martin Kiewitz
+       Walter van Niftrik
        Willem Jan Palenstijn
-       Jordi Vilalta Prat   
-       Lars Skovlund        
+       Jordi Vilalta Prat
+       Lars Skovlund
 
     TeenAgent:
        Robert Megone         - Help with callback rewriting
-       Vladimir Menshakov   
+       Vladimir Menshakov
 
     Tinsel:
-       Torbjorn Andersson   
+       Torbjorn Andersson
        Fabio Battaglia       - PSX version support
-       Paul Gilbert         
-       Sven Hesse           
-       Max Horn             
-       Filippos Karapetis   
-       Joost Peters         
+       Paul Gilbert
+       Sven Hesse
+       Max Horn
+       Filippos Karapetis
+       Joost Peters
 
     Touche:
-       Gregory Montoir      
+       Gregory Montoir
 
     Tucker:
-       Gregory Montoir      
+       Gregory Montoir
 
   Backend Teams
   -------------
     Dreamcast:
-       Marcus Comstedt      
+       Marcus Comstedt
 
     GP2X:
-       John Willis          
+       John Willis
 
     iPhone:
-       Oystein Eftevaag     
+       Oystein Eftevaag
 
     LinuxMoto:
-       Lubomyr Lisen        
+       Lubomyr Lisen
 
     Maemo:
-       Frantisek Dufka      
+       Frantisek Dufka
 
     Nintendo 64:
-       Fabio Battaglia      
+       Fabio Battaglia
 
     Nintendo DS:
-       Neil Millstone       
+       Neil Millstone
 
     PalmOS:
-       Chris Apers          
+       Chris Apers
 
     PocketPC / WinCE:
        Nicolas Bacca         - (retired)
-       Kostas Nakos         
+       Kostas Nakos
 
     PlayStation 2:
        Robert Goeffringmann  - (retired)
-       Max Lingua           
+       Max Lingua
 
     PSP (PlayStation Portable):
-       Joost Peters         
-       Yotam Barnoy         
+       Joost Peters
+       Yotam Barnoy
 
     SDL (Win/Linux/OS X/etc.):
-       Max Horn             
+       Max Horn
        Eugene Sandulenko     - Asm routines, GFX layers
 
     SymbianOS:
-       Jurgen Braam         
-       Lars Persson         
+       Jurgen Braam
+       Lars Persson
 
     Wii:
-       Andre Heider         
+       Andre Heider
 
   Other subsystems
   ----------------
     Infrastructure:
        Max Horn              - Backend & Engine APIs, file API, sound mixer,
                                audiostreams, data structures, etc.
-       Eugene Sandulenko    
+       Eugene Sandulenko
 
     GUI:
-       Vicent Marti         
-       Eugene Sandulenko    
-       Johannes Schickel    
+       Vicent Marti
+       Eugene Sandulenko
+       Johannes Schickel
 
     Miscellaneous:
        David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
@@ -238,7 +238,7 @@ ScummVM Team
 
   Website (code)
   --------------
-     Fredrik Wendel       
+     Fredrik Wendel
 
   Website (content)
   -----------------
@@ -266,52 +266,52 @@ Other contributions
   --------
     AmigaOS 4:
        Hans-Joerg Frieden    - (retired)
-       Hubert Maier         
+       Hubert Maier
        Juha Niemimaki        - (retired)
 
     Atari/FreeMiNT:
-       Keith Scroggins      
+       Keith Scroggins
 
     BeOS:
-       Stefan Parviainen    
-       Luc Schrijvers       
+       Stefan Parviainen
+       Luc Schrijvers
 
     Debian GNU/Linux:
        Tore Anderson         - (retired)
-       David Weinehall      
+       David Weinehall
 
     Fedora / RedHat:
        Willem Jan Palenstijn
 
     Mac OS X:
-       Max Horn             
-       Oystein Eftevaag     
+       Max Horn
+       Oystein Eftevaag
 
     Mandriva:
        Dominik Scherer       - (retired)
 
     MorphOS:
-       Fabien Coeurjoly     
+       Fabien Coeurjoly
        Ruediger Hanke        - (retired)
 
     OS/2:
-       Paul Smedley         
+       Paul Smedley
 
     SlackWare:
-       Robert Kelsen        
+       Robert Kelsen
 
     Solaris x86:
-       Laurent Blume        
+       Laurent Blume
 
     Solaris SPARC:
-       Markus Strangl       
+       Markus Strangl
 
     Win32:
-       Travis Howell        
+       Travis Howell
 
     Win64:
        Chris Gray            - (retired)
-       Johannes Schickel    
+       Johannes Schickel
 
   Websites (design)
   -----------------
@@ -398,8 +398,8 @@ Other contributions
      Solomon Peachy        - SDL ports and much of the sound subsystem
      Vyacheslav Dikonov    - Config script improvements
      Walter van Niftrik    - Ports to the Dreamcast and GP32 platforms
-     Xiaojun Chen         
-     Sean Terrell         
+     Xiaojun Chen
+     Sean Terrell
 
      Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM
      extension as a course project in his Advanced OS course.

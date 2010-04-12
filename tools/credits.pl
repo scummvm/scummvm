@@ -366,12 +366,13 @@ sub add_person {
 	my $tab;
 
 	if ($mode eq "TEXT") {
+		my $min_name_width = length $desc > 0 ? $max_name_width : 0;
 		$name = $nick if $name eq "";
 		$name = html_entities_to_ascii($name);
 		$desc = html_entities_to_ascii($desc);
 
 		$tab = " " x ($section_level * 2 + 1);
-		printf $tab."%-".$max_name_width.".".$max_name_width."s", $name;
+		printf $tab."%-".$min_name_width.".".$max_name_width."s", $name;
 
 		# Print desc wrapped
 		if (length $desc > 0) {
