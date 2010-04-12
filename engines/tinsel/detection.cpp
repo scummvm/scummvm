@@ -336,7 +336,7 @@ static const TinselGameDescription gameDescriptions[] = {
 				{"english.smp", 0, NULL, -1},
 				{NULL, 0, NULL, 0}
 			},
-			Common::HB_ISR,
+			Common::HE_ISR,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE

@@ -102,7 +102,7 @@ enum Language {
 	FR_FRA,
 	DE_DEU,
 	GR_GRE,
-	HB_ISR,
+	HE_ISR,
 	HU_HUN,
 	IT_ITA,
 	JA_JPN,

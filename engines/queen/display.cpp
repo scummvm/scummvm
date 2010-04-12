@@ -967,7 +967,7 @@ void Display::showMouseCursor(bool show) {
 
 void Display::initFont() {
 	switch (_vm->resource()->getLanguage()) {
-	case Common::HB_ISR:
+	case Common::HE_ISR:
 		_font = _fontHebrew;
 		break;
 	case Common::RU_RUS:

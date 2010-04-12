@@ -116,7 +116,8 @@ const LanguageDescription g_languages[] = {
 	{"fr", "French", FR_FRA},
 	{"de", "German", DE_DEU},
 	{"gr", "Greek", GR_GRE},
-	{"hb", "Hebrew", HB_ISR},
+	{"he", "Hebrew", HE_ISR},
+	{"hb", "Hebrew", HE_ISR}, // Deprecated
 	{"hu", "Hungarian", HU_HUN},
 	{"it", "Italian", IT_ITA},
 	{"jp", "Japanese", JA_JPN},

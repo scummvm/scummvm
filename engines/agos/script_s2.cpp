@@ -417,7 +417,7 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 		int j, k;
 
 		if (subObject->objectFlags & kOFNumber) {
-			if (_language == Common::HB_ISR) {
+			if (_language == Common::HE_ISR) {
 				j = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
 				k = (j % 10) * 10;
 				k += j / 10;

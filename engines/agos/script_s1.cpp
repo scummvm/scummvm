@@ -319,7 +319,7 @@ void AGOSEngine_Simon1::os1_pauseGame() {
 	case Common::PL_POL:
 		keyYes = Common::KEYCODE_t;
 		break;
-	case Common::HB_ISR:
+	case Common::HE_ISR:
 		keyYes = Common::KEYCODE_f;
 		break;
 	case Common::ES_ESP:
@@ -426,7 +426,7 @@ void AGOSEngine_Simon1::os1_screenTextPObj() {
 		int j, k;
 
 		if (subObject->objectFlags & kOFNumber) {
-			if (_language == Common::HB_ISR) {
+			if (_language == Common::HE_ISR) {
 				j = subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)];
 				k = (j % 10) * 10;
 				k += j / 10;

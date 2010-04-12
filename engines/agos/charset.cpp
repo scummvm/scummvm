@@ -319,7 +319,7 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 	if (count != 0)
 		memset(dst, 0, count);
 
-	if (_language == Common::HB_ISR)
+	if (_language == Common::HE_ISR)
 		dst += width - 1; // For Hebrew, start at the right edge, not the left.
 
 	dst_org = dst;
@@ -328,7 +328,7 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 			dst_org += width * textHeight;
 			dst = dst_org;
 		} else if ((chr -= ' ') == 0) {
-			dst += (_language == Common::HB_ISR ? -6 : 6); // Hebrew moves to the left, all others to the right
+			dst += (_language == Common::HE_ISR ? -6 : 6); // Hebrew moves to the left, all others to the right
 		} else {
 			byte *img_hdr, *img;
 			uint i, img_width, img_height;
@@ -345,7 +345,7 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 				img = src + READ_LE_UINT16(img_hdr);
 			}
 
-			if (_language == Common::HB_ISR)
+			if (_language == Common::HE_ISR)
 				dst -= img_width - 1; // For Hebrew, move from right edge to left edge of image.
 			byte *cur_dst = dst;
 
@@ -371,7 +371,7 @@ void AGOSEngine::renderString(uint vgaSpriteId, uint color, uint width, uint hei
 				cur_dst += width;
 			} while (--img_height);
 
-			if (_language != Common::HB_ISR) // Hebrew character movement is done higher up
+			if (_language != Common::HE_ISR) // Hebrew character movement is done higher up
 				dst += img_width - 1;
 		}
 	}
@@ -499,8 +499,8 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 		clearWindow(window);
 	} else if (c == 13 || c == 10) {
 		windowNewLine(window);
-	} else if ((c == 1 && _language != Common::HB_ISR) || (c == 8)) {
-		if (_language == Common::HB_ISR) {
+	} else if ((c == 1 && _language != Common::HE_ISR) || (c == 8)) {
+		if (_language == Common::HE_ISR) {
 			if (b >= 64 && b < 91)
 				width = _hebrewCharWidths [b - 64];
 
@@ -546,7 +546,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 			window->textRow--;
 		}
 
-		if (_language == Common::HB_ISR) {
+		if (_language == Common::HE_ISR) {
 			if (c >= 64 && c < 91)
 				width = _hebrewCharWidths [c - 64];
 			window->textColumnOffset -= width;

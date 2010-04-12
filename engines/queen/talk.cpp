@@ -1089,7 +1089,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	if (_vm->resource()->getLanguage() == Common::EN_ANY || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
 		strcpy(optionText[0], option);
 		lines = 1;
-	} else if (_vm->resource()->getLanguage() == Common::HB_ISR) {
+	} else if (_vm->resource()->getLanguage() == Common::HE_ISR) {
 		lines = splitOptionHebrew(option, optionText);
 	} else {
 		lines = splitOptionDefault(option, optionText);

@@ -258,7 +258,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::RU_RUS:
 			verb_prep_names = russian_verb_prep_names;
 			break;
-		case Common::HB_ISR:
+		case Common::HE_ISR:
 			verb_prep_names = hebrew_verb_prep_names;
 			break;
 		case Common::ES_ESP:
@@ -287,7 +287,7 @@ void AGOSEngine::printVerbOf(uint hitarea_id) {
 		case Common::RU_RUS:
 			verb_names = russian_verb_names;
 			break;
-		case Common::HB_ISR:
+		case Common::HE_ISR:
 			verb_names = hebrew_verb_names;
 			break;
 		case Common::ES_ESP:
@@ -332,7 +332,7 @@ void AGOSEngine::showActionString(const byte *string) {
 
 	window->textColumn = x / 8;
 	window->textColumnOffset = x & 7;
-	if (_language == Common::HB_ISR && window->textColumnOffset != 0) {
+	if (_language == Common::HE_ISR && window->textColumnOffset != 0) {
 		window->textColumnOffset = 8 - window->textColumnOffset;
 		window->textColumn++;
 	}

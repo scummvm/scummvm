@@ -1672,7 +1672,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "tbllist",		GAME_TBLFILE,	"d198a80de2c59e4a0cd24b98814849e8", 711},
 	{ NULL, 0, NULL, 0}
 			},
-			Common::HB_ISR,
+			Common::HE_ISR,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
@@ -2148,7 +2148,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 	{ "tbllist",		GAME_TBLFILE,	"2082f8d02075e590300478853a91ffd9", 513},
 	{ NULL, 0, NULL, 0}
 			},
-			Common::HB_ISR,
+			Common::HE_ISR,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NONE

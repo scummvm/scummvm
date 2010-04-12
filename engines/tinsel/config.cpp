@@ -141,7 +141,7 @@ void Config::readFromDisk() {
 
 	if (lang == Common::JA_JPN) {
 		// TODO: Add support for JAPAN version
-	} else if (lang == Common::HB_ISR) {
+	} else if (lang == Common::HE_ISR) {
 		// TODO: Add support for HEBREW version
 
 		// The Hebrew version appears to the software as being English

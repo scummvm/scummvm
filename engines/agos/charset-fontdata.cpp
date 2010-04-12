@@ -2370,7 +2370,7 @@ void AGOSEngine::windowDrawChar(WindowBlock *window, uint x, uint y, byte chr) {
 		case Common::PL_POL:
 			src = polish_simonFont + (chr - 32) * 8;
 			break;
-		case Common::HB_ISR:
+		case Common::HE_ISR:
 			src = hebrew_simonFont + (chr - 32) * 8;
 			break;
 		case Common::ES_ESP:

@@ -608,13 +608,13 @@ void AGOSEngine_Simon1::listSaveGames(char *dst) {
 		lastSlot = slot;
 		if (slot < 10) {
 			showMessageFormat(" ");
-		} else if (_language == Common::HB_ISR) {
+		} else if (_language == Common::HE_ISR) {
 			lastSlot = (slot % 10) * 10;
 			lastSlot += slot / 10;
 		}
 
 		showMessageFormat("%d", lastSlot);
-		if (_language == Common::HB_ISR && !(slot % 10))
+		if (_language == Common::HE_ISR && !(slot % 10))
 			showMessageFormat("0");
 		showMessageFormat(".%s\n", dst);
 		dst += 18;
@@ -672,7 +672,7 @@ void AGOSEngine_Simon1::userGame(bool load) {
 	char *name;
 	bool b;
 	char buf[108];
-	int maxChar = (_language == Common::HB_ISR) ? 155: 128;
+	int maxChar = (_language == Common::HE_ISR) ? 155: 128;
 
 	_saveOrLoad = load;
 
@@ -711,7 +711,7 @@ restart:;
 		window->textRow = result;
 
 		// init x offset with a 2 character savegame number + a period (18 pix)
-		if (_language == Common::HB_ISR) {
+		if (_language == Common::HE_ISR) {
 			window->textColumn = 3;
 			window->textColumnOffset = 6;
 		} else {
@@ -725,7 +725,7 @@ restart:;
 		// now process entire savegame name to get correct x offset for cursor
 		_saveGameNameLen = 0;
 		while (name[_saveGameNameLen]) {
-			if (_language == Common::HB_ISR) {
+			if (_language == Common::HE_ISR) {
 				byte width = 6;
 				if (name[_saveGameNameLen] >= 64 && name[_saveGameNameLen] < 91)
 					width = _hebrewCharWidths [name[_saveGameNameLen] - 64];
@@ -770,7 +770,7 @@ restart:;
 				goto restart;
 			}
 
-			if (_language == Common::HB_ISR) {
+			if (_language == Common::HE_ISR) {
 				if (i >= 128)
 					i -= 64;
 				else if (i >= 32)
@@ -788,7 +788,7 @@ restart:;
 					_saveGameNameLen--;
 					m = name[_saveGameNameLen];
 
-					if (_language == Common::HB_ISR)
+					if (_language == Common::HE_ISR)
 						x = 8;
 					else
 						x = (name[_saveGameNameLen] == 'i' || name[_saveGameNameLen] == 'l') ? 1 : 8;
@@ -889,7 +889,7 @@ void AGOSEngine::userGameBackSpace(WindowBlock *window, int x, byte b) {
 	oldTextColor = window->textColor;
 	window->textColor = window->fillColor;
 
-	if (_language == Common::HB_ISR) {
+	if (_language == Common::HE_ISR) {
 		x = 128;
 	} else {
 		x += 120;

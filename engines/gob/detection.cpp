@@ -1881,7 +1881,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"lit",
 			"",
 			AD_ENTRY1s("intro.stk", "e0767783ff662ed93665446665693aef", 4371238),
-			HB_ISR,
+			HE_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -2317,7 +2317,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"fascination",
 			"VGA 3 disks edition",
 			AD_ENTRY1s("intro.stk", "d6e45ce548598727e2b5587a99718eba", 1055909),
-			HB_ISR,
+			HE_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -2485,7 +2485,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			"gob3",
 			"",
 			AD_ENTRY1s("intro.stk", "904fc32032295baa3efb3a41f17db611", 178582),
-			HB_ISR,
+			HE_ISR,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH

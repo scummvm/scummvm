@@ -169,7 +169,7 @@ loom	Loom
 	6f8a22bfa397be1f7ed4b74aba0e397e	-1	fr	DOS	EGA	EGA	v1.2 26 Jun 90	Jorpho
 	470c45b636139bb40716daa1c7edaad0	-1	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Peter Eckerlein
 	fa127d7c4bb47d05bb1c33ddcaa9f767	5748	de	DOS	EGA	EGA	v1.2 Deutsch from 7 Jun 90	Fingolfin
-	187d315f6b5168f68680dfe8c3d76a3e	-1	hb	DOS	EGA	EGA	-	
+	187d315f6b5168f68680dfe8c3d76a3e	-1	he	DOS	EGA	EGA	-	
 	c3df37df9d3b481b45f75283a9907c47	-1	it	DOS	EGA	EGA	-	Andrea Petrucci
 	0be88565f734b1e9e77ccaaf3bb14b29	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	George Kormend
 	2a208ffbcd0e83e86f4356e6f64aa6e1	-1	es	DOS	EGA	EGA	v1.2 Espanol from 31 Aug 90	abnog, Andrea Petrucci, Peter Eckerlein
@@ -459,7 +459,7 @@ fbear	Fatty Bear's Birthday Surprise
 	6bca7a1a96d16e52b8f3c42b50dbdca3	-1	jp	3DO	HE 62	-	-	George Kormendi
 	3824e60cdf639d22f6df92a03dc4b131	7732	en	DOS	HE 62	-	-	khalek
 	4f1d6f8b38343dba405472538b5037ed	7717	en	DOS	HE 62	-	-	George Kormendi
-	ef74d9071d4e564b037cb44bd6774de7	-1	hb	DOS	HE 62	-	-	sev
+	ef74d9071d4e564b037cb44bd6774de7	-1	he	DOS	HE 62	-	-	sev
 	3df6ead57930488bc61e6e41901d0e97	-1	en	Mac	HE 62	-	-	khalek
 	179879b6e35c1ead0d93aab26db0951b	13381	en	Windows	HE 70	-	-	khalek
 
@@ -470,7 +470,7 @@ fbear	Fatty Bear's Birthday Surprise
 fbpack	Fatty Bear's Fun Pack
 	e01acc8c12ef44e8f778fe87e5f90f4e	-1	en	3DO	-	-	-	sev
 	c9717ee6059f1e43b768b464493d2fba	-1	jp	3DO	-	-	-	clone2727
-	f06e66fd45b2f8b0f4a2833ff4476050	-1	hb	DOS	-	-	-	sev
+	f06e66fd45b2f8b0f4a2833ff4476050	-1	he	DOS	-	-	-	sev
 
 freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	d4cccb5af88f3e77f370896e9ba8c5f9	-1	All	Windows	HE 71	-	-	sev
@@ -481,7 +481,7 @@ freddi	Freddi Fish 1: The Case of the Missing Kelp Seeds
 	c782fbbe74a987c3df8ac73cd3e289ed	-1	se	Mac	HE 73	-	-	Torbjörn Andersson
 	5ebb57234b2fe5c5dff641e00184ad81	-1	fr	Windows	HE 73	-	-	gist974
 	cf8ef3a1fb483c5c4b1c584d1167b2c4	-1	de	Windows	HE 73	-	-	Oncer
-	1f2e62b5a9c50589fc342285a6bb3a27	-1	hb	Windows	HE 73	-	-	e_orz
+	1f2e62b5a9c50589fc342285a6bb3a27	-1	he	Windows	HE 73	-	-	e_orz
 	507bb360688dc4180fdf0d7597352a69	26402	se	Windows	HE 73	-	-	Sven Arvidsson
 	df047cc4792150f601290357566d36a6	-1	us	All	HE 90	Updated	-	khalek
 	e44ea295a3f8fe4f41983080dab1e9ce	-1	fr	Mac	HE 90	Updated	-	ThierryFR
@@ -528,7 +528,7 @@ freddi3	Freddi Fish 3: The Case of the Stolen Conch Shell
 	bbadf7309c4a2c2763e4bbba3c3be634	-1	fr	All	-	Demo	-	Kirben
 	754feb59d3bf86b8a00840df74fd7b26	-1	nl	Windows	-	Demo	-	adutchguy
 	ed2b074bc3166087a747acb2a3c6abb0	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
-	d73c851b942af44deb9b6d5f416a0972	-1	hb	Windows	HE 99	Demo	-	Ori Avtalion
+	d73c851b942af44deb9b6d5f416a0972	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
 freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	4f580a021eee026f3b4589e17d130d78	-1	All	All	-	-	-	Kirben, sev
@@ -644,7 +644,7 @@ pajama2	Pajama Sam 2: Thunder and Lightning Aren't so Frightening
 	36a6750e03fb505fc19fc2bf3e4dbe91	58749	en	All	-	Demo	-	sev
 	30ba1e825d4ad2b448143ae8df18482a	-1	nl	All	HE 98.5	Demo	-	Kirben
 	4521138d15d1fd7649c31fb981746231	-1	de	All	HE 98.5	Demo	-	Joachim Eberhard
-	2a8658dbd13d84d1bce64a71a35995eb	-1	hb	Windows	HE 99	Demo	-	Ori Avtalion
+	2a8658dbd13d84d1bce64a71a35995eb	-1	he	Windows	HE 99	Demo	-	Ori Avtalion
 
 pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f7711f9264d4d43c2a1518ec7c10a607	79382	us	All	-	-	-	Kirben
@@ -708,7 +708,7 @@ puttmoon	Putt-Putt Goes to the Moon
 	a9543ef0d79bcb47cd76ec197ad0a967	-1	en	3DO	-	-	-	sev
 	780e4a0ae2ff17dc296f4a79543b44f8	-1	All	DOS	-	-	-	khalek
 	b9bb68c5d2c9b6e2d9c513a29a754a57	7828	en	DOS	-	-	-	George Kormendi
-	697c9b7c55a05d8199c48b48e379d2c8	-1	hb	DOS	-	-	-	sev
+	697c9b7c55a05d8199c48b48e379d2c8	-1	he	DOS	-	-	-	sev
 	9dc02577bf50d4cfaf3de3fbac06fbe2	-1	en	Mac	-	-	-	khalek
 	9c92eeaf517a31b7221ec2546ab669fd	-1	en	Windows	HE 70	-	-	khalek
 
@@ -726,7 +726,7 @@ puttcircus	Putt-Putt Joins the Circus
 
 	a7cacad9c40c4dc9e1812abf6c8af9d5	-1	en	All	-	Demo	-	Kirben, sev
 	1387d16aa620dc1c2d1fd87f8a9e7a09	-1	fr	Windows	-	Demo	-	Mevi
-	3af61c5edf8e15b43dbafd285b2e9777	-1	hb	Windows	-	Demo	-	Ori Avtalion
+	3af61c5edf8e15b43dbafd285b2e9777	-1	he	Windows	-	Demo	-	Ori Avtalion
 
 puttputt	Putt-Putt Joins the Parade
 	7766c9487f9d53a8cb0edabda5119c3d	8022	en	DOS	HE 60	-	-	George Kormendi
@@ -735,7 +735,7 @@ puttputt	Putt-Putt Joins the Parade
 	be2abe172f58db170de3a037daa1dd27	-1	jp	3DO	HE 61	-	-	clone2727
 	ee41f6afbc5b26fa475754b56fe92048	8032	jp	3DO	HE 61	-	-	George Kormendi
 	9708cf716ed8bcc9ff3fcfc69413b746	-1	en	DOS	HE 62	-	-	khalek
-	e361a7058ed8e8ebb462663c0a3ae8d6	-1	hb	DOS	HE 62	-	-	sev
+	e361a7058ed8e8ebb462663c0a3ae8d6	-1	he	DOS	HE 62	-	-	sev
 	684732efb5799c0f78804c99d8de9aba	-1	en	Mac	HE 62	-	-	khalek
 	6a30a07f353a75cdc602db27d73e1b42	-1	en	Windows	HE 70	-	-	khalek
 
@@ -806,7 +806,7 @@ funpack	Putt-Putt's Fun Pack
 	e95cf980719c0be078fb68a67af97b4a	-1	jp	3DO	-	-	-	clone2727
 	3d219e7546039543307b55a91282bf18	-1	en	DOS	-	-	-	iziku
 	46b53fd430adcfbed791b48a0d4b079f	-1	en	DOS	-	-	-	khalek
-	90a329d8ad5b7ce0690429e98cfbb32f	-1	hb	DOS	-	-	-	
+	90a329d8ad5b7ce0690429e98cfbb32f	-1	he	DOS	-	-	-	
 
 PuttsFunShop	Putt-Putt's One-Stop Fun Shop
 	5262a27afcaee04e5c4900220bd463e7	-1	us	All	-	-	-	Kirben

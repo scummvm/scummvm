@@ -78,7 +78,7 @@ void AGOSEngine_Simon2::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 		}
 		_skipVgaWait = true;
 	} else {
-		if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HB_ISR) {
+		if (getGameType() == GType_SIMON2 && _subtitles && _language != Common::HE_ISR) {
 			loadVoice(speech_id);
 			return;
 		}

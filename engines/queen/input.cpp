@@ -74,7 +74,7 @@ Input::Input(Common::Language language, OSystem *system, QueenEngine *vm) :
 	case Common::IT_ITA:
 		_currentCommandKeys = _commandKeys[3];
 		break;
-	case Common::HB_ISR:
+	case Common::HE_ISR:
 		_currentCommandKeys = _commandKeys[4];
 		break;
 	case Common::ES_ESP:

@@ -66,7 +66,7 @@ const Common::Language GobEngine::_gobToScummVMLang[] = {
 	Common::EN_USA,
 	Common::NL_NLD,
 	Common::KO_KOR,
-	Common::HB_ISR,
+	Common::HE_ISR,
 	Common::PT_BRA,
 	Common::JA_JPN
 };
@@ -290,7 +290,7 @@ Common::Error GobEngine::run() {
 	case Common::KO_KOR:
 		_global->_language = kLanguageKorean;
 		break;
-	case Common::HB_ISR:
+	case Common::HE_ISR:
 		_global->_language = kLanguageHebrew;
 		break;
 	case Common::PT_BRA:

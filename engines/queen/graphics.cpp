@@ -514,7 +514,7 @@ void Graphics::setBobText(const BobSlot *pbs, const char *text, int textX, int t
 
 	// Hebrew strings are written from right to left and should be cut
 	// to lines in reverse
-	if (_vm->resource()->getLanguage() == Common::HB_ISR) {
+	if (_vm->resource()->getLanguage() == Common::HE_ISR) {
 		for (i = length - 1; i >= 0; i--) {
 			lineLength++;
 
