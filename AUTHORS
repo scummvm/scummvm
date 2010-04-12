@@ -56,6 +56,7 @@ ScummVM Team
 
     Broken Sword:
        Fabio Battaglia       - PSX version support
+       Thierry Crozat        - Mac version support
        Robert Goeffringmann  - (retired)
 
     Broken Sword II:
@@ -246,6 +247,7 @@ ScummVM Team
 
   Documentation
   -------------
+     Thierry Crozat        - Numerous contributions to documentation
      Joachim Eberhard      - Numerous contributions to documentation
      Matthew Hoops         - Wiki editor
 
@@ -328,7 +330,6 @@ Other contributions
      Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
                              engine)
      Paolo Costabel        - PSP port contributions
-     Thierry Crozat        - Support for Broken Sword Macintosh version
      Martin Doucha         - CinE engine objectification
      Thomas Fach-Pedersen  - ProTracker module player
      Tobias Gunkel         - Sound support for C64 version of MM/Zak, Loom

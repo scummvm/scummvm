@@ -532,6 +532,7 @@ begin_credits("Credits");
 
 	  begin_section("Broken Sword");
 		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
+		  add_person("Thierry Crozat", "criezy", "Mac version support");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 	  end_section();
 
@@ -762,6 +763,7 @@ begin_credits("Credits");
 
     begin_section("Documentation");
 	  begin_persons();
+		add_person("Thierry Crozat", "criezy", "Numerous contributions to documentation");
 		add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation");
 		add_person("Matthew Hoops", "clone2727", "Wiki editor");
 	  end_persons();
@@ -864,7 +866,6 @@ begin_credits("Credits");
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
-		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword Macintosh version");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
 		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
 		  add_person("Tobias Gunkel", "hennymcc", "Sound support for C64 version of MM/Zak, Loom PCE support");
