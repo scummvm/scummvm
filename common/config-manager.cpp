@@ -61,13 +61,18 @@ void ConfigManager::loadDefaultConfigFile() {
 	_filename.clear();	// clear the filename to indicate that we are using the default config file
 
 	// ... load it, if available ...
-	if (stream)
+	if (stream) {
 		loadFromStream(*stream);
 
-	// ... and close it again.
-	delete stream;
+		// ... and close it again.
+		delete stream;
 
-	flushToDisk();
+	} else {
+		// No config file -> create new one!
+		printf("Default configuration file missing, creating a new one\n");
+
+		flushToDisk();
+	}
 }
 
 void ConfigManager::loadConfigFile(const String &filename) {
