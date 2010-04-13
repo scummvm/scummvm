@@ -256,7 +256,7 @@ void Sound::playSoundData(Audio::Mixer::SoundType type, Audio::SoundHandle *hand
 	// FIXME need to convert the volume properly
 	vol = Audio::Mixer::kMaxChannelVolume;
 
-	_mixer->playInputStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
+	_mixer->playStream(type, handle, Audio::makeLoopingAudioStream(sndStream, loop ? 0 : 1), -1, vol, pan);
 }
 
 } // end of namespace Asylum
