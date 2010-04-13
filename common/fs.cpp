@@ -132,10 +132,10 @@ Common::SeekableReadStream *FSNode::createReadStream() const {
 		return 0;
 
 	if (!_realNode->exists()) {
-		warning("FSNode::createReadStream: FSNode does not exist");
+        warning("FSNode::createReadStream: '%s' does not exist", getName().c_str());
 		return false;
 	} else if (_realNode->isDirectory()) {
-		warning("FSNode::createReadStream: FSNode is a directory");
+		warning("FSNode::createReadStream: '%s' is a directory", getName().c_str());
 		return false;
 	}
 
@@ -147,7 +147,7 @@ Common::WriteStream *FSNode::createWriteStream() const {
 		return 0;
 
 	if (_realNode->isDirectory()) {
-		warning("FSNode::createWriteStream: FSNode is a directory");
+		warning("FSNode::createWriteStream: '%s' is a directory", getName().c_str());
 		return 0;
 	}
 
@@ -215,10 +215,10 @@ ArchiveMemberPtr FSDirectory::getMember(const String &name) {
 	FSNode *node = lookupCache(_fileCache, name);
 
 	if (!node || !node->exists()) {
-		warning("FSDirectory::getMember: FSNode does not exist");
+		warning("FSDirectory::getMember: '%s' does not exist", name.c_str());
 		return ArchiveMemberPtr();
 	} else if (node->isDirectory()) {
-		warning("FSDirectory::getMember: FSNode is a directory");
+		warning("FSDirectory::getMember: '%s' is a directory", name.c_str());
 		return ArchiveMemberPtr();
 	}
 
