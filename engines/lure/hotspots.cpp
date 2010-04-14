@@ -765,16 +765,25 @@ void Hotspot::showMessage(uint16 messageId, uint16 destCharacterId) {
 	char nameBuffer[MAX_HOTSPOT_NAME_SIZE];
 	MemoryBlock *data = res.messagesData();
 	Hotspot *hotspot;
-	uint16 *v = (uint16 *) data->data();
+	uint8 *msgData = (uint8 *) data->data();
 	uint16 v2, idVal;
 	messageId &= 0x7fff;
 
 	// Skip through header to find table for given character
-	while (READ_LE_UINT16(v) != hotspotId()) v += 2;
+	uint headerEnd = READ_LE_UINT16(msgData + 2);
+	uint idx = 0;
+	while ((idx < headerEnd) && (READ_LE_UINT16(msgData + idx) != hotspotId()))
+		idx += 2 * sizeof(uint16);
+
+	if (idx == headerEnd) {
+		// Given character doesn't have a message set, so fall back on a simple puzzled animation
+		hotspot = new Hotspot(this, PUZZLED_ANIM_IDX);
+		res.addHotspot(hotspot);
+		return;
+	}
 
 	// Scan through secondary list
-	++v;
-	v = (uint16 *) (data->data() + READ_LE_UINT16(v));
+	uint16 *v = (uint16 *) (msgData + READ_LE_UINT16(msgData + idx + sizeof(uint16)));
 	v2 = 0;
 	while ((idVal = READ_LE_UINT16(v)) != 0xffff) {
 		++v;
