@@ -45,6 +45,7 @@ enum {
 struct GuiMenuEntry {
 	uint16 id;
 	Common::String text;
+	Common::String textSplit;
 	int16 textWidth;
 
 	GuiMenuEntry(uint16 curId)
@@ -62,6 +63,7 @@ struct GuiMenuItemEntry {
 	bool separatorLine;
 	reg_t saidVmPtr;
 	Common::String text;
+	Common::String textSplit;
 	reg_t textVmPtr;
 	int16 textWidth;
 	Common::String textRightAligned;

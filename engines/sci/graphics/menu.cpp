@@ -190,7 +190,9 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		if (separatorCount == tempPos - beginPos) {
 			itemEntry->separatorLine = true;
 		} else {
-			itemEntry->text = g_sci->strSplit(Common::String(content.c_str() + beginPos, tempPos - beginPos).c_str());
+			// we don't strSplit here, because multilingual SCI01 support language switching on the fly, so we have to do
+			//  this everytime the menu is called
+			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 
 			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
 			tempPtr = itemEntry->text.c_str();
@@ -260,7 +262,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 		itemEntry->saidVmPtr = value;
 		break;
 	case SCI_MENU_ATTRIBUTE_TEXT:
-		itemEntry->text = g_sci->strSplit(_segMan->getString(value).c_str());
+		itemEntry->text = _segMan->getString(value);
 		itemEntry->textVmPtr = value;
 		// We assume here that no script ever creates a separatorLine dynamically
 		break;
@@ -317,7 +319,7 @@ void GfxMenu::drawBar() {
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
-		_text16->Draw_String(listEntry->text.c_str());
+		_text16->Draw_String(listEntry->textSplit.c_str());
 
 		listIterator++;
 	}
@@ -336,7 +338,8 @@ void GfxMenu::calculateTextWidth() {
 	menuIterator = _list.begin();
 	while (menuIterator != menuEnd) {
 		menuEntry = *menuIterator;
-		_text16->StringWidth(menuEntry->text.c_str(), 0, menuEntry->textWidth, dummyHeight);
+		menuEntry->textSplit = g_sci->strSplit(menuEntry->text.c_str());
+		_text16->StringWidth(menuEntry->textSplit.c_str(), 0, menuEntry->textWidth, dummyHeight);
 
 		menuIterator++;
 	}
@@ -344,7 +347,9 @@ void GfxMenu::calculateTextWidth() {
 	itemIterator = _itemList.begin();
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
-		_text16->StringWidth(itemEntry->text.c_str(), 0, itemEntry->textWidth, dummyHeight);
+		// Split the text now for multilingual SCI01 games
+		itemEntry->textSplit = g_sci->strSplit(itemEntry->text.c_str());
+		_text16->StringWidth(itemEntry->textSplit.c_str(), 0, itemEntry->textWidth, dummyHeight);
 		_text16->StringWidth(itemEntry->textRightAligned.c_str(), 0, itemEntry->textRightAlignedWidth, dummyHeight);
 
 		itemIterator++;
@@ -548,7 +553,7 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 			if (!listItemEntry->separatorLine) {
 				_ports->textGreyedOutput(listItemEntry->enabled ? false : true);
 				_ports->moveTo(_menuRect.left, topPos);
-				_text16->Draw_String(listItemEntry->text.c_str());
+				_text16->Draw_String(listItemEntry->textSplit.c_str());
 				_ports->moveTo(_menuRect.right - listItemEntry->textRightAlignedWidth - 5, topPos);
 				_text16->Draw_String(listItemEntry->textRightAligned.c_str());
 			} else {
