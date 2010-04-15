@@ -163,7 +163,7 @@ void Sound::internalPlaySound(int16 resIndex, int16 type, int16 volume, int16 pa
 			}
 			*/
 
-			_vm->_mixer->playInputStream(soundType, &channels[freeChannel].handle,
+			_vm->_mixer->playStream(soundType, &channels[freeChannel].handle,
 				stream, -1, volume, panning);
 			
 		}

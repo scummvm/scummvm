@@ -83,7 +83,7 @@ void MoviePlayer::playMovie(uint resIndex) {
 
 	_audioStream = Audio::makeQueuingAudioStream(22050, false);
 
-	_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
+	_vm->_mixer->playStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle, _audioStream);
 
 	_soundChunkFramesLeft = 0;
 	_lastPrefetchOfs = 0;
