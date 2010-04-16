@@ -41,6 +41,7 @@ MODULE_OBJS := \
 	graphics/coordadjuster.o \
 	graphics/cursor.o \
 	graphics/font.o \
+	graphics/fontsjis.o \
 	graphics/gui.o \
 	graphics/menu.o \
 	graphics/paint.o \

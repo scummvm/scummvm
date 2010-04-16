@@ -243,7 +243,7 @@ void GfxFrameout::kernelFrameout() {
 					if (lookup_selector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
 						Common::String text = _segMan->getString(GET_SEL32(_segMan, itemEntry->object, SELECTOR(text)));
 						int16 fontRes = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(font));
-						GfxFont *font = new GfxFont(_resMan, _screen, fontRes);
+						GfxFont *font = new GfxFontFromResource(_resMan, _screen, fontRes);
 						bool dimmed = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(dimmed));
 						uint16 foreColor = GET_SEL32V(_segMan, itemEntry->object, SELECTOR(fore));
 						uint16 curX = itemEntry->x;

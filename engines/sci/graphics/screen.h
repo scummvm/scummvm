@@ -29,6 +29,8 @@
 #include "sci/sci.h"
 #include "sci/graphics/helpers.h"
 
+#include "graphics/sjis.h"
+
 namespace Sci {
 
 #define SCI_SCREEN_MAXHEIGHT 400
@@ -75,6 +77,7 @@ public:
 	bool getUpscaledHires() {
 		return _upscaledHires;
 	}
+	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
 	byte getControl(int x, int y);

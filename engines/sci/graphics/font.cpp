@@ -30,7 +30,7 @@
 
 namespace Sci {
 
-GfxFont::GfxFont(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
+GfxFontFromResource::GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
 	: _resourceId(resourceId), _screen(screen), _resMan(resMan) {
 	assert(resourceId != -1);
 
@@ -56,29 +56,29 @@ GfxFont::GfxFont(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resou
 	}
 }
 
-GfxFont::~GfxFont() {
+GfxFontFromResource::~GfxFontFromResource() {
 	delete []_chars;
 	_resMan->unlockResource(_resource);
 }
 
-GuiResourceId GfxFont::getResourceId() {
+GuiResourceId GfxFontFromResource::getResourceId() {
 	return _resourceId;
 }
 
-byte GfxFont::getHeight() {
+byte GfxFontFromResource::getHeight() {
 	return _fontHeight;
 }
-byte GfxFont::getCharWidth(byte chr) {
+byte GfxFontFromResource::getCharWidth(uint16 chr) {
 	return chr < _numChars ? _chars[chr].w : 0;
 }
-byte GfxFont::getCharHeight(byte chr) {
+byte GfxFontFromResource::getCharHeight(uint16 chr) {
 	return chr < _numChars ? _chars[chr].h : 0;
 }
-byte *GfxFont::getCharData(byte chr) {
+byte *GfxFontFromResource::getCharData(uint16 chr) {
 	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
 }
 
-void GfxFont::draw(int16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
+void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	int charWidth = MIN<int>(getCharWidth(chr), _screen->getWidth() - left);
 	int charHeight = MIN<int>(getCharHeight(chr), _screen->getHeight() - top);
 	byte b = 0, mask = 0xFF;

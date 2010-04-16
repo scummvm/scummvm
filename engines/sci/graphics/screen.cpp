@@ -234,6 +234,13 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	}
 }
 
+// We put hires kanji chars onto upscaled background, so we need to adjust coordinates. Caller gives use low-res ones
+void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color) {
+	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
+	// we don't use outline, so color 0 is actually not used
+	commonFont->drawChar(displayPtr, chr, _displayWidth, 1, color, 0);
+}
+
 byte GfxScreen::getVisual(int x, int y) {
 	return _visualScreen[y * _width + x];
 }

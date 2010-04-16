@@ -153,7 +153,7 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 
 // return max # of chars to fit maxwidth with full words
 int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
-	char curChar;
+	uint16 curChar;
 	int16 maxChars = 0, curCharCount = 0;
 	uint16 width = 0;
 	GuiResourceId oldFontId = GetFontId();
@@ -164,7 +164,11 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		return 0;
 
 	while (width <= maxWidth) {
-		curChar = *text++;
+		curChar = (*(unsigned char *)text++);
+		if (_font->isDoubleByte(curChar)) {
+			curChar |= (*(unsigned char *)text++) << 8;
+			curCharCount++;
+		}
 		switch (curChar) {
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
@@ -193,8 +197,9 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		curCharCount++;
 	}
 	if (maxChars == 0) {
-		// Is Kanji
-		maxChars = curCharCount - 1;
+		// Text w/o space, supposingly kanji - we don't adjust back to last char here strangely. If we do, we don't
+		//  get the same text cutting like in sierra sci
+		maxChars = curCharCount;
 	}
 	SetFont(oldFontId);
 	_ports->penColor(oldPenColor);
@@ -202,7 +207,7 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 }
 
 void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
-	unsigned char curChar;
+	uint16 curChar;
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _ports->_curPort->penClr;
 
@@ -212,7 +217,11 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	if (_font) {
 		text += from;
 		while (len--) {
-			curChar = *text++;
+			curChar = (*(unsigned char *)text++);
+			if (_font->isDoubleByte(curChar)) {
+				curChar |= (*(unsigned char *)text++) << 8;
+				len--;
+			}
 			switch (curChar) {
 			case 0x0A:
 			case 0x0D:
@@ -266,10 +275,6 @@ int16 GfxText16::Size(Common::Rect &rect, const char *str, GuiResourceId fontId,
 		rect.right = (maxWidth ? maxWidth : 192);
 		const char*p = str;
 		while (*p) {
-			//if (*p == 0xD || *p == 0xA) {
-			//	p++;
-			//	continue;
-			//}
 			charCount = GetLongest(p, rect.right, oldFontId);
 			if (charCount == 0)
 				break;
@@ -288,7 +293,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *str, GuiResourceId fontId,
 
 // returns maximum font height used
 void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
-	int16 curChar, charWidth;
+	uint16 curChar, charWidth;
 	Common::Rect rect;
 
 	GetFont();
@@ -299,7 +304,11 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	text += from;
 	while (len--) {
-		curChar = (*text++);
+		curChar = (*(unsigned char *)text++);
+		if (_font->isDoubleByte(curChar)) {
+			curChar |= (*(unsigned char *)text++) << 8;
+			len--;
+		}
 		switch (curChar) {
 		case 0x0A:
 		case 0x0D:
@@ -349,10 +358,6 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		SetFont(fontId);
 
 	while (*text) {
-//		if (*text == 0xD || *text == 0xA) {
-//			text++;
-//			continue;
-//		}
 		charCount = GetLongest(text, rect.width(), orgFontId);
 		if (charCount == 0)
 			break;

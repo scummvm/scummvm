@@ -23,59 +23,38 @@
  *
  */
 
-#ifndef SCI_GRAPHICS_FONT_H
-#define SCI_GRAPHICS_FONT_H
+#ifndef SCI_GRAPHICS_FONTSJIS_H
+#define SCI_GRAPHICS_FONTSJIS_H
+
+#include "graphics/sjis.h"
 
 #include "sci/graphics/helpers.h"
 
 namespace Sci {
 
-class GfxFont {
-public:
-	GfxFont() {};
-	virtual ~GfxFont() {};
-
-	virtual GuiResourceId getResourceId() { return 0; };
-	virtual byte getHeight() { return 0; };
-	virtual bool isDoubleByte(uint16 chr) { return false; };
-	virtual byte getCharWidth(uint16 chr) { return 0; };
-	virtual byte getCharHeight(uint16 chr) { return 0; };
-	virtual void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {};
-};
-
-
 /**
- * Font class, handles loading of font resources and drawing characters to screen
- *  every font resource has its own instance of this class
+ * Special Font class, handles SJIS inside sci games, uses ScummVM SJIS support
  */
-class GfxFontFromResource : public GfxFont {
+class GfxFontSjis : public GfxFont {
 public:
-	GfxFontFromResource(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
-	~GfxFontFromResource();
+	GfxFontSjis(GfxScreen *screen, GuiResourceId resourceId);
+	~GfxFontSjis();
 
 	GuiResourceId getResourceId();
 	byte getHeight();
+	bool isDoubleByte(uint16 chr);
 	byte getCharWidth(uint16 chr);
 	byte getCharHeight(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:
-	byte *getCharData(uint16 chr);
-
-	ResourceManager *_resMan;
 	GfxScreen *_screen;
-
-	Resource *_resource;
 	GuiResourceId _resourceId;
-	byte *_resourceData;
 
-	struct Charinfo {
-		byte w, h;
-		int16 offset;
-	};
-	byte _fontHeight;
-	uint16 _numChars;
-	Charinfo *_chars;
+	Graphics::FontSJIS *_commonFont;
+
+	byte _lastForDoubleByteWidth;
+	byte _lastForDoubleByteDraw;
 };
 
 } // End of namespace Sci

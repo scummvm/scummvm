@@ -32,6 +32,7 @@
 #include "sci/engine/selector.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/fontsjis.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {
@@ -67,8 +68,13 @@ GfxFont *GfxCache::getFont(GuiResourceId fontId) {
 	if (_cachedFonts.size() >= MAX_CACHED_FONTS)
 		purgeFontCache();
 
-	if (!_cachedFonts.contains(fontId))
-		_cachedFonts[fontId] = new GfxFont(_resMan, _screen, fontId);
+	if (!_cachedFonts.contains(fontId)) {
+		// Create special SJIS font in japanese games, when font 900 is selected
+		if ((fontId == 900) && (g_sci->getLanguage() == Common::JA_JPN))
+			_cachedFonts[fontId] = new GfxFontSjis(_screen, fontId);
+		else
+			_cachedFonts[fontId] = new GfxFontFromResource(_resMan, _screen, fontId);
+	}
 
 	return _cachedFonts[fontId];
 }
