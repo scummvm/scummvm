@@ -232,17 +232,8 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 		}
 
 		switch (loopCtr) {
-		case 1:
+		case 1: {
 			// @_rDelta:
-#if 1
-			if (forwardDirection) {
-				memcpy(dst, dst + ebx, byteLen);
-				dst += byteLen;
-			} else {
-				dst -= byteLen;
-				memcpy(dst + 1, dst + ebx + 1, byteLen);
-			}
-#else
 			const byte *saved_src = src;			// Save the source pointer
 			src = dst + ebx;			// Point it to existing data
 
@@ -254,45 +245,23 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 			}
 
 			src = saved_src;
-#endif
 			break;
+			}
 
 		case 2:
 			// @_rRaw
 			// Copy data from source to dest
-#if 1
-			if (forwardDirection) {
-				memcpy(dst, src, byteLen);
-				dst += byteLen;
-				src += byteLen;
-			} else {
-				dst -= byteLen;
-				src -= byteLen;
-				memcpy(dst + 1, src + 1, byteLen);
-			}
-#else
 			while (byteLen > 0) {
 				*dst = *src;
 				NEXT_BYTE(src);
 				NEXT_BYTE(dst);
 				--byteLen;
 			}
-#endif
 			break;
 
 		case 3:
 			// @_rRun
 			// Repeating run of data
-#if 1
-			if (forwardDirection) {
-				memset(dst, *(dst - 1), byteLen);
-				dst += byteLen;
-			} else {
-				eax = *(dst + 1);
-				dst -= byteLen;
-				memset(dst + 1, eax, byteLen);
-			}
-#else
 			eax = forwardDirection ? *(dst - 1) : *(dst + 1);
 
 			while (byteLen > 0) {
@@ -300,7 +269,6 @@ static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short d
 				NEXT_BYTE(dst);
 				--byteLen;
 			}
-#endif
 			break;
 		default:
 			break;
