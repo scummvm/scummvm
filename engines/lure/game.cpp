@@ -420,7 +420,7 @@ void Game::displayChuteAnimation() {
 
 void Game::displayBarrelAnimation() {
 	Mouse &mouse = Mouse::getReference();
-
+	Resources &res = Resources::getReference();
 	debugC(ERROR_INTERMEDIATE, kLureDebugAnimations, "Starting barrel animation");
 	Palette palette(BARREL_PALETTE_ID);
 	AnimationSequence *anim = new AnimationSequence(BARREL_ANIM_ID, palette, false);
@@ -432,6 +432,16 @@ void Game::displayBarrelAnimation() {
 	anim->show();
 
 	delete anim;
+
+	// Disable town NPCs that are no longer needed
+	res.deactivateHotspot(SKORL_ID);
+	res.deactivateHotspot(BLACKSMITH_ID);
+	res.deactivateHotspot(GWEN_ID);
+	res.deactivateHotspot(MALLIN_ID);
+	res.deactivateHotspot(MONK1_ID);
+	res.deactivateHotspot(GOEWIN_ID);
+	res.deactivateHotspot(MONK2_ID);
+	res.deactivateHotspot(WAYNE_ID);
 
 	Sound.killSounds();
 	mouse.cursorOn();
