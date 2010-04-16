@@ -1381,6 +1381,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
+			add_line_to_config_mk="ronindir = /usr/local/ronin"
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		gamecube)
