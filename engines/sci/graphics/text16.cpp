@@ -192,6 +192,10 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		width += _font->getCharWidth(curChar);
 		curCharCount++;
 	}
+	if (maxChars == 0) {
+		// Is Kanji
+		maxChars = curCharCount - 1;
+	}
 	SetFont(oldFontId);
 	_ports->penColor(oldPenColor);
 	return maxChars;

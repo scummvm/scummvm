@@ -139,10 +139,10 @@ Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang) 
 		seeker++;
 	}
 
-	if ((secondLang == K_LANG_JAPANESE) && (*(seeker + 1) == 'J')) {
-		// FIXME: Add Kanji support
-		lang = K_LANG_ENGLISH;
-	}
+	//if ((secondLang == K_LANG_JAPANESE) && (*(seeker + 1) == 'J')) {
+	//	// FIXME: Add Kanji support
+	//	lang = K_LANG_ENGLISH;
+	//}
 
 	if (secondLang == lang)
 		return Common::String(seeker + 2);
