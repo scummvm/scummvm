@@ -265,7 +265,14 @@ void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag
 		_screen->copyRectToScreen(rect);
 	} else {
 		Graphics::Surface *surface = g_system->lockScreen();
-		surface->fillRect(rect, 0);
+		if (!_screen->getUpscaledHires()) {
+			surface->fillRect(rect, 0);
+		} else {
+			Common::Rect upscaledRect = rect;
+			upscaledRect.top *= 2; upscaledRect.bottom *= 2;
+			upscaledRect.left *= 2; upscaledRect.right *= 2;
+			surface->fillRect(upscaledRect, 0);
+		}
 		g_system->unlockScreen();
 	}
 }
