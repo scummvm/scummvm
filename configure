@@ -1381,7 +1381,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
+			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
 		gamecube)
 			_endian=big
@@ -1492,7 +1492,7 @@ if test -n "$_host"; then
 			_backend="nds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/ds/ds.mk'
+			_port_mk="backends/platform/ds/ds.mk"
 			# TODO: Enable more ARM optimizations -- requires testing!
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
