@@ -349,19 +349,19 @@ gameListType* currentGame = NULL;
 // Stylus
 #define ABS(x) ((x)>0?(x):-(x))
 
-bool penDown;
-bool penHeld;
-bool penReleased;
-bool penDownLastFrame;
-s32 penX, penY;
-s32 penDownX, penDownY;
-int keysDownSaved;
-int keysReleasedSaved;
-int keysChangedSaved;
+bool penDown = FALSE;
+bool penHeld = FALSE;
+bool penReleased = FALSE;
+bool penDownLastFrame = FALSE;
+s32 penX = 0, penY = 0;
+s32 penDownX = 0, penDownY = 0;
+int keysDownSaved = 0;
+int keysReleasedSaved = 0;
+int keysChangedSaved = 0;
 
-bool penDownSaved;
-bool penReleasedSaved;
-int penDownFrames;
+bool penDownSaved = FALSE;
+bool penReleasedSaved = FALSE;
+int penDownFrames = 0;
 int touchXOffset = 0;
 int touchYOffset = 0;
 
@@ -580,12 +580,12 @@ void initGame() {
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
 	if (currentGame == NULL) {
-	
+
 		strcpy(gameName, ConfMan.get("gameid").c_str());
 	//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
-	
+
 		currentGame = &gameList[0];		// Default game
-	
+
 		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
 			if (!stricmp(gameName, gameList[r].gameId)) {
 				currentGame = &gameList[r];
@@ -1353,33 +1353,33 @@ void doScreenTapMode(OSystem_DS* system)
 	}
 
 	if (!(getKeysHeld() & (KEY_L | KEY_R))) {
-	
+
 		if (getKeysDown() & KEY_LEFT) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
+
 		if (getKeysReleased() & KEY_LEFT) {
 			event.type = Common::EVENT_LBUTTONUP;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
-	
+
+
 		if (getKeysDown() & KEY_RIGHT) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
+
 		if (getKeysReleased() & KEY_RIGHT) {
 			event.type = Common::EVENT_RBUTTONUP;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
 	}
-	
+
 	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(getPenX(), getPenY());
 	system->addEvent(event);
@@ -1403,18 +1403,21 @@ void doButtonSelectMode(OSystem_DS* system)
 	if (getPenReleased() && (leftButtonDown || rightButtonDown)) {
 		if (leftButtonDown) {
 			event.type = Common::EVENT_LBUTTONUP;
-		} else {
+			leftButtonDown = false;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		} else if (rightButtonDown) {
 			event.type = Common::EVENT_RBUTTONUP;
+			rightButtonDown = false;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
 		}
-
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
 	}
 
 
 	if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
 		if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
-			if ((mouseMode == MOUSE_LEFT) || (!displayModeIs8Bit)) {
+			if (mouseMode == MOUSE_LEFT) {
 				event.type = Common::EVENT_LBUTTONDOWN;
 				leftButtonDown = true;
 			} else {
@@ -1462,8 +1465,7 @@ void doButtonSelectMode(OSystem_DS* system)
 				mouseMode = MOUSE_LEFT;
 			}
 
-			if (rightButtonDown)
-			{
+			if (rightButtonDown) {
 				Common::Event event;
 				event.mouse = Common::Point(getPenX(), getPenY());
 				event.type = Common::EVENT_RBUTTONUP;
@@ -1642,26 +1644,26 @@ void addEventsToQueue() {
 			}
 
 
-			static int selectHoldCount = 0;
-			static const int SELECT_HOLD_TIME = 60;
+			static int selectTimeDown = -1;
+			static const int SELECT_HOLD_TIME = 1000;
 
-			if ((getKeysHeld() & KEY_SELECT)) {
-				selectHoldCount++;
-
-				if (selectHoldCount == SELECT_HOLD_TIME) {
-					// Hold select down for one second - show GMM
-					g_engine->openMainMenuDialog();
-				}
-			} else {
-				selectHoldCount = 0;
+			if (getKeysDown() & KEY_SELECT) {
+				selectTimeDown = getMillis();
 			}
 
+			if (selectTimeDown != -1) {
+				if (getKeysHeld() & KEY_SELECT) {
+					if (getMillis() - selectTimeDown >= SELECT_HOLD_TIME) {
+						// Hold select down for one second - show GMM
+						g_engine->openMainMenuDialog();
+					}
+				}
 
-
-			if (getKeysReleased() & KEY_SELECT) {
-				if (selectHoldCount < SELECT_HOLD_TIME) {
-					// Just pressed select - show DS options screen
-					showOptionsDialog();
+				if (getKeysReleased() & KEY_SELECT) {
+					if (getMillis() - selectTimeDown < SELECT_HOLD_TIME) {
+						// Just pressed select - show DS options screen
+						showOptionsDialog();
+					}
 				}
 			}
 		}
@@ -2081,7 +2083,7 @@ void VBlankHandler(void) {
 		storedMouseX = penX;
 		storedMouseY = penY;
 
-		if (gameScreenSwap) {
+		if (gameScreenSwap && touchPadStyle) {
 			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
 			setIconMain(3, 0, 0, 0, 0, false);
 		} else {
@@ -2590,16 +2592,16 @@ void penUpdate() {
 						if ((!keyboardEnable) || (!isInsideKeyboard(IPC->touchXpx, IPC->touchYpx))) {
 							int diffX = IPC->touchXpx - penDownX;
 							int diffY = IPC->touchYpx - penDownY;
-	
+
 							int speed = ABS(diffX) + ABS(diffY);
-	
+
 							if ((ABS(diffX) < 35) && (ABS(diffY) < 35)) {
-	
+
 								if (speed >= 8)	{
 									diffX *= ((speed >> 3) * touchPadSensitivity) >> 3;
 									diffY *= ((speed >> 3) * touchPadSensitivity) >> 3;
 								}
-	
+
 								penX += diffX;
 								penY += diffY;
 
@@ -2612,7 +2614,7 @@ void penUpdate() {
 									scX -= -penX;
 									penX = 0;
 								}
-							
+
 								if (penY > 191) {
 									scY += penY - 191;
 									penY = 191;
@@ -2623,7 +2625,7 @@ void penUpdate() {
 									penY = 0;
 								}
 							}
-	
+
 	//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
 						}
 						penDownX = IPC->touchXpx;

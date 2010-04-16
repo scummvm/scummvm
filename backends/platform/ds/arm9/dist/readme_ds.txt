@@ -41,6 +41,15 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.1.0
+
+ * New games are supported in this stable build: Return to Zork, Rodney's
+   Funscreen, Manhole, Leather Goddess of Phobos 2, Cruise for a Corpse.
+
+ScummVM DS 1.0.0
+
+ * No changes!
+
 ScummVM DS 1.0.0 RC1
 
  * Gamma correction feature to improve brightness level of game on the
@@ -226,25 +235,25 @@ Here is what you need to do:
 If your copy of ScummVM DS has been successfully patched, you will get a
 message on the top screen that looks like this:
 
-	DLDI Device:
-	GBA Movie Player (Compact Flash)
+        DLDI Device:
+        GBA Movie Player (Compact Flash)
 
 The message should show the name of your card reader. If it is wrong,
 you have used the wrong DLDI file.
 
 If you haven't patched your .nds file, you will get the following message
 
-	DLDI Driver not patched!
-	DLDI Initialise failed.
+        DLDI Driver not patched!
+        DLDI Initialise failed.
 
 In this case, you've made a mistake following the above instructions, or
 have patched the wrong file.
 
 You may also see the following message:
 
-	DLDI Device:
-	GBA Movie Player (Compact Flash)
-	DLDI Initialise failed.
+        DLDI Device:
+        GBA Movie Player (Compact Flash)
+        DLDI Initialise failed.
 
 In this case, the driver did not start up correctly. The driver is
 probably broken, or you've used the wrong one for your card reader.
@@ -310,7 +319,7 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-1.0.0 RC1. Demo versions of the games listed should work too.
+1.1.0. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
 Temptress have generously been released as freeware by the original
@@ -342,9 +351,9 @@ Monkey Island 2: LeChuck's Revenge        A
 
 Indiana Jones and the Fate of Atlantis    A
 
-Day of the Tentacle	                  A
+Day of the Tentacle                       A
 
-Sam & Max Hit the Road	                  A     Some slowdown in a few scenes
+Sam & Max Hit the Road                    A     Some slowdown in a few scenes
                                                 when MP3 audio is enabled
 
 Bear Stormin' (DOS)                       A
@@ -399,6 +408,16 @@ The Legend of Kyrandia                    F     Zoomed view does not follow the
 Lure of the Temptress                     G
 
 Nippon Safes                              G
+
+Return to Zork                            I
+
+Leather Goddess of Phobos 2               I
+
+Manhole                                   I
+
+Rodney's Funscreen                        I
+
+Cruise for a Corpse                       K
 
 
 Full Throttle and The Dig can run on the DS using an external RAM pack
@@ -456,7 +475,8 @@ with the DS pen, you can switch the input into one of three modes. Press
 left on the D-pad to enable the left mouse button. Press right on the
 D-pad to enable the right mouse button. Press up on the D-pad to enable
 hover mode. In this mode, you won't click on anything, just hover the
-mouse cursor over it. This lets you pick out active objects in the scene.
+mouse cursor over it. This lets you pick out active objects in the
+scene.
 
 An icon on the top screen will show you which mode you're in.
 
@@ -467,46 +487,48 @@ mode) will click the left or right mouse button.
 There is an alternative method of control which doesn't require you to
 change modes with the D-pad.  Press 'Select' to bring up the DS options,
 and choose 'Tap for left click, double tap for right click'.  In this
-mode, you can quickly tap the screen to left click the mouse, and tap twice
-to right click the mouse.
+mode, you can quickly tap the screen to left click the mouse, and tap
+twice to right click the mouse.
 
 
 Here is a complete list of controls in right-handed mode (the default
 setting):
-Key                Usage
-Pad Left           Left mouse button
-Pad Right          Right mouse button
-Pad Up             Hover mouse (no mouse button)
-Pad Down           Skip dialogue line (for some Lucasarts games), Show inventory
-                   (for Beneath a Steel Sky), Show active objects (for Simon the Sorceror)
-Start              Pause/game menu (works in some games)
-Select             DS Options
-B                  Skip cutscenes
-A                  Swap main screen and zoomed screen
-Y                  Show/Hide debug console
-X                  Show/Hide on-screen keyboard
-L + D-pad or L + Pen	Scroll touch screen view
-L + B              Zoom in
-L + A	           Zoom out
+Key                    Usage
+Pad Left               Left mouse button
+Pad Right              Right mouse button
+Pad Up                 Hover mouse (no mouse button)
+Pad Down               Skip dialogue line (for some Lucasarts games),
+                       Show inventory (for Beneath a Steel Sky), Show
+                       active objects (for Simon the Sorceror)
+Start                  Pause/game menu (works in some games)
+Select                 DS Options
+B                      Skip cutscenes
+A                      Swap main screen and zoomed screen
+Y                      Show/Hide debug console
+X                      Show/Hide on-screen keyboard
+L + D-pad or L + Pen   Scroll touch screen view
+L + B                  Zoom in
+L + A                  Zoom out
 
 
 
 And here's left-handed mode:
-Key                Usage
-Y	           Left mouse button
-A	           Right mouse button
-X	           Hover mouse (no mouse button)
-B	           Skip dialogue line (for some Lucasarts games), Show inventory (for
-                   Beneath a Steel Sky), Show active objects (for Simon the Sorceror)
-Start              Pause/game menu (works in some games)
-Select             DS Options
-D-pad down         Skip cutscenes
-D-pad up           Swap main screen and zoomed screen
-D-pad left         Show/Hide debug console
-D-pad right        Show/Hide on-screen keyboard
-R + D-pad or R + Pen	Scroll touch screen view
-R + D-pad down     Zoom in
-R + d-pad right    Zoom out
+Key                    Usage
+Y                      Left mouse button
+A                      Right mouse button
+X                      Hover mouse (no mouse button)
+B                      Skip dialogue line (for some Lucasarts games),
+                       Show inventory (for Beneath a Steel Sky), Show
+                       active objects (for Simon the Sorceror)
+Start                  Pause/game menu (works in some games)
+Select                 DS Options
+D-pad down             Skip cutscenes
+D-pad up               Swap main screen and zoomed screen
+D-pad left             Show/Hide debug console
+D-pad right            Show/Hide on-screen keyboard
+R + D-pad or R + Pen   Scroll touch screen view
+R + D-pad down         Zoom in
+R + d-pad right        Zoom out
 
 
 
@@ -779,11 +801,11 @@ This program was brought to you by caffiene, sugar, and late nights.
       ------------------------------------------------------------------------
 
 If you have problems getting ScummVM to work on your hardware, please
-read the FAQ first. /Please/ don't ask me questions which are
-answered in the FAQ, I get many emails about this program each day, and
-I can't help the people who really need help if I'm answering the same
-question all the time which is already answered on this page. Other than
-that, feel free to post on the ScummVM DS forum <http://forums.scummvm.org>
+read the FAQ first. /Please/ don't ask me questions which are answered
+in the FAQ, I get many emails about this program each day, and I can't
+help the people who really need help if I'm answering the same question
+all the time which is already answered on this page. Other than that,
+feel free to post on the ScummVM DS forum <http://forums.scummvm.org>
 for help. Please do your research first though. There is no way of
 running this on an out-of-the box DS without extra hardware. Most of
 these things are fairly inexpensive though.
@@ -819,14 +841,16 @@ libmad support by opening 'backends/platform/ds/arm9/makefile' and
 commenting out the line which says USE_MAD = 1.
 
 Then, enter the 'backends/platform/ds' folder and type:
-make SCUMM_BUILD=a
+
+  make SCUMM_BUILD=a
 
 The executable nds file will build inside 'backends/platform/ds/arm9/SCUMMVM-A'.
 
 For other builds, substitute the letters b - g in the above line.
 
 To build everything, type:
-make allbuildssafe
+
+  make allbuildssafe
 
 
 
