@@ -1255,8 +1255,6 @@ case $_host_os in
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
-		# FIXME: Please document why 'long' has to be used instead of int
-		#type_4_byte='long'
 		;;
 	bsd* | hpux* | netbsd* | openbsd* | sunos*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1289,8 +1287,6 @@ case $_host_os in
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
-		# FIXME: Please document why 'long' has to be used instead of int
-		#type_4_byte='long'
 		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1444,8 +1440,6 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
@@ -1514,8 +1508,6 @@ if test -n "$_host"; then
 		ppc-amigaos)
 			_endian=big
 			_need_memalign=yes
-			# FIXME: Please document why 'long' has to be used instead of int
-			#type_4_byte='long'
 			;;
 		ps2)
 			# TODO: complete this
