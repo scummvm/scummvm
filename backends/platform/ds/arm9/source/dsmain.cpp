@@ -580,12 +580,12 @@ void initGame() {
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
 	if (currentGame == NULL) {
-	
+
 		strcpy(gameName, ConfMan.get("gameid").c_str());
 	//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
-	
+
 		currentGame = &gameList[0];		// Default game
-	
+
 		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
 			if (!stricmp(gameName, gameList[r].gameId)) {
 				currentGame = &gameList[r];
@@ -1353,33 +1353,33 @@ void doScreenTapMode(OSystem_DS* system)
 	}
 
 	if (!(getKeysHeld() & (KEY_L | KEY_R))) {
-	
+
 		if (getKeysDown() & KEY_LEFT) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
+
 		if (getKeysReleased() & KEY_LEFT) {
 			event.type = Common::EVENT_LBUTTONUP;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
-	
+
+
 		if (getKeysDown() & KEY_RIGHT) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
-	
+
 		if (getKeysReleased() & KEY_RIGHT) {
 			event.type = Common::EVENT_RBUTTONUP;
 			event.mouse = Common::Point(getPenX(), getPenY());
 			system->addEvent(event);
 		}
 	}
-	
+
 	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(getPenX(), getPenY());
 	system->addEvent(event);
@@ -1658,7 +1658,7 @@ void addEventsToQueue() {
 						g_engine->openMainMenuDialog();
 					}
 				}
-	
+
 				if (getKeysReleased() & KEY_SELECT) {
 					if (getMillis() - selectTimeDown < SELECT_HOLD_TIME) {
 						// Just pressed select - show DS options screen
@@ -2592,16 +2592,16 @@ void penUpdate() {
 						if ((!keyboardEnable) || (!isInsideKeyboard(IPC->touchXpx, IPC->touchYpx))) {
 							int diffX = IPC->touchXpx - penDownX;
 							int diffY = IPC->touchYpx - penDownY;
-	
+
 							int speed = ABS(diffX) + ABS(diffY);
-	
+
 							if ((ABS(diffX) < 35) && (ABS(diffY) < 35)) {
-	
+
 								if (speed >= 8)	{
 									diffX *= ((speed >> 3) * touchPadSensitivity) >> 3;
 									diffY *= ((speed >> 3) * touchPadSensitivity) >> 3;
 								}
-	
+
 								penX += diffX;
 								penY += diffY;
 
@@ -2614,7 +2614,7 @@ void penUpdate() {
 									scX -= -penX;
 									penX = 0;
 								}
-							
+
 								if (penY > 191) {
 									scY += penY - 191;
 									penY = 191;
@@ -2625,7 +2625,7 @@ void penUpdate() {
 									penY = 0;
 								}
 							}
-	
+
 	//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
 						}
 						penDownX = IPC->touchXpx;
