@@ -1360,6 +1360,9 @@ if test -n "$_host"; then
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			;;
 		arm-riscos|linupy)
 			DEFINES="$DEFINES -DUNIX -DLINUPY"
@@ -1407,8 +1410,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1422,8 +1425,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gp2xwiz"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1497,6 +1500,9 @@ if test -n "$_host"; then
 			# TODO: Enable more ARM optimizations -- requires testing!
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			#add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			#add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			#add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			;;
 		neuros)
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
