@@ -407,15 +407,25 @@ void GfxTransitions::scroll(int16 number) {
 	screenWidth = _screen->getDisplayWidth(); screenHeight = _screen->getDisplayHeight();
 
 	oldScreenPtr = _oldScreen + _picRect.left + _picRect.top * screenWidth;
+	if (_screen->getUpscaledHires()) {
+		oldScreenPtr += _picRect.left + _picRect.top * screenWidth;
+	}
 
 	switch (number) {
 	case SCI_TRANSITIONS_SCROLL_LEFT:
 		newScreenRect.right = newScreenRect.left;
 		newMoveRect.left = newMoveRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
-			oldScreenPtr++; oldMoveRect.right--;
-			if (oldMoveRect.right > oldMoveRect.left)
-				g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+			oldScreenPtr++;
+			if (_screen->getUpscaledHires())
+				oldScreenPtr++;
+			oldMoveRect.right--;
+			if (oldMoveRect.right > oldMoveRect.left) {
+				if (!_screen->getUpscaledHires())
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+				else
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left * 2, oldMoveRect.top * 2, oldMoveRect.width() * 2, oldMoveRect.height() * 2);
+			}
 			newScreenRect.right++; newMoveRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
@@ -431,8 +441,12 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.left = newScreenRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
 			oldMoveRect.left++;
-			if (oldMoveRect.right > oldMoveRect.left)
-				g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+			if (oldMoveRect.right > oldMoveRect.left) {
+				if (!_screen->getUpscaledHires())
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+				else
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left * 2, oldMoveRect.top * 2, oldMoveRect.width() * 2, oldMoveRect.height() * 2);
+			}
 			newScreenRect.left--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			if ((stepNr & 1) == 0) {
@@ -448,9 +462,16 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.bottom = newScreenRect.top;
 		newMoveRect.top = newMoveRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
-			oldScreenPtr += screenWidth; oldMoveRect.top++;
-			if (oldMoveRect.top < oldMoveRect.bottom)
-				g_system->copyRectToScreen(oldScreenPtr, screenWidth, _picRect.left, _picRect.top, oldMoveRect.width(), oldMoveRect.height());
+			oldScreenPtr += screenWidth;
+			if (_screen->getUpscaledHires())
+				oldScreenPtr += screenWidth;
+			oldMoveRect.top++;
+			if (oldMoveRect.top < oldMoveRect.bottom) {
+				if (!_screen->getUpscaledHires())
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, _picRect.left, _picRect.top, oldMoveRect.width(), oldMoveRect.height());
+				else
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, _picRect.left * 2, _picRect.top * 2, oldMoveRect.width() * 2, oldMoveRect.height() * 2);
+			}
 			newScreenRect.bottom++;	newMoveRect.top--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
 			updateScreenAndWait(3);
@@ -461,8 +482,12 @@ void GfxTransitions::scroll(int16 number) {
 		newScreenRect.top = newScreenRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
 			oldMoveRect.top++;
-			if (oldMoveRect.top < oldMoveRect.bottom)
-				g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+			if (oldMoveRect.top < oldMoveRect.bottom) {
+				if (!_screen->getUpscaledHires())
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+				else
+					g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left * 2, oldMoveRect.top * 2, oldMoveRect.width() * 2, oldMoveRect.height() * 2);
+			}
 			newScreenRect.top--;
 			_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
 			updateScreenAndWait(3);
