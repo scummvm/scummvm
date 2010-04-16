@@ -99,8 +99,11 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+
+		if (curNode) {
+			curAddress = curNode->succ;
+			curNode = _s->_segMan->lookupNode(curAddress);
+		}
 	}
 	return true;
 }
