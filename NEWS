@@ -9,6 +9,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed a bug which caused the DOS versions to crash before the credits when AdLib
      music is selected.
 
+ Tinsel:
+   - Fix video playback regression in Discworld 2.
+
  PSP port: (Also forgot to mention in 1.1.0)
    - Added plugin support which allows the PSP Phat to run every game.
    - Added a new virtual keyboard optimized for rapid D-Pad input.
