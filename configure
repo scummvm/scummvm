@@ -204,7 +204,11 @@ EOF
 }
 
 gcc_get_define() {
-	$CXX -dM -E - < /dev/null | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
+	# Note: The AmigaOS compiler doesn't like the "-" input file, so a real file
+	# is used instead
+	touch $TMPC
+	$CXX -dM -E $TMPC | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
+	rm -f $TMPC
 }
 
 #
