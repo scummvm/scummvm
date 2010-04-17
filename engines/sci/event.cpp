@@ -101,6 +101,17 @@ int SciEvent::numlockify (int c) {
 	}
 }
 
+static const byte codepagemap_88591toDOS[0x80] = {
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x9x
+	 '?', 0xad, 0x9b, 0x9c,  '?', 0x9d,  '?', 0x9e,  '?',  '?', 0xa6, 0xae, 0xaa,  '?',  '?',  '?', // 0xAx
+	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', 0xa7, 0xaf, 0xac, 0xab,  '?', 0xa8, // 0xBx
+	 '?',  '?',  '?',  '?', 0x8e, 0x8f, 0x92, 0x80,  '?', 0x90,  '?',  '?',  '?',  '?',  '?',  '?', // 0xCx
+	 '?', 0xa5,  '?',  '?',  '?',  '?', 0x99,  '?',  '?',  '?',  '?',  '?', 0x9a,  '?',  '?', 0xe1, // 0xDx
+	0x85, 0xa0, 0x83,  '?', 0x84, 0x86, 0x91, 0x87, 0x8a, 0x82, 0x88, 0x89, 0x8d, 0xa1, 0x8c, 0x8b, // 0xEx
+	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
+};
+
 sciEvent SciEvent::getFromScummVM() {
 	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
 	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
@@ -155,6 +166,11 @@ sciEvent SciEvent::getFromScummVM() {
 			if (!(input.data & 0xFF00)) {
 				// Directly accept most common keys without conversion
 				input.type = SCI_EVENT_KEYBOARD;
+				if ((input.character >= 0x80) && (input.character <= 0xFF)) {
+					// we get 8859-1 character, we need dos (cp850/437) character for multilingual sci01 games
+					// TODO: check, if we get 8859-1 on all platforms
+					input.character = codepagemap_88591toDOS[input.character & 0x7f];
+				}
 				if (input.data == Common::KEYCODE_TAB) {
 					// Tab
 					input.type = SCI_EVENT_KEYBOARD;
