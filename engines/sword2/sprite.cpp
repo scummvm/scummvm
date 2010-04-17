@@ -701,7 +701,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 		// We cannot use good scaling for PSX version, as we are missing
 		// some required data.
 		if (_renderCaps & RDBLTFX_EDGEBLEND && !Sword2Engine::isPsx())
-			scaleImageGood(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, _buffer + _screenWide * rd.top + rd.left);
+			scaleImageGood(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h, _buffer, rd.left, rd.top);
 		else
 			scaleImageFast(newSprite, s->scaledWidth, s->scaledWidth, s->scaledHeight, sprite, s->w, s->w, s->h);
 

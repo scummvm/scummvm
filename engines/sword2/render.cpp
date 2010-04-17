@@ -88,11 +88,11 @@ void Screen::blitBlockSurface(BlockSurface *s, Common::Rect *r, Common::Rect *cl
 // There are two different separate functions for scaling the image - one fast
 // and one good. Or at least that's the theory. I'm sure there are better ways
 // to scale an image than this. The latter is used at the highest graphics
-// quality setting. Note that the "good" scaler takes an extra parameter, a
-// pointer to the area of the screen where the sprite will be drawn.
+// quality setting. Note that the "good" scaler takes extra parameters so that
+// it can use the background image when calculating the average pixel value.
 //
-// This code isn't quite like the original DrawSprite(), but should be close
-// enough.
+// This code isn't quite like the original DrawSprite(), but the result should
+// be close enough, I hope.
 
 void Screen::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight) {
 	int x, y;
@@ -111,7 +111,7 @@ void Screen::scaleImageFast(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 	}
 }
 
-void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backbuf) {
+void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth, uint16 srcHeight, byte *backBuf, int16 bbXPos, int16 bbYPos) {
 	for (int y = 0; y < dstHeight; y++) {
 		for (int x = 0; x < dstWidth; x++) {
 			uint8 c1, c2, c3, c4;
@@ -122,42 +122,76 @@ void Screen::scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth, uint16 
 			uint32 yFrac = dstHeight - (y * srcHeight) % dstHeight;
 
 			byte *srcPtr = src + yPos * srcPitch + xPos;
-			byte *backPtr = backbuf + y * _screenWide + x;
 
 			bool transparent = true;
 
 			if (*srcPtr) {
 				c1 = *srcPtr;
 				transparent = false;
-			} else
-				c1 = *backPtr;
+			} else {
+				if (bbXPos + x >= 0 &&
+				    bbXPos + x < RENDERWIDE &&
+				    bbYPos + y >= MENUDEEP &&
+				    bbYPos + y < MENUDEEP + RENDERDEEP) {
+					c1 = *(backBuf + _screenWide * (bbYPos + y) + bbXPos + x);
+				} else {
+					c1 = 0;
+				}
+			}
 
 			if (x < dstWidth - 1) {
 				if (*(srcPtr + 1)) {
 					c2 = *(srcPtr + 1);
 					transparent = false;
-				} else
-					c2 = *(backPtr + 1);
-			} else
+				} else {
+					if (bbXPos + x + 1 >= 0 &&
+					    bbXPos + x + 1 < RENDERWIDE &&
+					    bbYPos + y >= MENUDEEP &&
+					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+						c2 = *(backBuf + _screenWide * (bbYPos + y) + bbXPos + x + 1);
+					} else {
+						c2 = c1;
+					}
+				}
+			} else {
 				c2 = c1;
+			}
 
 			if (y < dstHeight - 1) {
 				if (*(srcPtr + srcPitch)) {
 					c3 = *(srcPtr + srcPitch);
 					transparent = false;
-				} else
-					c3 = *(backPtr + _screenWide);
-			} else
+				} else {
+					if (bbXPos + x >= 0 &&
+					    bbXPos + x < RENDERWIDE &&
+					    bbYPos + y + 1 >= MENUDEEP &&
+					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+						c3 = *(backBuf + _screenWide * (bbYPos + y + 1) + bbXPos);
+					} else {
+						c3 = c1;
+					}
+				}
+			} else {
 				c3 = c1;
+			}
 
 			if (x < dstWidth - 1 && y < dstHeight - 1) {
 				if (*(srcPtr + srcPitch + 1)) {
 					c4 = *(srcPtr + srcPitch + 1);
 					transparent = false;
-				} else
-					c4 = *(backPtr + _screenWide + 1);
-			} else
+				} else {
+					if (bbXPos + x + 1 >= 0 &&
+					    bbXPos + x + 1 < RENDERWIDE &&
+					    bbYPos + y + 1 >= MENUDEEP &&
+					    bbYPos + y + 1 < MENUDEEP + RENDERDEEP) {
+						c4 = *(backBuf + _screenWide * (bbYPos + y + 1) + bbXPos + x + 1);
+					} else {
+						c4 = c3;
+					}
+				}
+			} else {
 				c4 = c3;
+			}
 
 			if (!transparent) {
 				uint32 r1 = _palette[c1 * 4 + 0];

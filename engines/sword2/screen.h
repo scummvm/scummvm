@@ -444,7 +444,7 @@ public:
 		uint16 srcHeight);
 	void scaleImageGood(byte *dst, uint16 dstPitch, uint16 dstWidth,
 		uint16 dstHeight, byte *src, uint16 srcPitch, uint16 srcWidth,
-		uint16 srcHeight, byte *backbuf);
+		uint16 srcHeight, byte *backBuf, int16 bbXPos, int16 bbYPos);
 
 	void updateRect(Common::Rect *r);
 
