@@ -132,25 +132,35 @@ bool SoundManager::playSample(int id, Audio::Mixer::SoundType type, Audio::Sound
 		//_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, soundVolumeMusic);
 		_vm->_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, _vm->_config->_voiceVolume);
 
-		Common::MemoryReadStream *compressedStream =
-			new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 		Audio::AudioStream *sampleStream = 0;
 
 		// play it
 		switch (_soundMode) {
 		case kMP3Mode:
 #ifdef USE_MAD
+			{
+			Common::MemoryReadStream *compressedStream =
+				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
+			}
 #endif
 			break;
 		case kVorbisMode:
 #ifdef USE_VORBIS
+			{
+			Common::MemoryReadStream *compressedStream =
+				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
+			}
 #endif
 			break;
 		case kFLACMode:
 #ifdef USE_FLAC
+			{
+			Common::MemoryReadStream *compressedStream =
+				new Common::MemoryReadStream(sampleBuf, sampleLen, DisposeAfterUse::YES);
 			sampleStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
+			}
 #endif
 			break;
 		default:

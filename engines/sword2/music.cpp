@@ -188,8 +188,6 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 
 	fh->file.seek(pos, SEEK_SET);
 
-	SafeSubReadStream *tmp = 0;
-
 	switch (fh->fileType) {
 	case kCLUMode:
 		if (Sword2Engine::isPsx())
@@ -197,19 +195,22 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		else
 			return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
-	case kMP3Mode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+	case kMP3Mode: {
+		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeMP3Stream(tmp, DisposeAfterUse::YES);
+		}
 #endif
 #ifdef USE_VORBIS
-	case kVorbisMode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+	case kVorbisMode: {
+		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeVorbisStream(tmp, DisposeAfterUse::YES);
+		}
 #endif
 #ifdef USE_FLAC
-	case kFLACMode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
+	case kFLACMode: {
+		SafeSubReadStream *tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFLACStream(tmp, DisposeAfterUse::YES);
+		}
 #endif
 	default:
 		return NULL;
