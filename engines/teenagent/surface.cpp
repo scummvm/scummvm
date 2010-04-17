@@ -87,7 +87,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		return Common::Rect();
 
 	if (zoom == 256) {
-		byte *src = (byte *)getBasePtr(0, src_rect.top);
+		const byte *src = (const byte *)getBasePtr(0, src_rect.top);
 		byte *dst_base = (byte *)surface->getBasePtr(dst_rect.left, dst_rect.top);
 
 		for (int i = src_rect.top; i < src_rect.bottom; ++i) {
@@ -107,7 +107,7 @@ Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mi
 		for(int i = 0; i < dst_rect.height(); ++i) {
 			for (int j = 0; j < dst_rect.width(); ++j) {
 				int px = j * 256 / zoom;
-				byte *src = (byte *)getBasePtr(src_rect.left + (mirror? w - px - 1: px), src_rect.top + i * 256 / zoom);
+				const byte *src = (const byte *)getBasePtr(src_rect.left + (mirror? w - px - 1: px), src_rect.top + i * 256 / zoom);
 				byte p = *src;
 				if (p != 0xff)
 					dst[j] = p;

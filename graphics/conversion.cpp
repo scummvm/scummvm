@@ -107,7 +107,7 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		if (srcFmt.bytesPerPixel == 2) {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++, src += 2, dst += 4) {
-					color = *(uint16 *) src;
+					color = *(const uint16 *)src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
 					*(uint32 *)dst = color;
@@ -133,7 +133,7 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		} else {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++, src += 4, dst += 4) {
-					color = *(uint32 *) src;
+					color = *(const uint32 *)src;
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
 					*(uint32 *)dst = color;

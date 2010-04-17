@@ -586,7 +586,7 @@ INLINE Bits Operator::GetWave( Bitu index, Bitu vol ) {
 #endif
 }
 
-Bits INLINE Operator::GetSample( Bits modulation ) {
+INLINE Bits Operator::GetSample( Bits modulation ) {
 	Bitu vol = ForwardVolume();
 	if ( ENV_SILENT( vol ) ) {
 		//Simply forward the wave

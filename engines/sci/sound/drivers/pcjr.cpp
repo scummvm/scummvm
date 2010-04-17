@@ -34,7 +34,7 @@ namespace Sci {
 #define BASE_NOTE 129	// A10
 #define BASE_OCTAVE 10	// A10, as I said
 
-const static int freq_table[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
+static const int freq_table[12] = { // A4 is 440Hz, halftone map is x |-> ** 2^(x/12)
 	28160, // A10
 	29834,
 	31608,
