@@ -74,12 +74,13 @@ byte GfxFontSjis::getCharHeight(uint16 chr) {
 void GfxFontSjis::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	// TODO: Check, if character fits on screen - if it doesn't we need to skip it
 	//  Normally SCI cuts the character and draws the part that fits, but the common SJIS doesn't support that
-	// It seems as if the PC98 ROM actually uses the given position as the center of the character, that's why we
-	//  subtract 4 here. Otherwise the characters will be slightly to the right. The actual cause for "bad" coordinates
-	//  is GetLongest() inside GfxText16. It leaves the last character that is causing a split to a new line within the
-	//  current line instead of removing it. That way the result will actually be too long (not our fault, sierra sci
-	//  does it the same way)
-	_screen->putKanjiChar(_commonFont, left - 4, top, chr, color);
+
+	// According to LordHoto the PC98 ROM actually split the screen into 40x25 kanji chars and was only able to place
+	//  them there. So removing the lower 4 bits of the horizontal coordinate puts them into the correct position (it seems).
+	//  If we don't do this, the characters will be slightly to the right, caused by "GetLongest()" inside GfxText16 that
+	//  leaves the last character that is causing a split into a new line within the current line instead of removing it.
+	//  That way the result will actually be too long (not our fault, sierra sci does it the same way)
+	_screen->putKanjiChar(_commonFont, left & 0xFFC, top, chr, color);
 }
 
 } // End of namespace Sci
