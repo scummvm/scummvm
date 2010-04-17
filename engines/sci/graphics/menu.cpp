@@ -540,6 +540,11 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	if (!maxTextRightAlignedWidth)
 		_menuRect.right -= 5;
 
+	// if part of menu window is outside the screen, move it into the screen (this happens in multilingual sq3 and lsl3)
+	if (_menuRect.right > _screen->getWidth()) {
+		_menuRect.translate(-(_menuRect.right - _screen->getWidth()), 0);
+	}
+
 	// Save background
 	_menuSaveHandle = _paint16->bitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
 
