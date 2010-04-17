@@ -36,7 +36,11 @@ namespace Sci {
 
 #define SCANCODE_ROWS_NR 3
 
-SciEvent::SciEvent() {
+SciEvent::SciEvent(ResourceManager *resMan)
+	: _resMan(resMan) {
+
+	// Check, if font of current game includes extended chars
+	_fontIsExtended = _resMan->detectFontExtended();
 }
 
 SciEvent::~SciEvent() {
@@ -167,6 +171,17 @@ sciEvent SciEvent::getFromScummVM() {
 				// Directly accept most common keys without conversion
 				input.type = SCI_EVENT_KEYBOARD;
 				if ((input.character >= 0x80) && (input.character <= 0xFF)) {
+					// If there is no extended font, we will just clear the current event
+					//  Sierra SCI actually accepted those characters, but didn't display them inside textedit-controls
+					//  because the characters were missing inside the font(s)
+					//  We filter them out for non-multilingual games because of that
+					if (!_fontIsExtended) {
+						input.type = SCI_EVENT_NONE;
+						input.character = 0;
+						input.data = 0;
+						input.modifiers = 0;
+						return input;
+					}
 					// we get 8859-1 character, we need dos (cp850/437) character for multilingual sci01 games
 					// TODO: check, if we get 8859-1 on all platforms
 					input.character = codepagemap_88591toDOS[input.character & 0x7f];

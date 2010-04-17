@@ -265,6 +265,8 @@ public:
 	void addNewGMPatch(const Common::String &gameId);
 
 	bool detectHires();
+	// Detects, if standard font of current game includes extended characters (>0x80)
+	bool detectFontExtended();
 
 protected:
 	// Maximum number of bytes to allow being allocated for resources

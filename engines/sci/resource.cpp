@@ -1979,6 +1979,19 @@ bool ResourceManager::detectHires() {
 #endif
 }
 
+bool ResourceManager::detectFontExtended() {
+
+	Resource *res = findResource(ResourceId(kResourceTypeFont, 0), 0);
+	if (res) {
+		if (res->size >= 4) {
+			uint16 numChars = READ_LE_UINT16(res->data + 2);
+			if (numChars > 0x80)
+				return true;
+		}
+	}
+	return false;
+}
+
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
 bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);

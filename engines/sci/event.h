@@ -113,7 +113,7 @@ struct sciEvent {
 
 class SciEvent {
 public:
-	SciEvent();
+	SciEvent(ResourceManager *resMan);
 	~SciEvent();
 
 	sciEvent get(unsigned int mask);
@@ -126,6 +126,9 @@ private:
 	int numlockify (int c);
 	sciEvent getFromScummVM();
 
+	ResourceManager *_resMan;
+
+	bool _fontIsExtended;
 	Common::List<sciEvent> _events;
 };
 
