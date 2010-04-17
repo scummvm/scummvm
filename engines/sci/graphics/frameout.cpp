@@ -252,7 +252,7 @@ void GfxFrameout::kernelFrameout() {
 							// TODO: proper text splitting... this is a hack
 							if ((text[i] == ' ' && i > 0 && text[i - i] == ' ') || text[i] == '\n' || 
 								(curX + font->getCharWidth(text[i]) > _screen->getWidth())) {
-								curY += font->getCharHeight('A');
+								curY += font->getHeight();
 								curX = itemEntry->x;
 							}
 							font->draw(text[i], curY, curX, foreColor, dimmed);

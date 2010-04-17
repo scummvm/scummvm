@@ -44,7 +44,6 @@ public:
 	byte getHeight();
 	bool isDoubleByte(uint16 chr);
 	byte getCharWidth(uint16 chr);
-	byte getCharHeight(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:

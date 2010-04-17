@@ -67,10 +67,6 @@ byte GfxFontSjis::getCharWidth(uint16 chr) {
 	return _commonFont->getCharWidth(chr) >> 1;
 
 }
-byte GfxFontSjis::getCharHeight(uint16 chr) {
-	return _commonFont->getFontHeight() >> 1;
-}
-
 void GfxFontSjis::draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {
 	// TODO: Check, if character fits on screen - if it doesn't we need to skip it
 	//  Normally SCI cuts the character and draws the part that fits, but the common SJIS doesn't support that

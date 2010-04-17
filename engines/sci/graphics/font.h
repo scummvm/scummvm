@@ -39,7 +39,6 @@ public:
 	virtual byte getHeight() { return 0; };
 	virtual bool isDoubleByte(uint16 chr) { return false; };
 	virtual byte getCharWidth(uint16 chr) { return 0; };
-	virtual byte getCharHeight(uint16 chr) { return 0; };
 	virtual void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {};
 };
 
@@ -56,10 +55,10 @@ public:
 	GuiResourceId getResourceId();
 	byte getHeight();
 	byte getCharWidth(uint16 chr);
-	byte getCharHeight(uint16 chr);
 	void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput);
 
 private:
+	byte getCharHeight(uint16 chr);
 	byte *getCharData(uint16 chr);
 
 	ResourceManager *_resMan;

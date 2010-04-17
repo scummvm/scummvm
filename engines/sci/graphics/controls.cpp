@@ -116,12 +116,12 @@ void GfxControls::texteditCursorDraw(Common::Rect rect, const char *text, uint16
 	if (!_texteditCursorVisible) {
 		textWidth = 0;
 		for (i = 0; i < curPos; i++) {
-			textWidth += _text16->_font->getCharWidth(text[i]);
+			textWidth += _text16->_font->getCharWidth((unsigned char)text[i]);
 		}
 		_texteditCursorRect.left = rect.left + textWidth;
 		_texteditCursorRect.top = rect.top;
 		_texteditCursorRect.bottom = _texteditCursorRect.top + _text16->_font->getHeight();
-		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _text16->_font->getCharWidth(text[curPos]));
+		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : _text16->_font->getCharWidth((unsigned char)text[curPos]));
 		_paint16->invertRect(_texteditCursorRect);
 		_paint16->bitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;
