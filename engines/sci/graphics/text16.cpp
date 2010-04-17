@@ -164,9 +164,9 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		return 0;
 
 	while (width <= maxWidth) {
-		curChar = (*(unsigned char *)text++);
+		curChar = (*(const byte *)text++);
 		if (_font->isDoubleByte(curChar)) {
-			curChar |= (*(unsigned char *)text++) << 8;
+			curChar |= (*(const byte *)text++) << 8;
 			curCharCount++;
 		}
 		switch (curChar) {
@@ -217,9 +217,9 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 	if (_font) {
 		text += from;
 		while (len--) {
-			curChar = (*(unsigned char *)text++);
+			curChar = (*(const byte *)text++);
 			if (_font->isDoubleByte(curChar)) {
-				curChar |= (*(unsigned char *)text++) << 8;
+				curChar |= (*(const byte *)text++) << 8;
 				len--;
 			}
 			switch (curChar) {
@@ -304,9 +304,9 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 	rect.bottom = rect.top + _ports->_curPort->fontHeight;
 	text += from;
 	while (len--) {
-		curChar = (*(unsigned char *)text++);
+		curChar = (*(const byte *)text++);
 		if (_font->isDoubleByte(curChar)) {
-			curChar |= (*(unsigned char *)text++) << 8;
+			curChar |= (*(const byte *)text++) << 8;
 			len--;
 		}
 		switch (curChar) {
