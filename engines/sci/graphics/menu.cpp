@@ -338,7 +338,7 @@ void GfxMenu::calculateTextWidth() {
 	menuIterator = _list.begin();
 	while (menuIterator != menuEnd) {
 		menuEntry = *menuIterator;
-		menuEntry->textSplit = g_sci->strSplit(menuEntry->text.c_str());
+		menuEntry->textSplit = g_sci->strSplit(menuEntry->text.c_str(), NULL);
 		_text16->StringWidth(menuEntry->textSplit.c_str(), 0, menuEntry->textWidth, dummyHeight);
 
 		menuIterator++;
@@ -348,7 +348,7 @@ void GfxMenu::calculateTextWidth() {
 	while (itemIterator != itemEnd) {
 		itemEntry = *itemIterator;
 		// Split the text now for multilingual SCI01 games
-		itemEntry->textSplit = g_sci->strSplit(itemEntry->text.c_str());
+		itemEntry->textSplit = g_sci->strSplit(itemEntry->text.c_str(), NULL);
 		_text16->StringWidth(itemEntry->textSplit.c_str(), 0, itemEntry->textWidth, dummyHeight);
 		_text16->StringWidth(itemEntry->textRightAligned.c_str(), 0, itemEntry->textRightAlignedWidth, dummyHeight);
 
