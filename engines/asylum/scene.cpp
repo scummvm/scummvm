@@ -275,7 +275,7 @@ void Scene::updateActorDirection(int actorIndex, int param) {
 		// active (via the global at .data:00543504)
 		// FIXME skipping for now
 		if (0) {
-			if (vm()->_rnd.getRandomNumber(-2) == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
+			if (vm()->_rnd.getRandomBit() == 1 && defaultActorDirectionLoaded(actorIndex, 15)) {
 				actor->frameNum = 0;
 				if (actor->direction > 4)
 					actor->direction = 8 - actor->direction;
