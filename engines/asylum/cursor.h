@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://asylumengine.googlecode.com/svn/trunk/cursor.h $
- * $Id: cursor.h 427 2010-01-13 11:53:51Z alexbevi $
+ * $URL$
+ * $Id$
  *
  */
 
