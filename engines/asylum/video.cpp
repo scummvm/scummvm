@@ -76,10 +76,10 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 			_subtitles.push_back(newSubtitle);
 		}
 
-		delete line;
+		delete [] line;
 	}
 
-	delete buffer;
+	delete [] buffer;
 
 	return playVideo(stopEvents);
 }
