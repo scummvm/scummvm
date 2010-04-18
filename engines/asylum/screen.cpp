@@ -52,13 +52,16 @@ void Screen::copyToBackBuffer(byte *buffer, int32 pitch, int32 x, int32 y, int32
 }
 
 void Screen::copyToBackBufferWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
-	// int32 h = height;
-	// int32 w = width;
 	byte *dest = (byte *)_backBuffer.pixels;
+	
+	int32 left = (x < 0) ? -x : 0;
+	int32 top = (y < 0) ? -y : 0;
+	int32 right = (x + width > 640) ? 640 - abs(x) : width;
+	int32 bottom = (y + height > 480) ? 480 - abs(y) : height;
 
-	for (int32 curY = 0; curY < height; curY++) {
-		for (int32 curX = 0; curX < width; curX++) {
-			if (buffer[curX + curY * pitch] != 0) {
+	for (int32 curY = top; curY < bottom; curY++) {
+		for (int32 curX = left; curX < right; curX++) {
+			if (buffer[curX + curY * pitch] != 0 ) {
 				dest[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
 		}
@@ -71,10 +74,15 @@ void Screen::copyRectToScreen(byte *buffer, int32 pitch, int32 x, int32 y, int32
 
 void Screen::copyRectToScreenWithTransparency(byte *buffer, int32 pitch, int32 x, int32 y, int32 width, int32 height) {
 	byte *screenBuffer = (byte *)_vm->_system->lockScreen()->pixels;
-
-	for (int32 curY = 0; curY < height; curY++) {
-		for (int32 curX = 0; curX < width; curX++) {
-			if (buffer[curX + curY * pitch] != 0 && (x + curX + (y + curY) * 640 <= 640*480)) {
+	
+	int32 left = (x < 0) ? -x : 0;
+	int32 top = (y < 0) ? -y : 0;
+	int32 right = (x + width > 640) ? 640 - abs(x) : width;
+	int32 bottom = (y + height > 480) ? 480 - abs(y) : height;
+	
+	for (int32 curY = top; curY < bottom; curY++) {
+		for (int32 curX = left; curX < right; curX++) {
+			if (buffer[curX + curY * pitch] != 0) {
 				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
 		}
@@ -144,9 +152,9 @@ void Screen::drawGraphicsInQueue() {
 
 	for (uint32 i = 0; i < _queueItems.size(); i++) {
 		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
-		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
-
-		copyRectToScreenWithTransparency((byte *)fra->surface.pixels,
+		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);			
+		
+		copyToBackBufferWithTransparency((byte *)fra->surface.pixels,
 				fra->surface.w,
 				_queueItems[i].x - ws->xLeft, _queueItems[i].y - ws->yTop,
 				fra->surface.w,
