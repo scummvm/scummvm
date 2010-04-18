@@ -179,9 +179,9 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			break;
 
 		case 0xD:
-			curCharCount++;
-			continue;
-
+			// Check, if 0xA is following, if so include it as well
+			if ((*(unsigned char *)text) == 0xA)
+				curCharCount++;
 		case 0xA:
 			curCharCount++;
 		case 0:
