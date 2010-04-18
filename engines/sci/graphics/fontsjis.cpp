@@ -53,7 +53,7 @@ GuiResourceId GfxFontSjis::getResourceId() {
 
 // Returns true for first byte of double byte characters
 bool GfxFontSjis::isDoubleByte(uint16 chr) {
-	if ((chr == 0x5C) || (chr == 0x7E) || ((chr >= 0x81) && (chr <= 0x9F)) || ((chr >= 0xE0) && (chr <= 0xEF)))
+	if (((chr >= 0x81) && (chr <= 0x9F)) || ((chr >= 0xE0) && (chr <= 0xEF)))
 		return true;
 	return false;
 }
