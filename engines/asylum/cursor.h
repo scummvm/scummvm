@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://asylumengine.googlecode.com/svn/trunk/cursor.h $
+ * $Id: cursor.h 427 2010-01-13 11:53:51Z alexbevi $
  *
  */
 
@@ -45,7 +45,7 @@ public:
 	 * Generate a new cursor instance from the resource id
 	 * within the resource pack provided.
 	 */
-	static void create(Cursor *&cursor, ResourcePack *pack, uint32 id);
+	static void create(Cursor *&cursor, ResourcePack *pack, int32 id);
 
 	/**
 	 * Show the current cursor
@@ -63,7 +63,7 @@ public:
 	 * frame count should be derived from the graphic resource as opposed to being
 	 * explicitely set.
 	 */
-	void set(uint32 resId, int32 counter, int32 flags, int32 frames = -1);
+	void set(uint32 resId, int32 cntr, int32 flgs, int32 frames = -1);
 	/**
 	 * Set the x/y coordinates of the cursor
 	 */

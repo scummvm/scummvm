@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://asylumengine.googlecode.com/svn/trunk/cursor.cpp $
+ * $Id: cursor.cpp 427 2010-01-13 11:53:51Z alexbevi $
  *
  */
 
@@ -60,7 +60,7 @@ void Cursor::load(int32 index) {
 }
 */
 
-void Cursor::create(Cursor *&cursor, ResourcePack *pack, uint32 id) {
+void Cursor::create(Cursor *&cursor, ResourcePack *pack, int32 id) {
 	// If the current cursor resource is already assigned
 	// to the id value we're sending, just return
 	// TODO this simplifies a lot of additional validation calls
@@ -85,7 +85,7 @@ void Cursor::show() {
 	CursorMan.showMouse(true);
 }
 
-void Cursor::set(uint32 resId, int32 counter, int32 flags, int32 frames) {
+void Cursor::set(uint32 resId, int32 cntr, int32 flgs, int32 frames) {
 	if (_cursorRes)
 		delete _cursorRes;
 
@@ -95,8 +95,8 @@ void Cursor::set(uint32 resId, int32 counter, int32 flags, int32 frames) {
 		frameCount = frames;
 	else
 		frameCount = _cursorRes->getFrameCount();
-	this->flags   = flags;
-	this->counter = counter;
+	this->flags   = flgs;
+	this->counter = cntr;
 	currentFrame = 0;
 	_cursor_byte_45756C = 1;
 
