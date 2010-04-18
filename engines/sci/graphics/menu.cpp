@@ -187,7 +187,8 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 				break;
 			case '%':
 				// Some multilingual sci01 games use e.g. '--!%G--!' (which doesn't really make sense)
-				tempPos = curPos;
+				separatorCount += 2;
+				curPos++;
 			}
 			curPos++;
 		}
