@@ -190,7 +190,7 @@ public:
 
 	kLanguage getSciLanguage();
 
-	Common::String getSciLanguageString(const char *str, kLanguage lang) const;
+	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
 
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx

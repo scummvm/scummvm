@@ -124,7 +124,7 @@ static kLanguage charToLanguage(const char c) {
 	}
 }
 
-Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang) const {
+Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2) const {
 	kLanguage secondLang = K_LANG_NONE;
 
 	const char *seeker = str;
@@ -139,10 +139,9 @@ Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang) 
 		seeker++;
 	}
 
-	//if ((secondLang == K_LANG_JAPANESE) && (*(seeker + 1) == 'J')) {
-	//	// FIXME: Add Kanji support
-	//	lang = K_LANG_ENGLISH;
-	//}
+	// Return the secondary language found in the string
+	if (lang2)
+		*lang2 = secondLang;
 
 	if (secondLang == lang)
 		return Common::String(seeker + 2);
@@ -211,9 +210,16 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 		subLang = (kLanguage)GET_SEL32V(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(subtitleLang));
 	}
 
-	Common::String retval = getSciLanguageString(str, lang);
+	kLanguage secondLang;
+	Common::String retval = getSciLanguageString(str, lang, &secondLang);
 
-	if ((subLang != K_LANG_NONE) && (sep != NULL)) {
+	// Don't add subtitle when separator is not set, subtitle language is not set, or
+	// string contains only one language
+	if ((sep == NULL) || (subLang == K_LANG_NONE) || (secondLang == K_LANG_NONE))
+		return retval;
+
+	// Add subtitle, unless the subtitle language doesn't match the languages in the string
+	if ((subLang == K_LANG_ENGLISH) || (subLang == secondLang)) {
 		retval += sep;
 		retval += getSciLanguageString(str, subLang);
 	}
