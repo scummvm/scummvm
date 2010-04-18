@@ -1037,7 +1037,7 @@ int k_unk53(Script *script, ScriptEntry *cmd, Scene *scn) {
 
 int k_unk54_SET_ACTIONLIST_6EC(Script *script, ScriptEntry *cmd, Scene *scn) {
 	if (cmd->param2)
-		script->field_1BB0 = rand() % cmd->param1;
+		script->field_1BB0 = scn->vm()->_rnd.getRandomNumber(cmd->param1);
 	else
 		script->field_1BB0 = cmd->param1;
 

@@ -133,6 +133,8 @@ public:
 	Screen* screen() { return _screen; }
 	Scene* scene() { return _scene;}
 	Text* text() { return _text; }
+        
+        Common::RandomSource _rnd;
 
 private:
 	void checkForEvent(bool doUpdate);
@@ -146,7 +148,6 @@ private:
 	void playIntro();
 
 	Common::Language     _language;
-	Common::RandomSource _rnd;
 
 	bool _introPlaying;
 
