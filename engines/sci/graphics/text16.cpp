@@ -388,7 +388,7 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 			offset = 0;
 			break;
 
-		default: // left-aligned
+		default:
 			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
 		_ports->moveTo(rect.left + offset, rect.top + hline);
