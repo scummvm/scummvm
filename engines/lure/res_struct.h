@@ -467,6 +467,11 @@ public:
 	bool isEmpty() { return _actions.begin() == _actions.end(); }
 	void clear() { _actions.clear(); }
 	CurrentActionEntry &top() { return **_actions.begin(); }
+	CurrentActionEntry &bottom() { 
+		ActionsList::iterator i = _actions.end();
+		--i;
+		return **i;
+	}
 	CurrentAction action() { return isEmpty() ? NO_ACTION : top().action(); }
 	void pop() { _actions.erase(_actions.begin()); }
 	int size() { return _actions.size(); }
