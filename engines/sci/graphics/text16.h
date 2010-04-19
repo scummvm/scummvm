@@ -59,7 +59,7 @@ public:
 	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
 	void ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
 	void DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
-	int16 Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth);
+	int16 Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth);
 	void Draw(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Show(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId);
@@ -69,6 +69,7 @@ public:
 
 private:
 	void init();
+	void SwitchToFont900OnSjis(const char *text);
 
 	ResourceManager *_resMan;
 	GfxCache *_cache;

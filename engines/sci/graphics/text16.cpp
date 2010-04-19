@@ -262,7 +262,7 @@ void GfxText16::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPe
 	Draw(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 }
 
-int16 GfxText16::Size(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth) {
+int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth) {
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _ports->_curPort->penClr;
 	int16 charCount;
@@ -271,25 +271,29 @@ int16 GfxText16::Size(Common::Rect &rect, const char *str, GuiResourceId fontId,
 
 	if (fontId != -1)
 		SetFont(fontId);
+
+	if (g_sci->getLanguage() == Common::JA_JPN)
+		SwitchToFont900OnSjis(text);
+
 	rect.top = rect.left = 0;
 
 	if (maxWidth < 0) { // force output as single line
-		StringWidth(str, oldFontId, textWidth, textHeight);
+		StringWidth(text, oldFontId, textWidth, textHeight);
 		rect.bottom = textHeight;
 		rect.right = textWidth;
 	} else {
 		// rect.right=found widest line with RTextWidth and GetLongest
 		// rect.bottom=num. lines * GetPointSize
 		rect.right = (maxWidth ? maxWidth : 192);
-		const char*p = str;
-		while (*p) {
-			charCount = GetLongest(p, rect.right, oldFontId);
+		const char *curPos = text;
+		while (*curPos) {
+			charCount = GetLongest(curPos, rect.right, oldFontId);
 			if (charCount == 0)
 				break;
-			Width(p, 0, charCount, oldFontId, textWidth, textHeight);
+			Width(curPos, 0, charCount, oldFontId, textWidth, textHeight);
 			maxTextWidth = MAX(textWidth, maxTextWidth);
 			totalHeight += textHeight;
-			p += charCount;
+			curPos += charCount;
 		}
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
@@ -365,6 +369,9 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 	if (fontId != -1)
 		SetFont(fontId);
 
+	if (g_sci->getLanguage() == Common::JA_JPN)
+		SwitchToFont900OnSjis(text);
+
 	while (*text) {
 		charCount = GetLongest(text, rect.width(), orgFontId);
 		if (charCount == 0)
@@ -406,6 +413,13 @@ void GfxText16::Draw_String(const char *text) {
 	Draw(text, 0, strlen(text), orgFontId, orgPenColor);
 	SetFont(orgFontId);
 	_ports->penColor(orgPenColor);
+}
+
+// Sierra did this in their PC98 interpreter only, they identify a text as being sjis and then switch to font 900
+void GfxText16::SwitchToFont900OnSjis(const char *text) {
+	byte firstChar = (*(const byte *)text++);
+	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF)))
+		SetFont(900);
 }
 
 } // End of namespace Sci
