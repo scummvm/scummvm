@@ -6,6 +6,9 @@ Release version: 1.1.0
 New in this version
 -------------------
 
+1.1.1
+Fix to the Normal2xAspect scaler that was causing crashes.
+
 1.1.0
 The TeenAgent engine is now included, but there are no other port specific
 changes since 1.0.0.
