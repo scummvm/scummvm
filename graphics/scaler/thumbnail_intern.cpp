@@ -110,7 +110,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (screenFormat.bytesPerPixel == 1) {
 		palette = new byte[256 * 4];
 		assert(palette);
-		g_system->grabPalette(&palette[0], 0, 256);
+		g_system->grabPalette(palette, 0, 256);
 	}
 
 	for (uint y = 0; y < screen->h; ++y) {
