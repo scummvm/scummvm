@@ -9,6 +9,11 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed a bug which caused the DOS versions to crash before the credits when AdLib
      music is selected.
 
+ LURE:
+   - Fixed several memory leaks
+   - Corrected problems in the handling of followers when blocked from performing actions
+     by closed doors between rooms
+
  Tinsel:
    - Fix video playback regression in Discworld 2.
 
