@@ -102,12 +102,16 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	assert(screen->bytesPerPixel == 1 || screen->bytesPerPixel == 2);
 	assert(screen->pixels != 0);
 
-	byte palette[256 * 4];
-	g_system->grabPalette(&palette[0], 0, 256);
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
 
 	surf->create(screen->w, screen->h, 2);
 
-	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+	byte *palette = 0;
+	if (screenFormat.bytesPerPixel == 1) {
+		palette = new byte[256 * 4];
+		assert(palette);
+		g_system->grabPalette(&palette[0], 0, 256);
+	}
 
 	for (uint y = 0; y < screen->h; ++y) {
 		for (uint x = 0; x < screen->w; ++x) {
@@ -125,6 +129,8 @@ static bool grabScreen565(Graphics::Surface *surf) {
 			((uint16 *)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
+
+	delete[] palette;
 
 	g_system->unlockScreen();
 	return true;
