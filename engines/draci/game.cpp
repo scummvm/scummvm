@@ -41,7 +41,7 @@
 
 namespace Draci {
 
-static const Common::String dialoguePath("ROZH");
+static const char *dialoguePath = "ROZH";
 
 static double real_to_double(byte real[6]);
 
