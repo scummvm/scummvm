@@ -184,6 +184,8 @@ sciEvent SciEvent::getFromScummVM() {
 					}
 					// we get 8859-1 character, we need dos (cp850/437) character for multilingual sci01 games
 					// TODO: check, if we get 8859-1 on all platforms
+					// Currently checked: Windows XP (works), Wii w/ USB keyboard (works), Mac OS X (works)
+					//  Ubuntu (does not work, seems to be UTF-8)
 					input.character = codepagemap_88591toDOS[input.character & 0x7f];
 				}
 				if (input.data == Common::KEYCODE_TAB) {
