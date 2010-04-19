@@ -511,10 +511,11 @@ Graphics::Surface *OSystem_Wii::lockScreen() {
 	_surface.pixels = _gamePixels;
 	_surface.w = _gameWidth;
 	_surface.h = _gameHeight;
-	_surface.pitch = _gameWidth;
 #ifdef USE_RGB_COLOR
+	_surface.pitch = _gameWidth * _pfGame.bytesPerPixel;
 	_surface.bytesPerPixel = _pfGame.bytesPerPixel;
 #else
+	_surface.pitch = _gameWidth;
 	_surface.bytesPerPixel = 1;
 #endif
 
