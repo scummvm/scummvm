@@ -139,7 +139,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	heightWidth = SCI_CURSOR_SCI0_HEIGHTWIDTH;
 
 	if (_upscaledHires) {
-		// Scale cursor by 2x
+		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		heightWidth *= 2;
 		hotspot.x *= 2;
 		hotspot.y *= 2;
@@ -183,7 +183,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	}
 
 	if (_upscaledHires) {
-		// Scale cursor by 2x
+		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
 		cursorHotspot->x *= 2;
