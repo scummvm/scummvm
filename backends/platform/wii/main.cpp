@@ -62,16 +62,30 @@ void power_cb(void) {
 }
 
 static void show_console(int code) {
-	u32 b;
+	u32 i, b;
 
 	printf("ScummVM exited abnormally (%d).\n", code);
 
 	gfx_frame_abort();
+	gfx_init();
+
 	if (!gfx_frame_start())
 		return;
 
 	gfx_con_draw();
 	gfx_frame_end();
+
+	for (i = 0; i < 60 * 3; ++i)
+		VIDEO_WaitVSync();
+
+	printf("Press any key to continue.\n");
+
+	if (!gfx_frame_start())
+		return;
+
+	gfx_con_draw();
+	gfx_frame_end();
+	VIDEO_WaitVSync();
 
 	while (true) {
 		b = 0;
@@ -90,6 +104,15 @@ static void show_console(int code) {
 
 		VIDEO_WaitVSync();
 	}
+
+	printf("\n\nExiting...\n");
+
+	if (!gfx_frame_start())
+		return;
+
+	gfx_con_draw();
+	gfx_frame_end();
+	VIDEO_WaitVSync();
 }
 
 s32 reset_func(s32 final) {
