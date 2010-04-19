@@ -21,6 +21,17 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Tinsel:
    - Fix video playback regression in Discworld 2.
 
+ Wii/GameCube port: (Also forgot to mention in 1.1.0)
+   - Added support for games using 16bit graphics
+   - Complete GFX overhaul (new video modes, better performance, picture smoothing,
+     fine grained overscan settings)
+   - Added a new options dialog for Wii/Gamecube specific settings
+   - Fixed a GFX glitch on savegame thumbnails
+   - Added support for SMB mountpoints (Samba/Windows shares)
+   - Added an on-screen console, which is shown when ScummVM exits abnormally
+   - Fixed a couple of crashes when using Ogg/Vorbis encoded sound files
+   See the bundled READMII.txt file for more information
+
  PSP port: (Also forgot to mention in 1.1.0)
    - Added plugin support which allows the PSP Phat to run every game.
    - Added a new virtual keyboard optimized for rapid D-Pad input.
