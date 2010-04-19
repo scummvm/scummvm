@@ -162,6 +162,10 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		in = newscreen;
 	} else if (width == 720) {
 		// Special case to handle Hercules mode
+		//
+		// NOTE: This code is pretty SCUMM specific.
+		// For other games this code might cut off
+		// not only the menu, but also other graphics.
 		width = 640;
 		inHeight = 400;
 
