@@ -179,6 +179,11 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			break;
 
 		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
+		//  which means, we split text like
+		//  'Mature, experienced software analyst available.' 0xD 0xA
+		//  'Bug installation a proven speciality. "No version too clean."' (normal game text, this is from lsl2)
+		//   and 0xA '-------' 0xA (which is the official sierra subtitle separator)
+		//  Sierra did it the same way.
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
 			if ((*(const unsigned char *)text) == 0xA)
