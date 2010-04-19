@@ -178,12 +178,15 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			}
 			break;
 
+		// We need to add 0xD, 0xA and 0xD 0xA to curCharCount and then exit
 		case 0xD:
 			// Check, if 0xA is following, if so include it as well
 			if ((*(const unsigned char *)text) == 0xA)
 				curCharCount++;
+			// it's meant to pass through here
 		case 0xA:
 			curCharCount++;
+			// and it's also meant to pass through here
 		case 0:
 			SetFont(oldFontId);
 			_ports->penColor(oldPenColor);
