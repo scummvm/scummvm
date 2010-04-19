@@ -92,6 +92,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	int16 maskA, maskB;
 	byte *pOut;
 	byte *rawBitmap = new byte[SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH];
+	int16 heightWidth;
 
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
@@ -135,7 +136,20 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 		}
 	}
 
-	CursorMan.replaceCursor(rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+	heightWidth = SCI_CURSOR_SCI0_HEIGHTWIDTH;
+
+	if (_upscaledHires) {
+		// Scale cursor by 2x
+		heightWidth *= 2;
+		hotspot.x *= 2;
+		hotspot.y *= 2;
+		byte *upscaledBitmap = new byte[heightWidth * heightWidth];
+		_screen->scale2x(rawBitmap, upscaledBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH);
+		delete[] rawBitmap;
+		rawBitmap = upscaledBitmap;
+	}
+
+	CursorMan.replaceCursor(rawBitmap, heightWidth, heightWidth, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 	kernelShow();
 
 	delete[] rawBitmap;
@@ -155,6 +169,8 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 	int16 height = celInfo->height;
 	byte clearKey = celInfo->clearKey;
 	Common::Point *cursorHotspot = hotspot;
+	byte *cursorBitmap;
+
 	if (!cursorHotspot)
 		// Compute hotspot from xoffset/yoffset
 		cursorHotspot = new Common::Point((celInfo->width >> 1) - celInfo->displaceX, celInfo->height - celInfo->displaceY - 1);
@@ -166,8 +182,6 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		return;
 	}
 
-	byte *cursorBitmap = cursorView->getBitmap(loopNum, celNum);
-
 	if (_upscaledHires) {
 		// Scale cursor by 2x
 		width *= 2;
@@ -176,6 +190,8 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		cursorHotspot->y *= 2;
 		cursorBitmap = new byte[width * height];
 		_screen->scale2x(celInfo->rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
+	} else {
+		cursorBitmap = cursorView->getBitmap(loopNum, celNum);
 	}
 
 	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
