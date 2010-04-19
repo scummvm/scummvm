@@ -174,7 +174,7 @@ private:
 
 	// Inventory
 	void clearInventoryArea();
-	void drawInventoryImage(uint16 id, Common::Rect rect);
+	void drawInventoryImage(uint16 id, const Common::Rect *rect);
 	bool _inventoryDrawn;
 
 	// Screen Related

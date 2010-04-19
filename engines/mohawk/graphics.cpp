@@ -613,11 +613,11 @@ void RivenGraphics::showInventory() {
 	// bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
 
 	if (!hasCathBook) {
-		drawInventoryImage(101, atrusJournalRectSolo);
+		drawInventoryImage(101, g_atrusJournalRectSolo);
 	} else {
-		drawInventoryImage(101, atrusJournalRect);
-		drawInventoryImage(102, cathJournalRect);
-		drawInventoryImage(100, trapBookRect);
+		drawInventoryImage(101, g_atrusJournalRect);
+		drawInventoryImage(102, g_cathJournalRect);
+		drawInventoryImage(100, g_trapBookRect);
 	}
 
 	_vm->_system->updateScreen();
@@ -648,12 +648,12 @@ void RivenGraphics::clearInventoryArea() {
 	_vm->_system->unlockScreen();
 }
 
-void RivenGraphics::drawInventoryImage(uint16 id, Common::Rect rect) {
+void RivenGraphics::drawInventoryImage(uint16 id, const Common::Rect *rect) {
 	ImageData *imageData = _bitmapDecoder->decodeImage(_vm->getExtrasResource(ID_TBMP, id));
 	Graphics::Surface *surface = imageData->getSurface();
 	delete imageData;
 
-	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect.left, rect.top, surface->w, surface->h);
+	_vm->_system->copyRectToScreen((byte *)surface->pixels, surface->pitch, rect->left, rect->top, surface->w, surface->h);
 
 	surface->free();
 	delete surface;

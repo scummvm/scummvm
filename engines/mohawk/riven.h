@@ -66,11 +66,12 @@ enum {
 	StackNames = 5
 };
 
-// Rects for the inventory object positions
-static const Common::Rect atrusJournalRectSolo = Common::Rect(295, 402, 313, 426);
-static const Common::Rect atrusJournalRect = Common::Rect(222, 402, 240, 426);
-static const Common::Rect cathJournalRect = Common::Rect(291, 408, 311, 419);
-static const Common::Rect trapBookRect = Common::Rect(363, 396, 386, 432);
+// Rects for the inventory object positions (initialized in
+// MohawkEngine_Riven's constructor).
+extern Common::Rect *g_atrusJournalRectSolo;
+extern Common::Rect *g_atrusJournalRect;
+extern Common::Rect *g_cathJournalRect;
+extern Common::Rect *g_trapBookRect;
 
 struct RivenHotspot {
 	uint16 blstID;

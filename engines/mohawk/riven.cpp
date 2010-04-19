@@ -37,6 +37,11 @@
 
 namespace Mohawk {
 
+Common::Rect *g_atrusJournalRectSolo;
+Common::Rect *g_atrusJournalRect;
+Common::Rect *g_cathJournalRect;
+Common::Rect *g_trapBookRect;
+
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
 	_cardData.hasData = false;
@@ -50,6 +55,11 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "exe");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "assets2");
+
+	g_atrusJournalRectSolo = new Common::Rect(295, 402, 313, 426);
+	g_atrusJournalRect = new Common::Rect(222, 402, 240, 426);
+	g_cathJournalRect = new Common::Rect(291, 408, 311, 419);
+	g_trapBookRect = new Common::Rect(363, 396, 386, 432);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -62,6 +72,10 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _loadDialog;
 	delete _optionsDialog;
 	delete _rnd;
+	delete g_atrusJournalRectSolo;
+	delete g_atrusJournalRect;
+	delete g_cathJournalRect;
+	delete g_trapBookRect;
 	_cardData.scripts.clear();
 }
 
@@ -463,21 +477,21 @@ void MohawkEngine_Riven::checkInventoryClick() {
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
-		if (atrusJournalRectSolo.contains(_mousePos)) {
+		if (g_atrusJournalRectSolo->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
 		}
 	} else {
-		if (atrusJournalRect.contains(_mousePos)) {
+		if (g_atrusJournalRect->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (cathJournalRect.contains(_mousePos)) {
+		} else if (g_cathJournalRect->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
-		} else if (trapBookRect.contains(_mousePos)) {
+		} else if (g_trapBookRect->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(7);
