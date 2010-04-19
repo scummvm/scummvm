@@ -4028,23 +4028,22 @@ void HotspotTickHandlers::npcRoomChange(Hotspot &h) {
 	if (h.exitCtr() >= 5) {
 		// Failed to exit room too many times
 		h.setExitCtr(0);
-		if (h.currentActions().size() > 1) {
-			// Pending items on stack
+
+		if (!h.currentActions().isEmpty()) {
 			if (h.startRoomNumber() != 0) {
-				if (!h.currentActions().bottom().hasSupportData() || 
+				// If character isn't already returning to starting room, start them doing so
+				if (!h.currentActions().bottom().hasSupportData() ||
 					(h.currentActions().bottom().supportData().action() != RETURN)) {
-					// Signal character to return
+					// Start follower returning
 					h.currentActions().clear();
 					h.currentActions().addFront(RETURN, h.startRoomNumber(), 0, 0);
 				}
 			}
-			h.currentActions().top().setRoomNumber(h.roomNumber());
 
 		} else if ((h.blockedOffset() != 0) && (h.blockedOffset() != 0xffff)) {
 			// Only current action on stack - and there is a block handler
 			CharacterScheduleEntry *entry = res.charSchedules().getEntry(h.blockedOffset());
-			h.currentActions().top().setSupportData(entry);
-			h.currentActions().top().setRoomNumber(h.roomNumber());
+			h.currentActions().addFront(DISPATCH_ACTION, entry, h.roomNumber());
 		}
 
 		return;
