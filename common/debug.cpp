@@ -156,7 +156,7 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 
 	// Next, give the active engine (if any) a chance to augment the message,
 	// but only if not used from debugN.
-	if (Common::s_debugOutputFormatter) {
+	if (caret && Common::s_debugOutputFormatter) {
 		(*Common::s_debugOutputFormatter)(buf, in_buf, STRINGBUFLEN);
 	} else {
 		strncpy(buf, in_buf, STRINGBUFLEN);
