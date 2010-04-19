@@ -308,7 +308,9 @@ int16 OSystem_Wii::getHeight() {
 
 void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 #ifdef USE_RGB_COLOR
-	assert(_pfGame.bytesPerPixel == 1);
+	// work around nonsense calls
+	if (_pfGame.bytesPerPixel > 1)
+		return;
 #endif
 
 	const byte *s = colors;
@@ -338,7 +340,9 @@ void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
 
 void OSystem_Wii::grabPalette(byte *colors, uint start, uint num) {
 #ifdef USE_RGB_COLOR
-	assert(_pfGame.bytesPerPixel == 1);
+	// work around nonsense calls from graphics/scaler/thumbnail_intern.cpp
+	if (_pfGame.bytesPerPixel > 1)
+		return;
 #endif
 
 	u16 *s = _texGame.palette;
