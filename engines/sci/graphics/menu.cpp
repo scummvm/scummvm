@@ -218,6 +218,9 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			if (tagPos && tagPos >= rightAlignedPos)
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
+			// Remove ending space, if there is one. Strangely sometimes there are lone spaces at the end in some games
+			if (itemEntry->textRightAligned.hasSuffix(" "))
+				itemEntry->textRightAligned.deleteLastChar();
 			// - and + are used sometimes for volume control
 			if (itemEntry->textRightAligned == "-") {
 				itemEntry->keyPress = '-';
