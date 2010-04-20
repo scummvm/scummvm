@@ -69,7 +69,7 @@ public:
 
 private:
 	void init();
-	void SwitchToFont900OnSjis(const char *text);
+	bool SwitchToFont900OnSjis(const char *text);
 
 	ResourceManager *_resMan;
 	GfxCache *_cache;

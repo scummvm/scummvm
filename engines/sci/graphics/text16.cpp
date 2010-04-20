@@ -33,6 +33,7 @@
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/font.h"
+#include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 
 namespace Sci {
@@ -363,23 +364,28 @@ void GfxText16::Show(const char *text, int16 from, int16 len, GuiResourceId orgF
 
 // Draws a text in rect.
 void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, TextAlignment alignment, GuiResourceId fontId) {
-	int16 textWidth, textHeight, charCount;
+	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
 	GuiResourceId orgFontId = GetFontId();
 	int16 orgPenColor = _ports->_curPort->penClr;
+	bool doubleByteMode = false;
 
 	if (fontId != -1)
 		SetFont(fontId);
 
-	if (g_sci->getLanguage() == Common::JA_JPN)
-		SwitchToFont900OnSjis(text);
+	if (g_sci->getLanguage() == Common::JA_JPN) {
+		if (SwitchToFont900OnSjis(text))
+			doubleByteMode = true;
+	}
 
+	maxTextWidth = 0;
 	while (*text) {
 		charCount = GetLongest(text, rect.width(), orgFontId);
 		if (charCount == 0)
 			break;
 		Width(text, 0, charCount, orgFontId, textWidth, textHeight);
+		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
 		switch (alignment) {
 		case SCI_TEXT16_ALIGNMENT_RIGHT:
 			offset = rect.width() - textWidth;
@@ -407,6 +413,22 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 	}
 	SetFont(orgFontId);
 	_ports->penColor(orgPenColor);
+
+	if (doubleByteMode) {
+		// kanji is written by pc98 rom to screen directly. Because of GetLongest() behaviour (not cutting off the last
+		//  char, that causes a new line), results in the script thinking that the text would need less space. The coordinate
+		//  adjustment in fontsjis.cpp handles the incorrect centering because of that and this code actually shows all of
+		//  the chars - if we don't do this, the scripts will only show most of the chars, but the last few pixels won't get
+		//  shown most of the time.
+		Common::Rect kanjiRect = rect;
+		_ports->offsetRect(kanjiRect);
+		kanjiRect.left &= 0xFFC;
+		kanjiRect.right = kanjiRect.left + maxTextWidth;
+		kanjiRect.bottom = kanjiRect.top + hline;
+		kanjiRect.left *= 2; kanjiRect.right *= 2;
+		kanjiRect.top *= 2; kanjiRect.bottom *= 2;
+		_screen->copyDisplayRectToScreen(kanjiRect);
+	}
 }
 
 void GfxText16::Draw_String(const char *text) {
@@ -419,10 +441,13 @@ void GfxText16::Draw_String(const char *text) {
 }
 
 // Sierra did this in their PC98 interpreter only, they identify a text as being sjis and then switch to font 900
-void GfxText16::SwitchToFont900OnSjis(const char *text) {
+bool GfxText16::SwitchToFont900OnSjis(const char *text) {
 	byte firstChar = (*(const byte *)text++);
-	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF)))
+	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {
 		SetFont(900);
+		return true;
+	}
+	return false;
 }
 
 } // End of namespace Sci
