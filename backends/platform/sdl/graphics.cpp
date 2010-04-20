@@ -1226,8 +1226,7 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
 
 #ifdef USE_RGB_COLOR
-	if (_screenFormat.bytesPerPixel > 1)
-		return; //not using a paletted pixel format
+	assert(_screenFormat.bytesPerPixel == 1);
 #endif
 
 	// Setting the palette before _screen is created is allowed - for now -
@@ -1260,6 +1259,11 @@ void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 
 void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
 	assert(colors);
+
+#ifdef USE_RGB_COLOR
+	assert(_screenFormat.bytesPerPixel == 1);
+#endif
+
 	const SDL_Color *base = _currentPalette + start;
 
 	for (uint i = 0; i < num; ++i) {
