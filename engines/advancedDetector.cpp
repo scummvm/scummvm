@@ -52,7 +52,7 @@ typedef Common::Array<const ADGameDescription*> ADGameDescList;
  * @param platform	restrict results to specified platform only
  * @return	list of ADGameDescription (or subclass) pointers corresponding to matched games
  */
-static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra);
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String &extra);
 
 
 /**
@@ -339,7 +339,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String extra) {
+static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String &extra) {
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
 
