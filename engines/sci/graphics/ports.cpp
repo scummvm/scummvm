@@ -410,7 +410,7 @@ void GfxPorts::openPort(Port *port) {
 	port->left = 0;
 	port->greyedOutput = false;
 	port->penClr = 0;
-	port->backClr = 255;
+	port->backClr = _screen->getColorWhite();
 	port->penMode = 0;
 	port->rect = _bounds;
 }
