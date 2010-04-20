@@ -99,6 +99,10 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		while ((curPos < contentSize) && (content[curPos] != ':')) {
 			switch (content[curPos]) {
 			case '=': // Set tag
+				// Special case for normal animation speed - they use right aligned "=" for that one, so we ignore it
+				//  as being recognized as tag marker
+				if (rightAlignedPos == curPos - 1)
+					break;
 				if (tagPos)
 					error("multiple tag markers within one menu-item");
 				tagPos = curPos;
@@ -221,11 +225,13 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			// Remove ending space, if there is one. Strangely sometimes there are lone spaces at the end in some games
 			if (itemEntry->textRightAligned.hasSuffix(" "))
 				itemEntry->textRightAligned.deleteLastChar();
-			// - and + are used sometimes for volume control
+			// - and + are used sometimes for volume control/animation speed, = sometimes for animation speed
 			if (itemEntry->textRightAligned == "-") {
 				itemEntry->keyPress = '-';
 			} else if (itemEntry->textRightAligned == "+") {
 				itemEntry->keyPress = '+';
+			} else if (itemEntry->textRightAligned == "=") {
+				itemEntry->keyPress = '=';
 			}
 		}
 
