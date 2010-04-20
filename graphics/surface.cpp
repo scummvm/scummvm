@@ -135,23 +135,30 @@ void Surface::fillRect(Common::Rect r, uint32 color) {
 		return;
 
 	int width = r.width();
+	int lineLen = width;
 	int height = r.height();
-//	int i;
+	bool useMemset = true;
 
-	if (bytesPerPixel == 1) {
+	if (bytesPerPixel == 2) {
+		lineLen *= 2;
+		if ((uint16)color != ((color & 0xff) | (color & 0xff) << 8))
+			useMemset = false;
+	} else if (bytesPerPixel != 1) {
+		error("Surface::fillRect: bytesPerPixel must be 1 or 2");
+	}
+
+	if (useMemset) {
 		byte *ptr = (byte *)getBasePtr(r.left, r.top);
 		while (height--) {
-			memset(ptr, (byte)color, width);
+			memset(ptr, (byte)color, lineLen);
 			ptr += pitch;
 		}
-	} else if (bytesPerPixel == 2) {
+	} else {
 		uint16 *ptr = (uint16 *)getBasePtr(r.left, r.top);
 		while (height--) {
 			Common::set_to(ptr, ptr + width, (uint16)color);
 			ptr += pitch/2;
 		}
-	} else {
-		error("Surface::fillRect: bytesPerPixel must be 1 or 2");
 	}
 }
 
