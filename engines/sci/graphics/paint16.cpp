@@ -178,16 +178,16 @@ void GfxPaint16::clearScreen(byte color) {
 void GfxPaint16::invertRect(const Common::Rect &rect) {
 	int16 oldpenmode = _ports->_curPort->penMode;
 	_ports->_curPort->penMode = 2;
-	fillRect(rect, 1, _ports->_curPort->penClr, _ports->_curPort->backClr);
+	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->penClr, _ports->_curPort->backClr);
 	_ports->_curPort->penMode = oldpenmode;
 }
 
 void GfxPaint16::eraseRect(const Common::Rect &rect) {
-	fillRect(rect, 1, _ports->_curPort->backClr);
+	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->backClr);
 }
 
 void GfxPaint16::paintRect(const Common::Rect &rect) {
-	fillRect(rect, 1, _ports->_curPort->penClr);
+	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->penClr);
 }
 
 void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
