@@ -133,40 +133,74 @@ static int eatSystemEvents() {
 
 static void drawProgress(float progress) {
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
-	Graphics::Surface surf;
-	uint32 borderColor = 0x2;
-	uint32 fillColor = 0x4;
-	surf.w = g_system->getWidth() / 7 * 5;
-	surf.h = font.getFontHeight();
-	int x = g_system->getWidth() / 7;
-	int y = g_system->getHeight() / 2 - surf.h / 2;
-	surf.pitch = surf.w;
-	surf.bytesPerPixel = 1;
-	surf.pixels = calloc(surf.w, surf.h);
-	Common::Rect r(surf.w, surf.h);
-	surf.frameRect(r, borderColor);
+	Graphics::Surface *screen = g_system->lockScreen();
+
+	assert(screen);
+	assert(screen->pixels);
+
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
+	int16 w = g_system->getWidth() / 7 * 5;
+	int16 h = font.getFontHeight();
+	int16 x = g_system->getWidth() / 7;
+	int16 y = g_system->getHeight() / 2 - h / 2;
+
+	Common::Rect r(x, y, x + w, y + h);
+
+	uint32 col;
+	
+	if (screenFormat.bytesPerPixel > 1)
+		col = screenFormat.RGBToColor(0, 171, 0);
+	else
+		col = 1;
+
+	screen->frameRect(r, col);
+
 	r.grow(-1);
-	r.right = r.left + (uint16)(r.width() * progress);
-	surf.fillRect(r, fillColor);
-	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, x, y, surf.w, surf.h);
+	r.setWidth(uint16(progress * w));
+
+	if (screenFormat.bytesPerPixel > 1)
+		col = screenFormat.RGBToColor(171, 0, 0);
+	else
+		col = 2;
+
+	screen->fillRect(r, col);
+
+	g_system->unlockScreen();
 	g_system->updateScreen();
-	free(surf.pixels);
 }
 
 static void drawMessage(int offset, const Common::String &text) {
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kOSDFont));
-	Graphics::Surface surf;
-	uint32 color = 0x2;
-	surf.w = g_system->getWidth();
-	surf.h = font.getFontHeight();
-	surf.pitch = surf.w;
-	surf.bytesPerPixel = 1;
-	surf.pixels = calloc(surf.w, surf.h);
-	font.drawString(&surf, text, 0, 0, surf.w, color, Graphics::kTextAlignCenter);
-	int y = g_system->getHeight() / 2 - font.getFontHeight() / 2 + offset * (font.getFontHeight() + 1);
-	g_system->copyRectToScreen((byte *)surf.pixels, surf.pitch, 0, y, surf.w, surf.h);
+	Graphics::Surface *screen = g_system->lockScreen();
+
+	assert(screen);
+	assert(screen->pixels);
+
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
+	uint16 h = font.getFontHeight();
+	uint16 y = g_system->getHeight() / 2 - h / 2 + offset * (h + 1);
+
+	uint32 col;
+	
+	if (screenFormat.bytesPerPixel > 1)
+		col = screenFormat.RGBToColor(0, 0, 0);
+	else
+		col = 0;
+
+	Common::Rect r(0, y, screen->w, y + h);
+	screen->fillRect(r, col);
+
+	if (screenFormat.bytesPerPixel > 1)
+		col = screenFormat.RGBToColor(0, 171, 0);
+	else
+		col = 1;
+
+	font.drawString(screen, text, 0, y, screen->w, col, Graphics::kTextAlignCenter);
+
+	g_system->unlockScreen();
 	g_system->updateScreen();
-	free(surf.pixels);
 }
 
 static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Emu::File::OpenMode mode) {
@@ -179,12 +213,15 @@ static MT32Emu::File *MT32_OpenFile(void *userData, const char *filename, MT32Em
 }
 
 static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
-	char buf[512];
 	if (((MidiDriver_MT32 *)userData)->_initialising) {
+		char buf[512];
+
 		vsnprintf(buf, 512, fmt, list);
 		buf[70] = 0; // Truncate to a reasonable length
+
 		drawMessage(1, buf);
 	}
+
 	//vdebug(0, fmt, list); // FIXME: Use a higher debug level
 }
 
@@ -270,24 +307,36 @@ int MidiDriver_MT32::open() {
 	prop.printDebug = MT32_PrintDebug;
 	prop.report = MT32_Report;
 	prop.openFile = MT32_OpenFile;
-	_synth = new MT32Emu::Synth();
-	_initialising = true;
-	const byte dummy_palette[] = {
-		0, 0, 0, 0,
-		0, 0, 171, 0,
-		0, 171, 0, 0,
-		0, 171, 171, 0,
-		171, 0, 0, 0
-	};
 
-	g_system->setPalette(dummy_palette, 0, 5);
+	_synth = new MT32Emu::Synth();
+
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
+	if (screenFormat.bytesPerPixel == 1) {
+		const byte dummy_palette[] = {
+			0, 0, 0, 0,		// background
+			0, 171, 0, 0,	// border, font
+			171, 0, 0, 0	// fill
+		};
+
+		g_system->setPalette(dummy_palette, 0, 3);
+	}
+
+	_initialising = true;
 	drawMessage(-1, "Initialising MT-32 Emulator");
 	if (!_synth->open(prop))
 		return MERR_DEVICE_NOT_AVAILABLE;
 	_initialising = false;
-	g_system->fillScreen(0);
+
+	if (screenFormat.bytesPerPixel > 1)
+		g_system->fillScreen(screenFormat.RGBToColor(0, 0, 0));
+	else
+		g_system->fillScreen(0);
+
 	g_system->updateScreen();
+
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+
 	return 0;
 }
 
