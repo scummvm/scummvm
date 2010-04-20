@@ -236,12 +236,12 @@ public:
 	 * composed in three layers: the game graphics, the overlay
 	 * graphics, and the mouse.
 	 *
-	 * First, there are the game graphics. They are always 8bpp, and
-	 * the methods in this section deal with them exclusively. In
-	 * particular, the size of the game graphics is defined by a call
-	 * to initSize(), and copyRectToScreen() blits 8bpp data into the
-	 * game layer. Let W and H denote the width and height of the
-	 * game graphics.
+	 * First, there are the game graphics. The methods in this section
+	 * deal with them exclusively. In particular, the size of the game
+	 * graphics is defined by a call to initSize(), and
+	 * copyRectToScreen() blits the data in the current pixel format
+	 * into the game layer. Let W and H denote the width and height of
+	 * the game graphics.
 	 *
 	 * Before the user sees these graphics, the backend may apply some
 	 * transformations to it; for example, the may be scaled to better
@@ -282,16 +282,16 @@ public:
 	 * Finally, there is the mouse layer. This layer doesn't have to
 	 * actually exist within the backend -- it all depends on how a
 	 * backend chooses to implement mouse cursors, but in the default
-	 * SDL backend, it really is a separate layer. The mouse is
-	 * always in 8bpp but can have a palette of its own, if the
-	 * backend supports it. The scale of the mouse cursor is called
-	 * 'cursorTargetScale'. This is meant as a hint to the backend.
-	 * For example, let us assume the overlay is not visible, and the
-	 * game graphics are displayed using a 2x scaler. If a mouse
-	 * cursor with a cursorTargetScale of 1 is set, then it should be
-	 * scaled by factor 2x, too, just like the game graphics. But if
-	 * it has a cursorTargetScale of 2, then it shouldn't be scaled
-	 * again by the game graphics scaler.
+	 * SDL backend, it really is a separate layer. The mouse can
+	 * have a palette of its own, if the backend supports it.
+	 * The scale of the mouse cursor is called 'cursorTargetScale'.
+	 * This is meant as a hint to the backend. For example, let us
+	 * assume the overlay is not visible, and the game graphics are
+	 * displayed using a 2x scaler. If a mouse cursor with a
+	 * cursorTargetScale of 1 is set, then it should be scaled by
+	 * factor 2x, too, just like the game graphics. But if it has a
+	 * cursorTargetScale of 2, then it shouldn't be scaled again by
+	 * the game graphics scaler.
 	 */
 	//@{
 
@@ -527,8 +527,13 @@ public:
 	 *
 	 * @note It is an error if start+num exceeds 256, behaviour is undefined
 	 *       in that case (the backend may ignore it silently or assert).
+	 * @note It is an error if this function gets called when the pixel format
+	 *       in use (the return value of getScreenFormat) has more than one
+	 *       byte per pixel.
 	 * @note The alpha value is not actually used, and future revisions of this
 	 *       API are probably going to remove it.
+	 *
+	 * @see getScreenFormat
 	 */
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
 
@@ -540,6 +545,12 @@ public:
 	 * @param colors	the palette data, in interleaved RGBA format
 	 * @param start		the first platte entry to be read
 	 * @param num		the number of palette entries to be read
+	 *
+	 * @note It is an error if this function gets called when the pixel format
+	 *       in use (the return value of getScreenFormat) has more than one
+	 *       byte per pixel.
+	 *
+	 * @see getScreenFormat
 	 */
 	virtual void grabPalette(byte *colors, uint start, uint num) = 0;
 
@@ -549,8 +560,10 @@ public:
 	 * Client code has to to call updateScreen to ensure any changes are
 	 * visible to the user. This can be used to optimize drawing and reduce
 	 * flicker.
-	 * The graphics data uses 8 bits per pixel, using the palette specified
-	 * via setPalette.
+	 * If the current pixel format has one byte per pixel, the graphics data
+	 * uses 8 bits per pixel, using the palette specified via setPalette.
+	 * If more than one byte per pixel is in use, the graphics data uses the
+	 * pixel format returned by getScreenFormat.
 	 *
 	 * @param buf		the buffer containing the graphics data source
 	 * @param pitch		the pitch of the buffer (number of bytes in a scanline)
@@ -565,6 +578,7 @@ public:
 	 *       silently corrupt memory.
 	 *
 	 * @see updateScreen
+	 * @see getScreenFormat
 	 */
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) = 0;
 
@@ -576,9 +590,12 @@ public:
 	 * should make sure to only lock the framebuffer for the briefest
 	 * periods of time possible, as the whole system is potentially stalled
 	 * while the lock is active.
-	 * Returns 0 if an error occurred. Otherwise an 8bit surface is returned.
+	 * Returns 0 if an error occurred. Otherwise a surface with the pixel
+	 * format described by getScreenFormat is returned.
 	 *
 	 * The returned surface must *not* be deleted by the client code.
+	 *
+	 * @see getScreenFormat
 	 */
 	virtual Graphics::Surface *lockScreen() = 0;
 
@@ -603,8 +620,8 @@ public:
 	 *
 	 * This method could be called very often by engines. Backends are hence
 	 * supposed to only perform any redrawing if it is necessary, and otherwise
-	 * return immediately. For a discussion of the subject, see
-	 * <http://www.nabble.com/ATTN-porters%3A-updateScreen%28%29-OSystem-method-tt3960261.html#a3960261>
+	 * return immediately. See
+	 * <http://wiki.scummvm.org/index.php/HOWTO-Backends#updateScreen.28.29_method>
 	 */
 	virtual void updateScreen() = 0;
 
@@ -653,8 +670,8 @@ public:
 	 * In order to be able to display dialogs atop the game graphics, backends
 	 * must provide an overlay mode.
 	 *
-	 * While the game graphics are always 8 bpp, the overlay can be 8 or 16 bpp.
-	 * Depending on which it is, OverlayColor is 8 or 16 bit.
+	 * The overlay can be 8 or 16 bpp. Depending on which it is, OverlayColor
+	 * is 8 or 16 bit.
 	 *
 	 * For 'coolness' we usually want to have an overlay which is blended over
 	 * the game graphics. On backends which support alpha blending, this is
