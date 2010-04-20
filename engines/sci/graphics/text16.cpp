@@ -190,6 +190,7 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 				curCharCount++;
 			// it's meant to pass through here
 		case 0xA:
+		case 0x9781: // this one is used by SQ4/japanese as line break as well
 			curCharCount++;
 			// and it's also meant to pass through here
 		case 0:
@@ -233,6 +234,7 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 			switch (curChar) {
 			case 0x0A:
 			case 0x0D:
+			case 0x9781: // this one is used by SQ4/japanese as line break as well
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				break;
 			case 0x7C:
@@ -325,6 +327,7 @@ void GfxText16::Draw(const char *text, int16 from, int16 len, GuiResourceId orgF
 		case 0x0A:
 		case 0x0D:
 		case 0:
+		case 0x9781: // this one is used by SQ4/japanese as line break as well
 			break;
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
