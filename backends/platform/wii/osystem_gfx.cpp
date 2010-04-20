@@ -240,11 +240,24 @@ void OSystem_Wii::initSize(uint width, uint height,
 	}
 #endif
 
-	if (_gameWidth != width || _gameHeight != height) {
-		assert((width <= 640) && (height <= 480));
+	uint newWidth, newHeight;
+	if (_pfGame.bytesPerPixel > 1) {
+		newWidth = ROUNDUP(width, 4);
+		newHeight = ROUNDUP(height, 4);
+	} else {
+		newWidth = ROUNDUP(width, 8);
+		newHeight = ROUNDUP(height, 4);
+	}
 
-		_gameWidth = width;
-		_gameHeight = height;
+	if (_gameWidth != newWidth || _gameHeight != newHeight) {
+		assert((newWidth <= 640) && (newHeight <= 480));
+
+		if (width != newWidth || height != newHeight)
+			printf("extending texture for compability: %ux%u -> %ux%u\n",
+					width, height, newWidth, newHeight);
+
+		_gameWidth = newWidth;
+		_gameHeight = newHeight;
 		update = true;
 	}
 
