@@ -753,7 +753,7 @@ begin_credits("Credits");
 
     begin_section("Website (code)");
 	  begin_persons();
-		add_person("Fredrik Wendel", "", "");
+		add_person("Fredrik Wendel", "", "(retired)");
 	  end_persons();
     end_section();
 

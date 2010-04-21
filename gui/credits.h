@@ -268,6 +268,7 @@ static const char *credits[] = {
 "",
 "C1""Website (code)",
 "C0""Fredrik Wendel",
+"C2""(retired)",
 "",
 "C1""Website (content)",
 "C0""All active team members",
