@@ -112,7 +112,7 @@ public:
 enum MadsTextAlignment { ALIGN_CENTER = -1, ALIGN_CHAR_CENTER = -2, RIGHT_ALIGN = -3 };
 
 
-class RexDialogView : public MadsView {
+class RexDialogView : public View, public MadsView {
 private:
 	int _priorSceneId;
 

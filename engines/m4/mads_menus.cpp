@@ -586,7 +586,8 @@ void DragonMainMenuView::handleAction(MadsGameAction action) {
  *--------------------------------------------------------------------------
  */
 
-RexDialogView::RexDialogView(): MadsView(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())) {
+RexDialogView::RexDialogView(): View(_madsVm, Common::Rect(0, 0, _madsVm->_screen->width(), _madsVm->_screen->height())),
+		MadsView(this) {
 	_screenType = VIEWID_MENU;
 
 	// Initialise class variables
@@ -695,7 +696,10 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	// Check whether any of the dialog text entries need to be refreshed
 	refreshText();
 
-	MadsView::onRefresh(rects, destSurface);
+	// Handle the drawing of the various Mads elements
+	refresh(rects);
+
+	View::onRefresh(rects, destSurface);
 }
 
 /**

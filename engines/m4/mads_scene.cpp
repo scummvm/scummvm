@@ -40,7 +40,7 @@
 
 namespace M4 {
 
-MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
+MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 
 	_interfaceSurface = new MadsInterfaceView(vm);

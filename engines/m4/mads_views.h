@@ -154,16 +154,17 @@ public:
 
 
 
-class MadsView: public View {
+class MadsView {
+private:
+	View *_view;
 public:
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	ScreenObjects _screenObjects;
 public:
-	MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent = false);
-	MadsView(MadsM4Engine *vm, int x = 0, int y = 0, bool transparent = false);
+	MadsView(View *view): _view(view) {}
 
-	void onRefresh(RectList *rects, M4Surface *destSurface);
+	void refresh(RectList *rects);
 };
 
 #define CHEAT_SEQUENCE_MAX 8

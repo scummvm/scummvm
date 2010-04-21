@@ -237,20 +237,12 @@ void ScreenObjects::setActive(int category, int idx, bool active) {
 
 //--------------------------------------------------------------------------
 
-MadsView::MadsView(MadsM4Engine *vm, const Common::Rect &viewBounds, bool transparent): View(vm, viewBounds, transparent) {
-}
-
-MadsView::MadsView(MadsM4Engine *vm, int x, int y, bool transparent): View(vm, x, y, transparent) {
-}
-
-void MadsView::onRefresh(RectList *rects, M4Surface *destSurface) {
+void MadsView::refresh(RectList *rects) {
 	// Draw any sprites
-	_spriteSlots.draw(this);
+	_spriteSlots.draw(_view);
 
 	// Draw text elements onto the view
-	_textDisplay.draw(this);
-
-	View::onRefresh(rects, destSurface);
+	_textDisplay.draw(_view);
 }
 
 /*--------------------------------------------------------------------------

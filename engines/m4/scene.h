@@ -35,8 +35,6 @@ class View;
 #include "m4/viewmgr.h"
 #include "m4/gui.h"
 #include "m4/m4_views.h"
-#include "m4/mads_logic.h"
-#include "m4/mads_views.h"
 #include "common/array.h"
 
 namespace M4 {
@@ -76,7 +74,7 @@ class M4Engine;
 class MadsEngine;
 class InterfaceView;
 
-class Scene : public MadsView {
+class Scene : public View {
 private:
 	HotSpotList _sceneHotspots;
 protected:

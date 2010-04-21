@@ -27,6 +27,8 @@
 #define M4_MADS_SCENE_H
 
 #include "m4/scene.h"
+#include "m4/mads_logic.h"
+#include "m4/mads_views.h"
 
 namespace M4 {
 
@@ -176,7 +178,7 @@ public:
 
 #define DIRTY_AREA_SIZE 90
 
-class MadsScene : public Scene {
+class MadsScene : public Scene, public MadsView {
 private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
