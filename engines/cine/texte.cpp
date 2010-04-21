@@ -37,7 +37,8 @@ const char **otherMessages;
 const char *defaultCommandPreposition;
 const char **commandPrepositionTable;
 
-/*! \brief Loads font data from the given file.
+/**
+ * Loads font data from the given file.
  * The number of characters used in the font varies between game versions:
  * 78 (Most PC, Amiga and Atari ST versions of Future Wars, but also Operation Stealth's Amiga demo),
  * 85 (All observed versions of German Future Wars (Amiga and PC), possibly Spanish Future Wars too),
@@ -639,12 +640,13 @@ void loadPoldatDat(const char *fname) {
 	}
 }
 
-/*! \brief Fit a substring of text into one line of fixed width text box
- * \param str Text to fit
- * \param maxWidth Text box width
- * \param[out] words Number of words that fit
- * \param[out] width Total width of nonblank characters that fit
- * \return Length of substring which fits
+/**
+ * Fit a substring of text into one line of fixed width text box
+ * @param str Text to fit
+ * @param maxWidth Text box width
+ * @param[out] words Number of words that fit
+ * @param[out] width Total width of nonblank characters that fit
+ * @return Length of substring which fits
  */
 int fitLine(const char *str, int maxWidth, int &words, int &width) {
 	int i, bkpWords = 0, bkpWidth = 0, bkpLen = 0;

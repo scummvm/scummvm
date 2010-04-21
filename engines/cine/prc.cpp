@@ -40,8 +40,9 @@ ScriptList objectScripts;
 
 //char currentPrcName[20];
 
-/*! \todo Is script size of 0 valid?
- * \todo Fix script dump code
+/**
+ * @todo Is script size of 0 valid?
+ * @todo Fix script dump code
  * @return Was the loading successful?
  */
 bool loadPrc(const char *pPrcName) {

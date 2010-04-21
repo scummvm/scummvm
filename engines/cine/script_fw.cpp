@@ -23,7 +23,7 @@
  *
  */
 
-/*! \file
+/** \file
  * Future Wars script interpreter file
  */
 
@@ -218,7 +218,8 @@ void FWScript::setupTable() {
 FWScriptInfo *scriptInfo; ///< Script factory
 RawScriptArray scriptTable; ///< Table of script bytecode
 
-/*! \todo: replace with script subsystem
+/**
+ * @todo replace with script subsystem
  */
 void setupOpcodes() {
 	static FWScriptInfo fw;
@@ -232,8 +233,9 @@ void setupOpcodes() {
 	}
 }
 
-/*! \brief Allocate empty array
- * \param len Size of array
+/**
+ * Allocate empty array
+ * @param len Size of array
  *
  * Explicit to prevent var=0 instead of var[i]=0 typos.
  */
@@ -242,9 +244,10 @@ ScriptVars::ScriptVars(unsigned int len) : _size(len), _vars(new int16[len]) {
 	reset();
 }
 
-/*! \brief Allocate array and read contents from savefile
- * \param fHandle Savefile open for reading
- * \param len Size of array
+/**
+ * Allocate array and read contents from savefile
+ * @param fHandle Savefile open for reading
+ * @param len Size of array
  */
 ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 	: _size(len), _vars(new int16[len]) {
@@ -254,20 +257,23 @@ ScriptVars::ScriptVars(Common::SeekableReadStream &fHandle, unsigned int len)
 	load(fHandle);
 }
 
-/*! \brief Copy constructor
+/**
+ * Copy constructor
  */
 ScriptVars::ScriptVars(const ScriptVars &src) : _size(src._size), _vars(new int16[_size]) {
 	assert(_vars);
 	memcpy(_vars, src._vars, _size * sizeof(int16));
 }
 
-/*! \brief Destructor
+/**
+ * Destructor
  */
 ScriptVars::~ScriptVars() {
 	delete[] _vars;
 }
 
-/*! \brief Assignment operator
+/**
+ * Assignment operator
  */
 ScriptVars &ScriptVars::operator=(const ScriptVars &src) {
 	ScriptVars tmp(src);
@@ -280,9 +286,10 @@ ScriptVars &ScriptVars::operator=(const ScriptVars &src) {
 	return *this;
 }
 
-/*! \brief Direct array item access
- * \param idx Item index
- * \return Reference to item
+/**
+ * Direct array item access.
+ * @param idx Item index
+ * @return Reference to item
  */
 int16 &ScriptVars::operator[](unsigned int idx) {
 	debug(6, "assert(%d < %d)", idx, _size);
@@ -290,9 +297,10 @@ int16 &ScriptVars::operator[](unsigned int idx) {
 	return _vars[idx];
 }
 
-/*! \brief Direct read-only array item access
- * \param idx Item index
- * \return Copy of item
+/**
+ * Direct read-only array item access.
+ * @param idx Item index
+ * @return Copy of item
  */
 int16 ScriptVars::operator[](unsigned int idx) const {
 	debug(6, "assert(%d < %d)", idx, _size);
@@ -300,16 +308,18 @@ int16 ScriptVars::operator[](unsigned int idx) const {
 	return _vars[idx];
 }
 
-/*! \brief Savefile writer
- * \param fHandle Savefile open for writing
+/**
+ * Savefile writer
+ * @param fHandle Savefile open for writing
  */
 void ScriptVars::save(Common::OutSaveFile &fHandle) const {
 	save(fHandle, _size);
 }
 
-/*! \brief Savefile writer with data length limit
- * \param fHandle Savefile open for writing
- * \param len Length of data to be written (len <= _size)
+/**
+ * Savefile writer with data length limit
+ * @param fHandle Savefile open for writing
+ * @param len Length of data to be written (len <= _size)
  */
 void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) const {
 	debug(6, "assert(%d <= %d)", len, _size);
@@ -319,16 +329,18 @@ void ScriptVars::save(Common::OutSaveFile &fHandle, unsigned int len) const {
 	}
 }
 
-/*! \brief Restore array from savefile
- * \param fHandle Savefile open for reading
+/**
+ * Restore array from savefile
+ * @param fHandle Savefile open for reading
  */
 void ScriptVars::load(Common::SeekableReadStream &fHandle) {
 	load(fHandle, _size);
 }
 
-/*! \brief Restore part of array from savefile
- * \param fHandle Savefile open for reading
- * \param len Length of data to be read
+/**
+ * Restore part of array from savefile
+ * @param fHandle Savefile open for reading
+ * @param len Length of data to be read
  */
 void ScriptVars::load(Common::SeekableReadStream &fHandle, unsigned int len) {
 	debug(6, "assert(%d <= %d)", len, _size);
@@ -338,14 +350,16 @@ void ScriptVars::load(Common::SeekableReadStream &fHandle, unsigned int len) {
 	}
 }
 
-/*! \brief Reset all values to 0
+/**
+ * Reset all values to 0
  */
 void ScriptVars::reset() {
 	memset( _vars, 0, _size * sizeof(int16));
 }
 
-/*! \brief Constructor for partial loading
- * \param s Size of bytecode which will be added later
+/**
+ * Constructor for partial loading
+ * @param s Size of bytecode which will be added later
  *
  * This constructor _MUST_ be followed by setdata() method call before the
  * instance can be used. It leaves the instance in partially invalid state.
@@ -353,9 +367,10 @@ void ScriptVars::reset() {
 RawScript::RawScript(uint16 s) : _size(s), _data(NULL),
 	_labels(SCRIPT_STACK_SIZE) { }
 
-/*! \brief Complete constructor
- * \param data Script bytecode
- * \param s Bytecode length
+/**
+ * Complete constructor
+ * @param data Script bytecode
+ * @param s Bytecode length
  */
 RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
 	_size(s), _data(NULL), _labels(SCRIPT_STACK_SIZE) {
@@ -363,7 +378,8 @@ RawScript::RawScript(const FWScriptInfo &info, const byte *data, uint16 s) :
 	setData(info, data);
 }
 
-/*! \brief Copy constructor
+/**
+ * Copy constructor
  */
 RawScript::RawScript(const RawScript &src) : _size(src._size),
 	_data(new byte[_size+1]), _labels(src._labels) {
@@ -372,13 +388,15 @@ RawScript::RawScript(const RawScript &src) : _size(src._size),
 	memcpy(_data, src._data, _size+1);
 }
 
-/*! \brief Destructor
+/**
+ * Destructor
  */
 RawScript::~RawScript() {
 	delete[] _data;
 }
 
-/*! \brief Assignment operator
+/**
+ * Assignment operator
  */
 RawScript &RawScript::operator=(const RawScript &src) {
 	assert(src._data);
@@ -396,10 +414,11 @@ RawScript &RawScript::operator=(const RawScript &src) {
 	return *this;
 }
 
-/*! \brief Get the next label in bytecode
- * \param info Script info instance
- * \param offset Starting offset
- * \return Index of the next label in bytecode or _size on end of bytecode
+/**
+ * Get the next label in bytecode
+ * @param info Script info instance
+ * @param offset Starting offset
+ * @return Index of the next label in bytecode or _size on end of bytecode
  *
  * computeScriptStackSub replacement
  */
@@ -449,8 +468,9 @@ int RawScript::getNextLabel(const FWScriptInfo &info, int offset) const {
 	return _size;
 }
 
-/*! \brief Calculate initial script labels
- * \param info Script info instance
+/**
+ * Calculate initial script labels
+ * @param info Script info instance
  *
  * computeScriptStack replacement
  */
@@ -471,11 +491,12 @@ void RawScript::computeLabels(const FWScriptInfo &info) {
 	}
 }
 
-/*! \brief find the next label from current position
- * \param info Script info instance
- * \param index Label index to look for
- * \param offset Current position in script
- * \return Position of next instruction following the label
+/**
+ * find the next label from current position
+ * @param info Script info instance
+ * @param index Label index to look for
+ * @param offset Current position in script
+ * @return Position of next instruction following the label
  *
  * computeScriptStackFromScript replacement
  */
@@ -494,8 +515,9 @@ uint16 RawScript::getLabel(const FWScriptInfo &info, byte index, uint16 offset)
 	return -pos - 1;
 }
 
-/*! \brief Copy bytecode and calculate labels
- * \param data Bytecode to copy, must be _size long
+/**
+ * Copy bytecode and calculate labels
+ * @param data Bytecode to copy, must be _size long
  */
 void RawScript::setData(const FWScriptInfo &info, const byte *data) {
 	assert(!_data); // this function should be called only once per instance
@@ -508,17 +530,19 @@ void RawScript::setData(const FWScriptInfo &info, const byte *data) {
 	computeLabels(info);
 }
 
-/*! \brief Initial script labels
- * \return Precalculated script labels
+/**
+ * Initial script labels
+ * @return Precalculated script labels
  */
 const ScriptVars &RawScript::labels() const {
 	assert(_data);
 	return _labels;
 }
 
-/*! \brief One byte of bytecode
- * \param pos Index in bytecode
- * \return Byte from bytecode
+/**
+ * One byte of bytecode
+ * @param pos Index in bytecode
+ * @return Byte from bytecode
  */
 byte RawScript::getByte(unsigned int pos) const {
 	assert(_data && pos < _size);
@@ -526,9 +550,10 @@ byte RawScript::getByte(unsigned int pos) const {
 	return _data[pos];
 }
 
-/*! \brief One word of bytecode
- * \param pos Index of the first byte in bytecode
- * \return Word of bytecode
+/**
+ * One word of bytecode
+ * @param pos Index of the first byte in bytecode
+ * @return Word of bytecode
  */
 uint16 RawScript::getWord(unsigned int pos) const {
 	assert(_data && pos+1 < _size);
@@ -536,9 +561,10 @@ uint16 RawScript::getWord(unsigned int pos) const {
 	return READ_BE_UINT16(_data + pos);
 }
 
-/*! \brief String in bytecode
- * \param pos Index of the first char in string
- * \return Pointer to part of bytecode
+/**
+ * String in bytecode
+ * @param pos Index of the first char in string
+ * @return Pointer to part of bytecode
  */
 const char *RawScript::getString(unsigned int pos) const {
 	assert(_data && pos < _size);
@@ -546,11 +572,12 @@ const char *RawScript::getString(unsigned int pos) const {
 	return (const char*)(_data+pos);
 }
 
-/*! \brief Constructor for partial loading
- * \param size Size of bytecode which will be added later
- * \param p1 First object script parameter
- * \param p2 Second object script parameter
- * \param p3 Third object script parameter
+/**
+ * Constructor for partial loading
+ * @param size Size of bytecode which will be added later
+ * @param p1 First object script parameter
+ * @param p2 Second object script parameter
+ * @param p3 Third object script parameter
  *
  * This constructor _MUST_ be followed by setdata() method call before the
  * instance can be used. It leaves the instance in partially invalid state.
@@ -559,45 +586,50 @@ RawObjectScript::RawObjectScript(uint16 s, uint16 p1, uint16 p2, uint16 p3)
 	: RawScript(s), _runCount(0), _param1(p1), _param2(p2), _param3(p3)
 { }
 
-/*! \brief Complete constructor
- * \param data Script bytecode
- * \param s Bytecode length
- * \param p1 First object script parameter
- * \param p2 Second object script parameter
- * \param p3 Third object script parameter
+/**
+ * Complete constructor
+ * @param data Script bytecode
+ * @param s Bytecode length
+ * @param p1 First object script parameter
+ * @param p2 Second object script parameter
+ * @param p3 Third object script parameter
  */
 RawObjectScript::RawObjectScript(const FWScriptInfo &info, const byte *data,
 	uint16 s, uint16 p1, uint16 p2, uint16 p3) : RawScript(info, data, s),
 	_runCount(0), _param1(p1), _param2(p2), _param3(p3) { }
 
-/*! \brief Contructor for global scripts
- * \param script Script bytecode reference
- * \param idx Script bytecode index
+/**
+ * Contructor for global scripts
+ * @param script Script bytecode reference
+ * @param idx Script bytecode index
  */
 FWScript::FWScript(const RawScript &script, int16 idx) : _script(script),
 	_pos(0), _line(0), _compare(0), _index(idx),
 	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
 	_globalVars(globalVars), _info(new FWScriptInfo) { }
 
-/*! \brief Copy constructor
+/**
+ * Copy constructor
  */
 FWScript::FWScript(const FWScript &src) : _script(src._script), _pos(src._pos),
 	_line(src._line), _compare(src._compare), _index(src._index),
 	_labels(src._labels), _localVars(src._localVars),
 	_globalVars(src._globalVars), _info(new FWScriptInfo) { }
 
-/*! \brief Contructor for global scripts in derived classes
- * \param script Script bytecode reference
- * \param idx Script bytecode index
+/**
+ * Contructor for global scripts in derived classes
+ * @param script Script bytecode reference
+ * @param idx Script bytecode index
  */
 FWScript::FWScript(const RawScript &script, int16 idx, FWScriptInfo *info) :
 	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
 	_labels(script.labels()), _localVars(LOCAL_VARS_SIZE),
 	_globalVars(globalVars), _info(info) { }
 
-/*! \brief Constructor for object scripts in derived classes
- * \param script Script bytecode reference
- * \param idx Script bytecode index
+/**
+ * Constructor for object scripts in derived classes
+ * @param script Script bytecode reference
+ * @param idx Script bytecode index
  */
 FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info) :
 	_script(script), _pos(0), _line(0), _compare(0), _index(idx),
@@ -607,7 +639,8 @@ FWScript::FWScript(RawObjectScript &script, int16 idx, FWScriptInfo *info) :
 	_localVars[0] = script.run();
 }
 
-/*! \brief Copy constructor for derived classes
+/**
+ * Copy constructor for derived classes
  */
 FWScript::FWScript(const FWScript &src, FWScriptInfo *info) :
 	_script(src._script), _pos(src._pos), _line(src._line),
@@ -618,8 +651,9 @@ FWScript::~FWScript() {
 	delete _info;
 }
 
-/*! \brief Read next byte from bytecode
- * \return Byte from bytecode
+/**
+ * Read next byte from bytecode
+ * @return Byte from bytecode
  */
 byte FWScript::getNextByte() {
 	byte val = _script.getByte(_pos);
@@ -627,8 +661,9 @@ byte FWScript::getNextByte() {
 	return val;
 }
 
-/*! \brief Read next word from bytecode
- * \return Word from bytecode
+/**
+ * Read next word from bytecode
+ * @return Word from bytecode
  */
 uint16 FWScript::getNextWord() {
 	uint16 val = _script.getWord(_pos);
@@ -636,8 +671,9 @@ uint16 FWScript::getNextWord() {
 	return val;
 }
 
-/*! \brief Read next string from bytecode
- * \return Pointer to string
+/**
+ * Read next string from bytecode
+ * @return Pointer to string
  */
 const char *FWScript::getNextString() {
 	const char *val = _script.getString(_pos);
@@ -645,11 +681,12 @@ const char *FWScript::getNextString() {
 	return val;
 }
 
-/*! \brief Restore script state from savefile
- * \param labels Restored script labels
- * \param local Restored local script variables
- * \param compare Restored last comparison result
- * \param pos Restored script position
+/**
+ * Restore script state from savefile
+ * @param labels Restored script labels
+ * @param local Restored local script variables
+ * @param compare Restored last comparison result
+ * @param pos Restored script position
  */
 void FWScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) {
 	assert(pos < _script._size);
@@ -659,8 +696,9 @@ void FWScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 co
 	_pos = _line = pos;
 }
 
-/*! \brief Execute script
- * \return <0 on script termination, >0 on script pause
+/**
+ * Execute script
+ * @return <0 on script termination, >0 on script pause
  *
  * executeScript replacement.
  * Instruction handler must return 0 if the script should continue or
@@ -682,8 +720,9 @@ int FWScript::execute() {
 	return ret;
 }
 
-/*! \brief Save script to savefile
- * \param fHandle Savefile handle
+/**
+ * Save script to savefile
+ * @param fHandle Savefile handle
  */
 void FWScript::save(Common::OutSaveFile &fHandle) const {
 	_labels.save(fHandle);
@@ -694,8 +733,9 @@ void FWScript::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint16BE(_index);
 }
 
-/*! \brief Get opcode info string
- * \param opcode Opcode to look for in opcode table
+/**
+ * Get opcode info string
+ * @param opcode Opcode to look for in opcode table
  */
 const char *FWScriptInfo::opcodeInfo(byte opcode) const {
 	if (opcode == 0 || opcode > FWScript::_numOpcodes) {
@@ -710,8 +750,9 @@ const char *FWScriptInfo::opcodeInfo(byte opcode) const {
 	return FWScript::_opcodeTable[opcode - 1].args;
 }
 
-/*! \brief Get opcode handler pointer
- * \param opcode Opcode to look for in opcode table
+/**
+ * Get opcode handler pointer
+ * @param opcode Opcode to look for in opcode table
  */
 OpFunc FWScriptInfo::opcodeHandler(byte opcode) const {
 	if (opcode == 0 || opcode > FWScript::_numOpcodes) {
@@ -726,29 +767,32 @@ OpFunc FWScriptInfo::opcodeHandler(byte opcode) const {
 	return FWScript::_opcodeTable[opcode - 1].proc;
 }
 
-/*! \brief Create new FWScript instance
- * \param script Script bytecode
- * \param index Bytecode index
+/**
+ * Create new FWScript instance
+ * @param script Script bytecode
+ * @param index Bytecode index
  */
 FWScript *FWScriptInfo::create(const RawScript &script, int16 index) const {
 	return new FWScript(script, index);
 }
 
-/*! \brief Create new FWScript instance
- * \param script Object script bytecode
- * \param index Bytecode index
+/**
+ * Create new FWScript instance
+ * @param script Object script bytecode
+ * @param index Bytecode index
  */
 FWScript *FWScriptInfo::create(const RawObjectScript &script, int16 index) const {
 	return new FWScript(script, index);
 }
 
-/*! \brief Load saved FWScript instance
- * \param script Script bytecode
- * \param index Bytecode index
- * \param local Local variables
- * \param labels Script labels
- * \param compare Last compare result
- * \param pos Position in script
+/**
+ * Load saved FWScript instance
+ * @param script Script bytecode
+ * @param index Bytecode index
+ * @param local Local variables
+ * @param labels Script labels
+ * @param compare Last compare result
+ * @param pos Position in script
  */
 FWScript *FWScriptInfo::create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
 	FWScript *tmp = new FWScript(script, index);
@@ -757,13 +801,14 @@ FWScript *FWScriptInfo::create(const RawScript &script, int16 index, const Scrip
 	return tmp;
 }
 
-/*! \brief Load saved FWScript instance
- * \param script Object script bytecode
- * \param index Bytecode index
- * \param local Local variables
- * \param labels Script labels
- * \param compare Last compare result
- * \param pos Position in script
+/**
+ * Load saved FWScript instance
+ * @param script Object script bytecode
+ * @param index Bytecode index
+ * @param local Local variables
+ * @param labels Script labels
+ * @param compare Last compare result
+ * @param pos Position in script
  */
 FWScript *FWScriptInfo::create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
 	FWScript *tmp = new FWScript(script, index);
@@ -1329,7 +1374,7 @@ int FWScript::o1_loadBg() {
 	return 0;
 }
 
-/*! \brief Load collision table data */
+/** Load collision table data */
 int FWScript::o1_loadCt() {
 	const char *param = getNextString();
 
@@ -1437,8 +1482,9 @@ int FWScript::o1_palRotate() {
 	return 0;
 }
 
-/*!\brief Pause script
- * \todo Make sure it works
+/**
+ * Pause script.
+ * @todo Make sure it works
  */
 int FWScript::o1_break() {
 	debugC(5, kCineDebugScript, "Line: %d: break", _line);
@@ -1478,8 +1524,9 @@ int FWScript::o1_break() {
 	return 1;
 }
 
-/*! \brief Terminate script
- * \todo Make sure it works
+/**
+ * Terminate script
+ * @todo Make sure it works
  */
 int FWScript::o1_endScript() {
 	debugC(5, kCineDebugScript, "Line: %d: endScript", _line);
@@ -1584,7 +1631,8 @@ int FWScript::o1_unloadAllMasks() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/**
+ * @todo Implement this instruction
  */
 int FWScript::o1_setScreenDimensions() {
 	uint16 a = getNextWord();
@@ -1596,7 +1644,8 @@ int FWScript::o1_setScreenDimensions() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
+/**
+ * @todo Implement this instruction
  */
 int FWScript::o1_displayBackground() {
 	warning("STUB: o1_displayBackground()");
@@ -1698,7 +1747,8 @@ int FWScript::o1_stopSample() {
 	return 0;
 }
 
-/*! \todo Implement this instruction's Amiga part (PC part already done)
+/**
+ * @todo Implement this instruction's Amiga part (PC part already done)
  * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op71() {
@@ -1708,7 +1758,8 @@ int FWScript::o1_op71() {
 	return 0;
 }
 
-/*! \todo Implement this instruction's Amiga part (PC part already done)
+/**
+ * @todo Implement this instruction's Amiga part (PC part already done)
  * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op72() {
@@ -1719,7 +1770,8 @@ int FWScript::o1_op72() {
 	return 0;
 }
 
-/*! \todo Implement this instruction's Amiga part (PC part already done)
+/**
+ * @todo Implement this instruction's Amiga part (PC part already done)
  * In PC versions of Future Wars and Operation Stealth this instruction does nothing else but read the parameters.
  */
 int FWScript::o1_op73() {
@@ -1938,13 +1990,15 @@ void executeGlobalScripts() {
 	}
 }
 
-/*! \todo Remove object scripts with script index of -1 (Not script position, but script index!).
+/**
+ * @todo Remove object scripts with script index of -1 (Not script position, but script index!).
  *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
 void purgeObjectScripts() {
 }
 
-/*! \todo Remove global scripts with script index of -1 (Not script position, but script index!).
+/**
+ * @todo Remove global scripts with script index of -1 (Not script position, but script index!).
  *        This would seem to be valid for both Future Wars and Operation Stealth.
  */
 void purgeGlobalScripts() {

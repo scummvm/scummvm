@@ -23,8 +23,8 @@
  *
  */
 
-/*! \file
- * \todo Make resource manager class and make load* functions its members
+/** \file
+ * @todo Make resource manager class and make load* functions its members
  */
 
 #include "common/endian.h"
@@ -195,7 +195,8 @@ AnimData::AnimData() : _width(0), _height(0), _bpp(0), _var1(0), _data(NULL),
 	memset(_name, 0, sizeof(_name));
 }
 
-/*! \brief Copy constructor
+/**
+ * Copy constructor
  */
 AnimData::AnimData(const AnimData &src) : _width(src._width),
 	_height(src._height), _bpp(src._bpp), _var1(src._var1),
@@ -218,13 +219,15 @@ AnimData::AnimData(const AnimData &src) : _width(src._width),
 	strcpy(_name, src._name);
 }
 
-/*! \brief Destructor
+/**
+ * Destructor
  */
 AnimData::~AnimData() {
 	clear();
 }
 
-/*! \brief Assingment operator
+/**
+ * Assingment operator
  */
 AnimData &AnimData::operator=(const AnimData &src) {
 	AnimData tmp = src;
@@ -261,15 +264,16 @@ byte AnimData::getColor(int x, int y) {
 	return _data[x + y * _realWidth];
 }
 
-/*! \brief Load and decode image frame
- * \param d Encoded image data
- * \param type Encoding type
- * \param w Image width
- * \param h Image height
- * \param file Data file index in bundle
- * \param frame Image frame index
- * \param n Part name
- * \param transparent Transparent color (for ANIM_MASKSPRITE)
+/**
+ * Load and decode image frame
+ * @param d Encoded image data
+ * @param type Encoding type
+ * @param w Image width
+ * @param h Image height
+ * @param file Data file index in bundle
+ * @param frame Image frame index
+ * @param n Part name
+ * @param transparent Transparent color (for ANIM_MASKSPRITE)
  */
 void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 	int16 frame, const char *n, byte transparent) {
@@ -354,7 +358,8 @@ void AnimData::load(byte *d, int type, uint16 w, uint16 h, int16 file,
 	}
 }
 
-/*! \brief Reset image
+/**
+ * Reset image
  */
 void AnimData::clear() {
 	delete[] _data;
@@ -372,8 +377,9 @@ void AnimData::clear() {
 	_size = 0;
 }
 
-/*! \brief Write image identifiers to savefile
- * \param fHandle Savefile open for writing
+/**
+ * Write image identifiers to savefile
+ * @param fHandle Savefile open for writing
  */
 void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.writeUint16BE(_width);
@@ -387,9 +393,10 @@ void AnimData::save(Common::OutSaveFile &fHandle) const {
 	fHandle.write(_name, sizeof(_name));
 }
 
-/*! \brief Clear part of animDataTable
- * \param startIdx First image frame to be cleared
- * \param numIdx Number of image frames to be cleared
+/**
+ * Clear part of animDataTable
+ * @param startIdx First image frame to be cleared
+ * @param numIdx Number of image frames to be cleared
  */
 void freeAnimDataRange(byte startIdx, byte numIdx) {
 	for (byte i = 0; i < numIdx; i++) {
@@ -397,14 +404,16 @@ void freeAnimDataRange(byte startIdx, byte numIdx) {
 	}
 }
 
-/*! \brief Clear whole animDataTable
+/**
+ * Clear whole animDataTable
  */
 void freeAnimDataTable() {
 	freeAnimDataRange(0, NUM_MAX_ANIMDATA);
 }
 
-/*! \brief Find transparent color index for image
- * \brief animName Image file name
+/**
+ * Find transparent color index for image
+ * @param animName Image file name
  */
 static byte getAnimTransparentColor(const char *animName) {
 	char name[15];
@@ -419,11 +428,12 @@ static byte getAnimTransparentColor(const char *animName) {
 	return 0;
 }
 
-/*! \brief Generate mask for image
- * \param[in] sprite Image data
- * \param[out] mask Image mask
- * \param size Image data length
- * \param transparency Transparent color index
+/**
+ * Generate mask for image
+ * @param[in] sprite Image data
+ * @param[out] mask Image mask
+ * @param size Image data length
+ * @param transparency Transparent color index
  */
 void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency) {
 	for (uint16 i = 0; i < size; i++) {
@@ -435,11 +445,12 @@ void generateMask(const byte *sprite, byte *mask, uint16 size, byte transparency
 	}
 }
 
-/*! \brief Decode 1bpp mask
- * \param[out] dest Decoded mask
- * \param[in] source Encoded mask
- * \param width Mask width
- * \param height Mask height
+/**
+ * Decode 1bpp mask
+ * @param[out] dest Decoded mask
+ * @param[in] source Encoded mask
+ * @param width Mask width
+ * @param height Mask height
  */
 void convertMask(byte *dest, const byte *source, int16 width, int16 height) {
 	int16 i, j;
@@ -454,11 +465,12 @@ void convertMask(byte *dest, const byte *source, int16 width, int16 height) {
 	}
 }
 
-/*! \brief Decode 4bpp sprite
- * \param[out] dest Decoded image
- * \param[in] source Encoded image
- * \param width Image width
- * \param height Image height
+/**
+ * Decode 4bpp sprite
+ * @param[out] dest Decoded image
+ * @param[in] source Encoded image
+ * @param width Image width
+ * @param height Image height
  */
 void convert4BBP(byte *dest, const byte *source, int16 width, int16 height) {
 	byte maskEntry;
@@ -470,9 +482,10 @@ void convert4BBP(byte *dest, const byte *source, int16 width, int16 height) {
 	}
 }
 
-/*! \brief Read image header
- * \param[out] animHeader Image header reference
- * \param readS Input stream open for reading
+/**
+ * Read image header
+ * @param[out] animHeader Image header reference
+ * @param readS Input stream open for reading
  */
 void loadAnimHeader(AnimHeaderStruct &animHeader, Common::MemoryReadStream readS) {
 	animHeader.field_0 = readS.readByte();
@@ -495,8 +508,9 @@ void loadAnimHeader(AnimHeaderStruct &animHeader, Common::MemoryReadStream readS
 	animHeader.field_14 = readS.readUint16BE();
 }
 
-/*! \brief Find next empty space animDataTable
- * \param start First index to check
+/**
+ * Find next empty space animDataTable
+ * @param start First index to check
  */
 int emptyAnimSpace(int start = 0) {
 	for (; start < NUM_MAX_ANIMDATA; start++) {
@@ -508,10 +522,11 @@ int emptyAnimSpace(int start = 0) {
 	return -1;
 }
 
-/*! \brief Load SPL data into animDataTable
- * \param resourceName SPL filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded SPL data (-1 if error)
+/**
+ * Load SPL data into animDataTable
+ * @param resourceName SPL filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded SPL data (-1 if error)
  */
 int loadSpl(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -531,10 +546,11 @@ int loadSpl(const char *resourceName, int16 idx) {
 	return entry + 1;
 }
 
-/*! \brief Load 1bpp mask
- * \param resourceName Mask filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded mask (-1 if error)
+/**
+ * Load 1bpp mask
+ * @param resourceName Mask filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded mask (-1 if error)
  */
 int loadMsk(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -562,10 +578,11 @@ int loadMsk(const char *resourceName, int16 idx) {
 	return entry;
 }
 
-/*! \brief Load animation
- * \param resourceName Animation filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded animation (-1 if error)
+/**
+ * Load animation
+ * @param resourceName Animation filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded animation (-1 if error)
  */
 int loadAni(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -612,11 +629,12 @@ int loadAni(const char *resourceName, int16 idx) {
 	return entry;
 }
 
-/*! \brief Decode 16 color image with palette
- * \param[out] dest Decoded image
- * \param[in] source Encoded image
- * \param width Image width
- * \param height Image height
+/**
+ * Decode 16 color image with palette
+ * @param[out] dest Decoded image
+ * @param[in] source Encoded image
+ * @param width Image width
+ * @param height Image height
  */
 void convert8BBP(byte *dest, const byte *source, int16 width, int16 height) {
 	const byte *table = source;
@@ -632,11 +650,12 @@ void convert8BBP(byte *dest, const byte *source, int16 width, int16 height) {
 	}
 }
 
-/*! \brief Decode 8bit image
- * \param[out] dest Decoded image
- * \param[in] source Encoded image
- * \param width Image width
- * \param height Image height
+/**
+ * Decode 8bit image
+ * @param[out] dest Decoded image
+ * @param[in] source Encoded image
+ * @param width Image width
+ * @param height Image height
  * \attention Data in source are destroyed during decoding
  */
 void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
@@ -663,10 +682,11 @@ void convert8BBP2(byte *dest, byte *source, int16 width, int16 height) {
 	}	// end j
 }
 
-/*! \brief Load image set
- * \param resourceName Image set filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded image set (-1 if error)
+/**
+ * Load image set
+ * @param resourceName Image set filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded image set (-1 if error)
  */
 int loadSet(const char *resourceName, int16 idx) {
 	AnimHeader2Struct header2;
@@ -724,10 +744,11 @@ int loadSet(const char *resourceName, int16 idx) {
 	return entry;
 }
 
-/*! \brief Load SEQ data into animDataTable
- * \param resourceName SEQ data filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded SEQ data (-1 if error)
+/**
+ * Load SEQ data into animDataTable
+ * @param resourceName SEQ data filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded SEQ data (-1 if error)
  */
 int loadSeq(const char *resourceName, int16 idx) {
 	int16 foundFileIdx = findFileInBundle(resourceName);
@@ -743,11 +764,12 @@ int loadSeq(const char *resourceName, int16 idx) {
 	return entry + 1;
 }
 
-/*! \brief Load a resource into animDataTable
- * \param resourceName Resource's filename
- * \param idx Target index in animDataTable (-1 if any empty space will do)
- * \return The number of the animDataTable entry after the loaded resource (-1 if error)
- * \todo Implement loading of all resource types
+/**
+ * Load a resource into animDataTable
+ * @param resourceName Resource's filename
+ * @param idx Target index in animDataTable (-1 if any empty space will do)
+ * @return The number of the animDataTable entry after the loaded resource (-1 if error)
+ * @todo Implement loading of all resource types
  */
 int loadResource(const char *resourceName, int16 idx) {
 	int result = -1; // Return an error by default

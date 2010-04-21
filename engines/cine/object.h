@@ -39,7 +39,7 @@ struct ObjectStruct {
 	char name[20];
 	uint16 part;
 
-	/*! \brief Sets all member variables to zero. */
+	/** Sets all member variables to zero. */
 	void clear() {
 		this->x = 0;
 		this->y = 0;

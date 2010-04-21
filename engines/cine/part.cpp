@@ -264,7 +264,7 @@ byte *readBundleSoundFile(const char *entryName, uint32 *size) {
 	return data;
 }
 
-/*! \brief Rotate byte value to the left by n bits */
+/** Rotate byte value to the left by n bits */
 byte rolByte(byte value, uint n) {
 	n %= 8;
 	return (byte) ((value << n) | (value >> (8 - n)));

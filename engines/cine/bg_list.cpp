@@ -38,8 +38,9 @@ namespace Cine {
 uint32 var8;
 Common::List<BGIncrust> bgIncrustList;
 
-/*! \brief Add masked sprite to the background
- * \param objIdx Sprite description
+/**
+ * Add masked sprite to the background
+ * @param objIdx Sprite description
  */
 void addToBGList(int16 objIdx) {
 	renderer->incrustSprite(objectTable[objIdx]);
@@ -47,8 +48,9 @@ void addToBGList(int16 objIdx) {
 	createBgIncrustListElement(objIdx, 0);
 }
 
-/*! \brief Add filled sprite to the background
- * \param objIdx Sprite description
+/**
+ * Add filled sprite to the background
+ * @param objIdx Sprite description
  */
 void addSpriteFilledToBGList(int16 objIdx) {
 	renderer->incrustMask(objectTable[objIdx]);
@@ -56,9 +58,10 @@ void addSpriteFilledToBGList(int16 objIdx) {
 	createBgIncrustListElement(objIdx, 1);
 }
 
-/*! \brief Add new element to incrust list
- * \param objIdx Element description
- * \param param Type of element
+/**
+ * Add new element to incrust list
+ * @param objIdx Element description
+ * @param param Type of element
  */
 void createBgIncrustListElement(int16 objIdx, int16 param) {
 	BGIncrust tmp;
@@ -74,14 +77,16 @@ void createBgIncrustListElement(int16 objIdx, int16 param) {
 	bgIncrustList.push_back(tmp);
 }
 
-/*! \brief Reset var8 (probably something related to bgIncrustList)
+/**
+ * Reset var8 (probably something related to bgIncrustList)
  */
 void resetBgIncrustList() {
 	var8 = 0;
 }
 
-/*! \brief Restore incrust list from savefile
- * \param fHandle Savefile open for reading
+/**
+ * Restore incrust list from savefile
+ * @param fHandle Savefile open for reading
  */
 void loadBgIncrustFromSave(Common::SeekableReadStream &fHandle) {
 	BGIncrust tmp;

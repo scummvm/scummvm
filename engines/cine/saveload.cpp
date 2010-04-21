@@ -52,9 +52,10 @@ bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {
 	return !(in.eos() || in.err());
 }
 
-/*! \brief Savegame format detector
- * \param fHandle Savefile to check
- * \return Savegame format on success, ANIMSIZE_UNKNOWN on failure
+/**
+ * Savegame format detector
+ * @param fHandle Savefile to check
+ * @return Savegame format on success, ANIMSIZE_UNKNOWN on failure
  *
  * This function seeks through the savefile and tries to determine the
  * savegame format it uses. There's a miniscule chance that the detection
@@ -174,9 +175,10 @@ enum CineSaveGameFormat detectSaveGameFormat(Common::SeekableReadStream &fHandle
 	return result;
 }
 
-/*! \brief Restore script list item from savefile
- * \param fHandle Savefile handle open for reading
- * \param isGlobal Restore object or global script?
+/**
+ * Restore script list item from savefile
+ * @param fHandle Savefile handle open for reading
+ * @param isGlobal Restore object or global script?
  */
 void loadScriptFromSave(Common::SeekableReadStream &fHandle, bool isGlobal) {
 	ScriptVars localVars, labels;
@@ -208,8 +210,9 @@ void loadScriptFromSave(Common::SeekableReadStream &fHandle, bool isGlobal) {
 	}
 }
 
-/*! \brief Restore overlay sprites from savefile
- * \param fHandle Savefile open for reading
+/**
+ * Restore overlay sprites from savefile
+ * @param fHandle Savefile open for reading
  */
 void loadOverlayFromSave(Common::SeekableReadStream &fHandle) {
 	overlay tmp;
@@ -349,7 +352,7 @@ void saveCommandVariables(Common::OutSaveFile &out) {
 	}
 }
 
-/*! \brief Save the 80 bytes long command buffer padded to that length with zeroes. */
+/** Save the 80 bytes long command buffer padded to that length with zeroes. */
 void saveCommandBuffer(Common::OutSaveFile &out) {
 	// Let's make sure there's space for the trailing zero
 	// (That's why we subtract one from the maximum command buffer size here).
@@ -983,10 +986,11 @@ void CineEngine::makeSave(char *saveFileName) {
 	setMouseCursor(MOUSE_CURSOR_NORMAL);
 }
 
-/*! \brief Load animDataTable from save
- * \param fHandle Savefile open for reading
- * \param saveGameFormat The used savegame format
- * \todo Add Operation Stealth savefile support
+/**
+ * Load animDataTable from save
+ * @param fHandle Savefile open for reading
+ * @param saveGameFormat The used savegame format
+ * @todo Add Operation Stealth savefile support
  *
  * Unlike the old code, this one actually rebuilds the table one frame
  * at a time.

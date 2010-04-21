@@ -104,7 +104,7 @@ void loadRelatedPalette(const char *fileName) {
 }
 
 namespace {
-/*! \brief Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
+/** Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
 bool isBigEndian(const EndianType endian) {
 	assert(endian == CINE_NATIVE_ENDIAN || endian == CINE_LITTLE_ENDIAN || endian == CINE_BIG_ENDIAN);
 
@@ -123,7 +123,7 @@ bool isBigEndian(const EndianType endian) {
 #endif
 }
 
-/*! \brief Calculate byte position of given bit position in a multibyte variable using defined endianness. */
+/** Calculate byte position of given bit position in a multibyte variable using defined endianness. */
 int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
 	if (bigEndian)
 		return (numBytes - 1) - (bitPos / 8);
@@ -131,7 +131,7 @@ int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
 		return bitPos / 8;
 }
 
-/*! \brief Calculate the value of "base" to the power of "power". */
+/** Calculate the value of "base" to the power of "power". */
 int power(int base, int power) {
 	int result = 1;
 	while (power--)

@@ -38,7 +38,7 @@ namespace Cine {
 Common::Array<ObjectStruct> objectTable;
 Common::List<overlay> overlayList;
 
-/*! \brief Resets all elements in the object table. */
+/** Resets all elements in the object table. */
 void resetObjectTable() {
 	for (Common::Array<ObjectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); ++it) {
 		it->clear();
@@ -87,9 +87,10 @@ void loadObject(char *pObjectName) {
 	free(dataPtr);
 }
 
-/*! \brief Remove overlay sprite from the list
- * \param objIdx Remove overlay associated with this object
- * \param param Remove overlay of this type
+/**
+ * Remove overlay sprite from the list
+ * @param objIdx Remove overlay associated with this object
+ * @param param Remove overlay of this type
  */
 int removeOverlay(uint16 objIdx, uint16 param) {
 	Common::List<overlay>::iterator it;
@@ -104,10 +105,11 @@ int removeOverlay(uint16 objIdx, uint16 param) {
 	return 0;
 }
 
-/*! \brief Add new overlay sprite to the list
- * \param objIdx Associate the overlay with this object
- * \param type Type of new overlay
- * \todo Why are x, y, width and color left uninitialized?
+/**
+ * Add new overlay sprite to the list
+ * @param objIdx Associate the overlay with this object
+ * @param type Type of new overlay
+ * @todo Why are x, y, width and color left uninitialized?
  */
 void addOverlay(uint16 objIdx, uint16 type) {
 	Common::List<overlay>::iterator it;
@@ -140,9 +142,10 @@ void addOverlay(uint16 objIdx, uint16 type) {
 	overlayList.insert(it, tmp);
 }
 
-/*! \brief Add new background mask overlay
- * \param objIdx Associate the overlay with this object
- * \param param source background index
+/**
+ * Add new background mask overlay
+ * @param objIdx Associate the overlay with this object
+ * @param param source background index
  */
 void addGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
@@ -168,10 +171,11 @@ void addGfxElement(int16 objIdx, int16 param, int16 type) {
 	overlayList.insert(it, tmp);
 }
 
-/*! \brief Remove background mask overlay
- * \param objIdx Remove overlay associated with this object
- * \param param Remove overlay using this background
- * \todo Check that it works
+/**
+ * Remove background mask overlay
+ * @param objIdx Remove overlay associated with this object
+ * @param param Remove overlay using this background
+ * @todo Check that it works
  */
 void removeGfxElement(int16 objIdx, int16 param, int16 type) {
 	Common::List<overlay>::iterator it;
@@ -286,7 +290,8 @@ uint16 compareObjectParam(byte objIdx, byte type, int16 value) {
 	return compareResult;
 }
 
-/*! \bug In Operation Stealth, if you try to go downstairs to the sea in the
+/**
+ * @bug In Operation Stealth, if you try to go downstairs to the sea in the
  * location between bank and hotel, getObjectParam is called with paramIdx 16
  * and crashes
  */

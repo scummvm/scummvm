@@ -36,7 +36,8 @@ namespace Cine {
 extern byte *collisionPage;
 static const int kCollisionPageBgIdxAlias = 8;
 
-/*! \brief Background with palette
+/**
+ * Background with palette
  */
 struct palBg {
 	byte *bg; ///< Background data
@@ -115,7 +116,8 @@ private:
 	int _cursor;
 };
 
-/*! \brief Future Wars renderer
+/**
+ * Future Wars renderer
  *
  * Screen backbuffer is not cleared between frames.
  */
@@ -169,7 +171,7 @@ public:
 
 	virtual bool initialize();
 
-	/*! \brief Test if renderer is ready to draw */
+	/** Test if renderer is ready to draw */
 	virtual bool ready() { return _background != NULL; }
 
 	virtual void clear();
@@ -207,7 +209,8 @@ public:
 	void showCollisionPage(bool state);
 };
 
-/*! \brief Operation Stealth renderer
+/**
+ * Operation Stealth renderer
  */
 class OSRenderer : public FWRenderer {
 private:
@@ -229,7 +232,7 @@ public:
 
 	bool initialize();
 
-	/*! \brief Test if renderer is ready to draw */
+	/** Test if renderer is ready to draw */
 	bool ready() { return _bgTable[_currentBg].bg != NULL; }
 
 	void clear();

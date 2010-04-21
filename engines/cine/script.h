@@ -36,7 +36,8 @@ namespace Cine {
 #define SCRIPT_STACK_SIZE 50
 #define LOCAL_VARS_SIZE 50
 
-/*! \brief Fixed size array of script variables.
+/**
+ * Fixed size array of script variables.
  *
  * Array size can be set in constructors, once the instance is created,
  * it cannot be changed directly.
@@ -51,7 +52,8 @@ struct Opcode {
 	const char *args;
 };
 
-/*! \brief Fixed size array for script variables
+/**
+ *  Fixed size array for script variables
  */
 class ScriptVars {
 private:
@@ -78,7 +80,8 @@ public:
 
 class FWScriptInfo;
 
-/*! \brief Script bytecode and initial labels, ScriptStruct replacement.
+/**
+ *  Script bytecode and initial labels, ScriptStruct replacement.
  *
  * _data is one byte longer to make sure strings in bytecode are properly
  * terminated
@@ -103,9 +106,6 @@ public:
 	RawScript &operator=(const RawScript &src);
 
 	void setData(const FWScriptInfo &info, const byte *data);
-	/*! \brief Size of script
-	 * \return Size of script
-	 */
 	const ScriptVars &labels() const;
 	byte getByte(unsigned int pos) const;
 	uint16 getWord(unsigned int pos) const;
@@ -113,7 +113,8 @@ public:
 	uint16 getLabel(const FWScriptInfo &info, byte index, uint16 offset) const;
 };
 
-/*! \brief Object script class, RelObjectScript replacement
+/**
+ * Object script class, RelObjectScript replacement
  *
  * Script parameters are not used, this class is required by different
  * script initialization of object scripts
@@ -128,13 +129,16 @@ public:
 	RawObjectScript(uint16 size, uint16 p1, uint16 p2, uint16 p3);
 	RawObjectScript(const FWScriptInfo &info, const byte *data, uint16 size, uint16 p1, uint16 p2, uint16 p3);
 
-	/// \brief Run the script one more time
-	/// \return Run count before incrementation
+	/**
+	 * Run the script one more time.
+	 * @return Run count before incrementation
+	 */
 	int16 run() { return _runCount++; }
 };
 
-/*! \brief Future Wars script, prcLinkedListStruct replacement
- * \todo Rewrite _globalVars initialization
+/**
+ * Future Wars script, prcLinkedListStruct replacement.
+ * @todo Rewrite _globalVars initialization
  */
 class FWScript {
 private:
@@ -296,7 +300,8 @@ public:
 	friend class OSScript;
 };
 
-/*! \brief Operation Stealth script, prcLinkedListStruct replacement
+/**
+ * Operation Stealth script, prcLinkedListStruct replacement
  */
 class OSScript : public FWScript {
 private:
@@ -316,7 +321,8 @@ public:
 	friend class OSScriptInfo;
 };
 
-/*! \brief Future Wars script factory and info
+/**
+ * Future Wars script factory and info
  */
 class FWScriptInfo {
 protected:
@@ -334,7 +340,8 @@ public:
 	friend class FWScript;
 };
 
-/*! \brief Operation Stealth script factory and info
+/**
+ * Operation Stealth script factory and info
  */
 class OSScriptInfo : public FWScriptInfo {
 protected:

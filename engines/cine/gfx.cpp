@@ -88,7 +88,8 @@ static const byte cursorPalette[] = {
 	0xff, 0xff, 0xff, 0xff
 };
 
-/*! \brief Initialize renderer
+/**
+ * Initialize renderer
  */
 FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
@@ -100,7 +101,9 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	memset(_bgName, 0, sizeof (_bgName));
 }
 
-/* \brief Destroy renderer
+
+/**
+ * Destroy renderer
  */
 FWRenderer::~FWRenderer() {
 	delete[] _background;
@@ -114,7 +117,9 @@ bool FWRenderer::initialize() {
 	return true;
 }
 
-/* \brief Reset renderer state
+
+/**
+ * Reset renderer state
  */
 void FWRenderer::clear() {
 	delete[] _background;
@@ -132,9 +137,10 @@ void FWRenderer::clear() {
 	_showCollisionPage = false;
 }
 
-/*! \brief Draw 1bpp sprite using selected color
- * \param obj Object info
- * \param fillColor Sprite color
+/**
+ * Draw 1bpp sprite using selected color
+ * @param obj Object info
+ * @param fillColor Sprite color
  */
 void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -148,9 +154,10 @@ void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
 	gfxFillSprite(data, width, height, _backBuffer, x, y, color);
 }
 
-/*! \brief Draw 1bpp sprite using selected color on background
- * \param obj Object info
- * \param fillColor Sprite color
+/**
+ * Draw 1bpp sprite using selected color on background
+ * @param obj Object info
+ * @param fillColor Sprite color
  */
 void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -164,9 +171,10 @@ void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	gfxFillSprite(data, width, height, _background, x, y, color);
 }
 
-/*! \brief Draw color sprite using with external mask
- * \param obj Object info
- * \param mask External mask
+/**
+ * Draw color sprite using with external mask
+ * @param obj Object info
+ * @param mask External mask
  */
 void FWRenderer::drawMaskedSprite(const ObjectStruct &obj, const byte *mask) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -182,16 +190,18 @@ void FWRenderer::drawMaskedSprite(const ObjectStruct &obj, const byte *mask) {
 	drawSpriteRaw(data, mask, width, height, _backBuffer, x, y);
 }
 
-/*! \brief Draw color sprite
- * \param obj Object info
+/**
+ * Draw color sprite
+ * @param obj Object info
  */
 void FWRenderer::drawSprite(const ObjectStruct &obj) {
 	const byte *mask = animDataTable[obj.frame].mask();
 	drawMaskedSprite(obj, mask);
 }
 
-/*! \brief Draw color sprite on background
- * \param obj Object info
+/**
+ * Draw color sprite on background
+ * @param obj Object info
  */
 void FWRenderer::incrustSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -214,7 +224,8 @@ void FWRenderer::incrustSprite(const ObjectStruct &obj) {
 	}
 }
 
-/*! \brief Draw command box on screen
+/**
+ * Draw command box on screen
  */
 void FWRenderer::drawCommand() {
 	unsigned int i;
@@ -231,13 +242,14 @@ void FWRenderer::drawCommand() {
 	}
 }
 
-/*! \brief Draw message in a box
- * \param str Message to draw
- * \param x Top left message box corner coordinate
- * \param y Top left message box corner coordinate
- * \param width Message box width
- * \param color Message box background color (Or if negative draws only the text)
- * \note Negative colors are used in Operation Stealth's timed cutscenes
+/**
+ * Draw message in a box
+ * @param str Message to draw
+ * @param x Top left message box corner coordinate
+ * @param y Top left message box corner coordinate
+ * @param width Message box width
+ * @param color Message box background color (Or if negative draws only the text)
+ * @note Negative colors are used in Operation Stealth's timed cutscenes
  * (e.g. when first meeting The Movement for the Liberation of Santa Paragua).
  */
 void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color) {
@@ -303,14 +315,15 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	}
 }
 
-/*! \brief Draw rectangle on screen
- * \param x Top left corner coordinate
- * \param y Top left corner coordinate
- * \param width Rectangle width (Negative values draw the box horizontally flipped)
- * \param height Rectangle height (Negative values draw the box vertically flipped)
- * \param color Fill color
- * \note An on-screen rectangle's drawn width is always at least one.
- * \note An on-screen rectangle's drawn height is always at least one.
+/**
+ * Draw rectangle on screen
+ * @param x Top left corner coordinate
+ * @param y Top left corner coordinate
+ * @param width Rectangle width (Negative values draw the box horizontally flipped)
+ * @param height Rectangle height (Negative values draw the box vertically flipped)
+ * @param color Fill color
+ * @note An on-screen rectangle's drawn width is always at least one.
+ * @note An on-screen rectangle's drawn height is always at least one.
  */
 void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	// Make width's and height's absolute values at least one
@@ -378,12 +391,13 @@ void FWRenderer::drawTransparentBox(int x, int y, int width, int height) {
 	}
 }
 
-/*! \brief Draw empty rectangle
- * \param x Top left corner coordinate
- * \param y Top left corner coordinate
- * \param width Rectangle width
- * \param height Rectangle height
- * \param color Line color
+/**
+ * Draw empty rectangle
+ * @param x Top left corner coordinate
+ * @param y Top left corner coordinate
+ * @param width Rectangle width
+ * @param height Rectangle height
+ * @param color Line color
  */
 void FWRenderer::drawBorder(int x, int y, int width, int height, byte color) {
 	drawLine(x, y, width, 1, color);
@@ -392,22 +406,24 @@ void FWRenderer::drawBorder(int x, int y, int width, int height, byte color) {
 	drawLine(x + width, y, 1, height + 1, color);
 }
 
-/*! \brief Draw empty 2 color rectangle (inner line color is black)
- * \param x Top left corner coordinate
- * \param y Top left corner coordinate
- * \param width Rectangle width
- * \param height Rectangle height
- * \param color Outter line color
+/**
+ * Draw empty 2 color rectangle (inner line color is black)
+ * @param x Top left corner coordinate
+ * @param y Top left corner coordinate
+ * @param width Rectangle width
+ * @param height Rectangle height
+ * @param color Outter line color
  */
 void FWRenderer::drawDoubleBorder(int x, int y, int width, int height, byte color) {
 	drawBorder(x + 1, y + 1, width - 2, height - 2, 0);
 	drawBorder(x, y, width, height, color);
 }
 
-/*! \brief Draw text character on screen
- * \param character Character to draw
- * \param x Character coordinate
- * \param y Character coordinate
+/**
+ * Draw text character on screen
+ * @param character Character to draw
+ * @param x Character coordinate
+ * @param y Character coordinate
  */
 int FWRenderer::drawChar(char character, int x, int y) {
 	int width, idx;
@@ -423,22 +439,24 @@ int FWRenderer::drawChar(char character, int x, int y) {
 	return x;
 }
 
-/*! \brief Draw Line
- * \param x Line end coordinate
- * \param y Line end coordinate
- * \param width Horizontal line length
- * \param height Vertical line length
- * \param color Line color
- * \note Either width or height must be equal to 1
+/**
+ * Draw Line
+ * @param x Line end coordinate
+ * @param y Line end coordinate
+ * @param width Horizontal line length
+ * @param height Vertical line length
+ * @param color Line color
+ * @note Either width or height must be equal to 1
  */
 void FWRenderer::drawLine(int x, int y, int width, int height, byte color) {
 	// this line is a special case of rectangle ;-)
 	drawPlainBox(x, y, width, height, color);
 }
 
-/*! \brief Hide invisible parts of the sprite
- * \param[in,out] mask Mask to be updated
- * \param it Overlay info from overlayList
+/**
+ * Hide invisible parts of the sprite
+ * @param[in,out] mask Mask to be updated
+ * @param it Overlay info from overlayList
  */
 void FWRenderer::remaskSprite(byte *mask, Common::List<overlay>::iterator it) {
 	AnimData &sprite = animDataTable[objectTable[it->objIdx].frame];
@@ -465,15 +483,17 @@ void FWRenderer::remaskSprite(byte *mask, Common::List<overlay>::iterator it) {
 	}
 }
 
-/*! \brief Draw background to backbuffer
+/**
+ * Draw background to backbuffer
  */
 void FWRenderer::drawBackground() {
 	assert(_background);
 	memcpy(_backBuffer, _background, _screenSize);
 }
 
-/*! \brief Draw one overlay
- * \param it Overlay info
+/**
+ * Draw one overlay
+ * @param it Overlay info
  */
 void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int idx, len, width;
@@ -537,7 +557,8 @@ void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	}
 }
 
-/*! \brief Draw overlays
+/**
+ * Draw overlays
  */
 void FWRenderer::drawOverlays() {
 	Common::List<overlay>::iterator it;
@@ -547,7 +568,8 @@ void FWRenderer::drawOverlays() {
 	}
 }
 
-/*! \brief Draw another frame
+/**
+ * Draw another frame
  */
 void FWRenderer::drawFrame() {
 	drawBackground();
@@ -568,16 +590,17 @@ void FWRenderer::drawFrame() {
 	blit();
 }
 
-/*!
- * \brief Turn on or off the showing of the collision page.
+/**
+ * Turn on or off the showing of the collision page.
  * If turned on the blitting routine shows the collision page instead of the back buffer.
- * \note Useful for debugging collision page related problems.
+ * @note Useful for debugging collision page related problems.
  */
 void FWRenderer::showCollisionPage(bool state) {
 	_showCollisionPage = state;
 }
 
-/*! \brief Update screen
+/**
+ * Update screen
  */
 void FWRenderer::blit() {
 	// Show the back buffer or the collision page. Normally the back
@@ -586,14 +609,16 @@ void FWRenderer::blit() {
 	g_system->copyRectToScreen(source, 320, 0, 0, 320, 200);
 }
 
-/*! \brief Set player command string
- * \param cmd New command string
+/**
+ * Set player command string
+ * @param cmd New command string
  */
 void FWRenderer::setCommand(Common::String cmd) {
 	_cmd = cmd;
 }
 
-/*! \brief Refresh current palette
+/**
+ * Refresh current palette
  */
 void FWRenderer::refreshPalette() {
 	assert(_activePal.isValid() && !_activePal.empty());
@@ -601,7 +626,8 @@ void FWRenderer::refreshPalette() {
 	_changePal = 0;
 }
 
-/*! \brief Load palette of current background
+/**
+ * Load palette of current background
  */
 void FWRenderer::reloadPalette() {
 	assert(_backupPal.isValid() && !_backupPal.empty());
@@ -609,9 +635,10 @@ void FWRenderer::reloadPalette() {
 	_changePal = 1;
 }
 
-/*! \brief Load background into renderer
- * \param bg Raw background data
- * \todo Combine with OSRenderer's version of loadBg16
+/**
+ * Load background into renderer
+ * @param bg Raw background data
+ * @todo Combine with OSRenderer's version of loadBg16
  */
 void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx == 0);
@@ -633,49 +660,57 @@ void FWRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	gfxConvertSpriteToRaw(_background, bg, 160, 200);
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::loadCt16(const byte *ct, const char *name) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::loadCt256(const byte *ct, const char *name) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::selectBg(unsigned int idx) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::selectScrollBg(unsigned int idx) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::setScroll(unsigned int shift) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
 }
 
-/*! \brief Future Wars has no scrolling backgrounds so scroll value is always zero.
+/**
+ * Future Wars has no scrolling backgrounds so scroll value is always zero.
  */
 uint FWRenderer::getScroll() const {
 	return 0;
 }
 
-/*! \brief Placeholder for Operation Stealth implementation
+/**
+ * Placeholder for Operation Stealth implementation
  */
 void FWRenderer::removeBg(unsigned int idx) {
 	error("Future Wars renderer doesn't support multiple backgrounds");
@@ -690,8 +725,9 @@ const char *FWRenderer::getBgName(uint idx) const {
 	return _bgName;
 }
 
-/*! \brief Restore active and backup palette from save
- * \param fHandle Savefile open for reading
+/**
+ * Restore active and backup palette from save
+ * @param fHandle Savefile open for reading
  */
 void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 	byte buf[kLowPalNumBytes];
@@ -707,8 +743,9 @@ void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 	_changePal = 1;
 }
 
-/*! \brief Write active and backup palette to save
- * \param fHandle Savefile open for writing
+/**
+ * Write active and backup palette to save
+ * @param fHandle Savefile open for writing
  */
 void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	byte buf[kLowPalNumBytes];
@@ -730,9 +767,10 @@ void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	fHandle.write(buf, kLowPalNumBytes);
 }
 
-/*! \brief Write active and backup palette to save
- * \param fHandle Savefile open for writing
- * \todo Add support for saving the palette in the 16 color version of Operation Stealth.
+/**
+ * Write active and backup palette to save
+ * @param fHandle Savefile open for writing
+ * @todo Add support for saving the palette in the 16 color version of Operation Stealth.
  *       Possibly combine with FWRenderer's savePalette-method?
  */
 void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
@@ -751,8 +789,9 @@ void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	fHandle.write(buf, kHighPalNumBytes);
 }
 
-/*! \brief Restore active and backup palette from save
- * \param fHandle Savefile open for reading
+/**
+ * Restore active and backup palette from save
+ * @param fHandle Savefile open for reading
  */
 void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 	byte buf[kHighPalNumBytes];
@@ -768,22 +807,24 @@ void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
 	_changePal = 1;
 }
 
-/*! \brief Rotate active palette
- * \param a First color to rotate
- * \param b Last color to rotate
- * \param c Possibly rotation step, must be 0 or 1 at the moment
+/**
+ * Rotate active palette
+ * @param a First color to rotate
+ * @param b Last color to rotate
+ * @param c Possibly rotation step, must be 0 or 1 at the moment
  */
 void FWRenderer::rotatePalette(int a, int b, int c) {
 	_activePal.rotateRight(a, b, c);
 	refreshPalette();
 }
 
-/*! \brief Copy part of backup palette to active palette and transform
- * \param first First color to transform
- * \param last Last color to transform
- * \param r Red channel transformation
- * \param g Green channel transformation
- * \param b Blue channel transformation
+/**
+ * Copy part of backup palette to active palette and transform
+ * @param first First color to transform
+ * @param last Last color to transform
+ * @param r Red channel transformation
+ * @param g Green channel transformation
+ * @param b Blue channel transformation
  */
 void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	if (!_activePal.isValid() || _activePal.empty()) {
@@ -794,7 +835,8 @@ void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	refreshPalette();
 }
 
-/*! \brief Fade to black
+/**
+ * Fade to black
  * \bug Operation Stealth sometimes seems to fade to black using
  * transformPalette resulting in double fadeout
  */
@@ -988,7 +1030,8 @@ void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
 
 // -------------------
 
-/*! \brief Initialize Operation Stealth renderer
+/**
+ * Initialize Operation Stealth renderer
  */
 OSRenderer::OSRenderer() : FWRenderer(), _bgTable(), _currentBg(0), _scrollBg(0),
 	_bgShift(0) {
@@ -996,7 +1039,8 @@ OSRenderer::OSRenderer() : FWRenderer(), _bgTable(), _currentBg(0), _scrollBg(0)
 	_bgTable.resize(9); // Resize the background table to its required size
 }
 
-/*! \brief Destroy Operation Stealth renderer
+/**
+ * Destroy Operation Stealth renderer
  */
 OSRenderer::~OSRenderer() {
 	for (uint i = 0; i < _bgTable.size(); i++) {
@@ -1009,7 +1053,8 @@ bool OSRenderer::initialize() {
 	return true;
 }
 
-/*! \brief Reset Operation Stealth renderer state
+/**
+ * Reset Operation Stealth renderer state
  */
 void OSRenderer::clear() {
 	for (uint i = 0; i < _bgTable.size(); i++) {
@@ -1023,9 +1068,10 @@ void OSRenderer::clear() {
 	FWRenderer::clear();
 }
 
-/*! \brief Draw 1bpp sprite using selected color on backgrounds
- * \param obj Object info
- * \param fillColor Sprite color
+/**
+ * Draw 1bpp sprite using selected color on backgrounds
+ * @param obj Object info
+ * @param fillColor Sprite color
  */
 void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -1041,8 +1087,9 @@ void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	}
 }
 
-/*! \brief Draw color sprite
- * \param obj Object info
+/**
+ * Draw color sprite
+ * @param obj Object info
  */
 void OSRenderer::drawSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -1057,8 +1104,9 @@ void OSRenderer::drawSprite(const ObjectStruct &obj) {
 	drawSpriteRaw2(data, transColor, width, height, _backBuffer, x, y);
 }
 
-/*! \brief Draw color sprite
- * \param obj Object info
+/**
+ * Draw color sprite
+ * @param obj Object info
  */
 void OSRenderer::incrustSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
@@ -1075,10 +1123,11 @@ void OSRenderer::incrustSprite(const ObjectStruct &obj) {
 	}
 }
 
-/*! \brief Draw text character on screen
- * \param character Character to draw
- * \param x Character coordinate
- * \param y Character coordinate
+/**
+ * Draw text character on screen
+ * @param character Character to draw
+ * @param x Character coordinate
+ * @param y Character coordinate
  */
 int OSRenderer::drawChar(char character, int x, int y) {
 	int width, idx;
@@ -1094,7 +1143,8 @@ int OSRenderer::drawChar(char character, int x, int y) {
 	return x;
 }
 
-/*! \brief Draw background to backbuffer
+/**
+ * Draw background to backbuffer
  */
 void OSRenderer::drawBackground() {
 	byte *main;
@@ -1120,9 +1170,10 @@ void OSRenderer::drawBackground() {
 	}
 }
 
-/*! \brief Draw one overlay
- * \param it Overlay info
- * \todo Add handling of type 22 overlays
+/**
+ * Draw one overlay
+ * @param it Overlay info
+ * @todo Add handling of type 22 overlays
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len, idx, width, height;
@@ -1220,7 +1271,8 @@ void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	}
 }
 
-/*! \brief Load palette of current background
+/**
+ * Load palette of current background
  */
 void OSRenderer::reloadPalette() {
 	// selected background in plane takeoff scene has swapped colors 12
@@ -1233,12 +1285,13 @@ void OSRenderer::reloadPalette() {
 	_changePal = 1;
 }
 
-/*! \brief Copy part of backup palette to active palette and transform
- * \param first First color to transform
- * \param last Last color to transform
- * \param r Red channel transformation
- * \param g Green channel transformation
- * \param b Blue channel transformation
+/**
+ * Copy part of backup palette to active palette and transform
+ * @param first First color to transform
+ * @param last Last color to transform
+ * @param r Red channel transformation
+ * @param g Green channel transformation
+ * @param b Blue channel transformation
  */
 void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	palBg *bg = _bgShift ? &_bgTable[_scrollBg] : &_bgTable[_currentBg];
@@ -1252,11 +1305,12 @@ void OSRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	refreshPalette();
 }
 
-/*! \brief Load 16 color background into renderer
- * \param bg Raw background data
- * \param name Background filename
- * \param pos Background index
- * \todo Combine with FWRenderer's version of loadBg16
+/**
+ * Load 16 color background into renderer
+ * @param bg Raw background data
+ * @param name Background filename
+ * @param pos Background index
+ * @todo Combine with FWRenderer's version of loadBg16
  */
 void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx < 9);
@@ -1278,9 +1332,10 @@ void OSRenderer::loadBg16(const byte *bg, const char *name, unsigned int idx) {
 	gfxConvertSpriteToRaw(_bgTable[idx].bg, bg, 160, 200);
 }
 
-/*! \brief Load 16 color CT data as background into renderer
- * \param ct Raw CT data
- * \param name Background filename
+/**
+ * Load 16 color CT data as background into renderer
+ * @param ct Raw CT data
+ * @param name Background filename
  */
 void OSRenderer::loadCt16(const byte *ct, const char *name) {
 	// Make the 9th background point directly to the collision page
@@ -1289,10 +1344,11 @@ void OSRenderer::loadCt16(const byte *ct, const char *name) {
 	loadBg16(ct, name, kCollisionPageBgIdxAlias);
 }
 
-/*! \brief Load 256 color background into renderer
- * \param bg Raw background data
- * \param name Background filename
- * \param pos Background index
+/**
+ * Load 256 color background into renderer
+ * @param bg Raw background data
+ * @param name Background filename
+ * @param pos Background index
  */
 void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 	assert(idx < 9);
@@ -1308,9 +1364,10 @@ void OSRenderer::loadBg256(const byte *bg, const char *name, unsigned int idx) {
 	memcpy(_bgTable[idx].bg, bg + kHighPalNumBytes, _screenSize);
 }
 
-/*! \brief Load 256 color CT data as background into renderer
- * \param ct Raw CT data
- * \param name Background filename
+/**
+ * Load 256 color CT data as background into renderer
+ * @param ct Raw CT data
+ * @param name Background filename
  */
 void OSRenderer::loadCt256(const byte *ct, const char *name) {
 	// Make the 9th background point directly to the collision page
@@ -1319,8 +1376,9 @@ void OSRenderer::loadCt256(const byte *ct, const char *name) {
 	loadBg256(ct, name, kCollisionPageBgIdxAlias);
 }
 
-/*! \brief Select active background and load its palette
- * \param idx Background index
+/**
+ * Select active background and load its palette
+ * @param idx Background index
  */
 void OSRenderer::selectBg(unsigned int idx) {
 	assert(idx < 9 && _bgTable[idx].bg);
@@ -1330,8 +1388,9 @@ void OSRenderer::selectBg(unsigned int idx) {
 	reloadPalette();
 }
 
-/*! \brief Select scroll background
- * \param idx Scroll background index
+/**
+ * Select scroll background
+ * @param idx Scroll background index
  */
 void OSRenderer::selectScrollBg(unsigned int idx) {
 	assert(idx < 9);
@@ -1342,8 +1401,9 @@ void OSRenderer::selectScrollBg(unsigned int idx) {
 	reloadPalette();
 }
 
-/*! \brief Set background scroll
- * \param shift Background scroll in pixels
+/**
+ * Set background scroll
+ * @param shift Background scroll in pixels
  */
 void OSRenderer::setScroll(unsigned int shift) {
 	assert(shift <= 200);
@@ -1351,15 +1411,17 @@ void OSRenderer::setScroll(unsigned int shift) {
 	_bgShift = shift;
 }
 
-/*! \brief Get background scroll
- * \return Background scroll in pixels
+/**
+ * Get background scroll
+ * @return Background scroll in pixels
  */
 uint OSRenderer::getScroll() const {
 	return _bgShift;
 }
 
-/*! \brief Unload background from renderer
- * \param idx Background to unload
+/**
+ * Unload background from renderer
+ * @param idx Background to unload
  */
 void OSRenderer::removeBg(unsigned int idx) {
 	assert(idx > 0 && idx < 9);

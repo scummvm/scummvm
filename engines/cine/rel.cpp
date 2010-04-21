@@ -33,8 +33,9 @@ namespace Cine {
 
 RawObjectScriptArray relTable; ///< Object script bytecode table
 
-/*! \todo Is script size of 0 valid?
- * \todo Fix script dump code
+/**
+ * @todo Is script size of 0 valid?
+ * @todo Fix script dump code
  */
 void loadRel(char *pRelName) {
 	uint16 numEntry;

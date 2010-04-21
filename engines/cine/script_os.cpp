@@ -23,7 +23,7 @@
  *
  */
 
-/*! \file
+/** \file
  * Operation Stealth script interpreter file
  */
 
@@ -261,36 +261,41 @@ void OSScript::setupTable() {
 	OSScript::_numOpcodes = ARRAYSIZE(opcodeTable);
 }
 
-/*! \brief Contructor for global scripts
- * \param script Script bytecode reference
- * \param idx Script bytecode index
+/**
+ * Contructor for global scripts
+ * @param script Script bytecode reference
+ * @param idx Script bytecode index
  */
 OSScript::OSScript(const RawScript &script, int16 idx) :
 	FWScript(script, idx, new OSScriptInfo) {}
 
-/*! \brief Constructor for object scripts
- * \param script Script bytecode reference
- * \param idx Script bytecode index
+/**
+ * Constructor for object scripts
+ * @param script Script bytecode reference
+ * @param idx Script bytecode index
  */
 OSScript::OSScript(RawObjectScript &script, int16 idx) :
 	FWScript(script, idx, new OSScriptInfo) {}
 
-/*! \brief Copy constructor
+/**
+ * Copy constructor
  */
 OSScript::OSScript(const OSScript &src) : FWScript(src, new OSScriptInfo) {}
 
-/*! \brief Restore script state from savefile
- * \param labels Restored script labels
- * \param local Restored local script variables
- * \param compare Restored last comparison result
- * \param pos Restored script position
+/**
+ * Restore script state from savefile
+ * @param labels Restored script labels
+ * @param local Restored local script variables
+ * @param compare Restored last comparison result
+ * @param pos Restored script position
  */
 void OSScript::load(const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) {
 	FWScript::load(labels, local, compare, pos);
 }
 
-/*! \brief Get opcode info string
- * \param opcode Opcode to look for in opcode table
+/**
+ * Get opcode info string
+ * @param opcode Opcode to look for in opcode table
  */
 const char *OSScriptInfo::opcodeInfo(byte opcode) const {
 	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
@@ -305,8 +310,9 @@ const char *OSScriptInfo::opcodeInfo(byte opcode) const {
 	return OSScript::_opcodeTable[opcode - 1].args;
 }
 
-/*! \brief Get opcode handler pointer
- * \param opcode Opcode to look for in opcode table
+/**
+ * Get opcode handler pointer
+ * @param opcode Opcode to look for in opcode table
  */
 OpFunc OSScriptInfo::opcodeHandler(byte opcode) const {
 	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
@@ -321,29 +327,32 @@ OpFunc OSScriptInfo::opcodeHandler(byte opcode) const {
 	return OSScript::_opcodeTable[opcode - 1].proc;
 }
 
-/*! \brief Create new OSScript instance
- * \param script Script bytecode
- * \param index Bytecode index
+/**
+ * Create new OSScript instance
+ * @param script Script bytecode
+ * @param index Bytecode index
  */
 FWScript *OSScriptInfo::create(const RawScript &script, int16 index) const {
 	return new OSScript(script, index);
 }
 
-/*! \brief Create new OSScript instance
- * \param script Object script bytecode
- * \param index Bytecode index
+/**
+ * Create new OSScript instance
+ * @param script Object script bytecode
+ * @param index Bytecode index
  */
 FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index) const {
 	return new OSScript(script, index);
 }
 
-/*! \brief Load saved OSScript instance
- * \param script Script bytecode
- * \param index Bytecode index
- * \param local Local variables
- * \param labels Script labels
- * \param compare Last compare result
- * \param pos Position in script
+/**
+ * Load saved OSScript instance
+ * @param script Script bytecode
+ * @param index Bytecode index
+ * @param local Local variables
+ * @param labels Script labels
+ * @param compare Last compare result
+ * @param pos Position in script
  */
 FWScript *OSScriptInfo::create(const RawScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
 	OSScript *tmp = new OSScript(script, index);
@@ -352,13 +361,14 @@ FWScript *OSScriptInfo::create(const RawScript &script, int16 index, const Scrip
 	return tmp;
 }
 
-/*! \brief Load saved OSScript instance
- * \param script Object script bytecode
- * \param index Bytecode index
- * \param local Local variables
- * \param labels Script labels
- * \param compare Last compare result
- * \param pos Position in script
+/**
+ * Load saved OSScript instance
+ * @param script Object script bytecode
+ * @param index Bytecode index
+ * @param local Local variables
+ * @param labels Script labels
+ * @param compare Last compare result
+ * @param pos Position in script
  */
 FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const ScriptVars &labels, const ScriptVars &local, uint16 compare, uint16 pos) const {
 	OSScript *tmp = new OSScript(script, index);
@@ -371,7 +381,7 @@ FWScript *OSScriptInfo::create(const RawObjectScript &script, int16 index, const
 // OPERATION STEALTH opcodes
 // ------------------------------------------------------------------------
 
-/*! \brief Load collision table data */
+/** Load collision table data */
 int FWScript::o2_loadCt() {
 	const char *param = getNextString();
 
@@ -448,8 +458,9 @@ int FWScript::o2_removeSeq() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
+/**
+ * @todo Implement this instruction
+ * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op81() {
 	warning("STUB: o2_op81()");
@@ -469,7 +480,8 @@ int FWScript::o2_modifySeqListElement() {
 	return 0;
 }
 
-/*! \todo Check whether this opcode's name is backwards (i.e. should it be o2_isSeqNotRunning?)
+/**
+ * @todo Check whether this opcode's name is backwards (i.e. should it be o2_isSeqNotRunning?)
  */
 int FWScript::o2_isSeqRunning() {
 	byte a = getNextByte();
@@ -485,7 +497,8 @@ int FWScript::o2_isSeqRunning() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfSupNearest() {
 	byte labelIdx = getNextByte();
@@ -501,7 +514,8 @@ int FWScript::o2_gotoIfSupNearest() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfSupEquNearest() {
 	byte labelIdx = getNextByte();
@@ -517,7 +531,8 @@ int FWScript::o2_gotoIfSupEquNearest() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfInfNearest() {
 	byte labelIdx = getNextByte();
@@ -533,7 +548,8 @@ int FWScript::o2_gotoIfInfNearest() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfInfEquNearest() {
 	byte labelIdx = getNextByte();
@@ -549,7 +565,8 @@ int FWScript::o2_gotoIfInfEquNearest() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfEquNearest() {
 	byte labelIdx = getNextByte();
@@ -565,7 +582,8 @@ int FWScript::o2_gotoIfEquNearest() {
 	return 0;
 }
 
-/*! \todo The assert may produce false positives and requires testing
+/**
+ * @todo The assert may produce false positives and requires testing
  */
 int FWScript::o2_gotoIfDiffNearest() {
 	byte labelIdx = getNextByte();
@@ -686,8 +704,9 @@ int FWScript::o2_wasZoneChecked() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
+/**
+ * @todo Implement this instruction
+ * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9B() {
 	uint16 a = getNextWord();
@@ -702,8 +721,9 @@ int FWScript::o2_op9B() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
+/**
+ * @todo Implement this instruction
+ * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9C() {
 	uint16 a = getNextWord();
@@ -742,8 +762,9 @@ int FWScript::o2_setAdditionalBgVScroll() {
 	return 0;
 }
 
-/*! \todo Implement this instruction
- * \note According to the scripts' opcode usage comparison this opcode isn't used at all.
+/**
+ * @todo Implement this instruction
+ * @note According to the scripts' opcode usage comparison this opcode isn't used at all.
  */
 int FWScript::o2_op9F() {
 	warning("o2_op9F()");

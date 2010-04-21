@@ -93,7 +93,8 @@ uint16 musicIsPlaying;
 
 byte isInPause = 0;
 
-/*! \brief Bit masks for mouse buttons' states
+/**
+ * Bit masks for mouse buttons' states
  * Bit on = mouse button down
  * Bit off = mouse button up
  */
@@ -103,14 +104,14 @@ enum MouseButtonState
 	kRightMouseButton = (1 << 1)
 };
 
-/*! \brief Values used by the xMoveKeyb variable */
+/** Values used by the xMoveKeyb variable */
 enum xMoveKeybEnums {
 	kKeybMoveCenterX = 0,
 	kKeybMoveRight = 1,
 	kKeybMoveLeft = 2
 };
 
-/*! \brief Values used by the yMoveKeyb variable */
+/** Values used by the yMoveKeyb variable */
 enum yMoveKeybEnums {
 	kKeybMoveCenterY = 0,
 	kKeybMoveDown = 1,
@@ -135,9 +136,10 @@ int16 objListTab[20];
 Common::Array<uint16> zoneData;
 Common::Array<uint16> zoneQuery; ///< Only exists in Operation Stealth
 
-/*! \brief Move the player character using the keyboard
- * \param x Negative values move left, positive right, zero not at all
- * \param y Negative values move down, positive up, zero not at all
+/**
+ * Move the player character using the keyboard
+ * @param x Negative values move left, positive right, zero not at all
+ * @param y Negative values move down, positive up, zero not at all
  * NOTE: If both x and y are zero then the character stops
  * FIXME: This seems to only work in Operation Stealth. May need code changes somewhere else...
  */
@@ -173,9 +175,10 @@ void runObjectScript(int16 entryIdx) {
 	objectScripts.push_back(tmp);
 }
 
-/*! \brief Add action result message to overlay list
- * \param cmd Message description
- * \todo Why are x, y, width and color left uninitialized?
+/**
+ * Add action result message to overlay list
+ * @param cmd Message description
+ * @todo Why are x, y, width and color left uninitialized?
  */
 void addPlayerCommandMessage(int16 cmd) {
 	overlay tmp;
@@ -208,10 +211,11 @@ int16 getRelEntryForObject(uint16 param1, uint16 param2, SelectedObjStruct *pSel
 	return found;
 }
 
-/*! \brief Find index of the object under cursor
- * \param x Mouse cursor coordinate
- * \param y Mouse cursor coordinate
- * \todo Fix displaced type 1 objects
+/**
+ * Find index of the object under cursor
+ * @param x Mouse cursor coordinate
+ * @param y Mouse cursor coordinate
+ * @todo Fix displaced type 1 objects
  */
 int16 getObjectUnderCursor(uint16 x, uint16 y) {
 	Common::List<overlay>::iterator it;
@@ -1458,9 +1462,9 @@ uint16 addAni(uint16 param1, uint16 objIdx, const int8 *ptr, SeqListElement &ele
 	return 1;
 }
 
-/*!
+/**
  * Permutates the overlay list into a different order according to some logic.
- * \todo Check this function for correctness (Wasn't very easy to reverse engineer so there may be errors)
+ * @todo Check this function for correctness (Wasn't very easy to reverse engineer so there may be errors)
  */
 void resetGfxEntityEntry(uint16 objIdx) {
 	Common::List<overlay>::iterator it, bObjsCutPoint;
