@@ -80,7 +80,7 @@ static uint32 cdPlayHandle = (uint32)-1;
 
 static int	cdPlayFileNum, cdPlaySceneNum;
 static SCNHANDLE cdBaseHandle = 0, cdTopHandle = 0;
-static Common::File cdGraphStream;
+static Common::File *cdGraphStream = 0;
 
 static char szCdPlayFile[100];
 
@@ -179,20 +179,23 @@ void FreeHandleTable() {
 		free(handleTable);
 		handleTable = NULL;
 	}
-	if (cdGraphStream.isOpen())
-		cdGraphStream.close();
+	if (cdGraphStream) {
+		delete cdGraphStream;
+		cdGraphStream = 0;
+	}
 }
 
 /**
  * Loads a memory block as a file.
  */
 void OpenCDGraphFile() {
-	if (cdGraphStream.isOpen())
-		cdGraphStream.close();
+	if (cdGraphStream)
+		delete cdGraphStream;
 
 	// As the theory goes, the right CD will be in there!
 
-	if (!cdGraphStream.open(szCdPlayFile))
+	cdGraphStream = new Common::File;
+	if (!cdGraphStream->open(szCdPlayFile))
 		error(CANNOT_FIND_FILE, szCdPlayFile);
 }
 
@@ -214,14 +217,15 @@ void LoadCDGraphData(MEMHANDLE *pH) {
 	assert(addr);
 
 	// Move to correct place in file and load the required data
-	cdGraphStream.seek(cdBaseHandle & OFFSETMASK, SEEK_SET);
-	bytes = cdGraphStream.read(addr, (cdTopHandle - cdBaseHandle) & OFFSETMASK);
+	assert(cdGraphStream);
+	cdGraphStream->seek(cdBaseHandle & OFFSETMASK, SEEK_SET);
+	bytes = cdGraphStream->read(addr, (cdTopHandle - cdBaseHandle) & OFFSETMASK);
 
 	// New code to try and handle CD read failures 24/2/97
 	while (bytes != ((cdTopHandle - cdBaseHandle) & OFFSETMASK) && retries++ < MAX_READ_RETRIES)	{
 		// Try again
-		cdGraphStream.seek(cdBaseHandle & OFFSETMASK, SEEK_SET);
-		bytes = cdGraphStream.read(addr, (cdTopHandle - cdBaseHandle) & OFFSETMASK);
+		cdGraphStream->seek(cdBaseHandle & OFFSETMASK, SEEK_SET);
+		bytes = cdGraphStream->read(addr, (cdTopHandle - cdBaseHandle) & OFFSETMASK);
 	}
 
 	// discardable - unlock the memory
