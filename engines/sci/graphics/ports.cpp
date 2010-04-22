@@ -388,7 +388,8 @@ Port *GfxPorts::getPort() {
 }
 
 void GfxPorts::setOrigin(int16 left, int16 top) {
-	_curPort->left = left;
+	// This looks fishy, but it's exactly what sierra did. They removed last bit of left in their interpreter
+	_curPort->left = left & 0x7FFE;
 	_curPort->top = top;
 }
 
