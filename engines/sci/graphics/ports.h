@@ -109,6 +109,8 @@ private:
 
 	bool _usesOldGfxFunctions;
 
+	uint16 _styleUser;
+
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
 

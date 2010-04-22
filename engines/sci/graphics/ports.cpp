@@ -85,6 +85,11 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	//				will work, but some scripts seem to check for 0 and initialize the variable again in that case
 	//				resulting in problems.
 
+	if (getSciVersion() >= SCI_VERSION_1_LATE)
+		_styleUser = SCI_WINDOWMGR_STYLE_USER;
+	else
+		_styleUser = SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_TRANSPARENT;
+
 	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
 	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
@@ -233,7 +238,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	}
 
 	r = dims;
-	if ((style != SCI_WINDOWMGR_STYLE_USER) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
+	if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 		r.grow(1);
 		if (style & SCI_WINDOWMGR_STYLE_TITLE) {
 			r.top -= 10;
@@ -298,7 +303,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 	}
 
 	// drawing frame,shadow and title
-	if (!(wndStyle & SCI_WINDOWMGR_STYLE_USER)) {
+	if (wndStyle != _styleUser) {
 		r = pWnd->dims;
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 			r.translate(1, 1);
