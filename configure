@@ -1127,9 +1127,10 @@ else
 		irix*)
 			case $cxx_version in
 				7.4.4*)
-					# We just assume this is SGI MipsPRO
+					# We just assume this is SGI MIPSpro
 					_cxx_major=7
 					_cxx_minor=4
+					cxx_verc_fail=no
 					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
 					add_line_to_config_mk '-include Makedepend'
 					;;
