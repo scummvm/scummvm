@@ -152,6 +152,11 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 	return textCodeSize;
 }
 
+static const uint16 text16_punctuationSjis[] = {
+	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,
+	0x4083, 0x4283, 0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,
+	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0 };
+
 // return max # of chars to fit maxwidth with full words
 int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar;
@@ -210,6 +215,24 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		// Text w/o space, supposingly kanji - we don't adjust back to last char here strangely. If we do, we don't
 		//  get the same text cutting like in sierra sci
 		maxChars = curCharCount;
+
+		// sierra checked the following character against a punctuation kanji table
+		uint16 nextChar = (*(const byte *)text++);
+		if (_font->isDoubleByte(nextChar)) {
+			nextChar |= (*(const byte *)text++) << 8;
+
+			// if the character is punctuation, we go back one character
+			uint nonBreakingNr = 0;
+			while (text16_punctuationSjis[nonBreakingNr]) {
+				if (text16_punctuationSjis[nonBreakingNr] == nextChar) {
+					maxChars--;
+					if (curChar > 0xFF)
+						maxChars--; // go back 2 chars, when last char was double byte
+					break;
+				}
+				nonBreakingNr++;
+			}
+		}
 	}
 	SetFont(oldFontId);
 	_ports->penColor(oldPenColor);
