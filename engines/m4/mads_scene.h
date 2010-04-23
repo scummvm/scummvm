@@ -87,60 +87,6 @@ struct TimedText {
 	char message[100];
 };
 
-#define TIMER_ENTRY_SUBSET_MAX 5
-
-struct MadsTimerEntry {
-	int8 active;
-	int8 spriteListIndex;
-	
-	int field_2;
-	
-	int frameIndex;
-	int spriteNum;
-	int numSprites;
-	
-	int field_A;
-	int field_C;
-
-	int depth;
-	int scale;
-	int walkObjectIndex;
-
-	int field_12;
-	int field_13;
-	
-	int width;
-	int height;
-	
-	int field_24;
-	int field_25;
-	int len27;
-	int8 fld27[TIMER_ENTRY_SUBSET_MAX];
-	int16 fld2C[TIMER_ENTRY_SUBSET_MAX];
-	int8 field36;
-	int field_3B;
-
-	uint16 actionNouns[3];
-	int numTicks;
-	int extraTicks;
-	int32 timeout;
-};
-
-#define TIMER_LIST_SIZE 30
-
-class MadsTimerList {
-private:
-	Common::Array<MadsTimerEntry> _entries;
-public:
-	MadsTimerList();
-
-	MadsTimerEntry &operator[](int index) { return _entries[index]; }	
-	bool unk2(int index, int v1, int v2, int v3);
-	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, 
-		int numSprites, int spriteNum);
-};
-
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
 enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
 
@@ -198,7 +144,6 @@ private:
 public:
 	char _aaName[100];
 	uint16 actionNouns[3];
-	MadsTimerList _timerList;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

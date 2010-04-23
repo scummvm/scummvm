@@ -38,6 +38,7 @@ namespace M4 {
 #define MADS_SCREEN_HEIGHT 200
 #define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
 
+class MadsView;
 
 class MadsSpriteSlot {
 public:
@@ -81,6 +82,7 @@ public:
 		startIndex = 0;
 		_sprites.clear();
 	}
+	void deleteTimer(int timerIndex);
 
 	void draw(View *view);
 };
@@ -152,7 +154,98 @@ public:
 	void setActive(int category, int idx, bool active);
 };
 
+class DynamicHotspot {
+public:
+	bool active;
+	int timerIndex;
+	Common::Rect bounds;
+	Common::Point pos;
+	int facing;
+	int descId;
+	int field_14;
+	int articleNumber;
+	int field_17;
 
+	DynamicHotspot() { active = false; }
+};
+
+#define HITBOX_AREA_SIZE 8
+
+class DynamicHotspots {
+private:
+	MadsView &_owner;
+	Common::Array<DynamicHotspot> _entries;
+	bool _flag;
+	int _count;
+public:
+	DynamicHotspots(MadsView &owner);
+
+	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
+	int add(int descId, int field14, int timerIndex, const Common::Rect &bounds);
+	int setPosition(int index, int xp, int yp, int facing);
+	int set17(int index, int v);
+	void remove(int index);
+	void reset();
+};
+
+#define TIMER_ENTRY_SUBSET_MAX 5
+
+struct MadsTimerEntry {
+	int8 active;
+	int8 spriteListIndex;
+	
+	int field_2;
+	
+	int frameIndex;
+	int spriteNum;
+	int numSprites;
+	
+	int field_A;
+	int field_C;
+
+	int depth;
+	int scale;
+	int dynamicHotspotIndex;
+
+	int field_12;
+	int field_13;
+	
+	int width;
+	int height;
+	
+	int field_24;
+	int field_25;
+	int len27;
+	int8 fld27[TIMER_ENTRY_SUBSET_MAX];
+	int16 fld2C[TIMER_ENTRY_SUBSET_MAX];
+	int8 field36;
+	int field_3B;
+
+	uint16 actionNouns[3];
+	int numTicks;
+	int extraTicks;
+	uint32 timeout;
+};
+
+#define TIMER_LIST_SIZE 30
+
+class MadsTimerList {
+private:
+	MadsView &_owner;
+	Common::Array<MadsTimerEntry> _entries;
+public:
+	MadsTimerList(MadsView &owner);
+
+	MadsTimerEntry &operator[](int index) { return _entries[index]; }	
+	bool unk2(int index, int v1, int v2, int v3);
+	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, 
+		int numSprites, int spriteNum);
+	void remove(int timerIndex);
+	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
+	bool loadSprites(int timerIndex);
+	void tick();
+};
 
 class MadsView {
 private:
@@ -161,8 +254,13 @@ public:
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	ScreenObjects _screenObjects;
+	DynamicHotspots _dynamicHotspots;
+	MadsTimerList _timerList;
+
+	int _abortTimers;
+	int8 _abortTimers2;
 public:
-	MadsView(View *view): _view(view) {}
+	MadsView(View *view);
 
 	void refresh(RectList *rects);
 };
