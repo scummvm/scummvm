@@ -267,6 +267,9 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 					break;
 				}
 			default:
+				// if last character is a space, don't add it to textWidth
+				if ((curChar == ' ') && (!len))
+					break;
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
 			}
