@@ -181,7 +181,11 @@ Common::Error SciEngine::run() {
 	_features = new GameFeatures(segMan, _kernel);
 
 	_gamestate = new EngineState(_vocabulary, segMan);
-	_gamestate->_event = new SciEvent(_resMan);
+
+	// Detect extended font used in multilingual games
+	bool fontIsExtended = _resMan->detectFontExtended();
+
+	_gamestate->_event = new SciEvent(fontIsExtended);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -198,7 +202,7 @@ Common::Error SciEngine::run() {
 	} else {
 #endif
 		_gfxPorts = new GfxPorts(segMan, screen);
-		_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gfxPorts, _audio);
+		_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gfxPorts, _audio, fontIsExtended);
 #ifdef ENABLE_SCI32
 		_gui32 = 0;
 		_gfxFrameout = 0;

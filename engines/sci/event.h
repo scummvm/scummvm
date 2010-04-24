@@ -113,7 +113,7 @@ struct sciEvent {
 
 class SciEvent {
 public:
-	SciEvent(ResourceManager *resMan);
+	SciEvent(bool fontIsExtended);
 	~SciEvent();
 
 	sciEvent get(unsigned int mask);

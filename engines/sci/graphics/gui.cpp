@@ -51,7 +51,7 @@
 
 namespace Sci {
 
-SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio)
+SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio, bool fontIsExtended)
 	: _s(state), _screen(screen), _palette(palette), _cache(cache), _cursor(cursor), _ports(ports), _audio(audio) {
 
 	// FIXME/TODO: If SciGui inits all the stuff below, then it should *own* it,
@@ -66,7 +66,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_paint16 = new GfxPaint16(g_sci->getResMan(), _s->_segMan, g_sci->getKernel(), this, _cache, _ports, _coordAdjuster, _screen, _palette, _transitions);
 	g_sci->_gfxPaint = _paint16;
 	g_sci->_gfxPaint16 = _paint16;
-	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
+	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions, fontIsExtended);
 	g_sci->_gfxAnimate = _animate;
 	_text16 = new GfxText16(g_sci->getResMan(), _cache, _ports, _paint16, _screen);
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
