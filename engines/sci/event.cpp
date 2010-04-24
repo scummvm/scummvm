@@ -36,8 +36,9 @@ namespace Sci {
 
 #define SCANCODE_ROWS_NR 3
 
-SciEvent::SciEvent(bool fontIsExtended)
-	: _fontIsExtended(fontIsExtended) {
+SciEvent::SciEvent(ResourceManager *resMan) {
+	// Check, if font of current game includes extended chars
+	_fontIsExtended = resMan->detectFontExtended();
 }
 
 SciEvent::~SciEvent() {

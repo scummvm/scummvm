@@ -42,8 +42,8 @@
 
 namespace Sci {
 
-GfxAnimate::GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions, bool fontIsExtended)
-	: _s(state), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions), _fontIsExtended(fontIsExtended) {
+GfxAnimate::GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions)
+	: _s(state), _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _palette(palette), _cursor(cursor), _transitions(transitions) {
 	init();
 }
 
@@ -66,14 +66,6 @@ void GfxAnimate::init() {
 	//  (found in larry 1)
 	if (!_s->_segMan->findObjectByName("fastCast").isNull())
 		_ignoreFastCast = true;
-
-	// SCI01 introduced port-update calls, although only the non multilingual games qfg2 and xmas90ega
-	//  So we enable those for SCI1+ games all the time and for SCI01 games that don't have extended fonts
-	_doPortUpdate = false;
-	if ((getSciVersion() == SCI_VERSION_01) && (!_fontIsExtended))
-		_doPortUpdate = true;
-	if (getSciVersion() > SCI_VERSION_01)
-		_doPortUpdate = true;
 }
 
 void GfxAnimate::disposeLastCast() {
@@ -639,13 +631,13 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	fill(old_picNotValid);
 
 	if (old_picNotValid) {
-		// beginUpdate()/endUpdate() were introduced SCI01 (xmas90ega and qfg2 only), in SCI1+ all the time
+		// beginUpdate()/endUpdate() were introduced SCI1
 		//  calling those for SCI0 will work most of the time but breaks minor stuff like percentage bar of qfg1ega
 		//   at the character skill screen
-		if (_doPortUpdate)
+		if (getSciVersion() >= SCI_VERSION_1_EGA)
 			_ports->beginUpdate(_ports->_picWind);
 		update();
-		if (_doPortUpdate)
+		if (getSciVersion() >= SCI_VERSION_1_EGA)
 			_ports->endUpdate(_ports->_picWind);
 	}
 

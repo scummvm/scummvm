@@ -46,7 +46,7 @@ class GfxTransitions;
 
 class SciGui {
 public:
-	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio, bool fontIsExtended);
+	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio);
 	virtual ~SciGui();
 
 	virtual void init(bool usesOldGfxFunctions);

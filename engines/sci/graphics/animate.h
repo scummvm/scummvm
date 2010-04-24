@@ -86,7 +86,7 @@ class GfxTransitions;
  */
 class GfxAnimate {
 public:
-	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions, bool fontIsExtended);
+	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
 	// FIXME: Don't store EngineState
@@ -133,8 +133,6 @@ private:
 	AnimateEntry *_lastCastData;
 
 	bool _ignoreFastCast;
-	bool _fontIsExtended;
-	bool _doPortUpdate;
 };
 
 } // End of namespace Sci
