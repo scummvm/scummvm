@@ -212,15 +212,25 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		curCharCount++;
 	}
 	if (maxChars == 0) {
-		// Text w/o space, supposingly kanji - we don't adjust back to last char here strangely. If we do, we don't
-		//  get the same text cutting like in sierra sci
+		// Text w/o space, supposingly kanji
 		maxChars = curCharCount;
 
-		// sierra checked the following character against a punctuation kanji table
-		uint16 nextChar = (*(const byte *)text++);
-		if (_font->isDoubleByte(nextChar)) {
-			nextChar |= (*(const byte *)text++) << 8;
+		uint16 nextChar;
 
+		// we remove the last char only, if maxWidth was actually equal width before adding the last char
+		//  otherwise we won't get the same cutting as in sierra sci
+		if (maxWidth == (width - _font->getCharWidth(curChar))) {
+			maxChars--;
+			if (curChar > 0xFF)
+				maxChars--;
+			nextChar = curChar;
+		} else {
+			nextChar = (*(const byte *)text++);
+			if (_font->isDoubleByte(nextChar))
+				nextChar |= (*(const byte *)text++) << 8;
+		}
+		// sierra checked the following character against a punctuation kanji table
+		if (nextChar > 0xFF) {
 			// if the character is punctuation, we go back one character
 			uint nonBreakingNr = 0;
 			while (text16_punctuationSjis[nonBreakingNr]) {
