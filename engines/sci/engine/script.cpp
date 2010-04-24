@@ -167,7 +167,11 @@ void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
 
 	scr->_localsOffset = -count * 2; // Make sure it's invalid
 
-	allocLocalsSegment(scr, count);
+	LocalVariables *locals = allocLocalsSegment(scr, count);
+	if (locals) {
+		for (int i = 0; i < count; i++)
+			locals->_locals[i] = NULL_REG;
+	}
 }
 
 void SegManager::scriptInitialiseLocals(reg_t location) {
@@ -195,7 +199,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 		byte *base = (byte *)(scr->_buf + location.offset);
 
 		for (i = 0; i < count; i++)
-			locals->_locals[i].offset = READ_LE_UINT16(base + i * 2);
+			locals->_locals[i] = make_reg(0, READ_LE_UINT16(base + i * 2));
 	}
 }
 
