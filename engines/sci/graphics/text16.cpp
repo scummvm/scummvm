@@ -157,7 +157,7 @@ static const uint16 text16_punctuationSjis[] = {
 	0x4083, 0x4283, 0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,
 	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0 };
 
-// return max # of chars to fit maxwidth with full words
+// return max # of chars to fit maxwidth with full words, does not include breaking space
 int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar;
 	int16 maxChars = 0, curCharCount = 0;
@@ -205,7 +205,7 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			return curCharCount;
 
 		case ' ':
-			maxChars = curCharCount + 1;
+			maxChars = curCharCount; // return count up to (but not including) breaking space
 			break;
 		}
 		width += _font->getCharWidth(curChar);
@@ -267,9 +267,6 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 					break;
 				}
 			default:
-				// if last character is a space and the text is not ending afterwards, don't add it to textWidth
-				if ((curChar == ' ') && (!len) && (*text != 0))
-					break;
 				textHeight = MAX<int16> (textHeight, _ports->_curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
 			}
@@ -323,6 +320,8 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 			maxTextWidth = MAX(textWidth, maxTextWidth);
 			totalHeight += textHeight;
 			curPos += charCount;
+			if (*curPos == ' ')
+				curPos++;
 		}
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
@@ -436,6 +435,8 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 
 		hline += textHeight;
 		text += charCount;
+		if (*text == ' ')
+			text++;
 	}
 	SetFont(orgFontId);
 	_ports->penColor(orgPenColor);
