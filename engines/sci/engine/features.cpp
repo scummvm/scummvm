@@ -71,6 +71,9 @@ bool GameFeatures::autoDetectSoundType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Sound", _kernel->_selectorCache.play);
 
+	if (!addr.segment)
+		return false;
+
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
 	uint16 intParam = 0xFFFF;
@@ -206,6 +209,9 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Game", -1, methodNum);
 
+	if (!addr.segment)
+		return false;
+
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
 
@@ -288,6 +294,9 @@ SciVersion GameFeatures::detectLofsType() {
 bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Rm", _kernel->_selectorCache.overlay, methodNum);
+
+	if (!addr.segment)
+		return false;
 
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
@@ -379,6 +388,9 @@ bool GameFeatures::autoDetectSci21KernelType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Sound", _kernel->_selectorCache.play);
 
+	if (!addr.segment)
+		return false;
+
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
 
@@ -427,6 +439,9 @@ SciVersion GameFeatures::detectSci21KernelType() {
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Motion", _kernel->_selectorCache.doit);
+
+	if (!addr.segment)
+		return false;
 
 	uint16 offset = addr.offset;
 	Script *script = _segMan->getScript(addr.segment);
