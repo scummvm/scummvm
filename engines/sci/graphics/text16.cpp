@@ -218,7 +218,8 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		uint16 nextChar;
 
 		// we remove the last char only, if maxWidth was actually equal width before adding the last char
-		//  otherwise we won't get the same cutting as in sierra sci
+		//  otherwise we won't get the same cutting as in sierra pc98 sci
+		//  note: changing the while() instead will NOT WORK. it would break all sorts of regular sci games
 		if (maxWidth == (width - _font->getCharWidth(curChar))) {
 			maxChars--;
 			if (curChar > 0xFF)
