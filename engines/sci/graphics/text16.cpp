@@ -321,7 +321,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 			totalHeight += textHeight;
 			curPos += charCount;
 			if (*curPos == ' ')
-				curPos++;
+				curPos++; // skip over breaking space
 		}
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
@@ -436,7 +436,7 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		hline += textHeight;
 		text += charCount;
 		if (*text == ' ')
-			text++;
+			text++; // skip over breaking space
 	}
 	SetFont(orgFontId);
 	_ports->penColor(orgPenColor);
