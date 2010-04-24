@@ -113,9 +113,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("room",				WRAP_METHOD(Console, cmdRoomNumber));
 	DCmd_Register("quit",				WRAP_METHOD(Console, cmdQuit));
 	DCmd_Register("list_saves",			WRAP_METHOD(Console, cmdListSaves));
-	// Screen
-	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	// Graphics
+	DCmd_Register("show_map",			WRAP_METHOD(Console, cmdShowMap));
 	DCmd_Register("set_palette",		WRAP_METHOD(Console, cmdSetPalette));
 	DCmd_Register("draw_pic",			WRAP_METHOD(Console, cmdDrawPic));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
@@ -326,6 +325,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" quit - Quits the game\n");
 	DebugPrintf("\n");
 	DebugPrintf("Graphics:\n");
+	DebugPrintf(" show_map - Switches to visual, priority, control or display screen\n");
 	DebugPrintf(" set_palette - Sets a palette resource\n");
 	DebugPrintf(" draw_pic - Draws a pic resource\n");
 	DebugPrintf(" draw_cel - Draws a cel from a view resource\n");
