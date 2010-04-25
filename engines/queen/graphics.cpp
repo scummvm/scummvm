@@ -36,8 +36,6 @@
 
 namespace Queen {
 
-const Box BobSlot::_defaultBox(-1, -1, -1, -1);
-
 void BobSlot::curPos(int16 xx, int16 yy) {
 	active = true;
 	x = xx;
@@ -177,22 +175,14 @@ void BobSlot::scaleWalkSpeed(uint16 ms) {
 	}
 }
 
-void BobSlot::clear() {
+void BobSlot::clear(const Box *defaultBox) {
 	active = false;
 	xflip = false;
 	animating = false;
 	anim.string.buffer = NULL;
 	moving = false;
 	scale = 100;
-
-#ifdef PALMOS_ARM
-	Box *tmp = (Box *)&_defaultBox;
-	tmp->x1 = -1;
-	tmp->y1 = -1;
-	tmp->x2 = -1;
-	tmp->y2 = -1;
-#endif
-	box = _defaultBox;
+	box = *defaultBox;
 }
 
 static int compareBobDrawOrder(const void *a, const void *b) {
@@ -208,33 +198,15 @@ static int compareBobDrawOrder(const void *a, const void *b) {
 	return d;
 }
 
-const Box Graphics::_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1);
-const Box Graphics::_fullScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, GAME_SCREEN_HEIGHT - 1);
-
 Graphics::Graphics(QueenEngine *vm)
-	: _cameraBob(0), _vm(vm) {
+	: _cameraBob(0), _vm(vm),
+	_defaultBox(-1, -1, -1, -1),
+	_gameScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, ROOM_ZONE_HEIGHT - 1),
+	_fullScreenBox(0, 0, GAME_SCREEN_WIDTH - 1, GAME_SCREEN_HEIGHT - 1) {
 	memset(_bobs, 0, sizeof(_bobs));
 	memset(_sortedBobs, 0, sizeof(_sortedBobs));
 	_sortedBobsCount = 0;
 	_shrinkBuffer.data = new uint8[ BOB_SHRINK_BUF_SIZE ];
-
-#ifdef PALMOS_ARM
-	Box *tmp1 = (Box *)&BobSlot::_defaultBox;
-	tmp1->x1 = -1;
-	tmp1->y1 = -1;
-	tmp1->x2 = -1;
-	tmp1->y2 = -1;
-	Box *tmp2 = (Box *)&_gameScreenBox;
-	tmp2->x1 = 0;
-	tmp2->y1 = 0;
-	tmp2->x2 = GAME_SCREEN_WIDTH - 1;
-	tmp2->y2 = ROOM_ZONE_HEIGHT - 1;
-	Box *tmp3 = (Box *)&_fullScreenBox;
-	tmp3->x1 = 0;
-	tmp3->y1 = 0;
-	tmp3->x2 = GAME_SCREEN_WIDTH - 1;
-	tmp3->y2 = GAME_SCREEN_HEIGHT - 1;
-#endif
 }
 
 Graphics::~Graphics() {
@@ -329,7 +301,7 @@ void Graphics::drawBob(const BobSlot *bs, const BobFrame *bf, const Box *bbox, i
 	w = bf->width;
 	h = bf->height;
 
-	const Box *box = (bs->box == BobSlot::_defaultBox) ? bbox : &bs->box;
+	const Box *box = (bs->box == _defaultBox) ? bbox : &bs->box;
 
 	if (w != 0 && h != 0 && box->intersects(x, y, w, h)) {
 		uint8 *src = bf->data;
@@ -473,7 +445,7 @@ void Graphics::drawBobs() {
 
 void Graphics::clearBobs() {
 	for (int32 i = 0; i < ARRAYSIZE(_bobs); ++i) {
-		_bobs[i].clear();
+		_bobs[i].clear(&_defaultBox);
 	}
 }
 
@@ -879,7 +851,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 	if (pod->image == -3 || pod->image == -4) {
 		// a person object
 		if (pod->name <= 0) {
-			pbs->clear();
+			pbs->clear(&_defaultBox);
 		} else {
 			// find person number
 			uint16 pNum = _vm->logic()->findPersonNumber(obj, _vm->logic()->currentRoom());
@@ -897,7 +869,7 @@ uint16 Graphics::refreshObject(uint16 obj) {
 
 	if (pod->name < 0 || pod->image < 0) {
 		// object is hidden or disabled
-		pbs->clear();
+		pbs->clear(&_defaultBox);
 		return curImage;
 	}
 
@@ -1072,7 +1044,7 @@ void Graphics::setupRoomObjects() {
 				// static objects
 				curBob = 20 + _numFurnitureStatic + numObjectStatic;
 				++curImage;
-				bob(curBob)->clear();
+				bob(curBob)->clear(&_defaultBox);
 				_vm->bankMan()->unpack(pgd->firstFrame, curImage, 15);
 				++_numFrames;
 				if (pod->name > 0) {
@@ -1180,16 +1152,16 @@ void BamScene::playSfx() {
 }
 
 void BamScene::prepareAnimation() {
+	_vm->graphics()->clearBob(BOB_OBJ1);
 	_obj1 = _vm->graphics()->bob(BOB_OBJ1);
-	_obj1->clear();
 	_obj1->active = true;
 
+	_vm->graphics()->clearBob(BOB_OBJ2);
 	_obj2 = _vm->graphics()->bob(BOB_OBJ2);
-	_obj2->clear();
 	_obj2->active = true;
 
+	_vm->graphics()->clearBob(BOB_FX);
 	_objfx = _vm->graphics()->bob(BOB_FX);
-	_objfx->clear();
 	_objfx->active = true;
 
 	_index = 0;

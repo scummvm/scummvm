@@ -1048,7 +1048,7 @@ void Cutaway::stop() {
 
 					ObjectData *from = _vm->logic()->objectData(fromIndex);
 					if (object->image && !from->image && bobIndex && _vm->logic()->currentRoom() == object->room)
-						_vm->graphics()->bob(bobIndex)->clear();
+						_vm->graphics()->clearBob(bobIndex);
 				}
 
 				if (_vm->logic()->currentRoom() == room)
@@ -1076,7 +1076,7 @@ void Cutaway::stop() {
 					int objectFrame = _vm->logic()->findFrame(objectIndex);
 
 					if (objectFrame == 1000) {
-						_vm->graphics()->bob(bobIndex)->clear();
+						_vm->graphics()->clearBob(bobIndex);
 					} else if (objectFrame) {
 						_vm->bankMan()->unpack(ABS(frame), objectFrame, bank);
 						pbs->frameNum = objectFrame;

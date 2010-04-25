@@ -86,9 +86,7 @@ struct BobSlot {
 
 	void scaleWalkSpeed(uint16 ms);
 
-	void clear();
-
-	static const Box _defaultBox;
+	void clear(const Box *defaultBox);
 };
 
 class QueenEngine;
@@ -134,6 +132,8 @@ public:
 
 	//! returns a reference to the specified bob
 	BobSlot *bob(int index);
+
+	void clearBob(int index) { bob(index)->clear(&_defaultBox); }
 
 	//! display a text 'near' the specified bob
 	void setBobText(const BobSlot *bob, const char *text, int textX, int textY, int color, int flags);
@@ -219,8 +219,9 @@ private:
 
 	QueenEngine *_vm;
 
-	static const Box _gameScreenBox;
-	static const Box _fullScreenBox;
+	const Box _defaultBox;
+	const Box _gameScreenBox;
+	const Box _fullScreenBox;
 };
 
 class BamScene {
