@@ -72,7 +72,6 @@ void Copier::copy(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat *form
 		if (bytes > prefixDst)	// check that we can afford to subtract from bytes
 			bytes -= prefixDst;
 		else {
-			DEBUG_EXIT_FUNC();
 			return;
 		}
 		dst32 = (uint32 *)(dst + prefixDst);
@@ -126,7 +125,7 @@ test:
 		PSP_DEBUG_PRINT("\n");
 #endif
 
-	DEBUG_EXIT_FUNC();
+	return;		// So we have something to jump to with the label
 }
 
 inline void Copier::copy8(byte *dst, const byte *src, uint32 bytes) {
@@ -200,7 +199,6 @@ void *VramAllocator::allocate(int32 size, bool smallAllocation /* = false */) {
 	PSP_DEBUG_PRINT("Allocated in VRAM, size %u at %p.\n", size, lastAddress);
 	PSP_DEBUG_PRINT("Total allocated %u, remaining %u.\n", _bytesAllocated, (2 * 1024 * 1024) - _bytesAllocated);
 
-	DEBUG_EXIT_FUNC();
 	return lastAddress;
 }
 
@@ -217,11 +215,9 @@ void VramAllocator::deallocate(void *address) {
 			_bytesAllocated -= (*i).size;
 			_allocList.erase(i);
 			PSP_DEBUG_PRINT("Deallocated address[%p], size[%u]\n", (*i).address, (*i).size);
-			DEBUG_EXIT_FUNC();
 			return;
 		}
 	}
 
 	PSP_DEBUG_PRINT("Address[%p] not allocated.\n", address);
-	DEBUG_EXIT_FUNC();
 }

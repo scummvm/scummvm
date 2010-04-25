@@ -39,7 +39,6 @@ bool DefaultDisplayClient::allocate(bool bufferInVram /* = false */, bool palett
 
 	if (!_buffer.allocate(bufferInVram)) {
 		PSP_ERROR("Couldn't allocate buffer.\n");
-		DEBUG_EXIT_FUNC();
 		return false;
 	}
 
@@ -47,13 +46,11 @@ bool DefaultDisplayClient::allocate(bool bufferInVram /* = false */, bool palett
 		PSP_DEBUG_PRINT("_palette[%p]\n", &_palette);
 
 		if (!_palette.allocate()) {
-			PSP_ERROR("Couldn't allocate pallette.\n");
-			DEBUG_EXIT_FUNC();
+			PSP_ERROR("Couldn't allocate palette.\n");
 			return false;
 		}
 	}
 
-	DEBUG_EXIT_FUNC();
 	return true;
 }
 
@@ -68,34 +65,29 @@ void DefaultDisplayClient::clearBuffer() {
 	DEBUG_ENTER_FUNC();
 	_buffer.clear();
 	setDirty();
-	DEBUG_EXIT_FUNC();
 }
 
 inline void DefaultDisplayClient::clearPalette() {
 	DEBUG_ENTER_FUNC();
 	_palette.clear();
 	setDirty();
-	DEBUG_EXIT_FUNC();
 }
 
 void DefaultDisplayClient::init() {
 	DEBUG_ENTER_FUNC();
 	_renderer.setBuffer(&_buffer);
 	_renderer.setPalette(&_palette);
-	DEBUG_EXIT_FUNC();
 }
 
 void DefaultDisplayClient::copyFromRect(const byte *buf, int pitch, int destX, int destY, int recWidth, int recHeight) {
 	DEBUG_ENTER_FUNC();
 	_buffer.copyFromRect(buf, pitch, destX, destY, recWidth, recHeight);
 	setDirty();
-	DEBUG_EXIT_FUNC();
 }
 
 void DefaultDisplayClient::copyToArray(byte *dst, int pitch) {
 	DEBUG_ENTER_FUNC();
 	_buffer.copyToArray(dst, pitch);
-	DEBUG_EXIT_FUNC();
 }
 
 // Class Overlay -------------------------------------------------------
@@ -108,8 +100,6 @@ void Overlay::init() {
 	_renderer.setColorTest(false);
 	_renderer.setUseGlobalScaler(false);
 	_renderer.setFullScreen(true);	// speeds up render slightly
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Overlay::setBytesPerPixel(uint32 size) {
@@ -127,21 +117,17 @@ void Overlay::setBytesPerPixel(uint32 size) {
 		_buffer.setPixelFormat(PSPPixelFormat::Type_8888);
 		break;
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Overlay::setSize(uint32 width, uint32 height) {
 	DEBUG_ENTER_FUNC();
 	_buffer.setSize(width, height, Buffer::kSizeBySourceSize);
 	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
-	DEBUG_EXIT_FUNC();
 }
 
 void Overlay::copyToArray(OverlayColor *buf, int pitch) {
 	DEBUG_ENTER_FUNC();
 	_buffer.copyToArray((byte *)buf, pitch * sizeof(OverlayColor));	// Change to bytes
-	DEBUG_EXIT_FUNC();
 }
 
 void Overlay::copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
@@ -151,7 +137,6 @@ void Overlay::copyFromRect(const OverlayColor *buf, int pitch, int x, int y, int
 	// debug
 	//_buffer.print(0xFF);
 	setDirty();
-	DEBUG_EXIT_FUNC();
 }
 
 bool Overlay::allocate() {
@@ -159,7 +144,6 @@ bool Overlay::allocate() {
 
 	bool ret = DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -173,8 +157,6 @@ void Screen::init() {
 	_renderer.setColorTest(false);
 	_renderer.setUseGlobalScaler(true);
 	_renderer.setFullScreen(true);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Screen::setShakePos(int pos) {
@@ -188,8 +170,6 @@ void Screen::setSize(uint32 width, uint32 height) {
 
 	_buffer.setSize(width, height, Buffer::kSizeBySourceSize);
 	_renderer.setDrawWholeBuffer();	// We need to let the renderer know how much to draw
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
@@ -209,8 +189,6 @@ void Screen::setScummvmPixelFormat(const Graphics::PixelFormat *format) {
 	PSPPixelFormat::convertFromScummvmPixelFormat(format, bufferFormat, paletteFormat, swapRedBlue);
 	_buffer.setPixelFormat(bufferFormat, swapRedBlue);
 	_palette.setPixelFormats(paletteFormat, bufferFormat, swapRedBlue);
-
-	DEBUG_EXIT_FUNC();
 }
 
 Graphics::Surface *Screen::lockAndGetForEditing() {
@@ -223,8 +201,6 @@ Graphics::Surface *Screen::lockAndGetForEditing() {
 	_frameBuffer.bytesPerPixel = _buffer.getBytesPerPixel();
 	// We'll set to dirty once we unlock the screen
 
-	DEBUG_EXIT_FUNC();
-
 	return &_frameBuffer;
 }
 
@@ -232,6 +208,4 @@ bool Screen::allocate() {
 	DEBUG_ENTER_FUNC();
 
 	return DefaultDisplayClient::allocate(true, false);	// buffer in VRAM
-
-	DEBUG_EXIT_FUNC();
 }

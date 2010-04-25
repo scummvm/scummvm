@@ -54,8 +54,6 @@ PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 	_errorPos = 0;
 	_errorHandle = 0;
 	_suspendCount = 0;
-
-	DEBUG_EXIT_FUNC();
 }
 
 PSPIoStream::~PSPIoStream() {
@@ -70,8 +68,6 @@ PSPIoStream::~PSPIoStream() {
 	fclose((FILE *)_handle);	// We don't need a critical section(?). Worst case, the handle gets closed on its own
 
 	PowerMan.endCriticalSection();
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* Function to open the file pointed to by the path.
@@ -90,7 +86,6 @@ void *PSPIoStream::open() {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return _handle;
 }
 
@@ -100,7 +95,6 @@ bool PSPIoStream::err() const {
 		PSP_ERROR("mem_ferror[%d], source[%d], suspend error[%d], pos[%d], _errorPos[%d], _errorHandle[%p], suspendCount[%d]\n",
 		          _ferror, _errorSource, _errorSuspend, _pos, _errorPos, _errorHandle, _suspendCount);
 
-	DEBUG_EXIT_FUNC();
 	return _ferror;
 }
 
@@ -136,7 +130,6 @@ int32 PSPIoStream::size() const {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return length;
 }
 
@@ -163,7 +156,6 @@ bool PSPIoStream::seek(int32 offs, int whence) {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return (ret == 0);
 }
 
@@ -192,7 +184,6 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -218,7 +209,6 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -239,7 +229,6 @@ bool PSPIoStream::flush() {
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return (ret == 0);
 }
 
@@ -255,7 +244,6 @@ PSPIoStream *PSPIoStream::makeFromPath(const Common::String &path, bool writeMod
 		stream = 0;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return stream;
 }
 
@@ -278,7 +266,6 @@ int PSPIoStream::suspend() {
 		_handle = (void *)0xFFFFFFFF;	// Set handle to non-null invalid value so makeFromPath doesn't return error
 	}
 
-	DEBUG_EXIT_FUNC();
 	return 0;
 }
 
@@ -306,7 +293,6 @@ int PSPIoStream::resume() {
 			_errorHandle = _handle;
 		}
 	}
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 

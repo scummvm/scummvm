@@ -83,8 +83,6 @@ void MasterGuRenderer::guInit() {
 
 	sceDisplayWaitVblankStart();
 	sceGuDisplay(1);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void MasterGuRenderer::guProgramDisplayBufferSizes() {
@@ -106,8 +104,6 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 		VramAllocator::instance().allocate(PSP_FRAME_SIZE * sizeof(uint32) * 2);
 		break;
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 // These are GU commands that should always stay the same
@@ -130,8 +126,6 @@ inline void MasterGuRenderer::guPreRender() {
 
 	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA); // Also good enough for all purposes
 	sceGuAlphaFunc(GU_GREATER, 0, 0xFF);	   // Also good enough for all purposes
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline void MasterGuRenderer::guPostRender() {
@@ -147,8 +141,6 @@ inline void MasterGuRenderer::guPostRender() {
 
 	sceDisplayWaitVblankStart();
 	sceGuSwapBuffers();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void MasterGuRenderer::guShutDown() {
@@ -173,8 +165,6 @@ void DisplayManager::init() {
 	_cursor->init();
 
 	_masterGuRenderer.guInit();				// start up the renderer
-
-	DEBUG_EXIT_FUNC();
 }
 
 void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format) {
@@ -198,8 +188,6 @@ void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphi
 	_displayParams.screenSource.width = width;
 	_displayParams.screenSource.height = height;
 	calculateScaleParams();
-
-	DEBUG_EXIT_FUNC();
 }
 
 bool DisplayManager::setGraphicsMode(const char *name) {
@@ -210,13 +198,11 @@ bool DisplayManager::setGraphicsMode(const char *name) {
 	while (_supportedModes[i].name) {
 		if (!strcmpi(_supportedModes[i].name, name)) {
 			setGraphicsMode(_supportedModes[i].id);
-			DEBUG_EXIT_FUNC();
 			return true;
 		}
 		i++;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return false;
 }
 
@@ -248,7 +234,6 @@ bool DisplayManager::setGraphicsMode(int mode) {
 
 	calculateScaleParams();
 
-	DEBUG_EXIT_FUNC();
 	return true;
 }
 
@@ -264,7 +249,6 @@ void DisplayManager::renderAll() {
 	DEBUG_ENTER_FUNC();
 
 	if (!isTimeToUpdate()) {
-		DEBUG_EXIT_FUNC();
 		return;
 	}
 
@@ -273,7 +257,6 @@ void DisplayManager::renderAll() {
 	        (!_cursor->isDirty()) &&
 	        (!_keyboard->isDirty())) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
-		DEBUG_EXIT_FUNC();
 		return;
 	}
 
@@ -306,8 +289,6 @@ void DisplayManager::renderAll() {
 	_keyboard->setClean();
 
 	_masterGuRenderer.guPostRender();
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline bool DisplayManager::isTimeToUpdate() {

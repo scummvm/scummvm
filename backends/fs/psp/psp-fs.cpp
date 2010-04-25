@@ -108,7 +108,6 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 		PowerMan.endCriticalSection();
 		_isDirectory = S_ISDIR(st.st_mode);
 	}
-	DEBUG_EXIT_FUNC();
 }
 
 bool PSPFilesystemNode::exists() const {
@@ -123,7 +122,6 @@ bool PSPFilesystemNode::exists() const {
 	ret = access(_path.c_str(), F_OK);
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return (ret == 0);
 }
 
@@ -139,7 +137,6 @@ bool PSPFilesystemNode::isReadable() const {
 	ret = access(_path.c_str(), R_OK);
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return (ret == 0);
 }
 
@@ -155,7 +152,6 @@ bool PSPFilesystemNode::isWritable() const {
 	ret = access(_path.c_str(), W_OK);
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return ret == 0;
 }
 
@@ -175,7 +171,6 @@ AbstractFSNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 
 	AbstractFSNode *node = new PSPFilesystemNode(newPath, true);
 
-	DEBUG_EXIT_FUNC();
 	return node;
 }
 
@@ -233,7 +228,6 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 	PowerMan.endCriticalSection();
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -248,7 +242,7 @@ AbstractFSNode *PSPFilesystemNode::getParent() const {
 	const char *end = lastPathComponent(_path, '/');
 
 	AbstractFSNode *node = new PSPFilesystemNode(Common::String(start, end - start), false);
-	DEBUG_EXIT_FUNC();
+
 	return node;
 }
 

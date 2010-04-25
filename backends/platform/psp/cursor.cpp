@@ -45,8 +45,6 @@ void Cursor::init() {
 	_palette.setPixelFormats(PSPPixelFormat::Type_5551, PSPPixelFormat::Type_Palette_8bit); // default
 	_screenPalette.setPixelFormats(PSPPixelFormat::Type_5551, PSPPixelFormat::Type_Palette_8bit);
 	_buffer.setPixelFormat(PSPPixelFormat::Type_5551);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::deallocate() {
@@ -55,8 +53,6 @@ void Cursor::deallocate() {
 	_buffer.deallocate();
 	_palette.deallocate();
 	_screenPalette.deallocate();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::setCursorPalette(const byte *colors, uint start, uint num) {
@@ -73,8 +69,6 @@ void Cursor::setCursorPalette(const byte *colors, uint start, uint num) {
 
 	_palette.setPartial(colors, start, num);
 	setDirty();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::setScreenPalette(const byte *colors, uint start, uint num) {
@@ -86,8 +80,6 @@ void Cursor::setScreenPalette(const byte *colors, uint start, uint num) {
 
 	_screenPalette.setPartial(colors, start, num);
 	setDirty();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::setKeyColor(uint32 color) {
@@ -103,8 +95,6 @@ void Cursor::setKeyColor(uint32 color) {
 	}
 	// Don't need anything special for 16-bit
 	_keyColor = color;
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::clearKeyColor() {
@@ -121,8 +111,6 @@ void Cursor::clearKeyColor() {
 		_renderer.setKeyColor(_keyColor);
 	}
 	setDirty();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::enableCursorPalette(bool enable) {
@@ -136,7 +124,6 @@ void Cursor::enableCursorPalette(bool enable) {
 		_renderer.setPalette(&_screenPalette);
 
 	setDirty();
-	DEBUG_EXIT_FUNC();
 }
 
 inline void Cursor::setSize(uint32 width, uint32 height) {
@@ -145,8 +132,6 @@ inline void Cursor::setSize(uint32 width, uint32 height) {
 
 	_buffer.setSize(width, height, Buffer::kSizeByTextureSize);	// we'll use texture size for mouse
 	_renderer.setDrawWholeBuffer();		// We need to let the renderer know how much to draw
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::copyFromArray(const byte *array) {
@@ -161,9 +146,6 @@ void Cursor::copyFromArray(const byte *array) {
 
 	// debug
 	//PSP_DEBUG_DO(_buffer.print(0xF));
-
-	DEBUG_EXIT_FUNC();
-
 }
 
 void Cursor::setHotspot(int32 x, int32 y) {
@@ -174,7 +156,6 @@ void Cursor::setHotspot(int32 x, int32 y) {
 	updateRendererOffset();	// Important
 
 	PSP_DEBUG_PRINT("hotspotX[%d], hotspotY[%d]\n", x, y);
-	DEBUG_EXIT_FUNC();
 }
 
 // Returns true if change in x or y
@@ -204,11 +185,9 @@ bool Cursor::increaseXY(int32 incX, int32 incY) {
 	if (oldX != _x || oldY != _y) {
 		updateRendererOffset();
 		setDirty();
-		DEBUG_EXIT_FUNC();
 		return true;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return false;
 }
 
@@ -221,8 +200,6 @@ void Cursor::setLimits(uint32 width, uint32 height) {
 	PSP_DEBUG_PRINT("width[%u], height[%u]\n", width, height);
 	_mouseLimitWidth = width;
 	_mouseLimitHeight = height;
-
-	DEBUG_EXIT_FUNC();
 }
 
 // Adjust X,Y movement for the screen size to keep it consistent
@@ -253,8 +230,6 @@ inline void Cursor::adjustXYForScreenSize(int32 &x, int32 &y) {
 		x = newX;
 		y = newY;
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 // This is only called when we have a new screen
@@ -280,8 +255,6 @@ void Cursor::setScreenPaletteScummvmPixelFormat(const Graphics::PixelFormat *for
 		_palette.setPixelFormats(paletteType, bufferType);
 		setRendererModePalettized(true);	// use palettized mechanism
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 // This is called many many times
@@ -331,8 +304,6 @@ void Cursor::setSizeAndScummvmPixelFormat(uint32 width, uint32 height, const Gra
 	// debug
 	// PSP_DEBUG_DO(_palette.print(10));
 	// PSP_DEBUG_DO(_screenPalette.print(10));
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Cursor::setXY(int x, int y) {
@@ -342,14 +313,11 @@ void Cursor::setXY(int x, int y) {
 	_y = y;
 	updateRendererOffset();	// Very important to let renderer know things changed
 	setDirty();
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline void Cursor::updateRendererOffset() {
 	DEBUG_ENTER_FUNC();
 	_renderer.setOffsetOnScreen(_x - _hotspotX, _y - _hotspotY);
-	DEBUG_EXIT_FUNC();
 }
 
 inline void Cursor::setRendererModePalettized(bool palettized) {

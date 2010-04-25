@@ -100,19 +100,29 @@ extern int psp_debug_indent;
 
 /* Debugging function calls */
 #ifdef __PSP_DEBUG_FUNCS__
-#define DEBUG_ENTER_FUNC()					PSP_INFO_PRINT_INDENT("++ %s\n", __PRETTY_FUNCTION__); \
-												psp_debug_indent++
 
-#define DEBUG_EXIT_FUNC()					psp_debug_indent--; \
-												if (psp_debug_indent < 0) PSP_ERROR("debug indent < 0\n"); \
-												PSP_INFO_PRINT_INDENT("-- %s\n", __PRETTY_FUNCTION__)
+// We use this class to print out function calls on the stack in an easy way.
+//
+class PSPStackDebugFuncs {
+    Common::String _name;
 
-#define INLINE			/* don't want to inline so we get function names properly */
+public:
+	PSPStackDebugFuncs(const char *name) : _name(name) {
+		PSP_INFO_PRINT_INDENT("++ %s\n", _name.c_str()); \
+		psp_debug_indent++;
+    }
 
+	~PSPStackDebugFuncs() {
+		psp_debug_indent--; \
+		if (psp_debug_indent < 0) PSP_ERROR("debug indent < 0\n"); \
+		PSP_INFO_PRINT_INDENT("-- %s\n", _name.c_str());
+	}
+}
+
+/* We don't need anything but this line at the beginning of each function to debug function calls */
+	#define DEBUG_ENTER_FUNC()					PSPStackDebugFuncs(__PRETTY_FUNCTION__)
 #else /* Don't debug function calls */
-#define DEBUG_ENTER_FUNC()
-#define DEBUG_EXIT_FUNC()
-#define INLINE						inline
+	#define DEBUG_ENTER_FUNC()
 #endif /* __PSP_DEBUG_FUNCS__ */
 
 // Undef the main defines for next time

@@ -53,8 +53,6 @@ void Palette::clear() {
 		memset(_values, 0, getSizeInBytes());
 
 	PSP_DEBUG_PRINT("_values[%p]\n", _values);
-
-	DEBUG_EXIT_FUNC();
 }
 
 // Used to clear the specific keycolor
@@ -87,8 +85,6 @@ void Palette::setColorPositionAlpha(uint32 position, bool alpha) {
 	default:
 		PSP_ERROR("Incorrect bits per pixel value[%u]\n", _pixelFormat.bitsPerPixel);
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 //	Set some of the palette to color values in array
@@ -125,8 +121,6 @@ void Palette::setPartial(const byte *colors, uint32 start, uint32 num, bool supp
 			palette++;
 		}
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 // Sets pixel format and number of entries by the buffer's pixel format */
@@ -153,8 +147,6 @@ void Palette::setPixelFormats(PSPPixelFormat::Type paletteType, PSPPixelFormat::
 	}
 
 	_pixelFormat.set(paletteType, swapRedBlue);
-
-	DEBUG_EXIT_FUNC();
 }
 
 bool Palette::allocate() {
@@ -179,14 +171,12 @@ bool Palette::allocate() {
 
 	if (!_values) {
 		PSP_ERROR("Couldn't allocate palette.\n");
-		DEBUG_EXIT_FUNC();
 		return false;
 	}
 
 	PSP_DEBUG_PRINT("_values[%p]\n", _values);
 	clear();
 
-	DEBUG_EXIT_FUNC();
 	return true;
 }
 
@@ -196,8 +186,6 @@ void Palette::deallocate() {
 	free(CACHED(_values));
 	_values = 0;
 	_numOfEntries = 0;
-
-	DEBUG_EXIT_FUNC();
 }
 
 // Copy some of the palette to an array of colors
@@ -240,8 +228,6 @@ void Palette::getPartial(byte *colors, uint start, uint num) {
 			palette++;
 		}
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Palette::setSingleColorRGBA(uint32 num, byte r, byte g, byte b, byte a) {
@@ -265,7 +251,6 @@ void Palette::setSingleColorRGBA(uint32 num, byte r, byte g, byte b, byte a) {
 		PSP_ERROR("Incorrect bitsPerPixel[%d]\n", _pixelFormat.bitsPerPixel);
 		break;
 	}
-	// DEBUG_EXIT_FUNC();
 }
 
 // Print to screen
@@ -326,8 +311,6 @@ void Buffer::copyFromArray(const byte *buffer, int pitch) {
 
 	// We use sourceSize because outside, they won't know what the true size is
 	copyFromRect(buffer, pitch, 0, 0, _sourceSize.width, _sourceSize.height);
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* pitch is in bytes */
@@ -345,7 +328,6 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 	}
 
 	if (recWidth <= 0 || recHeight <= 0) {
-		DEBUG_EXIT_FUNC();
 		return;
 	}
 
@@ -365,8 +347,6 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 			dst += realWidthInBytes;
 		} while (--recHeight);
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* pitch is in bytes */
@@ -385,8 +365,6 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 		src += realWidthInBytes;
 		dst += pitch;
 	} while (--h);
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* We can size the buffer either by texture size (multiple of 2^n) or source size. The GU can
@@ -408,8 +386,6 @@ void Buffer::setSize(uint32 width, uint32 height, HowToSize textureOrSource/*=kS
 		_width = _sourceSize.width;
 		_height = _sourceSize.height;
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* Scale a dimension (width/height) up to power of 2 for the texture */
@@ -462,7 +438,6 @@ bool Buffer::allocate(bool inVram/*=false*/) {
 
 	if (!_pixels) {
 		PSP_ERROR("couldn't allocate buffer.\n");
-		DEBUG_EXIT_FUNC();
 		return false;
 	}
 
@@ -471,7 +446,6 @@ bool Buffer::allocate(bool inVram/*=false*/) {
 	_pixels = UNCACHED(_pixels);
 
 	clear();
-	DEBUG_EXIT_FUNC();
 	return true;
 }
 
@@ -487,8 +461,6 @@ void Buffer::deallocate() {
 		free(CACHED(_pixels));
 
 	_pixels = 0;
-
-	DEBUG_EXIT_FUNC();
 }
 
 void Buffer::clear() {
@@ -496,8 +468,6 @@ void Buffer::clear() {
 
 	if (_pixels)
 		memset(_pixels, 0, getSizeInBytes());
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* Convert 4 bit images to match weird PSP format */
@@ -517,8 +487,6 @@ void Buffer::flipNibbles() {
 			*dest++ = ((val >> 4) & 0x0F0F0F0F) | ((val << 4) & 0xF0F0F0F0);
 		}
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 // Print buffer contents to screen (only source size is printed out)
@@ -585,8 +553,6 @@ void GuRenderer::render() {
 
 		guDrawVertices(vertices);
 	}
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline void GuRenderer::setMaxTextureOffsetByIndex(uint32 x, uint32 y) {
@@ -595,7 +561,6 @@ inline void GuRenderer::setMaxTextureOffsetByIndex(uint32 x, uint32 y) {
 
 	_maxTextureOffset.x = x << maxTextureSizeShift; /* x times 512 */
 	_maxTextureOffset.y = y << maxTextureSizeShift; /* y times 512 */
-	DEBUG_EXIT_FUNC();
 }
 
 inline void GuRenderer::guProgramDrawBehavior() {
@@ -618,8 +583,6 @@ inline void GuRenderer::guProgramDrawBehavior() {
 		sceGuColorFunc(GU_NOTEQUAL, _keyColor, 0x00ffffff);
 	} else
 		sceGuDisable(GU_COLOR_TEST);
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline void GuRenderer::guLoadPalette() {
@@ -639,8 +602,6 @@ inline void GuRenderer::guLoadPalette() {
 
 	sceGuClutMode(convertToGuPixelFormat(_palette->getPixelFormat()), 0, mask, 0);
 	sceGuClutLoad(_palette->getNumOfEntries() >> 3, _palette->getRawValues());
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline void GuRenderer::guProgramTextureFormat() {
@@ -648,7 +609,6 @@ inline void GuRenderer::guProgramTextureFormat() {
 	PSP_DEBUG_PRINT("pixelFormat[%d]\n", _buffer->getPixelFormat());
 
 	sceGuTexMode(convertToGuPixelFormat(_buffer->getPixelFormat()), 0, 0, 0);
-	DEBUG_EXIT_FUNC();
 }
 
 inline uint32 GuRenderer::convertToGuPixelFormat(PSPPixelFormat::Type format) {
@@ -681,17 +641,13 @@ inline uint32 GuRenderer::convertToGuPixelFormat(PSPPixelFormat::Type format) {
 
 	PSP_DEBUG_PRINT("Pixelformat[%d], guFormat[%d]\n", format, guFormat);
 
-	DEBUG_EXIT_FUNC();
 	return guFormat;
-
 }
 
 inline void GuRenderer::guLoadTexture() {
 	DEBUG_ENTER_FUNC();
 
 	sceGuTexImage(0, _buffer->getTextureWidth(), _buffer->getTextureHeight(), _buffer->getWidth(), _buffer->getPixels() + _buffer->_pixelFormat.pixelsToBytes(_maxTextureOffset.x));
-
-	DEBUG_EXIT_FUNC();
 }
 
 inline Vertex *GuRenderer::guGetVertices() {
@@ -699,7 +655,6 @@ inline Vertex *GuRenderer::guGetVertices() {
 
 	Vertex *ret = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -759,8 +714,6 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 
 	PSP_DEBUG_PRINT("TextureStart: X[%f] Y[%f] TextureEnd: X[%.1f] Y[%.1f]\n", textureStartX, textureStartY, textureEndX, textureEndY);
 	PSP_DEBUG_PRINT("ImageStart:   X[%f] Y[%f] ImageEnd:   X[%.1f] Y[%.1f]\n", imageStartX, imageStartY, imageEndX, imageEndY);
-
-	DEBUG_EXIT_FUNC();
 }
 
 /* Scale the input X offset to appear in proper position on the screen */
@@ -795,7 +748,6 @@ inline void GuRenderer::guDrawVertices(Vertex *vertices) {
 	DEBUG_ENTER_FUNC();
 
 	sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF | GU_VERTEX_32BITF | GU_TRANSFORM_2D, 2, 0, vertices);
-	DEBUG_EXIT_FUNC();
 }
 
 void GuRenderer::cacheInvalidate(void *pointer, uint32 size) {

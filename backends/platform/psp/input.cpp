@@ -55,7 +55,6 @@ bool InputHandler::getAllInputs(Common::Event &event) {
 
 	uint32 time = g_system->getMillis();	// may not be necessary with read
 	if (time - _lastPadCheckTime < PAD_CHECK_TIME) {
-		DEBUG_EXIT_FUNC();
 		return false;
 	}
 
@@ -78,8 +77,6 @@ bool InputHandler::getAllInputs(Common::Event &event) {
 		PSP_DEBUG_PRINT("event.type[%d]\n", event.type);
 	}
 
-	DEBUG_EXIT_FUNC();
-
 	return haveEvent;
 }
 
@@ -100,7 +97,6 @@ bool InputHandler::getEvent(Common::Event &event, SceCtrlData &pad) {
 
 	_prevButtons = pad.Buttons;
 
-	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
 
@@ -156,7 +152,6 @@ bool InputHandler::getDpadEvent(Common::Event &event, SceCtrlData &pad) {
 		haveEvent = true;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
 
@@ -185,7 +180,6 @@ inline Common::KeyCode InputHandler::translateDpad(int x, int y) {
 			key = Common::KEYCODE_KP9;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return key;
 }
 
@@ -238,7 +232,6 @@ bool InputHandler::getButtonEvent(Common::Event &event, SceCtrlData &pad) {
 		haveEvent = true;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
 
@@ -292,7 +285,6 @@ bool InputHandler::getNubEvent(Common::Event &event, SceCtrlData &pad) {
 			PSP_DEBUG_PRINT("Nub event. X[%d], Y[%d]\n", newX, newY);
 		}
 	}
-	DEBUG_EXIT_FUNC();
 	return haveEvent;
 }
 
@@ -309,7 +301,5 @@ inline int32 InputHandler::modifyNubAxisMotion(int32 input) {
 	else 				// between these points, dampen the response to 0
 		input = 0;
 
-
-	DEBUG_EXIT_FUNC();
 	return input;
 }

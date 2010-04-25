@@ -65,7 +65,6 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 	}
 
 	PSP_DEBUG_PRINT("bitsPerPixel[%u]\n", bitsPerPixel);
-	DEBUG_EXIT_FUNC();
 }
 
 // Convert from ScummVM general PixelFormat to our pixel format
@@ -185,6 +184,5 @@ uint32 PSPPixelFormat::convertTo32BitColor(uint32 color) {
 	output = ((b << 16) | (g << 8) | (r << 0) | (a << 24));
 	PSP_DEBUG_PRINT_FUNC("input color[%x], output[%x]\n", color, output);
 
-	DEBUG_EXIT_FUNC();
 	return output;
 }

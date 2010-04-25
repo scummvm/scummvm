@@ -83,8 +83,6 @@ PowerManager::PowerManager() {
 	_listCounter = 0;
 	PMStatusSet(kInitDone);
 	_error = 0;
-
-	DEBUG_EXIT_FUNC();
 }
 
 /*******************************************
@@ -110,7 +108,6 @@ int PowerManager::registerSuspend(Suspendable *item) {
 
 	debugPM();
 
-	DEBUG_EXIT_FUNC();
 	return 0;
 }
 
@@ -138,7 +135,6 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 	PSP_DEBUG_PRINT("Out of unregisterSuspend\n");
 	debugPM();
 
-	DEBUG_EXIT_FUNC();
 	return 0;
 }
 
@@ -163,8 +159,6 @@ PowerManager::~PowerManager() {
 
 	SDL_DestroyMutex(_listMutex);
 	_listMutex = 0;
-
-	DEBUG_EXIT_FUNC();
 }
 
 /*******************************************
@@ -247,7 +241,6 @@ int PowerManager::beginCriticalSection(bool justBlock) {
 		ret = Error;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -285,7 +278,6 @@ int PowerManager::endCriticalSection() {
 		ret = Error;
 	}
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -377,7 +369,6 @@ int PowerManager::suspend() {
 
 	scePowerUnlock(0);				// Allow the PSP to go to sleep now
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }
 
@@ -452,6 +443,5 @@ int PowerManager::resume() {
 
 	scePowerUnlock(0);	// Allow new suspends
 
-	DEBUG_EXIT_FUNC();
 	return ret;
 }

@@ -97,8 +97,6 @@ void OSystem_PSP::initBackend() {
 	setupMixer();
 
 	OSystem::initBackend();
-
-	DEBUG_EXIT_FUNC();
 }
 
 bool OSystem_PSP::hasFeature(Feature f) {
@@ -118,38 +116,22 @@ const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {
 
 int OSystem_PSP::getDefaultGraphicsMode() const {
 	DEBUG_ENTER_FUNC();
-
-	int ret = _displayManager.getDefaultGraphicsMode();
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return _displayManager.getDefaultGraphicsMode();
 }
 
 bool OSystem_PSP::setGraphicsMode(int mode) {
 	DEBUG_ENTER_FUNC();
-
-	int ret = _displayManager.setGraphicsMode(mode);
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return _displayManager.setGraphicsMode(mode);
 }
 
 bool OSystem_PSP::setGraphicsMode(const char *name) {
 	DEBUG_ENTER_FUNC();
-
-	int ret = _displayManager.setGraphicsMode(name);
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return _displayManager.setGraphicsMode(name);
 }
 
 int OSystem_PSP::getGraphicsMode() const {
 	DEBUG_ENTER_FUNC();
-
-	int ret = _displayManager.getGraphicsMode();
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return _displayManager.getGraphicsMode();
 }
 
 #ifdef USE_RGB_COLOR
@@ -166,144 +148,94 @@ Common::List<Graphics::PixelFormat> OSystem_PSP::getSupportedFormats() {
 
 void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
-
 	_displayManager.setSizeAndPixelFormat(width, height, format);
 
 	_cursor.setVisible(false);
 	_cursor.setLimits(_screen.getWidth(), _screen.getHeight());
-
-	DEBUG_EXIT_FUNC();
 }
 
 int16 OSystem_PSP::getWidth() {
 	DEBUG_ENTER_FUNC();
-
-	int16 ret = (int16)_screen.getWidth();
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return (int16)_screen.getWidth();
 }
 
 int16 OSystem_PSP::getHeight() {
 	DEBUG_ENTER_FUNC();
-
-	int16 ret = (int16)_screen.getHeight();
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return (int16)_screen.getHeight();
 }
 
 void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
-
 	_screen.setPartialPalette(colors, start, num);
 	_cursor.setScreenPalette(colors, start, num);
 	_cursor.clearKeyColor();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::setCursorPalette(const byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
-
 	_cursor.setCursorPalette(colors, start, num);
 	_cursor.enableCursorPalette(true);
 	_cursor.clearKeyColor();	// Do we need this?
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::disableCursorPalette(bool disable) {
 	DEBUG_ENTER_FUNC();
-
 	_cursor.enableCursorPalette(!disable);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
-
 	_screen.copyFromRect(buf, pitch, x, y, w, h);
-
-	DEBUG_EXIT_FUNC();
 }
 
 Graphics::Surface *OSystem_PSP::lockScreen() {
 	DEBUG_ENTER_FUNC();
-
-	Graphics::Surface *ret = _screen.lockAndGetForEditing();
-
-	DEBUG_EXIT_FUNC();
-	return ret;
+	return _screen.lockAndGetForEditing();
 }
 
 void OSystem_PSP::unlockScreen() {
 	DEBUG_ENTER_FUNC();
 	// The screen is always completely updated anyway, so we don't have to force a full update here.
 	_screen.unlock();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::updateScreen() {
 	DEBUG_ENTER_FUNC();
-
 	_displayManager.renderAll();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::setShakePos(int shakeOffset) {
 	DEBUG_ENTER_FUNC();
-
 	_screen.setShakePos(shakeOffset);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::showOverlay() {
 	DEBUG_ENTER_FUNC();
-
 	_overlay.setVisible(true);
 	_cursor.setLimits(_overlay.getWidth(), _overlay.getHeight());
 	_cursor.useGlobalScaler(false);	// mouse with overlay is 1:1
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::hideOverlay() {
 	DEBUG_ENTER_FUNC();
-
 	_overlay.setVisible(false);
 	_cursor.setLimits(_screen.getWidth(), _screen.getHeight());
 	_cursor.useGlobalScaler(true);	// mouse needs to be scaled with screen
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::clearOverlay() {
 	DEBUG_ENTER_FUNC();
-
 	_overlay.clearBuffer();
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
 	DEBUG_ENTER_FUNC();
-
 	_overlay.copyToArray(buf, pitch);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
 	DEBUG_ENTER_FUNC();
-
 	_overlay.copyFromRect(buf, pitch, x, y, w, h);
-
-	DEBUG_EXIT_FUNC();
 }
 
 int16 OSystem_PSP::getOverlayWidth() {
@@ -316,35 +248,25 @@ int16 OSystem_PSP::getOverlayHeight() {
 
 void OSystem_PSP::grabPalette(byte *colors, uint start, uint num) {
 	DEBUG_ENTER_FUNC();
-
 	_screen.getPartialPalette(colors, start, num);
-
-	DEBUG_EXIT_FUNC();
 }
 
 bool OSystem_PSP::showMouse(bool v) {
 	DEBUG_ENTER_FUNC();
-
 	PSP_DEBUG_PRINT("%s\n", v ? "true" : "false");
 	bool last = _cursor.isVisible();
 	_cursor.setVisible(v);
-
-	DEBUG_EXIT_FUNC();
 
 	return last;
 }
 
 void OSystem_PSP::warpMouse(int x, int y) {
 	DEBUG_ENTER_FUNC();
-
 	_cursor.setXY(x, y);
-
-	DEBUG_EXIT_FUNC();
 }
 
 void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	DEBUG_ENTER_FUNC();
-
 	PSP_DEBUG_PRINT("pbuf[%p], w[%u], h[%u], hotspot:X[%d], Y[%d], keycolor[%d], scale[%d], pformat[%p]\n", buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
 	if (format) {
 		PSP_DEBUG_PRINT("format: bpp[%d], rLoss[%d], gLoss[%d], bLoss[%d], aLoss[%d], rShift[%d], gShift[%d], bShift[%d], aShift[%d]\n", format->bytesPerPixel, format->rLoss, format->gLoss, format->bLoss, format->aLoss, format->rShift, format->gShift, format->bShift, format->aShift);
@@ -356,8 +278,6 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	_cursor.setHotspot(hotspotX, hotspotY);
 	_cursor.clearKeyColor();
 	_cursor.copyFromArray(buf);
-
-	DEBUG_EXIT_FUNC();
 }
 
 bool OSystem_PSP::pollEvent(Common::Event &event) {
