@@ -149,6 +149,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
 	bool textChanged = false;
+	bool textAddChar = false;
 	Common::Rect rect;
 
 	if (textReference.isNull())
@@ -195,9 +196,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 			default:
 				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
 					// insert pressed character
-					// we check, if there is space left for this character
-
-					text.insertChar(eventKey, cursorPos++);
+					textAddChar = true;
 					textChanged = true;
 				}
 				break;
@@ -211,6 +210,20 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, SELECTOR(font));
 		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, SELECTOR(nsLeft)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsTop)),
 							  GET_SEL32V(_segMan, controlObject, SELECTOR(nsRight)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsBottom)));
+		if (textAddChar) {
+			// We check, if we are really able to add the new char
+			uint16 textWidth = 0;
+			const char *textPtr = text.c_str();
+			_text16->SetFont(fontId);
+			while (*textPtr)
+				textWidth += _text16->_font->getCharWidth(*textPtr++);
+			textWidth += _text16->_font->getCharWidth(eventKey);
+			if (textWidth >= rect.width()) {
+				_text16->SetFont(oldFontId);
+				return;
+			}
+			text.insertChar(eventKey, cursorPos++);
+		}
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
 		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
