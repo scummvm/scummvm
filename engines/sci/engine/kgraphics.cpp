@@ -872,7 +872,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	// change the directory where saved games are placed
 	if (objName == "changeDirI") {
 		int state = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | kControlStateDisabled) & ~kControlStateEnabled);
+		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);

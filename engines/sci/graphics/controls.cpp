@@ -248,7 +248,7 @@ void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *tex
 		_text16->Box(text, 0, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
 		_ports->textGreyedOutput(false);
 		rect.grow(1);
-		if (style & 8) // selected
+		if (style & SCI_CONTROLS_STYLE_SELECTED)
 			_paint16->frameRect(rect);
 		if (!getPicNotValid()) {
 			rect.grow(1);
@@ -266,7 +266,7 @@ void GfxControls::kernelDrawText(Common::Rect rect, reg_t obj, const char *text,
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
 		_text16->Box(text, 0, rect, alignment, fontId);
-		if (style & 8) { // selected
+		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}
 		rect.grow(1);
@@ -288,7 +288,7 @@ void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *t
 	_paint16->eraseRect(rect);
 	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
 	_paint16->frameRect(rect);
-	if (style & 8) {
+	if (style & SCI_CONTROLS_STYLE_SELECTED) {
 		_text16->SetFont(fontId);
 		rect.grow(-1);
 		texteditCursorDraw(rect, text, cursorPos);
@@ -317,7 +317,7 @@ void GfxControls::kernelDrawList(Common::Rect rect, reg_t obj, int16 maxChars, i
 	if (!hilite) {
 		drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
 		rect.grow(1);
-		if (isAlias && (style & 8)) {
+		if (isAlias && (style & SCI_CONTROLS_STYLE_SELECTED)) {
 			_paint16->frameRect(rect);
 		}
 		if (!getPicNotValid())

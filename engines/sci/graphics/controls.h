@@ -29,9 +29,9 @@
 namespace Sci {
 
 enum controlStateFlags {
-	kControlStateEnabled      = 0x0001,  ///< 0001 - enabled buttons
-	kControlStateDisabled     = 0x0004,  ///< 0010 - grayed out buttons
-	kControlStateFramed       = 0x0008   ///< 1000 - widgets surrounded by a frame
+	SCI_CONTROLS_STYLE_ENABLED  = 0x0001,  ///< 0001 - enabled buttons
+	SCI_CONTROLS_STYLE_DISABLED = 0x0004,  ///< 0010 - grayed out buttons
+	SCI_CONTROLS_STYLE_SELECTED = 0x0008   ///< 1000 - widgets surrounded by a frame
 };
 
 // Control types and flags
