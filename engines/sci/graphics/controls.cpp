@@ -283,6 +283,7 @@ void GfxControls::kernelDrawTextEdit(Common::Rect rect, reg_t obj, const char *t
 	uint16 oldFontId = _text16->GetFontId();
 
 	rect.grow(1);
+	_texteditCursorVisible = false;
 	texteditCursorErase();
 	_paint16->eraseRect(rect);
 	_text16->Box(text, 0, textRect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
