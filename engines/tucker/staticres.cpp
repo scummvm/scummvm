@@ -340,7 +340,7 @@ const SoundSequenceDataList AnimationSequencePlayer::_soundSeqDataList[] = {
 	{   1,  80, 13,  9, 43, _soundDataSeq15_16 },
 	{   1,  80, 11,  0, 11, _soundDataSeq27_28 },
 	{ 104, 100,  0,  0,  0, 0 },
-	{   0, 100,  4,  0,  7, _soundDataSeq19_20 }
+	{   0,   0,  4,  0,  7, _soundDataSeq19_20 }
 };
 
 const char *AnimationSequencePlayer::_audioFileNamesTable[] = {

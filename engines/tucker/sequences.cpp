@@ -535,6 +535,12 @@ void AnimationSequencePlayer::mainLoop() {
 			if (_seqNum == 1) {
 				break;
 			}
+			// budttle2.flc is shorter in french version ; start the background music
+			// earlier and skip any sounds effects
+			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 126) {
+				_soundSeqDataIndex = 6;
+				_frameCounter = 80;
+			}
 		}
 		(this->*(_updateFunc[_updateFuncIndex].play))();
 		if (_changeToNextSequence) {
@@ -765,8 +771,8 @@ bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
 		_flicPlayer[index].copyFrameToBuffer(_offscreenBuffer, 0, 0, kScreenWidth);
 	} else {
 		_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
-		++_frameCounter;
 	}
+	++_frameCounter;
 	if (index == 0) {
 		if (_flicPlayer[index].paletteChanged()) {
 			getRGBPalette(index);
