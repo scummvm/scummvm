@@ -339,14 +339,11 @@ void GfxMenu::drawBar() {
 	}
 }
 
-// This helper calculates all text widths for all menus/items
-void GfxMenu::calculateTextWidth() {
+// This helper calculates all text widths for all menus (only)
+void GfxMenu::calculateMenuWidth() {
 	GuiMenuList::iterator menuIterator;
 	GuiMenuList::iterator menuEnd = _list.end();
 	GuiMenuEntry *menuEntry;
-	GuiMenuItemList::iterator itemIterator;
-	GuiMenuItemList::iterator itemEnd = _itemList.end();
-	GuiMenuItemEntry *itemEntry;
 	int16 dummyHeight;
 
 	menuIterator = _list.begin();
@@ -357,6 +354,16 @@ void GfxMenu::calculateTextWidth() {
 
 		menuIterator++;
 	}
+}
+
+// This helper calculates all text widths for all menus/items
+void GfxMenu::calculateMenuAndItemWidth() {
+	GuiMenuItemList::iterator itemIterator;
+	GuiMenuItemList::iterator itemEnd = _itemList.end();
+	GuiMenuItemEntry *itemEntry;
+	int16 dummyHeight;
+
+	calculateMenuWidth();
 
 	itemIterator = _itemList.begin();
 	while (itemIterator != itemEnd) {
@@ -680,7 +687,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
 	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
 
-	calculateTextWidth();
+	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
@@ -801,7 +808,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	bool firstMenuChange = true;
 	GuiMenuItemEntry *curItemEntry = NULL;
 
-	calculateTextWidth();
+	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
 
@@ -874,6 +881,7 @@ void GfxMenu::kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack
 void GfxMenu::kernelDrawMenuBar(bool clear) {
 	if (!clear) {
 		Port *oldPort = _ports->setPort(_ports->_menuPort);
+		calculateMenuWidth();
 		drawBar();
 		_paint16->bitsShow(_ports->_menuBarRect);
 		_ports->setPort(oldPort);

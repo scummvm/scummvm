@@ -99,7 +99,8 @@ public:
 
 private:
 	GuiMenuItemEntry *findItem(uint16 menuId, uint16 itemId);
-	void calculateTextWidth();
+	void calculateMenuWidth();
+	void calculateMenuAndItemWidth();
 	void drawMenu(uint16 oldMenuId, uint16 newMenuId);
 	void invertMenuSelection(uint16 itemId);
 	void interactiveShowMouse();
