@@ -103,6 +103,7 @@ extern int psp_debug_indent;
 
 // We use this class to print out function calls on the stack in an easy way.
 //
+#include "common/str.h"
 class PSPStackDebugFuncs {
     Common::String _name;
 
@@ -117,7 +118,7 @@ public:
 		if (psp_debug_indent < 0) PSP_ERROR("debug indent < 0\n"); \
 		PSP_INFO_PRINT_INDENT("-- %s\n", _name.c_str());
 	}
-}
+};
 
 /* We don't need anything but this line at the beginning of each function to debug function calls */
 	#define DEBUG_ENTER_FUNC()					PSPStackDebugFuncs(__PRETTY_FUNCTION__)

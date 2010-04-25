@@ -23,13 +23,6 @@
  *
  */
 
-//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
-//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
-
-//#define ENABLE_RENDER_MEASURE
-
-#include "backends/platform/psp/trace.h"
-
 #include <pspgu.h>
 #include <pspdisplay.h>
 
@@ -45,6 +38,13 @@
 #define	PSP_SCREEN_WIDTH	480
 #define	PSP_SCREEN_HEIGHT	272
 #define PSP_FRAME_SIZE (PSP_BUFFER_WIDTH * PSP_SCREEN_HEIGHT)
+
+//#define ENABLE_RENDER_MEASURE /* how long it takes to render a frame */
+
+//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+
+#include "backends/platform/psp/trace.h"
 
 uint32 __attribute__((aligned(16))) MasterGuRenderer::_displayList[2048];
 
