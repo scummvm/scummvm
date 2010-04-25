@@ -60,6 +60,7 @@ public:
 
 	void clearScreen(byte color = 255);
 	void invertRect(const Common::Rect &rect);
+	void invertRectViaXOR(const Common::Rect &rect);
 	void eraseRect(const Common::Rect &rect);
 	void paintRect(const Common::Rect &rect);
 	void fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack = 0, byte bControl = 0);

@@ -251,7 +251,15 @@ int GfxControls::getPicNotValid() {
 }
 
 void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
+	int16 sci0EarlyPen, sci0EarlyBack;
 	if (!hilite) {
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			// SCI0early actually used hardcoded green/black buttons instead of using the port colors
+			sci0EarlyPen = _ports->_curPort->penClr;
+			sci0EarlyBack = _ports->_curPort->backClr;
+			_ports->penColor(0);
+			_ports->backColor(2);
+		}
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		_paint16->frameRect(rect);
@@ -266,8 +274,16 @@ void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *tex
 			rect.grow(1);
 			_paint16->bitsShow(rect);
 		}
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			_ports->penColor(sci0EarlyPen);
+			_ports->backColor(sci0EarlyBack);
+		}
 	} else {
-		_paint16->invertRect(rect);
+		// SCI0early used xor to invert button rectangles resulting in pink/white buttons
+		if (getSciVersion() == SCI_VERSION_0_EARLY)
+			_paint16->invertRectViaXOR(rect);
+		else
+			_paint16->invertRect(rect);
 		_paint16->bitsShow(rect);
 	}
 }

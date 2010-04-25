@@ -182,6 +182,25 @@ void GfxPaint16::invertRect(const Common::Rect &rect) {
 	_ports->_curPort->penMode = oldpenmode;
 }
 
+// used in SCI0early exclusively
+void GfxPaint16::invertRectViaXOR(const Common::Rect &rect) {
+	Common::Rect r = rect;
+	int16 x, y;
+	byte curVisual;
+
+	r.clip(_ports->_curPort->rect);
+	if (r.isEmpty()) // nothing to invert
+		return;
+
+	_ports->offsetRect(r);
+	for (y = r.top; y < r.bottom; y++) {
+		for (x = r.left; x < r.right; x++) {
+			curVisual = _screen->getVisual(x, y);
+			_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, curVisual ^ 0x0f, 0, 0);
+		}
+	}
+}
+
 void GfxPaint16::eraseRect(const Common::Rect &rect) {
 	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->backClr);
 }
