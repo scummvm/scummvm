@@ -312,7 +312,11 @@ void GfxPorts::drawWindow(Window *pWnd) {
 			_paint16->frameRect(r);// window frame
 
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
-				_paint16->frameRect(r);
+				if (getSciVersion() <= SCI_VERSION_0_LATE) {
+					// draw a black line between titlebar and actual window content for SCI0
+					r.bottom = r.top + 10;
+					_paint16->frameRect(r);
+				}
 				r.grow(-1);
 				if (getSciVersion() <= SCI_VERSION_0_LATE)
 					_paint16->fillRect(r, SCI_SCREEN_MASK_VISUAL, 8); // grey titlebar for SCI0
@@ -320,7 +324,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 					_paint16->fillRect(r, SCI_SCREEN_MASK_VISUAL, 0); // black titlebar for SCI01+
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = getPort()->penClr;
-					penColor(255);
+					penColor(_screen->getColorWhite());
 					_text16->Box(pWnd->title.c_str(), 1, r, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 					penColor(oldcolor);
 				}
