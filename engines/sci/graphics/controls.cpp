@@ -210,11 +210,11 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		GuiResourceId fontId = GET_SEL32V(_segMan, controlObject, SELECTOR(font));
 		rect = Common::Rect(GET_SEL32V(_segMan, controlObject, SELECTOR(nsLeft)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsTop)),
 							  GET_SEL32V(_segMan, controlObject, SELECTOR(nsRight)), GET_SEL32V(_segMan, controlObject, SELECTOR(nsBottom)));
+		_text16->SetFont(fontId);
 		if (textAddChar) {
 			// We check, if we are really able to add the new char
 			uint16 textWidth = 0;
 			const char *textPtr = text.c_str();
-			_text16->SetFont(fontId);
 			while (*textPtr)
 				textWidth += _text16->_font->getCharWidth(*textPtr++);
 			textWidth += _text16->_font->getCharWidth(eventKey);
@@ -226,9 +226,8 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 		texteditCursorErase();
 		_paint16->eraseRect(rect);
-		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, fontId);
+		_text16->Box(text.c_str(), 0, rect, SCI_TEXT16_ALIGNMENT_LEFT, -1);
 		_paint16->bitsShow(rect);
-		_text16->SetFont(fontId);
 		texteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text16->SetFont(oldFontId);
 		// Write back string
