@@ -44,7 +44,9 @@
 #include "osys_psp.h"
 #include "./trace.h"
 
-
+#ifdef ENABLE_PROFILING
+	#include <pspprof.h>
+#endif
 
 /**
  * Define the module info section
@@ -96,6 +98,11 @@ void loaderInit() {
 
 /* Exit callback */
 int exit_callback(void) {
+
+#ifdef ENABLE_PROFILING
+	gprof_cleanup();
+#endif	
+
 	sceKernelExitGame();
 	return 0;
 }
