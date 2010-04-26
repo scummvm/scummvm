@@ -132,6 +132,7 @@ _mt32emu=yes
 _build_hq_scalers=yes
 _build_scalers=yes
 _indeo3=auto
+_enable_prof=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -788,8 +789,7 @@ for ac_option in $@; do
 		_release_build=no
 		;;
 	--enable-profiling)
-		CXXFLAGS="$CXXFLAGS -pg"
-		LDFLAGS="$LDFLAGS -pg"
+		_enable_prof=yes
 		;;
 	--with-sdl-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
@@ -2219,6 +2219,16 @@ test -z "$_libdir" && _libdir="$_prefix/lib"
 DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
 DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/scummvm\\\""
 
+
+#
+# Set variables for profiling.
+# We need to do it here to prevent mess-ups with the tests e.g. on the PSP
+#
+if test "$_enable_prof" = yes ; then
+	CXXFLAGS="$CXXFLAGS -pg"
+	LDFLAGS="$LDFLAGS -pg"
+	DEFINES="$DEFINES -DENABLE_PROFILING"
+fi
 
 echo_n "Backend... "
 echo_n "$_backend"
