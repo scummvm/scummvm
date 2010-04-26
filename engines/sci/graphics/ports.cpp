@@ -303,7 +303,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 	}
 
 	// drawing frame,shadow and title
-	if (wndStyle != _styleUser) {
+	if ((getSciVersion() >= SCI_VERSION_1_LATE) ? !(wndStyle & _styleUser) : wndStyle != _styleUser) {
 		r = pWnd->dims;
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 			r.translate(1, 1);
