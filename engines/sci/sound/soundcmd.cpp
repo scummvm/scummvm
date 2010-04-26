@@ -517,8 +517,9 @@ void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundStopped);
 	} else {
 		PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 	}
+	// we need to set signal selector at least for sq3old (SCI0LATE), otherwise freeing the 2 guys wont work (endless loop)
+	PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
 	musicSlot->signal = 0;
