@@ -44,8 +44,6 @@ void PSPDebugTrace(bool alsoToScreen, const char *format, ...);
 extern int psp_debug_indent;
 #endif
 
-#endif /* TRACE_H */
-
 // From here on, we allow multiple definitions
 #undef __PSP_PRINT__
 #undef PSP_ERROR
@@ -109,13 +107,14 @@ class PSPStackDebugFuncs {
 
 public:
 	PSPStackDebugFuncs(const char *name) : _name(name) {
-		PSP_INFO_PRINT_INDENT("++ %s\n", _name.c_str()); \
+		PSP_INFO_PRINT_INDENT("++ %s\n", _name.c_str());
 		psp_debug_indent++;
     }
 
 	~PSPStackDebugFuncs() {
-		psp_debug_indent--; \
-		if (psp_debug_indent < 0) PSP_ERROR("debug indent < 0\n"); \
+		psp_debug_indent--;
+		if (psp_debug_indent < 0)
+			PSP_ERROR("debug indent < 0\n");
 		PSP_INFO_PRINT_INDENT("-- %s\n", _name.c_str());
 	}
 };
@@ -131,3 +130,5 @@ public:
 #undef __PSP_PRINT_TO_FILE_AND_SCREEN__
 #undef __PSP_DEBUG_FUNCS__
 #undef __PSP_DEBUG_PRINT__
+
+#endif /* TRACE_H */
