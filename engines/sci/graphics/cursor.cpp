@@ -182,6 +182,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		return;
 	}
 
+	celInfo->rawBitmap = cursorView->getBitmap(loopNum, celNum);
 	if (_upscaledHires) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
@@ -191,7 +192,7 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		cursorBitmap = new byte[width * height];
 		_screen->scale2x(celInfo->rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
 	} else {
-		cursorBitmap = cursorView->getBitmap(loopNum, celNum);
+		cursorBitmap = celInfo->rawBitmap;
 	}
 
 	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
