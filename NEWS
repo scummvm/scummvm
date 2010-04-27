@@ -24,6 +24,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed several memory leaks.
    - Corrected problems in the handling of followers when blocked from performing
      actions by closed doors between rooms.
+   - Solved issues with Goewin not always correctly following the player out of the caves
 
  Tinsel:
    - Fix video playback regression in Discworld 2.
