@@ -898,7 +898,7 @@ bool PCMMusicPlayer::getNextChunk() {
 			_state = S_END2;
 		} else {
 			if (snum == MUSIC_JUMP)
-				_scriptIndex = FROM_LE_32(script[++_scriptIndex]);
+				_scriptIndex = FROM_LE_32(script[_scriptIndex+1]);
 
 			_state = _forcePlay ? S_NEW : S_NEXT;
 			_forcePlay = false;
