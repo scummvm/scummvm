@@ -82,7 +82,7 @@ uint16 MadsSceneLogic::startSpriteSequence(uint16 srcSpriteIdx, int v0, int numT
 	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2));
 
-	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		-1, 100, (int)pixel - 1, 1, 1, 0, 0);
 }
 
@@ -91,7 +91,7 @@ uint16 MadsSceneLogic::startSpriteSequence2(uint16 srcSpriteIdx, int v0, int num
 	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2));
 
-	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		-1, 100, (int)pixel - 1, 1, 2, 0, 0);
 }
 
@@ -100,7 +100,7 @@ uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int num
 	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2));
 
-	return _madsVm->scene()->_timerList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		-1, 100, (int)pixel - 1, -1, 1, 0, 0);
 }
 
@@ -187,7 +187,7 @@ void MadsSceneLogic::enterScene() {
 	_spriteIndexes[16] = startSpriteSequence(_spriteIndexes[1], 0, 4, 0, 1, 0);
 	_spriteIndexes[17] = startSpriteSequence(_spriteIndexes[2], 0, 4, 0, 1, 0);
 
-	_madsVm->scene()->_timerList.unk2(0, 2, 7, 0x46);
+	_madsVm->scene()->_sequenceList.unk2(0, 2, 7, 0x46);
 
 	_spriteIndexes[18] = startSpriteSequence2(_spriteIndexes[3], 0, 10, 0, 0, 60);
 	_spriteIndexes[19] = startSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);

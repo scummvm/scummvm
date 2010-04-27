@@ -169,16 +169,17 @@ public:
 	DynamicHotspot() { active = false; }
 };
 
-#define HITBOX_AREA_SIZE 8
+#define DYNAMIC_HOTSPOTS_SIZE 8
 
-class DynamicHotspots {
+class MadsDynamicHotspots {
 private:
 	MadsView &_owner;
 	Common::Array<DynamicHotspot> _entries;
-	bool _flag;
 	int _count;
 public:
-	DynamicHotspots(MadsView &owner);
+	bool _flag;
+public:
+	MadsDynamicHotspots(MadsView &owner);
 
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
 	int add(int descId, int field14, int timerIndex, const Common::Rect &bounds);
@@ -190,7 +191,7 @@ public:
 
 #define TIMER_ENTRY_SUBSET_MAX 5
 
-struct MadsTimerEntry {
+struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
 	
@@ -201,7 +202,7 @@ struct MadsTimerEntry {
 	int numSprites;
 	
 	int field_A;
-	int field_C;
+	int frameStart;
 
 	int depth;
 	int scale;
@@ -218,7 +219,7 @@ struct MadsTimerEntry {
 	int len27;
 	int8 fld27[TIMER_ENTRY_SUBSET_MAX];
 	int16 fld2C[TIMER_ENTRY_SUBSET_MAX];
-	int8 field36;
+	int8 fld36[TIMER_ENTRY_SUBSET_MAX];
 	int field_3B;
 
 	uint16 actionNouns[3];
@@ -229,22 +230,23 @@ struct MadsTimerEntry {
 
 #define TIMER_LIST_SIZE 30
 
-class MadsTimerList {
+class MadsSequenceList {
 private:
 	MadsView &_owner;
-	Common::Array<MadsTimerEntry> _entries;
+	Common::Array<MadsSequenceEntry> _entries;
 public:
-	MadsTimerList(MadsView &owner);
+	MadsSequenceList(MadsView &owner);
 
-	MadsTimerEntry &operator[](int index) { return _entries[index]; }	
+	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	bool unk2(int index, int v1, int v2, int v3);
 	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, 
+		int height, int width, char field_12, char scale, char depth, int frameStart, int field_A, 
 		int numSprites, int spriteNum);
 	void remove(int timerIndex);
 	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
 	bool loadSprites(int timerIndex);
 	void tick();
+	void delay(uint32 v1, uint32 v2);
 };
 
 class MadsView {
@@ -254,8 +256,8 @@ public:
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	ScreenObjects _screenObjects;
-	DynamicHotspots _dynamicHotspots;
-	MadsTimerList _timerList;
+	MadsDynamicHotspots _dynamicHotspots;
+	MadsSequenceList _sequenceList;
 
 	int _abortTimers;
 	int8 _abortTimers2;

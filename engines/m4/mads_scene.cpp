@@ -312,6 +312,10 @@ void MadsScene::update() {
 	_spriteSlots.getSprite(0).getFrame(1)->copyTo(this, 120, 90, 0);
 }
 
+void MadsScene::updateState() {
+	_sequenceList.tick();
+}
+
 int MadsScene::loadSceneSpriteSet(const char *setName) {
 	char resName[100];
 	strcpy(resName, setName);

@@ -247,8 +247,8 @@ void ScreenObjects::setActive(int category, int idx, bool active) {
 
 /*--------------------------------------------------------------------------*/
 
-DynamicHotspots::DynamicHotspots(MadsView &owner): _owner(owner) {
-	for (int i = 0; HITBOX_AREA_SIZE; ++i) {
+MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
+	for (int i = 0; i < DYNAMIC_HOTSPOTS_SIZE; ++i) {
 		DynamicHotspot rec;
 		rec.active = false;
 	}
@@ -256,13 +256,13 @@ DynamicHotspots::DynamicHotspots(MadsView &owner): _owner(owner) {
 	_count = 0;
 }
 
-int DynamicHotspots::add(int descId, int field14, int timerIndex, const Common::Rect &bounds) {
+int MadsDynamicHotspots::add(int descId, int field14, int timerIndex, const Common::Rect &bounds) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && !_entries[idx].active)
 		++idx;
 	if (idx == _entries.size())
-		error("DynamicHotspots overflow");
+		error("MadsDynamicHotspots overflow");
 
 	_entries[idx].active = true;
 	_entries[idx].descId = descId;
@@ -276,12 +276,12 @@ int DynamicHotspots::add(int descId, int field14, int timerIndex, const Common::
 
 	++_count;
 	_flag = true;
-	_owner._timerList[timerIndex].dynamicHotspotIndex = idx;
+	_owner._sequenceList[timerIndex].dynamicHotspotIndex = idx;
 
 	return idx;
 }
 
-int DynamicHotspots::setPosition(int index, int xp, int yp, int facing) {
+int MadsDynamicHotspots::setPosition(int index, int xp, int yp, int facing) {
 	if (index >= 0) {
 		_entries[index].pos.x = xp;
 		_entries[index].pos.y = yp;
@@ -291,17 +291,17 @@ int DynamicHotspots::setPosition(int index, int xp, int yp, int facing) {
 	return index;
 }
 
-int DynamicHotspots::set17(int index, int v) {
+int MadsDynamicHotspots::set17(int index, int v) {
 	if (index >= 0)
 		_entries[index].field_17 = v;
 
 	return index;
 }
 
-void DynamicHotspots::remove(int index) {
+void MadsDynamicHotspots::remove(int index) {
 	if (_entries[index].active) {
 		if (_entries[index].timerIndex >= 0)
-			_owner._timerList[_entries[index].timerIndex].dynamicHotspotIndex = -1;
+			_owner._sequenceList[_entries[index].timerIndex].dynamicHotspotIndex = -1;
 		_entries[index].active = false;
 
 		--_count;
@@ -309,7 +309,7 @@ void DynamicHotspots::remove(int index) {
 	}
 }
 
-void DynamicHotspots::reset() {
+void MadsDynamicHotspots::reset() {
 	for (uint i = 0; i < _entries.size(); ++i)
 		_entries[i].active = false;
 
@@ -319,29 +319,29 @@ void DynamicHotspots::reset() {
 
 /*--------------------------------------------------------------------------*/
 
-MadsTimerList::MadsTimerList(MadsView &owner): _owner(owner) {
+MadsSequenceList::MadsSequenceList(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < TIMER_LIST_SIZE; ++i) {
-		MadsTimerEntry rec;
+		MadsSequenceEntry rec;
 		rec.active = 0;
 		rec.dynamicHotspotIndex = -1;
 		_entries.push_back(rec);
 	}
 }
 
-bool MadsTimerList::unk2(int index, int v1, int v2, int v3) {
+bool MadsSequenceList::unk2(int index, int v1, int v2, int v3) {
 	if (_entries[index].len27 >= TIMER_ENTRY_SUBSET_MAX)
 		return true;
 
 	int subIndex = _entries[index].len27++;
 	_entries[index].fld27[subIndex] = v1;
 	_entries[index].fld2C[subIndex] = v2;
-	_entries[index].field36 = v3;
+	_entries[index].fld36[subIndex] = v3;
 
 	return false;
 }
 
-int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int field_C, int field_A, int numSprites, 
+int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+		int height, int width, char field_12, char scale, char depth, int frameStart, int field_A, int numSprites, 
 		int spriteNum) {
 
 	// Find a free slot
@@ -356,7 +356,7 @@ int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_2
 	if (numSprites == 0)
 		numSprites = _madsVm->scene()->_spriteSlots.getSprite(spriteListIndex).getCount();
 	if (spriteNum == numSprites)
-		field_C = 0;
+		frameStart = 0;
 
 	// Set the list entry fields
 	_entries[timerIndex].active = true;
@@ -366,7 +366,7 @@ int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_2
 	_entries[timerIndex].spriteNum = spriteNum;
 	_entries[timerIndex].numSprites = numSprites;
 	_entries[timerIndex].field_A = field_A;
-	_entries[timerIndex].field_C = field_C;
+	_entries[timerIndex].frameStart = frameStart;
 	_entries[timerIndex].depth = depth;
 	_entries[timerIndex].scale = scale;
 	_entries[timerIndex].field_12 = field_12;
@@ -375,7 +375,7 @@ int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_2
 	_entries[timerIndex].numTicks = numTicks;
 	_entries[timerIndex].extraTicks = extraTicks;
 
-	_entries[timerIndex].timeout = g_system->getMillis() + timeoutTicks * GAME_FRAME_DELAY;
+	_entries[timerIndex].timeout = _madsVm->_currentTimer + timeoutTicks;
 
 	_entries[timerIndex].field_24 = field_24;
 	_entries[timerIndex].field_25 = 0;
@@ -390,7 +390,7 @@ int MadsTimerList::add(int spriteListIndex, int v0, int frameIndex, char field_2
 	return timerIndex;
 }
 
-void MadsTimerList::remove(int timerIndex) {
+void MadsSequenceList::remove(int timerIndex) {
 	if (_entries[timerIndex].active) {
 		if (_entries[timerIndex].dynamicHotspotIndex >= 0)
 			_owner._dynamicHotspots.remove(_entries[timerIndex].dynamicHotspotIndex);
@@ -400,8 +400,8 @@ void MadsTimerList::remove(int timerIndex) {
 	_owner._spriteSlots.deleteTimer(timerIndex);
 }
 
-void MadsTimerList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot) {
-	MadsTimerEntry &timerEntry = _entries[timerIndex];
+void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot) {
+	MadsSequenceEntry &timerEntry = _entries[timerIndex];
 	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
 	// TODO: Figure out logic for spriteId value based on SPRITE_SLOT.field_0
@@ -421,8 +421,11 @@ void MadsTimerList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot) {
 	}
 }
 
-bool MadsTimerList::loadSprites(int timerIndex) {
-	MadsTimerEntry &timerEntry = _entries[timerIndex];
+bool MadsSequenceList::loadSprites(int timerIndex) {
+	MadsSequenceEntry &timerEntry = _entries[timerIndex];
+	int slotIndex;
+	bool result = false;
+	int idx = -1;
 
 	_owner._spriteSlots.deleteTimer(timerIndex);
 	if (timerEntry.field_25 != 0) {
@@ -430,21 +433,102 @@ bool MadsTimerList::loadSprites(int timerIndex) {
 		return false;
 	}
 
-	// TODO: Rest of method
+	if (timerEntry.spriteListIndex == -1) {
+		timerEntry.field_25 = -1;
+	} else if ((slotIndex = _owner._spriteSlots.getIndex()) >= 0) {
+		MadsSpriteSlot &spriteSlot = _owner._spriteSlots[slotIndex];
+		setSpriteSlot(timerIndex, spriteSlot);
 
-	return true;
+		int x2 = 0, y2 = 0;
+
+		if ((timerEntry.field_13 != 0) || (timerEntry.dynamicHotspotIndex >= 0)) {
+			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
+			M4Sprite *frame = spriteSet.getFrame(timerEntry.frameIndex);
+			int width = frame->width() * timerEntry.scale / 200;
+			int height = frame->height() * timerEntry.scale / 100;
+
+			warning("frame size %d x %d", width, height);
+
+			// TODO: Missing stuff here, and I'm not certain about the dynamic hotspot stuff below
+
+			if (timerEntry.dynamicHotspotIndex >= 0) {
+				DynamicHotspot &dynHotspot = _owner._dynamicHotspots[timerEntry.dynamicHotspotIndex];
+
+				dynHotspot.bounds.left = MAX(x2 - width, 0);
+				dynHotspot.bounds.right = MAX(x2 - width, 319) - dynHotspot.bounds.left + 1;
+				dynHotspot.bounds.top = MAX(y2 - height, 0);
+				dynHotspot.bounds.bottom = MIN(y2, 155) - dynHotspot.bounds.top;
+
+				_owner._dynamicHotspots._flag = true;
+			}
+		}
+
+		// Frame adjustments
+		if (timerEntry.numSprites != timerEntry.spriteNum) 
+			timerEntry.frameIndex += timerEntry.frameStart;
+
+		if (timerEntry.frameIndex >= timerEntry.spriteNum) {
+			if (timerEntry.frameIndex > timerEntry.numSprites) {
+				result = true;
+				if (timerEntry.field_A != 2) {
+					timerEntry.frameIndex = timerEntry.spriteNum;
+				} else {
+					timerEntry.frameIndex = timerEntry.numSprites - 1;
+					timerEntry.frameStart = -1;
+				}
+			}
+		} else {
+			result = true;
+
+			if (timerEntry.field_A == 2) {
+				timerEntry.frameIndex = timerEntry.spriteNum + 1;
+				timerEntry.frameStart = 1;
+			} else {
+				timerEntry.frameIndex = timerEntry.numSprites;		
+			}
+		}
+
+		if (result && (timerEntry.field_24 != 0)) {
+			if (--timerEntry.field_24 != 0)
+				timerEntry.field_25 = -1;
+		}
+	} else {
+		// Out of sprite slots
+		timerEntry.field_25 = -1;
+	}
+
+	if (timerEntry.len27 > 0) {
+		for (int i = 0; i <= timerEntry.len27; ++i) {
+			if ((!timerEntry.fld27[i] && (timerEntry.field_25 != 0)) ||
+				((timerEntry.fld27[i] == 1) && result)) {
+				idx = i;
+			} else if (timerEntry.fld27[i] > 1) {
+				int v = timerEntry.fld2C[i];
+				if ((v == timerEntry.frameIndex) || (v == 0))
+					idx = i;
+			}
+		}
+	}
+
+	if (idx >= 0) {
+		_owner._abortTimers = timerEntry.fld36[idx];
+		
+		// TODO: Figure out word_84208, timerEntry.field_3B[]
+	}
+
+	return result;
 }
 
 /**
  * Handles counting down entries in the timer list for action
  */
-void MadsTimerList::tick() {
+void MadsSequenceList::tick() {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if ((_owner._abortTimers2 == 0) && (_owner._abortTimers != 0))
 			break;
 
-		MadsTimerEntry &timerEntry = _entries[idx];
-		uint32 currentTimer = g_system->getMillis();
+		MadsSequenceEntry &timerEntry = _entries[idx];
+		uint32 currentTimer = _madsVm->_currentTimer;
 
 		if (!timerEntry.active || (currentTimer < timerEntry.timeout))
 			continue;
@@ -459,9 +543,17 @@ void MadsTimerList::tick() {
 	}
 }
 
+void MadsSequenceList::delay(uint32 v1, uint32 v2) {
+	for (uint idx = 0; idx < _entries.size(); ++idx) {
+		if (_entries[idx].active) {
+			_entries[idx].timeout += v1 - v2;
+		}
+	}
+}
+
 //--------------------------------------------------------------------------
 
-MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _timerList(*this) {
+MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this) {
 	_abortTimers = 0;
 	_abortTimers2 = 0;
 }

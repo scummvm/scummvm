@@ -159,6 +159,8 @@ public:
 	virtual void setAction(int action, int objectId = -1);
 	virtual void update();
 
+	virtual void updateState();
+
 	int loadSceneSpriteSet(const char *setName);
 	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);

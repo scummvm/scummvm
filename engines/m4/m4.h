@@ -210,6 +210,7 @@ private:
 	void showDialog();
 public:
 	MadsConversation _converse;
+	uint32 _currentTimer;
 public:
 	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~MadsEngine();

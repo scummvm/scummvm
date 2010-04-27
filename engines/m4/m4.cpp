@@ -493,6 +493,7 @@ MadsEngine::MadsEngine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4
 	_madsVm = this;
 
 	_globals = new MadsGlobals(this);
+	_currentTimer = 0;
 }
 
 MadsEngine::~MadsEngine() {
@@ -582,7 +583,8 @@ Common::Error MadsEngine::run() {
 
 		if (g_system->getMillis() >= nextFrame) {
 			_viewManager->refreshAll();
-			nextFrame = g_system->getMillis();// + GAME_FRAME_DELAY;
+			nextFrame = g_system->getMillis() + GAME_FRAME_DELAY;
+			++_currentTimer;
 		}
 
 		g_system->delayMillis(10);
