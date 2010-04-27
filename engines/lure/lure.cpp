@@ -42,12 +42,12 @@ static LureEngine *int_engine = NULL;
 LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
 	g_eventRec.registerRandomSource(_rnd, "lure");
 
-	Common::addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
-	Common::addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");
-	Common::addDebugChannel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
-	Common::addDebugChannel(kLureDebugFights, "fights", "Fights debugging");
-	Common::addDebugChannel(kLureDebugSounds, "sounds", "Sounds debugging");
-	Common::addDebugChannel(kLureDebugStrings, "strings", "Strings debugging");
+	DebugMan.addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
+	DebugMan.addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");
+	DebugMan.addDebugChannel(kLureDebugHotspots, "hotspots", "Hotspots debugging");
+	DebugMan.addDebugChannel(kLureDebugFights, "fights", "Fights debugging");
+	DebugMan.addDebugChannel(kLureDebugSounds, "sounds", "Sounds debugging");
+	DebugMan.addDebugChannel(kLureDebugStrings, "strings", "Strings debugging");
 }
 
 Common::Error LureEngine::init() {
@@ -97,7 +97,7 @@ Common::Error LureEngine::init() {
 
 LureEngine::~LureEngine() {
 	// Remove all of our debug levels here
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	if (_initialised) {
 		// Delete and deinitialise subsystems

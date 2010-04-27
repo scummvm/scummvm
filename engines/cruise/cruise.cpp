@@ -53,8 +53,8 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_currentVolumeFile = new Common::File();
 #endif
 
-	Common::addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
-	Common::addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
+	DebugMan.addDebugChannel(kCruiseDebugScript, "scripts", "Scripts debug level");
+	DebugMan.addDebugChannel(kCruiseDebugSound, "sound", "Sound debug level");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,

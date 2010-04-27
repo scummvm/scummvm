@@ -870,7 +870,7 @@ int DecompressorDCL::unpackDCL(byte* dest) {
 				for (uint32 i = 0; i < copy_length; i++)
 					putByte(dest[pos + i]);
 
-				if (Common::isDebugChannelEnabled(kDebugLevelDclInflate)) {
+				if (DebugMan.isDebugChannelEnabled(kDebugLevelDclInflate)) {
 					for (uint32 i = 0; i < copy_length; i++)
 						debugC(kDebugLevelDclInflate, "\33[32;31m%02x\33[37;37m ", dest[pos + i]);
 					debugC(kDebugLevelDclInflate, "\n");

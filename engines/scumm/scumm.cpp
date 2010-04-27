@@ -547,14 +547,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	// Add debug levels
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
-		Common::addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
+		DebugMan.addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
 	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
 
 ScummEngine::~ScummEngine() {
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	delete _musicEngine;
 

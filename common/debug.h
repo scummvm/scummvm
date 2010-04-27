@@ -26,13 +26,20 @@
 #define COMMON_DEBUG_H
 
 #include "common/scummsys.h"
+#include "common/singleton.h"
 #include "common/textconsole.h"
 #include "common/list.h"
 #include "common/str.h"
 
+#include "common/hashmap.h"
+#include "common/hash-str.h"
+
 
 namespace Common {
 
+// TODO: Find a better name for this
+class DebugManager : public Singleton<DebugManager> {
+public:
 
 struct DebugChannel {
 	DebugChannel() : channel(0), enabled(false) {}
@@ -108,6 +115,19 @@ DebugChannelList listDebugChannels();
  */
 bool isDebugChannelEnabled(uint32 channel);
 
+
+private:
+	typedef HashMap<String, DebugChannel, IgnoreCase_Hash, IgnoreCase_EqualTo> DebugChannelMap;
+
+	DebugChannelMap gDebugChannels;
+	uint32 gDebugChannelsEnabled;
+
+	friend class Singleton<SingletonBaseType>;
+	DebugManager() : gDebugChannelsEnabled(0) {}
+};
+
+/** Shortcut for accessing the debug manager. */
+#define DebugMan		Common::DebugManager::instance()
 
 /**
  * Set the output formatter used by debug() and related functions.

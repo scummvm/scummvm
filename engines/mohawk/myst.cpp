@@ -37,16 +37,16 @@
 namespace Mohawk {
 
 MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
-	Common::addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
-	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
-	Common::addDebugChannel(kDebugView, "View", "Track Card File (VIEW) Parsing");
-	Common::addDebugChannel(kDebugHint, "Hint", "Track Cursor Hints (HINT) Parsing");
-	Common::addDebugChannel(kDebugResource, "Resource", "Track Resource (RLST) Parsing");
-	Common::addDebugChannel(kDebugINIT, "Init", "Track Card Init Script (INIT) Parsing");
-	Common::addDebugChannel(kDebugEXIT, "Exit", "Track Card Exit Script (EXIT) Parsing");
-	Common::addDebugChannel(kDebugScript, "Script", "Track Script Execution");
-	Common::addDebugChannel(kDebugHelp, "Help", "Track Help File (HELP) Parsing");
-	Common::addDebugChannel(kDebugCache, "Cache", "Track Resource Cache Accesses");
+	DebugMan.addDebugChannel(kDebugVariable, "Variable", "Track Variable Accesses");
+	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Track Save/Load Function");
+	DebugMan.addDebugChannel(kDebugView, "View", "Track Card File (VIEW) Parsing");
+	DebugMan.addDebugChannel(kDebugHint, "Hint", "Track Cursor Hints (HINT) Parsing");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Track Resource (RLST) Parsing");
+	DebugMan.addDebugChannel(kDebugINIT, "Init", "Track Card Init Script (INIT) Parsing");
+	DebugMan.addDebugChannel(kDebugEXIT, "Exit", "Track Card Exit Script (EXIT) Parsing");
+	DebugMan.addDebugChannel(kDebugScript, "Script", "Track Script Execution");
+	DebugMan.addDebugChannel(kDebugHelp, "Help", "Track Help File (HELP) Parsing");
+	DebugMan.addDebugChannel(kDebugCache, "Cache", "Track Resource Cache Accesses");
 
 	_zipMode = false;
 	_transitionsEnabled = false;

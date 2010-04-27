@@ -823,10 +823,10 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_config = new Config(this);
 
 	// Register debug flags
-	Common::addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
-	Common::addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
-	Common::addDebugChannel(kTinselDebugSound, "sound", "Sound debugging");
-	Common::addDebugChannel(kTinselDebugMusic, "music", "Music debugging");
+	DebugMan.addDebugChannel(kTinselDebugAnimations, "animations", "Animations debugging");
+	DebugMan.addDebugChannel(kTinselDebugActions, "actions", "Actions debugging");
+	DebugMan.addDebugChannel(kTinselDebugSound, "sound", "Sound debugging");
+	DebugMan.addDebugChannel(kTinselDebugMusic, "music", "Music debugging");
 
 	// Setup mixer
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));

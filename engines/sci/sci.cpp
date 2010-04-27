@@ -69,30 +69,30 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	_features = 0;
 
 	// Set up the engine specific debug levels
-	Common::addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
-	Common::addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
-	Common::addDebugChannel(kDebugLevelGraphics, "Graphics", "Graphics debugging");
-	Common::addDebugChannel(kDebugLevelStrings, "Strings", "Strings debugging");
-	Common::addDebugChannel(kDebugLevelMemory, "Memory", "Memory debugging");
-	Common::addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
-	Common::addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
-	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	Common::addDebugChannel(kDebugLevelGfxDriver, "Gfxdriver", "Gfx driver debugging");
-	Common::addDebugChannel(kDebugLevelBaseSetter, "Base", "Base Setter debugging");
-	Common::addDebugChannel(kDebugLevelParser, "Parser", "Parser debugging");
-	Common::addDebugChannel(kDebugLevelMenu, "Menu", "Menu handling debugging");
-	Common::addDebugChannel(kDebugLevelSaid, "Said", "Said specs debugging");
-	Common::addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
-	Common::addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
-	Common::addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
-	Common::addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
-	Common::addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
-	Common::addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
-	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
-	Common::addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
-	Common::addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
-	Common::addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
-	Common::addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
+	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
+	DebugMan.addDebugChannel(kDebugLevelNodes, "Lists", "Lists and nodes debugging");
+	DebugMan.addDebugChannel(kDebugLevelGraphics, "Graphics", "Graphics debugging");
+	DebugMan.addDebugChannel(kDebugLevelStrings, "Strings", "Strings debugging");
+	DebugMan.addDebugChannel(kDebugLevelMemory, "Memory", "Memory debugging");
+	DebugMan.addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
+	DebugMan.addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
+	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
+	DebugMan.addDebugChannel(kDebugLevelGfxDriver, "Gfxdriver", "Gfx driver debugging");
+	DebugMan.addDebugChannel(kDebugLevelBaseSetter, "Base", "Base Setter debugging");
+	DebugMan.addDebugChannel(kDebugLevelParser, "Parser", "Parser debugging");
+	DebugMan.addDebugChannel(kDebugLevelMenu, "Menu", "Menu handling debugging");
+	DebugMan.addDebugChannel(kDebugLevelSaid, "Said", "Said specs debugging");
+	DebugMan.addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
+	DebugMan.addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
+	DebugMan.addDebugChannel(kDebugLevelRoom, "Room", "Room number debugging");
+	DebugMan.addDebugChannel(kDebugLevelAvoidPath, "Pathfinding", "Pathfinding debugging");
+	DebugMan.addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
+	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
+	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
+	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
+	DebugMan.addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
+	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
+	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
 
 	_gamestate = 0;
 
@@ -112,7 +112,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 SciEngine::~SciEngine() {
 	// Remove all of our debug levels here
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	delete _audio;
 	delete _kernel;

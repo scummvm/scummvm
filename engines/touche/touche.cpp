@@ -68,17 +68,17 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
 
-	Common::addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
-	Common::addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	Common::addDebugChannel(kDebugResource, "Resource", "Resource debug level");
-	Common::addDebugChannel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
-	Common::addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
+	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+	DebugMan.addDebugChannel(kDebugResource, "Resource", "Resource debug level");
+	DebugMan.addDebugChannel(kDebugOpcodes,  "Opcodes",  "Opcodes debug level");
+	DebugMan.addDebugChannel(kDebugMenu,     "Menu",     "Menu debug level");
 
 	g_eventRec.registerRandomSource(_rnd, "touche");
 }
 
 ToucheEngine::~ToucheEngine() {
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 	delete _midiPlayer;
 }
 

@@ -54,8 +54,8 @@ void VDXPlayer::setOrigin(int16 x, int16 y) {
 }
 
 uint16 VDXPlayer::loadInternal() {
-	if (Common::isDebugChannelEnabled(kGroovieDebugVideo) ||
-	    Common::isDebugChannelEnabled(kGroovieDebugAll)) {
+	if (DebugMan.isDebugChannelEnabled(kGroovieDebugVideo) ||
+	    DebugMan.isDebugChannelEnabled(kGroovieDebugAll)) {
 		int8 i;
 		debugN(1, "Groovie::VDX: New VDX: bitflags are ");
 		for (i = 15; i >= 0; i--) {
@@ -175,7 +175,7 @@ bool VDXPlayer::playFrameInternal() {
 
 	// Wait until the current frame can be shown
 
-	if (!Common::isDebugChannelEnabled(kGroovieDebugFast)) {
+	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugFast)) {
 		waitFrame();
 	}
 	// TODO: Move it to a better place
@@ -506,7 +506,7 @@ void VDXPlayer::chunkSound(Common::ReadStream *in) {
 
 	byte *data = (byte *)malloc(60000);
 	int chunksize = in->read(data, 60000);
-	if (!Common::isDebugChannelEnabled(kGroovieDebugFast)) {
+	if (!DebugMan.isDebugChannelEnabled(kGroovieDebugFast)) {
 		_audioStream->queueBuffer(data, chunksize, DisposeAfterUse::YES, Audio::FLAG_UNSIGNED);
 	}
 }

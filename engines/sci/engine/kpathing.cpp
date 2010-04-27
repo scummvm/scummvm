@@ -1351,7 +1351,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	// Sentinel
 	writePoint(arrayRef, offset, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 
-	if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 		debug("\nReturning path:");
 		for (int i = 0; i < offset; i++) {
 			Common::Point pt = read_point(s->_segMan, output, i);
@@ -1407,7 +1407,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 				opt = argv[6].toUint16();
 		}
 
-		if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+		if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 			debug("[avoidpath] Pathfinding input:");
 			draw_point(s, start, 1, width, height);
 			draw_point(s, end, 0, width, height);
@@ -1578,7 +1578,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 		int32 pDestX = inpBuf[curIndex].toSint16() & 0x1ff;
 		int32 pDestY = inpBuf[curIndex + 1].toSint16();
 
-		if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+		if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 			draw_line(s, Common::Point(pSourceX, pSourceY),
 				Common::Point(pDestX, pDestY), 2, 320, 190);
 			debugN(-1, " (%i, %i)[%i]", pDestX, pDestY, curIndex);
@@ -1657,7 +1657,7 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 
 		if (curIndex == doneIndex) {
 			// End of polyline/polygon reached
-			if (Common::isDebugChannelEnabled(kDebugLevelAvoidPath)) {
+			if (DebugMan.isDebugChannelEnabled(kDebugLevelAvoidPath)) {
 				debug(";");
 				debugN(-1, "Found %i intersections", outCount);
 

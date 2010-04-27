@@ -130,18 +130,18 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 
-	Common::addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
-	Common::addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
-	Common::addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
-	Common::addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
-	Common::addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
-	Common::addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
-	Common::addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
-	Common::addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
-	Common::addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
-	Common::addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
-	Common::addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
-	Common::addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
+	DebugMan.addDebugChannel(kDebugFuncOp, "FuncOpcodes", "Script FuncOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugDrawOp, "DrawOpcodes", "Script DrawOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugGobOp, "GoblinOpcodes", "Script GoblinOpcodes debug level");
+	DebugMan.addDebugChannel(kDebugSound, "Sound", "Sound output debug level");
+	DebugMan.addDebugChannel(kDebugExpression, "Expression", "Expression parser debug level");
+	DebugMan.addDebugChannel(kDebugGameFlow, "Gameflow", "Gameflow debug level");
+	DebugMan.addDebugChannel(kDebugFileIO, "FileIO", "File Input/Output debug level");
+	DebugMan.addDebugChannel(kDebugSaveLoad, "SaveLoad", "Saving/Loading debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");
+	DebugMan.addDebugChannel(kDebugVideo, "Video", "IMD/VMD video debug level");
+	DebugMan.addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
+	DebugMan.addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
 
 	g_eventRec.registerRandomSource(_rnd, "gob");
 }

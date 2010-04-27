@@ -82,13 +82,13 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	//SearchMan.addSubDirectoryMatching(_gameDataDir, "sound");
 
 	// Here is the right place to set up the engine specific debug levels
-	Common::addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug info");
-	Common::addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
-	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
-	Common::addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
-	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
-	Common::addDebugChannel(kDraciSoundDebugLevel, "sound", "Sound debug info");
-	Common::addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
+	DebugMan.addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug info");
+	DebugMan.addDebugChannel(kDraciBytecodeDebugLevel, "bytecode", "GPL bytecode instructions");
+	DebugMan.addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
+	DebugMan.addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
+	DebugMan.addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
+	DebugMan.addDebugChannel(kDraciSoundDebugLevel, "sound", "Sound debug info");
+	DebugMan.addDebugChannel(kDraciWalkingDebugLevel, "walking", "Walking debug info");
 
 	// Don't forget to register your random source
 	g_eventRec.registerRandomSource(_rnd, "draci");
@@ -349,7 +349,7 @@ DraciEngine::~DraciEngine() {
 	delete _dubbingArchive;
 
 	// Remove all of our debug levels here
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 }
 
 Common::Error DraciEngine::run() {

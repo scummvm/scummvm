@@ -1680,7 +1680,7 @@ static EngineState *_game_run(EngineState *&s) {
 	EngineState *successor = NULL;
 	int game_is_finished = 0;
 
-	if (Common::isDebugChannelEnabled(kDebugLevelOnStartup))
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		g_sci->getSciDebugger()->attach();
 
 	do {

@@ -111,7 +111,7 @@ KyraEngine_LoK::~KyraEngine_LoK() {
 		_emc->unload(&_scriptClickData);
 	}
 
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	delete _screen;
 	delete _sprites;

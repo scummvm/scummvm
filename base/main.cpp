@@ -198,7 +198,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	Common::StringTokenizer tokenizer(edebuglevels, " ,");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
-		if (!enableDebugChannel(token))
+		if (!DebugMan.enableDebugChannel(token))
 			warning("Engine does not support debug level '%s'", token.c_str());
 	}
 
@@ -212,7 +212,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	system.engineDone();
 
 	// We clear all debug levels again even though the engine should do it
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	// Free up memory
 	delete engine;

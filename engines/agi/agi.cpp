@@ -515,16 +515,16 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "agi");
 
-	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
-	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
-	Common::addDebugChannel(kDebugLevelInventory, "Inventory", "Inventory debugging");
-	Common::addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
-	Common::addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
-	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
-	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	Common::addDebugChannel(kDebugLevelText, "Text", "Text output debugging");
-	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
+	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
+	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
+	DebugMan.addDebugChannel(kDebugLevelInventory, "Inventory", "Inventory debugging");
+	DebugMan.addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
+	DebugMan.addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
+	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
+	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
+	DebugMan.addDebugChannel(kDebugLevelText, "Text", "Text output debugging");
+	DebugMan.addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 
 
 	memset(&_game, 0, sizeof(struct AgiGame));

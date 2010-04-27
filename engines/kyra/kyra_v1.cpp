@@ -73,17 +73,17 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_mouseX = _mouseY = 0;
 
 	// sets up all engine specific debug levels
-	Common::addDebugChannel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
-	Common::addDebugChannel(kDebugLevelScript, "Script", "Script interpreter debug level");
-	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprite debug level");
-	Common::addDebugChannel(kDebugLevelScreen, "Screen", "Screen debug level");
-	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debug level");
-	Common::addDebugChannel(kDebugLevelAnimator, "Animator", "Animator debug level");
-	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addDebugChannel(kDebugLevelGUI, "GUI", "GUI debug level");
-	Common::addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
-	Common::addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
-	Common::addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
+	DebugMan.addDebugChannel(kDebugLevelScriptFuncs, "ScriptFuncs", "Script function debug level");
+	DebugMan.addDebugChannel(kDebugLevelScript, "Script", "Script interpreter debug level");
+	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprite debug level");
+	DebugMan.addDebugChannel(kDebugLevelScreen, "Screen", "Screen debug level");
+	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debug level");
+	DebugMan.addDebugChannel(kDebugLevelAnimator, "Animator", "Animator debug level");
+	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	DebugMan.addDebugChannel(kDebugLevelGUI, "GUI", "GUI debug level");
+	DebugMan.addDebugChannel(kDebugLevelSequence, "Sequence", "Sequence debug level");
+	DebugMan.addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
+	DebugMan.addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
 
 	g_eventRec.registerRandomSource(_rnd, "kyra");
 }
