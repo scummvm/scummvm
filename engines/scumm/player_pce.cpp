@@ -628,7 +628,7 @@ void Player_PCE::processSoundData(channel_t *channel) {
 			channel->controlVec23 = true;
 			break;
 		case 32: /*A921*/
-			*ptr++;
+			ptr++;
 			break;
 		case 47:
 			channel->controlVec24 = false;
