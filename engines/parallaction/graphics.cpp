@@ -524,7 +524,7 @@ void setupLabelSurface(Graphics::Surface &surf, uint w, uint h) {
 	surf.fillRect(Common::Rect(w,h), LABEL_TRANSPARENT_COLOR);
 }
 
-uint Gfx::renderFloatingLabel(Font *font, char *text) {
+GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 
 	Graphics::Surface *cnv = new Graphics::Surface;
 
@@ -555,34 +555,32 @@ uint Gfx::renderFloatingLabel(Font *font, char *text) {
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
 
-	uint id = _labels.size();
-	_labels.insert_at(id, obj);
-
-	return id;
+	return obj;
 }
 
-void Gfx::showFloatingLabel(uint label) {
-	assert(label < _labels.size());
-
+void Gfx::showFloatingLabel(GfxObj *label) {
 	hideFloatingLabel();
 
-	_labels[label]->x = -1000;
-	_labels[label]->y = -1000;
-	_labels[label]->setFlags(kGfxObjVisible);
-
-	_floatingLabel = label;
+	if (label) {
+		label->x = -1000;
+		label->y = -1000;
+		label->setFlags(kGfxObjVisible);
+	
+		_floatingLabel = label;
+		_labels.push_back(label);
+	}
 }
 
 void Gfx::hideFloatingLabel() {
-	if (_floatingLabel != NO_FLOATING_LABEL) {
-		_labels[_floatingLabel]->clearFlags(kGfxObjVisible);
+	if (_floatingLabel != 0) {
+		_floatingLabel->clearFlags(kGfxObjVisible);
 	}
-	_floatingLabel = NO_FLOATING_LABEL;
+	_floatingLabel = 0;
 }
 
 
 void Gfx::updateFloatingLabel() {
-	if (_floatingLabel == NO_FLOATING_LABEL) {
+	if (_floatingLabel == 0) {
 		return;
 	}
 
@@ -596,7 +594,7 @@ void Gfx::updateFloatingLabel() {
 	} *traits;
 
 	Common::Rect r;
-	_labels[_floatingLabel]->getRect(0, r);
+	_floatingLabel->getRect(0, r);
 
 	if (_gameType == GType_Nippon) {
 		FloatingLabelTraits traits_NS = {
@@ -619,14 +617,14 @@ void Gfx::updateFloatingLabel() {
 	_vm->_input->getCursorPos(cursor);
 	Common::Point offset = (_vm->_input->_activeItem._id) ? traits->_offsetWithItem : traits->_offsetWithoutItem;
 
-	_labels[_floatingLabel]->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
-	_labels[_floatingLabel]->y = CLIP(cursor.y + offset.y, traits->_minY, traits->_maxY);
+	_floatingLabel->x = CLIP(cursor.x + offset.x, traits->_minX, traits->_maxX);
+	_floatingLabel->y = CLIP(cursor.y + offset.y, traits->_minY, traits->_maxY);
 }
 
 
 
 
-uint Gfx::createLabel(Font *font, const char *text, byte color) {
+GfxObj *Gfx::createLabel(Font *font, const char *text, byte color) {
 	Graphics::Surface *cnv = new Graphics::Surface;
 
 	uint w, h;
@@ -652,19 +650,18 @@ uint Gfx::createLabel(Font *font, const char *text, byte color) {
 	obj->transparentKey = LABEL_TRANSPARENT_COLOR;
 	obj->layer = LAYER_FOREGROUND;
 
-	int id = _labels.size();
-
-	_labels.insert_at(id, obj);
-
-	return id;
+	return obj;
 }
 
-void Gfx::showLabel(uint id, int16 x, int16 y) {
-	assert(id < _labels.size());
-	_labels[id]->setFlags(kGfxObjVisible);
+void Gfx::showLabel(GfxObj *label, int16 x, int16 y) {
+	if (!label) {
+		return;
+	}
+
+	label->setFlags(kGfxObjVisible);
 
 	Common::Rect r;
-	_labels[id]->getRect(0, r);
+	label->getRect(0, r);
 
 	if (x == CENTER_LABEL_HORIZONTAL) {
 		x = CLIP<int16>((_backgroundInfo->width - r.width()) / 2, 0, _backgroundInfo->width/2);
@@ -674,23 +671,32 @@ void Gfx::showLabel(uint id, int16 x, int16 y) {
 		y = CLIP<int16>((_vm->_screenHeight - r.height()) / 2, 0, _vm->_screenHeight/2);
 	}
 
-	_labels[id]->x = x;
-	_labels[id]->y = y;
+	label->x = x;
+	label->y = y;
+	
+	_labels.push_back(label);
 }
 
-void Gfx::hideLabel(uint id) {
-	assert(id < _labels.size());
-	_labels[id]->clearFlags(kGfxObjVisible);
+void Gfx::hideLabel(GfxObj *label) {
+	if (label) {
+		label->clearFlags(kGfxObjVisible);
+		unregisterLabel(label);
+	}
 }
 
 void Gfx::freeLabels() {
-	for (uint i = 0; i < _labels.size(); i++) {
-		delete _labels[i];
-	}
 	_labels.clear();
-	_floatingLabel = NO_FLOATING_LABEL;
+	_floatingLabel = 0;
 }
 
+void Gfx::unregisterLabel(GfxObj *label) {
+	for (uint i = 0; i < _labels.size(); i++) {
+		if (_labels[i] == label) {
+			_labels.remove_at(i);
+			break;
+		}
+	}	
+}
 
 
 void Gfx::copyRect(const Common::Rect &r, Graphics::Surface &src, Graphics::Surface &dst) {
@@ -724,7 +730,7 @@ Gfx::Gfx(Parallaction* vm) :
 
 	setPalette(_palette);
 
-	_floatingLabel = NO_FLOATING_LABEL;
+	_floatingLabel = 0;
 
 	_backgroundInfo = 0;
 

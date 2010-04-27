@@ -87,8 +87,8 @@ Common::Error Parallaction_br::init() {
 
 	_part = -1;
 
-	_subtitle[0] = -1;
-	_subtitle[1] = -1;
+	_subtitle[0] = 0;
+	_subtitle[1] = 0;
 
 	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 
@@ -226,7 +226,7 @@ void Parallaction_br::freeCharacter() {
 void Parallaction_br::freeLocation(bool removeAll) {
 	// free open location stuff
 	clearSubtitles();
-	_subtitle[0] = _subtitle[1] = -1;
+	_subtitle[0] = _subtitle[1] = 0;
 
 	_localFlagNames->clear();
 

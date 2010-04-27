@@ -204,6 +204,8 @@ Zone::Zone() {
 }
 
 Zone::~Zone() {
+	_vm->_gfx->unregisterLabel(_label);
+	delete _label;
 }
 
 void Zone::translate(int16 x, int16 y) {

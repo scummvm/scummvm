@@ -444,14 +444,15 @@ public:
 	void unpackBlt(const Common::Rect& r, byte *data, uint size, Graphics::Surface *surf, uint16 z, uint scale, byte transparentColor);
 
 	// labels
-	void showFloatingLabel(uint label);
+	void showFloatingLabel(GfxObj *label);
 	void hideFloatingLabel();
 
-	uint renderFloatingLabel(Font *font, char *text);
-	uint createLabel(Font *font, const char *text, byte color);
-	void showLabel(uint id, int16 x, int16 y);
-	void hideLabel(uint id);
+	GfxObj *renderFloatingLabel(Font *font, char *text);
+	GfxObj *createLabel(Font *font, const char *text, byte color);
+	void showLabel(GfxObj *label, int16 x, int16 y);
+	void hideLabel(GfxObj *label);
 	void freeLabels();
+	void unregisterLabel(GfxObj *label);
 
 	// dialogue handling
 	GfxObj* registerBalloon(Frames *frames, const char *text);
@@ -528,11 +529,18 @@ protected:
 	void				scroll();
 	#define NO_FLOATING_LABEL	1000
 
+	struct Label {
+		Common::String _text;
+		int  _x, _y;
+		int color;
+		bool _floating;
+	};
+
 	GfxObjArray	_labels;
 	GfxObjArray _balloons;
 	GfxObjArray	_items;
 
-	uint _floatingLabel;
+	GfxObj *_floatingLabel;
 
 	// overlay mode enables drawing of graphics with automatic screen-to-game coordinate translation
 	bool				_overlayMode;

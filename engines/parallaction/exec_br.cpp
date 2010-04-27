@@ -96,7 +96,7 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 		_subtitle[1] = _gfx->createLabel(_labelFont, s2, color);
 		_gfx->showLabel(_subtitle[1], CENTER_LABEL_HORIZONTAL, _subtitleY + 5 + _labelFont->height());
 	} else {
-		_subtitle[1] = -1;
+		_subtitle[1] = 0;
 	}
 #if 0	// disabled because no references to lip sync has been found in the scripts
 	_subtitleLipSync = 0;
@@ -104,11 +104,11 @@ void Parallaction_br::setupSubtitles(char *s, char *s2, int y) {
 }
 
 void Parallaction_br::clearSubtitles() {
-	if (_subtitle[0] != -1) {
+	if (_subtitle[0]) {
 		_gfx->hideLabel(_subtitle[0]);
 	}
 
-	if (_subtitle[1] != -1) {
+	if (_subtitle[1]) {
 		_gfx->hideLabel(_subtitle[1]);
 	}
 }
