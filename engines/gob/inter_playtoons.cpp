@@ -193,8 +193,7 @@ bool Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
 	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
-//	_expression->printExpr(99);
-	_vm->_game->_script->readExpr(99, false);
+	_vm->_game->_script->readExpr(99, 0);
 
 	//unk_var is always set to 0 in Playtoons
 	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
