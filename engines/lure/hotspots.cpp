@@ -3819,7 +3819,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 
 				if (h.hotspotId() == EWAN_ID) {
 					HotspotData *player = res.getHotspot(PLAYER_ID);
-					HotspotData *gwyn = res.getHotspot(GOEWIN_ID);
+					HotspotData *gwyn = res.getHotspot(GWEN_ID);
 					HotspotData *wayne = res.getHotspot(WAYNE_ID);
 
 					if ((player->roomNumber != 35) && (gwyn->roomNumber != 35) && (wayne->roomNumber != 35)) {
