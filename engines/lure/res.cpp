@@ -625,6 +625,11 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 				CharacterScheduleEntry *entry = resources.charSchedules().getEntry(res->npcScheduleId);
 				res->npcSchedule.addFront(DISPATCH_ACTION, entry, res->roomNumber);
 			}
+			if ((hotspotId == GOEWIN_ID) && (hotspot->roomNumber() == 39))
+				// WORKAROUND: When you re-join Goewin in the caves, clear her schedule. This may prevent a
+				// situation where you could close the left door, and she'd be permanently stuck trying to go
+				// the next room on the left, since her old schedule still had her following your old path
+				hotspot->currentActions().clear();
 
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game
