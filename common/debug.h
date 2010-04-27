@@ -98,7 +98,7 @@ typedef List<DebugChannel> DebugChannelList;
 /**
  * Lists all engine specific debug channels.
  *
- * @return returns a arry with all debug channels
+ * @return returns an array with all debug channels
  */
 DebugChannelList listDebugChannels();
 
@@ -107,11 +107,6 @@ DebugChannelList listDebugChannels();
  * Test whether the given debug channel is enabled.
  */
 bool isDebugChannelEnabled(uint32 channel);
-
-/**
- * Test whether the given debug channel is enabled.
- */
-bool isDebugChannelEnabled(const String &name);
 
 
 /**
@@ -145,7 +140,7 @@ void debug(const char *s, ...) GCC_PRINTF(1, 2);
 
 /**
  * Print a debug message to the text console (stdout), but only if
- * the specified level does not exceed the value of gDebugLevel.
+ * the gDebugLevel equals at least the specified level.
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
  */
@@ -153,7 +148,7 @@ void debug(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
  * Print a debug message to the text console (stdout), but only if
- * the specified level does not exceed the value of gDebugLevel.
+ * the gDebugLevel equals at least the specified level.
  * As a rule of thumb, the more important the message, the lower the level.
  * Does not append a newline.
  */
@@ -161,7 +156,7 @@ void debugN(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 /**
  * Print a debug message to the text console (stdout), but only if
- * the specified level does not exceed the value of gDebugLevel AND
+ * the gDebugLevel equals at least the specified level AND
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
  * Automatically appends a newline.
@@ -172,7 +167,7 @@ void debugC(int level, uint32 debugChannels, const char *s, ...) GCC_PRINTF(3, 4
 
 /**
  * Print a debug message to the text console (stdout), but only if
- * the specified level does not exceed the value of gDebugLevel AND
+ * the gDebugLevel equals at least the specified level AND
  * if the specified special debug level is active.
  * As a rule of thumb, the more important the message, the lower the level.
  * Does not append a newline automatically.

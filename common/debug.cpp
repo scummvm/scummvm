@@ -123,19 +123,6 @@ bool isDebugChannelEnabled(uint32 channel) {
 		return (gDebugChannelsEnabled & channel) != 0;
 }
 
-bool isDebugChannelEnabled(const String &name) {
-	// Debug level 11 turns on all special debug level messages
-	if (gDebugLevel == 11)
-		return true;
-
-	// Search for the debug level with the given name and check if it is enabled
-	DebugChannelMap::iterator i = gDebugChannels.find(name);
-	if (i != gDebugChannels.end())
-		return i->_value.enabled;
-	else
-		return false;
-}
-
 
 
 static OutputFormatter s_debugOutputFormatter = 0;
