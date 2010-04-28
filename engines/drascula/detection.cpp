@@ -50,7 +50,7 @@ void DrasculaEngine::loadArchives() {
 
 	if (getFeatures() & GF_PACKED) {
 		for (ag = _gameDescription->desc.filesDescriptions; ag->fileName; ag++)
-			_archives.registerArchive(ag->fileName);
+			_archives.registerArchive(ag->fileName, ag->fileType);
 	}
 
 	_archives.enableFallback(true);
@@ -103,7 +103,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.003", 0, "e8f4dc6091037329bab4ddb1cba35807", 719728},
+				{"packet.003", 1, "e8f4dc6091037329bab4ddb1cba35807", 719728},
 				{NULL, 0, NULL, 0}
 			},
 			Common::DE_DEU,
@@ -120,7 +120,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.002", 0, "4401123400f22f212b89f15fb4b43013", 721122},
+				{"packet.002", 1, "4401123400f22f212b89f15fb4b43013", 721122},
 				{NULL, 0, NULL, 0}
 			},
 			Common::FR_FRA,
@@ -214,7 +214,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.004", 0, "a289d3cf80d50f25ec569b653248437e", 17205838},
+				{"packet.004", 1, "a289d3cf80d50f25ec569b653248437e", 17205838},
 				{NULL, 0, NULL, 0}
 			},
 			Common::ES_ESP,
@@ -231,7 +231,7 @@ static const DrasculaGameDescription gameDescriptions[] = {
 			0,
 			{
 				{"packet.001", 0, "c6a8697396e213a18472542d5f547cb4", 32847563},
-				{"packet.005", 0, "58caac54b891f5d7f335e710e45e5d29", 16209623},
+				{"packet.005", 1, "58caac54b891f5d7f335e710e45e5d29", 16209623},
 				{NULL, 0, NULL, 0}
 			},
 			Common::IT_ITA,
