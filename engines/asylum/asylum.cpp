@@ -38,29 +38,29 @@ namespace Asylum {
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 		: Engine(system) {
 
-	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
-	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
-	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
-	Common::addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
-	Common::addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
-	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
-	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
-	Common::addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
-	Common::addDebugChannel(kDebugLevelBarriers, "Barriers", "Debug Barrier Objects");
+	DebugMan.addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
+	DebugMan.addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
+	DebugMan.addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
+	DebugMan.addDebugChannel(kDebugLevelInput, "Input", "Input events debugging");
+	DebugMan.addDebugChannel(kDebugLevelMenu, "Menu", "Menu debugging");
+	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
+	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
+	DebugMan.addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
+	DebugMan.addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
+	DebugMan.addDebugChannel(kDebugLevelBarriers, "Barriers", "Debug Barrier Objects");
 
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "vids");
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
 
-	Common::enableDebugChannel("Scripts");
-	Common::enableDebugChannel("Barriers");
+	DebugMan.enableDebugChannel("Scripts");
+	DebugMan.enableDebugChannel("Barriers");
 
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
-	Common::clearAllDebugChannels();
+	DebugMan.clearAllDebugChannels();
 
 	delete _console;
 	delete _scene;
