@@ -268,6 +268,39 @@ int TeenAgentEngine::skipEvents() const {
 	return 0;
 }
 
+bool TeenAgentEngine::showCDLogo() {
+	Common::File cdlogo;
+	if (!cdlogo.exists("cdlogo.res") || !cdlogo.open("cdlogo.res"))
+		return true;
+
+	byte bg[0xfa00];
+	byte palette[0x400];
+
+	cdlogo.read(bg, sizeof(bg));
+	memset(palette, 0, sizeof(palette));
+
+	for(uint c = 0; c < 0x100; ++c) {
+		uint idx = c * 4;
+		cdlogo.read(palette + idx, 3);
+		palette[idx] *= 4;
+		palette[idx + 1] *= 4;
+		palette[idx + 2] *= 4;
+	}
+	_system->setPalette(palette, 0, 0x100);
+	_system->copyRectToScreen(bg, 320, 0, 0, 320, 200);
+	_system->updateScreen();
+
+	for(uint i = 0; i < 20; ++i) {
+		int r = skipEvents();
+		if (r != 0)
+			return r > 0? true: false;
+		_system->delayMillis(100);
+	}
+	cdlogo.close();
+
+	return true;
+}
+
 bool TeenAgentEngine::showLogo() {
 	FilePack logo;
 	if (!logo.open("unlogic.res"))
@@ -440,6 +473,8 @@ Common::Error TeenAgentEngine::run() {
 	if (load_slot >= 0) {
 		loadGameState(load_slot);
 	} else {
+		if (!showCDLogo())
+			return Common::kNoError;
 		if (!showLogo())
 			return Common::kNoError;
 		if (!showMetropolis())

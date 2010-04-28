@@ -41,7 +41,7 @@ void FilePack::close() {
 }
 
 bool FilePack::open(const Common::String &filename) {
-	if (!file.open(filename))
+	if (!file.exists(filename) || !file.open(filename))
 		return false;
 
 	_fileCount = file.readUint32LE();
@@ -94,7 +94,7 @@ bool TransientFilePack::open(const Common::String &filename) {
 	_filename = filename;
 
 	Common::File file;
-	if (!file.open(filename))
+	if (!file.exists(filename) || !file.open(filename))
 		return false;
 
 	_fileCount = file.readUint32LE();
@@ -154,7 +154,7 @@ void MemoryPack::close() {
 
 bool MemoryPack::open(const Common::String &filename) {
 	Common::File file;
-	if (!file.open(filename))
+	if (!file.exists(filename) || !file.open(filename))
 		return false;
 
 	uint32 count = file.readUint32LE();

@@ -74,6 +74,7 @@ public:
 	inline Scene *getScene() { return scene; }
 
 	bool showLogo();
+	bool showCDLogo();
 	bool showMetropolis();
 	int skipEvents() const;
 

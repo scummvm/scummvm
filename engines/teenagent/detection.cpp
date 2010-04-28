@@ -51,12 +51,32 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"mmm.res", 0, NULL, -1},
 			{"sam_mmm.res", 0, NULL, -1},
 			{"sam_sam.res", 0, NULL, -1},
-			{"unlogic.res", 0, NULL, -1},
+			//{"unlogic.res", 0, NULL, -1}, //skipped if not present
 			{NULL, 0, NULL, 0}
 		},
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
+		Common::GUIO_NOSPEECH
+	},
+	{
+		"teenagent",
+		"",
+		{
+			{"off.res", 0, NULL, -1},
+			{"on.res", 0, NULL, -1},
+			{"ons.res", 0, NULL, -1},
+			{"varia.res", 0, NULL, -1},
+			{"lan_000.res", 0, NULL, -1},
+			{"lan_500.res", 0, NULL, -1},
+			{"sam_sam.res", 0, NULL, -1},
+			{"voices.res", 0, NULL, -1},
+			{"cdlogo.res", 0, NULL, -1},
+			{NULL, 0, NULL, 0}
+		},
+		Common::CZ_CZE,
+		Common::kPlatformPC,
+		ADGF_CD,
 		Common::GUIO_NONE
 	},
 	AD_TABLE_END_MARKER,
