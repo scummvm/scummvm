@@ -214,7 +214,10 @@ Common::Error Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
+
+	// TODO: we may want to add a ~Character instead
 	freeCharacter();
+	_char._ani.reset();
 
 	destroyInventory();
 

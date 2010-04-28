@@ -416,6 +416,7 @@ void Parallaction_ns::_c_testResult(void *parm) {
 	_gfx->showLabel(labels[0], CENTER_LABEL_HORIZONTAL, 38);
 	_gfx->showLabel(labels[1], CENTER_LABEL_HORIZONTAL, 58);
 
+	// FIXME: this leaks two labels
 	return;
 }
 
