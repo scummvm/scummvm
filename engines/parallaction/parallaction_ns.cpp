@@ -207,6 +207,9 @@ Common::Error Parallaction_ns::init() {
 
 	_score = 1;
 
+	_testResultLabels[0] = 0;
+	_testResultLabels[1] = 0;
+
 	Parallaction::init();
 
 	return Common::kNoError;
