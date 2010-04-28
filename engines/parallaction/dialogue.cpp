@@ -485,14 +485,19 @@ void Parallaction::exitDialogueMode() {
 	ZonePtr z = _dialogueMan->_z;
 
 	// destroy the _dialogueMan here
-	delete _dialogueMan;
-	_dialogueMan = 0;
+	destroyDialogueManager();
 
 	// run the lists saved
 	if (_cmdList) {
 		_cmdExec->run(*_cmdList);
 	}
 	_cmdExec->run(z->_commands, z);
+}
+
+void Parallaction::destroyDialogueManager() {
+	// destroy the _dialogueMan here
+	delete _dialogueMan;
+	_dialogueMan = 0;
 }
 
 void Parallaction::runDialogueFrame() {

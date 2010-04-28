@@ -341,6 +341,7 @@ protected:
 	void	allocateLocationSlot(const char *name);
 	void	finalizeLocationParsing();
 	void	showLocationComment(const Common::String &text, bool end);
+	void	destroyDialogueManager();
 
 public:
 	void	beep();

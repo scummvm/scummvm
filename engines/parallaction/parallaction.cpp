@@ -57,7 +57,8 @@ uint32		_globalFlags = 0;
 
 
 Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gameDesc) :
-	Engine(syst), _gameDescription(gameDesc), _location(getGameType()) {
+	Engine(syst), _gameDescription(gameDesc), _location(getGameType()),
+	_dialogueMan(0) {
 
 	_vm = this;
 	DebugMan.addDebugChannel(kDebugDialogue, "dialogue", "Dialogues debug level");
@@ -81,6 +82,7 @@ Parallaction::~Parallaction() {
 	delete _callableNames;
 	delete _cmdExec;
 	delete _programExec;
+	destroyDialogueManager();
 	delete _saveLoad;
 
 	cleanupGui();
