@@ -556,8 +556,7 @@ void Puzzle::giveHint() {
 			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
 
 			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece * 3, 0);
-		}
-		else {
+		} else {
 				//	If no pieces are in the wrong place
 			_vm->_actor->nonActorSpeech(_hintBox, &hintStr[_lang][3], 1, PUZZLE_HINT_SOUNDS + 3 * 3 + _hintSpeaker, 0);
 		}

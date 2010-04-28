@@ -428,22 +428,22 @@ const char *ITEinterfaceTextStrings[][53] = {
 	}
 };
 
-Point pieceOrigins[PUZZLE_PIECES] = {
-	Point(268,  18),
-	Point(270,  51),
-	Point( 19,  51),
-	Point( 73,   0),
-	Point(  0,  34),
-	Point(215,   0),
-	Point(159,   0),
-	Point(  9,  69),
-	Point(288,  18),
-	Point(112,   0),
-	Point( 27,  88),
-	Point( 43,   0),
-	Point(  0,   0),
-	Point(262,   0),
-	Point(271, 103)
+const RawPoint pieceOrigins[PUZZLE_PIECES] = {
+	{ 268,  18 },
+	{ 270,  51 },
+	{  19,  51 },
+	{  73,   0 },
+	{   0,  34 },
+	{ 215,   0 },
+	{ 159,   0 },
+	{   9,  69 },
+	{ 288,  18 },
+	{ 112,   0 },
+	{  27,  88 },
+	{  43,   0 },
+	{   0,   0 },
+	{ 262,   0 },
+	{ 271, 103 }
 };
 
 const char *pieceNames[][PUZZLE_PIECES] = {
