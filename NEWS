@@ -33,6 +33,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Tinsel:
    - Fix video playback regression in Discworld 2.
 
+ Parallaction:
+   - Fix several crashes and other regressions in Nippon Safes, including
+     bugs 2969211, 2969232, 2969234, 2969257, 2970141.
+
  Wii/GameCube port: (Also forgot to mention in 1.1.0)
    - Added support for games using 16bit graphics.
    - Complete GFX overhaul (new video modes, better performance,
