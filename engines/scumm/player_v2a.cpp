@@ -1050,10 +1050,10 @@ public:
 		memcpy(tmp_data2, data + _offset, _size);
 		memcpy(tmp_data3, data + _offset, _size);
 		memcpy(tmp_data4, data + _offset, _size);
-		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, MIN((_vol >> 1) + 3,0x32), 0, _size, -127);
-		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, MIN((_vol >> 1) + 3,0x32), 0, _size, 127);
-		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq3, MIN((_vol >> 1) + 3,0x32), 0, _size, 127);
-		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq4, MIN((_vol >> 1) + 3,0x32), 0, _size, -127);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _freq1, MIN((_vol >> 1) + 3, 0x32), 0, _size, -127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _freq2, MIN((_vol >> 1) + 3, 0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x200, tmp_data3, _size, BASE_FREQUENCY / _freq3, MIN((_vol >> 1) + 3, 0x32), 0, _size, 127);
+		_mod->startChannel(_id | 0x300, tmp_data4, _size, BASE_FREQUENCY / _freq4, MIN((_vol >> 1) + 3, 0x32), 0, _size, -127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -1068,10 +1068,10 @@ public:
 		_vol--;
 		if (_vol == 0)
 			return false;
-		_mod->setChannelVol(_id | 0x000, MIN((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x100, MIN((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x200, MIN((_vol >> 1) + 3,0x32));
-		_mod->setChannelVol(_id | 0x300, MIN((_vol >> 1) + 3,0x32));
+		_mod->setChannelVol(_id | 0x000, MIN((_vol >> 1) + 3, 0x32));
+		_mod->setChannelVol(_id | 0x100, MIN((_vol >> 1) + 3, 0x32));
+		_mod->setChannelVol(_id | 0x200, MIN((_vol >> 1) + 3, 0x32));
+		_mod->setChannelVol(_id | 0x300, MIN((_vol >> 1) + 3, 0x32));
 		return true;
 	}
 private:
@@ -1380,11 +1380,13 @@ public:
 		_loop = 1;
 		_curfreq = 0x01F4;
 
-		char *tmp_data = (char *)malloc(_size);
-		memcpy(tmp_data, _data + _offset, _size);
-		_mod->startChannel(_id | 0x000, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, _data + _offset, _size);
+		memcpy(tmp_data2, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
 		// start 2nd channel silent
-		_mod->startChannel(_id | 0x100, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -1434,11 +1436,13 @@ public:
 		_loop = 1;
 		_curfreq = 0x0080;
 
-		char *tmp_data = (char *)malloc(_size);
-		memcpy(tmp_data, _data + _offset, _size);
-		_mod->startChannel(_id | 0x000, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
+		char *tmp_data1 = (char *)malloc(_size);
+		char *tmp_data2 = (char *)malloc(_size);
+		memcpy(tmp_data1, _data + _offset, _size);
+		memcpy(tmp_data2, _data + _offset, _size);
+		_mod->startChannel(_id | 0x000, tmp_data1, _size, BASE_FREQUENCY / _curfreq, 0x7F, 0, _size, -127);
 		// start 2nd channel silent
-		_mod->startChannel(_id | 0x100, tmp_data, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
+		_mod->startChannel(_id | 0x100, tmp_data2, _size, BASE_FREQUENCY / _curfreq, 0, 0, _size, 127);
 	}
 	virtual bool update() {
 		assert(_id);
@@ -1688,7 +1692,7 @@ public:
 	}
 	virtual bool update() {
 		assert(_id);
-		const uint16 _minvol[2] = {0x2E,0x32};
+		const uint16 _minvol[2] = {0x2E, 0x32};
 		int i;
                 for (i = 0; i < 4; i++) {
 			_mod->setChannelFreq(_id | (i << 8), BASE_FREQUENCY / _freq[i]);
@@ -1908,7 +1912,7 @@ void Player_V2A::startSound(int nr) {
 	uint32 crc = GetCRC(data + 0x0A, READ_BE_UINT16(data + 0x08));
 	V2A_Sound *snd = findSound(crc);
 	if (snd == NULL) {
-		warning("player_v2a - sound %i not recognized yet (crc %08X)",nr,crc);
+		warning("player_v2a - sound %i not recognized yet (crc %08X)", nr, crc);
 		return;
 	}
 	stopSound(nr);
@@ -1917,7 +1921,7 @@ void Player_V2A::startSound(int nr) {
 		return;
 	_slot[i].id = nr;
 	_slot[i].sound = snd;
-	_slot[i].sound->start(_mod,nr,data);
+	_slot[i].sound->start(_mod, nr, data);
 }
 
 void Player_V2A::update_proc(void *param) {
