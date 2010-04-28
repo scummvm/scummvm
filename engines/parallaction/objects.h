@@ -272,7 +272,7 @@ public:
 
 	uint32			_type;
 	uint32			_flags;
-	uint			_label;
+	GfxObj			*_label;
 
 	TypeData		u;
 	CommandList		_commands;

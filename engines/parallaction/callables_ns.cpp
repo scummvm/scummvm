@@ -409,13 +409,14 @@ void Parallaction_ns::_c_testResult(void *parm) {
 
 	parseLocation("common");
 
-	uint id[2];
-	id[0] = _gfx->createLabel(_menuFont, _location._slideText[0].c_str(), 1);
-	id[1] = _gfx->createLabel(_menuFont, _location._slideText[1].c_str(), 1);
+	GfxObj *labels[2];
+	labels[0] = _gfx->createLabel(_menuFont, _location._slideText[0].c_str(), 1);
+	labels[1] = _gfx->createLabel(_menuFont, _location._slideText[1].c_str(), 1);
 
-	_gfx->showLabel(id[0], CENTER_LABEL_HORIZONTAL, 38);
-	_gfx->showLabel(id[1], CENTER_LABEL_HORIZONTAL, 58);
+	_gfx->showLabel(labels[0], CENTER_LABEL_HORIZONTAL, 38);
+	_gfx->showLabel(labels[1], CENTER_LABEL_HORIZONTAL, 58);
 
+	// FIXME: this leaks two labels
 	return;
 }
 

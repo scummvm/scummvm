@@ -214,7 +214,10 @@ Common::Error Parallaction_ns::init() {
 
 Parallaction_ns::~Parallaction_ns() {
 	freeFonts();
+
+	// TODO: we may want to add a ~Character instead
 	freeCharacter();
+	_char._ani.reset();
 
 	destroyInventory();
 
@@ -340,6 +343,7 @@ void Parallaction_ns::changeLocation() {
 	_soundManI->playLocationMusic(location);
 
 	_input->stopHovering();
+	// this is still needed to remove the floatingLabel
 	_gfx->freeLabels();
 
 	_zoneTrap.reset();
@@ -355,12 +359,13 @@ void Parallaction_ns::changeLocation() {
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
-		uint id = _gfx->createLabel(_menuFont, _location._slideText[0].c_str(), 1);
-		_gfx->showLabel(id, CENTER_LABEL_HORIZONTAL, 14);
+		GfxObj *label = _gfx->createLabel(_menuFont, _location._slideText[0].c_str(), 1);
+		_gfx->showLabel(label, CENTER_LABEL_HORIZONTAL, 14);
 		_gfx->updateScreen();
 
 		_input->waitForButtonEvent(kMouseLeftUp);
-		_gfx->freeLabels();
+		_gfx->unregisterLabel(label);
+		delete label;
 	}
 
 	if (locname.hasCharacter()) {

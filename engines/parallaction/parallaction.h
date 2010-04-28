@@ -546,7 +546,7 @@ public:
 	uint		_subtitleLipSync;
 #endif
 	int			_subtitleY;
-	int			_subtitle[2];
+	GfxObj		*_subtitle[2];
 	ZonePtr		_activeZone2;
 	uint32		_zoneFlags[NUM_LOCATIONS][NUM_ZONES];
 
