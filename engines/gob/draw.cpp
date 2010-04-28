@@ -384,7 +384,12 @@ void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 col
 		int16 transp, SurfaceDesc &dest, const Font &font) {
 
 	while (*str != '\0') {
-		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
+		const int16 charRight  = x + font.getCharWidth(*str);
+		const int16 charBottom = y + font.getCharHeight();
+
+		if ((charRight <= dest.getWidth()) && (charBottom <= dest.getHeight()))
+			_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
+
 		x += font.getCharWidth(*str);
 		str++;
 	}
