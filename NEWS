@@ -16,6 +16,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Fixed several minor bugs here and there.
 
+ Drascula:
+   - Fixed regression that caused some texts to always be in English, even when
+     using another language. (#2970211 - DRASCULA: missing german translation)
+
  KYRA:
    - Fixed a bug which caused the DOS versions to crash before the credits when
      AdLib music is selected.

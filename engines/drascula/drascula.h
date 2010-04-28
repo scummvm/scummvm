@@ -259,7 +259,7 @@ public:
 
 	void enableFallback(bool val) { _fallBack = val; }
 
-	void registerArchive(const Common::String &filename);
+	void registerArchive(const Common::String &filename, int priority);
 
 	Common::SeekableReadStream *open(const Common::String &filename);
 
