@@ -721,7 +721,8 @@ void Gfx::grabBackground(const Common::Rect& r, Graphics::Surface &dst) {
 
 Gfx::Gfx(Parallaction* vm) :
 	_vm(vm), _disk(vm->_disk), _backgroundInfo(0), _scrollPosX(0), _minScrollX(0), _maxScrollX(0),
-	_minScrollY(0), _maxScrollY(0), _requestedHScrollSteps(0), _requestedVScrollSteps(0) {
+	_minScrollY(0), _maxScrollY(0), _requestedHScrollSteps(0), _requestedVScrollSteps(0),
+	_requestedHScrollDir(0), _requestedVScrollDir(0) {
 
 	_gameType = _vm->getGameType();
 	_doubleBuffering = _gameType != GType_Nippon;
