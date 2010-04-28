@@ -40,6 +40,23 @@ namespace Cine {
 byte *collisionPage;
 FWRenderer *renderer = NULL;
 
+// Constants related to kLowPalFormat
+#define kLowPalBytesPerColor 2
+#define kLowPalNumColors 16
+#define kLowPalNumBytes ((kLowPalNumColors) * (kLowPalBytesPerColor))
+
+/** Low resolution (9-bit) color format used in Cine's 16-color modes. */
+#define kLowPalFormat Graphics::PixelFormat(kLowPalBytesPerColor, 3, 3, 3, 0, 8, 4, 0, 0)
+
+
+// Constants related to kHighPalFormat
+#define kHighPalBytesPerColor 3
+#define kHighPalNumColors 256
+#define kHighPalNumBytes ((kHighPalNumColors) * (kHighPalBytesPerColor))
+
+/** High resolution (24-bit) color format used in Cine's 256-color modes. */
+#define kHighPalFormat Graphics::PixelFormat(kHighPalBytesPerColor, 8, 8, 8, 0, 0, 8, 16, 0)
+
 static const byte mouseCursorNormal[] = {
 	0x00, 0x00, 0x40, 0x00, 0x60, 0x00, 0x70, 0x00,
 	0x78, 0x00, 0x7C, 0x00, 0x7E, 0x00, 0x7F, 0x00,

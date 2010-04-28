@@ -186,7 +186,9 @@ const Graphics::PixelFormat &Palette::colorFormat() const {
 
 void Palette::setGlobalOSystemPalette() const {
 	byte buf[256 * 4]; // Allocate space for the largest possible palette
-	save(buf, sizeof(buf), Cine::kSystemPalFormat, CINE_LITTLE_ENDIAN);
+	// The color format used by OSystem's setPalette-function:
+	static const Graphics::PixelFormat kSystemPalFormat(4, 8, 8, 8, 0, 0, 8, 16, 0);
+	save(buf, sizeof(buf), kSystemPalFormat, CINE_LITTLE_ENDIAN);
 
 	if (g_cine->getPlatform() == Common::kPlatformAmiga && colorCount() == 16) {
 		// The Amiga version of Future Wars does use the upper 16 colors for a darkened

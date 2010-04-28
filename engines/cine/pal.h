@@ -30,26 +30,6 @@
 
 namespace Cine {
 
-// Constants related to kLowPalFormat
-#define kLowPalBytesPerColor 2
-#define kLowPalNumColors 16
-#define kLowPalNumBytes ((kLowPalNumColors) * (kLowPalBytesPerColor))
-
-/** Low resolution (9-bit) color format used in Cine's 16-color modes. */
-static const Graphics::PixelFormat kLowPalFormat(kLowPalBytesPerColor, 3, 3, 3, 0, 8, 4, 0, 0);
-
-
-// Constants related to kHighPalFormat
-#define kHighPalBytesPerColor 3
-#define kHighPalNumColors 256
-#define kHighPalNumBytes ((kHighPalNumColors) * (kHighPalBytesPerColor))
-
-/** High resolution (24-bit) color format used in Cine's 256-color modes. */
-static const Graphics::PixelFormat kHighPalFormat(kHighPalBytesPerColor, 8, 8, 8, 0, 0, 8, 16, 0);
-
-/** The color format used by OSystem's setPalette-function. */
-static const Graphics::PixelFormat kSystemPalFormat(4, 8, 8, 8, 0, 0, 8, 16, 0);
-
 /**
  * Endian types. Used at least by Palette class's load and save functions.
  * TODO: Move somewhere more general as this is definitely not Cine-engine specific
