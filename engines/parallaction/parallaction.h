@@ -439,6 +439,7 @@ private:
 	void	loadProgram(AnimationPtr a, const char *filename);
 	void	freeLocation(bool removeAll);
 	void	freeCharacter();
+	void	destroyTestResultLabels();
 	void	startMovingSarcophagus(ZonePtr sarc);
 	void	stopMovingSarcophagus();
 
@@ -459,6 +460,8 @@ private:
 	bool _intro;
 	static const Callable _dosCallables[25];
 	static const Callable _amigaCallables[25];
+
+	GfxObj *_testResultLabels[2];
 
 	PathWalker_NS		*_walker;
 

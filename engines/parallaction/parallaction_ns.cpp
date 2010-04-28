@@ -228,8 +228,17 @@ Parallaction_ns::~Parallaction_ns() {
 	_location._animations.remove(_char._ani);
 
 	delete _walker;
+
+	destroyTestResultLabels();
 }
 
+void Parallaction_ns::destroyTestResultLabels() {
+	for (int i = 0; i < 2; ++i) {
+		_gfx->unregisterLabel(_testResultLabels[i]);
+		delete _testResultLabels[i];
+		_testResultLabels[i] = 0;
+	}
+}
 
 void Parallaction_ns::freeFonts() {
 
