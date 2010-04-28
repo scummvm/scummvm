@@ -2,7 +2,7 @@
 # $URL$
 # $Id$
 
-VERBOSE_BUILD=1
+
 #Use only this section to modify how the makefile behaves ------------
 
 # Scummvm engine config: choose which engines are enabled
@@ -39,10 +39,13 @@ ENABLE_TINSEL = $(ENABLED)
 ENABLE_TOUCHE = $(ENABLED)
 ENABLE_TUCKER = $(ENABLED)
 
-
-#Set to 1 to enable, 0 to disable dynamic modules
+# Set to 1 to enable seeing the commands to gcc
+VERBOSE_BUILD=1
+# Set to 1 to enable, 0 to disable dynamic modules
 DYNAMIC_MODULES = 1
-#Set to 1 to enable, 0 to disable libmad and libogg
+# Set to 1 to enable profiling
+ENABLE_PROFILING = 0
+# Set to 1 to enable, 0 to disable libmad and libogg
 USE_LIBMAD = 1
 USE_LIBOGG = 1
 # --------------------------------------------------------------------
@@ -63,14 +66,13 @@ endif
 
 
 # Variables for common Scummvm makefile
-#CC	 = psp-gcc
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
-DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -DDISABLE_DOSBOX_OPL -DUSE_RGB_COLOR
+DEFINES  = -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB  -DDISABLE_DOSBOX_OPL -DUSE_RGB_COLOR
+
 LDFLAGS  :=
 INCDIR   := $(srcdir) . $(srcdir)/engines/ $(PSPSDK)/include
 INCLUDES := $(addprefix -I, $(INCDIR))
-#EXECUTABLE = $(TARGET)
 DEPDIR = .deps
 MODULE_DIRS += ./
 MKDIR	= mkdir -p
@@ -119,12 +121,19 @@ else
 ENABLED = STATIC_PLUGIN
 endif
 
+# Test for profiling
+ifeq ($(ENABLE_PROFILING),1)
+DEFINES += -DENABLE_PROFILING
+CXXFLAGS += -pg -g
+LDFLAGS += -pg
+endif
+
 # SDL Libs and Flags
 SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
 SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
-PSPLIBS = -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
-	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio
+PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
+	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspkernel
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
