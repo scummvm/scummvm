@@ -197,10 +197,10 @@ public:
 
 	KEYFPTR _keyHandler;
 
-	// Stack of pending mouse button events
+	/** Stack of pending mouse button events. */
 	Common::List<Common::EventType> _mouseButtons;
 
-	// Stack of pending keypresses
+	/** Stack of pending keypresses. */
 	Common::List<Common::Event> _keypresses;
 
 private:

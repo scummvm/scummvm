@@ -100,8 +100,6 @@ static bool bCuttingScene = false;
 
 static bool bChangingForRestore = false;
 
-static Common::Point clickPos;
-
 #ifdef DEBUG
 bool bFast;		// set to make it go ludicrously fast
 #endif
@@ -265,7 +263,7 @@ void KeyboardProcess(CORO_PARAM, const void *) {
  * Handles launching a single click action result if the timeout for a double-click
  * expires
  */
-static void SingleLeftProcess(CORO_PARAM, const void *) {
+static void SingleLeftProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 		uint32 endTicks;
 	CORO_END_CONTEXT(_ctx);
@@ -280,8 +278,10 @@ static void SingleLeftProcess(CORO_PARAM, const void *) {
 		CORO_SLEEP(1);
 	} while (DwGetCurrentTime() < _ctx->endTicks);
 
-	if (GetProvNotProcessed())
+	if (GetProvNotProcessed()) {
+		Common::Point clickPos = *(Common::Point *)param;
 		PlayerEvent(PLR_WALKTO, clickPos);
+	}
 
 	CORO_KILL_SELF();
 	CORO_END_CODE;
@@ -296,6 +296,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 		bool lastLWasDouble;
 		bool lastRWasDouble;
 		uint32 lastLeftClick, lastRightClick;
+		Common::Point clickPos;
 	CORO_END_CONTEXT(_ctx);
 
 	CORO_BEGIN_CODE(_ctx);
@@ -329,7 +330,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				if (TinselV2) {
 					// Kill off the button process and fire off the action command
 					g_scheduler->killMatchingProcess(PID_BTN_CLICK, -1);
-					PlayerEvent(PLR_ACTION, clickPos);
+					PlayerEvent(PLR_ACTION, _ctx->clickPos);
 				} else {
 					// signal left drag start
 					ProcessButEvent(PLR_DRAG1_START);
@@ -371,8 +372,8 @@ static void MouseProcess(CORO_PARAM, const void *) {
 				// If player control is enabled, start a process which, if it times out,
 				// will activate a single button click
 				if (TinselV2 && ControlIsOn()) {
-					clickPos = mousePos;
-					g_scheduler->createProcess(PID_BTN_CLICK, SingleLeftProcess, NULL, 0);
+					_ctx->clickPos = mousePos;
+					g_scheduler->createProcess(PID_BTN_CLICK, SingleLeftProcess, &_ctx->clickPos, sizeof(Common::Point));
 				}
 			} else
 				_ctx->lastLeftClick -= _vm->_config->_dclickSpeed;
@@ -391,7 +392,7 @@ static void MouseProcess(CORO_PARAM, const void *) {
 			if (DwGetCurrentTime() - _ctx->lastRightClick < (uint32)_vm->_config->_dclickSpeed) {
 				// Right button double-click
 				if (TinselV2) {
-					PlayerEvent(PLR_NOEVENT, clickPos);
+					PlayerEvent(PLR_NOEVENT, _ctx->clickPos);
 				} else {
 					// signal right drag start
 					ProcessButEvent(PLR_DRAG2_START);
