@@ -1346,7 +1346,7 @@ void LocationParser_ns::parseGetData(ZonePtr z) {
 void LocationParser_ns::parseExamineData(ZonePtr z) {
 	TypeData *data = &z->u;
 	if (!scumm_stricmp(_tokens[0], "file")) {
-		data->_filename = strdup(_tokens[1]);
+		data->_filename = _tokens[1];
 	} else
 	if (!scumm_stricmp(_tokens[0], "desc")) {
 		data->_examineText = parseComment();
@@ -1360,7 +1360,7 @@ void LocationParser_ns::parseDoorData(ZonePtr z) {
 		_vm->_location._slideText[1] = _tokens[2];
 	} else
 	if (!scumm_stricmp(_tokens[0], "location")) {
-		data->_doorLocation = strdup(_tokens[1]);
+		data->_doorLocation = _tokens[1];
 	} else
 	if (!scumm_stricmp(_tokens[0], "file")) {
 		GfxObj *obj = _vm->_gfx->loadDoor(_tokens[1]);
