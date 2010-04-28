@@ -73,10 +73,10 @@ void PathWalker_NS::correctPathPoint(Common::Point &to) {
 	int16 left = to.x;
 	do {
 		right++;
-	} while (!IS_PATH_CLEAR(right, to.y) && (right < maxX));
+	} while ((right < maxX) && !IS_PATH_CLEAR(right, to.y));
 	do {
 		left--;
-	} while (!IS_PATH_CLEAR(left, to.y) && (left > 0));
+	} while ((left > 0) && !IS_PATH_CLEAR(left, to.y));
 	right = (right == maxX) ? 1000 : right - to.x;
 	left = (left == 0) ? 1000 : to.x - left;
 
@@ -85,10 +85,10 @@ void PathWalker_NS::correctPathPoint(Common::Point &to) {
 	int16 bottom = to.y;
 	do {
 		top--;
-	} while (!IS_PATH_CLEAR(to.x, top) && (top > 0));
+	} while ((top > 0) && !IS_PATH_CLEAR(to.x, top));
 	do {
 		bottom++;
-	} while (!IS_PATH_CLEAR(to.x, bottom) && (bottom < maxY));
+	} while ((bottom < maxY) && !IS_PATH_CLEAR(to.x, bottom) );
 	top = (top == 0) ? 1000 : to.y - top;
 	bottom = (bottom == maxY) ? 1000 : bottom - to.y;
 
