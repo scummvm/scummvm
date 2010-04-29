@@ -36,6 +36,9 @@
 #include "sound/audiocd.h"
 #include "sound/decoders/raw.h"
 #include "sound/decoders/wave.h"
+#include "sound/decoders/flac.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
 
 namespace Sci {
 
@@ -224,36 +227,65 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	}
 
 	byte audioFlags;
+	uint32 audioCompressionType = audioRes->getAudioCompressionType();
 
-	if (audioRes->_headerSize > 0) {
-		// SCI1.1
-		Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
-
-		if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags)) {
-			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
-			data = readSOLAudio(&dataStream, size, audioFlags, flags);
+	if (audioCompressionType) {
+		// Compressed audio made by our tool
+		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::YES);
+		
+		switch (audioCompressionType) {
+		case MKID_BE('MP3 '):
+#ifdef USE_MAD
+			audioStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
+#endif
+			break;
+		case MKID_BE('OGG '):
+#ifdef USE_VORBIS
+			audioStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
+#endif
+			break;
+		case MKID_BE('FLAC'):
+#ifdef USE_FLAC
+			audioStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
+#endif
+			break;
 		}
+
+		// Hopefully FLAC/OGG/MP3 are always 16-bit, otherwise we will get inaccuracies during sampleLen calculation
+		//  TODO: Check if this is true, otherwise implement support for getting 8-bit/16-bit from stream in common
+		flags = Audio::FLAG_16BITS;
 	} else {
-		// SCI1 or WAVE file
-		if (audioRes->size > 4) {
-			if (memcmp(audioRes->data, "RIFF", 4) == 0) {
-				// WAVE detected
-				Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
-				audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
+		// Original source file
+		if (audioRes->_headerSize > 0) {
+			// SCI1.1
+			Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
+
+			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags)) {
+				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+				data = readSOLAudio(&dataStream, size, audioFlags, flags);
+			}
+		} else {
+			// SCI1 or WAVE file
+			if (audioRes->size > 4) {
+				if (memcmp(audioRes->data, "RIFF", 4) == 0) {
+					// WAVE detected
+					Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+					audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
+				}
+			}
+			if (!audioStream) {
+				// SCI1 raw audio
+				size = audioRes->size;
+				data = (byte *)malloc(size);
+				assert(data);
+				memcpy(data, audioRes->data, size);
+				flags = Audio::FLAG_UNSIGNED;
 			}
 		}
-		if (!audioStream) {
-			// SCI1 raw audio
-			size = audioRes->size;
-			data = (byte *)malloc(size);
-			assert(data);
-			memcpy(data, audioRes->data, size);
-			flags = Audio::FLAG_UNSIGNED;
-		}
-	}
 
-	if (data)
-		audioStream = Audio::makeRawStream(data, size, _audioRate, flags);
+		if (data)
+			audioStream = Audio::makeRawStream(data, size, _audioRate, flags);
+	}
 
 	if (audioStream) {
 		*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;

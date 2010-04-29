@@ -185,6 +185,7 @@ public:
 	uint32 _headerSize;
 
 	void writeToStream(Common::WriteStream *stream) const;
+	uint32 getAudioCompressionType();
 
 protected:
 	int32 _fileOffset; /**< Offset in file */
@@ -331,6 +332,12 @@ protected:
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addInternalMap(const char *name, int resNr);
+
+	/**
+	 * Checks, if an audio volume got compressed by our tool. If that's the case, it will set audioCompressionType
+	 *  and read in the offset translation table for later usage.
+	 */
+	void checkIfAudioVolumeIsCompressed(ResourceSource *source);
 
 	/**
 	 * Scans newly registered resource sources for resources, earliest addition first.

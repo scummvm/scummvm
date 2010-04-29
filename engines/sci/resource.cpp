@@ -57,6 +57,8 @@ struct ResourceSource {
 	const Common::FSNode *resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;
+	uint32 audioCompressionType;
+	int32 *audioCompressionOffsetMapping;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -176,6 +178,10 @@ void Resource::writeToStream(Common::WriteStream *stream) const {
 	stream->write(data, size);
 }
 
+uint32 Resource::getAudioCompressionType() {
+	return _source->audioCompressionType;
+}
+
 //-- resMan helper functions --
 
 // Resource source list management
@@ -217,6 +223,10 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->resourceFile = 0;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
+	newsrc->audioCompressionType = 0;
+	newsrc->audioCompressionOffsetMapping = NULL;
+	if (type == kSourceAudioVolume)
+		checkIfAudioVolumeIsCompressed(newsrc);
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -231,6 +241,10 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
+	newsrc->audioCompressionType = 0;
+	newsrc->audioCompressionOffsetMapping = NULL;
+	if (type == kSourceAudioVolume)
+		checkIfAudioVolumeIsCompressed(newsrc);
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -259,6 +273,32 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 }
 
 // Resource manager constructors and operations
+
+void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
+	Common::File *file = getVolumeFile(source->location_name.c_str());
+	if (!file) {
+		warning("Failed to open %s", source->location_name.c_str());
+		return;
+	}
+	file->seek(0, SEEK_SET);
+	uint32 compressionType = file->readUint32BE();
+	switch (compressionType) {
+	case MKID_BE('MP3 '):
+	case MKID_BE('OGG '):
+	case MKID_BE('FLAC'):
+		// Detected a compressed audio volume
+		source->audioCompressionType = compressionType;
+		// Now read the whole offset mapping table for later usage
+		uint32 recordCount = file->readUint32LE();
+		if (!recordCount)
+			error("compressed audio volume doesn't contain any entries!");
+		source->audioCompressionOffsetMapping = new int32[(recordCount + 1) * 4 * 2];
+		file->read(&source->audioCompressionOffsetMapping, recordCount * 4 * 2);
+		// Put ending zero
+		source->audioCompressionOffsetMapping[recordCount * 2] = 0;
+		source->audioCompressionOffsetMapping[recordCount * 2 + 1] = file->size();
+	}
+}
 
 bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 	// We assume that the resource type matches res->type
@@ -408,17 +448,55 @@ void ResourceManager::loadResource(Resource *res) {
 		res->unalloc();
 		return;
 	}
-	file->seek(res->_fileOffset, SEEK_SET);
 
-	if (res->_source->source_type == kSourceWave && loadFromWaveFile(res, *file))
+	switch(res->_source->source_type) {
+	case kSourceWave:
+		file->seek(res->_fileOffset, SEEK_SET);
+		loadFromWaveFile(res, *file);
 		return;
 
-	if (res->_source->source_type == kSourceAudioVolume) {
+	case kSourceAudioVolume:
+		if (res->_source->audioCompressionType) {
+			// this file is compressed, so lookup our offset in the offset-translation table and get the new offset
+			//  also calculate the compressed size by using the next offset
+			int32 *mappingTable = res->_source->audioCompressionOffsetMapping;
+			int32 compressedOffset = 0;
+
+			do {
+				if (*mappingTable == res->_fileOffset) {
+					mappingTable++;
+					compressedOffset = *mappingTable;
+					// Go to next compressed offset and use that to calculate size of compressed sample
+					mappingTable += 2;
+					res->size = *mappingTable - compressedOffset;
+					break;
+				}
+				mappingTable += 2;
+			} while (*mappingTable);
+
+			if (!compressedOffset)
+				error("could not translate offset to compressed offset in audio volume");
+			file->seek(compressedOffset, SEEK_SET);
+
+			switch (res->_id.type) {
+			case kResourceTypeAudio:
+			case kResourceTypeAudio36:
+				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
+				loadFromAudioVolumeSCI1(res, *file);
+				return;
+			}
+		} else {
+			// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
+			file->seek(res->_fileOffset, SEEK_SET);
+		}
 		if (getSciVersion() < SCI_VERSION_1_1)
 			loadFromAudioVolumeSCI1(res, *file);
 		else
 			loadFromAudioVolumeSCI11(res, *file);
-	} else {
+		return;
+
+	default:
+		file->seek(res->_fileOffset, SEEK_SET);
 		int error = decompress(res, file);
 		if (error) {
 			warning("Error %d occured while reading %s from resource file: %s",
