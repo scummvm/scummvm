@@ -1840,7 +1840,7 @@ int MSBuildProvider::getVisualStudioVersion() {
 
 #define OUTPUT_PROPERTIES_MSBUILD(config, properties) \
 	project << "\t<ImportGroup Condition=\"'$(Configuration)|$(Platform)'=='" << config << "'\" Label=\"PropertySheets\">\n" \
-	           "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" />\n" \
+	           "\t\t<Import Project=\"$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props\" Condition=\"exists('$(UserRootDir)\\Microsoft.Cpp.$(Platform).user.props')\" Label=\"LocalAppDataPlatform\" />\n" \
 	           "\t\t<Import Project=\"" << properties << "\" />\n" \
 	           "\t</ImportGroup>\n"
 
@@ -1890,7 +1890,7 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 
 	// Project version number
 	project << "\t<PropertyGroup>\n"
-	           "\t\t<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"; // FIXME: update temporary entry _ProjectFileVersion
+	           "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n";
 
 	if (name == "scummvm")
 		project << "<ExecutablePath>$(SCUMMVM_LIBS)\\bin;$(VCInstallDir)bin;$(WindowsSdkDir)bin\\NETFX 4.0 Tools;$(WindowsSdkDir)bin;$(VSInstallDir)Common7\\Tools\\bin;$(VSInstallDir)Common7\\tools;$(VSInstallDir)Common7\\ide;$(ProgramFiles)\\HTML Help Workshop;$(FrameworkSDKDir)\\bin;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>\n"
@@ -2041,12 +2041,11 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
-	// FIXME: update temporary entries _ProjectFileVersion & _PropertySheetDisplayName
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {	
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "<PropertyGroup>\n"
-	              "<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"
+	              "<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
 	              "<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
 	              "<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
 	              "<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
@@ -2087,14 +2086,13 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	if (!properties)
 		error("Could not open \"" + setup.outputDir + '/' + "ScummVM_" + outputType + (isWin32 ? "" : "64") + getPropertiesExtension() + "\" for writing");
 
-	// FIXME: update temporary entries _ProjectFileVersion & _PropertySheetDisplayName
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
 	              "\t<ImportGroup Label=\"PropertySheets\">\n"
 	              "\t\t<Import Project=\"ScummVM_Global" << (isWin32 ? "" : "64") << ".props\" />\n"
 	              "\t</ImportGroup>\n"
 	              "\t<PropertyGroup>\n"
-	              "\t\t<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>\n"
+	              "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
 	              "\t\t<_PropertySheetDisplayName>ScummVM_" << outputType << outputBitness << "</_PropertySheetDisplayName>\n"
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"
@@ -2136,12 +2134,12 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 }
 
 #define OUTPUT_NASM_COMMAND_MSBUILD(config) \
-	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(FileName).obj\" \"%(FullPath)\"</Command>\n" \
-	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(FileName).obj;%(Outputs)</Outputs>\n";
+	projectFile << "\t\t\t<Command Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">nasm.exe -f win32 -g -o \"$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj\" \"%(FullPath)\"</Command>\n" \
+	               "\t\t\t<Outputs Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|Win32'\">$(IntDir)" << (isDuplicate ? (*entry).prefix : "") << "%(Filename).obj;%(Outputs)</Outputs>\n";
 
 #define OUPUT_OBJECT_FILENAME_MSBUILD(config, platform, prefix) \
-	projectFile << "\t\t<ObjectFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(FileName).obj</ObjectFileName>\n" \
-	               "\t\t<XMLDocumentationFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(FileName).xdc</XMLDocumentationFileName>\n";
+	projectFile << "\t\t<ObjectFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(Filename).obj</ObjectFileName>\n" \
+	               "\t\t<XMLDocumentationFileName Condition=\"'$(Configuration)|$(Platform)'=='" << config << "|" << platform << "'\">$(IntDir)" << prefix << "%(Filename).xdc</XMLDocumentationFileName>\n";
 
 #define OUPUT_FILES_MSBUILD(files, action) \
 	if (!files.empty()) { \
