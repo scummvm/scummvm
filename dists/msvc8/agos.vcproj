@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="agos"
+	ProjectGUID="{12F87761-FACA-4D78-BEF5-F3C9D6BB3717}"
+	RootNamespace="agos"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\agos\agos.cpp" />
+		<File RelativePath="..\..\engines\agos\agos.h" />
+		<File RelativePath="..\..\engines\agos\agos.o" />
+		<File RelativePath="..\..\engines\agos\animation.cpp" />
+		<File RelativePath="..\..\engines\agos\animation.h" />
+		<File RelativePath="..\..\engines\agos\animation.o" />
+		<File RelativePath="..\..\engines\agos\charset-fontdata.cpp" />
+		<File RelativePath="..\..\engines\agos\charset-fontdata.o" />
+		<File RelativePath="..\..\engines\agos\charset.cpp" />
+		<File RelativePath="..\..\engines\agos\charset.o" />
+		<File RelativePath="..\..\engines\agos\contain.cpp" />
+		<File RelativePath="..\..\engines\agos\contain.o" />
+		<File RelativePath="..\..\engines\agos\cursor.cpp" />
+		<File RelativePath="..\..\engines\agos\cursor.o" />
+		<File RelativePath="..\..\engines\agos\debug.cpp" />
+		<File RelativePath="..\..\engines\agos\debug.h" />
+		<File RelativePath="..\..\engines\agos\debug.o" />
+		<File RelativePath="..\..\engines\agos\debugger.cpp" />
+		<File RelativePath="..\..\engines\agos\debugger.h" />
+		<File RelativePath="..\..\engines\agos\debugger.o" />
+		<File RelativePath="..\..\engines\agos\detection.cpp" />
+		<File RelativePath="..\..\engines\agos\detection.o" />
+		<File RelativePath="..\..\engines\agos\detection_tables.h" />
+		<File RelativePath="..\..\engines\agos\draw.cpp" />
+		<File RelativePath="..\..\engines\agos\draw.o" />
+		<File RelativePath="..\..\engines\agos\event.cpp" />
+		<File RelativePath="..\..\engines\agos\event.o" />
+		<File RelativePath="..\..\engines\agos\feeble.cpp" />
+		<File RelativePath="..\..\engines\agos\feeble.o" />
+		<File RelativePath="..\..\engines\agos\gfx.cpp" />
+		<File RelativePath="..\..\engines\agos\gfx.o" />
+		<File RelativePath="..\..\engines\agos\icons.cpp" />
+		<File RelativePath="..\..\engines\agos\icons.o" />
+		<File RelativePath="..\..\engines\agos\input.cpp" />
+		<File RelativePath="..\..\engines\agos\input.o" />
+		<File RelativePath="..\..\engines\agos\input_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\input_pn.o" />
+		<File RelativePath="..\..\engines\agos\intern.h" />
+		<File RelativePath="..\..\engines\agos\items.cpp" />
+		<File RelativePath="..\..\engines\agos\items.o" />
+		<File RelativePath="..\..\engines\agos\menus.cpp" />
+		<File RelativePath="..\..\engines\agos\menus.o" />
+		<File RelativePath="..\..\engines\agos\midi.cpp" />
+		<File RelativePath="..\..\engines\agos\midi.h" />
+		<File RelativePath="..\..\engines\agos\midi.o" />
+		<File RelativePath="..\..\engines\agos\midiparser_s1d.cpp" />
+		<File RelativePath="..\..\engines\agos\midiparser_s1d.o" />
+		<File RelativePath="..\..\engines\agos\module.mk" />
+		<File RelativePath="..\..\engines\agos\oracle.cpp" />
+		<File RelativePath="..\..\engines\agos\oracle.o" />
+		<File RelativePath="..\..\engines\agos\pn.cpp" />
+		<File RelativePath="..\..\engines\agos\pn.o" />
+		<File RelativePath="..\..\engines\agos\res.cpp" />
+		<File RelativePath="..\..\engines\agos\res.o" />
+		<File RelativePath="..\..\engines\agos\res_ami.cpp" />
+		<File RelativePath="..\..\engines\agos\res_ami.o" />
+		<File RelativePath="..\..\engines\agos\res_snd.cpp" />
+		<File RelativePath="..\..\engines\agos\res_snd.o" />
+		<File RelativePath="..\..\engines\agos\rooms.cpp" />
+		<File RelativePath="..\..\engines\agos\rooms.o" />
+		<File RelativePath="..\..\engines\agos\saveload.cpp" />
+		<File RelativePath="..\..\engines\agos\saveload.o" />
+		<File RelativePath="..\..\engines\agos\script.cpp" />
+		<File RelativePath="..\..\engines\agos\script.o" />
+		<File RelativePath="..\..\engines\agos\script_dp.cpp" />
+		<File RelativePath="..\..\engines\agos\script_dp.o" />
+		<File RelativePath="..\..\engines\agos\script_e1.cpp" />
+		<File RelativePath="..\..\engines\agos\script_e1.o" />
+		<File RelativePath="..\..\engines\agos\script_e2.cpp" />
+		<File RelativePath="..\..\engines\agos\script_e2.o" />
+		<File RelativePath="..\..\engines\agos\script_ff.cpp" />
+		<File RelativePath="..\..\engines\agos\script_ff.o" />
+		<File RelativePath="..\..\engines\agos\script_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\script_pn.o" />
+		<File RelativePath="..\..\engines\agos\script_pp.cpp" />
+		<File RelativePath="..\..\engines\agos\script_pp.o" />
+		<File RelativePath="..\..\engines\agos\script_s1.cpp" />
+		<File RelativePath="..\..\engines\agos\script_s1.o" />
+		<File RelativePath="..\..\engines\agos\script_s2.cpp" />
+		<File RelativePath="..\..\engines\agos\script_s2.o" />
+		<File RelativePath="..\..\engines\agos\script_ww.cpp" />
+		<File RelativePath="..\..\engines\agos\script_ww.o" />
+		<File RelativePath="..\..\engines\agos\sound.cpp" />
+		<File RelativePath="..\..\engines\agos\sound.h" />
+		<File RelativePath="..\..\engines\agos\sound.o" />
+		<File RelativePath="..\..\engines\agos\string.cpp" />
+		<File RelativePath="..\..\engines\agos\string.o" />
+		<File RelativePath="..\..\engines\agos\string_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\string_pn.o" />
+		<File RelativePath="..\..\engines\agos\subroutine.cpp" />
+		<File RelativePath="..\..\engines\agos\subroutine.o" />
+		<File RelativePath="..\..\engines\agos\verb.cpp" />
+		<File RelativePath="..\..\engines\agos\verb.o" />
+		<File RelativePath="..\..\engines\agos\verb_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\verb_pn.o" />
+		<File RelativePath="..\..\engines\agos\vga.cpp" />
+		<File RelativePath="..\..\engines\agos\vga.h" />
+		<File RelativePath="..\..\engines\agos\vga.o" />
+		<File RelativePath="..\..\engines\agos\vga_e2.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_e2.o" />
+		<File RelativePath="..\..\engines\agos\vga_ff.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_ff.o" />
+		<File RelativePath="..\..\engines\agos\vga_pn.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_pn.o" />
+		<File RelativePath="..\..\engines\agos\vga_s1.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_s1.o" />
+		<File RelativePath="..\..\engines\agos\vga_s2.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_s2.o" />
+		<File RelativePath="..\..\engines\agos\vga_ww.cpp" />
+		<File RelativePath="..\..\engines\agos\vga_ww.o" />
+		<File RelativePath="..\..\engines\agos\window.cpp" />
+		<File RelativePath="..\..\engines\agos\window.o" />
+		<File RelativePath="..\..\engines\agos\zones.cpp" />
+		<File RelativePath="..\..\engines\agos\zones.o" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="agi"
+	ProjectGUID="{BE223276-3071-4F10-B7A5-7BF51D512334}"
+	RootNamespace="agi"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4510;4610" />
+		</Configuration>
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4510;4610" />
+		</Configuration>
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4510;4610" />
+		</Configuration>
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops">
+			<Tool Name="VCCLCompilerTool" DisableSpecificWarnings="4510;4610" />
+		</Configuration>
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\agi\agi.cpp" />
+		<File RelativePath="..\..\engines\agi\agi.h" />
+		<File RelativePath="..\..\engines\agi\agi.o" />
+		<File RelativePath="..\..\engines\agi\checks.cpp" />
+		<File RelativePath="..\..\engines\agi\checks.o" />
+		<File RelativePath="..\..\engines\agi\console.cpp" />
+		<File RelativePath="..\..\engines\agi\console.h" />
+		<File RelativePath="..\..\engines\agi\console.o" />
+		<File RelativePath="..\..\engines\agi\cycle.cpp" />
+		<File RelativePath="..\..\engines\agi\cycle.o" />
+		<File RelativePath="..\..\engines\agi\detection.cpp" />
+		<File RelativePath="..\..\engines\agi\detection.o" />
+		<File RelativePath="..\..\engines\agi\font.h" />
+		<File RelativePath="..\..\engines\agi\global.cpp" />
+		<File RelativePath="..\..\engines\agi\global.o" />
+		<File RelativePath="..\..\engines\agi\graphics.cpp" />
+		<File RelativePath="..\..\engines\agi\graphics.h" />
+		<File RelativePath="..\..\engines\agi\graphics.o" />
+		<File RelativePath="..\..\engines\agi\id.cpp" />
+		<File RelativePath="..\..\engines\agi\id.o" />
+		<File RelativePath="..\..\engines\agi\inv.cpp" />
+		<File RelativePath="..\..\engines\agi\inv.o" />
+		<File RelativePath="..\..\engines\agi\keyboard.cpp" />
+		<File RelativePath="..\..\engines\agi\keyboard.h" />
+		<File RelativePath="..\..\engines\agi\keyboard.o" />
+		<File RelativePath="..\..\engines\agi\loader_v2.cpp" />
+		<File RelativePath="..\..\engines\agi\loader_v2.o" />
+		<File RelativePath="..\..\engines\agi\loader_v3.cpp" />
+		<File RelativePath="..\..\engines\agi\loader_v3.o" />
+		<File RelativePath="..\..\engines\agi\logic.cpp" />
+		<File RelativePath="..\..\engines\agi\logic.h" />
+		<File RelativePath="..\..\engines\agi\logic.o" />
+		<File RelativePath="..\..\engines\agi\lzw.cpp" />
+		<File RelativePath="..\..\engines\agi\lzw.h" />
+		<File RelativePath="..\..\engines\agi\lzw.o" />
+		<File RelativePath="..\..\engines\agi\menu.cpp" />
+		<File RelativePath="..\..\engines\agi\menu.h" />
+		<File RelativePath="..\..\engines\agi\menu.o" />
+		<File RelativePath="..\..\engines\agi\module.mk" />
+		<File RelativePath="..\..\engines\agi\motion.cpp" />
+		<File RelativePath="..\..\engines\agi\motion.o" />
+		<File RelativePath="..\..\engines\agi\objects.cpp" />
+		<File RelativePath="..\..\engines\agi\objects.o" />
+		<File RelativePath="..\..\engines\agi\op_cmd.cpp" />
+		<File RelativePath="..\..\engines\agi\op_cmd.o" />
+		<File RelativePath="..\..\engines\agi\op_dbg.cpp" />
+		<File RelativePath="..\..\engines\agi\op_dbg.o" />
+		<File RelativePath="..\..\engines\agi\op_test.cpp" />
+		<File RelativePath="..\..\engines\agi\op_test.o" />
+		<File RelativePath="..\..\engines\agi\opcodes.h" />
+		<File RelativePath="..\..\engines\agi\picture.cpp" />
+		<File RelativePath="..\..\engines\agi\picture.h" />
+		<File RelativePath="..\..\engines\agi\picture.o" />
+		<File RelativePath="..\..\engines\agi\preagi.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi.h" />
+		<File RelativePath="..\..\engines\agi\preagi.o" />
+		<File RelativePath="..\..\engines\agi\preagi_common.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_common.h" />
+		<File RelativePath="..\..\engines\agi\preagi_common.o" />
+		<File RelativePath="..\..\engines\agi\preagi_mickey.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_mickey.h" />
+		<File RelativePath="..\..\engines\agi\preagi_mickey.o" />
+		<File RelativePath="..\..\engines\agi\preagi_troll.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_troll.h" />
+		<File RelativePath="..\..\engines\agi\preagi_troll.o" />
+		<File RelativePath="..\..\engines\agi\preagi_winnie.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_winnie.h" />
+		<File RelativePath="..\..\engines\agi\preagi_winnie.o" />
+		<File RelativePath="..\..\engines\agi\predictive.cpp" />
+		<File RelativePath="..\..\engines\agi\predictive.o" />
+		<File RelativePath="..\..\engines\agi\saveload.cpp" />
+		<File RelativePath="..\..\engines\agi\saveload.o" />
+		<File RelativePath="..\..\engines\agi\sound.cpp" />
+		<File RelativePath="..\..\engines\agi\sound.h" />
+		<File RelativePath="..\..\engines\agi\sound.o" />
+		<File RelativePath="..\..\engines\agi\sprite.cpp" />
+		<File RelativePath="..\..\engines\agi\sprite.h" />
+		<File RelativePath="..\..\engines\agi\sprite.o" />
+		<File RelativePath="..\..\engines\agi\text.cpp" />
+		<File RelativePath="..\..\engines\agi\text.o" />
+		<File RelativePath="..\..\engines\agi\view.cpp" />
+		<File RelativePath="..\..\engines\agi\view.h" />
+		<File RelativePath="..\..\engines\agi\view.o" />
+		<File RelativePath="..\..\engines\agi\wagparser.cpp" />
+		<File RelativePath="..\..\engines\agi\wagparser.h" />
+		<File RelativePath="..\..\engines\agi\wagparser.o" />
+		<File RelativePath="..\..\engines\agi\words.cpp" />
+		<File RelativePath="..\..\engines\agi\words.o" />
+	</Files>
+</VisualStudioProject>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="teenagent"
+	ProjectGUID="{C2427533-1534-47BE-A158-97277F2176E6}"
+	RootNamespace="teenagent"
+	Keyword="Win32Proj"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\teenagent\actor.cpp" />
+		<File RelativePath="..\..\engines\teenagent\actor.h" />
+		<File RelativePath="..\..\engines\teenagent\actor.o" />
+		<File RelativePath="..\..\engines\teenagent\animation.cpp" />
+		<File RelativePath="..\..\engines\teenagent\animation.h" />
+		<File RelativePath="..\..\engines\teenagent\animation.o" />
+		<File RelativePath="..\..\engines\teenagent\callbacks.cpp" />
+		<File RelativePath="..\..\engines\teenagent\callbacks.o" />
+		<File RelativePath="..\..\engines\teenagent\console.cpp" />
+		<File RelativePath="..\..\engines\teenagent\console.h" />
+		<File RelativePath="..\..\engines\teenagent\console.o" />
+		<File RelativePath="..\..\engines\teenagent\detection.cpp" />
+		<File RelativePath="..\..\engines\teenagent\detection.o" />
+		<File RelativePath="..\..\engines\teenagent\dialog.cpp" />
+		<File RelativePath="..\..\engines\teenagent\dialog.h" />
+		<File RelativePath="..\..\engines\teenagent\dialog.o" />
+		<File RelativePath="..\..\engines\teenagent\font.cpp" />
+		<File RelativePath="..\..\engines\teenagent\font.h" />
+		<File RelativePath="..\..\engines\teenagent\font.o" />
+		<File RelativePath="..\..\engines\teenagent\inventory.cpp" />
+		<File RelativePath="..\..\engines\teenagent\inventory.h" />
+		<File RelativePath="..\..\engines\teenagent\inventory.o" />
+		<File RelativePath="..\..\engines\teenagent\module.mk" />
+		<File RelativePath="..\..\engines\teenagent\music.cpp" />
+		<File RelativePath="..\..\engines\teenagent\music.h" />
+		<File RelativePath="..\..\engines\teenagent\music.o" />
+		<File RelativePath="..\..\engines\teenagent\objects.cpp" />
+		<File RelativePath="..\..\engines\teenagent\objects.h" />
+		<File RelativePath="..\..\engines\teenagent\objects.o" />
+		<File RelativePath="..\..\engines\teenagent\pack.cpp" />
+		<File RelativePath="..\..\engines\teenagent\pack.h" />
+		<File RelativePath="..\..\engines\teenagent\pack.o" />
+		<File RelativePath="..\..\engines\teenagent\resources.cpp" />
+		<File RelativePath="..\..\engines\teenagent\resources.h" />
+		<File RelativePath="..\..\engines\teenagent\resources.o" />
+		<File RelativePath="..\..\engines\teenagent\scene.cpp" />
+		<File RelativePath="..\..\engines\teenagent\scene.h" />
+		<File RelativePath="..\..\engines\teenagent\scene.o" />
+		<File RelativePath="..\..\engines\teenagent\segment.cpp" />
+		<File RelativePath="..\..\engines\teenagent\segment.h" />
+		<File RelativePath="..\..\engines\teenagent\segment.o" />
+		<File RelativePath="..\..\engines\teenagent\surface.cpp" />
+		<File RelativePath="..\..\engines\teenagent\surface.h" />
+		<File RelativePath="..\..\engines\teenagent\surface.o" />
+		<File RelativePath="..\..\engines\teenagent\surface_list.cpp" />
+		<File RelativePath="..\..\engines\teenagent\surface_list.h" />
+		<File RelativePath="..\..\engines\teenagent\surface_list.o" />
+		<File RelativePath="..\..\engines\teenagent\teenagent.cpp" />
+		<File RelativePath="..\..\engines\teenagent\teenagent.h" />
+		<File RelativePath="..\..\engines\teenagent\teenagent.o" />
+	</Files>
+</VisualStudioProject>

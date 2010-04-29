@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ScummVM_Release64"
+	InheritedPropertySheets=".\ScummVM_Global64.vsprops"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		EnableIntrinsicFunctions="true"
+		WholeProgramOptimization="true"
+		PreprocessorDefinitions="WIN32"
+		StringPooling="true"
+		BufferSecurityCheck="false"
+		DebugInformationFormat="0"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		LinkIncremental="1"
+		IgnoreDefaultLibraryNames=""
+		SetChecksum="true"
+	/>
+</VisualStudioPropertySheet>

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="cruise"
+	ProjectGUID="{9374E0CC-5E9F-4897-8D18-47B0ECBE7DB7}"
+	RootNamespace="cruise"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\cruise\actor.cpp" />
+		<File RelativePath="..\..\engines\cruise\actor.h" />
+		<File RelativePath="..\..\engines\cruise\actor.o" />
+		<File RelativePath="..\..\engines\cruise\background.cpp" />
+		<File RelativePath="..\..\engines\cruise\background.h" />
+		<File RelativePath="..\..\engines\cruise\background.o" />
+		<File RelativePath="..\..\engines\cruise\backgroundIncrust.cpp" />
+		<File RelativePath="..\..\engines\cruise\backgroundIncrust.h" />
+		<File RelativePath="..\..\engines\cruise\backgroundIncrust.o" />
+		<File RelativePath="..\..\engines\cruise\cell.cpp" />
+		<File RelativePath="..\..\engines\cruise\cell.h" />
+		<File RelativePath="..\..\engines\cruise\cell.o" />
+		<File RelativePath="..\..\engines\cruise\cruise.cpp" />
+		<File RelativePath="..\..\engines\cruise\cruise.h" />
+		<File RelativePath="..\..\engines\cruise\cruise.o" />
+		<File RelativePath="..\..\engines\cruise\cruise_main.cpp" />
+		<File RelativePath="..\..\engines\cruise\cruise_main.h" />
+		<File RelativePath="..\..\engines\cruise\cruise_main.o" />
+		<File RelativePath="..\..\engines\cruise\ctp.cpp" />
+		<File RelativePath="..\..\engines\cruise\ctp.h" />
+		<File RelativePath="..\..\engines\cruise\ctp.o" />
+		<File RelativePath="..\..\engines\cruise\dataLoader.cpp" />
+		<File RelativePath="..\..\engines\cruise\dataLoader.h" />
+		<File RelativePath="..\..\engines\cruise\dataLoader.o" />
+		<File RelativePath="..\..\engines\cruise\debugger.cpp" />
+		<File RelativePath="..\..\engines\cruise\debugger.h" />
+		<File RelativePath="..\..\engines\cruise\debugger.o" />
+		<File RelativePath="..\..\engines\cruise\decompiler.cpp" />
+		<File RelativePath="..\..\engines\cruise\decompiler.o" />
+		<File RelativePath="..\..\engines\cruise\delphine-unpack.cpp" />
+		<File RelativePath="..\..\engines\cruise\delphine-unpack.o" />
+		<File RelativePath="..\..\engines\cruise\detection.cpp" />
+		<File RelativePath="..\..\engines\cruise\detection.o" />
+		<File RelativePath="..\..\engines\cruise\font.cpp" />
+		<File RelativePath="..\..\engines\cruise\font.h" />
+		<File RelativePath="..\..\engines\cruise\font.o" />
+		<File RelativePath="..\..\engines\cruise\function.cpp" />
+		<File RelativePath="..\..\engines\cruise\function.h" />
+		<File RelativePath="..\..\engines\cruise\function.o" />
+		<File RelativePath="..\..\engines\cruise\gfxModule.cpp" />
+		<File RelativePath="..\..\engines\cruise\gfxModule.h" />
+		<File RelativePath="..\..\engines\cruise\gfxModule.o" />
+		<File RelativePath="..\..\engines\cruise\linker.cpp" />
+		<File RelativePath="..\..\engines\cruise\linker.h" />
+		<File RelativePath="..\..\engines\cruise\linker.o" />
+		<File RelativePath="..\..\engines\cruise\mainDraw.cpp" />
+		<File RelativePath="..\..\engines\cruise\mainDraw.h" />
+		<File RelativePath="..\..\engines\cruise\mainDraw.o" />
+		<File RelativePath="..\..\engines\cruise\menu.cpp" />
+		<File RelativePath="..\..\engines\cruise\menu.h" />
+		<File RelativePath="..\..\engines\cruise\menu.o" />
+		<File RelativePath="..\..\engines\cruise\module.mk" />
+		<File RelativePath="..\..\engines\cruise\mouse.cpp" />
+		<File RelativePath="..\..\engines\cruise\mouse.h" />
+		<File RelativePath="..\..\engines\cruise\mouse.o" />
+		<File RelativePath="..\..\engines\cruise\object.cpp" />
+		<File RelativePath="..\..\engines\cruise\object.h" />
+		<File RelativePath="..\..\engines\cruise\object.o" />
+		<File RelativePath="..\..\engines\cruise\overlay.cpp" />
+		<File RelativePath="..\..\engines\cruise\overlay.h" />
+		<File RelativePath="..\..\engines\cruise\overlay.o" />
+		<File RelativePath="..\..\engines\cruise\perso.cpp" />
+		<File RelativePath="..\..\engines\cruise\perso.h" />
+		<File RelativePath="..\..\engines\cruise\perso.o" />
+		<File RelativePath="..\..\engines\cruise\polys.cpp" />
+		<File RelativePath="..\..\engines\cruise\polys.h" />
+		<File RelativePath="..\..\engines\cruise\polys.o" />
+		<File RelativePath="..\..\engines\cruise\saveload.cpp" />
+		<File RelativePath="..\..\engines\cruise\saveload.h" />
+		<File RelativePath="..\..\engines\cruise\saveload.o" />
+		<File RelativePath="..\..\engines\cruise\script.cpp" />
+		<File RelativePath="..\..\engines\cruise\script.h" />
+		<File RelativePath="..\..\engines\cruise\script.o" />
+		<File RelativePath="..\..\engines\cruise\sound.cpp" />
+		<File RelativePath="..\..\engines\cruise\sound.h" />
+		<File RelativePath="..\..\engines\cruise\sound.o" />
+		<File RelativePath="..\..\engines\cruise\stack.cpp" />
+		<File RelativePath="..\..\engines\cruise\stack.h" />
+		<File RelativePath="..\..\engines\cruise\stack.o" />
+		<File RelativePath="..\..\engines\cruise\staticres.cpp" />
+		<File RelativePath="..\..\engines\cruise\staticres.h" />
+		<File RelativePath="..\..\engines\cruise\staticres.o" />
+		<File RelativePath="..\..\engines\cruise\various.cpp" />
+		<File RelativePath="..\..\engines\cruise\various.h" />
+		<File RelativePath="..\..\engines\cruise\various.o" />
+		<File RelativePath="..\..\engines\cruise\vars.cpp" />
+		<File RelativePath="..\..\engines\cruise\vars.h" />
+		<File RelativePath="..\..\engines\cruise\vars.o" />
+		<File RelativePath="..\..\engines\cruise\volume.cpp" />
+		<File RelativePath="..\..\engines\cruise\volume.h" />
+		<File RelativePath="..\..\engines\cruise\volume.o" />
+	</Files>
+</VisualStudioProject>

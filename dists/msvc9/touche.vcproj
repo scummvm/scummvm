@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9.00"
+	Name="touche"
+	ProjectGUID="{A8AC662B-C376-4C7D-948F-BFB07094A8A5}"
+	RootNamespace="touche"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+		<Platform Name="x64" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+		<Configuration Name="Debug|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug64.vsprops" />
+		<Configuration Name="Release|x64" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release64.vsprops" />
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\touche\detection.cpp" />
+		<File RelativePath="..\..\engines\touche\detection.o" />
+		<File RelativePath="..\..\engines\touche\graphics.cpp" />
+		<File RelativePath="..\..\engines\touche\graphics.h" />
+		<File RelativePath="..\..\engines\touche\graphics.o" />
+		<File RelativePath="..\..\engines\touche\menu.cpp" />
+		<File RelativePath="..\..\engines\touche\menu.o" />
+		<File RelativePath="..\..\engines\touche\midi.cpp" />
+		<File RelativePath="..\..\engines\touche\midi.h" />
+		<File RelativePath="..\..\engines\touche\midi.o" />
+		<File RelativePath="..\..\engines\touche\module.mk" />
+		<File RelativePath="..\..\engines\touche\opcodes.cpp" />
+		<File RelativePath="..\..\engines\touche\opcodes.o" />
+		<File RelativePath="..\..\engines\touche\resource.cpp" />
+		<File RelativePath="..\..\engines\touche\resource.o" />
+		<File RelativePath="..\..\engines\touche\saveload.cpp" />
+		<File RelativePath="..\..\engines\touche\saveload.o" />
+		<File RelativePath="..\..\engines\touche\staticres.cpp" />
+		<File RelativePath="..\..\engines\touche\staticres.o" />
+		<File RelativePath="..\..\engines\touche\touche.cpp" />
+		<File RelativePath="..\..\engines\touche\touche.h" />
+		<File RelativePath="..\..\engines\touche\touche.o" />
+	</Files>
+</VisualStudioProject>
