@@ -477,6 +477,8 @@ void ResourceManager::loadResource(Resource *res) {
 				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
 				loadFromAudioVolumeSCI1(res, *file);
 				return;
+			default:
+				break;
 			}
 		} else {
 			// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
