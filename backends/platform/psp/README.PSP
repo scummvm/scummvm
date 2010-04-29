@@ -1,0 +1,130 @@
+ScummVM-PSP 1.1.1 README
+==============================================================================
+
+Installation
+============
+ - Copy the relevant game datafiles to your memory stick (location
+   doesn't matter).
+ - Install ScummVM like any other homebrew
+ - Run ScummVM and use the launcher to add games and run them
+
+
+Controls
+========
+
+Left trigger			- ESC
+Right trigger			- Modifier key (see below for uses)
+Analog					- Mouse movement
+Right trigger + Analog	- Fine control mouse
+Directionals			- Mouse movement
+Triangle				- Enter
+Cross					- Mouse button 1
+Circle					- Mouse button 2
+Square					- '.' (skip dialogue in some games)
+Start					- F5
+Right trigger + Start	- Return-To-Launcher menu
+
+Virtual Keyboard
+================
+
+Select					- Show/Hide Virtual Keyboard. Hold down to move keyboard onscreen.
+Start					- Enter
+Right trigger			- Switch to/between letter modes
+Left trigger			- Switch to/between numbers and symbols
+D-Pad					- Select square of characters
+Buttons/Triggers		- Choose a specific character
+
+Notes
+=====
+
+- Plugin files are NOT interchangeable between versions! You must copy ALL the
+  plugin files that come with every version of scummvm. They sit in the /plugin
+  subdirectory. If you get a crash upon startup, try deleting all the existing
+  plugin files in the plugin directory and copying the new ones over again.
+
+- While it's possible to compress certain game resources to reduce their size,
+  this can (and usually will) cause games (especially animation) to be choppy
+  sometimes, as it ofcourse needs extra CPU power to decode these files.
+  As such, it is recommended to play games in their original, uncompressed,
+  form whenever possible.
+
+- This README may be outdated, for more up-to-date instructions and notes see
+  the PSP Port Wiki: http://wiki.scummvm.org/index.php/PlayStation_Portable
+
+Frequently Asked Questions
+==========================
+
+Q:  Pressing select doesn't make the virtual keyboard show up on screen!
+A:  You need to make sure that the kbd.zip file is in the same directory as the scummvm executable.
+
+Q:  Scummvm crashes upon starting up!
+A:  See the first note above.
+
+Q:  What do I need to run the games?
+A:  A 1.00 or 1.50 firmware PSP (or an EBOOT loader on firmware 2.00 or
+    higher), and the necessary datafiles for the game you want to play and
+    obviously this ScummVM port.
+
+Q:  Can I run game X with this?
+A:  You can find the list of supported games on the compatibility page
+    on http://www.scummvm.org.
+    Note that ScummVM is NOT a 'DOS (game) emulator', but written
+    specifically for certain games/engines.
+
+Q:  My Monkey Island 1 doesn't have any music, what gives?
+A:  If your version of Monkey Island came on a CD then it has the music
+    as CD Audio tracks. You need to rip those to MP3/Ogg and copy them
+    to the same directory as the game datafiles for music to work.
+
+Q:  Game X crashes, or feature Y doesn't work. Can you fix this?
+A:  Possibly.
+    Because of the large amount of games ScummVM supports we obviously haven't
+    played them all start-to-finish on the PSP, so it's possible there
+    are bugs or issues that we're not aware of.
+    When you encounter such a bug, please use the "Bug Tracker" you find linked
+    on the ScummVM website, and mention all relevant info (i.e. that you're
+    using the PSP version, which ScummVM version it is, if the problem exists
+    in a recent PC SVN version, a detailed description of the problem,
+    and if at all possible a nearby savegame), this will make it much easier
+    for us to reproduce (and hopefully fix) the problem.
+
+Building the source code
+========================
+To build ScummVM for PSP you need:
+
+- PSP toolchain	(svn co svn://svn.pspdev.org/psp/trunk/psptoolchain)
+
+- PSPSDK	(svn co svn://svn.pspdev.org/psp/trunk/pspsdk)
+		Note: This usually gets installed by the PSP toolchain,
+		so you don't have to do it manually.
+
+- SDL		(svn co svn://svn.pspdev.org/psp/trunk/SDL)
+
+- zlib		(svn co svn://svn.pspdev.org/psp/trunk/zlib)
+
+- libPNG	(svn co svn://svn.pspdev.org/psp/trunk/libpng)
+
+- libmad(*)	(svn co svn://svn.pspdev.org/psp/trunk/libmad)
+
+- libTremor(*)	(svn co svn://svn.pspdev.org/psp/trunk/libTremor)
+
+
+
+(*) = optional
+
+When you've installed these libraries (read their README.PSP for instructions),
+type "make" in the backends/platform/psp directory to build a 1.00 firmware
+EBOOT.PBP, or "make kxploit" to build the 1.50/kxploit EBOOT.PBPs
+
+You can control most of the build process (engines and libraries used) from
+the Makefile.
+
+
+Port Authors
+============
+
+Joost Peters   (joostp@scummvm.org)
+Paolo Costabel (paoloc@pacbell.net)
+Thomas Mayer   (tommybear@internode.on.net)
+Yotam Barnoy   (yotambarnoy@gmail.com)
+
