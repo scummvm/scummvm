@@ -44,7 +44,7 @@ namespace Audio {
  */
 class Channel {
 public:
-	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input, DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent);
+	Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream, DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent);
 	~Channel();
 
 	/**
@@ -60,7 +60,7 @@ public:
 	/**
 	 * Queries whether the channel is still playing or not.
 	 */
-	bool isFinished() const { return _input->endOfStream(); }
+	bool isFinished() const { return _stream->endOfStream(); }
 
 	/**
 	 * Queries whether the channel is a permanent channel.
@@ -152,7 +152,7 @@ private:
 
 	DisposeAfterUse::Flag _autofreeStream;
 	RateConverter *_converter;
-	AudioStream *_input;
+	AudioStream *_stream;
 };
 
 #pragma mark -
@@ -215,15 +215,15 @@ void MixerImpl::insertChannel(SoundHandle *handle, Channel *chan) {
 void MixerImpl::playStream(
 			SoundType type,
 			SoundHandle *handle,
-			AudioStream *input,
+			AudioStream *stream,
 			int id, byte volume, int8 balance,
 			DisposeAfterUse::Flag autofreeStream,
 			bool permanent,
 			bool reverseStereo) {
 	Common::StackLock lock(_mutex);
 
-	if (input == 0) {
-		warning("input stream is 0");
+	if (stream == 0) {
+		warning("stream is 0");
 		return;
 	}
 
@@ -241,13 +241,13 @@ void MixerImpl::playStream(
 				// Thus, as a quick rule of thumb, you should never, ever,
 				// try to play QueuingAudioStreams with a sound id.
 				if (autofreeStream == DisposeAfterUse::YES)
-					delete input;
+					delete stream;
 				return;
 			}
 	}
 
 	// Create the channel
-	Channel *chan = new Channel(this, type, input, autofreeStream, reverseStereo, id, permanent);
+	Channel *chan = new Channel(this, type, stream, autofreeStream, reverseStereo, id, permanent);
 	chan->setVolume(volume);
 	chan->setBalance(balance);
 	insertChannel(handle, chan);
@@ -436,23 +436,23 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 #pragma mark --- Channel implementations ---
 #pragma mark -
 
-Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *input,
+Channel::Channel(Mixer *mixer, Mixer::SoundType type, AudioStream *stream,
                  DisposeAfterUse::Flag autofreeStream, bool reverseStereo, int id, bool permanent)
     : _type(type), _mixer(mixer), _id(id), _permanent(permanent), _volume(Mixer::kMaxChannelVolume),
       _balance(0), _pauseLevel(0), _samplesConsumed(0), _samplesDecoded(0), _mixerTimeStamp(0),
       _pauseStartTime(0), _pauseTime(0), _autofreeStream(autofreeStream), _converter(0),
-      _input(input) {
+      _stream(stream) {
 	assert(mixer);
-	assert(input);
+	assert(stream);
 
 	// Get a rate converter instance
-	_converter = makeRateConverter(_input->getRate(), mixer->getOutputRate(), _input->isStereo(), reverseStereo);
+	_converter = makeRateConverter(_stream->getRate(), mixer->getOutputRate(), _stream->isStereo(), reverseStereo);
 }
 
 Channel::~Channel() {
 	delete _converter;
 	if (_autofreeStream == DisposeAfterUse::YES)
-		delete _input;
+		delete _stream;
 }
 
 void Channel::setVolume(const byte volume) {
@@ -535,9 +535,9 @@ Timestamp Channel::getElapsedTime() {
 }
 
 void Channel::mix(int16 *data, uint len) {
-	assert(_input);
+	assert(_stream);
 
-	if (_input->endOfData()) {
+	if (_stream->endOfData()) {
 		// TODO: call drain method
 	} else {
 		assert(_converter);
@@ -545,7 +545,7 @@ void Channel::mix(int16 *data, uint len) {
 		_samplesConsumed = _samplesDecoded;
 		_mixerTimeStamp = g_system->getMillis();
 		_pauseTime = 0;
-		_samplesDecoded += _converter->flow(*_input, data, len, _volL, _volR);
+		_samplesDecoded += _converter->flow(*_stream, data, len, _volL, _volR);
 	}
 }
 
