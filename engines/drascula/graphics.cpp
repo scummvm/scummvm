@@ -335,6 +335,17 @@ void DrasculaEngine::centerText(const char *message, int textX, int textY) {
 		return;
 	}
 
+	// If it's a one-word message it can't be broken up. It's probably a
+	// mouse-over text, so try just sliding it to the side a bit to make it
+	// fit. This happens with the word "TOTENKOPF" in the very first room
+	// with the German translation.
+	if (!strchr(msg, ' ')) {
+		int len = strlen(msg);
+		x = CLIP<int>(textX - len * CHAR_WIDTH / 2, 0, 319 - len * CHAR_WIDTH);
+		print_abc(msg, x, y);
+		return;
+	}
+	
 	// Message doesn't fit on screen, split it
 
 	// Get a word from the message
