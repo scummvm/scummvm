@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm-tools
-Version		: 1.1.1pre
+Version		: 1.1.1
 Release		: 1
 Summary		: ScummVM-related tools
 Group		: Interpreters
