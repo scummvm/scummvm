@@ -4,7 +4,7 @@
     <category>Game</category>
     <title language_id="English">ScummVM</title>
     <startpoint language_id="English">./libscummvm.so</startpoint>
-    <thumbnailpath>./scummvm.bmp</thumbnailpath>
+    <thumbnailpath>scummvm.png</thumbnailpath>
     <totalsize>1</totalsize>
   </contentpack>
 </contentlibrary>
