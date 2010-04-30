@@ -115,6 +115,7 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	SearchMan.addSubDirectoryMatching(_gameDataDir, "resource");
 
 	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
+	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics debug level");
 	DebugMan.addDebugChannel(kDebugConversations, "conversations", "Conversations debugging");
 
 	_resourceManager = NULL;

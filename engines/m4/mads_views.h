@@ -60,12 +60,12 @@ typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
 
 class MadsSpriteSlots {
 private:
-	MadsSpriteSlot _entries[SPRITE_SLOTS_SIZE];
+	Common::Array<MadsSpriteSlot> _entries;
 	SpriteList _sprites;
 public:
 	int startIndex;
 
-	MadsSpriteSlots() { startIndex = 0; }
+	MadsSpriteSlots();
 
 	MadsSpriteSlot &operator[](int idx) {
 		assert(idx < SPRITE_SLOTS_SIZE);
@@ -85,6 +85,7 @@ public:
 	void deleteTimer(int timerIndex);
 
 	void draw(View *view);
+	void cleanUp();
 };
 
 class MadsTextDisplayEntry {
@@ -122,6 +123,7 @@ public:
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
 	void draw(View *view);
+	void cleanUp();
 };
 
 class ScreenObjectEntry {
@@ -191,6 +193,8 @@ public:
 
 #define TIMER_ENTRY_SUBSET_MAX 5
 
+enum SpriteAnimType {ANIMTYPE_SINGLE_DIRECTION = 1, ANIMTYPE_CYCLED = 2};
+
 struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
@@ -198,11 +202,11 @@ struct MadsSequenceEntry {
 	int field_2;
 	
 	int frameIndex;
-	int spriteNum;
-	int numSprites;
-	
-	int field_A;
 	int frameStart;
+	int numSprites;
+
+	SpriteAnimType animType;
+	int frameInc;
 
 	int depth;
 	int scale;
@@ -240,8 +244,8 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	bool unk2(int index, int v1, int v2, int v3);
 	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int frameStart, int field_A, 
-		int numSprites, int spriteNum);
+		int height, int width, char field_12, char scale, char depth, int frameInc, SpriteAnimType animType, 
+		int numSprites, int frameStart);
 	void remove(int timerIndex);
 	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
 	bool loadSprites(int timerIndex);
@@ -264,7 +268,7 @@ public:
 public:
 	MadsView(View *view);
 
-	void refresh(RectList *rects);
+	void refresh();
 };
 
 #define CHEAT_SEQUENCE_MAX 8

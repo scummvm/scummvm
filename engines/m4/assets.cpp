@@ -227,7 +227,7 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 		frame.w = spriteStream->readUint16LE();
 		frame.h = spriteStream->readUint16LE();
 		if (curFrame == 0)
-			printf("%i frames, x = %i, y = %i, w = %i, h = %i\n", _frameCount, frame.x, frame.y, frame.w, frame.h);
+			debugC(1, kDebugGraphics, "%i frames, x = %i, y = %i, w = %i, h = %i\n", _frameCount, frame.x, frame.y, frame.w, frame.h);
 
 		frame.frame = new M4Sprite(spriteDataStream, frame.x, frame.y, frame.w, frame.h, false);
 		_frames.push_back(frame);

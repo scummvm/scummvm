@@ -263,26 +263,10 @@ void MadsScene::setAction(int action, int objectId) {
  * Draws all the elements of the scene
  */
 void MadsScene::drawElements() {
-	// Display animations
-	_spriteSlots.draw(this);
-
-	// Text display 
-	_textDisplay.draw(this);
+	refresh();
 
 	// Copy the user interface surface onto the surface
 	_interfaceSurface->copyTo(this, 0, this->height() - _interfaceSurface->height());
-
-/*
-	// Some kind of copying over of slot entries
-	for (int idx = 0, idx2 = 0; idx < _spriteSlotsStart; ++idx) {
-		if (_spriteSlots[idx].spriteId >= 0) {
-			if (idx != idx2) {
-				// Copy over the slot entry
-				_spriteSlots[idx2] = _spriteSlots[idx];
-			}
-			++idx2;
-		}
-	}*/
 }
 
 

@@ -83,16 +83,16 @@ uint16 MadsSceneLogic::startSpriteSequence(uint16 srcSpriteIdx, int v0, int numT
 		spriteFrame->y + (spriteFrame->height() / 2));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, 1, 1, 0, 0);
+		-1, 100, (int)pixel - 1, 1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
 }
 
-uint16 MadsSceneLogic::startSpriteSequence2(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
+uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
 	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, 1, 2, 0, 0);
+		-1, 100, (int)pixel - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
@@ -101,7 +101,7 @@ uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int num
 		spriteFrame->y + (spriteFrame->height() / 2));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, -1, 1, 0, 0);
+		-1, 100, (int)pixel - 1, -1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
 }
 
 void MadsSceneLogic::activateHotspot(int idx, bool active) {
@@ -165,7 +165,7 @@ void MadsSceneLogic::selectScene(int sceneNum) {
 void MadsSceneLogic::setupScene() {
 	// FIXME: This is the hardcoded logic for Rex scene 101 only
 	const char *animName = formAnimName('A', -1);
-warning("anim - %s\n", animName);	
+
 //	sub_1e754(animName, 3);
 
 	getSceneSpriteSet();
@@ -189,7 +189,7 @@ void MadsSceneLogic::enterScene() {
 
 	_madsVm->scene()->_sequenceList.unk2(0, 2, 7, 0x46);
 
-	_spriteIndexes[18] = startSpriteSequence2(_spriteIndexes[3], 0, 10, 0, 0, 60);
+	_spriteIndexes[18] = startCycledSpriteSequence(_spriteIndexes[3], 0, 10, 0, 0, 60);
 	_spriteIndexes[19] = startSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);
 	_spriteIndexes[20] = startSpriteSequence(_spriteIndexes[5], 0, 10, 0, 2, 0);
 	_spriteIndexes[21] = startSpriteSequence(_spriteIndexes[6], 0, 6, 0, 0, 0);

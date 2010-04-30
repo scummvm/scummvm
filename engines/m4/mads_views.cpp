@@ -36,14 +36,26 @@
 
 namespace M4 {
 
-static const int INV_ANIM_FRAME_SPEED = 8;
+static const int INV_ANIM_FRAME_SPEED = 2;
 static const int INVENTORY_X = 160;
 static const int INVENTORY_Y = 159;
 static const int SCROLLER_DELAY = 200;
 
 //--------------------------------------------------------------------------
 
+MadsSpriteSlots::MadsSpriteSlots() {
+	for (int i = 0; i < SPRITE_SLOTS_SIZE; ++i) {
+		MadsSpriteSlot rec;
+		_entries.push_back(rec);
+	}
+
+	startIndex = 0;
+}
+
 int MadsSpriteSlots::getIndex() {
+	if (startIndex == SPRITE_SLOTS_SIZE)
+		error("Run out of sprite slots");
+
 	return startIndex++;
 }
 
@@ -97,7 +109,7 @@ void MadsSpriteSlots::draw(View *view) {
 	// Sort the list in order of the depth
 	Common::sort(depthList.begin(), depthList.end(), sortHelper);
 
-	// Loop through each of the objectes
+	// Loop through each of the objects
 	DepthList::iterator i;
 	for (i = depthList.begin(); i != depthList.end(); ++i) {
 		DepthEntry &de = *i;
@@ -128,6 +140,29 @@ void MadsSpriteSlots::draw(View *view) {
 				spr->draw3(view, xp, MADS_Y_OFFSET + yp);
 			}
 		}
+	}
+}
+
+/**
+ * Removes any sprite slots that are no longer needed
+ */
+void MadsSpriteSlots::cleanUp() {
+	// Delete any entries that aren't needed
+	int idx = 0;
+	while (idx < startIndex) {
+		if (_entries[idx].spriteId >= 0) {
+			_entries.remove_at(idx);
+			--startIndex;
+		} else {
+			++idx;
+		}
+	}
+
+	// Original engine sprite slot list was a fixed array, so to keep the engine similiar, for
+	// now I'm adding in new entries to make up the original fixed total again
+	while (_entries.size() < SPRITE_SLOTS_SIZE) {
+		MadsSpriteSlot rec;
+		_entries.push_back(rec);
 	}
 }
 
@@ -183,6 +218,18 @@ void MadsTextDisplay::draw(View *view) {
 	}
 
 	// Clear up any now text display entries that are to be expired
+	for (uint idx = 0; idx < _entries.size(); ++idx) {
+		if (_entries[idx].expire < 0) {
+			_entries[idx].active = false;
+			_entries[idx].expire = 0;
+		}
+	}
+}
+
+/**
+ * Deactivates any text display entries that are finished
+ */
+void MadsTextDisplay::cleanUp() {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].expire < 0) {
 			_entries[idx].active = false;
@@ -341,8 +388,8 @@ bool MadsSequenceList::unk2(int index, int v1, int v2, int v3) {
 }
 
 int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int frameStart, int field_A, int numSprites, 
-		int spriteNum) {
+		int height, int width, char field_12, char scale, char depth, int frameInc, SpriteAnimType animType, int numSprites, 
+		int frameStart) {
 
 	// Find a free slot
 	uint timerIndex = 0;
@@ -351,22 +398,22 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char fiel
 	if (timerIndex == _entries.size())
 		error("TimerList full");
 
-	if (spriteNum <= 0)
-		spriteNum = 1;
+	if (frameStart <= 0)
+		frameStart = 1;
 	if (numSprites == 0)
 		numSprites = _madsVm->scene()->_spriteSlots.getSprite(spriteListIndex).getCount();
-	if (spriteNum == numSprites)
-		frameStart = 0;
+	if (frameStart == numSprites)
+		frameInc = 0;
 
 	// Set the list entry fields
 	_entries[timerIndex].active = true;
 	_entries[timerIndex].spriteListIndex = spriteListIndex;
 	_entries[timerIndex].field_2 = v0;
 	_entries[timerIndex].frameIndex = frameIndex;
-	_entries[timerIndex].spriteNum = spriteNum;
-	_entries[timerIndex].numSprites = numSprites;
-	_entries[timerIndex].field_A = field_A;
 	_entries[timerIndex].frameStart = frameStart;
+	_entries[timerIndex].numSprites = numSprites;
+	_entries[timerIndex].animType = animType;
+	_entries[timerIndex].frameInc = frameInc;
 	_entries[timerIndex].depth = depth;
 	_entries[timerIndex].scale = scale;
 	_entries[timerIndex].field_12 = field_12;
@@ -405,7 +452,7 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
 	// TODO: Figure out logic for spriteId value based on SPRITE_SLOT.field_0
-	spriteSlot.spriteId = (0 /*field 0*/ == 1) ? 0xFFFC : 1;
+	spriteSlot.spriteId = (0 /*field 0*/ == 1) ? -4 : 1;
 	spriteSlot.timerIndex = timerIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
 	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
@@ -416,8 +463,8 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 		spriteSlot.xp = timerEntry.width;
 		spriteSlot.yp = timerEntry.height;
 	} else {
-		spriteSlot.xp = sprite.getFrame(timerEntry.frameIndex)->x;
-		spriteSlot.yp = sprite.getFrame(timerEntry.frameIndex)->y;
+		spriteSlot.xp = sprite.getFrame(timerEntry.frameIndex - 1)->x;
+		spriteSlot.yp = sprite.getFrame(timerEntry.frameIndex - 1)->y;
 	}
 }
 
@@ -443,7 +490,7 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 
 		if ((timerEntry.field_13 != 0) || (timerEntry.dynamicHotspotIndex >= 0)) {
 			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
-			M4Sprite *frame = spriteSet.getFrame(timerEntry.frameIndex);
+			M4Sprite *frame = spriteSet.getFrame(timerEntry.frameIndex - 1);
 			int width = frame->width() * timerEntry.scale / 200;
 			int height = frame->height() * timerEntry.scale / 100;
 
@@ -464,26 +511,32 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 		}
 
 		// Frame adjustments
-		if (timerEntry.numSprites != timerEntry.spriteNum) 
-			timerEntry.frameIndex += timerEntry.frameStart;
+		if (timerEntry.frameStart != timerEntry.numSprites)
+			timerEntry.frameIndex += timerEntry.frameInc;
 
-		if (timerEntry.frameIndex >= timerEntry.spriteNum) {
+		if (timerEntry.frameIndex >= timerEntry.frameStart) {
 			if (timerEntry.frameIndex > timerEntry.numSprites) {
 				result = true;
-				if (timerEntry.field_A != 2) {
-					timerEntry.frameIndex = timerEntry.spriteNum;
+				if (timerEntry.animType != ANIMTYPE_CYCLED) {
+					// Keep index from exceeding maximum allowed
+					timerEntry.frameIndex = timerEntry.frameStart;
 				} else {
+					// Switch into reverse
 					timerEntry.frameIndex = timerEntry.numSprites - 1;
-					timerEntry.frameStart = -1;
+					timerEntry.frameInc = -1;
 				}
 			}
 		} else {
+			// Currently in reverse mode
 			result = true;
 
-			if (timerEntry.field_A == 2) {
-				timerEntry.frameIndex = timerEntry.spriteNum + 1;
-				timerEntry.frameStart = 1;
+			if (timerEntry.animType == ANIMTYPE_CYCLED)
+			{
+				// Switch back to forward direction again
+				timerEntry.frameIndex = timerEntry.frameStart + 1;
+				timerEntry.frameInc = 1;
 			} else {
+				// Otherwise reset back to last sprite for further reverse animating
 				timerEntry.frameIndex = timerEntry.numSprites;		
 			}
 		}
@@ -511,7 +564,7 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 	}
 
 	if (idx >= 0) {
-		_owner._abortTimers = timerEntry.fld36[idx];
+		//_owner._abortTimers = timerEntry.fld36[idx];
 		
 		// TODO: Figure out word_84208, timerEntry.field_3B[]
 	}
@@ -558,12 +611,18 @@ MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceL
 	_abortTimers2 = 0;
 }
 
-void MadsView::refresh(RectList *rects) {
+void MadsView::refresh() {
 	// Draw any sprites
 	_spriteSlots.draw(_view);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(_view);
+
+	// Remove any sprite slots that are no longer needed
+	_spriteSlots.cleanUp();
+
+	// Deactivate any text display entries that are no longer needed
+	_textDisplay.cleanUp();
 }
 
 /*--------------------------------------------------------------------------

@@ -697,7 +697,7 @@ void RexDialogView::onRefresh(RectList *rects, M4Surface *destSurface) {
 	refreshText();
 
 	// Handle the drawing of the various Mads elements
-	refresh(rects);
+	refresh();
 
 	View::onRefresh(rects, destSurface);
 }
