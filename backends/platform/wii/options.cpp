@@ -131,9 +131,11 @@ WiiOptionsDialog::~WiiOptionsDialog() {
 }
 
 void WiiOptionsDialog::handleTickle() {
+#ifndef GAMECUBE
 	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
 
 	int tab = _tab->getActiveTab();
+#endif
 
 #ifdef USE_WII_DI
 	if (tab == _tabDVD) {
@@ -194,7 +196,9 @@ void WiiOptionsDialog::handleTickle() {
 
 void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 										uint32 data) {
+#ifndef GAMECUBE
 	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
+#endif
 
 	switch (cmd) {
 	case 'x':
