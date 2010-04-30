@@ -197,9 +197,6 @@ void GfxAnimate::makeSortedList(List *list) {
 	}
 
 	// Now sort the list according y and z (descending)
-	AnimateList::iterator listBegin = _list.begin();
-	AnimateList::iterator listEnd = _list.end();
-
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
 
@@ -522,28 +519,6 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 	} else {
 		_paint16->bitsShow(rect);
 	}
-
-	/*
-	if (!_lastCast->isEmpty()) {
-		HEAPHANDLE hnode = _lastCast->getFirst();
-		sciCast *pCast;
-		CResView *res;
-		while (hnode) {
-			pCast = (sciCast *)heap2Ptr(hnode);
-			res = (CResView *)ResMgr.ResLoad(SCI_RES_VIEW, pCast->view);
-			pCast->hSaved = _gfx->SaveBits(pCast->rect, 3);
-			res->drawCel(pCast->loop, pCast->cel, &pCast->rect, pCast->z, pCast->pal);
-			hnode = pCast->node.next;
-		}
-		_gfx->BitsShow(rect);
-		// restoring
-		hnode = _lastCast->getLast();
-		while (hnode) {
-			pCast = (sciCast *)heap2Ptr(hnode);
-			_gfx->BitsShow(pCast->hSaved);
-			hnode = pCast->node.prev;
-		}
-	*/
 }
 
 void GfxAnimate::addToPicDrawCels() {
