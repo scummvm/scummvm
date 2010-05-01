@@ -295,7 +295,7 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 
 bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 	// We assume that the resource type matches res->type
-	file.seek(res->_fileOffset + 2, SEEK_SET);
+	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
 	res->data = new byte[res->size];
 
@@ -329,7 +329,8 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 		res->unalloc();
 		return false;
 	}
-
+	// Skip resourceid and header size byte
+	file.seek(2, SEEK_SET);
 	return loadPatch(res, file);
 }
 
@@ -375,6 +376,8 @@ bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::File &file
 		// Load sample size
 		file.seek(7, SEEK_CUR);
 		res->size = file.readUint32LE();
+		// Adjust offset to point at the header data again
+		file.seek(-11, SEEK_CUR);
 	}
 
 	return loadPatch(res, file);
@@ -460,8 +463,15 @@ void ResourceManager::loadResource(Resource *res) {
 					mappingTable++;
 					compressedOffset = *mappingTable;
 					// Go to next compressed offset and use that to calculate size of compressed sample
-					mappingTable += 2;
-					res->size = *mappingTable - compressedOffset;
+					switch (res->_id.type) {
+					case kResourceTypeSync:
+					case kResourceTypeSync36:
+						// we should already have a (valid) size
+						break;
+					default:
+						mappingTable += 2;
+						res->size = *mappingTable - compressedOffset;
+					}
 					break;
 				}
 				mappingTable += 2;
