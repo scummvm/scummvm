@@ -153,7 +153,7 @@ public:
 	void loadDataToCurrentPosition(uint8 *trackdata, uint32 size, bool loop = 0);
 	void loadDataToEndOfQueue(uint8 *trackdata, uint32 size, bool loop = 0);
 	void setPlayBackStatus(bool playing);
-	bool isPlaying() {return _playing; }
+	bool isPlaying() const {return _playing; }
 	uint8 *trackData() {return _trackData; }
 
 	bool _loop;
@@ -1491,7 +1491,7 @@ public:
 
 	void nextTick(int32 *buffer, uint32 bufferSize);
 
-	uint8 chanEnable() { return _chanEnable; }
+	uint8 chanEnable() const { return _chanEnable; }
 private:
 	void updatesRegs();
 
@@ -2561,6 +2561,7 @@ TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerb
 	_timer(0), _noiseGenerator(0), _chanEnable(0) {
 
 	memset(_channels, 0, sizeof(_channels));
+	memset(_updateRequestBuf, 0, sizeof(_updateRequestBuf));
 	_reg = new uint8 *[11];
 
 	_reg[0] = &_channels[0].frqL;

@@ -133,8 +133,6 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 		}
 
 		if (cseq.flags & 1) {
-			int w2 = _seqWsa->width();
-			int h2 = _seqWsa->height();
 			int x = cseq.xPos;
 			int y = cseq.yPos;
 
@@ -142,13 +140,13 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 			if (_seqWsa) {
 				if (x < 0) {
+					_seqWsa->setWidth(_seqWsa->width() + x);
 					x = 0;
-					w2 = 0;
 				}
 
 				if (y < 0) {
+					_seqWsa->setHeight(_seqWsa->height() + y);
 					y = 0;
-					h2 = 0;
 				}
 
 				if (cseq.xPos + _seqWsa->width() > 319)
