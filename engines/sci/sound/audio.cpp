@@ -236,17 +236,17 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		switch (audioCompressionType) {
 		case MKID_BE('MP3 '):
 #ifdef USE_MAD
-			audioStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
+			audioStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		case MKID_BE('OGG '):
 #ifdef USE_VORBIS
-			audioStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
+			audioStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		case MKID_BE('FLAC'):
 #ifdef USE_FLAC
-			audioStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
+			audioStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		}
