@@ -282,14 +282,18 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 		// Detected a compressed audio volume
 		source->audioCompressionType = compressionType;
 		// Now read the whole offset mapping table for later usage
-		uint32 recordCount = file->readUint32LE();
+		int32 recordCount = file->readUint32LE();
 		if (!recordCount)
 			error("compressed audio volume doesn't contain any entries!");
-		source->audioCompressionOffsetMapping = new int32[(recordCount + 1) * 2];
-		file->read(source->audioCompressionOffsetMapping, recordCount * 4 * 2);
+		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
+		source->audioCompressionOffsetMapping = offsetMapping;
+		for (int recordNo = 0; recordNo < recordCount; recordNo++) {
+			*offsetMapping++ = file->readUint32LE();
+			*offsetMapping++ = file->readUint32LE();
+		}
 		// Put ending zero
-		source->audioCompressionOffsetMapping[recordCount * 2] = 0;
-		source->audioCompressionOffsetMapping[recordCount * 2 + 1] = file->size();
+		*offsetMapping++ = 0;
+		*offsetMapping++ = file->size();
 	}
 }
 
