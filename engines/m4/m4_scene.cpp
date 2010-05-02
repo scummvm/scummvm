@@ -43,7 +43,9 @@ M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 	_sceneSprites = NULL;
 	_inverseColourTable = NULL;
 
+	_sceneResources.hotspots = new HotSpotList();
 	_sceneResources.parallax = new HotSpotList();
+	_sceneResources.props = new HotSpotList();
 	_interfaceSurface = new M4InterfaceView(vm);
 }
 
