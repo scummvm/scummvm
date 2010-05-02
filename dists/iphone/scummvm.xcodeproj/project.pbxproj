@@ -1901,6 +1901,16 @@
 		DF90EAC310B023F400C8F93F /* msvideo1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF90EAC110B023F400C8F93F /* msvideo1.cpp */; };
 		DF90EAC410B023F400C8F93F /* msvideo1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF90EAC110B023F400C8F93F /* msvideo1.cpp */; };
 		DF90EAC510B023F400C8F93F /* msvideo1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF90EAC110B023F400C8F93F /* msvideo1.cpp */; };
+		DF9B9248118E46730069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9246118E46730069C19D /* error.cpp */; };
+		DF9B9249118E46730069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9246118E46730069C19D /* error.cpp */; };
+		DF9B924A118E46730069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9246118E46730069C19D /* error.cpp */; };
+		DF9B9252118E46A00069C19D /* fontsjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B924F118E46A00069C19D /* fontsjis.cpp */; };
+		DF9B9254118E46A00069C19D /* fontsjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B924F118E46A00069C19D /* fontsjis.cpp */; };
+		DF9B9256118E46A00069C19D /* fontsjis.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B924F118E46A00069C19D /* fontsjis.cpp */; };
+		DF9B9262118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
+		DF9B9263118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
+		DF9B9264118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
+		DF9B92A3118E47A50069C19D /* COMI in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF9B9280118E47960069C19D /* COMI */; };
 		DFAAAFF70F0112AD003E9390 /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFF50F0112AD003E9390 /* saveload.cpp */; };
 		DFAAAFF90F0112C1003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFF80F0112C1003E9390 /* detection.cpp */; };
 		DFAAAFFC0F0112DF003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
@@ -2903,6 +2913,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
+				DF9B92A3118E47A50069C19D /* COMI in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4337,6 +4348,12 @@
 		DF90EAC010B023F400C8F93F /* codec.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = codec.h; sourceTree = "<group>"; };
 		DF90EAC110B023F400C8F93F /* msvideo1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = msvideo1.cpp; sourceTree = "<group>"; };
 		DF90EAC210B023F400C8F93F /* msvideo1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = msvideo1.h; sourceTree = "<group>"; };
+		DF9B9246118E46730069C19D /* error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error.cpp; sourceTree = "<group>"; };
+		DF9B9247118E46730069C19D /* error.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = error.h; sourceTree = "<group>"; };
+		DF9B924F118E46A00069C19D /* fontsjis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontsjis.cpp; sourceTree = "<group>"; };
+		DF9B9250118E46A00069C19D /* fontsjis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontsjis.h; sourceTree = "<group>"; };
+		DF9B9261118E46FE0069C19D /* error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error.cpp; sourceTree = "<group>"; };
+		DF9B9280118E47960069C19D /* COMI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = COMI; path = ../../../../spill/COMI; sourceTree = SOURCE_ROOT; };
 		DFAAAFF50F0112AD003E9390 /* saveload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload.cpp; sourceTree = "<group>"; };
 		DFAAAFF60F0112AD003E9390 /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		DFAAAFF80F0112C1003E9390 /* detection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detection.cpp; sourceTree = "<group>"; };
@@ -4691,6 +4708,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				DF9B9277118E475D0069C19D /* games */,
 				DFD6476A0F49F7D2008E18EF /* libs */,
 				DF841FF50E7BA6A600F5680E /* engines */,
 				DFE470D50D81F4E700B6D1FB /* backends */,
@@ -4700,6 +4718,7 @@
 				DFE477C60D81F4E900B6D1FB /* sound */,
 				DFE470C00D81F4BA00B6D1FB /* base */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
+				DFA2A57A118E433A00344DFD /* Resources-iPad */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
 			);
@@ -4868,6 +4887,8 @@
 		DF45B175116628A5009B85CC /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				DF9B924F118E46A00069C19D /* fontsjis.cpp */,
+				DF9B9250118E46A00069C19D /* fontsjis.h */,
 				DF45B176116628A5009B85CC /* animate.cpp */,
 				DF45B177116628A5009B85CC /* animate.h */,
 				DF45B178116628A5009B85CC /* cache.cpp */,
@@ -6379,6 +6400,21 @@
 			path = codecs;
 			sourceTree = "<group>";
 		};
+		DF9B9277118E475D0069C19D /* games */ = {
+			isa = PBXGroup;
+			children = (
+				DF9B9280118E47960069C19D /* COMI */,
+			);
+			name = games;
+			sourceTree = "<group>";
+		};
+		DFA2A57A118E433A00344DFD /* Resources-iPad */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = "Resources-iPad";
+			sourceTree = "<group>";
+		};
 		DFC830190F48AF18005EF03C /* sci */ = {
 			isa = PBXGroup;
 			children = (
@@ -6653,6 +6689,7 @@
 		DFE473950D81F4E800B6D1FB /* common */ = {
 			isa = PBXGroup;
 			children = (
+				DF9B9261118E46FE0069C19D /* error.cpp */,
 				DFEC5D0A1166C5CF00C90552 /* random.cpp */,
 				DFEC5D0B1166C5CF00C90552 /* random.h */,
 				DFEC5D0C1166C5CF00C90552 /* str-array.h */,
@@ -6788,6 +6825,8 @@
 		DFE477880D81F4E900B6D1FB /* gui */ = {
 			isa = PBXGroup;
 			children = (
+				DF9B9246118E46730069C19D /* error.cpp */,
+				DF9B9247118E46730069C19D /* error.h */,
 				DF2EC3E410E6490800765801 /* browser_osx.mm */,
 				DF2FFBD50F485E360006E566 /* GuiManager.cpp */,
 				DF2FFBD60F485E360006E566 /* GuiManager.h */,
@@ -8017,6 +8056,9 @@
 				DFEC5D131166C5CF00C90552 /* tokenizer.cpp in Sources */,
 				DFEC5D371166C67300C90552 /* savestate.cpp in Sources */,
 				DFEC5D401166C6B400C90552 /* dbopl.cpp in Sources */,
+				DF9B9249118E46730069C19D /* error.cpp in Sources */,
+				DF9B9254118E46A00069C19D /* fontsjis.cpp in Sources */,
+				DF9B9263118E46FE0069C19D /* error.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8965,6 +9007,9 @@
 				DFEC5D151166C5CF00C90552 /* tokenizer.cpp in Sources */,
 				DFEC5D381166C67300C90552 /* savestate.cpp in Sources */,
 				DFEC5D411166C6B400C90552 /* dbopl.cpp in Sources */,
+				DF9B924A118E46730069C19D /* error.cpp in Sources */,
+				DF9B9256118E46A00069C19D /* fontsjis.cpp in Sources */,
+				DF9B9264118E46FE0069C19D /* error.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9914,6 +9959,9 @@
 				DFEC5D111166C5CF00C90552 /* tokenizer.cpp in Sources */,
 				DFEC5D361166C67300C90552 /* savestate.cpp in Sources */,
 				DFEC5D3F1166C6B400C90552 /* dbopl.cpp in Sources */,
+				DF9B9248118E46730069C19D /* error.cpp in Sources */,
+				DF9B9252118E46A00069C19D /* fontsjis.cpp in Sources */,
+				DF9B9262118E46FE0069C19D /* error.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9923,6 +9971,7 @@
 		1D6058940D05DD3E006BFB54 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
@@ -9958,13 +10007,15 @@
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		1D6058950D05DD3E006BFB54 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_UNIVERSAL_IPHONE_OS)";
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COMPRESS_PNG_FILES = NO;
@@ -9999,7 +10050,8 @@
 				PRODUCT_NAME = ScummVM;
 				PROVISIONING_PROFILE = "EF590570-5FAC-4346-9071-D609DE2B28D8";
 				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
-				SDKROOT = iphoneos2.0;
+				SDKROOT = iphoneos3.2;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;
@@ -10009,8 +10061,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_INPUT_FILETYPE = automatic;
@@ -10066,8 +10118,9 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EF590570-5FAC-4346-9071-D609DE2B28D8";
-				SDKROOT = iphoneos2.2.1;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Debug;
 		};
@@ -10076,8 +10129,8 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "Don't Code Sign";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Don't Code Sign";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -10129,8 +10182,9 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-lz";
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "EF590570-5FAC-4346-9071-D609DE2B28D8";
-				SDKROOT = iphoneos2.2.1;
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
+				SDKROOT = iphoneos3.0;
 			};
 			name = Release;
 		};
