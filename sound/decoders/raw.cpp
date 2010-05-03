@@ -145,11 +145,8 @@ int RawStream<is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffer, const int nu
 		int len = fillBuffer(samplesLeft);
 
 		// In case we were not able to read any samples
-		// and we reached the end of the stream we will
-		// skip reading here. We do not check endOfData
-		// alone here to allow empty blocks in the stream.
-		// (TODO/FIXME: Do we really need that?)
-		if (!len && endOfData())
+		// we will stop reading here.
+		if (!len)
 			break;
 
 		// Adjust the samples left to read.
