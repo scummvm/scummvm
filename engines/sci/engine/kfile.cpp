@@ -229,16 +229,17 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		error("fgets_wrapper: Trying to read from file '%s' opened for writing", f->_name.c_str());
 		return;
 	}
-	if (maxsize > 1)
+	if (maxsize > 1) {
+		memset(dest, 0, maxsize);
 		f->_in->readLine(dest, maxsize);
-	else
+		// The returned string must not have an ending LF
+		int strSize = strlen(dest);
+		if (strSize > 0) {
+			if (dest[strSize - 1] == 0x0A)
+				dest[strSize - 1] = 0;
+		}
+	} else {
 		*dest = f->_in->readByte();
-
-	// The returned string must not have an ending LF
-	int strSize = strlen(dest);
-	if (strSize > 0) {
-		if (dest[strSize - 1] == 0x0A)
-			dest[strSize - 1] = 0;
 	}
 
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
