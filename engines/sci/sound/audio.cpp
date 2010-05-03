@@ -212,6 +212,8 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	byte flags = 0;
 	Sci::Resource *audioRes;
 
+	*sampleLen = 0;
+
 	if (volume == 65535) {
 		audioRes = _resMan->findResource(ResourceId(kResourceTypeAudio, number), false);
 		if (!audioRes) {
@@ -251,10 +253,6 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 			break;
 		}
-
-		// Hopefully FLAC/OGG/MP3 are always 16-bit, otherwise we will get inaccuracies during sampleLen calculation
-		//  TODO: Check if this is true, otherwise implement support for getting 8-bit/16-bit from stream in common
-		flags = Audio::FLAG_16BITS;
 	} else {
 		// Original source file
 		if (audioRes->_headerSize > 0) {
@@ -271,6 +269,14 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				if (memcmp(audioRes->data, "RIFF", 4) == 0) {
 					// WAVE detected
 					Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+
+					// Calculate samplelen from WAVE header
+					int waveSize = 0, waveRate = 0;
+					byte waveFlags = 0;
+					Audio::loadWAVFromStream(*waveStream, waveSize, waveRate, waveFlags);
+					*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
+
+					waveStream->seek(0, SEEK_SET);
 					audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
 				}
 			}
@@ -293,9 +299,6 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		// Original code
 		//*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
 		audioStream = audioSeekStream;
-	} else {
-		// TODO: if possible make makeWAVStream() return seekableAudioStream as well, so we will be able to calculate sampleLen
-		*sampleLen = 0;
 	}
 	if (audioStream)
 		return audioStream;
