@@ -631,17 +631,22 @@ static void listSaves(const char *target) {
 		return;
 	}
 
-	// Query the plugin for a list of savegames
-	SaveStateList saveList = (*plugin)->listSaves(target);
+	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
+		// TODO: Include more info about the target (desc, engine name, ...) ???
+		printf("Target '%s' does not support listing of its save states.\n", target);
+	} else {
+		// Query the plugin for a list of savegames
+		SaveStateList saveList = (*plugin)->listSaves(target);
 
-	// TODO: Include more info about the target (desc, engine name, ...) ???
-	printf("Saves for target '%s':\n", target);
-	printf("  Slot Description                                           \n"
-	       "  ---- ------------------------------------------------------\n");
+		// TODO: Include more info about the target (desc, engine name, ...) ???
+		printf("Saves for target '%s':\n", target);
+		printf("  Slot Description                                           \n"
+		       "  ---- ------------------------------------------------------\n");
 
-	for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
-		printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
-		// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+		for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
+			printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
+			// TODO: Could also iterate over the full hashmap, printing all key-value pairs
+		}
 	}
 
 	// Revert to the old active domain
