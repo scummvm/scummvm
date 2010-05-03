@@ -130,6 +130,8 @@ private:
 	void cmdSetSoundLoop(reg_t obj, int16 value);
 	void cmdSuspendSound(reg_t obj, int16 value);
 
+	void processStopSound(reg_t obj, int16 value, bool sampleFinishedPlaying);
+
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	void changeSoundStatus(reg_t obj, int newStatus);
 #endif

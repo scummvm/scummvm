@@ -498,6 +498,10 @@ void SoundCommandParser::cmdDisposeSound(reg_t obj, int16 value) {
 }
 
 void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
+	processStopSound(obj, value, false);
+}
+
+void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFinishedPlaying) {
 	if (!obj.segment)
 		return;
 
@@ -517,8 +521,16 @@ void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
 		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundStopped);
 	} else {
 		PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 	}
+
+	// Set signal selector in sound SCI0 games only, when the sample has finished playing
+	//  If we don't set it at all, we get a problem when using vaporizer on the 2 guys
+	//  If we set it all the time, we get no music in sq3new and kq1
+	// FIXME: this *may* be wrong, it's impossible to find out in sierra DOS sci, because SCI0 under DOS didn't have
+	//         sfx drivers included
+	// We need to set signal in sound SCI1+ games all the time
+	if ((_soundVersion > SCI_VERSION_0_LATE) || sampleFinishedPlaying)
+		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
 	musicSlot->signal = 0;
@@ -812,7 +824,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
 		if (!_music->soundIsActive(musicSlot)) {
-			cmdStopSound(obj, 0);
+			processStopSound(obj, 0, true);
 		} else {
 			_music->updateAudioStreamTicker(musicSlot);
 		}
