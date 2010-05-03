@@ -63,7 +63,15 @@ public:
 
 		// Set current buffer state, playing first block
 		_stream->seek(_curBlock->pos, SEEK_SET);
-		_blockLeft = _curBlock->len;
+
+		// In case of an error we will stop (or rather
+		// not start) stream playback.
+		if (_stream->err()) {
+			_blockLeft = 0;
+			_curBlock = _blocks.end();
+		} else {
+			_blockLeft = _curBlock->len;
+		}
 
 		// Add up length of all blocks in order to caluclate total play time
 		int32 len = 0;
@@ -187,7 +195,12 @@ int RawStream<is16Bit, isUnsigned, isLE>::fillBuffer(int maxSamples) {
 		maxSamples -= samplesRead;
 		_blockLeft -= samplesRead;
 
-		// TODO: Check for possible read errors
+		// In case of an error we will stop
+		// stream playback.
+		if (_stream->err()) {
+			_blockLeft = 0;
+			_curBlock = _blocks.end();
+		}
 
 		// Advance to the next block in case the current
 		// one is already finished.
@@ -210,9 +223,14 @@ void RawStream<is16Bit, isUnsigned, isLE>::updateBlockIfNeeded() {
 		if (_curBlock != _blocks.end()) {
 			_stream->seek(_curBlock->pos, SEEK_SET);
 
-			// TODO: Check for errors while seeking
-
-			_blockLeft = _curBlock->len;
+			// In case of an error we will stop
+			// stream playback.
+			if (_stream->err()) {
+				_blockLeft = 0;
+				_curBlock = _blocks.end();
+			} else {
+				_blockLeft = _curBlock->len;
+			}
 		}
 	}
 }
@@ -244,7 +262,15 @@ bool RawStream<is16Bit, isUnsigned, isLE>::seek(const Timestamp &where) {
 		const uint32 offset = seekSample - curSample;
 
 		_stream->seek(_curBlock->pos + offset * (is16Bit ? 2 : 1), SEEK_SET);
-		_blockLeft = _curBlock->len - offset;
+
+		// In case of an error we will stop
+		// stream playback.
+		if (_stream->err()) {
+			_blockLeft = 0;
+			_curBlock = _blocks.end();
+		} else {
+			_blockLeft = _curBlock->len - offset;
+		}
 
 		return true;
 	}
