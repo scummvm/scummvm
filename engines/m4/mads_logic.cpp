@@ -164,7 +164,7 @@ void MadsSceneLogic::selectScene(int sceneNum) {
 
 void MadsSceneLogic::setupScene() {
 	// FIXME: This is the hardcoded logic for Rex scene 101 only
-	const char *animName = formAnimName('A', -1);
+	//const char *animName = formAnimName('A', -1);
 
 //	sub_1e754(animName, 3);
 
