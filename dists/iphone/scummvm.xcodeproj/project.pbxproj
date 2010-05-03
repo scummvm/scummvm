@@ -1910,7 +1910,6 @@
 		DF9B9262118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
 		DF9B9263118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
 		DF9B9264118E46FE0069C19D /* error.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF9B9261118E46FE0069C19D /* error.cpp */; };
-		DF9B92A3118E47A50069C19D /* COMI in CopyFiles */ = {isa = PBXBuildFile; fileRef = DF9B9280118E47960069C19D /* COMI */; };
 		DFAAAFF70F0112AD003E9390 /* saveload.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFF50F0112AD003E9390 /* saveload.cpp */; };
 		DFAAAFF90F0112C1003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFF80F0112C1003E9390 /* detection.cpp */; };
 		DFAAAFFC0F0112DF003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
@@ -2913,7 +2912,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 7;
 			files = (
-				DF9B92A3118E47A50069C19D /* COMI in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4353,7 +4351,6 @@
 		DF9B924F118E46A00069C19D /* fontsjis.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = fontsjis.cpp; sourceTree = "<group>"; };
 		DF9B9250118E46A00069C19D /* fontsjis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = fontsjis.h; sourceTree = "<group>"; };
 		DF9B9261118E46FE0069C19D /* error.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = error.cpp; sourceTree = "<group>"; };
-		DF9B9280118E47960069C19D /* COMI */ = {isa = PBXFileReference; lastKnownFileType = folder; name = COMI; path = ../../../../spill/COMI; sourceTree = SOURCE_ROOT; };
 		DFAAAFF50F0112AD003E9390 /* saveload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload.cpp; sourceTree = "<group>"; };
 		DFAAAFF60F0112AD003E9390 /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
 		DFAAAFF80F0112C1003E9390 /* detection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detection.cpp; sourceTree = "<group>"; };
@@ -6403,7 +6400,6 @@
 		DF9B9277118E475D0069C19D /* games */ = {
 			isa = PBXGroup;
 			children = (
-				DF9B9280118E47960069C19D /* COMI */,
 			);
 			name = games;
 			sourceTree = "<group>";
