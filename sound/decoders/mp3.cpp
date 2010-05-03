@@ -114,7 +114,14 @@ MP3Stream::MP3Stream(Common::SeekableReadStream *inStream, DisposeAfterUse::Flag
 	while (_state != MP3_STATE_EOS)
 		readHeader();
 
-	_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
+	// To rule out any invalid sample rate to be encountered here, say in case the
+	// MP3 stream is invalid, we just check the MAD error code here.
+	// We need to assure this, since else we might trigger an assertion in Timestamp
+	// (When getRate() returns 0 or a negative number to be precise).
+	// Note that we allow "MAD_ERROR_BUFLEN" as error code here, since according
+	// to mad.h it is also set on EOF.
+	if ((_stream.error == MAD_ERROR_NONE || _stream.error == MAD_ERROR_BUFLEN) && getRate() > 0)
+		_length = Timestamp(mad_timer_count(_totalTime, MAD_UNITS_MILLISECONDS), getRate());
 
 	deinitStream();
 
