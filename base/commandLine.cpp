@@ -627,19 +627,19 @@ static void listSaves(const char *target) {
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
-		error("Could not find any plugin to handle gameid '%s' (target '%s')", gameid.c_str(), target);
+		error("Could not find any plugin to handle target '%s' (gameid '%s')", target, gameid.c_str());
 		return;
 	}
 
 	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
-		printf("Target '%s' does not support listing of its save states.\n", target);
+		printf("ScummVM does not support listing save states for target '%s' (gameid '%s') .\n", target, gameid.c_str());
 	} else {
 		// Query the plugin for a list of savegames
 		SaveStateList saveList = (*plugin)->listSaves(target);
 
 		// TODO: Include more info about the target (desc, engine name, ...) ???
-		printf("Saves for target '%s':\n", target);
+		printf("Saves for target '%s' (gameid '%s'):\n", target, gameid.c_str());
 		printf("  Slot Description                                           \n"
 		       "  ---- ------------------------------------------------------\n");
 
