@@ -188,6 +188,7 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 
 	if (audioFlags & kSolFlagCompressed) {
 		buffer = (byte *)malloc(size * 2);
+		assert(buffer);
 
 		if (audioFlags & kSolFlag16Bit)
 			deDPCM16(buffer, *audioStream, size);
@@ -198,6 +199,7 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	} else {
 		// We assume that the sound data is raw PCM
 		buffer = (byte *)malloc(size);
+		assert(buffer);
 		audioStream->read(buffer, size);
 	}
 
@@ -234,22 +236,28 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 	if (audioCompressionType) {
 		// Compressed audio made by our tool
-		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::YES);
+		byte *compressedData = (byte *)malloc(audioRes->size);
+		assert(compressedData);
+		// We copy over the compressed data in our own buffer. If we don't do this resourcemanager may free the data
+		//  later. All other compression-types already decompress completely into an additional buffer here.
+		//  MP3/OGG/FLAC decompression works on-the-fly instead.
+		memcpy(compressedData, audioRes->data, audioRes->size);
+		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
 		
 		switch (audioCompressionType) {
 		case MKID_BE('MP3 '):
 #ifdef USE_MAD
-			audioSeekStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
 		case MKID_BE('OGG '):
 #ifdef USE_VORBIS
-			audioSeekStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
 		case MKID_BE('FLAC'):
 #ifdef USE_FLAC
-			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::YES);
 #endif
 			break;
 		}
@@ -300,6 +308,8 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		//*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
 		audioStream = audioSeekStream;
 	}
+	// We have to make sure that we don't depend on resource manager pointers after this point, because the actual
+	//  audio resource may get unloaded by resource manager at any time
 	if (audioStream)
 		return audioStream;
 
