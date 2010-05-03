@@ -205,6 +205,7 @@ static byte *readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 }
 
 Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 volume, int *sampleLen) {
+	Audio::SeekableAudioStream *audioSeekStream = 0;
 	Audio::RewindableAudioStream *audioStream = 0;
 	uint32 size = 0;
 	byte *data = 0;
@@ -236,17 +237,17 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		switch (audioCompressionType) {
 		case MKID_BE('MP3 '):
 #ifdef USE_MAD
-			audioStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeMP3Stream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		case MKID_BE('OGG '):
 #ifdef USE_VORBIS
-			audioStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeVorbisStream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		case MKID_BE('FLAC'):
 #ifdef USE_FLAC
-			audioStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::NO);
+			audioSeekStream = Audio::makeFLACStream(compressedStream, DisposeAfterUse::NO);
 #endif
 			break;
 		}
@@ -284,13 +285,20 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		}
 
 		if (data)
-			audioStream = Audio::makeRawStream(data, size, _audioRate, flags);
+			audioSeekStream = Audio::makeRawStream(data, size, _audioRate, flags);
 	}
 
-	if (audioStream) {
-		*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
-		return audioStream;
+	if (audioSeekStream) {
+		*sampleLen = (audioSeekStream->getLength().msecs() * 10000) / 166666; // we translate msecs to ticks
+		// Original code
+		//*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		audioStream = audioSeekStream;
+	} else {
+		// TODO: if possible make makeWAVStream() return seekableAudioStream as well, so we will be able to calculate sampleLen
+		*sampleLen = 0;
 	}
+	if (audioStream)
+		return audioStream;
 
 	return NULL;
 }
