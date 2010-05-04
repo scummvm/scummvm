@@ -31,6 +31,7 @@
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
 
+#include "common/debug-channels.h"
 #include "common/list.h"
 #include "common/system.h"
 

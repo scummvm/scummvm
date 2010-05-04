@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 
 #include "gui/message.h"
 

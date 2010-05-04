@@ -23,6 +23,7 @@
  */
 
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/util.h"
 
 #include <stdarg.h>	// For va_list etc.

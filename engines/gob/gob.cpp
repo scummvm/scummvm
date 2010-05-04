@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"

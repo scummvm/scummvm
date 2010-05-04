@@ -58,6 +58,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "engines/util.h"
 #include "graphics/surface.h"
 #include "sound/mididrv.h"

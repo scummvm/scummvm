@@ -23,9 +23,9 @@
  *
  */
 
-
 #include "common/system.h"
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"

@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/endian.h"
 #include "common/debug.h"
+#include "common/debug-channels.h"
 #include "common/stream.h"
 
 #include "sci/decompressor.h"

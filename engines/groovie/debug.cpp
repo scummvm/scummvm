@@ -27,6 +27,8 @@
 #include "groovie/groovie.h"
 #include "groovie/script.h"
 
+#include "common/debug-channels.h"
+
 namespace Groovie {
 
 Debugger::Debugger(GroovieEngine *vm) :

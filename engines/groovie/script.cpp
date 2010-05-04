@@ -31,6 +31,7 @@
 #include "groovie/saveload.h"
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"

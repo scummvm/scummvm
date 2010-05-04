@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 
 #include "engines/util.h"
