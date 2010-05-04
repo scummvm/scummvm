@@ -24,6 +24,9 @@
  */
 
 #include "common/str.h"
+#ifndef MACOSX
+#include "common/config-manager.h"
+#endif
 
 #include "scumm/charset.h"
 #include "scumm/dialogs.h"
