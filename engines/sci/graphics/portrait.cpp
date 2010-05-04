@@ -121,13 +121,19 @@ void Portrait::init() {
 
 	// Offset table follows
 	curBitmap = _bitmaps;
-	data += 18;
+	int32 offsetTableSize = READ_LE_UINT32(data);
+	assert((bitmapNr + 1) * 14 <= offsetTableSize);
+	data += 4;
+	byte *dataOffsetTable = data + 14; // we skip first bitmap offsets
 	for (bitmapNr = 0; bitmapNr < _bitmapCount; bitmapNr++) {
-		curBitmap->displaceX = READ_LE_UINT16(data);
-		curBitmap->displaceY = READ_LE_UINT16(data + 2);
-		data += 14;
+		curBitmap->displaceX = READ_LE_UINT16(dataOffsetTable);
+		curBitmap->displaceY = READ_LE_UINT16(dataOffsetTable + 2);
+		dataOffsetTable += 14;
 		curBitmap++;
 	}
+	data += offsetTableSize;
+
+	// raw lip-sync data follows
 }
 
 void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
