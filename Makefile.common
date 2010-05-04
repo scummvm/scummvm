@@ -171,7 +171,7 @@ VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 
 ifeq ($(shell LANG=C svn stat $(srcdir) 2>&1 | grep "is not a working copy"),)
 SVNROOT := $(srcdir)
-ifeq ($(origin SVNREV), undefined)
+ifeq ($(origin VER_SVNREV), undefined)
 # Get the working copy base revision
 VER_SVNREV := $(shell LANG=C svn info $(SVNROOT) | grep "^Revision" | cut -d ' ' -f 2)
 endif
