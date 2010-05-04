@@ -27,6 +27,7 @@
 #define SCI_SCICORE_RESOURCE_H
 
 #include "common/str.h"
+#include "common/fs.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"

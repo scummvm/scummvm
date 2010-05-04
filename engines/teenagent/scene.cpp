@@ -25,6 +25,8 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/algorithm.h"
+#include "common/ptr.h"
+
 #include "teenagent/scene.h"
 #include "teenagent/resources.h"
 #include "teenagent/surface.h"

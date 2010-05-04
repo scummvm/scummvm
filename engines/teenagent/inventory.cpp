@@ -23,6 +23,7 @@
  */
 
 #include "common/stream.h"
+#include "common/ptr.h"
 
 #include "teenagent/inventory.h"
 #include "teenagent/resources.h"

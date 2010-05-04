@@ -49,12 +49,14 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_activatedSLST = false;
 	_extrasFile = NULL;
 
-	// Attempt to let game run from the CD's
+	// Attempt to let game run from the CDs
 	// NOTE: assets2 contains higher quality audio than assets1
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "all");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "exe");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "assets2");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "assets2");
 
 	g_atrusJournalRectSolo = new Common::Rect(295, 402, 313, 426);
 	g_atrusJournalRect = new Common::Rect(222, 402, 240, 426);

@@ -56,13 +56,14 @@ SwordEngine::SwordEngine(OSystem *syst)
 		_features = 0;
 
 	// Add default file directories
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "clusters");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "speech");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "smackshi");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "english");//PSX Demo
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "italian");//PSX Demo
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "smackshi");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "english");//PSX Demo
+	SearchMan.addSubDirectoryMatching(gameDataDir, "italian");//PSX Demo
 }
 
 SwordEngine::~SwordEngine() {

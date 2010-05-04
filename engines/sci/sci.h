@@ -27,7 +27,7 @@
 #define SCI_H
 
 #include "engines/engine.h"
-//#include "engines/advancedDetector.h"
+#include "common/util.h"
 
 struct ADGameDescription;
 

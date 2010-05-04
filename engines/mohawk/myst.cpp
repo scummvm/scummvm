@@ -74,8 +74,10 @@ MohawkEngine_Myst::MohawkEngine_Myst(OSystem *syst, const MohawkGameDescription 
 
 	_scriptParser->disableInitOpcodes();
 
-	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh)
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "CD Data");
+	if ((getFeatures() & GF_ME) && getPlatform() == Common::kPlatformMacintosh) {
+		const Common::FSNode gameDataDir(ConfMan.get("path"));
+		SearchMan.addSubDirectoryMatching(gameDataDir, "CD Data");
+	}
 }
 
 MohawkEngine_Myst::~MohawkEngine_Myst() {

@@ -27,8 +27,8 @@
 
 #include "common/scummsys.h"
 #include "common/error.h"
-#include "common/fs.h"
 #include "common/str.h"
+#include "common/list.h"
 #include "graphics/pixelformat.h"
 
 class OSystem;
@@ -88,8 +88,6 @@ protected:
 	virtual int runDialog(GUI::Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
-
-	const Common::FSNode _gameDataDir;	// FIXME: Get rid of this
 
 private:
 	/**

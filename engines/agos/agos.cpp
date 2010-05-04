@@ -24,10 +24,11 @@
  */
 
 #include "common/config-manager.h"
-#include "common/file.h"
-#include "common/system.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/events.h"
+#include "common/file.h"
+#include "common/fs.h"
+#include "common/system.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
@@ -514,20 +515,22 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 		"\x5\x5\x4\x6\x5\x3\x4\x5\x6\x3\x5\x5\x4\x6\x5\x3\x4\x6\x5\x6\x6\x6\x5\x5\x5\x6\x5\x6\x6\x6\x6\x6", 32);
 
 
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "execute");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "execute");
 
 	// Add default file directories for Amiga/Macintosh
 	// verisons of Simon the Sorcerer 2
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "voices");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "voices");
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "gfx");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "movies");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "sfx");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "speech");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "gfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "speech");
 
 	g_eventRec.registerRandomSource(_rnd, "agos");
 }

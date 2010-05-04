@@ -90,7 +90,6 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
-		_gameDataDir(ConfMan.get("path")),
 		_pauseLevel(0),
 		_mainMenuDialog(NULL) {
 
@@ -320,12 +319,14 @@ void Engine::checkCD() {
 	char buffer[MAXPATHLEN];
 	int i;
 
-	if (_gameDataDir.getPath().empty()) {
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	if (gameDataDir.getPath().empty()) {
 		// That's it! I give up!
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, _gameDataDir.getPath().c_str(), MAXPATHLEN);
+		strncpy(buffer, gameDataDir.getPath().c_str(), MAXPATHLEN);
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')

@@ -257,10 +257,11 @@ namespace Sword2 {
 
 Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 	// Add default file directories
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "clusters");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "sword2");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "smacks");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "clusters");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "sword2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "smacks");
 
 	if (!scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2demo") || !scumm_stricmp(ConfMan.get("gameid").c_str(), "sword2psxdemo"))
 		_features = GF_DEMO;

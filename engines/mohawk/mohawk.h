@@ -33,6 +33,10 @@
 
 class OSystem;
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Mohawk {
 
 enum MohawkGameType {

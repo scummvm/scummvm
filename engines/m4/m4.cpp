@@ -52,6 +52,7 @@
 #include "m4/mads_menus.h"
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/endian.h"
@@ -111,8 +112,10 @@ MadsM4Engine::MadsM4Engine(OSystem *syst, const M4GameDescription *gameDesc) :
 	_vm = this;
 	_madsVm = NULL;
 
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "goodstuf");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "resource");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "goodstuf");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 
 	DebugMan.addDebugChannel(kDebugScript, "script", "Script debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "graphics", "Graphics debug level");

@@ -79,7 +79,8 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	// Do not initialize graphics here
 
 	// However this is the place to specify all default directories
-	//SearchMan.addSubDirectoryMatching(_gameDataDir, "sound");
+	//const Common::FSNode gameDataDir(ConfMan.get("path"));
+	//SearchMan.addSubDirectoryMatching(gameDataDir, "sound");
 
 	// Here is the right place to set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDraciGeneralDebugLevel, "general", "Draci general debug info");

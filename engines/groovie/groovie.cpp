@@ -41,9 +41,10 @@ GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	_graphicsMan(NULL), _waitingForInput(false) {
 
 	// Adding the default directories
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "groovie");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "media");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "system");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "groovie");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "media");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "system");
 
 	// Initialize the custom debug levels
 	DebugMan.addDebugChannel(kGroovieDebugAll, "All", "Debug everything");

@@ -933,22 +933,24 @@ ScummEngine_v8::~ScummEngine_v8() {
 
 Common::Error ScummEngine::init() {
 
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms");
 	}
 
 	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
 		// This is for the Mac version of Indy3/Loom
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 1");
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 2");
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 3");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms 1");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms 2");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "rooms 3");
 	}
 
 #ifdef ENABLE_SCUMM_7_8
 #ifdef MACOSX
-	if (_game.version == 8 && !memcmp(_gameDataDir.getPath().c_str(), "/Volumes/MONKEY3_", 17)) {
+	if (_game.version == 8 && !memcmp(gameDataDir.getPath().c_str(), "/Volumes/MONKEY3_", 17)) {
 		// Special case for COMI on Mac OS X. The mount points on OS X depend
 		// on the volume name. Hence if playing from CD, we'd get a problem.
 		// So if loading of a resource file fails, we fall back to the (fixed)
@@ -963,12 +965,12 @@ Common::Error ScummEngine::init() {
 #endif
 	if (_game.version == 8)
 		// This is for COMI
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "resource");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "resource");
 
 	if (_game.version == 7) {
 		// This is for Full Throttle & The Dig
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
-		SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "video");
+		SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	}
 #endif
 

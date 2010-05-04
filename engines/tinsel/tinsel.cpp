@@ -29,6 +29,7 @@
 #include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "common/serializer.h"
@@ -834,11 +835,12 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	// Add DW2 subfolder to search path in case user is running directly from the CDs
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "dw2");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameDataDir, "dw2");
 
 	// Add subfolders needed for psx versions of Discworld 1
 	if (TinselV1PSX)
-		SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 3, true);
+		SearchMan.addDirectory(gameDataDir.getPath(), gameDataDir, 0, 3, true);
 
 	const GameSettings *g;
 

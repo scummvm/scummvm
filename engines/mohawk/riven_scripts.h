@@ -27,6 +27,7 @@
 #define RIVEN_SCRIPTS_H
 
 #include "common/str-array.h"
+#include "common/ptr.h"
 
 class MohawkEngine_Riven;
 
