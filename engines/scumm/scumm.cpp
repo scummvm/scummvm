@@ -29,6 +29,8 @@
 #include "common/EventRecorder.h"
 #include "common/system.h"
 
+#include "engines/util.h"
+
 #include "gui/message.h"
 #include "gui/GuiManager.h"
 

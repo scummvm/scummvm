@@ -33,6 +33,8 @@
 
 #include "graphics/cursorman.h"
 
+#include "engines/util.h"
+
 #include "base/plugins.h"
 #include "base/version.h"
 

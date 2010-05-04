@@ -25,6 +25,9 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+
+#include "engines/util.h"
+
 #include "sound/mixer.h"
 
 #include "groovie/groovie.h"

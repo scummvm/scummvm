@@ -27,11 +27,16 @@
 #include "common/events.h"
 #include "common/savefile.h"
 #include "common/system.h"
+
 #include "engines/advancedDetector.h"
+#include "engines/util.h"
+
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/thumbnail.h"
+
 #include "teenagent/console.h"
 #include "teenagent/music.h"
 #include "teenagent/objects.h"

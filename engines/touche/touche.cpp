@@ -29,6 +29,7 @@
 #include "common/EventRecorder.h"
 #include "common/system.h"
 
+#include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "sound/mididrv.h"
 

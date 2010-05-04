@@ -34,6 +34,7 @@
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
+#include "engines/util.h"
 
 namespace Saga {
 

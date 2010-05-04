@@ -58,7 +58,7 @@
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
-#include "engines/engine.h"
+#include "engines/util.h"
 #include "graphics/surface.h"
 #include "sound/mididrv.h"
 

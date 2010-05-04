@@ -31,6 +31,8 @@
 #include "common/keyboard.h"
 #include "common/EventRecorder.h"
 
+#include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
 

@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "graphics/surface.h"
+#include "engines/util.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"

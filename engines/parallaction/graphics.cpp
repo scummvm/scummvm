@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "graphics/primitives.h"
+#include "engines/util.h"
 
 #include "parallaction/input.h"
 #include "parallaction/parallaction.h"

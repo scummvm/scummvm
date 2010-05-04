@@ -38,6 +38,8 @@
 
 #include "common/config-manager.h"
 
+#include "engines/util.h"
+
 #include "gui/message.h"
 #include "gui/GuiManager.h"
 

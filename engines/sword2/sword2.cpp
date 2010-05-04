@@ -25,8 +25,6 @@
  * $Id$
  */
 
-
-
 #include "base/plugins.h"
 
 #include "common/config-manager.h"
@@ -38,6 +36,7 @@
 #include "common/system.h"
 
 #include "engines/metaengine.h"
+#include "engines/util.h"
 
 #include "sword2/sword2.h"
 #include "sword2/defs.h"

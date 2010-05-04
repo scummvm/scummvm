@@ -28,6 +28,8 @@
 #include "common/savefile.h"
 #include "common/EventRecorder.h"
 
+#include "engines/util.h"
+
 #include "lure/luredefs.h"
 #include "lure/surface.h"
 #include "lure/lure.h"

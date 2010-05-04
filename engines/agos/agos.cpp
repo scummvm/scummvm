@@ -30,6 +30,8 @@
 #include "common/fs.h"
 #include "common/system.h"
 
+#include "engines/util.h"
+
 #include "agos/debugger.h"
 #include "agos/intern.h"
 #include "agos/agos.h"

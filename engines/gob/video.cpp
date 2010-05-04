@@ -24,6 +24,9 @@
  */
 
 #include "common/endian.h"
+
+#include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"

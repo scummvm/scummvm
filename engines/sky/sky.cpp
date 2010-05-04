@@ -47,6 +47,9 @@
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
 
+#include "engines/util.h"
+
+
 #ifdef _WIN32_WCE
 
 extern bool toolbar_drawn;

@@ -28,6 +28,8 @@
 #include "common/config-manager.h"
 
 #include "engines/advancedDetector.h"
+#include "engines/util.h"
+
 #include "sci/sci.h"
 #include "sci/debug.h"
 #include "sci/console.h"

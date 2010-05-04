@@ -33,6 +33,8 @@
 #include "common/events.h"
 #include "common/EventRecorder.h"
 
+#include "engines/util.h"
+
 #include "queen/queen.h"
 #include "queen/bankman.h"
 #include "queen/command.h"

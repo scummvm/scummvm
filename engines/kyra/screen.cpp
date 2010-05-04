@@ -27,6 +27,8 @@
 #include "common/endian.h"
 #include "common/system.h"
 
+#include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/sjis.h"
 

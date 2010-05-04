@@ -33,6 +33,8 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+#include "engines/util.h"
+
 #include "sound/mixer.h"
 
 #include "drascula/drascula.h"

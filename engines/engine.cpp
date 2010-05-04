@@ -32,6 +32,7 @@
 #include "engines/engine.h"
 #include "engines/dialogs.h"
 #include "engines/metaengine.h"
+#include "engines/util.h"
 
 #include "common/config-manager.h"
 #include "common/debug.h"

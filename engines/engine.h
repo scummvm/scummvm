@@ -28,8 +28,6 @@
 #include "common/scummsys.h"
 #include "common/error.h"
 #include "common/str.h"
-#include "common/list.h"
-#include "graphics/pixelformat.h"
 
 class OSystem;
 
@@ -45,28 +43,6 @@ namespace GUI {
 	class Debugger;
 	class Dialog;
 }
-
-/**
- * Setup the backend's graphics mode.
- */
-void initCommonGFX(bool defaultTo1XScaler);
-
-/**
- * Setup the backend's screen size and graphics mode.
- *
- * Shows an various warnings on certain backend graphics
- * transaction failures (aspect switch, fullscreen switch, etc.).
- *
- * Errors out when backend is not able to switch to the specified
- * mode.
- *
- * Defaults to 256 color paletted mode if no graphics format is provided.
- * Uses the backend's preferred format if graphics format pointer is NULL.
- * Finds the best compatible format if a list of graphics formats is provided.
- */
-void initGraphics(int width, int height, bool defaultTo1xScaler);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format);
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList);
 
 /**
  * Initializes graphics and shows error message.

@@ -35,6 +35,8 @@
 #include "common/serializer.h"
 #include "common/stream.h"
 
+#include "engines/util.h"
+
 #include "graphics/cursorman.h"
 
 #include "base/plugins.h"

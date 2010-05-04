@@ -28,6 +28,8 @@
 
 #include "common/events.h"
 
+#include "engines/util.h"
+
 namespace Mohawk {
 
 MohawkEngine_LivingBooks::MohawkEngine_LivingBooks(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {

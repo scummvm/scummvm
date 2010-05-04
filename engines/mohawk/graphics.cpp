@@ -29,6 +29,8 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_cursors.h"
 
+#include "engines/util.h"
+
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 #include "gui/message.h"
