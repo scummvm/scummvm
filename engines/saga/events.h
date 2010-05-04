@@ -28,6 +28,7 @@
 #ifndef SAGA_EVENT_H
 #define SAGA_EVENT_H
 
+#include "common/list.h"
 
 namespace Saga {
 

@@ -32,6 +32,7 @@
 #include "lure/hotspots.h"
 #include "lure/palette.h"
 
+#include "common/array.h"
 #include "common/file.h"
 #include "common/list.h"
 #include "common/random.h"

@@ -31,6 +31,7 @@
 #include "common/array.h"
 #include "common/events.h"
 #include "common/random.h"
+#include "common/hashmap.h"
 #include "common/system.h"
 
 #include "sound/mixer.h"

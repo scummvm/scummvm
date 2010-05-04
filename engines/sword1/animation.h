@@ -30,9 +30,12 @@
 #include "graphics/video/smk_decoder.h"
 #include "graphics/video/video_player.h"
 
+#include "common/array.h"
+
+#include "sound/audiostream.h"
+
 #include "sword1/screen.h"
 #include "sword1/sound.h"
-#include "sound/audiostream.h"
 
 namespace Sword1 {
 

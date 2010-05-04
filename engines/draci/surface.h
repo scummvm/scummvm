@@ -26,6 +26,7 @@
 #ifndef DRACI_SURFACE_H
 #define DRACI_SURFACE_H
 
+#include "common/list.h"
 #include "graphics/surface.h"
 
 namespace Draci {

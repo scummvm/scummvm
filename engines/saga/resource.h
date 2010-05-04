@@ -29,6 +29,7 @@
 #define SAGA_RESOURCE_H
 
 #include "common/file.h"
+#include "common/list.h"
 
 namespace Saga {
 

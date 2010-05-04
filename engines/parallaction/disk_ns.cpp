@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "parallaction/parser.h"
 #include "parallaction/parallaction.h"
 

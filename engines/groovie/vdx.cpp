@@ -27,6 +27,7 @@
 #include "groovie/lzss.h"
 #include "groovie/vdx.h"
 
+#include "common/debug-channels.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 

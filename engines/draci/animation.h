@@ -26,6 +26,8 @@
 #ifndef DRACI_ANIMATION_H
 #define DRACI_ANIMATION_H
 
+#include "common/array.h"
+#include "common/list.h"
 #include "common/rect.h"
 #include "draci/sprite.h"
 

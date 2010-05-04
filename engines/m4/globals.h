@@ -26,11 +26,11 @@
 #ifndef M4_GLOBALS_H
 #define M4_GLOBALS_H
 
+#include "common/scummsys.h"
 #include "common/array.h"
 #include "common/rect.h"
-#include "common/scummsys.h"
-
 #include "common/file.h"
+#include "common/list.h"
 #include "common/ptr.h"
 
 namespace M4 {

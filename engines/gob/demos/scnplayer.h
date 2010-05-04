@@ -28,6 +28,7 @@
 
 #include "common/str.h"
 #include "common/hashmap.h"
+#include "common/hash-str.h"
 
 #include "gob/demos/demoplayer.h"
 

@@ -26,6 +26,7 @@
 #include "graphics/iff.h"
 
 #include "common/config-manager.h"
+#include "common/fs.h"
 #include "parallaction/parallaction.h"
 #include "parallaction/parser.h"
 
