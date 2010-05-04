@@ -169,7 +169,7 @@ VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
 # Get Subversion's working copy information
 ######################################################################
 
-ifneq ($(shell svn info $(srcdir) 1>/dev/null 2>&1 || echo "error"),"error")
+ifneq ($(shell svn info $(srcdir) 1>/dev/null 2>&1 || echo "error"),error)
 SVNROOT := $(srcdir)
 ifeq ($(origin VER_SVNREV), undefined)
 # Get the working copy base revision
