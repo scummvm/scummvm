@@ -319,7 +319,7 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(strcmp(test4, testString), 0);
 	}
 
-	void test_strncat() {
+	void test_strlcat() {
 		static const char * const initialString = "123";
 		static const char * const appendString = "4567890";
 		static const char * const resultString = "1234567890";
