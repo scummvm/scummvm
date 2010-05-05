@@ -172,6 +172,8 @@ Common::Error PrisonerEngine::run() {
 		_textFont = addFont(pakName, 1, 96, 255);
 	}
 
+	setFontDefaultColors();
+
 	initInput();
 
 	_system->showMouse(true);
@@ -1030,6 +1032,22 @@ int16 PrisonerEngine::calcDirection(int16 x1, int16 y1, int16 x2, int16 y2) {
 			direction = 0;
 	}
 	return direction;
+}
+
+void PrisonerEngine::setFontDefaultColors() {
+	// TODO: More colors
+	_screenTextFontColor.outlineColor = 131;
+	_screenTextFontColor.inkColor = 124;
+	_zoneFontColor.outlineColor = 32;
+	_zoneFontColor.inkColor = 43;
+	_inventoryScreenTextFontColor.outlineColor = 32;
+	_inventoryScreenTextFontColor.inkColor = 110;
+	_inventoryFontColor.outlineColor = 32;
+	_inventoryFontColor.inkColor = 47;
+	_dialogFontColor.outlineColor = 56;
+	_dialogFontColor.inkColor = 63;
+	_dialogHoverFontColor.outlineColor = 80;
+	_dialogHoverFontColor.inkColor = 79;
 }
 
 } // End of namespace Prisoner

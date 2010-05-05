@@ -107,19 +107,11 @@ void PrisonerEngine::addScreenText(ScreenText *screenText, int16 resourceCacheSl
 		} else {
 			screenText->fontIndex = _textFont;
 			if (!_inventoryActive) {
-				/* TODO
-				screenText->fontOutlineColor = fontColor6.outline;
-				screenText->fontInkColor = fontColor6.ink;
-				*/
-				screenText->fontOutlineColor = 20;
-				screenText->fontInkColor = 220;
+				screenText->fontOutlineColor = _screenTextFontColor.outlineColor;
+				screenText->fontInkColor = _screenTextFontColor.inkColor;
 			} else {
-				/* TODO
-				screenText->fontOutlineColor = fontColor4.outline;
-				screenText->fontInkColor = fontColor4.ink;
-				*/
-				screenText->fontOutlineColor = 2;
-				screenText->fontInkColor = 200;
+				screenText->fontOutlineColor = _inventoryScreenTextFontColor.outlineColor;
+				screenText->fontInkColor = _inventoryScreenTextFontColor.inkColor;
 			}
 		}
 	} else {

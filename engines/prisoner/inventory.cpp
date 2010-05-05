@@ -132,7 +132,7 @@ void PrisonerEngine::updateInventoryItems() {
 	int16 clickBoxIndex = 0, x = 0;
 	AnimationResource *inventoryAnimationResource = _res->get<AnimationResource>(_inventoryItemsResourceCacheIndex);
 
-	// TODO: setFontColors(_textFont, fontColor3.outline, fontColor3.ink);
+	setFontColors(_textFont, _inventoryFontColor.outlineColor, _inventoryFontColor.inkColor);
 	setActiveFont(_textFont);
 
 	for (int16 i = 0; i < kMaxInventoryItems; i++) {

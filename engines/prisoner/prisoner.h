@@ -734,6 +734,10 @@ public:
 	/* Music */
 	MidiPlayer *_midi;
 
+	/* Font colors */
+	FontColorDef _dialogFontColor, _dialogHoverFontColor, _inventoryFontColor,
+		_zoneFontColor, _screenTextFontColor, _inventoryScreenTextFontColor;
+
 public:
 	int16 loadTextResource(Common::String &pakName, int16 pakSlot);
 	void makeLanguageString(Common::String &value);
@@ -1019,6 +1023,9 @@ public:
 	/* Music */
 	void initializeMidi();
 	void shutdownMidi();
+
+	/* Font colors */
+	void setFontDefaultColors();
 
 public:
 

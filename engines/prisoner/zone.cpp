@@ -147,7 +147,7 @@ void PrisonerEngine::drawZoneDescription(int16 zoneIndex) {
 	Zone *zone = &_zones[zoneIndex];
 	if (zone->hasText) {
 		TextResource *textResource = _res->get<TextResource>(zone->resourceCacheSlot);
-		// TODO: setFontColors(_textFont, fontColor5.outline, fontColor5.ink);
+		setFontColors(_textFont, _zoneFontColor.outlineColor, _zoneFontColor.inkColor);
 		setActiveFont(_textFont);
  		_screen->fillRect(0, 398, 639, 479, 0);
 		drawTextEx(0, 639, 398, 479, textResource->getText(zone->textIndex)->getChunkLineString(0, 0));

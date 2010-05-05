@@ -157,7 +157,7 @@ void PrisonerEngine::enterScene(int16 moduleIndex, int16 sceneIndex) {
 		_zoneMouseCursorActive = false;
 		_zoneMouseCursor = -1;
 		updateMouseCursor();
-		// TODO: setFontDefaultColors();
+		setFontDefaultColors();
 	}
 
 	clearScriptProgram(kSceneScriptProgram);

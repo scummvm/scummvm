@@ -106,7 +106,7 @@ void PrisonerEngine::startDialog(int16 dialogIndex) {
 	_dialogRunning = true;
 	_selectedDialogIndex = 0;
 	_dialogXAdd = 8;
-	// TODO: setFontColors(_textFont, fontColor2.outline, fontColor2.ink);
+	setFontColors(_textFont, _dialogFontColor.outlineColor, _dialogFontColor.inkColor);
 	setActiveFont(_textFont);
 	fontHeight = getActiveFontHeight();
 
@@ -168,8 +168,7 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 
 	Dialog *dialog = &_dialogs[_currDialogIndex];
 
-	// TODO: setFontColors(_textFont, fontColor2.outline, fontColor2.ink);
-	setFontColors(_textFont, 0, 255);
+	setFontColors(_textFont, _dialogFontColor.outlineColor, _dialogFontColor.inkColor);
 	setActiveFont(_textFont);
 
 	debug("(%d, %d, %d, %d)", _dialogRectX1, _dialogRectY1, _dialogRectX2, _dialogRectY2);
@@ -203,8 +202,7 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 		}
 		if (currKeyword != -1) {
 			DialogKeyword *dialogKeyword = &dialog->keywords[_currDialogKeywordIndices[currKeyword]];
-			// TODO: setFontColors(_textFont, fontColor1.outline, fontColor1.ink);
-			setFontColors(_textFont, 20, 40);
+			setFontColors(_textFont, _dialogHoverFontColor.outlineColor, _dialogHoverFontColor.inkColor);
 			setActiveFont(_textFont);
 			drawText(textX, currKeywordY, dialogKeyword->_keyword);
 			_selectedDialogKeywordIndex = _currDialogKeywordIndices[currKeyword];
@@ -215,8 +213,7 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 	} else {
 		int16 currKeyword = 0;
 		DialogKeyword *dialogKeyword = &dialog->keywords[_currDialogKeywordIndices[currKeyword]];
-		// TODO: setFontColors(_textFont, fontColor1.outline, fontColor1.ink);
-		setFontColors(_textFont, 20, 40);
+		setFontColors(_textFont, _dialogHoverFontColor.outlineColor, _dialogHoverFontColor.inkColor);
 		setActiveFont(_textFont);
 		drawTextEx(_dialogRectX1 + _dialogXAdd, -1, _dialogRectY1, _dialogRectY2, dialogKeyword->_keyword);//###
 		_selectedDialogKeywordIndex = _currDialogKeywordIndices[currKeyword];
