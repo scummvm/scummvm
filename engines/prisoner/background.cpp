@@ -230,10 +230,13 @@ void PrisonerEngine::updateCurrZone(int16 x, int16 y) {
 		break;
 
 	case kCursorLook:
-		/* TODO:
-		if (_mainActorIndex != -1)
-			setMainActorLookInExitZoneDirection(x, y);
-		*/
+		if (_mainActorIndex != -1 && _exitZoneActionFlag) {
+			// Was: setMainActorLookInExitZoneDirection()
+			Actor *actor = &_actors[_mainActorIndex];
+			actor->walkDestX = x;
+			actor->walkDestY = y;
+			setActorLookInDirection(_mainActorIndex);
+		}
 		updateZones(x, y);
 		break;
 

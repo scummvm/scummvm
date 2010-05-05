@@ -353,6 +353,10 @@ const int16 kMaxActorFrameSounds = 30;
 
 /* Fonts */
 
+struct FontColorDef {
+	byte inkColor, outlineColor;
+};
+
 struct Font {
 	int16 resourceCacheSlot;
 	FontResource *fontResource;
