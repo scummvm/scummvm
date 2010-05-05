@@ -75,22 +75,17 @@ void LogicHE::putInArray(int arg0, int idx2, int idx1, int val) {
 
 int32 LogicHE::dispatch(int op, int numArgs, int32 *args) {
 #if 1
-	char tmp[32], str[256];
+	Common::String str;
 
+	str = Common::String::printf("LogicHE::dispatch(%d, %d, [", op, numArgs);
 	if (numArgs > 0)
-		snprintf(tmp, 32, "%d", args[0]);
-	else
-		*tmp = 0;
-
-	snprintf(str, 256, "LogicHE::dispatch(%d, %d, [%s", op, numArgs, tmp);
-
+		str += Common::String::printf("%d", args[0]);
 	for (int i = 1; i < numArgs; i++) {
-		snprintf(tmp, 32, ", %d", args[i]);
-		strncat(str, tmp, sizeof(str) - strlen(str) - 1);
+		str += Common::String::printf(", %d", args[i]);
 	}
-	strncat(str, "])", sizeof(str) - strlen(str) - 1);
+	str += "])";
 
-	debug(0, "%s", str);
+	debug(0, "%s", str.c_str());
 #else
 	// Used for parallel trace utility
 	for (int i = 0; i < numArgs; i++)

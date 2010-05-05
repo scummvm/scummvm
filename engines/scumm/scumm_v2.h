@@ -44,7 +44,7 @@ protected:
 	V2MouseoverBox _mouseOverBoxesV2[7];
 	int8 _mouseOverBoxV2;
 
-	char _sentenceBuf[256];
+	Common::String _sentenceBuf;
 	uint16 _inventoryOffset;
 
 	int _activeInventory;

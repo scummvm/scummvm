@@ -425,8 +425,8 @@ void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInvent
 
 	// Append the 'object-name'
 	if (temp) {
-		strcat(_sentenceBuf, " ");
-		strcat(_sentenceBuf, (const char*)temp);
+		_sentenceBuf += " ";
+		_sentenceBuf += (const char *)temp;
 	}
 
 	// Append the modifier? (With / On / To / In)
@@ -469,7 +469,7 @@ void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInvent
 			lang = 0;	// Default to english
 		}
 
-		strcat(_sentenceBuf, prepositions[lang][sentencePrep]);
+		_sentenceBuf += prepositions[lang][sentencePrep];
 	}
 }
 
@@ -482,7 +482,7 @@ void ScummEngine_v0::drawSentence() {
 
 	// Current Verb, Walk/Use
 	if (getResourceAddress(rtVerb, _activeVerb)) {
-		strcpy(_sentenceBuf, (char*)getResourceAddress(rtVerb, _activeVerb));
+		_sentenceBuf = (char *)getResourceAddress(rtVerb, _activeVerb);
 	} else {
 		return;
 	}
@@ -528,8 +528,8 @@ void ScummEngine_v0::drawSentence() {
 	if (_activeActor) {
 		Actor *a = derefActor(_activeActor, "");
 
-		strcat(_sentenceBuf, " ");
-		strcat(_sentenceBuf, (const char*)a->getActorName());
+		_sentenceBuf += " ";
+		_sentenceBuf += (const char *)a->getActorName();
 	}
 
 	_string[2].charset = 1;
@@ -539,7 +539,7 @@ void ScummEngine_v0::drawSentence() {
 	_string[2].color = 16;
 
 	byte string[80];
-	char *ptr = _sentenceBuf;
+	const char *ptr = _sentenceBuf.c_str();
 	int i = 0, len = 0;
 
 	// Maximum length of printable characters
@@ -562,7 +562,7 @@ void ScummEngine_v0::drawSentence() {
 	sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
 	restoreBackground(sentenceline);
 
-	drawString(2, (byte*)string);
+	drawString(2, (byte *)string);
 }
 
 void ScummEngine_v0::o_stopCurrentScript() {

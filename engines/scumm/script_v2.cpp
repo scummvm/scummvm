@@ -965,15 +965,15 @@ void ScummEngine_v2::o2_drawSentence() {
 		return;
 
 	if (getResourceAddress(rtVerb, slot))
-		strcpy(_sentenceBuf, (char*)getResourceAddress(rtVerb, slot));
+		_sentenceBuf = (char *)getResourceAddress(rtVerb, slot);
 	else
 		return;
 
 	if (VAR(VAR_SENTENCE_OBJECT1) > 0) {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT1));
 		if (temp) {
-			strcat(_sentenceBuf, " ");
-			strcat(_sentenceBuf, (const char*)temp);
+			_sentenceBuf += " ";
+			_sentenceBuf += (const char *)temp;
 		}
 
 		// For V1 games, the engine must compute the preposition.
@@ -1018,16 +1018,16 @@ void ScummEngine_v2::o2_drawSentence() {
 		}
 
 		if (_game.platform == Common::kPlatformNES) {
-			strcat(_sentenceBuf, (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2));
+			_sentenceBuf += (const char *)(getResourceAddress(rtCostume, 78) + VAR(VAR_SENTENCE_PREPOSITION) * 8 + 2);
 		} else
-			strcat(_sentenceBuf, prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)]);
+			_sentenceBuf += prepositions[lang][VAR(VAR_SENTENCE_PREPOSITION)];
 	}
 
 	if (VAR(VAR_SENTENCE_OBJECT2) > 0) {
 		temp = getObjOrActorName(VAR(VAR_SENTENCE_OBJECT2));
 		if (temp) {
-			strcat(_sentenceBuf, " ");
-			strcat(_sentenceBuf, (const char*)temp);
+			_sentenceBuf += " ";
+			_sentenceBuf += (const char *)temp;
 		}
 	}
 
@@ -1044,7 +1044,7 @@ void ScummEngine_v2::o2_drawSentence() {
 		_string[2].color = 13;
 
 	byte string[80];
-	char *ptr = _sentenceBuf;
+	const char *ptr = _sentenceBuf.c_str();
 	int i = 0, len = 0;
 
 	// Maximum length of printable characters
@@ -1078,7 +1078,7 @@ void ScummEngine_v2::o2_drawSentence() {
 	}
 	restoreBackground(sentenceline);
 
-	drawString(2, (byte*)string);
+	drawString(2, (byte *)string);
 }
 
 void ScummEngine_v2::o2_ifClassOfIs() {
