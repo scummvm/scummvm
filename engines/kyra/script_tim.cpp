@@ -174,8 +174,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	for (int i = 0; i < num; ++i)
 		_tim->func[i].avtl = _tim->avtl + _tim->avtl[i];
 
-	strncpy(_tim->filename, filename, 13);
-	_tim->filename[12] = 0;
+	Common::strlcpy(_tim->filename, filename, 13);
 
 	_tim->isLoLOutro = (_vm->gameFlags().gameID == GI_LOL) && !scumm_stricmp(filename, "LOLFINAL.TIM");
 	_tim->lolCharacter = 0;

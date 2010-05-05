@@ -1297,17 +1297,11 @@ void KyraEngine_MR::restoreGfxRect32x32(int x, int y) {
 char *KyraEngine_MR::appendLanguage(char *buf, int lang, int bufSize) {
 	assert(lang < _languageExtensionSize);
 
-	int size = strlen(buf) + strlen(_languageExtension[lang]);
-
-	if (size > bufSize) {
+	const int size = Common::strlcat(buf, _languageExtension[lang], bufSize);
+	if (size >= bufSize) {
 		warning("buffer too small to append language extension");
 		return 0;
 	}
-
-	char *temp = buf + strlen(buf);
-	bufSize -= strlen(buf);
-
-	strncat(temp, _languageExtension[lang], bufSize);
 
 	return buf;
 }
@@ -1318,8 +1312,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 
 	uint32 size = 0;
 	char nBuf[32];
-	strncpy(nBuf, file, 32);
-	nBuf[31] = 0;
+	Common::strlcpy(nBuf, file, sizeof(nBuf));
 	buffer = _res->fileData(appendLanguage(nBuf, _lang, sizeof(nBuf)), &size);
 
 	return buffer ? size : 0 ;

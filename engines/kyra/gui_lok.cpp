@@ -582,8 +582,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	KyraEngine_v1::SaveHeader header;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); i++) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
-			strncpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
-			savenames[i][34] = 0;
+			Common::strlcpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
 
 			Util::convertISOToDOS(savenames[i]);
 
@@ -748,8 +747,7 @@ int GUI_LoK::saveGame(Button *button) {
 	} else {
 		for (int i = 0; i < 5; i++) {
 			if (_menu[2].item[i].saveSlot == _vm->_gameToLoad) {
-				strncpy(_savegameName, _menu[2].item[i].itemString, 31);
-				_savegameName[30] = 0;
+				Common::strlcpy(_savegameName, _menu[2].item[i].itemString, 31);
 				break;
 			}
 		}

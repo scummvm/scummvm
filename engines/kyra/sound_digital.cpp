@@ -458,8 +458,7 @@ int SoundDigital::playSound(const char *filename, uint8 priority, Audio::Mixer::
 		return -1;
 	}
 
-	strncpy(use->filename, filename, sizeof(use->filename));
-	use->filename[sizeof(use->filename) - 1] = 0;
+	Common::strlcpy(use->filename, filename, sizeof(use->filename));
 	use->priority = priority;
 	Audio::SeekableAudioStream *audioStream = _supportedCodecs[usedCodec].streamFunc(stream, DisposeAfterUse::YES);
 	if (!audioStream) {

@@ -2312,39 +2312,32 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 		if (_currentMenu == &_gameOptions) {
 			char *s = (char *)_vm->_tempBuffer5120;
-			strncpy(s, _vm->getLangString(0x406f + _vm->_monsterDifficulty), 30);
-			s[29] = 0;
+			Common::strlcpy(s, _vm->getLangString(0x406f + _vm->_monsterDifficulty), 30);
 			_currentMenu->item[_vm->gameFlags().isTalkie ? 0 : 2].itemString = s;
 			s += (strlen(s) + 1);
 
-			strncpy(s, _vm->getLangString(_vm->_smoothScrollingEnabled ? 0x4068 : 0x4069), 30);
-			s[29] = 0;
+			Common::strlcpy(s, _vm->getLangString(_vm->_smoothScrollingEnabled ? 0x4068 : 0x4069), 30);
 			_currentMenu->item[_vm->gameFlags().isTalkie ? 1 : 3].itemString = s;
 			s += (strlen(s) + 1);
 
-			strncpy(s, _vm->getLangString(_vm->_floatingCursorsEnabled ? 0x4068 : 0x4069), 30);
-			s[29] = 0;
+			Common::strlcpy(s, _vm->getLangString(_vm->_floatingCursorsEnabled ? 0x4068 : 0x4069), 30);
 			_currentMenu->item[_vm->gameFlags().isTalkie ? 2 : 4].itemString = s;
 			s += (strlen(s) + 1);
 
 			if (_vm->gameFlags().isTalkie) {
-				strncpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
-				s[29] = 0;
+				Common::strlcpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
 				_currentMenu->item[3].itemString = s;
 				s += (strlen(s) + 1);
 
-				strncpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
-				s[29] = 0;
+				Common::strlcpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
 				_currentMenu->item[4].itemString = s;
 				s += (strlen(s) + 1);
 			} else {
-				strncpy(s, _vm->getLangString(_vm->_configMusic ? 0x4068 : 0x4069), 30);
-				s[29] = 0;
+				Common::strlcpy(s, _vm->getLangString(_vm->_configMusic ? 0x4068 : 0x4069), 30);
 				_currentMenu->item[0].itemString = s;
 				s += (strlen(s) + 1);
 
-				strncpy(s, _vm->getLangString(_vm->_configSounds ? 0x4068 : 0x4069), 30);
-				s[29] = 0;
+				Common::strlcpy(s, _vm->getLangString(_vm->_configSounds ? 0x4068 : 0x4069), 30);
 				_currentMenu->item[1].itemString = s;
 				s += (strlen(s) + 1);
 			}
@@ -2582,8 +2575,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[_saveSlots[i + _savegameOffset - slotOffs]]) {
-			strncpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
-			s[79] = 0;
+			Common::strlcpy(s, _savegameList[_saveSlots[i + _savegameOffset - slotOffs]], 80);
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];
@@ -2628,7 +2620,7 @@ void GUI_LoL::updateSavegameList() {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
 			if (in) {
 				_savegameList[i] = new char[header.description.size() + 1];
-				strncpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
+				Common::strlcpy(_savegameList[i], header.description.c_str(), header.description.size() + 1);
 				Util::convertISOToDOS(_savegameList[i]);
 				delete in;
 			} else {
