@@ -295,6 +295,58 @@ class StringTestSuite : public CxxTest::TestSuite
 		Common::String s = Common::String::printf("%s%X", "test", 1234);
 		TS_ASSERT(s == "test4D2");
 		TS_ASSERT(s.size() == 7);
+	}
 
+	void test_strlcpy() {
+		static const char * const testString = "1234567890";
+
+		char test1[4];
+		TS_ASSERT_EQUALS(Common::strlcpy(test1, testString, 4), strlen(testString));
+		TS_ASSERT_EQUALS(strcmp(test1, "123"), 0);
+
+		char test2[12];
+		test2[11] = 'X';
+		TS_ASSERT_EQUALS(Common::strlcpy(test2, testString, 11), strlen(testString));
+		TS_ASSERT_EQUALS(strcmp(test2, testString), 0);
+		TS_ASSERT_EQUALS(test2[11], 'X');
+
+		char test3[1] = { 'X' };
+		TS_ASSERT_EQUALS(Common::strlcpy(test3, testString, 0), strlen(testString));
+		TS_ASSERT_EQUALS(test3[0], 'X');
+
+		char test4[12];
+		TS_ASSERT_EQUALS(Common::strlcpy(test4, testString, 12), strlen(testString));
+		TS_ASSERT_EQUALS(strcmp(test4, testString), 0);
+	}
+
+	void test_strncat() {
+		static const char * const initialString = "123";
+		static const char * const appendString = "4567890";
+		static const char * const resultString = "1234567890";
+
+		char test1[4];
+		TS_ASSERT_EQUALS(Common::strlcpy(test1, initialString, 4), strlen(initialString));
+		TS_ASSERT_EQUALS(strcmp(test1, initialString), 0);
+		TS_ASSERT_EQUALS(Common::strlcat(test1, appendString, 4), strlen(resultString));
+		TS_ASSERT_EQUALS(strcmp(test1, initialString), 0);
+
+		char test2[12];
+		test2[11] = 'X';
+		TS_ASSERT_EQUALS(Common::strlcpy(test2, initialString, 11), strlen(initialString));
+		TS_ASSERT_EQUALS(strcmp(test2, initialString), 0);
+		TS_ASSERT_EQUALS(Common::strlcat(test2, appendString, 11), strlen(resultString));
+		TS_ASSERT_EQUALS(strcmp(test2, resultString), 0);
+		TS_ASSERT_EQUALS(test2[11], 'X');
+
+		char test3[1];
+		test3[0] = 'X';
+		TS_ASSERT_EQUALS(Common::strlcat(test3, appendString, 0), strlen(appendString));
+		TS_ASSERT_EQUALS(test3[0], 'X');
+
+		char test4[11];
+		TS_ASSERT_EQUALS(Common::strlcpy(test4, initialString, 11), strlen(initialString));
+		TS_ASSERT_EQUALS(strcmp(test4, initialString), 0);
+		TS_ASSERT_EQUALS(Common::strlcat(test4, appendString, 11), strlen(resultString));
+		TS_ASSERT_EQUALS(strcmp(test4, resultString), 0);
 	}
 };

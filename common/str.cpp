@@ -739,4 +739,84 @@ String tag2string(uint32 tag) {
 	return Common::String(str);
 }
 
+size_t strlcpy(char *dst, const char *src, size_t size) {
+	// Our backup of the source's start, we need this
+	// to calculate the source's length.
+	const char * const srcStart = src;
+
+	// In case a non-empty size was specified we
+	// copy over (size - 1) bytes at max.
+	if (size != 0) {
+		// Copy over (size - 1) bytes at max.
+		while (--size != 0) {
+			if ((*dst++ = *src) == 0)
+				break;
+			++src;
+		}
+
+		// In case the source string was longer than the
+		// destination, we need to add a terminating
+		// zero.
+		if (size == 0)
+			*dst = 0;
+	}
+
+	// Move to the terminating zero of the source
+	// string, we need this to determin the length
+	// of the source string.
+	while (*src)
+		++src;
+
+	// Return the source string's length.
+	return src - srcStart;
+}
+
+size_t strlcat(char *dst, const char *src, size_t size) {
+	// In case the destination buffer does not contain
+	// space for at least 1 character, we will just
+	// return the source string's length.
+	if (size == 0)
+		return strlen(src);
+
+	// Our backup of the source's start, we need this
+	// to calculate the source's length.
+	const char * const srcStart = src;
+
+	// Our backup of the destination's start, we need
+	// this to calculate the destination's length.
+	const char * const dstStart = dst;
+
+	// Search the end of the destination, but do not
+	// move past the terminating zero.
+	while (size-- != 0 && *dst != 0)
+		++dst;
+
+	// Calculate the destination's length;
+	const size_t dstLength = dst - dstStart;
+
+	// In case we reached the end of the destination
+	// buffer before we had a chance to append any
+	// characters we will just return the destination
+	// length plus the source string's length.
+	if (size == 0)
+		return dstLength + strlen(srcStart);
+
+	// Copy over all of the source that fits
+	// the destination buffer. We also need
+	// to take the terminating zero we will
+	// add into consideration.
+	while (size-- != 0 && *src != 0)
+		*dst++ = *src++;
+	*dst = 0;
+
+	// Move to the terminating zero of the source
+	// string, we need this to determin the length
+	// of the source string.
+	while (*src)
+		++src;
+
+	// Return the total length of the result string
+	return dstLength + (src - srcStart);
+}
+
 }	// End of namespace Common

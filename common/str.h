@@ -326,6 +326,43 @@ bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool
 String tag2string(uint32 tag);
 
 /**
+ * Copy up to size - 1 characters from src to dst and also zero terminate the
+ * result. Note that src must be a zero terminated string.
+ *
+ * In case size is zero this function just returns the length of the source
+ * string.
+ *
+ * @note This is modeled after OpenBSD's strlcpy. See the manpage here:
+ *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcpy
+ *
+ * @param dst The destination buffer.
+ * @param src The source string.
+ * @param size The size of the destination buffer.
+ * @return The length of the (non-truncated) result, i.e. strlen(src).
+ */
+size_t strlcpy(char *dst, const char *src, size_t size);
+
+/**
+ * Append the string src to the string dst. Note that both src and dst must be
+ * zero terminated. The result will be zero terminated. At most
+ * "size - strlen(dst) - 1" bytes will be appended.
+ *
+ * In case the dst string does not contain a zero within the first "size" bytes
+ * the dst string will not be changed and size + strlen(src) is returned.
+ *
+ * @note This is modeled after OpenBSD's strlcat. See the manpage here:
+ *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcat
+ *
+ * @param dst The string the source string should be appended to.
+ * @param src The source string.
+ * @param size The (total) size of the destination buffer.
+ * @return The length of the (non-truncated) result. That is
+ *         strlen(dst) + strlen(src). In case strlen(dst) > size
+ *         size + strlen(src) is returned.
+ */
+size_t strlcat(char *dst, const char *src, size_t size);
+
+/**
  * Convenience wrapper for tag2string which "returns" a C string.
  * Note: It is *NOT* safe to do anything with the return value other than directly
  * copying or printing it.
