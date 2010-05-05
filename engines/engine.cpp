@@ -41,6 +41,7 @@
 #include "common/timer.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/str.h"
 
 #include "gui/debugger.h"
 #include "gui/message.h"
@@ -63,7 +64,7 @@ static void defaultOutputFormatter(char *dst, const char *src, size_t dstSize) {
 	if (g_engine) {
 		g_engine->errorString(src, dst, dstSize);
 	} else {
-		strncpy(dst, src, dstSize);
+		Common::strlcpy(dst, src, dstSize);
 	}
 }
 
@@ -327,7 +328,7 @@ void Engine::checkCD() {
 		if (getcwd(buffer, MAXPATHLEN) == NULL)
 			return;
 	} else
-		strncpy(buffer, gameDataDir.getPath().c_str(), MAXPATHLEN);
+		Common::strlcpy(buffer, gameDataDir.getPath().c_str(), sizeof(buffer));
 
 	for (i = 0; i < MAXPATHLEN - 1; i++) {
 		if (buffer[i] == '\\')
@@ -366,9 +367,7 @@ bool Engine::shouldPerformAutoSave(int lastSaveTime) {
 }
 
 void Engine::errorString(const char *buf1, char *buf2, int size) {
-	strncpy(buf2, buf1, size);
-	if (size > 0)
-		buf2[size-1] = '\0';
+	Common::strlcpy(buf2, buf1, size);
 }
 
 void Engine::pauseEngine(bool pause) {

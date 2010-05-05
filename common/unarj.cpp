@@ -303,9 +303,8 @@ ArjHeader *readHeader(SeekableReadStream &stream) {
 		return NULL;
 	}
 
-	strncpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
-
-	strncpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
+	Common::strlcpy(header.filename, (const char *)&headData[header.firstHdrSize], ARJ_FILENAME_MAX);
+	Common::strlcpy(header.comment, (const char *)&headData[header.firstHdrSize + strlen(header.filename) + 1], ARJ_COMMENT_MAX);
 
 	// Process extended headers, if any
 	uint16 extHeaderSize;
