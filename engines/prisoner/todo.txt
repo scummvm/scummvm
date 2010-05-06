@@ -1,0 +1,7 @@
+Bugs/Thinks noticed while playing:
+------------------------------------
+The sub:
+- First alarm screen disappears too quick
+- Captain doesn't walk to the door in the cargo room
+Falkland Islands:
+- Dialog keywords with Sears wrong (seems it's still the old dialog keywords)
