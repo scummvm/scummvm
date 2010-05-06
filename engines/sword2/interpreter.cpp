@@ -243,6 +243,8 @@ int Logic::runScript(byte *scriptData, byte *objectData, uint32 offset) {
 // and then updated the object hub myself.
 
 int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
+	int i;
+
 	// Interestingly, unlike our BASS engine the stack is a local variable.
 	// I don't know whether or not this is relevant to the working of the
 	// BS2 engine.
@@ -284,11 +286,9 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 		scriptNumber = offset;
 		debug(8, "Starting script %d from %d", scriptNumber, ip);
 	} else {
-		uint i;
-
 		ip = offset;
 
-		for (i = 1; i < noScripts; i++) {
+		for (i = 1; i < (int)noScripts; i++) {
 			if (READ_LE_UINT32(offsetTable + 4 * i) >= ip)
 				break;
 		}
@@ -331,8 +331,8 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	int32 codeLen = READ_LE_UINT32(checksumBlock + 4);
 	int32 checksum = 0;
 
-	for (int i = 0; i < codeLen; i++)
-		checksum += (unsigned char) code[i];
+	for (i = 0; i < codeLen; i++)
+		checksum += (unsigned char)code[i];
 
 	if (checksum != (int32)READ_LE_UINT32(checksumBlock + 8)) {
 		debug(1, "Checksum error in object %s", header.name);
@@ -348,7 +348,6 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 	int savedStartOfMcode = 0;	// For saving start of mcode commands
 
 	while (runningScript) {
-		int i;
 		int32 a, b;
 		int curCommand, parameter, value; // Command and parameter variables
 		int retVal;
@@ -614,9 +613,20 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			// amount to adjust stack by (no of parameters)
 			Read8ip(value);
 			debug(9, "CP_CALL_MCODE: '%s', %d", _opcodes[parameter].desc, value);
+
+			// The scripts do not always call the mcode command
+			// with as many parameters as it can accept. To keep
+			// things predictable, initialise the remaining
+			// parameters to 0.
+
+			for (i = STACK_SIZE - 1; i >= value; i--) {
+				opcodeParams[i] = 0;
+			}
+
 			while (--value >= 0) {
 				opcodeParams[value] = stack.pop();
 			}
+
 			retVal = (this->*_opcodes[parameter].proc)(opcodeParams);
 
 			switch (retVal & 7) {
