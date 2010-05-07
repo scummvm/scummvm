@@ -684,6 +684,7 @@ public:
 	int16 _inventoryClickBoxIndex;
 	int16 _currInventoryItemSlotBaseIndex;
 	bool _inventoryActive;
+	int16 _inventoryBoxResourceCacheSlot;
 
 	/* Fonts */
 	ObjectStorage<Font, 4> _fonts;

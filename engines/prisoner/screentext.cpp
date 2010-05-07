@@ -228,6 +228,18 @@ void PrisonerEngine::updateScreenTexts() {
 				_screen->setClipRect(0, 82, 639, 397);
 				if (_inventoryActive) {
 					// TODO: Draw frame for inventory text
+					AnimationResource *anim = _res->get<AnimationResource>(_inventoryBoxResourceCacheSlot);
+					int16 rx1 = x1 - 6;
+					int16 rx2 = rx1 + screenText->width;
+					int16 ry1 = y1 - screenText->fontHeight - 10;
+					int16 ry2 = ry1 + screenText->height;
+					addDirtyRect(rx1 - 3, ry1 - 3, screenText->width + 18, screenText->height + 26, 1);
+					_screen->frameRect(rx1 - 2, ry1 - 2, rx2 + 14, ry2 + 22, 155); // TODO: Color
+					_screen->frameRect(rx1 - 1, ry1 - 1, rx2 + 13, ry2 + 21, 153); // TODO: Color
+					_screen->drawAnimationElement(anim, 0, rx1, ry1);
+					_screen->drawAnimationElement(anim, 1, rx2 + 12, ry1);
+					_screen->drawAnimationElement(anim, 2, rx2 + 12, ry2 + 20);
+					_screen->drawAnimationElement(anim, 3, rx1, ry2 + 20);
 				} else {
 					addDirtyRect(x1 - 6, y1 - screenText->fontHeight - 10, (screenText->width + 6) * 2, (screenText->height + 10) * 2, 1);
 				}

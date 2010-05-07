@@ -206,8 +206,8 @@ Common::Error PrisonerEngine::run() {
 	_alarmPaletteSub = 10;
 
 	_dialogPanelResourceCacheSlot = -1;
-
 	_inventoryItemsResourceCacheIndex = -1;
+	_inventoryBoxResourceCacheSlot = -1;
 
 	clearScriptPrograms();
 
@@ -298,7 +298,7 @@ Common::Error PrisonerEngine::run() {
 	_newSceneIndex = 7;
 #endif
 
-#if 0
+#if 1
 	_newModuleIndex = 12;
 	_newSceneIndex = 1;//script opcode 21d9b etc. -> OK; skull room
 #endif
@@ -307,6 +307,13 @@ Common::Error PrisonerEngine::run() {
 	_newModuleIndex = 2;
 	_newSceneIndex = 33;//radar
 #endif
+
+	{
+		// TODO: Move to init function
+		// TODO: Load pakName/slot from exe etc.
+		Common::String pakName = "S_PANEL";
+		_inventoryBoxResourceCacheSlot = _res->load<AnimationResource>(pakName, 12, 11);
+	}
 
 	// Test-Main-Loop
 	bool done = false;
@@ -346,6 +353,12 @@ Common::Error PrisonerEngine::run() {
 
 		_screen->update();
 		_system->delayMillis(10);
+	}
+
+	{
+		// TODO: Move to shutdown function
+		_res->unload(_inventoryBoxResourceCacheSlot);
+		_inventoryBoxResourceCacheSlot = -1;
 	}
 
 #endif
