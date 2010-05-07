@@ -32,12 +32,9 @@ namespace Prisoner {
 /* Fonts */
 
 int16 PrisonerEngine::addFont(Common::String &pakName, int16 pakSlot, int16 outlineIndex, int16 inkIndex) {
-
 	int16 fontIndex = _fonts.getFreeSlot();
 	Font *font = &_fonts[fontIndex];
-
 	font->resourceCacheSlot = _res->load<FontResource>(pakName, pakSlot, 7);
-
 	font->fontResource = _res->get<FontResource>(font->resourceCacheSlot);
 	font->interletter = 1;
 	font->outlineColorIdx = outlineIndex;
@@ -47,9 +44,6 @@ int16 PrisonerEngine::addFont(Common::String &pakName, int16 pakSlot, int16 outl
 	font->unk2 = 0;
 	font->height = 0;
 	font->unk1 = font->unk2 + font->height;
-
-	// TODO: Set as active font
-
 	return fontIndex;
 }
 

@@ -34,6 +34,7 @@ namespace Prisoner {
 void PrisonerEngine::loadDialogKeywords(Common::String &pakName, int16 pakSlot, Dialog *dialog, bool init) {
 	int16 keywordsResourceSlot = loadTextResource(pakName, pakSlot);
 	TextResource *keywords = _res->get<TextResource>(keywordsResourceSlot);
+	dialog->keywords.clear();
 	for (uint i = 0; i < keywords->getCount(); i++) {
 		const TextItem *textItem = keywords->getText(i);
 		dialog->keywords.push_back(textItem->getChunkLineString(0, 0));
