@@ -44,6 +44,7 @@ void Resources::deinit() {
 	mmm.close();
 	sam_mmm.close();
 	sam_sam.close();
+	voices.close();
 }
 
 /*
@@ -95,7 +96,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	mmm.open("mmm.res");
 	sam_mmm.open("sam_mmm.res");
 	sam_sam.open("sam_sam.res");
-
+	voices.open("voices.res");
 
 	return true;
 }

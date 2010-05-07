@@ -31,6 +31,7 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
+#include "sound/audiocd.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 
@@ -470,8 +471,8 @@ Common::Error TeenAgentEngine::run() {
 
 	syncSoundSettings();
 
-	music->load(1);
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, false);
+	setMusic(1);
 	music->start();
 
 	int load_slot = Common::ConfigManager::instance().getInt("save_slot");
@@ -971,10 +972,22 @@ void TeenAgentEngine::playSoundNow(byte id) {
 
 void TeenAgentEngine::setMusic(byte id) {
 	debug(0, "starting music %u", id);
-	if (!music->load(id))
-		return;
-	*Resources::instance()->dseg.ptr(0xDB90) = id;
-	music->start();
+	Resources *res = Resources::instance();
+	
+	if (id != 1) //intro music
+		*res->dseg.ptr(0xDB90) = id;
+	
+	if (_gameDescription->flags & ADGF_CD) {
+		byte track2cd[] = {7, 2, 0, 9, 3, 6, 8, 10, 4, 5, 11};
+		if (id == 0 || id > 11 || track2cd[id - 1] == 0) {
+			debug(0, "no cd music for id %u", id);
+			return;
+		}
+		byte track = track2cd[id - 1];
+		debug(0, "playing cd track %u", track);
+		Audio::AudioCDManager::instance().play(track, -1, 0, 0);
+	} else if (music->load(id))
+		music->start();
 }
 
 bool TeenAgentEngine::hasFeature(EngineFeature f) const {

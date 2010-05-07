@@ -54,9 +54,9 @@ public:
 	 * TransientFilePack does not keep opened file descriptors and reopens it on each request.
 	 */
 #ifdef __PSP__
-	TransientFilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm;
+	TransientFilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm, voices;
 #else
-	FilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm;
+	FilePack off, on, ons, lan000, lan500, sam_mmm, sam_sam, mmm, voices;
 #endif
 
 	Segment cseg, dseg, eseg;

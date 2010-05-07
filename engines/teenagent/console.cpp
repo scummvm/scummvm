@@ -30,7 +30,8 @@ namespace TeenAgent {
 Console::Console(TeenAgentEngine *engine) : _engine(engine) {
 	DCmd_Register("enable_object",	WRAP_METHOD(Console, enableObject));
 	DCmd_Register("disable_object",	WRAP_METHOD(Console, enableObject));
-	DCmd_Register("set_ons",	WRAP_METHOD(Console, setOns));
+	DCmd_Register("set_ons",		WRAP_METHOD(Console, setOns));
+	DCmd_Register("set_music",		WRAP_METHOD(Console, setMusic));
 }
 
 bool Console::enableObject(int argc, const char **argv) {
@@ -91,7 +92,20 @@ bool Console::setOns(int argc, const char **argv) {
 	}
 
 	_engine->setOns(index, value, scene_id);
+	return true;
+}
 
+bool Console::setMusic(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("usage: %s index(1-11)\n", argv[0]);
+		return true;
+	}
+	int index = atoi(argv[1]);
+	if (index <= 0 || index > 11) {
+		DebugPrintf("invalid value\n");
+		return true;
+	}
+	_engine->setMusic(index);
 	return true;
 }
 
