@@ -1,6 +1,7 @@
 #!/bin/sh
 # ScummVM Slackware 9(.1) Package Creation Script
-# by Jay Lanagan - roni@parodius.com
+# Initial version by Jay Lanagan <roni@parodius.com>
+# Updated by Robert Kelsen <rkelsen@optusnet.com.au>
 
 CWD=`pwd`
 if [ "$TMP" = "" ]; then
@@ -19,37 +20,17 @@ if [ ! -d $PKG ]; then
   mkdir -p $PKG
 fi
 
-cd $TMP
-# tar xzvf scummvm-$VERSION.tgz
-tar xzvf scummvm-$VERSION.tar.gz
-# cd scummvm-$VERSION
-cd scummvm
-chown -R root.root .
-CXXFLAGS="-O2 -march=i486 -mcpu=i686" \
-./configure
+#cd $TMP
+tar xvf scummvm-$VERSION.tar.bz2
+cd scummvm-$VERSION
+./configure --prefix=/usr --bindir=/usr/games
 make
 strip scummvm
-chmod 755 scummvm
-mkdir -p $PKG/usr/bin
-cp scummvm $PKG/usr/bin
-chown -R root:bin $PKG/usr/bin
-gzip -9 dists/scummvm.6
-mkdir -p $PKG/usr/man/man6
-cp dists/scummvm.6.gz $PKG/usr/man/man6
-mkdir -p $PKG/usr/doc/scummvm-$VERSION
-cp -a AUTHORS COPYING COPYRIGHT ChangeLog NEWS README TODO \
-  $PKG/usr/doc/scummvm-$VERSION
-chmod 644 $PKG/usr/doc/scummvm-$VERSION
+make install DESTDIR=$PKG
 mkdir -p $PKG/install
 cat $CWD/slack-desc > $PKG/install/slack-desc
-mkdir -p $PKG/usr/share/pixmaps
-cp -a icons/scummvm.ico icons/scummvm.xpm \
-  $PKG/usr/share/pixmaps
-mkdir -p $PKG/usr/share/applications
-cp -a dists/scummvm.desktop \
-  $PKG/usr/share/applications
-
 cd $PKG
+chown -R root.root .
 makepkg -l y -c n $TMP/scummvm-$VERSION-$ARCH-$BUILD.tgz
 
 if [ "$1" = "--cleanup" ]; then
