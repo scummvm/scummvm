@@ -34,12 +34,6 @@ ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(LIBDIR)/scummvm/"
 endif
 
-deb:
-	ln -sf dists/debian;
-	debian/prepare
-	fakeroot debian/rules binary
-
-
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
 bundle: scummvm-static
