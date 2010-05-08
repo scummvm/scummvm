@@ -198,7 +198,9 @@ cc_check_clean() {
 
 cc_check() {
 	cc_check_no_clean "$@"
+	TMP="$?"
 	cc_check_clean
+	return "$TMP"
 }
 
 cc_check_define() {
