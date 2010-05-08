@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>C9ABBEC7-2D45-45D4-B3E3-3C600E1F74BD</ProjectGuid>
+		<RootNamespace>gob</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup>
+		<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\gob\demos\batplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\demos\demoplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\demos\scnplayer.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveconverter_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\savefile.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\savehandler.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\save\saveload_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\adlib.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\bgatmosphere.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\cdrom.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\infogrames.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\pcspeaker.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\protracker.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\sound.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\soundblaster.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\sounddesc.cpp" />
+		<ClCompile Include="..\..\engines\gob\sound\soundmixer.cpp" />
+		<ClCompile Include="..\..\engines\gob\dataio.cpp" />
+		<ClCompile Include="..\..\engines\gob\detection.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\draw_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\driver_vga.cpp" />
+		<ClCompile Include="..\..\engines\gob\expression.cpp" />
+		<ClCompile Include="..\..\engines\gob\game.cpp" />
+		<ClCompile Include="..\..\engines\gob\global.cpp" />
+		<ClCompile Include="..\..\engines\gob\gob.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\goblin_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\hotspots.cpp" />
+		<ClCompile Include="..\..\engines\gob\init.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\init_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_bargon.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_fascin.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_playtoons.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v3.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v4.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v5.cpp" />
+		<ClCompile Include="..\..\engines\gob\inter_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\map.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\map_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\mult_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\palanim.cpp" />
+		<ClCompile Include="..\..\engines\gob\resources.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\scenery_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\script.cpp" />
+		<ClCompile Include="..\..\engines\gob\totfile.cpp" />
+		<ClCompile Include="..\..\engines\gob\util.cpp" />
+		<ClCompile Include="..\..\engines\gob\variables.cpp" />
+		<ClCompile Include="..\..\engines\gob\video.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v1.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v2.cpp" />
+		<ClCompile Include="..\..\engines\gob\video_v6.cpp" />
+		<ClCompile Include="..\..\engines\gob\videoplayer.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\gob\demos\batplayer.h" />
+		<ClInclude Include="..\..\engines\gob\demos\demoplayer.h" />
+		<ClInclude Include="..\..\engines\gob\demos\scnplayer.h" />
+		<ClInclude Include="..\..\engines\gob\save\saveconverter.h" />
+		<ClInclude Include="..\..\engines\gob\save\savefile.h" />
+		<ClInclude Include="..\..\engines\gob\save\savehandler.h" />
+		<ClInclude Include="..\..\engines\gob\save\saveload.h" />
+		<ClInclude Include="..\..\engines\gob\sound\adlib.h" />
+		<ClInclude Include="..\..\engines\gob\sound\bgatmosphere.h" />
+		<ClInclude Include="..\..\engines\gob\sound\cdrom.h" />
+		<ClInclude Include="..\..\engines\gob\sound\infogrames.h" />
+		<ClInclude Include="..\..\engines\gob\sound\pcspeaker.h" />
+		<ClInclude Include="..\..\engines\gob\sound\protracker.h" />
+		<ClInclude Include="..\..\engines\gob\sound\sound.h" />
+		<ClInclude Include="..\..\engines\gob\sound\soundblaster.h" />
+		<ClInclude Include="..\..\engines\gob\sound\sounddesc.h" />
+		<ClInclude Include="..\..\engines\gob\sound\soundmixer.h" />
+		<ClInclude Include="..\..\engines\gob\dataio.h" />
+		<ClInclude Include="..\..\engines\gob\draw.h" />
+		<ClInclude Include="..\..\engines\gob\driver_vga.h" />
+		<ClInclude Include="..\..\engines\gob\expression.h" />
+		<ClInclude Include="..\..\engines\gob\game.h" />
+		<ClInclude Include="..\..\engines\gob\global.h" />
+		<ClInclude Include="..\..\engines\gob\gob.h" />
+		<ClInclude Include="..\..\engines\gob\goblin.h" />
+		<ClInclude Include="..\..\engines\gob\helper.h" />
+		<ClInclude Include="..\..\engines\gob\hotspots.h" />
+		<ClInclude Include="..\..\engines\gob\init.h" />
+		<ClInclude Include="..\..\engines\gob\inter.h" />
+		<ClInclude Include="..\..\engines\gob\map.h" />
+		<ClInclude Include="..\..\engines\gob\mult.h" />
+		<ClInclude Include="..\..\engines\gob\palanim.h" />
+		<ClInclude Include="..\..\engines\gob\resources.h" />
+		<ClInclude Include="..\..\engines\gob\scenery.h" />
+		<ClInclude Include="..\..\engines\gob\script.h" />
+		<ClInclude Include="..\..\engines\gob\totfile.h" />
+		<ClInclude Include="..\..\engines\gob\util.h" />
+		<ClInclude Include="..\..\engines\gob\variables.h" />
+		<ClInclude Include="..\..\engines\gob\video.h" />
+		<ClInclude Include="..\..\engines\gob\videoplayer.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\gob\demos\batplayer.o" />
+		<None Include="..\..\engines\gob\demos\demoplayer.o" />
+		<None Include="..\..\engines\gob\demos\scnplayer.o" />
+		<None Include="..\..\engines\gob\save\saveconverter.o" />
+		<None Include="..\..\engines\gob\save\saveconverter_v2.o" />
+		<None Include="..\..\engines\gob\save\saveconverter_v3.o" />
+		<None Include="..\..\engines\gob\save\saveconverter_v4.o" />
+		<None Include="..\..\engines\gob\save\saveconverter_v6.o" />
+		<None Include="..\..\engines\gob\save\savefile.o" />
+		<None Include="..\..\engines\gob\save\savehandler.o" />
+		<None Include="..\..\engines\gob\save\saveload.o" />
+		<None Include="..\..\engines\gob\save\saveload_fascin.o" />
+		<None Include="..\..\engines\gob\save\saveload_playtoons.o" />
+		<None Include="..\..\engines\gob\save\saveload_v2.o" />
+		<None Include="..\..\engines\gob\save\saveload_v3.o" />
+		<None Include="..\..\engines\gob\save\saveload_v4.o" />
+		<None Include="..\..\engines\gob\save\saveload_v6.o" />
+		<None Include="..\..\engines\gob\sound\adlib.o" />
+		<None Include="..\..\engines\gob\sound\bgatmosphere.o" />
+		<None Include="..\..\engines\gob\sound\cdrom.o" />
+		<None Include="..\..\engines\gob\sound\infogrames.o" />
+		<None Include="..\..\engines\gob\sound\pcspeaker.o" />
+		<None Include="..\..\engines\gob\sound\protracker.o" />
+		<None Include="..\..\engines\gob\sound\sound.o" />
+		<None Include="..\..\engines\gob\sound\soundblaster.o" />
+		<None Include="..\..\engines\gob\sound\sounddesc.o" />
+		<None Include="..\..\engines\gob\sound\soundmixer.o" />
+		<None Include="..\..\engines\gob\dataio.o" />
+		<None Include="..\..\engines\gob\detection.o" />
+		<None Include="..\..\engines\gob\draw.o" />
+		<None Include="..\..\engines\gob\draw_bargon.o" />
+		<None Include="..\..\engines\gob\draw_fascin.o" />
+		<None Include="..\..\engines\gob\draw_playtoons.o" />
+		<None Include="..\..\engines\gob\draw_v1.o" />
+		<None Include="..\..\engines\gob\draw_v2.o" />
+		<None Include="..\..\engines\gob\driver_vga.o" />
+		<None Include="..\..\engines\gob\expression.o" />
+		<None Include="..\..\engines\gob\game.o" />
+		<None Include="..\..\engines\gob\global.o" />
+		<None Include="..\..\engines\gob\gob.o" />
+		<None Include="..\..\engines\gob\goblin.o" />
+		<None Include="..\..\engines\gob\goblin_v1.o" />
+		<None Include="..\..\engines\gob\goblin_v2.o" />
+		<None Include="..\..\engines\gob\goblin_v3.o" />
+		<None Include="..\..\engines\gob\goblin_v4.o" />
+		<None Include="..\..\engines\gob\hotspots.o" />
+		<None Include="..\..\engines\gob\init.o" />
+		<None Include="..\..\engines\gob\init_v1.o" />
+		<None Include="..\..\engines\gob\init_v2.o" />
+		<None Include="..\..\engines\gob\init_v3.o" />
+		<None Include="..\..\engines\gob\init_v4.o" />
+		<None Include="..\..\engines\gob\init_v6.o" />
+		<None Include="..\..\engines\gob\inter.o" />
+		<None Include="..\..\engines\gob\inter_bargon.o" />
+		<None Include="..\..\engines\gob\inter_fascin.o" />
+		<None Include="..\..\engines\gob\inter_playtoons.o" />
+		<None Include="..\..\engines\gob\inter_v1.o" />
+		<None Include="..\..\engines\gob\inter_v2.o" />
+		<None Include="..\..\engines\gob\inter_v3.o" />
+		<None Include="..\..\engines\gob\inter_v4.o" />
+		<None Include="..\..\engines\gob\inter_v5.o" />
+		<None Include="..\..\engines\gob\inter_v6.o" />
+		<None Include="..\..\engines\gob\map.o" />
+		<None Include="..\..\engines\gob\map_v1.o" />
+		<None Include="..\..\engines\gob\map_v2.o" />
+		<None Include="..\..\engines\gob\module.mk" />
+		<None Include="..\..\engines\gob\mult.o" />
+		<None Include="..\..\engines\gob\mult_v1.o" />
+		<None Include="..\..\engines\gob\mult_v2.o" />
+		<None Include="..\..\engines\gob\palanim.o" />
+		<None Include="..\..\engines\gob\resources.o" />
+		<None Include="..\..\engines\gob\scenery.o" />
+		<None Include="..\..\engines\gob\scenery_v1.o" />
+		<None Include="..\..\engines\gob\scenery_v2.o" />
+		<None Include="..\..\engines\gob\script.o" />
+		<None Include="..\..\engines\gob\totfile.o" />
+		<None Include="..\..\engines\gob\util.o" />
+		<None Include="..\..\engines\gob\variables.o" />
+		<None Include="..\..\engines\gob\video.o" />
+		<None Include="..\..\engines\gob\video_v1.o" />
+		<None Include="..\..\engines\gob\video_v2.o" />
+		<None Include="..\..\engines\gob\video_v6.o" />
+		<None Include="..\..\engines\gob\videoplayer.o" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>

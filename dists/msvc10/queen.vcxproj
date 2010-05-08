@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<ItemGroup Label="ProjectConfigurations">
+		<ProjectConfiguration Include="Debug|Win32">
+			<Configuration>Debug</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Debug|x64">
+			<Configuration>Debug</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|Win32">
+			<Configuration>Release</Configuration>
+			<Platform>Win32</Platform>
+		</ProjectConfiguration>
+		<ProjectConfiguration Include="Release|x64">
+			<Configuration>Release</Configuration>
+			<Platform>x64</Platform>
+		</ProjectConfiguration>
+	</ItemGroup>
+	<PropertyGroup Label="Globals">
+		<ProjectGuid>FE829D8F-A7B2-43CD-B157-158D5A7AD53F</ProjectGuid>
+		<RootNamespace>queen</RootNamespace>
+		<Keyword>Win32Proj</Keyword>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+		<ConfigurationType>StaticLibrary</ConfigurationType>
+	</PropertyGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+	<ImportGroup Label="ExtensionSettings">
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Release.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Debug.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Release64.props" />
+	</ImportGroup>
+	<ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+		<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+		<Import Project="ScummVM_Debug64.props" />
+	</ImportGroup>
+	<PropertyGroup Label="UserMacros" />
+	<PropertyGroup>
+		<_ProjectFileVersion>10.0.21006.1</_ProjectFileVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<ClCompile Include="..\..\engines\queen\bankman.cpp" />
+		<ClCompile Include="..\..\engines\queen\command.cpp" />
+		<ClCompile Include="..\..\engines\queen\credits.cpp" />
+		<ClCompile Include="..\..\engines\queen\cutaway.cpp" />
+		<ClCompile Include="..\..\engines\queen\debug.cpp" />
+		<ClCompile Include="..\..\engines\queen\display.cpp" />
+		<ClCompile Include="..\..\engines\queen\graphics.cpp" />
+		<ClCompile Include="..\..\engines\queen\grid.cpp" />
+		<ClCompile Include="..\..\engines\queen\input.cpp" />
+		<ClCompile Include="..\..\engines\queen\journal.cpp" />
+		<ClCompile Include="..\..\engines\queen\logic.cpp" />
+		<ClCompile Include="..\..\engines\queen\midiadlib.cpp" />
+		<ClCompile Include="..\..\engines\queen\music.cpp" />
+		<ClCompile Include="..\..\engines\queen\musicdata.cpp" />
+		<ClCompile Include="..\..\engines\queen\queen.cpp" />
+		<ClCompile Include="..\..\engines\queen\resource.cpp" />
+		<ClCompile Include="..\..\engines\queen\restables.cpp" />
+		<ClCompile Include="..\..\engines\queen\sound.cpp" />
+		<ClCompile Include="..\..\engines\queen\state.cpp" />
+		<ClCompile Include="..\..\engines\queen\talk.cpp" />
+		<ClCompile Include="..\..\engines\queen\walk.cpp" />
+	</ItemGroup>
+	<ItemGroup>
+		<ClInclude Include="..\..\engines\queen\bankman.h" />
+		<ClInclude Include="..\..\engines\queen\command.h" />
+		<ClInclude Include="..\..\engines\queen\credits.h" />
+		<ClInclude Include="..\..\engines\queen\cutaway.h" />
+		<ClInclude Include="..\..\engines\queen\debug.h" />
+		<ClInclude Include="..\..\engines\queen\defs.h" />
+		<ClInclude Include="..\..\engines\queen\display.h" />
+		<ClInclude Include="..\..\engines\queen\graphics.h" />
+		<ClInclude Include="..\..\engines\queen\grid.h" />
+		<ClInclude Include="..\..\engines\queen\input.h" />
+		<ClInclude Include="..\..\engines\queen\journal.h" />
+		<ClInclude Include="..\..\engines\queen\logic.h" />
+		<ClInclude Include="..\..\engines\queen\music.h" />
+		<ClInclude Include="..\..\engines\queen\queen.h" />
+		<ClInclude Include="..\..\engines\queen\resource.h" />
+		<ClInclude Include="..\..\engines\queen\sound.h" />
+		<ClInclude Include="..\..\engines\queen\state.h" />
+		<ClInclude Include="..\..\engines\queen\structs.h" />
+		<ClInclude Include="..\..\engines\queen\talk.h" />
+		<ClInclude Include="..\..\engines\queen\walk.h" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\engines\queen\bankman.o" />
+		<None Include="..\..\engines\queen\command.o" />
+		<None Include="..\..\engines\queen\credits.o" />
+		<None Include="..\..\engines\queen\cutaway.o" />
+		<None Include="..\..\engines\queen\debug.o" />
+		<None Include="..\..\engines\queen\display.o" />
+		<None Include="..\..\engines\queen\graphics.o" />
+		<None Include="..\..\engines\queen\grid.o" />
+		<None Include="..\..\engines\queen\input.o" />
+		<None Include="..\..\engines\queen\journal.o" />
+		<None Include="..\..\engines\queen\logic.o" />
+		<None Include="..\..\engines\queen\midiadlib.o" />
+		<None Include="..\..\engines\queen\module.mk" />
+		<None Include="..\..\engines\queen\music.o" />
+		<None Include="..\..\engines\queen\musicdata.o" />
+		<None Include="..\..\engines\queen\queen.o" />
+		<None Include="..\..\engines\queen\resource.o" />
+		<None Include="..\..\engines\queen\restables.o" />
+		<None Include="..\..\engines\queen\sound.o" />
+		<None Include="..\..\engines\queen\state.o" />
+		<None Include="..\..\engines\queen\talk.o" />
+		<None Include="..\..\engines\queen\walk.o" />
+	</ItemGroup>
+	<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+	<ImportGroup Label="ExtensionTargets">
+	</ImportGroup>
+</Project>
