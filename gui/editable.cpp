@@ -208,7 +208,7 @@ bool EditableWidget::handleKeyDown(Common::KeyState state) {
 }
 
 void EditableWidget::defaultKeyDownHandler(Common::KeyState &state, bool &dirty, bool &forcecaret, bool &handled) {
-	if (tryInsertChar((byte)state.ascii, _caretPos)) {
+	if (state.ascii < 256 && tryInsertChar((byte)state.ascii, _caretPos)) {
 		_caretPos++;
 		dirty = true;
 		forcecaret = true;
