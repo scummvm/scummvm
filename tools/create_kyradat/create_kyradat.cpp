@@ -329,7 +329,7 @@ const TypeTable gameTable[] = {
 };
 
 byte getGameID(int game) {
-	return std::find(gameTable, gameTable + ARRAYSIZE(gameTable), game)->value;
+	return std::find(gameTable, gameTable + ARRAYSIZE(gameTable) - 1, game)->value;
 }
 
 const TypeTable languageTable[] = {
@@ -344,7 +344,7 @@ const TypeTable languageTable[] = {
 };
 
 byte getLanguageID(int lang) {
-	return std::find(languageTable, languageTable + ARRAYSIZE(languageTable), lang)->value;
+	return std::find(languageTable, languageTable + ARRAYSIZE(languageTable) - 1, lang)->value;
 }
 
 const TypeTable platformTable[] = {
@@ -357,7 +357,7 @@ const TypeTable platformTable[] = {
 };
 
 byte getPlatformID(int platform) {
-	return std::find(platformTable, platformTable + ARRAYSIZE(platformTable), platform)->value;
+	return std::find(platformTable, platformTable + ARRAYSIZE(platformTable) - 1, platform)->value;
 }
 
 const TypeTable specialTable[] = {
@@ -369,7 +369,7 @@ const TypeTable specialTable[] = {
 };
 
 byte getSpecialID(int special) {
-	return std::find(specialTable, specialTable + ARRAYSIZE(specialTable), special)->value;
+	return std::find(specialTable, specialTable + ARRAYSIZE(specialTable) - 1, special)->value;
 }
 
 // filename processing

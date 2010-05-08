@@ -108,7 +108,7 @@ const TypeTable typeTable[] = {
 	{ kLolTypeSpellData, 9 },
 	{ kLolTypeCompassData, 10 },
 	{ kLolTypeFlightShpData, 11 },
-	{ -1, 0 }
+	{ -1, 1 }
 };
 
 } // end of anonymous namespace
@@ -124,7 +124,7 @@ const ExtractType *findExtractType(const int type) {
 }
 
 byte getTypeID(int type) {
-	return std::find(typeTable, typeTable + ARRAYSIZE(typeTable), type)->value;
+	return std::find(typeTable, typeTable + ARRAYSIZE(typeTable) - 1, type)->value;
 }
 // Extractor implementation
 
