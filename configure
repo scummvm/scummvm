@@ -179,16 +179,26 @@ fi
 TMPC=${TMPO}.cpp
 TMPLOG=config.log
 
-cc_check() {
+cc_check_no_clean() {
 	echo >> "$TMPLOG"
 	cat "$TMPC" >> "$TMPLOG"
 	echo >> "$TMPLOG"
-	echo "$CXX $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
+	echo "$CXX $LDFLAGS $CXXFLAGS $TMPC -o $TMPO$HOSTEXEEXT $@" >> "$TMPLOG"
 	rm -f "$TMPO$HOSTEXEEXT"
 	( $CXX $LDFLAGS $CXXFLAGS "$TMPC" -o "$TMPO$HOSTEXEEXT" "$@" ) >> "$TMPLOG" 2>&1
 	TMP="$?"
+	echo "return code: $TMP" >> "$TMPLOG"
 	echo >> "$TMPLOG"
 	return "$TMP"
+}
+
+cc_check_clean() {
+	rm -rf $TMPC $TMPO $TMPO.o $TMPO.dSYM $TMPO$HOSTEXEEXT "$@"
+}
+
+cc_check() {
+	cc_check_no_clean "$@"
+	cc_check_clean
 }
 
 cc_check_define() {
@@ -207,6 +217,7 @@ EOF
 gcc_get_define() {
 	# Note: The AmigaOS compiler doesn't like the "-" input file, so a real file
 	# is used instead
+	rm -f $TMPC
 	touch $TMPC
 	$CXX -dM -E $TMPC | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
 	rm -f $TMPC
@@ -1036,18 +1047,20 @@ echo_n "Looking for C++ compiler... "
 
 # Check whether the given command is a working C++ compiler
 test_compiler() {
-	cat <<EOF >tmp_cxx_compiler.cpp
+	cat > tmp_cxx_compiler.cpp << EOF
 	class Foo { int a; };
 	int main(int argc, char **argv) {
 		Foo *a = new Foo(); delete a; return 0;
 	}
 EOF
 
+	echo "testing compiler: $1" >> "$TMPLOG"
+
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT -c tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO.o -c tmp_cxx_compiler.cpp" 2> /dev/null && cc_check_clean tmp_cxx_compiler.cpp
 	else
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.dSYM tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o $TMPO$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "$TMPO$HOSTEXEEXT 2> /dev/null" && cc_check_clean tmp_cxx_compiler.cpp
 	fi
 }
 
@@ -1160,7 +1173,7 @@ fi
 # Check for endianness
 #
 echo_n "Checking endianness... "
-cat <<EOF >tmp_endianness_check.cpp
+cat > tmp_endianness_check.cpp << EOF
 short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 void _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; }
@@ -1169,21 +1182,21 @@ short ebcdic_mm[] = { 0xC2C9, 0xC785, 0x95C4, 0x8981, 0x95E2, 0xA8E2, 0 };
 void _ebcdic() { char* s = (char*) ebcdic_mm; s = (char*) ebcdic_ii; }
 int main() { _ascii (); _ebcdic (); return 0; }
 EOF
-$CXX $CXXFLAGS -c -o tmp_endianness_check.o tmp_endianness_check.cpp
-if strings tmp_endianness_check.o | grep BIGenDianSyS >/dev/null; then
+$CXX $CXXFLAGS -c -o $TMPO.o tmp_endianness_check.cpp
+if strings $TMPO.o | grep BIGenDianSyS >/dev/null; then
 	_endian=big
 else
 	_endian=little
 fi
 echo $_endian;
-rm -f tmp_endianness_check.o tmp_endianness_check.cpp
+cc_check_clean tmp_endianness_check.cpp
 
 #
 # Determine a data type with the given length
 #
 find_type_with_size() {
 	for datatype in int short char long unknown; do
-	cat <<EOF >tmp_find_type_with_size.cpp
+		cat > tmp_find_type_with_size.cpp << EOF
 typedef $datatype ac__type_sizeof_;
 int main() {
 	static int test_array [1 - 2 * !(((long int) (sizeof (ac__type_sizeof_))) == $1)];
@@ -1191,17 +1204,17 @@ int main() {
 	return 0;
 }
 EOF
-	if $CXX $CXXFLAGS -c -o tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp 2>/dev/null ; then
-		break
-	else
-		if test "$datatype" = "unknown"; then
-			echo "couldn't find data type with $1 bytes"
-			exit 1
+		if $CXX $CXXFLAGS -c -o $TMPO.o tmp_find_type_with_size.cpp 2>/dev/null ; then
+			break
+		else
+			if test "$datatype" = "unknown"; then
+				echo "couldn't find data type with $1 bytes"
+				exit 1
+			fi
+			continue
 		fi
-		continue
-	fi
 	done
-	rm -f tmp_find_type_with_size$HOSTEXEEXT tmp_find_type_with_size.cpp
+	cc_check_clean tmp_find_type_with_size.cpp
 	echo $datatype
 }
 
@@ -1643,7 +1656,8 @@ int main(int argc, char **argv) {
 }
 EOF
 			_need_memalign=yes
-			cc_check && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check_no_clean && $TMPO$HOSTEXEEXT && _need_memalign=no
+			cc_check_clean
 			;;
 	esac
 	echo "$_need_memalign"
@@ -2066,7 +2080,8 @@ EOF
 		# don't execute while cross compiling
 		cc_check $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && _mpeg2=yes
 	else
-		cc_check $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
+		cc_check_no_clean $MPEG2_CFLAGS $MPEG2_LIBS -lmpeg2 && $TMPO$HOSTEXEEXT && _mpeg2=yes
+		cc_check_clean
 	fi
 fi
 if test "$_mpeg2" = yes ; then
@@ -2106,7 +2121,6 @@ else
 	_def_fluidsynth='#undef USE_FLUIDSYNTH'
 fi
 echo "$_fluidsynth"
-rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 
 #
 # Check for readline if text_console is enabled
@@ -2132,7 +2146,6 @@ EOF
 		fi
 	fi
 	echo "$_readline"
-	rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 else
 	_readline=no
 	echo "skipping (text console disabled)"
