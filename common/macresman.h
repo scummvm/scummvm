@@ -31,7 +31,7 @@
 
 namespace Common {
 
-typedef Common::Array<int16> MacResIDArray;
+typedef Common::Array<uint16> MacResIDArray;
 
 /**
  * Class for reading Mac Binary files.
@@ -40,21 +40,28 @@ typedef Common::Array<int16> MacResIDArray;
 class MacResManager {
 
 public:
-	MacResManager(Common::String fileName);
+	MacResManager();
 	~MacResManager();
+	
+	bool open(Common::String fileName);
+	void close();
+
+	bool hasDataFork();
+	bool hasResFork();
 
 	/**
 	 * Read resource from the Mac Binary file
 	 * @param typeID FourCC with type ID
 	 * @param resID Resource ID to fetch
-	 * @param size Pointer to int where loaded data size will be stored
-	 * @return Pointer to memory with loaded resource. Malloc()'ed
+	 * @return Pointer to a SeekableReadStream with loaded resource
 	 */
-	byte *getResource(const char *typeID, int16 resID, int *size);
+	Common::SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
-	char *getResName(const char *typeID, int16 resID);
+	Common::SeekableReadStream *getDataFork();
+	Common::String getResName(uint32 typeID, uint16 resID);
+	
 	/**
-	 * Convert cursor from Mac format to format suitable for feeding to CursorMan
+	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
 	 * @param data Pointer to the cursor data
 	 * @param datasize Size of the cursor data
 	 * @param cursor Pointer to memory where result cursor will be stored. The memory
@@ -70,56 +77,65 @@ public:
 	 *                The memory will be malloc()'ed
 	 * @param palSize Pointer to integer where the palette size will be stored.
 	 */
-	void convertCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
+	void convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
 					  int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize);
 
 	/**
 	 * Return list of resource IDs with specified type ID
 	 */
-	MacResIDArray getResIDArray(const char *typeID);
-
-	Common::String getFileName() { return _fileName; }
+	MacResIDArray getResIDArray(uint32 typeID);
 
 private:
-	int extractResource(int id, byte **buf);
-	bool init();
-	void readMap();
+	Common::SeekableReadStream *_stream;
+	Common::String _baseFileName;
 
+	bool load(Common::SeekableReadStream &stream);
+
+	bool loadFromRawFork(Common::SeekableReadStream &stream);
+	bool loadFromMacBinary(Common::SeekableReadStream &stream);
+	bool loadFromAppleDouble(Common::SeekableReadStream &stream);
+
+	enum {
+		kResForkNone = 0,
+		kResForkRaw,
+		kResForkMacBinary,
+		kResForkAppleDouble
+	} _mode;
+
+	void readMap();
+	
 	struct ResMap {
-		int16 resAttr;
-		int16 typeOffset;
-		int16 nameOffset;
-		int16 numTypes;
+		uint16 resAttr;
+		uint16 typeOffset;
+		uint16 nameOffset;
+		uint16 numTypes;
 	};
 
 	struct ResType {
-		char  id[5];
-		int16 items;
-		int16 offset;
+		uint32 id;
+		uint16 items;
+		uint16 offset;
 	};
 
 	struct Resource {
-		int16 id;
+		uint16 id;
 		int16 nameOffset;
-		byte  attr;
-		int32 dataOffset;
-		char  *name;
+		byte attr;
+		uint32 dataOffset;
+		char *name;
 	};
 
 	typedef Resource *ResPtr;
+	
+	int32 _resForkOffset;
 
-private:
-	int _resOffset;
-	int32 _dataOffset;
-	int32 _dataLength;
-	int32 _mapOffset;
-	int32 _mapLength;
+	uint32 _dataOffset;
+	uint32 _dataLength;
+	uint32 _mapOffset;
+	uint32 _mapLength;
 	ResMap _resMap;
 	ResType *_resTypes;
 	ResPtr  *_resLists;
-
-	Common::String _fileName;
-	Common::File _resFile;
 };
 
 } // End of namespace Common

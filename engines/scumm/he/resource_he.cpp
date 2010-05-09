@@ -1144,58 +1144,33 @@ MacResExtractor::MacResExtractor(ScummEngine_v70he *scumm) : ResExtractor(scumm)
 }
 
 int MacResExtractor::extractResource(int id, byte **buf) {
-	Common::File in;
-	int size;
-
-	if (_fileName.empty()) { // We are running for the first time
-		_fileName = _vm->generateFilename(-3);
-
-		// Some programs write it as .bin. Try that too
-		if (!in.open(_fileName)) {
-			Common::String tmp(_fileName);
-
-			_fileName += ".bin";
-
-			if (!in.open(_fileName)) {
-				// And finally check if we have dumped resource fork
-				_fileName = tmp;
-				_fileName += ".bin";
-				if (!in.open(_fileName)) {
-					error("Cannot open file any of files '%s', '%s.bin', '%s.rsrc",
-						  tmp.c_str(), tmp.c_str(), tmp.c_str());
-				}
-			}
-		}
-	} else
-		in.open(_fileName);
-
-	if (!in.isOpen()) {
-		error("Cannot open file %s", _fileName.c_str());
+	// Create the MacResManager if not created already
+	if (_resMgr == NULL) {
+		_resMgr = new Common::MacResManager();
+		if (!_resMgr->open(_vm->generateFilename(-3)))
+			error("Cannot open file %s", _fileName.c_str());
 	}
-	in.close();
 
-	if (_resMgr == NULL)
-		_resMgr = new Common::MacResManager(_fileName);
-
-
-	*buf = _resMgr->getResource("crsr", 1000 + id, &size);
-
-	if (*buf == NULL)
+	Common::SeekableReadStream *dataStream = _resMgr->getResource('crsr', 1000 + id);
+	
+	if (!dataStream)
 		error("There is no cursor ID #%d", 1000 + id);
+	
+	uint32 size = dataStream->size();
+	*buf = (byte *)malloc(size);
+	dataStream->read(*buf, size);
+	delete dataStream;
 
 	return size;
 }
 
 int MacResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int *w, int *h,
 			  int *hotspot_x, int *hotspot_y, int *keycolor, byte **palette, int *palSize) {
-
-	_resMgr->convertCursor(data, datasize, cursor, w, h, hotspot_x, hotspot_y, keycolor,
-						   _vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette), palette, palSize);
-
+			  
+	_resMgr->convertCrsrCursor(data, datasize, cursor, w, h, hotspot_x, hotspot_y, keycolor,
+						_vm->_system->hasFeature(OSystem::kFeatureCursorHasPalette), palette, palSize);
 	return 1;
 }
-
-
 
 void ScummEngine_v70he::readRoomsOffsets() {
 	int num, i;

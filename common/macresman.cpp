@@ -25,25 +25,31 @@
 
 #include "common/scummsys.h"
 #include "common/debug.h"
-#include "common/file.h"
 #include "common/util.h"
 
+#include "common/file.h"
 #include "common/macresman.h"
+
+#ifdef MACOSX
+#include "common/config-manager.h"
+#include "backends/fs/stdiostream.h"
+#endif
 
 namespace Common {
 
-MacResManager::MacResManager(Common::String fileName) : _fileName(fileName), _resOffset(-1) {
-	_resFile.open(_fileName);
-
-	if (!_resFile.isOpen()) {
-		error("Cannot open file %s", _fileName.c_str());
-	}
-
-	if (!init())
-		error("Resource fork is missing in file '%s'", _fileName.c_str());
+MacResManager::MacResManager() {
+	memset(this, 0, sizeof(MacResManager));
+	close();
 }
 
 MacResManager::~MacResManager() {
+	close();
+}
+
+void MacResManager::close() {
+	_resForkOffset = -1;
+	_mode = kResForkNone;
+
 	for (int i = 0; i < _resMap.numTypes; i++) {
 		for (int j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1) {
@@ -53,10 +59,86 @@ MacResManager::~MacResManager() {
 		delete _resLists[i];
 	}
 
-	delete _resLists;
-	delete _resTypes;
+	delete _resLists; _resLists = 0;
+	delete _resTypes; _resTypes = 0;
+	delete _stream; _stream = 0;
+}
 
-	_resFile.close();
+bool MacResManager::hasDataFork() {
+	return !_baseFileName.empty();
+}
+
+bool MacResManager::hasResFork() {
+	return !_baseFileName.empty() && _mode != kResForkNone;
+}
+
+bool MacResManager::open(Common::String filename) {
+	close();
+
+#ifdef MACOSX
+	// Check the actual fork on a Mac computer
+	Common::String fullPath = ConfMan.get("path") + "/" + filename + "/..namedfork/rsrc";
+
+	if (loadFromRawFork(*StdioStream::makeFromPath(fullPath, false))) {
+		_baseFileName = filename;
+		return true;
+	}
+#endif
+
+	Common::File *file = new Common::File();
+
+	// First, let's try to see if the Mac converted name exists
+	if (file->open("._" + filename) && loadFromAppleDouble(*file)) {
+		_baseFileName = filename;
+		return true;
+	}
+
+	// Check .bin too
+	if (file->open(filename + ".bin") && loadFromMacBinary(*file)) {
+		_baseFileName = filename;
+		return true;
+	}
+		
+	// Maybe we have a dumped fork?
+	if (file->open(filename + ".rsrc") && loadFromRawFork(*file)) {
+		_baseFileName = filename;
+		return true;
+	}
+
+	// Fine, what about just the data fork?
+	if (file->open(filename)) {
+		_baseFileName = filename;
+		return true;
+	}
+		
+	delete file;
+
+	// The file doesn't exist
+	return false;
+}
+
+bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
+	if (stream.readUint32BE() != 0x00051607) // tag
+		return false;
+
+	stream.skip(20); // version + home file system
+
+	uint16 entryCount = stream.readUint16BE();
+
+	for (uint16 i = 0; i < entryCount; i++) {
+		uint32 id = stream.readUint32BE();
+		uint32 offset = stream.readUint32BE();
+		stream.readUint32BE(); // length
+
+		if (id == 1) {
+			// Found the data fork!
+			_resForkOffset = offset;
+			_mode = kResForkAppleDouble;
+			return load(stream);
+		}
+	}
+
+	return false;
 }
 
 #define MBI_INFOHDR 128
@@ -68,64 +150,92 @@ MacResManager::~MacResManager() {
 #define MBI_RFLEN 87
 #define MAXNAMELEN 63
 
-bool MacResManager::init() {
+bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
 	byte infoHeader[MBI_INFOHDR];
-	int32 data_size, rsrc_size;
-	int32 data_size_pad, rsrc_size_pad;
-	int filelen;
-
-	filelen = _resFile.size();
-	_resFile.read(infoHeader, MBI_INFOHDR);
+	stream.read(infoHeader, MBI_INFOHDR);
 
 	// Maybe we have MacBinary?
 	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
 		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
 
 		// Pull out fork lengths
-		data_size = READ_BE_UINT32(infoHeader + MBI_DFLEN);
-		rsrc_size = READ_BE_UINT32(infoHeader + MBI_RFLEN);
+		uint32 dataSize = READ_BE_UINT32(infoHeader + MBI_DFLEN);
+		uint32 rsrcSize = READ_BE_UINT32(infoHeader + MBI_RFLEN);
 
-		data_size_pad = (((data_size + 127) >> 7) << 7);
-		rsrc_size_pad = (((rsrc_size + 127) >> 7) << 7);
+		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
+		uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
 
 		// Length check
-		int sumlen =  MBI_INFOHDR + data_size_pad + rsrc_size_pad;
-
-		if (sumlen == filelen)
-			_resOffset = MBI_INFOHDR + data_size_pad;
+		if (MBI_INFOHDR + dataSizePad + rsrcSizePad == (uint32)stream.size())
+			_resForkOffset = MBI_INFOHDR + dataSizePad;
 	}
 
-	if (_resOffset == -1) // MacBinary check is failed
-		_resOffset = 0; // Maybe we have dumped fork?
+	if (_resForkOffset < 0)
+		return false;
 
-	_resFile.seek(_resOffset);
+	_mode = kResForkMacBinary;
+	return load(stream);
+}
 
-	_dataOffset = _resFile.readUint32BE() + _resOffset;
-	_mapOffset = _resFile.readUint32BE() + _resOffset;
-	_dataLength = _resFile.readUint32BE();
-	_mapLength = _resFile.readUint32BE();
+bool MacResManager::loadFromRawFork(Common::SeekableReadStream &stream) {
+	_mode = kResForkRaw;
+	_resForkOffset = 0;
+	return load(stream);
+}
+
+bool MacResManager::load(Common::SeekableReadStream &stream) {
+	if (_mode == kResForkNone)
+		return false;
+
+	stream.seek(_resForkOffset);
+
+	_dataOffset = stream.readUint32BE() + _resForkOffset;
+	_mapOffset = stream.readUint32BE() + _resForkOffset;
+	_dataLength = stream.readUint32BE();
+	_mapLength = stream.readUint32BE();
 
 	// do sanity check
-	if (_dataOffset >= filelen || _mapOffset >= filelen ||
-		_dataLength + _mapLength  > filelen) {
-		_resOffset = -1;
+	if (_dataOffset >= (uint32)stream.size() || _mapOffset >= (uint32)stream.size() ||
+		_dataLength + _mapLength  > (uint32)stream.size()) {
+		_resForkOffset = -1;
+		_mode = kResForkNone;
 		return false;
 	}
 
 	debug(7, "got header: data %d [%d] map %d [%d]",
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
+		
+	_stream = &stream;
 
 	readMap();
-
 	return true;
 }
 
-MacResIDArray MacResManager::getResIDArray(const char *typeID) {
+Common::SeekableReadStream *MacResManager::getDataFork() {
+	if (!_stream)
+		return NULL;
+
+	if (_mode == kResForkMacBinary) {
+		_stream->seek(MBI_DFLEN);
+		uint32 dataSize = _stream->readUint32BE();
+		_stream->seek(MBI_INFOHDR);
+		return _stream->readStream(dataSize);
+	}
+
+	Common::File *file = new Common::File();
+	if (file->open(_baseFileName))
+		return file;
+	delete file;
+
+	return NULL;
+}
+
+MacResIDArray MacResManager::getResIDArray(uint32 typeID) {
 	int typeNum = -1;
 	MacResIDArray res;
 
 	for (int i = 0; i < _resMap.numTypes; i++)
-		if (strcmp(_resTypes[i].id, typeID) == 0) {
+		if (_resTypes[i].id ==  typeID) {
 			typeNum = i;
 			break;
 		}
@@ -141,35 +251,31 @@ MacResIDArray MacResManager::getResIDArray(const char *typeID) {
 	return res;
 }
 
-char *MacResManager::getResName(const char *typeID, int16 resID) {
-	int i;
+Common::String MacResManager::getResName(uint32 typeID, uint16 resID) {
 	int typeNum = -1;
 
-	for (i = 0; i < _resMap.numTypes; i++)
-		if (strcmp(_resTypes[i].id, typeID) == 0) {
+	for (int i = 0; i < _resMap.numTypes; i++)
+		if (_resTypes[i].id == typeID) {
 			typeNum = i;
 			break;
 		}
 
 	if (typeNum == -1)
-		return NULL;
+		return "";
 
-	for (i = 0; i < _resTypes[typeNum].items; i++)
+	for (int i = 0; i < _resTypes[typeNum].items; i++)
 		if (_resLists[typeNum][i].id == resID)
 			return _resLists[typeNum][i].name;
 
-	return NULL;
+	return "";
 }
 
-byte *MacResManager::getResource(const char *typeID, int16 resID, int *size) {
-	int i;
+Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 resID) {
 	int typeNum = -1;
 	int resNum = -1;
-	byte *buf;
-	int len;
 
-	for (i = 0; i < _resMap.numTypes; i++)
-		if (strcmp(_resTypes[i].id, typeID) == 0) {
+	for (int i = 0; i < _resMap.numTypes; i++)
+		if (_resTypes[i].id == typeID) {
 			typeNum = i;
 			break;
 		}
@@ -177,7 +283,7 @@ byte *MacResManager::getResource(const char *typeID, int16 resID, int *size) {
 	if (typeNum == -1)
 		return NULL;
 
-	for (i = 0; i < _resTypes[typeNum].items; i++)
+	for (int i = 0; i < _resTypes[typeNum].items; i++)
 		if (_resLists[typeNum][i].id == resID) {
 			resNum = i;
 			break;
@@ -186,76 +292,66 @@ byte *MacResManager::getResource(const char *typeID, int16 resID, int *size) {
 	if (resNum == -1)
 		return NULL;
 
-	_resFile.seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
-
-	len = _resFile.readUint32BE();
-	buf = (byte *)malloc(len);
-
-	_resFile.read(buf, len);
-
-	*size = len;
-
-	return buf;
+	_stream->seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
+	uint32 len = _stream->readUint32BE();
+	return _stream->readStream(len);
 }
 
 void MacResManager::readMap() {
-	int	i, j, len;
+	_stream->seek(_mapOffset + 22);
 
-	_resFile.seek(_mapOffset + 22);
-
-	_resMap.resAttr = _resFile.readUint16BE();
-	_resMap.typeOffset = _resFile.readUint16BE();
-	_resMap.nameOffset = _resFile.readUint16BE();
-	_resMap.numTypes = _resFile.readUint16BE();
+	_resMap.resAttr = _stream->readUint16BE();
+	_resMap.typeOffset = _stream->readUint16BE();
+	_resMap.nameOffset = _stream->readUint16BE();
+	_resMap.numTypes = _stream->readUint16BE();
 	_resMap.numTypes++;
 
-	_resFile.seek(_mapOffset + _resMap.typeOffset + 2);
+	_stream->seek(_mapOffset + _resMap.typeOffset + 2);
 	_resTypes = new ResType[_resMap.numTypes];
 
-	for (i = 0; i < _resMap.numTypes; i++) {
-		_resFile.read(_resTypes[i].id, 4);
-		_resTypes[i].id[4] = 0;
-		_resTypes[i].items = _resFile.readUint16BE();
-		_resTypes[i].offset = _resFile.readUint16BE();
+	for (int i = 0; i < _resMap.numTypes; i++) {
+		_resTypes[i].id = _stream->readUint32BE();
+		_resTypes[i].items = _stream->readUint16BE();
+		_resTypes[i].offset = _stream->readUint16BE();
 		_resTypes[i].items++;
 
-		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", _resTypes[i].id, _resTypes[i].items,  _resTypes[i].offset, _resTypes[i].offset);
+		debug(8, "resType: <%s> items: %d offset: %d (0x%x)", tag2str(_resTypes[i].id), _resTypes[i].items,  _resTypes[i].offset, _resTypes[i].offset);
 	}
 
 	_resLists = new ResPtr[_resMap.numTypes];
 
-	for (i = 0; i < _resMap.numTypes; i++) {
+	for (int i = 0; i < _resMap.numTypes; i++) {
 		_resLists[i] = new Resource[_resTypes[i].items];
-		_resFile.seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
+		_stream->seek(_resTypes[i].offset + _mapOffset + _resMap.typeOffset);
 
-		for (j = 0; j < _resTypes[i].items; j++) {
+		for (int j = 0; j < _resTypes[i].items; j++) {
 			ResPtr resPtr = _resLists[i] + j;
 
-			resPtr->id = _resFile.readUint16BE();
-			resPtr->nameOffset = _resFile.readUint16BE();
-			resPtr->dataOffset = _resFile.readUint32BE();
-			_resFile.readUint32BE();
+			resPtr->id = _stream->readUint16BE();
+			resPtr->nameOffset = _stream->readUint16BE();
+			resPtr->dataOffset = _stream->readUint32BE();
+			_stream->readUint32BE();
 			resPtr->name = 0;
 
 			resPtr->attr = resPtr->dataOffset >> 24;
 			resPtr->dataOffset &= 0xFFFFFF;
 		}
 
-		for (j = 0; j < _resTypes[i].items; j++) {
+		for (int j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1) {
-				_resFile.seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
+				_stream->seek(_resLists[i][j].nameOffset + _mapOffset + _resMap.nameOffset);
 
-				len = _resFile.readByte();
+				byte len = _stream->readByte();
 				_resLists[i][j].name = new char[len + 1];
 				_resLists[i][j].name[len] = 0;
-				_resFile.read(_resLists[i][j].name, len);
+				_stream->read(_resLists[i][j].name, len);
 			}
 		}
 	}
 }
 
-void MacResManager::convertCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
-					 int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize) {
+void MacResManager::convertCrsrCursor(byte *data, int datasize, byte **cursor, int *w, int *h,
+				int *hotspot_x, int *hotspot_y, int *keycolor, bool colored, byte **palette, int *palSize) {
 	Common::MemoryReadStream dis(data, datasize);
 	int i, b;
 	byte imageByte;
