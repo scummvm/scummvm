@@ -1305,7 +1305,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 			_videoMode.scaleFactor = 3;
 			_scalerProc = AdvMame3x;
 			break;
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 		case GFX_HQ2X:
 			_videoMode.scaleFactor = 2;
 			_scalerProc = HQ2x;

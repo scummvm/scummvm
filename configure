@@ -129,8 +129,8 @@ _debug_build=auto
 _release_build=auto
 _text_console=no
 _mt32emu=yes
-_build_hq_scalers=yes
 _build_scalers=yes
+_build_hq_scalers=yes
 _indeo3=auto
 _enable_prof=no
 # Default vkeybd/keymapper options
@@ -641,8 +641,8 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
-  --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-scalers        exclude scalers
+  --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build process
 
@@ -700,8 +700,8 @@ done # for parm in ...
 for ac_option in $@; do
 	case "$ac_option" in
 	--disable-16bit)          _16bit=no       ;;
-	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--disable-scalers)        _build_scalers=no ;;
+	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
 	--disable-alsa)           _alsa=no        ;;
 	--enable-vorbis)          _vorbis=yes     ;;
@@ -1873,8 +1873,19 @@ add_to_config_mk_if_yes "$_16bit" 'USE_RGB_COLOR = 1'
 #
 # Check whether to enable the (hq) scalers
 #
-add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
-add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
+if test "$_build_scalers" = no ; then
+	_def_scalers='#undef USE_SCALERS'
+else
+	_def_scalers='#define USE_SCALERS'
+fi
+add_to_config_mk_if_yes "$_build_scalers" 'USE_SCALERS = 1'
+
+if test "$_build_hq_scalers" = no ; then
+	_def_hq_scalers='#undef USE_HQ_SCALERS'
+else
+	_def_hq_scalers='#define USE_HQ_SCALERS'
+fi
+add_to_config_mk_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS = 1'
 
 #
 # Check whether to compile the Indeo3 decoder
@@ -2256,6 +2267,10 @@ if test "$_16bit" = yes ; then
 	echo_n ", 16bit color"
 fi
 
+if test "$_build_scalers" = yes ; then
+	echo_n ", scalers"
+fi
+
 if test "$_build_hq_scalers" = yes ; then
 	echo_n ", HQ scalers"
 fi
@@ -2529,6 +2544,8 @@ $_def_text_console
 $_def_mt32emu
 $_def_indeo3
 $_def_16bit
+$_def_scalers
+$_def_hq_scalers
 
 /* Plugin settings */
 $_def_plugin

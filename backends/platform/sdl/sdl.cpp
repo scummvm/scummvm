@@ -94,9 +94,11 @@ AspectRatio::AspectRatio(int w, int h) {
 	_kh = h;
 }
 
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 static const size_t AR_COUNT = 4;
 static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
 static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
+
 static AspectRatio getDesiredAspectRatio() {
 	//TODO : We could parse an arbitrary string, if we code enough proper validation
 	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
@@ -111,6 +113,7 @@ static AspectRatio getDesiredAspectRatio() {
 	// TODO : Report a warning
 	return AspectRatio(0, 0);
 }
+#endif
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
@@ -147,7 +150,7 @@ void OSystem_SDL::initBackend() {
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
 	_cksumValid = false;
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && !defined(DISABLE_SCALERS)
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");

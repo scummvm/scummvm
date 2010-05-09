@@ -61,8 +61,6 @@ $ftp_url = "FTP://$FTP_User\@$FTP_Host/$FTP_Dir/";
 $ExtraMacros =  "MACRO		NONSTANDARD_PORT\n";
 $ExtraMacros .=  "MACRO		ENABLE_VKEYBD\n";
 $ExtraMacros .= "MACRO		DISABLE_FANCY_THEMES\n";
-$ExtraMacros .= "MACRO		DISABLE_SCALERS\n";
-$ExtraMacros .= "MACRO		DISABLE_HQ_SCALERS\n";
 
 # prep nice list of SDKs
 #while( ($SDK, $RootDir) = each(%SDK_RootDirs) )

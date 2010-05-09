@@ -91,10 +91,6 @@ PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.syms scummvm-psp.elf
 PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-psp.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
-# Remove unneeded scalers
-DISABLE_SCALERS = true
-DISABLE_HQ_SCALERS = true
-
 # PSP-specific variables
 STRIP   = psp-strip
 MKSFO	= mksfoex -d MEMSIZE=1

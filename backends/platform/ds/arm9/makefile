@@ -286,7 +286,6 @@ RANLIB = arm-eabi-ranlib
 OBJCOPY = arm-eabi-objcopy
 AS = arm-eabi-as
 HAVE_GCC3 = true
-DISABLE_SCALERS = true
 
 ifdef DYNAMIC_MODULES
 DEFINES += -DDYNAMIC_MODULES

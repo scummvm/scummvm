@@ -34,7 +34,6 @@
 
 #define __GP2X__
 #define USE_OSD
-/* #define DISABLE_SCALERS */
 #define MIXER_DOUBLE_BUFFERING 1
 
 namespace Audio {

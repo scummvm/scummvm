@@ -30,7 +30,7 @@
 
 int gBitFormat = 565;
 
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 // RGB-to-YUV lookup table
 extern "C" {
 
@@ -139,7 +139,7 @@ void InitScalers(uint32 BitFormat) {
 		format = g_system->getOverlayFormat();
 	}
 
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 	InitLUT(format);
 #endif
 
@@ -152,7 +152,7 @@ void InitScalers(uint32 BitFormat) {
 }
 
 void DestroyScalers(){
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 	free(RGBtoYUV);
 	RGBtoYUV = 0;
 #endif
@@ -177,7 +177,7 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 	}
 }
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 
 
 #ifdef USE_ARM_SCALER_ASM
@@ -386,4 +386,4 @@ void DotMatrix(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPi
 	}
 }
 
-#endif // #ifndef DISABLE_SCALERS
+#endif // #ifdef USE_SCALERS

@@ -398,7 +398,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 			r->y = dst_y;
 
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif

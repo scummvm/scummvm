@@ -70,7 +70,8 @@ REMOTE_DIRECTORY = \Storage Card\Program Files\Scummvm
 ########################################################################
 ## You're probably not going to want to change these defines...
 
-#DISABLE_HQ_SCALERS = 1
+USE_SCALERS = 1
+USE_HQ_SCALERS = 1
 USE_ARM_SOUND_ASM = 1
 USE_ARM_SMUSH_ASM = 1
 USE_ARM_GFX_ASM   = 1
@@ -153,6 +154,14 @@ endif
 ifdef USE_FLAC
 DEFINES += -DUSE_FLAC
 LIBS += -lFLAC
+endif
+
+ifdef USE_SCALERS
+DEFINES += -DUSE_SCALERS
+endif
+
+ifdef USE_HQ_SCALERS
+DEFINES += -DUSE_HQ_SCALERS
 endif
 
 ifdef USE_ARM_SMUSH_ASM

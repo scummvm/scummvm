@@ -7,10 +7,6 @@ PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
 
 ENABLED=STATIC_PLUGIN
 
-#control build
-DISABLE_SCALERS = true
-DISABLE_HQ_SCALERS = true
-
 ENABLE_SCUMM = $(ENABLED)
 ENABLE_SCUMM_7_8 = $(ENABLED)
 #ENABLE_HE = $(ENABLED)

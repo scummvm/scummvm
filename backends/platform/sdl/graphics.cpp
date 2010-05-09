@@ -37,7 +37,7 @@
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
 	{"2xsai", "2xSAI", GFX_2XSAI},
@@ -45,7 +45,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"supereagle", "SuperEagle", GFX_SUPEREAGLE},
 	{"advmame2x", "AdvMAME2x", GFX_ADVMAME2X},
 	{"advmame3x", "AdvMAME3x", GFX_ADVMAME3X},
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 	{"hq2x", "HQ2x", GFX_HQ2X},
 	{"hq3x", "HQ3x", GFX_HQ3X},
 #endif
@@ -58,7 +58,7 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 // Table of relative scalers magnitudes
 // [definedScale - 1][scaleFactor - 1]
 static ScalerProc *scalersMagn[3][3] = {
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	{ Normal1x, AdvMame2x, AdvMame3x },
 	{ Normal1x, Normal1x, Normal1o5x },
 	{ Normal1x, Normal1x, Normal1x }
@@ -80,7 +80,7 @@ static const int s_gfxModeSwitchTable[][4] = {
 		{ GFX_NORMAL, GFX_DOTMATRIX, -1, -1 }
 	};
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
 
@@ -308,7 +308,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
 		break;
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	case GFX_DOUBLESIZE:
 		newScaleFactor = 2;
 		break;
@@ -331,7 +331,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	case GFX_ADVMAME3X:
 		newScaleFactor = 3;
 		break;
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 	case GFX_HQ2X:
 		newScaleFactor = 2;
 		break;
@@ -345,7 +345,7 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 	case GFX_DOTMATRIX:
 		newScaleFactor = 2;
 		break;
-#endif // DISABLE_SCALERS
+#endif // USE_SCALERS
 
 	default:
 		warning("unknown gfx mode %d", mode);
@@ -372,7 +372,7 @@ void OSystem_SDL::setGraphicsModeIntern() {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
 		break;
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	case GFX_DOUBLESIZE:
 		newScalerProc = Normal2x;
 		break;
@@ -395,7 +395,7 @@ void OSystem_SDL::setGraphicsModeIntern() {
 	case GFX_ADVMAME3X:
 		newScalerProc = AdvMame3x;
 		break;
-#ifndef DISABLE_HQ_SCALERS
+#ifdef USE_HQ_SCALERS
 	case GFX_HQ2X:
 		newScalerProc = HQ2x;
 		break;
@@ -409,7 +409,7 @@ void OSystem_SDL::setGraphicsModeIntern() {
 	case GFX_DOTMATRIX:
 		newScalerProc = DotMatrix;
 		break;
-#endif // DISABLE_SCALERS
+#endif // USE_SCALERS
 
 	default:
 		error("Unknown gfx mode %d", _videoMode.mode);
@@ -898,7 +898,7 @@ void OSystem_SDL::internUpdateScreen() {
 			r->w = r->w * scale1;
 			r->h = dst_h * scale1;
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
 				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
 #endif
@@ -1110,7 +1110,7 @@ void OSystem_SDL::addDirtyRect(int x, int y, int w, int h, bool realCoordinates)
 		h = height - y;
 	}
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates) {
 		makeRectStretchable(x, y, w, h);
 	}
@@ -1371,7 +1371,7 @@ void OSystem_SDL::clearOverlay() {
 	_scalerProc((byte *)(_tmpscreen->pixels) + _tmpscreen->pitch + 2, _tmpscreen->pitch,
 	(byte *)_overlayscreen->pixels, _overlayscreen->pitch, _videoMode.screenWidth, _videoMode.screenHeight);
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection)
 		stretch200To240((uint8 *)_overlayscreen->pixels, _overlayscreen->pitch,
 						_videoMode.overlayWidth, _videoMode.screenHeight * _videoMode.scaleFactor, 0, 0, 0);
@@ -1664,7 +1664,7 @@ void OSystem_SDL::blitCursor() {
 		_mouseCurState.vHotY = _mouseCurState.hotY;
 	}
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	int rH1 = rH; // store original to pass to aspect-correction function later
 #endif
 
@@ -1712,7 +1712,7 @@ void OSystem_SDL::blitCursor() {
 		_mouseOrigSurface->pitch, (byte *)_mouseSurface->pixels, _mouseSurface->pitch,
 		_mouseCurState.w, _mouseCurState.h);
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 	if (_videoMode.aspectRatioCorrection && _cursorTargetScale == 1)
 		cursorStretch200To240((uint8 *)_mouseSurface->pixels, _mouseSurface->pitch, rW, rH1, 0, 0, 0);
 #endif
@@ -1721,7 +1721,7 @@ void OSystem_SDL::blitCursor() {
 	SDL_UnlockSurface(_mouseOrigSurface);
 }
 
-#ifndef DISABLE_SCALERS
+#ifdef USE_SCALERS
 // Basically it is kVeryFastAndUglyAspectMode of stretch200To240 from
 // common/scale/aspect.cpp
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY) {

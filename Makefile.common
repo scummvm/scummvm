@@ -33,15 +33,6 @@ ifdef USE_MT32EMU
 MODULES += sound/softsynth/mt32
 endif
 
-ifdef DISABLE_SCALERS
-DEFINES += -DDISABLE_SCALERS
-endif
-
-ifdef DISABLE_HQ_SCALERS
-DEFINES += -DDISABLE_HQ_SCALERS
-endif
-
-
 ######################################################################
 # The build rules follow - normally you should have no need to
 # touch whatever comes after here.

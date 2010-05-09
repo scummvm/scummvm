@@ -32,7 +32,7 @@ MODULE_OBJS := \
 	video/coktelvideo/indeo3.o \
 	video/coktelvideo/coktelvideo.o
 
-ifndef DISABLE_SCALERS
+ifdef USE_SCALERS
 MODULE_OBJS += \
 	scaler/2xsai.o \
 	scaler/aspect.o \
@@ -48,7 +48,7 @@ MODULE_OBJS += \
 	scaler/Normal2xARM.o
 endif
 
-ifndef DISABLE_HQ_SCALERS
+ifdef USE_HQ_SCALERS
 MODULE_OBJS += \
 	scaler/hq2x.o \
 	scaler/hq3x.o

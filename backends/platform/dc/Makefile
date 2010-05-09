@@ -29,7 +29,6 @@ RM_REC = rm -rf
 AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 HAVE_GCC3 = true
-DISABLE_SCALERS = true
 USE_RGB_COLOR = true
 
 ifdef DYNAMIC_MODULES
