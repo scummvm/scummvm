@@ -27,6 +27,8 @@
 #include "common/endian.h"
 #include "common/events.h"
 
+#include "graphics/cursorman.h"
+
 #include "cine/cine.h"
 #include "cine/main_loop.h"
 #include "cine/object.h"
@@ -525,8 +527,6 @@ void processInventory(int16 x, int16 y) {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
 	} while (button);
-
-	// TODO: Both Future Wars and Operation Stealth call showMouse, drawMouse or something similar here.
 }
 
 int16 buildObjectListCommand(int16 param) {
@@ -628,10 +628,12 @@ void makeCommandLine() {
 	if (g_cine->getGameType() == Cine::GType_OS || !(playerCommand != -1 && choiceResultTable[playerCommand] == 2)) {
 		if (playerCommand == 2) {
 			getMouseData(mouseUpdateStatus, &dummyU16, &x, &y);
+			CursorMan.showMouse(false);
 			processInventory(x, y + 8);
 			playerCommand = -1;
 			commandVar1 = 0;
 			commandBuffer = "";
+			CursorMan.showMouse(true);
 		}
 	}
 
