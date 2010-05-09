@@ -1065,11 +1065,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.shadowMode = _shadow_mode;
 	bdd.shadowPalette = _vm->_shadowPalette;
 
-	bdd.actorPalette = 0;
-	if (_useBompPalette) {
-		for (uint i = 0; i < 256; i++)
-			bdd.actorPalette[i] = _palette[i];
- 	}
+	bdd.actorPalette = _useBompPalette ? _palette : 0;
 
 	bdd.mirror = !_mirror;
 
