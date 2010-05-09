@@ -38,6 +38,8 @@
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
+#include "scumm/file.h"
+#include "scumm/file_nes.h"
 
 #include "engines/metaengine.h"
 
@@ -207,6 +209,50 @@ static bool searchFSNode(const Common::FSList &fslist, const Common::String &nam
 		}
 	}
 	return false;
+}
+
+static BaseScummFile *openDiskImage(const Common::FSNode &node, const GameFilenamePattern *gfp) {
+	Common::String disk1 = node.getName();
+	BaseScummFile *diskImg;
+
+	SearchMan.addDirectory("tmpDiskImgDir", node.getParent());
+
+	if (disk1.hasSuffix(".prg")) { // NES
+		diskImg = new ScummNESFile();
+	} else { // C64 or Apple //gs
+		// setup necessary game settings for disk image reader
+		GameSettings gs;
+		memset(&gs, 0, sizeof(GameSettings));
+		gs.gameid = gfp->gameid;
+		gs.id = (Common::String(gfp->gameid) == "maniac" ? GID_MANIAC : GID_ZAK); 
+		gs.platform = gfp->platform;
+
+		// determine second disk file name
+		Common::String disk2(disk1);
+		for (Common::String::iterator it = disk2.begin(); it != disk2.end(); ++it) {
+			// replace "xyz1.(d64|dsk)" by "xyz2.(d64|dsk)"
+			if (*it == '1') {
+				*it = '2';
+				break;
+			}
+		}
+
+		// open image
+		diskImg = new ScummDiskImage(disk1.c_str(), disk2.c_str(), gs);
+	}
+
+	if (diskImg->open(disk1.c_str()) && diskImg->openSubFile("00.LFL")) {
+		debug(0, "Success");
+		return diskImg;
+	}
+	delete diskImg;
+	return 0;
+}
+
+static void closeDiskImage(ScummDiskImage *img) {
+	if (img)
+		img->close();
+	SearchMan.remove("tmpDiskImgDir");
 }
 
 // The following function tries to detect the language for COMI and DIG
@@ -389,8 +435,19 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 		//
 		DetectorDesc &d = fileMD5Map[file];
 		if (d.md5.empty()) {
-			Common::File tmp;
-			if (tmp.open(d.node) && Common::md5_file_string(tmp, md5str, kMD5FileSizeLimit)) {
+			Common::File *tmp = 0;
+			bool isDiskImg = (file.hasSuffix(".d64") || file.hasSuffix(".dsk") || file.hasSuffix(".prg"));
+			
+			if (isDiskImg) {
+				tmp = openDiskImage(d.node, gfp);
+
+				debug(2, "Falling back to disk-based detection");
+			} else {
+				tmp = new Common::File;
+				tmp->open(d.node);
+			}
+
+			if (tmp && tmp->isOpen() && Common::md5_file_string(*tmp, md5str, kMD5FileSizeLimit)) {
 
 				d.md5 = md5str;
 				d.md5Entry = findInMD5Table(md5str);
@@ -409,6 +466,10 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					results.push_back(dr);
 				}
 			}
+
+			if (isDiskImg)
+				closeDiskImage((ScummDiskImage*)tmp);
+			delete tmp;
 		}
 
 		// If an exact match for this file has already been found, don't bother

@@ -53,25 +53,20 @@
 # IFS=$OIFS
 #
 maniac	Maniac Mansion
-	d831f7c048574dd9d5d85db2a1468099	-1	en	C64	C64	-	-	
-	c4a7f7398ac9ae588940f9912ea5fd8f	-1	de	C64	C64	-	-	
+	2d624d1b214f7faf0094daea65c6d1a6	-1	en	2gs	Apple II	-	-	
+
+	eea4d9ac2fb6f145945a308e8866915b	-1	en	C64	C64	-	-	
+	439a7f4adf510489981ac52308e7d7a2	-1	de	C64	C64	-	-	
 
 	7f45ddd6dbfbf8f80c0c0efea4c295bc	1972	en	DOS	V1	V1	-	Fingolfin
 
-	d8d07efcb88f396bee0b402b10c3b1c9	262144	gb	NES	NES	-	-	
-	3905799e081b80a61d4460b7b733c206	262144	us	NES	NES	-	-	
-	81bbfa181184cb494e7a81dcfa94fbd9	262144	fr	NES	NES	-	-	
-	257f8c14d8c584f7ddd601bcb00920c7	262144	de	NES	NES	-	-	
-	f163cf53f7850e43fb482471e5c52e1a	262144	es	NES	NES	-	-
-	54a68a5f5e3c86da42b7ca5f51e79b1d	262144	it	NES	NES	-	-
-	22d07d6c386c9c25aca5dac2a0c0d94b	262144	se	NES	NES	-	-	
-	17f7296f63c78642724f057fd8e736a7	-1	gb	NES	NES	extracted	-	
-	91d5db93187fab54d823f73bd6441cb6	-1	us	NES	NES	extracted	-	
-	1c7e7db2cfab1ad62746ab680a634204	-1	fr	NES	NES	extracted	-	
-	3a5ec90d556d4920976c5578bfbfaf79	-1	de	NES	NES	extracted	-	
-	b7d37d6b786b5a22deea3b038eca96ca	2082	es	NES	NES	extracted	-	
-	fa3cb1541f9d7cf99ccbae6249bc150c	2082	it	NES	NES	extracted	-	
-	6b5a3fef241e90d4b2e77f1e222773ee	-1	se	NES	NES	extracted	-	
+	17f7296f63c78642724f057fd8e736a7	-1	gb	NES	NES	-	
+	91d5db93187fab54d823f73bd6441cb6	-1	us	NES	NES	-	
+	1c7e7db2cfab1ad62746ab680a634204	-1	fr	NES	NES	-	
+	3a5ec90d556d4920976c5578bfbfaf79	-1	de	NES	NES	-	
+	b7d37d6b786b5a22deea3b038eca96ca	-1	es	NES	NES	-	
+	fa3cb1541f9d7cf99ccbae6249bc150c	-1	it	NES	NES	-	
+	6b5a3fef241e90d4b2e77f1e222773ee	-1	se	NES	NES	-	
 
 	e781230da44a44e2f0770edb2b3b3633	-1	en	Amiga	V2	V2	-	dhewg, Andrea Petrucci
 	ce7733f185b838e248927c7ba1a04204	-1	fr	Amiga	V2	V2	-	Tobias Fleischer
@@ -92,9 +87,9 @@ maniac	Maniac Mansion
 	40564ec47da48a67787d1f9bd043902a	1988	en	DOS	V2 Demo	V2 Demo	non-interactive	Fingolfin
 
 zak	Zak McKracken and the Alien Mindbenders
-	55d3987641bf229c83bc729210173383	174848	en	C64	V1	-	-	
-	4973bbc3899e3826dbf316e1d7271ec7	196608	de	C64	V1	-	-	
-	7b60620558b8d6b7d7313b8ac7bb5a98	174848	it	C64	V1	-	-	
+	254fede2f15dbb32a23760d601b01816	-1	en	C64	V1	-	-	
+	95be99181bd0f10fef4872c2d4a771cb	-1	de	C64	V1	-	-	
+	aeec382acef62e122bf0d5b14581cfa4	-1	it	C64	V1	-	-	
 	7020931d5a2be0a49d68e7a1882363e4	1896	en	DOS	V1	V1	-	Fingolfin
 	b23f7cd7c304d7dff08e92a96120d5b4	-1	en	DOS	V1	V1	alt?	Andrea Petrucci
 
