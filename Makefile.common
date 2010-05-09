@@ -132,7 +132,7 @@ ifdef USE_NASM
 # Build rule for NASM assembler files
 %.o: %.asm
 	$(QUIET)$(MKDIR) $(*D)
-	$(QUIET_NASM)$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
+	$(QUIET_NASM)$(NASM) $(NASMFLAGS) -o $*.o $(<)
 endif
 
 # Include the dependency tracking files.

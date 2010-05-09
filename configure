@@ -2191,10 +2191,23 @@ if test "$_have_x86" = yes ; then
 		for path_dir in $_nasmpath; do
 			if test -x "$path_dir/nasm$NATIVEEXEEXT" ; then
 				NASM="$path_dir/nasm$NATIVEEXEEXT"
+				NASMFLAGS="-O1 -g"
 				echo $NASM
 				break
 			fi
 		done
+
+		# fallback to the nasm compatible yasm
+		if test x$NASM = x -o x$NASM = x'"$NASM"'; then
+			for path_dir in $_nasmpath; do
+				if test -x "$path_dir/yasm$NATIVEEXEEXT" ; then
+					NASM="$path_dir/yasm$NATIVEEXEEXT"
+					NASMFLAGS="-a x86 -m x86"
+					echo $NASM
+					break
+				fi
+			done
+		fi
 
 		IFS="$ac_save_ifs"
 
@@ -2204,16 +2217,16 @@ if test "$_have_x86" = yes ; then
 		else
 			case $_host_os in
 				os2-emx*)
-					NASMFLAGS="-f aout"
+					NASMFLAGS="$NASMFLAGS -f aout"
 				;;
 				mingw*)
-					NASMFLAGS="-f win32"
+					NASMFLAGS="$NASMFLAGS -f win32"
 				;;
 				darwin*)
-					NASMFLAGS="-f macho"
+					NASMFLAGS="$NASMFLAGS -f macho"
 				;;
 				*)
-					NASMFLAGS="-f elf"
+					NASMFLAGS="$NASMFLAGS -f elf"
 				;;
 			esac
 			_nasm=yes
