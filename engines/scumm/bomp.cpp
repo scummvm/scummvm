@@ -38,7 +38,7 @@ static void bompScaleFuncX(byte *line_buffer, byte *scaling_x_ptr, byte skip, in
 static void bompApplyShadow0(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency, bool HE7Check);
 static void bompApplyShadow1(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
 static void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *dst, int32 size, byte transparency);
-static void bompApplyActorPalette(byte *actorPalette, byte *line_buffer, int32 size);
+static void bompApplyActorPalette(uint16 *actorPalette, byte *line_buffer, int32 size);
 
 
 
@@ -172,7 +172,7 @@ void bompApplyShadow3(const byte *shadowPalette, const byte *line_buffer, byte *
 	}
 }
 
-void bompApplyActorPalette(byte *actorPalette, byte *line_buffer, int32 size) {
+void bompApplyActorPalette(uint16 *actorPalette, byte *line_buffer, int32 size) {
 	actorPalette[255] = 255;
 	while (size-- > 0) {
 		*line_buffer = actorPalette[*line_buffer];

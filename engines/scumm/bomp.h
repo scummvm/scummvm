@@ -54,7 +54,7 @@ struct BompDrawData {
 	uint16 shadowMode;
 	byte *shadowPalette;
 
-	byte *actorPalette;
+	uint16 *actorPalette;
 
 	bool mirror;
 };
