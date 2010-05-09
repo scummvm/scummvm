@@ -118,6 +118,7 @@ SOURCE	   engines\engine.cpp
 SOURCE	   engines\dialogs.cpp
 SOURCE	   engines\game.cpp
 SOURCE 	   engines\advanceddetector.cpp
+SOURCE 	   engines\savestate.cpp
 // backend specific includes
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
@@ -131,3 +132,6 @@ SOURCE     backends\vkeybd\polygon.cpp
 SOURCE     backends\vkeybd\virtual-keyboard-gui.cpp
 SOURCE     backends\vkeybd\virtual-keyboard-parser.cpp
 SOURCE     backends\vkeybd\virtual-keyboard.cpp
+
+// Downscaler
+SOURCE	   graphics\scaler\downscaler.cpp

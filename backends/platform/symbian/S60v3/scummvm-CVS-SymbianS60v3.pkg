@@ -1,4 +1,3 @@
-/* ScummVM - Graphic Adventure Engine
 ;
 ; ScummVM is the legal property of its developers, whose names
 ; are too numerous to list here. Please refer to the COPYRIGHT
@@ -37,10 +36,12 @@
 :"ScummVM"
 
 ; UID is the app's UID
-#{"ScummVM S60v3/5"},(0xA0000657),1,10,0
+#{"ScummVM S60v3"},(0xA0000657),1,12,0
 
 ;Supports Series 60 v 3.0
 [0x101F7961], 0, 0, 0, {"Series60ProductID"}
+;Supports Series 60 v 5.0
+[0x1028315F], 0, 0, 0, {"Series60ProductID"}
 
 ; Launcher, Application, AIF & Resource file
 "\epoc32\release\gcce\urel\ScummVM.exe"-		"!:\sys\bin\ScummVM.exe"
