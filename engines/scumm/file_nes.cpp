@@ -1273,6 +1273,7 @@ bool ScummNESFile::generateIndex() {
 	int i, j;
 	_lfl_index lfl_index;
 
+	memset(&lfl_index, 0, sizeof(lfl_index));
 
 	for (i = 0; lfls[i].num != -1; i++) {
 		const LFL *lfl = &lfls[i];
