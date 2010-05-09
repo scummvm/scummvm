@@ -431,8 +431,12 @@ uint16 ScummDiskImage::extractResource(Common::WriteStream *out, int res) {
 	}
 
 	for (i = 0; i < _resourcesPerFile[res]; i++) {
-		uint16 len = fileReadUint16LE();
-		reslen += write_word(out, len);
+		uint16 len;
+		do {
+			// Note: len might be 0xFFFF for padding in zak-c64-german
+			len = fileReadUint16LE();
+			reslen += write_word(out, len);
+		} while (len == 0xFFFF);
 
 		for (len -= 2; len > 0; len--)
 			reslen += write_byte(out, fileReadByte());
