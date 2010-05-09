@@ -159,7 +159,24 @@ _sdlpath="$PATH"
 _nasmpath="$PATH"
 NASMFLAGS=""
 NASM=""
-_prefix=/usr/local
+
+# Directories for installing ScummVM.
+# This list is closely based on what GNU autoconf does,
+# although the default value for datadir differs.
+# Like GNU autoconf, we distinguish datadir and datarootdir
+# to make it possible to change e.g. the location of the
+# man pages independently of that of the engine data files,
+# which are placed inside $datadir/scummvm
+exec_prefix=NONE
+prefix=NONE
+bindir='${exec_prefix}/bin'
+datarootdir='${prefix}/share'
+datadir='${datarootdir}/scummvm'
+docdir='${datarootdir}/doc/scummvm'
+libdir='${exec_prefix}/lib'
+#localedir='${datarootdir}/locale'
+mandir='${datarootdir}/man'
+
 # For cross compiling
 _host=""
 _host_cpu=""
@@ -606,27 +623,43 @@ for parm in "$@" ; do
 Usage: $0 [OPTIONS]...
 
 Configuration:
-  -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (dc, gp2x, gp2xwiz, iphone, linuxmoto, nds, null, ps2, psp, sdl, wii, wince) [sdl]
+  -h, --help              display this help and exit
+  --backend=BACKEND       backend to build (dc, gp2x, gp2xwiz, iphone,
+                          linuxmoto, nds, null, ps2, psp, sdl, wii, wince)
+                          [sdl]
 
 Installation directories:
-  --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
-  --bindir=DIR           directory to install the scummvm binary in [PREFIX/bin]
-  --mandir=DIR           directory to install the manpage in [PREFIX/share/man]
-  --datadir=DIR          directory to install the data files in [PREFIX/share]
-  --libdir=DIR           directory to install the plugins in [PREFIX/lib]
+  --prefix=PREFIX         install architecture-independent files in PREFIX
+                          [/usr/local]
+  --exec-prefix=EPREFIX   install architecture-dependent files in EPREFIX
+                          [PREFIX]
+
+By default, \`make install' will install all the files in
+\`/usr/local/bin', \`/usr/local/lib' etc.  You can specify
+an installation prefix other than \`/usr/local' using \`--prefix',
+for instance \`--prefix=\$HOME'.
+
+For better control, use the options below.
+
+Fine tuning of the installation directories:
+  --bindir=DIR            user executables [EPREFIX/bin]
+  --libdir=DIR            object code libraries [EPREFIX/lib]
+  --datarootdir=DIR       read-only arch.-independent data root [PREFIX/share]
+  --datadir=DIR           read-only architecture-independent data [DATAROOTDIR/scummvm]
+  --mandir=DIR            man documentation [DATAROOTDIR/man]
+  --docdir=DIR            documentation root [DATAROOTDIR/doc/scummvm]
 
 Special configuration feature:
-  --host=HOST            cross-compile to target HOST (arm-linux, ...)
-                         special targets: dreamcast for Sega Dreamcast
-                                          gamecube for Nintendo GameCube
-                                          iphone for Apple iPhone
-                                          linupy for Yopy PDA
-                                          nds for Nintendo DS
-                                          ps2 for PlayStation 2
-                                          psp for PlayStation Portable
-                                          wii for Nintendo Wii
-                                          wince for Windows CE
+  --host=HOST             cross-compile to target HOST (arm-linux, ...)
+                          special targets: dreamcast for Sega Dreamcast
+                                           gamecube for Nintendo GameCube
+                                           iphone for Apple iPhone
+                                           linupy for Yopy PDA
+                                           nds for Nintendo DS
+                                           ps2 for PlayStation 2
+                                           psp for PlayStation Portable
+                                           wii for Nintendo Wii
+                                           wince for Windows CE
 
 Game engines:
   --enable-all-engines     enable all engines
@@ -818,20 +851,26 @@ for ac_option in $@; do
 	--host=*)
 		_host=`echo $ac_option | cut -d '=' -f 2`
 		;;
+	--exec-prefix=*)
+		exec_prefix=`echo $ac_option | cut -d '=' -f 2`
+		;;
 	--prefix=*)
-		_prefix=`echo $ac_option | cut -d '=' -f 2`
+		prefix=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--bindir=*)
-		_bindir=`echo $ac_option | cut -d '=' -f 2`
+		bindir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--mandir=*)
-		_mandir=`echo $ac_option | cut -d '=' -f 2`
+		mandir=`echo $ac_option | cut -d '=' -f 2`
+		;;
+	--datarootdir=*)
+		datarootdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--datadir=*)
-		_datadir=`echo $ac_option | cut -d '=' -f 2`
+		datadir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--libdir=*)
-		_libdir=`echo $ac_option | cut -d '=' -f 2`
+		libdir=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-all-engines)
 		engine_enable_all
@@ -2250,13 +2289,11 @@ fi
 #
 # Figure out installation directories
 #
-test -z "$_bindir" && _bindir="$_prefix/bin"
-test -z "$_mandir" && _mandir="$_prefix/share/man"
-test -z "$_datadir" && _datadir="$_prefix/share"
-test -z "$_libdir" && _libdir="$_prefix/lib"
+test "x$prefix" = xNONE && prefix=/usr/local
+test "x$exec_prefix" = xNONE && exec_prefix='${prefix}'
 
-DEFINES="$DEFINES -DDATA_PATH=\\\"$_datadir/scummvm\\\""
-DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/scummvm\\\""
+DEFINES="$DEFINES -DDATA_PATH=\\\"$datadir\\\""
+DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
 
 
 #
@@ -2592,11 +2629,14 @@ EXEEXT := $HOSTEXEEXT
 NASM := $NASM
 NASMFLAGS := $NASMFLAGS
 
-PREFIX := $_prefix
-BINDIR := $_bindir
-MANDIR := $_mandir
-DATADIR := $_datadir
-LIBDIR := $_libdir
+prefix = $prefix
+exec_prefix = $exec_prefix
+bindir = $bindir
+datarootdir = $datarootdir
+datadir = $datadir
+docdir = $docdir
+libdir = $libdir
+mandir = $mandir
 
 $_config_mk_data
 

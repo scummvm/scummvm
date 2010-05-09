@@ -8,30 +8,30 @@
 #
 # UNIX specific
 #
-install: all
-	$(INSTALL) -d "$(DESTDIR)$(BINDIR)"
-	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
-	$(INSTALL) -d "$(DESTDIR)$(MANDIR)/man6/"
-	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
-	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/pixmaps/"
-	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
-	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
-	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/scummvm/"
-	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/scummvm/"
+install:
+	$(INSTALL) -d "$(DESTDIR)$(bindir)"
+	$(INSTALL) -c -s -m 755 "./$(EXECUTABLE)" "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	$(INSTALL) -d "$(DESTDIR)$(mandir)/man6/"
+	$(INSTALL) -c -m 644 "$(srcdir)/dists/scummvm.6" "$(DESTDIR)$(mandir)/man6/scummvm.6"
+	$(INSTALL) -d "$(DESTDIR)$(datarootdir)/pixmaps/"
+	$(INSTALL) -c -m 644 "$(srcdir)/icons/scummvm.xpm" "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	$(INSTALL) -d "$(DESTDIR)$(docdir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(docdir)"
+	$(INSTALL) -d "$(DESTDIR)$(datadir)"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(datadir)/"
 ifdef DYNAMIC_MODULES
-	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/scummvm/"
-	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(LIBDIR)/scummvm/"
+	$(INSTALL) -d "$(DESTDIR)$(libdir)/scummvm/"
+	$(INSTALL) -c -s -m 644 $(PLUGINS) "$(DESTDIR)$(libdir)/scummvm/"
 endif
 
 uninstall:
-	rm -f "$(DESTDIR)$(BINDIR)/$(EXECUTABLE)"
-	rm -f "$(DESTDIR)$(MANDIR)/man6/scummvm.6"
-	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/scummvm.xpm"
-	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/scummvm/"
-	rm -rf "$(DESTDIR)$(DATADIR)/scummvm/"
+	rm -f "$(DESTDIR)$(bindir)/$(EXECUTABLE)"
+	rm -f "$(DESTDIR)$(mandir)/man6/scummvm.6"
+	rm -f "$(DESTDIR)$(datarootdir)/pixmaps/scummvm.xpm"
+	rm -rf "$(DESTDIR)$(docdir)"
+	rm -rf "$(DESTDIR)$(datadir)"
 ifdef DYNAMIC_MODULES
-	rm -rf "$(DESTDIR)$(LIBDIR)/scummvm/"
+	rm -rf "$(DESTDIR)$(libdir)/scummvm/"
 endif
 
 # Special target to create a application wrapper for Mac OS X
