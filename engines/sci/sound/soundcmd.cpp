@@ -833,7 +833,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			_music->soundSetVolume(musicSlot, musicSlot->volume);
 			musicSlot->fadeSetVolume = false;
 		}
-	} else {
+	} else if (musicSlot->pMidiParser) {
 		// Update MIDI slots
 		if (musicSlot->signal == 0) {
 			if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, SELECTOR(dataInc))) {
@@ -848,6 +848,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			if (musicSlot->signal == SIGNAL_OFFSET)
 				cmdStopSound(obj, 0);
 		}
+	} else {
+		// Slot actually has no data (which would mean that a sound-resource w/ unsupported data is used
+		//  (example lsl5 - sound resource 744 - it's roland exclusive
+		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		// If we don't set signal here, at least the switch to the mud wrestling room in lsl5 will not work
 	}
 
 	if (musicSlot->fadeCompleted) {
