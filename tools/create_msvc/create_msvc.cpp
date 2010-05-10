@@ -825,16 +825,18 @@ TokenList tokenize(const std::string &input) {
 namespace {
 const Feature s_features[] = {
 	// Libraries
-	{    "libz",      "USE_ZLIB", "zlib.lib", true, "zlib (compression) support" },
-	{     "mad",       "USE_MAD", "libmad.lib", true, "libmad (MP3) support" },
-	{  "vorbis",    "USE_VORBIS", "libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib", true, "Ogg Vorbis support" },
-	{    "flac",      "USE_FLAC", "libFLAC_static.lib", true, "FLAC support" },
-	{   "mpeg2",     "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
+	{      "libz",       "USE_ZLIB", "zlib.lib", true, "zlib (compression) support" },
+	{       "mad",        "USE_MAD", "libmad.lib", true, "libmad (MP3) support" },
+	{    "vorbis",     "USE_VORBIS", "libvorbisfile_static.lib libvorbis_static.lib libogg_static.lib", true, "Ogg Vorbis support" },
+	{      "flac",       "USE_FLAC", "libFLAC_static.lib", true, "FLAC support" },
+	{     "mpeg2",      "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
-	{   "16bit", "USE_RGB_COLOR", "", true, "16bit color support" },
-	{ "mt32emu",   "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
-	{    "nasm",      "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{   "scalers",    "USE_SCALERS", "", true, "Scalers" },
+	{ "hqscalers", "USE_HQ_SCALERS", "", true, "HQ scalers" },
+	{     "16bit",  "USE_RGB_COLOR", "", true, "16bit color support" },
+	{   "mt32emu",    "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
+	{      "nasm",       "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
 };
 } // End of anonymous namespace
 
