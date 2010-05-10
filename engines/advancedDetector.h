@@ -43,9 +43,9 @@ struct ADGameFileDescription {
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_MACRESFORK = (1 << 25), // the md5 for this entry will be calculated from the resource fork
 	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
-	ADGF_KEEPMATCH = (1 << 27), // this entry is kept even when there are matched
-								// entries with more files
+	ADGF_KEEPMATCH = (1 << 27), // this entry is kept even when there are matched entries with more files
 	ADGF_DROPLANGUAGE = (1 << 28), // don't add language to gameid
 	ADGF_CD = (1 << 29),    	// add "-cd" to gameid
 	ADGF_DEMO = (1 << 30)   	// add "-demo" to gameid

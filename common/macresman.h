@@ -31,7 +31,10 @@
 
 namespace Common {
 
+class FSNode;
+
 typedef Common::Array<uint16> MacResIDArray;
+typedef Common::Array<uint32> MacResTagArray;
 
 /**
  * Class for reading Mac Binary files.
@@ -43,7 +46,8 @@ public:
 	MacResManager();
 	~MacResManager();
 	
-	bool open(Common::String fileName);
+	bool open(Common::String filename);
+	bool open(Common::FSNode path, Common::String filename);
 	void close();
 
 	bool hasDataFork();
@@ -59,6 +63,8 @@ public:
 
 	Common::SeekableReadStream *getDataFork();
 	Common::String getResName(uint32 typeID, uint16 resID);
+	uint32 getResForkSize();
+	bool getResForkMD5(char *md5str, uint32 length);
 	
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan
@@ -84,6 +90,11 @@ public:
 	 * Return list of resource IDs with specified type ID
 	 */
 	MacResIDArray getResIDArray(uint32 typeID);
+
+	/**
+	 * Return list of resource tags
+	 */
+	MacResTagArray getResTagArray();
 
 private:
 	Common::SeekableReadStream *_stream;
@@ -128,6 +139,7 @@ private:
 	typedef Resource *ResPtr;
 	
 	int32 _resForkOffset;
+	uint32 _resForkSize;
 
 	uint32 _dataOffset;
 	uint32 _dataLength;

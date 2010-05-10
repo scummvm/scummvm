@@ -29,6 +29,7 @@
 #include "common/util.h"
 #include "common/hash-str.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/md5.h"
 #include "common/config-manager.h"
 
@@ -374,24 +375,38 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
-				debug(3, "+ %s", fname.c_str());
+			SizeMD5 tmp;
 
-				SizeMD5 tmp;
-				Common::File testFile;
-
-				if (testFile.open(allFiles[fname])) {
-					tmp.size = (int32)testFile.size();
-					if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
+			if (g->flags & ADGF_MACRESFORK) {
+				Common::MacResManager *macResMan = new Common::MacResManager();
+				
+				if (macResMan->open(parent, fname)) {
+					if (!macResMan->getResForkMD5(tmp.md5, params.md5Bytes))
 						tmp.md5[0] = 0;
-				} else {
-					tmp.size = -1;
-					tmp.md5[0] = 0;
+					tmp.size = macResMan->getResForkSize();
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					filesSizeMD5[fname] = tmp;
 				}
 
-				debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+				delete macResMan;
+			} else {
+				if (allFiles.contains(fname) && !filesSizeMD5.contains(fname)) {
+					debug(3, "+ %s", fname.c_str());
 
-				filesSizeMD5[fname] = tmp;
+					Common::File testFile;
+
+					if (testFile.open(allFiles[fname])) {
+						tmp.size = (int32)testFile.size();
+						if (!md5_file_string(testFile, tmp.md5, params.md5Bytes))
+							tmp.md5[0] = 0;
+					} else {
+						tmp.size = -1;
+						tmp.md5[0] = 0;
+					}
+				
+					debug(3, "> '%s': '%s'", fname.c_str(), tmp.md5);
+					filesSizeMD5[fname] = tmp;
+				}
 			}
 		}
 	}
