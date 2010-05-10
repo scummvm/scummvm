@@ -42,6 +42,7 @@ typedef void ScalerProc(const uint8 *srcPtr, uint32 srcPitch,
 DECLARE_SCALER(Normal1x);
 
 #ifdef USE_SCALERS
+
 DECLARE_SCALER(Normal2x);
 DECLARE_SCALER(Normal3x);
 DECLARE_SCALER(Normal1o5x);
@@ -55,12 +56,13 @@ DECLARE_SCALER(AdvMame3x);
 
 DECLARE_SCALER(TV2x);
 DECLARE_SCALER(DotMatrix);
-#endif // #ifdef USE_SCALERS
 
 #ifdef USE_HQ_SCALERS
 DECLARE_SCALER(HQ2x);
 DECLARE_SCALER(HQ3x);
 #endif
+
+#endif // #ifdef USE_SCALERS
 
 // creates a 160x100 thumbnail for 320x200 games
 // and 160x120 thumbnail for 320x240 and 640x480 games

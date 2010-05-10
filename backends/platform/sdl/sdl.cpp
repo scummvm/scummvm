@@ -94,7 +94,7 @@ AspectRatio::AspectRatio(int w, int h) {
 	_kh = h;
 }
 
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && (defined(USE_SCALERS) || defined(USE_HQ_SCALERS))
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 static const size_t AR_COUNT = 4;
 static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
 static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
@@ -150,16 +150,12 @@ void OSystem_SDL::initBackend() {
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
 	_cksumValid = false;
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && (defined(USE_SCALERS) || defined(USE_HQ_SCALERS))
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-#ifdef USE_SCALERS
 	_scalerProc = Normal2x;
-#else
-	_scalerProc = HQ2x;
-#endif
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;

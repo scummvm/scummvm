@@ -48,14 +48,7 @@ MODULE_OBJS += \
 	scaler/Normal2xARM.o
 endif
 
-endif
-
 ifdef USE_HQ_SCALERS
-ifndef USE_SCALERS
-MODULE_OBJS += \
-	scaler/aspect.o
-endif
-
 MODULE_OBJS += \
 	scaler/hq2x.o \
 	scaler/hq3x.o
@@ -64,6 +57,8 @@ ifdef USE_NASM
 MODULE_OBJS += \
 	scaler/hq2x_i386.o \
 	scaler/hq3x_i386.o
+endif
+
 endif
 
 endif
