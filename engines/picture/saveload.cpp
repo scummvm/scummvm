@@ -53,12 +53,12 @@ namespace Picture {
 	- Maybe switch to SCUMM/Tinsel serialization approach?
 */
 
-#define SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
+#define PICTURE_SAVEGAME_VERSION 0 // 0 is dev version until in official SVN
 
 PictureEngine::kReadSaveHeaderError PictureEngine::readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header) {
 
 	header.version = in->readUint32LE();
-	if (header.version != SAVEGAME_VERSION)
+	if (header.version != PICTURE_SAVEGAME_VERSION)
 		return kRSHEInvalidVersion;
 
 	byte descriptionLen = in->readByte();
@@ -92,7 +92,7 @@ void PictureEngine::savegame(const char *filename, const char *description) {
 		return;
 	}
 
-	out->writeUint32LE(SAVEGAME_VERSION);
+	out->writeUint32LE(PICTURE_SAVEGAME_VERSION);
 
 	byte descriptionLen = strlen(description);
 	out->writeByte(descriptionLen);
