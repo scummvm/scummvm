@@ -188,7 +188,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_sub_21FD9);
 	Opcode(op_sub_220B8);
 	Opcode(op_autoSave);
-	Opcode(op_input22108);
+	Opcode(op_setMainActorValid);
 
 }
 #undef Opcode
@@ -1451,8 +1451,10 @@ int16 ScriptOpcodes::op_autoSave(Script *script) {
 	return 0;
 }
 
-int16 ScriptOpcodes::op_input22108(Script *script) {
- debug("ARGS!"); // TODO
+int16 ScriptOpcodes::op_setMainActorValid(Script *script) {
+	ARG_EVALUATE(value);
+	_vm->_mainActorValid = value != 0;
+	script->actorIndex = _vm->_mainActorIndex;
 	return 0;
 }
 

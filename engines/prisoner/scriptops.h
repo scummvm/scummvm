@@ -195,7 +195,7 @@ protected:
 	int16 op_sub_21FD9(Script *script);
 	int16 op_sub_220B8(Script *script);
 	int16 op_autoSave(Script *script);
-	int16 op_input22108(Script *script);
+	int16 op_setMainActorValid(Script *script);
 
 };
 
