@@ -300,7 +300,7 @@ Common::Error PrisonerEngine::run() {
 	_newSceneIndex = 7;
 #endif
 
-#if 1
+#if 0
 	_newModuleIndex = 12;
 	_newSceneIndex = 1;//script opcode 21d9b etc. -> OK; skull room
 #endif

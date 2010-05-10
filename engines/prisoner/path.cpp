@@ -630,7 +630,7 @@ void PathSystem::cleanupPathResult() {
 }
 
 void PathSystem::deletePathResultItem(int16 resultIndex) {
-	memcpy(&_pathResults[resultIndex], &_pathResults[resultIndex + 1], _pathResultsCount - resultIndex - 1);
+	memcpy(&_pathResults[resultIndex], &_pathResults[resultIndex + 1], (_pathResultsCount - resultIndex - 1) * sizeof(PathResult));
 	_pathResultsCount--;
 }
 
