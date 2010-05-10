@@ -80,7 +80,8 @@ enum ResSourceType {
 	kSourceIntMap,
 	kSourceAudioVolume,
 	kSourceExtAudioMap,
-	kSourceWave
+	kSourceWave,
+	kSourceMacResourceFork
 };
 
 enum ResourceType {
@@ -205,6 +206,7 @@ public:
 		kResVersionSci1Middle,
 		kResVersionSci1Late,
 		kResVersionSci11,
+		kResVersionSci11Mac,
 		kResVersionSci32
 	};
 
@@ -367,8 +369,8 @@ protected:
 	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
 	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
 	void freeOldResources();
-	int decompress(Resource *res, Common::File *file);
-	int readResourceInfo(Resource *res, Common::File *file, uint32&szPacked, ResourceCompression &compression);
+	int decompress(Resource *res, Common::SeekableReadStream *file);
+	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32&szPacked, ResourceCompression &compression);
 	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
 	void removeAudioResource(ResourceId resId);
 
@@ -389,6 +391,13 @@ protected:
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
+	
+	/**
+	 * Reads the SCI1.1+ resource file from a Mac resource fork.
+	 * @param source The source
+	 * @return 0 on success, an SCI_ERROR_* code otherwise
+	 */
+	int readMacResourceFork(ResourceSource *source);
 
 	/**
 	 * Reads SCI1.1 audio map resources

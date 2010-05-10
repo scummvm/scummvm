@@ -223,7 +223,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.map") || filename.contains("resmap.00")) {
+		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
 			// HACK: resource.map is located in the same directory as the other resource files,
 			// therefore add the directory here, so that the game files can be opened later on
 			// We now add the parent directory temporary to our SearchMan so the engine code
@@ -258,6 +258,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
 			foundRes000 = true;
+
+		// Data1 contains both map and volume for SCI1.1+ Mac games
+		if (filename.contains("Data1")) {
+			foundResMap = foundRes000 = true;
+			 s_fallbackDesc.platform = Common::kPlatformMacintosh;
+		}
 
 		// Determine the game platform
 		// The existence of any of these files indicates an Amiga game

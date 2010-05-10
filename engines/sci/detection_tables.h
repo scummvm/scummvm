@@ -1088,6 +1088,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// King's Quest 6 - English Macintosh Floppy
+	// VERSION file reports "1.0"
+	{"kq6", "", {
+		{"Data1", 0, "f3c38a33c94293b8ff0337c1090a4973", 3916479},
+		{"Data2", 0, "b255edf327d7b366dce816b7debf3b94", 15046256},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH	},
+
 #ifdef ENABLE_SCI32
 
 
@@ -2241,6 +2249,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "ec6f5cf369054dd3e5392995e9975b9e", 768218},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH
+	},
+
+	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
+	// VERSION file reports "2.0"
+	{"qfg1", "VGA Remake", {
+		{"Data1", 0, "14f26bc75f24bb1ecc94532df17b5371", 1768155},
+		{"Data2", 0, "a7aee8bd46fc9cef7fd3bea93ef173e0", 6586422},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, GUIO_NOSPEECH
 	},
 
 	// Quest for Glory 2 - English Amiga

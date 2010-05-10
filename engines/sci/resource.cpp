@@ -26,6 +26,7 @@
 // Resource library
 
 #include "common/file.h"
+#include "common/macresman.h"
 
 #include "sci/resource.h"
 
@@ -52,6 +53,7 @@ struct ResourceSource {
 	ResourceSource *associated_map;
 	uint32 audioCompressionType;
 	int32 *audioCompressionOffsetMapping;
+	Common::MacResManager macResMan;
 };
 
 //////////////////////////////////////////////////////////////////////
@@ -435,12 +437,29 @@ Common::File *ResourceManager::getVolumeFile(const char *filename) {
 	return NULL;
 }
 
-void ResourceManager::loadResource(Resource *res) {
-	Common::File *file;
+static const uint32 resTypeToMacTag(ResourceType type);
 
+void ResourceManager::loadResource(Resource *res) {
 	if (res->_source->source_type == kSourcePatch && loadFromPatchFile(res))
 		return;
 
+	if (res->_source->source_type == kSourceMacResourceFork) {
+		//error("ResourceManager::loadResource(): TODO: Mac resource fork ;)");
+		Common::SeekableReadStream *stream = res->_source->macResMan.getResource(resTypeToMacTag(res->_id.type), res->_id.number);
+
+		if (!stream)
+			error("Could not get Mac resource fork resource");
+
+		int error = decompress(res, stream);
+		if (error) {
+			warning("Error %d occured while reading %s from Mac resource file: %s",
+				    error, res->_id.toString().c_str(), sci_error_types[error]);
+			res->unalloc();
+		}
+		return;
+	}
+
+	Common::File *file;
 	// Either loading from volume or patch loading failed
 	file = getVolumeFile(res->_source->location_name.c_str());
 	if (!file) {
@@ -549,11 +568,19 @@ int ResourceManager::addAppropriateSources() {
 			addSource(map, kSourceVolume, name.c_str(), number);
 		}
 #ifdef ENABLE_SCI32
-
 		// GK1CD hires content
-		if (Common::File::exists("ALT.MAP") && Common::File::exists("RESOURCE.ALT")) {
+		if (Common::File::exists("ALT.MAP") && Common::File::exists("RESOURCE.ALT"))
 			addSource(addExternalMap("ALT.MAP", 10), kSourceVolume, "RESOURCE.ALT", 10);
+#endif
+	} else if (Common::File::exists("Data1")) {
+		// Mac SCI1.1+ file naming scheme
+		SearchMan.listMatchingMembers(files, "Data?");
+
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+			Common::String filename = (*x)->getName();
+			addSource(0, kSourceMacResourceFork, filename.c_str(), atoi(filename.c_str() + 4));
 		}
+#ifdef ENABLE_SCI32
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
@@ -712,6 +739,9 @@ void ResourceManager::scanNewSources() {
 			case kSourceIntMap:
 				readAudioMapSCI11(source);
 				break;
+			case kSourceMacResourceFork:
+				readMacResourceFork(source);
+				break;
 			default:
 				break;
 			}
@@ -720,8 +750,11 @@ void ResourceManager::scanNewSources() {
 }
 
 void ResourceManager::freeResourceSources() {
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
+		if ((*it)->source_type == kSourceMacResourceFork)
+			(*it)->macResMan.close();
 		delete *it;
+	}
 
 	_sources.clear();
 }
@@ -939,6 +972,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 		return "Late SCI1";
 	case kResVersionSci11:
 		return "SCI1.1";
+	case kResVersionSci11Mac:
+		return "Mac SCI1.1+";
 	case kResVersionSci32:
 		return "SCI32";
 	}
@@ -965,7 +1000,8 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 					fileStream = file;
 			}
 			break;
-		}
+		} else if (rsrc->source_type == kSourceMacResourceFork)
+			return kResVersionSci11Mac;
 	}
 
 	if (!fileStream)
@@ -1054,8 +1090,10 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 					fileStream = file;
 			}
 			break;
-		}
+		} else if (rsrc->source_type == kSourceMacResourceFork)
+			return kResVersionSci11Mac;
 	}
+
 	if (!fileStream) {
 		error("Failed to open volume file - if you got resource.p01/resource.p02/etc. files, merge them together into resource.000");
 		// resource.p01/resource.p02/etc. may be there when directly copying the files from the original floppies
@@ -1414,6 +1452,70 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	return 0;
 }
 
+static const uint32 resourceTypeMacTags[] = {
+	'V56 ', 'P56 ', 'SCR ', 'TEX ', 'SND ',
+		 0, 'VOC ', 'FON ',      0, 'Pat ', // 'CURS is a mac cursor, not sure if it goes in
+	     0, 'PAL ',      0,      0,      0,
+	'MSG ',      0, 'HEP '
+};
+
+static const uint32 resTypeToMacTag(ResourceType type) {
+	if (type >= ARRAYSIZE(resourceTypeMacTags))
+		return 0;
+
+	return resourceTypeMacTags[type];
+}
+
+int ResourceManager::readMacResourceFork(ResourceSource *source) {
+	if (!source->macResMan.open(source->location_name.c_str()))
+		error("%s is not a valid Mac resource fork", source->location_name.c_str());
+
+	Common::MacResTagArray tagArray = source->macResMan.getResTagArray();
+
+	for (uint32 i = 0; i < tagArray.size(); i++) {
+		ResourceType type = kResourceTypeInvalid;
+
+		// Map the Mac tags to our ResourceType
+		for (uint32 j = 0; j < ARRAYSIZE(resourceTypeMacTags); j++)
+			if (tagArray[i] == resourceTypeMacTags[j]) {
+				type = (ResourceType)j;
+				break;
+			}
+
+		if (type == kResourceTypeInvalid)
+			continue;
+
+		Common::MacResIDArray idArray = source->macResMan.getResIDArray(tagArray[i]);
+
+		for (uint32 j = 0; j < idArray.size(); j++) {
+			ResourceId resId = ResourceId(type, idArray[j]);
+
+			Resource *newrsc = NULL;
+
+			// Prepare destination, if neccessary
+			if (!_resMap.contains(resId)) {
+				newrsc = new Resource;
+				_resMap.setVal(resId, newrsc);
+			} else
+				newrsc = _resMap.getVal(resId);
+
+			// Get the size of the file
+			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);;
+			uint32 fileSize = stream->size();
+			delete stream;
+
+			// Overwrite everything, because we're patching
+			newrsc->_id = resId;
+			newrsc->_status = kResStatusNoMalloc;
+			newrsc->_source = source;
+			newrsc->size = fileSize;
+			newrsc->_headerSize = 0;
+		}
+	}
+
+	return 0;
+}
+
 void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
@@ -1681,7 +1783,7 @@ int ResourceManager::getAudioLanguage() const {
 	return (_audioMapSCI1 ? _audioMapSCI1->volume_number : 0);
 }
 
-int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
+int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream *file,
                                       uint32&szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
@@ -1715,6 +1817,15 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
+	case kResVersionSci11Mac:
+		// Doesn't store this data in the resource. Fortunately,
+		// we already have this data.
+		type = res->_id.type;
+		number = res->_id.number;
+		szPacked = file->size();
+		szUnpacked = file->size();
+		wCompression = 0;
+		break;
 #ifdef ENABLE_SCI32
 	case kResVersionSci32:
 		type = (ResourceType)(file->readByte() & 0x7F);
@@ -1727,11 +1838,14 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	default:
 		return SCI_ERROR_INVALID_RESMAP_ENTRY;
 	}
+
 	// check if there were errors while reading
 	if ((file->eos() || file->err()))
 		return SCI_ERROR_IO_ERROR;
+
 	res->_id = ResourceId(type, number);
 	res->size = szUnpacked;
+
 	// checking compression method
 	switch (wCompression) {
 	case 0:
@@ -1766,7 +1880,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
 }
 
-int ResourceManager::decompress(Resource *res, Common::File *file) {
+int ResourceManager::decompress(Resource *res, Common::SeekableReadStream *file) {
 	int error;
 	uint32 szPacked = 0;
 	ResourceCompression compression = kCompUnknown;
@@ -1775,6 +1889,7 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 	error = readResourceInfo(res, file, szPacked, compression);
 	if (error)
 		return error;
+
 	// getting a decompressor
 	Decompressor *dec = NULL;
 	switch (compression) {
@@ -1930,6 +2045,7 @@ void ResourceManager::detectSciVersion() {
 	// Set view type
 	if (viewCompression == kCompDCL
 		|| _volVersion == kResVersionSci11 // pq4demo
+		|| _volVersion == kResVersionSci11Mac // FIXME: Is this right?
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
 		|| _volVersion == kResVersionSci32 // kq7
@@ -1940,6 +2056,17 @@ void ResourceManager::detectSciVersion() {
 	} else {
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
+	}
+	
+	if (_volVersion == kResVersionSci11Mac) {
+		// SCI32 doesn't have the resource.cfg file, so we can figure out
+		// which of the games are SCI1.1.
+		// TODO: Decide between SCI2 and SCI2.1
+		if (Common::File::exists("resource.cfg"))
+			s_sciVersion = SCI_VERSION_1_1;
+		else
+			s_sciVersion = SCI_VERSION_2;
+		return;
 	}
 
 	// Handle SCI32 versions here
