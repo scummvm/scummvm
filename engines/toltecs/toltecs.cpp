@@ -36,6 +36,8 @@
 #include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 
+#include "engines/util.h"
+
 #include "sound/mixer.h"
 
 #include "toltecs/toltecs.h"
