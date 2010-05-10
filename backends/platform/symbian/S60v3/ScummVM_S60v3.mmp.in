@@ -126,6 +126,9 @@ SOURCE gui\KeysDialog.cpp
 SOURCE gui\Actions.cpp
 SOURCE gui\Dialog.cpp
 
+// Common error 
+source common\error.cpp
+
 // Special for graphics
 source graphics\iff.cpp
 
