@@ -108,6 +108,7 @@ bool MacResManager::open(Common::String filename) {
 	// Fine, what about just the data fork?
 	if (file->open(filename)) {
 		_baseFileName = filename;
+		_stream = file;
 		return true;
 	}
 		
@@ -218,8 +219,7 @@ Common::SeekableReadStream *MacResManager::getDataFork() {
 	if (_mode == kResForkMacBinary) {
 		_stream->seek(MBI_DFLEN);
 		uint32 dataSize = _stream->readUint32BE();
-		_stream->seek(MBI_INFOHDR);
-		return _stream->readStream(dataSize);
+		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
 	Common::File *file = new Common::File();
