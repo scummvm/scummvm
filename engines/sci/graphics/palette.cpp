@@ -63,6 +63,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetP
 		else
 			kernelSetFromResource(999, true);
 	}
+	_sysPaletteChanged = false;
 }
 
 GfxPalette::~GfxPalette() {
