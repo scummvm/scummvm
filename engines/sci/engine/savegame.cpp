@@ -587,9 +587,13 @@ static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
 		tmp = obj._value;
 	s.syncString(tmp);
 	if (s.isLoading()) {
-		//free(*str);
-		obj._value = (char *)calloc(obj._maxSize, sizeof(char));
-		strncpy(obj._value, tmp.c_str(), obj._maxSize);
+		if (!obj._maxSize) {
+			obj._value = NULL;
+		} else {
+			//free(*str);
+			obj._value = (char *)calloc(obj._maxSize, sizeof(char));
+			strncpy(obj._value, tmp.c_str(), obj._maxSize);
+		}
 	}
 }
 
