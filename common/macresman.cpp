@@ -381,7 +381,7 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 	return _stream->readStream(len);
 }
 
-Common::SeekableReadStream *MacResManager::getResource(Common::String filename) {
+Common::SeekableReadStream *MacResManager::getResource(const Common::String &filename) {
 	for (uint32 i = 0; i < _resMap.numTypes; i++) {
 		for (uint32 j = 0; j < _resTypes[i].items; j++) {
 			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
