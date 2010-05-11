@@ -63,8 +63,8 @@ static const GroovieGameDescription gameDescriptions[] = {
 	{
 		{
 			"t7g", "",
-			AD_ENTRY1s("script.grv", "6e30b54b1f3bc2262cdcf7961db2ae67", 17191),
-			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_NO_FLAGS, Common::GUIO_NONE
+			AD_ENTRY1s("T7GMac", "a139540fa2be2247005ccf888b7231e3", 1830783),
+			Common::EN_ANY, Common::kPlatformMacintosh, ADGF_MACRESFORK, Common::GUIO_NONE
 		},
 		kGroovieT7G, 0
 	},

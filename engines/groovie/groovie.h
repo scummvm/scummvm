@@ -36,6 +36,10 @@
 #include "groovie/resource.h"
 #include "groovie/script.h"
 
+namespace Common {
+	class MacResManager;
+}
+
 /**
  * This is the namespace of the Groovie engine.
  *
@@ -102,6 +106,8 @@ public:
 	VideoPlayer *_videoPlayer;
 	MusicPlayer *_musicPlayer;
 	GraphicsMan *_graphicsMan;
+
+	Common::MacResManager *_macResFork;
 
 private:
 	const GroovieGameDescription *_gameDescription;

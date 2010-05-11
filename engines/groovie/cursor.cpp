@@ -26,6 +26,8 @@
 #include "groovie/cursor.h"
 #include "groovie/groovie.h"
 
+#include "common/archive.h"
+#include "common/macresman.h"
 #include "graphics/cursorman.h"
 
 namespace Groovie {
@@ -136,26 +138,32 @@ static const uint16 cursorDataOffsets[NUM_IMGS] = {
 const uint GrvCursorMan_t7g::_cursorImg[NUM_STYLES] = {3, 5, 4, 3, 1, 0, 2, 6, 7, 8, 8};
 const uint GrvCursorMan_t7g::_cursorPal[NUM_STYLES] = {0, 0, 0, 0, 2, 0, 1, 3, 5, 4, 6};
 
-GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system) :
+GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork) :
 	GrvCursorMan(system) {
 
-	// Open the cursors file
-	Common::File robgjd;
-	if (!robgjd.open("rob.gjd")) {
-		error("Groovie::Cursor: Couldn't open rob.gjd");
-		return;
+	Common::SeekableReadStream *robgjd = 0;
+
+	if (macResFork) {
+		// Open the cursors file from the resource fork
+		robgjd = macResFork->getResource("rob.gjd");
+	} else {
+		// Open the cursors file
+		robgjd = SearchMan.createReadStreamForMember("rob.gjd");
 	}
+
+	if (!robgjd)
+		error("Groovie::Cursor: Couldn't open rob.gjd");
 
 	// Load the images
 	for (uint imgnum = 0; imgnum < NUM_IMGS; imgnum++) {
-		robgjd.seek(cursorDataOffsets[imgnum]);
-		_images.push_back(loadImage(robgjd));
+		robgjd->seek(cursorDataOffsets[imgnum]);
+		_images.push_back(loadImage(*robgjd));
 	}
 
 	// Load the palettes
-	robgjd.seek(-0x60 * NUM_PALS, SEEK_END);
+	robgjd->seek(-0x60 * NUM_PALS, SEEK_END);
 	for (uint palnum = 0; palnum < NUM_PALS; palnum++) {
-		_palettes.push_back(loadPalette(robgjd));
+		_palettes.push_back(loadPalette(*robgjd));
 	}
 
 	// Build the cursors
@@ -164,7 +172,7 @@ GrvCursorMan_t7g::GrvCursorMan_t7g(OSystem *system) :
 		_cursors.push_back(s);
 	}
 
-	robgjd.close();
+	delete robgjd;
 }
 
 GrvCursorMan_t7g::~GrvCursorMan_t7g() {
@@ -179,7 +187,7 @@ GrvCursorMan_t7g::~GrvCursorMan_t7g() {
 	}
 }
 
-byte *GrvCursorMan_t7g::loadImage(Common::File &file) {
+byte *GrvCursorMan_t7g::loadImage(Common::SeekableReadStream &file) {
 	uint16 decompbytes = 0, offset, i, length;
 	uint8 flagbyte, lengthmask = 0x0F, offsetlen, var_8;
 	byte *cursorStorage = new byte[65536];
@@ -217,7 +225,7 @@ byte *GrvCursorMan_t7g::loadImage(Common::File &file) {
 	return cursorStorage;
 }
 
-byte *GrvCursorMan_t7g::loadPalette(Common::File &file) {
+byte *GrvCursorMan_t7g::loadPalette(Common::SeekableReadStream &file) {
 	byte *palette = new byte[4 * 32];
 	for (uint8 colournum = 0; colournum < 32; colournum++) {
 		palette[colournum * 4 + 0] = file.readByte();

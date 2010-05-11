@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/archive.h"
+#include "common/macresman.h"
+
 #include "groovie/groovie.h"
 #include "groovie/resource.h"
 
@@ -73,7 +76,7 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 
 static const char t7g_gjds[][0x15] = {"at", "b", "ch", "d", "dr", "fh", "ga", "hdisk", "htbd", "intro", "jhek", "k", "la", "li", "mb", "mc", "mu", "n", "p", "xmi", "gamwav"};
 
-ResMan_t7g::ResMan_t7g() {
+ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFork) {
 	for (int i = 0; i < 0x15; i++) {
 		// Prepare the filename
 		Common::String filename = t7g_gjds[i];
@@ -89,19 +92,25 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 	Common::String rlFileName(t7g_gjds[_lastGjd]);
 	rlFileName += ".rl";
 
-	// Open the RL file
-	Common::File rlFile;
-	if (!rlFile.open(rlFileName)) {
-		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
-		return false;
+	Common::SeekableReadStream *rlFile = 0;
+
+	if (_macResFork) {
+		// Open the RL file from the resource fork
+		rlFile = _macResFork->getResource(rlFileName);
+	} else {
+		// Open the RL file
+		rlFile = SearchMan.createReadStreamForMember(rlFileName);
 	}
+
+	if (!rlFile)
+		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
 
 	uint16 resNum;
 	bool found = false;
-	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
+	for (resNum = 0; !found && !rlFile->err() && !rlFile->eos(); resNum++) {
 		// Read the resource name
 		char readname[12];
-		rlFile.read(readname, 12);
+		rlFile->read(readname, 12);
 
 		// Test whether it's the resource we're searching
 		Common::String resname(readname, 12);
@@ -111,11 +120,11 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 		}
 
 		// Skip the rest of resource information
-		rlFile.read(readname, 8);
+		rlFile->read(readname, 8);
 	}
 
 	// Close the RL file
-	rlFile.close();
+	delete rlFile;
 
 	// Verify we really found the resource
 	if (!found) {
@@ -135,32 +144,37 @@ bool ResMan_t7g::getResInfo(uint32 fileRef, ResInfo &resInfo) {
 	Common::String rlFileName(t7g_gjds[resInfo.gjd]);
 	rlFileName += ".rl";
 
-	// Open the RL file
-	Common::File rlFile;
-	if (!rlFile.open(rlFileName)) {
-		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
-		return false;
+	Common::SeekableReadStream *rlFile = 0;
+
+	if (_macResFork) {
+		// Open the RL file from the resource fork
+		rlFile = _macResFork->getResource(rlFileName);
+	} else {
+		// Open the RL file
+		rlFile = SearchMan.createReadStreamForMember(rlFileName);
 	}
 
+	if (!rlFile)
+		error("Groovie::Resource: Couldn't open %s", rlFileName.c_str());
+
 	// Seek to the position of the desired resource
-	rlFile.seek(resNum * 20);
-	if (rlFile.eos()) {
-		rlFile.close();
+	rlFile->seek(resNum * 20);
+	if (rlFile->eos()) {
+		delete rlFile;
 		error("Groovie::Resource: Invalid resource number: 0x%04X (%s)", resNum, rlFileName.c_str());
-		return false;
 	}
 
 	// Read the resource name (just for debugging purposes)
 	char resname[12];
-	rlFile.read(resname, 12);
+	rlFile->read(resname, 12);
 	debugC(2, kGroovieDebugResource | kGroovieDebugAll, "Groovie::Resource: Resource name: %12s", resname);
 
 	// Read the resource information
-	resInfo.offset = rlFile.readUint32LE();
-	resInfo.size = rlFile.readUint32LE();
+	resInfo.offset = rlFile->readUint32LE();
+	resInfo.size = rlFile->readUint32LE();
 
 	// Close the resource RL file
-	rlFile.close();
+	delete rlFile;
 
 	return true;
 }

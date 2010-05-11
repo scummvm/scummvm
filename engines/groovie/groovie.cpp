@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
+#include "common/macresman.h"
 
 #include "engines/util.h"
 
@@ -42,7 +43,7 @@ namespace Groovie {
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _waitingForInput(false) {
+	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false) {
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -73,6 +74,7 @@ GroovieEngine::~GroovieEngine() {
 	delete _musicPlayer;
 	delete _graphicsMan;
 	delete _script;
+	delete _macResFork;
 }
 
 Common::Error GroovieEngine::run() {
@@ -104,8 +106,14 @@ Common::Error GroovieEngine::run() {
 	// Create the resource and cursor managers and the video player
 	switch (_gameDescription->version) {
 	case kGroovieT7G:
-		_resMan = new ResMan_t7g();
-		_grvCursorMan = new GrvCursorMan_t7g(_system);
+		if (_gameDescription->desc.platform == Common::kPlatformMacintosh) {
+			_macResFork = new Common::MacResManager();
+			if (!_macResFork->open(_gameDescription->desc.filesDescriptions[0].fileName))
+				error("Could not open %s as a resource fork", _gameDescription->desc.filesDescriptions[0].fileName);
+		}
+
+		_resMan = new ResMan_t7g(_macResFork);
+		_grvCursorMan = new GrvCursorMan_t7g(_system, _macResFork);
 		_videoPlayer = new VDXPlayer(this);
 		break;
 	case kGroovieV2:
@@ -116,11 +124,10 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create the music player
-	if (_gameDescription->desc.platform == Common::kPlatformMacintosh) {
+	if (_gameDescription->desc.platform == Common::kPlatformMacintosh)
 		_musicPlayer = new MusicPlayerMac(this);
-	} else {
+	else
 		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
-	}
 
 	// Load volume levels
 	syncSoundSettings();
@@ -129,9 +136,10 @@ Common::Error GroovieEngine::run() {
 	Common::String filename = _gameDescription->desc.filesDescriptions[0].fileName;
 	if (_gameDescription->version == kGroovieT7G) {
 		// Run The 7th Guest's demo if requested
-		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode")) {
+		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode"))
 			filename = Common::String("demo.grv");
-		}
+		else if (_gameDescription->desc.platform == Common::kPlatformMacintosh)
+			filename = "script.grv"; // Stored inside the executable's resource fork
 	} else if (_gameDescription->version == kGroovieV2) {
 		// Open the disk index
 		Common::File disk;

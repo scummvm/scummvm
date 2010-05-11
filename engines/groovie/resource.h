@@ -26,6 +26,10 @@
 #ifndef GROOVIE_RESOURCE_H
 #define GROOVIE_RESOURCE_H
 
+namespace Common {
+	class MacResManager;
+}
+
 namespace Groovie {
 
 struct ResInfo {
@@ -50,11 +54,14 @@ protected:
 
 class ResMan_t7g : public ResMan {
 public:
-	ResMan_t7g();
+	ResMan_t7g(Common::MacResManager *macResFork = 0);
 	~ResMan_t7g() {}
 
 	uint16 getRef(Common::String name, Common::String scriptname);
 	bool getResInfo(uint32 fileRef, ResInfo &resInfo);
+
+private:
+	Common::MacResManager *_macResFork;
 };
 
 class ResMan_v2 : public ResMan {

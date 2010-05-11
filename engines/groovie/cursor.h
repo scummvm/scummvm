@@ -30,6 +30,10 @@
 #include "common/array.h"
 #include "common/file.h"
 
+namespace Common {
+	class MacResManager;
+}
+
 namespace Groovie {
 
 class Cursor {
@@ -70,7 +74,7 @@ protected:
 
 class GrvCursorMan_t7g : public GrvCursorMan {
 public:
-	GrvCursorMan_t7g(OSystem *system);
+	GrvCursorMan_t7g(OSystem *system, Common::MacResManager *macResFork = 0);
 	~GrvCursorMan_t7g();
 
 private:
@@ -83,8 +87,8 @@ private:
 	Common::Array<byte *> _palettes;
 
 	// Loading functions
-	byte *loadImage(Common::File &file);
-	byte *loadPalette(Common::File &file);
+	byte *loadImage(Common::SeekableReadStream &file);
+	byte *loadPalette(Common::SeekableReadStream &file);
 };
 
 class GrvCursorMan_v2 : public GrvCursorMan {

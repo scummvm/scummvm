@@ -30,11 +30,13 @@
 #include "groovie/cell.h"
 #include "groovie/saveload.h"
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/macresman.h"
 
 #define NUM_OPCODES 90
 
@@ -128,22 +130,29 @@ void Script::timerTick() {
 }
 
 bool Script::loadScript(Common::String filename) {
-	// Try to open the script file
-	Common::File scriptfile;
-	if (!scriptfile.open(filename)) {
-		return false;
+	Common::SeekableReadStream *scriptfile = 0;
+
+	if (_vm->_macResFork) {
+		// Try to open the script file from the resource fork
+		scriptfile = _vm->_macResFork->getResource(filename);
+	} else {
+		// Try to open the script file
+		scriptfile = SearchMan.createReadStreamForMember(filename);
 	}
+
+	if (!scriptfile)
+		return false;
 
 	// Save the script filename
 	_scriptFile = filename;
 
 	// Load the code
-	_codeSize = scriptfile.size();
+	_codeSize = scriptfile->size();
 	_code = new byte[_codeSize];
 	if (!_code)
 		return false;
-	scriptfile.read(_code, _codeSize);
-	scriptfile.close();
+	scriptfile->read(_code, _codeSize);
+	delete scriptfile;
 
 	// Patch the loaded code for known script bugs
 	if (filename.equals("dr.grv")) {
