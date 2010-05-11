@@ -557,7 +557,6 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 
 		_music->pauseAll(value);
 	} else {	// pause a playlist slot
-		Common::StackLock lock(_music->_mutex);
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
 			warning("cmdPauseSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
