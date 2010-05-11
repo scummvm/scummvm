@@ -61,6 +61,13 @@ public:
 	 */
 	Common::SeekableReadStream *getResource(uint32 typeID, uint16 resID);
 
+	/**
+	 * Read resource from the Mac Binary file
+	 * @param filename filename of the resource
+	 * @return Pointer to a SeekableReadStream with loaded resource
+	 */
+	Common::SeekableReadStream *getResource(Common::String filename);
+
 	Common::SeekableReadStream *getDataFork();
 	Common::String getResName(uint32 typeID, uint16 resID);
 	uint32 getResForkSize();
