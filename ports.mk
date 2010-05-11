@@ -57,7 +57,9 @@ iphonebundle: iphone
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+	$(STRIP) scummvm
 	ldid -S scummvm
+	chmod 755 scummvm
 	cp scummvm $(bundle_name)/ScummVM
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
