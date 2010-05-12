@@ -120,7 +120,7 @@ public:
 };
 
 /* We don't need anything but this line at the beginning of each function to debug function calls */
-	#define DEBUG_ENTER_FUNC()					PSPStackDebugFuncs(__PRETTY_FUNCTION__)
+	#define DEBUG_ENTER_FUNC()		volatile PSPStackDebugFuncs __foo(__PRETTY_FUNCTION__)
 #else /* Don't debug function calls */
 	#define DEBUG_ENTER_FUNC()
 #endif /* __PSP_DEBUG_FUNCS__ */
