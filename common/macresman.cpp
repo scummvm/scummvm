@@ -61,16 +61,15 @@ void MacResManager::close() {
 	_mode = kResForkNone;
 
 	for (int i = 0; i < _resMap.numTypes; i++) {
-		for (int j = 0; j < _resTypes[i].items; j++) {
-			if (_resLists[i][j].nameOffset != -1) {
-				delete _resLists[i][j].name;
-			}
-		}
-		delete _resLists[i];
+		for (int j = 0; j < _resTypes[i].items; j++)
+			if (_resLists[i][j].nameOffset != -1)
+				delete[] _resLists[i][j].name;
+
+		delete[] _resLists[i];
 	}
 
-	delete _resLists; _resLists = 0;
-	delete _resTypes; _resTypes = 0;
+	delete[] _resLists; _resLists = 0;
+	delete[] _resTypes; _resTypes = 0;
 	delete _stream; _stream = 0;
 }
 
