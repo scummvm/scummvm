@@ -49,17 +49,7 @@ struct BalloonPositions {
 	Common::Point	_answerChar;
 };
 
-BalloonPositions _balloonPositions_NS = {
-	Common::Point(140, 10),
-	Common::Point(190, 80),
-	Common::Point(10, 80)
-};
 
-BalloonPositions _balloonPositions_BR = {
-	Common::Point(0, 0),
-	Common::Point(380, 80),
-	Common::Point(10, 80)
-};
 
 
 class DialogueManager {
@@ -379,7 +369,9 @@ protected:
 
 public:
 	DialogueManager_ns(Parallaction_ns *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
-		_ballonPos = _balloonPositions_NS;
+		_ballonPos._questionBalloon = Common::Point(140, 10);
+		_ballonPos._questionChar = Common::Point(190, 80);
+		_ballonPos._answerChar = Common::Point(10, 80);
 	}
 
 	bool canDisplayAnswer(Answer *a) {
@@ -426,7 +418,9 @@ class DialogueManager_br : public DialogueManager {
 
 public:
 	DialogueManager_br(Parallaction_br *vm, ZonePtr z) : DialogueManager(vm, z), _vm(vm) {
-		_ballonPos = _balloonPositions_BR;
+		_ballonPos._questionBalloon = Common::Point(0, 0);
+		_ballonPos._questionChar = Common::Point(380, 80);
+		_ballonPos._answerChar = Common::Point(10, 80);
 	}
 
 	bool canDisplayAnswer(Answer *a) {

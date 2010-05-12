@@ -108,8 +108,8 @@ class ChooseLanguageInputState_NS : public MenuInputState {
 	Common::String _nextState;
 
 	GfxObj *_label;
-	static const Common::Rect _dosLanguageSelectBlocks[4];
-	static const Common::Rect _amigaLanguageSelectBlocks[4];
+	Common::Rect _dosLanguageSelectBlocks[4];
+	Common::Rect _amigaLanguageSelectBlocks[4];
 	const Common::Rect *_blocks;
 
 	Parallaction *_vm;
@@ -118,6 +118,17 @@ public:
 	ChooseLanguageInputState_NS(Parallaction *vm, MenuInputHelper *helper) : MenuInputState("chooselanguage", helper), _vm(vm) {
 		_allowChoice = false;
 		_nextState = "selectgame";
+
+		_dosLanguageSelectBlocks[0] = Common::Rect(  80, 110, 128, 180 );	// Italian
+		_dosLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
+		_dosLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
+		_dosLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
+	
+		_amigaLanguageSelectBlocks[0] = Common::Rect(  -1,  -1,  -1,  -1 );	// Italian: not supported by Amiga multi-lingual version
+		_amigaLanguageSelectBlocks[1] = Common::Rect( 129,  85, 177, 155 );	// French
+		_amigaLanguageSelectBlocks[2] = Common::Rect( 178,  60, 226, 130 );	// English
+		_amigaLanguageSelectBlocks[3] = Common::Rect( 227,  35, 275, 105 );	// German
+
 
 		if (_vm->getPlatform() == Common::kPlatformAmiga) {
 			if (!(_vm->getFeatures() & GF_LANG_MULT)) {
@@ -192,20 +203,6 @@ public:
 
 		_vm->_input->setArrowCursor();
 	}
-};
-
-const Common::Rect ChooseLanguageInputState_NS::_dosLanguageSelectBlocks[4] = {
-	Common::Rect(  80, 110, 128, 180 ),	// Italian
-	Common::Rect( 129,  85, 177, 155 ),	// French
-	Common::Rect( 178,  60, 226, 130 ),	// English
-	Common::Rect( 227,  35, 275, 105 )	// German
-};
-
-const Common::Rect ChooseLanguageInputState_NS::_amigaLanguageSelectBlocks[4] = {
-	Common::Rect(  -1,  -1,  -1,  -1 ),	// Italian: not supported by Amiga multi-lingual version
-	Common::Rect( 129,  85, 177, 155 ),	// French
-	Common::Rect( 178,  60, 226, 130 ),	// English
-	Common::Rect( 227,  35, 275, 105 )	// German
 };
 
 class SelectGameInputState_NS : public MenuInputState {
@@ -419,8 +416,8 @@ class SelectCharacterInputState_NS : public MenuInputState {
 	#define CHAR_DONNA	1
 	#define CHAR_DOUGH	2
 
-	static const Common::Rect codeSelectBlocks[9];
-	static const Common::Rect codeTrueBlocks[9];
+ 	Common::Rect _codeSelectBlocks[9];
+	Common::Rect _codeTrueBlocks[9];
 
 	Parallaction_ns *_vm;
 
@@ -429,18 +426,18 @@ class SelectCharacterInputState_NS : public MenuInputState {
 		int selection = -1;
 
 		for (uint16 i = 0; i < 9; i++) {
-			if (codeSelectBlocks[i].contains(p)) {
+			if (_codeSelectBlocks[i].contains(p)) {
 				selection = i;
 				break;
 			}
 		}
 
 		if ((selection != -1) && (_vm->getPlatform() == Common::kPlatformAmiga)) {
-			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
+			_vm->_gfx->invertBackground(_codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 			_vm->beep();
 			_vm->_system->delayMillis(100);
-			_vm->_gfx->invertBackground(codeTrueBlocks[selection]);
+			_vm->_gfx->invertBackground(_codeTrueBlocks[selection]);
 			_vm->_gfx->updateScreen();
 		}
 
@@ -480,6 +477,26 @@ public:
 		_block.create(BLOCK_WIDTH, BLOCK_HEIGHT, 1);
 		_labels[0] = 0;
 		_labels[1] = 0;
+		
+		_codeSelectBlocks[0] = Common::Rect( 111, 129, 127, 153 );	// na
+		_codeSelectBlocks[1] = Common::Rect( 128, 120, 144, 144 );	// wa
+		_codeSelectBlocks[2] = Common::Rect( 145, 111, 161, 135 );	// ra
+		_codeSelectBlocks[3] = Common::Rect( 162, 102, 178, 126 );	// ri
+		_codeSelectBlocks[4] = Common::Rect( 179, 93, 195, 117 );	// i
+		_codeSelectBlocks[5] = Common::Rect( 196, 84, 212, 108 );	// ne
+		_codeSelectBlocks[6] = Common::Rect( 213, 75, 229, 99 );		// ho
+		_codeSelectBlocks[7] = Common::Rect( 230, 66, 246, 90 );		// ki
+		_codeSelectBlocks[8] = Common::Rect( 247, 57, 263, 81 );		// ka
+
+		_codeTrueBlocks[0] = Common::Rect( 112, 130, 128, 154 );
+		_codeTrueBlocks[1] = Common::Rect( 129, 121, 145, 145 );
+		_codeTrueBlocks[2] = Common::Rect( 146, 112, 162, 136 );
+		_codeTrueBlocks[3] = Common::Rect( 163, 103, 179, 127 );
+		_codeTrueBlocks[4] = Common::Rect( 180, 94, 196, 118 );
+		_codeTrueBlocks[5] = Common::Rect( 197, 85, 213, 109 );
+		_codeTrueBlocks[6] = Common::Rect( 214, 76, 230, 100 );
+		_codeTrueBlocks[7] = Common::Rect( 231, 67, 247, 91 );
+		_codeTrueBlocks[8] = Common::Rect( 248, 58, 264, 82 );
 	}
 
 	~SelectCharacterInputState_NS() {
@@ -525,7 +542,7 @@ public:
 		int _si = guiGetSelectedBlock(p);
 
 		if (_si != -1) {
-			_vm->_gfx->grabBackground(codeTrueBlocks[_si], _block);
+			_vm->_gfx->grabBackground(_codeTrueBlocks[_si], _block);
 			_vm->_gfx->patchBackground(_block, _len * SLOT_WIDTH + SLOT_X, SLOT_Y, false);
 
 			if (_keys[0][_len] != _si && _keys[1][_len] != _si && _keys[2][_len] != _si) {
@@ -653,31 +670,6 @@ const char *SelectCharacterInputState_NS::_charStartLocation[] = {
 	"test.dino",
 	"test.donna",
 	"test.dough"
-};
-
-
-const Common::Rect SelectCharacterInputState_NS::codeSelectBlocks[9] = {
-	Common::Rect( 111, 129, 127, 153 ),		// na
-	Common::Rect( 128, 120, 144, 144 ),		// wa
-	Common::Rect( 145, 111, 161, 135 ),		// ra
-	Common::Rect( 162, 102, 178, 126 ),		// ri
-	Common::Rect( 179, 93, 195, 117 ),		// i
-	Common::Rect( 196, 84, 212, 108 ),		// ne
-	Common::Rect( 213, 75, 229, 99 ),		// ho
-	Common::Rect( 230, 66, 246, 90 ),		// ki
-	Common::Rect( 247, 57, 263, 81 )		// ka
-};
-
-const Common::Rect SelectCharacterInputState_NS::codeTrueBlocks[9] = {
-	Common::Rect( 112, 130, 128, 154 ),
-	Common::Rect( 129, 121, 145, 145 ),
-	Common::Rect( 146, 112, 162, 136 ),
-	Common::Rect( 163, 103, 179, 127 ),
-	Common::Rect( 180, 94, 196, 118 ),
-	Common::Rect( 197, 85, 213, 109 ),
-	Common::Rect( 214, 76, 230, 100 ),
-	Common::Rect( 231, 67, 247, 91 ),
-	Common::Rect( 248, 58, 264, 82 )
 };
 
 
