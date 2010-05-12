@@ -108,6 +108,8 @@ Common::Error PrisonerEngine::run() {
 	_languageChar = 'E';
 	_currModuleIndex = 2;
 
+    _isSaveAllowed = true;
+
 	_cameraX = 0;
 	_cameraY = 0;
 

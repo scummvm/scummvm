@@ -16,6 +16,7 @@ MODULE_OBJS = \
 	palette.o \
 	path.o \
 	prisoner.o \
+	saveload.o \
 	resource.o \
 	resourcemgr.o \
 	scene.o \

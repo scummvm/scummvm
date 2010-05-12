@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 #include "common/random.h"
+#include "common/savefile.h"
 #include "common/system.h"
 
 #include "sound/mixer.h"
@@ -1027,6 +1028,35 @@ public:
 
 	/* Font colors */
 	void setFontDefaultColors();
+
+	/* Save/load */
+
+	enum kReadSaveHeaderError {
+		kRSHENoError = 0,
+		kRSHEInvalidType = 1,
+		kRSHEInvalidVersion = 2,
+		kRSHEIoError = 3
+	};
+
+	struct SaveHeader {
+		Common::String description;
+		uint32 version;
+		byte gameID;
+		uint32 flags;
+		Graphics::Surface *thumbnail;
+	};
+
+	bool _isSaveAllowed;
+
+	bool canLoadGameStateCurrently() { return _isSaveAllowed; }
+	bool canSaveGameStateCurrently() { return _isSaveAllowed; }
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *description);
+	void savegame(const char *filename, const char *description);
+	void loadgame(const char *filename);
+	const char *getSavegameFilename(int num);
+	static Common::String getSavegameFilename(const Common::String &target, int num);
+	static kReadSaveHeaderError readSaveHeader(Common::SeekableReadStream *in, bool loadThumbnail, SaveHeader &header);
 
 public:
 

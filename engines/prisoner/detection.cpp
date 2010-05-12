@@ -151,18 +151,29 @@ public:
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 
+	SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
+
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 
 };
 
 bool PrisonerMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
-		false;
+		(f == kSupportsListSaves) ||
+//		(f == kSupportsLoadingDuringStartup) ||
+//		(f == kSupportsDeleteSave) ||
+	   	(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail);
 }
 
 bool Prisoner::PrisonerEngine::hasFeature(EngineFeature f) const {
 	return
-		false;
+//		(f == kSupportsRTL) || // TODO: Not yet...
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
 }
 
 bool PrisonerMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
@@ -185,6 +196,100 @@ const ADGameDescription *PrisonerMetaEngine::fallbackDetect(const Common::FSList
 	Prisoner::g_fallbackDesc.version = 3;
 
 	return NULL;
+}
+
+SaveStateList PrisonerMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Prisoner::PrisonerEngine::SaveHeader header;
+	Common::String pattern = target;
+	pattern += ".???";
+
+	Common::StringArray filenames;
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); file++) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		if (slotNum >= 0 && slotNum <= 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(file->c_str());
+			if (in) {
+				if (Prisoner::PrisonerEngine::readSaveHeader(in, false, header) == Prisoner::PrisonerEngine::kRSHENoError) {
+					saveList.push_back(SaveStateDescriptor(slotNum, header.description));
+				}
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+int PrisonerMetaEngine::getMaximumSaveSlot() const {
+	return 999;
+}
+
+void PrisonerMetaEngine::removeSaveState(const char *target, int slot) const {
+	// Slot 0 can't be deleted, it's for restarting the game(s)
+	if (slot == 0)
+		return;
+
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::String filename = Prisoner::PrisonerEngine::getSavegameFilename(target, slot);
+
+	saveFileMan->removeSavefile(filename.c_str());
+
+	Common::StringArray filenames;
+	Common::String pattern = target;
+	pattern += ".???";
+	filenames = saveFileMan->listSavefiles(pattern.c_str());
+	Common::sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 3);
+
+		// Rename every slot greater than the deleted slot,
+		// Also do not rename quicksaves.
+		if (slotNum > slot && slotNum < 990) {
+			// FIXME: Our savefile renaming done here is inconsitent with what we do in
+			// GUI_v2::deleteMenu. While here we rename every slot with a greater equal
+			// number of the deleted slot to deleted slot, deleted slot + 1 etc.,
+			// we only rename the following slots in GUI_v2::deleteMenu until a slot
+			// is missing.
+			saveFileMan->renameSavefile(file->c_str(), filename.c_str());
+
+			filename = Prisoner::PrisonerEngine::getSavegameFilename(target, ++slot);
+		}
+	}
+
+}
+
+SaveStateDescriptor PrisonerMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String filename = Prisoner::PrisonerEngine::getSavegameFilename(target, slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename.c_str());
+
+	if (in) {
+		Prisoner::PrisonerEngine::SaveHeader header;
+		Prisoner::PrisonerEngine::kReadSaveHeaderError error;
+
+		error = Prisoner::PrisonerEngine::readSaveHeader(in, true, header);
+		delete in;
+
+		if (error == Prisoner::PrisonerEngine::kRSHENoError) {
+			SaveStateDescriptor desc(slot, header.description);
+
+			desc.setDeletableFlag(false);
+			desc.setWriteProtectedFlag(false);
+			desc.setThumbnail(header.thumbnail);
+
+			return desc;
+		}
+	}
+
+	return SaveStateDescriptor();
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(PRISONER)
