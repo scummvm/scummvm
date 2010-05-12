@@ -67,7 +67,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	CelInfo *cel;
 	uint16 celCount = 0;
 	uint16 mirrorBits = 0;
-	uint16 palOffset = 0;
+	uint32 palOffset = 0;
 	uint16 headerSize = 0;
 	uint16 loopSize = 0, celSize = 0;
 	int loopNo, celNo, EGAmapNr;
@@ -166,15 +166,17 @@ void GfxView::initData(GuiResourceId resourceId) {
 		}
 		break;
 
-	case kViewVga11: // View-format SCI1.1
+	case kViewVga11: // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
-		headerSize = READ_LE_UINT16(_resourceData + 0);
+		headerSize = READ_LE_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so its added
+		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
-		palOffset = READ_LE_UINT16(_resourceData + 8);
+		palOffset = READ_LE_UINT32(_resourceData + 8);
 		// FIXME: After LoopCount there is another byte and its set for view 50 within Laura Bow 2 CD, check what it means
 
 		loopData = _resourceData + headerSize;
 		loopSize = _resourceData[12];
+		assert(loopSize >= 16);
 		celSize = _resourceData[13];
 
 		if (palOffset) {
@@ -186,7 +188,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
 			loopData = _resourceData + headerSize + (loopNo * loopSize);
 
-			seekEntry = loopData[2];
+			seekEntry = loopData[0];
 			if (seekEntry != 255) {
 				if (seekEntry >= _loopCount)
 					error("Bad loop-pointer in sci 1.1 view");
@@ -196,10 +198,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 				_loop[loopNo].mirrorFlag = false;
 			}
 
-			celCount = loopData[4];
+			celCount = loopData[2];
 			_loop[loopNo].celCount = celCount;
 
-			celData = _resourceData + READ_LE_UINT16(loopData + 14);
+			celData = _resourceData + READ_LE_UINT32(loopData + 12);
 
 			// read cel info
 			_loop[loopNo].cel = new CelInfo[celCount];
