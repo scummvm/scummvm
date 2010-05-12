@@ -341,6 +341,8 @@ protected:
 	byte VAR_NUM_IMAGES;
 	byte VAR_NUM_CHARSETS;
 
+	byte VAR_SOUND_ENABLED;
+
 	byte VAR_POLYGONS_ONLY;
 
 	byte VAR_MOUSE_STATE;			// Used in checkExecVerbs();

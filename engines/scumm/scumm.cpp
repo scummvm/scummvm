@@ -793,6 +793,7 @@ ScummEngine_v72he::ScummEngine_v72he(OSystem *syst, const DetectorResult &dr)
 	VAR_NUM_COSTUMES = 0xFF;
 	VAR_NUM_IMAGES = 0xFF;
 	VAR_NUM_CHARSETS = 0xFF;
+	VAR_SOUND_ENABLED = 0xFF;
 	VAR_POLYGONS_ONLY = 0xFF;
 	VAR_MOUSE_STATE = 0xFF;
 	VAR_PLATFORM = 0xFF;

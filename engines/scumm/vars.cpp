@@ -296,6 +296,7 @@ void ScummEngine_v72he::setupScummVars() {
 	VAR_POLYGONS_ONLY = 76;
 
 	if (_game.heversion <= 74) {
+		VAR_SOUND_ENABLED = 54;
 		VAR_NUM_SOUND_CHANNELS = 56;
 	}
 
@@ -653,6 +654,11 @@ void ScummEngine_v72he::resetScummVars() {
 	VAR(VAR_NUM_IMAGES) = _numImages - 1;
 	VAR(VAR_NUM_CHARSETS) = _numCharsets - 1;
 	VAR(VAR_NUM_GLOBAL_OBJS) = _numGlobalObjects - 1;
+
+	if (_game.heversion <= 74) {
+		// Songs are disabled, if sound is disabled.
+		VAR(VAR_SOUND_ENABLED) = 1;
+	}
 
 	if (_game.heversion == 74) {
 		// Uses different values, compared to later HE80+ games.
