@@ -822,7 +822,7 @@ void Scene::handleMouseUpdate(int direction, Common::Rect rect) {
 					_cursor->set(_ws->curTalkNPC2, 0, 2);
 			}
 		} else {
-			int32 targetUpdateType;
+			int32 targetUpdateType = 0;
 			switch (type) {
 			case kHitActionArea:
 				targetUpdateType = _ws->actions[targetIdx].actionType;
