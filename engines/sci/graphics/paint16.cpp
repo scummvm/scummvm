@@ -452,7 +452,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	Common::Rect rect;
 	reg_t result = NULL_REG;
 
-	// Make a "backup" of the port settings
+	// Make a "backup" of the port settings (required for SCI01+ only)
 	Port oldPort = *_ports->getPort();
 
 	// setting defaults
@@ -536,6 +536,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	uint16 tLeft = currport->curLeft;
 	if (getSciVersion() >= SCI_VERSION_01) {
 		// Restore port settings for SCI01+ only
+		// the change actually happened inbetween sci0late. sq3new has fixed scripts and includes this change
+		//  sq3old doesn't and restoring the port will result in font 0 getting used when scanning for planets
 		*currport = oldPort;
 	}
 	currport->curTop = tTop;
