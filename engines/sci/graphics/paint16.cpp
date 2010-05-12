@@ -29,6 +29,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/graphics/cache.h"
@@ -452,7 +453,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	Common::Rect rect;
 	reg_t result = NULL_REG;
 
-	// Make a "backup" of the port settings (required for SCI01+ only)
+	// Make a "backup" of the port settings (required for some SCI0LATE and SCI01+ only)
 	Port oldPort = *_ports->getPort();
 
 	// setting defaults
@@ -534,11 +535,15 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	Port *currport = _ports->getPort();
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
-	if (getSciVersion() >= SCI_VERSION_01) {
-		// Restore port settings for SCI01+ only
-		// the change actually happened inbetween sci0late. sq3new has fixed scripts and includes this change
-		//  sq3old doesn't and restoring the port will result in font 0 getting used when scanning for planets
-		// to be exact it happened between .530 (hoyle1) and .566 (heros quest)
+	if (!g_sci->_features->usesOldGfxFunctions()) {
+		// Restore port settings for some SCI0LATE and SCI01+ only
+		// the change actually happened inbetween .530 (hoyle1) and .566 (heros quest). We don't have any detection for
+		//  that currently, so we are using oldGfxFunctions (.502). The only games that could get regressions because of
+		//  this are hoyle1, kq4 and funseeker. If there are regressions, we should use interpreter version (which would
+		//  require exe version detection)
+		// If we restore the port for whole SCI0LATE, at least sq3old will get an issue - font 0 will get used when
+		//  scanning for planets instead of font 600 - a setfont parameter is missing in one of the kDisplay calls in
+		//  script 19. I assume this is a script bug, because it was added in sq3new.
 		*currport = oldPort;
 	}
 	currport->curTop = tTop;
