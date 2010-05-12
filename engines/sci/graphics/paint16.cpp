@@ -538,6 +538,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		// Restore port settings for SCI01+ only
 		// the change actually happened inbetween sci0late. sq3new has fixed scripts and includes this change
 		//  sq3old doesn't and restoring the port will result in font 0 getting used when scanning for planets
+		// to be exact it happened between .530 (hoyle1) and .566 (heros quest)
 		*currport = oldPort;
 	}
 	currport->curTop = tTop;
