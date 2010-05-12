@@ -24,10 +24,14 @@
  */
 
 #include "common/config-manager.h"
+#include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/system.h"
 #include "common/file.h"
 #include "common/EventRecorder.h"
+
+#include "engines/advancedDetector.h"
+#include "engines/util.h"
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
@@ -49,9 +53,11 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	DebugMan.addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
 	DebugMan.addDebugChannel(kDebugLevelBarriers, "Barriers", "Debug Barrier Objects");
 
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "vids");
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vids");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 
 	DebugMan.enableDebugChannel("Scripts");
 	DebugMan.enableDebugChannel("Barriers");
