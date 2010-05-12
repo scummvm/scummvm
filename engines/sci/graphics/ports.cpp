@@ -136,9 +136,8 @@ void GfxPorts::kernelSetPicWindow(Common::Rect rect, int16 picTop, int16 picLeft
 	_picWind->rect = rect;
 	_picWind->top = picTop;
 	_picWind->left = picLeft;
-	// TODO: fixme before joining
-	//if (initPriorityBandsFlag)
-	//	initPriorityBands();
+	if (initPriorityBandsFlag)
+		kernelInitPriorityBands();
 }
 
 reg_t GfxPorts::kernelGetActive() {
