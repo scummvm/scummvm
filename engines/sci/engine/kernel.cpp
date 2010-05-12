@@ -360,7 +360,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ListEachElementDo", kListEachElementDo, "li.*"),
 	DEFUN("ListFirstTrue", kListFirstTrue, "li.*"),
 	DEFUN("ListAllTrue", kListAllTrue, "li.*"),
-	DEFUN("ListIndexOf", kListIndexOf, "lo"),
+	DEFUN("ListIndexOf", kListIndexOf, "lZo"),
 	DEFUN("OnMe", kOnMe, "iio.*"),
 	DEFUN("InPolygon", kInPolygon, "iio"),
 	DEFUN("CreateTextBitmap", kCreateTextBitmap, "iiio"),
