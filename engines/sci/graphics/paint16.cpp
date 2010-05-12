@@ -534,7 +534,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	Port *currport = _ports->getPort();
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
-	*currport = oldPort;
+	if (getSciVersion() >= SCI_VERSION_01) {
+		// Restore port settings for SCI01+ only
+		*currport = oldPort;
+	}
 	currport->curTop = tTop;
 	currport->curLeft = tLeft;
 	return result;
