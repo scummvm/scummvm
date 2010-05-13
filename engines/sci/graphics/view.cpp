@@ -365,6 +365,21 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 					break;
 				}
 			}
+			// Crazy-Ass mac compression for clone2727
+			// uint32 pixelLine;
+			// while (pixelNo < pixelCount) {
+			// 	pixelLine = pixelNo;
+			// 	runLength = *rlePtr++;
+			// 	pixelNo += runLength;
+			// 	runLength = *rlePtr++;
+			// 	while (runLength-- && pixelNo < pixelCount) {
+			// 		outPtr[pixelNo] = *literalPtr++;
+			// 		if (outPtr[pixelNo] == 255)
+			// 			outPtr[pixelNo] = 0;
+			// 		pixelNo++;
+			// 	}
+			// 	pixelNo = pixelLine + celInfo->width;
+			// }
 		} else {
 			// literal stream only, so no compression
 			memcpy(outPtr, literalPtr, pixelCount);
