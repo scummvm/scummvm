@@ -276,13 +276,6 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
 
-	if (!(pwnd->wndStyle & (SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_NOFRAME))) {
-		// The shadow is drawn slightly outside the window.
-		// Enlarge restoreRect to cover that.
-		pwnd->restoreRect.bottom++;
-		pwnd->restoreRect.right++;
-	}
-
 	if (draw)
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
@@ -314,16 +307,18 @@ void GfxPorts::drawWindow(Window *pWnd) {
 	if ((getSciVersion() >= SCI_VERSION_1_LATE) ? !(wndStyle & _styleUser) : wndStyle != _styleUser) {
 		r = pWnd->dims;
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
-			r.translate(1, 1);
-			_paint16->frameRect(r);// shadow
+			r.top++;
+			r.left++;
+			_paint16->frameRect(r);// draw shadow
 			r.translate(-1, -1);
-			_paint16->frameRect(r);// window frame
+			_paint16->frameRect(r);// draw actual window frame
 
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
 				if (getSciVersion() <= SCI_VERSION_0_LATE) {
 					// draw a black line between titlebar and actual window content for SCI0
 					r.bottom = r.top + 10;
 					_paint16->frameRect(r);
+					r.bottom = pWnd->dims.bottom - 1;
 				}
 				r.grow(-1);
 				if (getSciVersion() <= SCI_VERSION_0_LATE)
@@ -337,7 +332,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 					penColor(oldcolor);
 				}
 
-				r = pWnd->dims;
+				r.grow(+1);
 				r.top += 9;
 			}
 
