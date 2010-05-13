@@ -171,6 +171,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		headerSize = READ_LE_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so its added
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
+		assert(_loopCount);
 		palOffset = READ_LE_UINT32(_resourceData + 8);
 		// FIXME: After LoopCount there is another byte and its set for view 50 within Laura Bow 2 CD, check what it means
 
@@ -178,6 +179,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		loopSize = _resourceData[12];
 		assert(loopSize >= 16);
 		celSize = _resourceData[13];
+		assert(celSize >= 32);
 
 		if (palOffset) {
 			_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
@@ -199,6 +201,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 
 			celCount = loopData[2];
+			assert(celCount);
 			_loop[loopNo].celCount = celCount;
 
 			celData = _resourceData + READ_LE_UINT32(loopData + 12);
@@ -208,7 +211,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 			for (celNo = 0; celNo < celCount; celNo++) {
 				cel = &_loop[loopNo].cel[celNo];
 				cel->width = READ_LE_UINT16(celData);
+				assert(cel->width);
 				cel->height = READ_LE_UINT16(celData + 2);
+				assert(cel->height);
 				cel->displaceX = READ_LE_UINT16(celData + 4);
 				cel->displaceY = READ_LE_UINT16(celData + 6);
 				cel->clearKey = celData[8];
