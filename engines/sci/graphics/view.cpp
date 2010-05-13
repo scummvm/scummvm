@@ -201,7 +201,6 @@ void GfxView::initData(GuiResourceId resourceId) {
 			}
 
 			celCount = loopData[2];
-			assert(celCount);
 			_loop[loopNo].celCount = celCount;
 
 			celData = _resourceData + READ_LE_UINT32(loopData + 12);
