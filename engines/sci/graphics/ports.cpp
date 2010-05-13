@@ -229,8 +229,17 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	else
 		_windowList.push_back(pwnd);
 	openPort(pwnd);
+
 	r = dims;
-	pwnd->rect = dims;
+	if (r.width() > _screen->getWidth()) {
+		// We get invalid dimensions at least at the end of sq3 (script bug!)
+		warning("fixing too large window, given left&right was %d, %d", dims.left, dims.right);
+		r.left = 0;
+		r.right = _screen->getWidth() - 1;
+		if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME))
+			r.right--;
+	}
+	pwnd->rect = r;
 	if (restoreRect)
 		pwnd->restoreRect = *restoreRect;
 
@@ -244,7 +253,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 		pwnd->title = title;
 	}
 
-	r = dims;
+	r = pwnd->rect;
 	if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 		r.grow(1);
 		if (style & SCI_WINDOWMGR_STYLE_TITLE) {
@@ -252,9 +261,6 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 			r.bottom++;
 		}
 	}
-
-	// FIXME: it seems as if shadows may result in the window getting moved one upwards
-	//         so that the shadow is visible (lsl5)
 
 	pwnd->dims = r;
 	const Common::Rect *wmprect = &_wmgrPort->rect;
@@ -314,9 +320,9 @@ void GfxPorts::drawWindow(Window *pWnd) {
 			_paint16->frameRect(r);// draw actual window frame
 
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
-				r.bottom = r.top + 10;
 				if (getSciVersion() <= SCI_VERSION_0_LATE) {
 					// draw a black line between titlebar and actual window content for SCI0
+					r.bottom = r.top + 10;
 					_paint16->frameRect(r);
 				}
 				r.grow(-1);
