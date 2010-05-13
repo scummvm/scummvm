@@ -419,6 +419,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// King's Quest 4 (PC 5.25") 2.3 9/27/88 [AGI 3.002.086]
 	GAME3("kq4", "2.3 1988-09-27", "kq4dir", "6d7714b8b61466a5f5981242b993498f", 0x3086, GID_KQ4),
 
+	// King's Quest 4 (PC 3.5") 2.3 9/27/88 [AGI 3.002.086]
+	GAME3("kq4", "2.3 1988-09-27 3.5\"", "kq4dir", "82a0d39af891042e99ac1bd6e0b29046", 0x3086, GID_KQ4),
+
 	// King's Quest 4 (IIgs) 1.0K 11/22/88 (CE)
 	// Menus not tested
 	GAME3_P("kq4", "1.0K 1988-11-22", "kq4dir", "8536859331159f15012e35dc82cb154e", 0x3086, 0, GID_KQ4, Common::kPlatformApple2GS),
