@@ -314,11 +314,10 @@ void GfxPorts::drawWindow(Window *pWnd) {
 			_paint16->frameRect(r);// draw actual window frame
 
 			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
+				r.bottom = r.top + 10;
 				if (getSciVersion() <= SCI_VERSION_0_LATE) {
 					// draw a black line between titlebar and actual window content for SCI0
-					r.bottom = r.top + 10;
 					_paint16->frameRect(r);
-					r.bottom = pWnd->dims.bottom - 1;
 				}
 				r.grow(-1);
 				if (getSciVersion() <= SCI_VERSION_0_LATE)
@@ -333,6 +332,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 				}
 
 				r.grow(+1);
+				r.bottom = pWnd->dims.bottom - 1;
 				r.top += 9;
 			}
 
