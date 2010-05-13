@@ -437,7 +437,7 @@ Common::File *ResourceManager::getVolumeFile(const char *filename) {
 	return NULL;
 }
 
-static const uint32 resTypeToMacTag(ResourceType type);
+static uint32 resTypeToMacTag(ResourceType type);
 
 void ResourceManager::loadResource(Resource *res) {
 	if (res->_source->source_type == kSourcePatch && loadFromPatchFile(res))
@@ -1459,7 +1459,7 @@ static const uint32 resourceTypeMacTags[] = {
 	'MSG ',      0, 'HEP '
 };
 
-static const uint32 resTypeToMacTag(ResourceType type) {
+static uint32 resTypeToMacTag(ResourceType type) {
 	if (type >= ARRAYSIZE(resourceTypeMacTags))
 		return 0;
 
