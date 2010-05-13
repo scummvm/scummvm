@@ -26,6 +26,7 @@
 #include "common/util.h"
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
@@ -98,7 +99,10 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 
 	openPort(_wmgrPort);
 	setPort(_wmgrPort);
-	setOrigin(0, offTop);
+	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
+	//  We leave _wmgrPort top at 0, so the adjustment wont get done
+	if (!g_sci->_features->usesOldGfxFunctions())
+		setOrigin(0, offTop);
 	_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
 	_wmgrPort->rect.right = _screen->getWidth();
 	_wmgrPort->rect.moveTo(0, 0);
@@ -107,6 +111,10 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	_windowList.push_front(_wmgrPort);
 
 	_picWind = newWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
+	//  Because of the menu/status bar
+	if (g_sci->_features->usesOldGfxFunctions())
+		_picWind->top = offTop;
 
 	priorityBandsMemoryActive = false;
 
@@ -278,6 +286,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	if (draw)
 		drawWindow(pwnd);
 	setPort((Port *)pwnd);
+	// All SCI0 games till kq4 .502 (not including) did not adjust against _wmgrPort, we set _wmgrPort->top to 0 in that case
 	setOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
 	pwnd->rect.moveTo(0, 0);
 	return pwnd;
