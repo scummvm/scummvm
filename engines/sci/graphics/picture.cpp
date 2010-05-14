@@ -607,6 +607,8 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
+					if (pic_priority == 255)
+						_priority = 0; // if priority not set, use priority 0
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
 					curPos += size;
 					break;
