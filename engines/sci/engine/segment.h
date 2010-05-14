@@ -254,7 +254,14 @@ public:
 		return -1;
 	}
 
+	/**
+	 * Determines if the object explicitly defines slc as a varselector
+	 * Returns -1 if not found
+	 */
+	int locateVarSelector(SegManager *segMan, Selector slc);
+
 	bool isClass() { return (getInfoSelector().offset & SCRIPT_INFO_CLASS);	}
+	Object *getClass(SegManager *segMan);
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
 	bool isFreed() { return _flags & OBJECT_FLAG_FREED;	}

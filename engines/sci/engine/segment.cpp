@@ -674,6 +674,33 @@ void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 //-------------------- hunk --------------------
 
+//-------------------- object ----------------------------
+
+Object *Object::getClass(SegManager *segMan) {
+	return isClass() ? this : segMan->getObject(getSuperClassSelector());
+}
+
+int Object::locateVarSelector(SegManager *segMan, Selector slc) {
+	byte *buf;
+	uint varnum;
+
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		varnum = getVarCount();
+		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
+		buf = _baseObj + selector_name_offset;
+	} else {
+		Object *obj = getClass(segMan);
+		varnum = obj->getVariable(1).toUint16();
+		buf = (byte *)obj->_baseVars;
+	}
+
+	for (uint i = 0; i < varnum; i++)
+		if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
+			return i; // report success
+
+	return -1; // Failed
+}
+
 //-------------------- dynamic memory --------------------
 
 reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) {

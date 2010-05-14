@@ -258,31 +258,6 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	return retval;
 }
 
-static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc) {
-	// Determines if obj explicitly defines slc as a varselector
-	// Returns -1 if not found
-	byte *buf;
-	uint varnum;
-
-	if (getSciVersion() < SCI_VERSION_1_1) {
-		varnum = obj->getVarCount();
-		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
-		buf = obj->_baseObj + selector_name_offset;
-	} else {
-		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
-			obj = segMan->getObject(obj->getSuperClassSelector());
-
-		buf = (byte *)obj->_baseVars;
-		varnum = obj->getVariable(1).toUint16();
-	}
-
-	for (uint i = 0; i < varnum; i++)
-		if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
-			return i; // report success
-
-	return -1; // Failed
-}
-
 SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
 	Object *obj = segMan->getObject(obj_location);
 	int index;
@@ -298,7 +273,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 				PRINT_REG(obj_location));
 	}
 
-	index = _obj_locate_varselector(segMan, obj, selector_id);
+	index = obj->locateVarSelector(segMan, selector_id);
 
 	if (index >= 0) {
 		// Found it as a variable
