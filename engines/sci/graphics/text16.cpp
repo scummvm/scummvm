@@ -159,7 +159,7 @@ static const uint16 text16_punctuationSjis[] = {
 
 // return max # of chars to fit maxwidth with full words, does not include breaking space
 int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
-	uint16 curChar;
+	uint16 curChar = 0;
 	int16 maxChars = 0, curCharCount = 0;
 	uint16 width = 0;
 	GuiResourceId oldFontId = GetFontId();

@@ -147,7 +147,7 @@ void GfxControls::kernelTexteditChange(reg_t controlObject, reg_t eventObject) {
 	uint16 maxChars = GET_SEL32V(_segMan, controlObject, SELECTOR(max));
 	reg_t textReference = GET_SEL32(_segMan, controlObject, SELECTOR(text));
 	Common::String text;
-	uint16 textSize, eventType, eventKey;
+	uint16 textSize, eventType, eventKey = 0;
 	bool textChanged = false;
 	bool textAddChar = false;
 	Common::Rect rect;
@@ -251,7 +251,7 @@ int GfxControls::getPicNotValid() {
 }
 
 void GfxControls::kernelDrawButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
-	int16 sci0EarlyPen, sci0EarlyBack;
+	int16 sci0EarlyPen = 0, sci0EarlyBack = 0;
 	if (!hilite) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			// SCI0early actually used hardcoded green/black buttons instead of using the port colors
