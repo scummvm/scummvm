@@ -259,7 +259,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			text->_played = true;
 			_vm->_sound->playCompSpeech(text->_speechId, 16, 0);
 		}
-		if (frame <= text->_endFrame) {
+		if (frame < text->_endFrame) {
 			drawTextObject(_currentMovieText, screen);
 		} else {
 			closeTextObject(_currentMovieText, screen);
