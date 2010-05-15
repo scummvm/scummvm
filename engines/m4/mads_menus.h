@@ -41,6 +41,8 @@ enum MadsLayers {LAYER_GUI = 19};
 
 class RexMainMenuView : public View {
 private:
+	Common::Point _menuItemPosList[6];
+private:
 	M4Surface *_bgSurface;
 	RGBList *_bgPalData;
 	int _menuItemIndex;
@@ -62,6 +64,8 @@ public:
 };
 
 class DragonMainMenuView : public View {
+private:
+	Common::Point _menuItemPosList[6];
 private:
 	//M4Surface *_bgSurface;
 	RGBList *_bgPalData;

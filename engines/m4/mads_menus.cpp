@@ -32,16 +32,6 @@ namespace M4 {
 #define PHANTOM_MENUSCREEN 920
 #define DRAGON_MENUSCREEN 922
 
-static Common::Point rexMenuItemPosList[6] = {
-	Common::Point(12, 68), Common::Point(12, 87), Common::Point(12, 107),
-	Common::Point(184, 75), Common::Point(245, 75), Common::Point(184, 99)
-};
-
-static Common::Point dragonMenuItemPosList[6] = {
-	Common::Point(46, 187), Common::Point(92, 187), Common::Point(138, 187),
-	Common::Point(184, 187), Common::Point(230, 187), Common::Point(276, 187)
-};
-
 #define DRAGON_MENU_BUTTON_W = 45
 #define DRAGON_MENU_BUTTON_H = 11
 
@@ -71,6 +61,14 @@ RexMainMenuView::RexMainMenuView(MadsM4Engine *vm):
 	setColor(2);
 	hLine(0, width() - 1, row - 1);
 	hLine(0, width() - 1, height() - row + 1);
+
+	// Set up the menu item pos list
+	_menuItemPosList[0] = Common::Point(12, 68);
+	_menuItemPosList[1] = Common::Point(12, 87);
+	_menuItemPosList[2] = Common::Point(12, 107);
+	_menuItemPosList[3] = Common::Point(184, 75);
+	_menuItemPosList[4] = Common::Point(245, 75);
+	_menuItemPosList[5] = Common::Point(184, 99);
 }
 
 RexMainMenuView::~RexMainMenuView() {
@@ -164,7 +162,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, 
 				_highlightedIndex = menuIndex;
 				if (_highlightedIndex != -1) {
 					M4Sprite *spr = _menuItem->getFrame(_highlightedIndex);
-					const Common::Point &pt = rexMenuItemPosList[_highlightedIndex];
+					const Common::Point &pt = _menuItemPosList[_highlightedIndex];
 					spr->copyTo(this, pt.x, row + pt.y, 0);
 				}
 			}
@@ -212,8 +210,8 @@ void RexMainMenuView::updateState() {
 				// Draw the final frame of the menuitem
 				M4Sprite *spr = _menuItem->getFrame(0);
 				itemSize = _menuItem->getFrame(0)->height();
-				spr->copyTo(this, rexMenuItemPosList[_menuItemIndex - 1].x,
-					rexMenuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 0);
+				spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x,
+					_menuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 0);
 
 				delete _menuItem;
 				copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0);
@@ -276,7 +274,7 @@ void RexMainMenuView::updateState() {
 
 	_bgSurface->copyTo(this, 0, row);
 	M4Sprite *spr = _menuItem->getFrame(_frameIndex);
-	spr->copyTo(this, rexMenuItemPosList[_menuItemIndex - 1].x, rexMenuItemPosList[_menuItemIndex - 1].y +
+	spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x, _menuItemPosList[_menuItemIndex - 1].y +
 		row + (itemSize / 2) - (spr->height() / 2), 0);
 }
 
@@ -284,7 +282,7 @@ int RexMainMenuView::getHighlightedItem(int x, int y) {
 	y -= (height() - MADS_SURFACE_HEIGHT) / 2;
 
 	for (int index = 0; index < 6; ++index) {
-		const Common::Point &pt = rexMenuItemPosList[index];
+		const Common::Point &pt = _menuItemPosList[index];
 		M4Sprite *spr = _menuItem->getFrame(index);
 
 		if ((x >= pt.x) && (y >= pt.y) && (x < (pt.x + spr->width())) && (y < (pt.y + spr->height())))
@@ -376,6 +374,14 @@ DragonMainMenuView::DragonMainMenuView(MadsM4Engine *vm):
 	this->loadBackground(942, &_bgPalData);
 	_vm->_palette->addRange(_bgPalData);
 	this->translate(_bgPalData);
+
+	// Set up the menu item pos list
+	_menuItemPosList[0] = Common::Point(46, 187);
+	_menuItemPosList[1] = Common::Point(92, 187);
+	_menuItemPosList[2] = Common::Point(138, 187);
+	_menuItemPosList[3] = Common::Point(184, 187);
+	_menuItemPosList[4] = Common::Point(230, 187);
+	_menuItemPosList[5] = Common::Point(276, 187);
 }
 
 DragonMainMenuView::~DragonMainMenuView() {
@@ -535,7 +541,7 @@ int DragonMainMenuView::getHighlightedItem(int x, int y) {
 	y -= (height() - MADS_SURFACE_HEIGHT) / 2;
 
 	for (int index = 0; index < 6; ++index) {
-		const Common::Point &pt = dragonMenuItemPosList[index];
+		const Common::Point &pt = _menuItemPosList[index];
 		M4Sprite *spr = _menuItem->getFrame(0);
 
 		if ((x >= pt.x - 25) && (y >= pt.y - spr->height()) && (x < (pt.x - 25 + spr->width())) && (y < (pt.y)))  {
