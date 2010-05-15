@@ -57,6 +57,12 @@ MadsScene::~MadsScene() {
  * Secondary scene loading code
  */
 void MadsScene::loadScene2(const char *aaName) {
+	// TODO: Completely finish
+
+	_spriteSlots.clear();
+	_sequenceList.clear();
+	_kernelMessages.clear();
+
 	// Load up the properties for the scene
 	_sceneResources.load(_currentScene);
 
@@ -652,42 +658,6 @@ void MadsSceneResources::load(int sId) {
  * Adds a new entry to the timed on-screen text display list
  */
 /*
-int MadsScreenText::addTimed(const Common::Point &destPos, uint fontColours, uint flags, int vUnknown, uint32 timeout, const char *message) {
-	// Find a free slot
-	int idx = 0;
-	while ((idx < TIMED_TEXT_SIZE) && ((_timedText[idx].flags & TEXTFLAG_ACTIVE) != 0))
-		++idx;
-	if (idx == TIMED_TEXT_SIZE) {
-		if (vUnknown == 0)
-			return -1;
-
-		error("Ran out of timed text display slots");
-	}
-
-	// Set up the entry values
-	_timedText[idx].flags = flags | TEXTFLAG_ACTIVE;
-	strcpy(_timedText[idx].message, message);
-	_timedText[idx].colour1 = fontColours & 0xff;
-	_timedText[idx].colour2 = fontColours >> 8;
-	_timedText[idx].position.x = destPos.x;
-	_timedText[idx].position.y = destPos.y;
-	_timedText[idx].textDisplayIndex = -1;
-	_timedText[idx].timeout = timeout;
-	_timedText[idx].frameTimer = g_system->getMillis();
-	_timedText[idx].field_1C = vUnknown;
-	_timedText[idx].field_1D = 0; // word_84206
-
-	// Copy the current action noun list
-	for (int i = 0; i < 3; ++i)
-		_timedText[idx].actionNouns[i] = _madsVm->scene()->actionNouns[i];
-
-	if (flags & TEXTFLAG_2) {
-		warning("word_844b8 and dword_845a0 not yet implemented");
-	}
-
-	return idx;
-}
-
 void MadsScreenText::draw(M4Surface *surface) {
 }
 

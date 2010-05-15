@@ -164,7 +164,8 @@ void MadsSceneLogic::selectScene(int sceneNum) {
 
 void MadsSceneLogic::setupScene() {
 	// FIXME: This is the hardcoded logic for Rex scene 101 only
-	//const char *animName = formAnimName('A', -1);
+	const char *animName = formAnimName('A', -1);
+	warning("anim - %s", animName);
 
 //	sub_1e754(animName, 3);
 
@@ -187,7 +188,7 @@ void MadsSceneLogic::enterScene() {
 	_spriteIndexes[16] = startSpriteSequence(_spriteIndexes[1], 0, 4, 0, 1, 0);
 	_spriteIndexes[17] = startSpriteSequence(_spriteIndexes[2], 0, 4, 0, 1, 0);
 
-	_madsVm->scene()->_sequenceList.unk2(0, 2, 7, 0x46);
+	_madsVm->scene()->_sequenceList.addSubEntry(0, SM_FRAME_INDEX, 7, 70);
 
 	_spriteIndexes[18] = startCycledSpriteSequence(_spriteIndexes[3], 0, 10, 0, 0, 60);
 	_spriteIndexes[19] = startSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);

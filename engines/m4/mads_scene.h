@@ -66,27 +66,6 @@ public:
 	void load(int sceneId);	
 };
 
-#define TIMED_TEXT_SIZE 10
-#define TEXT_4A_SIZE 30
-
-enum TalkTextFlags {TEXTFLAG_2 = 2, TEXTFLAG_4 = 4, TEXTFLAG_8 = 8, TEXTFLAG_40 = 0x40,
-		TEXTFLAG_ACTIVE = 0x80};
-
-struct TimedText {
-	uint8 flags;
-	int colour1;
-	int colour2;
-	Common::Point position;
-	int textDisplayIndex;
-	int timerIndex;
-	uint32 timeout;
-	uint32 frameTimer;
-	bool field_1C;
-	uint8 field_1D;
-	uint16 actionNouns[3];
-	char message[100];
-};
-
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
 enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
 

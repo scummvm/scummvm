@@ -40,6 +40,8 @@ namespace M4 {
 
 class MadsView;
 
+enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
+
 class MadsSpriteSlot {
 public:
 	int spriteId;
@@ -126,6 +128,48 @@ public:
 	void cleanUp();
 };
 
+#define TIMED_TEXT_SIZE 10
+#define TEXT_4A_SIZE 30
+
+enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+
+class MadsKernelMessageListEntry {
+public:
+	uint8 flags;
+	int sequenceIndex;
+	char asciiChar;
+	char asciiChar2;
+	int colour1;
+	int colour2;
+	Common::Point position;
+	int textDisplayIndex;
+	int msgOffset;
+	int field_E;
+	uint32 frameTimer2;
+	uint32 frameTimer;
+	uint32 timeout;
+	bool field_1C;
+	AbortTimerMode abortMode;
+	uint16 actionNouns[3];
+	char *msg;
+};
+
+class MadsKernelMessageList {
+private:
+	MadsView &_owner;
+	Common::Array<MadsKernelMessageListEntry> _entries;
+	Font *_talkFont;
+public:
+	MadsKernelMessageList(MadsView &owner);
+
+	void clear();
+	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, char *msg);
+	void unk1(int msgIndex, int v1, int v2);
+	void setSeqIndex(int msgIndex, int seqIndex);
+	void remove(int msgIndex);
+	void reset();
+};
+
 class ScreenObjectEntry {
 public:
 	Common::Rect bounds;
@@ -191,9 +235,18 @@ public:
 	void reset();
 };
 
+enum SpriteAnimType {ANIMTYPE_SINGLE_DIRECTION = 1, ANIMTYPE_CYCLED = 2};
+
+enum SequenceSubEntryMode {SM_0 = 0, SM_1 = 1, SM_FRAME_INDEX = 2};
+
 #define TIMER_ENTRY_SUBSET_MAX 5
 
-enum SpriteAnimType {ANIMTYPE_SINGLE_DIRECTION = 1, ANIMTYPE_CYCLED = 2};
+struct MadsSequenceSubEntries {
+	int count;
+	SequenceSubEntryMode mode[TIMER_ENTRY_SUBSET_MAX];
+	int16 frameIndex[TIMER_ENTRY_SUBSET_MAX];
+	int8 abortVal[TIMER_ENTRY_SUBSET_MAX];
+};
 
 struct MadsSequenceEntry {
 	int8 active;
@@ -220,11 +273,8 @@ struct MadsSequenceEntry {
 	
 	int field_24;
 	int field_25;
-	int len27;
-	int8 fld27[TIMER_ENTRY_SUBSET_MAX];
-	int16 fld2C[TIMER_ENTRY_SUBSET_MAX];
-	int8 fld36[TIMER_ENTRY_SUBSET_MAX];
-	int field_3B;
+	MadsSequenceSubEntries entries;
+	AbortTimerMode abortMode;
 
 	uint16 actionNouns[3];
 	int numTicks;
@@ -242,7 +292,8 @@ public:
 	MadsSequenceList(MadsView &owner);
 
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
-	bool unk2(int index, int v1, int v2, int v3);
+	void clear();
+	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
 	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
 		int height, int width, char field_12, char scale, char depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
@@ -259,12 +310,18 @@ private:
 public:
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
+	MadsKernelMessageList _kernelMessages;
 	ScreenObjects _screenObjects;
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
 
+	int _textSpacing;
+	int _ticksAmount;
+	uint32 _newTimeout;
 	int _abortTimers;
 	int8 _abortTimers2;
+	AbortTimerMode _abortTimersMode;
+	AbortTimerMode _abortTimersMode2;
 public:
 	MadsView(View *view);
 

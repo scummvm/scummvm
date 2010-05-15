@@ -240,6 +240,108 @@ void MadsTextDisplay::cleanUp() {
 
 //--------------------------------------------------------------------------
 
+MadsKernelMessageList::MadsKernelMessageList(MadsView &owner): _owner(owner) {
+	for (int i = 0; i < TIMED_TEXT_SIZE; ++i) {
+		MadsKernelMessageListEntry rec;
+		_entries.push_back(rec);
+	}
+
+	_owner._textSpacing = -1;
+	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
+}
+
+void MadsKernelMessageList::clear() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i].flags = 0;
+
+	_owner._textSpacing = -1;
+	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
+}
+
+int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, char *msg) {
+	// Find a free slot
+	uint idx = 0;
+	while ((idx < _entries.size()) && ((_entries[idx].flags & KMSG_ACTIVE) != 0))
+		++idx;
+	if (idx == _entries.size()) {
+		if (v2 == 0)
+			return -1;
+
+		error("MadsKernelList overflow");
+	}
+
+	MadsKernelMessageListEntry &rec = _entries[idx];
+	rec.msg = msg;
+	rec.flags = flags | KMSG_ACTIVE;
+	rec.colour1 = fontColour & 0xff;
+	rec.colour2 = fontColour >> 8;
+	rec.position = pt;
+	rec.textDisplayIndex = -1;
+	rec.timeout = timeout;
+	rec.frameTimer = _madsVm->_currentTimer;
+	rec.field_1C = v2;
+	rec.abortMode = _owner._abortTimersMode2;
+	
+	for (int i = 0; i < 3; ++i)
+		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
+
+	if (flags & KMSG_2)
+		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
+
+	return idx;
+}
+
+void MadsKernelMessageList::unk1(int msgIndex, int v1, int v2) {
+	if (msgIndex < 0)
+		return;
+
+	_entries[msgIndex].flags |= (v2 == 0) ? KMSG_8 : (KMSG_8 | KMSG_1);
+	_entries[msgIndex].msgOffset = 0;
+	_entries[msgIndex].field_E = v1;
+	_entries[msgIndex].frameTimer2 = _madsVm->_currentTimer;
+
+	const char *msgP = _entries[msgIndex].msg;
+	_entries[msgIndex].asciiChar = *msgP;
+	_entries[msgIndex].asciiChar2 = *(msgP + 1);
+
+	if (_entries[msgIndex].flags & KMSG_2)
+		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
+
+	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
+}
+
+void MadsKernelMessageList::setSeqIndex(int msgIndex, int seqIndex) {
+	if (msgIndex >= 0) {
+		_entries[msgIndex].flags |= KMSG_4;
+		_entries[msgIndex].sequenceIndex = seqIndex;
+	}
+}
+
+void MadsKernelMessageList::remove(int msgIndex) {
+	MadsKernelMessageListEntry &rec = _entries[msgIndex];
+
+	if (rec.flags & KMSG_ACTIVE) {
+		if (rec.flags & KMSG_8) {
+			*(rec.msg + rec.msgOffset) = rec.asciiChar;
+			*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
+		}
+
+		if (rec.textDisplayIndex >= 0)
+			_owner._textDisplay.expire(rec.textDisplayIndex);
+
+		rec.flags &= ~KMSG_ACTIVE;
+	}
+}
+
+void MadsKernelMessageList::reset() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		remove(i);
+
+	// sub_20454
+}
+
+//--------------------------------------------------------------------------
+
 /**
  * Clears the entries list
  */
@@ -375,14 +477,21 @@ MadsSequenceList::MadsSequenceList(MadsView &owner): _owner(owner) {
 	}
 }
 
-bool MadsSequenceList::unk2(int index, int v1, int v2, int v3) {
-	if (_entries[index].len27 >= TIMER_ENTRY_SUBSET_MAX)
+void MadsSequenceList::clear() {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		_entries[i].active = 0;
+		_entries[i].dynamicHotspotIndex = -1;
+	}
+}
+
+bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal) {
+	if (_entries[index].entries.count >= TIMER_ENTRY_SUBSET_MAX)
 		return true;
 
-	int subIndex = _entries[index].len27++;
-	_entries[index].fld27[subIndex] = v1;
-	_entries[index].fld2C[subIndex] = v2;
-	_entries[index].fld36[subIndex] = v3;
+	int subIndex = _entries[index].entries.count++;
+	_entries[index].entries.mode[subIndex] = mode;
+	_entries[index].entries.frameIndex[subIndex] = frameIndex;
+	_entries[index].entries.abortVal[subIndex] = abortVal;
 
 	return false;
 }
@@ -428,8 +537,8 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char fiel
 	_entries[timerIndex].field_25 = 0;
 	_entries[timerIndex].field_13 = 0;
 	_entries[timerIndex].dynamicHotspotIndex = -1;
-	_entries[timerIndex].len27 = 0;
-	_entries[timerIndex].field_3B = 0; //word_84206
+	_entries[timerIndex].entries.count = 0;
+	_entries[timerIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
 		_entries[timerIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
@@ -469,37 +578,37 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 }
 
 bool MadsSequenceList::loadSprites(int timerIndex) {
-	MadsSequenceEntry &timerEntry = _entries[timerIndex];
+	MadsSequenceEntry &seqEntry = _entries[timerIndex];
 	int slotIndex;
 	bool result = false;
 	int idx = -1;
 
 	_owner._spriteSlots.deleteTimer(timerIndex);
-	if (timerEntry.field_25 != 0) {
+	if (seqEntry.field_25 != 0) {
 		remove(timerIndex);
 		return false;
 	}
 
-	if (timerEntry.spriteListIndex == -1) {
-		timerEntry.field_25 = -1;
+	if (seqEntry.spriteListIndex == -1) {
+		seqEntry.field_25 = -1;
 	} else if ((slotIndex = _owner._spriteSlots.getIndex()) >= 0) {
 		MadsSpriteSlot &spriteSlot = _owner._spriteSlots[slotIndex];
 		setSpriteSlot(timerIndex, spriteSlot);
 
 		int x2 = 0, y2 = 0;
 
-		if ((timerEntry.field_13 != 0) || (timerEntry.dynamicHotspotIndex >= 0)) {
-			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
-			M4Sprite *frame = spriteSet.getFrame(timerEntry.frameIndex - 1);
-			int width = frame->width() * timerEntry.scale / 200;
-			int height = frame->height() * timerEntry.scale / 100;
+		if ((seqEntry.field_13 != 0) || (seqEntry.dynamicHotspotIndex >= 0)) {
+			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
+			M4Sprite *frame = spriteSet.getFrame(seqEntry.frameIndex - 1);
+			int width = frame->width() * seqEntry.scale / 200;
+			int height = frame->height() * seqEntry.scale / 100;
 
 			warning("frame size %d x %d", width, height);
 
 			// TODO: Missing stuff here, and I'm not certain about the dynamic hotspot stuff below
 
-			if (timerEntry.dynamicHotspotIndex >= 0) {
-				DynamicHotspot &dynHotspot = _owner._dynamicHotspots[timerEntry.dynamicHotspotIndex];
+			if (seqEntry.dynamicHotspotIndex >= 0) {
+				DynamicHotspot &dynHotspot = _owner._dynamicHotspots[seqEntry.dynamicHotspotIndex];
 
 				dynHotspot.bounds.left = MAX(x2 - width, 0);
 				dynHotspot.bounds.right = MAX(x2 - width, 319) - dynHotspot.bounds.left + 1;
@@ -511,62 +620,70 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 		}
 
 		// Frame adjustments
-		if (timerEntry.frameStart != timerEntry.numSprites)
-			timerEntry.frameIndex += timerEntry.frameInc;
+		if (seqEntry.frameStart != seqEntry.numSprites)
+			seqEntry.frameIndex += seqEntry.frameInc;
 
-		if (timerEntry.frameIndex >= timerEntry.frameStart) {
-			if (timerEntry.frameIndex > timerEntry.numSprites) {
+		if (seqEntry.frameIndex >= seqEntry.frameStart) {
+			if (seqEntry.frameIndex > seqEntry.numSprites) {
 				result = true;
-				if (timerEntry.animType != ANIMTYPE_CYCLED) {
+				if (seqEntry.animType != ANIMTYPE_CYCLED) {
 					// Keep index from exceeding maximum allowed
-					timerEntry.frameIndex = timerEntry.frameStart;
+					seqEntry.frameIndex = seqEntry.frameStart;
 				} else {
 					// Switch into reverse
-					timerEntry.frameIndex = timerEntry.numSprites - 1;
-					timerEntry.frameInc = -1;
+					seqEntry.frameIndex = seqEntry.numSprites - 1;
+					seqEntry.frameInc = -1;
 				}
 			}
 		} else {
 			// Currently in reverse mode
 			result = true;
 
-			if (timerEntry.animType == ANIMTYPE_CYCLED)
+			if (seqEntry.animType == ANIMTYPE_CYCLED)
 			{
 				// Switch back to forward direction again
-				timerEntry.frameIndex = timerEntry.frameStart + 1;
-				timerEntry.frameInc = 1;
+				seqEntry.frameIndex = seqEntry.frameStart + 1;
+				seqEntry.frameInc = 1;
 			} else {
 				// Otherwise reset back to last sprite for further reverse animating
-				timerEntry.frameIndex = timerEntry.numSprites;		
+				seqEntry.frameIndex = seqEntry.numSprites;		
 			}
 		}
 
-		if (result && (timerEntry.field_24 != 0)) {
-			if (--timerEntry.field_24 != 0)
-				timerEntry.field_25 = -1;
+		if (result && (seqEntry.field_24 != 0)) {
+			if (--seqEntry.field_24 != 0)
+				seqEntry.field_25 = -1;
 		}
 	} else {
 		// Out of sprite slots
-		timerEntry.field_25 = -1;
+		seqEntry.field_25 = -1;
 	}
 
-	if (timerEntry.len27 > 0) {
-		for (int i = 0; i <= timerEntry.len27; ++i) {
-			if ((!timerEntry.fld27[i] && (timerEntry.field_25 != 0)) ||
-				((timerEntry.fld27[i] == 1) && result)) {
+	if (seqEntry.entries.count > 0) {
+		for (int i = 0; i <= seqEntry.entries.count; ++i) {
+			switch (seqEntry.entries.mode[i]) {
+			case SM_0:
+			case SM_1:
+				if (((seqEntry.entries.mode[i] == SM_0) && (seqEntry.field_25 != 0)) ||
+					((seqEntry.entries.mode[i] == SM_1) && result))
 				idx = i;
-			} else if (timerEntry.fld27[i] > 1) {
-				int v = timerEntry.fld2C[i];
-				if ((v == timerEntry.frameIndex) || (v == 0))
+				break;
+
+			case SM_FRAME_INDEX: {
+				int v = seqEntry.entries.frameIndex[i];
+				if ((v == seqEntry.frameIndex) || (v == 0))
 					idx = i;
+			}
+
+			default:
+				break;
 			}
 		}
 	}
 
 	if (idx >= 0) {
-		//_owner._abortTimers = timerEntry.fld36[idx];
-		
-		// TODO: Figure out word_84208, timerEntry.field_3B[]
+		_owner._abortTimers = seqEntry.entries.abortVal[idx];
+		_owner._abortTimersMode = seqEntry.abortMode;
 	}
 
 	return result;
@@ -606,9 +723,15 @@ void MadsSequenceList::delay(uint32 v1, uint32 v2) {
 
 //--------------------------------------------------------------------------
 
-MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this) {
+MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
+		_kernelMessages(*this) {
+	_textSpacing = -1;
+	_ticksAmount = 3;
+	_newTimeout = 0;
 	_abortTimers = 0;
 	_abortTimers2 = 0;
+	_abortTimersMode = ABORTMODE_0;
+	_abortTimersMode2 = ABORTMODE_0;
 }
 
 void MadsView::refresh() {

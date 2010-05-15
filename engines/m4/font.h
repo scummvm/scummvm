@@ -61,6 +61,12 @@ class Font {
 public:
 	Font(MadsM4Engine *vm);
 	~Font();
+
+	Font *getFont(const char *filename) {
+		// TODO: Proper separation of font instances
+		setFont(filename);
+		return this;
+	}
 	void setFont(const char *filename);
 	void setColor(uint8 color);
 	void setColors(uint8 alt1, uint8 alt2, uint8 foreground);
