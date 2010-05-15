@@ -65,6 +65,7 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new Port(0xFFFF);
 	openPort(_menuPort);
+	setPort(_menuPort);
 	_text16->SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->getWidth(), _screen->getHeight());
 	_menuBarRect = Common::Rect(0, 0, _screen->getWidth(), 9);
