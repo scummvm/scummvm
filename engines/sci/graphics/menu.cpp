@@ -392,6 +392,11 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	case SCI_EVENT_KEYBOARD:
 		keyPress = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
 		keyModifier = GET_SEL32V(_segMan, eventObject, SELECTOR(modifiers));
+		// If tab got pressed, handle it here as if it was Ctrl-I - at least sci0 also did it that way
+		if (keyPress == SCI_KEY_TAB) {
+			keyModifier = SCI_KEYMOD_CTRL;
+			keyPress = 'i';
+		}
 		switch (keyPress) {
 		case 0:
 			break;
