@@ -148,7 +148,7 @@ Common::Error SciEngine::run() {
 	//  it to platform windows.
 	if (getPlatform() == Common::kPlatformWindows) {
 		if (!strcmp(getGameID(), "kq6"))
-			upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+			upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 #ifdef ENABLE_SCI32
 		if (!strcmp(getGameID(), "gk1"))
 			upscaledHires = GFX_SCREEN_UPSCALED_640x480;

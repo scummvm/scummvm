@@ -222,6 +222,10 @@ Common::Point GfxCursor::getPosition() {
 		mousePos.x /= 2;
 		mousePos.y /= 2;
 		break;
+	case GFX_SCREEN_UPSCALED_640x440:
+		mousePos.x /= 2;
+		mousePos.y = (mousePos.y * 5) / 11;
+		break;
 	case GFX_SCREEN_UPSCALED_640x480:
 		mousePos.x /= 2;
 		mousePos.y = (mousePos.y * 5) / 12;

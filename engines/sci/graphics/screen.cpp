@@ -47,6 +47,12 @@ GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int ups
 		for (int i = 0; i <= _height; i++)
 			_upscaledMapping[i] = i * 2;
 		break;
+	case GFX_SCREEN_UPSCALED_640x440:
+		_displayWidth = 640;
+		_displayHeight = 440;
+		for (int i = 0; i <= _height; i++)
+			_upscaledMapping[i] = (i * 11) / 5;
+		break;
 	case GFX_SCREEN_UPSCALED_640x480:
 		_displayWidth = 640;
 		_displayHeight = 480;
