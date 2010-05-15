@@ -524,12 +524,16 @@ void GfxView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRe
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
 				color = bitmap[x];
-				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
-					// UpscaledHires means view is hires and is supposed to get drawn onto lowres screen
-					if (!upscaledHires)
-						_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
-					else
+				if (color != clearKey) {
+					if (!upscaledHires) {
+						if (priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y))
+							_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
+					} else {
+						// UpscaledHires means view is hires and is supposed to get drawn onto lowres screen
+						// FIXME(?): we can't read priority directly with the hires coordinates. may not be needed at all
+						//            in kq6
 						_screen->putPixelOnDisplay(clipRectTranslated.left + x, clipRectTranslated.top + y, palette->mapping[color]);
+					}
 				}
 			}
 		}

@@ -75,7 +75,7 @@ private:
 	GfxCoordAdjuster *_coordAdjuster;
 	SciEvent *_event;
 
-	bool _upscaledHires;
+	int _upscaledHires;
 
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
 

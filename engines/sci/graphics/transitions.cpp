@@ -269,8 +269,8 @@ void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag
 			surface->fillRect(rect, 0);
 		} else {
 			Common::Rect upscaledRect = rect;
-			upscaledRect.top *= 2; upscaledRect.bottom *= 2;
-			upscaledRect.left *= 2; upscaledRect.right *= 2;
+			_screen->adjustToUpscaledCoordinates(upscaledRect.top, upscaledRect.left);
+			_screen->adjustToUpscaledCoordinates(upscaledRect.bottom, upscaledRect.right);
 			surface->fillRect(upscaledRect, 0);
 		}
 		g_system->unlockScreen();

@@ -35,23 +35,29 @@
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, bool upscaledHires) :
+GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int upscaledHires) :
 	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
 
 	_pixels = _width * _height;
-	_displayWidth = _width;
-	_displayHeight = _height;
 
-	if (_upscaledHires) {
-		_displayWidth *= 2;
-		_displayHeight *= 2;
-
-#ifdef ENABLE_SCI32
-		// SCI32 also corrects the aspect ratio when upscaling the resolution.
-		// This is especially needed in GK1, as the credits video is 640x480.
-		if (getSciVersion() >= SCI_VERSION_2)
-			_displayHeight = _displayHeight * 6 / 5;
-#endif
+	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_640x400:
+		_displayWidth = 640;
+		_displayHeight = 400;
+		for (int i = 0; i <= _height; i++)
+			_upscaledMapping[i] = i * 2;
+		break;
+	case GFX_SCREEN_UPSCALED_640x480:
+		_displayWidth = 640;
+		_displayHeight = 480;
+		for (int i = 0; i <= _height; i++)
+			_upscaledMapping[i] = (i * 12) / 5;
+		break;
+	default:
+		_displayWidth = _width;
+		_displayHeight = _height;
+		memset(&_upscaledMapping, 0, sizeof(_upscaledMapping) );
+		break;
 	}
 
 	_displayPixels = _displayWidth * _displayHeight;
@@ -98,7 +104,7 @@ void GfxScreen::copyToScreen() {
 void GfxScreen::copyFromScreen(byte *buffer) {
 	Graphics::Surface *screen;
 	screen = g_system->lockScreen();
-	memcpy(buffer, screen->pixels, _displayWidth * _displayHeight);
+	memcpy(buffer, screen->pixels, _displayPixels);
 	g_system->unlockScreen();
 }
 
@@ -113,7 +119,8 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 	} else {
-		g_system->copyRectToScreen(_activeScreen + rect.top * 2 * _displayWidth + rect.left * 2, _displayWidth, rect.left * 2, rect.top * 2, rect.width() * 2, rect.height() * 2);
+		int rectHeight = _upscaledMapping[rect.bottom] - _upscaledMapping[rect.top];
+		g_system->copyRectToScreen(_activeScreen + _upscaledMapping[rect.top] * _displayWidth + rect.left * 2, _displayWidth, rect.left * 2, _upscaledMapping[rect.top], rect.width() * 2, rectHeight);
 	}
 }
 
@@ -128,7 +135,8 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 	if (!_upscaledHires)  {
 		g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 	} else {
-		g_system->copyRectToScreen(_activeScreen + rect.top * 2 * _displayWidth + rect.left * 2, _displayWidth, x * 2, y * 2, rect.width() * 2, rect.height() * 2);
+		int rectHeight = _upscaledMapping[rect.bottom] - _upscaledMapping[rect.top];
+		g_system->copyRectToScreen(_activeScreen + _upscaledMapping[rect.top] * _displayWidth + rect.left * 2, _displayWidth, x * 2, _upscaledMapping[y], rect.width() * 2, rectHeight);
 	}
 }
 
@@ -151,11 +159,14 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
 		if (!_upscaledHires) {
 			_displayScreen[offset] = color;
 		} else {
-			int displayOffset = y * 2 * _displayWidth + x * 2;
-			_displayScreen[displayOffset] = color;
-			_displayScreen[displayOffset + 1] = color;
-			_displayScreen[displayOffset + _displayWidth] = color;
-			_displayScreen[displayOffset + _displayWidth + 1] = color;
+			int displayOffset = _upscaledMapping[y] * _displayWidth + x * 2;
+			int heightOffsetBreak = (_upscaledMapping[y + 1] - _upscaledMapping[y]) * _displayWidth;
+			int heightOffset = 0;
+			do {
+				_displayScreen[displayOffset + heightOffset] = color;
+				_displayScreen[displayOffset + heightOffset + 1] = color;
+				heightOffset += _displayWidth;
+			} while (heightOffset != heightOffsetBreak);
 		}
 	}
 	if (drawMask & GFX_SCREEN_MASK_PRIORITY)
@@ -275,7 +286,8 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 		if (!_upscaledHires) {
 			byteCount += pixels; // _displayScreen
 		} else {
-			byteCount += pixels * 4; // _displayScreen (upscaled hires)
+			int rectHeight = _upscaledMapping[rect.bottom] - _upscaledMapping[rect.top];
+			byteCount += rectHeight * rect.width() * 2; // _displayScreen (upscaled hires)
 		}
 	}
 	if (mask & GFX_SCREEN_MASK_PRIORITY) {
@@ -334,9 +346,10 @@ void GfxScreen::bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	if (!_upscaledHires) {
 		screen += (rect.top * _displayWidth) + rect.left;
 	} else {
-		screen += (rect.top * 2 * _displayWidth) + rect.left * 2;
+		screen += (_upscaledMapping[rect.top] * _displayWidth) + rect.left * 2;
 		width *= 2;
-		rect.top *= 2; rect.bottom *= 2;
+		rect.top = _upscaledMapping[rect.top];
+		rect.bottom = _upscaledMapping[rect.bottom];
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
@@ -393,9 +406,10 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	if (!_upscaledHires) {
 		screen += (rect.top * _displayWidth) + rect.left;
 	} else {
-		screen += (rect.top * 2 * _displayWidth) + rect.left * 2;
+		screen += (_upscaledMapping[rect.top] * _displayWidth) + rect.left * 2;
 		width *= 2;
-		rect.top *= 2; rect.bottom *= 2;
+		rect.top = _upscaledMapping[rect.top];
+		rect.bottom = _upscaledMapping[rect.bottom];
 	}
 
 	for (y = rect.top; y < rect.bottom; y++) {
@@ -540,6 +554,11 @@ void GfxScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 			srcPtr++;
 		}
 	}
+}
+
+void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
+	x *= 2;
+	y = _upscaledMapping[y];
 }
 
 int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {

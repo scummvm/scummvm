@@ -128,7 +128,7 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
 	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
-	position.x *= 2; position.y *= 2;
+	_screen->adjustToUpscaledCoordinates(position.y, position.x);
 	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
 	delete myPortrait;
 }

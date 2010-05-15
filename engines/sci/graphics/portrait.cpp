@@ -45,7 +45,7 @@ Portrait::Portrait(ResourceManager *resMan, SciEvent *event, SciGui *gui, GfxScr
 
 Portrait::~Portrait() {
 	delete[] _bitmaps;
-	delete _fileData;
+	delete[] _fileData;
 }
 
 void Portrait::init() {

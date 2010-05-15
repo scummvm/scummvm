@@ -44,7 +44,7 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 
 	_upscaledHires = _screen->getUpscaledHires();
 	// center mouse cursor
-	setPosition(Common::Point(_screen->getDisplayWidth() / 2, _screen->getDisplayHeight() / 2));
+	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
 	kernelSetMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
 
 	_isVisible = true;
@@ -209,16 +209,24 @@ void GfxCursor::setPosition(Common::Point pos) {
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
-		g_system->warpMouse(pos.x * 2, pos.y * 2);
+		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
+		g_system->warpMouse(pos.x, pos.y);
 	}
 }
 
 Common::Point GfxCursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	if (_upscaledHires) {
+	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_640x400:
 		mousePos.x /= 2;
 		mousePos.y /= 2;
+		break;
+	case GFX_SCREEN_UPSCALED_640x480:
+		mousePos.x /= 2;
+		mousePos.y = (mousePos.y * 5) / 12;
+	default:
+		break;
 	}
 
 	return mousePos;

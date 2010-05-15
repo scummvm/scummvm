@@ -152,15 +152,18 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 		// adjust curPort to upscaled hires
 		clipRect = celRect;
 		curPortRect = _ports->_curPort->rect;
-		curPortRect.top *= 2; curPortRect.bottom *= 2; curPortRect.bottom++;
-		curPortRect.left *= 2; curPortRect.right *= 2; curPortRect.right++;
+		_screen->adjustToUpscaledCoordinates(curPortRect.top, curPortRect.left);
+		_screen->adjustToUpscaledCoordinates(curPortRect.bottom, curPortRect.right);
+		curPortRect.bottom++;
+		curPortRect.right++;
 		clipRect.clip(curPortRect);
 		if (clipRect.isEmpty()) // nothing to draw
 			return;
 
 		clipRectTranslated = clipRect;
 		if (!upscaledHiresHack) {
-			curPortPos.x = _ports->_curPort->left * 2; curPortPos.y = _ports->_curPort->top * 2;
+			curPortPos.x = _ports->_curPort->left; curPortPos.y = _ports->_curPort->top;
+			_screen->adjustToUpscaledCoordinates(curPortPos.y, curPortPos.x);
 			clipRectTranslated.top += curPortPos.y; clipRectTranslated.bottom += curPortPos.y;
 			clipRectTranslated.left += curPortPos.x; clipRectTranslated.right += curPortPos.x;
 		}
@@ -308,8 +311,10 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 
 	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
 		// Adjust rect to upscaled hires, but dont adjust according to port
-		workerRect.top *= 2; workerRect.bottom *= 2; workerRect.bottom++;
-		workerRect.left *= 2; workerRect.right *= 2; workerRect.right++;
+		_screen->adjustToUpscaledCoordinates(workerRect.top, workerRect.left);
+		_screen->adjustToUpscaledCoordinates(workerRect.bottom, workerRect.right);
+		workerRect.bottom++;
+		workerRect.right++;
 	} else {
 		_ports->offsetRect(workerRect);
 	}

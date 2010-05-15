@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-#define SCI_SCREEN_MAXHEIGHT 400
+#define SCI_SCREEN_UPSCALEDMAXHEIGHT 200
 
 enum GfxScreenUpscaledMode {
 	GFX_SCREEN_UPSCALED_DISABLED	= 0,
@@ -58,7 +58,7 @@ enum GfxScreenMasks {
  */
 class GfxScreen {
 public:
-	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, bool upscaledHires = false);
+	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, int upscaledHires = GFX_SCREEN_UPSCALED_DISABLED);
 	~GfxScreen();
 
 	uint16 getWidth() { return _width; }
@@ -82,7 +82,7 @@ public:
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
 	}
-	bool getUpscaledHires() {
+	int getUpscaledHires() {
 		return _upscaledHires;
 	}
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
@@ -101,6 +101,8 @@ public:
 	void setVerticalShakePos(uint16 shakePos);
 
 	void scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
+
+	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
 	void debugUnditherSetState(bool flag);
@@ -138,7 +140,7 @@ private:
 	byte *_priorityScreen;
 	byte *_controlScreen;
 
-	// this screen is the one that is actually displayed to the user. It may be 640x480 for japanese SCI1 games
+	// this screen is the one that is actually displayed to the user. It may be 640x400 for japanese SCI1 games
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
 
@@ -148,7 +150,12 @@ private:
 
 	// this is a pointer to the currently active screen (changing it only required for debug purposes)
 	byte *_activeScreen;
-	bool _upscaledHires;
+
+	// this variable defines, if upscaled hires is active and what upscaled mode is used
+	int _upscaledHires;
+
+	// this here holds a translation for vertical coordinates between native (visual) and actual (display) screen
+	int _upscaledMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
 };
 
 } // End of namespace Sci
