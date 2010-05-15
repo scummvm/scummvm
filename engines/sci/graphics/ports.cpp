@@ -51,7 +51,6 @@ GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
 
 GfxPorts::~GfxPorts() {
 	// TODO: Clear _windowList and delete all stuff in it?
-	delete _mainPort;
 	delete _menuPort;
 }
 
@@ -62,12 +61,6 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	_gui = gui;
 	_paint16 = paint16;
 	_text16 = text16;
-
-	// _mainPort is not known to windowmanager, that's okay according to sierra sci
-	//  its not even used currently in our engine
-	_mainPort = new Port(0);
-	setPort(_mainPort);
-	openPort(_mainPort);
 
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new Port(0xFFFF);

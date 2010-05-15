@@ -118,7 +118,6 @@ private:
 	Common::Array<Port *> _windowsById;
 
 	Common::Rect _bounds;
-	Port *_mainPort;
 
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
