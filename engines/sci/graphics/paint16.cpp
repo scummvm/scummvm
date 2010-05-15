@@ -173,13 +173,13 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 }
 
 void GfxPaint16::clearScreen(byte color) {
-	fillRect(_ports->_curPort->rect, SCI_SCREEN_MASK_ALL, color, 0, 0);
+	fillRect(_ports->_curPort->rect, GFX_SCREEN_MASK_ALL, color, 0, 0);
 }
 
 void GfxPaint16::invertRect(const Common::Rect &rect) {
 	int16 oldpenmode = _ports->_curPort->penMode;
 	_ports->_curPort->penMode = 2;
-	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->penClr, _ports->_curPort->backClr);
+	fillRect(rect, GFX_SCREEN_MASK_VISUAL, _ports->_curPort->penClr, _ports->_curPort->backClr);
 	_ports->_curPort->penMode = oldpenmode;
 }
 
@@ -197,17 +197,17 @@ void GfxPaint16::invertRectViaXOR(const Common::Rect &rect) {
 	for (y = r.top; y < r.bottom; y++) {
 		for (x = r.left; x < r.right; x++) {
 			curVisual = _screen->getVisual(x, y);
-			_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, curVisual ^ 0x0f, 0, 0);
+			_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, curVisual ^ 0x0f, 0, 0);
 		}
 	}
 }
 
 void GfxPaint16::eraseRect(const Common::Rect &rect) {
-	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->backClr);
+	fillRect(rect, GFX_SCREEN_MASK_VISUAL, _ports->_curPort->backClr);
 }
 
 void GfxPaint16::paintRect(const Common::Rect &rect) {
-	fillRect(rect, SCI_SCREEN_MASK_VISUAL, _ports->_curPort->penClr);
+	fillRect(rect, GFX_SCREEN_MASK_VISUAL, _ports->_curPort->penClr);
 }
 
 void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
@@ -222,22 +222,22 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen
 	byte curVisual;
 
 	// Doing visual first
-	if (drawFlags & SCI_SCREEN_MASK_VISUAL) {
+	if (drawFlags & GFX_SCREEN_MASK_VISUAL) {
 		if (oldPenMode == 2) { // invert mode
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
 					curVisual = _screen->getVisual(x, y);
 					if (curVisual == clrPen) {
-						_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrBack, 0, 0);
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrBack, 0, 0);
 					} else if (curVisual == clrBack) {
-						_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrPen, 0, 0);
+						_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrPen, 0, 0);
 					}
 				}
 			}
 		} else { // just fill rect with ClrPen
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, clrPen, 0, 0);
+					_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, clrPen, 0, 0);
 				}
 			}
 		}
@@ -245,7 +245,7 @@ void GfxPaint16::fillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen
 
 	if (drawFlags < 2)
 		return;
-	drawFlags &= SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_CONTROL;
+	drawFlags &= GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL;
 
 	if (oldPenMode != 2) {
 		for (y = r.top; y < r.bottom; y++) {
@@ -306,7 +306,7 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 	if (workerRect.isEmpty()) // nothing to save
 		return NULL_REG;
 
-	if (screenMask == SCI_SCREEN_MASK_DISPLAY) {
+	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
 		// Adjust rect to upscaled hires, but dont adjust according to port
 		workerRect.top *= 2; workerRect.bottom *= 2; workerRect.bottom++;
 		workerRect.left *= 2; workerRect.right *= 2; workerRect.right++;
@@ -407,7 +407,7 @@ reg_t GfxPaint16::kernelGraphSaveBox(Common::Rect rect, uint16 screenMask) {
 }
 
 reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(Common::Rect rect) {
-	return bitsSave(rect, SCI_SCREEN_MASK_DISPLAY);
+	return bitsSave(rect, GFX_SCREEN_MASK_DISPLAY);
 }
 
 void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
@@ -525,9 +525,9 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	}
 
 	if (doSaveUnder)
-		result = bitsSave(rect, SCI_SCREEN_MASK_VISUAL);
+		result = bitsSave(rect, GFX_SCREEN_MASK_VISUAL);
 	if (colorBack != -1)
-		fillRect(rect, SCI_SCREEN_MASK_VISUAL, colorBack, 0, 0);
+		fillRect(rect, GFX_SCREEN_MASK_VISUAL, colorBack, 0, 0);
 	_text16->Box(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		bitsShow(rect);

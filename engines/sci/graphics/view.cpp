@@ -507,7 +507,7 @@ void GfxView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRe
 	int16 width, height;
 	byte clearKey = celInfo->clearKey;
 	byte color;
-	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
+	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 
 	if (_embeddedPal) {
@@ -554,7 +554,7 @@ void GfxView::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect 
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
 	byte clearKey = celInfo->clearKey;
 	byte color;
-	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
+	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 	uint16 scalingX[320];
 	uint16 scalingY[200];

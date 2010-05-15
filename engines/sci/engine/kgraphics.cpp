@@ -463,7 +463,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	int argBase = 0;
 
 	if ((argc == 2) || (argc == 4)) {
-		screenMask = SCI_SCREEN_MASK_CONTROL;
+		screenMask = GFX_SCREEN_MASK_CONTROL;
 	} else {
 		screenMask = argv[0].toUint16();
 		argBase = 1;

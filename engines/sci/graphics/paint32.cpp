@@ -52,7 +52,7 @@ void GfxPaint32::fillRect(Common::Rect rect, byte color) {
 	int16 y, x;
 	for (y = rect.top; y < rect.bottom; y++) {
 		for (x = rect.left; x < rect.right; x++) {
-			_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, color, 0, 0);
+			_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, color, 0, 0);
 		}
 	}
 }

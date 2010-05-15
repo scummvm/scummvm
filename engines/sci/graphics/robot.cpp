@@ -168,7 +168,7 @@ void Robot::draw() {
 	//for (frame = 0; frame < 30; frame++) {
 	for (y = 0; y < _height; y++) {
 		for (x = 0; x < _width; x++) {
-			_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL, *bitmapData, 0, 0);
+			_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL, *bitmapData, 0, 0);
 			bitmapData++;
 		}
 	}

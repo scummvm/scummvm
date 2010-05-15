@@ -53,7 +53,7 @@ uint16 GfxCompare::isOnControl(uint16 screenMask, const Common::Rect &rect) {
 	if (rect.isEmpty())
 		return 0;
 
-	if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
+	if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
 		for (y = rect.top; y < rect.bottom; y++) {
 			for (x = rect.left; x < rect.right; x++) {
 				result |= 1 << _screen->getPriority(x, y);
@@ -161,7 +161,7 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 	signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
 	controlMask = GET_SEL32V(_segMan, curObject, SELECTOR(illegalBits));
-	result = (isOnControl(SCI_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
+	result = (isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _segMan->lookupList(listReference);
 		if (!list)

@@ -86,7 +86,7 @@ void GfxPicture::reset() {
 	int16 x, y;
 	for (y = _ports->getPort()->top; y < _screen->getHeight(); y++) {
 		for (x = 0; x < _screen->getWidth(); x++) {
-			_screen->putPixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
+			_screen->putPixel(x, y, GFX_SCREEN_MASK_ALL, 255, 0, 0);
 		}
 	}
 }
@@ -304,7 +304,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY, curByte, priority, 0);
 
 			x++;
 
@@ -321,7 +321,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY, curByte, priority, 0);
 			
 			if (x == leftX) {
 				if (width > rightX - leftX) // Skip extra pixels at the end of the row
@@ -716,35 +716,35 @@ void GfxPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, by
 	byte searchControl = _screen->getControl(p.x, p.y);
 
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
-	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
+	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
 		if ((color == _screen->getColorWhite()) || (searchColor != _screen->getColorWhite()))
 			return;
-	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
+	} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
 		if ((priority == 0) || (searchPriority != 0))
 			return;
-	} else if (screenMask & SCI_SCREEN_MASK_CONTROL) {
+	} else if (screenMask & GFX_SCREEN_MASK_CONTROL) {
 		if ((control == 0) || (searchControl != 0))
 			return;
 	}
 
 	// Now remove screens, that already got the right color/priority/control
-	if ((screenMask & SCI_SCREEN_MASK_VISUAL) && (searchColor == color))
-		screenMask ^= SCI_SCREEN_MASK_VISUAL;
-	if ((screenMask & SCI_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
-		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
-	if ((screenMask & SCI_SCREEN_MASK_CONTROL) && (searchControl == control))
-		screenMask ^= SCI_SCREEN_MASK_CONTROL;
+	if ((screenMask & GFX_SCREEN_MASK_VISUAL) && (searchColor == color))
+		screenMask ^= GFX_SCREEN_MASK_VISUAL;
+	if ((screenMask & GFX_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
+		screenMask ^= GFX_SCREEN_MASK_PRIORITY;
+	if ((screenMask & GFX_SCREEN_MASK_CONTROL) && (searchControl == control))
+		screenMask ^= GFX_SCREEN_MASK_CONTROL;
 
 	// Exit, if no screens left
 	if (!screenMask)
 		return;
 
-	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
-		matchMask = SCI_SCREEN_MASK_VISUAL;
-	} else if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
-		matchMask = SCI_SCREEN_MASK_PRIORITY;
+	if (screenMask & GFX_SCREEN_MASK_VISUAL) {
+		matchMask = GFX_SCREEN_MASK_VISUAL;
+	} else if (screenMask & GFX_SCREEN_MASK_PRIORITY) {
+		matchMask = GFX_SCREEN_MASK_PRIORITY;
 	} else {
-		matchMask = SCI_SCREEN_MASK_CONTROL;
+		matchMask = GFX_SCREEN_MASK_CONTROL;
 	}
 
 	// hard borders for filling

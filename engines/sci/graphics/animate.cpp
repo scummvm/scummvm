@@ -316,7 +316,7 @@ void GfxAnimate::update() {
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
-				_paint16->fillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 			listEntry->signal = signal;
 		}
@@ -336,9 +336,9 @@ void GfxAnimate::update() {
 			} else {
 				signal &= 0xFFFF ^ kSignalRemoveView;
 				if (signal & kSignalIgnoreActor)
-					bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
+					bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
 				else
-					bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+					bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_ALL);
 				PUT_SEL32(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 			}
 			listEntry->signal = signal;
@@ -361,7 +361,7 @@ void GfxAnimate::update() {
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
-				_paint16->fillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
 		listIterator++;
@@ -386,7 +386,7 @@ void GfxAnimate::drawCels() {
 
 		if (!(signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
 			// Save background
-			bitsHandle = _paint16->bitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+			bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_ALL);
 			PUT_SEL32(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
@@ -504,7 +504,7 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 		lastCastEntry = _lastCastData;
 		lastCastCount = _lastCastCount;
 		while (lastCastCount > 0) {
-			lastCastEntry->castHandle = _paint16->bitsSave(lastCastEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
+			lastCastEntry->castHandle = _paint16->bitsSave(lastCastEntry->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
 			_paint16->drawCel(lastCastEntry->viewId, lastCastEntry->loopNo, lastCastEntry->celNo, lastCastEntry->celRect, lastCastEntry->priority, lastCastEntry->paletteNo, lastCastEntry->scaleX, lastCastEntry->scaleY);
 			lastCastEntry++; lastCastCount--;
 		}
@@ -546,7 +546,7 @@ void GfxAnimate::addToPicDrawCels() {
 		_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 		if ((listEntry->signal & kSignalIgnoreActor) == 0) {
 			listEntry->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
-			_paint16->fillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+			_paint16->fillRect(listEntry->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
 
 		listIterator++;

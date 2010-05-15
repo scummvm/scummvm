@@ -135,18 +135,18 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
 byte GfxScreen::getDrawingMask(byte color, byte prio, byte control) {
 	byte flag = 0;
 	if (color != 255)
-		flag |= SCI_SCREEN_MASK_VISUAL;
+		flag |= GFX_SCREEN_MASK_VISUAL;
 	if (prio != 255)
-		flag |= SCI_SCREEN_MASK_PRIORITY;
+		flag |= GFX_SCREEN_MASK_PRIORITY;
 	if (control != 255)
-		flag |= SCI_SCREEN_MASK_CONTROL;
+		flag |= GFX_SCREEN_MASK_CONTROL;
 	return flag;
 }
 
 void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = y * _width + x;
 
-	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
+	if (drawMask & GFX_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
 		if (!_upscaledHires) {
 			_displayScreen[offset] = color;
@@ -158,9 +158,9 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
 			_displayScreen[displayOffset + _displayWidth + 1] = color;
 		}
 	}
-	if (drawMask & SCI_SCREEN_MASK_PRIORITY)
+	if (drawMask & GFX_SCREEN_MASK_PRIORITY)
 		_priorityScreen[offset] = priority;
-	if (drawMask & SCI_SCREEN_MASK_CONTROL)
+	if (drawMask & GFX_SCREEN_MASK_CONTROL)
 		_controlScreen[offset] = control;
 }
 
@@ -258,19 +258,19 @@ byte GfxScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byt
 	int offset = y * _width + x;
 	byte match = 0;
 
-	if (screenMask & SCI_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
-		match |= SCI_SCREEN_MASK_VISUAL;
-	if (screenMask & SCI_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
-		match |= SCI_SCREEN_MASK_PRIORITY;
-	if (screenMask & SCI_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
-		match |= SCI_SCREEN_MASK_CONTROL;
+	if (screenMask & GFX_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
+		match |= GFX_SCREEN_MASK_VISUAL;
+	if (screenMask & GFX_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
+		match |= GFX_SCREEN_MASK_PRIORITY;
+	if (screenMask & GFX_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
+		match |= GFX_SCREEN_MASK_CONTROL;
 	return match;
 }
 
 int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
-	if (mask & SCI_SCREEN_MASK_VISUAL) {
+	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		byteCount += pixels; // _visualScreen
 		if (!_upscaledHires) {
 			byteCount += pixels; // _displayScreen
@@ -278,13 +278,13 @@ int GfxScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 			byteCount += pixels * 4; // _displayScreen (upscaled hires)
 		}
 	}
-	if (mask & SCI_SCREEN_MASK_PRIORITY) {
+	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		byteCount += pixels; // _priorityScreen
 	}
-	if (mask & SCI_SCREEN_MASK_CONTROL) {
+	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		byteCount += pixels; // _controlScreen
 	}
-	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
 			error("bitsGetDataSize() called w/o being in upscaled hires mode");
 		byteCount += pixels; // _displayScreen (coordinates actually are given to us for hires displayScreen)
@@ -297,17 +297,17 @@ void GfxScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
-	if (mask & SCI_SCREEN_MASK_VISUAL) {
+	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsSaveScreen(rect, _visualScreen, _width, memoryPtr);
 		bitsSaveDisplayScreen(rect, memoryPtr);
 	}
-	if (mask & SCI_SCREEN_MASK_PRIORITY) {
+	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsSaveScreen(rect, _priorityScreen, _width, memoryPtr);
 	}
-	if (mask & SCI_SCREEN_MASK_CONTROL) {
+	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		bitsSaveScreen(rect, _controlScreen, _width, memoryPtr);
 	}
-	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
 			error("bitsSave() called w/o being in upscaled hires mode");
 		bitsSaveScreen(rect, _displayScreen, _displayWidth, memoryPtr);
@@ -356,17 +356,17 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 	memcpy((void *)&rect, memoryPtr, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
 
-	if (mask & SCI_SCREEN_MASK_VISUAL) {
+	if (mask & GFX_SCREEN_MASK_VISUAL) {
 		bitsRestoreScreen(rect, memoryPtr, _visualScreen, _width);
 		bitsRestoreDisplayScreen(rect, memoryPtr);
 	}
-	if (mask & SCI_SCREEN_MASK_PRIORITY) {
+	if (mask & GFX_SCREEN_MASK_PRIORITY) {
 		bitsRestoreScreen(rect, memoryPtr, _priorityScreen, _width);
 	}
-	if (mask & SCI_SCREEN_MASK_CONTROL) {
+	if (mask & GFX_SCREEN_MASK_CONTROL) {
 		bitsRestoreScreen(rect, memoryPtr, _controlScreen, _width);
 	}
-	if (mask & SCI_SCREEN_MASK_DISPLAY) {
+	if (mask & GFX_SCREEN_MASK_DISPLAY) {
 		if (!_upscaledHires)
 			error("bitsRestore() called w/o being in upscaled hires mode");
 		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);

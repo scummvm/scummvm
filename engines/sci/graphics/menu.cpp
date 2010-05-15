@@ -563,12 +563,12 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	}
 
 	// Save background
-	_menuSaveHandle = _paint16->bitsSave(_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_menuSaveHandle = _paint16->bitsSave(_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	// Do the drawing
-	_paint16->fillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, 0);
+	_paint16->fillRect(_menuRect, GFX_SCREEN_MASK_VISUAL, 0);
 	_menuRect.left++; _menuRect.right--; _menuRect.bottom--;
-	_paint16->fillRect(_menuRect, SCI_SCREEN_MASK_VISUAL, _screen->getColorWhite());
+	_paint16->fillRect(_menuRect, GFX_SCREEN_MASK_VISUAL, _screen->getColorWhite());
 
 	_menuRect.left += 8;
 	topPos = _menuRect.top + 1;
@@ -588,7 +588,7 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 				pixelPos.y = topPos + (_ports->_curPort->fontHeight >> 1) - 1;
 				pixelPos.x = _menuRect.left - 7;
 				while (pixelPos.x < (_menuRect.right - 1)) {
-					_screen->putPixel(pixelPos.x, pixelPos.y, SCI_SCREEN_MASK_VISUAL, 0, 0, 0);
+					_screen->putPixel(pixelPos.x, pixelPos.y, GFX_SCREEN_MASK_VISUAL, 0, 0, 0);
 					pixelPos.x += 2;
 				}
 			}
@@ -689,7 +689,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 
 	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
-	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
 	_ports->backColor(_screen->getColorWhite());
@@ -810,7 +810,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 
 	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
-	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
 	_ports->backColor(_screen->getColorWhite());

@@ -247,7 +247,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
 	pwnd->bDrawn = false;
 	if ((style & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0)
-		pwnd->saveScreenMask = (priority == -1 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY);
+		pwnd->saveScreenMask = (priority == -1 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY);
 
 	if (title && (style & SCI_WINDOWMGR_STYLE_TITLE)) {
 		pwnd->title = title;
@@ -301,11 +301,11 @@ void GfxPorts::drawWindow(Window *pWnd) {
 	Port *oldport = setPort(_wmgrPort);
 	penColor(0);
 	if ((wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0) {
-		pWnd->hSaved1 = _paint16->bitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
-		if (pWnd->saveScreenMask & SCI_SCREEN_MASK_PRIORITY) {
-			pWnd->hSaved2 = _paint16->bitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
+		pWnd->hSaved1 = _paint16->bitsSave(pWnd->restoreRect, GFX_SCREEN_MASK_VISUAL);
+		if (pWnd->saveScreenMask & GFX_SCREEN_MASK_PRIORITY) {
+			pWnd->hSaved2 = _paint16->bitsSave(pWnd->restoreRect, GFX_SCREEN_MASK_PRIORITY);
 			if ((wndStyle & SCI_WINDOWMGR_STYLE_USER) == 0)
-				_paint16->fillRect(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY, 0, 15);
+				_paint16->fillRect(pWnd->restoreRect, GFX_SCREEN_MASK_PRIORITY, 0, 15);
 		}
 	}
 
@@ -327,9 +327,9 @@ void GfxPorts::drawWindow(Window *pWnd) {
 				}
 				r.grow(-1);
 				if (getSciVersion() <= SCI_VERSION_0_LATE)
-					_paint16->fillRect(r, SCI_SCREEN_MASK_VISUAL, 8); // grey titlebar for SCI0
+					_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, 8); // grey titlebar for SCI0
 				else
-					_paint16->fillRect(r, SCI_SCREEN_MASK_VISUAL, 0); // black titlebar for SCI01+
+					_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, 0); // black titlebar for SCI01+
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = getPort()->penClr;
 					penColor(_screen->getColorWhite());
@@ -346,7 +346,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 		}
 
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
-			_paint16->fillRect(r, SCI_SCREEN_MASK_VISUAL, pWnd->backClr);
+			_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, pWnd->backClr);
 
 		_paint16->bitsShow(pWnd->restoreRect);
 	}
@@ -371,11 +371,11 @@ void GfxPorts::updateWindow(Window *wnd) {
 	reg_t handle;
 
 	if (wnd->saveScreenMask && wnd->bDrawn) {
-		handle = _paint16->bitsSave(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
+		handle = _paint16->bitsSave(wnd->restoreRect, GFX_SCREEN_MASK_VISUAL);
 		_paint16->bitsRestore(wnd->hSaved1);
 		wnd->hSaved1 = handle;
-		if (wnd->saveScreenMask & SCI_SCREEN_MASK_PRIORITY) {
-			handle = _paint16->bitsSave(wnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
+		if (wnd->saveScreenMask & GFX_SCREEN_MASK_PRIORITY) {
+			handle = _paint16->bitsSave(wnd->restoreRect, GFX_SCREEN_MASK_PRIORITY);
 			_paint16->bitsRestore(wnd->hSaved2);
 			wnd->hSaved2 = handle;
 		}
