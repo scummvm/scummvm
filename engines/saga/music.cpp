@@ -396,7 +396,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		// Note that the IHNM demo has only got one music file
 		// (music.rsc). It is assumed that it contains FM music
 
-		if (hasAdLib() || _vm->getFeatures() & GF_IHNM_DEMO) {
+		if (hasAdLib() || _vm->isIHNMDemo()) {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
 		} else {
 			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);

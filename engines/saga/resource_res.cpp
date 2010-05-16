@@ -46,7 +46,7 @@ static int metaResourceTableDemo[] = { 0, 0, 0, 0, 0, 0, 0, 285, 0 };
 
 void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	if (chapter < 0)
-		chapter = (!(_vm->getFeatures() & GF_IHNM_DEMO)) ? 8 : 7;
+		chapter = !_vm->isIHNMDemo() ? 8 : 7;
 
 	_vm->_script->_globalVoiceLUT.freeMem();
 
@@ -69,7 +69,7 @@ void Resource_RES::loadGlobalResources(int chapter, int actorsEntrance) {
 	byte *resourcePointer;
 	size_t resourceLength;
 
-	if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
+	if (!_vm->isIHNMDemo()) {
 		_vm->_resource->loadResource(resourceContext, metaResourceTable[chapter],
 									 resourcePointer, resourceLength);
 	} else {

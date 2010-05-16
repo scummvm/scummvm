@@ -636,7 +636,7 @@ void Scene::loadScene(LoadSceneParams &loadSceneParams) {
 		_vm->_interface->activate();
 
 		if (loadSceneParams.chapter == 8 || loadSceneParams.chapter == -1) {
-			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
+			if (!_vm->isIHNMDemo())
 				_vm->_interface->setMode(kPanelChapterSelection);
 			else
 				_vm->_interface->setMode(kPanelNull);
@@ -1518,7 +1518,7 @@ void Scene::showPsychicProfile(const char *text) {
 }
 
 void Scene::clearPsychicProfile() {
-	if (_vm->_interface->getMode() == kPanelPlacard || _vm->getFeatures() & GF_IHNM_DEMO) {
+	if (_vm->_interface->getMode() == kPanelPlacard || _vm->isIHNMDemo()) {
 		_vm->_render->setFlag(RF_DISABLE_ACTORS);
 		_vm->_scene->clearPlacard();
 		_vm->_interface->activate();

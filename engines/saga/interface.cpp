@@ -387,7 +387,7 @@ int Interface::activate() {
 		unlockMode();
 		if (_panelMode == kPanelMain || _panelMode == kPanelChapterSelection) {
 			_saveReminderState = 1;
-		} else if (_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO) {
+		} else if (_panelMode == kPanelNull && _vm->isIHNMDemo()) {
 			_saveReminderState = 1;
 		}
 		_vm->_gfx->showCursor(true);
@@ -438,7 +438,7 @@ void Interface::setMode(int mode) {
 	} else if (mode == kPanelChapterSelection) {
 		_saveReminderState = 1;
 	} else if (mode == kPanelNull) {
-		if (_vm->getFeatures() & GF_IHNM_DEMO) {
+		if (_vm->isIHNMDemo()) {
 			_inMainMode = true;
 			_saveReminderState = 1;
 		}
@@ -728,7 +728,7 @@ bool Interface::processAscii(Common::KeyState keystate) {
 #ifdef ENABLE_IHNM
 		if (_vm->getGameId() == GID_IHNM) {
 			// Any keypress here returns the user back to the game
-			if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
+			if (!_vm->isIHNMDemo()) {
 				_vm->_scene->clearPsychicProfile();
 			} else {
 				setMode(kPanelConverse);
@@ -809,7 +809,7 @@ void Interface::draw() {
 	drawStatusBar();
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelMap ||
-		(_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO)) {
+		(_panelMode == kPanelNull && _vm->isIHNMDemo())) {
 		_mainPanel.getRect(rect);
 		_vm->_gfx->drawRegion(rect, _mainPanel.image);
 
@@ -826,7 +826,7 @@ void Interface::draw() {
 
 	if (_panelMode == kPanelMain || _panelMode == kPanelConverse ||
 		_lockedMode == kPanelMain || _lockedMode == kPanelConverse ||
-		(_panelMode == kPanelNull && _vm->getFeatures() & GF_IHNM_DEMO)) {
+		(_panelMode == kPanelNull && _vm->isIHNMDemo())) {
 		leftPortraitPoint.x = _mainPanel.x + _vm->getDisplayInfo().leftPortraitXOffset;
 		leftPortraitPoint.y = _mainPanel.y + _vm->getDisplayInfo().leftPortraitYOffset;
 		_vm->_sprite->draw(_defPortraits, _leftPortrait, leftPortraitPoint, 256);
@@ -1079,7 +1079,7 @@ void Interface::setQuit(PanelButton *panelButton) {
 			break;
 		case kTextQuit:
 #ifdef ENABLE_IHNM
-			if (_vm->getFeatures() & GF_IHNM_DEMO)
+			if (_vm->isIHNMDemo())
 				_vm->_scene->creditsScene();	// display sales info for IHNM demo
 			else
 #endif
@@ -1853,7 +1853,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		if (_vm->getGameId() == GID_IHNM) {
 			// Any mouse click here returns the user back to the game
 			if (updateFlag & UPDATE_MOUSECLICK) {
-				if (!(_vm->getFeatures() & GF_IHNM_DEMO)) {
+				if (!_vm->isIHNMDemo()) {
 					_vm->_scene->clearPsychicProfile();
 				} else {
 					setMode(kPanelConverse);

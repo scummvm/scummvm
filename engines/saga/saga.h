@@ -150,9 +150,8 @@ enum GameFeatures {
 #endif
 	GF_MONO_MUSIC        = 1 << 4,
 	GF_EXTRA_ITE_CREDITS = 1 << 5,
-	GF_IHNM_DEMO         = 1 << 6,
-	GF_LE_VOICES         = 1 << 7,
-	GF_8BIT_UNSIGNED_PCM = 1 << 8
+	GF_LE_VOICES         = 1 << 6,
+	GF_8BIT_UNSIGNED_PCM = 1 << 7
 };
 
 enum VerbTypeIds {
@@ -502,6 +501,8 @@ public:
 		return isSaveListFull() ? _saveFilesCount : _saveFilesCount + 1;
 	}
 
+	bool isIHNMDemo() { return _isIHNMDemo; }
+
 	int16 _framesEsc;
 
 	uint32 _globalFlags;
@@ -519,6 +520,7 @@ public:
 	bool _copyProtection;
 	bool _gf_wyrmkeep;
 	bool _musicWasPlaying;
+	bool _isIHNMDemo;
 
 	SndRes *_sndRes;
 	Sound *_sound;

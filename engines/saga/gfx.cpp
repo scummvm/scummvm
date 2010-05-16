@@ -494,7 +494,7 @@ void Gfx::setCursor(CursorType cursorType) {
 
 		switch (cursorType) {
 		case kCursorBusy:
-			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
+			if (!_vm->isIHNMDemo())
 				resourceId = RID_IHNM_HOURGLASS_CURSOR;
 			else
 				resourceId = (uint32)-1;

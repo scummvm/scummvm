@@ -74,7 +74,7 @@ SndRes::SndRes(SagaEngine *vm) : _vm(vm), _sfxContext(NULL), _voiceContext(NULL)
 		byte *resourcePointer;
 		size_t resourceLength;
 
-		if (_vm->getFeatures() & GF_IHNM_DEMO) {
+		if (_vm->isIHNMDemo()) {
 			_vm->_resource->loadResource(resourceContext, RID_IHNMDEMO_SFX_LUT,
 									 resourcePointer, resourceLength);
 		} else {

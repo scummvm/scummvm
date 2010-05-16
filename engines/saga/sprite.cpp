@@ -63,7 +63,7 @@ Sprite::Sprite(SagaEngine *vm) : _vm(vm) {
 		_arrowSprites = _saveReminderSprites = _inventorySprites = _mainSprites;
 #ifdef ENABLE_IHNM
 	} else if (_vm->getGameId() == GID_IHNM) {
-		if (_vm->getFeatures() & GF_IHNM_DEMO) {
+		if (_vm->isIHNMDemo()) {
 			loadList(RID_IHNMDEMO_ARROW_SPRITES, _arrowSprites);
 			loadList(RID_IHNMDEMO_SAVEREMINDER_SPRITES, _saveReminderSprites);
 		} else {

@@ -327,7 +327,7 @@ void SagaEngine::load(const char *fileName) {
 		_music->stop();
 		if (_scene->currentChapterNumber() == 8)
 			_interface->setMode(kPanelChapterSelection);
-		if (!(getFeatures() & GF_IHNM_DEMO)) {
+		if (!isIHNMDemo()) {
 			_music->play(_music->_songTable[_scene->getCurrentMusicTrack()], _scene->getCurrentMusicRepeat() ? MUSIC_LOOP : MUSIC_NORMAL);
 		} else {
 			_music->play(3, MUSIC_LOOP);

@@ -366,7 +366,7 @@ class Scene {
 	void showIHNMDemoSpecialScreen();
 
 	bool isNonInteractiveIHNMDemoPart() {
-		return _vm->getFeatures() & GF_IHNM_DEMO && (_sceneNumber >= 144 && _sceneNumber <= 149);
+		return _vm->isIHNMDemo() && (_sceneNumber >= 144 && _sceneNumber <= 149);
 	}
 
 	bool isITEPuzzleScene() {

@@ -508,13 +508,13 @@ int Events::handleOneShot(Event *event) {
 		case kEventSetNormalCursor:
 			// in ITE and IHNM demo there is just one cursor
 			// ITE never makes this call
-			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
+			if (!_vm->isIHNMDemo())
 				_vm->_gfx->setCursor(kCursorNormal);
 			break;
 		case kEventSetBusyCursor:
 			// in ITE and IHNM demo there is just one cursor
 			// ITE never makes this call
-			if (!(_vm->getFeatures() & GF_IHNM_DEMO))
+			if (!_vm->isIHNMDemo())
 				_vm->_gfx->setCursor(kCursorBusy);
 			break;
 		default:

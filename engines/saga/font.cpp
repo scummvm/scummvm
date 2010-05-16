@@ -651,7 +651,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 	FontId fontId = kSmallFont;
 
 	// The demo version of IHNM has 3 font types (like ITE), not 6 (like the full version of IHNM)
-	if (_vm->getGameId() == GID_ITE || _vm->getFeatures() & GF_IHNM_DEMO) {
+	if (_vm->getGameId() == GID_ITE || _vm->isIHNMDemo()) {
 		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;
@@ -674,7 +674,7 @@ Font::FontId Font::knownFont2FontIdx(KnownFont font) {
 			break;
 		}
 #ifdef ENABLE_IHNM
-	} else if (_vm->getGameId() == GID_IHNM && !(_vm->getFeatures() & GF_IHNM_DEMO)) {
+	} else if (_vm->getGameId() == GID_IHNM && !_vm->isIHNMDemo()) {
 		switch (font) {
 		case (kKnownFontSmall):
 			fontId = kSmallFont;

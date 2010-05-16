@@ -222,6 +222,7 @@ Common::Error SagaEngine::run() {
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_gf_wyrmkeep = false;
 	_musicWasPlaying = false;
+	_isIHNMDemo = Common::File::exists("music.res");
 
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;

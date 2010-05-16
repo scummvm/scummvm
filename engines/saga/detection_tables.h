@@ -626,7 +626,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_IHNM,
-		GF_IHNM_DEMO,
+		0,
 		IHNMDEMO_DEFAULT_SCENE,
 		&IHNMDEMO_Resources,
 		ARRAYSIZE(IHNMDEMO_GameFonts),
