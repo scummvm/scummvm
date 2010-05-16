@@ -186,7 +186,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 	free(resource);
 
 	// Option panel
-	if (!(_vm->getFeatures() & GF_NON_INTERACTIVE)) {
+	if (!_vm->_script->isNonInteractiveDemo()) {
 		_optionPanel.buttons = _vm->getDisplayInfo().optionPanelButtons;
 		_optionPanel.buttonsCount = _vm->getDisplayInfo().optionPanelButtonsCount;
 
@@ -237,7 +237,7 @@ Interface::Interface(SagaEngine *vm) : _vm(vm) {
 
 	// Main panel sprites
 	_vm->_sprite->loadList(_vm->getResourceDescription()->mainPanelSpritesResourceId, _mainPanel.sprites);
-	if (!(_vm->getFeatures() & GF_NON_INTERACTIVE)) {
+	if (!_vm->_script->isNonInteractiveDemo()) {
 		// Option panel sprites
 		_vm->_sprite->loadList(_vm->getResourceDescription()->optionPanelSpritesResourceId, _optionPanel.sprites);
 		// Save panel sprites

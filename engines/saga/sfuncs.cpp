@@ -226,7 +226,7 @@ void Script::sfMainMode(SCRIPTFUNC_PARAMS) {
 	// exit the game. Therefore, once this opcode is called in the older ITE demos,
 	// exit the game. Known non-interactive demos are GID_ITE_MACDEMO1 and
 	// GID_ITE_WINDEMO1
-	if (_vm->getFeatures() & GF_NON_INTERACTIVE)
+	if (_vm->_script->isNonInteractiveDemo())
 		_vm->quitGame();
 }
 

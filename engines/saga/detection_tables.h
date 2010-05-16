@@ -250,7 +250,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NOSPEECH
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_NON_INTERACTIVE | GF_LE_VOICES,
+		GF_WYRMKEEP | GF_LE_VOICES,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),
@@ -302,7 +302,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			GUIO_NONE
 		},
 		GID_ITE,
-		GF_WYRMKEEP | GF_NON_INTERACTIVE | GF_8BIT_UNSIGNED_PCM,
+		GF_WYRMKEEP | GF_8BIT_UNSIGNED_PCM,
 		ITE_DEFAULT_SCENE,
 		&ITE_Resources,
 		ARRAYSIZE(ITEWINDEMO_GameFonts),

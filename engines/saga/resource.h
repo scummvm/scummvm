@@ -119,6 +119,10 @@ public:
 		return _fileType;
 	}
 
+	int32 fileSize() const {
+		return _fileSize;
+	}
+
 	int serial() const {
 		return _serial;
 	}

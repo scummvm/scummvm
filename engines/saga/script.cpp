@@ -1321,6 +1321,12 @@ void Script::setVerb(int verb) {
 	showVerb();
 }
 
+bool Script::isNonInteractiveDemo() {
+	// This detection only works in ITE. The early non-interactive demos had
+	// a very small script file
+	return _vm->getGameId() == GID_ITE && _scriptContext->fileSize() < 50000;
+}
+
 void Script::setLeftButtonVerb(int verb) {
 	int		oldVerb = _currentVerb;
 

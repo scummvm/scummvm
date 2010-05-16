@@ -341,6 +341,8 @@ public:
 	int getVerbType(VerbTypes verbType);
 	TextListEntry *getPlacardTextEntry() { return _placardTextEntry; }
 
+	bool isNonInteractiveDemo();
+
 protected:
 	// When reading or writing data to the common buffer, we have to use a
 	// well-defined byte order since it's stored in savegames. Otherwise,
