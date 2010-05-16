@@ -72,6 +72,7 @@ public:
 	void setCodeSurface(M4Surface *surface) { _walkCodes = surface; }
 	void clearRails();
 	int32 addRailNode(int32 x, int32 y, bool restoreEdges);
+	uint8 getDepth(const Common::Point &pt);
 
 private:
 	Common::Array<RailNode *> _nodes;

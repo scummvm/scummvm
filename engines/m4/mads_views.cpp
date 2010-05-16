@@ -258,7 +258,7 @@ void MadsKernelMessageList::clear() {
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
 }
 
-int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, char *msg) {
+int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && ((_entries[idx].flags & KMSG_ACTIVE) != 0))
@@ -289,6 +289,11 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
 
 	return idx;
+}
+
+int MadsKernelMessageList::addQuote(int quoteId, int v2, uint32 timeout) {
+	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
+	return add(Common::Point(0, 0), 0x1110, KMSG_2 | KMSG_20, v2, timeout, quoteStr);
 }
 
 void MadsKernelMessageList::unk1(int msgIndex, int v1, int v2) {
@@ -322,8 +327,8 @@ void MadsKernelMessageList::remove(int msgIndex) {
 
 	if (rec.flags & KMSG_ACTIVE) {
 		if (rec.flags & KMSG_8) {
-			*(rec.msg + rec.msgOffset) = rec.asciiChar;
-			*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
+			//*(rec.msg + rec.msgOffset) = rec.asciiChar;
+			//*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
 		}
 
 		if (rec.textDisplayIndex >= 0)
@@ -497,7 +502,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 }
 
 int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int frameInc, SpriteAnimType animType, int numSprites, 
+		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
 	// Find a free slot

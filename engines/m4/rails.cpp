@@ -95,6 +95,12 @@ bool Rails::isLineWalkable(int x0, int y0, int x1, int y1) {
 	return isWalkableData.result;
 }
 
+uint8 Rails::getDepth(const Common::Point &pt) {
+	// TODO: Check based on sceneResources
+	const byte *b = _walkCodes->getBasePtr(pt.x, pt.y);
+	return *b & 0xf;
+}
+
 // helper function
 uint8 getEndCode(int32 x, int32 y, Common::Rect rect) {
 	uint8 endCode = 0;

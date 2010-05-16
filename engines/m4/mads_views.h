@@ -131,7 +131,7 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define TEXT_4A_SIZE 30
 
-enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageListEntry {
 public:
@@ -151,7 +151,7 @@ public:
 	bool field_1C;
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
-	char *msg;
+	const char *msg;
 };
 
 class MadsKernelMessageList {
@@ -163,7 +163,8 @@ public:
 	MadsKernelMessageList(MadsView &owner);
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, char *msg);
+	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg);
+	int addQuote(int quoteId, int v2, uint32 timeout);
 	void unk1(int msgIndex, int v1, int v2);
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);
@@ -295,7 +296,7 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
 	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, char depth, int frameInc, SpriteAnimType animType, 
+		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
 	void remove(int timerIndex);
 	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);

@@ -79,29 +79,29 @@ uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
 
 uint16 MadsSceneLogic::startSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
-	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
-		spriteFrame->y + (spriteFrame->height() / 2));
+	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, 1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
+		-1, 100, depth - 1, 1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
 }
 
 uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
-	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
-		spriteFrame->y + (spriteFrame->height() / 2));
+	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, 1, ANIMTYPE_CYCLED, 0, 0);
+		-1, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
-	uint8 pixel = *_madsVm->scene()->getWalkSurface()->getBasePtr(spriteFrame->x + (spriteFrame->width() / 2),
-		spriteFrame->y + (spriteFrame->height() / 2));
+	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
+		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, fld24, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, (int)pixel - 1, -1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
+		-1, 100, depth - 1, -1, ANIMTYPE_SINGLE_DIRECTION, 0, 0);
 }
 
 void MadsSceneLogic::activateHotspot(int idx, bool active) {
