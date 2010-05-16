@@ -1,0 +1,23 @@
+product scummvm
+    id "scummvm 1.2.0svn Script Creation Utility Maniac Mansion VM"
+    image sw
+        id "software"
+        version 18
+        order 9999
+        subsys eoe default
+            id "execution only env"
+            replaces self
+            exp scummvm.sw.eoe
+        endsubsys
+    endimage
+    image man
+        id "man pages"
+        version 18
+        order 9999
+        subsys readme default
+            id "scummvm documentation"
+            replaces self
+            exp scummvm.man.readme
+        endsubsys
+    endimage
+endproduct
