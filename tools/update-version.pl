@@ -38,7 +38,7 @@ my @subs_files = qw(
 	dists/slackware/scummvm.SlackBuild
 	dists/macosx/Info.plist
 	dists/iphone/Info.plist
-	dists/irix/scummvm.spec.in
+	dists/irix/scummvm.spec
 	dists/wii/meta.xml
 	backends/platform/psp/README.PSP
 	);
