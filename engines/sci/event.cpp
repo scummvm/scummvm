@@ -202,7 +202,7 @@ sciEvent SciEvent::getFromScummVM() {
 				// SCI_K_SHIFT_F1 == 84 << 8
 				input.data = SCI_KEY_F1 + ((input.data - Common::KEYCODE_F1)<<8);
 				if (input.modifiers & (SCI_KEYMOD_LSHIFT | SCI_KEYMOD_RSHIFT))
-					input.character = input.data + 25;
+					input.character = input.data + 0x1900;
 				else
 					input.character = input.data;
 			} else {
