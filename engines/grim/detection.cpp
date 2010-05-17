@@ -51,7 +51,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("grim.tab", "cfb333d6aec260c905151b6b98ef71e8", 362212),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -64,7 +64,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("grim.tab", "464138caf47e580cbb237dee10674b16", 398592),
 			Common::DE_DEU,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -77,7 +77,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("grim.tab", "b1460cd029f13718f7f62c2403e047ec", 372709),
 			Common::ES_ESP,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -90,7 +90,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("grim.tab", "2d99c796b7a4e5c421cae49dc29dab6c", 369071),
 			Common::IT_ITA,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -103,7 +103,7 @@ static const GrimGameDescription gameDescriptions[] = {
 			0,
 			AD_ENTRY1s("gfdemo01.lab", "755cdac083f7f751bec7506402278f1a", 29489930),
 			Common::EN_ANY,
-			Common::kPlatformPC,
+			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
@@ -115,7 +115,7 @@ static const GrimGameDescription gameDescriptions[] = {
 };
 
 static const GrimGameDescription fallbackGameDescriptions[] = {
-	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE}, 0}
+	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformWindows, ADGF_NO_FLAGS, GUIO_NONE}, 0}
 };
 
 static const ADFileBasedFallback grimFallback[] = {
