@@ -1208,8 +1208,8 @@ case $_host_os in
 		LIBS="$LIBS -lnsl -lsocket"
 		;;
 	irix*)
-		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lmd -lfastm -lm"
+		DEFINES="$DEFINES -DUNIX -DIRIX -DUSE_OPENGL -DSYSTEM_NOT_SUPPORTING_D_TYPE"
+		LIBS="$LIBS -lmd -lfastm -lm -lGL -lGLU -L/usr/X11/lib"
 		_ranlib=:
 		;;
 	darwin*)
