@@ -80,7 +80,7 @@ void Variables::writeOff32(uint32 offset, uint32 value) {
 }
 
 void Variables::writeOffString(uint32 offset, const char *value) {
-	strcpy((char *) (_vars + offset), value);
+	strcpy((char *)(_vars + offset), value);
 }
 
 uint8 Variables::readVar8(uint32 var) const {
@@ -112,7 +112,7 @@ uint32 Variables::readOff32(uint32 offset) const {
 }
 
 void Variables::readOffString(uint32 offset, char *value, uint32 length) {
-	strncpy0(value, (const char *) (_vars + offset), length - 1);
+	strncpy0(value, (const char *)(_vars + offset), length - 1);
 }
 
 const uint8 *Variables::getAddressVar8(uint32 var) const {
@@ -132,19 +132,19 @@ char *Variables::getAddressVarString(uint32 var) {
 }
 
 const uint8 *Variables::getAddressOff8(uint32 offset) const {
-	return ((const uint8 *) (_vars + offset));
+	return ((const uint8 *)(_vars + offset));
 }
 
 uint8 *Variables::getAddressOff8(uint32 offset) {
-	return ((uint8 *) (_vars + offset));
+	return ((uint8 *)(_vars + offset));
 }
 
 const char *Variables::getAddressOffString(uint32 offset) const {
-	return ((const char *) (_vars + offset));
+	return ((const char *)(_vars + offset));
 }
 
 char *Variables::getAddressOffString(uint32 offset) {
-	return ((char *) (_vars + offset));
+	return ((char *)(_vars + offset));
 }
 
 bool Variables::copyTo(uint32 offset, byte *variables, uint32 n) const {

@@ -149,7 +149,7 @@ int16 Goblin::peekGoblin(Gob_Object *_curGob) {
 	ptr = _objList->pHead;
 	index = 0;
 	while (ptr != 0) {
-		desc = (Gob_Object *) ptr->pData;
+		desc = (Gob_Object *)ptr->pData;
 		if (desc != _curGob) {
 			for (i = 0; i < 3; i++) {
 				if (desc != _goblins[i])
@@ -220,7 +220,7 @@ void Goblin::drawObjects() {
 
 	ptr = _objList->pHead;
 	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
-		objDesc = (Gob_Object *) ptr->pData;
+		objDesc = (Gob_Object *)ptr->pData;
 
 		if (objDesc->type == 3)
 			objDesc->toRedraw = 1;
@@ -229,7 +229,7 @@ void Goblin::drawObjects() {
 	}
 
 	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
-		objDesc = (Gob_Object *) ptr->pData;
+		objDesc = (Gob_Object *)ptr->pData;
 		if (objDesc->toRedraw == 0)
 			continue;
 
@@ -273,7 +273,7 @@ void Goblin::drawObjects() {
 
 	sortByOrder(_objList);
 	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
-		objDesc = (Gob_Object *) ptr->pData;
+		objDesc = (Gob_Object *)ptr->pData;
 		if (objDesc->toRedraw) {
 			layer =
 			    objDesc->stateMach[objDesc->state][objDesc->
@@ -321,7 +321,7 @@ void Goblin::drawObjects() {
 
 		if ((objDesc->type == 0) && (objDesc->visible != 0)) {
 			for (ptr2 = _objList->pHead; ptr2 != 0; ptr2 = ptr2->pNext) {
-				gobDesc2 = (Gob_Object *) ptr2->pData;
+				gobDesc2 = (Gob_Object *)ptr2->pData;
 
 				if (gobDesc2->toRedraw == 0)
 					continue;
@@ -357,7 +357,7 @@ void Goblin::drawObjects() {
 	}
 
 	for (ptr = _objList->pHead; ptr != 0; ptr = ptr->pNext) {
-		objDesc = (Gob_Object *) ptr->pData;
+		objDesc = (Gob_Object *)ptr->pData;
 		if ((objDesc->toRedraw == 0) || (objDesc->type == 1))
 			continue;
 
@@ -417,7 +417,7 @@ void Goblin::animateObjects() {
 	int16 layer;
 
 	for (node = _objList->pHead; node != 0; node = node->pNext) {
-		objDesc = (Gob_Object *) node->pData;
+		objDesc = (Gob_Object *)node->pData;
 		if ((objDesc->doAnim != 1) || (objDesc->type != 0))
 			continue;
 

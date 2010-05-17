@@ -136,9 +136,9 @@ void Init::initGame() {
 
 	} else {
 		infBuf = _vm->_dataIO->getData("intro.inf");
-		infPtr = (char *) infBuf;
+		infPtr = (char *)infBuf;
 
-		infEnd = (char *) (infBuf + _vm->_dataIO->getDataSize("intro.inf"));
+		infEnd = (char *)(infBuf + _vm->_dataIO->getDataSize("intro.inf"));
 
 		for (int i = 0; i < 8; i++, infPtr++) {
 			int j;
@@ -185,7 +185,7 @@ void Init::initGame() {
 			_vm->_util->clearPalette();
 
 			DataStream *stream = _vm->_dataIO->getDataStream("coktel.clt");
-			stream->read((byte *) _vm->_draw->_vgaPalette, 768);
+			stream->read((byte *)_vm->_draw->_vgaPalette, 768);
 			delete stream;
 
 			if (_vm->_dataIO->existData("coktel.ims")) {

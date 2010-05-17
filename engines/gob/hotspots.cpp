@@ -1352,7 +1352,7 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 			uint16 length = _vm->_game->_script->readUint16();
 
 			inputs[inputCount].str =
-				(const char *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
+				(const char *)(_vm->_game->_script->getData() + _vm->_game->_script->pos());
 
 			_vm->_game->_script->skip(length);
 		}

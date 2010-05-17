@@ -295,8 +295,8 @@ void Mult::prepPalAnim(bool &stop) {
 		_multData->palAnimIndices[2] = 0;
 		_multData->palAnimIndices[3] = 0;
 
-		memcpy((char *) _palAnimPalette,
-				(char *) _vm->_global->_pPaletteDesc->vgaPal, 768);
+		memcpy((char *)_palAnimPalette,
+				(char *)_vm->_global->_pPaletteDesc->vgaPal, 768);
 		_vm->_global->_pPaletteDesc->vgaPal = _palAnimPalette;
 	}
 }

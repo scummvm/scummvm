@@ -122,7 +122,7 @@ bool Sound::sampleLoad(SoundDesc *sndDesc, SoundType type, const char *fileName,
 	byte *data;
 	uint32 size;
 
-	data = (byte *) _vm->_dataIO->getData(fileName);
+	data = (byte *)_vm->_dataIO->getData(fileName);
 	if (!data)
 		return false;
 

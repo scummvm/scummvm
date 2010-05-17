@@ -94,7 +94,7 @@ bool DemoPlayer::play(uint32 index) {
 
 	case kScriptSourceDirect:
 		{
-			Common::MemoryReadStream stream((const byte *) script.script, strlen(script.script));
+			Common::MemoryReadStream stream((const byte *)script.script, strlen(script.script));
 
 			init();
 			return playStream(stream);

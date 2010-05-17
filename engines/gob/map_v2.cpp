@@ -85,7 +85,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 				_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
 				break;
 			case 65535:
-				_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var);
+				_passMap = (int8 *)_vm->_inter->_variables->getAddressOff8(var);
 				break;
 			default:
 				warning("Map_v2::loadMapObjects(): ID == %d", (uint16) id);
@@ -156,7 +156,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	if ((variables != 0) &&
 	    (variables != _vm->_inter->_variables->getAddressOff8(0))) {
 
-		_passMap = (int8 *) variables;
+		_passMap = (int8 *)variables;
 		mapHeight = _screenHeight / _tilesHeight;
 		mapWidth = _screenWidth / _tilesWidth;
 

@@ -374,7 +374,7 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 
 			if (b) {
 				_vm->_palAnim->fade(0, -2, 0);
-				memset((char *) _vm->_draw->_vgaPalette, 0, 768);
+				memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 			}
 
 			if (!_noCursorSwitch)
@@ -759,7 +759,7 @@ void VideoPlayer::copyPalette(Graphics::CoktelVideo &video, int16 palStart, int1
 	if (palEnd < 0)
 		palEnd = 255;
 
-	memcpy(((char *) (_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
+	memcpy(((char *)(_vm->_global->_pPaletteDesc->vgaPal)) + palStart * 3,
 			video.getPalette() + palStart * 3,
 			(palEnd - palStart + 1) * 3);
 }

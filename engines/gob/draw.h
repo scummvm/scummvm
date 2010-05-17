@@ -178,7 +178,7 @@ public:
 	}
 	void adjustCoords(char adjust, int16 *coord1, int16 *coord2);
 	void adjustCoords(char adjust, uint16 *coord1, uint16 *coord2) {
-		adjustCoords(adjust, (int16 *) coord1, (int16 *) coord2);
+		adjustCoords(adjust, (int16 *)coord1, (int16 *)coord2);
 	}
 	int stringLength(const char *str, int16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,

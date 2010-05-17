@@ -39,8 +39,8 @@ Video_v6::Video_v6(GobEngine *vm) : Video_v2(vm) {
 }
 
 void Video_v6::setPrePalette() {
-	byte *tpal = (byte *) _vm->_draw->_vgaPalette;
-	const byte *fpal = (const byte *) _ditherPalette;
+	byte *tpal = (byte *)_vm->_draw->_vgaPalette;
+	const byte *fpal = (const byte *)_ditherPalette;
 
 	for (int i = 0; i < 256; i++) {
 		byte r, g, b;

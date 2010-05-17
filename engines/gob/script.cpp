@@ -210,7 +210,7 @@ char *Script::readString(int32 length) {
 		while (_totPtr[length++] != '\0') { }
 	}
 
-	char *string = (char *) _totPtr;
+	char *string = (char *)_totPtr;
 
 	_totPtr += length;
 
@@ -262,7 +262,7 @@ int32 Script::peekInt32(int32 offset) {
 }
 
 char *Script::peekString(int32 offset) {
-	return (char *) (_totPtr + offset);
+	return (char *)(_totPtr + offset);
 }
 
 int16 Script::readVarIndex(uint16 *size, uint16 *type) {

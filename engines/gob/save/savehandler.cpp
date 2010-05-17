@@ -257,7 +257,7 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 
 	// Handle palette
 	if (usesPalette(size)) {
-		if (!_sprite->writePalette((byte *) _vm->_global->_pPaletteDesc->vgaPal))
+		if (!_sprite->writePalette((byte *)_vm->_global->_pPaletteDesc->vgaPal))
 			return false;
 
 		_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
@@ -289,7 +289,7 @@ bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 	// Handle palette
 	if (usesPalette(size)) {
-		if (!_sprite->readPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal))
+		if (!_sprite->readPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal))
 			return false;
 	}
 

@@ -111,7 +111,7 @@ void Inter_Bargon::oBargon_intro2(OpGobParams &params) {
 				_vm->shouldQuit()) {
 			_vm->_palAnim->fade(0, -2, 0);
 			_vm->_video->clearSurf(*_vm->_draw->_frontSurface);
-			memset((char *) _vm->_draw->_vgaPalette, 0, 768);
+			memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 			WRITE_VAR(4, buttons);
 			WRITE_VAR(0, kKeyEscape);
 			WRITE_VAR(57, (uint32) -1);
@@ -154,7 +154,7 @@ void Inter_Bargon::oBargon_intro3(OpGobParams &params) {
 	_vm->_sound->blasterPlayComposition(comp, 0, samples, 2);
 	for (int i = 0; i < 20; i++) {
 		for (int j = 0; j < 4; j++) {
-			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *) palettes[j];
+			_vm->_global->_pPaletteDesc->vgaPal = (Video::Color *)palettes[j];
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
 			_vm->_util->longDelay(_vm->_util->getRandom(200));
 		}

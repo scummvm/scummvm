@@ -357,7 +357,7 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 	o1_palLoad(params);
 
 	if (_gotFirstPalette)
-		_vm->_video->_palLUT->setPalette((const byte *) _vm->_global->_pPaletteDesc->vgaPal,
+		_vm->_video->_palLUT->setPalette((const byte *)_vm->_global->_pPaletteDesc->vgaPal,
 				Graphics::PaletteLUT::kPaletteRGB, 6, 0);
 
 	_gotFirstPalette = true;

@@ -344,7 +344,7 @@ void Inter_v2::o2_initMult() {
 			_vm->_mult->_objects[i].pPosY = new VariableReference(*_vm->_inter->_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim);
+				(Mult::Mult_AnimData *)_variables->getAddressOff8(offAnim);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -409,7 +409,7 @@ void Inter_v2::o2_loadMultObject() {
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
-	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
+	multData = (byte *)_vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekByte() != 99)
 			multData[i] = _vm->_game->_script->readValExpr();

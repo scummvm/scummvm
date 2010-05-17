@@ -77,10 +77,10 @@ int32 Expression::encodePtr(byte *ptr, int type) {
 		offset = _vm->_game->_script->getOffset(ptr);
 		break;
 	case kInterVar:
-		offset = ptr - ((byte *) _vm->_inter->_variables->getAddressOff8(0));
+		offset = ptr - ((byte *)_vm->_inter->_variables->getAddressOff8(0));
 		break;
 	case kResStr:
-		offset = ptr - ((byte *) _resultStr);
+		offset = ptr - ((byte *)_resultStr);
 		break;
 	default:
 		error("Expression::encodePtr(): Unknown pointer type");
@@ -96,10 +96,10 @@ byte *Expression::decodePtr(int32 n) {
 	case kExecPtr:
 		return _vm->_game->_script->getData((n & 0x0FFFFFFF));
 	case kInterVar:
-		ptr = (byte *) _vm->_inter->_variables->getAddressOff8(0);
+		ptr = (byte *)_vm->_inter->_variables->getAddressOff8(0);
 		break;
 	case kResStr:
-		ptr = (byte *) _resultStr;
+		ptr = (byte *)_resultStr;
 		break;
 	default:
 		error("Expression::decodePtr(): Unknown pointer type");
@@ -495,7 +495,7 @@ int Expression::cmpHelper(const StackFrame &stackFrame) {
 	} else if (type == OP_LOAD_IMM_STR) {
 		if ((char *)decodePtr(stackFrame.values[-3]) != _resultStr) {
 			strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]));
-			stackFrame.values[-3] = encodePtr((byte *) _resultStr, kResStr);
+			stackFrame.values[-3] = encodePtr((byte *)_resultStr, kResStr);
 		}
 		cmpTemp = strcmp(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
 	}
@@ -727,7 +727,7 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 
 	case OP_LOAD_IMM_STR:
 		*stackFrame.opers = OP_LOAD_IMM_STR;
-		*stackFrame.values = encodePtr((byte *) _vm->_game->_script->readString(), kExecPtr);
+		*stackFrame.values = encodePtr((byte *)_vm->_game->_script->readString(), kExecPtr);
 		break;
 
 	case OP_LOAD_VAR_INT32:
@@ -797,11 +797,11 @@ void Expression::simpleArithmetic1(StackFrame &stackFrame) {
 	switch (stackFrame.opers[-1]) {
 	case OP_ADD:
 		if (stackFrame.opers[-2] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(stackFrame.values[-2]) != _resultStr) {
-				strcpy(_resultStr, (char *) decodePtr(stackFrame.values[-2]));
-				stackFrame.values[-2] = encodePtr((byte *) _resultStr, kResStr);
+			if ((char *)decodePtr(stackFrame.values[-2]) != _resultStr) {
+				strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-2]));
+				stackFrame.values[-2] = encodePtr((byte *)_resultStr, kResStr);
 			}
-			strcat(_resultStr, (char *) decodePtr(stackFrame.values[0]));
+			strcat(_resultStr, (char *)decodePtr(stackFrame.values[0]));
 			stackFrame.pop(2);
 		}
 		break;
@@ -873,12 +873,12 @@ bool Expression::complexArithmetic(Stack &stack, StackFrame &stackFrame, int16 b
 		if (stack.opers[brackStart] == OP_LOAD_IMM_INT16) {
 			stack.values[brackStart] += stackFrame.values[-1];
 		} else if (stack.opers[brackStart] == OP_LOAD_IMM_STR) {
-			if ((char *) decodePtr(stack.values[brackStart]) != _resultStr) {
-				strcpy(_resultStr, (char *) decodePtr(stack.values[brackStart]));
+			if ((char *)decodePtr(stack.values[brackStart]) != _resultStr) {
+				strcpy(_resultStr, (char *)decodePtr(stack.values[brackStart]));
 				stack.values[brackStart] =
-					encodePtr((byte *) _resultStr, kResStr);
+					encodePtr((byte *)_resultStr, kResStr);
 			}
-			strcat(_resultStr, (char *) decodePtr(stackFrame.values[-1]));
+			strcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
 		}
 		stackFrame.pop(2);
 		break;
@@ -982,8 +982,8 @@ void Expression::getResult(byte operation, int32 value, byte *type) {
 		break;
 
 	case OP_LOAD_IMM_STR:
-		if ((char *) decodePtr(value) != _resultStr)
-			strcpy(_resultStr, (char *) decodePtr(value));
+		if ((char *)decodePtr(value) != _resultStr)
+			strcpy(_resultStr, (char *)decodePtr(value));
 		break;
 
 	case OP_LOAD_VAR_INT32:
@@ -1113,11 +1113,11 @@ int16 Expression::parseExpr(byte stopToken, byte *type) {
 					if (stackFrame.opers[-3] == OP_LOAD_IMM_INT16) {
 						stackFrame.values[-3] += stackFrame.values[-1];
 					} else if (stackFrame.opers[-3] == OP_LOAD_IMM_STR) {
-						if ((char *) decodePtr(stackFrame.values[-3]) != _resultStr) {
-							strcpy(_resultStr, (char *) decodePtr(stackFrame.values[-3]));
-							stackFrame.values[-3] = encodePtr((byte *) _resultStr, kResStr);
+						if ((char *)decodePtr(stackFrame.values[-3]) != _resultStr) {
+							strcpy(_resultStr, (char *)decodePtr(stackFrame.values[-3]));
+							stackFrame.values[-3] = encodePtr((byte *)_resultStr, kResStr);
 						}
-						strcat(_resultStr, (char *) decodePtr(stackFrame.values[-1]));
+						strcat(_resultStr, (char *)decodePtr(stackFrame.values[-1]));
 					}
 					stackFrame.pop(2);
 

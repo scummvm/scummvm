@@ -468,7 +468,7 @@ void Inter_v1::o1_initMult() {
 			_vm->_mult->_objects[i].pPosY = new VariableReference(*_variables, offPosY);
 
 			_vm->_mult->_objects[i].pAnimData =
-				(Mult::Mult_AnimData *) _variables->getAddressOff8(offAnim);
+				(Mult::Mult_AnimData *)_variables->getAddressOff8(offAnim);
 
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
@@ -526,7 +526,7 @@ void Inter_v1::o1_loadMultObject() {
 
 	debugC(4, kDebugGameFlow, "Loading mult object %d", objIndex);
 
-	multData = (byte *) _vm->_mult->_objects[objIndex].pAnimData;
+	multData = (byte *)_vm->_mult->_objects[objIndex].pAnimData;
 	for (int i = 0; i < 11; i++) {
 		if (_vm->_game->_script->peekUint16() != 99) {
 			_vm->_game->_script->evalExpr(&val);
@@ -1119,12 +1119,12 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (!resource)
 			break;
 
-		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN<int>(768, resource->getSize()));
+		memcpy((char *)_vm->_draw->_vgaPalette, resource->getData(), MIN<int>(768, resource->getSize()));
 		delete resource;
 		break;
 
 	case 54:
-		memset((char *) _vm->_draw->_vgaPalette, 0, 768);
+		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
 	case 61:
@@ -1135,7 +1135,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (!resource)
 			break;
 
-		memcpy((char *) _vm->_draw->_vgaPalette + index1 * 3,
+		memcpy((char *)_vm->_draw->_vgaPalette + index1 * 3,
 		       resource->getData() + index1 * 3, index2);
 		delete resource;
 
@@ -1778,7 +1778,7 @@ bool Inter_v1::o1_readData(OpFuncParams &params) {
 		if (((dataVar >> 2) == 59) && (size == 4))
 			WRITE_VAR(59, stream->readUint32LE());
 		else
-			retSize = stream->read((byte *) _variables->getAddressOff8(dataVar), size);
+			retSize = stream->read((byte *)_variables->getAddressOff8(dataVar), size);
 
 		if (retSize == size)
 			WRITE_VAR(1, 0);

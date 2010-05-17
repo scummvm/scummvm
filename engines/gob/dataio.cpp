@@ -105,17 +105,17 @@ uint32 DataStream::read(void *dataPtr, uint32 dataSize) {
 		return _stream->read(dataPtr, dataSize);
 
 	if (!_io->isDataFileChunk(_handle))
-		return _io->file_getHandle(_handle)->read((byte *) dataPtr, dataSize);
+		return _io->file_getHandle(_handle)->read((byte *)dataPtr, dataSize);
 
-	byte *data = (byte *) dataPtr;
+	byte *data = (byte *)dataPtr;
 	uint32 haveRead = 0;
 	while (dataSize > 0x3FFF) {
-		_io->readChunk(_handle, (byte *) data, 0x3FFF);
+		_io->readChunk(_handle, (byte *)data, 0x3FFF);
 		dataSize -= 0x3FFF;
 		data     += 0x3FFF;
 		haveRead += 0x3FFF;
 	}
-	_io->readChunk(_handle, (byte *) data, dataSize);
+	_io->readChunk(_handle, (byte *)data, dataSize);
 
 	return haveRead + dataSize;
 }

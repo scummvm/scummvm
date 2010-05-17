@@ -187,7 +187,7 @@ byte *CDROM::getTrackBuffer(const char *trackName) const {
 	byte *curPtr = _LICbuffer;
 
 	for (int i = 0; i < _numTracks; i++) {
-		if (!scumm_stricmp((char *) curPtr, trackName)) {
+		if (!scumm_stricmp((char *)curPtr, trackName)) {
 			matchPtr = curPtr;
 			break;
 		}
