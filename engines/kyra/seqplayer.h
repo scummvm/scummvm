@@ -59,7 +59,7 @@ protected:
 	struct SeqEntry {
 		uint8 len;
 		SeqProc proc;
-		const char* desc;
+		const char *desc;
 	};
 
 	// the sequence procs

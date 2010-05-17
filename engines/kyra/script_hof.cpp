@@ -1477,17 +1477,17 @@ int KyraEngine_HoF::t2_playSoundEffect(const TIM *tim, const uint16 *param) {
 
 #pragma mark -
 
-typedef Common::Functor1Mem<EMCState*, int, KyraEngine_HoF> OpcodeV2;
+typedef Common::Functor1Mem<EMCState *, int, KyraEngine_HoF> OpcodeV2;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV2(this, &KyraEngine_HoF::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV2(this, 0))
 
-typedef Common::Functor2Mem<const TIM*, const uint16*, int, KyraEngine_HoF> TIMOpcodeV2;
+typedef Common::Functor2Mem<const TIM *, const uint16 *, int, KyraEngine_HoF> TIMOpcodeV2;
 #define OpcodeTim(x) _timOpcodes.push_back(new TIMOpcodeV2(this, &KyraEngine_HoF::x))
 #define OpcodeTimUnImpl() _timOpcodes.push_back(new TIMOpcodeV2(this, 0))
 
 void KyraEngine_HoF::setupOpcodeTable() {
-	Common::Array<const Opcode*> *table = 0;
+	Common::Array<const Opcode *> *table = 0;
 
 	_opcodes.reserve(176);
 	SetOpcodeTable(_opcodes);

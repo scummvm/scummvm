@@ -212,7 +212,7 @@ Common::Error KyraEngine_v1::init() {
 }
 
 KyraEngine_v1::~KyraEngine_v1() {
-	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
+	for (Common::Array<const Opcode *>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete *i;
 	_opcodes.clear();
 	_keyMap.clear();

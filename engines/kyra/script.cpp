@@ -102,7 +102,7 @@ bool EMCInterpreter::callback(Common::IFFChunk &chunk) {
 	return false;
 }
 
-bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode*> *opcodes) {
+bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Common::Array<const Opcode *> *opcodes) {
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream) {
 		error("Couldn't open script file '%s'", filename);

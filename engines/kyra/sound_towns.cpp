@@ -377,7 +377,7 @@ void Towns_EuphonyPcmChannel::controlChange(byte control, byte value) {
 void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fmInst) {
 	if (type == 0x80) {
 		for (uint8 i = 0; i < 8; i++) {
-			const byte * const* pos = (const byte * const *)fmInst;
+			const byte * const *pos = (const byte * const *)fmInst;
 			for (uint8 ii = 0; ii < 10; ii++) {
 				if (_voice->id[i] == *(pos[ii] + 8)) {
 					if (!_voice->_snd[i])
@@ -390,8 +390,8 @@ void Towns_EuphonyPcmChannel::sysEx_customInstrument(uint32 type, const byte *fm
 					_voice->_snd[i]->loopLength = READ_LE_UINT32(pos[ii] + 20);
 					_voice->_snd[i]->samplingRate = READ_LE_UINT16(pos[ii] + 24);
 					_voice->_snd[i]->keyOffset = READ_LE_UINT16(pos[ii] + 26);
-					_voice->_snd[i]->keyNote = *(const uint8*)(pos[ii] + 28);
-					_voice->_snd[i]->_samples = (const int8*)(pos[ii] + 32);
+					_voice->_snd[i]->keyNote = *(const uint8 *)(pos[ii] + 28);
+					_voice->_snd[i]->_samples = (const int8 *)(pos[ii] + 32);
 				}
 			}
 		}
@@ -579,7 +579,7 @@ Towns_EuphonyDriver::Towns_EuphonyDriver(Audio::Mixer *mixer)
 	_channel[14] = _channel[15] = 0;
 
 	_fmInstruments = _waveInstruments = 0;
-	memset(_waveSounds, 0, sizeof(uint8*)* 10);
+	memset(_waveSounds, 0, sizeof(uint8 *)* 10);
 
 	rate(getRate());
 	fading(0);
@@ -966,7 +966,7 @@ void Towns_EuphonyParser::setup() {
 	_mode = data + 0x374;
 	_channel = data + 0x394;
 	_adjVelo = data + 0x3B4;
-	_adjNote = (int8*)data + 0x3D4;
+	_adjNote = (int8 *)data + 0x3D4;
 
 	_nextBaseTickStep = _firstBaseTickStep = data[0x804];
 	_initialTempo = calculateTempo((data[0x805] > 0xfc) ? 0x5a : data[0x805]);
@@ -1900,7 +1900,7 @@ void TownsPC98_OpnChannel::processEvents() {
 void TownsPC98_OpnChannel::processFrequency() {
 	if (_flags & CHS_RECALCFREQ) {
 
-		_frequency = (((const uint16*)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
+		_frequency = (((const uint16 *)_drv->_opnFreqTable)[_frqBlockMSB & 0x0f] + _frqLSB) | (((_frqBlockMSB & 0x70) >> 1) << 8);
 
 		_drv->writeReg(_part, _regOffset + 0xa4, (_frequency >> 8));
 		_drv->writeReg(_part, _regOffset + 0xa0, (_frequency & 0xff));
@@ -2297,7 +2297,7 @@ void TownsPC98_OpnChannelSSG::processFrequency() {
 
 	if (_flags & CHS_RECALCFREQ) {
 		_block = _frqBlockMSB >> 4;
-		_frequency = ((const uint16*)_drv->_opnFreqTableSSG)[_frqBlockMSB & 0x0f] + _frqLSB;
+		_frequency = ((const uint16 *)_drv->_opnFreqTableSSG)[_frqBlockMSB & 0x0f] + _frqLSB;
 
 		uint16 f = _frequency >> _block;
 		_drv->writeReg(_part, _regOffset << 1, f & 0xff);
@@ -3237,7 +3237,7 @@ void TownsPC98_OpnCore::generateTables() {
 	WRITE_BE_UINT32(_oprRates + 36, _numChan == 6 ? 0x00001010 : 0x00081018);
 	memset(_oprRates, 0x90, 32);
 	memset(_oprRates + 96, 0x80, 32);
-	uint8 *dst = (uint8*)_oprRates + 40;
+	uint8 *dst = (uint8 *)_oprRates + 40;
 	for (int i = 0; i < 40; i += 4)
 		WRITE_BE_UINT32(dst + i, 0x00081018);
 	for (int i = 0; i < 48; i += 4)
@@ -3251,7 +3251,7 @@ void TownsPC98_OpnCore::generateTables() {
 	delete[] _oprRateshift;
 	_oprRateshift = new uint8[128];
 	memset(_oprRateshift, 0, 128);
-	dst = (uint8*)_oprRateshift + 32;
+	dst = (uint8 *)_oprRateshift + 32;
 	for (int i = 11; i; i--) {
 		memset(dst, i, 4);
 		dst += 4;
@@ -3451,11 +3451,11 @@ bool TownsPC98_OpnDriver::init() {
 
 	TownsPC98_OpnCore::init();
 
-	_channels = new TownsPC98_OpnChannel*[_numChan];
+	_channels = new TownsPC98_OpnChannel *[_numChan];
 	for (int i = 0; i < _numChan; i++) {
 		int ii = i * 6;
 		_channels[i] = new TownsPC98_OpnChannel(this, _drvTables[ii], _drvTables[ii + 1],
-			_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+			_drvTables[ii + 2], _drvTables[ii + 3], _drvTables[ii + 4], _drvTables[ii + 5]);
 		_channels[i]->init();
 	}
 
@@ -3463,19 +3463,19 @@ bool TownsPC98_OpnDriver::init() {
 		_ssgPatches = new uint8[256];
 		memcpy(_ssgPatches, _drvTables + 156, 256);
 
-		_ssgChannels = new TownsPC98_OpnChannelSSG*[_numSSG];
+		_ssgChannels = new TownsPC98_OpnChannelSSG *[_numSSG];
 		for (int i = 0; i < _numSSG; i++) {
 			int ii = i * 6;
 			_ssgChannels[i] = new TownsPC98_OpnChannelSSG(this, _drvTables[ii], _drvTables[ii + 1],
-				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+				_drvTables[ii + 2], _drvTables[ii + 3], _drvTables[ii + 4], _drvTables[ii + 5]);
 			_ssgChannels[i]->init();
 		}
 
-		_sfxChannels = new TownsPC98_OpnSfxChannel*[2];
+		_sfxChannels = new TownsPC98_OpnSfxChannel *[2];
 		for (int i = 0; i < 2; i++) {
 			int ii = (i + 1) * 6;
 			_sfxChannels[i] = new TownsPC98_OpnSfxChannel(this, _drvTables[ii], _drvTables[ii + 1],
-				_drvTables[ii + 2],	_drvTables[ii + 3],	_drvTables[ii + 4], _drvTables[ii + 5]);
+				_drvTables[ii + 2], _drvTables[ii + 3], _drvTables[ii + 4], _drvTables[ii + 5]);
 			_sfxChannels[i]->init();
 		}
 	}
@@ -3880,7 +3880,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	if (offset == -1)
 		return;
 
-	uint32 *sfxHeader = (uint32*)(fileBody + offset);
+	uint32 *sfxHeader = (uint32 *)(fileBody + offset);
 
 	uint32 sfxHeaderID = READ_LE_UINT32(sfxHeader);
 	uint32 sfxHeaderInBufferSize = READ_LE_UINT32(&sfxHeader[1]);
@@ -4261,7 +4261,7 @@ int32 SoundTownsPC98_v2::voicePlay(const char *file, Audio::SoundHandle *handle,
 	bool compressed = (READ_LE_UINT16(src) & 1) ? true : false;
 	src += 2;
 	uint32 outsize = READ_LE_UINT32(src);
-	uint8 *sfx = (uint8*)malloc(outsize);
+	uint8 *sfx = (uint8 *)malloc(outsize);
 	uint8 *dst = sfx;
 	src += 4;
 

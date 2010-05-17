@@ -678,7 +678,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 		int16 cmd = 0;
 
 		do  {
-			cmd = ((int16*)_tables[2])[_src->getKeyLower()];
+			cmd = ((int16 *)_tables[2])[_src->getKeyLower()];
 			_src->advSrcBitsByIndex(cmd < 0 ? calcCmdAndIndex(_tables[3], cmd) : _tables[0][cmd]);
 
 			if (cmd == 0x11d) {
@@ -691,7 +691,7 @@ bool FileExpander::process(uint8 *dst, const uint8 *src, uint32 outsize, uint32 
 				*d++ = cmd & 0xff;
 			} else if (cmd != 0x100) {
 				cmd -= 0xfe;
-				int16 offset = ((int16*)_tables[4])[_src->getKeyLower()];
+				int16 offset = ((int16 *)_tables[4])[_src->getKeyLower()];
 				_src->advSrcBitsByIndex(offset < 0 ? calcCmdAndIndex(_tables[5], offset) : _tables[1][offset]);
 				if ((offset & 0xff) >= 4) {
 					uint8 newIndex = ((offset & 0xff) >> 1) - 1;
@@ -798,13 +798,13 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 	cnt--;
 	s = tbl1 + cnt;
 	d = &_tables16[2][cnt];
-	uint16 * bt = (uint16*)tbl3;
+	uint16 * bt = (uint16 *)tbl3;
 	uint16 inc = 0;
 	uint16 cnt2 = 0;
 
 	do {
 		uint8 t = *s--;
-		uint16 *s2 = (uint16*)tbl2;
+		uint16 *s2 = (uint16 *)tbl2;
 
 		if (t && t < 9) {
 			inc = 1 << t;
@@ -822,12 +822,12 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 			t -= 8;
 			uint8 shiftCnt = 1;
 			uint8 v = (*d) >> 8;
-			s2 = &((uint16*)tbl2)[*d & 0xff];
+			s2 = &((uint16 *)tbl2)[*d & 0xff];
 
 			do {
 				if (!*s2) {
 					*s2 = (uint16)(~cnt2);
-					*(uint32*)&bt[cnt2] = 0;
+					*(uint32 *)&bt[cnt2] = 0;
 					cnt2 += 2;
 				}
 
@@ -844,7 +844,7 @@ void FileExpander::generateTables(uint8 srcIndex, uint8 dstIndex, uint8 dstIndex
 }
 
 uint8 FileExpander::calcCmdAndIndex(const uint8 *tbl, int16 &para) {
-	const uint16 *t = (const uint16*)tbl;
+	const uint16 *t = (const uint16 *)tbl;
 	_src->advSrcBitsByIndex(8);
 	uint8 newIndex = 0;
 	uint16 v = _src->getKeyLower();
@@ -1239,7 +1239,7 @@ uint8 *CmpVocDecoder::process(uint8 *src, uint32 insize, uint32 *outsize, bool d
 			for (int i = -128; i < 128; i++)
 				_stTbl[i + 128] = (int32)((float)i / t + 0.5f);
 
-			int8 *ps = (int8*)_sndArray;
+			int8 *ps = (int8 *)_sndArray;
 			for (int i = 0; i < 8192; i++)
 				_floatArray[i + 1] = _stTbl[128 + *ps++];
 

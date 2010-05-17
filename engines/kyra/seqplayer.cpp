@@ -579,7 +579,7 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		SEQOP(2, s1_prefetchVocFile)
 	};
 
-	const SeqEntry* commands;
+	const SeqEntry *commands;
 	int numCommands;
 
 	if (_vm->gameFlags().isTalkie) {

@@ -74,12 +74,12 @@ public:
 
 	bool exists(const char *file, bool errorOutOnFail=false);
 	uint32 getFileSize(const char *file);
-	uint8* fileData(const char *file, uint32 *size);
+	uint8 *fileData(const char *file, uint32 *size);
 	Common::SeekableReadStream *createReadStream(const Common::String &file);
 
 	bool loadFileToBuf(const char *file, void *buf, uint32 maxSize);
 protected:
-	typedef Common::HashMap<Common::String, Common::Archive*, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
+	typedef Common::HashMap<Common::String, Common::Archive *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> ArchiveMap;
 	ArchiveMap _archiveCache;
 
 	Common::SearchSet _files;

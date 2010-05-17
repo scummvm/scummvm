@@ -125,7 +125,7 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_inventoryButtons = _buttonList = 0;
 
 	_dlgBuffer = 0;
-	_conversationState = new int8*[19];
+	_conversationState = new int8 *[19];
 	for (int i = 0; i < 19; i++)
 		_conversationState[i] = new int8[14];
 	_npcTalkChpIndex = _npcTalkDlgIndex = -1;
@@ -172,7 +172,7 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 		delete[] _conversationState[i];
 	delete[] _conversationState;
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timOpcodes.begin(); i != _timOpcodes.end(); ++i)
 		delete *i;
 	_timOpcodes.clear();
 }

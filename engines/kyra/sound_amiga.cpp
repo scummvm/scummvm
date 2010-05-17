@@ -62,7 +62,7 @@ bool SoundAmiga::init() {
 void SoundAmiga::loadSoundFile(uint file) {
 	debugC(5, kDebugLevelSound, "SoundAmiga::loadSoundFile(%d)", file);
 
-	static const char *const tableFilenames[3][2] = {
+	static const char * const tableFilenames[3][2] = {
 		{ "introscr.mx",  "introinst.mx" },
 		{ "kyramusic.mx", 0 },
 		{ "finalescr.mx", "introinst.mx" }
@@ -70,8 +70,8 @@ void SoundAmiga::loadSoundFile(uint file) {
 	assert(file < ARRAYSIZE(tableFilenames));
 	if (_fileLoaded == (FileType)file)
 		return;
-	const char* scoreName = tableFilenames[file][0];
-	const char* sampleName = tableFilenames[file][1];
+	const char *scoreName = tableFilenames[file][0];
+	const char *sampleName = tableFilenames[file][1];
 	bool loaded = false;
 
 	Common::SeekableReadStream *scoreIn = _vm->resource()->createReadStream(scoreName);

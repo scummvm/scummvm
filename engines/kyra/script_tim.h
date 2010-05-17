@@ -106,7 +106,7 @@ private:
 };
 
 struct TIM;
-typedef Common::Functor2<const TIM*, const uint16*, int> TIMOpcode;
+typedef Common::Functor2<const TIM *, const uint16 *, int> TIMOpcode;
 
 struct TIM {
 	char filename[13];
@@ -148,7 +148,7 @@ struct TIM {
 	uint16 *avtl;
 	uint8 *text;
 
-	const Common::Array<const TIMOpcode*> *opcodes;
+	const Common::Array<const TIMOpcode *> *opcodes;
 
 	// TODO: Get rid of this ugly HACK to allow the
 	// Lands of Lore outro to be working properly.
@@ -161,7 +161,7 @@ public:
 	TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system);
 	virtual ~TIMInterpreter();
 
-	TIM *load(const char *filename, const Common::Array<const TIMOpcode*> *opcodes);
+	TIM *load(const char *filename, const Common::Array<const TIMOpcode *> *opcodes);
 	void unload(TIM *&tim) const;
 
 	bool callback(Common::IFFChunk &chunk);

@@ -352,8 +352,8 @@ void Screen::scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int
 		for (int x = 0; x < w; ++x, dstL1 += 2, dstL2 += 2) {
 			uint16 col = *src++;
 			col |= col << 8;
-			*(uint16*)(dstL1) = col;
-			*(uint16*)(dstL2) = col;
+			*(uint16 *)(dstL1) = col;
+			*(uint16 *)(dstL2) = col;
 		}
 		dstL1 += dstAdd; dstL2 += dstAdd;
 		src += srcAdd;
@@ -1272,19 +1272,19 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	_dsDrawLayer = 0;
 
 	if (flags & 0x8000) {
-		_dsTable2 = va_arg(args, uint8*);
+		_dsTable2 = va_arg(args, uint8 *);
 	}
 
 	if (flags & 0x100) {
-		_dsTable = va_arg(args, uint8*);
+		_dsTable = va_arg(args, uint8 *);
 		_dsTableLoopCount = va_arg(args, int);
 		if (!_dsTableLoopCount)
 			flags &= ~0x100;
 	}
 
 	if (flags & 0x1000) {
-		_dsTable3 = va_arg(args, uint8*);
-		_dsTable4 = va_arg(args, uint8*);
+		_dsTable3 = va_arg(args, uint8 *);
+		_dsTable4 = va_arg(args, uint8 *);
 	}
 
 	if (flags & 0x200) {
@@ -1309,7 +1309,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if ((flags & 0x2000) && _vm->gameFlags().gameID != GI_KYRA1)
-		_dsTable5 = va_arg(args,  uint8*);
+		_dsTable5 = va_arg(args, uint8 *);
 
 	static const DsMarginSkipFunc dsMarginFunc[] = {
 		&Screen::drawShapeMarginNoScaleUpwind,

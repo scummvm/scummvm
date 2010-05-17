@@ -323,15 +323,15 @@ LoLEngine::~LoLEngine() {
 
 	delete[] _automapShapes;
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
 	_timIntroOpcodes.clear();
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timOutroOpcodes.begin(); i != _timOutroOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timOutroOpcodes.begin(); i != _timOutroOpcodes.end(); ++i)
 		delete *i;
 	_timOutroOpcodes.clear();
 
-	for (Common::Array<const TIMOpcode*>::iterator i = _timIngameOpcodes.begin(); i != _timIngameOpcodes.end(); ++i)
+	for (Common::Array<const TIMOpcode *>::iterator i = _timIngameOpcodes.begin(); i != _timIngameOpcodes.end(); ++i)
 		delete *i;
 	_timIngameOpcodes.clear();
 
@@ -401,7 +401,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _mapCursorOverlay;
 	delete[] _mapOverlay;
 
-	for (Common::Array<const SpellProc*>::iterator i = _spellProcs.begin(); i != _spellProcs.end(); ++i)
+	for (Common::Array<const SpellProc *>::iterator i = _spellProcs.begin(); i != _spellProcs.end(); ++i)
 		delete *i;
 	_spellProcs.clear();
 
@@ -472,8 +472,8 @@ Common::Error LoLEngine::init() {
 	memset(_lvlShapeLeftRight, 0, 36 * sizeof(int16));
 	_levelShapeProperties = new LevelShapeProperty[100];
 	memset(_levelShapeProperties, 0, 100 * sizeof(LevelShapeProperty));
-	_levelShapes = new uint8*[400];
-	memset(_levelShapes, 0, 400 * sizeof(uint8*));
+	_levelShapes = new uint8 *[400];
+	memset(_levelShapes, 0, 400 * sizeof(uint8 *));
 	_blockDrawingBuffer = new uint16[1320];
 	memset(_blockDrawingBuffer, 0, 1320 * sizeof(uint16));
 	_sceneWindowBuffer = new uint8[21120];
@@ -504,19 +504,19 @@ Common::Error LoLEngine::init() {
 	_sceneDrawPage1 = 2;
 	_sceneDrawPage2 = 6;
 
-	_monsterShapes = new uint8*[48];
-	memset(_monsterShapes, 0, 48 * sizeof(uint8*));
-	_monsterPalettes = new uint8*[48];
-	memset(_monsterPalettes, 0, 48 * sizeof(uint8*));
+	_monsterShapes = new uint8 *[48];
+	memset(_monsterShapes, 0, 48 * sizeof(uint8 *));
+	_monsterPalettes = new uint8 *[48];
+	memset(_monsterPalettes, 0, 48 * sizeof(uint8 *));
 
-	_monsterShapesEx = new uint8*[576];
-	memset(_monsterShapesEx, 0, 576 * sizeof(uint8*));
+	_monsterShapesEx = new uint8 *[576];
+	memset(_monsterShapesEx, 0, 576 * sizeof(uint8 *));
 	memset(&_scriptData, 0, sizeof(EMCData));
 
 	_hasTempDataFlags = 0;
 	_activeMagicMenu = -1;
 
-	_automapShapes = new const uint8*[109];
+	_automapShapes = new const uint8 *[109];
 	_mapOverlay = new uint8[256];
 
 	memset(_availableSpells, -1, 8);
@@ -634,7 +634,7 @@ void LoLEngine::loadItemIconShapes() {
 	_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemIconShapes = READ_LE_UINT16(shp);
-	_itemIconShapes = new uint8*[_numItemIconShapes];
+	_itemIconShapes = new uint8 *[_numItemIconShapes];
 	for (int i = 0; i < _numItemIconShapes; i++)
 		_itemIconShapes[i] = _screen->makeShapeCopy(shp, i);
 
@@ -644,7 +644,7 @@ void LoLEngine::loadItemIconShapes() {
 		_screen->loadBitmap("GAMESHP.SHP", 3, 3, 0);
 		shp = _screen->getCPagePtr(3);
 		_numGameShapes = READ_LE_UINT16(shp);
-		_gameShapes = new uint8*[_numGameShapes];
+		_gameShapes = new uint8 *[_numGameShapes];
 		for (int i = 0; i < _numGameShapes; i++)
 			_gameShapes[i] = _screen->makeShapeCopy(shp, i);
 	}
@@ -824,42 +824,42 @@ void LoLEngine::startup() {
 	_screen->loadBitmap("ITEMSHP.SHP", 3, 3, 0);
 	const uint8 *shp = _screen->getCPagePtr(3);
 	_numItemShapes = READ_LE_UINT16(shp);
-	_itemShapes = new uint8*[_numItemShapes];
+	_itemShapes = new uint8 *[_numItemShapes];
 	for (int i = 0; i < _numItemShapes; i++)
 		_itemShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("THROWN.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numThrownShapes = READ_LE_UINT16(shp);
-	_thrownShapes = new uint8*[_numThrownShapes];
+	_thrownShapes = new uint8 *[_numThrownShapes];
 	for (int i = 0; i < _numThrownShapes; i++)
 		_thrownShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("ICE.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numEffectShapes = READ_LE_UINT16(shp);
-	_effectShapes = new uint8*[_numEffectShapes];
+	_effectShapes = new uint8 *[_numEffectShapes];
 	for (int i = 0; i < _numEffectShapes; i++)
 		_effectShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("FIREBALL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numFireballShapes = READ_LE_UINT16(shp);
-	_fireballShapes = new uint8*[_numFireballShapes];
+	_fireballShapes = new uint8 *[_numFireballShapes];
 	for (int i = 0; i < _numFireballShapes; i++)
 		_fireballShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEAL.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealShapes = READ_LE_UINT16(shp);
-	_healShapes = new uint8*[_numHealShapes];
+	_healShapes = new uint8 *[_numHealShapes];
 	for (int i = 0; i < _numHealShapes; i++)
 		_healShapes[i] = _screen->makeShapeCopy(shp, i);
 
 	_screen->loadBitmap("HEALI.SHP", 3, 3, 0);
 	shp = _screen->getCPagePtr(3);
 	_numHealiShapes = READ_LE_UINT16(shp);
-	_healiShapes = new uint8*[_numHealiShapes];
+	_healiShapes = new uint8 *[_numHealiShapes];
 	for (int i = 0; i < _numHealiShapes; i++)
 		_healiShapes[i] = _screen->makeShapeCopy(shp, i);
 
@@ -1671,8 +1671,8 @@ void LoLEngine::fadeText() {
 }
 
 void LoLEngine::transformRegion(int x1, int y1, int x2, int y2, int w, int h, int srcPage, int dstPage) {
-	uint16 *p1 = (uint16*)_tempBuffer5120;
-	uint16 *p2 = (uint16*)(_tempBuffer5120 + 640);
+	uint16 *p1 = (uint16 *)_tempBuffer5120;
+	uint16 *p2 = (uint16 *)(_tempBuffer5120 + 640);
 
 	for (int i = 0; i < w; i++)
 		p1[i] = i;
@@ -1939,7 +1939,7 @@ void LoLEngine::giveItemToMonster(MonsterInPlay *monster, uint16 item) {
 }
 
 const uint16 *LoLEngine::getCharacterOrMonsterStats(int id) {
-	return (id & 0x8000) ? (const uint16*)_monsters[id & 0x7fff].properties->fightingStats : _characters[id].defaultModifiers;
+	return (id & 0x8000) ? (const uint16 *)_monsters[id & 0x7fff].properties->fightingStats : _characters[id].defaultModifiers;
 }
 
 uint16 *LoLEngine::getCharacterOrMonsterItemsMight(int id) {
@@ -4145,7 +4145,7 @@ bool LoLEngine::updateAutoMapIntern(uint16 block, uint16 x, uint16 y, int16 xOff
 }
 
 void LoLEngine::loadMapLegendData(int level) {
-	uint16 *legendData= (uint16*)_tempBuffer5120;
+	uint16 *legendData = (uint16 *)_tempBuffer5120;
 	for (int i = 0; i < 32; i++) {
 		legendData[i * 6] = 0xffff;
 		legendData[i * 6 + 5] = 0xffff;
@@ -4256,7 +4256,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 		sx = mapGetStartPosX();
 		sy = mapGetStartPosY();
 
-		uint16 *legendData = (uint16*)_tempBuffer5120;
+		uint16 *legendData = (uint16 *)_tempBuffer5120;
 		uint8 yOffset = _flags.use16ColorMode ? 4 : 0;
 
 		for (int ii = 0; ii < 32; ii++)  {

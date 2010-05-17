@@ -1137,12 +1137,12 @@ int KyraEngine_MR::o3d_delay(EMCState *script) {
 
 #pragma mark -
 
-typedef Common::Functor1Mem<EMCState*, int, KyraEngine_MR> OpcodeV3;
+typedef Common::Functor1Mem<EMCState *, int, KyraEngine_MR> OpcodeV3;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV3(this, &KyraEngine_MR::x))
 #define OpcodeUnImpl() table->push_back(new OpcodeV3(this, 0))
 void KyraEngine_MR::setupOpcodeTable() {
-	Common::Array<const Opcode*> *table = 0;
+	Common::Array<const Opcode *> *table = 0;
 
 	_opcodes.reserve(176);
 	SetOpcodeTable(_opcodes);

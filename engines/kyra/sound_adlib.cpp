@@ -509,7 +509,7 @@ int AdLibDriver::snd_setSoundData(va_list &list) {
 		delete[] _soundData;
 		_soundData = 0;
 	}
-	_soundData = va_arg(list, uint8*);
+	_soundData = va_arg(list, uint8 *);
 	return 0;
 }
 

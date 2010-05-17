@@ -131,8 +131,8 @@ void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
 }
 
 void KyraEngine_LoK::timerSetFlags2(int timerNum) {
-	if (!((uint32*)(_flagsTable+0x2D))[timerNum])
-		((uint32*)(_flagsTable+0x2D))[timerNum] = 1;
+	if (!((uint32 *)(_flagsTable+0x2D))[timerNum])
+		((uint32 *)(_flagsTable+0x2D))[timerNum] = 1;
 }
 
 void KyraEngine_LoK::timerCheckAnimFlag1(int timerNum) {

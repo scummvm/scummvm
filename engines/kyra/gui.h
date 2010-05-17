@@ -37,10 +37,10 @@
 
 namespace Kyra {
 
-#define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Common::Functor1Mem<Button*, int, type>(x, y))
+#define BUTTON_FUNCTOR(type, x, y) Button::Callback(new Common::Functor1Mem<Button *, int, type>(x, y))
 
 struct Button {
-	typedef Common::Functor1<Button*, int> CallbackFunctor;
+	typedef Common::Functor1<Button *, int> CallbackFunctor;
 	typedef Common::SharedPtr<CallbackFunctor> Callback;
 
 	Button() : nextButton(0), index(0), keyCode(0), keyCode2(0), data0Val1(0), data1Val1(0), data2Val1(0), flags(0),

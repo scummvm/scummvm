@@ -34,7 +34,7 @@
 namespace Kyra {
 
 struct EMCState;
-typedef Common::Functor1<EMCState*, int> Opcode;
+typedef Common::Functor1<EMCState *, int> Opcode;
 
 struct EMCData {
 	char filename[13];
@@ -44,7 +44,7 @@ struct EMCData {
 	uint16 *ordr;
 	uint16 dataSize;
 
-	const Common::Array<const Opcode*> *sysFuncs;
+	const Common::Array<const Opcode *> *sysFuncs;
 };
 
 struct EMCState {

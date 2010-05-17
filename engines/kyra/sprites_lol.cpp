@@ -97,7 +97,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 		uint8 numCol = *tmpPal2;
 
 		for (int ii = 0; ii < numCol; ii++) {
-			uint8 *cl = (uint8*)memchr(tmpPal1, tmpPal2[1 + ii], 64);
+			uint8 *cl = (uint8 *)memchr(tmpPal1, tmpPal2[1 + ii], 64);
 			if (!cl)
 				continue;
 			tmpPal3[ii] = (uint16) (cl - tmpPal1);

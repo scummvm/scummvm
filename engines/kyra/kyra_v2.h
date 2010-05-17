@@ -257,7 +257,7 @@ protected:
 	virtual void uninitAnimationShapes(int count, uint8 *filedata) = 0;
 
 	// Shapes
-	typedef Common::HashMap<int, uint8*> ShapeMap;
+	typedef Common::HashMap<int, uint8 *> ShapeMap;
 	ShapeMap _gameShapes;
 
 	uint8 *getShapePtr(int index) const;

@@ -185,7 +185,7 @@ KyraEngine_MR::~KyraEngine_MR() {
 	delete[] _sceneStrings;
 	delete[] _talkObjectList;
 
-	for (Common::Array<const Opcode*>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
+	for (Common::Array<const Opcode *>::iterator i = _opcodesDialog.begin(); i != _opcodesDialog.end(); ++i)
 		delete *i;
 	_opcodesDialog.clear();
 
@@ -1320,7 +1320,7 @@ int KyraEngine_MR::loadLanguageFile(const char *file, uint8 *&buffer) {
 
 uint8 *KyraEngine_MR::getTableEntry(uint8 *buffer, int id) {
 	uint16 tableEntries = READ_LE_UINT16(buffer);
-	const uint16 *indexTable = (const uint16*)(buffer + 2);
+	const uint16 *indexTable = (const uint16 *)(buffer + 2);
 	const uint16 *offsetTable = indexTable + tableEntries;
 
 	int num = 0;

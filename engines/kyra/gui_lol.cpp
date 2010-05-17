@@ -2614,7 +2614,7 @@ void GUI_LoL::updateSavegameList() {
 		KyraEngine_v1::SaveHeader header;
 		Common::InSaveFile *in;
 
-		_savegameList = new char*[_savegameListSize];
+		_savegameList = new char *[_savegameListSize];
 
 		for (int i = 0; i < _savegameListSize; i++) {
 			in = _vm->openSaveForReading(_vm->getSavegameFilename(i), header);
@@ -2751,7 +2751,7 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 	_newMenu = &_savenameMenu;
 	int16 s = (int16)button->arg;
 	_menuResult = _saveMenu.item[-s - 2].saveSlot + 1;
-	_saveDescription = (char*)_vm->_tempBuffer5120 + 1000;
+	_saveDescription = (char *)_vm->_tempBuffer5120 + 1000;
 	_saveDescription[0] = 0;
 	if (_saveMenu.item[-s - 2].saveSlot != -3)
 		strcpy(_saveDescription, _saveMenu.item[-s - 2].itemString);

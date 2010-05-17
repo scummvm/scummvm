@@ -537,9 +537,9 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 
 		tmp_s[i].flags = stream.readUint16BE();
 		tmp_s[i].wsaFile = new char[14];
-		stream.read(const_cast<char*>(tmp_s[i].wsaFile), 14);
+		stream.read(const_cast<char *>(tmp_s[i].wsaFile), 14);
 		tmp_s[i].cpsFile = new char[14];
-		stream.read(const_cast<char*>(tmp_s[i].cpsFile), 14);
+		stream.read(const_cast<char *>(tmp_s[i].cpsFile), 14);
 		tmp_s[i].startupCommand = stream.readByte();
 		tmp_s[i].finalCommand = stream.readByte();
 		tmp_s[i].stringIndex1 = stream.readUint16BE();
@@ -563,7 +563,7 @@ bool StaticResource::loadHofSequenceData(Common::SeekableReadStream &stream, voi
 
 		tmp_n[i].flags = stream.readUint16BE();
 		tmp_n[i].wsaFile = new char[14];
-		stream.read(const_cast<char*>(tmp_n[i].wsaFile), 14);
+		stream.read(const_cast<char *>(tmp_n[i].wsaFile), 14);
 		tmp_n[i].startframe = stream.readUint16BE();
 		tmp_n[i].endFrame = stream.readUint16BE();
 		tmp_n[i].frameDelay = stream.readUint16BE();
@@ -1225,7 +1225,7 @@ void KyraEngine_HoF::initStaticResource() {
 	// replace sequence talkie files with localized versions
 	const char *const *seqSoundList = _staticres->loadStrings(k2SeqplaySfxFiles, _sequenceSoundListSize);
 	const char *const *tlkfiles = _staticres->loadStrings(k2SeqplayTlkFiles, tmpSize);
-	char **tmpSndLst = new char*[_sequenceSoundListSize];
+	char **tmpSndLst = new char *[_sequenceSoundListSize];
 
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
 		const int len = strlen(seqSoundList[i]);
@@ -1452,7 +1452,7 @@ void LoLEngine::initStaticResource() {
 
 	const char *const *tmpSndList = _staticres->loadStrings(kLolIngameSfxFiles, _ingameSoundListSize);
 	if (tmpSndList) {
-		_ingameSoundList = new char*[_ingameSoundListSize];
+		_ingameSoundList = new char *[_ingameSoundListSize];
 		for (int i = 0; i < _ingameSoundListSize; i++) {
 			_ingameSoundList[i] = new char[strlen(tmpSndList[i]) + 1];
 			strcpy(_ingameSoundList[i], tmpSndList[i]);
@@ -1507,7 +1507,7 @@ void LoLEngine::initStaticResource() {
 		_staticres->unloadId(kLolLightningDefs);
 	}
 
-	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLolFireballCoords, _fireBallCoordsSize);
+	_fireBallCoords = (const int16 *)_staticres->loadRawDataBe16(kLolFireballCoords, _fireBallCoordsSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);
@@ -1894,7 +1894,7 @@ void KyraEngine_LoK::setupButtonData() {
 
 	_buttonData = new Button[15];
 	assert(_buttonData);
-	_buttonDataListPtr = new Button*[15];
+	_buttonDataListPtr = new Button *[15];
 	assert(_buttonDataListPtr);
 
 	GUI_V1_BUTTON(_buttonData[1], 0x01, 1, 1, 1, 0x0487, 0, 0x009, 0xA4, 0x36, 0x1E, 0);

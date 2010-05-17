@@ -658,8 +658,8 @@ void Screen_LoL::copyRegionSpecial(int page1, int w1, int h1, int x1, int y1, in
 	if (mode == 2) {
 		va_list args;
 		va_start(args, mode);
-		table1 = va_arg(args, uint8*);
-		table2 = va_arg(args, uint8*);
+		table1 = va_arg(args, uint8 *);
+		table2 = va_arg(args, uint8 *);
 		va_end(args);
 	}
 

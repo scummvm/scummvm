@@ -1754,7 +1754,7 @@ int KyraEngine_LoK::o1_dummy(EMCState *script) {
 
 #pragma mark -
 
-typedef Common::Functor1Mem<EMCState*, int, KyraEngine_LoK> OpcodeV1;
+typedef Common::Functor1Mem<EMCState *, int, KyraEngine_LoK> OpcodeV1;
 #define SetOpcodeTable(x) table = &x;
 #define Opcode(x) table->push_back(new OpcodeV1(this, &KyraEngine_LoK::x))
 void KyraEngine_LoK::setupOpcodeTable() {

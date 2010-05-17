@@ -135,13 +135,13 @@ public:
 	typedef void (KyraEngine_LoK::*IntroProc)();
 
 	// static data access
-	const char * const*seqWSATable() { return _seq_WSATable; }
-	const char * const*seqCPSTable() { return _seq_CPSTable; }
-	const char * const*seqCOLTable() { return _seq_COLTable; }
-	const char * const*seqTextsTable() { return _seq_textsTable; }
+	const char * const *seqWSATable() { return _seq_WSATable; }
+	const char * const *seqCPSTable() { return _seq_CPSTable; }
+	const char * const *seqCOLTable() { return _seq_COLTable; }
+	const char * const *seqTextsTable() { return _seq_textsTable; }
 
-	const uint8 * const*palTable1() { return &_specialPalettes[0]; }
-	const uint8 * const*palTable2() { return &_specialPalettes[29]; }
+	const uint8 * const *palTable1() { return &_specialPalettes[0]; }
+	const uint8 * const *palTable2() { return &_specialPalettes[29]; }
 
 protected:
 	virtual Common::Error go();

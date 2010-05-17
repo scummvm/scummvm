@@ -604,7 +604,7 @@ int TIMInterpreter::execCommand(int cmd, const uint16 *param) {
 		return 0;
 	}
 
-	debugC(5, kDebugLevelScript, "TIMInterpreter::%s(%p)", _commands[cmd].desc, (const void* )param);
+	debugC(5, kDebugLevelScript, "TIMInterpreter::%s(%p)", _commands[cmd].desc, (const void *)param);
 	return (this->*_commands[cmd].proc)(param);
 }
 
@@ -1171,7 +1171,7 @@ int TIMInterpreter_LoL::execCommand(int cmd, const uint16 *param) {
 		return 0;
 	}
 
-	debugC(5, kDebugLevelScript, "TIMInterpreter::%s(%p)", _commands[cmd].desc, (const void* )param);
+	debugC(5, kDebugLevelScript, "TIMInterpreter::%s(%p)", _commands[cmd].desc, (const void *)param);
 	return (this->*_commands[cmd].proc)(param);
 }
 
