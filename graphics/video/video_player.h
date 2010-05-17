@@ -60,13 +60,13 @@ public:
 	 * Returns the current frame number of the video
 	 * @return the current frame number of the video
 	 */
-	virtual int32 getCurFrame();
+	virtual int32 getCurFrame() const;
 
 	/**
 	 * Returns the amount of frames in the video
 	 * @return the amount of frames in the video
 	 */
-	virtual int32 getFrameCount();
+	virtual int32 getFrameCount() const;
 
 	/**
 	 * Returns the frame rate of the video
@@ -108,7 +108,7 @@ public:
 	/**
 	 * Returns if a video file is loaded or not
 	 */
-	bool isVideoLoaded() { return (_fileStream != NULL); }
+	bool isVideoLoaded() const { return (_fileStream != NULL); }
 
 	/**
 	 * Set RGB palette, based on current frame
@@ -158,6 +158,11 @@ public:
 	 */
 	virtual bool decodeNextFrame() = 0;
 
+	/**
+	 * Returns if the video is finished or not
+	 */
+	virtual bool endOfVideo() const;
+
 protected:
 	struct {
 		uint32 width;
@@ -166,7 +171,7 @@ protected:
 		int32 frameRate;
 		int32 frameDelay;		// 1/100 ms (to avoid rounding errors)
 		uint32 firstframeOffset;
-		uint32 currentFrame;
+		int32 currentFrame;
 		uint32 startTime;
 	} _videoInfo;
 

@@ -240,7 +240,7 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	MovieText *text;
-	int frame = _decoder->getCurFrame();
+	int frame = _decoder->getCurFrame() + 1;
 
 	if (_currentMovieText < _numMovieTexts) {
 		text = &_movieTexts[_currentMovieText];

@@ -61,7 +61,7 @@ bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
 		return false;
 
 	// Seek to the first frame
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 
 	_videoInfo.width = SCREEN_WIDTH;
 	_videoInfo.height = SCREEN_HEIGHT;
@@ -129,6 +129,8 @@ bool SeqDecoder::decodeNextFrame() {
 
 	_fileStream->seek(offset);
 
+	_videoInfo.currentFrame++;
+
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
 
@@ -151,7 +153,7 @@ bool SeqDecoder::decodeNextFrame() {
 		delete[] buf;
 	}
 
-	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
+	return !endOfVideo();
 }
 
 #define WRITE_TO_BUFFER(n) \

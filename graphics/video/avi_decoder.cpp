@@ -213,8 +213,7 @@ bool AviDecoder::loadFile(const char *fileName) {
 
 	_decodedHeader = false;
 	// Seek to the first frame
-	_videoInfo.currentFrame = 0;
-
+	_videoInfo.currentFrame = -1;
 
 	// Read chunks until we have decoded the header
 	while (!_decodedHeader)
@@ -379,14 +378,11 @@ Surface *AviDecoder::getNextFrame() {
 }
 
 bool AviDecoder::decodeNextFrame() {
-	if (_videoInfo.currentFrame == 0)
-		_videoInfo.startTime = g_system->getMillis();
-
 	Surface *surface = NULL;
 
-	uint32 curFrame = _videoInfo.currentFrame;
+	int32 curFrame = _videoInfo.currentFrame;
 
-	while (!surface && _videoInfo.currentFrame < _videoInfo.frameCount && !_fileStream->eos())
+	while (!surface && !endOfVideo() && !_fileStream->eos())
 		surface = getNextFrame();
 
 	if (curFrame == _videoInfo.currentFrame) {
@@ -397,7 +393,10 @@ bool AviDecoder::decodeNextFrame() {
 	if (surface)
 		memcpy(_videoFrameBuffer, surface->pixels, _header.width * _header.height);
 
-	return _videoInfo.currentFrame < _videoInfo.frameCount;
+	if (_videoInfo.currentFrame == 0)
+		_videoInfo.startTime = g_system->getMillis();
+
+	return !endOfVideo();
 }
 
 int32 AviDecoder::getAudioLag() {
@@ -405,7 +404,7 @@ int32 AviDecoder::getAudioLag() {
 		return 0;
 
 	int32 frameDelay = getFrameDelay();
-	int32 videoTime = _videoInfo.currentFrame * frameDelay;
+	int32 videoTime = (_videoInfo.currentFrame + 1) * frameDelay;
 	int32 audioTime;
 
 	if (!_audStream) {

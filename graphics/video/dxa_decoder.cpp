@@ -56,7 +56,7 @@ DXADecoder::DXADecoder() {
 
 	_frameSize = 0;
 	_videoInfo.frameCount = 0;
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 	_videoInfo.frameRate = 0;
 	_videoInfo.frameDelay = 0;
 
@@ -159,7 +159,7 @@ bool DXADecoder::loadFile(const char *fileName) {
 	// Read the sound header
 	_soundTag = _fileStream->readUint32BE();
 
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 
 	_videoInfo.firstframeOffset = _fileStream->pos();
 
@@ -484,6 +484,8 @@ void DXADecoder::decode13(int size) {
 bool DXADecoder::decodeNextFrame() {
 	uint32 tag;
 
+	_videoInfo.currentFrame++;
+
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
 
@@ -557,7 +559,7 @@ bool DXADecoder::decodeNextFrame() {
 		break;
 	}
 
-	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
+	return !endOfVideo();
 }
 
 } // End of namespace Graphics

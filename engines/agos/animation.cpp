@@ -272,7 +272,7 @@ void MoviePlayerDXA::playVideo() {
 		_vm->clearSurfaces();
 	}
 
-	while (getCurFrame() < getFrameCount() && !_skipMovie && !_vm->shouldQuit())
+	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
 
@@ -318,18 +318,18 @@ void MoviePlayerDXA::startSound() {
 }
 
 void MoviePlayerDXA::nextFrame() {
-	if (_bgSoundStream && _vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
+	if (_bgSoundStream && _vm->_mixer->isSoundHandleActive(_bgSound) && (_vm->_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 <= (uint32)getCurFrame()) {
 		copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
 		return;
 	}
 
-	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
+	if (_vm->_interactiveVideo == TYPE_LOOPING && endOfVideo()) {
 		_fileStream->seek(_videoInfo.firstframeOffset);
-		_videoInfo.currentFrame = 0;
+		_videoInfo.currentFrame = -1;
 		startSound();
 	}
 
-	if (getCurFrame() < getFrameCount()) {
+	if (!endOfVideo()) {
 		decodeNextFrame();
 		if (_vm->_interactiveVideo == TYPE_OMNITV) {
 			copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);
@@ -370,10 +370,10 @@ bool MoviePlayerDXA::processFrame() {
 	copyFrameToBuffer((byte *)screen->pixels, (_vm->_screenWidth - getWidth()) / 2, (_vm->_screenHeight - getHeight()) / 2, _vm->_screenWidth);
 	_vm->_system->unlockScreen();
 
-	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < getCurFrame() + 1)) {
+	if ((_bgSoundStream == NULL) || ((int)(_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 <= getCurFrame())) {
 
 		if (_bgSoundStream && _mixer->isSoundHandleActive(_bgSound)) {
-			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 < (uint32)getCurFrame()) {
+			while (_mixer->isSoundHandleActive(_bgSound) && (_mixer->getSoundElapsedTime(_bgSound) * getFrameRate()) / 1000 <= (uint32)getCurFrame()) {
 				_vm->_system->delayMillis(10);
 			}
 			// In case the background sound ends prematurely, update
@@ -421,7 +421,7 @@ bool MoviePlayerSMK::load() {
 }
 
 void MoviePlayerSMK::playVideo() {
-	while (getCurFrame() < getFrameCount() && !_skipMovie && !_vm->shouldQuit())
+	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
 		handleNextFrame();
 }
 
@@ -440,12 +440,12 @@ void MoviePlayerSMK::handleNextFrame() {
 }
 
 void MoviePlayerSMK::nextFrame() {
-	if (_vm->_interactiveVideo == TYPE_LOOPING && getCurFrame() == getFrameCount()) {
+	if (_vm->_interactiveVideo == TYPE_LOOPING && endOfVideo()) {
 		_fileStream->seek(_videoInfo.firstframeOffset);
-		_videoInfo.currentFrame = 0;
+		_videoInfo.currentFrame = -1;
 	}
 
-	if (getCurFrame() < getFrameCount()) {
+	if (!endOfVideo()) {
 		decodeNextFrame();
 		if (_vm->_interactiveVideo == TYPE_OMNITV) {
 			copyFrameToBuffer(_vm->getBackBuf(), 465, 222, _vm->_screenWidth);

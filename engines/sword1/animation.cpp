@@ -179,7 +179,7 @@ void MoviePlayer::play() {
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	if (!_movieTexts.empty()) {
-		if (_decoder->getCurFrame() == _movieTexts[0]->_startFrame) {
+		if (_decoder->getCurFrame() + 1 == _movieTexts[0]->_startFrame) {
 			_textMan->makeTextSprite(2, (uint8 *)_movieTexts[0]->_text, 600, LETTER_COL);
 
 			FrameHeader *frame = _textMan->giveSpriteData(2);
@@ -188,7 +188,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_textX = 320 - _textWidth / 2;
 			_textY = 420 - _textHeight;
 		}
-		if (_decoder->getCurFrame() == _movieTexts[0]->_endFrame) {
+		if (_decoder->getCurFrame() + 1 == _movieTexts[0]->_endFrame) {
 			_textMan->releaseText(2, false);
 			delete _movieTexts.remove_at(0);
 		}
@@ -256,7 +256,7 @@ int32 DXADecoderWithSound::getAudioLag() {
 		return 0;
 
 	int32 frameDelay = getFrameDelay();
-	int32 videoTime = _videoInfo.currentFrame * frameDelay;
+	int32 videoTime = (_videoInfo.currentFrame + 1) * frameDelay;
 	int32 audioTime;
 
 	const Audio::Timestamp ts = _mixer->getElapsedTime(*_bgSoundHandle);

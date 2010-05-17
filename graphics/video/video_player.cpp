@@ -39,6 +39,7 @@ namespace Graphics {
 VideoDecoder::VideoDecoder() : _fileStream(0) {
 	_curFrameBlack = 0;
 	_curFrameWhite = 255;
+	_videoInfo.currentFrame = -1;
 }
 
 VideoDecoder::~VideoDecoder() {
@@ -56,13 +57,11 @@ int VideoDecoder::getHeight() {
 	return _videoInfo.height;
 }
 
-int32 VideoDecoder::getCurFrame() {
-	if (!_fileStream)
-		return -1;
+int32 VideoDecoder::getCurFrame() const {
 	return _videoInfo.currentFrame;
 }
 
-int32 VideoDecoder::getFrameCount() {
+int32 VideoDecoder::getFrameCount() const {
 	if (!_fileStream)
 		return 0;
 	return _videoInfo.frameCount;
@@ -152,6 +151,10 @@ void VideoDecoder::setPalette(byte *pal) {
 	g_system->setPalette(videoPalette, 0, 256);
 }
 
+bool VideoDecoder::endOfVideo() const {
+	return !isVideoLoaded() || getCurFrame() >= (int32)getFrameCount() - 1;
+}
+
 
 /*
  *  VideoPlayer
@@ -192,7 +195,7 @@ bool VideoPlayer::playVideo(Common::List<Common::Event> &stopEvents) {
 	int frameX = (g_system->getWidth() - _decoder->getWidth()) / 2;
 	int frameY = (g_system->getHeight() - _decoder->getHeight()) / 2;
 
-	while (_decoder->getCurFrame() < _decoder->getFrameCount() && !_skipVideo) {
+	while (!_decoder->endOfVideo() && !_skipVideo) {
 		processVideoEvents(stopEvents);
 
 		uint32 startTime = 0;

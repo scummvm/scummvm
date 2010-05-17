@@ -1464,7 +1464,7 @@ void ScummEngine_v90he::o90_getVideoData() {
 		break;
 	case 52:	// Get current frame
 		pop();
-		push(_moviePlay->getCurFrame());
+		push(_moviePlay->endOfVideo() ? -1 : (_moviePlay->getCurFrame() + 1));
 		break;
 	case 63:	// Get image number
 		pop();

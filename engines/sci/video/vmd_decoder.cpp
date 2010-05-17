@@ -75,7 +75,7 @@ bool VMDDecoder::loadFile(const char *fileName) {
 	_videoInfo.frameCount = _vmdDecoder->getFramesCount();
 	_videoInfo.frameRate = _vmdDecoder->getFrameRate();
 	_videoInfo.frameDelay = _videoInfo.frameRate * 100;
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 	_videoInfo.firstframeOffset = 0;	// not really necessary for VMDs
 
 	if (_vmdDecoder->hasExtraData())
@@ -103,6 +103,8 @@ void VMDDecoder::closeFile() {
 }
 
 bool VMDDecoder::decodeNextFrame() {
+	_videoInfo.currentFrame++;
+
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
 
@@ -113,7 +115,7 @@ bool VMDDecoder::decodeNextFrame() {
 		setPalette(_palette);
 	}
 
-	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
+	return !endOfVideo();
 }
 
 void VMDDecoder::getPalette() {

@@ -86,7 +86,7 @@ bool FlicDecoder::loadFile(const char *fileName) {
 	_paletteChanged = false;
 
 	// Seek to the first frame
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 	_fileStream->seek(_offsetFrame1);
 	return true;
 }
@@ -195,9 +195,6 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 #define FRAME_TYPE 0xF1FA
 
 bool FlicDecoder::decodeNextFrame() {
-	if (_videoInfo.currentFrame == 0)
-		_videoInfo.startTime = g_system->getMillis();
-
 	// Read chunk
 	uint32 frameSize = _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
@@ -222,6 +219,9 @@ bool FlicDecoder::decodeNextFrame() {
 			_videoInfo.height = newHeight;
 
 		_videoInfo.currentFrame++;
+
+		if (_videoInfo.currentFrame == 0)
+			_videoInfo.startTime = g_system->getMillis();
 		}
 		break;
 	default:
@@ -261,12 +261,12 @@ bool FlicDecoder::decodeNextFrame() {
 	}
 
 	// If we just processed the ring frame, set the next frame
-	if (_videoInfo.currentFrame == _videoInfo.frameCount + 1) {
+	if (_videoInfo.currentFrame == (int32)_videoInfo.frameCount + 1) {
 		_videoInfo.currentFrame = 1;
 		_fileStream->seek(_offsetFrame2);
 	}
 
-	return _videoInfo.currentFrame < _videoInfo.frameCount;
+	return !endOfVideo();
 }
 
 void FlicDecoder::reset() {

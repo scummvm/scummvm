@@ -128,9 +128,8 @@ void MoviePlayer::handleNextFrame() {
 		_vm->markRectAsDirty(kMainVirtScreen, imageRect);
 	}
 
-	if (getCurFrame() == getFrameCount()) {
+	if (endOfVideo())
 		closeFile();
-	}
 }
 
 void MoviePlayer::setPalette(byte *pal) {

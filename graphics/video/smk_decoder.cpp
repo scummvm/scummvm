@@ -368,7 +368,7 @@ int32 SmackerDecoder::getAudioLag() {
 		return 0;
 
 	int32 frameDelay = getFrameDelay();
-	int32 videoTime = _videoInfo.currentFrame * frameDelay;
+	int32 videoTime = (_videoInfo.currentFrame + 1) * frameDelay;
 	int32 audioTime;
 
 	if (!_audioStream) {
@@ -396,7 +396,7 @@ bool SmackerDecoder::loadFile(const char *fileName) {
 		return false;
 
 	// Seek to the first frame
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 	_header.signature = _fileStream->readUint32BE();
 
 	// No BINK support available
@@ -534,6 +534,8 @@ bool SmackerDecoder::decodeNextFrame() {
 	uint32 dataSizeUnpacked = 0;
 
 	uint32 startPos = _fileStream->pos();
+
+	_videoInfo.currentFrame++;
 
 	if (_videoInfo.currentFrame == 0)
 		_videoInfo.startTime = g_system->getMillis();
@@ -749,7 +751,7 @@ bool SmackerDecoder::decodeNextFrame() {
 
 	free(_frameData);
 
-	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
+	return !endOfVideo();
 }
 
 void SmackerDecoder::queueCompressedBuffer(byte *buffer, uint32 bufferSize,
