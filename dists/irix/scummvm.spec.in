@@ -1,5 +1,5 @@
 product scummvm
-    id "scummvm @VERSION@ Script Creation Utility Maniac Mansion VM"
+    id "ScummVM @VERSION@"
     image sw
         id "software"
         version 18
