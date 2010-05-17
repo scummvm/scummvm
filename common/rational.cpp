@@ -49,7 +49,7 @@ Rational::Rational(int num, int denom) {
 
 void Rational::cancel() {
 	// Cancel the fraction by dividing both the num and the denom
-	// by their greatest common denom.
+	// by their greatest common divisor.
 
 	int gcd = Common::gcd(_num, _denom);
 
@@ -144,65 +144,49 @@ const Rational Rational::operator-() const {
 
 const Rational Rational::operator+(const Rational &right) const {
 	Rational tmp = *this;
-
 	tmp += right;
-
 	return tmp;
 }
 
 const Rational Rational::operator-(const Rational &right) const {
 	Rational tmp = *this;
-
 	tmp -= right;
-
 	return tmp;
 }
 
 const Rational Rational::operator*(const Rational &right) const {
 	Rational tmp = *this;
-
 	tmp *= right;
-
 	return tmp;
 }
 
 const Rational Rational::operator/(const Rational &right) const {
 	Rational tmp = *this;
-
 	tmp /= right;
-
 	return tmp;
 }
 
 const Rational Rational::operator+(int right) const {
 	Rational tmp = *this;
-
 	tmp += right;
-
 	return tmp;
 }
 
 const Rational Rational::operator-(int right) const {
 	Rational tmp = *this;
-
 	tmp -= right;
-
 	return tmp;
 }
 
 const Rational Rational::operator*(int right) const {
 	Rational tmp = *this;
-
 	tmp *= right;
-
 	return tmp;
 }
 
 const Rational Rational::operator/(int right) const {
 	Rational tmp = *this;
-
 	tmp /= right;
-
 	return tmp;
 }
 
@@ -296,33 +280,25 @@ Rational::operator double() const {
 
 const Rational operator+(int left, const Rational &right) {
 	Rational tmp = right;
-
 	tmp += left;
-
 	return tmp;
 }
 
 const Rational operator-(int left, const Rational &right) {
 	Rational tmp = right;
-
 	tmp -= left;
-
 	return tmp;
 }
 
 const Rational operator*(int left, const Rational &right) {
 	Rational tmp = right;
-
 	tmp *= left;
-
 	return tmp;
 }
 
 const Rational operator/(int left, const Rational &right) {
 	Rational tmp = right;
-
 	tmp /= left;
-
 	return tmp;
 }
 
