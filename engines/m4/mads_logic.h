@@ -35,9 +35,9 @@ class MadsSceneLogic {
 private:
 	// Library interface methods
 	uint16 loadSpriteSet(uint16 suffixNum, uint16 sepChar);
-	uint16 startSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
-	uint16 startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
-	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int fld24, int timeoutTicks, int extraTicks);
+	uint16 startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	uint16 startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
 	void activateHotspot(int idx, bool active);
 	void lowRoomsEntrySound();
 private:

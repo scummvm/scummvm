@@ -583,13 +583,15 @@ Common::Error MadsEngine::run() {
 
 		_animation->updateAnim();
 
-		// Call the updateState method of all views
-		_viewManager->updateState();
-
 		if (g_system->getMillis() >= nextFrame) {
-			_viewManager->refreshAll();
 			nextFrame = g_system->getMillis() + GAME_FRAME_DELAY;
 			++_currentTimer;
+
+			// Call the updateState method of all views
+			_viewManager->updateState();
+
+			// Refresh the display
+			_viewManager->refreshAll();
 		}
 
 		g_system->delayMillis(10);

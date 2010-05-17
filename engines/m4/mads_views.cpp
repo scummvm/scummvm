@@ -121,7 +121,7 @@ void MadsSpriteSlots::draw(View *view) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
-			spr->draw1(view, slot.scale, slot.depth, slot.xp, MADS_Y_OFFSET + slot.yp);
+			spr->draw1(view, slot.scale, slot.depth, slot.xp, slot.yp);
 		} else {
 			int xp, yp;
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
@@ -135,9 +135,9 @@ void MadsSpriteSlots::draw(View *view) {
 			}
 
 			if (slot.depth > 1) {
-				spr->draw2(view, slot.depth, xp, MADS_Y_OFFSET + yp);
+				spr->draw2(view, slot.depth, xp, yp);
 			} else {
-				spr->draw3(view, xp, MADS_Y_OFFSET + yp);
+				spr->draw3(view, xp, yp);
 			}
 		}
 	}
@@ -501,7 +501,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 	return false;
 }
 
-int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
@@ -536,10 +536,10 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, char fiel
 	_entries[timerIndex].numTicks = numTicks;
 	_entries[timerIndex].extraTicks = extraTicks;
 
-	_entries[timerIndex].timeout = _madsVm->_currentTimer + timeoutTicks;
+	_entries[timerIndex].timeout = _madsVm->_currentTimer + delayTicks;
 
-	_entries[timerIndex].field_24 = field_24;
-	_entries[timerIndex].field_25 = 0;
+	_entries[timerIndex].triggerCountdown = triggerCountdown;
+	_entries[timerIndex].doneFlag = false;
 	_entries[timerIndex].field_13 = 0;
 	_entries[timerIndex].dynamicHotspotIndex = -1;
 	_entries[timerIndex].entries.count = 0;
@@ -589,13 +589,14 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 	int idx = -1;
 
 	_owner._spriteSlots.deleteTimer(timerIndex);
-	if (seqEntry.field_25 != 0) {
+	if (seqEntry.doneFlag) {
 		remove(timerIndex);
 		return false;
 	}
 
 	if (seqEntry.spriteListIndex == -1) {
-		seqEntry.field_25 = -1;
+		// Doesn't have an associated sprite anymore, so mark as done
+		seqEntry.doneFlag = true;
 	} else if ((slotIndex = _owner._spriteSlots.getIndex()) >= 0) {
 		MadsSpriteSlot &spriteSlot = _owner._spriteSlots[slotIndex];
 		setSpriteSlot(timerIndex, spriteSlot);
@@ -631,17 +632,17 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 		if (seqEntry.frameIndex >= seqEntry.frameStart) {
 			if (seqEntry.frameIndex > seqEntry.numSprites) {
 				result = true;
-				if (seqEntry.animType != ANIMTYPE_CYCLED) {
-					// Keep index from exceeding maximum allowed
+				if (seqEntry.animType == ANIMTYPE_CYCLED) {
+					// Reset back to the starting frame (cyclic)
 					seqEntry.frameIndex = seqEntry.frameStart;
 				} else {
-					// Switch into reverse
+					// Switch into reverse mode
 					seqEntry.frameIndex = seqEntry.numSprites - 1;
 					seqEntry.frameInc = -1;
 				}
 			}
 		} else {
-			// Currently in reverse mode
+			// Currently in reverse mode and moved past starting frame
 			result = true;
 
 			if (seqEntry.animType == ANIMTYPE_CYCLED)
@@ -655,13 +656,13 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 			}
 		}
 
-		if (result && (seqEntry.field_24 != 0)) {
-			if (--seqEntry.field_24 != 0)
-				seqEntry.field_25 = -1;
+		if (result && (seqEntry.triggerCountdown != 0)) {
+			if (--seqEntry.triggerCountdown == 0)
+				seqEntry.doneFlag = true;
 		}
 	} else {
-		// Out of sprite slots
-		seqEntry.field_25 = -1;
+		// Out of sprite display slots, so mark entry as done
+		seqEntry.doneFlag = true;
 	}
 
 	if (seqEntry.entries.count > 0) {
@@ -669,7 +670,7 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 			switch (seqEntry.entries.mode[i]) {
 			case SM_0:
 			case SM_1:
-				if (((seqEntry.entries.mode[i] == SM_0) && (seqEntry.field_25 != 0)) ||
+				if (((seqEntry.entries.mode[i] == SM_0) && seqEntry.doneFlag) ||
 					((seqEntry.entries.mode[i] == SM_1) && result))
 				idx = i;
 				break;
@@ -702,18 +703,18 @@ void MadsSequenceList::tick() {
 		if ((_owner._abortTimers2 == 0) && (_owner._abortTimers != 0))
 			break;
 
-		MadsSequenceEntry &timerEntry = _entries[idx];
+		MadsSequenceEntry &seqEntry = _entries[idx];
 		uint32 currentTimer = _madsVm->_currentTimer;
 
-		if (!timerEntry.active || (currentTimer < timerEntry.timeout))
+		if (!seqEntry.active || (currentTimer < seqEntry.timeout))
 			continue;
 
 		// Set the next timeout for the timer entry
-		timerEntry.timeout = currentTimer + timerEntry.numTicks;		
+		seqEntry.timeout = currentTimer + seqEntry.numTicks;		
 
 		// Action the sprite
 		if (loadSprites(idx)) {
-			timerEntry.timeout += timerEntry.extraTicks;
+			seqEntry.timeout += seqEntry.extraTicks;
 		}
 	}
 }

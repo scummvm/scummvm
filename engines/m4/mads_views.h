@@ -236,7 +236,7 @@ public:
 	void reset();
 };
 
-enum SpriteAnimType {ANIMTYPE_SINGLE_DIRECTION = 1, ANIMTYPE_CYCLED = 2};
+enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
 
 enum SequenceSubEntryMode {SM_0 = 0, SM_1 = 1, SM_FRAME_INDEX = 2};
 
@@ -272,8 +272,8 @@ struct MadsSequenceEntry {
 	int width;
 	int height;
 	
-	int field_24;
-	int field_25;
+	int triggerCountdown;
+	bool doneFlag;
 	MadsSequenceSubEntries entries;
 	AbortTimerMode abortMode;
 
@@ -295,7 +295,7 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, int v0, int v1, char field_24, int timeoutTicks, int extraTicks, int numTicks, 
+	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
 	void remove(int timerIndex);
