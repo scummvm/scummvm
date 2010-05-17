@@ -56,12 +56,18 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
 	}
 
+	uint32 neededSleep = 30;
+
 	// WORKAROUND:
 	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
 	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
 	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
 	if (s->_gameId == "lsl3" && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
+	if (s->_gameId == "iceman" && s->currentRoomNumber() == 27) {
+		s->_throttleTrigger = true;
+		neededSleep = 60;
+	}
 
 	if (s->_throttleTrigger) {
 		// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
@@ -74,7 +80,6 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 		uint32 curTime = g_system->getMillis();
 		uint32 duration = curTime - s->_throttleLastTime;
-		uint32 neededSleep = 30;
 
 		if (duration < neededSleep) {
 			s->_event->sleep(neededSleep - duration);
