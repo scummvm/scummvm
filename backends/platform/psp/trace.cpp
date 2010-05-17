@@ -23,11 +23,11 @@
  *
  */
 
-#define TRACE_C
+
 #include <pspkernel.h>
 #include <pspdebug.h>
-#include "backends/platform/psp/trace.h"
-
+#include <stdarg.h>
+#include <stdio.h>
 
 int psp_debug_indent = 0;
 

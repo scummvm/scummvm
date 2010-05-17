@@ -24,10 +24,12 @@
  */
 
 #include <pspgu.h>
+#include <pspkerneltypes.h>
 #include <pspdisplay.h>
 #include <psputils.h>
 
 #include "common/scummsys.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/memory.h"

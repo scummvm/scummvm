@@ -34,6 +34,7 @@
 #include "common/events.h"
 #include "common/scummsys.h"
 
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
 #include "backends/platform/psp/powerman.h"
 

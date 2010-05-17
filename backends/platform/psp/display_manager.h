@@ -36,10 +36,15 @@ public:
 	void guPreRender();
 	void guPostRender();
 	void guShutDown();
+	bool isRenderFinished() { return _renderFinished; }
+	void setupCallbackThread();
 private:
 	static uint32 _displayList[];
 	uint32 _lastRenderTime;					// For measuring rendering
 	void guProgramDisplayBufferSizes();
+	static bool _renderFinished;
+	static int guCallbackThread(SceSize, void *);
+	static void guDisplayCallback(int);
 };
 
 class Screen;

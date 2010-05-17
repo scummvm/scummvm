@@ -41,8 +41,9 @@
 #include "backends/platform/psp/powerman.h"
 
 #include "backends/plugins/psp/psp-provider.h"
-#include "osys_psp.h"
-#include "./trace.h"
+#include "backends/platform/psp/psppixelformat.h"
+#include "backends/platform/psp/osys_psp.h"
+#include "backends/platform/psp/trace.h"
 
 #ifdef ENABLE_PROFILING
 	#include <pspprof.h>

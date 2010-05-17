@@ -24,6 +24,7 @@
  */
 
 #include "common/scummsys.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"

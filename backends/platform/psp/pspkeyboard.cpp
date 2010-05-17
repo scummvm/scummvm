@@ -29,17 +29,21 @@
 #define PSP_KB_SHELL_PATH 	"ms0:/psp/game4xx/scummvm-solid/"	/* path to kbd.zip */
 #endif
 
-//#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
-//#define __PSP_DEBUG_PRINT__
 
-#include "backends/platform/psp/trace.h"
 #include <malloc.h>
-#include "pspkernel.h"
-#include "png.h"
+#include <pspkernel.h>
+#include <png.h>
+
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/pspkeyboard.h"
 #include "common/keyboard.h"
 #include "common/fs.h"
 #include "common/unzip.h"
+
+//#define __PSP_DEBUG_FUNCS__	/* For debugging the stack */
+//#define __PSP_DEBUG_PRINT__
+
+#include "backends/platform/psp/trace.h"
 
 #define PSP_SCREEN_WIDTH 480
 #define PSP_SCREEN_HEIGHT 272

@@ -25,13 +25,17 @@
 
 #include <pspgu.h>
 #include <pspdisplay.h>
+#include <pspthreadman.h>
 
 #include "common/scummsys.h"
 #include "backends/base-backend.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/display_client.h"
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
+
+//#define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
 
 #define PSP_BUFFER_WIDTH (512)
@@ -56,8 +60,44 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{0, 0, 0}
 };
 
+bool MasterGuRenderer::_renderFinished = true;	// synchronizes the callback thread
 
 // Class MasterGuRenderer ----------------------------------------------
+
+void MasterGuRenderer::setupCallbackThread() {
+	DEBUG_ENTER_FUNC();
+	int thid = sceKernelCreateThread("displayCbThread", guCallbackThread, 0x11, 4*1024, THREAD_ATTR_USER, 0);
+	
+	PSP_DEBUG_PRINT("Display CB thread id is %x\n", thid);
+	
+	if (thid >= 0) {
+		sceKernelStartThread(thid, 0, 0);
+	} else 
+		PSP_ERROR("failed to create display callback thread\n");
+}
+
+// thread that reacts to the callback
+int MasterGuRenderer::guCallbackThread(SceSize, void *) {
+	DEBUG_ENTER_FUNC();
+	
+	if (sceGuSetCallback(GU_CALLBACK_FINISH, guDisplayCallback) != 0) {
+		PSP_ERROR("Warning: previous display callback found.\n");
+	}
+	PSP_DEBUG_PRINT("set callback. Going to sleep\n");
+
+	sceKernelSleepThreadCB();	// sleep until we get a callback
+	return 0;
+}
+
+// This callback is called when the render is finished. It swaps the buffers
+void MasterGuRenderer::guDisplayCallback(int) {
+	if (_renderFinished == true)
+		PSP_ERROR("callback thread found wrong value[true] in _renderFinished\n");
+		
+	sceDisplayWaitVblankStart();	// wait for v-blank without eating main thread cycles
+	sceGuSwapBuffers();
+	_renderFinished = true;	// Only this thread can set the variable to true
+}
 
 void MasterGuRenderer::guInit() {
 	DEBUG_ENTER_FUNC();
@@ -110,6 +150,8 @@ void MasterGuRenderer::guProgramDisplayBufferSizes() {
 inline void MasterGuRenderer::guPreRender() {
 	DEBUG_ENTER_FUNC();
 
+	_renderFinished = false;	// set to synchronize with callback thread
+	
 #ifdef ENABLE_RENDER_MEASURE
 	_lastRenderTime = g_system->getMillis();
 #endif /* ENABLE_RENDER_MEASURE */
@@ -132,7 +174,8 @@ inline void MasterGuRenderer::guPostRender() {
 	DEBUG_ENTER_FUNC();
 
 	sceGuFinish();
-	sceGuSync(0, 0);
+#ifndef USE_DISPLAY_CALLBACK
+	sceGuSync(0, 0);	
 
 #ifdef ENABLE_RENDER_MEASURE
 	uint32 now = g_system->getMillis();
@@ -141,6 +184,8 @@ inline void MasterGuRenderer::guPostRender() {
 
 	sceDisplayWaitVblankStart();
 	sceGuSwapBuffers();
+	_renderFinished = true;
+#endif /* !USE_DISPLAY_CALLBACK */	
 }
 
 void MasterGuRenderer::guShutDown() {
@@ -164,11 +209,15 @@ void DisplayManager::init() {
 	_overlay->init();
 	_cursor->init();
 
+
 	_masterGuRenderer.guInit();				// start up the renderer
+#ifdef USE_DISPLAY_CALLBACK
+	_masterGuRenderer.setupCallbackThread();
+#endif
+	
 }
 
 void DisplayManager::setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format) {
-
 	DEBUG_ENTER_FUNC();
 	PSP_DEBUG_PRINT("w[%u], h[%u], pformat[%p]\n", width, height, format);
 
@@ -248,9 +297,15 @@ void DisplayManager::calculateScaleParams() {
 void DisplayManager::renderAll() {
 	DEBUG_ENTER_FUNC();
 
-	if (!isTimeToUpdate()) {
+#ifdef USE_DISPLAY_CALLBACK
+	if (!_masterGuRenderer.isRenderFinished()) {
+		PSP_DEBUG_PRINT("Callback render not finished.\n");
 		return;
-	}
+	}	
+#endif /* USE_DISPLAY_CALLBACK */
+	
+	if (!isTimeToUpdate()) 
+		return;
 
 	if (!_screen->isDirty() &&
 	        (!_overlay->isDirty()) &&

@@ -31,6 +31,7 @@
 
 #include "backends/platform/psp/trace.h"
 
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/input.h"
 
 // Defines for working with PSP buttons

@@ -29,7 +29,6 @@
 #include "common/singleton.h"
 #include "graphics/surface.h"
 #include "common/system.h"
-#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/memory.h"
 
 #define MAX_TEXTURE_SIZE 512

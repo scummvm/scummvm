@@ -76,7 +76,7 @@ private:
 	GuRenderer _renderer;
 
 	int loadPngImage(Common::SeekableReadStream *file, Buffer &buffer, Palette &palette);
-	int getPngImageSize(Common::SeekableReadStream *, uint32 *png_width, uint32 *png_height, u32 *paletteSize);
+	int getPngImageSize(Common::SeekableReadStream *, uint32 *png_width, uint32 *png_height, uint32 *paletteSize);
 	uint32 convert_pow2(uint32 size);
 	void increaseKeyboardLocationX(int amount);		// Move keyboard onscreen
 	void increaseKeyboardLocationY(int amount);
