@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	md5.o \
 	mutex.o \
 	random.o \
+	rational.o \
 	str.o \
 	stream.o \
 	system.o \
