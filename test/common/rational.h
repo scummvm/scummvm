@@ -40,12 +40,12 @@ public:
 		Common::Rational r0(6, 3);
 		Common::Rational r1(1, 2);
 
-		TS_ASSERT(r0 == 2);
-		TS_ASSERT(r1 == Common::Rational(1, 2));
+		TS_ASSERT_EQUALS(r0, 2);
+		TS_ASSERT_EQUALS(r1, Common::Rational(1, 2));
 
 		r0 = r1;
-		TS_ASSERT(r0 == r1);
-		TS_ASSERT(r0 == Common::Rational(1, 2));
+		TS_ASSERT_EQUALS(r0, r1);
+		TS_ASSERT_EQUALS(r0, Common::Rational(1, 2));
 	}
 
 	void test_negative() {
@@ -54,19 +54,22 @@ public:
 
 		r0 = -r0;
 		r1 = -r1;
-		TS_ASSERT(r0 == -2);
-		TS_ASSERT(r1 == Common::Rational(-1, 2));
-		TS_ASSERT(r1 == Common::Rational(1, -2));
+		TS_ASSERT_EQUALS(r0, -2);
+		TS_ASSERT_EQUALS(r1, Common::Rational(-1, 2));
+		TS_ASSERT_EQUALS(r1, Common::Rational(1, -2));
+
+		TS_ASSERT_EQUALS(r1, Common::Rational(-25, 50));
+		TS_ASSERT_EQUALS(r1, Common::Rational(25, -50));
 	}
 
 	void test_add_sub() {
 		const Common::Rational r0(6, 3);
 		const Common::Rational r1(1, 2);
 
-		TS_ASSERT(r0 + r1 == Common::Rational(5, 2));
-		TS_ASSERT(r1 + r0 == Common::Rational(5, 2));
-		TS_ASSERT(r0 - r1 == Common::Rational(3, 2));
-		TS_ASSERT(r1 - r0 == Common::Rational(-3, 2));
+		TS_ASSERT_EQUALS(r0 + r1, Common::Rational(5, 2));
+		TS_ASSERT_EQUALS(r1 + r0, Common::Rational(5, 2));
+		TS_ASSERT_EQUALS(r0 - r1, Common::Rational(3, 2));
+		TS_ASSERT_EQUALS(r1 - r0, Common::Rational(-3, 2));
 	}
 
 	void test_mul() {
@@ -89,6 +92,6 @@ public:
 		Common::Rational r0(6, 3);
 		Common::Rational r1(1, 2);
 
-		TS_ASSERT(r0 / r1 == 4);
+		TS_ASSERT_EQUALS(r0 / r1, 4);
 	}
 };
