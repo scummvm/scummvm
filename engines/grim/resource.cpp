@@ -106,6 +106,9 @@ Block *ResourceLoader::getFileFromCache(const char *filename) {
 }
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const char *filename) {
+	if (_cache.empty())
+		return NULL;
+	
 	if (_cacheDirty) {
 		qsort(_cache.begin(), _cache.size(), sizeof(ResourceCache), sortCallback);
 		_cacheDirty = false;
