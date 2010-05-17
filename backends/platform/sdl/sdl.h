@@ -190,7 +190,9 @@ protected:
 	int _overlayWidth, _overlayHeight;
 	bool _overlayDirty;
 	int _overlayNumTex;
+#ifdef USE_OPENGL
 	GLuint *_overlayTexIds;
+#endif
 
 	void closeOverlay();
 

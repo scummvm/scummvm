@@ -174,7 +174,9 @@ OSystem_SDL::OSystem_SDL()
 	_overlayscreen(0),
 	_overlayWidth(0), _overlayHeight(0),
 	_overlayDirty(true), _overlayNumTex(0),
+#ifdef USE_OPENGL
 	_overlayTexIds(0),
+#endif
 	_samplesPerSec(0),
 	_cdrom(0),
 
