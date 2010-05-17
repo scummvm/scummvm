@@ -250,7 +250,7 @@ int Rational::toInt() const {
 }
 
 double Rational::toDouble() const {
-	return ((double) _num) / ((double) _denom);
+	return ((double)_num) / ((double)_denom);
 }
 
 frac_t Rational::toFrac() const {
