@@ -214,13 +214,38 @@ void Sound::playMovieSound(int32 res, int type) {
 
 	assert(_vm->_resman->fetchType(data) == WAV_FILE);
 
-	// In PSX version we have nothing to skip here, as data starts right away
-	if (!Sword2Engine::isPsx()) {
-		data += ResHeader::size();
-		len -= ResHeader::size();
+	// We want to close the resource right away, so to be safe we make a
+	// private copy of the sound;
+	byte *soundData = (byte *)malloc(len);
+
+	if (soundData) {
+		memcpy(soundData, data, len);
+
+		Common::MemoryReadStream *stream = new Common::MemoryReadStream(soundData, len, DisposeAfterUse::YES);
+
+		// In PSX version we have nothing to skip here, as data starts
+		// right away.
+		if (!Sword2Engine::isPsx()) {
+			stream->seek(ResHeader::size());
+		}
+
+		Audio::RewindableAudioStream *input = 0;
+
+		if (Sword2Engine::isPsx()) {
+			input = Audio::makeVagStream(stream);
+		} else {
+			input = Audio::makeWAVStream(stream, DisposeAfterUse::YES);
+		}
+
+		_vm->_mixer->playInputStream(
+			Audio::Mixer::kMusicSoundType, handle, input,
+			-1, Audio::Mixer::kMaxChannelVolume, 0,
+			DisposeAfterUse::YES, false, isReverseStereo());
+	} else {
+		warning("Sound::playMovieSound: Could not allocate %d bytes\n", len);
 	}
 
-	_vm->_sound->playFx(handle, data, len, Audio::Mixer::kMaxChannelVolume, 0, false, Audio::Mixer::kMusicSoundType);
+	_vm->_resman->closeResource(res);
 }
 
 void Sound::stopMovieSounds() {

@@ -4,6 +4,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 1.1.2 (????-??-??)
   Broken Sword 2
    - Fixed missing speech in some cutscenes.
+   - Fixed a memory leak that would eventually cause the game to hang.
+     (#2976008 - BS2: Game lockup in British Museum)
 
 1.1.1 (2010-05-02)
  New Ports:
