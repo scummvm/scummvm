@@ -41,10 +41,15 @@ Rational::Rational(int num) {
 Rational::Rational(int num, int denom) {
 	assert(denom != 0);
 
-	_num   = num;
-	_denom = denom;
+	if (denom > 0) {
+		_num   = num;
+		_denom = denom;
+	} else {
+		_num   = -num;
+		_denom = -denom;
+	}
 
-	normalize();
+	cancel();
 }
 
 void Rational::cancel() {
@@ -55,22 +60,6 @@ void Rational::cancel() {
 
 	_num   /= gcd;
 	_denom /= gcd;
-}
-
-void Rational::normalize() {
-	// Is the fraction negative?
-	bool negative = !((!(_num < 0)) == (!(_denom < 0)));
-
-	// Make both integers positive
-	_num   = ABS(_num);
-	_denom = ABS(_denom);
-
-	// Cancel the fraction
-	cancel();
-
-	// If the fraction is supposed to be negative, make the num negative
-	if (negative)
-		_num = -_num;
 }
 
 Rational &Rational::operator=(const Rational &right) {
@@ -91,7 +80,7 @@ Rational &Rational::operator+=(const Rational &right) {
 	_num   = _num * right._denom + right._num * _denom;
 	_denom = _denom * right._denom;
 
-	normalize();
+	cancel();
 
 	return *this;
 }
@@ -100,26 +89,25 @@ Rational &Rational::operator-=(const Rational &right) {
 	_num   = _num * right._denom - right._num * _denom;
 	_denom = _denom * right._denom;
 
-	normalize();
+	cancel();
 
 	return *this;
 }
 
 Rational &Rational::operator*=(const Rational &right) {
-	// Try to cross-cancel first, to avoid unnecessary overflow
+	// Cross-cancel to avoid unnecessary overflow;
+	// the result then is automatically normalized
 	int gcd1 = Common::gcd(_num, right._denom);
 	int gcd2 = Common::gcd(right._num, _denom);
 
 	_num   = (_num    / gcd1) * (right._num    / gcd2);
 	_denom = (_denom  / gcd2) * (right._denom  / gcd1);
 
-	normalize();
-
 	return *this;
 }
 
 Rational &Rational::operator/=(const Rational &right) {
-	return *this *= Rational(right._denom, right._num);
+	return *this *= right.getInverse();
 }
 
 Rational &Rational::operator+=(int right) {
@@ -243,7 +231,10 @@ void Rational::invert() {
 
 	SWAP(_num, _denom);
 
-	normalize();
+	if (_denom < 0) {
+		_denom = -_denom;
+		_num = -_num;
+	}
 }
 
 Rational Rational::getInverse() const {
@@ -255,14 +246,10 @@ Rational Rational::getInverse() const {
 }
 
 int Rational::toInt() const {
-	assert(_denom != 0);
-
 	return _num / _denom;
 }
 
 double Rational::toDouble() const {
-	assert(_denom != 0);
-
 	return ((double) _num) / ((double) _denom);
 }
 

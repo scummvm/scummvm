@@ -91,7 +91,6 @@ private:
 	int _denom;
 
 	void cancel();
-	void normalize();
 };
 
 const Rational operator+(int left, const Rational &right);
