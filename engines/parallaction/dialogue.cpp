@@ -443,6 +443,7 @@ public:
 				continue;
 			}
 			_visAnswers[_numVisAnswers]._a = a;
+			_visAnswers[_numVisAnswers]._index = i;
 			_numVisAnswers++;
 		}
 	}
