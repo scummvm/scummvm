@@ -341,9 +341,8 @@ Common::Error QueenEngine::saveGameState(int slot, const char *desc) {
 		file->writeUint32BE(0);
 		file->writeUint32BE(dataSize);
 		char description[32];
-		memset(description, 0, 32);
-		strncpy(description, desc, 31);
-		file->write(description, 32);
+		Common::strlcpy(description, desc, sizeof(description));
+		file->write(description, sizeof(description));
 
 		// write save data
 		file->write(saveData, dataSize);
