@@ -160,7 +160,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	//			Details currently unknown
 	// kDoAudio sits at seg026:038C
 	default:
-		warning("kDoAudio: Unhandled case %d", argv[0].toUint16());
+		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 	}
 
 	return s->r_acc;
