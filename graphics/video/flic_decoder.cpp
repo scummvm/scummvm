@@ -34,20 +34,17 @@ namespace Graphics {
 FlicDecoder::FlicDecoder() {
 	_paletteChanged = false;
 	_fileStream = 0;
-	_videoFrameBuffer = 0;
-	memset(&_videoInfo, 0, sizeof(_videoInfo));
+	_surface = 0;
 }
 
 FlicDecoder::~FlicDecoder() {
-	closeFile();
+	close();
 }
 
-bool FlicDecoder::loadFile(const char *fileName) {
-	closeFile();
+bool FlicDecoder::load(Common::SeekableReadStream &stream) {
+	close();
 
-	_fileStream = SearchMan.createReadStreamForMember(fileName);
-	if (!_fileStream)
-		return false;
+	_fileStream = &stream;
 
 	/* uint32 frameSize = */ _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
@@ -60,9 +57,10 @@ bool FlicDecoder::loadFile(const char *fileName) {
 		return false;
 	}
 
-	_videoInfo.frameCount = _fileStream->readUint16LE();
-	_videoInfo.width = _fileStream->readUint16LE();
-	_videoInfo.height = _fileStream->readUint16LE();
+	
+	_frameCount = _fileStream->readUint16LE();
+	uint16 width = _fileStream->readUint16LE();
+	uint16 height = _fileStream->readUint16LE();
 	uint16 colorDepth = _fileStream->readUint16LE();
 	if (colorDepth != 8) {
 		warning("FlicDecoder::FlicDecoder(): attempted to load an FLC with a palette of color depth %d. Only 8-bit color palettes are supported", frameType);
@@ -70,45 +68,48 @@ bool FlicDecoder::loadFile(const char *fileName) {
 		_fileStream = 0;
 		return false;
 	}
+
 	_fileStream->readUint16LE();	// flags
 	// Note: The normal delay is a 32-bit integer (dword), whereas the overriden delay is a 16-bit integer (word)
 	// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
-	_videoInfo.frameDelay = 100 * _fileStream->readUint32LE();
-	_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
+	uint32 frameDelay = 100 * _fileStream->readUint32LE();
+	_frameRate = 100 * 1000 / frameDelay;
 
 	_fileStream->seek(80);
 	_offsetFrame1 = _fileStream->readUint32LE();
 	_offsetFrame2 = _fileStream->readUint32LE();
 
-	_videoFrameBuffer = new byte[_videoInfo.width * _videoInfo.height];
+	_surface = new Graphics::Surface();
+	_surface->create(width, height, 1);
 	_palette = (byte *)malloc(3 * 256);
 	memset(_palette, 0, 3 * 256);
 	_paletteChanged = false;
 
 	// Seek to the first frame
-	_videoInfo.currentFrame = -1;
 	_fileStream->seek(_offsetFrame1);
 	return true;
 }
 
-void FlicDecoder::closeFile() {
+void FlicDecoder::close() {
 	if (!_fileStream)
 		return;
 
 	delete _fileStream;
 	_fileStream = 0;
 
-	delete[] _videoFrameBuffer;
-	_videoFrameBuffer = 0;
+	_surface->free();
+	delete _surface;
+	_surface = 0;
 
 	free(_palette);
-
 	_dirtyRects.clear();
+
+	reset();
 }
 
 void FlicDecoder::decodeByteRun(uint8 *data) {
-	byte *ptr = (uint8 *)_videoFrameBuffer;
-	while ((uint32)(ptr - _videoFrameBuffer) < (_videoInfo.width * _videoInfo.height)) {
+	byte *ptr = (byte *)_surface->pixels;
+	while ((int32)(ptr - (byte *)_surface->pixels) < (getWidth() * getHeight())) {
 		int chunks = *data++;
 		while (chunks--) {
 			int count = (int8)*data++;
@@ -125,7 +126,7 @@ void FlicDecoder::decodeByteRun(uint8 *data) {
 
 	// Redraw
 	_dirtyRects.clear();
-	_dirtyRects.push_back(Common::Rect(0, 0, _videoInfo.width, _videoInfo.height));
+	_dirtyRects.push_back(Common::Rect(0, 0, getWidth(), getHeight()));
 }
 
 #define OP_PACKETCOUNT   0
@@ -152,8 +153,8 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 			case OP_UNDEFINED:
 				break;
 			case OP_LASTPIXEL:
-				_videoFrameBuffer[currentLine * _videoInfo.width + _videoInfo.width - 1] = (opcode & 0xFF);
-				_dirtyRects.push_back(Common::Rect(_videoInfo.width - 1, currentLine, _videoInfo.width, currentLine + 1));
+				*((byte *)_surface->pixels + currentLine * getWidth() + getWidth() - 1) = (opcode & 0xFF);
+				_dirtyRects.push_back(Common::Rect(getWidth() - 1, currentLine, getWidth(), currentLine + 1));
 				break;
 			case OP_LINESKIPCOUNT:
 				currentLine += -(int16)opcode;
@@ -168,14 +169,14 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 			column += *data++;
 			int rleCount = (int8)*data++;
 			if (rleCount > 0) {
-				memcpy(_videoFrameBuffer + (currentLine * _videoInfo.width) + column, data, rleCount * 2);
+				memcpy((byte *)_surface->pixels + (currentLine * getWidth()) + column, data, rleCount * 2);
 				data += rleCount * 2;
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else if (rleCount < 0) {
 				rleCount = -rleCount;
 				uint16 dataWord = READ_UINT16(data); data += 2;
 				for (int i = 0; i < rleCount; ++i) {
-					WRITE_UINT16(_videoFrameBuffer + currentLine * _videoInfo.width + column + i * 2, dataWord);
+					WRITE_UINT16((byte *)_surface->pixels + currentLine * getWidth() + column + i * 2, dataWord);
 				}
 				_dirtyRects.push_back(Common::Rect(column, currentLine, column + rleCount * 2, currentLine + 1));
 			} else { // End of cutscene ?
@@ -194,34 +195,40 @@ void FlicDecoder::decodeDeltaFLC(uint8 *data) {
 #define PSTAMP     18
 #define FRAME_TYPE 0xF1FA
 
-bool FlicDecoder::decodeNextFrame() {
+Surface *FlicDecoder::decodeNextFrame() {
 	// Read chunk
 	uint32 frameSize = _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();
 	uint16 chunkCount = 0;
 
 	switch (frameType) {
-	case FRAME_TYPE: {
-		chunkCount = _fileStream->readUint16LE();
-		// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
-		// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
-		uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
-		if (newFrameDelay > 0) {
-			_videoInfo.frameDelay = 100 * newFrameDelay;
-			_videoInfo.frameRate = 100 * 1000 / _videoInfo.frameDelay;
-		}
-		_fileStream->readUint16LE();	// reserved, always 0
-		uint16 newWidth = _fileStream->readUint16LE();
-		uint16 newHeight = _fileStream->readUint16LE();
-		if (newWidth > 0)
-			_videoInfo.width = newWidth;
-		if (newHeight > 0)
-			_videoInfo.height = newHeight;
+	case FRAME_TYPE:
+		{
+			// FIXME: FLIC should be switched over to a variable frame rate VideoDecoder to handle
+			// this properly.
 
-		_videoInfo.currentFrame++;
+			chunkCount = _fileStream->readUint16LE();
+			// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
+			// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
+			uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
+			if (newFrameDelay > 0)
+				_frameRate = 1000 / newFrameDelay;
 
-		if (_videoInfo.currentFrame == 0)
-			_videoInfo.startTime = g_system->getMillis();
+			_fileStream->readUint16LE();	// reserved, always 0
+			uint16 newWidth = _fileStream->readUint16LE();
+			uint16 newHeight = _fileStream->readUint16LE();
+
+			if ((newWidth != 0) && (newHeight != 0)) {
+				if (newWidth == 0)
+					newWidth = _surface->w;
+				if (newHeight == 0)
+					newHeight = _surface->h;
+
+				_surface->free();
+				delete _surface;
+				_surface = new Graphics::Surface();
+				_surface->create(newWidth, newHeight, 1);
+			}
 		}
 		break;
 	default:
@@ -239,7 +246,6 @@ bool FlicDecoder::decodeNextFrame() {
 			switch (frameType) {
 			case FLI_SETPAL:
 				unpackPalette(data);
-				setPalette(_palette);
 				_paletteChanged = true;
 				break;
 			case FLI_SS2:
@@ -259,19 +265,25 @@ bool FlicDecoder::decodeNextFrame() {
 			delete[] data;
 		}
 	}
+	
+	_curFrame++;
+
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
 
 	// If we just processed the ring frame, set the next frame
-	if (_videoInfo.currentFrame == (int32)_videoInfo.frameCount) {
-		_videoInfo.currentFrame = 0;
+	if (_curFrame == (int32)_frameCount) {
+		_curFrame = 0;
 		_fileStream->seek(_offsetFrame2);
 	}
 
-	return !endOfVideo();
+	return _surface;
 }
 
 void FlicDecoder::reset() {
-	_videoInfo.currentFrame = -1;
-	_fileStream->seek(_offsetFrame1);
+	VideoDecoder::reset();
+	if (_fileStream)
+		_fileStream->seek(_offsetFrame1);
 }
 
 void FlicDecoder::unpackPalette(uint8 *data) {
@@ -303,7 +315,7 @@ void FlicDecoder::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
 	for (Common::List<Common::Rect>::const_iterator it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
 		for (int y = (*it).top; y < (*it).bottom; ++y) {
 			const int x = (*it).left;
-			memcpy(dst + y * pitch + x, _videoFrameBuffer + y * _videoInfo.width + x, (*it).right - x);
+			memcpy(dst + y * pitch + x, (byte *)_surface->pixels + y * getWidth() + x, (*it).right - x);
 		}
 	}
 	_dirtyRects.clear();

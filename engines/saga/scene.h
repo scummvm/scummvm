@@ -424,6 +424,7 @@ class Scene {
 	int DinoStartProc();
 	int FTA2StartProc();
 	int FTA2EndProc(FTA2Endings whichEnding);
+	void playMovie(const char *filename);
 
 	void IHNMLoadCutaways();
 	bool checkKey();

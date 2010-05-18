@@ -72,6 +72,9 @@ private:
 	virtual void handleNextFrame();
 	virtual bool processFrame() = 0;
 	virtual void startSound() {}
+
+protected:
+	uint32 _firstFrameOffset;
 };
 
 class MoviePlayerDXA : public MoviePlayer, ::Graphics::DXADecoder {
@@ -84,13 +87,12 @@ public:
 	void playVideo();
 	void nextFrame();
 	virtual void stopVideo();
-protected:
-	void setPalette(byte *pal);
 
 private:
 	void handleNextFrame();
 	bool processFrame();
 	void startSound();
+	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 };
 
 class MoviePlayerSMK : public MoviePlayer, ::Graphics::SmackerDecoder {
@@ -101,12 +103,12 @@ public:
 	void playVideo();
 	void nextFrame();
 	virtual void stopVideo();
-protected:
-	void setPalette(byte *pal);
+
 private:
 	void handleNextFrame();
 	bool processFrame();
 	void startSound();
+	void copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch);
 };
 
 MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name);

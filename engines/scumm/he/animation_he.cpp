@@ -46,23 +46,21 @@ int MoviePlayer::getImageNum() {
 }
 
 int MoviePlayer::load(const char *filename, int flags, int image) {
-	if (isVideoLoaded()) {
-		closeFile();
-	}
+	if (isVideoLoaded())
+		close();
 
 	if (!loadFile(filename)) {
 		warning("Failed to load video file %s", filename);
 		return -1;
 	}
+
 	debug(1, "Playing video %s", filename);
 
-	if (flags & 2) {
+	if (flags & 2)
 		_vm->_wiz->createWizEmptyImage(image, 0, 0, getWidth(), getHeight());
-	}
 
 	_flags = flags;
 	_wizResNum = image;
-
 	return 0;
 }
 
@@ -70,7 +68,11 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 	uint h = getHeight();
 	uint w = getWidth();
 
-	byte *src = _videoFrameBuffer;
+	Graphics::Surface *surface = decodeNextFrame();
+	byte *src = (byte *)surface->pixels;
+
+	if (hasDirtyPalette())
+		_vm->setPaletteFromPtr(getPalette(), 256);
 
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		dst += y * pitch + x * 2;
@@ -102,13 +104,10 @@ void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint
 }
 
 void MoviePlayer::handleNextFrame() {
-	if (!isVideoLoaded()) {
+	if (!isVideoLoaded())
 		return;
-	}
 
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-
-	decodeNextFrame();
 
 	if (_flags & 2) {
 		uint8 *dstPtr = _vm->getResourceAddress(rtImage, _wizResNum);
@@ -129,11 +128,7 @@ void MoviePlayer::handleNextFrame() {
 	}
 
 	if (endOfVideo())
-		closeFile();
-}
-
-void MoviePlayer::setPalette(byte *pal) {
-	_vm->setPaletteFromPtr(pal, 256);
+		close();
 }
 
 } // End of namespace Scumm

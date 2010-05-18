@@ -29,7 +29,7 @@
 #define GRAPHICS_VIDEO_VMD_DECODER_H
 
 #include "graphics/video/coktelvideo/coktelvideo.h"
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 #include "sound/mixer.h"
 
 namespace Sci {
@@ -49,32 +49,37 @@ namespace Sci {
  * - Shivers 2: Harvest of Souls
  * - Torin's Passage
  */
-class VMDDecoder : public Graphics::VideoDecoder {
+class VMDDecoder : public Graphics::FixedRateVideoDecoder {
 public:
 	VMDDecoder(Audio::Mixer *mixer);
 	virtual ~VMDDecoder();
 
 	uint32 getFrameWaitTime();
 
-	/**
-	 * Load a VMD encoded video file
-	 * @param filename	the filename to load
-	 */
-	bool loadFile(const char *filename);
+	bool load(Common::SeekableReadStream &stream);
+	void close();
 
-	/**
-	 * Close a VMD encoded video file
-	 */
-	void closeFile();
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _surface->w; }
+	uint16 getHeight() const { return _surface->h; }
+	uint32 getFrameCount() const { return _vmdDecoder->getFramesCount(); }
+	Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
-	bool decodeNextFrame();
+protected:
+	Common::Rational getFrameRate() const { return _vmdDecoder->getFrameRate(); }
 
 private:
 	Graphics::Vmd *_vmdDecoder;
 	Audio::Mixer *_mixer;
+	Graphics::Surface *_surface;
+	Common::SeekableReadStream *_fileStream;
 	byte _palette[256 * 3];
+	bool _dirtyPalette;
 
-	void getPalette();
+	void loadPaletteFromVMD();
 };
 
 } // End of namespace Graphics

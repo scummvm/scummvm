@@ -43,6 +43,7 @@ public:
 	~SMCDecoder() { delete _surface; }
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
 
 private:
 	Graphics::Surface *_surface;

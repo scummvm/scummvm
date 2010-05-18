@@ -26,7 +26,7 @@
 #ifndef GRAPHICS_VIDEO_DXA_PLAYER_H
 #define GRAPHICS_VIDEO_DXA_PLAYER_H
 
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 
 namespace Graphics {
 
@@ -38,28 +38,32 @@ namespace Graphics {
  *  - sword1
  *  - sword2
  */
-class DXADecoder : public VideoDecoder {
+class DXADecoder : public FixedRateVideoDecoder {
 public:
 	DXADecoder();
 	virtual ~DXADecoder();
 
-	/**
-	 * Load a DXA encoded video file
-	 * @param filename	the filename to load
-	 */
-	bool loadFile(const char *fileName);
-
-	/**
-	 * Close a DXA encoded video file
-	 */
-	void closeFile();
-
-	bool decodeNextFrame();
+	bool load(Common::SeekableReadStream &stream);
+	void close();
+	
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _width; }
+	uint16 getHeight() const { return _height; }
+	uint32 getFrameCount() const { return _frameCount; }
+	Surface *decodeNextFrame();
+	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**
 	 * Get the sound chunk tag of the loaded DXA file
 	 */
 	uint32 getSoundTag() { return _soundTag; }
+
+protected:
+	Common::Rational getFrameRate() const { return _frameRate; }
+
+	Common::SeekableReadStream *_fileStream;
 
 private:
 	void decodeZlib(byte *data, int size, int totalSize);
@@ -72,6 +76,10 @@ private:
 		S_DOUBLE
 	};
 
+	Graphics::Surface *_surface;
+	byte _palette[256 * 3];
+	bool _dirtyPalette;
+
 	byte *_frameBuffer1;
 	byte *_frameBuffer2;
 	byte *_scaledBuffer;
@@ -83,6 +91,9 @@ private:
 	uint32 _frameSize;
 	ScaleMode _scaleMode;
 	uint32 _soundTag;
+	uint16 _width, _height;
+	uint32 _frameRate;
+	uint32 _frameCount;
 };
 
 } // End of namespace Graphics

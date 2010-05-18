@@ -28,6 +28,7 @@
 
 #include "common/stream.h"
 #include "graphics/surface.h"
+#include "graphics/pixelformat.h"
 
 namespace Graphics {
 
@@ -35,7 +36,9 @@ class Codec {
 public:
 	Codec() {}
 	virtual ~Codec() {}
+
 	virtual Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
+	virtual PixelFormat getPixelFormat() const = 0;
 };
 
 } // End of namespace Graphics

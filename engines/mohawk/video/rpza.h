@@ -37,6 +37,7 @@ public:
 	~RPZADecoder() { delete _surface; }
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	Graphics::Surface *_surface;

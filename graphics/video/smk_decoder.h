@@ -26,7 +26,7 @@
 #ifndef GRAPHICS_VIDEO_SMK_PLAYER_H
 #define GRAPHICS_VIDEO_SMK_PLAYER_H
 
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 #include "sound/mixer.h"
 
 namespace Audio {
@@ -51,27 +51,28 @@ class BigHuffmanTree;
  *  - sword1
  *  - sword2
  */
-class SmackerDecoder : public VideoDecoder {
+class SmackerDecoder : public FixedRateVideoDecoder {
 public:
 	SmackerDecoder(Audio::Mixer *mixer,
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();
 
-	int getHeight();
-	int32 getAudioLag();
+	bool load(Common::SeekableReadStream &stream);
+	void close();
 
-	/**
-	 * Load an SMK encoded video file
-	 * @param filename	the filename to load
-	 */
-	bool loadFile(const char *filename);
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _surface->w; }
+	uint16 getHeight() const { return _surface->h; }
+	uint32 getFrameCount() const { return _frameCount; }
+	uint32 getElapsedTime() const;
+	Surface *decodeNextFrame();
+	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
-	/**
-	 * Close an SMK encoded video file
-	 */
-	void closeFile();
-
-	bool decodeNextFrame();
+protected:
+	Common::Rational getFrameRate() const { return _frameRate; }
+	Common::SeekableReadStream *_fileStream;
 
 private:
 	void unpackPalette();
@@ -111,6 +112,11 @@ private:
 	byte *_frameData;
 	// The RGB palette
 	byte *_palette;
+	bool _dirtyPalette;
+
+	uint32 _frameRate;
+	uint32 _frameCount;
+	Surface *_surface;
 
 	Audio::Mixer::SoundType _soundType;
 	Audio::Mixer *_mixer;

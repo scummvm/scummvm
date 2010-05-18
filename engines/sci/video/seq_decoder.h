@@ -26,40 +26,50 @@
 #ifndef SEQ_DECODER_H
 #define SEQ_DECODER_H
 
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 
 namespace Sci {
 
 /**
  * Implementation of the Sierra SEQ decoder, used in KQ6 DOS floppy/CD and GK1 DOS
  */
-class SeqDecoder : public Graphics::VideoDecoder {
+class SeqDecoder : public Graphics::FixedRateVideoDecoder {
 public:
-	SeqDecoder() {}
+	SeqDecoder();
 	virtual ~SeqDecoder();
 
-	/**
-	 * Load a SEQ encoded video file
-	 * @param filename	the filename to load
-	 */
-	bool loadFile(const char *fileName) { return loadFile(fileName, 10); }
+	bool load(Common::SeekableReadStream &stream);
+	void close();
 
-	/**
-	 * Load a SEQ encoded video file
-	 * @param filename	the filename to load
-	 * @param frameDelay the delay between frames, in ticks
-	 */
-	bool loadFile(const char *fileName, int frameDelay);
+	void setFrameDelay(int frameDelay) { _frameDelay = frameDelay; }
 
-	/**
-	 * Close a SEQ encoded video file
-	 */
-	void closeFile();
-
-	bool decodeNextFrame();
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return SEQ_SCREEN_WIDTH; }
+	uint16 getHeight() const { return SEQ_SCREEN_HEIGHT; }
+	uint32 getFrameCount() const { return _frameCount; }
+	Graphics::Surface *decodeNextFrame();
+	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
+  
+protected:
+	Common::Rational getFrameRate() const { assert(_frameDelay); return Common::Rational(60, _frameDelay); }
 
 private:
+	enum {
+		SEQ_SCREEN_WIDTH = 320,
+		SEQ_SCREEN_HEIGHT = 200
+	};
+
 	bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
+
+	uint16 _width, _height;
+	uint16 _frameDelay;
+	Common::SeekableReadStream *_fileStream;
+	byte _palette[256 * 3];
+	bool _dirtyPalette;
+	uint32 _frameCount;
+	Graphics::Surface *_surface;
 };
 
 } // End of namespace Sci

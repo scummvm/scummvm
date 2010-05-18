@@ -1078,8 +1078,6 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
-	bool playedVideo = false;
-
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
 	bool reshowCursor;
@@ -1087,30 +1085,29 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	reshowCursor = g_sci->_gfxCursor->isVisible();
 	if (reshowCursor)
 		g_sci->_gfxCursor->kernelHide();
+		
+	Graphics::VideoDecoder *videoDecoder = 0;
 
 	if (argv[0].segment != 0) {
+		Common::String filename = s->_segMan->getString(argv[0]);
+
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			// Mac QuickTime
 			// The only argument is the string for the video
-			warning("TODO: Play QuickTime movie '%s'", s->_segMan->getString(argv[0]).c_str());
+			warning("TODO: Play QuickTime movie '%s'", filename.c_str());
 			return s->r_acc;
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
-			Common::String filename = s->_segMan->getString(argv[0]);
-			int delay = argv[1].toUint16(); // Time between frames in ticks
-
 			SeqDecoder *seqDecoder = new SeqDecoder();
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
-			if (seqDecoder->loadFile(filename.c_str(), delay)) {
-				player->playVideo();
-				playedVideo = true;
-			} else {
+			seqDecoder->setFrameDelay(argv[1].toUint16()); // Time between frames in ticks
+			videoDecoder = seqDecoder;
+
+			if (!videoDecoder->loadFile(filename)) {
 				warning("Failed to open movie file %s", filename.c_str());
+				delete videoDecoder;
+				videoDecoder = 0;
 			}
-			seqDecoder->closeFile();
-			delete player;
-			delete seqDecoder;
 		}
 	} else {
 		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
@@ -1130,17 +1127,13 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		switch (argv[0].toUint16()) {
 		case 0: {
 			Common::String filename = s->_segMan->getString(argv[1]);
-			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
-			if (aviDecoder->loadFile(filename.c_str())) {
-				player->playVideo();
-				playedVideo = true;
-			} else {
+			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
+
+			if (!videoDecoder->loadFile(filename.c_str())) {
 				warning("Failed to open movie file %s", filename.c_str());
+				delete videoDecoder;
+				videoDecoder = 0;
 			}
-			aviDecoder->closeFile();
-			delete player;
-			delete aviDecoder;
 			break;
 		}
 		default:
@@ -1148,8 +1141,33 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	if (playedVideo)
+	if (videoDecoder) {
+		uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
+		uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+
+		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
+			if (videoDecoder->needsUpdate()) {
+				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+				if (frame) {
+					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+					if (videoDecoder->hasDirtyPalette())
+						videoDecoder->setSystemPalette();
+
+					g_system->updateScreen();
+				}
+			}
+
+			Common::Event event;
+			while (g_system->getEventManager()->pollEvent(event))
+				;
+
+			g_system->delayMillis(10);
+		}
+		
+		delete videoDecoder;
 		g_sci->_gfxScreen->kernelSyncWithFramebuffer();
+	}
 
 	if (reshowCursor)
 		g_sci->_gfxCursor->kernelShow();

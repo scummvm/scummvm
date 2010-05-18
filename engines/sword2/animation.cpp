@@ -47,9 +47,10 @@ namespace Sword2 {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system), VideoPlayer(decoder) {
+	: _vm(vm), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
 	_bgSoundStream = NULL;
 	_decoderType = decoderType;
+	_decoder = decoder;
 }
 
 MoviePlayer:: ~MoviePlayer() {
@@ -62,11 +63,10 @@ MoviePlayer:: ~MoviePlayer() {
  * @param id the id of the file
  */
 bool MoviePlayer::load(const char *name) {
-	if (_decoderType == kVideoDecoderDXA) {
+	if (_decoderType == kVideoDecoderDXA)
 		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(name);
-	} else {
+	else
 		_bgSoundStream = NULL;
-	}
 
 	_textSurface = NULL;
 
@@ -97,13 +97,11 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 	_currentMovieText = 0;
 	_leadOut = leadOut;
 
-	if (leadIn) {
+	if (leadIn)
 		_vm->_sound->playMovieSound(leadIn, kLeadInSound);
-	}
 
-	if (_bgSoundStream) {
+	if (_bgSoundStream)
 		_snd->playStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
-	}
 
 	bool terminated = false;
 
@@ -186,12 +184,12 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 
 				for (int y = 0; y < text->_textSprite.h; y++) {
 					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
-						memset(dst + _textX, _decoder->getBlack(), text->_textSprite.w);
+						memset(dst + _textX, findBlackPalIndex(), text->_textSprite.w);
 					} else {
 						if (frameX > _textX)
-							memset(dst + _textX, _decoder->getBlack(), frameX - _textX);
+							memset(dst + _textX, findBlackPalIndex(), frameX - _textX);
 						if (frameX + frameWidth < _textX + text->_textSprite.w)
-							memset(dst + frameX + frameWidth, _decoder->getBlack(), _textX + text->_textSprite.w - (frameX + frameWidth));
+							memset(dst + frameX + frameWidth, findBlackPalIndex(), _textX + text->_textSprite.w - (frameX + frameWidth));
 					}
 
 					dst += _system->getWidth();
@@ -207,8 +205,8 @@ void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 	MovieText *text = &_movieTexts[index];
 
-	byte white = _decoder->getWhite();
-	byte black = _decoder->getBlack();
+	byte white = findWhitePalIndex();
+	byte black = findBlackPalIndex();
 
 	if (text->_textMem && _textSurface) {
 		byte *src = text->_textSprite.data;
@@ -240,7 +238,7 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	MovieText *text;
-	int frame = _decoder->getCurFrame() + 1;
+	int frame = _decoder->getCurFrame();
 
 	if (_currentMovieText < _numMovieTexts) {
 		text = &_movieTexts[_currentMovieText];
@@ -272,25 +270,51 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 	}
 }
 
+bool MoviePlayer::playVideo() {
+	uint16 x = (g_system->getWidth() - _decoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - _decoder->getHeight()) / 2;
+
+	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
+		if (_decoder->needsUpdate()) {
+			Graphics::Surface *frame = _decoder->decodeNextFrame();
+			if (frame)
+				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+			if (_decoder->hasDirtyPalette())
+				_decoder->setSystemPalette();
+
+			Graphics::Surface *screen = _vm->_system->lockScreen();
+			performPostProcessing((byte *)screen->pixels);
+			_vm->_system->unlockScreen();
+			_vm->_system->updateScreen();
+		}
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				return false;
+	}
+
+	return !_vm->shouldQuit();
+}
+
+byte MoviePlayer::findBlackPalIndex() {
+	return 0;
+}
+
+byte MoviePlayer::findWhitePalIndex() {
+	return 0xff;
+}
+
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
 	: _mixer(mixer), _bgSoundHandle(bgSoundHandle)  {
 }
 
-int32 DXADecoderWithSound::getAudioLag() {
-	if (!_fileStream)
-		return 0;
+uint32 DXADecoderWithSound::getElapsedTime() const {
+	if (_mixer->isSoundHandleActive(*_bgSoundHandle))
+		return _mixer->getSoundElapsedTime(*_bgSoundHandle);
 
-	if (!_mixer->isSoundHandleActive(*_bgSoundHandle))
-		return 0;
-
-	int32 frameDelay = getFrameDelay();
-	int32 videoTime = _videoInfo.currentFrame * frameDelay;
-	int32 audioTime;
-
-	const Audio::Timestamp ts = _mixer->getElapsedTime(*_bgSoundHandle);
-	audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
-
-	return videoTime - audioTime;
+	return VideoDecoder::getElapsedTime();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

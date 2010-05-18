@@ -45,6 +45,7 @@ public:
 	~JPEGDecoder();
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	Graphics::PixelFormat _pixelFormat;

@@ -35,10 +35,6 @@
 
 namespace Sci {
 
-// SEQ videos always run at 320x200
-#define SCREEN_WIDTH 320
-#define SCREEN_HEIGHT 200
-
 enum seqPalTypes {
 	kSeqPalVariable = 0,
 	kSeqPalConstant = 1
@@ -49,26 +45,24 @@ enum seqFrameTypes {
 	kSeqFrameDiff = 1
 };
 
-SeqDecoder::~SeqDecoder() {
-	closeFile();
+SeqDecoder::SeqDecoder() {
+	_fileStream = 0;
+	_surface = 0;
+	_dirtyPalette = false;
 }
 
-bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
-	closeFile();
+SeqDecoder::~SeqDecoder() {
+	close();
+}
 
-	_fileStream = SearchMan.createReadStreamForMember(fileName);
-	if (!_fileStream)
-		return false;
+bool SeqDecoder::load(Common::SeekableReadStream &stream) {
+	close();
 
-	// Seek to the first frame
-	_videoInfo.currentFrame = -1;
+	_fileStream = &stream;
+	_surface = new Graphics::Surface();
+	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, 1);
 
-	_videoInfo.width = SCREEN_WIDTH;
-	_videoInfo.height = SCREEN_HEIGHT;
-	_videoInfo.frameCount = _fileStream->readUint16LE();
-	// Our frameDelay is calculated in 1/100 ms, so we convert it here
-	_videoInfo.frameDelay = 100 * frameDelay * 1000 / 60;
-	_videoFrameBuffer = new byte[_videoInfo.width * _videoInfo.height];
+	_frameCount = _fileStream->readUint16LE();
 
 	// Set palette
 	int paletteSize = _fileStream->readUint32LE();
@@ -81,39 +75,38 @@ bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
 	uint16 palColorStart = READ_LE_UINT16(paletteData + 25);
 	uint16 palColorCount = READ_LE_UINT16(paletteData + 29);
 
-	byte palette[256 * 4];
 	int palOffset = 37;
 
 	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 		if (palFormat == kSeqPalVariable)
 			palOffset++;
-		palette[colorNo * 4 + 0] = paletteData[palOffset++];
-		palette[colorNo * 4 + 1] = paletteData[palOffset++];
-		palette[colorNo * 4 + 2] = paletteData[palOffset++];
-		palette[colorNo * 4 + 3] = 0;
+		_palette[colorNo * 3 + 0] = paletteData[palOffset++];
+		_palette[colorNo * 3 + 1] = paletteData[palOffset++];
+		_palette[colorNo * 3 + 2] = paletteData[palOffset++];
 	}
 
-	g_system->setPalette(palette, 0, 256);
-
+	_dirtyPalette = true;
 	delete[] paletteData;
-
-	_videoInfo.firstframeOffset = _fileStream->pos();
-
 	return true;
 }
 
-void SeqDecoder::closeFile() {
+void SeqDecoder::close() {
 	if (!_fileStream)
 		return;
+
+	_frameDelay = 0;
 
 	delete _fileStream;
 	_fileStream = 0;
 
-	delete[] _videoFrameBuffer;
-	_videoFrameBuffer = 0;
+	_surface->free();
+	delete _surface;
+	_surface = 0;
+
+	reset();
 }
 
-bool SeqDecoder::decodeNextFrame() {
+Graphics::Surface *SeqDecoder::decodeNextFrame() {
 	int16 frameWidth = _fileStream->readUint16LE();
 	int16 frameHeight = _fileStream->readUint16LE();
 	int16 frameLeft = _fileStream->readUint16LE();
@@ -129,42 +122,41 @@ bool SeqDecoder::decodeNextFrame() {
 
 	_fileStream->seek(offset);
 
-	_videoInfo.currentFrame++;
-
-	if (_videoInfo.currentFrame == 0)
-		_videoInfo.startTime = g_system->getMillis();
-
 	if (frameType == kSeqFrameFull) {
-		byte *dst = _videoFrameBuffer + frameTop * SCREEN_WIDTH + frameLeft;
+		byte *dst = (byte *)_surface->pixels + frameTop * SEQ_SCREEN_WIDTH + frameLeft;
 
 		byte *linebuf = new byte[frameWidth];
 
 		do {
 			_fileStream->read(linebuf, frameWidth);
 			memcpy(dst, linebuf, frameWidth);
-			dst += SCREEN_WIDTH;
+			dst += SEQ_SCREEN_WIDTH;
 		} while (--frameHeight);
 
 		delete[] linebuf;
 	} else {
 		byte *buf = new byte[frameSize];
 		_fileStream->read(buf, frameSize);
-		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, _videoFrameBuffer + SCREEN_WIDTH * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
+		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, (byte *)_surface->pixels + SEQ_SCREEN_WIDTH * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
 		delete[] buf;
 	}
 
-	return !endOfVideo();
+	if (_curFrame == -1)
+		_startTime = g_system->getMillis();
+
+	_curFrame++;
+	return _surface;
 }
 
 #define WRITE_TO_BUFFER(n) \
-	if (writeRow * SCREEN_WIDTH + writeCol + (n) > SCREEN_WIDTH * height) { \
+	if (writeRow * SEQ_SCREEN_WIDTH + writeCol + (n) > SEQ_SCREEN_WIDTH * height) { \
 		warning("SEQ player: writing out of bounds, aborting"); \
 		return false; \
 	} \
 	if (litPos + (n) > litSize) { \
 		warning("SEQ player: reading out of bounds, aborting"); \
 	} \
-	memcpy(dest + writeRow * SCREEN_WIDTH + writeCol, litData + litPos, n);
+	memcpy(dest + writeRow * SEQ_SCREEN_WIDTH + writeCol, litData + litPos, n);
 
 bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey) {
 	int writeRow = 0;

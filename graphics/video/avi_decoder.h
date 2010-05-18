@@ -26,7 +26,7 @@
 #ifndef GRAPHICS_AVI_PLAYER_H
 #define GRAPHICS_AVI_PLAYER_H
 
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 #include "graphics/video/codecs/codec.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -172,26 +172,27 @@ struct AVIStreamHeader {
 	Common::Rect frame;
 };
 
-class AviDecoder : public VideoDecoder {
+class AviDecoder : public FixedRateVideoDecoder {
 public:
 	AviDecoder(Audio::Mixer *mixer,
 			Audio::Mixer::SoundType soundType = Audio::Mixer::kPlainSoundType);
 	virtual ~AviDecoder();
 
-	/**
-	 * Load an AVI video file
-	 * @param filename	the filename to load
-	 */
-	bool loadFile(const char *fileName);
+	bool load(Common::SeekableReadStream &stream);
+	void close();
 
-	/**
-	 * Close an AVI video file
-	 */
-	void closeFile();
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _header.width; }
+	uint16 getHeight() const { return _header.height; }
+	uint32 getFrameCount() const { return _header.totalFrames; }
+	uint32 getElapsedTime() const;
+	Surface *decodeNextFrame();
+	PixelFormat getPixelFormat() const;
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
-	bool decodeNextFrame();
-	int32 getAudioLag();
-	int32 getFrameRate() { return _vidsHeader.rate / _vidsHeader.scale; }
+protected:
+	Common::Rational getFrameRate() const { return Common::Rational(_vidsHeader.rate, _vidsHeader.scale); }
 
 private:
 	Audio::Mixer *_mixer;
@@ -202,7 +203,9 @@ private:
 	AVIStreamHeader _vidsHeader;
 	AVIStreamHeader _audsHeader;
 	byte _palette[3 * 256];
+	bool _dirtyPalette;
 
+	Common::SeekableReadStream *_fileStream;
 	bool _decodedHeader;
 
 	Codec *_videoCodec;
@@ -223,8 +226,6 @@ private:
 	static byte char2num(char c);
 	static byte getStreamNum(uint32 tag);
 	static uint16 getStreamType(uint32 tag);
-
-	Surface *getNextFrame();
 };
 
 } // End of namespace Graphics

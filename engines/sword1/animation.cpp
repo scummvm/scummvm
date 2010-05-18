@@ -68,9 +68,10 @@ static const char *sequenceList[20] = {
 ///////////////////////////////////////////////////////////////////////////////
 
 MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType)
-	: _vm(vm), _textMan(textMan), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system), VideoPlayer(decoder) {
+	: _vm(vm), _textMan(textMan), _snd(snd), _bgSoundHandle(bgSoundHandle), _system(system) {
 	_bgSoundStream = NULL;
 	_decoderType = decoderType;
+	_decoder = decoder;
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -86,11 +87,10 @@ bool MoviePlayer::load(uint32 id) {
 	Common::File f;
 	char filename[20];
 
-	if (_decoderType == kVideoDecoderDXA) {
+	if (_decoderType == kVideoDecoderDXA)
 		_bgSoundStream = Audio::SeekableAudioStream::openStreamFile(sequenceList[id]);
-	} else {
+	else
 		_bgSoundStream = NULL;
-	}
 
 	if (SwordEngine::_systemVars.showText) {
 		sprintf(filename, "%s.txt", sequenceList[id]);
@@ -146,9 +146,9 @@ bool MoviePlayer::load(uint32 id) {
 }
 
 void MoviePlayer::play() {
-	if (_bgSoundStream) {
+	if (_bgSoundStream)
 		_snd->playStream(Audio::Mixer::kSFXSoundType, _bgSoundHandle, _bgSoundStream);
-	}
+
 	bool terminated = false;
 
 	_textX = 0;
@@ -179,7 +179,7 @@ void MoviePlayer::play() {
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	if (!_movieTexts.empty()) {
-		if (_decoder->getCurFrame() + 1 == _movieTexts[0]->_startFrame) {
+		if (_decoder->getCurFrame() == _movieTexts[0]->_startFrame) {
 			_textMan->makeTextSprite(2, (uint8 *)_movieTexts[0]->_text, 600, LETTER_COL);
 
 			FrameHeader *frame = _textMan->giveSpriteData(2);
@@ -188,7 +188,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			_textX = 320 - _textWidth / 2;
 			_textY = 420 - _textHeight;
 		}
-		if (_decoder->getCurFrame() + 1 == _movieTexts[0]->_endFrame) {
+		if (_decoder->getCurFrame() == _movieTexts[0]->_endFrame) {
 			_textMan->releaseText(2, false);
 			delete _movieTexts.remove_at(0);
 		}
@@ -205,10 +205,10 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 			for (x = 0; x < _textWidth; x++) {
 				switch (src[x]) {
 				case BORDER_COL:
-					dst[x] = _decoder->getBlack();
+					dst[x] = findBlackPalIndex();
 					break;
 				case LETTER_COL:
-					dst[x] = _decoder->getWhite();
+					dst[x] = findWhitePalIndex();
 					break;
 				}
 			}
@@ -228,12 +228,12 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 
 		for (y = 0; y < _textHeight; y++) {
 			if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
-				memset(dst + _textX, _decoder->getBlack(), _textWidth);
+				memset(dst + _textX, findBlackPalIndex(), _textWidth);
 			} else {
 				if (frameX > _textX)
-					memset(dst + _textX, _decoder->getBlack(), frameX - _textX);
+					memset(dst + _textX, findBlackPalIndex(), frameX - _textX);
 				if (frameX + frameWidth < _textX + _textWidth)
-					memset(dst + frameX + frameWidth, _decoder->getBlack(), _textX + _textWidth - (frameX + frameWidth));
+					memset(dst + frameX + frameWidth, findBlackPalIndex(), _textX + _textWidth - (frameX + frameWidth));
 			}
 
 			dst += _system->getWidth();
@@ -244,25 +244,51 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 	}
 }
 
+bool MoviePlayer::playVideo() {
+	uint16 x = (g_system->getWidth() - _decoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - _decoder->getHeight()) / 2;
+
+	while (!_vm->shouldQuit() && !_decoder->endOfVideo()) {
+		if (_decoder->needsUpdate()) {
+			Graphics::Surface *frame = _decoder->decodeNextFrame();
+			if (frame)
+				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+			if (_decoder->hasDirtyPalette())
+				_decoder->setSystemPalette();
+
+			Graphics::Surface *screen = _vm->_system->lockScreen();
+			performPostProcessing((byte *)screen->pixels);
+			_vm->_system->unlockScreen();
+			_vm->_system->updateScreen();
+		}
+
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				return false;
+	}
+
+	return !_vm->shouldQuit();
+}
+
+byte MoviePlayer::findBlackPalIndex() {
+	return 0;
+}
+
+byte MoviePlayer::findWhitePalIndex() {
+	return 0xff;
+}
+
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)
 	: _mixer(mixer), _bgSoundHandle(bgSoundHandle)  {
 }
 
-int32 DXADecoderWithSound::getAudioLag() {
-	if (!_fileStream)
-		return 0;
+uint32 DXADecoderWithSound::getElapsedTime() const {
+	if (_mixer->isSoundHandleActive(*_bgSoundHandle))
+		return _mixer->getSoundElapsedTime(*_bgSoundHandle);
 
-	if (!_mixer->isSoundHandleActive(*_bgSoundHandle))
-		return 0;
-
-	int32 frameDelay = getFrameDelay();
-	int32 videoTime = (_videoInfo.currentFrame + 1) * frameDelay;
-	int32 audioTime;
-
-	const Audio::Timestamp ts = _mixer->getElapsedTime(*_bgSoundHandle);
-	audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
-
-	return videoTime - audioTime;
+	return VideoDecoder::getElapsedTime();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

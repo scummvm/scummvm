@@ -1437,7 +1437,7 @@ void ScummEngine_v90he::o90_videoOps() {
 			}
 		} else if (_videoParams.status == 165) {
 			// Stop video
-			_moviePlay->closeFile();
+			_moviePlay->close();
 		}
 		break;
 	default:

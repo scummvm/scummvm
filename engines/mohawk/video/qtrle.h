@@ -37,6 +37,7 @@ public:
 	~QTRLEDecoder();
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	byte _bitsPerPixel;

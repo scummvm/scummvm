@@ -65,6 +65,7 @@ public:
 	~CinepakDecoder();
 
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	CinepakFrame _curFrame;

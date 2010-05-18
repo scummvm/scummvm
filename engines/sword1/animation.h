@@ -28,7 +28,7 @@
 
 #include "graphics/video/dxa_decoder.h"
 #include "graphics/video/smk_decoder.h"
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 
 #include "common/array.h"
 
@@ -64,18 +64,20 @@ public:
 	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
 	~DXADecoderWithSound() {}
 
-	int32 getAudioLag();
+	uint32 getElapsedTime() const;
+
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle *_bgSoundHandle;
 };
 
-class MoviePlayer : public Graphics::VideoPlayer {
+class MoviePlayer {
 public:
 	MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
 	bool load(uint32 id);
 	void play();
+
 protected:
 	SwordEngine *_vm;
 	Text *_textMan;
@@ -85,10 +87,15 @@ protected:
 	int _textX, _textY, _textWidth, _textHeight;
 	DecoderType _decoderType;
 
+	Graphics::VideoDecoder *_decoder;
 	Audio::SoundHandle *_bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
 
+	bool playVideo();
 	void performPostProcessing(byte *screen);
+
+	byte findBlackPalIndex();
+	byte findWhitePalIndex();
 };
 
 MoviePlayer *makeMoviePlayer(uint32 id, SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSystem *system);

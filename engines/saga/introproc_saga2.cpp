@@ -40,13 +40,7 @@ namespace Saga {
 int Scene::DinoStartProc() {
 	_vm->_gfx->showCursor(false);
 
-	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
-	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
-	if (smkDecoder->loadFile("testvid.smk"))
-		player->playVideo();        // Play introduction
-	smkDecoder->closeFile();
-	delete player;
-	delete smkDecoder;
+	playMovie("testvid.smk");
 
 	// HACK: Forcibly quit here
 	_vm->quitGame();
@@ -57,16 +51,8 @@ int Scene::DinoStartProc() {
 int Scene::FTA2StartProc() {
 	_vm->_gfx->showCursor(false);
 
-	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
-	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
-	if (smkDecoder->loadFile("trimark.smk"))
-		player->playVideo();      // Show Ignite logo
-	smkDecoder->closeFile();
-	if (smkDecoder->loadFile("intro.smk"))
-		player->playVideo();        // Play introduction
-	smkDecoder->closeFile();
-	delete player;
-	delete smkDecoder;
+	playMovie("trimark.smk");
+	playMovie("intro.smk");
 
 	// HACK: Forcibly quit here
 	_vm->quitGame();
@@ -100,16 +86,39 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 	_vm->_gfx->showCursor(false);
 
 	// Play ending
-	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
-	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
-	if (smkDecoder->loadFile(videoName)) {
-		player->playVideo();
-		smkDecoder->closeFile();
-	}
-	delete player;
-	delete smkDecoder;
+	playMovie(videoName);
 
 	return SUCCESS;
+}
+
+void Scene::playMovie(const char *filename) {
+	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
+
+	if (!smkDecoder->loadFile(filename))
+		return;
+
+	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
+	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
+
+	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo()) {
+		if (smkDecoder->needsUpdate()) {
+			Graphics::Surface *frame = smkDecoder->decodeNextFrame();
+			if (frame) {
+				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+				if (smkDecoder->hasDirtyPalette())
+					smkDecoder->setSystemPalette();
+
+				_vm->_system->updateScreen();
+			}
+		}
+	
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event))
+			;
+
+		_vm->_system->delayMillis(10);
+	}
 }
 
 } // End of namespace Saga

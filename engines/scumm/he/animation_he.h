@@ -56,9 +56,6 @@ public:
 
 	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();
-
-protected:
-	virtual void setPalette(byte *pal);
 };
 
 } // End of namespace Scumm

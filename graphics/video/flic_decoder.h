@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GRAPHICS_VIDEO_FlicDecoder_H
-#define GRAPHICS_VIDEO_FlicDecoder_H
+#ifndef GRAPHICS_VIDEO_FLICDECODER_H
+#define GRAPHICS_VIDEO_FLICDECODER_H
 
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 #include "common/list.h"
 #include "common/rect.h"
 
@@ -42,34 +42,41 @@ namespace Graphics {
  * Video decoder used in engines:
  *  - tucker
  */
-class FlicDecoder : public VideoDecoder {
+class FlicDecoder : public FixedRateVideoDecoder {
 public:
 	FlicDecoder();
 	virtual ~FlicDecoder();
 
 	/**
-	 * Load a FLIC encoded video file
-	 * @param filename	the filename to load
+	 * Load a video file
+	 * @param stream  the stream to load
 	 */
-	bool loadFile(const char *fileName);
+	bool load(Common::SeekableReadStream &stream);
+	void close();
 
 	/**
-	 * Close a FLIC encoded video file
+	 * Decode the next frame and return the frame's surface
+	 * @note the return surface should *not* be freed
+	 * @note this may return 0, in which case the last frame should be kept on screen
 	 */
-	void closeFile();
+	Surface *decodeNextFrame();
 
-	/**
-	 * Decode the next frame
-	 */
-	bool decodeNextFrame();
+	bool isVideoLoaded() const { return _fileStream != 0; }
+	uint16 getWidth() const { return _surface->w; }
+	uint16 getHeight() const { return _surface->h; }
+	uint32 getFrameCount() const { return _frameCount; }
+	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
 
 	const Common::List<Common::Rect> *getDirtyRects() const { return &_dirtyRects; }
 	void clearDirtyRects() { _dirtyRects.clear(); }
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
-	const byte *getPalette() { _paletteChanged = false; return _palette; }
-	bool paletteChanged() { return _paletteChanged; }
+	byte *getPalette() { _paletteChanged = false; return _palette; }
+	bool hasDirtyPalette() { return _paletteChanged; }
 	void reset();
+
+protected:
+	Common::Rational getFrameRate() const { return _frameRate; }
 
 private:
 	uint16 _offsetFrame1;
@@ -81,8 +88,12 @@ private:
 	void decodeDeltaFLC(uint8 *data);
 	void unpackPalette(uint8 *mem);
 
-	Common::List<Common::Rect> _dirtyRects;
+	Common::SeekableReadStream *_fileStream;
+	Surface *_surface;
+	uint32 _frameCount;
+	uint32 _frameRate;
 
+	Common::List<Common::Rect> _dirtyRects;
 };
 
 } // End of namespace Graphics

@@ -27,7 +27,6 @@
 
 #include "sci/video/vmd_decoder.h"
 
-#include "common/archive.h"
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/stream.h"
@@ -42,54 +41,39 @@ namespace Sci {
 
 VMDDecoder::VMDDecoder(Audio::Mixer *mixer) : _mixer(mixer) {
 	_vmdDecoder = new Graphics::Vmd(new Graphics::PaletteLUT(5, Graphics::PaletteLUT::kPaletteYUV));
+	_surface = 0;
+	_dirtyPalette = false;
+	_fileStream = 0;
 }
 
 VMDDecoder::~VMDDecoder() {
-	closeFile();
+	close();
 }
 
-uint32 VMDDecoder::getFrameWaitTime() {
-	return _vmdDecoder->getFrameWaitTime();
-}
+bool VMDDecoder::load(Common::SeekableReadStream &stream) {
+	close();
 
-bool VMDDecoder::loadFile(const char *fileName) {
-	closeFile();
-
-	_fileStream = SearchMan.createReadStreamForMember(fileName);
-	if (!_fileStream)
+	if (!_vmdDecoder->load(stream))
 		return false;
 
-	if (!_vmdDecoder->load(*_fileStream))
-		return false;
+	_fileStream = &stream;
 
-	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesPalette) {
-		getPalette();
-		setPalette(_palette);
-	}
+	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesPalette)
+		loadPaletteFromVMD();
 
 	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesSound)
 		_vmdDecoder->enableSound(*_mixer);
 
-	_videoInfo.width = _vmdDecoder->getWidth();
-	_videoInfo.height = _vmdDecoder->getHeight();
-	_videoInfo.frameCount = _vmdDecoder->getFramesCount();
-	_videoInfo.frameRate = _vmdDecoder->getFrameRate();
-	_videoInfo.frameDelay = _videoInfo.frameRate * 100;
-	_videoInfo.currentFrame = -1;
-	_videoInfo.firstframeOffset = 0;	// not really necessary for VMDs
-
 	if (_vmdDecoder->hasExtraData())
 		warning("This VMD video has extra embedded data, which is currently not handled");
 
-	_videoFrameBuffer = new byte[_videoInfo.width * _videoInfo.height];
-	memset(_videoFrameBuffer, 0, _videoInfo.width * _videoInfo.height);
-
-	_vmdDecoder->setVideoMemory(_videoFrameBuffer, _videoInfo.width, _videoInfo.height);
-
+	_surface = new Graphics::Surface();
+	_surface->create(_vmdDecoder->getWidth(), _vmdDecoder->getHeight(), 1);
+	_vmdDecoder->setVideoMemory((byte *)_surface->pixels, _surface->w, _surface->h);
 	return true;
 }
 
-void VMDDecoder::closeFile() {
+void VMDDecoder::close() {
 	if (!_fileStream)
 		return;
 
@@ -98,27 +82,27 @@ void VMDDecoder::closeFile() {
 	delete _fileStream;
 	_fileStream = 0;
 
-	delete[] _videoFrameBuffer;
-	_videoFrameBuffer = 0;
+	_surface->free();
+	delete _surface;
+	_surface = 0;
+
+	reset();
 }
 
-bool VMDDecoder::decodeNextFrame() {
-	_videoInfo.currentFrame++;
-
-	if (_videoInfo.currentFrame == 0)
-		_videoInfo.startTime = g_system->getMillis();
-
+Graphics::Surface *VMDDecoder::decodeNextFrame() {
 	Graphics::CoktelVideo::State state = _vmdDecoder->nextFrame();
 
-	if (state.flags & Graphics::CoktelVideo::kStatePalette) {
-		getPalette();
-		setPalette(_palette);
-	}
+	if (state.flags & Graphics::CoktelVideo::kStatePalette)
+		loadPaletteFromVMD();
 
-	return !endOfVideo();
+	if (_curFrame == -1)
+		_startTime = g_system->getMillis();
+
+	_curFrame++;
+	return _surface;
 }
 
-void VMDDecoder::getPalette() {
+void VMDDecoder::loadPaletteFromVMD() {
 	const byte *pal = _vmdDecoder->getPalette();
 
 	for (int i = 0; i < 256; i++) {
@@ -126,6 +110,8 @@ void VMDDecoder::getPalette() {
 		_palette[i * 3 + 1] = pal[i * 3 + 1] << 2;
 		_palette[i * 3 + 2] = pal[i * 3 + 2] << 2;
 	}
+
+	_dirtyPalette = true;
 }
 
 } // End of namespace Graphics

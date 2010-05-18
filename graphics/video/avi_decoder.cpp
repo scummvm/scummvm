@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/archive.h"
 #include "common/endian.h"
 #include "common/file.h"
 #include "common/stream.h"
@@ -49,6 +48,7 @@ AviDecoder::AviDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 	_audStream = NULL;
 	_fileStream = NULL;
 	_audHandle = new Audio::SoundHandle();
+	_dirtyPalette = false;
 	memset(_palette, 0, sizeof(_palette));
 	memset(&_wvInfo, 0, sizeof(PCMWAVEFORMAT));
 	memset(&_bmInfo, 0, sizeof(BITMAPINFOHEADER));
@@ -58,7 +58,7 @@ AviDecoder::AviDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) :
 }
 
 AviDecoder::~AviDecoder() {
-	closeFile();
+	close();
 	delete _audHandle;
 }
 
@@ -190,7 +190,7 @@ void AviDecoder::handleStreamHeader() {
 				/*_palette[i * 4 + 3] = */_fileStream->readByte();
 			}
 
-			setPalette(_palette);
+			_dirtyPalette = true;
 		}
 	} else if (sHeader.streamType == ID_AUDS) {
 		_audsHeader = sHeader;
@@ -204,23 +204,15 @@ void AviDecoder::handleStreamHeader() {
 	}
 }
 
-bool AviDecoder::loadFile(const char *fileName) {
-	closeFile();
+bool AviDecoder::load(Common::SeekableReadStream &stream) {
+	close();
 
-	_fileStream = SearchMan.createReadStreamForMember(fileName);
-	if (!_fileStream)
-		return false;
-
+	_fileStream = &stream;
 	_decodedHeader = false;
-	// Seek to the first frame
-	_videoInfo.currentFrame = -1;
 
 	// Read chunks until we have decoded the header
 	while (!_decodedHeader)
 		runHandle(_fileStream->readUint32BE());
-
-	_videoFrameBuffer = new byte[_header.width * _header.height];
-	memset(_videoFrameBuffer, 0, _header.width * _header.height);
 
 	uint32 nextTag = _fileStream->readUint32BE();
 
@@ -247,17 +239,10 @@ bool AviDecoder::loadFile(const char *fileName) {
 		_mixer->playStream(_soundType, _audHandle, _audStream);
 
 	debug (0, "Frames = %d, Dimensions = %d x %d", _header.totalFrames, _header.width, _header.height);
-	debug (0, "Frame Rate = %d", getFrameRate());
+	debug (0, "Frame Rate = %d", _vidsHeader.rate / _vidsHeader.scale);
 	if ((_audsHeader.scale != 0) && (_header.flags & AVIF_ISINTERLEAVED))
 		debug (0, "Sound Rate = %d", AUDIO_RATE);
 	debug (0, "Video Codec = \'%s\'", tag2str(_vidsHeader.streamHandler));
-
-	_videoInfo.firstframeOffset = _fileStream->pos();
-	_videoInfo.width = _header.width;
-	_videoInfo.height = _header.height;
-	_videoInfo.frameCount = _header.totalFrames;
-	// Our frameDelay is calculated in 1/100 ms, so we convert it here
-	_videoInfo.frameDelay = _header.microSecondsPerFrame / 10;
 
 	if (!_videoCodec)
 		return false;
@@ -265,15 +250,12 @@ bool AviDecoder::loadFile(const char *fileName) {
 	return true;
 }
 
-void AviDecoder::closeFile() {
+void AviDecoder::close() {
 	if (!_fileStream)
 		return;
 
 	delete _fileStream;
 	_fileStream = 0;
-
-	delete[] _videoFrameBuffer;
-	_videoFrameBuffer = 0;
 
 	// Deinitialize sound
 	_mixer->stopHandle(*_audHandle);
@@ -293,13 +275,25 @@ void AviDecoder::closeFile() {
 	memset(&_vidsHeader, 0, sizeof(AVIStreamHeader));
 	memset(&_audsHeader, 0, sizeof(AVIStreamHeader));
 	memset(&_ixInfo, 0, sizeof(AVIOLDINDEX));
+
+	reset();
 }
 
-Surface *AviDecoder::getNextFrame() {
+uint32 AviDecoder::getElapsedTime() const {
+	if (_audStream)
+		return _mixer->getSoundElapsedTime(*_audHandle);
+
+	return VideoDecoder::getElapsedTime();
+}
+
+Surface *AviDecoder::decodeNextFrame() {
 	uint32 nextTag = _fileStream->readUint32BE();
 
 	if (_fileStream->eos())
 		return NULL;
+
+	if (_curFrame == -1)
+		_startTime = g_system->getMillis();
 
 	if (nextTag == ID_LIST) {
 		// A list of audio/video chunks
@@ -312,7 +306,7 @@ Surface *AviDecoder::getNextFrame() {
 		// Decode chunks in the list and see if we get a frame
 		Surface *frame = NULL;
 		while (_fileStream->pos() < startPos + (int32)listSize) {
-			Surface *temp = getNextFrame();
+			Surface *temp = decodeNextFrame();
 			if (temp)
 				frame = temp;
 		}
@@ -335,7 +329,7 @@ Surface *AviDecoder::getNextFrame() {
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
 	           getStreamType(nextTag) == 'AM' || getStreamType(nextTag) == '32') {
 		// Compressed Frame
-		_videoInfo.currentFrame++;
+		_curFrame++;
 		uint32 chunkSize = _fileStream->readUint32LE();
 
 		if (chunkSize == 0) // Keep last frame on screen
@@ -364,7 +358,7 @@ Surface *AviDecoder::getNextFrame() {
 			_fileStream->readByte(); // Flags that don't serve us any purpose
 		}
 
-		setPalette(_palette);
+		_dirtyPalette = true;
 
 		// No alignment necessary. It's always even.
 	} else if (nextTag == ID_JUNK) {
@@ -372,54 +366,9 @@ Surface *AviDecoder::getNextFrame() {
 	} else if (nextTag == ID_IDX1) {
 		runHandle(ID_IDX1);
 	} else
-		error ("Tag = \'%s\', %d", tag2str(nextTag), _fileStream->pos());
+		error("Tag = \'%s\', %d", tag2str(nextTag), _fileStream->pos());
 
 	return NULL;
-}
-
-bool AviDecoder::decodeNextFrame() {
-	Surface *surface = NULL;
-
-	int32 curFrame = _videoInfo.currentFrame;
-
-	while (!surface && !endOfVideo() && !_fileStream->eos())
-		surface = getNextFrame();
-
-	if (curFrame == _videoInfo.currentFrame) {
-		warning("No video frame found");
-		_videoInfo.currentFrame++;
-	}
-
-	if (surface)
-		memcpy(_videoFrameBuffer, surface->pixels, _header.width * _header.height);
-
-	if (_videoInfo.currentFrame == 0)
-		_videoInfo.startTime = g_system->getMillis();
-
-	return !endOfVideo();
-}
-
-int32 AviDecoder::getAudioLag() {
-	if (!_fileStream)
-		return 0;
-
-	int32 frameDelay = getFrameDelay();
-	int32 videoTime = (_videoInfo.currentFrame + 1) * frameDelay;
-	int32 audioTime;
-
-	if (!_audStream) {
-		/* No audio.
-		   Calculate the lag by how much time has gone by since the first frame
-		   and how much time *should* have passed.
-		*/
-
-		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
-	} else {
-		const Audio::Timestamp ts = _mixer->getElapsedTime(*_audHandle);
-		audioTime = ts.convertToFramerate(100000).totalNumberOfFrames();
-	}
-
-	return videoTime - audioTime;
 }
 
 Codec *AviDecoder::createCodec() {
@@ -437,11 +386,14 @@ Codec *AviDecoder::createCodec() {
 	return NULL;
 }
 
-Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
+PixelFormat AviDecoder::getPixelFormat() const {
+	assert(_videoCodec);
+	return _videoCodec->getPixelFormat();
+}
 
-	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM) {
+Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
+	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
 		return Audio::makeQueuingAudioStream(AUDIO_RATE, false);
-	}
 
 	if (_wvInfo.tag != 0) // No sound
 		warning ("Unsupported AVI audio format %d", _wvInfo.tag);

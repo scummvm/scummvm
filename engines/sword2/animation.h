@@ -30,7 +30,7 @@
 
 #include "graphics/video/dxa_decoder.h"
 #include "graphics/video/smk_decoder.h"
-#include "graphics/video/video_player.h"
+#include "graphics/video/video_decoder.h"
 #include "sound/mixer.h"
 
 #include "sword2/screen.h"
@@ -63,13 +63,13 @@ public:
 	DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle);
 	~DXADecoderWithSound() {}
 
-	int32 getAudioLag();
+	uint32 getElapsedTime() const;
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle *_bgSoundHandle;
 };
 
-class MoviePlayer : public Graphics::VideoPlayer {
+class MoviePlayer {
 public:
 	MoviePlayer(Sword2Engine *vm, Audio::Mixer *snd, OSystem *system, Audio::SoundHandle *bgSoundHandle, Graphics::VideoDecoder *decoder, DecoderType decoderType);
 	virtual ~MoviePlayer();
@@ -89,6 +89,7 @@ protected:
 	int _textX, _textY;
 	DecoderType _decoderType;
 
+	Graphics::VideoDecoder *_decoder;
 	Audio::SoundHandle *_bgSoundHandle;
 	Audio::AudioStream *_bgSoundStream;
 
@@ -96,10 +97,14 @@ protected:
 	int _leadOutFrame;
 
 	void performPostProcessing(byte *screen);
+	bool playVideo();
 
 	void openTextObject(uint32 index);
 	void closeTextObject(uint32 index, byte *screen);
 	void drawTextObject(uint32 index, byte *screen);
+
+	byte findBlackPalIndex();
+	byte findWhitePalIndex();
 };
 
 MoviePlayer *makeMoviePlayer(const char *name, Sword2Engine *vm, Audio::Mixer *snd, OSystem *system);

@@ -222,42 +222,48 @@ void Console::postEnter() {
 	if (!_videoFile.empty()) {
 		_engine->_gfxCursor->kernelHide();
 
+		Graphics::VideoDecoder *videoDecoder = 0;
+
 		if (_videoFile.hasSuffix(".seq")) {
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
-			if (seqDecoder->loadFile(_videoFile.c_str(), _videoFrameDelay))
-				player->playVideo();
-			else
-				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
-			seqDecoder->closeFile();
-			delete player;
-			delete seqDecoder;
-		} else if (_videoFile.hasSuffix(".avi")) {
-			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
-			if (aviDecoder->loadFile(_videoFile.c_str()))
-				player->playVideo();
-			else
-				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
-			aviDecoder->closeFile();
-			delete player;
-			delete aviDecoder;
-		} else if (_videoFile.hasSuffix(".vmd")) {
+			videoDecoder = new SeqDecoder();
+			((SeqDecoder *)videoDecoder)->setFrameDelay(_videoFrameDelay);
 #ifdef ENABLE_SCI32
-			VMDDecoder *vmdDecoder = new VMDDecoder(g_system->getMixer());
-			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(vmdDecoder);
-			if (vmdDecoder->loadFile(_videoFile.c_str()))
-				player->playVideo();
-			else
-				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
-			vmdDecoder->closeFile();
-			delete player;
-			delete vmdDecoder;
+		} else if (_videoFile.hasSuffix(".vmd")) {
+			videoDecoder = new VMDDecoder(g_system->getMixer());
 #endif
+		} else if (_videoFile.hasSuffix(".avi")) {
+			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
 		}
 
-		_engine->_gfxCursor->kernelShow();
+		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
+			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
+			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
 
+			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
+				if (videoDecoder->needsUpdate()) {
+					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+					if (frame) {
+						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+						if (videoDecoder->hasDirtyPalette())
+							videoDecoder->setSystemPalette();
+
+						g_system->updateScreen();
+					}
+				}
+
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event))
+					;
+
+				g_system->delayMillis(10);
+			}
+		
+			delete videoDecoder;
+		} else
+			warning("Could not play video %s\n", _videoFile.c_str());
+
+		_engine->_gfxCursor->kernelShow();
 		_videoFile.clear();
 		_videoFrameDelay = 0;
 	}

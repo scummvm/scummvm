@@ -537,9 +537,9 @@ void AnimationSequencePlayer::mainLoop() {
 			}
 			// budttle2.flc is shorter in french version ; start the background music
 			// earlier and skip any sounds effects
-			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 126) {
+			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 127) {
 				_soundSeqDataIndex = 6;
-				_frameCounter = 80;
+				_frameCounter = 79;
 			}
 		}
 		(this->*(_updateFunc[_updateFuncIndex].play))();
@@ -766,19 +766,21 @@ void AnimationSequencePlayer::openAnimation(int index, const char *fileName) {
 }
 
 bool AnimationSequencePlayer::decodeNextAnimationFrame(int index) {
-	bool framesLeft = _flicPlayer[index].decodeNextFrame();
+	::Graphics::Surface *surface = _flicPlayer[index].decodeNextFrame();
+
 	if (_seqNum == 19) {
-		_flicPlayer[index].copyFrameToBuffer(_offscreenBuffer, 0, 0, kScreenWidth);
+		for (uint16 y = 0; (y < surface->h) && (y < kScreenHeight); y++)
+			memcpy(_offscreenBuffer + y * kScreenWidth, (byte *)surface->pixels + y * surface->pitch, surface->w);
 	} else {
 		_flicPlayer[index].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
 	}
+
 	++_frameCounter;
-	if (index == 0) {
-		if (_flicPlayer[index].paletteChanged()) {
-			getRGBPalette(index);
-		}
-	}
-	return framesLeft;
+
+	if (index == 0 && _flicPlayer[index].hasDirtyPalette())
+		getRGBPalette(index);
+
+	return !_flicPlayer[index].endOfVideo();
 }
 
 void AnimationSequencePlayer::loadIntroSeq17_18() {
@@ -803,20 +805,23 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// The intro credits animation. This uses 2 animations: the foreground one, which
 	// is the actual intro credits, and the background one, which is an animation of
 	// cogs, and is being replayed when an intro credit appears
-	if (_flicPlayer[0].getCurFrame() >= 116) {
-		if (!_flicPlayer[1].decodeNextFrame()) {
+	::Graphics::Surface *surface = 0;
+
+	if (_flicPlayer[0].getCurFrame() >= 117) {
+		surface = _flicPlayer[1].decodeNextFrame();
+		if (_flicPlayer[1].endOfVideo())
 			_flicPlayer[1].reset();
-		}
 	}
+
 	bool framesLeft = decodeNextAnimationFrame(0);
-	for (int i = 0; i < kScreenWidth * kScreenHeight; ++i) {
-		if (_offscreenBuffer[i] == 0) {
-			_offscreenBuffer[i] = _flicPlayer[1].getPixel(i);
-		}
-	}
-	if (!framesLeft) {
+
+	if (surface)
+		for (int i = 0; i < kScreenWidth * kScreenHeight; ++i)
+			if (_offscreenBuffer[i] == 0)
+				_offscreenBuffer[i] = *((byte *)surface->pixels + i);
+
+	if (!framesLeft)
 		_changeToNextSequence = true;
-	}
 }
 
 void AnimationSequencePlayer::displayLoadingScreen() {
@@ -870,7 +875,7 @@ void AnimationSequencePlayer::loadIntroSeq3_4() {
 void AnimationSequencePlayer::playIntroSeq3_4() {
 	if (!_updateScreenPicture) {
 		bool framesLeft = decodeNextAnimationFrame(0);
-		if (_flicPlayer[0].getCurFrame() == 706) {
+		if (_flicPlayer[0].getCurFrame() == 707) {
 			initPicPart4();
 		}
 		if (!framesLeft) {
@@ -909,13 +914,21 @@ void AnimationSequencePlayer::drawPic2Part10() {
 }
 
 void AnimationSequencePlayer::drawPic1Part10() {
+	::Graphics::Surface *surface = _flicPlayer[0].decodeNextFrame();
+	_flicPlayer[0].copyDirtyRectsToBuffer(_offscreenBuffer, kScreenWidth);
+	++_frameCounter;
+
+	if (_flicPlayer[0].hasDirtyPalette())
+		getRGBPalette(0);
+
 	int offset = 0;
 	for (int y = 0; y < kScreenHeight; ++y) {
 		for (int x = 0; x < kScreenWidth; ++x) {
-			byte color = _flicPlayer[0].getPixel(offset);
-			if (color == 0) {
+			byte color = *((byte *)surface->pixels + offset);
+
+			if (color == 0)
 				color = _picBufPtr[800 + y * 640 + _updateScreenWidth + x];
-			}
+
 			_offscreenBuffer[offset++] = color;
 		}
 	}
@@ -930,22 +943,22 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 }
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
-	bool framesLeft = decodeNextAnimationFrame(0);
-	if (_flicPlayer[0].getCurFrame() >= 264 && _flicPlayer[0].getCurFrame() <= 295) {
+	if (_flicPlayer[0].getCurFrame() >= 265 && _flicPlayer[0].getCurFrame() <= 296) {
 		drawPic1Part10();
 		_updateScreenWidth += 6;
-	} else if (_flicPlayer[0].getCurFrame() == 984) {
+	} else if (_flicPlayer[0].getCurFrame() == 985) {
+		decodeNextAnimationFrame(0);
 		drawPic2Part10();
-	} else if (_flicPlayer[0].getCurFrame() >= 988 && _flicPlayer[0].getCurFrame() <= 996) {
+	} else if (_flicPlayer[0].getCurFrame() >= 989 && _flicPlayer[0].getCurFrame() <= 997) {
 		drawPic1Part10();
 		_updateScreenWidth -= 25;
 		if (_updateScreenWidth < 0) {
 			_updateScreenWidth = 0;
 		}
 	}
-	if (!framesLeft) {
+
+	if (_flicPlayer[0].endOfVideo())
 		_changeToNextSequence = true;
-	}
 }
 
 void AnimationSequencePlayer::loadIntroSeq21_22() {
