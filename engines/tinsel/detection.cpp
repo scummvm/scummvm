@@ -954,9 +954,7 @@ Common::Error TinselEngine::loadGameState(int slot) {
 Common::Error TinselEngine::saveGameState(int slot, const char *desc) {
 	Common::String saveName = _vm->getSavegameFilename((int16)(slot + 1));
 	char saveDesc[SG_DESC_LEN];
-	strncpy(saveDesc, desc, SG_DESC_LEN);
-	// Make sure that saveDesc is 0-terminated
-	saveDesc[SG_DESC_LEN - 1] = '\0';
+	Common::strlcpy(saveDesc, desc, SG_DESC_LEN);
 	SaveGame((char *)saveName.c_str(), saveDesc);
 	ProcessSRQueue();			// This shouldn't be needed, but for some reason it is...
 	return Common::kNoError;	// TODO: return success/failure

@@ -288,8 +288,7 @@ void LoadFile(MEMHANDLE *pH) {
 	}
 
 	// extract and zero terminate the filename
-	strncpy(szFilename, pH->szName, sizeof(pH->szName));
-	szFilename[sizeof(pH->szName)] = 0;
+	Common::strlcpy(szFilename, pH->szName, sizeof(pH->szName));
 
 	if (f.open(szFilename)) {
 		// read the data

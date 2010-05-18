@@ -365,9 +365,8 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 		}
 #endif
 
-		strncpy(savedFiles[i].name, fname.c_str(), FNAMELEN);
-		strncpy(savedFiles[i].desc, hdr.desc, SG_DESC_LEN);
-		savedFiles[i].desc[SG_DESC_LEN - 1] = 0;
+		Common::strlcpy(savedFiles[i].name, fname.c_str(), FNAMELEN);
+		Common::strlcpy(savedFiles[i].desc, hdr.desc, SG_DESC_LEN);
 		savedFiles[i].dateTime = hdr.dateTime;
 
 		++numSfiles;
