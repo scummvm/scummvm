@@ -491,32 +491,6 @@ int game_exit(EngineState *s);
 void quit_vm();
 
 /**
- * Allocates "kernel" memory and returns a handle suitable to be passed on
- * to SCI scripts
- * @param[in] segMan	The Segment Manager
- * @param[in] type			A free-form type description string (static)
- * @param[in] space			The space to allocate
- * @return					The handle
- */
-reg_t kalloc(SegManager *segMan, const char *type, int space);
-
-/**
- * Returns a pointer to "kernel" memory based on the handle
- * @param[in] segMan	The Segment Manager
- * @param[in] handle		The handle to use
- * @return					A pointer to the allocated memory
- */
-byte *kmem(SegManager *segMan, reg_t handle);
-
-/**
- * Frees all "kernel" memory associated with a handle
- * @param[in] segMan	The Segment Manager
- * @param[in] handle		The handle to free
- * @return					0 on success, 1 otherwise
- */
-int kfree(SegManager *segMan, reg_t handle);
-
-/**
  * Shrink execution stack to size.
  * Contains an assert it is not already smaller.
  */

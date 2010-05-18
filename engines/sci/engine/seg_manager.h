@@ -33,8 +33,6 @@
 
 namespace Sci {
 
-#define GET_SEGMENT(mgr, index, rtype) (((mgr).getSegmentType(index) == (rtype))? (mgr)._heap[index] : NULL)
-
 /**
  * Verify the the given condition is true, output the message if condition is false, and exit.
  * @param cond	condition to be verified
@@ -255,11 +253,9 @@ public:
 	 * @param[in] size		Number of bytes to allocate for the hunk entry
 	 * @param[in] hunk_type	A descriptive string for the hunk entry, for
 	 *	 					debugging purposes
-	 * @param[out] addr		The offset of the freshly allocated hunk entry
-	 * @return				Reference to the memory allocated for the hunk
-	 * 						piece
+	 * @return				The offset of the freshly allocated hunk entry
 	 */
-	Hunk *allocateHunkEntry(const char *hunk_type, int size, reg_t *addr);
+	reg_t allocateHunkEntry(const char *hunk_type, int size);
 
 	/**
 	 * Deallocates a hunk entry
@@ -267,6 +263,11 @@ public:
 	 */
 	void freeHunkEntry(reg_t addr);
 
+	/**
+	 * Gets a pointer to the hunk memory referenced by a specified handle
+	 * @param[in] addr	Offset of the hunk entry
+	 */
+	byte *getHunkPointer(reg_t addr);
 
 	// 9. Dynamic Memory
 
@@ -404,6 +405,9 @@ public:
 
 	// TODO: document this
 	SegmentType getSegmentType(SegmentId seg);
+
+	// TODO: document this
+	SegmentObj *getSegment(SegmentId seg, SegmentType type);
 
 	/**
 	 * Retrieves an object from the specified location

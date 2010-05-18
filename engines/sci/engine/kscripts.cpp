@@ -39,7 +39,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
-		return kalloc(s->_segMan, "kLoad()", resnr);
+		return s->_segMan->allocateHunkEntry("kLoad()", resnr);
 
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
@@ -78,7 +78,7 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 		reg_t resnr = argv[1];
 
 		if (restype == kResourceTypeMemory)
-			kfree(s->_segMan, resnr);
+			s->_segMan->freeHunkEntry(resnr);
 
 		if (argc > 2)
 			warning("kUnload called with more than 2 parameters (%d)", argc);

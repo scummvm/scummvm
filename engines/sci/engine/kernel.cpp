@@ -477,35 +477,6 @@ void Kernel::loadSelectorNames() {
 	}
 }
 
-// Allocates a set amount of memory for a specified use and returns a handle to it.
-reg_t kalloc(SegManager *segMan, const char *type, int space) {
-	reg_t reg;
-
-	segMan->allocateHunkEntry(type, space, &reg);
-	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)", space, PRINT_REG(reg), type);
-
-	return reg;
-}
-
-// Returns a pointer to the memory indicated by the specified handle
-byte *kmem(SegManager *segMan, reg_t handle) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segMan, handle.segment, SEG_TYPE_HUNK);
-
-	if (!ht || !ht->isValidEntry(handle.offset)) {
-		warning("Error: kmem() with invalid handle");
-		return NULL;
-	}
-
-	return (byte *)ht->_table[handle.offset].mem;
-}
-
-// Frees the specified handle. Returns 0 on success, 1 otherwise.
-int kfree(SegManager *segMan, reg_t handle) {
-	segMan->freeHunkEntry(handle);
-
-	return 0;
-}
-
 static void kernel_compile_signature(const char **s) {
 	const char *src = *s;
 	char *result;

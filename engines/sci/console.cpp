@@ -2854,7 +2854,7 @@ void Console::printList(List *l) {
 
 	while (!pos.isNull()) {
 		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_engine->_gamestate->_segMan, pos.segment, SEG_TYPE_NODES);
+		NodeTable *nt = (NodeTable *)_engine->_gamestate->_segMan->getSegment(pos.segment, SEG_TYPE_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.offset)) {
 			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
@@ -2881,7 +2881,7 @@ void Console::printList(List *l) {
 }
 
 int Console::printNode(reg_t addr) {
-	SegmentObj *mobj = GET_SEGMENT(*_engine->_gamestate->_segMan, addr.segment, SEG_TYPE_LISTS);
+	SegmentObj *mobj = _engine->_gamestate->_segMan->getSegment(addr.segment, SEG_TYPE_LISTS);
 
 	if (mobj) {
 		ListTable *lt = (ListTable *)mobj;
@@ -2898,7 +2898,7 @@ int Console::printNode(reg_t addr) {
 	} else {
 		NodeTable *nt;
 		Node *node;
-		mobj = GET_SEGMENT(*_engine->_gamestate->_segMan, addr.segment, SEG_TYPE_NODES);
+		mobj = _engine->_gamestate->_segMan->getSegment(addr.segment, SEG_TYPE_NODES);
 
 		if (!mobj) {
 			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);

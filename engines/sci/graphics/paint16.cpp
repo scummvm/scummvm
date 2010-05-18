@@ -135,7 +135,7 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 			//  I'm not sure if this is what we are supposed to do or if there is some other bug that actually makes
 			//  coordinates to be 0 in the first place
 			byte *memoryPtr = NULL;
-			memoryPtr = kmem(_segMan, upscaledHiresHandle);
+			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
 			if (memoryPtr) {
 				Common::Rect upscaledHiresRect;
 				_screen->bitsGetRect(memoryPtr, &upscaledHiresRect);
@@ -322,8 +322,8 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 	// now actually ask _screen how much space it will need for saving
 	size = _screen->bitsGetDataSize(workerRect, screenMask);
 
-	memoryId = kalloc(_segMan, "SaveBits()", size);
-	memoryPtr = kmem(_segMan, memoryId);
+	memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
+	memoryPtr = _segMan->getHunkPointer(memoryId);
 	_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
 }
@@ -332,7 +332,7 @@ void GfxPaint16::bitsGetRect(reg_t memoryHandle, Common::Rect *destRect) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_segMan, memoryHandle);
+		memoryPtr = _segMan->getHunkPointer(memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsGetRect(memoryPtr, destRect);
@@ -344,19 +344,17 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
-		memoryPtr = kmem(_segMan, memoryHandle);
+		memoryPtr = _segMan->getHunkPointer(memoryHandle);
 
 		if (memoryPtr) {
 			_screen->bitsRestore(memoryPtr);
-			kfree(_segMan, memoryHandle);
+			_segMan->freeHunkEntry(memoryHandle);
 		}
 	}
 }
 
 void GfxPaint16::bitsFree(reg_t memoryHandle) {
-	if (!memoryHandle.isNull()) {
-		kfree(_segMan, memoryHandle);
-	}
+	_segMan->freeHunkEntry(memoryHandle);
 }
 
 void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

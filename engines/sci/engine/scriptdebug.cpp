@@ -100,7 +100,7 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
-	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, pos.segment, SEG_TYPE_SCRIPT);
+	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	byte *scr;
 	int scr_size;
@@ -328,7 +328,7 @@ void script_debug(EngineState *s) {
 #endif
 
 	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
-		SegmentObj *mobj = GET_SEGMENT(*s->_segMan, scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
+		SegmentObj *mobj = s->_segMan->getSegment(scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
 
 		if (mobj) {
 			Script *scr = (Script *)mobj;

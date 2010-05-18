@@ -207,6 +207,10 @@ SegmentType SegManager::getSegmentType(SegmentId seg) {
 	return _heap[seg]->getType();
 }
 
+SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) {
+	return getSegmentType(seg) == type ? _heap[seg] : NULL;
+}
+
 Object *SegManager::getObject(reg_t pos) {
 	SegmentObj *mobj = getSegmentObj(pos.segment);
 	Object *obj = NULL;
@@ -399,7 +403,12 @@ SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 }
 
 void SegManager::freeHunkEntry(reg_t addr) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, SEG_TYPE_HUNK);
+	if (addr.isNull()) {
+		warning("Attempt to free a Hunk from a null address");
+		return;
+	}
+
+	HunkTable *ht = (HunkTable *)getSegment(addr.segment, SEG_TYPE_HUNK);
 
 	if (!ht) {
 		warning("Attempt to free Hunk from address %04x:%04x: Invalid segment type", PRINT_REG(addr));
@@ -409,7 +418,7 @@ void SegManager::freeHunkEntry(reg_t addr) {
 	ht->freeEntry(addr.offset);
 }
 
-Hunk *SegManager::allocateHunkEntry(const char *hunk_type, int size, reg_t *addr) {
+reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	HunkTable *table;
 	int offset;
 
@@ -419,17 +428,28 @@ Hunk *SegManager::allocateHunkEntry(const char *hunk_type, int size, reg_t *addr
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(Hunks_seg_id, offset);
+	reg_t addr = make_reg(Hunks_seg_id, offset);
 	Hunk *h = &(table->_table[offset]);
 
 	if (!h)
-		return NULL;
+		return NULL_REG;
 
 	h->mem = malloc(size);
 	h->size = size;
 	h->type = hunk_type;
 
-	return h;
+	return addr;
+}
+
+byte *SegManager::getHunkPointer(reg_t addr) {
+	HunkTable *ht = (HunkTable *)getSegment(addr.segment, SEG_TYPE_HUNK);
+
+	if (!ht || !ht->isValidEntry(addr.offset)) {
+		warning("getHunkPointer() with invalid handle");
+		return NULL;
+	}
+
+	return (byte *)ht->_table[addr.offset].mem;
 }
 
 Clone *SegManager::allocateClone(reg_t *addr) {
