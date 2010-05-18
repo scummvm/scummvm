@@ -99,8 +99,9 @@ void Scene::playMovie(const char *filename) {
 
 	uint16 x = (g_system->getWidth() - smkDecoder->getWidth()) / 2;
 	uint16 y = (g_system->getHeight() - smkDecoder->getHeight()) / 2;
+	bool skipVideo = false;
 
-	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo()) {
+	while (!_vm->shouldQuit() && !smkDecoder->endOfVideo() && !skipVideo) {
 		if (smkDecoder->needsUpdate()) {
 			Graphics::Surface *frame = smkDecoder->decodeNextFrame();
 			if (frame) {
@@ -114,8 +115,10 @@ void Scene::playMovie(const char *filename) {
 		}
 	
 		Common::Event event;
-		while (_vm->_system->getEventManager()->pollEvent(event))
-			;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
 
 		_vm->_system->delayMillis(10);
 	}
