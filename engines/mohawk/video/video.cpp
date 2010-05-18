@@ -126,7 +126,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 		_vm->_system->delayMillis(10);
 	}
 
-	_videoStreams[videoHandle]->stop();
+	_videoStreams[videoHandle]->close();
 	_videoStreams.clear();
 }
 
@@ -155,7 +155,7 @@ bool VideoManager::updateBackgroundMovies() {
 		// Remove any videos that are over
 		if (_videoStreams[i]->endOfVideo()) {
 			if (_videoStreams[i].loop) {
-				_videoStreams[i]->reset();
+				_videoStreams[i]->rewind();
 			} else {
 				delete _videoStreams[i].video;
 				memset(&_videoStreams[i], 0, sizeof(VideoEntry));
@@ -166,7 +166,7 @@ bool VideoManager::updateBackgroundMovies() {
 
 		// Check if we need to draw a frame
 		if (_videoStreams[i]->needsUpdate()) {
-			Graphics::Surface *frame = _videoStreams[i]->getNextFrame();
+			Graphics::Surface *frame = _videoStreams[i]->decodeNextFrame();
 			bool deleteFrame = false;
 
 			if (frame && _videoStreams[i].enabled) {
@@ -196,26 +196,10 @@ bool VideoManager::updateBackgroundMovies() {
 					deleteFrame = true;
 				}
 
-				// Check if we're drawing at a 2x or 4x resolution (because of
-				// evil QuickTime scaling it first).
-				if (_videoStreams[i]->getScaleMode() == kScaleHalf || _videoStreams[i]->getScaleMode() == kScaleQuarter) {
-					byte scaleFactor = (_videoStreams[i]->getScaleMode() == kScaleHalf) ? 2 : 4;
-
-					Graphics::Surface scaledSurf;
-					scaledSurf.create(_videoStreams[i]->getWidth() / scaleFactor, _videoStreams[i]->getHeight() / scaleFactor, frame->bytesPerPixel);
-
-					for (uint32 j = 0; j < scaledSurf.h; j++)
-						for (uint32 k = 0; k < scaledSurf.w; k++)
-							memcpy(scaledSurf.getBasePtr(k, j), frame->getBasePtr(k * scaleFactor, j * scaleFactor), frame->bytesPerPixel);
-
-					_vm->_system->copyRectToScreen((byte*)scaledSurf.pixels, scaledSurf.pitch, _videoStreams[i].x, _videoStreams[i].y, scaledSurf.w, scaledSurf.h);
-					scaledSurf.free();
-				} else {
-					// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
-					uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
-					uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
-					_vm->_system->copyRectToScreen((byte*)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
-				}
+				// Clip the width/height to make sure we stay on the screen (Myst does this a few times)
+				uint16 width = MIN<int32>(_videoStreams[i]->getWidth(), _vm->_system->getWidth() - _videoStreams[i].x);
+				uint16 height = MIN<int32>(_videoStreams[i]->getHeight(), _vm->_system->getHeight() - _videoStreams[i].y);
+				_vm->_system->copyRectToScreen((byte*)frame->pixels, frame->pitch, _videoStreams[i].x, _videoStreams[i].y, width, height);
 
 				// We've drawn something to the screen, make sure we update it
 				updateScreen = true;
@@ -346,8 +330,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.loop = loop;
 	entry.enabled = true;
 	entry->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
-	entry->loadFile(_vm->getRawData(ID_TMOV, id));
-	entry->startAudio();
+	entry->load(*_vm->getRawData(ID_TMOV, id));
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
@@ -383,8 +366,7 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 		return NULL_VID_HANDLE;
 	}
 	
-	entry->loadFile(file);
-	entry->startAudio();
+	entry->load(*file);
 	
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)

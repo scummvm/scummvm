@@ -56,36 +56,38 @@ namespace Mohawk {
 // QTPlayer
 ////////////////////////////////////////////
 
-QTPlayer::QTPlayer() {
+QTPlayer::QTPlayer() : Graphics::VideoDecoder() {
 	_audStream = NULL;
 	_beginOffset = 0;
 	_videoCodec = NULL;
-	_noCodecFound = false;
 	_curFrame = -1;
-	_lastFrameStart = _nextFrameStart = 0;
+	_startTime = _nextFrameStartTime = 0;
 	_audHandle = Audio::SoundHandle();
 	_numStreams = 0;
+	_fd = 0;
+	_scaledSurface = 0;
+	_dirtyPalette = false;
 }
 
 QTPlayer::~QTPlayer() {
-	stop();
+	close();
 }
 
-uint16 QTPlayer::getWidth() {
+uint16 QTPlayer::getWidth() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
-	return _streams[_videoStreamIndex]->width;
+	return _streams[_videoStreamIndex]->width / getScaleMode();
 }
 
-uint16 QTPlayer::getHeight() {
+uint16 QTPlayer::getHeight() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
-	return _streams[_videoStreamIndex]->height;
+	return _streams[_videoStreamIndex]->height / getScaleMode();
 }
 
-uint32 QTPlayer::getFrameCount() {
+uint32 QTPlayer::getFrameCount() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
@@ -106,7 +108,7 @@ uint32 QTPlayer::getCodecTag() {
 	return _streams[_videoStreamIndex]->codec_tag;
 }
 
-ScaleMode QTPlayer::getScaleMode() {
+ScaleMode QTPlayer::getScaleMode() const {
 	if (_videoStreamIndex < 0)
 		return kScaleNormal;
 
@@ -121,8 +123,8 @@ uint32 QTPlayer::getFrameDuration() {
 	for (int32 i = 0; i < _streams[_videoStreamIndex]->stts_count; i++) {
 		curFrameIndex += _streams[_videoStreamIndex]->stts_data[i].count;
 		if ((uint32)_curFrame < curFrameIndex) {
-			// Ok, now we have what duration this frame has. Now, we have to convert the duration to 1/100 ms.
-			return _streams[_videoStreamIndex]->stts_data[i].duration * 1000 * 100 / _streams[_videoStreamIndex]->time_scale;
+			// Ok, now we have what duration this frame has.
+			return _streams[_videoStreamIndex]->stts_data[i].duration;
 		}
 	}
 
@@ -131,20 +133,17 @@ uint32 QTPlayer::getFrameDuration() {
 	return 0;
 }
 
-void QTPlayer::stop() {
-	stopAudio();
+Graphics::PixelFormat QTPlayer::getPixelFormat() const {
+	if (!_videoCodec)
+		return Graphics::PixelFormat::createFormatCLUT8();
 
-	if (!_noCodecFound)
-		delete _videoCodec;
-
-	closeFile();
+	return _videoCodec->getPixelFormat();
 }
 
-void QTPlayer::reset() {
+void QTPlayer::rewind() {
 	delete _videoCodec; _videoCodec = NULL;
-	_noCodecFound = false;
 	_curFrame = -1;
-	_lastFrameStart = _nextFrameStart = 0;
+	_startTime = _nextFrameStartTime = 0;
 
 	// Restart the audio too
 	stopAudio();
@@ -207,57 +206,82 @@ void QTPlayer::stopAudio() {
 	_audStream = NULL; // the mixer automatically frees the stream
 }
 
-Graphics::Surface *QTPlayer::getNextFrame() {
-	if (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1)
+Graphics::Surface *QTPlayer::decodeNextFrame() {
+	if (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1)
 		return NULL;
 
-	if (_nextFrameStart == 0)
-		_nextFrameStart = g_system->getMillis() * 100;
+	if (_startTime == 0)
+		_startTime = g_system->getMillis();
 
-	_lastFrameStart = _nextFrameStart;
 	_curFrame++;
-	_nextFrameStart = getFrameDuration() + _lastFrameStart;
+	_nextFrameStartTime += getFrameDuration();
 
 	Common::SeekableReadStream *frameData = getNextFramePacket();
-
-	if (!_videoCodec) {
-		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
-		// If we don't get it still, the codec is unsupported ;)
-		if (!_videoCodec) {
-			_noCodecFound = true;
-			return NULL;
-		}
-	}
 
 	if (frameData) {
 		Graphics::Surface *frame = _videoCodec->decodeImage(frameData);
 		delete frameData;
-		return frame;
+		return scaleSurface(frame);
 	}
 
 	return NULL;
 }
 
-bool QTPlayer::endOfVideo() {
-	return (!_audStream || _audStream->endOfData()) && (_noCodecFound || _curFrame >= (int32)getFrameCount() - 1);
+Graphics::Surface *QTPlayer::scaleSurface(Graphics::Surface *frame) {
+	if (getScaleMode() == kScaleNormal)
+		return frame;
+
+	assert(_scaledSurface);
+
+	for (uint32 j = 0; j < _scaledSurface->h; j++)
+		for (uint32 k = 0; k < _scaledSurface->w; k++)
+			memcpy(_scaledSurface->getBasePtr(k, j), frame->getBasePtr(k * getScaleMode(), j * getScaleMode()), frame->bytesPerPixel);
+
+	return _scaledSurface;
 }
 
-bool QTPlayer::needsUpdate() {
-	if (endOfVideo())
-		return false;
-
-	if (_curFrame == -1)
-		return true;
-
-	return (g_system->getMillis() * 100 - _lastFrameStart) >= getFrameDuration();
+bool QTPlayer::endOfVideo() const {
+	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1);
 }
 
-bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
-	_fd = stream;
+void QTPlayer::addPauseTime(uint32 p) {
+	Graphics::VideoDecoder::addPauseTime(p);
+	if (_videoStreamIndex >= 0)
+		_nextFrameStartTime += p * _streams[_videoStreamIndex]->time_scale / 1000;
+}
+
+bool QTPlayer::needsUpdate() const {
+	return !endOfVideo() && getTimeToNextFrame() == 0;
+}
+
+uint32 QTPlayer::getElapsedTime() const {
+	if (_audStream)
+		return g_system->getMixer()->getSoundElapsedTime(_audHandle);
+
+	return g_system->getMillis() - _startTime;
+}
+
+uint32 QTPlayer::getTimeToNextFrame() const {
+	if (endOfVideo() || _curFrame < 0)
+		return 0;
+
+	// Convert from the Sega FILM base to 1000
+	uint32 nextFrameStartTime = _nextFrameStartTime * 1000 / _streams[_videoStreamIndex]->time_scale;
+	uint32 elapsedTime = getElapsedTime();
+
+	if (nextFrameStartTime <= elapsedTime)
+		return 0;
+
+	return nextFrameStartTime - elapsedTime;
+}
+
+bool QTPlayer::load(Common::SeekableReadStream &stream) {
+	_fd = &stream;
 	_foundMOOV = _foundMDAT = false;
 	_numStreams = 0;
 	_partial = 0;
 	_videoStreamIndex = _audioStreamIndex = -1;
+	_startTime = 0;
 
 	initParseTable();
 
@@ -313,6 +337,18 @@ bool QTPlayer::loadFile(Common::SeekableReadStream *stream) {
 		// Make sure the bits per sample transfers to the sample size
 		if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('raw ') || _streams[_audioStreamIndex]->codec_tag == MKID_BE('twos'))
 			_streams[_audioStreamIndex]->sample_size = (_streams[_audioStreamIndex]->bits_per_sample / 8) * _streams[_audioStreamIndex]->channels;
+
+		startAudio();
+	}
+
+	if (_videoStreamIndex >= 0) {
+		_videoCodec = createCodec(getCodecTag(), getBitsPerPixel());
+
+		if (getScaleMode() != kScaleNormal) {
+			// We have to initialize the scaled surface
+			_scaledSurface = new Graphics::Surface();
+			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
+		}
 	}
 
 	return true;
@@ -785,6 +821,8 @@ int QTPlayer::readSTSD(MOVatom atom) {
 
 			// if the depth is 2, 4, or 8 bpp, file is palettized
 			if (colorDepth == 2 || colorDepth == 4 || colorDepth == 8) {
+				_dirtyPalette = true;
+
 				if (colorGreyscale) {
 					debug(0, "Greyscale palette");
 
@@ -1078,14 +1116,26 @@ int QTPlayer::readWAVE(MOVatom atom) {
 	return 0;
 }
 
-void QTPlayer::closeFile() {
+void QTPlayer::close() {
+	stopAudio();
+
+	delete _videoCodec; _videoCodec = 0;
+
 	for (uint32 i = 0; i < _numStreams; i++)
 		delete _streams[i];
 
 	delete _fd;
 
+	if (_scaledSurface) {
+		_scaledSurface->free();
+		delete _scaledSurface;
+		_scaledSurface = 0;
+	}
+
 	// The audio stream is deleted automatically
 	_audStream = NULL;
+
+	Graphics::VideoDecoder::reset();
 }
 
 Common::SeekableReadStream *QTPlayer::getNextFramePacket() {

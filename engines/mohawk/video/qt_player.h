@@ -36,7 +36,10 @@
 
 #include "common/scummsys.h"
 #include "common/queue.h"
+
+#include "graphics/video/video_decoder.h"
 #include "graphics/video/codecs/codec.h"
+
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -52,7 +55,7 @@ enum ScaleMode {
 	kScaleQuarter = 4
 };
 
-class QTPlayer {
+class QTPlayer : public Graphics::VideoDecoder {
 public:
 	QTPlayer();
 	virtual ~QTPlayer();
@@ -61,54 +64,37 @@ public:
 	 * Returns the width of the video
 	 * @return the width of the video
 	 */
-	uint16 getWidth();
+	uint16 getWidth() const;
 
 	/**
 	 * Returns the height of the video
 	 * @return the height of the video
 	 */
-	uint16 getHeight();
+	uint16 getHeight() const;
 
 	/**
 	 * Returns the amount of frames in the video
 	 * @return the amount of frames in the video
 	 */
-	uint32 getFrameCount();
-
-	/**
-	 * Returns the bits per pixel of the video
-	 * @return the bits per pixel of the video
-	 */
-	byte getBitsPerPixel();
-
-	/**
-	 * Returns the codec tag of the video
-	 * @return the codec tag of the video
-	 */
-	uint32 getCodecTag();
+	uint32 getFrameCount() const;
 
 	/**
 	 * Load a QuickTime video file from a SeekableReadStream
 	 * @param stream	the stream to load
 	 */
-	bool loadFile(Common::SeekableReadStream* stream);
+	bool load(Common::SeekableReadStream &stream);
 
 	/**
 	 * Close a QuickTime encoded video file
 	 */
-	void closeFile();
-
-	/**
-	 * Returns the downscale mode of the video
-	 * @return the downscale mode of the video
-	 */
-	ScaleMode getScaleMode();
+	void close();
 
 	/**
 	 * Returns the palette of the video
 	 * @return the palette of the video
 	 */
-	byte *getPalette() { return _palette; }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
+	bool hasDirtyPalette() const { return _dirtyPalette; }
 
 	/**
 	 * Set the beginning offset of the video so we can modify the offsets in the stco
@@ -117,18 +103,22 @@ public:
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
-	int32 getCurFrame() { return _curFrame; }
-	void addPauseTime(uint32 p) { _lastFrameStart += p; _nextFrameStart += p; }
-	Graphics::Surface *getNextFrame();
-	void updateAudioBuffer();
-	void startAudio();
-	void stopAudio();
+	bool isVideoLoaded() const { return _fd != 0; }
+	void addPauseTime(uint32 p);
+	Graphics::Surface *decodeNextFrame();
+	bool needsUpdate() const;
+	bool endOfVideo() const;
+	uint32 getElapsedTime() const;
+	uint32 getTimeToNextFrame() const;
+	Graphics::PixelFormat getPixelFormat() const;
+
+	void rewind(); // For a future RewindableVideoDecoder class
+
+	// TODO: These audio functions need to be removed from the public and/or added to
+	// the VideoDecoder API directly.
+	void updateAudioBuffer(); // This is going to be problematic.
 	void pauseAudio();
 	void resumeAudio();
-	bool needsUpdate();
-	bool endOfVideo();
-	void stop();
-	void reset();
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -238,25 +228,32 @@ protected:
 	ScaleMode _scaleMode;
 	MOVStreamContext *_streams[20];
 	byte _palette[256 * 4];
+	bool _dirtyPalette;
+	uint32 _beginOffset;
 
 	void initParseTable();
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
 	bool checkAudioCodecSupport(uint32 tag);
 	Common::SeekableReadStream *getNextFramePacket();
 	uint32 getFrameDuration();
+	uint32 getCodecTag();
+	byte getBitsPerPixel();
 
 	Audio::QueuingAudioStream *_audStream;
-	int8 _videoStreamIndex;
+	void startAudio();
+	void stopAudio();
 	int8 _audioStreamIndex;
 	uint _curAudioChunk;
-	uint32 _beginOffset;
+	Audio::SoundHandle _audHandle;
 
 	Graphics::Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
 	Graphics::Codec *_videoCodec;
-	bool _noCodecFound;
-	int32 _curFrame;
-	uint32 _lastFrameStart, _nextFrameStart; // In 1/100 ms
-	Audio::SoundHandle _audHandle;
+	uint32 _nextFrameStartTime;
+	int8 _videoStreamIndex;
+
+	Graphics::Surface *_scaledSurface;
+	Graphics::Surface *scaleSurface(Graphics::Surface *frame);
+	ScaleMode getScaleMode() const;
 
 	int readDefault(MOVatom atom);
 	int readLeaf(MOVatom atom);
