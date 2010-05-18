@@ -75,8 +75,20 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 		sdlflags |= SDL_FULLSCREEN;
 
 	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
+
+#ifdef USE_OPENGL
+	if (!_screen && _opengl) {
+		warning("Couldn't create 32-bit visual, trying 16-bit");
+		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 5);
+		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 1);
+		_screen = SDL_SetVideoMode(screenW, screenH, 0, sdlflags);
+	}
+#endif
+
 	if (!_screen)
-		error("Could not initialize video");
+		error("Could not initialize video: %s", SDL_GetError());
 
 #ifdef USE_OPENGL
 	if (_opengl) {
