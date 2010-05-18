@@ -53,6 +53,8 @@ public:
 	bool hasDataFork();
 	bool hasResFork();
 
+	bool isMacBinary(Common::SeekableReadStream &stream);
+
 	/**
 	 * Read resource from the Mac Binary file
 	 * @param typeID FourCC with type ID
@@ -72,6 +74,8 @@ public:
 	Common::String getResName(uint32 typeID, uint16 resID);
 	uint32 getResForkSize();
 	bool getResForkMD5(char *md5str, uint32 length);
+
+	Common::String getBaseFileName() { return _baseFileName; }
 	
 	/**
 	 * Convert cursor from crsr format to format suitable for feeding to CursorMan

@@ -135,7 +135,13 @@ bool MacResManager::open(Common::String filename) {
 	// Fine, what about just the data fork?
 	if (file->open(filename)) {
 		_baseFileName = filename;
-		_stream = file;
+
+		if (isMacBinary(*file)) {
+			file->seek(0, SEEK_SET);
+			loadFromMacBinary(*file);
+		} else {
+			_stream = file;
+		}
 		return true;
 	}
 		
@@ -184,7 +190,12 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 	fsNode = path.getChild(filename);
 	if (fsNode.exists() && !fsNode.isDirectory()) {
 		_baseFileName = filename;
-		_stream = fsNode.createReadStream();
+
+		if (isMacBinary(*fsNode.createReadStream())) {
+			loadFromMacBinary(*fsNode.createReadStream());
+		} else {
+			_stream = fsNode.createReadStream();
+		}
 		return true;
 	}
 
@@ -215,6 +226,34 @@ bool MacResManager::loadFromAppleDouble(Common::SeekableReadStream &stream) {
 	}
 
 	return false;
+}
+
+bool MacResManager::isMacBinary(Common::SeekableReadStream &stream) {
+	byte infoHeader[MBI_INFOHDR];
+	int resForkOffset = -1;
+
+	stream.read(infoHeader, MBI_INFOHDR);
+
+	if (infoHeader[MBI_ZERO1] == 0 && infoHeader[MBI_ZERO2] == 0 &&
+		infoHeader[MBI_ZERO3] == 0 && infoHeader[MBI_NAMELEN] <= MAXNAMELEN) {
+
+		// Pull out fork lengths
+		uint32 dataSize = READ_BE_UINT32(infoHeader + MBI_DFLEN);
+		uint32 rsrcSize = READ_BE_UINT32(infoHeader + MBI_RFLEN);
+
+		uint32 dataSizePad = (((dataSize + 127) >> 7) << 7);
+		uint32 rsrcSizePad = (((rsrcSize + 127) >> 7) << 7);
+
+		// Length check
+		if (MBI_INFOHDR + dataSizePad + rsrcSizePad == (uint32)stream.size()) {
+			resForkOffset = MBI_INFOHDR + dataSizePad;
+		}
+	}
+
+	if (resForkOffset < 0)
+		return false;
+
+	return true;
 }
 
 bool MacResManager::loadFromMacBinary(Common::SeekableReadStream &stream) {
