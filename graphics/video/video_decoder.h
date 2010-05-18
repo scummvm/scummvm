@@ -160,11 +160,8 @@ protected:
 /**
  * A VideoDecoder wrapper that implements getTimeToNextFrame() based on getFrameRate().
  */
-class FixedRateVideoDecoder : public VideoDecoder {
+class FixedRateVideoDecoder : public virtual VideoDecoder {
 public:
-	FixedRateVideoDecoder() {}
-	virtual ~FixedRateVideoDecoder() {}
-
 	uint32 getTimeToNextFrame() const;
 
 protected:
@@ -177,6 +174,17 @@ protected:
 
 private:
 	uint32 getFrameBeginTime(uint32 frame) const;
+};
+
+/**
+ * A VideoDecoder that can rewind back to the beginning.
+ */
+class RewindableVideoDecoder : public virtual VideoDecoder {
+public:
+	/**
+	 * Rewind to the beginning of the video.
+	 */
+	virtual void rewind() = 0;
 };
 
 } // End of namespace Graphics

@@ -225,8 +225,9 @@ void Console::postEnter() {
 		Graphics::VideoDecoder *videoDecoder = 0;
 
 		if (_videoFile.hasSuffix(".seq")) {
-			videoDecoder = new SeqDecoder();
-			((SeqDecoder *)videoDecoder)->setFrameDelay(_videoFrameDelay);
+			SeqDecoder *seqDecoder = new SeqDecoder();
+			seqDecoder->setFrameDelay(_videoFrameDelay);
+			videoDecoder = seqDecoder;
 #ifdef ENABLE_SCI32
 		} else if (_videoFile.hasSuffix(".vmd")) {
 			videoDecoder = new VMDDecoder(g_system->getMixer());

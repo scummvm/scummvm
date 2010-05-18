@@ -55,7 +55,7 @@ enum ScaleMode {
 	kScaleQuarter = 4
 };
 
-class QTPlayer : public Graphics::VideoDecoder {
+class QTPlayer : public Graphics::RewindableVideoDecoder {
 public:
 	QTPlayer();
 	virtual ~QTPlayer();
@@ -112,7 +112,7 @@ public:
 	uint32 getTimeToNextFrame() const;
 	Graphics::PixelFormat getPixelFormat() const;
 
-	void rewind(); // For a future RewindableVideoDecoder class
+	void rewind();
 
 	// TODO: These audio functions need to be removed from the public and/or added to
 	// the VideoDecoder API directly.
