@@ -197,6 +197,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	g_debugState.runningStep = 0;
 	g_debugState.stopOnEvent = false;
 	g_debugState.debugging = false;
+	g_debugState.breakpointWasHit = false;
 }
 
 Console::~Console() {

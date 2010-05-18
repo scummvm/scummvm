@@ -309,7 +309,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 }
 
 
-void script_debug(EngineState *s, bool bp) {
+void script_debug(EngineState *s) {
 	// Do we support a separate console?
 
 #if 0
@@ -327,7 +327,7 @@ void script_debug(EngineState *s, bool bp) {
 		return;
 #endif
 
-	if (g_debugState.seeking && !bp) { // Are we looking for something special?
+	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
 		SegmentObj *mobj = GET_SEGMENT(*s->_segMan, scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
 
 		if (mobj) {

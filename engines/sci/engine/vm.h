@@ -367,9 +367,8 @@ void run_vm(EngineState *s, bool restoring);
 /**
  * Debugger functionality
  * @param[in] s					The state at which debugging should take place
- * @param[in] bp				Flag, set to true when a breakpoint is triggered
  */
-void script_debug(EngineState *s, bool bp);
+void script_debug(EngineState *s);
 
 /**
  * Initializes a EngineState block

@@ -54,9 +54,6 @@ int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a r
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
-static bool breakpointWasHit = false;	// FIXME: Avoid non-const global vars
-
-
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
 /**
@@ -290,7 +287,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 				Console *con = g_sci->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
 				g_debugState.debugging = true;
-				breakpointWasHit = true;
+				g_debugState.breakpointWasHit = true;
 				break;
 			}
 		}
@@ -373,8 +370,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					Console *con = g_sci->getSciDebugger();
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
-					breakpointWasHit = true;
 					g_debugState.debugging = true;
+					g_debugState.breakpointWasHit = true;
 					break;
 				}
 			}
@@ -814,8 +811,8 @@ void run_vm(EngineState *s, bool restoring) {
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
 		if (g_debugState.debugging /* sci_debug_flags*/) {
-			script_debug(s, breakpointWasHit);
-			breakpointWasHit = false;
+			script_debug(s);
+			g_debugState.breakpointWasHit = false;
 		}
 		Console *con = g_sci->getSciDebugger();
 		if (con->isAttached()) {

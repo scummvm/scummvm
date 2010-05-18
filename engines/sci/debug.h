@@ -42,6 +42,7 @@ enum DebugSeeking {
 
 struct DebugState {
 	bool debugging;
+	bool breakpointWasHit;
 	bool stopOnEvent;
 	DebugSeeking seeking;		// Stepping forward until some special condition is met
 	int runningStep;			// Set to > 0 to allow multiple stepping
