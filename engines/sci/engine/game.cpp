@@ -33,7 +33,6 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/kernel_types.h"
 #include "sci/engine/message.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/menu.h"

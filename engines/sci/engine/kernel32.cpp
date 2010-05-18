@@ -378,7 +378,7 @@ void Kernel::setKernelNamesSci2() {
 	_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesSci2);
 }
 
-void Kernel::setKernelNamesSci21(EngineState *s) {
+void Kernel::setKernelNamesSci21() {
 	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
 	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
 	// to use based on where kDoSound is called from Sound::play().

@@ -225,7 +225,7 @@ Common::Error SciEngine::run() {
 	_resMan->addNewGMPatch(_gamestate->_gameId);
 
 	script_adjust_opcode_formats(_gamestate);
-	_kernel->loadKernelNames(getGameID(), _gamestate);
+	_kernel->loadKernelNames(getGameID());
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)

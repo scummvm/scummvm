@@ -78,13 +78,13 @@ struct List;	// from segment.h
  *
  * SCI0 parser vocabularies:
  * - vocab.901 / 901.voc - suffix vocabulary
- * - vocab.900 / 900.vo1 - parse tree branches
+ * - vocab.900 / 900.voc - parse tree branches
  * - vocab.0 / 0.voc - main vocabulary, containing words and their attributes
  *                     (e.g. "onto" - "position")
  *
  * SCI01 parser vocabularies:
  * - vocab.902 / 902.voc - suffix vocabulary
- * - vocab.901 / 901.vo1 - parse tree branches
+ * - vocab.901 / 901.voc - parse tree branches
  * - vocab.900 / 900.voc - main vocabulary, containing words and their attributes
  *                        (e.g. "onto" - "position")
  *
@@ -93,6 +93,39 @@ struct List;	// from segment.h
 
 //#define DEBUG_PARSER	// enable for parser debugging
 //#define DISABLE_VALIDATIONS	// enable to stop validation checks
+
+// ---- Kernel signatures -----------------------------------------------------
+#define KSIG_TERMINATOR 0
+
+// Uncompiled signatures
+#define KSIG_SPEC_ARITMETIC 'i'
+#define KSIG_SPEC_LIST 'l'
+#define KSIG_SPEC_NODE 'n'
+#define KSIG_SPEC_OBJECT 'o'
+#define KSIG_SPEC_REF 'r' // Said Specs and strings
+#define KSIG_SPEC_ARITHMETIC 'i'
+#define KSIG_SPEC_NULL 'z'
+#define KSIG_SPEC_ANY '.'
+#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
+
+#define KSIG_SPEC_SUM_DONE ('a' - 'A') // Use small letters to indicate end of sum type
+/* Use capital letters for sum types, e.g.
+** "LNoLr" for a function which takes two arguments:
+** (1) list, node or object
+** (2) list or ref
+*/
+
+// Compiled signatures
+#define KSIG_LIST	0x01
+#define KSIG_NODE	0x02
+#define KSIG_OBJECT	0x04
+#define KSIG_REF	0x08
+#define KSIG_ARITHMETIC 0x10
+
+#define KSIG_NULL	0x40
+#define KSIG_ANY	0x5f
+#define KSIG_ELLIPSIS	0x80
+// ----------------------------------------------------------------------------
 
 /* Generic description: */
 typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);
@@ -131,7 +164,7 @@ public:
 	 * name table of the resource (the format changed between version 0 and 1).
 	 * @return true on success, false on failure
 	 */
-	bool loadKernelNames(Common::String gameId, EngineState *s);
+	bool loadKernelNames(Common::String gameId);
 
 	/**
 	 * Determines the selector ID of a selector by its name
@@ -149,6 +182,29 @@ public:
 	typedef Common::Array<KernelFuncWithSignature> KernelFuncsContainer;
 	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions */
 
+	/**
+	 * Determines whether a list of registers matches a given signature.
+	 * If no signature is given (i.e., if sig is NULL), this is always
+	 * treated as a match.
+	 *
+	 * @param segMan pointer to the segment manager
+	 * @param sig	 signature to test against
+	 * @param argc	 number of arguments to test
+	 * @param argv	 argument list
+	 * @return true if the signature was matched, false otherwise
+	 */
+	bool signatureMatch(SegManager *segMan, const char *sig, int argc, const reg_t *argv);
+
+	/**
+	 * Determines the type of the object indicated by reg.
+	 * @param segMan			the Segment manager
+	 * @param reg				register to check
+	 * @return one of KSIG_* below KSIG_NULL.
+	 *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
+	 *	       0 on error.
+	 */
+	int findRegType(SegManager *segMan, reg_t reg);
+
 private:
 	/**
 	 * Sets the default kernel function names, based on the SCI version used
@@ -164,7 +220,7 @@ private:
 	/**
 	 * Sets the default kernel function names to the SCI2.1 kernel functions
 	 */
-	void setKernelNamesSci21(EngineState *s);
+	void setKernelNamesSci21();
 #endif
 
 	/**

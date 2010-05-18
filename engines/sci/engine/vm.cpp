@@ -35,7 +35,6 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/script.h"
 #include "sci/engine/gc.h"
@@ -564,7 +563,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNum];
 
 	if (kernelFunc.signature
-			&& !kernel_matches_signature(s->_segMan, kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
+			&& !g_sci->getKernel()->signatureMatch(s->_segMan, kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
 		error("[VM] Invalid arguments to kernel call %x", kernelFuncNum);
 	}
 

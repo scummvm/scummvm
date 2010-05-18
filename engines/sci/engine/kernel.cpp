@@ -28,7 +28,6 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
-#include "sci/engine/kernel_types.h"
 
 #include "common/system.h"
 
@@ -643,7 +642,7 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(SegManager *segMan, reg_t reg) {
+int Kernel::findRegType(SegManager *segMan, reg_t reg) {
 	// No segment? Must be arithmetic
 	if (!reg.segment)
 		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
@@ -685,14 +684,14 @@ int determine_reg_type(SegManager *segMan, reg_t reg) {
 	}
 }
 
-bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, const reg_t *argv) {
+bool Kernel::signatureMatch(SegManager *segMan, const char *sig, int argc, const reg_t *argv) {
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = determine_reg_type(segMan, *argv);
+			int type = findRegType(segMan, *argv);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
@@ -777,12 +776,12 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 	}
 }
 
-bool Kernel::loadKernelNames(Common::String gameId, EngineState *s) {
+bool Kernel::loadKernelNames(Common::String gameId) {
 	_kernelNames.clear();
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21(s);
+		setKernelNamesSci21();
 	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else

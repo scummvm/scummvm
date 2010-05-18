@@ -33,7 +33,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/savegame.h"
-#include "sci/engine/kernel_types.h"	// for determine_reg_type
 #include "sci/engine/gc.h"
 #include "sci/engine/features.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -1835,7 +1834,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		return true;
 	}
 
-	int t = determine_reg_type(_engine->_gamestate->_segMan, val);
+	int t = g_sci->getKernel()->findRegType(_engine->_gamestate->_segMan, val);
 
 	switch (t) {
 	case KSIG_LIST:
@@ -1904,7 +1903,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = determine_reg_type(_engine->_gamestate->_segMan, reg);
+	int type_mask = g_sci->getKernel()->findRegType(_engine->_gamestate->_segMan, reg);
 	int filter;
 	int found = 0;
 
