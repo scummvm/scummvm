@@ -650,11 +650,11 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 			break;
 
 		case Script_Word:
-			opparams[i] = READ_LE_UINT16(src + offset);
+			opparams[i] = READ_SCI11ENDIAN_UINT16(src + offset);
 			offset += 2;
 			break;
 		case Script_SWord:
-			opparams[i] = (int16)READ_LE_UINT16(src + offset);
+			opparams[i] = (int16)READ_SCI11ENDIAN_UINT16(src + offset);
 			offset += 2;
 			break;
 
@@ -670,7 +670,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 			if (extOpcode & 1) {
 				opparams[i] = src[offset++];
 			} else {
-				opparams[i] = READ_LE_UINT16(src + offset);
+				opparams[i] = READ_SCI11ENDIAN_UINT16(src + offset);
 				offset += 2;
 			}
 			break;
@@ -680,7 +680,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 			if (extOpcode & 1) {
 				opparams[i] = (int8)src[offset++];
 			} else {
-				opparams[i] = (int16)READ_LE_UINT16(src + offset);
+				opparams[i] = (int16)READ_SCI11ENDIAN_UINT16(src + offset);
 				offset += 2;
 			}
 			break;

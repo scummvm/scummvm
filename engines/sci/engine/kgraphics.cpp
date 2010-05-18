@@ -159,7 +159,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+			g_sci->_gfxCursor->kernelSetMacCursor(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		else
+			g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
 	default :
 		warning("kSetCursor: Unhandled case: %d arguments given", argc);
@@ -1086,22 +1089,29 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_gfxCursor->kernelHide();
 
 	if (argv[0].segment != 0) {
-		// DOS SEQ
-		// SEQ's are called with no subops, just the string and delay
-		Common::String filename = s->_segMan->getString(argv[0]);
-		int delay = argv[1].toUint16(); // Time between frames in ticks
-
-		SeqDecoder *seqDecoder = new SeqDecoder();
-		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
-		if (seqDecoder->loadFile(filename.c_str(), delay)) {
-			player->playVideo();
-			playedVideo = true;
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
+			// Mac QuickTime
+			// The only argument is the string for the video
+			warning("TODO: Play QuickTime movie '%s'", s->_segMan->getString(argv[0]).c_str());
+			return s->r_acc;
 		} else {
-			warning("Failed to open movie file %s", filename.c_str());
+			// DOS SEQ
+			// SEQ's are called with no subops, just the string and delay
+			Common::String filename = s->_segMan->getString(argv[0]);
+			int delay = argv[1].toUint16(); // Time between frames in ticks
+
+			SeqDecoder *seqDecoder = new SeqDecoder();
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
+			if (seqDecoder->loadFile(filename.c_str(), delay)) {
+				player->playVideo();
+				playedVideo = true;
+			} else {
+				warning("Failed to open movie file %s", filename.c_str());
+			}
+			seqDecoder->closeFile();
+			delete player;
+			delete seqDecoder;
 		}
-		seqDecoder->closeFile();
-		delete player;
-		delete seqDecoder;
 	} else {
 		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
 		// TODO: This appears to be some sort of subop. case 0 contains the string

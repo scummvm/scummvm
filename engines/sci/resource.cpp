@@ -29,6 +29,7 @@
 #include "common/macresman.h"
 
 #include "sci/resource.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -581,6 +582,15 @@ int ResourceManager::addAppropriateSources() {
 			addSource(0, kSourceMacResourceFork, filename.c_str(), atoi(filename.c_str() + 4));
 		}
 #ifdef ENABLE_SCI32
+		// Mac SCI32 games have extra folders for patches
+		addPatchDir("Robot Folder");
+		addPatchDir("Sound Folder");
+		addPatchDir("Voices Folder");
+		//addPatchDir("VMD Folder");
+
+		// There can also be a "Patches" resource fork with patches
+		if (Common::File::exists("Patches"))
+			addSource(0, kSourceMacResourceFork, "Patches", 100);
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
@@ -750,11 +760,8 @@ void ResourceManager::scanNewSources() {
 }
 
 void ResourceManager::freeResourceSources() {
-	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
-		if ((*it)->source_type == kSourceMacResourceFork)
-			(*it)->macResMan.close();
+	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
 		delete *it;
-	}
 
 	_sources.clear();
 }
@@ -1452,18 +1459,32 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	return 0;
 }
 
-static const uint32 resourceTypeMacTags[] = {
-	'V56 ', 'P56 ', 'SCR ', 'TEX ', 'SND ',
-		 0, 'VOC ', 'FON ',      0, 'Pat ', // 'CURS is a mac cursor, not sure if it goes in
-	     0, 'PAL ',      0,      0,      0,
-	'MSG ',      0, 'HEP '
+struct {
+	uint32 tag;
+	ResourceType type;
+} static const macResTagMap[] = {
+	{ MKID_BE('V56 '), kResourceTypeView },
+	{ MKID_BE('P56 '), kResourceTypePic },
+	{ MKID_BE('SCR '), kResourceTypeScript },
+	{ MKID_BE('TEX '), kResourceTypeText },
+	{ MKID_BE('SND '), kResourceTypeSound },
+	{ MKID_BE('VOC '), kResourceTypeVocab },
+	{ MKID_BE('FON '), kResourceTypeFont },
+	{ MKID_BE('CURS'), kResourceTypeCursor },
+	{ MKID_BE('crsr'), kResourceTypeCursor },
+	{ MKID_BE('Pat '), kResourceTypePatch },
+	{ MKID_BE('PAL '), kResourceTypePalette },
+	{ MKID_BE('snd '), kResourceTypeAudio },
+	{ MKID_BE('MSG '), kResourceTypeMessage },
+	{ MKID_BE('HEP '), kResourceTypeHeap }
 };
 
 static uint32 resTypeToMacTag(ResourceType type) {
-	if (type >= ARRAYSIZE(resourceTypeMacTags))
-		return 0;
+	for (uint32 i = 0; i < ARRAYSIZE(macResTagMap); i++)
+		if (macResTagMap[i].type == type)
+			return macResTagMap[i].tag;
 
-	return resourceTypeMacTags[type];
+	return 0;
 }
 
 int ResourceManager::readMacResourceFork(ResourceSource *source) {
@@ -1476,9 +1497,9 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 		ResourceType type = kResourceTypeInvalid;
 
 		// Map the Mac tags to our ResourceType
-		for (uint32 j = 0; j < ARRAYSIZE(resourceTypeMacTags); j++)
-			if (tagArray[i] == resourceTypeMacTags[j]) {
-				type = (ResourceType)j;
+		for (uint32 j = 0; j < ARRAYSIZE(macResTagMap); j++)
+			if (tagArray[i] == macResTagMap[j].tag) {
+				type = macResTagMap[j].type;
 				break;
 			}
 
@@ -1492,7 +1513,7 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 
 			Resource *newrsc = NULL;
 
-			// Prepare destination, if neccessary
+			// Prepare destination, if neccessary. Resource forks may contain patches.
 			if (!_resMap.contains(resId)) {
 				newrsc = new Resource;
 				_resMap.setVal(resId, newrsc);
@@ -1500,11 +1521,11 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 				newrsc = _resMap.getVal(resId);
 
 			// Get the size of the file
-			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);;
+			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);
 			uint32 fileSize = stream->size();
 			delete stream;
 
-			// Overwrite everything, because we're patching
+			// Overwrite everything
 			newrsc->_id = resId;
 			newrsc->_status = kResStatusNoMalloc;
 			newrsc->_source = source;
@@ -2045,7 +2066,7 @@ void ResourceManager::detectSciVersion() {
 	// Set view type
 	if (viewCompression == kCompDCL
 		|| _volVersion == kResVersionSci11 // pq4demo
-		|| _volVersion == kResVersionSci11Mac // FIXME: Is this right?
+		|| _volVersion == kResVersionSci11Mac
 #ifdef ENABLE_SCI32
 		|| viewCompression == kCompSTACpack
 		|| _volVersion == kResVersionSci32 // kq7
@@ -2064,6 +2085,8 @@ void ResourceManager::detectSciVersion() {
 		// TODO: Decide between SCI2 and SCI2.1
 		if (Common::File::exists("resource.cfg"))
 			s_sciVersion = SCI_VERSION_1_1;
+		else if (Common::File::exists("Patches"))
+			s_sciVersion = SCI_VERSION_2_1;
 		else
 			s_sciVersion = SCI_VERSION_2;
 		return;

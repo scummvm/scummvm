@@ -271,31 +271,42 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
+		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('RIFF')) {
+			// WAVE detected
+			Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+
+			// Calculate samplelen from WAVE header
+			int waveSize = 0, waveRate = 0;
+			byte waveFlags = 0;
+			Audio::loadWAVFromStream(*waveStream, waveSize, waveRate, waveFlags);
+			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
+
+			waveStream->seek(0, SEEK_SET);
+			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
+		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
+				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
+			// Mac snd detected
+			// See http://developer.apple.com/legacy/mac/library/documentation/mac/Sound/Sound-60.html#HEADING60-15 for more details
+
+			uint32 soundHeaderOffset = READ_BE_UINT32(audioRes->data + 16);
+			assert(READ_BE_UINT32(audioRes->data + soundHeaderOffset) == 0);
+			size = READ_BE_UINT32(audioRes->data + soundHeaderOffset + 4);
+			_audioRate = READ_BE_UINT16(audioRes->data + soundHeaderOffset + 8); // Really floating point, but we're just truncating
+
+			if (*(audioRes->data + soundHeaderOffset + 20) != 0)
+				error("Unhandled Mac snd extended/compressed header");
+
+			data = (byte *)malloc(size);
+			memcpy(data, audioRes->data + soundHeaderOffset + 22, size);
+			flags = Audio::FLAG_UNSIGNED;
 		} else {
-			// SCI1 or WAVE file
-			if (audioRes->size > 4) {
-				if (memcmp(audioRes->data, "RIFF", 4) == 0) {
-					// WAVE detected
-					Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
-
-					// Calculate samplelen from WAVE header
-					int waveSize = 0, waveRate = 0;
-					byte waveFlags = 0;
-					Audio::loadWAVFromStream(*waveStream, waveSize, waveRate, waveFlags);
-					*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
-
-					waveStream->seek(0, SEEK_SET);
-					audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
-				}
-			}
-			if (!audioStream) {
-				// SCI1 raw audio
-				size = audioRes->size;
-				data = (byte *)malloc(size);
-				assert(data);
-				memcpy(data, audioRes->data, size);
-				flags = Audio::FLAG_UNSIGNED;
-			}
+			// SCI1 raw audio
+			size = audioRes->size;
+			data = (byte *)malloc(size);
+			assert(data);
+			memcpy(data, audioRes->data, size);
+			flags = Audio::FLAG_UNSIGNED;
+			_audioRate = 11025;
 		}
 
 		if (data)

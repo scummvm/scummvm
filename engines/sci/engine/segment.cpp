@@ -253,18 +253,18 @@ int Script::relocateObject(Object &obj, SegmentId segment, int location) {
 void Script::scriptAddCodeBlock(reg_t location) {
 	CodeBlock cb;
 	cb.pos = location;
-	cb.size = READ_LE_UINT16(_buf + location.offset - 2);
+	cb.size = READ_SCI11ENDIAN_UINT16(_buf + location.offset - 2);
 	_codeBlocks.push_back(cb);
 }
 
 void Script::scriptRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_bufSize && READ_LE_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
+	VERIFY(block.offset < (uint16)_bufSize && READ_SCI11ENDIAN_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
 	       "Relocation block outside of script\n");
 
-	int count = READ_LE_UINT16(_buf + block.offset);
+	int count = READ_SCI11ENDIAN_UINT16(_buf + block.offset);
 
 	for (int i = 0; i <= count; i++) {
-		int pos = READ_LE_UINT16(_buf + block.offset + 2 + (i * 2));
+		int pos = READ_SCI11ENDIAN_UINT16(_buf + block.offset + 2 + (i * 2));
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
@@ -302,16 +302,16 @@ void Script::scriptRelocate(reg_t block) {
 }
 
 void Script::heapRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_heapSize && READ_LE_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
+	VERIFY(block.offset < (uint16)_heapSize && READ_SCI11ENDIAN_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
 	       "Relocation block outside of script\n");
 
 	if (_relocated)
 		return;
 	_relocated = true;
-	int count = READ_LE_UINT16(_heapStart + block.offset);
+	int count = READ_SCI11ENDIAN_UINT16(_heapStart + block.offset);
 
 	for (int i = 0; i < count; i++) {
-		int pos = READ_LE_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
+		int pos = READ_SCI11ENDIAN_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
 
 		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
@@ -359,7 +359,7 @@ void Script::setLockers(int lockers) {
 void Script::setExportTableOffset(int offset) {
 	if (offset) {
 		_exportTable = (uint16 *)(_buf + offset + 2);
-		_numExports = READ_LE_UINT16((byte *)(_exportTable - 1));
+		_numExports = READ_SCI11ENDIAN_UINT16((byte *)(_exportTable - 1));
 	} else {
 		_exportTable = NULL;
 		_numExports = 0;
@@ -380,7 +380,7 @@ uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 
 	if (_exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_LE_UINT16((byte *)(scr->_exportTable + pubfunct));
+	uint16 offset = READ_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + pubfunct));
 	VERIFY(offset < scr->_bufSize, "invalid export function pointer");
 
 	return offset;
@@ -413,7 +413,7 @@ void Script::mcpyInOut(int dst, const void *src, size_t n) {
 
 int16 Script::getHeap(uint16 offset) const {
 	assert(offset + 1 < (int)_bufSize);
-	return READ_LE_UINT16(_buf + offset);
+	return READ_SCI11ENDIAN_UINT16(_buf + offset);
 //	return (_buf[offset] | (_buf[offset+1]) << 8);
 }
 
@@ -695,7 +695,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) {
 	}
 
 	for (uint i = 0; i < varnum; i++)
-		if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
+		if (READ_SCI11ENDIAN_UINT16(buf + (i << 1)) == slc) // Found it?
 			return i; // report success
 
 	return -1; // Failed

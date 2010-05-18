@@ -23,9 +23,11 @@
  *
  */
 
+
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -43,7 +45,7 @@ public:
 			return false;
 
 		// Read message count from last word in header
-		_messageCount = READ_LE_UINT16(_data + _headerSize - 2);
+		_messageCount = READ_SCI11ENDIAN_UINT16(_data + _headerSize - 2);
 
 		if (_messageCount * _recordSize + _headerSize > _size)
 			return false;
@@ -124,7 +126,7 @@ public:
 				record.tuple = tuple;
 				record.refTuple = MessageTuple(recordPtr[7], recordPtr[8], recordPtr[9]);
 				record.talker = recordPtr[4];
-				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 5);
+				record.string = (const char *)_data + READ_SCI11ENDIAN_UINT16(recordPtr + 5);
 				return true;
 			}
 			recordPtr += _recordSize;
@@ -143,7 +145,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 	}
 
 	MessageReader *reader;
-	int version = READ_LE_UINT16(res->data) / 1000;
+	int version = READ_SCI11ENDIAN_UINT32(res->data) / 1000;
 
 	switch (version) {
 	case 2:

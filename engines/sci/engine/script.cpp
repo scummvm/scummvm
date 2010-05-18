@@ -25,6 +25,7 @@
 
 #include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/util.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -128,7 +129,7 @@ void SegManager::createClassTable() {
 	_classtable.resize(totalClasses);
 
 	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
-		uint16 scriptNr = READ_LE_UINT16(vocab996->data + classNr * 4 + 2);
+		uint16 scriptNr = READ_SCI11ENDIAN_UINT16(vocab996->data + classNr * 4 + 2);
 
 		_classtable[classNr].reg = NULL_REG;
 		_classtable[classNr].script = scriptNr;
@@ -150,8 +151,7 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 			getScriptSegment(the_class->script, lock);
 
 			if (!the_class->reg.segment) {
-				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
-				          " Entering debugger.", classnr, the_class->script, the_class->script);
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;", classnr, the_class->script, the_class->script);
 				return NULL_REG;
 			}
 		} else
@@ -181,7 +181,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
 
 	if (getSciVersion() >= SCI_VERSION_1_1)
-		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
+		count = READ_SCI11ENDIAN_UINT16(scr->_buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
 	// half block size
@@ -199,7 +199,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 		byte *base = (byte *)(scr->_buf + location.offset);
 
 		for (i = 0; i < count; i++)
-			locals->_locals[i] = make_reg(0, READ_LE_UINT16(base + i * 2));
+			locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
 	}
 }
 
@@ -209,9 +209,10 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		uint16 location = READ_LE_UINT16((byte *)(scr->_exportTable + i));
-		if ((location < scr->_heapSize - 1) && (READ_LE_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
-			WRITE_LE_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
+		uint16 location = READ_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + i));
+
+		if ((location < scr->_heapSize - 1) && (READ_SCI11ENDIAN_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
+			WRITE_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
 		} else {
 			// Otherwise it's probably a function export,
 			// and we don't need to do anything.
@@ -221,12 +222,12 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	byte *seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
+	byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 
-	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
+	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
 			int classpos = seeker - scr->_buf;
-			int species = READ_LE_UINT16(seeker + 10);
+			int species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 
 			if (species < 0 || species >= (int)_classtable.size()) {
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
@@ -237,11 +238,11 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 			_classtable[species].reg.segment = seg;
 			_classtable[species].reg.offset = classpos;
 		}
-		seeker += READ_LE_UINT16(seeker + 2) * 2;
+		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
 
-	seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
-	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
+	seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg;
 		Object *obj;
 
@@ -270,7 +271,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		// to be sufficient.
 		obj->setClassScriptSelector(make_reg(0, scr->_nr));
 
-		seeker += READ_LE_UINT16(seeker + 2) * 2;
+		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
 }
 
@@ -514,12 +515,12 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 
 	_heapStart = script->size;
 	if (script->size & 2)
-		_heapStart ++;
+		_heapStart++;
 
 	scr->mcpyInOut(0, script->data, script->size);
 	scr->mcpyInOut(_heapStart, heap->data, heap->size);
 
-	if (READ_LE_UINT16(script->data + 6) > 0)
+	if (READ_SCI11ENDIAN_UINT16(script->data + 6) > 0)
 		scr->setExportTableOffset(6);
 
 	reg.segment = seg_id;
@@ -529,7 +530,7 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 	segMan->scriptRelocateExportsSci11(seg_id);
 	segMan->scriptInitialiseObjectsSci11(seg_id);
 
-	reg.offset = READ_LE_UINT16(heap->data);
+	reg.offset = READ_SCI11ENDIAN_UINT16(heap->data);
 	scr->heapRelocate(reg);
 
 	return seg_id;

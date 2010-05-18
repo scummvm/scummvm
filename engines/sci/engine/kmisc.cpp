@@ -294,6 +294,19 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// kIconBar is really a subop of kPlatform for SCI1.1 Mac
+reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
+	// TODO...
+
+	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0)
+		for (int i = 0; i < argv[2].toUint16(); i++)
+			warning("kIconBar: Icon Object %d = %04x:%04x", i, PRINT_REG(argv[i + 3]));
+
+	// Other calls seem to handle selecting/deselecting them
+
+	return NULL_REG;
+}
+
 enum kSciPlatforms {
 	kSciPlatformDOS = 1,
 	kSciPlatformWindows = 2
@@ -337,6 +350,9 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 		warning("STUB: kPlatform(CDCheck)");
 		break;
 	case kPlatformUnk0:
+		if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() == SCI_VERSION_1_1)
+			return kIconBar(s, argc - 1, argv + 1);
+		// Otherwise, fall through
 	case kPlatformGetPlatform:
 		return make_reg(0, (isWindows) ? kSciPlatformWindows : kSciPlatformDOS);
 	case kPlatformUnk5:

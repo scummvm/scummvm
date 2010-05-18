@@ -29,6 +29,7 @@
 #include "common/serializer.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/util.h"
 
 namespace Sci {
 
@@ -228,16 +229,16 @@ public:
 	reg_t getClassScriptSelector() { return _variables[4]; }
 	void setClassScriptSelector(reg_t value) { _variables[4] = value; }
 
-	Selector getVarSelector(uint16 i) { return *(_baseVars + i); }
+	Selector getVarSelector(uint16 i) { return READ_SCI11ENDIAN_UINT16(_baseVars + i); }
 
 	reg_t getFunction(uint16 i) {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
-		return make_reg(_pos.segment, READ_LE_UINT16((byte *) (_baseMethod + offset)));
+		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset)));
 	}
 
 	Selector getFuncSelector(uint16 i) {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
-		return READ_LE_UINT16((byte *) (_baseMethod + offset));
+		return READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset));
 	}
 
 	/**
@@ -280,14 +281,14 @@ public:
 			_baseMethod = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
 			_methodCount = READ_LE_UINT16(_baseMethod - 1);
 		} else {
-			_variables.resize(READ_LE_UINT16(data + 2));
-			_baseVars = (uint16 *)(buf + READ_LE_UINT16(data + 4));
-			_baseMethod = (uint16 *)(buf + READ_LE_UINT16(data + 6));
-			_methodCount = READ_LE_UINT16(_baseMethod);
+			_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
+			_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
+			_baseMethod = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
+			_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
 		}
 
 		for (uint i = 0; i < _variables.size(); i++)
-			_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
+			_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
 	}
 
 	reg_t getVariable(uint var) { return _variables[var]; }

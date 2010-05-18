@@ -24,6 +24,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/util.h"
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
@@ -168,11 +169,11 @@ void GfxView::initData(GuiResourceId resourceId) {
 
 	case kViewVga11: // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
-		headerSize = READ_LE_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so its added
+		headerSize = READ_SCI11ENDIAN_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so its added
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
-		palOffset = READ_LE_UINT32(_resourceData + 8);
+		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
 		// FIXME: After LoopCount there is another byte and its set for view 50 within Laura Bow 2 CD, check what it means
 
 		loopData = _resourceData + headerSize;
@@ -203,22 +204,24 @@ void GfxView::initData(GuiResourceId resourceId) {
 			celCount = loopData[2];
 			_loop[loopNo].celCount = celCount;
 
-			celData = _resourceData + READ_LE_UINT32(loopData + 12);
+			celData = _resourceData + READ_SCI11ENDIAN_UINT32(loopData + 12);
 
 			// read cel info
 			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
 				cel = &_loop[loopNo].cel[celNo];
-				cel->width = READ_LE_UINT16(celData);
-				assert(cel->width);
-				cel->height = READ_LE_UINT16(celData + 2);
-				assert(cel->height);
-				cel->displaceX = READ_LE_UINT16(celData + 4);
-				cel->displaceY = READ_LE_UINT16(celData + 6);
+				cel->width = READ_SCI11ENDIAN_UINT16(celData);
+				cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
+				cel->displaceX = READ_SCI11ENDIAN_UINT16(celData + 4);
+				cel->displaceY = READ_SCI11ENDIAN_UINT16(celData + 6);
+
+				assert(cel->width && cel->height);
+
 				cel->clearKey = celData[8];
 				cel->offsetEGA = 0;
-				cel->offsetRLE = READ_LE_UINT32(celData + 24);
-				cel->offsetLiteral = READ_LE_UINT32(celData + 28);
+				cel->offsetRLE = READ_SCI11ENDIAN_UINT32(celData + 24);
+				cel->offsetLiteral = READ_SCI11ENDIAN_UINT32(celData + 28);
+
 				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
 					cel->displaceX = -cel->displaceX;
@@ -351,39 +354,41 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 	} else {
 		literalPtr = _resourceData + celInfo->offsetLiteral;
 		if (celInfo->offsetRLE) {
-			// decompression for data that has separate rle and literal streams
-			while (pixelNo < pixelCount) {
-				pixel = *rlePtr++;
-				runLength = pixel & 0x3F;
-				switch (pixel & 0xC0) {
-				case 0: // copy bytes as-is
-					while (runLength-- && pixelNo < pixelCount)
-						outPtr[pixelNo++] = *literalPtr++;
-					break;
-				case 0x80: // fill with color
-					memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
+			if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
+				// Crazy-Ass compression for SCI1.1+ Mac
+				while (pixelNo < pixelCount) {
+					uint32 pixelLine = pixelNo;
+					runLength = *rlePtr++;
 					pixelNo += runLength;
-					break;
-				case 0xC0: // fill with transparent
-					pixelNo += runLength;
-					break;
+					runLength = *rlePtr++;
+					while (runLength-- && pixelNo < pixelCount) {
+						outPtr[pixelNo] = *literalPtr++;
+						if (outPtr[pixelNo] == 255)
+							outPtr[pixelNo] = 0;
+						pixelNo++;
+					}
+					pixelNo = pixelLine + celInfo->width;
+				}
+			} else {
+				// decompression for data that has separate rle and literal streams
+				while (pixelNo < pixelCount) {
+					pixel = *rlePtr++;
+					runLength = pixel & 0x3F;
+					switch (pixel & 0xC0) {
+					case 0: // copy bytes as-is
+						while (runLength-- && pixelNo < pixelCount)
+							outPtr[pixelNo++] = *literalPtr++;
+						break;
+					case 0x80: // fill with color
+						memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
+						pixelNo += runLength;
+						break;
+					case 0xC0: // fill with transparent
+						pixelNo += runLength;
+						break;
+					}
 				}
 			}
-			// Crazy-Ass mac compression for clone2727
-			// uint32 pixelLine;
-			// while (pixelNo < pixelCount) {
-			// 	pixelLine = pixelNo;
-			// 	runLength = *rlePtr++;
-			// 	pixelNo += runLength;
-			// 	runLength = *rlePtr++;
-			// 	while (runLength-- && pixelNo < pixelCount) {
-			// 		outPtr[pixelNo] = *literalPtr++;
-			// 		if (outPtr[pixelNo] == 255)
-			// 			outPtr[pixelNo] = 0;
-			// 		pixelNo++;
-			// 	}
-			// 	pixelNo = pixelLine + celInfo->width;
-			// }
 		} else {
 			// literal stream only, so no compression
 			memcpy(outPtr, literalPtr, pixelCount);

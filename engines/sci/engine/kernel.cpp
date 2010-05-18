@@ -335,9 +335,9 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Intersections", kIntersections, "iiiiriiiri"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
-	DEFUN("ShowMovie", kShowMovie, "..*"),
+	DEFUN("ShowMovie", kShowMovie, ".*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
-	DEFUN("Platform", kPlatform, "i*"),
+	DEFUN("Platform", kPlatform, "i.*"),
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Portrait", kPortrait, ".*"),
@@ -757,10 +757,16 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 		break;
 
 	case SCI_VERSION_1_1:
-		// In KQ6CD, the empty kSetSynonyms function has been replaced
-		// with kPortrait
-		if (gameId == "kq6")
-			_kernelNames[0x26] = "Portrait";
+		// In KQ6 CD, the empty kSetSynonyms function has been replaced
+		// with kPortrait. In KQ6 Mac, kPlayBack has been replaced by
+		// kShowMovie.
+		if (gameId == "kq6") {
+			if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+				_kernelNames[0x84] = "ShowMovie";
+			else
+				_kernelNames[0x26] = "Portrait";
+		}
+
 		_kernelNames[0x71] = "PalVary";
 		_kernelNames[0x7c] = "Message";
 		break;

@@ -95,7 +95,7 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 		return -1;
 	}
 
-	return READ_LE_UINT16(selectoroffset + prop_ofs);
+	return READ_SCI11ENDIAN_UINT16(selectoroffset + prop_ofs);
 }
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
@@ -164,7 +164,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 		case Script_Word:
 		case Script_SWord:
-			printf(" %04x", 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8)));
+			printf(" %04x", READ_SCI11ENDIAN_UINT16(&scr[retval.offset]));
 			retval.offset += 2;
 			break;
 
@@ -178,7 +178,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
+				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
 				retval.offset += 2;
 			}
 
@@ -195,7 +195,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
+				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
 				retval.offset += 2;
 			}
 			printf(opsize ? " %02x" : " %04x", param_value);
@@ -205,7 +205,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (opsize)
 				param_value = scr[retval.offset++];
 			else {
-				param_value = 0xffff & (scr[retval.offset] | (scr[retval.offset+1] << 8));
+				param_value = READ_SCI11ENDIAN_UINT16(&scr[retval.offset]);
 				retval.offset += 2;
 			}
 			printf(opsize ? " %02x  [%04x]" : " %04x  [%04x]", param_value, (0xffff) & (retval.offset + param_value));
@@ -337,7 +337,7 @@ void script_debug(EngineState *s, bool bp) {
 			int opcode = scriptState.xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset];
 			int op = opcode >> 1;
 			int paramb1 = scriptState.xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 : (scriptState.xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + scriptState.xs->addr.pc.offset + 1));
+			int paramf1 = (opcode & 1) ? paramb1 : (scriptState.xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + scriptState.xs->addr.pc.offset + 1));
 
 			switch (g_debugState.seeking) {
 			case kDebugSeekSpecialCallk:
@@ -397,9 +397,9 @@ void script_debug(EngineState *s, bool bp) {
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
-	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
-	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
-	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
+	int species = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 14 + seeker);
 	int i = 0;
 
 	printf("Object\n");
@@ -410,28 +410,28 @@ void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 	printf("Name: %s\n", namepos ? ((char *)(data + namepos)) : "<unknown>");
 	printf("Superclass: %x\n", superclass);
 	printf("Species: %x\n", species);
-	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
+	printf("-info-:%x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 12 + seeker) & 0xffff);
 
-	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *) data + seeker + 4));
-	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *) data + seeker + 6)));
+	printf("Function area offset: %x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + seeker + 6)));
 
 	seeker += 8;
 
 	while (selectors--) {
-		printf("  [#%03x] = 0x%x\n", i++, (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
+		printf("  [#%03x] = 0x%x\n", i++, (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker) & 0xffff);
 		seeker += 2;
 	}
 
-	printf("Overridden functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+	printf("Overridden functions: %x\n", selectors = overloads = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
 	if (overloads < 100)
 		while (overloads--) {
-			int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker));
+			int selector = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + (seeker));
 
 			printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>");
-			printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
+			printf("%04x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker + selectors*2 + 2) & 0xffff);
 
 			seeker += 2;
 		}
@@ -439,9 +439,9 @@ void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
 
 void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 	int selectors, overloads, selectorsize;
-	int species = (int16)READ_LE_UINT16((unsigned char *) data + 8 + seeker);
-	int superclass = (int16)READ_LE_UINT16((unsigned char *) data + 10 + seeker);
-	int namepos = (int16)READ_LE_UINT16((unsigned char *) data + 14 + seeker);
+	int species = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 8 + seeker);
+	int superclass = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 10 + seeker);
+	int namepos = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + 14 + seeker);
 
 	printf("Class\n");
 
@@ -450,35 +450,35 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 	printf("Name: %s\n", namepos ? ((char *)data + namepos) : "<unknown>");
 	printf("Superclass: %x\n", superclass);
 	printf("Species: %x\n", species);
-	printf("-info-:%x\n", (int16)READ_LE_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
+	printf("-info-:%x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + 12 + seeker) & 0xffff);
 
-	printf("Function area offset: %x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + 4));
-	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_LE_UINT16((unsigned char *)data + seeker + 6)));
+	printf("Function area offset: %x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker + 4));
+	printf("Selectors [%x]:\n", selectors = (selectorsize = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker + 6)));
 
 	seeker += 8;
 	selectorsize <<= 1;
 
 	while (selectors--) {
-		int selector = (int16)READ_LE_UINT16((unsigned char *) data + (seeker) + selectorsize);
+		int selector = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *) data + (seeker) + selectorsize);
 
 		printf("  [%03x] %s = 0x%x\n", 0xffff & selector, (selector >= 0 && selector < (int)_selectorNames.size()) ? _selectorNames[selector].c_str() : "<?>",
-		          (int16)READ_LE_UINT16((unsigned char *)data + seeker) & 0xffff);
+		          (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker) & 0xffff);
 
 		seeker += 2;
 	}
 
 	seeker += selectorsize;
 
-	printf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_LE_UINT16((unsigned char *)data + seeker));
+	printf("Overloaded functions: %x\n", selectors = overloads = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker));
 
 	seeker += 2;
 
 	while (overloads--) {
-		int selector = (int16)READ_LE_UINT16((unsigned char *)data + (seeker));
+		int selector = (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + (seeker));
 		fprintf(stderr, "selector=%d; selectorNames.size() =%d\n", selector, _selectorNames.size());
 		printf("  [%03x] %s: @", selector & 0xffff, (selector >= 0 && selector < (int)_selectorNames.size()) ?
 		          _selectorNames[selector].c_str() : "<?>");
-		printf("%04x\n", (int16)READ_LE_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
+		printf("%04x\n", (int16)READ_SCI11ENDIAN_UINT16((unsigned char *)data + seeker + selectors * 2 + 2) & 0xffff);
 
 		seeker += 2;
 	}
@@ -495,7 +495,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	}
 
 	while (_seeker < script->size) {
-		int objtype = (int16)READ_LE_UINT16(script->data + _seeker);
+		int objtype = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker);
 		int objsize;
 		unsigned int seeker = _seeker + 4;
 
@@ -508,7 +508,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 		printf("\n");
 
-		objsize = (int16)READ_LE_UINT16(script->data + _seeker + 2);
+		objsize = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker + 2);
 
 		printf("Obj type #%x, size 0x%x: ", objtype, objsize);
 
