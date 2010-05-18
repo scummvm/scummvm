@@ -689,6 +689,12 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 		error("cmdFadeSound: unsupported argc %d", _argc);
 	}
 
+	// If sound is not playing currently, set signal directly
+	if (musicSlot->status != kSoundPlaying) {
+		warning("cmdFadeSound: fading requested, but sound is currently not playing");
+		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+	}
+
 	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 #endif
 }
@@ -856,10 +862,11 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	if (musicSlot->fadeCompleted) {
 		musicSlot->fadeCompleted = false;
+		// We need signal for sci0 at least in iceman as well (room 14, fireworks)
+		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			cmdStopSound(obj, 0);
 		} else {
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 			if (musicSlot->stopAfterFading)
 				cmdStopSound(obj, 0);
 		}
