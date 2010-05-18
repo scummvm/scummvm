@@ -391,7 +391,7 @@ SciKernelFunction kfunct_mappers[] = {
 	{NULL, NULL, NULL} // Terminator
 };
 
-Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
 }
@@ -642,13 +642,13 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int Kernel::findRegType(SegManager *segMan, reg_t reg) {
+int Kernel::findRegType(reg_t reg) {
 	// No segment? Must be arithmetic
 	if (!reg.segment)
 		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
 
 	// Otherwise it's an object
-	SegmentObj *mobj = segMan->getSegmentObj(reg.segment);
+	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
 	if (!mobj)
 		return 0; // Invalid
 
@@ -684,14 +684,14 @@ int Kernel::findRegType(SegManager *segMan, reg_t reg) {
 	}
 }
 
-bool Kernel::signatureMatch(SegManager *segMan, const char *sig, int argc, const reg_t *argv) {
+bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = findRegType(segMan, *argv);
+			int type = findRegType(*argv);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
@@ -790,6 +790,39 @@ bool Kernel::loadKernelNames(Common::String gameId) {
 
 	mapFunctions();
 	return true;
+}
+
+Common::String Kernel::lookupText(reg_t address, int index) {
+	char *seeker;
+	Resource *textres;
+
+	if (address.segment)
+		return _segMan->getString(address);
+	else {
+		int textlen;
+		int _index = index;
+		textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
+
+		if (!textres) {
+			error("text.%03d not found", address.offset);
+			return NULL; /* Will probably segfault */
+		}
+
+		textlen = textres->size;
+		seeker = (char *) textres->data;
+
+		while (index--)
+			while ((textlen--) && (*seeker++))
+				;
+
+		if (textlen)
+			return seeker;
+		else {
+			error("Index %d out of bounds in text.%03d", _index, address.offset);
+			return NULL;
+		}
+
+	}
 }
 
 } // End of namespace Sci

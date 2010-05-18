@@ -1071,7 +1071,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		text = s->_segMan->getString(textp);
 	} else {
 		argc--; argc--; argv++; argv++;
-		text = kernel_lookup_text(s, textp, index);
+		text = g_sci->getKernel()->lookupText(textp, index);
 	}
 
 	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);

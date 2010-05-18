@@ -140,6 +140,8 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	SegManager *segMan = new SegManager(_resMan);
+
 	// Scale the screen, if needed
 	int upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
 
@@ -175,12 +177,10 @@ Common::Error SciEngine::run() {
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
 
-	_kernel = new Kernel(_resMan);
+	_kernel = new Kernel(_resMan, segMan);
 	// Only SCI0 and SCI01 games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
-
-	SegManager *segMan = new SegManager(_resMan);
 
 	_features = new GameFeatures(segMan, _kernel);
 

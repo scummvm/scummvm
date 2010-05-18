@@ -33,40 +33,6 @@
 
 namespace Sci {
 
-/* Returns the string the script intended to address */
-Common::String kernel_lookup_text(EngineState *s, reg_t address, int index) {
-	char *seeker;
-	Resource *textres;
-
-	if (address.segment)
-		return s->_segMan->getString(address);
-	else {
-		int textlen;
-		int _index = index;
-		textres = g_sci->getResMan()->findResource(ResourceId(kResourceTypeText, address.offset), 0);
-
-		if (!textres) {
-			error("text.%03d not found", address.offset);
-			return NULL; /* Will probably segfault */
-		}
-
-		textlen = textres->size;
-		seeker = (char *) textres->data;
-
-		while (index--)
-			while ((textlen--) && (*seeker++))
-				;
-
-		if (textlen)
-			return seeker;
-		else {
-			error("Index %d out of bounds in text.%03d", _index, address.offset);
-			return 0;
-		}
-
-	}
-}
-
 reg_t kStrEnd(EngineState *s, int argc, reg_t *argv) {
 	reg_t address = argv[0];
 	address.offset += s->_segMan->strlen(address);
@@ -211,7 +177,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	else
 		startarg = 3; /* First parameter to use for formatting */
 
-	Common::String source_str = kernel_lookup_text(s, position, index);
+	Common::String source_str = g_sci->getKernel()->lookupText(position, index);
 	const char* source = source_str.c_str();
 
 	debugC(2, kDebugLevelStrings, "Formatting \"%s\"", source);
@@ -278,7 +244,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					reg = GET_SEL32(s->_segMan, reg, SELECTOR(data));
 #endif
 
-				Common::String tempsource = (reg == NULL_REG) ? "" : kernel_lookup_text(s, reg,
+				Common::String tempsource = (reg == NULL_REG) ? "" : g_sci->getKernel()->lookupText(reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;

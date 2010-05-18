@@ -1834,7 +1834,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		return true;
 	}
 
-	int t = g_sci->getKernel()->findRegType(_engine->_gamestate->_segMan, val);
+	int t = g_sci->getKernel()->findRegType(val);
 
 	switch (t) {
 	case KSIG_LIST:
@@ -1903,7 +1903,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = g_sci->getKernel()->findRegType(_engine->_gamestate->_segMan, reg);
+	int type_mask = g_sci->getKernel()->findRegType(reg);
 	int filter;
 	int found = 0;
 

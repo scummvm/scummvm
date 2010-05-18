@@ -563,7 +563,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNum];
 
 	if (kernelFunc.signature
-			&& !g_sci->getKernel()->signatureMatch(s->_segMan, kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
+			&& !g_sci->getKernel()->signatureMatch(kernelFunc.signature, argc, scriptState.xs->sp + 1)) {
 		error("[VM] Invalid arguments to kernel call %x", kernelFuncNum);
 	}
 

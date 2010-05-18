@@ -146,7 +146,7 @@ public:
 	/**
 	 * Initializes the SCI kernel
 	 */
-	Kernel(ResourceManager *resMan);
+	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
@@ -193,17 +193,30 @@ public:
 	 * @param argv	 argument list
 	 * @return true if the signature was matched, false otherwise
 	 */
-	bool signatureMatch(SegManager *segMan, const char *sig, int argc, const reg_t *argv);
+	bool signatureMatch(const char *sig, int argc, const reg_t *argv);
 
 	/**
 	 * Determines the type of the object indicated by reg.
-	 * @param segMan			the Segment manager
 	 * @param reg				register to check
 	 * @return one of KSIG_* below KSIG_NULL.
 	 *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
 	 *	       0 on error.
 	 */
-	int findRegType(SegManager *segMan, reg_t reg);
+	int findRegType(reg_t reg);
+
+	/******************** Text functionality ********************/
+	/**
+	 * Looks up text referenced by scripts
+	 * SCI uses two values to reference to text: An address, and an index. The address
+	 * determines whether the text should be read from a resource file, or from the heap,
+	 * while the index either refers to the number of the string in the specified source,
+	 * or to a relative position inside the text.
+	 *
+	 * @param address The address to look up
+	 * @param index The relative index
+	 * @return The referenced text, or empty string on error.
+	 */
+	Common::String lookupText(reg_t address, int index);
 
 private:
 	/**
@@ -245,28 +258,13 @@ private:
 	void mapFunctions();
 
 	ResourceManager *_resMan;
+	SegManager *_segMan;
 	uint32 features;
 
 	// Kernel-related lists
 	Common::StringArray _selectorNames;
 	Common::StringArray _kernelNames;
 };
-
-/******************** Text functionality ********************/
-/**
- * Looks up text referenced by scripts
- * SCI uses two values to reference to text: An address, and an index. The address
- * determines whether the text should be read from a resource file, or from the heap,
- * while the index either refers to the number of the string in the specified source,
- * or to a relative position inside the text.
- *
- * @param s The current state
- * @param address The address to look up
- * @param index The relative index
- * @return The referenced text, or empty string on error.
- */
-Common::String kernel_lookup_text(EngineState *s, reg_t address, int index);
-
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 /******************** Misc functions ********************/
