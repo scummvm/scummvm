@@ -252,7 +252,7 @@ bool FlicDecoder::decodeNextFrame() {
 				/* PSTAMP - skip for now */
 				break;
 			default:
-				error("FlicDecoder::decodeFrame(): unknown subchunk type (type = 0x%02X)", frameType);
+				error("FlicDecoder::decodeNextFrame(): unknown subchunk type (type = 0x%02X)", frameType);
 				break;
 			 }
 
@@ -261,8 +261,8 @@ bool FlicDecoder::decodeNextFrame() {
 	}
 
 	// If we just processed the ring frame, set the next frame
-	if (_videoInfo.currentFrame == (int32)_videoInfo.frameCount + 1) {
-		_videoInfo.currentFrame = 1;
+	if (_videoInfo.currentFrame == (int32)_videoInfo.frameCount) {
+		_videoInfo.currentFrame = 0;
 		_fileStream->seek(_offsetFrame2);
 	}
 
@@ -270,7 +270,7 @@ bool FlicDecoder::decodeNextFrame() {
 }
 
 void FlicDecoder::reset() {
-	_videoInfo.currentFrame = 0;
+	_videoInfo.currentFrame = -1;
 	_fileStream->seek(_offsetFrame1);
 }
 
