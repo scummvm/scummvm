@@ -598,8 +598,11 @@ void Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneSpeak:
-		enterDialogueMode(z);
-		return;
+		if (z->u._speakDialogue) {
+			enterDialogueMode(z);
+			return;
+		}
+		break;
 	}
 
 	debugC(3, kDebugExec, "runZone completed");
