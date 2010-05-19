@@ -222,7 +222,7 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be reserved_id
-	s.skip(4, VER(18), VER(18));	// OBSOLETE: Used to be _exportsAreWide
+	s.skip(4, VER(9), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be gc_mark_bits
 
 	if (s.isLoading()) {
