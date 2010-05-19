@@ -446,12 +446,20 @@ public:
 	 */
 	int getSynonymsNr() const;
 
-
 	/**
 	 * Sets the script-relative offset of the exports table.
 	 * @param offset	script-relative exports table offset
 	 */
 	void setExportTableOffset(int offset);
+
+	/**
+	 * Validate whether the specified public function is exported by
+	 * the script in the specified segment.
+	 * @param pubfunct		Index of the function to validate
+	 * @return				NULL if the public function is invalid, its
+	 * 						offset into the script's segment otherwise
+	 */
+	uint16 validateExportFunc(int pubfunct);
 
 	/**
 	 * Sets the script-relative offset of the synonyms associated with this script.

@@ -218,11 +218,6 @@ int script_init_engine(EngineState *s) {
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 
-	if (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE)
-		s->_segMan->setExportAreWide(true);
-	else
-		s->_segMan->setExportAreWide(false);
-
 	debug(2, "Engine initialized");
 
 	return 0;

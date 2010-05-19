@@ -96,17 +96,6 @@ public:
 	void reconstructScripts(EngineState *s);
 
 	/**
-	 * Validate whether the specified public function is exported by
-	 * the script in the specified segment.
-	 * @param pubfunct		Index of the function to validate
-	 * @param seg			Segment ID of the script the check is to
-	 * 						be performed for
-	 * @return				NULL if the public function is invalid, its
-	 * 						offset into the script's segment otherwise
-	 */
-	uint16 validateExportFunc(int pubfunct, SegmentId seg);
-
-	/**
 	 * Determines the segment occupied by a certain script, if any.
 	 * @param script_nr		Number of the script to look up
 	 * @return				The script's segment ID, or 0 on failure
@@ -125,7 +114,7 @@ public:
 	// TODO: document this
 	reg_t lookupScriptExport(int script_nr, int export_index) {
 		SegmentId seg = getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-		return make_reg(seg, validateExportFunc(export_index, seg));
+		return make_reg(seg, getScript(seg)->validateExportFunc(export_index));
 	}
 
 	// TODO: document this
@@ -170,12 +159,6 @@ public:
 	 * @param location	Location to initialize from
 	 */
 	void scriptInitialiseLocals(reg_t location);
-
-	/**
-	 * Tells the segment manager whether exports are wide (32-bit) or not.
-	 * @param flag	true if exports are wide, false otherwise
-	 */
-	void setExportAreWide(bool flag);
 
 	// 2. Clones
 
@@ -471,8 +454,6 @@ private:
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
 	ResourceManager *_resMan;
-
-	bool _exportsAreWide;
 
 	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment

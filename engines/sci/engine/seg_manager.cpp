@@ -49,7 +49,6 @@ SegManager::SegManager(ResourceManager *resMan) {
 	String_seg_id = 0;
 #endif
 
-	_exportsAreWide = false;
 	_resMan = resMan;
 
 	createClassTable();
@@ -338,10 +337,6 @@ bool SegManager::check(SegmentId seg) {
 		return false;
 	}
 	return true;
-}
-
-void SegManager::setExportAreWide(bool flag) {
-	_exportsAreWide = flag;
 }
 
 // return the seg if script_id is valid and in the map, else 0

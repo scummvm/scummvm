@@ -26,6 +26,7 @@
 #include "common/endian.h"
 
 #include "sci/sci.h"
+#include "sci/engine/features.h"
 #include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
@@ -366,22 +367,18 @@ void Script::setExportTableOffset(int offset) {
 	}
 }
 
-// TODO: This method should be Script method. The only reason
-// that it isn't is that it uses _exportsAreWide, which is true if
-// detectLofsType() == SCI_VERSION_1_MIDDLE
-// Maybe _exportsAreWide should become a Script member var, e.g. set
-// by setExportTableOffset?
-uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
-	Script *scr = getScript(seg);
-	if (scr->_numExports <= pubfunct) {
+uint16 Script::validateExportFunc(int pubfunct) {
+	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
+
+	if (_numExports <= pubfunct) {
 		warning("validateExportFunc(): pubfunct is invalid");
 		return 0;
 	}
 
-	if (_exportsAreWide)
+	if (exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + pubfunct));
-	VERIFY(offset < scr->_bufSize, "invalid export function pointer");
+	uint16 offset = READ_SCI11ENDIAN_UINT16((byte *)(_exportTable + pubfunct));
+	VERIFY(offset < _bufSize, "invalid export function pointer");
 
 	return offset;
 }

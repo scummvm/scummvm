@@ -187,12 +187,11 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return argv[0];
 
 	SegmentId scriptSeg = s->_segMan->getScriptSegment(script, SCRIPT_GET_LOAD);
-	Script *scr;
 
 	if (!scriptSeg)
 		return NULL_REG;
 
-	scr = s->_segMan->getScript(scriptSeg);
+	Script *scr = s->_segMan->getScript(scriptSeg);
 
 	if (!scr->_numExports) {
 		// FIXME: Is this fatal? This occurs in SQ4CD
@@ -205,7 +204,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(scriptSeg, s->_segMan->validateExportFunc(index, scriptSeg));
+	return make_reg(scriptSeg, scr->validateExportFunc(index));
 }
 
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {

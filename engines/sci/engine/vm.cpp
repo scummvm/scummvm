@@ -258,10 +258,12 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	int seg = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
 
-	if (!scr || scr->isMarkedAsDeleted()) // Script not present yet?
+	if (!scr || scr->isMarkedAsDeleted()) { // Script not present yet?
 		seg = script_instantiate(g_sci->getResMan(), s->_segMan, script);
+		scr = s->_segMan->getScript(seg);
+	}
 
-	const int temp = s->_segMan->validateExportFunc(pubfunct, seg);
+	const int temp = scr->validateExportFunc(pubfunct);
 	if (!temp) {
 #ifdef ENABLE_SCI32
 		// HACK: Temporarily switch to a warning in SCI32 games until we can figure out why Torin has
