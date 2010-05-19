@@ -550,7 +550,7 @@ int main(int argc, char *argv[]) {
 	//
 	// 4510 ('class' : default constructor could not be generated)
 	//
-	// 4511 (class' : copy constructor could not be generated)
+	// 4511 ('class' : copy constructor could not be generated)
 	//
 	// 4610 (object 'class' can never be instantiated - user-defined constructor required)
 	//   "correct" but harmless (as is 4510)
