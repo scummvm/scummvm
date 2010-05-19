@@ -927,6 +927,11 @@ void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	Common::StackLock(_music->_mutex);
 
+	// FIXME: this can't be right, it's called in iceman (room 14) when the door sound has done playing
+	//         stopping sounds can't be right, because music is starting afterwards in ssci. Maybe it actually means
+	//		   "resume play of queued sound" or something like that
+	return;
+
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
