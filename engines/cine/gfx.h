@@ -162,6 +162,7 @@ protected:
 	void drawOverlays();
 
 	void blit();
+
 public:
 	uint16 _messageBg; ///< Message box background color
 	uint16 _cmdY; ///< Player command string position on screen
@@ -207,6 +208,9 @@ public:
 
 	virtual void fadeToBlack();
 	void showCollisionPage(bool state);
+
+	void drawString(const char *string, byte param);
+	int getStringWidth(const char *str);
 };
 
 /**

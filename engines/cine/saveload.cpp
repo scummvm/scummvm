@@ -774,7 +774,7 @@ bool CineEngine::makeLoad(char *saveName) {
 	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
 
 	if (!saveFile) {
-		drawString(otherMessages[0], 0);
+		renderer->drawString(otherMessages[0], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);
@@ -971,7 +971,7 @@ void CineEngine::makeSave(char *saveFileName) {
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
 	if (!fHandle) {
-		drawString(otherMessages[1], 0);
+		renderer->drawString(otherMessages[1], 0);
 		waitPlayerInput();
 		// restoreScreen();
 		checkDataDisk(-1);

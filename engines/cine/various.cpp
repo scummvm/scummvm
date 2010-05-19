@@ -55,10 +55,13 @@ uint16 var5;
 int16 buildObjectListCommand(int16 param);
 int16 canUseOnObject = 0;
 
-void drawString(const char *string, byte param) {
-}
-
 void waitPlayerInput() {
+	uint16 button;
+	
+	do {
+		manageEvents();
+		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
+	} while (!button && !g_cine->shouldQuit());
 }
 
 void setTextWindow(uint16 param1, uint16 param2, uint16 param3, uint16 param4) {
@@ -362,13 +365,13 @@ void CineEngine::makeSystemMenu() {
 		systemCommand = makeMenuChoice(systemMenu, numEntry, mouseX, mouseY, 140);
 
 		switch (systemCommand) {
-		case 0:
+		case 0: // Pause
 			{
-				drawString(otherMessages[2], 0);
+				renderer->drawString(otherMessages[2], 0);
 				waitPlayerInput();
 				break;
 			}
-		case 1:
+		case 1: // Restart Game
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
@@ -376,7 +379,7 @@ void CineEngine::makeSystemMenu() {
 				}
 				break;
 			}
-		case 2:
+		case 2: // Quit
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
@@ -405,27 +408,27 @@ void CineEngine::makeSystemMenu() {
 							char loadString[256];
 
 							sprintf(loadString, otherMessages[3], currentSaveName[selectedSave]);
-							drawString(loadString, 0);
+							renderer->drawString(loadString, 0);
 
 							makeLoad(saveNameBuffer);
 						} else {
-							drawString(otherMessages[4], 0);
+							renderer->drawString(otherMessages[4], 0);
 							waitPlayerInput();
 							checkDataDisk(-1);
 						}
 					} else {
-						drawString(otherMessages[4], 0);
+						renderer->drawString(otherMessages[4], 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
 				} else {
-					drawString(otherMessages[5], 0);
+					renderer->drawString(otherMessages[5], 0);
 					waitPlayerInput();
 					checkDataDisk(-1);
 				}
 				break;
 			}
-		case 5:
+		case 5: // Save game
 			{
 				loadSaveDirectory();
 				selectedSave = makeMenuChoice(currentSaveName, 10, mouseX, mouseY + 8, 180);
@@ -458,13 +461,13 @@ void CineEngine::makeSystemMenu() {
 						delete fHandle;
 
 						sprintf(saveString, otherMessages[3], currentSaveName[selectedSave]);
-						drawString(saveString, 0);
+						renderer->drawString(saveString, 0);
 
 						makeSave(saveFileName);
 
 						checkDataDisk(-1);
 					} else {
-						drawString(otherMessages[4], 0);
+						renderer->drawString(otherMessages[4], 0);
 						waitPlayerInput();
 						checkDataDisk(-1);
 					}
@@ -849,7 +852,7 @@ uint16 executePlayerInput() {
 	canUseOnObject = 0;
 
 	if (isInPause) {
-		drawString(otherMessages[2], 0);
+		renderer->drawString(otherMessages[2], 0);
 		waitPlayerInput();
 		isInPause = 0;
 	}

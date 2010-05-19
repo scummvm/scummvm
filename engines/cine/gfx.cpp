@@ -259,6 +259,17 @@ void FWRenderer::drawCommand() {
 	}
 }
 
+void FWRenderer::drawString(const char *string, byte param) {
+	int width;
+
+	width = getStringWidth(string) + 10;
+	width = width > 300 ? 300 : width;
+
+	drawMessage(string, (320 - width) / 2, 80, width, 4);
+
+	blit();
+}
+
 /**
  * Draw message in a box
  * @param str Message to draw
@@ -454,6 +465,21 @@ int FWRenderer::drawChar(char character, int x, int y) {
 	}
 
 	return x;
+}
+
+int FWRenderer::getStringWidth(const char *str) {
+	const char *p = str;
+	int width = 0;
+
+	while (*p) {
+		if (*p == ' ')
+			width += 5;
+		else
+			width += g_cine->_textHandler.fontParamTable[(unsigned char)*p].characterWidth;
+		p++;
+	}
+
+	return width;
 }
 
 /**
