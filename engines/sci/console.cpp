@@ -2769,74 +2769,144 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 
 		// Finally, after the colon comes the offset
 		offsetStr = colon + 1;
-	} else if (*str == '?') {	// Object by name: "?OBJ" or "?OBJ.INDEX" or "?OBJ.INDEX+OFFSET" or "?OBJ.INDEX-OFFSET"
-		// The (optional) index can be used to distinguish multiple object with the same name.
-		int index = -1;
 
-		// Skip over the leading question mark '?'
-		str++;
+	} else {
+		// Now we either got an object name, or segment:offset or plain value
+		//  segment:offset is recognized by the ":"
+		//  plain value may be "123" or "123h" or "fffh" or "0xfff"
+		//  object name is assumed if nothing else matches or a "?" is used as prefix as override
+		//  object name may contain "+", "-" and "." for relative calculations, those chars are used nowhere else
 
-		// Look for an offset. It starts with + or -
-		relativeOffset = true;
-		offsetStr = strchr(str, '+');
-		if (!offsetStr)	// No + found, look for -
-			offsetStr = strchr(str, '-');
+		// First we cycle through the string counting special chars
+		const char *strLoop = str;
+		int charsCount = strlen(str);
+		int charsCountObject = 0;
+		int charsCountSegmentOffset = 0;
+		int charsCountLetter = 0;
+		int charsCountNumber = 0;
+		bool charsForceHex = false;
+		bool charsForceObject = false;
 
-		// Strip away the offset and the leading '?'
-		Common::String str_objname;
-		if (offsetStr)
-			str_objname = Common::String(str, offsetStr);
-		else
-			str_objname = str;
-
-
-		// Scan for a period, after which (if present) we'll find an index
-		const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
-		if (tmp != str_objname.end()) {
-			index = strtol(tmp + 1, &endptr, 16);
-			if (*endptr)
-				return -1;
-			// Chop of the index
-			str_objname = Common::String(str_objname.c_str(), tmp);
+		while (*strLoop) {
+			switch (*strLoop) {
+			case '+':
+			case '-':
+			case '.':
+				charsCountObject++;
+				break;
+			case '?':
+				if (strLoop == str) {
+					charsForceObject = true;
+					str++; // skip over prefix
+				}
+				break;
+			case ':':
+				charsCountSegmentOffset++;
+				break;
+			case 'h':
+				if (*(strLoop + 1) == 0)
+					charsForceHex = true;
+				else
+					charsCountObject++;
+				break;
+			case '0':
+				if (*(strLoop + 1) == 'x') {
+					str += 2; // skip "0x"
+					strLoop++; // skip "x"
+					charsForceHex = true;
+				}
+				charsCountNumber++;
+				break;
+			default:
+				if ((*strLoop >= '0') && (*strLoop <= '9'))
+					charsCountNumber++;
+				if ((*strLoop >= 'a') && (*strLoop <= 'f'))
+					charsCountLetter++;
+				if ((*strLoop >= 'A') && (*strLoop <= 'F'))
+					charsCountLetter++;
+				if ((*strLoop >= 'i') && (*strLoop <= 'z'))
+					charsCountObject++;
+				if ((*strLoop >= 'I') && (*strLoop <= 'Z'))
+					charsCountObject++;
+			}
+			strLoop++;
 		}
 
-		// Now all values are available; iterate over all objects.
+		if ((charsCountObject) && (charsCountSegmentOffset))
+			return 1; // input doesn't make sense
 
-		*dest = s->_segMan->findObjectByName(str_objname, index);
-		if (dest->isNull())
-			return 1;
+		if (!charsForceObject) {
+			// input may be values/segment:offset
 
-	} else {	// Finally, check for "SEGMENT:OFFSET" or just "OFFSET"
-		const char *colon = strchr(str, ':');
+			if (charsCountSegmentOffset) {
+				// ':' found, so must be segment:offset
+				const char *colon = strchr(str, ':');
 
-		if (!colon) {
-			// No segment specified
-			if (mayBeValue) {
-				// We assume that this is not an offset, but a straight (decimal) value
-				int val;
-				int length = strlen(str);
-				const char *lastchar = str + length - (length ? 1 : 0);
-				if (*lastchar != 'h') {
+				offsetStr = colon + 1;
+
+				Common::String segmentStr(str, colon);
+				dest->segment = strtol(segmentStr.c_str(), &endptr, 16);
+				if (*endptr)
+					return 1;
+			} else {
+				int val = 0;
+				dest->segment = 0;
+
+				if (charsCountNumber == charsCount) {
+					// Only numbers in input, assume decimal value
 					val = strtol(str, &endptr, 10);
 					if (*endptr)
-						return 1;
+						return 1; // strtol failed?
+					dest->offset = val;
+					return 0;
 				} else {
-					val = strtol(str, &endptr, 16);
-					if (endptr != lastchar)
-						return 1;
+					// We also got letters, check if there were only hexadecimal letters and '0x' at the start or 'h' at the end
+					if ((charsForceHex) && (!charsCountObject)) {
+						val = strtol(str, &endptr, 16);
+						if ((*endptr != 'h') && (*endptr != 0))
+							return 1;
+						dest->offset = val;
+						return 0;
+					} else {
+						// Something else was in input, assume object name
+						charsForceObject = true;
+					}
 				}
-				dest->offset = val;
-			} else {
-				// We require an address, so interpret it as an offset (hexadecimal)
-				offsetStr = str;
 			}
-			dest->segment = 0;
-		} else {
-			offsetStr = colon + 1;
+		}
 
-			Common::String segmentStr(str, colon);
-			dest->segment = strtol(segmentStr.c_str(), &endptr, 16);
-			if (*endptr)
+		if (charsForceObject) {
+			// We assume now that input is object name
+			// Object by name: "?OBJ" or "?OBJ.INDEX" or "?OBJ.INDEX+OFFSET" or "?OBJ.INDEX-OFFSET"
+			// The (optional) index can be used to distinguish multiple object with the same name.
+			int index = -1;
+
+			// Look for an offset. It starts with + or -
+			relativeOffset = true;
+			offsetStr = strchr(str, '+');
+			if (!offsetStr)	// No + found, look for -
+				offsetStr = strchr(str, '-');
+
+			// Strip away the offset and the leading '?'
+			Common::String str_objname;
+			if (offsetStr)
+				str_objname = Common::String(str, offsetStr);
+			else
+				str_objname = str;
+
+			// Scan for a period, after which (if present) we'll find an index
+			const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
+			if (tmp != str_objname.end()) {
+				index = strtol(tmp + 1, &endptr, 16);
+				if (*endptr)
+					return -1;
+				// Chop of the index
+				str_objname = Common::String(str_objname.c_str(), tmp);
+			}
+
+			// Now all values are available; iterate over all objects.
+			*dest = s->_segMan->findObjectByName(str_objname, index);
+			if (dest->isNull())
 				return 1;
 		}
 	}
