@@ -275,13 +275,13 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	}
 
 	// Check if a breakpoint is set on this method
-	if (s->_activeBreakpointTypes & BREAK_EXPORT) {
+	if (g_debugState._activeBreakpointTypes & BREAK_EXPORT) {
 		uint32 bpaddress;
 
 		bpaddress = (script << 16 | pubfunct);
 
 		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
+		for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
 			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
 				Console *con = g_sci->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
@@ -354,13 +354,13 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 		// Check if a breakpoint is set on this method
-		if (s->_activeBreakpointTypes & BREAK_SELECTOR) {
+		if (g_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
 			char method_name[256];
 
 			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str());
 
 			Common::List<Breakpoint>::const_iterator bp;
-			for (bp = s->_breakpoints.begin(); bp != s->_breakpoints.end(); ++bp) {
+			for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
 				int cmplen = bp->name.size();
 				if (bp->name.lastChar() != ':')
 					cmplen = 256;

@@ -94,7 +94,6 @@ EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
 
 	script_000 = 0;
 
-	_activeBreakpointTypes = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
 

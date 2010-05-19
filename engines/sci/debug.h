@@ -31,6 +31,27 @@
 
 namespace Sci {
 
+// These types are used both as identifiers and as elements of bitfields
+enum BreakpointType {
+	/**
+	 * Break when selector is executed. data contains (char *) selector name
+	 * (in the format Object::Method)
+	 */
+	BREAK_SELECTOR = 1,
+
+	/**
+	 * Break when an exported function is called. data contains
+	 * script_no << 16 | export_no.
+	 */
+	BREAK_EXPORT = 2
+};
+
+struct Breakpoint {
+	BreakpointType type;
+	uint32 address;  ///< Breakpoints on exports
+	Common::String name; ///< Breakpoints on selector names
+};
+
 enum DebugSeeking {
 	kDebugSeekNothing = 0,
 	kDebugSeekCallk = 1,        // Step forward until callk is found
@@ -50,6 +71,8 @@ struct DebugState {
 	int seekSpecial;			// Used for special seeks
 	int old_pc_offset;
 	StackPtr old_sp;
+	Common::List<Breakpoint> _breakpoints;   //< List of breakpoints
+	int _activeBreakpointTypes;  //< Bit mask specifying which types of breakpoints are active
 };
 
 // Various global variables used for debugging are declared here

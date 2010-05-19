@@ -157,10 +157,6 @@ public:
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
 
-	/* Debugger data: */
-	Common::List<Breakpoint> _breakpoints;   /**< List of breakpoints */
-	int _activeBreakpointTypes;  /**< Bit mask specifying which types of breakpoints are active */
-
 	/* System strings */
 	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;

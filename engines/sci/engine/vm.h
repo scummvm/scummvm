@@ -277,28 +277,6 @@ struct ScriptState {
  */
 extern ScriptState scriptState;
 
-
-// These types are used both as identifiers and as elements of bitfields
-enum BreakpointType {
-	/**
-	 * Break when selector is executed. data contains (char *) selector name
-	 * (in the format Object::Method)
-	 */
-	BREAK_SELECTOR = 1,
-
-	/**
-	 * Break when an exported function is called. data contains
-	 * script_no << 16 | export_no.
-	 */
-	BREAK_EXPORT = 2
-};
-
-struct Breakpoint {
-	BreakpointType type;
-	uint32 address;  ///< Breakpoints on exports
-	Common::String name; ///< Breakpoints on selector names
-};
-
 /**
  * Set this to 1 to abort script execution immediately. Aborting will
  * leave the debug exec stack intact.

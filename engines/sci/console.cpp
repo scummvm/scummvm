@@ -197,6 +197,8 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	g_debugState.stopOnEvent = false;
 	g_debugState.debugging = false;
 	g_debugState.breakpointWasHit = false;
+	g_debugState._breakpoints.clear(); // No breakpoints defined
+	g_debugState._activeBreakpointTypes = 0;
 }
 
 Console::~Console() {
@@ -2380,8 +2382,8 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 
 	DebugPrintf("Breakpoint list:\n");
 
-	Common::List<Breakpoint>::const_iterator bp = _engine->_gamestate->_breakpoints.begin();
-	Common::List<Breakpoint>::const_iterator end = _engine->_gamestate->_breakpoints.end();
+	Common::List<Breakpoint>::const_iterator bp = g_debugState._breakpoints.begin();
+	Common::List<Breakpoint>::const_iterator end = g_debugState._breakpoints.end();
 	for (; bp != end; ++bp) {
 		DebugPrintf("  #%i: ", i);
 		switch (bp->type) {
@@ -2410,8 +2412,8 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	const int idx = atoi(argv[1]);
 
 	// Find the breakpoint at index idx.
-	Common::List<Breakpoint>::iterator bp = _engine->_gamestate->_breakpoints.begin();
-	const Common::List<Breakpoint>::iterator end = _engine->_gamestate->_breakpoints.end();
+	Common::List<Breakpoint>::iterator bp = g_debugState._breakpoints.begin();
+	const Common::List<Breakpoint>::iterator end = g_debugState._breakpoints.end();
 	for (int i = 0; bp != end && i < idx; ++bp, ++i) {
 		// do nothing
 	}
@@ -2422,15 +2424,15 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	}
 
 	// Delete it
-	_engine->_gamestate->_breakpoints.erase(bp);
+	g_debugState._breakpoints.erase(bp);
 
 	// Update EngineState::_activeBreakpointTypes.
 	int type = 0;
-	for (bp = _engine->_gamestate->_breakpoints.begin(); bp != end; ++bp) {
+	for (bp = g_debugState._breakpoints.begin(); bp != end; ++bp) {
 		type |= bp->type;
 	}
 
-	_engine->_gamestate->_activeBreakpointTypes = type;
+	g_debugState._activeBreakpointTypes = type;
 
 	return true;
 }
@@ -2452,8 +2454,8 @@ bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
 	bp.type = BREAK_SELECTOR;
 	bp.name = argv[1];
 
-	_engine->_gamestate->_breakpoints.push_back(bp);
-	_engine->_gamestate->_activeBreakpointTypes |= BREAK_SELECTOR;
+	g_debugState._breakpoints.push_back(bp);
+	g_debugState._activeBreakpointTypes |= BREAK_SELECTOR;
 
 	return true;
 }
@@ -2473,8 +2475,8 @@ bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
 	bp.type = BREAK_EXPORT;
 	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
-	_engine->_gamestate->_breakpoints.push_back(bp);
-	_engine->_gamestate->_activeBreakpointTypes |= BREAK_EXPORT;
+	g_debugState._breakpoints.push_back(bp);
+	g_debugState._activeBreakpointTypes |= BREAK_EXPORT;
 
 	return true;
 }
