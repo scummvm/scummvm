@@ -1049,16 +1049,31 @@ void SoundCommandParser::cmdSuspendSound(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 
 void SoundCommandParser::updateSci0Cues() {
-	Common::StackLock(_music->_mutex);
+	bool noOnePlaying = true;
+	MusicEntry *pWaitingForPlay = NULL;
+
+	_music->_mutex.lock();
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
 		// this sound, as SCI0 only allows one active song
+		if  (((*i)->isQueued) && (!pWaitingForPlay)) {
+			pWaitingForPlay = (*i);
+			continue;
+		}
 		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
 			continue;
 
 		cmdUpdateCues((*i)->soundObj, 0);
+		noOnePlaying = false;
+	}
+	_music->_mutex.unlock();
+
+	if (noOnePlaying && pWaitingForPlay) {
+		// If there is a queued entry, play it now ffs: SciMusic::soundPlay()
+		pWaitingForPlay->isQueued = false;
+		_music->soundPlay(pWaitingForPlay);
 	}
 }
 

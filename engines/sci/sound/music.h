@@ -71,6 +71,8 @@ public:
 	SoundResource *soundRes;
 	uint16 resourceId;
 
+	bool isQueued; // for SCI0 only!
+
 	uint16 dataInc;
 	uint16 ticker;
 	uint16 signal;

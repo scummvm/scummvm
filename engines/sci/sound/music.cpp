@@ -241,16 +241,33 @@ void SciMusic::onTimer() {
 void SciMusic::soundPlay(MusicEntry *pSnd) {
 	_mutex.lock();
 
-	uint sz = _playList.size(), i;
+	uint playListCount = _playList.size();
+	uint playListNo = playListCount;
+	bool alreadyPlaying = false;
+
 	// searching if sound is already in _playList
-	for (i = 0; i < sz && _playList[i] != pSnd; i++)
-		;
-	if (i == sz) {// not found
+	for (uint i = 0; i < playListCount; i++) {
+		if (_playList[i] == pSnd)
+			playListNo = i;
+		if (_playList[i]->status == kSoundPlaying)
+			alreadyPlaying = true;
+	}
+	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
 		sortPlayList();
 	}
 
 	_mutex.unlock();	// unlock to perform mixer-related calls
+
+	if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
+		// if any music is already playing, SCI0 queues music and plays it after the current music has finished
+		//  done by SoundCommandParser::updateSci0Cues()
+		// Example of such case: iceman room 14
+		// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
+		pSnd->isQueued = true;
+		pSnd->status = kSoundPaused;
+		return;
+	}
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
 		if (pSnd->loop > 1) {
@@ -443,6 +460,8 @@ MusicEntry::MusicEntry() {
 
 	soundRes = 0;
 	resourceId = 0;
+
+	isQueued = false;
 
 	dataInc = 0;
 	ticker = 0;
