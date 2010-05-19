@@ -186,7 +186,9 @@ struct Dialogue {
 	~Dialogue();
 };
 
-#define MAX_WALKPOINT_LISTS 20
+#define MAX_WALKPOINT_LISTS 	20
+#define FREE_HEAR_CHANNEL		-1
+#define MUSIC_HEAR_CHANNEL		-2
 
 struct TypeData {
 	// common
@@ -232,7 +234,7 @@ struct TypeData {
 		_doorStartFrame2_br = 0;
 		_doorStartPos2_br.x = -1000;
 		_doorStartPos2_br.y = -1000;
-		_hearChannel = -1;
+		_hearChannel = FREE_HEAR_CHANNEL;
 		_hearFreq = -1;
 		_mergeObj1 = 0;
 		_mergeObj2 = 0;

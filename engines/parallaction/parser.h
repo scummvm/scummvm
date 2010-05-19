@@ -293,6 +293,7 @@ public:
 	virtual void	parsePathData(ZonePtr z);
 	virtual void	parseGetData(ZonePtr z);
 	virtual void	parseDoorData(ZonePtr z);
+	virtual void	parseHearData(ZonePtr z);
 protected:
 	void	parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();

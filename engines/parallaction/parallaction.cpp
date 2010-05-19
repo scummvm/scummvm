@@ -591,10 +591,15 @@ void Parallaction::runZone(ZonePtr z) {
 		break;
 
 	case kZoneHear:
-		_soundMan->execute(SC_SETSFXCHANNEL, z->u._hearChannel);
-		_soundMan->execute(SC_SETSFXLOOPING, (int)((z->_flags & kFlagsLooping) == kFlagsLooping));
-		_soundMan->execute(SC_SETSFXVOLUME, 60);
-		_soundMan->execute(SC_PLAYSFX, z->u._filename.c_str());
+		if (z->u._hearChannel == MUSIC_HEAR_CHANNEL) {
+			_soundMan->execute(SC_SETMUSICFILE, z->u._filename.c_str());
+			_soundMan->execute(SC_PLAYMUSIC);
+		} else {
+			_soundMan->execute(SC_SETSFXCHANNEL, z->u._hearChannel);
+			_soundMan->execute(SC_SETSFXLOOPING, (int)((z->_flags & kFlagsLooping) == kFlagsLooping));
+			_soundMan->execute(SC_SETSFXVOLUME, 60);
+			_soundMan->execute(SC_PLAYSFX, z->u._filename.c_str());
+		}
 		break;
 
 	case kZoneSpeak:

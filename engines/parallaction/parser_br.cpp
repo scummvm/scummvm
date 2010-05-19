@@ -808,6 +808,23 @@ void LocationParser_br::parseDoorData(ZonePtr z) {
 	}
 }
 
+void LocationParser_br::parseHearData(ZonePtr z) {
+	TypeData *data = &z->u;
+	if (!scumm_stricmp(_tokens[0], "sound")) {
+		assert(!data->_filename.size());
+		data->_filename = _tokens[1];
+		data->_hearChannel = atoi(_tokens[2]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "freq")) {
+		data->_hearFreq = atoi(_tokens[1]);
+	} else
+	if (!scumm_stricmp(_tokens[0], "music")) {
+		assert(data->_hearChannel == FREE_HEAR_CHANNEL);
+		data->_filename = _tokens[1];
+		data->_hearChannel = MUSIC_HEAR_CHANNEL;
+	}
+}
+
 typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
 	0,	// no type
