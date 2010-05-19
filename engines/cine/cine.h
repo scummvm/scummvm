@@ -134,6 +134,8 @@ public:
 	StringPtrHashMap _volumeEntriesMap;
 	TextHandler _textHandler;
 
+	bool _restartRequested;
+
 private:
 	void initialize();
 	void resetEngine();

@@ -90,13 +90,20 @@ Common::Error CineEngine::run() {
 	}
 	g_saveFileMan = _saveFileMan;
 
-	initialize();
+	_restartRequested = false;
 
-	CursorMan.showMouse(true);
-	mainLoop(1);
+	do {
+		initialize();
 
-	delete renderer;
-	delete[] collisionPage;
+		_restartRequested = false;
+
+		CursorMan.showMouse(true);
+		mainLoop(1);
+
+		delete renderer;
+		delete[] collisionPage;
+	} while (_restartRequested);
+
 	delete g_sound;
 
 	return Common::kNoError;
@@ -186,7 +193,7 @@ void CineEngine::initialize() {
 	currentDatName[0] = 0;
 
 	_preLoad = false;
-	if (ConfMan.hasKey("save_slot")) {
+	if (ConfMan.hasKey("save_slot") && !_restartRequested) {
 		char saveNameBuffer[256];
 
 		sprintf(saveNameBuffer, "%s.%1d", _targetName.c_str(), ConfMan.getInt("save_slot"));

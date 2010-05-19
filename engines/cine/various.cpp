@@ -78,7 +78,6 @@ uint16 waitForPlayerClick;
 uint16 menuCommandLen;
 bool _paletteNeedUpdate;
 uint16 _messageLen;
-byte _danKeysPressed;
 
 int16 playerCommand;
 
@@ -375,7 +374,7 @@ void CineEngine::makeSystemMenu() {
 			{
 				getMouseData(mouseUpdateStatus, (uint16 *)&mouseButton, (uint16 *)&mouseX, (uint16 *)&mouseY);
 				if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
-					//reinitEngine();
+					_restartRequested = true;
 				}
 				break;
 			}

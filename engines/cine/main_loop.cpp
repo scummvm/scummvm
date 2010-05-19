@@ -422,7 +422,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 
 		manageEvents();
 
-	} while (!shouldQuit() && _danKeysPressed != 7);
+	} while (!shouldQuit() && !_restartRequested);
 
 	hideMouse();
 	g_sound->stopMusic();

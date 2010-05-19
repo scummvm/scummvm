@@ -92,7 +92,6 @@ extern uint16 waitForPlayerClick;
 extern uint16 menuCommandLen;
 extern bool _paletteNeedUpdate;
 extern uint16 _messageLen;
-extern byte _danKeysPressed;
 
 extern int16 playerCommand;
 
