@@ -470,7 +470,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	if (relocation >= 0)
 		scr->scriptRelocate(make_reg(seg_id, relocation));
 
-	return curOffset;		// instantiation successful
+	return seg_id;		// instantiation successful
 }
 
 int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
