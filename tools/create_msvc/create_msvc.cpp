@@ -550,6 +550,8 @@ int main(int argc, char *argv[]) {
 	//
 	// 4510 ('class' : default constructor could not be generated)
 	//
+	// 4511 class' : copy constructor could not be generated
+	//
 	// 4610 (object 'class' can never be instantiated - user-defined constructor required)
 	//   "correct" but harmless (as is 4510)
 	//
@@ -558,6 +560,7 @@ int main(int argc, char *argv[]) {
 	globalWarnings = "4068;4100;4103;4127;4244;4250;4310;4351;4512;4702;4706;4800;4996";
 
 	projectWarnings["agi"] = "4510;4610";
+	projectWarnings["agos"] = "4511";
 	projectWarnings["lure"] = "4189;4355";
 	projectWarnings["kyra"] = "4355";
 	projectWarnings["m4"] = "4355";
