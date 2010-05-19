@@ -116,9 +116,6 @@ void script_adjust_opcode_formats(EngineState *s) {
 #endif
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, reg))
-
-
 void SegManager::createClassTable() {
 	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
@@ -329,93 +326,69 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 	return seg_id;
 }
 
+#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, addr))
+
 int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int script_nr) {
-	int objtype;
-	unsigned int objlength;
+	int objType;
+	uint32 objLength = 0;
 	int relocation = -1;
-	int magic_pos_adder; // Usually 0; 2 for older SCI versions
 	Resource *script;
 	int was_new;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
 	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
+	int16 curOffset = oldScriptHeader ? 2 : 0;
 
 	if (was_new)
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
+	scr->mcpyInOut(0, script->data, script->size);
 
 	if (oldScriptHeader) {
-		//
-		int locals_nr = READ_LE_UINT16(script->data);
-
 		// Old script block
 		// There won't be a localvar block in this case
 		// Instead, the script starts with a 16 bit int specifying the
 		// number of locals we need; these are then allocated and zeroed.
-
-		scr->mcpyInOut(0, script->data, script->size);
-		magic_pos_adder = 2;  // Step over the funny prefix
-
+		int locals_nr = READ_LE_UINT16(script->data);
 		if (locals_nr)
 			segMan->scriptInitialiseLocalsZero(seg_id, locals_nr);
-
-	} else {
-		scr->mcpyInOut(0, script->data, script->size);
-		magic_pos_adder = 0;
 	}
 
 	// Now do a first pass through the script objects to find the
 	// export table and local variable block
 
-	reg_t reg;
-	reg.segment = seg_id;
-	reg.offset = magic_pos_adder;
-
-	objlength = 0;
-
 	do {
-		reg_t data_base;
-		reg_t addr;
-		reg.offset += objlength; // Step over the last checked object
-		objtype = scr->getHeap(reg.offset);
-		if (!objtype)
+		objType = scr->getHeap(curOffset);
+		if (!objType)
 			break;
 
-		objlength = scr->getHeap(reg.offset + 2);
+		objLength = scr->getHeap(curOffset + 2);
 
 		// This happens in some demos (e.g. the EcoQuest 1 demo). Not sure what is the
 		// actual cause of it, but the scripts of these demos can't be loaded properly
-		// and we're stuck forever in this loop, as objlength never changes
-		if (!objlength) {
-			warning("script_instantiate_sci0: objlength is 0, unable to parse script");
+		// and we're stuck forever in this loop, as objLength never changes
+		if (!objLength) {
+			warning("script_instantiate_sci0: objLength is 0, unable to parse script");
 			return 0;
 		}
 
-		data_base = reg;
-		data_base.offset += 4;
+		curOffset += 4;		// skip header
 
-		addr = data_base;
-
-		switch (objtype) {
-		case SCI_OBJ_EXPORTS: {
-			scr->setExportTableOffset(data_base.offset);
-		}
-		break;
-
-		case SCI_OBJ_SYNONYMS:
-			scr->setSynonymsOffset(addr.offset);   // +4 is to step over the header
-			scr->setSynonymsNr((objlength) / 4);
+		switch (objType) {
+		case SCI_OBJ_EXPORTS:
+			scr->setExportTableOffset(curOffset);
 			break;
-
+		case SCI_OBJ_SYNONYMS:
+			scr->setSynonymsOffset(curOffset);
+			scr->setSynonymsNr((objLength) / 4);
+			break;
 		case SCI_OBJ_LOCALVARS:
-			segMan->scriptInitialiseLocals(data_base);
+			segMan->scriptInitialiseLocals(make_reg(seg_id, curOffset));
 			break;
 
 		case SCI_OBJ_CLASS: {
-			int classpos = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
-			int species;
-			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
+			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
+			int species = scr->getHeap(curOffset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
 			if (species < 0 || species >= (int)segMan->_classtable.size()) {
 				if (species == (int)segMan->_classtable.size()) {
 					// Happens in the LSL2 demo
@@ -430,7 +403,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 				}
 			}
 
-			segMan->_classtable[species].reg = addr;
+			segMan->_classtable[species].reg.segment = seg_id;
 			segMan->_classtable[species].reg.offset = classpos;
 			// Set technical class position-- into the block allocated for it
 		}
@@ -439,26 +412,25 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		default:
 			break;
 		}
-	} while (objtype != 0);
+
+		curOffset += objLength - 4;
+	} while (objType != 0 && curOffset < script->size - 2);
 
 	// And now a second pass to adjust objects and class pointers, and the general pointers
-
-	objlength = 0;
-	reg.offset = magic_pos_adder; // Reset counter
+	objLength = 0;
+	curOffset = oldScriptHeader ? 2 : 0;
 
 	do {
-		reg_t addr;
-		reg.offset += objlength; // Step over the last checked object
-		objtype = scr->getHeap(reg.offset);
-		if (!objtype)
+		objType = scr->getHeap(curOffset);
+		if (!objType)
 			break;
 
-		objlength = scr->getHeap(reg.offset + 2);
+		objLength = scr->getHeap(curOffset + 2);
+		curOffset += 4;		// skip header
 
-		addr = reg;
-		addr.offset += 4; // Step over header
+		reg_t addr = make_reg(seg_id, curOffset);
 
-		switch (objtype) {
+		switch (objType) {
 		case SCI_OBJ_CODE:
 			scr->scriptAddCodeBlock(addr);
 			break;
@@ -492,12 +464,13 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 		}
 
-	} while (objtype != 0 && reg.offset < script->size - 2);
+		curOffset += objLength - 4;
+	} while (objType != 0 && curOffset < script->size - 2);
 
 	if (relocation >= 0)
 		scr->scriptRelocate(make_reg(seg_id, relocation));
 
-	return reg.segment;		// instantiation successful
+	return curOffset;		// instantiation successful
 }
 
 int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
@@ -546,23 +519,23 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_n
 void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	reg_t reg = make_reg(seg, oldScriptHeader ? 2 : 0);
-	int objtype, objlength;
+	int objType, objLength;
 	Script *scr = segMan->getScript(seg);
 
 	// Make a pass over the object in order uninstantiate all superclasses
-	objlength = 0;
+	objLength = 0;
 
 	do {
-		reg.offset += objlength; // Step over the last checked object
+		reg.offset += objLength; // Step over the last checked object
 
-		objtype = scr->getHeap(reg.offset);
-		if (!objtype)
+		objType = scr->getHeap(reg.offset);
+		if (!objType)
 			break;
-		objlength = scr->getHeap(reg.offset + 2);  // use SEG_UGET_HEAP ??
+		objLength = scr->getHeap(reg.offset + 2);  // use SEG_UGET_HEAP ??
 
 		reg.offset += 4; // Step over header
 
-		if ((objtype == SCI_OBJ_OBJECT) || (objtype == SCI_OBJ_CLASS)) { // object or class?
+		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
 			int superclass;
 
 			reg.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
@@ -585,7 +558,7 @@ void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg)
 
 		reg.offset -= 4; // Step back on header
 
-	} while (objtype != 0);
+	} while (objType != 0);
 }
 
 void script_uninstantiate(SegManager *segMan, int script_nr) {
