@@ -232,7 +232,8 @@ Common::String getSierraGameId(ResourceManager *resMan) {
 			exportsOffset = READ_UINT16(script000->_buf + curOffset + 2);
 			break;
 		}
-	} while (objType != 0);
+		curOffset += objLength - 4;
+	} while (objType != 0 && curOffset < script->size - 2);
 
 	// The game object is the first export. Script 0 is always at segment 1
 	reg_t gameObj = make_reg(1, exportsOffset);
