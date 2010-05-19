@@ -495,11 +495,11 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	}
 
 	while (_seeker < script->size) {
-		int objtype = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker);
+		int objType = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker);
 		int objsize;
 		unsigned int seeker = _seeker + 4;
 
-		if (!objtype) {
+		if (!objType) {
 			printf("End of script object (#0) encountered.\n");
 			printf("Classes: %i, Objects: %i, Export: %i,\n Var: %i (all base 10)",
 			          objectctr[6], objectctr[1], objectctr[7], objectctr[10]);
@@ -510,13 +510,13 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 		objsize = (int16)READ_SCI11ENDIAN_UINT16(script->data + _seeker + 2);
 
-		printf("Obj type #%x, size 0x%x: ", objtype, objsize);
+		printf("Obj type #%x, size 0x%x: ", objType, objsize);
 
 		_seeker += objsize;
 
-		objectctr[objtype]++;
+		objectctr[objType]++;
 
-		switch (objtype) {
+		switch (objType) {
 		case SCI_OBJ_OBJECT:
 			dumpScriptObject((char *)script->data, seeker, objsize);
 			break;

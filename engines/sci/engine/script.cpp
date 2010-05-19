@@ -336,7 +336,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	int was_new;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
-	int16 curOffset = oldScriptHeader ? 2 : 0;
+	uint16 curOffset = oldScriptHeader ? 2 : 0;
 
 	if (was_new)
 		return seg_id;
