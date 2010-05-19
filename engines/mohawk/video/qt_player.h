@@ -124,6 +124,8 @@ protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
 	Common::SeekableReadStream *_fd;
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct MOVatom {
 		uint32 type;
 		uint32 offset;
@@ -213,6 +215,8 @@ protected:
 		uint32 start_time;
 		ScaleMode scaleMode;
 	};
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	const ParseTable *_parseTable;
 	bool _foundMOOV;
