@@ -69,12 +69,12 @@ public:
 	reg_t soundObj;
 
 	SoundResource *soundRes;
-	uint16 resnum;
+	uint16 resourceId;
 
 	uint16 dataInc;
 	uint16 ticker;
 	uint16 signal;
-	byte prio;
+	byte priority;
 	uint16 loop;
 	int16 volume;
 	byte hold;

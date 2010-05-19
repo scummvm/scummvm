@@ -112,8 +112,8 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		uint32 handle = 0;
 		s.syncAsSint32LE(handle);
 		soundObj = DEFROBNICATE_HANDLE(handle);
-		s.syncAsSint32LE(resnum);
-		s.syncAsSint32LE(prio);
+		s.syncAsSint32LE(resourceId);
+		s.syncAsSint32LE(priority);
 		s.syncAsSint32LE(status);
 		s.skip(4);	// restoreBehavior
 		uint32 restoreTime = 0;
@@ -133,11 +133,11 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	} else {
 		// A bit more optimized saving
 		sync_reg_t(s, soundObj);
-		s.syncAsSint16LE(resnum);
+		s.syncAsSint16LE(resourceId);
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
 		s.syncAsSint16LE(signal, VER(17));
-		s.syncAsByte(prio);
+		s.syncAsByte(priority);
 		s.syncAsSint16LE(loop, VER(17));
 		s.syncAsByte(volume);
 		s.syncAsByte(hold, VER(17));

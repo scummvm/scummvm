@@ -171,7 +171,7 @@ void SciMusic::setReverb(byte reverb) {
 }
 
 static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->prio - ((const MusicEntry *)arg1)->prio;
+	return ((const MusicEntry *)arg2)->priority - ((const MusicEntry *)arg1)->priority;
 }
 
 void SciMusic::sortPlayList() {
@@ -302,7 +302,7 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 	Common::StackLock lock(_mutex);
 
-	pSnd->prio = prio;
+	pSnd->priority = prio;
 	sortPlayList();
 }
 
@@ -392,7 +392,7 @@ void SciMusic::printPlayList(Console *con) {
 	for (uint32 i = 0; i < _playList.size(); i++) {
 		MusicEntry *song = _playList[i];
 		con->DebugPrintf("%d: %04x:%04x, resource id: %d, status: %s, %s type\n", i,
-						PRINT_REG(song->soundObj), song->resnum,
+						PRINT_REG(song->soundObj), song->resourceId,
 						musicStatus[song->status], song->pMidiParser ? "MIDI" : "digital audio");
 	}
 }
@@ -406,9 +406,9 @@ void SciMusic::printSongInfo(reg_t obj, Console *con) {
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		MusicEntry *song = *i;
 		if (song->soundObj == obj) {
-			con->DebugPrintf("Resource id: %d, status: %s\n", song->resnum, musicStatus[song->status]);
+			con->DebugPrintf("Resource id: %d, status: %s\n", song->resourceId, musicStatus[song->status]);
 			con->DebugPrintf("dataInc: %d, hold: %d, loop: %d\n", song->dataInc, song->hold, song->loop);
-			con->DebugPrintf("signal: %d, priority: %d\n", song->signal, song->prio);
+			con->DebugPrintf("signal: %d, priority: %d\n", song->signal, song->priority);
 			con->DebugPrintf("ticker: %d, volume: %d\n", song->ticker, song->volume);
 
 			if (song->pMidiParser) {
@@ -442,12 +442,12 @@ MusicEntry::MusicEntry() {
 	soundObj = NULL_REG;
 
 	soundRes = 0;
-	resnum = 0;
+	resourceId = 0;
 
 	dataInc = 0;
 	ticker = 0;
 	signal = 0;
-	prio = 0;
+	priority = 0;
 	loop = 0;
 	volume = MUSIC_VOLUME_DEFAULT;
 	hold = 0;

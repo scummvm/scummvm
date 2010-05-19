@@ -253,7 +253,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	if (!obj.segment)
 		return;
 
-	int number = GET_SEL32V(_segMan, obj, SELECTOR(number));
+	int resourceId = GET_SEL32V(_segMan, obj, SELECTOR(number));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 
@@ -273,10 +273,10 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		}
 	}
 
-	if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, number)))
+	if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, resourceId)))
 		return;
 
-	_state->sfx_add_song(build_iterator(_resMan, number, type, handle), 0, handle, number);
+	_state->sfx_add_song(build_iterator(_resMan, resourceId, type, handle), 0, handle, resourceId);
 
 
 	// Notify the engine
@@ -295,15 +295,15 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		cmdDisposeSound(obj, value);
 
 	MusicEntry *newSound = new MusicEntry();
-	newSound->resnum = number;
-	if (number && _resMan->testResource(ResourceId(kResourceTypeSound, number)))
-		newSound->soundRes = new SoundResource(number, _resMan, _soundVersion);
+	newSound->resourceId = resourceId;
+	if (resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, resourceId)))
+		newSound->soundRes = new SoundResource(resourceId, _resMan, _soundVersion);
 	else
 		newSound->soundRes = 0;
 
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	newSound->prio = GET_SEL32V(_segMan, obj, SELECTOR(pri)) & 0xFF;
+	newSound->priority = GET_SEL32V(_segMan, obj, SELECTOR(pri)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_LATE)
 		newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
@@ -312,10 +312,10 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	// effects. If the resource exists, play it using map 65535 (sound
 	// effects map)
 
-	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, number))) {
+	if (getSciVersion() >= SCI_VERSION_1_1 && _resMan->testResource(ResourceId(kResourceTypeAudio, resourceId))) {
 		// Found a relevant audio resource, play it
 		int sampleLen;
-		newSound->pStreamAud = _audio->getAudioStream(number, 65535, &sampleLen);
+		newSound->pStreamAud = _audio->getAudioStream(resourceId, 65535, &sampleLen);
 		newSound->soundType = Audio::Mixer::kSpeechSoundType;
 	} else {
 		if (newSound->soundRes)
@@ -415,16 +415,16 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 		return;
 	}
 
-	int number = obj.segment ? GET_SEL32V(_segMan, obj, SELECTOR(number)) : -1;
+	int resourceId = obj.segment ? GET_SEL32V(_segMan, obj, SELECTOR(number)) : -1;
 
-	if (musicSlot->resnum != number) { // another sound loaded into struct
+	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		cmdDisposeSound(obj, value);
 		cmdInitSound(obj, value);
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
 	int16 loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	debugC(2, kDebugLevelSound, "cmdPlaySound: resource number %d, loop %d", number, loop);
+	debugC(2, kDebugLevelSound, "cmdPlaySound: resource number %d, loop %d", resourceId, loop);
 
 	PUT_SEL32(_segMan, obj, SELECTOR(handle), obj);
 
@@ -439,7 +439,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 	}
 
 	musicSlot->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	musicSlot->prio = GET_SEL32V(_segMan, obj, SELECTOR(priority));
+	musicSlot->priority = GET_SEL32V(_segMan, obj, SELECTOR(priority));
 	if (_soundVersion >= SCI_VERSION_1_LATE)
 		musicSlot->volume = GET_SEL32V(_segMan, obj, SELECTOR(vol));
 	_music->soundPlay(musicSlot);
@@ -729,7 +729,7 @@ void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
 	uint32 objPrio = GET_SEL32V(_segMan, obj, SELECTOR(pri));
-	if (objPrio != musicSlot->prio)
+	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
 
 #endif
@@ -984,7 +984,7 @@ void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
 
 	if (value == -1) {
 		// Set priority from the song data
-		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, musicSlot->resnum), 0);
+		Resource *song = _resMan->findResource(ResourceId(kResourceTypeSound, musicSlot->resourceId), 0);
 		if (song->data[0] == 0xf0)
 			_music->soundSetPriority(musicSlot, song->data[1]);
 		else
@@ -1077,8 +1077,8 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if ((*i)->resnum && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resnum))) {
-			(*i)->soundRes = new SoundResource((*i)->resnum, _resMan, _soundVersion);
+		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
+			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
 			_music->soundInitSnd(*i);
 		} else {
 			(*i)->soundRes = 0;
