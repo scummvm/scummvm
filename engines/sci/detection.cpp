@@ -33,6 +33,7 @@
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"		// for convertSierraGameId
@@ -204,6 +205,49 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
+#define READ_UINT16(buf) (!resMan->isSci11Mac() ? READ_LE_UINT16(buf) : READ_BE_UINT16(buf))
+
+// Finds the internal ID of the current game from script 0
+Common::String getSierraGameId(ResourceManager *resMan) {
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
+	Script *script000 = new Script();
+	script000->init(0, resMan);
+	script000->mcpyInOut(0, script->data, script->size);
+	uint16 curOffset = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
+	uint16 objLength = 0;
+	int objType = 0;
+	int16 exportsOffset = 0;
+	Common::String sierraId;
+
+	// Now find the export table of the script
+	do {
+		objType = READ_UINT16(script000->_buf + curOffset);
+		if (!objType)
+			break;
+	
+		objLength = READ_UINT16(script000->_buf + curOffset + 2);
+		curOffset += 4;		// skip header
+
+		if (objType == SCI_OBJ_EXPORTS) {
+			exportsOffset = READ_UINT16(script000->_buf + curOffset + 2);
+			break;
+		}
+	} while (objType != 0);
+
+	// The game object is the first export. Script 0 is always at segment 1
+	reg_t gameObj = make_reg(1, exportsOffset);
+
+	// TODO: stop using the segment manager and read the object name here
+	SegManager *segMan = new SegManager(resMan);
+	script_instantiate(resMan, segMan, 0);
+	sierraId = segMan->getObjectName(gameObj);
+	delete segMan;
+
+	delete script000;
+
+	return sierraId;
+}
+
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
@@ -315,22 +359,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	SegManager *segMan = new SegManager(resMan);
-	if (!script_instantiate(resMan, segMan, 0)) {
-		warning("fallbackDetect(): Could not instantiate script 0");
-		SearchMan.remove("SCI_detection");
-		delete segMan;
-		delete resMan;
-		return 0;
-	}
-	reg_t game_obj = segMan->lookupScriptExport(0, 0);
-	const char *sierraGameId = segMan->getObjectName(game_obj);
-	debug(2, "Detected ID: \"%s\" at %04x:%04x", sierraGameId, PRINT_REG(game_obj));
-	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
+	Common::String gameId = convertSierraGameId(getSierraGameId(resMan).c_str(), &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
 	s_fallbackDesc.gameid = s_fallbackGameIdBuf;
-	delete segMan;
 
 	// Try to determine the game language
 	// Load up text 0 and start looking for "#" characters
