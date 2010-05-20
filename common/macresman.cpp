@@ -110,6 +110,7 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	delete macResForkRawStream;
 #endif
 
 	Common::File *file = new Common::File();
@@ -119,18 +120,21 @@ bool MacResManager::open(Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	file->close();
 
 	// Check .bin too
 	if (file->open(filename + ".bin") && loadFromMacBinary(*file)) {
 		_baseFileName = filename;
 		return true;
 	}
-		
+	file->close();
+
 	// Maybe we have a dumped fork?
 	if (file->open(filename + ".rsrc") && loadFromRawFork(*file)) {
 		_baseFileName = filename;
 		return true;
 	}
+	file->close();
 
 	// Fine, what about just the data fork?
 	if (file->open(filename)) {
@@ -138,13 +142,15 @@ bool MacResManager::open(Common::String filename) {
 
 		if (isMacBinary(*file)) {
 			file->seek(0, SEEK_SET);
-			loadFromMacBinary(*file);
-		} else {
-			_stream = file;
+			if (loadFromMacBinary(*file))
+				return true;
 		}
+
+		file->seek(0, SEEK_SET);
+		_stream = file;
 		return true;
 	}
-		
+
 	delete file;
 
 	// The file doesn't exist
@@ -163,39 +169,56 @@ bool MacResManager::open(Common::FSNode path, Common::String filename) {
 		_baseFileName = filename;
 		return true;
 	}
+	delete macResForkRawStream;
 #endif
 
 	// First, let's try to see if the Mac converted name exists
 	Common::FSNode fsNode = path.getChild("._" + filename);
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromAppleDouble(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromAppleDouble(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
 
 	// Check .bin too
 	fsNode = path.getChild(filename + ".bin");
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromMacBinary(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromMacBinary(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
-		
+
 	// Maybe we have a dumped fork?
 	fsNode = path.getChild(filename + ".rsrc");
-	if (fsNode.exists() && !fsNode.isDirectory() && loadFromRawFork(*fsNode.createReadStream())) {
-		_baseFileName = filename;
-		return true;
+	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
+		if (loadFromRawFork(*stream)) {
+			_baseFileName = filename;
+			return true;
+		}
+		delete stream;
 	}
 
 	// Fine, what about just the data fork?
 	fsNode = path.getChild(filename);
 	if (fsNode.exists() && !fsNode.isDirectory()) {
+		SeekableReadStream *stream = fsNode.createReadStream();
 		_baseFileName = filename;
 
-		if (isMacBinary(*fsNode.createReadStream())) {
-			loadFromMacBinary(*fsNode.createReadStream());
-		} else {
-			_stream = fsNode.createReadStream();
+		if (isMacBinary(*stream)) {
+			stream->seek(0, SEEK_SET);
+			if (loadFromMacBinary(*stream))
+				return true;
 		}
+
+		stream->seek(0, SEEK_SET);
+		_stream = stream;
 		return true;
 	}
 
@@ -313,7 +336,7 @@ bool MacResManager::load(Common::SeekableReadStream &stream) {
 
 	debug(7, "got header: data %d [%d] map %d [%d]",
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
-		
+
 	_stream = &stream;
 
 	readMap();
