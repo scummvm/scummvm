@@ -31,7 +31,7 @@
  */
 class MasterGuRenderer {
 public:
-	MasterGuRenderer() : _lastRenderTime(0) {}
+	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), _callbackId(-1) {}
 	void guInit();
 	void guPreRender();
 	void guPostRender();
@@ -42,9 +42,10 @@ private:
 	static uint32 _displayList[];
 	uint32 _lastRenderTime;					// For measuring rendering
 	void guProgramDisplayBufferSizes();
-	static bool _renderFinished;
-	static int guCallbackThread(SceSize, void *);
-	static void guDisplayCallback(int);
+	static int guCallbackThread(SceSize, void *);	// for the graphics callbacks
+	static int guCallback(int, int, void *__this);
+	bool _renderFinished;
+	int _callbackId;
 };
 
 class Screen;

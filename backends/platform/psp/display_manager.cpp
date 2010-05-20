@@ -35,7 +35,7 @@
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
 
-//#define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
+#define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
 
 #define PSP_BUFFER_WIDTH (512)
@@ -60,8 +60,6 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 	{0, 0, 0}
 };
 
-bool MasterGuRenderer::_renderFinished = true;	// synchronizes the callback thread
-
 // Class MasterGuRenderer ----------------------------------------------
 
 void MasterGuRenderer::setupCallbackThread() {
@@ -70,33 +68,47 @@ void MasterGuRenderer::setupCallbackThread() {
 	
 	PSP_DEBUG_PRINT("Display CB thread id is %x\n", thid);
 	
+	// We want to pass the pointer to this, but we'll have to take address of this so use a little trick
+	MasterGuRenderer *_this = this;
+	
 	if (thid >= 0) {
-		sceKernelStartThread(thid, 0, 0);
+		sceKernelStartThread(thid, sizeof(uint32 *), &_this);
 	} else 
 		PSP_ERROR("failed to create display callback thread\n");
 }
 
 // thread that reacts to the callback
-int MasterGuRenderer::guCallbackThread(SceSize, void *) {
+int MasterGuRenderer::guCallbackThread(SceSize, void *__this) {
 	DEBUG_ENTER_FUNC();
 	
-	if (sceGuSetCallback(GU_CALLBACK_FINISH, guDisplayCallback) != 0) {
-		PSP_ERROR("Warning: previous display callback found.\n");
+	// Dereferenced the copied value which was this
+	MasterGuRenderer *_this = *(MasterGuRenderer **)__this;
+	
+	// Create the callback. It should always get the pointer to MasterGuRenderer
+	_this->_callbackId = sceKernelCreateCallback("Display Callback", guCallback, _this);
+	if (_this->_callbackId < 0) {
+		PSP_ERROR("failed to create display callback\n");
+		return -1;
 	}
-	PSP_DEBUG_PRINT("set callback. Going to sleep\n");
+	
+	PSP_DEBUG_PRINT("created callback. Going to sleep\n");
 
 	sceKernelSleepThreadCB();	// sleep until we get a callback
 	return 0;
 }
 
 // This callback is called when the render is finished. It swaps the buffers
-void MasterGuRenderer::guDisplayCallback(int) {
-	if (_renderFinished == true)
-		PSP_ERROR("callback thread found wrong value[true] in _renderFinished\n");
-		
-	sceDisplayWaitVblankStart();	// wait for v-blank without eating main thread cycles
-	sceGuSwapBuffers();
-	_renderFinished = true;	// Only this thread can set the variable to true
+int MasterGuRenderer::guCallback(int, int, void *__this) {
+
+	MasterGuRenderer *_this = (MasterGuRenderer *)__this;
+
+	sceGuSync(0, 0);				// make sure we wait for GU to finish		
+	sceDisplayWaitVblankStartCB();	// wait for v-blank without eating main thread cycles
+	sceGuSwapBuffers();				// swap the back and front buffers
+
+	_this->_renderFinished = true;	// Only this thread can set the variable to true
+	
+	return 0;
 }
 
 void MasterGuRenderer::guInit() {
@@ -174,7 +186,12 @@ inline void MasterGuRenderer::guPostRender() {
 	DEBUG_ENTER_FUNC();
 
 	sceGuFinish();
-#ifndef USE_DISPLAY_CALLBACK
+#ifdef USE_DISPLAY_CALLBACK
+	if (_callbackId < 0)
+		PSP_ERROR("bad callbackId[%d]\n", _callbackId);
+	else
+		sceKernelNotifyCallback(_callbackId, 0);	// notify the callback. Nothing extra to pass
+#else
 	sceGuSync(0, 0);	
 
 #ifdef ENABLE_RENDER_MEASURE
@@ -208,7 +225,6 @@ void DisplayManager::init() {
 	_screen->init();
 	_overlay->init();
 	_cursor->init();
-
 
 	_masterGuRenderer.guInit();				// start up the renderer
 #ifdef USE_DISPLAY_CALLBACK
