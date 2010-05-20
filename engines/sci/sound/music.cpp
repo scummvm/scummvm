@@ -249,7 +249,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 	for (uint i = 0; i < playListCount; i++) {
 		if (_playList[i] == pSnd)
 			playListNo = i;
-		if (_playList[i]->status == kSoundPlaying)
+		if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
 			alreadyPlaying = true;
 	}
 	if (playListNo == playListCount) { // not found
@@ -259,14 +259,16 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	_mutex.unlock();	// unlock to perform mixer-related calls
 
-	if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
-		// if any music is already playing, SCI0 queues music and plays it after the current music has finished
-		//  done by SoundCommandParser::updateSci0Cues()
-		// Example of such case: iceman room 14
-		// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
-		pSnd->isQueued = true;
-		pSnd->status = kSoundPaused;
-		return;
+	if (pSnd->pMidiParser) {
+		if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
+			// if any music is already playing, SCI0 queues music and plays it after the current music has finished
+			//  done by SoundCommandParser::updateSci0Cues()
+			// Example of such case: iceman room 14
+			// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
+			pSnd->isQueued = true;
+			pSnd->status = kSoundPaused;
+			return;
+		}
 	}
 
 	if (pSnd->pStreamAud && !_pMixer->isSoundHandleActive(pSnd->hCurrentAud)) {
