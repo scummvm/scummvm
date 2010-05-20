@@ -114,11 +114,11 @@ public:
 	// RewindableVideoDecoder API
 	void rewind();
 
-	// TODO: These audio functions need to be removed from the public and/or added to
-	// the VideoDecoder API directly.
-	void updateAudioBuffer(); // This is going to be problematic.
-
-
+	// TODO: This audio function need to be removed from the public and/or added to
+	// the VideoDecoder API directly. I plan on replacing this function with something
+	// that can figure out how much audio is needed instead of constantly keeping two
+	// chunks in memory.
+	void updateAudioBuffer();
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -227,7 +227,7 @@ protected:
 	int _ni;
 	ScaleMode _scaleMode;
 	MOVStreamContext *_streams[20];
-	byte _palette[256 * 4];
+	byte _palette[256 * 3];
 	bool _dirtyPalette;
 	uint32 _beginOffset;
 

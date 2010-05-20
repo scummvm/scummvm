@@ -822,7 +822,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 					int16 colorIndex = 255;
 					byte colorDec = 256 / (colorCount - 1);
 					for (byte j = 0; j < colorCount; j++) {
-						_palette[j * 4] = _palette[j * 4 + 1] = _palette[j * 4 + 2] = colorIndex;
+						_palette[j * 3] = _palette[j * 3 + 1] = _palette[j * 3 + 2] = colorIndex;
 						colorIndex -= colorDec;
 						if (colorIndex < 0)
 							colorIndex = 0;
@@ -864,11 +864,11 @@ int QTPlayer::readSTSD(MOVatom atom) {
 						// up front
 						_fd->readByte();
 						_fd->readByte();
-						_palette[j * 4] = _fd->readByte();
+						_palette[j * 3] = _fd->readByte();
 						_fd->readByte();
-						_palette[j * 4 + 1] = _fd->readByte();
+						_palette[j * 3 + 1] = _fd->readByte();
 						_fd->readByte();
-						_palette[j * 4 + 2] = _fd->readByte();
+						_palette[j * 3 + 2] = _fd->readByte();
 						_fd->readByte();
 					}
 				}

@@ -176,9 +176,9 @@ bool VideoManager::updateBackgroundMovies() {
 					for (uint16 j = 0; j < frame->h; j++) {
 						for (uint16 k = 0; k < frame->w; k++) {
 							byte palIndex = *((byte *)frame->getBasePtr(k, j));
-							byte r = palette[palIndex * 4];
-							byte g = palette[palIndex * 4 + 1];
-							byte b = palette[palIndex * 4 + 2];
+							byte r = palette[palIndex * 3];
+							byte g = palette[palIndex * 3 + 1];
+							byte b = palette[palIndex * 3 + 2];
 							if (pixelFormat.bytesPerPixel == 2)
 								*((uint16 *)newFrame->getBasePtr(k, j)) = pixelFormat.RGBToColor(r, g, b);
 							else
