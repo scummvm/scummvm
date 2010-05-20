@@ -103,7 +103,7 @@ uint16 VDXPlayer::loadInternal() {
 	debugC(1, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: Playing video");
 
 	if (_file->readUint16LE() != VDX_IDENT) {
-		error("Groovie::VDX: This does not appear to be a 7th guest vxd file");
+		error("Groovie::VDX: This does not appear to be a 7th guest VDX file");
 		return 0;
 	} else {
 		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::VDX: VDX file identified correctly");

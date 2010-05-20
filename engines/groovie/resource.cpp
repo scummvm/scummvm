@@ -82,6 +82,10 @@ ResMan_t7g::ResMan_t7g(Common::MacResManager *macResFork) : _macResFork(macResFo
 		Common::String filename = t7g_gjds[i];
 		filename += ".gjd";
 
+		// Handle the special case of Mac's hdisk.gjd
+		if (_macResFork && i == 7)
+			filename = "T7GData";
+
 		// Append it to the list of GJD files
 		_gjds.push_back(filename);
 	}
