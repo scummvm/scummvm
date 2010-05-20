@@ -53,6 +53,7 @@ void ConfigurationManager::read() {
     musicVolume = ConfMan.getInt("music_volume");
     sfxVolume   = ConfMan.getInt("sfx_volume");
     voiceVolume = ConfMan.getInt("speech_volume");
+    showMovieSubtitles = (VideoSubtitles)ConfMan.getBool("subtitles");
 }
 
 void ConfigurationManager::write() {
@@ -60,6 +61,7 @@ void ConfigurationManager::write() {
     ConfMan.setInt("music_volume", musicVolume);
     ConfMan.setInt("sfx_volume", sfxVolume);
     ConfMan.setInt("speech_volume", voiceVolume);
+    ConfMan.setBool("subtitles", (bool)showMovieSubtitles);
 }
 
 } // end of namespace Asylum
