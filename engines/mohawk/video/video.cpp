@@ -32,7 +32,6 @@
 namespace Mohawk {
 
 VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
-	_pauseStart = 0;
 }
 
 VideoManager::~VideoManager() {
@@ -42,17 +41,12 @@ VideoManager::~VideoManager() {
 
 void VideoManager::pauseVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->pauseAudio();
-	_pauseStart = _vm->_system->getMillis() * 100;
+		_videoStreams[i]->pauseVideo(true);
 }
 
 void VideoManager::resumeVideos() {
-	for (uint16 i = 0; i < _videoStreams.size(); i++) {
-		_videoStreams[i]->addPauseTime(_vm->_system->getMillis() * 100 - _pauseStart);
-		_videoStreams[i]->resumeAudio();
-	}
-
-	_pauseStart = 0;
+	for (uint16 i = 0; i < _videoStreams.size(); i++)
+		_videoStreams[i]->pauseVideo(false);
 }
 
 void VideoManager::stopVideos() {

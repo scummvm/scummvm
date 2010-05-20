@@ -97,7 +97,6 @@ private:
 
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
-	uint32 _pauseStart;
 
 	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
 	VideoHandle createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop);

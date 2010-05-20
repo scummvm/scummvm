@@ -187,23 +187,20 @@ Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
 }
 
 void QTPlayer::startAudio() {
-	if (!_audStream) // No audio/audio not supported
-		return;
-
-	g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
-}
-
-void QTPlayer::pauseAudio() {
-	g_system->getMixer()->pauseHandle(_audHandle, true);
-}
-
-void QTPlayer::resumeAudio() {
-	g_system->getMixer()->pauseHandle(_audHandle, false);
+	if (_audStream) // No audio/audio not supported
+		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
 }
 
 void QTPlayer::stopAudio() {
-	g_system->getMixer()->stopHandle(_audHandle);
-	_audStream = NULL; // the mixer automatically frees the stream
+	if (_audStream) {
+		g_system->getMixer()->stopHandle(_audHandle);
+		_audStream = NULL; // the mixer automatically frees the stream
+	}
+}
+
+void QTPlayer::pauseVideoIntern(bool pause) {
+	if (_audStream)
+		g_system->getMixer()->pauseHandle(_audHandle, pause);		
 }
 
 Graphics::Surface *QTPlayer::decodeNextFrame() {
@@ -242,12 +239,6 @@ Graphics::Surface *QTPlayer::scaleSurface(Graphics::Surface *frame) {
 
 bool QTPlayer::endOfVideo() const {
 	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1);
-}
-
-void QTPlayer::addPauseTime(uint32 p) {
-	Graphics::VideoDecoder::addPauseTime(p);
-	if (_videoStreamIndex >= 0)
-		_nextFrameStartTime += p * _streams[_videoStreamIndex]->time_scale / 1000;
 }
 
 bool QTPlayer::needsUpdate() const {

@@ -71,10 +71,28 @@ bool VideoDecoder::needsUpdate() const {
 void VideoDecoder::reset() {
 	_curFrame = -1;
 	_startTime = 0;
+	_pauseLevel = 0;
 }
 
 bool VideoDecoder::endOfVideo() const {
 	return !isVideoLoaded() || (getCurFrame() >= (int32)getFrameCount() - 1);
+}
+
+void VideoDecoder::pauseVideo(bool pause) {
+	if (pause) {
+		_pauseLevel++;
+	} else {
+		assert(_pauseLevel); // We can't go negative
+		_pauseLevel--;
+	}
+
+	if (_pauseLevel == 1 && pause) {
+		_pauseStartTime = g_system->getMillis(); // Store the starting time from pausing to keep it for later
+		pauseVideoIntern(true);
+	} else if (_pauseLevel == 0) {
+		pauseVideoIntern(false);
+		addPauseTime(g_system->getMillis() - _pauseStartTime);
+	}
 }
 
 uint32 FixedRateVideoDecoder::getTimeToNextFrame() const {

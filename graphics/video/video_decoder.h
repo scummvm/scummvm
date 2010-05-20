@@ -128,11 +128,6 @@ public:
 	virtual bool hasDirtyPalette() const { return false; }
 
 	/**
-	 * Add the time the video has been paused to maintain sync
-	 */
-	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
-
-	/**
 	 * Returns if the video is finished or not
 	 */
 	virtual bool endOfVideo() const;
@@ -147,14 +142,47 @@ public:
 	 */
 	virtual uint32 getTimeToNextFrame() const = 0;
 
+	/**
+	 * Pause or resume the video. This should stop/resume any audio playback
+	 * and other stuff. The initial pause time is kept so that any timing
+	 * variables can be updated appropriately.
+	 *
+	 * This is a convenience tracker which automatically keeps track on how
+	 * often the video has been paused, ensuring that after pausing an video
+	 * e.g. twice, it has to be unpaused twice before actuallying resuming.
+	 *
+	 * @param pause		true to pause the video, false to resume it
+	 */
+	void pauseVideo(bool pause);
+
+	/**
+	 * Return whether the video is currently paused or not.
+	 */
+	bool isPaused() const { return _pauseLevel != 0; }
+
 protected:
 	/**
 	 * Resets _curFrame and _startTime. Should be called from every close() function.
 	 */
 	void reset();
 
+	/**
+	 * Actual implementation of pause by subclasses. See pause()
+	 * for details.
+	 */
+	virtual void pauseVideoIntern(bool pause) {}
+
+	/**
+	 * Add the time the video has been paused to maintain sync
+	 */
+	virtual void addPauseTime(uint32 ms) { _startTime += ms; }
+
 	int32 _curFrame;
 	uint32 _startTime;
+
+private:
+	uint32 _pauseLevel;
+	uint32 _pauseStartTime;
 };
 
 /**

@@ -104,7 +104,6 @@ public:
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 	bool isVideoLoaded() const { return _fd != 0; }
-	void addPauseTime(uint32 p);
 	Graphics::Surface *decodeNextFrame();
 	bool needsUpdate() const;
 	bool endOfVideo() const;
@@ -112,13 +111,14 @@ public:
 	uint32 getTimeToNextFrame() const;
 	Graphics::PixelFormat getPixelFormat() const;
 
+	// RewindableVideoDecoder API
 	void rewind();
 
 	// TODO: These audio functions need to be removed from the public and/or added to
 	// the VideoDecoder API directly.
 	void updateAudioBuffer(); // This is going to be problematic.
-	void pauseAudio();
-	void resumeAudio();
+
+
 
 protected:
 	// This is the file handle from which data is read from. It can be the actual file handle or a decompressed stream.
@@ -254,6 +254,8 @@ protected:
 	Graphics::Surface *_scaledSurface;
 	Graphics::Surface *scaleSurface(Graphics::Surface *frame);
 	ScaleMode getScaleMode() const;
+
+	void pauseVideoIntern(bool pause);
 
 	int readDefault(MOVatom atom);
 	int readLeaf(MOVatom atom);
