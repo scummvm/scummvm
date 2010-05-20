@@ -26,21 +26,94 @@
 #include "asylum/video.h"
 
 namespace Asylum {
+	
+Video::Video(Audio::Mixer *mixer): _skipVideo(false) {
+	Common::Event stopEvent;
+	_stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd.keycode  = Common::KEYCODE_ESCAPE;
+	_stopEvents.push_back(stopEvent);
 
-VideoPlayer::VideoPlayer(Graphics::VideoDecoder *decoder) :
-		Graphics::VideoPlayer(decoder) {
+	_smkDecoder = new Graphics::SmackerDecoder(mixer);
+	
 	_text = new VideoText();
 	ResourcePack *resPack = new ResourcePack(1);
 	_text->loadFont(resPack, 57);	// video font
 	delete resPack;
 }
 
-VideoPlayer::~VideoPlayer() {
+Video::~Video() {
+	delete _smkDecoder;
 	delete _text;
 }
 
-bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int32 videoNumber) {
+bool Video::playVideo(int32 videoNumber, VideoSubtitles subtitles) {
+	bool lastMouseState = false;
+	char filename[20];
+
+	sprintf(filename, "mov%03d.smk", videoNumber);
+
+	bool result = _smkDecoder->loadFile(filename);
+
+	lastMouseState = g_system->showMouse(false);
+	if (result) {
+		_skipVideo = false;
+		if(subtitles == kSubtitlesOn) {
+			loadSubtitles(videoNumber);
+		}
+		
+		uint16 x = (g_system->getWidth() - _smkDecoder->getWidth()) / 2;
+		uint16 y = (g_system->getHeight() - _smkDecoder->getHeight()) / 2;
+	
+		while (!_smkDecoder->endOfVideo() && !_skipVideo) {
+			processVideoEvents();
+			if (_smkDecoder->needsUpdate()) {
+				Graphics::Surface *frame = _smkDecoder->decodeNextFrame();
+				
+				if (frame) {
+					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+					
+					if(subtitles) {
+						Graphics::Surface *screen = g_system->lockScreen();
+						performPostProcessing((byte *)screen->pixels);
+						g_system->unlockScreen();
+					}
+					
+					if (_smkDecoder->hasDirtyPalette())
+						_smkDecoder->setSystemPalette();
+						
+					g_system->updateScreen();
+				}
+			}
+			g_system->delayMillis(10);
+		}
+	}
+	_smkDecoder->close();
+	_subtitles.clear();
+	g_system->showMouse(lastMouseState);
+
+	return result;
+}
+
+void Video::performPostProcessing(byte *screen) {
+	int32 curFrame = _smkDecoder->getCurFrame();
+
+	// Reset subtitle area, by filling it with zeroes
+	memset(screen + 640 * 400, 0, 640 * 80);
+
+	for (uint32 i = 0; i < _subtitles.size(); i++) {
+		VideoSubtitle curSubtitle = _subtitles[i];
+		if (curFrame >= curSubtitle.frameStart &&
+		        curFrame <= curSubtitle.frameEnd) {
+			_text->drawMovieSubtitle(screen, curSubtitle.textRes);
+			break;
+		}
+	}
+}
+
+void Video::loadSubtitles(int32 videoNumber) {
 	// Read vids.cap
+	
 	char movieToken[10];
 	sprintf(movieToken, "[MOV%03d]", videoNumber);
 
@@ -80,62 +153,31 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	}
 
 	delete [] buffer;
-
-	return playVideo(stopEvents);
 }
 
-void VideoPlayer::performPostProcessing(byte *screen) {
-	int32 curFrame = _decoder->getCurFrame();
-
-	// Reset subtitle area, by filling it with zeroes
-	memset(screen + 640 * 400, 0, 640 * 80);
-
-	for (uint32 i = 0; i < _subtitles.size(); i++) {
-		VideoSubtitle curSubtitle = _subtitles[i];
-		if (curFrame >= curSubtitle.frameStart &&
-		        curFrame <= curSubtitle.frameEnd) {
-			_text->drawMovieSubtitle(screen, curSubtitle.textRes);
-			break;
+void Video::processVideoEvents() {
+	Common::Event curEvent;
+	while (g_system->getEventManager()->pollEvent(curEvent)) {
+		if (curEvent.type == Common::EVENT_RTL || curEvent.type == Common::EVENT_QUIT) {
+			_skipVideo = true;
+		}
+	
+		for (Common::List<Common::Event>::const_iterator iter = _stopEvents.begin(); iter != _stopEvents.end(); ++iter) {
+			if (curEvent.type == iter->type) {
+				if (iter->type == Common::EVENT_KEYDOWN || iter->type == Common::EVENT_KEYUP) {
+					if (curEvent.kbd.keycode == iter->kbd.keycode) {
+						_skipVideo = true;
+						break;
+					}
+				} else {
+					_skipVideo = true;
+					break;
+				}
+			}
 		}
 	}
 }
 
-Video::Video(Audio::Mixer *mixer) {
-	Common::Event stopEvent;
-	_stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd  = Common::KEYCODE_ESCAPE;
-	_stopEvents.push_back(stopEvent);
-
-	_smkDecoder = new Graphics::SmackerDecoder(mixer);
-	_player     = new VideoPlayer(_smkDecoder);
-}
-
-Video::~Video() {
-	delete _player;
-	delete _smkDecoder;
-}
-
-bool Video::playVideo(int32 number, VideoSubtitles subtitles) {
-	bool lastMouseState = false;
-    char filename[20];
-
-	sprintf(filename, "mov%03d.smk", number);
-
-	bool result = _smkDecoder->loadFile(filename);
-
-	lastMouseState = g_system->showMouse(false);
-	if (result) {
-		if (subtitles == kSubtitlesOff)
-			_player->playVideo(_stopEvents);
-		else
-			_player->playVideoWithSubtitles(_stopEvents, number);
-	}
-	_smkDecoder->closeFile();
-	g_system->showMouse(lastMouseState);
-
-	return result;
-}
 
 VideoText::VideoText() {
 	_curFontFlags = 0;

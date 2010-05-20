@@ -29,7 +29,6 @@
 #include "sound/mixer.h"
 #include "graphics/surface.h"
 #include "graphics/video/smk_decoder.h"
-#include "graphics/video/video_player.h"
 
 #include "common/array.h"
 #include "common/events.h"
@@ -53,31 +52,23 @@ enum VideoSubtitles {
 
 class VideoText;
 
-class VideoPlayer : public Graphics::VideoPlayer {
-public:
-	VideoPlayer(Graphics::VideoDecoder* decoder);
-	virtual ~VideoPlayer();
-
-	bool playVideoWithSubtitles(Common::List<Common::Event> &stopEvents, int videoNumber);
-
-private:
-	void performPostProcessing(byte *screen);
-
-	VideoText					*_text;
-	Common::Array<VideoSubtitle> _subtitles;
-};
-
 class Video {
 public:
 	Video(Audio::Mixer *mixer);
 	virtual ~Video();
 
-	bool playVideo(int number, VideoSubtitles subtitles);
-
+	bool playVideo(int32 videoNumber, VideoSubtitles subtitles);
+	
 private:
+	void performPostProcessing(byte *screen);
+	void loadSubtitles(int32 videoNumber);
+	void processVideoEvents();
+	
+	bool _skipVideo;
+	VideoText *_text;
+	Graphics::SmackerDecoder *_smkDecoder;
 	Common::List<Common::Event> _stopEvents;
-	Graphics::SmackerDecoder	*_smkDecoder;
-	VideoPlayer					*_player;
+	Common::Array<VideoSubtitle> _subtitles;
 }; // end of class Video
 
 // The VideoText class has some methods from the Text class,
