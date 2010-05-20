@@ -23,10 +23,12 @@
  *
  */
 
+#include "groovie/lzss.h"
 #include "groovie/music.h"
 #include "groovie/resource.h"
 
 #include "common/config-manager.h"
+#include "common/macresman.h"
 #include "sound/audiocd.h"
 
 namespace Groovie {
@@ -674,25 +676,46 @@ void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
 
 // MusicPlayerMac
 
-MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) :
-	MusicPlayerMidi(vm) {
+MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
+	// Create the parser
+	_midiParser = MidiParser::createParser_SMF();
+
+	// Create the driver
+	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = createMidi(driver);
+	this->open();
+
+	// Set the parser's driver
+	_midiParser->setMidiDriver(this);
+
+	// Set the timer rate
+	_midiParser->setTimerRate(_driver->getBaseTempo());
+
+	// Sanity check
+	assert(_vm->_macResFork);
 }
 
 bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Starting the playback of song: %04X", fileref);
-	debug("Groovie::Music: Starting the playback of song: %04X %d", fileref, fileref);
 
-	// Open the song resource
-	/*
-	Common::SeekableReadStream *file = _vm->_resMan->open(fileref);
-	if (!file) {
-		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
+	// First try for compressed MIDI
+	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKID_BE('cmid'), fileref & 0x3FF);
+
+	if (file) {
+		// TODO: A form of LZSS, not supported by the current Groovie decoder.
+		// The offset/length uint16 is BE, but not sure the amount of length bits
+		// nor whether the offset is absolute/relative.
+		warning("TODO: Mac Compressed MIDI: cmid 0x%04x", fileref & 0x3FF);
+		delete file;
 		return false;
 	}
-	*/
 
-	//return loadParser(file, loop);
-	return false;
+	// Otherwise, it's uncompressed
+	file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
+	if (!file)
+		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
+
+	return loadParser(file, loop);
 }
 
 } // End of Groovie namespace
