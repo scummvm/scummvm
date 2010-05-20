@@ -413,6 +413,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 	int i;
 	Palette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
+	bool icemanDrawFix = false;
 
 	memset(&palette, 0, sizeof(palette));
 
@@ -425,6 +426,14 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 		for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
 			memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
 		memcpy(&EGApriority, &vector_defaultEGApriority, sizeof(vector_defaultEGApriority));
+
+		if (strcmp(g_sci->getGameID(), "iceman") == 0) {
+			// WORKAROUND: we remove certain visual&priority lines in underwater rooms of iceman, when not dithering the
+			//              picture. Normally those lines aren't shown, because they share the same color as the dithered
+			//              fill color combination. When not dithering, those lines would appear and get distracting.
+			if ((_screen->getUnditherState()) && ((_resourceId >= 53 && _resourceId <= 58) || (_resourceId == 61)))
+				icemanDrawFix = true;
+		}
 	}
 
 	// Drawing
@@ -472,6 +481,15 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 		case PIC_OP_MEDIUM_LINES: // medium line
 			vectorGetAbsCoords(data, curPos, x, y);
+			if (icemanDrawFix) {
+				// WORKAROUND: remove certain lines in iceman ffs. see above
+				if ((pic_color == 1) && (pic_priority == 14)) {
+					if ((y < 100) || (!(y & 1))) {
+						pic_color = 255;
+						pic_priority = 255;
+					}
+				}
+			}
 			while (vectorIsNonOpcode(data[curPos])) {
 				oldx = x; oldy = y;
 				vectorGetRelCoordsMed(data, curPos, x, y);

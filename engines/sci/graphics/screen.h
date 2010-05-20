@@ -86,6 +86,9 @@ public:
 	int getUpscaledHires() {
 		return _upscaledHires;
 	}
+	bool getUnditherState() {
+		return _unditherState;
+	}
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
