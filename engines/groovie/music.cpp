@@ -609,18 +609,66 @@ void MusicPlayerXMI::setTimbreAD(byte channel, const Timbre &timbre) {
 	}
 }
 
-void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
-	// Verify the timbre size
-	if (timbre.size != 0xF6) {
-		error("Groovie::Music: Invalid size for an MT-32 timbre: %d", timbre.size);
-	}
+
+#include "common/pack-start.h"	// START STRUCT PACKING
+
+struct RolandInstrumentSysex {
+	byte roland_id;
+	byte device_id;
+	byte model_id;
+	byte command;
+	byte address[3];
+	byte instrument[0xF6];
+	byte checksum;
+} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
+
+void setRolandInstrument(MidiDriver *drv, byte channel, byte *instrument) {
+	RolandInstrumentSysex sysex;
+	memcpy(&sysex.instrument, instrument, 0xF6);
 
 	// Show the timbre name as extra debug information
-	Common::String name((char*)timbre.data, 10);
-	debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Using MT32 timbre: %s", name.c_str());
+	Common::String name((char *)instrument, 10);
+	debugC(5, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Setting MT32 timbre '%s' to channel %d", name.c_str(), channel);
 
-	// TODO: Support MT-32 custom instruments
-	warning("Groovie::Music: Setting MT32 custom instruments isn't supported yet");
+	sysex.roland_id = 0x41;
+	sysex.device_id = channel; // Unit#
+	sysex.model_id = 0x16; // MT32
+	sysex.command = 0x12; // Data set
+
+	// Remap instrument to appropriate address space.
+	int address = 0x008000;
+	sysex.address[0] = (address >> 14) & 0x7F;
+	sysex.address[1] = (address >>  7) & 0x7F;
+	sysex.address[2] = (address      ) & 0x7F;
+
+	// Compute the checksum.
+	byte checksum = 0;
+	byte *ptr = sysex.address;
+	for (int i = 4; i < (int)sizeof(RolandInstrumentSysex) - 1; ++i)
+		checksum -= *ptr++;
+	sysex.checksum = checksum & 0x7F;
+
+	// Send sysex
+	drv->sysEx((byte *)&sysex, sizeof(RolandInstrumentSysex));
+
+
+	// Wait the time it takes to send the SysEx data
+	uint32 delay = (sizeof(RolandInstrumentSysex) + 2) * 1000 / 3125;
+
+	// Plus an additional delay for the MT-32 rev00
+	delay += 40;
+
+	g_system->delayMillis(delay);
+}
+
+void MusicPlayerXMI::setTimbreMT(byte channel, const Timbre &timbre) {
+	// Verify the timbre size
+	if (timbre.size != 0xF6)
+		error("Groovie::Music: Invalid size for an MT-32 timbre: %d", timbre.size);
+
+	setRolandInstrument(_driver, channel, timbre.data);
 }
 
 
