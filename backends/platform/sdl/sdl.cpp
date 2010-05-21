@@ -496,7 +496,7 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 	}
 }
 
-void OSystem_SDL::quit() {
+void OSystem_SDL::deinit() {
 	if (_cdrom) {
 		SDL_CDStop(_cdrom);
 		SDL_CDClose(_cdrom);
@@ -525,6 +525,10 @@ void OSystem_SDL::quit() {
 	// recorded events
 	delete getEventManager();
 	delete _savefile;
+}
+
+void OSystem_SDL::quit() {
+	deinit();
 
 #if !defined(SAMSUNGTV)
 	exit(0);
