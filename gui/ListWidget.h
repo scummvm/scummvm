@@ -87,8 +87,8 @@ protected:
 	ThemeEngine::FontColor _editColor;
 
 public:
-	ListWidget(GuiObject *boss, const String &name, uint32 cmd = 0);
-	ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
+	ListWidget(Dialog *boss, const String &name, uint32 cmd = 0);
+	ListWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd = 0);
 	virtual ~ListWidget();
 
 	virtual Widget *findWidget(int x, int y);

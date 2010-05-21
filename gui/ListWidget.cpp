@@ -36,7 +36,7 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, const String &name, uint32 cmd)
 	: EditableWidget(boss, name), _cmd(cmd) {
 
 	_scrollBar = NULL;
@@ -68,7 +68,7 @@ ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
 	_editColor = ThemeEngine::kFontColorNormal;
 }
 
-ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd)
 	: EditableWidget(boss, x, y, w, h), _cmd(cmd) {
 
 	_scrollBar = NULL;
@@ -472,6 +472,10 @@ void ListWidget::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 		if (_currentPos != (int)data) {
 			_currentPos = data;
 			draw();
+
+			// Scrollbar actions cause list focus (which triggers a redraw)
+			// NOTE: ListWidget's boss is always GUI::Dialog
+			((GUI::Dialog *)_boss)->setFocusWidget(this);
 		}
 		break;
 	}
