@@ -44,8 +44,10 @@ Script::~Script() {
 /*
  * readLineIntern read a text line and prepares it for
  * parsing, by stripping the leading whitespace and
- * changing tabs to spaces. It will stop on a CR or LF,
- * and return an empty string (length = 0) when a line
+ * changing tabs to spaces. It will stop on a CR, LF, or
+ * SUB (0x1A), which may all occur at the end of a script
+ * line.
+ * Returns an empty string (length = 0) when a line
  * has no printable text in it.
  */
 char *Script::readLineIntern(char *buf, size_t bufSize) {
@@ -54,7 +56,8 @@ char *Script::readLineIntern(char *buf, size_t bufSize) {
 		char c = _input->readSByte();
 		if (_input->eos())
 			break;
-		if (c == '\n' || c == '\r')
+		// break if EOL
+		if (c == '\n' || c == '\r' || c == (char)0x1A)
 			break;
 		if (c == '\t')
 			c = ' ';
