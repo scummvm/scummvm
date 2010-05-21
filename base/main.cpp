@@ -340,8 +340,10 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
-	if (!Base::processSettings(command, settings))
-		return 0;
+	Common::Error res;
+
+	if ((res = Base::processSettings(command, settings)) != Common::kArgumentNotProcessed)
+		return res;
 
 	// Init the backend. Must take place after all config data (including
 	// the command line params) was read.

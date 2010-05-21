@@ -602,7 +602,9 @@ static void listTargets() {
 }
 
 /** List all saves states for the given target. */
-static void listSaves(const char *target) {
+static Common::Error listSaves(const char *target) {
+	Common::Error result = Common::kNoError;
+
 	// FIXME HACK
 	g_system->initBackend();
 
@@ -627,13 +629,14 @@ static void listSaves(const char *target) {
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (!plugin) {
-		error("Could not find any plugin to handle target '%s' (gameid '%s')", target, gameid.c_str());
-		return;
+		warning("Could not find any plugin to handle target '%s' (gameid '%s')", target, gameid.c_str());
+		return Common::kPluginNotFound;
 	}
 
 	if (!(*plugin)->hasFeature(MetaEngine::kSupportsListSaves)) {
 		// TODO: Include more info about the target (desc, engine name, ...) ???
 		printf("ScummVM does not support listing save states for target '%s' (gameid '%s') .\n", target, gameid.c_str());
+		result = Common::kPluginNotSupportSaves;
 	} else {
 		// Query the plugin for a list of savegames
 		SaveStateList saveList = (*plugin)->listSaves(target);
@@ -643,6 +646,9 @@ static void listSaves(const char *target) {
 		printf("  Slot Description                                           \n"
 		       "  ---- ------------------------------------------------------\n");
 
+		if (saveList.size() == 0)
+			result = Common::kNoSavesError;
+
 		for (SaveStateList::const_iterator x = saveList.begin(); x != saveList.end(); ++x) {
 			printf("  %-4s %s\n", x->save_slot().c_str(), x->description().c_str());
 			// TODO: Could also iterate over the full hashmap, printing all key-value pairs
@@ -651,6 +657,8 @@ static void listSaves(const char *target) {
 
 	// Revert to the old active domain
 	ConfMan.setActiveDomain(oldDomain);
+
+	return result;
 }
 
 /** Lists all usable themes */
@@ -863,7 +871,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #endif // DISABLE_COMMAND_LINE
 
 
-bool processSettings(Common::String &command, Common::StringMap &settings) {
+Common::Error processSettings(Common::String &command, Common::StringMap &settings) {
 
 #ifndef DISABLE_COMMAND_LINE
 
@@ -872,34 +880,33 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	// have been loaded.
 	if (command == "list-targets") {
 		listTargets();
-		return false;
+		return Common::kNoError;
 	} else if (command == "list-games") {
 		listGames();
-		return false;
+		return Common::kNoError;
 	} else if (command == "list-saves") {
-		listSaves(settings["list-saves"].c_str());
-		return false;
+		return listSaves(settings["list-saves"].c_str());
 	} else if (command == "list-themes") {
 		listThemes();
-		return false;
+		return Common::kNoError;
 	} else if (command == "version") {
 		printf("%s\n", gScummVMFullVersion);
 		printf("Features compiled in: %s\n", gScummVMFeatures);
-		return false;
+		return Common::kNoError;
 	} else if (command == "help") {
 		printf(HELP_STRING, s_appName);
-		return false;
+		return Common::kNoError;
 	}
 #ifdef DETECTOR_TESTING_HACK
 	else if (command == "test-detector") {
 		runDetectorTest();
-		return false;
+		return Common::kNoError;
 	}
 #endif
 #ifdef UPGRADE_ALL_TARGETS_HACK
 	else if (command == "upgrade-targets") {
 		upgradeTargets();
-		return false;
+		return Common::kNoError;
 	}
 #endif
 
@@ -971,7 +978,7 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
 	}
 
-	return true;
+	return Common::kArgumentNotProcessed;
 }
 
 } // End of namespace Base
