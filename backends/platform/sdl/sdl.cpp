@@ -521,7 +521,7 @@ void OSystem_SDL::quit() {
 
 	SDL_Quit();
 
-	// Even Manager requires save manager for storing
+	// Event Manager requires save manager for storing
 	// recorded events
 	delete getEventManager();
 	delete _savefile;
