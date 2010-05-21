@@ -43,7 +43,7 @@ extern "C" int Game_Main(char *path, char *) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(0, 0);
-	g_system->quit();	// TODO: Consider removing / replacing this!
+	((OSystem_SDL *)g_system)->deinit();
 	return res;
 }
 
