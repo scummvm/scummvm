@@ -210,41 +210,58 @@ Common::Language charToScummVMLanguage(const char c) {
 // Finds the internal ID of the current game from script 0
 Common::String getSierraGameId(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
-	Script *script000 = new Script();
-	script000->init(0, resMan);
-	script000->mcpyInOut(0, script->data, script->size);
 	uint16 curOffset = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
 	uint16 objLength = 0;
 	int objType = 0;
 	int16 exportsOffset = 0;
+	int16 magicOffset = (getSciVersion() < SCI_VERSION_1_1) ? 8 : 0;
 	Common::String sierraId;
+
+	// TODO: SCI1.1 version
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		//if (READ_UINT16(script->data + 6) > 0)
+		//	exportsOffset = READ_UINT16(script->data + 6 + 2);
+		return "sci";
+	}
 
 	// Now find the export table of the script
 	do {
-		objType = READ_UINT16(script000->_buf + curOffset);
+		objType = READ_UINT16(script->data + curOffset);
 		if (!objType)
 			break;
 	
-		objLength = READ_UINT16(script000->_buf + curOffset + 2);
+		objLength = READ_UINT16(script->data + curOffset + 2);
 		curOffset += 4;		// skip header
 
-		if (objType == SCI_OBJ_EXPORTS) {
-			exportsOffset = READ_UINT16(script000->_buf + curOffset + 2);
+		switch (objType) {
+		case SCI_OBJ_EXPORTS:
+			exportsOffset = READ_UINT16(script->data + curOffset + 2);
+			break;
+		case SCI_OBJ_OBJECT:
+		case SCI_OBJ_CLASS:
+			// The game object is the first export. Script 0 is always at segment 1
+			if (curOffset == exportsOffset - magicOffset) {
+				reg_t nameSelector = make_reg(1, READ_UINT16(script->data + curOffset + magicOffset + 3 * 2));
+
+				// TODO: stop using the segment manager and read the object name here
+				SegManager *segMan = new SegManager(resMan);
+				script_instantiate(resMan, segMan, 0);
+				sierraId = segMan->derefString(nameSelector);
+				delete segMan;
+
+				break;
+			}
+			break;
+		case SCI_OBJ_CODE:
+		case SCI_OBJ_SYNONYMS:
+		case SCI_OBJ_LOCALVARS:
+		case SCI_OBJ_POINTERS: // A relocation table
+			// Ignore
 			break;
 		}
+
 		curOffset += objLength - 4;
 	} while (objType != 0 && curOffset < script->size - 2);
-
-	// The game object is the first export. Script 0 is always at segment 1
-	reg_t gameObj = make_reg(1, exportsOffset);
-
-	// TODO: stop using the segment manager and read the object name here
-	SegManager *segMan = new SegManager(resMan);
-	script_instantiate(resMan, segMan, 0);
-	sierraId = segMan->getObjectName(gameObj);
-	delete segMan;
-
-	delete script000;
 
 	return sierraId;
 }
