@@ -172,11 +172,11 @@ bool MidiParser_MSC::loadMusic(byte *data, uint32 size) {
 
 	byte *pos = data;
 
-	uint32 signature = read4high(pos);
-	if (memcmp("tCSM", &signature, 4)) {
+	if (memcmp("MSCt", pos, 4)) {
 		warning("Expected header not found in music file.");
 		return false;
 	}
+	pos += 4;
 
 	_beats = read1(pos);
 	_ppqn = read2low(pos);
