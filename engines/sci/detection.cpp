@@ -215,7 +215,6 @@ Common::String getSierraGameId(ResourceManager *resMan) {
 	int objType = 0;
 	int16 exportsOffset = 0;
 	int16 magicOffset = (getSciVersion() < SCI_VERSION_1_1) ? 8 : 0;
-	Common::String sierraId;
 
 	// TODO: SCI1.1 version
 	if (getSciVersion() >= SCI_VERSION_1_1) {
@@ -239,17 +238,21 @@ Common::String getSierraGameId(ResourceManager *resMan) {
 			break;
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS:
-			// The game object is the first export. Script 0 is always at segment 1
+			// The game object is the first export
 			if (curOffset == exportsOffset - magicOffset) {
-				reg_t nameSelector = make_reg(1, READ_UINT16(script->data + curOffset + magicOffset + 3 * 2));
+				// The name selector is the third one
+				uint16 nameSelectorOffset = READ_UINT16(script->data + curOffset + magicOffset + 3 * 2);
 
-				// TODO: stop using the segment manager and read the object name here
-				SegManager *segMan = new SegManager(resMan);
-				script_instantiate(resMan, segMan, 0);
-				sierraId = segMan->derefString(nameSelector);
-				delete segMan;
+				char sierraId[20];
+				int i = 0;
+				byte curChar = 0;
 
-				break;
+				do {
+					curChar = *(script->data + nameSelectorOffset + i);
+					sierraId[i++] = curChar;
+				} while (curChar != 0);
+
+				return sierraId;
 			}
 			break;
 		case SCI_OBJ_CODE:
@@ -263,7 +266,7 @@ Common::String getSierraGameId(ResourceManager *resMan) {
 		curOffset += objLength - 4;
 	} while (objType != 0 && curOffset < script->size - 2);
 
-	return sierraId;
+	return "sci";	// detection failed
 }
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
