@@ -240,12 +240,8 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 	seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		reg_t reg;
-		Object *obj;
-
-		reg.segment = seg;
-		reg.offset = seeker - scr->_buf;
-		obj = scr->scriptObjInit(reg);
+		reg_t reg = make_reg(seg, seeker - scr->_buf);
+		Object *obj = scr->scriptObjInit(reg);
 
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
@@ -310,10 +306,6 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 	}
 
 	scr->init(script_nr, resMan);
-
-	reg_t reg;
-	reg.segment = seg_id;
-	reg.offset = 0;
 
 	// Set heap position (beyond the size word)
 	scr->setLockers(1);
@@ -475,18 +467,15 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 
 int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	Resource *script, *heap;
-	int _heapStart;
-	reg_t reg;
 	int was_new;
-
 	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, &heap, &was_new);
 
 	if (was_new)
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
+	int _heapStart = script->size;
 
-	_heapStart = script->size;
 	if (script->size & 2)
 		_heapStart++;
 
@@ -496,15 +485,12 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 	if (READ_SCI11ENDIAN_UINT16(script->data + 6) > 0)
 		scr->setExportTableOffset(6);
 
-	reg.segment = seg_id;
-	reg.offset = _heapStart + 4;
-	segMan->scriptInitialiseLocals(reg);
+	segMan->scriptInitialiseLocals(make_reg(seg_id, _heapStart + 4));
 
 	segMan->scriptRelocateExportsSci11(seg_id);
 	segMan->scriptInitialiseObjectsSci11(seg_id);
 
-	reg.offset = READ_SCI11ENDIAN_UINT16(heap->data);
-	scr->heapRelocate(reg);
+	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(heap->data)));
 
 	return seg_id;
 }
@@ -519,11 +505,10 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_n
 void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	reg_t reg = make_reg(seg, oldScriptHeader ? 2 : 0);
-	int objType, objLength;
+	int objType, objLength = 0;
 	Script *scr = segMan->getScript(seg);
 
 	// Make a pass over the object in order uninstantiate all superclasses
-	objLength = 0;
 
 	do {
 		reg.offset += objLength; // Step over the last checked object
