@@ -687,15 +687,26 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	debugC(5, kDebugExec, "checkZoneBox for %s (type = %x, x = %i, y = %i)", z->_name, type, x, y);
 
 	if (!z->hitRect(x, y)) {
-
 		// check for special zones (items defined in common.loc)
 		if (checkSpecialZoneBox(z, type, x, y))
 			return true;
 
-		if (z->getX() != -1)
+		// check if self-use zone (nothing to do with kFlagsSelfuse)
+		int gameType = getGameType();
+		if (gameType == GType_Nippon) {
+			if (z->getX() != -1) {	// no explicit self-use flag in NS
+				return false;
+			}
+		}
+		if (gameType == GType_BRA) {
+			if (!(z->_flags & kFlagsYourself)) {
+				return false;
+			}
+		}
+		if (!_char._ani->hitFrameRect(x, y)) {
 			return false;
-		if (!_char._ani->hitFrameRect(x, y))
-			return false;
+		}
+		// we get here only if (x,y) hits the character and the zone is marked as self-use
 	}
 
 	// normal Zone
