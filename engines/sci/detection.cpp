@@ -212,23 +212,21 @@ Common::String getSierraGameId(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
 	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
 	Resource *heap = 0;
-	int nameSelector = 0;
-	byte *exportPtr, *heapPtr;
+	byte *seeker = 0;
 
 	// Seek to the name selector of the first export
 	if (getSciVersion() < SCI_VERSION_1_1) {
+		const int nameSelector = 3;
 		int extraSci0EarlyBytes = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
-		nameSelector = 3;
-		exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
-		heapPtr = script->data;
+		byte *exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
+		seeker = script->data + READ_UINT16(script->data + READ_UINT16(exportPtr) + nameSelector * 2);
 	} else {
-		nameSelector = 5 + 3;
-		exportPtr = script->data + 4 + 2 + 2;
+		const int nameSelector = 5 + 3;
 		heap = resMan->findResource(ResourceId(kResourceTypeHeap, 0), false);
-		heapPtr = heap->data;
+		byte *exportPtr = script->data + 4 + 2 + 2;
+		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
 	}
 
-	byte *seeker = heapPtr + READ_UINT16(heapPtr + READ_UINT16(exportPtr) + nameSelector * 2);
 	char sierraId[20];
 	int i = 0;
 	byte curChar = 0;
