@@ -690,6 +690,35 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	return false;
 }
 
+bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
+	int gameType = getGameType();
+
+	if (gameType == GType_Nippon) {
+		if ((type == 0) && (ITEMTYPE(z) == 0))
+			return true;		
+	}
+
+	if (gameType == GType_BRA) {
+		if (type == 0) {
+			if (ITEMTYPE(z) == 0) {			
+				if (ACTIONTYPE(z) != kZonePath) {
+					return true;
+				}
+			} 
+			if (ACTIONTYPE(z) == kZoneDoor) {
+				return true;
+			}	
+		}
+	}
+
+	if (z->_type == type)
+		return true;
+	if (ITEMTYPE(z) == type)
+		return true;
+
+	return false;
+}
+
 bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (z->_flags & kFlagsRemove)
 		return false;
@@ -719,15 +748,7 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 		// we get here only if (x,y) hits the character and the zone is marked as self-use
 	}
 
-	// normal Zone
-	if ((type == 0) && (ITEMTYPE(z) == 0))
-		return true;
-	if (z->_type == type)
-		return true;
-	if (ITEMTYPE(z) == type)
-		return true;
-
-	return false;
+	return checkZoneType(z, type);
 }
 
 bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
@@ -745,16 +766,7 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 		return false;
 	}
 
-	// NOTE: the implementation of the following lines is a different in the
-	// original... it is working so far, though
-	if ((type == 0) && (ITEMTYPE(z) == 0))
-		return true;
-	if (z->_type == type)
-		return true;
-	if (ITEMTYPE(z) == type)
-		return true;
-
-	return false;
+	return checkZoneType(z, type);
 }
 
 /* NOTE: hitZone needs to be passed absolute game coordinates to work.
@@ -776,13 +788,22 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	}
 
 
+	int gameType = getGameType();
+
 	int16 _a, _b, _c, _d;
 	bool _ef;
 	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ++ait) {
 
 		AnimationPtr a = *ait;
 
-		_a = (a->_flags & kFlagsActive) ? 1 : 0;															   // _a: active Animation
+		_a = (a->_flags & kFlagsActive) ? 1 : 0;	// _a: active Animation
+		
+		if (!_a) {
+			if (gameType == GType_BRA && ACTIONTYPE(a) != kZoneTrap) {
+				continue;
+			}
+		}
+
 		_ef = a->hitFrameRect(_si, _di);
 
 		_b = ((type != 0) || (a->_type == kZoneYou)) ? 0 : 1;										 // _b: (no type specified) AND (Animation is not the character)

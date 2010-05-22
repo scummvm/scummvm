@@ -360,6 +360,7 @@ public:
 	uint32		getLocationFlags();
 	bool		checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y);
 	bool		checkZoneBox(ZonePtr z, uint32 type, uint x, uint y);
+	bool 		checkZoneType(ZonePtr z, uint32 type);
 	bool		checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y);
 	ZonePtr		hitZone(uint32 type, uint16 x, uint16 y);
 	void		runZone(ZonePtr z);
