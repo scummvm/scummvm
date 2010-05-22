@@ -652,11 +652,21 @@ bool Parallaction::pickupItem(ZonePtr z) {
 }
 
 bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
-	// not a special zone
-	if ((z->getX() != -2) && (z->getX() != -3)) {
-		return false;
+	// check if really a special zone
+	int gameType = getGameType();
+	if (gameType == GType_Nippon) {
+		// so-called special zones in NS have special x coordinates
+		if ((z->getX() != -2) && (z->getX() != -3)) {
+			return false;
+		}
 	}
-
+	if (gameType == GType_BRA) {
+		// so far, special zones in BRA are only merge zones
+		if (ACTIONTYPE(z) != kZoneMerge) {
+			return false;
+		}
+	}
+	
 	// WORKAROUND: this huge condition is needed because we made TypeData a collection of structs
 	// instead of an union. So, merge->_obj1 and get->_icon were just aliases in the original engine,
 	// but we need to check it separately here. The same workaround is applied in freeZones.
