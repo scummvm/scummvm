@@ -326,8 +326,13 @@ bool Input::translateGameInput() {
 
 	if ((_mouseButtons == kMouseLeftUp) && ((_activeItem._id != 0) || (ACTIONTYPE(z) == kZoneCommand))) {
 
-		if (z->_flags & kFlagsNoWalk) {
-			// character doesn't need to walk to take specified action
+		bool noWalk = z->_flags & kFlagsNoWalk;	// check the explicit no-walk flag
+		if (_gameType == GType_BRA) {
+			// action performed on object marked for self-use do not need walk in BRA
+			noWalk |= z->_flags & kFlagsYourself;
+		}
+
+		if (noWalk) {
 			takeAction(z);
 		} else {
 			// action delayed: if Zone defined a moveto position the character is programmed to move there,
