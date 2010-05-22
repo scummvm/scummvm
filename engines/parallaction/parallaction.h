@@ -280,6 +280,7 @@ public:
 	int32			_screenWidth;
 	int32			_screenHeight;
 	int32			_screenSize;
+	int				_gameType;
 
 	// subsystems
 	Gfx				*_gfx;

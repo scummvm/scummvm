@@ -102,7 +102,8 @@ Parallaction::~Parallaction() {
 
 
 Common::Error Parallaction::init() {
-
+	
+	_gameType = getGameType();
 	_engineFlags = 0;
 	_objectsNames = NULL;
 	_globalFlagsNames = NULL;
@@ -408,7 +409,7 @@ void Parallaction::drawAnimation(AnimationPtr anim) {
 	uint16 layer = LAYER_FOREGROUND;
 	uint16 scale = 100;
 
-	switch (getGameType()) {
+	switch (_gameType) {
 	case GType_Nippon:
 		if ((anim->_flags & kFlagsNoMasked) == 0) {
 			// Layer in NS depends on where the animation is on the screen, for each animation.
@@ -523,7 +524,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 	}
 
 	// TODO: move this balloons stuff into DialogueManager and BalloonManager
-	if (getGameType() == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		if (!data->_filename.empty()) {
 			if (data->_gfxobj == 0) {
 				data->_gfxobj = _disk->loadStatic(data->_filename.c_str());
@@ -540,7 +541,7 @@ void Parallaction::enterCommentMode(ZonePtr z) {
 			_gfx->setItem(_char._talk, 190, 80);
 		}
 	} else
-	if (getGameType() == GType_BRA) {
+	if (_gameType == GType_BRA) {
 		_balloonMan->setSingleBalloon(data->_examineText.c_str(), 0, 0, 1, BalloonManager::kNormalColor);
 		_gfx->setItem(_char._talk, 10, 80);
 	}
@@ -653,14 +654,13 @@ bool Parallaction::pickupItem(ZonePtr z) {
 
 bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	// check if really a special zone
-	int gameType = getGameType();
-	if (gameType == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		// so-called special zones in NS have special x coordinates
 		if ((z->getX() != -2) && (z->getX() != -3)) {
 			return false;
 		}
 	}
-	if (gameType == GType_BRA) {
+	if (_gameType == GType_BRA) {
 		// so far, special zones in BRA are only merge zones
 		if (ACTIONTYPE(z) != kZoneMerge) {
 			return false;
@@ -691,14 +691,12 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 }
 
 bool Parallaction::checkZoneType(ZonePtr z, uint32 type) {
-	int gameType = getGameType();
-
-	if (gameType == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		if ((type == 0) && (ITEMTYPE(z) == 0))
 			return true;		
 	}
 
-	if (gameType == GType_BRA) {
+	if (_gameType == GType_BRA) {
 		if (type == 0) {
 			if (ITEMTYPE(z) == 0) {			
 				if (ACTIONTYPE(z) != kZonePath) {
@@ -731,13 +729,12 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 			return true;
 
 		// check if self-use zone (nothing to do with kFlagsSelfuse)
-		int gameType = getGameType();
-		if (gameType == GType_Nippon) {
+		if (_gameType == GType_Nippon) {
 			if (z->getX() != -1) {	// no explicit self-use flag in NS
 				return false;
 			}
 		}
-		if (gameType == GType_BRA) {
+		if (_gameType == GType_BRA) {
 			if (!(z->_flags & kFlagsYourself)) {
 				return false;
 			}
@@ -787,9 +784,6 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		}
 	}
 
-
-	int gameType = getGameType();
-
 	int16 _a, _b, _c, _d;
 	bool _ef;
 	for (AnimationList::iterator ait = _location._animations.begin(); ait != _location._animations.end(); ++ait) {
@@ -799,7 +793,7 @@ ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 		_a = (a->_flags & kFlagsActive) ? 1 : 0;	// _a: active Animation
 		
 		if (!_a) {
-			if (gameType == GType_BRA && ACTIONTYPE(a) != kZoneTrap) {
+			if (_gameType == GType_BRA && ACTIONTYPE(a) != kZoneTrap) {
 				continue;
 			}
 		}
@@ -995,7 +989,7 @@ bool CharacterName::dummy() const {
 }
 
 void Parallaction::beep() {
-	if (getGameType() == GType_Nippon) {
+	if (_gameType == GType_Nippon) {
 		_soundMan->execute(SC_SETSFXCHANNEL, 3);
 		_soundMan->execute(SC_SETSFXVOLUME, 127);
 		_soundMan->execute(SC_SETSFXLOOPING, (int32)0);
