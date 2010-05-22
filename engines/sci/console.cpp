@@ -1762,7 +1762,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
 	int vartype;
-	int idx = atoi(argv[2]);
+	int idx;
 
 	if (!vartype_pre) {
 		DebugPrintf("Invalid variable type '%c'\n", *argv[1]);
@@ -1770,6 +1770,26 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	}
 
 	vartype = vartype_pre - varabbrev;
+
+	char *endPtr = 0;
+	int idxLen = strlen(argv[2]);
+	const char *lastChar = argv[2] + idxLen - (idxLen == 0 ? 0 : 1);
+
+	if ((strncmp(argv[2], "0x", 2) == 0) || (*lastChar == 'h')) {
+		// hexadecimal number
+		idx = strtol(argv[2], &endPtr, 16);
+		if ((*endPtr != 0) && (*endPtr != 'h')) {
+			DebugPrintf("Invalid hexadecimal index '%s'\n", argv[2]);
+			return true;
+		}
+	} else {
+		// decimal number
+		idx = strtol(argv[2], &endPtr, 10);
+		if (*endPtr != 0) {
+			DebugPrintf("Invalid decimal index '%s'\n", argv[2]);
+			return true;
+		}
+	}
 
 	if (idx < 0) {
 		DebugPrintf("Invalid: negative index\n");
