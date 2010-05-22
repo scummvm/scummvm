@@ -536,12 +536,12 @@ GfxObj *Gfx::renderFloatingLabel(Font *font, char *text) {
 
 		setupLabelSurface(*cnv, w, h);
 
-		font->setColor((_vm->getGameType() == GType_BRA) ? 0 : 7);
+		font->setColor((_gameType == GType_BRA) ? 0 : 7);
 		font->drawString((byte*)cnv->pixels + 1, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + 1 + cnv->w * 2, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + cnv->w, cnv->w, text);
 		font->drawString((byte*)cnv->pixels + 2 + cnv->w, cnv->w, text);
-		font->setColor((_vm->getGameType() == GType_BRA) ? 11 : 1);
+		font->setColor((_gameType == GType_BRA) ? 11 : 1);
 		font->drawString((byte*)cnv->pixels + 1 + cnv->w, cnv->w, text);
 	} else {
 		w = font->getStringWidth(text);
@@ -833,7 +833,7 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 		// The PC version of BRA needs the entries 20-31 of the palette to be constant, but
 		// the background resource files are screwed up. The right colors come from an unused
 		// bitmap (pointer.bmp). Nothing is known about the Amiga version so far.
-		if ((_vm->getGameType() == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
+		if ((_gameType == GType_BRA) && (_vm->getPlatform() == Common::kPlatformPC)) {
 			int r, g, b;
 			for (uint i = 16; i < 32; i++) {
 				_backupPal.getEntry(i, r, g, b);
