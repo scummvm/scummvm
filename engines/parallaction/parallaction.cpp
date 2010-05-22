@@ -651,7 +651,6 @@ bool Parallaction::pickupItem(ZonePtr z) {
 	return (slot != -1);
 }
 
-// FIXME: input coordinates must be offseted to handle scrolling!
 bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	// not a special zone
 	if ((z->getX() != -2) && (z->getX() != -3)) {
@@ -681,7 +680,6 @@ bool Parallaction::checkSpecialZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	return false;
 }
 
-// FIXME: input coordinates must be offseted to handle scrolling!
 bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (z->_flags & kFlagsRemove)
 		return false;
@@ -711,7 +709,6 @@ bool Parallaction::checkZoneBox(ZonePtr z, uint32 type, uint x, uint y) {
 	return false;
 }
 
-// FIXME: input coordinates must be offseted to handle scrolling!
 bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 	if (z->_flags & kFlagsRemove)
 		return false;
@@ -739,6 +736,11 @@ bool Parallaction::checkLinkedAnimBox(ZonePtr z, uint32 type, uint x, uint y) {
 	return false;
 }
 
+/* NOTE: hitZone needs to be passed absolute game coordinates to work.
+
+   When type is kZoneMerge, then x and y are the identifiers of the objects to merge,
+   and the above requirement does not apply.
+*/
 ZonePtr Parallaction::hitZone(uint32 type, uint16 x, uint16 y) {
 	uint16 _di = y;
 	uint16 _si = x;

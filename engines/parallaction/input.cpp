@@ -352,7 +352,7 @@ bool Input::translateGameInput() {
 
 void Input::enterInventoryMode() {
 	Common::Point mousePos;
-	getCursorPos(mousePos);
+	getAbsoluteCursorPos(mousePos);
 	bool hitCharacter = _vm->hitZone(kZoneYou, mousePos.x, mousePos.y);
 
 	if (hitCharacter) {
