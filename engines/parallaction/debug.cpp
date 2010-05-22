@@ -42,6 +42,7 @@ Debugger::Debugger(Parallaction *vm)
 	DCmd_Register("zones",		WRAP_METHOD(Debugger, Cmd_Zones));
 	DCmd_Register("animations",	WRAP_METHOD(Debugger, Cmd_Animations));
 	DCmd_Register("globalflags",WRAP_METHOD(Debugger, Cmd_GlobalFlags));
+	DCmd_Register("toggleglobalflag",WRAP_METHOD(Debugger, Cmd_ToggleGlobalFlag));
 	DCmd_Register("localflags",	WRAP_METHOD(Debugger, Cmd_LocalFlags));
 	DCmd_Register("locations",	WRAP_METHOD(Debugger, Cmd_Locations));
 	DCmd_Register("gfxobjects",	WRAP_METHOD(Debugger, Cmd_GfxObjects));
@@ -113,6 +114,32 @@ bool Debugger::Cmd_GlobalFlags(int argc, const char **argv) {
 		DebugPrintf("|%-30s|   %-6s|\n", _vm->_globalFlagsNames->item(i),  value);
 	}
 	DebugPrintf("+------------------------------+---------+\n");
+
+	return true;
+}
+
+bool Debugger::Cmd_ToggleGlobalFlag(int argc, const char **argv) {
+
+	int i;
+
+	switch (argc) {
+	case 2:
+		i = _vm->_globalFlagsNames->lookup(argv[1]);
+		if (i == Table::notFound) {
+			DebugPrintf("invalid flag '%s'\n", argv[1]);
+		} else {
+			i--;
+			if ((_globalFlags & (1 << i)) == 0)
+				_globalFlags |= (1 << i);
+			else
+				_globalFlags &= ~(1 << i);
+		}
+		break;
+
+	default:
+		DebugPrintf("toggleglobalflag <flag name>\n");
+
+	}
 
 	return true;
 }
