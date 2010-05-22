@@ -205,69 +205,43 @@ Common::Language charToScummVMLanguage(const char c) {
 	}
 }
 
-#define READ_UINT16(buf) (!resMan->isSci11Mac() ? READ_LE_UINT16(buf) : READ_BE_UINT16(buf))
+#define READ_UINT16(ptr) (!resMan->isSci11Mac() ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr))
 
 // Finds the internal ID of the current game from script 0
 Common::String getSierraGameId(ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
-	uint16 curOffset = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
-	uint16 objLength = 0;
-	int objType = 0;
-	int16 exportsOffset = 0;
-	int16 magicOffset = (getSciVersion() < SCI_VERSION_1_1) ? 8 : 0;
+	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
+	Resource *heap = 0;
+	int nameSelector = 0;
+	byte *exportPtr, *heapPtr;
 
-	// TODO: SCI1.1 version
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		//if (READ_UINT16(script->data + 6) > 0)
-		//	exportsOffset = READ_UINT16(script->data + 6 + 2);
-		return "sci";
+	// Seek to the name selector of the first export
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		int extraSci0EarlyBytes = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
+		nameSelector = 3;
+		exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
+		heapPtr = script->data;
+	} else {
+		nameSelector = 5 + 3;
+		exportPtr = script->data + 4 + 2 + 2;
+		heap = resMan->findResource(ResourceId(kResourceTypeHeap, 0), false);
+		heapPtr = heap->data;
 	}
 
-	// Now find the export table of the script
+	byte *seeker = heapPtr + READ_UINT16(heapPtr + READ_UINT16(exportPtr) + nameSelector * 2);
+	char sierraId[20];
+	int i = 0;
+	byte curChar = 0;
+
 	do {
-		objType = READ_UINT16(script->data + curOffset);
-		if (!objType)
-			break;
-	
-		objLength = READ_UINT16(script->data + curOffset + 2);
-		curOffset += 4;		// skip header
+		curChar = *(seeker + i);
+		sierraId[i++] = curChar;
+	} while (curChar != 0);
 
-		switch (objType) {
-		case SCI_OBJ_EXPORTS:
-			exportsOffset = READ_UINT16(script->data + curOffset + 2);
-			break;
-		case SCI_OBJ_OBJECT:
-		case SCI_OBJ_CLASS:
-			// The game object is the first export
-			if (curOffset == exportsOffset - magicOffset) {
-				// The name selector is the third one
-				uint16 nameSelectorOffset = READ_UINT16(script->data + curOffset + magicOffset + 3 * 2);
-
-				char sierraId[20];
-				int i = 0;
-				byte curChar = 0;
-
-				do {
-					curChar = *(script->data + nameSelectorOffset + i);
-					sierraId[i++] = curChar;
-				} while (curChar != 0);
-
-				return sierraId;
-			}
-			break;
-		case SCI_OBJ_CODE:
-		case SCI_OBJ_SYNONYMS:
-		case SCI_OBJ_LOCALVARS:
-		case SCI_OBJ_POINTERS: // A relocation table
-			// Ignore
-			break;
-		}
-
-		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < script->size - 2);
-
-	return "sci";	// detection failed
+	return sierraId;
 }
+
+#undef READ_UINT16
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
