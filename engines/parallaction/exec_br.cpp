@@ -337,7 +337,7 @@ DECLARE_COMMAND_OPCODE(speak) {
 		return;
 	}
 
-	if (ACTIONTYPE(ctxt._cmd->_zone) == kZoneSpeak) {
+	if (ACTIONTYPE(ctxt._cmd->_zone) == kZoneSpeak && ctxt._cmd->_zone->u._speakDialogue) {
 		_vm->enterDialogueMode(ctxt._cmd->_zone);
 	} else {
 		_vm->_activeZone = ctxt._cmd->_zone;
