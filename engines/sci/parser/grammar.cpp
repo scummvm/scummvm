@@ -258,6 +258,11 @@ void Vocabulary::freeRuleList(ParseRuleList *list) {
 static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
 	if (!rule)
 		return list;
+	if (!rule->_data.size()) {
+		// Special case for qfg2 demo
+		warning("no rule contents on _vocab_add_rule()");
+		return list;
+	}
 
 	ParseRuleList *new_elem = new ParseRuleList(rule);
 
