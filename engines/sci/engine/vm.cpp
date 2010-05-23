@@ -1701,7 +1701,7 @@ static EngineState *_game_run(EngineState *&s) {
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 
 			script_abort_flag = 0;
-			s->restarting_flags = SCI_GAME_WAS_RESTARTED | SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
+			s->restarting_flags = SCI_GAME_WAS_RESTARTED;
 
 		} else {
 			successor = s->successor;

@@ -37,7 +37,6 @@ namespace Sci {
 
 reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 
 	s->shrinkStackToBase();
 

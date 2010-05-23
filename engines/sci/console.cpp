@@ -920,22 +920,6 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Restarts the game. There are two ways to restart a SCI game:\n");
-		DebugPrintf("%s play - calls the game object's play() method\n", argv[0]);
-		DebugPrintf("%s replay - calls the replay() methody\n", argv[0]);
-		return true;
-	}
-
-	if (!scumm_stricmp(argv[1], "play")) {
-		_engine->_gamestate->restarting_flags |= SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
-	} else if (!scumm_stricmp(argv[1], "replay")) {
-		_engine->_gamestate->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
-	} else {
-		DebugPrintf("Invalid usage of %s\n", argv[0]);
-		return true;
-	}
-
 	_engine->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
 
