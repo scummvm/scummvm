@@ -25,14 +25,14 @@
 
  // Based off ffmpeg's RPZA decoder
 
-#include "mohawk/video/rpza.h"
+#include "graphics/video/codecs/rpza.h"
 
 #include "common/system.h"
 #include "graphics/colormasks.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Graphics::Codec() {
+RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Codec() {
 	_pixelFormat = g_system->getScreenFormat();
 
 	// We need to increase the surface size to a multiple of 4
@@ -42,7 +42,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Graphics::Codec() {
 
 	debug(2, "RPZA corrected width: %d", width);
 
-	_surface = new Graphics::Surface();
+	_surface = new Surface();
 	_surface->create(width, height, _pixelFormat.bytesPerPixel);
 }
 
@@ -60,7 +60,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Graphics::Codec() {
 #define PUT_PIXEL(color) \
 	if ((int32)blockPtr < _surface->w * _surface->h) { \
 		byte r = 0, g = 0, b = 0; \
-		Graphics::colorToRGB<Graphics::ColorMasks<555> >(color, r, g, b); \
+		colorToRGB<ColorMasks<555> >(color, r, g, b); \
 		if (_pixelFormat.bytesPerPixel == 2) \
 			*((uint16 *)_surface->pixels + blockPtr) = _pixelFormat.RGBToColor(r, g, b); \
 		else \
@@ -68,7 +68,7 @@ RPZADecoder::RPZADecoder(uint16 width, uint16 height) : Graphics::Codec() {
 	} \
 	blockPtr++
 
-Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
+Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint16 colorA = 0, colorB = 0;
 	uint16 color4[4];
 
@@ -205,4 +205,4 @@ Graphics::Surface *RPZADecoder::decodeImage(Common::SeekableReadStream *stream) 
 	return _surface;
 }
 
-} // End of namespace Mohawk
+} // End of namespace Graphics

@@ -35,6 +35,7 @@
 #include "graphics/video/avi_decoder.h"
 
 // Codecs
+#include "graphics/video/codecs/cinepak.h"
 #include "graphics/video/codecs/msvideo1.h"
 #include "graphics/video/codecs/msrle.h"
 
@@ -379,6 +380,8 @@ Codec *AviDecoder::createCodec() {
 			return new MSVideo1Decoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
 		case ID_RLE :
 			return new MSRLEDecoder(_bmInfo.width, _bmInfo.height, _bmInfo.bitCount);
+		case ID_CVID:
+			return new CinepakDecoder();
 		default:
 			warning ("Unknown/Unhandled compression format \'%s\'", tag2str(_vidsHeader.streamHandler));
 	}

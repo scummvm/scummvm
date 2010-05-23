@@ -23,14 +23,17 @@
  *
  */
 
-#ifndef MOHAWK_VIDEO_QDM2_H
-#define MOHAWK_VIDEO_QDM2_H
+// Only compile if Mohawk is enabled or if we're building dynamic modules
+#if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
+
+#ifndef SOUND_QDM2_H
+#define SOUND_QDM2_H
 
 #include "sound/audiostream.h"
 #include "common/array.h"
 #include "common/stream.h"
 
-namespace Mohawk {
+namespace Audio {
 
 enum {
 	SOFTCLIP_THRESHOLD = 27600,
@@ -284,6 +287,8 @@ private:
 	int qdm2_decodeFrame(Common::SeekableReadStream *in);
 };
 
-} // End of namespace Mohawk
+} // End of namespace Audio
 
-#endif
+#endif // SOUND_QDM2_H
+
+#endif // Mohawk/Plugins guard

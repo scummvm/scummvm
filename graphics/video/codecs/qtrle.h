@@ -23,37 +23,36 @@
  *
  */
 
-#ifndef MOHAWK_JPEG_H
-#define MOHAWK_JPEG_H
+#ifndef GRAPHICS_VIDEO_QTRLE_H
+#define GRAPHICS_VIDEO_QTRLE_H
 
-#include "common/scummsys.h"
-#include "common/stream.h"
-
-#include "graphics/video/codecs/codec.h"
-#include "graphics/jpeg.h"
 #include "graphics/pixelformat.h"
+#include "graphics/video/codecs/codec.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-// Mohawk's JPEG Decoder
-// Basically a wrapper around JPEG which converts to RGB and also functions
-// as a Codec.
-
-class JPEGDecoder : public Graphics::Codec {
+class QTRLEDecoder : public Codec {
 public:
-	JPEGDecoder(bool freeSurfaceAfterUse);
-	~JPEGDecoder();
+	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
+	~QTRLEDecoder();
 
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
-	Graphics::PixelFormat _pixelFormat;
-	Graphics::JPEG *_jpeg;
-	Graphics::Surface *_surface;
-	bool _freeSurfaceAfterUse;
+	byte _bitsPerPixel;
+
+	Surface *_surface;
+	PixelFormat _pixelFormat;
+
+	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
+	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
 };
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
 
 #endif

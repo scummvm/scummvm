@@ -25,12 +25,14 @@
 
 // Based off ffmpeg's QDM2 decoder
 
-#include "mohawk/video/qdm2.h"
-#include "mohawk/video/qdm2data.h"
+#include "sound/decoders/qdm2.h"
 
+#ifdef SOUND_QDM2_H
+
+#include "sound/decoders/qdm2data.h"
 #include "common/system.h"
 
-namespace Mohawk {
+namespace Audio {
 
 // Fix compilation for non C99-compliant compilers, like MSVC
 #ifndef int64_t
@@ -3060,4 +3062,6 @@ int QDM2Stream::readBuffer(int16 *buffer, const int numSamples) {
 	return decodedSamples;
 }
 
-} // End of namespace Mohawk
+} // End of namespace Audio
+
+#endif

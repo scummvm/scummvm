@@ -27,7 +27,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/sound.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 #include "gui/message.h"
 #include "common/events.h"

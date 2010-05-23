@@ -25,9 +25,9 @@
 
 // Based off ffmpeg's SMC decoder
 
-#include "mohawk/video/smc.h"
+#include "graphics/video/codecs/smc.h"
 
-namespace Mohawk {
+namespace Graphics {
 
 #define GET_BLOCK_COUNT() \
   (opcode & 0x10) ? (1 + stream->readByte()) : 1 + (opcode & 0x0F);
@@ -382,4 +382,4 @@ Graphics::Surface *SMCDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	return _surface;
 }
 
-} // End of namespace Mohawk
+} // End of namespace Graphics

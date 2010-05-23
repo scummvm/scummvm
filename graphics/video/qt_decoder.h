@@ -31,8 +31,8 @@
 // Seek function by Gael Chardon gael.dev@4now.net
 //
 
-#ifndef MOHAWK_QT_PLAYER_H
-#define MOHAWK_QT_PLAYER_H
+#ifndef GRAPHICS_QT_DECODER_H
+#define GRAPHICS_QT_DECODER_H
 
 #include "common/scummsys.h"
 #include "common/queue.h"
@@ -47,7 +47,7 @@ namespace Common {
 	class File;
 }
 
-namespace Mohawk {
+namespace Graphics {
 
 enum ScaleMode {
 	kScaleNormal = 1,
@@ -55,10 +55,10 @@ enum ScaleMode {
 	kScaleQuarter = 4
 };
 
-class QTPlayer : public Graphics::RewindableVideoDecoder {
+class QuickTimeDecoder : public RewindableVideoDecoder {
 public:
-	QTPlayer();
-	virtual ~QTPlayer();
+	QuickTimeDecoder();
+	virtual ~QuickTimeDecoder();
 
 	/**
 	 * Returns the width of the video
@@ -104,12 +104,12 @@ public:
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
 
 	bool isVideoLoaded() const { return _fd != 0; }
-	Graphics::Surface *decodeNextFrame();
+	Surface *decodeNextFrame();
 	bool needsUpdate() const;
 	bool endOfVideo() const;
 	uint32 getElapsedTime() const;
 	uint32 getTimeToNextFrame() const;
-	Graphics::PixelFormat getPixelFormat() const;
+	PixelFormat getPixelFormat() const;
 
 	// RewindableVideoDecoder API
 	void rewind();
@@ -132,7 +132,7 @@ protected:
 
 	struct ParseTable {
 		uint32 type;
-		int (QTPlayer::*func)(MOVatom atom);
+		int (QuickTimeDecoder::*func)(MOVatom atom);
 	};
 
 	struct MOVstts {
@@ -246,13 +246,13 @@ protected:
 	uint _curAudioChunk;
 	Audio::SoundHandle _audHandle;
 
-	Graphics::Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
-	Graphics::Codec *_videoCodec;
+	Codec *createCodec(uint32 codecTag, byte bitsPerPixel);
+	Codec *_videoCodec;
 	uint32 _nextFrameStartTime;
 	int8 _videoStreamIndex;
 
-	Graphics::Surface *_scaledSurface;
-	Graphics::Surface *scaleSurface(Graphics::Surface *frame);
+	Surface *_scaledSurface;
+	Surface *scaleSurface(Surface *frame);
 	ScaleMode getScaleMode() const;
 
 	void pauseVideoIntern(bool pause);
@@ -277,6 +277,6 @@ protected:
 	int readWAVE(MOVatom atom);
 };
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
 
 #endif

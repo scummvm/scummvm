@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef CINEPAK_H
-#define CINEPAK_H
+#ifndef GRAPHICS_CINEPAK_H
+#define GRAPHICS_CINEPAK_H
 
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -34,7 +34,7 @@
 
 #include "graphics/video/codecs/codec.h"
 
-namespace Mohawk {
+namespace Graphics {
 
 struct CinepakCodebook {
 	byte y[4];
@@ -56,26 +56,26 @@ struct CinepakFrame {
 	uint16 stripCount;
 	CinepakStrip *strips;
 
-	Graphics::Surface *surface;
+	Surface *surface;
 };
 
-class CinepakDecoder : public Graphics::Codec {
+class CinepakDecoder : public Codec {
 public:
 	CinepakDecoder();
 	~CinepakDecoder();
 
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
 	CinepakFrame _curFrame;
 	int32 _y;
-	Graphics::PixelFormat _pixelFormat;
+	PixelFormat _pixelFormat;
 
 	void loadCodebook(Common::SeekableReadStream *stream, uint16 strip, byte codebookType, byte chunkID, uint32 chunkSize);
 	void decodeVectors(Common::SeekableReadStream *stream, uint16 strip, byte chunkID, uint32 chunkSize);
 };
 
-}
+} // End of namespace Graphics
 
 #endif

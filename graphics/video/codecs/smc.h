@@ -23,36 +23,37 @@
  *
  */
 
-#ifndef MOHAWK_QTRLE_H
-#define MOHAWK_QTRLE_H
+#ifndef GRAPHICS_VIDEO_SMC_H
+#define GRAPHICS_VIDEO_SMC_H
 
-#include "graphics/pixelformat.h"
 #include "graphics/video/codecs/codec.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-class QTRLEDecoder : public Graphics::Codec {
-public:
-	QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~QTRLEDecoder();
-
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
-
-private:
-	byte _bitsPerPixel;
-
-	Graphics::Surface *_surface;
-	Graphics::PixelFormat _pixelFormat;
-
-	void decode1(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode2_4(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange, byte bpp);
-	void decode8(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode16(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode24(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
-	void decode32(Common::SeekableReadStream *stream, uint32 rowPtr, uint32 linesToChange);
+enum {
+	CPAIR = 2,
+	CQUAD = 4,
+	COCTET = 8,
+	COLORS_PER_TABLE = 256
 };
 
-} // End of namespace Mohawk
+class SMCDecoder : public Codec {
+public:
+	SMCDecoder(uint16 width, uint16 height);
+	~SMCDecoder() { delete _surface; }
+
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const { return PixelFormat::createFormatCLUT8(); }
+
+private:
+	Surface *_surface;
+
+	// SMC color tables
+	byte _colorPairs[COLORS_PER_TABLE * CPAIR];
+	byte _colorQuads[COLORS_PER_TABLE * CQUAD];
+	byte _colorOctets[COLORS_PER_TABLE * COCTET];
+};
+
+} // End of namespace Graphics
 
 #endif

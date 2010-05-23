@@ -28,6 +28,10 @@
 
 #include "graphics/pixelformat.h"
 
+namespace Graphics {
+	class QuickTimeDecoder;
+}
+
 namespace Mohawk {
 
 class MohawkEngine;
@@ -44,10 +48,8 @@ struct MLSTRecord {
 	uint16 u1;
 };
 
-class QTPlayer;
-
 struct VideoEntry {
-	QTPlayer *video;
+	Graphics::QuickTimeDecoder *video;
 	uint16 x;
 	uint16 y;
 	bool loop;
@@ -55,7 +57,7 @@ struct VideoEntry {
 	uint16 id; // Riven only
 	bool enabled;
 
-	QTPlayer *operator->() const { assert(video); return video; }
+	Graphics::QuickTimeDecoder *operator->() const { assert(video); return video; }
 };
 
 typedef int32 VideoHandle;

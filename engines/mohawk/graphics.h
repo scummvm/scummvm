@@ -27,11 +27,11 @@
 #define MOHAWK_GRAPHICS_H
 
 #include "mohawk/bitmap.h"
-#include "mohawk/jpeg.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/myst_pict.h"
 
 #include "common/file.h"
+#include "graphics/video/codecs/mjpeg.h"
 
 namespace Mohawk {
 
@@ -96,8 +96,8 @@ public:
 	void loadExternalPictureFile(uint16 stack);
 	void copyImageSectionToScreen(uint16 image, Common::Rect src, Common::Rect dest);
 	void copyImageToScreen(uint16 image, Common::Rect dest);
-	void showCursor(void);
-	void hideCursor(void);
+	void showCursor();
+	void hideCursor();
 	void changeCursor(uint16);
 
 	void drawRect(Common::Rect rect, bool active);
@@ -105,7 +105,7 @@ private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
 	MystPICT *_pictDecoder;
-	JPEGDecoder *_jpegDecoder;
+	Graphics::JPEGDecoder *_jpegDecoder;
 	Graphics::PixelFormat _pixelFormat;
 
 	struct PictureFile {

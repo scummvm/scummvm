@@ -23,27 +23,27 @@
  *
  */
 
-#ifndef MOHAWK_RPZA_H
-#define MOHAWK_RPZA_H
+#ifndef GRAPHICS_VIDEO_RPZA_H
+#define GRAPHICS_VIDEO_RPZA_H
 
 #include "graphics/pixelformat.h"
 #include "graphics/video/codecs/codec.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-class RPZADecoder : public Graphics::Codec {
+class RPZADecoder : public Codec {
 public:
 	RPZADecoder(uint16 width, uint16 height);
 	~RPZADecoder() { delete _surface; }
 
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return _pixelFormat; }
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
-	Graphics::Surface *_surface;
-	Graphics::PixelFormat _pixelFormat;
+	Surface *_surface;
+	PixelFormat _pixelFormat;
 };
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
 
 #endif

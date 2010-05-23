@@ -26,7 +26,7 @@
 // QuickTime RLE Decoder
 // Based off ffmpeg's QuickTime RLE decoder (written by Mike Melanson)
 
-#include "mohawk/video/qtrle.h"
+#include "graphics/video/codecs/qtrle.h"
 
 #include "common/scummsys.h"
 #include "common/stream.h"
@@ -34,9 +34,9 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Graphics::Codec() {
+QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Codec() {
 	_bitsPerPixel = bitsPerPixel;
 	_pixelFormat = g_system->getScreenFormat();
 
@@ -47,7 +47,7 @@ QTRLEDecoder::QTRLEDecoder(uint16 width, uint16 height, byte bitsPerPixel) : Gra
 
 	debug(2, "QTRLE corrected width: %d", width);
 
-	_surface = new Graphics::Surface();
+	_surface = new Surface();
 	_surface->create(width, height, _bitsPerPixel <= 8 ? 1 : _pixelFormat.bytesPerPixel);
 }
 
@@ -239,7 +239,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 				while (rleCode--) {
 					// Convert from RGB555 to the format specified by the Overlay
 					byte r = 0, g = 0, b = 0;
-					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
+					colorToRGB<ColorMasks<555> >(rgb16, r, g, b);
 					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
 				}
 			} else {
@@ -252,7 +252,7 @@ void QTRLEDecoder::decode16(Common::SeekableReadStream *stream, uint32 rowPtr, u
 
 					// Convert from RGB555 to the format specified by the Overlay
 					byte r = 0, g = 0, b = 0;
-					Graphics::colorToRGB<Graphics::ColorMasks<555> >(rgb16, r, g, b);
+					colorToRGB<ColorMasks<555> >(rgb16, r, g, b);
 					rgb[pixelPtr++] = _pixelFormat.RGBToColor(r, g, b);
 				}
 			}
@@ -354,7 +354,7 @@ void QTRLEDecoder::decode32(Common::SeekableReadStream *stream, uint32 rowPtr, u
 	}
 }
 
-Graphics::Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
+Surface *QTRLEDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	uint16 start_line = 0;
 	uint16 height = _surface->h;
 
@@ -417,4 +417,4 @@ QTRLEDecoder::~QTRLEDecoder() {
 	_surface->free();
 }
 
-} // End of namespace Mohawk
+} // End of namespace Graphics

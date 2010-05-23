@@ -23,37 +23,36 @@
  *
  */
 
-#ifndef MOHAWK_VIDEO_SMC_H
-#define MOHAWK_VIDEO_SMC_H
+#ifndef GRAPHICS_MJPEG_H
+#define GRAPHICS_MJPEG_H
+
+#include "common/scummsys.h"
+#include "common/stream.h"
 
 #include "graphics/video/codecs/codec.h"
+#include "graphics/jpeg.h"
+#include "graphics/pixelformat.h"
 
-namespace Mohawk {
+namespace Graphics {
 
-enum {
-	CPAIR = 2,
-	CQUAD = 4,
-	COCTET = 8,
-	COLORS_PER_TABLE = 256
-};
+// Motion JPEG Decoder
+// Basically a wrapper around JPEG which converts to RGB and also functions
+// as a Codec.
 
-class SMCDecoder : public Graphics::Codec {
+class JPEGDecoder : public Codec {
 public:
-	SMCDecoder(uint16 width, uint16 height);
-	~SMCDecoder() { delete _surface; }
+	JPEGDecoder();
+	~JPEGDecoder();
 
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat::createFormatCLUT8(); }
+	Surface *decodeImage(Common::SeekableReadStream *stream);
+	PixelFormat getPixelFormat() const { return _pixelFormat; }
 
 private:
-	Graphics::Surface *_surface;
-
-	// SMC color tables
-	byte _colorPairs[COLORS_PER_TABLE * CPAIR];
-	byte _colorQuads[COLORS_PER_TABLE * CQUAD];
-	byte _colorOctets[COLORS_PER_TABLE * COCTET];
+	PixelFormat _pixelFormat;
+	JPEG *_jpeg;
+	Surface *_surface;
 };
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
 
 #endif

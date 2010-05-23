@@ -31,7 +31,7 @@
 // Seek function by Gael Chardon gael.dev@4now.net
 //
 
-#include "mohawk/video/qt_player.h"
+#include "graphics/video/qt_decoder.h"
 
 #include "common/debug.h"
 #include "common/endian.h"
@@ -41,22 +41,22 @@
 // Audio codecs
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/raw.h"
-#include "mohawk/video/qdm2.h"
+#include "sound/decoders/qdm2.h"
 
 // Video codecs
-#include "mohawk/jpeg.h"
-#include "mohawk/video/cinepak.h"
-#include "mohawk/video/qtrle.h"
-#include "mohawk/video/rpza.h"
-#include "mohawk/video/smc.h"
+#include "graphics/video/codecs/cinepak.h"
+#include "graphics/video/codecs/mjpeg.h"
+#include "graphics/video/codecs/qtrle.h"
+#include "graphics/video/codecs/rpza.h"
+#include "graphics/video/codecs/smc.h"
 
-namespace Mohawk {
+namespace Graphics {
 
 ////////////////////////////////////////////
-// QTPlayer
+// QuickTimeDecoder
 ////////////////////////////////////////////
 
-QTPlayer::QTPlayer() : Graphics::VideoDecoder() {
+QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
 	_audStream = NULL;
 	_beginOffset = 0;
 	_videoCodec = NULL;
@@ -69,53 +69,53 @@ QTPlayer::QTPlayer() : Graphics::VideoDecoder() {
 	_dirtyPalette = false;
 }
 
-QTPlayer::~QTPlayer() {
+QuickTimeDecoder::~QuickTimeDecoder() {
 	close();
 }
 
-uint16 QTPlayer::getWidth() const {
+uint16 QuickTimeDecoder::getWidth() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
 	return _streams[_videoStreamIndex]->width / getScaleMode();
 }
 
-uint16 QTPlayer::getHeight() const {
+uint16 QuickTimeDecoder::getHeight() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
 	return _streams[_videoStreamIndex]->height / getScaleMode();
 }
 
-uint32 QTPlayer::getFrameCount() const {
+uint32 QuickTimeDecoder::getFrameCount() const {
 	if (_videoStreamIndex < 0)
 		return 0;
 
 	return _streams[_videoStreamIndex]->nb_frames;
 }
 
-byte QTPlayer::getBitsPerPixel() {
+byte QuickTimeDecoder::getBitsPerPixel() {
 	if (_videoStreamIndex < 0)
 		return 0;
 
 	return _streams[_videoStreamIndex]->bits_per_sample & 0x1F;
 }
 
-uint32 QTPlayer::getCodecTag() {
+uint32 QuickTimeDecoder::getCodecTag() {
 	if (_videoStreamIndex < 0)
 		return 0;
 
 	return _streams[_videoStreamIndex]->codec_tag;
 }
 
-ScaleMode QTPlayer::getScaleMode() const {
+ScaleMode QuickTimeDecoder::getScaleMode() const {
 	if (_videoStreamIndex < 0)
 		return kScaleNormal;
 
 	return (ScaleMode)(_scaleMode * _streams[_videoStreamIndex]->scaleMode);
 }
 
-uint32 QTPlayer::getFrameDuration() {
+uint32 QuickTimeDecoder::getFrameDuration() {
 	if (_videoStreamIndex < 0)
 		return 0;
 
@@ -133,14 +133,14 @@ uint32 QTPlayer::getFrameDuration() {
 	return 0;
 }
 
-Graphics::PixelFormat QTPlayer::getPixelFormat() const {
+PixelFormat QuickTimeDecoder::getPixelFormat() const {
 	if (!_videoCodec)
-		return Graphics::PixelFormat::createFormatCLUT8();
+		return PixelFormat::createFormatCLUT8();
 
 	return _videoCodec->getPixelFormat();
 }
 
-void QTPlayer::rewind() {
+void QuickTimeDecoder::rewind() {
 	delete _videoCodec; _videoCodec = NULL;
 	_curFrame = -1;
 	_startTime = _nextFrameStartTime = 0;
@@ -154,7 +154,7 @@ void QTPlayer::rewind() {
 	startAudio();
 }
 
-Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
+Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 	if (codecTag == MKID_BE('cvid')) {
 		// Cinepak: As used by most Myst and all Riven videos as well as some Myst ME videos. "The Chief" videos also use this.
 		return new CinepakDecoder();
@@ -175,7 +175,7 @@ Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
 		warning ("Sorenson Video 3 not yet supported");
 	} else if (codecTag == MKID_BE('jpeg')) {
 		// Motion JPEG: Used by some Myst ME 10th Anniversary videos.
-		return new JPEGDecoder(true);
+		return new JPEGDecoder();
 	} else if (codecTag == MKID_BE('QkBk')) {
 		// CDToons: Used by most of the Broderbund games. This is an unknown format so far.
 		warning ("CDToons not yet supported");
@@ -186,24 +186,24 @@ Graphics::Codec *QTPlayer::createCodec(uint32 codecTag, byte bitsPerPixel) {
 	return NULL;
 }
 
-void QTPlayer::startAudio() {
+void QuickTimeDecoder::startAudio() {
 	if (_audStream) // No audio/audio not supported
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
 }
 
-void QTPlayer::stopAudio() {
+void QuickTimeDecoder::stopAudio() {
 	if (_audStream) {
 		g_system->getMixer()->stopHandle(_audHandle);
 		_audStream = NULL; // the mixer automatically frees the stream
 	}
 }
 
-void QTPlayer::pauseVideoIntern(bool pause) {
+void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 	if (_audStream)
 		g_system->getMixer()->pauseHandle(_audHandle, pause);		
 }
 
-Graphics::Surface *QTPlayer::decodeNextFrame() {
+Surface *QuickTimeDecoder::decodeNextFrame() {
 	if (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1)
 		return NULL;
 
@@ -216,7 +216,7 @@ Graphics::Surface *QTPlayer::decodeNextFrame() {
 	Common::SeekableReadStream *frameData = getNextFramePacket();
 
 	if (frameData) {
-		Graphics::Surface *frame = _videoCodec->decodeImage(frameData);
+		Surface *frame = _videoCodec->decodeImage(frameData);
 		delete frameData;
 		return scaleSurface(frame);
 	}
@@ -224,7 +224,7 @@ Graphics::Surface *QTPlayer::decodeNextFrame() {
 	return NULL;
 }
 
-Graphics::Surface *QTPlayer::scaleSurface(Graphics::Surface *frame) {
+Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
 	if (getScaleMode() == kScaleNormal)
 		return frame;
 
@@ -237,22 +237,22 @@ Graphics::Surface *QTPlayer::scaleSurface(Graphics::Surface *frame) {
 	return _scaledSurface;
 }
 
-bool QTPlayer::endOfVideo() const {
+bool QuickTimeDecoder::endOfVideo() const {
 	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1);
 }
 
-bool QTPlayer::needsUpdate() const {
+bool QuickTimeDecoder::needsUpdate() const {
 	return !endOfVideo() && getTimeToNextFrame() == 0;
 }
 
-uint32 QTPlayer::getElapsedTime() const {
+uint32 QuickTimeDecoder::getElapsedTime() const {
 	if (_audStream)
 		return g_system->getMixer()->getSoundElapsedTime(_audHandle);
 
 	return g_system->getMillis() - _startTime;
 }
 
-uint32 QTPlayer::getTimeToNextFrame() const {
+uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;
 
@@ -266,7 +266,7 @@ uint32 QTPlayer::getTimeToNextFrame() const {
 	return nextFrameStartTime - elapsedTime;
 }
 
-bool QTPlayer::load(Common::SeekableReadStream &stream) {
+bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
 	_fd = &stream;
 	_foundMOOV = _foundMDAT = false;
 	_numStreams = 0;
@@ -337,7 +337,7 @@ bool QTPlayer::load(Common::SeekableReadStream &stream) {
 
 		if (getScaleMode() != kScaleNormal) {
 			// We have to initialize the scaled surface
-			_scaledSurface = new Graphics::Surface();
+			_scaledSurface = new Surface();
 			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
 		}
 	}
@@ -345,40 +345,40 @@ bool QTPlayer::load(Common::SeekableReadStream &stream) {
 	return true;
 }
 
-void QTPlayer::initParseTable() {
+void QuickTimeDecoder::initParseTable() {
 	static const ParseTable p[] = {
-		{ MKID_BE('dinf'), &QTPlayer::readDefault },
-		{ MKID_BE('dref'), &QTPlayer::readLeaf },
-		{ MKID_BE('edts'), &QTPlayer::readDefault },
-		{ MKID_BE('elst'), &QTPlayer::readELST },
-		{ MKID_BE('hdlr'), &QTPlayer::readHDLR },
-		{ MKID_BE('mdat'), &QTPlayer::readMDAT },
-		{ MKID_BE('mdhd'), &QTPlayer::readMDHD },
-		{ MKID_BE('mdia'), &QTPlayer::readDefault },
-		{ MKID_BE('minf'), &QTPlayer::readDefault },
-		{ MKID_BE('moov'), &QTPlayer::readMOOV },
-		{ MKID_BE('mvhd'), &QTPlayer::readMVHD },
-		{ MKID_BE('smhd'), &QTPlayer::readLeaf },
-		{ MKID_BE('stbl'), &QTPlayer::readDefault },
-		{ MKID_BE('stco'), &QTPlayer::readSTCO },
-		{ MKID_BE('stsc'), &QTPlayer::readSTSC },
-		{ MKID_BE('stsd'), &QTPlayer::readSTSD },
-		{ MKID_BE('stss'), &QTPlayer::readSTSS },
-		{ MKID_BE('stsz'), &QTPlayer::readSTSZ },
-		{ MKID_BE('stts'), &QTPlayer::readSTTS },
-		{ MKID_BE('tkhd'), &QTPlayer::readTKHD },
-		{ MKID_BE('trak'), &QTPlayer::readTRAK },
-		{ MKID_BE('udta'), &QTPlayer::readLeaf },
-		{ MKID_BE('vmhd'), &QTPlayer::readLeaf },
-		{ MKID_BE('cmov'), &QTPlayer::readCMOV },
-		{ MKID_BE('wave'), &QTPlayer::readWAVE },
+		{ MKID_BE('dinf'), &QuickTimeDecoder::readDefault },
+		{ MKID_BE('dref'), &QuickTimeDecoder::readLeaf },
+		{ MKID_BE('edts'), &QuickTimeDecoder::readDefault },
+		{ MKID_BE('elst'), &QuickTimeDecoder::readELST },
+		{ MKID_BE('hdlr'), &QuickTimeDecoder::readHDLR },
+		{ MKID_BE('mdat'), &QuickTimeDecoder::readMDAT },
+		{ MKID_BE('mdhd'), &QuickTimeDecoder::readMDHD },
+		{ MKID_BE('mdia'), &QuickTimeDecoder::readDefault },
+		{ MKID_BE('minf'), &QuickTimeDecoder::readDefault },
+		{ MKID_BE('moov'), &QuickTimeDecoder::readMOOV },
+		{ MKID_BE('mvhd'), &QuickTimeDecoder::readMVHD },
+		{ MKID_BE('smhd'), &QuickTimeDecoder::readLeaf },
+		{ MKID_BE('stbl'), &QuickTimeDecoder::readDefault },
+		{ MKID_BE('stco'), &QuickTimeDecoder::readSTCO },
+		{ MKID_BE('stsc'), &QuickTimeDecoder::readSTSC },
+		{ MKID_BE('stsd'), &QuickTimeDecoder::readSTSD },
+		{ MKID_BE('stss'), &QuickTimeDecoder::readSTSS },
+		{ MKID_BE('stsz'), &QuickTimeDecoder::readSTSZ },
+		{ MKID_BE('stts'), &QuickTimeDecoder::readSTTS },
+		{ MKID_BE('tkhd'), &QuickTimeDecoder::readTKHD },
+		{ MKID_BE('trak'), &QuickTimeDecoder::readTRAK },
+		{ MKID_BE('udta'), &QuickTimeDecoder::readLeaf },
+		{ MKID_BE('vmhd'), &QuickTimeDecoder::readLeaf },
+		{ MKID_BE('cmov'), &QuickTimeDecoder::readCMOV },
+		{ MKID_BE('wave'), &QuickTimeDecoder::readWAVE },
 		{ 0, 0 }
 	};
 
 	_parseTable = p;
 }
 
-int QTPlayer::readDefault(MOVatom atom) {
+int QuickTimeDecoder::readDefault(MOVatom atom) {
 	uint32 total_size = 0;
 	MOVatom a;
 	int err = 0;
@@ -443,14 +443,14 @@ int QTPlayer::readDefault(MOVatom atom) {
 	return err;
 }
 
-int QTPlayer::readLeaf(MOVatom atom) {
+int QuickTimeDecoder::readLeaf(MOVatom atom) {
 	if (atom.size > 1)
 		_fd->seek(atom.size, SEEK_SET);
 
 	return 0;
 }
 
-int QTPlayer::readMOOV(MOVatom atom) {
+int QuickTimeDecoder::readMOOV(MOVatom atom) {
 	if (readDefault(atom) < 0)
 		return -1;
 
@@ -464,7 +464,7 @@ int QTPlayer::readMOOV(MOVatom atom) {
 	return 0; // now go for mdat
 }
 
-int QTPlayer::readCMOV(MOVatom atom) {
+int QuickTimeDecoder::readCMOV(MOVatom atom) {
 #ifdef USE_ZLIB
 	// Read in the dcom atom
 	_fd->readUint32BE();
@@ -515,7 +515,7 @@ int QTPlayer::readCMOV(MOVatom atom) {
 #endif
 }
 
-int QTPlayer::readMVHD(MOVatom atom) {
+int QuickTimeDecoder::readMVHD(MOVatom atom) {
 	byte version = _fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 
@@ -570,7 +570,7 @@ int QTPlayer::readMVHD(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readTRAK(MOVatom atom) {
+int QuickTimeDecoder::readTRAK(MOVatom atom) {
 	MOVStreamContext *sc = new MOVStreamContext();
 
 	if (!sc)
@@ -585,7 +585,7 @@ int QTPlayer::readTRAK(MOVatom atom) {
 }
 
 // this atom contains actual media data
-int QTPlayer::readMDAT(MOVatom atom) {
+int QuickTimeDecoder::readMDAT(MOVatom atom) {
 	if (atom.size == 0) // wrong one (MP4)
 		return 0;
 
@@ -602,7 +602,7 @@ int QTPlayer::readMDAT(MOVatom atom) {
 	return 0; // now go for moov
 }
 
-int QTPlayer::readTKHD(MOVatom atom) {
+int QuickTimeDecoder::readTKHD(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 	byte version = _fd->readByte();
 
@@ -662,7 +662,7 @@ int QTPlayer::readTKHD(MOVatom atom) {
 }
 
 // edit list atom
-int QTPlayer::readELST(MOVatom atom) {
+int QuickTimeDecoder::readELST(MOVatom atom) {
 	_fd->readByte(); // version
 	_fd->readByte(); _fd->readByte(); _fd->readByte(); // flags
 	uint32 editCount = _streams[_numStreams - 1]->edit_count = _fd->readUint32BE();	 // entries
@@ -681,7 +681,7 @@ int QTPlayer::readELST(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readHDLR(MOVatom atom) {
+int QuickTimeDecoder::readHDLR(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -722,7 +722,7 @@ int QTPlayer::readHDLR(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readMDHD(MOVatom atom) {
+int QuickTimeDecoder::readMDHD(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 	byte version = _fd->readByte();
 
@@ -749,7 +749,7 @@ int QTPlayer::readMDHD(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readSTSD(MOVatom atom) {
+int QuickTimeDecoder::readSTSD(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -934,7 +934,7 @@ int QTPlayer::readSTSD(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readSTSC(MOVatom atom) {
+int QuickTimeDecoder::readSTSC(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -959,7 +959,7 @@ int QTPlayer::readSTSC(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readSTSS(MOVatom atom) {
+int QuickTimeDecoder::readSTSS(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -982,7 +982,7 @@ int QTPlayer::readSTSS(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readSTSZ(MOVatom atom) {
+int QuickTimeDecoder::readSTSZ(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -1014,7 +1014,7 @@ static uint32 ff_gcd(uint32 a, uint32 b) {
 	else  return a;
 }
 
-int QTPlayer::readSTTS(MOVatom atom) {
+int QuickTimeDecoder::readSTTS(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 	uint32 duration = 0;
 	uint32 total_sample_count = 0;
@@ -1054,7 +1054,7 @@ int QTPlayer::readSTTS(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readSTCO(MOVatom atom) {
+int QuickTimeDecoder::readSTCO(MOVatom atom) {
 	MOVStreamContext *st = _streams[_numStreams - 1];
 
 	_fd->readByte(); // version
@@ -1088,7 +1088,7 @@ int QTPlayer::readSTCO(MOVatom atom) {
 	return 0;
 }
 
-int QTPlayer::readWAVE(MOVatom atom) {
+int QuickTimeDecoder::readWAVE(MOVatom atom) {
 	if (_numStreams < 1)
 		return 0;
 
@@ -1107,7 +1107,7 @@ int QTPlayer::readWAVE(MOVatom atom) {
 	return 0;
 }
 
-void QTPlayer::close() {
+void QuickTimeDecoder::close() {
 	stopAudio();
 
 	delete _videoCodec; _videoCodec = 0;
@@ -1126,10 +1126,10 @@ void QTPlayer::close() {
 	// The audio stream is deleted automatically
 	_audStream = NULL;
 
-	Graphics::VideoDecoder::reset();
+	VideoDecoder::reset();
 }
 
-Common::SeekableReadStream *QTPlayer::getNextFramePacket() {
+Common::SeekableReadStream *QuickTimeDecoder::getNextFramePacket() {
 	if (_videoStreamIndex < 0)
 		return NULL;
 
@@ -1182,17 +1182,22 @@ Common::SeekableReadStream *QTPlayer::getNextFramePacket() {
 	return _fd->readStream(_streams[_videoStreamIndex]->sample_sizes[getCurFrame()]);
 }
 
-bool QTPlayer::checkAudioCodecSupport(uint32 tag) {
+bool QuickTimeDecoder::checkAudioCodecSupport(uint32 tag) {
 	// Check if the codec is a supported codec
-	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4') || tag == MKID_BE('QDM2'))
+	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
 		return true;
+
+#ifdef SOUND_QDM2_H
+	if (tag == MKID_BE('QDM2'))
+		return true;
+#endif
 
 	warning("Audio Codec Not Supported: \'%s\'", tag2str(tag));
 
 	return false;
 }
 
-Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stream) {
+Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStream *stream) {
 	if (!stream || _audioStreamIndex < 0)
 		return NULL;
 
@@ -1213,9 +1218,11 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);
+#ifdef SOUND_QDM2_H
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('QDM2')) {
 		// Several Myst ME videos use this codec
-		return new QDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
+		return new Audio::QDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
+#endif
 	}
 
 	error("Unsupported audio codec");
@@ -1223,12 +1230,12 @@ Audio::AudioStream *QTPlayer::createAudioStream(Common::SeekableReadStream *stre
 	return NULL;
 }
 
-void QTPlayer::updateAudioBuffer() {
+void QuickTimeDecoder::updateAudioBuffer() {
 	if (!_audStream)
 		return;
 
-	// Keep two streams in buffer so that when the first ends, it goes right into the next
-	for (; _audStream->numQueuedStreams() < 2 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
+	// Keep three streams in buffer so that if/when the first two end, it goes right into the next
+	for (; _audStream->numQueuedStreams() < 3 && _curAudioChunk < _streams[_audioStreamIndex]->chunk_count; _curAudioChunk++) {
 		Common::MemoryWriteStreamDynamic *wStream = new Common::MemoryWriteStreamDynamic();
 
 		_fd->seek(_streams[_audioStreamIndex]->chunk_offsets[_curAudioChunk]);
@@ -1269,4 +1276,4 @@ void QTPlayer::updateAudioBuffer() {
 	}
 }
 
-} // End of namespace Mohawk
+} // End of namespace Graphics

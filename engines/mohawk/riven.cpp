@@ -33,7 +33,7 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 namespace Mohawk {
 

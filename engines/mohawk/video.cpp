@@ -24,10 +24,10 @@
  */
 
 #include "mohawk/resource.h"
-#include "mohawk/video/video.h"
-#include "mohawk/video/qt_player.h"
+#include "mohawk/video.h"
 
 #include "common/events.h"
+#include "graphics/video/qt_decoder.h"
 
 namespace Mohawk {
 
@@ -316,7 +316,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 
 	// Otherwise, create a new entry
 	VideoEntry entry;
-	entry.video = new QTPlayer();
+	entry.video = new Graphics::QuickTimeDecoder();
 	entry.x = x;
 	entry.y = y;
 	entry.filename = "";
@@ -346,7 +346,7 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 
 	// Otherwise, create a new entry
 	VideoEntry entry;
-	entry.video = new QTPlayer();
+	entry.video = new Graphics::QuickTimeDecoder();
 	entry.x = x;
 	entry.y = y;
 	entry.filename = filename;

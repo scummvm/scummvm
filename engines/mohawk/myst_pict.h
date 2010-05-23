@@ -32,18 +32,18 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-#include "mohawk/jpeg.h"
+#include "graphics/video/codecs/mjpeg.h"
 
 namespace Mohawk {
 
 class MystPICT {
 public:
-	MystPICT(JPEGDecoder *jpegDecoder);
+	MystPICT(Graphics::JPEGDecoder *jpegDecoder);
 	~MystPICT() {}
 	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
 
 private:
-	JPEGDecoder *_jpegDecoder;
+	Graphics::JPEGDecoder *_jpegDecoder;
 	Common::Rect _imageRect;
 	Graphics::PixelFormat _pixelFormat;
 

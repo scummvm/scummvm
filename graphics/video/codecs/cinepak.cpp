@@ -23,32 +23,33 @@
  *
  */
 
-#include "mohawk/video/cinepak.h"
+#include "graphics/video/codecs/cinepak.h"
 
 #include "common/system.h"
-#include "graphics/conversion.h" // For YUV2RGB
 
 // Code here partially based off of ffmpeg ;)
 
-namespace Mohawk {
+namespace Graphics {
+
+// Convert a color from YUV to RGB colorspace, Cinepak style.
+inline static void CPYUV2RGB(byte y, byte u, byte v, byte &r, byte &g, byte &b) {
+	r = CLIP<int>(y + 2 * (v - 128), 0, 255);
+	g = CLIP<int>(y - (u - 128) / 2 - (v - 128), 0, 255);
+	b = CLIP<int>(y + 2 * (u - 128), 0, 255);
+}
 
 #define PUT_PIXEL(offset, lum, u, v) \
-	Graphics::CPYUV2RGB(lum, u, v, r, g, b); \
+	CPYUV2RGB(lum, u, v, r, g, b); \
 	if (_pixelFormat.bytesPerPixel == 2) \
 		*((uint16 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b); \
 	else \
 		*((uint32 *)_curFrame.surface->pixels + offset) = _pixelFormat.RGBToColor(r, g, b)
 
-CinepakDecoder::CinepakDecoder() : Graphics::Codec() {
+CinepakDecoder::CinepakDecoder() : Codec() {
 	_curFrame.surface = NULL;
 	_curFrame.strips = NULL;
 	_y = 0;
 	_pixelFormat = g_system->getScreenFormat();
-
-	// We're going to have to dither if we're running in 8bpp.
-	// We'll take RGBA8888 for best color performance in this case.
-	if (_pixelFormat.bytesPerPixel == 1)
-		_pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 }
 
 CinepakDecoder::~CinepakDecoder() {
@@ -57,7 +58,7 @@ CinepakDecoder::~CinepakDecoder() {
 	delete[] _curFrame.strips;
 }
 
-Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
+Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *stream) {
 	_curFrame.flags = stream->readByte();
 	_curFrame.length = (stream->readByte() << 16) + stream->readUint16BE();
 	_curFrame.width = stream->readUint16BE();
@@ -79,7 +80,7 @@ Graphics::Surface *CinepakDecoder::decodeImage(Common::SeekableReadStream *strea
 #endif
 
 	if (!_curFrame.surface) {
-		_curFrame.surface = new Graphics::Surface();
+		_curFrame.surface = new Surface();
 		_curFrame.surface->create(_curFrame.width, _curFrame.height, _pixelFormat.bytesPerPixel);
 	}
 
@@ -283,4 +284,4 @@ void CinepakDecoder::decodeVectors(Common::SeekableReadStream *stream, uint16 st
 	}
 }
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
