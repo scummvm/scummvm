@@ -1221,7 +1221,7 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 #ifdef SOUND_QDM2_H
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('QDM2')) {
 		// Several Myst ME videos use this codec
-		return new Audio::QDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
+		return Audio::makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 #endif
 	}
 
