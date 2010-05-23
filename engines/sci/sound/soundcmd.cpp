@@ -1058,8 +1058,11 @@ void SoundCommandParser::updateSci0Cues() {
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
 		// this sound, as SCI0 only allows one active song
-		if  (((*i)->isQueued) && (!pWaitingForPlay)) {
+		if  ((*i)->isQueued) {
 			pWaitingForPlay = (*i);
+			// FIXME (?) - in iceman 2 songs are queued when playing the door sound - if we use the first song for resuming
+			//              then it's the wrong one. Both songs have same priority. Maybe the new sound function in sci0
+			//              is somehow responsible
 			continue;
 		}
 		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
