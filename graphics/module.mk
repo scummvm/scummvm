@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	video/codecs/mjpeg.o \
 	video/codecs/msrle.o \
 	video/codecs/msvideo1.o \
+	video/codecs/qdm2.o \
 	video/codecs/qtrle.o \
 	video/codecs/rpza.o \
 	video/codecs/smc.o \

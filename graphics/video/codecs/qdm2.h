@@ -26,8 +26,8 @@
 // Only compile if Mohawk is enabled or if we're building dynamic modules
 #if defined(ENABLE_MOHAWK) || defined(DYNAMIC_MODULES)
 
-#ifndef SOUND_QDM2_H
-#define SOUND_QDM2_H
+#ifndef GRAPHICS_QDM2_H
+#define GRAPHICS_QDM2_H
 
 namespace Common {
 	class SeekableReadStream;
@@ -35,6 +35,9 @@ namespace Common {
 
 namespace Audio {
 	class AudioStream;
+}
+
+namespace Graphics {
 
 /**
  * Create a new AudioStream from the QDM2 data in the given stream.
@@ -43,9 +46,9 @@ namespace Audio {
  * @param extraData    the QuickTime extra data stream
  * @return   a new AudioStream, or NULL, if an error occured
  */
-AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
+Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
 
-} // End of namespace Audio
+} // End of namespace Graphics
 
-#endif // SOUND_QDM2_H
+#endif // GRAPHICS_QDM2_H
 #endif // Mohawk/Plugins guard

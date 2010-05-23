@@ -25,18 +25,18 @@
 
 // Based off ffmpeg's QDM2 decoder
 
-#include "sound/decoders/qdm2.h"
+#include "graphics/video/codecs/qdm2.h"
 
-#ifdef SOUND_QDM2_H
+#ifdef GRAPHICS_QDM2_H
 
 #include "sound/audiostream.h"
-#include "sound/decoders/qdm2data.h"
+#include "graphics/video/codecs/qdm2data.h"
 
 #include "common/array.h"
 #include "common/stream.h"
 #include "common/system.h"
 
-namespace Audio {
+namespace Graphics {
 
 enum {
 	SOFTCLIP_THRESHOLD = 27600,
@@ -3318,10 +3318,10 @@ int QDM2Stream::readBuffer(int16 *buffer, const int numSamples) {
 	return decodedSamples;
 }
 
-AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
+Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData) {
 	return new QDM2Stream(stream, extraData);
 }
 
-} // End of namespace Audio
+} // End of namespace Graphics
 
 #endif

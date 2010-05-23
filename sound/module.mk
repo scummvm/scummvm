@@ -18,7 +18,6 @@ MODULE_OBJS := \
 	decoders/flac.o \
 	decoders/iff_sound.o \
 	decoders/mp3.o \
-	decoders/qdm2.o \
 	decoders/raw.o \
 	decoders/vag.o \
 	decoders/voc.o \

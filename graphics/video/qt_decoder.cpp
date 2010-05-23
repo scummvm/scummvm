@@ -41,7 +41,7 @@
 // Audio codecs
 #include "sound/decoders/adpcm.h"
 #include "sound/decoders/raw.h"
-#include "sound/decoders/qdm2.h"
+#include "graphics/video/codecs/qdm2.h"
 
 // Video codecs
 #include "graphics/video/codecs/cinepak.h"
@@ -1187,7 +1187,7 @@ bool QuickTimeDecoder::checkAudioCodecSupport(uint32 tag) {
 	if (tag == MKID_BE('twos') || tag == MKID_BE('raw ') || tag == MKID_BE('ima4'))
 		return true;
 
-#ifdef SOUND_QDM2_H
+#ifdef GRAPHICS_QDM2_H
 	if (tag == MKID_BE('QDM2'))
 		return true;
 #endif
@@ -1218,10 +1218,10 @@ Audio::AudioStream *QuickTimeDecoder::createAudioStream(Common::SeekableReadStre
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('ima4')) {
 		// Riven uses this codec (as do some Myst ME videos)
 		return Audio::makeADPCMStream(stream, DisposeAfterUse::YES, stream->size(), Audio::kADPCMApple, _streams[_audioStreamIndex]->sample_rate, _streams[_audioStreamIndex]->channels, 34);
-#ifdef SOUND_QDM2_H
+#ifdef GRAPHICS_QDM2_H
 	} else if (_streams[_audioStreamIndex]->codec_tag == MKID_BE('QDM2')) {
 		// Several Myst ME videos use this codec
-		return Audio::makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
+		return makeQDM2Stream(stream, _streams[_audioStreamIndex]->extradata);
 #endif
 	}
 
