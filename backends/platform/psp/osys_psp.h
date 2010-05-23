@@ -38,6 +38,7 @@
 #include "backends/platform/psp/pspkeyboard.h"
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/input.h"
+#include "backends/platform/psp/audio.h"
 
 #include <SDL.h>
 
@@ -55,6 +56,7 @@ private:
 	DisplayManager _displayManager;
 	PSPKeyboard _keyboard;
 	InputHandler _inputHandler;
+	PspAudio _audio;
 
 	void initSDL();
 

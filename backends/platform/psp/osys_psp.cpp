@@ -48,6 +48,7 @@
 
 #include "backends/platform/psp/trace.h"
 
+#define USE_PSP_AUDIO
 
 #define	SAMPLES_PER_SEC	44100
 
@@ -58,7 +59,11 @@ static int timer_handler(int t) {
 }
 
 void OSystem_PSP::initSDL() {
+#ifdef USE_PSP_AUDIO
+	SDL_Init(SDL_INIT_TIMER);
+#else
 	SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER);
+#endif
 }
 
 OSystem_PSP::~OSystem_PSP() {}
@@ -331,8 +336,6 @@ void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {
 }
 
 void OSystem_PSP::setupMixer(void) {
-	SDL_AudioSpec desired;
-	SDL_AudioSpec obtained;
 
 	// Determine the desired output sampling frequency.
 	uint32 samplesPerSec = 0;
@@ -349,6 +352,22 @@ void OSystem_PSP::setupMixer(void) {
 	while (samples * 16 > samplesPerSec * 2)
 		samples >>= 1;
 
+	assert(!_mixer);
+
+#ifdef USE_PSP_AUDIO
+	if (!_audio.open(samplesPerSec, 2, samples, mixCallback, this)) {
+		PSP_ERROR("failed to open audio\n");
+		return;
+	}
+	samplesPerSec = _audio.getFrequency();	// may have been changed by audio system
+	_mixer = new Audio::MixerImpl(this, samplesPerSec);
+	assert(_mixer);
+	_mixer->setReady(true);
+	_audio.unpause();
+#else
+	SDL_AudioSpec obtained;
+	SDL_AudioSpec desired;
+
 	memset(&desired, 0, sizeof(desired));
 	desired.freq = samplesPerSec;
 	desired.format = AUDIO_S16SYS;
@@ -356,8 +375,7 @@ void OSystem_PSP::setupMixer(void) {
 	desired.samples = samples;
 	desired.callback = mixCallback;
 	desired.userdata = this;
-
-	assert(!_mixer);
+	
 	if (SDL_OpenAudio(&desired, &obtained) != 0) {
 		warning("Could not open audio: %s", SDL_GetError());
 		_mixer = new Audio::MixerImpl(this, samplesPerSec);
@@ -376,10 +394,15 @@ void OSystem_PSP::setupMixer(void) {
 
 		SDL_PauseAudio(0);
 	}
+#endif /* USE_PSP_AUDIO */
 }
 
 void OSystem_PSP::quit() {
+#ifdef USE_PSP_AUDIO
+	_audio.close();
+#else
 	SDL_CloseAudio();
+#endif
 	SDL_Quit();
 	sceKernelExitGame();
 }
