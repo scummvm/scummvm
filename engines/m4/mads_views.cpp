@@ -43,13 +43,23 @@ static const int SCROLLER_DELAY = 200;
 
 //--------------------------------------------------------------------------
 
-MadsSpriteSlots::MadsSpriteSlots() {
+MadsSpriteSlots::MadsSpriteSlots(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < SPRITE_SLOTS_SIZE; ++i) {
 		MadsSpriteSlot rec;
 		_entries.push_back(rec);
 	}
 
 	startIndex = 0;
+}
+
+void MadsSpriteSlots::clear() {
+	_owner._textDisplay.clear();
+	_sprites.clear();
+
+	// Reset the sprite slots list back to a single entry for a full screen refresh
+	startIndex = 1;
+	_entries[0].spriteType = FULL_SCREEN_REFRESH;
+	_entries[0].timerIndex = -1;
 }
 
 int MadsSpriteSlots::getIndex() {
@@ -77,7 +87,7 @@ int MadsSpriteSlots::addSprites(const char *resName) {
 void MadsSpriteSlots::deleteTimer(int timerIndex) {
 	for (int idx = 0; idx < startIndex; ++idx) {
 		if (_entries[idx].timerIndex == timerIndex)
-			_entries[idx].spriteId = -1;
+			_entries[idx].spriteType = -1;
 	}
 }
 
@@ -95,12 +105,49 @@ bool sortHelper(const DepthEntry &entry1, const DepthEntry &entry2) {
 
 typedef Common::List<DepthEntry> DepthList;
 
-void MadsSpriteSlots::draw(View *view) {
+void MadsSpriteSlots::drawBackground() {
+	// Draw all active sprites onto the background surface
+	for (int i = 0; i < startIndex; ++i) {
+		if (_entries[i].spriteType >= 0) {
+			_owner._dirtyAreas[i].active = false;
+		} else {
+			_owner._dirtyAreas[i].textActive = true;
+			_owner._dirtyAreas.setSpriteSlot(i, _entries[i]);
+
+			if (_entries[i].spriteType == BACKGROUND_SPRITE) {
+				SpriteAsset &spriteSet = getSprite(_entries[i].spriteListIndex);
+				M4Sprite *frame = spriteSet.getFrame((_entries[i].frameNumber & 0x7fff) - 1);
+				int xp = _entries[i].xp;
+				int yp = _entries[i].yp;
+
+				if (_entries[i].scale != -1) {
+					// Adjust position based on frame size
+					xp -= frame->width() / 2;
+					yp -= frame->height() / 2;
+				}
+
+				if (_entries[i].depth <= 1) {
+					// No depth, so simply copy the frame onto the background
+					frame->copyTo(_owner._bgSurface, xp, yp);
+				} else {
+					// Depth was specified, so draw frame using scene's depth information
+					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100);
+				}
+			}
+		}
+	}
+
+	// Flag any remaining dirty areas as inactive
+	for (uint i = startIndex; i < DIRTY_AREAS_TEXT_DISPLAY_IDX; ++i)
+		_owner._dirtyAreas[i].active = false;
+}
+
+void MadsSpriteSlots::drawForeground(View *view) {
 	DepthList depthList;
 
 	// Get a list of sprite object depths for active objects
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteId >= 0) {
+		if (_entries[i].spriteType >= 0) {
 			DepthEntry rec(_entries[i].depth, i);
 			depthList.push_back(rec);
 		}
@@ -121,24 +168,37 @@ void MadsSpriteSlots::draw(View *view) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
-			spr->draw1(view, slot.scale, slot.depth, slot.xp, slot.yp);
+			spr->copyTo(view, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 0);
 		} else {
 			int xp, yp;
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
 
 			if (slot.scale == -1) {
-				xp = slot.xp; // - widthAdjust;
-				yp = slot.yp; // - heightAdjust;
+				xp = slot.xp - _owner._posAdjust.x;
+				yp = slot.yp - _owner._posAdjust.y;
 			} else {
-				xp = slot.xp - (spr->width() / 2); // - widthAdjust;
-				yp = slot.yp - spr->height() + 1; // - heightAdjust;
+				xp = slot.xp - (spr->width() / 2) - _owner._posAdjust.x;
+				yp = slot.yp - spr->height() - _owner._posAdjust.y + 1;
 			}
 
 			if (slot.depth > 1) {
-				spr->draw2(view, slot.depth, xp, yp);
+				// Draw the frame with depth processing
+				spr->copyTo(view, xp, yp, slot.depth, _owner._depthSurface, 100, 0);
 			} else {
-				spr->draw3(view, xp, yp);
+				// No depth, so simply draw the image
+				spr->copyTo(view, xp, yp, 0);
 			}
+		}
+	}
+}
+
+void MadsSpriteSlots::setDirtyAreas() {
+	for (int i = 0; i < startIndex; ++i) {
+		if (_entries[i].spriteType >= 0) {
+			_owner._dirtyAreas.setSpriteSlot(i, _entries[i]);
+
+			_owner._dirtyAreas[i].textActive = (_entries[i].spriteType <= 0) ? 0 : 1;
+			_entries[i].spriteType = 0;
 		}
 	}
 }
@@ -150,7 +210,7 @@ void MadsSpriteSlots::cleanUp() {
 	// Delete any entries that aren't needed
 	int idx = 0;
 	while (idx < startIndex) {
-		if (_entries[idx].spriteId >= 0) {
+		if (_entries[idx].spriteType < 0) {
 			_entries.remove_at(idx);
 			--startIndex;
 		} else {
@@ -168,7 +228,7 @@ void MadsSpriteSlots::cleanUp() {
 
 //--------------------------------------------------------------------------
 
-MadsTextDisplay::MadsTextDisplay() {
+MadsTextDisplay::MadsTextDisplay(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
 		MadsTextDisplayEntry rec;
 		rec.active = false;
@@ -204,6 +264,28 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 	}
 
 	return usedSlot;
+}
+
+void MadsTextDisplay::setDirtyAreas() {
+	// Determine dirty areas for active text areas
+	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
+		if ((_entries[idx].expire < 0) || !_entries[idx].active)
+			_owner._dirtyAreas[dirtyIdx].active = false;
+		else {
+			_owner._dirtyAreas[dirtyIdx].textActive = true;
+			_owner._dirtyAreas.setTextDisplay(dirtyIdx, _entries[idx]);
+		}
+	}
+}
+
+void MadsTextDisplay::setDirtyAreas2() {
+	// Determine dirty areas for active text areas
+	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
+		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
+			_owner._dirtyAreas.setTextDisplay(dirtyIdx, _entries[idx]);
+			_owner._dirtyAreas[dirtyIdx].textActive = (_entries[idx].expire <= 0) ? 0 : 1;
+		}
+	}
 }
 
 void MadsTextDisplay::draw(View *view) {
@@ -405,21 +487,23 @@ MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < DYNAMIC_HOTSPOTS_SIZE; ++i) {
 		DynamicHotspot rec;
 		rec.active = false;
+		_entries.push_back(rec);
 	}
 	_flag = true;
 	_count = 0;
 }
 
-int MadsDynamicHotspots::add(int descId, int field14, int timerIndex, const Common::Rect &bounds) {
+int MadsDynamicHotspots::add(int descId, int field14, int seqIndex, const Common::Rect &bounds) {
 	// Find a free slot
 	uint idx = 0;
-	while ((idx < _entries.size()) && !_entries[idx].active)
+	while ((idx < _entries.size()) && _entries[idx].active)
 		++idx;
 	if (idx == _entries.size())
 		error("MadsDynamicHotspots overflow");
 
 	_entries[idx].active = true;
 	_entries[idx].descId = descId;
+	_entries[idx].seqIndex = seqIndex;
 	_entries[idx].bounds = bounds;
 	_entries[idx].pos.x = -3;
 	_entries[idx].pos.y = 0;
@@ -430,7 +514,9 @@ int MadsDynamicHotspots::add(int descId, int field14, int timerIndex, const Comm
 
 	++_count;
 	_flag = true;
-	_owner._sequenceList[timerIndex].dynamicHotspotIndex = idx;
+
+	if (seqIndex >= 0)
+		_owner._sequenceList[seqIndex].dynamicHotspotIndex = idx;
 
 	return idx;
 }
@@ -454,8 +540,8 @@ int MadsDynamicHotspots::set17(int index, int v) {
 
 void MadsDynamicHotspots::remove(int index) {
 	if (_entries[index].active) {
-		if (_entries[index].timerIndex >= 0)
-			_owner._sequenceList[_entries[index].timerIndex].dynamicHotspotIndex = -1;
+		if (_entries[index].seqIndex >= 0)
+			_owner._sequenceList[_entries[index].seqIndex].dynamicHotspotIndex = -1;
 		_entries[index].active = false;
 
 		--_count;
@@ -469,6 +555,143 @@ void MadsDynamicHotspots::reset() {
 
 	_count = 0;
 	_flag = false;
+}
+
+/*--------------------------------------------------------------------------*/
+
+void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) {
+	if (bounds.left % 2) {
+		--bounds.left;
+		++width;
+	}
+	int right = bounds.left + width;
+	if (bounds.left < 0)
+		bounds.left = 0;
+	if (right < 0)
+		right = 0;
+	if (right > maxWidth)
+		right = maxWidth;
+
+	bounds.right = right;
+	bounds2.left = bounds.width() / 2;
+	bounds2.right = bounds.left + (bounds.width() + 1) / 2 - 1;
+
+	if (bounds.top < 0)
+		bounds.top = 0;
+	int bottom = bounds.top + height;
+	if (bottom < 0)
+		bottom = 0;
+	if (bottom > maxHeight)
+		bottom = maxHeight;
+
+	bounds.bottom = bottom;
+	bounds2.top = bounds.height() / 2;
+	bounds2.bottom = bounds.top + (bounds.height() + 1) / 2 - 1;
+
+	active = true;
+}
+
+/*--------------------------------------------------------------------------*/
+
+MadsDirtyAreas::MadsDirtyAreas(MadsView &owner): _owner(owner) {
+	for (int i = 0; i < DIRTY_AREAS_SIZE; ++i) {
+		MadsDirtyArea rec;
+		rec.active = false;
+		_entries.push_back(rec);
+	}
+}
+
+void MadsDirtyAreas::setSpriteSlot(int dirtyIdx, const MadsSpriteSlot &spriteSlot) {
+	int width, height;
+	MadsDirtyArea &dirtyArea = _entries[dirtyIdx];
+
+	if (spriteSlot.spriteType == FULL_SCREEN_REFRESH) {
+		// Special entry to refresh the entire screen
+		dirtyArea.bounds.left = 0;
+		dirtyArea.bounds.top = 0;
+		width = MADS_SURFACE_WIDTH;
+		height = MADS_SURFACE_HEIGHT;
+	} else {
+		// Standard sprite slots
+		dirtyArea.bounds.left = spriteSlot.xp - _owner._posAdjust.x;
+		dirtyArea.bounds.top = spriteSlot.yp - _owner._posAdjust.y;
+
+		SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(spriteSlot.spriteListIndex);
+		M4Sprite *frame = spriteSet.getFrame(((spriteSlot.frameNumber & 0x7fff) - 1) & 0x7f);
+		
+		if (spriteSlot.scale == -1) {
+			width = frame->width();
+			height = frame->height();
+		} else {
+			width = frame->width() * spriteSlot.scale / 100;
+			height = frame->height() * spriteSlot.scale / 100;
+
+			dirtyArea.bounds.left -= width / 2;
+			dirtyArea.bounds.top += -(height - 1);
+		}
+	}
+
+	dirtyArea.setArea(width, height, MADS_SURFACE_WIDTH, MADS_SURFACE_HEIGHT);
+}
+
+void MadsDirtyAreas::setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &textDisplay) {
+	MadsDirtyArea &dirtyArea = _entries[dirtyIdx];
+	dirtyArea.bounds.left = textDisplay.bounds.left;
+	dirtyArea.bounds.top = textDisplay.bounds.top;
+
+	dirtyArea.setArea(textDisplay.bounds.width(), textDisplay.bounds.height(), MADS_SURFACE_WIDTH, MADS_SURFACE_HEIGHT);
+}
+
+/**
+ * Merge together any designated dirty areas that overlap
+ * @param startIndex	1-based starting dirty area starting index
+ * @param count			Number of entries to process
+ */
+void MadsDirtyAreas::merge(int startIndex, int count) {
+	if (startIndex >= count)
+		return;
+
+	for (int outerCtr = startIndex - 1, idx = 0; idx < count; ++outerCtr, ++idx) {
+		if (!_entries[outerCtr].active)
+			continue;
+
+		for (int innerCtr = outerCtr + 1; innerCtr < count; ++innerCtr) {
+			if (!_entries[innerCtr].active || !intersects(outerCtr, innerCtr))
+				continue;
+
+			if (_entries[outerCtr].textActive && _entries[innerCtr].textActive)
+				mergeAreas(outerCtr, innerCtr);
+		}
+	}
+}
+
+/**
+ * Returns true if two dirty areas intersect
+ */
+bool MadsDirtyAreas::intersects(int idx1, int idx2) {
+	return _entries[idx1].bounds2.intersects(_entries[idx2].bounds2);
+}
+
+void MadsDirtyAreas::mergeAreas(int idx1, int idx2) {
+	MadsDirtyArea &da1 = _entries[idx1];
+	MadsDirtyArea &da2 = _entries[idx2];
+
+	da1.bounds.extend(da2.bounds);
+
+	da1.bounds2.left = da1.bounds.width() / 2;
+	da1.bounds2.right = da1.bounds.left + (da1.bounds.width() + 1) / 2 - 1;
+	da1.bounds2.top = da1.bounds.height() / 2;
+	da1.bounds2.bottom = da1.bounds.top + (da1.bounds.height() + 1) / 2 - 1;
+
+	da2.active = false;
+	da1.textActive = true;
+}
+
+void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src) {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (_entries[i].active && _entries[i].bounds.isValidRect())
+			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top);
+	}
 }
 
 /*--------------------------------------------------------------------------*/
@@ -565,8 +788,7 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 	MadsSequenceEntry &timerEntry = _entries[timerIndex];
 	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
-	// TODO: Figure out logic for spriteId value based on SPRITE_SLOT.field_0
-	spriteSlot.spriteId = (0 /*field 0*/ == 1) ? -4 : 1;
+	spriteSlot.spriteType = sprite.getAssetType() == 1 ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 	spriteSlot.timerIndex = timerIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
 	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
@@ -727,10 +949,44 @@ void MadsSequenceList::delay(uint32 v1, uint32 v2) {
 	}
 }
 
+void MadsSequenceList::setAnimRange(int timerIndex, int startVal, int endVal) {
+	MadsSequenceEntry &seqEntry = _entries[timerIndex];
+	SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
+	int numSprites = spriteSet.getCount();
+	int tempStart = startVal, tempEnd = endVal;
+
+	switch (startVal) {
+	case -2:
+		tempStart = numSprites;
+		break;
+	case -1:
+		tempStart = 1;
+		break;
+	}
+	
+	switch (endVal) {
+	case -2:
+	case 0:
+		tempEnd = numSprites;
+		break;
+	case -1:
+		tempEnd = 1;
+		break;
+	default:
+		tempEnd = numSprites;
+		break;
+	}
+
+	seqEntry.frameStart = tempStart;
+	seqEntry.numSprites = tempEnd;
+
+	seqEntry.frameIndex = (seqEntry.frameInc < 0) ? tempStart : tempEnd;
+}
+
 //--------------------------------------------------------------------------
 
 MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
-		_kernelMessages(*this) {
+		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
 	_textSpacing = -1;
 	_ticksAmount = 3;
 	_newTimeout = 0;
@@ -738,11 +994,31 @@ MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceL
 	_abortTimers2 = 0;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
+	
+	_depthSurface = NULL;
+	_bgSurface = NULL;
 }
 
 void MadsView::refresh() {
 	// Draw any sprites
-	_spriteSlots.draw(_view);
+	_spriteSlots.drawBackground();
+
+	// Process dirty areas
+	_textDisplay.setDirtyAreas();
+
+	// Merge any identified dirty areas
+	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
+	
+	// Copy dirty areas to the main display surface 
+	_dirtyAreas.copy(_view, _bgSurface);
+
+	// Handle dirty areas for foreground objects
+	_spriteSlots.setDirtyAreas();
+	_textDisplay.setDirtyAreas2();
+	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
+
+	// Draw foreground sprites
+	_spriteSlots.drawForeground(_view);
 
 	// Draw text elements onto the view
 	_textDisplay.draw(_view);

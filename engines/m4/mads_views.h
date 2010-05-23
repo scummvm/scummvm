@@ -34,6 +34,7 @@
 
 namespace M4 {
 
+#define MADS_SURFACE_WIDTH 320
 #define MADS_SURFACE_HEIGHT 156
 #define MADS_SCREEN_HEIGHT 200
 #define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
@@ -44,7 +45,7 @@ enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 class MadsSpriteSlot {
 public:
-	int spriteId;
+	int spriteType;
 	int timerIndex;
 	int spriteListIndex;
 	int frameNumber;
@@ -58,16 +59,21 @@ public:
 
 #define SPRITE_SLOTS_SIZE 50
 
+enum SpriteIdSpecial {
+	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, FOREGROUND_SPRITE = 1
+};
+
 typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
 
 class MadsSpriteSlots {
 private:
+	MadsView &_owner;
 	Common::Array<MadsSpriteSlot> _entries;
 	SpriteList _sprites;
 public:
 	int startIndex;
 
-	MadsSpriteSlots();
+	MadsSpriteSlots(MadsView &owner);
 
 	MadsSpriteSlot &operator[](int idx) {
 		assert(idx < SPRITE_SLOTS_SIZE);
@@ -80,13 +86,12 @@ public:
 
 	int getIndex();
 	int addSprites(const char *resName);
-	void clear() {
-		startIndex = 0;
-		_sprites.clear();
-	}
+	void clear();
 	void deleteTimer(int timerIndex);
 
-	void draw(View *view);
+	void drawBackground();
+	void drawForeground(View *view);
+	void setDirtyAreas();
 	void cleanUp();
 };
 
@@ -108,9 +113,10 @@ public:
 
 class MadsTextDisplay {
 private:
+	MadsView &_owner;
 	Common::Array<MadsTextDisplayEntry> _entries;
 public:
-	MadsTextDisplay();
+	MadsTextDisplay(MadsView &owner);
 
 	MadsTextDisplayEntry &operator[](int idx) {
 		assert(idx < TEXT_DISPLAY_SIZE);
@@ -125,6 +131,8 @@ public:
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
 	void draw(View *view);
+	void setDirtyAreas();
+	void setDirtyAreas2();
 	void cleanUp();
 };
 
@@ -204,7 +212,7 @@ public:
 class DynamicHotspot {
 public:
 	bool active;
-	int timerIndex;
+	int seqIndex;
 	Common::Rect bounds;
 	Common::Point pos;
 	int facing;
@@ -229,11 +237,45 @@ public:
 	MadsDynamicHotspots(MadsView &owner);
 
 	DynamicHotspot &operator[](uint idx) { return _entries[idx]; }
-	int add(int descId, int field14, int timerIndex, const Common::Rect &bounds);
+	int add(int descId, int field14, int seqIndex, const Common::Rect &bounds);
 	int setPosition(int index, int xp, int yp, int facing);
 	int set17(int index, int v);
 	void remove(int index);
 	void reset();
+};
+
+class MadsDirtyArea {
+public:
+	Common::Rect bounds;
+	Common::Rect bounds2;
+	bool textActive;
+	bool active;
+
+	MadsDirtyArea() { active = false; }
+	void setArea(int width, int height, int maxWidth, int maxHeight);
+};
+
+#define DIRTY_AREAS_SIZE 90
+#define DIRTY_AREAS_TEXT_DISPLAY_IDX 50
+
+class MadsDirtyAreas {
+private:
+	MadsView &_owner;
+	Common::Array<MadsDirtyArea> _entries;
+public:
+	MadsDirtyAreas(MadsView &owner);
+
+	MadsDirtyArea &operator[](uint idx) {
+		assert(idx < _entries.size());
+		return _entries[idx];
+	}
+
+	void setSpriteSlot(int dirtyIdx, const MadsSpriteSlot &spriteSlot);
+	void setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &textDisplay);
+	void merge(int startIndex, int count);
+	bool intersects(int idx1, int idx2);
+	void mergeAreas(int idx1, int idx2);
+	void copy(M4Surface *dest, M4Surface *src);
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -303,6 +345,7 @@ public:
 	bool loadSprites(int timerIndex);
 	void tick();
 	void delay(uint32 v1, uint32 v2);
+	void setAnimRange(int timerIndex, int startVal, int endVal);
 };
 
 class MadsView {
@@ -315,6 +358,7 @@ public:
 	ScreenObjects _screenObjects;
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
+	MadsDirtyAreas _dirtyAreas;
 
 	int _textSpacing;
 	int _ticksAmount;
@@ -323,6 +367,10 @@ public:
 	int8 _abortTimers2;
 	AbortTimerMode _abortTimersMode;
 	AbortTimerMode _abortTimersMode2;
+	Common::Point _posAdjust;
+
+	M4Surface *_depthSurface;
+	M4Surface *_bgSurface;
 public:
 	MadsView(View *view);
 

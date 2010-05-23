@@ -113,6 +113,7 @@ public:
 	int32 getFrameHeight(int index);
 	int32 getMaxFrameWidth() const { return _maxWidth; }
 	int32 getMaxFrameHeight() const { return _maxHeight; }
+	uint16 getAssetType() const { return _assetType; }
 	M4Sprite *getFrame(int frameIndex);
 	void loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX, int destY);
 	RGB8* getPalette() { return _palette; }
@@ -123,6 +124,7 @@ public:
 	int32 getFrameSize(int index);
 	M4Sprite *operator[](int index) { return getFrame(index); }
 protected:
+	Common::SeekableReadStream *_stream;
 	RGB8 _palette[256];
 	uint32 _colorCount;
 	uint32 _srcSize;
@@ -132,7 +134,10 @@ protected:
 	Common::Array<uint32> _frameOffsets;
 	Common::Array<SpriteAssetFrame> _frames;
 	uint32 _frameStartOffset;
-	Common::SeekableReadStream *_stream;
+	
+	// MADS sprite set fields
+	uint16 _assetType;
+
 	int32 parseSprite(bool isBigEndian = false);
 	void loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndian = false);
 private:

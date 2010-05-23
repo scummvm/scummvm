@@ -145,8 +145,10 @@ public:
 	void clear();
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
-	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY,
-		int transparentColor = -1);
+	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, 
+			int transparentColour = -1);
+	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, int scale,
+			int transparentColour = -1);
 
 	void update() {
 		if (_isScreen) {
@@ -156,16 +158,22 @@ public:
 	}
 
 	// copyTo methods
-	inline void copyTo(M4Surface *dest, int transparentColor = -1) {
-		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColor);
+	inline void copyTo(M4Surface *dest, int transparentColour = -1) {
+		dest->copyFrom(this, Common::Rect(width(), height()), 0, 0, transparentColour);
 	}
-	inline void copyTo(M4Surface *dest, int x, int y, int transparentColor = -1) {
-		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColor);
+	inline void copyTo(M4Surface *dest, int x, int y, int transparentColour = -1) {
+		dest->copyFrom(this, Common::Rect(width(), height()), x, y, transparentColour);
 	}
 	inline void copyTo(M4Surface *dest, const Common::Rect &srcBounds, int destX, int destY,
-				int transparentColor = -1) {
-		dest->copyFrom(this, srcBounds, destX, destY, transparentColor);
+				int transparentColour = -1) {
+		dest->copyFrom(this, srcBounds, destX, destY, transparentColour);
 	}
+	inline void copyTo(M4Surface *dest, int destX, int destY, int depth, M4Surface *depthsSurface, int scale,
+				int transparentColour = -1) {
+		dest->copyFrom(this, destX, destY, depth, depthsSurface, scale, transparentColour);
+	}
+
+
 
 	void translate(RGBList *list, bool isTransparent = false);
 };

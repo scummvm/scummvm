@@ -43,6 +43,8 @@ namespace M4 {
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 
+	MadsView::_bgSurface = Scene::_backgroundSurface;
+	MadsView::_depthSurface = Scene::_walkSurface;
 	_interfaceSurface = new MadsInterfaceView(vm);
 	for (int i = 0; i < 3; ++i)
 		actionNouns[i] = 0;
@@ -277,9 +279,6 @@ void MadsScene::drawElements() {
 
 
 void MadsScene::update() {
-	// Copy the bare scene in
-	_backgroundSurface->copyTo(this);
-
 	// Draw all the various elements
 	drawElements();
 

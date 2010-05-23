@@ -78,7 +78,7 @@ uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
 }
 
 uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
-	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
@@ -87,8 +87,7 @@ uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0
 }
 
 uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
-	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
-warning("%d %dx%d %d/%d", srcSpriteIdx, spriteFrame->x, spriteFrame->y, spriteFrame->width(), spriteFrame->height());
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
@@ -97,7 +96,7 @@ warning("%d %dx%d %d/%d", srcSpriteIdx, spriteFrame->x, spriteFrame->y, spriteFr
 }
 
 uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
-	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(1);
+	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
@@ -160,7 +159,7 @@ void MadsSceneLogic::selectScene(int sceneNum) {
 	assert(sceneNum == 101);
 	_sceneNumber = sceneNum;
 
-
+	Common::set_to(&_spriteIndexes[0], &_spriteIndexes[50], 0);
 }
 
 void MadsSceneLogic::setupScene() {
@@ -206,10 +205,38 @@ void MadsSceneLogic::enterScene() {
 	if (_madsVm->globals()->previousScene != -1)
 		_madsVm->globals()->_globals[10] = 0;
 	if (_madsVm->globals()->previousScene != -2) {
-		//playerPos = (100, 152);
+		_madsVm->scene()->getSceneResources().playerPos = Common::Point(100, 152);
 	}
 	
-	// TODO: EXTRA STUFF
+	if ((_madsVm->globals()->previousScene == 112) || 
+		((_madsVm->globals()->previousScene != -2) && (_spriteIndexes[29] != 0))) {
+		// Returning from probe cutscene?
+		_spriteIndexes[29] = -1;
+		_madsVm->scene()->getSceneResources().playerPos = Common::Point(161, 123);
+		_madsVm->scene()->getSceneResources().playerDir = 9;
+
+		// TODO: Extra flags setting
+		_spriteIndexes[25] = startCycledSpriteSequence(_spriteIndexes[10], 0, 3, 0, 0, 0);
+		_madsVm->scene()->_sequenceList.setAnimRange(_spriteIndexes[25], 17, 17);
+		activateHotspot(0x47, false);	// CHAIR
+		/*timer_unk1 = */_madsVm->scene()->_dynamicHotspots.add(0x47, 0x13F /*SIT_IN*/, -1,
+			Common::Rect(159, 84, 159+33, 84+36));
+		
+		//if (_madsVm->globals()->previousScene == 112)
+		//	room101Check();
+	} else {
+		_spriteIndexes[26] = startCycledSpriteSequence(_spriteIndexes[11], 0, 6, 0, 0, 0);
+	}
+
+	_madsVm->globals()->loadQuoteSet(0x31, 0x32, 0x37, 0x38, 0x39, -1);
+
+	if (_madsVm->globals()->_globals[10]) {
+		// TODO: Load scene animation
+
+		_madsVm->scene()->getSceneResources().playerPos = Common::Point(68, 140);
+		_madsVm->scene()->getSceneResources().playerDir = 4;
+		// TODO: Flags setting
+	}
 
 	lowRoomsEntrySound();
 }

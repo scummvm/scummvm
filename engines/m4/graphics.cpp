@@ -333,7 +333,7 @@ void M4Surface::fillRect(const Common::Rect &r, uint8 color) {
 }
 
 void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY,
-						 int transparentColor) {
+						 int transparentColour) {
 	// Validation of the rectangle and position
 	if ((destX >= w) || (destY >= h))
 		return;
@@ -362,13 +362,13 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
 	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
 
 	for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
-		if (transparentColor == -1)
+		if (transparentColour == -1)
 			// No transparency, so copy line over
 			Common::copy(srcPtr, srcPtr + copyRect.width(), destPtr);
 		else {
 			// Copy each byte one at a time checking for the transparency color
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr)
-				if (srcPtr[xCtr] != transparentColor) destPtr[xCtr] = srcPtr[xCtr];
+				if (srcPtr[xCtr] != transparentColour) destPtr[xCtr] = srcPtr[xCtr];
 		}
 
 		srcPtr += src->width();
@@ -376,6 +376,81 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
 	}
 
 	src->freeData();
+}
+
+/**
+ * Copies a given image onto a destination surface with scaling, transferring only pixels that meet
+ * the specified depth requirement on a secondary surface contain depth information
+ */
+void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthsSurface, 
+						 int scale, int transparentColour) {
+	/* TODO: This isn't a straight re-implementation of the original draw routine. Double check in future
+	 * whether this implementation provides equivalent functionality
+	 */
+	Common::Rect copyRect(0, 0, src->width(), src->height());
+
+	if (destX < 0) {
+		copyRect.left += -destX;
+		destX = 0;
+	} else if (destX + copyRect.width() > w) {
+		copyRect.right -= destX + copyRect.width() - w;
+	}
+	if (destY < 0) {
+		copyRect.top += -destY;
+		destY = 0;
+	} else if (destY + copyRect.height() > h) {
+		copyRect.bottom -= destY + copyRect.height() - h;
+	}
+
+	if (!copyRect.isValidRect())
+		return;
+
+	// Copy the specified area
+
+	byte *data = src->getBasePtr();
+	byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
+	byte *depthsData = depthsSurface->getBasePtr();
+	byte *depthsPtr = depthsData + (src->width() * copyRect.top + copyRect.left);
+	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
+
+	if (scale == 100) {
+		// 100% scaling variation
+		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
+			// Copy each byte one at a time checking against the depth
+			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
+				if ((depthsPtr[xCtr] > depth) && (srcPtr[xCtr] != transparentColour))
+					destPtr[xCtr] = srcPtr[xCtr];
+			}
+
+			srcPtr += src->width();
+			depthsPtr += depthsSurface->width();
+			destPtr += width();
+		}
+	} else {
+		// Scaled variation
+		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
+			int currX = -1;
+
+			// Loop through the source pixels
+			for (int xCtr = 0, xTotal = 0; xCtr < copyRect.width(); ++xCtr, xTotal += (100 - scale)) {
+				int srcX = xTotal / 100;
+
+				if (srcX != currX) {
+					currX = srcX;
+
+					if ((depthsPtr[currX] > depth) && (srcPtr[xCtr] != transparentColour))
+						destPtr[currX] = srcPtr[xCtr];
+				}
+			}
+
+			srcPtr += src->width();
+			depthsPtr += depthsSurface->width();
+			destPtr += width();
+		}
+	}
+
+	src->freeData();
+	depthsSurface->freeData();	
 }
 
 void M4Surface::loadBackgroundRiddle(const char *sceneName) {

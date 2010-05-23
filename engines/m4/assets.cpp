@@ -195,7 +195,9 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	_maxHeight = 0;
 
 	Common::SeekableReadStream *spriteStream = sprite.getItemStream(0);
-	for (int i = 0; i < 19; i++) {
+
+	_assetType = spriteStream->readUint16LE();
+	for (int i = 0; i < 18; i++) {
 		spriteStream->readUint16LE();
 	}
 	_frameCount = spriteStream->readUint16LE();

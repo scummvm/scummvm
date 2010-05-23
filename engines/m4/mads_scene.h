@@ -34,18 +34,6 @@ namespace M4 {
 
 #define INTERFACE_HEIGHT 106
 
-struct SpriteSlot {
-	int16 spriteId;
-	int16 scale;
-	uint16 spriteListIndex;
-};
-
-struct DirtyArea {
-	bool active;
-	bool active2;
-	Common::Rect bounds;
-};
-
 
 class MadsSceneResources: public SceneResources {
 public:
@@ -60,8 +48,10 @@ public:
 	
 	int walkSize;
 	byte *walkData;
+	Common::Point playerPos;
+	int playerDir;
 
-	MadsSceneResources() { walkSize = 0; walkData = NULL; }
+	MadsSceneResources() { walkSize = 0; walkData = NULL; playerDir = 0; }
 	~MadsSceneResources() { delete walkData; }
 	void load(int sceneId);	
 };
@@ -101,8 +91,6 @@ public:
 	const char *statusText() const { return _statusText; }
 };
 
-#define DIRTY_AREA_SIZE 90
-
 class MadsScene : public Scene, public MadsView {
 private:
 	MadsEngine *_vm;
@@ -111,7 +99,6 @@ private:
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
-	DirtyArea _dirtyAreas[DIRTY_AREA_SIZE];
 
 	void drawElements();
 	void loadScene2(const char *aaName);
