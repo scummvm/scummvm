@@ -1025,7 +1025,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	s->successor = retval; // Set successor
 	script_abort_flag = 2; // Abort current game with replay
-	shrink_execution_stack(s, s->execution_stack_base + 1);
+	s->shrinkStackToBase();
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

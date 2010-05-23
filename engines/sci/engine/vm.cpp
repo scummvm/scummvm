@@ -724,7 +724,7 @@ void run_vm(EngineState *s, bool restoring) {
 	}
 
 	if (!restoring)
-		s->execution_stack_base = s->_executionStack.size()-1;
+		s->execution_stack_base = s->_executionStack.size() - 1;
 
 #ifndef DISABLE_VALIDATIONS
 	// Initialize maximum variable count
@@ -1183,7 +1183,7 @@ void run_vm(EngineState *s, bool restoring) {
 				StackPtr old_fp = scriptState.xs->fp;
 				ExecStack *old_xs = &(s->_executionStack.back());
 
-				if ((int)s->_executionStack.size()-1 == s->execution_stack_base) { // Have we reached the base?
+				if ((int)s->_executionStack.size() - 1 == s->execution_stack_base) { // Have we reached the base?
 					s->execution_stack_base = old_execution_stack_base; // Restore stack base
 
 					s->_executionStack.pop_back();
@@ -1754,15 +1754,6 @@ void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
 	g_debugState.seeking = kDebugSeekNothing;
 	g_debugState.runningStep = 0;
-}
-
-void shrink_execution_stack(EngineState *s, uint size) {
-	assert(s->_executionStack.size() >= size);
-	Common::List<ExecStack>::iterator iter;
-	iter = s->_executionStack.begin();
-	for (uint i = 0; i < size; ++i)
-		++iter;
-	s->_executionStack.erase(iter, s->_executionStack.end());
 }
 
 reg_t* ObjVarRef::getPointer(SegManager *segMan) const {

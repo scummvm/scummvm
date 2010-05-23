@@ -39,7 +39,7 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 
-	shrink_execution_stack(s, s->execution_stack_base + 1);
+	s->shrinkStackToBase();
 
 	script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;

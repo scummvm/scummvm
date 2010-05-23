@@ -469,12 +469,6 @@ int game_exit(EngineState *s);
 void quit_vm();
 
 /**
- * Shrink execution stack to size.
- * Contains an assert it is not already smaller.
- */
-void shrink_execution_stack(EngineState *s, uint size);
-
-/**
  * Read a PMachine instruction from a memory buffer and return its length.
  *
  * @param[in] src		address from which to start parsing

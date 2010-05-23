@@ -155,6 +155,12 @@ public:
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
 
+	/**
+	 * Shrink execution stack to size.
+	 * Contains an assert it is not already smaller.
+	 */
+	void shrinkStackToBase();
+
 	/* System strings */
 	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;

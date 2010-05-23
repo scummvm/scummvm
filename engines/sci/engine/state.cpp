@@ -135,6 +135,15 @@ void EngineState::setRoomNumber(uint16 roomNumber) {
 	script_000->_localsBlock->_locals[13] = make_reg(0, roomNumber);
 }
 
+void EngineState::shrinkStackToBase() {
+	uint size = execution_stack_base + 1;
+	assert(_executionStack.size() >= size);
+	Common::List<ExecStack>::iterator iter = _executionStack.begin();
+	for (uint i = 0; i < size; ++i)
+		++iter;
+	_executionStack.erase(iter, _executionStack.end());
+}
+
 static kLanguage charToLanguage(const char c) {
 	switch (c) {
 	case 'F':
