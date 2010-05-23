@@ -273,6 +273,11 @@ public:
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 
+	/**
+	 * Finds the internal Sierra ID of the current game from script 0
+	 */
+	Common::String findSierraGameId();
+
 protected:
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction

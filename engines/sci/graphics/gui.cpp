@@ -92,7 +92,7 @@ void SciGui::resetEngineState(EngineState *s) {
 }
 
 void SciGui::init(bool usesOldGfxFunctions) {
-	_ports->init(usesOldGfxFunctions, this, _paint16, _text16, _s->_gameId);
+	_ports->init(usesOldGfxFunctions, this, _paint16, _text16);
 	_paint16->init(_animate, _text16);
 }
 

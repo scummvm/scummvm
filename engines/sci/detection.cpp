@@ -120,6 +120,140 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{0, 0}
 };
 
+struct OldNewIdTableEntry {
+	const char *oldId;
+	const char *newId;
+	SciVersion version;
+};
+
+static const OldNewIdTableEntry s_oldNewTable[] = {
+	{ "arthur",		"camelot",			SCI_VERSION_NONE     },
+	{ "brain",      "castlebrain",      SCI_VERSION_1_MIDDLE },	// Amiga
+	{ "brain",      "castlebrain",      SCI_VERSION_1_LATE   },
+	{ "demo",		"christmas1988",	SCI_VERSION_NONE     },
+	{ "card",       "christmas1990",    SCI_VERSION_1_EARLY, },
+	{ "card",       "christmas1992",    SCI_VERSION_1_1      },
+	{ "RH Budget",	"cnick-longbow",	SCI_VERSION_NONE     },
+	// iceman is the same
+	{ "icedemo",	"iceman",			SCI_VERSION_NONE     },
+	// longbow is the same
+	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
+	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
+	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
+	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
+	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
+	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
+	// hoyle3 is the same
+	// hoyle4 is the same
+	{ "brain",      "islandbrain",      SCI_VERSION_1_1      },
+	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
+	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
+	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
+	{ "rh",			"longbow",			SCI_VERSION_NONE     },
+	{ "ll1",		"lsl1sci",			SCI_VERSION_NONE     },
+	{ "lsl1",		"lsl1sci",			SCI_VERSION_NONE     },
+	// lsl2 is the same
+	{ "lsl3",		"lsl3",				SCI_VERSION_NONE     },
+	{ "ll5",		"lsl5",				SCI_VERSION_NONE     },
+	// lsl5 is the same
+	// lsl6 is the same
+	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
+	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
+	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
+	{ "pq",			"pq2",				SCI_VERSION_NONE     },
+	// pq3 is the same
+	// pq4 is the same
+	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
+	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
+	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
+	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
+	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	{ "thegame",	"slater",			SCI_VERSION_NONE     },
+	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
+	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
+	// sq3 is the same
+	// sq4 is the same
+	// sq5 is the same
+	// torin is the same
+
+	// TODO: SCI2.1, SCI3 IDs
+
+	{ "", "", SCI_VERSION_NONE }
+};
+
+Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, ResourceManager *resMan) {
+	// Convert the id to lower case, so that we match all upper/lower case variants.
+	sierraId.toLowercase();
+
+	// If the game has less than the expected scripts, it's a demo
+	uint32 demoThreshold = 100;
+	// ...but there are some exceptions
+	if (sierraId == "brain" || sierraId == "lsl1" ||
+		sierraId == "mg" || sierraId == "pq" ||
+		sierraId == "jones" ||
+		sierraId == "cardgames" || sierraId == "solitare" ||
+		sierraId == "hoyle3" || sierraId == "hoyle4")
+		demoThreshold = 40;
+	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
+		demoThreshold = 150;
+
+	Common::List<ResourceId> *resources = resMan->listResources(kResourceTypeScript, -1);
+	if (resources->size() < demoThreshold) {
+		*gameFlags |= ADGF_DEMO;
+
+		// Crazy Nick's Picks
+		if (sierraId == "lsl1" && resources->size() == 34)
+			return "cnick-lsl";
+		if (sierraId == "sq4" && resources->size() == 34)
+			return "cnick-sq";
+
+		// TODO: cnick-kq, cnick-laurabow and cnick-longbow (their resources can't be read)
+
+		// Handle Astrochicken 1 (SQ3) and 2 (SQ4)
+		if (sierraId == "sq3" && resources->size() == 20)
+			return "astrochicken";
+		if (sierraId == "sq4")
+			return "msastrochicken";
+	}
+
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
+		if (sierraId == cur->oldId) {
+			// Distinguish same IDs from the SCI version
+			if (cur->version != SCI_VERSION_NONE && cur->version != getSciVersion())
+				continue;
+
+			return cur->newId;
+		}
+	}
+
+	if (sierraId == "glory") {
+		// This could either be qfg1 VGA, qfg3 or qfg4 demo (all SCI1.1),
+		// or qfg4 full (SCI2)
+		// qfg1 VGA doesn't have view 1
+		if (!resMan->testResource(ResourceId(kResourceTypeView, 1)))
+			return "qfg1";
+
+		// qfg4 full is SCI2
+		if (getSciVersion() == SCI_VERSION_2)
+			return "qfg4";
+
+		// qfg4 demo has less than 50 scripts
+		if (resources->size() < 50)
+			return "qfg4";
+
+		// Otherwise it's qfg3
+		return "qfg3";
+	}
+
+	return sierraId;
+}
+
 #include "sci/detection_tables.h"
 
 /**
@@ -204,42 +338,6 @@ Common::Language charToScummVMLanguage(const char c) {
 		return Common::UNK_LANG;
 	}
 }
-
-#define READ_UINT16(ptr) (!resMan->isSci11Mac() ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr))
-
-// Finds the internal ID of the current game from script 0
-Common::String getSierraGameId(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, 0), false);
-	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
-	Resource *heap = 0;
-	byte *seeker = 0;
-
-	// Seek to the name selector of the first export
-	if (getSciVersion() < SCI_VERSION_1_1) {
-		const int nameSelector = 3;
-		int extraSci0EarlyBytes = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
-		byte *exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
-		seeker = script->data + READ_UINT16(script->data + READ_UINT16(exportPtr) + nameSelector * 2);
-	} else {
-		const int nameSelector = 5 + 3;
-		heap = resMan->findResource(ResourceId(kResourceTypeHeap, 0), false);
-		byte *exportPtr = script->data + 4 + 2 + 2;
-		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
-	}
-
-	char sierraId[20];
-	int i = 0;
-	byte curChar = 0;
-
-	do {
-		curChar = *(seeker + i);
-		sierraId[i++] = curChar;
-	} while (curChar != 0);
-
-	return sierraId;
-}
-
-#undef READ_UINT16
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
@@ -352,7 +450,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String gameId = convertSierraGameId(getSierraGameId(resMan).c_str(), &s_fallbackDesc.flags, resMan);
+	Common::String gameId = convertSierraGameId(resMan->findSierraGameId(), &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
 	s_fallbackDesc.gameid = s_fallbackGameIdBuf;

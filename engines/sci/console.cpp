@@ -421,10 +421,9 @@ const char *selector_name(EngineState *s, int selector) {
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
-	EngineState *s = _engine->_gamestate;
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 
-	DebugPrintf("Game ID: %s\n", s->_gameId.c_str());
+	DebugPrintf("Game ID: %s\n", _engine->getGameID());
 	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
 	DebugPrintf("\n");
 	DebugPrintf("Detected features:\n");

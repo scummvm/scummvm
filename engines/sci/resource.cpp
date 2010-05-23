@@ -2329,6 +2329,41 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
+#define READ_UINT16(ptr) (!isSci11Mac() ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr))
+
+Common::String ResourceManager::findSierraGameId() {
+	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
+	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
+	Resource *heap = 0;
+	byte *seeker = 0;
+
+	// Seek to the name selector of the first export
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		const int nameSelector = 3;
+		int extraSci0EarlyBytes = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
+		byte *exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
+		seeker = script->data + READ_UINT16(script->data + READ_UINT16(exportPtr) + nameSelector * 2);
+	} else {
+		const int nameSelector = 5 + 3;
+		heap = findResource(ResourceId(kResourceTypeHeap, 0), false);
+		byte *exportPtr = script->data + 4 + 2 + 2;
+		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
+	}
+
+	char sierraId[20];
+	int i = 0;
+	byte curChar = 0;
+
+	do {
+		curChar = *(seeker + i);
+		sierraId[i++] = curChar;
+	} while (curChar != 0);
+
+	return sierraId;
+}
+
+#undef READ_UINT16
+
 SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true);
 	int trackNr, channelNr;

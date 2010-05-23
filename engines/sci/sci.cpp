@@ -222,7 +222,7 @@ Common::Error SciEngine::run() {
 	}
 
 	// Add the after market GM patches for the specified game, if they exist
-	_resMan->addNewGMPatch(_gamestate->_gameId);
+	_resMan->addNewGMPatch(getGameID());
 
 	script_adjust_opcode_formats(_gamestate);
 	_kernel->loadKernelNames(getGameID());

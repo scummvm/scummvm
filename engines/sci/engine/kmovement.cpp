@@ -334,7 +334,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// FIXME: find out why iceman needs this and we ask for version > SCI01
-	if ((getSciVersion() > SCI_VERSION_01) || (s->_gameId == "iceman"))
+	if ((getSciVersion() > SCI_VERSION_01) || !strcmp(g_sci->getGameID(), "iceman"))
 		if (completed)
 			invoke_selector(INV_SEL(s, mover, moveDone, kStopOnInvalidSelector), 0);
 

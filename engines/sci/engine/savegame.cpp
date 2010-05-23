@@ -997,7 +997,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		retval->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 
 	retval->successor = NULL;
-	retval->_gameId = s->_gameId;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	retval->_sound._it = NULL;

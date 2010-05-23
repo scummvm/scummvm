@@ -105,8 +105,6 @@ public:
 	SegManager *_segMan; /**< The segment manager */
 	Vocabulary *_voc;
 
-	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
-
 	/* Non-VM information */
 
 	SciEvent *_event; // Event handling
