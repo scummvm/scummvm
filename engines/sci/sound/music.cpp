@@ -243,14 +243,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
-	bool alreadyPlaying = false;
+	MusicEntry *alreadyPlaying = NULL;
 
 	// searching if sound is already in _playList
 	for (uint i = 0; i < playListCount; i++) {
 		if (_playList[i] == pSnd)
 			playListNo = i;
 		if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
-			alreadyPlaying = true;
+			alreadyPlaying = _playList[i];
 	}
 	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
@@ -261,13 +261,20 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->pMidiParser) {
 		if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
-			// if any music is already playing, SCI0 queues music and plays it after the current music has finished
-			//  done by SoundCommandParser::updateSci0Cues()
-			// Example of such case: iceman room 14
-			// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
-			pSnd->isQueued = true;
-			pSnd->status = kSoundPaused;
-			return;
+			// Music already playing in SCI0?
+			if (pSnd->priority > alreadyPlaying->priority) {
+				// And new priority higher? pause previous music and play new one immediately
+				// Example of such case: lsl3, when getting points (jingle is played then)
+				soundPause(alreadyPlaying);
+				alreadyPlaying->isQueued = true;
+			} else {
+				// And new priority equal or lower? queue up music and play it afterwards done by
+				//  SoundCommandParser::updateSci0Cues()
+				// Example of such case: iceman room 14
+				pSnd->isQueued = true;
+				pSnd->status = kSoundPaused;
+				return;
+			}
 		}
 	}
 
