@@ -39,6 +39,7 @@
 #include <base/main.h>
 #include <base/plugins.h>
 #include "backends/platform/psp/powerman.h"
+#include "backends/platform/psp/thread.h"
 
 #include "backends/plugins/psp/psp-provider.h"
 #include "backends/platform/psp/psppixelformat.h"
@@ -140,7 +141,7 @@ int CallbackThread(SceSize /*size*/, void *arg) {
 
 /* Sets up the callback thread and returns its thread id */
 int SetupCallbacks(void) {
-	int thid = sceKernelCreateThread("update_thread", CallbackThread, 0x11, 0xFA0, THREAD_ATTR_USER, 0);
+	int thid = sceKernelCreateThread("power_thread", CallbackThread, PRIORITY_POWER_THREAD, STACK_POWER_THREAD, THREAD_ATTR_USER, 0);
 	if (thid >= 0) {
 		sceKernelStartThread(thid, 0, 0);
 	}

@@ -39,6 +39,7 @@
 #include "backends/platform/psp/display_manager.h"
 #include "backends/platform/psp/input.h"
 #include "backends/platform/psp/audio.h"
+#include "backends/platform/psp/timer.h"
 
 #include <SDL.h>
 
@@ -57,6 +58,7 @@ private:
 	PSPKeyboard _keyboard;
 	InputHandler _inputHandler;
 	PspAudio _audio;
+	PspTimer _pspTimer;
 
 	void initSDL();
 

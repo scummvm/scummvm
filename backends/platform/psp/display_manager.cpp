@@ -34,6 +34,7 @@
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
+#include "backends/platform/psp/thread.h"
 
 #define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
@@ -64,7 +65,7 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 
 void MasterGuRenderer::setupCallbackThread() {
 	DEBUG_ENTER_FUNC();
-	int thid = sceKernelCreateThread("displayCbThread", guCallbackThread, 0x11, 4*1024, THREAD_ATTR_USER, 0);
+	int thid = sceKernelCreateThread("displayCbThread", guCallbackThread, PRIORITY_DISPLAY_THREAD, STACK_DISPLAY_THREAD, THREAD_ATTR_USER, 0);
 	
 	PSP_DEBUG_PRINT("Display CB thread id is %x\n", thid);
 	

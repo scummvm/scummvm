@@ -29,6 +29,7 @@
  
 #include "common/scummsys.h" 
 #include "backends/platform/psp/audio.h"
+#include "backends/platform/psp/thread.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -93,7 +94,7 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 
 bool PspAudio::createThread() {
 	DEBUG_ENTER_FUNC();
-	int threadId = sceKernelCreateThread("audioThread", thread, 30, 16*1024, THREAD_ATTR_USER, 0); 
+	int threadId = sceKernelCreateThread("audioThread", thread, PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD, THREAD_ATTR_USER, 0); 
 	
 	if (threadId < 0) {	// error
 		PSP_ERROR("failed to create audio thread. Error code %d\n", threadId);

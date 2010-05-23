@@ -60,9 +60,9 @@ static int timer_handler(int t) {
 
 void OSystem_PSP::initSDL() {
 #ifdef USE_PSP_AUDIO
-	SDL_Init(SDL_INIT_TIMER);
+	SDL_Init(0);
 #else
-	SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER);
+	SDL_Init(SDL_INIT_AUDIO);
 #endif
 }
 
@@ -90,7 +90,7 @@ void OSystem_PSP::initBackend() {
 	_inputHandler.init();
 
 	initSDL();
-
+	
 	_savefile = new PSPSaveFileManager;
 
 	_timer = new DefaultTimerManager();
@@ -308,7 +308,10 @@ void OSystem_PSP::delayMillis(uint msecs) {
 }
 
 void OSystem_PSP::setTimerCallback(TimerProc callback, int interval) {
-	SDL_SetTimer(interval, (SDL_TimerCallback)callback);
+	//SDL_SetTimer(interval, (SDL_TimerCallback)callback);
+	_pspTimer.setCallback((PspTimer::CallbackFunc)callback);
+	_pspTimer.setIntervalMs(interval);
+	_pspTimer.start();
 }
 
 OSystem::MutexRef OSystem_PSP::createMutex(void) {
