@@ -87,6 +87,7 @@ protected:
 	uint32 _currentMovieText;
 	byte *_textSurface;
 	int _textX, _textY;
+	byte _white, _black;
 	DecoderType _decoderType;
 
 	Graphics::VideoDecoder *_decoder;
