@@ -35,6 +35,7 @@
 
 #include "common/debug.h"
 #include "common/endian.h"
+#include "common/macresman.h"
 #include "common/util.h"
 #include "common/zlib.h"
 
@@ -67,10 +68,14 @@ QuickTimeDecoder::QuickTimeDecoder() : VideoDecoder() {
 	_fd = 0;
 	_scaledSurface = 0;
 	_dirtyPalette = false;
+	_resFork = new Common::MacResManager();
+
+	initParseTable();
 }
 
 QuickTimeDecoder::~QuickTimeDecoder() {
 	close();
+	delete _resFork;
 }
 
 uint16 QuickTimeDecoder::getWidth() const {
@@ -256,7 +261,7 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 	if (endOfVideo() || _curFrame < 0)
 		return 0;
 
-	// Convert from the Sega FILM base to 1000
+	// Convert from the QuickTime rate base to 1000
 	uint32 nextFrameStartTime = _nextFrameStartTime * 1000 / _streams[_videoStreamIndex]->time_scale;
 	uint32 elapsedTime = getElapsedTime();
 
@@ -264,6 +269,41 @@ uint32 QuickTimeDecoder::getTimeToNextFrame() const {
 		return 0;
 
 	return nextFrameStartTime - elapsedTime;
+}
+
+bool QuickTimeDecoder::loadFile(const Common::String &filename) {
+	if (!_resFork->open(filename) || !_resFork->hasDataFork())
+		return false;
+
+	_foundMOOV = _foundMDAT = false;
+	_numStreams = 0;
+	_partial = 0;
+	_videoStreamIndex = _audioStreamIndex = -1;
+	_startTime = 0;
+
+	MOVatom atom = { 0, 0, 0xffffffff };
+
+	if (_resFork->hasResFork()) {
+		_fd = _resFork->getResource(MKID_BE('moov'), 0x80);
+		if (_fd) {
+			atom.size = _fd->size();
+			if (readDefault(atom) < 0 || !_foundMOOV)
+				return false;
+		}
+		delete _fd;
+
+		atom.type = 0;
+		atom.offset = 0;
+		atom.size = 0xffffffff;
+	}
+
+	_fd = _resFork->getDataFork();
+
+	if (readDefault(atom) < 0 || !_foundMOOV || !_foundMDAT)
+		return false;
+
+	init();
+	return true;
 }
 
 bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
@@ -274,20 +314,21 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
 	_videoStreamIndex = _audioStreamIndex = -1;
 	_startTime = 0;
 
-	initParseTable();
-
 	MOVatom atom = { 0, 0, 0xffffffff };
 
-	if (readDefault(atom) < 0 || (!_foundMOOV && !_foundMDAT))
+	if (readDefault(atom) < 0 || !_foundMOOV || !_foundMDAT) {
+		_fd = 0;
 		return false;
+	}
 
-	debug(0, "on_parse_exit_offset=%d", _fd->pos());
+	init();
+	return true;
+}
 
+void QuickTimeDecoder::init() {
 	// some cleanup : make sure we are on the mdat atom
 	if((uint32)_fd->pos() != _mdatOffset)
 		_fd->seek(_mdatOffset, SEEK_SET);
-
-	_next_chunk_offset = _mdatOffset; // initialise reading
 
 	for (uint32 i = 0; i < _numStreams;) {
 		if (_streams[i]->codec_type == CODEC_TYPE_MOV_OTHER) {// not audio, not video, delete
@@ -302,13 +343,11 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
 	for (uint32 i = 0; i < _numStreams; i++) {
 		MOVStreamContext *sc = _streams[i];
 
-		if(!sc->time_rate)
+		if (!sc->time_rate)
 			sc->time_rate = 1;
 
-		if(!sc->time_scale)
+		if (!sc->time_scale)
 			sc->time_scale = _timeScale;
-
-		//av_set_pts_info(s->streams[i], 64, sc->time_rate, sc->time_scale);
 
 		sc->duration /= sc->time_rate;
 
@@ -341,8 +380,6 @@ bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
 			_scaledSurface->create(getWidth(), getHeight(), getPixelFormat().bytesPerPixel);
 		}
 	}
-
-	return true;
 }
 
 void QuickTimeDecoder::initParseTable() {
@@ -392,6 +429,11 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 		if (atom.size >= 8) {
 			a.size = _fd->readUint32BE();
 			a.type = _fd->readUint32BE();
+
+			// Some QuickTime videos with resource forks have mdat chunks
+			// that are of size 0. Adjust it so it's the correct size.
+			if (a.size == 0)
+				a.size = _fd->size();
 		}
 
 		total_size += 8;

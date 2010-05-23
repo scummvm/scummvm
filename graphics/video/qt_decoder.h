@@ -45,6 +45,7 @@
 
 namespace Common {
 	class File;
+	class MacResManager;
 }
 
 namespace Graphics {
@@ -77,6 +78,12 @@ public:
 	 * @return the amount of frames in the video
 	 */
 	uint32 getFrameCount() const;
+
+	/**
+	 * Load a video file
+	 * @param filename	the filename to load
+	 */
+	bool loadFile(const Common::String &filename);
 
 	/**
 	 * Load a QuickTime video file from a SeekableReadStream
@@ -221,7 +228,6 @@ protected:
 	uint32 _duration;
 	uint32 _mdatOffset;
 	uint32 _mdatSize;
-	uint32 _next_chunk_offset;
 	MOVStreamContext *_partial;
 	uint32 _numStreams;
 	int _ni;
@@ -230,6 +236,7 @@ protected:
 	byte _palette[256 * 3];
 	bool _dirtyPalette;
 	uint32 _beginOffset;
+	Common::MacResManager *_resFork;
 
 	void initParseTable();
 	Audio::AudioStream *createAudioStream(Common::SeekableReadStream *stream);
@@ -238,6 +245,7 @@ protected:
 	uint32 getFrameDuration();
 	uint32 getCodecTag();
 	byte getBitsPerPixel();
+	void init();
 
 	Audio::QueuingAudioStream *_audStream;
 	void startAudio();
