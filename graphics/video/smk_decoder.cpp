@@ -25,7 +25,7 @@
 
 // Based on http://wiki.multimedia.cx/index.php?title=Smacker
 // and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
-// http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
+// http://git.ffmpeg.org/?p=ffmpeg;a=blob;f=libavcodec/smacker.c;hb=b8437a00a2f14d4a437346455d624241d726128e
 
 #include "graphics/video/smk_decoder.h"
 
