@@ -1506,6 +1506,10 @@ if test -n "$_host"; then
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
 			;;
+		mips-sgi*)
+			_endian=big
+			_need_memalign=yes
+			;;
 		motoezx)
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
