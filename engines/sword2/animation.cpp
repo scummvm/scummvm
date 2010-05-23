@@ -293,6 +293,8 @@ bool MoviePlayer::playVideo() {
 		while (_vm->_system->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				return false;
+
+		_vm->_system->delayMillis(10);
 	}
 
 	return !_vm->shouldQuit();
