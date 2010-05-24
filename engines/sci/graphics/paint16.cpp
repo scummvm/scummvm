@@ -61,7 +61,7 @@ void GfxPaint16::init(GfxAnimate *animate, GfxText16 *text16) {
 	_EGAdrawingVisualize = false;
 }
 
-void GfxPaint16::setEGAdrawingVisualize(bool state) {
+void GfxPaint16::debugSetEGAdrawingVisualize(bool state) {
 	_EGAdrawingVisualize = state;
 }
 

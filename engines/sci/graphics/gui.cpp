@@ -136,9 +136,4 @@ void SciGui::portraitShow(Common::String resourceName, Common::Point position, u
 void SciGui::portraitUnload(uint16 portraitId) {
 }
 
-bool SciGui::debugEGAdrawingVisualize(bool state) {
-	_paint16->setEGAdrawingVisualize(state);
-	return false;
-}
-
 } // End of namespace Sci

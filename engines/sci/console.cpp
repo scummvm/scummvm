@@ -47,6 +47,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/palette.h"
 
 #include "sci/parser/vocabulary.h"
@@ -1112,7 +1113,11 @@ bool Console::cmdUndither(int argc, const char **argv) {
 
 	bool flag = atoi(argv[1]) ? true : false;
 	_engine->_gfxScreen->debugUnditherSetState(flag);
-	return false;
+	if (flag)
+		DebugPrintf("undithering ENABLED\n");
+	else
+		DebugPrintf("undithering DISABLED\n");
+	return true;
 }
 
 bool Console::cmdPicVisualize(int argc, const char **argv) {
@@ -1124,7 +1129,16 @@ bool Console::cmdPicVisualize(int argc, const char **argv) {
 
 	bool state = atoi(argv[1]) ? true : false;
 
-	return _engine->_gui->debugEGAdrawingVisualize(state);
+	if (_engine->_resMan->getViewType() == kViewEga) {
+		_engine->_gfxPaint16->debugSetEGAdrawingVisualize(state);
+		if (state)
+			DebugPrintf("picture visualization ENABLED\n");
+		else
+			DebugPrintf("picture visualization DISABLED\n");
+	} else {
+		DebugPrintf("picture visualization only available for EGA games\n");
+	}
+	return true;
 }
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {
