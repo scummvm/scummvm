@@ -300,9 +300,9 @@ reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 
 	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0) {
 		for (int i = 0; i < argv[2].toUint16(); i++)
-			g_sci->_macIconBar->addIcon(argv[i + 3]);
+			g_sci->_gfxMacIconBar->addIcon(argv[i + 3]);
 
-		g_sci->_macIconBar->drawIcons();		
+		g_sci->_gfxMacIconBar->drawIcons();		
 	}
 
 	// Other calls seem to handle selecting/deselecting them

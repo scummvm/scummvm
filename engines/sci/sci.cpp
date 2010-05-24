@@ -98,7 +98,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
 
 	_gamestate = 0;
-	_macIconBar = 0;
+	_gfxMacIconBar = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -174,7 +174,7 @@ Common::Error SciEngine::run() {
 		screen = new GfxScreen(_resMan, 320, 200, upscaledHires);
 
 	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
-		_macIconBar = new MacIconBar();
+		_gfxMacIconBar = new GfxMacIconBar();
 
 	GfxPalette *palette = new GfxPalette(_resMan, screen);
 	GfxCache *cache = new GfxCache(_resMan, screen, palette);

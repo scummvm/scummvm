@@ -65,7 +65,7 @@ class GfxPalette;
 class GfxPorts;
 class GfxScreen;
 class SciGui;
-class MacIconBar;
+class GfxMacIconBar;
 
 #ifdef ENABLE_SCI32
 class SciGui32;
@@ -206,7 +206,7 @@ public:
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	SciGui *_gui; /* Currently active Gui */
-	MacIconBar *_macIconBar; // Mac Icon Bar manager
+	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
 	SciGui32 *_gui32; // GUI for SCI32 games

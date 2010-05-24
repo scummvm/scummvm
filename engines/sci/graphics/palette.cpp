@@ -314,8 +314,8 @@ void GfxPalette::setOnScreen() {
 	_screen->setPalette(&_sysPalette);
 
 	// Redraw the Mac SCI1.1 Icon bar every palette change
-	if (g_sci->_macIconBar)
-		g_sci->_macIconBar->drawIcons();
+	if (g_sci->_gfxMacIconBar)
+		g_sci->_gfxMacIconBar->drawIcons();
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {

@@ -36,11 +36,11 @@
 
 namespace Sci {
 
-void MacIconBar::addIcon(reg_t obj) {
+void GfxMacIconBar::addIcon(reg_t obj) {
 	_iconBarObjects.push_back(obj);
 }
 
-void MacIconBar::drawIcons() {
+void GfxMacIconBar::drawIcons() {
 	// Draw the icons to the bottom of the screen
 
 	byte *pal = new byte[256 * 4];
@@ -69,7 +69,7 @@ void MacIconBar::drawIcons() {
 	delete[] pal;
 }
 
-void MacIconBar::remapColors(Graphics::Surface *surf, byte *palette) {
+void GfxMacIconBar::remapColors(Graphics::Surface *surf, byte *palette) {
 	byte *pixels = (byte *)surf->pixels;
 
 	// Remap to the screen palette

@@ -36,10 +36,10 @@ namespace Graphics {
 
 namespace Sci {
 
-class MacIconBar {
+class GfxMacIconBar {
 public:
-	MacIconBar() {}
-	~MacIconBar() {}
+	GfxMacIconBar() {}
+	~GfxMacIconBar() {}
 
 	void addIcon(reg_t obj);
 	void drawIcons();
