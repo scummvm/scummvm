@@ -126,6 +126,7 @@ SciEngine::~SciEngine() {
 	delete _console;
 	delete _resMan;
 	delete _features;
+	delete _macIconBar;
 
 	g_sci = 0;
 }
