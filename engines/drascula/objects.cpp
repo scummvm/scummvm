@@ -89,7 +89,8 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	updateRoom();
 	updateScreen();
 
-	if (cursorVisible)
+	// roomNumber -2 is end credits. Do not show cursor there
+	if (cursorVisible && roomNumber != -2)
 		showCursor();
 }
 
