@@ -108,6 +108,7 @@ add_engine teenagent "Teen Agent" yes
 add_engine tinsel "Tinsel" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
+add_engine testbed "TestBed: the Testing framework" yes
 
 
 #
