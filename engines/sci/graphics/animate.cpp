@@ -109,7 +109,15 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 }
 
 bool sortHelper(const AnimateEntry* entry1, const AnimateEntry* entry2) {
-	return (entry1->y == entry2->y) ? (entry1->z < entry2->z) : (entry1->y < entry2->y);
+	if (entry1->y == entry2->y) {
+		// if both y and z are the same, use the order we were given originally
+		//  this is needed for special cases like iceman room 35
+		if (entry1->z == entry2->z)
+			return entry1->givenOrderNo < entry2->givenOrderNo;
+		else
+			return entry1->z < entry2->z;
+	}
+	return entry1->y < entry2->y;
 }
 
 void GfxAnimate::makeSortedList(List *list) {
@@ -156,6 +164,7 @@ void GfxAnimate::makeSortedList(List *list) {
 		listEntry->object = curObject;
 
 		// Get data from current object
+		listEntry->givenOrderNo = listNr;
 		listEntry->viewId = GET_SEL32V(_s->_segMan, curObject, SELECTOR(view));
 		listEntry->loopNo = GET_SEL32V(_s->_segMan, curObject, SELECTOR(loop));
 		listEntry->celNo = GET_SEL32V(_s->_segMan, curObject, SELECTOR(cel));
