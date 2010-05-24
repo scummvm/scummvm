@@ -18,39 +18,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/portdefs.h $
- * $Id: portdefs.h 38687 2009-02-21 12:08:52Z joostp $
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/osys_psp.h $
+ * $Id: osys_psp.h 49173 2010-05-24 03:05:17Z bluddy $
  *
  */
 
-#ifndef PSP_THREAD_H
-#define PSP_THREAD_H
+#include <time.h> 
+#include <psptypes.h>
+#include <psprtc.h>
+#include <pspthreadman.h> 
 
-#include "common/scummsys.h"
+#include "backends/platform/psp/thread.h"
+ 
+void PspThread::delayMillis(uint32 ms) {
+	sceKernelDelayThread(ms * 1000);
+}
 
-class PspThread {
-public:
-	static void delayMillis(uint32 ms);
-	static void delayMicros(uint32 us);
-	static uint32 getMillis();
-	static uint32 getMicros();
-};
+void PspThread::delayMicros(uint32 us) {
+	sceKernelDelayThread(us);
+}
 
-enum ThreadPriority {
-	PRIORITY_MAIN_THREAD = 36,
-	PRIORITY_AUDIO_THREAD = 35,		// We'll alternate between this and main thread priority
-	PRIORITY_TIMER_THREAD = 30,
-	PRIORITY_POWER_THREAD = 20,
-	PRIORITY_DISPLAY_THREAD = 17
-};
+uint32 PspThread::getMillis() {
+	uint32 ticks[2];
+	sceRtcGetCurrentTick((u64 *)ticks);
+	return (ticks[0]/1000);	
+}
 
-enum StackSizes {
-	STACK_AUDIO_THREAD = 16 * 1024,
-	STACK_TIMER_THREAD = 16 * 1024,
-	STACK_DISPLAY_THREAD = 2 * 1024,
-	STACK_POWER_THREAD = 4 * 1024
-};
-	
-#endif /* PSP_THREADS_H */
-
+uint32 PspThread::getMicros() {
+	uint32 ticks[2];
+	sceRtcGetCurrentTick((u64 *)ticks);
+	return ticks[0]; 
+}
 

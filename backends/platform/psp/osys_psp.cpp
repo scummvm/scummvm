@@ -37,6 +37,7 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
 #include "backends/platform/psp/powerman.h"
+#include "backends/platform/psp/thread.h"
 
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -298,17 +299,15 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 	return _inputHandler.getAllInputs(event);
 }
 
-
 uint32 OSystem_PSP::getMillis() {
-	return SDL_GetTicks();
+	return PspThread::getMillis();
 }
 
 void OSystem_PSP::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
+	PspThread::delayMillis(msecs);
 }
 
 void OSystem_PSP::setTimerCallback(TimerProc callback, int interval) {
-	//SDL_SetTimer(interval, (SDL_TimerCallback)callback);
 	_pspTimer.setCallback((PspTimer::CallbackFunc)callback);
 	_pspTimer.setIntervalMs(interval);
 	_pspTimer.start();
