@@ -305,7 +305,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
-	pSnd->isQueued = false;
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		pSnd->isQueued = false;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
