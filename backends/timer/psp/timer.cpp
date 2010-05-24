@@ -23,12 +23,13 @@
  *
  */
 
+#if defined (__PSP__) 
 #include <pspthreadman.h>
 
 #include "common/scummsys.h"
 #include "common/timer.h"
 #include "backends/platform/psp/thread.h"
-#include "backends/platform/psp/timer.h"
+#include "backends/timer/psp/timer.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -78,3 +79,5 @@ void PspTimer::timerThread() {
 		_callback();
 	}
 };
+
+#endif /* __PSP__ */

@@ -148,8 +148,7 @@ OBJS := powerman.o \
 	trace.o \
 	psploader.o \
 	pspkeyboard.o \
-	audio.o \
-	timer.o
+	audio.o
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common
