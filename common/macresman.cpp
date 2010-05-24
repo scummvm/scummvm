@@ -439,6 +439,11 @@ Common::SeekableReadStream *MacResManager::getResource(uint32 typeID, uint16 res
 
 	_stream->seek(_dataOffset + _resLists[typeNum][resNum].dataOffset);
 	uint32 len = _stream->readUint32BE();
+
+	// Ignore resources with 0 length
+	if (!len)
+		return 0;
+
 	return _stream->readStream(len);
 }
 
@@ -448,6 +453,11 @@ Common::SeekableReadStream *MacResManager::getResource(const Common::String &fil
 			if (_resLists[i][j].nameOffset != -1 && filename.equalsIgnoreCase(_resLists[i][j].name)) {
 				_stream->seek(_dataOffset + _resLists[i][j].dataOffset);
 				uint32 len = _stream->readUint32BE();
+
+				// Ignore resources with 0 length
+				if (!len)
+					return 0;
+
 				return _stream->readStream(len);
 			}
 		}
