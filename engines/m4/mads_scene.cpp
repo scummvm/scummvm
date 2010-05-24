@@ -302,7 +302,9 @@ void MadsScene::update() {
 }
 
 void MadsScene::updateState() {
+	_sceneLogic.sceneStep();
 	_sequenceList.tick();
+	_kernelMessages.update();
 }
 
 int MadsScene::loadSceneSpriteSet(const char *setName) {
@@ -652,57 +654,5 @@ void MadsSceneResources::load(int sId) {
 }
 
 /*--------------------------------------------------------------------------*/
-
-/**
- * Adds a new entry to the timed on-screen text display list
- */
-/*
-void MadsScreenText::draw(M4Surface *surface) {
-}
-
-void MadsScreenText::timedDisplay() {
-	for (int idx = 0; !_abortTimedText && (idx < OLD_TEXT_DISPLAY_SIZE); ++idx) {
-		if (((_timedText[idx].flags & TEXTFLAG_ACTIVE) != 0) && 
-			(_timedText[idx].frameTimer <= g_system->getMillis()))
-			// Add the specified entry
-			addTimedText(&_timedText[idx]);
-	}
-}
-
-void MadsScreenText::addTimedText(TimedText *entry) {
-	if ((entry->flags & TEXTFLAG_40) != 0) {
-		this->setActive2(entry->textDisplayIndex);
-		entry->flags &= 0x7F;
-		return;
-	}
-
-	if ((entry->flags & TEXTFLAG_8) == 0) 
-		// FIXME: Adjust timeouts for ScumVM's milli counter
-		entry->timeout -= 3;
-
-	if ((entry->flags & TEXTFLAG_4) != 0) {
-		Text4A &rec = _text4A[entry->unk4AIndex];
-		if ((rec.field25 != 0) || (rec.active == 0))
-			entry->timeout = 0;
-	}
-
-	if ((entry->timeout == 0) && !_abortTimedText) {
-		entry->flags |= TEXTFLAG_40;
-
-		if (entry->field_1C) {
-			_abortTimedText = entry->field_1C;
-			//word_84208 = entry->field_1D;
-			
-			if (entry->field_1D != 1) {
-				// Restore the action list
-				for (int i = 0; i < 3; ++i)
-					_madsVm->scene()->actionNouns[i] = entry->actionNouns[i]; 
-			}
-		}
-	}
-
-	// TODO: code from 'loc_244ec' onwards
-}
-*/
 
 } // End of namespace M4

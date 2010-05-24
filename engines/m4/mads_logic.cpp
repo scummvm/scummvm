@@ -245,4 +245,15 @@ void MadsSceneLogic::doAction() {
 
 }
 
+void MadsSceneLogic::sceneStep() {
+	// FIXME: Temporary code to display a message on-screen
+	static bool tempBool = false;
+	if (!tempBool) {
+		tempBool = true;
+
+		_madsVm->scene()->_kernelMessages.add(Common::Point(63, 100), 0x1110, 0, 0, 240, 
+			_madsVm->globals()->getQuote(49));
+	}
+}
+
 }

@@ -54,6 +54,7 @@ public:
 	void setupScene();
 	void enterScene();
 	void doAction();
+	void sceneStep();
 };
 
 }

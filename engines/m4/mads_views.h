@@ -139,9 +139,10 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define TEXT_4A_SIZE 30
 
-enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_30 = 0x30, 
+	KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
 
-class MadsKernelMessageListEntry {
+class MadsKernelMessageEntry {
 public:
 	uint8 flags;
 	int sequenceIndex;
@@ -152,21 +153,23 @@ public:
 	Common::Point position;
 	int textDisplayIndex;
 	int msgOffset;
-	int field_E;
+	int numTicks;
 	uint32 frameTimer2;
 	uint32 frameTimer;
 	uint32 timeout;
 	bool field_1C;
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
-	const char *msg;
+	char msg[100];
 };
 
 class MadsKernelMessageList {
 private:
 	MadsView &_owner;
-	Common::Array<MadsKernelMessageListEntry> _entries;
+	Common::Array<MadsKernelMessageEntry> _entries;
 	Font *_talkFont;
+public:
+	int word_8469E;
 public:
 	MadsKernelMessageList(MadsView &owner);
 
@@ -177,6 +180,8 @@ public:
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);
 	void reset();
+	void update();
+	void processText(int msgIndex);
 };
 
 class ScreenObjectEntry {
@@ -311,9 +316,7 @@ struct MadsSequenceEntry {
 	int field_12;
 	int field_13;
 	
-	int width;
-	int height;
-	
+	Common::Point msgPos;
 	int triggerCountdown;
 	bool doneFlag;
 	MadsSequenceSubEntries entries;
@@ -338,7 +341,7 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
 	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
+		int msgX, int msgY, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
 	void remove(int timerIndex);
 	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
