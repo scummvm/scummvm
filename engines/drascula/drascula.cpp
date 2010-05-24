@@ -87,6 +87,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	_textverbs = 0;
 	_textmisc = 0;
 	_textd1 = 0;
+	_talkSequences = 0;
 
 	_color = 0;
 	blinking = 0;
