@@ -31,7 +31,7 @@
 #include "sci/engine/vm.h"
 
 namespace Graphics {
-	class Surface;
+	struct Surface;
 }
 
 namespace Sci {

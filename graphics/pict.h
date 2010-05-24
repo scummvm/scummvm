@@ -38,7 +38,7 @@ namespace Common {
 namespace Graphics {
 
 class JPEG;
-class Surface;
+struct Surface;
 
 class PictDecoder {
 public:
