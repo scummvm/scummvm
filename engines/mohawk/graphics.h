@@ -28,9 +28,9 @@
 
 #include "mohawk/bitmap.h"
 #include "mohawk/livingbooks.h"
-#include "mohawk/myst_pict.h"
 
 #include "common/file.h"
+#include "graphics/pict.h"
 #include "graphics/video/codecs/mjpeg.h"
 
 namespace Mohawk {
@@ -104,7 +104,7 @@ public:
 private:
 	MohawkEngine_Myst *_vm;
 	MystBitmap *_bmpDecoder;
-	MystPICT *_pictDecoder;
+	Graphics::PictDecoder *_pictDecoder;
 	Graphics::JPEGDecoder *_jpegDecoder;
 	Graphics::PixelFormat _pixelFormat;
 

@@ -79,7 +79,7 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 
 	if (_vm->getFeatures() & GF_ME) {
 		_jpegDecoder = new Graphics::JPEGDecoder();
-		_pictDecoder = new MystPICT(_jpegDecoder);
+		_pictDecoder = new Graphics::PictDecoder(_pixelFormat);
 	} else {
 		_jpegDecoder = NULL;
 		_pictDecoder = NULL;

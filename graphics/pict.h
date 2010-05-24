@@ -23,35 +23,61 @@
  *
  */
 
-#ifndef MYST_PICT_H
-#define MYST_PICT_H
+#ifndef GRAPHICS_PICT_H
+#define GRAPHICS_PICT_H
 
 #include "common/rect.h"
 #include "common/scummsys.h"
-#include "common/stream.h"
+
 #include "graphics/pixelformat.h"
-#include "graphics/surface.h"
 
-#include "graphics/video/codecs/mjpeg.h"
+namespace Common {
+	class SeekableReadStream;
+}
 
-namespace Mohawk {
+namespace Graphics {
 
-class MystPICT {
+class JPEG;
+class Surface;
+
+class PictDecoder {
 public:
-	MystPICT(Graphics::JPEGDecoder *jpegDecoder);
-	~MystPICT() {}
-	Graphics::Surface *decodeImage(Common::SeekableReadStream *stream);
+	PictDecoder(Graphics::PixelFormat pixelFormat);
+	~PictDecoder();
+	Surface *decodeImage(Common::SeekableReadStream *stream, byte *palette = 0);
+
+	struct PixMap {
+		uint32 baseAddr;
+		uint16 rowBytes;
+		Common::Rect bounds;
+		uint16 pmVersion;
+		uint16 packType;
+		uint32 packSize;
+		uint32 hRes;
+		uint32 vRes;
+		uint16 pixelType;
+		uint16 pixelSize;
+		uint16 cmpCount;
+		uint16 cmpSize;
+		uint32 planeBytes;
+		uint32 pmTable;
+		uint32 pmReserved;
+	};
+
+	static PixMap readPixMap(Common::SeekableReadStream *stream, bool hasBaseAddr = true);
 
 private:
-	Graphics::JPEGDecoder *_jpegDecoder;
 	Common::Rect _imageRect;
-	Graphics::PixelFormat _pixelFormat;
+	PixelFormat _pixelFormat;
+	JPEG *_jpeg;
+	byte _palette[256 * 4];
+	bool _isPaletted;
 
-	void decodeDirectBitsRect(Common::SeekableReadStream *stream, Graphics::Surface *image);
+	void decodeDirectBitsRect(Common::SeekableReadStream *stream, Surface *image, bool hasPalette);
 	void decodeDirectBitsLine(byte *out, uint32 length, Common::SeekableReadStream *data, byte bytesPerPixel);
-	void decodeCompressedQuickTime(Common::SeekableReadStream *stream, Graphics::Surface *image);
+	void decodeCompressedQuickTime(Common::SeekableReadStream *stream, Surface *image);
 };
 
-} // End of namespace Mohawk
+} // End of namespace Graphics
 
 #endif
