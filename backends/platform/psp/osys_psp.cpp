@@ -49,7 +49,7 @@
 
 #include "backends/platform/psp/trace.h"
 
-//#define USE_PSP_AUDIO
+#define USE_PSP_AUDIO
 
 #define	SAMPLES_PER_SEC	44100
 

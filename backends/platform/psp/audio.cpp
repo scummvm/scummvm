@@ -79,7 +79,6 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 	_bufferSize = numOfSamples * numOfChannels * sizeof(uint16);	// should be the right size to send the app
 	_callback = callback;
 	_userData = userData;
-	_emptyBuffers = NUM_BUFFERS - 1;	// because we'll increase in the beginning
 	_bufferToFill = 0;
 	_bufferToPlay = 0;
 	
@@ -122,10 +121,7 @@ int PspAudio::thread(SceSize, void *__this) {
 };
 
 // The real thread function
-void PspAudio::audioThread() {
-	bool isPlaying = false;
-	int remainingSamples = 0;
-	
+void PspAudio::audioThread() {	
 	assert(_callback);
 	PSP_DEBUG_PRINT_FUNC("audio thread started\n");
 
@@ -138,29 +134,13 @@ void PspAudio::audioThread() {
 				PSP_DEBUG_PRINT("audio thread unpaused\n");
 		}
 
-		// check if the audio is playing
-		remainingSamples = sceAudioGetChannelRestLen(_pspChannel);
-		if (remainingSamples < 0) {
-			PSP_ERROR("failed to get remaining samples\n");
-			return;
-		}
-		isPlaying = remainingSamples ? true : false;
-		
 		PSP_DEBUG_PRINT("remaining samples[%d]\n", remainingSamples);
 
-		if (!isPlaying) {
-			_emptyBuffers++;
-		}
+		PSP_DEBUG_PRINT("filling buffer[%d]\n", _bufferToFill);
+		_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in
+		nextBuffer(_bufferToFill);
 		
-		while (_emptyBuffers)	{ // we have some empty buffers
-			PSP_DEBUG_PRINT("filling buffer[%d]. empty buffers[%d]\n", _bufferToFill, _emptyBuffers);
-			_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in
-			nextBuffer(_bufferToFill);
-			_emptyBuffers--;
-			break;
-		}
-		
-		PSP_DEBUG_PRINT("playing buffer[%d]. empty buffers[%d]\n", _bufferToPlay, _emptyBuffers);
+		PSP_DEBUG_PRINT("playing buffer[%d].\n", _bufferToPlay);
 		playBuffer();
 		nextBuffer(_bufferToPlay);
 	} // while _init

@@ -35,8 +35,8 @@ public:
 	typedef void (* callbackFunc)(void *userData, byte *samples, int len);
 	PspAudio() : _pspChannel(0), 
 			_numOfChannels(0), _numOfSamples(0), _callback(0), 
-			_bufferToPlay(0), _bufferToFill(0), _emptyBuffers(NUM_BUFFERS), 
-			_init(false), _paused(true), _stoppedPlayingOnceFlag(true) {
+			_bufferToPlay(0), _bufferToFill(0), 
+			_init(false), _paused(true) {
 		for (int i=0; i<NUM_BUFFERS; i++)
 			_buffers[i] = 0;
 	}
@@ -62,10 +62,8 @@ private:
 	int _bufferToPlay;				// the next buffer to output
 	int _bufferToFill;
 	int _bufferSize;
-	int _emptyBuffers;
 	bool _init;						// flag for initialization
 	bool _paused;
-	bool _stoppedPlayingOnceFlag;		// used to make sure we know when the playing stopped
 };
 
 #endif /* PSP_AUDIO_H */

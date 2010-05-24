@@ -38,15 +38,15 @@ public:
 
 enum ThreadPriority {
 	PRIORITY_MAIN_THREAD = 36,
-	PRIORITY_AUDIO_THREAD = 35,		// We'll alternate between this and main thread priority
 	PRIORITY_TIMER_THREAD = 30,
-	PRIORITY_POWER_THREAD = 20,
-	PRIORITY_DISPLAY_THREAD = 17
+	PRIORITY_AUDIO_THREAD = 25,		// must be higher than timer or we get stuttering
+	PRIORITY_POWER_THREAD = 20,		// quite a light thread
+	PRIORITY_DISPLAY_THREAD = 17	// very light thread for callbacks only
 };
 
 enum StackSizes {
 	STACK_AUDIO_THREAD = 16 * 1024,
-	STACK_TIMER_THREAD = 16 * 1024,
+	STACK_TIMER_THREAD = 32 * 1024,
 	STACK_DISPLAY_THREAD = 2 * 1024,
 	STACK_POWER_THREAD = 4 * 1024
 };
