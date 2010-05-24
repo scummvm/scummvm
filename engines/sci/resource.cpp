@@ -445,11 +445,10 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 
 	if (res->_source->source_type == kSourceMacResourceFork) {
-		//error("ResourceManager::loadResource(): TODO: Mac resource fork ;)");
 		Common::SeekableReadStream *stream = res->_source->macResMan.getResource(resTypeToMacTag(res->_id.type), res->_id.number);
 
 		if (!stream)
-			error("Could not get Mac resource fork resource");
+			error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
 
 		int error = decompress(res, stream);
 		if (error) {
@@ -1476,7 +1475,10 @@ struct {
 	{ MKID_BE('PAL '), kResourceTypePalette },
 	{ MKID_BE('snd '), kResourceTypeAudio },
 	{ MKID_BE('MSG '), kResourceTypeMessage },
-	{ MKID_BE('HEP '), kResourceTypeHeap }
+	{ MKID_BE('HEP '), kResourceTypeHeap },
+	{ MKID_BE('IBIN'), kResourceTypeMacIconBarPictN },
+	{ MKID_BE('IBIS'), kResourceTypeMacIconBarPictS },
+	{ MKID_BE('PICT'), kResourceTypeMacPict }
 };
 
 static uint32 resTypeToMacTag(ResourceType type) {
@@ -1509,6 +1511,16 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 		Common::MacResIDArray idArray = source->macResMan.getResIDArray(tagArray[i]);
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
+			// Get the size of the file
+			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);
+
+			// Some IBIS resources have a size of 0, so we skip them
+			if (!stream)
+				continue;
+
+			uint32 fileSize = stream->size();
+			delete stream;
+
 			ResourceId resId = ResourceId(type, idArray[j]);
 
 			Resource *newrsc = NULL;
@@ -1519,11 +1531,6 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 				_resMap.setVal(resId, newrsc);
 			} else
 				newrsc = _resMap.getVal(resId);
-
-			// Get the size of the file
-			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);
-			uint32 fileSize = stream->size();
-			delete stream;
 
 			// Overwrite everything
 			newrsc->_id = resId;

@@ -32,6 +32,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
@@ -297,9 +298,12 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	// TODO...
 
-	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0)
+	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0) {
 		for (int i = 0; i < argv[2].toUint16(); i++)
-			warning("kIconBar: Icon Object %d = %04x:%04x", i, PRINT_REG(argv[i + 3]));
+			g_sci->_macIconBar->addIcon(argv[i + 3]);
+
+		g_sci->_macIconBar->drawIcons();		
+	}
 
 	// Other calls seem to handle selecting/deselecting them
 

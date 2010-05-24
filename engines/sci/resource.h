@@ -108,7 +108,13 @@ enum ResourceType {
 	kResourceTypeUnknown1, // Translation, currently unsupported
 	kResourceTypeUnknown2,
 	kResourceTypeRobot,
-	kResourceTypeInvalid
+	kResourceTypeInvalid,
+
+	// Mac-only resources, these resource types are self-defined
+	// Numbers subject to change
+	kResourceTypeMacIconBarPictN = -1, // IBIN resources (icon bar, not selected)
+	kResourceTypeMacIconBarPictS = -2, // IBIS resources (icon bar, selected)
+	kResourceTypeMacPict = -3          // PICT resources (inventory)
 };
 
 const char *getResourceTypeName(ResourceType restype);
@@ -127,7 +133,7 @@ public:
 
 	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0)
 			: type(type_), number(number_), tuple(tuple_) {
-		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+		if (type < kResourceTypeMacPict || type > kResourceTypeInvalid)
 			type = kResourceTypeInvalid;
 	}
 

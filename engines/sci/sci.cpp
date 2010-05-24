@@ -43,6 +43,7 @@
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/maciconbar.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
@@ -97,6 +98,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
 
 	_gamestate = 0;
+	_macIconBar = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -169,6 +171,9 @@ Common::Error SciEngine::run() {
 		screen = new GfxScreen(_resMan, 640, 480);
 	else
 		screen = new GfxScreen(_resMan, 320, 200, upscaledHires);
+
+	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
+		_macIconBar = new MacIconBar();
 
 	GfxPalette *palette = new GfxPalette(_resMan, screen);
 	GfxCache *cache = new GfxCache(_resMan, screen, palette);

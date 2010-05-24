@@ -30,8 +30,9 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/screen.h"
+#include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
@@ -311,6 +312,10 @@ void GfxPalette::setOnScreen() {
 	if (_resMan->isAmiga32color())
 		return;
 	_screen->setPalette(&_sysPalette);
+
+	// Redraw the Mac SCI1.1 Icon bar every palette change
+	if (g_sci->_macIconBar)
+		g_sci->_macIconBar->drawIcons();
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
