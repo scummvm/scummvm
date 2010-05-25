@@ -527,6 +527,8 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			}
 			break;
 
+		// Pattern opcodes are handled in sierra sci1.1+ as actual NOPs and normally they definitely should not occur
+		//  inside picture data for such games
 		case PIC_OP_SET_PATTERN:
 			if (_resourceType >= SCI_PICTURE_TYPE_SCI11) {
 				if (strcmp(g_sci->getGameID(), "sq4") == 0) {
