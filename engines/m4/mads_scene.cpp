@@ -78,7 +78,7 @@ void MadsScene::loadScene2(const char *aaName) {
 void MadsScene::loadSceneTemporary() {
 	/* Existing code that eventually needs to be replaced with the proper MADS code */
 	// Set system palette entries
-	_vm->_palette->blockRange(0, 7);
+	_vm->_palette->blockRange(0, 18);
 	RGB8 sysColors[3] = { {0x1f<<2, 0x2d<<2, 0x31<<2, 0}, {0x24<<2, 0x37<<2, 0x3a<<2, 0},
 		{0x00<<2, 0x10<<2, 0x16<<2, 0}};
 	_vm->_palette->setPalette(&sysColors[0], 4, 3);
