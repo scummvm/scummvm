@@ -115,8 +115,6 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::pauseAll(bool pause) {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundToggle(*i, pause);
