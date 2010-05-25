@@ -146,9 +146,8 @@ PixelFormat QuickTimeDecoder::getPixelFormat() const {
 }
 
 void QuickTimeDecoder::rewind() {
-	delete _videoCodec; _videoCodec = NULL;
-	_curFrame = -1;
-	_startTime = _nextFrameStartTime = 0;
+	VideoDecoder::reset();
+	_nextFrameStartTime = 0;
 
 	// Restart the audio too
 	stopAudio();
@@ -243,11 +242,7 @@ Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
 }
 
 bool QuickTimeDecoder::endOfVideo() const {
-	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1);
-}
-
-bool QuickTimeDecoder::needsUpdate() const {
-	return !endOfVideo() && getTimeToNextFrame() == 0;
+	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || VideoDecoder::endOfVideo());
 }
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
