@@ -121,7 +121,9 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	}
 
 	delete _videoStreams[videoHandle].video;
-	memset(&_videoStreams[videoHandle], 0, sizeof(VideoEntry));
+	_videoStreams[videoHandle].video = 0;
+	_videoStreams[videoHandle].id = 0;
+	_videoStreams[videoHandle].filename = "";
 }
 
 void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
@@ -152,8 +154,9 @@ bool VideoManager::updateBackgroundMovies() {
 				_videoStreams[i]->rewind();
 			} else {
 				delete _videoStreams[i].video;
-				memset(&_videoStreams[i], 0, sizeof(VideoEntry));
-				_videoStreams[i].video = NULL;
+				_videoStreams[i].video = 0;
+				_videoStreams[i].id = 0;
+				_videoStreams[i].filename = "";
 				continue;
 			}
 		}
