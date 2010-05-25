@@ -189,7 +189,7 @@ public:
 	Player *_player;
 	Mouse *_mouse;
 	Events *_events;
-	Font *_font;
+	FontManager *_font;
 	Actor *_actor;
 	Scene *_scene;
 	Dialogs *_dialogs;

@@ -37,7 +37,7 @@ namespace M4 {
 TextviewView::TextviewView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())),
 		_bgSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT),
-		_textSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT + vm->_font->getHeight() +
+		_textSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT + vm->_font->current()->getHeight() +
 			TEXTVIEW_LINE_SPACING) {
 
 	_screenType = VIEWID_TEXTVIEW;
@@ -60,7 +60,7 @@ TextviewView::TextviewView(MadsM4Engine *vm):
 	_vm->_palette->setPalette(&palData[0], 4, 3);
 	_vm->_palette->blockRange(4, 3);
 
-	_vm->_font->setColors(5, 6, 4);
+	_vm->_font->current()->setColours(5, 6, 4);
 
 	clear();
 	_bgSurface.clear();
@@ -222,7 +222,7 @@ void TextviewView::updateState() {
 		}
 	} else {
 		// Handling a text row
-		if (++_lineY == (_vm->_font->getHeight() + TEXTVIEW_LINE_SPACING))
+		if (++_lineY == (_vm->_font->current()->getHeight() + TEXTVIEW_LINE_SPACING))
 			processLines();
 	}
 
@@ -404,7 +404,7 @@ void TextviewView::processText() {
 
 	if (!strcmp(_currentLine, "***")) {
 		// Special signifier for end of script
-		_scrollCount = _vm->_font->getHeight() * 13;
+		_scrollCount = _vm->_font->current()->getHeight() * 13;
 		_lineY = -1;
 		return;
 	}
@@ -416,7 +416,7 @@ void TextviewView::processText() {
 	char *centerP = strchr(_currentLine, '@');
 	if (centerP) {
 		*centerP = '\0';
-		xStart = (width() / 2) - _vm->_font->getWidth(_currentLine);
+		xStart = (width() / 2) - _vm->_font->current()->getWidth(_currentLine);
 
 		// Delete the @ character and shift back the remainder of the string
 		char *p = centerP + 1;
@@ -424,16 +424,16 @@ void TextviewView::processText() {
 		strcpy(centerP, p);
 
 	} else {
-		lineWidth = _vm->_font->getWidth(_currentLine);
+		lineWidth = _vm->_font->current()->getWidth(_currentLine);
 		xStart = (width() - lineWidth) / 2;
 	}
 
 	// Copy the text line onto the bottom of the textSurface surface, which will allow it
 	// to gradually scroll onto the screen
-	int yp = _textSurface.height() - _vm->_font->getHeight() - TEXTVIEW_LINE_SPACING;
+	int yp = _textSurface.height() - _vm->_font->current()->getHeight() - TEXTVIEW_LINE_SPACING;
 	_textSurface.fillRect(Common::Rect(0, yp, _textSurface.width(), _textSurface.height()),
 		_vm->_palette->BLACK);
-	_vm->_font->writeString(&_textSurface, _currentLine, xStart, yp);
+	_vm->_font->current()->writeString(&_textSurface, _currentLine, xStart, yp);
 }
 
 

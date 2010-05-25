@@ -291,8 +291,7 @@ void MadsTextDisplay::setDirtyAreas2() {
 void MadsTextDisplay::draw(View *view) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
-			_entries[idx].font->setColours(_entries[idx].colour1, 
-				(_entries[idx].colour2 == 0) ? _entries[idx].colour1 : _entries[idx].colour2, 0xff);
+			_entries[idx].font->setColours(_entries[idx].colour1, _entries[idx].colour2, 0);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
 				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
@@ -1204,13 +1203,13 @@ MadsInterfaceView::~MadsInterfaceView() {
 void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
 	switch (newMode) {
 	case ITEM_NORMAL:
-		_vm->_font->setColors(4, 4, 0xff);
+		_vm->_font->current()->setColours(4, 4, 0xff);
 		break;
 	case ITEM_HIGHLIGHTED:
-		_vm->_font->setColors(5, 5, 0xff);
+		_vm->_font->current()->setColours(5, 5, 0xff);
 		break;
 	case ITEM_SELECTED:
-		_vm->_font->setColors(6, 6, 0xff);
+		_vm->_font->current()->setColours(6, 6, 0xff);
 		break;
 	}
 }
@@ -1300,7 +1299,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 			// Display the verb
 			const Common::Rect r(_screenObjects[actionIndex]);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+			_vm->_font->current()->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
 		}
 	}
 
@@ -1335,7 +1334,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		else setFontMode(ITEM_NORMAL);
 
 		// Write out it's description
-		_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+		_vm->_font->current()->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
 	}
 
 	// Handle the display of any currently selected object
@@ -1365,7 +1364,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 
 			// Set the highlighting and display the entry
 			setFontMode((i == yIndex) ? ITEM_HIGHLIGHTED : ITEM_NORMAL);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
+			_vm->_font->current()->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
 		}
 	}
 }

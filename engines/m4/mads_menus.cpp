@@ -985,15 +985,15 @@ RexGameMenuDialog::RexGameMenuDialog(): RexDialogView() {
 
 void RexGameMenuDialog::addLines() {
 	// Add the title
-	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->getHeight() + 2) * 6) >> 1) - 78);
+	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->current()->getHeight() + 2) * 6) >> 1) - 78);
 		
-	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 10);
+	addQuote(_vm->_font->current(), ALIGN_CENTER, 0, top, 10);
 
 	// Loop for adding the option lines of the dialog
 	top += 6;
 	for (int idx = 0; idx < 5; ++idx) {
-		top += _vm->_font->getHeight() + 1;
-		addQuote(_vm->_font, ALIGN_CENTER, 0, top, 11 + idx);
+		top += _vm->_font->current()->getHeight() + 1;
+		addQuote(_vm->_font->current(), ALIGN_CENTER, 0, top, 11 + idx);
 	}
 }
 
@@ -1069,42 +1069,42 @@ void RexOptionsDialog::reload() {
 
 void RexOptionsDialog::addLines() {
 	// Add the title
-	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->getHeight() + 1) * 9 + 12) >> 1) - 78);
+	int top = MADS_Y_OFFSET - 2 - ((((_vm->_font->current()->getHeight() + 1) * 9 + 12) >> 1) - 78);
 
-	addQuote(_vm->_font, ALIGN_CENTER, 0, top, 16);
+	addQuote(_vm->_font->current(), ALIGN_CENTER, 0, top, 16);
 
 	// Music state line
-	top += _vm->_font->getHeight() + 1 + 6;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 17, _tempConfig.musicFlag ? 24 : 25);
+	top += _vm->_font->current()->getHeight() + 1 + 6;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 17, _tempConfig.musicFlag ? 24 : 25);
 
 	// Sound state line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 18, _tempConfig.soundFlag ? 26 : 27);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 18, _tempConfig.soundFlag ? 26 : 27);
 
 	// Interface easy state line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 19, _tempConfig.easyMouse ? 29 : 28);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 19, _tempConfig.easyMouse ? 29 : 28);
 
 	// Inventory sppinng state line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 20, _tempConfig.invObjectsStill ? 31 : 30);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 20, _tempConfig.invObjectsStill ? 31 : 30);
 
 	// Text window state line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 21, _tempConfig.textWindowStill ? 33 : 32);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 21, _tempConfig.textWindowStill ? 33 : 32);
 
 	// Screen fade state line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 22, _tempConfig.screenFades + 34);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 22, _tempConfig.screenFades + 34);
 
 	// Storyline mode line
-	top += _vm->_font->getHeight() + 1;
-	addQuote(_vm->_font, ALIGN_CHAR_CENTER, 0, top, 23, (_tempConfig.storyMode == 1) ? 37 : 38);
+	top += _vm->_font->current()->getHeight() + 1;
+	addQuote(_vm->_font->current(), ALIGN_CHAR_CENTER, 0, top, 23, (_tempConfig.storyMode == 1) ? 37 : 38);
 
 	// Add Done and Cancel button texts
-	top += _vm->_font->getHeight() + 1 + 6;
-	addQuote(_vm->_font, ALIGN_CENTER, -54, top, 1, 0);
-	addQuote(_vm->_font, ALIGN_CENTER, 54, top, 2, 0);
+	top += _vm->_font->current()->getHeight() + 1 + 6;
+	addQuote(_vm->_font->current(), ALIGN_CENTER, -54, top, 1, 0);
+	addQuote(_vm->_font->current(), ALIGN_CENTER, 54, top, 2, 0);
 }
 
 bool RexOptionsDialog::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {

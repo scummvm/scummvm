@@ -170,7 +170,7 @@ Common::Error MadsM4Engine::run() {
 	_events = new Events(this);
 	_kernel = new Kernel(this);
 	_player = new Player(this);
-	_font = new Font(this);
+	_font = new FontManager(this);
 	if (getGameType() == GType_Burger) {
 		_actor = new Actor(this);
 		_conversationView = new ConversationView(this);
@@ -554,9 +554,9 @@ Common::Error MadsEngine::run() {
 		_scene->show();
 
 		_font->setFont(FONT_MAIN_MADS);
-		_font->setColors(2, 1, 3);
-		_font->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
-		_font->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
+		_font->current()->setColours(2, 1, 3);
+		_font->current()->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
+		_font->current()->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
 
 		if (getGameType() == GType_DragonSphere) {
 			//_scene->showMADSV2TextBox("Test", 10, 10, NULL);

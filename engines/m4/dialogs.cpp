@@ -127,7 +127,7 @@ void Dialog::writeChars(const char *srcLine) {
 		strcat(line, wordStr);
 
 		lineLen = strlen(line);
-		lineWidth = _vm->_font->getWidth(line, DIALOG_SPACING);
+		lineWidth = _vm->_font->current()->getWidth(line, DIALOG_SPACING);
 
 		if (((_lineX + lineLen) > _widthChars) || ((_widthX + lineWidth) > _dialogWidth)) {
 			incLine();
@@ -146,7 +146,7 @@ void Dialog::writeChars(const char *srcLine) {
  */
 void Dialog::appendText(const char *line) {
 	_lineX += strlen(line);
-	_widthX += _vm->_font->getWidth(line, DIALOG_SPACING);
+	_widthX += _vm->_font->current()->getWidth(line, DIALOG_SPACING);
 
 	strcat(_lines[_lines.size() - 1].data, line);
 }
@@ -158,7 +158,7 @@ void Dialog::addLine(const char *line, bool underlineP) {
 	if ((_widthX > 0) || (_lineX > 0))
 		incLine();
 
-	int lineWidth = _vm->_font->getWidth(line, DIALOG_SPACING);
+	int lineWidth = _vm->_font->current()->getWidth(line, DIALOG_SPACING);
 	int lineLen = strlen(line);
 
 	if ((lineWidth > _dialogWidth) || (lineLen >= _widthChars))
@@ -383,7 +383,7 @@ Dialog::Dialog(MadsM4Engine *vm, const char *msgData, const char *title): View(v
 				if (id > 0) {
 					// Suffix provided - specifies the dialog width in number of chars
 					_widthChars = id * 2;
-					_dialogWidth = id * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
+					_dialogWidth = id * (_vm->_font->current()->getMaxWidth() + DIALOG_SPACING) + 10;
 				}
 
 			} else if (matchCommand(cmdText, "UNDER")) {
@@ -416,7 +416,7 @@ Dialog::Dialog(MadsM4Engine *vm, const char *msgData, const char *title): View(v
 Dialog::Dialog(MadsM4Engine *vm, int widthChars): View(vm, Common::Rect(0, 0, 0, 0)) {
 	_vm->_font->setFont(FONT_INTERFACE_MADS);
 	_widthChars = widthChars * 2;
-	_dialogWidth = widthChars * (_vm->_font->getMaxWidth() + DIALOG_SPACING) + 10;
+	_dialogWidth = widthChars * (_vm->_font->current()->getMaxWidth() + DIALOG_SPACING) + 10;
 	_screenType = LAYER_DIALOG;
 	_lineX = 0;
 	_widthX = 0;
@@ -439,7 +439,7 @@ void Dialog::draw() {
 
 	// Calculate bounds
 	int dlgWidth = _dialogWidth;
-	int dlgHeight = _lines.size() * (_vm->_font->getHeight() + 1) + 10;
+	int dlgHeight = _lines.size() * (_vm->_font->current()->getHeight() + 1) + 10;
 	int dialogX = (_vm->_screen->width() - dlgWidth) / 2;
 	int dialogY = (_vm->_screen->height() - dlgHeight) / 2;
 
@@ -480,26 +480,26 @@ void Dialog::draw() {
 	}
 
 	// Handle drawing the text contents
-	_vm->_font->setColours(7, 7, 7);
+	_vm->_font->current()->setColours(7, 7, 7);
 	setColour(7);
 
-	for (uint lineCtr = 0, yp = 5; lineCtr < _lines.size(); ++lineCtr, yp += _vm->_font->getHeight() + 1) {
+	for (uint lineCtr = 0, yp = 5; lineCtr < _lines.size(); ++lineCtr, yp += _vm->_font->current()->getHeight() + 1) {
 
 		if (_lines[lineCtr].barLine) {
 			// Bar separation line
-			hLine(5, width() - 6, ((_vm->_font->getHeight() + 1) >> 1) + yp);
+			hLine(5, width() - 6, ((_vm->_font->current()->getHeight() + 1) >> 1) + yp);
 		} else {
 			// Standard line
 			Common::Point pt(_lines[lineCtr].xp + 5, yp);
 			if (_lines[lineCtr].xp & 0x40)
 				++pt.y;
 
-			_vm->_font->writeString(this, _lines[lineCtr].data, pt.x, pt.y, 0, DIALOG_SPACING);
+			_vm->_font->current()->writeString(this, _lines[lineCtr].data, pt.x, pt.y, 0, DIALOG_SPACING);
 
 			if (_lines[lineCtr].underline)
 				// Underline needed
-				hLine(pt.x, pt.x + _vm->_font->getWidth(_lines[lineCtr].data, DIALOG_SPACING),
-					pt.y + _vm->_font->getHeight());
+				hLine(pt.x, pt.x + _vm->_font->current()->getWidth(_lines[lineCtr].data, DIALOG_SPACING),
+					pt.y + _vm->_font->current()->getHeight());
 		}
 	}
 
@@ -528,7 +528,7 @@ void Dialog::display(MadsM4Engine *vm, int widthChars, const char **descEntries)
 		dlg->incLine();
 		dlg->writeChars(*descEntries);
 
-		int lineWidth = vm->_font->getWidth(*descEntries, DIALOG_SPACING);
+		int lineWidth = vm->_font->current()->getWidth(*descEntries, DIALOG_SPACING);
 		dlg->_lines[dlg->_lines.size() - 1].xp = (dlg->_dialogWidth - 10 - lineWidth) / 2;
 		++descEntries;
 	}
