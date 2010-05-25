@@ -8,6 +8,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  General:
    - Switched to the "fast" DOSBox OPL emulator.
+   - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
 
 1.1.2 (????-??-??)
   Broken Sword 2
