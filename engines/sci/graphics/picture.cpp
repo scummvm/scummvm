@@ -69,6 +69,8 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 	headerSize = READ_LE_UINT16(_resource->data);
 	switch (headerSize) {
 	case 0x26: // SCI 1.1 VGA picture
+		if (_addToFlag)
+			_priority = 15;
 		drawSci11Vga();
 		break;
 #ifdef ENABLE_SCI32
@@ -108,9 +110,8 @@ void GfxPicture::drawSci11Vga() {
 	_palette->set(&palette, true);
 
 	// display Cel-data
-	if (has_cel) {
+	if (has_cel)
 		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, false);
-	}
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
