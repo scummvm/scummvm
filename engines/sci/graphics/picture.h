@@ -33,9 +33,9 @@ namespace Sci {
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
 enum {
-	SCI_PICTURE_CELTYPE_REGULAR		= 0,
-	SCI_PICTURE_CELTYPE_SCI11		= 1,
-	SCI_PICTURE_CELTYPE_SCI32		= 2
+	SCI_PICTURE_TYPE_REGULAR		= 0,
+	SCI_PICTURE_TYPE_SCI11		= 1,
+	SCI_PICTURE_TYPE_SCI32		= 2
 };
 
 class GfxPorts;
@@ -63,7 +63,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, int celType);
+	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);
@@ -86,6 +86,7 @@ private:
 
 	int16 _resourceId;
 	Resource *_resource;
+	int _resourceType;
 
 	int16 _animationNr;
 	bool _mirroredFlag;
