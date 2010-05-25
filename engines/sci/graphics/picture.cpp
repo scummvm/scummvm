@@ -111,7 +111,7 @@ void GfxPicture::drawSci11Vga() {
 
 	// display Cel-data
 	if (has_cel)
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, false);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, SCI_PICTURE_CELTYPE_SCI11);
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
@@ -156,14 +156,14 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 		cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
 		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos, true);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos, SCI_PICTURE_CELTYPE_SCI32);
 		cel_headerPos += 42;
 		celCount--;
 	}
 }
 #endif
 
-void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, int celType) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -180,11 +180,16 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	int pixelNr, pixelCount;
 
 #ifdef ENABLE_SCI32
-	if (!hasSci32Header) {
+	if (celType != SCI_PICTURE_CELTYPE_SCI32) {
 #endif
 		displaceX = (signed char)headerPtr[4];
 		displaceY = (unsigned char)headerPtr[5];
-		clearColor = headerPtr[6];
+		if (celType == SCI_PICTURE_CELTYPE_SCI11) {
+			// SCI1.1 uses hardcoded clearcolor for pictures, even if cel header specifies otherwise
+			clearColor = _screen->getColorWhite();
+		} else {
+			clearColor = headerPtr[6];
+		}
 #ifdef ENABLE_SCI32
 	} else {
 		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
@@ -586,7 +591,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, SCI_PICTURE_CELTYPE_REGULAR);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -628,7 +633,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					if (pic_priority == 255)
 						_priority = 0; // if priority not set, use priority 0
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, SCI_PICTURE_CELTYPE_REGULAR);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
