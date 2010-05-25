@@ -89,7 +89,7 @@ void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) 
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
-	while (!_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (_videoStreams[videoHandle].video && !_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateBackgroundMovies())
 			_vm->_system->updateScreen();
 
@@ -120,8 +120,8 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 		_vm->_system->delayMillis(10);
 	}
 
-	_videoStreams[videoHandle]->close();
-	_videoStreams.clear();
+	delete _videoStreams[videoHandle].video;
+	memset(&_videoStreams[videoHandle], 0, sizeof(VideoEntry));
 }
 
 void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
@@ -372,6 +372,26 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 	// Otherwise, just add it to the list
 	_videoStreams.push_back(entry);
 	return _videoStreams.size() - 1;
+}
+
+VideoHandle VideoManager::findVideoHandle(uint16 id) {
+	for (uint16 i = 0; i < _mlstRecords.size(); i++)
+		if (_mlstRecords[i].code == id)
+			for (uint16 j = 0; j < _videoStreams.size(); j++)
+				if (_videoStreams[j].video && _mlstRecords[i].movieID == _videoStreams[j].id)
+					return j;
+
+	return NULL_VID_HANDLE;
+}
+
+int32 VideoManager::getCurFrame(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getCurFrame();
+}
+
+uint32 VideoManager::getFrameCount(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getFrameCount();
 }
 
 } // End of namespace Mohawk

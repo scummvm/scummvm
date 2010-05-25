@@ -92,6 +92,11 @@ public:
 	// Riven-related variables
 	Common::Array<MLSTRecord> _mlstRecords;
 
+	// Handle functions
+	VideoHandle findVideoHandle(uint16 id);
+	int32 getCurFrame(const VideoHandle &handle);
+	uint32 getFrameCount(const VideoHandle &handle);
+
 private:
 	MohawkEngine *_vm;
 
