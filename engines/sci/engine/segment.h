@@ -112,7 +112,7 @@ public:
 	 *
 	 * @param sub_addr		base address whose canonic address is to be found
 	 */
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) { return sub_addr; }
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const { return sub_addr; }
 
 	/**
 	 * Deallocates all memory associated with the specified address.
@@ -194,7 +194,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -217,14 +217,14 @@ public:
 	reg_t getSpeciesSelector() const { return _variables[_offset]; }
 	void setSpeciesSelector(reg_t value) { _variables[_offset] = value; }
 
-	reg_t getSuperClassSelector() const {	return _variables[_offset + 1];	}
+	reg_t getSuperClassSelector() const { return _variables[_offset + 1]; }
 	void setSuperClassSelector(reg_t value) { _variables[_offset + 1] = value; }
 
 	reg_t getInfoSelector() const { return _variables[_offset + 2]; }
-	void setInfoSelector(reg_t value) {	_variables[_offset + 2] = value; }
+	void setInfoSelector(reg_t value) { _variables[_offset + 2] = value; }
 
 	reg_t getNameSelector() const { return _variables[_offset + 3]; }
-	void setNameSelector(reg_t value) {	_variables[_offset + 3] = value; }
+	void setNameSelector(reg_t value) { _variables[_offset + 3] = value; }
 
 	reg_t getClassScriptSelector() const { return _variables[4]; }
 	void setClassScriptSelector(reg_t value) { _variables[4] = value; }
@@ -233,12 +233,12 @@ public:
 
 	reg_t getFunction(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
-		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset)));
+		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16(_baseMethod + offset));
 	}
 
 	Selector getFuncSelector(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
-		return READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset));
+		return READ_SCI11ENDIAN_UINT16(_baseMethod + offset);
 	}
 
 	/**
@@ -261,11 +261,11 @@ public:
 	 */
 	int locateVarSelector(SegManager *segMan, Selector slc) const;
 
-	bool isClass() const { return (getInfoSelector().offset & SCRIPT_INFO_CLASS);	}
+	bool isClass() const { return (getInfoSelector().offset & SCRIPT_INFO_CLASS); }
 	const Object *getClass(SegManager *segMan) const;
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
-	bool isFreed() const { return _flags & OBJECT_FLAG_FREED;	}
+	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }
 
 	void setVarCount(uint size) { _variables.resize(size); }
 	uint getVarCount() const { return _variables.size(); }
@@ -326,10 +326,10 @@ public:
 
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
+	uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	int _numExports; /**< Number of entries in the exports table */
 
-	byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
 	int _numSynonyms; /**< Number of entries in the synonyms block */
 
 protected:
@@ -359,7 +359,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
@@ -526,7 +526,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -685,7 +685,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -811,8 +811,8 @@ public:
 	// We overload destroy to ensure the string type is 3 after destroying
 	void destroy() { SciArray<char>::destroy(); _type = 3; }
 
-	Common::String toString();
-	void fromString(Common::String string);
+	Common::String toString() const;
+	void fromString(const Common::String &string);
 };
 
 struct ArrayTable : public Table<SciArray<reg_t> > {

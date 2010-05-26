@@ -193,7 +193,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	LocalVariables *locals = allocLocalsSegment(scr, count);
 	if (locals) {
 		uint i;
-		byte *base = (byte *)(scr->_buf + location.offset);
+		const byte *base = (const byte *)(scr->_buf + location.offset);
 
 		for (i = 0; i < count; i++)
 			locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
@@ -206,10 +206,10 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		uint16 location = READ_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + i));
+		uint16 location = READ_SCI11ENDIAN_UINT16(scr->_exportTable + i);
 
 		if ((location < scr->_heapSize - 1) && (READ_SCI11ENDIAN_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
-			WRITE_SCI11ENDIAN_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
+			WRITE_SCI11ENDIAN_UINT16(scr->_exportTable + i, location + scr->_heapStart - scr->_buf);
 		} else {
 			// Otherwise it's probably a function export,
 			// and we don't need to do anything.
@@ -219,7 +219,7 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {

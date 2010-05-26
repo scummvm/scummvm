@@ -362,8 +362,8 @@ void Script::setLockers(int lockers) {
 
 void Script::setExportTableOffset(int offset) {
 	if (offset) {
-		_exportTable = (const uint16 *)(_buf + offset + 2);
-		_numExports = READ_SCI11ENDIAN_UINT16((const byte *)(_exportTable - 1));
+		_exportTable = (uint16 *)(_buf + offset + 2);
+		_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
 	} else {
 		_exportTable = NULL;
 		_numExports = 0;
@@ -380,7 +380,7 @@ uint16 Script::validateExportFunc(int pubfunct) {
 
 	if (exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_SCI11ENDIAN_UINT16((const byte *)(_exportTable + pubfunct));
+	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
 	return offset;
@@ -538,7 +538,7 @@ SegmentRef SystemStrings::dereference(reg_t pointer) {
 
 
 //-------------------- script --------------------
-reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) {
+reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	addr.offset = 0;
 	return addr;
 }
@@ -622,7 +622,7 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 
 
 //-------------------- locals --------------------
-reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) {
+reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	// Reference the owning script
 	SegmentId owner_seg = segMan->getScriptSegment(script_id);
 
@@ -640,7 +640,7 @@ void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCall
 
 
 //-------------------- stack --------------------
-reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) {
+reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	addr.offset = 0;
 	return addr;
 }
@@ -821,7 +821,7 @@ bool Object::initBaseObject(SegManager *segMan, reg_t addr) {
 
 //-------------------- dynamic memory --------------------
 
-reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) {
+reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	addr.offset = 0;
 	return addr;
 }
@@ -860,7 +860,7 @@ void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 	}
 }
 
-Common::String SciString::toString() {
+Common::String SciString::toString() const {
 	if (_type != 3)
 		error("SciString::toString(): Array is not a string");
 
@@ -871,7 +871,7 @@ Common::String SciString::toString() {
 	return string;
 }
 
-void SciString::fromString(Common::String string) {
+void SciString::fromString(const Common::String &string) {
 	if (_type != 3)
 		error("SciString::fromString(): Array is not a string");
 
