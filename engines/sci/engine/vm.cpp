@@ -397,10 +397,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				printf("Varselector: Read\n");
 #endif // VM_DEBUG_SEND
 
-			// Make sure that argc is either 0 (read) or 1 (write) here.
-			// This isn't strictly necessary, but better safe than sorry
-			argc = MIN<int>(argc, 1);
-
 			// argc == 0: read selector
 			// argc != 0: write selector
 			if (printSendActions && !argc) {	// read selector
@@ -414,6 +410,13 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				debug("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
 				printSendActions = false;
 			}
+
+			if (argc > 1)
+				// argc can indeed be bigger than 1 in some cases, and it seems correct
+				// (i.e. we should skip that many bytes later on)... question is, why
+				// does this occur? Could such calls be used to point to data after X bytes in the heap?
+				// What are the skipped bytes in this case?
+				warning("send_selector(): more than 1 parameter (%d) while modifying a variable selector", argc);
 
 			{
 				CallsStruct call;
