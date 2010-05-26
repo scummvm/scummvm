@@ -260,7 +260,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 }
 
 SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
-	Object *obj = segMan->getObject(obj_location);
+	const Object *obj = segMan->getObject(obj_location);
 	int index;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 

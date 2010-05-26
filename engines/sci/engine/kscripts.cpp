@@ -111,7 +111,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = s->_segMan->getObject(parent_addr);
+	const Object *parent_obj = s->_segMan->getObject(parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 

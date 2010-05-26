@@ -156,7 +156,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 }
 
 bool SegManager::isHeapObject(reg_t pos) {
-	Object *obj = getObject(pos);
+	const Object *obj = getObject(pos);
 	if (obj == NULL || (obj && obj->isFreed()))
 		return false;
 	Script *scr = getScriptIfLoaded(pos.segment);
@@ -234,7 +234,7 @@ Object *SegManager::getObject(reg_t pos) {
 }
 
 const char *SegManager::getObjectName(reg_t pos) {
-	Object *obj = getObject(pos);
+	const Object *obj = getObject(pos);
 	if (!obj)
 		return "<no such object>";
 
@@ -275,7 +275,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 
 		// It's a script or a clone table, scan all objects in it
 		for (; idx < max_index; ++idx) {
-			Object *obj = NULL;
+			const Object *obj = NULL;
 			reg_t objpos;
 			objpos.offset = 0;
 			objpos.segment = i;
@@ -485,7 +485,7 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					Object *baseObj = getObject(seeker.getSpeciesSelector());
+					const Object *baseObj = getObject(seeker.getSpeciesSelector());
 					seeker.cloneFromObject(baseObj);
 					if (!baseObj)
 						warning("Clone entry without a base class: %d", j);

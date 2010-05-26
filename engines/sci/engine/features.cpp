@@ -266,7 +266,7 @@ SciVersion GameFeatures::detectLofsType() {
 
 		// Find a function of the game object which invokes lofsa/lofss
 		reg_t gameClass = _segMan->findObjectByName("Game");
-		Object *obj = _segMan->getObject(gameClass);
+		const Object *obj = _segMan->getObject(gameClass);
 		bool found = false;
 
 		for (uint m = 0; m < obj->getMethodCount(); m++) {
@@ -343,7 +343,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				// No overlay selector found, check if any method of the Rm object
 				// is calling kDrawPic, as the overlay selector might be missing in demos
 
-				Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
+				const Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
 					found = autoDetectGfxFunctionsType(m);
 					if (found)

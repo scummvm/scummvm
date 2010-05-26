@@ -194,6 +194,13 @@ Object *Script::getObject(uint16 offset) {
 		return 0;
 }
 
+const Object *Script::getObject(uint16 offset) const {
+	if (_objects.contains(offset))
+		return &_objects[offset];
+	else
+		return 0;
+}
+
 Object *Script::scriptObjInit(reg_t obj_pos) {
 	Object *obj;
 
@@ -355,8 +362,8 @@ void Script::setLockers(int lockers) {
 
 void Script::setExportTableOffset(int offset) {
 	if (offset) {
-		_exportTable = (uint16 *)(_buf + offset + 2);
-		_numExports = READ_SCI11ENDIAN_UINT16((byte *)(_exportTable - 1));
+		_exportTable = (const uint16 *)(_buf + offset + 2);
+		_numExports = READ_SCI11ENDIAN_UINT16((const byte *)(_exportTable - 1));
 	} else {
 		_exportTable = NULL;
 		_numExports = 0;
@@ -373,7 +380,7 @@ uint16 Script::validateExportFunc(int pubfunct) {
 
 	if (exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_SCI11ENDIAN_UINT16((byte *)(_exportTable + pubfunct));
+	uint16 offset = READ_SCI11ENDIAN_UINT16((const byte *)(_exportTable + pubfunct));
 	VERIFY(offset < _bufSize, "invalid export function pointer");
 
 	return offset;
@@ -383,7 +390,7 @@ void Script::setSynonymsOffset(int offset) {
 	_synonyms = _buf + offset;
 }
 
-byte *Script::getSynonyms() const {
+const byte *Script::getSynonyms() const {
 	return _synonyms;
 }
 
@@ -547,13 +554,13 @@ void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 		segMan->deallocateScript(_nr);
 }
 
-void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
 	(*note)(param, make_reg(segId, 0));
 }
 
-void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
-		Object *obj = getObject(addr.offset);
+		const Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
 			if (_localsSegment)
@@ -573,16 +580,14 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 
 //-------------------- clones --------------------
 
-void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
-	Clone *clone;
-
+void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 //	assert(addr.segment == _segId);
 
 	if (!isValidEntry(addr.offset)) {
 		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
 	}
 
-	clone = &(_table[addr.offset]);
+	const Clone *clone = &(_table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (uint i = 0; i < clone->getVarCount(); i++)
@@ -626,7 +631,7 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	return make_reg(owner_seg, 0);
 }
 
-void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 //	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
@@ -640,7 +645,7 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	return addr;
 }
 
-void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	fprintf(stderr, "Emitting %d stack entries\n", _capacity);
 	for (int i = 0; i < _capacity; i++)
 		(*note)(param, _entries[i]);
@@ -653,13 +658,13 @@ void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 
-	List *list = &(_table[addr.offset]);
+	const List *list = &(_table[addr.offset]);
 
 	note(param, list->first);
 	note(param, list->last);
@@ -673,12 +678,12 @@ void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
-	Node *node = &(_table[addr.offset]);
+	const Node *node = &(_table[addr.offset]);
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node
@@ -694,19 +699,19 @@ void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 //-------------------- object ----------------------------
 
 void Object::init(byte *buf, reg_t obj_pos) {
-	byte *data = (byte *)(buf + obj_pos.offset);
+	byte *data = buf + obj_pos.offset;
 	_baseObj = data;
 	_pos = obj_pos;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		_variables.resize(READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET));
-		_baseVars = (uint16 *)(_baseObj + _variables.size() * 2);
-		_baseMethod = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
+		_baseVars = (const uint16 *)(_baseObj + _variables.size() * 2);
+		_baseMethod = (const uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
 		_methodCount = READ_LE_UINT16(_baseMethod - 1);
 	} else {
 		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
-		_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
-		_baseMethod = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
+		_baseVars = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
+		_baseMethod = (const uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
 		_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
 	}
 
@@ -714,12 +719,12 @@ void Object::init(byte *buf, reg_t obj_pos) {
 		_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
 }
 
-Object *Object::getClass(SegManager *segMan) {
+const Object *Object::getClass(SegManager *segMan) const {
 	return isClass() ? this : segMan->getObject(getSuperClassSelector());
 }
 
-int Object::locateVarSelector(SegManager *segMan, Selector slc) {
-	byte *buf;
+int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
+	const byte *buf;
 	uint varnum;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
@@ -727,7 +732,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) {
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		buf = _baseObj + selector_name_offset;
 	} else {
-		Object *obj = getClass(segMan);
+		const Object *obj = getClass(segMan);
 		varnum = obj->getVariable(1).toUint16();
 		buf = (byte *)obj->_baseVars;
 	}
@@ -761,7 +766,7 @@ bool Object::relocate(SegmentId segment, int location, size_t scriptSize) {
 	return true;
 }
 
-int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) {
+int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
 
 	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
@@ -771,14 +776,14 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) {
 	}
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		byte *selectoroffset = ((byte *)(_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
+		const byte *selectoroffset = ((const byte *)(_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 		return READ_SCI11ENDIAN_UINT16(selectoroffset + propertyOffset);
 	} else {
-		Object *obj = this;
+		const Object *obj = this;
 		if (!(getInfoSelector().offset & SCRIPT_INFO_CLASS))
 			obj = segMan->getObject(getSuperClassSelector());
 
-		return READ_SCI11ENDIAN_UINT16((byte *)obj->_baseVars + propertyOffset);
+		return READ_SCI11ENDIAN_UINT16((const byte *)obj->_baseVars + propertyOffset);
 	}
 }
 
@@ -801,7 +806,7 @@ void Object::initSuperClass(SegManager *segMan, reg_t addr) {
 }
 
 bool Object::initBaseObject(SegManager *segMan, reg_t addr) {
-	Object *baseObj = segMan->getObject(getSpeciesSelector());
+	const Object *baseObj = segMan->getObject(getSpeciesSelector());
 
 	if (baseObj) {
 		setVarCount(baseObj->getVarCount());
@@ -821,7 +826,7 @@ reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	return addr;
 }
 
-void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
 	(*note)(param, make_reg(segId, 0));
 }
 
@@ -840,13 +845,13 @@ void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
+void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 
-	SciArray<reg_t> *array = &(_table[addr.offset]);
+	const SciArray<reg_t> *array = &(_table[addr.offset]);
 
 	for (uint32 i = 0; i < array->getSize(); i++) {
 		reg_t value = array->getValue(i);

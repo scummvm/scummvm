@@ -177,7 +177,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();
 
 		if (numSynonyms) {
-			byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
+			const byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
 
 			if (synonyms) {
 				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d",

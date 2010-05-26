@@ -833,7 +833,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 				it->_value._baseVars = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
 			} else {
 				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
-				Object *baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
+				const Object *baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
 
 				if (!baseObj) {
 					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",

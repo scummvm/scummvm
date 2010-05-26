@@ -193,7 +193,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	if (pos == scriptState.xs->addr.pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
-			Object *obj = s->_segMan->getObject(scriptState.xs->objp);
+			const Object *obj = s->_segMan->getObject(scriptState.xs->objp);
 			if (!obj)
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(scriptState.xs->objp));
 			else

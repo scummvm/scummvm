@@ -1265,7 +1265,7 @@ bool Console::segmentInfo(int nr) {
 		for (it = scr->_objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
+			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value.getPos()),
 							_engine->_gamestate->_segMan->getObjectName(it->_value.getPos()),
@@ -1312,7 +1312,7 @@ bool Console::segmentInfo(int nr) {
 				objpos.segment = nr;
 				DebugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
+				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
 								_engine->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
@@ -2226,7 +2226,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
+	const Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
 	int selector_id = _engine->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
@@ -2327,7 +2327,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *o = _engine->_gamestate->_segMan->getObject(object);
+	const Object *o = _engine->_gamestate->_segMan->getObject(object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
@@ -3018,8 +3018,8 @@ int Console::printNode(reg_t addr) {
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _engine->_gamestate;	// for the several defines in this function
-	Object *obj = s->_segMan->getObject(pos);
-	Object *var_container = obj;
+	const Object *obj = s->_segMan->getObject(pos);
+	const Object *var_container = obj;
 	uint i;
 
 	if (!obj) {
@@ -3048,7 +3048,7 @@ int Console::printObject(reg_t pos) {
 		if (!val.segment)
 			DebugPrintf(" (%d)", val.offset);
 
-		Object *ref = s->_segMan->getObject(val);
+		const Object *ref = s->_segMan->getObject(val);
 		if (ref)
 			DebugPrintf(" (%s)", s->_segMan->getObjectName(val));
 
