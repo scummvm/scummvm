@@ -427,7 +427,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 
 			// Some QuickTime videos with resource forks have mdat chunks
 			// that are of size 0. Adjust it so it's the correct size.
-			if (a.size == 0)
+			if (a.type == MKID_BE('mdat') && a.size == 0)
 				a.size = _fd->size();
 		}
 

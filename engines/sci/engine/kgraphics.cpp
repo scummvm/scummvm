@@ -23,8 +23,10 @@
  *
  */
 
+#include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/video/avi_decoder.h"
+#include "graphics/video/qt_decoder.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
@@ -1080,11 +1082,12 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
-	bool reshowCursor;
-	
-	reshowCursor = g_sci->_gfxCursor->isVisible();
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
 	if (reshowCursor)
 		g_sci->_gfxCursor->kernelHide();
+
+	uint16 screenWidth = g_system->getWidth();
+	uint16 screenHeight = g_system->getHeight();
 		
 	Graphics::VideoDecoder *videoDecoder = 0;
 
@@ -1094,8 +1097,18 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			// Mac QuickTime
 			// The only argument is the string for the video
-			warning("TODO: Play QuickTime movie '%s'", filename.c_str());
-			return s->r_acc;
+
+			// HACK: Switch to 16bpp graphics for Cinepak.
+			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+
+			if (g_system->getScreenFormat().bytesPerPixel == 1) {
+				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
+				return NULL_REG;
+			}
+
+			videoDecoder = new Graphics::QuickTimeDecoder();
+			if (!videoDecoder->loadFile(filename))
+				error("Could not open '%s'", filename.c_str());
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -1110,7 +1123,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			}
 		}
 	} else {
-		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
+		// Windows AVI
 		// TODO: This appears to be some sort of subop. case 0 contains the string
 		// for the video, so we'll just play it from there for now.
 
@@ -1142,10 +1155,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-		uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+		uint16 x = (screenWidth - videoDecoder->getWidth()) / 2;
+		uint16 y = (screenHeight - videoDecoder->getHeight()) / 2;
 
-		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
+		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {
 			if (videoDecoder->needsUpdate()) {
 				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 				if (frame) {
@@ -1164,9 +1177,15 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 			g_system->delayMillis(10);
 		}
+
+		// HACK: Switch back to 8bpp if we played a QuickTime video.
+		// We also won't be copying the screen to the SCI screen...
+		if (g_system->getScreenFormat().bytesPerPixel != 1)
+			initGraphics(screenWidth, screenHeight, screenWidth > 320);
+		else
+			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 		
 		delete videoDecoder;
-		g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 	}
 
 	if (reshowCursor)
