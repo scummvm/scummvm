@@ -547,9 +547,8 @@ void RivenScript::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 41: activate MLST record and play
 void RivenScript::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->enableMovie(argv[0] - 1);
 	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
-	// TODO: Play movie (blocking?)
+	_vm->_video->playMovie(argv[0]);
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)

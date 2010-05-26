@@ -537,13 +537,14 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	if (heat) {
 		if (platform == 0) {
 			_vm->_video->activateMLST(7, _vm->getCurCard());
-			// TODO: Play video (non-blocking)
+			_vm->_video->playMovie(7);
 		} else {
 			_vm->_video->activateMLST(8, _vm->getCurCard());
-			// TODO: Play video (non-blocking)
+			_vm->_video->playMovie(8);
 		}
 	} else {
-		// TODO: Stop MLST's 7 and 8
+		_vm->_video->stopMovie(7);
+		_vm->_video->stopMovie(8);
 	}
 
 	_vm->refreshCard();
