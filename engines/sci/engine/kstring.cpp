@@ -138,10 +138,28 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	while (isspace((unsigned char)*source))
 		source++; /* Skip whitespace */
 
-	if (*source == '$') /* SCI uses this for hex numbers */
-		return make_reg(0, (int16)strtol(source + 1, NULL, 16)); /* Hex */
-	else
-		return make_reg(0, (int16)strtol(source, NULL, 10)); /* Force decimal */
+	int16 result = 0;
+
+	if (*source == '$') {
+		// hexadecimal input
+		result = (int16)strtol(source + 1, NULL, 16);
+	} else {
+		// decimal input, we can not use strtol/atoi in here, because sierra used atoi BUT it was a non standard compliant
+		//  atoi, that didnt do clipping. In SQ4 we get the door code in here and that's even larger than uint32!
+		if (*source == '-') {
+			result = -1;
+			source++;
+		}
+		while (*source) {
+			result *= 10;
+			if ((*source < '0') || (*source > '9'))
+				error("Invalid character in kReadNumber input");
+			result += *source - 0x30;
+			source++;
+		}
+	}
+
+	return make_reg(0, result);
 }
 
 
