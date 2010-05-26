@@ -270,28 +270,9 @@ public:
 	void setVarCount(uint size) { _variables.resize(size); }
 	uint getVarCount() { return _variables.size(); }
 
-	void init(byte *buf, reg_t obj_pos) {
-		byte *data = (byte *)(buf + obj_pos.offset);
-		_baseObj = data;
-		_pos = obj_pos;
+	void init(byte *buf, reg_t obj_pos);
 
-		if (getSciVersion() < SCI_VERSION_1_1) {
-			_variables.resize(READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET));
-			_baseVars = (uint16 *)(_baseObj + _variables.size() * 2);
-			_baseMethod = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
-			_methodCount = READ_LE_UINT16(_baseMethod - 1);
-		} else {
-			_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
-			_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
-			_baseMethod = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
-			_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
-		}
-
-		for (uint i = 0; i < _variables.size(); i++)
-			_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
-	}
-
-	reg_t getVariable(uint var) { return _variables[var]; }
+	reg_t &getVariable(uint var) { return _variables[var]; }
 
 	uint16 getMethodCount() { return _methodCount; }
 	reg_t getPos() { return _pos; }
@@ -304,13 +285,23 @@ public:
 		_baseVars = obj ? obj->_baseVars : NULL;
 	}
 
+	bool relocate(SegmentId segment, int location, size_t scriptSize);
+
+	int propertyOffsetToId(SegManager *segMan, int propertyOffset);
+
+	void initSpecies(SegManager *segMan, reg_t addr);
+	void initSuperClass(SegManager *segMan, reg_t addr);
+	bool initBaseObject(SegManager *segMan, reg_t addr);
+
 	// TODO: make private
-	Common::Array<reg_t> _variables;
+	// Only SegManager::reconstructScripts() is left needing direct access to these
+public:
 	byte *_baseObj; /**< base + object offset within base */
 	uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
 
 private:
+	Common::Array<reg_t> _variables;
 	uint16 _methodCount;
 	int _flags;
 	uint16 _offset;
@@ -414,7 +405,6 @@ public:
 private:
 	int relocateLocal(SegmentId segment, int location);
 	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
-	int relocateObject(Object &obj, SegmentId segment, int location);
 
 public:
 	// script lock operations

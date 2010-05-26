@@ -120,7 +120,7 @@ static reg_t &validate_property(Object *obj, int index) {
 		return dummyReg;
 	}
 
-	return obj->_variables[index];
+	return obj->getVariable(index);
 }
 
 static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
@@ -1758,8 +1758,7 @@ void quit_vm() {
 
 reg_t* ObjVarRef::getPointer(SegManager *segMan) const {
 	Object *o = segMan->getObject(obj);
-	if (!o) return 0;
-	return &(o->_variables[varindex]);
+	return o ? &o->getVariable(varindex) : 0;
 }
 
 reg_t* ExecStack::getVarPointer(SegManager *segMan) const {

@@ -247,10 +247,6 @@ int Script::relocateLocal(SegmentId segment, int location) {
 		return 0; // No hands, no cookies
 }
 
-int Script::relocateObject(Object &obj, SegmentId segment, int location) {
-	return relocateBlock(obj._variables, obj.getPos().offset, segment, location);
-}
-
 void Script::scriptAddCodeBlock(reg_t location) {
 	CodeBlock cb;
 	cb.pos = location;
@@ -276,7 +272,7 @@ void Script::scriptRelocate(reg_t block) {
 			ObjMap::iterator it;
 			const ObjMap::iterator end = _objects.end();
 			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (relocateObject(it->_value, block.segment, pos))
+				if (it->_value.relocate(block.segment, pos, _scriptSize))
 					done = true;
 			}
 
@@ -321,7 +317,7 @@ void Script::heapRelocate(reg_t block) {
 			ObjMap::iterator it;
 			const ObjMap::iterator end = _objects.end();
 			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (relocateObject(it->_value, block.segment, pos))
+				if (it->_value.relocate(block.segment, pos, _scriptSize))
 					done = true;
 			}
 
@@ -673,6 +669,27 @@ void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 //-------------------- object ----------------------------
 
+void Object::init(byte *buf, reg_t obj_pos) {
+	byte *data = (byte *)(buf + obj_pos.offset);
+	_baseObj = data;
+	_pos = obj_pos;
+
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		_variables.resize(READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET));
+		_baseVars = (uint16 *)(_baseObj + _variables.size() * 2);
+		_baseMethod = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
+		_methodCount = READ_LE_UINT16(_baseMethod - 1);
+	} else {
+		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
+		_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
+		_baseMethod = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
+		_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
+	}
+
+	for (uint i = 0; i < _variables.size(); i++)
+		_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+}
+
 Object *Object::getClass(SegManager *segMan) {
 	return isClass() ? this : segMan->getObject(getSuperClassSelector());
 }
@@ -696,6 +713,81 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) {
 			return i; // report success
 
 	return -1; // Failed
+}
+
+bool Object::relocate(SegmentId segment, int location, size_t scriptSize) {
+	int rel = location - getPos().offset;
+
+	if (rel < 0)
+		return false;
+
+	uint idx = rel >> 1;
+
+	if (idx >= _variables.size())
+		return false;
+
+	if (rel & 1) {
+		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, getPos().offset);
+		return false;
+	}
+	_variables[idx].segment = segment; // Perform relocation
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		_variables[idx].offset += scriptSize;
+
+	return true;
+}
+
+int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) {
+	int selectors = getVarCount();
+
+	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
+		warning("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
+		          propertyOffset, propertyOffset >> 1, selectors - 1);
+		return -1;
+	}
+
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		byte *selectoroffset = ((byte *)(_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
+		return READ_SCI11ENDIAN_UINT16(selectoroffset + propertyOffset);
+	} else {
+		Object *obj = this;
+		if (!(getInfoSelector().offset & SCRIPT_INFO_CLASS))
+			obj = segMan->getObject(getSuperClassSelector());
+
+		return READ_SCI11ENDIAN_UINT16((byte *)obj->_baseVars + propertyOffset);
+	}
+}
+
+void Object::initSpecies(SegManager *segMan, reg_t addr) {
+	uint16 speciesOffset = getSpeciesSelector().offset;
+
+	if (speciesOffset == 0xffff)		// -1
+		setSpeciesSelector(NULL_REG);	// no species
+	else
+		setSpeciesSelector(segMan->getClassAddress(speciesOffset, SCRIPT_GET_LOCK, addr));
+}
+
+void Object::initSuperClass(SegManager *segMan, reg_t addr) {
+	uint16 superClassOffset = getSuperClassSelector().offset;
+
+	if (superClassOffset == 0xffff)			// -1
+		setSuperClassSelector(NULL_REG);	// no superclass
+	else
+		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr));
+}
+
+bool Object::initBaseObject(SegManager *segMan, reg_t addr) {
+	Object *baseObj = segMan->getObject(getSpeciesSelector());
+
+	if (baseObj) {
+		setVarCount(baseObj->getVarCount());
+		// Copy base from species class, as we need its selector IDs
+		_baseObj = baseObj->_baseObj;
+		initSuperClass(segMan, addr);
+		return true;
+	}
+
+	return false;
 }
 
 //-------------------- dynamic memory --------------------

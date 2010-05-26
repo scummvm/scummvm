@@ -67,37 +67,6 @@ extern const char *selector_name(EngineState *s, int selector);
 
 DebugState g_debugState;
 
-int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
-	Object *obj = segMan->getObject(objp);
-	byte *selectoroffset;
-	int selectors;
-
-	if (!obj) {
-		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
-		return -1;
-	}
-
-	selectors = obj->getVarCount();
-
-	if (getSciVersion() < SCI_VERSION_1_1)
-		selectoroffset = ((byte *)(obj->_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
-	else {
-		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS)) {
-			obj = segMan->getObject(obj->getSuperClassSelector());
-			selectoroffset = (byte *)obj->_baseVars;
-		} else
-			selectoroffset = (byte *)obj->_baseVars;
-	}
-
-	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {
-		warning("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d]) on object at %04x:%04x",
-		          prop_ofs, prop_ofs >> 1, selectors - 1, PRINT_REG(objp));
-		return -1;
-	}
-
-	return READ_SCI11ENDIAN_UINT16(selectoroffset + prop_ofs);
-}
-
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
@@ -224,10 +193,11 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	if (pos == scriptState.xs->addr.pc) { // Extra information if debugging the current opcode
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
-			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = propertyOffsetToId(s->_segMan, prop_ofs, scriptState.xs->objp);
-
-			printf("	(%s)", selector_name(s, prop_id));
+			Object *obj = s->_segMan->getObject(scriptState.xs->objp);
+			if (!obj)
+				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(scriptState.xs->objp));
+			else
+				printf("	(%s)", selector_name(s, obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])));
 		}
 	}
 
