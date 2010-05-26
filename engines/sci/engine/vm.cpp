@@ -411,12 +411,21 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				printSendActions = false;
 			}
 
-			if (argc > 1)
+			if (argc > 1) {
 				// argc can indeed be bigger than 1 in some cases, and it seems correct
 				// (i.e. we should skip that many bytes later on)... question is, why
 				// does this occur? Could such calls be used to point to data after X bytes in the heap?
 				// What are the skipped bytes in this case?
-				warning("send_selector(): more than 1 parameter (%d) while modifying a variable selector", argc);
+				// In SQ4CD, this occurs with the returnVal selector of object Sq4GlobalNarrator when the
+				// game starts, and right after the narrator is heard (e.g. after he talks when examining
+				// something)
+				reg_t oldReg = *varp.getPointer(s->_segMan);
+				reg_t newReg = argp[1];
+				warning("send_selector(): argc = %d while modifying variable selector "
+						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x", 
+						argc, selector, g_sci->getKernel()->getSelectorName(selector).c_str(), PRINT_REG(send_obj),
+						s->_segMan->getObjectName(send_obj), PRINT_REG(oldReg), PRINT_REG(newReg));
+			}
 
 			{
 				CallsStruct call;
