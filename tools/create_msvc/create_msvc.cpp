@@ -511,8 +511,6 @@ int main(int argc, char *argv[]) {
 	// 4103 (alignment changed after including header, may be due to missing #pragma pack(pop))
 	//   used by pack-start / pack-end
 	//
-	// 4121 (alignment of a member was sensitive to packing)
-	//
 	// 4127 (conditional expression is constant)
 	//   used in a lot of engines
 	//
@@ -566,7 +564,6 @@ int main(int argc, char *argv[]) {
 	projectWarnings["lure"] = "4189;4355";
 	projectWarnings["kyra"] = "4355";
 	projectWarnings["m4"] = "4355";
-	projectWarnings["mohawk"] = "4121";
 
 	ProjectProvider *provider = NULL;
 
