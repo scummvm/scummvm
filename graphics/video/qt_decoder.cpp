@@ -279,7 +279,12 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	MOVatom atom = { 0, 0, 0xffffffff };
 
 	if (_resFork->hasResFork()) {
-		_fd = _resFork->getResource(MKID_BE('moov'), 0x80);
+		// Search for a 'moov' resource
+		Common::MacResIDArray idArray = _resFork->getResIDArray(MKID_BE('moov'));
+
+		if (!idArray.empty())
+			_fd = _resFork->getResource(MKID_BE('moov'), idArray[0]);
+
 		if (_fd) {
 			atom.size = _fd->size();
 			if (readDefault(atom) < 0 || !_foundMOOV)
@@ -417,7 +422,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 
 	a.offset = atom.offset;
 
-	while(((total_size + 8) < atom.size) && !_fd->eos() && !err) {
+	while(((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
 		a.size = atom.size;
 		a.type = 0;
 
@@ -1153,6 +1158,7 @@ void QuickTimeDecoder::close() {
 		delete _streams[i];
 
 	delete _fd;
+	_fd = 0;
 
 	if (_scaledSurface) {
 		_scaledSurface->free();
