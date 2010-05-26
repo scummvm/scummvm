@@ -2358,9 +2358,7 @@ Common::String ResourceManager::findSierraGameId() {
 		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
 	}
 
-	do {
-		sierraId += *(seeker++);
-	} while (*seeker);
+	sierraId += (const char *)seeker;
 
 	return sierraId;
 }
