@@ -108,7 +108,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _language(dr.language),
 	  _debugger(0),
 	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(0), _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
+	  _messageDialog(0), _pauseDialog(0), _versionDialog(0) {
 
 	if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
@@ -140,7 +140,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	_fileHandle = 0;
 
-
 	// Init all vars
 	_v0ObjectIndex = false;
 	_v0ObjectInInventory = false;
@@ -152,7 +151,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_sound = NULL;
 	memset(&vm, 0, sizeof(vm));
 	_pauseDialog = NULL;
-	_scummMenuDialog = NULL;
 	_versionDialog = NULL;
 	_fastMode = 0;
 	_actors = NULL;
@@ -552,6 +550,12 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
 		DebugMan.addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
+#ifndef DISABLE_HELP
+	// Create custom GMM dialog providing a help subdialog
+	assert(!_mainMenuDialog);
+	_mainMenuDialog = new ScummMenuDialog(this);
+#endif
+
 	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
@@ -572,7 +576,6 @@ ScummEngine::~ScummEngine() {
 	delete _charset;
 	delete _messageDialog;
 	delete _pauseDialog;
-	delete _scummMenuDialog;
 	delete _versionDialog;
 	delete _fileHandle;
 
@@ -2435,13 +2438,6 @@ void ScummEngine::versionDialog() {
 	if (!_versionDialog)
 		_versionDialog = new PauseDialog(this, 1);
 	runDialog(*_versionDialog);
-}
-
-void ScummEngine::scummMenuDialog() {
-	if (!_scummMenuDialog)
-		_scummMenuDialog = new ScummMenuDialog(this);
-	runDialog(*_scummMenuDialog);
-	syncSoundSettings();
 }
 
 void ScummEngine::confirmExitDialog() {

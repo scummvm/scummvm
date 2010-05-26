@@ -35,8 +35,9 @@
 #include "gui/GuiManager.h"
 #include "gui/launcher.h"
 #include "gui/ListWidget.h"
-#include "gui/ThemeEval.h"
+#include "gui/options.h"
 #include "gui/saveload.h"
+#include "gui/ThemeEval.h"
 
 #include "engines/dialogs.h"
 #include "engines/engine.h"
@@ -49,16 +50,17 @@
 using GUI::CommandSender;
 using GUI::StaticTextWidget;
 
-enum {
-	kSaveCmd = 'SAVE',
-	kLoadCmd = 'LOAD',
-	kPlayCmd = 'PLAY',
-	kOptionsCmd = 'OPTN',
-	kHelpCmd = 'HELP',
-	kAboutCmd = 'ABOU',
-	kQuitCmd = 'QUIT',
-	kRTLCmd = 'RTL ',
-	kChooseCmd = 'CHOS'
+class ConfigDialog : public GUI::OptionsDialog {
+protected:
+#ifdef SMALL_SCREEN_DEVICE
+	GUI::Dialog		*_keysDialog;
+#endif
+
+public:
+	ConfigDialog(bool subtitleControls);
+	~ConfigDialog();
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 };
 
 MainMenuDialog::MainMenuDialog(Engine *engine)
@@ -94,6 +96,12 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	_saveButton->setEnabled(_engine->hasFeature(Engine::kSupportsSavingDuringRuntime));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.Options", "Options", kOptionsCmd, 'O');
+
+	// The help button is disabled by default.
+	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
+	// (at least for now, we might change how this works in the future).
+	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", "Help", kHelpCmd, 'H');
+	_helpButton->setEnabled(false);
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", "About", kAboutCmd, 'A');
 
@@ -134,6 +142,9 @@ void MainMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kAboutCmd:
 		_aboutDialog->runModal();
+		break;
+	case kHelpCmd:
+		// Not handled here -- needs to be handled by a subclass (for now)
 		break;
 	case kRTLCmd: {
 		Common::Event eventRTL;
@@ -263,13 +274,13 @@ enum {
 //  "" as value for the domain, and in fact provide a somewhat better user
 // experience at the same time.
 ConfigDialog::ConfigDialog(bool subtitleControls)
-	: GUI::OptionsDialog("", "ScummConfig") {
+	: GUI::OptionsDialog("", "GlobalConfig") {
 
 	//
 	// Sound controllers
 	//
 
-	addVolumeControls(this, "ScummConfig.");
+	addVolumeControls(this, "GlobalConfig.");
 	setVolumeSettingsState(true); // could disable controls by GUI options
 
 	//
@@ -278,7 +289,7 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 
 	if (subtitleControls) {
 		// Global talkspeed range of 0-255
-		addSubtitleControls(this, "ScummConfig.", 255);
+		addSubtitleControls(this, "GlobalConfig.", 255);
 		setSubtitleSettingsState(true); // could disable controls by GUI options
 	}
 
@@ -286,11 +297,11 @@ ConfigDialog::ConfigDialog(bool subtitleControls)
 	// Add the buttons
 	//
 
-	new GUI::ButtonWidget(this, "ScummConfig.Ok", "OK", GUI::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, "ScummConfig.Cancel", "Cancel", GUI::kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "GlobalConfig.Ok", "OK", GUI::kOKCmd, 'O');
+	new GUI::ButtonWidget(this, "GlobalConfig.Cancel", "Cancel", GUI::kCloseCmd, 'C');
 
 #ifdef SMALL_SCREEN_DEVICE
-	new GUI::ButtonWidget(this, "ScummConfig.Keys", "Keys", kKeysCmd, 'K');
+	new GUI::ButtonWidget(this, "GlobalConfig.Keys", "Keys", kKeysCmd, 'K');
 	_keysDialog = NULL;
 #endif
 }
