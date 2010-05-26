@@ -143,6 +143,7 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 	// HACK
 	_mirroredFlag = false;
 	_addToFlag = false;
+	_resourceType = SCI_PICTURE_TYPE_SCI32;
 
 	if ((celNo == -1) || (celNo == 0)) {
 		// Create palette and set it
