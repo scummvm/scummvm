@@ -136,10 +136,14 @@ protected:
 		uint32 size;
 	};
 
+#include "common/pack-start.h"	// START STRUCT PACKING
+
 	struct ParseTable {
 		uint32 type;
 		int (QuickTimeDecoder::*func)(MOVatom atom);
-	};
+	} PACKED_STRUCT;
+
+#include "common/pack-end.h"	// END STRUCT PACKING
 
 	struct MOVstts {
 		int count;
