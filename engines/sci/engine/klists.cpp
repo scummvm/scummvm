@@ -155,28 +155,10 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
-	reg_t nodebase;
-	Node *n = s->_segMan->allocateNode(&nodebase);
-
-	if (!n) {
-		error("[Kernel] Out of memory while creating a node");
-		return NULL_REG;
-	}
-
-	n->pred = n->succ = NULL_REG;
-	n->key = key;
-	n->value = value;
-
-	return nodebase;
-}
-
 reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
-
-	if (argc == 1)
-		s->r_acc = _k_new_node(s, argv[0], argv[0]);
-	else
-		s->r_acc = _k_new_node(s, argv[0], argv[1]);
+	reg_t nodeValue = argv[0];
+	reg_t nodeKey = (argc == 2) ? argv[1] : NULL_REG;
+	s->r_acc = s->_segMan->newNode(nodeValue, nodeKey);
 
 	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
 
@@ -453,7 +435,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	qsort(temp_array, input_size, sizeof(sort_temp_t), sort_temp_cmp);
 
 	for (i = 0;i < input_size;i++) {
-		reg_t lNode = _k_new_node(s, temp_array[i].key, temp_array[i].value);
+		reg_t lNode = s->_segMan->newNode(temp_array[i].value, temp_array[i].key);
 		_k_add_to_end(s, output_data, lNode);
 	}
 

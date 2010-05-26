@@ -215,6 +215,14 @@ public:
 	Node *allocateNode(reg_t *addr);
 
 	/**
+	 * Allocate and initialize a new list node.
+	 * @param[in] value		The value to set the node to
+	 * @param[in] key		The key to set
+	 * @return				Pointer to the newly initialized list node
+	 */
+	reg_t newNode(reg_t value, reg_t key);
+
+	/**
 	 * Resolves a list pointer to a list.
 	 * @param addr The address to resolve
 	 * @return The list referenced, or NULL on error

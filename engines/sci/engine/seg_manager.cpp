@@ -523,6 +523,16 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	return &(table->_table[offset]);
 }
 
+reg_t SegManager::newNode(reg_t value, reg_t key) {
+	reg_t nodebase;
+	Node *n = allocateNode(&nodebase);
+	n->pred = n->succ = NULL_REG;
+	n->key = key;
+	n->value = value;
+
+	return nodebase;
+}
+
 List *SegManager::lookupList(reg_t addr) {
 	if (getSegmentType(addr.segment) != SEG_TYPE_LISTS) {
 		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
