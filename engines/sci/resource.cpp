@@ -2343,6 +2343,7 @@ Common::String ResourceManager::findSierraGameId() {
 	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
 	Resource *heap = 0;
 	byte *seeker = 0;
+	Common::String sierraId;
 
 	// Seek to the name selector of the first export
 	if (getSciVersion() < SCI_VERSION_1_1) {
@@ -2357,14 +2358,12 @@ Common::String ResourceManager::findSierraGameId() {
 		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
 	}
 
-	char sierraId[20];
-	int i = 0;
-	byte curChar = 0;
+	char c = 0;
 
 	do {
-		curChar = *(seeker + i);
-		sierraId[i++] = curChar;
-	} while (curChar != 0);
+		c = *(seeker++);
+		sierraId += c;
+	} while (c);
 
 	return sierraId;
 }

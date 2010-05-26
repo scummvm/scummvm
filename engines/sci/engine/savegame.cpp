@@ -849,24 +849,19 @@ void SegManager::reconstructScripts(EngineState *s) {
 			byte *data = scr->_buf + it->_value.getPos().offset;
 
 			if (getSciVersion() >= SCI_VERSION_1_1) {
-				uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
-				uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
-
-				it->_value._baseMethod = funct_area;
-				it->_value._baseVars = prop_area;
+				it->_value._baseMethod = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
+				it->_value._baseVars = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
 			} else {
 				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
-				Object *_baseObj;
+				Object *baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
 
-				_baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
-
-				if (!_baseObj) {
+				if (!baseObj) {
 					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
 						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
 					continue;
 				}
-				it->_value.setVarCount(_baseObj->getVarCount());
-				it->_value._baseObj = _baseObj->_baseObj;
+				it->_value.setVarCount(baseObj->getVarCount());
+				it->_value._baseObj = baseObj->_baseObj;
 
 				it->_value._baseMethod = (uint16 *)(data + funct_area);
 				it->_value._baseVars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
