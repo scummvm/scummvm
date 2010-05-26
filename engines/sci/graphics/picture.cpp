@@ -533,10 +533,16 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_SET_PATTERN:
 			if (_resourceType >= SCI_PICTURE_TYPE_SCI11) {
 				if (strcmp(g_sci->getGameID(), "sq4") == 0) {
-					// WORKAROUND: For SQ4 / picture 381 handle this like a terminator
+					// WORKAROUND: For SQ4 / for some pictures handle this like a terminator
 					//  This picture includes garbage data, first a set pattern w/o parameter and then short pattern
-					if (_resourceId == 381)
+					//  I guess that garbage is a left over from the sq4-floppy (sci1) to sq4-cd (sci1.1) conversion
+					switch (_resourceId) {
+					case 381:
+					case 376:
 						return;
+					default:
+						break;
+					}
 				}
 				error("pic-operation set pattern inside sci1.1+ vector data");
 			}
