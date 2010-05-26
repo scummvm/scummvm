@@ -341,7 +341,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 	int selector;
 	int argc;
 	int origin = s->_executionStack.size()-1; // Origin: Used for debugging
-	int print_send_action = 0;
+	bool printSendActions = false;
 	// We return a pointer to the new active ExecStack
 
 	// The selector calls we catch are stored below:
@@ -370,7 +370,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
 					Console *con = g_sci->getSciDebugger();
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-					print_send_action = 1;
+					printSendActions = true;
 					g_debugState.debugging = true;
 					g_debugState.breakpointWasHit = true;
 					break;
@@ -397,23 +397,23 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				printf("Varselector: Read\n");
 #endif // VM_DEBUG_SEND
 
+			// Make sure that argc is either 0 (read) or 1 (write) here.
+			// This isn't strictly necessary, but better safe than sorry
+			argc = MIN<int>(argc, 1);
+
 			// argc == 0: read selector
-			// argc == 1: write selector
-			// argc > 1: write selector?
-			if (print_send_action && argc ==  0) {	// read selector
-				printf("[read selector]\n");
-				print_send_action = 0;
+			// argc != 0: write selector
+			if (printSendActions && !argc) {	// read selector
+				debug("[read selector]\n");
+				printSendActions = false;
 			}
 
-			if (print_send_action && argc > 0) {
+			if (printSendActions && argc) {
 				reg_t oldReg = *varp.getPointer(s->_segMan);
 				reg_t newReg = argp[1];
-				printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
-				print_send_action = 0;
+				debug("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+				printSendActions = false;
 			}
-
-			if (argc > 1)
-				warning("send_selector(): more than 1 parameter (%d) while modifying a variable selector", argc);
 
 			{
 				CallsStruct call;
@@ -438,9 +438,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
-			if (print_send_action) {
-				printf("[invoke selector]\n");
-				print_send_action = 0;
+			if (printSendActions) {
+				debug("[invoke selector]\n");
+				printSendActions = false;
 			}
 
 			{
@@ -477,9 +477,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 	_exec_varselectors(s);
 
-	if (s->_executionStack.empty())
-		return NULL;
-	return &(s->_executionStack.back());
+	return s->_executionStack.empty() ? NULL : &(s->_executionStack.back());
 }
 
 static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
