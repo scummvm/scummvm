@@ -83,7 +83,7 @@ uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
+		true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
 uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
@@ -92,7 +92,7 @@ uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, in
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
+		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
@@ -101,7 +101,7 @@ uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int num
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
+		true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 void MadsSceneLogic::activateHotspot(int idx, bool active) {

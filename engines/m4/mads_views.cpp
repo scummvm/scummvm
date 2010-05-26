@@ -340,13 +340,13 @@ void MadsKernelMessageList::clear() {
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
 }
 
-int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg) {
+int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && ((_entries[idx].flags & KMSG_ACTIVE) != 0))
 		++idx;
 	if (idx == _entries.size()) {
-		if (v2 == 0)
+		if (abortTimers == 0)
 			return -1;
 
 		error("MadsKernelList overflow");
@@ -361,28 +361,28 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	rec.textDisplayIndex = -1;
 	rec.timeout = timeout;
 	rec.frameTimer = _madsVm->_currentTimer;
-	rec.field_1C = v2;
+	rec.abortTimers = abortTimers;
 	rec.abortMode = _owner._abortTimersMode2;
 	
 	for (int i = 0; i < 3; ++i)
 		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
 
-	if (flags & KMSG_2)
+	if (flags & KMSG_OWNER_TIMEOUT)
 		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
 
 	return idx;
 }
 
-int MadsKernelMessageList::addQuote(int quoteId, int v2, uint32 timeout) {
+int MadsKernelMessageList::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
-	return add(Common::Point(0, 0), 0x1110, KMSG_2 | KMSG_20, v2, timeout, quoteStr);
+	return add(Common::Point(0, 0), 0x1110, KMSG_OWNER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
 }
 
-void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
+void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	if (msgIndex < 0)
 		return;
 
-	_entries[msgIndex].flags |= (v2 == 0) ? KMSG_8 : (KMSG_8 | KMSG_1);
+	_entries[msgIndex].flags |= quoted ? (KMSG_SCROLL | KMSG_QUOTED) : KMSG_SCROLL;
 	_entries[msgIndex].msgOffset = 0;
 	_entries[msgIndex].numTicks = numTicks;
 	_entries[msgIndex].frameTimer2 = _madsVm->_currentTimer;
@@ -391,7 +391,7 @@ void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
 	_entries[msgIndex].asciiChar = *msgP;
 	_entries[msgIndex].asciiChar2 = *(msgP + 1);
 
-	if (_entries[msgIndex].flags & KMSG_2)
+	if (_entries[msgIndex].flags & KMSG_OWNER_TIMEOUT)
 		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
 
 	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
@@ -399,7 +399,7 @@ void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
 
 void MadsKernelMessageList::setSeqIndex(int msgIndex, int seqIndex) {
 	if (msgIndex >= 0) {
-		_entries[msgIndex].flags |= KMSG_4;
+		_entries[msgIndex].flags |= KMSG_SEQ_ENTRY;
 		_entries[msgIndex].sequenceIndex = seqIndex;
 	}
 }
@@ -408,9 +408,9 @@ void MadsKernelMessageList::remove(int msgIndex) {
 	MadsKernelMessageEntry &rec = _entries[msgIndex];
 
 	if (rec.flags & KMSG_ACTIVE) {
-		if (rec.flags & KMSG_8) {
-			//*(rec.msg + rec.msgOffset) = rec.asciiChar;
-			//*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
+		if (rec.flags & KMSG_SCROLL) {
+			*(rec.msg + rec.msgOffset) = rec.asciiChar;
+			*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
 		}
 
 		if (rec.textDisplayIndex >= 0)
@@ -441,26 +441,26 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	uint32 currentTimer = _madsVm->_currentTimer;
 	bool flag = false;
 
-	if ((msg.flags & KMSG_40) != 0) {
+	if ((msg.flags & KMSG_EXPIRE) != 0) {
 		_owner._textDisplay.expire(msg.textDisplayIndex);
 		msg.flags &= !KMSG_ACTIVE;
 		return;
 	}
 
-	if ((msg.flags & KMSG_8) == 0) {
+	if ((msg.flags & KMSG_SCROLL) == 0) {
 		msg.timeout -= 3;
 	}
 
-	if (msg.flags & KMSG_4) {
+	if (msg.flags & KMSG_SEQ_ENTRY) {
 		MadsSequenceEntry &seqEntry = _owner._sequenceList[msg.sequenceIndex];
 		if (seqEntry.doneFlag || !seqEntry.active)
 			msg.timeout = 0;
 	}
 
 	if ((msg.timeout <= 0) && (_owner._abortTimers == 0)) {
-		msg.flags |= KMSG_40;
-		if (msg.field_1C != 0) {
-			_owner._abortTimers = msg.field_1C;
+		msg.flags |= KMSG_EXPIRE;
+		if (msg.abortTimers != 0) {
+			_owner._abortTimers = msg.abortTimers;
 			_owner._abortTimersMode = msg.abortMode;
 
 			if (_owner._abortTimersMode != ABORTMODE_1) {
@@ -473,9 +473,9 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	msg.frameTimer = currentTimer + 3;
 	int x1 = 0, y1 = 0;
 
-	if (msg.flags & KMSG_4) {
+	if (msg.flags & KMSG_SEQ_ENTRY) {
 		MadsSequenceEntry &seqEntry = _owner._sequenceList[msg.sequenceIndex];
-		if (seqEntry.field_12) {
+		if (!seqEntry.nonFixed) {
 			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
 			M4Sprite *frame = spriteSet.getFrame(seqEntry.frameIndex - 1);
 			x1 = frame->bounds().left;
@@ -486,7 +486,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		}
 	}
 	
-	if (msg.flags & KMSG_2) {
+	if (msg.flags & KMSG_OWNER_TIMEOUT) {
 		if (word_8469E != 0) {
 			// TODO: Figure out various flags
 		} else {
@@ -498,7 +498,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	x1 += msg.position.x;
 	y1 += msg.position.y;
 
-	if ((msg.flags & KMSG_8) && (msg.frameTimer >= currentTimer)) {
+	if ((msg.flags & KMSG_SCROLL) && (msg.frameTimer >= currentTimer)) {
 		msg.msg[msg.msgOffset] = msg.asciiChar;
 		char *msgP = &msg.msg[++msg.msgOffset];
 		*msgP = msg.asciiChar2;
@@ -507,9 +507,10 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		msg.asciiChar2 = *(msgP + 1);
 
 		if (!msg.asciiChar) {
+			// End of message
 			*msgP = '\0';
-			msg.flags &= ~KMSG_8;
-		} else if (msg.flags & KMSG_1) {
+			msg.flags &= ~KMSG_SCROLL;
+		} else if (msg.flags & KMSG_QUOTED) {
 			*msgP = '"';
 			*(msgP + 1) = '\0';
 		}
@@ -520,8 +521,8 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 	int strWidth = _talkFont->getWidth(msg.msg, _owner._textSpacing); 
 
-	if (msg.flags & KMSG_30) {
-		x1 -= (msg.flags & KMSG_20) ? strWidth / 2 : strWidth;
+	if (msg.flags & (KMSG_RIGHT_ALIGN | KMSG_CENTER_ALIGN)) {
+		x1 -= (msg.flags & KMSG_CENTER_ALIGN) ? strWidth / 2 : strWidth;
 	}
 
 	// Make sure text appears entirely on-screen
@@ -854,7 +855,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 }
 
 int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
+		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
 	// Find a free slot
@@ -882,7 +883,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	_entries[timerIndex].frameInc = frameInc;
 	_entries[timerIndex].depth = depth;
 	_entries[timerIndex].scale = scale;
-	_entries[timerIndex].field_12 = field_12;
+	_entries[timerIndex].nonFixed = nonFixed;
 	_entries[timerIndex].msgPos.x = msgX;
 	_entries[timerIndex].msgPos.y = msgY;
 	_entries[timerIndex].numTicks = numTicks;
@@ -924,7 +925,7 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 	spriteSlot.depth = timerEntry.depth;
 	spriteSlot.scale = timerEntry.scale;
 	
-	if (timerEntry.field_12 == 0) {
+	if (!timerEntry.nonFixed) {
 		spriteSlot.xp = timerEntry.msgPos.x;
 		spriteSlot.yp = timerEntry.msgPos.y;
 	} else {

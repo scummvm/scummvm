@@ -139,8 +139,8 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define TEXT_4A_SIZE 30
 
-enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_30 = 0x30, 
-	KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageEntry {
 public:
@@ -157,7 +157,7 @@ public:
 	uint32 frameTimer2;
 	uint32 frameTimer;
 	uint32 timeout;
-	bool field_1C;
+	int abortTimers;
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
 	char msg[100];
@@ -174,9 +174,9 @@ public:
 	MadsKernelMessageList(MadsView &owner);
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg);
-	int addQuote(int quoteId, int v2, uint32 timeout);
-	void unk1(int msgIndex, int v1, int v2);
+	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg);
+	int addQuote(int quoteId, int abortTimers, uint32 timeout);
+	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);
 	void reset();
@@ -313,7 +313,7 @@ struct MadsSequenceEntry {
 	int scale;
 	int dynamicHotspotIndex;
 
-	int field_12;
+	bool nonFixed;
 	int field_13;
 	
 	Common::Point msgPos;
@@ -341,7 +341,7 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
 	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
+		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
 	void remove(int timerIndex);
 	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
