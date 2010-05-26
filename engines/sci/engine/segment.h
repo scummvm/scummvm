@@ -501,7 +501,7 @@ public:
 	/**
 	 * Finds the pointer where a block of a specific type starts from
 	 */
-	byte *Script::findBlock(int type);
+	byte *findBlock(int type);
 
 private:
 	void setScriptSize(int script_nr, ResourceManager *resMan);
