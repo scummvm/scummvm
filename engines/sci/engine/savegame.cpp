@@ -748,26 +748,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	if (oldScriptHeader)
-		buf += 2;
-
-	do {
-		int seeker_type = READ_LE_UINT16(buf);
-
-		if (seeker_type == 0) break;
-		if (seeker_type == type) return buf;
-
-		int seeker_size = READ_LE_UINT16(buf + 2);
-		assert(seeker_size > 0);
-		buf += seeker_size;
-	} while (1);
-
-	return NULL;
-}
-
 // TODO: This should probably be turned into an EngineState or DataStack method.
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
@@ -821,8 +801,8 @@ void SegManager::reconstructScripts(EngineState *s) {
 				s->_segMan->scriptRelocateExportsSci11(i);
 			}
 		} else {
-			scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
-			scr->_synonyms = find_unique_script_block(s, scr->_buf, SCI_OBJ_SYNONYMS);
+			scr->_exportTable = (uint16 *) scr->findBlock(SCI_OBJ_EXPORTS);
+			scr->_synonyms = scr->findBlock(SCI_OBJ_SYNONYMS);
 			scr->_exportTable += 3;
 		}
 		scr->_codeBlocks.clear();

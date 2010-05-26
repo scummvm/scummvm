@@ -395,6 +395,30 @@ int Script::getSynonymsNr() const {
 	return _numSynonyms;
 }
 
+byte *Script::findBlock(int type) {
+	byte *buf = _buf;
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	if (oldScriptHeader)
+		buf += 2;
+
+	do {
+		int seekerType = READ_LE_UINT16(buf);
+
+		if (seekerType == 0)
+			break;
+		if (seekerType == type)
+			return buf;
+
+		int seekerSize = READ_LE_UINT16(buf + 2);
+		assert(seekerSize > 0);
+		buf += seekerSize;
+	} while (1);
+
+	return NULL;
+}
+
+
 // memory operations
 
 void Script::mcpyInOut(int dst, const void *src, size_t n) {

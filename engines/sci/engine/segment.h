@@ -498,6 +498,11 @@ public:
 	 */
 	int16 getHeap(uint16 offset) const;
 
+	/**
+	 * Finds the pointer where a block of a specific type starts from
+	 */
+	byte *Script::findBlock(int type);
+
 private:
 	void setScriptSize(int script_nr, ResourceManager *resMan);
 };
