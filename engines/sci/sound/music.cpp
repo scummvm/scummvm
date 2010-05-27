@@ -531,6 +531,14 @@ void MusicEntry::doFade() {
 			fadeStep = 0;
 			fadeCompleted = true;
 		}
+#ifdef ENABLE_SCI32
+		// Disable fading for SCI32 - sound drivers have issues when fading in (gabriel knight 1 sierra title)
+		if (getSciVersion() >= SCI_VERSION_2) {
+			volume = fadeTo;
+			fadeStep = 0;
+			fadeCompleted = true;
+		}
+#endif
 
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser) {
