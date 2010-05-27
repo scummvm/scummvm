@@ -574,7 +574,7 @@ int ResourceManager::addAppropriateSources() {
 #endif
 	} else if (Common::File::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
-		SearchMan.listMatchingMembers(files, "Data?");
+		SearchMan.listMatchingMembers(files, "Data?*");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			Common::String filename = (*x)->getName();
@@ -1478,7 +1478,8 @@ struct {
 	{ MKID_BE('HEP '), kResourceTypeHeap },
 	{ MKID_BE('IBIN'), kResourceTypeMacIconBarPictN },
 	{ MKID_BE('IBIS'), kResourceTypeMacIconBarPictS },
-	{ MKID_BE('PICT'), kResourceTypeMacPict }
+	{ MKID_BE('PICT'), kResourceTypeMacPict },
+	{ MKID_BE('SYN '), kResourceTypeSync }
 };
 
 static uint32 resTypeToMacTag(ResourceType type) {
