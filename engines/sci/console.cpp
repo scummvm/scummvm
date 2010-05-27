@@ -3060,7 +3060,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), selector_name(s, obj->getFuncSelector(i)), PRINT_REG(fptr));
 	}
 	if (s->_segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
-		DebugPrintf("\nOwner script:\t%d\n", s->_segMan->getScript(pos.segment)->_nr);
+		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->_nr);
 
 	return 0;
 }
