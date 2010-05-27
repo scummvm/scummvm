@@ -1109,6 +1109,14 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	// this function tries to read patch file with any supported naming scheme,
 	// regardless of s_sciVersion value
 
+	// Note that audio36 and sync36 use a different naming scheme, because they cannot be described
+	// with a single resource number, but are a result of a <number, noun, verb, cond, seq> tuple.
+	// Please don't be confused with the normal audio patches (*.aud) and normal sync patches (*.syn).
+	// audio36 patches can be seen for example in the AUD folder of GK1CD, and are like this file:
+	// @0CS0M00.0X1. GK1CD is the first game where these have been observed. The actual audio36 and
+	// sync36 resources exist in SCI1.1 as well, but the first game where external patch files for
+	// them have been found is GK1CD
+
 	Common::String mask, name;
 	Common::ArchiveMemberList files;
 	int number = -1;
