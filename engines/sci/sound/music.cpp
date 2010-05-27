@@ -37,9 +37,6 @@
 
 namespace Sci {
 
-// When defined, volume fading immediately sets the final sound volume
-#define DISABLE_VOLUME_FADING
-
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
 
@@ -537,12 +534,6 @@ void MusicEntry::doFade() {
 
 		// Only process MIDI streams in this thread, not digital sound effects
 		if (pMidiParser) {
-#ifdef DISABLE_VOLUME_FADING
-			// Signal fading to stop...
-			volume = fadeTo;
-			fadeStep = 0;
-			fadeCompleted = true;
-#endif
 			pMidiParser->setVolume(volume);
 		}
 
