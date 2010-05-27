@@ -387,7 +387,12 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		return;
 	if (pSnd->status != kSoundPaused)
 		return;
-	soundPlay(pSnd);
+	if (pSnd->pStreamAud) {
+		_pMixer->pauseHandle(pSnd->hCurrentAud, false);
+		pSnd->status = kSoundPlaying;
+	} else {
+		soundPlay(pSnd);
+	}
 }
 
 void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {

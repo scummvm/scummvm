@@ -828,7 +828,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		if (!_music->soundIsActive(musicSlot)) {
+		if ((!_music->soundIsActive(musicSlot)) && (musicSlot->status != kSoundPaused)) {
 			processStopSound(obj, 0, true);
 		} else {
 			_music->updateAudioStreamTicker(musicSlot);
