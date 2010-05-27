@@ -226,6 +226,9 @@ public:
 	reg_t getNameSelector() const { return _variables[_offset + 3]; }
 	void setNameSelector(reg_t value) { _variables[_offset + 3] = value; }
 
+	reg_t getPropDictSelector() const { return _variables[2]; }
+	void setPropDictSelector(reg_t value) { _variables[2] = value; }
+
 	reg_t getClassScriptSelector() const { return _variables[4]; }
 	void setClassScriptSelector(reg_t value) { _variables[4] = value; }
 

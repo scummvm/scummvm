@@ -256,6 +256,16 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		obj->setSuperClassSelector(
 			getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
 
+		// If object is instance, get -propDict- from class and set it for this object
+		//  This is needed for ::isMemberOf() to work.
+		// Example testcase - room 381 of sq4cd - if isMemberOf() doesn't work, talk-clicks on the robot will act like
+		//                     clicking on ego
+		if (!obj->isClass()) {
+			reg_t classObject = obj->getSuperClassSelector();
+			Object *classObj = getObject(classObject);
+			obj->setPropDictSelector(classObj->getPropDictSelector());
+		}
+
 		// Set the -classScript- selector to the script number.
 		// FIXME: As this selector is filled in at run-time, it is likely
 		// that it is supposed to hold a pointer. The Obj::isKindOf method
