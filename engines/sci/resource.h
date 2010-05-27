@@ -26,8 +26,9 @@
 #ifndef SCI_SCICORE_RESOURCE_H
 #define SCI_SCICORE_RESOURCE_H
 
-#include "common/str.h"
 #include "common/fs.h"
+#include "common/macresman.h"
+#include "common/str.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
@@ -121,7 +122,18 @@ const char *getResourceTypeName(ResourceType restype);
 
 
 class ResourceManager;
-struct ResourceSource;
+
+struct ResourceSource {
+	ResSourceType source_type;
+	bool scanned;
+	Common::String location_name;	// FIXME: Replace by FSNode ?
+	const Common::FSNode *resourceFile;
+	int volume_number;
+	ResourceSource *associated_map;
+	uint32 audioCompressionType;
+	int32 *audioCompressionOffsetMapping;
+	Common::MacResManager macResMan;
+};
 
 class ResourceId {
 public:
