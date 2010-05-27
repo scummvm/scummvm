@@ -41,12 +41,14 @@ VideoManager::~VideoManager() {
 
 void VideoManager::pauseVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->pauseVideo(true);
+		if (_videoStreams[i].video)
+			_videoStreams[i]->pauseVideo(true);
 }
 
 void VideoManager::resumeVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->pauseVideo(false);
+		if (_videoStreams[i].video)
+			_videoStreams[i]->pauseVideo(false);
 }
 
 void VideoManager::stopVideos() {
