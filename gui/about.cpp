@@ -81,6 +81,8 @@ AboutDialog::AboutDialog()
 	: Dialog(10, 20, 300, 174),
 	_scrollPos(0), _scrollTime(0), _willClose(false) {
 
+	reflowLayout();
+
 	int i;
 
 	for (i = 0; i < 1; i++)
