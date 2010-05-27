@@ -686,17 +686,18 @@ void GuRenderer::fillVertices(Vertex *vertices) {
 	uint32 gapX = _useGlobalScaler ? (PSP_SCREEN_WIDTH - outputWidth) >> 1 : 0;
 	uint32 gapY = _useGlobalScaler ? (PSP_SCREEN_HEIGHT - outputHeight) >> 1 : 0;
 
+	// Save scaled offset on screen
+	float scaledOffsetOnScreenX = scaleSourceToOutputX(_offsetOnScreen.x);
+	float scaledOffsetOnScreenY = scaleSourceToOutputY(_offsetOnScreen.y);
+	
 	float imageStartX, imageStartY, imageEndX, imageEndY;
 
-	imageStartX = gapX + (scaleSourceToOutputX(_maxTextureOffset.x));
-	imageStartY = gapY;
-
-	imageStartX += scaleSourceToOutputX(_offsetOnScreen.x);
-	imageStartY += scaleSourceToOutputY(_offsetOnScreen.y);
+	imageStartX = gapX + scaledOffsetOnScreenX + (scaleSourceToOutputX(_maxTextureOffset.x));
+	imageStartY = gapY + scaledOffsetOnScreenY;
 
 	if (_fullScreen) { // shortcut
-		imageEndX = PSP_SCREEN_WIDTH - gapX;
-		imageEndY = PSP_SCREEN_HEIGHT - gapY;
+		imageEndX = PSP_SCREEN_WIDTH - gapX + scaledOffsetOnScreenX; 
+		imageEndY = PSP_SCREEN_HEIGHT - gapY + scaledOffsetOnScreenY; // needed for screen shake
 	} else { /* !fullScreen */
 		imageEndX = imageStartX + scaleSourceToOutputX(_drawSize.width);
 		imageEndY = imageStartY + scaleSourceToOutputY(_drawSize.height);
