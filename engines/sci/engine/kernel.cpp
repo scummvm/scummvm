@@ -336,7 +336,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, ".*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
-	DEFUN("Platform", kPlatform, "i.*"),
+	DEFUN("Platform", kPlatform, ".*"),
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Portrait", kPortrait, ".*"),
