@@ -1242,9 +1242,9 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 
 
 void ResourceManager::readResourcePatches(ResourceSource *source) {
-// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
-// this function tries to read patch file with any supported naming scheme,
-// regardless of s_sciVersion value
+	// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
+	// this function tries to read patch file with any supported naming scheme,
+	// regardless of s_sciVersion value
 
 	Common::String mask, name;
 	Common::ArchiveMemberList files;
@@ -1254,6 +1254,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 
 	for (int i = kResourceTypeView; i <= kResourceTypeRobot; ++i) {
 		// TODO: add support for audio36 and sync36 files
+		// Such patches were introduced in SCI2, and didn't exist in SCI0-SCI1.1
 		if (i == kResourceTypeAudio36 || i == kResourceTypeSync36)
 			continue;
 
