@@ -35,15 +35,37 @@
 #define MIN2(a,b) ((a < b) ? a : b)
 #define MIN3(a,b,c) ( (a < b) ? (a < c ? a : c) : (b < c ? b : c) )
 
-//#define __PSP_PRINT_TO_FILE__
-//#define __PSP_DEBUG_FUNCS__ /* For debugging function calls */
+//#define __PSP_PRINT_TO_FILE__ /* For debugging suspend stuff, we have no screen output */
+//#define __PSP_DEBUG_FUNCS__ 	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+
 #include "backends/platform/psp/trace.h"
+
+//#define DEBUG_BUFFERS					/* to see the contents of the buffers being read */
+
+#ifdef DEBUG_BUFFERS
+void printBuffer(byte *ptr, uint32 len) {
+	uint32 printLen = len <= 10 ? len : 10;
+	
+	for (int i = 0; i < printLen; i++) {
+		PSP_INFO_PRINT("%x ", ptr[i]);		
+	}
+	
+	if (len > 10) {
+		PSP_INFO_PRINT("... ");
+		for (int i = len - 10; i < len; i++)
+			PSP_INFO_PRINT("%x ", ptr[i]);
+	}
+	
+	PSP_INFO_PRINT("\n");
+}
+#endif
+
 
 PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 		: StdioStream((void *)1), _path(path), _writeMode(writeMode),
 		  _ferror(false), _pos(0),
-		  _physicalPos(0), _fileSize(0), _inCache(false),
+		  _physicalPos(0), _fileSize(0), _inCache(false), _eos(false),
 		  _cacheStartOffset(-1), _cache(0),
 		  _errorSuspend(0), _errorSource(0),
 		  _errorPos(0), _errorHandle(0), _suspendCount(0) {
@@ -102,6 +124,7 @@ void *PSPIoStream::open() {
 
 bool PSPIoStream::err() const {
 	DEBUG_ENTER_FUNC();
+	
 	if (_ferror)	// We dump since no printing to screen with suspend
 		PSP_ERROR("mem_ferror[%d], source[%d], suspend error[%d], pos[%d], \
 		_errorPos[%d], _errorHandle[%p], suspendCount[%d]\n",
@@ -116,7 +139,7 @@ void PSPIoStream::clearErr() {
 }
 
 bool PSPIoStream::eos() const {
-	return (_pos >= _fileSize);
+	return _eos;
 }
 
 int32 PSPIoStream::pos() const {
@@ -129,8 +152,8 @@ int32 PSPIoStream::size() const {
 
 bool PSPIoStream::seek(int32 offs, int whence) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT_FUNC("offset[%d], whence[%d], _pos[%d], _physPos[%d]\n", offs, whence, _pos, _physicalPos);
-	bool success = true;
+	PSP_DEBUG_PRINT_FUNC("offset[0x%x], whence[%d], _pos[0x%x], _physPos[0x%x]\n", offs, whence, _pos, _physicalPos);
+	_eos = false;
 	
 	int32 posToSearchFor = 0;
 	switch (whence) {
@@ -144,43 +167,44 @@ bool PSPIoStream::seek(int32 offs, int whence) {
 	posToSearchFor += offs;
 	
 	// Check for bad values
-	if (posToSearchFor < 0 || posToSearchFor > _fileSize) {
+	if (posToSearchFor < 0) {
 		_ferror = true;
+		return false;
+	}
+	
+	if (posToSearchFor > _fileSize) {
+		_ferror = true;
+		_eos = true;
 		return false;
 	}
 	
 	// See if we can find it in cache
 	if (isOffsetInCache(posToSearchFor)) {
-		PSP_DEBUG_PRINT("seek offset[%d] found in cache. Cache starts[%d]\n", posToSearchFor, _cacheStartOffset);
+		PSP_DEBUG_PRINT("seek offset[0x%x] found in cache. Cache starts[0x%x]\n", posToSearchFor, _cacheStartOffset);
 		_inCache = true;		
 	} else {	// not in cache
 		_inCache = false;		
 	}	
 	_pos = posToSearchFor;		
-	return success;
+	return true;
 }
-
-// for debugging
-/*
-void printBuffer(byte *ptr, uint32 len) {
-	for (int i = 0; i < len; i++) {
-		PSP_INFO_PRINT("%x ", *ptr);
-		ptr++;
-	}	
-	PSP_INFO_PRINT("\n");
-}*/
 
 uint32 PSPIoStream::read(void *ptr, uint32 len) {
 	DEBUG_ENTER_FUNC();
-	PSP_DEBUG_PRINT_FUNC("filename[%s], len[%d], ptr[%p]\n", _path.c_str(), len, ptr);
+	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x], ptr[%p]\n", _path.c_str(), len, ptr);
 
+	if (_ferror || _eos)
+		return 0;
+		
 	byte *destPtr = (byte *)ptr;
 	uint32 lenFromFile = len;		// how much we read from the actual file
 	uint32 lenFromCache = 0;		// how much we read from cache
 	uint32 lenRemainingInFile = _fileSize - _pos;
 	
-	if (lenFromFile > lenRemainingInFile)
+	if (lenFromFile > lenRemainingInFile) {
 		lenFromFile = lenRemainingInFile;
+		_eos = true;
+	}	
 	
 	// Are we in cache?
 	if (_inCache && isCacheValid()) {
@@ -188,7 +212,7 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		// We can read at most what's in the cache or the remaining size of the file
 		lenFromCache = MIN2(lenFromFile, CACHE_SIZE - offsetInCache); // unsure
 		
-		PSP_DEBUG_PRINT("reading %d bytes from cache to %p. pos[%d] physPos[%d] cacheStart[%d]\n", lenFromCache, destPtr, _pos, _physicalPos, _cacheStartOffset);
+		PSP_DEBUG_PRINT("reading 0x%x bytes from cache to %p. pos[0x%x] physPos[0x%x] cacheStart[0x%x]\n", lenFromCache, destPtr, _pos, _physicalPos, _cacheStartOffset);
 		
 		memcpy(destPtr, &_cache[offsetInCache], lenFromCache);
 		_pos += lenFromCache;		
@@ -198,8 +222,10 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 			lenRemainingInFile -= lenFromCache;	// since we moved pos
 			destPtr += lenFromCache;
 		} else {							// we're done
-			// debug
-			//if (len < 10) printBuffer((byte *)ptr, len);
+#ifdef DEBUG_BUFFERS
+			printBuffer((byte *)ptr, len);
+#endif			
+			
 			return lenFromCache;			// how much we actually read
 		}		
 	}
@@ -214,11 +240,11 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		// This optimization is based on the principle that reading 1 byte is as expensive as 1000 bytes
 		uint32 lenToCopyToCache = MIN2((uint32)MIN_READ_SIZE, lenRemainingInFile); // at most remaining file size
 		
-		PSP_DEBUG_PRINT("filling cache with %d bytes from physicalPos[%d]. cacheStart[%d], pos[%d], fileSize[%d]\n", lenToCopyToCache, _physicalPos, _cacheStartOffset, _pos, _fileSize);
+		PSP_DEBUG_PRINT("filling cache with 0x%x bytes from physicalPos[0x%x]. cacheStart[0x%x], pos[0x%x], fileSize[0x%x]\n", lenToCopyToCache, _physicalPos, _cacheStartOffset, _pos, _fileSize);
 		
 		size_t ret = fread(_cache, 1, lenToCopyToCache, (FILE *)_handle);
 		if (ret != lenToCopyToCache) {
-			PSP_ERROR("in filling cache, failed to get %d bytes. Only got %d\n", lenToCopyToCache, ret);
+			PSP_ERROR("in filling cache, failed to get 0x%x bytes. Only got 0x%x\n", lenToCopyToCache, ret);
 			_ferror = true;
 			clearerr((FILE *)_handle);
 		}
@@ -227,21 +253,21 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		
 		_physicalPos += ret;
 		
-		PSP_DEBUG_PRINT("copying %d bytes from cache to %p\n", lenFromFile, destPtr);
+		PSP_DEBUG_PRINT("copying 0x%x bytes from cache to %p\n", lenFromFile, destPtr);
 		
 		// Copy to the destination buffer from cache
 		memcpy(destPtr, _cache, lenFromFile);
 		_pos += lenFromFile;
 		
 	} else {	// Too big for cache. No caching
-		PSP_DEBUG_PRINT("reading %d bytes from file to %p. Pos[%d], physPos[%d]\n", lenFromFile, destPtr, _pos, _physicalPos);
+		PSP_DEBUG_PRINT("reading 0x%x bytes from file to %p. Pos[0x%x], physPos[0x%x]\n", lenFromFile, destPtr, _pos, _physicalPos);
 		size_t ret = fread(destPtr, 1, lenFromFile, (FILE *)_handle);
 
 		_physicalPos += ret;	// Update pos
 		_pos = _physicalPos;
 
 		if (ret != lenFromFile) {	// error
-			PSP_ERROR("fread returned [%d] instead of len[%d]\n", ret, lenFromFile);
+			PSP_ERROR("fread returned [0x%x] instead of len[0x%x]\n", ret, lenFromFile);
 			_ferror = true;
 			clearerr((FILE *)_handle);
 			_errorSource = 4;			
@@ -251,8 +277,10 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 
 	PowerMan.endCriticalSection();
 
-	// debug
-	//if (len < 10) printBuffer((byte *)ptr, len);
+#ifdef DEBUG_BUFFERS
+	printBuffer((byte *)ptr, len);
+#endif	
+		
 	return lenFromCache + lenFromFile;		// total of what was copied
 }
 
@@ -281,8 +309,12 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
-	PSP_DEBUG_PRINT_FUNC("filename[%s], len[%d]\n", _path.c_str(), len);
+	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x]\n", _path.c_str(), len);
 
+	if (_ferror)
+		return 0;
+		
+	_eos = false;	// we can't have eos with write
 	synchronizePhysicalPos();
 	
 	size_t ret = fwrite(ptr, 1, len, (FILE *)_handle);
@@ -300,7 +332,7 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 		clearerr((FILE *)_handle);
 		_pos = ftell((FILE *)_handle);	// Update pos
 		_errorSource = 5;
-		PSP_ERROR("fwrite returned[%d] instead of len[%d]\n", ret, len);
+		PSP_ERROR("fwrite returned[0x%x] instead of len[0x%x]\n", ret, len);
 	}
 
 	PowerMan.endCriticalSection();
@@ -320,7 +352,7 @@ bool PSPIoStream::flush() {
 		_ferror = true;
 		clearerr((FILE *)_handle);
 		_errorSource = 6;
-		PSP_ERROR("fflush returned ret[%u]\n", ret);
+		PSP_ERROR("fflush returned ret[%d]\n", ret);
 	}
 
 	PowerMan.endCriticalSection();

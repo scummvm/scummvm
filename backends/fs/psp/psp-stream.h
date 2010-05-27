@@ -41,6 +41,7 @@ protected:
 	int _physicalPos;	// position in the real file
 	int _pos;			// position. Sometimes virtual
 	bool _inCache;		// whether we're in cache (virtual) mode
+	bool _eos;			// EOS flag
 	
 	enum {
 		SuspendError = 2,
