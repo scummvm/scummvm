@@ -561,7 +561,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true'>
+		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true' spacing='2'>
 			<widget name = 'Title'
 					width = '160'
 					height = 'Globals.Line.Height'

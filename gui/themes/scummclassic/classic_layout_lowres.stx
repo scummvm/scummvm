@@ -565,7 +565,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '8, 8, 4, 6' center = 'true'>
+		<layout type = 'vertical' padding = '2, 2, 4, 6' center = 'true' spacing='6'>
 			<widget name = 'Title'
 					width = '160'
 					height = '4'
