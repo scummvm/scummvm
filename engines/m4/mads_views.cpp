@@ -59,7 +59,7 @@ void MadsSpriteSlots::clear() {
 	// Reset the sprite slots list back to a single entry for a full screen refresh
 	startIndex = 1;
 	_entries[0].spriteType = FULL_SCREEN_REFRESH;
-	_entries[0].timerIndex = -1;
+	_entries[0].seqIndex = -1;
 }
 
 int MadsSpriteSlots::getIndex() {
@@ -84,10 +84,10 @@ int MadsSpriteSlots::addSprites(const char *resName) {
 /*
  * Deletes the sprite slot with the given timer entry
  */
-void MadsSpriteSlots::deleteTimer(int timerIndex) {
+void MadsSpriteSlots::deleteTimer(int seqIndex) {
 	for (int idx = 0; idx < startIndex; ++idx) {
-		if (_entries[idx].timerIndex == timerIndex)
-			_entries[idx].spriteType = -1;
+		if (_entries[idx].seqIndex == seqIndex)
+			_entries[idx].spriteType = EXPIRED_SPRITE;
 	}
 }
 
@@ -201,6 +201,16 @@ void MadsSpriteSlots::setDirtyAreas() {
 			_entries[i].spriteType = 0;
 		}
 	}
+}
+
+/**
+ * Flags the entire screen to be redrawn during the next drawing cycle
+ */
+void MadsSpriteSlots::fullRefresh() {
+	int idx = getIndex();
+
+	_entries[idx].spriteType = FULL_SCREEN_REFRESH;
+	_entries[idx].seqIndex = -1;
 }
 
 /**
@@ -859,10 +869,10 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 		int frameStart) {
 
 	// Find a free slot
-	uint timerIndex = 0;
-	while ((timerIndex < _entries.size()) && (_entries[timerIndex].active))
-		++timerIndex;
-	if (timerIndex == _entries.size())
+	uint seqIndex = 0;
+	while ((seqIndex < _entries.size()) && (_entries[seqIndex].active))
+		++seqIndex;
+	if (seqIndex == _entries.size())
 		error("TimerList full");
 
 	if (frameStart <= 0)
@@ -873,53 +883,53 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 		frameInc = 0;
 
 	// Set the list entry fields
-	_entries[timerIndex].active = true;
-	_entries[timerIndex].spriteListIndex = spriteListIndex;
-	_entries[timerIndex].field_2 = v0;
-	_entries[timerIndex].frameIndex = frameIndex;
-	_entries[timerIndex].frameStart = frameStart;
-	_entries[timerIndex].numSprites = numSprites;
-	_entries[timerIndex].animType = animType;
-	_entries[timerIndex].frameInc = frameInc;
-	_entries[timerIndex].depth = depth;
-	_entries[timerIndex].scale = scale;
-	_entries[timerIndex].nonFixed = nonFixed;
-	_entries[timerIndex].msgPos.x = msgX;
-	_entries[timerIndex].msgPos.y = msgY;
-	_entries[timerIndex].numTicks = numTicks;
-	_entries[timerIndex].extraTicks = extraTicks;
+	_entries[seqIndex].active = true;
+	_entries[seqIndex].spriteListIndex = spriteListIndex;
+	_entries[seqIndex].field_2 = v0;
+	_entries[seqIndex].frameIndex = frameIndex;
+	_entries[seqIndex].frameStart = frameStart;
+	_entries[seqIndex].numSprites = numSprites;
+	_entries[seqIndex].animType = animType;
+	_entries[seqIndex].frameInc = frameInc;
+	_entries[seqIndex].depth = depth;
+	_entries[seqIndex].scale = scale;
+	_entries[seqIndex].nonFixed = nonFixed;
+	_entries[seqIndex].msgPos.x = msgX;
+	_entries[seqIndex].msgPos.y = msgY;
+	_entries[seqIndex].numTicks = numTicks;
+	_entries[seqIndex].extraTicks = extraTicks;
 
-	_entries[timerIndex].timeout = _madsVm->_currentTimer + delayTicks;
+	_entries[seqIndex].timeout = _madsVm->_currentTimer + delayTicks;
 
-	_entries[timerIndex].triggerCountdown = triggerCountdown;
-	_entries[timerIndex].doneFlag = false;
-	_entries[timerIndex].field_13 = 0;
-	_entries[timerIndex].dynamicHotspotIndex = -1;
-	_entries[timerIndex].entries.count = 0;
-	_entries[timerIndex].abortMode = _owner._abortTimersMode2;
+	_entries[seqIndex].triggerCountdown = triggerCountdown;
+	_entries[seqIndex].doneFlag = false;
+	_entries[seqIndex].field_13 = 0;
+	_entries[seqIndex].dynamicHotspotIndex = -1;
+	_entries[seqIndex].entries.count = 0;
+	_entries[seqIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_entries[timerIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_entries[seqIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
 
-	return timerIndex;
+	return seqIndex;
 }
 
-void MadsSequenceList::remove(int timerIndex) {
-	if (_entries[timerIndex].active) {
-		if (_entries[timerIndex].dynamicHotspotIndex >= 0)
-			_owner._dynamicHotspots.remove(_entries[timerIndex].dynamicHotspotIndex);
+void MadsSequenceList::remove(int seqIndex) {
+	if (_entries[seqIndex].active) {
+		if (_entries[seqIndex].dynamicHotspotIndex >= 0)
+			_owner._dynamicHotspots.remove(_entries[seqIndex].dynamicHotspotIndex);
 	}
 
-	_entries[timerIndex].active = false;
-	_owner._spriteSlots.deleteTimer(timerIndex);
+	_entries[seqIndex].active = false;
+	_owner._spriteSlots.deleteTimer(seqIndex);
 }
 
-void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot) {
-	MadsSequenceEntry &timerEntry = _entries[timerIndex];
+void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
+	MadsSequenceEntry &timerEntry = _entries[seqIndex];
 	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
 	spriteSlot.spriteType = sprite.getAssetType() == 1 ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
-	spriteSlot.timerIndex = timerIndex;
+	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
 	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
 	spriteSlot.depth = timerEntry.depth;
@@ -934,15 +944,15 @@ void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot)
 	}
 }
 
-bool MadsSequenceList::loadSprites(int timerIndex) {
-	MadsSequenceEntry &seqEntry = _entries[timerIndex];
+bool MadsSequenceList::loadSprites(int seqIndex) {
+	MadsSequenceEntry &seqEntry = _entries[seqIndex];
 	int slotIndex;
 	bool result = false;
 	int idx = -1;
 
-	_owner._spriteSlots.deleteTimer(timerIndex);
+	_owner._spriteSlots.deleteTimer(seqIndex);
 	if (seqEntry.doneFlag) {
-		remove(timerIndex);
+		remove(seqIndex);
 		return false;
 	}
 
@@ -951,7 +961,7 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 		seqEntry.doneFlag = true;
 	} else if ((slotIndex = _owner._spriteSlots.getIndex()) >= 0) {
 		MadsSpriteSlot &spriteSlot = _owner._spriteSlots[slotIndex];
-		setSpriteSlot(timerIndex, spriteSlot);
+		setSpriteSlot(seqIndex, spriteSlot);
 
 		int x2 = 0, y2 = 0;
 
@@ -1079,8 +1089,8 @@ void MadsSequenceList::delay(uint32 v1, uint32 v2) {
 	}
 }
 
-void MadsSequenceList::setAnimRange(int timerIndex, int startVal, int endVal) {
-	MadsSequenceEntry &seqEntry = _entries[timerIndex];
+void MadsSequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
+	MadsSequenceEntry &seqEntry = _entries[seqIndex];
 	SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
 	int numSprites = spriteSet.getCount();
 	int tempStart = startVal, tempEnd = endVal;

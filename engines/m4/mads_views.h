@@ -46,7 +46,7 @@ enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 class MadsSpriteSlot {
 public:
 	int spriteType;
-	int timerIndex;
+	int seqIndex;
 	int spriteListIndex;
 	int frameNumber;
 	int xp;
@@ -60,7 +60,7 @@ public:
 #define SPRITE_SLOTS_SIZE 50
 
 enum SpriteIdSpecial {
-	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, FOREGROUND_SPRITE = 1
+	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, FOREGROUND_SPRITE = 1, EXPIRED_SPRITE = -1
 };
 
 typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
@@ -87,11 +87,12 @@ public:
 	int getIndex();
 	int addSprites(const char *resName);
 	void clear();
-	void deleteTimer(int timerIndex);
+	void deleteTimer(int seqIndex);
 
 	void drawBackground();
 	void drawForeground(View *view);
 	void setDirtyAreas();
+	void fullRefresh();
 	void cleanUp();
 };
 
@@ -343,12 +344,12 @@ public:
 	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
-	void remove(int timerIndex);
-	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
-	bool loadSprites(int timerIndex);
+	void remove(int seqIndex);
+	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
+	bool loadSprites(int seqIndex);
 	void tick();
 	void delay(uint32 v1, uint32 v2);
-	void setAnimRange(int timerIndex, int startVal, int endVal);
+	void setAnimRange(int seqIndex, int startVal, int endVal);
 };
 
 class MadsView {

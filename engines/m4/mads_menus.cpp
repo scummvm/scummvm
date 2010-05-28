@@ -619,7 +619,7 @@ void RexDialogView::initialiseLines() {
 	// Set up a default sprite slot entry for a full screen refresh
 	_spriteSlots.startIndex = 1;
 	_spriteSlots[0].spriteType = FULL_SCREEN_REFRESH;
-	_spriteSlots[0].timerIndex = -1;
+	_spriteSlots[0].seqIndex = -1;
 }
 
 void RexDialogView::initialiseGraphics() {
@@ -796,7 +796,7 @@ bool RexDialogView::onEvent(M4EventType eventType, int32 param1, int x, int y, b
 void RexDialogView::setFrame(int frameNumber, int depth) {
 	int slotIndex = _spriteSlots.getIndex();
 	_spriteSlots[slotIndex].spriteType = FOREGROUND_SPRITE;
-	_spriteSlots[slotIndex].timerIndex = 1;
+	_spriteSlots[slotIndex].seqIndex = 1;
 	_spriteSlots[slotIndex].spriteListIndex = 0; //_menuSpritesIndex;
 	_spriteSlots[slotIndex].frameNumber = frameNumber;
 
