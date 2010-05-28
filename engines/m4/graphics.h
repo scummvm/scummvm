@@ -173,7 +173,8 @@ public:
 		dest->copyFrom(this, destX, destY, depth, depthsSurface, scale, transparentColour);
 	}
 
-
+	void scrollX(int xAmount);
+	void scrollY(int yAmount);
 
 	void translate(RGBList *list, bool isTransparent = false);
 };

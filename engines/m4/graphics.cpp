@@ -738,6 +738,71 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 	delete intStream;
 }
 
+void M4Surface::scrollX(int xAmount) {
+	if (xAmount == 0)
+		return;
+
+	byte buffer[80];
+	int direction = (xAmount > 0) ? 1 : -1;
+	int xSize = ABS(xAmount);
+	assert(xSize <= 80);
+
+	byte *srcP = (byte *)getBasePtr(0, 0);
+
+	for (int y = 0; y < height(); ++y, srcP += pitch) {
+		if (direction < 0) {
+			// Copy area to be overwritten
+			Common::copy(srcP, srcP + xSize, &buffer[0]);
+			// Shift the remainder of the line over the given area
+			Common::copy(srcP + xSize, srcP + width(), srcP);
+			// Move buffered area to the end of the line
+			Common::copy(&buffer[0], &buffer[xSize], srcP + width() - xSize);
+		} else {
+			// Copy area to be overwritten
+			Common::copy_backward(srcP + width() - xSize, srcP + width(), &buffer[80]);
+			// Shift the remainder of the line over the given area
+			Common::copy_backward(srcP, srcP + width() - xSize, srcP + width());
+			// Move buffered area to the start of the line
+			Common::copy_backward(&buffer[80 - xSize], &buffer[80], srcP + xSize);
+		}
+	}
+}
+
+void M4Surface::scrollY(int yAmount) {
+	if (yAmount == 0)
+		return;
+
+	int direction = (yAmount > 0) ? 1 : -1;
+	int ySize = ABS(yAmount);
+	assert(ySize < (height() / 2));
+	assert(width() == pitch);
+
+	int blockSize = ySize * width();
+	byte *tempData = (byte *)malloc(blockSize);
+	byte *pixelsP = (byte *)getBasePtr(0, 0);
+
+	if (direction > 0) {
+		// Buffer the lines to be overwritten
+		byte *srcP = (byte *)getBasePtr(0, height() - ySize);
+		Common::copy(srcP, srcP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy_backward(pixelsP, pixelsP + (pitch * (height() - ySize)),
+			pixelsP + (pitch * height()));
+		// Transfer the buffered lines top the top of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP);
+	} else {
+		// Buffer the lines to be overwritten
+		Common::copy(pixelsP, pixelsP + (pitch * ySize), tempData);
+		// Vertically shift all the lines
+		Common::copy(pixelsP + (pitch * ySize), pixelsP + (pitch * height()), pixelsP);
+		// Transfer the buffered lines to the bottom of the screen
+		Common::copy(tempData, tempData + blockSize, pixelsP + (pitch * (height() - ySize))); 
+	}
+
+	::free(tempData);
+}
+
+
 void M4Surface::translate(RGBList *list, bool isTransparent) {
 	byte *p = getBasePtr(0, 0);
 	byte *palIndexes = list->palIndexes();
