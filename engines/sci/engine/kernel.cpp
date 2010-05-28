@@ -383,7 +383,6 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),
 	DEFUN("ATan", kATan, ".*"),
-	DEFUN("MergePoly", kMergePoly, ".*"),
 	DEFUN("Record", kRecord, ".*"),
 	DEFUN("PlayBack", kPlayBack, ".*"),
 	DEFUN("DbugStr", kDbugStr, ".*"),
