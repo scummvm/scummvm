@@ -332,16 +332,45 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 SciVersion GameFeatures::detectGfxFunctionsType() {
 	if (_gfxFunctionsType == SCI_VERSION_NONE) {
-		// This detection only works (and is only needed) for SCI0 games
-		if (getSciVersion() >= SCI_VERSION_01) {
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			// Old SCI0 games always used old graphics functions
+			_gfxFunctionsType = SCI_VERSION_0_EARLY;
+		} else if (getSciVersion() >= SCI_VERSION_01) {
+			// SCI01 and newer games always used new graphics functions
 			_gfxFunctionsType = SCI_VERSION_0_LATE;
-		} else if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		} else {	// SCI0 late
 			// Check if the game is using an overlay
-			bool found = false;
+			bool searchRoomObj = false;
 
-			if (_kernel->_selectorCache.overlay == -1) {
-				// No overlay selector found, check if any method of the Rm object
-				// is calling kDrawPic, as the overlay selector might be missing in demos
+			if (_kernel->_selectorCache.overlay != -1) {
+				// The game has an overlay selector, check how it calls kDrawPicto determine
+				// the graphics functions type used
+				reg_t objAddr = _segMan->findObjectByName("Rm");
+				if (lookup_selector(_segMan, objAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
+					if (!autoDetectGfxFunctionsType()) {
+						warning("Graphics functions detection failed, taking an educated guess");
+
+						// Try detecting the graphics function types from the existence of the motionCue
+						// selector (which is a bit of a hack)
+						if (_kernel->findSelector("motionCue") != -1)
+							_gfxFunctionsType = SCI_VERSION_0_LATE;
+						else
+							_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					}
+				} else {
+					// The game has an overlay selector, but it's not a method of the Rm object
+					// (like in Hoyle 1 and 2), so search for other methods
+					searchRoomObj = true;
+				}
+			} else {
+				// The game doesn't have an overlay selector, so search for it manually
+				searchRoomObj = true;
+			}
+
+			if (searchRoomObj) {
+				// If requested, check if any method of the Rm object is calling kDrawPic,
+				// as the overlay selector might be missing in demos
+				bool found = false;
 
 				const Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
@@ -351,30 +380,11 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				}
 
 				if (!found) {
-					// No overlay selector found, therefore the game is definitely
-					// using old graphics functions
+					// No method of the Rm object is calling kDrawPic, thus the game
+					// doesn't have overlays and is using older graphics functions
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
-			} else {	// _kernel->_selectorCache.overlay != -1
-				// An in-between case: The game does not have a shiftParser
-				// selector, but it does have an overlay selector, so it uses an
-				// overlay. Therefore, check it to see how it calls kDrawPic to
-				// determine the graphics functions type used
-
-				if (!autoDetectGfxFunctionsType()) {
-					warning("Graphics functions detection failed, taking an educated guess");
-
-					// Try detecting the graphics function types from the existence of the motionCue
-					// selector (which is a bit of a hack)
-					if (_kernel->findSelector("motionCue") != -1)
-						_gfxFunctionsType = SCI_VERSION_0_LATE;
-					else
-						_gfxFunctionsType = SCI_VERSION_0_EARLY;
-				}
 			}
-		} else {	// (getSciVersion() == SCI_VERSION_0_EARLY)
-			// Old SCI0 games always used old graphics functions
-			_gfxFunctionsType = SCI_VERSION_0_EARLY;
 		}
 
 		debugC(1, kDebugLevelVM, "Detected graphics functions type: %s", getSciVersionDesc(_gfxFunctionsType));
