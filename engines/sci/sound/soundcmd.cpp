@@ -304,7 +304,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	newSound->soundObj = obj;
 	newSound->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
 	newSound->priority = GET_SEL32V(_segMan, obj, SELECTOR(pri)) & 0xFF;
-	if (_soundVersion >= SCI_VERSION_1_LATE)
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
@@ -440,7 +440,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 
 	musicSlot->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
 	musicSlot->priority = GET_SEL32V(_segMan, obj, SELECTOR(priority));
-	if (_soundVersion >= SCI_VERSION_1_LATE)
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = GET_SEL32V(_segMan, obj, SELECTOR(vol));
 	_music->soundPlay(musicSlot);
 
