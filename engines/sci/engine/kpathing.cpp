@@ -1694,4 +1694,34 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
+	// 3 parameters: raw polygon data, polygon list, list size
+	reg_t polygonData = argv[0];
+
+	// TODO: actually merge the polygon
+
+#if 0
+	List *list = s->_segMan->lookupList(argv[1]);
+	Node *node = s->_segMan->lookupNode(list->first);
+	// List size is not needed
+
+	Polygon *polygon;
+	int count = 0;
+
+	while (node) {
+		polygon = convert_polygon(s, node->value);
+
+		if (polygon) {
+			count += GET_SEL32V(s->_segMan, node->value, SELECTOR(size));
+		}
+
+		node = s->_segMan->lookupNode(node->succ);
+	}
+#endif
+
+	warning("Stub: kMergePoly");
+
+	return polygonData;
+}
+
 } // End of namespace Sci

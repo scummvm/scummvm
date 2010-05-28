@@ -332,6 +332,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("DoSync", kDoSync, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, "iri*"),
 	DEFUN("Intersections", kIntersections, "iiiiriiiri"),
+	DEFUN("MergePoly", kMergePoly, "rli"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, ".*"),
