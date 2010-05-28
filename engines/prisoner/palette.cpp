@@ -72,7 +72,7 @@ void PrisonerEngine::alarmPalette(byte *source) {
 		_alarmPaletteSubDelta = -_alarmPaletteSubDelta;
 }
 
-void PrisonerEngine::paletteTask(int16 type, int16 value1, int16 value2, int16 value3) {
+void PrisonerEngine::startPaletteTask(int16 type, int16 value1, int16 value2, int16 value3) {
 
 	switch (type) {
 	case 3:

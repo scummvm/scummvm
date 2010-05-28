@@ -62,6 +62,7 @@ struct TextItem;
 class ScriptOpcodes;
 class MidiPlayer;
 class PathSystem;
+class PrisonerEngine;
 
 /* Script */
 
@@ -88,7 +89,7 @@ enum {
 
 struct Script {
 	byte status;
-	byte *ip;
+	byte *ip, *code;
 	int16 soundItemIndex;
 	int16 zoneIndex;
 	bool zoneEnterLeaveFlag;
@@ -103,7 +104,7 @@ struct Script {
 	byte readByte();
 	int16 readInt16();
 	Common::String readString();
-	Script() {
+	void clear() {
 		status = kScriptStatusPaused;
 		ip = NULL;
 		soundItemIndex = -1;
@@ -121,6 +122,8 @@ struct ScriptProgram {
 	int16 scriptCount;
 	Script scripts[kMaxScripts];
 	ScriptProgram() : scriptCount(0) {}
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 /* Zones */
@@ -137,6 +140,8 @@ struct Zone {
 	Common::String identifier;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 struct ZoneAction {
@@ -156,6 +161,8 @@ struct ZoneAction {
 	int16 sceneIndex;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxZones = 50;
@@ -179,6 +186,8 @@ struct Dialog {
 	Common::Array<DialogKeyword> keywords;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxDialogs = 3;
@@ -199,6 +208,8 @@ struct InventoryItem {
 		name.clear();
 		combinationIndex = -1;
 	}
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 struct InventoryItemCombination {
@@ -207,6 +218,8 @@ struct InventoryItemCombination {
 	int16 scriptIndex;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxInventoryItems = 50;
@@ -232,6 +245,9 @@ struct ActorSprite {
 	int16 ticks;
 	int16 frameListIndex, frameListCount;
 	AnimationFrameList *frameList;
+	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 struct CompareActorSpriteByY {
@@ -271,6 +287,8 @@ struct Actor {
 	int16 x, y;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
 	void clear() { resourceCacheSlot = -1; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxAltActorAnimations = 5;
@@ -280,6 +298,8 @@ struct AltActorAnimation {
 	byte value;
 	bool isEmpty() const { return resourceCacheSlot == -1; }
 	void clear() { resourceCacheSlot = -1; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 /* BackgroundObject */
@@ -333,6 +353,8 @@ struct SceneItem {
 		actorIndex = -1;
 		inventoryItemIndex = -1;
 	}
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxSceneItems = 10;
@@ -348,6 +370,8 @@ struct ActorFrameSound {
 	byte unk2;
 	bool isEmpty() const { return actorIndex == -1; }
 	void clear() { actorIndex = -1; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxActorFrameSounds = 30;
@@ -356,6 +380,8 @@ const int16 kMaxActorFrameSounds = 30;
 
 struct FontColorDef {
 	byte inkColor, outlineColor;
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 struct Font {
@@ -395,10 +421,11 @@ struct ScreenText {
 	int16 x, y;
 	int16 lineCount;
 	int16 width, height;
-	uint32 dataOffset;
 	int16 fontHeight;
 	bool isEmpty() const { return used == 0; }
 	void clear() { used = 0; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxScreenTexts = 3;
@@ -463,6 +490,8 @@ struct PaletteTask {
 	int16 value3;
 	int16 positionIncr;
 	int16 updateTicks;
+	void save(PrisonerEngine *vm, Common::WriteStream *out);
+	void load(PrisonerEngine *vm, Common::ReadStream *in);
 };
 
 const int16 kMaxPaletteTasks = 5;
@@ -611,7 +640,7 @@ public:
 
 	/* Actors */
 	ObjectStorage<Actor, kMaxActors> _actors;
-	ActorSprite _actorSprites[kMaxActors];
+	ObjectStorage<ActorSprite, kMaxActors> _actorSprites;
 	ObjectStorage<AltActorAnimation, kMaxAltActorAnimations> _altActorAnimations;
 	int16 _mainActorIndex;
 	bool _mainActorValid;
@@ -826,6 +855,7 @@ public:
 	void clearActor(int16 actorIndex);
 	void clearActors();
 	void unloadActors();
+	void restoreActorSprites();
 	void setActorFontColors(int16 actorIndex, int16 outlineColor, int16 inkColor);
 	void setMainActor(int16 actorIndex);
 	void actorAssignPathWalker(int16 actorIndex);
@@ -943,6 +973,7 @@ public:
 
 	/* Inventory */
 	int16 registerInventoryItem(Common::String &pakName, int16 pakSlot, int16 id);
+	void loadInventoryItemText(int16 inventoryItemIndex);
 	int16 addInventoryItemCombination(int16 inventoryItem1, int16 inventoryItem2, int16 scriptIndex);
 	void removeInventoryItemCombination(int16 combinationIndex);
 	int16 getInventoryItemCombinationScript(int16 inventoryItem1, int16 inventoryItem2);
@@ -1008,7 +1039,7 @@ public:
 	int16 getClickBoxTag(int16 clickBoxIndex);
 
 	/* Palette task */
-	void paletteTask(int16 type, int16 value1, int16 value2, int16 value3);
+	void startPaletteTask(int16 type, int16 value1, int16 value2, int16 value3);
 	void updatePaletteTasks();
 	void clearPaletteTasks();
 

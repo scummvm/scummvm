@@ -30,6 +30,8 @@
 
 namespace Prisoner {
 
+class PrisonerEngine;
+
 template<class T, int16 N>
 class ObjectStorage {
 public:
@@ -54,6 +56,14 @@ public:
 		return _objects[index];
 	}
 	int16 count() const { return N; }
+	void save(PrisonerEngine *vm, Common::WriteStream *out) {
+		for (int16 i = 0; i < N; i++)
+			_objects[i].save(vm, out);
+	}
+	void load(PrisonerEngine *vm, Common::ReadStream *in) {
+		for (int16 i = 0; i < N; i++)
+			_objects[i].load(vm, in);
+	}
 protected:
 	T _objects[N];
 };

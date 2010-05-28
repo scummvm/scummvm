@@ -30,23 +30,23 @@
 namespace Prisoner {
 
 int16 PrisonerEngine::registerInventoryItem(Common::String &pakName, int16 pakSlot, int16 id) {
-
 	int16 inventoryItemIndex = _inventoryItems.getFreeSlot();
 	InventoryItem *inventoryItem = &_inventoryItems[inventoryItemIndex];
-
 	inventoryItem->resourceCacheSlot = _res->load<AnimationResource>(pakName, pakSlot, 9);
 	inventoryItem->id = id;
 	inventoryItem->status = 0;
+	loadInventoryItemText(inventoryItemIndex);
+	return inventoryItemIndex;
+}
 
-	// TODO: Move to own method after all
+void PrisonerEngine::loadInventoryItemText(int16 inventoryItemIndex) {
+	InventoryItem *inventoryItem = &_inventoryItems[inventoryItemIndex];
 	Common::String textPakName = Common::String::printf("%c_M%02d", _languageChar, _currModuleIndex);
 	Common::String identifier = Common::String::printf("%02d", inventoryItemIndex);
 	int16 inventoryItemNamesSlot = loadTextResource(textPakName, 0);
 	TextResource *inventoryItemNames = _res->get<TextResource>(inventoryItemNamesSlot);
 	inventoryItem->name = inventoryItemNames->getText(identifier)->getChunkLineString(0, 0);
 	_res->unload(inventoryItemNamesSlot);
-
-	return inventoryItemIndex;
 }
 
 int16 PrisonerEngine::addInventoryItemCombination(int16 inventoryItem1, int16 inventoryItem2, int16 scriptIndex) {

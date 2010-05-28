@@ -138,7 +138,7 @@ protected:
 	int16 op_not(Script *script);
 	int16 op_actorAssignPathWalker(Script *script);
 	int16 op_setUserInput(Script *script);
-	int16 op_paletteTask(Script *script);
+	int16 op_startPaletteTask(Script *script);
 	int16 op_playActorAnimation(Script *script);
 	int16 op_setActorSpriteFrameListIndexIfIdle(Script *script);
 	int16 op_actorAnimation20CC7(Script *script);

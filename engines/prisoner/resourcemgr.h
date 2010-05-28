@@ -95,9 +95,11 @@ public:
 	T* get(int16 slotIndex) const { return (T*)_slots[slotIndex].resource; }
 	void unload(int16 slotIndex);
 	void purge();
-	void getSlotInfo(int16 slotIndex, Common::String &pakName, int16 &pakSlot) {
+	void getSlotInfo(int16 slotIndex, Common::String &pakName, int16 &pakSlot, int16 *type = NULL) {
 		pakName = _slots[slotIndex].pakName;
 		pakSlot = _slots[slotIndex].pakSlot;
+		if (type)
+			*type = _slots[slotIndex].type;
 	}
 	void dump(Common::String &pakName, int16 pakSlot, int16 type);
 protected:

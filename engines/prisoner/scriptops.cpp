@@ -130,7 +130,7 @@ void ScriptOpcodes::setupOpcodes() {
 	Opcode(op_actorAssignPathWalker);
 	Opcode(op_setUserInput);
 	Opcode(op_clearZoneAction);
-	Opcode(op_paletteTask);
+	Opcode(op_startPaletteTask);
 	Opcode(op_playActorAnimation);
 	Opcode(op_setActorSpriteFrameListIndexIfIdle);
 	Opcode(op_actorAnimation20CC7);
@@ -926,12 +926,12 @@ int16 ScriptOpcodes::op_setUserInput(Script *script) {
 	}
 }
 
-int16 ScriptOpcodes::op_paletteTask(Script *script) {
+int16 ScriptOpcodes::op_startPaletteTask(Script *script) {
 	ARG_EVALUATE(type);
 	ARG_EVALUATE(value1);
 	ARG_EVALUATE(value2);
 	ARG_EVALUATE(value3);
-	_vm->paletteTask(type, value1, value2, value3);
+	_vm->startPaletteTask(type, value1, value2, value3);
 	return 0;
 }
 

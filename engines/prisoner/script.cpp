@@ -72,6 +72,7 @@ void PrisonerEngine::clearScriptProgram(int16 programIndex) {
 		script->actorIndex2 = -1;
 		script->soundItemIndex = -1;
 		script->ip = NULL;
+		script->code = NULL;
 	}
 }
 
@@ -88,7 +89,8 @@ void PrisonerEngine::startScript(int16 programIndex, int16 scriptIndex) {
 	ScriptProgram *scriptProgram = &_scriptPrograms[programIndex];
 	Script *script = &scriptProgram->scripts[scriptIndex];
 
-	script->ip = scriptProgram->scriptResource->getScript(scriptIndex);
+	script->code = scriptProgram->scriptResource->getScript(scriptIndex);
+	script->ip = script->code;
 	script->status = kScriptStatusRunCode;
 	script->actorIndex2 = -1;
 	script->unk1 = -1;
@@ -113,6 +115,7 @@ void PrisonerEngine::stopScript(int16 programIndex, int16 scriptIndex) {
 		unloadScreenText(script->screenTextIndex);
 
 	script->ip = NULL;
+	script->code = NULL;
 	script->status = kScriptStatusPaused;
 
 	if (script->actorIndex2 != -1) {

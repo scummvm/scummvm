@@ -141,6 +141,19 @@ void PrisonerEngine::unloadActors() {
 	}
 }
 
+void PrisonerEngine::restoreActorSprites() {
+	if (_actorsCleared) {
+		for (int16 actorIndex = 0; actorIndex < kMaxActors; actorIndex++) {
+			Actor *actor = &_actors[actorIndex];
+			if (actor->resourceCacheSlot != -1) {
+				ActorSprite *actorSprite = actor->actorSprite;
+				actorSprite->animationResource = _res->get<AnimationResource>(actor->resourceCacheSlot);
+				actorSprite->frameList = actorSprite->animationResource->_anims[actorSprite->frameListIndex];
+			}
+		}
+	}
+}
+
 void PrisonerEngine::setActorFontColors(int16 actorIndex, int16 outlineColor, int16 inkColor) {
 	_actors[actorIndex].fontOutlineColor = outlineColor;
 	_actors[actorIndex].fontInkColor = inkColor;

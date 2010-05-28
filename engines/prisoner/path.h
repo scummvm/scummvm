@@ -179,6 +179,9 @@ public:
 	bool getPathSystemBuilt() { return _pathSystemBuilt; }
 	void setPathSystemBuilt(bool value) { _pathSystemBuilt = value; }
 
+	void saveState(Common::WriteStream *out);
+	void loadState(Common::ReadStream *in);
+
 };
 
 } // End of namespace Prisoner
