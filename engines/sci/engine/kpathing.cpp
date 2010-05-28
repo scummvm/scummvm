@@ -1694,11 +1694,15 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
 	}
 }
 
+// This is a quite rare kernel function. An example of when it's called
+// is in QFG1VGA, after killing any monster.
 reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	// 3 parameters: raw polygon data, polygon list, list size
 	reg_t polygonData = argv[0];
 
 	// TODO: actually merge the polygon
+	// In QFG1VGA, there are no immediately visible side-effects
+	// of this being a stub.
 
 #if 0
 	List *list = s->_segMan->lookupList(argv[1]);
