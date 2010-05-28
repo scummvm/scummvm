@@ -1,9 +1,9 @@
 # $Header: Exp $
  include $(PS2SDK)/Defs.make
 
-PS2_EXTRA = /works/devel/ps2/sdk-extra
-PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
-PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
+PS2_EXTRA = /home/tony/GSOC/ps2/sdk-extra
+PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /isjpcm/ee/src /vorbis
+PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /isjpcm/ee/lib /vorbis /vorbis/tremor/.libs /vorbis/tremor
 
 ENABLED=STATIC_PLUGIN
 
@@ -33,7 +33,7 @@ ENABLE_TOUCHE = $(ENABLED)
 
 HAVE_GCC3 = true
 
-CC		= ee-gcc
+CC	= ee-gcc
 CXX     = ee-g++
 AS      = ee-gcc
 LD      = ee-gcc
@@ -48,7 +48,7 @@ VPATH = $(srcdir)
 INCDIR = ../../../
 # DEPDIR = .deps
 
-DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
+DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
@@ -80,7 +80,7 @@ include $(srcdir)/Makefile.common
 LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile 
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
-LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++ 
+LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
 LDFLAGS += -s 
 
 all: $(TARGET)
