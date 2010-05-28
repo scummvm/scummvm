@@ -832,12 +832,14 @@ void run_vm(EngineState *s, bool restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 		if (scriptState.xs->sp < scriptState.xs->fp)
-			error("run_vm(): stack underflow");
+			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x", 
+			PRINT_REG(*scriptState.xs->sp), PRINT_REG(*scriptState.xs->fp));
 
 		scriptState.variables_max[VAR_TEMP] = scriptState.xs->sp - scriptState.xs->fp;
 
 		if (scriptState.xs->addr.pc.offset >= code_buf_size)
-			error("run_vm(): program counter gone astray");
+			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d", 
+			scriptState.xs->addr.pc.offset, code_buf_size);
 #endif
 
 		// Get opcode
