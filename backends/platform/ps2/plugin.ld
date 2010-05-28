@@ -13,7 +13,7 @@ _DYNAMIC_LINK = 0;
 SECTIONS
 {
   /* Read-only sections, merged into text segment: */
-  . = 0x100000; //TODO: Change to 0?
+  . = 0; //Not sure this shouldn't be 0x100000
   .interp         : { *(.interp) } plugin
   .reginfo 	  : { *(.reginfo) } plugin
   .hash           : { *(.hash) }
