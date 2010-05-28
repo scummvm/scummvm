@@ -354,7 +354,8 @@ void GfxPaint16::bitsRestore(reg_t memoryHandle) {
 }
 
 void GfxPaint16::bitsFree(reg_t memoryHandle) {
-	_segMan->freeHunkEntry(memoryHandle);
+	if (!memoryHandle.isNull())	// happens in KQ5CD
+		_segMan->freeHunkEntry(memoryHandle);
 }
 
 void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {

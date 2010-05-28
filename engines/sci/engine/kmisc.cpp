@@ -252,10 +252,15 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
+		if (!argv[1].segment) {
+			// This occurs in KQ5CD when interacting with certain objects
+			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			return s->r_acc;
+		}
+
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
