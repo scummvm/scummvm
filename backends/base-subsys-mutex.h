@@ -23,20 +23,15 @@
  *
  */
 
-#ifndef BACKENDS_BASE_BACKEND_H
-#define BACKENDS_BASE_BACKEND_H
+#ifndef BACKENDS_BASE_SUBSYS_MUTEX_H
+#define BACKENDS_BASE_SUBSYS_MUTEX_H
 
 #include "common/system.h"
-#include "backends/events/default/default-events.h"
 
-class BaseBackend : public OSystem, Common::EventSource {
+class BaseSubSys_Mutex : public virtual OSystem {
 public:
-	virtual Common::EventManager *getEventManager();
-	virtual void displayMessageOnOSD(const char *msg);
-	virtual void fillScreen(uint32 col);
-
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
+	virtual void mutexInit() = 0;
+	virtual void mutexDone() = 0;
 };
 
 

@@ -1,7 +1,6 @@
 MODULE := backends
 
 MODULE_OBJS := \
-	base-backend.o \
 	events/default/default-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
