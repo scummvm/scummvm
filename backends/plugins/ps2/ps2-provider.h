@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/branches/gsoc2010-plugins/backends/plugins/ps2/ps2-provider.h $
- * $Id: ps2-provider.h 49253 2010-05-26 5:17:18Z Toneman $
+ * $URL$
+ * $Id$
  *
  */
 
