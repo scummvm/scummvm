@@ -434,7 +434,6 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
-	void scriptRelocateExportsSci11(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 
 public: // TODO: make private
