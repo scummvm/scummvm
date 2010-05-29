@@ -1520,12 +1520,12 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
 
 	if (id.segment) {
-		SegManager *segMan = _engine->_gamestate->_segMan;	// for PUT_SEL32V
+		SegManager *segMan = _engine->_gamestate->_segMan;	// for writeSelectorValue
 		_engine->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		_engine->_gamestate->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
-		PUT_SEL32V(segMan, id, SELECTOR(nodePtr), 0);
-		PUT_SEL32V(segMan, id, SELECTOR(handle), 0);
+		writeSelectorValue(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(segMan, id, SELECTOR(nodePtr), 0);
+		writeSelectorValue(segMan, id, SELECTOR(handle), 0);
 	}
 #else
 
@@ -2227,7 +2227,7 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 	}
 
 	const Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
-	int selector_id = _engine->getKernel()->findSelector(argv[2]);
+	int selectorId = _engine->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
 	if (!obj) {
@@ -2235,12 +2235,12 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	if (selector_id < 0) {
+	if (selectorId < 0) {
 		DebugPrintf("Not a valid selector name.");
 		return true;
 	}
 
-	if (lookup_selector(_engine->_gamestate->_segMan, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
+	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, NULL, &addr) != kSelectorMethod) {
 		DebugPrintf("Not a method.");
 		return true;
 	}
@@ -2320,9 +2320,9 @@ bool Console::cmdSend(int argc, const char **argv) {
 	}
 
 	const char *selector_name = argv[2];
-	int selector_id = _engine->getKernel()->findSelector(selector_name);
+	int selectorId = _engine->getKernel()->findSelector(selector_name);
 
-	if (selector_id < 0) {
+	if (selectorId < 0) {
 		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
 		return true;
 	}
@@ -2333,7 +2333,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	SelectorType selector_type = lookup_selector(_engine->_gamestate->_segMan, object, selector_id, 0, 0);
+	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, 0, 0);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
@@ -2346,7 +2346,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	// Create the data block for send_selecor() at the top of the stack:
 	// [selector_number][argument_counter][arguments...]
 	StackPtr stackframe = _engine->_gamestate->_executionStack.back().sp;
-	stackframe[0] = make_reg(0, selector_id);
+	stackframe[0] = make_reg(0, selectorId);
 	stackframe[1] = make_reg(0, send_argc);
 	for (int i = 0; i < send_argc; i++) {
 		if (parse_reg_t(_engine->_gamestate, argv[3+i], &stackframe[2+i], false)) {

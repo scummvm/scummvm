@@ -337,15 +337,15 @@ static void draw_point(EngineState *s, Common::Point p, int start, int width, in
 
 static void draw_polygon(EngineState *s, reg_t polygon, int width, int height) {
 	SegManager *segMan = s->_segMan;
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
 
 #ifdef ENABLE_SCI32
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
-	int type = GET_SEL32V(segMan, polygon, SELECTOR(type));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
 	Common::Point first, prev;
 	int i;
 
@@ -386,15 +386,15 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 }
 
 static void print_polygon(SegManager *segMan, reg_t polygon) {
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
 
 #ifdef ENABLE_SCI32
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
-	int type = GET_SEL32V(segMan, polygon, SELECTOR(type));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
+	int type = readSelectorValue(segMan, polygon, SELECTOR(type));
 	int i;
 	Common::Point point;
 
@@ -1036,13 +1036,13 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Returns   : (Polygon *) The converted polygon, or NULL on error
 	SegManager *segMan = s->_segMan;
 	int i;
-	reg_t points = GET_SEL32(segMan, polygon, SELECTOR(points));
-	int size = GET_SEL32V(segMan, polygon, SELECTOR(size));
+	reg_t points = readSelector(segMan, polygon, SELECTOR(points));
+	int size = readSelectorValue(segMan, polygon, SELECTOR(size));
 
 #ifdef ENABLE_SCI32
 	// SCI32 stores the actual points in the data property of points (in a new array)
 	if (segMan->isHeapObject(points))
-		points = GET_SEL32(segMan, points, SELECTOR(data));
+		points = readSelector(segMan, points, SELECTOR(data));
 #endif
 
 	if (size == 0) {
@@ -1050,7 +1050,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 		return NULL;
 	}
 
-	Polygon *poly = new Polygon(GET_SEL32V(segMan, polygon, SELECTOR(type)));
+	Polygon *poly = new Polygon(readSelectorValue(segMan, polygon, SELECTOR(type)));
 
 	int skip = 0;
 
@@ -1121,7 +1121,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 			if (polygon) {
 				pf_s->polygons.push_back(polygon);
-				count += GET_SEL32V(segMan, node->value, SELECTOR(size));
+				count += readSelectorValue(segMan, node->value, SELECTOR(size));
 			}
 
 			node = s->_segMan->lookupNode(node->succ);
@@ -1394,7 +1394,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			if (argc < 7)
 				error("[avoidpath] Not enough arguments");
 
-			poly_list = (!argv[4].isNull() ? GET_SEL32(s->_segMan, argv[4], SELECTOR(elements)) : NULL_REG);
+			poly_list = (!argv[4].isNull() ? readSelector(s->_segMan, argv[4], SELECTOR(elements)) : NULL_REG);
 			width = argv[5].toUint16();
 			height = argv[6].toUint16();
 			if (argc > 7)
@@ -1716,7 +1716,7 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 		polygon = convert_polygon(s, node->value);
 
 		if (polygon) {
-			count += GET_SEL32V(s->_segMan, node->value, SELECTOR(size));
+			count += readSelectorValue(s->_segMan, node->value, SELECTOR(size));
 		}
 
 		node = s->_segMan->lookupNode(node->succ);

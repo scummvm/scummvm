@@ -259,7 +259,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 				// If the string is a string object, get to the actual string in the data selector
 				if (s->_segMan->isObject(reg))
-					reg = GET_SEL32(s->_segMan, reg, SELECTOR(data));
+					reg = readSelector(s->_segMan, reg, SELECTOR(data));
 #endif
 
 				Common::String tempsource = (reg == NULL_REG) ? "" : g_sci->getKernel()->lookupText(reg,

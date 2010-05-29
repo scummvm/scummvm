@@ -161,7 +161,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// QFG3 clears clones with underbits set
-	//if (GET_SEL32V(victim_addr, underBits))
+	//if (readSelectorValue(victim_addr, underBits))
 	//	warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
 
 #if 0
@@ -250,7 +250,7 @@ reg_t kRespondsTo(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 
-	return make_reg(0, s->_segMan->isHeapObject(obj) && lookup_selector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
+	return make_reg(0, s->_segMan->isHeapObject(obj) && lookupSelector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

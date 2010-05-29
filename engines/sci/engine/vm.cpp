@@ -212,7 +212,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookup_selector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
+				if (lookupSelector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
 					reg_t *clientVar = varp.getPointer(segMan);
 					*clientVar = value;
 				}
@@ -383,7 +383,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
-		switch (lookup_selector(s->_segMan, send_obj, selector, &varp, &funcp)) {
+		switch (lookupSelector(s->_segMan, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 			break;
@@ -468,7 +468,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 
 			break;
-		} // switch (lookup_selector())
+		} // switch (lookupSelector())
 
 		framesize -= (2 + argc);
 		argp += argc + 1;

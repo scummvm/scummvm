@@ -53,8 +53,8 @@
 namespace Sci {
 
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	uint16 signal = GET_SEL32V(s->_segMan, object, SELECTOR(signal));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
 	int16 loopNo;
 	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -93,7 +93,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -439,7 +439,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
 	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
@@ -451,8 +451,8 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	int16 loopNo = GET_SEL32V(s->_segMan, object, SELECTOR(loop));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
 	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
@@ -528,8 +528,8 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
 	if (!strcmp(g_sci->getGameID(), "lsl1sci") && s->currentRoomNumber() == 300) {
-		int top = GET_SEL32V(s->_segMan, object, SELECTOR(brTop));
-		PUT_SEL32V(s->_segMan, object, SELECTOR(brTop), top + 2);
+		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
+		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
 	}
 
 	return s->r_acc;
@@ -743,12 +743,12 @@ Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
-	int16 type = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
-	int16 style = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-	int16 x = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsLeft));
-	int16 y = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsTop));
-	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(font));
-	reg_t textReference = GET_SEL32(s->_segMan, controlObject, SELECTOR(text));
+	int16 type = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
+	int16 style = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+	int16 x = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsLeft));
+	int16 y = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsTop));
+	GuiResourceId fontId = readSelectorValue(s->_segMan, controlObject, SELECTOR(font));
+	reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	Common::Rect rect;
 	TextAlignment alignment;
@@ -764,8 +764,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	bool isAlias = false;
 
 	rect = kControlCreateRect(x, y,
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsRight)),
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsBottom)));
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsRight)),
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsBottom)));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
@@ -777,32 +777,32 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
+		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		mode = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
-		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
+		mode = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(max));
+		cursorPos = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
-		viewId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(view));
+		viewId = readSelectorValue(s->_segMan, controlObject, SELECTOR(view));
 		{
-			int l = GET_SEL32V(s->_segMan, controlObject, SELECTOR(loop));
+			int l = readSelectorValue(s->_segMan, controlObject, SELECTOR(loop));
 			loopNo = (l & 0x80) ? l - 256 : l;
-			int c = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cel));
+			int c = readSelectorValue(s->_segMan, controlObject, SELECTOR(cel));
 			celNo = (c & 0x80) ? c - 256 : c;
 			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
 			//  ALL other games use a hardcoded -1 (madness!)
 			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
 			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
 			if (!strcmp(g_sci->getGameID(), "jones"))
-				priority = GET_SEL32V(s->_segMan, controlObject, SELECTOR(priority));
+				priority = readSelectorValue(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
 		}
@@ -815,17 +815,17 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
-		cursorOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
+		cursorOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
 		if (g_sci->getKernel()->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString
-			upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(topString));
+			upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
-			if (lookup_selector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(brTop));
+			if (lookupSelector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(brTop));
 			else
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(lsTop));
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(lsTop));
 		}
 
 		// Count string entries in NULL terminated string list
@@ -876,8 +876,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	if (objName == "changeDirI") {
-		int state = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
+		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
@@ -896,7 +896,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[1];
 
 	if (!controlObject.isNull()) {
-		int16 controlType = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
+		int16 controlType = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
 
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:

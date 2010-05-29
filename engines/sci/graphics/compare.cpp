@@ -79,12 +79,12 @@ bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &c
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
-			signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
+			signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
 			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
-				curRect.left = GET_SEL32V(_segMan, curObject, SELECTOR(brLeft));
-				curRect.top = GET_SEL32V(_segMan, curObject, SELECTOR(brTop));
-				curRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
-				curRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
+				curRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
+				curRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
+				curRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
+				curRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
 				// Check if curRect is within checkRect
 				// TODO: This check is slightly odd, because it means that a rect is not contained
 				// in itself. It may very well be that the original SCI engine did it just
@@ -115,29 +115,29 @@ uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
 void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	GfxView *view = NULL;
 	Common::Rect celRect(0, 0);
-	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(_segMan, objectReference, SELECTOR(view));
+	GuiResourceId viewId = (GuiResourceId)readSelectorValue(_segMan, objectReference, SELECTOR(view));
 
 	// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
 	if (viewId == 0xFFFF)	// invalid view
 		return;
 
-	int16 loopNo = GET_SEL32V(_segMan, objectReference, SELECTOR(loop));
-	int16 celNo = GET_SEL32V(_segMan, objectReference, SELECTOR(cel));
-	int16 x = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(x));
-	int16 y = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(y));
+	int16 loopNo = readSelectorValue(_segMan, objectReference, SELECTOR(loop));
+	int16 celNo = readSelectorValue(_segMan, objectReference, SELECTOR(cel));
+	int16 x = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(x));
+	int16 y = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(y));
 	int16 z = 0;
 	if (_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(_segMan, objectReference, SELECTOR(z));
+		z = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(z));
 
 	// now get cel rectangle
 	view = _cache->getView(viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
-	if (lookup_selector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
-		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
-		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsTop), celRect.top);
-		PUT_SEL32V(_segMan, objectReference, SELECTOR(nsBottom), celRect.bottom);
+	if (lookupSelector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
+		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
+		writeSelectorValue(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
+		writeSelectorValue(_segMan, objectReference, SELECTOR(nsTop), celRect.top);
+		writeSelectorValue(_segMan, objectReference, SELECTOR(nsBottom), celRect.bottom);
 	}
 }
 
@@ -147,10 +147,10 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	uint16 signal, controlMask;
 	bool result;
 
-	checkRect.left = GET_SEL32V(_segMan, curObject, SELECTOR(brLeft));
-	checkRect.top = GET_SEL32V(_segMan, curObject, SELECTOR(brTop));
-	checkRect.right = GET_SEL32V(_segMan, curObject, SELECTOR(brRight));
-	checkRect.bottom = GET_SEL32V(_segMan, curObject, SELECTOR(brBottom));
+	checkRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
+	checkRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
+	checkRect.right = readSelectorValue(_segMan, curObject, SELECTOR(brRight));
+	checkRect.bottom = readSelectorValue(_segMan, curObject, SELECTOR(brBottom));
 
 	if (!checkRect.isValidRect()) {	// can occur in Iceman - HACK? TODO: is this really occuring in sierra sci? check this
 		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
@@ -159,8 +159,8 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 	adjustedRect = _coordAdjuster->onControl(checkRect);
 
-	signal = GET_SEL32V(_segMan, curObject, SELECTOR(signal));
-	controlMask = GET_SEL32V(_segMan, curObject, SELECTOR(illegalBits));
+	signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
+	controlMask = readSelectorValue(_segMan, curObject, SELECTOR(illegalBits));
 	result = (isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
 	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _segMan->lookupList(listReference);
@@ -183,14 +183,14 @@ bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo,
 }
 
 void GfxCompare::kernelBaseSetter(reg_t object) {
-	if (lookup_selector(_segMan, object, _kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
-		int16 x = GET_SEL32V(_segMan, object, SELECTOR(x));
-		int16 y = GET_SEL32V(_segMan, object, SELECTOR(y));
-		int16 z = (_kernel->_selectorCache.z > -1) ? GET_SEL32V(_segMan, object, SELECTOR(z)) : 0;
-		int16 yStep = GET_SEL32V(_segMan, object, SELECTOR(yStep));
-		GuiResourceId viewId = GET_SEL32V(_segMan, object, SELECTOR(view));
-		int16 loopNo = GET_SEL32V(_segMan, object, SELECTOR(loop));
-		int16 celNo = GET_SEL32V(_segMan, object, SELECTOR(cel));
+	if (lookupSelector(_segMan, object, _kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
+		int16 x = readSelectorValue(_segMan, object, SELECTOR(x));
+		int16 y = readSelectorValue(_segMan, object, SELECTOR(y));
+		int16 z = (_kernel->_selectorCache.z > -1) ? readSelectorValue(_segMan, object, SELECTOR(z)) : 0;
+		int16 yStep = readSelectorValue(_segMan, object, SELECTOR(yStep));
+		GuiResourceId viewId = readSelectorValue(_segMan, object, SELECTOR(view));
+		int16 loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
+		int16 celNo = readSelectorValue(_segMan, object, SELECTOR(cel));
 
 		// HACK: Ignore invalid views for now (perhaps unimplemented text views?)
 		if (viewId == 0xFFFF)	// invalid view
@@ -203,10 +203,10 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		celRect.bottom = y + 1;
 		celRect.top = celRect.bottom - yStep;
 
-		PUT_SEL32V(_segMan, object, SELECTOR(brLeft), celRect.left);
-		PUT_SEL32V(_segMan, object, SELECTOR(brRight), celRect.right);
-		PUT_SEL32V(_segMan, object, SELECTOR(brTop), celRect.top);
-		PUT_SEL32V(_segMan, object, SELECTOR(brBottom), celRect.bottom);
+		writeSelectorValue(_segMan, object, SELECTOR(brLeft), celRect.left);
+		writeSelectorValue(_segMan, object, SELECTOR(brRight), celRect.right);
+		writeSelectorValue(_segMan, object, SELECTOR(brTop), celRect.top);
+		writeSelectorValue(_segMan, object, SELECTOR(brBottom), celRect.bottom);
 	}
 }
 

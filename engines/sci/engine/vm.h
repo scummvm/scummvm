@@ -95,7 +95,7 @@ class ResourceManager;
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL
 
-/** Types of selectors as returned by lookup_selector() below. */
+/** Types of selectors as returned by lookupSelector() below. */
 enum SelectorType {
 	kSelectorNone = 0,
 	kSelectorVariable,
@@ -379,7 +379,7 @@ int script_init_engine(EngineState *);
  * 							kSelectorMethod if the selector represents a
  * 							method
  */
-SelectorType lookup_selector(SegManager *segMan, reg_t obj, Selector selectorid,
+SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**

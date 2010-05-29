@@ -34,20 +34,15 @@
 
 namespace Sci {
 
-
-/******************** Selector functionality ********************/
-
 enum SelectorInvocation {
 	kStopOnInvalidSelector = 0,
 	kContinueOnInvalidSelector = 1
 };
 
-
 /**
  * Map a selector name to a selector id. Shortcut for accessing the selector cache.
  */
 #define SELECTOR(_slc_)		(g_sci->getKernel()->_selectorCache._slc_)
-//#define SELECTOR(_slc_)		_slc_
 
 /**
  * Retrieves a selector from an object.
@@ -58,8 +53,8 @@ enum SelectorInvocation {
  * This macro halts on error. 'selector' must be a selector name registered in vm.h's
  * SelectorCache and mapped in script.cpp.
  */
-#define GET_SEL32(segMan, _obj_, _slc_) read_selector(segMan, _obj_, _slc_)
-#define GET_SEL32V(segMan, _obj_, _slc_) (GET_SEL32(segMan, _obj_, _slc_).offset)
+reg_t readSelector(SegManager *segMan, reg_t object, Selector selectorId);
+#define readSelectorValue(segMan, _obj_, _slc_) (readSelector(segMan, _obj_, _slc_).offset)
 
 /**
  * Writes a selector value to an object.
@@ -70,25 +65,23 @@ enum SelectorInvocation {
  * This macro halts on error. 'selector' must be a selector name registered in vm.h's
  * SelectorCache and mapped in script.cpp.
  */
-#define PUT_SEL32(segMan, _obj_, _slc_, _val_) write_selector(segMan, _obj_, _slc_, _val_)
-#define PUT_SEL32V(segMan, _obj_, _slc_, _val_) PUT_SEL32(segMan, _obj_, _slc_, make_reg(0, _val_))
-
+void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t value);
+#define writeSelectorValue(segMan, _obj_, _slc_, _val_) writeSelector(segMan, _obj_, _slc_, make_reg(0, _val_))
 
 /**
- * Kludge for use with invoke_selector(). Used for compatibility with compilers
+ * Invokes a selector from an object.
+ */
+int invokeSelector(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
+	int k_argc, StackPtr k_argp, int argc, ...);
+int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
+	int k_argc, StackPtr k_argp, int argc, const reg_t *argv);
+
+/**
+ * Kludge for use with invokeSelector(). Used for compatibility with compilers
  * that cannot handle vararg macros.
  */
 #define INV_SEL(s, _object_, _selector_, _noinvalid_) \
 	s, _object_,  g_sci->getKernel()->_selectorCache._selector_, _noinvalid_, argc, argv
-
-
-reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id);
-void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value);
-int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...);
-int invoke_selector_argv(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, const reg_t *argv);
-
 
 
 } // End of namespace Sci

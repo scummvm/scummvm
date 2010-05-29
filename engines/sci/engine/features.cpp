@@ -56,7 +56,7 @@ reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc
 	}
 
 	if (methodNum == -1) {
-		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+		if (lookupSelector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
 			warning("getDetectionAddr: target selector is not a method of object %s", objName.c_str());
 			return NULL_REG;
 		}
@@ -189,7 +189,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 			}
 
 			// Now we check what the number variable holds in the handCursor object.
-			uint16 number = GET_SEL32V(_segMan, objAddr, SELECTOR(number));
+			uint16 number = readSelectorValue(_segMan, objAddr, SELECTOR(number));
 
 			// If the number is 0, it uses views and therefore the SCI1.1 kSetCursor semantics,
 			// otherwise it uses the SCI0 early kSetCursor semantics.
@@ -346,7 +346,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				// The game has an overlay selector, check how it calls kDrawPicto determine
 				// the graphics functions type used
 				reg_t objAddr = _segMan->findObjectByName("Rm");
-				if (lookup_selector(_segMan, objAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
+				if (lookupSelector(_segMan, objAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
 					if (!autoDetectGfxFunctionsType()) {
 						warning("Graphics functions detection failed, taking an educated guess");
 

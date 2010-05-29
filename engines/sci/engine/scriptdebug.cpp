@@ -246,7 +246,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				printf("  %s::%s[", name, (selector > kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
-				switch (lookup_selector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
+				switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
 					printf("FUNCT");
 					argc += restmod;
