@@ -123,13 +123,13 @@ void SegManager::createClassTable() {
 		error("SegManager: failed to open vocab 996");
 
 	int totalClasses = vocab996->size >> 2;
-	_classtable.resize(totalClasses);
+	_classTable.resize(totalClasses);
 
 	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
 		uint16 scriptNr = READ_SCI11ENDIAN_UINT16(vocab996->data + classNr * 4 + 2);
 
-		_classtable[classNr].reg = NULL_REG;
-		_classtable[classNr].script = scriptNr;
+		_classTable[classNr].reg = NULL_REG;
+		_classTable[classNr].script = scriptNr;
 	}
 
 	_resMan->unlockResource(vocab996);
@@ -139,11 +139,11 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 	if (classnr == 0xffff)
 		return NULL_REG;
 
-	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
-		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
+	if (classnr < 0 || (int)_classTable.size() <= classnr || _classTable[classnr].script < 0) {
+		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classTable.size());
 		return NULL_REG;
 	} else {
-		Class *the_class = &_classtable[classnr];
+		Class *the_class = &_classTable[classnr];
 		if (!the_class->reg.segment) {
 			getScriptSegment(the_class->script, lock);
 
@@ -209,14 +209,14 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 			int classpos = seeker - scr->_buf;
 			int species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 
-			if (species < 0 || species >= (int)_classtable.size()) {
+			if (species < 0 || species >= (int)_classTable.size()) {
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
-				          species, species, _classtable.size(), scr->_nr);
+				          species, species, _classTable.size(), scr->_nr);
 				return;
 			}
 
-			_classtable[species].reg.segment = seg;
-			_classtable[species].reg.offset = classpos;
+			_classTable[species].reg.segment = seg;
+			_classTable[species].reg.offset = classpos;
 		}
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
@@ -372,22 +372,21 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		case SCI_OBJ_CLASS: {
 			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species = scr->getHeap(curOffset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
-			if (species < 0 || species >= (int)segMan->_classtable.size()) {
-				if (species == (int)segMan->_classtable.size()) {
+			if (species < 0 || species >= (int)segMan->classTableSize()) {
+				if (species == (int)segMan->classTableSize()) {
 					// Happens in the LSL2 demo
 					warning("Applying workaround for an off-by-one invalid species access");
-					segMan->_classtable.resize(segMan->_classtable.size() + 1);
+					segMan->resizeClassTable(segMan->classTableSize() + 1);
 				} else {
 					warning("Invalid species %d(0x%x) not in interval "
 							  "[0,%d) while instantiating script %d\n",
-							  species, species, segMan->_classtable.size(),
+							  species, species, segMan->classTableSize(),
 							  script_nr);
 					return 0;
 				}
 			}
 
-			segMan->_classtable[species].reg.segment = seg_id;
-			segMan->_classtable[species].reg.offset = classpos;
+			segMan->setClassOffset(species, make_reg(seg_id, classpos));
 			// Set technical class position-- into the block allocated for it
 		}
 		break;
@@ -507,7 +506,7 @@ void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg)
 			superclass = scr->getHeap(reg.offset + SCRIPT_SUPERCLASS_OFFSET); // Get superclass...
 
 			if (superclass >= 0) {
-				int superclass_script = segMan->_classtable[superclass].script;
+				int superclass_script = segMan->getClass(superclass).script;
 
 				if (superclass_script == script_nr) {
 					if (scr->getLockers())
@@ -541,9 +540,9 @@ void script_uninstantiate(SegManager *segMan, int script_nr) {
 		return;
 
 	// Free all classtable references to this script
-	for (uint i = 0; i < segMan->_classtable.size(); i++)
-		if (segMan->_classtable[i].reg.segment == segment)
-			segMan->_classtable[i].reg = NULL_REG;
+	for (uint i = 0; i < segMan->classTableSize(); i++)
+		if (segMan->getClass(i).reg.segment == segment)
+			segMan->setClassOffset(i, NULL_REG);
 
 	if (getSciVersion() < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(segMan, script_nr, segment);

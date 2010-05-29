@@ -277,8 +277,8 @@ void Console::postEnter() {
 #if 0
 // Unused
 #define LOOKUP_SPECIES(species) (\
-	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
-		+ s->_classtable[species].class_offset)
+	(species >= 1000) ? species : *(s->_classTable[species].scriptposp) \
+		+ s->_classTable[species].class_offset)
 #endif
 
 bool Console::cmdHelp(int argc, const char **argv) {
@@ -929,11 +929,11 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
-	for (uint i = 0; i < _engine->_gamestate->_segMan->_classtable.size(); i++) {
-		if (_engine->_gamestate->_segMan->_classtable[i].reg.segment) {
+	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
+		if (_engine->_gamestate->_segMan->_classTable[i].reg.segment) {
 			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i,
-					PRINT_REG(_engine->_gamestate->_segMan->_classtable[i].reg),
-					_engine->_gamestate->_segMan->_classtable[i].script);
+					PRINT_REG(_engine->_gamestate->_segMan->_classTable[i].reg),
+					_engine->_gamestate->_segMan->_classTable[i].script);
 		}
 	}
 

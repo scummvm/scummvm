@@ -436,9 +436,15 @@ public:
 
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 
+	uint32 classTableSize() { return _classTable.size(); }
+	Class getClass(int index) { return _classTable[index]; }
+	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
+	void resizeClassTable(uint32 size) { _classTable.resize(size); }
+
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
-	Common::Array<Class> _classtable; /**< Table of all classes */
+	// Only accessible from saveLoadWithSerializer()
+	Common::Array<Class> _classTable; /**< Table of all classes */
 
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);

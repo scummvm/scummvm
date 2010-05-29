@@ -383,7 +383,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	sync_SegManagerPtr(s, _segMan);
 
-	syncArray<Class>(s, _segMan->_classtable);
+	syncArray<Class>(s, _segMan->_classTable);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sync_songlib(s, _sound._songlib);

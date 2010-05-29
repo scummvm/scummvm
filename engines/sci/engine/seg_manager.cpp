@@ -77,7 +77,7 @@ void SegManager::resetSegMan() {
 	Hunks_seg_id = 0;
 
 	// Reinitialize class table
-	_classtable.clear();
+	_classTable.clear();
 	createClassTable();
 }
 
