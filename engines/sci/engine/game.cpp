@@ -127,7 +127,13 @@ int game_init(EngineState *s) {
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-	s->_gameObj = g_sci->getResMan()->findGameObject();
+	// TODO: This is sometimes off by 1... find out why
+	//s->_gameObj = g_sci->getResMan()->findGameObject();
+	// Replaced by the code below for now
+	Script *scr000 = s->_segMan->getScript(1);
+	s->_gameObj = make_reg(1, scr000->validateExportFunc(0));
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		 s->_gameObj.offset += scr000->_scriptSize;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)

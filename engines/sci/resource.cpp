@@ -1926,10 +1926,6 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset)
 		offset += script->size;
 
-	// TODO: Investigate why this is needed for SCI2+ games
-	if (getSciVersion() >= SCI_VERSION_2)
-		offset += 1;
-
 	return make_reg(1, offset);
 }
 
@@ -1946,10 +1942,6 @@ Common::String ResourceManager::findSierraGameId() {
 	}
 
 	int16 gameObjectOffset = findGameObject(false).offset;
-
-	// Compensate for the odd offsets of SCI2+ games
-	if (getSciVersion() >= SCI_VERSION_2)
-		gameObjectOffset -= 1;
 
 	// Seek to the name selector of the first export
 	byte *seeker = heap->data + READ_UINT16(heap->data + gameObjectOffset + nameSelector * 2);
