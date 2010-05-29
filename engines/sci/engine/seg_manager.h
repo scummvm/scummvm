@@ -112,12 +112,6 @@ public:
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
 	// TODO: document this
-	reg_t lookupScriptExport(int script_nr, int export_index) {
-		SegmentId seg = getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-		return make_reg(seg, getScript(seg)->validateExportFunc(export_index));
-	}
-
-	// TODO: document this
 	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
 
 	/**

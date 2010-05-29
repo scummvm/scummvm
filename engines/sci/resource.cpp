@@ -1913,26 +1913,37 @@ bool ResourceManager::hasSci1Voc900() {
 
 #define READ_UINT16(ptr) (!isSci11Mac() ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr))
 
-Common::String ResourceManager::findSierraGameId() {
+reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
+	int extraBytes = 0;
+	if (getSciVersion() == SCI_VERSION_0_EARLY || getSciVersion() >= SCI_VERSION_1_1)
+		extraBytes = 2;
+	
+	int16 offset = READ_UINT16(script->data + extraBytes + 4 + 2);
+
+	// In SCI1.1 and newer, the heap is appended at the end of the script,
+	// so adjust the offset accordingly
+	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset)
+		offset += script->size;
+
+	return make_reg(1, offset);
+}
+
+Common::String ResourceManager::findSierraGameId() {
 	// In SCI0-SCI1, the heap is embedded in the script. In SCI1.1+, it's separated
 	Resource *heap = 0;
-	byte *seeker = 0;
-	Common::String sierraId;
+	int nameSelector = 3;
 
-	// Seek to the name selector of the first export
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		const int nameSelector = 3;
-		int extraSci0EarlyBytes = (getSciVersion() == SCI_VERSION_0_EARLY) ? 2 : 0;
-		byte *exportPtr = script->data + extraSci0EarlyBytes + 4 + 2;
-		seeker = script->data + READ_UINT16(script->data + READ_UINT16(exportPtr) + nameSelector * 2);
+		heap = findResource(ResourceId(kResourceTypeScript, 0), false);
 	} else {
-		const int nameSelector = 5 + 3;
 		heap = findResource(ResourceId(kResourceTypeHeap, 0), false);
-		byte *exportPtr = script->data + 4 + 2 + 2;
-		seeker = heap->data + READ_UINT16(heap->data + READ_UINT16(exportPtr) + nameSelector * 2);
+		nameSelector += 5;
 	}
 
+	// Seek to the name selector of the first export
+	byte *seeker = heap->data + READ_UINT16(heap->data + findGameObject(false).offset + nameSelector * 2);
+	Common::String sierraId;
 	sierraId += (const char *)seeker;
 
 	return sierraId;

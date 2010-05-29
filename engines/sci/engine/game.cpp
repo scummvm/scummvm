@@ -127,9 +127,7 @@ int game_init(EngineState *s) {
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-//	script_dissect(0, s->_selectorNames);
-	// The first entry in the export table of script 0 points to the game object
-	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
+	s->_gameObj = g_sci->getResMan()->findGameObject();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)

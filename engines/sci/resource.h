@@ -296,6 +296,14 @@ public:
 	 */
 	Common::String findSierraGameId();
 
+	/**
+	 * Finds the location of the game object from script 0
+	 * @param addSci11ScriptOffset: Adjust the return value for SCI1.1 and newer
+	 *        games. Needs to be false when the heap is accessed directly inside
+	 *        findSierraGameId().
+	 */
+	reg_t findGameObject(bool addSci11ScriptOffset = true);
+
 protected:
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
