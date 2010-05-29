@@ -200,23 +200,6 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	}
 }
 
-void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
-	Script *scr = getScript(seg);
-	for (int i = 0; i < scr->_numExports; i++) {
-		/* We are forced to use an ugly heuristic here to distinguish function
-		   exports from object/class exports. The former kind points into the
-		   script resource, the latter into the heap resource.  */
-		uint16 location = READ_SCI11ENDIAN_UINT16(scr->_exportTable + i);
-
-		if ((location < scr->_heapSize - 1) && (READ_SCI11ENDIAN_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
-			WRITE_SCI11ENDIAN_UINT16(scr->_exportTable + i, location + scr->_heapStart - scr->_buf);
-		} else {
-			// Otherwise it's probably a function export,
-			// and we don't need to do anything.
-		}
-	}
-}
-
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
@@ -484,7 +467,6 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 
 	segMan->scriptInitialiseLocals(make_reg(seg_id, _heapStart + 4));
 
-	segMan->scriptRelocateExportsSci11(seg_id);
 	segMan->scriptInitialiseObjectsSci11(seg_id);
 
 	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(heap->data)));

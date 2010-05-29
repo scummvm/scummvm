@@ -798,7 +798,6 @@ void SegManager::reconstructScripts(EngineState *s) {
 			scr->_synonyms = 0;
 			if (READ_LE_UINT16(scr->_buf + 6) > 0) {
 				scr->setExportTableOffset(6);
-				s->_segMan->scriptRelocateExportsSci11(i);
 			}
 		} else {
 			scr->_exportTable = (uint16 *) scr->findBlock(SCI_OBJ_EXPORTS);

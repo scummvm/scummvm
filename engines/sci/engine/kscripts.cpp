@@ -204,7 +204,13 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(scriptSeg, scr->validateExportFunc(index));
+	uint16 address = scr->validateExportFunc(index);
+
+	// Point to the heap for SCI1.1+ games
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		address += scr->_scriptSize;
+
+	return make_reg(scriptSeg, address);
 }
 
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
