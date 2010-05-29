@@ -329,7 +329,7 @@ public:
 
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
+	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	int _numExports; /**< Number of entries in the exports table */
 
 	const byte *_synonyms; /**< Synonyms block or 0 if not present*/

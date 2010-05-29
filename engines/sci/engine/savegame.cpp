@@ -800,7 +800,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 				scr->setExportTableOffset(6);
 			}
 		} else {
-			scr->_exportTable = (uint16 *) scr->findBlock(SCI_OBJ_EXPORTS);
+			scr->_exportTable = (const uint16 *)scr->findBlock(SCI_OBJ_EXPORTS);
 			scr->_synonyms = scr->findBlock(SCI_OBJ_SYNONYMS);
 			scr->_exportTable += 3;
 		}

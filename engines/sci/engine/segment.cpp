@@ -362,7 +362,7 @@ void Script::setLockers(int lockers) {
 
 void Script::setExportTableOffset(int offset) {
 	if (offset) {
-		_exportTable = (uint16 *)(_buf + offset + 2);
+		_exportTable = (const uint16 *)(_buf + offset + 2);
 		_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
 	} else {
 		_exportTable = NULL;
