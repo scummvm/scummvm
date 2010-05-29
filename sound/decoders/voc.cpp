@@ -384,7 +384,7 @@ AudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, uint 
 
 SeekableAudioStream *makeVOCStream(Common::SeekableReadStream *stream, byte flags, DisposeAfterUse::Flag disposeAfterUse) {
 #ifdef STREAM_AUDIO_FROM_DISK
-	return makeVOCDiskStreamNoLoop(*stream, flags, disposeAfterUse);
+	return makeVOCDiskStreamNoLoop(stream, flags, disposeAfterUse);
 #else
 	int size, rate;
 
