@@ -225,33 +225,34 @@ void Script::scriptObjRemove(reg_t obj_pos) {
 	_objects.erase(obj_pos.toUint16());
 }
 
-int Script::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
+// This helper function is used by Script::relocateLocal and Object::relocate
+static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
 	int rel = location - block_location;
 
 	if (rel < 0)
-		return 0;
+		return false;
 
 	uint idx = rel >> 1;
 
 	if (idx >= block.size())
-		return 0;
+		return false;
 
 	if (rel & 1) {
 		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
-		return 0;
+		return false;
 	}
 	block[idx].segment = segment; // Perform relocation
 	if (getSciVersion() >= SCI_VERSION_1_1)
-		block[idx].offset += _scriptSize;
+		block[idx].offset += scriptSize;
 
-	return 1;
+	return true;
 }
 
-int Script::relocateLocal(SegmentId segment, int location) {
+bool Script::relocateLocal(SegmentId segment, int location) {
 	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location);
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _scriptSize);
 	else
-		return 0; // No hands, no cookies
+		return false;
 }
 
 void Script::scriptAddCodeBlock(reg_t location) {
@@ -745,25 +746,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 }
 
 bool Object::relocate(SegmentId segment, int location, size_t scriptSize) {
-	int rel = location - getPos().offset;
-
-	if (rel < 0)
-		return false;
-
-	uint idx = rel >> 1;
-
-	if (idx >= _variables.size())
-		return false;
-
-	if (rel & 1) {
-		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, getPos().offset);
-		return false;
-	}
-	_variables[idx].segment = segment; // Perform relocation
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		_variables[idx].offset += scriptSize;
-
-	return true;
+	return relocateBlock(_variables, getPos().offset, segment, location, scriptSize);
 }
 
 int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {

@@ -408,8 +408,7 @@ public:
 	void heapRelocate(reg_t block);
 
 private:
-	int relocateLocal(SegmentId segment, int location);
-	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
+	bool relocateLocal(SegmentId segment, int location);
 
 public:
 	// script lock operations
