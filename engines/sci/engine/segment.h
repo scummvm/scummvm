@@ -325,12 +325,6 @@ public:
 	byte *_buf; /**< Static data buffer, or NULL if not used */
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
-	int _numExports; /**< Number of entries in the exports table */
-
-	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
-	int _numSynonyms; /**< Number of entries in the synonyms block */
-
 	uint32 getScriptSize() { return _scriptSize; }
 	uint32 getHeapSize() { return _heapSize; }
 	uint32 getBufSize() { return _bufSize; }
@@ -342,6 +336,13 @@ private:
 	size_t _scriptSize;
 	size_t _heapSize;
 	size_t _bufSize;
+
+	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
+	uint16 _numExports; /**< Number of entries in the exports table */
+
+	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
+
 	Common::Array<CodeBlock> _codeBlocks;
 
 public:
@@ -432,16 +433,28 @@ public:
 	void setLockers(int lockers);
 
 	/**
+	 * Retrieves a pointer to the exports of this script
+	 * @return	pointer to the exports.
+	 */
+	const uint16 *getExportTable() const { return _exportTable; }
+
+	/**
+	 * Retrieves the number of exports of script.
+	 * @return	the number of exports of this script
+	 */
+	uint16 getExportsNr() const { return _numExports; }
+
+	/**
 	 * Retrieves a pointer to the synonyms associated with this script
 	 * @return	pointer to the synonyms, in non-parsed format.
 	 */
-	const byte *getSynonyms() const;
+	const byte *getSynonyms() const { return _synonyms; }
 
 	/**
 	 * Retrieves the number of synonyms associated with this script.
 	 * @return	the number of synonyms associated with this script
 	 */
-	int getSynonymsNr() const;
+	uint16 getSynonymsNr() const { return _numSynonyms; }
 
 	/**
 	 * Validate whether the specified public function is exported by

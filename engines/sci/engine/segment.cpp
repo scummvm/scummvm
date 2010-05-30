@@ -384,14 +384,6 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	return offset;
 }
 
-const byte *Script::getSynonyms() const {
-	return _synonyms;
-}
-
-int Script::getSynonymsNr() const {
-	return _numSynonyms;
-}
-
 byte *Script::findBlock(int type) {
 	byte *buf = _buf;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);

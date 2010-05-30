@@ -1246,12 +1246,12 @@ bool Console::segmentInfo(int nr) {
 	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
 		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
-		if (scr->_exportTable)
-			DebugPrintf("  Exports: %4d at %d\n", scr->_numExports, (int)(((const byte *)scr->_exportTable) - ((const byte *)scr->_buf)));
+		if (scr->getExportTable())
+			DebugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), (int)(((const byte *)scr->getExportTable()) - ((const byte *)scr->_buf)));
 		else
 			DebugPrintf("  Exports: none\n");
 
-		DebugPrintf("  Synonyms: %4d\n", scr->_numSynonyms);
+		DebugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
 
 		if (scr->_localsBlock)
 			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);

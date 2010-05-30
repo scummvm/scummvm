@@ -181,7 +181,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
-	int index = (argc > 1) ? argv[1].toUint16() : 0;
+	uint16 index = (argc > 1) ? argv[1].toUint16() : 0;
 
 	if (argv[0].segment)
 		return argv[0];
@@ -193,7 +193,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 
 	Script *scr = s->_segMan->getScript(scriptSeg);
 
-	if (!scr->_numExports) {
+	if (!scr->getExportsNr()) {
 		// This is normal. Some scripts don't have a dispatch (exports) table,
 		// and this call is probably used to load them in memory, ignoring
 		// the return value. If only one argument is passed, this call is done
@@ -205,8 +205,8 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (index > scr->_numExports) {
-		error("Dispatch index too big: %d > %d", index, scr->_numExports);
+	if (index > scr->getExportsNr()) {
+		error("Dispatch index too big: %d > %d", index, scr->getExportsNr());
 		return NULL_REG;
 	}
 
