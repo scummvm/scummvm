@@ -205,7 +205,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
+		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {	// -info- selector
 			int classpos = seeker - scr->_buf;
 			int species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 
@@ -225,15 +225,6 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg = make_reg(seg, seeker - scr->_buf);
 		Object *obj = scr->scriptObjInit(reg);
-
-#if 0
-		if (obj->_variables[5].offset != 0xffff) {
-			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			baseObj = getObject(obj->_variables[5]);
-			obj->variable_names_nr = baseObj->variables_nr;
-			obj->_baseObj = baseObj->_baseObj;
-		}
-#endif
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
