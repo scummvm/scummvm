@@ -117,8 +117,8 @@ void Script::freeScript() {
 	_codeBlocks.clear();
 }
 
-bool Script::init(int script_nr, ResourceManager *resMan) {
-	setScriptSize(script_nr, resMan);
+void Script::init(int script_nr, ResourceManager *resMan) {
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 
 	_localsOffset = 0;
 	_localsBlock = NULL;
@@ -132,7 +132,25 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 	_buf = 0;
 	_heapStart = 0;
 
-	return true;
+	_scriptSize = script->size;
+	_bufSize = script->size;
+	_heapSize = 0;
+
+	if (getSciVersion() == SCI_VERSION_0_EARLY) {
+		_bufSize += READ_LE_UINT16(script->data) * 2;
+	} else if (getSciVersion() >= SCI_VERSION_1_1) {
+		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+		_bufSize += heap->size;
+		_heapSize = heap->size;
+
+		// Ensure that the start of the heap resource can be word-aligned.
+		if (script->size & 2) {
+			_bufSize++;
+			_scriptSize++;
+		}
+
+		assert(_bufSize <= 65535);
+	}
 }
 
 void Script::load(ResourceManager *resMan) {
@@ -153,42 +171,6 @@ void Script::load(ResourceManager *resMan) {
 
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
-	}
-}
-
-void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	_scriptSize = script->size;
-	_heapSize = 0; // Set later
-
-	if (!script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
-		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
-	}
-	if (oldScriptHeader) {
-		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
-		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (getSciVersion() < SCI_VERSION_1_1) {
-		_bufSize = script->size;
-	} else {
-		_bufSize = script->size + heap->size;
-		_heapSize = heap->size;
-
-		// Ensure that the start of the heap resource can be word-aligned.
-		if (script->size & 2) {
-			_bufSize++;
-			_scriptSize++;
-		}
-
-		if (_bufSize > 65535) {
-			error("Script and heap sizes combined exceed 64K."
-			          "This means a fundamental design bug was made in SCI\n"
-			          "regarding SCI1.1 games.\nPlease report this so it can be"
-			          "fixed in the next major version");
-			return;
-		}
 	}
 }
 

@@ -1926,6 +1926,7 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset) {
 		offset += script->size;
 
+		// Ensure that the start of the heap is word-aligned - same as in Script::init()
 		if (script->size & 2)
 			offset++;
 	}

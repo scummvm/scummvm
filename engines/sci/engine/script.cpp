@@ -437,13 +437,6 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 		scr->setExportTableOffset(6);
 
 	int heapStart = scr->getScriptSize();
-
-	// FIXME: This code was used to ensure that the heap address is word-aligned
-	// Make sure that this is used in all places where the heap is referenced,
-	// not just here...
-	//if (heapStart & 2)
-	//	heapStart++;
-
 	segMan->scriptInitialiseLocals(make_reg(seg_id, heapStart + 4));
 	segMan->scriptInitialiseObjectsSci11(seg_id);
 	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));

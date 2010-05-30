@@ -363,7 +363,7 @@ public:
 	~Script();
 
 	void freeScript();
-	bool init(int script_nr, ResourceManager *resMan);
+	void init(int script_nr, ResourceManager *resMan);
 	void load(ResourceManager *resMan);
 
 	virtual bool isValidOffset(uint16 offset) const;
@@ -512,9 +512,6 @@ public:
 	 * Finds the pointer where a block of a specific type starts from
 	 */
 	byte *findBlock(int type);
-
-private:
-	void setScriptSize(int script_nr, ResourceManager *resMan);
 };
 
 /** Data stack */
