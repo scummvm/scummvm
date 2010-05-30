@@ -222,6 +222,12 @@ public:
 	typedef const char *  const_iterator;
 
 	iterator begin() {
+		// Since the user could potentionally
+		// change the string via the returned
+		// iterator we have to assure we are
+		// pointing to an unique storage.
+		makeUnique();
+
 		return _str;
 	}
 
