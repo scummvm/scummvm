@@ -223,7 +223,7 @@ Object *SegManager::getObject(reg_t pos) {
 				warning("getObject(): Trying to get an invalid object");
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
-			if (pos.offset <= scr->_bufSize && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			if (pos.offset <= scr->getBufSize() && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(scr->_buf + pos.offset)) {
 				obj = scr->getObject(pos.offset);
 			}

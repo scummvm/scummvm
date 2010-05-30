@@ -1245,7 +1245,7 @@ bool Console::segmentInfo(int nr) {
 
 	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
-		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->_bufSize, (uint)scr->_bufSize);
+		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
 		if (scr->_exportTable)
 			DebugPrintf("  Exports: %4d at %d\n", scr->_numExports, (int)(((const byte *)scr->_exportTable) - ((const byte *)scr->_buf)));
 		else

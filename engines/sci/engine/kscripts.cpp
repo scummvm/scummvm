@@ -208,7 +208,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 
 	// Point to the heap for SCI1.1+ games
 	if (getSciVersion() >= SCI_VERSION_1_1)
-		address += scr->_scriptSize;
+		address += scr->getScriptSize();
 
 	return make_reg(scriptSeg, address);
 }

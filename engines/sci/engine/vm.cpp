@@ -784,7 +784,7 @@ void run_vm(EngineState *s, bool restoring) {
 				obj = s->_segMan->getObject(scriptState.xs->objp);
 				code_buf = scr->_buf;
 #ifndef DISABLE_VALIDATIONS
-				code_buf_size = scr->_bufSize;
+				code_buf_size = scr->getBufSize();
 #endif
 				local_script = s->_segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 				if (!local_script) {
@@ -1398,7 +1398,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				s->r_acc.offset = opparams[0] + local_script->_scriptSize;
+				s->r_acc.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				s->r_acc.offset = opparams[0];
@@ -1420,7 +1420,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 			switch (g_sci->_features->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				r_temp.offset = opparams[0] + local_script->_scriptSize;
+				r_temp.offset = opparams[0] + local_script->getScriptSize();
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				r_temp.offset = opparams[0];

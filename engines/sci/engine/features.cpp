@@ -87,7 +87,7 @@ bool GameFeatures::autoDetectSoundType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		// The play method of the Sound object pushes the DoSound command
@@ -223,7 +223,7 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_lofsa || opcode == op_lofss) {
@@ -231,13 +231,13 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 			uint16 lofs = opparams[0];
 
 			// Check for going out of bounds when interpreting as abs/rel
-			if (lofs >= script->_bufSize)
+			if (lofs >= script->getBufSize())
 				_lofsType = SCI_VERSION_0_EARLY;
 
 			if ((signed)offset + (int16)lofs < 0)
 				_lofsType = SCI_VERSION_1_MIDDLE;
 
-			if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
+			if ((signed)offset + (int16)lofs >= (signed)script->getBufSize())
 				_lofsType = SCI_VERSION_1_MIDDLE;
 
 			if (_lofsType != SCI_VERSION_NONE)
@@ -309,7 +309,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {
@@ -412,7 +412,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {
@@ -465,7 +465,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {

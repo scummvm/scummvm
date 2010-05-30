@@ -175,7 +175,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	Script *scr = getScript(location.segment);
 	unsigned int count;
 
-	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
+	VERIFY(location.offset + 1 < (uint16)scr->getBufSize(), "Locals beyond end of script\n");
 
 	if (getSciVersion() >= SCI_VERSION_1_1)
 		count = READ_SCI11ENDIAN_UINT16(scr->_buf + location.offset - 2);
@@ -185,9 +185,9 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	scr->_localsOffset = location.offset;
 
-	if (!(location.offset + count * 2 + 1 < scr->_bufSize)) {
-		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->_bufSize);
-		count = (scr->_bufSize - location.offset) >> 1;
+	if (!(location.offset + count * 2 + 1 < scr->getBufSize())) {
+		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->getBufSize());
+		count = (scr->getBufSize() - location.offset) >> 1;
 	}
 
 	LocalVariables *locals = allocLocalsSegment(scr, count);

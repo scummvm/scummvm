@@ -758,22 +758,22 @@ static void reconstruct_stack(EngineState *retval) {
 }
 
 static void load_script(EngineState *s, Script *scr) {
-	scr->_buf = (byte *)malloc(scr->_bufSize);
+	scr->_buf = (byte *)malloc(scr->getBufSize());
 	assert(scr->_buf);
 
 	Resource *script = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
 	assert(script != 0);
 
-	assert(scr->_bufSize >= script->size);
+	assert(scr->getBufSize() >= script->size);
 	memcpy(scr->_buf, script->data, script->size);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
 		Resource *heap = g_sci->getResMan()->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
 		assert(heap != 0);
 
-		scr->_heapStart = scr->_buf + scr->_scriptSize;
+		scr->_heapStart = scr->_buf + scr->getScriptSize();
 
-		assert(scr->_bufSize - scr->_scriptSize <= heap->size);
+		assert(scr->getBufSize() - scr->getScriptSize() <= heap->size);
 		memcpy(scr->_heapStart, heap->data, heap->size);
 	}
 }

@@ -323,10 +323,6 @@ class Script : public SegmentObj {
 public:
 	int _nr; /**< Script number */
 	byte *_buf; /**< Static data buffer, or NULL if not used */
-	size_t _bufSize;
-	size_t _scriptSize;
-	size_t _heapSize;
-
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
@@ -335,8 +331,17 @@ public:
 	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
 	int _numSynonyms; /**< Number of entries in the synonyms block */
 
+	uint32 getScriptSize() { return _scriptSize; }
+	uint32 getHeapSize() { return _heapSize; }
+	uint32 getBufSize() { return _bufSize; }
+
 protected:
 	int _lockers; /**< Number of classes and objects that require this script */
+
+private:
+	size_t _scriptSize;
+	size_t _heapSize;
+	size_t _bufSize;
 
 public:
 	/**
