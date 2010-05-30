@@ -1923,8 +1923,12 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 
 	// In SCI1.1 and newer, the heap is appended at the end of the script,
 	// so adjust the offset accordingly
-	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset)
+	if (getSciVersion() >= SCI_VERSION_1_1 && addSci11ScriptOffset) {
 		offset += script->size;
+
+		if (script->size & 2)
+			offset++;
+	}
 
 	return make_reg(1, offset);
 }
