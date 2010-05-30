@@ -135,6 +135,8 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	_bufSize = script->size;
 	_heapSize = 0;
 
+	_lockers = 1;
+
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
 	} else if (getSciVersion() >= SCI_VERSION_1_1) {

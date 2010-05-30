@@ -273,10 +273,6 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 	scr->init(script_nr, resMan);
 	scr->load(resMan);
 
-	// Set heap position (beyond the size word)
-	scr->setLockers(1);
-
-
 	*was_new = 0;
 
 	return seg_id;
