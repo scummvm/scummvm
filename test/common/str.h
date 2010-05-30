@@ -119,7 +119,7 @@ class StringTestSuite : public CxxTest::TestSuite
 	}
 
 	void test_refCount5() {
-		// Test for allocated storage
+		// using external storage
 		Common::String foo1("HelloHelloHelloHelloAndHi");
 		Common::String foo2(foo1);
 
@@ -128,16 +128,18 @@ class StringTestSuite : public CxxTest::TestSuite
 
 		TS_ASSERT_EQUALS(foo1, "HelloHelloHelloHelloAndHi");
 		TS_ASSERT_EQUALS(foo2, "hhhhhhhhhhhhhhhhhhhhhhhhh");
+	}
 
-		// Test for builtin storage
-		Common::String foo3("Hello");
-		Common::String foo4(foo3);
+	void test_refCount6() {
+		// using internal storage
+		Common::String foo1("Hello");
+		Common::String foo2(foo1);
 
-		for (Common::String::iterator i = foo4.begin(); i != foo4.end(); ++i)
+		for (Common::String::iterator i = foo2.begin(); i != foo2.end(); ++i)
 			*i = 'h';
 
-		TS_ASSERT_EQUALS(foo3, "Hello");
-		TS_ASSERT_EQUALS(foo4, "hhhhh");
+		TS_ASSERT_EQUALS(foo1, "Hello");
+		TS_ASSERT_EQUALS(foo2, "hhhhh");
 	}
 
 	void test_self_asignment() {
