@@ -541,8 +541,8 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(_numExports);
-	s.syncAsSint32LE(_numSynonyms);
+	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numExports
+	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -763,18 +763,6 @@ void SegManager::reconstructScripts(EngineState *s) {
 		// FIXME: Unify this code with script_instantiate_* ?
 		scr->load(g_sci->getResMan());
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			scr->_exportTable = 0;
-			scr->_synonyms = 0;
-			if (READ_LE_UINT16(scr->_buf + 6) > 0) {
-				scr->setExportTableOffset(6);
-			}
-		} else {
-			scr->_exportTable = (const uint16 *)scr->findBlock(SCI_OBJ_EXPORTS);
-			scr->_synonyms = scr->findBlock(SCI_OBJ_SYNONYMS);
-			scr->_exportTable += 3;
-		}
-		scr->_codeBlocks.clear();
 
 		ObjMap::iterator it;
 		const ObjMap::iterator end = scr->_objects.end();

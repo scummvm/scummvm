@@ -27,6 +27,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
@@ -181,6 +182,28 @@ void Script::load(ResourceManager *resMan) {
 
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
+	}
+
+	_codeBlocks.clear();
+
+	_exportTable = 0;
+	_numExports = 0;
+	_synonyms = 0;
+	_numSynonyms = 0;
+	
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		if (READ_LE_UINT16(_buf + 6) > 0) {
+			_exportTable = (const uint16 *)(_buf + 6 + 2);
+			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+		}
+	} else {
+		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
+		if (_exportTable) {
+			_exportTable += 3;
+			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+		}
+		_synonyms = findBlock(SCI_OBJ_SYNONYMS);
+		_numSynonyms = _synonyms ? READ_SCI11ENDIAN_UINT16(_synonyms - 2) / 4 : 0;
 	}
 }
 
@@ -343,16 +366,6 @@ void Script::setLockers(int lockers) {
 	_lockers = lockers;
 }
 
-void Script::setExportTableOffset(int offset) {
-	if (offset) {
-		_exportTable = (const uint16 *)(_buf + offset + 2);
-		_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
-	} else {
-		_exportTable = NULL;
-		_numExports = 0;
-	}
-}
-
 uint16 Script::validateExportFunc(int pubfunct) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
@@ -369,16 +382,8 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	return offset;
 }
 
-void Script::setSynonymsOffset(int offset) {
-	_synonyms = _buf + offset;
-}
-
 const byte *Script::getSynonyms() const {
 	return _synonyms;
-}
-
-void Script::setSynonymsNr(int n) {
-	_numSynonyms = n;
 }
 
 int Script::getSynonymsNr() const {

@@ -275,9 +275,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 
 	// Set heap position (beyond the size word)
 	scr->setLockers(1);
-	scr->setExportTableOffset(0);
-	scr->setSynonymsOffset(0);
-	scr->setSynonymsNr(0);
+
 
 	*was_new = 0;
 
@@ -309,7 +307,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	}
 
 	// Now do a first pass through the script objects to find the
-	// export table and local variable block
+	// local variable blocks
 
 	do {
 		objType = scr->getHeap(curOffset);
@@ -317,29 +315,12 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 
 		objLength = scr->getHeap(curOffset + 2);
-
-		// This happens in some demos (e.g. the EcoQuest 1 demo). Not sure what is the
-		// actual cause of it, but the scripts of these demos can't be loaded properly
-		// and we're stuck forever in this loop, as objLength never changes
-		if (!objLength) {
-			warning("script_instantiate_sci0: objLength is 0, unable to parse script");
-			return 0;
-		}
-
 		curOffset += 4;		// skip header
 
 		switch (objType) {
-		case SCI_OBJ_EXPORTS:
-			scr->setExportTableOffset(curOffset);
-			break;
-		case SCI_OBJ_SYNONYMS:
-			scr->setSynonymsOffset(curOffset);
-			scr->setSynonymsNr((objLength) / 4);
-			break;
 		case SCI_OBJ_LOCALVARS:
 			segMan->scriptInitialiseLocals(make_reg(seg_id, curOffset));
 			break;
-
 		case SCI_OBJ_CLASS: {
 			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species = scr->getHeap(curOffset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
@@ -423,9 +404,6 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
-
-	if (READ_SCI11ENDIAN_UINT16(scr->_buf + 6) > 0)
-		scr->setExportTableOffset(6);
 
 	int heapStart = scr->getScriptSize();
 	segMan->scriptInitialiseLocals(make_reg(seg_id, heapStart + 4));

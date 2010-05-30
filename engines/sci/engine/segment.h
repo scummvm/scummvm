@@ -342,6 +342,7 @@ private:
 	size_t _scriptSize;
 	size_t _heapSize;
 	size_t _bufSize;
+	Common::Array<CodeBlock> _codeBlocks;
 
 public:
 	/**
@@ -354,7 +355,6 @@ public:
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
-	Common::Array<CodeBlock> _codeBlocks;
 	bool _markedAsDeleted;
 
 public:
@@ -444,12 +444,6 @@ public:
 	int getSynonymsNr() const;
 
 	/**
-	 * Sets the script-relative offset of the exports table.
-	 * @param offset	script-relative exports table offset
-	 */
-	void setExportTableOffset(int offset);
-
-	/**
 	 * Validate whether the specified public function is exported by
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
@@ -457,19 +451,6 @@ public:
 	 * 						offset into the script's segment otherwise
 	 */
 	uint16 validateExportFunc(int pubfunct);
-
-	/**
-	 * Sets the script-relative offset of the synonyms associated with this script.
-	 * @param offset	script-relative offset of the synonyms block
-	 */
-	void setSynonymsOffset(int offset);
-
-	/**
-	 * Sets the number of synonyms associated with this script,
-	 * @param nr		number of synonyms, as to be stored within the script
-	 */
-	void setSynonymsNr(int nr);
-
 
 	/**
 	 * Marks the script as deleted.
