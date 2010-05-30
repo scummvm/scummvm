@@ -270,8 +270,14 @@ void Script::scriptRelocate(reg_t block) {
 
 	for (int i = 0; i <= count; i++) {
 		int pos = READ_SCI11ENDIAN_UINT16(_buf + block.offset + 2 + (i * 2));
+		// This occurs in SCI01/SCI1 games where every other export
+		// value is zero. I have no idea what it's supposed to mean.
+		//
+		// Yes, there is code in the original to handle this situation,
+		// but we need an example of it happening in order to determine
+		// what to do.
 		if (!pos)
-			continue; // FIXME: A hack pending investigation
+			continue; // FIXME: Just ignore it for now.
 
 		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
