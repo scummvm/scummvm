@@ -731,15 +731,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 		return 1;
 	}
 
-/*
-	if (s->sound_server) {
-		if ((s->sound_server->save)(s, dirname)) {
-			warning("Saving failed for the sound subsystem");
-			//chdir("..");
-			return 1;
-		}
-	}
-*/
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
 	Graphics::saveThumbnail(*fh);

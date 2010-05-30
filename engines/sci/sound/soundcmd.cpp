@@ -630,7 +630,6 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (_soundVersion != SCI_VERSION_1_LATE) {
-		/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
 		/* FIXME: The next couple of lines actually STOP the handle, rather
 		** than fading it! */
 		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
