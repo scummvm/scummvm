@@ -194,8 +194,14 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	Script *scr = s->_segMan->getScript(scriptSeg);
 
 	if (!scr->_numExports) {
-		// FIXME: Is this fatal? This occurs in SQ4CD
-		warning("Script 0x%x does not have a dispatch table", script);
+		// This is normal. Some scripts don't have a dispatch (exports) table,
+		// and this call is probably used to load them in memory, ignoring
+		// the return value. If only one argument is passed, this call is done
+		// only to load the script in memory. Thus, don't show any warning,
+		// as no return value is expected
+		if (argc == 2)
+			warning("Script 0x%x does not have a dispatch table and export %d "
+					"was requested from it", script, index);
 		return NULL_REG;
 	}
 
