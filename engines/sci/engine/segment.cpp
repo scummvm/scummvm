@@ -147,6 +147,27 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 	return true;
 }
 
+void Script::load(ResourceManager *resMan) {
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
+	assert(script != 0);
+
+	_buf = (byte *)malloc(_bufSize);
+	assert(_buf);
+
+	assert(_bufSize >= script->size);
+	memcpy(_buf, script->data, script->size);
+
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
+		assert(heap != 0);
+
+		_heapStart = _buf + _scriptSize;
+
+		assert(_bufSize - _scriptSize <= heap->size);
+		memcpy(_heapStart, heap->data, heap->size);
+	}
+}
+
 void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);

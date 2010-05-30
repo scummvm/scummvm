@@ -757,27 +757,6 @@ static void reconstruct_stack(EngineState *retval) {
 	retval->stack_top = stack->_entries + stack->_capacity;
 }
 
-static void load_script(EngineState *s, Script *scr) {
-	scr->_buf = (byte *)malloc(scr->getBufSize());
-	assert(scr->_buf);
-
-	Resource *script = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
-	assert(script != 0);
-
-	assert(scr->getBufSize() >= script->size);
-	memcpy(scr->_buf, script->data, script->size);
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		Resource *heap = g_sci->getResMan()->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
-		assert(heap != 0);
-
-		scr->_heapStart = scr->_buf + scr->getScriptSize();
-
-		assert(scr->getBufSize() - scr->getScriptSize() <= heap->size);
-		memcpy(scr->_heapStart, heap->data, heap->size);
-	}
-}
-
 // TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
@@ -791,7 +770,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		Script *scr = (Script *)mobj;
 
 		// FIXME: Unify this code with script_instantiate_* ?
-		load_script(s, scr);
+		scr->load(g_sci->getResMan());
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			scr->_exportTable = 0;

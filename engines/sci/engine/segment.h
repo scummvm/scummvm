@@ -364,6 +364,7 @@ public:
 
 	void freeScript();
 	bool init(int script_nr, ResourceManager *resMan);
+	void load(ResourceManager *resMan);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
