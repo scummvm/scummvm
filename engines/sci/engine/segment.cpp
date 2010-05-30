@@ -120,15 +120,6 @@ void Script::freeScript() {
 bool Script::init(int script_nr, ResourceManager *resMan) {
 	setScriptSize(script_nr, resMan);
 
-	_buf = (byte *)malloc(_bufSize);
-
-	if (!_buf) {
-		freeScript();
-		warning("Not enough memory space for script size");
-		_bufSize = 0;
-		return false;
-	}
-
 	_localsOffset = 0;
 	_localsBlock = NULL;
 
@@ -138,11 +129,8 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 	_markedAsDeleted = false;
 
 	_nr = script_nr;
-
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		_heapStart = _buf + _scriptSize;
-	else
-		_heapStart = _buf;
+	_buf = 0;
+	_heapStart = 0;
 
 	return true;
 }

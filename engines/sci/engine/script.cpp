@@ -263,23 +263,8 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 
 
-int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {
+int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, int *was_new) {
 	*was_new = 1;
-
-	*script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		*heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-
-	if (!*script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
-		warning("Script 0x%x requested but not found", script_nr);
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			if (*heap)
-				warning("Inconsistency: heap resource WAS found");
-			else if (*script)
-				warning("Inconsistency: script resource WAS found");
-		}
-		return 0;
-	}
 
 	SegmentId seg_id = segMan->getScriptSegment(script_nr);
 	Script *scr = segMan->getScriptIfLoaded(seg_id);
@@ -292,13 +277,10 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 		}
 	} else {
 		scr = segMan->allocateScript(script_nr, &seg_id);
-		if (!scr) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
-			error("Not enough heap space for script size 0x%x of script 0x%x (Should this happen?)", (*script)->size, script_nr);
-			return 0;
-		}
 	}
 
 	scr->init(script_nr, resMan);
+	scr->load(resMan);
 
 	// Set heap position (beyond the size word)
 	scr->setLockers(1);
@@ -315,26 +297,24 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	int objType;
 	uint32 objLength = 0;
 	int relocation = -1;
-	Resource *script;
 	int was_new;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
+	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &was_new);
 	uint16 curOffset = oldScriptHeader ? 2 : 0;
 
 	if (was_new)
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
-	scr->mcpyInOut(0, script->data, script->size);
 
 	if (oldScriptHeader) {
 		// Old script block
 		// There won't be a localvar block in this case
 		// Instead, the script starts with a 16 bit int specifying the
 		// number of locals we need; these are then allocated and zeroed.
-		int locals_nr = READ_LE_UINT16(script->data);
-		if (locals_nr)
-			segMan->scriptInitialiseLocalsZero(seg_id, locals_nr);
+		int localsCount = READ_LE_UINT16(scr->_buf);
+		if (localsCount)
+			segMan->scriptInitialiseLocalsZero(seg_id, localsCount);
 	}
 
 	// Now do a first pass through the script objects to find the
@@ -396,7 +376,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		}
 
 		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < script->size - 2);
+	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
 
 	// And now a second pass to adjust objects and class pointers, and the general pointers
 	objLength = 0;
@@ -436,7 +416,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		}
 
 		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < script->size - 2);
+	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
 
 	if (relocation >= 0)
 		scr->scriptRelocate(make_reg(seg_id, relocation));
@@ -445,30 +425,28 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 }
 
 int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
-	Resource *script, *heap;
 	int was_new;
-	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, &heap, &was_new);
+	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &was_new);
 
 	if (was_new)
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
-	int _heapStart = script->size;
 
-	if (script->size & 2)
-		_heapStart++;
-
-	scr->mcpyInOut(0, script->data, script->size);
-	scr->mcpyInOut(_heapStart, heap->data, heap->size);
-
-	if (READ_SCI11ENDIAN_UINT16(script->data + 6) > 0)
+	if (READ_SCI11ENDIAN_UINT16(scr->_buf + 6) > 0)
 		scr->setExportTableOffset(6);
 
-	segMan->scriptInitialiseLocals(make_reg(seg_id, _heapStart + 4));
+	int heapStart = scr->getScriptSize();
 
+	// FIXME: This code was used to ensure that the heap address is word-aligned
+	// Make sure that this is used in all places where the heap is referenced,
+	// not just here...
+	//if (heapStart & 2)
+	//	heapStart++;
+
+	segMan->scriptInitialiseLocals(make_reg(seg_id, heapStart + 4));
 	segMan->scriptInitialiseObjectsSci11(seg_id);
-
-	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(heap->data)));
+	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
 
 	return seg_id;
 }
