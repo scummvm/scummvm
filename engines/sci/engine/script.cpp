@@ -419,7 +419,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
 
 	if (relocation >= 0)
-		scr->scriptRelocate(make_reg(seg_id, relocation));
+		scr->relocate(make_reg(seg_id, relocation));
 
 	return seg_id;		// instantiation successful
 }
@@ -439,7 +439,7 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 	int heapStart = scr->getScriptSize();
 	segMan->scriptInitialiseLocals(make_reg(seg_id, heapStart + 4));
 	segMan->scriptInitialiseObjectsSci11(seg_id);
-	scr->heapRelocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
+	scr->relocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
 
 	return seg_id;
 }

@@ -355,7 +355,6 @@ public:
 	LocalVariables *_localsBlock;
 
 	Common::Array<CodeBlock> _codeBlocks;
-	bool _relocated;
 	bool _markedAsDeleted;
 
 public:
@@ -409,9 +408,7 @@ public:
 	 * @param obj_pos	Location (segment, offset) of the block
 	 * @return			Location of the relocation block
 	 */
-	void scriptRelocate(reg_t block);
-
-	void heapRelocate(reg_t block);
+	void relocate(reg_t block);
 
 private:
 	bool relocateLocal(SegmentId segment, int location);

@@ -100,7 +100,6 @@ Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_localsSegment = 0;
 	_localsBlock = NULL;
 
-	_relocated = false;
 	_markedAsDeleted = 0;
 }
 
@@ -125,7 +124,6 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 
 	_codeBlocks.clear();
 
-	_relocated = false;
 	_markedAsDeleted = false;
 
 	_nr = script_nr;
@@ -139,6 +137,14 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
 	} else if (getSciVersion() >= SCI_VERSION_1_1) {
+		/**
+		 * In SCI11, the heap was in a separate space from the script.
+		 * We append it to the end of the script, and adjust addressing accordingly.
+		 * However, since we address the heap with a 16-bit pointer, the combined
+		 * size of the stack and the heap must be 64KB. So far this has worked
+		 * for SCI11, SCI2 and SCI21 games. SCI3 games use a different script format,
+		 * and theoretically they can exceed the 64KB boundary using relocation.
+		 */
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 		_bufSize += heap->size;
 		_heapSize = heap->size;
@@ -149,7 +155,11 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 			_scriptSize++;
 		}
 
-		assert(_bufSize <= 65535);
+		// As mentioned above, the script and the heap together should not exceed 64KB
+		if (_bufSize > 65535)
+			error("Script and heap sizes combined exceed 64K. This means a fundamental "
+					"design bug was made regarding SCI1.1 and newer games.\nPlease "
+					"report this error to the ScummVM team");
 	}
 }
 
@@ -253,14 +263,24 @@ void Script::scriptAddCodeBlock(reg_t location) {
 	_codeBlocks.push_back(cb);
 }
 
-void Script::scriptRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_bufSize && READ_SCI11ENDIAN_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
+void Script::relocate(reg_t block) {
+	byte *heap = _buf;
+	uint16 heapSize = (uint16)_bufSize;
+	uint16 heapOffset = 0;
+
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		heap = _heapStart;
+		heapSize = (uint16)_heapSize;
+		heapOffset = _scriptSize;
+	}
+
+	VERIFY(block.offset < (uint16)heapSize && READ_SCI11ENDIAN_UINT16(heap + block.offset) * 2 + block.offset < (uint16)heapSize,
 	       "Relocation block outside of script\n");
 
-	int count = READ_SCI11ENDIAN_UINT16(_buf + block.offset);
+	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
 
-	for (int i = 0; i <= count; i++) {
-		int pos = READ_SCI11ENDIAN_UINT16(_buf + block.offset + 2 + (i * 2));
+	for (int i = 0; i < count; i++) {
+		int pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (i * 2)) + heapOffset;
 		// This occurs in SCI01/SCI1 games where every other export
 		// value is zero. I have no idea what it's supposed to mean.
 		//
@@ -281,10 +301,13 @@ void Script::scriptRelocate(reg_t block) {
 					done = true;
 			}
 
-			for (k = 0; !done && k < _codeBlocks.size(); k++) {
-				if (pos >= _codeBlocks[k].pos.offset &&
-				        pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
-					done = true;
+			// Sanity check for SCI0-SCI1
+			if (getSciVersion() < SCI_VERSION_1_1) {
+				for (k = 0; !done && k < _codeBlocks.size(); k++) {
+					if (pos >= _codeBlocks[k].pos.offset &&
+							pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
+						done = true;
+				}
 			}
 
 			if (!done) {
@@ -298,44 +321,6 @@ void Script::scriptRelocate(reg_t block) {
 					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
 				// SQ3 script 71 has broken relocation entries.
 				printf("Trying to continue anyway...\n");
-			}
-		}
-	}
-}
-
-void Script::heapRelocate(reg_t block) {
-	VERIFY(block.offset < (uint16)_heapSize && READ_SCI11ENDIAN_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
-	       "Relocation block outside of script\n");
-
-	if (_relocated)
-		return;
-	_relocated = true;
-	int count = READ_SCI11ENDIAN_UINT16(_heapStart + block.offset);
-
-	for (int i = 0; i < count; i++) {
-		int pos = READ_SCI11ENDIAN_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
-
-		if (!relocateLocal(block.segment, pos)) {
-			bool done = false;
-			uint k;
-
-			ObjMap::iterator it;
-			const ObjMap::iterator end = _objects.end();
-			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (it->_value.relocate(block.segment, pos, _scriptSize))
-					done = true;
-			}
-
-			if (!done) {
-				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (_localsBlock)
-					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
-				else
-					printf("- No locals\n");
-				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}
 	}
