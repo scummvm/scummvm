@@ -593,19 +593,25 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 
 		//warning("callk %s", kernelFunc.orig_name.c_str());
 
-		// TODO: SCI2/SCI2.1+ equivalent, once saving/loading works in SCI2/SCI2.1+
-		if (g_loadFromLauncher >= 0 && kernelFuncNum == 0x8) {
-			// A game is being loaded from the launcher, and kDisplay is called, all initialization has taken
-			// place (i.e. menus have been constructed etc). Therefore, inject a kRestoreGame call
-			// here, instead of the requested function.
-			int saveSlot = g_loadFromLauncher;
-			g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
+		// TODO: SCI2.1 equivalent
+		if (g_loadFromLauncher >= 0 && 
+				(kernelFuncNum == 0x8 && getSciVersion() <= SCI_VERSION_1_1) ||     // DrawPic
+				(kernelFuncNum == 0x3d && getSciVersion() == SCI_VERSION_2)) {      // GetSaveDir
+				//(kernelFuncNum == 0x28 && getSciVersion() == SCI_VERSION_2_1)) {    // AddPlane
 
-			if (saveSlot < 0)
-				error("Requested to load invalid save slot");	// should never happen, really
+				// A game is being loaded from the launcher, and the game is about to draw something on
+				// screen, hence all initialization has taken place (i.e. menus have been constructed etc).
+				// Therefore, inject a kRestoreGame call here, instead of the requested function.
+				// The restore call is injected here mainly for games which have a menu, as the menu is
+				// constructed when the game starts and is not reconstructed when a saved game is loaded.
+				int saveSlot = g_loadFromLauncher;
+				g_loadFromLauncher = -1;	// invalidate slot, so that we don't load again
 
-			reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
-			kRestoreGame(s, 2, restoreArgv);
+				if (saveSlot < 0)
+					error("Requested to load invalid save slot");	// should never happen, really
+
+				reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
+				kRestoreGame(s, 2, restoreArgv);
 		} else {
 			// Call kernel function
 			s->r_acc = kernelFunc.fun(s, argc, argv);
