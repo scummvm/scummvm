@@ -153,6 +153,8 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 		while (*source) {
 			if (*source == ' ') {
 				source++; // skip spaces - happens in lsl3 intro
+				// TODO: find the cause for those spaces. ssci breaks when encountering spaces, but we even get a leading
+				//  space in lsl3 (" -97 ") which would actually mean we need to return 0
 				continue;
 			}
 			if ((*source < '0') || (*source > '9')) {
