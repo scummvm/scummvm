@@ -145,7 +145,6 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _script;
 	delete _ws;
 	delete _random;
-	delete _animation;
 	delete _palette;
 }
 
@@ -184,7 +183,6 @@ Common::Error MadsM4Engine::run() {
 	_sound = new Sound(this, _mixer, 255);
 	_script = new ScriptInterpreter(this);
 	_ws = new WoodScript(this);
-	_animation = new Animation(this);
 	//_callbacks = new Callbacks(this);
 	_random = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_random, "m4");
@@ -580,8 +578,6 @@ Common::Error MadsEngine::run() {
 	uint32 nextFrame = g_system->getMillis();
 	while (!_events->quitFlag) {
 		eventHandler();
-
-		_animation->updateAnim();
 
 		if (g_system->getMillis() >= nextFrame) {
 			nextFrame = g_system->getMillis() + GAME_FRAME_DELAY;

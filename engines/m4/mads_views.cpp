@@ -24,6 +24,7 @@
  */
 
 #include "m4/m4_views.h"
+#include "m4/animation.h"
 #include "m4/dialogs.h"
 #include "m4/events.h"
 #include "m4/font.h"
@@ -40,6 +41,22 @@ static const int INV_ANIM_FRAME_SPEED = 2;
 static const int INVENTORY_X = 160;
 static const int INVENTORY_Y = 159;
 static const int SCROLLER_DELAY = 200;
+
+//--------------------------------------------------------------------------
+
+bool MadsSpriteSlot::operator==(const SpriteSlotSubset &other) const {
+	return (spriteListIndex == other.spriteListIndex) && (frameNumber == other.frameNumber) &&
+		(xp == other.xp) && (yp == other.yp) && (depth == other.depth) && (scale == other.scale);
+}
+
+void MadsSpriteSlot::copy(const SpriteSlotSubset &other) {
+	spriteListIndex = other.spriteListIndex;
+	frameNumber = other.frameNumber;
+	xp = other.xp;
+	yp = other.yp;
+	depth = other.depth;
+	scale = other.scale;
+}
 
 //--------------------------------------------------------------------------
 
@@ -74,6 +91,7 @@ int MadsSpriteSlots::addSprites(const char *resName) {
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
 	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
 	spriteSet->translate(_madsVm->_palette);
+	assert(spriteSet != NULL);
 
 	_sprites.push_back(SpriteList::value_type(spriteSet));
 	_vm->res()->toss(resName);
@@ -1125,8 +1143,20 @@ void MadsSequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 
 //--------------------------------------------------------------------------
 
+Animation::Animation(MadsM4Engine *vm): _vm(vm) {
+}
+
+void Animation::loadFullScreen(const Common::String &filename) {
+	_vm->_palette->deleteAllRanges();
+	load(filename);
+}
+
+//--------------------------------------------------------------------------
+
 MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
-		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
+		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this),
+		// FIXME: There's probably a cleaner way to do this, and I don't think the destructor is ever called
+		_sceneAnimation(*new MadsAnimation(_vm, this)) {
 	_textSpacing = -1;
 	_ticksAmount = 3;
 	_newTimeout = 0;

@@ -43,6 +43,16 @@ class MadsView;
 
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
+class SpriteSlotSubset {
+public:
+	int spriteListIndex;
+	int frameNumber;
+	int xp;
+	int yp;
+	int depth;
+	int scale;
+};
+
 class MadsSpriteSlot {
 public:
 	int spriteType;
@@ -55,12 +65,16 @@ public:
 	int scale;
 
 	MadsSpriteSlot() { }
+
+	bool operator==(const SpriteSlotSubset &other) const;
+	void copy(const SpriteSlotSubset &other);
 };
 
 #define SPRITE_SLOTS_SIZE 50
 
 enum SpriteIdSpecial {
-	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, FOREGROUND_SPRITE = 1, EXPIRED_SPRITE = -1
+	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, EXPIRED_SPRITE = -1, SPRITE_ZERO = 0, FOREGROUND_SPRITE = 1,
+	SPRITE_FOUR = 4
 };
 
 typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
@@ -138,7 +152,7 @@ public:
 };
 
 #define TIMED_TEXT_SIZE 10
-#define TEXT_4A_SIZE 30
+#define INDEFINITE_TIMEOUT 9999999
 
 enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
 	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
@@ -352,10 +366,26 @@ public:
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 };
 
+class Animation {
+protected:
+	MadsM4Engine *_vm;
+public:
+	Animation(MadsM4Engine *vm);
+	void loadFullScreen(const Common::String &filename);
+
+	virtual void load(const Common::String &filename) = 0;
+    virtual void start() = 0;
+    virtual bool update() = 0;
+    virtual void stop() = 0;
+	virtual void setCurrentFrame(int frameNumber) = 0;
+};
+	
+
 class MadsView {
 private:
 	View *_view;
 public:
+	Animation &_sceneAnimation;
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	MadsKernelMessageList _kernelMessages;

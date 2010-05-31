@@ -49,7 +49,7 @@ class Palette;
 
 class BaseAsset {
 public:
-	BaseAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	BaseAsset(MadsM4Engine *vm);
 	~BaseAsset();
 	const Common::String getName() const { return _name; }
 protected:
@@ -103,6 +103,7 @@ struct SpriteAssetFrame {
 class SpriteAsset : public BaseAsset {
 public:
 	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream = false);
+	SpriteAsset(MadsM4Engine *vm, const char *name);
 	~SpriteAsset();
 	void loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, bool asStream);
 	void loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream);

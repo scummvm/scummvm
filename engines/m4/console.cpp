@@ -47,7 +47,6 @@ Console::Console(MadsM4Engine *vm) : GUI::Debugger() {
 	DCmd_Register("start_conv",		WRAP_METHOD(Console, cmdStartConversation));
 	DCmd_Register("textview",		WRAP_METHOD(Console, cmdShowTextview));
 	DCmd_Register("animview",		WRAP_METHOD(Console, cmdShowAnimview));
-	DCmd_Register("anim",			WRAP_METHOD(Console, cmdPlayAnimation));
 }
 
 Console::~Console() {
@@ -247,33 +246,6 @@ bool Console::cmdShowAnimview(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdPlayAnimation(int argc, const char **argv) {
-	View *view = _vm->_viewManager->getView(VIEWID_SCENE);
-	if (view == NULL) {
-		DebugPrintf("The scene view isn't currently active\n");
-	} else if (argc != 2 && argc != 3) {
-		DebugPrintf("Usage: %s <anim resource (*.aa)> <fullscreen>\n", argv[0]);
-		DebugPrintf("If fullscreen is 1, the screen palette is replaced with the palette of the animation\n");
-	} else {
-		char resourceName[20];
-		strncpy(resourceName, argv[1], 15);
-		resourceName[15] = '\0';
-		if (!strchr(resourceName, '.'))
-			strcat(resourceName, ".AA");
-
-		_vm->_viewManager->moveToFront(view);
-		if (argc == 3 && atoi(argv[2]) == 1)
-			_vm->_animation->loadFullScreen(resourceName);
-		else
-			_vm->_animation->load(resourceName);
-		_vm->_animation->start();
-		view->restore(0, 0, view->width(), view->height());
-		return false;
-	}
-
-	return true;
-}
-
 /*--------------------------------------------------------------------------*/
 
 MadsConsole::MadsConsole(MadsEngine *vm): Console(vm) {
@@ -282,6 +254,7 @@ MadsConsole::MadsConsole(MadsEngine *vm): Console(vm) {
 	DCmd_Register("object",			WRAP_METHOD(MadsConsole, cmdObject));
 	DCmd_Register("message",		WRAP_METHOD(MadsConsole, cmdMessage));
 	DCmd_Register("scene_info",		WRAP_METHOD(MadsConsole, cmdSceneInfo));
+	DCmd_Register("anim",			WRAP_METHOD(MadsConsole, cmdPlayAnimation));
 }
 
 bool MadsConsole::cmdObject(int argc, const char **argv) {
@@ -382,6 +355,34 @@ bool MadsConsole::cmdMessage(int argc, const char **argv) {
 
 bool MadsConsole::cmdSceneInfo(int argc, const char **argv) {
 	DebugPrintf("Current scene is: %i\n", _vm->_scene->getCurrentScene());
+
+	return true;
+}
+
+bool MadsConsole::cmdPlayAnimation(int argc, const char **argv) {
+	View *view = _vm->_viewManager->getView(VIEWID_SCENE);
+	if (view == NULL) {
+		DebugPrintf("The scene view isn't currently active\n");
+	} else if (argc != 2 && argc != 3) {
+		DebugPrintf("Usage: %s <anim resource (*.aa)> <fullscreen>\n", argv[0]);
+		DebugPrintf("If fullscreen is 1, the screen palette is replaced with the palette of the animation\n");
+	} else {
+		char resourceName[20];
+		strncpy(resourceName, argv[1], 15);
+		resourceName[15] = '\0';
+		if (!strchr(resourceName, '.'))
+			strcat(resourceName, ".AA");
+
+		_vm->_viewManager->moveToFront(view);
+		if (argc == 3 && atoi(argv[2]) == 1)
+			_madsVm->scene()->_sceneAnimation.loadFullScreen(resourceName);
+		else
+			_madsVm->scene()->_sceneAnimation.load(resourceName);
+		_madsVm->scene()->_sceneAnimation.start();
+
+		view->restore(0, 0, view->width(), view->height());
+		return false;
+	}
 
 	return true;
 }

@@ -200,7 +200,6 @@ public:
 	Rails *_rails;
 	ScriptInterpreter *_script;
 	WoodScript *_ws;
-	Animation *_animation;
 	Common::RandomSource *_random;
 
 	Scene *scene() { return _scene; }
