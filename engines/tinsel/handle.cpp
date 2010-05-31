@@ -288,7 +288,8 @@ void LoadFile(MEMHANDLE *pH) {
 	}
 
 	// extract and zero terminate the filename
-	Common::strlcpy(szFilename, pH->szName, sizeof(pH->szName)+1);
+	memcpy(szFilename, pH->szName, sizeof(pH->szName));
+	szFilename[sizeof(pH->szName)] = 0;
 
 	if (f.open(szFilename)) {
 		// read the data
