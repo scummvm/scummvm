@@ -194,18 +194,21 @@ void Script::load(ResourceManager *resMan) {
 	_numSynonyms = 0;
 	
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		if (READ_LE_UINT16(_buf + 6) > 0) {
-			_exportTable = (const uint16 *)(_buf + 6 + 2);
+		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {
+			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
 		}
 	} else {
 		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
 		if (_exportTable) {
-			_exportTable += 3;
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable + 1);
+			_exportTable += 3;	// skip header plus 2 bytes (_exportTable is a uint16 pointer)
 		}
 		_synonyms = findBlock(SCI_OBJ_SYNONYMS);
-		_numSynonyms = _synonyms ? READ_SCI11ENDIAN_UINT16(_synonyms - 2) / 4 : 0;
+		if (_synonyms) {
+			_numSynonyms = READ_SCI11ENDIAN_UINT16(_synonyms + 2) / 4;
+			_synonyms += 4;	// skip header
+		}
 	}
 }
 
