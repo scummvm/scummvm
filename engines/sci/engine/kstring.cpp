@@ -151,6 +151,10 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 			source++;
 		}
 		while (*source) {
+			if (*source == ' ') {
+				source++; // skip spaces - happens in lsl3 intro
+				continue;
+			}
 			if ((*source < '0') || (*source > '9')) {
 				// TODO: this happens in lsl5 right in the intro -> we get '1' '3' 0xCD 0xCD 0xCD 0xCD 0xCD
 				//       find out why this happens and fix it
