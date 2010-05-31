@@ -594,10 +594,11 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 		//warning("callk %s", kernelFunc.orig_name.c_str());
 
 		// TODO: SCI2.1 equivalent
-		if (g_loadFromLauncher >= 0 && 
+		if (g_loadFromLauncher >= 0 && (
 				(kernelFuncNum == 0x8 && getSciVersion() <= SCI_VERSION_1_1) ||     // DrawPic
-				(kernelFuncNum == 0x3d && getSciVersion() == SCI_VERSION_2)) {      // GetSaveDir
-				//(kernelFuncNum == 0x28 && getSciVersion() == SCI_VERSION_2_1)) {    // AddPlane
+				(kernelFuncNum == 0x3d && getSciVersion() == SCI_VERSION_2)         // GetSaveDir
+				//(kernelFuncNum == 0x28 && getSciVersion() == SCI_VERSION_2_1)       // AddPlane
+				)) {
 
 				// A game is being loaded from the launcher, and the game is about to draw something on
 				// screen, hence all initialization has taken place (i.e. menus have been constructed etc).
