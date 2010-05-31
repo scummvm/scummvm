@@ -34,7 +34,7 @@ namespace M4 {
 GUIInventory::GUIInventory(View *owner, MadsM4Engine *vm, const Common::Rect &bounds, int horizCells,
 		   int vertCells, int cellWidth, int cellHeight, int tag): GUIRect(owner, bounds, tag) {
 
-    _vm = vm;
+	_vm = vm;
 	_cellCount.x = horizCells;
 	_cellCount.y = vertCells;
 	_cellSize.x = cellWidth;

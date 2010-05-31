@@ -1146,6 +1146,9 @@ void MadsSequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 Animation::Animation(MadsM4Engine *vm): _vm(vm) {
 }
 
+Animation::~Animation() {
+}
+
 void Animation::loadFullScreen(const Common::String &filename) {
 	_vm->_palette->deleteAllRanges();
 	load(filename);

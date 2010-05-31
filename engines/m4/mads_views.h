@@ -371,12 +371,13 @@ protected:
 	MadsM4Engine *_vm;
 public:
 	Animation(MadsM4Engine *vm);
+	virtual ~Animation();
 	void loadFullScreen(const Common::String &filename);
 
 	virtual void load(const Common::String &filename) = 0;
-    virtual void start() = 0;
-    virtual bool update() = 0;
-    virtual void stop() = 0;
+	virtual void start() = 0;
+	virtual bool update() = 0;
+	virtual void stop() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;
 };
 	

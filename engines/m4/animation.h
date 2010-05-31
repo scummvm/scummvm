@@ -90,7 +90,7 @@ private:
 	Common::String _soundName;
 	Common::Array<int> _spriteListIndexes;
 
-    int _currentFrame, _oldFrameEntry;
+	int _currentFrame, _oldFrameEntry;
 	bool _resetFlag;
 	int _unk1;
 	bool _skipLoad;
@@ -106,12 +106,12 @@ private:
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
-    virtual ~MadsAnimation();
+	virtual ~MadsAnimation();
 
-    virtual void load(const Common::String &filename);
-    virtual void start();
-    virtual bool update();
-    virtual void stop();
+	virtual void load(const Common::String &filename);
+	virtual void start();
+	virtual bool update();
+	virtual void stop();
 	virtual void setCurrentFrame(int frameNumber);
 };
 

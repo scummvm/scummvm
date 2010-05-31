@@ -66,8 +66,8 @@ public:
 
 class FabDecompressor {
 private:
-    int _bitsLeft;
-    uint32 _bitBuffer;
+	int _bitsLeft;
+	uint32 _bitBuffer;
 	const byte *_srcData, *_srcP;
 	int _srcSize;
 
