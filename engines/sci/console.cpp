@@ -105,6 +105,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
+	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -324,6 +325,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" resource_types - Shows the valid resource types\n");
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
+	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -807,6 +809,40 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 			}
 		}
 	}
+
+	return true;
+}
+
+bool Console::cmdVerifyScripts(int argc, const char **argv) {
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		DebugPrintf("This script check is only meant for SCI1.1-SCI2.1 games\n");
+		return true;
+	}
+
+	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	sort(resources->begin(), resources->end(), ResourceIdLess());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	DebugPrintf("%d SCI1.1-SCI2.1 scripts found, performing sanity checks...\n", resources->size());
+
+	Resource *script, *heap;
+	while (itr != resources->end()) {
+		script = _engine->getResMan()->findResource(*itr, false);
+		if (!script)
+			DebugPrintf("Error: script %d couldn't be loaded\n", itr->number);
+
+		heap = _engine->getResMan()->findResource(*itr, false);
+		if (!heap)
+			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->number);
+
+		if (script && heap && (script->size + heap->size > 65535))
+			DebugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
+			itr->number, script->size + heap->size);
+
+		++itr;
+	}
+
+	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
 
 	return true;
 }
