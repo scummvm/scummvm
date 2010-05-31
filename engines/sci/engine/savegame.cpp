@@ -757,17 +757,11 @@ void SegManager::reconstructScripts(EngineState *s) {
 			continue;
 
 		Script *scr = (Script *)_heap[i];
-
-		// FIXME: Unify this code with script_instantiate_* ?
 		scr->load(g_sci->getResMan());
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
 
-		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value.getPos().offset;
-			it->_value._baseObj = data;
-		}
+		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+			it->_value._baseObj = scr->_buf + it->_value.getPos().offset;
 	}
 
 	for (i = 0; i < _heap.size(); i++) {
@@ -776,29 +770,15 @@ void SegManager::reconstructScripts(EngineState *s) {
 
 		Script *scr = (Script *)_heap[i];
 
-		// FIXME: Unify this code with Script::scriptObjInit ?
-		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value.getPos().offset;
+		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+			reg_t addr = it->_value.getPos();
+			Object *obj = scr->scriptObjInit(addr, false);
 
-			if (getSciVersion() >= SCI_VERSION_1_1) {
-				it->_value._baseMethod = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
-				it->_value._baseVars = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
-			} else {
-				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
-				const Object *baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
-
-				if (!baseObj) {
-					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
-					continue;
+			if (getSciVersion() < SCI_VERSION_1_1) {
+				if (!obj->initBaseObject(this, addr, false)) {
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					scr->scriptObjRemove(addr);
 				}
-				it->_value.setVarCount(baseObj->getVarCount());
-				it->_value._baseObj = baseObj->_baseObj;
-
-				it->_value._baseMethod = (uint16 *)(data + funct_area);
-				it->_value._baseVars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
 			}
 		}
 	}

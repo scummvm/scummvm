@@ -227,10 +227,10 @@ const Object *Script::getObject(uint16 offset) const {
 		return 0;
 }
 
-Object *Script::scriptObjInit(reg_t obj_pos) {
+Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	Object *obj;
 
-	if (getSciVersion() < SCI_VERSION_1_1)
+	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
 		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
 	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
@@ -239,7 +239,7 @@ Object *Script::scriptObjInit(reg_t obj_pos) {
 
 	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
-	obj->init(_buf, obj_pos);
+	obj->init(_buf, obj_pos, fullObjectInit);
 
 	return obj;
 }
@@ -680,7 +680,7 @@ void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 //-------------------- object ----------------------------
 
-void Object::init(byte *buf, reg_t obj_pos) {
+void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 	byte *data = buf + obj_pos.offset;
 	_baseObj = data;
 	_pos = obj_pos;
@@ -697,8 +697,10 @@ void Object::init(byte *buf, reg_t obj_pos) {
 		_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
 	}
 
-	for (uint i = 0; i < _variables.size(); i++)
-		_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+	if (initVariables) {
+		for (uint i = 0; i < _variables.size(); i++)
+			_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
+	}
 }
 
 const Object *Object::getClass(SegManager *segMan) const {
@@ -769,14 +771,15 @@ void Object::initSuperClass(SegManager *segMan, reg_t addr) {
 		setSuperClassSelector(segMan->getClassAddress(superClassOffset, SCRIPT_GET_LOCK, addr));
 }
 
-bool Object::initBaseObject(SegManager *segMan, reg_t addr) {
+bool Object::initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass) {
 	const Object *baseObj = segMan->getObject(getSpeciesSelector());
 
 	if (baseObj) {
-		setVarCount(baseObj->getVarCount());
+		_variables.resize(baseObj->getVarCount());
 		// Copy base from species class, as we need its selector IDs
 		_baseObj = baseObj->_baseObj;
-		initSuperClass(segMan, addr);
+		if (doInitSuperClass)
+			initSuperClass(segMan, addr);
 		return true;
 	}
 

@@ -270,10 +270,9 @@ public:
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
 	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }
 
-	void setVarCount(uint size) { _variables.resize(size); }
 	uint getVarCount() const { return _variables.size(); }
 
-	void init(byte *buf, reg_t obj_pos);
+	void init(byte *buf, reg_t obj_pos, bool initVariables = true);
 
 	reg_t getVariable(uint var) const { return _variables[var]; }
 	reg_t &getVariableRef(uint var) { return _variables[var]; }
@@ -295,16 +294,17 @@ public:
 
 	void initSpecies(SegManager *segMan, reg_t addr);
 	void initSuperClass(SegManager *segMan, reg_t addr);
-	bool initBaseObject(SegManager *segMan, reg_t addr);
+	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
 
 	// TODO: make private
 	// Only SegManager::reconstructScripts() is left needing direct access to these
 public:
 	const byte *_baseObj; /**< base + object offset within base */
+
+private:
 	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
 	const uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
 
-private:
 	Common::Array<reg_t> _variables;
 	uint16 _methodCount;
 	int _flags;
@@ -394,7 +394,7 @@ public:
 	 * @returns			A newly created Object describing the object,
 	 * 					stored within the relevant script
 	 */
-	Object *scriptObjInit(reg_t obj_pos);
+	Object *scriptObjInit(reg_t obj_pos, bool fullObjectInit = true);
 
 	/**
 	 * Removes a script object
