@@ -341,12 +341,12 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 		} else {	// SCI0 late
 			// Check if the game is using an overlay
 			bool searchRoomObj = false;
+			reg_t rmObjAddr = _segMan->findObjectByName("Rm");
 
 			if (_kernel->_selectorCache.overlay != -1) {
 				// The game has an overlay selector, check how it calls kDrawPicto determine
 				// the graphics functions type used
-				reg_t objAddr = _segMan->findObjectByName("Rm");
-				if (lookupSelector(_segMan, objAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
+				if (lookupSelector(_segMan, rmObjAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
 					if (!autoDetectGfxFunctionsType()) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
@@ -372,7 +372,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				// as the overlay selector might be missing in demos
 				bool found = false;
 
-				const Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
+				const Object *obj = _segMan->getObject(rmObjAddr);
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
 					found = autoDetectGfxFunctionsType(m);
 					if (found)
