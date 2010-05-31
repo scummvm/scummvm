@@ -751,14 +751,12 @@ static void reconstruct_stack(EngineState *retval) {
 // TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
-	SegmentObj *mobj;
 
 	for (i = 0; i < _heap.size(); i++) {
-		mobj = _heap[i];
-		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
 			continue;
 
-		Script *scr = (Script *)mobj;
+		Script *scr = (Script *)_heap[i];
 
 		// FIXME: Unify this code with script_instantiate_* ?
 		scr->load(g_sci->getResMan());
@@ -773,11 +771,10 @@ void SegManager::reconstructScripts(EngineState *s) {
 	}
 
 	for (i = 0; i < _heap.size(); i++) {
-		mobj = _heap[i];
-		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
 			continue;
 
-		Script *scr = (Script *)mobj;
+		Script *scr = (Script *)_heap[i];
 
 		// FIXME: Unify this code with Script::scriptObjInit ?
 		ObjMap::iterator it;
