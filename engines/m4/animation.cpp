@@ -106,7 +106,7 @@ void MadsAnimation::load(const Common::String &filename) {
 		// Chunk 2
 		// Following is a list of any messages for the animation
 
-		Common::SeekableReadStream *animStream = anim.getItemStream(streamIndex++);
+		animStream = anim.getItemStream(streamIndex++);
 
 		for (int i = 0; i < messagesCount; ++i) {
 			AnimMessage rec;

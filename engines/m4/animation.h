@@ -103,10 +103,10 @@ private:
 	uint16 _actionNouns[3];
 
 	void load1(int frameNumber);
-	bool MadsAnimation::proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
+	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
-    ~MadsAnimation();
+    virtual ~MadsAnimation();
 
     virtual void load(const Common::String &filename);
     virtual void start();
