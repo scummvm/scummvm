@@ -743,6 +743,7 @@ public:
 	int16 _lipSyncTime;
 	AnimationResource *_lipSyncAnimationResource;
 	Common::Array<LipSyncChannelStatus> _lipSyncChannelStatus;
+	bool _lipSyncChannelStatusRestored;
 
 	/* Mouse cursors */
 	MouseCursor _mouseCursors[kMouseCursors];

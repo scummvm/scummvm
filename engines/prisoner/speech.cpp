@@ -52,10 +52,14 @@ void PrisonerEngine::startTalkieSpeech(int16 pakSlot, uint32 &finishedTime, int1
 		LipSyncSoundResource *lipSyncSoundResource = _res->get<LipSyncSoundResource>(_talkieDataResourceCacheSlot);
 		_talkieSpeechData = lipSyncSoundResource->getAudioStream();
 		finishedTime = getTicks() + lipSyncSoundResource->getDuration();
-		_lipSyncChannelStatus.clear();
-		_lipSyncChannelStatus.reserve(lipSyncSoundResource->getChannelCount());
-		for (uint i = 0; i < lipSyncSoundResource->getChannelCount(); i++)
-			_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
+		if (_lipSyncChannelStatusRestored) {
+			_lipSyncChannelStatusRestored = false;
+		} else {
+			_lipSyncChannelStatus.clear();
+			_lipSyncChannelStatus.reserve(lipSyncSoundResource->getChannelCount());
+			for (uint i = 0; i < lipSyncSoundResource->getChannelCount(); i++)
+				_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
+		}
 		_talkieSpeechDataPlayNow = true;
 	}
 
@@ -70,6 +74,7 @@ void PrisonerEngine::stopTalkieSpeech() {
 		_res->unload(_talkieDataResourceCacheSlot);
 		_talkieDataResourceCacheSlot = -1;
 	}
+	_lipSyncChannelStatus.clear();
 }
 
 void PrisonerEngine::updateTalkieSpeech(int16 &pakSlot, uint32 &finishedTime, int16 resourceCacheSlot) {

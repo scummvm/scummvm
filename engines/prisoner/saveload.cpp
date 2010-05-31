@@ -373,9 +373,7 @@ void Actor::save(PrisonerEngine *vm, Common::WriteStream *out) {
 }
 
 void Actor::load(PrisonerEngine *vm, Common::ReadStream *in) {
-debug("Actor::load()");
 	resourceCacheSlot = in->readUint16LE();
-debug("  resourceCacheSlot = %d", resourceCacheSlot);
 	if (resourceCacheSlot != -1) {
 		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
 		unk1 = in->readUint16LE();
@@ -427,7 +425,6 @@ debug("  resourceCacheSlot = %d", resourceCacheSlot);
 		fontInkColor = in->readUint16LE();
 		x = in->readUint16LE();
 		y = in->readUint16LE();
-debug("  x = %d; y = %d", x, y);
 	}
 }
 
@@ -571,7 +568,7 @@ void ScreenText::load(PrisonerEngine *vm, Common::ReadStream *in) {
 		resourceCacheSlot = in->readUint16LE();
 		actorIndex = in->readUint16LE();
 		finishedTime = in->readUint32LE();
-		speechPakSlot = in->readUint16LE();
+		speechPakSlot = in->readUint16LE() - 1; // Dec since the slot is already set to the next slot in-game
 		chunkCount = in->readUint16LE();
 		chunkIndex = in->readUint16LE();
 		inventoryActive = in->readByte();
@@ -739,6 +736,11 @@ void PrisonerEngine::savegame(const char *filename, const char *description) {
 	out->writeUint16LE(_lipSyncResourceCacheSlot);
 	if (_lipSyncResourceCacheSlot != -1) {
 		writeResourceCacheSlotInfo(_lipSyncResourceCacheSlot, _res, out);
+		out->writeUint16LE(_lipSyncChannelStatus.size());
+		for (uint i = 0; i < _lipSyncChannelStatus.size(); i++) {
+			out->writeUint16LE(_lipSyncChannelStatus[i].ticks);
+			out->writeUint16LE(_lipSyncChannelStatus[i].index);
+		}
 	}
 
 	// Scripts
@@ -827,7 +829,6 @@ void PrisonerEngine::loadgame(const char *filename) {
 
 	clearActors();
 
-	debug("#1");
 	// Module & Background
 	_currModuleIndex = in->readUint16LE();
 	_currSceneIndex = in->readUint16LE();
@@ -855,14 +856,12 @@ void PrisonerEngine::loadgame(const char *filename) {
 		setBackgroundObjects(pakName, pakSlot);
 	}
 
-	debug("#2");
 	// Script variables
 	for (uint i = 0; i < 250; i++)
 		_globalScriptVars[i] = in->readUint16LE();
 	for (uint i = 0; i < 300; i++)
 		_moduleScriptVars[i] = in->readUint16LE();
 
-	debug("#3");
 	// Palette
 	// TODO: Unknown palette struct "stru_761EC" seems unused
 	_scenePaletteOk = in->readByte() != 0;
@@ -872,26 +871,21 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_screen->buildPaletteTransTable(_scenePalette, 0);
 	_needToUpdatePalette = true;
 
-	debug("#4");
 	// Palette tasks
 	for (int i = 0; i < kMaxPaletteTasks; i++) {
 		_paletteTasks[i].load(this, in);
 		// TODO: Start palette task
 	}
 
-	debug("#5");
 	// Path system
 	_pathSystem->loadState(in);
 
-	debug("#6");
 	// Scene items
 	_sceneItems.load(this, in);
 
-	debug("#7");
 	// Inventory item combinations
 	_inventoryItemCombinations.load(this, in);
 
-	debug("#8");
 	// Inventory
 	_inventoryItemCursor = in->readUint16LE(); // TODO: sg_inventoryItemCursor
 	// TODO: "someArray" doesn't seem to be used
@@ -909,14 +903,12 @@ void PrisonerEngine::loadgame(const char *filename) {
 		_inventoryItemsResourceCacheIndex = loadResourceCacheSlotInfo<AnimationResource>(_res, in);
 	}
 
-	debug("#9");
 	// Actor frame sounds
 	_actorFrameSoundItemsCount = in->readUint16LE();
 	if (_actorFrameSoundItemsCount > 0) {
 		_actorFrameSounds.load(this, in);
 	}
 
-	debug("#10");
 	// Actors
 	_exitZoneActionFlag = in->readByte();
 	_mainActorIndex = in->readUint16LE();
@@ -924,11 +916,8 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_cameraDeltaX = in->readUint16LE();
 	_cameraDeltaY = in->readUint16LE();
 
-	debug("#11");
-
 	// Actor sprites
 	_actorSprites.load(this, in);
-	debug("#12");
 
 	// Actors
 	_actors.load(this, in);
@@ -956,31 +945,26 @@ void PrisonerEngine::loadgame(const char *filename) {
 	restoreActorSprites();
 	buildActorSpriteDrawQueue();
 
-	debug("#13");
 	// Alt actor animations
 	_altActorAnimations.load(this, in);
 
 	restoreActorSprites();
 
-	debug("#14");
 	// Zones
 	_zones.load(this, in);
 	_zoneIndexAtMouse = in->readUint16LE();
 
-	debug("#15");
 	// Main actor saved path/queued action
 	_actorPathFlag = in->readByte();
 	_actorPathX = in->readUint16LE();
 	_actorPathY = in->readUint16LE();
 	_zoneActionItem.load(this, in);
 
-	debug("#16");
 	// Zone actions
 	_queuedZoneAction.load(this, in);
 	_zoneActions.load(this, in);
 	_currZoneActionIndex = in->readUint16LE();
 
-	debug("#17");
 	// LipSync
 	_lipSyncX = in->readUint16LE();
 	_lipSyncY = in->readUint16LE();
@@ -991,10 +975,18 @@ void PrisonerEngine::loadgame(const char *filename) {
 		Common::String pakName;
 		int16 pakSlot;
 		readResourceCacheSlotInfo(in, pakName, pakSlot);
+		int16 count = in->readUint16LE();
+		_lipSyncChannelStatusRestored = true;
+		_lipSyncChannelStatus.clear();
+		_lipSyncChannelStatus.reserve(count);
+		for (uint i = 0; i < count; i++) {
+			_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
+			_lipSyncChannelStatus[i].ticks = in->readUint16LE();
+			_lipSyncChannelStatus[i].index = in->readUint16LE();
+		}
 		startLipSync(pakName, pakSlot, _lipSyncScriptNumber, _lipSyncActorIndex, _lipSyncX, _lipSyncY);
 	}
 
-	debug("#18");
 	// Scripts
 	_enterSceneScriptIndex = in->readUint16LE();
 	_enterSceneScriptProgramIndex = in->readUint16LE();
@@ -1003,7 +995,6 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_scriptPrograms[0].load(this, in);
 	_scriptPrograms[1].load(this, in);
 
-	debug("#19");
 	// Dialog
 	_dialogs.load(this, in);
 	for (uint i = 0; i < 50; i++)
@@ -1018,11 +1009,9 @@ void PrisonerEngine::loadgame(const char *filename) {
 	if (_dialogRunning)
 		startDialog(_currDialogIndex);
 
-	debug("#20");
 	// User input counter
 	_userInputCounter = in->readUint16LE();
 
-	debug("#21");
 	// Text colors
 	_screenTextFontColor.load(this, in);
 	_inventoryScreenTextFontColor.load(this, in);
@@ -1031,7 +1020,6 @@ void PrisonerEngine::loadgame(const char *filename) {
 	_dialogFontColor.load(this, in);
 	_dialogHoverFontColor.load(this, in);
 
-	debug("#22");
 	// Screen texts
 	// Unused: g_currTextItemIndex
 	_screenTexts.load(this, in);
@@ -1052,8 +1040,6 @@ void PrisonerEngine::loadgame(const char *filename) {
 	updateScreen(true, _cameraX + _mouseX, _cameraY + _mouseY);
 	_backgroundFlag = 4;
 	_updateDirtyRectsFlag = true;
-
-	debug("#XX");
 
 	delete in;
 

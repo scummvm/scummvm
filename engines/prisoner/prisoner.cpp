@@ -108,7 +108,7 @@ Common::Error PrisonerEngine::run() {
 	_languageChar = 'E';
 	_currModuleIndex = 2;
 
-    _isSaveAllowed = true;
+	_isSaveAllowed = true;
 
 	_cameraX = 0;
 	_cameraY = 0;
@@ -141,8 +141,10 @@ Common::Error PrisonerEngine::run() {
 #endif
 
 #if 0
-	Common::String pakName = "E_TCETXT";
-	_res->dump(pakName, 1, 3);
+	//Common::String pakName = "E_TCETXT";
+	//_res->dump(pakName, 1, 3);
+	Common::String pakName = "E_M02R06";
+	_res->dump(pakName, 25, 16);
 #endif
 
 #if 0
@@ -251,6 +253,7 @@ Common::Error PrisonerEngine::run() {
 	_lipSyncScriptNumber = -1;
 	_lipSyncActorIndex = -1;
 	_lipSyncResourceCacheSlot = -1;
+	_lipSyncChannelStatusRestored = false;
 
 	/* Inventory init */
 	_inventoryBarEnabled = false;
@@ -341,6 +344,8 @@ Common::Error PrisonerEngine::run() {
 			_screen->setFullPalette(_effectPalette);
 			_needToUpdatePalette = false;
 		}
+
+		_loadingSavegame = false;
 
 #if 0
 		// Test: Draw the main actor's path
