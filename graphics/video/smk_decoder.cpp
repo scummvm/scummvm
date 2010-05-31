@@ -361,7 +361,7 @@ SmackerDecoder::~SmackerDecoder() {
 }
 
 uint32 SmackerDecoder::getElapsedTime() const {
-	if (_audioStream)
+	if (_audioStream && _audioStarted)
 		return _mixer->getSoundElapsedTime(_audioHandle);
 
 	return VideoDecoder::getElapsedTime();
@@ -437,6 +437,9 @@ bool SmackerDecoder::load(Common::SeekableReadStream &stream) {
 		_header.audioInfo[i].hasV2Compression = !(audioInfo & 0x8000000) &&
 												!(audioInfo & 0x4000000);
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
+
+		if (_header.audioInfo[i].hasV2Compression)
+			warning("Unhandled Smacker v2 audio compression");
 
 		if (_header.audioInfo[i].hasAudio && i == 0)
 			_audioStream = Audio::makeQueuingAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
@@ -541,7 +544,11 @@ Surface *SmackerDecoder::decodeNextFrame() {
 
 			_fileStream->read(soundBuffer, chunkSize);
 
-			if (_header.audioInfo[i].isCompressed) {
+			if (_header.audioInfo[i].hasV2Compression) {
+				// TODO: Compressed audio (Bink RDFT encoded)
+				free(soundBuffer);
+				continue;
+			} else if (_header.audioInfo[i].isCompressed) {
 				// Compressed audio (Huffman DPCM encoded)
 				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
 				free(soundBuffer);
