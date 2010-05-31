@@ -16,7 +16,8 @@ MODULE_OBJS := \
     systemps2.o \
     ps2mutex.o \
     ps2time.o \
-	ps2debug.o
+	ps2debug.o \
+	ps2loader.o
 
 MODULE_DIRS += \
 	backends/platform/ps2/
