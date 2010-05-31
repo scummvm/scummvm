@@ -151,16 +151,14 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 			source++;
 		}
 		while (*source) {
-			if (*source == ' ') {
-				source++; // skip spaces - happens in lsl3 intro
-				// TODO: find the cause for those spaces. ssci breaks when encountering spaces, but we even get a leading
-				//  space in lsl3 (" -97 ") which would actually mean we need to return 0
-				continue;
-			}
 			if ((*source < '0') || (*source > '9')) {
-				// TODO: this happens in lsl5 right in the intro -> we get '1' '3' 0xCD 0xCD 0xCD 0xCD 0xCD
-				//       find out why this happens and fix it
-				warning("Invalid character in kReadNumber input");
+				// Sierras atoi stopped processing at anything different than number
+				//  Sometimes the input has a trailing space, that's fine (example: lsl3)
+				if (*source != ' ') {
+					// TODO: this happens in lsl5 right in the intro -> we get '1' '3' 0xCD 0xCD 0xCD 0xCD 0xCD
+					//       find out why this happens and fix it
+					warning("Invalid character in kReadNumber input");
+				}
 				break;
 			}
 			result *= 10;
