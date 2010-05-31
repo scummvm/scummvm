@@ -252,45 +252,12 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	}
 }
 
-
-
-int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, int *was_new) {
-	*was_new = 1;
-
-	SegmentId seg_id = segMan->getScriptSegment(script_nr);
-	Script *scr = segMan->getScriptIfLoaded(seg_id);
-	if (scr) {
-		if (!scr->isMarkedAsDeleted()) {
-			scr->incrementLockers();
-			return seg_id;
-		} else {
-			scr->freeScript();
-		}
-	} else {
-		scr = segMan->allocateScript(script_nr, &seg_id);
-	}
-
-	scr->init(script_nr, resMan);
-	scr->load(resMan);
-
-	*was_new = 0;
-
-	return seg_id;
-}
-
-int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int script_nr) {
+int script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 	int objType;
 	uint32 objLength = 0;
 	int relocation = -1;
-	int was_new;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &was_new);
 	uint16 curOffset = oldScriptHeader ? 2 : 0;
-
-	if (was_new)
-		return seg_id;
-
-	Script *scr = segMan->getScript(seg_id);
 
 	if (oldScriptHeader) {
 		// Old script block
@@ -299,7 +266,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		// number of locals we need; these are then allocated and zeroed.
 		int localsCount = READ_LE_UINT16(scr->_buf);
 		if (localsCount)
-			segMan->scriptInitialiseLocalsZero(seg_id, localsCount);
+			segMan->scriptInitialiseLocalsZero(segmentId, localsCount);
 	}
 
 	// Now do a first pass through the script objects to find the
@@ -315,7 +282,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 
 		switch (objType) {
 		case SCI_OBJ_LOCALVARS:
-			segMan->scriptInitialiseLocals(make_reg(seg_id, curOffset));
+			segMan->scriptInitialiseLocals(make_reg(segmentId, curOffset));
 			break;
 		case SCI_OBJ_CLASS: {
 			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
@@ -327,14 +294,14 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 					segMan->resizeClassTable(segMan->classTableSize() + 1);
 				} else {
 					warning("Invalid species %d(0x%x) not in interval "
-							  "[0,%d) while instantiating script %d\n",
+							  "[0,%d) while instantiating script at segment %d\n",
 							  species, species, segMan->classTableSize(),
-							  script_nr);
+							  segmentId);
 					return 0;
 				}
 			}
 
-			segMan->setClassOffset(species, make_reg(seg_id, classpos));
+			segMan->setClassOffset(species, make_reg(segmentId, classpos));
 			// Set technical class position-- into the block allocated for it
 		}
 		break;
@@ -358,7 +325,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		objLength = scr->getHeap(curOffset + 2);
 		curOffset += 4;		// skip header
 
-		reg_t addr = make_reg(seg_id, curOffset);
+		reg_t addr = make_reg(segmentId, curOffset);
 
 		switch (objType) {
 		case SCI_OBJ_CODE:
@@ -387,33 +354,37 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
 
 	if (relocation >= 0)
-		scr->relocate(make_reg(seg_id, relocation));
+		scr->relocate(make_reg(segmentId, relocation));
 
-	return seg_id;		// instantiation successful
+	return segmentId;		// instantiation successful
 }
 
-int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
-	int was_new;
-	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &was_new);
+int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNum) {
+	SegmentId segmentId = segMan->getScriptSegment(scriptNum);
+	Script *scr = segMan->getScriptIfLoaded(segmentId);
+	if (scr) {
+		if (!scr->isMarkedAsDeleted()) {
+			scr->incrementLockers();
+			return segmentId;
+		} else {
+			scr->freeScript();
+		}
+	} else {
+		scr = segMan->allocateScript(scriptNum, &segmentId);
+	}
 
-	if (was_new)
-		return seg_id;
+	scr->init(scriptNum, resMan);
+	scr->load(resMan);
 
-	Script *scr = segMan->getScript(seg_id);
-
-	int heapStart = scr->getScriptSize();
-	segMan->scriptInitialiseLocals(make_reg(seg_id, heapStart + 4));
-	segMan->scriptInitialiseObjectsSci11(seg_id);
-	scr->relocate(make_reg(seg_id, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
-
-	return seg_id;
-}
-
-int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr) {
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		return script_instantiate_sci11(resMan, segMan, script_nr);
-	else
-		return script_instantiate_sci0(resMan, segMan, script_nr);
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		int heapStart = scr->getScriptSize();
+		segMan->scriptInitialiseLocals(make_reg(segmentId, heapStart + 4));
+		segMan->scriptInitialiseObjectsSci11(segmentId);
+		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
+		return segmentId;
+	} else {
+		return script_instantiate_sci0(scr, segmentId, segMan);
+	}
 }
 
 void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
