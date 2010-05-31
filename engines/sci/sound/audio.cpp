@@ -235,6 +235,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	uint32 audioCompressionType = audioRes->getAudioCompressionType();
 
 	if (audioCompressionType) {
+#if (defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC))
 		// Compressed audio made by our tool
 		byte *compressedData = (byte *)malloc(audioRes->size);
 		assert(compressedData);
@@ -261,6 +262,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 			break;
 		}
+#else
+		error("Compressed audio file encountered, but no appropriate decoder is compiled in");
+#endif
 	} else {
 		// Original source file
 		if (audioRes->_headerSize > 0) {
