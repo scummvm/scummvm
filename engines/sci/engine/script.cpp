@@ -252,10 +252,9 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	}
 }
 
-int script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
+void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 	int objType;
 	uint32 objLength = 0;
-	int relocation = -1;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	uint16 curOffset = oldScriptHeader ? 2 : 0;
 
@@ -293,11 +292,11 @@ int script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 					warning("Applying workaround for an off-by-one invalid species access");
 					segMan->resizeClassTable(segMan->classTableSize() + 1);
 				} else {
-					warning("Invalid species %d(0x%x) not in interval "
+					error("Invalid species %d(0x%x) not in interval "
 							  "[0,%d) while instantiating script at segment %d\n",
 							  species, species, segMan->classTableSize(),
 							  segmentId);
-					return 0;
+					return;
 				}
 			}
 
@@ -342,21 +341,12 @@ int script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 			}
 		} // if object or class
 		break;
-		case SCI_OBJ_POINTERS: // A relocation table
-			relocation = addr.offset;
-			break;
-
 		default:
 			break;
 		}
 
 		curOffset += objLength - 4;
 	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
-
-	if (relocation >= 0)
-		scr->relocate(make_reg(segmentId, relocation));
-
-	return segmentId;		// instantiation successful
 }
 
 int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNum) {
@@ -381,10 +371,14 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNu
 		segMan->scriptInitialiseLocals(make_reg(segmentId, heapStart + 4));
 		segMan->scriptInitialiseObjectsSci11(segmentId);
 		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
-		return segmentId;
 	} else {
-		return script_instantiate_sci0(scr, segmentId, segMan);
+		script_instantiate_sci0(scr, segmentId, segMan);
+		byte *relocationBlock = scr->findBlock(SCI_OBJ_POINTERS);
+		if (relocationBlock)
+			scr->relocate(make_reg(segmentId, relocationBlock - scr->_buf + 4));
 	}
+
+	return segmentId;
 }
 
 void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
