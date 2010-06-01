@@ -857,7 +857,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// Create a new EngineState object
-	retval = new EngineState(s->_voc, s->_segMan);
+	retval = new EngineState(s->_segMan);
 	retval->_event = s->_event;
 
 	// Copy some old data
@@ -897,11 +897,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
 	retval->game_start_time = g_system->getMillis();
-
-	// static parser information:
-
-	if (retval->_voc)
-		retval->_voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 
 	retval->successor = NULL;
 

@@ -190,7 +190,7 @@ Common::Error SciEngine::run() {
 
 	_features = new GameFeatures(segMan, _kernel);
 
-	_gamestate = new EngineState(_vocabulary, segMan);
+	_gamestate = new EngineState(segMan);
 
 	_gamestate->_event = new SciEvent(_resMan);
 

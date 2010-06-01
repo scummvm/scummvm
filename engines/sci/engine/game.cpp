@@ -99,10 +99,12 @@ int game_init(EngineState *s) {
 		return 1;
 	}
 
-	if (s->_voc) {
-		s->_voc->parserIsValid = false; // Invalidate parser
-		s->_voc->parser_event = NULL_REG; // Invalidate parser event
-		s->_voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
+	// Reset parser
+	Vocabulary *voc = g_sci->getVocabulary();
+	if (voc) {
+		voc->parserIsValid = false; // Invalidate parser
+		voc->parser_event = NULL_REG; // Invalidate parser event
+		voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
 	// Initialize menu TODO: Actually this should be another init()

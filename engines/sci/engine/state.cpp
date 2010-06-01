@@ -69,8 +69,8 @@ static const uint16 s_halfWidthSJISMap[256] = {
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
 
-EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
-: _voc(voc), _segMan(segMan), _dirseeker() {
+EngineState::EngineState(SegManager *segMan)
+: _segMan(segMan), _dirseeker() {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;

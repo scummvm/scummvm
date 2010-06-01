@@ -95,14 +95,13 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(Vocabulary *voc, SegManager *segMan);
+	EngineState(SegManager *segMan);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 public:
 	SegManager *_segMan; /**< The segment manager */
-	Vocabulary *_voc;
 
 	/* Non-VM information */
 

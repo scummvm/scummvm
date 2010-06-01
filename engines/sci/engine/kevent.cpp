@@ -67,8 +67,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	oldy = mousePos.y;
 	curEvent = s->_event->get(mask);
 
-	if (s->_voc)
-		s->_voc->parser_event = NULL_REG; // Invalidate parser event
+	if (g_sci->getVocabulary())
+		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
 
 	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
 	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
