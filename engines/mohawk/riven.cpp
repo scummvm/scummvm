@@ -233,6 +233,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Stop any videos playing
 	_video->stopVideos();
+	_video->clearMLST();
 
 	// Clear the old stack files out
 	for (uint32 i = 0; i < _mhk.size(); i++)
@@ -310,7 +311,6 @@ void MohawkEngine_Riven::refreshCard() {
 	_gfx->clearWaterEffects();
 	_gfx->_activatedPLSTs.clear();
 	_video->stopVideos();
-	_video->_mlstRecords.clear();
 	_gfx->drawPLST(1);
 	_activatedSLST = false;
 

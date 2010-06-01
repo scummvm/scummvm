@@ -35,7 +35,6 @@ VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
 }
 
 VideoManager::~VideoManager() {
-	_mlstRecords.clear();
 	stopVideos();
 }
 
@@ -125,7 +124,7 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	delete _videoStreams[videoHandle].video;
 	_videoStreams[videoHandle].video = 0;
 	_videoStreams[videoHandle].id = 0;
-	_videoStreams[videoHandle].filename = "";
+	_videoStreams[videoHandle].filename.clear();
 }
 
 void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
@@ -158,7 +157,7 @@ bool VideoManager::updateBackgroundMovies() {
 				delete _videoStreams[i].video;
 				_videoStreams[i].video = 0;
 				_videoStreams[i].id = 0;
-				_videoStreams[i].filename = "";
+				_videoStreams[i].filename.clear();
 				continue;
 			}
 		}
@@ -245,13 +244,25 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 		if (mlstRecord.u1 != 1)
 			warning("mlstRecord.u1 not 1");
 
+		// We've found a match, add it
 		if (mlstRecord.index == mlstId) {
+			// Make sure we don't have a duplicate
+			for (uint32 j = 0; j < _mlstRecords.size(); j++)
+				if (_mlstRecords[j].index == mlstId) {
+					_mlstRecords.remove_at(j);
+					break;
+				}
+
 			_mlstRecords.push_back(mlstRecord);
 			break;
 		}
 	}
 
 	delete mlstStream;
+}
+
+void VideoManager::clearMLST() {
+	_mlstRecords.clear();
 }
 
 void VideoManager::playMovie(uint16 id) {

@@ -82,15 +82,13 @@ public:
 
 	// Riven-related functions
 	void activateMLST(uint16 mlstId, uint16 card);
+	void clearMLST();
 	void enableMovie(uint16 id);
 	void disableMovie(uint16 id);
 	void disableAllMovies();
 	void playMovie(uint16 id);
 	void stopMovie(uint16 id);
 	void playMovieBlocking(uint16 id);
-
-	// Riven-related variables
-	Common::Array<MLSTRecord> _mlstRecords;
 
 	// Handle functions
 	VideoHandle findVideoHandle(uint16 id);
@@ -100,13 +98,15 @@ public:
 private:
 	MohawkEngine *_vm;
 
-	void waitUntilMovieEnds(VideoHandle videoHandle);
+	// Riven-related variables
+	Common::Array<MLSTRecord> _mlstRecords;
 
 	// Keep tabs on any videos playing
 	Common::Array<VideoEntry> _videoStreams;
 
 	VideoHandle createVideoHandle(uint16 id, uint16 x, uint16 y, bool loop);
 	VideoHandle createVideoHandle(Common::String filename, uint16 x, uint16 y, bool loop);
+	void waitUntilMovieEnds(VideoHandle videoHandle);
 };
 
 } // End of namespace Mohawk
