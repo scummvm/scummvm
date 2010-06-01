@@ -150,8 +150,6 @@ public:
 	bool setGraphicsMode(int mode);
 	int getGraphicsMode() const;
 
-	bool openCD(int drive);
-
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
 	bool getFeatureState(Feature f);
