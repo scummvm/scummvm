@@ -54,7 +54,6 @@ SegManager::SegManager(ResourceManager *resMan) {
 	createClassTable();
 }
 
-// Destroy the object, free the memorys if allocated before
 SegManager::~SegManager() {
 	resetSegMan();
 }
@@ -79,6 +78,25 @@ void SegManager::resetSegMan() {
 	// Reinitialize class table
 	_classTable.clear();
 	createClassTable();
+}
+
+void SegManager::initSysStrings() {
+	sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &sysStringsSegment);
+
+	// Allocate static buffer for savegame and CWD directories
+	SystemString *strSaveDir = &sysStrings->_strings[SYS_STRING_SAVEDIR];
+	strSaveDir->_name = "savedir";
+	strSaveDir->_maxSize = MAX_SAVE_DIR_SIZE;
+	strSaveDir->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
+	// Set the savegame dir (actually, we set it to a fake value,
+	// since we cannot let the game control where saves are stored)
+	::strcpy(strSaveDir->_value, "");
+
+	// Allocate static buffer for the parser base
+	SystemString *strParserBase = &sysStrings->_strings[SYS_STRING_PARSER_BASE];
+	strParserBase->_name = "parser-base";
+	strParserBase->_maxSize = MAX_PARSER_BASE;
+	strParserBase->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
 }
 
 SegmentId SegManager::findFreeSegment() const {
@@ -391,10 +409,6 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	retval->_capacity = size;
 
 	return retval;
-}
-
-SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	return (SystemStrings *)allocSegment(new SystemStrings(), segid);
 }
 
 void SegManager::freeHunkEntry(reg_t addr) {

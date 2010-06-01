@@ -160,10 +160,6 @@ public:
 	 */
 	void shrinkStackToBase();
 
-	/* System strings */
-	SegmentId sys_strings_segment;
-	SystemStrings *sys_strings;
-
 	reg_t _gameObj; /**< Pointer to the game object */
 
 	int gc_countdown; /**< Number of kernel calls until next gc */

@@ -182,15 +182,10 @@ public:
 	// 5. System Strings
 
 	/**
-	 * Allocates a system string table
-	 * See also sys_string_acquire();
-	 * @param[in] segid	Segment ID of the stack
-	 * @returns			The physical stack
+	 * Initializes the system string table.
 	 */
-	SystemStrings *allocateSysStrings(SegmentId *segid);
+	void initSysStrings();
 
-
-	// 5. System Strings
 
 	// 6, 7. Lists and Nodes
 
@@ -441,6 +436,11 @@ public:
 	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
 	void resizeClassTable(uint32 size) { _classTable.resize(size); }
 
+	/**
+	 * Obtains the system strings segment ID
+	 */
+	SegmentId getSysStringsSegment() { return sysStringsSegment; }
+
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
 	// Only accessible from saveLoadWithSerializer()
@@ -466,6 +466,13 @@ private:
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
 	SegmentId Nodes_seg_id; ///< ID of the (a) node segment
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
+
+	/* System strings */
+	SegmentId sysStringsSegment;
+public:	// TODO: make private. Only kString() needs direct access
+	SystemStrings *sysStrings;
+
+private:
 
 #ifdef ENABLE_SCI32
 	SegmentId Arrays_seg_id;

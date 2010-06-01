@@ -233,11 +233,6 @@ Common::Error SciEngine::run() {
 	script_adjust_opcode_formats(_gamestate);
 	_kernel->loadKernelNames(getGameID());
 
-	// Set the savegame dir (actually, we set it to a fake value,
-	// since we cannot let the game control where saves are stored)
-	assert(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value != 0);
-	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
-
 	SciVersion soundVersion = _features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);

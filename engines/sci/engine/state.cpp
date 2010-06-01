@@ -94,9 +94,6 @@ EngineState::EngineState(Vocabulary *voc, SegManager *segMan)
 
 	script_000 = 0;
 
-	sys_strings_segment = 0;
-	sys_strings = 0;
-
 	_gameObj = NULL_REG;
 
 	gc_countdown = 0;

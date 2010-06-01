@@ -575,16 +575,16 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 + 1 : argv[5].toUint16();
 	
 		// We have a special case here for argv[1] being a system string
-		if (argv[1].segment == s->sys_strings_segment) {
+		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
 			// Resize if necessary
-			if ((uint32)s->sys_strings->_strings[argv[1].toUint16()]._maxSize < index1 + count) {
-				delete[] s->sys_strings->_strings[argv[1].toUint16()]._value;
-				s->sys_strings->_strings[argv[1].toUint16()]._maxSize = index1 + count;
-				s->sys_strings->_strings[argv[1].toUint16()]._value = new char[index1 + count];
-				memset(s->sys_strings->_strings[argv[1].toUint16()]._value, 0, index1 + count);
+			if ((uint32)s->_segMan->sysStrings->_strings[argv[1].toUint16()]._maxSize < index1 + count) {
+				delete[] s->_segMan->sysStrings->_strings[argv[1].toUint16()]._value;
+				s->_segMan->sysStrings->_strings[argv[1].toUint16()]._maxSize = index1 + count;
+				s->_segMan->sysStrings->_strings[argv[1].toUint16()]._value = new char[index1 + count];
+				memset(s->_segMan->sysStrings->_strings[argv[1].toUint16()]._value, 0, index1 + count);
 			}
 
-			strncpy(s->sys_strings->_strings[argv[1].toUint16()]._value + index1, string2.c_str() + index2, count);
+			strncpy(s->_segMan->sysStrings->_strings[argv[1].toUint16()]._value + index1, string2.c_str() + index2, count);
 		} else {
 			SciString *string1 = s->_segMan->lookupString(argv[1]);
 

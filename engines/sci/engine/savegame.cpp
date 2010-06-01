@@ -893,8 +893,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->_gameObj = s->_gameObj;
 	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
-	retval->sys_strings = (SystemStrings *)(retval->_segMan->_heap[retval->sys_strings_segment]);
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
@@ -903,7 +901,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// static parser information:
 
 	if (retval->_voc)
-		retval->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+		retval->_voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 
 	retval->successor = NULL;
 

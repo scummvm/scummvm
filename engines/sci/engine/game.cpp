@@ -67,13 +67,7 @@ int script_init_engine(EngineState *s) {
 
 	s->script_000 = s->_segMan->getScript(script_000_segment);
 
-	s->sys_strings = s->_segMan->allocateSysStrings(&s->sys_strings_segment);
-
-	// Allocate static buffer for savegame and CWD directories
-	SystemString *str = &s->sys_strings->_strings[SYS_STRING_SAVEDIR];
-	str->_name = "savedir";
-	str->_maxSize = MAX_SAVE_DIR_SIZE;
-	str->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
+	s->_segMan->initSysStrings();
 
 	s->r_acc = s->r_prev = NULL_REG;
 	s->restAdjust = 0;
@@ -108,7 +102,7 @@ int game_init(EngineState *s) {
 	if (s->_voc) {
 		s->_voc->parserIsValid = false; // Invalidate parser
 		s->_voc->parser_event = NULL_REG; // Invalidate parser event
-		s->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+		s->_voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
 	// Initialize menu TODO: Actually this should be another init()
@@ -116,11 +110,6 @@ int game_init(EngineState *s) {
 		g_sci->_gfxMenu->reset();
 
 	s->successor = NULL; // No successor
-
-	SystemString *str = &s->sys_strings->_strings[SYS_STRING_PARSER_BASE];
-	str->_name = "parser-base";
-	str->_maxSize = MAX_PARSER_BASE;
-	str->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
 
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;
