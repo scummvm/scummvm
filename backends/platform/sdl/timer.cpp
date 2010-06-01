@@ -47,11 +47,10 @@ SdlSubSys_Timer::~SdlSubSys_Timer() {
 	}
 }
 
-void SdlSubSys_Timer::timerInit(OSystem *mainSys) {
+void SdlSubSys_Timer::timerInit() {
 	if (_inited) {
 		return;
 	}
-	_mainSys = mainSys;
 
 	if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
 		error("Could not initialize SDL Timer: %s", SDL_GetError());

@@ -39,7 +39,7 @@ public:
 	SdlSubSys_Mutex();
 	~SdlSubSys_Mutex();
 
-	virtual void mutexInit(OSystem *mainSys);
+	virtual void mutexInit();
 	virtual void mutexDone();
 
 	bool hasFeature(Feature f);
@@ -60,9 +60,6 @@ protected:
 	 * when accessing the screen.
 	 */
 	MutexRef _graphicsMutex;
-
-private:
-	OSystem *_mainSys;
 };
 
 

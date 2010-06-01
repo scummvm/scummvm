@@ -39,7 +39,7 @@ public:
 	SdlSubSys_Timer();
 	~SdlSubSys_Timer();
 
-	virtual void timerInit(OSystem *mainSys);
+	virtual void timerInit();
 	virtual void timerDone();
 
 	bool hasFeature(Feature f);
@@ -60,9 +60,6 @@ protected:
 
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
-
-private:
-	OSystem *_mainSys;
 };
 
 

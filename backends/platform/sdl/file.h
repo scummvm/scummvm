@@ -39,7 +39,7 @@ public:
 	SdlSubSys_File();
 	~SdlSubSys_File();
 
-	virtual void fileInit(OSystem *mainSys);
+	virtual void fileInit();
 	virtual void fileDone();
 
 	bool hasFeature(Feature f);
@@ -58,9 +58,6 @@ protected:
 
 	FilesystemFactory *_fsFactory;
 	Common::SaveFileManager *_savefile;
-
-private:
-	OSystem *_mainSys;
 };
 
 

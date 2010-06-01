@@ -68,16 +68,29 @@ SdlSubSys_File::SdlSubSys_File()
 	_fsFactory(0),
 	_savefile(0) {
 
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
 SdlSubSys_File::~SdlSubSys_File() {
+	if (_inited) {
+		fileDone();
+	}
 }
 
-void SdlSubSys_File::fileInit(OSystem *mainSys) {
+void SdlSubSys_File::fileInit() {
 	if (_inited) {
 		return;
 	}
-	_mainSys = mainSys;
 
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
@@ -89,23 +102,16 @@ void SdlSubSys_File::fileInit(OSystem *mainSys) {
 	#endif
 	}
 
-#if defined(__amigaos4__)
-	_fsFactory = new AmigaOSFilesystemFactory();
-#elif defined(UNIX)
-	_fsFactory = new POSIXFilesystemFactory();
-#elif defined(WIN32)
-	_fsFactory = new WindowsFilesystemFactory();
-#elif defined(__SYMBIAN32__)
-	// Do nothing since its handled by the Symbian SDL inheritance
-#else
-	#error Unknown and unsupported FS backend
-#endif
-
 	_inited = true;
 }
 
 void SdlSubSys_File::fileDone() {
+	// Event Manager requires save manager for storing
+	// recorded events
+	delete getEventManager();
 	delete _savefile;
+
+	_inited = false;
 }
 
 bool SdlSubSys_File::hasFeature(Feature f) {

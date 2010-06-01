@@ -27,7 +27,8 @@
 
 SdlSubSys_Mutex::SdlSubSys_Mutex()
 	:
-	_inited(false) {
+	_inited(false),
+	_graphicsMutex(0) {
 
 }
 
@@ -37,11 +38,10 @@ SdlSubSys_Mutex::~SdlSubSys_Mutex() {
 	}
 }
 
-void SdlSubSys_Mutex::mutexInit(OSystem *mainSys) {
+void SdlSubSys_Mutex::mutexInit() {
 	if (_inited) {
 		return;
 	}
-	_mainSys = mainSys;
 
 	_graphicsMutex = createMutex();
 
