@@ -111,7 +111,7 @@ int game_init(EngineState *s) {
 	if (g_sci->_gfxMenu)
 		g_sci->_gfxMenu->reset();
 
-	s->successor = NULL; // No successor
+	s->restoring = false;
 
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;
@@ -134,9 +134,8 @@ int game_init(EngineState *s) {
 }
 
 int game_exit(EngineState *s) {
-	s->_executionStack.clear();
-
-	if (!s->successor) {
+	if (!s->restoring) {
+		s->_executionStack.clear();
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state

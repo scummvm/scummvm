@@ -174,7 +174,12 @@ public:
 	uint _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
-	EngineState *successor; /**< Successor of this state: Used for restoring */
+	/**
+	 * Resets the engine state.
+	 */
+	void reset(bool isRestoring);
+
+	bool restoring;	/**< A flag to indicate if a game is being restored */
 };
 
 } // End of namespace Sci

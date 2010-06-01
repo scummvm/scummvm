@@ -72,45 +72,49 @@ static const uint16 s_halfWidthSJISMap[256] = {
 EngineState::EngineState(SegManager *segMan)
 : _segMan(segMan), _dirseeker() {
 
+	reset(false);
+}
+
+EngineState::~EngineState() {
+	delete _msgState;
+}
+
+void EngineState::reset(bool isRestoring) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sfx_init_flags = 0;
 #endif
 
-	restarting_flags = 0;
+	if (!isRestoring) {
+		script_000 = 0;
+		_gameObj = NULL_REG;
+
+		_memorySegmentSize = 0;
+		_soundCmd = 0;
+
+		restarting_flags = 0;
+
+		execution_stack_base = 0;
+		_executionStackPosChanged = false;
+
+		_fileHandles.resize(5);
+
+		r_acc = NULL_REG;
+		restAdjust = 0;
+		r_prev = NULL_REG;
+
+		stack_base = 0;
+		stack_top = 0;
+	}
 
 	last_wait_time = 0;
 
-	_fileHandles.resize(5);
-
-	execution_stack_base = 0;
-	_executionStackPosChanged = false;
-
-	r_acc = NULL_REG;
-	restAdjust = 0;
-	r_prev = NULL_REG;
-
-	stack_base = 0;
-	stack_top = 0;
-
-	script_000 = 0;
-
-	_gameObj = NULL_REG;
-
 	gc_countdown = 0;
-
-	successor = 0;
 
 	_throttleCounter = 0;
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 
-	_memorySegmentSize = 0;
-
-	_soundCmd = 0;
-}
-
-EngineState::~EngineState() {
-	delete _msgState;
+	restoring = false;
 }
 
 void EngineState::wait(int16 ticks) {

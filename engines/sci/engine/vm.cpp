@@ -1695,17 +1695,16 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 }
 
 static EngineState *_game_run(EngineState *&s) {
-	EngineState *successor = NULL;
-	int game_is_finished = 0;
+	bool restoring = false;
 
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		g_sci->getSciDebugger()->attach();
 
 	do {
 		s->_executionStackPosChanged = false;
-		run_vm(s, successor ? true : false);
+		run_vm(s, restoring);
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
-			successor = NULL;
+			restoring = false;
 			s->_executionStack.clear();
 			s->_executionStackPosChanged = false;
 
@@ -1723,12 +1722,10 @@ static EngineState *_game_run(EngineState *&s) {
 			s->restarting_flags = SCI_GAME_WAS_RESTARTED;
 
 		} else {
-			successor = s->successor;
-			if (successor) {
+			restoring = s->restoring;
+			if (restoring) {
 				game_exit(s);
-				delete s;
-				s = successor;
-
+				s->restoring = false;
 				if (script_abort_flag == 2) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()");
 					s->_executionStack.clear(); // Restart with replay
@@ -1741,9 +1738,9 @@ static EngineState *_game_run(EngineState *&s) {
 				script_abort_flag = 0;
 
 			} else
-				game_is_finished = 1;
+				break;	// exit loop
 		}
-	} while (!game_is_finished);
+	} while (true);
 
 	return s;
 }

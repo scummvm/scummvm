@@ -821,7 +821,6 @@ static void reconstruct_sounds(EngineState *s) {
 #endif
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
-	EngineState *retval;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongLibrary temp;
 #endif
@@ -856,76 +855,66 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		thumbnail = 0;
 	}
 
-	// Create a new EngineState object
-	retval = new EngineState(s->_segMan);
-	retval->_event = s->_event;
-
-	// Copy some old data
-	retval->_soundCmd = s->_soundCmd;
-
-	// Copy memory segment
-	retval->_memorySegmentSize = s->_memorySegmentSize;
-	memcpy(retval->_memorySegment, s->_memorySegment, s->_memorySegmentSize);
-
-	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
+	s->reset(true);
+	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound.sfx_exit();
 #endif
 
 	// Set exec stack base to zero
-	retval->execution_stack_base = 0;
+	s->execution_stack_base = 0;
 
 	// Now copy all current state information
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
-	retval->sfx_init_flags = s->sfx_init_flags;
-	retval->_sound._songlib.freeSounds();
-	retval->_sound._songlib = temp;
-	retval->_soundCmd->updateSfxState(&retval->_sound);
+	temp = s->_sound._songlib;
+	s->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
+	s->sfx_init_flags = s->sfx_init_flags;
+	s->_sound._songlib.freeSounds();
+	s->_sound._songlib = temp;
+	s->_soundCmd->updateSfxState(&retval->_sound);
 #endif
 
-	reconstruct_stack(retval);
-	retval->_segMan->reconstructScripts(retval);
-	retval->_segMan->reconstructClones();
-	retval->_gameObj = s->_gameObj;
-	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
-	retval->gc_countdown = GC_INTERVAL - 1;
+	reconstruct_stack(s);
+	s->_segMan->reconstructScripts(s);
+	s->_segMan->reconstructClones();
+	s->_gameObj = s->_gameObj;
+	s->script_000 = s->_segMan->getScript(s->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
+	s->gc_countdown = GC_INTERVAL - 1;
 
 	// Time state:
-	retval->last_wait_time = g_system->getMillis();
-	retval->game_start_time = g_system->getMillis();
+	s->last_wait_time = g_system->getMillis();
+	s->game_start_time = g_system->getMillis();
 
-	retval->successor = NULL;
+	s->restoring = false;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	retval->_sound._it = NULL;
-	retval->_sound._flags = s->_sound._flags;
-	retval->_sound._song = NULL;
-	retval->_sound._suspended = s->_sound._suspended;
-	reconstruct_sounds(retval);
+	s->_sound._it = NULL;
+	s->_sound._flags = s->_sound._flags;
+	s->_sound._song = NULL;
+	s->_sound._suspended = s->_sound._suspended;
+	reconstruct_sounds(s);
 #else
-	retval->_soundCmd->reconstructPlayList(meta.savegame_version);
+	s->_soundCmd->reconstructPlayList(meta.savegame_version);
 #endif
 
 	// Message state:
-	retval->_msgState = new MessageState(retval->_segMan);
+	s->_msgState = new MessageState(s->_segMan);
 
 #ifdef ENABLE_SCI32
 	if (g_sci->_gui32) {
 		g_sci->_gui32->init();
 	} else {
 #endif
-		g_sci->_gui->resetEngineState(retval);
+		g_sci->_gui->resetEngineState(s);
 		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}
 #endif
 
 
-	s->successor = retval; // Set successor
+	s->restoring = true;
 	script_abort_flag = 2; // Abort current game with replay
 	s->shrinkStackToBase();
 }
