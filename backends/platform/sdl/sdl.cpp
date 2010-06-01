@@ -251,9 +251,9 @@ OSystem_SDL::OSystem_SDL()
 	_screenIsLocked(false),
 	_graphicsMutex(0), _transactionMode(kTransactionNone) {
 
-	// allocate palette storage
-	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+	// clear palette storage
+	memset(_currentPalette, 0, sizeof(_currentPalette));
+	memset(_cursorPalette, 0, sizeof(_cursorPalette));
 
 	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 
@@ -282,8 +282,6 @@ OSystem_SDL::~OSystem_SDL() {
 	closeMixer();
 
 	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
 	free(_mouseData);
 
 	delete _savefile;
@@ -513,8 +511,6 @@ void OSystem_SDL::deinit() {
 	closeMixer();
 
 	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
 	free(_mouseData);
 
 	delete _timer;

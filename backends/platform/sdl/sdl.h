@@ -422,11 +422,11 @@ protected:
 	int _newShakePos;
 
 	// Palette data
-	SDL_Color *_currentPalette;
+	SDL_Color _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 
 	// Cursor palette data
-	SDL_Color *_cursorPalette;
+	SDL_Color _cursorPalette[256];
 
 	/**
 	 * Mutex which prevents multiple threads from interfering with each other
