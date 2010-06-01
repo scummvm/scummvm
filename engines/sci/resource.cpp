@@ -537,8 +537,6 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		// TODO: Load the SCI2.1+ maps (resmap.*) in concurrence with the volumes to
-		// get the proper volume numbers from the maps.
 		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
 			map = addExternalMap(file);
 			break;
@@ -563,6 +561,14 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 			addSource(map, kSourceVolume, file, number);
 		}
 	}
+
+#ifdef ENABLE_SCI32
+	// SCI2.1 resource patches
+	if (Common::File::exists("RESMAP.PAT") && Common::File::exists("RESSCI.PAT")) {
+		// We add this resource with a map which surely won't exist
+		addSource(addExternalMap("RESMAP.PAT", 100), kSourceVolume, "RESSCI.PAT", 100);
+	}
+#endif
 
 	// This function is only called by the advanced detector, and we don't really need
 	// to add a patch directory or message.map here
