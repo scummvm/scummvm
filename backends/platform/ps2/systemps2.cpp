@@ -59,6 +59,8 @@
 #include "backends/platform/ps2/ps2debug.h"
 #include "backends/fs/ps2/ps2-fs-factory.h"
 
+#include "backends/plugins/ps2/ps2-provider.h"
+
 #include "backends/saves/default/default-saves.h"
 #include "common/config-manager.h"
 
@@ -131,6 +133,10 @@ extern "C" int main(int argc, char *argv[]) {
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
 	g_systemPs2->init();
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new PS2PluginProvider());
+#endif
 
 	sioprintf("init done. starting ScummVM.\n");
 	int res = scummvm_main(argc, argv);

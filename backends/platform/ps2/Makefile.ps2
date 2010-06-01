@@ -2,10 +2,8 @@
  include $(PS2SDK)/Defs.make
 
 PS2_EXTRA = /home/tony/GSOC/ps2/sdk-extra
-PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /isjpcm/ee/src /vorbis
-PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /isjpcm/ee/lib /vorbis /vorbis/tremor/.libs /vorbis/tremor
-
-ENABLED=STATIC_PLUGIN
+PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
+PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /vorbis /tremor/tremor
 
 ENABLE_SCUMM = $(ENABLED)
 ENABLE_SCUMM_7_8 = $(ENABLED)
@@ -50,7 +48,6 @@ INCDIR = ../../../
 
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
-
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
 
@@ -71,17 +68,37 @@ OBJS := backends/platform/ps2/DmaPipe.o \
     backends/platform/ps2/systemps2.o \
     backends/platform/ps2/ps2mutex.o \
     backends/platform/ps2/ps2time.o \
-	backends/platform/ps2/ps2debug.o
+	backends/platform/ps2/ps2debug.o \
+	backends/platform/ps2/ps2loader.o
     
 MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
-LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile 
+# Set to 1 to enable, 0 to disable dynamic modules
+DYNAMIC_MODULES = 1
+
+# Variables for dynamic plugin building
+PLUGIN_PREFIX =
+PLUGIN_SUFFIX = .plg
+PLUGIN_EXTRA_DEPS = plugin.syms scummvm-ps2.elf
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-ps2.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
+
+# Test for dynamic plugins
+ifeq ($(DYNAMIC_MODULES),1)
+ENABLED = DYNAMIC_PLUGIN
+DEFINES += -DDYNAMIC_MODULES
+PRE_OBJS_FLAGS = -Wl,--whole-archive
+POST_OBJS_FLAGS = -Wl,--no-whole-archive
+else
+ENABLED = STATIC_PLUGIN
+endif
+
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Tmain_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
-LDFLAGS += -s 
+LDFLAGS += -s
 
 all: $(TARGET)
 
