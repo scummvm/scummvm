@@ -5,6 +5,21 @@ PS2_EXTRA = /home/tony/GSOC/ps2/sdk-extra
 PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /vorbis /tremor/tremor
 
+# Set to 1 to enable, 0 to disable dynamic modules
+DYNAMIC_MODULES = 1
+
+VERBOSE_BUILD=1
+
+# Test for dynamic plugins
+ifeq ($(DYNAMIC_MODULES),1)
+ENABLED = DYNAMIC_PLUGIN
+DEFINES += -DDYNAMIC_MODULES
+PRE_OBJS_FLAGS = -Wl,--whole-archive
+POST_OBJS_FLAGS = -Wl,--no-whole-archive
+else
+ENABLED = STATIC_PLUGIN
+endif
+
 ENABLE_SCUMM = $(ENABLED)
 ENABLE_SCUMM_7_8 = $(ENABLED)
 ENABLE_HE = $(ENABLED)
@@ -49,7 +64,7 @@ INCDIR = ../../../
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
-INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
+INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines -I $(srcdir)/backends/platform/ps2
 
 TARGET = elf/scummvm.elf
 
@@ -75,33 +90,19 @@ MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
-# Set to 1 to enable, 0 to disable dynamic modules
-DYNAMIC_MODULES = 1
-
-# Variables for dynamic plugin building
-PLUGIN_PREFIX =
-PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.syms scummvm-ps2.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-ps2.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
-
-# Test for dynamic plugins
-ifeq ($(DYNAMIC_MODULES),1)
-ENABLED = DYNAMIC_PLUGIN
-DEFINES += -DDYNAMIC_MODULES
-PRE_OBJS_FLAGS = -Wl,--whole-archive
-POST_OBJS_FLAGS = -Wl,--no-whole-archive
-else
-ENABLED = STATIC_PLUGIN
-endif
-
 LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Tmain_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
 LDFLAGS += -s
 
+# Variables for dynamic plugin building
+PLUGIN_PREFIX =
+PLUGIN_SUFFIX = .plg
+PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q, -Tplugin.ld, --retain-symbols-file,plugin.syms -lstdc++ -lc
+
 all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
-
