@@ -183,7 +183,7 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volum
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile) {
+ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = kSourceExtMap;
@@ -191,7 +191,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile) {
 	newsrc->resourceFile = mapFile;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
-	newsrc->volume_number = 0;
+	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -447,11 +447,11 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 int ResourceManager::addAppropriateSources() {
 	Common::ArchiveMemberList files;
 
-	if (Common::File::exists("RESOURCE.MAP")) {
+	if (Common::File::exists("resource.map")) {
 		// SCI0-SCI2 file naming scheme
-		ResourceSource *map = addExternalMap("RESOURCE.MAP");
+		ResourceSource *map = addExternalMap("resource.map");
 
-		SearchMan.listMatchingMembers(files, "RESOURCE.0??");
+		SearchMan.listMatchingMembers(files, "resource.0??");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			const Common::String name = (*x)->getName();
@@ -462,8 +462,8 @@ int ResourceManager::addAppropriateSources() {
 		}
 #ifdef ENABLE_SCI32
 		// GK1CD hires content
-		if (Common::File::exists("ALT.MAP") && Common::File::exists("RESOURCE.ALT"))
-			addSource(addExternalMap("ALT.MAP", 10), kSourceVolume, "RESOURCE.ALT", 10);
+		if (Common::File::exists("alt.map") && Common::File::exists("resource.alt"))
+			addSource(addExternalMap("alt.map", 10), kSourceVolume, "resource.alt", 10);
 #endif
 	} else if (Common::File::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
@@ -486,8 +486,8 @@ int ResourceManager::addAppropriateSources() {
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
-		SearchMan.listMatchingMembers(mapFiles, "RESMAP.0??");
-		SearchMan.listMatchingMembers(files, "RESSCI.0??");
+		SearchMan.listMatchingMembers(mapFiles, "resmap.0??");
+		SearchMan.listMatchingMembers(files, "ressci.0??");
 
 		// We need to have the same number of maps as resource archives
 		if (mapFiles.empty() || files.empty() || mapFiles.size() != files.size())
@@ -509,9 +509,9 @@ int ResourceManager::addAppropriateSources() {
 		}
 
 		// SCI2.1 resource patches
-		if (Common::File::exists("RESMAP.PAT") && Common::File::exists("RESSCI.PAT")) {
+		if (Common::File::exists("resmap.pat") && Common::File::exists("ressci.pat")) {
 			// We add this resource with a map which surely won't exist
-			addSource(addExternalMap("RESMAP.PAT", 100), kSourceVolume, "RESSCI.PAT", 100);
+			addSource(addExternalMap("resmap.pat", 100), kSourceVolume, "ressci.pat", 100);
 		}
 	}
 #else
@@ -520,14 +520,16 @@ int ResourceManager::addAppropriateSources() {
 #endif
 
 	addPatchDir(".");
-	if (Common::File::exists("MESSAGE.MAP"))
-		addSource(addExternalMap("MESSAGE.MAP"), kSourceVolume, "RESOURCE.MSG", 0);
+	if (Common::File::exists("message.map"))
+		addSource(addExternalMap("message.map"), kSourceVolume, "resource.msg", 0);
 
 	return 1;
 }
 
 int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 	ResourceSource *map = 0;
+	ResourceSource *sci21PatchMap = 0;
+	const Common::FSNode *sci21PatchRes = 0;
 
 	// First, find resource.map
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -537,14 +539,32 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+		if (filename.contains("resource.map"))
 			map = addExternalMap(file);
-			break;
+
+		if (filename.contains("resmap.0")) {
+			const char *dot = strrchr(file->getName().c_str(), '.');
+			int number = atoi(dot + 1);
+			map = addExternalMap(file, number);
 		}
+
+#ifdef ENABLE_SCI32
+		// SCI2.1 resource patches
+		if (filename.contains("resmap.pat"))
+			sci21PatchMap = addExternalMap(file, 100);
+
+		if (filename.contains("ressci.pat"))
+			sci21PatchRes = file;
+#endif
 	}
 
 	if (!map)
 		return 0;
+
+#ifdef ENABLE_SCI32
+	if (sci21PatchMap && sci21PatchRes)
+		addSource(sci21PatchMap, kSourceVolume, sci21PatchRes, 100);
+#endif
 
 	// Now find all the resource.0?? files
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -561,14 +581,6 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 			addSource(map, kSourceVolume, file, number);
 		}
 	}
-
-#ifdef ENABLE_SCI32
-	// SCI2.1 resource patches
-	if (Common::File::exists("RESMAP.PAT") && Common::File::exists("RESSCI.PAT")) {
-		// We add this resource with a map which surely won't exist
-		addSource(addExternalMap("RESMAP.PAT", 100), kSourceVolume, "RESSCI.PAT", 100);
-	}
-#endif
 
 	// This function is only called by the advanced detector, and we don't really need
 	// to add a patch directory or message.map here
@@ -1282,7 +1294,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				res->_id = resId;
 				
 				// NOTE: We add the map's volume number here to the specified volume number
-				// for SCI2.1 and SCI3 maps that are not RESMAP.000. The RESMAP.* files' numbers
+				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 				// need to be used in concurrence with the volume specified in the map to get
 				// the actual resource file.
 				res->_source = getVolume(map, volume_nr + map->volume_number);

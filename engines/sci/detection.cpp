@@ -140,9 +140,11 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
 	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
 	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
+	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
 	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
 	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
 	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	// gk2 is the same
 	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
@@ -152,6 +154,9 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
 	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
 	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	// kq5 is the same
+	// kq6 is the same
+	// kq7 is the same
 	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
@@ -165,24 +170,30 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	// lsl6 is the same
 	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
 	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
+	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE     },
+	// TODO: distinguish the full version of Phantasmagoria from the demo
 	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
 	{ "pq",			"pq2",				SCI_VERSION_NONE     },
 	// pq3 is the same
 	// pq4 is the same
-	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
 	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
 	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
 	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
 	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	// rama is the same
+	// TODO: distinguish the full version of rama from the demo
 	{ "thegame",	"slater",			SCI_VERSION_NONE     },
 	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
 	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
 	// sq3 is the same
 	// sq4 is the same
 	// sq5 is the same
+	// sq6 is the same
+	// TODO: distinguish the full version of SQ6 from the demo
 	// torin is the same
 
-	// TODO: SCI2.1, SCI3 IDs
+
+	// TODO: SCI3 IDs
 
 	{ "", "", SCI_VERSION_NONE }
 };
@@ -221,6 +232,9 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		if (sierraId == "sq4")
 			return "msastrochicken";
 	}
+
+	if (sierraId == "torin" && resources->size() == 226)	// Torin's Passage demo
+		*gameFlags |= ADGF_DEMO;
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {

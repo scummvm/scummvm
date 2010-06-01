@@ -321,8 +321,8 @@ protected:
 	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; ///< list of opened volume files
 	ResourceSource *_audioMapSCI1; ///< Currently loaded audio map for SCI1
-	ResVersion _volVersion; ///< RESOURCE.0xx version
-	ResVersion _mapVersion; ///< RESOURCE.MAP version
+	ResVersion _volVersion; ///< resource.0xx version
+	ResVersion _mapVersion; ///< resource.map version
 
 	/**
 	 * Initializes the resource manager
@@ -358,7 +358,7 @@ protected:
 	 */
 	ResourceSource *addExternalMap(const char *file_name, int volume_nr = 0);
 
-	ResourceSource *addExternalMap(const Common::FSNode *mapFile);
+	ResourceSource *addExternalMap(const Common::FSNode *mapFile, int volume_nr = 0);
 
 	/**
 	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
