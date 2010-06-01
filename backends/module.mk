@@ -35,11 +35,13 @@ MODULE_OBJS := \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
 	plugins/psp/psp-provider.o \
+	plugins/ps2/ps2-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \
 	saves/psp/psp-saves.o \
 	timer/default/default-timer.o \
+	timer/psp/timer.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \
