@@ -246,7 +246,7 @@ OSystem_GP2X::OSystem_GP2X()
 	_hwscreen(0), _screen(0), _tmpscreen(0),
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
+	_scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_joystick(0),
@@ -649,27 +649,4 @@ void OSystem_GP2X::closeMixer() {
 Audio::Mixer *OSystem_GP2X::getMixer() {
 	assert(_mixer);
 	return _mixer;
-}
-
-#pragma mark -
-#pragma mark --- CD Audio ---
-#pragma mark -
-
-bool OSystem_GP2X::openCD(int drive) {
-	return (_cdrom = NULL);
-}
-
-void OSystem_GP2X::stopCD() {
-}
-
-void OSystem_GP2X::playCD(int track, int num_loops, int start_frame, int duration) {
-	return;
-}
-
-bool OSystem_GP2X::pollCD() {
-		return false;
-}
-
-void OSystem_GP2X::updateCD() {
-	return;
 }

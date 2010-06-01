@@ -121,19 +121,6 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	// Poll CD status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play CD audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop CD audio track
-	void stopCD();
-
-	// Update CD audio status
-	void updateCD();
-
 	// Quit
 	void quit();
 
@@ -205,11 +192,6 @@ protected:
 	SDL_Surface *_overlayscreen;
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
-
-	// CD Audio
-	SDL_CD *_cdrom;
-	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
-	uint32 _cdEndTime, _cdStopTime;
 
 	enum {
 		DF_WANT_RECT_OPTIM			= 1 << 0
