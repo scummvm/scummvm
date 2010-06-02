@@ -101,7 +101,7 @@ Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_localsSegment = 0;
 	_localsBlock = NULL;
 
-	_markedAsDeleted = 0;
+	_markedAsDeleted = false;
 }
 
 Script::~Script() {
@@ -306,17 +306,20 @@ void Script::relocate(reg_t block) {
 	       "Relocation block outside of script\n");
 
 	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
+	int exportIndex = 0;
 
 	for (int i = 0; i < count; i++) {
-		int pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (i * 2)) + heapOffset;
-		// This occurs in SCI01/SCI1 games where every other export
-		// value is zero. I have no idea what it's supposed to mean.
-		//
-		// Yes, there is code in the original to handle this situation,
-		// but we need an example of it happening in order to determine
-		// what to do.
-		if (!pos)
-			continue; // FIXME: Just ignore it for now.
+		int pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
+		// This occurs in SCI01/SCI1 games where every usually one export
+		// value is zero. It seems that in this situation, we should skip
+		// the export and move to the next one, though the total count
+		// of valid exports remains the same
+		if (!pos) {
+			exportIndex++;
+			pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
+			if (!pos)
+				error("Script::relocate(): Consecutive zero exports found");
+		}
 
 		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
@@ -339,18 +342,19 @@ void Script::relocate(reg_t block) {
 			}
 
 			if (!done) {
-				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
+				debug("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
+				debug("Relocation failed for index %04x (%d/%d)\n", pos, exportIndex + 1, count);
 				if (_localsBlock)
-					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
+					debug("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
 				else
-					printf("- No locals\n");
+					debug("- No locals\n");
 				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				// SQ3 script 71 has broken relocation entries.
-				printf("Trying to continue anyway...\n");
+					debug("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
+				debug("Trying to continue anyway...\n");
 			}
 		}
+
+		exportIndex++;
 	}
 }
 
