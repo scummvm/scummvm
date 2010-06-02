@@ -47,6 +47,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_cardData.hasData = false;
 	_gameOver = false;
 	_activatedSLST = false;
+	_ignoreNextMouseUp = false;
 	_extrasFile = NULL;
 
 	// Attempt to let game run from the CDs
@@ -147,10 +148,15 @@ Common::Error MohawkEngine_Riven::run() {
 					runHotspotScript(_curHotspot, kMouseDownScript);
 				break;
 			case Common::EVENT_LBUTTONUP:
-				if (_curHotspot >= 0)
-					runHotspotScript(_curHotspot, kMouseUpScript);
-				else
-					checkInventoryClick();
+				// See RivenScript::switchCard() for more information on why we sometimes
+				// disable the next up event.
+				if (!_ignoreNextMouseUp) {
+					if (_curHotspot >= 0)
+						runHotspotScript(_curHotspot, kMouseUpScript);
+					else
+						checkInventoryClick();
+				}
+				_ignoreNextMouseUp = false;
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {

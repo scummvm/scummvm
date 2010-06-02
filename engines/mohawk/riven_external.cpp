@@ -210,7 +210,7 @@ void RivenExternal::runEndGame(uint16 video) {
 	_vm->_video->playMovieBlocking(video);
 
 	// TODO: Play until the last frame and then run the credits
-	_vm->_gameOver = true;
+	_vm->setGameOver();
 }
 
 void RivenExternal::runDomeButtonMovie() {
