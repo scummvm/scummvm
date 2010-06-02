@@ -109,6 +109,32 @@ static const PictureGameDescription gameDescriptions[] = {
 		},
 	},
 
+	{
+		// 3 Skulls of the Toltecs French version
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "4fb845635cbdac732453fe23be350df9", 327269545),
+			Common::FR_FRA,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+	},
+
+	{
+		// 3 Skulls of the Toltecs Spanish version
+		{
+			"toltecs",
+			0,
+			AD_ENTRY1s("WESTERN", "479f468beccc1b0ce5873ec523d1380e", 308391018),
+			Common::ES_ESP,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+	},
+
 	{ AD_TABLE_END_MARKER }
 };
 
