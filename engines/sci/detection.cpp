@@ -464,7 +464,16 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String gameId = convertSierraGameId(resMan->findSierraGameId(), &s_fallbackDesc.flags, resMan);
+	Common::String sierraGameId = resMan->findSierraGameId();
+
+	// If we don't have a game id, the game is not SCI
+	if (sierraGameId.empty()) {
+		SearchMan.remove("SCI_detection");
+		delete resMan;
+		return 0;
+	}
+
+	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
 	s_fallbackDesc.gameid = s_fallbackGameIdBuf;

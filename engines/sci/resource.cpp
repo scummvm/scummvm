@@ -1935,6 +1935,10 @@ bool ResourceManager::hasSci1Voc900() {
 
 reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
+
+	if (!script)
+		return NULL_REG;
+
 	int extraBytes = 0;
 	if (getSciVersion() == SCI_VERSION_0_EARLY || getSciVersion() >= SCI_VERSION_1_1)
 		extraBytes = 2;
@@ -1966,7 +1970,13 @@ Common::String ResourceManager::findSierraGameId() {
 		nameSelector += 5;
 	}
 
+	if (!heap)
+		return "";
+
 	int16 gameObjectOffset = findGameObject(false).offset;
+
+	if (!gameObjectOffset)
+		return "";
 
 	// Seek to the name selector of the first export
 	byte *seeker = heap->data + READ_UINT16(heap->data + gameObjectOffset + nameSelector * 2);
