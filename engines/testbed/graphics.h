@@ -1,4 +1,4 @@
-#ifdef GRAPHICS_H
+#ifndef GRAPHICS_H
 #define GRAPHICS_H
 
 #include "testbed/testsuite.h"
@@ -16,8 +16,10 @@ public:
 	 * @see addTest()
 	 */
 	GFXTestSuite();
-	~GFXTestSuite() {};
-}
+	~GFXTestSuite();
+	int execute();
+	const char *getName(); 
+};
 
 }	// End of namespace Testbed
 

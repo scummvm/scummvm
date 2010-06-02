@@ -27,14 +27,29 @@ bool testFullScreenMode() {
 		g_system->endGFXTransaction();
 	}
 
+	return true;
 }
 
 GFXTestSuite::GFXTestSuite() {
 	addTest("FullScreenMode", &testFullScreenMode);
 }
 
-int execute() {
-	//TODO: Implement the method	
+GFXTestSuite::~GFXTestSuite() {
+	printf("Cleanup\n");
+}
+
+const char *GFXTestSuite::getName() {
+	return "GFX";
+}
+
+int GFXTestSuite::execute() {
+	//TODO: Implement the method
+	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+		printf("Executing Test:%s\n", ((*i)->featureName).c_str());
+		printf("Result:%d",(*i)->driver());
+	}
+
+	return 1;
 }
 
 }

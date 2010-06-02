@@ -10,20 +10,11 @@ namespace Testbed {
 typedef bool (*invokingFunction)();
 
 /**
- * Make g_system available to test invoker functions
- */
-extern OSystem *g_system;
-
-/**
  * This represents a feature to be tested
  */
 
 struct Test {
-	Test(Common::String name, invokingFunction f) : featureName(name),
-													driver(f),
-													enabled(true),
-													passed(false) {}
-
+	Test(Common::String name, invokingFunction f) : featureName(name), driver(f), enabled(true), passed(false) {}
 	Common::String featureName;		///< Name of feature to be tested
 	invokingFunction driver;	    ///< Pointer to the function that will invoke this feature test
 	bool enabled;				    ///< Decides whether or not this test is to be executed
@@ -39,12 +30,11 @@ struct Test {
 class Testsuite {
 public:
 	Testsuite() {
-		extern OSystem *g_system;
 		_backend = g_system;
 		_numTestsPassed = 0;
 		_numTestsExecuted = 0;
 	}
-	~Testsuite() {}
+	virtual ~Testsuite() {}
 	inline int getNumTests() { return _testsToExecute.size(); }
 	inline int getNumTestsPassed() { return _numTestsPassed; }
 	inline int getNumTestsFailed() { return _numTestsExecuted - _numTestsPassed; }
@@ -56,7 +46,7 @@ public:
 	 * @param	f pointer to the function that invokes this test
 	 */
 	inline void addTest(Common::String name, invokingFunction f) {
-		Test featureTest(name, f);
+		Test*  featureTest = new Test(name, f);
 		_testsToExecute.push_back(featureTest);
 	}
 	
@@ -68,11 +58,13 @@ public:
 	virtual const char *getName() = 0;
 
 private:
-	OSystem		*_backend;					///< Pointer to OSystem backend
+	OSystem		*_backend;				///< Pointer to OSystem backend
 	int		    _numTestsPassed;			///< Number of tests passed
 	int  		_numTestsExecuted;			///< Number of tests executed
-	Common::Array<Test> _testsToExecute;	///< List of tests to be executed
-}
+
+protected:
+	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
+};
 
 }	// End of namespace testbed
 

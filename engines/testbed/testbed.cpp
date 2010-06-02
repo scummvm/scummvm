@@ -4,6 +4,7 @@
 #include "engines/util.h"
  
 #include "testbed/testbed.h"
+#include "testbed/graphics.h"
  
 namespace Testbed {
  
@@ -49,7 +50,9 @@ Common::Error TestbedEngine::run() {
 	// Additional setup.
 	printf("TestbedEngine::init\n");
 
- 
+	GFXTestSuite ts;
+	ts.execute();
+
 	// Your main even loop should be (invoked from) here.
 	printf("TestbedEngine::go: Hello, World!\n");
 	
