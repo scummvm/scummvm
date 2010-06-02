@@ -237,6 +237,7 @@ ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = kSourceDirectory;
+	newsrc->resourceFile = 0;
 	newsrc->scanned = false;
 	newsrc->location_name = dirname;
 
@@ -257,7 +258,7 @@ ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 
 // Resource manager constructors and operations
 
-bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
+bool ResourceManager::loadPatch(Resource *res, Common::SeekableReadStream *file) {
 	// We assume that the resource type matches res->type
 	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
@@ -272,12 +273,12 @@ bool ResourceManager::loadPatch(Resource *res, Common::File &file) {
 
 	unsigned int really_read;
 	if (res->_headerSize > 0) {
-		really_read = file.read(res->_header, res->_headerSize);
+		really_read = file->read(res->_header, res->_headerSize);
 		if (really_read != res->_headerSize)
 			error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->_headerSize);
 	}
 
-	really_read = file.read(res->data, res->size);
+	really_read = file->read(res->data, res->size);
 	if (really_read != res->size)
 		error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->size);
 
@@ -295,7 +296,7 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	}
 	// Skip resourceid and header size byte
 	file.seek(2, SEEK_SET);
-	return loadPatch(res, file);
+	return loadPatch(res, &file);
 }
 
 Common::File *ResourceManager::getVolumeFile(const char *filename) {
@@ -352,10 +353,15 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 
-	Common::File *file;
+	Common::SeekableReadStream *fileStream;
+
 	// Either loading from volume or patch loading failed
-	file = getVolumeFile(res->_source->location_name.c_str());
-	if (!file) {
+	if (res->_source->resourceFile)
+		fileStream = res->_source->resourceFile->createReadStream();
+	else
+		fileStream = getVolumeFile(res->_source->location_name.c_str());
+
+	if (!fileStream) {
 		warning("Failed to open %s", res->_source->location_name.c_str());
 		res->unalloc();
 		return;
@@ -363,8 +369,8 @@ void ResourceManager::loadResource(Resource *res) {
 
 	switch(res->_source->source_type) {
 	case kSourceWave:
-		file->seek(res->_fileOffset, SEEK_SET);
-		loadFromWaveFile(res, *file);
+		fileStream->seek(res->_fileOffset, SEEK_SET);
+		loadFromWaveFile(res, fileStream);
 		return;
 
 	case kSourceAudioVolume:
@@ -395,30 +401,30 @@ void ResourceManager::loadResource(Resource *res) {
 
 			if (!compressedOffset)
 				error("could not translate offset to compressed offset in audio volume");
-			file->seek(compressedOffset, SEEK_SET);
+			fileStream->seek(compressedOffset, SEEK_SET);
 
 			switch (res->_id.type) {
 			case kResourceTypeAudio:
 			case kResourceTypeAudio36:
 				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
-				loadFromAudioVolumeSCI1(res, *file);
+				loadFromAudioVolumeSCI1(res, fileStream);
 				return;
 			default:
 				break;
 			}
 		} else {
 			// original file, directly seek to given offset and get SCI1/SCI1.1 audio resource
-			file->seek(res->_fileOffset, SEEK_SET);
+			fileStream->seek(res->_fileOffset, SEEK_SET);
 		}
 		if (getSciVersion() < SCI_VERSION_1_1)
-			loadFromAudioVolumeSCI1(res, *file);
+			loadFromAudioVolumeSCI1(res, fileStream);
 		else
-			loadFromAudioVolumeSCI11(res, *file);
+			loadFromAudioVolumeSCI11(res, fileStream);
 		return;
 
 	default:
-		file->seek(res->_fileOffset, SEEK_SET);
-		int error = decompress(res, file);
+		fileStream->seek(res->_fileOffset, SEEK_SET);
+		int error = decompress(res, fileStream);
 		if (error) {
 			warning("Error %d occured while reading %s from resource file: %s",
 				    error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -872,7 +878,6 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 
 ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	Common::SeekableReadStream *fileStream = 0;
-	Common::File *file = 0;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
 
@@ -883,7 +888,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			if (rsrc->resourceFile) {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
-				file = new Common::File();
+				Common::File *file = new Common::File();
 				file->open(rsrc->location_name);
 				if (file->isOpen())
 					fileStream = file;
@@ -963,7 +968,6 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 
 ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	Common::SeekableReadStream *fileStream = 0;
-	Common::File *file = 0;
 	ResourceSource *rsrc;
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
@@ -973,7 +977,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 			if (rsrc->resourceFile) {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
-				file = new Common::File();
+				Common::File *file = new Common::File();
 				file->open(rsrc->location_name);
 				if (file->isOpen())
 					fileStream = file;
@@ -1063,7 +1067,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, int resnumber) {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
 	Resource *newrsc;
 	ResourceId resId = ResourceId(restype, resnumber);
 	byte patchtype, patch_data_offset;
@@ -1071,18 +1075,27 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 
 	if (resnumber == -1)
 		return;
-	if (!file.open(source->location_name)) {
-		warning("ResourceManager::processPatch(): failed to open %s", source->location_name.c_str());
-		return;
+
+	if (source->resourceFile) {
+		fileStream = source->resourceFile->createReadStream();
+	} else {
+		Common::File *file = new Common::File();
+		if (!file->open(source->location_name)) {
+			warning("ResourceManager::processPatch(): failed to open %s", source->location_name.c_str());
+			return;
+		}
+		fileStream = file;
 	}
-	fsize = file.size();
+	fsize = fileStream->size();
 	if (fsize < 3) {
 		debug("Patching %s failed - file too small", source->location_name.c_str());
 		return;
 	}
 
-	patchtype = file.readByte() & 0x7F;
-	patch_data_offset = file.readByte();
+	patchtype = fileStream->readByte() & 0x7F;
+	patch_data_offset = fileStream->readByte();
+
+	delete fileStream;
 
 	if (patchtype != restype) {
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
@@ -1097,8 +1110,12 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 			case 1:
 				patch_data_offset = 2;
 				break;
+			case 4:
+				patch_data_offset = 8;
+				break;
 			default:
-				warning("Resource patch unsupported special case %X", patch_data_offset);
+				warning("Resource patch unsupported special case %X", patch_data_offset & 0x7F);
+				return;
 		}
 	}
 
@@ -1180,6 +1197,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 				psrcPatch = new ResourceSource;
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
+				psrcPatch->resourceFile = 0;
 				processPatch(psrcPatch, (ResourceType)i, number);
 			}
 		}
@@ -1931,7 +1949,31 @@ bool ResourceManager::hasSci1Voc900() {
 	return offset == res->size;
 }
 
-#define READ_UINT16(ptr) (!isSci11Mac() ? READ_LE_UINT16(ptr) : READ_BE_UINT16(ptr))
+// Same function as Script::findBlock(). Slight code
+// duplication here, but this has been done to keep the resource
+// manager independent from the rest of the engine
+static byte *findSci0ExportsBlock(byte *buffer) {
+	byte *buf = buffer;
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	if (oldScriptHeader)
+		buf += 2;
+
+	do {
+		int seekerType = READ_LE_UINT16(buf);
+
+		if (seekerType == 0)
+			break;
+		if (seekerType == 7)	// exports
+			return buf;
+
+		int seekerSize = READ_LE_UINT16(buf + 2);
+		assert(seekerSize > 0);
+		buf += seekerSize;
+	} while (1);
+
+	return NULL;
+}
 
 reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	Resource *script = findResource(ResourceId(kResourceTypeScript, 0), false);
@@ -1939,11 +1981,26 @@ reg_t ResourceManager::findGameObject(bool addSci11ScriptOffset) {
 	if (!script)
 		return NULL_REG;
 
-	int extraBytes = 0;
-	if (getSciVersion() == SCI_VERSION_0_EARLY || getSciVersion() >= SCI_VERSION_1_1)
-		extraBytes = 2;
+	byte *offsetPtr = 0;
+
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		byte *buf = (getSciVersion() == SCI_VERSION_0_EARLY) ? script->data + 2 : script->data;
+
+		// Check if the first block is the exports block (in most cases, it is)
+		bool exportsIsFirst = (READ_LE_UINT16(buf + 4) == 7);
+		if (exportsIsFirst) {
+			offsetPtr = buf + 4 + 2;
+		} else {
+			offsetPtr = findSci0ExportsBlock(script->data);
+			if (!offsetPtr)
+				error("Unable to find exports block from script 0");
+			offsetPtr += 4 + 2;
+		}
+	} else {
+		offsetPtr = script->data + 4 + 2 + 2;
+	}
 	
-	int16 offset = READ_UINT16(script->data + extraBytes + 4 + 2);
+	int16 offset = !isSci11Mac() ? READ_LE_UINT16(offsetPtr) : READ_BE_UINT16(offsetPtr);
 
 	// In SCI1.1 and newer, the heap is appended at the end of the script,
 	// so adjust the offset accordingly
@@ -1985,7 +2042,5 @@ Common::String ResourceManager::findSierraGameId() {
 
 	return sierraId;
 }
-
-#undef READ_UINT16
 
 } // End of namespace Sci

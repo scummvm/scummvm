@@ -395,11 +395,11 @@ protected:
 
 	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
-	bool loadPatch(Resource *res, Common::File &file);
+	bool loadPatch(Resource *res, Common::SeekableReadStream *file);
 	bool loadFromPatchFile(Resource *res);
-	bool loadFromWaveFile(Resource *res, Common::File &file);
-	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
-	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
+	bool loadFromWaveFile(Resource *res, Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI1(Resource *res, Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI11(Resource *res, Common::SeekableReadStream *file);
 	void freeOldResources();
 	int decompress(Resource *res, Common::SeekableReadStream *file);
 	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32&szPacked, ResourceCompression &compression);
