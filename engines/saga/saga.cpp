@@ -330,20 +330,6 @@ Common::Error SagaEngine::run() {
 
 	syncSoundSettings();
 
-
-#if 0
-	// FIXME: Disabled this code for now. We want to get rid of OSystem::kFeatureAutoComputeDirtyRects
-	// and this is the last place to make use of it. We need to find out whether doing
-	// so causes any regressions. If it does, we can reenable it, if not, we can remove
-	// this code in 0.13.0.
-
-	// FIXME: This is the ugly way of reducing redraw overhead. It works
-	//        well for 320x200 but it's unclear how well it will work for
-	//        640x480.
-	if (getGameId() == GID_ITE)
-		_system->setFeatureState(OSystem::kFeatureAutoComputeDirtyRects, true);
-#endif
-
 	int msec = 0;
 
 	_previousTicks = _system->getMillis();

@@ -149,7 +149,6 @@ void OSystem_SDL::initBackend() {
 	memset(&_videoMode, 0, sizeof(_videoMode));
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
-	_cksumValid = false;
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
@@ -163,7 +162,6 @@ void OSystem_SDL::initBackend() {
 	_scalerProc = Normal1x;
 #endif
 	_scalerType = 0;
-	_modeFlags = 0;
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
@@ -233,7 +231,7 @@ OSystem_SDL::OSystem_SDL()
 #endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
+	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0),
 	_scrollLock(false),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
@@ -281,7 +279,6 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
-	free(_dirtyChecksums);
 	free(_mouseData);
 
 	delete _savefile;
@@ -451,7 +448,6 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	return
 		(f == kFeatureFullscreenMode) ||
 		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureAutoComputeDirtyRects) ||
 		(f == kFeatureCursorHasPalette) ||
 		(f == kFeatureIconifyWindow);
 }
@@ -463,12 +459,6 @@ void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 		break;
 	case kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
-		break;
-	case kFeatureAutoComputeDirtyRects:
-		if (enable)
-			_modeFlags |= DF_WANT_RECT_OPTIM;
-		else
-			_modeFlags &= ~DF_WANT_RECT_OPTIM;
 		break;
 	case kFeatureIconifyWindow:
 		if (enable)
@@ -487,8 +477,6 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 		return _videoMode.fullscreen;
 	case kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
-	case kFeatureAutoComputeDirtyRects:
-		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:
 		return false;
 	}
@@ -510,7 +498,6 @@ void OSystem_SDL::deinit() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
-	free(_dirtyChecksums);
 	free(_mouseData);
 
 	delete _timer;

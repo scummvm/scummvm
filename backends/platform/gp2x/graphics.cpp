@@ -270,12 +270,7 @@ void OSystem_GP2X::initSize(uint w, uint h, const Graphics::PixelFormat *format)
 	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
 
-	_cksumNum = (w * h / (8 * 8));
-
 	_transactionDetails.sizeChanged = true;
-
-	free(_dirtyChecksums);
-	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 }
 
 int OSystem_GP2X::effectiveScreenHeight() const {
@@ -724,40 +719,31 @@ void OSystem_GP2X::copyRectToScreen(const byte *src, int pitch, int x, int y, in
 	assert(h > 0 && y + h <= _videoMode.screenHeight);
 	assert(w > 0 && x + w <= _videoMode.screenWidth);
 
-	if (IS_ALIGNED(src, 4) && pitch == _videoMode.screenWidth && x == 0 && y == 0 &&
-			w == _videoMode.screenWidth && h == _videoMode.screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
-		/* Special, optimized case for full screen updates.
-		 * It tries to determine what areas were actually changed,
-		 * and just updates those, on the actual display. */
-		addDirtyRgnAuto(src);
-	} else {
-		/* Clip the coordinates */
-		if (x < 0) {
-			w += x;
-			src -= x;
-			x = 0;
-		}
-
-		if (y < 0) {
-			h += y;
-			src -= y * pitch;
-			y = 0;
-		}
-
-		if (w > _videoMode.screenWidth - x) {
-			w = _videoMode.screenWidth - x;
-		}
-
-		if (h > _videoMode.screenHeight - y) {
-			h = _videoMode.screenHeight - y;
-		}
-
-		if (w <= 0 || h <= 0)
-			return;
-
-		_cksumValid = false;
-		addDirtyRect(x, y, w, h);
+	/* Clip the coordinates */
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
 	}
+
+	if (y < 0) {
+		h += y;
+		src -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _videoMode.screenWidth - x) {
+		w = _videoMode.screenWidth - x;
+	}
+
+	if (h > _videoMode.screenHeight - y) {
+		h = _videoMode.screenHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	addDirtyRect(x, y, w, h);
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
@@ -882,88 +868,6 @@ void OSystem_GP2X::addDirtyRect(int x, int y, int w, int h, bool realCoordinates
 		r->y = y;
 		r->w = w;
 		r->h = h;
-	}
-}
-
-void OSystem_GP2X::makeChecksums(const byte *buf) {
-	assert(buf);
-	uint32 *sums = _dirtyChecksums;
-	uint x,y;
-	const uint last_x = (uint)_videoMode.screenWidth / 8;
-	const uint last_y = (uint)_videoMode.screenHeight / 8;
-
-	const uint BASE = 65521; /* largest prime smaller than 65536 */
-
-	/* the 8x8 blocks in buf are enumerated starting in the top left corner and
-	 * reading each line at a time from left to right */
-	for (y = 0; y != last_y; y++, buf += _videoMode.screenWidth * (8 - 1))
-		for (x = 0; x != last_x; x++, buf += 8) {
-			// Adler32 checksum algorithm (from RFC1950, used by gzip and zlib).
-			// This computes the Adler32 checksum of a 8x8 pixel block. Note
-			// that we can do the modulo operation (which is the slowest part)
-			// of the algorithm) at the end, instead of doing each iteration,
-			// since we only have 64 iterations in total - and thus s1 and
-			// s2 can't overflow anyway.
-			uint32 s1 = 1;
-			uint32 s2 = 0;
-			const byte *ptr = buf;
-			for (int subY = 0; subY < 8; subY++) {
-				for (int subX = 0; subX < 8; subX++) {
-					s1 += ptr[subX];
-					s2 += s1;
-				}
-				ptr += _videoMode.screenWidth;
-			}
-
-			s1 %= BASE;
-			s2 %= BASE;
-
-			/* output the checksum for this block */
-			*sums++ =  (s2 << 16) + s1;
-	}
-}
-
-void OSystem_GP2X::addDirtyRgnAuto(const byte *buf) {
-	assert(buf);
-	assert(IS_ALIGNED(buf, 4));
-
-	/* generate a table of the checksums */
-	makeChecksums(buf);
-
-	if (!_cksumValid) {
-		_forceFull = true;
-		_cksumValid = true;
-	}
-
-	/* go through the checksum list, compare it with the previous checksums,
-		 and add all dirty rectangles to a list. try to combine small rectangles
-		 into bigger ones in a simple way */
-	if (!_forceFull) {
-		int x, y, w;
-		uint32 *ck = _dirtyChecksums;
-
-		for (y = 0; y != _videoMode.screenHeight / 8; y++) {
-			for (x = 0; x != _videoMode.screenWidth / 8; x++, ck++) {
-				if (ck[0] != ck[_cksumNum]) {
-					/* found a dirty 8x8 block, now go as far to the right as possible,
-						 and at the same time, unmark the dirty status by setting old to new. */
-					w=0;
-					do {
-						ck[w + _cksumNum] = ck[w];
-						w++;
-					} while (x + w != _videoMode.screenWidth / 8 && ck[w] != ck[w + _cksumNum]);
-
-					addDirtyRect(x * 8, y * 8, w * 8, 8);
-
-					if (_forceFull)
-						goto get_out;
-				}
-			}
-		}
-	} else {
-		get_out:;
-		/* Copy old checksums to new */
-		memcpy(_dirtyChecksums + _cksumNum, _dirtyChecksums, _cksumNum * sizeof(uint32));
 	}
 }
 
@@ -1175,7 +1079,6 @@ void OSystem_GP2X::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, 
 		return;
 
 	// Mark the modified region as dirty
-	_cksumValid = false;
 	addDirtyRect(x, y, w, h);
 
 	if (SDL_LockSurface(_overlayscreen) == -1)

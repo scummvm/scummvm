@@ -30,7 +30,6 @@
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
 		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureAutoComputeDirtyRects) ||
 		(f == kFeatureCursorHasPalette);
 }
 
@@ -38,12 +37,6 @@ void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 	case kFeatureAspectRatioCorrection:
 		setAspectRatioCorrection(enable);
-		break;
-	case kFeatureAutoComputeDirtyRects:
-		if (enable)
-			_modeFlags |= DF_WANT_RECT_OPTIM;
-		else
-			_modeFlags &= ~DF_WANT_RECT_OPTIM;
 		break;
 	default:
 		break;
@@ -56,8 +49,6 @@ bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureAspectRatioCorrection:
 		return _videoMode.aspectRatioCorrection;
-	case kFeatureAutoComputeDirtyRects:
-		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:
 		return false;
 	}
