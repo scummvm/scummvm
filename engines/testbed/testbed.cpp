@@ -49,29 +49,6 @@ Common::Error TestbedEngine::run() {
 	// Additional setup.
 	printf("TestbedEngine::init\n");
 
-	printf("Testing fullscreen mode\n");
-	bool isFeaturePresent;
-	bool isFeatureEnabled;
-
-	isFeaturePresent = _system->hasFeature(OSystem::kFeatureFullscreenMode);
-	isFeatureEnabled = _system->getFeatureState(OSystem::kFeatureFullscreenMode);
-
-	printf("Testing Feature Presence.. \n");
-	if (isFeaturePresent) {
-		//Toggle
-		printf("Supported\n");
-
-		_system->beginGFXTransaction();
-		_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
-		_system->endGFXTransaction();
-
-		_system->delayMillis(1000);
-		
-		_system->beginGFXTransaction();
-		_system->setFeatureState(OSystem::kFeatureFullscreenMode, isFeatureEnabled);
-		_system->endGFXTransaction();
-	}
-
  
 	// Your main even loop should be (invoked from) here.
 	printf("TestbedEngine::go: Hello, World!\n");
