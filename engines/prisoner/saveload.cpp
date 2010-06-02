@@ -948,8 +948,6 @@ void PrisonerEngine::loadgame(const char *filename) {
 	// Alt actor animations
 	_altActorAnimations.load(this, in);
 
-	restoreActorSprites();
-
 	// Zones
 	_zones.load(this, in);
 	_zoneIndexAtMouse = in->readUint16LE();

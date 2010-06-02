@@ -88,6 +88,7 @@ void PrisonerEngine::clearActor(int16 actorIndex) {
 		resetPathWalker(actor->pathWalkerIndex);
 		actor->pathWalker2 = NULL;
 	}
+	actor->pathWalkerIndex = -1;
 	if (actorIndex == _mainActorIndex) {
 		_mainActorIndex = -1;
 		_mainActorValid = false;
@@ -105,6 +106,7 @@ void PrisonerEngine::clearActors() {
 		Actor *actor = &_actors[actorIndex];
 		actor->resourceCacheSlot = -1;
 		actor->unk1 = -1;
+		actor->pathWalkerIndex = -1; //???
 	}
 
 	for (int16 altActorAnimationIndex = 0; altActorAnimationIndex < kMaxAltActorAnimations; altActorAnimationIndex++) {
@@ -129,6 +131,7 @@ void PrisonerEngine::unloadActors() {
 					resetPathWalker(actor->pathWalkerIndex);
 					actor->pathWalker2 = NULL;
 				}
+				actor->pathWalkerIndex = -1;
 			}
 		}
 		for (int16 altActorAnimationIndex = 0; altActorAnimationIndex < kMaxAltActorAnimations; altActorAnimationIndex++) {
