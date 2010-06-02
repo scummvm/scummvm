@@ -246,11 +246,11 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 
 		// We've found a match, add it
 		if (mlstRecord.index == mlstId) {
-			// Make sure we don't have a duplicate
+			// Make sure we don't have any duplicates
 			for (uint32 j = 0; j < _mlstRecords.size(); j++)
-				if (_mlstRecords[j].index == mlstId) {
+				if (_mlstRecords[j].index == mlstRecord.index || _mlstRecords[j].code == mlstRecord.code) {
 					_mlstRecords.remove_at(j);
-					break;
+					j--;
 				}
 
 			_mlstRecords.push_back(mlstRecord);
