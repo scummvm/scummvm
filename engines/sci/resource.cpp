@@ -528,8 +528,10 @@ int ResourceManager::addAppropriateSources() {
 
 int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 	ResourceSource *map = 0;
+#ifdef ENABLE_SCI32
 	ResourceSource *sci21PatchMap = 0;
 	const Common::FSNode *sci21PatchRes = 0;
+#endif
 
 	// First, find resource.map
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
