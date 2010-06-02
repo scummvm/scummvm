@@ -135,6 +135,7 @@ void PrisonerEngine::setMouseCursor(int16 elementIndex, AnimationResource *anima
 	Graphics::Surface *surface = decompressAnimationCel(animationCel);
 	CursorMan.replaceCursor((const byte *)surface->pixels, surface->w, surface->h, hotspotX, hotspotY, 0);
 	delete surface;
+	CursorMan.showMouse(true);
 }
 
 void PrisonerEngine::updateMouseCursor() {
