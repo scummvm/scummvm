@@ -165,13 +165,13 @@ void SciMusic::setReverb(byte reverb) {
 	_pMidiDrv->setReverb(reverb);
 }
 
-static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->priority - ((const MusicEntry *)arg1)->priority;
+static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
+	return (l->priority > r->priority);
 }
 
 void SciMusic::sortPlayList() {
-	MusicEntry ** pData = _playList.begin();
-	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
+	// Sort the play list in descending priority order
+	Common::sort(_playList.begin(), _playList.end(), musicEntryCompare);
 }
 
 void SciMusic::findUsedChannels() {

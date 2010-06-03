@@ -245,13 +245,10 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
 }
 
-static int _savegame_index_struct_compare(const void *a, const void *b) {
-	const SavegameDesc *A = (const SavegameDesc *)a;
-	const SavegameDesc *B = (const SavegameDesc *)b;
-
-	if (B->date != A->date)
-		return B->date - A->date;
-	return B->time - A->time;
+static bool _savegame_index_struct_compare(const SavegameDesc &l, const SavegameDesc &r) {
+	if (l.date != r.date)
+		return (l.date > r.date);
+	return (l.time > r.time);
 }
 
 void listSavegames(Common::Array<SavegameDesc> &saves) {
@@ -285,7 +282,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	}
 
 	// Sort the list by creation date of the saves
-	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
+	Common::sort(saves.begin(), saves.end(), _savegame_index_struct_compare);
 }
 
 bool Console::cmdListSaves(int argc, const char **argv) {
