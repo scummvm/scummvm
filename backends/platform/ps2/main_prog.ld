@@ -219,4 +219,10 @@ SECTIONS
   .debug_varnames  0 : { *(.debug_varnames) }
   .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
   .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
+
+  	/* Symbols needed by crt0.s.  */
+  PROVIDE(_heap_size = -1);
+  PROVIDE(_stack = -1);
+  PROVIDE(_stack_size = 128 * 1024);
+
 }

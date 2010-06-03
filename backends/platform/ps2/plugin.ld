@@ -2,20 +2,22 @@
 OUTPUT_FORMAT("elf32-littlemips", "elf32-bigmips",
 	      "elf32-littlemips")
 OUTPUT_ARCH(mips:5900)
+SEARCH_DIR("/home/tony/GSOC/ps2/tools/ee/ee/lib");
 PHDRS
 {
   plugin PT_LOAD ;
   shorts PT_LOAD ;
 }
 /* Do we need any of these for elf?
-   __DYNAMIC = 0;    */
-_DYNAMIC_LINK = 0;
+   __DYNAMIC = 0;    
+_DYNAMIC_LINK = 0; */
 SECTIONS
 {
   /* Read-only sections, merged into text segment: */
-  . = 0; //Not sure this shouldn't be 0x100000
-  .interp         : { *(.interp) } plugin
-  .reginfo 	  : { *(.reginfo) } plugin
+  . = 0x100000;
+  .interp         : { *(.interp) } : plugin
+  .reginfo 	  : { *(.reginfo) } : plugin
+  .dynamic	  : { *(.dynamic) }
   .hash           : { *(.hash) }
   .dynsym         : { *(.dynsym) }
   .dynstr         : { *(.dynstr) }
@@ -129,8 +131,10 @@ SECTIONS
     ___plugin_dtors_end = .;
   }
   .jcr            : { KEEP (*(.jcr)) }
+
   . = __plugin_hole_start;
-  .got            : { *(.got.plt) *(.got) } shorts
+
+  .got            : { *(.got.plt) *(.got) } : shorts
   .lit8 : { *(.lit8) }
   .lit4 : { *(.lit4) }
   /* We want the small data sections together, so single-instruction offsets
@@ -202,4 +206,9 @@ SECTIONS
   .debug_varnames  0 : { *(.debug_varnames) }
   .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
   .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
+
+  /* Symbols needed by crt0.s */
+  PROVIDE(_heap_size = -1);
+  PROVIDE(_stack = -1);
+  PROVIDE(_stack_size = 128 * 1024);
 }
