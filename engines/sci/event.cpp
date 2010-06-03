@@ -319,8 +319,6 @@ sciEvent SciEvent::get(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sciEvent event = { 0, 0, 0, 0 };
 
-	// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
-
 	// Update the screen here, since it's called very often
 	g_system->updateScreen();
 
@@ -389,7 +387,6 @@ void SciEvent::sleep(uint32 msecs) {
 	while (true) {
 		// let backend process events and update the screen
 		get(SCI_EVENT_PEEK);
-		// TODO: we need to call Cursor::refreshPosition() before each screen update to limit the mouse cursor position
 		time = g_system->getMillis();
 		if (time + 10 < wakeup_time) {
 			g_system->delayMillis(10);
