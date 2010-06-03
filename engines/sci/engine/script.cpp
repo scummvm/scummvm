@@ -205,7 +205,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {	// -info- selector
+		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass) {	// -info- selector
 			int classpos = seeker - scr->_buf;
 			int species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 

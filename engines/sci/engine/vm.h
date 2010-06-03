@@ -43,44 +43,9 @@ class ResourceManager;
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
 
-/** Maximum number of calls residing on the stack */
-#define SCRIPT_MAX_EXEC_STACK 256
-/** Maximum number of entries in the class table */
-#define SCRIPT_MAX_classTable_SIZE 256
-/** Maximum number of cloned objects on the heap */
-#define SCRIPT_MAX_CLONES 256
-
-
-/** Object-relative offset of the selector area inside a script */
-#define SCRIPT_SELECTOR_OFFSET 8 -8
-
-/** Object-relative offset of the pointer to the underlying script's local variables */
-#define SCRIPT_LOCALVARPTR_OFFSET 2 -8
-
-/** Object-relative offset of the selector counter */
-#define SCRIPT_SELECTORCTR_OFFSET 6 -8
-
-/** Object-relative offset of the offset of the function area */
-#define SCRIPT_FUNCTAREAPTR_OFFSET 4 -8
-
-/** Offset that has to be added to the function area pointer */
-#define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
-
-/** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 14 -8 : 16)
-
-/** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 12 -8 : 14)
-
-/** Flag fo the -info- selector */
-#define SCRIPT_INFO_CLONE 0x0001
-
-/** Flag for the -info- selector */
-#define SCRIPT_INFO_CLASS 0x8000
-
-
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
+
 /** Offset of this identifier */
 #define SCRIPT_OBJECT_MAGIC_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? -8 : 0)
 
@@ -88,9 +53,6 @@ class ResourceManager;
 #define SCRIPT_SPECIES_OFFSET 8 -8
 
 #define SCRIPT_SUPERCLASS_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 10 -8 : 12)
-
-/** Magic adjustment value for lofsa and lofss */
-#define SCRIPT_LOFS_MAGIC 3
 
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL

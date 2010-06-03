@@ -132,7 +132,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 
 	// Mark as clone
-	clone_obj->setInfoSelector(make_reg(0, SCRIPT_INFO_CLONE));
+	clone_obj->markAsClone();
 	clone_obj->setSpeciesSelector(clone_obj->getPos());
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->getPos());
@@ -154,7 +154,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (victim_obj->getInfoSelector().offset != SCRIPT_INFO_CLONE) {
+	if (!victim_obj->isClone()) {
 		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;

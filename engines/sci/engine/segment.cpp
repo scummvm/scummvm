@@ -240,7 +240,7 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 
 	obj = allocateObject(obj_pos.offset);
 
-	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
+	VERIFY(obj_pos.offset + kOffsetFunctionArea < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
 	obj->init(_buf, obj_pos, fullObjectInit);
 
@@ -693,9 +693,9 @@ void Object::init(byte *buf, reg_t obj_pos, bool initVariables) {
 	_pos = obj_pos;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		_variables.resize(READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET));
+		_variables.resize(READ_LE_UINT16(data + kOffsetSelectorCounter));
 		_baseVars = (const uint16 *)(_baseObj + _variables.size() * 2);
-		_baseMethod = (const uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
+		_baseMethod = (const uint16 *)(data + READ_LE_UINT16(data + kOffsetFunctionArea));
 		_methodCount = READ_LE_UINT16(_baseMethod - 1);
 	} else {
 		_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
@@ -720,7 +720,7 @@ int Object::locateVarSelector(SegManager *segMan, Selector slc) const {
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		varnum = getVarCount();
-		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
+		int selector_name_offset = varnum * 2 + kOffsetSelectorSegment;
 		buf = _baseObj + selector_name_offset;
 	} else {
 		const Object *obj = getClass(segMan);
@@ -749,11 +749,11 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	}
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		const byte *selectoroffset = ((const byte *)(_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
+		const byte *selectoroffset = ((const byte *)(_baseObj)) + kOffsetSelectorSegment + selectors * 2;
 		return READ_SCI11ENDIAN_UINT16(selectoroffset + propertyOffset);
 	} else {
 		const Object *obj = this;
-		if (!(getInfoSelector().offset & SCRIPT_INFO_CLASS))
+		if (!isClass())
 			obj = segMan->getObject(getSuperClassSelector());
 
 		return READ_SCI11ENDIAN_UINT16((const byte *)obj->_baseVars + propertyOffset);

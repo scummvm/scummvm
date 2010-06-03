@@ -205,6 +205,22 @@ enum {
 	OBJECT_FLAG_FREED = (1 << 0)
 };
 
+enum infoSelectorFlags {
+	kInfoFlagClone = 0x0001,
+	kInfoFlagClass = 0x8000
+};
+
+enum ObjectOffsets {
+	kOffsetLocalVariables = -6,
+	kOffsetFunctionArea = -4,
+	kOffsetSelectorCounter = -2,
+	kOffsetSelectorSegment = 0,
+	kOffsetInfoSelectorSci0 = 4,
+	kOffsetNamePointerSci0 = 6,
+	kOffsetInfoSelectorSci11 = 14,
+	kOffsetNamePointerSci11 = 16,
+};
+
 class Object {
 public:
 	Object() {
@@ -264,8 +280,11 @@ public:
 	 */
 	int locateVarSelector(SegManager *segMan, Selector slc) const;
 
-	bool isClass() const { return (getInfoSelector().offset & SCRIPT_INFO_CLASS); }
+	bool isClass() const { return (getInfoSelector().offset & kInfoFlagClass); }
 	const Object *getClass(SegManager *segMan) const;
+
+	void markAsClone() { setInfoSelector(make_reg(0, kInfoFlagClone)); }
+	bool isClone() const { return (getInfoSelector().offset & kInfoFlagClone); }
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
 	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }
