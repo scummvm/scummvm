@@ -72,6 +72,7 @@ void iPhone_updateScreenRect(unsigned short* screen, int x1, int y1, int x2, int
 void iPhone_initSurface(int width, int height);
 bool iPhone_fetchEvent(int *outEvent, float *outX, float *outY);
 const char* iPhone_getDocumentsDir();
+bool iPhone_isHighResDevice();
 
 #ifdef __cplusplus
 }
