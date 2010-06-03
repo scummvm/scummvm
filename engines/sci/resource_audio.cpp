@@ -151,6 +151,7 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
 		ResourceSource *psrcPatch = new ResourceSource;
 		psrcPatch->source_type = kSourcePatch;
+		psrcPatch->resourceFile = 0;
 		psrcPatch->location_name = gmPatchFile;
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
@@ -467,6 +468,9 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 	byte *dataEnd;
 	Channel *channel, *sampleChannel;
 
+	for (int i = 0; i < 16; i++)
+		_usedChannels[i] = false;
+
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
@@ -556,6 +560,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
 					channel->size = READ_LE_UINT16(data + 4) - 2; // Not counting channel header
 					channel->number = *(channel->data - 2);
+					_usedChannels[channel->number] = true;
 					channel->poly = *(channel->data - 1);
 					channel->time = channel->prev = 0;
 					if (channel->number == 0xFE) { // Digital channel
