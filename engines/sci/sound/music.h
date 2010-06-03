@@ -211,7 +211,7 @@ protected:
 private:
 	static void miditimerCallback(void *p);
 	void findUsedChannels();
-	int16 getNextUnusedChannel() {
+	int16 getNextUnusedChannel() const {
 		for (int i = 0; i < 16; i++) {
 			if (!_usedChannels[i])
 				return i;

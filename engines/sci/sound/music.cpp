@@ -179,8 +179,8 @@ void SciMusic::findUsedChannels() {
 	for (int k = 0; k < 16; k++)
 		_usedChannels[k] = false;
 
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+	const MusicList::const_iterator end = _playList.end();
+	for (MusicList::const_iterator i = _playList.begin(); i != end; ++i) {
 		for (int channel = 0; channel < 16; channel++) {
 			if ((*i)->soundRes && (*i)->soundRes->isChannelUsed(channel))
 				_usedChannels[channel] = true;

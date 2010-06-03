@@ -78,7 +78,7 @@ public:
 	}
 
 protected:
-	bool isChannelUsed(byte channel) { return _channelsUsed & (1 << channel); }
+	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
 	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
 
 	void parseNextEvent(EventInfo &info);
