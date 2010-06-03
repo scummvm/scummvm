@@ -727,15 +727,9 @@ void M4Surface::m4LoadBackground(Common::SeekableReadStream *source) {
 	delete tileBuffer;
 }
 
-void M4Surface::madsloadInterface(int index, RGBList **palData) {
-	char resourceName[20];
-	sprintf(resourceName, "i%d.int", index);
-	MadsPack intFile(resourceName, _vm);
+void M4Surface::madsLoadInterface(const Common::String &filename) {
+	MadsPack intFile(filename.c_str(), _vm);
 	RGB8 *palette = new RGB8[16];
-
-	bool hasPalette = palData != NULL;
-	if (!hasPalette)
-		palData = &_rgbList;
 
 	// Chunk 0, palette
 	Common::SeekableReadStream *intStream = intFile.getItemStream(0);
@@ -748,7 +742,7 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 		intStream->readByte();
 		intStream->readByte();
 	}
-	*palData = new RGBList(16, palette, true);
+	_rgbList = new RGBList(16, palette, true);
 	delete intStream;
 
 	// Chunk 1, data
@@ -757,11 +751,9 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 	intStream->read(pixels, 320 * 44);
 	delete intStream;
 
-	if (!hasPalette) {
-		// Translate the interface palette
-		_vm->_palette->addRange(_rgbList);
-		this->translate(_rgbList);
-	}
+	// Translate the interface palette
+	_vm->_palette->addRange(_rgbList);
+	this->translate(_rgbList);
 }
 
 void M4Surface::scrollX(int xAmount) {

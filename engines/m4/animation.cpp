@@ -45,7 +45,7 @@ MadsAnimation::~MadsAnimation() {
 	delete _font;
 }
 
-void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) {
+void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -66,8 +66,8 @@ void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface
 	animStream->skip(2);
 	_animMode = animStream->readUint16LE();
 	_roomNumber = animStream->readUint16LE();
+	animStream->skip(2);
 	_field12 = animStream->readUint16LE() != 0;
-	animStream->skip(4);
 	_spriteListIndex = animStream->readUint16LE();
 	_scrollX = animStream->readUint16LE();
 	_scrollY = animStream->readSint16LE();
@@ -96,7 +96,7 @@ void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface
 	if (_animMode == 4)
 		flags |= 0x4000;
 	if (flags & 0x100)
-		loadInterface(walkSurface, sceneSurface);
+		loadInterface(interfaceSurface, sceneSurface);
 
 	// Initialise the reference list
 	for (int i = 0; i < spriteListCount; ++i)
@@ -424,18 +424,28 @@ bool MadsAnimation::proc1(SpriteAsset &spriteSet, const Common::Point &pt, int f
 	return 0;
 }
 
-void MadsAnimation::loadInterface(M4Surface *walkSurface, M4Surface *sceneSurface) {
-	walkSurface->madsloadInterface(0);
-
-
-	/* TODO - implement properly
-	if (_animMode > 2) {
-		warning("Mode1");	
-	} else {
+void MadsAnimation::loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface) {
+	if (_animMode <= 2) {
 		MadsSceneResources sceneResources;
-		sceneResources.load(_roomNumber, _infoFilename.c_str(), 0, walkSurface, sceneSurface);
+		sceneResources.load(_roomNumber, _infoFilename.c_str(), 0, depthSurface, interfaceSurface);
+
+		// Rex only supports a single dialog draw style
+		assert(sceneResources.dialogStyle == 2);
+
+	} else if (_animMode == 4) {
+		// Load a scene interface
+		interfaceSurface->madsLoadInterface(_infoFilename);
+	} else {
+		// This mode allocates two large surfaces for the animation
+		// TODO: Are these ever properly freed?
+error("Anim mode %d - need to check free logic", _animMode);
+		assert(!interfaceSurface);
+		assert(!depthSurface);
+		depthSurface = new M4Surface(MADS_SURFACE_WIDTH, MADS_SCREEN_HEIGHT);
+		interfaceSurface = new M4Surface(MADS_SURFACE_WIDTH, MADS_SCREEN_HEIGHT);
+		depthSurface->clear();
+		interfaceSurface->clear();
 	}
-	*/
 }
 
 } // End of namespace M4

@@ -104,12 +104,12 @@ private:
 
 	void load1(int frameNumber);
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
-	void loadInterface(M4Surface *walkSurface, M4Surface *sceneSurface);
+	void loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface);
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface);
+	virtual void load(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface);
 	virtual void start();
 	virtual bool update();
 	virtual void stop();

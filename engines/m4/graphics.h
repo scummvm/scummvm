@@ -122,7 +122,8 @@ public:
 	// loads the specified background
 	void loadBackground(int sceneNumber, RGBList **palData = NULL);
 	void loadBackgroundRiddle(const char *sceneName);
-	void madsloadInterface(int index, RGBList **palData = NULL);
+	void madsLoadInterface(int index, RGBList **palData = NULL);
+	void madsLoadInterface(const Common::String &filename);
 
 	void setColor(byte value) { _color = value; }
 	void setColour(byte value) { _color = value; }
