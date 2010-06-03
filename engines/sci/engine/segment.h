@@ -218,7 +218,7 @@ enum ObjectOffsets {
 	kOffsetInfoSelectorSci0 = 4,
 	kOffsetNamePointerSci0 = 6,
 	kOffsetInfoSelectorSci11 = 14,
-	kOffsetNamePointerSci11 = 16,
+	kOffsetNamePointerSci11 = 16
 };
 
 class Object {
