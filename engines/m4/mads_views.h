@@ -34,11 +34,6 @@
 
 namespace M4 {
 
-#define MADS_SURFACE_WIDTH 320
-#define MADS_SURFACE_HEIGHT 156
-#define MADS_SCREEN_HEIGHT 200
-#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
-
 class MadsView;
 
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
@@ -372,9 +367,7 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	void loadFullScreen(const Common::String &filename);
-
-	virtual void load(const Common::String &filename) = 0;
+	virtual void load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
 	virtual void start() = 0;
 	virtual bool update() = 0;
 	virtual void stop() = 0;
@@ -386,7 +379,7 @@ class MadsView {
 private:
 	View *_view;
 public:
-	Animation &_sceneAnimation;
+	Animation *_sceneAnimation;
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	MadsKernelMessageList _kernelMessages;
@@ -408,58 +401,9 @@ public:
 	M4Surface *_bgSurface;
 public:
 	MadsView(View *view);
+	~MadsView();
 
 	void refresh();
-};
-
-#define CHEAT_SEQUENCE_MAX 8
-
-class IntegerList : public Common::Array<int> {
-public:
-	int indexOf(int v) {
-		for (uint i = 0; i < size(); ++i)
-			if (operator [](i) == v)
-				return i;
-		return -1;
-	}
-};
-
-enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
-
-enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
-		INVLIST_START = 13, VOCAB_START = 18};
-
-class MadsInterfaceView : public GameInterfaceView {
-private:
-	IntegerList _inventoryList;
-	RectList _screenObjects;
-	int _highlightedElement;
-	int _topIndex;
-	uint32 _nextScrollerTicks;
-	int _cheatKeyCtr;
-
-	// Object display fields
-	int _selectedObject;
-	SpriteAsset *_objectSprites;
-	RGBList *_objectPalData;
-	int _objectFrameNumber;
-
-	void setFontMode(InterfaceFontMode newMode);
-	bool handleCheatKey(int32 keycode);
-	bool handleKeypress(int32 keycode);
-	void leaveScene();
-public:
-	MadsInterfaceView(MadsM4Engine *vm);
-	~MadsInterfaceView();
-
-	virtual void initialise();
-	virtual void setSelectedObject(int objectNumber);
-	virtual void addObjectToInventory(int objectNumber);
-	int getSelectedObject() { return _selectedObject; }
-	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
-
-	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 }

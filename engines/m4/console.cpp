@@ -375,10 +375,10 @@ bool MadsConsole::cmdPlayAnimation(int argc, const char **argv) {
 
 		_vm->_viewManager->moveToFront(view);
 		if (argc == 3 && atoi(argv[2]) == 1)
-			_madsVm->scene()->_sceneAnimation.loadFullScreen(resourceName);
-		else
-			_madsVm->scene()->_sceneAnimation.load(resourceName);
-		_madsVm->scene()->_sceneAnimation.start();
+			_madsVm->_palette->deleteAllRanges();
+
+		_madsVm->scene()->_sceneAnimation->load(resourceName, 0, NULL, NULL);
+		_madsVm->scene()->_sceneAnimation->start();
 
 		view->restore(0, 0, view->width(), view->height());
 		return false;

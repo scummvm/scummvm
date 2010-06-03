@@ -26,6 +26,7 @@
 #include "m4/assets.h"
 #include "m4/animation.h"
 #include "m4/compression.h"
+#include "m4/mads_scene.h"
 
 namespace M4 {
 
@@ -44,7 +45,7 @@ MadsAnimation::~MadsAnimation() {
 	delete _font;
 }
 
-void MadsAnimation::load(const Common::String &filename) {
+void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -64,7 +65,6 @@ void MadsAnimation::load(const Common::String &filename) {
 
 	animStream->skip(2);
 	_animMode = animStream->readUint16LE();
-	assert(_animMode != 4);
 	_roomNumber = animStream->readUint16LE();
 	_field12 = animStream->readUint16LE() != 0;
 	animStream->skip(4);
@@ -74,7 +74,7 @@ void MadsAnimation::load(const Common::String &filename) {
 	animStream->skip(10);
 	
 	animStream->read(buffer, 13);
-	_field24 = Common::String(buffer, 13);
+	_infoFilename = Common::String(buffer, 13);
 
 	for (int i = 0; i < 10; ++i) {
 		animStream->read(buffer, 13);
@@ -93,8 +93,10 @@ void MadsAnimation::load(const Common::String &filename) {
 	animStream->read(buffer, 13);
 	Common::String fontResource(buffer, 13);
 
-	// TODO: Based on a weird usage of a flags word, a secondary method gets called here.
-	// Figure out secondary method, and when/if it's called
+	if (_animMode == 4)
+		flags |= 0x4000;
+	if (flags & 0x100)
+		loadInterface(walkSurface, sceneSurface);
 
 	// Initialise the reference list
 	for (int i = 0; i < spriteListCount; ++i)
@@ -416,12 +418,24 @@ void MadsAnimation::load1(int frameNumber) {
 
 	if (proc1(spriteSet, pt, frameNumber))
 		error("proc1 failure");
-
-
 }
 
 bool MadsAnimation::proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber) {
 	return 0;
+}
+
+void MadsAnimation::loadInterface(M4Surface *walkSurface, M4Surface *sceneSurface) {
+	walkSurface->madsloadInterface(0);
+
+
+	/* TODO - implement properly
+	if (_animMode > 2) {
+		warning("Mode1");	
+	} else {
+		MadsSceneResources sceneResources;
+		sceneResources.load(_roomNumber, _infoFilename.c_str(), 0, walkSurface, sceneSurface);
+	}
+	*/
 }
 
 } // End of namespace M4

@@ -35,6 +35,12 @@
 
 namespace M4 {
 
+#define MADS_SURFACE_WIDTH 320
+#define MADS_SURFACE_HEIGHT 156
+#define MADS_SCREEN_HEIGHT 200
+#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
+
+
 struct BGR8 {
 	uint8 b, g, r;
 };
@@ -89,19 +95,23 @@ class M4Surface : protected Graphics::Surface {
 private:
 	byte _color;
 	bool _isScreen;
+	RGBList *_rgbList;
 
 	void rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData = NULL);
 	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
 	void m4LoadBackground(Common::SeekableReadStream *source);
 public:
 	M4Surface(bool isScreen = false) {
-		create(g_system->getWidth(), g_system->getHeight(), 1);
+		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, 1);
 		_isScreen = isScreen;
+		_rgbList = NULL;
 	}
 	M4Surface(int width_, int height_) {
 		create(width_, height_, 1);
 		_isScreen = false;
+		_rgbList = NULL;
 	}
+	virtual ~M4Surface();
 
 	// loads a .COD file into the M4Surface
 	// TODO: maybe move this to the rail system? check where it makes sense
@@ -112,7 +122,7 @@ public:
 	// loads the specified background
 	void loadBackground(int sceneNumber, RGBList **palData = NULL);
 	void loadBackgroundRiddle(const char *sceneName);
-	void madsloadInterface(int index, RGBList **palData);
+	void madsloadInterface(int index, RGBList **palData = NULL);
 
 	void setColor(byte value) { _color = value; }
 	void setColour(byte value) { _color = value; }

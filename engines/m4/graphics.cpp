@@ -69,6 +69,13 @@ void RGBList::setRange(int start, int count, const RGB8 *src) {
 
 #define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)
 
+M4Surface::~M4Surface() {
+	if (_rgbList) {
+		_madsVm->_palette->deleteRange(_rgbList);
+		delete _rgbList;
+	}
+}
+
 void M4Surface::loadCodesM4(Common::SeekableReadStream *source) {
 	if (!source) {
 		free();
@@ -472,9 +479,18 @@ void M4Surface::loadBackground(int sceneNumber, RGBList **palData) {
 
 		if (_vm->getGameType() == GType_RexNebular) {
 			// Load Rex Nebular screen
+			bool hasPalette = palData != NULL;
+			if (!hasPalette)
+				palData = &_rgbList;
+
 			sprintf(resourceName, "rm%d.art", sceneNumber);
 			stream = _vm->_resourceManager->get(resourceName);
 			rexLoadBackground(stream, palData);
+
+			if (!hasPalette) {
+				_vm->_palette->addRange(_rgbList);
+				this->translate(_rgbList);
+			}
 		} else {
 			// Loads M4 game scene
 			if (palData)
@@ -717,6 +733,10 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 	MadsPack intFile(resourceName, _vm);
 	RGB8 *palette = new RGB8[16];
 
+	bool hasPalette = palData != NULL;
+	if (!hasPalette)
+		palData = &_rgbList;
+
 	// Chunk 0, palette
 	Common::SeekableReadStream *intStream = intFile.getItemStream(0);
 
@@ -736,6 +756,12 @@ void M4Surface::madsloadInterface(int index, RGBList **palData) {
 	create(320, 44, 1);
 	intStream->read(pixels, 320 * 44);
 	delete intStream;
+
+	if (!hasPalette) {
+		// Translate the interface palette
+		_vm->_palette->addRange(_rgbList);
+		this->translate(_rgbList);
+	}
 }
 
 void M4Surface::scrollX(int xAmount) {

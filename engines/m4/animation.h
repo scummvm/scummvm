@@ -83,7 +83,7 @@ private:
 	int _spriteListIndex;
 	int _scrollX;
 	int _scrollY;
-	Common::String _field24;
+	Common::String _infoFilename;
 	Common::String _spriteSetNames[10];
 	Common::String _lbmFilename;
 	Common::String _spritesFilename;
@@ -104,11 +104,12 @@ private:
 
 	void load1(int frameNumber);
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
+	void loadInterface(M4Surface *walkSurface, M4Surface *sceneSurface);
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void load(const Common::String &filename);
+	virtual void load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface);
 	virtual void start();
 	virtual bool update();
 	virtual void stop();
