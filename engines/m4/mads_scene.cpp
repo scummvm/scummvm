@@ -604,18 +604,18 @@ void MadsAction::set() {
 
 /*--------------------------------------------------------------------------*/
 
-void MadsSceneResources::load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface) {
-	char buffer[80];
+void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface) {
+	char buffer1[80];
 	const char *sceneName;
 
 	// TODO: Initialise spriteSet / xp_list
 
-	if (sceneId > 0) {
-		sceneName = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneId, ".DAT");
+	if (sceneNumber > 0) {
+		sceneName = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneNumber, ".DAT");
 	} else {
-		strcat(buffer, "*");
-		strcat(buffer, resName);
-		sceneName = buffer; // TODO: Check whether this needs to be converted to 'HAG form'
+		strcat(buffer1, "*");
+		strcat(buffer1, resName);
+		sceneName = buffer1; // TODO: Check whether this needs to be converted to 'HAG form'
 	}
 
 	Common::SeekableReadStream *rawStream = _vm->_resourceManager->get(sceneName);
@@ -626,7 +626,7 @@ void MadsSceneResources::load(int sceneId, const char *resName, int v0, M4Surfac
 	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
 
 	int resSceneId = stream->readUint16LE();
-	assert(resSceneId == sceneId);
+	assert(resSceneId == sceneNumber);
 	artFileNum = stream->readUint16LE();
 	dialogStyle = stream->readUint16LE();
 	width = stream->readUint16LE();
@@ -651,8 +651,8 @@ void MadsSceneResources::load(int sceneId, const char *resName, int v0, M4Surfac
 	int setCount = stream->readUint16LE();
 	stream->readUint16LE();
 	for (int i = 0; i < setCount; ++i) {
-		char buffer[64];
-		Common::String s(buffer, 64);
+		char buffer2[64];
+		Common::String s(buffer2, 64);
 		setNames.push_back(s);
 	}
 	
@@ -696,7 +696,7 @@ void MadsSceneResources::load(int sceneId, const char *resName, int v0, M4Surfac
 	_vm->_resourceManager->toss(sceneName);
 
 	// Load the surface artwork
-	surface->loadBackground(sceneId);
+	surface->loadBackground(sceneNumber);
 
 	// Final cleanup
 	if (ssFlag)
