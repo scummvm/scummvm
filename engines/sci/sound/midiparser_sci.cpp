@@ -60,6 +60,9 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	_dataincToAdd = 0;
 	_resetOnPause = false;
 	_channelsUsed = 0;
+
+	for (int i = 0; i < 16; i++)
+		_channelRemap[i] = i;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
@@ -120,17 +123,26 @@ void MidiParser_SCI::unloadMusic() {
 	// Center the pitch wheels and hold pedal in preparation for the next piece of music
 	if (_driver) {
 		for (int i = 0; i < 16; ++i) {
-			if (_channelsUsed & (1 << i)) {
+			if (isChannelUsed(i)) {
 				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
 				_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
 			}
 		}
 	}
+
+	for (int i = 0; i < 16; i++)
+		_channelRemap[i] = i;
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
+	byte remappedChannel = _channelRemap[info.channel()];
+
+	// Remap channel. Keep the upper 4 bits (command code) and change
+	// the lower 4 bits (channel)
+	info.event = (info.event & 0xF0) | (remappedChannel & 0xF);
+
 	// Monitor which channels are used by this song
-	_channelsUsed |= (1 << info.channel());
+	setChannelUsed(info.channel());
 
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {

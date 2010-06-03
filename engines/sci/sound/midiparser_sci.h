@@ -71,7 +71,16 @@ public:
 			jumpToTick(0);
 	}
 
+	void remapChannel(byte channel, byte newChannel) {
+		assert(channel < 0xF);		// don't touch special SCI channel 15
+		assert(newChannel < 0xF);	// don't touch special SCI channel 15
+		_channelRemap[channel] = newChannel;
+	}
+
 protected:
+	bool isChannelUsed(byte channel) { return _channelsUsed & (1 << channel); }
+	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
+
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
@@ -93,6 +102,8 @@ protected:
 	// A 16-bit mask, containing the channels used
 	// by the currently parsed song
 	uint16 _channelsUsed;
+
+	byte _channelRemap[16];
 };
 
 } // End of namespace Sci
