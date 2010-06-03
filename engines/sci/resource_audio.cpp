@@ -168,6 +168,7 @@ void ResourceManager::readWaveAudioPatches() {
 			int number = atoi(name.c_str());
 			ResourceSource *psrcPatch = new ResourceSource;
 			psrcPatch->source_type = kSourceWave;
+			psrcPatch->resourceFile = 0;
 			psrcPatch->location_name = name;
 			psrcPatch->volume_number = 0;
 			psrcPatch->audioCompressionType = 0;
