@@ -99,7 +99,7 @@ MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
-LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog2.ld
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
