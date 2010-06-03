@@ -173,6 +173,21 @@ void SciMusic::sortPlayList() {
 	MusicEntry ** pData = _playList.begin();
 	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
 }
+
+void SciMusic::findUsedChannels() {
+	// Reset list
+	for (int k = 0; k < 16; k++)
+		_usedChannels[k] = false;
+
+	const MusicList::iterator end = _playList.end();
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		for (int channel = 0; channel < 16; channel++) {
+			if ((*i)->soundRes && (*i)->soundRes->isChannelUsed(channel))
+				_usedChannels[channel] = true;
+		}
+	}
+}
+
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
@@ -219,6 +234,25 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+
+			// TODO: Fix channel remapping. This doesn't quite work... (e.g. no difference in LSL1VGA)
+#if 0
+			// Remap channels
+			findUsedChannels();
+
+			for (int i = 0; i < 16; i++) {
+				if (_usedChannels[i] && pSnd->soundRes->isChannelUsed(i)) {
+					int16 newChannel = getNextUnusedChannel();
+					if (newChannel >= 0) {
+						_usedChannels[newChannel] = true;
+						debug("Remapping channel %d to %d\n", i, newChannel);
+						pSnd->pMidiParser->remapChannel(i, newChannel);
+					} else {
+						warning("Attempt to remap channel %d, but no unused channels exist", i);
+					}
+				}
+			}
+#endif
 
 			// Fast forward to the last position and perform associated events when loading
 			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
