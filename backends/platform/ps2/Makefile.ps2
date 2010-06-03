@@ -17,6 +17,8 @@ DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
 else
+PRE_OBJS_FLAGS =
+POST_OBJS_FLAGS =
 ENABLED = STATIC_PLUGIN
 endif
 
@@ -58,9 +60,15 @@ RM      = rm -f
 
 srcdir = ../../..
 VPATH = $(srcdir)
-INCDIR = $(srcdir)
+INCDIR = ../../../
 #DEPDIR = .deps
 #CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d,-MQ,"$@",-MP
+
+# Variables for dynamic plugin building
+PLUGIN_PREFIX =
+PLUGIN_SUFFIX = .plg
+PLUGIN_EXTRA_DEPS = plugin.syms scummvm-ps2.elf
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-ps2.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
 
@@ -87,17 +95,11 @@ OBJS := backends/platform/ps2/DmaPipe.o \
 	backends/platform/ps2/ps2debug.o \
 	backends/platform/ps2/ps2loader.o
     
-MODULE_DIRS += ./
+MODULE_DIRS += .
 
 include $(srcdir)/Makefile.common
 
-# Variables for dynamic plugin building
-PLUGIN_PREFIX =
-PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.syms scummvm-ps2.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-ps2.org.elf,-Tplugin.ld,--export-dynamic,--retain-symbols-file,plugin.syms -lstdc++ -lc
-
-LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-Tmain_prog.ld
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog2.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
