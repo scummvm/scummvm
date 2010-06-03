@@ -157,7 +157,6 @@ struct SelectorCache {
 
 	// Used for auto detection purposes
 	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
-	Selector setCursor; ///< For cursor semantics autodetection
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
