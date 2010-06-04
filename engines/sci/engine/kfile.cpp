@@ -44,6 +44,7 @@ struct SavegameDesc {
 	int id;
 	int date;
 	int time;
+	char name[SCI_MAX_SAVENAME_LENGTH];
 };
 
 /*
@@ -262,7 +263,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
+			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
 				// invalid
 				delete in;
 				continue;
@@ -275,6 +276,13 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.savegame_time;
+
+			if (meta.savegame_name.lastChar() == '\n')
+				meta.savegame_name.deleteLastChar();
+
+			strncpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH - 1);
+			desc.name[SCI_MAX_SAVENAME_LENGTH - 1] = 0;
+
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
 			saves.push_back(desc);
@@ -289,28 +297,11 @@ bool Console::cmdListSaves(int argc, const char **argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
 	for (uint i = 0; i < saves.size(); i++) {
 		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
-				// invalid
-				delete in;
-				continue;
-			}
-
-			if (!meta.savegame_name.empty()) {
-				if (meta.savegame_name.lastChar() == '\n')
-					meta.savegame_name.deleteLastChar();
-
-				DebugPrintf("%s: '%s'\n", filename.c_str(), meta.savegame_name.c_str());
-			}
-			delete in;
-		}
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
 	}
+
 	return true;
 }
 
@@ -446,44 +437,20 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	int savedir_nr = argv[1].toUint16();
+	uint16 savedir_nr = argv[1].toUint16();
 
 	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), savedir_nr);
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	savedir_nr = saves[savedir_nr].id;
-
-	if (savedir_nr > MAX_SAVEGAME_NR - 1) {
-		return NULL_REG;
-	}
-
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String filename = g_sci->getSavegameName(savedir_nr);
-	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename))) {
-		// found a savegame file
-
-		SavegameMetadata meta;
-		if (!get_savegame_metadata(in, &meta)) {
-			// invalid
-			s->r_acc = make_reg(0, 0);
-		} else {
-			s->r_acc = make_reg(0, 1);
-		}
-		delete in;
-	} else {
-		s->r_acc = make_reg(0, 1);
-	}
-
-	return s->r_acc;
+	return make_reg(0, savedir_nr < saves.size());
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
 	reg_t nametarget = argv[1];
-	reg_t *nameoffsets = s->_segMan->derefRegPtr(argv[2], 0);
+	reg_t *slot = s->_segMan->derefRegPtr(argv[2], 0);
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
@@ -491,42 +458,17 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	listSavegames(saves);
 
 	s->r_acc = NULL_REG;
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 
-	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			// found a savegame file
+	for (uint i = 0; i < MIN<uint>(saves.size(), MAX_SAVEGAME_NR); i++) {
+		*slot++ = s->r_acc; // Store savegame ID
+		++s->r_acc.offset; // Increase number of files found
 
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
-				// invalid
-				delete in;
-				continue;
-			}
+		s->_segMan->strcpy(nametarget, saves[i].name);
 
-			if (!meta.savegame_name.empty()) {
-				if (meta.savegame_name.lastChar() == '\n')
-					meta.savegame_name.deleteLastChar();
-
-				*nameoffsets = s->r_acc; // Store savegame ID
-				++s->r_acc.offset; // Increase number of files found
-
-				nameoffsets++; // Make sure the next ID string address is written to the next pointer
-				Common::String name = meta.savegame_name;
-				if (name.size() > SCI_MAX_SAVENAME_LENGTH-1)
-					name = Common::String(meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH-1);
-				s->_segMan->strcpy(nametarget, name.c_str());
-
-				// Increase name offset pointer accordingly
-				nametarget.offset += SCI_MAX_SAVENAME_LENGTH;
-			}
-			delete in;
-		}
+		// Increase name offset pointer accordingly
+		nametarget.offset += SCI_MAX_SAVENAME_LENGTH;
 	}
 
-	//free(gfname);
 	s->_segMan->strcpy(nametarget, ""); // Terminate list
 
 	return s->r_acc;
