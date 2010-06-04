@@ -468,8 +468,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 	byte *dataEnd;
 	Channel *channel, *sampleChannel;
 
-	for (int i = 0; i < 16; i++)
-		_usedChannels[i] = false;
+	_channelsUsed = 0;
 
 	switch (_soundVersion) {
 	case SCI_VERSION_0_EARLY:
@@ -560,7 +559,7 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
 					channel->size = READ_LE_UINT16(data + 4) - 2; // Not counting channel header
 					channel->number = *(channel->data - 2);
-					_usedChannels[channel->number] = true;
+					setChannelUsed(channel->number);
 					channel->poly = *(channel->data - 1);
 					channel->time = channel->prev = 0;
 					if (channel->number == 0xFE) { // Digital channel
