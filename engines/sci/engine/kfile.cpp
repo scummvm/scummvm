@@ -44,6 +44,7 @@ struct SavegameDesc {
 	int id;
 	int date;
 	int time;
+	int version;
 	char name[SCI_MAX_SAVENAME_LENGTH];
 };
 
@@ -276,6 +277,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.savegame_time;
+			desc.version = meta.savegame_version;
 
 			if (meta.savegame_name.lastChar() == '\n')
 				meta.savegame_name.deleteLastChar();
@@ -444,7 +446,17 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	return make_reg(0, savedir_nr < saves.size());
+	// Check for savegame slot being out of range
+	if (savedir_nr >= saves.size())
+		return NULL_REG;
+
+	// Check for compatible savegame version
+	int ver = saves[savedir_nr].version;
+	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
+		return NULL_REG;
+
+	// Otherwise we assume the savegame is OK
+	return make_reg(0, 1);
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
