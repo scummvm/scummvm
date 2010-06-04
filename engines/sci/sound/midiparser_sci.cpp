@@ -88,7 +88,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_tracks[0] = _mixedData;
 	setTrack(0);
 	_loopTick = 0;
-	_channelsUsed = 0;
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// Set initial voice count
@@ -135,12 +134,6 @@ void MidiParser_SCI::unloadMusic() {
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	byte remappedChannel = _channelRemap[info.channel()];
-
-	// Remap channel. Keep the upper 4 bits (command code) and change
-	// the lower 4 bits (channel)
-	info.event = (info.event & 0xF0) | (remappedChannel & 0xF);
-
 	// Monitor which channels are used by this song
 	setChannelUsed(info.channel());
 
@@ -334,7 +327,7 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	for (int i = 0; i < _track->channelCount; i++) {
 		if (_track->channels[i].time == -1) // channel ended
 			continue;
-		next = *_track->channels[i].data; // when the next event shoudl occur
+		next = *_track->channels[i].data; // when the next event should occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
 			next = 240;
 		next += _track->channels[i].time;
@@ -401,9 +394,18 @@ byte *MidiParser_SCI::midiMixChannels() {
 			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
-			if (command & 0x80)
+			if (command & 0x80) {
 				par1 = *channel->data++;
-			else {// running status
+
+				// TODO: Fix remapping
+
+#if 0
+				// Remap channel. Keep the upper 4 bits (command code) and change
+				// the lower 4 bits (channel)
+				byte remappedChannel = _channelRemap[par1 & 0xF];
+				par1 = (par1 & 0xF0) | (remappedChannel & 0xF);
+#endif
+			} else {// running status
 				par1 = command;
 				command = channel->prev;
 			}

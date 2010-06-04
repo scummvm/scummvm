@@ -231,14 +231,12 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			pSnd->pauseCounter = 0;
 
-			// Find out what channels to filter for SCI0
-			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
-			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
-
 			// TODO: Fix channel remapping. This doesn't quite work... (e.g. no difference in LSL1VGA)
 #if 0
 			// Remap channels
 			findUsedChannels();
+
+			pSnd->pMidiParser->clearUsedChannels();
 
 			for (int i = 0; i < 16; i++) {
 				if (_usedChannels[i] && pSnd->soundRes->isChannelUsed(i)) {
@@ -253,6 +251,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 				}
 			}
 #endif
+
+			// Find out what channels to filter for SCI0
+			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
+			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
 			// Fast forward to the last position and perform associated events when loading
 			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);

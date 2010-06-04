@@ -77,6 +77,8 @@ public:
 		_channelRemap[channel] = newChannel;
 	}
 
+	void clearUsedChannels() { _channelsUsed = 0; }
+
 protected:
 	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
 	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
