@@ -377,8 +377,7 @@ bool MadsConsole::cmdPlayAnimation(int argc, const char **argv) {
 		if (argc == 3 && atoi(argv[2]) == 1)
 			_madsVm->_palette->deleteAllRanges();
 
-		_madsVm->scene()->_sceneAnimation->load(resourceName, 0, NULL, NULL);
-		_madsVm->scene()->_sceneAnimation->start();
+		_madsVm->scene()->_sceneAnimation->load(resourceName, 0);
 
 		view->restore(0, 0, view->width(), view->height());
 		return false;

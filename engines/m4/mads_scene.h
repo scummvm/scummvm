@@ -39,7 +39,7 @@ class MadsSceneResources: public SceneResources {
 public:
 	int sceneId;
 	int artFileNum;
-	int dialogStyle;
+	int drawStyle;
 	int width;
 	int height;
 	Common::Array<MadsObject> objects;
@@ -93,6 +93,7 @@ private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
 	MadsAction _action;
+	Animation *_activeAnimation;
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
@@ -127,6 +128,7 @@ public:
 	int loadSceneSpriteSet(const char *setName);
 	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
+	void loadAnimation(const Common::String &animName, int v0);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }

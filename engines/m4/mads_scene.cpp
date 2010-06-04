@@ -37,6 +37,7 @@
 #include "m4/mads_views.h"
 #include "m4/compression.h"
 #include "m4/staticres.h"
+#include "m4/animation.h"
 
 namespace M4 {
 
@@ -49,6 +50,7 @@ static const int SCROLLER_DELAY = 200;
 
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
+	_activeAnimation = NULL;
 
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
@@ -58,6 +60,8 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 }
 
 MadsScene::~MadsScene() {
+	delete _activeAnimation;
+	_activeAnimation = NULL;
 	leaveScene();
 	_vm->_viewManager->deleteView(_interfaceSurface);
 }
@@ -83,7 +87,7 @@ void MadsScene::loadScene2(const char *aaName) {
 	if (_madsVm->globals()->_config.textWindowStill)
 		flags |= 0x200;
 
-	_sceneAnimation->load(aaName, flags, _interfaceSurface, NULL);
+	_sceneAnimation->initialise(aaName, flags, _interfaceSurface, NULL);
 }
 
 /**
@@ -165,6 +169,11 @@ void MadsScene::leaveScene() {
 	delete _sceneResources.hotspots;
 	delete _sceneResources.props;
 	delete _walkSurface;
+
+	if (_activeAnimation) {
+		delete _activeAnimation;
+		_activeAnimation = NULL;
+	}
 
 	Scene::leaveScene();
 }
@@ -286,14 +295,15 @@ void MadsScene::update() {
 		_vm->_font->setFont(FONT_MAIN_MADS);
 		_vm->_font->current()->writeString(this, sStatusText, (width() - _vm->_font->current()->getWidth(sStatusText)) / 2, 142, 0);
 	}
-
-	//***DEBUG***
-	_spriteSlots.getSprite(0).getFrame(1)->copyTo(this, 120, 90, 0);
 }
 
 void MadsScene::updateState() {
 	_sceneLogic.sceneStep();
 	_sequenceList.tick();
+
+	if ((_activeAnimation) && !_abortTimers)
+		_activeAnimation->update();
+
 	_kernelMessages.update();
 }
 
@@ -425,6 +435,15 @@ void MadsScene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 
 	// Bottom right corner
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
+}
+
+void MadsScene::loadAnimation(const Common::String &animName, int v0) {
+	if (_activeAnimation)
+		error("Multiple active animations are not allowed");
+
+	MadsAnimation *anim = new MadsAnimation(_vm, this);
+	anim->load(animName.c_str(), 0);
+	_activeAnimation = anim;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -628,7 +647,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	int resSceneId = stream->readUint16LE();
 	assert(resSceneId == sceneNumber);
 	artFileNum = stream->readUint16LE();
-	dialogStyle = stream->readUint16LE();
+	drawStyle = stream->readUint16LE();
 	width = stream->readUint16LE();
 	height = stream->readUint16LE();
 	assert((width == 320) && (height == 156));
@@ -664,7 +683,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		ssFlag = true;
 	}
 	int walkSize = gfxSize;
-	if (dialogStyle == 2) {
+	if (drawStyle == 2) {
 		width >>= 2;
 		walkSize = width * height;
 	}

@@ -72,17 +72,16 @@ enum SpriteIdSpecial {
 	SPRITE_FOUR = 4
 };
 
-typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
-
 class MadsSpriteSlots {
 private:
 	MadsView &_owner;
 	Common::Array<MadsSpriteSlot> _entries;
-	SpriteList _sprites;
+	Common::Array<SpriteAsset *> _sprites;
 public:
 	int startIndex;
 
 	MadsSpriteSlots(MadsView &owner);
+	~MadsSpriteSlots();
 
 	MadsSpriteSlot &operator[](int idx) {
 		assert(idx < SPRITE_SLOTS_SIZE);
@@ -90,11 +89,12 @@ public:
 	}
 	SpriteAsset &getSprite(int idx) {
 		assert(idx < (int)_sprites.size());
-		return *_sprites[idx].get();
+		return *_sprites[idx];
 	}
 
 	int getIndex();
 	int addSprites(const char *resName);
+	void deleteSprites(int listIndex);
 	void clear();
 	void deleteTimer(int seqIndex);
 
@@ -359,6 +359,7 @@ public:
 	void tick();
 	void delay(uint32 v1, uint32 v2);
 	void setAnimRange(int seqIndex, int startVal, int endVal);
+	void scan();
 };
 
 class Animation {
@@ -367,10 +368,9 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	virtual void load(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
-	virtual void start() = 0;
-	virtual bool update() = 0;
-	virtual void stop() = 0;
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
+	virtual void load(const Common::String &filename, int v0) = 0;
+	virtual void update() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;
 };
 	

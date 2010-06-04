@@ -67,7 +67,6 @@ enum MadsAnimationFlags {ANIM_CUSTOM_FONT = 0x20};
 
 class MadsAnimation: public Animation {
 private:
-	bool _playing;
 	MadsView *_view;
 
 	int _spriteListCount;
@@ -83,7 +82,7 @@ private:
 	int _spriteListIndex;
 	int _scrollX;
 	int _scrollY;
-	Common::String _infoFilename;
+	Common::String _interfaceFile;
 	Common::String _spriteSetNames[10];
 	Common::String _lbmFilename;
 	Common::String _spritesFilename;
@@ -92,7 +91,7 @@ private:
 
 	int _currentFrame, _oldFrameEntry;
 	bool _resetFlag;
-	int _unk1;
+	bool _freeFlag;
 	bool _skipLoad;
 	int _unkIndex;
 	Common::Point _unkList[2];
@@ -109,10 +108,9 @@ public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void load(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface);
-	virtual void start();
-	virtual bool update();
-	virtual void stop();
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface);
+	virtual void load(const Common::String &filename, int abortTimers);
+	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);
 };
 

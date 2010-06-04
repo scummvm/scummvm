@@ -146,6 +146,7 @@ void MadsSceneLogic::lowRoomsEntrySound() {
 	}
 }
 
+
 /*--------------------------------------------------------------------------*/
 
 /**
@@ -233,7 +234,8 @@ void MadsSceneLogic::enterScene() {
 	_madsVm->globals()->loadQuoteSet(0x31, 0x32, 0x37, 0x38, 0x39, -1);
 
 	if (_madsVm->globals()->_globals[10]) {
-		// TODO: Load scene animation
+		const char *animName = MADSResourceManager::getResourceName('S', 'e', EXTTYPE_AA, NULL, -1);
+		_madsVm->scene()->loadAnimation(animName, 0x47);
 
 		_madsVm->scene()->getSceneResources().playerPos = Common::Point(68, 140);
 		_madsVm->scene()->getSceneResources().playerDir = 4;

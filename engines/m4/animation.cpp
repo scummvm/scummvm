@@ -33,19 +33,31 @@ namespace M4 {
 // TODO: this code needs cleanup
 
 MadsAnimation::MadsAnimation(MadsM4Engine *vm, MadsView *view): Animation(vm), _view(view) {
-	_playing = false;
 	_font = NULL;
-	_unk1 = 0;
+	_freeFlag = false;
 	_skipLoad = false;
 	_unkIndex = -1;
 	_messageCtr= 0;
 }
 
 MadsAnimation::~MadsAnimation() {
+	for (uint i = 0; i < _messages.size(); ++i) {
+		if (_messages[i].kernelMsgIndex >= 0)
+			_view->_kernelMessages.remove(_messages[i].kernelMsgIndex);
+	}
+
+	// Further deletion logic
+	if (_field12) {
+		_view->_spriteSlots.deleteSprites(_spriteListIndexes[_spriteListIndex]);
+	}
+
 	delete _font;
 }
 
-void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface) {
+/**
+ * Initialises and loads the data of an animation
+ */
+void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -74,7 +86,7 @@ void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface
 	animStream->skip(10);
 	
 	animStream->read(buffer, 13);
-	_infoFilename = Common::String(buffer, 13);
+	_interfaceFile = Common::String(buffer, 13);
 
 	for (int i = 0; i < 10; ++i) {
 		animStream->read(buffer, 13);
@@ -160,7 +172,8 @@ void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface
 
 		for (int i = 0; i < miscEntriesCount; ++i) {
 			AnimMiscEntry rec;
-			rec.soundNum = animStream->readUint16LE();
+			rec.soundNum = animStream->readByte();
+			animStream->skip(1);
 			rec.numTicks = animStream->readUint16LE();
 			rec.posAdjust.x = animStream->readUint16LE();
 			rec.posAdjust.y = animStream->readUint16LE();
@@ -204,20 +217,37 @@ void MadsAnimation::load(const Common::String &filename, uint16 flags, M4Surface
 	
 }
 
-void MadsAnimation::start() {
+/**
+ * Loads an animation file for display
+ */
+void MadsAnimation::load(const Common::String &filename, int abortTimers) {
+	initialise(filename, 0, NULL, NULL);
+	_messageCtr = 0;
+	_skipLoad = true;
+
+	if (_field12) {
+		_unkIndex = -1;
+		int listIndex = _spriteListIndexes[_spriteListIndex];
+		SpriteAsset &spriteSet = _view->_spriteSlots.getSprite(listIndex);
+warning("%d", spriteSet.getCount());
+	}
+
+	// Initialise miscellaneous fields
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
-	//for (int i = 0; i < _seriesCount; i++) {
-		//_spriteSeries[i] = new SpriteSeries((char*)_spriteSeriesNames[i].c_str());
-	//}
-	_playing = true;
-	update();
+	_nextFrameTimer = _madsVm->_currentTimer;
+	_abortTimers = abortTimers;
+	_abortMode = _madsVm->scene()->_abortTimersMode2;
+
+	for (int i = 0; i < 3; ++i)
+		_actionNouns[i] = _madsVm->scene()->actionNouns[i];
+
+	// Initialise kernel message list
+	for (uint i = 0; i < _messages.size(); ++i)
+		_messages[i].kernelMsgIndex = -1;
 }
 
-bool MadsAnimation::update() {
-	if (!_playing)
-		return true;
-
+void MadsAnimation::update() {
 	if (_field12) {
 		int spriteListIndex = _spriteListIndexes[_spriteListIndex];
 		int newIndex = -1;
@@ -235,7 +265,8 @@ bool MadsAnimation::update() {
 
 	// If it's not time for the next frame, then exit
 	if (_madsVm->_currentTimer < _nextFrameTimer)
-		return false;
+		return;
+return;//*** TODO: This routine still needs to be properly tested
 
 	// Loop checks for any prior animation sprite slots to be expired
 	for (int slotIndex = 0; slotIndex < _view->_spriteSlots.startIndex; ++slotIndex) {
@@ -253,8 +284,8 @@ bool MadsAnimation::update() {
 			_currentFrame = 0;
 			_oldFrameEntry = 0;
 		} else {
-			_unk1 = true;
-			return true;
+			_freeFlag = true;
+			return;
 		}
 	}
 
@@ -368,8 +399,6 @@ bool MadsAnimation::update() {
 	_currentFrame++;
 	if (_currentFrame >= (int)_miscEntries.size()) {
 		// Animation is complete
-		stop();
-
 		if (_abortTimers != 0) {
 			_view->_abortTimers = _abortTimers;
 			_view->_abortTimersMode = _abortMode;
@@ -384,18 +413,12 @@ bool MadsAnimation::update() {
 
 	int frameNum = MIN(_currentFrame, (int)_miscEntries.size() - 1);
 	_nextFrameTimer = _madsVm->_currentTimer + _miscEntries[frameNum].numTicks;
-
-	return _currentFrame >= (int)_miscEntries.size();
-}
-
-void MadsAnimation::stop() {
-	_playing = false;
 }
 
 void MadsAnimation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
-	_unk1 = 0;
+	_freeFlag = false;
 }
 
 void MadsAnimation::load1(int frameNumber) {
@@ -427,14 +450,14 @@ bool MadsAnimation::proc1(SpriteAsset &spriteSet, const Common::Point &pt, int f
 void MadsAnimation::loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface) {
 	if (_animMode <= 2) {
 		MadsSceneResources sceneResources;
-		sceneResources.load(_roomNumber, _infoFilename.c_str(), 0, depthSurface, interfaceSurface);
+		sceneResources.load(_roomNumber, _interfaceFile.c_str(), 0, depthSurface, interfaceSurface);
 
 		// Rex only supports a single dialog draw style
-		assert(sceneResources.dialogStyle == 2);
+		assert(sceneResources.drawStyle == 2);
 
 	} else if (_animMode == 4) {
 		// Load a scene interface
-		interfaceSurface->madsLoadInterface(_infoFilename);
+		interfaceSurface->madsLoadInterface(_interfaceFile);
 	} else {
 		// This mode allocates two large surfaces for the animation
 		// TODO: Are these ever properly freed?

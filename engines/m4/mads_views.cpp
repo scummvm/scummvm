@@ -62,8 +62,15 @@ MadsSpriteSlots::MadsSpriteSlots(MadsView &owner): _owner(owner) {
 	startIndex = 0;
 }
 
+MadsSpriteSlots::~MadsSpriteSlots() {
+	for (uint i = 0; i < _sprites.size(); ++i)
+		delete _sprites[i];
+}
+
 void MadsSpriteSlots::clear() {
 	_owner._textDisplay.clear();
+	for (uint i = 0; i < _sprites.size(); ++i)
+		delete _sprites[i];
 	_sprites.clear();
 
 	// Reset the sprite slots list back to a single entry for a full screen refresh
@@ -86,10 +93,20 @@ int MadsSpriteSlots::addSprites(const char *resName) {
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 
-	_sprites.push_back(SpriteList::value_type(spriteSet));
+	_sprites.push_back(spriteSet);
 	_vm->res()->toss(resName);
 
 	return _sprites.size() - 1;
+}
+
+void MadsSpriteSlots::deleteSprites(int listIndex) {
+	if (listIndex < 0)
+		return;
+
+	delete _sprites[listIndex];
+	_sprites[listIndex] = NULL;
+	if (listIndex == ((int)_sprites.size() - 1))
+		_sprites.remove_at(listIndex);
 }
 
 /*
@@ -173,7 +190,7 @@ void MadsSpriteSlots::drawForeground(View *view) {
 		DepthEntry &de = *i;
 		MadsSpriteSlot &slot = _entries[de.index];
 		assert(slot.spriteListIndex < (int)_sprites.size());
-		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex].get();
+		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
 		if (slot.scale < 100) {
 			// Minimalised drawing
@@ -1132,6 +1149,15 @@ void MadsSequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
 	seqEntry.numSprites = tempEnd;
 
 	seqEntry.frameIndex = (seqEntry.frameInc < 0) ? tempStart : tempEnd;
+}
+
+void MadsSequenceList::scan() {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (!_entries[i].active && (_entries[i].spriteListIndex != -1)) {
+			int idx = _owner._spriteSlots.getIndex();
+			setSpriteSlot(i, _owner._spriteSlots[idx]);
+		}
+	}
 }
 
 //--------------------------------------------------------------------------
