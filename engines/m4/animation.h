@@ -112,6 +112,8 @@ public:
 	virtual void load(const Common::String &filename, int abortTimers);
 	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);
+
+	bool freeFlag() const { return _freeFlag; }
 };
 
 } // End of namespace M4
