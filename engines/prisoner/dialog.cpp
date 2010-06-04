@@ -169,6 +169,9 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 
 	Dialog *dialog = &_dialogs[_currDialogIndex];
 
+	x -= _cameraX;
+	y -= _cameraY;
+
 	setFontColors(_textFont, _dialogFontColor.outlineColor, _dialogFontColor.inkColor);
 	setActiveFont(_textFont);
 
