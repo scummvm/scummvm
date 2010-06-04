@@ -282,8 +282,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			if (meta.savegame_name.lastChar() == '\n')
 				meta.savegame_name.deleteLastChar();
 
-			strncpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH - 1);
-			desc.name[SCI_MAX_SAVENAME_LENGTH - 1] = 0;
+			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
 
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
