@@ -23,15 +23,21 @@
  *
  */
 
-#ifndef BACKENDS_BASE_SUBSYS_FILE_H
-#define BACKENDS_BASE_SUBSYS_FILE_H
+#ifndef BACKENDS_AUDIO_DEFAULT_H
+#define BACKENDS_AUDIO_DEFAULT_H
 
 #include "common/system.h"
+#include "common/noncopyable.h"
+#include "sound/mixer_intern.h"
 
-class BaseSubSys_File : public virtual OSystem {
+class DefaultAudioManager : Audio::MixerImpl, Common::NonCopyable {
 public:
-	virtual void fileInit() = 0;
-	virtual void fileDone() = 0;
+	DefaultAudioManager(OSystem *system, uint sampleRate) : Audio::MixerImpl(system, sampleRate) {}
+	~DefaultAudioManager() {}
+
+	bool hasAudioFeature(OSystem::Feature f);
+	void setAudioFeatureState(OSystem::Feature f, bool enable) {}
+	bool getAudioFeatureState(OSystem::Feature f);
 };
 
 

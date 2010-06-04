@@ -23,15 +23,25 @@
  *
  */
 
-#ifndef BACKENDS_BASE_SUBSYS_TIMER_H
-#define BACKENDS_BASE_SUBSYS_TIMER_H
+#ifndef BACKENDS_MUTEX_DEFAULT_H
+#define BACKENDS_MUTEX_DEFAULT_H
 
 #include "common/system.h"
+#include "common/noncopyable.h"
 
-class BaseSubSys_Timer : public virtual OSystem {
+class DefaultMutexManager : Common::NonCopyable {
 public:
-	virtual void timerInit() = 0;
-	virtual void timerDone() = 0;
+	DefaultMutexManager() {}
+	~DefaultMutexManager() {}
+
+	bool hasMutexFeature(OSystem::Feature f);
+	void setMutexFeatureState(OSystem::Feature f, bool enable) {}
+	bool getMutexFeatureState(OSystem::Feature f);
+
+	OSystem::MutexRef createMutex();
+	void lockMutex(OSystem::MutexRef mutex) {}
+	void unlockMutex(OSystem::MutexRef mutex) {}
+	void deleteMutex(OSystem::MutexRef mutex);
 };
 
 

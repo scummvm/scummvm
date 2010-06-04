@@ -23,16 +23,12 @@
  *
  */
 
-#ifndef BACKENDS_BASE_SUBSYS_MUTEX_H
-#define BACKENDS_BASE_SUBSYS_MUTEX_H
+#include "backends/audio/default/default-audio.h"
 
-#include "common/system.h"
+bool DefaultAudioManager::hasAudioFeature(OSystem::Feature f) {
+	return false;
+}
 
-class BaseSubSys_Mutex : public virtual OSystem {
-public:
-	virtual void mutexInit() = 0;
-	virtual void mutexDone() = 0;
-};
-
-
-#endif
+bool DefaultAudioManager::getAudioFeatureState(OSystem::Feature f) {
+	return false;
+}

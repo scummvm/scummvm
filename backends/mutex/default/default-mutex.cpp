@@ -23,16 +23,16 @@
  *
  */
 
-#ifndef BACKENDS_BASE_SUBSYS_GRAPHICS_H
-#define BACKENDS_BASE_SUBSYS_GRAPHICS_H
+#include "backends/mutex/default/default-mutex.h"
 
-#include "common/system.h"
+OSystem::MutexRef DefaultMutexManager::createMutex() {
+	return OSystem::MutexRef();
+}
 
-class BaseSubSys_Graphics : public virtual OSystem {
-public:
-	virtual void graphicsInit() = 0;
-	virtual void graphicsDone() = 0;
-};
+bool DefaultMutexManager::hasMutexFeature(OSystem::Feature f) {
+	return false;
+}
 
-
-#endif
+bool DefaultMutexManager::getMutexFeatureState(OSystem::Feature f) {
+	return false;
+}
