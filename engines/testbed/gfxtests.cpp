@@ -1,6 +1,9 @@
 #include "testbed/gfxtests.h"
 #include "testbed/testsuite.h"
+
 #include "graphics/pixelformat.h"
+#include "graphics/fontman.h"
+#include "graphics/surface.h"
 
 namespace Testbed {
 
@@ -49,17 +52,41 @@ bool testAspectRatio() {
 	char blackbuf[16 * 20];
 	memset(blackbuf, 1, 16 * 20); // Prepare a buffer 16px wide and 240px high, to fit on a lateral strip
 
-	uint8 pal[2 * 4];
-	g_system->grabPalette(pal, 0, 2);
+	uint8 pal[3 * 4];
+	g_system->grabPalette(pal, 0, 3);
 	pal[4] = 255;
 	pal[5] = 255;
-	pal[6] = 0;
+	pal[6] = 255;
 
-	g_system->setPalette(pal, 0, 2);
+	pal[8] = 0;
+	pal[9] = 255;
+	pal[10] = 0;
 
-    g_system->copyRectToScreen((const byte *)blackbuf, 16, 20, 28, 16, 20); // Fix left strip
+	g_system->setPalette(pal, 0, 3);
+
+    //g_system->copyRectToScreen((const byte *)blackbuf, 16, 20, 28, 16, 20);
+	//g_system->updateScreen();
+
+	// Font usage
+	
+	Graphics::Surface *screen = g_system->lockScreen();
+
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+	
+	uint16 h = font.getFontHeight();
+	uint16 y = g_system->getHeight() / 2 - h / 2;
+	
+
+	Common::Rect r(0,y,screen->w,y+h);
+	screen->fillRect(r,0);
+
+	Common::String text("Hi thr!");
+
+	font.drawString(screen, text, 0, y, screen->w, 1, Graphics::kTextAlignCenter);
+
+	g_system->unlockScreen();
 	g_system->updateScreen();
-
+	
 	return true;
 
 }
