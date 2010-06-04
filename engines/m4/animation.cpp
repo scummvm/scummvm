@@ -154,11 +154,12 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			AnimFrameEntry rec;
 			rec.frameNumber = animStream->readUint16LE();
 			rec.seqIndex = animStream->readByte();
+			rec.spriteSlot.spriteListIndex = animStream->readByte();
 			rec.spriteSlot.frameNumber = animStream->readUint16LE();
 			rec.spriteSlot.xp = animStream->readUint16LE();
 			rec.spriteSlot.yp = animStream->readUint16LE();
-			rec.spriteSlot.depth = animStream->readUint16LE();
-			rec.spriteSlot.scale = animStream->readUint16LE();
+			rec.spriteSlot.depth = animStream->readByte();
+			rec.spriteSlot.scale = animStream->readByte();
 
 			_frameEntries.push_back(rec);
 		}
@@ -266,7 +267,6 @@ void MadsAnimation::update() {
 	// If it's not time for the next frame, then exit
 	if (_madsVm->_currentTimer < _nextFrameTimer)
 		return;
-return;//*** TODO: This routine still needs to be properly tested
 
 	// Loop checks for any prior animation sprite slots to be expired
 	for (int slotIndex = 0; slotIndex < _view->_spriteSlots.startIndex; ++slotIndex) {
