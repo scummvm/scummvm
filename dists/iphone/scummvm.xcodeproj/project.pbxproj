@@ -735,7 +735,6 @@
 		DF09418A0F63CB26002D821E /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
 		DF09418B0F63CB26002D821E /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DF09418C0F63CB26002D821E /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
-		DF0941910F63CB26002D821E /* video_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBA70F485D950006E566 /* video_player.cpp */; };
 		DF0941920F63CB26002D821E /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
 		DF0941930F63CB26002D821E /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
 		DF0941940F63CB26002D821E /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
@@ -875,7 +874,6 @@
 		DF2EC51910E64EE600765801 /* wave6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2EC51710E64EE600765801 /* wave6581.cpp */; };
 		DF2EC51A10E64EE600765801 /* wave6581.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2EC51710E64EE600765801 /* wave6581.cpp */; };
 		DF2FFB930F485D890006E566 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
-		DF2FFBB70F485D950006E566 /* video_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBA70F485D950006E566 /* video_player.cpp */; };
 		DF2FFBD30F485DFB0006E566 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
 		DF2FFBD90F485E360006E566 /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
 		DF2FFBFC0F4860A60006E566 /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
@@ -1915,6 +1913,33 @@
 		DFAAAFFC0F0112DF003E9390 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
 		DFAAB0020F011392003E9390 /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DFAAD23D0F50120E00C3A4E2 /* console.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAD2390F50120E00C3A4E2 /* console.cpp */; };
+		DFB0576811B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
+		DFB0576911B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
+		DFB0576A11B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
+		DFB0576B11B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
+		DFB0576C11B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
+		DFB0576D11B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
+		DFB0576E11B753AF0015AE65 /* mpeg_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576211B753AF0015AE65 /* mpeg_player.cpp */; };
+		DFB0576F11B753AF0015AE65 /* qt_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576411B753AF0015AE65 /* qt_decoder.cpp */; };
+		DFB0577011B753AF0015AE65 /* video_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0576611B753AF0015AE65 /* video_decoder.cpp */; };
+		DFB0577611B753DA0015AE65 /* rational.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577411B753DA0015AE65 /* rational.cpp */; };
+		DFB0577711B753DA0015AE65 /* rational.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577411B753DA0015AE65 /* rational.cpp */; };
+		DFB0577811B753DA0015AE65 /* rational.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577411B753DA0015AE65 /* rational.cpp */; };
+		DFB0578011B7541F0015AE65 /* resource_audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577D11B7541F0015AE65 /* resource_audio.cpp */; };
+		DFB0578111B7541F0015AE65 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577E11B7541F0015AE65 /* util.cpp */; };
+		DFB0578211B7541F0015AE65 /* resource_audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577D11B7541F0015AE65 /* resource_audio.cpp */; };
+		DFB0578311B7541F0015AE65 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577E11B7541F0015AE65 /* util.cpp */; };
+		DFB0578411B7541F0015AE65 /* resource_audio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577D11B7541F0015AE65 /* resource_audio.cpp */; };
+		DFB0578511B7541F0015AE65 /* util.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0577E11B7541F0015AE65 /* util.cpp */; };
+		DFB0578A11B754570015AE65 /* maciconbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578811B754570015AE65 /* maciconbar.cpp */; };
+		DFB0578B11B754570015AE65 /* maciconbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578811B754570015AE65 /* maciconbar.cpp */; };
+		DFB0578C11B754570015AE65 /* maciconbar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578811B754570015AE65 /* maciconbar.cpp */; };
+		DFB0579111B7547D0015AE65 /* pict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578F11B7547D0015AE65 /* pict.cpp */; };
+		DFB0579211B7547D0015AE65 /* pict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578F11B7547D0015AE65 /* pict.cpp */; };
+		DFB0579311B7547D0015AE65 /* pict.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0578F11B7547D0015AE65 /* pict.cpp */; };
+		DFB0579811B7549C0015AE65 /* cinepak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0579611B7549C0015AE65 /* cinepak.cpp */; };
+		DFB0579911B7549C0015AE65 /* cinepak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0579611B7549C0015AE65 /* cinepak.cpp */; };
+		DFB0579A11B7549C0015AE65 /* cinepak.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFB0579611B7549C0015AE65 /* cinepak.cpp */; };
 		DFC831210F48AF19005EF03C /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8301A0F48AF18005EF03C /* detection.cpp */; };
 		DFC831230F48AF19005EF03C /* game.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8301D0F48AF18005EF03C /* game.cpp */; };
 		DFC831240F48AF19005EF03C /* gc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFC8301E0F48AF18005EF03C /* gc.cpp */; };
@@ -2796,7 +2821,6 @@
 		DFF95C1F0FB22D5700A3EC78 /* detection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAAFFB0F0112DF003E9390 /* detection.cpp */; };
 		DFF95C200FB22D5700A3EC78 /* thumbnail_intern.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */; };
 		DFF95C210FB22D5700A3EC78 /* dither.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFB900F485D890006E566 /* dither.cpp */; };
-		DFF95C260FB22D5700A3EC78 /* video_player.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBA70F485D950006E566 /* video_player.cpp */; };
 		DFF95C270FB22D5700A3EC78 /* debug.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD10F485DFB0006E566 /* debug.cpp */; };
 		DFF95C280FB22D5700A3EC78 /* GuiManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBD50F485E360006E566 /* GuiManager.cpp */; };
 		DFF95C290FB22D5700A3EC78 /* posix-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF2FFBF80F4860A60006E566 /* posix-saves.cpp */; };
@@ -2985,8 +3009,6 @@
 		DF2FFB900F485D890006E566 /* dither.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = dither.cpp; sourceTree = "<group>"; };
 		DF2FFB910F485D890006E566 /* dither.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dither.h; sourceTree = "<group>"; };
 		DF2FFB920F485D890006E566 /* pixelformat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pixelformat.h; sourceTree = "<group>"; };
-		DF2FFBA70F485D950006E566 /* video_player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_player.cpp; sourceTree = "<group>"; };
-		DF2FFBA80F485D950006E566 /* video_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_player.h; sourceTree = "<group>"; };
 		DF2FFBD10F485DFB0006E566 /* debug.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = debug.cpp; sourceTree = "<group>"; };
 		DF2FFBD20F485DFB0006E566 /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		DF2FFBD50F485E360006E566 /* GuiManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GuiManager.cpp; sourceTree = "<group>"; };
@@ -4358,6 +4380,24 @@
 		DFAAB0010F011392003E9390 /* thumbnail_intern.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = thumbnail_intern.cpp; sourceTree = "<group>"; };
 		DFAAD2390F50120E00C3A4E2 /* console.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = console.cpp; sourceTree = "<group>"; };
 		DFAAD23A0F50120E00C3A4E2 /* console.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = console.h; sourceTree = "<group>"; };
+		DFB0576211B753AF0015AE65 /* mpeg_player.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = mpeg_player.cpp; sourceTree = "<group>"; };
+		DFB0576311B753AF0015AE65 /* mpeg_player.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mpeg_player.h; sourceTree = "<group>"; };
+		DFB0576411B753AF0015AE65 /* qt_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = qt_decoder.cpp; sourceTree = "<group>"; };
+		DFB0576511B753AF0015AE65 /* qt_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = qt_decoder.h; sourceTree = "<group>"; };
+		DFB0576611B753AF0015AE65 /* video_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = video_decoder.cpp; sourceTree = "<group>"; };
+		DFB0576711B753AF0015AE65 /* video_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = video_decoder.h; sourceTree = "<group>"; };
+		DFB0577311B753DA0015AE65 /* debug-channels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "debug-channels.h"; sourceTree = "<group>"; };
+		DFB0577411B753DA0015AE65 /* rational.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = rational.cpp; sourceTree = "<group>"; };
+		DFB0577511B753DA0015AE65 /* rational.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rational.h; sourceTree = "<group>"; };
+		DFB0577D11B7541F0015AE65 /* resource_audio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = resource_audio.cpp; sourceTree = "<group>"; };
+		DFB0577E11B7541F0015AE65 /* util.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = util.cpp; sourceTree = "<group>"; };
+		DFB0577F11B7541F0015AE65 /* util.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = util.h; sourceTree = "<group>"; };
+		DFB0578811B754570015AE65 /* maciconbar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = maciconbar.cpp; sourceTree = "<group>"; };
+		DFB0578911B754570015AE65 /* maciconbar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = maciconbar.h; sourceTree = "<group>"; };
+		DFB0578F11B7547D0015AE65 /* pict.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = pict.cpp; sourceTree = "<group>"; };
+		DFB0579011B7547D0015AE65 /* pict.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = pict.h; sourceTree = "<group>"; };
+		DFB0579611B7549C0015AE65 /* cinepak.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = cinepak.cpp; sourceTree = "<group>"; };
+		DFB0579711B7549C0015AE65 /* cinepak.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cinepak.h; sourceTree = "<group>"; };
 		DFC8301A0F48AF18005EF03C /* detection.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = detection.cpp; sourceTree = "<group>"; };
 		DFC8301D0F48AF18005EF03C /* game.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = game.cpp; sourceTree = "<group>"; };
 		DFC8301E0F48AF18005EF03C /* gc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gc.cpp; sourceTree = "<group>"; };
@@ -4776,6 +4816,12 @@
 		DF2FFB940F485D950006E566 /* video */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0576211B753AF0015AE65 /* mpeg_player.cpp */,
+				DFB0576311B753AF0015AE65 /* mpeg_player.h */,
+				DFB0576411B753AF0015AE65 /* qt_decoder.cpp */,
+				DFB0576511B753AF0015AE65 /* qt_decoder.h */,
+				DFB0576611B753AF0015AE65 /* video_decoder.cpp */,
+				DFB0576711B753AF0015AE65 /* video_decoder.h */,
 				DF90EABF10B023F300C8F93F /* codecs */,
 				DF90EAB610B023D100C8F93F /* avi_decoder.cpp */,
 				DF90EAB710B023D100C8F93F /* avi_decoder.h */,
@@ -4786,8 +4832,6 @@
 				DF6118630FE3A9410042AD3F /* flic_decoder.h */,
 				DF6118640FE3A9410042AD3F /* smk_decoder.cpp */,
 				DF6118650FE3A9410042AD3F /* smk_decoder.h */,
-				DF2FFBA70F485D950006E566 /* video_player.cpp */,
-				DF2FFBA80F485D950006E566 /* video_player.h */,
 			);
 			path = video;
 			sourceTree = "<group>";
@@ -4884,6 +4928,8 @@
 		DF45B175116628A5009B85CC /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0578811B754570015AE65 /* maciconbar.cpp */,
+				DFB0578911B754570015AE65 /* maciconbar.h */,
 				DF9B924F118E46A00069C19D /* fontsjis.cpp */,
 				DF9B9250118E46A00069C19D /* fontsjis.h */,
 				DF45B176116628A5009B85CC /* animate.cpp */,
@@ -6388,6 +6434,8 @@
 		DF90EABF10B023F300C8F93F /* codecs */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0579611B7549C0015AE65 /* cinepak.cpp */,
+				DFB0579711B7549C0015AE65 /* cinepak.h */,
 				DFCDC6FC11662AD700A7D2A0 /* msrle.cpp */,
 				DFCDC6FD11662AD700A7D2A0 /* msrle.h */,
 				DF90EAC010B023F400C8F93F /* codec.h */,
@@ -6414,6 +6462,9 @@
 		DFC830190F48AF18005EF03C /* sci */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0577D11B7541F0015AE65 /* resource_audio.cpp */,
+				DFB0577E11B7541F0015AE65 /* util.cpp */,
+				DFB0577F11B7541F0015AE65 /* util.h */,
 				DF45B175116628A5009B85CC /* graphics */,
 				DF45B1A5116628A5009B85CC /* parser */,
 				DF45B1AB116628A5009B85CC /* sound */,
@@ -6685,6 +6736,9 @@
 		DFE473950D81F4E800B6D1FB /* common */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0577311B753DA0015AE65 /* debug-channels.h */,
+				DFB0577411B753DA0015AE65 /* rational.cpp */,
+				DFB0577511B753DA0015AE65 /* rational.h */,
 				DF9B9261118E46FE0069C19D /* error.cpp */,
 				DFEC5D0A1166C5CF00C90552 /* random.cpp */,
 				DFEC5D0B1166C5CF00C90552 /* random.h */,
@@ -6767,6 +6821,8 @@
 		DFE477520D81F4E900B6D1FB /* graphics */ = {
 			isa = PBXGroup;
 			children = (
+				DFB0578F11B7547D0015AE65 /* pict.cpp */,
+				DFB0579011B7547D0015AE65 /* pict.h */,
 				DF6BF4C010529DA50069811F /* conversion.cpp */,
 				DF6BF4C110529DA50069811F /* conversion.h */,
 				DF6BF4C210529DA50069811F /* jpeg.cpp */,
@@ -7834,7 +7890,6 @@
 				DFAAAFFC0F0112DF003E9390 /* detection.cpp in Sources */,
 				DFAAB0020F011392003E9390 /* thumbnail_intern.cpp in Sources */,
 				DF2FFB930F485D890006E566 /* dither.cpp in Sources */,
-				DF2FFBB70F485D950006E566 /* video_player.cpp in Sources */,
 				DF2FFBD30F485DFB0006E566 /* debug.cpp in Sources */,
 				DF2FFBD90F485E360006E566 /* GuiManager.cpp in Sources */,
 				DF2FFBFC0F4860A60006E566 /* posix-saves.cpp in Sources */,
@@ -8055,6 +8110,15 @@
 				DF9B9249118E46730069C19D /* error.cpp in Sources */,
 				DF9B9254118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9263118E46FE0069C19D /* error.cpp in Sources */,
+				DFB0576B11B753AF0015AE65 /* mpeg_player.cpp in Sources */,
+				DFB0576C11B753AF0015AE65 /* qt_decoder.cpp in Sources */,
+				DFB0576D11B753AF0015AE65 /* video_decoder.cpp in Sources */,
+				DFB0577711B753DA0015AE65 /* rational.cpp in Sources */,
+				DFB0578211B7541F0015AE65 /* resource_audio.cpp in Sources */,
+				DFB0578311B7541F0015AE65 /* util.cpp in Sources */,
+				DFB0578B11B754570015AE65 /* maciconbar.cpp in Sources */,
+				DFB0579211B7547D0015AE65 /* pict.cpp in Sources */,
+				DFB0579911B7549C0015AE65 /* cinepak.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8781,7 +8845,6 @@
 				DF09418A0F63CB26002D821E /* detection.cpp in Sources */,
 				DF09418B0F63CB26002D821E /* thumbnail_intern.cpp in Sources */,
 				DF09418C0F63CB26002D821E /* dither.cpp in Sources */,
-				DF0941910F63CB26002D821E /* video_player.cpp in Sources */,
 				DF0941920F63CB26002D821E /* debug.cpp in Sources */,
 				DF0941930F63CB26002D821E /* GuiManager.cpp in Sources */,
 				DF0941940F63CB26002D821E /* posix-saves.cpp in Sources */,
@@ -9006,6 +9069,15 @@
 				DF9B924A118E46730069C19D /* error.cpp in Sources */,
 				DF9B9256118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9264118E46FE0069C19D /* error.cpp in Sources */,
+				DFB0576E11B753AF0015AE65 /* mpeg_player.cpp in Sources */,
+				DFB0576F11B753AF0015AE65 /* qt_decoder.cpp in Sources */,
+				DFB0577011B753AF0015AE65 /* video_decoder.cpp in Sources */,
+				DFB0577811B753DA0015AE65 /* rational.cpp in Sources */,
+				DFB0578411B7541F0015AE65 /* resource_audio.cpp in Sources */,
+				DFB0578511B7541F0015AE65 /* util.cpp in Sources */,
+				DFB0578C11B754570015AE65 /* maciconbar.cpp in Sources */,
+				DFB0579311B7547D0015AE65 /* pict.cpp in Sources */,
+				DFB0579A11B7549C0015AE65 /* cinepak.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9737,7 +9809,6 @@
 				DFF95C1F0FB22D5700A3EC78 /* detection.cpp in Sources */,
 				DFF95C200FB22D5700A3EC78 /* thumbnail_intern.cpp in Sources */,
 				DFF95C210FB22D5700A3EC78 /* dither.cpp in Sources */,
-				DFF95C260FB22D5700A3EC78 /* video_player.cpp in Sources */,
 				DFF95C270FB22D5700A3EC78 /* debug.cpp in Sources */,
 				DFF95C280FB22D5700A3EC78 /* GuiManager.cpp in Sources */,
 				DFF95C290FB22D5700A3EC78 /* posix-saves.cpp in Sources */,
@@ -9958,6 +10029,15 @@
 				DF9B9248118E46730069C19D /* error.cpp in Sources */,
 				DF9B9252118E46A00069C19D /* fontsjis.cpp in Sources */,
 				DF9B9262118E46FE0069C19D /* error.cpp in Sources */,
+				DFB0576811B753AF0015AE65 /* mpeg_player.cpp in Sources */,
+				DFB0576911B753AF0015AE65 /* qt_decoder.cpp in Sources */,
+				DFB0576A11B753AF0015AE65 /* video_decoder.cpp in Sources */,
+				DFB0577611B753DA0015AE65 /* rational.cpp in Sources */,
+				DFB0578011B7541F0015AE65 /* resource_audio.cpp in Sources */,
+				DFB0578111B7541F0015AE65 /* util.cpp in Sources */,
+				DFB0578A11B754570015AE65 /* maciconbar.cpp in Sources */,
+				DFB0579111B7547D0015AE65 /* pict.cpp in Sources */,
+				DFB0579811B7549C0015AE65 /* cinepak.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10061,6 +10141,8 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					XCODE,
@@ -10128,6 +10210,8 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_ENABLE_CPP_EXCEPTIONS = NO;
+				GCC_ENABLE_CPP_RTTI = NO;
 				GCC_INPUT_FILETYPE = automatic;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					XCODE,

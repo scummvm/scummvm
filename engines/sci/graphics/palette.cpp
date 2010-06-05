@@ -55,6 +55,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetP
 	_sysPalette.colors[255].g = 255;
 	_sysPalette.colors[255].b = 255;
 
+	_sysPaletteChanged = false;
 	if (autoSetPalette) {
 		if (_resMan->getViewType() == kViewEga)
 			setEGA();
@@ -63,7 +64,6 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetP
 		else
 			kernelSetFromResource(999, true);
 	}
-	_sysPaletteChanged = false;
 }
 
 GfxPalette::~GfxPalette() {

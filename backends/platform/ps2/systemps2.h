@@ -97,12 +97,6 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	virtual bool openCD(int drive);
-	virtual bool pollCD();
-	virtual void playCD(int track, int num_loops, int start_frame, int duration);
-	virtual void stopCD();
-	virtual void updateCD();
-
 	virtual MutexRef createMutex(void);
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);

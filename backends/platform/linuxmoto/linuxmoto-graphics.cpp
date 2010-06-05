@@ -128,12 +128,7 @@ void OSystem_LINUXMOTO::initSize(uint w, uint h) {
 		toggleMouseGrab();
 	}
 
-	_cksumNum = (w * h / (8 * 8));
-
 	_transactionDetails.sizeChanged = true;
-
-	free(_dirtyChecksums);
-	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 }
 
 bool OSystem_LINUXMOTO::loadGFXMode() {

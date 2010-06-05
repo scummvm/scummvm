@@ -57,7 +57,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_overlayVisible(false), _overlayBuffer(NULL), _fullscreen(NULL),
 	_mouseHeight(0), _mouseWidth(0), _mouseBuf(NULL), _lastMouseTap(0),
 	_secondaryTapped(false), _lastSecondaryTap(0), _screenOrientation(kScreenOrientationFlippedLandscape),
-	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false), _touchpadModeEnabled(true),
+	_needEventRestPeriod(false), _mouseClickAndDragEnabled(false),
 	_gestureStartX(-1), _gestureStartY(-1), _fullScreenIsDirty(false), _fullScreenOverlayIsDirty(false),
 	_mouseDirty(false), _timeSuspended(0), _lastDragPosX(-1), _lastDragPosY(-1), _screenChangeCount(0)
 
@@ -65,6 +65,7 @@ OSystem_IPHONE::OSystem_IPHONE() :
 	_queuedInputEvent.type = (Common::EventType)0;
 	_lastDrawnMouseRect = Common::Rect(0, 0, 0, 0);
 
+	_touchpadModeEnabled = !iPhone_isHighResDevice();
 	_fsFactory = new POSIXFilesystemFactory();
 }
 

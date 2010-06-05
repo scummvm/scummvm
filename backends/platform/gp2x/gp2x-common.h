@@ -121,19 +121,6 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	// Poll CD status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play CD audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop CD audio track
-	void stopCD();
-
-	// Update CD audio status
-	void updateCD();
-
 	// Quit
 	void quit();
 
@@ -162,8 +149,6 @@ public:
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
 	int getGraphicsMode() const;
-
-	bool openCD(int drive);
 
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
@@ -206,15 +191,6 @@ protected:
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
 
-	// CD Audio
-	SDL_CD *_cdrom;
-	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
-	uint32 _cdEndTime, _cdStopTime;
-
-	enum {
-		DF_WANT_RECT_OPTIM			= 1 << 0
-	};
-
 	enum {
 		kTransactionNone = 0,
 		kTransactionActive = 1,
@@ -255,7 +231,6 @@ protected:
 	Graphics::Surface _framebuffer;
 
 	/** Current video mode flags (see DF_* constants) */
-	uint32 _modeFlags;
 	bool _modeChanged;
 	int _screenChangeCount;
 
@@ -272,9 +247,6 @@ protected:
 	// Dirty rect management
 	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
 	int _numDirtyRects;
-	uint32 *_dirtyChecksums;
-	bool _cksumValid;
-	int _cksumNum;
 
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
@@ -371,9 +343,6 @@ protected:
 	Common::TimerManager *_timer;
 
 protected:
-	void addDirtyRgnAuto(const byte *buf);
-	void makeChecksums(const byte *buf);
-
 	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
 
 	void drawMouse();

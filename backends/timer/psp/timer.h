@@ -18,54 +18,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/backends/platform/psp/osys_psp.cpp $
+ * $Id: osys_psp.cpp 46126 2009-11-24 14:18:46Z fingolfin $
  *
  */
 
-#ifndef M4_ANIMATION_H
-#define M4_ANIMATION_H
-
-#include "m4/m4.h"
-#include "m4/graphics.h"
-#include "m4/assets.h"
-
-namespace M4 {
-
-struct AnimationFrame {
-    uint16 animFrameIndex;
-    byte u;
-    byte seriesIndex;
-    uint16 seriesFrameIndex;
-    uint16 x, y;
-    byte v, w;
+#ifndef PSP_TIMER_H
+#define PSP_TIMER_H 
+ 
+class PspTimer {
+public:
+	typedef void (* CallbackFunc)(void);
+	PspTimer() : _callback(0), _interval(0), _threadId(-1), _init(false) {}
+	void stop() { _init = false; }
+	bool start();
+	~PspTimer() { stop(); }
+	void setCallback(CallbackFunc cb) { _callback = cb; }
+	void setIntervalMs(uint32 interval) { _interval = interval * 1000; }
+	static int thread(SceSize, void *__this);		// static thread to use as bridge
+	void timerThread();
+private:
+	CallbackFunc _callback;	// pointer to timer callback
+	uint32 _interval;
+	int _threadId;
+	bool _init;
 };
-
-class Animation {
-    public:
-		Animation(MadsM4Engine *vm);
-        ~Animation();
-
-        void load(const char *filename);
-		void loadFullScreen(const char *filename);
-        void start();
-        bool updateAnim();
-        void stop();
-
-    private:
-		bool _playing;
-		MadsM4Engine *_vm;
-        int _seriesCount;
-        int _frameCount;
-        int _frameEntryCount;
-        AnimationFrame *_frameEntries;
-        Common::String *_spriteSeriesNames;
-        SpriteAsset *_spriteSeries;
-        int _curFrame, _curFrameEntry;
-
-	bool freeFlag() const { return _freeFlag; }
-};
-
-} // End of namespace M4
 
 #endif

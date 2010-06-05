@@ -20,10 +20,10 @@ else
 ENABLED = STATIC_PLUGIN
 endif
 
-#ENABLE_SCUMM = $(ENABLED)
+ENABLE_SCUMM = $(ENABLED)
 #ENABLE_SCUMM_7_8 = $(ENABLED)
 #ENABLE_HE = $(ENABLED)
-#ENABLE_AGI = $(ENABLED)
+ENABLE_AGI = $(ENABLED)
 #ENABLE_AGOS = $(ENABLED)
 #ENABLE_CINE = $(ENABLED)
 #ENABLE_CRUISE = $(ENABLED)
@@ -59,8 +59,8 @@ RM      = rm -f
 srcdir = ../../..
 VPATH = $(srcdir)
 INCDIR = ../../../
-#DEPDIR = .deps
-#CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
+DEPDIR = .deps
+CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 
 # Variables for dynamic plugin building
 PLUGIN_PREFIX =
@@ -68,7 +68,7 @@ PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.syms elf/scummvm.elf
 PLUGIN_LDFLAGS = -nostartfiles -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-q,--just-symbols=elf/scummvm.org.elf,-Tlinkfile,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
-DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
+DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 
 INCLUDES = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
@@ -103,12 +103,7 @@ LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS))
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
 LDFLAGS +=
 
-all: $(TARGET).ps2
+all: $(TARGET).elf
 
 $(TARGET).elf: $(OBJS)
 	$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) -o $@
-	cp $(TARGET).elf $(TARGET).org.elf
-
-$(TARGET).ps2: $(TARGET).elf
-	rm $(TARGET).elf
-	rm $(TARGET).org.elf

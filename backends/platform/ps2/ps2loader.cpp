@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(__PS2__)
+#if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #include <string.h>
 #include <stdarg.h>
@@ -718,4 +718,4 @@ void dlforgetsyms(void *handle) {
 }
 
 
-#endif /* DYNAMIC_MODULES && __PS2__ */
+#endif /* DYNAMIC_MODULES && __PLAYSTATION2__ */

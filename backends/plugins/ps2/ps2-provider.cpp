@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(__PS2__)
+#if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #include "backends/plugins/ps2/ps2-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -105,4 +105,4 @@ bool PS2PluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-#endif // defined(DYNAMIC_MODULES) && defined(__PS2__)
+#endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)

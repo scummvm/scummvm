@@ -103,6 +103,7 @@
 #include "profiler/cyg-profile.h"
 #endif
 #include "backends/fs/ds/ds-fs.h"
+#include "base/version.h"
 #include "engine.h"
 
 extern "C" void OurIntrMain(void);
@@ -3162,7 +3163,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 1.1.0 ");
+	consolePrintf("Version %s ", gScummVMVersion);
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

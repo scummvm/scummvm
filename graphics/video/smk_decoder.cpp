@@ -422,24 +422,36 @@ bool SmackerDecoder::load(Common::SeekableReadStream &stream) {
 	for (i = 0; i < 7; ++i) {
 		// AudioRate - Frequency and format information for each sound track, up to 7 audio tracks.
 		// The 32 constituent bits have the following meaning:
-		// * bit 31 - data is compressed
+		// * bit 31 - indicates Huffman + DPCM compression
 		// * bit 30 - indicates that audio data is present for this track
 		// * bit 29 - 1 = 16-bit audio; 0 = 8-bit audio
 		// * bit 28 - 1 = stereo audio; 0 = mono audio
-		// * bits 27-26 - if both set to zero - use v2 sound decompression
+		// * bit 27 - indicates Bink RDFT compression
+		// * bit 26 - indicates Bink DCT compression
 		// * bits 25-24 - unused
 		// * bits 23-0 - audio sample rate
 		uint32 audioInfo = _fileStream->readUint32LE();
-		_header.audioInfo[i].isCompressed = audioInfo & 0x80000000;
 		_header.audioInfo[i].hasAudio = audioInfo & 0x40000000;
 		_header.audioInfo[i].is16Bits = audioInfo & 0x20000000;
 		_header.audioInfo[i].isStereo = audioInfo & 0x10000000;
-		_header.audioInfo[i].hasV2Compression = !(audioInfo & 0x8000000) &&
-												!(audioInfo & 0x4000000);
 		_header.audioInfo[i].sampleRate = audioInfo & 0xFFFFFF;
 
-		if (_header.audioInfo[i].hasAudio && i == 0)
-			_audioStream = Audio::makeQueuingAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
+		if (audioInfo & 0x8000000)
+			_header.audioInfo[i].compression = kCompressionRDFT;
+		else if (audioInfo & 0x4000000)
+			_header.audioInfo[i].compression = kCompressionDCT;
+		else if (audioInfo & 0x80000000)
+			_header.audioInfo[i].compression = kCompressionDPCM;
+		else
+			_header.audioInfo[i].compression = kCompressionNone;
+
+		if (_header.audioInfo[i].hasAudio) {
+			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT)
+				warning("Unhandled Smacker v2 audio compression");
+
+			if (i == 0)
+				_audioStream = Audio::makeQueuingAudioStream(_header.audioInfo[0].sampleRate, _header.audioInfo[0].isStereo);
+		}
 	}
 
 	_header.dummy = _fileStream->readUint32LE();
@@ -528,7 +540,7 @@ Surface *SmackerDecoder::decodeNextFrame() {
 		chunkSize = _fileStream->readUint32LE();
 		chunkSize -= 4;    // subtract the first 4 bytes (chunk size)
 
-		if (_header.audioInfo[i].isCompressed) {
+		if (_header.audioInfo[i].compression != kCompressionNone) {
 			dataSizeUnpacked = _fileStream->readUint32LE();
 			chunkSize -= 4;    // subtract the next 4 bytes (unpacked data size)
 		} else {
@@ -541,7 +553,11 @@ Surface *SmackerDecoder::decodeNextFrame() {
 
 			_fileStream->read(soundBuffer, chunkSize);
 
-			if (_header.audioInfo[i].isCompressed) {
+			if (_header.audioInfo[i].compression == kCompressionRDFT || _header.audioInfo[i].compression == kCompressionDCT) {
+				// TODO: Compressed audio (Bink RDFT/DCT encoded)
+				free(soundBuffer);
+				continue;
+			} else if (_header.audioInfo[i].compression == kCompressionDPCM) {
 				// Compressed audio (Huffman DPCM encoded)
 				queueCompressedBuffer(soundBuffer, chunkSize, dataSizeUnpacked, i);
 				free(soundBuffer);

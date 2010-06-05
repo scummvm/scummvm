@@ -64,7 +64,7 @@ void MadsScene::loadScene2(const char *aaName) {
 	_kernelMessages.clear();
 
 	// Load up the properties for the scene
-	_sceneResources.load(_currentScene);
+	_sceneResources.load(_currentScene, NULL,  0/*word_83546*/, _walkSurface, _backgroundSurface);
 
 	// Load scene walk paths
 	loadSceneCodes(_currentScene);
@@ -304,6 +304,16 @@ void MadsScene::update() {
 
 void MadsScene::updateState() {
 	_sequenceList.tick();
+
+	if ((_activeAnimation) && !_abortTimers) {
+		_activeAnimation->update();
+		if (((MadsAnimation *) _activeAnimation)->freeFlag()) {
+			delete _activeAnimation;
+			_activeAnimation = NULL;
+		}
+	}
+
+	_kernelMessages.update();
 }
 
 int MadsScene::loadSceneSpriteSet(const char *setName) {

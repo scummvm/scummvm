@@ -43,8 +43,6 @@
 	SoftKeyboard* _keyboardView;
 	CALayer* _screenLayer;
 
-	int _fullWidth;
-	int _fullHeight;
 	int _widthOffset;
 	int _heightOffset;
 

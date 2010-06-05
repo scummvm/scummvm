@@ -131,11 +131,11 @@ bool DefaultSaveFileManager::removeSavefile(const Common::String &filename) {
 	// There is a nicely portable workaround, too: Make this method overloadable.
 	if (remove(file.getPath().c_str()) != 0) {
 #ifndef _WIN32_WCE
-		if (errno == EACCES)
+	  /*	if (errno == EACCES)
 			setError(Common::kWritePermissionDenied, "Search or write permission denied: "+file.getName());
 
 		if (errno == ENOENT)
-			setError(Common::kPathDoesNotExist, "removeSavefile: '"+file.getName()+"' does not exist or path is invalid");
+		setError(Common::kPathDoesNotExist, "removeSavefile: '"+file.getName()+"' does not exist or path is invalid"); */
 #endif
 		return false;
 	} else {

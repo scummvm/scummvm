@@ -28,7 +28,7 @@
 
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__PS2__)
+#if defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 class PS2PluginProvider : public FilePluginProvider {
 protected:
@@ -38,6 +38,6 @@ protected:
 
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(__PS2__)
+#endif // defined(DYNAMIC_MODULES) && defined(__PLAYSTATION2__)
 
 #endif /* BACKENDS_PLUGINS_PS2_PS2_PROVIDER_H */
