@@ -33,13 +33,20 @@
 namespace Sci {
 
 void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
-	Common::File *file = getVolumeFile(source->location_name.c_str());
-	if (!file) {
+	Common::SeekableReadStream *fileStream;
+
+	if (source->resourceFile)
+		fileStream = source->resourceFile->createReadStream();
+	else
+		fileStream = getVolumeFile(source->location_name.c_str());
+
+	if (!fileStream) {
 		warning("Failed to open %s", source->location_name.c_str());
 		return;
 	}
-	file->seek(0, SEEK_SET);
-	uint32 compressionType = file->readUint32BE();
+
+	fileStream->seek(0, SEEK_SET);
+	uint32 compressionType = fileStream->readUint32BE();
 	switch (compressionType) {
 	case MKID_BE('MP3 '):
 	case MKID_BE('OGG '):
@@ -47,19 +54,22 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 		// Detected a compressed audio volume
 		source->audioCompressionType = compressionType;
 		// Now read the whole offset mapping table for later usage
-		int32 recordCount = file->readUint32LE();
+		int32 recordCount = fileStream->readUint32LE();
 		if (!recordCount)
 			error("compressed audio volume doesn't contain any entries!");
 		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
 		source->audioCompressionOffsetMapping = offsetMapping;
 		for (int recordNo = 0; recordNo < recordCount; recordNo++) {
-			*offsetMapping++ = file->readUint32LE();
-			*offsetMapping++ = file->readUint32LE();
+			*offsetMapping++ = fileStream->readUint32LE();
+			*offsetMapping++ = fileStream->readUint32LE();
 		}
 		// Put ending zero
 		*offsetMapping++ = 0;
-		*offsetMapping++ = file->size();
+		*offsetMapping++ = fileStream->size();
 	}
+
+	if (source->resourceFile)
+		delete fileStream;
 }
 
 bool ResourceManager::loadFromWaveFile(Resource *res, Common::SeekableReadStream *file) {

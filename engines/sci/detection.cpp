@@ -373,19 +373,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		filename.toLowercase();
 
 		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
-			// HACK: resource.map is located in the same directory as the other resource files,
-			// therefore add the directory here, so that the game files can be opened later on
-			// We now add the parent directory temporary to our SearchMan so the engine code
-			// used in the detection can access all files via Common::File without any problems.
-			// In all branches returning from this function, we need to have a call to
-			// SearchMan.remove to remove it from the default directory pool again.
-			//
-			// A proper solution to remove this hack would be to have the code, which is needed
-			// for detection, to operate on Stream objects, so they can be easily called from
-			// the detection code. This might be easily to achieve through refactoring the
-			// code needed for detection.
-			assert(!SearchMan.hasArchive("SCI_detection"));
-			SearchMan.addDirectory("SCI_detection", file->getParent());
 			foundResMap = true;
 		}
 
@@ -429,7 +416,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000) {
-		SearchMan.remove("SCI_detection");
 		return 0;
 	}
 
@@ -437,11 +423,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
+	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
+	//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 	if (gameViews == kViewUnknown) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
-		// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
-		//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 		return 0;
 	}
 
@@ -449,7 +434,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
@@ -468,7 +452,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	// If we don't have a game id, the game is not SCI
 	if (sierraGameId.empty()) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
 		return 0;
 	}
@@ -521,8 +504,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
 		s_fallbackDesc.extra = "demo";
-
-	SearchMan.remove("SCI_detection");
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }

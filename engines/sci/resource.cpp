@@ -371,6 +371,8 @@ void ResourceManager::loadResource(Resource *res) {
 	case kSourceWave:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 		loadFromWaveFile(res, fileStream);
+		if (res->_source->resourceFile)
+			delete fileStream;
 		return;
 
 	case kSourceAudioVolume:
@@ -408,6 +410,8 @@ void ResourceManager::loadResource(Resource *res) {
 			case kResourceTypeAudio36:
 				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
 				loadFromAudioVolumeSCI1(res, fileStream);
+				if (res->_source->resourceFile)
+					delete fileStream;
 				return;
 			default:
 				break;
@@ -420,11 +424,18 @@ void ResourceManager::loadResource(Resource *res) {
 			loadFromAudioVolumeSCI1(res, fileStream);
 		else
 			loadFromAudioVolumeSCI11(res, fileStream);
+
+		if (res->_source->resourceFile)
+			delete fileStream;
 		return;
 
 	default:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 		int error = decompress(res, fileStream);
+
+		if (res->_source->resourceFile)
+			delete fileStream;
+
 		if (error) {
 			warning("Error %d occured while reading %s from resource file: %s",
 				    error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -435,19 +446,6 @@ void ResourceManager::loadResource(Resource *res) {
 
 Resource *ResourceManager::testResource(ResourceId id) {
 	return _resMap.getVal(id, NULL);
-}
-
-int sci0_get_compression_method(Common::ReadStream &stream) {
-	uint16 compressionMethod;
-
-	stream.readUint16LE();
-	stream.readUint16LE();
-	stream.readUint16LE();
-	compressionMethod = stream.readUint16LE();
-	if (stream.err())
-		return SCI_ERROR_IO_ERROR;
-
-	return compressionMethod;
 }
 
 int ResourceManager::addAppropriateSources() {
@@ -1205,25 +1203,34 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 }
 
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
 	Resource *res;
 	ResourceType type;
 	uint16 number, id;
 	uint32 offset;
 
-	if (!file.open(map->location_name))
-		return SCI_ERROR_RESMAP_NOT_FOUND;
+	if (map->resourceFile) {
+		fileStream = map->resourceFile->createReadStream();
+		if (!fileStream)
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+	} else {
+		Common::File *file = new Common::File();
+		if (!file->open(map->location_name))
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+		fileStream = file;
+	}
 
-	file.seek(0, SEEK_SET);
+	fileStream->seek(0, SEEK_SET);
 
 	byte bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
 	byte bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
 
 	do {
-		id = file.readUint16LE();
-		offset = file.readUint32LE();
+		id = fileStream->readUint16LE();
+		offset = fileStream->readUint32LE();
 
-		if (file.eos() || file.err()) {
+		if (fileStream->eos() || fileStream->err()) {
+			delete fileStream;
 			warning("Error while reading %s", map->location_name.c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
@@ -1252,15 +1259,26 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->_id = resId;
 			_resMap.setVal(resId, res);
 		}
-	} while (!file.eos());
+	} while (!fileStream->eos());
+
+	delete fileStream;
 	return 0;
 }
 
 int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
 	Resource *res;
-	if (!file.open(map->location_name))
-		return SCI_ERROR_RESMAP_NOT_FOUND;
+
+	if (map->resourceFile) {
+		fileStream = map->resourceFile->createReadStream();
+		if (!fileStream)
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+	} else {
+		Common::File *file = new Common::File();
+		if (!file->open(map->location_name))
+			return SCI_ERROR_RESMAP_NOT_FOUND;
+		fileStream = file;
+	}
 
 	resource_index_t resMap[32];
 	memset(resMap, 0, sizeof(resource_index_t) * 32);
@@ -1271,8 +1289,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	// Read resource type and offsets to resource offsets block from .MAP file
 	// The last entry has type=0xFF (0x1F) and offset equals to map file length
 	do {
-		type = file.readByte() & 0x1F;
-		resMap[type].wOffset = file.readUint16LE();
+		type = fileStream->readByte() & 0x1F;
+		resMap[type].wOffset = fileStream->readUint16LE();
 		resMap[prevtype].wSize = (resMap[type].wOffset
 		                          - resMap[prevtype].wOffset) / nEntrySize;
 		prevtype = type;
@@ -1283,18 +1301,18 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	for (type = 0; type < 32; type++) {
 		if (resMap[type].wOffset == 0) // this resource does not exist in map
 			continue;
-		file.seek(resMap[type].wOffset);
+		fileStream->seek(resMap[type].wOffset);
 		for (int i = 0; i < resMap[type].wSize; i++) {
-			uint16 number = file.readUint16LE();
+			uint16 number = fileStream->readUint16LE();
 			int volume_nr = 0;
 			if (_mapVersion == kResVersionSci11) {
 				// offset stored in 3 bytes
-				off = file.readUint16LE();
-				off |= file.readByte() << 16;
+				off = fileStream->readUint16LE();
+				off |= fileStream->readByte() << 16;
 				off <<= 1;
 			} else {
 				// offset/volume stored in 4 bytes
-				off = file.readUint32LE();
+				off = fileStream->readUint32LE();
 				if (_mapVersion < kResVersionSci11) {
 					volume_nr = off >> 28; // most significant 4 bits
 					off &= 0x0FFFFFFF;     // least significant 28 bits
@@ -1302,7 +1320,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 					// in SCI32 it's a plain offset
 				}
 			}
-			if (file.eos() || file.err()) {
+			if (fileStream->eos() || fileStream->err()) {
+				delete fileStream;
 				warning("Error while reading %s", map->location_name.c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
@@ -1322,6 +1341,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			}
 		}
 	}
+
+	delete fileStream;
 	return 0;
 }
 
@@ -1574,7 +1595,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 
 	// Test 10 views to see if any are compressed
 	for (int i = 0; i < 1000; i++) {
-		Common::File *file;
+		Common::SeekableReadStream *fileStream = 0;
 		Resource *res = testResource(ResourceId(kResourceTypeView, i));
 
 		if (!res)
@@ -1583,16 +1604,26 @@ ResourceCompression ResourceManager::getViewCompression() {
 		if (res->_source->source_type != kSourceVolume)
 			continue;
 
-		file = getVolumeFile(res->_source->location_name.c_str());
-		if (!file)
+		if (res->_source->resourceFile)
+			fileStream = res->_source->resourceFile->createReadStream();
+		else
+			fileStream = getVolumeFile(res->_source->location_name.c_str());
+
+		if (!fileStream)
 			continue;
-		file->seek(res->_fileOffset, SEEK_SET);
+		fileStream->seek(res->_fileOffset, SEEK_SET);
 
 		uint32 szPacked;
 		ResourceCompression compression;
 
-		if (readResourceInfo(res, file, szPacked, compression))
+		if (readResourceInfo(res, fileStream, szPacked, compression)) {
+			if (res->_source->resourceFile)
+				delete fileStream;
 			continue;
+		}
+
+		if (res->_source->resourceFile)
+			delete fileStream;
 
 		if (compression != kCompNone)
 			return compression;
