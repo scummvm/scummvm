@@ -210,11 +210,12 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	_maxHeight = 0;
 
 	Common::SeekableReadStream *spriteStream = sprite.getItemStream(0);
-
-	_assetType = spriteStream->readUint16LE();
-	for (int i = 0; i < 18; i++) {
-		spriteStream->readUint16LE();
-	}
+	_mode = spriteStream->readByte();
+	spriteStream->skip(1);
+	int type1 = spriteStream->readUint16LE();
+	int type2 = spriteStream->readUint16LE();
+	_isBackground = (type1 != 0) && (type2 < 4);
+	spriteStream->skip(32);
 	_frameCount = spriteStream->readUint16LE();
 	// we skip the rest of the data
 	delete spriteStream;

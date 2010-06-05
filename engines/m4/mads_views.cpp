@@ -156,10 +156,10 @@ void MadsSpriteSlots::drawBackground() {
 
 				if (_entries[i].depth <= 1) {
 					// No depth, so simply copy the frame onto the background
-					frame->copyTo(_owner._bgSurface, xp, yp);
+					frame->copyTo(_owner._bgSurface, xp, yp, 0);
 				} else {
 					// Depth was specified, so draw frame using scene's depth information
-					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100);
+					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100, 0);
 				}
 			}
 		}
@@ -954,9 +954,9 @@ void MadsSequenceList::remove(int seqIndex) {
 
 void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
 	MadsSequenceEntry &timerEntry = _entries[seqIndex];
-	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
+	SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
-	spriteSlot.spriteType = sprite.getAssetType() == 1 ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
+	spriteSlot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
 	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
@@ -967,8 +967,8 @@ void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
 		spriteSlot.xp = timerEntry.msgPos.x;
 		spriteSlot.yp = timerEntry.msgPos.y;
 	} else {
-		spriteSlot.xp = sprite.getFrame(timerEntry.frameIndex - 1)->x;
-		spriteSlot.yp = sprite.getFrame(timerEntry.frameIndex - 1)->y;
+		spriteSlot.xp = spriteSet.getFrame(timerEntry.frameIndex - 1)->x;
+		spriteSlot.yp = spriteSet.getFrame(timerEntry.frameIndex - 1)->y;
 	}
 }
 

@@ -114,7 +114,7 @@ public:
 	int32 getFrameHeight(int index);
 	int32 getMaxFrameWidth() const { return _maxWidth; }
 	int32 getMaxFrameHeight() const { return _maxHeight; }
-	uint16 getAssetType() const { return _assetType; }
+	bool isBackground() const { return _isBackground; }
 	M4Sprite *getFrame(int frameIndex);
 	void loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX, int destY);
 	RGB8* getPalette() { return _palette; }
@@ -137,7 +137,8 @@ protected:
 	uint32 _frameStartOffset;
 	
 	// MADS sprite set fields
-	uint16 _assetType;
+	uint8 _mode;
+	bool _isBackground;
 
 	int32 parseSprite(bool isBigEndian = false);
 	void loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndian = false);

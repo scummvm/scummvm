@@ -354,14 +354,13 @@ void MadsAnimation::update() {
 				
 				if (spriteSlotIndex == 0) {
 					int slotIndex = _view->_spriteSlots.getIndex();
-					_view->_spriteSlots[slotIndex].copy(_frameEntries[_oldFrameEntry].spriteSlot);
-					_view->_spriteSlots[slotIndex].seqIndex += 0x80;
+					MadsSpriteSlot &slot = _view->_spriteSlots[slotIndex];
+					slot.copy(_frameEntries[_oldFrameEntry].spriteSlot);
+					slot.seqIndex = _frameEntries[_oldFrameEntry].seqIndex + 0x80;
 					
 					SpriteAsset &spriteSet = _view->_spriteSlots.getSprite(
 						_view->_spriteSlots[slotIndex].spriteListIndex);
-
-					_view->_spriteSlots[slotIndex].spriteType = (spriteSet.getAssetType() == 0) ?
-						SPRITE_FOUR : SPRITE_ZERO;
+					slot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 				}
 				break;
 			}
