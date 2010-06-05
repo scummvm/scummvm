@@ -198,6 +198,10 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 
 	// Load all the sprite sets for the animation
 	for (int i = 0; i < spriteListCount; ++i) {
+		if (_field12 && (i == _spriteListIndex))
+			// Skip over field, since it's manually loaded		
+			continue;
+
 		_spriteListIndexes[i] = _view->_spriteSlots.addSprites(_spriteSetNames[i].c_str());
 	}
 
@@ -211,11 +215,17 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		_spriteListIndexes[_spriteListIndex] = _view->_spriteSlots.addSprites(resName.c_str());
 	}
 
-	// TODO: Unknown section about handling palette entries - I think it's adjusting sprite sets
-	// to the palette of the game screen
+	// TODO: Unknown section about handling sprite set list combined with messages size
 
-	// Process the sprite list indexes to remap them to the actual sprite list indexes
-	
+	// TODO: The original has two separate loops for the loop below based on _animMode == 4. Is it
+	// perhaps that in that mode the sprite frames has a different format..?
+
+	// Remap the sprite list index fields from the initial value to the indexes of the loaded
+	// sprite sets for the animation
+	for (uint i = 0; i < _frameEntries.size(); ++i)  {
+		int idx = _frameEntries[i].spriteSlot.spriteListIndex;
+		_frameEntries[i].spriteSlot.spriteListIndex = _spriteListIndexes[idx];
+	}
 }
 
 /**
@@ -270,8 +280,7 @@ void MadsAnimation::update() {
 
 	// Loop checks for any prior animation sprite slots to be expired
 	for (int slotIndex = 0; slotIndex < _view->_spriteSlots.startIndex; ++slotIndex) {
-		if ((_view->_spriteSlots[slotIndex].seqIndex >= 0x80) &&
-			(_view->_spriteSlots[slotIndex].seqIndex <= 0xFD)) {
+		if (_view->_spriteSlots[slotIndex].seqIndex >= 0x80) {
 			// Flag the frame as animation sprite slot
 			_view->_spriteSlots[slotIndex].spriteType = EXPIRED_SPRITE;
 		}
@@ -334,8 +343,10 @@ void MadsAnimation::update() {
 				if ((spriteSlotIndex == 0) && (index < spriteSlotsMax)) {
 					int seqIndex = _frameEntries[_oldFrameEntry].seqIndex - _view->_spriteSlots[index].seqIndex;
 					if (seqIndex == 0x80) {
-						if (_view->_spriteSlots[index] == _frameEntries[_oldFrameEntry].spriteSlot)
+						if (_view->_spriteSlots[index] == _frameEntries[_oldFrameEntry].spriteSlot) {
 							_view->_spriteSlots[index].spriteType = SPRITE_ZERO;
+							spriteSlotIndex = -1;
+						}
 					}
 					++index;
 					continue;
