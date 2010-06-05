@@ -35,9 +35,11 @@ loc=`dirname "$f"`
 cp $loc/../lib/libz.so.1.2.3 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libz.so.1
 cp $loc/../lib/libvorbisidec.so.1.0.2 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libvorbisidec.so.1
 
-
-echo Making Stripped exe.
+echo Making Stripped Binary.
 arm-open2x-linux-strip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/scummvm.wiz
+
+echo Making Stripped Plugins.
+arm-open2x-linux-strip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/plugins/*
 
 echo Building ZIP bundle.
 if [ -f /usr/bin/zip ]
