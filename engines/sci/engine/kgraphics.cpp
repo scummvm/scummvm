@@ -148,6 +148,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		int16 bottom = argv[2].toSint16();
 		int16 right = argv[3].toSint16();
 
+		// In SCI32, the right parameter seems to be divided by 2
+		if (getSciVersion() >= SCI_VERSION_2)
+			right *= 2;
+
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
 			g_sci->_gfxCursor->kernelSetMoveZone(rect);
