@@ -490,7 +490,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 	}
 
-	delete resMan;
 
 	// Fill in extras field
 	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
@@ -498,12 +497,14 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		!strcmp(s_fallbackDesc.gameid, "sq1sci"))
 		s_fallbackDesc.extra = "VGA Remake";
 
-	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && !Common::File::exists("resource.001"))
+	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && getSciVersion() == SCI_VERSION_1_1)
 		s_fallbackDesc.extra = "VGA Remake";
 
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
 		s_fallbackDesc.extra = "demo";
+
+	delete resMan;
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
