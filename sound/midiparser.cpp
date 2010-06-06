@@ -47,6 +47,10 @@ _num_tracks(0),
 _active_track(255),
 _abort_parse(0) {
 	memset(_active_notes, 0, sizeof(_active_notes));
+	_next_event.start = NULL;
+	_next_event.delta = 0;
+	_next_event.event = 0;
+	_next_event.length = 0;
 }
 
 void MidiParser::property(int prop, int value) {
