@@ -20,39 +20,39 @@ else
 ENABLED = STATIC_PLUGIN
 endif
 
-ENABLE_SCUMM = $(ENABLED)
+#ENABLE_SCUMM = $(ENABLED)
 #ENABLE_SCUMM_7_8 = $(ENABLED)
-#ENABLE_HE = $(ENABLED)
+ENABLE_HE = $(ENABLED)
 ENABLE_AGI = $(ENABLED)
-#ENABLE_AGOS = $(ENABLED)
-#ENABLE_CINE = $(ENABLED)
-#ENABLE_CRUISE = $(ENABLED)
-#ENABLE_DRASCULA = $(ENABLED)
+ENABLE_AGOS = $(ENABLED)
+ENABLE_CINE = $(ENABLED)
+ENABLE_CRUISE = $(ENABLED)
+ENABLE_DRASCULA = $(ENABLED)
 #ENABLE_GOB = $(ENABLED)
 #ENABLE_KYRA = $(ENABLED)
-#ENABLE_LURE = $(ENABLED)
+ENABLE_LURE = $(ENABLED)
 # ENABLE_M4 = $(ENABLED)
-#ENABLE_MADE = $(ENABLED)
-#ENABLE_PARALLACTION = $(ENABLED)
-#ENABLE_QUEEN = $(ENABLED)
-#ENABLE_SAGA = $(ENABLED)
-#ENABLE_SAGA2 = $(ENABLED)
-#ENABLE_IHNM = $(ENABLED)
-#ENABLE_SKY = $(ENABLED)
-#ENABLE_SWORD1 = $(ENABLED)
-#ENABLE_SWORD2 = $(ENABLED)
+ENABLE_MADE = $(ENABLED)
+ENABLE_PARALLACTION = $(ENABLED)
+ENABLE_QUEEN = $(ENABLED)
+ENABLE_SAGA = $(ENABLED)
+ENABLE_SAGA2 = $(ENABLED)
+ENABLE_IHNM = $(ENABLED)
+ENABLE_SKY = $(ENABLED)
+ENABLE_SWORD1 = $(ENABLED)
+ENABLE_SWORD2 = $(ENABLED)
 # ENABLE_TINSEL = $(ENABLED)
-#ENABLE_TOUCHE = $(ENABLED)
+ENABLE_TOUCHE = $(ENABLED)
 
-TARGET = elf/scummvm
+TARGET = elf/scummvm.elf
 #EXECUTABLE = $(TARGET)
 
 HAVE_GCC3 = true
 
-CC	= ee-gcc
-CXX     = ee-g++
-AS      = ee-gcc
-LD      = ee-gcc
+CC	= ee-gcc -G 0
+CXX     = ee-g++ -G 0
+AS      = ee-gcc -G 0
+LD      = ee-gcc -G 0
 AR      = ee-ar cru
 RANLIB  = ee-ranlib
 STRIP   = ee-strip
@@ -69,11 +69,7 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.syms elf/scummvm.elf
-PLUGIN_LDFLAGS = -nostartfiles -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-q,--just-symbols=elf/scummvm.org.elf,-Tlinkfile,--retain-symbols-file,plugin.syms -lstdc++ -lc
-
-#PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms scummvm-psp.elf
-#PLUGIN_LDFLAGS = -Wl -Tplugin.ld --just-symbols=scummvm-psp.org.elf --retain-symbols-file plugin.syms
-
+PLUGIN_LDFLAGS = -nostartfiles -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-q,--just-symbols=elf/scummvm.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 
@@ -98,17 +94,17 @@ OBJS := backends/platform/ps2/DmaPipe.o \
 	backends/platform/ps2/ps2debug.o \
 	backends/platform/ps2/ps2loader.o
     
-MODULE_DIRS += .
+MODULE_DIRS += ./
 
 include $(srcdir)/Makefile.common
 
 LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog.ld #$(PS2SDK)/ee/startup/linkfile
-LDFLAGS += -G 0 -L $(PS2SDK)/ee/lib -L .
+LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
 LDFLAGS +=
 
-all: $(TARGET).elf
+all: $(TARGET)
 
-$(TARGET).elf: $(OBJS)
+$(TARGET): $(OBJS)
 	$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) -o $@
