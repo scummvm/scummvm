@@ -299,9 +299,14 @@ bool ResourceManager::loadFromPatchFile(Resource *res) {
 	return loadPatch(res, &file);
 }
 
-Common::File *ResourceManager::getVolumeFile(const char *filename) {
+Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *source) {
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
 	Common::File *file;
+
+	if (source->resourceFile)
+		return source->resourceFile->createReadStream();
+
+	const char *filename = source->location_name.c_str();
 
 	// check if file is already opened
 	while (it != _volumeFiles.end()) {
@@ -353,13 +358,7 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 
-	Common::SeekableReadStream *fileStream;
-
-	// Either loading from volume or patch loading failed
-	if (res->_source->resourceFile)
-		fileStream = res->_source->resourceFile->createReadStream();
-	else
-		fileStream = getVolumeFile(res->_source->location_name.c_str());
+	Common::SeekableReadStream *fileStream = getVolumeFile(res->_source);
 
 	if (!fileStream) {
 		warning("Failed to open %s", res->_source->location_name.c_str());
@@ -1604,10 +1603,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 		if (res->_source->source_type != kSourceVolume)
 			continue;
 
-		if (res->_source->resourceFile)
-			fileStream = res->_source->resourceFile->createReadStream();
-		else
-			fileStream = getVolumeFile(res->_source->location_name.c_str());
+		fileStream = getVolumeFile(res->_source);
 
 		if (!fileStream)
 			continue;

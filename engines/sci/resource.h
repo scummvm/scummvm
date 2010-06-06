@@ -393,7 +393,7 @@ protected:
 	 */
 	const char *versionDescription(ResVersion version) const;
 
-	Common::File *getVolumeFile(const char *filename);
+	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::SeekableReadStream *file);
 	bool loadFromPatchFile(Resource *res);

@@ -33,12 +33,7 @@
 namespace Sci {
 
 void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
-	Common::SeekableReadStream *fileStream;
-
-	if (source->resourceFile)
-		fileStream = source->resourceFile->createReadStream();
-	else
-		fileStream = getVolumeFile(source->location_name.c_str());
+	Common::SeekableReadStream *fileStream = getVolumeFile(source);
 
 	if (!fileStream) {
 		warning("Failed to open %s", source->location_name.c_str());
