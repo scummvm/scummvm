@@ -83,7 +83,7 @@ public class ScummVMActivity extends Activity {
 						}
 					});
 			}
-		}	
+		}
 	}
 	private MyScummVM scummvm;
 	private Thread scummvm_thread;
@@ -353,7 +353,7 @@ public class ScummVMActivity extends Activity {
 		e.kbd_ascii = kevent.getUnicodeChar();
 		if (e.kbd_ascii == 0)
 			e.kbd_ascii = e.kbd_keycode; // scummvm keycodes are mostly ascii
-		
+
 
 		e.kbd_flags = 0;
 		if (kevent.isAltPressed())

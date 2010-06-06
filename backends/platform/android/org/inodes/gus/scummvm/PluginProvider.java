@@ -42,7 +42,7 @@ public class PluginProvider extends BroadcastReceiver {
 						 .authority(context.getPackageName())
 						 .path(mylib)
 						 .toString());
- 
+
 			extras.putStringArrayList(ScummVMApplication.EXTRA_UNPACK_LIBS,
 									  all_libs);
 		}

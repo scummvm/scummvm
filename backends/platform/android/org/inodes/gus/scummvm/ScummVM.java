@@ -42,7 +42,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 		create(context.getAssets());  // Init C++ code, set nativeScummVM
 	}
 
-	private native void nativeDestroy(); 
+	private native void nativeDestroy();
 
 	public synchronized void destroy() {
 		if (nativeScummVM != 0) {

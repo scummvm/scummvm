@@ -703,10 +703,10 @@ void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
 		palette += 3;
 		colors += 4;
 	} while (--num);
-}	
-	
+}
+
 void OSystem_Android::grabPalette(byte *colors, uint start, uint num) {
-		ENTER("grabPalette(%p, %u, %u)", colors, start, num);
+	ENTER("grabPalette(%p, %u, %u)", colors, start, num);
 	const byte* palette = _game_texture->palette_const() + start*3;
 	do {
 		for (int i = 0; i < 3; ++i)
