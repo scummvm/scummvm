@@ -536,9 +536,9 @@ void AnimationSequencePlayer::mainLoop() {
 			}
 			// budttle2.flc is shorter in french version ; start the background music
 			// earlier and skip any sounds effects
-			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 127) {
+			if (_seqNum == 19 && _flicPlayer[0].getFrameCount() == 126) {
 				_soundSeqDataIndex = 6;
-				_frameCounter = 79;
+				_frameCounter = 80;
 			}
 		}
 		(this->*(_updateFunc[_updateFuncIndex].play))();
@@ -806,7 +806,7 @@ void AnimationSequencePlayer::playIntroSeq19_20() {
 	// cogs, and is being replayed when an intro credit appears
 	::Graphics::Surface *surface = 0;
 
-	if (_flicPlayer[0].getCurFrame() >= 117) {
+	if (_flicPlayer[0].getCurFrame() >= 115) {
 		surface = _flicPlayer[1].decodeNextFrame();
 		if (_flicPlayer[1].endOfVideo())
 			_flicPlayer[1].reset();
@@ -883,7 +883,7 @@ void AnimationSequencePlayer::loadIntroSeq3_4() {
 void AnimationSequencePlayer::playIntroSeq3_4() {
 	if (!_updateScreenPicture) {
 		bool framesLeft = decodeNextAnimationFrame(0);
-		if (_flicPlayer[0].getCurFrame() == 707) {
+		if (_flicPlayer[0].getCurFrame() == 705) {
 			initPicPart4();
 		}
 		if (!framesLeft) {
@@ -951,13 +951,13 @@ void AnimationSequencePlayer::loadIntroSeq9_10() {
 }
 
 void AnimationSequencePlayer::playIntroSeq9_10() {
-	if (_flicPlayer[0].getCurFrame() >= 265 && _flicPlayer[0].getCurFrame() <= 296) {
+	if (_flicPlayer[0].getCurFrame() >= 263 && _flicPlayer[0].getCurFrame() <= 294) {
 		drawPic1Part10();
 		_updateScreenWidth += 6;
-	} else if (_flicPlayer[0].getCurFrame() == 985) {
+	} else if (_flicPlayer[0].getCurFrame() == 983) {
 		decodeNextAnimationFrame(0);
 		drawPic2Part10();
-	} else if (_flicPlayer[0].getCurFrame() >= 989 && _flicPlayer[0].getCurFrame() <= 997) {
+	} else if (_flicPlayer[0].getCurFrame() >= 987 && _flicPlayer[0].getCurFrame() <= 995) {
 		drawPic1Part10();
 		_updateScreenWidth -= 25;
 		if (_updateScreenWidth < 0) {
