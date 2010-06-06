@@ -180,7 +180,8 @@ static void syncSavedMover(Common::Serializer &s, SAVED_MOVER &sm) {
 static void syncSavedActor(Common::Serializer &s, SAVED_ACTOR &sa) {
 	s.syncAsUint16LE(sa.actorID);
 	s.syncAsUint16LE(sa.zFactor);
-	s.syncAsUint32LE(sa.bAlive);
+	s.syncAsUint16LE(sa.bAlive);
+	s.syncAsUint16LE(sa.bHidden);
 	s.syncAsUint32LE(sa.presFilm);
 	s.syncAsUint16LE(sa.presRnum);
 	s.syncAsUint16LE(sa.presPlayX);
