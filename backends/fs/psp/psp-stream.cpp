@@ -24,6 +24,8 @@
  */
 #ifdef __PSP__
 
+#include <pspiofilemgr_stat.h>
+#include <pspiofilemgr.h>
 #include <SDL/SDL_thread.h>
 #include <SDL/SDL_mutex.h>
 
@@ -106,10 +108,11 @@ void *PSPIoStream::open() {
 	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb"); 	// open
 
 	if (_handle) {
-		// Get the file size
-		fseek((FILE *)_handle, 0, SEEK_END);	// go to the end
-		_fileSize = ftell((FILE *)_handle);
-		fseek((FILE *)_handle, 0, SEEK_SET);	// back to the beginning
+		// Get the file size. This way is much faster than going to the end of the file and back
+		SceIoStat stat;
+		sceIoGetstat(_path.c_str(), &stat);
+		_fileSize = *((uint32 *)(void *)&stat.st_size);	// 4GB file is big enough for us
+		PSP_DEBUG_PRINT("%s filesize = %d\n", _path.c_str(), _fileSize);
 	
 		// Allocate the cache
 		_cache = (char *)memalign(64, CACHE_SIZE);
