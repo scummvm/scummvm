@@ -44,6 +44,9 @@ ENABLE_AGI = $(ENABLED)
 # ENABLE_TINSEL = $(ENABLED)
 #ENABLE_TOUCHE = $(ENABLED)
 
+TARGET = elf/scummvm
+#EXECUTABLE = $(TARGET)
+
 HAVE_GCC3 = true
 
 CC	= ee-gcc
@@ -68,12 +71,14 @@ PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.syms elf/scummvm.elf
 PLUGIN_LDFLAGS = -nostartfiles -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-q,--just-symbols=elf/scummvm.org.elf,-Tlinkfile,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
+#PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms scummvm-psp.elf
+#PLUGIN_LDFLAGS = -Wl -Tplugin.ld --just-symbols=scummvm-psp.org.elf --retain-symbols-file plugin.syms
+
+
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 
 INCLUDES = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
-
-TARGET = elf/scummvm
 
 OBJS := backends/platform/ps2/DmaPipe.o \
     backends/platform/ps2/Gs2dScreen.o \
