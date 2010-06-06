@@ -75,10 +75,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
-	DVar_Register("gc_interval",		&script_gc_interval, DVAR_INT, 0);
+	DVar_Register("gc_interval",		&engine->_gamestate->script_gc_interval, DVAR_INT, 0);
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("script_abort_flag",	&script_abort_flag, DVAR_INT, 0);
+	DVar_Register("script_abort_flag",	&_engine->_gamestate->script_abort_flag, DVAR_INT, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
@@ -595,14 +595,14 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 }
 
 bool Console::cmdRegisters(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_engine->_gamestate->r_acc), PRINT_REG(_engine->_gamestate->r_prev), scriptState.restAdjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjust);
 
-	if (!_engine->_gamestate->_executionStack.empty()) {
-		EngineState *s = _engine->_gamestate;	// for PRINT_STK
+	if (!s->_executionStack.empty()) {
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
-					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp),
-					(unsigned)(scriptState.xs->fp - s->stack_base), (unsigned)(scriptState.xs->sp - s->stack_base));
+					PRINT_REG(s->xs->addr.pc), PRINT_REG(s->xs->objp),
+					(unsigned)(s->xs->fp - s->stack_base), (unsigned)(s->xs->sp - s->stack_base));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -958,7 +958,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	script_abort_flag = 1;
+	_engine->_gamestate->script_abort_flag = 1;
 
 	return false;
 }
@@ -1766,14 +1766,15 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;
 	const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(scriptState.variables_seg[i], scriptState.variables[i] - scriptState.variables_base[i])));
-		if (scriptState.variables_max)
-			DebugPrintf("  total %d", scriptState.variables_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variables_seg[i], s->variables[i] - s->variables_base[i])));
+		if (s->variables_max)
+			DebugPrintf("  total %d", s->variables_max[i]);
 		DebugPrintf("\n");
 	}
 
@@ -1791,6 +1792,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
+	EngineState *s = _engine->_gamestate;
 	const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
@@ -1829,17 +1831,17 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	if ((scriptState.variables_max) && (scriptState.variables_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", scriptState.variables_max[vartype], scriptState.variables_max[vartype]);
+	if ((s->variables_max) && (s->variables_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", s->variables_max[vartype], s->variables_max[vartype]);
 		return true;
 	}
 
 	switch (argc) {
 	case 3:
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(s->variables[vartype][idx]));
 		break;
 	case 4:
-		if (parse_reg_t(_engine->_gamestate, argv[3], &scriptState.variables[vartype][idx], true)) {
+		if (parse_reg_t(_engine->_gamestate, argv[3], &s->variables[vartype][idx], true)) {
 			DebugPrintf("Invalid value/address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			DebugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
@@ -2072,7 +2074,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-	printObject(scriptState.xs->objp);
+	printObject(_engine->_gamestate->xs->objp);
 
 	return true;
 }
@@ -2085,7 +2087,7 @@ bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
-	DebugPrintf("Number of executed SCI operations: %d\n", script_step_counter);
+	DebugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->script_step_counter);
 	return true;
 }
 
@@ -2729,7 +2731,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
-		script_abort_flag = 1; // Terminate VM
+		_engine->_gamestate->script_abort_flag = 1; // Terminate VM
 		g_debugState.seeking = kDebugSeekNothing;
 		g_debugState.runningStep = 0;
 

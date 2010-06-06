@@ -615,7 +615,7 @@ void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
 void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_capacity);
 	if (s.isLoading()) {
-		//free(entries);
+		free(_entries);
 		_entries = (reg_t *)calloc(_capacity, sizeof(reg_t));
 	}
 }
@@ -915,7 +915,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 
 	s->restoring = true;
-	script_abort_flag = 2; // Abort current game with replay
+	s->script_abort_flag = 2; // Abort current game with replay
 	s->shrinkStackToBase();
 }
 

@@ -41,7 +41,7 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 
 	s->shrinkStackToBase();
 
-	script_abort_flag = 1; // Force vm to abort ASAP
+	s->script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }
 

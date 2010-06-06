@@ -114,6 +114,10 @@ void EngineState::reset(bool isRestoring) {
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 
+	script_abort_flag = 0;
+	script_step_counter = 0;
+	script_gc_interval = GC_INTERVAL;
+
 	restoring = false;
 }
 

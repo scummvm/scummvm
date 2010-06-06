@@ -148,7 +148,25 @@ public:
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
+	// Script state
+	ExecStack *xs;
+	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
+	reg_t *variables_base[4];	///< Used for referencing VM ops
+	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
+	int variables_max[4];		///< Max. values for all variables
+
 	Script *script_000;  /**< script 000, e.g. for globals */
+
+	int loadFromLauncher;
+
+	/**
+	 * Set this to 1 to abort script execution immediately. Aborting will
+	 * leave the debug exec stack intact.
+	 * Set it to 2 to force a replay afterwards.
+	 */
+	int script_abort_flag; // Set to 1 to abort execution. Set to 2 to force a replay afterwards
+	int script_step_counter; // Counts the number of steps executed
+	int script_gc_interval; // Number of steps in between gcs
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);

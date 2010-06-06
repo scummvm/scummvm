@@ -224,40 +224,10 @@ enum {
 	VAR_PARAM = 3
 };
 
-/**
- * Structure for storing the current internal state of the VM.
- */
-struct ScriptState {
-	ExecStack *xs;
-	int16 restAdjust;
-	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
-	reg_t *variables_base[4];	///< Used for referencing VM ops
-	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
-	int variables_max[4];		///< Max. values for all variables
-};
-
-/**
- * The current internal state of the VM.
- */
-extern ScriptState scriptState;
-
-/**
- * Set this to 1 to abort script execution immediately. Aborting will
- * leave the debug exec stack intact.
- * Set it to 2 to force a replay afterwards.
- */
-extern int script_abort_flag;
-
 /** Number of kernel calls in between gcs; should be < 50000 */
 enum {
 	GC_INTERVAL = 32768
 };
-
-/** Initially GC_DELAY, can be set at runtime */
-extern int script_gc_interval;
-
-/** Number of steps executed */
-extern int script_step_counter;
 
 
 /**
@@ -430,7 +400,7 @@ int game_exit(EngineState *s);
 /**
  * Instructs the virtual machine to abort
  */
-void quit_vm();
+void quit_vm(EngineState *s);
 
 /**
  * Read a PMachine instruction from a memory buffer and return its length.

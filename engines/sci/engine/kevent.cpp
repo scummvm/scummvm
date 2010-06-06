@@ -79,7 +79,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
-		quit_vm();
+		quit_vm(s);
 		break;
 
 	case SCI_EVENT_KEYBOARD:

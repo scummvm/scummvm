@@ -56,8 +56,6 @@
 
 namespace Sci {
 
-extern int g_loadFromLauncher;
-
 SciEngine *g_sci = 0;
 
 
@@ -259,9 +257,9 @@ Common::Error SciEngine::run() {
 
 	// Check whether loading a savestate was requested
 	if (ConfMan.hasKey("save_slot")) {
-		g_loadFromLauncher = ConfMan.getInt("save_slot");
+		_gamestate->loadFromLauncher = ConfMan.getInt("save_slot");
 	} else {
-		g_loadFromLauncher = -1;
+		_gamestate->loadFromLauncher = -1;
 	}
 
 	game_run(&_gamestate); // Run the game
