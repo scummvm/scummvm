@@ -34,6 +34,7 @@ namespace M4 {
 
 MadsAnimation::MadsAnimation(MadsM4Engine *vm, MadsView *view): Animation(vm), _view(view) {
 	_font = NULL;
+	_resetFlag = false;
 	_freeFlag = false;
 	_skipLoad = false;
 	_unkIndex = -1;
@@ -159,7 +160,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			rec.spriteSlot.xp = animStream->readUint16LE();
 			rec.spriteSlot.yp = animStream->readUint16LE();
 			rec.spriteSlot.depth = animStream->readByte();
-			rec.spriteSlot.scale = animStream->readByte();
+			rec.spriteSlot.scale = (int8)animStream->readByte();
 
 			_frameEntries.push_back(rec);
 		}
@@ -287,7 +288,7 @@ void MadsAnimation::update() {
 	}
 
 	// Validate the current frame
-	if (_currentFrame > (int)_miscEntries.size()) {
+	if (_currentFrame >= (int)_miscEntries.size()) {
 		// Is the animation allowed to be repeated?
 		if (_resetFlag) {
 			_currentFrame = 0;

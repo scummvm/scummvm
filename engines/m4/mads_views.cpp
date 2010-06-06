@@ -195,7 +195,7 @@ void MadsSpriteSlots::drawForeground(View *view) {
 		if (slot.scale < 100) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
-			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
+			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
 			spr->copyTo(view, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 0);
 		} else {
 			int xp, yp;
