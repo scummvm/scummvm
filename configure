@@ -999,6 +999,11 @@ wince)
 	_host_cpu=arm
 	_host_alias=arm-wince-mingw32ce
 	;;
+android)
+	_host_os=android
+	_host_cpu=arm
+	_host_alias=arm-android-eabi
+	;;
 *)
 	if test -n "$_host"; then
 		guessed_host=`$_srcdir/config.sub $_host`
@@ -1074,6 +1079,12 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
+		exit 1
+	fi
+	;;
+android)
+	if test -z "$ANDROID_SDK"; then
+		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
 		exit 1
 	fi
 	;;
@@ -1399,6 +1410,11 @@ case $_host_os in
 		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
+	android)
+		DEFINES="$DEFINES -DUNIX"
+		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
+		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
+		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
@@ -1647,6 +1663,19 @@ if test -n "$_host"; then
 			_mt32emu="no"
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
+		android)
+			DEFINES="$DEFINES -DANDROID -DUNIX -DUSE_ARM_SMUSH_ASM"
+			_endian=little
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			_backend="android"
+			_port_mk="backends/platform/android/android.mk"
+			_build_hq_scalers="no"
+			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
@@ -1825,7 +1854,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 LIBS            += -ldl
 '
 		;;
-	linux*)
+	linux*|android)
 _def_plugin='
 #define PLUGIN_PREFIX	"lib"
 #define PLUGIN_SUFFIX	".so"
@@ -2432,6 +2461,14 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
 		;;
+	android)
+		# -lgcc is carefully placed here - we want to catch
+		# all toolchain symbols in *our* libraries rather
+		# than pick up anything unhygenic from the Android libs.
+		LIBS="$LIBS -lgcc -lstdc++ -llog -lGLESv1_CM -lEGL"
+		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
+		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
+		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -2447,7 +2484,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
+		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos* | android)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
@@ -2468,7 +2505,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-gamecube | psp | wii)
+gamecube | psp | wii | android)
 	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"

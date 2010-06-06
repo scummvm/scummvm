@@ -1,0 +1,84 @@
+Building the ScummVM Android port
+=================================
+
+You will need these things to build:
+1. Android EGL headers and library
+2. Android SDK
+3. An arm-android-eabi GCC toolchain
+
+In the example commands, we are going to build against the Android 1.5
+native ABI (but using the Android 1.6 SDK tools).  Other version
+combinations might/should be possible with a bit of tweaking.
+
+In detail:
+
+1. Android EGL headers and library
+
+You can build these from the full Android source, but it is far easier
+to just download the 3 Android EGL headers from here:
+ http://android.git.kernel.org/?p=platform/frameworks/base.git;a=tree;f=opengl/include/EGL;hb=HEAD
+ (copy them to a directory called "EGL" somewhere)
+
+... and grab libEGL.so off an existing phone/emulator:
+ adb pull /system/lib/libEGL.so /tmp
+
+2. Android SDK
+
+Download and install somewhere.
+
+3. arm-android-eabi GCC toolchain
+
+You have several choices for toolchains:
+
+- Use Google arm-eabi prebuilt toolchain.
+
+This is shipped with both the Android source release and Android NDK.
+The problem is that "arm-eabi-gcc" can't actually link anything
+successfully without extra command line flags.  To use this with the
+ScummVM configure/build environment you will need to create a family
+of shell wrapper scripts that convert "arm-android-eabi-foo" to
+"arm-eabi-foo -mandroid".
+
+For example, I use this script:
+ #!/bin/sh
+ exec arm-eabi-${0##*-} -mandroid -DANDROID "$@"
+
+... and create a family of symlinks/hardlinks pointing to it called
+arm-android-eabi-gcc, arm-android-eabi-g++, etc.  For tools that don't
+take a "-mandroid" argument - like arm-eabi-strip - I bypass the shell
+wrapper and just create an arm-android-eabi-strip symlink to the tool
+directly.
+
+- Build your own arm-android-eabi toolchain from GCC source.
+
+This is lots of fun.  I suggest my Android openembedded patches, see:
+  http://wiki.github.com/anguslees/openembedded-android/
+(You just need to have lots of disk space and type a few commands)
+If you get stuck, ask 
+
+Alternatively, do a websearch - there are several other cross-compile
+toolchains around.
+
+
+Building ScummVM
+================
+
+ export ANDROID_SDK=<root of Android SDK>
+
+ PATH=$ANDROID_SDK/platforms/android-1.6/tools:$ANDROID_SDK/tools:$PATH
+ # You also want to ensure your arm-android-eabi toolchain is in your $PATH
+
+ export ANDROID_TOP=<root of built Android source>
+
+ EGL_INC="-I<location of EGL/ header directory>"
+ EGL_LIBS="-L<location of libEGL.so>"
+
+ CPPFLAGS="$EGL_INC" \
+ LDFLAGS="-g $EGL_LIBS" \
+ ./configure --backend=android --host=android --enable-zlib #and any other flags
+ make scummvm.apk
+
+This will build a "monolithic" ScummVM package, with the engines
+statically linked in.  If you want to build separate engine packages,
+like on the market, add "--enable-plugins --default-dynamic" to
+configure and also make scummvm-engine-scumm.apk, etc.
