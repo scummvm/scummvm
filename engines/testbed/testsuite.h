@@ -51,10 +51,10 @@ public:
 		}	
 	}
 	
-	inline int getNumTests() { return _testsToExecute.size(); }
-	inline int getNumTestsPassed() { return _numTestsPassed; }
-	inline int getNumTestsFailed() { return _numTestsExecuted - _numTestsPassed; }
-	inline void genReport() {
+	int getNumTests() { return _testsToExecute.size(); }
+	int getNumTestsPassed() { return _numTestsPassed; }
+	int getNumTestsFailed() { return _numTestsExecuted - _numTestsPassed; }
+	void genReport() {
 		printf("Subsystem:%s\n",getName());
 		printf("Tests executed:%d\n", _numTestsExecuted);
 		printf("Tests Passed:%d\n", _numTestsPassed);
@@ -68,18 +68,17 @@ public:
 	 * @param	textToDisplay Display text
 	 * @return	true if "Yes" false otherwise
 	 */ 
-	static inline bool handleInteractiveInput(Common::String& textToDisplay) {
+	static bool handleInteractiveInput(const Common::String &textToDisplay) {
 		GUI::MessageDialog	prompt(textToDisplay, "Yes", "No");
 		return prompt.runModal() == GUI::kMessageOK ? true : false;
 	}
 	
-	static inline void displayMessage(const char *textToDisplay) {
-		Common::String message(textToDisplay);
-		GUI::MessageDialog	prompt(message);
+	static void displayMessage(const Common::String &textToDisplay) {
+		GUI::MessageDialog	prompt(textToDisplay);
 		prompt.runModal();
 	}
 
-	static inline Common::Rect writeOnScreen(const char *textToDisplay, Common::Point &pt) {
+	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt) {
 		const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 		
 		Graphics::Surface *screen = g_system->lockScreen();
@@ -90,8 +89,7 @@ public:
 		Common::Rect rect(pt.x, pt.y, pt.x + width, pt.y + height);
 
 		screen->fillRect(rect, kColorBlack);
-		Common::String text(textToDisplay);
-		font.drawString(screen, text, rect.left, rect.top, screen->w, kColorWhite, Graphics::kTextAlignCenter);
+		font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, kColorWhite, Graphics::kTextAlignCenter);
 
 		g_system->unlockScreen();
 		g_system->updateScreen();
@@ -99,7 +97,7 @@ public:
 		return rect;
 	}
 
-	static inline void clearScreen(Common::Rect rect) {
+	static void clearScreen(const Common::Rect &rect) {
 		Graphics::Surface *screen = g_system->lockScreen();
 		
 		screen->fillRect(rect, kColorBlack);	
@@ -114,7 +112,7 @@ public:
 	 * @param	name the string description of the test, for display purposes
 	 * @param	f pointer to the function that invokes this test
 	 */
-	inline void addTest(Common::String name, invokingFunction f) {
+	void addTest(const Common::String &name, invokingFunction f) {
 		Test*  featureTest = new Test(name, f);
 		_testsToExecute.push_back(featureTest);
 	}
