@@ -2,6 +2,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
 1.2.0 (????-??-??)
+ New Ports:
+   - Added Android port.
+
  PSP port:
    - Switched to new backend design which fixes minor graphical issues,
      speeds things up, and provides 16-bit support.
@@ -20,7 +23,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
 1.1.1 (2010-05-02)
  New Ports:
-   - Added Nintendo 64 Port. (Actually added in 1.1.0, but forgot to mention it. oops)
+   - Added Nintendo 64 port. (Actually added in 1.1.0, but forgot to mention it. oops)
 
  General:
    - Fixed several minor bugs here and there.
