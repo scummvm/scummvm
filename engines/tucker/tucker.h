@@ -934,7 +934,7 @@ private:
 	void unloadAnimation();
 	uint8 *loadPicture(const char *fileName);
 	void openAnimation(int index, const char *fileName);
-	bool decodeNextAnimationFrame(int index);
+	bool decodeNextAnimationFrame(int index, bool copyDirtyRects = true);
 	void loadIntroSeq17_18();
 	void playIntroSeq17_18();
 	void loadIntroSeq19_20();
