@@ -524,8 +524,16 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		}
 	case 1: // Size
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
-	case 2:  // At (return value at an index)
-		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
+	case 2: { // At (return value at an index)
+		Common::String string = s->_segMan->getString(argv[1]);
+
+		if (argv[2].toUint16() >= string.size()) {
+			warning("kString(At): Out of bounds: %d/%d\n", argv[2].toUint16(), string.size());
+			return NULL_REG;
+		}
+
+		return make_reg(0, string[argv[2].toUint16()]);
+	}
 	case 3: { // Atput (put value at an index)
 		SciString *string = s->_segMan->lookupString(argv[1]);
 
