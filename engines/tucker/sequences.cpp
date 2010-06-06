@@ -491,7 +491,6 @@ AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *
 	_offscreenBuffer = (uint8 *)malloc(kScreenWidth * kScreenHeight);
 	_updateScreenWidth = 0;
 	_updateScreenPicture = false;
-	_updateScreenOffset = 0;
 	_picBufPtr = _pic2BufPtr = 0;
 }
 
@@ -841,19 +840,28 @@ void AnimationSequencePlayer::displayLoadingScreen() {
 void AnimationSequencePlayer::initPicPart4() {
 	_updateScreenWidth = 320;
 	_updateScreenPicture = true;
-	_updateScreenOffset = 0;
+	_updateScreenCounter = 0;
+	_updateScreenIndex = -1;
 }
 
 void AnimationSequencePlayer::drawPicPart4() {
-	static const uint8 offsetsTable[77] = {
-		1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4,
-		5, 5, 5, 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-		6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-		6, 6, 6, 6, 6, 5, 5, 5, 5, 4, 4, 4, 4, 3, 3, 3,
-		3, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1
-	};
-	_updateScreenWidth = _updateScreenWidth - offsetsTable[_updateScreenOffset];
-	++_updateScreenOffset;
+	static const uint8 offsets[] = { 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1 };
+	if (_updateScreenIndex == -1) {
+		for (int i = 0; i < 256; ++i) {
+			if (memcmp(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3) != 0) {
+				memcpy(_animationPalette + i * 4, _picBufPtr + 32 + i * 3, 3);
+				_animationPalette[i * 4 + 3] = 0;
+			}
+		}
+	}
+	if (_updateScreenCounter == 0) {
+		static const uint8 counter[] = { 1, 2, 3, 4, 5, 35, 5, 4, 3, 2, 1 };
+		++_updateScreenIndex;
+		assert(_updateScreenIndex < ARRAYSIZE(counter));
+		_updateScreenCounter = counter[_updateScreenIndex];
+	}
+	--_updateScreenCounter;
+	_updateScreenWidth -= offsets[_updateScreenIndex];
 	for (int y = 0; y < 200; ++y) {
 		memcpy(_offscreenBuffer + y * 320, _picBufPtr + 800 + y * 640 + _updateScreenWidth, 320);
 	}

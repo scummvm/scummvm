@@ -975,7 +975,8 @@ private:
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
 	int _updateScreenPicture;
-	int _updateScreenOffset;
+	int _updateScreenCounter;
+	int _updateScreenIndex;
 	int _frameCounter;
 	int _frameTime;
 	uint32 _lastFrameTime;
