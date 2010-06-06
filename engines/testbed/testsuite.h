@@ -5,7 +5,18 @@
 #include "common/str.h"
 #include "common/array.h"
 
+#include "graphics/fontman.h"
+#include "graphics/surface.h"
+
+#include "gui/message.h"
+
 namespace Testbed {
+
+enum {
+	kColorBlack = 0,
+	kColorWhite = 1,
+	kColorCustom = 2
+};
 
 typedef bool (*invokingFunction)();
 
@@ -30,14 +41,72 @@ struct Test {
 class Testsuite {
 public:
 	Testsuite() {
-		_backend = g_system;
 		_numTestsPassed = 0;
 		_numTestsExecuted = 0;
 	}
-	virtual ~Testsuite() {}
+	
+	virtual ~Testsuite() {
+		for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+			delete (*i);
+		}	
+	}
+	
 	inline int getNumTests() { return _testsToExecute.size(); }
 	inline int getNumTestsPassed() { return _numTestsPassed; }
 	inline int getNumTestsFailed() { return _numTestsExecuted - _numTestsPassed; }
+	inline void genReport() {
+		printf("Subsystem:%s\n",getName());
+		printf("Tests executed:%d\n", _numTestsExecuted);
+		printf("Tests Passed:%d\n", _numTestsPassed);
+		printf("Tests Failed:%d\n", getNumTestsFailed());
+	}
+	
+	/**
+	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
+	 * e.g: "Is this like you expect?" "Yes" or "No"
+	 *
+	 * @param	textToDisplay Display text
+	 * @return	true if "Yes" false otherwise
+	 */ 
+	static inline bool handleInteractiveInput(Common::String& textToDisplay) {
+		GUI::MessageDialog	prompt(textToDisplay, "Yes", "No");
+		return prompt.runModal() == GUI::kMessageOK ? true : false;
+	}
+	
+	static inline void displayMessage(const char *textToDisplay) {
+		Common::String message(textToDisplay);
+		GUI::MessageDialog	prompt(message);
+		prompt.runModal();
+	}
+
+	static inline Common::Rect writeOnScreen(const char *textToDisplay, Common::Point &pt) {
+		const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+		
+		Graphics::Surface *screen = g_system->lockScreen();
+		
+		int height = font.getFontHeight();
+		int width = screen->w;
+
+		Common::Rect rect(pt.x, pt.y, pt.x + width, pt.y + height);
+
+		screen->fillRect(rect, kColorBlack);
+		Common::String text(textToDisplay);
+		font.drawString(screen, text, rect.left, rect.top, screen->w, kColorWhite, Graphics::kTextAlignCenter);
+
+		g_system->unlockScreen();
+		g_system->updateScreen();
+
+		return rect;
+	}
+
+	static inline void clearScreen(Common::Rect rect) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		
+		screen->fillRect(rect, kColorBlack);	
+
+		g_system->unlockScreen();
+		g_system->updateScreen();
+	}
 
 	/**
 	 * Adds a test to the list of tests to be executed
@@ -54,16 +123,22 @@ public:
 	 * The driver function for the testsuite
 	 * All code should go in here.
 	 */
-	virtual int execute() = 0;
+	virtual void execute() {
+		for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+			printf("Executing Test:%s\n", ((*i)->featureName).c_str());
+			_numTestsExecuted++;
+			if ((*i)->driver()) {
+				_numTestsPassed++;
+			}
+		}
+		genReport();
+	}
 	virtual const char *getName() = 0;
-
-private:
-	OSystem		*_backend;				///< Pointer to OSystem backend
-	int		    _numTestsPassed;			///< Number of tests passed
-	int  		_numTestsExecuted;			///< Number of tests executed
 
 protected:
 	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
+	int		    _numTestsPassed;					///< Number of tests passed
+	int  		_numTestsExecuted;					///< Number of tests executed
 };
 
 }	// End of namespace testbed

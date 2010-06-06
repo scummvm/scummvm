@@ -50,11 +50,22 @@ Common::Error TestbedEngine::run() {
 	// Additional setup.
 	printf("TestbedEngine::init\n");
 
-	GFXTestSuite ts;
-	ts.execute();
+	// As of now we are using GUI::MessageDialog for interaction, Test if it works.
+	// interactive mode could also be modified by a config parameter "non-interactive=1"
+	// TODO: Implement that
 
-	// Your main even loop should be (invoked from) here.
-	printf("TestbedEngine::go: Hello, World!\n");
+	bool interactive;
+	Common::String prompt("Welcome to the ScummVM testbed! \n \
+						It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc. \n \
+						If you are seeing this correctly, it means interactive tests would run on this system :)");
+	interactive = Testsuite::handleInteractiveInput(prompt);
+
+	if (interactive) {
+		printf("Running tests in Interactive Mode\n");		
+		// Executing GFX Tests
+		GFXTestSuite ts;
+		ts.execute();
+	}
 	
 	return Common::kNoError;
 }

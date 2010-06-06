@@ -16,9 +16,20 @@ public:
 	 * @see addTest()
 	 */
 	GFXTestSuite();
-	~GFXTestSuite();
-	int execute();
-	const char *getName(); 
+	~GFXTestSuite(){}
+	void execute();
+	const char *getName();
+	void setCustomColor(uint r, uint g, uint b);
+
+private:
+	/**
+	 * A Palette consists of 4 components RGBA.
+	 * As of now we only take 3 colors
+	 * 0 (R:0, G:0, B:0) Black (kColorBlack)
+	 * 1 (R:255, G:255, B:255) White (kColorWhite)
+	 * 2 (R:255, G:255, B:255) your customized color (by default white) (kColorCustom)
+	 */
+	byte _palette[3 * 4];
 };
 
 }	// End of namespace Testbed
