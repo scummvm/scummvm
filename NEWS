@@ -5,6 +5,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  PSP port:
    - Switched to new backend design which fixes minor graphical issues,
      speeds things up, and provides 16-bit support.
+   - Enabled playback of MP3 files using the hardware decoder (ME). This means that
+     the port is now optimized for MP3 playback (as opposed to OGG).
 
  General:
    - Switched to the "fast" DOSBox OPL emulator.
