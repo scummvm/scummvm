@@ -363,7 +363,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ListIndexOf", kListIndexOf, "lZo"),
 	DEFUN("OnMe", kOnMe, "iio.*"),
 	DEFUN("InPolygon", kInPolygon, "iio"),
-	DEFUN("CreateTextBitmap", kCreateTextBitmap, "iiio"),
+	DEFUN("CreateTextBitmap", kCreateTextBitmap, "i.*"),
 
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),

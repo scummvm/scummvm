@@ -804,9 +804,16 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
-	reg_t object = argv[3];
-	Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-	debug("kCreateTextBitmap: %s", text.c_str());
+	switch (argv[0].toUint16()) {
+	case 0:
+		if (argc != 4) {
+			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		debug("kCreateTextBitmap: %s", text.c_str());
+	}
 
 	return NULL_REG;
 }
