@@ -578,7 +578,7 @@ void AnimviewView::readNextCommand() {
 	_activeAnimation->load(_currentLine, 0);
 
 	_backgroundSurface.loadBackground(_activeAnimation->roomNumber());
-	_codeSurface.create(_backgroundSurface.width(), _backgroundSurface.height(), 1);
+	_codeSurface.setSize(_backgroundSurface.width(), _backgroundSurface.height());
 	_codeSurface.clear();
 
 	_spriteSlots.fullRefresh();
