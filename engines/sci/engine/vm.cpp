@@ -718,7 +718,7 @@ void run_vm(EngineState *s, bool restoring) {
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	s->restAdjust = s->restAdjust;
+	s->restAdjustCur = s->restAdjust;
 	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
@@ -1116,17 +1116,17 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_call: { // 0x20 (32)
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + s->restAdjust;
+			           + 1 + s->restAdjustCur;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->restAdjustCur;
 
 			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
 											s->xs->addr.pc.offset + opparams[0]),
 											s->xs->sp, s->xs->objp,
-											(validate_arithmetic(*call_base)) + s->restAdjust,
+											(validate_arithmetic(*call_base)) + s->restAdjustCur,
 											call_base, NULL_SELECTOR, s->xs->objp,
 											s->_executionStack.size()-1, s->xs->local_segment);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->restAdjustCur = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
@@ -1140,19 +1140,19 @@ void run_vm(EngineState *s, bool restoring) {
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 			if (!oldScriptHeader) {
-				s->xs->sp -= s->restAdjust;
-				s->restAdjust = 0; // We just used up the s->restAdjust, remember?
+				s->xs->sp -= s->restAdjustCur;
+				s->restAdjust = 0; // We just used up the s->restAdjustCur, remember?
 			}
 
 			int argc = validate_arithmetic(s->xs->sp[0]);
 
 			if (!oldScriptHeader)
-				argc += s->restAdjust;
+				argc += s->restAdjustCur;
 
 			callKernelFunc(s, opparams[0], argc);
 
 			if (!oldScriptHeader)
-				s->restAdjust = s->restAdjust;
+				s->restAdjustCur = s->restAdjust;
 
 			// Calculate xs again: The kernel function might
 			// have spawned a new VM
@@ -1163,27 +1163,27 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		case op_callb: // 0x22 (34)
-			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[1] >> 1) + s->restAdjustCur + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->restAdjustCur;
 			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->restAdjustCur = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_calle: // 0x23 (35)
-			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
+			temp = ((opparams[2] >> 1) + s->restAdjustCur + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjust;
+			s->xs->sp[0].offset += s->restAdjustCur;
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjust = 0; // Used up the &rest adjustment
+			s->restAdjustCur = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -1201,7 +1201,7 @@ void run_vm(EngineState *s, bool restoring) {
 					s->_executionStack.pop_back();
 
 					s->_executionStackPosChanged = true;
-					s->restAdjust = s->restAdjust; // Update &rest
+					s->restAdjust = s->restAdjustCur; // Update &rest
 					return; // "Hard" return
 				}
 
@@ -1234,16 +1234,16 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_send: // 0x25 (37)
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjustCur); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->restAdjustCur;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
-									(int)(opparams[0] >> 1) + (uint16)s->restAdjust, s->xs->sp);
+									(int)(opparams[0] >> 1) + (uint16)s->restAdjustCur, s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->restAdjustCur = 0;
 
 			break;
 
@@ -1263,17 +1263,17 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_self: // 0x2a (42)
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjustCur); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjust;
+			s->xs->sp[1].offset += s->restAdjustCur;
 			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
-									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjust,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjustCur,
 									s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjust = 0;
+			s->restAdjustCur = 0;
 			break;
 
 		case op_super: // 0x2b (43)
@@ -1283,24 +1283,24 @@ void run_vm(EngineState *s, bool restoring) {
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = s->xs->sp;
-				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjust); // Adjust stack
+				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjustCur); // Adjust stack
 
-				s->xs->sp[1].offset += s->restAdjust;
+				s->xs->sp[1].offset += s->restAdjustCur;
 				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
-										(int)(opparams[1] >> 1) + (uint16)s->restAdjust,
+										(int)(opparams[1] >> 1) + (uint16)s->restAdjustCur,
 										s->xs->sp);
 
 				if (xs_new && xs_new != s->xs)
 					s->_executionStackPosChanged = true;
 
-				s->restAdjust = 0;
+				s->restAdjustCur = 0;
 			}
 
 			break;
 
 		case op_rest: // 0x2c (44)
 			temp = (uint16) opparams[0]; // First argument
-			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			s->restAdjustCur = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
 			for (; temp <= s->xs->argc; temp++)
 				PUSH32(s->xs->variables_argp[temp]);

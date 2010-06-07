@@ -143,6 +143,7 @@ public:
 
 	reg_t r_acc; /**< Accumulator */
 	int16 restAdjust; /**< &rest register (only used for save games) */
+	int16 restAdjustCur; /**< current &rest register (only used for save games) */
 	reg_t r_prev; /**< previous comparison result */
 
 	StackPtr stack_base; /**< Pointer to the least stack element */

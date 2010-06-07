@@ -205,12 +205,12 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (pos == s->xs->addr.pc) { // Extra information if debugging the current opcode
 		if (opcode == op_callk) {
-			int stackframe = (scr[pos.offset + 2] >> 1) + (s->restAdjust);
+			int stackframe = (scr[pos.offset + 2] >> 1) + (s->restAdjustCur);
 			int argc = ((s->xs->sp)[- stackframe - 1]).offset;
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 			if (!oldScriptHeader)
-				argc += (s->restAdjust);
+				argc += (s->restAdjustCur);
 
 			printf(" Kernel params: (");
 
@@ -221,7 +221,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 			printf(")\n");
 		} else if ((opcode == op_send) || (opcode == op_self)) {
-			int restmod = s->restAdjust;
+			int restmod = s->restAdjustCur;
 			int stackframe = (scr[pos.offset + 1] >> 1) + restmod;
 			reg_t *sb = s->xs->sp;
 			uint16 selector;

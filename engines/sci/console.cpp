@@ -597,7 +597,7 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 bool Console::cmdRegisters(int argc, const char **argv) {
 	EngineState *s = _engine->_gamestate;
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjustCur);
 
 	if (!s->_executionStack.empty()) {
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
