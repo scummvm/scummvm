@@ -32,8 +32,20 @@ class PspThread {
 public:
 	static void delayMillis(uint32 ms);
 	static void delayMicros(uint32 us);
-	static uint32 getMillis();
-	static uint32 getMicros();
+};
+
+class PspRtc {
+private:
+	uint32 _startMillis;
+	uint32 _startMicros;
+	uint32 _lastMillis;
+	uint32 _milliOffset;		// to prevent looping around of millis
+	bool _looped;				// make sure we only loop once
+public:
+	PspRtc() : _startMillis(0), _startMicros(0), _lastMillis(0), _milliOffset(0), _looped(false) { init(); }
+	void init();
+	uint32 getMillis();
+	uint32 getMicros();
 };
 
 enum ThreadPriority {

@@ -37,7 +37,6 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
 #include "backends/platform/psp/powerman.h"
-#include "backends/platform/psp/thread.h"
 
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -300,7 +299,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 }
 
 uint32 OSystem_PSP::getMillis() {
-	return PspThread::getMillis();
+	return _pspRtc.getMillis();
 }
 
 void OSystem_PSP::delayMillis(uint msecs) {
