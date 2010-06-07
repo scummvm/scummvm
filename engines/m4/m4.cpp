@@ -146,6 +146,8 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _ws;
 	delete _random;
 	delete _palette;
+	delete _globals;
+	delete _resourceManager;
 }
 
 Common::Error MadsM4Engine::run() {
@@ -303,8 +305,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engi
 }
 
 M4Engine::~M4Engine() {
-	delete _resourceManager;
-	delete _globals;
 	delete _converse;
 }
 
@@ -500,8 +500,6 @@ MadsEngine::MadsEngine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4
 }
 
 MadsEngine::~MadsEngine() {
-	delete _globals;
-	delete _resourceManager;
 }
 
 Common::Error MadsEngine::run() {
