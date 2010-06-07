@@ -76,12 +76,12 @@ void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = y;
 
 	// Adjust for the screen scaling
-	if (!_overlayVisible) {
+	/*if (!_overlayVisible) { // FIXME
 		event.mouse.x /= _videoMode.scaleFactor;
 		event.mouse.y /= _videoMode.scaleFactor;
 		if (_videoMode.aspectRatioCorrection)
 			event.mouse.y = aspect2Real(event.mouse.y);
-	}
+	}*/
 }
 
 void OSystem_SDL::handleKbdMouse() {
@@ -184,8 +184,8 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
 	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
-	if (_modeChanged) {
-		_modeChanged = false;
+	if (_graphicsManager->_modeChanged) {
+		_graphicsManager->_modeChanged = false;
 		event.type = Common::EVENT_SCREEN_CHANGED;
 		return true;
 	}
@@ -218,7 +218,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		_forceFull = true;
+		_graphicsManager->_forceFull = true;
 		break;
 
 	case SDL_QUIT:
@@ -243,7 +243,8 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_SCRL;
 
 	// Alt-Return and Alt-Enter toggle full screen mode
-	if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+	// TODO: make a function in graphics manager for this
+	/*if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
 		beginGFXTransaction();
 			setFullscreenMode(!_videoMode.fullscreen);
 		endGFXTransaction();
@@ -255,10 +256,11 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 #endif
 
 		return false;
-	}
+	}*/
 
 	// Alt-S: Create a screenshot
-	if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
+	// TODO: make a function in graphics manager for this
+	/*if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
 		char filename[20];
 
 		for (int n = 0;; n++) {
@@ -275,7 +277,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		else
 			printf("Could not save screenshot!\n");
 		return false;
-	}
+	}*/
 
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
@@ -310,7 +312,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		if (handleScalerHotkeys(ev.key))
+		if (_graphicsManager->handleScalerHotkeys(ev.key))
 			return false;
 	}
 
@@ -339,7 +341,7 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if (isScalerHotkey(event))
+	if (_graphicsManager->isScalerHotkey(event))
 		// Swallow these key up events
 		return false;
 
@@ -350,7 +352,7 @@ bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
-	setMousePos(event.mouse.x, event.mouse.y);
+	_graphicsManager->setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }
 
@@ -569,4 +571,11 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	}
 #endif
 	return false;
+}
+
+void OSystem_SDL::toggleMouseGrab() {
+	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
+		SDL_WM_GrabInput(SDL_GRAB_ON);
+	else
+		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
