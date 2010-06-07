@@ -455,7 +455,7 @@ protected:
 #ifdef ENABLE_SCI32
 	void readResourcePatchesBase36(ResourceSource *source);
 #endif
-	void processPatch(ResourceSource *source, ResourceType restype, uint16 resnumber, uint32 tuple = 0);
+	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**
 	 * Process wave files as patches for Audio resources

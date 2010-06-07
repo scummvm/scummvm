@@ -1066,19 +1066,19 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 }
 
 // version-agnostic patch application
-void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, uint16 resnumber, uint32 tuple) {
+void ResourceManager::processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple) {
 	Common::SeekableReadStream *fileStream = 0;
 	Resource *newrsc;
-	ResourceId resId = ResourceId(restype, resnumber, tuple);
-	byte patchtype, patch_data_offset;
+	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
+	byte patchType, patchDataOffset;
 	int fsize;
 
 	// base36 encoded patches (i.e. audio36 and sync36) have the same type as their non-base36 encoded counterparts
-	if (restype == kResourceTypeAudio36)
-		restype = kResourceTypeAudio;
+	if (resourceType == kResourceTypeAudio36)
+		resourceType = kResourceTypeAudio;
 
-	if (restype == kResourceTypeSync36)
-		restype = kResourceTypeSync;
+	if (resourceType == kResourceTypeSync36)
+		resourceType = kResourceTypeSync;
 
 	if (source->resourceFile) {
 		fileStream = source->resourceFile->createReadStream();
@@ -1096,36 +1096,36 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 		return;
 	}
 
-	patchtype = fileStream->readByte() & 0x7F;
-	patch_data_offset = fileStream->readByte();
+	patchType = fileStream->readByte() & 0x7F;
+	patchDataOffset = fileStream->readByte();
 
 	delete fileStream;
 
-	if (patchtype != restype) {
+	if (patchType != resourceType) {
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 	}
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
-	if (patch_data_offset & 0x80) {
-		switch (patch_data_offset & 0x7F) {
+	if (patchDataOffset & 0x80) {
+		switch (patchDataOffset & 0x7F) {
 			case 0:
-				patch_data_offset = 24;
+				patchDataOffset = 24;
 				break;
 			case 1:
-				patch_data_offset = 2;
+				patchDataOffset = 2;
 				break;
 			case 4:
-				patch_data_offset = 8;
+				patchDataOffset = 8;
 				break;
 			default:
-				warning("Resource patch unsupported special case %X", patch_data_offset & 0x7F);
+				warning("Resource patch unsupported special case %X", patchDataOffset & 0x7F);
 				return;
 		}
 	}
 
-	if (patch_data_offset + 2 >= fsize) {
+	if (patchDataOffset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-		      source->location_name.c_str(), patch_data_offset + 2, fsize);
+		      source->location_name.c_str(), patchDataOffset + 2, fsize);
 		return;
 	}
 	// Prepare destination, if neccessary
@@ -1138,8 +1138,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	newrsc->_id = resId;
 	newrsc->_status = kResStatusNoMalloc;
 	newrsc->_source = source;
-	newrsc->size = fsize - patch_data_offset - 2;
-	newrsc->_headerSize = patch_data_offset;
+	newrsc->size = fsize - patchDataOffset - 2;
+	newrsc->_headerSize = patchDataOffset;
 	newrsc->_fileOffset = 0;
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
 }
@@ -1185,13 +1185,13 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			inputName.deleteChar(7);	// delete the dot
 
 			// The base36 encoded resource contains the following:
-			// uint16 number, byte noun, byte verb, byte cond, byte seq
-			uint16 number = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36);	// 3 characters
+			// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
+			uint16 resourceNr = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36);	// 3 characters
 			byte noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);	// 2 characters
 			byte verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);	// 2 characters
 			byte cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);	// 2 characters
 			byte seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);		// 1 character
-			ResourceId resource36((ResourceType)i, number, noun, verb, cond, seq);
+			ResourceId resource36((ResourceType)i, resourceNr, noun, verb, cond, seq);
 
 			/*
 			if (i == kResourceTypeAudio36)
@@ -1204,7 +1204,7 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			psrcPatch->source_type = kSourcePatch;
 			psrcPatch->location_name = name;
 			psrcPatch->resourceFile = 0;
-			processPatch(psrcPatch, (ResourceType)i, number, resource36.tuple);
+			processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 		}
 	}
 }
@@ -1218,7 +1218,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 
 	Common::String mask, name;
 	Common::ArchiveMemberList files;
-	int number = -1;
+	uint16 resourceNr = 0;
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
@@ -1239,14 +1239,14 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			name = (*x)->getName();
 			// SCI1 scheme
 			if (isdigit(name[0])) {
-				number = atoi(name.c_str());
+				resourceNr = atoi(name.c_str());
 				bAdd = true;
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
 				if (scumm_strnicmp(name.c_str(), szResType, resname_len) == 0
 					&& !isalpha(name[resname_len + 1])) {
-					number = atoi(name.c_str() + resname_len + 1);
+					resourceNr = atoi(name.c_str() + resname_len + 1);
 					bAdd = true;
 				}
 			}
@@ -1256,7 +1256,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
 				psrcPatch->resourceFile = 0;
-				processPatch(psrcPatch, (ResourceType)i, number);
+				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
 		}
 	}
