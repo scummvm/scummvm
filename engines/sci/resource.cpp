@@ -1073,6 +1073,13 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	byte patchtype, patch_data_offset;
 	int fsize;
 
+	// base36 encoded patches (i.e. audio36 and sync36) have the same type as their non-base36 encoded counterparts
+	if (restype == kResourceTypeAudio36)
+		restype = kResourceTypeAudio;
+
+	if (restype == kResourceTypeSync36)
+		restype = kResourceTypeSync;
+
 	if (resnumber == 0xFFFF)
 		return;
 
@@ -1156,9 +1163,11 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 
 	Common::String name, inputName;
 	Common::ArchiveMemberList files;
-	//ResourceSource *psrcPatch;
+	ResourceSource *psrcPatch;
 
 	for (int i = kResourceTypeAudio36; i <= kResourceTypeSync36; ++i) {
+		files.clear();
+
 		// audio36 resources start with a @, A, or B
 		// sync36 resources start with a #
 		if (i == kResourceTypeAudio36) {
@@ -1172,28 +1181,33 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			name = (*x)->getName();
 			inputName = (*x)->getName();
 			inputName.toUppercase();
+			if (inputName.hasPrefix("BOOT"))	// skip bootdisk.*
+				continue;
+
 			inputName.deleteChar(0);	// delete the first character (type)
 			inputName.deleteChar(7);	// delete the dot
 
 			// The base36 encoded resource contains the following:
 			// uint16 number, byte noun, byte verb, byte cond, byte seq
-			// TODO: this is still not right (especially the tuple part, seems to be overflowing?)
-			uint16 number = strtol(Common::String(inputName.c_str(), 2).c_str(), 0, 36);
-			uint32 tuple = strtol(inputName.c_str() + 2, 0, 36);
-			ResourceId resource36((ResourceType)i, number, tuple);
-
-			if (i == kResourceTypeAudio36)
-				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), tuple, resource36.toString().c_str());
-			else
-				debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), tuple, resource36.toString().c_str());
+			uint16 number = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36);	// 3 characters
+			byte noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);	// 2 characters
+			byte verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);	// 2 characters
+			byte cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);	// 2 characters
+			byte seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);		// 1 character
+			ResourceId resource36((ResourceType)i, number, noun, verb, cond, seq);
 
 			/*
+			if (i == kResourceTypeAudio36)
+				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+			else
+				debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+			*/
+
 			psrcPatch = new ResourceSource;
 			psrcPatch->source_type = kSourcePatch;
 			psrcPatch->location_name = name;
 			psrcPatch->resourceFile = 0;
-			processPatch(psrcPatch, (ResourceType)i, number, tuple);
-			*/
+			processPatch(psrcPatch, (ResourceType)i, number, resource36.tuple);
 		}
 	}
 }
