@@ -63,7 +63,7 @@ public:
 
 #define ANIM_SPRITE_SET_SIZE 50
 
-enum MadsAnimationFlags {ANIM_CUSTOM_FONT = 0x20};
+enum MadsAnimationFlags {ANIM_CUSTOM_FONT = 0x20, ANIM_HAS_SOUND = 0x8000};
 
 class MadsAnimation: public Animation {
 private:
@@ -114,6 +114,7 @@ public:
 	virtual void setCurrentFrame(int frameNumber);
 
 	bool freeFlag() const { return _freeFlag; }
+	int roomNumber() const { return _roomNumber; }
 };
 
 } // End of namespace M4

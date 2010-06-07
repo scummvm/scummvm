@@ -49,7 +49,7 @@ RexMainMenuView::RexMainMenuView(MadsM4Engine *vm):
 	_skipFlag = false;
 
 	// Load the background for the Rex Nebular game
-	_bgSurface = new M4Surface(width(), MADS_SURFACE_HEIGHT);
+	_bgSurface = new M4Surface();
 	_bgSurface->loadBackground(REX_MENUSCREEN, &_bgPalData);
 	_vm->_palette->addRange(_bgPalData);
 	_bgSurface->translate(_bgPalData);

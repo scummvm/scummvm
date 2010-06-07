@@ -441,7 +441,11 @@ void TextviewView::processText() {
 
 AnimviewView::AnimviewView(MadsM4Engine *vm):
 		View(vm, Common::Rect(0, 0, vm->_screen->width(), vm->_screen->height())),
-		_bgSurface(vm->_screen->width(), MADS_SURFACE_HEIGHT) {
+		MadsView(this), _backgroundSurface(MADS_SURFACE_WIDTH, MADS_SURFACE_HEIGHT),
+		_codeSurface(MADS_SURFACE_WIDTH, MADS_SURFACE_HEIGHT) {
+
+	MadsView::_bgSurface = &_backgroundSurface;
+	MadsView::_depthSurface = &_codeSurface;
 
 	_screenType = VIEWID_ANIMVIEW;
 	_screenFlags.layer = LAYER_BACKGROUND;
@@ -452,27 +456,28 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	_palData = NULL;
 	_previousUpdate = 0;
 	_transition = kTransitionNone;
+	_activeAnimation = NULL;
 	reset();
 
 	// Set up system palette colors
 	_vm->_palette->setMadsSystemPalette();
 
 	clear();
-	_bgSurface.clear();
+	_backgroundSurface.clear();
 
-	int y = (height() - MADS_SURFACE_HEIGHT) / 2;
 	setColor(2);
-	hLine(0, width() - 1, y - 2);
-	hLine(0, width() - 1, height() - y + 1);
+	hLine(0, width() - 1, MADS_Y_OFFSET - 2);
+	hLine(0, width() - 1, MADS_Y_OFFSET + MADS_SURFACE_HEIGHT + 2);
 }
 
 AnimviewView::~AnimviewView() {
 	if (_script)
 		_vm->res()->toss(_resourceName);
+	delete _activeAnimation;
 }
 
 void AnimviewView::reset() {
-	_bgSurface.clear();
+	_backgroundSurface.clear();
 	_soundDriverLoaded = false;
 }
 
@@ -515,19 +520,26 @@ void AnimviewView::updateState() {
 		_previousUpdate = g_system->getMillis();
 	}
 
-	// Check if we're ready for the next command
-	bool animRunning = false;
-	if (!animRunning) {
+	if (!_activeAnimation) {
+		readNextCommand();
+		assert(_activeAnimation);
+	}
+
+	// Update the current animation
+	_activeAnimation->update();
+	if (_activeAnimation->freeFlag()) {
+		delete _activeAnimation;
+		_activeAnimation = NULL;
+
 		if (_script->eos() ||  _script->err()) {
 			scriptDone();
 			return;
 		}
 
 		readNextCommand();
-
-		// FIXME: Replace flag with proper animation end check
-		animRunning = true;
 	}
+
+	refresh();
 }
 
 void AnimviewView::readNextCommand() {
@@ -562,46 +574,15 @@ void AnimviewView::readNextCommand() {
 	if (strchr(_currentLine, '.') == NULL)
 		strcat(_currentLine, ".aa");
 
-	AAFile aaFile(_currentLine, _vm);
+	_activeAnimation = new MadsAnimation(_vm, this);
+	_activeAnimation->load(_currentLine, 0);
 
-	// Initial validation
-	if (aaFile.flags & AA_HAS_FONT) {
-		assert(_vm->_resourceManager->resourceExists(aaFile.fontResource.c_str()));
-	}
+	_backgroundSurface.loadBackground(_activeAnimation->roomNumber());
+	_codeSurface.create(_backgroundSurface.width(), _backgroundSurface.height(), 1);
+	_codeSurface.clear();
 
-	for (int seriesCtr = 0; seriesCtr < aaFile.seriesCount; ++seriesCtr)
-		assert(_vm->_resourceManager->resourceExists(aaFile.filenames[seriesCtr].c_str()));
-
-	// Start sound
-	if (aaFile.flags & AA_HAS_SOUND) {
-		char buffer[100];
-		strcpy(buffer, aaFile.soundName.c_str());
-		buffer[0] = 'A';	// A for AdLib resource
-
-		/*Common::SeekableReadStream *stream = */_vm->_resourceManager->get(buffer);
-
-		_vm->_resourceManager->toss(buffer);
-	}
-
-
-	char artFile[80];
-	sprintf(artFile, "rm%d.art", aaFile.roomNumber);
-
-	// Not all scenes have a background. If there is one, refresh it
-	if (_vm->_resourceManager->resourceExists(artFile)) {
-		if (_palData) {
-			_vm->_palette->deleteRange(_palData);
-			delete _palData;
-		}
-		_bgSurface.loadBackground(aaFile.roomNumber, &_palData);
-		_vm->_palette->addRange(_palData);
-		_bgSurface.translate(_palData);
-	}
-
-	// Grab what the final palete will be
-	RGB8 destPalette[256];
-	_vm->_palette->grabPalette(destPalette, 0, 256);
-
+	_spriteSlots.fullRefresh();
+/*
 	// Handle scene transition
 	switch (_transition) {
 		case kTransitionNone:
@@ -631,16 +612,14 @@ void AnimviewView::readNextCommand() {
 			// nothing to do
 			break;
 	}
-
-	// Refresh the view
-	int yp = (height() - _bgSurface.height()) / 2;
-	_bgSurface.copyTo(this, 0, yp);
+*/
 
 	_vm->_resourceManager->toss(_currentLine);
 }
 
 
 void AnimviewView::scriptDone() {
+return;
 	AnimviewCallback fn = _callback;
 	MadsM4Engine *vm = _vm;
 
@@ -712,47 +691,6 @@ void AnimviewView::processCommand() {
 	} else {
 		error("Unknown response command: '%s'", commandStr);
 	}
-}
-
-AAFile::AAFile(const char *resourceName, MadsM4Engine* vm): MadsPack(resourceName, vm) {
-	Common::MemoryReadStream stream1(*getItemStream(1));
-	Common::MemoryReadStream stream2(*getItemStream(2));
-
-	Common::MemoryReadStream stream(*getItemStream(0));
-
-	seriesCount = stream.readUint16LE();
-	frameCount = stream.readUint16LE();
-	frameEntryCount = stream.readUint16LE();
-	stream.skip(3);
-	flags = stream.readByte();
-	stream.skip(4);
-	roomNumber = stream.readUint16LE();
-	stream.skip(10);
-	frameTicks = stream.readUint16LE();
-
-	stream.skip(21);
-	for (int i = 0; i < 10; ++i) {
-		char filename[13];
-		stream.read(filename, 13);
-		filenames.push_back(Common::String(filename, 13));
-	}
-
-	stream.skip(81);
-	char name[100];
-	stream.read(name, 13);
-	lbmFilename = Common::String(name, 13);
-
-	stream.skip(365);
-	stream.read(name, 13);
-	spritesFilename = Common::String(name, 13);
-
-	stream.skip(48);
-	stream.read(name, 13);
-	soundName = Common::String(name, 13);
-
-	stream.skip(26);
-	stream.read(name, 14);
-	fontResource = Common::String(name, 14);
 }
 
 }

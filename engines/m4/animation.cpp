@@ -39,6 +39,11 @@ MadsAnimation::MadsAnimation(MadsM4Engine *vm, MadsView *view): Animation(vm), _
 	_skipLoad = false;
 	_unkIndex = -1;
 	_messageCtr= 0;
+	_field12 = 0;
+
+	_currentFrame = 0;
+	_oldFrameEntry = 0;
+	_nextFrameTimer = _madsVm->_currentTimer;
 }
 
 MadsAnimation::~MadsAnimation() {
@@ -237,12 +242,14 @@ void MadsAnimation::load(const Common::String &filename, int abortTimers) {
 	_messageCtr = 0;
 	_skipLoad = true;
 
+/* TODO:  figure out extra stuff in this routine
 	if (_field12) {
 		_unkIndex = -1;
 		int listIndex = _spriteListIndexes[_spriteListIndex];
 		SpriteAsset &spriteSet = _view->_spriteSlots.getSprite(listIndex);
-warning("%d", spriteSet.getCount());
+		..?..
 	}
+*/
 
 	// Initialise miscellaneous fields
 	_currentFrame = 0;
@@ -462,9 +469,6 @@ void MadsAnimation::loadInterface(M4Surface *&interfaceSurface, M4Surface *&dept
 	if (_animMode <= 2) {
 		MadsSceneResources sceneResources;
 		sceneResources.load(_roomNumber, _interfaceFile.c_str(), 0, depthSurface, interfaceSurface);
-
-		// Rex only supports a single dialog draw style
-		assert(sceneResources.drawStyle == 2);
 
 	} else if (_animMode == 4) {
 		// Load a scene interface

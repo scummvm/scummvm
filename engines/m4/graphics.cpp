@@ -633,16 +633,6 @@ void M4Surface::rexLoadBackground(Common::SeekableReadStream *source, RGBList **
 	int sceneWidth = sourceUnc->readUint16LE();
 	int sceneHeight = sourceUnc->readUint16LE();
 	int sceneSize = sceneWidth * sceneHeight;
-	if (sceneWidth > this->width()) {
-		warning("Background width is %i, too large to fit in screen. Setting it to %i", sceneWidth, this->width());
-		sceneWidth = this->width();
-		sceneSize = sceneWidth * sceneHeight;
-	}
-	if (sceneHeight > this->height()) {
-		warning("Background height is %i, too large to fit in screen.Setting it to %i", sceneHeight, this->height());
-		sceneHeight = this->height();
-		sceneSize = sceneWidth * sceneHeight;
-	}
 
 	// Set palette
 	if (!palData) {
@@ -658,6 +648,7 @@ void M4Surface::rexLoadBackground(Common::SeekableReadStream *source, RGBList **
 	sourceUnc = packData.getItemStream(1);
 	assert((int)sourceUnc->size() >= sceneSize);
 
+	create(sceneWidth, sceneHeight, 1);
 	byte *pData = (byte *)pixels;
 	sourceUnc->read(pData, sceneSize);
 
