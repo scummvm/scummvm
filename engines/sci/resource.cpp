@@ -1150,18 +1150,23 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 	// folder of GK1CD, and are like this file: @0CS0M00.0X1. GK1CD is the first game where these
 	// have been observed. The actual audio36 and sync36 resources exist in SCI1.1 as well, but the
 	// first game where external patch files for them have been found is GK1CD. The names of these
-	// files are base36 encoded, and we handle their decoding here. audio36 files start with a "@",
-	// whereas sync36 start with a "#"
+	// files are base36 encoded, and we handle their decoding here. audio36 files start with a '@',
+	// whereas sync36 start with a '#'. Mac versions begin with 'A' (probably meaning AIFF). Torin
+	// has several that begin with 'B'.
 
-	Common::String mask, name, inputName;
+	Common::String name, inputName;
 	Common::ArchiveMemberList files;
 	//ResourceSource *psrcPatch;
 
 	for (int i = kResourceTypeAudio36; i <= kResourceTypeSync36; ++i) {
-		// audio36 resources start with a @
+		// audio36 resources start with a @, A, or B
 		// sync36 resources start with a #
-		mask = (i == kResourceTypeAudio36) ? "@*.*" : "#*.*";
-		SearchMan.listMatchingMembers(files, mask);
+		if (i == kResourceTypeAudio36) {
+			SearchMan.listMatchingMembers(files, "@???????.???");
+			SearchMan.listMatchingMembers(files, "A???????.???");
+			SearchMan.listMatchingMembers(files, "B???????.???");
+		} else
+			SearchMan.listMatchingMembers(files, "#???????.???");
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			name = (*x)->getName();
