@@ -620,6 +620,9 @@ void ResourceManager::scanNewSources() {
 			switch (source->source_type) {
 			case kSourceDirectory:
 				readResourcePatches(source);
+#ifdef ENABLE_SCI32
+				readResourcePatchesBase36(source);
+#endif
 				readWaveAudioPatches();
 				break;
 			case kSourceExtMap:
@@ -1063,10 +1066,10 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 }
 
 // version-agnostic patch application
-void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, int resnumber) {
+void ResourceManager::processPatch(ResourceSource *source, ResourceType restype, uint16 resnumber, uint32 tuple) {
 	Common::SeekableReadStream *fileStream = 0;
 	Resource *newrsc;
-	ResourceId resId = ResourceId(restype, resnumber);
+	ResourceId resId = ResourceId(restype, resnumber, tuple);
 	byte patchtype, patch_data_offset;
 	int fsize;
 
@@ -1137,19 +1140,65 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
 }
 
+#ifdef ENABLE_SCI32
+
+void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
+	// The base36 encoded audio36 and sync36 resources use a different naming scheme, because they
+	// cannot be described with a single resource number, but are a result of a
+	// <number, noun, verb, cond, seq> tuple. Please don't be confused with the normal audio patches
+	// (*.aud) and normal sync patches (*.syn). audio36 patches can be seen for example in the AUD
+	// folder of GK1CD, and are like this file: @0CS0M00.0X1. GK1CD is the first game where these
+	// have been observed. The actual audio36 and sync36 resources exist in SCI1.1 as well, but the
+	// first game where external patch files for them have been found is GK1CD. The names of these
+	// files are base36 encoded, and we handle their decoding here. audio36 files start with a "@",
+	// whereas sync36 start with a "#"
+
+	Common::String mask, name, inputName;
+	Common::ArchiveMemberList files;
+	//ResourceSource *psrcPatch;
+
+	for (int i = kResourceTypeAudio36; i <= kResourceTypeSync36; ++i) {
+		// audio36 resources start with a @
+		// sync36 resources start with a #
+		mask = (i == kResourceTypeAudio36) ? "@*.*" : "#*.*";
+		SearchMan.listMatchingMembers(files, mask);
+
+		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
+			name = (*x)->getName();
+			inputName = (*x)->getName();
+			inputName.toUppercase();
+			inputName.deleteChar(0);	// delete the first character (type)
+			inputName.deleteChar(7);	// delete the dot
+
+			// The base36 encoded resource contains the following:
+			// uint16 number, byte noun, byte verb, byte cond, byte seq
+			// TODO: this is still not right (especially the tuple part, seems to be overflowing?)
+			uint16 number = strtol(Common::String(inputName.c_str(), 2).c_str(), 0, 36);
+			uint32 tuple = strtol(inputName.c_str() + 2, 0, 36);
+			ResourceId resource36((ResourceType)i, number, tuple);
+
+			if (i == kResourceTypeAudio36)
+				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), tuple, resource36.toString().c_str());
+			else
+				debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), tuple, resource36.toString().c_str());
+
+			/*
+			psrcPatch = new ResourceSource;
+			psrcPatch->source_type = kSourcePatch;
+			psrcPatch->location_name = name;
+			psrcPatch->resourceFile = 0;
+			processPatch(psrcPatch, (ResourceType)i, number, tuple);
+			*/
+		}
+	}
+}
+
+#endif
 
 void ResourceManager::readResourcePatches(ResourceSource *source) {
 	// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
 	// this function tries to read patch file with any supported naming scheme,
 	// regardless of s_sciVersion value
-
-	// Note that audio36 and sync36 use a different naming scheme, because they cannot be described
-	// with a single resource number, but are a result of a <number, noun, verb, cond, seq> tuple.
-	// Please don't be confused with the normal audio patches (*.aud) and normal sync patches (*.syn).
-	// audio36 patches can be seen for example in the AUD folder of GK1CD, and are like this file:
-	// @0CS0M00.0X1. GK1CD is the first game where these have been observed. The actual audio36 and
-	// sync36 resources exist in SCI1.1 as well, but the first game where external patch files for
-	// them have been found is GK1CD
 
 	Common::String mask, name;
 	Common::ArchiveMemberList files;
@@ -1157,12 +1206,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i <= kResourceTypeRobot; ++i) {
-		// TODO: add support for audio36 and sync36 files
-		// Such patches were introduced in SCI2, and didn't exist in SCI0-SCI1.1
-		if (i == kResourceTypeAudio36 || i == kResourceTypeSync36)
-			continue;
-
+	for (int i = kResourceTypeView; i <= kResourceTypeHeap; ++i) {
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
@@ -1173,6 +1217,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 		mask = "*.";
 		mask += resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
+
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			bool bAdd = false;
 			name = (*x)->getName();

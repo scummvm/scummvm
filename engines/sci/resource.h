@@ -452,7 +452,10 @@ protected:
 	 * Reads patch files from a local directory.
 	 */
 	void readResourcePatches(ResourceSource *source);
-	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
+#ifdef ENABLE_SCI32
+	void readResourcePatchesBase36(ResourceSource *source);
+#endif
+	void processPatch(ResourceSource *source, ResourceType restype, uint16 resnumber, uint32 tuple = 0);
 
 	/**
 	 * Process wave files as patches for Audio resources
