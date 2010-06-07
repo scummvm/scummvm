@@ -41,7 +41,6 @@ public:
 	const OSystem::GraphicsMode *getSupportedGraphicsModes();
 	int getDefaultGraphicsMode() { return 0; }
 	bool setGraphicsMode(int mode) { return true; }
-	bool setGraphicsMode(const char *name) { return true; }
 	int getGraphicsMode() { return 0; }
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
