@@ -1073,7 +1073,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	byte patchtype, patch_data_offset;
 	int fsize;
 
-	if (resnumber == -1)
+	if (resnumber == 0xFFFF)
 		return;
 
 	if (source->resourceFile) {
