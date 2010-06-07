@@ -24,6 +24,7 @@
  */
 
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR
@@ -84,6 +85,150 @@ static const int s_gfxModeSwitchTable[][4] = {
 #ifdef USE_SCALERS
 static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height, int srcX, int srcY, int origSrcY);
 #endif
+
+AspectRatio::AspectRatio(int w, int h) {
+	// TODO : Validation and so on...
+	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
+	_kw = w;
+	_kh = h;
+}
+
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
+static const size_t AR_COUNT = 4;
+static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
+static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
+
+static AspectRatio getDesiredAspectRatio() {
+	//TODO : We could parse an arbitrary string, if we code enough proper validation
+	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
+
+	for (size_t i = 0; i < AR_COUNT; i++) {
+		assert(desiredAspectRatioAsStrings[i] != NULL);
+
+		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
+			return desiredAspectRatios[i];
+		}
+	}
+	// TODO : Report a warning
+	return AspectRatio(0, 0);
+}
+#endif
+
+SdlGraphicsManager::SdlGraphicsManager()
+	:
+#ifdef USE_OSD
+	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
+#endif
+	_hwscreen(0), _screen(0), _tmpscreen(0),
+#ifdef USE_RGB_COLOR
+	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
+	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
+#endif
+	_overlayVisible(false),
+	_overlayscreen(0), _tmpscreen2(0),
+	_scalerProc(0), _modeChanged(false), _screenChangeCount(0),
+	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
+	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
+	_currentShakePos(0), _newShakePos(0),
+	_paletteDirtyStart(0), _paletteDirtyEnd(0),
+	_screenIsLocked(false),
+	_graphicsMutex(0), _transactionMode(kTransactionNone) {
+
+	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
+		error("Could not initialize SDL: %s", SDL_GetError());
+	}
+
+	// allocate palette storage
+	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+
+	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+
+	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
+
+	_graphicsMutex = g_system->createMutex();
+
+#ifdef _WIN32_WCE
+	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
+		SDL_VideoInit("windib", 0);
+		sdlFlags ^= SDL_INIT_VIDEO;
+	}
+#endif
+
+	SDL_ShowCursor(SDL_DISABLE);
+
+	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
+	memset(&_videoMode, 0, sizeof(_videoMode));
+	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
+
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
+	_videoMode.mode = GFX_DOUBLESIZE;
+	_videoMode.scaleFactor = 2;
+	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
+	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
+	_scalerProc = Normal2x;
+#else // for small screen platforms
+	_videoMode.mode = GFX_NORMAL;
+	_videoMode.scaleFactor = 1;
+	_videoMode.aspectRatioCorrection = false;
+	_scalerProc = Normal1x;
+#endif
+	_scalerType = 0;
+
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
+#else
+	_videoMode.fullscreen = true;
+#endif
+}
+
+SdlGraphicsManager::~SdlGraphicsManager() {
+	unloadGFXMode();
+	g_system->deleteMutex(_graphicsMutex);
+
+	free(_currentPalette);
+	free(_cursorPalette);
+	free(_mouseData);
+}
+
+bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	return
+		(f == OSystem::kFeatureFullscreenMode) ||
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
+		(f == OSystem::kFeatureAutoComputeDirtyRects) ||
+		(f == OSystem::kFeatureCursorHasPalette) ||
+		(f == OSystem::kFeatureIconifyWindow);
+}
+
+void SdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+		setFullscreenMode(enable);
+		break;
+	case OSystem::kFeatureAspectRatioCorrection:
+		setAspectRatioCorrection(enable);
+		break;
+	case OSystem::kFeatureIconifyWindow:
+		if (enable)
+			SDL_WM_IconifyWindow();
+		break;
+	default:
+		break;
+	}
+}
+
+bool SdlGraphicsManager::getFeatureState(OSystem::Feature f) {
+	assert (_transactionMode == kTransactionNone);
+
+	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+		return _videoMode.fullscreen;
+	case OSystem::kFeatureAspectRatioCorrection:
+		return _videoMode.aspectRatioCorrection;
+	default:
+		return false;
+	}
+}
 
 const OSystem::GraphicsMode *SdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
@@ -1645,14 +1790,6 @@ static int cursorStretch200To240(uint8 *buf, uint32 pitch, int width, int height
 }
 #endif
 
-// Move to events
-/*void SdlGraphicsManager::toggleMouseGrab() {
-	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
-		SDL_WM_GrabInput(SDL_GRAB_ON);
-	else
-		SDL_WM_GrabInput(SDL_GRAB_OFF);
-}*/
-
 void SdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
@@ -1883,7 +2020,7 @@ bool SdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 #ifdef USE_OSD
 		if (_osdSurface) {
 			const char *newScalerName = 0;
-			const GraphicsMode *g = getSupportedGraphicsModes();
+			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
 			while (g->name) {
 				if (g->id == _videoMode.mode) {
 					newScalerName = g->description;

@@ -36,6 +36,11 @@
 #include <SDL.h>
 #endif
 
+#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+// Uncomment this to enable the 'on screen display' code.
+#define USE_OSD	1
+#endif
+
 enum {
 	GFX_NORMAL = 0,
 	GFX_DOUBLESIZE = 1,
@@ -68,14 +73,13 @@ public:
 	SdlGraphicsManager();
 	~SdlGraphicsManager();
 
-	bool hasGraphicsFeature(OSystem::Feature f);
-	void setGraphicsFeatureState(OSystem::Feature f, bool enable);
-	bool getGraphicsFeatureState(OSystem::Feature f);
+	bool hasFeature(OSystem::Feature f);
+	void setFeatureState(OSystem::Feature f, bool enable);
+	bool getFeatureState(OSystem::Feature f);
 
 	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
-	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const;
 
 #ifdef USE_RGB_COLOR
@@ -116,6 +120,23 @@ public:
 	}
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	
+#ifdef USE_OSD
+	void displayMessageOnOSD(const char *msg);
+#endif
+
+	// Accessed from OSystem_SDL::pollEvent for EVENT_SCREEN_CHANGED
+	// The way this event works should be changed
+	bool _modeChanged;
+
+	// Accessed from OSystem_SDL::dispatchSDLEvent
+	// A function here for toggling it should be made for this
+	bool _forceFull;
+
+	bool handleScalerHotkeys(const SDL_KeyboardEvent &key); // Move this?
+	bool isScalerHotkey(const Common::Event &event); // Move this?
+
+	void setMousePos(int x, int y);
+
 protected:
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;
@@ -187,7 +208,6 @@ protected:
 	virtual void setGraphicsModeIntern(); // overloaded by CE backend
 
 	/** Force full redraw on next updateScreen */
-	bool _forceFull;
 	ScalerProc *_scalerProc;
 	int _scalerType;
 	int _transactionMode;
@@ -195,8 +215,6 @@ protected:
 	bool _screenIsLocked;
 	Graphics::Surface _framebuffer;
 
-	/** Current video mode flags (see DF_* constants) */
-	bool _modeChanged;
 	int _screenChangeCount;
 
 	enum {
@@ -207,8 +225,6 @@ protected:
 	// Dirty rect management
 	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
 	int _numDirtyRects;
-
-	void setMousePos(int x, int y);
 
 	struct MousePos {
 		// The mouse position, using either virtual (game) or real
@@ -288,11 +304,6 @@ protected:
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 	int effectiveScreenHeight() const;
-
-	void setupIcon();
-
-	bool handleScalerHotkeys(const SDL_KeyboardEvent &key); // Move to events?
-	bool isScalerHotkey(const Common::Event &event); // Move to events?
 };
 
 
