@@ -460,29 +460,37 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	reg_t nametarget = argv[1];
-	reg_t *slot = s->_segMan->derefRegPtr(argv[2], 0);
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	s->r_acc = NULL_REG;
+	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
 
-	for (uint i = 0; i < MIN<uint>(saves.size(), MAX_SAVEGAME_NR); i++) {
-		*slot++ = s->r_acc; // Store savegame ID
-		++s->r_acc.offset; // Increase number of files found
+	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
 
-		s->_segMan->strcpy(nametarget, saves[i].name);
-
-		// Increase name offset pointer accordingly
-		nametarget.offset += SCI_MAX_SAVENAME_LENGTH;
+	if (!slot) {
+		warning("kGetSaveFiles: %04X:%04X invalid or too small to hold slot data", PRINT_REG(argv[2]));
+		totalSaves = 0;
 	}
 
-	s->_segMan->strcpy(nametarget, ""); // Terminate list
+	const uint bufSize = (totalSaves * SCI_MAX_SAVENAME_LENGTH) + 1;
+	char *saveNames = new char[bufSize];
+	char *saveNamePtr = saveNames;
 
-	return s->r_acc;
+	for (uint i = 0; i < totalSaves; i++) {
+		*slot++ = make_reg(0, i); // Store slot
+		strcpy(saveNamePtr, saves[i].name);
+		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
+	}
+
+	*saveNamePtr = 0; // Terminate list
+
+	s->_segMan->memcpy(argv[1], (byte *)saveNames, bufSize);
+	delete[] saveNames;
+
+	return make_reg(0, totalSaves);
 }
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
