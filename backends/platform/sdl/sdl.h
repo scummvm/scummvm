@@ -33,6 +33,10 @@
 #endif
 
 #include "backends/base-backend.h"
+
+#include "backends/mutex/sdl/sdl-mutex.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
+
 #include "graphics/scaler.h"
 
 
@@ -54,35 +58,6 @@ namespace Audio {
 #define MIXER_DOUBLE_BUFFERING 1
 #endif
 
-
-enum {
-	GFX_NORMAL = 0,
-	GFX_DOUBLESIZE = 1,
-	GFX_TRIPLESIZE = 2,
-	GFX_2XSAI = 3,
-	GFX_SUPER2XSAI = 4,
-	GFX_SUPEREAGLE = 5,
-	GFX_ADVMAME2X = 6,
-	GFX_ADVMAME3X = 7,
-	GFX_HQ2X = 8,
-	GFX_HQ3X = 9,
-	GFX_TV2X = 10,
-	GFX_DOTMATRIX = 11
-};
-
-class AspectRatio {
-	int _kw, _kh;
-public:
-	AspectRatio() { _kw = _kh = 0; }
-	AspectRatio(int w, int h);
-
-	bool isAuto() const { return (_kw | _kh) == 0; }
-
-	int kw() const { return _kw; }
-	int kh() const { return _kh; }
-};
-
-
 class OSystem_SDL : public BaseBackend {
 public:
 	OSystem_SDL();
@@ -90,12 +65,18 @@ public:
 
 	virtual void initBackend();
 
+
+protected:
+	SdlMutexManager *_mutexManager;
+	SdlGraphicsManager *_graphicsManager;
+
+public:
 	void beginGFXTransaction();
 	TransactionError endGFXTransaction();
 
 #ifdef USE_RGB_COLOR
 	// Game screen
-	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+	virtual Graphics::PixelFormat getScreenFormat() const;
 
 	// Highest supported
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
@@ -105,7 +86,7 @@ public:
 	// Typically, 320x200 CLUT8
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format); // overloaded by CE backend
 
-	virtual int getScreenChangeID() const { return _screenChangeCount; }
+	virtual int getScreenChangeID() const;
 
 	// Set colors of the palette
 	void setPalette(const byte *colors, uint start, uint num);
@@ -138,10 +119,7 @@ public:
 	void setCursorPalette(const byte *colors, uint start, uint num);
 
 	// Disables or enables cursor palette
-	void disableCursorPalette(bool disable) {
-		_cursorPaletteDisabled = disable;
-		blitCursor();
-	}
+	void disableCursorPalette(bool disable);
 
 	// Shaking is used in SCUMM. Set current shake position.
 	void setShakePos(int shake_pos);
@@ -214,7 +192,7 @@ public:
 	void deleteMutex(MutexRef mutex);
 
 	// Overlay
-	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -223,8 +201,8 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
-	virtual int16 getOverlayHeight()  { return _videoMode.overlayHeight; }
-	virtual int16 getOverlayWidth()   { return _videoMode.overlayWidth; }
+	virtual int16 getOverlayHeight();
+	virtual int16 getOverlayWidth();
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
@@ -254,109 +232,10 @@ protected:
 	bool _inited;
 	SDL_AudioSpec _obtainedRate;
 
-#ifdef USE_OSD
-	SDL_Surface *_osdSurface;
-	Uint8 _osdAlpha;			// Transparency level of the OSD
-	uint32 _osdFadeStartTime;	// When to start the fade out
-	enum {
-		kOSDFadeOutDelay = 2 * 1000,	// Delay before the OSD is faded out (in milliseconds)
-		kOSDFadeOutDuration = 500,		// Duration of the OSD fade out (in milliseconds)
-		kOSDColorKey = 1,
-		kOSDInitialAlpha = 80			// Initial alpha level, in percent
-	};
-#endif
-
-	// hardware screen
-	SDL_Surface *_hwscreen;
-
-	// unseen game screen
-	SDL_Surface *_screen;
-#ifdef USE_RGB_COLOR
-	Graphics::PixelFormat _screenFormat;
-	Graphics::PixelFormat _cursorFormat;
-#endif
-
-	// temporary screen (for scalers)
-	SDL_Surface *_tmpscreen;
-	SDL_Surface *_tmpscreen2;
-
-	// overlay
-	SDL_Surface *_overlayscreen;
-	bool _overlayVisible;
-	Graphics::PixelFormat _overlayFormat;
-
 	// CD Audio
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
 	uint32 _cdEndTime, _cdStopTime;
-
-	enum {
-		DF_WANT_RECT_OPTIM			= 1 << 0
-	};
-
-	enum {
-		kTransactionNone = 0,
-		kTransactionActive = 1,
-		kTransactionRollback = 2
-	};
-
-	struct TransactionDetails {
-		bool sizeChanged;
-		bool needHotswap;
-		bool needUpdatescreen;
-		bool normal1xScaler;
-#ifdef USE_RGB_COLOR
-		bool formatChanged;
-#endif
-	};
-	TransactionDetails _transactionDetails;
-
-	struct VideoState {
-		bool setup;
-
-		bool fullscreen;
-		bool aspectRatioCorrection;
-		AspectRatio desiredAspectRatio;
-
-		int mode;
-		int scaleFactor;
-
-		int screenWidth, screenHeight;
-		int overlayWidth, overlayHeight;
-		int hardwareWidth, hardwareHeight;
-#ifdef USE_RGB_COLOR
-		Graphics::PixelFormat format;
-#endif
-	};
-	VideoState _videoMode, _oldVideoMode;
-
-	virtual void setGraphicsModeIntern(); // overloaded by CE backend
-
-	/** Force full redraw on next updateScreen */
-	bool _forceFull;
-	ScalerProc *_scalerProc;
-	int _scalerType;
-	int _transactionMode;
-
-	bool _screenIsLocked;
-	Graphics::Surface _framebuffer;
-
-	/** Current video mode flags (see DF_* constants) */
-	uint32 _modeFlags;
-	bool _modeChanged;
-	int _screenChangeCount;
-
-	enum {
-		NUM_DIRTY_RECT = 100,
-		MAX_SCALING = 3
-	};
-
-	// Dirty rect management
-	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
-	int _numDirtyRects;
-	uint32 *_dirtyChecksums;
-	bool _cksumValid;
-	int _cksumNum;
 
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
@@ -366,73 +245,13 @@ protected:
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
 
-	struct MousePos {
-		// The mouse position, using either virtual (game) or real
-		// (overlay) coordinates.
-		int16 x, y;
-
-		// The size and hotspot of the original cursor image.
-		int16 w, h;
-		int16 hotX, hotY;
-
-		// The size and hotspot of the pre-scaled cursor image, in real
-		// coordinates.
-		int16 rW, rH;
-		int16 rHotX, rHotY;
-
-		// The size and hotspot of the pre-scaled cursor image, in game
-		// coordinates.
-		int16 vW, vH;
-		int16 vHotX, vHotY;
-
-		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
-		             rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
-		             vHotX(0), vHotY(0)
-			{ }
-	};
-
-	// mouse
 	KbdMouse _km;
-	bool _mouseVisible;
-	bool _mouseNeedsRedraw;
-	byte *_mouseData;
-	SDL_Rect _mouseBackup;
-	MousePos _mouseCurState;
-#ifdef USE_RGB_COLOR
-	uint32 _mouseKeyColor;
-#else
-	byte _mouseKeyColor;
-#endif
-	int _cursorTargetScale;
-	bool _cursorPaletteDisabled;
-	SDL_Surface *_mouseOrigSurface;
-	SDL_Surface *_mouseSurface;
-	enum {
-		kMouseColorKey = 1
-	};
 
 	// Scroll lock state - since SDL doesn't track it
 	bool _scrollLock;
 	
 	// joystick
 	SDL_Joystick *_joystick;
-
-	// Shake mode
-	int _currentShakePos;
-	int _newShakePos;
-
-	// Palette data
-	SDL_Color *_currentPalette;
-	uint _paletteDirtyStart, _paletteDirtyEnd;
-
-	// Cursor palette data
-	SDL_Color *_cursorPalette;
-
-	/**
-	 * Mutex which prevents multiple threads from interfering with each other
-	 * when accessing the screen.
-	 */
-	MutexRef _graphicsMutex;
 
 #ifdef MIXER_DOUBLE_BUFFERING
 	SDL_mutex *_soundMutex;
@@ -459,40 +278,14 @@ protected:
 	Common::TimerManager *_timer;
 
 protected:
-	void addDirtyRgnAuto(const byte *buf);
-	void makeChecksums(const byte *buf);
-
-	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false); // overloaded by CE backend
-
-	virtual void drawMouse(); // overloaded by CE backend
-	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
-	virtual void blitCursor(); // overloaded by CE backend (FIXME)
-
-	/** Set the position of the virtual mouse cursor. */
-	void setMousePos(int x, int y);
 	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
 	void toggleMouseGrab();
 
-	virtual void internUpdateScreen(); // overloaded by CE backend
-
-	virtual bool loadGFXMode(); // overloaded by CE backend
-	virtual void unloadGFXMode(); // overloaded by CE backend
-	virtual bool hotswapGFXMode(); // overloaded by CE backend
-
-	void setFullscreenMode(bool enable);
-	void setAspectRatioCorrection(bool enable);
-
-	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
-
-	int effectiveScreenHeight() const;
-
-	void setupIcon();
 	void handleKbdMouse();
 
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	void setupIcon();
 
-	bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
-	bool isScalerHotkey(const Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

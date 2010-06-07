@@ -87,49 +87,14 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 	return interval;
 }
 
-AspectRatio::AspectRatio(int w, int h) {
-	// TODO : Validation and so on...
-	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
-	_kw = w;
-	_kh = h;
-}
-
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
-static const size_t AR_COUNT = 4;
-static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
-static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
-
-static AspectRatio getDesiredAspectRatio() {
-	//TODO : We could parse an arbitrary string, if we code enough proper validation
-	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
-
-	for (size_t i = 0; i < AR_COUNT; i++) {
-		assert(desiredAspectRatioAsStrings[i] != NULL);
-
-		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
-			return desiredAspectRatios[i];
-		}
-	}
-	// TODO : Report a warning
-	return AspectRatio(0, 0);
-}
-#endif
-
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
 
 	int joystick_num = ConfMan.getInt("joystick_num");
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
+	uint32 sdlFlags = 0;
 
 	if (ConfMan.hasKey("disable_sdl_parachute"))
 		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-#ifdef _WIN32_WCE
-	if (ConfMan.hasKey("use_GDI") && ConfMan.getBool("use_GDI")) {
-		SDL_VideoInit("windib", 0);
-		sdlFlags ^= SDL_INIT_VIDEO;
-	}
-#endif
 
 	if (joystick_num > -1)
 		sdlFlags |= SDL_INIT_JOYSTICK;
@@ -138,52 +103,14 @@ void OSystem_SDL::initBackend() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	_graphicsMutex = createMutex();
-
-	SDL_ShowCursor(SDL_DISABLE);
-
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
-
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
-
-	_cksumValid = false;
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
-	_videoMode.mode = GFX_DOUBLESIZE;
-	_videoMode.scaleFactor = 2;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
-	_scalerProc = Normal2x;
-#else // for small screen platforms
-	_videoMode.mode = GFX_NORMAL;
-	_videoMode.scaleFactor = 1;
-	_videoMode.aspectRatioCorrection = false;
-	_scalerProc = Normal1x;
-#endif
-	_scalerType = 0;
-	_modeFlags = 0;
-
-#if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
-#else
-	_videoMode.fullscreen = true;
-#endif
-
-#if !defined(MACOSX) && !defined(__SYMBIAN32__)
-	// Setup a custom program icon.
-	// Don't set icon on OS X, as we use a nicer external icon there.
-	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
-	setupIcon();
-#endif
 
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
-
 
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
@@ -198,22 +125,44 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
+		// TODO: Implement SdlAudioManager
+		if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
+		}
+
 		setupMixer();
 	}
 
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timer == 0) {
-		// Note: We could implement a custom SDLTimerManager by using
-		// SDL_AddTimer. That might yield better timer resolution, but it would
-		// also change the semantics of a timer: Right now, ScummVM timers
-		// *never* run in parallel, due to the way they are implemented. If we
-		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// However, not all our code is prepared for that, so we can't just
-		// switch. Still, it's a potential future change to keep in mind.
+		// TODO: Implement SdlTimerManager
+		if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
+		}
+
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
+
+	// Create and hook up the mutex manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_mutexManager == 0) {
+		_mutexManager = new SdlMutexManager();
+	}
+
+	// Create and hook up the graphics manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_graphicsManager == 0) {
+		_graphicsManager = new SdlGraphicsManager();
+	}
+
+#if !defined(MACOSX) && !defined(__SYMBIAN32__)
+	// Setup a custom program icon.
+	// Don't set icon on OS X, as we use a nicer external icon there.
+	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
+	setupIcon();
+#endif
 
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
@@ -223,23 +172,9 @@ void OSystem_SDL::initBackend() {
 
 OSystem_SDL::OSystem_SDL()
 	:
-#ifdef USE_OSD
-	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
-#endif
-	_hwscreen(0), _screen(0), _tmpscreen(0),
-#ifdef USE_RGB_COLOR
-	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
-	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
-#endif
-	_overlayVisible(false),
-	_overlayscreen(0), _tmpscreen2(0),
-	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
+	_cdrom(0),
 	_scrollLock(false),
-	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_joystick(0),
-	_currentShakePos(0), _newShakePos(0),
-	_paletteDirtyStart(0), _paletteDirtyEnd(0),
 #if MIXER_DOUBLE_BUFFERING
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
@@ -248,21 +183,13 @@ OSystem_SDL::OSystem_SDL()
 	_savefile(0),
 	_mixer(0),
 	_timer(0),
-	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
-
-	// allocate palette storage
-	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-
-	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+	_mutexManager(0),
+	_graphicsManager(0) {
 
 	// reset mouse state
 	memset(&_km, 0, sizeof(_km));
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
 
 	_inited = false;
-
 
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
@@ -280,11 +207,6 @@ OSystem_SDL::OSystem_SDL()
 OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
-
-	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
 
 	delete _savefile;
 	delete _timer;
@@ -450,50 +372,15 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 }
 
 bool OSystem_SDL::hasFeature(Feature f) {
-	return
-		(f == kFeatureFullscreenMode) ||
-		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureAutoComputeDirtyRects) ||
-		(f == kFeatureCursorHasPalette) ||
-		(f == kFeatureIconifyWindow);
+	return _graphicsManager->hasFeature(f);
 }
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureFullscreenMode:
-		setFullscreenMode(enable);
-		break;
-	case kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case kFeatureAutoComputeDirtyRects:
-		if (enable)
-			_modeFlags |= DF_WANT_RECT_OPTIM;
-		else
-			_modeFlags &= ~DF_WANT_RECT_OPTIM;
-		break;
-	case kFeatureIconifyWindow:
-		if (enable)
-			SDL_WM_IconifyWindow();
-		break;
-	default:
-		break;
-	}
+	_graphicsManager->setFeatureState(f, enable);
 }
 
 bool OSystem_SDL::getFeatureState(Feature f) {
-	assert (_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case kFeatureFullscreenMode:
-		return _videoMode.fullscreen;
-	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	case kFeatureAutoComputeDirtyRects:
-		return _modeFlags & DF_WANT_RECT_OPTIM;
-	default:
-		return false;
-	}
+	return _graphicsManager->getFeatureState(f);
 }
 
 void OSystem_SDL::deinit() {
@@ -501,8 +388,6 @@ void OSystem_SDL::deinit() {
 		SDL_CDStop(_cdrom);
 		SDL_CDClose(_cdrom);
 	}
-	unloadGFXMode();
-	deleteMutex(_graphicsMutex);
 
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
@@ -511,11 +396,6 @@ void OSystem_SDL::deinit() {
 
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
-
-	free(_dirtyChecksums);
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
 
 	delete _timer;
 
@@ -587,20 +467,24 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
+#pragma mark -
+#pragma mark --- Mutex ---
+#pragma mark -
+
 OSystem::MutexRef OSystem_SDL::createMutex() {
-	return (MutexRef) SDL_CreateMutex();
+	return _mutexManager->createMutex();
 }
 
 void OSystem_SDL::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
+	_mutexManager->lockMutex(mutex);
 }
 
 void OSystem_SDL::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
+	_mutexManager->unlockMutex(mutex);
 }
 
 void OSystem_SDL::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
+	_mutexManager->deleteMutex(mutex);
 }
 
 #pragma mark -
@@ -873,3 +757,147 @@ void OSystem_SDL::updateCD() {
 		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
 	}
 }
+
+#pragma mark -
+#pragma mark --- Graphics ---
+#pragma mark -
+
+const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
+	return _graphicsManager->getSupportedGraphicsModes();
+}
+
+int OSystem_SDL::getDefaultGraphicsMode() const {
+	return _graphicsManager->getDefaultGraphicsMode();
+}
+
+bool OSystem_SDL::setGraphicsMode(int mode) {
+	return _graphicsManager->setGraphicsMode(mode);
+}
+
+int OSystem_SDL::getGraphicsMode() const {
+	return _graphicsManager->getGraphicsMode();
+}
+
+#ifdef USE_RGB_COLOR
+Graphics::PixelFormat OSystem_SDL::getScreenFormat() const {
+	return _graphicsManager->getScreenFormat();
+}
+
+Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
+	return _graphicsManager->getSupportedFormats();
+}
+#endif
+
+void OSystem_SDL::beginGFXTransaction() {
+	_graphicsManager->beginGFXTransaction();
+}
+
+OSystem::TransactionError OSystem_SDL::endGFXTransaction() {
+	return _graphicsManager->endGFXTransaction();
+}
+
+void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
+	_graphicsManager->initSize(w, h, format);
+}
+
+int16 OSystem_SDL::getHeight() {
+	return _graphicsManager->getHeight();
+}
+
+int16 OSystem_SDL::getWidth() {
+	return _graphicsManager->getWidth();
+}
+
+void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
+	_graphicsManager->setPalette(colors, start, num);
+}
+
+void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
+	_graphicsManager->grabPalette(colors, start, num);
+}
+
+void OSystem_SDL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
+	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
+}
+
+Graphics::Surface *OSystem_SDL::lockScreen() {
+	return _graphicsManager->lockScreen();
+}
+
+void OSystem_SDL::unlockScreen() {
+	_graphicsManager->unlockScreen();
+}
+
+/*void OSystem_SDL::fillScreen(uint32 col) {
+	_graphicsManager->fillScreen(col);
+}*/
+
+void OSystem_SDL::updateScreen() {
+	_graphicsManager->updateScreen();
+}
+
+void OSystem_SDL::setShakePos(int shakeOffset) {
+	_graphicsManager->setShakePos(shakeOffset);
+}
+
+void OSystem_SDL::showOverlay() {
+	_graphicsManager->showOverlay();
+}
+
+void OSystem_SDL::hideOverlay() {
+	_graphicsManager->hideOverlay();
+}
+
+Graphics::PixelFormat OSystem_SDL::getOverlayFormat() const {
+	return _graphicsManager->getOverlayFormat();
+}
+
+void OSystem_SDL::clearOverlay() {
+	_graphicsManager->clearOverlay();
+}
+
+void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
+	_graphicsManager->grabOverlay(buf, pitch);
+}
+
+void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
+}
+
+int16 OSystem_SDL::getOverlayHeight() {
+	return _graphicsManager->getOverlayHeight();
+}
+
+int16 OSystem_SDL::getOverlayWidth() {
+	return _graphicsManager->getOverlayWidth();
+}
+
+bool OSystem_SDL::showMouse(bool visible) {
+	return _graphicsManager->showMouse(visible);
+}
+
+void OSystem_SDL::warpMouse(int x, int y) {
+	_graphicsManager->warpMouse(x, y);
+}
+
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
+}
+
+void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
+	_graphicsManager->setCursorPalette(colors, start, num);
+}
+
+void OSystem_SDL::disableCursorPalette(bool disable) {
+	_graphicsManager->disableCursorPalette(disable);
+}
+
+int OSystem_SDL::getScreenChangeID() const {
+	return _graphicsManager->getScreenChangeID();
+}
+
+#ifdef USE_OSD
+void OSystem_SDL::displayMessageOnOSD(const char *msg) {
+	_graphicsManager->displayMessageOnOSD(msg);
+}
+#endif
