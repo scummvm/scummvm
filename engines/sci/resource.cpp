@@ -1080,9 +1080,6 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	if (restype == kResourceTypeSync36)
 		restype = kResourceTypeSync;
 
-	if (resnumber == 0xFFFF)
-		return;
-
 	if (source->resourceFile) {
 		fileStream = source->resourceFile->createReadStream();
 	} else {
