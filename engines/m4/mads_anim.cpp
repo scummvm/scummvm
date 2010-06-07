@@ -446,6 +446,7 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 
 	MadsView::_bgSurface = &_backgroundSurface;
 	MadsView::_depthSurface = &_codeSurface;
+	MadsView::_yOffset = MADS_Y_OFFSET;
 
 	_screenType = VIEWID_ANIMVIEW;
 	_screenFlags.layer = LAYER_BACKGROUND;
@@ -512,14 +513,6 @@ void AnimviewView::updateState() {
 	if (!_script)
 		return;
 
-	// Only update state if wait period has expired
-	if (_previousUpdate > 0) {
-		if (g_system->getMillis() - _previousUpdate < 100)
-			return;
-
-		_previousUpdate = g_system->getMillis();
-	}
-
 	if (!_activeAnimation) {
 		readNextCommand();
 		assert(_activeAnimation);
@@ -579,7 +572,7 @@ void AnimviewView::readNextCommand() {
 
 	_backgroundSurface.loadBackground(_activeAnimation->roomNumber());
 	_codeSurface.setSize(_backgroundSurface.width(), _backgroundSurface.height());
-	_codeSurface.clear();
+	_codeSurface.fillRect(_codeSurface.bounds(), 0xff);
 
 	_spriteSlots.fullRefresh();
 /*

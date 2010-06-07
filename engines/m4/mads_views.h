@@ -98,7 +98,7 @@ public:
 	void deleteTimer(int seqIndex);
 
 	void drawBackground();
-	void drawForeground(View *view);
+	void drawForeground(View *view, int yOffset);
 	void setDirtyAreas();
 	void fullRefresh();
 	void cleanUp();
@@ -139,7 +139,7 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view);
+	void draw(View *view, int yOffset);
 	void setDirtyAreas();
 	void setDirtyAreas2();
 	void cleanUp();
@@ -289,7 +289,7 @@ public:
 	void merge(int startIndex, int count);
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(M4Surface *dest, M4Surface *src);
+	void copy(M4Surface *dest, M4Surface *src, int yOffset);
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -398,6 +398,7 @@ public:
 
 	M4Surface *_depthSurface;
 	M4Surface *_bgSurface;
+	int _yOffset;
 public:
 	MadsView(View *view);
 	~MadsView();
