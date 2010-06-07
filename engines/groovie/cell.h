@@ -26,11 +26,7 @@
 #ifndef GROOVIE_CELL_H
 #define GROOVIE_CELL_H
 
-#include "common/file.h"
-#include "common/util.h"
-
-#include "groovie/cell.h"
-#include "groovie/groovie.h"
+#include "common/textconsole.h"
 
 #define BOARDSIZE 7
 #define CELL_CLEAR 0

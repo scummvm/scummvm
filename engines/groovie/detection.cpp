@@ -23,11 +23,11 @@
  *
  */
 
-#include "common/savefile.h"
-
 #include "groovie/groovie.h"
 #include "groovie/detection.h"
 #include "groovie/saveload.h"
+
+#include "common/system.h"
 
 namespace Groovie {
 

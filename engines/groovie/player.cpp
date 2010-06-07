@@ -23,8 +23,8 @@
  *
  */
 
-#include "groovie/groovie.h"
 #include "groovie/player.h"
+#include "groovie/groovie.h"
 
 namespace Groovie {
 

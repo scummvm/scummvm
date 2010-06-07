@@ -26,13 +26,15 @@
 #ifndef GROOVIE_MUSIC_H
 #define GROOVIE_MUSIC_H
 
-#include "groovie/groovie.h"
-
-#include "sound/mididrv.h"
-#include "sound/midiparser.h"
+#include "common/array.h"
 #include "common/mutex.h"
+#include "sound/mididrv.h"
+
+class MidiParser;
 
 namespace Groovie {
+
+class GroovieEngine;
 
 class MusicPlayer {
 public:

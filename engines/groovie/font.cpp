@@ -23,106 +23,105 @@
  *
  */
 
-#include "common/file.h"
-#include "graphics/surface.h"
-
 #include "groovie/font.h"
 
 namespace Groovie {
 
-Font::Font(OSystem *syst) :
-	_syst(syst), _sphinxfnt(NULL) {
+T7GFont::T7GFont() : _maxHeight(0), _maxWidth(0), _glyphs(0) {
+}
 
-	Common::File fontfile;
-	if (!fontfile.open("sphinx.fnt")) {
-		error("Groovie::Font: Couldn't open sphinx.fnt");
+T7GFont::~T7GFont() {
+	delete[] _glyphs;
+}
+
+bool T7GFont::load(Common::SeekableReadStream &stream) {
+	// Read the mapping of characters to glyphs
+	if (stream.read(_mapChar2Glyph, 128) < 128) {
+		error("Groovie::T7GFont: Couldn't read the character to glyph map");
+		return false;
 	}
-	uint16 fontfilesize = fontfile.size();
-	_sphinxfnt = fontfile.readStream(fontfilesize);
-	fontfile.close();
-}
 
-Font::~Font() {
-	delete _sphinxfnt;
-}
+	// Calculate the number of glyphs
+	byte numGlyphs = 0;
+	for (int i = 0; i < 128; i++)
+		if (_mapChar2Glyph[i] >= numGlyphs)
+			numGlyphs = _mapChar2Glyph[i] + 1;
 
-void Font::printstring(const char *messagein) {
-	uint16 totalwidth = 0, currxoffset, i;
+	// Read the glyph offsets
+	uint16 *glyphOffsets = new uint16[numGlyphs];
+	for (int i = 0; i < numGlyphs; i++)
+		glyphOffsets[i] = stream.readUint16LE();
 
-	char message[15];
-	memset(message, 0, 15);
+	if (stream.eos()) {
+		error("Groovie::T7GFont: Couldn't read the glyph offsets");
+		return false;
+	}
 
-	// Clear the top bar
-	Common::Rect topbar(640, 80);
-	Graphics::Surface *gamescreen;
-	gamescreen = _syst->lockScreen();
-	gamescreen->fillRect(topbar, 0);
-	_syst->unlockScreen();
+	// Allocate the glyph data
+	delete[] _glyphs;
+	_glyphs = new Glyph[numGlyphs];
 
-	for (i = 0; i < 14; i++) {
-		char chartocopy = messagein[i];
-		if (chartocopy <= 0x00 || chartocopy == 0x24) {
-			break;
+	// Read the glyphs
+	_maxHeight = _maxWidth = 0;
+	for (int i = 0; (i < numGlyphs) && !stream.eos(); i++) {
+		// Verify we're at the expected stream position
+		if (stream.pos() != glyphOffsets[i]) {
+			error("Groovie::T7GFont: Glyph %d starts at %d but the current "
+				"offset is %d", i, glyphOffsets[i], stream.pos());
+			return false;
 		}
-		message[i] = chartocopy;
+
+		// Read the glyph information
+		Glyph *g = &_glyphs[i];
+		g->width = stream.readByte();
+		g->julia = stream.readByte();
+
+		// Read the pixels data into a dynamic array (we don't know its length)
+		Common::Array<byte> data;
+		data.reserve(300);
+		byte b = stream.readByte();
+		while (!stream.eos() && (b != 0xFF)) {
+			data.push_back(b);
+			b = stream.readByte();
+		}
+
+		// Verify the pixel data size
+		assert (data.size() % g->width == 0);
+		g->height = data.size() / g->width;
+
+		// Copy the pixel data into the definitive static array
+		g->pixels = new byte[data.size()];
+		memcpy(g->pixels, data.begin(), data.size());
+
+		// Update the max values
+		if (g->width > _maxWidth)
+			_maxWidth = g->width;
+		if (g->height > _maxHeight)
+			_maxHeight = g->height;
 	}
-	Common::rtrim(message);
-	for (i = 0; i < strlen(message); i++) {
-		totalwidth += letterwidth(message[i]);
-	}
-	currxoffset = (640 - totalwidth) / 2;
-	char *currpos = message;
-	while (*(currpos) != 0) {
-		currxoffset += printletter(*(currpos++), currxoffset);
+
+	delete[] glyphOffsets;
+	return true;
+}
+
+void T7GFont::drawChar(Graphics::Surface *dst, byte chr, int x, int y, uint32 color) const {
+	// We ignore the color, as the font is already colored
+	const Glyph *glyph = getGlyph(chr);
+	const byte *src = glyph->pixels;
+	byte *target = (byte *)dst->getBasePtr(x, y);
+
+	for (int i = 0; i < glyph->height; i++) {
+		memcpy(target, src, glyph->width);
+		src += glyph->width;
+		target += dst->pitch;
 	}
 }
 
-uint16 Font::letteroffset(char letter) {
-	uint16 offset;
-	offset = letter;
-	_sphinxfnt->seek(offset);
-	offset = _sphinxfnt->readByte() * 2 + 128;
-	_sphinxfnt->seek(offset);
-	offset = _sphinxfnt->readUint16LE();
-	return offset;
-}
+const T7GFont::Glyph *T7GFont::getGlyph(byte chr) const {
+	assert (chr < 128);
 
-uint8 Font::letterwidth(char letter) {
-	uint16 offset = letteroffset(letter);
-	_sphinxfnt->seek(offset);
-	return _sphinxfnt->readByte();
-}
-
-uint8 Font::letterheight(char letter) {
-	uint16 offset, width, julia, data, counter = 0;
-	offset = letteroffset(letter);
-	_sphinxfnt->seek(offset);
-	width = _sphinxfnt->readByte();
-	julia = _sphinxfnt->readByte();
-	data = _sphinxfnt->readByte();
-	while (data != 0xFF) {
-		data = _sphinxfnt->readByte();
-		counter++;
-	}
-	if (counter % width != 0) assert("font file corrupt");
-	return counter / width;
-}
-
-
-uint8 Font::printletter(char letter, uint16 xoffset) {
-	uint16 offset, width, height, julia;
-	offset = letteroffset(letter);
-	height = letterheight(letter);
-	_sphinxfnt->seek(offset);
-	width = _sphinxfnt->readByte();
-	julia = _sphinxfnt->readByte();
-
-	byte *data = new byte[width * height];
-	_sphinxfnt->read(data, width * height);
-	_syst->copyRectToScreen(data, width, xoffset, 16, width, height);
-	delete[] data;
-
-	return width;
+	byte numGlyph = _mapChar2Glyph[chr];
+	return &_glyphs[numGlyph];
 }
 
 } // End of Groovie namespace
