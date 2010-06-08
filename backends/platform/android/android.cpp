@@ -31,10 +31,6 @@
 
 #if defined(ANDROID_BACKEND)
 
-#define ANDROID_VERSION_GE(major,minor) \
-  (ANDROID_MAJOR_VERSION > (major) || \
-   (ANDROID_MAJOR_VERSION == (major) && ANDROID_MINOR_VERSION >= (minor)))
-
 #include <jni.h>
 
 #include <string.h>
