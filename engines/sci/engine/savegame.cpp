@@ -739,15 +739,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-// TODO: This should probably be turned into an EngineState or DataStack method.
-static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
-	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
-
-	retval->stack_base = stack->_entries;
-	retval->stack_top = stack->_entries + stack->_capacity;
-}
-
 // TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
@@ -782,6 +773,14 @@ void SegManager::reconstructScripts(EngineState *s) {
 			}
 		}
 	}
+}
+
+void SegManager::reconstructStack(EngineState *s) {
+	SegmentId stack_seg = findSegmentByType(SEG_TYPE_STACK);
+	DataStack *stack = (DataStack *)(_heap[stack_seg]);
+
+	s->stack_base = stack->_entries;
+	s->stack_top = stack->_entries + stack->_capacity;
 }
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -876,10 +875,9 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->_soundCmd->updateSfxState(&retval->_sound);
 #endif
 
-	reconstruct_stack(s);
+	s->_segMan->reconstructStack(s);
 	s->_segMan->reconstructScripts(s);
 	s->_segMan->reconstructClones();
-	s->_gameObj = s->_gameObj;
 	s->script_000 = s->_segMan->getScript(s->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	s->gc_countdown = GC_INTERVAL - 1;
 

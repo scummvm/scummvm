@@ -96,6 +96,11 @@ public:
 	void reconstructScripts(EngineState *s);
 
 	/**
+	 * Reconstructs the stack. Used when restoring saved games
+	 */
+	void reconstructStack(EngineState *s);
+
+	/**
 	 * Determines the segment occupied by a certain script, if any.
 	 * @param script_nr		Number of the script to look up
 	 * @return				The script's segment ID, or 0 on failure
