@@ -620,9 +620,11 @@ void ResourceManager::scanNewSources() {
 			switch (source->source_type) {
 			case kSourceDirectory:
 				readResourcePatches(source);
+#ifdef ENABLE_SCI32
 				// We can't use getSciVersion() at this point, thus using _volVersion
 				if (_volVersion >= kResVersionSci11)	// SCI1.1+
 					readResourcePatchesBase36(source);
+#endif
 				readWaveAudioPatches();
 				break;
 			case kSourceExtMap:
