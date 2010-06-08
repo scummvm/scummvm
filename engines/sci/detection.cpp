@@ -140,9 +140,11 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "eco",		"ecoquest",			SCI_VERSION_NONE     },
 	{ "eco2",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 demo
 	{ "rain",		"ecoquest2",		SCI_VERSION_NONE     },	// EcoQuest 2 full
+	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
 	{ "fp",			"freddypharkas",	SCI_VERSION_NONE     },
 	{ "emc",		"funseeker",		SCI_VERSION_NONE     },
 	{ "gk",			"gk1",				SCI_VERSION_NONE     },
+	// gk2 is the same
 	{ "hoyledemo",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "cardgames",	"hoyle1",			SCI_VERSION_NONE     },
 	{ "solitare",	"hoyle2",			SCI_VERSION_NONE     },
@@ -152,6 +154,9 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "demo000",	"kq1sci",			SCI_VERSION_NONE     },
 	{ "kq1",		"kq1sci",			SCI_VERSION_NONE     },
 	{ "kq4",		"kq4sci",			SCI_VERSION_NONE     },
+	// kq5 is the same
+	// kq6 is the same
+	// kq7 is the same
 	{ "mm1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "cb1",		"laurabow",			SCI_VERSION_NONE     },
 	{ "lb2",		"laurabow2",		SCI_VERSION_NONE     },
@@ -165,24 +170,30 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	// lsl6 is the same
 	{ "mg",			"mothergoose",		SCI_VERSION_NONE     },
 	{ "twisty",		"pepper",			SCI_VERSION_NONE     },
+	{ "scary",      "phantasmagoria",   SCI_VERSION_NONE     },
+	// TODO: distinguish the full version of Phantasmagoria from the demo
 	{ "pq1",		"pq1sci",			SCI_VERSION_NONE     },
 	{ "pq",			"pq2",				SCI_VERSION_NONE     },
 	// pq3 is the same
 	// pq4 is the same
-	{ "tales",		"fairytales",		SCI_VERSION_NONE     },
 	{ "hq",			"qfg1",				SCI_VERSION_NONE     },	// QFG1 SCI0/EGA
 	{ "glory",      "qfg1",             SCI_VERSION_0_LATE   },	// QFG1 SCI0/EGA
 	{ "trial",		"qfg2",				SCI_VERSION_NONE     },
 	{ "hq2demo",	"qfg2",				SCI_VERSION_NONE     },
+	// rama is the same
+	// TODO: distinguish the full version of rama from the demo
 	{ "thegame",	"slater",			SCI_VERSION_NONE     },
 	{ "sq1demo",	"sq1sci",			SCI_VERSION_NONE     },
 	{ "sq1",		"sq1sci",			SCI_VERSION_NONE     },
 	// sq3 is the same
 	// sq4 is the same
 	// sq5 is the same
+	// sq6 is the same
+	// TODO: distinguish the full version of SQ6 from the demo
 	// torin is the same
 
-	// TODO: SCI2.1, SCI3 IDs
+
+	// TODO: SCI3 IDs
 
 	{ "", "", SCI_VERSION_NONE }
 };
@@ -221,6 +232,9 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		if (sierraId == "sq4")
 			return "msastrochicken";
 	}
+
+	if (sierraId == "torin" && resources->size() == 226)	// Torin's Passage demo
+		*gameFlags |= ADGF_DEMO;
 
 	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId[0]; ++cur) {
 		if (sierraId == cur->oldId) {
@@ -359,19 +373,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		filename.toLowercase();
 
 		if (filename.contains("resource.map") || filename.contains("resmap.00") || filename.contains("Data1")) {
-			// HACK: resource.map is located in the same directory as the other resource files,
-			// therefore add the directory here, so that the game files can be opened later on
-			// We now add the parent directory temporary to our SearchMan so the engine code
-			// used in the detection can access all files via Common::File without any problems.
-			// In all branches returning from this function, we need to have a call to
-			// SearchMan.remove to remove it from the default directory pool again.
-			//
-			// A proper solution to remove this hack would be to have the code, which is needed
-			// for detection, to operate on Stream objects, so they can be easily called from
-			// the detection code. This might be easily to achieve through refactoring the
-			// code needed for detection.
-			assert(!SearchMan.hasArchive("SCI_detection"));
-			SearchMan.addDirectory("SCI_detection", file->getParent());
 			foundResMap = true;
 		}
 
@@ -415,7 +416,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000) {
-		SearchMan.remove("SCI_detection");
 		return 0;
 	}
 
@@ -423,11 +423,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
+	// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
+	//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 	if (gameViews == kViewUnknown) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
-		// Can't be SCI (or unsupported SCI views). Pinball Creep by sierra also uses resource.map/resource.000 files
-		//  but doesnt share sci format at all, if we dont return 0 here we will detect this game as SCI
 		return 0;
 	}
 
@@ -435,7 +434,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
 	if (getSciVersion() >= SCI_VERSION_2) {
-		SearchMan.remove("SCI_detection");
 		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
@@ -450,7 +448,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	Common::String gameId = convertSierraGameId(resMan->findSierraGameId(), &s_fallbackDesc.flags, resMan);
+	Common::String sierraGameId = resMan->findSierraGameId();
+
+	// If we don't have a game id, the game is not SCI
+	if (sierraGameId.empty()) {
+		delete resMan;
+		return 0;
+	}
+
+	Common::String gameId = convertSierraGameId(sierraGameId, &s_fallbackDesc.flags, resMan);
 	strncpy(s_fallbackGameIdBuf, gameId.c_str(), sizeof(s_fallbackGameIdBuf) - 1);
 	s_fallbackGameIdBuf[sizeof(s_fallbackGameIdBuf) - 1] = 0;	// Make sure string is NULL terminated
 	s_fallbackDesc.gameid = s_fallbackGameIdBuf;
@@ -484,7 +490,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 	}
 
-	delete resMan;
 
 	// Fill in extras field
 	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
@@ -492,14 +497,14 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		!strcmp(s_fallbackDesc.gameid, "sq1sci"))
 		s_fallbackDesc.extra = "VGA Remake";
 
-	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && !Common::File::exists("resource.001"))
+	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && getSciVersion() == SCI_VERSION_1_1)
 		s_fallbackDesc.extra = "VGA Remake";
 
 	// Add "demo" to the description for demos
 	if (s_fallbackDesc.flags & ADGF_DEMO)
 		s_fallbackDesc.extra = "demo";
 
-	SearchMan.remove("SCI_detection");
+	delete resMan;
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }

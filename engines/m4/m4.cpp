@@ -145,8 +145,9 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _script;
 	delete _ws;
 	delete _random;
-	delete _animation;
 	delete _palette;
+	delete _globals;
+	delete _resourceManager;
 }
 
 Common::Error MadsM4Engine::run() {
@@ -170,7 +171,7 @@ Common::Error MadsM4Engine::run() {
 	_events = new Events(this);
 	_kernel = new Kernel(this);
 	_player = new Player(this);
-	_font = new Font(this);
+	_font = new FontManager(this);
 	if (getGameType() == GType_Burger) {
 		_actor = new Actor(this);
 		_conversationView = new ConversationView(this);
@@ -184,7 +185,6 @@ Common::Error MadsM4Engine::run() {
 	_sound = new Sound(this, _mixer, 255);
 	_script = new ScriptInterpreter(this);
 	_ws = new WoodScript(this);
-	_animation = new Animation(this);
 	//_callbacks = new Callbacks(this);
 	_random = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_random, "m4");
@@ -305,8 +305,6 @@ M4Engine::M4Engine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4Engi
 }
 
 M4Engine::~M4Engine() {
-	delete _resourceManager;
-	delete _globals;
 	delete _converse;
 }
 
@@ -502,8 +500,6 @@ MadsEngine::MadsEngine(OSystem *syst, const M4GameDescription *gameDesc): MadsM4
 }
 
 MadsEngine::~MadsEngine() {
-	delete _globals;
-	delete _resourceManager;
 }
 
 Common::Error MadsEngine::run() {
@@ -554,9 +550,9 @@ Common::Error MadsEngine::run() {
 		_scene->show();
 
 		_font->setFont(FONT_MAIN_MADS);
-		_font->setColors(2, 1, 3);
-		_font->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
-		_font->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
+		_font->current()->setColours(2, 1, 3);
+		_font->current()->writeString(_scene->getBackgroundSurface(), "Testing the M4/MADS ScummVM engine", 5, 160, 310, 2);
+		_font->current()->writeString(_scene->getBackgroundSurface(), "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 5, 180, 310, 2);
 
 		if (getGameType() == GType_DragonSphere) {
 			//_scene->showMADSV2TextBox("Test", 10, 10, NULL);
@@ -580,8 +576,6 @@ Common::Error MadsEngine::run() {
 	uint32 nextFrame = g_system->getMillis();
 	while (!_events->quitFlag) {
 		eventHandler();
-
-		_animation->updateAnim();
 
 		if (g_system->getMillis() >= nextFrame) {
 			nextFrame = g_system->getMillis() + GAME_FRAME_DELAY;

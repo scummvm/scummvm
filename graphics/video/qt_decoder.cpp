@@ -146,9 +146,8 @@ PixelFormat QuickTimeDecoder::getPixelFormat() const {
 }
 
 void QuickTimeDecoder::rewind() {
-	delete _videoCodec; _videoCodec = NULL;
-	_curFrame = -1;
-	_startTime = _nextFrameStartTime = 0;
+	VideoDecoder::reset();
+	_nextFrameStartTime = 0;
 
 	// Restart the audio too
 	stopAudio();
@@ -243,11 +242,7 @@ Surface *QuickTimeDecoder::scaleSurface(Surface *frame) {
 }
 
 bool QuickTimeDecoder::endOfVideo() const {
-	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || _curFrame >= (int32)getFrameCount() - 1);
-}
-
-bool QuickTimeDecoder::needsUpdate() const {
-	return !endOfVideo() && getTimeToNextFrame() == 0;
+	return (!_audStream || _audStream->endOfData()) && (!_videoCodec || VideoDecoder::endOfVideo());
 }
 
 uint32 QuickTimeDecoder::getElapsedTime() const {
@@ -284,7 +279,12 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	MOVatom atom = { 0, 0, 0xffffffff };
 
 	if (_resFork->hasResFork()) {
-		_fd = _resFork->getResource(MKID_BE('moov'), 0x80);
+		// Search for a 'moov' resource
+		Common::MacResIDArray idArray = _resFork->getResIDArray(MKID_BE('moov'));
+
+		if (!idArray.empty())
+			_fd = _resFork->getResource(MKID_BE('moov'), idArray[0]);
+
 		if (_fd) {
 			atom.size = _fd->size();
 			if (readDefault(atom) < 0 || !_foundMOOV)
@@ -384,31 +384,31 @@ void QuickTimeDecoder::init() {
 
 void QuickTimeDecoder::initParseTable() {
 	static const ParseTable p[] = {
-		{ MKID_BE('dinf'), &QuickTimeDecoder::readDefault },
-		{ MKID_BE('dref'), &QuickTimeDecoder::readLeaf },
-		{ MKID_BE('edts'), &QuickTimeDecoder::readDefault },
-		{ MKID_BE('elst'), &QuickTimeDecoder::readELST },
-		{ MKID_BE('hdlr'), &QuickTimeDecoder::readHDLR },
-		{ MKID_BE('mdat'), &QuickTimeDecoder::readMDAT },
-		{ MKID_BE('mdhd'), &QuickTimeDecoder::readMDHD },
-		{ MKID_BE('mdia'), &QuickTimeDecoder::readDefault },
-		{ MKID_BE('minf'), &QuickTimeDecoder::readDefault },
-		{ MKID_BE('moov'), &QuickTimeDecoder::readMOOV },
-		{ MKID_BE('mvhd'), &QuickTimeDecoder::readMVHD },
-		{ MKID_BE('smhd'), &QuickTimeDecoder::readLeaf },
-		{ MKID_BE('stbl'), &QuickTimeDecoder::readDefault },
-		{ MKID_BE('stco'), &QuickTimeDecoder::readSTCO },
-		{ MKID_BE('stsc'), &QuickTimeDecoder::readSTSC },
-		{ MKID_BE('stsd'), &QuickTimeDecoder::readSTSD },
-		{ MKID_BE('stss'), &QuickTimeDecoder::readSTSS },
-		{ MKID_BE('stsz'), &QuickTimeDecoder::readSTSZ },
-		{ MKID_BE('stts'), &QuickTimeDecoder::readSTTS },
-		{ MKID_BE('tkhd'), &QuickTimeDecoder::readTKHD },
-		{ MKID_BE('trak'), &QuickTimeDecoder::readTRAK },
-		{ MKID_BE('udta'), &QuickTimeDecoder::readLeaf },
-		{ MKID_BE('vmhd'), &QuickTimeDecoder::readLeaf },
-		{ MKID_BE('cmov'), &QuickTimeDecoder::readCMOV },
-		{ MKID_BE('wave'), &QuickTimeDecoder::readWAVE },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('dinf') },
+		{ &QuickTimeDecoder::readLeaf,    MKID_BE('dref') },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('edts') },
+		{ &QuickTimeDecoder::readELST,    MKID_BE('elst') },
+		{ &QuickTimeDecoder::readHDLR,    MKID_BE('hdlr') },
+		{ &QuickTimeDecoder::readMDAT,    MKID_BE('mdat') },
+		{ &QuickTimeDecoder::readMDHD,    MKID_BE('mdhd') },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('mdia') },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('minf') },
+		{ &QuickTimeDecoder::readMOOV,    MKID_BE('moov') },
+		{ &QuickTimeDecoder::readMVHD,    MKID_BE('mvhd') },
+		{ &QuickTimeDecoder::readLeaf,    MKID_BE('smhd') },
+		{ &QuickTimeDecoder::readDefault, MKID_BE('stbl') },
+		{ &QuickTimeDecoder::readSTCO,    MKID_BE('stco') },
+		{ &QuickTimeDecoder::readSTSC,    MKID_BE('stsc') },
+		{ &QuickTimeDecoder::readSTSD,    MKID_BE('stsd') },
+		{ &QuickTimeDecoder::readSTSS,    MKID_BE('stss') },
+		{ &QuickTimeDecoder::readSTSZ,    MKID_BE('stsz') },
+		{ &QuickTimeDecoder::readSTTS,    MKID_BE('stts') },
+		{ &QuickTimeDecoder::readTKHD,    MKID_BE('tkhd') },
+		{ &QuickTimeDecoder::readTRAK,    MKID_BE('trak') },
+		{ &QuickTimeDecoder::readLeaf,    MKID_BE('udta') },
+		{ &QuickTimeDecoder::readLeaf,    MKID_BE('vmhd') },
+		{ &QuickTimeDecoder::readCMOV,    MKID_BE('cmov') },
+		{ &QuickTimeDecoder::readWAVE,    MKID_BE('wave') },
 		{ 0, 0 }
 	};
 
@@ -422,7 +422,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 
 	a.offset = atom.offset;
 
-	while(((total_size + 8) < atom.size) && !_fd->eos() && !err) {
+	while(((total_size + 8) < atom.size) && !_fd->eos() && _fd->pos() < _fd->size() && !err) {
 		a.size = atom.size;
 		a.type = 0;
 
@@ -432,7 +432,7 @@ int QuickTimeDecoder::readDefault(MOVatom atom) {
 
 			// Some QuickTime videos with resource forks have mdat chunks
 			// that are of size 0. Adjust it so it's the correct size.
-			if (a.size == 0)
+			if (a.type == MKID_BE('mdat') && a.size == 0)
 				a.size = _fd->size();
 		}
 
@@ -1158,6 +1158,7 @@ void QuickTimeDecoder::close() {
 		delete _streams[i];
 
 	delete _fd;
+	_fd = 0;
 
 	if (_scaledSurface) {
 		_scaledSurface->free();

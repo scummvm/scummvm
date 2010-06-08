@@ -111,7 +111,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = s->_segMan->getObject(parent_addr);
+	const Object *parent_obj = s->_segMan->getObject(parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -132,7 +132,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 
 	// Mark as clone
-	clone_obj->setInfoSelector(make_reg(0, SCRIPT_INFO_CLONE));
+	clone_obj->markAsClone();
 	clone_obj->setSpeciesSelector(clone_obj->getPos());
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->getPos());
@@ -154,14 +154,14 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	if (victim_obj->getInfoSelector().offset != SCRIPT_INFO_CLONE) {
+	if (!victim_obj->isClone()) {
 		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;
 	}
 
 	// QFG3 clears clones with underbits set
-	//if (GET_SEL32V(victim_addr, underBits))
+	//if (readSelectorValue(victim_addr, underBits))
 	//	warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
 
 #if 0
@@ -181,7 +181,7 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 // Returns script dispatch address index in the supplied script
 reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
-	int index = (argc > 1) ? argv[1].toUint16() : 0;
+	uint16 index = (argc > 1) ? argv[1].toUint16() : 0;
 
 	if (argv[0].segment)
 		return argv[0];
@@ -193,18 +193,30 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 
 	Script *scr = s->_segMan->getScript(scriptSeg);
 
-	if (!scr->_numExports) {
-		// FIXME: Is this fatal? This occurs in SQ4CD
-		warning("Script 0x%x does not have a dispatch table", script);
+	if (!scr->getExportsNr()) {
+		// This is normal. Some scripts don't have a dispatch (exports) table,
+		// and this call is probably used to load them in memory, ignoring
+		// the return value. If only one argument is passed, this call is done
+		// only to load the script in memory. Thus, don't show any warning,
+		// as no return value is expected
+		if (argc == 2)
+			warning("Script 0x%x does not have a dispatch table and export %d "
+					"was requested from it", script, index);
 		return NULL_REG;
 	}
 
-	if (index > scr->_numExports) {
-		error("Dispatch index too big: %d > %d", index, scr->_numExports);
+	if (index > scr->getExportsNr()) {
+		error("Dispatch index too big: %d > %d", index, scr->getExportsNr());
 		return NULL_REG;
 	}
 
-	return make_reg(scriptSeg, scr->validateExportFunc(index));
+	uint16 address = scr->validateExportFunc(index);
+
+	// Point to the heap for SCI1.1+ games
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		address += scr->getScriptSize();
+
+	return make_reg(scriptSeg, address);
 }
 
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
@@ -244,7 +256,7 @@ reg_t kRespondsTo(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 
-	return make_reg(0, s->_segMan->isHeapObject(obj) && lookup_selector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
+	return make_reg(0, s->_segMan->isHeapObject(obj) && lookupSelector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

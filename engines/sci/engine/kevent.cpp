@@ -49,16 +49,18 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	Common::Point mousePos;
 
+	// Limit the mouse cursor position, if necessary
+	g_sci->_gfxCursor->refreshPosition();
 	mousePos = g_sci->_gfxCursor->getPosition();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
 	if (g_debug_simulated_key && (mask & SCI_EVENT_KEYBOARD)) {
-		PUT_SEL32V(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
-		PUT_SEL32V(segMan, obj, SELECTOR(message), g_debug_simulated_key);
-		PUT_SEL32V(segMan, obj, SELECTOR(modifiers), SCI_KEYMOD_NUMLOCK); // Numlock on
-		PUT_SEL32V(segMan, obj, SELECTOR(x), mousePos.x);
-		PUT_SEL32V(segMan, obj, SELECTOR(y), mousePos.y);
+		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
+		writeSelectorValue(segMan, obj, SELECTOR(message), g_debug_simulated_key);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), SCI_KEYMOD_NUMLOCK); // Numlock on
+		writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
+		writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
@@ -67,26 +69,26 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	oldy = mousePos.y;
 	curEvent = s->_event->get(mask);
 
-	if (s->_voc)
-		s->_voc->parser_event = NULL_REG; // Invalidate parser event
+	if (g_sci->getVocabulary())
+		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
 
-	PUT_SEL32V(segMan, obj, SELECTOR(x), mousePos.x);
-	PUT_SEL32V(segMan, obj, SELECTOR(y), mousePos.y);
+	writeSelectorValue(segMan, obj, SELECTOR(x), mousePos.x);
+	writeSelectorValue(segMan, obj, SELECTOR(y), mousePos.y);
 
 	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
-		quit_vm();
+		quit_vm(s);
 		break;
 
 	case SCI_EVENT_KEYBOARD:
-		PUT_SEL32V(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
+		writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD); // Keyboard event
 		s->r_acc = make_reg(0, 1);
 
-		PUT_SEL32V(segMan, obj, SELECTOR(message), curEvent.character);
+		writeSelectorValue(segMan, obj, SELECTOR(message), curEvent.character);
 		// We only care about the translated character
-		PUT_SEL32V(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
+		writeSelectorValue(segMan, obj, SELECTOR(modifiers), curEvent.modifiers & modifier_mask);
 		break;
 
 	case SCI_EVENT_MOUSE_RELEASE:
@@ -111,9 +113,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 				break;
 			}
 
-			PUT_SEL32V(segMan, obj, SELECTOR(type), curEvent.type);
-			PUT_SEL32V(segMan, obj, SELECTOR(message), 0);
-			PUT_SEL32V(segMan, obj, SELECTOR(modifiers), (curEvent.modifiers | extra_bits) & modifier_mask);
+			writeSelectorValue(segMan, obj, SELECTOR(type), curEvent.type);
+			writeSelectorValue(segMan, obj, SELECTOR(message), 0);
+			writeSelectorValue(segMan, obj, SELECTOR(modifiers), (curEvent.modifiers | extra_bits) & modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
 		break;
@@ -165,9 +167,9 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
-	if (GET_SEL32V(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
+	if (readSelectorValue(segMan, obj, SELECTOR(type)) == SCI_EVENT_KEYBOARD) { // Keyboard
 		int mover = -1;
-		switch (GET_SEL32V(segMan, obj, SELECTOR(message))) {
+		switch (readSelectorValue(segMan, obj, SELECTOR(message))) {
 		case SCI_KEY_HOME:
 			mover = 8;
 			break;
@@ -201,8 +203,8 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mover >= 0) {
-			PUT_SEL32V(segMan, obj, SELECTOR(type), SCI_EVENT_JOYSTICK);
-			PUT_SEL32V(segMan, obj, SELECTOR(message), mover);
+			writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_JOYSTICK);
+			writeSelectorValue(segMan, obj, SELECTOR(message), mover);
 			return make_reg(0, 1);
 		} else
 			return NULL_REG;
@@ -217,13 +219,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
-		int16 x = GET_SEL32V(segMan, obj, SELECTOR(x));
-		int16 y = GET_SEL32V(segMan, obj, SELECTOR(y));
+		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
+		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
 		g_sci->_gfxCoordAdjuster->kernelGlobalToLocal(x, y, planeObject);
 
-		PUT_SEL32V(segMan, obj, SELECTOR(x), x);
-		PUT_SEL32V(segMan, obj, SELECTOR(y), y);
+		writeSelectorValue(segMan, obj, SELECTOR(x), x);
+		writeSelectorValue(segMan, obj, SELECTOR(y), y);
 	}
 
 	return s->r_acc;
@@ -236,13 +238,13 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
-		int16 x = GET_SEL32V(segMan, obj, SELECTOR(x));
-		int16 y = GET_SEL32V(segMan, obj, SELECTOR(y));
+		int16 x = readSelectorValue(segMan, obj, SELECTOR(x));
+		int16 y = readSelectorValue(segMan, obj, SELECTOR(y));
 
 		g_sci->_gfxCoordAdjuster->kernelLocalToGlobal(x, y, planeObject);
 
-		PUT_SEL32V(segMan, obj, SELECTOR(x), x);
-		PUT_SEL32V(segMan, obj, SELECTOR(y), y);
+		writeSelectorValue(segMan, obj, SELECTOR(x), x);
+		writeSelectorValue(segMan, obj, SELECTOR(y), y);
 	}
 
 	return s->r_acc;

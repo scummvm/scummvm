@@ -30,13 +30,13 @@
 
 namespace M4 {
 
-BaseAsset::BaseAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : _vm(vm) {
+BaseAsset::BaseAsset(MadsM4Engine *vm) : _vm(vm) {
 }
 
 BaseAsset::~BaseAsset() {
 }
 
-MachineAsset::MachineAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm, stream, size, name) {
+MachineAsset::MachineAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm) {
 	uint32 stateCount = stream->readUint32LE();
 	for (uint32 curState = 0; curState < stateCount; curState++) {
 		uint32 stateOffset = stream->readUint32LE();
@@ -61,7 +61,7 @@ uint32 MachineAsset::getStateOffset(uint32 state) {
 	return _stateTable[state];
 }
 
-SequenceAsset::SequenceAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm, stream, size, name) {
+SequenceAsset::SequenceAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm) {
 	_localVarCount = stream->readUint32LE();
 	_codeSize = size - 4;
 	_code = new byte[_codeSize];
@@ -78,7 +78,7 @@ void SequenceAsset::getCode(byte *&code, uint32 &codeSize) {
 }
 
 
-DataAsset::DataAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm, stream, size, name) {
+DataAsset::DataAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name) : BaseAsset(vm) {
 
 	_recCount = stream->readUint32LE();
 	_recSize = stream->readUint32LE();
@@ -98,7 +98,8 @@ long *DataAsset::getRow(int index) {
 	return &_data[_recSize * index];
 }
 
-SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream) : BaseAsset(vm, stream, size, name) {
+SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream) : 
+			BaseAsset(vm) {
 	_stream = stream;
 	_palInterface = NULL;
 	_paletteData = NULL;
@@ -108,6 +109,20 @@ SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, i
 	} else {
 		loadMadsSpriteAsset(vm, stream);
 	}
+}
+
+SpriteAsset::SpriteAsset(MadsM4Engine *vm, const char *name): BaseAsset(vm) {
+	_stream = vm->res()->get(name);
+	_palInterface = NULL;
+	_paletteData = NULL;
+
+	if (_vm->isM4()) {
+		loadM4SpriteAsset(vm, _stream, true);
+	} else {
+		loadMadsSpriteAsset(vm, _stream);
+	}
+
+	vm->res()->toss(name);
 }
 
 SpriteAsset::~SpriteAsset() {
@@ -195,11 +210,12 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	_maxHeight = 0;
 
 	Common::SeekableReadStream *spriteStream = sprite.getItemStream(0);
-
-	_assetType = spriteStream->readUint16LE();
-	for (int i = 0; i < 18; i++) {
-		spriteStream->readUint16LE();
-	}
+	_mode = spriteStream->readByte();
+	spriteStream->skip(1);
+	int type1 = spriteStream->readUint16LE();
+	int type2 = spriteStream->readUint16LE();
+	_isBackground = (type1 != 0) && (type2 < 4);
+	spriteStream->skip(32);
 	_frameCount = spriteStream->readUint16LE();
 	// we skip the rest of the data
 	delete spriteStream;

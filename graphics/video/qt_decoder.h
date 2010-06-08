@@ -112,7 +112,6 @@ public:
 
 	bool isVideoLoaded() const { return _fd != 0; }
 	Surface *decodeNextFrame();
-	bool needsUpdate() const;
 	bool endOfVideo() const;
 	uint32 getElapsedTime() const;
 	uint32 getTimeToNextFrame() const;
@@ -138,8 +137,8 @@ protected:
 	};
 
 	struct ParseTable {
-		uint32 type;
 		int (QuickTimeDecoder::*func)(MOVatom atom);
+		uint32 type;
 	};
 
 	struct MOVstts {

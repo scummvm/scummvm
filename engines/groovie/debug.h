@@ -27,12 +27,11 @@
 #define GROOVIE_DEBUG_H
 
 #include "gui/debugger.h"
-#include "engines/engine.h"
 
 namespace Groovie {
 
-class Script;
 class GroovieEngine;
+class Script;
 
 class Debugger : public GUI::Debugger {
 public:
@@ -42,7 +41,6 @@ public:
 private:
 	GroovieEngine *_vm;
 	Script *_script;
-	OSystem *_syst;
 
 	int getNumber(const char *arg);
 

@@ -210,7 +210,28 @@ void RivenExternal::runEndGame(uint16 video) {
 	_vm->_video->playMovieBlocking(video);
 
 	// TODO: Play until the last frame and then run the credits
-	_vm->_gameOver = true;
+	_vm->setGameOver();
+}
+
+void RivenExternal::runDomeButtonMovie() {
+	// This command just plays the video of the button moving down and up.
+	_vm->_video->playMovieBlocking(2);
+}
+
+void RivenExternal::runDomeCheck() {
+	// Check if we clicked while the golden frame was showing
+
+	VideoHandle video = _vm->_video->findVideoHandle(1);
+	assert(video != NULL_VID_HANDLE);
+
+	int32 curFrame = _vm->_video->getCurFrame(video);
+	int32 frameCount = _vm->_video->getFrameCount(video);
+
+	// The final frame of the video is the 'golden' frame (double meaning: the
+	// frame that is the magic one is the one with the golden symbol) but we
+	// give a 3 frame leeway in either direction.
+	if (frameCount - curFrame < 3 || curFrame < 3)
+		*_vm->matchVarToString("domecheck") = 1;
 }
 
 // ------------------------------------------------------------------------------------
@@ -218,11 +239,13 @@ void RivenExternal::runEndGame(uint16 video) {
 // ------------------------------------------------------------------------------------
 
 void RivenExternal::xastartupbtnhide(uint16 argc, uint16 *argv) {
-	// The original game hides the start/setup buttons depending on an ini entry. It's safe to ignore this command.
+	// The original game hides the start/setup buttons depending on an ini entry.
+	// It's safe to ignore this command.
 }
 
 void RivenExternal::xasetupcomplete(uint16 argc, uint16 *argv) {
-	// The original game sets an ini entry to disable the setup button and use the start button only. It's safe to ignore this part of the command.
+	// The original game sets an ini entry to disable the setup button and use the
+	// start button only. It's safe to ignore this part of the command.
 	_vm->_sound->stopSound();
 	_vm->changeToCard(1);
 }
@@ -514,13 +537,14 @@ void RivenExternal::xbupdateboiler(uint16 argc, uint16 *argv) {
 	if (heat) {
 		if (platform == 0) {
 			_vm->_video->activateMLST(7, _vm->getCurCard());
-			// TODO: Play video (non-blocking)
+			_vm->_video->playMovie(7);
 		} else {
 			_vm->_video->activateMLST(8, _vm->getCurCard());
-			// TODO: Play video (non-blocking)
+			_vm->_video->playMovie(8);
 		}
 	} else {
-		// TODO: Stop MLST's 7 and 8
+		_vm->_video->stopMovie(7);
+		_vm->_video->stopMovie(8);
 	}
 
 	_vm->refreshCard();
@@ -627,11 +651,11 @@ void RivenExternal::xbisland190_slidermw(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xbscpbtn(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeButtonMovie();
 }
 
 void RivenExternal::xbisland_domecheck(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeCheck();
 }
 
 void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
@@ -723,11 +747,11 @@ void RivenExternal::xgisland25_slidermw(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xgscpbtn(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeButtonMovie();
 }
 
 void RivenExternal::xgisland1490_domecheck(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeCheck();
 }
 
 void RivenExternal::xgplateau3160_dopools(uint16 argc, uint16 *argv) {
@@ -978,11 +1002,11 @@ void RivenExternal::xjdome25_slidermw(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xjscpbtn(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeButtonMovie();
 }
 
 void RivenExternal::xjisland3500_domecheck(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeCheck();
 }
 
 int RivenExternal::jspitElevatorLoop() {
@@ -1258,11 +1282,11 @@ void RivenExternal::xpisland990_elevcombo(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xpscpbtn(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeButtonMovie();
 }
 
 void RivenExternal::xpisland290_domecheck(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeCheck();
 }
 
 void RivenExternal::xpisland25_opencard(uint16 argc, uint16 *argv) {
@@ -1457,11 +1481,11 @@ void RivenExternal::xtakeit(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xtscpbtn(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeButtonMovie();
 }
 
 void RivenExternal::xtisland4990_domecheck(uint16 argc, uint16 *argv) {
-	// TODO: Dome related
+	runDomeCheck();
 }
 
 void RivenExternal::xtisland5056_opencard(uint16 argc, uint16 *argv) {

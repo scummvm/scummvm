@@ -23,27 +23,30 @@
  *
  */
 
+#include "groovie/groovie.h"
+#include "groovie/cursor.h"
+#include "groovie/detection.h"
+#include "groovie/graphics.h"
+#include "groovie/music.h"
+#include "groovie/resource.h"
+#include "groovie/roq.h"
+#include "groovie/vdx.h"
+
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/macresman.h"
 
 #include "engines/util.h"
-
+#include "graphics/fontman.h"
 #include "sound/mixer.h"
-
-#include "groovie/groovie.h"
-#include "groovie/detection.h"
-#include "groovie/music.h"
-#include "groovie/roq.h"
-#include "groovie/vdx.h"
 
 namespace Groovie {
 
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
 	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
-	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false) {
+	_graphicsMan(NULL), _macResFork(NULL), _waitingForInput(false), _font(NULL) {
 
 	// Adding the default directories
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
@@ -104,12 +107,26 @@ Common::Error GroovieEngine::run() {
 	_graphicsMan = new GraphicsMan(this);
 
 	// Create the resource and cursor managers and the video player
+	// Prepare the font too
 	switch (_gameDescription->version) {
 	case kGroovieT7G:
 		if (_gameDescription->desc.platform == Common::kPlatformMacintosh) {
 			_macResFork = new Common::MacResManager();
 			if (!_macResFork->open(_gameDescription->desc.filesDescriptions[0].fileName))
 				error("Could not open %s as a resource fork", _gameDescription->desc.filesDescriptions[0].fileName);
+			// The Macintosh release used system fonts. We use GUI fonts.
+			_font = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		} else {
+			Common::File fontfile;
+			if (!fontfile.open("sphinx.fnt")) {
+				error("Couldn't open sphinx.fnt");
+				return Common::kNoGameDataFoundError;
+			} else if (!_sphinxFont.load(fontfile)) {
+				error("Error loading sphinx.fnt");
+				return Common::kUnknownError;
+			}
+			fontfile.close();
+			_font = &_sphinxFont;
 		}
 
 		_resMan = new ResMan_t7g(_macResFork);

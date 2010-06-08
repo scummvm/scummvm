@@ -154,10 +154,8 @@ void AviDecoder::handleStreamHeader() {
 	sHeader.bufferSize = _fileStream->readUint32LE();
 	sHeader.quality = _fileStream->readUint32LE();
 	sHeader.sampleSize = _fileStream->readUint32LE();
-	sHeader.frame.left = _fileStream->readSint16LE();
-	sHeader.frame.top = _fileStream->readSint16LE();
-	sHeader.frame.right = _fileStream->readSint16LE();
-	sHeader.frame.bottom = _fileStream->readSint16LE();
+
+	_fileStream->skip(sHeader.size - 48); // Skip over the remainder of the chunk (frame)
 
 	if (_fileStream->readUint32BE() != ID_STRF)
 		error("Could not find STRF tag");
@@ -188,11 +186,14 @@ void AviDecoder::handleStreamHeader() {
 				_palette[i * 3 + 2] = _fileStream->readByte();
 				_palette[i * 3 + 1] = _fileStream->readByte();
 				_palette[i * 3] = _fileStream->readByte();
-				/*_palette[i * 4 + 3] = */_fileStream->readByte();
+				_fileStream->readByte();
 			}
 
 			_dirtyPalette = true;
 		}
+
+		if (!_vidsHeader.streamHandler)
+			_vidsHeader.streamHandler = _bmInfo.compression;
 	} else if (sHeader.streamType == ID_AUDS) {
 		_audsHeader = sHeader;
 
@@ -202,6 +203,11 @@ void AviDecoder::handleStreamHeader() {
 		_wvInfo.avgBytesPerSec = _fileStream->readUint32LE();
 		_wvInfo.blockAlign = _fileStream->readUint16LE();
 		_wvInfo.size = _fileStream->readUint16LE();
+
+		// AVI seems to treat the sampleSize as including the second
+		// channel as well, so divide for our sake.
+		if (_wvInfo.channels == 2)
+			_audsHeader.sampleSize /= 2;
 	}
 }
 
@@ -325,6 +331,9 @@ Surface *AviDecoder::decodeNextFrame() {
 		else
 			flags |= Audio::FLAG_UNSIGNED;
 
+		if (_wvInfo.channels == 2)
+			flags |= Audio::FLAG_STEREO;
+
 		_audStream->queueBuffer(data, chunkSize, DisposeAfterUse::YES, flags);
 		_fileStream->skip(chunkSize & 1); // Alignment
 	} else if (getStreamType(nextTag) == 'dc' || getStreamType(nextTag) == 'id' ||
@@ -396,7 +405,7 @@ PixelFormat AviDecoder::getPixelFormat() const {
 
 Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
 	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
-		return Audio::makeQueuingAudioStream(AUDIO_RATE, false);
+		return Audio::makeQueuingAudioStream(AUDIO_RATE, _wvInfo.channels == 2);
 
 	if (_wvInfo.tag != 0) // No sound
 		warning ("Unsupported AVI audio format %d", _wvInfo.tag);

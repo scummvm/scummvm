@@ -54,7 +54,6 @@ SegManager::SegManager(ResourceManager *resMan) {
 	createClassTable();
 }
 
-// Destroy the object, free the memorys if allocated before
 SegManager::~SegManager() {
 	resetSegMan();
 }
@@ -77,8 +76,27 @@ void SegManager::resetSegMan() {
 	Hunks_seg_id = 0;
 
 	// Reinitialize class table
-	_classtable.clear();
+	_classTable.clear();
 	createClassTable();
+}
+
+void SegManager::initSysStrings() {
+	sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &sysStringsSegment);
+
+	// Allocate static buffer for savegame and CWD directories
+	SystemString *strSaveDir = &sysStrings->_strings[SYS_STRING_SAVEDIR];
+	strSaveDir->_name = "savedir";
+	strSaveDir->_maxSize = MAX_SAVE_DIR_SIZE;
+	strSaveDir->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
+	// Set the savegame dir (actually, we set it to a fake value,
+	// since we cannot let the game control where saves are stored)
+	::strcpy(strSaveDir->_value, "");
+
+	// Allocate static buffer for the parser base
+	SystemString *strParserBase = &sysStrings->_strings[SYS_STRING_PARSER_BASE];
+	strParserBase->_name = "parser-base";
+	strParserBase->_maxSize = MAX_PARSER_BASE;
+	strParserBase->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
 }
 
 SegmentId SegManager::findFreeSegment() const {
@@ -156,7 +174,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 }
 
 bool SegManager::isHeapObject(reg_t pos) {
-	Object *obj = getObject(pos);
+	const Object *obj = getObject(pos);
 	if (obj == NULL || (obj && obj->isFreed()))
 		return false;
 	Script *scr = getScriptIfLoaded(pos.segment);
@@ -223,7 +241,7 @@ Object *SegManager::getObject(reg_t pos) {
 				warning("getObject(): Trying to get an invalid object");
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
-			if (pos.offset <= scr->_bufSize && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			if (pos.offset <= scr->getBufSize() && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(scr->_buf + pos.offset)) {
 				obj = scr->getObject(pos.offset);
 			}
@@ -234,7 +252,7 @@ Object *SegManager::getObject(reg_t pos) {
 }
 
 const char *SegManager::getObjectName(reg_t pos) {
-	Object *obj = getObject(pos);
+	const Object *obj = getObject(pos);
 	if (!obj)
 		return "<no such object>";
 
@@ -275,7 +293,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 
 		// It's a script or a clone table, scan all objects in it
 		for (; idx < max_index; ++idx) {
-			Object *obj = NULL;
+			const Object *obj = NULL;
 			reg_t objpos;
 			objpos.offset = 0;
 			objpos.segment = i;
@@ -393,10 +411,6 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	return retval;
 }
 
-SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	return (SystemStrings *)allocSegment(new SystemStrings(), segid);
-}
-
 void SegManager::freeHunkEntry(reg_t addr) {
 	if (addr.isNull()) {
 		warning("Attempt to free a Hunk from a null address");
@@ -485,7 +499,7 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					Object *baseObj = getObject(seeker.getSpeciesSelector());
+					const Object *baseObj = getObject(seeker.getSpeciesSelector());
 					seeker.cloneFromObject(baseObj);
 					if (!baseObj)
 						warning("Clone entry without a base class: %d", j);
@@ -521,6 +535,16 @@ Node *SegManager::allocateNode(reg_t *addr) {
 
 	*addr = make_reg(Nodes_seg_id, offset);
 	return &(table->_table[offset]);
+}
+
+reg_t SegManager::newNode(reg_t value, reg_t key) {
+	reg_t nodebase;
+	Node *n = allocateNode(&nodebase);
+	n->pred = n->succ = NULL_REG;
+	n->key = key;
+	n->value = value;
+
+	return nodebase;
 }
 
 List *SegManager::lookupList(reg_t addr) {

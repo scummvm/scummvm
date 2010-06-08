@@ -633,8 +633,10 @@ Win32ResExtractor::WinResource *Win32ResExtractor::list_pe_resources(WinLibrary 
 		wr[c].children = fi->first_resource + (FROM_LE_32(dirent[c].offset_to_data) & ~IMAGE_RESOURCE_DATA_IS_DIRECTORY);
 
 		/* fill in wr->id, wr->numeric_id */
-		if (!decode_pe_resource_id(fi, wr + c, FROM_LE_32(dirent[c].name)))
+		if (!decode_pe_resource_id(fi, wr + c, FROM_LE_32(dirent[c].name))) {
+			free(wr);
 			return NULL;
+		}
 	}
 
 	return wr;

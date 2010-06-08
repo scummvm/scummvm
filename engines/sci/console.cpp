@@ -75,10 +75,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
-	DVar_Register("gc_interval",		&script_gc_interval, DVAR_INT, 0);
+	DVar_Register("gc_interval",		&engine->_gamestate->script_gc_interval, DVAR_INT, 0);
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("script_abort_flag",	&script_abort_flag, DVAR_INT, 0);
+	DVar_Register("script_abort_flag",	&_engine->_gamestate->script_abort_flag, DVAR_INT, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
@@ -105,6 +105,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("resource_types",		WRAP_METHOD(Console, cmdResourceTypes));
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
+	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -277,8 +278,8 @@ void Console::postEnter() {
 #if 0
 // Unused
 #define LOOKUP_SPECIES(species) (\
-	(species >= 1000) ? species : *(s->_classtable[species].scriptposp) \
-		+ s->_classtable[species].class_offset)
+	(species >= 1000) ? species : *(s->_classTable[species].scriptposp) \
+		+ s->_classTable[species].class_offset)
 #endif
 
 bool Console::cmdHelp(int argc, const char **argv) {
@@ -324,6 +325,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" resource_types - Shows the valid resource types\n");
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
+	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -593,14 +595,14 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 }
 
 bool Console::cmdRegisters(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_engine->_gamestate->r_acc), PRINT_REG(_engine->_gamestate->r_prev), scriptState.restAdjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(s->r_acc), PRINT_REG(s->r_prev), s->restAdjustCur);
 
-	if (!_engine->_gamestate->_executionStack.empty()) {
-		EngineState *s = _engine->_gamestate;	// for PRINT_STK
+	if (!s->_executionStack.empty()) {
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
-					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp),
-					(unsigned)(scriptState.xs->fp - s->stack_base), (unsigned)(scriptState.xs->sp - s->stack_base));
+					PRINT_REG(s->xs->addr.pc), PRINT_REG(s->xs->objp),
+					(unsigned)(s->xs->fp - s->stack_base), (unsigned)(s->xs->sp - s->stack_base));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -811,6 +813,40 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdVerifyScripts(int argc, const char **argv) {
+	if (getSciVersion() < SCI_VERSION_1_1) {
+		DebugPrintf("This script check is only meant for SCI1.1-SCI2.1 games\n");
+		return true;
+	}
+
+	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
+	sort(resources->begin(), resources->end(), ResourceIdLess());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	DebugPrintf("%d SCI1.1-SCI2.1 scripts found, performing sanity checks...\n", resources->size());
+
+	Resource *script, *heap;
+	while (itr != resources->end()) {
+		script = _engine->getResMan()->findResource(*itr, false);
+		if (!script)
+			DebugPrintf("Error: script %d couldn't be loaded\n", itr->number);
+
+		heap = _engine->getResMan()->findResource(*itr, false);
+		if (!heap)
+			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->number);
+
+		if (script && heap && (script->size + heap->size > 65535))
+			DebugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
+			itr->number, script->size + heap->size);
+
+		++itr;
+	}
+
+	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
+
+	return true;
+}
+
 bool Console::cmdList(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Lists all the resources of a given type\n");
@@ -922,18 +958,18 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	script_abort_flag = 1;
+	_engine->_gamestate->script_abort_flag = 1;
 
 	return false;
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
-	for (uint i = 0; i < _engine->_gamestate->_segMan->_classtable.size(); i++) {
-		if (_engine->_gamestate->_segMan->_classtable[i].reg.segment) {
+	for (uint i = 0; i < _engine->_gamestate->_segMan->classTableSize(); i++) {
+		if (_engine->_gamestate->_segMan->_classTable[i].reg.segment) {
 			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i,
-					PRINT_REG(_engine->_gamestate->_segMan->_classtable[i].reg),
-					_engine->_gamestate->_segMan->_classtable[i].script);
+					PRINT_REG(_engine->_gamestate->_segMan->_classTable[i].reg),
+					_engine->_gamestate->_segMan->_classTable[i].script);
 		}
 	}
 
@@ -1245,13 +1281,13 @@ bool Console::segmentInfo(int nr) {
 
 	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
-		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->_bufSize, (uint)scr->_bufSize);
-		if (scr->_exportTable)
-			DebugPrintf("  Exports: %4d at %d\n", scr->_numExports, (int)(((byte *)scr->_exportTable) - ((byte *)scr->_buf)));
+		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
+		if (scr->getExportTable())
+			DebugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), (int)(((const byte *)scr->getExportTable()) - ((const byte *)scr->_buf)));
 		else
 			DebugPrintf("  Exports: none\n");
 
-		DebugPrintf("  Synonyms: %4d\n", scr->_numSynonyms);
+		DebugPrintf("  Synonyms: %4d\n", scr->getSynonymsNr());
 
 		if (scr->_localsBlock)
 			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);
@@ -1265,7 +1301,7 @@ bool Console::segmentInfo(int nr) {
 		for (it = scr->_objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
+			const Object *obj = _engine->_gamestate->_segMan->getObject(it->_value.getPos());
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value.getPos()),
 							_engine->_gamestate->_segMan->getObjectName(it->_value.getPos()),
@@ -1312,7 +1348,7 @@ bool Console::segmentInfo(int nr) {
 				objpos.segment = nr;
 				DebugPrintf("  [%04x] %s; copy of ", i, _engine->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
+				const Object *obj = _engine->_gamestate->_segMan->getObject(ct->_table[i].getPos());
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
 								_engine->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
@@ -1520,12 +1556,12 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
 
 	if (id.segment) {
-		SegManager *segMan = _engine->_gamestate->_segMan;	// for PUT_SEL32V
+		SegManager *segMan = _engine->_gamestate->_segMan;	// for writeSelectorValue
 		_engine->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		_engine->_gamestate->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
-		PUT_SEL32V(segMan, id, SELECTOR(nodePtr), 0);
-		PUT_SEL32V(segMan, id, SELECTOR(handle), 0);
+		writeSelectorValue(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(segMan, id, SELECTOR(nodePtr), 0);
+		writeSelectorValue(segMan, id, SELECTOR(handle), 0);
 	}
 #else
 
@@ -1730,14 +1766,15 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
+	EngineState *s = _engine->_gamestate;
 	const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(scriptState.variables_seg[i], scriptState.variables[i] - scriptState.variables_base[i])));
-		if (scriptState.variables_max)
-			DebugPrintf("  total %d", scriptState.variables_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variables_seg[i], s->variables[i] - s->variables_base[i])));
+		if (s->variables_max)
+			DebugPrintf("  total %d", s->variables_max[i]);
 		DebugPrintf("\n");
 	}
 
@@ -1755,6 +1792,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
+	EngineState *s = _engine->_gamestate;
 	const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
@@ -1793,17 +1831,17 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	if ((scriptState.variables_max) && (scriptState.variables_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", scriptState.variables_max[vartype], scriptState.variables_max[vartype]);
+	if ((s->variables_max) && (s->variables_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", s->variables_max[vartype], s->variables_max[vartype]);
 		return true;
 	}
 
 	switch (argc) {
 	case 3:
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(s->variables[vartype][idx]));
 		break;
 	case 4:
-		if (parse_reg_t(_engine->_gamestate, argv[3], &scriptState.variables[vartype][idx], true)) {
+		if (parse_reg_t(_engine->_gamestate, argv[3], &s->variables[vartype][idx], true)) {
 			DebugPrintf("Invalid value/address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			DebugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
@@ -2036,7 +2074,7 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-	printObject(scriptState.xs->objp);
+	printObject(_engine->_gamestate->xs->objp);
 
 	return true;
 }
@@ -2049,7 +2087,7 @@ bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
-	DebugPrintf("Number of executed SCI operations: %d\n", script_step_counter);
+	DebugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->script_step_counter);
 	return true;
 }
 
@@ -2226,8 +2264,8 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
-	int selector_id = _engine->getKernel()->findSelector(argv[2]);
+	const Object *obj = _engine->_gamestate->_segMan->getObject(objAddr);
+	int selectorId = _engine->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
 	if (!obj) {
@@ -2235,12 +2273,12 @@ bool Console::cmdDisassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	if (selector_id < 0) {
+	if (selectorId < 0) {
 		DebugPrintf("Not a valid selector name.");
 		return true;
 	}
 
-	if (lookup_selector(_engine->_gamestate->_segMan, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
+	if (lookupSelector(_engine->_gamestate->_segMan, objAddr, selectorId, NULL, &addr) != kSelectorMethod) {
 		DebugPrintf("Not a method.");
 		return true;
 	}
@@ -2320,20 +2358,20 @@ bool Console::cmdSend(int argc, const char **argv) {
 	}
 
 	const char *selector_name = argv[2];
-	int selector_id = _engine->getKernel()->findSelector(selector_name);
+	int selectorId = _engine->getKernel()->findSelector(selector_name);
 
-	if (selector_id < 0) {
+	if (selectorId < 0) {
 		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
 		return true;
 	}
 
-	Object *o = _engine->_gamestate->_segMan->getObject(object);
+	const Object *o = _engine->_gamestate->_segMan->getObject(object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
 	}
 
-	SelectorType selector_type = lookup_selector(_engine->_gamestate->_segMan, object, selector_id, 0, 0);
+	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, 0, 0);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
@@ -2346,7 +2384,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	// Create the data block for send_selecor() at the top of the stack:
 	// [selector_number][argument_counter][arguments...]
 	StackPtr stackframe = _engine->_gamestate->_executionStack.back().sp;
-	stackframe[0] = make_reg(0, selector_id);
+	stackframe[0] = make_reg(0, selectorId);
 	stackframe[1] = make_reg(0, send_argc);
 	for (int i = 0; i < send_argc; i++) {
 		if (parse_reg_t(_engine->_gamestate, argv[3+i], &stackframe[2+i], false)) {
@@ -2693,7 +2731,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
-		script_abort_flag = 1; // Terminate VM
+		_engine->_gamestate->script_abort_flag = 1; // Terminate VM
 		g_debugState.seeking = kDebugSeekNothing;
 		g_debugState.runningStep = 0;
 
@@ -3018,8 +3056,8 @@ int Console::printNode(reg_t addr) {
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _engine->_gamestate;	// for the several defines in this function
-	Object *obj = s->_segMan->getObject(pos);
-	Object *var_container = obj;
+	const Object *obj = s->_segMan->getObject(pos);
+	const Object *var_container = obj;
 	uint i;
 
 	if (!obj) {
@@ -3031,7 +3069,7 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
 				obj->getVarCount(), obj->getMethodCount());
 
-	if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
+	if (!obj->isClass())
 		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->getVarCount(); i++) {
@@ -3048,7 +3086,7 @@ int Console::printObject(reg_t pos) {
 		if (!val.segment)
 			DebugPrintf(" (%d)", val.offset);
 
-		Object *ref = s->_segMan->getObject(val);
+		const Object *ref = s->_segMan->getObject(val);
 		if (ref)
 			DebugPrintf(" (%s)", s->_segMan->getObjectName(val));
 
@@ -3060,7 +3098,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), selector_name(s, obj->getFuncSelector(i)), PRINT_REG(fptr));
 	}
 	if (s->_segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
-		DebugPrintf("\nOwner script:\t%d\n", s->_segMan->getScript(pos.segment)->_nr);
+		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->_nr);
 
 	return 0;
 }

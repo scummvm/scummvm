@@ -75,7 +75,7 @@ else
 			ifdef DS_BUILD_K
 
 			else
-				USE_MAD = 1
+		#		USE_MAD = 1
 			endif
 		endif
 	endif

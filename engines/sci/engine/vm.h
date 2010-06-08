@@ -43,44 +43,9 @@ class ResourceManager;
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
 
-/** Maximum number of calls residing on the stack */
-#define SCRIPT_MAX_EXEC_STACK 256
-/** Maximum number of entries in the class table */
-#define SCRIPT_MAX_CLASSTABLE_SIZE 256
-/** Maximum number of cloned objects on the heap */
-#define SCRIPT_MAX_CLONES 256
-
-
-/** Object-relative offset of the selector area inside a script */
-#define SCRIPT_SELECTOR_OFFSET 8 -8
-
-/** Object-relative offset of the pointer to the underlying script's local variables */
-#define SCRIPT_LOCALVARPTR_OFFSET 2 -8
-
-/** Object-relative offset of the selector counter */
-#define SCRIPT_SELECTORCTR_OFFSET 6 -8
-
-/** Object-relative offset of the offset of the function area */
-#define SCRIPT_FUNCTAREAPTR_OFFSET 4 -8
-
-/** Offset that has to be added to the function area pointer */
-#define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
-
-/** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 14 -8 : 16)
-
-/** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 12 -8 : 14)
-
-/** Flag fo the -info- selector */
-#define SCRIPT_INFO_CLONE 0x0001
-
-/** Flag for the -info- selector */
-#define SCRIPT_INFO_CLASS 0x8000
-
-
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
+
 /** Offset of this identifier */
 #define SCRIPT_OBJECT_MAGIC_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? -8 : 0)
 
@@ -89,13 +54,10 @@ class ResourceManager;
 
 #define SCRIPT_SUPERCLASS_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 10 -8 : 12)
 
-/** Magic adjustment value for lofsa and lofss */
-#define SCRIPT_LOFS_MAGIC 3
-
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL
 
-/** Types of selectors as returned by lookup_selector() below. */
+/** Types of selectors as returned by lookupSelector() below. */
 enum SelectorType {
 	kSelectorNone = 0,
 	kSelectorVariable,
@@ -195,7 +157,6 @@ struct SelectorCache {
 
 	// Used for auto detection purposes
 	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
-	Selector setCursor; ///< For cursor semantics autodetection
 
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
@@ -263,40 +224,10 @@ enum {
 	VAR_PARAM = 3
 };
 
-/**
- * Structure for storing the current internal state of the VM.
- */
-struct ScriptState {
-	ExecStack *xs;
-	int16 restAdjust;
-	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
-	reg_t *variables_base[4];	///< Used for referencing VM ops
-	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
-	int variables_max[4];		///< Max. values for all variables
-};
-
-/**
- * The current internal state of the VM.
- */
-extern ScriptState scriptState;
-
-/**
- * Set this to 1 to abort script execution immediately. Aborting will
- * leave the debug exec stack intact.
- * Set it to 2 to force a replay afterwards.
- */
-extern int script_abort_flag;
-
 /** Number of kernel calls in between gcs; should be < 50000 */
 enum {
 	GC_INTERVAL = 32768
 };
-
-/** Initially GC_DELAY, can be set at runtime */
-extern int script_gc_interval;
-
-/** Number of steps executed */
-extern int script_step_counter;
 
 
 /**
@@ -379,7 +310,7 @@ int script_init_engine(EngineState *);
  * 							kSelectorMethod if the selector represents a
  * 							method
  */
-SelectorType lookup_selector(SegManager *segMan, reg_t obj, Selector selectorid,
+SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**
@@ -469,7 +400,7 @@ int game_exit(EngineState *s);
 /**
  * Instructs the virtual machine to abort
  */
-void quit_vm();
+void quit_vm(EngineState *s);
 
 /**
  * Read a PMachine instruction from a memory buffer and return its length.

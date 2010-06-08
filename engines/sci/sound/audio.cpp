@@ -235,6 +235,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	uint32 audioCompressionType = audioRes->getAudioCompressionType();
 
 	if (audioCompressionType) {
+#if (defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC))
 		// Compressed audio made by our tool
 		byte *compressedData = (byte *)malloc(audioRes->size);
 		assert(compressedData);
@@ -261,6 +262,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 #endif
 			break;
 		}
+#else
+		error("Compressed audio file encountered, but no appropriate decoder is compiled in");
+#endif
 	} else {
 		// Original source file
 		if (audioRes->_headerSize > 0) {
@@ -332,11 +336,11 @@ void AudioPlayer::setSoundSync(ResourceId id, reg_t syncObjAddr, SegManager *seg
 	_syncOffset = 0;
 
 	if (_syncResource) {
-		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), 0);
+		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), 0);
 	} else {
 		warning("setSoundSync: failed to find resource %s", id.toString().c_str());
 		// Notify the scripts to stop sound sync
-		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), SIGNAL_OFFSET);
+		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), SIGNAL_OFFSET);
 	}
 }
 
@@ -352,8 +356,8 @@ void AudioPlayer::doSoundSync(reg_t syncObjAddr, SegManager *segMan) {
 			_syncOffset += 2;
 		}
 
-		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncTime), syncTime);
-		PUT_SEL32V(segMan, syncObjAddr, SELECTOR(syncCue), syncCue);
+		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncTime), syncTime);
+		writeSelectorValue(segMan, syncObjAddr, SELECTOR(syncCue), syncCue);
 	}
 }
 

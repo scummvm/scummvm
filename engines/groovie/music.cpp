@@ -23,13 +23,14 @@
  *
  */
 
-#include "groovie/lzss.h"
 #include "groovie/music.h"
+#include "groovie/groovie.h"
 #include "groovie/resource.h"
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
 #include "sound/audiocd.h"
+#include "sound/midiparser.h"
 
 namespace Groovie {
 

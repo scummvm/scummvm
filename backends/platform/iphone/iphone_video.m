@@ -29,6 +29,8 @@
 static iPhoneView *sharedInstance = nil;
 static int _width = 0;
 static int _height = 0;
+static int _fullWidth;
+static int _fullHeight;
 static CGRect _screenRect;
 static char* _textureBuffer = 0;
 static int _textureWidth = 0;
@@ -41,6 +43,10 @@ static UITouch* _secondTouch = NULL;
 
 // static long lastTick = 0;
 // static int frames = 0;
+
+bool iPhone_isHighResDevice() {
+	return _fullHeight > 480;
+}
 
 void iPhone_updateScreen() {
 	if (!_needsScreenUpdate) {

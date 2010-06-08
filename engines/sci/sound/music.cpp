@@ -37,9 +37,6 @@
 
 namespace Sci {
 
-// When defined, volume fading immediately sets the final sound volume
-#define DISABLE_VOLUME_FADING
-
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
 
@@ -115,8 +112,6 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::pauseAll(bool pause) {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundToggle(*i, pause);
@@ -170,14 +165,29 @@ void SciMusic::setReverb(byte reverb) {
 	_pMidiDrv->setReverb(reverb);
 }
 
-static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->priority - ((const MusicEntry *)arg1)->priority;
+static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
+	return (l->priority > r->priority);
 }
 
 void SciMusic::sortPlayList() {
-	MusicEntry ** pData = _playList.begin();
-	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
+	// Sort the play list in descending priority order
+	Common::sort(_playList.begin(), _playList.end(), musicEntryCompare);
 }
+
+void SciMusic::findUsedChannels() {
+	// Reset list
+	for (int k = 0; k < 16; k++)
+		_usedChannels[k] = false;
+
+	const MusicList::const_iterator end = _playList.end();
+	for (MusicList::const_iterator i = _playList.begin(); i != end; ++i) {
+		for (int channel = 0; channel < 16; channel++) {
+			if ((*i)->soundRes && (*i)->soundRes->isChannelUsed(channel))
+				_usedChannels[channel] = true;
+		}
+	}
+}
+
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
@@ -220,6 +230,27 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			}
 
 			pSnd->pauseCounter = 0;
+
+			// TODO: Fix channel remapping. This doesn't quite work... (e.g. no difference in LSL1VGA)
+#if 0
+			// Remap channels
+			findUsedChannels();
+
+			pSnd->pMidiParser->clearUsedChannels();
+
+			for (int i = 0; i < 16; i++) {
+				if (_usedChannels[i] && pSnd->soundRes->isChannelUsed(i)) {
+					int16 newChannel = getNextUnusedChannel();
+					if (newChannel >= 0) {
+						_usedChannels[newChannel] = true;
+						debug("Remapping channel %d to %d\n", i, newChannel);
+						pSnd->pMidiParser->remapChannel(i, newChannel);
+					} else {
+						warning("Attempt to remap channel %d, but no unused channels exist", i);
+					}
+				}
+			}
+#endif
 
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
@@ -389,7 +420,12 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		return;
 	if (pSnd->status != kSoundPaused)
 		return;
-	soundPlay(pSnd);
+	if (pSnd->pStreamAud) {
+		_pMixer->pauseHandle(pSnd->hCurrentAud, false);
+		pSnd->status = kSoundPlaying;
+	} else {
+		soundPlay(pSnd);
+	}
 }
 
 void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {
@@ -531,15 +567,17 @@ void MusicEntry::doFade() {
 			fadeStep = 0;
 			fadeCompleted = true;
 		}
-
-		// Only process MIDI streams in this thread, not digital sound effects
-		if (pMidiParser) {
-#ifdef DISABLE_VOLUME_FADING
-			// Signal fading to stop...
+#ifdef ENABLE_SCI32
+		// Disable fading for SCI32 - sound drivers have issues when fading in (gabriel knight 1 sierra title)
+		if (getSciVersion() >= SCI_VERSION_2) {
 			volume = fadeTo;
 			fadeStep = 0;
 			fadeCompleted = true;
+		}
 #endif
+
+		// Only process MIDI streams in this thread, not digital sound effects
+		if (pMidiParser) {
 			pMidiParser->setVolume(volume);
 		}
 

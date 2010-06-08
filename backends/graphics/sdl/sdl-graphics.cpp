@@ -195,7 +195,6 @@ bool SdlGraphicsManager::hasFeature(OSystem::Feature f) {
 	return
 		(f == OSystem::kFeatureFullscreenMode) ||
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
-		(f == OSystem::kFeatureAutoComputeDirtyRects) ||
 		(f == OSystem::kFeatureCursorHasPalette) ||
 		(f == OSystem::kFeatureIconifyWindow);
 }

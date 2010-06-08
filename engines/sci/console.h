@@ -73,6 +73,7 @@ private:
 	bool cmdResourceTypes(int argc, const char **argv);
 	bool cmdList(int argc, const char **argv);
 	bool cmdHexgrep(int argc, const char **argv);
+	bool cmdVerifyScripts(int argc, const char **argv);
 	// Game
 	bool cmdSaveGame(int argc, const char **argv);
 	bool cmdRestoreGame(int argc, const char **argv);

@@ -113,7 +113,6 @@ public:
 	Common::RandomSource *_rnd;
 
 	Card _cardData;
-	bool _gameOver;
 
 	GUI::Debugger *getDebugger();
 
@@ -146,6 +145,10 @@ private:
 	// Variables
 	uint32 *_vars;
 	uint32 _varCount;
+
+	// Miscellaneous
+	bool _gameOver;
+	bool _ignoreNextMouseUp;
 
 public:
 	Common::SeekableReadStream *getExtrasResource(uint32 tag, uint16 id);
@@ -180,6 +183,9 @@ public:
 	uint32 *getLocalVar(uint32 index);
 	uint32 *matchVarToString(Common::String varName);
 	uint32 *matchVarToString(const char *varName);
+
+	void setGameOver() { _gameOver = true; }
+	void ignoreNextMouseUp() { _ignoreNextMouseUp = true; }
 };
 
 } // End of namespace Mohawk

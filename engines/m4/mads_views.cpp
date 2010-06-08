@@ -24,6 +24,7 @@
  */
 
 #include "m4/m4_views.h"
+#include "m4/animation.h"
 #include "m4/dialogs.h"
 #include "m4/events.h"
 #include "m4/font.h"
@@ -36,10 +37,19 @@
 
 namespace M4 {
 
-static const int INV_ANIM_FRAME_SPEED = 2;
-static const int INVENTORY_X = 160;
-static const int INVENTORY_Y = 159;
-static const int SCROLLER_DELAY = 200;
+bool MadsSpriteSlot::operator==(const SpriteSlotSubset &other) const {
+	return (spriteListIndex == other.spriteListIndex) && (frameNumber == other.frameNumber) &&
+		(xp == other.xp) && (yp == other.yp) && (depth == other.depth) && (scale == other.scale);
+}
+
+void MadsSpriteSlot::copy(const SpriteSlotSubset &other) {
+	spriteListIndex = other.spriteListIndex;
+	frameNumber = other.frameNumber;
+	xp = other.xp;
+	yp = other.yp;
+	depth = other.depth;
+	scale = other.scale;
+}
 
 //--------------------------------------------------------------------------
 
@@ -52,14 +62,21 @@ MadsSpriteSlots::MadsSpriteSlots(MadsView &owner): _owner(owner) {
 	startIndex = 0;
 }
 
+MadsSpriteSlots::~MadsSpriteSlots() {
+	for (uint i = 0; i < _sprites.size(); ++i)
+		delete _sprites[i];
+}
+
 void MadsSpriteSlots::clear() {
 	_owner._textDisplay.clear();
+	for (uint i = 0; i < _sprites.size(); ++i)
+		delete _sprites[i];
 	_sprites.clear();
 
 	// Reset the sprite slots list back to a single entry for a full screen refresh
 	startIndex = 1;
 	_entries[0].spriteType = FULL_SCREEN_REFRESH;
-	_entries[0].timerIndex = -1;
+	_entries[0].seqIndex = -1;
 }
 
 int MadsSpriteSlots::getIndex() {
@@ -74,20 +91,31 @@ int MadsSpriteSlots::addSprites(const char *resName) {
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
 	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
 	spriteSet->translate(_madsVm->_palette);
+	assert(spriteSet != NULL);
 
-	_sprites.push_back(SpriteList::value_type(spriteSet));
+	_sprites.push_back(spriteSet);
 	_vm->res()->toss(resName);
 
 	return _sprites.size() - 1;
 }
 
+void MadsSpriteSlots::deleteSprites(int listIndex) {
+	if (listIndex < 0)
+		return;
+
+	delete _sprites[listIndex];
+	_sprites[listIndex] = NULL;
+	if (listIndex == ((int)_sprites.size() - 1))
+		_sprites.remove_at(listIndex);
+}
+
 /*
  * Deletes the sprite slot with the given timer entry
  */
-void MadsSpriteSlots::deleteTimer(int timerIndex) {
+void MadsSpriteSlots::deleteTimer(int seqIndex) {
 	for (int idx = 0; idx < startIndex; ++idx) {
-		if (_entries[idx].timerIndex == timerIndex)
-			_entries[idx].spriteType = -1;
+		if (_entries[idx].seqIndex == seqIndex)
+			_entries[idx].spriteType = EXPIRED_SPRITE;
 	}
 }
 
@@ -128,10 +156,10 @@ void MadsSpriteSlots::drawBackground() {
 
 				if (_entries[i].depth <= 1) {
 					// No depth, so simply copy the frame onto the background
-					frame->copyTo(_owner._bgSurface, xp, yp);
+					frame->copyTo(_owner._bgSurface, xp, yp, 0);
 				} else {
 					// Depth was specified, so draw frame using scene's depth information
-					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100);
+					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100, 0);
 				}
 			}
 		}
@@ -142,7 +170,7 @@ void MadsSpriteSlots::drawBackground() {
 		_owner._dirtyAreas[i].active = false;
 }
 
-void MadsSpriteSlots::drawForeground(View *view) {
+void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 	DepthList depthList;
 
 	// Get a list of sprite object depths for active objects
@@ -162,13 +190,13 @@ void MadsSpriteSlots::drawForeground(View *view) {
 		DepthEntry &de = *i;
 		MadsSpriteSlot &slot = _entries[de.index];
 		assert(slot.spriteListIndex < (int)_sprites.size());
-		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex].get();
+		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
 		if (slot.scale < 100) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
-			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
-			spr->copyTo(view, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 0);
+			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
+			spr->copyTo(view, slot.xp, slot.yp + yOffset, slot.depth, _owner._depthSurface, slot.scale, 0);
 		} else {
 			int xp, yp;
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
@@ -183,10 +211,10 @@ void MadsSpriteSlots::drawForeground(View *view) {
 
 			if (slot.depth > 1) {
 				// Draw the frame with depth processing
-				spr->copyTo(view, xp, yp, slot.depth, _owner._depthSurface, 100, 0);
+				spr->copyTo(view, xp, yp + yOffset, slot.depth, _owner._depthSurface, 100, 0);
 			} else {
 				// No depth, so simply draw the image
-				spr->copyTo(view, xp, yp, 0);
+				spr->copyTo(view, xp, yp + yOffset, 0);
 			}
 		}
 	}
@@ -201,6 +229,16 @@ void MadsSpriteSlots::setDirtyAreas() {
 			_entries[i].spriteType = 0;
 		}
 	}
+}
+
+/**
+ * Flags the entire screen to be redrawn during the next drawing cycle
+ */
+void MadsSpriteSlots::fullRefresh() {
+	int idx = getIndex();
+
+	_entries[idx].spriteType = FULL_SCREEN_REFRESH;
+	_entries[idx].seqIndex = -1;
 }
 
 /**
@@ -288,13 +326,12 @@ void MadsTextDisplay::setDirtyAreas2() {
 	}
 }
 
-void MadsTextDisplay::draw(View *view) {
+void MadsTextDisplay::draw(View *view, int yOffset) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
-			_entries[idx].font->setColours(_entries[idx].colour1, 
-				(_entries[idx].colour2 == 0) ? _entries[idx].colour1 : _entries[idx].colour2, 0xff);
+			_entries[idx].font->setColours(_entries[idx].colour1, _entries[idx].colour2, 0);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
-				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
+				_entries[idx].bounds.left, _entries[idx].bounds.top + yOffset, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
 		}
 	}
@@ -341,13 +378,13 @@ void MadsKernelMessageList::clear() {
 	_talkFont = _vm->_font->getFont(FONT_CONVERSATION_MADS);
 }
 
-int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg) {
+int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg) {
 	// Find a free slot
 	uint idx = 0;
 	while ((idx < _entries.size()) && ((_entries[idx].flags & KMSG_ACTIVE) != 0))
 		++idx;
 	if (idx == _entries.size()) {
-		if (v2 == 0)
+		if (abortTimers == 0)
 			return -1;
 
 		error("MadsKernelList overflow");
@@ -362,28 +399,28 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	rec.textDisplayIndex = -1;
 	rec.timeout = timeout;
 	rec.frameTimer = _madsVm->_currentTimer;
-	rec.field_1C = v2;
+	rec.abortTimers = abortTimers;
 	rec.abortMode = _owner._abortTimersMode2;
 	
 	for (int i = 0; i < 3; ++i)
 		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
 
-	if (flags & KMSG_2)
+	if (flags & KMSG_OWNER_TIMEOUT)
 		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
 
 	return idx;
 }
 
-int MadsKernelMessageList::addQuote(int quoteId, int v2, uint32 timeout) {
+int MadsKernelMessageList::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
-	return add(Common::Point(0, 0), 0x1110, KMSG_2 | KMSG_20, v2, timeout, quoteStr);
+	return add(Common::Point(0, 0), 0x1110, KMSG_OWNER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
 }
 
-void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
+void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quoted) {
 	if (msgIndex < 0)
 		return;
 
-	_entries[msgIndex].flags |= (v2 == 0) ? KMSG_8 : (KMSG_8 | KMSG_1);
+	_entries[msgIndex].flags |= quoted ? (KMSG_SCROLL | KMSG_QUOTED) : KMSG_SCROLL;
 	_entries[msgIndex].msgOffset = 0;
 	_entries[msgIndex].numTicks = numTicks;
 	_entries[msgIndex].frameTimer2 = _madsVm->_currentTimer;
@@ -392,7 +429,7 @@ void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
 	_entries[msgIndex].asciiChar = *msgP;
 	_entries[msgIndex].asciiChar2 = *(msgP + 1);
 
-	if (_entries[msgIndex].flags & KMSG_2)
+	if (_entries[msgIndex].flags & KMSG_OWNER_TIMEOUT)
 		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
 
 	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
@@ -400,7 +437,7 @@ void MadsKernelMessageList::unk1(int msgIndex, int numTicks, int v2) {
 
 void MadsKernelMessageList::setSeqIndex(int msgIndex, int seqIndex) {
 	if (msgIndex >= 0) {
-		_entries[msgIndex].flags |= KMSG_4;
+		_entries[msgIndex].flags |= KMSG_SEQ_ENTRY;
 		_entries[msgIndex].sequenceIndex = seqIndex;
 	}
 }
@@ -409,9 +446,9 @@ void MadsKernelMessageList::remove(int msgIndex) {
 	MadsKernelMessageEntry &rec = _entries[msgIndex];
 
 	if (rec.flags & KMSG_ACTIVE) {
-		if (rec.flags & KMSG_8) {
-			//*(rec.msg + rec.msgOffset) = rec.asciiChar;
-			//*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
+		if (rec.flags & KMSG_SCROLL) {
+			*(rec.msg + rec.msgOffset) = rec.asciiChar;
+			*(rec.msg + rec.msgOffset + 1) = rec.asciiChar2;
 		}
 
 		if (rec.textDisplayIndex >= 0)
@@ -442,26 +479,26 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	uint32 currentTimer = _madsVm->_currentTimer;
 	bool flag = false;
 
-	if ((msg.flags & KMSG_40) != 0) {
+	if ((msg.flags & KMSG_EXPIRE) != 0) {
 		_owner._textDisplay.expire(msg.textDisplayIndex);
 		msg.flags &= !KMSG_ACTIVE;
 		return;
 	}
 
-	if ((msg.flags & KMSG_8) == 0) {
+	if ((msg.flags & KMSG_SCROLL) == 0) {
 		msg.timeout -= 3;
 	}
 
-	if (msg.flags & KMSG_4) {
+	if (msg.flags & KMSG_SEQ_ENTRY) {
 		MadsSequenceEntry &seqEntry = _owner._sequenceList[msg.sequenceIndex];
 		if (seqEntry.doneFlag || !seqEntry.active)
 			msg.timeout = 0;
 	}
 
 	if ((msg.timeout <= 0) && (_owner._abortTimers == 0)) {
-		msg.flags |= KMSG_40;
-		if (msg.field_1C != 0) {
-			_owner._abortTimers = msg.field_1C;
+		msg.flags |= KMSG_EXPIRE;
+		if (msg.abortTimers != 0) {
+			_owner._abortTimers = msg.abortTimers;
 			_owner._abortTimersMode = msg.abortMode;
 
 			if (_owner._abortTimersMode != ABORTMODE_1) {
@@ -474,9 +511,9 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	msg.frameTimer = currentTimer + 3;
 	int x1 = 0, y1 = 0;
 
-	if (msg.flags & KMSG_4) {
+	if (msg.flags & KMSG_SEQ_ENTRY) {
 		MadsSequenceEntry &seqEntry = _owner._sequenceList[msg.sequenceIndex];
-		if (seqEntry.field_12) {
+		if (!seqEntry.nonFixed) {
 			SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
 			M4Sprite *frame = spriteSet.getFrame(seqEntry.frameIndex - 1);
 			x1 = frame->bounds().left;
@@ -487,7 +524,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		}
 	}
 	
-	if (msg.flags & KMSG_2) {
+	if (msg.flags & KMSG_OWNER_TIMEOUT) {
 		if (word_8469E != 0) {
 			// TODO: Figure out various flags
 		} else {
@@ -499,7 +536,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 	x1 += msg.position.x;
 	y1 += msg.position.y;
 
-	if ((msg.flags & KMSG_8) && (msg.frameTimer >= currentTimer)) {
+	if ((msg.flags & KMSG_SCROLL) && (msg.frameTimer >= currentTimer)) {
 		msg.msg[msg.msgOffset] = msg.asciiChar;
 		char *msgP = &msg.msg[++msg.msgOffset];
 		*msgP = msg.asciiChar2;
@@ -508,9 +545,10 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		msg.asciiChar2 = *(msgP + 1);
 
 		if (!msg.asciiChar) {
+			// End of message
 			*msgP = '\0';
-			msg.flags &= ~KMSG_8;
-		} else if (msg.flags & KMSG_1) {
+			msg.flags &= ~KMSG_SCROLL;
+		} else if (msg.flags & KMSG_QUOTED) {
 			*msgP = '"';
 			*(msgP + 1) = '\0';
 		}
@@ -521,8 +559,8 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 	int strWidth = _talkFont->getWidth(msg.msg, _owner._textSpacing); 
 
-	if (msg.flags & KMSG_30) {
-		x1 -= (msg.flags & KMSG_20) ? strWidth / 2 : strWidth;
+	if (msg.flags & (KMSG_RIGHT_ALIGN | KMSG_CENTER_ALIGN)) {
+		x1 -= (msg.flags & KMSG_CENTER_ALIGN) ? strWidth / 2 : strWidth;
 	}
 
 	// Make sure text appears entirely on-screen
@@ -817,10 +855,10 @@ void MadsDirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1.textActive = true;
 }
 
-void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src) {
+void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset) {
 	for (uint i = 0; i < _entries.size(); ++i) {
 		if (_entries[i].active && _entries[i].bounds.isValidRect())
-			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top);
+			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
 	}
 }
 
@@ -855,14 +893,14 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 }
 
 int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
+		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
 	// Find a free slot
-	uint timerIndex = 0;
-	while ((timerIndex < _entries.size()) && (_entries[timerIndex].active))
-		++timerIndex;
-	if (timerIndex == _entries.size())
+	uint seqIndex = 0;
+	while ((seqIndex < _entries.size()) && (_entries[seqIndex].active))
+		++seqIndex;
+	if (seqIndex == _entries.size())
 		error("TimerList full");
 
 	if (frameStart <= 0)
@@ -873,76 +911,76 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 		frameInc = 0;
 
 	// Set the list entry fields
-	_entries[timerIndex].active = true;
-	_entries[timerIndex].spriteListIndex = spriteListIndex;
-	_entries[timerIndex].field_2 = v0;
-	_entries[timerIndex].frameIndex = frameIndex;
-	_entries[timerIndex].frameStart = frameStart;
-	_entries[timerIndex].numSprites = numSprites;
-	_entries[timerIndex].animType = animType;
-	_entries[timerIndex].frameInc = frameInc;
-	_entries[timerIndex].depth = depth;
-	_entries[timerIndex].scale = scale;
-	_entries[timerIndex].field_12 = field_12;
-	_entries[timerIndex].msgPos.x = msgX;
-	_entries[timerIndex].msgPos.y = msgY;
-	_entries[timerIndex].numTicks = numTicks;
-	_entries[timerIndex].extraTicks = extraTicks;
+	_entries[seqIndex].active = true;
+	_entries[seqIndex].spriteListIndex = spriteListIndex;
+	_entries[seqIndex].field_2 = v0;
+	_entries[seqIndex].frameIndex = frameIndex;
+	_entries[seqIndex].frameStart = frameStart;
+	_entries[seqIndex].numSprites = numSprites;
+	_entries[seqIndex].animType = animType;
+	_entries[seqIndex].frameInc = frameInc;
+	_entries[seqIndex].depth = depth;
+	_entries[seqIndex].scale = scale;
+	_entries[seqIndex].nonFixed = nonFixed;
+	_entries[seqIndex].msgPos.x = msgX;
+	_entries[seqIndex].msgPos.y = msgY;
+	_entries[seqIndex].numTicks = numTicks;
+	_entries[seqIndex].extraTicks = extraTicks;
 
-	_entries[timerIndex].timeout = _madsVm->_currentTimer + delayTicks;
+	_entries[seqIndex].timeout = _madsVm->_currentTimer + delayTicks;
 
-	_entries[timerIndex].triggerCountdown = triggerCountdown;
-	_entries[timerIndex].doneFlag = false;
-	_entries[timerIndex].field_13 = 0;
-	_entries[timerIndex].dynamicHotspotIndex = -1;
-	_entries[timerIndex].entries.count = 0;
-	_entries[timerIndex].abortMode = _owner._abortTimersMode2;
+	_entries[seqIndex].triggerCountdown = triggerCountdown;
+	_entries[seqIndex].doneFlag = false;
+	_entries[seqIndex].field_13 = 0;
+	_entries[seqIndex].dynamicHotspotIndex = -1;
+	_entries[seqIndex].entries.count = 0;
+	_entries[seqIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_entries[timerIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_entries[seqIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
 
-	return timerIndex;
+	return seqIndex;
 }
 
-void MadsSequenceList::remove(int timerIndex) {
-	if (_entries[timerIndex].active) {
-		if (_entries[timerIndex].dynamicHotspotIndex >= 0)
-			_owner._dynamicHotspots.remove(_entries[timerIndex].dynamicHotspotIndex);
+void MadsSequenceList::remove(int seqIndex) {
+	if (_entries[seqIndex].active) {
+		if (_entries[seqIndex].dynamicHotspotIndex >= 0)
+			_owner._dynamicHotspots.remove(_entries[seqIndex].dynamicHotspotIndex);
 	}
 
-	_entries[timerIndex].active = false;
-	_owner._spriteSlots.deleteTimer(timerIndex);
+	_entries[seqIndex].active = false;
+	_owner._spriteSlots.deleteTimer(seqIndex);
 }
 
-void MadsSequenceList::setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot) {
-	MadsSequenceEntry &timerEntry = _entries[timerIndex];
-	SpriteAsset &sprite = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
+void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
+	MadsSequenceEntry &timerEntry = _entries[seqIndex];
+	SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(timerEntry.spriteListIndex);
 
-	spriteSlot.spriteType = sprite.getAssetType() == 1 ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
-	spriteSlot.timerIndex = timerIndex;
+	spriteSlot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
+	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
 	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
 	spriteSlot.depth = timerEntry.depth;
 	spriteSlot.scale = timerEntry.scale;
 	
-	if (timerEntry.field_12 == 0) {
+	if (!timerEntry.nonFixed) {
 		spriteSlot.xp = timerEntry.msgPos.x;
 		spriteSlot.yp = timerEntry.msgPos.y;
 	} else {
-		spriteSlot.xp = sprite.getFrame(timerEntry.frameIndex - 1)->x;
-		spriteSlot.yp = sprite.getFrame(timerEntry.frameIndex - 1)->y;
+		spriteSlot.xp = spriteSet.getFrame(timerEntry.frameIndex - 1)->x;
+		spriteSlot.yp = spriteSet.getFrame(timerEntry.frameIndex - 1)->y;
 	}
 }
 
-bool MadsSequenceList::loadSprites(int timerIndex) {
-	MadsSequenceEntry &seqEntry = _entries[timerIndex];
+bool MadsSequenceList::loadSprites(int seqIndex) {
+	MadsSequenceEntry &seqEntry = _entries[seqIndex];
 	int slotIndex;
 	bool result = false;
 	int idx = -1;
 
-	_owner._spriteSlots.deleteTimer(timerIndex);
+	_owner._spriteSlots.deleteTimer(seqIndex);
 	if (seqEntry.doneFlag) {
-		remove(timerIndex);
+		remove(seqIndex);
 		return false;
 	}
 
@@ -951,7 +989,7 @@ bool MadsSequenceList::loadSprites(int timerIndex) {
 		seqEntry.doneFlag = true;
 	} else if ((slotIndex = _owner._spriteSlots.getIndex()) >= 0) {
 		MadsSpriteSlot &spriteSlot = _owner._spriteSlots[slotIndex];
-		setSpriteSlot(timerIndex, spriteSlot);
+		setSpriteSlot(seqIndex, spriteSlot);
 
 		int x2 = 0, y2 = 0;
 
@@ -1079,8 +1117,8 @@ void MadsSequenceList::delay(uint32 v1, uint32 v2) {
 	}
 }
 
-void MadsSequenceList::setAnimRange(int timerIndex, int startVal, int endVal) {
-	MadsSequenceEntry &seqEntry = _entries[timerIndex];
+void MadsSequenceList::setAnimRange(int seqIndex, int startVal, int endVal) {
+	MadsSequenceEntry &seqEntry = _entries[seqIndex];
 	SpriteAsset &spriteSet = _owner._spriteSlots.getSprite(seqEntry.spriteListIndex);
 	int numSprites = spriteSet.getCount();
 	int tempStart = startVal, tempEnd = endVal;
@@ -1113,10 +1151,28 @@ void MadsSequenceList::setAnimRange(int timerIndex, int startVal, int endVal) {
 	seqEntry.frameIndex = (seqEntry.frameInc < 0) ? tempStart : tempEnd;
 }
 
+void MadsSequenceList::scan() {
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (!_entries[i].active && (_entries[i].spriteListIndex != -1)) {
+			int idx = _owner._spriteSlots.getIndex();
+			setSpriteSlot(i, _owner._spriteSlots[idx]);
+		}
+	}
+}
+
+//--------------------------------------------------------------------------
+
+Animation::Animation(MadsM4Engine *vm): _vm(vm) {
+}
+
+Animation::~Animation() {
+}
+
 //--------------------------------------------------------------------------
 
 MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
 		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
+		
 	_textSpacing = -1;
 	_ticksAmount = 3;
 	_newTimeout = 0;
@@ -1124,9 +1180,15 @@ MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceL
 	_abortTimers2 = 0;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
-	
+
+	_yOffset = 0;
 	_depthSurface = NULL;
 	_bgSurface = NULL;
+	_sceneAnimation = new MadsAnimation(_vm, this);
+}
+
+MadsView::~MadsView() {
+	delete _sceneAnimation;
 }
 
 void MadsView::refresh() {
@@ -1140,7 +1202,7 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 	
 	// Copy dirty areas to the main display surface 
-	_dirtyAreas.copy(_view, _bgSurface);
+	_dirtyAreas.copy(_view, _bgSurface, _yOffset);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
@@ -1148,439 +1210,16 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw foreground sprites
-	_spriteSlots.drawForeground(_view);
+	_spriteSlots.drawForeground(_view, _yOffset);
 
 	// Draw text elements onto the view
-	_textDisplay.draw(_view);
+	_textDisplay.draw(_view, _yOffset);
 
 	// Remove any sprite slots that are no longer needed
 	_spriteSlots.cleanUp();
 
 	// Deactivate any text display entries that are no longer needed
 	_textDisplay.cleanUp();
-}
-
-/*--------------------------------------------------------------------------
- * MadsInterfaceView handles the user interface section at the bottom of
- * game screens in MADS games
- *--------------------------------------------------------------------------
- */
-
-MadsInterfaceView::MadsInterfaceView(MadsM4Engine *vm): GameInterfaceView(vm, 
-		Common::Rect(0, MADS_SURFACE_HEIGHT, vm->_screen->width(), vm->_screen->height())) {
-	_screenType = VIEWID_INTERFACE;
-	_highlightedElement = -1;
-	_topIndex = 0;
-	_selectedObject = -1;
-	_cheatKeyCtr = 0;
-
-	_objectSprites = NULL;
-	_objectPalData = NULL;
-
-	/* Set up the rect list for screen elements */
-	// Actions
-	for (int i = 0; i < 10; ++i)
-		_screenObjects.addRect((i / 5) * 32 + 1, (i % 5) * 8 + MADS_SURFACE_HEIGHT + 2,
-			((i / 5) + 1) * 32 + 3, ((i % 5) + 1) * 8 + MADS_SURFACE_HEIGHT + 2);
-
-	// Scroller elements (up arrow, scroller, down arrow)
-	_screenObjects.addRect(73, 160, 82, 167);
-	_screenObjects.addRect(73, 168, 82, 190);
-	_screenObjects.addRect(73, 191, 82, 198);
-
-	// Inventory object names
-	for (int i = 0; i < 5; ++i)
-		_screenObjects.addRect(89, 158 + i * 8, 160, 166 + i * 8);
-
-	// Full rectangle area for all vocab actions
-	for (int i = 0; i < 5; ++i)
-		_screenObjects.addRect(239, 158 + i * 8, 320, 166 + i * 8);
-}
-
-MadsInterfaceView::~MadsInterfaceView() {
-	delete _objectSprites;
-}
-
-void MadsInterfaceView::setFontMode(InterfaceFontMode newMode) {
-	switch (newMode) {
-	case ITEM_NORMAL:
-		_vm->_font->setColors(4, 4, 0xff);
-		break;
-	case ITEM_HIGHLIGHTED:
-		_vm->_font->setColors(5, 5, 0xff);
-		break;
-	case ITEM_SELECTED:
-		_vm->_font->setColors(6, 6, 0xff);
-		break;
-	}
-}
-
-void MadsInterfaceView::initialise() {
-	// Build up the inventory list
-	_inventoryList.clear();
-
-	for (uint i = 0; i < _madsVm->globals()->getObjectsSize(); ++i) {
-		MadsObject *obj = _madsVm->globals()->getObject(i);
-		if (obj->roomNumber == PLAYER_INVENTORY)
-			_inventoryList.push_back(i);
-	}
-
-	// If the inventory has at least one object, select it
-	if (_inventoryList.size() > 0)
-		setSelectedObject(_inventoryList[0]);
-}
-
-void MadsInterfaceView::setSelectedObject(int objectNumber) {
-	char resName[80];
-
-	// Load inventory resource
-	if (_objectSprites) {
-		_vm->_palette->deleteRange(_objectPalData);
-		delete _objectSprites;
-	}
-
-	// Check to make sure the object is in the inventory, and also visible on-screen
-	int idx = _inventoryList.indexOf(objectNumber);
-	if (idx == -1) {
-		// Object wasn't found, so return
-		_selectedObject = -1;
-		return;
-	}
-
-	// Found the object
-	if (idx < _topIndex)
-		_topIndex = idx;
-	else if (idx >= (_topIndex + 5))
-		_topIndex = MAX(0, idx - 4);
-
-	_selectedObject = objectNumber;
-	sprintf(resName, "*OB%.3dI.SS", objectNumber);
-
-	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	_objectSprites = new SpriteAsset(_vm, data, data->size(), resName);
-	_vm->res()->toss(resName);
-
-	// Slot it into available palette space
-	_objectPalData = _objectSprites->getRgbList();
-	_vm->_palette->addRange(_objectPalData);
-	_objectSprites->translate(_objectPalData, true);
-
-	_objectFrameNumber = 0;
-}
-
-void MadsInterfaceView::addObjectToInventory(int objectNumber) {
-	if (_inventoryList.indexOf(objectNumber) == -1) {
-		_madsVm->globals()->getObject(objectNumber)->roomNumber = PLAYER_INVENTORY;
-		_inventoryList.push_back(objectNumber);
-	}
-
-	setSelectedObject(objectNumber);
-}
-
-void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
-	_vm->_font->setFont(FONT_INTERFACE_MADS);
-	char buffer[100];
-
-	// Check to see if any dialog is currently active
-	bool dialogVisible = _vm->_viewManager->getView(LAYER_DIALOG) != NULL;
-
-	// Highlighting logic for action list
-	int actionIndex = 0;
-	for (int x = 0; x < 2; ++x) {
-		for (int y = 0; y < 5; ++y, ++actionIndex) {
-			// Determine the font colour depending on whether an item is selected. Note that the first action,
-			// 'Look', is always 'selected', even when another action is clicked on
-			setFontMode((_highlightedElement == actionIndex) ? ITEM_HIGHLIGHTED :
-				((actionIndex == 0) ? ITEM_SELECTED : ITEM_NORMAL));
-
-			// Get the verb action and capitalise it
-			const char *verbStr = _madsVm->globals()->getVocab(kVerbLook + actionIndex);
-			strcpy(buffer, verbStr);
-			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-			// Display the verb
-			const Common::Rect r(_screenObjects[actionIndex]);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-		}
-	}
-
-	// Check for highlighting of the scrollbar controls
-	if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_SCROLLER) || (_highlightedElement == SCROLL_DOWN)) {
-		// Highlight the control's borders
-		const Common::Rect r(_screenObjects[_highlightedElement]);
-		destSurface->frameRect(r, 5);
-	}
-
-	// Draw the horizontal line in the scroller representing the current top selected
-	const Common::Rect scroller(_screenObjects[SCROLL_SCROLLER]);
-	int yP = (_inventoryList.size() < 2) ? 0 : (scroller.height() - 5) * _topIndex / (_inventoryList.size() - 1);
-	destSurface->setColor(4);
-	destSurface->hLine(scroller.left + 2, scroller.right - 3, scroller.top + 2 + yP);
-
-	// List inventory items
-	for (uint i = 0; i < 5; ++i) {
-		if ((_topIndex + i) >= _inventoryList.size())
-			break;
-
-		const char *descStr = _madsVm->globals()->getVocab(_madsVm->globals()->getObject(
-			_inventoryList[_topIndex + i])->descId);
-		strcpy(buffer, descStr);
-		if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-		const Common::Rect r(_screenObjects[INVLIST_START + i]);
-
-		// Set the highlighting of the inventory item
-		if (_highlightedElement == (int)(INVLIST_START + i)) setFontMode(ITEM_HIGHLIGHTED);
-		else if (_selectedObject == _inventoryList[_topIndex + i]) setFontMode(ITEM_SELECTED);
-		else setFontMode(ITEM_NORMAL);
-
-		// Write out it's description
-		_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-	}
-
-	// Handle the display of any currently selected object
-	if (_objectSprites) {
-		// Display object sprite. Note that the frame number isn't used directly, because it would result
-		// in too fast an animation
-		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
-		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
-
-		if (!_madsVm->globals()->_config.invObjectsStill && !dialogVisible) {
-			// If objects need to be animated, move to the next frame
-			if (++_objectFrameNumber >= (_objectSprites->getCount() * INV_ANIM_FRAME_SPEED))
-				_objectFrameNumber = 0;
-		}
-
-		// List the vocab actions for the currently selected object
-		MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-		int yIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
-
-		for (int i = 0; i < obj->vocabCount; ++i) {
-			const Common::Rect r(_screenObjects[VOCAB_START + i]);
-
-			// Get the vocab description and capitalise it
-			const char *descStr = _madsVm->globals()->getVocab(obj->vocabList[i].vocabId);
-			strcpy(buffer, descStr);
-			if ((buffer[0] >= 'a') && (buffer[0] <= 'z')) buffer[0] -= 'a' - 'A';
-
-			// Set the highlighting and display the entry
-			setFontMode((i == yIndex) ? ITEM_HIGHLIGHTED : ITEM_NORMAL);
-			_vm->_font->writeString(destSurface, buffer, r.left, r.top, r.width(), 0);
-		}
-	}
-}
-
-bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
-	MadsAction &act = _madsVm->scene()->getAction();
-
-	// If the mouse isn't being held down, then reset the repeated scroll timer
-	if (eventType != MEVENT_LEFT_HOLD)
-		_nextScrollerTicks = 0;
-
-	// Handle various event types
-	switch (eventType) {
-	case MEVENT_MOVE:
-		// If the cursor isn't in "wait mode", don't do any processing
-		if (_vm->_mouse->getCursorNum() == CURSOR_WAIT)
-			return true;
-
-		// Ensure the cursor is the standard arrow
-		_vm->_mouse->setCursorNum(CURSOR_ARROW);
-
-		// Check if any interface element is currently highlighted
-		_highlightedElement = _screenObjects.find(Common::Point(x, y));
-
-		return true;
-
-	case MEVENT_LEFT_CLICK:
-		// Left mouse click
-		{
-			// Check if an inventory object was selected
-			if ((_highlightedElement >= INVLIST_START) && (_highlightedElement < (INVLIST_START + 5))) {
-				// Ensure there is an inventory item listed in that cell
-				uint idx = _highlightedElement - INVLIST_START;
-				if ((_topIndex + idx) < _inventoryList.size()) {
-					// Set the selected object
-					setSelectedObject(_inventoryList[_topIndex + idx]);
-				}
-			} else if ((_highlightedElement >= ACTIONS_START) && (_highlightedElement < (ACTIONS_START + 10))) {
-				// A standard action was selected
-				int verbId = kVerbLook + (_highlightedElement - ACTIONS_START);
-				warning("Selected action #%d", verbId);
-				
-			} else if ((_highlightedElement >= VOCAB_START) && (_highlightedElement < (VOCAB_START + 5))) {
-				// A vocab action was selected
-				MadsObject *obj = _madsVm->globals()->getObject(_selectedObject);
-				int vocabIndex = MIN(_highlightedElement - VOCAB_START, obj->vocabCount - 1);
-				if (vocabIndex >= 0) {
-					act._actionMode = ACTMODE_OBJECT;
-					act._actionMode2 = ACTMODE2_2;
-					act._flags1 = obj->vocabList[1].flags1;
-					act._flags2 = obj->vocabList[1].flags2;
-
-					act._currentHotspot = _selectedObject;
-					act._articleNumber = act._flags2;
-				}
-			}
-		}
-		return true;
-
-	case MEVENT_LEFT_HOLD:
-		// Left mouse hold
-		// Handle the scroller - the up/down buttons allow for multiple actions whilst the mouse is held down
-		if ((_highlightedElement == SCROLL_UP) || (_highlightedElement == SCROLL_DOWN)) {
-			if ((_nextScrollerTicks == 0) || (g_system->getMillis() >= _nextScrollerTicks)) {
-				// Handle scroll up/down action
-				_nextScrollerTicks = g_system->getMillis() + SCROLLER_DELAY;
-
-				if ((_highlightedElement == SCROLL_UP) && (_topIndex > 0))
-					--_topIndex;
-				if ((_highlightedElement == SCROLL_DOWN) && (_topIndex < (int)(_inventoryList.size() - 1)))
-					++_topIndex;
-			}
-		}
-		return true;
-
-	case MEVENT_LEFT_DRAG:
-		// Left mouse drag
-		// Handle the the the scroller area that can be dragged to adjust the top displayed index
-		if (_highlightedElement == SCROLL_SCROLLER) {
-			// Calculate the new top index based on the Y position
-			const Common::Rect r(_screenObjects[SCROLL_SCROLLER]);
-			_topIndex = CLIP((int)(_inventoryList.size() - 1) * (y - r.top - 2) / (r.height() - 5),
-				0, (int)_inventoryList.size() - 1);
-		}
-		return true;
-
-	case KEVENT_KEY:
-		if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
-			handleCheatKey(param1);
-		handleKeypress(param1);
-		return true;
-
-	default:
-		break;
-	}
-
-	return false;
-}
-
-bool MadsInterfaceView::handleCheatKey(int32 keycode) {
-	switch (keycode) {
-	case Common::KEYCODE_SPACE:
-		// TODO: Move player to current destination
-		return true;
-
-	case Common::KEYCODE_t | (Common::KEYCODE_LALT):
-	case Common::KEYCODE_t | (Common::KEYCODE_RALT):
-	{
-		// Teleport to room
-		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
-
-
-		return true;
-	}
-
-	default:
-		break;
-	}
-
-	return false;
-}
-
-const char *CHEAT_SEQUENCE = "widepipe";
-
-bool MadsInterfaceView::handleKeypress(int32 keycode) {
-	int flags = keycode >> 24;
-	int kc = keycode & 0xffff;
-
-	// Capitalise the letter if necessary
-	if (_cheatKeyCtr < CHEAT_SEQUENCE_MAX) {
-		if ((flags & Common::KBD_CTRL) && (kc == CHEAT_SEQUENCE[_cheatKeyCtr])) {
-			++_cheatKeyCtr;
-			if (_cheatKeyCtr == CHEAT_SEQUENCE_MAX)
-				Dialog::display(_vm, 22, cheatingEnabledDesc);
-			return true;
-		} else {
-			_cheatKeyCtr = 0;
-		}
-	}
-
-	// Handle the various keys
-	if ((keycode == Common::KEYCODE_ESCAPE) || (keycode == Common::KEYCODE_F1)) {
-		// Game menu
-		_madsVm->globals()->dialogType = DIALOG_GAME_MENU;
-		leaveScene();
-		return false;
-	} else if (flags & Common::KBD_CTRL) {
-		// Handling of the different control key combinations
-		switch (kc) {
-		case Common::KEYCODE_i:
-			// Mouse to inventory
-			warning("TODO: Mouse to inventory");
-			break;
-
-		case Common::KEYCODE_k:
-			// Toggle hotspots
-			warning("TODO: Toggle hotspots");
-			break;
-
-		case Common::KEYCODE_p:
-			// Player stats
-			warning("TODO: Player stats");
-			break;
-
-		case Common::KEYCODE_q:
-			// Quit game
-			break;
-
-		case Common::KEYCODE_s:
-			// Activate sound
-			warning("TODO: Activate sound");
-			break;
-
-		case Common::KEYCODE_u:
-			// Rotate player
-			warning("TODO: Rotate player");
-			break;
-
-		case Common::KEYCODE_v: {
-			// Release version
-			Dialog *dlg = new Dialog(_vm, GameReleaseInfoStr, GameReleaseTitleStr);
-			_vm->_viewManager->addView(dlg);
-			_vm->_viewManager->moveToFront(dlg);
-			return false;
-		}
-
-		default:
-			break;
-		}
-	} else if ((flags & Common::KBD_ALT) && (kc == Common::KEYCODE_q)) {
-		// Quit Game
-
-	} else {
-		// Standard keypresses
-		switch (kc) {
-			case Common::KEYCODE_F2:
-				// Save game
-				_madsVm->globals()->dialogType = DIALOG_SAVE;
-				leaveScene();
-				break;
-			case Common::KEYCODE_F3:
-				// Restore game
-				_madsVm->globals()->dialogType = DIALOG_RESTORE;
-				leaveScene();
-				break;
-		}
-	}
-//DIALOG_OPTIONS
-	return false;
-}
-
-void MadsInterfaceView::leaveScene() {
-	// Close the scene
-	View *view = _madsVm->_viewManager->getView(VIEWID_SCENE);
-	_madsVm->_viewManager->deleteView(view);
 }
 
 } // End of namespace M4

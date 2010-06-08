@@ -83,7 +83,6 @@ bool OSystem_SDL_Symbian::hasFeature(Feature f) {
 	switch (f) {
 	case kFeatureFullscreenMode:
 	case kFeatureAspectRatioCorrection:
-	case kFeatureAutoComputeDirtyRects:
 	case kFeatureCursorHasPalette:
 #ifdef  USE_VIBRA_SE_PXXX
 	case kFeatureVibration:

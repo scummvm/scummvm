@@ -48,7 +48,7 @@ void GfxMacIconBar::drawIcons() {
 	uint32 lastX = 0;
 
 	for (uint32 i = 0; i < _iconBarObjects.size(); i++) {
-		uint32 iconIndex = GET_SEL32V(g_sci->getEngineState()->_segMan, _iconBarObjects[i], SELECTOR(iconIndex));
+		uint32 iconIndex = readSelectorValue(g_sci->getEngineState()->_segMan, _iconBarObjects[i], SELECTOR(iconIndex));
 		Resource *res = g_sci->getResMan()->findResource(ResourceId(kResourceTypeMacIconBarPictN, iconIndex + 1), false);
 		if (!res)
 			continue;

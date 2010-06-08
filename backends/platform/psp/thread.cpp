@@ -29,6 +29,7 @@
 #include <pspthreadman.h> 
 
 #include "backends/platform/psp/thread.h"
+#include "backends/platform/psp/trace.h"
  
 void PspThread::delayMillis(uint32 ms) {
 	sceKernelDelayThread(ms * 1000);
@@ -38,15 +39,49 @@ void PspThread::delayMicros(uint32 us) {
 	sceKernelDelayThread(us);
 }
 
-uint32 PspThread::getMillis() {
+void PspRtc::init() {						// init our starting ticks
 	uint32 ticks[2];
 	sceRtcGetCurrentTick((u64 *)ticks);
-	return (ticks[0]/1000);	
+
+	_startMillis = ticks[0]/1000;
+	_startMicros = ticks[0];
+	//_lastMillis = ticks[0]/1000;	//debug - only when we don't subtract startMillis
 }
 
-uint32 PspThread::getMicros() {
+#define MS_LOOP_AROUND 4294967				/* We loop every 2^32 / 1000 = 71 minutes */
+#define MS_LOOP_CHECK  60000				/* Threading can cause weird mixups without this */
+
+// Note that after we fill up 32 bits ie 50 days we'll loop back to 0, which may cause 
+// unpredictable results
+uint32 PspRtc::getMillis() {
 	uint32 ticks[2];
+	
+	sceRtcGetCurrentTick((u64 *)ticks);		// can introduce weird thread delays
+	
+	uint32 millis = ticks[0]/1000;
+	millis -= _startMillis;					// get ms since start of program
+
+	if ((int)_lastMillis - (int)millis > MS_LOOP_CHECK) {		// we must have looped around
+		if (_looped == false) {					// check to make sure threads do this once
+			_looped = true;
+			_milliOffset += MS_LOOP_AROUND;		// add the needed offset
+			PSP_DEBUG_PRINT("looping around. last ms[%d], curr ms[%d]\n", _lastMillis, millis);
+		}	
+	} else {
+		_looped = false;
+	}
+	
+	_lastMillis = millis;	
+	
+	return millis + _milliOffset;
+}
+
+uint32 PspRtc::getMicros() {
+	uint32 ticks[2];
+	
 	sceRtcGetCurrentTick((u64 *)ticks);
+	ticks[0] -= _startMicros;
+	
 	return ticks[0]; 
 }
 

@@ -13,7 +13,7 @@ export ASFLAGS=-mfloat-abi=soft
 
 cd ../../../..
 
-echo Building ScummVM for GP2X.
+echo Building ScummVM for GP2X Wiz.
 make
 
-echo Build for GP2X - SDL - complete - Please check build logs.
+echo Build for GP2X Wiz - complete - Please check build logs.

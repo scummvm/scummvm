@@ -112,7 +112,7 @@ public:
 	 *
 	 * @param sub_addr		base address whose canonic address is to be found
 	 */
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) { return sub_addr; }
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const { return sub_addr; }
 
 	/**
 	 * Deallocates all memory associated with the specified address.
@@ -125,7 +125,7 @@ public:
 	 * @param note		Invoked for each address on which free_at_address() makes sense
 	 * @param param		parameter passed to 'note'
 	 */
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {}
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {}
 
 	/**
 	 * Iterates over all references reachable from the specified object.
@@ -134,7 +134,7 @@ public:
 	 * @param note		Invoked for each outgoing reference within the object
 	 * Note: This function may also choose to report numbers (segment 0) as adresses
 	 */
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) {}
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const {}
 };
 
 
@@ -194,8 +194,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -203,6 +203,22 @@ public:
 /** Clone has been marked as 'freed' */
 enum {
 	OBJECT_FLAG_FREED = (1 << 0)
+};
+
+enum infoSelectorFlags {
+	kInfoFlagClone = 0x0001,
+	kInfoFlagClass = 0x8000
+};
+
+enum ObjectOffsets {
+	kOffsetLocalVariables = -6,
+	kOffsetFunctionArea = -4,
+	kOffsetSelectorCounter = -2,
+	kOffsetSelectorSegment = 0,
+	kOffsetInfoSelectorSci0 = 4,
+	kOffsetNamePointerSci0 = 6,
+	kOffsetInfoSelectorSci11 = 14,
+	kOffsetNamePointerSci11 = 16
 };
 
 class Object {
@@ -214,31 +230,34 @@ public:
 
 	~Object() { }
 
-	reg_t getSpeciesSelector() { return _variables[_offset]; }
+	reg_t getSpeciesSelector() const { return _variables[_offset]; }
 	void setSpeciesSelector(reg_t value) { _variables[_offset] = value; }
 
-	reg_t getSuperClassSelector() {	return _variables[_offset + 1];	}
+	reg_t getSuperClassSelector() const { return _variables[_offset + 1]; }
 	void setSuperClassSelector(reg_t value) { _variables[_offset + 1] = value; }
 
-	reg_t getInfoSelector() { return _variables[_offset + 2]; }
-	void setInfoSelector(reg_t value) {	_variables[_offset + 2] = value; }
+	reg_t getInfoSelector() const { return _variables[_offset + 2]; }
+	void setInfoSelector(reg_t value) { _variables[_offset + 2] = value; }
 
-	reg_t getNameSelector() { return _variables[_offset + 3]; }
-	void setNameSelector(reg_t value) {	_variables[_offset + 3] = value; }
+	reg_t getNameSelector() const { return _variables[_offset + 3]; }
+	void setNameSelector(reg_t value) { _variables[_offset + 3] = value; }
 
-	reg_t getClassScriptSelector() { return _variables[4]; }
+	reg_t getPropDictSelector() const { return _variables[2]; }
+	void setPropDictSelector(reg_t value) { _variables[2] = value; }
+
+	reg_t getClassScriptSelector() const { return _variables[4]; }
 	void setClassScriptSelector(reg_t value) { _variables[4] = value; }
 
-	Selector getVarSelector(uint16 i) { return READ_SCI11ENDIAN_UINT16(_baseVars + i); }
+	Selector getVarSelector(uint16 i) const { return READ_SCI11ENDIAN_UINT16(_baseVars + i); }
 
-	reg_t getFunction(uint16 i) {
+	reg_t getFunction(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? _methodCount + 1 + i : i * 2 + 2;
-		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset)));
+		return make_reg(_pos.segment, READ_SCI11ENDIAN_UINT16(_baseMethod + offset));
 	}
 
-	Selector getFuncSelector(uint16 i) {
+	Selector getFuncSelector(uint16 i) const {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
-		return READ_SCI11ENDIAN_UINT16((byte *) (_baseMethod + offset));
+		return READ_SCI11ENDIAN_UINT16(_baseMethod + offset);
 	}
 
 	/**
@@ -247,7 +266,7 @@ public:
 	 * superclasses, i.e. failure may be returned even if one of the
 	 * superclasses defines the funcselector
 	 */
-	int funcSelectorPosition(Selector sel) {
+	int funcSelectorPosition(Selector sel) const {
 		for (uint i = 0; i < _methodCount; i++)
 			if (getFuncSelector(i) == sel)
 				return i;
@@ -256,61 +275,56 @@ public:
 	}
 
 	/**
-	 * Determines if the object explicitly defines slc as a varselector
-	 * Returns -1 if not found
+	 * Determines if the object explicitly defines slc as a varselector.
+	 * Returns -1 if not found.
 	 */
-	int locateVarSelector(SegManager *segMan, Selector slc);
+	int locateVarSelector(SegManager *segMan, Selector slc) const;
 
-	bool isClass() { return (getInfoSelector().offset & SCRIPT_INFO_CLASS);	}
-	Object *getClass(SegManager *segMan);
+	bool isClass() const { return (getInfoSelector().offset & kInfoFlagClass); }
+	const Object *getClass(SegManager *segMan) const;
+
+	void markAsClone() { setInfoSelector(make_reg(0, kInfoFlagClone)); }
+	bool isClone() const { return (getInfoSelector().offset & kInfoFlagClone); }
 
 	void markAsFreed() { _flags |= OBJECT_FLAG_FREED; }
-	bool isFreed() { return _flags & OBJECT_FLAG_FREED;	}
+	bool isFreed() const { return _flags & OBJECT_FLAG_FREED; }
 
-	void setVarCount(uint size) { _variables.resize(size); }
-	uint getVarCount() { return _variables.size(); }
+	uint getVarCount() const { return _variables.size(); }
 
-	void init(byte *buf, reg_t obj_pos) {
-		byte *data = (byte *)(buf + obj_pos.offset);
-		_baseObj = data;
-		_pos = obj_pos;
+	void init(byte *buf, reg_t obj_pos, bool initVariables = true);
 
-		if (getSciVersion() < SCI_VERSION_1_1) {
-			_variables.resize(READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET));
-			_baseVars = (uint16 *)(_baseObj + _variables.size() * 2);
-			_baseMethod = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
-			_methodCount = READ_LE_UINT16(_baseMethod - 1);
-		} else {
-			_variables.resize(READ_SCI11ENDIAN_UINT16(data + 2));
-			_baseVars = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 4));
-			_baseMethod = (uint16 *)(buf + READ_SCI11ENDIAN_UINT16(data + 6));
-			_methodCount = READ_SCI11ENDIAN_UINT16(_baseMethod);
-		}
+	reg_t getVariable(uint var) const { return _variables[var]; }
+	reg_t &getVariableRef(uint var) { return _variables[var]; }
 
-		for (uint i = 0; i < _variables.size(); i++)
-			_variables[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(data + (i * 2)));
-	}
-
-	reg_t getVariable(uint var) { return _variables[var]; }
-
-	uint16 getMethodCount() { return _methodCount; }
-	reg_t getPos() { return _pos; }
+	uint16 getMethodCount() const { return _methodCount; }
+	reg_t getPos() const { return _pos; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 
-	void cloneFromObject(Object *obj) {
+	void cloneFromObject(const Object *obj) {
 		_baseObj = obj ? obj->_baseObj : NULL;
 		_baseMethod = obj ? obj->_baseMethod : NULL;
 		_baseVars = obj ? obj->_baseVars : NULL;
 	}
 
+	bool relocate(SegmentId segment, int location, size_t scriptSize);
+
+	int propertyOffsetToId(SegManager *segMan, int propertyOffset) const;
+
+	void initSpecies(SegManager *segMan, reg_t addr);
+	void initSuperClass(SegManager *segMan, reg_t addr);
+	bool initBaseObject(SegManager *segMan, reg_t addr, bool doInitSuperClass = true);
+
 	// TODO: make private
-	Common::Array<reg_t> _variables;
-	byte *_baseObj; /**< base + object offset within base */
-	uint16 *_baseVars; /**< Pointer to the varselector area for this object */
-	uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
+	// Only SegManager::reconstructScripts() is left needing direct access to these
+public:
+	const byte *_baseObj; /**< base + object offset within base */
 
 private:
+	const uint16 *_baseVars; /**< Pointer to the varselector area for this object */
+	const uint16 *_baseMethod; /**< Pointer to the method selector area for this object */
+
+	Common::Array<reg_t> _variables;
 	uint16 _methodCount;
 	int _flags;
 	uint16 _offset;
@@ -328,20 +342,27 @@ class Script : public SegmentObj {
 public:
 	int _nr; /**< Script number */
 	byte *_buf; /**< Static data buffer, or NULL if not used */
-	size_t _bufSize;
-	size_t _scriptSize;
-	size_t _heapSize;
-
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
-	int _numExports; /**< Number of entries in the exports table */
-
-	byte *_synonyms; /**< Synonyms block or 0 if not present*/
-	int _numSynonyms; /**< Number of entries in the synonyms block */
+	uint32 getScriptSize() { return _scriptSize; }
+	uint32 getHeapSize() { return _heapSize; }
+	uint32 getBufSize() { return _bufSize; }
 
 protected:
 	int _lockers; /**< Number of classes and objects that require this script */
+
+private:
+	size_t _scriptSize;
+	size_t _heapSize;
+	size_t _bufSize;
+
+	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
+	uint16 _numExports; /**< Number of entries in the exports table */
+
+	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
+
+	Common::Array<CodeBlock> _codeBlocks;
 
 public:
 	/**
@@ -354,8 +375,6 @@ public:
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
-	Common::Array<CodeBlock> _codeBlocks;
-	bool _relocated;
 	bool _markedAsDeleted;
 
 public:
@@ -363,19 +382,21 @@ public:
 	~Script();
 
 	void freeScript();
-	bool init(int script_nr, ResourceManager *resMan);
+	void init(int script_nr, ResourceManager *resMan);
+	void load(ResourceManager *resMan);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	Object *allocateObject(uint16 offset);
 	Object *getObject(uint16 offset);
+	const Object *getObject(uint16 offset) const;
 
 	/**
 	 * Informs the segment manager that a code block must be relocated
@@ -392,7 +413,7 @@ public:
 	 * @returns			A newly created Object describing the object,
 	 * 					stored within the relevant script
 	 */
-	Object *scriptObjInit(reg_t obj_pos);
+	Object *scriptObjInit(reg_t obj_pos, bool fullObjectInit = true);
 
 	/**
 	 * Removes a script object
@@ -407,14 +428,10 @@ public:
 	 * @param obj_pos	Location (segment, offset) of the block
 	 * @return			Location of the relocation block
 	 */
-	void scriptRelocate(reg_t block);
-
-	void heapRelocate(reg_t block);
+	void relocate(reg_t block);
 
 private:
-	int relocateLocal(SegmentId segment, int location);
-	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
-	int relocateObject(Object &obj, SegmentId segment, int location);
+	bool relocateLocal(SegmentId segment, int location);
 
 public:
 	// script lock operations
@@ -435,22 +452,28 @@ public:
 	void setLockers(int lockers);
 
 	/**
+	 * Retrieves a pointer to the exports of this script
+	 * @return	pointer to the exports.
+	 */
+	const uint16 *getExportTable() const { return _exportTable; }
+
+	/**
+	 * Retrieves the number of exports of script.
+	 * @return	the number of exports of this script
+	 */
+	uint16 getExportsNr() const { return _numExports; }
+
+	/**
 	 * Retrieves a pointer to the synonyms associated with this script
 	 * @return	pointer to the synonyms, in non-parsed format.
 	 */
-	byte *getSynonyms() const;
+	const byte *getSynonyms() const { return _synonyms; }
 
 	/**
 	 * Retrieves the number of synonyms associated with this script.
 	 * @return	the number of synonyms associated with this script
 	 */
-	int getSynonymsNr() const;
-
-	/**
-	 * Sets the script-relative offset of the exports table.
-	 * @param offset	script-relative exports table offset
-	 */
-	void setExportTableOffset(int offset);
+	uint16 getSynonymsNr() const { return _numSynonyms; }
 
 	/**
 	 * Validate whether the specified public function is exported by
@@ -460,19 +483,6 @@ public:
 	 * 						offset into the script's segment otherwise
 	 */
 	uint16 validateExportFunc(int pubfunct);
-
-	/**
-	 * Sets the script-relative offset of the synonyms associated with this script.
-	 * @param offset	script-relative offset of the synonyms block
-	 */
-	void setSynonymsOffset(int offset);
-
-	/**
-	 * Sets the number of synonyms associated with this script,
-	 * @param nr		number of synonyms, as to be stored within the script
-	 */
-	void setSynonymsNr(int nr);
-
 
 	/**
 	 * Marks the script as deleted.
@@ -508,8 +518,10 @@ public:
 	 */
 	int16 getHeap(uint16 offset) const;
 
-private:
-	void setScriptSize(int script_nr, ResourceManager *resMan);
+	/**
+	 * Finds the pointer where a block of a specific type starts from
+	 */
+	byte *findBlock(int type);
 };
 
 /** Data stack */
@@ -529,8 +541,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -618,7 +630,7 @@ public:
 		entries_used--;
 	}
 
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
 		for (uint i = 0; i < _table.size(); i++)
 			if (isValidEntry(i))
 				(*note)(param, make_reg(segId, i));
@@ -631,7 +643,7 @@ struct CloneTable : public Table<Clone> {
 	CloneTable() : Table<Clone>(SEG_TYPE_CLONES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -642,7 +654,7 @@ struct NodeTable : public Table<Node> {
 	NodeTable() : Table<Node>(SEG_TYPE_NODES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -653,7 +665,7 @@ struct ListTable : public Table<List> {
 	ListTable() : Table<List>(SEG_TYPE_LISTS) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -688,8 +700,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
+	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -782,7 +794,7 @@ public:
 		_size = _actualSize = size;
 	}
 
-	T getValue(uint16 index) {
+	T getValue(uint16 index) const {
 		if (index >= _size)
 			error("SciArray::getValue(): %d is out of bounds (%d)", index, _size);
 
@@ -796,8 +808,8 @@ public:
 		_data[index] = value;
 	}
 
-	byte getType() { return _type; }
-	uint32 getSize() { return _size; }
+	byte getType() const { return _type; }
+	uint32 getSize() const { return _size; }
 	T *getRawData() { return _data; }
 
 protected:
@@ -814,15 +826,15 @@ public:
 	// We overload destroy to ensure the string type is 3 after destroying
 	void destroy() { SciArray<char>::destroy(); _type = 3; }
 
-	Common::String toString();
-	void fromString(Common::String string);
+	Common::String toString() const;
+	void fromString(const Common::String &string);
 };
 
 struct ArrayTable : public Table<SciArray<reg_t> > {
 	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);

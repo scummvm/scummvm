@@ -35,18 +35,19 @@ VideoManager::VideoManager(MohawkEngine* vm) : _vm(vm) {
 }
 
 VideoManager::~VideoManager() {
-	_mlstRecords.clear();
 	stopVideos();
 }
 
 void VideoManager::pauseVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->pauseVideo(true);
+		if (_videoStreams[i].video)
+			_videoStreams[i]->pauseVideo(true);
 }
 
 void VideoManager::resumeVideos() {
 	for (uint16 i = 0; i < _videoStreams.size(); i++)
-		_videoStreams[i]->pauseVideo(false);
+		if (_videoStreams[i].video)
+			_videoStreams[i]->pauseVideo(false);
 }
 
 void VideoManager::stopVideos() {
@@ -89,7 +90,7 @@ void VideoManager::playMovieCentered(Common::String filename, bool clearScreen) 
 void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 	bool continuePlaying = true;
 
-	while (!_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
+	while (_videoStreams[videoHandle].video && !_videoStreams[videoHandle]->endOfVideo() && !_vm->shouldQuit() && continuePlaying) {
 		if (updateBackgroundMovies())
 			_vm->_system->updateScreen();
 
@@ -120,8 +121,10 @@ void VideoManager::waitUntilMovieEnds(VideoHandle videoHandle) {
 		_vm->_system->delayMillis(10);
 	}
 
-	_videoStreams[videoHandle]->close();
-	_videoStreams.clear();
+	delete _videoStreams[videoHandle].video;
+	_videoStreams[videoHandle].video = 0;
+	_videoStreams[videoHandle].id = 0;
+	_videoStreams[videoHandle].filename.clear();
 }
 
 void VideoManager::playBackgroundMovie(Common::String filename, int16 x, int16 y, bool loop) {
@@ -152,8 +155,9 @@ bool VideoManager::updateBackgroundMovies() {
 				_videoStreams[i]->rewind();
 			} else {
 				delete _videoStreams[i].video;
-				memset(&_videoStreams[i], 0, sizeof(VideoEntry));
-				_videoStreams[i].video = NULL;
+				_videoStreams[i].video = 0;
+				_videoStreams[i].id = 0;
+				_videoStreams[i].filename.clear();
 				continue;
 			}
 		}
@@ -240,13 +244,25 @@ void VideoManager::activateMLST(uint16 mlstId, uint16 card) {
 		if (mlstRecord.u1 != 1)
 			warning("mlstRecord.u1 not 1");
 
+		// We've found a match, add it
 		if (mlstRecord.index == mlstId) {
+			// Make sure we don't have any duplicates
+			for (uint32 j = 0; j < _mlstRecords.size(); j++)
+				if (_mlstRecords[j].index == mlstRecord.index || _mlstRecords[j].code == mlstRecord.code) {
+					_mlstRecords.remove_at(j);
+					j--;
+				}
+
 			_mlstRecords.push_back(mlstRecord);
 			break;
 		}
 	}
 
 	delete mlstStream;
+}
+
+void VideoManager::clearMLST() {
+	_mlstRecords.clear();
 }
 
 void VideoManager::playMovie(uint16 id) {
@@ -274,8 +290,10 @@ void VideoManager::stopMovie(uint16 id) {
 		if (_mlstRecords[i].code == id)
 			for (uint16 j = 0; j < _videoStreams.size(); j++)
 				if (_mlstRecords[i].movieID == _videoStreams[j].id) {
-					delete _videoStreams[i].video;
-					memset(&_videoStreams[i].video, 0, sizeof(VideoEntry));
+					delete _videoStreams[j].video;
+					_videoStreams[j].video = 0;
+					_videoStreams[j].id = 0;
+					_videoStreams[j].filename.clear();
 					return;
 				}
 }
@@ -372,6 +390,26 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 	// Otherwise, just add it to the list
 	_videoStreams.push_back(entry);
 	return _videoStreams.size() - 1;
+}
+
+VideoHandle VideoManager::findVideoHandle(uint16 id) {
+	for (uint16 i = 0; i < _mlstRecords.size(); i++)
+		if (_mlstRecords[i].code == id)
+			for (uint16 j = 0; j < _videoStreams.size(); j++)
+				if (_videoStreams[j].video && _mlstRecords[i].movieID == _videoStreams[j].id)
+					return j;
+
+	return NULL_VID_HANDLE;
+}
+
+int32 VideoManager::getCurFrame(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getCurFrame();
+}
+
+uint32 VideoManager::getFrameCount(const VideoHandle &handle) {
+	assert(handle != NULL_VID_HANDLE);
+	return _videoStreams[handle]->getFrameCount();
 }
 
 } // End of namespace Mohawk

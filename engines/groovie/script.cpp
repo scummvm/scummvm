@@ -23,18 +23,19 @@
  *
  */
 
-#include "groovie/debug.h"
-#include "groovie/music.h"
 #include "groovie/script.h"
-#include "groovie/groovie.h"
 #include "groovie/cell.h"
+#include "groovie/cursor.h"
+#include "groovie/graphics.h"
+#include "groovie/groovie.h"
+#include "groovie/music.h"
+#include "groovie/player.h"
+#include "groovie/resource.h"
 #include "groovie/saveload.h"
 
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
-#include "common/endian.h"
-#include "common/events.h"
 #include "common/EventRecorder.h"
 #include "common/macresman.h"
 
@@ -63,9 +64,8 @@ static void debugScript(int level, bool nl, const char *s, ...) {
 }
 
 Script::Script(GroovieEngine *vm, EngineVersion version) :
-	_code(NULL), _savedCode(NULL), _stacktop(0),
-	_debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _font(NULL), _staufsMove(NULL) {
+	_code(NULL), _savedCode(NULL), _stacktop(0), _debugger(NULL), _vm(vm),
+	_videoFile(NULL), _videoRef(0), _staufsMove(NULL) {
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
 	case kGroovieT7G:
@@ -112,7 +112,6 @@ Script::~Script() {
 	delete[] _code;
 	delete[] _savedCode;
 
-	delete _font;
 	delete _videoFile;
 }
 
@@ -427,6 +426,22 @@ void Script::savegame(uint slot) {
 		}
 	}
 	_saveNames[slot] = save;
+}
+
+void Script::printString(Graphics::Surface *surface, const char *str) {
+	char message[15];
+	memset(message, 0, 15);
+
+	// Preprocess the string
+	for (int i = 0; i < 14; i++) {
+		if (str[i] <= 0x00 || str[i] == 0x24)
+			break;
+		message[i] = str[i];
+	}
+	Common::rtrim(message);
+
+	// Draw the string
+	_vm->_font->drawString(surface, message, 0, 16, 640, 0xE2, Graphics::kTextAlignCenter);
 }
 
 // OPCODES
@@ -1249,11 +1264,16 @@ void Script::o_printstring() {
 
 	stringstorage[counter] = 0;
 
-	// Load the font if required
-	if (!_font) {
-		_font = new Font(_vm->_system);
-	}
-	_font->printstring(stringstorage);
+	Common::Rect topbar(640, 80);
+	Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+
+	// Clear the top bar
+	gamescreen->fillRect(topbar, 0);
+
+	// Draw the string
+	printString(gamescreen, stringstorage);
+
+	_vm->_system->unlockScreen();
 }
 
 void Script::o_hotspot_slot() {
@@ -1273,11 +1293,15 @@ void Script::o_hotspot_slot() {
 			return;
 		}
 
-		// Load the font if required
-		if (!_font) {
-			_font = new Font(_vm->_system);
-		}
-		_font->printstring(_saveNames[slot].c_str());
+		Common::Rect topbar(640, 80);
+		Graphics::Surface *gamescreen = _vm->_system->lockScreen();
+
+		// Clear the top bar
+		gamescreen->fillRect(topbar, 0);
+
+		printString(gamescreen, _saveNames[slot].c_str());
+
+		_vm->_system->unlockScreen();
 
 		// Save the currently highlighted slot
 		_hotspotSlot = slot;

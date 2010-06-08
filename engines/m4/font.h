@@ -59,19 +59,11 @@ namespace M4 {
 
 class Font {
 public:
-	Font(MadsM4Engine *vm);
+	Font(MadsM4Engine *vm, const Common::String &filename);
 	~Font();
 
-	Font *getFont(const char *filename) {
-		// TODO: Proper separation of font instances
-		setFont(filename);
-		return this;
-	}
-	void setFont(const char *filename);
-	void setColor(uint8 color);
-	void setColors(uint8 alt1, uint8 alt2, uint8 foreground);
-	void setColour(uint8 colour) { setColor(colour); }
-	void setColours(uint8 alt1, uint8 alt2, uint8 foreground) { setColors(alt1, alt2, foreground); }
+	void setColour(uint8 colour);
+	void setColours(uint8 col1, uint8 col2, uint8 col3);
 
 	int32 getWidth(const char *text, int spaceWidth = -1);
 	int32 getHeight() const { return _maxHeight; }
@@ -80,7 +72,8 @@ public:
 	int32 writeString(M4Surface *surface, const char *text, int x, int y, int width = 0, int spaceWidth = -1) {
 		return write(surface, text, x, y, width, spaceWidth, _fontColors);
 	}
-
+public:
+	const Common::String _filename;
 private:
 	void setFontM4(const char *filename);
 	void setFontMads(const char *filename);
@@ -91,8 +84,37 @@ private:
 	uint16 *_charOffs;
 	uint8 *_charData;
 	bool _sysFont;
-	const char *_filename;
 	uint8 _fontColors[4];
+};
+
+class FontEntry {
+public:
+	Font *_font;
+
+	FontEntry() {
+		_font = NULL;
+	}
+	~FontEntry() {
+		delete _font;
+	}
+};
+
+class FontManager {
+private:
+	MadsM4Engine *_vm;
+	Common::Array<Font *> _entries;
+	Font *_currentFont;
+public:
+	FontManager(MadsM4Engine *vm): _vm(vm) { _currentFont = NULL; }
+	~FontManager();
+
+	Font *getFont(const Common::String &filename);
+	void setFont(const Common::String &filename);
+
+	Font *current() { 
+		assert(_currentFont);
+		return _currentFont;
+	}
 };
 
 } // End of namespace M4

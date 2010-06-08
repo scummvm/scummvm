@@ -50,7 +50,6 @@ private:
 	bool cmdStartConversation(int argc, const char **argv);
 	bool cmdShowTextview(int argc, const char **argv);
 	bool cmdShowAnimview(int argc, const char **argv);
-	bool cmdPlayAnimation(int argc, const char **argv);
 
 public:
 	Console(MadsM4Engine *vm);
@@ -64,6 +63,8 @@ private:
 	bool cmdObject(int argc, const char **argv);
 	bool cmdMessage(int argc, const char **argv);
 	bool cmdSceneInfo(int argc, const char **argv);
+	bool cmdPlayAnimation(int argc, const char **argv);
+
 public:
 	MadsConsole(MadsEngine *vm);
 	virtual ~MadsConsole() {}

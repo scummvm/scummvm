@@ -49,7 +49,7 @@ class Palette;
 
 class BaseAsset {
 public:
-	BaseAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name);
+	BaseAsset(MadsM4Engine *vm);
 	~BaseAsset();
 	const Common::String getName() const { return _name; }
 protected:
@@ -103,6 +103,7 @@ struct SpriteAssetFrame {
 class SpriteAsset : public BaseAsset {
 public:
 	SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream = false);
+	SpriteAsset(MadsM4Engine *vm, const char *name);
 	~SpriteAsset();
 	void loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, bool asStream);
 	void loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream);
@@ -113,7 +114,7 @@ public:
 	int32 getFrameHeight(int index);
 	int32 getMaxFrameWidth() const { return _maxWidth; }
 	int32 getMaxFrameHeight() const { return _maxHeight; }
-	uint16 getAssetType() const { return _assetType; }
+	bool isBackground() const { return _isBackground; }
 	M4Sprite *getFrame(int frameIndex);
 	void loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX, int destY);
 	RGB8* getPalette() { return _palette; }
@@ -136,7 +137,8 @@ protected:
 	uint32 _frameStartOffset;
 	
 	// MADS sprite set fields
-	uint16 _assetType;
+	uint8 _mode;
+	bool _isBackground;
 
 	int32 parseSprite(bool isBigEndian = false);
 	void loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndian = false);

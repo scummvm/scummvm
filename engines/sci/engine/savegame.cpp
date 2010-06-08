@@ -383,7 +383,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	sync_SegManagerPtr(s, _segMan);
 
-	syncArray<Class>(s, _segMan->_classtable);
+	syncArray<Class>(s, _segMan->_classTable);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	sync_songlib(s, _sound._songlib);
@@ -541,8 +541,8 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(_numExports);
-	s.syncAsSint32LE(_numSynonyms);
+	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numExports
+	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -615,7 +615,7 @@ void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
 void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_capacity);
 	if (s.isLoading()) {
-		//free(entries);
+		free(_entries);
 		_entries = (reg_t *)calloc(_capacity, sizeof(reg_t));
 	}
 }
@@ -731,41 +731,12 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 		return 1;
 	}
 
-/*
-	if (s->sound_server) {
-		if ((s->sound_server->save)(s, dirname)) {
-			warning("Saving failed for the sound subsystem");
-			//chdir("..");
-			return 1;
-		}
-	}
-*/
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
 	Graphics::saveThumbnail(*fh);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 
 	return 0;
-}
-
-static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	if (oldScriptHeader)
-		buf += 2;
-
-	do {
-		int seeker_type = READ_LE_UINT16(buf);
-
-		if (seeker_type == 0) break;
-		if (seeker_type == type) return buf;
-
-		int seeker_size = READ_LE_UINT16(buf + 2);
-		assert(seeker_size > 0);
-		buf += seeker_size;
-	} while (1);
-
-	return NULL;
 }
 
 // TODO: This should probably be turned into an EngineState or DataStack method.
@@ -777,99 +748,37 @@ static void reconstruct_stack(EngineState *retval) {
 	retval->stack_top = stack->_entries + stack->_capacity;
 }
 
-static void load_script(EngineState *s, Script *scr) {
-	scr->_buf = (byte *)malloc(scr->_bufSize);
-	assert(scr->_buf);
-
-	Resource *script = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
-	assert(script != 0);
-
-	assert(scr->_bufSize >= script->size);
-	memcpy(scr->_buf, script->data, script->size);
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		Resource *heap = g_sci->getResMan()->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
-		assert(heap != 0);
-
-		scr->_heapStart = scr->_buf + scr->_scriptSize;
-
-		assert(scr->_bufSize - scr->_scriptSize <= heap->size);
-		memcpy(scr->_heapStart, heap->data, heap->size);
-	}
-}
-
 // TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
-	SegmentObj *mobj;
 
 	for (i = 0; i < _heap.size(); i++) {
-		mobj = _heap[i];
-		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
 			continue;
 
-		Script *scr = (Script *)mobj;
-
-		// FIXME: Unify this code with script_instantiate_* ?
-		load_script(s, scr);
+		Script *scr = (Script *)_heap[i];
+		scr->load(g_sci->getResMan());
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			scr->_exportTable = 0;
-			scr->_synonyms = 0;
-			if (READ_LE_UINT16(scr->_buf + 6) > 0) {
-				scr->setExportTableOffset(6);
-				s->_segMan->scriptRelocateExportsSci11(i);
-			}
-		} else {
-			scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
-			scr->_synonyms = find_unique_script_block(s, scr->_buf, SCI_OBJ_SYNONYMS);
-			scr->_exportTable += 3;
-		}
-		scr->_codeBlocks.clear();
 
-		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value.getPos().offset;
-			it->_value._baseObj = data;
-		}
+		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
+			it->_value._baseObj = scr->_buf + it->_value.getPos().offset;
 	}
 
 	for (i = 0; i < _heap.size(); i++) {
-		mobj = _heap[i];
-		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+		if (!_heap[i] ||  _heap[i]->getType() != SEG_TYPE_SCRIPT)
 			continue;
 
-		Script *scr = (Script *)mobj;
+		Script *scr = (Script *)_heap[i];
 
-		// FIXME: Unify this code with Script::scriptObjInit ?
-		ObjMap::iterator it;
-		const ObjMap::iterator end = scr->_objects.end();
-		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value.getPos().offset;
+		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+			reg_t addr = it->_value.getPos();
+			Object *obj = scr->scriptObjInit(addr, false);
 
-			if (getSciVersion() >= SCI_VERSION_1_1) {
-				uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
-				uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
-
-				it->_value._baseMethod = funct_area;
-				it->_value._baseVars = prop_area;
-			} else {
-				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
-				Object *_baseObj;
-
-				_baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
-
-				if (!_baseObj) {
-					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
-					continue;
+			if (getSciVersion() < SCI_VERSION_1_1) {
+				if (!obj->initBaseObject(this, addr, false)) {
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					scr->scriptObjRemove(addr);
 				}
-				it->_value.setVarCount(_baseObj->getVarCount());
-				it->_value._baseObj = _baseObj->_baseObj;
-
-				it->_value._baseMethod = (uint16 *)(data + funct_area);
-				it->_value._baseVars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
 			}
 		}
 	}
@@ -912,7 +821,6 @@ static void reconstruct_sounds(EngineState *s) {
 #endif
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
-	EngineState *retval;
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongLibrary temp;
 #endif
@@ -947,84 +855,67 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		thumbnail = 0;
 	}
 
-	// Create a new EngineState object
-	retval = new EngineState(s->_voc, s->_segMan);
-	retval->_event = s->_event;
-
-	// Copy some old data
-	retval->_soundCmd = s->_soundCmd;
-
-	// Copy memory segment
-	retval->_memorySegmentSize = s->_memorySegmentSize;
-	memcpy(retval->_memorySegment, s->_memorySegment, s->_memorySegmentSize);
-
-	retval->saveLoadWithSerializer(ser);	// FIXME: Error handling?
+	s->reset(true);
+	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound.sfx_exit();
 #endif
 
 	// Set exec stack base to zero
-	retval->execution_stack_base = 0;
+	s->execution_stack_base = 0;
 
 	// Now copy all current state information
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
-	retval->sfx_init_flags = s->sfx_init_flags;
-	retval->_sound._songlib.freeSounds();
-	retval->_sound._songlib = temp;
-	retval->_soundCmd->updateSfxState(&retval->_sound);
+	temp = s->_sound._songlib;
+	s->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
+	s->sfx_init_flags = s->sfx_init_flags;
+	s->_sound._songlib.freeSounds();
+	s->_sound._songlib = temp;
+	s->_soundCmd->updateSfxState(&retval->_sound);
 #endif
 
-	reconstruct_stack(retval);
-	retval->_segMan->reconstructScripts(retval);
-	retval->_segMan->reconstructClones();
-	retval->_gameObj = s->_gameObj;
-	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
-	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
-	retval->sys_strings = (SystemStrings *)(retval->_segMan->_heap[retval->sys_strings_segment]);
+	reconstruct_stack(s);
+	s->_segMan->reconstructScripts(s);
+	s->_segMan->reconstructClones();
+	s->_gameObj = s->_gameObj;
+	s->script_000 = s->_segMan->getScript(s->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
+	s->gc_countdown = GC_INTERVAL - 1;
 
 	// Time state:
-	retval->last_wait_time = g_system->getMillis();
-	retval->game_start_time = g_system->getMillis();
+	s->last_wait_time = g_system->getMillis();
+	s->game_start_time = g_system->getMillis();
 
-	// static parser information:
-
-	if (retval->_voc)
-		retval->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
-
-	retval->successor = NULL;
+	s->restoring = false;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	retval->_sound._it = NULL;
-	retval->_sound._flags = s->_sound._flags;
-	retval->_sound._song = NULL;
-	retval->_sound._suspended = s->_sound._suspended;
-	reconstruct_sounds(retval);
+	s->_sound._it = NULL;
+	s->_sound._flags = s->_sound._flags;
+	s->_sound._song = NULL;
+	s->_sound._suspended = s->_sound._suspended;
+	reconstruct_sounds(s);
 #else
-	retval->_soundCmd->reconstructPlayList(meta.savegame_version);
+	s->_soundCmd->reconstructPlayList(meta.savegame_version);
 #endif
 
 	// Message state:
-	retval->_msgState = new MessageState(retval->_segMan);
+	s->_msgState = new MessageState(s->_segMan);
 
 #ifdef ENABLE_SCI32
 	if (g_sci->_gui32) {
 		g_sci->_gui32->init();
 	} else {
 #endif
-		g_sci->_gui->resetEngineState(retval);
+		g_sci->_gui->resetEngineState(s);
 		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}
 #endif
 
 
-	s->successor = retval; // Set successor
-	script_abort_flag = 2; // Abort current game with replay
+	s->restoring = true;
+	s->script_abort_flag = 2; // Abort current game with replay
 	s->shrinkStackToBase();
 }
 

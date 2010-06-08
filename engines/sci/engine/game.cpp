@@ -67,13 +67,7 @@ int script_init_engine(EngineState *s) {
 
 	s->script_000 = s->_segMan->getScript(script_000_segment);
 
-	s->sys_strings = s->_segMan->allocateSysStrings(&s->sys_strings_segment);
-
-	// Allocate static buffer for savegame and CWD directories
-	SystemString *str = &s->sys_strings->_strings[SYS_STRING_SAVEDIR];
-	str->_name = "savedir";
-	str->_maxSize = MAX_SAVE_DIR_SIZE;
-	str->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
+	s->_segMan->initSysStrings();
 
 	s->r_acc = s->r_prev = NULL_REG;
 	s->restAdjust = 0;
@@ -105,31 +99,26 @@ int game_init(EngineState *s) {
 		return 1;
 	}
 
-	if (s->_voc) {
-		s->_voc->parserIsValid = false; // Invalidate parser
-		s->_voc->parser_event = NULL_REG; // Invalidate parser event
-		s->_voc->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
+	// Reset parser
+	Vocabulary *voc = g_sci->getVocabulary();
+	if (voc) {
+		voc->parserIsValid = false; // Invalidate parser
+		voc->parser_event = NULL_REG; // Invalidate parser event
+		voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
 	// Initialize menu TODO: Actually this should be another init()
 	if (g_sci->_gfxMenu)
 		g_sci->_gfxMenu->reset();
 
-	s->successor = NULL; // No successor
-
-	SystemString *str = &s->sys_strings->_strings[SYS_STRING_PARSER_BASE];
-	str->_name = "parser-base";
-	str->_maxSize = MAX_PARSER_BASE;
-	str->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
+	s->restoring = false;
 
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-//	script_dissect(0, s->_selectorNames);
-	// The first entry in the export table of script 0 points to the game object
-	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
+	s->_gameObj = g_sci->getResMan()->findGameObject();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
@@ -145,9 +134,8 @@ int game_init(EngineState *s) {
 }
 
 int game_exit(EngineState *s) {
-	s->_executionStack.clear();
-
-	if (!s->successor) {
+	if (!s->restoring) {
+		s->_executionStack.clear();
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 		s->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state

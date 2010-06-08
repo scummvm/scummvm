@@ -96,7 +96,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 	_vm->_font->setFont(FONT_CONVERSATION);
 
 	// TODO: Conversation styles and colors
-	_vm->_font->setColors(2, 1, 3);
+	_vm->_font->current()->setColours(2, 1, 3);
 
 	_currentNodeIndex = nodeIndex;
 
@@ -124,7 +124,7 @@ void ConversationView::setNode(int32 nodeIndex) {
 			}
 
 			// Figure out the longest string to determine where option highlighting ends
-			int tempX = _vm->_font->getWidth(node->entries[i]->text, 0) +
+			int tempX = _vm->_font->current()->getWidth(node->entries[i]->text, 0) +
 				CONV_ENTRIES_X_OFFSET + 10;
 			_xEnd = MAX(_xEnd, tempX);
 		}
@@ -163,10 +163,10 @@ void ConversationView::onRefresh(RectList *rects, M4Surface *destSurface) {
 			if (i > CONV_MAX_SHOWN_ENTRIES - 1)
 				break;
 
-			_vm->_font->setColor((_highlightedIndex == i) ? CONVERSATION_ENTRY_HIGHLIGHTED :
+			_vm->_font->current()->setColour((_highlightedIndex == i) ? CONVERSATION_ENTRY_HIGHLIGHTED :
 				CONVERSATION_ENTRY_NORMAL);
 
-			_vm->_font->writeString(this, _activeItems[i]->text, CONV_ENTRIES_X_OFFSET,
+			_vm->_font->current()->writeString(this, _activeItems[i]->text, CONV_ENTRIES_X_OFFSET,
 				CONV_ENTRIES_Y_OFFSET + CONV_ENTRIES_HEIGHT * i, 0, 0);
 		}
 	}

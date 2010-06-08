@@ -30,6 +30,7 @@
 
 #include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
+#include "graphics/scaler/aspect.h"
 
 #include "common/util.h"
 #include "common/events.h"

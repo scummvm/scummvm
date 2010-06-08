@@ -38,7 +38,7 @@
 #include <system.h>
 #include <stdlib.h>
 #include <string.h>
-//#include <registers_alt.h>	// not needed in current libnds
+#include <registers_alt.h>		// Needed for SOUND_CR
 #include <NDS/scummvm_ipc.h>
 //////////////////////////////////////////////////////////////////////
 #ifdef USE_DEBUGGER
@@ -590,7 +590,7 @@ int main(int argc, char ** argv) {
   IPC->reset = false;
 
 
- fifoInit();
+ //fifoInit();
 
   for (int r = 0; r < 8; r++) {
 	IPC->adpcm.arm7Buffer[r] = (u8 *) malloc(512);

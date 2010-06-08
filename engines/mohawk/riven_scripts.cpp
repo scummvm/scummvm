@@ -298,13 +298,10 @@ void RivenScript::processCommands(bool runCommands) {
 
 // Command 1: draw tBMP resource (tbmp_id, left, top, right, bottom, u0, u1, u2, u3)
 void RivenScript::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
-	if (argc < 5) {
-		// Copy the image to the whole screen, ignoring the rest of the parameters
+	if (argc < 5) // Copy the image to the whole screen, ignoring the rest of the parameters
 		_vm->_gfx->copyImageToScreen(argv[0], 0, 0, 608, 392);
-	} else {
-		// Copy the image to a certain part of the screen
+	else // Copy the image to a certain part of the screen
 		_vm->_gfx->copyImageToScreen(argv[0], argv[1], argv[2], argv[3], argv[4]);
-	}
 
 	// Now, update the screen
 	_vm->_gfx->updateScreen();
@@ -313,6 +310,12 @@ void RivenScript::drawBitmap(uint16 op, uint16 argc, uint16 *argv) {
 // Command 2: go to card (card id)
 void RivenScript::switchCard(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->changeToCard(argv[0]);
+
+	// WORKAROUND: If we changed card on a mouse down event,
+	// we want to ignore the next mouse up event so we don't
+	// change card when lifting the mouse on the next card.
+	if (_scriptType == kMouseDownScript)
+		_vm->ignoreNextMouseUp();
 }
 
 // Command 3: play an SLST from the script
@@ -547,9 +550,8 @@ void RivenScript::activateSLST(uint16 op, uint16 argc, uint16 *argv) {
 
 // Command 41: activate MLST record and play
 void RivenScript::activateMLSTAndPlay(uint16 op, uint16 argc, uint16 *argv) {
-	_vm->_video->enableMovie(argv[0] - 1);
 	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
-	// TODO: Play movie (blocking?)
+	_vm->_video->playMovie(argv[0]);
 }
 
 // Command 43: activate BLST record (card hotspot enabling lists)

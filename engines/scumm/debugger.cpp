@@ -870,7 +870,7 @@ bool ScummDebugger::Cmd_Passcode(int argc, const char **argv) {
 		_detach_now = true;
 
 	} else {
-		DebugPrintf("Use 'passcode <SEGA CD Passcode>'\n");
+		DebugPrintf("Current Passcode is %d \nUse 'passcode <SEGA CD Passcode>'\n",_vm->_scummVars[411]);
 		return true;
 	}
 	return false;

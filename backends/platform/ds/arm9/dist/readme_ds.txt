@@ -41,6 +41,10 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.1.1
+
+ * Bugfix release: no new features
+
 ScummVM DS 1.1.0
 
  * New games are supported in this stable build: Return to Zork, Rodney's
@@ -319,7 +323,7 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-1.1.0. Demo versions of the games listed should work too.
+1.1.1. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
 Temptress have generously been released as freeware by the original

@@ -44,7 +44,9 @@ bundle: scummvm-static
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
+ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
+endif
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp scummvm-static $(bundle_name)/Contents/MacOS/scummvm
@@ -56,7 +58,9 @@ iphonebundle: iphone
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
 	cp $(DIST_FILES_THEMES) $(bundle_name)/
+ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+endif
 	$(STRIP) scummvm
 	ldid -S scummvm
 	chmod 755 scummvm
@@ -151,7 +155,9 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
+endif
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(WIN32PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING.LGPL.txt
@@ -172,7 +178,9 @@ aos4dist: $(EXECUTABLE)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)
 	cp icons/scummvm.info $(AOS4PATH)/$(EXECUTABLE).info
 	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
+ifdef DIST_FILES_ENGINEDATA
 	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+endif
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING $(AOS4PATH)/COPYING.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt

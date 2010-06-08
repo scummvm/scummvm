@@ -59,8 +59,8 @@ void MadsSceneLogic::getSceneSpriteSet() {
 //	if ((_sceneNumber == 105) ((_sceneNumber == 109) && (word_84800 != 0)))
 //		_madsVm->globals()->playerSpriteChanged = true;
 
-//	_vm->_palette->setEntry(16, 0x38, 0xFF, 0xFF);
-//	_vm->_palette->setEntry(17, 0x38, 0xb4, 0xb4);
+	_vm->_palette->setEntry(16, 0x38, 0xFF, 0xFF);
+	_vm->_palette->setEntry(17, 0x38, 0xb4, 0xb4);
 }
 
 void MadsSceneLogic::getAnimName() {
@@ -83,7 +83,7 @@ uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
+		true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
 uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
@@ -92,7 +92,7 @@ uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, in
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
+		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
@@ -101,7 +101,7 @@ uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int num
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
 	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
-		-1, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
+		true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
 }
 
 void MadsSceneLogic::activateHotspot(int idx, bool active) {
@@ -146,6 +146,7 @@ void MadsSceneLogic::lowRoomsEntrySound() {
 	}
 }
 
+
 /*--------------------------------------------------------------------------*/
 
 /**
@@ -169,7 +170,9 @@ void MadsSceneLogic::setupScene() {
 
 //	sub_1e754(animName, 3);
 
-	getSceneSpriteSet();
+	if ((_sceneNumber >= 101) && (_sceneNumber <= 112))
+		getSceneSpriteSet();
+
 	getAnimName();
 }
 
@@ -231,7 +234,8 @@ void MadsSceneLogic::enterScene() {
 	_madsVm->globals()->loadQuoteSet(0x31, 0x32, 0x37, 0x38, 0x39, -1);
 
 	if (_madsVm->globals()->_globals[10]) {
-		// TODO: Load scene animation
+		const char *animName = MADSResourceManager::getResourceName('S', 'e', EXTTYPE_AA, NULL, -1);
+		_madsVm->scene()->loadAnimation(animName, 0x47);
 
 		_madsVm->scene()->getSceneResources().playerPos = Common::Point(68, 140);
 		_madsVm->scene()->getSceneResources().playerDir = 4;

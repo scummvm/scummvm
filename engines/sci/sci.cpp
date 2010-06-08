@@ -56,8 +56,6 @@
 
 namespace Sci {
 
-extern int g_loadFromLauncher;
-
 SciEngine *g_sci = 0;
 
 
@@ -190,7 +188,7 @@ Common::Error SciEngine::run() {
 
 	_features = new GameFeatures(segMan, _kernel);
 
-	_gamestate = new EngineState(_vocabulary, segMan);
+	_gamestate = new EngineState(segMan);
 
 	_gamestate->_event = new SciEvent(_resMan);
 
@@ -233,11 +231,6 @@ Common::Error SciEngine::run() {
 	script_adjust_opcode_formats(_gamestate);
 	_kernel->loadKernelNames(getGameID());
 
-	// Set the savegame dir (actually, we set it to a fake value,
-	// since we cannot let the game control where saves are stored)
-	assert(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value != 0);
-	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "");
-
 	SciVersion soundVersion = _features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
@@ -264,9 +257,9 @@ Common::Error SciEngine::run() {
 
 	// Check whether loading a savestate was requested
 	if (ConfMan.hasKey("save_slot")) {
-		g_loadFromLauncher = ConfMan.getInt("save_slot");
+		_gamestate->loadFromLauncher = ConfMan.getInt("save_slot");
 	} else {
-		g_loadFromLauncher = -1;
+		_gamestate->loadFromLauncher = -1;
 	}
 
 	game_run(&_gamestate); // Run the game

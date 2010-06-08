@@ -69,15 +69,20 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 	headerSize = READ_LE_UINT16(_resource->data);
 	switch (headerSize) {
 	case 0x26: // SCI 1.1 VGA picture
+		_resourceType = SCI_PICTURE_TYPE_SCI11;
+		if (_addToFlag)
+			_priority = 15;
 		drawSci11Vga();
 		break;
 #ifdef ENABLE_SCI32
 	case 0x0e: // SCI32 VGA picture
+		_resourceType = SCI_PICTURE_TYPE_SCI32;
 		drawSci32Vga();
 		break;
 #endif
 	default:
 		// VGA, EGA or Amiga vector data
+		_resourceType = SCI_PICTURE_TYPE_REGULAR;
 		drawVectorData(_resource->data, _resource->size);
 	}
 }
@@ -108,9 +113,8 @@ void GfxPicture::drawSci11Vga() {
 	_palette->set(&palette, true);
 
 	// display Cel-data
-	if (has_cel) {
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, false);
-	}
+	if (has_cel)
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0);
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
@@ -139,6 +143,7 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 	// HACK
 	_mirroredFlag = false;
 	_addToFlag = false;
+	_resourceType = SCI_PICTURE_TYPE_SCI32;
 
 	if ((celNo == -1) || (celNo == 0)) {
 		// Create palette and set it
@@ -155,14 +160,14 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 		cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
 		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos, true);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos);
 		cel_headerPos += 42;
 		celCount--;
 	}
 }
 #endif
 
-void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY, bool hasSci32Header) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -179,11 +184,16 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	int pixelNr, pixelCount;
 
 #ifdef ENABLE_SCI32
-	if (!hasSci32Header) {
+	if (_resourceType != SCI_PICTURE_TYPE_SCI32) {
 #endif
 		displaceX = (signed char)headerPtr[4];
 		displaceY = (unsigned char)headerPtr[5];
-		clearColor = headerPtr[6];
+		if (_resourceType == SCI_PICTURE_TYPE_SCI11) {
+			// SCI1.1 uses hardcoded clearcolor for pictures, even if cel header specifies otherwise
+			clearColor = _screen->getColorWhite();
+		} else {
+			clearColor = headerPtr[6];
+		}
 #ifdef ENABLE_SCI32
 	} else {
 		displaceX = READ_LE_UINT16(headerPtr + 4); // probably signed?!?
@@ -518,10 +528,29 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			}
 			break;
 
+		// Pattern opcodes are handled in sierra sci1.1+ as actual NOPs and normally they definitely should not occur
+		//  inside picture data for such games
 		case PIC_OP_SET_PATTERN:
+			if (_resourceType >= SCI_PICTURE_TYPE_SCI11) {
+				if (strcmp(g_sci->getGameID(), "sq4") == 0) {
+					// WORKAROUND: For SQ4 / for some pictures handle this like a terminator
+					//  This picture includes garbage data, first a set pattern w/o parameter and then short pattern
+					//  I guess that garbage is a left over from the sq4-floppy (sci1) to sq4-cd (sci1.1) conversion
+					switch (_resourceId) {
+					case 381:
+					case 376:
+						return;
+					default:
+						break;
+					}
+				}
+				error("pic-operation set pattern inside sci1.1+ vector data");
+			}
 			pattern_Code = data[curPos++];
 			break;
 		case PIC_OP_SHORT_PATTERNS:
+			if (_resourceType >= SCI_PICTURE_TYPE_SCI11)
+				error("pic-operation short pattern inside sci1.1+ vector data");
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
 			vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
@@ -532,6 +561,8 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			}
 			break;
 		case PIC_OP_MEDIUM_PATTERNS:
+			if (_resourceType >= SCI_PICTURE_TYPE_SCI11)
+				error("pic-operation medium pattern inside sci1.1+ vector data");
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
 			vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
@@ -542,6 +573,8 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			}
 			break;
 		case PIC_OP_ABSOLUTE_PATTERN:
+			if (_resourceType >= SCI_PICTURE_TYPE_SCI11)
+				error("pic-operation absolute pattern inside sci1.1+ vector data");
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetAbsCoords(data, curPos, x, y);
@@ -585,7 +618,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -627,7 +660,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					if (pic_priority == 255)
 						_priority = 0; // if priority not set, use priority 0
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, false);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
