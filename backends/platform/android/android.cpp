@@ -78,8 +78,8 @@
 // actually prints the assertion failure before aborting.
 extern "C"
 void __assert(const char *file, int line, const char *expr) {
-  __android_log_assert(expr, LOG_TAG, "%s:%d: Assertion failure: %s",
-		       file, line, expr);
+	__android_log_assert(expr, LOG_TAG, "%s:%d: Assertion failure: %s",
+						 file, line, expr);
 }
 
 static JavaVM *cached_jvm;
