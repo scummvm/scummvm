@@ -50,7 +50,7 @@ public:
 
 	void init(GfxAnimate *animate, GfxText16 *text16);
 
-	void setEGAdrawingVisualize(bool state);
+	void debugSetEGAdrawingVisualize(bool state);
 
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);

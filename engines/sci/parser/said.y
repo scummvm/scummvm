@@ -799,13 +799,14 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 
 int said(EngineState *s, byte *spec, bool verbose) {
 	int retval;
+	Vocabulary *voc = g_sci->getVocabulary();
 
-	parse_tree_node_t *parse_tree_ptr = s->_voc->_parserNodes;
+	parse_tree_node_t *parse_tree_ptr = voc->_parserNodes;
 
-	if (s->_voc->parserIsValid) {
+	if (voc->parserIsValid) {
 		if (said_parse_spec(spec)) {
 			printf("Offending spec was: ");
-			s->_voc->decipherSaidBlock(spec);
+			voc->decipherSaidBlock(spec);
 			return SAID_NO_MATCH;
 		}
 

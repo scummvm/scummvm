@@ -42,6 +42,19 @@ namespace M4 {
 class View;
 class ViewManager;
 
+enum SceneTransition {
+	kTransitionNone = 0,
+	kTransitionFadeIn = 1,
+	kTransitionFadeIn2 = 2,
+	kTransitionBoxInBottomLeft = 3,
+	kTransitionBoxInBottomRight = 4,
+	kTransitionBoxInTopLeft = 5,
+	kTransitionBoxInTopRight = 6,
+	kTransitionPanLeftToRight = 7,
+	kTransitionPanRightToLeft = 8,
+	kTransitionCircleIn = 9
+};
+
 enum {SCREEN_DIALOG, SCREEN_BUFFER, SCREEN_TEXT, SCREEN_TRANSPARENT};
 enum ScreenEventType {SCREVENT_NONE = 0, SCREVENT_KEY = 1, SCREVENT_MOUSE = 2, SCREVENT_ALL = 3};
 enum ScreenLayers {

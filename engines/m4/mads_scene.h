@@ -33,27 +33,24 @@
 namespace M4 {
 
 #define INTERFACE_HEIGHT 106
-
+class MadsInterfaceView;
 
 class MadsSceneResources: public SceneResources {
 public:
 	int sceneId;
 	int artFileNum;
-	int field_4;
+	int drawStyle;
 	int width;
 	int height;
-
-	int objectCount;
-	MadsObject objects[32];
+	Common::Array<MadsObject> objects;
+	Common::Array<Common::String> setNames;
 	
-	int walkSize;
-	byte *walkData;
 	Common::Point playerPos;
 	int playerDir;
 
-	MadsSceneResources() { walkSize = 0; walkData = NULL; playerDir = 0; }
-	~MadsSceneResources() { delete walkData; }
-	void load(int sceneId);	
+	MadsSceneResources() { playerDir = 0; }
+	~MadsSceneResources() {}
+	void load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface);
 };
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
@@ -96,6 +93,7 @@ private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
 	MadsAction _action;
+	Animation *_activeAnimation;
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
@@ -130,11 +128,62 @@ public:
 	int loadSceneSpriteSet(const char *setName);
 	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
+	void loadAnimation(const Common::String &animName, int v0);
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
 	MadsAction &getAction() { return _action; }
 	void setStatusText(const char *text) {}//***DEPRECATED***
+};
+
+#define CHEAT_SEQUENCE_MAX 8
+
+class IntegerList : public Common::Array<int> {
+public:
+	int indexOf(int v) {
+		for (uint i = 0; i < size(); ++i)
+			if (operator [](i) == v)
+				return i;
+		return -1;
+	}
+};
+
+enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
+
+enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
+		INVLIST_START = 13, VOCAB_START = 18};
+
+class MadsInterfaceView : public GameInterfaceView {
+private:
+	IntegerList _inventoryList;
+	RectList _screenObjects;
+	int _highlightedElement;
+	int _topIndex;
+	uint32 _nextScrollerTicks;
+	int _cheatKeyCtr;
+
+	// Object display fields
+	int _selectedObject;
+	SpriteAsset *_objectSprites;
+	RGBList *_objectPalData;
+	int _objectFrameNumber;
+
+	void setFontMode(InterfaceFontMode newMode);
+	bool handleCheatKey(int32 keycode);
+	bool handleKeypress(int32 keycode);
+	void leaveScene();
+public:
+	MadsInterfaceView(MadsM4Engine *vm);
+	~MadsInterfaceView();
+
+	virtual void initialise();
+	virtual void setSelectedObject(int objectNumber);
+	virtual void addObjectToInventory(int objectNumber);
+	int getSelectedObject() { return _selectedObject; }
+	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
+
+	void onRefresh(RectList *rects, M4Surface *destSurface);
+	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 } // End of namespace M4

@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	detection.o \
 	event.o \
 	resource.o \
+	resource_audio.o \
 	sci.o \
 	util.o \
 	engine/features.o \
@@ -44,6 +45,7 @@ MODULE_OBJS := \
 	graphics/font.o \
 	graphics/fontsjis.o \
 	graphics/gui.o \
+	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint.o \
 	graphics/paint16.o \

@@ -378,7 +378,7 @@ void GfxMenu::calculateMenuAndItemWidth() {
 }
 
 reg_t GfxMenu::kernelSelect(reg_t eventObject) {
-	int16 eventType = GET_SEL32V(_segMan, eventObject, SELECTOR(type));
+	int16 eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
 	GuiMenuItemList::iterator itemIterator = _itemList.begin();
@@ -390,8 +390,8 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
-		keyPress = GET_SEL32V(_segMan, eventObject, SELECTOR(message));
-		keyModifier = GET_SEL32V(_segMan, eventObject, SELECTOR(modifiers));
+		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
+		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
 		// If tab got pressed, handle it here as if it was Ctrl-I - at least sci0 also did it that way
 		if (keyPress == SCI_KEY_TAB) {
 			keyModifier = SCI_KEYMOD_CTRL;
@@ -465,7 +465,7 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		_ports->setPort(_oldPort);
 
 	if ((itemEntry) || (forceClaimed))
-		PUT_SEL32(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
+		writeSelector(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
 	if (itemEntry)
 		return make_reg(0, (itemEntry->menuId << 8) | (itemEntry->id));
 	return NULL_REG;

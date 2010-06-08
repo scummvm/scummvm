@@ -33,7 +33,7 @@
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"
 #include "mohawk/dialogs.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 namespace Mohawk {
 
@@ -47,6 +47,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_cardData.hasData = false;
 	_gameOver = false;
 	_activatedSLST = false;
+	_ignoreNextMouseUp = false;
 	_extrasFile = NULL;
 
 	// Attempt to let game run from the CDs
@@ -147,10 +148,15 @@ Common::Error MohawkEngine_Riven::run() {
 					runHotspotScript(_curHotspot, kMouseDownScript);
 				break;
 			case Common::EVENT_LBUTTONUP:
-				if (_curHotspot >= 0)
-					runHotspotScript(_curHotspot, kMouseUpScript);
-				else
-					checkInventoryClick();
+				// See RivenScript::switchCard() for more information on why we sometimes
+				// disable the next up event.
+				if (!_ignoreNextMouseUp) {
+					if (_curHotspot >= 0)
+						runHotspotScript(_curHotspot, kMouseUpScript);
+					else
+						checkInventoryClick();
+				}
+				_ignoreNextMouseUp = false;
 				break;
 			case Common::EVENT_KEYDOWN:
 				switch (event.kbd.keycode) {
@@ -233,6 +239,7 @@ void MohawkEngine_Riven::changeToStack(uint16 n) {
 
 	// Stop any videos playing
 	_video->stopVideos();
+	_video->clearMLST();
 
 	// Clear the old stack files out
 	for (uint32 i = 0; i < _mhk.size(); i++)
@@ -310,7 +317,6 @@ void MohawkEngine_Riven::refreshCard() {
 	_gfx->clearWaterEffects();
 	_gfx->_activatedPLSTs.clear();
 	_video->stopVideos();
-	_video->_mlstRecords.clear();
 	_gfx->drawPLST(1);
 	_activatedSLST = false;
 

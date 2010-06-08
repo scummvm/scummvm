@@ -129,7 +129,8 @@ SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
 SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
 PSPLIBS =  -lpspprof -lpspvfpu -lpspdebug -lpspgu -lpspge -lpspdisplay -lpspctrl -lpspsdk \
-	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspkernel
+	-lpsputility -lpspuser -lpsppower -lpsphprm -lpspsdk -lpsprtc -lpspaudio -lpspaudiocodec \
+	-lpspkernel
 
 # Add in PSPSDK includes and libraries.
 CXXFLAGS += $(SDLFLAGS)
@@ -148,7 +149,9 @@ OBJS := powerman.o \
 	trace.o \
 	psploader.o \
 	pspkeyboard.o \
-	audio.o
+	audio.o \
+	thread.o \
+	mp3.o
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common

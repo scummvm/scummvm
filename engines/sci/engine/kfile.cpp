@@ -44,6 +44,8 @@ struct SavegameDesc {
 	int id;
 	int date;
 	int time;
+	int version;
+	char name[SCI_MAX_SAVENAME_LENGTH];
 };
 
 /*
@@ -245,13 +247,10 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
 }
 
-static int _savegame_index_struct_compare(const void *a, const void *b) {
-	const SavegameDesc *A = (const SavegameDesc *)a;
-	const SavegameDesc *B = (const SavegameDesc *)b;
-
-	if (B->date != A->date)
-		return B->date - A->date;
-	return B->time - A->time;
+static bool _savegame_index_struct_compare(const SavegameDesc &l, const SavegameDesc &r) {
+	if (l.date != r.date)
+		return (l.date > r.date);
+	return (l.time > r.time);
 }
 
 void listSavegames(Common::Array<SavegameDesc> &saves) {
@@ -265,7 +264,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 		Common::SeekableReadStream *in;
 		if ((in = saveFileMan->openForLoading(filename))) {
 			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
+			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
 				// invalid
 				delete in;
 				continue;
@@ -278,6 +277,13 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.savegame_time;
+			desc.version = meta.savegame_version;
+
+			if (meta.savegame_name.lastChar() == '\n')
+				meta.savegame_name.deleteLastChar();
+
+			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+
 			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
 
 			saves.push_back(desc);
@@ -285,35 +291,18 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	}
 
 	// Sort the list by creation date of the saves
-	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
+	Common::sort(saves.begin(), saves.end(), _savegame_index_struct_compare);
 }
 
 bool Console::cmdListSaves(int argc, const char **argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
 	for (uint i = 0; i < saves.size(); i++) {
 		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
-				// invalid
-				delete in;
-				continue;
-			}
-
-			if (!meta.savegame_name.empty()) {
-				if (meta.savegame_name.lastChar() == '\n')
-					meta.savegame_name.deleteLastChar();
-
-				DebugPrintf("%s: '%s'\n", filename.c_str(), meta.savegame_name.c_str());
-			}
-			delete in;
-		}
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
 	}
+
 	return true;
 }
 
@@ -428,7 +417,7 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 		warning("kGetSaveDir called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[0]));
 #endif
 
-	return make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
+	return make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_SAVEDIR);
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
@@ -449,90 +438,59 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	int savedir_nr = argv[1].toUint16();
+	uint16 savedir_nr = argv[1].toUint16();
 
 	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), savedir_nr);
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	savedir_nr = saves[savedir_nr].id;
-
-	if (savedir_nr > MAX_SAVEGAME_NR - 1) {
+	// Check for savegame slot being out of range
+	if (savedir_nr >= saves.size())
 		return NULL_REG;
-	}
 
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::String filename = g_sci->getSavegameName(savedir_nr);
-	Common::SeekableReadStream *in;
-	if ((in = saveFileMan->openForLoading(filename))) {
-		// found a savegame file
+	// Check for compatible savegame version
+	int ver = saves[savedir_nr].version;
+	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
+		return NULL_REG;
 
-		SavegameMetadata meta;
-		if (!get_savegame_metadata(in, &meta)) {
-			// invalid
-			s->r_acc = make_reg(0, 0);
-		} else {
-			s->r_acc = make_reg(0, 1);
-		}
-		delete in;
-	} else {
-		s->r_acc = make_reg(0, 1);
-	}
-
-	return s->r_acc;
+	// Otherwise we assume the savegame is OK
+	return make_reg(0, 1);
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	reg_t nametarget = argv[1];
-	reg_t *nameoffsets = s->_segMan->derefRegPtr(argv[2], 0);
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	s->r_acc = NULL_REG;
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
 
-	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			// found a savegame file
+	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
 
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta)) {
-				// invalid
-				delete in;
-				continue;
-			}
-
-			if (!meta.savegame_name.empty()) {
-				if (meta.savegame_name.lastChar() == '\n')
-					meta.savegame_name.deleteLastChar();
-
-				*nameoffsets = s->r_acc; // Store savegame ID
-				++s->r_acc.offset; // Increase number of files found
-
-				nameoffsets++; // Make sure the next ID string address is written to the next pointer
-				Common::String name = meta.savegame_name;
-				if (name.size() > SCI_MAX_SAVENAME_LENGTH-1)
-					name = Common::String(meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH-1);
-				s->_segMan->strcpy(nametarget, name.c_str());
-
-				// Increase name offset pointer accordingly
-				nametarget.offset += SCI_MAX_SAVENAME_LENGTH;
-			}
-			delete in;
-		}
+	if (!slot) {
+		warning("kGetSaveFiles: %04X:%04X invalid or too small to hold slot data", PRINT_REG(argv[2]));
+		totalSaves = 0;
 	}
 
-	//free(gfname);
-	s->_segMan->strcpy(nametarget, ""); // Terminate list
+	const uint bufSize = (totalSaves * SCI_MAX_SAVENAME_LENGTH) + 1;
+	char *saveNames = new char[bufSize];
+	char *saveNamePtr = saveNames;
 
-	return s->r_acc;
+	for (uint i = 0; i < totalSaves; i++) {
+		*slot++ = make_reg(0, i); // Store slot
+		strcpy(saveNamePtr, saves[i].name);
+		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
+	}
+
+	*saveNamePtr = 0; // Terminate list
+
+	s->_segMan->memcpy(argv[1], (byte *)saveNames, bufSize);
+	delete[] saveNames;
+
+	return make_reg(0, totalSaves);
 }
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {

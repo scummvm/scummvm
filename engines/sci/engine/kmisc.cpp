@@ -32,16 +32,16 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
 #include "sci/graphics/gui.h"
+#include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
 reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 
-	shrink_execution_stack(s, s->execution_stack_base + 1);
+	s->shrinkStackToBase();
 
-	script_abort_flag = 1; // Force vm to abort ASAP
+	s->script_abort_flag = 1; // Force vm to abort ASAP
 	return NULL_REG;
 }
 
@@ -62,9 +62,9 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
 	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
 	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
-	if (s->_gameId == "lsl3" && s->currentRoomNumber() == 290)
+	if (!strcmp(g_sci->getGameID(), "lsl3") && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
-	if (s->_gameId == "iceman" && s->currentRoomNumber() == 27) {
+	if (!strcmp(g_sci->getGameID(), "iceman") && s->currentRoomNumber() == 27) {
 		s->_throttleTrigger = true;
 		neededSleep = 60;
 	}
@@ -252,10 +252,15 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
+		if (!argv[1].segment) {
+			// This occurs in KQ5CD when interacting with certain objects
+			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			return s->r_acc;
+		}
+
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
@@ -298,9 +303,12 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 reg_t kIconBar(EngineState *s, int argc, reg_t *argv) {
 	// TODO...
 
-	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0)
+	if (argv[0].toUint16() == 4 && argv[1].toUint16() == 0) {
 		for (int i = 0; i < argv[2].toUint16(); i++)
-			warning("kIconBar: Icon Object %d = %04x:%04x", i, PRINT_REG(argv[i + 3]));
+			g_sci->_gfxMacIconBar->addIcon(argv[i + 3]);
+
+		g_sci->_gfxMacIconBar->drawIcons();		
+	}
 
 	// Other calls seem to handle selecting/deselecting them
 

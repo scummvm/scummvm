@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	iff.o \
 	imagedec.o \
 	jpeg.o \
+	pict.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \
@@ -25,10 +26,17 @@ MODULE_OBJS := \
 	video/dxa_decoder.o \
 	video/flic_decoder.o \
 	video/mpeg_player.o \
+	video/qt_decoder.o \
 	video/smk_decoder.o \
 	video/video_decoder.o \
+	video/codecs/cinepak.o \
+	video/codecs/mjpeg.o \
 	video/codecs/msrle.o \
 	video/codecs/msvideo1.o \
+	video/codecs/qdm2.o \
+	video/codecs/qtrle.o \
+	video/codecs/rpza.o \
+	video/codecs/smc.o \
 	video/coktelvideo/indeo3.o \
 	video/coktelvideo/coktelvideo.o
 

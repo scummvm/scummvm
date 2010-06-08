@@ -3,19 +3,20 @@
 
 namespace Testbed {
 
+byte GFXTestSuite::_palette[3 * 4] = {0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0};
+
 GFXTestSuite::GFXTestSuite() {
 	// Initialize color palettes
 	// Te fourth field is for alpha channel which is unused
 	// Assuming 8bpp as of now
-	_palette[0] =_palette[1] =_palette[2] = 0;
-	_palette[4] =_palette[5] =_palette[6] = 255;
-	_palette[8] =_palette[9] =_palette[10] = 255;
 	g_system->setPalette(_palette, 0, 3);
 	g_system->grabPalette(_palette, 0, 3);
 	
 	// Add tests here
-	addTest("FullScreenMode", &testFullScreenMode);
-	addTest("AspectRatio", &testAspectRatio);
+//	addTest("FullScreenMode", &testFullScreenMode);
+//	addTest("AspectRatio", &testAspectRatio);
+	addTest("PalettizedCursors", &testPalettizedCursors);
+//	addTest("BlitBitmaps", &testCopyRectToScreen);
 }
 
 const char *GFXTestSuite::getName() {

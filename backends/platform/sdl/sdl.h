@@ -291,10 +291,6 @@ protected:
 	uint32 _cdEndTime, _cdStopTime;
 
 	enum {
-		DF_WANT_RECT_OPTIM			= 1 << 0
-	};
-
-	enum {
 		kTransactionNone = 0,
 		kTransactionActive = 1,
 		kTransactionRollback = 2
@@ -342,7 +338,6 @@ protected:
 	Graphics::Surface _framebuffer;
 
 	/** Current video mode flags (see DF_* constants) */
-	uint32 _modeFlags;
 	bool _modeChanged;
 	int _screenChangeCount;
 
@@ -354,9 +349,6 @@ protected:
 	// Dirty rect management
 	SDL_Rect _dirtyRectList[NUM_DIRTY_RECT];
 	int _numDirtyRects;
-	uint32 *_dirtyChecksums;
-	bool _cksumValid;
-	int _cksumNum;
 
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
@@ -422,11 +414,11 @@ protected:
 	int _newShakePos;
 
 	// Palette data
-	SDL_Color *_currentPalette;
+	SDL_Color _currentPalette[256];
 	uint _paletteDirtyStart, _paletteDirtyEnd;
 
 	// Cursor palette data
-	SDL_Color *_cursorPalette;
+	SDL_Color _cursorPalette[256];
 
 	/**
 	 * Mutex which prevents multiple threads from interfering with each other
@@ -459,9 +451,6 @@ protected:
 	Common::TimerManager *_timer;
 
 protected:
-	void addDirtyRgnAuto(const byte *buf);
-	void makeChecksums(const byte *buf);
-
 	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false); // overloaded by CE backend
 
 	virtual void drawMouse(); // overloaded by CE backend

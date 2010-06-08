@@ -35,25 +35,39 @@
  */
 class PSPIoStream : public StdioStream, public Suspendable {
 protected:
-	Common::String _path;			/* Need to maintain for reopening after suspend */
-	bool _writeMode;				/* "" */
-	int _pos;						/* "" */
-	mutable int _ferror;			/* Save file ferror */
-	mutable bool _feof;						/* and eof */
-
+	Common::String _path;
+	int _fileSize;
+	bool _writeMode;	// for resuming in the right mode
+	int _physicalPos;	// position in the real file
+	int _pos;			// position. Sometimes virtual
+	bool _inCache;		// whether we're in cache (virtual) mode
+	bool _eos;			// EOS flag
+	
 	enum {
 		SuspendError = 2,
 		ResumeError = 3
 	};
 
-	int _errorSuspend;
+	enum {
+		CACHE_SIZE = 1024,
+		MIN_READ_SIZE = 1024	// reading less than 1024 takes exactly the same time as 1024
+	};
+	
+	// For caching
+	char *_cache;
+	int _cacheStartOffset;		// starting offset of the cache. -1 when cache is invalid
+	
+	mutable int _ferror;		// file error state
+	int _errorSuspend;			// for debugging
 	mutable int _errorSource;
-
-	// Error checking
 	int _errorPos;
 	void * _errorHandle;
 	int _suspendCount;
 
+	bool synchronizePhysicalPos();		// synchronize the physical and virtual positions
+	bool isOffsetInCache(uint32 pos);	// check if an offset is found in cache
+	bool isCacheValid() { return _cacheStartOffset != -1; }
+	
 public:
 
 	/**

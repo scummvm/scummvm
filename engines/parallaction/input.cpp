@@ -329,7 +329,7 @@ bool Input::translateGameInput() {
 		bool noWalk = z->_flags & kFlagsNoWalk;	// check the explicit no-walk flag
 		if (_gameType == GType_BRA) {
 			// action performed on object marked for self-use do not need walk in BRA
-			noWalk |= z->_flags & kFlagsYourself;
+			noWalk |= ((z->_flags & kFlagsYourself) != 0);
 		}
 
 		if (noWalk) {

@@ -341,6 +341,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Myst Masterpiece Edition
+	// French Windows
+	// From gamin (Included in "Myst: La Trilogie")
+	{
+		{
+			"myst",
+			"Masterpiece Edition",
+			AD_ENTRY1("MYST.DAT", "aea81633b2d2ae498f09072fb87263b6"),
+			Common::FR_FRA,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_MYST,
+		GF_ME,
+		0,
+	},
+
 	// Riven: The Sequel to Myst
 	// Version 1.0 (5CD)
 	// From clone2727
@@ -422,6 +440,24 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY1("a_Data.MHK", "a5fe1c91a6033eb6ee54b287578b74b9"),
 			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_RIVEN,
+		GF_DVD,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
+	// Version ? (DVD, From "Myst: La Trilogie")
+	// From gamin
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1("a_Data.MHK", "aff2a384aaa9a0e0ec51010f708c5c04"),
+			Common::FR_FRA,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
 			Common::GUIO_NONE

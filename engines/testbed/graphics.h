@@ -19,7 +19,7 @@ public:
 	~GFXTestSuite(){}
 	void execute();
 	const char *getName();
-	void setCustomColor(uint r, uint g, uint b);
+	static void setCustomColor(uint r, uint g, uint b);
 
 private:
 	/**
@@ -29,7 +29,7 @@ private:
 	 * 1 (R:255, G:255, B:255) White (kColorWhite)
 	 * 2 (R:255, G:255, B:255) your customized color (by default white) (kColorCustom)
 	 */
-	byte _palette[3 * 4];
+	static byte _palette[3 * 4];
 };
 
 }	// End of namespace Testbed

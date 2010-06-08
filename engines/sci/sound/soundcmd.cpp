@@ -50,9 +50,9 @@ namespace Sci {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void script_set_priority(ResourceManager *resMan, SegManager *segMan, SfxState *state, reg_t obj, int priority) {
-	int song_nr = GET_SEL32V(segMan, obj, SELECTOR(number));
+	int song_nr = readSelectorValue(segMan, obj, SELECTOR(number));
 	Resource *song = resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
-	int flags = GET_SEL32V(segMan, obj, SELECTOR(flags));
+	int flags = readSelectorValue(segMan, obj, SELECTOR(flags));
 
 	if (priority == -1) {
 		if (song->data[0] == 0xf0)
@@ -64,7 +64,7 @@ static void script_set_priority(ResourceManager *resMan, SegManager *segMan, Sfx
 	} else flags |= SCI1_SOUND_FLAG_SCRIPTED_PRI;
 
 	state->sfx_song_renice(FROBNICATE_HANDLE(obj), priority);
-	PUT_SEL32V(segMan, obj, SELECTOR(flags), flags);
+	writeSelectorValue(segMan, obj, SELECTOR(flags), flags);
 }
 
 SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id) {
@@ -98,27 +98,27 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_LOOP:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)",
 			          PRINT_REG(obj), cue);
-			/*			PUT_SEL32V(segMan, obj, SELECTOR(loops), GET_SEL32V(segMan, obj, SELECTOR(loop));; - 1);*/
-			PUT_SEL32V(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			/*			writeSelectorValue(segMan, obj, SELECTOR(loops), readSelectorValue(segMan, obj, SELECTOR(loop));; - 1);*/
+			writeSelectorValue(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 			break;
 
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d",
 			          PRINT_REG(obj), cue);
-			PUT_SEL32V(segMan, obj, SELECTOR(signal), cue + 0x7f);
+			writeSelectorValue(segMan, obj, SELECTOR(signal), cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d",
 			          PRINT_REG(obj), cue);
-			PUT_SEL32V(segMan, obj, SELECTOR(signal), cue);
+			writeSelectorValue(segMan, obj, SELECTOR(signal), cue);
 			break;
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished",
 			          PRINT_REG(obj));
-			PUT_SEL32V(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-			PUT_SEL32V(segMan, obj, SELECTOR(state), kSoundStopped);
+			writeSelectorValue(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			writeSelectorValue(segMan, obj, SELECTOR(state), kSoundStopped);
 			break;
 
 		default:
@@ -253,7 +253,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	if (!obj.segment)
 		return;
 
-	int resourceId = GET_SEL32V(_segMan, obj, SELECTOR(number));
+	int resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 
@@ -267,7 +267,7 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	SongIteratorType type = (_soundVersion <= SCI_VERSION_0_LATE) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr))) {
+		if (readSelectorValue(_segMan, obj, SELECTOR(nodePtr))) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
 		}
@@ -281,11 +281,11 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 
 	// Notify the engine
 	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundInitialized);
+		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
 	else
-		PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), obj);
+		writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
 
-	PUT_SEL32(_segMan, obj, SELECTOR(handle), obj);
+	writeSelector(_segMan, obj, SELECTOR(handle), obj);
 
 #else
 
@@ -302,10 +302,10 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 		newSound->soundRes = 0;
 
 	newSound->soundObj = obj;
-	newSound->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	newSound->priority = GET_SEL32V(_segMan, obj, SELECTOR(pri)) & 0xFF;
-	if (_soundVersion >= SCI_VERSION_1_LATE)
-		newSound->volume = CLIP<int>(GET_SEL32V(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
+	newSound->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
+		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -327,11 +327,11 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	if (newSound->soundRes || newSound->pStreamAud) {
 		// Notify the engine
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundInitialized);
+			writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
 		else
-			PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), obj);
+			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
 
-		PUT_SEL32(_segMan, obj, SELECTOR(handle), obj);
+		writeSelector(_segMan, obj, SELECTOR(handle), obj);
 	}
 #endif
 
@@ -346,30 +346,30 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
-		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundPlaying);
+		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
+		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundPlaying);
 	} else if (_soundVersion == SCI_VERSION_1_EARLY) {
 		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
-		_state->sfx_song_renice(handle, GET_SEL32V(_segMan, obj, SELECTOR(pri)));
+		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
+		_state->sfx_song_renice(handle, readSelectorValue(_segMan, obj, SELECTOR(pri)));
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) value;		/* Too lazy to look up a default value for this */
 		_state->_songlib.setSongRestoreBehavior(handle, rb);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), 0);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
 	} else if (_soundVersion == SCI_VERSION_1_LATE) {
-		int looping = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-		//int vol = GET_SEL32V(_segMan, obj, SELECTOR(vol));
-		int pri = GET_SEL32V(_segMan, obj, SELECTOR(pri));
+		int looping = readSelectorValue(_segMan, obj, SELECTOR(loop));
+		//int vol = readSelectorValue(_segMan, obj, SELECTOR(vol));
+		int pri = readSelectorValue(_segMan, obj, SELECTOR(pri));
 		int sampleLen = 0;
 		Song *song = _state->_songlib.findSong(handle);
-		int songNumber = GET_SEL32V(_segMan, obj, SELECTOR(number));
+		int songNumber = readSelectorValue(_segMan, obj, SELECTOR(number));
 
-		if (GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)) && (song && songNumber != song->_resourceNum)) {
+		if (readSelectorValue(_segMan, obj, SELECTOR(nodePtr)) && (song && songNumber != song->_resourceNum)) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			_state->sfx_remove_song(handle);
-			PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
+			writeSelector(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
 		}
 
-		if (!GET_SEL32V(_segMan, obj, SELECTOR(nodePtr)) && obj.segment) {
+		if (!readSelectorValue(_segMan, obj, SELECTOR(nodePtr)) && obj.segment) {
 			// In SCI1.1 games, sound effects are started from here. If we can find
 			// a relevant audio resource, play it, otherwise switch to synthesized
 			// effects. If the resource exists, play it using map 65535 (sound
@@ -387,7 +387,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 					warning("Could not open song number %d", songNumber);
 					// Send a "stop handle" event so that the engine won't wait forever here
 					_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-					PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+					writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 					return;
 				}
 				debugC(2, kDebugLevelSound, "Initializing song number %d", songNumber);
@@ -395,15 +395,15 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 				                          handle), 0, handle, songNumber);
 			}
 
-			PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), obj);
-			PUT_SEL32(_segMan, obj, SELECTOR(handle), obj);
+			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
+			writeSelector(_segMan, obj, SELECTOR(handle), obj);
 		}
 
 		if (obj.segment) {
 			_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 			_state->sfx_song_set_loops(handle, looping);
 			_state->sfx_song_renice(handle, pri);
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), 0);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
 		}
 	}
 
@@ -415,7 +415,7 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 		return;
 	}
 
-	int resourceId = obj.segment ? GET_SEL32V(_segMan, obj, SELECTOR(number)) : -1;
+	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
 		cmdDisposeSound(obj, value);
@@ -423,25 +423,25 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
-	int16 loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
+	int16 loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
 	debugC(2, kDebugLevelSound, "cmdPlaySound: resource number %d, loop %d", resourceId, loop);
 
-	PUT_SEL32(_segMan, obj, SELECTOR(handle), obj);
+	writeSelector(_segMan, obj, SELECTOR(handle), obj);
 
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
-		PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), obj);
-		PUT_SEL32V(_segMan, obj, SELECTOR(min), 0);
-		PUT_SEL32V(_segMan, obj, SELECTOR(sec), 0);
-		PUT_SEL32V(_segMan, obj, SELECTOR(frame), 0);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), 0);
+		writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
+		writeSelectorValue(_segMan, obj, SELECTOR(min), 0);
+		writeSelectorValue(_segMan, obj, SELECTOR(sec), 0);
+		writeSelectorValue(_segMan, obj, SELECTOR(frame), 0);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
 	} else {
-		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundPlaying);
+		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundPlaying);
 	}
 
-	musicSlot->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	musicSlot->priority = GET_SEL32V(_segMan, obj, SELECTOR(priority));
-	if (_soundVersion >= SCI_VERSION_1_LATE)
-		musicSlot->volume = GET_SEL32V(_segMan, obj, SELECTOR(vol));
+	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
+	if (_soundVersion >= SCI_VERSION_1_EARLY)
+		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 	_music->soundPlay(musicSlot);
 
 #endif
@@ -458,7 +458,7 @@ void SoundCommandParser::changeSoundStatus(reg_t obj, int newStatus) {
 	if (obj.segment) {
 		_state->sfx_song_set_status(handle, newStatus);
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, obj, SELECTOR(state), newStatus);
+			writeSelectorValue(_segMan, obj, SELECTOR(state), newStatus);
 	}
 }
 #endif
@@ -475,7 +475,7 @@ void SoundCommandParser::cmdDisposeSound(reg_t obj, int16 value) {
 		_state->sfx_remove_song(handle);
 
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0x0000);
+			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0x0000);
 	}
 
 #else
@@ -489,11 +489,11 @@ void SoundCommandParser::cmdDisposeSound(reg_t obj, int16 value) {
 	cmdStopSound(obj, value);
 
 	_music->soundKill(musicSlot);
-	PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0);
+	writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
-		PUT_SEL32(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
+		writeSelector(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
 	else
-		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundStopped);
+		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundStopped);
 #endif
 }
 
@@ -509,7 +509,7 @@ void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFin
 	changeSoundStatus(obj, SOUND_STATUS_STOPPED);
 
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -518,9 +518,9 @@ void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFin
 	}
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		PUT_SEL32V(_segMan, obj, SELECTOR(state), kSoundStopped);
+		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundStopped);
 	} else {
-		PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0);
+		writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
 	}
 
 	// Set signal selector in sound SCI0 games only, when the sample has finished playing
@@ -530,7 +530,7 @@ void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFin
 	//         sfx drivers included
 	// We need to set signal in sound SCI1+ games all the time
 	if ((_soundVersion > SCI_VERSION_0_LATE) || sampleFinishedPlaying)
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
 	musicSlot->signal = 0;
@@ -565,7 +565,7 @@ void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
 
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			// Always pause the sound in SCI0 games. It's resumed in cmdResumeSound()
-			PUT_SEL32V(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
+			writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
 			_music->soundPause(musicSlot);
 		} else {
 			_music->soundToggle(musicSlot, value);
@@ -590,7 +590,7 @@ void SoundCommandParser::cmdResumeSound(reg_t obj, int16 value) {
 		return;
 	}
 
-	PUT_SEL32V(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
+	writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
 	_music->soundResume(musicSlot);
 #endif
 }
@@ -630,13 +630,12 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (_soundVersion != SCI_VERSION_1_LATE) {
-		/*s->sound_server->command(s, SOUND_COMMAND_FADE_HANDLE, obj, 120);*/ /* Fade out in 2 secs */
 		/* FIXME: The next couple of lines actually STOP the handle, rather
 		** than fading it! */
 		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		if (_soundVersion <= SCI_VERSION_0_LATE)
-			PUT_SEL32V(_segMan, obj, SELECTOR(state), SOUND_STATUS_STOPPED);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			writeSelectorValue(_segMan, obj, SELECTOR(state), SOUND_STATUS_STOPPED);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 	} else {
 		fade_params_t fade;
 		fade.final_volume = _argv[2].toUint16();
@@ -651,11 +650,11 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 		/* FIXME: The next couple of lines actually STOP the handle, rather
 		** than fading it! */
 		if (_argv[5].toUint16()) {
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		} else {
 			// FIXME: Support fade-and-continue. For now, send signal right away.
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		}
 	}
 #else
@@ -692,7 +691,7 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
 		warning("cmdFadeSound: fading requested, but sound is currently not playing");
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 	}
 
 	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
@@ -714,8 +713,8 @@ void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	if (_soundVersion <= SCI_VERSION_0_LATE && obj.segment) {
-		_state->sfx_song_set_loops(handle, GET_SEL32V(_segMan, obj, SELECTOR(loop)));
-		script_set_priority(_resMan, _segMan, _state, obj, GET_SEL32V(_segMan, obj, SELECTOR(pri)));
+		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
+		script_set_priority(_resMan, _segMan, _state, obj, readSelectorValue(_segMan, obj, SELECTOR(pri)));
 	}
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
@@ -724,11 +723,11 @@ void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
 		return;
 	}
 
-	musicSlot->loop = GET_SEL32V(_segMan, obj, SELECTOR(loop));
-	int16 objVol = CLIP<int>(GET_SEL32V(_segMan, obj, SELECTOR(vol)), 0, 255);
+	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
+	int16 objVol = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, 255);
 	if (objVol != musicSlot->volume)
 		_music->soundSetVolume(musicSlot, objVol);
-	uint32 objPrio = GET_SEL32V(_segMan, obj, SELECTOR(pri));
+	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(pri));
 	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
 
@@ -755,7 +754,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d",
 		          PRINT_REG(obj), signal);
 		debugC(2, kDebugLevelSound, "abs-signal %04X", signal);
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), signal);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), signal);
 		break;
 
 	case SI_RELATIVE_CUE:
@@ -765,17 +764,17 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		/* FIXME to match commented-out semantics
 		 * below, with proper storage of dataInc and
 		 * signal in the iterator code. */
-		PUT_SEL32V(_segMan, obj, SELECTOR(dataInc), signal);
+		writeSelectorValue(_segMan, obj, SELECTOR(dataInc), signal);
 		debugC(2, kDebugLevelSound, "rel-signal %04X", signal);
 		if (_soundVersion == SCI_VERSION_1_EARLY)
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), signal);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), signal);
 		else
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), signal + 127);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), signal + 127);
 		break;
 
 	case SI_FINISHED:
 		debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x", PRINT_REG(obj));
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		break;
 
 	case SI_LOOP:
@@ -784,30 +783,30 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	//switch (signal) {
 	//case 0x00:
-	//	if (dataInc != GET_SEL32V(segMan, obj, SELECTOR(dataInc))) {
-	//		PUT_SEL32V(segMan, obj, SELECTOR(dataInc), dataInc);
-	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), dataInc+0x7f);
+	//	if (dataInc != readSelectorValue(segMan, obj, SELECTOR(dataInc))) {
+	//		writeSelectorValue(segMan, obj, SELECTOR(dataInc), dataInc);
+	//		writeSelectorValue(segMan, obj, SELECTOR(signal), dataInc+0x7f);
 	//	} else {
-	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), signal);
+	//		writeSelectorValue(segMan, obj, SELECTOR(signal), signal);
 	//	}
 	//	break;
 	//case 0xFF: // May be unnecessary
 	//	s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 	//	break;
 	//default :
-	//	if (dataInc != GET_SEL32V(segMan, obj, SELECTOR(dataInc))) {
-	//		PUT_SEL32V(segMan, obj, SELECTOR(dataInc), dataInc);
-	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), dataInc + 0x7f);
+	//	if (dataInc != readSelectorValue(segMan, obj, SELECTOR(dataInc))) {
+	//		writeSelectorValue(segMan, obj, SELECTOR(dataInc), dataInc);
+	//		writeSelectorValue(segMan, obj, SELECTOR(signal), dataInc + 0x7f);
 	//	} else {
-	//		PUT_SEL32V(segMan, obj, SELECTOR(signal), signal);
+	//		writeSelectorValue(segMan, obj, SELECTOR(signal), signal);
 	//	}
 	//	break;
 	//}
 
 	if (_soundVersion == SCI_VERSION_1_EARLY) {
-		PUT_SEL32V(_segMan, obj, SELECTOR(min), min);
-		PUT_SEL32V(_segMan, obj, SELECTOR(sec), sec);
-		PUT_SEL32V(_segMan, obj, SELECTOR(frame), frame);
+		writeSelectorValue(_segMan, obj, SELECTOR(min), min);
+		writeSelectorValue(_segMan, obj, SELECTOR(sec), sec);
+		writeSelectorValue(_segMan, obj, SELECTOR(frame), frame);
 	}
 #else
 	MusicEntry *musicSlot = _music->getSlot(obj);
@@ -828,7 +827,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		if (!_music->soundIsActive(musicSlot)) {
+		if ((!_music->soundIsActive(musicSlot)) && (musicSlot->status != kSoundPaused)) {
 			processStopSound(obj, 0, true);
 		} else {
 			_music->updateAudioStreamTicker(musicSlot);
@@ -841,14 +840,14 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	} else if (musicSlot->pMidiParser) {
 		// Update MIDI slots
 		if (musicSlot->signal == 0) {
-			if (musicSlot->dataInc != GET_SEL32V(_segMan, obj, SELECTOR(dataInc))) {
+			if (musicSlot->dataInc != readSelectorValue(_segMan, obj, SELECTOR(dataInc))) {
 				if (_kernel->_selectorCache.dataInc > -1)
-					PUT_SEL32V(_segMan, obj, SELECTOR(dataInc), musicSlot->dataInc);
-				PUT_SEL32V(_segMan, obj, SELECTOR(signal), musicSlot->dataInc + 127);
+					writeSelectorValue(_segMan, obj, SELECTOR(dataInc), musicSlot->dataInc);
+				writeSelectorValue(_segMan, obj, SELECTOR(signal), musicSlot->dataInc + 127);
 			}
 		} else {
 			// Sync the signal of the sound object
-			PUT_SEL32V(_segMan, obj, SELECTOR(signal), musicSlot->signal);
+			writeSelectorValue(_segMan, obj, SELECTOR(signal), musicSlot->signal);
 			// We need to do this especially because state selector needs to get updated
 			if (musicSlot->signal == SIGNAL_OFFSET)
 				cmdStopSound(obj, 0);
@@ -856,14 +855,14 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 	} else {
 		// Slot actually has no data (which would mean that a sound-resource w/ unsupported data is used
 		//  (example lsl5 - sound resource 744 - it's roland exclusive
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		// If we don't set signal here, at least the switch to the mud wrestling room in lsl5 will not work
 	}
 
 	if (musicSlot->fadeCompleted) {
 		musicSlot->fadeCompleted = false;
 		// We need signal for sci0 at least in iceman as well (room 14, fireworks)
-		PUT_SEL32V(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			cmdStopSound(obj, 0);
 		} else {
@@ -874,14 +873,14 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 
 	// Sync loop selector for SCI0
 	if (_soundVersion <= SCI_VERSION_0_LATE)
-		PUT_SEL32V(_segMan, obj, SELECTOR(loop), musicSlot->loop);
+		writeSelectorValue(_segMan, obj, SELECTOR(loop), musicSlot->loop);
 
 	musicSlot->signal = 0;
 
 	if (_soundVersion >= SCI_VERSION_1_EARLY) {
-		PUT_SEL32V(_segMan, obj, SELECTOR(min), musicSlot->ticker / 3600);
-		PUT_SEL32V(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
-		PUT_SEL32V(_segMan, obj, SELECTOR(frame), musicSlot->ticker);
+		writeSelectorValue(_segMan, obj, SELECTOR(min), musicSlot->ticker / 3600);
+		writeSelectorValue(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
+		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker);
 	}
 
 #endif
@@ -927,18 +926,13 @@ void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	Common::StackLock(_music->_mutex);
 
-	// FIXME: this can't be right, it's called in iceman (room 14) when the door sound has done playing
-	//         stopping sounds can't be right, because music is starting afterwards in ssci. can't be resume queued
-	//         song(s), because music is playing even when this call is nuked inside ssci.
-	return;
-
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			PUT_SEL32V(_segMan, (*i)->soundObj, SELECTOR(state), kSoundStopped);
+			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(state), kSoundStopped);
 		} else {
-			PUT_SEL32V(_segMan, obj, SELECTOR(handle), 0);
-			PUT_SEL32V(_segMan, (*i)->soundObj, SELECTOR(signal), SIGNAL_OFFSET);
+			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
+			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal), SIGNAL_OFFSET);
 		}
 
 		(*i)->dataInc = 0;
@@ -969,7 +963,7 @@ void SoundCommandParser::cmdSetSoundVolume(reg_t obj, int16 value) {
 	if (musicSlot->volume != value) {
 		musicSlot->volume = value;
 		_music->soundSetVolume(musicSlot, value);
-		PUT_SEL32V(_segMan, obj, SELECTOR(vol), value);
+		writeSelectorValue(_segMan, obj, SELECTOR(vol), value);
 	}
 #endif
 }
@@ -996,12 +990,12 @@ void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
 			warning("cmdSetSoundPriority: Attempt to unset song priority when there is no built-in value");
 
 		//pSnd->prio=0;field_15B=0
-		PUT_SEL32V(_segMan, obj, SELECTOR(flags), GET_SEL32V(_segMan, obj, SELECTOR(flags)) & 0xFD);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
 	} else {
 		// Scripted priority
 
 		//pSnd->field_15B=1;
-		PUT_SEL32V(_segMan, obj, SELECTOR(flags), GET_SEL32V(_segMan, obj, SELECTOR(flags)) | 2);
+		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
 		//DoSOund(0xF,hobj,w)
 	}
 #endif
@@ -1012,7 +1006,7 @@ void SoundCommandParser::cmdSetSoundLoop(reg_t obj, int16 value) {
 		return;
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (!GET_SEL32(_segMan, obj, SELECTOR(nodePtr)).isNull()) {
+	if (!readSelector(_segMan, obj, SELECTOR(nodePtr)).isNull()) {
 		SongHandle handle = FROBNICATE_HANDLE(obj);
 		_state->sfx_song_set_loops(handle, value);
 	}
@@ -1037,7 +1031,7 @@ void SoundCommandParser::cmdSetSoundLoop(reg_t obj, int16 value) {
 		musicSlot->loop = 1; // actually plays the music once
 	}
 
-	PUT_SEL32V(_segMan, obj, SELECTOR(loop), musicSlot->loop);
+	writeSelectorValue(_segMan, obj, SELECTOR(loop), musicSlot->loop);
 #endif
 }
 
@@ -1058,8 +1052,11 @@ void SoundCommandParser::updateSci0Cues() {
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
 		// this sound, as SCI0 only allows one active song
-		if  (((*i)->isQueued) && (!pWaitingForPlay)) {
+		if  ((*i)->isQueued) {
 			pWaitingForPlay = (*i);
+			// FIXME (?) - in iceman 2 songs are queued when playing the door sound - if we use the first song for resuming
+			//              then it's the wrong one. Both songs have same priority. Maybe the new sound function in sci0
+			//              is somehow responsible
 			continue;
 		}
 		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
@@ -1105,11 +1102,11 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 		}
 		if ((*i)->status == kSoundPlaying) {
 			if (savegame_version < 14) {
-				(*i)->dataInc = GET_SEL32V(_segMan, (*i)->soundObj, SELECTOR(dataInc));
-				(*i)->signal = GET_SEL32V(_segMan, (*i)->soundObj, SELECTOR(signal));
+				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
+				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
 
 				if (_soundVersion >= SCI_VERSION_1_LATE)
-					(*i)->volume = GET_SEL32V(_segMan, (*i)->soundObj, SELECTOR(vol));
+					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
 			}
 
 			cmdPlaySound((*i)->soundObj, 0);
@@ -1145,7 +1142,7 @@ void SoundCommandParser::startNewSound(int number) {
 	MusicEntry *song = *_music->getPlayListStart();
 	reg_t soundObj = song->soundObj;
 	cmdDisposeSound(soundObj, 0);
-	PUT_SEL32V(_segMan, soundObj, SELECTOR(number), number);
+	writeSelectorValue(_segMan, soundObj, SELECTOR(number), number);
 	cmdInitSound(soundObj, 0);
 	cmdPlaySound(soundObj, 0);
 #endif

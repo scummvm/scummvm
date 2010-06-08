@@ -85,6 +85,7 @@ protected:
 	OSystem *_system;
 	Common::Array<MovieText *> _movieTexts;
 	int _textX, _textY, _textWidth, _textHeight;
+	byte _white, _black;
 	DecoderType _decoderType;
 
 	Graphics::VideoDecoder *_decoder;

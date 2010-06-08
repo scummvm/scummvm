@@ -80,12 +80,18 @@ private:
 	uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 	void queueCompressedBuffer(byte *buffer, uint32 bufferSize, uint32 unpackedSize, int streamNum);
 
+	enum AudioCompression {
+		kCompressionNone,
+		kCompressionDPCM,
+		kCompressionRDFT,
+		kCompressionDCT
+	};
+
 	struct AudioInfo {
-		bool isCompressed;
+		AudioCompression compression;
 		bool hasAudio;
 		bool is16Bits;
 		bool isStereo;
-		bool hasV2Compression;
 		uint32 sampleRate;
 	};
 

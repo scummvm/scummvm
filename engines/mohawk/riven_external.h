@@ -57,6 +57,8 @@ private:
 	int jspitElevatorLoop();
 	void runDemoBoundaryDialog();
 	void runEndGame(uint16 video);
+	void runDomeCheck();
+	void runDomeButtonMovie();
 
 	// -----------------------------------------------------
 	// aspit (Main Menu, Books, Setup) external commands

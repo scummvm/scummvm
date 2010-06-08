@@ -43,6 +43,10 @@ extern bool isSmartphone();
 	#define fputs(str, file)	DS::std_fwrite(str, strlen(str), 1, file)
 #endif
 
+#ifdef ANDROID
+	#include <android/log.h>
+#endif
+
 namespace Common {
 
 static OutputFormatter s_errorOutputFormatter = 0;
@@ -71,7 +75,9 @@ void warning(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !defined (__SYMBIAN32__)
+#if defined( ANDROID )
+	__android_log_write(ANDROID_LOG_WARN, "ScummVM", buf);
+#elif !defined (__SYMBIAN32__)
 	fputs("WARNING: ", stderr);
 	fputs(buf, stderr);
 	fputs("!\n", stderr);
@@ -139,6 +145,10 @@ void NORETURN_PRE error(const char *s, ...) {
 #else
 	OutputDebugString(buf_output);
 #endif
+#endif
+
+#ifdef ANDROID
+	__android_log_assert("Fatal error", "ScummVM", "%s", buf_output);
 #endif
 
 #ifdef PALMOS_MODE

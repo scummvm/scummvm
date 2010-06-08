@@ -845,7 +845,7 @@ void CharsetRendererClassic::printChar(int chr, bool ignoreCharsetMask) {
 		offsX = offsY = 0;
 	} else {
 		uint32 charOffs = READ_LE_UINT32(_fontPtr + chr * 4 + 4);
-		assert(charOffs < 0x10000);
+		assert(charOffs < 0x14000);
 		if (!charOffs)
 			return;
 		charPtr = _fontPtr + charOffs;

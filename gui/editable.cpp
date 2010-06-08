@@ -65,7 +65,7 @@ void EditableWidget::setEditString(const String &str) {
 	// TODO: We probably should filter the input string here,
 	// e.g. using tryInsertChar.
 	_editString = str;
-	_caretPos = _editString.size();
+	_caretPos = 0;
 }
 
 bool EditableWidget::tryInsertChar(byte c, int pos) {

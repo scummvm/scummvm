@@ -934,7 +934,7 @@ private:
 	void unloadAnimation();
 	uint8 *loadPicture(const char *fileName);
 	void openAnimation(int index, const char *fileName);
-	bool decodeNextAnimationFrame(int index);
+	bool decodeNextAnimationFrame(int index, bool copyDirtyRects = true);
 	void loadIntroSeq17_18();
 	void playIntroSeq17_18();
 	void loadIntroSeq19_20();
@@ -975,7 +975,8 @@ private:
 	uint8 *_offscreenBuffer;
 	int _updateScreenWidth;
 	int _updateScreenPicture;
-	int _updateScreenOffset;
+	int _updateScreenCounter;
+	int _updateScreenIndex;
 	int _frameCounter;
 	int _frameTime;
 	uint32 _lastFrameTime;

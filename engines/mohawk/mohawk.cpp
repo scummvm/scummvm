@@ -35,7 +35,7 @@
 #include "mohawk/mohawk.h"
 #include "mohawk/dialogs.h"
 #include "mohawk/sound.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 #include "sound/mixer.h"
 

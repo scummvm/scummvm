@@ -37,9 +37,6 @@
 
 namespace Sci {
 
-// When defined, volume fading immediately sets the final sound volume
-#define DISABLE_VOLUME_FADING
-
 SciMusic::SciMusic(SciVersion soundVersion)
 	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(0) {
 
@@ -115,8 +112,6 @@ void SciMusic::clearPlayList() {
 }
 
 void SciMusic::pauseAll(bool pause) {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundToggle(*i, pause);
@@ -170,14 +165,29 @@ void SciMusic::setReverb(byte reverb) {
 	_pMidiDrv->setReverb(reverb);
 }
 
-static int f_compare(const void *arg1, const void *arg2) {
-	return ((const MusicEntry *)arg2)->priority - ((const MusicEntry *)arg1)->priority;
+static bool musicEntryCompare(const MusicEntry *l, const MusicEntry *r) {
+	return (l->priority > r->priority);
 }
 
 void SciMusic::sortPlayList() {
-	MusicEntry ** pData = _playList.begin();
-	qsort(pData, _playList.size(), sizeof(MusicEntry *), &f_compare);
+	// Sort the play list in descending priority order
+	Common::sort(_playList.begin(), _playList.end(), musicEntryCompare);
 }
+
+void SciMusic::findUsedChannels() {
+	// Reset list
+	for (int k = 0; k < 16; k++)
+		_usedChannels[k] = false;
+
+	const MusicList::const_iterator end = _playList.end();
+	for (MusicList::const_iterator i = _playList.begin(); i != end; ++i) {
+		for (int channel = 0; channel < 16; channel++) {
+			if ((*i)->soundRes && (*i)->soundRes->isChannelUsed(channel))
+				_usedChannels[channel] = true;
+		}
+	}
+}
+
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
@@ -221,6 +231,27 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			pSnd->pauseCounter = 0;
 
+			// TODO: Fix channel remapping. This doesn't quite work... (e.g. no difference in LSL1VGA)
+#if 0
+			// Remap channels
+			findUsedChannels();
+
+			pSnd->pMidiParser->clearUsedChannels();
+
+			for (int i = 0; i < 16; i++) {
+				if (_usedChannels[i] && pSnd->soundRes->isChannelUsed(i)) {
+					int16 newChannel = getNextUnusedChannel();
+					if (newChannel >= 0) {
+						_usedChannels[newChannel] = true;
+						debug("Remapping channel %d to %d\n", i, newChannel);
+						pSnd->pMidiParser->remapChannel(i, newChannel);
+					} else {
+						warning("Attempt to remap channel %d, but no unused channels exist", i);
+					}
+				}
+			}
+#endif
+
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
@@ -243,14 +274,14 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	uint playListCount = _playList.size();
 	uint playListNo = playListCount;
-	bool alreadyPlaying = false;
+	MusicEntry *alreadyPlaying = NULL;
 
 	// searching if sound is already in _playList
 	for (uint i = 0; i < playListCount; i++) {
 		if (_playList[i] == pSnd)
 			playListNo = i;
 		if ((_playList[i]->status == kSoundPlaying) && (_playList[i]->pMidiParser))
-			alreadyPlaying = true;
+			alreadyPlaying = _playList[i];
 	}
 	if (playListNo == playListCount) { // not found
 		_playList.push_back(pSnd);
@@ -261,13 +292,20 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 	if (pSnd->pMidiParser) {
 		if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
-			// if any music is already playing, SCI0 queues music and plays it after the current music has finished
-			//  done by SoundCommandParser::updateSci0Cues()
-			// Example of such case: iceman room 14
-			// FIXME: this code is supposed to also take a look at priority and pause currently playing sound accordingly
-			pSnd->isQueued = true;
-			pSnd->status = kSoundPaused;
-			return;
+			// Music already playing in SCI0?
+			if (pSnd->priority > alreadyPlaying->priority) {
+				// And new priority higher? pause previous music and play new one immediately
+				// Example of such case: lsl3, when getting points (jingle is played then)
+				soundPause(alreadyPlaying);
+				alreadyPlaying->isQueued = true;
+			} else {
+				// And new priority equal or lower? queue up music and play it afterwards done by
+				//  SoundCommandParser::updateSci0Cues()
+				// Example of such case: iceman room 14
+				pSnd->isQueued = true;
+				pSnd->status = kSoundPaused;
+				return;
+			}
 		}
 	}
 
@@ -298,6 +336,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 
 void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		pSnd->isQueued = false;
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
@@ -380,7 +420,12 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		return;
 	if (pSnd->status != kSoundPaused)
 		return;
-	soundPlay(pSnd);
+	if (pSnd->pStreamAud) {
+		_pMixer->pauseHandle(pSnd->hCurrentAud, false);
+		pSnd->status = kSoundPlaying;
+	} else {
+		soundPlay(pSnd);
+	}
 }
 
 void SciMusic::soundToggle(MusicEntry *pSnd, bool pause) {
@@ -522,15 +567,17 @@ void MusicEntry::doFade() {
 			fadeStep = 0;
 			fadeCompleted = true;
 		}
-
-		// Only process MIDI streams in this thread, not digital sound effects
-		if (pMidiParser) {
-#ifdef DISABLE_VOLUME_FADING
-			// Signal fading to stop...
+#ifdef ENABLE_SCI32
+		// Disable fading for SCI32 - sound drivers have issues when fading in (gabriel knight 1 sierra title)
+		if (getSciVersion() >= SCI_VERSION_2) {
 			volume = fadeTo;
 			fadeStep = 0;
 			fadeCompleted = true;
+		}
 #endif
+
+		// Only process MIDI streams in this thread, not digital sound effects
+		if (pMidiParser) {
 			pMidiParser->setVolume(volume);
 		}
 

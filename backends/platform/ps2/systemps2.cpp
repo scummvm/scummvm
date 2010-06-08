@@ -624,23 +624,6 @@ void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	_screen->setMouseOverlay(buf, w, h, hotspot_x, hotspot_y, keycolor);
 }
 
-bool OSystem_PS2::openCD(int drive) {
-	return false;
-}
-
-bool OSystem_PS2::pollCD(void) {
-	return false;
-}
-
-void OSystem_PS2::playCD(int track, int num_loops, int start_frame, int duration) {
-}
-
-void OSystem_PS2::stopCD(void) {
-}
-
-void OSystem_PS2::updateCD(void) {
-}
-
 void OSystem_PS2::showOverlay(void) {
 	_screen->showOverlay();
 }

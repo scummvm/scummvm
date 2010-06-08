@@ -666,6 +666,10 @@ begin_credits("Credits");
 
 
     begin_section("Backend Teams");
+	  begin_section("Android");
+		  add_person("Angus Lees", "Gus", "");
+	  end_section();
+
 	  begin_section("Dreamcast");
 		  add_person("Marcus Comstedt", "", "");
 	  end_section();

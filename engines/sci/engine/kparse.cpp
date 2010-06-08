@@ -42,6 +42,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
+	Vocabulary *voc = g_sci->getVocabulary();
 #ifdef DEBUG_PARSER
 	const int debug_parser = 1;
 #else
@@ -63,7 +64,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->_voc->decipherSaidBlock(said_block);
 #endif
 
-	if (s->_voc->parser_event.isNull() || (GET_SEL32V(s->_segMan, s->_voc->parser_event, SELECTOR(claimed)))) {
+	if (voc->parser_event.isNull() || (readSelectorValue(s->_segMan, voc->parser_event, SELECTOR(claimed)))) {
 		return NULL_REG;
 	}
 
@@ -77,7 +78,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 		if (new_lastmatch != SAID_PARTIAL_MATCH)
-			PUT_SEL32V(s->_segMan, s->_voc->parser_event, SELECTOR(claimed), 1);
+			writeSelectorValue(s->_segMan, voc->parser_event, SELECTOR(claimed), 1);
 
 	} else {
 		return NULL_REG;
@@ -92,15 +93,15 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
-	Vocabulary *voc = s->_voc;
+	Vocabulary *voc = g_sci->getVocabulary();
 
-	s->_voc->parser_event = event;
+	voc->parser_event = event;
 
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
-	s->_voc->parserIsValid = false; /* not valid */
+	voc->parserIsValid = false; /* not valid */
 
 	if (res && !words.empty()) {
-		s->_voc->synonymizeTokens(words);
+		voc->synonymizeTokens(words);
 
 		s->r_acc = make_reg(0, 1);
 
@@ -115,32 +116,32 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 
 		if (syntax_fail) {
 			s->r_acc = make_reg(0, 1);
-			PUT_SEL32V(segMan, event, SELECTOR(claimed), 1);
+			writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 
-			invoke_selector(INV_SEL(s, s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
+			invokeSelector(INV_SEL(s, s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, voc->parser_base, stringpos);
 			/* Issue warning */
 
 			debugC(2, kDebugLevelParser, "Tree building failed");
 
 		} else {
-			s->_voc->parserIsValid = true;
-			PUT_SEL32V(segMan, event, SELECTOR(claimed), 0);
+			voc->parserIsValid = true;
+			writeSelectorValue(segMan, event, SELECTOR(claimed), 0);
 
 #ifdef DEBUG_PARSER
-			s->_voc->dumpParseTree();
+			voc->dumpParseTree();
 #endif
 		}
 
 	} else {
 
 		s->r_acc = make_reg(0, 0);
-		PUT_SEL32V(segMan, event, SELECTOR(claimed), 1);
+		writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 		if (error) {
-			s->_segMan->strcpy(s->_voc->parser_base, error);
+			s->_segMan->strcpy(voc->parser_base, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 
-			invoke_selector(INV_SEL(s, s->_gameObj, wordFail, kStopOnInvalidSelector), 2, s->_voc->parser_base, stringpos);
+			invokeSelector(INV_SEL(s, s->_gameObj, wordFail, kStopOnInvalidSelector), 2, voc->parser_base, stringpos);
 			free(error);
 			return make_reg(0, 1); /* Tell them that it didn't work */
 		}
@@ -156,28 +157,29 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 	Node *node;
 	int script;
 	int numSynonyms = 0;
+	Vocabulary *voc = g_sci->getVocabulary();
 
 	// Only SCI0-SCI1 EGA games had a parser. In newer versions, this is a stub
 	if (getSciVersion() > SCI_VERSION_1_EGA)
 		return s->r_acc;
 
-	s->_voc->clearSynonyms();
+	voc->clearSynonyms();
 
-	list = s->_segMan->lookupList(GET_SEL32(segMan, object, SELECTOR(elements)));
+	list = s->_segMan->lookupList(readSelector(segMan, object, SELECTOR(elements)));
 	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		reg_t objpos = node->value;
 		int seg;
 
-		script = GET_SEL32V(segMan, objpos, SELECTOR(number));
+		script = readSelectorValue(segMan, objpos, SELECTOR(number));
 		seg = s->_segMan->getScriptSegment(script);
 
 		if (seg > 0)
 			numSynonyms = s->_segMan->getScript(seg)->getSynonymsNr();
 
 		if (numSynonyms) {
-			byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
+			const byte *synonyms = s->_segMan->getScript(seg)->getSynonyms();
 
 			if (synonyms) {
 				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d",
@@ -193,7 +195,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 						synonym_t tmp;
 						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
 						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
-						s->_voc->addSynonym(tmp);
+						voc->addSynonym(tmp);
 					}
 			} else
 				warning("Synonyms of script.%03d were requested, but script is not available", script);

@@ -103,6 +103,7 @@
 #include "profiler/cyg-profile.h"
 #endif
 #include "backends/fs/ds/ds-fs.h"
+#include "base/version.h"
 #include "engine.h"
 
 extern "C" void OurIntrMain(void);
@@ -701,7 +702,7 @@ void displayMode8Bit() {
 
 
 
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true, true);
 
 	// Set this again because consoleinit resets it
 	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
@@ -939,7 +940,7 @@ void displayMode16Bit() {
 	SUB_BG0_CR = BG_MAP_BASE(4) | BG_TILE_BASE(0);
 	SUB_BG0_Y0 = 0;
 
-	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false);
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 4, 0, false, true);
 //	consoleInitDefault((u16*)SCREEN_BASE_BLOCK_SUB(4), (u16*)CHAR_BASE_BLOCK_SUB(0), 16);
 
 	for (int r = 0; r < 32 * 32; r++) {
@@ -3162,7 +3163,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 1.1.0 ");
+	consolePrintf("Version %s ", gScummVMVersion);
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");

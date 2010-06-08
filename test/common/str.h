@@ -118,6 +118,30 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(foo3, "fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd""fooasdkadklasdjklasdjlkasjdlkasjdklasjdlkjasdasd");
 	}
 
+	void test_refCount5() {
+		// using external storage
+		Common::String foo1("HelloHelloHelloHelloAndHi");
+		Common::String foo2(foo1);
+
+		for (Common::String::iterator i = foo2.begin(); i != foo2.end(); ++i)
+			*i = 'h';
+
+		TS_ASSERT_EQUALS(foo1, "HelloHelloHelloHelloAndHi");
+		TS_ASSERT_EQUALS(foo2, "hhhhhhhhhhhhhhhhhhhhhhhhh");
+	}
+
+	void test_refCount6() {
+		// using internal storage
+		Common::String foo1("Hello");
+		Common::String foo2(foo1);
+
+		for (Common::String::iterator i = foo2.begin(); i != foo2.end(); ++i)
+			*i = 'h';
+
+		TS_ASSERT_EQUALS(foo1, "Hello");
+		TS_ASSERT_EQUALS(foo2, "hhhhh");
+	}
+
 	void test_self_asignment() {
 		Common::String foo1("12345678901234567890123456789012");
 		foo1 = foo1.c_str() + 2;

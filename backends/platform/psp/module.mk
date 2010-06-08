@@ -13,7 +13,9 @@ MODULE_OBJS := powerman.o \
 	trace.o \
 	psploader.o \
 	pspkeyboard.o \
-	audio.o
+	audio.o \
+	thread.o \
+	mp3.o
 
 MODULE_DIRS += \
 	backends/platform/psp/

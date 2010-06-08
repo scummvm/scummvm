@@ -530,7 +530,6 @@ protected:
 	Dialog *_pauseDialog;
 	Dialog *_messageDialog;
 	Dialog *_versionDialog;
-	Dialog *_scummMenuDialog;
 
 	virtual int runDialog(Dialog &dialog);
 	void confirmExitDialog();
@@ -538,7 +537,6 @@ protected:
 	void pauseDialog();
 	void messageDialog(const char *message);
 	void versionDialog();
-	void scummMenuDialog();
 
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 

@@ -23,8 +23,10 @@
  *
  */
 
+#include "engines/util.h"
 #include "graphics/cursorman.h"
 #include "graphics/video/avi_decoder.h"
+#include "graphics/video/qt_decoder.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
@@ -51,8 +53,8 @@
 namespace Sci {
 
 void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	uint16 signal = GET_SEL32V(s->_segMan, object, SELECTOR(signal));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	uint16 signal = readSelectorValue(s->_segMan, object, SELECTOR(signal));
 	int16 loopNo;
 	int16 maxLoops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
@@ -91,7 +93,7 @@ void _k_dirloop(reg_t object, uint16 angle, EngineState *s, int argc, reg_t *arg
 	if ((loopNo > 1) && (maxLoops < 4))
 		return;
 
-	PUT_SEL32V(s->_segMan, object, SELECTOR(loop), loopNo);
+	writeSelectorValue(s->_segMan, object, SELECTOR(loop), loopNo);
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
@@ -145,6 +147,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		int16 left = argv[1].toSint16();
 		int16 bottom = argv[2].toSint16();
 		int16 right = argv[3].toSint16();
+
+		// In SCI32, the right parameter seems to be divided by 2
+		if (getSciVersion() >= SCI_VERSION_2)
+			right *= 2;
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
@@ -437,7 +443,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
 	int16 loopCount;
 
 	loopCount = g_sci->_gfxCache->kernelViewGetLoopCount(viewId);
@@ -449,8 +455,8 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
-	GuiResourceId viewId = GET_SEL32V(s->_segMan, object, SELECTOR(view));
-	int16 loopNo = GET_SEL32V(s->_segMan, object, SELECTOR(loop));
+	GuiResourceId viewId = readSelectorValue(s->_segMan, object, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, object, SELECTOR(loop));
 	int16 celCount;
 
 	celCount = g_sci->_gfxCache->kernelViewGetCelCount(viewId, loopNo);
@@ -525,9 +531,9 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
-	if (s->_gameId == "lsl1sci" && s->currentRoomNumber() == 300) {
-		int top = GET_SEL32V(s->_segMan, object, SELECTOR(brTop));
-		PUT_SEL32V(s->_segMan, object, SELECTOR(brTop), top + 2);
+	if (!strcmp(g_sci->getGameID(), "lsl1sci") && s->currentRoomNumber() == 300) {
+		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
+		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
 	}
 
 	return s->r_acc;
@@ -741,12 +747,12 @@ Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 }
 
 void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
-	int16 type = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
-	int16 style = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-	int16 x = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsLeft));
-	int16 y = GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsTop));
-	GuiResourceId fontId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(font));
-	reg_t textReference = GET_SEL32(s->_segMan, controlObject, SELECTOR(text));
+	int16 type = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
+	int16 style = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+	int16 x = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsLeft));
+	int16 y = readSelectorValue(s->_segMan, controlObject, SELECTOR(nsTop));
+	GuiResourceId fontId = readSelectorValue(s->_segMan, controlObject, SELECTOR(font));
+	reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 	Common::String text;
 	Common::Rect rect;
 	TextAlignment alignment;
@@ -762,8 +768,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	bool isAlias = false;
 
 	rect = kControlCreateRect(x, y,
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsRight)),
-				GET_SEL32V(s->_segMan, controlObject, SELECTOR(nsBottom)));
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsRight)),
+				readSelectorValue(s->_segMan, controlObject, SELECTOR(nsBottom)));
 
 	if (!textReference.isNull())
 		text = s->_segMan->getString(textReference);
@@ -775,32 +781,32 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		alignment = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
+		alignment = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
 		g_sci->_gfxControls->kernelDrawText(rect, controlObject, g_sci->strSplit(text.c_str()).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
-		mode = GET_SEL32V(s->_segMan, controlObject, SELECTOR(mode));
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(max));
-		cursorPos = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
+		mode = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(max));
+		cursorPos = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_ICON:
-		viewId = GET_SEL32V(s->_segMan, controlObject, SELECTOR(view));
+		viewId = readSelectorValue(s->_segMan, controlObject, SELECTOR(view));
 		{
-			int l = GET_SEL32V(s->_segMan, controlObject, SELECTOR(loop));
+			int l = readSelectorValue(s->_segMan, controlObject, SELECTOR(loop));
 			loopNo = (l & 0x80) ? l - 256 : l;
-			int c = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cel));
+			int c = readSelectorValue(s->_segMan, controlObject, SELECTOR(cel));
 			celNo = (c & 0x80) ? c - 256 : c;
 			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
 			//  ALL other games use a hardcoded -1 (madness!)
 			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
 			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
-			if (s->_gameId == "jones")
-				priority = GET_SEL32V(s->_segMan, controlObject, SELECTOR(priority));
+			if (!strcmp(g_sci->getGameID(), "jones"))
+				priority = readSelectorValue(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
 		}
@@ -813,17 +819,17 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
-		maxChars = GET_SEL32V(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
-		cursorOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(cursor));
+		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
+		cursorOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
 		if (g_sci->getKernel()->_selectorCache.topString != -1) {
 			// Games from early SCI1 onwards use topString
-			upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(topString));
+			upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
-			if (lookup_selector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(brTop));
+			if (lookupSelector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(brTop));
 			else
-				upperOffset = GET_SEL32V(s->_segMan, controlObject, SELECTOR(lsTop));
+				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(lsTop));
 		}
 
 		// Count string entries in NULL terminated string list
@@ -874,8 +880,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	if (objName == "changeDirI") {
-		int state = GET_SEL32V(s->_segMan, controlObject, SELECTOR(state));
-		PUT_SEL32V(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
+		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
+		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
@@ -894,7 +900,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[1];
 
 	if (!controlObject.isNull()) {
-		int16 controlType = GET_SEL32V(s->_segMan, controlObject, SELECTOR(type));
+		int16 controlType = readSelectorValue(s->_segMan, controlObject, SELECTOR(type));
 
 		switch (controlType) {
 		case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -983,7 +989,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	if ((s->_gameId == "freddypharkas") || (s->_gameId == "freddypharkas-demo")) {
+	if (!strcmp(g_sci->getGameID(), "freddypharkas") || !strcmp(g_sci->getGameID(), "freddypharkas-demo")) {
 		// WORKAROUND
 		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
 		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
@@ -994,7 +1000,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 			priority = 15;
 	}
 
-	if (s->_gameId == "laurabow2") {
+	if (!strcmp(g_sci->getGameID(), "laurabow2")) {
 		// WORKAROUND
 		// see the one above
 		if ((viewId == 995) && (priority == 0))
@@ -1080,11 +1086,12 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
-	bool reshowCursor;
-	
-	reshowCursor = g_sci->_gfxCursor->isVisible();
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
 	if (reshowCursor)
 		g_sci->_gfxCursor->kernelHide();
+
+	uint16 screenWidth = g_system->getWidth();
+	uint16 screenHeight = g_system->getHeight();
 		
 	Graphics::VideoDecoder *videoDecoder = 0;
 
@@ -1094,8 +1101,18 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 			// Mac QuickTime
 			// The only argument is the string for the video
-			warning("TODO: Play QuickTime movie '%s'", filename.c_str());
-			return s->r_acc;
+
+			// HACK: Switch to 16bpp graphics for Cinepak.
+			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
+
+			if (g_system->getScreenFormat().bytesPerPixel == 1) {
+				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
+				return NULL_REG;
+			}
+
+			videoDecoder = new Graphics::QuickTimeDecoder();
+			if (!videoDecoder->loadFile(filename))
+				error("Could not open '%s'", filename.c_str());
 		} else {
 			// DOS SEQ
 			// SEQ's are called with no subops, just the string and delay
@@ -1110,7 +1127,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			}
 		}
 	} else {
-		// Windows AVI (Macintosh QuickTime? Need to check KQ6 Macintosh)
+		// Windows AVI
 		// TODO: This appears to be some sort of subop. case 0 contains the string
 		// for the video, so we'll just play it from there for now.
 
@@ -1142,10 +1159,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-		uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+		uint16 x = (screenWidth - videoDecoder->getWidth()) / 2;
+		uint16 y = (screenHeight - videoDecoder->getHeight()) / 2;
 
-		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
+		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {
 			if (videoDecoder->needsUpdate()) {
 				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 				if (frame) {
@@ -1164,9 +1181,15 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 			g_system->delayMillis(10);
 		}
+
+		// HACK: Switch back to 8bpp if we played a QuickTime video.
+		// We also won't be copying the screen to the SCI screen...
+		if (g_system->getScreenFormat().bytesPerPixel != 1)
+			initGraphics(screenWidth, screenHeight, screenWidth > 320);
+		else
+			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 		
 		delete videoDecoder;
-		g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 	}
 
 	if (reshowCursor)

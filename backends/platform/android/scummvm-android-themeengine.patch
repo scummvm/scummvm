@@ -1,0 +1,135 @@
+diff -r 884e66fd1b9c gui/ThemeEngine.cpp
+--- a/gui/ThemeEngine.cpp	Tue Apr 13 09:30:52 2010 +1000
++++ b/gui/ThemeEngine.cpp	Fri May 28 23:24:43 2010 +1000
+@@ -390,21 +390,19 @@
+ 
+ 	// Try to create a Common::Archive with the files of the theme.
+ 	if (!_themeArchive && !_themeFile.empty()) {
+-		Common::FSNode node(_themeFile);
+-		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
++		Common::ArchiveMemberPtr member = SearchMan.getMember(_themeFile);
++		if (member && member->getName().hasSuffix(".zip")) {
+ #ifdef USE_ZLIB
+-			Common::Archive *zipArchive = Common::makeZipArchive(node);
++			Common::Archive *zipArchive = Common::makeZipArchive(member->createReadStream());
+ 
+ 			if (!zipArchive) {
+-				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
++				warning("Failed to open Zip archive '%s'.", member->getDisplayName().c_str());
+ 			}
+ 			_themeArchive = zipArchive;
+ #else
+ 			warning("Trying to load theme '%s' in a Zip archive without zLib support", _themeFile.c_str());
+ 			return false;
+ #endif
+-		} else if (node.isDirectory()) {
+-			_themeArchive = new Common::FSDirectory(node);
+ 		}
+ 	}
+ 
+@@ -1436,6 +1434,30 @@
+ 	return tok.empty();
+ }
+ 
++bool ThemeEngine::themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName) {
++	Common::File stream;
++	bool foundHeader = false;
++
++	if (member.getName().hasSuffix(".zip")) {
++#ifdef USE_ZLIB
++		Common::Archive *zipArchive = Common::makeZipArchive(member.createReadStream());
++
++		if (zipArchive && zipArchive->hasFile("THEMERC")) {
++			stream.open("THEMERC", *zipArchive);
++		}
++
++		delete zipArchive;
++#endif
++	}
++
++	if (stream.isOpen()) {
++		Common::String stxHeader = stream.readLine();
++		foundHeader = themeConfigParseHeader(stxHeader, themeName);
++	}
++
++	return foundHeader;
++}
++
+ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &themeName) {
+ 	Common::File stream;
+ 	bool foundHeader = false;
+@@ -1493,10 +1515,6 @@
+ 	if (ConfMan.hasKey("themepath"))
+ 		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
+ 
+-#ifdef DATA_PATH
+-	listUsableThemes(Common::FSNode(DATA_PATH), list);
+-#endif
+-
+ #if defined(MACOSX) || defined(IPHONE)
+ 	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
+ 	if (resourceUrl) {
+@@ -1509,10 +1527,7 @@
+ 	}
+ #endif
+ 
+-	if (ConfMan.hasKey("extrapath"))
+-		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
+-
+-	listUsableThemes(Common::FSNode("."), list, 1);
++	listUsableThemes(SearchMan, list);
+ 
+ 	// Now we need to strip all duplicates
+ 	// TODO: It might not be the best idea to strip duplicates. The user might
+@@ -1531,6 +1546,34 @@
+ 	output.clear();
+ }
+ 
++void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list) {
++	ThemeDescriptor td;
++
++#ifdef USE_ZLIB
++	Common::ArchiveMemberList fileList;
++	archive.listMatchingMembers(fileList, "*.zip");
++	for (Common::ArchiveMemberList::iterator i = fileList.begin();
++	     i != fileList.end(); ++i) {
++		td.name.clear();
++		if (themeConfigUsable(**i, td.name)) {
++			td.filename = (*i)->getName();
++			td.id = (*i)->getDisplayName();
++
++			// If the name of the node object also contains
++			// the ".zip" suffix, we will strip it.
++			if (td.id.hasSuffix(".zip")) {
++				for (int j = 0; j < 4; ++j)
++					td.id.deleteLastChar();
++			}
++
++			list.push_back(td);
++		}
++	}
++
++	fileList.clear();
++#endif
++}
++
+ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {
+ 	if (!node.exists() || !node.isReadable() || !node.isDirectory())
+ 		return;
+diff -r 884e66fd1b9c gui/ThemeEngine.h
+--- a/gui/ThemeEngine.h	Tue Apr 13 09:30:52 2010 +1000
++++ b/gui/ThemeEngine.h	Fri May 28 23:24:43 2010 +1000
+@@ -560,11 +560,13 @@
+ 	static void listUsableThemes(Common::List<ThemeDescriptor> &list);
+ private:
+ 	static bool themeConfigUsable(const Common::FSNode &node, Common::String &themeName);
++	static bool themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName);
+ 	static bool themeConfigParseHeader(Common::String header, Common::String &themeName);
+ 
+ 	static Common::String getThemeFile(const Common::String &id);
+ 	static Common::String getThemeId(const Common::String &filename);
+ 	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
++	static void listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list);
+ 
+ protected:
+ 	OSystem *_system; /** Global system object. */

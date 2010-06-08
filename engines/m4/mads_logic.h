@@ -29,6 +29,8 @@
 #ifndef M4_MADS_LOGIC_H
 #define M4_MADS_LOGIC_H
 
+#include "m4/mads_views.h"
+
 namespace M4 {
 
 class MadsSceneLogic {
@@ -54,6 +56,7 @@ public:
 	void setupScene();
 	void enterScene();
 	void doAction();
+	void sceneStep();
 };
 
 }

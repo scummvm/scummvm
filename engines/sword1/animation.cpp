@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/file.h"
 #include "sword1/sword1.h"
 #include "sword1/animation.h"
@@ -72,6 +71,9 @@ MoviePlayer::MoviePlayer(SwordEngine *vm, Text *textMan, Audio::Mixer *snd, OSys
 	_bgSoundStream = NULL;
 	_decoderType = decoderType;
 	_decoder = decoder;
+
+	_white = 255;
+	_black = 0;
 }
 
 MoviePlayer::~MoviePlayer() {
@@ -254,8 +256,34 @@ bool MoviePlayer::playVideo() {
 			if (frame)
 				_vm->_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
 
-			if (_decoder->hasDirtyPalette())
+			if (_decoder->hasDirtyPalette()) {
 				_decoder->setSystemPalette();
+
+				uint32 maxWeight = 0;
+				uint32 minWeight = 0xFFFFFFFF;
+				uint32 weight;
+				byte r, g, b;
+				
+				byte *palette = _decoder->getPalette();
+
+				for (int i = 0; i < 256; i++) {
+					r = *palette++;
+					g = *palette++;
+					b = *palette++;
+
+					weight = 3 * r * r + 6 * g * g + 2 * b * b;
+
+					if (weight >= maxWeight) {
+						maxWeight = weight;
+						_white = i;
+					}
+
+					if (weight <= minWeight) {
+						minWeight = weight;
+						_black = i;
+					}
+				}
+			}
 
 			Graphics::Surface *screen = _vm->_system->lockScreen();
 			performPostProcessing((byte *)screen->pixels);
@@ -267,17 +295,19 @@ bool MoviePlayer::playVideo() {
 		while (_vm->_system->getEventManager()->pollEvent(event))
 			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
 				return false;
+
+		_vm->_system->delayMillis(10);
 	}
 
 	return !_vm->shouldQuit();
 }
 
 byte MoviePlayer::findBlackPalIndex() {
-	return 0;
+	return _black;
 }
 
 byte MoviePlayer::findWhitePalIndex() {
-	return 0xff;
+	return _white;
 }
 
 DXADecoderWithSound::DXADecoderWithSound(Audio::Mixer *mixer, Audio::SoundHandle *bgSoundHandle)

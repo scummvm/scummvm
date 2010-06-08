@@ -926,7 +926,7 @@ const OSystem::GraphicsMode *OSystem_WINCE3::getSupportedGraphicsModes() const {
 }
 
 bool OSystem_WINCE3::hasFeature(Feature f) {
-	return (f == kFeatureAutoComputeDirtyRects || f == kFeatureVirtualKeyboard);
+	return (f == kFeatureVirtualKeyboard);
 }
 
 void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
@@ -1151,14 +1151,12 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYm = 1;
 				_scaleFactorYd = 1;
 				_scalerProc = DownscaleHorizByThreeQuarters;
-				_modeFlags = 0;
 			} else {
 				_scaleFactorXm = 1;
 				_scaleFactorXd = 1;
 				_scaleFactorYm = 1;
 				_scaleFactorYd = 1;
 				_scalerProc = Normal1x;
-				_modeFlags = 0;
 			}
 		} else if ( _orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth)) {
 			if (!_panelVisible && !_hasSmartphoneResolution  && !_overlayVisible && _canBeAspectScaled) {
@@ -1167,7 +1165,6 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYm = 6;
 				_scaleFactorYd = 5;
 				_scalerProc = Normal1xAspect;
-				_modeFlags = 0;
 				_videoMode.aspectRatioCorrection = true;
 			} else {
 				_scaleFactorXm = 1;
@@ -1175,7 +1172,6 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYm = 1;
 				_scaleFactorYd = 1;
 				_scalerProc = Normal1x;
-				_modeFlags = 0;
 			}
 		} else if (_videoMode.screenWidth == 640 && !(isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
@@ -1183,14 +1179,12 @@ bool OSystem_WINCE3::update_scalers() {
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 2;
 			_scalerProc = DownscaleAllByHalf;
-			_modeFlags = 0;
 		} else if (_videoMode.screenWidth == 640 && (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640))) {
 			_scaleFactorXm = 1;
 			_scaleFactorXd = 1;
 			_scaleFactorYm = 1;
 			_scaleFactorYd = 1;
 			_scalerProc = Normal1x;
-			_modeFlags = 0;
 		}
 
 		return true;
@@ -1203,7 +1197,6 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYm = 12;
 				_scaleFactorYd = 5;
 				_scalerProc = Normal2xAspect;
-				_modeFlags = 0;
 				_videoMode.aspectRatioCorrection = true;
 			} else if ( (_panelVisible || _overlayVisible) && _canBeAspectScaled ) {
 				_scaleFactorXm = 2;
@@ -1211,7 +1204,6 @@ bool OSystem_WINCE3::update_scalers() {
 				_scaleFactorYm = 2;
 				_scaleFactorYd = 1;
 				_scalerProc = Normal2x;
-				_modeFlags = 0;
 			}
 			return true;
 		}
@@ -1232,7 +1224,6 @@ bool OSystem_WINCE3::update_scalers() {
 		_scaleFactorYm = 7;
 		_scaleFactorYd = 8;
 		_scalerProc = SmartphoneLandscape;
-		_modeFlags = 0;
 		initZones();
 		return true;
 	}
@@ -1824,7 +1815,6 @@ void OSystem_WINCE3::copyRectToOverlay(const OverlayColor *buf, int pitch, int x
 		return;
 
 	// Mark the modified region as dirty
-	_cksumValid = false;
 	addDirtyRect(x, y, w, h);
 
 	undrawMouse();
@@ -1851,40 +1841,31 @@ void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 
 	Common::StackLock lock(_graphicsMutex);	// Lock the mutex until this function ends
 
-	if (((long)src & 3) == 0 && pitch == _videoMode.screenWidth && x == 0 && y == 0 &&
-			w == _videoMode.screenWidth && h == _videoMode.screenHeight && _modeFlags & DF_WANT_RECT_OPTIM) {
-		/* Special, optimized case for full screen updates.
-		 * It tries to determine what areas were actually changed,
-		 * and just updates those, on the actual display. */
-		addDirtyRgnAuto(src);
-	} else {
-		/* Clip the coordinates */
-		if (x < 0) {
-			w += x;
-			src -= x;
-			x = 0;
-		}
-
-		if (y < 0) {
-			h += y;
-			src -= y * pitch;
-			y = 0;
-		}
-
-		if (w > _videoMode.screenWidth - x) {
-			w = _videoMode.screenWidth - x;
-		}
-
-		if (h > _videoMode.screenHeight - y) {
-			h = _videoMode.screenHeight - y;
-		}
-
-		if (w <= 0 || h <= 0)
-			return;
-
-		_cksumValid = false;
-		addDirtyRect(x, y, w, h);
+	/* Clip the coordinates */
+	if (x < 0) {
+		w += x;
+		src -= x;
+		x = 0;
 	}
+
+	if (y < 0) {
+		h += y;
+		src -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _videoMode.screenWidth - x) {
+		w = _videoMode.screenWidth - x;
+	}
+
+	if (h > _videoMode.screenHeight - y) {
+		h = _videoMode.screenHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	addDirtyRect(x, y, w, h);
 
 	undrawMouse();
 

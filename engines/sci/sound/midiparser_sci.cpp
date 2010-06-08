@@ -60,6 +60,9 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	_dataincToAdd = 0;
 	_resetOnPause = false;
 	_channelsUsed = 0;
+
+	for (int i = 0; i < 16; i++)
+		_channelRemap[i] = i;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
@@ -85,7 +88,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_tracks[0] = _mixedData;
 	setTrack(0);
 	_loopTick = 0;
-	_channelsUsed = 0;
 
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// Set initial voice count
@@ -120,17 +122,20 @@ void MidiParser_SCI::unloadMusic() {
 	// Center the pitch wheels and hold pedal in preparation for the next piece of music
 	if (_driver) {
 		for (int i = 0; i < 16; ++i) {
-			if (_channelsUsed & (1 << i)) {
+			if (isChannelUsed(i)) {
 				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
 				_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
 			}
 		}
 	}
+
+	for (int i = 0; i < 16; i++)
+		_channelRemap[i] = i;
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 	// Monitor which channels are used by this song
-	_channelsUsed |= (1 << info.channel());
+	setChannelUsed(info.channel());
 
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {
@@ -322,7 +327,7 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	for (int i = 0; i < _track->channelCount; i++) {
 		if (_track->channels[i].time == -1) // channel ended
 			continue;
-		next = *_track->channels[i].data; // when the next event shoudl occur
+		next = *_track->channels[i].data; // when the next event should occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
 			next = 240;
 		next += _track->channels[i].time;
@@ -389,9 +394,18 @@ byte *MidiParser_SCI::midiMixChannels() {
 			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
-			if (command & 0x80)
+			if (command & 0x80) {
 				par1 = *channel->data++;
-			else {// running status
+
+				// TODO: Fix remapping
+
+#if 0
+				// Remap channel. Keep the upper 4 bits (command code) and change
+				// the lower 4 bits (channel)
+				byte remappedChannel = _channelRemap[par1 & 0xF];
+				par1 = (par1 & 0xF0) | (remappedChannel & 0xF);
+#endif
+			} else {// running status
 				par1 = command;
 				command = channel->prev;
 			}

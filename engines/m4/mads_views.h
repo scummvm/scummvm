@@ -34,19 +34,24 @@
 
 namespace M4 {
 
-#define MADS_SURFACE_WIDTH 320
-#define MADS_SURFACE_HEIGHT 156
-#define MADS_SCREEN_HEIGHT 200
-#define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
-
 class MadsView;
 
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
+class SpriteSlotSubset {
+public:
+	int spriteListIndex;
+	int frameNumber;
+	int xp;
+	int yp;
+	int depth;
+	int scale;
+};
+
 class MadsSpriteSlot {
 public:
 	int spriteType;
-	int timerIndex;
+	int seqIndex;
 	int spriteListIndex;
 	int frameNumber;
 	int xp;
@@ -55,25 +60,27 @@ public:
 	int scale;
 
 	MadsSpriteSlot() { }
+
+	bool operator==(const SpriteSlotSubset &other) const;
+	void copy(const SpriteSlotSubset &other);
 };
 
 #define SPRITE_SLOTS_SIZE 50
 
 enum SpriteIdSpecial {
-	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, FOREGROUND_SPRITE = 1
+	BACKGROUND_SPRITE = -4, FULL_SCREEN_REFRESH = -2, EXPIRED_SPRITE = -1, SPRITE_ZERO = 0, FOREGROUND_SPRITE = 1
 };
-
-typedef Common::Array<Common::SharedPtr<SpriteAsset> > SpriteList;
 
 class MadsSpriteSlots {
 private:
 	MadsView &_owner;
 	Common::Array<MadsSpriteSlot> _entries;
-	SpriteList _sprites;
+	Common::Array<SpriteAsset *> _sprites;
 public:
 	int startIndex;
 
 	MadsSpriteSlots(MadsView &owner);
+	~MadsSpriteSlots();
 
 	MadsSpriteSlot &operator[](int idx) {
 		assert(idx < SPRITE_SLOTS_SIZE);
@@ -81,17 +88,19 @@ public:
 	}
 	SpriteAsset &getSprite(int idx) {
 		assert(idx < (int)_sprites.size());
-		return *_sprites[idx].get();
+		return *_sprites[idx];
 	}
 
 	int getIndex();
 	int addSprites(const char *resName);
+	void deleteSprites(int listIndex);
 	void clear();
-	void deleteTimer(int timerIndex);
+	void deleteTimer(int seqIndex);
 
 	void drawBackground();
-	void drawForeground(View *view);
+	void drawForeground(View *view, int yOffset);
 	void setDirtyAreas();
+	void fullRefresh();
 	void cleanUp();
 };
 
@@ -130,18 +139,19 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view);
+	void draw(View *view, int yOffset);
 	void setDirtyAreas();
 	void setDirtyAreas2();
 	void cleanUp();
 };
 
 #define TIMED_TEXT_SIZE 10
-#define TEXT_4A_SIZE 30
+#define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_1 = 1, KMSG_2 = 2, KMSG_4 = 4, KMSG_8 = 8, KMSG_20 = 0x20, KMSG_40 = 0x40, KMSG_ACTIVE = 0x80};
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
-class MadsKernelMessageListEntry {
+class MadsKernelMessageEntry {
 public:
 	uint8 flags;
 	int sequenceIndex;
@@ -152,31 +162,35 @@ public:
 	Common::Point position;
 	int textDisplayIndex;
 	int msgOffset;
-	int field_E;
+	int numTicks;
 	uint32 frameTimer2;
 	uint32 frameTimer;
 	uint32 timeout;
-	bool field_1C;
+	int abortTimers;
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
-	const char *msg;
+	char msg[100];
 };
 
 class MadsKernelMessageList {
 private:
 	MadsView &_owner;
-	Common::Array<MadsKernelMessageListEntry> _entries;
+	Common::Array<MadsKernelMessageEntry> _entries;
 	Font *_talkFont;
+public:
+	int word_8469E;
 public:
 	MadsKernelMessageList(MadsView &owner);
 
 	void clear();
-	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 v2, uint32 timeout, const char *msg);
-	int addQuote(int quoteId, int v2, uint32 timeout);
-	void unk1(int msgIndex, int v1, int v2);
+	int add(const Common::Point &pt, uint fontColour, uint8 flags, uint8 abortTimers, uint32 timeout, const char *msg);
+	int addQuote(int quoteId, int abortTimers, uint32 timeout);
+	void scrollMessage(int msgIndex, int numTicks, bool quoted);
 	void setSeqIndex(int msgIndex, int seqIndex);
 	void remove(int msgIndex);
 	void reset();
+	void update();
+	void processText(int msgIndex);
 };
 
 class ScreenObjectEntry {
@@ -275,7 +289,7 @@ public:
 	void merge(int startIndex, int count);
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(M4Surface *dest, M4Surface *src);
+	void copy(M4Surface *dest, M4Surface *src, int yOffset);
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -308,12 +322,10 @@ struct MadsSequenceEntry {
 	int scale;
 	int dynamicHotspotIndex;
 
-	int field_12;
+	bool nonFixed;
 	int field_13;
 	
-	int width;
-	int height;
-	
+	Common::Point msgPos;
 	int triggerCountdown;
 	bool doneFlag;
 	MadsSequenceSubEntries entries;
@@ -338,20 +350,35 @@ public:
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
 	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int height, int width, char field_12, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
+		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
 		int numSprites, int frameStart);
-	void remove(int timerIndex);
-	void setSpriteSlot(int timerIndex, MadsSpriteSlot &spriteSlot);
-	bool loadSprites(int timerIndex);
+	void remove(int seqIndex);
+	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
+	bool loadSprites(int seqIndex);
 	void tick();
 	void delay(uint32 v1, uint32 v2);
-	void setAnimRange(int timerIndex, int startVal, int endVal);
+	void setAnimRange(int seqIndex, int startVal, int endVal);
+	void scan();
 };
+
+class Animation {
+protected:
+	MadsM4Engine *_vm;
+public:
+	Animation(MadsM4Engine *vm);
+	virtual ~Animation();
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
+	virtual void load(const Common::String &filename, int v0) = 0;
+	virtual void update() = 0;
+	virtual void setCurrentFrame(int frameNumber) = 0;
+};
+	
 
 class MadsView {
 private:
 	View *_view;
 public:
+	Animation *_sceneAnimation;
 	MadsSpriteSlots _spriteSlots;
 	MadsTextDisplay _textDisplay;
 	MadsKernelMessageList _kernelMessages;
@@ -371,60 +398,12 @@ public:
 
 	M4Surface *_depthSurface;
 	M4Surface *_bgSurface;
+	int _yOffset;
 public:
 	MadsView(View *view);
+	~MadsView();
 
 	void refresh();
-};
-
-#define CHEAT_SEQUENCE_MAX 8
-
-class IntegerList : public Common::Array<int> {
-public:
-	int indexOf(int v) {
-		for (uint i = 0; i < size(); ++i)
-			if (operator [](i) == v)
-				return i;
-		return -1;
-	}
-};
-
-enum InterfaceFontMode {ITEM_NORMAL, ITEM_HIGHLIGHTED, ITEM_SELECTED};
-
-enum InterfaceObjects {ACTIONS_START = 0, SCROLL_UP = 10, SCROLL_SCROLLER = 11, SCROLL_DOWN = 12,
-		INVLIST_START = 13, VOCAB_START = 18};
-
-class MadsInterfaceView : public GameInterfaceView {
-private:
-	IntegerList _inventoryList;
-	RectList _screenObjects;
-	int _highlightedElement;
-	int _topIndex;
-	uint32 _nextScrollerTicks;
-	int _cheatKeyCtr;
-
-	// Object display fields
-	int _selectedObject;
-	SpriteAsset *_objectSprites;
-	RGBList *_objectPalData;
-	int _objectFrameNumber;
-
-	void setFontMode(InterfaceFontMode newMode);
-	bool handleCheatKey(int32 keycode);
-	bool handleKeypress(int32 keycode);
-	void leaveScene();
-public:
-	MadsInterfaceView(MadsM4Engine *vm);
-	~MadsInterfaceView();
-
-	virtual void initialise();
-	virtual void setSelectedObject(int objectNumber);
-	virtual void addObjectToInventory(int objectNumber);
-	int getSelectedObject() { return _selectedObject; }
-	int getInventoryObject(int objectIndex) { return _inventoryList[objectIndex]; }
-
-	void onRefresh(RectList *rects, M4Surface *destSurface);
-	bool onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents);
 };
 
 }

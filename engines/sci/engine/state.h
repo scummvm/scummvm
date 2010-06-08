@@ -76,8 +76,7 @@ enum {
 enum {
 	SCI_GAME_IS_NOT_RESTARTING = 0,
 	SCI_GAME_WAS_RESTARTED = 1,
-	SCI_GAME_IS_RESTARTING_NOW = 2,
-	SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE = 4
+	SCI_GAME_IS_RESTARTING_NOW = 2
 };
 
 class FileHandle {
@@ -96,16 +95,13 @@ public:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(Vocabulary *voc, SegManager *segMan);
+	EngineState(SegManager *segMan);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 public:
 	SegManager *_segMan; /**< The segment manager */
-	Vocabulary *_voc;
-
-	Common::String _gameId; /**< Designation of the primary object (which inherits from Game) */
 
 	/* Non-VM information */
 
@@ -152,14 +148,34 @@ public:
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
+	// Script state
+	ExecStack *xs;
+	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
+	reg_t *variables_base[4];	///< Used for referencing VM ops
+	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
+	int variables_max[4];		///< Max. values for all variables
+
 	Script *script_000;  /**< script 000, e.g. for globals */
+
+	int loadFromLauncher;
+
+	/**
+	 * Set this to 1 to abort script execution immediately. Aborting will
+	 * leave the debug exec stack intact.
+	 * Set it to 2 to force a replay afterwards.
+	 */
+	int script_abort_flag; // Set to 1 to abort execution. Set to 2 to force a replay afterwards
+	int script_step_counter; // Counts the number of steps executed
+	int script_gc_interval; // Number of steps in between gcs
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
 
-	/* System strings */
-	SegmentId sys_strings_segment;
-	SystemStrings *sys_strings;
+	/**
+	 * Shrink execution stack to size.
+	 * Contains an assert it is not already smaller.
+	 */
+	void shrinkStackToBase();
 
 	reg_t _gameObj; /**< Pointer to the game object */
 
@@ -176,7 +192,12 @@ public:
 	uint _memorySegmentSize;
 	byte _memorySegment[kMemorySegmentMax];
 
-	EngineState *successor; /**< Successor of this state: Used for restoring */
+	/**
+	 * Resets the engine state.
+	 */
+	void reset(bool isRestoring);
+
+	bool restoring;	/**< A flag to indicate if a game is being restored */
 };
 
 } // End of namespace Sci

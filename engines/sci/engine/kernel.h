@@ -414,6 +414,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSync(EngineState *s, int argc, reg_t *argv);
 reg_t kMemorySegment(EngineState *s, int argc, reg_t *argv);
 reg_t kIntersections(EngineState *s, int argc, reg_t *argv);
+reg_t kMergePoly(EngineState *s, int argc, reg_t *argv);
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv);
 reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv);
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv);

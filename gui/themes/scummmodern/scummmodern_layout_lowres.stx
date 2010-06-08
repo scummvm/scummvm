@@ -561,7 +561,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalMenu' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true'>
+		<layout type = 'vertical' padding = '4, 4, 4, 4' center = 'true' spacing='2'>
 			<widget name = 'Title'
 					width = '160'
 					height = 'Globals.Line.Height'
@@ -581,6 +581,10 @@
 			/>
 			<space size = '2'/>
 			<widget name = 'Options'
+					width = '120'
+					height = 'Globals.Button.Height'
+			/>
+			<widget name = 'Help'
 					width = '120'
 					height = 'Globals.Button.Height'
 			/>
@@ -604,36 +608,7 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'ScummMain' overlays = 'screen_center'>
-		<layout type = 'vertical' padding = '4, 4, 4, 4'>
-			<widget name = 'Resume'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Load'
-					type = 'Button'
-			/>
-			<widget name = 'Save'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Options'
-					type = 'Button'
-			/>
-			<widget name = 'Help'
-					type = 'Button'
-			/>
-			<widget name = 'About'
-					type = 'Button'
-			/>
-			<space size = '8'/>
-			<widget name = 'Quit'
-					type = 'Button'
-			/>
-		</layout>
-	</dialog>
-
-	<dialog name = 'ScummConfig' overlays = 'screen_center'>
+	<dialog name = 'GlobalConfig' overlays = 'screen_center'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'vcMusicText'

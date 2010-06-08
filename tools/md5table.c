@@ -221,7 +221,7 @@ int main(int argc, char *argv[])
 
 	const int entrySize = 256;
 	int numEntries = 0, maxEntries = 1;
-	char *entriesBuffer = malloc(maxEntries * entrySize);
+	char *entriesBuffer = (char *)malloc(maxEntries * entrySize);
 
 	typedef enum {
 		kCPPOutput,
@@ -294,7 +294,7 @@ int main(int argc, char *argv[])
 			} else if (entry.md5) {
 				if (numEntries >= maxEntries) {
 					maxEntries *= 2;
-					entriesBuffer = realloc(entriesBuffer, maxEntries * entrySize);
+					entriesBuffer = (char *)realloc(entriesBuffer, maxEntries * entrySize);
 				}
 				if (0 == strcmp(entry.variant, "-"))
 					entry.variant = "";

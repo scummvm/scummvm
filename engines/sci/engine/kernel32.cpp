@@ -501,7 +501,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
 
-		return GET_SEL32(s->_segMan, argv[1], SELECTOR(data));
+		return readSelector(s->_segMan, argv[1], SELECTOR(data));
 	default:
 		error("Unknown kArray subop %d", argv[0].toUint16());
 	}
@@ -524,8 +524,12 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		}
 	case 1: // Size
 		return make_reg(0, s->_segMan->getString(argv[1]).size());
-	case 2:  // At (return value at an index)
+	case 2: { // At (return value at an index)
+		if (argv[1].segment == s->_segMan->getStringSegmentId())
+			return make_reg(0, s->_segMan->lookupString(argv[1])->getRawData()[argv[2].toUint16()]);
+
 		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
+	}
 	case 3: { // Atput (put value at an index)
 		SciString *string = s->_segMan->lookupString(argv[1]);
 
@@ -563,28 +567,40 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
-		Common::String string2 = s->_segMan->getString(argv[3]);
+		const char *string2 = 0;
+		uint32 string2Size = 0;
+
+		if (argv[3].segment == s->_segMan->getStringSegmentId()) {
+			SciString *string = s->_segMan->lookupString(argv[3]);
+			string2 = string->getRawData();
+			string2Size = string->getSize();
+		} else {
+			Common::String string = s->_segMan->getString(argv[3]);
+			string2 = string.c_str();
+			string2Size = string.size() + 1;
+		}
+
 		uint32 index1 = argv[2].toUint16();
 		uint32 index2 = argv[4].toUint16();
 
 		// The original engine ignores bad copies too
-		if (index2 > string2.size())
+		if (index2 > string2Size)
 			break;
 
 		// A count of -1 means fill the rest of the array
-		uint32 count = argv[5].toSint16() == -1 ? string2.size() - index2 + 1 : argv[5].toUint16();
+		uint32 count = argv[5].toSint16() == -1 ? string2Size - index2 + 1 : argv[5].toUint16();
 	
 		// We have a special case here for argv[1] being a system string
-		if (argv[1].segment == s->sys_strings_segment) {
+		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
 			// Resize if necessary
-			if ((uint32)s->sys_strings->_strings[argv[1].toUint16()]._maxSize < index1 + count) {
-				delete[] s->sys_strings->_strings[argv[1].toUint16()]._value;
-				s->sys_strings->_strings[argv[1].toUint16()]._maxSize = index1 + count;
-				s->sys_strings->_strings[argv[1].toUint16()]._value = new char[index1 + count];
-				memset(s->sys_strings->_strings[argv[1].toUint16()]._value, 0, index1 + count);
+			const uint16 sysStringId = argv[1].toUint16();
+			if ((uint32)s->_segMan->sysStrings->_strings[sysStringId]._maxSize < index1 + count) {
+				free(s->_segMan->sysStrings->_strings[sysStringId]._value);
+				s->_segMan->sysStrings->_strings[sysStringId]._maxSize = index1 + count;
+				s->_segMan->sysStrings->_strings[sysStringId]._value = (char *)calloc(index1 + count, sizeof(char));
 			}
 
-			strncpy(s->sys_strings->_strings[argv[1].toUint16()]._value + index1, string2.c_str() + index2, count);
+			strncpy(s->_segMan->sysStrings->_strings[sysStringId]._value + index1, string2 + index2, count);
 		} else {
 			SciString *string1 = s->_segMan->lookupString(argv[1]);
 
@@ -594,7 +610,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			// Note: We're accessing from c_str() here because the string's size ignores
 			// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
 			for (uint16 i = 0; i < count; i++)
-				string1->setValue(i + index1, string2.c_str()[i + index2]);
+				string1->setValue(i + index1, string2[i + index2]);
 		}
 		
 	} return argv[1];
@@ -608,15 +624,25 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
 	}
 	case 8: { // Dup
-		Common::String string = s->_segMan->getString(argv[1]);
+		const char *rawString = 0;
+		uint32 size = 0;
+
+		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
+			SciString *string = s->_segMan->lookupString(argv[1]);
+			rawString = string->getRawData();
+			size = string->getSize();
+		} else {
+			Common::String string = s->_segMan->getString(argv[1]);
+			rawString = string.c_str();
+			size = string.size() + 1;
+		}
+
 		reg_t stringHandle;
 		SciString *dupString = s->_segMan->allocateString(&stringHandle);
-		dupString->setSize(string.size() + 1);
+		dupString->setSize(size);
 
-		for (uint32 i = 0; i < string.size(); i++)
-			dupString->setValue(i, string.c_str()[i]);
-
-		dupString->setValue(dupString->getSize() - 1, 0);
+		for (uint32 i = 0; i < size; i++)
+			dupString->setValue(i, rawString[i]);
 
 		return stringHandle;
 	}
@@ -624,7 +650,7 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		if (!s->_segMan->isHeapObject(argv[1]))
 			return argv[1];
 
-		return GET_SEL32(s->_segMan, argv[1], SELECTOR(data));
+		return readSelector(s->_segMan, argv[1], SELECTOR(data));
 	case 10: // Stringlen
 		return make_reg(0, s->_segMan->strlen(argv[1]));
 	case 11: { // Printf
@@ -689,12 +715,12 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 	/*
 	reg_t viewObj = argv[0];
-	uint16 viewId = GET_SEL32V(s->_segMan, viewObj, SELECTOR(view));
-	int16 loopNo = GET_SEL32V(s->_segMan, viewObj, SELECTOR(loop));
-	int16 celNo = GET_SEL32V(s->_segMan, viewObj, SELECTOR(cel));
+	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
+	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
 	//int16 leftPos = 0;
 	//int16 topPos = 0;
-	int16 priority = GET_SEL32V(s->_segMan, viewObj, SELECTOR(priority));
+	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
 	//int16 control = 0;
 	*/
 
@@ -761,10 +787,10 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect nsRect;
 
 	// Get the bounding rectangle of the object
-	nsRect.left = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsLeft));
-	nsRect.top = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsTop));
-	nsRect.right = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsRight));
-	nsRect.bottom = GET_SEL32V(s->_segMan, targetObject, SELECTOR(nsBottom));
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
 
 	//warning("kOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
@@ -778,9 +804,16 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
-	reg_t object = argv[3];
-	Common::String text = s->_segMan->getString(GET_SEL32(s->_segMan, object, SELECTOR(text)));
-	debug("kCreateTextBitmap: %s", text.c_str());
+	switch (argv[0].toUint16()) {
+	case 0:
+		if (argc != 4) {
+			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		debug("kCreateTextBitmap: %s", text.c_str());
+	}
 
 	return NULL_REG;
 }

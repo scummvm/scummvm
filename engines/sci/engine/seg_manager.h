@@ -112,12 +112,6 @@ public:
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
 	// TODO: document this
-	reg_t lookupScriptExport(int script_nr, int export_index) {
-		SegmentId seg = getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-		return make_reg(seg, getScript(seg)->validateExportFunc(export_index));
-	}
-
-	// TODO: document this
 	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
 
 	/**
@@ -188,15 +182,10 @@ public:
 	// 5. System Strings
 
 	/**
-	 * Allocates a system string table
-	 * See also sys_string_acquire();
-	 * @param[in] segid	Segment ID of the stack
-	 * @returns			The physical stack
+	 * Initializes the system string table.
 	 */
-	SystemStrings *allocateSysStrings(SegmentId *segid);
+	void initSysStrings();
 
-
-	// 5. System Strings
 
 	// 6, 7. Lists and Nodes
 
@@ -213,6 +202,14 @@ public:
 	 * @return			Reference to the memory allocated for the node
 	 */
 	Node *allocateNode(reg_t *addr);
+
+	/**
+	 * Allocate and initialize a new list node.
+	 * @param[in] value		The value to set the node to
+	 * @param[in] key		The key to set
+	 * @return				Pointer to the newly initialized list node
+	 */
+	reg_t newNode(reg_t value, reg_t key);
 
 	/**
 	 * Resolves a list pointer to a list.
@@ -432,12 +429,22 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
-	void scriptRelocateExportsSci11(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
+
+	uint32 classTableSize() { return _classTable.size(); }
+	Class getClass(int index) { return _classTable[index]; }
+	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
+	void resizeClassTable(uint32 size) { _classTable.resize(size); }
+
+	/**
+	 * Obtains the system strings segment ID
+	 */
+	SegmentId getSysStringsSegment() { return sysStringsSegment; }
 
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
-	Common::Array<Class> _classtable; /**< Table of all classes */
+	// Only accessible from saveLoadWithSerializer()
+	Common::Array<Class> _classTable; /**< Table of all classes */
 
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
@@ -459,6 +466,13 @@ private:
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
 	SegmentId Nodes_seg_id; ///< ID of the (a) node segment
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
+
+	/* System strings */
+	SegmentId sysStringsSegment;
+public:	// TODO: make private. Only kString() needs direct access
+	SystemStrings *sysStrings;
+
+private:
 
 #ifdef ENABLE_SCI32
 	SegmentId Arrays_seg_id;

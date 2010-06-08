@@ -332,11 +332,12 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("DoSync", kDoSync, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, "iri*"),
 	DEFUN("Intersections", kIntersections, "iiiiriiiri"),
+	DEFUN("MergePoly", kMergePoly, "rli"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
 	DEFUN("ShowMovie", kShowMovie, ".*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
-	DEFUN("Platform", kPlatform, "i.*"),
+	DEFUN("Platform", kPlatform, ".*"),
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Portrait", kPortrait, ".*"),
@@ -362,7 +363,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ListIndexOf", kListIndexOf, "lZo"),
 	DEFUN("OnMe", kOnMe, "iio.*"),
 	DEFUN("InPolygon", kInPolygon, "iio"),
-	DEFUN("CreateTextBitmap", kCreateTextBitmap, "iiio"),
+	DEFUN("CreateTextBitmap", kCreateTextBitmap, "i.*"),
 
 	// SCI2.1 Kernel Functions
 	DEFUN("Save", kSave, ".*"),
@@ -382,7 +383,6 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),
 	DEFUN("ATan", kATan, ".*"),
-	DEFUN("MergePoly", kMergePoly, ".*"),
 	DEFUN("Record", kRecord, ".*"),
 	DEFUN("PlayBack", kPlayBack, ".*"),
 	DEFUN("DbugStr", kDbugStr, ".*"),
@@ -628,7 +628,7 @@ int Kernel::findRegType(reg_t reg) {
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj)._bufSize &&
+		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
 			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
 		    RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
 			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;

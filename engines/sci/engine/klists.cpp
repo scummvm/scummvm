@@ -155,28 +155,10 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
-	reg_t nodebase;
-	Node *n = s->_segMan->allocateNode(&nodebase);
-
-	if (!n) {
-		error("[Kernel] Out of memory while creating a node");
-		return NULL_REG;
-	}
-
-	n->pred = n->succ = NULL_REG;
-	n->key = key;
-	n->value = value;
-
-	return nodebase;
-}
-
 reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
-
-	if (argc == 1)
-		s->r_acc = _k_new_node(s, argv[0], argv[0]);
-	else
-		s->r_acc = _k_new_node(s, argv[0], argv[1]);
+	reg_t nodeValue = argv[0];
+	reg_t nodeKey = (argc == 2) ? argv[1] : NULL_REG;
+	s->r_acc = s->_segMan->newNode(nodeValue, nodeKey);
 
 	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
 
@@ -415,11 +397,11 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];
 
-	int input_size = (int16)GET_SEL32V(segMan, source, SELECTOR(size));
+	int input_size = (int16)readSelectorValue(segMan, source, SELECTOR(size));
 	int i;
 
-	reg_t input_data = GET_SEL32(segMan, source, SELECTOR(elements));
-	reg_t output_data = GET_SEL32(segMan, dest, SELECTOR(elements));
+	reg_t input_data = readSelector(segMan, source, SELECTOR(elements));
+	reg_t output_data = readSelector(segMan, dest, SELECTOR(elements));
 
 	List *list;
 	Node *node;
@@ -430,10 +412,10 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	if (output_data.isNull()) {
 		list = s->_segMan->allocateList(&output_data);
 		list->first = list->last = NULL_REG;
-		PUT_SEL32(segMan, dest, SELECTOR(elements), output_data);
+		writeSelector(segMan, dest, SELECTOR(elements), output_data);
 	}
 
-	PUT_SEL32V(segMan, dest, SELECTOR(size), input_size);
+	writeSelectorValue(segMan, dest, SELECTOR(size), input_size);
 
 	list = s->_segMan->lookupList(input_data);
 	node = s->_segMan->lookupNode(list->first);
@@ -442,7 +424,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	i = 0;
 	while (node) {
-		invoke_selector(INV_SEL(s, order_func, doit, kStopOnInvalidSelector), 1, node->value);
+		invokeSelector(INV_SEL(s, order_func, doit, kStopOnInvalidSelector), 1, node->value);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;
@@ -453,7 +435,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	qsort(temp_array, input_size, sizeof(sort_temp_t), sort_temp_cmp);
 
 	for (i = 0;i < input_size;i++) {
-		reg_t lNode = _k_new_node(s, temp_array[i].key, temp_array[i].value);
+		reg_t lNode = s->_segMan->newNode(temp_array[i].value, temp_array[i].key);
 		_k_add_to_end(s, output_data, lNode);
 	}
 
@@ -533,15 +515,15 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
-		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// This can only happen with 3 params (list, target selector, variable)
 			if (argc != 3) {
 				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
 			} else {
-				write_selector(s->_segMan, curObject, slc, argv[2]);
+				writeSelector(s->_segMan, curObject, slc, argv[2]);
 			}
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 		}
 
 		curNode = s->_segMan->lookupNode(nextNode);
@@ -566,11 +548,11 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
-		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
 			warning("kListFirstTrue: Attempted to access a variable selector");
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result is true
 			if (!s->r_acc.isNull())
@@ -600,11 +582,11 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 		curObject = curNode->value;
 
 		// First, check if the target selector is a variable
-		if (lookup_selector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
+		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
 			warning("kListAllTrue: Attempted to access a variable selector");
 		} else {
-			invoke_selector_argv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result isn't true
 			if (s->r_acc.isNull())

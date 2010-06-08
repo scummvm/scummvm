@@ -27,9 +27,8 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
-#include "gui/options.h"
 #include "gui/widget.h"
-#include "gui/saveload.h"
+#include "engines/dialogs.h"
 
 #include "scumm/detection.h"
 
@@ -52,32 +51,17 @@ protected:
 	typedef Common::String String;
 };
 
-class ScummMenuDialog : public ScummDialog {
+#ifndef DISABLE_HELP
+class ScummMenuDialog : public MainMenuDialog {
 public:
 	ScummMenuDialog(ScummEngine *scumm);
 	~ScummMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
-	virtual void reflowLayout();
-
-	int runModal();
 protected:
-	ScummEngine		*_vm;
-
-	GUI::Dialog		*_aboutDialog;
-	GUI::Dialog		*_optionsDialog;
-#ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
-#endif
-	GUI::SaveLoadChooser	*_saveDialog;
-	GUI::SaveLoadChooser	*_loadDialog;
-
-	GUI::ButtonWidget *_loadButton;
-	GUI::ButtonWidget *_saveButton;
-
-	void save();
-	void load();
 };
+#endif
 
 /**
  * A dialog which displays an arbitrary message to the user and returns

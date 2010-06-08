@@ -86,7 +86,7 @@ int16 OSystem_IPHONE::getWidth() {
 }
 
 void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
-	//printf("setPalette()\n");
+	assert(start + num <= 256);
 	const byte *b = colors;
 
 	for (uint i = start; i < start + num; ++i) {
@@ -98,7 +98,14 @@ void OSystem_IPHONE::setPalette(const byte *colors, uint start, uint num) {
 }
 
 void OSystem_IPHONE::grabPalette(byte *colors, uint start, uint num) {
-	//printf("grabPalette()\n");
+	assert(start + num <= 256);
+	byte *b = colors;
+
+	for (uint i = start; i < start + num; ++i) {
+		Graphics::colorToRGB<Graphics::ColorMasks<565> >(_palette[i], b[0], b[1], b[2]);
+		b[3] = 0xFF;
+		b += 4;
+	}
 }
 
 void OSystem_IPHONE::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {

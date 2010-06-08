@@ -78,9 +78,8 @@ MystGraphics::MystGraphics(MohawkEngine_Myst* vm) : _vm(vm) {
 		error("Myst requires greater than 256 colors to run");
 
 	if (_vm->getFeatures() & GF_ME) {
-		// We want to delete our own JPEG surfaces, so don't free after use.
-		_jpegDecoder = new JPEGDecoder(false);
-		_pictDecoder = new MystPICT(_jpegDecoder);
+		_jpegDecoder = new Graphics::JPEGDecoder();
+		_pictDecoder = new Graphics::PictDecoder(_pixelFormat);
 	} else {
 		_jpegDecoder = NULL;
 		_pictDecoder = NULL;
@@ -152,9 +151,10 @@ void MystGraphics::copyImageSectionToScreen(uint16 image, Common::Rect src, Comm
 	if (_vm->getFeatures() & GF_ME && _vm->getPlatform() == Common::kPlatformMacintosh && _pictureFile.picFile.isOpen()) {
 		for (uint32 i = 0; i < _pictureFile.pictureCount; i++)
 			if (_pictureFile.entries[i].id == image) {
-				if (_pictureFile.entries[i].type == 0)
-					surface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
-				else if (_pictureFile.entries[i].type == 1)
+				if (_pictureFile.entries[i].type == 0) {
+					Graphics::Surface *jpegSurface = _jpegDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
+					surface->copyFrom(*jpegSurface);
+				} else if (_pictureFile.entries[i].type == 1)
 					surface = _pictDecoder->decodeImage(new Common::SeekableSubReadStream(&_pictureFile.picFile, _pictureFile.entries[i].offset, _pictureFile.entries[i].offset + _pictureFile.entries[i].size));
 				else
 					error ("Unknown Picture File type %d", _pictureFile.entries[i].type);

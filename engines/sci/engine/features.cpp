@@ -56,7 +56,7 @@ reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc
 	}
 
 	if (methodNum == -1) {
-		if (lookup_selector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
+		if (lookupSelector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
 			warning("getDetectionAddr: target selector is not a method of object %s", objName.c_str());
 			return NULL_REG;
 		}
@@ -87,7 +87,7 @@ bool GameFeatures::autoDetectSoundType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		// The play method of the Sound object pushes the DoSound command
@@ -189,7 +189,7 @@ SciVersion GameFeatures::detectSetCursorType() {
 			}
 
 			// Now we check what the number variable holds in the handCursor object.
-			uint16 number = GET_SEL32V(_segMan, objAddr, SELECTOR(number));
+			uint16 number = readSelectorValue(_segMan, objAddr, SELECTOR(number));
 
 			// If the number is 0, it uses views and therefore the SCI1.1 kSetCursor semantics,
 			// otherwise it uses the SCI0 early kSetCursor semantics.
@@ -223,7 +223,7 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_lofsa || opcode == op_lofss) {
@@ -231,13 +231,13 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 			uint16 lofs = opparams[0];
 
 			// Check for going out of bounds when interpreting as abs/rel
-			if (lofs >= script->_bufSize)
+			if (lofs >= script->getBufSize())
 				_lofsType = SCI_VERSION_0_EARLY;
 
 			if ((signed)offset + (int16)lofs < 0)
 				_lofsType = SCI_VERSION_1_MIDDLE;
 
-			if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
+			if ((signed)offset + (int16)lofs >= (signed)script->getBufSize())
 				_lofsType = SCI_VERSION_1_MIDDLE;
 
 			if (_lofsType != SCI_VERSION_NONE)
@@ -266,7 +266,7 @@ SciVersion GameFeatures::detectLofsType() {
 
 		// Find a function of the game object which invokes lofsa/lofss
 		reg_t gameClass = _segMan->findObjectByName("Game");
-		Object *obj = _segMan->getObject(gameClass);
+		const Object *obj = _segMan->getObject(gameClass);
 		bool found = false;
 
 		for (uint m = 0; m < obj->getMethodCount(); m++) {
@@ -309,7 +309,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {
@@ -332,18 +332,47 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 SciVersion GameFeatures::detectGfxFunctionsType() {
 	if (_gfxFunctionsType == SCI_VERSION_NONE) {
-		// This detection only works (and is only needed) for SCI0 games
-		if (getSciVersion() >= SCI_VERSION_01) {
+		if (getSciVersion() == SCI_VERSION_0_EARLY) {
+			// Old SCI0 games always used old graphics functions
+			_gfxFunctionsType = SCI_VERSION_0_EARLY;
+		} else if (getSciVersion() >= SCI_VERSION_01) {
+			// SCI01 and newer games always used new graphics functions
 			_gfxFunctionsType = SCI_VERSION_0_LATE;
-		} else if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		} else {	// SCI0 late
 			// Check if the game is using an overlay
-			bool found = false;
+			bool searchRoomObj = false;
+			reg_t rmObjAddr = _segMan->findObjectByName("Rm");
 
-			if (_kernel->_selectorCache.overlay == -1) {
-				// No overlay selector found, check if any method of the Rm object
-				// is calling kDrawPic, as the overlay selector might be missing in demos
+			if (_kernel->_selectorCache.overlay != -1) {
+				// The game has an overlay selector, check how it calls kDrawPicto determine
+				// the graphics functions type used
+				if (lookupSelector(_segMan, rmObjAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
+					if (!autoDetectGfxFunctionsType()) {
+						warning("Graphics functions detection failed, taking an educated guess");
 
-				Object *obj = _segMan->getObject(_segMan->findObjectByName("Rm"));
+						// Try detecting the graphics function types from the existence of the motionCue
+						// selector (which is a bit of a hack)
+						if (_kernel->findSelector("motionCue") != -1)
+							_gfxFunctionsType = SCI_VERSION_0_LATE;
+						else
+							_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					}
+				} else {
+					// The game has an overlay selector, but it's not a method of the Rm object
+					// (like in Hoyle 1 and 2), so search for other methods
+					searchRoomObj = true;
+				}
+			} else {
+				// The game doesn't have an overlay selector, so search for it manually
+				searchRoomObj = true;
+			}
+
+			if (searchRoomObj) {
+				// If requested, check if any method of the Rm object is calling kDrawPic,
+				// as the overlay selector might be missing in demos
+				bool found = false;
+
+				const Object *obj = _segMan->getObject(rmObjAddr);
 				for (uint m = 0; m < obj->getMethodCount(); m++) {
 					found = autoDetectGfxFunctionsType(m);
 					if (found)
@@ -351,30 +380,11 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				}
 
 				if (!found) {
-					// No overlay selector found, therefore the game is definitely
-					// using old graphics functions
+					// No method of the Rm object is calling kDrawPic, thus the game
+					// doesn't have overlays and is using older graphics functions
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
-			} else {	// _kernel->_selectorCache.overlay != -1
-				// An in-between case: The game does not have a shiftParser
-				// selector, but it does have an overlay selector, so it uses an
-				// overlay. Therefore, check it to see how it calls kDrawPic to
-				// determine the graphics functions type used
-
-				if (!autoDetectGfxFunctionsType()) {
-					warning("Graphics functions detection failed, taking an educated guess");
-
-					// Try detecting the graphics function types from the existence of the motionCue
-					// selector (which is a bit of a hack)
-					if (_kernel->findSelector("motionCue") != -1)
-						_gfxFunctionsType = SCI_VERSION_0_LATE;
-					else
-						_gfxFunctionsType = SCI_VERSION_0_EARLY;
-				}
 			}
-		} else {	// (getSciVersion() == SCI_VERSION_0_EARLY)
-			// Old SCI0 games always used old graphics functions
-			_gfxFunctionsType = SCI_VERSION_0_EARLY;
 		}
 
 		debugC(1, kDebugLevelVM, "Detected graphics functions type: %s", getSciVersionDesc(_gfxFunctionsType));
@@ -402,7 +412,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {
@@ -455,7 +465,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
-		if (opcode == op_ret || offset >= script->_bufSize)
+		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
 		if (opcode == op_callk) {

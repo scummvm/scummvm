@@ -30,7 +30,7 @@
 #include "mohawk/riven.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/sound.h"
-#include "mohawk/video/video.h"
+#include "mohawk/video.h"
 
 namespace Mohawk {
 

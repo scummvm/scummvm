@@ -26,8 +26,9 @@
 #ifndef SCI_SCICORE_RESOURCE_H
 #define SCI_SCICORE_RESOURCE_H
 
-#include "common/str.h"
 #include "common/fs.h"
+#include "common/macresman.h"
+#include "common/str.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
@@ -108,14 +109,31 @@ enum ResourceType {
 	kResourceTypeUnknown1, // Translation, currently unsupported
 	kResourceTypeUnknown2,
 	kResourceTypeRobot,
-	kResourceTypeInvalid
+	kResourceTypeInvalid,
+
+	// Mac-only resources, these resource types are self-defined
+	// Numbers subject to change
+	kResourceTypeMacIconBarPictN = -1, // IBIN resources (icon bar, not selected)
+	kResourceTypeMacIconBarPictS = -2, // IBIS resources (icon bar, selected)
+	kResourceTypeMacPict = -3          // PICT resources (inventory)
 };
 
 const char *getResourceTypeName(ResourceType restype);
 
 
 class ResourceManager;
-struct ResourceSource;
+
+struct ResourceSource {
+	ResSourceType source_type;
+	bool scanned;
+	Common::String location_name;	// FIXME: Replace by FSNode ?
+	const Common::FSNode *resourceFile;
+	int volume_number;
+	ResourceSource *associated_map;
+	uint32 audioCompressionType;
+	int32 *audioCompressionOffsetMapping;
+	Common::MacResManager macResMan;
+};
 
 class ResourceId {
 public:
@@ -127,7 +145,7 @@ public:
 
 	ResourceId(ResourceType type_, uint16 number_, uint32 tuple_ = 0)
 			: type(type_), number(number_), tuple(tuple_) {
-		if ((type < kResourceTypeView) || (type > kResourceTypeInvalid))
+		if (type < kResourceTypeMacPict || type > kResourceTypeInvalid)
 			type = kResourceTypeInvalid;
 	}
 
@@ -273,6 +291,19 @@ public:
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
 
+	/**
+	 * Finds the internal Sierra ID of the current game from script 0
+	 */
+	Common::String findSierraGameId();
+
+	/**
+	 * Finds the location of the game object from script 0
+	 * @param addSci11ScriptOffset: Adjust the return value for SCI1.1 and newer
+	 *        games. Needs to be false when the heap is accessed directly inside
+	 *        findSierraGameId().
+	 */
+	reg_t findGameObject(bool addSci11ScriptOffset = true);
+
 protected:
 	// Maximum number of bytes to allow being allocated for resources
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
@@ -290,8 +321,8 @@ protected:
 	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; ///< list of opened volume files
 	ResourceSource *_audioMapSCI1; ///< Currently loaded audio map for SCI1
-	ResVersion _volVersion; ///< RESOURCE.0xx version
-	ResVersion _mapVersion; ///< RESOURCE.MAP version
+	ResVersion _volVersion; ///< resource.0xx version
+	ResVersion _mapVersion; ///< resource.map version
 
 	/**
 	 * Initializes the resource manager
@@ -327,7 +358,7 @@ protected:
 	 */
 	ResourceSource *addExternalMap(const char *file_name, int volume_nr = 0);
 
-	ResourceSource *addExternalMap(const Common::FSNode *mapFile);
+	ResourceSource *addExternalMap(const Common::FSNode *mapFile, int volume_nr = 0);
 
 	/**
 	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
@@ -362,13 +393,13 @@ protected:
 	 */
 	const char *versionDescription(ResVersion version) const;
 
-	Common::File *getVolumeFile(const char *filename);
+	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
 	void loadResource(Resource *res);
-	bool loadPatch(Resource *res, Common::File &file);
+	bool loadPatch(Resource *res, Common::SeekableReadStream *file);
 	bool loadFromPatchFile(Resource *res);
-	bool loadFromWaveFile(Resource *res, Common::File &file);
-	bool loadFromAudioVolumeSCI1(Resource *res, Common::File &file);
-	bool loadFromAudioVolumeSCI11(Resource *res, Common::File &file);
+	bool loadFromWaveFile(Resource *res, Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI1(Resource *res, Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI11(Resource *res, Common::SeekableReadStream *file);
 	void freeOldResources();
 	int decompress(Resource *res, Common::SeekableReadStream *file);
 	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32&szPacked, ResourceCompression &compression);
@@ -421,7 +452,10 @@ protected:
 	 * Reads patch files from a local directory.
 	 */
 	void readResourcePatches(ResourceSource *source);
-	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
+#ifdef ENABLE_SCI32
+	void readResourcePatchesBase36(ResourceSource *source);
+#endif
+	void processPatch(ResourceSource *source, ResourceType restype, uint16 resnumber, uint32 tuple = 0);
 
 	/**
 	 * Process wave files as patches for Audio resources
@@ -481,6 +515,7 @@ public:
 	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
 	byte getInitialVoiceCount(byte channel);
+	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
 
 private:
 	SciVersion _soundVersion;
@@ -488,6 +523,9 @@ private:
 	Track *_tracks;
 	Resource *_innerResource;
 	ResourceManager *_resMan;
+	uint16 _channelsUsed;
+
+	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
 };
 
 } // End of namespace Sci

@@ -23,12 +23,12 @@
  *
  */
 
-#include <SDL.h> 
 #include <pspthreadman.h> 
 #include <pspaudio.h>
  
 #include "common/scummsys.h" 
 #include "backends/platform/psp/audio.h"
+#include "backends/platform/psp/thread.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -79,7 +79,6 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 	_bufferSize = numOfSamples * numOfChannels * sizeof(uint16);	// should be the right size to send the app
 	_callback = callback;
 	_userData = userData;
-	_emptyBuffers = NUM_BUFFERS;
 	_bufferToFill = 0;
 	_bufferToPlay = 0;
 	
@@ -93,7 +92,7 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 
 bool PspAudio::createThread() {
 	DEBUG_ENTER_FUNC();
-	int threadId = sceKernelCreateThread("audioThread", thread, 30, 16*1024, THREAD_ATTR_USER, 0); 
+	int threadId = sceKernelCreateThread("audioThread", thread, PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD, THREAD_ATTR_USER, 0); 
 	
 	if (threadId < 0) {	// error
 		PSP_ERROR("failed to create audio thread. Error code %d\n", threadId);
@@ -122,10 +121,7 @@ int PspAudio::thread(SceSize, void *__this) {
 };
 
 // The real thread function
-void PspAudio::audioThread() {
-	bool isPlaying = false;
-	int remainingSamples = 0;
-	
+void PspAudio::audioThread() {	
 	assert(_callback);
 	PSP_DEBUG_PRINT_FUNC("audio thread started\n");
 
@@ -133,63 +129,20 @@ void PspAudio::audioThread() {
 		if (_paused)
 			PSP_DEBUG_PRINT("audio thread paused\n");
 		while (_paused) {	// delay until we stop pausing
-			SDL_Delay(100);
+			sceKernelDelayThread(100000);	// 100ms
+			if (!_paused)
+				PSP_DEBUG_PRINT("audio thread unpaused\n");
 		}
-		if (!_paused)
-			PSP_DEBUG_PRINT("audio thread unpaused\n");
 
-		// check if the audio is playing
-		remainingSamples = sceAudioGetChannelRestLen(_pspChannel);
-		if (remainingSamples < 0) {
-			PSP_ERROR("failed to get remaining samples\n");
-			return;
-		}
-		isPlaying = remainingSamples ? true : false;
-		
 		PSP_DEBUG_PRINT("remaining samples[%d]\n", remainingSamples);
+
+		PSP_DEBUG_PRINT("filling buffer[%d]\n", _bufferToFill);
+		_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in
+		nextBuffer(_bufferToFill);
 		
-		while (true) {	// really only execute once. this just helps write the logic
-			if (isPlaying) {
-				_stoppedPlayingOnceFlag = false;
-			
-				// check if a buffer is empty
-				if (_emptyBuffers)	{ // we have some empty buffers
-					PSP_DEBUG_PRINT("sound playing & an empty buffer. filling buffer[%d]. empty buffers[%d]\n", _bufferToFill, _emptyBuffers);
-					_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in
-					nextBuffer(_bufferToFill);
-					_emptyBuffers--;
-					break;
-				} else { // we have no empty buffers
-					// calculate how long we need to sleep. time(us) = samples * 1000000 / freq
-					// since frequency is always 44100, we can do a shortcut:
-					// time(us) = samples * (10000 / 441)
-					uint32 sleepTime = (remainingSamples * 10000) / 441;
-					if (!sleepTime)
-						break;
-					PSP_DEBUG_PRINT("sound playing & no empty buffers. sleeping for %d samples for %dus\n", remainingSamples, sleepTime);	
-					sceKernelDelayThread(sleepTime);
-					break;
-				}
-			} else {	// we're not playing right now
-				if (_stoppedPlayingOnceFlag == false) {	// we only want to do this when we finish playing
-					nextBuffer(_bufferToPlay);
-					_emptyBuffers++;
-					_stoppedPlayingOnceFlag = true;
-				}	
-			
-				if (_emptyBuffers == NUM_BUFFERS) { // problem: we have only empty buffers!
-					PSP_DEBUG_PRINT("no sound playing & no full buffer. filling buffer[%d]. empty buffers[%d]\n", _bufferToFill, _emptyBuffers);
-					_callback(_userData, _buffers[_bufferToFill], _bufferSize);
-					nextBuffer(_bufferToFill);
-					_emptyBuffers--;
-					break;
-				} else { // we have at least one non-empty buffer
-					PSP_DEBUG_PRINT("no sound playing & a full buffer. playing buffer[%d]. empty buffers[%d]\n", _bufferToPlay, _emptyBuffers);
-					playBuffer();
-					break;
-				}
-			}
-		} // while true	
+		PSP_DEBUG_PRINT("playing buffer[%d].\n", _bufferToPlay);
+		playBuffer();
+		nextBuffer(_bufferToPlay);
 	} // while _init
 	
 	// destroy everything
@@ -211,9 +164,9 @@ inline bool PspAudio::playBuffer() {
 	DEBUG_ENTER_FUNC();
 	int ret;
 	if (_numOfChannels == 1)
-		ret = sceAudioOutput(_pspChannel, PSP_AUDIO_VOLUME_MAX, _buffers[_bufferToPlay]);
+		ret = sceAudioOutputBlocking(_pspChannel, PSP_AUDIO_VOLUME_MAX, _buffers[_bufferToPlay]);
 	else
-		ret = sceAudioOutputPanned(_pspChannel, PSP_AUDIO_VOLUME_MAX, PSP_AUDIO_VOLUME_MAX, _buffers[_bufferToPlay]);
+		ret = sceAudioOutputPannedBlocking(_pspChannel, PSP_AUDIO_VOLUME_MAX, PSP_AUDIO_VOLUME_MAX, _buffers[_bufferToPlay]);
 	
 	if (ret < 0) {
 		PSP_ERROR("failed to output audio. Error[%d]\n", ret);
