@@ -6,6 +6,8 @@
 #include "graphics/surface.h"
 #include "graphics/cursorman.h"
 
+#include "common/events.h"
+
 namespace Testbed {
 
 bool testFullScreenMode() {
@@ -80,7 +82,8 @@ bool testAspectRatio() {
 }
 
 bool testPalettizedCursors() {
-	Testsuite::displayMessage("Testing Cursors. You should expect to see a red colored cursor.\n");
+	Testsuite::displayMessage("Testing Cursors. You should expect to see a yellow colored square cursor.\n \
+	You should be able to move it. The test finishes when the mouse(L/R) is clicked");
 	
 	Common::Point pt(0,100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing Palettized Cursors", pt);
@@ -90,7 +93,6 @@ bool testPalettizedCursors() {
 
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
 	isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureCursorHasPalette);
-	g_system->delayMillis(1000);
 
 	if (isFeaturePresent) {
 		byte palette[3 * 4]; // Black, white and yellow
@@ -103,9 +105,47 @@ bool testPalettizedCursors() {
 		memset(buffer, 2, 10 * 10);
 		
 		CursorMan.pushCursorPalette(palette, 0, 3);
-		CursorMan.pushCursor(buffer, 10, 10, 40, 40, 2, 1);
+		CursorMan.pushCursor(buffer, 10, 10, 45, 45, 1);
 		CursorMan.showMouse(true);
-		g_system->updateScreen();
+
+		Common::EventManager *eventMan = g_system->getEventManager();
+		Common::Event event;
+
+		bool quitLoop = false;
+		uint32 lastRedraw = 0;
+		const uint32 waitTime = 1000 / 45;
+
+		while (!quitLoop) {
+			while (eventMan->pollEvent(event)) {
+	
+				 if (lastRedraw + waitTime < g_system->getMillis()) {
+        	        g_system->updateScreen();
+            	    lastRedraw = g_system->getMillis();
+           		 }
+
+				switch (event.type) {
+				case Common::EVENT_MOUSEMOVE:
+					printf("Mouse Move\n");
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+					Testsuite::clearScreen(rect);
+					Testsuite::writeOnScreen("Mouse Clicked", pt);
+					printf("Mouse Clicked\n");
+					g_system->delayMillis(1000);
+					quitLoop = true;
+					CursorMan.popCursorPalette();
+					CursorMan.popCursor();
+					Testsuite::clearScreen(rect);
+					Testsuite::writeOnScreen("TestFinished", pt);
+					g_system->delayMillis(1000);
+					break;
+				default:	
+					;//Ignore any other event
+
+				}
+			}
+		}
 	}
 	else {
 		Testsuite::displayMessage("feature not supported");

@@ -13,10 +13,10 @@ GFXTestSuite::GFXTestSuite() {
 	g_system->grabPalette(_palette, 0, 3);
 	
 	// Add tests here
-//	addTest("FullScreenMode", &testFullScreenMode);
-//	addTest("AspectRatio", &testAspectRatio);
+	addTest("FullScreenMode", &testFullScreenMode);
+	addTest("AspectRatio", &testAspectRatio);
 	addTest("PalettizedCursors", &testPalettizedCursors);
-//	addTest("BlitBitmaps", &testCopyRectToScreen);
+	addTest("BlitBitmaps", &testCopyRectToScreen);
 }
 
 const char *GFXTestSuite::getName() {
