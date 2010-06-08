@@ -1665,7 +1665,6 @@ if test -n "$_host"; then
 			;;
 		android)
 			DEFINES="$DEFINES -DANDROID -DUNIX -DUSE_ARM_SMUSH_ASM"
-			_endian=little
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
