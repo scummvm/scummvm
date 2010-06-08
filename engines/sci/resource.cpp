@@ -1072,15 +1072,17 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	Common::SeekableReadStream *fileStream = 0;
 	Resource *newrsc;
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
+	ResourceType checkForType = resourceType;
 	byte patchType, patchDataOffset;
 	int fsize;
+	uint32 audio36Header = 0;
 
 	// base36 encoded patches (i.e. audio36 and sync36) have the same type as their non-base36 encoded counterparts
-	if (resourceType == kResourceTypeAudio36)
-		resourceType = kResourceTypeAudio;
+	if (checkForType == kResourceTypeAudio36)
+		checkForType = kResourceTypeAudio;
 
-	if (resourceType == kResourceTypeSync36)
-		resourceType = kResourceTypeSync;
+	if (checkForType == kResourceTypeSync36)
+		checkForType = kResourceTypeSync;
 
 	if (source->resourceFile) {
 		fileStream = source->resourceFile->createReadStream();
@@ -1101,10 +1103,22 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	patchType = fileStream->readByte() & 0x7F;
 	patchDataOffset = fileStream->readByte();
 
+	if (resourceType == kResourceTypeAudio36) {
+		audio36Header = fileStream->readUint32BE();
+	}
+
 	delete fileStream;
 
-	if (patchType != resourceType) {
+	if (patchType != checkForType) {
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
+		return;
+	}
+
+	if (resourceType == kResourceTypeAudio36) {
+		if (audio36Header != MKID_BE('SOL\x00')) {
+			debug("Patching %s failed - audio36 patch doesn't have SOL header", source->location_name.c_str());
+			return;
+		}
 	}
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
