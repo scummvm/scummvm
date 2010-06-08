@@ -666,6 +666,13 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 
 	int volume = musicSlot->volume;
 
+	// If sound is not playing currently, set signal directly
+	if (musicSlot->status != kSoundPlaying) {
+		warning("cmdFadeSound: fading requested, but sound is currently not playing");
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		return;
+	}
+
 	switch (_argc) {
 	case 2: // SCI0
 		// SCI0 fades out all the time and when fadeout is done it will also stop the music from playing
@@ -686,12 +693,6 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 
 	default:
 		error("cmdFadeSound: unsupported argc %d", _argc);
-	}
-
-	// If sound is not playing currently, set signal directly
-	if (musicSlot->status != kSoundPlaying) {
-		warning("cmdFadeSound: fading requested, but sound is currently not playing");
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 	}
 
 	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
