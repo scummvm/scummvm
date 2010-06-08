@@ -91,19 +91,21 @@ void EngineState::reset(bool isRestoring) {
 		_memorySegmentSize = 0;
 		_soundCmd = 0;
 
-		execution_stack_base = 0;
-		_executionStackPosChanged = false;
-
 		_fileHandles.resize(5);
-
-		r_acc = NULL_REG;
-		restAdjust = 0;
-		r_prev = NULL_REG;
 
 		stack_base = 0;
 		stack_top = 0;
 		abortScriptProcessing = kAbortNone;
 	}
+
+	execution_stack_base = 0;
+	_executionStackPosChanged = false;
+
+	restAdjust = 0;
+	restAdjustCur = 0;
+
+	r_acc = NULL_REG;
+	r_prev = NULL_REG;
 
 	last_wait_time = 0;
 

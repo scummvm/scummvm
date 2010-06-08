@@ -1713,7 +1713,6 @@ void game_run(EngineState **_s) {
 
 		if (s->abortScriptProcessing == kAbortRestartGame) {
 			s->abortScriptProcessing = kAbortNone;
-			s->_executionStack.clear();
 			s->_executionStackPosChanged = false;
 
 			script_init_engine(s);
@@ -1726,17 +1725,14 @@ void game_run(EngineState **_s) {
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 
 			s->gameWasRestarted = true;
-
+		} else if (s->abortScriptProcessing == kAbortLoadGame) {
+			s->abortScriptProcessing = kAbortNone;
+			debugC(2, kDebugLevelVM, "Restarting with replay()");
+			// Restart with replay
+			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
+			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 		} else {
-			if (s->abortScriptProcessing == kAbortLoadGame) {
-				s->abortScriptProcessing = kAbortNone;
-				debugC(2, kDebugLevelVM, "Restarting with replay()");
-				s->_executionStack.clear();
-				// Restart with replay
-				_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
-				send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-			} else
-				break;	// exit loop
+			break;	// exit loop
 		}
 	} while (true);
 

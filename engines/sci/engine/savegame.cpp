@@ -856,9 +856,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->_sound.sfx_exit();
 #endif
 
-	// Set exec stack base to zero
-	s->execution_stack_base = 0;
-
 	// Now copy all current state information
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
