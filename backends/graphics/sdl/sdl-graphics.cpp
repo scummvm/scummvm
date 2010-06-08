@@ -1193,6 +1193,13 @@ void SdlGraphicsManager::unlockScreen() {
 	g_system->unlockMutex(_graphicsMutex);
 }
 
+void SdlGraphicsManager::fillScreen(uint32 col) {
+	Graphics::Surface *screen = lockScreen();
+	if (screen && screen->pixels)
+		memset(screen->pixels, col, screen->h * screen->pitch);
+	unlockScreen();
+}
+
 void SdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {
 	if (_forceFull)
 		return;
@@ -1966,7 +1973,7 @@ bool SdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key.keysym.sym == 'a') {
 		beginGFXTransaction();
-			setGraphicsFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
+			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
 #ifdef USE_OSD
 		char buffer[128];

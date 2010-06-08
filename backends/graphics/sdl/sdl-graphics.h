@@ -26,7 +26,7 @@
 #ifndef BACKENDS_GRAPHICS_SDL_H
 #define BACKENDS_GRAPHICS_SDL_H
 
-#include "backends/graphics/default/default-graphics.h"
+#include "backends/graphics/abstract-graphics.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 
@@ -68,7 +68,7 @@ public:
 	int kh() const { return _kh; }
 };
 
-class SdlGraphicsManager : public DefaultGraphicsManager {
+class SdlGraphicsManager : public GraphicsManager {
 public:
 	SdlGraphicsManager();
 	~SdlGraphicsManager();
@@ -305,6 +305,5 @@ protected:
 
 	int effectiveScreenHeight() const;
 };
-
 
 #endif

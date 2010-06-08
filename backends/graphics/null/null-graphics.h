@@ -23,22 +23,22 @@
  *
  */
 
-#ifndef BACKENDS_GRAPHICS_DEFAULT_H
-#define BACKENDS_GRAPHICS_DEFAULT_H
+#ifndef BACKENDS_GRAPHICS_NULL_H
+#define BACKENDS_GRAPHICS_NULL_H
 
-#include "common/system.h"
-#include "common/noncopyable.h"
+#include "backends/graphics/abstract-graphics.h"
 
-class DefaultGraphicsManager : Common::NonCopyable {
+static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
+
+class NullGraphicsManager : GraphicsManager {
 public:
-	DefaultGraphicsManager() {}
-	~DefaultGraphicsManager() {}
+	~NullGraphicsManager() {}
 
-	bool hasGraphicsFeature(OSystem::Feature f);
-	void setGraphicsFeatureState(OSystem::Feature f, bool enable) {}
-	bool getGraphicsFeatureState(OSystem::Feature f);
+	bool hasFeature(OSystem::Feature f) { return false; }
+	void setFeatureState(OSystem::Feature f, bool enable) {}
+	bool getFeatureState(OSystem::Feature f) { return false; }
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes();
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() { return s_noGraphicsModes; }
 	int getDefaultGraphicsMode() { return 0; }
 	bool setGraphicsMode(int mode) { return true; }
 	int getGraphicsMode() { return 0; }
@@ -69,10 +69,9 @@ public:
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {}
 	int16 getOverlayHeight() { return 0; }
 	int16 getOverlayWidth() { return 0; }
-	bool showMouse(bool visible) {}
+	bool showMouse(bool visible) { return !visible; }
 	void warpMouse(int x, int y) {}
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) {}
 };
-
 
 #endif

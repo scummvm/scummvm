@@ -17,7 +17,6 @@ MODULE_OBJS := \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
-	graphics/default/default-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
