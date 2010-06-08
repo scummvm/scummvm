@@ -293,16 +293,6 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(Nodes_seg_id);
 }
 
-static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
-	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
-
-	if (s.isLoading())
-		obj->resetSegMan();
-
-	obj->saveLoadWithSerializer(s);
-}
-
-
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
@@ -381,7 +371,12 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortLeft);
 	}
 
-	sync_SegManagerPtr(s, _segMan);
+	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
+
+	if (s.isLoading())
+		_segMan->resetSegMan();
+
+	_segMan->saveLoadWithSerializer(s);
 
 	syncArray<Class>(s, _segMan->_classTable);
 
