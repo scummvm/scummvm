@@ -78,7 +78,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DVar_Register("gc_interval",		&engine->_gamestate->script_gc_interval, DVAR_INT, 0);
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("script_abort_flag",	&_engine->_gamestate->script_abort_flag, DVAR_INT, 0);
+	DVar_Register("script_abort_flag",	&_engine->_gamestate->abortScriptProcessing, DVAR_INT, 0);
 
 	// General
 	DCmd_Register("help",				WRAP_METHOD(Console, cmdHelp));
@@ -957,8 +957,7 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
-	_engine->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-	_engine->_gamestate->script_abort_flag = 1;
+	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;;
 
 	return false;
 }
@@ -2731,7 +2730,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
-		_engine->_gamestate->script_abort_flag = 1; // Terminate VM
+		_engine->_gamestate->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		g_debugState.seeking = kDebugSeekNothing;
 		g_debugState.runningStep = 0;
 

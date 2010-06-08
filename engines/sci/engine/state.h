@@ -52,6 +52,13 @@ class SciEvent;
 class MessageState;
 class SoundCommandParser;
 
+enum AbortGameState {
+	kAbortNone = 0,
+	kAbortLoadGame = 1,
+	kAbortRestartGame = 2,
+	kAbortQuitGame = 3
+};
+
 class DirSeeker {
 protected:
 	reg_t _outbuffer;
@@ -113,8 +120,6 @@ public:
 #endif
 	SoundCommandParser *_soundCmd;
 
-	byte restarting_flags; /**< Flags used for restarting */
-
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
 
@@ -160,12 +165,9 @@ public:
 
 	int loadFromLauncher;
 
-	/**
-	 * Set this to 1 to abort script execution immediately. Aborting will
-	 * leave the debug exec stack intact.
-	 * Set it to 2 to force a replay afterwards.
-	 */
-	int script_abort_flag; // Set to 1 to abort execution. Set to 2 to force a replay afterwards
+	AbortGameState abortScriptProcessing;
+	bool gameWasRestarted;
+
 	int script_step_counter; // Counts the number of steps executed
 	int script_gc_interval; // Number of steps in between gcs
 
@@ -197,8 +199,6 @@ public:
 	 * Resets the engine state.
 	 */
 	void reset(bool isRestoring);
-
-	bool restoring;	/**< A flag to indicate if a game is being restored */
 };
 
 } // End of namespace Sci

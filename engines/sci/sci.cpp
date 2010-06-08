@@ -219,6 +219,8 @@ Common::Error SciEngine::run() {
 	_gfxCache = cache;
 	_gfxCursor = cursor;
 
+	_gamestate->abortScriptProcessing = kAbortNone;
+
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
 		// TODO: Add an "init failed" error?
@@ -263,8 +265,6 @@ Common::Error SciEngine::run() {
 	}
 
 	game_run(&_gamestate); // Run the game
-
-	game_exit(_gamestate);
 
 	ConfMan.flushToDisk();
 

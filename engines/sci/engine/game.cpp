@@ -75,7 +75,7 @@ int script_init_engine(EngineState *s) {
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
 
-	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
+	s->gameWasRestarted = false;
 
 	debug(2, "Engine initialized");
 
@@ -111,8 +111,6 @@ int game_init(EngineState *s) {
 	if (g_sci->_gfxMenu)
 		g_sci->_gfxMenu->reset();
 
-	s->restoring = false;
-
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;
 
@@ -134,7 +132,7 @@ int game_init(EngineState *s) {
 }
 
 int game_exit(EngineState *s) {
-	if (!s->restoring) {
+	if (s->abortScriptProcessing != kAbortLoadGame) {
 		s->_executionStack.clear();
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 		s->_sound.sfx_exit();
@@ -152,7 +150,7 @@ int game_exit(EngineState *s) {
 	// the segment manager has already been initialized from the
 	// save game. Deleting or resetting it here will result in
 	// invalidating the loaded save state
-	if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW)
+	if (s->abortScriptProcessing == kAbortRestartGame)
 		s->_segMan->resetSegMan();
 
 	// TODO Free parser segment here

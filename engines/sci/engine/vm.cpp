@@ -816,7 +816,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 		}
 
-		if (s->script_abort_flag || g_engine->shouldQuit())
+		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
 			return; // Emergency
 
 		// Debug if this has been requested:
@@ -1708,14 +1708,14 @@ void game_run(EngineState **_s) {
 
 	do {
 		s->_executionStackPosChanged = false;
-		run_vm(s, s->restoring);
+		run_vm(s, (s->abortScriptProcessing == kAbortLoadGame));
+		game_exit(s);
 
-		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
-			s->restoring = false;
+		if (s->abortScriptProcessing == kAbortRestartGame) {
+			s->abortScriptProcessing = kAbortNone;
 			s->_executionStack.clear();
 			s->_executionStackPosChanged = false;
 
-			game_exit(s);
 			script_init_engine(s);
 			game_init(s);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -1725,24 +1725,16 @@ void game_run(EngineState **_s) {
 
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 
-			s->script_abort_flag = 0;
-			s->restarting_flags = SCI_GAME_WAS_RESTARTED;
+			s->gameWasRestarted = true;
 
 		} else {
-			if (s->restoring) {
-				game_exit(s);
-				s->restoring = false;
-				if (s->script_abort_flag == 2) {
-					debugC(2, kDebugLevelVM, "Restarting with replay()");
-					s->_executionStack.clear(); // Restart with replay
-
-					_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
-
-					send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-				}
-
-				s->script_abort_flag = 0;
-
+			if (s->abortScriptProcessing == kAbortLoadGame) {
+				s->abortScriptProcessing = kAbortNone;
+				debugC(2, kDebugLevelVM, "Restarting with replay()");
+				s->_executionStack.clear();
+				// Restart with replay
+				_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
+				send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 			} else
 				break;	// exit loop
 		}

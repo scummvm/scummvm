@@ -91,8 +91,6 @@ void EngineState::reset(bool isRestoring) {
 		_memorySegmentSize = 0;
 		_soundCmd = 0;
 
-		restarting_flags = 0;
-
 		execution_stack_base = 0;
 		_executionStackPosChanged = false;
 
@@ -104,6 +102,7 @@ void EngineState::reset(bool isRestoring) {
 
 		stack_base = 0;
 		stack_top = 0;
+		abortScriptProcessing = kAbortNone;
 	}
 
 	last_wait_time = 0;
@@ -114,11 +113,8 @@ void EngineState::reset(bool isRestoring) {
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 
-	script_abort_flag = 0;
 	script_step_counter = 0;
 	script_gc_interval = GC_INTERVAL;
-
-	restoring = false;
 }
 
 void EngineState::wait(int16 ticks) {

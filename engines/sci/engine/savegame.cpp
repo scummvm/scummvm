@@ -880,8 +880,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->last_wait_time = g_system->getMillis();
 	s->game_start_time = g_system->getMillis();
 
-	s->restoring = false;
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound._it = NULL;
 	s->_sound._flags = s->_sound._flags;
@@ -906,9 +904,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 #endif
 
-
-	s->restoring = true;
-	s->script_abort_flag = 2; // Abort current game with replay
+	s->abortScriptProcessing = kAbortLoadGame;
 	s->shrinkStackToBase();
 }
 

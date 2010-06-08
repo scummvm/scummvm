@@ -79,7 +79,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
-		s->script_abort_flag = 1; // Terminate VM
+		s->abortScriptProcessing = kAbortQuitGame; // Terminate VM
 		g_debugState.seeking = kDebugSeekNothing;
 		g_debugState.runningStep = 0;
 		break;

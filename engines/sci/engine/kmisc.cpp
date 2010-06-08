@@ -37,11 +37,9 @@
 namespace Sci {
 
 reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
-	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-
 	s->shrinkStackToBase();
 
-	s->script_abort_flag = 1; // Force vm to abort ASAP
+	s->abortScriptProcessing = kAbortRestartGame; // Force vm to abort ASAP
 	return NULL_REG;
 }
 
@@ -49,11 +47,11 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
+	s->r_acc = make_reg(0, s->gameWasRestarted);
 
 	if (argc) { // Only happens during replay
 		if (!argv[0].toUint16()) // Set restarting flag
-			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
+			s->gameWasRestarted = false;
 	}
 
 	uint32 neededSleep = 30;
