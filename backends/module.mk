@@ -17,6 +17,8 @@ MODULE_OBJS := \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
+	graphics/default/default-graphics.o \
+	graphics/sdl/sdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
@@ -30,6 +32,8 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
+	mutex/default/default-mutex.o \
+	mutex/sdl/sdl-mutex.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
