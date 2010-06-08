@@ -36,7 +36,7 @@
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -57,17 +57,19 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetP
 	_sysPalette.colors[255].b = 255;
 
 	_sysPaletteChanged = false;
-	if (autoSetPalette) {
-		if (_resMan->getViewType() == kViewEga)
-			setEGA();
-		else if (_resMan->isAmiga32color())
-			setAmiga();
-		else
-			kernelSetFromResource(999, true);
-	}
 }
 
 GfxPalette::~GfxPalette() {
+}
+
+// meant to get called only once during init of engine
+void GfxPalette::setDefault() {
+	if (_resMan->getViewType() == kViewEga)
+		setEGA();
+	else if (_resMan->isAmiga32color())
+		setAmiga();
+	else
+		kernelSetFromResource(999, true);
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1

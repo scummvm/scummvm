@@ -36,9 +36,10 @@ class Screen;
  */
 class GfxPalette {
 public:
-	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette = true);
+	GfxPalette(ResourceManager *resMan, GfxScreen *screen);
 	~GfxPalette();
 
+	void setDefault();
 	void createFromData(byte *data, Palette *paletteOut);
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);

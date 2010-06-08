@@ -254,6 +254,8 @@ Common::Error SciEngine::run() {
 	else
 #endif
 		_gui->init(_features->usesOldGfxFunctions());
+	// Set default (EGA, amiga or resource 999) palette
+	_gfxPalette->setDefault();
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
