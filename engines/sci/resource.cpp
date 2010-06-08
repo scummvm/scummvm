@@ -620,11 +620,9 @@ void ResourceManager::scanNewSources() {
 			switch (source->source_type) {
 			case kSourceDirectory:
 				readResourcePatches(source);
-#ifdef ENABLE_SCI32
 				// We can't use getSciVersion() at this point, thus using _volVersion
-				if (_volVersion == kResVersionSci32)	// SCI2+
+				if (_volVersion >= kResVersionSci11)	// SCI1.1+
 					readResourcePatchesBase36(source);
-#endif
 				readWaveAudioPatches();
 				break;
 			case kSourceExtMap:
@@ -1180,10 +1178,6 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			name = (*x)->getName();
 			inputName = (*x)->getName();
 			inputName.toUppercase();
-			if (inputName.hasPrefix("BOOT"))	// skip bootdisk.*
-				continue;
-			if (inputName.hasSuffix("DRV"))		// skip AUD*.DRV
-				continue;
 
 			inputName.deleteChar(0);	// delete the first character (type)
 			inputName.deleteChar(7);	// delete the dot
@@ -1191,24 +1185,27 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			// The base36 encoded resource contains the following:
 			// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
 			uint16 resourceNr = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36);	// 3 characters
-			byte noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);	// 2 characters
-			byte verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);	// 2 characters
-			byte cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);	// 2 characters
-			byte seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);		// 1 character
-			ResourceId resource36((ResourceType)i, resourceNr, noun, verb, cond, seq);
+			uint16 noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);	// 2 characters
+			uint16 verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);	// 2 characters
+			uint16 cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);	// 2 characters
+			uint16 seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);		// 1 character
+			// Check, if we got valid results
+			if ((noun <= 255) && (verb <= 255) && (cond <= 255) && (seq <= 255)) {
+				ResourceId resource36((ResourceType)i, resourceNr, noun, verb, cond, seq);
 
-			/*
-			if (i == kResourceTypeAudio36)
-				debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
-			else
-				debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
-			*/
+				/*
+				if (i == kResourceTypeAudio36)
+					debug("audio36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+				else
+					debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
+				*/
 
-			psrcPatch = new ResourceSource;
-			psrcPatch->source_type = kSourcePatch;
-			psrcPatch->location_name = name;
-			psrcPatch->resourceFile = 0;
-			processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
+				psrcPatch = new ResourceSource;
+				psrcPatch->source_type = kSourcePatch;
+				psrcPatch->location_name = name;
+				psrcPatch->resourceFile = 0;
+				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
+			}
 		}
 	}
 }
