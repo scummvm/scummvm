@@ -621,7 +621,9 @@ void ResourceManager::scanNewSources() {
 			case kSourceDirectory:
 				readResourcePatches(source);
 #ifdef ENABLE_SCI32
-				readResourcePatchesBase36(source);
+				// We can't use getSciVersion() at this point, thus using _volVersion
+				if (_volVersion == kResVersionSci32)	// SCI2+
+					readResourcePatchesBase36(source);
 #endif
 				readWaveAudioPatches();
 				break;
@@ -1179,6 +1181,8 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 			inputName = (*x)->getName();
 			inputName.toUppercase();
 			if (inputName.hasPrefix("BOOT"))	// skip bootdisk.*
+				continue;
+			if (inputName.hasSuffix("DRV"))		// skip AUD*.DRV
 				continue;
 
 			inputName.deleteChar(0);	// delete the first character (type)
