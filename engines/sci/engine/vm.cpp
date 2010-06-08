@@ -1687,17 +1687,31 @@ static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
 	s->stack_base[1] = NULL_REG;
 }
 
-static EngineState *_game_run(EngineState *&s) {
-	bool restoring = false;
+void game_run(EngineState **_s) {
+	EngineState *s = *_s;
 
+	debugC(2, kDebugLevelVM, "Calling %s::play()", g_sci->getGameID());
+	_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play); // Call the play selector
+
+	// Now: Register the first element on the execution stack
+	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
+		g_sci->getSciDebugger()->printObject(s->_gameObj);
+		error("Failed to run the game! Aborting...");
+		return;
+	}
+
+	// and ENGAGE!
+
+	// Attach the debug console on game startup, if requested
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
 		g_sci->getSciDebugger()->attach();
 
 	do {
 		s->_executionStackPosChanged = false;
-		run_vm(s, restoring);
+		run_vm(s, s->restoring);
+
 		if (s->restarting_flags & SCI_GAME_IS_RESTARTING_NOW) { // Restart was requested?
-			restoring = false;
+			s->restoring = false;
 			s->_executionStack.clear();
 			s->_executionStackPosChanged = false;
 
@@ -1715,8 +1729,7 @@ static EngineState *_game_run(EngineState *&s) {
 			s->restarting_flags = SCI_GAME_WAS_RESTARTED;
 
 		} else {
-			restoring = s->restoring;
-			if (restoring) {
+			if (s->restoring) {
 				game_exit(s);
 				s->restoring = false;
 				if (s->script_abort_flag == 2) {
@@ -1735,34 +1748,7 @@ static EngineState *_game_run(EngineState *&s) {
 		}
 	} while (true);
 
-	return s;
-}
-
-int game_run(EngineState **_s) {
-	EngineState *s = *_s;
-
-	debugC(2, kDebugLevelVM, "Calling %s::play()", g_sci->getGameID());
-	_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play); // Call the play selector
-
-	// Now: Register the first element on the execution stack-
-	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
-		Console *con = g_sci->getSciDebugger();
-		con->printObject(s->_gameObj);
-		warning("Failed to run the game! Aborting...");
-		return 1;
-	}
-	// and ENGAGE!
-	_game_run(*_s);
-
 	debugC(2, kDebugLevelVM, "Game::play() finished.");
-
-	return 0;
-}
-
-void quit_vm(EngineState *s) {
-	s->script_abort_flag = 1; // Terminate VM
-	g_debugState.seeking = kDebugSeekNothing;
-	g_debugState.runningStep = 0;
 }
 
 reg_t *ObjVarRef::getPointer(SegManager *segMan) const {

@@ -375,9 +375,8 @@ int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
  * Note that, EngineState *s may be changed during the game, e.g. if a game
  * state is restored.
  * @param[in] s	Pointer to the pointer of the state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_run(EngineState **s);
+  */
+void game_run(EngineState **s);
 
 /**
  * Restores an SCI game state and runs the game
@@ -396,11 +395,6 @@ int game_restore(EngineState **s, char *savegame_name);
  * @return		0 on success, 1 if an error occured.
  */
 int game_exit(EngineState *s);
-
-/**
- * Instructs the virtual machine to abort
- */
-void quit_vm(EngineState *s);
 
 /**
  * Read a PMachine instruction from a memory buffer and return its length.
