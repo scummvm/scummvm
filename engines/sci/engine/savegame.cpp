@@ -895,7 +895,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		g_sci->_gui32->init();
 	} else {
 #endif
-		g_sci->_gui->resetEngineState(s);
 		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
 #ifdef ENABLE_SCI32
 	}

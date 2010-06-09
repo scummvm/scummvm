@@ -86,11 +86,6 @@ SciGui::~SciGui() {
 	delete _coordAdjuster;
 }
 
-void SciGui::resetEngineState(EngineState *s) {
-	_s = s;
-	_animate->resetEngineState(s);
-}
-
 void SciGui::init(bool usesOldGfxFunctions) {
 	_ports->init(usesOldGfxFunctions, this, _paint16, _text16);
 	_paint16->init(_animate, _text16);

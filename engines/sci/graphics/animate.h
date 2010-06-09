@@ -90,9 +90,6 @@ public:
 	GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxPalette *palette, GfxCursor *cursor, GfxTransitions *transitions);
 	virtual ~GfxAnimate();
 
-	// FIXME: Don't store EngineState
-	void resetEngineState(EngineState *newState) { _s = newState; }
-
 	void disposeLastCast();
 	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);

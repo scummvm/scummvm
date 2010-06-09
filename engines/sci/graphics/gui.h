@@ -61,9 +61,6 @@ public:
 	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	virtual void portraitUnload(uint16 portraitId);
 
-	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *s);
-
 protected:
 	GfxCursor *_cursor;
 	EngineState *_s;
