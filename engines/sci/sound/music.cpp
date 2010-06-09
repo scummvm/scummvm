@@ -317,6 +317,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
 		} else {
+			// Rewind in case we play the same sample multiple times (non-looped) like in pharkas right at the start
+			pSnd->pStreamAud->rewind();
 			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
