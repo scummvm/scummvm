@@ -864,7 +864,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->sfx_init_flags = s->sfx_init_flags;
 	s->_sound._songlib.freeSounds();
 	s->_sound._songlib = temp;
-	s->_soundCmd->updateSfxState(&retval->_sound);
+	s->_soundCmd->updateSfxState(&s->_sound);
 #endif
 
 	s->_segMan->reconstructStack(s);
