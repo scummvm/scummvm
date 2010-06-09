@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(WIN32) || defined(UNIX) || defined(MACOSX)
+
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
@@ -2069,3 +2071,5 @@ bool SdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	}
 	return false;
 }
+
+#endif

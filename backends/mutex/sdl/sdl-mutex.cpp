@@ -23,6 +23,8 @@
  *
  */
 
+#if defined(WIN32) || defined(UNIX) || defined(MACOSX)
+
 #include "backends/mutex/sdl/sdl-mutex.h"
 
 #if defined(__SYMBIAN32__)
@@ -46,3 +48,5 @@ void SdlMutexManager::unlockMutex(OSystem::MutexRef mutex) {
 void SdlMutexManager::deleteMutex(OSystem::MutexRef mutex) {
 	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
+
+#endif
