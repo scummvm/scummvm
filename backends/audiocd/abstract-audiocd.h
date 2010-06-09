@@ -40,11 +40,19 @@ public:
 		int numLoops;
 	};
 
+	// Emulated CD functions, engines should call these functions
 	virtual void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false) = 0;
 	virtual void stop() = 0;
 	virtual bool isPlaying() const = 0;
 	virtual void update() = 0;
 	virtual Status getStatus() const = 0;
+
+	// Real CD functions. Let Subclasses implement the real code
+	virtual bool openCD(int drive) { return false; }
+	virtual void updateCD() {}
+	virtual bool pollCD() const { return false; }
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
+	virtual void stopCD() {}
 };
 
 #endif

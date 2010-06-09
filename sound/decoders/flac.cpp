@@ -32,7 +32,6 @@
 #include "common/util.h"
 
 #include "sound/audiostream.h"
-#include "sound/audiocd.h"
 
 #define FLAC__NO_DLL // that MS-magic gave me headaches - just link the library you like
 #include <FLAC/export.h>

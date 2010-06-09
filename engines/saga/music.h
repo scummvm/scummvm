@@ -28,7 +28,7 @@
 #ifndef SAGA_MUSIC_H
 #define SAGA_MUSIC_H
 
-#include "sound/audiocd.h"
+#include "sound/mixer.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
 #include "sound/decoders/mp3.h"

@@ -36,8 +36,6 @@
 
 #include "graphics/surface.h"
 
-#include "sound/audiocd.h"
-
 namespace AGOS {
 
 void AGOSEngine::addTimeEvent(uint16 timeout, uint16 subroutine_id) {
@@ -429,7 +427,7 @@ void AGOSEngine::delay(uint amount) {
 	uint32 cur = start;
 	uint this_delay, vgaPeriod;
 
-	AudioCD.updateCD();
+	_system->getAudioCD()->updateCD();
 
 	if (_debugger->isAttached())
 		_debugger->onFrame();
@@ -535,7 +533,7 @@ void AGOSEngine::delay(uint amount) {
 		if (_leftButton == 1)
 			_leftButtonCount++;
 
-		AudioCD.updateCD();
+		_system->getAudioCD()->updateCD();
 
 		_system->updateScreen();
 

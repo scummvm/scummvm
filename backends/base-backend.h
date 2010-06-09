@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
+#include "backends/audiocd/default/default-audiocd.h"
 
 class BaseBackend : public OSystem, Common::EventSource {
 public:
@@ -37,6 +38,8 @@ public:
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
+
+	virtual AudioCDManager *getAudioCD();
 };
 
 

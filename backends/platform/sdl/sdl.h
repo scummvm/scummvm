@@ -36,6 +36,7 @@
 
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/audiocd/sdl/sdl-audiocd.h"
 
 #include "graphics/scaler.h"
 
@@ -69,6 +70,7 @@ public:
 protected:
 	SdlMutexManager *_mutexManager;
 	SdlGraphicsManager *_graphicsManager;
+	SdlAudioCDManager *_audiocdManager;
 
 public:
 	void beginGFXTransaction();
@@ -164,19 +166,6 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	// Poll CD status
-	// Returns true if cd audio is playing
-	bool pollCD();
-
-	// Play CD audio track
-	void playCD(int track, int num_loops, int start_frame, int duration);
-
-	// Stop CD audio track
-	void stopCD();
-
-	// Update CD audio status
-	void updateCD();
-
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
@@ -210,7 +199,6 @@ public:
 	virtual int getGraphicsMode() const;
 
 	virtual void setWindowCaption(const char *caption);
-	virtual bool openCD(int drive);
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -228,14 +216,11 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
+	virtual AudioCDManager *getAudioCD();
+
 protected:
 	bool _inited;
 	SDL_AudioSpec _obtainedRate;
-
-	// CD Audio
-	SDL_CD *_cdrom;
-	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
-	uint32 _cdEndTime, _cdStopTime;
 
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
@@ -277,7 +262,6 @@ protected:
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
-protected:
 	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
 	void toggleMouseGrab();
 

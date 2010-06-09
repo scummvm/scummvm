@@ -52,8 +52,6 @@
 #include "gui/message.h"
 #include "gui/error.h"
 
-#include "sound/audiocd.h"
-
 #include "backends/keymapper/keymapper.h"
 
 #if defined(_WIN32_WCE)
@@ -416,15 +414,6 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			warning("Could not find any engine capable of running the selected game");
 			GUI::displayErrorDialog("Could not find any engine capable of running the selected game");
 		}
-
-		// We will destroy the AudioCDManager singleton here to save some memory.
-		// This will not make the CD audio stop, one would have to enable this:
-		//AudioCD.stop();
-		// but the engine is responsible for stopping CD playback anyway and
-		// this way we catch engines not doing it properly. For some more
-		// information about why AudioCDManager::destroy does not stop the CD
-		// playback read the FIXME in sound/audiocd.h
-		Audio::AudioCDManager::destroy();
 
 		// reset the graphics to default
 		setupGraphics(system);

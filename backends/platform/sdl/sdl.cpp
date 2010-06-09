@@ -157,6 +157,10 @@ void OSystem_SDL::initBackend() {
 		_graphicsManager = new SdlGraphicsManager();
 	}
 
+	if (_audiocdManager == 0) {
+		_audiocdManager = new SdlAudioCDManager();
+	}
+
 #if !defined(MACOSX) && !defined(__SYMBIAN32__)
 	// Setup a custom program icon.
 	// Don't set icon on OS X, as we use a nicer external icon there.
@@ -172,7 +176,6 @@ void OSystem_SDL::initBackend() {
 
 OSystem_SDL::OSystem_SDL()
 	:
-	_cdrom(0),
 	_scrollLock(false),
 	_joystick(0),
 #if MIXER_DOUBLE_BUFFERING
@@ -184,7 +187,8 @@ OSystem_SDL::OSystem_SDL()
 	_mixer(0),
 	_timer(0),
 	_mutexManager(0),
-	_graphicsManager(0) {
+	_graphicsManager(0),
+	_audiocdManager(0) {
 
 	// reset mouse state
 	memset(&_km, 0, sizeof(_km));
@@ -384,11 +388,6 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 }
 
 void OSystem_SDL::deinit() {
-	if (_cdrom) {
-		SDL_CDStop(_cdrom);
-		SDL_CDClose(_cdrom);
-	}
-
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
 
@@ -669,96 +668,6 @@ Audio::Mixer *OSystem_SDL::getMixer() {
 }
 
 #pragma mark -
-#pragma mark --- CD Audio ---
-#pragma mark -
-
-bool OSystem_SDL::openCD(int drive) {
-	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
-		_cdrom = NULL;
-	else {
-		_cdrom = SDL_CDOpen(drive);
-		// Did it open? Check if _cdrom is NULL
-		if (!_cdrom) {
-			warning("Couldn't open drive: %s", SDL_GetError());
-		} else {
-			_cdNumLoops = 0;
-			_cdStopTime = 0;
-			_cdEndTime = 0;
-		}
-	}
-
-	return (_cdrom != NULL);
-}
-
-void OSystem_SDL::stopCD() {	/* Stop CD Audio in 1/10th of a second */
-	_cdStopTime = SDL_GetTicks() + 100;
-	_cdNumLoops = 0;
-}
-
-void OSystem_SDL::playCD(int track, int num_loops, int start_frame, int duration) {
-	if (!num_loops && !start_frame)
-		return;
-
-	if (!_cdrom)
-		return;
-
-	if (duration > 0)
-		duration += 5;
-
-	_cdTrack = track;
-	_cdNumLoops = num_loops;
-	_cdStartFrame = start_frame;
-
-	SDL_CDStatus(_cdrom);
-	if (start_frame == 0 && duration == 0)
-		SDL_CDPlayTracks(_cdrom, track, 0, 1, 0);
-	else
-		SDL_CDPlayTracks(_cdrom, track, start_frame, 0, duration);
-	_cdDuration = duration;
-	_cdStopTime = 0;
-	_cdEndTime = SDL_GetTicks() + _cdrom->track[track].length * 1000 / CD_FPS;
-}
-
-bool OSystem_SDL::pollCD() {
-	if (!_cdrom)
-		return false;
-
-	return (_cdNumLoops != 0 && (SDL_GetTicks() < _cdEndTime || SDL_CDStatus(_cdrom) == CD_PLAYING));
-}
-
-void OSystem_SDL::updateCD() {
-	if (!_cdrom)
-		return;
-
-	if (_cdStopTime != 0 && SDL_GetTicks() >= _cdStopTime) {
-		SDL_CDStop(_cdrom);
-		_cdNumLoops = 0;
-		_cdStopTime = 0;
-		return;
-	}
-
-	if (_cdNumLoops == 0 || SDL_GetTicks() < _cdEndTime)
-		return;
-
-	if (_cdNumLoops != 1 && SDL_CDStatus(_cdrom) != CD_STOPPED) {
-		// Wait another second for it to be done
-		_cdEndTime += 1000;
-		return;
-	}
-
-	if (_cdNumLoops > 0)
-		_cdNumLoops--;
-
-	if (_cdNumLoops != 0) {
-		if (_cdStartFrame == 0 && _cdDuration == 0)
-			SDL_CDPlayTracks(_cdrom, _cdTrack, 0, 1, 0);
-		else
-			SDL_CDPlayTracks(_cdrom, _cdTrack, _cdStartFrame, 0, _cdDuration);
-		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
-	}
-}
-
-#pragma mark -
 #pragma mark --- Graphics ---
 #pragma mark -
 
@@ -900,4 +809,13 @@ int OSystem_SDL::getScreenChangeID() const {
 void OSystem_SDL::displayMessageOnOSD(const char *msg) {
 	_graphicsManager->displayMessageOnOSD(msg);
 }
+
+#pragma mark -
+#pragma mark --- AudioCD ---
+#pragma mark -
+
+AudioCDManager *OSystem_SDL::getAudioCD() {
+	return (AudioCDManager *)_audiocdManager;
+}
+
 #endif

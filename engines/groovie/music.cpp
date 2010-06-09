@@ -29,7 +29,6 @@
 
 #include "common/config-manager.h"
 #include "common/macresman.h"
-#include "sound/audiocd.h"
 #include "sound/midiparser.h"
 
 namespace Groovie {
@@ -42,7 +41,7 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 }
 
 MusicPlayer::~MusicPlayer() {
-	AudioCD.stop();
+	g_system->getAudioCD()->stop();
 }
 
 void MusicPlayer::playSong(uint32 fileref) {
@@ -90,7 +89,7 @@ void MusicPlayer::playCD(uint8 track) {
 		// the song number (it's track 2 on the 2nd CD)
 	} else if ((track == 98) && (_prevCDtrack == 3)) {
 		// Track 98 is used as a hack to stop the credits song
-		AudioCD.stop();
+		g_system->getAudioCD()->stop();
 		return;
 	}
 
@@ -101,16 +100,16 @@ void MusicPlayer::playCD(uint8 track) {
 	// It was in the original interpreter, but it introduces a big delay
 	// in the middle of the introduction, so it's disabled right now
 	/*
-	AudioCD.updateCD();
-	while (AudioCD.isPlaying()) {
+	g_system->getAudioCD()->updateCD();
+	while (g_system->getAudioCD()->isPlaying()) {
 		// Wait a bit and try again
 		_vm->_system->delayMillis(100);
-		AudioCD.updateCD();
+		g_system->getAudioCD()->updateCD();
 	}
 	*/
 
 	// Play the track starting at the requested offset (1000ms = 75 frames)
-	AudioCD.play(track - 1, 1, startms * 75 / 1000, 0);
+	g_system->getAudioCD()->play(track - 1, 1, startms * 75 / 1000, 0);
 }
 
 void MusicPlayer::startBackground() {

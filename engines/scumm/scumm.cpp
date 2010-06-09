@@ -1149,7 +1149,7 @@ void ScummEngine::setupScumm() {
 
 		int cd_num = ConfMan.getInt("cdrom");
 		if (cd_num >= 0)
-			_system->openCD(cd_num);
+			_system->getAudioCD()->openCD(cd_num);
 	}
 
 	// Create the sound manager

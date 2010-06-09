@@ -31,7 +31,6 @@
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
 
-#include "sound/audiocd.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
 
@@ -985,7 +984,7 @@ void TeenAgentEngine::setMusic(byte id) {
 		}
 		byte track = track2cd[id - 1];
 		debug(0, "playing cd track %u", track);
-		Audio::AudioCDManager::instance().play(track, -1, 0, 0);
+		_system->getAudioCD()->play(track, -1, 0, 0);
 	} else if (music->load(id))
 		music->start();
 }

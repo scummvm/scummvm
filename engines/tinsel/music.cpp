@@ -30,7 +30,6 @@
 #include "sound/audiostream.h"
 #include "sound/mididrv.h"
 #include "sound/midiparser.h"
-#include "sound/audiocd.h"
 #include "sound/decoders/adpcm.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -212,11 +211,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 				currentLoop = bLoop;
 
 				// try to play track, but don't fall back to a true CD
-				AudioCD.play(track, bLoop ? -1 : 1, 0, 0, true);
+				g_system->getAudioCD()->play(track, bLoop ? -1 : 1, 0, 0, true);
 
 				// Check if an enhanced audio track is being played.
 				// If it is, stop here and don't load a MIDI track
-				if (AudioCD.isPlaying()) {
+				if (g_system->getAudioCD()->isPlaying()) {
 					return true;
 				}
 			}
@@ -291,7 +290,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
  */
 bool MidiPlaying() {
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
-		if (AudioCD.isPlaying())
+		if (g_system->getAudioCD()->isPlaying())
 			return true;
 	}
 	return _vm->_midiMusic->isPlaying();
@@ -305,7 +304,7 @@ bool StopMidi() {
 	currentLoop = false;
 
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
-		AudioCD.stop();
+		g_system->getAudioCD()->stop();
 	}
 
 	_vm->_midiMusic->stop();

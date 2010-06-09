@@ -38,7 +38,6 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
-#include "sound/audiocd.h"
 #include "sound/mixer.h"
 
 #include "made/made.h"
@@ -81,7 +80,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->openCD(cd_num);
+		_system->getAudioCD()->openCD(cd_num);
 
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ResourceReader();
@@ -129,7 +128,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 }
 
 MadeEngine::~MadeEngine() {
-	AudioCD.stop();
+	_system->getAudioCD()->stop();
 
 	delete _rnd;
 	delete _pmvPlayer;
@@ -241,7 +240,7 @@ void MadeEngine::handleEvents() {
 		}
 	}
 
-	AudioCD.updateCD();
+	_system->getAudioCD()->updateCD();
 
 }
 

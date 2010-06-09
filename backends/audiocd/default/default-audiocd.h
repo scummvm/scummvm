@@ -34,22 +34,19 @@ public:
 	DefaultAudioCDManager();
 	virtual ~DefaultAudioCDManager() {}
 
-	// Emulated CD functions, engines should call this functions
 	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
 	void stop();
 	bool isPlaying() const;
 	void update();
 	virtual Status getStatus() const; // Subclasses should override for better status results
 
-protected:
-
-	// Real CD functions. Let Subclasses implement the real code
 	virtual bool openCD(int drive) { return false; }
 	virtual void updateCD() {}
 	virtual bool pollCD() const { return false; }
 	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
 	virtual void stopCD() {}
 
+protected:
 	Audio::SoundHandle _handle;
 	bool _emulating;
 

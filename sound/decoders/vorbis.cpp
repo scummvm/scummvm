@@ -32,7 +32,6 @@
 #include "common/util.h"
 
 #include "sound/audiostream.h"
-#include "sound/audiocd.h"
 
 #ifdef USE_TREMOR
 #if defined(ANDROID) || defined(__GP32__) // custom libtremor locations

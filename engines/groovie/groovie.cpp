@@ -217,7 +217,7 @@ Common::Error GroovieEngine::run() {
 	// Initialize the CD
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->openCD(cd_num);
+		_system->getAudioCD()->openCD(cd_num);
 
 	while (!shouldQuit()) {
 		// Show the debugger if required

@@ -53,11 +53,3 @@ bool OSystem::setGraphicsMode(const char *name) {
 
 	return false;
 }
-
-bool OSystem::openCD(int drive) {
-	return false;
-}
-
-bool OSystem::pollCD() {
-	return false;
-}
