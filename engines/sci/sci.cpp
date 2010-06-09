@@ -217,6 +217,7 @@ Common::Error SciEngine::run() {
 	}
 
 	script_adjust_opcode_formats(_gamestate);
+	_kernel->loadKernelNames();
 
 	SciVersion soundVersion = _features->detectDoSoundType();
 
