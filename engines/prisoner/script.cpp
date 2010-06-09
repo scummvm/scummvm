@@ -93,14 +93,14 @@ void PrisonerEngine::startScript(int16 programIndex, int16 scriptIndex) {
 	script->ip = script->code;
 	script->status = kScriptStatusRunCode;
 	script->actorIndex2 = -1;
-	script->unk1 = -1;
+	script->altAnimationIndex = -1;
 	script->soundItemIndex = -1;
 	script->frameIndex = -1;
 	script->zoneIndex = -1;
 	script->zoneEnterLeaveFlag = 0;
 	script->screenTextIndex = -1;
 	script->sleepCounter = 0;
-	script->unk3 = 0;
+	/*script->unk3 = 0;*/
 	script->syncScriptNumber = -1;
 	script->actorIndex = -1;
 

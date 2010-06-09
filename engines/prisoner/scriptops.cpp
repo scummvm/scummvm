@@ -1369,7 +1369,7 @@ int16 ScriptOpcodes::op_setActorAltAnimationAtPos(Script *script) {
 	ARG_EVALUATE(y);
 	_vm->setActorAltAnimationAtPos(actorIndex, altAnimationIndex, frameListIndex, x, y);
 	script->actorIndex2 = actorIndex;
-	script->unk1 = altAnimationIndex;
+	script->altAnimationIndex = altAnimationIndex;
 	script->actorIndex = actorIndex;
 	script->status = kScriptStatus12;
 	return 0;

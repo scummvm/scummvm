@@ -105,7 +105,7 @@ void PrisonerEngine::clearActors() {
 	for (int16 actorIndex = 0; actorIndex < kMaxActors; actorIndex++) {
 		Actor *actor = &_actors[actorIndex];
 		actor->resourceCacheSlot = -1;
-		actor->unk1 = -1;
+		actor->altAnimationIndex = -1;
 		actor->pathWalkerIndex = -1; //???
 	}
 
@@ -771,12 +771,8 @@ void PrisonerEngine::clearActorSprites() {
 bool PrisonerEngine::updateActorSpriteAnimation(int16 actorIndex) {
 	ActorSprite *actorSprite = &_actorSprites[actorIndex];
 
-	//debug(8, "actorSprite->frameCount = %d", actorSprite->frameCount);
-
 	if (actorSprite->frameCount == 1)
 		return false;
-
-	//debug(8, "actorSprite->ticks = %d", actorSprite->ticks);
 
 	if (actorSprite->frameIndex != actorSprite->prevFrameIndex)
 		actorSprite->ticks -= _animationFrameTicks;
@@ -913,7 +909,7 @@ void PrisonerEngine::setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimat
 	AltActorAnimation *altActorAnimation = &_altActorAnimations[altAnimationIndex];
 	ActorSprite tempActorSprite;
 
-	actor->unk1 = altAnimationIndex;
+	actor->altAnimationIndex = altAnimationIndex;
 	SWAP(actor->resourceCacheSlot, altActorAnimation->resourceCacheSlot);
 
 	tempActorSprite = *actor->actorSprite;

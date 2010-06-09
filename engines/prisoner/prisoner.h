@@ -98,9 +98,9 @@ struct Script {
 	int16 syncScriptNumber;
 	int16 actorIndex;
 	int16 actorIndex2;
-	int16 unk1;
+	int16 altAnimationIndex;
 	int16 frameIndex;
-	int16 unk3;
+	/*int16 unk3;*/
 	byte readByte();
 	int16 readInt16();
 	Common::String readString();
@@ -154,9 +154,9 @@ struct ZoneAction {
 	int16 scriptIndex1;
 	int16 scriptProgIndex;
 	int16 scriptIndex2;
-	byte unk2;
-	int16 unk3;
-	int16 unk4;
+	/*byte unk2;*/
+	/*int16 unk3;*/
+	/*int16 unk4;*/
 	int16 moduleIndex;
 	int16 sceneIndex;
 	bool isEmpty() const { return used == 0; }
@@ -262,7 +262,7 @@ const int16 kMaxActors = 20;
 
 struct Actor {
 	int16 resourceCacheSlot;
-	int16 unk1;
+	int16 altAnimationIndex;
 	int16 status;
 	int16 pathWalkerIndex;
 	int16 pathResultIndex;

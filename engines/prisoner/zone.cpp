@@ -286,7 +286,7 @@ int16 PrisonerEngine::addZoneAction(int16 zoneIndex, int16 type, int16 pathNodeI
 	zoneAction->moduleIndex = moduleIndex;
 	zoneAction->sceneIndex = sceneIndex;
 	zoneAction->scriptIndex2 = 0;
-	zoneAction->unk2 = 0;
+	/*zoneAction->unk2 = 0;*/
 
 	return zoneActionIndex;
 }

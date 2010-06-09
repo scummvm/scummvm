@@ -138,9 +138,9 @@ void ZoneAction::save(PrisonerEngine *vm, Common::WriteStream *out) {
 		out->writeUint16LE(scriptIndex1);
 		out->writeUint16LE(scriptProgIndex);
 		out->writeUint16LE(scriptIndex2);
-		out->writeByte(unk2);
-		out->writeUint16LE(unk3);
-		out->writeUint16LE(unk4);
+		out->writeByte(0/*unk2*/);
+		out->writeUint16LE(0/*unk3*/);
+		out->writeUint16LE(0/*unk4*/);
 		out->writeUint16LE(moduleIndex);
 		out->writeUint16LE(sceneIndex);
 	}
@@ -157,9 +157,9 @@ void ZoneAction::load(PrisonerEngine *vm, Common::ReadStream *in) {
 		scriptIndex1 = in->readUint16LE();
 		scriptProgIndex = in->readUint16LE();
 		scriptIndex2 = in->readUint16LE();
-		unk2 = in->readByte();
-		unk3 = in->readUint16LE();
-		unk4 = in->readUint16LE();
+		/*unk2 = */in->readByte();
+		/*unk3 = */in->readUint16LE();
+		/*unk4 = */in->readUint16LE();
 		moduleIndex = in->readUint16LE();
 		sceneIndex = in->readUint16LE();
 	}
@@ -182,9 +182,9 @@ void ScriptProgram::save(PrisonerEngine *vm, Common::WriteStream *out) {
 				out->writeUint16LE(script->syncScriptNumber);
 				out->writeUint16LE(script->actorIndex);
 				out->writeUint16LE(script->actorIndex2);
-				out->writeUint16LE(script->unk1);
+				out->writeUint16LE(script->altAnimationIndex);
 				out->writeUint16LE(script->frameIndex);
-				out->writeUint16LE(script->unk3);
+				out->writeUint16LE(0/*script->unk3*/);
 			}
 		}
 	}
@@ -213,9 +213,9 @@ void ScriptProgram::load(PrisonerEngine *vm, Common::ReadStream *in) {
 				script->syncScriptNumber = in->readUint16LE();
 				script->actorIndex = in->readUint16LE();
 				script->actorIndex2 = in->readUint16LE();
-				script->unk1 = in->readUint16LE();
+				script->altAnimationIndex = in->readUint16LE();
 				script->frameIndex = in->readUint16LE();
-				script->unk3 = in->readUint16LE();
+				/*script->unk3 = */in->readUint16LE();
 			}
 		}
 	}
@@ -329,7 +329,7 @@ void Actor::save(PrisonerEngine *vm, Common::WriteStream *out) {
 	out->writeUint16LE(resourceCacheSlot);
 	if (resourceCacheSlot != -1) {
 		writeResourceCacheSlotInfo(resourceCacheSlot, vm->_res, out);
-		out->writeUint16LE(unk1);
+		out->writeUint16LE(altAnimationIndex);
 		out->writeUint16LE(status);
 		out->writeUint16LE(pathWalkerIndex);
 		out->writeUint16LE(pathResultIndex);
@@ -376,7 +376,7 @@ void Actor::load(PrisonerEngine *vm, Common::ReadStream *in) {
 	resourceCacheSlot = in->readUint16LE();
 	if (resourceCacheSlot != -1) {
 		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
-		unk1 = in->readUint16LE();
+		altAnimationIndex = in->readUint16LE();
 		status = in->readUint16LE();
 		pathWalkerIndex = in->readUint16LE();
 		pathResultIndex = in->readUint16LE();
@@ -977,7 +977,7 @@ void PrisonerEngine::loadgame(const char *filename) {
 		_lipSyncChannelStatusRestored = true;
 		_lipSyncChannelStatus.clear();
 		_lipSyncChannelStatus.reserve(count);
-		for (uint i = 0; i < count; i++) {
+		for (int i = 0; i < count; i++) {
 			_lipSyncChannelStatus.push_back(LipSyncChannelStatus());
 			_lipSyncChannelStatus[i].ticks = in->readUint16LE();
 			_lipSyncChannelStatus[i].index = in->readUint16LE();
