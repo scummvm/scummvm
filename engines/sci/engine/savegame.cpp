@@ -870,7 +870,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->_segMan->reconstructStack(s);
 	s->_segMan->reconstructScripts(s);
 	s->_segMan->reconstructClones();
-	s->script_000 = s->_segMan->getScript(s->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
+	s->initGlobals();
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	// Time state:

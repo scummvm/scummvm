@@ -85,7 +85,6 @@ void EngineState::reset(bool isRestoring) {
 #endif
 
 	if (!isRestoring) {
-		script_000 = 0;
 		_gameObj = NULL_REG;
 
 		_memorySegmentSize = 0;
@@ -127,12 +126,23 @@ void EngineState::wait(int16 ticks) {
 	g_sci->getEventManager()->sleep(ticks * 1000 / 60);
 }
 
+void EngineState::initGlobals() {
+	Script *script_000 = _segMan->getScript(1);
+	
+	if (!script_000->_localsBlock)
+		error("Script 0 has no locals block");
+
+	variables_seg[VAR_GLOBAL] = script_000->_localsSegment;
+	variables_base[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->_localsBlock->_locals.begin();
+	variables_max[VAR_GLOBAL] = script_000->_localsBlock->_locals.size();
+}
+
 uint16 EngineState::currentRoomNumber() const {
-	return script_000->_localsBlock->_locals[13].toUint16();
+	return variables[VAR_GLOBAL][13].toUint16();
 }
 
 void EngineState::setRoomNumber(uint16 roomNumber) {
-	script_000->_localsBlock->_locals[13] = make_reg(0, roomNumber);
+	variables[VAR_GLOBAL][13] = make_reg(0, roomNumber);
 }
 
 void EngineState::shrinkStackToBase() {

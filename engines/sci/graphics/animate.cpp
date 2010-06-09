@@ -84,10 +84,8 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 		if (!_ignoreFastCast) {
 			// Check if the game has a fastCast object set
 			//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
-			reg_t global84 = _s->script_000->_localsBlock->_locals[84];
-
-			if (!global84.isNull()) {
-				if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast"))
+			if (!_s->variables[VAR_GLOBAL][84].isNull()) {
+				if (!strcmp(_s->_segMan->getObjectName(_s->variables[VAR_GLOBAL][84]), "fastCast"))
 					return false;
 			}
 		}

@@ -736,23 +736,8 @@ void run_vm(EngineState *s, bool restoring) {
 	if (!restoring)
 		s->execution_stack_base = s->_executionStack.size() - 1;
 
-#ifndef DISABLE_VALIDATIONS
-	// Initialize maximum variable count
-	if (s->script_000->_localsBlock)
-		s->variables_max[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.size();
-	else
-		s->variables_max[VAR_GLOBAL] = 0;
-#endif
-
-	s->variables_seg[VAR_GLOBAL] = s->script_000->_localsSegment;
 	s->variables_seg[VAR_TEMP] = s->variables_seg[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	s->variables_base[VAR_TEMP] = s->variables_base[VAR_PARAM] = s->stack_base;
-
-	// SCI code reads the zeroth argument to determine argc
-	if (s->script_000->_localsBlock)
-		s->variables_base[VAR_GLOBAL] = s->variables[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.begin();
-	else
-		s->variables_base[VAR_GLOBAL] = s->variables[VAR_GLOBAL] = NULL;
 
 	s->_executionStackPosChanged = true; // Force initialization
 

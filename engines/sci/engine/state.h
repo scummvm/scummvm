@@ -79,13 +79,6 @@ enum {
 	MAX_SAVE_DIR_SIZE = MAXPATHLEN
 };
 
-/** values for EngineState.restarting_flag */
-enum {
-	SCI_GAME_IS_NOT_RESTARTING = 0,
-	SCI_GAME_WAS_RESTARTED = 1,
-	SCI_GAME_IS_RESTARTING_NOW = 2
-};
-
 class FileHandle {
 public:
 	Common::String _name;
@@ -145,7 +138,7 @@ public:
 	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	reg_t r_acc; /**< Accumulator */
-	int16 restAdjust; /**< current &rest register (only used for save games) */
+	int16 restAdjust; /**< current &rest register */
 	reg_t r_prev; /**< previous comparison result */
 
 	StackPtr stack_base; /**< Pointer to the least stack element */
@@ -158,8 +151,6 @@ public:
 	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
 	int variables_max[4];		///< Max. values for all variables
 
-	Script *script_000;  /**< script 000, e.g. for globals */
-
 	int loadFromLauncher;
 
 	AbortGameState abortScriptProcessing;
@@ -170,6 +161,11 @@ public:
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
+
+	/**
+	 * Sets global variables from script 0
+	 */
+	void initGlobals();
 
 	/**
 	 * Shrink execution stack to size.

@@ -58,14 +58,13 @@ int script_init_engine(EngineState *s) {
 	s->_msgState = new MessageState(s->_segMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
-	SegmentId script_000_segment = s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
-
-	if (script_000_segment <= 0) {
+	// Script 0 should always be at segment 1
+	if (s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK) != 1) {
 		debug(2, "Failed to instantiate script.000");
 		return 1;
 	}
 
-	s->script_000 = s->_segMan->getScript(script_000_segment);
+	s->initGlobals();
 
 	s->_segMan->initSysStrings();
 
