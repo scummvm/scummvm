@@ -50,6 +50,8 @@ private:
 	Common::SaveFileManager *_savefile;
 	Audio::MixerImpl *_mixer;
 	Common::TimerManager *_timer;
+	bool _pendingUpdate;  			// save an update we couldn't perform
+	uint32 _pendingUpdateCounter;	// prevent checking for pending update too often, in a cheap way
 
 	// All needed sub-members
 	Screen _screen;
@@ -62,10 +64,10 @@ private:
 	PspTimer _pspTimer;
 	PspRtc _pspRtc;
 
-	void initSDL();
+	void initSDL();	
 
 public:
-	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0) {}
+	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}
 	~OSystem_PSP();
 
 	static OSystem *instance();

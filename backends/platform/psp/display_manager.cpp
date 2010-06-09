@@ -311,25 +311,26 @@ void DisplayManager::calculateScaleParams() {
 	}
 }
 
-void DisplayManager::renderAll() {
+// return true if we really rendered or no dirty. False otherwise
+bool DisplayManager::renderAll() {
 	DEBUG_ENTER_FUNC();
 
 #ifdef USE_DISPLAY_CALLBACK
 	if (!_masterGuRenderer.isRenderFinished()) {
 		PSP_DEBUG_PRINT("Callback render not finished.\n");
-		return;
+		return false;	// didn't render
 	}	
 #endif /* USE_DISPLAY_CALLBACK */
 	
 	if (!isTimeToUpdate()) 
-		return;
+		return false;	// didn't render
 
 	if (!_screen->isDirty() &&
 	        (!_overlay->isDirty()) &&
 	        (!_cursor->isDirty()) &&
 	        (!_keyboard->isDirty())) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
-		return;
+		return true;	// nothing to render
 	}
 
 	PSP_DEBUG_PRINT("screen[%s], overlay[%s], cursor[%s], keyboard[%s]\n",
@@ -361,6 +362,8 @@ void DisplayManager::renderAll() {
 	_keyboard->setClean();
 
 	_masterGuRenderer.guPostRender();
+	
+	return true;	// rendered successfully
 }
 
 inline bool DisplayManager::isTimeToUpdate() {

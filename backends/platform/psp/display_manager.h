@@ -40,12 +40,12 @@ public:
 	void setupCallbackThread();
 private:
 	static uint32 _displayList[];
-	uint32 _lastRenderTime;					// For measuring rendering
+	uint32 _lastRenderTime;					// For measuring rendering time
 	void guProgramDisplayBufferSizes();
 	static int guCallbackThread(SceSize, void *);	// for the graphics callbacks
 	static int guCallback(int, int, void *__this);
-	bool _renderFinished;
-	int _callbackId;
+	bool _renderFinished;					// for sync with render callback
+	int _callbackId;						// to keep track of render callback
 };
 
 class Screen;
@@ -68,7 +68,7 @@ public:
 	~DisplayManager();
 
 	void init();
-	void renderAll();
+	bool renderAll();	// return true if rendered or nothing dirty. False otherwise
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const { return _graphicsMode; }
