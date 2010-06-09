@@ -70,7 +70,6 @@ int script_init_engine(EngineState *s) {
 	s->_segMan->initSysStrings();
 
 	s->r_acc = s->r_prev = NULL_REG;
-	s->restAdjust = 0;
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
@@ -143,15 +142,6 @@ int game_exit(EngineState *s) {
 		s->_soundCmd->clearPlayList();
 #endif
 	}
-
-	// Note: It's a bad idea to delete the segment manager here
-	// when loading a game.
-	// This function is called right after a game is loaded, and
-	// the segment manager has already been initialized from the
-	// save game. Deleting or resetting it here will result in
-	// invalidating the loaded save state
-	if (s->abortScriptProcessing == kAbortRestartGame)
-		s->_segMan->resetSegMan();
 
 	// TODO Free parser segment here
 

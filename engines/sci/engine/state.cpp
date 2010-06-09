@@ -102,7 +102,6 @@ void EngineState::reset(bool isRestoring) {
 	_executionStackPosChanged = false;
 
 	restAdjust = 0;
-	restAdjustCur = 0;
 
 	r_acc = NULL_REG;
 	r_prev = NULL_REG;

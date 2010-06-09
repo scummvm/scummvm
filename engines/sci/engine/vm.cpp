@@ -718,7 +718,7 @@ void run_vm(EngineState *s, bool restoring) {
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	s->restAdjustCur = s->restAdjust;
+	s->restAdjust = 0;
 	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
@@ -1116,17 +1116,17 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_call: { // 0x20 (32)
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + s->restAdjustCur;
+			           + 1 + s->restAdjust;
 			StackPtr call_base = s->xs->sp - argc;
-			s->xs->sp[1].offset += s->restAdjustCur;
+			s->xs->sp[1].offset += s->restAdjust;
 
 			xs_new = add_exec_stack_entry(s->_executionStack, make_reg(s->xs->addr.pc.segment,
 											s->xs->addr.pc.offset + opparams[0]),
 											s->xs->sp, s->xs->objp,
-											(validate_arithmetic(*call_base)) + s->restAdjustCur,
+											(validate_arithmetic(*call_base)) + s->restAdjust,
 											call_base, NULL_SELECTOR, s->xs->objp,
 											s->_executionStack.size()-1, s->xs->local_segment);
-			s->restAdjustCur = 0; // Used up the &rest adjustment
+			s->restAdjust = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
@@ -1139,20 +1139,18 @@ void run_vm(EngineState *s, bool restoring) {
 			s->xs->sp -= (opparams[1] >> 1) + 1;
 
 			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-			if (!oldScriptHeader) {
-				s->xs->sp -= s->restAdjustCur;
-				s->restAdjust = 0; // We just used up the s->restAdjustCur, remember?
-			}
+			if (!oldScriptHeader)
+				s->xs->sp -= s->restAdjust;
 
 			int argc = validate_arithmetic(s->xs->sp[0]);
 
 			if (!oldScriptHeader)
-				argc += s->restAdjustCur;
+				argc += s->restAdjust;
 
 			callKernelFunc(s, opparams[0], argc);
 
 			if (!oldScriptHeader)
-				s->restAdjustCur = s->restAdjust;
+				s->restAdjust = 0;
 
 			// Calculate xs again: The kernel function might
 			// have spawned a new VM
@@ -1163,27 +1161,27 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		case op_callb: // 0x22 (34)
-			temp = ((opparams[1] >> 1) + s->restAdjustCur + 1);
+			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjustCur;
+			s->xs->sp[0].offset += s->restAdjust;
 			xs_new = execute_method(s, 0, opparams[0], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjustCur = 0; // Used up the &rest adjustment
+			s->restAdjust = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case op_calle: // 0x23 (35)
-			temp = ((opparams[2] >> 1) + s->restAdjustCur + 1);
+			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
 
-			s->xs->sp[0].offset += s->restAdjustCur;
+			s->xs->sp[0].offset += s->restAdjust;
 			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, s->xs->objp,
 									s->xs->sp[0].offset, s->xs->sp);
-			s->restAdjustCur = 0; // Used up the &rest adjustment
+			s->restAdjust = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -1201,7 +1199,6 @@ void run_vm(EngineState *s, bool restoring) {
 					s->_executionStack.pop_back();
 
 					s->_executionStackPosChanged = true;
-					s->restAdjust = s->restAdjustCur; // Update &rest
 					return; // "Hard" return
 				}
 
@@ -1234,16 +1231,16 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_send: // 0x25 (37)
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjustCur); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjustCur;
+			s->xs->sp[1].offset += s->restAdjust;
 			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
-									(int)(opparams[0] >> 1) + (uint16)s->restAdjustCur, s->xs->sp);
+									(int)(opparams[0] >> 1) + (uint16)s->restAdjust, s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjustCur = 0;
+			s->restAdjust = 0;
 
 			break;
 
@@ -1263,17 +1260,17 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_self: // 0x2a (42)
 			s_temp = s->xs->sp;
-			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjustCur); // Adjust stack
+			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
-			s->xs->sp[1].offset += s->restAdjustCur;
+			s->xs->sp[1].offset += s->restAdjust;
 			xs_new = send_selector(s, s->xs->objp, s->xs->objp,
-									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjustCur,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)s->restAdjust,
 									s->xs->sp);
 
 			if (xs_new && xs_new != s->xs)
 				s->_executionStackPosChanged = true;
 
-			s->restAdjustCur = 0;
+			s->restAdjust = 0;
 			break;
 
 		case op_super: // 0x2b (43)
@@ -1283,24 +1280,24 @@ void run_vm(EngineState *s, bool restoring) {
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = s->xs->sp;
-				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjustCur); // Adjust stack
+				s->xs->sp -= ((opparams[1] >> 1) + s->restAdjust); // Adjust stack
 
-				s->xs->sp[1].offset += s->restAdjustCur;
+				s->xs->sp[1].offset += s->restAdjust;
 				xs_new = send_selector(s, r_temp, s->xs->objp, s_temp,
-										(int)(opparams[1] >> 1) + (uint16)s->restAdjustCur,
+										(int)(opparams[1] >> 1) + (uint16)s->restAdjust,
 										s->xs->sp);
 
 				if (xs_new && xs_new != s->xs)
 					s->_executionStackPosChanged = true;
 
-				s->restAdjustCur = 0;
+				s->restAdjust = 0;
 			}
 
 			break;
 
 		case op_rest: // 0x2c (44)
 			temp = (uint16) opparams[0]; // First argument
-			s->restAdjustCur = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
 			for (; temp <= s->xs->argc; temp++)
 				PUSH32(s->xs->variables_argp[temp]);
@@ -1715,6 +1712,7 @@ void game_run(EngineState **_s) {
 			s->abortScriptProcessing = kAbortNone;
 			s->_executionStackPosChanged = false;
 
+			s->_segMan->resetSegMan();
 			script_init_engine(s);
 			game_init(s);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -1727,8 +1725,7 @@ void game_run(EngineState **_s) {
 			s->gameWasRestarted = true;
 		} else if (s->abortScriptProcessing == kAbortLoadGame) {
 			s->abortScriptProcessing = kAbortNone;
-			debugC(2, kDebugLevelVM, "Restarting with replay()");
-			// Restart with replay
+			// Insert a replay selector
 			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 		} else {
