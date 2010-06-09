@@ -728,14 +728,14 @@ void Kernel::setDefaultKernelNames() {
 		break;
 
 	case SCI_VERSION_1_1:
-		// In KQ6 CD, the empty kSetSynonyms function has been replaced
-		// with kPortrait. In KQ6 Mac, kPlayBack has been replaced by
-		// kShowMovie.
+		// In the Windows version of KQ6 CD, the empty kSetSynonyms
+		// function has been replaced with kPortrait. In KQ6 Mac,
+		// kPlayBack has been replaced by kShowMovie.
 		if (!strcmp(g_sci->getGameID(), "kq6")) {
-			if (g_sci->getPlatform() == Common::kPlatformMacintosh)
-				_kernelNames[0x84] = "ShowMovie";
-			else
+			if (g_sci->getPlatform() == Common::kPlatformWindows)
 				_kernelNames[0x26] = "Portrait";
+			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+				_kernelNames[0x84] = "ShowMovie";
 		}
 
 		_kernelNames[0x71] = "PalVary";
