@@ -178,23 +178,22 @@ void GLESTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h,
 	ENTER("updateBuffer(%u, %u, %u, %u, %p, %d)", x, y, w, h, buf, pitch);
 	glBindTexture(GL_TEXTURE_2D, _texture_name);
 
+	setDirtyRect(Common::Rect(x, y, x+w, y+h));
+
 	if (static_cast<int>(w) * bytesPerPixel() == pitch) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						glFormat(), glType(), buf);
 	} else {
 		// GLES removed the ability to specify pitch, so we
 		// have to do this row by row.
-		int i = h;
 		const byte* src = static_cast<const byte*>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 							w, 1, glFormat(), glType(), src);
 			++y;
 			src += pitch;
-		} while (--i);
+		} while (--h);
 	}
-
-	setDirtyRect(Common::Rect(x, y, x+w, y+h));
 }
 
 void GLESTexture::fillBuffer(byte x) {
@@ -297,6 +296,8 @@ void GLESPaletteTexture::fillBuffer(byte x) {
 void GLESPaletteTexture::updateBuffer(GLuint x, GLuint y,
 									  GLuint w, GLuint h,
 									  const void* buf, int pitch) {
+	_all_dirty = true;
+
 	const byte* src = static_cast<const byte*>(buf);
 	byte* dst = static_cast<byte*>(_surface.getBasePtr(x, y));
 	do {
