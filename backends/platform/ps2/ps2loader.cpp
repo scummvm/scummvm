@@ -30,9 +30,9 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
-#include <sys/_default_fcntl.h>
+#include <sys/fcntl.h>
 
-#include <ps2utils.h>
+//#include <ps2utils.h> do these exist?
 
 #include "backends/platform/ps2/ps2loader.h"
 //#include "backends/platform/ps2/powerman.h" //TODO
@@ -552,7 +552,8 @@ bool DLObject::open(const char *path) {
 	_gpVal = (unsigned int) & _gp;
 	DBG("_gpVal is %x\n", _gpVal);
 
-	PowerMan.beginCriticalSection();
+	//PS2 has no "PowerMan" for suspending the system.
+	//PowerMan.beginCriticalSection();
 
 	if ((fd = ::open(path, O_RDONLY)) < 0) {
 		seterror("%s not found.", path);
@@ -568,10 +569,12 @@ bool DLObject::open(const char *path) {
 
 	::close(fd);
 
-	PowerMan.endCriticalSection();
+	//PS2 has no "PowerMan" for suspending the system.
+	//PowerMan.endCriticalSection();
 
 	// flush data cache
-	sceKernelDcacheWritebackAll();
+	FlushCache(0);
+	FlushCache(2);
 
 	// Get the symbols for the global constructors and destructors
 	ctors_start = symbol("___plugin_ctors");

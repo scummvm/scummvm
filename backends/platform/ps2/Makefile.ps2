@@ -6,34 +6,36 @@ PS2_EXTRA = /home/tony/GSOC/ps2/sdk-extra
 PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /vorbis /tremor/tremor
 
-ENABLE_SCUMM = $(ENABLED)
-ENABLE_SCUMM_7_8 = $(ENABLED)
-ENABLE_HE = $(ENABLED)
-ENABLE_AGI = $(ENABLED)
-ENABLE_AGOS = $(ENABLED)
-ENABLE_CINE = $(ENABLED)
-ENABLE_CRUISE = $(ENABLED)
-ENABLE_DRASCULA = $(ENABLED)
+#ENABLE_SCUMM = $(ENABLED)
+#ENABLE_SCUMM_7_8 = $(ENABLED)
+#ENABLE_HE = $(ENABLED)
+#ENABLE_AGI = $(ENABLED)
+#ENABLE_AGOS = $(ENABLED)
+#ENABLE_CINE = $(ENABLED)
+#ENABLE_CRUISE = $(ENABLED)
+#ENABLE_DRASCULA = $(ENABLED)
 #ENABLE_GOB = $(ENABLED)
 #ENABLE_KYRA = $(ENABLED)
-ENABLE_LURE = $(ENABLED)
+#ENABLE_LURE = $(ENABLED)
 # ENABLE_M4 = $(ENABLED)
-ENABLE_MADE = $(ENABLED)
-ENABLE_PARALLACTION = $(ENABLED)
-ENABLE_QUEEN = $(ENABLED)
-ENABLE_SAGA = $(ENABLED)
-ENABLE_SAGA2 = $(ENABLED)
-ENABLE_IHNM = $(ENABLED)
+#ENABLE_MADE = $(ENABLED)
+#ENABLE_PARALLACTION = $(ENABLED)
+#ENABLE_QUEEN = $(ENABLED)
+#ENABLE_SAGA = $(ENABLED)
+#ENABLE_SAGA2 = $(ENABLED)
+#ENABLE_IHNM = $(ENABLED)
 ENABLE_SKY = $(ENABLED)
-ENABLE_SWORD1 = $(ENABLED)
-ENABLE_SWORD2 = $(ENABLED)
+#ENABLE_SWORD1 = $(ENABLED)
+#ENABLE_SWORD2 = $(ENABLED)
 # ENABLE_TINSEL = $(ENABLED)
-ENABLE_TOUCHE = $(ENABLED)
+#ENABLE_TOUCHE = $(ENABLED)
 
 # Set to 1 to enable, 0 to disable dynamic modules
 DYNAMIC_MODULES = 1
 # Set to 1 to enable, 0 to disable more detailed printing of gcc commands
-VERBOSE_BUILD=0
+VERBOSE_BUILD=1
+# Set to 1 to enable, 0 to disable debugging support (This won't easily work "out of the box")
+DEBUG=0
 # --------------------------------------------------------------------
 
 #General variables
@@ -46,10 +48,16 @@ TARGET = elf/scummvm.elf
 CXX     = ee-g++ -G 0
 CXXFLAGS = -O2 -Wall -Wno-multichar -fno-exceptions -fno-rtti
 DEFINES  = -DUSE_VORBIS -DUSE_MAD -DUSE_TREMOR -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__
+ifeq ($(DEBUG),1)
+DEFINES += -D__PS2_DEBUG__ -g -Wall -Wno-multichar
+endif
 
 LDFLAGS :=
 INCDIR = ../../../
 INCLUDES = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
+ifeq ($(DEBUG),1)
+INCLUDES += -I $(PS2GDB)/ee
+endif
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
 DEPDIR = .deps
 MODULE_DIRS += ./
@@ -69,7 +77,8 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms elf/scummvm.elf #comment out -mno?
-PLUGIN_LDFLAGS = -nostartfiles -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -Wl,-q,--just-symbols,elf/scummvm.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
+#PLUGIN_LDFLAGS = -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
 
 # Test for dynamic plugins
 ifeq ($(DYNAMIC_MODULES),1)
@@ -81,10 +90,17 @@ else
 ENABLED = STATIC_PLUGIN
 endif
 
+LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
+ifeq ($(DEBUG),1)
+LDFLAGS += -L $(PS2GDB)/lib
+endif
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
+ifeq ($(DEBUG),1)
+LDFLAGS += -lps2gdbStub -lps2ip -ldebug
+endif
 LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++
-LDFLAGS += -s
+LDFLAGS +=
 
 OBJS :=	backends/platform/ps2/DmaPipe.o \
     backends/platform/ps2/Gs2dScreen.o \
@@ -107,7 +123,7 @@ OBJS :=	backends/platform/ps2/DmaPipe.o \
 
 include $(srcdir)/Makefile.common
 
-LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog.ld #$(PS2SDK)/ee/startup/linkfile
+LDFLAGS += -Wl,-G,0 -T main_prog.ld #$(PS2SDK)/ee/startup/linkfile
 
 all: $(TARGET)
 

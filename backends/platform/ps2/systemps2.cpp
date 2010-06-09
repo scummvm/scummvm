@@ -132,11 +132,11 @@ extern "C" int main(int argc, char *argv[]) {
 	sioprintf("Creating system\n");
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
+	g_systemPs2->init();
+
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new PS2PluginProvider());
 #endif
-	
-	g_systemPs2->init();
 
 	sioprintf("init done. starting ScummVM.\n");
 	int res = scummvm_main(argc, argv);
