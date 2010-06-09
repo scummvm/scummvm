@@ -31,12 +31,7 @@
 
 class DefaultMutexManager : Common::NonCopyable {
 public:
-	DefaultMutexManager() {}
-	~DefaultMutexManager() {}
-
-	bool hasMutexFeature(OSystem::Feature f);
-	void setMutexFeatureState(OSystem::Feature f, bool enable) {}
-	bool getMutexFeatureState(OSystem::Feature f);
+	virtual ~DefaultMutexManager() {}
 
 	OSystem::MutexRef createMutex();
 	void lockMutex(OSystem::MutexRef mutex) {}

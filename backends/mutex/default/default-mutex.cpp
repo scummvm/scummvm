@@ -28,11 +28,3 @@
 OSystem::MutexRef DefaultMutexManager::createMutex() {
 	return OSystem::MutexRef();
 }
-
-bool DefaultMutexManager::hasMutexFeature(OSystem::Feature f) {
-	return false;
-}
-
-bool DefaultMutexManager::getMutexFeatureState(OSystem::Feature f) {
-	return false;
-}
