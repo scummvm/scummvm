@@ -119,14 +119,12 @@ void EngineState::reset(bool isRestoring) {
 }
 
 void EngineState::wait(int16 ticks) {
-	uint32 time;
-
-	time = g_system->getMillis();
+	uint32 time = g_system->getMillis();
 	r_acc = make_reg(0, ((long)time - (long)last_wait_time) * 60 / 1000);
 	last_wait_time = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	_event->sleep(ticks * 1000 / 60);
+	g_sci->getEventManager()->sleep(ticks * 1000 / 60);
 }
 
 uint16 EngineState::currentRoomNumber() const {

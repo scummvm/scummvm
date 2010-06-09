@@ -45,7 +45,7 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(SegManager *segMan, SciEvent *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
+SciGui32::SciGui32(SegManager *segMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor)
 	: _screen(screen), _palette(palette), _cache(cache), _cursor(cursor) {
 
 	_coordAdjuster = new GfxCoordAdjuster32(segMan);

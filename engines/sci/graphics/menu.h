@@ -83,7 +83,7 @@ typedef Common::List<GuiMenuItemEntry *> GuiMenuItemList;
  */
 class GfxMenu {
 public:
-	GfxMenu(SciEvent *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);
+	GfxMenu(EventManager *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor);
 	~GfxMenu();
 
 	void reset();
@@ -111,7 +111,7 @@ private:
 	uint16 mouseFindMenuItemSelection(Common::Point mousePosition, uint16 menuId);
 	GuiMenuItemEntry *interactiveGetItem(uint16 menuId, uint16 itemId, bool menuChanged);
 
-	SciEvent *_event;
+	EventManager *_event;
 	SegManager *_segMan;
 	SciGui *_gui;
 	GfxPorts *_ports;

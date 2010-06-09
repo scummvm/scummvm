@@ -111,10 +111,10 @@ struct sciEvent {
 #define SCI_KEYMOD_NO_FOOLOCK      (~(SCI_KEYMOD_SCRLOCK | SCI_KEYMOD_NUMLOCK | SCI_KEYMOD_CAPSLOCK | SCI_KEYMOD_INSERT))
 #define SCI_KEYMOD_ALL             0xFF
 
-class SciEvent {
+class EventManager {
 public:
-	SciEvent(ResourceManager *resMgr);
-	~SciEvent();
+	EventManager(ResourceManager *resMgr);
+	~EventManager();
 
 	sciEvent get(unsigned int mask);
 

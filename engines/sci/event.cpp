@@ -36,12 +36,12 @@ namespace Sci {
 
 #define SCANCODE_ROWS_NR 3
 
-SciEvent::SciEvent(ResourceManager *resMan) {
+EventManager::EventManager(ResourceManager *resMan) {
 	// Check, if font of current game includes extended chars
 	_fontIsExtended = resMan->detectFontExtended();
 }
 
-SciEvent::~SciEvent() {
+EventManager::~EventManager() {
 }
 
 struct scancode_row {
@@ -53,7 +53,7 @@ struct scancode_row {
 	{0x2c, "ZXCVBNM,./"}
 };
 
-int SciEvent::altify (int ch) {
+int EventManager::altify (int ch) {
 	// Calculates a PC keyboard scancode from a character */
 	int row;
 	int c = toupper((char)ch);
@@ -74,7 +74,7 @@ int SciEvent::altify (int ch) {
 	return ch;
 }
 
-int SciEvent::numlockify (int c) {
+int EventManager::numlockify (int c) {
 	switch (c) {
 	case SCI_KEY_DELETE:
 		return '.';
@@ -114,7 +114,7 @@ static const byte codepagemap_88591toDOS[0x80] = {
 	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
 };
 
-sciEvent SciEvent::getFromScummVM() {
+sciEvent EventManager::getFromScummVM() {
 	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
 	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
@@ -315,7 +315,7 @@ sciEvent SciEvent::getFromScummVM() {
 	return input;
 }
 
-sciEvent SciEvent::get(unsigned int mask) {
+sciEvent EventManager::get(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sciEvent event = { 0, 0, 0, 0 };
 
@@ -380,7 +380,7 @@ sciEvent SciEvent::get(unsigned int mask) {
 	return event;
 }
 
-void SciEvent::sleep(uint32 msecs) {
+void EventManager::sleep(uint32 msecs) {
 	uint32 time;
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 

@@ -41,7 +41,7 @@ class GfxPaint32;
 
 class SciGui32 {
 public:
-	SciGui32(SegManager *segMan, SciEvent *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
+	SciGui32(SegManager *segMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
 	~SciGui32();
 
 	void init();

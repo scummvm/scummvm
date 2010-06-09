@@ -48,7 +48,7 @@ namespace Common {
 
 namespace Sci {
 
-class SciEvent;
+class EventManager;
 class MessageState;
 class SoundCommandParser;
 
@@ -111,8 +111,6 @@ public:
 	SegManager *_segMan; /**< The segment manager */
 
 	/* Non-VM information */
-
-	SciEvent *_event; // Event handling
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	SfxState _sound; /**< sound subsystem */

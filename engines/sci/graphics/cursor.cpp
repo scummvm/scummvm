@@ -54,7 +54,7 @@ GfxCursor::~GfxCursor() {
 	purgeCache();
 }
 
-void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, SciEvent *event) {
+void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
 	_coordAdjuster = coordAdjuster;
 	_event = event;
 }

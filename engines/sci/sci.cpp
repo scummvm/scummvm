@@ -190,7 +190,7 @@ Common::Error SciEngine::run() {
 
 	_gamestate = new EngineState(segMan);
 
-	_gamestate->_event = new SciEvent(_resMan);
+	_eventMan = new EventManager(_resMan);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -203,7 +203,7 @@ Common::Error SciEngine::run() {
 		_gfxPaint16 = 0;
 		_gfxPorts = 0;
 		_gui = 0;
-		_gui32 = new SciGui32(_gamestate->_segMan, _gamestate->_event, screen, palette, cache, cursor);
+		_gui32 = new SciGui32(_gamestate->_segMan, _eventMan, screen, palette, cache, cursor);
 	} else {
 #endif
 		_gfxPorts = new GfxPorts(segMan, screen);
@@ -280,7 +280,7 @@ Common::Error SciEngine::run() {
 	delete _gfxPalette;
 	delete cursor;
 	delete _gfxScreen;
-	delete _gamestate->_event;
+	delete _eventMan;
 	delete segMan;
 	delete _gamestate;
 

@@ -51,6 +51,7 @@ class Kernel;
 class GameFeatures;
 class Console;
 class AudioPlayer;
+class EventManager;
 
 class GfxAnimate;
 class GfxCache;
@@ -164,6 +165,7 @@ public:
 	inline Kernel *getKernel() const { return _kernel; }
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
+	inline EventManager *getEventManager() const { return _eventMan; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -222,6 +224,7 @@ private:
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;
+	EventManager *_eventMan;
 	Console *_console;
 	OSystem *_system;
 };
