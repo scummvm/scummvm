@@ -109,6 +109,9 @@ public:
 	/**
 	 * Creates a looping audio stream object.
 	 *
+	 * Note that on creation of the LoopingAudioStream object
+	 * the underlying stream will be rewound.
+	 *
 	 * @see makeLoopingAudioStream
 	 *
 	 * @param stream Stream to loop
@@ -231,6 +234,9 @@ class SubLoopingAudioStream : public AudioStream {
 public:
 	/**
 	 * Constructor for a SubLoopingAudioStream.
+	 *
+	 * Note that on creation of the LoopingAudioStream object
+	 * the underlying stream will be rewound.
 	 *
 	 * @param stream Stream to loop
 	 * @param loops How often the stream should be looped (0 means infinite)
