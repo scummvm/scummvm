@@ -74,6 +74,9 @@ int game_init(EngineState *s) {
 
 	s->initGlobals();
 
+	if (s->abortScriptProcessing == kAbortRestartGame && g_sci->_gfxMenu)
+		g_sci->_gfxMenu->reset();
+
 	s->_segMan->initSysStrings();
 
 	s->r_acc = s->r_prev = NULL_REG;
@@ -100,10 +103,6 @@ int game_init(EngineState *s) {
 		voc->parser_event = NULL_REG; // Invalidate parser event
 		voc->parser_base = make_reg(s->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
-
-	// Initialize menu TODO: Actually this should be another init()
-	if (g_sci->_gfxMenu)
-		g_sci->_gfxMenu->reset();
 
 	s->game_start_time = g_system->getMillis();
 	s->last_wait_time = s->game_start_time;

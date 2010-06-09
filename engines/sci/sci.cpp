@@ -44,6 +44,7 @@
 #include "sci/sound/soundcmd.h"
 #include "sci/graphics/gui.h"
 #include "sci/graphics/maciconbar.h"
+#include "sci/graphics/menu.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
@@ -193,6 +194,15 @@ Common::Error SciEngine::run() {
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan);
 
+	// The game needs to be initialized before the graphics system is initialized, as
+	// the graphics code checks parts of the seg manager upon initialization (e.g. for
+	// the presence of the fastCast object)
+	if (game_init(_gamestate)) { /* Initialize */
+		warning("Game initialization failed: Aborting...");
+		// TODO: Add an "init failed" error?
+		return Common::kUnknownError;
+	}
+
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
 		_gfxAnimate = 0;
@@ -209,15 +219,11 @@ Common::Error SciEngine::run() {
 #ifdef ENABLE_SCI32
 		_gui32 = 0;
 		_gfxFrameout = 0;
+
+		g_sci->_gfxMenu->reset();
 	}
 #endif
-
-	if (game_init(_gamestate)) { /* Initialize */
-		warning("Game initialization failed: Aborting...");
-		// TODO: Add an "init failed" error?
-		return Common::kUnknownError;
-	}
-	
+		
 	_kernel->loadKernelNames(_features);	// Must be called after game_init()
 
 	script_adjust_opcode_formats(_gamestate);
