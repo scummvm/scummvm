@@ -258,12 +258,16 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 }
 
 void GfxCursor::setPosition(Common::Point pos) {
+	// This code has been disabled because it's annoying in windowed mode. The engine shouldn't move
+	// the mouse cursor whenever it wants, it interferes with other programs
+#if 0
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
 		_screen->adjustToUpscaledCoordinates(pos.y, pos.x);
 		g_system->warpMouse(pos.x, pos.y);
 	}
+#endif
 }
 
 Common::Point GfxCursor::getPosition() {
@@ -289,6 +293,9 @@ Common::Point GfxCursor::getPosition() {
 }
 
 void GfxCursor::refreshPosition() {
+	// This code has been disabled because it's annoying in windowed mode. The engine shouldn't move
+	// the mouse cursor whenever it wants, it interferes with other programs
+#if 0
 	bool clipped = false;
 	Common::Point mousePoint = getPosition();
 
@@ -311,6 +318,7 @@ void GfxCursor::refreshPosition() {
 	// FIXME: Do this only when mouse is grabbed?
 	if (clipped)
 		setPosition(mousePoint);
+#endif
 }
 
 void GfxCursor::kernelSetMoveZone(Common::Rect zone) {
