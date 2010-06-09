@@ -378,7 +378,7 @@ void Kernel::setKernelNamesSci2() {
 	_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesSci2);
 }
 
-void Kernel::setKernelNamesSci21() {
+void Kernel::setKernelNamesSci21(GameFeatures *features) {
 	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
 	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
 	// to use based on where kDoSound is called from Sound::play().
@@ -386,7 +386,7 @@ void Kernel::setKernelNamesSci21() {
 	// This is interesting because they all have the same interpreter version (2.100.002), yet
 	// they would not be compatible with other games of the same interpreter.
 
-	if (g_sci->_features->detectSci21KernelType() == SCI_VERSION_2) {
+	if (features->detectSci21KernelType() == SCI_VERSION_2) {
 		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2

@@ -394,7 +394,6 @@ SciKernelFunction kfunct_mappers[] = {
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
-	loadKernelNames();	// must be called after the selectors are set
 }
 
 Kernel::~Kernel() {
@@ -748,12 +747,12 @@ void Kernel::setDefaultKernelNames() {
 	}
 }
 
-void Kernel::loadKernelNames() {
+void Kernel::loadKernelNames(GameFeatures *features) {
 	_kernelNames.clear();
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21();
+		setKernelNamesSci21(features);
 	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else

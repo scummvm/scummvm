@@ -141,6 +141,9 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	// Add the after market GM patches for the specified game, if they exist
+	_resMan->addNewGMPatch(getGameID());
+
 	SegManager *segMan = new SegManager(_resMan);
 
 	// Scale the screen, if needed
@@ -170,6 +173,8 @@ Common::Error SciEngine::run() {
 	else
 		_gfxScreen = new GfxScreen(_resMan, 320, 200, upscaledHires);
 
+	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
+
 	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
 		_gfxMacIconBar = new GfxMacIconBar();
 
@@ -181,10 +186,10 @@ Common::Error SciEngine::run() {
 	_console = new Console(this);
 
 	_kernel = new Kernel(_resMan, segMan);
+	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0 and SCI01 games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
-	_features = new GameFeatures(segMan, _kernel);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan);
 
@@ -207,22 +212,19 @@ Common::Error SciEngine::run() {
 	}
 #endif
 
-	// Add the after market GM patches for the specified game, if they exist
-	_resMan->addNewGMPatch(getGameID());
-
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
 	}
+	
+	_kernel->loadKernelNames(_features);	// Must be called after game_init()
 
 	script_adjust_opcode_formats(_gamestate);
 
 	SciVersion soundVersion = _features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
-
-	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (game_init_sound(_gamestate, 0, soundVersion)) {

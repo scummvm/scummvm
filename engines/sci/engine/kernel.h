@@ -207,7 +207,6 @@ public:
 	 */
 	Common::String lookupText(reg_t address, int index);
 
-private:
 	/**
 	 * Loads the kernel function names.
 	 *
@@ -216,8 +215,9 @@ private:
 	 * The resulting list has the same format regardless of the format of the
 	 * name table of the resource (the format changed between version 0 and 1).
 	 */
-	void loadKernelNames();
+	void loadKernelNames(GameFeatures *features);
 
+private:
 	/**
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
@@ -232,7 +232,7 @@ private:
 	/**
 	 * Sets the default kernel function names to the SCI2.1 kernel functions
 	 */
-	void setKernelNamesSci21();
+	void setKernelNamesSci21(GameFeatures *features);
 #endif
 
 	/**
