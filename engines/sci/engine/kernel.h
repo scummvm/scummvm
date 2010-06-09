@@ -207,6 +207,7 @@ public:
 	 */
 	Common::String lookupText(reg_t address, int index);
 
+private:
 	/**
 	 * Loads the kernel function names.
 	 *
@@ -217,7 +218,6 @@ public:
 	 */
 	void loadKernelNames();
 
-private:
 	/**
 	 * Sets the default kernel function names, based on the SCI version used
 	 */

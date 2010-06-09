@@ -394,6 +394,7 @@ SciKernelFunction kfunct_mappers[] = {
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
+	loadKernelNames();	// must be called after the selectors are set
 }
 
 Kernel::~Kernel() {
