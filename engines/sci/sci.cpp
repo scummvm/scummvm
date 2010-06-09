@@ -163,20 +163,19 @@ Common::Error SciEngine::run() {
 		upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
 	// Initialize graphics-related parts
-	GfxScreen *screen = 0;
 
 	// invokes initGraphics()
 	if (_resMan->detectHires())
-		screen = new GfxScreen(_resMan, 640, 480);
+		_gfxScreen = new GfxScreen(_resMan, 640, 480);
 	else
-		screen = new GfxScreen(_resMan, 320, 200, upscaledHires);
+		_gfxScreen = new GfxScreen(_resMan, 320, 200, upscaledHires);
 
 	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
 		_gfxMacIconBar = new GfxMacIconBar();
 
-	GfxPalette *palette = new GfxPalette(_resMan, screen);
-	GfxCache *cache = new GfxCache(_resMan, screen, palette);
-	GfxCursor *cursor = new GfxCursor(_resMan, palette, screen);
+	_gfxPalette = new GfxPalette(_resMan, _gfxScreen);
+	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
+	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -185,15 +184,9 @@ Common::Error SciEngine::run() {
 	// Only SCI0 and SCI01 games used a parser
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
-
 	_features = new GameFeatures(segMan, _kernel);
-
 	_gamestate = new EngineState(segMan);
-
 	_eventMan = new EventManager(_resMan);
-
-	if (script_init_engine(_gamestate))
-		return Common::kUnknownError;
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
@@ -203,23 +196,19 @@ Common::Error SciEngine::run() {
 		_gfxPaint16 = 0;
 		_gfxPorts = 0;
 		_gui = 0;
-		_gui32 = new SciGui32(_gamestate->_segMan, _eventMan, screen, palette, cache, cursor);
+		_gui32 = new SciGui32(_gamestate->_segMan, _eventMan, _gfxScreen, _gfxPalette, _gfxCache, _gfxCursor);
 	} else {
 #endif
-		_gfxPorts = new GfxPorts(segMan, screen);
-		_gui = new SciGui(_gamestate, screen, palette, cache, cursor, _gfxPorts, _audio);
+		_gfxPorts = new GfxPorts(segMan, _gfxScreen);
+		_gui = new SciGui(_gamestate, _gfxScreen, _gfxPalette, _gfxCache, _gfxCursor, _gfxPorts, _audio);
 #ifdef ENABLE_SCI32
 		_gui32 = 0;
 		_gfxFrameout = 0;
 	}
 #endif
 
-	_gfxPalette = palette;
-	_gfxScreen = screen;
-	_gfxCache = cache;
-	_gfxCursor = cursor;
-
-	_gamestate->abortScriptProcessing = kAbortNone;
+	// Add the after market GM patches for the specified game, if they exist
+	_resMan->addNewGMPatch(getGameID());
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -227,17 +216,13 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	// Add the after market GM patches for the specified game, if they exist
-	_resMan->addNewGMPatch(getGameID());
-
 	script_adjust_opcode_formats(_gamestate);
-	_kernel->loadKernelNames(getGameID());
 
 	SciVersion soundVersion = _features->detectDoSoundType();
 
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
-	screen->debugUnditherSetState(ConfMan.getBool("undither"));
+	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (game_init_sound(_gamestate, 0, soundVersion)) {
@@ -278,7 +263,7 @@ Common::Error SciEngine::run() {
 	delete _gfxPorts;
 	delete _gfxCache;
 	delete _gfxPalette;
-	delete cursor;
+	delete _gfxCursor;
 	delete _gfxScreen;
 	delete _eventMan;
 	delete segMan;

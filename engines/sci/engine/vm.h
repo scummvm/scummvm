@@ -283,14 +283,6 @@ void run_vm(EngineState *s, bool restoring);
 void script_debug(EngineState *s);
 
 /**
- * Initializes a EngineState block
- * @param[in] s	The state to initialize
- * @return		0 on success, 1 if vocab.996 (the class table) is missing
- * 				or corrupted
- */
-int script_init_engine(EngineState *);
-
-/**
  * Looks up a selector and returns its type and value
  * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
  * @param[in] segMan		The Segment Manager

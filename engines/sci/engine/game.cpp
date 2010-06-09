@@ -53,13 +53,21 @@ int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion) {
 }
 #endif
 
-// Architectural stuff: Init/Unintialize engine
-int script_init_engine(EngineState *s) {
+/*************************************************************/
+/* Game instance stuff: Init/Unitialize state-dependant data */
+/*************************************************************/
+
+int game_init(EngineState *s) {
+	// FIXME Use new VM instantiation code all over the place
+	// Script 0 needs to be allocated here before anything else!
+	int script0Segment = s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
+	DataStack *stack = s->_segMan->allocateStack(VM_STACK_SIZE, NULL);
+
 	s->_msgState = new MessageState(s->_segMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	// Script 0 should always be at segment 1
-	if (s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK) != 1) {
+	if (script0Segment != 1) {
 		debug(2, "Failed to instantiate script.000");
 		return 1;
 	}
@@ -72,23 +80,11 @@ int script_init_engine(EngineState *s) {
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
+	s->_executionStackPosChanged = false;
 
+	s->abortScriptProcessing = kAbortNone;
 	s->gameWasRestarted = false;
 
-	debug(2, "Engine initialized");
-
-	return 0;
-}
-
-/*************************************************************/
-/* Game instance stuff: Init/Unitialize state-dependant data */
-/*************************************************************/
-
-int game_init(EngineState *s) {
-	// FIXME Use new VM instantiation code all over the place
-	DataStack *stack;
-
-	stack = s->_segMan->allocateStack(VM_STACK_SIZE, NULL);
 	s->stack_base = stack->_entries;
 	s->stack_top = stack->_entries + stack->_capacity;
 

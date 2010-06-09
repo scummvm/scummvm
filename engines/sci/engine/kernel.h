@@ -156,17 +156,6 @@ public:
 	const Common::String &getKernelName(uint number) const;
 
 	/**
-	 * Loads the kernel function names.
-	 *
-	 * This function reads the kernel function name table from resource_map,
-	 * and fills the _kernelNames array with them.
-	 * The resulting list has the same format regardless of the format of the
-	 * name table of the resource (the format changed between version 0 and 1).
-	 * @return true on success, false on failure
-	 */
-	bool loadKernelNames(Common::String gameId);
-
-	/**
 	 * Determines the selector ID of a selector by its name
 	 * @param selectorName Name of the selector to look up
 	 * @return The appropriate selector ID, or -1 on error
@@ -220,9 +209,19 @@ public:
 
 private:
 	/**
+	 * Loads the kernel function names.
+	 *
+	 * This function reads the kernel function name table from resource_map,
+	 * and fills the _kernelNames array with them.
+	 * The resulting list has the same format regardless of the format of the
+	 * name table of the resource (the format changed between version 0 and 1).
+	 */
+	void loadKernelNames();
+
+	/**
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
-	void setDefaultKernelNames(Common::String gameId);
+	void setDefaultKernelNames();
 
 #ifdef ENABLE_SCI32
 	/**

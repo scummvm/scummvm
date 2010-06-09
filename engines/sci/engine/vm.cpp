@@ -1694,19 +1694,13 @@ void game_run(EngineState **_s) {
 		game_exit(s);
 
 		if (s->abortScriptProcessing == kAbortRestartGame) {
-			s->abortScriptProcessing = kAbortNone;
-			s->_executionStackPosChanged = false;
-
 			s->_segMan->resetSegMan();
-			script_init_engine(s);
 			game_init(s);
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 			s->_sound.sfx_reset_player();
 #endif
 			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play);
-
 			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-
 			s->gameWasRestarted = true;
 		} else if (s->abortScriptProcessing == kAbortLoadGame) {
 			s->abortScriptProcessing = kAbortNone;

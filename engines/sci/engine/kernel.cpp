@@ -392,6 +392,7 @@ SciKernelFunction kfunct_mappers[] = {
 };
 
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
+	loadKernelNames();
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
 }
@@ -691,7 +692,7 @@ bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
 	return false;
 }
 
-void Kernel::setDefaultKernelNames(Common::String gameId) {
+void Kernel::setDefaultKernelNames() {
 	_kernelNames = Common::StringArray(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
@@ -730,7 +731,7 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 		// In KQ6 CD, the empty kSetSynonyms function has been replaced
 		// with kPortrait. In KQ6 Mac, kPlayBack has been replaced by
 		// kShowMovie.
-		if (gameId == "kq6") {
+		if (!strcmp(g_sci->getGameID(), "kq6")) {
 			if (g_sci->getPlatform() == Common::kPlatformMacintosh)
 				_kernelNames[0x84] = "ShowMovie";
 			else
@@ -747,7 +748,7 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 	}
 }
 
-bool Kernel::loadKernelNames(Common::String gameId) {
+void Kernel::loadKernelNames() {
 	_kernelNames.clear();
 
 #ifdef ENABLE_SCI32
@@ -757,10 +758,9 @@ bool Kernel::loadKernelNames(Common::String gameId) {
 		setKernelNamesSci2();
 	else
 #endif
-		setDefaultKernelNames(gameId);
+		setDefaultKernelNames();
 
 	mapFunctions();
-	return true;
 }
 
 Common::String Kernel::lookupText(reg_t address, int index) {
