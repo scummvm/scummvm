@@ -59,7 +59,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	// then it should init it!
 	_coordAdjuster = new GfxCoordAdjuster16(_ports);
 	g_sci->_gfxCoordAdjuster = _coordAdjuster;
-	_cursor->init(_coordAdjuster, _s->_event);
+	_cursor->init(_coordAdjuster, g_sci->getEventManager());
 	_compare = new GfxCompare(_s->_segMan, g_sci->getKernel(), _cache, _screen, _coordAdjuster);
 	g_sci->_gfxCompare = _compare;
 	_transitions = new GfxTransitions(this, _screen, _palette, g_sci->getResMan()->isVGA());
@@ -71,7 +71,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_text16 = new GfxText16(g_sci->getResMan(), _cache, _ports, _paint16, _screen);
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
 	g_sci->_gfxControls = _controls;
-	_menu = new GfxMenu(_s->_event, _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
+	_menu = new GfxMenu(g_sci->getEventManager(), _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
 	g_sci->_gfxMenu = _menu;
 }
 
@@ -123,7 +123,7 @@ reg_t SciGui::portraitLoad(Common::String resourceName) {
 }
 
 void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(g_sci->getResMan(), _s->_event, this, _screen, _palette, _audio, resourceName);
+	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), this, _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)
