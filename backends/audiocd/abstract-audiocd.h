@@ -23,38 +23,28 @@
  *
  */
 
-#ifndef BACKENDS_AUDIOCD_DEFAULT_H
-#define BACKENDS_AUDIOCD_DEFAULT_H
+#ifndef BACKENDS_AUDIOCD_ABSTRACT_H
+#define BACKENDS_AUDIOCD_ABSTRACT_H
 
-#include "backends/audiocd/abstract-audiocd.h"
-#include "sound/mixer.h"
+#include "common/noncopyable.h"
 
-class DefaultAudioCDManager : AudioCDManager {
+class AudioCDManager : Common::NonCopyable {
 public:
-	DefaultAudioCDManager();
-	virtual ~DefaultAudioCDManager() {}
+	virtual ~AudioCDManager() {}
 
-	// Emulated CD functions, engines should call this functions
-	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
-	void stop();
-	bool isPlaying() const;
-	void update();
-	virtual Status getStatus() const; // Subclasses should override for better status results
+	struct Status {
+		bool playing;
+		int track;
+		int start;
+		int duration;
+		int numLoops;
+	};
 
-protected:
-
-	// Real CD functions. Let Subclasses implement the real code
-	virtual bool openCD(int drive) { return false; }
-	virtual void updateCD() {}
-	virtual bool pollCD() const { return false; }
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-	virtual void stopCD() {}
-
-	Audio::SoundHandle _handle;
-	bool _emulating;
-
-	Status _cd;
-	Audio::Mixer *_mixer;
+	virtual void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false) = 0;
+	virtual void stop() = 0;
+	virtual bool isPlaying() const = 0;
+	virtual void update() = 0;
+	virtual Status getStatus() const = 0;
 };
 
 #endif
