@@ -369,6 +369,10 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortRect.right);
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
+
+		if (s.isLoading()) {
+			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
+		}
 	}
 
 	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
