@@ -2,8 +2,22 @@ Bugs/Thinks noticed while playing:
 ------------------------------------
 The sub:
 - First alarm screen disappears too quickly
-
+general:
+- Clipping bug in lipsync animations
 DONE:
 - Captain doesn't walk to the door in the cargo room
 Falkland Islands:
 - Dialog keywords with Sears wrong (seems it's still the old dialog keywords)
+
+Todo:
+-------
+- Sound effects
+- Digital music
+- Midi music
+- Mux player needs bugfixing
+- Menu system
+- Finish main loop (replace current placeholder loop)
+- Load from Gui
+- Return to Gui
+- Switch savegame system to Serializer
+- Dirty rectangles
