@@ -47,6 +47,7 @@ AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(
 		_syncResource(NULL), _syncOffset(0), _audioCdStart(0) {
 
 	_mixer = g_system->getMixer();
+	_wPlayFlag = false;
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -65,11 +66,24 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);
 
 	if (audioStream) {
+		_wPlayFlag = false;
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
 	}
 
 	return 0;
+}
+
+int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
+	// Get the audio sample length and set the wPlay flag so we return 0 on position.
+	// SSCI pre-loads the audio here, but it's much easier for us to just get the
+	// sample length and return that. wPlayAudio should *not* actually start the sample.
+
+	int sampleLen = 0;
+	Audio::AudioStream *audioStream = getAudioStream(module, tuple, &sampleLen);
+	delete audioStream;
+	_wPlayFlag = true;
+	return sampleLen;
 }
 
 void AudioPlayer::stopAudio() {
@@ -87,6 +101,8 @@ void AudioPlayer::resumeAudio() {
 int AudioPlayer::getAudioPosition() {
 	if (_mixer->isSoundHandleActive(_audioHandle))
 		return _mixer->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
+	else if (_wPlayFlag)
+		return 0; // Sound has "loaded" so return that it hasn't started
 	else
 		return -1; // Sound finished
 }

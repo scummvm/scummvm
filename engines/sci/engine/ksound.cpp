@@ -44,7 +44,6 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case kSciAudioWPlay:
 	case kSciAudioPlay: {
 		if (argc < 2)
 			return NULL_REG;
@@ -72,6 +71,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case kSciAudioPosition:
 		return make_reg(0, g_sci->_audio->audioCdPosition());
+	case kSciAudioWPlay: // CD Audio can't be preloaded
 	case kSciAudioRate: // No need to set the audio rate
 	case kSciAudioVolume: // The speech setting isn't used by CD Audio
 	case kSciAudioLanguage: // No need to set the language
@@ -119,7 +119,11 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		return make_reg(0, g_sci->_audio->startAudio(module, number)); // return sample length in ticks
+		// return sample length in ticks
+		if (argv[0].toUint16() == kSciAudioWPlay)
+			return make_reg(0, g_sci->_audio->wPlayAudio(module, number));
+		else
+			return make_reg(0, g_sci->_audio->startAudio(module, number));
 	}
 	case kSciAudioStop:
 		g_sci->_audio->stopAudio();
