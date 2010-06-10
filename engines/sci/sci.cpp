@@ -36,6 +36,7 @@
 #include "sci/event.h"
 
 #include "sci/engine/features.h"
+#include "sci/engine/message.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
@@ -197,7 +198,7 @@ Common::Error SciEngine::run() {
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for
 	// the presence of the fastCast object)
-	if (game_init(_gamestate)) { /* Initialize */
+	if (!initGame()) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
@@ -259,7 +260,7 @@ Common::Error SciEngine::run() {
 		_gamestate->loadFromLauncher = -1;
 	}
 
-	game_run(&_gamestate); // Run the game
+	runGame();
 
 	ConfMan.flushToDisk();
 
@@ -278,6 +279,133 @@ Common::Error SciEngine::run() {
 	delete _gamestate;
 
 	return Common::kNoError;
+}
+
+bool SciEngine::initGame() {
+	// Script 0 needs to be allocated here before anything else!
+	int script0Segment = _gamestate->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
+	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE, NULL);
+
+	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
+	_gamestate->gc_countdown = GC_INTERVAL - 1;
+
+	// Script 0 should always be at segment 1
+	if (script0Segment != 1) {
+		debug(2, "Failed to instantiate script.000");
+		return false;
+	}
+
+	_gamestate->initGlobals();
+
+	if (_gamestate->abortScriptProcessing == kAbortRestartGame && _gfxMenu)
+		_gfxMenu->reset();
+
+	_gamestate->_segMan->initSysStrings();
+
+	_gamestate->r_acc = _gamestate->r_prev = NULL_REG;
+
+	_gamestate->_executionStack.clear();    // Start without any execution stack
+	_gamestate->execution_stack_base = -1; // No vm is running yet
+	_gamestate->_executionStackPosChanged = false;
+
+	_gamestate->abortScriptProcessing = kAbortNone;
+	_gamestate->gameWasRestarted = false;
+
+	_gamestate->stack_base = stack->_entries;
+	_gamestate->stack_top = stack->_entries + stack->_capacity;
+
+	if (!script_instantiate(_resMan, _gamestate->_segMan, 0)) {
+		warning("initGame(): Could not instantiate script 0");
+		return false;
+	}
+
+	// Reset parser
+	if (_vocabulary) {
+		_vocabulary->parserIsValid = false; // Invalidate parser
+		_vocabulary->parser_event = NULL_REG; // Invalidate parser event
+		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
+	}
+
+	_gamestate->game_start_time = _gamestate->last_wait_time = g_system->getMillis();
+
+	srand(g_system->getMillis()); // Initialize random number generator
+
+	_gamestate->_gameObj = _resMan->findGameObject();
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	if (_gamestate->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
+		game_init_sound(_gamestate, 0, _features->detectDoSoundType());
+#endif
+
+	// Load game language into printLang property of game object
+	// FIXME: It's evil to achieve this as a side effect of a getter.
+	// Much better to have an explicit init method for this.
+	getSciLanguage();
+
+	return true;
+}
+
+void SciEngine::initStackBaseWithSelector(Selector selector) {
+	_gamestate->stack_base[0] = make_reg(0, (uint16)selector);
+	_gamestate->stack_base[1] = NULL_REG;
+
+	// Register the first element on the execution stack
+	if (!send_selector(_gamestate, _gamestate->_gameObj, _gamestate->_gameObj, _gamestate->stack_base, 2, _gamestate->stack_base)) {
+		_console->printObject(_gamestate->_gameObj);
+		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
+	}
+
+}
+
+void SciEngine::runGame() {
+	initStackBaseWithSelector(_kernel->_selectorCache.play); // Call the play selector
+
+	// Attach the debug console on game startup, if requested
+	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
+		_console->attach();
+
+	do {
+		_gamestate->_executionStackPosChanged = false;
+		run_vm(_gamestate, (_gamestate->abortScriptProcessing == kAbortLoadGame));
+		exitGame();
+
+		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
+			_gamestate->_segMan->resetSegMan();
+			initGame();
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+			_gamestate->_sound.sfx_reset_player();
+#endif
+			initStackBaseWithSelector(_kernel->_selectorCache.play);
+			_gamestate->gameWasRestarted = true;
+		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
+			_gamestate->abortScriptProcessing = kAbortNone;
+			initStackBaseWithSelector(_kernel->_selectorCache.replay);
+		} else {
+			break;	// exit loop
+		}
+	} while (true);
+}
+
+void SciEngine::exitGame() {
+	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
+		_gamestate->_executionStack.clear();
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+		_gamestate->_sound.sfx_exit();
+		// Reinit because some other code depends on having a valid state
+		game_init_sound(_gamestate, SFX_STATE_FLAG_NOSOUND, _features->detectDoSoundType());
+#else
+		_audio->stopAllAudio();
+		_gamestate->_soundCmd->clearPlayList();
+#endif
+	}
+
+	// TODO Free parser segment here
+
+	// TODO Free scripts here
+
+	// Close all opened file handles
+	_gamestate->_fileHandles.clear();
+	_gamestate->_fileHandles.resize(5);
 }
 
 // Invoked by error() when a severe error occurs

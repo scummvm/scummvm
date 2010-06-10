@@ -1664,57 +1664,6 @@ void run_vm(EngineState *s, bool restoring) {
 	}
 }
 
-static void _init_stack_base_with_selector(EngineState *s, Selector selector) {
-	s->stack_base[0] = make_reg(0, (uint16)selector);
-	s->stack_base[1] = NULL_REG;
-}
-
-void game_run(EngineState **_s) {
-	EngineState *s = *_s;
-
-	debugC(2, kDebugLevelVM, "Calling %s::play()", g_sci->getGameID());
-	_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play); // Call the play selector
-
-	// Now: Register the first element on the execution stack
-	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
-		g_sci->getSciDebugger()->printObject(s->_gameObj);
-		error("Failed to run the game! Aborting...");
-		return;
-	}
-
-	// and ENGAGE!
-
-	// Attach the debug console on game startup, if requested
-	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
-		g_sci->getSciDebugger()->attach();
-
-	do {
-		s->_executionStackPosChanged = false;
-		run_vm(s, (s->abortScriptProcessing == kAbortLoadGame));
-		game_exit(s);
-
-		if (s->abortScriptProcessing == kAbortRestartGame) {
-			s->_segMan->resetSegMan();
-			game_init(s);
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-			s->_sound.sfx_reset_player();
-#endif
-			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.play);
-			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-			s->gameWasRestarted = true;
-		} else if (s->abortScriptProcessing == kAbortLoadGame) {
-			s->abortScriptProcessing = kAbortNone;
-			// Insert a replay selector
-			_init_stack_base_with_selector(s, g_sci->getKernel()->_selectorCache.replay);
-			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
-		} else {
-			break;	// exit loop
-		}
-	} while (true);
-
-	debugC(2, kDebugLevelVM, "Game::play() finished.");
-}
-
 reg_t *ObjVarRef::getPointer(SegManager *segMan) const {
 	Object *o = segMan->getObject(obj);
 	return o ? &o->getVariableRef(varindex) : 0;

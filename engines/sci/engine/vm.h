@@ -330,65 +330,6 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_n
 void script_uninstantiate(SegManager *segMan, int script_nr);
 
 /**
- * Converts the builtin Sierra game IDs to the ones we use in ScummVM
- * @param[in] gameId		The internal game ID
- * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
- * @return					The equivalent ScummVM game id
- */
-Common::String convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan);
-
-/**
- * Initializes an SCI game
- * This function must be run before script_run() is executed. Graphics data
- * is initialized iff s->gfx_state != NULL.
- * @param[in] s	The state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_init(EngineState *s);
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-/**
- * Initializes the sound part of an SCI game
- * This function may only be called if game_init() did not initialize
- * the sound data.
- * @param[in] s				The state to initialize the sound in
- * @param[in] sound_flags	Flags to pass to the sound subsystem
- * @param[in] soundVersion	sound-version that got detected during game init
- * @return					0 on success, 1 if an error occured
- */
-int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
-#endif
-
-/**
- * Runs an SCI game
- * This is the main function for SCI games. It takes a valid state, loads
- * script 0 to it, finds the game object, allocates a stack, and runs the
- * init method of the game object. In layman's terms, this runs an SCI game.
- * Note that, EngineState *s may be changed during the game, e.g. if a game
- * state is restored.
- * @param[in] s	Pointer to the pointer of the state to operate on
-  */
-void game_run(EngineState **s);
-
-/**
- * Restores an SCI game state and runs the game
- * This restores a savegame; otherwise, it behaves just like game_run().
- * @param[in] s				Pointer to the pointer of the state to
- * 							operate on
- * @param[in] savegame_name	Name of the savegame to restore
- * @return					0 on success, 1 if an error occured.
- */
-int game_restore(EngineState **s, char *savegame_name);
-
-/**
- * Uninitializes an initialized SCI game
- * This function should be run after each script_run() call.
- * @param[in] s	The state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_exit(EngineState *s);
-
-/**
  * Read a PMachine instruction from a memory buffer and return its length.
  *
  * @param[in] src		address from which to start parsing

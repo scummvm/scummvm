@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	sci.o \
 	util.o \
 	engine/features.o \
-	engine/game.o \
 	engine/gc.o \
 	engine/kernel.o \
 	engine/kevent.o \

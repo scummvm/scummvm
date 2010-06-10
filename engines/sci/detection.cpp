@@ -36,7 +36,6 @@
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
-#include "sci/engine/vm.h"		// for convertSierraGameId
 
 namespace Sci {
 
@@ -198,6 +197,12 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "", "", SCI_VERSION_NONE }
 };
 
+/**
+ * Converts the builtin Sierra game IDs to the ones we use in ScummVM
+ * @param[in] gameId		The internal game ID
+ * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
+ * @return					The equivalent ScummVM game id
+ */
 Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, ResourceManager *resMan) {
 	// Convert the id to lower case, so that we match all upper/lower case variants.
 	sierraId.toLowercase();

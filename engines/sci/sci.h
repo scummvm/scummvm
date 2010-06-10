@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/util.h"
+#include "engine/vm_types.h"	// for Selector
 
 struct ADGameDescription;
 
@@ -219,6 +220,46 @@ public:
 	GameFeatures *_features;
 
 private:
+	/**
+	 * Initializes a SCI game
+	 * This function must be run before script_run() is executed. Graphics data
+	 * is initialized iff s->gfx_state != NULL.
+	 * @param[in] s	The state to operate on
+	 * @return		true on success, false if an error occured.
+	 */
+	bool initGame();
+
+	/**
+	 * Runs a SCI game
+	 * This is the main function for SCI games. It takes a valid state, loads
+	 * script 0 to it, finds the game object, allocates a stack, and runs the
+	 * init method of the game object. In layman's terms, this runs a SCI game.
+	 * @param[in] s	Pointer to the pointer of the state to operate on
+	  */
+	void runGame();
+
+	/**
+	 * Uninitializes an initialized SCI game
+	 * This function should be run after each script_run() call.
+	 * @param[in] s	The state to operate on
+	 */
+	void exitGame();
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+	/**
+	 * Initializes the sound part of a SCI game
+	 * This function may only be called if game_init() did not initialize
+	 * the sound data.
+	 * @param[in] s				The state to initialize the sound in
+	 * @param[in] sound_flags	Flags to pass to the sound subsystem
+	 * @param[in] soundVersion	sound-version that got detected during game init
+	 * @return					0 on success, 1 if an error occured
+	 */
+	int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
+#endif
+
+	void initStackBaseWithSelector(Selector selector);
+
 	const ADGameDescription *_gameDescription;
 	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
