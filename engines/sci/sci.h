@@ -187,6 +187,8 @@ public:
 	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
 
 	kLanguage getSciLanguage();
+	void setSciLanguage(kLanguage lang);
+	void setSciLanguage();
 
 	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
 

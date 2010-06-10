@@ -673,11 +673,11 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool SciEngine::canLoadGameStateCurrently() {
-	return !_gamestate->execution_stack_base;
+	return !_gamestate->executionStackBase;
 }
 
 bool SciEngine::canSaveGameStateCurrently() {
-	return !_gamestate->execution_stack_base;
+	return !_gamestate->executionStackBase;
 }
 
 } // End of namespace Sci

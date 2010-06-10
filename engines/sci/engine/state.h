@@ -112,7 +112,7 @@ public:
 	SoundCommandParser *_soundCmd;
 
 	uint32 game_start_time; /**< The time at which the interpreter was started */
-	uint32 last_wait_time; /**< The last time the game invoked Wait() */
+	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
 
 	void wait(int16 ticks);
 
@@ -134,7 +134,7 @@ public:
 	 * When called from kernel functions, the vm is re-started recursively on
 	 * the same stack. This variable contains the stack base for the current vm.
 	 */
-	int execution_stack_base;
+	int executionStackBase;
 	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	reg_t r_acc; /**< Accumulator */
@@ -156,8 +156,8 @@ public:
 	AbortGameState abortScriptProcessing;
 	bool gameWasRestarted;
 
-	int script_step_counter; // Counts the number of steps executed
-	int script_gc_interval; // Number of steps in between gcs
+	int scriptStepCounter; // Counts the number of steps executed
+	int scriptGCInterval; // Number of steps in between gcs
 
 	uint16 currentRoomNumber() const;
 	void setRoomNumber(uint16 roomNumber);
@@ -169,7 +169,7 @@ public:
 
 	/**
 	 * Shrink execution stack to size.
-	 * Contains an assert it is not already smaller.
+	 * Contains an assert if it is not already smaller.
 	 */
 	void shrinkStackToBase();
 

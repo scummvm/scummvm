@@ -631,7 +631,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 
 static void gc_countdown(EngineState *s) {
 	if (s->gc_countdown-- <= 0) {
-		s->gc_countdown = s->script_gc_interval;
+		s->gc_countdown = s->scriptGCInterval;
 		run_gc(s);
 	}
 }
@@ -726,7 +726,7 @@ void run_vm(EngineState *s, bool restoring) {
 	ExecStack *xs_new = NULL;
 	Object *obj = s->_segMan->getObject(s->xs->objp);
 	Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
-	int old_execution_stack_base = s->execution_stack_base;
+	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
 	const byte *code_buf = NULL; // (Avoid spurious warning)
 
@@ -735,7 +735,7 @@ void run_vm(EngineState *s, bool restoring) {
 	}
 
 	if (!restoring)
-		s->execution_stack_base = s->_executionStack.size() - 1;
+		s->executionStackBase = s->_executionStack.size() - 1;
 
 	s->variables_seg[VAR_TEMP] = s->variables_seg[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	s->variables_base[VAR_TEMP] = s->variables_base[VAR_PARAM] = s->stack_base;
@@ -1179,8 +1179,8 @@ void run_vm(EngineState *s, bool restoring) {
 				StackPtr old_fp = s->xs->fp;
 				ExecStack *old_xs = &(s->_executionStack.back());
 
-				if ((int)s->_executionStack.size() - 1 == s->execution_stack_base) { // Have we reached the base?
-					s->execution_stack_base = old_execution_stack_base; // Restore stack base
+				if ((int)s->_executionStack.size() - 1 == s->executionStackBase) { // Have we reached the base?
+					s->executionStackBase = old_executionStackBase; // Restore stack base
 
 					s->_executionStack.pop_back();
 
@@ -1661,7 +1661,7 @@ void run_vm(EngineState *s, bool restoring) {
 					opcode);
 		}
 //#endif
-		++s->script_step_counter;
+		++s->scriptStepCounter;
 	}
 }
 

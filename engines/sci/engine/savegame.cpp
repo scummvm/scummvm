@@ -722,7 +722,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
-	if (s->execution_stack_base) {
+	if (s->executionStackBase) {
 		warning("Cannot save from below kernel function");
 		return 1;
 	}
@@ -875,7 +875,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	// Time state:
-	s->last_wait_time = g_system->getMillis();
+	s->lastWaitTime = g_system->getMillis();
 	s->game_start_time = g_system->getMillis();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

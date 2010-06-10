@@ -75,7 +75,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
-	DVar_Register("gc_interval",		&engine->_gamestate->script_gc_interval, DVAR_INT, 0);
+	DVar_Register("gc_interval",		&engine->_gamestate->scriptGCInterval, DVAR_INT, 0);
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
 	DVar_Register("script_abort_flag",	&_engine->_gamestate->abortScriptProcessing, DVAR_INT, 0);
@@ -2086,7 +2086,7 @@ bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 }
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
-	DebugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->script_step_counter);
+	DebugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->scriptStepCounter);
 	return true;
 }
 
@@ -2114,7 +2114,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
 
-	DebugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->execution_stack_base);
+	DebugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
 

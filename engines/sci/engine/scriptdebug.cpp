@@ -284,7 +284,7 @@ void script_debug(EngineState *s) {
 
 #if 0
 	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
-		printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
+		printf("%d: acc=%04x:%04x  ", scriptStepCounter, PRINT_REG(s->r_acc));
 		disassemble(s, s->xs->addr.pc, 0, 1);
 		if (s->seeking == kDebugSeekGlobal)
 			printf("Global %d (0x%x) = %04x:%04x\n", s->seekSpecial,
@@ -351,7 +351,7 @@ void script_debug(EngineState *s) {
 		}
 	}
 
-	printf("Step #%d\n", s->script_step_counter);
+	printf("Step #%d\n", s->scriptStepCounter);
 	disassemble(s, s->xs->addr.pc, 0, 1);
 
 	if (g_debugState.runningStep) {

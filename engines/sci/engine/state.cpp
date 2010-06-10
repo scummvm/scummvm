@@ -95,7 +95,7 @@ void EngineState::reset(bool isRestoring) {
 		abortScriptProcessing = kAbortNone;
 	}
 
-	execution_stack_base = 0;
+	executionStackBase = 0;
 	_executionStackPosChanged = false;
 
 	restAdjust = 0;
@@ -103,7 +103,7 @@ void EngineState::reset(bool isRestoring) {
 	r_acc = NULL_REG;
 	r_prev = NULL_REG;
 
-	last_wait_time = 0;
+	lastWaitTime = 0;
 
 	gc_countdown = 0;
 
@@ -111,14 +111,14 @@ void EngineState::reset(bool isRestoring) {
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 
-	script_step_counter = 0;
-	script_gc_interval = GC_INTERVAL;
+	scriptStepCounter = 0;
+	scriptGCInterval = GC_INTERVAL;
 }
 
 void EngineState::wait(int16 ticks) {
 	uint32 time = g_system->getMillis();
-	r_acc = make_reg(0, ((long)time - (long)last_wait_time) * 60 / 1000);
-	last_wait_time = time;
+	r_acc = make_reg(0, ((long)time - (long)lastWaitTime) * 60 / 1000);
+	lastWaitTime = time;
 
 	ticks *= g_debug_sleeptime_factor;
 	g_sci->getEventManager()->sleep(ticks * 1000 / 60);
@@ -144,7 +144,7 @@ void EngineState::setRoomNumber(uint16 roomNumber) {
 }
 
 void EngineState::shrinkStackToBase() {
-	uint size = execution_stack_base + 1;
+	uint size = executionStackBase + 1;
 	assert(_executionStack.size() >= size);
 	Common::List<ExecStack>::iterator iter = _executionStack.begin();
 	for (uint i = 0; i < size; ++i)
@@ -268,13 +268,18 @@ kLanguage SciEngine::getSciLanguage() {
 			default:
 				lang = K_LANG_ENGLISH;
 			}
-
-			// Store language in printLang selector
-			writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
 		}
 	}
 
 	return lang;
+}
+
+void SciEngine::setSciLanguage(kLanguage lang) {
+	writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
+}
+
+void SciEngine::setSciLanguage() {
+	setSciLanguage(getSciLanguage());
 }
 
 Common::String SciEngine::strSplit(const char *str, const char *sep) {

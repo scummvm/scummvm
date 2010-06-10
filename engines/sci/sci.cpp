@@ -304,7 +304,7 @@ bool SciEngine::initGame() {
 	_gamestate->r_acc = _gamestate->r_prev = NULL_REG;
 
 	_gamestate->_executionStack.clear();    // Start without any execution stack
-	_gamestate->execution_stack_base = -1; // No vm is running yet
+	_gamestate->executionStackBase = -1; // No vm is running yet
 	_gamestate->_executionStackPosChanged = false;
 
 	_gamestate->abortScriptProcessing = kAbortNone;
@@ -325,7 +325,7 @@ bool SciEngine::initGame() {
 		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
-	_gamestate->game_start_time = _gamestate->last_wait_time = g_system->getMillis();
+	_gamestate->game_start_time = _gamestate->lastWaitTime = g_system->getMillis();
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
@@ -335,9 +335,7 @@ bool SciEngine::initGame() {
 #endif
 
 	// Load game language into printLang property of game object
-	// FIXME: It's evil to achieve this as a side effect of a getter.
-	// Much better to have an explicit init method for this.
-	getSciLanguage();
+	setSciLanguage();
 
 	return true;
 }
