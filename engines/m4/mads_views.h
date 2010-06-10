@@ -404,6 +404,7 @@ public:
 	~MadsView();
 
 	void refresh();
+	void clearLists();
 };
 
 }

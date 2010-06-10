@@ -192,7 +192,7 @@ void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 		assert(slot.spriteListIndex < (int)_sprites.size());
 		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
-		if (slot.scale < 100) {
+		if ((slot.scale < 100) && (slot.scale != -1)) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
 			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
@@ -1220,6 +1220,12 @@ void MadsView::refresh() {
 
 	// Deactivate any text display entries that are no longer needed
 	_textDisplay.cleanUp();
+}
+
+void MadsView::clearLists() {
+	_textDisplay.clear();
+	_kernelMessages.clear();
+	_spriteSlots.clear();
 }
 
 } // End of namespace M4

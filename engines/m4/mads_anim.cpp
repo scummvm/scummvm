@@ -524,6 +524,11 @@ void AnimviewView::updateState() {
 		delete _activeAnimation;
 		_activeAnimation = NULL;
 
+		// Clear up current background and sprites
+		_backgroundSurface.reset();
+		clearLists();
+		
+		// Check if script is finished
 		if (_script->eos() ||  _script->err()) {
 			scriptDone();
 			return;

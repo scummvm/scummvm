@@ -154,6 +154,7 @@ public:
 	}
 	void freeData();
 	void clear();
+	void reset();
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
 	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, 

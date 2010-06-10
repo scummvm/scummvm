@@ -331,6 +331,16 @@ void M4Surface::clear() {
 	Common::set_to((byte *)pixels, (byte *)pixels + w * h, _vm->_palette->BLACK);
 }
 
+void M4Surface::reset() {
+	::free(pixels);
+	pixels = NULL;
+	if (_rgbList) {
+		_vm->_palette->deleteRange(_rgbList);
+		delete _rgbList;
+		_rgbList = NULL;
+	}
+}
+
 void M4Surface::frameRect(const Common::Rect &r, uint8 color) {
 	Graphics::Surface::frameRect(r, color);
 }
@@ -412,6 +422,11 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surf
 	if (!copyRect.isValidRect())
 		return;
 
+	if (scale != 100) {
+		destX -= (src->width() * scale / 100) / 2;
+		destY -= (src->height() * scale / 100);
+	}
+
 	// Copy the specified area
 
 	byte *data = src->getBasePtr();
@@ -435,27 +450,31 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surf
 		}
 	} else {
 		// Scaled variation
-		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
-			int currX = -1;
+		int currY = -1;
+
+		for (int rowCtr = 0, yTotal = 0; rowCtr < copyRect.height(); ++rowCtr, yTotal += scale, 
+					srcPtr += src->width(), depthsPtr += depthsSurface->width()) {
+			int srcY = yTotal / 100;
+			if (srcY == currY)
+				continue;
+			currY = srcY;
 
 			// Loop through the source pixels
-			for (int xCtr = 0, xTotal = 0; xCtr < copyRect.width(); ++xCtr, xTotal += (100 - scale)) {
+			int currX = -1;
+			byte *destP = destPtr;
+			for (int xCtr = 0, xTotal = 0; xCtr < copyRect.width(); ++xCtr, xTotal += scale) {
 				int srcX = xTotal / 100;
+				if (srcX == currX)
+					continue;
+				currX = srcX;
 
-				if (srcX != currX) {
-					currX = srcX;
-
-					if ((depthsPtr[currX] > depth) && (srcPtr[xCtr] != transparentColour))
-						destPtr[currX] = srcPtr[xCtr];
-				}
+				if ((depthsPtr[currX] > depth) && (srcPtr[xCtr] != transparentColour))
+					*destP++ = srcPtr[xCtr];
 			}
 
-			srcPtr += src->width();
-			depthsPtr += depthsSurface->width();
 			destPtr += width();
 		}
 	}
-
 	src->freeData();
 	depthsSurface->freeData();	
 }
@@ -471,8 +490,6 @@ void M4Surface::loadBackgroundRiddle(const char *sceneName) {
 }
 
 void M4Surface::loadBackground(int sceneNumber, RGBList **palData) {
-	clear();		// clear previous scene
-
 	if (_vm->isM4() || (_vm->getGameType() == GType_RexNebular)) {
 		char resourceName[20];
 		Common::SeekableReadStream *stream;
