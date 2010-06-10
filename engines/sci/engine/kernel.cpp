@@ -742,6 +742,9 @@ void Kernel::setDefaultKernelNames() {
 		break;
 
 	case SCI_VERSION_1_1:
+		// In SCI1.1, kSetSynonyms is a dummy (empty) function
+		_kernelNames[0x26] = "Dummy";
+
 		// In the Windows version of KQ6 CD, the empty kSetSynonyms
 		// function has been replaced with kPortrait. In KQ6 Mac,
 		// kPlayBack has been replaced by kShowMovie.
