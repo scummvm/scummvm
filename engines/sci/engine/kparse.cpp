@@ -118,7 +118,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = make_reg(0, 1);
 			writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 
-			invokeSelector(s, g_sci->getGameObject(), SELECTOR(syntaxFail), 2, params);
+			invokeSelector(s, g_sci->getGameObject(), SELECTOR(syntaxFail), argc, argv, 2, params);
 			/* Issue warning */
 
 			debugC(2, kDebugLevelParser, "Tree building failed");
@@ -141,7 +141,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 
-			invokeSelector(s, g_sci->getGameObject(), SELECTOR(wordFail), 2, params);
+			invokeSelector(s, g_sci->getGameObject(), SELECTOR(wordFail), argc, argv, 2, params);
 			free(error);
 			return make_reg(0, 1); /* Tell them that it didn't work */
 		}

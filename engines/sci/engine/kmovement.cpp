@@ -464,7 +464,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		reg_t params[2] = { make_reg(0, angle), client };
 
 		if (looper.segment) {
-			invokeSelector(s, looper, SELECTOR(doit), 2, params);
+			invokeSelector(s, looper, SELECTOR(doit), argc, argv, 2, params);
 			return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
