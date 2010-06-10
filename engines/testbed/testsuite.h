@@ -73,8 +73,8 @@ public:
 		return prompt.runModal() == GUI::kMessageOK ? true : false;
 	}
 	
-	static void displayMessage(const Common::String &textToDisplay) {
-		GUI::MessageDialog	prompt(textToDisplay);
+	static void displayMessage(const Common::String &textToDisplay, const char *defaultButton = "OK", const char *altButton = 0 ) {
+		GUI::MessageDialog	prompt(textToDisplay, defaultButton);
 		prompt.runModal();
 	}
 

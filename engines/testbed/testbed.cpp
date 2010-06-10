@@ -55,10 +55,13 @@ Common::Error TestbedEngine::run() {
 	// TODO: Implement that
 
 	bool interactive;
-	Common::String prompt("Welcome to the ScummVM testbed! \n \
-						It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc. \n \
-						If you are seeing this correctly, it means interactive tests would run on this system :)");
-	interactive = Testsuite::handleInteractiveInput(prompt);
+	Common::String prompt("Welcome to the ScummVM testbed!\n"
+						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
+						"If you see this, it means interactive tests would run on this system :)");
+
+	// To be set from config file
+	interactive = true;
+	Testsuite::displayMessage(prompt, "proceed?");
 
 	if (interactive) {
 		printf("Running tests in Interactive Mode\n");		

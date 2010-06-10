@@ -5,6 +5,16 @@
 
 namespace Testbed {
 
+namespace GFXtests {
+// will contain function declarations for GFX tests
+bool fullScreenMode(); 
+bool aspectRatio();
+bool palettizedCursors();
+bool copyRectToScreen();
+bool mouseMovements();
+// add more here
+}
+
 class GFXTestSuite : public Testsuite {
 public:
 	/**

@@ -3,7 +3,6 @@ MODULE := engines/testbed
 MODULE_OBJS := \
 	detection.o \
 	graphics.o \
-	gfxtests.o \
 	testbed.o
  
 MODULE_DIRS += \
