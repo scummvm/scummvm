@@ -482,14 +482,15 @@ bool Console::cmdSelector(int argc, const char **argv) {
 		return true;
 	}
 
-	for (uint seeker = 0; seeker < _engine->getKernel()->getSelectorNamesSize(); seeker++) {
-		if (!scumm_stricmp(_engine->getKernel()->getSelectorName(seeker).c_str(), argv[1])) {
-			DebugPrintf("Selector %s found at %03x (%d)\n", _engine->getKernel()->getSelectorName(seeker).c_str(), seeker, seeker);
-			return true;
-		}
+	Common::String name = argv[1];
+	name.toLowercase();
+	int seeker = _engine->getKernel()->findSelector(name.c_str());
+	if (seeker >= 0) {
+		DebugPrintf("Selector %s found at %03x (%d)\n", name.c_str(), seeker, seeker);
+		return true;
 	}
 
-	DebugPrintf("Selector %s wasn't found\n", argv[1]);
+	DebugPrintf("Selector %s wasn't found\n", name.c_str());
 
 	return true;
 }
