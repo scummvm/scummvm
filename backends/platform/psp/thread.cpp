@@ -31,6 +31,8 @@
 #include "backends/platform/psp/thread.h"
 #include "backends/platform/psp/trace.h"
  
+// Class PspThread -------------------------------------------------- 
+ 
 void PspThread::delayMillis(uint32 ms) {
 	sceKernelDelayThread(ms * 1000);
 }
@@ -38,6 +40,88 @@ void PspThread::delayMillis(uint32 ms) {
 void PspThread::delayMicros(uint32 us) {
 	sceKernelDelayThread(us);
 }
+
+// Class PspSemaphore ------------------------------------------------
+//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+
+#include "backends/platform/psp/trace.h"
+
+PspSemaphore::PspSemaphore(int initialValue, int maxValue) {
+	DEBUG_ENTER_FUNC();
+	_handle = 0;
+	_handle = sceKernelCreateSema("ScummVM Sema", 0 /* attr */, 
+								  initialValue, maxValue, 
+								  0 /*option*/);
+	if (!_handle)
+		PSP_ERROR("failed to create semaphore.\n");
+}
+
+PspSemaphore::~PspSemaphore() {
+	DEBUG_ENTER_FUNC();
+	if (_handle)
+		if (sceKernelDeleteSema(_handle) < 0)
+			PSP_ERROR("failed to delete semaphore.\n");
+}
+
+int PspSemaphore::numOfWaitingThreads() {
+	DEBUG_ENTER_FUNC();
+	SceKernelSemaInfo info;
+	info.numWaitThreads = 0;
+	
+	if (sceKernelReferSemaStatus(_handle, &info) < 0)
+		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
+		
+	return info.numWaitThreads;
+}
+
+int PspSemaphore::getValue() {
+	DEBUG_ENTER_FUNC();
+	SceKernelSemaInfo info;
+	info.currentCount = 0;
+	
+	if (sceKernelReferSemaStatus(_handle, &info) < 0)
+		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
+		
+	return info.currentCount;
+}
+
+bool PspSemaphore::pollForValue(int value) {
+	DEBUG_ENTER_FUNC();
+	if (sceKernelPollSema(_handle, value) < 0)
+		return false;
+	
+	return true;
+}
+
+// false: timeout or error
+bool PspSemaphore::takeWithTimeOut(int num, uint32 timeOut) {
+	DEBUG_ENTER_FUNC();
+	
+	uint32 *pTimeOut = 0;
+	if (timeOut) 
+		pTimeOut = &timeOut;
+	
+	if (sceKernelWaitSema(_handle, num, pTimeOut) < 0)
+		return false;
+	return true;
+}
+
+bool PspSemaphore::give(int num) {
+	DEBUG_ENTER_FUNC();
+	
+	if (sceKernelSignalSema(_handle, num) < 0)
+		return false;	
+	return true;
+}
+
+//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
+
+#include "backends/platform/psp/trace.h"
+
+
+// Class PspRtc ---------------------------------------------------------------
 
 void PspRtc::init() {						// init our starting ticks
 	uint32 ticks[2];

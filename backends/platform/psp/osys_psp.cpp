@@ -346,19 +346,19 @@ void OSystem_PSP::setTimerCallback(TimerProc callback, int interval) {
 }
 
 OSystem::MutexRef OSystem_PSP::createMutex(void) {
-	return (MutexRef)SDL_CreateMutex();
+	return (MutexRef) new PspMutex(true);	// start with a full mutex
 }
 
 void OSystem_PSP::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *)mutex);
+	((PspMutex *)mutex)->lock();
 }
 
 void OSystem_PSP::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *)mutex);
+	((PspMutex *)mutex)->unlock();
 }
 
 void OSystem_PSP::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *)mutex);
+	delete (PspMutex *)mutex;
 }
 
 void OSystem_PSP::mixCallback(void *sys, byte *samples, int len) {

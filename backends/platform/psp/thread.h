@@ -34,6 +34,33 @@ public:
 	static void delayMicros(uint32 us);
 };
 
+class PspSemaphore {
+private:
+	SceUID _handle;
+public:
+	PspSemaphore(int initialValue, int maxValue);
+	~PspSemaphore();
+	bool take(int num) { return takeWithTimeOut(num, 0); }
+	bool takeWithTimeOut(int num, uint32 timeOut);
+	bool give(int num);
+	bool pollForValue(int value);	// check for a certain value
+	int numOfWaitingThreads();
+	int getValue();
+};
+
+class PspMutex {
+private:
+	PspSemaphore _semaphore;
+public:
+	PspMutex(bool initialValue) : _semaphore(initialValue ? 1 : 0, 255) {}	// initial, max value
+	bool lock() { return _semaphore.take(1); }
+	bool unlock() { return _semaphore.give(1); }
+	bool poll() { return _semaphore.pollForValue(1); }
+	int getNumWaitingThreads() { return _semaphore.numOfWaitingThreads(); }
+	bool getValue() { return (bool)_semaphore.getValue(); }
+};
+
+
 class PspRtc {
 private:
 	uint32 _startMillis;
