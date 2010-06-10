@@ -452,15 +452,14 @@ protected:
 	 * Reads patch files from a local directory.
 	 */
 	void readResourcePatches(ResourceSource *source);
-#ifdef ENABLE_SCI32
 	void readResourcePatchesBase36(ResourceSource *source);
-#endif
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**
 	 * Process wave files as patches for Audio resources
 	 */
 	void readWaveAudioPatches();
+	void processWavePatch(ResourceId resourceId, Common::String name);
 
  	/**
 	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).

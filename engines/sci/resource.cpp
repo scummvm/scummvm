@@ -481,6 +481,7 @@ int ResourceManager::addAppropriateSources() {
 		addPatchDir("Robot Folder");
 		addPatchDir("Sound Folder");
 		addPatchDir("Voices Folder");
+		addPatchDir("Voices");
 		//addPatchDir("VMD Folder");
 
 		// There can also be a "Patches" resource fork with patches
@@ -620,11 +621,11 @@ void ResourceManager::scanNewSources() {
 			switch (source->source_type) {
 			case kSourceDirectory:
 				readResourcePatches(source);
-#ifdef ENABLE_SCI32
+
 				// We can't use getSciVersion() at this point, thus using _volVersion
 				if (_volVersion >= kResVersionSci11)	// SCI1.1+
 					readResourcePatchesBase36(source);
-#endif
+
 				readWaveAudioPatches();
 				break;
 			case kSourceExtMap:
@@ -1070,18 +1071,14 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 // version-agnostic patch application
 void ResourceManager::processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple) {
 	Common::SeekableReadStream *fileStream = 0;
-	Resource *newrsc;
+	Resource *newrsc = 0;
 	ResourceId resId = ResourceId(resourceType, resourceNr, tuple);
 	ResourceType checkForType = resourceType;
-	byte patchType, patchDataOffset;
-	int fsize;
-	uint32 audio36Header = 0;
 
 	// base36 encoded patches (i.e. audio36 and sync36) have the same type as their non-base36 encoded counterparts
 	if (checkForType == kResourceTypeAudio36)
 		checkForType = kResourceTypeAudio;
-
-	if (checkForType == kResourceTypeSync36)
+	else if (checkForType == kResourceTypeSync36)
 		checkForType = kResourceTypeSync;
 
 	if (source->resourceFile) {
@@ -1094,31 +1091,21 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		}
 		fileStream = file;
 	}
-	fsize = fileStream->size();
+
+	int fsize = fileStream->size();
 	if (fsize < 3) {
 		debug("Patching %s failed - file too small", source->location_name.c_str());
 		return;
 	}
 
-	patchType = fileStream->readByte() & 0x7F;
-	patchDataOffset = fileStream->readByte();
-
-	if (resourceType == kResourceTypeAudio36) {
-		audio36Header = fileStream->readUint32BE();
-	}
+	byte patchType = fileStream->readByte() & 0x7F;
+	byte patchDataOffset = fileStream->readByte();
 
 	delete fileStream;
 
 	if (patchType != checkForType) {
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 		return;
-	}
-
-	if (resourceType == kResourceTypeAudio36) {
-		if (audio36Header != MKID_BE('SOL\x00')) {
-			debug("Patching %s failed - audio36 patch doesn't have SOL header", source->location_name.c_str());
-			return;
-		}
 	}
 
 	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
@@ -1144,12 +1131,14 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		      source->location_name.c_str(), patchDataOffset + 2, fsize);
 		return;
 	}
+
 	// Prepare destination, if neccessary
 	if (_resMap.contains(resId) == false) {
 		newrsc = new Resource;
 		_resMap.setVal(resId, newrsc);
 	} else
 		newrsc = _resMap.getVal(resId);
+
 	// Overwrite everything, because we're patching
 	newrsc->_id = resId;
 	newrsc->_status = kResStatusNoMalloc;
@@ -1159,8 +1148,6 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	newrsc->_fileOffset = 0;
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
 }
-
-#ifdef ENABLE_SCI32
 
 void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 	// The base36 encoded audio36 and sync36 resources use a different naming scheme, because they
@@ -1192,19 +1179,20 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			name = (*x)->getName();
+
 			inputName = (*x)->getName();
 			inputName.toUppercase();
-
 			inputName.deleteChar(0);	// delete the first character (type)
 			inputName.deleteChar(7);	// delete the dot
 
 			// The base36 encoded resource contains the following:
 			// uint16 resourceId, byte noun, byte verb, byte cond, byte seq
-			uint16 resourceNr = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36);	// 3 characters
-			uint16 noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);	// 2 characters
-			uint16 verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);	// 2 characters
-			uint16 cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);	// 2 characters
-			uint16 seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);		// 1 character
+			uint16 resourceNr = strtol(Common::String(inputName.c_str(), 3).c_str(), 0, 36); // 3 characters
+			uint16 noun = strtol(Common::String(inputName.c_str() + 3, 2).c_str(), 0, 36);   // 2 characters
+			uint16 verb = strtol(Common::String(inputName.c_str() + 5, 2).c_str(), 0, 36);   // 2 characters
+			uint16 cond = strtol(Common::String(inputName.c_str() + 7, 2).c_str(), 0, 36);   // 2 characters
+			uint16 seq = strtol(Common::String(inputName.c_str() + 9, 1).c_str(), 0, 36);    // 1 character
+
 			// Check, if we got valid results
 			if ((noun <= 255) && (verb <= 255) && (cond <= 255) && (seq <= 255)) {
 				ResourceId resource36((ResourceType)i, resourceNr, noun, verb, cond, seq);
@@ -1216,6 +1204,28 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 					debug("sync36 patch: %s => %s. tuple:%d, %s\n", name.c_str(), inputName.c_str(), resource36.tuple, resource36.toString().c_str());
 				*/
 
+				// Make sure that the audio patch is a valid resource
+				if (i == kResourceTypeAudio36) {
+					Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
+					uint32 tag = stream->readUint32BE();
+
+					if (tag == MKID_BE('RIFF') || tag == MKID_BE('FORM')) {
+						delete stream;
+						processWavePatch(resource36, name);
+						continue;
+					}
+
+					// Check for SOL as well
+					tag = (tag << 16) | stream->readUint16BE();
+					
+					if (tag != MKID_BE('SOL\0')) {
+						delete stream;
+						continue;
+					}
+
+					delete stream;
+				}
+
 				psrcPatch = new ResourceSource;
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
@@ -1225,8 +1235,6 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 		}
 	}
 }
-
-#endif
 
 void ResourceManager::readResourcePatches(ResourceSource *source) {
 	// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files

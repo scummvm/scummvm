@@ -162,6 +162,34 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 	}
 }
 
+void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
+	ResourceSource *resSrc = new ResourceSource;
+	resSrc->source_type = kSourceWave;
+	resSrc->resourceFile = 0;
+	resSrc->location_name = name;
+	resSrc->volume_number = 0;
+	resSrc->audioCompressionType = 0;
+
+	Resource *newRes = 0;
+
+	if (_resMap.contains(resourceId)) {
+		newRes = _resMap.getVal(resourceId);
+	} else {
+		newRes = new Resource;
+		_resMap.setVal(resourceId, newRes);
+	}
+
+	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
+	newRes->size = stream->size();
+	delete stream;
+
+	newRes->_id = resourceId;
+	newRes->_status = kResStatusNoMalloc;
+	newRes->_source = resSrc;
+	newRes->_headerSize = 0;
+	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.c_str());
+}
+
 void ResourceManager::readWaveAudioPatches() {
 	// Here we do check for SCI1.1+ so we can patch wav files in as audio resources
 	Common::ArchiveMemberList files;
@@ -170,39 +198,8 @@ void ResourceManager::readWaveAudioPatches() {
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String name = (*x)->getName();
 
-		if (isdigit(name[0])) {
-			int number = atoi(name.c_str());
-			ResourceSource *psrcPatch = new ResourceSource;
-			psrcPatch->source_type = kSourceWave;
-			psrcPatch->resourceFile = 0;
-			psrcPatch->location_name = name;
-			psrcPatch->volume_number = 0;
-			psrcPatch->audioCompressionType = 0;
-
-			ResourceId resId = ResourceId(kResourceTypeAudio, number);
-
-			Resource *newrsc = NULL;
-
-			// Prepare destination, if neccessary
-			if (_resMap.contains(resId) == false) {
-				newrsc = new Resource;
-				_resMap.setVal(resId, newrsc);
-			} else
-				newrsc = _resMap.getVal(resId);
-
-			// Get the size of the file
-			Common::SeekableReadStream *stream = (*x)->createReadStream();
-			uint32 fileSize = stream->size();
-			delete stream;
-
-			// Overwrite everything, because we're patching
-			newrsc->_id = resId;
-			newrsc->_status = kResStatusNoMalloc;
-			newrsc->_source = psrcPatch;
-			newrsc->size = fileSize;
-			newrsc->_headerSize = 0;
-			debugC(1, kDebugLevelResMan, "Patching %s - OK", psrcPatch->location_name.c_str());
-		}
+		if (isdigit(name[0]))
+			processWavePatch(ResourceId(kResourceTypeAudio, atoi(name.c_str())), name);
 	}
 }
 
