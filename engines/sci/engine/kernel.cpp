@@ -53,10 +53,8 @@ namespace Sci {
 
 
 
-// Default kernel name table
-#define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
-
-static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
+/** Default kernel name table. */
+static const char *s_defaultKernelNames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",
@@ -207,205 +205,203 @@ struct SciKernelFunction {
 	const char *signature;  /* kfunct signature */
 };
 
-#define DEFUN(name, fun, sig) {name, fun, sig}
-
 SciKernelFunction kfunct_mappers[] = {
-	/*00*/	DEFUN("Load", kLoad, "iii*"),
-	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),	// Work around SQ1 bug, when exiting the Ulence flats bar
-	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
-	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oii*"), // Work around QfG1 bug
-	/*04*/	DEFUN("Clone", kClone, "o"),
-	/*05*/	DEFUN("DisposeClone", kDisposeClone, "o"),
-	/*06*/	DEFUN("IsObject", kIsObject, "."),
-	/*07*/	DEFUN("RespondsTo", kRespondsTo, ".i"),
-	/*08*/	DEFUN("DrawPic", kDrawPic, "i*"),
+	/*00*/	{ "Load", kLoad, "iii*" },
+	/*01*/	{ "UnLoad", kUnLoad, "i.*" },	// Work around SQ1 bug, when exiting the Ulence flats bar
+	/*02*/	{ "ScriptID", kScriptID, "Ioi*" },
+	/*03*/	{ "DisposeScript", kDisposeScript, "Oii*" }, // Work around QfG1 bug
+	/*04*/	{ "Clone", kClone, "o" },
+	/*05*/	{ "DisposeClone", kDisposeClone, "o" },
+	/*06*/	{ "IsObject", kIsObject, "." },
+	/*07*/	{ "RespondsTo", kRespondsTo, ".i" },
+	/*08*/	{ "DrawPic", kDrawPic, "i*" },
 
-	/*0a*/	DEFUN("PicNotValid", kPicNotValid, "i*"),
-	/*0b*/	DEFUN("Animate", kAnimate, "LI*"), // More like (li?)?
-	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), // The second parameter is ignored
-	/*0d*/	DEFUN("NumLoops", kNumLoops, "o"),
-	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
-	/*0f*/	DEFUN("CelWide", kCelWide, "iOi*"),
-	/*10*/	DEFUN("CelHigh", kCelHigh, "iOi*"),
-	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*i*r*"),
-	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
+	/*0a*/	{ "PicNotValid", kPicNotValid, "i*" },
+	/*0b*/	{ "Animate", kAnimate, "LI*" }, // More like (li?)?
+	/*0c*/	{ "SetNowSeen", kSetNowSeen, "oi*" }, // The second parameter is ignored
+	/*0d*/	{ "NumLoops", kNumLoops, "o" },
+	/*0e*/	{ "NumCels", kNumCels, "o" },
+	/*0f*/	{ "CelWide", kCelWide, "iOi*" },
+	/*10*/	{ "CelHigh", kCelHigh, "iOi*" },
+	/*11*/	{ "DrawCel", kDrawCel, "iiiiii*i*r*" },
+	/*12*/	{ "AddToPic", kAddToPic, "Il*" },
 	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
-	/*13*/	DEFUN("NewWindow", kNewWindow, "*."),
-	///*13*/	DEFUN("NewWindow", kNewWindow, "iiiiZRi*"),
-	/*14*/	DEFUN("GetPort", kGetPort, ""),
-	/*15*/	DEFUN("SetPort", kSetPort, "ii*"),
-	/*16*/	DEFUN("DisposeWindow", kDisposeWindow, "ii*"),
-	/*17*/	DEFUN("DrawControl", kDrawControl, "o"),
-	/*18*/	DEFUN("HiliteControl", kHiliteControl, "o"),
-	/*19*/	DEFUN("EditControl", kEditControl, "ZoZo"),
-	/*1a*/	DEFUN("TextSize", kTextSize, "rZrii*r*"),
-	/*1b*/	DEFUN("Display", kDisplay, ".*"),
-	/*1c*/	DEFUN("GetEvent", kGetEvent, "ioi*"),	// Mac versions pass an extra 3rd parameter (ignored - always 0?)
-	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "oo*"),
-	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "oo*"),
-	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
-	/*20*/	DEFUN("DrawMenuBar", kDrawMenuBar, "i"),
-	/*21*/	DEFUN("MenuSelect", kMenuSelect, "oi*"),
-	/*22*/	DEFUN("AddMenu", kAddMenu, "rr"),
-	/*23*/	DEFUN("DrawStatus", kDrawStatus, "Zri*"),
-	/*24*/	DEFUN("Parse", kParse, "ro"),
-	/*25*/	DEFUN("Said", kSaid, "Zr"),
-	/*26*/	DEFUN("SetSynonyms", kSetSynonyms, "o"),
-	/*27*/	DEFUN("HaveMouse", kHaveMouse, ""),
-	/*28*/	DEFUN("SetCursor", kSetCursor, "i*"),
+	/*13*/	{ "NewWindow", kNewWindow, "*." },
+	///*13*/	{ "NewWindow", kNewWindow, "iiiiZRi*" },
+	/*14*/	{ "GetPort", kGetPort, "" },
+	/*15*/	{ "SetPort", kSetPort, "ii*" },
+	/*16*/	{ "DisposeWindow", kDisposeWindow, "ii*" },
+	/*17*/	{ "DrawControl", kDrawControl, "o" },
+	/*18*/	{ "HiliteControl", kHiliteControl, "o" },
+	/*19*/	{ "EditControl", kEditControl, "ZoZo" },
+	/*1a*/	{ "TextSize", kTextSize, "rZrii*r*" },
+	/*1b*/	{ "Display", kDisplay, ".*" },
+	/*1c*/	{ "GetEvent", kGetEvent, "ioi*" },	// Mac versions pass an extra 3rd parameter (ignored - always 0?)
+	/*1d*/	{ "GlobalToLocal", kGlobalToLocal, "oo*" },
+	/*1e*/	{ "LocalToGlobal", kLocalToGlobal, "oo*" },
+	/*1f*/	{ "MapKeyToDir", kMapKeyToDir, "o" },
+	/*20*/	{ "DrawMenuBar", kDrawMenuBar, "i" },
+	/*21*/	{ "MenuSelect", kMenuSelect, "oi*" },
+	/*22*/	{ "AddMenu", kAddMenu, "rr" },
+	/*23*/	{ "DrawStatus", kDrawStatus, "Zri*" },
+	/*24*/	{ "Parse", kParse, "ro" },
+	/*25*/	{ "Said", kSaid, "Zr" },
+	/*26*/	{ "SetSynonyms", kSetSynonyms, "o" },
+	/*27*/	{ "HaveMouse", kHaveMouse, "" },
+	/*28*/	{ "SetCursor", kSetCursor, "i*" },
 	// FIXME: The number 0x28 occurs twice :-)
-	/*28*/	DEFUN("MoveCursor", kMoveCursor, "ii"),
-	/*29*/	DEFUN("FOpen", kFOpen, "ri"),
-	/*2a*/	DEFUN("FPuts", kFPuts, "ir"),
-	/*2b*/	DEFUN("FGets", kFGets, "rii"),
-	/*2c*/	DEFUN("FClose", kFClose, "i"),
-	/*2d*/	DEFUN("SaveGame", kSaveGame, "rirr*"),
-	/*2e*/	DEFUN("RestoreGame", kRestoreGame, "rir*"),
-	/*2f*/	DEFUN("RestartGame", kRestartGame, ""),
-	/*30*/	DEFUN("GameIsRestarting", kGameIsRestarting, "i*"),
-	/*31*/	DEFUN("DoSound", kDoSound, "iIo*"),
-	/*32*/	DEFUN("NewList", kNewList, ""),
-	/*33*/	DEFUN("DisposeList", kDisposeList, "l"),
-	/*34*/	DEFUN("NewNode", kNewNode, ".."),
-	/*35*/	DEFUN("FirstNode", kFirstNode, "Zl"),
-	/*36*/	DEFUN("LastNode", kLastNode, "l"),
-	/*37*/	DEFUN("EmptyList", kEmptyList, "l"),
-	/*38*/	DEFUN("NextNode", kNextNode, "n"),
-	/*39*/	DEFUN("PrevNode", kPrevNode, "n"),
-	/*3a*/	DEFUN("NodeValue", kNodeValue, "Zn"),
-	/*3b*/	DEFUN("AddAfter", kAddAfter, "lnn"),
-	/*3c*/	DEFUN("AddToFront", kAddToFront, "ln"),
-	/*3d*/	DEFUN("AddToEnd", kAddToEnd, "ln"),
-	/*3e*/	DEFUN("FindKey", kFindKey, "l."),
-	/*3f*/	DEFUN("DeleteKey", kDeleteKey, "l."),
-	/*40*/	DEFUN("Random", kRandom, "i*"),
-	/*41*/	DEFUN("Abs", kAbs, "Oi"),
-	/*42*/	DEFUN("Sqrt", kSqrt, "i"),
-	/*43*/	DEFUN("GetAngle", kGetAngle, "iiiii*"), // occasionally KQ6 passes a 5th argument by mistake
-	/*44*/	DEFUN("GetDistance", kGetDistance, "iiiii*"),
-	/*45*/	DEFUN("Wait", kWait, "i"),
-	/*46*/	DEFUN("GetTime", kGetTime, "i*"),
-	/*47*/	DEFUN("StrEnd", kStrEnd, "r"),
-	/*48*/	DEFUN("StrCat", kStrCat, "rr"),
-	/*49*/	DEFUN("StrCmp", kStrCmp, "rri*"),
-	/*4a*/	DEFUN("StrLen", kStrLen, "Zr"),
-	/*4b*/	DEFUN("StrCpy", kStrCpy, "rZri*"),
-	/*4c*/	DEFUN("Format", kFormat, "r.*"),
-	/*4d*/	DEFUN("GetFarText", kGetFarText, "iiZr"),
-	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
-	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
-	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),
+	/*28*/	{ "MoveCursor", kMoveCursor, "ii" },
+	/*29*/	{ "FOpen", kFOpen, "ri" },
+	/*2a*/	{ "FPuts", kFPuts, "ir" },
+	/*2b*/	{ "FGets", kFGets, "rii" },
+	/*2c*/	{ "FClose", kFClose, "i" },
+	/*2d*/	{ "SaveGame", kSaveGame, "rirr*" },
+	/*2e*/	{ "RestoreGame", kRestoreGame, "rir*" },
+	/*2f*/	{ "RestartGame", kRestartGame, "" },
+	/*30*/	{ "GameIsRestarting", kGameIsRestarting, "i*" },
+	/*31*/	{ "DoSound", kDoSound, "iIo*" },
+	/*32*/	{ "NewList", kNewList, "" },
+	/*33*/	{ "DisposeList", kDisposeList, "l" },
+	/*34*/	{ "NewNode", kNewNode, ".." },
+	/*35*/	{ "FirstNode", kFirstNode, "Zl" },
+	/*36*/	{ "LastNode", kLastNode, "l" },
+	/*37*/	{ "EmptyList", kEmptyList, "l" },
+	/*38*/	{ "NextNode", kNextNode, "n" },
+	/*39*/	{ "PrevNode", kPrevNode, "n" },
+	/*3a*/	{ "NodeValue", kNodeValue, "Zn" },
+	/*3b*/	{ "AddAfter", kAddAfter, "lnn" },
+	/*3c*/	{ "AddToFront", kAddToFront, "ln" },
+	/*3d*/	{ "AddToEnd", kAddToEnd, "ln" },
+	/*3e*/	{ "FindKey", kFindKey, "l." },
+	/*3f*/	{ "DeleteKey", kDeleteKey, "l." },
+	/*40*/	{ "Random", kRandom, "i*" },
+	/*41*/	{ "Abs", kAbs, "Oi" },
+	/*42*/	{ "Sqrt", kSqrt, "i" },
+	/*43*/	{ "GetAngle", kGetAngle, "iiiii*" }, // occasionally KQ6 passes a 5th argument by mistake
+	/*44*/	{ "GetDistance", kGetDistance, "iiiii*" },
+	/*45*/	{ "Wait", kWait, "i" },
+	/*46*/	{ "GetTime", kGetTime, "i*" },
+	/*47*/	{ "StrEnd", kStrEnd, "r" },
+	/*48*/	{ "StrCat", kStrCat, "rr" },
+	/*49*/	{ "StrCmp", kStrCmp, "rri*" },
+	/*4a*/	{ "StrLen", kStrLen, "Zr" },
+	/*4b*/	{ "StrCpy", kStrCpy, "rZri*" },
+	/*4c*/	{ "Format", kFormat, "r.*" },
+	/*4d*/	{ "GetFarText", kGetFarText, "iiZr" },
+	/*4e*/	{ "ReadNumber", kReadNumber, "r" },
+	/*4f*/	{ "BaseSetter", kBaseSetter, "o" },
+	/*50*/	{ "DirLoop", kDirLoop, "oi" },
 	// Opcode 51 is defined twice for a reason: In older SCI versions
 	// it is CanBeHere, whereas in newer version it is CantBeHere
-	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
-	/*51*/	DEFUN("CantBeHere", kCantBeHere, "ol*"),
-	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
-	/*53*/	DEFUN("InitBresen", kInitBresen, "oi*"),
-	/*54*/	DEFUN("DoBresen", kDoBresen, "o"),
-	/*55*/	DEFUN("DoAvoider", kDoAvoider, "o"),
-	/*56*/	DEFUN("SetJump", kSetJump, "oiii"),
-	/*57*/	DEFUN("SetDebug", kSetDebug, "i*"),
-	/*5c*/	DEFUN("MemoryInfo", kMemoryInfo, "i"),
-	/*5f*/	DEFUN("GetMenu", kGetMenu, "i."),
-	/*60*/	DEFUN("SetMenu", kSetMenu, "i.*"),
-	/*61*/	DEFUN("GetSaveFiles", kGetSaveFiles, "rrr"),
-	/*62*/	DEFUN("GetCWD", kGetCWD, "r"),
-	/*63*/	DEFUN("CheckFreeSpace", kCheckFreeSpace, "r.*"),
-	/*64*/	DEFUN("ValidPath", kValidPath, "r"),
-	/*65*/	DEFUN("CoordPri", kCoordPri, "ii*"),
-	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
-	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
-	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ".*"),	// accepts a parameter in SCI2+ games
-	/*69*/	DEFUN("CheckSaveGame", kCheckSaveGame, ".*"),
-	/*6a*/	DEFUN("ShakeScreen", kShakeScreen, "ii*"),
-	/*6b*/	DEFUN("FlushResources", kFlushResources, "i"),
-	/*6c*/	DEFUN("TimesSin", kTimesSin, "ii"),
-	/*6d*/	DEFUN("TimesCos", kTimesCos, "ii"),
-	/*6e*/	DEFUN("6e", kTimesSin, "ii"),
-	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
-	/*70*/	DEFUN("Graph", kGraph, ".*"),
-	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
+	/*51*/	{ "CanBeHere", kCanBeHere, "ol*" },
+	/*51*/	{ "CantBeHere", kCantBeHere, "ol*" },
+	/*52*/	{ "OnControl", kOnControl, "i*" },
+	/*53*/	{ "InitBresen", kInitBresen, "oi*" },
+	/*54*/	{ "DoBresen", kDoBresen, "o" },
+	/*55*/	{ "DoAvoider", kDoAvoider, "o" },
+	/*56*/	{ "SetJump", kSetJump, "oiii" },
+	/*57*/	{ "SetDebug", kSetDebug, "i*" },
+	/*5c*/	{ "MemoryInfo", kMemoryInfo, "i" },
+	/*5f*/	{ "GetMenu", kGetMenu, "i." },
+	/*60*/	{ "SetMenu", kSetMenu, "i.*" },
+	/*61*/	{ "GetSaveFiles", kGetSaveFiles, "rrr" },
+	/*62*/	{ "GetCWD", kGetCWD, "r" },
+	/*63*/	{ "CheckFreeSpace", kCheckFreeSpace, "r.*" },
+	/*64*/	{ "ValidPath", kValidPath, "r" },
+	/*65*/	{ "CoordPri", kCoordPri, "ii*" },
+	/*66*/	{ "StrAt", kStrAt, "rii*" },
+	/*67*/	{ "DeviceInfo", kDeviceInfo, "i.*" },
+	/*68*/	{ "GetSaveDir", kGetSaveDir, ".*" },	// accepts a parameter in SCI2+ games
+	/*69*/	{ "CheckSaveGame", kCheckSaveGame, ".*" },
+	/*6a*/	{ "ShakeScreen", kShakeScreen, "ii*" },
+	/*6b*/	{ "FlushResources", kFlushResources, "i" },
+	/*6c*/	{ "TimesSin", kTimesSin, "ii" },
+	/*6d*/	{ "TimesCos", kTimesCos, "ii" },
+	/*6e*/	{ "6e", kTimesSin, "ii" },
+	/*6f*/	{ "6f", kTimesCos, "ii" },
+	/*70*/	{ "Graph", kGraph, ".*" },
+	/*71*/	{ "Joystick", kJoystick, ".*" },
 
 	// Experimental functions
-	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
-	/*(?)*/	DEFUN("Memory", kMemory, "i.*"),
-	/*(?)*/	DEFUN("Sort", kSort, "ooo"),
-	/*(?)*/	DEFUN("AvoidPath", kAvoidPath, "ii.*"),
-	/*(?)*/	DEFUN("Lock", kLock, "iii*"),
-	/*(?)*/	DEFUN("Palette", kPalette, "i.*"),
-	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
-	/*7b*/	DEFUN("StrSplit", kStrSplit, "rrZr"),
+	/*74*/	{ "FileIO", kFileIO, "i.*" },
+	/*(?)*/	{ "Memory", kMemory, "i.*" },
+	/*(?)*/	{ "Sort", kSort, "ooo" },
+	/*(?)*/	{ "AvoidPath", kAvoidPath, "ii.*" },
+	/*(?)*/	{ "Lock", kLock, "iii*" },
+	/*(?)*/	{ "Palette", kPalette, "i.*" },
+	/*(?)*/	{ "IsItSkip", kIsItSkip, "iiiii" },
+	/*7b*/	{ "StrSplit", kStrSplit, "rrZr" },
 
 	// Non-experimental functions without a fixed ID
-	DEFUN("CosMult", kTimesCos, "ii"),
-	DEFUN("SinMult", kTimesSin, "ii"),
+	{ "CosMult", kTimesCos, "ii" },
+	{ "SinMult", kTimesSin, "ii" },
 
 	// Misc functions
-	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
-	/*(?)*/	DEFUN("PriCoord", kPriCoord, "i"),
-	/*(?)*/	DEFUN("SinDiv", kSinDiv, "ii"),
-	/*(?)*/	DEFUN("TimesCot", kTimesCot, "ii"),
-	/*(?)*/	DEFUN("TimesTan", kTimesTan, "ii"),
-	DEFUN("Message", kMessage, ".*"),
-	DEFUN("GetMessage", kGetMessage, "iiir"),
-	DEFUN("DoAudio", kDoAudio, ".*"),
-	DEFUN("DoSync", kDoSync, ".*"),
-	DEFUN("MemorySegment", kMemorySegment, "iri*"),
-	DEFUN("Intersections", kIntersections, "iiiiriiiri"),
-	DEFUN("MergePoly", kMergePoly, "rli"),
-	DEFUN("ResCheck", kResCheck, "iii*"),
-	DEFUN("SetQuitStr", kSetQuitStr, "r"),
-	DEFUN("ShowMovie", kShowMovie, ".*"),
-	DEFUN("SetVideoMode", kSetVideoMode, "i"),
-	DEFUN("Platform", kPlatform, ".*"),
-	DEFUN("TextColors", kTextColors, ".*"),
-	DEFUN("TextFonts", kTextFonts, ".*"),
-	DEFUN("Portrait", kPortrait, ".*"),
+	/*(?)*/	{ "CosDiv", kCosDiv, "ii" },
+	/*(?)*/	{ "PriCoord", kPriCoord, "i" },
+	/*(?)*/	{ "SinDiv", kSinDiv, "ii" },
+	/*(?)*/	{ "TimesCot", kTimesCot, "ii" },
+	/*(?)*/	{ "TimesTan", kTimesTan, "ii" },
+	{ "Message", kMessage, ".*" },
+	{ "GetMessage", kGetMessage, "iiir" },
+	{ "DoAudio", kDoAudio, ".*" },
+	{ "DoSync", kDoSync, ".*" },
+	{ "MemorySegment", kMemorySegment, "iri*" },
+	{ "Intersections", kIntersections, "iiiiriiiri" },
+	{ "MergePoly", kMergePoly, "rli" },
+	{ "ResCheck", kResCheck, "iii*" },
+	{ "SetQuitStr", kSetQuitStr, "r" },
+	{ "ShowMovie", kShowMovie, ".*" },
+	{ "SetVideoMode", kSetVideoMode, "i" },
+	{ "Platform", kPlatform, ".*" },
+	{ "TextColors", kTextColors, ".*" },
+	{ "TextFonts", kTextFonts, ".*" },
+	{ "Portrait", kPortrait, ".*" },
 
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
-	DEFUN("IsHiRes", kIsHiRes, ""),
-	DEFUN("Array", kArray, ".*"),
-	DEFUN("ListAt", kListAt, "li"),
-	DEFUN("String", kString, ".*"),
-	DEFUN("AddScreenItem", kAddScreenItem, "o"),
-	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
-	DEFUN("DeleteScreenItem", kDeleteScreenItem, "o"),
-	DEFUN("AddPlane", kAddPlane, "o"),
-	DEFUN("DeletePlane", kDeletePlane, "o"),
-	DEFUN("UpdatePlane", kUpdatePlane, "o"),
-	DEFUN("RepaintPlane", kRepaintPlane, "o"),
-	DEFUN("GetHighPlanePri", kGetHighPlanePri, ""),
-	DEFUN("FrameOut", kFrameOut, ""),
-	DEFUN("ListEachElementDo", kListEachElementDo, "li.*"),
-	DEFUN("ListFirstTrue", kListFirstTrue, "li.*"),
-	DEFUN("ListAllTrue", kListAllTrue, "li.*"),
-	DEFUN("ListIndexOf", kListIndexOf, "lZo"),
-	DEFUN("OnMe", kOnMe, "iio.*"),
-	DEFUN("InPolygon", kInPolygon, "iio"),
-	DEFUN("CreateTextBitmap", kCreateTextBitmap, "i.*"),
+	{ "IsHiRes", kIsHiRes, "" },
+	{ "Array", kArray, ".*" },
+	{ "ListAt", kListAt, "li" },
+	{ "String", kString, ".*" },
+	{ "AddScreenItem", kAddScreenItem, "o" },
+	{ "UpdateScreenItem", kUpdateScreenItem, "o" },
+	{ "DeleteScreenItem", kDeleteScreenItem, "o" },
+	{ "AddPlane", kAddPlane, "o" },
+	{ "DeletePlane", kDeletePlane, "o" },
+	{ "UpdatePlane", kUpdatePlane, "o" },
+	{ "RepaintPlane", kRepaintPlane, "o" },
+	{ "GetHighPlanePri", kGetHighPlanePri, "" },
+	{ "FrameOut", kFrameOut, "" },
+	{ "ListEachElementDo", kListEachElementDo, "li.*" },
+	{ "ListFirstTrue", kListFirstTrue, "li.*" },
+	{ "ListAllTrue", kListAllTrue, "li.*" },
+	{ "ListIndexOf", kListIndexOf, "lZo" },
+	{ "OnMe", kOnMe, "iio.*" },
+	{ "InPolygon", kInPolygon, "iio" },
+	{ "CreateTextBitmap", kCreateTextBitmap, "i.*" },
 
 	// SCI2.1 Kernel Functions
-	DEFUN("Save", kSave, ".*"),
-	DEFUN("List", kList, ".*"),
-	DEFUN("Robot", kRobot, ".*"),
-	DEFUN("IsOnMe", kOnMe, "iio.*"),	// TODO: this seems right, but verify...
+	{ "Save", kSave, ".*" },
+	{ "List", kList, ".*" },
+	{ "Robot", kRobot, ".*" },
+	{ "IsOnMe", kOnMe, "iio.*" },	// TODO: this seems right, but verify...
 
 #endif
 
 	// its a stub, but its needed for Pharkas to work
-	DEFUN("PalVary", kPalVary, "ii*"),
-	DEFUN("AssertPalette", kAssertPalette, "i"),
+	{ "PalVary", kPalVary, "ii*" },
+	{ "AssertPalette", kAssertPalette, "i" },
 
 #if 0
 	// Stub functions
-	/*09*/	DEFUN("Show", kShow, "i"),
-	DEFUN("ShiftScreen", kShiftScreen, ".*"),
-	DEFUN("ListOps", kListOps, ".*"),
-	DEFUN("ATan", kATan, ".*"),
-	DEFUN("Record", kRecord, ".*"),
-	DEFUN("PlayBack", kPlayBack, ".*"),
-	DEFUN("DbugStr", kDbugStr, ".*"),
+	/*09*/	{ "Show", kShow, "i" },
+	{ "ShiftScreen", kShiftScreen, ".*" },
+	{ "ListOps", kListOps, ".*" },
+	{ "ATan", kATan, ".*" },
+	{ "Record", kRecord, ".*" },
+	{ "PlayBack", kPlayBack, ".*" },
+	{ "DbugStr", kDbugStr, ".*" },
 #endif
 
 	{NULL, NULL, NULL} // Terminator
@@ -500,8 +496,7 @@ void Kernel::loadSelectorNames() {
 static void kernel_compile_signature(const char **s) {
 	const char *src = *s;
 	char *result;
-	int ellipsis = 0;
-	char v;
+	bool ellipsis = false;
 	int index = 0;
 
 	if (!src)
@@ -511,7 +506,7 @@ static void kernel_compile_signature(const char **s) {
 
 	while (*src) {
 		char c;
-		v = 0;
+		char v = 0;
 
 		if (ellipsis) {
 			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", *s, *src);
@@ -554,7 +549,7 @@ static void kernel_compile_signature(const char **s) {
 
 			case KSIG_SPEC_ELLIPSIS:
 				v |= KSIG_ELLIPSIS;
-				ellipsis = 1;
+				ellipsis = true;
 				break;
 
 			default:
@@ -706,12 +701,13 @@ bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
 	}
 	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
 		return true;
+
 	warning("kernel_matches_signature: too few arguments");
 	return false;
 }
 
 void Kernel::setDefaultKernelNames() {
-	_kernelNames = Common::StringArray(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
+	_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
 	if (_selectorCache.cantBeHere != -1)
@@ -787,31 +783,28 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 
 	if (address.segment)
 		return _segMan->getString(address);
-	else {
-		int textlen;
-		int _index = index;
-		textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
-		if (!textres) {
-			error("text.%03d not found", address.offset);
-			return NULL; /* Will probably segfault */
-		}
+	int textlen;
+	int _index = index;
+	textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
-		textlen = textres->size;
-		seeker = (char *) textres->data;
-
-		while (index--)
-			while ((textlen--) && (*seeker++))
-				;
-
-		if (textlen)
-			return seeker;
-		else {
-			error("Index %d out of bounds in text.%03d", _index, address.offset);
-			return NULL;
-		}
-
+	if (!textres) {
+		error("text.%03d not found", address.offset);
+		return NULL; /* Will probably segfault */
 	}
+
+	textlen = textres->size;
+	seeker = (char *) textres->data;
+
+	while (index--)
+		while ((textlen--) && (*seeker++))
+			;
+
+	if (textlen)
+		return seeker;
+
+	error("Index %d out of bounds in text.%03d", _index, address.offset);
+	return NULL;
 }
 
 } // End of namespace Sci
