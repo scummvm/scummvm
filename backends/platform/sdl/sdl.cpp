@@ -106,6 +106,12 @@ void OSystem_SDL::initBackend() {
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
+	// Create and hook up the mutex manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_mutexManager == 0) {
+		_mutexManager = new SdlMutexManager();
+	}
+
 	// enable joystick
 	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
 		printf("Using joystick: %s\n", SDL_JoystickName(0));
@@ -143,12 +149,6 @@ void OSystem_SDL::initBackend() {
 
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-	}
-
-	// Create and hook up the mutex manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_mutexManager == 0) {
-		_mutexManager = new SdlMutexManager();
 	}
 
 	// Create and hook up the graphics manager, if none exists yet (we check for
