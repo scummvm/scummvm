@@ -176,7 +176,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				_signalSet = true;
 				_signalToSet = info.basic.param1;
 			} else {
-				_loopTick = _position._play_tick;
+				_loopTick = _position._play_tick + info.delta;
 			}
 		}
 		break;
