@@ -275,7 +275,8 @@ kLanguage SciEngine::getSciLanguage() {
 }
 
 void SciEngine::setSciLanguage(kLanguage lang) {
-	writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
+	if (SELECTOR(printLang) != -1)
+		writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
 }
 
 void SciEngine::setSciLanguage() {
