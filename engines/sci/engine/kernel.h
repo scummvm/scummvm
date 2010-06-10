@@ -128,7 +128,7 @@ enum AutoDetectedFeatures {
 class Kernel {
 public:
 	/**
-	 * Initializes the SCI kernel
+	 * Initializes the SCI kernel.
 	 */
 	Kernel(ResourceManager *resMan, SegManager *segMan);
 	~Kernel();
@@ -140,7 +140,7 @@ public:
 	const Common::String &getKernelName(uint number) const;
 
 	/**
-	 * Determines the selector ID of a selector by its name
+	 * Determines the selector ID of a selector by its name.
 	 * @param selectorName Name of the selector to look up
 	 * @return The appropriate selector ID, or -1 on error
 	 */
@@ -151,9 +151,9 @@ public:
 	void dumpScriptObject(char *data, int seeker, int objsize);
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
-	SelectorCache _selectorCache; /**< Shortcut list for important selectors */
+	SelectorCache _selectorCache; /**< Shortcut list for important selectors. */
 	typedef Common::Array<KernelFuncWithSignature> KernelFuncsContainer;
-	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions */
+	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions. */
 
 	/**
 	 * Determines whether a list of registers matches a given signature.
@@ -179,11 +179,11 @@ public:
 
 	/******************** Text functionality ********************/
 	/**
-	 * Looks up text referenced by scripts
-	 * SCI uses two values to reference to text: An address, and an index. The address
-	 * determines whether the text should be read from a resource file, or from the heap,
-	 * while the index either refers to the number of the string in the specified source,
-	 * or to a relative position inside the text.
+	 * Looks up text referenced by scripts.
+	 * SCI uses two values to reference to text: An address, and an index. The
+	 * address determines whether the text should be read from a resource file,
+	 * or from the heap, while the index either refers to the number of the
+	 * string in the specified source, or to a relative position inside the text.
 	 *
 	 * @param address The address to look up
 	 * @param index The relative index
@@ -203,18 +203,18 @@ public:
 
 private:
 	/**
-	 * Sets the default kernel function names, based on the SCI version used
+	 * Sets the default kernel function names, based on the SCI version used.
 	 */
 	void setDefaultKernelNames();
 
 #ifdef ENABLE_SCI32
 	/**
-	 * Sets the default kernel function names to the SCI2 kernel functions
+	 * Sets the default kernel function names to the SCI2 kernel functions.
 	 */
 	void setKernelNamesSci2();
 
 	/**
-	 * Sets the default kernel function names to the SCI2.1 kernel functions
+	 * Sets the default kernel function names to the SCI2.1 kernel functions.
 	 */
 	void setKernelNamesSci21(GameFeatures *features);
 #endif
@@ -231,12 +231,12 @@ private:
 	Common::StringArray checkStaticSelectorNames();
 
 	/**
-	 * Maps special selectors
+	 * Maps special selectors.
 	 */
 	void mapSelectors();
 
 	/**
-	 * Maps kernel functions
+	 * Maps kernel functions.
 	 */
 	void mapFunctions();
 
@@ -252,14 +252,14 @@ private:
 /******************** Misc functions ********************/
 
 /**
- * Get all sound events, apply their changes to the heap
+ * Get all sound events, apply their changes to the heap.
  */
 void process_sound_events(EngineState *s);
 
 /******************** Constants ********************/
 #endif
 
-/* Maximum length of a savegame name (including terminator character) */
+/* Maximum length of a savegame name (including terminator character). */
 #define SCI_MAX_SAVENAME_LENGTH 0x24
 
 /******************** Kernel functions ********************/
