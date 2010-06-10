@@ -352,16 +352,14 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
-	if (s.getVersion() >= 13 && g_sci->_gui) {
-		// Save/Load picPort as well (cause sierra sci also does this)
+	if (s.getVersion() >= 13 && getSciVersion() <= SCI_VERSION_1_1) {
+		// Save/Load picPort as well for SCI0-SCI1.1. Necessary for Castle of Dr. Brain,
+		// as the picPort has been changed when loading during the intro
 		int16 picPortTop, picPortLeft;
 		Common::Rect picPortRect;
 
-		if (s.isSaving()) {
-			// FIXME: _gfxPorts is 0 when using SCI32 code
-			assert(g_sci->_gfxPorts);
+		if (s.isSaving())
 			picPortRect = g_sci->_gfxPorts->kernelGetPicWindow(picPortTop, picPortLeft);
-		}
 
 		s.syncAsSint16LE(picPortRect.top);
 		s.syncAsSint16LE(picPortRect.left);
@@ -370,9 +368,8 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
 
-		if (s.isLoading()) {
+		if (s.isLoading())
 			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
-		}
 	}
 
 	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
