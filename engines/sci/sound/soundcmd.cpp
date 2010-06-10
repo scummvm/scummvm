@@ -842,7 +842,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		// Update MIDI slots
 		if (musicSlot->signal == 0) {
 			if (musicSlot->dataInc != readSelectorValue(_segMan, obj, SELECTOR(dataInc))) {
-				if (_kernel->_selectorCache.dataInc > -1)
+				if (SELECTOR(dataInc) > -1)
 					writeSelectorValue(_segMan, obj, SELECTOR(dataInc), musicSlot->dataInc);
 				writeSelectorValue(_segMan, obj, SELECTOR(signal), musicSlot->dataInc + 127);
 			}

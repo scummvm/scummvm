@@ -821,12 +821,12 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 
 		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(x)); // max chars per entry
 		cursorOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
-		if (g_sci->getKernel()->_selectorCache.topString != -1) {
+		if (SELECTOR(topString) != -1) {
 			// Games from early SCI1 onwards use topString
 			upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(topString));
 		} else {
 			// Earlier games use lsTop or brTop
-			if (lookupSelector(s->_segMan, controlObject, g_sci->getKernel()->_selectorCache.brTop, NULL, NULL) == kSelectorVariable)
+			if (lookupSelector(s->_segMan, controlObject, SELECTOR(brTop), NULL, NULL) == kSelectorVariable)
 				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(brTop));
 			else
 				upperOffset = readSelectorValue(s->_segMan, controlObject, SELECTOR(lsTop));

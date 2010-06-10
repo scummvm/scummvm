@@ -69,7 +69,7 @@ reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc
 
 bool GameFeatures::autoDetectSoundType() {
 	// Look up the script address
-	reg_t addr = getDetectionAddr("Sound", _kernel->_selectorCache.play);
+	reg_t addr = getDetectionAddr("Sound", SELECTOR(play));
 
 	if (!addr.segment)
 		return false;
@@ -138,7 +138,7 @@ SciVersion GameFeatures::detectDoSoundType() {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
 			// This game is using early SCI0 sound code (different headers than SCI0 late)
 			_doSoundType = SCI_VERSION_0_EARLY;
-		} else if (_kernel->_selectorCache.nodePtr == -1) {
+		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
 			// SCI0 sound code (i.e. SCI_VERSION_0_LATE)
 			_doSoundType = SCI_VERSION_0_LATE;
@@ -293,7 +293,7 @@ SciVersion GameFeatures::detectLofsType() {
 
 bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 	// Look up the script address
-	reg_t addr = getDetectionAddr("Rm", _kernel->_selectorCache.overlay, methodNum);
+	reg_t addr = getDetectionAddr("Rm", SELECTOR(overlay), methodNum);
 
 	if (!addr.segment)
 		return false;
@@ -343,10 +343,10 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 			bool searchRoomObj = false;
 			reg_t rmObjAddr = _segMan->findObjectByName("Rm");
 
-			if (_kernel->_selectorCache.overlay != -1) {
+			if (SELECTOR(overlay) != -1) {
 				// The game has an overlay selector, check how it calls kDrawPicto determine
 				// the graphics functions type used
-				if (lookupSelector(_segMan, rmObjAddr, _kernel->_selectorCache.overlay, NULL, NULL) == kSelectorMethod) {
+				if (lookupSelector(_segMan, rmObjAddr, SELECTOR(overlay), NULL, NULL) == kSelectorMethod) {
 					if (!autoDetectGfxFunctionsType()) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
@@ -396,7 +396,7 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 #ifdef ENABLE_SCI32
 bool GameFeatures::autoDetectSci21KernelType() {
 	// Look up the script address
-	reg_t addr = getDetectionAddr("Sound", _kernel->_selectorCache.play);
+	reg_t addr = getDetectionAddr("Sound", SELECTOR(play));
 
 	if (!addr.segment)
 		return false;
@@ -448,7 +448,7 @@ SciVersion GameFeatures::detectSci21KernelType() {
 
 bool GameFeatures::autoDetectMoveCountType() {
 	// Look up the script address
-	reg_t addr = getDetectionAddr("Motion", _kernel->_selectorCache.doit);
+	reg_t addr = getDetectionAddr("Motion", SELECTOR(doit));
 
 	if (!addr.segment)
 		return false;

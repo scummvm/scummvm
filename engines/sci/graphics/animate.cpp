@@ -93,7 +93,7 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
-			invokeSelector(_s, curObject, g_sci->getKernel()->_selectorCache.doit, kContinueOnInvalidSelector, argc, argv, 0);
+			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}
@@ -497,7 +497,7 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 
 		if (signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
-			invokeSelector(_s, curObject, g_sci->getKernel()->_selectorCache.delete_, kContinueOnInvalidSelector, argc, argv, 0);
+			invokeSelector(_s, curObject, SELECTOR(delete_), argc, argv, 0);
 		}
 		listIterator--;
 	}

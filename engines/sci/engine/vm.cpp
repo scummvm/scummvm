@@ -35,8 +35,9 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/engine/seg_manager.h"
 #include "sci/engine/script.h"
+#include "sci/engine/seg_manager.h"
+#include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
 
 namespace Sci {
@@ -205,7 +206,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
-				if (lookupSelector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
+				if (lookupSelector(segMan, stopGroopPos, SELECTOR(client), &varp, NULL) == kSelectorVariable) {
 					reg_t *clientVar = varp.getPointer(segMan);
 					*clientVar = value;
 				}

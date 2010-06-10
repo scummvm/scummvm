@@ -40,6 +40,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/script.h"	// for script_adjust_opcode_formats
+#include "sci/engine/selector.h"	// for SELECTOR
 
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
@@ -366,7 +367,7 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 }
 
 void SciEngine::runGame() {
-	initStackBaseWithSelector(_kernel->_selectorCache.play); // Call the play selector
+	initStackBaseWithSelector(SELECTOR(play)); // Call the play selector
 
 	// Attach the debug console on game startup, if requested
 	if (DebugMan.isDebugChannelEnabled(kDebugLevelOnStartup))
@@ -383,11 +384,11 @@ void SciEngine::runGame() {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 			_gamestate->_sound.sfx_reset_player();
 #endif
-			initStackBaseWithSelector(_kernel->_selectorCache.play);
+			initStackBaseWithSelector(SELECTOR(play));
 			_gamestate->gameWasRestarted = true;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
-			initStackBaseWithSelector(_kernel->_selectorCache.replay);
+			initStackBaseWithSelector(SELECTOR(replay));
 		} else {
 			break;	// exit loop
 		}

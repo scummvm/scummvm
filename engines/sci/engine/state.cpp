@@ -234,7 +234,7 @@ kLanguage SciEngine::getSciLanguage() {
 
 	lang = K_LANG_ENGLISH;
 
-	if (_kernel->_selectorCache.printLang != -1) {
+	if (SELECTOR(printLang) != -1) {
 		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
@@ -281,7 +281,7 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getSciLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (_kernel->_selectorCache.subtitleLang != -1) {
+	if (SELECTOR(subtitleLang) != -1) {
 		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(subtitleLang));
 	}
 
