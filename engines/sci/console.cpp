@@ -2370,7 +2370,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, 0, 0);
+	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, NULL, NULL);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);

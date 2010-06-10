@@ -258,7 +258,6 @@ private:
 
 	ResourceManager *_resMan;
 	SegManager *_segMan;
-	uint32 features;
 
 	// Kernel-related lists
 	Common::StringArray _selectorNames;

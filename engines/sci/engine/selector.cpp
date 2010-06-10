@@ -204,14 +204,13 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
-	reg_t address;
 	int slc_type;
 	StackPtr stackframe = k_argp + k_argc;
 
 	stackframe[0] = make_reg(0, selectorId);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, &address);
+	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
 
 	if (slc_type == kSelectorNone) {
 		error("Selector '%s' of object at %04x:%04x could not be invoked",
