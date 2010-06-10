@@ -330,7 +330,8 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 		}
 
 		// If we find a lowercase character or a digit, it's not a stage direction
-		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9')))
+		// SCI32 seems to support having digits in stage directions
+		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
 			return false;
 	}
 
