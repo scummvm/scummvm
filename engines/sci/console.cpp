@@ -434,7 +434,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Sound type: %s\n", getSciVersionDesc(_engine->_features->detectDoSoundType()));
 	DebugPrintf("Graphics functions type: %s\n", getSciVersionDesc(_engine->_features->detectGfxFunctionsType()));
 	DebugPrintf("Lofs type: %s\n", getSciVersionDesc(_engine->_features->detectLofsType()));
-	DebugPrintf("Move count type: %s\n", (_engine->_features->detectMoveCountType() == kIncrementMoveCount) ? "increment" : "ignore");
+	DebugPrintf("Move count type: %s\n", (_engine->_features->handleMoveCount()) ? "increment" : "ignore");
 	DebugPrintf("SetCursor type: %s\n", getSciVersionDesc(_engine->_features->detectSetCursorType()));
 	DebugPrintf("View type: %s\n", viewTypeDesc[g_sci->getResMan()->getViewType()]);
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());

@@ -31,6 +31,12 @@
 
 namespace Sci {
 
+enum MoveCountType {
+	kMoveCountUninitialized,
+	kIgnoreMoveCount,
+	kIncrementMoveCount
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);

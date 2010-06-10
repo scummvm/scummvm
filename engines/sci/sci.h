@@ -118,12 +118,6 @@ enum SciVersion {
 	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
 };
 
-enum MoveCountType {
-	kMoveCountUninitialized,
-	kIgnoreMoveCount,
-	kIncrementMoveCount
-};
-
 /** Supported languages */
 enum kLanguage {
 	K_LANG_NONE = 0,
