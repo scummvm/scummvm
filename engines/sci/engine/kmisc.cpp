@@ -188,7 +188,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
-	elapsedTime = g_system->getMillis() - s->game_start_time;
+	elapsedTime = g_system->getMillis() - s->gameStartTime;
 
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 

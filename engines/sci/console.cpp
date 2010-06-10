@@ -1771,9 +1771,9 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 	DebugPrintf("Addresses of variables in the VM:\n");
 
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variables_seg[i], s->variables[i] - s->variables_base[i])));
-		if (s->variables_max)
-			DebugPrintf("  total %d", s->variables_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(s->variablesSegment[i], s->variables[i] - s->variablesBase[i])));
+		if (s->variablesMax)
+			DebugPrintf("  total %d", s->variablesMax[i]);
 		DebugPrintf("\n");
 	}
 
@@ -1830,8 +1830,8 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	if ((s->variables_max) && (s->variables_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", s->variables_max[vartype], s->variables_max[vartype]);
+	if ((s->variablesMax) && (s->variablesMax[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", s->variablesMax[vartype], s->variablesMax[vartype]);
 		return true;
 	}
 

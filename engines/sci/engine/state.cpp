@@ -105,7 +105,7 @@ void EngineState::reset(bool isRestoring) {
 
 	lastWaitTime = 0;
 
-	gc_countdown = 0;
+	gcCountDown = 0;
 
 	_throttleCounter = 0;
 	_throttleLastTime = 0;
@@ -130,9 +130,9 @@ void EngineState::initGlobals() {
 	if (!script_000->_localsBlock)
 		error("Script 0 has no locals block");
 
-	variables_seg[VAR_GLOBAL] = script_000->_localsSegment;
-	variables_base[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->_localsBlock->_locals.begin();
-	variables_max[VAR_GLOBAL] = script_000->_localsBlock->_locals.size();
+	variablesSegment[VAR_GLOBAL] = script_000->_localsSegment;
+	variablesBase[VAR_GLOBAL] = variables[VAR_GLOBAL] = script_000->_localsBlock->_locals.begin();
+	variablesMax[VAR_GLOBAL] = script_000->_localsBlock->_locals.size();
 }
 
 uint16 EngineState::currentRoomNumber() const {

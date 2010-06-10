@@ -286,7 +286,7 @@ bool SciEngine::initGame() {
 	DataStack *stack = _gamestate->_segMan->allocateStack(VM_STACK_SIZE, NULL);
 
 	_gamestate->_msgState = new MessageState(_gamestate->_segMan);
-	_gamestate->gc_countdown = GC_INTERVAL - 1;
+	_gamestate->gcCountDown = GC_INTERVAL - 1;
 
 	// Script 0 should always be at segment 1
 	if (script0Segment != 1) {
@@ -325,7 +325,7 @@ bool SciEngine::initGame() {
 		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
-	_gamestate->game_start_time = _gamestate->lastWaitTime = g_system->getMillis();
+	_gamestate->gameStartTime = _gamestate->lastWaitTime = g_system->getMillis();
 
 	srand(g_system->getMillis()); // Initialize random number generator
 

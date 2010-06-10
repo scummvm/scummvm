@@ -111,7 +111,7 @@ public:
 #endif
 	SoundCommandParser *_soundCmd;
 
-	uint32 game_start_time; /**< The time at which the interpreter was started */
+	uint32 gameStartTime; /**< The time at which the interpreter was started */
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
 
 	void wait(int16 ticks);
@@ -147,9 +147,9 @@ public:
 	// Script state
 	ExecStack *xs;
 	reg_t *variables[4];		///< global, local, temp, param, as immediate pointers
-	reg_t *variables_base[4];	///< Used for referencing VM ops
-	SegmentId variables_seg[4];	///< Same as above, contains segment IDs
-	int variables_max[4];		///< Max. values for all variables
+	reg_t *variablesBase[4];	///< Used for referencing VM ops
+	SegmentId variablesSegment[4];	///< Same as above, contains segment IDs
+	int variablesMax[4];		///< Max. values for all variables
 
 	int loadFromLauncher;
 
@@ -173,7 +173,7 @@ public:
 	 */
 	void shrinkStackToBase();
 
-	int gc_countdown; /**< Number of kernel calls until next gc */
+	int gcCountDown; /**< Number of kernel calls until next gc */
 
 public:
 	MessageState *_msgState;

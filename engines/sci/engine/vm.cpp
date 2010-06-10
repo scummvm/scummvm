@@ -230,8 +230,8 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 #endif
 
-#define READ_VAR(type, index, def) validate_read_var(s->variables[type], s->stack_base, type, s->variables_max[type], index, __LINE__, def)
-#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variables_max[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
+#define READ_VAR(type, index, def) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, def)
+#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 #define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
@@ -629,9 +629,9 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 	}
 }
 
-static void gc_countdown(EngineState *s) {
-	if (s->gc_countdown-- <= 0) {
-		s->gc_countdown = s->scriptGCInterval;
+static void gcCountDown(EngineState *s) {
+	if (s->gcCountDown-- <= 0) {
+		s->gcCountDown = s->scriptGCInterval;
 		run_gc(s);
 	}
 }
@@ -737,8 +737,8 @@ void run_vm(EngineState *s, bool restoring) {
 	if (!restoring)
 		s->executionStackBase = s->_executionStack.size() - 1;
 
-	s->variables_seg[VAR_TEMP] = s->variables_seg[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
-	s->variables_base[VAR_TEMP] = s->variables_base[VAR_PARAM] = s->stack_base;
+	s->variablesSegment[VAR_TEMP] = s->variablesSegment[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
+	s->variablesBase[VAR_TEMP] = s->variablesBase[VAR_PARAM] = s->stack_base;
 
 	s->_executionStackPosChanged = true; // Force initialization
 
@@ -776,24 +776,24 @@ void run_vm(EngineState *s, bool restoring) {
 				if (!local_script) {
 					warning("Could not find local script from segment %x", s->xs->local_segment);
 					local_script = NULL;
-					s->variables_base[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
+					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
 #ifndef DISABLE_VALIDATIONS
-					s->variables_max[VAR_LOCAL] = 0;
+					s->variablesMax[VAR_LOCAL] = 0;
 #endif
 				} else {
 
-					s->variables_seg[VAR_LOCAL] = local_script->_localsSegment;
+					s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
 					if (local_script->_localsBlock)
-						s->variables_base[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
+						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
 					else
-						s->variables_base[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
+						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
 #ifndef DISABLE_VALIDATIONS
 					if (local_script->_localsBlock)
-						s->variables_max[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
+						s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
 					else
-						s->variables_max[VAR_LOCAL] = 0;
-					s->variables_max[VAR_TEMP] = s->xs->sp - s->xs->fp;
-					s->variables_max[VAR_PARAM] = s->xs->argc + 1;
+						s->variablesMax[VAR_LOCAL] = 0;
+					s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
+					s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 #endif
 				}
 				s->variables[VAR_TEMP] = s->xs->fp;
@@ -821,7 +821,7 @@ void run_vm(EngineState *s, bool restoring) {
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x", 
 			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
 
-		s->variables_max[VAR_TEMP] = s->xs->sp - s->xs->fp;
+		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
 		if (s->xs->addr.pc.offset >= code_buf_size)
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d", 
@@ -1120,7 +1120,7 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		case op_callk: { // 0x21 (33)
-			gc_countdown(s);
+			gcCountDown(s);
 
 			s->xs->sp -= (opparams[1] >> 1) + 1;
 
@@ -1295,8 +1295,8 @@ void run_vm(EngineState *s, bool restoring) {
 			var_number = temp & 0x03; // Get variable type
 
 			// Get variable block offset
-			r_temp.segment = s->variables_seg[var_number];
-			r_temp.offset = s->variables[var_number] - s->variables_base[var_number];
+			r_temp.segment = s->variablesSegment[var_number];
+			r_temp.offset = s->variables[var_number] - s->variablesBase[var_number];
 
 			if (temp & 0x08)  // Add accumulator offset if requested
 				r_temp.offset += signed_validate_arithmetic(s->r_acc);

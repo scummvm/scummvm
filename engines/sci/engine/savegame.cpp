@@ -872,11 +872,11 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->_segMan->reconstructScripts(s);
 	s->_segMan->reconstructClones();
 	s->initGlobals();
-	s->gc_countdown = GC_INTERVAL - 1;
+	s->gcCountDown = GC_INTERVAL - 1;
 
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
-	s->game_start_time = g_system->getMillis();
+	s->gameStartTime = g_system->getMillis();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound._it = NULL;
