@@ -85,8 +85,6 @@ void EngineState::reset(bool isRestoring) {
 #endif
 
 	if (!isRestoring) {
-		_gameObj = NULL_REG;
-
 		_memorySegmentSize = 0;
 		_soundCmd = 0;
 
@@ -237,7 +235,7 @@ kLanguage SciEngine::getSciLanguage() {
 	lang = K_LANG_ENGLISH;
 
 	if (_kernel->_selectorCache.printLang != -1) {
-		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang));
+		lang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang));
 
 		if ((getSciVersion() >= SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
@@ -272,7 +270,7 @@ kLanguage SciEngine::getSciLanguage() {
 			}
 
 			// Store language in printLang selector
-			writeSelectorValue(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(printLang), lang);
+			writeSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(printLang), lang);
 		}
 	}
 
@@ -284,7 +282,7 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	kLanguage subLang = K_LANG_NONE;
 
 	if (_kernel->_selectorCache.subtitleLang != -1) {
-		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gamestate->_gameObj, SELECTOR(subtitleLang));
+		subLang = (kLanguage)readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(subtitleLang));
 	}
 
 	kLanguage secondLang;

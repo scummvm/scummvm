@@ -173,8 +173,6 @@ public:
 	 */
 	void shrinkStackToBase();
 
-	reg_t _gameObj; /**< Pointer to the game object */
-
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 public:

@@ -161,6 +161,7 @@ public:
 	inline EngineState *getEngineState() const { return _gamestate; }
 	inline Vocabulary *getVocabulary() const { return _vocabulary; }
 	inline EventManager *getEventManager() const { return _eventMan; }
+	inline reg_t getGameObject() const { return _gameObj; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -259,6 +260,7 @@ private:
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;
 	EventManager *_eventMan;
+	reg_t _gameObj; /**< Pointer to the game object */
 	Console *_console;
 	OSystem *_system;
 };

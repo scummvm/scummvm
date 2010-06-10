@@ -145,6 +145,7 @@ Common::Error SciEngine::run() {
 
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(getGameID());
+	_gameObj = _resMan->findGameObject();
 
 	SegManager *segMan = new SegManager(_resMan);
 
@@ -327,8 +328,6 @@ bool SciEngine::initGame() {
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-	_gamestate->_gameObj = _resMan->findGameObject();
-
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (_gamestate->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
 		initGameSound(0, _features->detectDoSoundType());
@@ -359,8 +358,8 @@ void SciEngine::initStackBaseWithSelector(Selector selector) {
 	_gamestate->stack_base[1] = NULL_REG;
 
 	// Register the first element on the execution stack
-	if (!send_selector(_gamestate, _gamestate->_gameObj, _gamestate->_gameObj, _gamestate->stack_base, 2, _gamestate->stack_base)) {
-		_console->printObject(_gamestate->_gameObj);
+	if (!send_selector(_gamestate, _gameObj, _gameObj, _gamestate->stack_base, 2, _gamestate->stack_base)) {
+		_console->printObject(_gameObj);
 		error("initStackBaseWithSelector: error while registering the first selector in the call stack");
 	}
 
