@@ -1911,9 +1911,11 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		break;
 	case KSIG_ARITHMETIC:
 		DebugPrintf("Arithmetic");
+	case KSIG_ARITHMETIC | KSIG_NULL:
+		DebugPrintf("Null");
 		break;
 	default:
-		DebugPrintf("Erroneous unknown type %02x(%d decimal)\n", t, t);
+		DebugPrintf("Erroneous unknown type 0x%02x (%d decimal)\n", t, t);
 	}
 
 	return true;
