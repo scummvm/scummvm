@@ -424,7 +424,8 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	i = 0;
 	while (node) {
-		invokeSelector(INV_SEL(s, order_func, doit, kStopOnInvalidSelector), 1, node->value);
+		reg_t params[1] = { node->value };
+		invokeSelector(s, order_func, SELECTOR(doit), argc, argv, 1, params);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;
@@ -523,7 +524,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 				writeSelector(s->_segMan, curObject, slc, argv[2]);
 			}
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 		}
 
 		curNode = s->_segMan->lookupNode(nextNode);
@@ -552,7 +553,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListFirstTrue: Attempted to access a variable selector");
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result is true
 			if (!s->r_acc.isNull())
@@ -586,7 +587,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 			// Can this happen with variable selectors?
 			warning("kListAllTrue: Attempted to access a variable selector");
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result isn't true
 			if (s->r_acc.isNull())

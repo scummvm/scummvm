@@ -200,7 +200,7 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 		*address.getPointer(segMan) = value;
 }
 
-int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
+void invokeSelector(EngineState *s, reg_t object, int selectorId, 
 	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
@@ -214,16 +214,12 @@ int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInv
 	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
-		warning("Selector '%s' of object at %04x:%04x could not be invoked",
+		error("Selector '%s' of object at %04x:%04x could not be invoked",
 		         g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-		if (noinvalid == kStopOnInvalidSelector)
-			error("[Kernel] Not recoverable: VM was halted");
-		return 1;
 	}
 	if (slc_type == kSelectorVariable) {
 		warning("Attempting to invoke variable selector %s of object %04x:%04x",
 			g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-		return 0;
 	}
 
 	for (i = 0; i < argc; i++)
@@ -238,24 +234,6 @@ int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInv
 	xstack->fp += argc + 2;
 
 	run_vm(s, false); // Start a new vm
-
-	return 0;
-}
-
-int invokeSelector(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...) {
-	va_list argp;
-	reg_t *args = new reg_t[argc];
-
-	va_start(argp, argc);
-	for (int i = 0; i < argc; i++)
-		args[i] = va_arg(argp, reg_t);
-	va_end(argp);
-
-	int retval = invokeSelectorArgv(s, object, selectorId, noinvalid, k_argc, k_argp, argc, args);
-
-	delete[] args;
-	return retval;
 }
 
 SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {

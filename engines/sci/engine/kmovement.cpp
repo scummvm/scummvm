@@ -315,11 +315,11 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
-	if (g_sci->getKernel()->_selectorCache.cantBeHere != -1) {
-		invokeSelector(INV_SEL(s, client, cantBeHere, kStopOnInvalidSelector), 0);
+	if (SELECTOR(cantBeHere) != -1) {
+		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 		s->r_acc = make_reg(0, !s->r_acc.offset);
 	} else {
-		invokeSelector(INV_SEL(s, client, canBeHere, kStopOnInvalidSelector), 0);
+		invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 	}
 
 	if (!s->r_acc.offset) { // Contains the return value
@@ -335,7 +335,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
-			invokeSelector(INV_SEL(s, mover, moveDone, kStopOnInvalidSelector), 0);
+			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
 	return make_reg(0, completed);
 }
@@ -399,20 +399,13 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
 
-	if (invokeSelector(INV_SEL(s, mover, doit, kContinueOnInvalidSelector) , 0)) {
-		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, mover, SELECTOR(doit), argc, argv);
 
 	mover = readSelector(segMan, client, SELECTOR(mover));
 	if (!mover.segment) // Mover has been disposed?
 		return s->r_acc; // Return gracefully.
 
-	if (invokeSelector(INV_SEL(s, client, isBlocked, kContinueOnInvalidSelector) , 0)) {
-		error("Client %04x:%04x of avoider %04x:%04x doesn't"
-		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, client, SELECTOR(isBlocked), argc, argv);
 
 	dx = destx - readSelectorValue(segMan, client, SELECTOR(x));
 	dy = desty - readSelectorValue(segMan, client, SELECTOR(y));
@@ -439,11 +432,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
 
-			if (invokeSelector(INV_SEL(s, client, canBeHere, kContinueOnInvalidSelector) , 0)) {
-				error("Client %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-				return NULL_REG;
-			}
+			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy);
@@ -472,12 +461,11 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 		s->r_acc = make_reg(0, angle);
 
+		reg_t params[2] = { make_reg(0, angle), client };
+
 		if (looper.segment) {
-			if (invokeSelector(INV_SEL(s, looper, doit, kContinueOnInvalidSelector), 2, angle, client)) {
-				error("Looper %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
-			} else
-				return s->r_acc;
+			invokeSelector(s, looper, SELECTOR(doit), 2, params);
+			return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
 			_k_dirloop(client, (uint16)angle, s, argc, argv);

@@ -34,11 +34,6 @@
 
 namespace Sci {
 
-enum SelectorInvocation {
-	kStopOnInvalidSelector = 0,
-	kContinueOnInvalidSelector = 1
-};
-
 /**
  * Map a selector name to a selector id. Shortcut for accessing the selector cache.
  */
@@ -71,18 +66,8 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 /**
  * Invokes a selector from an object.
  */
-int invokeSelector(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...);
-int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, const reg_t *argv);
-
-/**
- * Kludge for use with invokeSelector(). Used for compatibility with compilers
- * that cannot handle vararg macros.
- */
-#define INV_SEL(s, _object_, _selector_, _noinvalid_) \
-	s, _object_,  g_sci->getKernel()->_selectorCache._selector_, _noinvalid_, argc, argv
-
+void invokeSelector(EngineState *s, reg_t object, int selectorId, 
+	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
 } // End of namespace Sci
 
