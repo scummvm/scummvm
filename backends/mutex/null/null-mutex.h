@@ -23,21 +23,17 @@
  *
  */
 
-#ifndef BACKENDS_MUTEX_DEFAULT_H
-#define BACKENDS_MUTEX_DEFAULT_H
+#ifndef BACKENDS_MUTEX_NULL_H
+#define BACKENDS_MUTEX_NULL_H
 
-#include "common/system.h"
-#include "common/noncopyable.h"
+#include "backends/mutex/abstract-mutex.h"
 
-class DefaultMutexManager : Common::NonCopyable {
+class NullMutexManager : MutexManager {
 public:
-	virtual ~DefaultMutexManager() {}
-
-	OSystem::MutexRef createMutex();
+	OSystem::MutexRef createMutex() { return OSystem::MutexRef(); }
 	void lockMutex(OSystem::MutexRef mutex) {}
 	void unlockMutex(OSystem::MutexRef mutex) {}
-	void deleteMutex(OSystem::MutexRef mutex);
+	void deleteMutex(OSystem::MutexRef mutex) {}
 };
-
 
 #endif

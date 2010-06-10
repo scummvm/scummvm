@@ -26,9 +26,9 @@
 #ifndef BACKENDS_MUTEX_SDL_H
 #define BACKENDS_MUTEX_SDL_H
 
-#include "backends/mutex/default/default-mutex.h"
+#include "backends/mutex/abstract-mutex.h"
 
-class SdlMutexManager : public DefaultMutexManager {
+class SdlMutexManager : public MutexManager {
 public:
 	OSystem::MutexRef createMutex();
 	void lockMutex(OSystem::MutexRef mutex);

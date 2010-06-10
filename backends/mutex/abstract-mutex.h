@@ -23,8 +23,19 @@
  *
  */
 
-#include "backends/mutex/default/default-mutex.h"
+#ifndef BACKENDS_MUTEX_ABSTRACT_H
+#define BACKENDS_MUTEX_ABSTRACT_H
 
-OSystem::MutexRef DefaultMutexManager::createMutex() {
-	return OSystem::MutexRef();
-}
+#include "common/system.h"
+#include "common/noncopyable.h"
+
+class MutexManager : Common::NonCopyable {
+public:
+	virtual OSystem::MutexRef createMutex() = 0;
+	virtual void lockMutex(OSystem::MutexRef mutex) = 0;
+	virtual void unlockMutex(OSystem::MutexRef mutex) = 0;
+	virtual void deleteMutex(OSystem::MutexRef mutex) = 0;
+};
+
+
+#endif
