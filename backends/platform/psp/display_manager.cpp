@@ -322,9 +322,7 @@ bool DisplayManager::renderAll() {
 	}	
 #endif /* USE_DISPLAY_CALLBACK */
 	
-	if (!isTimeToUpdate()) 
-		return false;	// didn't render
-
+	// This is cheaper than checking time, so we do it first
 	if (!_screen->isDirty() &&
 	        (!_overlay->isDirty()) &&
 	        (!_cursor->isDirty()) &&
@@ -332,6 +330,9 @@ bool DisplayManager::renderAll() {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
 		return true;	// nothing to render
 	}
+
+	if (!isTimeToUpdate()) 
+		return false;	// didn't render
 
 	PSP_DEBUG_PRINT("screen[%s], overlay[%s], cursor[%s], keyboard[%s]\n",
 	                _screen->isDirty() ? "true" : "false",
