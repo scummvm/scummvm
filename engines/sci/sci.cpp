@@ -234,10 +234,7 @@ Common::Error SciEngine::run() {
 	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (game_init_sound(_gamestate, 0, soundVersion)) {
-		warning("Game initialization failed: Error in sound subsystem. Aborting...");
-		return Common::kUnknownError;
-	}
+	initGameSound(0, soundVersion);
 #endif
 
 	syncSoundSettings();
@@ -334,7 +331,7 @@ bool SciEngine::initGame() {
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	if (_gamestate->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
-		game_init_sound(_gamestate, 0, _features->detectDoSoundType());
+		initGameSound(0, _features->detectDoSoundType());
 #endif
 
 	// Load game language into printLang property of game object
@@ -344,6 +341,18 @@ bool SciEngine::initGame() {
 
 	return true;
 }
+
+#ifdef USE_OLD_MUSIC_FUNCTIONS
+
+void SciEngine::initGameSound(int sound_flags, SciVersion soundVersion) {
+	if (getSciVersion() > SCI_VERSION_0_LATE)
+	 sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
+
+	_gamestate->sfx_init_flags = sound_flags;
+	_gamestate->_sound.sfx_init(_resMan, sound_flags, soundVersion);
+}
+
+#endif
 
 void SciEngine::initStackBaseWithSelector(Selector selector) {
 	_gamestate->stack_base[0] = make_reg(0, (uint16)selector);
@@ -392,7 +401,7 @@ void SciEngine::exitGame() {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 		_gamestate->_sound.sfx_exit();
 		// Reinit because some other code depends on having a valid state
-		game_init_sound(_gamestate, SFX_STATE_FLAG_NOSOUND, _features->detectDoSoundType());
+		initGameSound(SFX_STATE_FLAG_NOSOUND, _features->detectDoSoundType());
 #else
 		_audio->stopAllAudio();
 		_gamestate->_soundCmd->clearPlayList();
