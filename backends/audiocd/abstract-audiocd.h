@@ -28,9 +28,14 @@
 
 #include "common/noncopyable.h"
 
+/**
+* Abstract Audio CD manager class. Private subclasses implement the actual
+* functionality.
+*/
 class AudioCDManager : Common::NonCopyable {
 public:
 	virtual ~AudioCDManager() {}
+
 
 	struct Status {
 		bool playing;
@@ -40,19 +45,88 @@ public:
 		int numLoops;
 	};
 
-	// Emulated CD functions, engines should call these functions
+	/**
+	 * @name Emulated playback functions
+	 * Engines should call these functions. Not all platforms
+	 * support cd playback, and these functions should try to
+	 * emulate it.
+	 */
+	//@{
+
+	/**
+	 * Start audio CD playback
+	 * @param track			the track to play.
+	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
+	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
+	 * @param duration		the number of frames to play.
+	 * @param only_emulate	determines if the track should be emulated only
+	 */
 	virtual void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false) = 0;
-	virtual void stop() = 0;
+
+	/**
+	 * Get if audio is being played.
+	 * @return true if CD or emulated audio is playing
+	 */
 	virtual bool isPlaying() const = 0;
+
+	/**
+	 * Stop CD or emulated audio playback.
+	 */
+	virtual void stop() = 0;
+
+	/**
+	 * Update CD or emulated audio status.
+	 */
 	virtual void update() = 0;
+
+	/**
+	 * Get the playback status.
+	 * @return a Status struct with playback data.
+	 */
 	virtual Status getStatus() const = 0;
 
-	// Real CD functions. Let Subclasses implement the real code
-	virtual bool openCD(int drive) { return false; }
-	virtual void updateCD() {}
-	virtual bool pollCD() const { return false; }
-	virtual void playCD(int track, int num_loops, int start_frame, int duration) {}
-	virtual void stopCD() {}
+	//@}
+
+
+	/**
+	 * @name Real CD audio methods
+	 * These functions should be called from the emulated
+	 * ones if they can't emulate the audio playback.
+	 */
+	//@{
+
+	/**
+	 * Initialise the specified CD drive for audio playback.
+	 * @return true if the CD drive was inited succesfully
+	 */
+	virtual bool openCD(int drive) = 0;
+	
+	/**
+	 * Poll CD status.
+	 * @return true if CD audio is playing
+	 */
+	virtual bool pollCD() const = 0;
+
+	/**
+	 * Start CD audio playback.
+	 * @param track			the track to play.
+	 * @param num_loops		how often playback should be repeated (-1 = infinitely often).
+	 * @param start_frame	the frame at which playback should start (75 frames = 1 second).
+	 * @param duration		the number of frames to play.
+	 */
+	virtual void playCD(int track, int num_loops, int start_frame, int duration) = 0;
+
+	/**
+	 * Stop CD audio playback.
+	 */
+	virtual void stopCD() = 0;
+
+	/**
+	 * Update CD audio status.
+	 */
+	virtual void updateCD() = 0;
+
+	//@}
 };
 
 #endif
