@@ -31,7 +31,6 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
-	mutex/default/default-mutex.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
