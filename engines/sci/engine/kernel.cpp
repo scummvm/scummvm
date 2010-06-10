@@ -33,6 +33,26 @@
 
 namespace Sci {
 
+// Uncompiled kernel signatures are formed from a string of letters.
+// each corresponding to a type of a parameter (see below).
+// Use small letters to indicate end of sum type.
+// Use capital letters for sum types, e.g.
+// "LNoLr" for a function which takes two arguments:
+// (1) list, node or object
+// (2) list or ref
+#define KSIG_SPEC_LIST 'l'
+#define KSIG_SPEC_NODE 'n'
+#define KSIG_SPEC_OBJECT 'o'
+#define KSIG_SPEC_REF 'r' // Said Specs and strings
+#define KSIG_SPEC_ARITHMETIC 'i'
+#define KSIG_SPEC_NULL 'z'
+#define KSIG_SPEC_ANY '.'
+#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
+
+#define KSIG_SPEC_SUM_DONE ('a' - 'A')
+
+
+
 // Default kernel name table
 #define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
 
@@ -538,8 +558,7 @@ static void kernel_compile_signature(const char **s) {
 				break;
 
 			default:
-				error("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
-				          " '%c')\n", *s, c, c);
+				error("ERROR compiling kernel function signature '%s': (%02x / '%c') not understood", *s, c, c);
 			}
 		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
 

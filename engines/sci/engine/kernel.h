@@ -95,36 +95,20 @@ struct List;	// from segment.h
 //#define DISABLE_VALIDATIONS	// enable to stop validation checks
 
 // ---- Kernel signatures -----------------------------------------------------
-#define KSIG_TERMINATOR 0
 
-// Uncompiled signatures
-#define KSIG_SPEC_ARITMETIC 'i'
-#define KSIG_SPEC_LIST 'l'
-#define KSIG_SPEC_NODE 'n'
-#define KSIG_SPEC_OBJECT 'o'
-#define KSIG_SPEC_REF 'r' // Said Specs and strings
-#define KSIG_SPEC_ARITHMETIC 'i'
-#define KSIG_SPEC_NULL 'z'
-#define KSIG_SPEC_ANY '.'
-#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
-
-#define KSIG_SPEC_SUM_DONE ('a' - 'A') // Use small letters to indicate end of sum type
-/* Use capital letters for sum types, e.g.
-** "LNoLr" for a function which takes two arguments:
-** (1) list, node or object
-** (2) list or ref
-*/
 
 // Compiled signatures
-#define KSIG_LIST	0x01
-#define KSIG_NODE	0x02
-#define KSIG_OBJECT	0x04
-#define KSIG_REF	0x08
-#define KSIG_ARITHMETIC 0x10
+enum {
+	KSIG_LIST       = 0x01,
+	KSIG_NODE       = 0x02,
+	KSIG_OBJECT     = 0x04,
+	KSIG_REF        = 0x08,
+	KSIG_ARITHMETIC = 0x10,
+	KSIG_NULL       = 0x40,
+	KSIG_ANY        = 0x5f,
+	KSIG_ELLIPSIS   = 0x80
+};
 
-#define KSIG_NULL	0x40
-#define KSIG_ANY	0x5f
-#define KSIG_ELLIPSIS	0x80
 // ----------------------------------------------------------------------------
 
 /* Generic description: */
