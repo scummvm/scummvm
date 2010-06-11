@@ -162,6 +162,7 @@ public class ScummVM implements SurfaceHolder.Callback {
 	final public native static void loadConfigFile(String path);
 	final public native static void setConfMan(String key, int value);
 	final public native static void setConfMan(String key, String value);
+	final public native void enableZoning(boolean enable);
 
 	// Feed an event to ScummVM.  Safe to call from other threads.
 	final public native void pushEvent(Event e);

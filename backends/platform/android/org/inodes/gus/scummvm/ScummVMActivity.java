@@ -1,7 +1,7 @@
 package org.inodes.gus.scummvm;
 
-import android.app.AlertDialog;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.media.AudioManager;
@@ -9,13 +9,14 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.inputmethod.InputMethodManager;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewConfiguration;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -33,6 +34,12 @@ public class ScummVMActivity extends Activity {
 
 		public MyScummVM() {
 			super(ScummVMActivity.this);
+
+			// Enable ScummVM zoning on 'small' screens.
+			// This 'density' term is very confusing.
+			DisplayMetrics metrics = new DisplayMetrics();
+			getWindowManager().getDefaultDisplay().getMetrics(metrics);
+			enableZoning(metrics.densityDpi <= DisplayMetrics.DENSITY_LOW);
 		}
 
 		@Override

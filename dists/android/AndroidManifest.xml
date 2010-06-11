@@ -38,17 +38,6 @@
 	<category android:name="android.intent.category.LAUNCHER" />
       </intent-filter>
     </activity>
-    <activity android:name=".TestActivity"
-	      android:label="AAATestActivity"
-      android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
-      android:screenOrientation="landscape"
-      android:configChanges="orientation|keyboardHidden"
-      android:windowSoftInputMode="adjustResize">
-      <intent-filter>
-	<action android:name="android.intent.action.MAIN" />
-	<category android:name="android.intent.category.LAUNCHER" />
-      </intent-filter>
-    </activity>
   </application>
 
   <permission android:name="org.inodes.gus.scummvm.permission.SCUMMVM_PLUGIN"
@@ -68,8 +57,4 @@
 		      android:reqKeyboardType="qwerty"/>
   <uses-configuration android:reqTouchScreen="stylus"
 		      android:reqKeyboardType="qwerty"/>
-
-  <!-- Can't really be used on a "small" screen, at least until we add
-       zooming support (and even then it won't be great) -->
-  <supports-screens android:smallScreens="false" />
 </manifest>

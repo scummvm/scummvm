@@ -178,8 +178,8 @@ private:
 	// Game layer
 	GLESPaletteTexture* _game_texture;
 	int _shake_offset;
+	Common::Rect _focus_rect;
 	bool _full_screen_dirty;
-	Common::Array<Common::Rect> _dirty_rects;
 
 	// Overlay layer
 	GLES4444Texture* _overlay_texture;
@@ -199,6 +199,7 @@ private:
 	pthread_t _timer_thread;
 	static void* timerThreadFunc(void* arg);
 
+	bool _enable_zoning;
 	bool _virtkeybd_on;
 
 	Common::SaveFileManager *_savefile;
@@ -221,6 +222,7 @@ public:
 	static OSystem_Android* fromJavaObject(JNIEnv* env, jobject obj);
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;
+	void enableZoning(bool enable) { _enable_zoning = enable; }
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -311,6 +313,7 @@ OSystem_Android::OSystem_Android(jobject am)
 	  _use_mouse_palette(false),
 	  _show_mouse(false),
 	  _show_overlay(false),
+	  _enable_zoning(false),
 	  _savefile(0),
 	  _mixer(0),
 	  _timer(0),
@@ -649,16 +652,15 @@ void OSystem_Android::setupScummVMSurface() {
 		_mouse_texture->reinitGL();
 
 	glViewport(0, 0, _egl_surface_width, _egl_surface_height);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrthof(0, _egl_surface_width, _egl_surface_height, 0, -1, 1);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	clearFocusRectangle();
 	CHECK_GL_ERROR();
-
-	_force_redraw = true;
 }
 
 void OSystem_Android::destroyScummVMSurface() {
@@ -680,7 +682,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 
 	// Don't know mouse size yet - it gets reallocated in
-	// setMouseCursor.	We need the palette allocated before
+	// setMouseCursor.  We need the palette allocated before
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
 	_mouse_texture->allocBuffer(20, 20);
@@ -695,7 +697,7 @@ int16 OSystem_Android::getWidth() {
 }
 
 void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
-		ENTER("setPalette(%p, %u, %u)", colors, start, num);
+	ENTER("setPalette(%p, %u, %u)", colors, start, num);
 
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
@@ -753,15 +755,39 @@ void OSystem_Android::updateScreen() {
 		glTranslatex(0, -_shake_offset << 16, 0);
 	}
 
-	_game_texture->drawTexture(0, 0,
-				   _egl_surface_width, _egl_surface_height);
+	if (_focus_rect.isEmpty()) {
+		_game_texture->drawTexture(0, 0,
+								   _egl_surface_width, _egl_surface_height);
+	} else {
+		// Need to ensure any exposed out-of-bounds region doesn't go
+		// all hall-of-mirrors.  If _shake_offset != 0, we've already
+		// done this above.
+		const Common::Rect
+			screen_bounds(_game_texture->width(), _game_texture->height());
+		if (!screen_bounds.contains(_focus_rect) && _shake_offset != 0) {
+			glClearColorx(0, 0, 0, 1 << 16);
+			glClear(GL_COLOR_BUFFER_BIT);
+		}
+
+		glPushMatrix();
+		glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
+				 xdiv(_egl_surface_height, _focus_rect.height()),
+				 1 << 16);
+		glTranslatex(-_focus_rect.left << 16, -_focus_rect.top << 16, 0);
+		glScalex(xdiv(_game_texture->width(), _egl_surface_width),
+				 xdiv(_game_texture->height(), _egl_surface_height),
+				 1 << 16);
+		_game_texture->drawTexture(0, 0,
+								   _egl_surface_width, _egl_surface_height);
+		glPopMatrix();
+	}
 
 	CHECK_GL_ERROR();
 
 	if (_show_overlay) {
 		_overlay_texture->drawTexture(0, 0,
-						  _egl_surface_width,
-						  _egl_surface_height);
+									  _egl_surface_width,
+									  _egl_surface_height);
 		CHECK_GL_ERROR();
 	}
 
@@ -769,8 +795,8 @@ void OSystem_Android::updateScreen() {
 		glPushMatrix();
 
 		glTranslatex(-_mouse_hotspot.x << 16,
-				 -_mouse_hotspot.y << 16,
-				 0);
+					 -_mouse_hotspot.y << 16,
+					 0);
 
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		int texwidth, texheight;
@@ -782,8 +808,8 @@ void OSystem_Android::updateScreen() {
 			texheight = getHeight();
 		}
 		glScalex(xdiv(_egl_surface_width, texwidth),
-			 xdiv(_egl_surface_height, texheight),
-			 1 << 16);
+				 xdiv(_egl_surface_height, texheight),
+				 1 << 16);
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
@@ -845,26 +871,18 @@ void OSystem_Android::fillScreen(uint32 col) {
 void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
 	ENTER("setFocusRectangle(%d,%d,%d,%d)",
 		  rect.left, rect.top, rect.right, rect.bottom);
-#if 0
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(rect.left, rect.right, rect.top, rect.bottom, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-
-	_force_redraw = true;
-#endif
+	if (_enable_zoning) {
+		_focus_rect = rect;
+		_force_redraw = true;
+	}
 }
 
 void OSystem_Android::clearFocusRectangle() {
 	ENTER("clearFocusRectangle()");
-#if 0
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(0, _egl_surface_width, _egl_surface_height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-
-	_force_redraw = true;
-#endif
+	if (_enable_zoning) {
+		_focus_rect = Common::Rect();
+		_force_redraw = true;
+	}
 }
 
 void OSystem_Android::showOverlay() {
@@ -1342,6 +1360,11 @@ void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 }
 #endif
 
+static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
+	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+	cpp_obj->enableZoning(enable);
+}
+
 const static JNINativeMethod gMethods[] = {
 	{ "create", "(Landroid/content/res/AssetManager;)V",
 	  (void*)ScummVM_create },
@@ -1356,6 +1379,8 @@ const static JNINativeMethod gMethods[] = {
 	  (void*)ScummVM_setConfManInt },
 	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
 	  (void*)ScummVM_setConfManString },
+	{ "enableZoning", "(Z)V",
+	  (void*)ScummVM_enableZoning },
 };
 
 JNIEXPORT jint JNICALL
