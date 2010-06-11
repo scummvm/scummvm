@@ -89,8 +89,6 @@ void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *forma
 	_graphicsManager->initSize(w, h, format);
 }
 
-/** TODO: Add getScreenChangeID, beginGFXTransaction and
- ** endGFXTransaction to graphics manager
 int ModularBackend::getScreenChangeID() const {
 	return _graphicsManager->getScreenChangeID();
 }
@@ -101,7 +99,7 @@ void ModularBackend::beginGFXTransaction() {
 
 OSystem::TransactionError ModularBackend::endGFXTransaction() {
 	return _graphicsManager->endGFXTransaction();
-}*/
+}
 
 int16 ModularBackend::getHeight() {
 	return _graphicsManager->getHeight();
@@ -142,15 +140,13 @@ void ModularBackend::updateScreen() {
 void ModularBackend::setShakePos(int shakeOffset) {
 	_graphicsManager->setShakePos(shakeOffset);
 }
-/** TODO: Add setFocusRectangle and clearFocusRectangle
- ** to graphics manager
 void ModularBackend::setFocusRectangle(const Common::Rect& rect) {
 	_graphicsManager->setFocusRectangle(rect);
 }
 
 void ModularBackend::clearFocusRectangle() {
 	_graphicsManager->clearFocusRectangle();
-}*/
+}
 
 void ModularBackend::showOverlay() {
 	_graphicsManager->showOverlay();
@@ -196,15 +192,13 @@ void ModularBackend::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
 }
 
-/** TODO: Add setCursorPalette and disableCursorPalette
- ** to graphics manager
 void ModularBackend::setCursorPalette(const byte *colors, uint start, uint num) {
 	_graphicsManager->setCursorPalette(colors, start, num);
 }
 
 void ModularBackend::disableCursorPalette(bool disable) {
 	_graphicsManager->disableCursorPalette(disable);
-}*/
+}
 
 /** TODO: Add getMillis, delayMillis and getTimeAndDate
  ** to timer manager

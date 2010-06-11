@@ -81,17 +81,16 @@ public:
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
 	int getGraphicsMode() const;
-
 #ifdef USE_RGB_COLOR
-	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-
-	// Highest supported
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 #endif
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
+
 	void beginGFXTransaction();
 	OSystem::TransactionError endGFXTransaction();
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
+	
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	void setPalette(const byte *colors, uint start, uint num);
@@ -102,14 +101,18 @@ public:
 	void fillScreen(uint32 col);
 	void updateScreen();
 	void setShakePos(int shakeOffset);
+	void setFocusRectangle(const Common::Rect& rect) {}
+	void clearFocusRectangle() {}
+
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
 	void clearOverlay();
 	void grabOverlay(OverlayColor *buf, int pitch);
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight()  { return _videoMode.overlayHeight; }
-	virtual int16 getOverlayWidth()   { return _videoMode.overlayWidth; }
+	virtual int16 getOverlayHeight() { return _videoMode.overlayHeight; }
+	virtual int16 getOverlayWidth() { return _videoMode.overlayWidth; }
+
 	bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
@@ -118,7 +121,6 @@ public:
 		_cursorPaletteDisabled = disable;
 		blitCursor();
 	}
-	virtual int getScreenChangeID() const { return _screenChangeCount; }
 	
 #ifdef USE_OSD
 	void displayMessageOnOSD(const char *msg);

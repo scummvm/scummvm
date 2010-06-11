@@ -50,10 +50,10 @@ public:
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
-	//virtual int getScreenChangeID() const;
+	virtual int getScreenChangeID() const;
 
-	//virtual void beginGFXTransaction();
-	//virtual OSystem::TransactionError endGFXTransaction();
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
 
 	virtual int16 getHeight();
 	virtual int16 getWidth();
@@ -65,8 +65,8 @@ public:
 	virtual void fillScreen(uint32 col);
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeOffset);
-	//virtual void setFocusRectangle(const Common::Rect& rect);
-	//virtual void clearFocusRectangle();
+	virtual void setFocusRectangle(const Common::Rect& rect);
+	virtual void clearFocusRectangle();
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
@@ -80,8 +80,8 @@ public:
 	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
-	/*virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable);*/
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual void disableCursorPalette(bool disable);
 
 	/*virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);

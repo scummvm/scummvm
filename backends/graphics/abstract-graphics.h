@@ -41,9 +41,16 @@ public:
 	virtual int getDefaultGraphicsMode() const = 0;
 	virtual bool setGraphicsMode(int mode) = 0;
 	virtual int getGraphicsMode() const = 0;
+#ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
+#endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual int getScreenChangeID() const = 0;
+
+	virtual void beginGFXTransaction() = 0;
+	virtual OSystem::TransactionError endGFXTransaction() = 0;
+
 	virtual int16 getHeight() = 0;
 	virtual int16 getWidth() = 0;
 	virtual void setPalette(const byte *colors, uint start, uint num) = 0;
@@ -54,6 +61,9 @@ public:
 	virtual void fillScreen(uint32 col) = 0;
 	virtual void updateScreen() = 0;
 	virtual void setShakePos(int shakeOffset) = 0;
+	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
+	virtual void clearFocusRectangle() = 0;
+
 	virtual void showOverlay() = 0;
 	virtual void hideOverlay() = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
@@ -62,9 +72,14 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h)= 0;
 	virtual int16 getOverlayHeight() = 0;
 	virtual int16 getOverlayWidth() = 0;
+
 	virtual bool showMouse(bool visible) = 0;
 	virtual void warpMouse(int x, int y) = 0;
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+	virtual void setCursorPalette(const byte *colors, uint start, uint num) = 0;
+	virtual void disableCursorPalette(bool disable) = 0;
+
+	virtual void displayMessageOnOSD(const char *msg) {}
 };
 
 #endif
