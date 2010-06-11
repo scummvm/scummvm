@@ -375,4 +375,12 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
+	// Placeholder for empty kernel functions which are still called from the engine
+	// scripts (like the empty kSetSynonyms function in SCI1.1). This differs from
+	// dummy functions because it does nothing and never throws a warning when it's
+	// called
+	return s->r_acc;
+}
+
 } // End of namespace Sci

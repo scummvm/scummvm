@@ -357,6 +357,7 @@ SciKernelFunction kfunct_mappers[] = {
 	{ "TextColors", kTextColors, ".*" },
 	{ "TextFonts", kTextFonts, ".*" },
 	{ "Portrait", kPortrait, ".*" },
+	{ "Empty", kEmpty, ".*" },
 
 #ifdef ENABLE_SCI32
 	// SCI2 Kernel Functions
@@ -742,8 +743,8 @@ void Kernel::setDefaultKernelNames() {
 		break;
 
 	case SCI_VERSION_1_1:
-		// In SCI1.1, kSetSynonyms is a dummy (empty) function
-		_kernelNames[0x26] = "Dummy";
+		// In SCI1.1, kSetSynonyms is an empty function
+		_kernelNames[0x26] = "Empty";
 
 		// In the Windows version of KQ6 CD, the empty kSetSynonyms
 		// function has been replaced with kPortrait. In KQ6 Mac,

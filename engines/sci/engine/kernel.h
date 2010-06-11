@@ -405,6 +405,7 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
+reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
