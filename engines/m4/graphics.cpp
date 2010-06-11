@@ -769,7 +769,7 @@ void M4Surface::scrollX(int xAmount) {
 		return;
 
 	byte buffer[80];
-	int direction = (xAmount > 0) ? 1 : -1;
+	int direction = (xAmount > 0) ? -1 : 1;
 	int xSize = ABS(xAmount);
 	assert(xSize <= 80);
 

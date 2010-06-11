@@ -87,7 +87,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	animStream->skip(2);
 	_field12 = animStream->readUint16LE() != 0;
 	_spriteListIndex = animStream->readUint16LE();
-	_scrollX = animStream->readUint16LE();
+	_scrollX = animStream->readSint16LE();
 	_scrollY = animStream->readSint16LE();
 	animStream->skip(10);
 	
