@@ -147,7 +147,7 @@ protected:
 
 	void mixerProducerThread();
 	static int SDLCALL mixerProducerThreadEntry(void *arg);
-	void initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize);
+	void initThreadedMixer(Audio::Mixer *mixer, uint bufSize);
 	void deinitThreadedMixer();
 #endif
 

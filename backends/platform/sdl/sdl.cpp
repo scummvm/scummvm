@@ -457,7 +457,7 @@ void OSystem_SDL::mixerProducerThread() {
 
 		// Generate samples and put them into the next buffer
 		nextSoundBuffer = _activeSoundBuf ^ 1;
-		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
+		((Audio::MixerImpl *)_mixer)->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
 
 		// Swap buffers
 		_activeSoundBuf = nextSoundBuffer;
@@ -473,7 +473,7 @@ int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
 }
 
 
-void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
+void OSystem_SDL::initThreadedMixer(Audio::Mixer *mixer, uint bufSize) {
 	_soundThreadIsRunning = false;
 	_soundThreadShouldQuit = false;
 
