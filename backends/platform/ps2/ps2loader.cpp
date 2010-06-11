@@ -40,7 +40,7 @@
 //#define __PS2_DEBUG_PLUGINS__
 
 #ifdef __PS2_DEBUG_PLUGINS__
-#define DBG(x,...) fprintf(stderr,x, ## __VA_ARGS__)
+#define DBG(x,...) sioprintf(x, ## __VA_ARGS__)
 #else
 #define DBG(x,...)
 #endif
@@ -103,7 +103,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 	// Treat each relocation entry. Loop over all of them
 	int cnt = size / sizeof(*rel);
 
-	DBG("Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
+	//DBG("Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
 
 	bool seenHi16 = false;	// For treating HI/LO16 commands
 	int firstHi16 = -1;		// Mark the point of the first hi16 seen
@@ -141,9 +141,9 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 
 				lastHiSymVal = sym->st_value;
 				hi16InShorts = (ShortsMan.inGeneralSegment((char *)sym->st_value)); // Fix for problem with switching btw segments
-				if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
-					DBG("R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x\n",
-					    i, rel[i].r_offset, ahl, *target);
+				//if (debugRelocs[0]++ < DEBUG_NUM)	// Print only a set number
+					//DBG("R_MIPS_HI16: i=%d, offset=%x, ahl = %x, target = %x\n",
+					    //i, rel[i].r_offset, ahl, *target);
 			}
 			break;
 
@@ -194,12 +194,12 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				*target &= 0xffff0000;						// Clear the lower 16 bits of current target
 				*target |= relocation & 0xffff;				// Take the lower 16 bits of the relocation
 
-				if (debugRelocs[1]++ < DEBUG_NUM)
-					DBG("R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
-					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
-				if (lo16InShorts && debugRelocs[2]++ < DEBUG_NUM)
-					DBG("R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
-					    i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
+				//if (debugRelocs[1]++ < DEBUG_NUM)
+					//DBG("R_MIPS_LO16: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
+					  //  i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
+				//if (lo16InShorts && debugRelocs[2]++ < DEBUG_NUM)
+					//DBG("R_MIPS_LO16s: i=%d, offset=%x, a=%x, ahl = %x, lastTarget = %x, origt = %x, target = %x\n",
+					  //  i, rel[i].r_offset, a, ahl, *lastTarget, origTarget, *target);
 			}
 			break;
 
@@ -211,13 +211,13 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				*target &= 0xfc000000;					// Clean lower 26 target bits
 				*target |= (relocation & 0x03ffffff);
 
-				if (debugRelocs[3]++ < DEBUG_NUM)
-					DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
-					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
+				//if (debugRelocs[3]++ < DEBUG_NUM)
+					//DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
+					  //  i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			} else {
-				if (debugRelocs[4]++ < DEBUG_NUM)
-					DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
-					    i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
+				//if (debugRelocs[4]++ < DEBUG_NUM)
+					//DBG("R_MIPS_26: i=%d, offset=%x, symbol=%d, stinfo=%x, a=%x, origTarget=%x, target=%x\n",
+					  //  i, rel[i].r_offset, REL_INDEX(rel[i].r_info), sym->st_info, a, origTarget, *target);
 			}
 			break;
 
@@ -232,9 +232,9 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 				*target &= 0xffff0000;					// Clear the lower 16 bits of the target
 				*target |= relocation & 0xffff;
 
-				if (debugRelocs[5]++ < DEBUG_NUM)
-					DBG("R_MIPS_GPREL16: i=%d, a=%x, gpVal=%x, origTarget=%x, target=%x, offset=%x\n",
-					    i, a, _gpVal, origTarget, *target, _shortsSegment->getOffset());
+				//if (debugRelocs[5]++ < DEBUG_NUM)
+					//DBG("R_MIPS_GPREL16: i=%d, a=%x, gpVal=%x, origTarget=%x, target=%x, offset=%x\n",
+					  //  i, a, _gpVal, origTarget, *target, _shortsSegment->getOffset());
 			}
 
 			break;
@@ -249,8 +249,8 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 					relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
 				*target = relocation;
 
-				if (debugRelocs[6]++ < DEBUG_NUM)
-					DBG("R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+				//if (debugRelocs[6]++ < DEBUG_NUM)
+					//DBG("R_MIPS_32: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
 			}
 			break;
 
@@ -261,7 +261,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 		}
 	}
 
-	DBG("Done with relocation. extendedHi16=%d\n\n", extendedHi16);
+	//DBG("Done with relocation. extendedHi16=%d\n\n", extendedHi16);
 
 	free(rel);
 	return true;
@@ -279,8 +279,8 @@ bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
 		return false;
 	}
 
-	DBG("phoff = %d, phentsz = %d, phnum = %d\n",
-	    ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
+	//DBG("phoff = %d, phentsz = %d, phnum = %d\n",
+	    //ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
 
 	return true;
 }
@@ -299,8 +299,8 @@ bool DLObject::readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, in
 		return false;
 	}
 
-	DBG("offs = %x, filesz = %x, memsz = %x, align = %x\n",
-	    phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
+	//DBG("offs = %x, filesz = %x, memsz = %x, align = %x\n",
+	    //phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
 
 	return true;
 
@@ -315,7 +315,7 @@ bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
 
 		// Attempt to allocate memory for segment
 		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
-		DBG("extra mem is %x\n", extra);
+		//DBG("extra mem is %x\n", extra);
 
 		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
 
@@ -323,7 +323,7 @@ bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
 			seterror("Out of memory.\n");
 			return false;
 		}
-		DBG("allocated segment @ %p\n", _segment);
+		//DBG("allocated segment @ %p\n", _segment);
 
 		// Get offset to load segment into
 		baseAddress = (char *)_segment + phdr->p_vaddr;
@@ -332,14 +332,14 @@ bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
 		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
 
 		baseAddress = _shortsSegment->getStart();
-		DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
-		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
+		//DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
+		    //_shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
 
 	}
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
-		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
+		//DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
 		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 	// Read the segment into memory
@@ -396,7 +396,7 @@ int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 		return -1;
 	}
 
-	DBG("Symbol section at section %d, size %x\n", _symtab_sect, shdr[_symtab_sect].sh_size);
+	//DBG("Symbol section at section %d, size %x\n", _symtab_sect, shdr[_symtab_sect].sh_size);
 
 	// Allocate memory for symbol table
 	if (!(_symtab = malloc(shdr[_symtab_sect].sh_size))) {
@@ -414,7 +414,7 @@ int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Set number of symbols
 	_symbol_cnt = shdr[_symtab_sect].sh_size / sizeof(Elf32_Sym);
-	DBG("Loaded %d symbols.\n", _symbol_cnt);
+	//DBG("Loaded %d symbols.\n", _symbol_cnt);
 
 	return _symtab_sect;
 
@@ -443,7 +443,7 @@ bool DLObject::loadStringTable(int fd, Elf32_Shdr *shdr) {
 void DLObject::relocateSymbols(Elf32_Addr offset, Elf32_Addr shortsOffset) {
 
 	int shortsCount = 0, othersCount = 0;
-	DBG("Relocating symbols by %x. Shorts offset=%x\n", offset, shortsOffset);
+	//DBG("Relocating symbols by %x. Shorts offset=%x\n", offset, shortsOffset);
 
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
@@ -466,7 +466,7 @@ void DLObject::relocateSymbols(Elf32_Addr offset, Elf32_Addr shortsOffset) {
 
 	}
 
-	DBG("Relocated %d short symbols, %d others.\n", shortsCount, othersCount);
+	//DBG("Relocated %d short symbols, %d others.\n", shortsCount, othersCount);
 }
 
 bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
@@ -546,11 +546,11 @@ bool DLObject::open(const char *path) {
 	int fd;
 	void *ctors_start, *ctors_end;
 
-	DBG("open(\"%s\")\n", path);
+	//DBG("open(\"%s\")\n", path);
 
 	// Get the address of the global pointer
 	_gpVal = (unsigned int) & _gp;
-	DBG("_gpVal is %x\n", _gpVal);
+	//DBG("_gpVal is %x\n", _gpVal);
 
 	//PS2 has no "PowerMan" for suspending the system.
 	//PowerMan.beginCriticalSection();
@@ -590,11 +590,11 @@ bool DLObject::open(const char *path) {
 		return false;
 	}
 
-	DBG("Calling constructors.\n");
+	//DBG("Calling constructors.\n");
 	for (void (**f)(void) = (void (**)(void))ctors_start; f != ctors_end; f++)
 		(**f)();
 
-	DBG("%s opened ok.\n", path);
+	//DBG("%s opened ok.\n", path);
 	return true;
 }
 
@@ -608,7 +608,7 @@ bool DLObject::close() {
 }
 
 void *DLObject::symbol(const char *name) {
-	DBG("symbol(\"%s\")\n", name);
+	//DBG("symbol(\"%s\")\n", name);
 
 	if (_symtab == NULL || _strtab == NULL || _symbol_cnt < 1) {
 		seterror("No symbol table loaded.");
@@ -624,7 +624,7 @@ void *DLObject::symbol(const char *name) {
 		        !strcmp(name, _strtab + s->st_name)) {
 
 			// We found the symbol
-			DBG("=> %p\n", (void*)s->st_value);
+			//DBG("=> %p\n", (void*)s->st_value);
 			return (void*)s->st_value;
 		}
 	}
@@ -668,14 +668,14 @@ ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *or
 
 	_list.insert(i, seg);
 
-	DBG("Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.\n",
-	    size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
+	//DBG("Shorts segment size %x allocated. End = %p. Remaining space = %x. Highest so far is %p.\n",
+	    //size, lastAddress + size, _shortsEnd - _list.back()->getEnd(), _highestAddress);
 
 	return seg;
 }
 
 void ShortSegmentManager::deleteSegment(ShortSegmentManager::Segment *seg) {
-	DBG("Deleting shorts segment from %p to %p.\n\n", seg->getStart(), seg->getEnd());
+	//DBG("Deleting shorts segment from %p to %p.\n\n", seg->getStart(), seg->getEnd());
 	_list.remove(seg);
 	delete seg;
 }
