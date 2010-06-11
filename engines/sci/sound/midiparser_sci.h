@@ -79,6 +79,8 @@ public:
 
 	void clearUsedChannels() { _channelsUsed = 0; }
 
+	const byte *getMixedData() const { return _mixedData; }
+
 protected:
 	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
 	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }

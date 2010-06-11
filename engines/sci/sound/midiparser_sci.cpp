@@ -75,7 +75,8 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_pSnd = psnd;
 	_soundVersion = soundVersion;
 
-	setVolume(psnd->volume);
+	if (_pSnd)
+		setVolume(psnd->volume);
 
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
@@ -86,30 +87,35 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 
 	_num_tracks = 1;
 	_tracks[0] = _mixedData;
-	setTrack(0);
+	if (_pSnd)
+		setTrack(0);
 	_loopTick = 0;
 
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		// Set initial voice count
-		for (int i = 0; i < 16; ++i) {
-			byte voiceCount = 0;
-			if (channelFilterMask & (1 << i))
-				voiceCount = psnd->soundRes->getInitialVoiceCount(i);
-			_driver->send(0xB0 | i, 0x4B, voiceCount);
+	if (_pSnd) {
+		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			// Set initial voice count
+			for (int i = 0; i < 16; ++i) {
+				byte voiceCount = 0;
+				if (channelFilterMask & (1 << i))
+					voiceCount = psnd->soundRes->getInitialVoiceCount(i);
+				_driver->send(0xB0 | i, 0x4B, voiceCount);
+			}
 		}
-	}
 
-	// Send a velocity off signal to all channels
-	for (int i = 0; i < 16; ++i) {
-		_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity
+		// Send a velocity off signal to all channels
+		for (int i = 0; i < 16; ++i) {
+			_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity
+		}
 	}
 
 	return true;
 }
 
 void MidiParser_SCI::unloadMusic() {
-	resetTracking();
-	allNotesOff();
+	if (_pSnd) {
+		resetTracking();
+		allNotesOff();
+	}
 	_num_tracks = 0;
 	_active_track = 255;
 	_resetOnPause = false;
@@ -120,7 +126,7 @@ void MidiParser_SCI::unloadMusic() {
 	}
 
 	// Center the pitch wheels and hold pedal in preparation for the next piece of music
-	if (_driver) {
+	if (_driver && _pSnd) {
 		for (int i = 0; i < 16; ++i) {
 			if (isChannelUsed(i)) {
 				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
@@ -359,10 +365,10 @@ byte *MidiParser_SCI::midiMixChannels() {
 	long new_delta;
 	SoundResource::Channel *channel;
 
-	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still active channel
+	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
 		channel = &_track->channels[curr];
 		curDelta = *channel->data++;
-		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the comamnd is supposed to occur
+		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
 		new_delta = channel->time - ticker;

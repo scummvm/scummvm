@@ -39,6 +39,7 @@
 #include "sci/sound/iterator/songlib.h"	// for SongLibrary
 #include "sci/sound/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #else
+#include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
 #endif
 #include "sci/sound/drivers/mididriver.h"
@@ -106,6 +107,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
+	DCmd_Register("verify_midi",		WRAP_METHOD(Console, cmdVerifyMidi));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -326,6 +328,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
+	DebugPrintf(" verify_midi - Performs checks on MIDI patches, for unmapped instruments\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -832,7 +835,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 		if (!script)
 			DebugPrintf("Error: script %d couldn't be loaded\n", itr->number);
 
-		heap = _engine->getResMan()->findResource(*itr, false);
+		heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->number), false);
 		if (!heap)
 			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->number);
 
@@ -844,6 +847,107 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	}
 
 	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
+
+	return true;
+}
+
+bool Console::cmdVerifyMidi(int argc, const char **argv) {
+	// TODO: Sometimes this goes out of bounds with some songs, as it misses
+	// the EOT signal
+#if 0
+	SciVersion doSoundVersion = _engine->_features->detectDoSoundType();
+	MidiPlayer *player = MidiPlayer_Midi_create(doSoundVersion);
+	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion);
+	parser->setMidiDriver(player);
+
+	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);
+	sort(resources->begin(), resources->end(), ResourceIdLess());
+	Common::List<ResourceId>::iterator itr = resources->begin();
+
+	DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources->size());
+
+	SoundResource *sound;
+
+	while (itr != resources->end()) {
+		sound = new SoundResource(itr->number, _engine->getResMan(), doSoundVersion);
+		int channelFilterMask = sound->getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
+		SoundResource::Track *track = sound->getTrackByType(player->getPlayId());
+		if (track->digitalChannelNr != -1) {
+			// Skip digitized sound effects
+			delete sound;
+			continue;
+		}
+
+		parser->loadMusic(track, NULL, channelFilterMask, doSoundVersion);
+		const byte *channelData = parser->getMixedData();
+
+		byte param1 = 0;
+		byte command = 0, prev = 0;
+		byte curEvent = 0;
+		bool endOfTrack = false;
+
+		do {
+			while (*channelData == 0xF8)
+				channelData++;
+
+			channelData++;	// delta
+
+			if ((*channelData & 0xF0) >= 0x80)
+				curEvent = *(channelData++);
+			else
+				curEvent = prev;
+			if (curEvent < 0x80)
+				continue;
+
+			prev = curEvent;
+			command = curEvent >> 4;
+
+			switch (command) {
+			case 0xC:	// program change
+				param1 = *channelData++;
+				// TODO: verify that the instrument is mapped
+				printf("Song %d, patch %d\n", itr->number, param1);
+				break;
+			case 0xD:
+			case 0xB:
+				param1 = *channelData++;
+				break;
+			case 0x8:
+			case 0x9:
+			case 0xA:
+			case 0xE:
+				param1 = *channelData++;
+				*channelData++;	// param2
+				break;
+			case 0xF:
+				if ((curEvent & 0x0F) == 0x2) {
+					param1 = *channelData++;
+					*channelData++;	// param2
+				} else if ((curEvent & 0x0F) == 0x3) {
+					param1 = *channelData++;
+				} else if ((curEvent & 0x0F) == 0xF) {	// META
+					byte type = *channelData++;
+					if (type == 0x2F) {// end of track reached
+						endOfTrack = true;
+					} else {
+						// no further processing necessary
+					}
+				}
+				break;
+			default:
+				break;
+			}
+		} while (!endOfTrack);
+
+		delete sound;
+		++itr;
+	}
+
+	delete parser;
+	delete player;
+
+	DebugPrintf("Music check finished\n");
+#endif
 
 	return true;
 }
