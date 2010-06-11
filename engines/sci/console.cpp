@@ -107,7 +107,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("list",				WRAP_METHOD(Console, cmdList));
 	DCmd_Register("hexgrep",			WRAP_METHOD(Console, cmdHexgrep));
 	DCmd_Register("verify_scripts",		WRAP_METHOD(Console, cmdVerifyScripts));
-	DCmd_Register("verify_midi",		WRAP_METHOD(Console, cmdVerifyMidi));
+	DCmd_Register("show_instruments",	WRAP_METHOD(Console, cmdShowInstruments));
 	// Game
 	DCmd_Register("save_game",			WRAP_METHOD(Console, cmdSaveGame));
 	DCmd_Register("restore_game",		WRAP_METHOD(Console, cmdRestoreGame));
@@ -328,7 +328,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" list - Lists all the resources of a given type\n");
 	DebugPrintf(" hexgrep - Searches some resources for a particular sequence of bytes, represented as hexadecimal numbers\n");
 	DebugPrintf(" verify_scripts - Performs sanity checks on SCI1.1-SCI2.1 game scripts (e.g. if they're up to 64KB in total)\n");
-	DebugPrintf(" verify_midi - Performs checks on MIDI patches, for unmapped instruments\n");
+	DebugPrintf(" show_instruments - Shows the instruments of a specific song, or all songs\n");
 	DebugPrintf("\n");
 	DebugPrintf("Game:\n");
 	DebugPrintf(" save_game - Saves the current game state to the hard disk\n");
@@ -851,40 +851,56 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdVerifyMidi(int argc, const char **argv) {
-	// TODO: Sometimes this goes out of bounds with some songs, as it misses
-	// the EOT signal
-#if 0
+bool Console::cmdShowInstruments(int argc, const char **argv) {
+	int songNumber = -1;
+
+	if (argc == 2)
+		songNumber = atoi(argv[1]);
+
 	SciVersion doSoundVersion = _engine->_features->detectDoSoundType();
 	MidiPlayer *player = MidiPlayer_Midi_create(doSoundVersion);
 	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion);
 	parser->setMidiDriver(player);
-
+	
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);
 	sort(resources->begin(), resources->end(), ResourceIdLess());
 	Common::List<ResourceId>::iterator itr = resources->begin();
+	int instruments[128];
+	for (int i = 0; i < 128; i++)
+		instruments[i] = 0;
 
-	DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources->size());
+	if (songNumber == -1) {
+		DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources->size());
+		DebugPrintf("Instruments:\n");
+		DebugPrintf("============\n");
+	}
 
 	SoundResource *sound;
 
 	while (itr != resources->end()) {
+		if (songNumber >= 0 && itr->number != songNumber) {
+			++itr;
+			continue;
+		}
+
 		sound = new SoundResource(itr->number, _engine->getResMan(), doSoundVersion);
 		int channelFilterMask = sound->getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
 		SoundResource::Track *track = sound->getTrackByType(player->getPlayId());
 		if (track->digitalChannelNr != -1) {
 			// Skip digitized sound effects
 			delete sound;
+			++itr;
 			continue;
 		}
 
 		parser->loadMusic(track, NULL, channelFilterMask, doSoundVersion);
 		const byte *channelData = parser->getMixedData();
 
-		byte param1 = 0;
-		byte command = 0, prev = 0;
-		byte curEvent = 0;
+		byte curEvent = 0, prevEvent = 0, command = 0;
 		bool endOfTrack = false;
+		bool firstOneShown = false;
+
+		DebugPrintf("Song %d: ", itr->number);
 
 		do {
 			while (*channelData == 0xF8)
@@ -895,36 +911,47 @@ bool Console::cmdVerifyMidi(int argc, const char **argv) {
 			if ((*channelData & 0xF0) >= 0x80)
 				curEvent = *(channelData++);
 			else
-				curEvent = prev;
+				curEvent = prevEvent;
 			if (curEvent < 0x80)
 				continue;
 
-			prev = curEvent;
+			prevEvent = curEvent;
 			command = curEvent >> 4;
 
 			switch (command) {
 			case 0xC:	// program change
-				param1 = *channelData++;
-				// TODO: verify that the instrument is mapped
-				printf("Song %d, patch %d\n", itr->number, param1);
+				{
+				//byte channel = curEvent & 0x0F;
+				byte instrument = *channelData++;
+				if (!firstOneShown)
+					firstOneShown = true;					
+				else
+					DebugPrintf(",");
+
+				DebugPrintf(" %d", instrument);
+				instruments[instrument]++;
+				}
 				break;
 			case 0xD:
+				channelData++;	// param1
+				break;
 			case 0xB:
-				param1 = *channelData++;
+				channelData++;	// param1
+				channelData++;	// param2
 				break;
 			case 0x8:
 			case 0x9:
 			case 0xA:
 			case 0xE:
-				param1 = *channelData++;
-				*channelData++;	// param2
+				channelData++;	// param1
+				channelData++;	// param2
 				break;
 			case 0xF:
 				if ((curEvent & 0x0F) == 0x2) {
-					param1 = *channelData++;
-					*channelData++;	// param2
+					channelData++;	// param1
+					channelData++;	// param2
 				} else if ((curEvent & 0x0F) == 0x3) {
-					param1 = *channelData++;
+					channelData++;	// param1
 				} else if ((curEvent & 0x0F) == 0xF) {	// META
 					byte type = *channelData++;
 					if (type == 0x2F) {// end of track reached
@@ -939,6 +966,8 @@ bool Console::cmdVerifyMidi(int argc, const char **argv) {
 			}
 		} while (!endOfTrack);
 
+		DebugPrintf("\n");
+
 		delete sound;
 		++itr;
 	}
@@ -946,8 +975,16 @@ bool Console::cmdVerifyMidi(int argc, const char **argv) {
 	delete parser;
 	delete player;
 
-	DebugPrintf("Music check finished\n");
-#endif
+	DebugPrintf("\n");
+
+	if (songNumber == -1) {
+		DebugPrintf("Used instruments: ");
+		for (int i = 0; i < 128; i++) {
+			if (instruments[i] > 0)
+				DebugPrintf("%d, ", i);
+		}
+		DebugPrintf("\n\n");
+	}
 
 	return true;
 }
