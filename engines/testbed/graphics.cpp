@@ -19,10 +19,10 @@ GFXTestSuite::GFXTestSuite() {
 	g_system->grabPalette(_palette, 0, 3);
 	
 	// Add tests here
-	addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	// addTest("FullScreenMode", &GFXtests::fullScreenMode);
 	addTest("AspectRatio", &GFXtests::aspectRatio);
-	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
-	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	// addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	// addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
 }
 
 const char *GFXTestSuite::getName() {
@@ -56,12 +56,54 @@ void GFXTestSuite::execute() {
 
 // GFXtests go here
 
+void drawEllipse(int cx, int cy, int a, int b) {
+	byte buffer[100][100] = {0};
+	int shift = 25;
+	// Assume a rectangle of 50x50
+	// horizontal axis = y-axis
+	// vertical axis = x-axis
+	// The centre is (shift, shift). As of now assume it to be (0, 0)
+	// and when done shift it to (shift, shift)
+	float theta;
+	int x, y, x1, y1;
+
+	for (theta = 0; theta <= PI / 2; theta += PI / 90  ) {
+		x = (int)(b * sin(theta) + 0.5);
+		y = (int)(a * cos(theta) + 0.5);
+		
+		// This gives us four points
+		
+		x1 = x + shift;
+		y1 = y + shift;
+		
+		buffer[x1][y1] = 1;
+
+		x1 = (-1) * x + shift;
+		y1 = y + shift;
+		
+		buffer[x1][y1] = 1;
+		
+		x1 = x + shift;
+		y1 = (-1) * y + shift;
+		
+		buffer[x1][y1] = 1;
+
+		x1 = (-1) * x + shift;
+		y1 = (-1) * y + shift;
+		
+		buffer[x1][y1] = 1;
+	}
+
+	g_system->copyRectToScreen(&buffer[0][0], 100, cx, cy, 100, 100);
+	g_system->updateScreen();
+}
+
 bool GFXtests::fullScreenMode() {
 
-	Testsuite::displayMessage("Testing fullscreen mode. \n \
-	If the feature is supported by the backend, you should expect to see a toggle between fullscreen and normal modes");
+	Testsuite::displayMessage("Testing fullscreen mode.\n"
+	"If the feature is supported by the backend, you should expect to see a toggle between fullscreen and normal modes");
 
-	Common::Point pt(0,100);
+	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
 	
 	bool isFeaturePresent;
@@ -95,8 +137,11 @@ bool GFXtests::fullScreenMode() {
 bool GFXtests::aspectRatio() {
 	Testsuite::displayMessage("Testing Aspect Ratio Correction.\n"
 	"With this feature enabled games running at 320x200 should be scaled upto 320x240 pixels");
+
+	// Draw an ellipse
+	drawEllipse(25, 25, 24, 20);
 	
-	Common::Point pt(0,100);
+	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing Aspect ratio correction", pt);
 	
 	bool isFeaturePresent;
