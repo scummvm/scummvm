@@ -496,6 +496,11 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isnt meant to be used on hires)
 	for (y = _priorityBottom; y < 200; y++)
 		_priorityBands[y] = _priorityBandCount;
+
+	// adjust, if bottom is 200 (one over the actual screen range) - we could otherwise go possible out of bounds
+	//  sierra sci also adjust accordingly
+	if (_priorityBottom == 200)
+		_priorityBottom--;
 }
 
 void GfxPorts::priorityBandsInit(byte *data) {
