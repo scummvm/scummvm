@@ -108,7 +108,7 @@ public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface);
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface);
 	virtual void load(const Common::String &filename, int abortTimers);
 	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);

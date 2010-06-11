@@ -720,7 +720,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	_vm->_resourceManager->toss(sceneName);
 
 	// Load the surface artwork
-	surface->loadBackground(sceneNumber);
+	surface->loadBackground(artFileNum);
 
 	// Final cleanup
 	if (ssFlag)

@@ -90,6 +90,7 @@ private:
 	RGBList *_palData;
 	int _transition;
 	MadsAnimation *_activeAnimation;
+	bool _bgLoadFlag;
 
 	void reset();
 	void readNextCommand();

@@ -458,6 +458,8 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	_previousUpdate = 0;
 	_transition = kTransitionNone;
 	_activeAnimation = NULL;
+	_bgLoadFlag = true;
+	
 	reset();
 
 	// Set up system palette colors
@@ -572,12 +574,12 @@ void AnimviewView::readNextCommand() {
 	if (strchr(_currentLine, '.') == NULL)
 		strcat(_currentLine, ".aa");
 
-	_activeAnimation = new MadsAnimation(_vm, this);
-	_activeAnimation->load(_currentLine, 0);
+	uint16 flags = 0;
+	if (_bgLoadFlag)
+		flags |= 0x100;
 
-	_backgroundSurface.loadBackground(_activeAnimation->roomNumber());
-	_codeSurface.setSize(_backgroundSurface.width(), _backgroundSurface.height());
-	_codeSurface.fillRect(_codeSurface.bounds(), 0xff);
+	_activeAnimation = new MadsAnimation(_vm, this);
+	_activeAnimation->initialise(_currentLine, flags, &_backgroundSurface, &_codeSurface);
 
 	_spriteSlots.fullRefresh();
 /*
@@ -675,7 +677,10 @@ void AnimviewView::processCommand() {
 	str_upper(commandStr);
 	char *param = commandStr;
 
-	if (!strncmp(commandStr, "X", 1)) {
+	if (!strncmp(commandStr, "B", 1)) {
+		// Toggle background load flag
+		_bgLoadFlag = !_bgLoadFlag;
+	} else if (!strncmp(commandStr, "X", 1)) {
 		//printf("X ");
 	} else if (!strncmp(commandStr, "W", 1)) {
 		//printf("W ");

@@ -63,7 +63,7 @@ MadsAnimation::~MadsAnimation() {
 /**
  * Initialises and loads the data of an animation
  */
-void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface) {
+void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -114,7 +114,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	if (_animMode == 4)
 		flags |= 0x4000;
 	if (flags & 0x100)
-		loadInterface(interfaceSurface, sceneSurface);
+		loadInterface(surface, depthSurface);
 
 	// Initialise the reference list
 	for (int i = 0; i < spriteListCount; ++i)
