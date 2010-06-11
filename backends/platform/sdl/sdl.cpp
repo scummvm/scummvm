@@ -118,13 +118,19 @@ void OSystem_SDL::initBackend() {
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
 
+	// Create and hook up the event manager, if none exists yet (we check for
+	// this to allow subclasses to provide their own).
+	if (_eventManager == 0) {
+		_eventManager = new DefaultEventManager(this);
+	}
+
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
-	if (_savefile == 0) {
+	if (_savefileManager == 0) {
 #ifdef UNIX
-	_savefile = new POSIXSaveFileManager();
+	_savefileManager = new POSIXSaveFileManager();
 #else
-	_savefile = new DefaultSaveFileManager();
+	_savefileManager = new DefaultSaveFileManager();
 #endif
 	}
 
@@ -141,14 +147,14 @@ void OSystem_SDL::initBackend() {
 
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
-	if (_timer == 0) {
+	if (_timerManager == 0) {
 		// TODO: Implement SdlTimerManager
 		if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
 
-		_timer = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+		_timerManager = new DefaultTimerManager();
+		_timerID = SDL_AddTimer(10, &timer_handler, _timerManager);
 	}
 
 	// Create and hook up the graphics manager, if none exists yet (we check for
@@ -158,7 +164,7 @@ void OSystem_SDL::initBackend() {
 	}
 
 	if (_audiocdManager == 0) {
-		_audiocdManager = new SdlAudioCDManager();
+		_audiocdManager = (AudioCDManager *)new SdlAudioCDManager();
 	}
 
 #if !defined(MACOSX) && !defined(__SYMBIAN32__)
@@ -176,19 +182,12 @@ void OSystem_SDL::initBackend() {
 
 OSystem_SDL::OSystem_SDL()
 	:
-	_scrollLock(false),
-	_joystick(0),
 #if MIXER_DOUBLE_BUFFERING
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
-	_fsFactory(0),
-	_savefile(0),
-	_mixer(0),
-	_timer(0),
-	_mutexManager(0),
-	_graphicsManager(0),
-	_audiocdManager(0) {
+	_scrollLock(false),
+	_joystick(0) {
 
 	// reset mouse state
 	memset(&_km, 0, sizeof(_km));
@@ -212,8 +211,8 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
-	delete _savefile;
-	delete _timer;
+	delete _savefileManager;
+	delete _timerManager;
 }
 
 uint32 OSystem_SDL::getMillis() {
@@ -235,21 +234,6 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
-}
-
-Common::TimerManager *OSystem_SDL::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
-FilesystemFactory *OSystem_SDL::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -375,18 +359,6 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 }
 
-bool OSystem_SDL::hasFeature(Feature f) {
-	return _graphicsManager->hasFeature(f);
-}
-
-void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	_graphicsManager->setFeatureState(f, enable);
-}
-
-bool OSystem_SDL::getFeatureState(Feature f) {
-	return _graphicsManager->getFeatureState(f);
-}
-
 void OSystem_SDL::deinit() {
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
@@ -396,14 +368,14 @@ void OSystem_SDL::deinit() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
-	delete _timer;
+	delete _timerManager;
 
 	SDL_Quit();
 
 	// Event Manager requires save manager for storing
 	// recorded events
 	delete getEventManager();
-	delete _savefile;
+	delete _savefileManager;
 }
 
 void OSystem_SDL::quit() {
@@ -464,26 +436,6 @@ void OSystem_SDL::setupIcon() {
 	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
-}
-
-#pragma mark -
-#pragma mark --- Mutex ---
-#pragma mark -
-
-OSystem::MutexRef OSystem_SDL::createMutex() {
-	return _mutexManager->createMutex();
-}
-
-void OSystem_SDL::lockMutex(MutexRef mutex) {
-	_mutexManager->lockMutex(mutex);
-}
-
-void OSystem_SDL::unlockMutex(MutexRef mutex) {
-	_mutexManager->unlockMutex(mutex);
-}
-
-void OSystem_SDL::deleteMutex(MutexRef mutex) {
-	_mutexManager->deleteMutex(mutex);
 }
 
 #pragma mark -
@@ -585,11 +537,11 @@ void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
 #else
 
 void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_SDL *this_ = (OSystem_SDL *)sys;
+	ModularBackend *this_ = (ModularBackend *)sys;
 	assert(this_);
-	assert(this_->_mixer);
+	assert(this_->getMixer());
 
-	this_->_mixer->mixCallback(samples, len);
+	((Audio::MixerImpl *)this_->getMixer())->mixCallback(samples, len);
 }
 
 #endif
@@ -625,7 +577,7 @@ void OSystem_SDL::setupMixer() {
 		warning("Could not open audio device: %s", SDL_GetError());
 		_mixer = new Audio::MixerImpl(this, samplesPerSec);
 		assert(_mixer);
-		_mixer->setReady(false);
+		((Audio::MixerImpl *)_mixer)->setReady(false);
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
@@ -636,7 +588,7 @@ void OSystem_SDL::setupMixer() {
 		// Create the mixer instance and start the sound processing
 		_mixer = new Audio::MixerImpl(this, samplesPerSec);
 		assert(_mixer);
-		_mixer->setReady(true);
+		((Audio::MixerImpl *)_mixer)->setReady(true);
 
 #if MIXER_DOUBLE_BUFFERING
 		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
@@ -649,7 +601,7 @@ void OSystem_SDL::setupMixer() {
 
 void OSystem_SDL::closeMixer() {
 	if (_mixer)
-		_mixer->setReady(false);
+		((Audio::MixerImpl *)_mixer)->setReady(false);
 
 	SDL_CloseAudio();
 
@@ -661,161 +613,3 @@ void OSystem_SDL::closeMixer() {
 #endif
 
 }
-
-Audio::Mixer *OSystem_SDL::getMixer() {
-	assert(_mixer);
-	return _mixer;
-}
-
-#pragma mark -
-#pragma mark --- Graphics ---
-#pragma mark -
-
-const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
-	return _graphicsManager->getSupportedGraphicsModes();
-}
-
-int OSystem_SDL::getDefaultGraphicsMode() const {
-	return _graphicsManager->getDefaultGraphicsMode();
-}
-
-bool OSystem_SDL::setGraphicsMode(int mode) {
-	return _graphicsManager->setGraphicsMode(mode);
-}
-
-int OSystem_SDL::getGraphicsMode() const {
-	return _graphicsManager->getGraphicsMode();
-}
-
-#ifdef USE_RGB_COLOR
-Graphics::PixelFormat OSystem_SDL::getScreenFormat() const {
-	return _graphicsManager->getScreenFormat();
-}
-
-Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
-	return _graphicsManager->getSupportedFormats();
-}
-#endif
-
-void OSystem_SDL::beginGFXTransaction() {
-	_graphicsManager->beginGFXTransaction();
-}
-
-OSystem::TransactionError OSystem_SDL::endGFXTransaction() {
-	return _graphicsManager->endGFXTransaction();
-}
-
-void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {
-	_graphicsManager->initSize(w, h, format);
-}
-
-int16 OSystem_SDL::getHeight() {
-	return _graphicsManager->getHeight();
-}
-
-int16 OSystem_SDL::getWidth() {
-	return _graphicsManager->getWidth();
-}
-
-void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
-	_graphicsManager->setPalette(colors, start, num);
-}
-
-void OSystem_SDL::grabPalette(byte *colors, uint start, uint num) {
-	_graphicsManager->grabPalette(colors, start, num);
-}
-
-void OSystem_SDL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	_graphicsManager->copyRectToScreen(buf, pitch, x, y, w, h);
-}
-
-Graphics::Surface *OSystem_SDL::lockScreen() {
-	return _graphicsManager->lockScreen();
-}
-
-void OSystem_SDL::unlockScreen() {
-	_graphicsManager->unlockScreen();
-}
-
-/*void OSystem_SDL::fillScreen(uint32 col) {
-	_graphicsManager->fillScreen(col);
-}*/
-
-void OSystem_SDL::updateScreen() {
-	_graphicsManager->updateScreen();
-}
-
-void OSystem_SDL::setShakePos(int shakeOffset) {
-	_graphicsManager->setShakePos(shakeOffset);
-}
-
-void OSystem_SDL::showOverlay() {
-	_graphicsManager->showOverlay();
-}
-
-void OSystem_SDL::hideOverlay() {
-	_graphicsManager->hideOverlay();
-}
-
-Graphics::PixelFormat OSystem_SDL::getOverlayFormat() const {
-	return _graphicsManager->getOverlayFormat();
-}
-
-void OSystem_SDL::clearOverlay() {
-	_graphicsManager->clearOverlay();
-}
-
-void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
-	_graphicsManager->grabOverlay(buf, pitch);
-}
-
-void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	_graphicsManager->copyRectToOverlay(buf, pitch, x, y, w, h);
-}
-
-int16 OSystem_SDL::getOverlayHeight() {
-	return _graphicsManager->getOverlayHeight();
-}
-
-int16 OSystem_SDL::getOverlayWidth() {
-	return _graphicsManager->getOverlayWidth();
-}
-
-bool OSystem_SDL::showMouse(bool visible) {
-	return _graphicsManager->showMouse(visible);
-}
-
-void OSystem_SDL::warpMouse(int x, int y) {
-	_graphicsManager->warpMouse(x, y);
-}
-
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-	_graphicsManager->setMouseCursor(buf, w, h, hotspotX, hotspotY, keycolor, cursorTargetScale, format);
-}
-
-void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
-	_graphicsManager->setCursorPalette(colors, start, num);
-}
-
-void OSystem_SDL::disableCursorPalette(bool disable) {
-	_graphicsManager->disableCursorPalette(disable);
-}
-
-int OSystem_SDL::getScreenChangeID() const {
-	return _graphicsManager->getScreenChangeID();
-}
-
-#ifdef USE_OSD
-void OSystem_SDL::displayMessageOnOSD(const char *msg) {
-	_graphicsManager->displayMessageOnOSD(msg);
-}
-
-#pragma mark -
-#pragma mark --- AudioCD ---
-#pragma mark -
-
-AudioCDManager *OSystem_SDL::getAudioCD() {
-	return (AudioCDManager *)_audiocdManager;
-}
-
-#endif

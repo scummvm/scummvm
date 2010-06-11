@@ -32,7 +32,7 @@
 #include <SDL.h>
 #endif
 
-#include "backends/base-backend.h"
+#include "backends/modular-backend.h"
 
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
@@ -59,72 +59,12 @@ namespace Audio {
 #define MIXER_DOUBLE_BUFFERING 1
 #endif
 
-class OSystem_SDL : public BaseBackend {
+class OSystem_SDL : public ModularBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
 	virtual void initBackend();
-
-
-protected:
-	SdlMutexManager *_mutexManager;
-	SdlGraphicsManager *_graphicsManager;
-	SdlAudioCDManager *_audiocdManager;
-
-public:
-	void beginGFXTransaction();
-	TransactionError endGFXTransaction();
-
-#ifdef USE_RGB_COLOR
-	// Game screen
-	virtual Graphics::PixelFormat getScreenFormat() const;
-
-	// Highest supported
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
-#endif
-
-	// Set the size and format of the video bitmap.
-	// Typically, 320x200 CLUT8
-	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format); // overloaded by CE backend
-
-	virtual int getScreenChangeID() const;
-
-	// Set colors of the palette
-	void setPalette(const byte *colors, uint start, uint num);
-
-	// Get colors of the palette
-	void grabPalette(byte *colors, uint start, uint num);
-
-	// Draw a bitmap to screen.
-	// The screen will not be updated to reflect the new bitmap
-	virtual void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
-
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-
-	// Update the dirty areas of the screen
-	void updateScreen();
-
-	// Either show or hide the mouse cursor
-	bool showMouse(bool visible);
-
-	// Warp the mouse cursor. Where set_mouse_pos() only informs the
-	// backend of the mouse cursor's current position, this function
-	// actually moves the cursor to the specified position.
-	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
-
-	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
-
-	// Set colors of cursor palette
-	void setCursorPalette(const byte *colors, uint start, uint num);
-
-	// Disables or enables cursor palette
-	void disableCursorPalette(bool disable);
-
-	// Shaking is used in SCUMM. Set current shake position.
-	void setShakePos(int shake_pos);
 
 	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
@@ -132,91 +72,32 @@ public:
 	// Delay for a specified amount of milliseconds
 	void delayMillis(uint msecs);
 
+	virtual void getTimeAndDate(TimeDate &t) const;
+
 	// Get the next event.
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
-protected:
-	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
-
-	// Handlers for specific SDL events, called by pollEvent.
-	// This way, if a backend inherits fromt the SDL backend, it can
-	// change the behavior of only a single event, without having to override all
-	// of pollEvent.
-	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-
-public:
-
-
 	// Define all hardware keys for keymapper
 	virtual Common::HardwareKeySet *getHardwareKeySet();
+
+	virtual void preprocessEvents(SDL_Event *event) {}
 
 	// Set function that generates samples
 	virtual void setupMixer();
 	static void mixCallback(void *s, byte *samples, int len);
-
 	virtual void closeMixer();
-
-	virtual Audio::Mixer *getMixer();
 
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
 	void deinit();
 
-	virtual void getTimeAndDate(TimeDate &t) const;
-	virtual Common::TimerManager *getTimerManager();
-
-	// Mutex handling
-	MutexRef createMutex();
-	void lockMutex(MutexRef mutex);
-	void unlockMutex(MutexRef mutex);
-	void deleteMutex(MutexRef mutex);
-
-	// Overlay
-	virtual Graphics::PixelFormat getOverlayFormat() const;
-
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
-
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
-
 	virtual void setWindowCaption(const char *caption);
 
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
-	virtual void preprocessEvents(SDL_Event *event) {}
-
-#ifdef USE_OSD
-	void displayMessageOnOSD(const char *msg);
-#endif
-
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
-
-	virtual AudioCDManager *getAudioCD();
 
 protected:
 	bool _inited;
@@ -238,6 +119,21 @@ protected:
 	// joystick
 	SDL_Joystick *_joystick;
 
+	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
+
+	// Handlers for specific SDL events, called by pollEvent.
+	// This way, if a backend inherits fromt the SDL backend, it can
+	// change the behavior of only a single event, without having to override all
+	// of pollEvent.
+	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+
 #ifdef MIXER_DOUBLE_BUFFERING
 	SDL_mutex *_soundMutex;
 	SDL_cond *_soundCond;
@@ -255,12 +151,7 @@ protected:
 	void deinitThreadedMixer();
 #endif
 
-	FilesystemFactory *_fsFactory;
-	Common::SaveFileManager *_savefile;
-	Audio::MixerImpl *_mixer;
-
 	SDL_TimerID _timerID;
-	Common::TimerManager *_timer;
 
 	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
 	void toggleMouseGrab();

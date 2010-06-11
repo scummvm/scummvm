@@ -32,7 +32,7 @@
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/graphics/null/null-graphics.h"
 
-class ModularBackend : public OSystem {
+class ModularBackend : public OSystem, public Common::EventSource {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();

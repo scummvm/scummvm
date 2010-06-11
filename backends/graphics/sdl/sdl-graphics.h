@@ -126,13 +126,7 @@ public:
 	void displayMessageOnOSD(const char *msg);
 #endif
 
-	// Accessed from OSystem_SDL::pollEvent for EVENT_SCREEN_CHANGED
-	// The way this event works should be changed
-	bool _modeChanged;
-
-	// Accessed from OSystem_SDL::dispatchSDLEvent
-	// A function here for toggling it should be made for this
-	bool _forceFull;
+	void forceFullRedraw();
 
 	bool handleScalerHotkeys(const SDL_KeyboardEvent &key); // Move this?
 	bool isScalerHotkey(const Common::Event &event); // Move this?
@@ -210,6 +204,8 @@ protected:
 	virtual void setGraphicsModeIntern(); // overloaded by CE backend
 
 	/** Force full redraw on next updateScreen */
+	bool _forceFull;
+
 	ScalerProc *_scalerProc;
 	int _scalerType;
 	int _transactionMode;

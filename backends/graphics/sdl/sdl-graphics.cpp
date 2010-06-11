@@ -128,7 +128,7 @@ SdlGraphicsManager::SdlGraphicsManager()
 #endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
-	_scalerProc(0), _modeChanged(false), _screenChangeCount(0),
+	_scalerProc(0), _screenChangeCount(0),
 	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_currentShakePos(0), _newShakePos(0),
@@ -322,7 +322,6 @@ OSystem::TransactionError SdlGraphicsManager::endGFXTransaction() {
 			clearOverlay();
 
 			_videoMode.setup = true;
-			_modeChanged = true;
 			// OSystem_SDL::pollEvent used to update the screen change count,
 			// but actually it gives problems when a video mode was changed
 			// but OSystem_SDL::pollEvent was not called. This for example
@@ -339,7 +338,6 @@ OSystem::TransactionError SdlGraphicsManager::endGFXTransaction() {
 			}
 		} else {
 			_videoMode.setup = true;
-			_modeChanged = true;
 			// OSystem_SDL::pollEvent used to update the screen change count,
 			// but actually it gives problems when a video mode was changed
 			// but OSystem_SDL::pollEvent was not called. This for example
@@ -2070,6 +2068,10 @@ bool SdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 		return (isScaleKey || event.kbd.keycode == 'a');
 	}
 	return false;
+}
+
+void SdlGraphicsManager::forceFullRedraw() {
+	_forceFull = true;
 }
 
 #endif

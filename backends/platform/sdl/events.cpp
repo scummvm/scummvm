@@ -184,11 +184,11 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	handleKbdMouse();
 
 	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
-	if (_graphicsManager->_modeChanged) {
+	/*if (_graphicsManager->_modeChanged) { // TODO: use getScreenChangeID
 		_graphicsManager->_modeChanged = false;
 		event.type = Common::EVENT_SCREEN_CHANGED;
 		return true;
-	}
+	}*/
 
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
@@ -218,7 +218,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		_graphicsManager->_forceFull = true;
+		((SdlGraphicsManager *)_graphicsManager)->forceFullRedraw();
 		break;
 
 	case SDL_QUIT:
@@ -312,7 +312,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		if (_graphicsManager->handleScalerHotkeys(ev.key))
+		if (((SdlGraphicsManager *)_graphicsManager)->handleScalerHotkeys(ev.key))
 			return false;
 	}
 
@@ -341,7 +341,7 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if (_graphicsManager->isScalerHotkey(event))
+	if (((SdlGraphicsManager *)_graphicsManager)->isScalerHotkey(event))
 		// Swallow these key up events
 		return false;
 
@@ -352,7 +352,7 @@ bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
-	_graphicsManager->setMousePos(event.mouse.x, event.mouse.y);
+	((SdlGraphicsManager *)_graphicsManager)->setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }
 
