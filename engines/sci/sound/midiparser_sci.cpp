@@ -148,12 +148,12 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		_dataincAdd = false;
 		_pSnd->dataInc += _dataincToAdd;
 		_pSnd->signal = 0x7f + _pSnd->dataInc;
-		debugC(2, kDebugLevelSound, "datainc %04x", _dataincToAdd);
+		debugC(4, kDebugLevelSound, "datainc %04x", _dataincToAdd);
 	}
 	if (_signalSet) {
 		_signalSet = false;
 		_pSnd->signal = _signalToSet;
-		debugC(2, kDebugLevelSound, "signal %04x", _signalToSet);
+		debugC(4, kDebugLevelSound, "signal %04x", _signalToSet);
 	}
 
 	info.start = _position._play_pos;
@@ -313,7 +313,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					_pSnd->status = kSoundStopped;
 					_pSnd->signal = SIGNAL_OFFSET;
 
-					debugC(2, kDebugLevelSound, "signal EOT");
+					debugC(4, kDebugLevelSound, "signal EOT");
 				}
 			}
 			break;
@@ -376,21 +376,21 @@ byte *MidiParser_SCI::midiMixChannels() {
 
 		command = *channel->data++;
 		if (command != kEndOfTrack) {
-			debugC(2, kDebugLevelSound, "\nDELTA ");
+			debugC(4, kDebugLevelSound, "\nDELTA ");
 			// Write delta
 			while (new_delta > 240) {
 				*outData++ = 0xF8;
-				debugC(2, kDebugLevelSound, "F8 ");
+				debugC(4, kDebugLevelSound, "F8 ");
 				new_delta -= 240;
 			}
 			*outData++ = (byte)new_delta;
-			debugC(2, kDebugLevelSound, "%02X ", (uint32)new_delta);
+			debugC(4, kDebugLevelSound, "%02X ", (uint32)new_delta);
 		}
 		// Write command
 		switch (command) {
 		case 0xF0: // sysEx
 			*outData++ = command;
-			debugC(2, kDebugLevelSound, "%02X ", command);
+			debugC(4, kDebugLevelSound, "%02X ", command);
 			do {
 				par1 = *channel->data++;
 				*outData++ = par1; // out
@@ -478,22 +478,22 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 		}
 		if ((1 << curChannel) & channelMask) {
 			if (command != kEndOfTrack) {
-				debugC(2, kDebugLevelSound, "\nDELTA ");
+				debugC(4, kDebugLevelSound, "\nDELTA ");
 				// Write delta
 				while (delta > 240) {
 					*outData++ = 0xF8;
-					debugC(2, kDebugLevelSound, "F8 ");
+					debugC(4, kDebugLevelSound, "F8 ");
 					delta -= 240;
 				}
 				*outData++ = (byte)delta;
-				debugC(2, kDebugLevelSound, "%02X ", delta);
+				debugC(4, kDebugLevelSound, "%02X ", delta);
 				delta = 0;
 			}
 			// Write command
 			switch (command) {
 			case 0xF0: // sysEx
 				*outData++ = command;
-				debugC(2, kDebugLevelSound, "%02X ", command);
+				debugC(4, kDebugLevelSound, "%02X ", command);
 				do {
 					curByte = *channelData++;
 					*outData++ = curByte; // out
@@ -507,20 +507,20 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 			default: // MIDI command
 				if (lastCommand != command) {
 					*outData++ = command;
-					debugC(2, kDebugLevelSound, "%02X ", command);
+					debugC(4, kDebugLevelSound, "%02X ", command);
 					lastCommand = command;
 				}
 				if (midiParamCount > 0) {
 					if (curByte & 0x80) {
-						debugC(2, kDebugLevelSound, "%02X ", *channelData);
+						debugC(4, kDebugLevelSound, "%02X ", *channelData);
 						*outData++ = *channelData++;
 					} else {
-						debugC(2, kDebugLevelSound, "%02X ", curByte);
+						debugC(4, kDebugLevelSound, "%02X ", curByte);
 						*outData++ = curByte;
 					}
 				}
 				if (midiParamCount > 1) {
-					debugC(2, kDebugLevelSound, "%02X ", *channelData);
+					debugC(4, kDebugLevelSound, "%02X ", *channelData);
 					*outData++ = *channelData++;
 				}
 			}

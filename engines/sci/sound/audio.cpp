@@ -69,6 +69,8 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 		_wPlayFlag = false;
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
+	} else {
+		warning("startAudio: unable to create stream for audio number %d, module %d", number, module);
 	}
 
 	return 0;
@@ -81,6 +83,8 @@ int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
 
 	int sampleLen = 0;
 	Audio::AudioStream *audioStream = getAudioStream(module, tuple, &sampleLen);
+	if (!audioStream)
+		warning("wPlayAudio: unable to create stream for audio tuple %d, module %d", tuple, module);
 	delete audioStream;
 	_wPlayFlag = true;
 	return sampleLen;

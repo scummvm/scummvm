@@ -307,6 +307,9 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
+	debugC(2, kDebugLevelSound, "cmdInitSound, number %d, loop %d, prio %d, vol %d", resourceId, 
+			newSound->loop, newSound->priority, newSound->volume);
+
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
 	// effects. If the resource exists, play it using map 65535 (sound
@@ -423,8 +426,6 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
-	int16 loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	debugC(2, kDebugLevelSound, "cmdPlaySound: resource number %d, loop %d", resourceId, loop);
 
 	writeSelector(_segMan, obj, SELECTOR(handle), obj);
 
@@ -442,6 +443,10 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
+
+	debugC(2, kDebugLevelSound, "cmdPlaySound, number %d, loop %d, prio %d, vol %d", resourceId, 
+			musicSlot->loop, musicSlot->priority, musicSlot->volume);
+
 	_music->soundPlay(musicSlot);
 
 #endif
