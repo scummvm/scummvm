@@ -401,41 +401,33 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
  */
 void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthsSurface, 
 						 int scale, int transparentColour) {
-	/* TODO: This isn't a straight re-implementation of the original draw routine. Double check in future
-	 * whether this implementation provides equivalent functionality
-	 */
-	Common::Rect copyRect(0, 0, src->width(), src->height());
-
-	if (destX < 0) {
-		copyRect.left += -destX;
-		destX = 0;
-	} else if (destX + copyRect.width() > w) {
-		copyRect.right -= destX + copyRect.width() - w;
-	}
-	if (destY < 0) {
-		copyRect.top += -destY;
-		destY = 0;
-	} else if (destY + copyRect.height() > h) {
-		copyRect.bottom -= destY + copyRect.height() - h;
-	}
-
-	if (!copyRect.isValidRect())
-		return;
-
-	if (scale != 100) {
-		destX -= (src->width() * scale / 100) / 2;
-		destY -= (src->height() * scale / 100);
-	}
-
-	// Copy the specified area
-
-	byte *data = src->getBasePtr();
-	byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
-	byte *depthsData = depthsSurface->getBasePtr();
-	byte *depthsPtr = depthsData + (src->width() * copyRect.top + copyRect.left);
-	byte *destPtr = (byte *)pixels + (destY * width()) + destX;
 
 	if (scale == 100) {
+		// Copy the specified area
+		Common::Rect copyRect(0, 0, src->width(), src->height());
+
+		if (destX < 0) {
+			copyRect.left += -destX;
+			destX = 0;
+		} else if (destX + copyRect.width() > w) {
+			copyRect.right -= destX + copyRect.width() - w;
+		}
+		if (destY < 0) {
+			copyRect.top += -destY;
+			destY = 0;
+		} else if (destY + copyRect.height() > h) {
+			copyRect.bottom -= destY + copyRect.height() - h;
+		}
+
+		if (!copyRect.isValidRect())
+			return;
+
+		byte *data = src->getBasePtr();
+		byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
+		byte *depthsData = depthsSurface->getBasePtr();
+		byte *depthsPtr = depthsData + (src->width() * copyRect.top + copyRect.left);
+		byte *destPtr = (byte *)pixels + (destY * width()) + destX;
+
 		// 100% scaling variation
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 			// Copy each byte one at a time checking against the depth
@@ -448,35 +440,127 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surf
 			depthsPtr += depthsSurface->width();
 			destPtr += width();
 		}
-	} else {
-		// Scaled variation
-		int currY = -1;
 
-		for (int rowCtr = 0, yTotal = 0; rowCtr < copyRect.height(); ++rowCtr, yTotal += scale, 
-					srcPtr += src->width(), depthsPtr += depthsSurface->width()) {
-			int srcY = yTotal / 100;
-			if (srcY == currY)
-				continue;
-			currY = srcY;
-
-			// Loop through the source pixels
-			int currX = -1;
-			byte *destP = destPtr;
-			for (int xCtr = 0, xTotal = 0; xCtr < copyRect.width(); ++xCtr, xTotal += scale) {
-				int srcX = xTotal / 100;
-				if (srcX == currX)
-					continue;
-				currX = srcX;
-
-				if ((depthsPtr[currX] > depth) && (srcPtr[xCtr] != transparentColour))
-					*destP++ = srcPtr[xCtr];
-			}
-
-			destPtr += width();
-		}
+		src->freeData();
+		depthsSurface->freeData();	
+		return;
 	}
+
+	// Start of draw logic for scaled sprites
+	const byte *srcPixelsP = src->getBasePtr();
+
+	int destRight = this->width() - 1;
+	int destBottom = this->height() - 1;
+	bool normalFrame = true;	// TODO: false for negative frame numbers
+	int frameWidth = src->width();
+	int frameHeight = src->height();
+
+	int highestDim = MAX(frameWidth, frameHeight);
+	bool lineDist[MADS_SURFACE_WIDTH];
+	int distIndex = 0;
+	int distXCount = 0, distYCount = 0;
+
+	int distCtr = 0;
+	do {
+		distCtr += scale;
+		if (distCtr < 100) {
+			lineDist[distIndex] = false;
+		} else {
+			lineDist[distIndex] = true;
+			distCtr -= 100;
+
+			if (distIndex < frameWidth)
+				++distXCount;
+
+			if (distIndex < frameHeight)
+				++distYCount;
+		}
+	} while (++distIndex < highestDim);
+
+	destX -= distXCount / 2;
+	destY -= distYCount - 1;
+
+	// Check x bounding area
+	int spriteLeft = 0;
+	int spriteWidth = distXCount;
+	int widthAmount = destX + distXCount - 1;
+
+	if (destX < 0) {
+		spriteWidth += destX;
+		spriteLeft -= destX;
+	}
+	widthAmount -= destRight;
+	if (widthAmount > 0)
+		spriteWidth -= widthAmount;
+	
+	int spriteRight = spriteLeft + spriteWidth;
+	if (spriteWidth <= 0)
+		return;
+	if (!normalFrame) {
+		destX += distXCount - 1;
+		spriteLeft = -(distXCount - spriteRight);
+		spriteRight = (-spriteLeft + spriteWidth);
+	}
+
+	// Check y bounding area
+	int spriteTop = 0;
+	int spriteHeight = distYCount;
+	int heightAmount = destY + distYCount - 1;
+
+	if (destY < 0) {
+		spriteHeight += destY;
+		spriteTop -= destY;
+	}
+	heightAmount -= destBottom;
+	if (heightAmount > 0)
+		spriteHeight -= heightAmount;
+	int spriteBottom = spriteTop + spriteHeight;
+
+	if (spriteHeight <= 0)
+		return;
+
+	byte *destPixelsP = this->getBasePtr(destX + spriteLeft, destY + spriteTop);
+	const byte *depthPixelsP = depthsSurface->getBasePtr(destX + spriteLeft, destY + spriteTop);
+
+	spriteLeft = (spriteLeft * (normalFrame ? 1 : -1));
+
+	// Loop through the lines of the sprite
+	for (int yp = 0, sprY = -1; yp < frameHeight; ++yp, srcPixelsP += src->pitch) {
+		if (!lineDist[yp])
+			// Not a display line, so skip it
+			continue;
+		// Check whether the sprite line is in the display range
+		++sprY;
+		if ((sprY >= spriteBottom) || (sprY < spriteTop))
+			continue;
+
+		// Found a line to display. Loop through the pixels
+		const byte *srcP = srcPixelsP;
+		const byte *depthP = depthPixelsP;
+		byte *destP = destPixelsP;
+		for (int xp = 0, sprX = 0; xp < frameWidth; ++xp, ++srcP) {
+			if (xp < spriteLeft)
+				// Not yet reached start of display area
+				continue;
+			if (!lineDist[sprX++])
+				// Not a display pixel
+				continue;
+
+			if (depth <= *depthP)
+				*destP = *srcP;
+
+			++destP;
+			++depthP;
+		}
+
+		// Move to the next destination line
+		destPixelsP += this->pitch;
+		depthPixelsP += depthsSurface->pitch;
+	}
+
 	src->freeData();
 	depthsSurface->freeData();	
+	this->freeData();
 }
 
 void M4Surface::loadBackgroundRiddle(const char *sceneName) {
