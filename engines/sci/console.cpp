@@ -866,8 +866,14 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	sort(resources->begin(), resources->end(), ResourceIdLess());
 	Common::List<ResourceId>::iterator itr = resources->begin();
 	int instruments[128];
+	bool instrumentsSongs[128][1000];
+
 	for (int i = 0; i < 128; i++)
 		instruments[i] = 0;
+
+	for (int i = 0; i < 128; i++)
+		for (int j = 0; j < 1000; j++)
+			instrumentsSongs[i][j] = false;
 
 	if (songNumber == -1) {
 		DebugPrintf("%d sounds found, checking their instrument mappings...\n", resources->size());
@@ -930,6 +936,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 				DebugPrintf(" %d", instrument);
 				instruments[instrument]++;
+				instrumentsSongs[instrument][itr->number] = true;
 				}
 				break;
 			case 0xD:
@@ -983,6 +990,20 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			if (instruments[i] > 0)
 				DebugPrintf("%d, ", i);
 		}
+		DebugPrintf("\n\n");
+
+		DebugPrintf("Used instruments in songs:\n");
+		for (int i = 0; i < 128; i++) {
+			if (instruments[i] > 0) {
+				DebugPrintf("Instrument %d: ", i);
+				for (int j = 0; j < 1000; j++) {
+					if (instrumentsSongs[i][j])
+						DebugPrintf("%d, ", j);
+				}
+				DebugPrintf("\n");
+			}
+		}
+
 		DebugPrintf("\n\n");
 	}
 
