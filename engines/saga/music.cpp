@@ -42,19 +42,25 @@ namespace Saga {
 #define BUFFER_SIZE 4096
 #define MUSIC_SUNSPOT 26
 
-MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
+MusicDriver::MusicDriver() : _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
+	_nativeMT32 = ConfMan.getBool("native_mt32");
+
+	_driverType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = MidiDriver::createMidi(_driverType);
+	if (isMT32())
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
 	this->open();
 }
 
-MusicPlayer::~MusicPlayer() {
-	_driver->setTimerCallback(NULL, NULL);
-	stopMusic();
+MusicDriver::~MusicDriver() {
 	this->close();
+	delete _driver;
 }
 
-void MusicPlayer::setVolume(int volume) {
+void MusicDriver::setVolume(int volume) {
 	volume = CLIP(volume, 0, 255);
 
 	if (_masterVolume == volume)
@@ -71,32 +77,7 @@ void MusicPlayer::setVolume(int volume) {
 	}
 }
 
-int MusicPlayer::open() {
-	// Don't ever call open without first setting the output driver!
-	if (!_driver)
-		return 255;
-
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	_driver->setTimerCallback(this, &onTimer);
-	return 0;
-}
-
-void MusicPlayer::close() {
-	stopMusic();
-	if (_driver)
-		_driver->close();
-	_driver = 0;
-}
-
-void MusicPlayer::send(uint32 b) {
-	if (_passThrough) {
-		_driver->send(b);
-		return;
-	}
-
+void MusicDriver::send(uint32 b) {
 	byte channel = (byte)(b & 0x0F);
 	if ((b & 0xFFF0) == 0x07B0) {
 		// Adjust volume changes by master volume
@@ -104,71 +85,86 @@ void MusicPlayer::send(uint32 b) {
 		_channelVolume[channel] = volume;
 		volume = volume * _masterVolume / 255;
 		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && !_isGM && !_nativeMT32) {
+	} else if ((b & 0xF0) == 0xC0 && !_isGM && !isMT32()) {
+		// Remap MT32 instruments to General Midi
 		b = (b & 0xFFFF00FF) | MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8;
-	}
-	else if ((b & 0xFFF0) == 0x007BB0) {
-		//Only respond to All Notes Off if this channel
-		//has currently been allocated
-		if (_channel[b & 0x0F])
+	} else if ((b & 0xFFF0) == 0x007BB0) {
+		// Only respond to All Notes Off if this channel
+		// has currently been allocated
+		if (!_channel[channel])
 			return;
 	}
 
 	if (!_channel[channel])
 		_channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_channel[channel])
+	else
 		_channel[channel]->send(b);
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	// FIXME: The "elkfanfare" is played much too quickly. There are some
-	//        meta events that we don't handle. Perhaps there is a
-	//        connection...?
-
-	switch (type) {
-	case 0x2F:	// End of Track
-		if (_looping)
-			_parser->jumpToTick(0);
-		else
-			stopMusic();
-		break;
-	default:
-		//warning("Unhandled meta event: %02x", type);
-		break;
-	}
-}
-
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
-	Common::StackLock lock(music->_mutex);
-
-	if (music->_isPlaying)
-		music->_parser->onTimer();
-}
-
-void MusicPlayer::playMusic() {
-	_isPlaying = true;
-}
-
-void MusicPlayer::stopMusic() {
-	Common::StackLock lock(_mutex);
-
-	_isPlaying = false;
-	if (_parser) {
-		_parser->unloadMusic();
-		_parser = NULL;
-	}
-}
-
-Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm), _mixer(mixer), _adlib(false) {
-	_player = new MusicPlayer(driver);
+Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 	_currentVolume = 0;
-
-	xmidiParser = MidiParser::createParser_XMIDI();
-	smfParser = MidiParser::createParser_SMF();
+	_driver = new MusicDriver();
 
 	_digitalMusicContext = _vm->_resource->getContext(GAME_DIGITALMUSICFILE);
+	if (!_driver->isAdlib())
+		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_GM);
+	else
+		_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
+
+	if (!_musicContext) {
+		if (_vm->getGameId() == GID_ITE) {
+			_musicContext = _vm->_resource->getContext(GAME_RESOURCEFILE);
+		} else {
+			// I've listened to music from both the FM and the GM
+			// file, and I've tentatively reached the conclusion
+			// that they are both General MIDI. My guess is that
+			// the FM file has been reorchestrated to sound better
+			// on AdLib and other FM synths.
+			//
+			// Sev says the AdLib music does not sound like in the
+			// original, but I still think assuming General MIDI is
+			// the right thing to do. Some music, like the End
+			// Title (song 0) sound absolutely atrocious when piped
+			// through our MT-32 to GM mapping.
+			//
+			// It is, however, quite possible that the original
+			// used a different GM to FM mapping. If the original
+			// sounded markedly better, perhaps we should add some
+			// way of replacing our stock mapping in adlib.cpp?
+			//
+			// For the composer's own recording of the End Title,
+			// see http://www.johnottman.com/
+
+			// Oddly enough, the intro music (song 1) is very
+			// different in the two files. I have no idea why.
+			// Note that the IHNM demo has only got one music file
+			// (music.rsc). It is assumed that it contains FM music
+			_musicContext = _vm->_resource->getContext(GAME_MUSICFILE_FM);
+		}
+	}
+
+	// Check if the game is using XMIDI or SMF music
+	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
+		// Just set an XMIDI parser for Mac IHNM for now
+		_parser = MidiParser::createParser_XMIDI();
+	} else {
+		byte *resourceData;
+		size_t resourceSize;
+		int resourceId = (_vm->getGameId() == GID_ITE ? 9 : 0);
+		_vm->_resource->loadResource(_musicContext, resourceId, resourceData, resourceSize);
+		if (!memcmp(resourceData, "FORM", 4)) {
+			_parser = MidiParser::createParser_XMIDI();
+			// ITE had MT32 mapped instruments
+			_driver->setGM(_vm->getGameId() != GID_ITE);
+		} else {
+			_parser = MidiParser::createParser_SMF();
+		}
+		free(resourceData);
+	}
+
+	_parser->setMidiDriver(_driver);
+	_parser->setTimerRate(_driver->getBaseTempo());
+	_parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
 
 	_songTableLen = 0;
 	_songTable = 0;
@@ -180,11 +176,11 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver) : _vm(vm),
 Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
-	delete _player;
-	xmidiParser->setMidiDriver(NULL);
-	smfParser->setMidiDriver(NULL);
-	delete xmidiParser;
-	delete smfParser;
+	_driver->setTimerCallback(NULL, NULL);
+	_driver->close();
+	delete _driver;
+	_parser->setMidiDriver(NULL);
+	delete _parser;
 
 	free(_songTable);
 	free(_midiMusicData);
@@ -192,6 +188,12 @@ Music::~Music() {
 
 void Music::musicVolumeGaugeCallback(void *refCon) {
 	((Music *)refCon)->musicVolumeGauge();
+}
+
+void Music::onTimer(void *refCon) {
+	Music *music = (Music *)refCon;
+	Common::StackLock lock(music->_driver->_mutex);
+	music->_parser->onTimer();
 }
 
 void Music::musicVolumeGauge() {
@@ -209,7 +211,7 @@ void Music::musicVolumeGauge() {
 		volume = 1;
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-	_player->setVolume(volume);
+	_driver->setVolume(volume);
 
 	if (_currentVolumePercent == 100) {
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
@@ -226,7 +228,7 @@ void Music::setVolume(int volume, int time) {
 
 	if (time == 1) {
 		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, volume);
-		_player->setVolume(volume);
+		_driver->setVolume(volume);
 		_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 		_currentVolume = volume;
 		return;
@@ -236,13 +238,11 @@ void Music::setVolume(int volume, int time) {
 }
 
 bool Music::isPlaying() {
-	return _mixer->isSoundHandleActive(_musicHandle) || _player->isPlaying();
+	return _mixer->isSoundHandleActive(_musicHandle) || _parser->isPlaying();
 }
 
 void Music::play(uint32 resourceId, MusicFlags flags) {
 	Audio::SeekableAudioStream *audioStream = NULL;
-	MidiParser *parser;
-	ResourceContext *context = NULL;
 	byte *resourceData;
 	size_t resourceSize;
 	uint32 loopStart;
@@ -254,8 +254,8 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	}
 
 	_trackNumber = resourceId;
-	_player->stopMusic();
 	_mixer->stopHandle(_musicHandle);
+	_parser->unloadMusic();
 
 	int realTrackNumber;
 
@@ -356,55 +356,10 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		return;
 	}
 
-	if (flags == MUSIC_DEFAULT) {
+	if (flags == MUSIC_DEFAULT)
 		flags = MUSIC_NORMAL;
-	}
 
 	// Load MIDI/XMI resource data
-
-	if (_vm->getGameId() == GID_ITE) {
-		context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
-		if (context == NULL) {
-			context = _vm->_resource->getContext(GAME_RESOURCEFILE);
-		}
-	} else if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
-		// The music of the Mac version of IHNM is loaded from its
-		// associated external file later on
-	} else {
-		// I've listened to music from both the FM and the GM
-		// file, and I've tentatively reached the conclusion
-		// that they are both General MIDI. My guess is that
-		// the FM file has been reorchestrated to sound better
-		// on AdLib and other FM synths.
-		//
-		// Sev says the AdLib music does not sound like in the
-		// original, but I still think assuming General MIDI is
-		// the right thing to do. Some music, like the End
-		// Title (song 0) sound absolutely atrocious when piped
-		// through our MT-32 to GM mapping.
-		//
-		// It is, however, quite possible that the original
-		// used a different GM to FM mapping. If the original
-		// sounded markedly better, perhaps we should add some
-		// way of replacing our stock mapping in adlib.cpp?
-		//
-		// For the composer's own recording of the End Title,
-		// see http://www.johnottman.com/
-
-		// Oddly enough, the intro music (song 1) is very
-		// different in the two files. I have no idea why.
-		// Note that the IHNM demo has only got one music file
-		// (music.rsc). It is assumed that it contains FM music
-
-		if (hasAdLib() || _vm->isIHNMDemo()) {
-			context = _vm->_resource->getContext(GAME_MUSICFILE_FM);
-		} else {
-			context = _vm->_resource->getContext(GAME_MUSICFILE_GM);
-		}
-	}
-
-	_player->setGM(true);
-
 	if (_vm->getGameId() == GID_IHNM && _vm->isMacResources()) {
 		// Load the external music file for Mac IHNM
 #if 0
@@ -422,56 +377,39 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 #endif
 		return;
 	} else {
-		_vm->_resource->loadResource(context, resourceId, resourceData, resourceSize);
+		_vm->_resource->loadResource(_musicContext, resourceId, resourceData, resourceSize);
 	}
 
 	if (resourceSize < 4) {
 		error("Music::play() wrong music resource size");
 	}
 
-	if (xmidiParser->loadMusic(resourceData, resourceSize)) {
-		if (_vm->getGameId() == GID_ITE)
-			_player->setGM(false);
+	if (!_parser->loadMusic(resourceData, resourceSize))
+		error("Music::play() wrong music resource");
 
-		parser = xmidiParser;
-	} else {
-		if (smfParser->loadMusic(resourceData, resourceSize)) {
-			parser = smfParser;
-		} else {
-			error("Music::play() wrong music resource");
-		}
-	}
+	_parser->setTrack(0);
+	_driver->setTimerCallback(this, &onTimer);
 
-	parser->setTrack(0);
-	parser->setMidiDriver(_player);
-	parser->setTimerRate(_player->getBaseTempo());
-	parser->property(MidiParser::mpCenterPitchWheelOnUnload, 1);
-
-	_player->_parser = parser;
 	setVolume(_vm->_musicVolume);
 
-	if (flags & MUSIC_LOOP)
-		_player->setLoop(true);
-	else
-		_player->setLoop(false);
+	// Handle music looping
+	_parser->property(MidiParser::mpAutoLoop, (flags & MUSIC_LOOP) ? 1 : 0);
 
-	_player->playMusic();
 	free(_midiMusicData);
 	_midiMusicData = resourceData;
 }
 
 void Music::pause() {
-	_player->setVolume(-1);
-	_player->setPlaying(false);
+	_driver->setTimerCallback(NULL, NULL);
 }
 
 void Music::resume() {
-	_player->setVolume(_vm->_musicVolume);
-	_player->setPlaying(true);
+	_driver->setTimerCallback(this, &onTimer);
 }
 
 void Music::stop() {
-	_player->stopMusic();
+	_driver->setTimerCallback(NULL, NULL);
+	_parser->unloadMusic();
 }
 
 } // End of namespace Saga

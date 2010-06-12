@@ -44,41 +44,32 @@ enum MusicFlags {
 	MUSIC_DEFAULT = 0xffff
 };
 
-class MusicPlayer : public MidiDriver {
+class MusicDriver : public MidiDriver {
 public:
-	MusicPlayer(MidiDriver *driver);
-	~MusicPlayer();
-
-	bool isPlaying() { return _isPlaying; }
-	void setPlaying(bool playing) { _isPlaying = playing; }
+	MusicDriver();
+	~MusicDriver();
 
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
 
-	void setNativeMT32(bool b) { _nativeMT32 = b; }
-	bool hasNativeMT32() { return _nativeMT32; }
-	void playMusic();
-	void stopMusic();
-	void setLoop(bool loop) { _looping = loop; }
-	void setPassThrough(bool b) { _passThrough = b; }
-
+	bool isAdlib() { return _driverType == MD_ADLIB; }
+	bool isMT32() { return _driverType == MD_MT32 || _nativeMT32; }
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	//MidiDriver interface implementation
-	int open();
-	void close();
+	int open() { return _driver->open(); }
+	void close() { _driver->close(); }
 	void send(uint32 b);
 
-	void metaEvent(byte type, byte *data, uint16 length);
+	void metaEvent(byte type, byte *data, uint16 length) {}
 
-	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { }
-	uint32 getBaseTempo()	{ return _driver ? _driver->getBaseTempo() : 0; }
+	void setTimerCallback(void *timerParam, void (*timerProc)(void *)) { _driver->setTimerCallback(timerParam, timerProc); }
+	uint32 getBaseTempo()	{ return _driver->getBaseTempo(); }
 
 	//Channel allocation functions
 	MidiChannel *allocateChannel()		{ return 0; }
 	MidiChannel *getPercussionChannel()	{ return 0; }
 
-	MidiParser *_parser;
 	Common::Mutex _mutex;
 
 protected:
@@ -87,14 +78,11 @@ protected:
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
+	MidiDriverType _driverType;
 	byte _channelVolume[16];
-	bool _nativeMT32;
 	bool _isGM;
-	bool _passThrough;
+	bool _nativeMT32;
 
-	bool _isPlaying;
-	bool _looping;
-	bool _randomLoop;
 	byte _masterVolume;
 
 	byte *_musicData;
@@ -105,13 +93,8 @@ protected:
 class Music {
 public:
 
-	Music(SagaEngine *vm, Audio::Mixer *mixer, MidiDriver *driver);
+	Music(SagaEngine *vm, Audio::Mixer *mixer);
 	~Music();
-	void setNativeMT32(bool b)	{ _player->setNativeMT32(b); }
-	bool hasNativeMT32()		{ return _player->hasNativeMT32(); }
-	void setAdLib(bool b)		{ _adlib = b; }
-	bool hasAdLib()			{ return _adlib; }
-	void setPassThrough(bool b)	{ _player->setPassThrough(b); }
 	bool isPlaying();
 	bool hasDigitalMusic() { return _digitalMusic; }
 
@@ -130,24 +113,23 @@ private:
 	SagaEngine *_vm;
 	Audio::Mixer *_mixer;
 
-	MusicPlayer *_player;
+	MusicDriver *_driver;
 	Audio::SoundHandle _musicHandle;
 	uint32 _trackNumber;
-
-	bool _adlib;
 
 	int _targetVolume;
 	int _currentVolume;
 	int _currentVolumePercent;
 	bool _digitalMusic;
 
+	ResourceContext *_musicContext;
 	ResourceContext *_digitalMusicContext;
-	MidiParser *xmidiParser;
-	MidiParser *smfParser;
+	MidiParser *_parser;
 
 	byte *_midiMusicData;
 
 	static void musicVolumeGaugeCallback(void *refCon);
+	static void onTimer(void *refCon);
 	void musicVolumeGauge();
 };
 
