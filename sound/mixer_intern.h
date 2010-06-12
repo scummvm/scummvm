@@ -60,7 +60,7 @@ private:
 	OSystem *_syst;
 	Common::Mutex _mutex;
 
-	const uint _sampleRate;
+	uint _sampleRate;
 	bool _mixerReady;
 	uint32 _handleSeed;
 
@@ -127,6 +127,8 @@ public:
 	 * their audio system has been completed.
 	 */
 	void setReady(bool ready);
+
+	void setSampleRate(uint sampleRate);
 };
 
 

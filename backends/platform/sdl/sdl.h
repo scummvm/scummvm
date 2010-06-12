@@ -50,15 +50,6 @@ namespace Audio {
 #define USE_OSD	1
 #endif
 
-#if defined(MACOSX)
-// On Mac OS X, we need to double buffer the audio buffer, else anything
-// which produces sampled data with high latency (like the MT-32 emulator)
-// will sound terribly.
-// This could be enabled for more / most ports in the future, but needs some
-// testing.
-#define MIXER_DOUBLE_BUFFERING 1
-#endif
-
 class OSystem_SDL : public ModularBackend {
 public:
 	OSystem_SDL();
@@ -83,11 +74,6 @@ public:
 
 	virtual void preprocessEvents(SDL_Event *event) {}
 
-	// Set function that generates samples
-	virtual void setupMixer();
-	static void mixCallback(void *s, byte *samples, int len);
-	virtual void closeMixer();
-
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
@@ -101,7 +87,6 @@ public:
 
 protected:
 	bool _inited;
-	SDL_AudioSpec _obtainedRate;
 
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
@@ -133,23 +118,6 @@ protected:
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-
-#ifdef MIXER_DOUBLE_BUFFERING
-	SDL_mutex *_soundMutex;
-	SDL_cond *_soundCond;
-	SDL_Thread *_soundThread;
-	bool _soundThreadIsRunning;
-	bool _soundThreadShouldQuit;
-
-	byte _activeSoundBuf;
-	uint _soundBufSize;
-	byte *_soundBuffers[2];
-
-	void mixerProducerThread();
-	static int SDLCALL mixerProducerThreadEntry(void *arg);
-	void initThreadedMixer(Audio::Mixer *mixer, uint bufSize);
-	void deinitThreadedMixer();
-#endif
 
 	SDL_TimerID _timerID;
 

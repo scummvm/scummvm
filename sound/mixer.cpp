@@ -431,6 +431,9 @@ int MixerImpl::getVolumeForSoundType(SoundType type) const {
 	return _volumeForSoundType[type];
 }
 
+void MixerImpl::setSampleRate(uint sampleRate) {
+	_sampleRate = sampleRate;
+}
 
 #pragma mark -
 #pragma mark --- Channel implementations ---
