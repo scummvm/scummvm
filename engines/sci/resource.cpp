@@ -1230,6 +1230,8 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
 				psrcPatch->resourceFile = 0;
+				psrcPatch->audioCompressionType = 0;
+				psrcPatch->audioCompressionOffsetMapping = NULL;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 			}
 		}
@@ -1281,6 +1283,8 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
 				psrcPatch->resourceFile = 0;
+				psrcPatch->audioCompressionType = 0;
+				psrcPatch->audioCompressionOffsetMapping = NULL;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
 		}

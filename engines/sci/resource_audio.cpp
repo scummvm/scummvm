@@ -158,6 +158,8 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 		psrcPatch->source_type = kSourcePatch;
 		psrcPatch->resourceFile = 0;
 		psrcPatch->location_name = gmPatchFile;
+		psrcPatch->audioCompressionType = 0;
+		psrcPatch->audioCompressionOffsetMapping = NULL;
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
 }
