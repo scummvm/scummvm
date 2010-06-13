@@ -133,6 +133,15 @@ struct ResourceSource {
 	uint32 audioCompressionType;
 	int32 *audioCompressionOffsetMapping;
 	Common::MacResManager macResMan;
+	ResourceSource() {
+		source_type = kSourceDirectory;
+		scanned = false;
+		resourceFile = 0;
+		volume_number = 0;
+		associated_map = NULL;
+		audioCompressionType = 0;
+		audioCompressionOffsetMapping = NULL;
+	}
 };
 
 class ResourceId {

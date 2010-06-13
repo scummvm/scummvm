@@ -174,9 +174,6 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volum
 
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
-	newsrc->resourceFile = 0;
-	newsrc->scanned = false;
-	newsrc->associated_map = NULL;
 	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
@@ -189,8 +186,6 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = mapFile->getName();
 	newsrc->resourceFile = mapFile;
-	newsrc->scanned = false;
-	newsrc->associated_map = NULL;
 	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
@@ -201,13 +196,9 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = type;
-	newsrc->scanned = false;
 	newsrc->location_name = filename;
-	newsrc->resourceFile = 0;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
-	newsrc->audioCompressionType = 0;
-	newsrc->audioCompressionOffsetMapping = NULL;
 	if (type == kSourceAudioVolume)
 		checkIfAudioVolumeIsCompressed(newsrc);
 
@@ -219,13 +210,10 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = type;
-	newsrc->scanned = false;
 	newsrc->location_name = resFile->getName();
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
-	newsrc->audioCompressionType = 0;
-	newsrc->audioCompressionOffsetMapping = NULL;
 	if (type == kSourceAudioVolume)
 		checkIfAudioVolumeIsCompressed(newsrc);
 
@@ -237,8 +225,6 @@ ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 	ResourceSource *newsrc = new ResourceSource();
 
 	newsrc->source_type = kSourceDirectory;
-	newsrc->resourceFile = 0;
-	newsrc->scanned = false;
 	newsrc->location_name = dirname;
 
 	_sources.push_back(newsrc);
@@ -1229,9 +1215,6 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 				psrcPatch = new ResourceSource;
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
-				psrcPatch->resourceFile = 0;
-				psrcPatch->audioCompressionType = 0;
-				psrcPatch->audioCompressionOffsetMapping = NULL;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 			}
 		}
@@ -1282,9 +1265,6 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 				psrcPatch = new ResourceSource;
 				psrcPatch->source_type = kSourcePatch;
 				psrcPatch->location_name = name;
-				psrcPatch->resourceFile = 0;
-				psrcPatch->audioCompressionType = 0;
-				psrcPatch->audioCompressionOffsetMapping = NULL;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
 		}
