@@ -395,7 +395,7 @@ void Input::exitInventoryMode() {
 			_vm->dropItem(z->u._mergeObj1);
 			_vm->dropItem(z->u._mergeObj2);
 			_vm->addInventoryItem(z->u._mergeObj3);
-			_vm->_cmdExec->run(z->_commands);
+			_vm->_cmdExec->run(z->_commands);	// commands might set a new _inputMode
 		}
 
 	}
@@ -412,7 +412,11 @@ void Input::exitInventoryMode() {
 	}
 	_vm->resumeJobs();
 
-	_inputMode = kInputModeGame;
+	// in case the input mode was not changed by the code above (especially by the commands
+	// executed in case of a merge), then assume we are going back to game mode
+	if (_inputMode == kInputModeInventory) {
+		_inputMode = kInputModeGame;
+	}
 }
 
 bool Input::updateInventoryInput() {
