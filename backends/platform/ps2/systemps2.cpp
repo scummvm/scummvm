@@ -107,7 +107,6 @@ extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
 	SifInitRpc(0);
-
 	ee_thread_t thisThread;
 	int tid = GetThreadId();
 	ReferThreadStatus(tid, &thisThread);
@@ -132,12 +131,11 @@ extern "C" int main(int argc, char *argv[]) {
 	sioprintf("Creating system\n");
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
-	g_systemPs2->init();
-
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new PS2PluginProvider());
 #endif
 
+	g_systemPs2->init();
 	sioprintf("init done. starting ScummVM.\n");
 	int res = scummvm_main(argc, argv);
 	sioprintf("scummvm_main terminated: %d\n", res);
@@ -343,6 +341,7 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 }
 
 void OSystem_PS2::init(void) {
+	//msgPrintf(FOREVER, "got to init! Now restart your console... %d\n", res);
 	sioprintf("Timer...\n");
 	_scummTimerManager = new DefaultTimerManager();
 	_scummMixer = new Audio::MixerImpl(this, 48000);
