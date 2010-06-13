@@ -222,10 +222,12 @@ void Gfx::drawGfxObject(GfxObj *obj, Graphics::Surface &surf) {
 	obj->getRect(obj->frame, rect);
 
 	int x = obj->x;
+	int y = obj->y;
 	if (_overlayMode) {
 		x += _scrollPosX;
+		y += _scrollPosY;
 	}
-	rect.translate(x, obj->y);
+	rect.translate(x, y);
 	data = obj->getData(obj->frame);
 
 	if (obj->getSize(obj->frame) == obj->getRawSize(obj->frame)) {
