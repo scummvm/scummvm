@@ -157,7 +157,9 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 	reg_t nodeValue = argv[0];
-	reg_t nodeKey = (argc == 2) ? argv[1] : NULL_REG;
+	// Some SCI32 games call this with 1 parameter (e.g. the demo of Phantasmagoria).
+	// Set the key to be the same as the value in this case
+	reg_t nodeKey = (argc == 2) ? argv[1] : argv[0];
 	s->r_acc = s->_segMan->newNode(nodeValue, nodeKey);
 
 	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
