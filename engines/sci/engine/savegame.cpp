@@ -566,7 +566,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(_localsOffset);
+	s.skip(4, VER(9), VER(20));		// OBSOLETE: Used to be _localsOffset
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);

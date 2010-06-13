@@ -159,41 +159,48 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 	}
 }
 
-void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
-	Script *scr = getScript(seg);
+void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
+	Script *scr = getScript(segmentId);
+	uint16 count;
 
-	scr->_localsOffset = -count * 2; // Make sure it's invalid
+	if (getSciVersion() == SCI_VERSION_0_EARLY) {
+		// Old script block. There won't be a localvar block in this case.
+		// Instead, the script starts with a 16 bit int specifying the
+		// number of locals we need; these are then allocated and zeroed.
+		int localsCount = READ_LE_UINT16(scr->_buf);
+		if (localsCount) {
+			scr->_localsOffset = -localsCount * 2; // Make sure it's invalid
+			LocalVariables *locals = allocLocalsSegment(scr, localsCount);
+			if (locals) {
+				for (int i = 0; i < localsCount; i++)
+					locals->_locals[i] = NULL_REG;
+			}
+		}
 
-	LocalVariables *locals = allocLocalsSegment(scr, count);
-	if (locals) {
-		for (int i = 0; i < count; i++)
-			locals->_locals[i] = NULL_REG;
+		return;
 	}
-}
 
-void SegManager::scriptInitialiseLocals(reg_t location) {
-	Script *scr = getScript(location.segment);
-	unsigned int count;
+	// Check if the script actually has local variables
+	if (scr->_localsOffset == 0)
+		return;
 
-	VERIFY(location.offset + 1 < (uint16)scr->getBufSize(), "Locals beyond end of script\n");
+	VERIFY(scr->_localsOffset + 1 < (uint16)scr->getBufSize(), "Locals beyond end of script\n");
 
 	if (getSciVersion() >= SCI_VERSION_1_1)
-		count = READ_SCI11ENDIAN_UINT16(scr->_buf + location.offset - 2);
+		count = READ_SCI11ENDIAN_UINT16(scr->_buf + scr->_localsOffset - 2);
 	else
-		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
+		count = (READ_LE_UINT16(scr->_buf + scr->_localsOffset - 2) - 4) >> 1;
 	// half block size
 
-	scr->_localsOffset = location.offset;
-
-	if (!(location.offset + count * 2 + 1 < scr->getBufSize())) {
-		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->getBufSize());
-		count = (scr->getBufSize() - location.offset) >> 1;
+	if (!(scr->_localsOffset + count * 2 + 1 < (uint16)scr->getBufSize())) {
+		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", scr->_localsOffset, count, (uint)scr->getBufSize());
+		count = (scr->getBufSize() - scr->_localsOffset) >> 1;
 	}
 
 	LocalVariables *locals = allocLocalsSegment(scr, count);
 	if (locals) {
 		uint i;
-		const byte *base = (const byte *)(scr->_buf + location.offset);
+		const byte *base = (const byte *)(scr->_buf + scr->_localsOffset);
 
 		for (i = 0; i < count; i++)
 			locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
@@ -258,18 +265,7 @@ void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	uint16 curOffset = oldScriptHeader ? 2 : 0;
 
-	if (oldScriptHeader) {
-		// Old script block
-		// There won't be a localvar block in this case
-		// Instead, the script starts with a 16 bit int specifying the
-		// number of locals we need; these are then allocated and zeroed.
-		int localsCount = READ_LE_UINT16(scr->_buf);
-		if (localsCount)
-			segMan->scriptInitialiseLocalsZero(segmentId, localsCount);
-	}
-
-	// Now do a first pass through the script objects to find the
-	// local variable blocks
+	// Now do a first pass through the script objects to find all the object classes
 
 	do {
 		objType = scr->getHeap(curOffset);
@@ -280,9 +276,6 @@ void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 		curOffset += 4;		// skip header
 
 		switch (objType) {
-		case SCI_OBJ_LOCALVARS:
-			segMan->scriptInitialiseLocals(make_reg(segmentId, curOffset));
-			break;
 		case SCI_OBJ_CLASS: {
 			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species = scr->getHeap(curOffset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
@@ -365,10 +358,9 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNu
 
 	scr->init(scriptNum, resMan);
 	scr->load(resMan);
+	segMan->scriptInitialiseLocals(segmentId);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		int heapStart = scr->getScriptSize();
-		segMan->scriptInitialiseLocals(make_reg(segmentId, heapStart + 4));
 		segMan->scriptInitialiseObjectsSci11(segmentId);
 		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
 	} else {

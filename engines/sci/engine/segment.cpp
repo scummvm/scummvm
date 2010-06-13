@@ -197,6 +197,7 @@ void Script::load(ResourceManager *resMan) {
 		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {
 			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
+			_localsOffset = _scriptSize + 4;
 		}
 	} else {
 		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
@@ -209,6 +210,9 @@ void Script::load(ResourceManager *resMan) {
 			_numSynonyms = READ_SCI11ENDIAN_UINT16(_synonyms + 2) / 4;
 			_synonyms += 4;	// skip header
 		}
+		const byte* localsBlock = findBlock(SCI_OBJ_LOCALVARS);
+		if (localsBlock)
+			_localsOffset = localsBlock - _buf + 4;
 	}
 }
 

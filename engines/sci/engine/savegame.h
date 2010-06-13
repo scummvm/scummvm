@@ -36,7 +36,7 @@ namespace Sci {
 struct EngineState;
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 20,
+	CURRENT_SAVEGAME_VERSION = 21,
 	MINIMUM_SAVEGAME_VERSION = 9
 };
 

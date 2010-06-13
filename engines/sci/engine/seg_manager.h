@@ -146,18 +146,10 @@ public:
 	// i.e. loading and linking.
 
 	/**
-	 * Initializes a script's local variable block
-	 * All variables are initialized to zero.
-	 * @param seg	Segment containing the script to initialize
-	 * @param nr	Number of local variables to allocate
-	 */
-	void scriptInitialiseLocalsZero(SegmentId seg, int nr);
-
-	/**
 	 * Initializes a script's local variable block according to a prototype
-	 * @param location	Location to initialize from
+	 * @param segmentId	Segment containing the script to initialize
 	 */
-	void scriptInitialiseLocals(reg_t location);
+	void scriptInitialiseLocals(SegmentId segmentId);
 
 	// 2. Clones
 
