@@ -2,7 +2,11 @@ MODULE := backends
 
 MODULE_OBJS := \
 	base-backend.o \
+	modular-backend.o \
+	audiocd/default/default-audiocd.o \
+	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
+	events/sdl/sdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
