@@ -64,10 +64,8 @@ void GFXTestSuite::execute() {
 
 void GFXtests::drawEllipse(int cx, int cy, int a, int b) {	
 	
-	// top-left coordinates of rectangle enclosing the eclipse  (cx - a, cy - a)
-	// length = width = 2a
-	// size of buffer = 4 * a * a 
-	
+	// Take a buffer of screen size
+
 	byte buffer[200][320] = {{0}};
 	float theta;
 	int x, y, x1, y1;
@@ -75,6 +73,8 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 	// Illuminate the center
 	buffer[cx][cy] = 1;
 	
+	// Illuminate the points lying on ellipse
+
 	for (theta = 0; theta <= PI / 2; theta += PI / 360  ) {
 		x = (int)(b * sin(theta) + 0.5);
 		y = (int)(a * cos(theta) + 0.5);
@@ -153,7 +153,7 @@ bool GFXtests::aspectRatio() {
 	Testsuite::displayMessage("Testing Aspect Ratio Correction.\n"
 	"With this feature enabled games running at 320x200 should be scaled upto 320x240 pixels");
 
-	// Draw a circle on the screen
+	// Draw an ellipse on the screen
 	
 	drawEllipse(100, 160, 72, 60);
 	
