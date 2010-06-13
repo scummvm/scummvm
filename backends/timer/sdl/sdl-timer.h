@@ -23,8 +23,10 @@
  *
  */
 
-#ifndef SDL_COMMON_H
-#define SDL_COMMON_H
+#ifndef BACKENDS_TIMER_SDL_H
+#define BACKENDS_TIMER_SDL_H
+
+#include "backends/timer/default/default-timer.h"
 
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
@@ -32,38 +34,18 @@
 #include <SDL.h>
 #endif
 
-#include "backends/modular-backend.h"
-#include "backends/graphics/sdl/sdl-graphics.h"
-
-class OSystem_SDL : public ModularBackend {
+class SdlTimerManager : public DefaultTimerManager {
 public:
-	OSystem_SDL();
-	virtual ~OSystem_SDL();
+	SdlTimerManager();
+	~SdlTimerManager();
 
-	virtual void initBackend();
-
-	// Define all hardware keys for keymapper
-	virtual Common::HardwareKeySet *getHardwareKeySet();
-
-	// Quit
-	virtual void quit(); // overloaded by CE backend
-
-	void deinit();
-
-	virtual void setWindowCaption(const char *caption);
-
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual Common::SeekableReadStream *createConfigReadStream();
-	virtual Common::WriteStream *createConfigWriteStream();
-
-	SdlGraphicsManager *getGraphicsManager();
-
-	virtual bool pollEvent(Common::Event &event);
+	uint32 getMillis();
+	void delayMillis(uint msecs);
+	void getTimeAndDate(TimeDate &t) const;
 
 protected:
-	bool _inited;
-
-	void setupIcon();
+	SDL_TimerID _timerID;
 };
+
 
 #endif

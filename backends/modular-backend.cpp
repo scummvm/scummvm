@@ -200,8 +200,6 @@ void ModularBackend::disableCursorPalette(bool disable) {
 	_graphicsManager->disableCursorPalette(disable);
 }
 
-/** TODO: Add getMillis, delayMillis and getTimeAndDate
- ** to timer manager
 uint32 ModularBackend::getMillis() {
 	assert(_timerManager);
 	return _timerManager->getMillis();
@@ -215,7 +213,7 @@ void ModularBackend::delayMillis(uint msecs) {
 void ModularBackend::getTimeAndDate(TimeDate &t) const {
 	assert(_timerManager);
 	return _timerManager->getTimeAndDate(t);
-}*/
+}
 
 Common::TimerManager *ModularBackend::getTimerManager() {
 	assert(_timerManager);

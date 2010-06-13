@@ -26,6 +26,7 @@
 #define COMMON_TIMER_H
 
 #include "common/scummsys.h"
+#include "common/system.h"
 #include "common/noncopyable.h"
 
 namespace Common {
@@ -55,6 +56,21 @@ public:
 	 * and no instance of this callback will be running anymore.
 	 */
 	virtual void removeTimerProc(TimerProc proc) = 0;
+
+	/**
+	 *  Get the number of milliseconds since the program was started.
+	 */
+	virtual uint32 getMillis() = 0;
+
+	/**
+	 * Delay for a specified amount of milliseconds
+	 */
+	virtual void delayMillis(uint msecs) = 0;
+
+	/**
+	 * Get the current time and date
+	 */
+	virtual void getTimeAndDate(TimeDate &t) const = 0;
 };
 
 } // End of namespace Common

@@ -27,6 +27,7 @@
 #define BACKENDS_MODULAR_BACKEND_H
 
 #include "common/system.h"
+#include "common/timer.h"
 #include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/mutex/null/null-mutex.h"
@@ -83,9 +84,9 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
 
-	/*virtual uint32 getMillis();
+	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
-	virtual void getTimeAndDate(TimeDate &t) const;*/
+	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual Common::TimerManager *getTimerManager();
 	virtual Common::EventManager *getEventManager();
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }

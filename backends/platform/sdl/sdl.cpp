@@ -33,7 +33,6 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/EventRecorder.h"
 #include "common/util.h"
 
 #ifdef UNIX
@@ -41,15 +40,13 @@
 #else
   #include "backends/saves/default/default-saves.h"
 #endif
-#include "backends/timer/default/default-timer.h"
-
-#include "backends/mixer/sdl/sdl-mixer.h"
-
+#include "backends/audiocd/sdl/sdl-audiocd.h"
 #include "backends/events/sdl/sdl-events.h"
+#include "backends/mutex/sdl/sdl-mutex.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
+#include "backends/timer/sdl/sdl-timer.h"
 
 #include "icons/scummvm.xpm"
-
-#include <time.h>	// for getTimeAndDate()
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
@@ -61,7 +58,6 @@
 #elif defined(WIN32)
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
-
 
 #if defined(UNIX)
 #ifdef MACOSX
@@ -79,11 +75,6 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
-
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
-}
 
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
@@ -135,13 +126,7 @@ void OSystem_SDL::initBackend() {
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_timerManager == 0) {
-		// TODO: Implement SdlTimerManager
-		if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
-			error("Could not initialize SDL: %s", SDL_GetError());
-		}
-
-		_timerManager = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timerManager);
+		_timerManager = new SdlTimerManager();
 	}
 
 	// Create and hook up the graphics manager, if none exists yet (we check for
@@ -184,32 +169,9 @@ OSystem_SDL::OSystem_SDL()
 }
 
 OSystem_SDL::~OSystem_SDL() {
-	SDL_RemoveTimer(_timerID);
-	
 	delete _mixer;
 	delete _savefileManager;
 	delete _timerManager;
-}
-
-uint32 OSystem_SDL::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void OSystem_SDL::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -240,7 +202,6 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 #endif
 
 }
-
 
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
@@ -337,8 +298,6 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 
 void OSystem_SDL::deinit() {
 	SDL_ShowCursor(SDL_ENABLE);
-
-	SDL_RemoveTimer(_timerID);
 
 	delete _mixer;
 

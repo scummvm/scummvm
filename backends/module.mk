@@ -47,6 +47,7 @@ MODULE_OBJS := \
 	saves/psp/psp-saves.o \
 	timer/default/default-timer.o \
 	timer/psp/timer.o \
+	timer/sdl/sdl-timer.o \
 	vkeybd/image-map.o \
 	vkeybd/polygon.o \
 	vkeybd/virtual-keyboard.o \

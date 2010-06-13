@@ -48,6 +48,10 @@ public:
 	 * Timer callback, to be invoked at regular time intervals by the backend.
 	 */
 	void handler();
+
+	virtual uint32 getMillis() { return 0; }
+	virtual void delayMillis(uint msecs) {}
+	virtual void getTimeAndDate(TimeDate &t) const {}
 };
 
 #endif
