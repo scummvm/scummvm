@@ -57,6 +57,7 @@ public:
 class AnimMiscEntry {
 public:
 	int soundNum;
+	int msgIndex;
 	int numTicks;
 	Common::Point posAdjust;
 };
@@ -82,6 +83,7 @@ private:
 	int _spriteListIndex;
 	int _scrollX;
 	int _scrollY;
+	int _scrollTicks;
 	Common::String _interfaceFile;
 	Common::String _spriteSetNames[10];
 	Common::String _lbmFilename;
@@ -96,14 +98,17 @@ private:
 	int _unkIndex;
 	Common::Point _unkList[2];
 	uint32 _nextFrameTimer;
+	uint32 _nextScrollTimer;
 	int _messageCtr;
 	int _abortTimers;
 	AbortTimerMode _abortMode;
 	uint16 _actionNouns[3];
 
+
 	void load1(int frameNumber);
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
 	void loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface);
+	bool hasScroll() const { return (_scrollX != 0) || (_scrollY != 0); }
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
@@ -114,6 +119,7 @@ public:
 	virtual void setCurrentFrame(int frameNumber);
 
 	bool freeFlag() const { return _freeFlag; }
+	bool getAnimMode() const { return _animMode; }
 	int roomNumber() const { return _roomNumber; }
 };
 

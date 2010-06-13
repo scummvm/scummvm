@@ -44,6 +44,7 @@ MadsAnimation::MadsAnimation(MadsM4Engine *vm, MadsView *view): Animation(vm), _
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _madsVm->_currentTimer;
+	_nextScrollTimer = 0;
 }
 
 MadsAnimation::~MadsAnimation() {
@@ -89,7 +90,8 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	_spriteListIndex = animStream->readUint16LE();
 	_scrollX = animStream->readSint16LE();
 	_scrollY = animStream->readSint16LE();
-	animStream->skip(10);
+	_scrollTicks = animStream->readUint16LE();
+	animStream->skip(8);
 	
 	animStream->read(buffer, 13);
 	_interfaceFile = Common::String(buffer, 13);
@@ -180,7 +182,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		for (int i = 0; i < miscEntriesCount; ++i) {
 			AnimMiscEntry rec;
 			rec.soundNum = animStream->readByte();
-			animStream->skip(1);
+			rec.msgIndex = animStream->readSByte();
 			rec.numTicks = animStream->readUint16LE();
 			rec.posAdjust.x = animStream->readUint16LE();
 			rec.posAdjust.y = animStream->readUint16LE();
@@ -232,6 +234,9 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		int idx = _frameEntries[i].spriteSlot.spriteListIndex;
 		_frameEntries[i].spriteSlot.spriteListIndex = _spriteListIndexes[idx];
 	}
+
+	if (hasScroll())
+		_nextScrollTimer = _madsVm->_currentTimer + _scrollTicks;
 }
 
 /**
@@ -282,9 +287,24 @@ void MadsAnimation::update() {
 			load1(newIndex);
 	}
 
+	// Check for scroll change
+	bool screenChanged = false;
+
+	// Handle any scrolling of the screen surface
+	if (hasScroll() && (_madsVm->_currentTimer >= _nextScrollTimer)) {
+		_view->_bgSurface->scrollX(_scrollX);
+		_view->_bgSurface->scrollY(_scrollY);
+
+		_nextScrollTimer = _madsVm->_currentTimer + _scrollTicks;
+		screenChanged = true;
+	}
+
 	// If it's not time for the next frame, then exit
-	if (_madsVm->_currentTimer < _nextFrameTimer)
+	if (_madsVm->_currentTimer < _nextFrameTimer) {
+		if (screenChanged)
+			_view->_spriteSlots.fullRefresh();
 		return;
+	}
 
 	// Loop checks for any prior animation sprite slots to be expired
 	for (int slotIndex = 0; slotIndex < _view->_spriteSlots.startIndex; ++slotIndex) {
@@ -310,16 +330,6 @@ void MadsAnimation::update() {
 	AnimMiscEntry &misc = _miscEntries[_currentFrame];
 	if (misc.soundNum)
 		_vm->_sound->playSound(misc.soundNum);
-
-	bool screenChanged = false;
-
-	// Handle any scrolling of the screen surface
-	if ((_scrollX != 0) || (_scrollY != 0)) {
-		_view->_bgSurface->scrollX(_scrollX);
-		_view->_bgSurface->scrollY(_scrollY);
-
-		screenChanged = true;
-	}
 
 	// Handle any offset adjustment for sprites as of this frame
 	if (_view->_posAdjust.x != misc.posAdjust.x) {
