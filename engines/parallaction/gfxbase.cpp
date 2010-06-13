@@ -283,30 +283,54 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 		return;
 	}
 
-	Common::Rect q(r);
-	Common::Rect clipper(surf->w, surf->h);
-	q.clip(clipper);
-	if (!q.isValidRect()) return;
+	// unscaled rectangle size
+	uint width = r.width();
+	uint height = r.height();
 
-	uint inc = r.width() * (100 - scale);
-	uint thr = r.width() * 100;
-	uint xAccum = 0, yAccum = 0;
+	// scaled rectangle size
+	uint scaledWidth = r.width() * scale / 100;
+	uint scaledHeight = r.height() * scale / 100;
+
+	// scaled rectangle origin
+	uint scaledLeft = r.left + (width - scaledWidth) / 2;
+	uint scaledTop = r.top + (height - scaledHeight);
+
+	// clipped scaled destination rectangle
+	Common::Rect dstRect(scaledWidth, scaledHeight);
+	dstRect.moveTo(scaledLeft, scaledTop);
+	
+	Common::Rect clipper(surf->w, surf->h);	
+	dstRect.clip(clipper);
+	if (!dstRect.isValidRect()) return;
+	
+	
+	// clipped source rectangle
+	Common::Rect srcRect;
+	srcRect.left = (dstRect.left - scaledLeft)  * 100 / scale;
+	srcRect.top = (dstRect.top - scaledTop) * 100 / scale;
+	srcRect.setWidth(dstRect.width() * 100 / scale);
+	srcRect.setHeight(dstRect.height() * 100 / scale);
+	if (!srcRect.isValidRect()) return;	
 
 	Common::Point dp;
-	dp.x = q.left + (r.width() * (100 - scale)) / 200;
-	dp.y = q.top + (r.height() * (100 - scale)) / 100;
-	q.translate(-r.left, -r.top);
-	byte *s = data + q.left + q.top * r.width();
+	dp.x = dstRect.left;
+	dp.y = dstRect.top;
+
+	byte *s = data + srcRect.left + srcRect.top * width;
 	byte *d = (byte*)surf->getBasePtr(dp.x, dp.y);
 
 	uint line = 0, col = 0;
 
-	for (uint16 i = 0; i < q.height(); i++) {
+	uint xAccum = 0, yAccum = 0;
+    uint inc = width * (100 - scale);
+	uint thr = width * 100;
+
+	for (uint16 i = 0; i < srcRect.height(); i++) {
 		yAccum += inc;
 
 		if (yAccum >= thr) {
 			yAccum -= thr;
-			s += r.width();
+			s += width;
 			continue;
 		}
 
@@ -314,7 +338,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 		byte *d2 = d;
 		col = 0;
 
-		for (uint16 j = 0; j < q.width(); j++) {
+		for (uint16 j = 0; j < srcRect.width(); j++) {
 			xAccum += inc;
 
 			if (xAccum >= thr) {
@@ -337,7 +361,7 @@ void Gfx::bltMaskScale(const Common::Rect& r, byte *data, Graphics::Surface *sur
 			col++;
 		}
 
-		s += r.width() - q.width();
+		s += width - srcRect.width();
 		d += surf->w;
 		line++;
 	}
