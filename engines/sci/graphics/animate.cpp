@@ -63,9 +63,11 @@ void GfxAnimate::init() {
 	if (getSciVersion() <= SCI_VERSION_01)
 		_ignoreFastCast = true;
 	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesnt do kAnimate aborts
-	//  (found in larry 1)
-	if (!_s->_segMan->findObjectByName("fastCast").isNull())
-		_ignoreFastCast = true;
+	//  (found in Larry 1)
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		if (!_s->_segMan->findObjectByName("fastCast").isNull())
+			_ignoreFastCast = true;
+	}
 }
 
 void GfxAnimate::disposeLastCast() {

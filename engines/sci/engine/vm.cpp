@@ -201,7 +201,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		// stopGroop object, which points to ego, to the new ego object. If this is not
 		// done, ego's movement will not be updated properly, so the result is
 		// unpredictable (for example in LSL5, Patti spins around instead of walking).
-		if (index == 0 && type == VAR_GLOBAL) {	// global 0 is ego
+		if (index == 0 && type == VAR_GLOBAL && getSciVersion() > SCI_VERSION_0_EARLY) {	// global 0 is ego
 			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
 				// Find the "client" member variable of the stopGroop object, and update it
