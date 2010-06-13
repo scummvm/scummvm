@@ -23,10 +23,11 @@
  *
  */
 
+#if defined(WIN32) || defined(UNIX) || defined(MACOSX)
+
+#include "backends/events/sdl/sdl-events.h"
 #include "backends/platform/sdl/sdl.h"
-#include "common/util.h"
-#include "common/events.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real
+#include "common/config-manager.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button
@@ -47,8 +48,35 @@
 #define JOY_BUT_SPACE 4
 #define JOY_BUT_F5 5
 
+SdlEventManager::SdlEventManager(Common::EventSource *boss)
+	:
+	_scrollLock(false),
+	_joystick(0),
+	DefaultEventManager(boss) {
 
+	// reset mouse state
+	memset(&_km, 0, sizeof(_km));
 
+	int joystick_num = ConfMan.getInt("joystick_num");
+
+	if (joystick_num > -1) {
+		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
+			error("Could not initialize SDL: %s", SDL_GetError());
+		}
+	}
+
+	// enable joystick
+	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
+		printf("Using joystick: %s\n", SDL_JoystickName(0));
+		_joystick = SDL_JoystickOpen(joystick_num);
+	}
+
+}
+
+SdlEventManager::~SdlEventManager() {
+	if (_joystick)
+		SDL_JoystickClose(_joystick);
+}
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -67,7 +95,7 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
+void SdlEventManager::fillMouseEvent(Common::Event &event, int x, int y) {
 	event.mouse.x = x;
 	event.mouse.y = y;
 
@@ -84,8 +112,8 @@ void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
 	}*/
 }
 
-void OSystem_SDL::handleKbdMouse() {
-	uint32 curTime = getMillis();
+void SdlEventManager::handleKbdMouse() {
+	uint32 curTime = g_system->getMillis();
 	if (curTime >= _km.last_time + _km.delay_time) {
 		_km.last_time = curTime;
 		if (_km.x_down_count == 1) {
@@ -178,7 +206,7 @@ static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_CAPS;
 }
 
-bool OSystem_SDL::pollEvent(Common::Event &event) {
+bool SdlEventManager::pollSdlEvent(Common::Event &event) {
 	SDL_Event ev;
 
 	handleKbdMouse();
@@ -198,7 +226,7 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 	case SDL_KEYDOWN:
 		return handleKeyDown(ev, event);
@@ -218,7 +246,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 		return handleJoyAxisMotion(ev, event);
 
 	case SDL_VIDEOEXPOSE:
-		((SdlGraphicsManager *)_graphicsManager)->forceFullRedraw();
+		((OSystem_SDL *) g_system)->getGraphicsManager()->forceFullRedraw();
 		break;
 
 	case SDL_QUIT:
@@ -231,7 +259,7 @@ bool OSystem_SDL::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 }
 
 
-bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
@@ -312,7 +340,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	// Ctrl-Alt-<key> will change the GFX mode
 	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		if (((SdlGraphicsManager *)_graphicsManager)->handleScalerHotkeys(ev.key))
+		if (((OSystem_SDL *) g_system)->getGraphicsManager()->handleScalerHotkeys(ev.key))
 			return false;
 	}
 
@@ -326,7 +354,7 @@ bool OSystem_SDL::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
@@ -341,22 +369,22 @@ bool OSystem_SDL::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if (((SdlGraphicsManager *)_graphicsManager)->isScalerHotkey(event))
+	if (((OSystem_SDL *) g_system)->getGraphicsManager()->isScalerHotkey(event))
 		// Swallow these key up events
 		return false;
 
 	return true;
 }
 
-bool OSystem_SDL::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
-	((SdlGraphicsManager *)_graphicsManager)->setMousePos(event.mouse.x, event.mouse.y);
+	((OSystem_SDL *) g_system)->getGraphicsManager()->setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONDOWN;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -379,7 +407,7 @@ bool OSystem_SDL::handleMouseButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.button.button == SDL_BUTTON_LEFT)
 		event.type = Common::EVENT_LBUTTONUP;
 	else if (ev.button.button == SDL_BUTTON_RIGHT)
@@ -395,7 +423,7 @@ bool OSystem_SDL::handleMouseButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -426,7 +454,7 @@ bool OSystem_SDL::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	if (ev.jbutton.button == JOY_BUT_LMOUSE) {
 		event.type = Common::EVENT_LBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -457,7 +485,7 @@ bool OSystem_SDL::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	int axis = ev.jaxis.value;
 	if ( axis > JOY_DEADZONE) {
 		axis -= JOY_DEADZONE;
@@ -505,7 +533,7 @@ bool OSystem_SDL::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 #ifdef LINUPY
 	// On Yopy map the End button to quit
 	if ((ev.key.keysym.sym == 293)) {
@@ -573,9 +601,11 @@ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
 	return false;
 }
 
-void OSystem_SDL::toggleMouseGrab() {
+void SdlEventManager::toggleMouseGrab() {
 	if (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_OFF)
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	else
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
+
+#endif

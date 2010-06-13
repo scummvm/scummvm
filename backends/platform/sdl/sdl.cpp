@@ -45,6 +45,8 @@
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
+#include "backends/events/sdl/sdl-events.h"
+
 #include "icons/scummvm.xpm"
 
 #include <time.h>	// for getTimeAndDate()
@@ -86,14 +88,10 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
 
-	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = 0;
 
 	if (ConfMan.hasKey("disable_sdl_parachute"))
 		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-	if (joystick_num > -1)
-		sdlFlags |= SDL_INIT_JOYSTICK;
 
 	if (SDL_Init(sdlFlags) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -108,16 +106,10 @@ void OSystem_SDL::initBackend() {
 		_mutexManager = new SdlMutexManager();
 	}
 
-	// enable joystick
-	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		_joystick = SDL_JoystickOpen(joystick_num);
-	}
-
 	// Create and hook up the event manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
 	if (_eventManager == 0) {
-		_eventManager = new DefaultEventManager(this);
+		_eventManager = new SdlEventManager(this);
 	}
 
 	// Create the savefile manager, if none exists yet (we check for this to
@@ -177,14 +169,7 @@ void OSystem_SDL::initBackend() {
 
 OSystem_SDL::OSystem_SDL()
 	:
-	_scrollLock(false),
-	_joystick(0) {
-
-	// reset mouse state
-	memset(&_km, 0, sizeof(_km));
-
-	_inited = false;
-
+	_inited(false) {
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(UNIX)
@@ -351,9 +336,6 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 }
 
 void OSystem_SDL::deinit() {
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
-
 	SDL_ShowCursor(SDL_ENABLE);
 
 	SDL_RemoveTimer(_timerID);
@@ -366,7 +348,7 @@ void OSystem_SDL::deinit() {
 
 	// Event Manager requires save manager for storing
 	// recorded events
-	delete getEventManager();
+	delete _eventManager;
 	delete _savefileManager;
 }
 
@@ -428,4 +410,14 @@ void OSystem_SDL::setupIcon() {
 	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
+}
+
+SdlGraphicsManager *OSystem_SDL::getGraphicsManager() {
+	assert(_graphicsManager);
+	return (SdlGraphicsManager *)_graphicsManager;
+}
+
+bool OSystem_SDL::pollEvent(Common::Event &event) {
+	assert(_eventManager);
+	return ((SdlEventManager *)_eventManager)->pollSdlEvent(event);
 }

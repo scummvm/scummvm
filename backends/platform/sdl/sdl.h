@@ -65,14 +65,8 @@ public:
 
 	virtual void getTimeAndDate(TimeDate &t) const;
 
-	// Get the next event.
-	// Returns true if an event was retrieved.
-	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
-
 	// Define all hardware keys for keymapper
 	virtual Common::HardwareKeySet *getHardwareKeySet();
-
-	virtual void preprocessEvents(SDL_Event *event) {}
 
 	// Quit
 	virtual void quit(); // overloaded by CE backend
@@ -85,50 +79,16 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
+	SdlGraphicsManager *getGraphicsManager();
+
+	virtual bool pollEvent(Common::Event &event);
+
 protected:
 	bool _inited;
 
-	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
-	// I am keeping the rest of the code in for now, since the joystick
-	// code (or rather, "hack") uses it, too.
-	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
-		uint32 last_time, delay_time, x_down_time, y_down_time;
-	};
-
-	KbdMouse _km;
-
-	// Scroll lock state - since SDL doesn't track it
-	bool _scrollLock;
-	
-	// joystick
-	SDL_Joystick *_joystick;
-
-	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
-
-	// Handlers for specific SDL events, called by pollEvent.
-	// This way, if a backend inherits fromt the SDL backend, it can
-	// change the behavior of only a single event, without having to override all
-	// of pollEvent.
-	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleMouseButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
-
 	SDL_TimerID _timerID;
 
-	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
-	void toggleMouseGrab();
-
-	void handleKbdMouse();
-
 	void setupIcon();
-
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif
