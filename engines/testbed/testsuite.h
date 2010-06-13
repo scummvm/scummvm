@@ -51,10 +51,10 @@ public:
 		}	
 	}
 	
-	int getNumTests() { return _testsToExecute.size(); }
-	int getNumTestsPassed() { return _numTestsPassed; }
-	int getNumTestsFailed() { return _numTestsExecuted - _numTestsPassed; }
-	void genReport() {
+	int getNumTests() const { return _testsToExecute.size(); }
+	int getNumTestsPassed() const { return _numTestsPassed; }
+	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
+	void genReport() const {
 		printf("Subsystem:%s\n",getName());
 		printf("Tests executed:%d\n", _numTestsExecuted);
 		printf("Tests Passed:%d\n", _numTestsPassed);
@@ -137,7 +137,7 @@ public:
 		}
 		genReport();
 	}
-	virtual const char *getName() = 0;
+	virtual const char *getName() const = 0;
 
 protected:
 	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed

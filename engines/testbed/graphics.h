@@ -9,14 +9,18 @@ namespace GFXtests {
 
 // Helper functions for GFX tests
 void drawEllipse(int x, int y, int a, int b);
+void drawCursor(const char *gfxModeName = 0, int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
 bool fullScreenMode(); 
 bool aspectRatio();
 bool palettizedCursors();
 bool copyRectToScreen();
-bool mouseMovements();
 bool iconifyWindow();
+bool scaledCursors();
+bool shakingEffect();
+bool focusRectangle();
+bool overlayGraphics();
 // add more here
 }
 
@@ -33,7 +37,7 @@ public:
 	GFXTestSuite();
 	~GFXTestSuite(){}
 	void execute();
-	const char *getName();
+	const char *getName() const;
 	static void setCustomColor(uint r, uint g, uint b);
 
 private:
