@@ -852,6 +852,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 }
 
 bool Console::cmdShowInstruments(int argc, const char **argv) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
 	int songNumber = -1;
 
 	if (argc == 2)
@@ -1007,6 +1008,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		DebugPrintf("\n\n");
 	}
 
+#endif
 	return true;
 }
 
