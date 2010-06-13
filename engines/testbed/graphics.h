@@ -6,12 +6,17 @@
 namespace Testbed {
 
 namespace GFXtests {
+
+// Helper functions for GFX tests
+void drawEllipse(int x, int y, int a, int b);
+
 // will contain function declarations for GFX tests
 bool fullScreenMode(); 
 bool aspectRatio();
 bool palettizedCursors();
 bool copyRectToScreen();
 bool mouseMovements();
+bool iconifyWindow();
 // add more here
 }
 

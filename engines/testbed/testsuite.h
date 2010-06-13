@@ -105,6 +105,12 @@ public:
 		g_system->unlockScreen();
 		g_system->updateScreen();
 	}
+	
+	static void clearScreen() {
+		byte buffer[200][320] = {{0}};
+		g_system->copyRectToScreen(&buffer[0][0], 320, 0, 0, 320, 200);
+		g_system->updateScreen();
+	}
 
 	/**
 	 * Adds a test to the list of tests to be executed

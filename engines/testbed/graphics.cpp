@@ -6,6 +6,7 @@
 #include "graphics/cursorman.h"
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
+#include "graphics/VectorRendererSpec.h"
 
 namespace Testbed {
 
@@ -19,10 +20,11 @@ GFXTestSuite::GFXTestSuite() {
 	g_system->grabPalette(_palette, 0, 3);
 	
 	// Add tests here
-	// addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	addTest("FullScreenMode", &GFXtests::fullScreenMode);
 	addTest("AspectRatio", &GFXtests::aspectRatio);
-	// addTest("PalettizedCursors", &GFXtests::palettizedCursors);
-	// addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
 }
 
 const char *GFXTestSuite::getName() {
@@ -56,51 +58,61 @@ void GFXTestSuite::execute() {
 
 // GFXtests go here
 
-void drawEllipse(int cx, int cy, int a, int b) {
-	byte buffer[100][100] = {0};
-	int shift = 25;
-	// Assume a rectangle of 50x50
-	// horizontal axis = y-axis
-	// vertical axis = x-axis
-	// The centre is (shift, shift). As of now assume it to be (0, 0)
-	// and when done shift it to (shift, shift)
+/**
+ * Used by aspectRatio()
+ */
+
+void GFXtests::drawEllipse(int cx, int cy, int a, int b) {	
+	
+	// top-left coordinates of rectangle enclosing the eclipse  (cx - a, cy - a)
+	// length = width = 2a
+	// size of buffer = 4 * a * a 
+	
+	byte buffer[200][320] = {{0}};
 	float theta;
 	int x, y, x1, y1;
 
-	for (theta = 0; theta <= PI / 2; theta += PI / 90  ) {
+	// Illuminate the center
+	buffer[cx][cy] = 1;
+	
+	for (theta = 0; theta <= PI / 2; theta += PI / 360  ) {
 		x = (int)(b * sin(theta) + 0.5);
 		y = (int)(a * cos(theta) + 0.5);
 		
 		// This gives us four points
 		
-		x1 = x + shift;
-		y1 = y + shift;
+		x1 = x + cx;
+		y1 = y + cy;
 		
 		buffer[x1][y1] = 1;
 
-		x1 = (-1) * x + shift;
-		y1 = y + shift;
+		x1 = (-1) * x + cx;
+		y1 = y + cy;
 		
 		buffer[x1][y1] = 1;
 		
-		x1 = x + shift;
-		y1 = (-1) * y + shift;
+		x1 = x + cx;
+		y1 = (-1) * y + cy;
 		
 		buffer[x1][y1] = 1;
 
-		x1 = (-1) * x + shift;
-		y1 = (-1) * y + shift;
+		x1 = (-1) * x + cx;
+		y1 = (-1) * y + cy;
 		
 		buffer[x1][y1] = 1;
 	}
 
-	g_system->copyRectToScreen(&buffer[0][0], 100, cx, cy, 100, 100);
+	g_system->copyRectToScreen(&buffer[0][0], 320, 0, 0, 320, 200);
 	g_system->updateScreen();
 }
 
-bool GFXtests::fullScreenMode() {
+/**
+ * Tests the fullscreen mode by: toggling between fullscreen and windowed mode
+ */
 
-	Testsuite::displayMessage("Testing fullscreen mode.\n"
+bool GFXtests::fullScreenMode() {
+	
+	Testsuite::displayMessage("Testing fullscreen mode.\n" 
 	"If the feature is supported by the backend, you should expect to see a toggle between fullscreen and normal modes");
 
 	Common::Point pt(0, 100);
@@ -125,8 +137,7 @@ bool GFXtests::fullScreenMode() {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, isFeatureEnabled);
 		g_system->endGFXTransaction();
-	}
-	else {
+	} else {
 		Testsuite::displayMessage("feature not supported");
 	}
 
@@ -134,15 +145,20 @@ bool GFXtests::fullScreenMode() {
 	return true;
 }
 
+/**
+ * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
+ */
+
 bool GFXtests::aspectRatio() {
 	Testsuite::displayMessage("Testing Aspect Ratio Correction.\n"
 	"With this feature enabled games running at 320x200 should be scaled upto 320x240 pixels");
 
-	// Draw an ellipse
-	drawEllipse(25, 25, 24, 20);
+	// Draw a circle on the screen
 	
-	Common::Point pt(0, 100);
-	Common::Rect rect = Testsuite::writeOnScreen("Testing Aspect ratio correction", pt);
+	drawEllipse(100, 160, 72, 60);
+	
+	Common::Point pt(0, 180);
+	Testsuite::writeOnScreen("when corrected, it should be a circle!", pt);
 	
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
@@ -163,14 +179,19 @@ bool GFXtests::aspectRatio() {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, isFeatureEnabled);
 		g_system->endGFXTransaction();
-	}
-	else {
+	} else {
 		Testsuite::displayMessage("feature not supported");
 	}
 
-	Testsuite::clearScreen(rect);
+	g_system->delayMillis(500);
+	Testsuite::clearScreen();
 	return true;
 }
+
+/**
+ * Tests Palettized cursors.
+ * Method: Create a yellow colored cursor, should be able to move it. Once you click test terminates
+ */
 
 bool GFXtests::palettizedCursors() {
 	Testsuite::displayMessage("Testing Cursors. You should expect to see a yellow colored square cursor.\n"
@@ -192,11 +213,17 @@ bool GFXtests::palettizedCursors() {
 		palette[8] = palette[9] = 255;
 		palette[10] = 0;
 		
-		byte buffer[10 * 10];
-		memset(buffer, 2, 10 * 10);
+		byte buffer[10][10];
+		memset(&buffer[0][0], 2, 10 * 10);
+
+		// Mark the hotspot
+		for (int i = 0; i < 10; i++) {
+			buffer[i][i] = 0;
+			buffer[9 - i][i] = 0;
+		}
 		
 		CursorMan.pushCursorPalette(palette, 0, 3);
-		CursorMan.pushCursor(buffer, 10, 10, 45, 45, 1);
+		CursorMan.pushCursor(&buffer[0][0], 10, 10, 5, 5, 1);
 		CursorMan.showMouse(true);
 
 		Common::EventManager *eventMan = g_system->getEventManager();
@@ -225,8 +252,6 @@ bool GFXtests::palettizedCursors() {
 					printf("Mouse Clicked\n");
 					g_system->delayMillis(1000);
 					quitLoop = true;
-					CursorMan.popCursorPalette();
-					CursorMan.popCursor();
 					Testsuite::clearScreen(rect);
 					Testsuite::writeOnScreen("TestFinished", pt);
 					g_system->delayMillis(1000);
@@ -241,13 +266,44 @@ bool GFXtests::palettizedCursors() {
 		Testsuite::displayMessage("feature not supported");
 	}
 	Testsuite::clearScreen(rect);
+
+	// Testing Mouse Movements now!
+	
+	Testsuite::writeOnScreen("Moving mouse automatically from (0, 0) to (100, 100)", pt);
+	g_system->warpMouse(0, 0);
+	g_system->updateScreen();
+	g_system->delayMillis(1000);
+
+	for (int i = 0; i <= 100; i++) {
+		g_system->delayMillis(20);
+		g_system->warpMouse(i, i);
+		g_system->updateScreen();
+	}
+	
+	Testsuite::clearScreen();
+	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
+	g_system->delayMillis(1500);
+	// Popping cursor
+	CursorMan.popCursorPalette();
+	CursorMan.popCursor();
+
+	Testsuite::clearScreen();
 	return true;
 }
+
+/**
+ * Tests Mouse Movements.
+ * Currently plan to implement an automove along a diagonal to the mid point.
+ */
 
 bool GFXtests::mouseMovements() {
 	return true;
 }
 
+/**
+ * This basically blits the screen by the contents of its buffer.
+ *
+ */
 bool GFXtests::copyRectToScreen() {
 	Testsuite::displayMessage("Testing Blitting a Bitmap to screen.\n"
 	"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.");
@@ -270,4 +326,42 @@ bool GFXtests::copyRectToScreen() {
 
 }
 
+/**
+ * Testing feature : Iconifying window
+ * It is expected the screen minimizes when this feature is enabled 
+ */
+bool GFXtests::iconifyWindow() {
+	
+	Testsuite::displayMessage("Testing Iconify Window mode.\n" 
+	"If the feature is supported by the backend, you should expect to see a toggle between minimized and normal states");
+
+	Common::Point pt(0, 100);
+	Common::Rect rect = Testsuite::writeOnScreen("Testing Iconifying window", pt);
+	
+	bool isFeaturePresent;
+	bool isFeatureEnabled;
+
+	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureIconifyWindow);
+	isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureIconifyWindow);
+	g_system->delayMillis(1000);
+
+	if (isFeaturePresent) {
+		// Toggle
+
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureIconifyWindow, !isFeatureEnabled);
+		g_system->endGFXTransaction();
+
+		g_system->delayMillis(1000);
+		
+		g_system->beginGFXTransaction();
+		g_system->setFeatureState(OSystem::kFeatureIconifyWindow, isFeatureEnabled);
+		g_system->endGFXTransaction();
+	} else {
+		Testsuite::displayMessage("feature not supported");
+	}
+
+	Testsuite::clearScreen(rect);
+	return true;
+}
 }
