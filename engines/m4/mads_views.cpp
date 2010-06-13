@@ -855,10 +855,15 @@ void MadsDirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1.textActive = true;
 }
 
-void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset) {
+void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset, const Common::Point &posAdjust) {
 	for (uint i = 0; i < _entries.size(); ++i) {
+		const Common::Rect &srcBounds = _entries[i].bounds;
+
+		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
+			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+
 		if (_entries[i].active && _entries[i].bounds.isValidRect())
-			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
+			src->copyTo(dest, bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
 	}
 }
 
@@ -1202,7 +1207,7 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 	
 	// Copy dirty areas to the main display surface 
-	_dirtyAreas.copy(_view, _bgSurface, _yOffset);
+	_dirtyAreas.copy(_view, _bgSurface, _yOffset, _posAdjust);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();

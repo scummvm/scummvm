@@ -655,7 +655,6 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	drawStyle = stream->readUint16LE();
 	width = stream->readUint16LE();
 	height = stream->readUint16LE();
-	assert((width == 320) && (height == 156));
 	
 	stream->skip(24);
 

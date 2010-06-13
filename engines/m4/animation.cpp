@@ -333,13 +333,15 @@ void MadsAnimation::update() {
 
 	// Handle any offset adjustment for sprites as of this frame
 	if (_view->_posAdjust.x != misc.posAdjust.x) {
-		misc.posAdjust.x = _view->_posAdjust.x;
+		_view->_posAdjust.x = misc.posAdjust.x;
 		screenChanged = true;
 	}
 	if (_view->_posAdjust.y != misc.posAdjust.y) {
-		misc.posAdjust.y = _view->_posAdjust.y;
+		_view->_posAdjust.y = misc.posAdjust.y;
 		screenChanged = true;
 	}
+
+
 	if (screenChanged) {
 		// Signal the entire screen needs refreshing
 		_view->_spriteSlots.fullRefresh();
