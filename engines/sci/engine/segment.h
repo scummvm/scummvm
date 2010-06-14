@@ -331,11 +331,6 @@ private:
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 };
 
-struct CodeBlock {
-	reg_t pos;
-	int size;
-};
-
 typedef Common::HashMap<uint16, Object> ObjMap;
 
 class Script : public SegmentObj {
@@ -361,8 +356,6 @@ private:
 
 	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
 	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
-
-	Common::Array<CodeBlock> _codeBlocks;
 
 	int _localsOffset;
 	uint16 _localsCount;
@@ -401,12 +394,6 @@ public:
 	Object *allocateObject(uint16 offset);
 	Object *getObject(uint16 offset);
 	const Object *getObject(uint16 offset) const;
-
-	/**
-	 * Informs the segment manager that a code block must be relocated
-	 * @param location	Start of block to relocate
-	 */
-	void scriptAddCodeBlock(reg_t location);
 
 	/**
 	 * Initializes an object within the segment manager

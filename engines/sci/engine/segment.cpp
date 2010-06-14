@@ -115,7 +115,6 @@ void Script::freeScript() {
 	_bufSize = 0;
 
 	_objects.clear();
-	_codeBlocks.clear();
 }
 
 void Script::init(int script_nr, ResourceManager *resMan) {
@@ -124,8 +123,6 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	_localsOffset = 0;
 	_localsBlock = NULL;
 	_localsCount = 0;
-
-	_codeBlocks.clear();
 
 	_markedAsDeleted = false;
 
@@ -187,8 +184,6 @@ void Script::load(ResourceManager *resMan) {
 		assert(_bufSize - _scriptSize <= heap->size);
 		memcpy(_heapStart, heap->data, heap->size);
 	}
-
-	_codeBlocks.clear();
 
 	_exportTable = 0;
 	_numExports = 0;
@@ -310,13 +305,6 @@ bool Script::relocateLocal(SegmentId segment, int location) {
 		return false;
 }
 
-void Script::scriptAddCodeBlock(reg_t location) {
-	CodeBlock cb;
-	cb.pos = location;
-	cb.size = READ_SCI11ENDIAN_UINT16(_buf + location.offset - 2);
-	_codeBlocks.push_back(cb);
-}
-
 void Script::relocate(reg_t block) {
 	byte *heap = _buf;
 	uint16 heapSize = (uint16)_bufSize;
@@ -333,13 +321,14 @@ void Script::relocate(reg_t block) {
 
 	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
 	int exportIndex = 0;
+	int pos = 0;
 
 	for (int i = 0; i < count; i++) {
-		int pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
-		// This occurs in SCI01/SCI1 games where every usually one export
-		// value is zero. It seems that in this situation, we should skip
-		// the export and move to the next one, though the total count
-		// of valid exports remains the same
+		pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
+		// This occurs in SCI01/SCI1 games where usually one export value
+		// is zero. It seems that in this situation, we should skip the
+		// export and move to the next one, though the total count of valid
+		// exports remains the same
 		if (!pos) {
 			exportIndex++;
 			pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
@@ -347,37 +336,15 @@ void Script::relocate(reg_t block) {
 				error("Script::relocate(): Consecutive zero exports found");
 		}
 
+		// In SCI0-SCI1, script local variables, objects and code are relocated. We only relocate
+		// locals and objects here, and ignore relocation of code blocks. In SCI1.1 and newer
+		// versions, only locals and objects are relocated.
 		if (!relocateLocal(block.segment, pos)) {
-			bool done = false;
-			uint k;
-
-			ObjMap::iterator it;
+			// Not a local? It's probably an object or code block. If it's an object, relocate it.
 			const ObjMap::iterator end = _objects.end();
-			for (it = _objects.begin(); !done && it != end; ++it) {
+			for (ObjMap::iterator it = _objects.begin(); it != end; ++it)
 				if (it->_value.relocate(block.segment, pos, _scriptSize))
-					done = true;
-			}
-
-			// Sanity check for SCI0-SCI1
-			if (getSciVersion() < SCI_VERSION_1_1) {
-				for (k = 0; !done && k < _codeBlocks.size(); k++) {
-					if (pos >= _codeBlocks[k].pos.offset &&
-							pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
-						done = true;
-				}
-			}
-
-			if (!done) {
-				debug("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				debug("Relocation failed for index %04x (%d/%d)\n", pos, exportIndex + 1, count);
-				if (_localsBlock)
-					debug("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
-				else
-					debug("- No locals\n");
-				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					debug("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				debug("Trying to continue anyway...\n");
-			}
+					break;
 		}
 
 		exportIndex++;

@@ -179,7 +179,10 @@ void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+	const byte *seeker = scr->_heapStart;;
+	uint16 entrySize = READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
+	seeker += entrySize;	// skip first entry
+	seeker += 4;			// skip header
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass) {	// -info- selector
@@ -251,10 +254,6 @@ void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 			addr = make_reg(segmentId, curOffset);;
 
 			switch (objType) {
-			case SCI_OBJ_CODE:
-				if (pass == 0)
-					scr->scriptAddCodeBlock(addr);
-				break;
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				if (pass == 0 && objType == SCI_OBJ_CLASS) {
