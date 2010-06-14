@@ -340,6 +340,35 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
+static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth) {
+	if (depth == 0)
+		return;
+
+	if (fslist.empty())
+		return;
+
+	// First we compose a hashmap of all files in fslist.
+	// Includes nifty stuff like removing trailing dots and ignoring case.
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory()) {
+			Common::FSList files;
+
+			if (!file->getChildren(files, Common::FSNode::kListAll))
+				continue;
+
+			composeFileHashMap(files, allFiles, depth - 1);
+		}
+
+		Common::String tstr = file->getName();
+
+		// Strip any trailing dot
+		if (tstr.lastChar() == '.')
+			tstr.deleteLastChar();
+
+		allFiles[tstr] = *file;	// Record the presence of this file
+	}
+}
+
 static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &params, Common::Language language, Common::Platform platform, const Common::String &extra) {
 	FileMap allFiles;
 	SizeMD5Map filesSizeMD5;
@@ -355,18 +384,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 	// First we compose a hashmap of all files in fslist.
 	// Includes nifty stuff like removing trailing dots and ignoring case.
-	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		if (file->isDirectory())
-			continue;
-
-		Common::String tstr = file->getName();
-
-		// Strip any trailing dot
-		if (tstr.lastChar() == '.')
-			tstr.deleteLastChar();
-
-		allFiles[tstr] = *file;	// Record the presence of this file
-	}
+	composeFileHashMap(fslist, allFiles, (params.depth == 0 ? 1 : params.depth));
 
 	// Check which files are included in some ADGameDescription *and* present
 	// in fslist. Compute MD5s and file sizes for these files.

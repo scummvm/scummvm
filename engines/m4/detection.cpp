@@ -400,7 +400,9 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOMIDI
+	Common::GUIO_NOMIDI,
+	// Maximum directory depth
+	1
 };
 
 class M4MetaEngine : public AdvancedMetaEngine {

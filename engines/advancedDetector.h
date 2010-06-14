@@ -190,6 +190,13 @@ struct ADParams {
 	 * enum for the list.
 	 */
 	uint32 guioptions;
+
+	/**
+	 *
+	 * Maximum depth of directories to look up
+	 * If set to 0, the depth is 1 level
+	 */
+	uint32 depth;
 };
 
 

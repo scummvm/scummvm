@@ -237,7 +237,9 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI
+	Common::GUIO_NOSPEECH | Common::GUIO_NOMIDI,
+	// Maximum directory depth
+	1
 };
 
 class CruiseMetaEngine : public AdvancedMetaEngine {

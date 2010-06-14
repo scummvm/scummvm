@@ -91,7 +91,8 @@ static const ADParams detectionParams = {
 	"teenagent",
 	0,
 	0,
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	1
 };
 
 #define MAX_SAVES 20

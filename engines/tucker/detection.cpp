@@ -114,7 +114,8 @@ static const ADParams detectionParams = {
 	"tucker",
 	0,
 	0,
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	1
 };
 
 static const ADGameDescription tuckerDemoGameDescription = {

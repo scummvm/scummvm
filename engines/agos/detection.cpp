@@ -102,7 +102,9 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOLAUNCHLOAD
+	Common::GUIO_NOLAUNCHLOAD,
+	// Maximum directory depth
+	1
 };
 
 using namespace AGOS;

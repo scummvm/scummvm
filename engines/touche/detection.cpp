@@ -134,7 +134,9 @@ static const ADParams detectionParams = {
 	Touche::fileBasedFallback, // file-based detection data to enable not yet known versions to start
 	kADFlagPrintWarningOnFileBasedFallback,
 	// Additional GUI options (for every game}
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1
 };
 
 class ToucheMetaEngine : public AdvancedMetaEngine {

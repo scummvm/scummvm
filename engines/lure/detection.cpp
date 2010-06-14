@@ -196,7 +196,9 @@ static const ADParams detectionParams = {
 	// Flags
 	kADFlagUseExtraAsHint,
 	// Additional GUI options (for every game}
-	Common::GUIO_NOSPEECH
+	Common::GUIO_NOSPEECH,
+	// Maximum directory depth
+	1
 };
 
 class LureMetaEngine : public AdvancedMetaEngine {
