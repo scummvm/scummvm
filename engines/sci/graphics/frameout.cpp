@@ -126,6 +126,14 @@ void GfxFrameout::kernelFrameout() {
 
 	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
 		planeObject = _planes[planeNr];
+
+		// Remove any invalid planes
+		if (!_segMan->isObject(planeObject)) {
+			_planes.remove_at(planeNr);
+			planeNr--;
+			continue;
+		}
+
 		planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
 		if (planePriority == -1) // Plane currently not meant to be shown
@@ -161,6 +169,14 @@ void GfxFrameout::kernelFrameout() {
 		itemEntry = itemData;
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
 			itemObject = _screenItems[itemNr];
+
+			// Remove any invalid items
+			if (!_segMan->isObject(itemObject)) {
+				_screenItems.remove_at(itemNr);
+				itemNr--;
+				continue;
+			}
+
 			itemPlane = readSelector(_segMan, itemObject, SELECTOR(plane));
 			if (planeObject == itemPlane) {
 				// Found an item on current plane
