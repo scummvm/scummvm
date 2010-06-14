@@ -160,19 +160,6 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	// QFG3 clears clones with underbits set
-	//if (readSelectorValue(victim_addr, underBits))
-	//	warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
-
-#if 0
-	if (s->dyn_views) {  // Free any widget associated with the clone
-		GfxWidget *widget = gfxw_set_id(gfxw_remove_ID(s->dyn_views, offset), GFXW_NO_ID);
-
-		if (widget && s->bg_widgets)
-			s->bg_widgets->add(GFXWC(s->bg_widgets), widget);
-	}
-#endif
-
 	victim_obj->markAsFreed();
 
 	return s->r_acc;
