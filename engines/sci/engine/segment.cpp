@@ -196,12 +196,12 @@ void Script::load(ResourceManager *resMan) {
 	_numSynonyms = 0;
 	
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {
+		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {	// does the script have an export table?
 			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
-			_localsOffset = _scriptSize + 4;
-			_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 		}
+		_localsOffset = _scriptSize + 4;
+		_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 	} else {
 		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
 		if (_exportTable) {
