@@ -113,6 +113,7 @@ public:
 
 	uint32 gameStartTime; /**< The time at which the interpreter was started */
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
+	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
 	void wait(int16 ticks);
 

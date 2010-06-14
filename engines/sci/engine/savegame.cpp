@@ -877,6 +877,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Time state:
 	s->lastWaitTime = g_system->getMillis();
 	s->gameStartTime = g_system->getMillis();
+	s->_screenUpdateTime = g_system->getMillis();
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 	s->_sound._it = NULL;

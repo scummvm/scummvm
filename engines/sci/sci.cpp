@@ -325,7 +325,7 @@ bool SciEngine::initGame() {
 		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
 	}
 
-	_gamestate->gameStartTime = _gamestate->lastWaitTime = g_system->getMillis();
+	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
