@@ -192,8 +192,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 				return;
 			}
 
-			_classTable[species].reg.segment = seg;
-			_classTable[species].reg.offset = classpos;
+			setClassOffset(species, make_reg(seg, classpos));
 		}
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
@@ -231,85 +230,69 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 	int objType;
-	uint32 objLength = 0;
+	reg_t addr;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	uint16 curOffset = oldScriptHeader ? 2 : 0;
 
-	// Now do a first pass through the script objects to find all the object classes
+	// The script is initialized in 2 passes. 
+	// Pass 1: creates a lookup table of all used classes
+	// Pass 2: loads classes and objects
 
-	do {
-		objType = scr->getHeap(curOffset);
-		if (!objType)
-			break;
+	for (uint16 pass = 0; pass <= 1; pass++) {
+		uint16 objLength = 0;
+		uint16 curOffset = oldScriptHeader ? 2 : 0;
 
-		objLength = scr->getHeap(curOffset + 2);
-		curOffset += 4;		// skip header
+		do {
+			objType = scr->getHeap(curOffset);
+			if (!objType)
+				break;
 
-		switch (objType) {
-		case SCI_OBJ_CLASS: {
-			int classpos = curOffset - SCRIPT_OBJECT_MAGIC_OFFSET;
-			int species = scr->getHeap(curOffset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
-			if (species < 0 || species >= (int)segMan->classTableSize()) {
-				if (species == (int)segMan->classTableSize()) {
-					// Happens in the LSL2 demo
-					warning("Applying workaround for an off-by-one invalid species access");
-					segMan->resizeClassTable(segMan->classTableSize() + 1);
-				} else {
-					error("Invalid species %d(0x%x) not in interval "
-							  "[0,%d) while instantiating script at segment %d\n",
-							  species, species, segMan->classTableSize(),
-							  segmentId);
-					return;
+			objLength = scr->getHeap(curOffset + 2);
+			curOffset += 4;		// skip header
+			addr = make_reg(segmentId, curOffset);;
+
+			switch (objType) {
+			case SCI_OBJ_CODE:
+				if (pass == 0)
+					scr->scriptAddCodeBlock(addr);
+				break;
+			case SCI_OBJ_OBJECT:
+			case SCI_OBJ_CLASS:
+				if (pass == 0 && objType == SCI_OBJ_CLASS) {
+					int classpos = curOffset + 8;	// SCRIPT_OBJECT_MAGIC_OFFSET
+					int species = scr->getHeap(classpos);
+
+					if (species == (int)segMan->classTableSize()) {
+						// Happens in the LSL2 demo
+						warning("Applying workaround for an off-by-one invalid species access");
+						segMan->resizeClassTable(segMan->classTableSize() + 1);
+					} else if (species < 0 || species > (int)segMan->classTableSize()) {
+						error("Invalid species %d(0x%x) not in interval "
+								  "[0,%d) while instantiating script at segment %d\n",
+								  species, species, segMan->classTableSize(),
+								  segmentId);
+						return;
+					}
+
+					segMan->setClassOffset(species, make_reg(segmentId, classpos));
+				} else if (pass == 1) {
+					Object *obj = scr->scriptObjInit(addr);
+					obj->initSpecies(segMan, addr);
+
+					if (!obj->initBaseObject(segMan, addr)) {
+						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						scr->scriptObjRemove(addr);
+					}
 				}
+				break;
+
+			default:
+				break;
 			}
 
-			segMan->setClassOffset(species, make_reg(segmentId, classpos));
-			// Set technical class position-- into the block allocated for it
-		}
-		break;
+			curOffset += objLength - 4;
+		} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
+	}	// for
 
-		default:
-			break;
-		}
-
-		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
-
-	// And now a second pass to adjust objects and class pointers, and the general pointers
-	objLength = 0;
-	curOffset = oldScriptHeader ? 2 : 0;
-
-	do {
-		objType = scr->getHeap(curOffset);
-		if (!objType)
-			break;
-
-		objLength = scr->getHeap(curOffset + 2);
-		curOffset += 4;		// skip header
-
-		reg_t addr = make_reg(segmentId, curOffset);
-
-		switch (objType) {
-		case SCI_OBJ_CODE:
-			scr->scriptAddCodeBlock(addr);
-			break;
-		case SCI_OBJ_OBJECT:
-		case SCI_OBJ_CLASS: { // object or class?
-			Object *obj = scr->scriptObjInit(addr);
-			obj->initSpecies(segMan, addr);
-
-			if (!obj->initBaseObject(segMan, addr)) {
-				warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-				scr->scriptObjRemove(addr);
-			}
-		} // if object or class
-		break;
-		default:
-			break;
-		}
-
-		curOffset += objLength - 4;
-	} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
 }
 
 int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNum) {
@@ -411,16 +394,11 @@ void script_uninstantiate(SegManager *segMan, int script_nr) {
 		script_uninstantiate_sci0(segMan, script_nr, segment);
 	// FIXME: Add proper script uninstantiation for SCI 1.1
 
-	if (scr->getLockers())
-		return; // if xxx.lockers > 0
-
-	// Otherwise unload it completely
-	// Explanation: I'm starting to believe that this work is done by SCI itself.
-	scr->markDeleted();
-
-	debugC(kDebugLevelScripts, "Unloaded script 0x%x.", script_nr);
-
-	return;
+	if (!scr->getLockers()) {
+		// The actual script deletion seems to be done by SCI scripts themselves
+		scr->markDeleted();
+		debugC(kDebugLevelScripts, "Unloaded script 0x%x.", script_nr);
+	}
 }
 
 
