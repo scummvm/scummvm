@@ -161,7 +161,7 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 		}
 
 		// As mentioned above, the script and the heap together should not exceed 64KB
-		if (_bufSize > 65535)
+		if (script->size + heap->size > 65535)
 			error("Script and heap sizes combined exceed 64K. This means a fundamental "
 					"design bug was made regarding SCI1.1 and newer games.\nPlease "
 					"report this error to the ScummVM team");

@@ -354,7 +354,7 @@ protected:
 private:
 	size_t _scriptSize;
 	size_t _heapSize;
-	size_t _bufSize;
+	uint16 _bufSize;
 
 	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
 	uint16 _numExports; /**< Number of entries in the exports table */
