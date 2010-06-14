@@ -91,6 +91,7 @@ private:
 	int _transition;
 	MadsAnimation *_activeAnimation;
 	bool _bgLoadFlag;
+	int _startFrame;
 
 	void reset();
 	void readNextCommand();

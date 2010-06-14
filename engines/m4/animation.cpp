@@ -328,6 +328,7 @@ void MadsAnimation::update() {
 
 	// Handle starting any sound for this frame
 	AnimMiscEntry &misc = _miscEntries[_currentFrame];
+printf("frame %d delay %d\n", _currentFrame, misc.numTicks);
 	if (misc.soundNum)
 		_vm->_sound->playSound(misc.soundNum);
 
@@ -449,6 +450,8 @@ void MadsAnimation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
 	_freeFlag = false;
+
+	_nextScrollTimer = _nextFrameTimer = _madsVm->_currentTimer;
 }
 
 void MadsAnimation::load1(int frameNumber) {

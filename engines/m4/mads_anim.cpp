@@ -459,7 +459,8 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	_transition = kTransitionNone;
 	_activeAnimation = NULL;
 	_bgLoadFlag = true;
-	
+	_startFrame = -1;
+
 	reset();
 
 	// Set up system palette colors
@@ -536,6 +537,9 @@ void AnimviewView::updateState() {
 			return;
 		}
 
+		// Reset flags
+		_startFrame = -1;
+
 		readNextCommand();
 	}
 
@@ -543,7 +547,15 @@ void AnimviewView::updateState() {
 }
 
 void AnimviewView::readNextCommand() {
+static bool tempFlag = true;//****DEBUG - Temporarily allow me to skip several intro scenes ****
+
 	while (!_script->eos() && !_script->err()) {
+		if (!tempFlag) {
+			tempFlag = true;
+			strncpy(_currentLine, _script->readLine().c_str(), 79);
+			strncpy(_currentLine, _script->readLine().c_str(), 79);
+		}
+
 		strncpy(_currentLine, _script->readLine().c_str(), 79);
 
 		// Process any switches on the line
@@ -580,6 +592,9 @@ void AnimviewView::readNextCommand() {
 
 	_activeAnimation = new MadsAnimation(_vm, this);
 	_activeAnimation->initialise(_currentLine, flags, &_backgroundSurface, &_codeSurface);
+
+	if (_startFrame != -1)
+		_activeAnimation->setCurrentFrame(_startFrame);
 
 	_spriteSlots.fullRefresh();
 /*
@@ -634,6 +649,7 @@ return;
 Switches are: (taken from the help of the original executable)
   -b       Toggle background load status off/on.
   -c:char  Specify sound card id letter.
+  -f:num   Specify a specific starting frame number
   -g       Stay in graphics mode on exit.
   -h[:ex]  Disable EMS/XMS high memory support.
   -i       Switch sound interrupts mode off/on.
@@ -677,21 +693,39 @@ void AnimviewView::processCommand() {
 	str_upper(commandStr);
 	char *param = commandStr;
 
-	if (!strncmp(commandStr, "B", 1)) {
+	switch (commandStr[0]) {
+	case 'B':
 		// Toggle background load flag
 		_bgLoadFlag = !_bgLoadFlag;
-	} else if (!strncmp(commandStr, "X", 1)) {
-		//printf("X ");
-	} else if (!strncmp(commandStr, "W", 1)) {
-		//printf("W ");
-	} else if (!strncmp(commandStr, "R", 1)) {
-		param = param + 2;
-		//printf("R:%s ", param);
-	} else if (!strncmp(commandStr, "O", 1)) {
+		break;
+
+	case 'F':
+		// Start animation at a specific frame
+		++param;
+		assert(*param == ':');
+		_startFrame = atoi(++param);
+		break;
+
+	case 'O':
 		param = param + 2;
 		//printf("O:%i ", atoi(param));
 		_transition = atoi(param);
-	} else {
+		break;
+
+	case 'R':
+		param = param + 2;
+		//printf("R:%s ", param);
+		break;
+
+	case 'W':
+		//printf("W ");
+		break;
+
+	case 'X':
+		//printf("X ");
+		break;
+
+	default:
 		error("Unknown response command: '%s'", commandStr);
 	}
 }
