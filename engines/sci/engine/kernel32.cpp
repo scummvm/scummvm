@@ -788,15 +788,19 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect nsRect;
 
 	// Get the bounding rectangle of the object
-	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-	// If these are 0, read them from nsLeft, nsTop. This is madness...
-	if (nsRect.left == 0 && nsRect.top == 0) {
-		nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
-		nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
-	}
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
 	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+	if (nsRect.left == itemY && nsRect.top == itemX) {
+		// FIXME: Why is this happening??
+		// Swap the values, as they're inversed(eh???)
+		nsRect.left = itemX;
+		nsRect.top = itemY;
+	}
 
 	/*
 	warning("kOnMe: (%d, %d) on object %04x:%04x (%s), rect (%d, %d, %d, %d), parameter %d", 
