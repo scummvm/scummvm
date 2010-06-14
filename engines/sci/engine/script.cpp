@@ -161,49 +161,19 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 
 void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
 	Script *scr = getScript(segmentId);
-	uint16 count;
 
-	if (getSciVersion() == SCI_VERSION_0_EARLY) {
-		// Old script block. There won't be a localvar block in this case.
-		// Instead, the script starts with a 16 bit int specifying the
-		// number of locals we need; these are then allocated and zeroed.
-		int localsCount = READ_LE_UINT16(scr->_buf);
-		if (localsCount) {
-			scr->_localsOffset = -localsCount * 2; // Make sure it's invalid
-			LocalVariables *locals = allocLocalsSegment(scr, localsCount);
-			if (locals) {
-				for (int i = 0; i < localsCount; i++)
-					locals->_locals[i] = NULL_REG;
-			}
-		}
-
-		return;
-	}
-
-	// Check if the script actually has local variables
-	if (scr->_localsOffset == 0)
-		return;
-
-	VERIFY(scr->_localsOffset + 1 < (uint16)scr->getBufSize(), "Locals beyond end of script\n");
-
-	if (getSciVersion() >= SCI_VERSION_1_1)
-		count = READ_SCI11ENDIAN_UINT16(scr->_buf + scr->_localsOffset - 2);
-	else
-		count = (READ_LE_UINT16(scr->_buf + scr->_localsOffset - 2) - 4) >> 1;
-	// half block size
-
-	if (!(scr->_localsOffset + count * 2 + 1 < (uint16)scr->getBufSize())) {
-		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", scr->_localsOffset, count, (uint)scr->getBufSize());
-		count = (scr->getBufSize() - scr->_localsOffset) >> 1;
-	}
-
-	LocalVariables *locals = allocLocalsSegment(scr, count);
+	LocalVariables *locals = allocLocalsSegment(scr);
 	if (locals) {
-		uint i;
-		const byte *base = (const byte *)(scr->_buf + scr->_localsOffset);
+		if (getSciVersion() > SCI_VERSION_0_EARLY) {
+			const byte *base = (const byte *)(scr->_buf + scr->getLocalsOffset());
 
-		for (i = 0; i < count; i++)
-			locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
+			for (uint16 i = 0; i < scr->getLocalsCount(); i++)
+				locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
+		} else {
+			// In SCI0 early, locals are set at run time, thus zero them all here
+			for (uint16 i = 0; i < scr->getLocalsCount(); i++)
+				locals->_locals[i] = NULL_REG;
+		}
 	}
 }
 

@@ -377,8 +377,8 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 	return segment;
 }
 
-LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
-	if (!count) { // No locals
+LocalVariables *SegManager::allocLocalsSegment(Script *scr) {
+	if (!scr->getLocalsCount()) { // No locals
 		scr->_localsSegment = 0;
 		scr->_localsBlock = NULL;
 		return NULL;
@@ -395,7 +395,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 
 		scr->_localsBlock = locals;
 		locals->script_id = scr->_nr;
-		locals->_locals.resize(count);
+		locals->_locals.resize(scr->getLocalsCount());
 
 		return locals;
 	}

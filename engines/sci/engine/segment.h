@@ -364,6 +364,9 @@ private:
 
 	Common::Array<CodeBlock> _codeBlocks;
 
+	int _localsOffset;
+	uint16 _localsCount;
+
 public:
 	/**
 	 * Table for objects, contains property variables.
@@ -371,7 +374,8 @@ public:
 	 */
 	ObjMap _objects;
 
-	int _localsOffset;
+	int getLocalsOffset() const { return _localsOffset; }
+	uint16 getLocalsCount() const { return _localsCount; }
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 

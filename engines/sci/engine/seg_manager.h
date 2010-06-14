@@ -478,7 +478,7 @@ private:
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
-	LocalVariables *allocLocalsSegment(Script *scr, int count);
+	LocalVariables *allocLocalsSegment(Script *scr);
 	int deallocate(SegmentId seg, bool recursive);
 	void createClassTable();
 

@@ -100,6 +100,7 @@ Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_localsOffset = 0;
 	_localsSegment = 0;
 	_localsBlock = NULL;
+	_localsCount = 0;
 
 	_markedAsDeleted = false;
 }
@@ -122,6 +123,7 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 
 	_localsOffset = 0;
 	_localsBlock = NULL;
+	_localsCount = 0;
 
 	_codeBlocks.clear();
 
@@ -198,6 +200,7 @@ void Script::load(ResourceManager *resMan) {
 			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
 			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
 			_localsOffset = _scriptSize + 4;
+			_localsCount = READ_SCI11ENDIAN_UINT16(_buf + _localsOffset - 2);
 		}
 	} else {
 		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
@@ -211,8 +214,27 @@ void Script::load(ResourceManager *resMan) {
 			_synonyms += 4;	// skip header
 		}
 		const byte* localsBlock = findBlock(SCI_OBJ_LOCALVARS);
-		if (localsBlock)
+		if (localsBlock) {
 			_localsOffset = localsBlock - _buf + 4;
+			_localsCount = (READ_LE_UINT16(_buf + _localsOffset - 2) - 4) >> 1;	// half block size
+		}
+	}
+
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		// Does the script actually have locals? If not, set the locals offset to 0
+		if (!_localsCount)
+			_localsOffset = 0;
+
+		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
+			warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", _localsOffset, _localsCount, _bufSize);
+			_localsCount = (_bufSize - _localsOffset) >> 1;
+		}
+	} else {
+		// Old script block. There won't be a localvar block in this case.
+		// Instead, the script starts with a 16 bit int specifying the
+		// number of locals we need; these are then allocated and zeroed.
+		_localsCount = READ_LE_UINT16(_buf);
+		_localsOffset = -_localsCount * 2; // Make sure it's invalid
 	}
 }
 
