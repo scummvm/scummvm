@@ -18,16 +18,16 @@ enum {
 	kColorCustom = 2
 };
 
-typedef bool (*invokingFunction)();
+typedef bool (*InvokingFunction)();
 
 /**
  * This represents a feature to be tested
  */
 
 struct Test {
-	Test(Common::String name, invokingFunction f) : featureName(name), driver(f), enabled(true), passed(false) {}
+	Test(Common::String name, InvokingFunction f) : featureName(name), driver(f), enabled(true), passed(false) {}
 	Common::String featureName;		///< Name of feature to be tested
-	invokingFunction driver;	    ///< Pointer to the function that will invoke this feature test
+	InvokingFunction driver;	    ///< Pointer to the function that will invoke this feature test
 	bool enabled;				    ///< Decides whether or not this test is to be executed
 	bool passed;					///< Collects and stores result of this feature test
 };
@@ -118,7 +118,7 @@ public:
 	 * @param	name the string description of the test, for display purposes
 	 * @param	f pointer to the function that invokes this test
 	 */
-	void addTest(const Common::String &name, invokingFunction f) {
+	void addTest(const Common::String &name, InvokingFunction f) {
 		Test*  featureTest = new Test(name, f);
 		_testsToExecute.push_back(featureTest);
 	}
