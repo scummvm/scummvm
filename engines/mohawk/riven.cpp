@@ -57,6 +57,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "assets1");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "assets2");
 
 	g_atrusJournalRectSolo = new Common::Rect(295, 402, 313, 426);
