@@ -71,6 +71,8 @@ public:
 			jumpToTick(0);
 	}
 
+	void allNotesOff();
+
 	void remapChannel(byte channel, byte newChannel) {
 		assert(channel < 0xF);		// don't touch special SCI channel 15
 		assert(newChannel < 0xF);	// don't touch special SCI channel 15
