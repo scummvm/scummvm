@@ -48,23 +48,6 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	g_system->grabPalette(_palette, 0, 3);
 }
 
-void GFXTestSuite::execute() {
-	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
-		printf("Executing Test:%s\n", ((*i)->featureName).c_str());
-		// Invoke the test
-		(*i)->driver();
-		_numTestsExecuted++;
-		// Verify result by Interacting with the tester.
-		Common::String prompt("Was this similar to what you expected?");
-		if (handleInteractiveInput(prompt)) {
-			_numTestsPassed++;
-		}
-	}
-
-	// Report Generation
-	genReport();
-}
-
 // Helper functions used by GFX tests
 
 void GFXtests::drawCursor(const char *gfxModeName, int cursorTargetScale) {
@@ -84,7 +67,7 @@ void GFXtests::drawCursor(const char *gfxModeName, int cursorTargetScale) {
 			buffer[9 - i][i] = 0;
 		}
 	
-		CursorMan.pushCursorPalette(palette, 0, 3);
+		CursorMan.replaceCursorPalette(palette, 0, 3);
 		CursorMan.pushCursor(&buffer[0][0], 10, 10, 5, 5, cursorTargetScale);
 		CursorMan.showMouse(true);
 		g_system->updateScreen();
@@ -158,37 +141,72 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 
 bool GFXtests::fullScreenMode() {
 	
-	Testsuite::displayMessage("Testing fullscreen mode.\n" 
-	"If the feature is supported by the backend, you should expect to see a toggle between fullscreen and normal modes");
-
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
 	
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
+	bool passed = true;
+	Common::String prompt;
+	OptionSelected shouldSelect;
 
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureFullscreenMode);
-	isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
-	g_system->delayMillis(1000);
 
 	if (isFeaturePresent) {
 		// Toggle
+		isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
+		
+		if (isFeatureEnabled) {
+			printf("LOG: Current Mode is Fullsecreen\n");
+		} else {
+			printf("LOG: Current Mode is Windowed\n");
+		}
+
+		prompt = " Which mode do you see currently ?  ";
+		
+		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
+			// User selected incorrect current state
+			passed = false;
+			printf("LOG: g_system->getFeatureState() failed\n");
+		}
 
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
 
+		// Current state should be now !isFeatureEnabled
+		isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
+		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
+			
 		g_system->delayMillis(1000);
 		
+		prompt = " Which mode do you see now ?  ";
+		
+		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
+			// User selected incorrect mode
+			passed = false;
+			printf("LOG: g_system->setFeatureState() failed\n");
+		}
+		
 		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, isFeatureEnabled);
+		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
+		
+		prompt = "This should be your initial state.Is it?";
+		
+		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", shouldSelect)) {
+			// User selected incorrect mode
+			printf("LOG: switching back to initial state failed\n");
+			passed = false;
+		}
+
 	} else {
 		Testsuite::displayMessage("feature not supported");
 	}
 
-	Testsuite::clearScreen(rect);
-	return true;
+	Testsuite::clearScreen();
+	return passed;
 }
 
 /**
@@ -196,18 +214,18 @@ bool GFXtests::fullScreenMode() {
  */
 
 bool GFXtests::aspectRatio() {
-	Testsuite::displayMessage("Testing Aspect Ratio Correction.\n"
-	"With this feature enabled games running at 320x200 should be scaled upto 320x240 pixels");
-
 	// Draw an ellipse on the screen
 	
 	drawEllipse(100, 160, 72, 60);
 	
 	Common::Point pt(0, 180);
-	Testsuite::writeOnScreen("when corrected, it should be a circle!", pt);
+	Testsuite::writeOnScreen("Testing Aspect Ratio Correction!", pt);
 	
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
+	bool passed;
+	Common::String prompt;
+	OptionSelected shouldSelect;
 
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureAspectRatioCorrection);
 	isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection);
@@ -215,12 +233,27 @@ bool GFXtests::aspectRatio() {
 
 	if (isFeaturePresent) {
 		// Toggle
-
+		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
+		prompt = " What does the curve on screen appears to you ?";
+		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
+			// User selected incorrect option
+			passed = false;
+			printf("LOG: Aspect Ratio Correction failed\n");
+		}
+		
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, !isFeatureEnabled);
 		g_system->endGFXTransaction();
-
+		
 		g_system->delayMillis(1000);
+		
+		shouldSelect = !isFeatureEnabled ? kOptionLeft : kOptionRight;
+		prompt = " What does the curve on screen appears to you ?";
+		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
+			// User selected incorrect option
+			passed = false;
+			printf("LOG: Aspect Ratio Correction failed\n");
+		}
 		
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, isFeatureEnabled);
@@ -231,7 +264,7 @@ bool GFXtests::aspectRatio() {
 
 	g_system->delayMillis(500);
 	Testsuite::clearScreen();
-	return true;
+	return passed;
 }
 
 /**
@@ -246,15 +279,30 @@ bool GFXtests::palettizedCursors() {
 	Common::Point pt(0, 100);
 	
 	bool isFeaturePresent;
-	bool isFeatureEnabled;
+	bool passed = true;
 
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
-	isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureCursorHasPalette);
 
 	if (isFeaturePresent) {
-		GFXtests::drawCursor();
-		
 		Testsuite::writeOnScreen("Testing Palettized Cursors", pt);
+		
+		// Cursor palette is Black(0), White(1), yellow(2)
+		GFXtests::drawCursor();
+		// Change screen Palette color-value 2 to red
+		// This function exactly does this job
+		GFXTestSuite::setCustomColor(255, 0, 0);
+		// Now disable palette
+		CursorMan.disableCursorPalette(true);
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		if (Testsuite::handleInteractiveInput("Which color does cursor appears to you?", "Yellow", "Red", kOptionRight)) {
+			printf("LOG: Couldn't use game palette for rendering cursor\n");
+			passed = false;
+		}
+		
+		// Now enable cursor palette
+		CursorMan.disableCursorPalette(false);
+		GFXtests::drawCursor();
 		
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
@@ -318,7 +366,10 @@ bool GFXtests::palettizedCursors() {
 	CursorMan.popCursor();
 
 	Testsuite::clearScreen();
-	return true;
+	if (!Testsuite::handleInteractiveInput("Did it went as you were expecting?")) {
+		passed = false;
+	}
+	return passed;
 }
 
 

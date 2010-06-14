@@ -36,7 +36,6 @@ public:
 	 */
 	GFXTestSuite();
 	~GFXTestSuite(){}
-	void execute();
 	const char *getName() const;
 	static void setCustomColor(uint r, uint g, uint b);
 

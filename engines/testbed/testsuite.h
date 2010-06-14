@@ -18,6 +18,11 @@ enum {
 	kColorCustom = 2
 };
 
+enum OptionSelected {
+	kOptionLeft = 1,
+	kOptionRight = 0
+};
+
 typedef bool (*InvokingFunction)();
 
 /**
@@ -68,12 +73,12 @@ public:
 	 * @param	textToDisplay Display text
 	 * @return	true if "Yes" false otherwise
 	 */ 
-	static bool handleInteractiveInput(const Common::String &textToDisplay) {
-		GUI::MessageDialog	prompt(textToDisplay, "Yes", "No");
-		return prompt.runModal() == GUI::kMessageOK ? true : false;
+	static bool handleInteractiveInput(const Common::String &textToDisplay, const char *opt1 = "Yes", const char *opt2 = "No", OptionSelected result = kOptionLeft) {
+		GUI::MessageDialog	prompt(textToDisplay, opt1, opt2);
+		return prompt.runModal() == result ? true : false;
 	}
 	
-	static void displayMessage(const Common::String &textToDisplay, const char *defaultButton = "OK", const char *altButton = 0 ) {
+	static void displayMessage(const Common::String &textToDisplay, const char *defaultButton = "OK", const char *altButton = 0) {
 		GUI::MessageDialog	prompt(textToDisplay, defaultButton);
 		prompt.runModal();
 	}
