@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 echo Quick script to make running configure all the time less painful
 echo and let all the build work be done from the backend/build folder.

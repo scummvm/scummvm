@@ -13,7 +13,7 @@ mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib"
 
 echo "Please put your save games in this dir" >> "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
-cp ./scummvm.gpe ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
+cp ./scummvm-gdb.gpe ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/scummvm.gpe
 cp ./scummvm.png ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ./README-GP2XWIZ ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ./scummvm.ini ./scummvm-wiz-`date '+%Y-%m-%d'`/
@@ -35,12 +35,6 @@ loc=`dirname "$f"`
 cp $loc/../lib/libz.so.1.2.3 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libz.so.1
 cp $loc/../lib/libvorbisidec.so.1.0.2 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libvorbisidec.so.1
 
-echo Making Stripped Binary.
-arm-open2x-linux-strip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/scummvm.wiz
-
-echo Making Stripped Plugins.
-arm-open2x-linux-strip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/plugins/*
-
 echo Building ZIP bundle.
 if [ -f /usr/bin/zip ]
 	then
@@ -55,3 +49,6 @@ if [ -f /usr/bin/zip ]
 		echo All included files can also be found in ./"scummvm-wiz-`date '+%Y-%m-%d'`"
 		echo - Please use you preferred archive tool to bundle these files.
 fi
+
+echo Please ensure GDB is installed somewhere in the path on your Wiz.
+
