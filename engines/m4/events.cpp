@@ -57,6 +57,10 @@ Events::Events(MadsM4Engine *vm) : _vm(vm) {
 		_console = new MadsConsole(_madsVm);
 }
 
+Events::~Events() {
+	delete _console;
+}
+
 M4EventType Events::handleEvents() {
 	static int oldX = -1, oldY = -1;
 	static uint32 dclickTime = 0;

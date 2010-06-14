@@ -235,7 +235,7 @@ private:
 	MadsEngine *_vm;
 	Common::Array<char* > _madsVocab;
 	Common::Array<char* > _madsQuotes;
-	Common::Array<MessageItem* > _madsMessages;
+	Common::Array<MessageItem> _madsMessages;
 	MadsObjectArray _madsObjects;
 	Common::List<int> _visitedScenes;
 public:

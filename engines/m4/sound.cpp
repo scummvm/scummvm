@@ -197,20 +197,20 @@ void Sound::loadDSRFile(const char *fileName) {
 	//printf("DSR has %i entries\n", _dsrFile.entryCount);
 
 	for (int i = 0; i < _dsrFile.entryCount; i++) {
-		DSREntry* newEntry = new DSREntry();
-		newEntry->frequency = fileStream->readUint16LE();
-		newEntry->channels = fileStream->readUint32LE();
-		newEntry->compSize = fileStream->readUint32LE();
-		newEntry->uncompSize = fileStream->readUint32LE();
-		newEntry->offset = fileStream->readUint32LE();
+		DSREntry newEntry;
+		newEntry.frequency = fileStream->readUint16LE();
+		newEntry.channels = fileStream->readUint32LE();
+		newEntry.compSize = fileStream->readUint32LE();
+		newEntry.uncompSize = fileStream->readUint32LE();
+		newEntry.offset = fileStream->readUint32LE();
 		_dsrFile.dsrEntries.push_back(newEntry);
 
 		/*
 		printf("%i: ", i);
 		printf("frequency: %i ", newEntry->frequency);
 		printf("channels: %i ", newEntry->channels);
-		printf("comp: %i ", newEntry->compSize);
-		printf("uncomp: %i ", newEntry->uncompSize);
+		printf("comp: %i ", newEntry.compSize);
+		printf("uncomp: %i ", newEntry.uncompSize);
 		printf("offset: %i ", newEntry->offset);
 		printf("\n");
 		*/
@@ -225,9 +225,7 @@ void Sound::unloadDSRFile() {
 	if (!_dsrFileLoaded)
 		return;
 
-	for (int i = 0; i < _dsrFile.entryCount; i++) {
-		_dsrFile.dsrEntries.remove_at(0);
-	}
+	_dsrFile.dsrEntries.clear();
 
 	_dsrFile.entryCount = 0;
 	strcpy(_dsrFile.fileName, "");
@@ -251,28 +249,28 @@ void Sound::playDSRSound(int soundIndex, int volume, bool loop) {
 
 	// Get sound data
 	FabDecompressor fab;
-	byte *compData = new byte[_dsrFile.dsrEntries[soundIndex]->compSize];
-	byte *buffer = new byte[_dsrFile.dsrEntries[soundIndex]->uncompSize];
+	byte *compData = new byte[_dsrFile.dsrEntries[soundIndex].compSize];
+	byte *buffer = new byte[_dsrFile.dsrEntries[soundIndex].uncompSize];
 	Common::SeekableReadStream *fileStream = _vm->res()->get(_dsrFile.fileName);
-	fileStream->seek(_dsrFile.dsrEntries[soundIndex]->offset, SEEK_SET);
-	fileStream->read(compData, _dsrFile.dsrEntries[soundIndex]->compSize);
+	fileStream->seek(_dsrFile.dsrEntries[soundIndex].offset, SEEK_SET);
+	fileStream->read(compData, _dsrFile.dsrEntries[soundIndex].compSize);
 	_vm->res()->toss(_dsrFile.fileName);
 
-	fab.decompress(compData, _dsrFile.dsrEntries[soundIndex]->compSize,
-				   buffer, _dsrFile.dsrEntries[soundIndex]->uncompSize);
+	fab.decompress(compData, _dsrFile.dsrEntries[soundIndex].compSize,
+				   buffer, _dsrFile.dsrEntries[soundIndex].uncompSize);
 
 	// Play sound
 	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
 				Audio::makeRawStream(buffer,
-					_dsrFile.dsrEntries[soundIndex]->uncompSize,
-					_dsrFile.dsrEntries[soundIndex]->frequency, Audio::FLAG_UNSIGNED),
+					_dsrFile.dsrEntries[soundIndex].uncompSize,
+					_dsrFile.dsrEntries[soundIndex].frequency, Audio::FLAG_UNSIGNED),
 				loop ? 0 : 1);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &handle->handle, stream, -1, volume);
 
 	/*
 	// Dump the sound file
 	FILE *destFile = fopen("sound.raw", "wb");
-	fwrite(_dsrFile.dsrEntries[soundIndex]->data, _dsrFile.dsrEntries[soundIndex]->uncompSize, 1, destFile);
+	fwrite(_dsrFile.dsrEntries[soundIndex]->data, _dsrFile.dsrEntries[soundIndex].uncompSize, 1, destFile);
 	fclose(destFile);
 	*/
 }

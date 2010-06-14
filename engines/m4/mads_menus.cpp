@@ -293,7 +293,7 @@ int RexMainMenuView::getHighlightedItem(int x, int y) {
 }
 
 void RexMainMenuView::handleAction(MadsGameAction action) {
-	MadsM4Engine *vm = _vm;
+	MadsEngine *vm = (MadsEngine *)_vm;
 	vm->_mouse->cursorOff();
 	vm->_viewManager->deleteView(this);
 
@@ -303,8 +303,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		// Load a sample starting scene - note that, currently, calling loadScene automatically
 		// removes this menu screen from being displayed
 		vm->_mouse->cursorOn();
-		vm->_scene->show();
-		vm->_scene->loadScene(101);
+		vm->startScene(101);
 		return;
 
 	case SHOW_INTRO:
@@ -325,7 +324,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 
 			// Activate the scene display with the specified scene
 			bool altAdvert = vm->_random->getRandomNumber(1000) >= 500;
-			vm->_scene->loadScene(altAdvert ? 995 : 996);
+			vm->startScene(altAdvert ? 995 : 996);
 			vm->_viewManager->addView(vm->_scene);
 
 			vm->_viewManager->refreshAll();

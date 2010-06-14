@@ -328,7 +328,6 @@ void MadsAnimation::update() {
 
 	// Handle starting any sound for this frame
 	AnimMiscEntry &misc = _miscEntries[_currentFrame];
-printf("frame %d delay %d\n", _currentFrame, misc.numTicks);
 	if (misc.soundNum)
 		_vm->_sound->playSound(misc.soundNum);
 

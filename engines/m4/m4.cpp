@@ -148,6 +148,7 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _palette;
 	delete _globals;
 	delete _sound;
+	delete _driver;
 	delete _resourceManager;
 }
 
@@ -158,11 +159,11 @@ Common::Error MadsM4Engine::run() {
 	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(midiDriver);
 	if (native_mt32)
-		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 
-	_midi = new MidiPlayer(this, driver);
+	_midi = new MidiPlayer(this, _driver);
 	_midi->setGM(true);
 	_midi->setNativeMT32(native_mt32);
 
@@ -513,7 +514,6 @@ Common::Error MadsEngine::run() {
 	// Set up needed common functionality
 	MadsM4Engine::run();
 
-	_scene = new MadsScene(this);
 	_palette->setMadsSystemPalette();
 
 	_mouse->init("cursor.ss", NULL);
@@ -538,9 +538,12 @@ Common::Error MadsEngine::run() {
 	//printf("%s\n----------\n", _globals->loadMessage(i));
 
 	if ((getGameType() == GType_RexNebular) || (getGameType() == GType_DragonSphere)) {
+		_scene = NULL;
 		loadMenu(MAIN_MENU);
 
 	} else {
+		_scene = new MadsScene(this);
+
 		if (getGameType() == GType_DragonSphere) {
 			_scene->loadScene(FIRST_SCENE);
 		} else if (getGameType() == GType_Phantom) {
