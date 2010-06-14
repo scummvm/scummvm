@@ -33,6 +33,7 @@
 #include "sci/graphics/gui.h"
 #include "sci/graphics/gui32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/screen.h"
 
 #include "common/system.h"
 
@@ -787,12 +788,62 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect nsRect;
 
 	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+	// If these are 0, read them from nsLeft, nsTop. This is madness...
+	if (nsRect.left == 0 && nsRect.top == 0) {
+		nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+		nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	}
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	/*
+	warning("kOnMe: (%d, %d) on object %04x:%04x (%s), rect (%d, %d, %d, %d), parameter %d", 
+		argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]), 
+		nsRect.left, nsRect.top, nsRect.right, nsRect.bottom,
+		argv[3].toUint16());
+	*/
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object, after adjusting the coordinates
+	// of the object according to the object's plane
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
 	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
 	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
 	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
 
-	//warning("kOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+	// Get the object's plane
+	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
+	uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+	uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+	uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+	uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+	planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+	planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+
+	// Adjust the bounding rectangle of the object by the object's actual X, Y coordinates
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+	itemY = ((itemY * g_sci->_gfxScreen->getHeight()) / planeResY);
+	itemX = ((itemX * g_sci->_gfxScreen->getWidth()) / planeResX);
+	itemY += planeTop;
+	itemX += planeLeft;
+
+	nsRect.translate(itemX, itemY);
+
+	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
 	return make_reg(0, nsRect.contains(x, y));
 }
