@@ -74,6 +74,7 @@ M4Surface::~M4Surface() {
 		_madsVm->_palette->deleteRange(_rgbList);
 		delete _rgbList;
 	}
+	free();
 }
 
 void M4Surface::loadCodesM4(Common::SeekableReadStream *source) {

@@ -678,7 +678,9 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		Common::String s(buffer2, 64);
 		setNames.push_back(s);
 	}
-	
+
+	delete stream;
+
 	// Initialise a copy of the surfaces if they weren't provided
 	bool dsFlag = false, ssFlag = false;
 	int gfxSize = width * height;
@@ -696,6 +698,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		dsFlag = true;
 	}
 
+
 	// For Rex Nebular, read in the scene's compressed walk surface information
 	if (_vm->getGameType() == GType_RexNebular) {
 		assert(depthSurface);
@@ -712,7 +715,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 			destP += runLength;
 		}
 
-		delete walkData;
+		free(walkData);
 		delete stream;
 	}
 

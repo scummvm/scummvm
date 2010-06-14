@@ -270,6 +270,7 @@ MadsTextDisplay::MadsTextDisplay(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
 		MadsTextDisplayEntry rec;
 		rec.active = false;
+		rec.expire = 0;
 		_entries.push_back(rec);
 	}
 }

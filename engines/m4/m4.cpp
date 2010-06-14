@@ -147,6 +147,7 @@ MadsM4Engine::~MadsM4Engine() {
 	delete _random;
 	delete _palette;
 	delete _globals;
+	delete _sound;
 	delete _resourceManager;
 }
 
