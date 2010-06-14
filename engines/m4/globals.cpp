@@ -282,6 +282,8 @@ MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
 	playerSpriteChanged = false;
 	dialogType = DIALOG_NONE;
 	sceneNumber = -1;
+	for (int i = 0; i < 3; ++i)
+		actionNouns[i] = 0;
 }
 
 MadsGlobals::~MadsGlobals() {

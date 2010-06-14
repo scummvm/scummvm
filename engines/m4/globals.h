@@ -249,6 +249,7 @@ public:
 	MadsDialogType dialogType;
 	int sceneNumber;
 	int previousScene;
+	uint16 actionNouns[3];
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }

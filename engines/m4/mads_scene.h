@@ -107,7 +107,6 @@ private:
 	void setAction();
 public:
 	char _aaName[100];
-	uint16 actionNouns[3];
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

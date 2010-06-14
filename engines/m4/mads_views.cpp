@@ -404,7 +404,7 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	rec.abortMode = _owner._abortTimersMode2;
 	
 	for (int i = 0; i < 3; ++i)
-		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		rec.actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
 	if (flags & KMSG_OWNER_TIMEOUT)
 		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
@@ -504,7 +504,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 			if (_owner._abortTimersMode != ABORTMODE_1) {
 				for (int i = 0; i < 3; ++i)
-					_madsVm->scene()->actionNouns[i] = msg.actionNouns[i];
+					_madsVm->globals()->actionNouns[i] = msg.actionNouns[i];
 			}
 		}
 	}
@@ -943,7 +943,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	_entries[seqIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_entries[seqIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_entries[seqIndex].actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
 	return seqIndex;
 }

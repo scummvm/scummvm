@@ -55,8 +55,6 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
 	_interfaceSurface = new MadsInterfaceView(vm);
-	for (int i = 0; i < 3; ++i)
-		actionNouns[i] = 0;
 }
 
 MadsScene::~MadsScene() {
