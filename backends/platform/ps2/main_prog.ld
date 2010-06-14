@@ -70,7 +70,9 @@ SECTIONS {
 		*(.scommon)
 	}
 
-	/*current PS2 Makefile disables this gp-relative section*/
+	/*current PS2 Makefile disables data being put in the gp-relative section,
+	  but ideally this "plugin hole" is so the plugins can all have global data
+	  in the same place.*/
 	__plugin_hole_start = .;
 	. = _gp + 0x7ff00;
 	__plugin_hole_end = .;

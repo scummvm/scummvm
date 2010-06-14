@@ -1,206 +1,93 @@
-OUTPUT_FORMAT("elf32-littlemips", "elf32-bigmips",
-	      "elf32-littlemips")
-OUTPUT_ARCH(mips:5900)
-/* Do we need any of these for elf?
-   __DYNAMIC = 0;    */
-_DYNAMIC_LINK = 0;
-PHDRS
-{
-   plugin PT_LOAD ;
-   shorts PT_LOAD ;
+/* PHDRS specifies ELF Program Headers (or segments) to the plugin linker */
+PHDRS {
+  plugin PT_LOAD ; /* Specifies that the plugin segment should be loaded from file */
+  shorts PT_LOAD ; /* Specifies that the shorts segment should be loaded from file */
 }
-SECTIONS
-{
-  /* Read-only sections, merged into text segment: */
-  . = 0;
-  .interp  : { *(.interp) } : plugin
-  .reginfo : { *(.reginfo) } : plugin
-  .hash           : { *(.hash) }
-  .dynsym         : { *(.dynsym) }
-  .dynstr         : { *(.dynstr) }
-  .gnu.version    : { *(.gnu.version) }
-  .gnu.version_d  : { *(.gnu.version_d) }
-  .gnu.version_r  : { *(.gnu.version_r) }
-  .rel.dyn        :
-    {
-      *(.rel.init)
-      *(.rel.text .rel.text.* .rel.gnu.linkonce.t.*)
-      *(.rel.fini)
-      *(.rel.rodata .rel.rodata.* .rel.gnu.linkonce.r.*)
-      *(.rel.data .rel.data.* .rel.gnu.linkonce.d.*)
-      *(.rel.tdata .rel.tdata.* .rel.gnu.linkonce.td.*)
-      *(.rel.tbss .rel.tbss.* .rel.gnu.linkonce.tb.*)
-      *(.rel.ctors)
-      *(.rel.dtors)
-      *(.rel.got)
-      *(.rel.sdata .rel.sdata.* .rel.gnu.linkonce.s.*)
-      *(.rel.sbss .rel.sbss.* .rel.gnu.linkonce.sb.*)
-      *(.rel.sdata2 .rel.sdata2.* .rel.gnu.linkonce.s2.*)
-      *(.rel.sbss2 .rel.sbss2.* .rel.gnu.linkonce.sb2.*)
-      *(.rel.bss .rel.bss.* .rel.gnu.linkonce.b.*)
-    }
-  .rela.dyn       :
-    {
-      *(.rela.init)
-      *(.rela.text .rela.text.* .rela.gnu.linkonce.t.*)
-      *(.rela.fini)
-      *(.rela.rodata .rela.rodata.* .rela.gnu.linkonce.r.*)
-      *(.rela.data .rela.data.* .rela.gnu.linkonce.d.*)
-      *(.rela.tdata .rela.tdata.* .rela.gnu.linkonce.td.*)
-      *(.rela.tbss .rela.tbss.* .rela.gnu.linkonce.tb.*)
-      *(.rela.ctors)
-      *(.rela.dtors)
-      *(.rela.got)
-      *(.rela.sdata .rela.sdata.* .rela.gnu.linkonce.s.*)
-      *(.rela.sbss .rela.sbss.* .rela.gnu.linkonce.sb.*)
-      *(.rela.sdata2 .rela.sdata2.* .rela.gnu.linkonce.s2.*)
-      *(.rela.sbss2 .rela.sbss2.* .rela.gnu.linkonce.sb2.*)
-      *(.rela.bss .rela.bss.* .rela.gnu.linkonce.b.*)
-    }
-  .rel.plt        : { *(.rel.plt) }
-  .rela.plt       : { *(.rela.plt) }
-  .init           :
-  {
-    KEEP (*(.init))
-  } =0
-  .plt            : { *(.plt) }
-  .text           :
-  {
-    _ftext = . ;
-    *(.text .stub .text.* .gnu.linkonce.t.*)
-    /* .gnu.warning sections are handled specially by elf32.em.  */
-    *(.gnu.warning)
-    *(.mips16.fn.*) *(.mips16.call.*)
-  } =0
-  .fini           :
-  {
-    KEEP (*(.fini))
-  } =0
-  PROVIDE (__etext = .);
-  PROVIDE (_etext = .);
-  PROVIDE (etext = .);
-  .rodata         : { *(.rodata .rodata.* .gnu.linkonce.r.*) }
-  .rodata1        : { *(.rodata1) }
-  .sdata2         : { *(.sdata2 .sdata2.* .gnu.linkonce.s2.*) }
-  .sbss2          : { *(.sbss2 .sbss2.* .gnu.linkonce.sb2.*) }
-  .eh_frame_hdr : { *(.eh_frame_hdr) }
-  /* Adjust the address for the data segment.  We want to adjust up to
-     the same address within the page on the next page up.  */
-  . = ALIGN(128) + (. & (128 - 1));
-  /* Ensure the __preinit_array_start label is properly aligned.  We
-     could instead move the label definition inside the section, but
-     the linker would then create the section even if it turns out to
-     be empty, which isn't pretty.  */
-  . = ALIGN(32 / 8);
-  PROVIDE (__preinit_array_start = .);
-  .preinit_array     : { *(.preinit_array) }
-  PROVIDE (__preinit_array_end = .);
-  PROVIDE (__init_array_start = .);
-  .init_array     : { *(.init_array) }
-  PROVIDE (__init_array_end = .);
-  PROVIDE (__fini_array_start = .);
-  .fini_array     : { *(.fini_array) }
-  PROVIDE (__fini_array_end = .);
-  .data           :
-  {
-    _fdata = . ;
-    *(.data .data.* .gnu.linkonce.d.*)
-    SORT(CONSTRUCTORS)
-  }
-  .data1          : { *(.data1) }
-  .tdata	  : { *(.tdata .tdata.* .gnu.linkonce.td.*) }
-  .tbss		  : { *(.tbss .tbss.* .gnu.linkonce.tb.*) *(.tcommon) }
-  .eh_frame       : { KEEP (*(.eh_frame)) }
-  .gcc_except_table   : { *(.gcc_except_table) }
-  .dynamic        : { *(.dynamic) }
-  .ctors          :
-  {
-    ___plugin_ctors = .;
-    KEEP (*(SORT(.ctors.*)))
-    KEEP (*(.ctors))
-    ___plugin_ctors_end = .;
-  }
-  .dtors          :
-  {
-    ___plugin_dtors = .;
-    KEEP (*(SORT(.dtors.*)))
-    KEEP (*(.dtors))
-    ___plugin_dtors_end = .;
-  }
-  .jcr            : { KEEP (*(.jcr)) }
-  
-  . = __plugin_hole_start;
-  .got            : { *(.got.plt) *(.got) } : shorts
-  .lit8 : { *(.lit8) }
-  .lit4 : { *(.lit4) }
-  /* We want the small data sections together, so single-instruction offsets
-     can access them all, and initialized data all before uninitialized, so
-     we can shorten the on-disk segment size.  */
-  .sdata          :
-  {
-    *(.sdata .sdata.* .gnu.linkonce.s.*)
-  }
-  _edata = .;
-  PROVIDE (edata = .);
-  __bss_start = .;
-  _fbss = .;
-  .sbss           :
-  {
-    PROVIDE (__sbss_start = .);
-    PROVIDE (___sbss_start = .);
-    *(.dynsbss)
-    *(.sbss .sbss.* .gnu.linkonce.sb.*)
-    *(.scommon)
-    PROVIDE (__sbss_end = .);
-    PROVIDE (___sbss_end = .);
-  }
-  .bss            :
-  {
-   *(.dynbss)
-   *(.bss .bss.* .gnu.linkonce.b.*)
-   *(COMMON)
-   /* Align here to ensure that the .bss section occupies space up to
-      _end.  Align after .bss to ensure correct alignment even if the
-      .bss section disappears because there are no input sections.  */
-   . = ALIGN(32 / 8);
-  }
-  . = ALIGN(32 / 8);
-  _end = .;
-  PROVIDE (end = .);
-  /* Stabs debugging sections.  */
-  .stab          0 : { *(.stab) }
-  .stabstr       0 : { *(.stabstr) }
-  .stab.excl     0 : { *(.stab.excl) }
-  .stab.exclstr  0 : { *(.stab.exclstr) }
-  .stab.index    0 : { *(.stab.index) }
-  .stab.indexstr 0 : { *(.stab.indexstr) }
-  .comment       0 : { *(.comment) }
-  /* DWARF debug sections.
-     Symbols in the DWARF debugging sections are relative to the beginning
-     of the section so we begin them at 0.  */
-  /* DWARF 1 */
-  .debug          0 : { *(.debug) }
-  .line           0 : { *(.line) }
-  /* GNU DWARF 1 extensions */
-  .debug_srcinfo  0 : { *(.debug_srcinfo) }
-  .debug_sfnames  0 : { *(.debug_sfnames) }
-  /* DWARF 1.1 and DWARF 2 */
-  .debug_aranges  0 : { *(.debug_aranges) }
-  .debug_pubnames 0 : { *(.debug_pubnames) }
-  /* DWARF 2 */
-  .debug_info     0 : { *(.debug_info .gnu.linkonce.wi.*) }
-  .debug_abbrev   0 : { *(.debug_abbrev) }
-  .debug_line     0 : { *(.debug_line) }
-  .debug_frame    0 : { *(.debug_frame) }
-  .debug_str      0 : { *(.debug_str) }
-  .debug_loc      0 : { *(.debug_loc) }
-  .debug_macinfo  0 : { *(.debug_macinfo) }
-  /* SGI/MIPS DWARF 2 extensions */
-  .debug_weaknames 0 : { *(.debug_weaknames) }
-  .debug_funcnames 0 : { *(.debug_funcnames) }
-  .debug_typenames 0 : { *(.debug_typenames) }
-  .debug_varnames  0 : { *(.debug_varnames) }
-  .gptab.sdata : { *(.gptab.data) *(.gptab.sdata) }
-  .gptab.sbss : { *(.gptab.bss) *(.gptab.sbss) }
-}
+SECTIONS {
+	.text 0: {
+		_ftext = . ;
+		*(.text)
+		*(.text.*)
+		*(.gnu.linkonce.t*)
+		KEEP(*(.init))
+		KEEP(*(.fini))
+		QUAD(0)
+	} : plugin /*The ": plugin" tells the linker to assign this and
+  	             the following sections to the "plugin" segment*/
+	PROVIDE(_etext = .);
+	PROVIDE(etext = .);
 
+	.reginfo : { *(.reginfo) }
+
+	/* Global/static constructors and deconstructors. */
+	.ctors ALIGN(16): {
+	        ___plugin_ctors = .;
+		KEEP(*(SORT(.ctors.*)))
+		KEEP(*(.ctors))
+		___plugin_ctors_end = .;
+	}
+	.dtors ALIGN(16): {
+		___plugin_dtors = .;
+		KEEP(*(SORT(.dtors.*)))
+		KEEP(*(.dtors))
+		___plugin_dtors_end = .;
+	}
+
+	/* Static data.  */
+	.rodata ALIGN(128): {
+		*(.rodata)
+		*(.rodata.*)
+		*(.gnu.linkonce.r*)
+	}
+
+	.data ALIGN(128): {
+		_fdata = . ;
+		*(.data)
+		*(.data.*)
+		*(.gnu.linkonce.d*)
+		SORT(CONSTRUCTORS)
+	}
+
+	.rdata ALIGN(128): { *(.rdata) }
+	.gcc_except_table ALIGN(128): { *(.gcc_except_table) }
+
+	 /*We assign the output location counter to the plugin hole made
+   	  in main_prog.ld, then assign the small data sections to the shorts segment*/
+	. = __plugin_hole_start;
+	.lit4 ALIGN(128): { *(.lit4) } : shorts
+	.lit8 ALIGN(128): { *(.lit8) }
+
+	.sdata ALIGN(128): {
+		*(.sdata)
+		*(.sdata.*)
+		*(.gnu.linkonce.s*)
+	}
+
+	_edata = .;
+	PROVIDE(edata = .);
+
+	/* Uninitialized data.  */
+	.sbss ALIGN(128) : {
+		_fbss = . ;
+		*(.sbss)
+		*(.sbss.*)
+		*(.gnu.linkonce.sb*)
+		*(.scommon)
+	}
+
+	.bss ALIGN(128) : {
+		*(.bss)
+		*(.bss.*)
+		*(.gnu.linkonce.b*)
+		*(COMMON)
+	}
+	_end_bss = .;
+
+	_end = . ;
+	PROVIDE(end = .);
+
+	/* Symbols needed by crt0.s.  */
+	PROVIDE(_heap_size = -1);
+	PROVIDE(_stack = -1);
+	PROVIDE(_stack_size = 128 * 1024);
+}
