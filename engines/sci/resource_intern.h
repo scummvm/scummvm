@@ -69,7 +69,7 @@ public:
 	const Common::String &getLocationName() const { return _name; }
 
 	// Auxiliary method, used by loadResource implementations.
-	Common::SeekableReadStream *getVolumeFile(Resource *res, ResourceManager *resMan);
+	Common::SeekableReadStream *getVolumeFile(Resource *res);
 
 	/**
 	 * TODO: Document this
@@ -80,29 +80,27 @@ public:
 
 	/**
 	 * Scan this source for TODO.
-	 * TODO: The resMan param for now is just a hack.
 	 */
-	virtual void scanSource(ResourceManager *resMan) {}
+	virtual void scanSource() {}
 
 	/**
 	 * Load a resource.
-	 * TODO: The resMan param for now is just a hack.
 	 */
-	virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res);
 };
 
 class DirectoryResourceSource : public ResourceSource {
 public:
 	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource();
 };
 
 class PatchResourceSource : public ResourceSource {
 public:
 	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
 
-	virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res);
 };
 
 class VolumeResourceSource : public ResourceSource {
@@ -130,7 +128,7 @@ public:
 		: ResourceSource(kSourceExtMap, name, volNum, resFile) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource();
 };
 
 class IntMapResourceSource : public ResourceSource {
@@ -139,14 +137,14 @@ public:
 		: ResourceSource(kSourceIntMap, name, volNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource();
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
 public:
 	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum);
 
-	virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res);
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
@@ -155,14 +153,14 @@ public:
 		: ResourceSource(kSourceExtAudioMap, name, volNum) {
 	}
 
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource();
 };
 
 class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
 
-	virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res);
 };
 
 class MacResourceForkResourceSource : public ResourceSource {
@@ -176,9 +174,9 @@ public:
 	/**
 	 * Reads the SCI1.1+ resource file from a Mac resource fork.
 	 */
-	virtual void scanSource(ResourceManager *resMan);
+	virtual void scanSource();
 
-	virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res);
 };
 
 } // End of namespace Sci

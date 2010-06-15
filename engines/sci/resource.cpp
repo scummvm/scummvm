@@ -315,21 +315,23 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 static uint32 resTypeToMacTag(ResourceType type);
 
 void ResourceManager::loadResource(Resource *res) {
-	res->_source->loadResource(res, this);
+	res->_source->loadResource(res);
 }
 
 
-void PatchResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
+void PatchResourceSource::loadResource(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
 	bool result = resMan->loadFromPatchFile(res);
 	if (!result) {
 		// TODO: We used to fallback to the "default" code here if loadFromPatchFile
 		// failed, but I am not sure whether that is really appropriate.
 		// In fact it looks like a bug to me, so I commented this out for now.
-		//ResourceSource::loadResource(res, resMan);
+		//ResourceSource::loadResource(res);
 	}
 }
 
-void MacResourceForkResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
+void MacResourceForkResourceSource::loadResource(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
 
 	if (!stream)
@@ -343,7 +345,8 @@ void MacResourceForkResourceSource::loadResource(Resource *res, ResourceManager 
 	}
 }
 
-Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res, ResourceManager *resMan) {
+Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
@@ -354,8 +357,9 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res, Resourc
 	return fileStream;
 }
 
-void WaveResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res, resMan);
+void WaveResourceSource::loadResource(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
+	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
 
@@ -365,8 +369,9 @@ void WaveResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
 		delete fileStream;
 }
 
-void AudioVolumeResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res, resMan);
+void AudioVolumeResourceSource::loadResource(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
+	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
 
@@ -423,8 +428,9 @@ void AudioVolumeResourceSource::loadResource(Resource *res, ResourceManager *res
 		delete fileStream;
 }
 
-void ResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res, resMan);
+void ResourceSource::loadResource(Resource *res) {
+	ResourceManager *resMan = g_sci->getResMan();
+	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
 
@@ -616,12 +622,13 @@ void ResourceManager::scanNewSources() {
 
 		if (!source->_scanned) {
 			source->_scanned = true;
-			source->scanSource(this);
+			source->scanSource();
 		}
 	}
 }
 
-void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
+void DirectoryResourceSource::scanSource() {
+	ResourceManager *resMan = g_sci->getResMan();
 	resMan->readResourcePatches(this);
 
 	// We can't use getSciVersion() at this point, thus using _volVersion
@@ -631,18 +638,21 @@ void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readWaveAudioPatches();
 }
 
-void ExtMapResourceSource::scanSource(ResourceManager *resMan) {
+void ExtMapResourceSource::scanSource() {
+	ResourceManager *resMan = g_sci->getResMan();
 	if (resMan->_mapVersion < ResourceManager::kResVersionSci1Late)
 		resMan->readResourceMapSCI0(this);
 	else
 		resMan->readResourceMapSCI1(this);
 }
 
-void ExtAudioMapResourceSource::scanSource(ResourceManager *resMan) {
+void ExtAudioMapResourceSource::scanSource() {
+	ResourceManager *resMan = g_sci->getResMan();
 	resMan->readAudioMapSCI1(this);
 }
 
-void IntMapResourceSource::scanSource(ResourceManager *resMan) {
+void IntMapResourceSource::scanSource() {
+	ResourceManager *resMan = g_sci->getResMan();
 	resMan->readAudioMapSCI11(this);
 }
 
@@ -1447,7 +1457,8 @@ static uint32 resTypeToMacTag(ResourceType type) {
 	return 0;
 }
 
-void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
+void MacResourceForkResourceSource::scanSource() {
+	ResourceManager *resMan = g_sci->getResMan();
 	if (!_macResMan->open(getLocationName().c_str()))
 		error("%s is not a valid Mac resource fork", getLocationName().c_str());
 
