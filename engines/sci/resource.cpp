@@ -133,7 +133,7 @@ const char *getResourceTypeName(ResourceType restype) {
 }
 
 //-- Resource main functions --
-Resource::Resource() {
+Resource::Resource(ResourceId id) : _id(id) {
 	data = NULL;
 	size = 0;
 	_fileOffset = 0;
@@ -1485,9 +1485,8 @@ void MacResourceForkResourceSource::scanSource() {
 void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {
 	// Adding new resource only if it does not exist
 	if (_resMap.contains(resId) == false) {
-		Resource *res = new Resource;
+		Resource *res = new Resource(resId);
 		_resMap.setVal(resId, res);
-		res->_id = resId;
 		res->_source = src;
 		res->_fileOffset = offset;
 		res->size = size;
@@ -1501,11 +1500,10 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	if (_resMap.contains(resId)) {
 		res = _resMap.getVal(resId);
 	} else {
-		res = new Resource;
+		res = new Resource(resId);
 		_resMap.setVal(resId, res);
 	}
 
-	res->_id = resId;
 	res->_status = kResStatusNoMalloc;
 	res->_source = src;
 	res->_headerSize = 0;

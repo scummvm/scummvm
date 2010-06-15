@@ -184,19 +184,18 @@ class Resource {
 	friend class AudioVolumeResourceSource;
 	friend class MacResourceForkResourceSource;
 
+// NOTE : Currently most member variables lack the underscore prefix and have
+// public visibility to let the rest of the engine compile without changes.
 public:
-	Resource();
-	~Resource();
-	void unalloc();
-
-// NOTE : Currently all member data has the same name and public visibility
-// to let the rest of the engine compile without changes
-public:
-	ResourceId _id;
 	byte *data;
 	uint32 size;
 	byte *_header;
 	uint32 _headerSize;
+
+public:
+	Resource(ResourceId id);
+	~Resource();
+	void unalloc();
 
 	inline ResourceType getType() const { return _id.getType(); }
 
@@ -208,6 +207,7 @@ public:
 	uint32 getAudioCompressionType() const;
 
 protected:
+	ResourceId _id;	// TODO: _id could almost be made const, only readResourceInfo() modifies it...
 	int32 _fileOffset; /**< Offset in file */
 	ResourceStatus _status;
 	uint16 _lockers; /**< Number of places where this resource was locked */
