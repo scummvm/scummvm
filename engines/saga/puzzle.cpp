@@ -411,12 +411,12 @@ void Puzzle::solicitHint() {
 	switch (_hintRqState) {
 	case kRQSpeaking:
 		if (_vm->_actor->isSpeaking()) {
-			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50000, this);
+			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50 * 1000000, this);
 			break;
 		}
 
 		_hintRqState = _hintNextRqState;
-		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 333333, this);
+		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 100*1000000/3, this);
 		break;
 
 	case kRQNoHint:
@@ -439,11 +439,11 @@ void Puzzle::solicitHint() {
 		//	Roll to see if Sakka scolds
 		if (_vm->_rnd.getRandomNumber(1)) {
 			_hintRqState = kRQSakkaDenies;
-			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 200000, this);
+			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 200*1000000, this);
 		} else {
 			_hintRqState = kRQSpeaking;
 			_hintNextRqState = kRQHintRequested;
-			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50000, this);
+			_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this);
 		}
 
 		break;
@@ -456,7 +456,7 @@ void Puzzle::solicitHint() {
 
 		_hintRqState = kRQSpeaking;
 		_hintNextRqState = kRQHintRequestedStage2;
-		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50000, this);
+		_vm->getTimerManager()->installTimerProc(&hintTimerCallback, 50*1000000, this);
 
 		_vm->_interface->converseClear();
 		_vm->_interface->converseAddText(optionsStr[_lang][kROAccept], 0, 1, 0, 0 );
