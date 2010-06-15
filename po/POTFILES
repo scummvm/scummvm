@@ -19,8 +19,16 @@ common/error.cpp
 
 engines/dialogs.cpp
 engines/scumm/dialogs.cpp
+engines/mohawk/dialogs.cpp
 
 sound/mididrv.cpp
 
-
-#TODO: backends engines tools?
+backends/keymapper/remap-dialog.cpp
+backends/platform/ds/arm9/source/dsoptions.cpp
+backends/platform/iphone/osys_events.cpp
+backends/platform/symbian/src/SymbianActions.cpp
+backends/platform/symbian/src/SymbianOS.cpp
+backends/platform/wii/options.cpp
+backends/platform/wince/CEActionsPocket.cpp
+backends/platform/wince/CEActionsSmartphone.cpp
+backends/platform/wince/CELauncherDialog.cpp

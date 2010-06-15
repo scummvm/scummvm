@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-12 19:52+0300\n"
+"POT-Creation-Date: 2010-06-13 16:52+0300\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
@@ -35,7 +35,8 @@ msgstr ""
 #: gui/browser.cpp:70 gui/KeysDialog.cpp:45 gui/launcher.cpp:265
 #: gui/massadd.cpp:95 gui/options.cpp:859 gui/saveload.cpp:65
 #: gui/saveload.cpp:157 gui/themebrowser.cpp:56 engines/dialogs.cpp:302
-#: gui/options.cpp:861 gui/chooser.cpp:49
+#: gui/options.cpp:861 gui/chooser.cpp:49 gui/launcher.cpp:266
+#: gui/options.cpp:878 backends/platform/wii/options.cpp:48
 msgid "Cancel"
 msgstr ""
 
@@ -48,6 +49,7 @@ msgid "Failed to load any GUI theme, aborting"
 msgstr ""
 
 #: gui/GuiManager.cpp:98 gui/GuiManager.cpp:102
+#: backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr ""
 
@@ -69,7 +71,8 @@ msgstr ""
 
 #: gui/KeysDialog.cpp:44 gui/launcher.cpp:266 gui/launcher.cpp:873
 #: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:860
-#: engines/dialogs.cpp:301 gui/options.cpp:862
+#: engines/dialogs.cpp:301 gui/options.cpp:862 gui/launcher.cpp:267
+#: gui/options.cpp:879 backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
 msgstr "Igen"
 
@@ -119,65 +122,74 @@ msgstr ""
 #: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
 #: sound/mididrv.cpp:38 sound/mididrv.cpp:39 gui/options.cpp:79
 #: gui/options.cpp:583 gui/options.cpp:593 gui/options.cpp:840
+#: gui/launcher.cpp:194 gui/options.cpp:597 gui/options.cpp:607
+#: gui/options.cpp:859 sound/mididrv.cpp:60
 msgid "<default>"
 msgstr "<alapértelmezett>"
 
-#: gui/launcher.cpp:191
+#: gui/launcher.cpp:191 gui/launcher.cpp:192
 msgid "Platform:"
 msgstr ""
 
 #: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
-#: gui/options.cpp:747 gui/options.cpp:764
+#: gui/options.cpp:747 gui/options.cpp:764 gui/launcher.cpp:204
+#: gui/options.cpp:783
 msgid "Graphics"
 msgstr "Grafikával"
 
 #: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
-#: gui/options.cpp:747 gui/options.cpp:764
+#: gui/options.cpp:747 gui/options.cpp:764 gui/launcher.cpp:204
+#: gui/options.cpp:783
 msgid "GFX"
 msgstr ""
 
-#: gui/launcher.cpp:205
+#: gui/launcher.cpp:205 gui/launcher.cpp:206
 msgid "Override global graphic settings"
 msgstr ""
 
 #: gui/launcher.cpp:212 gui/options.cpp:772 gui/options.cpp:770
+#: gui/launcher.cpp:213 gui/options.cpp:789
 msgid "Audio"
 msgstr "Hang"
 
-#: gui/launcher.cpp:214
+#: gui/launcher.cpp:214 gui/launcher.cpp:215
 msgid "Override global audio settings"
 msgstr ""
 
 #: gui/launcher.cpp:222 gui/options.cpp:776 gui/options.cpp:774
+#: gui/launcher.cpp:223 gui/options.cpp:793
 msgid "Volume"
 msgstr "Volumene"
 
-#: gui/launcher.cpp:224
+#: gui/launcher.cpp:224 gui/launcher.cpp:225
 msgid "Override global volume settings"
 msgstr ""
 
 #: gui/launcher.cpp:231 gui/options.cpp:784 gui/options.cpp:782
+#: gui/launcher.cpp:232 gui/options.cpp:801
 msgid "MIDI"
 msgstr ""
 
-#: gui/launcher.cpp:233
+#: gui/launcher.cpp:233 gui/launcher.cpp:234
 msgid "Override global MIDI settings"
 msgstr ""
 
 #: gui/launcher.cpp:243 gui/options.cpp:790 gui/options.cpp:788
+#: gui/launcher.cpp:244 gui/options.cpp:807
 msgid "Paths"
 msgstr "Ösvények"
 
-#: gui/launcher.cpp:249
+#: gui/launcher.cpp:249 gui/launcher.cpp:250
 #, fuzzy
 msgid "Game Path:"
 msgstr "Extra Útvonal:"
 
 #: gui/launcher.cpp:253 gui/options.cpp:803 gui/options.cpp:801
+#: gui/launcher.cpp:254 gui/options.cpp:820
 msgid "Extra Path:"
 msgstr "Extra Útvonal:"
 
-#: gui/launcher.cpp:257
+#: gui/launcher.cpp:257 gui/launcher.cpp:258
 #, fuzzy
 msgid "Save Path:"
 msgstr "Extra Útvonal:"
@@ -194,17 +206,23 @@ msgstr "Extra Útvonal:"
 #: gui/options.cpp:946 gui/options.cpp:1045 gui/options.cpp:222
 #: gui/options.cpp:379 gui/options.cpp:465 gui/options.cpp:511
 #: gui/options.cpp:646 gui/options.cpp:799 gui/options.cpp:802
-#: gui/options.cpp:806 gui/options.cpp:1043
+#: gui/options.cpp:806 gui/options.cpp:1043 gui/launcher.cpp:275
+#: gui/options.cpp:383 gui/options.cpp:469 gui/options.cpp:525
+#: gui/options.cpp:665 gui/options.cpp:818 gui/options.cpp:821
+#: gui/options.cpp:825 gui/options.cpp:902 gui/options.cpp:908
+#: gui/options.cpp:914 gui/options.cpp:922 gui/options.cpp:950
+#: gui/options.cpp:956 gui/options.cpp:963 gui/options.cpp:1062
 msgid "None"
 msgstr "Semmi"
 
-#: gui/launcher.cpp:279 gui/launcher.cpp:357
+#: gui/launcher.cpp:279 gui/launcher.cpp:357 gui/launcher.cpp:280
+#: backends/platform/wii/options.cpp:56
 #, fuzzy
 msgid "Default"
 msgstr "<alapértelmezett>"
 
 #: gui/launcher.cpp:391 gui/options.cpp:1044 gui/options.cpp:1039
-#: gui/options.cpp:1037
+#: gui/options.cpp:1037 gui/options.cpp:1056
 msgid "Select SoundFont"
 msgstr ""
 
@@ -225,6 +243,9 @@ msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 
 #: gui/launcher.cpp:500 engines/dialogs.cpp:113
+#: backends/platform/symbian/src/SymbianActions.cpp:55
+#: backends/platform/wince/CEActionsPocket.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:51
 msgid "Quit"
 msgstr ""
 
@@ -265,6 +286,8 @@ msgid "Load game:"
 msgstr ""
 
 #: gui/launcher.cpp:551 engines/dialogs.cpp:91 engines/dialogs.cpp:117
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Load"
 msgstr ""
 
@@ -275,10 +298,18 @@ msgid ""
 msgstr ""
 
 #: gui/launcher.cpp:661 gui/launcher.cpp:810
+#: backends/platform/symbian/src/SymbianOS.cpp:447
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+#: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Yes"
 msgstr ""
 
 #: gui/launcher.cpp:661 gui/launcher.cpp:810
+#: backends/platform/symbian/src/SymbianOS.cpp:447
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+#: backends/platform/wince/CELauncherDialog.cpp:104
 #, fuzzy
 msgid "No"
 msgstr "Semmi"
@@ -391,131 +422,137 @@ msgstr "Csak feliratok"
 msgid "Speech & Subs"
 msgstr "Beszéd s Feliratok"
 
-#: gui/options.cpp:595 gui/options.cpp:580
+#: gui/options.cpp:595 gui/options.cpp:580 gui/options.cpp:594
 msgid "Graphics mode:"
 msgstr "Grafikus mód:"
 
-#: gui/options.cpp:606 gui/options.cpp:591
+#: gui/options.cpp:606 gui/options.cpp:591 gui/options.cpp:605
 msgid "Render mode:"
 msgstr "Renderelési mód:"
 
-#: gui/options.cpp:616 gui/options.cpp:601
+#: gui/options.cpp:616 gui/options.cpp:601 gui/options.cpp:615
 msgid "Fullscreen mode"
 msgstr "Teljes képerny s mód:"
 
-#: gui/options.cpp:619 gui/options.cpp:604
+#: gui/options.cpp:619 gui/options.cpp:604 gui/options.cpp:618
 msgid "Aspect ratio correction"
 msgstr "Aspect adag korrekció"
 
-#: gui/options.cpp:626 gui/options.cpp:611
+#: gui/options.cpp:626 gui/options.cpp:611 gui/options.cpp:625
 msgid "Music driver:"
 msgstr "Zenei vezet :"
 
-#: gui/options.cpp:637 gui/options.cpp:622
+#: gui/options.cpp:637 gui/options.cpp:622 gui/options.cpp:641
 msgid "AdLib emulator:"
 msgstr "AdLib vezet :"
 
-#: gui/options.cpp:648 gui/options.cpp:633
+#: gui/options.cpp:648 gui/options.cpp:633 gui/options.cpp:652
 msgid "Output rate:"
 msgstr "Kimeneti teljesítmény:"
 
-#: gui/options.cpp:660 gui/options.cpp:645
+#: gui/options.cpp:660 gui/options.cpp:645 gui/options.cpp:664
 msgid "SoundFont:"
 msgstr ""
 
-#: gui/options.cpp:665 gui/options.cpp:650
+#: gui/options.cpp:665 gui/options.cpp:650 gui/options.cpp:669
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Vegyes AdLib/MIDI mód"
 
-#: gui/options.cpp:668 gui/options.cpp:653
+#: gui/options.cpp:668 gui/options.cpp:653 gui/options.cpp:672
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Igaz Roland MT-32 (megbénít GM emuláció)"
 
-#: gui/options.cpp:671 gui/options.cpp:656
+#: gui/options.cpp:671 gui/options.cpp:656 gui/options.cpp:675
 msgid "Enable Roland GS Mode"
 msgstr "Képessé Roland GS Mode"
 
-#: gui/options.cpp:674 gui/options.cpp:659
+#: gui/options.cpp:674 gui/options.cpp:659 gui/options.cpp:678
 msgid "MIDI gain:"
 msgstr "MIDI nyereség:"
 
-#: gui/options.cpp:687 gui/options.cpp:672
+#: gui/options.cpp:687 gui/options.cpp:672 gui/options.cpp:691
 msgid "Text and Speech:"
 msgstr "Szöveg és beszéd:"
 
-#: gui/options.cpp:691 gui/options.cpp:689
+#: gui/options.cpp:691 gui/options.cpp:689 gui/options.cpp:708
 msgid "Subtitle speed:"
 msgstr "Felirat sebesség:"
 
-#: gui/options.cpp:703 gui/options.cpp:701
+#: gui/options.cpp:703 gui/options.cpp:701 gui/options.cpp:720
 msgid "Music volume:"
 msgstr "Zene mennyiség:"
 
-#: gui/options.cpp:710 gui/options.cpp:708
+#: gui/options.cpp:710 gui/options.cpp:708 gui/options.cpp:727
 msgid "Mute All"
 msgstr "Muta Összes"
 
-#: gui/options.cpp:713 gui/options.cpp:711
+#: gui/options.cpp:713 gui/options.cpp:711 gui/options.cpp:730
 msgid "SFX volume:"
 msgstr "SFX mennyisége"
 
-#: gui/options.cpp:720 gui/options.cpp:718
+#: gui/options.cpp:720 gui/options.cpp:718 gui/options.cpp:737
 msgid "Speech volume:"
 msgstr "Beszéd mennyiség:"
 
-#: gui/options.cpp:797 gui/options.cpp:795
+#: gui/options.cpp:797 gui/options.cpp:795 gui/options.cpp:814
 msgid "Save Path: "
 msgstr ""
 
-#: gui/options.cpp:800 gui/options.cpp:798
+#: gui/options.cpp:800 gui/options.cpp:798 gui/options.cpp:817
 msgid "Theme Path:"
 msgstr ""
 
-#: gui/options.cpp:807 gui/options.cpp:805
+#: gui/options.cpp:807 gui/options.cpp:805 gui/options.cpp:824
 msgid "Plugins Path:"
 msgstr ""
 
-#: gui/options.cpp:812 gui/options.cpp:810
+#: gui/options.cpp:812 gui/options.cpp:810 gui/options.cpp:829
 msgid "Misc"
 msgstr ""
 
-#: gui/options.cpp:814 gui/options.cpp:812
+#: gui/options.cpp:814 gui/options.cpp:812 gui/options.cpp:831
 msgid "Theme:"
 msgstr "Téma:"
 
-#: gui/options.cpp:818 gui/options.cpp:816
+#: gui/options.cpp:818 gui/options.cpp:816 gui/options.cpp:835
 msgid "GUI Renderer:"
 msgstr "Leképez eszköz GUI:"
 
-#: gui/options.cpp:824 gui/options.cpp:822
+#: gui/options.cpp:824 gui/options.cpp:822 gui/options.cpp:841
 msgid "Autosave:"
 msgstr "Automatikus mentés:"
 
 #: gui/options.cpp:832 engines/dialogs.cpp:305 gui/options.cpp:830
+#: gui/options.cpp:849
 msgid "Keys"
 msgstr "Kulcsok"
 
-#: gui/options.cpp:844 gui/options.cpp:842
+#: gui/options.cpp:844 gui/options.cpp:842 gui/options.cpp:861
 msgid "English"
 msgstr ""
 
 #: gui/options.cpp:996 gui/options.cpp:991 gui/options.cpp:989
+#: gui/options.cpp:1008
 msgid "Select directory for savegames"
 msgstr ""
 
 #: gui/options.cpp:1003 gui/options.cpp:998 gui/options.cpp:996
+#: gui/options.cpp:1015
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 
 #: gui/options.cpp:1012 gui/options.cpp:1007 gui/options.cpp:1005
+#: gui/options.cpp:1024
 msgid "Select directory for GUI themes"
 msgstr ""
 
 #: gui/options.cpp:1022 gui/options.cpp:1017 gui/options.cpp:1015
+#: gui/options.cpp:1034
 msgid "Select directory for extra files"
 msgstr ""
 
 #: gui/options.cpp:1033 gui/options.cpp:1028 gui/options.cpp:1026
+#: gui/options.cpp:1045
 msgid "Select directory for plugins"
 msgstr ""
 
@@ -598,11 +635,14 @@ msgstr ""
 msgid "Menu"
 msgstr ""
 
-#: base/main.cpp:275
+#: base/main.cpp:275 backends/platform/symbian/src/SymbianActions.cpp:48
+#: backends/platform/wince/CEActionsPocket.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:45
 msgid "Skip"
 msgstr ""
 
-#: base/main.cpp:278
+#: base/main.cpp:278 backends/platform/symbian/src/SymbianActions.cpp:53
+#: backends/platform/wince/CEActionsPocket.cpp:41
 #, fuzzy
 msgid "Pause"
 msgstr "Ösvények"
@@ -676,6 +716,11 @@ msgid "Resume"
 msgstr ""
 
 #: engines/dialogs.cpp:95 engines/dialogs.cpp:119
+#: backends/platform/symbian/src/SymbianActions.cpp:47
+#: backends/platform/wince/CEActionsPocket.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Save"
 msgstr ""
 
@@ -699,7 +744,7 @@ msgstr ""
 msgid "Save game:"
 msgstr ""
 
-#: gui/options.cpp:978 gui/options.cpp:976
+#: gui/options.cpp:978 gui/options.cpp:976 gui/options.cpp:995
 msgid "You have to restart ScummVM to take the effect."
 msgstr ""
 
@@ -715,81 +760,81 @@ msgstr ""
 msgid "Antialiased Renderer (16bpp)"
 msgstr ""
 
-#: sound/mididrv.cpp:39 sound/mididrv.cpp:40
+#: sound/mididrv.cpp:39 sound/mididrv.cpp:40 sound/mididrv.cpp:61
 msgid "No music"
 msgstr ""
 
-#: sound/mididrv.cpp:42 sound/mididrv.cpp:43
+#: sound/mididrv.cpp:42 sound/mididrv.cpp:43 sound/mididrv.cpp:64
 msgid "Windows MIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:46 sound/mididrv.cpp:47
+#: sound/mididrv.cpp:46 sound/mididrv.cpp:47 sound/mididrv.cpp:68
 msgid "ALSA"
 msgstr ""
 
-#: sound/mididrv.cpp:50 sound/mididrv.cpp:51
+#: sound/mididrv.cpp:50 sound/mididrv.cpp:51 sound/mididrv.cpp:72
 msgid "Atari ST MIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:54 sound/mididrv.cpp:55
+#: sound/mididrv.cpp:54 sound/mididrv.cpp:55 sound/mididrv.cpp:76
 msgid "SEQ"
 msgstr ""
 
-#: sound/mididrv.cpp:58 sound/mididrv.cpp:59
+#: sound/mididrv.cpp:58 sound/mididrv.cpp:59 sound/mididrv.cpp:80
 msgid "DMedia"
 msgstr ""
 
-#: sound/mididrv.cpp:62 sound/mididrv.cpp:63
+#: sound/mididrv.cpp:62 sound/mididrv.cpp:63 sound/mididrv.cpp:84
 msgid "CAMD"
 msgstr ""
 
-#: sound/mididrv.cpp:66 sound/mididrv.cpp:67
+#: sound/mididrv.cpp:66 sound/mididrv.cpp:67 sound/mididrv.cpp:88
 #, fuzzy
 msgid "CoreAudio"
 msgstr "Hang"
 
-#: sound/mididrv.cpp:68 sound/mididrv.cpp:69
+#: sound/mididrv.cpp:68 sound/mididrv.cpp:69 sound/mididrv.cpp:90
 msgid "CoreMIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:73 sound/mididrv.cpp:74
+#: sound/mididrv.cpp:73 sound/mididrv.cpp:74 sound/mididrv.cpp:95
 msgid "Yamaha Pa1"
 msgstr ""
 
-#: sound/mididrv.cpp:75 sound/mididrv.cpp:76
+#: sound/mididrv.cpp:75 sound/mididrv.cpp:76 sound/mididrv.cpp:97
 msgid "Tapwave Zodiac"
 msgstr ""
 
-#: sound/mididrv.cpp:80 sound/mididrv.cpp:81
+#: sound/mididrv.cpp:80 sound/mididrv.cpp:81 sound/mididrv.cpp:102
 msgid "FluidSynth"
 msgstr ""
 
-#: sound/mididrv.cpp:83 sound/mididrv.cpp:84
+#: sound/mididrv.cpp:83 sound/mididrv.cpp:84 sound/mididrv.cpp:105
 msgid "MT-32 Emulation"
 msgstr ""
 
-#: sound/mididrv.cpp:87 sound/mididrv.cpp:88
+#: sound/mididrv.cpp:87 sound/mididrv.cpp:88 sound/mididrv.cpp:109
 #, fuzzy
 msgid "AdLib"
 msgstr "Hang"
 
-#: sound/mididrv.cpp:88 sound/mididrv.cpp:89
+#: sound/mididrv.cpp:88 sound/mididrv.cpp:89 sound/mididrv.cpp:110
 msgid "PC Speaker"
 msgstr ""
 
-#: sound/mididrv.cpp:89 sound/mididrv.cpp:90
+#: sound/mididrv.cpp:89 sound/mididrv.cpp:90 sound/mididrv.cpp:111
 msgid "IBM PCjr"
 msgstr ""
 
-#: sound/mididrv.cpp:90 sound/mididrv.cpp:91
+#: sound/mididrv.cpp:90 sound/mididrv.cpp:91 sound/mididrv.cpp:112
 msgid "Creative Music System"
 msgstr ""
 
-#: sound/mididrv.cpp:91 sound/mididrv.cpp:92
+#: sound/mididrv.cpp:91 sound/mididrv.cpp:92 sound/mididrv.cpp:113
 msgid "FM Towns"
 msgstr ""
 
-#: sound/mididrv.cpp:93 sound/mididrv.cpp:94
+#: sound/mididrv.cpp:93 sound/mididrv.cpp:94 sound/mididrv.cpp:115
 msgid "TiMidity"
 msgstr ""
 
@@ -853,12 +898,14 @@ msgstr ""
 msgid "~R~eturn to Launcher"
 msgstr ""
 
-#: engines/dialogs.cpp:301
+#: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:84
+#: engines/mohawk/dialogs.cpp:118
 #, fuzzy
 msgid "~O~K"
 msgstr "Igen"
 
-#: engines/dialogs.cpp:302
+#: engines/dialogs.cpp:302 engines/mohawk/dialogs.cpp:85
+#: engines/mohawk/dialogs.cpp:119
 msgid "~C~ancel"
 msgstr ""
 
@@ -876,28 +923,32 @@ msgid "~N~ext"
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:289
+#: backends/platform/ds/arm9/source/dsoptions.cpp:56
 msgid "~C~lose"
 msgstr ""
 
-#: gui/options.cpp:677 gui/options.cpp:683
+#: gui/options.cpp:677 gui/options.cpp:683 gui/options.cpp:696
+#: gui/options.cpp:702
 #, fuzzy
 msgid "Speech"
 msgstr "Csak a beszéd"
 
-#: gui/options.cpp:678 gui/options.cpp:684
+#: gui/options.cpp:678 gui/options.cpp:684 gui/options.cpp:697
+#: gui/options.cpp:703
 #, fuzzy
 msgid "Subtitles"
 msgstr "Csak feliratok"
 
-#: gui/options.cpp:679 gui/options.cpp:685
+#: gui/options.cpp:679 gui/options.cpp:685 gui/options.cpp:698
+#: gui/options.cpp:704
 msgid "Both"
 msgstr ""
 
-#: gui/options.cpp:683
+#: gui/options.cpp:683 gui/options.cpp:702
 msgid "Spch"
 msgstr ""
 
-#: gui/options.cpp:684
+#: gui/options.cpp:684 gui/options.cpp:703
 msgid "Subs"
 msgstr ""
 
@@ -913,7 +964,7 @@ msgstr ""
 msgid "Search in game list"
 msgstr ""
 
-#: gui/launcher.cpp:529 gui/options.cpp:647
+#: gui/launcher.cpp:529 gui/options.cpp:647 gui/options.cpp:666
 msgid "Clear value"
 msgstr ""
 
@@ -933,16 +984,17 @@ msgid ""
 "English"
 msgstr ""
 
-#: gui/launcher.cpp:191 gui/launcher.cpp:192
+#: gui/launcher.cpp:191 gui/launcher.cpp:192 gui/launcher.cpp:193
 msgid "Platform the game was originally designed for"
 msgstr ""
 
-#: gui/launcher.cpp:253 gui/launcher.cpp:254
+#: gui/launcher.cpp:253 gui/launcher.cpp:254 gui/launcher.cpp:255
 msgid "Specifies path to additional data used the game"
 msgstr ""
 
 #: gui/launcher.cpp:257 gui/launcher.cpp:258 gui/options.cpp:795
-#: gui/options.cpp:796
+#: gui/options.cpp:796 gui/launcher.cpp:259 gui/options.cpp:814
+#: gui/options.cpp:815
 msgid "Specifies where your savegames are put"
 msgstr ""
 
@@ -974,11 +1026,12 @@ msgstr ""
 msgid "Remove game from the list. The game data files stay intact"
 msgstr ""
 
-#: gui/options.cpp:591 gui/options.cpp:592
+#: gui/options.cpp:591 gui/options.cpp:592 gui/options.cpp:605
+#: gui/options.cpp:606
 msgid "Special dithering modes supported by some games"
 msgstr ""
 
-#: gui/options.cpp:604
+#: gui/options.cpp:604 gui/options.cpp:618
 msgid "Correct aspect ratio for 320x200 games"
 msgstr ""
 
@@ -986,54 +1039,465 @@ msgstr ""
 msgid "Specifies output sound device or sound emulator"
 msgstr ""
 
-#: gui/options.cpp:622 gui/options.cpp:623
+#: gui/options.cpp:622 gui/options.cpp:623 gui/options.cpp:641
+#: gui/options.cpp:642
 msgid "AdLib is used for music in many games"
 msgstr ""
 
-#: gui/options.cpp:633 gui/options.cpp:634
+#: gui/options.cpp:633 gui/options.cpp:634 gui/options.cpp:652
+#: gui/options.cpp:653
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
 
-#: gui/options.cpp:645 gui/options.cpp:646
+#: gui/options.cpp:645 gui/options.cpp:646 gui/options.cpp:664
+#: gui/options.cpp:665
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr ""
 
-#: gui/options.cpp:650
+#: gui/options.cpp:650 gui/options.cpp:669
 msgid "Use both MIDI and AdLib sound generation"
 msgstr ""
 
-#: gui/options.cpp:653
+#: gui/options.cpp:653 gui/options.cpp:672
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
 
-#: gui/options.cpp:656
+#: gui/options.cpp:656 gui/options.cpp:675
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
 
-#: gui/options.cpp:685
+#: gui/options.cpp:685 gui/options.cpp:704
 msgid "Show subtitles and play speech"
 msgstr ""
 
-#: gui/options.cpp:711 gui/options.cpp:712
+#: gui/options.cpp:711 gui/options.cpp:712 gui/options.cpp:730
+#: gui/options.cpp:731
 msgid "Special sound effects volume"
 msgstr ""
 
-#: gui/options.cpp:801 gui/options.cpp:802
+#: gui/options.cpp:801 gui/options.cpp:802 gui/options.cpp:820
+#: gui/options.cpp:821
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 
-#: gui/options.cpp:837
+#: gui/options.cpp:837 gui/options.cpp:856
 msgid "GUI Language:"
 msgstr ""
 
-#: gui/options.cpp:837
+#: gui/options.cpp:837 gui/options.cpp:856
 msgid "Language of ScummVM GUI"
 msgstr ""
 
-#: gui/options.cpp:612 gui/options.cpp:611
+#: gui/options.cpp:612 gui/options.cpp:611 gui/options.cpp:625
+#: gui/options.cpp:626
 msgid "Specifies output sound device or sound card emulator"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
+msgid "~Z~ip Mode Activated"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:82
+msgid "~T~ransitions Enabled"
+msgstr ""
+
+#: engines/mohawk/dialogs.cpp:116
+msgid "~W~ater Effect Enabled"
+msgstr ""
+
+#: backends/keymapper/remap-dialog.cpp:49
+msgid "Keymap:"
+msgstr ""
+
+#: backends/keymapper/remap-dialog.cpp:66
+msgid " (Active)"
+msgstr ""
+
+#: backends/keymapper/remap-dialog.cpp:100
+msgid " (Global)"
+msgstr ""
+
+#: backends/keymapper/remap-dialog.cpp:110
+msgid " (Game)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:57
+msgid "ScummVM Main Menu"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:63
+#, fuzzy
+msgid "~L~eft handed mode"
+msgstr "Renderelési mód:"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:64
+msgid "~I~ndy fight controls"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:65
+msgid "Show mouse cursor"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+msgid "Snap to edges"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:68
+msgid "Touch X Offset"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:75
+msgid "Touch Y Offset"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:87
+msgid "Use laptop trackpad-style cursor control"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:88
+msgid "Tap for left click, double tap right click"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:90
+msgid "Sensitivity"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:99
+msgid "Initial top screen scale:"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:105
+msgid "Main screen scaling:"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:107
+msgid "Hardware scale (fast, but low quality)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:108
+msgid "Software scale (good quality, but slower)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:109
+msgid "Unscaled (you must scroll left and right)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:111
+msgid "Brightness:"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:121
+msgid "High quality audio (slower) (reboot)"
+msgstr ""
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:122
+msgid "Disable power off"
+msgstr ""
+
+#: backends/platform/iphone/osys_events.cpp:339
+msgid "Touchpad mode enabled."
+msgstr ""
+
+#: backends/platform/iphone/osys_events.cpp:341
+msgid "Touchpad mode disabled."
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:41
+#: backends/platform/wince/CEActionsSmartphone.cpp:38
+msgid "Up"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsSmartphone.cpp:39
+msgid "Down"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:40
+msgid "Left"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:41
+msgid "Right"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:45
+#: backends/platform/wince/CEActionsPocket.cpp:59
+#: backends/platform/wince/CEActionsSmartphone.cpp:42
+msgid "Left Click"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:46
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
+msgid "Right Click"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:49
+#: backends/platform/wince/CEActionsSmartphone.cpp:46
+#, fuzzy
+msgid "Zone"
+msgstr "Semmi"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:50
+#: backends/platform/wince/CEActionsPocket.cpp:53
+#: backends/platform/wince/CEActionsSmartphone.cpp:47
+msgid "Multi Function"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:51
+msgid "Swap character"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+msgid "Skip text"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:54
+#, fuzzy
+msgid "Fast mode"
+msgstr "Grafikus mód:"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:56
+msgid "Debugger"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:57
+msgid "Global menu"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:58
+msgid "Virtual keyboard"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianActions.cpp:59
+msgid "Key mapper"
+msgstr ""
+
+#: backends/platform/symbian/src/SymbianOS.cpp:447
+msgid "Do you want to quit ?"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:47
+msgid "Ok"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:51
+msgid "Video"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:54
+#, fuzzy
+msgid "Current video mode:"
+msgstr "Renderelési mód:"
+
+#: backends/platform/wii/options.cpp:56
+msgid "Double-strike"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:60
+msgid "Horizontal underscan:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:66
+msgid "Vertical underscan:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:71
+msgid "Input"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:74
+msgid "GC Pad sensitivity:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:80
+msgid "GC Pad acceleration:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:86
+msgid "DVD"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
+msgid "Status:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
+msgid "Unknown"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:93
+msgid "Mount DVD"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:94
+msgid "Unmount DVD"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:98
+msgid "SMB"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:106
+#, fuzzy
+msgid "Server:"
+msgstr "Soha"
+
+#: backends/platform/wii/options.cpp:110
+msgid "Share:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:114
+msgid "Username:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:118
+msgid "Password:"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:121
+msgid "Init network"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:123
+msgid "Mount SMB"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:124
+msgid "Unmount SMB"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:145
+msgid "DVD Mounted successfully"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:148
+msgid "Error while mounting the DVD"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:150
+msgid "DVD not mounted"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:163
+msgid "Network up, share mounted"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:165
+msgid "Network up"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:168
+msgid ", error while mounting the share"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:170
+msgid ", share not mounted"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:176
+msgid "Network down"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:180
+msgid "Initialising network"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:184
+msgid "Timeout while initialising network"
+msgstr ""
+
+#: backends/platform/wii/options.cpp:188
+#, c-format
+msgid "Network not initialsed (%d)"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:45
+msgid "Hide Toolbar"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:46
+msgid "Show Keyboard"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:47
+msgid "Sound on/off"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:48
+msgid "Right click"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:49
+msgid "Show/Hide Cursor"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:50
+msgid "Free look"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:51
+msgid "Zoom up"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:52
+msgid "Zoom down"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:54
+#: backends/platform/wince/CEActionsSmartphone.cpp:48
+#, fuzzy
+msgid "Bind Keys"
+msgstr "Kulcsok"
+
+#: backends/platform/wince/CEActionsPocket.cpp:55
+msgid "Cursor Up"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:56
+msgid "Cursor Down"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:57
+msgid "Cursor Left"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:58
+msgid "Cursor Right"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
+msgid "Do you want to load or save the game?"
+msgstr ""
+
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+msgid "   Are you sure you want to quit ?   "
+msgstr ""
+
+#: backends/platform/wince/CEActionsSmartphone.cpp:49
+msgid "Keyboard"
+msgstr ""
+
+#: backends/platform/wince/CEActionsSmartphone.cpp:50
+msgid "Rotate"
+msgstr ""
+
+#: backends/platform/wince/CELauncherDialog.cpp:58
+#, fuzzy
+msgid "Using SDL driver "
+msgstr "Zenei vezet :"
+
+#: backends/platform/wince/CELauncherDialog.cpp:62
+msgid "Display "
+msgstr ""
+
+#: backends/platform/wince/CELauncherDialog.cpp:104
+msgid "Do you want to perform an automatic scan ?"
 msgstr ""
