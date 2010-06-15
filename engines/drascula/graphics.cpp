@@ -190,10 +190,16 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 
-	for (y = 0; y < height; y++)
-		for (x = 0; x < width; x++)
-			if (src[x + y * 320] != 255)
-				dest[x + y * 320] = src[x + y * 320];
+	int ptr = 0;
+	for (y = 0; y < height; y++) {
+		for (x = 0; x < width; x++) {
+			if (src[ptr] != 255)
+				dest[ptr] = src[ptr];
+			ptr++;
+		}
+		ptr += 320 - width;
+	}
+		
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
