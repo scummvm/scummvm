@@ -79,18 +79,40 @@ public:
 	TranslationManager();
 	~TranslationManager();
 
+	/**
+	 * Retrieves the language string to the given id.
+	 *
+	 * @param id Id of the language
+	 * @return the matching string description of the language
+	 */
 	const char *getLangById(int id);
 
 	/**
 	 * Sets the current translation language to the one specified in the
 	 * parameter. If the parameter is an empty string, it sets the default
 	 * system language.
+	 *
+	 * @param lang Language to setup.
 	 */
-	void setLanguage(const char *);
+	void setLanguage(const char *lang);
+
+	/**
+	 * Sets the current translation language to the one specified by the
+	 * id parameter.
+	 *
+	 * @param id The id of the language.
+	 */
 	void setLanguage(int id) {
 		setLanguage(getLangById(id));
 	}
 
+	/**
+	 * Parses a language string and returns an id instead.
+	 *
+	 * @param lang Language string
+	 * @return id of the language or kTranslationBuiltinId in case the
+	 *         language could not be found.
+	 */
 	int parseLanguage(const String lang);
 
 	/**
@@ -100,6 +122,11 @@ public:
 	 */
 	const char *getTranslation(const char *message);
 
+	/**
+	 * Returns the translation into the current language of the parameter
+	 * message. In case the message isn't found in the translation catalog,
+	 * it returns the original untranslated message.
+	 */
 	String getTranslation(const String &message);
 
 	/**
@@ -108,6 +135,11 @@ public:
 	 */
 	const char *convertTerm(const char *message);
 
+	/**
+	 * Returns a list of supported languages.
+	 *
+	 * @return The list of supported languages.
+	 */
 	const TLangArray getSupportedLanguages() const;
 };
 
