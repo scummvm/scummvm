@@ -493,8 +493,18 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
-	_oplPopUpDesc->setEnabled(enabled);
-	_oplPopUp->setEnabled(enabled);
+
+	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO(~0ul);
+
+	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
+				(_guioptions & allFlags) && // No flags are specified
+				!(_guioptions & Common::GUIO_MIDIADLIB)) {
+		_oplPopUpDesc->setEnabled(false);
+		_oplPopUp->setEnabled(false);
+	} else {
+		_oplPopUpDesc->setEnabled(enabled);
+		_oplPopUp->setEnabled(enabled);
+	}
 	_outputRatePopUpDesc->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
