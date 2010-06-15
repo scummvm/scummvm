@@ -38,6 +38,7 @@
 #include "sound/mixer.h"
 
 #include "drascula/drascula.h"
+#include "drascula/console.h"
 
 namespace Drascula {
 
@@ -172,6 +173,8 @@ Common::Error DrasculaEngine::run() {
 		warning("Unknown game language. Falling back to English");
 		_lang = kEnglish;
 	}
+
+	_console = new Console(this);
 
 	if (!loadDrasculaDat())
 		return Common::kUnknownError;
@@ -594,6 +597,9 @@ bool DrasculaEngine::runCurrentChapter() {
 		} else if (key == Common::KEYCODE_ESCAPE) {
 			if (!confirmExit())
 				return false;
+		} else if (key == Common::KEYCODE_TILDE || key == Common::KEYCODE_BACKQUOTE) {
+			_console->attach();
+			_console->onFrame();
 		} else if (currentChapter == 6 && key == Common::KEYCODE_0 && roomNumber == 61) {
 			loadPic("alcbar.alg", bgSurface, 255);
 		}
