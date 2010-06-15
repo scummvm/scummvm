@@ -234,7 +234,9 @@ ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) 
 
 // Resource manager constructors and operations
 
-bool ResourceManager::loadPatch(Resource *res, Common::SeekableReadStream *file) {
+bool Resource::loadPatch(Common::SeekableReadStream *file) {
+	Resource *res = this;
+
 	// We assume that the resource type matches res->type
 	//  We also assume that the current file position is right at the actual data (behind resourceid/headersize byte)
 
@@ -262,17 +264,17 @@ bool ResourceManager::loadPatch(Resource *res, Common::SeekableReadStream *file)
 	return true;
 }
 
-bool ResourceManager::loadFromPatchFile(Resource *res) {
+bool Resource::loadFromPatchFile() {
 	Common::File file;
-	const Common::String &filename = res->_source->getLocationName();
+	const Common::String &filename = _source->getLocationName();
 	if (file.open(filename) == false) {
 		warning("Failed to open patch file %s", filename.c_str());
-		res->unalloc();
+		unalloc();
 		return false;
 	}
 	// Skip resourceid and header size byte
 	file.seek(2, SEEK_SET);
-	return loadPatch(res, &file);
+	return loadPatch(&file);
 }
 
 Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *source) {
@@ -321,8 +323,7 @@ void ResourceManager::loadResource(Resource *res) {
 
 
 void PatchResourceSource::loadResource(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
-	bool result = resMan->loadFromPatchFile(res);
+	bool result = res->loadFromPatchFile();
 	if (!result) {
 		// TODO: We used to fallback to the "default" code here if loadFromPatchFile
 		// failed, but I am not sure whether that is really appropriate.
@@ -360,19 +361,17 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res) {
 }
 
 void WaveResourceSource::loadResource(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
 
 	fileStream->seek(res->_fileOffset, SEEK_SET);
-	resMan->loadFromWaveFile(res, fileStream);
+	res->loadFromWaveFile(fileStream);
 	if (_resourceFile)
 		delete fileStream;
 }
 
 void AudioVolumeResourceSource::loadResource(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
@@ -410,7 +409,7 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 		case kResourceTypeAudio:
 		case kResourceTypeAudio36:
 			// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
-			resMan->loadFromAudioVolumeSCI1(res, fileStream);
+			res->loadFromAudioVolumeSCI1(fileStream);
 			if (_resourceFile)
 				delete fileStream;
 			return;
@@ -422,9 +421,9 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 	}
 	if (getSciVersion() < SCI_VERSION_1_1)
-		resMan->loadFromAudioVolumeSCI1(res, fileStream);
+		res->loadFromAudioVolumeSCI1(fileStream);
 	else
-		resMan->loadFromAudioVolumeSCI11(res, fileStream);
+		res->loadFromAudioVolumeSCI11(fileStream);
 
 	if (_resourceFile)
 		delete fileStream;

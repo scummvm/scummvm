@@ -192,6 +192,12 @@ public:
 	void writeToStream(Common::WriteStream *stream) const;
 	uint32 getAudioCompressionType() const;
 
+	bool loadPatch(Common::SeekableReadStream *file);
+	bool loadFromPatchFile();
+	bool loadFromWaveFile(Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI1(Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI11(Common::SeekableReadStream *file);
+
 protected:
 	int32 _fileOffset; /**< Offset in file */
 	ResourceStatus _status;
@@ -386,11 +392,6 @@ protected:
 
 	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
 	void loadResource(Resource *res);
-	bool loadPatch(Resource *res, Common::SeekableReadStream *file);
-	bool loadFromPatchFile(Resource *res);
-	bool loadFromWaveFile(Resource *res, Common::SeekableReadStream *file);
-	bool loadFromAudioVolumeSCI1(Resource *res, Common::SeekableReadStream *file);
-	bool loadFromAudioVolumeSCI11(Resource *res, Common::SeekableReadStream *file);
 	void freeOldResources();
 	int decompress(Resource *res, Common::SeekableReadStream *file);
 	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);

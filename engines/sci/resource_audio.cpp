@@ -76,7 +76,9 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name,
 		delete fileStream;
 }
 
-bool ResourceManager::loadFromWaveFile(Resource *res, Common::SeekableReadStream *file) {
+bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
+	Resource *res = this;
+
 	res->data = new byte[res->size];
 
 	uint32 really_read = file->read(res->data, res->size);
@@ -87,14 +89,16 @@ bool ResourceManager::loadFromWaveFile(Resource *res, Common::SeekableReadStream
 	return true;
 }
 
-bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::SeekableReadStream *file) {
+bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
+	Resource *res = this;
+
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKID_BE('RIFF')) {
 		res->_headerSize = 0;
 		res->size = file->readUint32LE();
 		file->seek(-8, SEEK_CUR);
-		return loadFromWaveFile(res, file);
+		return loadFromWaveFile(file);
 	}
 	file->seek(-4, SEEK_CUR);
 
@@ -122,10 +126,12 @@ bool ResourceManager::loadFromAudioVolumeSCI11(Resource *res, Common::SeekableRe
 		file->seek(-11, SEEK_CUR);
 	}
 
-	return loadPatch(res, file);
+	return loadPatch(file);
 }
 
-bool ResourceManager::loadFromAudioVolumeSCI1(Resource *res, Common::SeekableReadStream *file) {
+bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
+	Resource *res = this;
+
 	res->data = new byte[res->size];
 
 	if (res->data == NULL) {
