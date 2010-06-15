@@ -30,6 +30,7 @@
 
 #include "gui/GuiManager.h"
 #include "common/savefile.h"
+#include "common/translation.h"
 
 namespace Mohawk {
 
@@ -77,11 +78,11 @@ enum {
 };
 
 MystOptionsDialog::MystOptionsDialog(MohawkEngine_Myst* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
-	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Transitions Enabled", kTransCmd, 'T');
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
+	_transitionsCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~T~ransitions Enabled"), 0, kTransCmd);
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", GUI::kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
 }
 
 MystOptionsDialog::~MystOptionsDialog() {
@@ -111,11 +112,11 @@ void MystOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, ui
 }
 
 RivenOptionsDialog::RivenOptionsDialog(MohawkEngine_Riven* vm) : GUI::OptionsDialog("", 120, 120, 360, 200), _vm(vm) {
-	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, "Zip Mode Activated", kZipCmd, 'Z');
-	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, "Water Effect Enabled", kWaterCmd, 'W');
+	_zipModeCheckbox = new GUI::CheckboxWidget(this, 15, 10, 300, 15, _("~Z~ip Mode Activated"), 0, kZipCmd);
+	_waterEffectCheckbox = new GUI::CheckboxWidget(this, 15, 30, 300, 15, _("~W~ater Effect Enabled"), 0, kWaterCmd);
 
-	new GUI::ButtonWidget(this, 95, 160, 120, 25, "OK", GUI::kOKCmd, 'O');
-	new GUI::ButtonWidget(this, 225, 160, 120, 25, "Cancel", GUI::kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, 95, 160, 120, 25, _("~O~K"), 0, GUI::kOKCmd);
+	new GUI::ButtonWidget(this, 225, 160, 120, 25, _("~C~ancel"), 0, GUI::kCloseCmd);
 }
 
 RivenOptionsDialog::~RivenOptionsDialog() {
