@@ -49,8 +49,6 @@ public:
 	SciGui(EngineState *s, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor, GfxPorts *ports, AudioPlayer *audio);
 	virtual ~SciGui();
 
-	virtual void init(bool usesOldGfxFunctions);
-
 protected:
 	GfxCursor *_cursor;
 	EngineState *_s;

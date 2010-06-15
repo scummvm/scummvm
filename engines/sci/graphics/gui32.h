@@ -44,10 +44,6 @@ public:
 	SciGui32(SegManager *segMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, GfxCache *cache, GfxCursor *cursor);
 	~SciGui32();
 
-	void init();
-
-	void textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
-
 	void drawRobot(GuiResourceId robotId);
 
 protected:

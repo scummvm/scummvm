@@ -193,6 +193,9 @@ public:
 
 	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
 
+	// Initializes ports and paint16 for non-sci32 games, also sets default palette
+	void initGraphics();
+
 public:
 	GfxAnimate *_gfxAnimate; // Animate for 16-bit gfx
 	GfxCache *_gfxCache;

@@ -47,6 +47,7 @@
 #include "sci/graphics/gui.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/menu.h"
+#include "sci/graphics/paint16.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/cursor.h"
@@ -254,14 +255,7 @@ Common::Error SciEngine::run() {
 
 	syncSoundSettings();
 
-#ifdef ENABLE_SCI32
-	if (_gui32)
-		_gui32->init();
-	else
-#endif
-		_gui->init(_features->usesOldGfxFunctions());
-	// Set default (EGA, amiga or resource 999) palette
-	_gfxPalette->setDefault();
+	initGraphics();
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
@@ -351,6 +345,15 @@ bool SciEngine::initGame() {
 	setSciLanguage();
 
 	return true;
+}
+
+void SciEngine::initGraphics() {
+	if (_gfxPorts) {
+		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
+		_gfxPaint16->init(_gfxAnimate, _gfxText16);
+	}
+	// Set default (EGA, amiga or resource 999) palette
+	_gfxPalette->setDefault();
 }
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

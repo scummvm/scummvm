@@ -54,11 +54,10 @@ GfxPorts::~GfxPorts() {
 	delete _menuPort;
 }
 
-void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16) {
+void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16) {
 	int16 offTop = 10;
 
 	_usesOldGfxFunctions = usesOldGfxFunctions;
-	_gui = gui;
 	_paint16 = paint16;
 	_text16 = text16;
 

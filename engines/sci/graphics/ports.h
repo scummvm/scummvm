@@ -45,7 +45,7 @@ public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
 
-	void init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16);
+	void init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16);
 
 	void kernelSetActive(uint16 portId);
 	Common::Rect kernelGetPicWindow(int16 &picTop, int16 &picLeft);
@@ -102,7 +102,6 @@ private:
 	typedef Common::List<Port *> PortList;
 
 	SegManager *_segMan;
-	SciGui *_gui;
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
 	GfxText16 *_text16;

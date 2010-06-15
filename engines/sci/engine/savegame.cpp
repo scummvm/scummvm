@@ -983,15 +983,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Message state:
 	s->_msgState = new MessageState(s->_segMan);
 
-#ifdef ENABLE_SCI32
-	if (g_sci->_gui32) {
-		g_sci->_gui32->init();
-	} else {
-#endif
-		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
-#ifdef ENABLE_SCI32
-	}
-#endif
+	g_sci->initGraphics();
 
 	s->abortScriptProcessing = kAbortLoadGame;
 	s->shrinkStackToBase();

@@ -86,9 +86,4 @@ SciGui::~SciGui() {
 	delete _coordAdjuster;
 }
 
-void SciGui::init(bool usesOldGfxFunctions) {
-	_ports->init(usesOldGfxFunctions, this, _paint16, _text16);
-	_paint16->init(_animate, _text16);
-}
-
 } // End of namespace Sci

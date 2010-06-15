@@ -66,9 +66,6 @@ SciGui32::~SciGui32() {
 	delete _coordAdjuster;
 }
 
-void SciGui32::init() {
-}
-
 void SciGui32::drawRobot(GuiResourceId robotId) {
 	Robot *test = new Robot(g_sci->getResMan(), _screen, robotId);
 	test->draw();
