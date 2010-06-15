@@ -163,6 +163,11 @@ struct ResourceIdLess : public Common::BinaryFunction<ResourceId, ResourceId, bo
 /** Class for storing resources in memory */
 class Resource {
 	friend class ResourceManager;
+
+	// FIXME: These 'friend' declarations are meant to be a temporary hack to
+	// ease transition to the ResourceSource class system.
+	friend class MacResourceForkResourceSource;
+
 public:
 	Resource();
 	~Resource();
@@ -196,7 +201,6 @@ typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualT
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
-	friend class ResourceSource;
 	friend class DirectoryResourceSource;
 	friend class ExtMapResourceSource;
 	friend class IntMapResourceSource;
@@ -406,13 +410,6 @@ protected:
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
 	
-	/**
-	 * Reads the SCI1.1+ resource file from a Mac resource fork.
-	 * @param source The source
-	 * @return 0 on success, an SCI_ERROR_* code otherwise
-	 */
-	int readMacResourceFork(ResourceSource *source);
-
 	/**
 	 * Reads SCI1.1 audio map resources
 	 * @param map The map

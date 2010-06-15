@@ -653,10 +653,6 @@ void IntMapResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readAudioMapSCI11(this);
 }
 
-void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
-	resMan->readMacResourceFork(this);
-}
-
 
 void ResourceManager::freeResourceSources() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)
@@ -1465,12 +1461,12 @@ static uint32 resTypeToMacTag(ResourceType type) {
 	return 0;
 }
 
-int ResourceManager::readMacResourceFork(ResourceSource *source) {
-	assert(source->_macResMan);
-	if (!source->_macResMan->open(source->getLocationName().c_str()))
-		error("%s is not a valid Mac resource fork", source->getLocationName().c_str());
+void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
+	assert(_macResMan);
+	if (!_macResMan->open(getLocationName().c_str()))
+		error("%s is not a valid Mac resource fork", getLocationName().c_str());
 
-	Common::MacResTagArray tagArray = source->_macResMan->getResTagArray();
+	Common::MacResTagArray tagArray = _macResMan->getResTagArray();
 
 	for (uint32 i = 0; i < tagArray.size(); i++) {
 		ResourceType type = kResourceTypeInvalid;
@@ -1485,11 +1481,11 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 		if (type == kResourceTypeInvalid)
 			continue;
 
-		Common::MacResIDArray idArray = source->_macResMan->getResIDArray(tagArray[i]);
+		Common::MacResIDArray idArray = _macResMan->getResIDArray(tagArray[i]);
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
 			// Get the size of the file
-			Common::SeekableReadStream *stream = source->_macResMan->getResource(tagArray[i], idArray[j]);
+			Common::SeekableReadStream *stream = _macResMan->getResource(tagArray[i], idArray[j]);
 
 			// Some IBIS resources have a size of 0, so we skip them
 			if (!stream)
@@ -1503,22 +1499,20 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 			Resource *newrsc = NULL;
 
 			// Prepare destination, if neccessary. Resource forks may contain patches.
-			if (!_resMap.contains(resId)) {
+			if (!resMan->_resMap.contains(resId)) {
 				newrsc = new Resource;
-				_resMap.setVal(resId, newrsc);
+				resMan->_resMap.setVal(resId, newrsc);
 			} else
-				newrsc = _resMap.getVal(resId);
+				newrsc = resMan->_resMap.getVal(resId);
 
 			// Overwrite everything
 			newrsc->_id = resId;
 			newrsc->_status = kResStatusNoMalloc;
-			newrsc->_source = source;
+			newrsc->_source = this;
 			newrsc->size = fileSize;
 			newrsc->_headerSize = 0;
 		}
 	}
-
-	return 0;
 }
 
 void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size) {

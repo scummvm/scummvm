@@ -143,6 +143,9 @@ class MacResourceForkResourceSource : public ResourceSource {
 public:
 	MacResourceForkResourceSource(const Common::String &name) : ResourceSource(kSourceMacResourceFork, name) {}
 
+	/**
+	 * Reads the SCI1.1+ resource file from a Mac resource fork.
+	 */
 	virtual void scanSource(ResourceManager *resMan);
 };
 
