@@ -381,7 +381,7 @@ static void computeGameSettingsFromMD5(const Common::FSList &fslist, const GameF
 	}
 }
 
-static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map, int depth) {
+static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map, int depth, const char **globs) {
 	if (depth <= 0)
 		return;
 
@@ -395,10 +395,23 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 			d.md5Entry = 0;
 			fileMD5Map[file->getName()] = d;
 		} else {
+			if (!directoryGlobs)
+				continue;
+
+			bool matched = false;
+			for (const char *glob = *globs; *glob; glob++)
+				if (file->getName().matchString(glob, true)) {
+					matched = true;
+					break;
+				}
+					
+			if (!matched)
+				continue;
+
 			Common::FSList files;
 
 			if (file->getChildren(files, Common::FSNode::kListAll)) {
-				composeFileHashMap(files, fileMD5Map, depth - 1);
+				composeFileHashMap(files, fileMD5Map, depth - 1, directoryGlobs);
 			}
 		}
 	}
@@ -410,7 +423,7 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 	char md5str[32+1];
 
 	// Dive one level down since mac indy3/loom has its files split into directories. See Bug #1438631
-	composeFileHashMap(fslist, fileMD5Map, 2);
+	composeFileHashMap(fslist, fileMD5Map, 2, directoryGlobs);
 
 	// Iterate over all filename patterns.
 	for (const GameFilenamePattern *gfp = gameFilenamesTable; gfp->gameid; ++gfp) {

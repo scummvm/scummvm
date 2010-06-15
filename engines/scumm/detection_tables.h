@@ -48,6 +48,15 @@ namespace Scumm {
 #pragma mark --- Tables ---
 #pragma mark -
 
+/**
+ * This table contains list of directories which could contain game data
+ * and which should be looked into during detection.
+ */
+static const char *directoryGlobs[] = {
+	"rooms *",  // Mac version of indy3/loom
+	0
+};
+
 
 /**
  * This table contains all game IDs supported by the SCUMM engine, and maps
