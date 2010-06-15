@@ -1134,20 +1134,12 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		return;
 	}
 
-	// Prepare destination, if neccessary
-	if (_resMap.contains(resId) == false) {
-		newrsc = new Resource;
-		_resMap.setVal(resId, newrsc);
-	} else
-		newrsc = _resMap.getVal(resId);
-
 	// Overwrite everything, because we're patching
-	newrsc->_id = resId;
-	newrsc->_status = kResStatusNoMalloc;
-	newrsc->_source = source;
-	newrsc->size = fsize - patchDataOffset - 2;
+	newrsc = updateResource(resId, source, fsize - patchDataOffset - 2);
 	newrsc->_headerSize = patchDataOffset;
 	newrsc->_fileOffset = 0;
+
+
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
 
@@ -1285,7 +1277,6 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 
 int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = 0;
-	Resource *res;
 	ResourceType type;
 	uint16 number, id;
 	uint32 offset;
@@ -1323,9 +1314,8 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		ResourceId resId = ResourceId(type, number);
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
-			res = new Resource;
-			res->_source = findVolume(map, offset >> bShift);
-			if (!res->_source) {
+			ResourceSource *source = findVolume(map, offset >> bShift);
+			if (!source) {
 				warning("Could not get volume for resource %d, VolumeID %d", id, offset >> bShift);
 				if (_mapVersion != _volVersion) {
 					warning("Retrying with the detected volume version instead");
@@ -1333,12 +1323,11 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 					_mapVersion = _volVersion;
 					bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
 					bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
-					res->_source = findVolume(map, offset >> bShift);
+					source = findVolume(map, offset >> bShift);
 				}
 			}
-			res->_fileOffset = offset & (((~bMask) << 24) | 0xFFFFFF);
-			res->_id = resId;
-			_resMap.setVal(resId, res);
+
+			addResource(resId, source, offset & (((~bMask) << 24) | 0xFFFFFF));
 		}
 	} while (!fileStream->eos());
 
@@ -1348,7 +1337,6 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = 0;
-	Resource *res;
 
 	if (map->_resourceFile) {
 		fileStream = map->_resourceFile->createReadStream();
@@ -1409,16 +1397,11 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			resId = ResourceId((ResourceType)type, number);
 			// adding new resource only if it does not exist
 			if (_resMap.contains(resId) == false) {
-				res = new Resource;
-				_resMap.setVal(resId, res);
-				res->_id = resId;
-				
 				// NOTE: We add the map's volume number here to the specified volume number
 				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 				// need to be used in concurrence with the volume specified in the map to get
 				// the actual resource file.
-				res->_source = findVolume(map, volume_nr + map->_volumeNumber);
-				res->_fileOffset = off;
+				addResource(resId, findVolume(map, volume_nr + map->_volumeNumber), off);
 			}
 		}
 	}
@@ -1494,21 +1477,8 @@ void MacResourceForkResourceSource::scanSource() {
 
 			ResourceId resId = ResourceId(type, idArray[j]);
 
-			Resource *newrsc = NULL;
-
-			// Prepare destination, if neccessary. Resource forks may contain patches.
-			if (!resMan->_resMap.contains(resId)) {
-				newrsc = new Resource;
-				resMan->_resMap.setVal(resId, newrsc);
-			} else
-				newrsc = resMan->_resMap.getVal(resId);
-
-			// Overwrite everything
-			newrsc->_id = resId;
-			newrsc->_status = kResStatusNoMalloc;
-			newrsc->_source = this;
-			newrsc->size = fileSize;
-			newrsc->_headerSize = 0;
+			// Overwrite Resource instance. Resource forks may contain patches.
+			resMan->updateResource(resId, this, fileSize);
 		}
 	}
 }
@@ -1523,6 +1493,26 @@ void ResourceManager::addResource(ResourceId resId, ResourceSource *src, uint32 
 		res->_fileOffset = offset;
 		res->size = size;
 	}
+}
+
+Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src, uint32 size) {
+	// Update a patched resource, whether it exists or not
+	Resource *res = 0;
+
+	if (_resMap.contains(resId)) {
+		res = _resMap.getVal(resId);
+	} else {
+		res = new Resource;
+		_resMap.setVal(resId, res);
+	}
+
+	res->_id = resId;
+	res->_status = kResStatusNoMalloc;
+	res->_source = src;
+	res->_headerSize = 0;
+	res->size = size;
+
+	return res;
 }
 
 int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream *file,

@@ -170,6 +170,9 @@ public:
 	virtual void loadResource(Resource *res);
 };
 
+/**
+ * Reads SCI1.1+ resources from a Mac resource fork.
+ */
 class MacResourceForkResourceSource : public ResourceSource {
 protected:
 	Common::MacResManager *_macResMan;
@@ -178,9 +181,6 @@ public:
 	MacResourceForkResourceSource(const Common::String &name, int volNum);
 	~MacResourceForkResourceSource();
 
-	/**
-	 * Reads the SCI1.1+ resource file from a Mac resource fork.
-	 */
 	virtual void scanSource();
 
 	virtual void loadResource(Resource *res);

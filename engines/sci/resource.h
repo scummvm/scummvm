@@ -395,6 +395,7 @@ protected:
 	int decompress(Resource *res, Common::SeekableReadStream *file);
 	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
 	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
+	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size);
 	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/

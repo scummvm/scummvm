@@ -170,24 +170,11 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 
 void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
 	ResourceSource *resSrc = new WaveResourceSource(name);
+	Common::File file;
+	file.open(name);
 
-	Resource *newRes = 0;
+	updateResource(resourceId, resSrc, name.size());
 
-	if (_resMap.contains(resourceId)) {
-		newRes = _resMap.getVal(resourceId);
-	} else {
-		newRes = new Resource;
-		_resMap.setVal(resourceId, newRes);
-	}
-
-	Common::SeekableReadStream *stream = SearchMan.createReadStreamForMember(name);
-	newRes->size = stream->size();
-	delete stream;
-
-	newRes->_id = resourceId;
-	newRes->_status = kResStatusNoMalloc;
-	newRes->_source = resSrc;
-	newRes->_headerSize = 0;
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", name.c_str());
 }
 
