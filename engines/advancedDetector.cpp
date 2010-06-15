@@ -341,7 +341,7 @@ static void reportUnknown(const Common::FSNode &path, const SizeMD5Map &filesSiz
 
 static ADGameDescList detectGameFilebased(const FileMap &allFiles, const ADParams &params);
 
-static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth) {
+static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, int depth, const char **directoryGlobs) {
 	if (depth <= 0)
 		return;
 
@@ -354,10 +354,23 @@ static void composeFileHashMap(const Common::FSList &fslist, FileMap &allFiles, 
 		if (file->isDirectory()) {
 			Common::FSList files;
 
+			if (!directoryGlobs)
+				continue;
+
+			bool matched = false;
+			for (const char *glob = *directoryGlobs; *glob; glob++)
+				if (file->getName().matchString(glob, true)) {
+					matched = true;
+					break;
+				}
+					
+			if (!matched)
+				continue;
+
 			if (!file->getChildren(files, Common::FSNode::kListAll))
 				continue;
 
-			composeFileHashMap(files, allFiles, depth - 1);
+			composeFileHashMap(files, allFiles, depth - 1, directoryGlobs);
 		}
 
 		Common::String tstr = file->getName();
@@ -385,7 +398,7 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 	// First we compose a hashmap of all files in fslist.
 	// Includes nifty stuff like removing trailing dots and ignoring case.
-	composeFileHashMap(fslist, allFiles, (params.depth == 0 ? 1 : params.depth));
+	composeFileHashMap(fslist, allFiles, (params.depth == 0 ? 1 : params.depth), params.directoryGlobs);
 
 	// Check which files are included in some ADGameDescription *and* present
 	// in fslist. Compute MD5s and file sizes for these files.

@@ -192,11 +192,19 @@ struct ADParams {
 	uint32 guioptions;
 
 	/**
-	 *
 	 * Maximum depth of directories to look up
 	 * If set to 0, the depth is 1 level
 	 */
 	uint32 depth;
+
+	/**
+	 * Case-insensitive list of directory globs which could be used for
+	 * going deeper int directory structure.
+	 * @see String::matchString() method for format description.
+	 *
+	 * @note Last item must be 0
+	 */
+	const char **directoryGlobs;
 };
 
 

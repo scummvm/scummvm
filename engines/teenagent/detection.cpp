@@ -92,7 +92,8 @@ static const ADParams detectionParams = {
 	0,
 	0,
 	Common::GUIO_NONE,
-	1
+	1,
+	0
 };
 
 #define MAX_SAVES 20
