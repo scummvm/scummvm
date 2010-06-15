@@ -283,7 +283,8 @@ void DrasculaEngine::converse(int index) {
 void DrasculaEngine::response(int function) {
 	debug(4, "response(%d)", function);
 
-	playTalkSequence(function);
+	if (function != 31)
+		playTalkSequence(function);
 
 	if (currentChapter == 2) {
 		if (function == 16 || function == 20 || function == 23 || function == 29 || function == 31)
