@@ -234,36 +234,39 @@ public:
 
 	/**
 	 * Looks up a resource's data.
-	 * @param id: The resource type to look for
-	 * @param lock: non-zero iff the resource should be locked
-	 * @return (Resource *): The resource, or NULL if it doesn't exist
+	 * @param id	The resource type to look for
+	 * @param lock	non-zero iff the resource should be locked
+	 * @return The resource, or NULL if it doesn't exist
 	 * @note Locked resources are guaranteed not to have their contents freed until
 	 *       they are unlocked explicitly (by unlockResource).
 	 */
 	Resource *findResource(ResourceId id, bool lock);
 
-	/* Unlocks a previously locked resource
-	**             (Resource *) res: The resource to free
-	** Returns   : ()
-	*/
+	/**
+	 * Unlocks a previously locked resource.
+	 * @param res	The resource to free
+	 */
 	void unlockResource(Resource *res);
 
-	/* Tests whether a resource exists
-	**             (ResourceId) id: Id of the resource to check
-	** Returns   : (Resource *) non-NULL if the resource exists, NULL otherwise
-	** This function may often be much faster than finding the resource
-	** and should be preferred for simple tests.
-	** The resource object returned is, indeed, the resource in question, but
-	** it should be used with care, as it may be unallocated.
-	** Use scir_find_resource() if you want to use the data contained in the resource.
-	*/
+	/**
+	 * Tests whether a resource exists.
+	 *
+	 * This function may often be much faster than finding the resource
+	 * and should be preferred for simple tests.
+	 * The resource object returned is, indeed, the resource in question, but
+	 * it should be used with care, as it may be unallocated.
+	 * Use scir_find_resource() if you want to use the data contained in the resource.
+	 *
+	 * @param id	Id of the resource to check
+	 * @return		non-NULL if the resource exists, NULL otherwise
+	 */
 	Resource *testResource(ResourceId id);
 
 	/**
 	 * Returns a list of all resources of the specified type.
-	 * @param type: The resource type to look for
-	 * @param mapNumber: For audio36 and sync36, limit search to this map
-	 * @return: The resource list
+	 * @param type		The resource type to look for
+	 * @param mapNumber	For audio36 and sync36, limit search to this map
+	 * @return			The resource list
 	 */
 	Common::List<ResourceId> *listResources(ResourceType type, int mapNumber = -1);
 
@@ -280,7 +283,7 @@ public:
 	 * Adds the appropriate GM patch from the Sierra MIDI utility as 4.pat, without
 	 * requiring the user to rename the file to 4.pat. Thus, the original Sierra
 	 * archive can be extracted in the extras directory, and the GM patches can be
-	 * applied per game, if applicable
+	 * applied per game, if applicable.
 	 */
 	void addNewGMPatch(const Common::String &gameId);
 
@@ -289,13 +292,13 @@ public:
 	bool detectFontExtended();
 
 	/**
-	 * Finds the internal Sierra ID of the current game from script 0
+	 * Finds the internal Sierra ID of the current game from script 0.
 	 */
 	Common::String findSierraGameId();
 
 	/**
-	 * Finds the location of the game object from script 0
-	 * @param addSci11ScriptOffset: Adjust the return value for SCI1.1 and newer
+	 * Finds the location of the game object from script 0.
+	 * @param addSci11ScriptOffset	Adjust the return value for SCI1.1 and newer
 	 *        games. Needs to be false when the heap is accessed directly inside
 	 *        findSierraGameId().
 	 */
@@ -337,14 +340,15 @@ protected:
 	/**
 	 * Adds a source to the resource manager's list of sources.
 	 * @param source	The new source to add
-	 * @return A pointer to the added source structure, or NULL if an error occurred.
+	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addSource(ResourceSource *source);
 
 	ResourceSource *addSource(ResourceSource *source, const Common::FSNode *resFile);
 
 	/**
-	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.
+	 * Add an external (i.e., separate file) map resource to the resource
+	 * manager's list of sources.
 	 * @param file_name	 The name of the volume to add
 	 * @param volume_nr  The volume number the map starts at, 0 for <SCI2.1
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
@@ -357,19 +361,20 @@ protected:
 	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
 	 * @param name		The name of the resource to add
 	 * @param resNr		The map resource number
-	 * @return A pointer to the added source structure, or NULL if an error occurred.
+	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addInternalMap(const Common::String &name, int resNr);
 
 	/**
-	 * Checks, if an audio volume got compressed by our tool. If that's the case, it will set _audioCompressionType
-	 *  and read in the offset translation table for later usage.
+	 * Checks if an audio volume got compressed by our tool. If that is the
+	 * case, set _audioCompressionType and read in the offset translation
+	 * table for later usage.
 	 */
 	void checkIfAudioVolumeIsCompressed(ResourceSource *source);
 
 	/**
 	 * Scans newly registered resource sources for resources, earliest addition first.
-	 * @param detected_version: Pointer to the detected version number,
+	 * @param detected_version Pointer to the detected version number,
 	 *					 used during startup. May be NULL.
 	 * @return One of SCI_ERROR_*.
 	 */
@@ -380,9 +385,9 @@ protected:
 	void freeResourceSources();
 
 	/**
-	 * Returns a string describing a ResVersion
-	 * @param version: The resource version
-	 * @return: The description of version
+	 * Returns a string describing a ResVersion.
+	 * @param version	The resource version
+	 * @return		The description of version
 	 */
 	const char *versionDescription(ResVersion version) const;
 
@@ -416,16 +421,16 @@ protected:
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readResourceMapSCI1(ResourceSource *map);
-	
+
 	/**
-	 * Reads SCI1.1 audio map resources
+	 * Reads SCI1.1 audio map resources.
 	 * @param map The map
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
 	 */
 	int readAudioMapSCI11(ResourceSource *map);
 
 	/**
-	 * Reads SCI1 audio map files
+	 * Reads SCI1 audio map files.
 	 * @param map The map
 	 * @param unload Unload the map instead of loading it
 	 * @return 0 on success, an SCI_ERROR_* code otherwise
@@ -442,7 +447,7 @@ protected:
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**
-	 * Process wave files as patches for Audio resources
+	 * Process wave files as patches for Audio resources.
 	 */
 	void readWaveAudioPatches();
 	void processWavePatch(ResourceId resourceId, Common::String name);
