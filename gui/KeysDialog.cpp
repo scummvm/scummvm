@@ -41,9 +41,9 @@ enum {
 KeysDialog::KeysDialog(const Common::String &title)
 	: GUI::Dialog("KeysDialog") {
 
-	new ButtonWidget(this, "KeysDialog.Map", _("Map"), kMapCmd);
-	new ButtonWidget(this, "KeysDialog.Ok", _("OK"), kOKCmd);
-	new ButtonWidget(this, "KeysDialog.Cancel", _("Cancel"), kCloseCmd);
+	new ButtonWidget(this, "KeysDialog.Map", _("Map"), 0, kMapCmd);
+	new ButtonWidget(this, "KeysDialog.Ok", _("OK"), 0, kOKCmd);
+	new ButtonWidget(this, "KeysDialog.Cancel", _("Cancel"), 0, kCloseCmd);
 
 	_actionsList = new ListWidget(this, "KeysDialog.List");
 	_actionsList->setNumberingMode(kListNumberingZero);
