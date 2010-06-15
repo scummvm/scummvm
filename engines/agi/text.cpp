@@ -489,7 +489,7 @@ int AgiEngine::print(const char *p, int lin, int col, int len) {
 			_game.keypress = 0;
 			break;
 		}
-	} while (_game.msgBoxTicks > 0);
+	} while (_game.msgBoxTicks > 0 && !(shouldQuit() || _restartGame));
 
 	setvar(vWindowReset, 0);
 
