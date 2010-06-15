@@ -77,6 +77,7 @@ void DrasculaEngine::hiccup(int counter) {
 	do {
 		counter--;
 
+		updateEvents();
 		updateRoom();
 		if (currentChapter == 3)
 			updateScreen(0, 0, 0, y, 320, 200, screenSurface);
@@ -449,6 +450,7 @@ void DrasculaEngine::placeVonBraun(int pointX) {
 	vonBraunHasMoved = 1;
 
 	for (;;) {
+		updateEvents();
 		updateRoom();
 		updateScreen();
 		if (trackVonBraun == 0) {
