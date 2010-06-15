@@ -47,10 +47,10 @@ void PspThread::delayMicros(uint32 us) {
 
 #include "backends/platform/psp/trace.h"
 
-PspSemaphore::PspSemaphore(int initialValue, int maxValue) {
+PspSemaphore::PspSemaphore(int initialValue, int maxValue/*=255*/) {
 	DEBUG_ENTER_FUNC();
 	_handle = 0;
-	_handle = sceKernelCreateSema("ScummVM Sema", 0 /* attr */, 
+	_handle = (uint32)sceKernelCreateSema("ScummVM Sema", 0 /* attr */, 
 								  initialValue, maxValue, 
 								  0 /*option*/);
 	if (!_handle)
@@ -60,7 +60,7 @@ PspSemaphore::PspSemaphore(int initialValue, int maxValue) {
 PspSemaphore::~PspSemaphore() {
 	DEBUG_ENTER_FUNC();
 	if (_handle)
-		if (sceKernelDeleteSema(_handle) < 0)
+		if (sceKernelDeleteSema((SceUID)_handle) < 0)
 			PSP_ERROR("failed to delete semaphore.\n");
 }
 
@@ -69,7 +69,7 @@ int PspSemaphore::numOfWaitingThreads() {
 	SceKernelSemaInfo info;
 	info.numWaitThreads = 0;
 	
-	if (sceKernelReferSemaStatus(_handle, &info) < 0)
+	if (sceKernelReferSemaStatus((SceUID)_handle, &info) < 0)
 		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
 		
 	return info.numWaitThreads;
@@ -80,7 +80,7 @@ int PspSemaphore::getValue() {
 	SceKernelSemaInfo info;
 	info.currentCount = 0;
 	
-	if (sceKernelReferSemaStatus(_handle, &info) < 0)
+	if (sceKernelReferSemaStatus((SceUID)_handle, &info) < 0)
 		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
 		
 	return info.currentCount;
@@ -88,7 +88,7 @@ int PspSemaphore::getValue() {
 
 bool PspSemaphore::pollForValue(int value) {
 	DEBUG_ENTER_FUNC();
-	if (sceKernelPollSema(_handle, value) < 0)
+	if (sceKernelPollSema((SceUID)_handle, value) < 0)
 		return false;
 	
 	return true;
@@ -107,10 +107,10 @@ bool PspSemaphore::takeWithTimeOut(uint32 timeOut) {
 	return true;
 }
 
-bool PspSemaphore::give(int num) {
+bool PspSemaphore::give(int num /*=1*/) {
 	DEBUG_ENTER_FUNC();
 	
-	if (sceKernelSignalSema(_handle, num) < 0)
+	if (sceKernelSignalSema((SceUID)_handle, num) < 0)
 		return false;	
 	return true;
 }
@@ -150,6 +150,46 @@ bool PspMutex::unlock() {
 		ret = _semaphore.give(1);
 	}	
 	return ret;
+}
+
+// Class PspCondition -------------------------------------------------
+
+// Release all threads waiting on the condition
+void PspCondition::releaseAll() {
+        _mutex.lock();
+        if (_waitingThreads > _signaledThreads) {	// we have signals to issue
+                int numWaiting = _waitingThreads - _signaledThreads;	// threads we haven't signaled
+                _signaledThreads = _waitingThreads;
+                
+				_waitSem.give(numWaiting);
+                _mutex.unlock();
+                for (int i=0; i<numWaiting; i++)	// wait for threads to tell us they're awake
+					_doneSem.take();
+        } else {
+                _mutex.unlock();
+        }
+}
+
+// Mutex must be taken before entering wait
+void PspCondition::wait(PspMutex &externalMutex) {
+        _mutex.lock();
+        _waitingThreads++;
+        _mutex.unlock();
+
+        externalMutex.unlock();	// must unlock external mutex
+
+		_waitSem.take();	// sleep on the wait semaphore
+
+		// let the signaling thread know we're done
+		_mutex.lock();
+        if (_signaledThreads > 0 ) {
+                _doneSem.give();	// let the thread know
+                _signaledThreads--;
+        }
+        _waitingThreads--;
+        _mutex.unlock();
+
+        externalMutex.lock();		// must lock external mutex here for continuation
 }
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
