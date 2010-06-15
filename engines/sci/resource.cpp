@@ -333,12 +333,12 @@ void PatchResourceSource::loadResource(Resource *res) {
 }
 
 void MacResourceForkResourceSource::loadResource(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
 
 	if (!stream)
 		error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
 
+	ResourceManager *resMan = g_sci->getResMan();
 	int error = resMan->decompress(res, stream);
 	if (error) {
 		warning("Error %d occured while reading %s from Mac resource file: %s",
@@ -430,12 +430,13 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 }
 
 void ResourceSource::loadResource(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
 	Common::SeekableReadStream *fileStream = getVolumeFile(res);
 	if (!fileStream)
 		return;
 
 	fileStream->seek(res->_fileOffset, SEEK_SET);
+
+	ResourceManager *resMan = g_sci->getResMan();
 	int error = resMan->decompress(res, fileStream);
 
 	if (_resourceFile)

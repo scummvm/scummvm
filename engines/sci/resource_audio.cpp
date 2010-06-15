@@ -77,51 +77,47 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name,
 }
 
 bool Resource::loadFromWaveFile(Common::SeekableReadStream *file) {
-	Resource *res = this;
+	data = new byte[size];
 
-	res->data = new byte[res->size];
+	uint32 really_read = file->read(data, size);
+	if (really_read != size)
+		error("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
-	uint32 really_read = file->read(res->data, res->size);
-	if (really_read != res->size)
-		error("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->size);
-
-	res->_status = kResStatusAllocated;
+	_status = kResStatusAllocated;
 	return true;
 }
 
 bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
-	Resource *res = this;
-
 	// Check for WAVE files here
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKID_BE('RIFF')) {
-		res->_headerSize = 0;
-		res->size = file->readUint32LE();
+		_headerSize = 0;
+		size = file->readUint32LE();
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
 	}
 	file->seek(-4, SEEK_CUR);
 
 	ResourceType type = (ResourceType)(file->readByte() & 0x7f);
-	if (((res->_id.type == kResourceTypeAudio || res->_id.type == kResourceTypeAudio36) && (type != kResourceTypeAudio))
-		|| ((res->_id.type == kResourceTypeSync || res->_id.type == kResourceTypeSync36) && (type != kResourceTypeSync))) {
-		warning("Resource type mismatch loading %s", res->_id.toString().c_str());
-		res->unalloc();
+	if (((_id.type == kResourceTypeAudio || _id.type == kResourceTypeAudio36) && (type != kResourceTypeAudio))
+		|| ((_id.type == kResourceTypeSync || _id.type == kResourceTypeSync36) && (type != kResourceTypeSync))) {
+		warning("Resource type mismatch loading %s", _id.toString().c_str());
+		unalloc();
 		return false;
 	}
 
-	res->_headerSize = file->readByte();
+	_headerSize = file->readByte();
 
 	if (type == kResourceTypeAudio) {
-		if (res->_headerSize != 11 && res->_headerSize != 12) {
+		if (_headerSize != 11 && _headerSize != 12) {
 			warning("Unsupported audio header");
-			res->unalloc();
+			unalloc();
 			return false;
 		}
 
 		// Load sample size
 		file->seek(7, SEEK_CUR);
-		res->size = file->readUint32LE();
+		size = file->readUint32LE();
 		// Adjust offset to point at the header data again
 		file->seek(-11, SEEK_CUR);
 	}
@@ -130,19 +126,17 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 }
 
 bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
-	Resource *res = this;
+	data = new byte[size];
 
-	res->data = new byte[res->size];
-
-	if (res->data == NULL) {
-		error("Can't allocate %d bytes needed for loading %s", res->size, res->_id.toString().c_str());
+	if (data == NULL) {
+		error("Can't allocate %d bytes needed for loading %s", size, _id.toString().c_str());
 	}
 
-	unsigned int really_read = file->read(res->data, res->size);
-	if (really_read != res->size)
-		warning("Read %d bytes from %s but expected %d", really_read, res->_id.toString().c_str(), res->size);
+	unsigned int really_read = file->read(data, size);
+	if (really_read != size)
+		warning("Read %d bytes from %s but expected %d", really_read, _id.toString().c_str(), size);
 
-	res->_status = kResStatusAllocated;
+	_status = kResStatusAllocated;
 	return true;
 }
 
