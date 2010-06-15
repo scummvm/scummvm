@@ -260,6 +260,9 @@ void Tooltip::setVisible(bool state) {
 		return;
 
 	if (state) {
+		if (!_guiManager->getTopDialog())
+			return;
+
 		Widget *wdg = _guiManager->getTopDialog()->findWidget(_mouseX, _mouseY);
 
 		if (!wdg)
