@@ -440,8 +440,12 @@ void GfxTransitions::scroll(int16 number) {
 			}
 			stepNr++;
 		}
-		if ((stepNr & 1) == 0)
-			g_system->updateScreen();
+		if ((stepNr & 1) == 0) {
+			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+				g_system->updateScreen();
+				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+			}
+		}
 		break;
 
 	case SCI_TRANSITIONS_SCROLL_RIGHT:
@@ -461,8 +465,12 @@ void GfxTransitions::scroll(int16 number) {
 			}
 			stepNr++;
 		}
-		if ((stepNr & 1) == 0)
-			g_system->updateScreen();
+		if ((stepNr & 1) == 0) {
+			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+				g_system->updateScreen();
+				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+			}
+		}
 		break;
 
 	case SCI_TRANSITIONS_SCROLL_UP:

@@ -321,9 +321,7 @@ sciEvent EventManager::get(unsigned int mask) {
 
 	// Update the screen here, since it's called very often.
 	// Throttle the screen update rate to 60fps.
-	uint32 curTime = g_system->getMillis();
-	uint32 duration = curTime - g_sci->getEngineState()->_screenUpdateTime;
-	if (duration >= 1000 / 60) {
+	if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
 		g_system->updateScreen();
 		g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
 	}
