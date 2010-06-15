@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-10 23:21+0300\n"
+"POT-Creation-Date: 2010-06-12 18:43+0300\n"
 "PO-Revision-Date: 2010-06-08 08:52-0100\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -44,23 +44,23 @@ msgstr "Отмена"
 msgid "Choose"
 msgstr "Выбрать"
 
-#: gui/GuiManager.cpp:75
+#: gui/GuiManager.cpp:75 gui/GuiManager.cpp:76
 msgid "Failed to load any GUI theme, aborting"
 msgstr "Не удалось загрузить тему GUI, прекращаю работу"
 
-#: gui/GuiManager.cpp:98
+#: gui/GuiManager.cpp:98 gui/GuiManager.cpp:102
 msgid "Close"
 msgstr "Закрыть"
 
-#: gui/GuiManager.cpp:101
+#: gui/GuiManager.cpp:101 gui/GuiManager.cpp:105
 msgid "Mouse click"
 msgstr "Клик мышью"
 
-#: gui/GuiManager.cpp:104 base/main.cpp:284
+#: gui/GuiManager.cpp:104 base/main.cpp:284 gui/GuiManager.cpp:108
 msgid "Display keyboard"
 msgstr "Показать клавиатуру"
 
-#: gui/GuiManager.cpp:107 base/main.cpp:287
+#: gui/GuiManager.cpp:107 base/main.cpp:287 gui/GuiManager.cpp:111
 msgid "Remap keys"
 msgstr "Переназначить клавиши"
 
@@ -893,3 +893,19 @@ msgstr "Озв"
 #: gui/options.cpp:684
 msgid "Subs"
 msgstr "Суб"
+
+#: gui/browser.cpp:69
+msgid "Go to previous directory level"
+msgstr "Перейти на директорию уровнем выше"
+
+#: gui/launcher.cpp:511
+msgid "Hold Shift for Mass Add"
+msgstr "Удерживайте клавишу Shift для того, чтобы добавить несколько игр"
+
+#: gui/launcher.cpp:522
+msgid "Search in game list"
+msgstr "Поиск в списке игр"
+
+#: gui/launcher.cpp:529 gui/options.cpp:647
+msgid "Clear value"
+msgstr "Очистить значение"
