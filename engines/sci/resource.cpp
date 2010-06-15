@@ -334,10 +334,10 @@ void PatchResourceSource::loadResource(Resource *res) {
 }
 
 void MacResourceForkResourceSource::loadResource(Resource *res) {
-	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->_id.getNumber());
+	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
 
 	if (!stream)
-		error("Could not get Mac resource fork resource: %d %d", res->getType(), res->_id.getNumber());
+		error("Could not get Mac resource fork resource: %d %d", res->getType(), res->getNumber());
 
 	int error = res->decompress(stream);
 	if (error) {
@@ -799,7 +799,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 
 	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
-		if ((itr->_value->getType() == type) && ((mapNumber == -1) || (itr->_value->_id.getNumber() == mapNumber)))
+		if ((itr->_value->getType() == type) && ((mapNumber == -1) || (itr->_value->getNumber() == mapNumber)))
 			resources->push_back(itr->_value->_id);
 		++itr;
 	}
@@ -1551,7 +1551,7 @@ int Resource::readResourceInfo(Common::SeekableReadStream *file,
 		// Doesn't store this data in the resource. Fortunately,
 		// we already have this data.
 		type = getType();
-		number = _id.getNumber();
+		number = getNumber();
 		szPacked = file->size();
 		szUnpacked = file->size();
 		wCompression = 0;

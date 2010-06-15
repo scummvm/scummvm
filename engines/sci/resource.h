@@ -198,6 +198,7 @@ public:
 	void unalloc();
 
 	inline ResourceType getType() const { return _id.getType(); }
+	inline uint16 getNumber() const { return _id.getNumber(); }
 
 	/**
 	 * Write the resource to the specified stream.
