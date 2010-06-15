@@ -242,7 +242,7 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 		pos0 += _WIDTH;
 	}
 
-	// WORKAROUND
+	// WORKAROUND (see ScummVM bug #1945716)
 	// When set.view command is called, current code cannot detect  this situation while updating
 	// Thus we force removal of the old sprite
 	if (s->v->viewReplaced) {
