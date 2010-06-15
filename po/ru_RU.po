@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-06-13 16:52+0300\n"
-"PO-Revision-Date: 2010-06-08 08:52-0100\n"
+"PO-Revision-Date: 2010-06-13 20:55+0300\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
 "MIME-Version: 1.0\n"
@@ -966,8 +966,8 @@ msgid ""
 "Short game identifier used for referring to savegames and running the game "
 "from the command line"
 msgstr ""
-"Короткий идентификатор, испульзуемый для игры в сохранения и для запуска из "
-"командной строки"
+"Короткий идентификатор, используемый для имен сохранений игр и для запуска "
+"из командной строки"
 
 #: gui/launcher.cpp:177 gui/launcher.cpp:178
 msgid "Full title of the game"
@@ -1047,7 +1047,7 @@ msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
 msgstr ""
-"Большие значения задают лучшее качество звука, однако они могут не "
+"БОльшие значения задают лучшее качество звука, однако они могут не "
 "поддерживаться вашей звуковой картой"
 
 #: gui/options.cpp:645 gui/options.cpp:646 gui/options.cpp:664
@@ -1066,8 +1066,8 @@ msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
 msgstr ""
-"Отметьте у вас подключено Roland-совместимое звуковое устройство и вы хотите "
-"его использовать"
+"Отметьте если у вас подключено Roland-совместимое звуковое устройство и вы "
+"хотите его использовать"
 
 #: gui/options.cpp:656 gui/options.cpp:675
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
@@ -1076,7 +1076,7 @@ msgstr ""
 
 #: gui/options.cpp:685 gui/options.cpp:704
 msgid "Show subtitles and play speech"
-msgstr "Показывать субтитры и проигрывать речь"
+msgstr "Показывать субтитры и воспроизводить речь"
 
 #: gui/options.cpp:711 gui/options.cpp:712 gui/options.cpp:730
 #: gui/options.cpp:731
@@ -1105,415 +1105,398 @@ msgstr "Указывает выходное звуковое устройство или эмулятор звуковой карты"
 
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
-msgstr ""
+msgstr "Режим быстрого перехода активирован"
 
 #: engines/mohawk/dialogs.cpp:82
 msgid "~T~ransitions Enabled"
-msgstr ""
+msgstr "Переходы активированы"
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
-msgstr ""
+msgstr "Эффекты воды включены"
 
 #: backends/keymapper/remap-dialog.cpp:49
 msgid "Keymap:"
-msgstr ""
+msgstr "Таблица клавиш:"
 
 #: backends/keymapper/remap-dialog.cpp:66
 msgid " (Active)"
-msgstr ""
+msgstr " (Активная)"
 
 #: backends/keymapper/remap-dialog.cpp:100
 msgid " (Global)"
-msgstr ""
+msgstr " (Глобальная)"
 
 #: backends/keymapper/remap-dialog.cpp:110
-#, fuzzy
 msgid " (Game)"
-msgstr "Игра"
+msgstr " (Игры)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:57
 msgid "ScummVM Main Menu"
-msgstr ""
+msgstr "Главное меню ScummVM"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:63
-#, fuzzy
 msgid "~L~eft handed mode"
-msgstr "Режим растрирования:"
+msgstr "Леворукий режим"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:64
 msgid "~I~ndy fight controls"
-msgstr ""
+msgstr "Управление боями в Indy"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:65
 msgid "Show mouse cursor"
-msgstr ""
+msgstr "Показывать курсор мыши"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "Snap to edges"
-msgstr ""
+msgstr "Прикрепить к границам"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Touch X Offset"
-msgstr ""
+msgstr "Смещение касаний по оси X"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:75
 msgid "Touch Y Offset"
-msgstr ""
+msgstr "Смещение касаний по оси Y"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:87
 msgid "Use laptop trackpad-style cursor control"
-msgstr ""
+msgstr "Использовать управление курсором как на трекпаде лептопов"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:88
 msgid "Tap for left click, double tap right click"
-msgstr ""
+msgstr "Тап для левого щелчка, двойной тап для правого щелчка"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Sensitivity"
-msgstr ""
+msgstr "Чувствительность"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:99
 msgid "Initial top screen scale:"
-msgstr ""
+msgstr "Начальный масштаб верхнего экрана:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:105
 msgid "Main screen scaling:"
-msgstr ""
+msgstr "Масштаб главного экрана:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:107
 msgid "Hardware scale (fast, but low quality)"
-msgstr ""
+msgstr "Хардварное масштабирование (быстро, но низкого качества)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Software scale (good quality, but slower)"
-msgstr ""
+msgstr "Программное масштабирование (хорошее качество, но медленнее)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:109
 msgid "Unscaled (you must scroll left and right)"
-msgstr ""
+msgstr "Без масштабирования (нужно будет прокручивать влево и вправо)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Brightness:"
-msgstr ""
+msgstr "Яркость:"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:121
 msgid "High quality audio (slower) (reboot)"
-msgstr ""
+msgstr "Высокое качество звука (медленнее) (ребут)"
 
 #: backends/platform/ds/arm9/source/dsoptions.cpp:122
 msgid "Disable power off"
-msgstr ""
+msgstr "Запретить выключение"
 
 #: backends/platform/iphone/osys_events.cpp:339
 msgid "Touchpad mode enabled."
-msgstr ""
+msgstr "Режим тачпада включен."
 
 #: backends/platform/iphone/osys_events.cpp:341
 msgid "Touchpad mode disabled."
-msgstr ""
+msgstr "Режим тачпада выключен."
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:38
 msgid "Up"
-msgstr ""
+msgstr "Вверх"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:42
 #: backends/platform/wince/CEActionsSmartphone.cpp:39
 msgid "Down"
-msgstr ""
+msgstr "Вниз"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:43
 #: backends/platform/wince/CEActionsSmartphone.cpp:40
 msgid "Left"
-msgstr ""
+msgstr "Влево"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:44
 #: backends/platform/wince/CEActionsSmartphone.cpp:41
 msgid "Right"
-msgstr ""
+msgstr "Вправо"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:45
 #: backends/platform/wince/CEActionsPocket.cpp:59
 #: backends/platform/wince/CEActionsSmartphone.cpp:42
 msgid "Left Click"
-msgstr ""
+msgstr "Левый щелчок"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:46
 #: backends/platform/wince/CEActionsSmartphone.cpp:43
 msgid "Right Click"
-msgstr ""
+msgstr "Правый щелчок"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:49
 #: backends/platform/wince/CEActionsSmartphone.cpp:46
-#, fuzzy
 msgid "Zone"
-msgstr "Не задан"
+msgstr "Зона"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:50
 #: backends/platform/wince/CEActionsPocket.cpp:53
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Multi Function"
-msgstr ""
+msgstr "Мультифункция"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Swap character"
-msgstr ""
+msgstr "Сменить героя"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
-#, fuzzy
 msgid "Skip text"
-msgstr "Пропустить строку"
+msgstr "Пропустить текст"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:54
-#, fuzzy
 msgid "Fast mode"
-msgstr "Графический режим:"
+msgstr "Быстрый режим"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Debugger"
-msgstr ""
+msgstr "Отладчик"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:57
 msgid "Global menu"
-msgstr ""
+msgstr "Глобальное меню"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:58
-#, fuzzy
 msgid "Virtual keyboard"
-msgstr "Показать клавиатуру"
+msgstr "Виртуальная клавиатура"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:59
 msgid "Key mapper"
-msgstr ""
+msgstr "Назначение клавиш"
 
 #: backends/platform/symbian/src/SymbianOS.cpp:447
 msgid "Do you want to quit ?"
-msgstr ""
+msgstr "Вы хотите выйти?"
 
 #: backends/platform/wii/options.cpp:47
 msgid "Ok"
-msgstr ""
+msgstr "Ok"
 
 #: backends/platform/wii/options.cpp:51
 msgid "Video"
-msgstr ""
+msgstr "Видео"
 
 #: backends/platform/wii/options.cpp:54
-#, fuzzy
 msgid "Current video mode:"
-msgstr "Режим растрирования:"
+msgstr "Текущий видеорежим:"
 
 #: backends/platform/wii/options.cpp:56
 msgid "Double-strike"
-msgstr ""
+msgstr "Двойной удар"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "Горизонтальный underscan:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "Вертикальный underscan:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
-msgstr ""
+msgstr "Ввод"
 
 #: backends/platform/wii/options.cpp:74
 msgid "GC Pad sensitivity:"
-msgstr ""
+msgstr "Чувстаительность GC пада:"
 
 #: backends/platform/wii/options.cpp:80
 msgid "GC Pad acceleration:"
-msgstr ""
+msgstr "Ускорение GC пада:"
 
 #: backends/platform/wii/options.cpp:86
 msgid "DVD"
-msgstr ""
+msgstr "DVD"
 
 #: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
-#, fuzzy
 msgid "Status:"
-msgstr "Пуск"
+msgstr "Состояние:"
 
 #: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
-#, fuzzy
 msgid "Unknown"
-msgstr "Неизвестная ошибка"
+msgstr "Неизвестно"
 
 #: backends/platform/wii/options.cpp:93
 msgid "Mount DVD"
-msgstr ""
+msgstr "Подключить DVD"
 
 #: backends/platform/wii/options.cpp:94
 msgid "Unmount DVD"
-msgstr ""
+msgstr "Отключить DVD"
 
 #: backends/platform/wii/options.cpp:98
 msgid "SMB"
-msgstr ""
+msgstr "SMB"
 
 #: backends/platform/wii/options.cpp:106
-#, fuzzy
 msgid "Server:"
-msgstr "Никогда"
+msgstr "Сервер:"
 
 #: backends/platform/wii/options.cpp:110
-#, fuzzy
 msgid "Share:"
-msgstr "Поиск:"
+msgstr "Сетевая папка:"
 
 #: backends/platform/wii/options.cpp:114
 msgid "Username:"
-msgstr ""
+msgstr "Пользователь:"
 
 #: backends/platform/wii/options.cpp:118
 msgid "Password:"
-msgstr ""
+msgstr "Пароль:"
 
 #: backends/platform/wii/options.cpp:121
 msgid "Init network"
-msgstr ""
+msgstr "Инициализация сети"
 
 #: backends/platform/wii/options.cpp:123
 msgid "Mount SMB"
-msgstr ""
+msgstr "Подключить SMB"
 
 #: backends/platform/wii/options.cpp:124
 msgid "Unmount SMB"
-msgstr ""
+msgstr "Отключть SMB"
 
 #: backends/platform/wii/options.cpp:145
 msgid "DVD Mounted successfully"
-msgstr ""
+msgstr "DVD подключен успешно"
 
 #: backends/platform/wii/options.cpp:148
 msgid "Error while mounting the DVD"
-msgstr ""
+msgstr "Ошибка во время подключения DVD"
 
 #: backends/platform/wii/options.cpp:150
 msgid "DVD not mounted"
-msgstr ""
+msgstr "DVD не подключен"
 
 #: backends/platform/wii/options.cpp:163
 msgid "Network up, share mounted"
-msgstr ""
+msgstr "Сеть работает, папка подключена"
 
 #: backends/platform/wii/options.cpp:165
 msgid "Network up"
-msgstr ""
+msgstr "Сеть работает"
 
 #: backends/platform/wii/options.cpp:168
 msgid ", error while mounting the share"
-msgstr ""
+msgstr ", ошибка во время подключения папки"
 
 #: backends/platform/wii/options.cpp:170
 msgid ", share not mounted"
-msgstr ""
+msgstr ", папка не подключена"
 
 #: backends/platform/wii/options.cpp:176
 msgid "Network down"
-msgstr ""
+msgstr "Сеть выключена"
 
 #: backends/platform/wii/options.cpp:180
 msgid "Initialising network"
-msgstr ""
+msgstr "Настраиваю сеть"
 
 #: backends/platform/wii/options.cpp:184
 msgid "Timeout while initialising network"
-msgstr ""
+msgstr "Время подключения к сети истекло"
 
 #: backends/platform/wii/options.cpp:188
 #, c-format
 msgid "Network not initialsed (%d)"
-msgstr ""
+msgstr "Сеть не настроена (%d)"
 
 #: backends/platform/wince/CEActionsPocket.cpp:45
 msgid "Hide Toolbar"
-msgstr ""
+msgstr "Спрятать панель инструментов"
 
 #: backends/platform/wince/CEActionsPocket.cpp:46
 msgid "Show Keyboard"
-msgstr ""
+msgstr "Показать клавиатуру"
 
 #: backends/platform/wince/CEActionsPocket.cpp:47
-#, fuzzy
 msgid "Sound on/off"
-msgstr "SoundFont:"
+msgstr "Звук вкл/выкл"
 
 #: backends/platform/wince/CEActionsPocket.cpp:48
 msgid "Right click"
-msgstr ""
+msgstr "Правый щелчок"
 
 #: backends/platform/wince/CEActionsPocket.cpp:49
 msgid "Show/Hide Cursor"
-msgstr ""
+msgstr "Показать/Убрать курсор"
 
 #: backends/platform/wince/CEActionsPocket.cpp:50
 msgid "Free look"
-msgstr ""
+msgstr "Свободный обзор"
 
 #: backends/platform/wince/CEActionsPocket.cpp:51
-#, fuzzy
 msgid "Zoom up"
-msgstr "Вверх"
+msgstr "Увел. масштаб"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
 msgid "Zoom down"
-msgstr ""
+msgstr "Уменьш. масштаб"
 
 #: backends/platform/wince/CEActionsPocket.cpp:54
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
-#, fuzzy
 msgid "Bind Keys"
-msgstr "Клавиши"
+msgstr "Назначить клавиши"
 
 #: backends/platform/wince/CEActionsPocket.cpp:55
 msgid "Cursor Up"
-msgstr ""
+msgstr "Курсор вверх"
 
 #: backends/platform/wince/CEActionsPocket.cpp:56
 msgid "Cursor Down"
-msgstr ""
+msgstr "Курсор вниз"
 
 #: backends/platform/wince/CEActionsPocket.cpp:57
 msgid "Cursor Left"
-msgstr ""
+msgstr "Курсор влево"
 
 #: backends/platform/wince/CEActionsPocket.cpp:58
 msgid "Cursor Right"
-msgstr ""
+msgstr "Курсор вправо"
 
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
-#, fuzzy
 msgid "Do you want to load or save the game?"
-msgstr "Вы действительно хотите удалить это сохранение?"
+msgstr "Вы хотите загрузить либо сохранить игру?"
 
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 msgid "   Are you sure you want to quit ?   "
-msgstr ""
+msgstr "   Вы уверены, что хотите выйти?   "
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:49
 msgid "Keyboard"
-msgstr ""
+msgstr "Клавиатура"
 
 #: backends/platform/wince/CEActionsSmartphone.cpp:50
 msgid "Rotate"
-msgstr ""
+msgstr "Повернуть"
 
 #: backends/platform/wince/CELauncherDialog.cpp:58
-#, fuzzy
 msgid "Using SDL driver "
-msgstr "Драйвер музыки:"
+msgstr "Использую драйвер SDL "
 
 #: backends/platform/wince/CELauncherDialog.cpp:62
-#, fuzzy
 msgid "Display "
-msgstr "Показать клавиатуру"
+msgstr "Показать "
 
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
-msgstr ""
+msgstr "Вы хотите произвести автоматический поиск?"
