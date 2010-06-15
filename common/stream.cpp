@@ -152,7 +152,7 @@ char *SeekableReadStream::readLine(char *buf, size_t bufSize) {
 		len++;
 	}
 
-	// We always terminate the buffer if no error occured
+	// We always terminate the buffer if no error occurred
 	*p = 0;
 	return buf;
 }

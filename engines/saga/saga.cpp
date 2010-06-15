@@ -419,7 +419,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 		offset = scriptS.readUint16();
 		// In some rooms in IHNM, string offsets can be greater than the maximum value than a 16-bit integer can hold
 		// We detect this by checking the previous offset, and if it was bigger than the current one, an overflow
-		// occured (since the string offsets are sequential), so we're adding the missing part of the number
+		// occurred (since the string offsets are sequential), so we're adding the missing part of the number
 		// Fixes bug #1895205 - "IHNM: end game text/caption error"
 		if (prevOffset > offset)
 			offset += 65536;

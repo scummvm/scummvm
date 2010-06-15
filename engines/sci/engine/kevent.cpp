@@ -129,9 +129,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	if ((s->r_acc.offset) && (g_debugState.stopOnEvent)) {
 		g_debugState.stopOnEvent = false;
 
-		// A SCI event occured, and we have been asked to stop, so open the debug console
+		// A SCI event occurred, and we have been asked to stop, so open the debug console
 		Console *con = g_sci->getSciDebugger();
-		con->DebugPrintf("SCI event occured: ");
+		con->DebugPrintf("SCI event occurred: ");
 		switch (curEvent.type) {
 		case SCI_EVENT_QUIT:
 			con->DebugPrintf("quit event\n");

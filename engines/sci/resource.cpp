@@ -341,7 +341,7 @@ void MacResourceForkResourceSource::loadResource(Resource *res) {
 
 	int error = res->decompress(stream);
 	if (error) {
-		warning("Error %d occured while reading %s from Mac resource file: %s",
+		warning("Error %d occurred while reading %s from Mac resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
 		res->unalloc();
 	}
@@ -442,7 +442,7 @@ void ResourceSource::loadResource(Resource *res) {
 		delete fileStream;
 
 	if (error) {
-		warning("Error %d occured while reading %s from resource file: %s",
+		warning("Error %d occurred while reading %s from resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
 		res->unalloc();
 	}
@@ -817,7 +817,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 		loadResource(retval);
 	else if (retval->_status == kResStatusEnqueued)
 		removeFromLRU(retval);
-	// Unless an error occured, the resource is now either
+	// Unless an error occurred, the resource is now either
 	// locked or allocated, but never queued or freed.
 
 	freeOldResources();

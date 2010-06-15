@@ -122,7 +122,7 @@ protected:
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct {
-		int16 x, y;	// Position of mouse when the click occured
+		int16 x, y;	// Position of mouse when the click occurred
 		uint32 time;	// Time
 		int count;	// How often was it already pressed?
 	} _lastClick;

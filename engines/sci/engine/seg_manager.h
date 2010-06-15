@@ -407,7 +407,7 @@ public:
 	 * Determines the name of an object
 	 * @param[in] pos	Location (segment, offset) of the object
 	 * @return			A name for that object, or a string describing an error
-	 * 					that occured while looking it up. The string is stored
+	 * 					that occurred while looking it up. The string is stored
 	 * 					in a static buffer and need not be freed (neither may
 	 * 					it be modified).
 	 */

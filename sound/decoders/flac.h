@@ -41,8 +41,8 @@
 #ifndef SOUND_FLAC_H
 #define SOUND_FLAC_H
 
-#include "common/types.h"
 #include "common/scummsys.h"
+#include "common/types.h"
 
 #ifdef USE_FLAC
 
@@ -61,7 +61,7 @@ class SeekableAudioStream;
  *
  * @param stream            the SeekableReadStream from which to read the FLAC data
  * @param disposeAfterUse   whether to delete the stream after use
- * @return   a new SeekableAudioStream, or NULL, if an error occured
+ * @return   a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeFLACStream(
 	Common::SeekableReadStream *stream,

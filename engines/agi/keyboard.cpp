@@ -121,7 +121,7 @@ int AgiEngine::handleController(int key) {
 		if (_game.controllers[i].keycode == key) {
 			debugC(3, kDebugLevelInput, "event %d: key press", _game.controllers[i].controller);
 			_game.controllerOccured[_game.controllers[i].controller] = true;
-			report("event AC:%i occured\n", _game.controllers[i].controller);
+			report("event AC:%i occurred\n", _game.controllers[i].controller);
 			return true;
 		}
 	}

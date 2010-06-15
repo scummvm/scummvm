@@ -448,7 +448,7 @@ void AGOSEngine_Feeble::drawIconArray(uint num, Item *itemRef, int line, int cla
 				setupIconHitArea(window, k++, xp, yp, itemRef);
 		} else {
 /*
- *	Just remember the overflow has occured
+ *	Just remember the overflow has occurred
  */
 			window->iconPtr->iconArray[icount].item = NULL;	/* END MARKINGS */
 			_iOverflow = 1;

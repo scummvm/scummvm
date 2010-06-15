@@ -38,8 +38,8 @@
 #ifndef SOUND_VOC_H
 #define SOUND_VOC_H
 
-#include "common/types.h"
 #include "common/scummsys.h"
+#include "common/types.h"
 
 namespace Common { class ReadStream; }
 namespace Common { class SeekableReadStream; }

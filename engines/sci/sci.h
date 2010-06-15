@@ -222,7 +222,7 @@ private:
 	 * This function must be run before script_run() is executed. Graphics data
 	 * is initialized iff s->gfx_state != NULL.
 	 * @param[in] s	The state to operate on
-	 * @return		true on success, false if an error occured.
+	 * @return		true on success, false if an error occurred.
 	 */
 	bool initGame();
 

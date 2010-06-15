@@ -41,8 +41,8 @@
 #ifndef SOUND_MP3_H
 #define SOUND_MP3_H
 
-#include "common/types.h"
 #include "common/scummsys.h"
+#include "common/types.h"
 
 #ifdef USE_MAD
 
@@ -61,7 +61,7 @@ class SeekableAudioStream;
  *
  * @param stream			the SeekableReadStream from which to read the MP3 data
  * @param disposeAfterUse	whether to delete the stream after use
- * @return	a new SeekableAudioStream, or NULL, if an error occured
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
 SeekableAudioStream *makeMP3Stream(
 	Common::SeekableReadStream *stream,

@@ -879,7 +879,7 @@ public:
 
 	/**
 	 * Create a new mutex.
-	 * @return the newly created mutex, or 0 if an error occured.
+	 * @return the newly created mutex, or 0 if an error occurred.
 	 */
 	virtual MutexRef createMutex() = 0;
 

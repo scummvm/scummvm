@@ -48,7 +48,7 @@ class AudioStream;
  * @param stream	the ReadStream from which to read the ProTracker data
  * @param rate		TODO
  * @param stereo	TODO
- * @return	a new AudioStream, or NULL, if an error occured
+ * @return	a new AudioStream, or NULL, if an error occurred
  */
 AudioStream *makeProtrackerStream(Common::SeekableReadStream *stream, int offs = 0, int rate = 44100, bool stereo = true);
 

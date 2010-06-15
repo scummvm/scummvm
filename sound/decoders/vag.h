@@ -49,7 +49,7 @@ class RewindableAudioStream;
  *
  * @param stream            the SeekableReadStream from which to read the ADPCM data
  * @param rate              the sampling rate
- * @return   a new RewindableAudioStream, or NULL, if an error occured
+ * @return   a new RewindableAudioStream, or NULL, if an error occurred
  */
 RewindableAudioStream *makeVagStream(
 	Common::SeekableReadStream *stream,
