@@ -167,6 +167,7 @@ class Resource {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
 	friend class ResourceSource;
+	friend class PatchResourceSource;
 	friend class WaveResourceSource;
 	friend class AudioVolumeResourceSource;
 	friend class MacResourceForkResourceSource;
@@ -192,24 +193,37 @@ public:
 	void writeToStream(Common::WriteStream *stream) const;
 	uint32 getAudioCompressionType() const;
 
-	bool loadPatch(Common::SeekableReadStream *file);
-	bool loadFromPatchFile();
-	bool loadFromWaveFile(Common::SeekableReadStream *file);
-	bool loadFromAudioVolumeSCI1(Common::SeekableReadStream *file);
-	bool loadFromAudioVolumeSCI11(Common::SeekableReadStream *file);
-
 protected:
 	int32 _fileOffset; /**< Offset in file */
 	ResourceStatus _status;
 	uint16 _lockers; /**< Number of places where this resource was locked */
 	ResourceSource *_source;
+
+	bool loadPatch(Common::SeekableReadStream *file);
+	bool loadFromPatchFile();
+	bool loadFromWaveFile(Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI1(Common::SeekableReadStream *file);
+	bool loadFromAudioVolumeSCI11(Common::SeekableReadStream *file);
+	int decompress(Common::SeekableReadStream *file);
+	int readResourceInfo(Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
 };
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualTo> ResourceMap;
 
+enum ResVersion {
+	kResVersionUnknown,
+	kResVersionSci0Sci1Early,
+	kResVersionSci1Middle,
+	kResVersionSci1Late,
+	kResVersionSci11,
+	kResVersionSci11Mac,
+	kResVersionSci32
+};
+
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
+	friend class Resource;	// For _volVersion
 	friend class ResourceSource;
 	friend class DirectoryResourceSource;
 	friend class PatchResourceSource;
@@ -221,16 +235,6 @@ class ResourceManager {
 	friend class MacResourceForkResourceSource;
 
 public:
-	enum ResVersion {
-		kResVersionUnknown,
-		kResVersionSci0Sci1Early,
-		kResVersionSci1Middle,
-		kResVersionSci1Late,
-		kResVersionSci11,
-		kResVersionSci11Mac,
-		kResVersionSci32
-	};
-
 	/**
 	 * Creates a new SCI resource manager.
 	 */
@@ -393,8 +397,6 @@ protected:
 	Common::SeekableReadStream *getVolumeFile(ResourceSource *source);
 	void loadResource(Resource *res);
 	void freeOldResources();
-	int decompress(Resource *res, Common::SeekableReadStream *file);
-	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
 	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
 	Resource *updateResource(ResourceId resId, ResourceSource *src, uint32 size);
 	void removeAudioResource(ResourceId resId);
@@ -437,8 +439,8 @@ protected:
 	/**
 	 * Reads patch files from a local directory.
 	 */
-	void readResourcePatches(ResourceSource *source);
-	void readResourcePatchesBase36(ResourceSource *source);
+	void readResourcePatches();
+	void readResourcePatchesBase36();
 	void processPatch(ResourceSource *source, ResourceType resourceType, uint16 resourceNr, uint32 tuple = 0);
 
 	/**

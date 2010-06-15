@@ -338,8 +338,7 @@ void MacResourceForkResourceSource::loadResource(Resource *res) {
 	if (!stream)
 		error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
 
-	ResourceManager *resMan = g_sci->getResMan();
-	int error = resMan->decompress(res, stream);
+	int error = res->decompress(stream);
 	if (error) {
 		warning("Error %d occured while reading %s from Mac resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -436,8 +435,7 @@ void ResourceSource::loadResource(Resource *res) {
 
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 
-	ResourceManager *resMan = g_sci->getResMan();
-	int error = resMan->decompress(res, fileStream);
+	int error = res->decompress(fileStream);
 
 	if (_resourceFile)
 		delete fileStream;
@@ -631,18 +629,18 @@ void ResourceManager::scanNewSources() {
 
 void DirectoryResourceSource::scanSource() {
 	ResourceManager *resMan = g_sci->getResMan();
-	resMan->readResourcePatches(this);
+	resMan->readResourcePatches();
 
 	// We can't use getSciVersion() at this point, thus using _volVersion
-	if (resMan->_volVersion >= ResourceManager::kResVersionSci11)	// SCI1.1+
-		resMan->readResourcePatchesBase36(this);
+	if (resMan->_volVersion >= kResVersionSci11)	// SCI1.1+
+		resMan->readResourcePatchesBase36();
 
 	resMan->readWaveAudioPatches();
 }
 
 void ExtMapResourceSource::scanSource() {
 	ResourceManager *resMan = g_sci->getResMan();
-	if (resMan->_mapVersion < ResourceManager::kResVersionSci1Late)
+	if (resMan->_mapVersion < kResVersionSci1Late)
 		resMan->readResourceMapSCI0(this);
 	else
 		resMan->readResourceMapSCI1(this);
@@ -881,7 +879,7 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 	return "Version not valid";
 }
 
-ResourceManager::ResVersion ResourceManager::detectMapVersion() {
+ResVersion ResourceManager::detectMapVersion() {
 	Common::SeekableReadStream *fileStream = 0;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
@@ -971,7 +969,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	return kResVersionUnknown;
 }
 
-ResourceManager::ResVersion ResourceManager::detectVolVersion() {
+ResVersion ResourceManager::detectVolVersion() {
 	Common::SeekableReadStream *fileStream = 0;
 	ResourceSource *rsrc;
 
@@ -1143,7 +1141,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
 
-void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
+void ResourceManager::readResourcePatchesBase36() {
 	// The base36 encoded audio36 and sync36 resources use a different naming scheme, because they
 	// cannot be described with a single resource number, but are a result of a
 	// <number, noun, verb, cond, seq> tuple. Please don't be confused with the normal audio patches
@@ -1227,7 +1225,7 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 	}
 }
 
-void ResourceManager::readResourcePatches(ResourceSource *source) {
+void ResourceManager::readResourcePatches() {
 	// Note: since some SCI1 games(KQ5 floppy, SQ4) might use SCI0 naming scheme for patch files
 	// this function tries to read patch file with any supported naming scheme,
 	// regardless of s_sciVersion value
@@ -1515,7 +1513,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	return res;
 }
 
-int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream *file,
+int Resource::readResourceInfo(Common::SeekableReadStream *file,
                                       uint32 &szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
@@ -1525,7 +1523,8 @@ int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream 
 	uint32 wCompression, szUnpacked;
 	ResourceType type;
 
-	switch (_volVersion) {
+	ResourceManager *resMan = g_sci->getResMan();
+	switch (resMan->_volVersion) {
 	case kResVersionSci0Sci1Early:
 	case kResVersionSci1Middle:
 		w = file->readUint16LE();
@@ -1552,8 +1551,8 @@ int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream 
 	case kResVersionSci11Mac:
 		// Doesn't store this data in the resource. Fortunately,
 		// we already have this data.
-		type = res->_id.type;
-		number = res->_id.number;
+		type = _id.type;
+		number = _id.number;
 		szPacked = file->size();
 		szUnpacked = file->size();
 		wCompression = 0;
@@ -1575,8 +1574,8 @@ int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream 
 	if ((file->eos() || file->err()))
 		return SCI_ERROR_IO_ERROR;
 
-	res->_id = ResourceId(type, number);
-	res->size = szUnpacked;
+	_id = ResourceId(type, number);
+	size = szUnpacked;
 
 	// checking compression method
 	switch (wCompression) {
@@ -1612,13 +1611,13 @@ int ResourceManager::readResourceInfo(Resource *res, Common::SeekableReadStream 
 	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
 }
 
-int ResourceManager::decompress(Resource *res, Common::SeekableReadStream *file) {
+int Resource::decompress(Common::SeekableReadStream *file) {
 	int error;
 	uint32 szPacked = 0;
 	ResourceCompression compression = kCompUnknown;
 
 	// fill resource info
-	error = readResourceInfo(res, file, szPacked, compression);
+	error = readResourceInfo(file, szPacked, compression);
 	if (error)
 		return error;
 
@@ -1646,15 +1645,15 @@ int ResourceManager::decompress(Resource *res, Common::SeekableReadStream *file)
 		break;
 #endif
 	default:
-		warning("Resource %s: Compression method %d not supported", res->_id.toString().c_str(), compression);
+		warning("Resource %s: Compression method %d not supported", _id.toString().c_str(), compression);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
-	res->data = new byte[res->size];
-	res->_status = kResStatusAllocated;
-	error = res->data ? dec->unpack(file, res->data, szPacked, res->size) : SCI_ERROR_RESOURCE_TOO_BIG;
+	data = new byte[size];
+	_status = kResStatusAllocated;
+	error = data ? dec->unpack(file, data, szPacked, size) : SCI_ERROR_RESOURCE_TOO_BIG;
 	if (error)
-		res->unalloc();
+		unalloc();
 
 	delete dec;
 	return error;
@@ -1683,7 +1682,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 		uint32 szPacked;
 		ResourceCompression compression;
 
-		if (readResourceInfo(res, fileStream, szPacked, compression)) {
+		if (res->readResourceInfo(fileStream, szPacked, compression)) {
 			if (res->_source->_resourceFile)
 				delete fileStream;
 			continue;

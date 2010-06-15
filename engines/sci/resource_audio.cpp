@@ -319,8 +319,8 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 			}
 
 			if (n & 0x40) {
-				// This seems to define the size of raw lipsync data (at least in kq6), may also just be general appended
-				//  data
+				// This seems to define the size of raw lipsync data (at least
+				// in kq6), may also just be general appended data.
 				syncSize += READ_LE_UINT16(ptr);
 				ptr += 2;
 			}
