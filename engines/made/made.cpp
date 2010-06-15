@@ -80,7 +80,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->getAudioCD()->openCD(cd_num);
+		_system->getAudioCDManager()->openCD(cd_num);
 
 	_pmvPlayer = new PmvPlayer(this, _mixer);
 	_res = new ResourceReader();
@@ -128,7 +128,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 }
 
 MadeEngine::~MadeEngine() {
-	_system->getAudioCD()->stop();
+	_system->getAudioCDManager()->stop();
 
 	delete _rnd;
 	delete _pmvPlayer;
@@ -240,7 +240,7 @@ void MadeEngine::handleEvents() {
 		}
 	}
 
-	_system->getAudioCD()->updateCD();
+	_system->getAudioCDManager()->updateCD();
 
 }
 

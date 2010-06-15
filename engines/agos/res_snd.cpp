@@ -227,9 +227,9 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 	stopMusic();
 
 	// Support for compressed music from the ScummVM Music Enhancement Project
-	_system->getAudioCD()->stop();
-	_system->getAudioCD()->play(music + 1, -1, 0, 0);
-	if (_system->getAudioCD()->isPlaying())
+	_system->getAudioCDManager()->stop();
+	_system->getAudioCDManager()->play(music + 1, -1, 0, 0);
+	if (_system->getAudioCDManager()->isPlaying())
 		return;
 
 	if (getPlatform() == Common::kPlatformAmiga) {

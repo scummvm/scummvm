@@ -900,7 +900,7 @@ AGOSEngine::~AGOSEngine() {
 	_midi.close();
 	delete _driver;
 
-	_system->getAudioCD()->stop();
+	_system->getAudioCDManager()->stop();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];

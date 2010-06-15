@@ -250,7 +250,7 @@ Audio::Mixer *ModularBackend::getMixer() {
 	return (Audio::Mixer *)_mixer;
 }
 
-AudioCDManager *ModularBackend::getAudioCD() {
+AudioCDManager *ModularBackend::getAudioCDManager() {
 	assert(_audiocdManager);
 	return _audiocdManager;
 }

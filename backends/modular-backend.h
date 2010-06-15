@@ -98,7 +98,7 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
-	virtual AudioCDManager *getAudioCD();
+	virtual AudioCDManager *getAudioCDManager();
 
 	virtual void quit() { exit(0); }
 	virtual void setWindowCaption(const char *caption) {}

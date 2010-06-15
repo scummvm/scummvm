@@ -853,7 +853,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->getAudioCD()->openCD(cd_num);
+		_system->getAudioCDManager()->openCD(cd_num);
 
 	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
@@ -884,7 +884,7 @@ TinselEngine::~TinselEngine() {
 	if (_bmv->MoviePlaying())
 		_bmv->FinishBMV();
 
-	_system->getAudioCD()->stop();
+	_system->getAudioCDManager()->stop();
 	delete _bmv;
 	delete _sound;
 	delete _midiMusic;
@@ -1006,7 +1006,7 @@ Common::Error TinselEngine::run() {
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {
 			timerVal = g_system->getMillis();
-			_system->getAudioCD()->updateCD();
+			_system->getAudioCDManager()->updateCD();
 			NextGameCycle();
 		}
 

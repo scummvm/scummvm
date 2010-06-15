@@ -115,7 +115,7 @@ void CDROM::play(uint32 from, uint32 to) {
 	// HSG encodes frame information into a double word:
 	// minute multiplied by 4500, plus second multiplied by 75,
 	// plus frame, minus 150
-	g_system->getAudioCD()->play(1, 1, from, to - from + 1);
+	g_system->getAudioCDManager()->play(1, 1, from, to - from + 1);
 	_cdPlaying = true;
 }
 
@@ -160,7 +160,7 @@ void CDROM::stopPlaying() {
 
 void CDROM::stop() {
 	_curTrackBuffer = 0;
-	g_system->getAudioCD()->stop();
+	g_system->getAudioCDManager()->stop();
 	_cdPlaying = false;
 }
 

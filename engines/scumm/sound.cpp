@@ -86,7 +86,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 
 Sound::~Sound() {
 	stopCDTimer();
-	g_system->getAudioCD()->stop();
+	g_system->getAudioCDManager()->stop();
 	delete _sfxFile;
 }
 
@@ -1068,7 +1068,7 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 
 	// Play it
 	if (!_soundsPaused)
-		g_system->getAudioCD()->play(track, numLoops, startFrame, duration);
+		g_system->getAudioCDManager()->play(track, numLoops, startFrame, duration);
 
 	// Start the timer after starting the track. Starting an MP3 track is
 	// almost instantaneous, but a CD player may take some time. Hopefully
@@ -1077,15 +1077,15 @@ void Sound::playCDTrack(int track, int numLoops, int startFrame, int duration) {
 }
 
 void Sound::stopCD() {
-	g_system->getAudioCD()->stop();
+	g_system->getAudioCDManager()->stop();
 }
 
 int Sound::pollCD() const {
-	return g_system->getAudioCD()->isPlaying();
+	return g_system->getAudioCDManager()->isPlaying();
 }
 
 void Sound::updateCD() {
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->updateCD();
 }
 
 void Sound::saveLoadWithSerializer(Serializer *ser) {

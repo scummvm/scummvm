@@ -1372,13 +1372,13 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 	if (s->getVersion() >= VER(24)) {
 		AudioCDManager::Status info;
 		if (s->isSaving())
-			info = _system->getAudioCD()->getStatus();
+			info = _system->getAudioCDManager()->getStatus();
 		s->saveLoadArrayOf(&info, 1, sizeof(info), audioCDEntries);
 		// If we are loading, and the music being loaded was supposed to loop
 		// forever, then resume playing it. This helps a lot when the audio CD
 		// is used to provide ambient music (see bug #788195).
 		if (s->isLoading() && info.playing && info.numLoops < 0)
-			_system->getAudioCD()->play(info.track, info.numLoops, info.start, info.duration);
+			_system->getAudioCDManager()->play(info.track, info.numLoops, info.start, info.duration);
 	}
 
 

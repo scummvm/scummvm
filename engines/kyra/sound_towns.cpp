@@ -3774,7 +3774,7 @@ SoundTowns::SoundTowns(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 }
 
 SoundTowns::~SoundTowns() {
-	g_system->getAudioCD()->stop();
+	g_system->getAudioCDManager()->stop();
 	haltTrack();
 	delete[] _sfxFileData;
 
@@ -3795,7 +3795,7 @@ bool SoundTowns::init() {
 }
 
 void SoundTowns::process() {
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->updateCD();
 }
 
 void SoundTowns::playTrack(uint8 track) {
@@ -3815,8 +3815,8 @@ void SoundTowns::playTrack(uint8 track) {
 	beginFadeOut();
 
 	if (_musicEnabled == 2 && trackNum != -1) {
-		g_system->getAudioCD()->play(trackNum+1, loop ? -1 : 1, 0, 0);
-		g_system->getAudioCD()->updateCD();
+		g_system->getAudioCDManager()->play(trackNum+1, loop ? -1 : 1, 0, 0);
+		g_system->getAudioCDManager()->updateCD();
 	} else if (_musicEnabled) {
 		playEuphonyTrack(READ_LE_UINT32(&tTable[tTableIndex]), loop);
 	}
@@ -3826,8 +3826,8 @@ void SoundTowns::playTrack(uint8 track) {
 
 void SoundTowns::haltTrack() {
 	_lastTrack = -1;
-	g_system->getAudioCD()->stop();
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->stop();
+	g_system->getAudioCDManager()->updateCD();
 	if (_parser) {
 		Common::StackLock lock(_mutex);
 		_parser->setTrack(0);
@@ -3935,8 +3935,8 @@ void SoundTowns::beginFadeOut() {
 	_driver->fading();
 
 	// TODO: this should fade out too
-	g_system->getAudioCD()->stop();
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->stop();
+	g_system->getAudioCDManager()->updateCD();
 }
 
 int SoundTowns::open() {
@@ -4098,8 +4098,8 @@ void SoundPC98::playTrack(uint8 track) {
 
 void SoundPC98::haltTrack() {
 	_lastTrack = -1;
-	g_system->getAudioCD()->stop();
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->stop();
+	g_system->getAudioCDManager()->updateCD();
 	_driver->reset();
 }
 
@@ -4168,7 +4168,7 @@ void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
 }
 
 void SoundTownsPC98_v2::process() {
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->updateCD();
 }
 
 void SoundTownsPC98_v2::playTrack(uint8 track) {
@@ -4205,8 +4205,8 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 	_driver->loadMusicData(_musicTrackData, true);
 
 	if (_musicEnabled == 2 && trackNum != -1) {
-		g_system->getAudioCD()->play(trackNum+1, _driver->looping() ? -1 : 1, 0, 0);
-		g_system->getAudioCD()->updateCD();
+		g_system->getAudioCDManager()->play(trackNum+1, _driver->looping() ? -1 : 1, 0, 0);
+		g_system->getAudioCDManager()->updateCD();
 	} else if (_musicEnabled) {
 		_driver->cont();
 	}
@@ -4216,8 +4216,8 @@ void SoundTownsPC98_v2::playTrack(uint8 track) {
 
 void SoundTownsPC98_v2::haltTrack() {
 	_lastTrack = -1;
-	g_system->getAudioCD()->stop();
-	g_system->getAudioCD()->updateCD();
+	g_system->getAudioCDManager()->stop();
+	g_system->getAudioCDManager()->updateCD();
 	_driver->reset();
 }
 

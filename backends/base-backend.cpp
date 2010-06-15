@@ -87,7 +87,7 @@ Common::WriteStream *BaseBackend::createConfigWriteStream() {
 
 static DefaultAudioCDManager *s_audiocdManager = 0;
 
-AudioCDManager *BaseBackend::getAudioCD() {
+AudioCDManager *BaseBackend::getAudioCDManager() {
 	if (!s_audiocdManager)
 		s_audiocdManager = new DefaultAudioCDManager();
 	return (AudioCDManager *)s_audiocdManager;

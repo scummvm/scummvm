@@ -39,7 +39,7 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual AudioCDManager *getAudioCD();
+	virtual AudioCDManager *getAudioCDManager();
 };
 
 

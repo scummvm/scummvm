@@ -211,11 +211,11 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 				currentLoop = bLoop;
 
 				// try to play track, but don't fall back to a true CD
-				g_system->getAudioCD()->play(track, bLoop ? -1 : 1, 0, 0, true);
+				g_system->getAudioCDManager()->play(track, bLoop ? -1 : 1, 0, 0, true);
 
 				// Check if an enhanced audio track is being played.
 				// If it is, stop here and don't load a MIDI track
-				if (g_system->getAudioCD()->isPlaying()) {
+				if (g_system->getAudioCDManager()->isPlaying()) {
 					return true;
 				}
 			}
@@ -290,7 +290,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
  */
 bool MidiPlaying() {
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
-		if (g_system->getAudioCD()->isPlaying())
+		if (g_system->getAudioCDManager()->isPlaying())
 			return true;
 	}
 	return _vm->_midiMusic->isPlaying();
@@ -304,7 +304,7 @@ bool StopMidi() {
 	currentLoop = false;
 
 	if (_vm->getFeatures() & GF_ENHANCED_AUDIO_SUPPORT) {
-		g_system->getAudioCD()->stop();
+		g_system->getAudioCDManager()->stop();
 	}
 
 	_vm->_midiMusic->stop();

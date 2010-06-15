@@ -33,7 +33,7 @@
 
 #include "graphics/pixelformat.h"
 
-#include "backends/audiocd/abstract-audiocd.h"
+#include "backends/audiocd/audiocd.h"
 
 namespace Audio {
 	class Mixer;
@@ -935,7 +935,7 @@ public:
 	 * Return the audio cd manager. For more information, refer to the
 	 * AudioCDManager documentation.
 	 */
-	virtual AudioCDManager *getAudioCD() = 0;
+	virtual AudioCDManager *getAudioCDManager() = 0;
 
 	//@}
 

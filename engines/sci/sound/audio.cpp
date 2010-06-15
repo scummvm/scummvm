@@ -374,7 +374,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 
 		// Subtract one from track. KQ6 starts at track 1, while ScummVM
 		// ignores the data track and considers track 2 to be track 1.
-		g_system->getAudioCD()->play(track - 1, 1, start, duration);
+		g_system->getAudioCDManager()->play(track - 1, 1, start, duration);
 		return 1;
 	} else {
 		// Jones in the Fast Lane CD Audio format
@@ -397,7 +397,7 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 
 			// Jones uses the track as the resource value in the map
 			if (res == track) {
-				g_system->getAudioCD()->play(1, 1, startFrame, length);
+				g_system->getAudioCDManager()->play(1, 1, startFrame, length);
 				_audioCdStart = g_system->getMillis();
 				break;
 			}
@@ -411,16 +411,16 @@ int AudioPlayer::audioCdPlay(int track, int start, int duration) {
 
 void AudioPlayer::audioCdStop() {
 	_audioCdStart = 0;
-	g_system->getAudioCD()->stop();
+	g_system->getAudioCDManager()->stop();
 }
 
 void AudioPlayer::audioCdUpdate() {
-	g_system->getAudioCD()->update();
+	g_system->getAudioCDManager()->update();
 }
 
 int AudioPlayer::audioCdPosition() {
 	// Return -1 if the sample is done playing. Converting to frames to compare.
-	if (((g_system->getMillis() - _audioCdStart) * 75 / 1000) >= (uint32)g_system->getAudioCD()->getStatus().duration)
+	if (((g_system->getMillis() - _audioCdStart) * 75 / 1000) >= (uint32)g_system->getAudioCDManager()->getStatus().duration)
 		return -1;
 
 	// Return the position otherwise (in ticks).

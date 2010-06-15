@@ -100,7 +100,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
-		_system->getAudioCD()->openCD(cd_num);
+		_system->getAudioCDManager()->openCD(cd_num);
 
 	_lang = kEnglish;
 
