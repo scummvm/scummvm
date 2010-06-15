@@ -34,7 +34,7 @@ class SeekableReadStream;
 }
 
 namespace Graphics {
-class Surface;
+struct Surface;
 }
 
 namespace Groovie {
