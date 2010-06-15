@@ -131,6 +131,8 @@ void DrasculaEngine::cleanupString(char *string) {
 }
 
 void DrasculaEngine::converse(int index) {
+	debug(4, "converse(%d)", index);
+
 	char fileName[20];
 	sprintf(fileName, "op_%d.cal", index);
 	Common::SeekableReadStream *stream = _archives.open(fileName);
@@ -279,6 +281,8 @@ void DrasculaEngine::converse(int index) {
 }
 
 void DrasculaEngine::response(int function) {
+	debug(4, "response(%d)", function);
+
 	playTalkSequence(function);
 
 	if (currentChapter == 2) {

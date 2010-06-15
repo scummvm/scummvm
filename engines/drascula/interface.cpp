@@ -65,6 +65,8 @@ void DrasculaEngine::selectVerbFromBar() {
 }
 
 void DrasculaEngine::selectVerb(int verb) {
+	debug(4, "selectVerb(%d)", verb);
+
 	int c = _menuScreen ? 0 : 171;
 
 	if (currentChapter == 5) {
