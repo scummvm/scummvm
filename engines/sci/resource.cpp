@@ -163,8 +163,12 @@ void Resource::writeToStream(Common::WriteStream *stream) const {
 	stream->write(data, size);
 }
 
-uint32 Resource::getAudioCompressionType() {
-	return _source->_audioCompressionType;
+uint32 Resource::getAudioCompressionType() const {
+	return _source->getAudioCompressionType();
+}
+
+uint32 AudioVolumeResourceSource::getAudioCompressionType() const {
+	return _audioCompressionType;
 }
 
 
@@ -172,8 +176,6 @@ ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, i
  : _sourceType(type), _name(name), _volumeNumber(volNum), _resourceFile(resFile) {
 	_scanned = false;
 	_associatedMap = NULL;
-	_audioCompressionType = 0;
-	_audioCompressionOffsetMapping = NULL;
 }
 
 ResourceSource::~ResourceSource() {

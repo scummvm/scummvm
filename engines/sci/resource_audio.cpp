@@ -36,6 +36,9 @@ namespace Sci {
 AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum)
 	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
+	_audioCompressionType = 0;
+	_audioCompressionOffsetMapping = NULL;
+
 	/*
 	 * Check if this audio volume got compressed by our tool. If that is the
 	 * case, set _audioCompressionType and read in the offset translation

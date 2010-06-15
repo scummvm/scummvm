@@ -190,7 +190,7 @@ public:
 	 * This method is used only by the "dump" debugger command.
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
-	uint32 getAudioCompressionType();
+	uint32 getAudioCompressionType() const;
 
 protected:
 	int32 _fileOffset; /**< Offset in file */

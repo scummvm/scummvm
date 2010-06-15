@@ -57,8 +57,6 @@ public:
 	const Common::FSNode * const _resourceFile;
 	const int _volumeNumber;
 	ResourceSource *_associatedMap;	// TODO: Move to VolumeResourceSource
-	uint32 _audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
-	int32 *_audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
 
 protected:
 	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0, const Common::FSNode *resFile = 0);
@@ -87,6 +85,9 @@ public:
 	 * Load a resource.
 	 */
 	virtual void loadResource(Resource *res);
+
+	virtual uint32 getAudioCompressionType() const { return 0; }
+
 };
 
 class DirectoryResourceSource : public ResourceSource {
@@ -141,10 +142,16 @@ public:
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
+protected:
+	uint32 _audioCompressionType;
+	int32 *_audioCompressionOffsetMapping;
+
 public:
 	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum);
 
 	virtual void loadResource(Resource *res);
+
+	virtual uint32 getAudioCompressionType() const;
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
