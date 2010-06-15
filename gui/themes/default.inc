@@ -433,7 +433,7 @@
 "<def var='KeyMapper.Spacing' value='10'/> "
 "<def var='KeyMapper.LabelWidth' value='100'/> "
 "<def var='KeyMapper.ButtonWidth' value='80'/> "
-"<def var='Tooltip.MaxWidth' value='100'/> "
+"<def var='Tooltip.MaxWidth' value='200'/> "
 "<def var='Tooltip.XDelta' value='16'/> "
 "<def var='Tooltip.YDelta' value='16'/> "
 "<widget name='OptionsLabel' "
