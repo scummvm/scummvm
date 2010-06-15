@@ -320,7 +320,7 @@ void AgiEngine::handleKeys(int key) {
 		// Clear to start a new line
 		_game.hasPrompt = 0;
 		_game.inputBuffer[_game.cursorPos = 0] = 0;
-		debugC(3, kDebugLevelInput, "clear lines");
+		debugC(3, kDebugLevelInput | kDebugLevelText, "clear lines");
 		clearLines(l, l + 1, bg);
 		flushLines(l, l + 1);
 #ifdef __DS__

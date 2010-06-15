@@ -214,6 +214,7 @@ void AgiEngine::printTextConsole(const char *msg, int x, int y, int len, int fg,
 	x *= CHAR_COLS;
 	y *= 10;
 
+	debugC(4, kDebugLevelText, "printTextConsole(): %s, %d, %d, %d, %d, %d", msg, x, y, len, fg, bg);
 	printText2(1, msg, 0, x, y, len, fg, bg);
 }
 
@@ -698,6 +699,8 @@ void AgiEngine::clearLines(int l1, int l2, int c) {
 	// do we need to adjust for +8 on topline?
 	// inc for endline so it matches the correct num
 	// ie, from 22 to 24 is 3 lines, not 2 lines.
+
+	debugC(4, kDebugLevelText, "clearLines(%d, %d, %d)", l1, l2, c);
 
 	l1 *= CHAR_LINES;
 	l2 *= CHAR_LINES;
