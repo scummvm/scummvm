@@ -367,13 +367,6 @@ protected:
 	ResourceSource *addInternalMap(const Common::String &name, int resNr);
 
 	/**
-	 * Checks if an audio volume got compressed by our tool. If that is the
-	 * case, set _audioCompressionType and read in the offset translation
-	 * table for later usage.
-	 */
-	void checkIfAudioVolumeIsCompressed(ResourceSource *source);
-
-	/**
 	 * Scans newly registered resource sources for resources, earliest addition first.
 	 * @param detected_version Pointer to the detected version number,
 	 *					 used during startup. May be NULL.

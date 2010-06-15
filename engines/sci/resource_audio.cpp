@@ -35,13 +35,19 @@ namespace Sci {
 
 AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum)
 	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
-}
 
-void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(source);
+	ResourceManager *resMan = g_sci->getResMan();
+
+	/*
+	 * Check if this audio volume got compressed by our tool. If that is the
+	 * case, set _audioCompressionType and read in the offset translation
+	 * table for later usage.
+	 */
+
+	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
-		warning("Failed to open %s", source->getLocationName().c_str());
+		warning("Failed to open %s", getLocationName().c_str());
 		return;
 	}
 
@@ -52,13 +58,13 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 	case MKID_BE('OGG '):
 	case MKID_BE('FLAC'):
 		// Detected a compressed audio volume
-		source->_audioCompressionType = compressionType;
+		_audioCompressionType = compressionType;
 		// Now read the whole offset mapping table for later usage
 		int32 recordCount = fileStream->readUint32LE();
 		if (!recordCount)
 			error("compressed audio volume doesn't contain any entries!");
 		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
-		source->_audioCompressionOffsetMapping = offsetMapping;
+		_audioCompressionOffsetMapping = offsetMapping;
 		for (int recordNo = 0; recordNo < recordCount; recordNo++) {
 			*offsetMapping++ = fileStream->readUint32LE();
 			*offsetMapping++ = fileStream->readUint32LE();
@@ -68,7 +74,7 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 		*offsetMapping++ = fileStream->size();
 	}
 
-	if (source->_resourceFile)
+	if (_resourceFile)
 		delete fileStream;
 }
 

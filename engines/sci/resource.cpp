@@ -210,14 +210,6 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 ResourceSource *ResourceManager::addSource(ResourceSource *newsrc) {
 	assert(newsrc);
 
-	if (newsrc->getSourceType() == kSourceAudioVolume) {
-		// TODO: Move this call into the AudioVolumeResourceSource constructor.
-		// Need to verify if this is safe, though; in particular, whether this
-		// method may be called before the new AudioVolumeResourceSource has been
-		// added to the _sources lists.
-		checkIfAudioVolumeIsCompressed(newsrc);
-	}
-
 	_sources.push_back(newsrc);
 	return newsrc;
 }
