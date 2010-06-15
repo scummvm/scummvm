@@ -68,6 +68,9 @@ public:
 	ResSourceType getSourceType() const { return _sourceType; }
 	const Common::String &getLocationName() const { return _name; }
 
+	// Auxiliary method, used by loadResource implementations.
+	Common::SeekableReadStream *getVolumeFile(Resource *res, ResourceManager *resMan);
+
 	/**
 	 * TODO: Document this
 	 */
@@ -136,7 +139,7 @@ public:
 		: VolumeResourceSource(name, map, kSourceAudioVolume) {
 	}
 
-	//virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
@@ -150,7 +153,7 @@ class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
 
-	//virtual void loadResource(Resource *res, ResourceManager *resMan);
+	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class MacResourceForkResourceSource : public ResourceSource {

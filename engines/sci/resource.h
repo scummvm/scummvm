@@ -167,6 +167,8 @@ class Resource {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
 	friend class ResourceSource;
+	friend class WaveResourceSource;
+	friend class AudioVolumeResourceSource;
 	friend class MacResourceForkResourceSource;
 
 public:
@@ -393,7 +395,7 @@ protected:
 	bool loadFromAudioVolumeSCI11(Resource *res, Common::SeekableReadStream *file);
 	void freeOldResources();
 	int decompress(Resource *res, Common::SeekableReadStream *file);
-	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32&szPacked, ResourceCompression &compression);
+	int readResourceInfo(Resource *res, Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
 	void addResource(ResourceId resId, ResourceSource *src, uint32 offset, uint32 size = 0);
 	void removeAudioResource(ResourceId resId);
 
