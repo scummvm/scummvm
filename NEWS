@@ -15,6 +15,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed number of GFX glitches.
    - Made PIC drawing code picture perfect.
    - Added support of MIDI devices.
+   - Added support for accurate Tandy sound emulation. Switched to it as default.
 
   Drascula:
    - Fixed number of GFX glitches.
