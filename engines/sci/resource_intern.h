@@ -54,14 +54,14 @@ protected:
 
 public:
 	bool _scanned;
-	const Common::FSNode *_resourceFile;
+	const Common::FSNode * const _resourceFile;
 	const int _volumeNumber;
 	ResourceSource *_associatedMap;	// TODO: Move to VolumeResourceSource
 	uint32 _audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
 	int32 *_audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
 
 protected:
-	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0);
+	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0, const Common::FSNode *resFile = 0);
 public:
 	virtual ~ResourceSource();
 
@@ -112,6 +112,11 @@ public:
 		_associatedMap = map;
 	}
 
+	VolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum, const Common::FSNode *resFile)
+		: ResourceSource(kSourceVolume, name, volNum, resFile) {
+		_associatedMap = map;
+	}
+
 	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
 		if (_associatedMap == map && _volumeNumber == volNum)
 			return this;
@@ -121,8 +126,8 @@ public:
 
 class ExtMapResourceSource : public ResourceSource {
 public:
-	ExtMapResourceSource(const Common::String &name, int volNum)
-		: ResourceSource(kSourceExtMap, name, volNum) {
+	ExtMapResourceSource(const Common::String &name, int volNum, const Common::FSNode *resFile = 0)
+		: ResourceSource(kSourceExtMap, name, volNum, resFile) {
 	}
 
 	virtual void scanSource(ResourceManager *resMan);

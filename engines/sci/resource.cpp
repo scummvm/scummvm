@@ -168,10 +168,9 @@ uint32 Resource::getAudioCompressionType() {
 }
 
 
-ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum)
- : _sourceType(type), _name(name), _volumeNumber(volNum) {
+ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum, const Common::FSNode *resFile)
+ : _sourceType(type), _name(name), _volumeNumber(volNum), _resourceFile(resFile) {
 	_scanned = false;
-	_resourceFile = 0;
 	_associatedMap = NULL;
 	_audioCompressionType = 0;
 	_audioCompressionOffsetMapping = NULL;
@@ -202,9 +201,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, 
 }
 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
-	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getName(), volume_nr);
-
-	newsrc->_resourceFile = mapFile;
+	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getName(), volume_nr, mapFile);
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -213,22 +210,6 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 ResourceSource *ResourceManager::addSource(ResourceSource *newsrc) {
 	assert(newsrc);
 
-	if (newsrc->getSourceType() == kSourceAudioVolume) {
-		// TODO: Move this call into the AudioVolumeResourceSource constructor.
-		// Need to verify if this is safe, though; in particular, whether this
-		// method may be called before the new AudioVolumeResourceSource has been
-		// added to the _sources lists.
-		checkIfAudioVolumeIsCompressed(newsrc);
-	}
-
-	_sources.push_back(newsrc);
-	return newsrc;
-}
-
-ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, const Common::FSNode *resFile) {
-	assert(newsrc);
-
-	newsrc->_resourceFile = resFile;
 	if (newsrc->getSourceType() == kSourceAudioVolume) {
 		// TODO: Move this call into the AudioVolumeResourceSource constructor.
 		// Need to verify if this is safe, though; in particular, whether this
@@ -594,7 +575,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
-		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, 100), sci21PatchRes);
+		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap, 100, sci21PatchRes));
 #endif
 
 	// Now find all the resource.0?? files
@@ -609,7 +590,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 			const char *dot = strrchr(filename.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(new VolumeResourceSource(file->getName(), map, number), file);
+			addSource(new VolumeResourceSource(file->getName(), map, number, file));
 		}
 	}
 

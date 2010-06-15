@@ -347,8 +347,6 @@ protected:
 	 */
 	ResourceSource *addSource(ResourceSource *source);
 
-	ResourceSource *addSource(ResourceSource *source, const Common::FSNode *resFile);
-
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource
 	 * manager's list of sources.
