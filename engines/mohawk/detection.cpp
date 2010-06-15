@@ -123,6 +123,13 @@ static const PlainGameDescriptor mohawkGames[] = {
 
 #include "mohawk/detection_tables.h"
 
+static const char *directoryGlobs[] = {
+	"all",
+	"assets1",
+	"data",
+	0
+};
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Mohawk::gameDescriptions,
@@ -145,7 +152,7 @@ static const ADParams detectionParams = {
 	// Maximum directory depth
 	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
 
 class MohawkMetaEngine : public AdvancedMetaEngine {
