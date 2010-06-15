@@ -51,8 +51,6 @@ public:
 
 	virtual void init(bool usesOldGfxFunctions);
 
-	virtual void wait(int16 ticks);
-
 protected:
 	GfxCursor *_cursor;
 	EngineState *_s;

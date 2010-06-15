@@ -562,22 +562,14 @@ void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
 			_screen->setVerticalShakePos(10);
 		// TODO: horizontal shakes
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
 
-		if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
-			g_system->updateScreen();
-			g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
-		}
-
-		_gui->wait(3);
 		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
 			_screen->setVerticalShakePos(0);
 
-		if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
-			g_system->updateScreen();
-			g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
-		}
-
-		_gui->wait(3);
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
 	}
 }
 

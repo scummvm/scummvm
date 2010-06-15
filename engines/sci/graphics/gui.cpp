@@ -91,8 +91,4 @@ void SciGui::init(bool usesOldGfxFunctions) {
 	_paint16->init(_animate, _text16);
 }
 
-void SciGui::wait(int16 ticks) {
-	_s->wait(ticks);
-}
-
 } // End of namespace Sci

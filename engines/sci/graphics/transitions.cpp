@@ -291,7 +291,7 @@ void GfxTransitions::fadeOut() {
 			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
 		}
 		g_system->setPalette(workPalette + 4, 1, 254);
-		_gui->wait(2);
+		g_sci->getEngineState()->wait(2);
 	}
 }
 
@@ -301,7 +301,7 @@ void GfxTransitions::fadeIn() {
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
 		_palette->kernelSetIntensity(1, 255, stepNr, true);
-		_gui->wait(2);
+		g_sci->getEngineState()->wait(2);
 	}
 }
 
