@@ -738,33 +738,6 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 #endif
 
-#pragma mark -
-
-
-int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-
-	SavegameMetadata meta;
-	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
-	meta.savegame_name = savename;
-	meta.game_version = version;
-	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	if (s->executionStackBase) {
-		warning("Cannot save from below kernel function");
-		return 1;
-	}
-
-	Common::Serializer ser(0, fh);
-	sync_SavegameMetadata(ser, meta);
-	Graphics::saveThumbnail(*fh);
-	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
-
-	return 0;
-}
-
 void SegManager::reconstructStack(EngineState *s) {
 	DataStack *stack = (DataStack *)(_heap[findSegmentByType(SEG_TYPE_STACK)]);
 	s->stack_base = stack->_entries;
@@ -873,6 +846,34 @@ static void reconstruct_sounds(EngineState *s) {
 	}
 }
 #endif
+
+
+#pragma mark -
+
+
+int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	SavegameMetadata meta;
+	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
+	meta.savegame_name = savename;
+	meta.game_version = version;
+	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+
+	if (s->executionStackBase) {
+		warning("Cannot save from below kernel function");
+		return 1;
+	}
+
+	Common::Serializer ser(0, fh);
+	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
+	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
+
+	return 0;
+}
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 #ifdef USE_OLD_MUSIC_FUNCTIONS
