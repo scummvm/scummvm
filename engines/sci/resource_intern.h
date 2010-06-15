@@ -69,6 +69,9 @@ public:
 	ResSourceType getSourceType() const { return _sourceType; }
 	const Common::String &getLocationName() const { return _name; }
 
+	/**
+	 * TODO: Document this
+	 */
 	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
 		return NULL;
 	};
@@ -78,6 +81,12 @@ public:
 	 * TODO: The resMan param for now is just a hack.
 	 */
 	virtual void scanSource(ResourceManager *resMan) {}
+
+	/**
+	 * Load a resource.
+	 * TODO: The resMan param for now is just a hack.
+	 */
+	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class DirectoryResourceSource : public ResourceSource {
@@ -141,7 +150,8 @@ public:
 
 class MacResourceForkResourceSource : public ResourceSource {
 public:
-	MacResourceForkResourceSource(const Common::String &name) : ResourceSource(kSourceMacResourceFork, name) {}
+	MacResourceForkResourceSource(const Common::String &name);
+	~MacResourceForkResourceSource();
 
 	/**
 	 * Reads the SCI1.1+ resource file from a Mac resource fork.

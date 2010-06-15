@@ -176,14 +176,18 @@ ResourceSource::ResourceSource(ResSourceType type, const Common::String &name)
 	associated_map = NULL;
 	audioCompressionType = 0;
 	audioCompressionOffsetMapping = NULL;
-
-	if (_sourceType == kSourceMacResourceFork)
-		_macResMan = new Common::MacResManager();
-	else
-		_macResMan = NULL;
+	_macResMan = NULL;
 }
 
 ResourceSource::~ResourceSource() {
+}
+
+MacResourceForkResourceSource::MacResourceForkResourceSource(const Common::String &name)
+ : ResourceSource(kSourceMacResourceFork, name) {
+	_macResMan = new Common::MacResManager();
+}
+
+MacResourceForkResourceSource::~MacResourceForkResourceSource() {
 	delete _macResMan;
 }
 
@@ -344,17 +348,22 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 static uint32 resTypeToMacTag(ResourceType type);
 
 void ResourceManager::loadResource(Resource *res) {
-	if (res->_source->getSourceType() == kSourcePatch && loadFromPatchFile(res))
+	res->_source->loadResource(res, this);
+}
+
+void ResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
+
+	if (getSourceType() == kSourcePatch && resMan->loadFromPatchFile(res))
 		return;
 
-	if (res->_source->getSourceType() == kSourceMacResourceFork) {
-		assert(res->_source->_macResMan);
-		Common::SeekableReadStream *stream = res->_source->_macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
+	if (getSourceType() == kSourceMacResourceFork) {
+		assert(_macResMan);
+		Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
 
 		if (!stream)
 			error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
 
-		int error = decompress(res, stream);
+		int error = resMan->decompress(res, stream);
 		if (error) {
 			warning("Error %d occured while reading %s from Mac resource file: %s",
 				    error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -363,27 +372,27 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 
-	Common::SeekableReadStream *fileStream = getVolumeFile(res->_source);
+	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
-		warning("Failed to open %s", res->_source->getLocationName().c_str());
+		warning("Failed to open %s", getLocationName().c_str());
 		res->unalloc();
 		return;
 	}
 
-	switch(res->_source->getSourceType()) {
+	switch(getSourceType()) {
 	case kSourceWave:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
-		loadFromWaveFile(res, fileStream);
-		if (res->_source->_resourceFile)
+		resMan->loadFromWaveFile(res, fileStream);
+		if (_resourceFile)
 			delete fileStream;
 		return;
 
 	case kSourceAudioVolume:
-		if (res->_source->audioCompressionType) {
+		if (audioCompressionType) {
 			// this file is compressed, so lookup our offset in the offset-translation table and get the new offset
 			//  also calculate the compressed size by using the next offset
-			int32 *mappingTable = res->_source->audioCompressionOffsetMapping;
+			int32 *mappingTable = audioCompressionOffsetMapping;
 			int32 compressedOffset = 0;
 
 			do {
@@ -413,8 +422,8 @@ void ResourceManager::loadResource(Resource *res) {
 			case kResourceTypeAudio:
 			case kResourceTypeAudio36:
 				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
-				loadFromAudioVolumeSCI1(res, fileStream);
-				if (res->_source->_resourceFile)
+				resMan->loadFromAudioVolumeSCI1(res, fileStream);
+				if (_resourceFile)
 					delete fileStream;
 				return;
 			default:
@@ -425,19 +434,19 @@ void ResourceManager::loadResource(Resource *res) {
 			fileStream->seek(res->_fileOffset, SEEK_SET);
 		}
 		if (getSciVersion() < SCI_VERSION_1_1)
-			loadFromAudioVolumeSCI1(res, fileStream);
+			resMan->loadFromAudioVolumeSCI1(res, fileStream);
 		else
-			loadFromAudioVolumeSCI11(res, fileStream);
+			resMan->loadFromAudioVolumeSCI11(res, fileStream);
 
-		if (res->_source->_resourceFile)
+		if (_resourceFile)
 			delete fileStream;
 		return;
 
 	default:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
-		int error = decompress(res, fileStream);
+		int error = resMan->decompress(res, fileStream);
 
-		if (res->_source->_resourceFile)
+		if (_resourceFile)
 			delete fileStream;
 
 		if (error) {
