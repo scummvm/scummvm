@@ -682,13 +682,6 @@ void ResourceManager::freeResourceSources() {
 }
 
 ResourceManager::ResourceManager() {
-	addAppropriateSources();
-	init();
-}
-
-ResourceManager::ResourceManager(const Common::FSList &fslist) {
-	addAppropriateSources(fslist);
-	init();
 }
 
 void ResourceManager::init() {

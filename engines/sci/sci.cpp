@@ -66,11 +66,20 @@ class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 		: Engine(syst), _gameDescription(desc), _system(syst) {
-	_console = NULL;
 
 	assert(g_sci == 0);
 	g_sci = this;
+
+	_gfxMacIconBar = 0;
+
+	_audio = 0;
 	_features = 0;
+	_resMan = 0;
+	_gamestate = 0;
+	_kernel = 0;
+	_vocabulary = 0;
+	_eventMan = 0;
+	_console = 0;
 
 	// Set up the engine specific debug levels
 	DebugMan.addDebugChannel(kDebugLevelError, "Error", "Script error debugging");
@@ -97,9 +106,6 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	DebugMan.addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
-
-	_gamestate = 0;
-	_gfxMacIconBar = 0;
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
@@ -138,11 +144,18 @@ Common::Error SciEngine::run() {
 	ConfMan.registerDefault("enable_fb01", "false");
 
 	_resMan = new ResourceManager();
+	assert(_resMan);
+	_resMan->addAppropriateSources();
+	_resMan->init();
 
+	// TODO: Add error handling. Check return values of addAppropriateSources
+	// and init. We first have to *add* sensible return values, though ;).
+/*
 	if (!_resMan) {
 		warning("No resources found, aborting");
 		return Common::kNoGameDataFoundError;
 	}
+*/
 
 	// Add the after market GM patches for the specified game, if they exist
 	_resMan->addNewGMPatch(getGameID());

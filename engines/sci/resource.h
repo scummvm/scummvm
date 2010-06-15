@@ -229,8 +229,16 @@ public:
 	 * Creates a new SCI resource manager.
 	 */
 	ResourceManager();
-	ResourceManager(const Common::FSList &fslist);
 	~ResourceManager();
+
+
+	/**
+	 * Initializes the resource manager.
+	 */
+	void init();
+
+	int addAppropriateSources();
+	int addAppropriateSources(const Common::FSList &fslist);	// TODO: Switch from FSList to Common::Archive?
 
 	/**
 	 * Looks up a resource's data.
@@ -325,11 +333,6 @@ protected:
 	ResVersion _mapVersion; ///< resource.map version
 
 	/**
-	 * Initializes the resource manager
-	 */
-	void init();
-
-	/**
 	 * Add a path to the resource manager's list of sources.
 	 * @return a pointer to the added source structure, or NULL if an error occurred.
 	 */
@@ -379,8 +382,7 @@ protected:
 	 * @return One of SCI_ERROR_*.
 	 */
 	void scanNewSources();
-	int addAppropriateSources();
-	int addAppropriateSources(const Common::FSList &fslist);
+
 	int addInternalSources();
 	void freeResourceSources();
 

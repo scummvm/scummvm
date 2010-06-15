@@ -428,7 +428,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 
-	ResourceManager *resMan = new ResourceManager(fslist);
+	ResourceManager *resMan = new ResourceManager();
+	assert(resMan);
+	resMan->addAppropriateSources(fslist);
+	resMan->init();
+	// TODO: Add error handling.
+
 	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
