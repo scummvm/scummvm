@@ -194,6 +194,15 @@ protected:
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualTo> ResourceMap;
 
 class ResourceManager {
+	// FIXME: These 'friend' declarations are meant to be a temporary hack to
+	// ease transition to the ResourceSource class system.
+	friend class ResourceSource;
+	friend class DirectoryResourceSource;
+	friend class ExtMapResourceSource;
+	friend class IntMapResourceSource;
+	friend class ExtAudioMapResourceSource;
+	friend class MacResourceForkResourceSource;
+
 public:
 	enum ResVersion {
 		kResVersionUnknown,

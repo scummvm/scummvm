@@ -623,37 +623,40 @@ void ResourceManager::scanNewSources() {
 
 		if (!source->scanned) {
 			source->scanned = true;
-			switch (source->getSourceType()) {
-			case kSourceDirectory:
-				readResourcePatches(source);
-
-				// We can't use getSciVersion() at this point, thus using _volVersion
-				if (_volVersion >= kResVersionSci11)	// SCI1.1+
-					readResourcePatchesBase36(source);
-
-				readWaveAudioPatches();
-				break;
-			case kSourceExtMap:
-				if (_mapVersion < kResVersionSci1Late)
-					readResourceMapSCI0(source);
-				else
-					readResourceMapSCI1(source);
-				break;
-			case kSourceExtAudioMap:
-				readAudioMapSCI1(source);
-				break;
-			case kSourceIntMap:
-				readAudioMapSCI11(source);
-				break;
-			case kSourceMacResourceFork:
-				readMacResourceFork(source);
-				break;
-			default:
-				break;
-			}
+			source->scanSource(this);
 		}
 	}
 }
+
+void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
+	resMan->readResourcePatches(this);
+
+	// We can't use getSciVersion() at this point, thus using _volVersion
+	if (resMan->_volVersion >= ResourceManager::kResVersionSci11)	// SCI1.1+
+		resMan->readResourcePatchesBase36(this);
+
+	resMan->readWaveAudioPatches();
+}
+
+void ExtMapResourceSource::scanSource(ResourceManager *resMan) {
+	if (resMan->_mapVersion < ResourceManager::kResVersionSci1Late)
+		resMan->readResourceMapSCI0(this);
+	else
+		resMan->readResourceMapSCI1(this);
+}
+
+void ExtAudioMapResourceSource::scanSource(ResourceManager *resMan) {
+	resMan->readAudioMapSCI1(this);
+}
+
+void IntMapResourceSource::scanSource(ResourceManager *resMan) {
+	resMan->readAudioMapSCI11(this);
+}
+
+void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
+	resMan->readMacResourceFork(this);
+}
+
 
 void ResourceManager::freeResourceSources() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it)

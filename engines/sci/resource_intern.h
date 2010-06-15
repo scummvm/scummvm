@@ -72,11 +72,19 @@ public:
 	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
 		return NULL;
 	};
+
+	/**
+	 * Scan this source for TODO.
+	 * TODO: The resMan param for now is just a hack.
+	 */
+	virtual void scanSource(ResourceManager *resMan) {}
 };
 
 class DirectoryResourceSource : public ResourceSource {
 public:
 	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
+
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class PatchResourceSource : public ResourceSource {
@@ -101,11 +109,15 @@ public:
 class ExtMapResourceSource : public ResourceSource {
 public:
 	ExtMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtMap, name) {}
+
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class IntMapResourceSource : public ResourceSource {
 public:
 	IntMapResourceSource(const Common::String &name) : ResourceSource(kSourceIntMap, name) {}
+
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
@@ -118,6 +130,8 @@ public:
 class ExtAudioMapResourceSource : public ResourceSource {
 public:
 	ExtAudioMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtAudioMap, name) {}
+
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class WaveResourceSource : public ResourceSource {
@@ -128,6 +142,8 @@ public:
 class MacResourceForkResourceSource : public ResourceSource {
 public:
 	MacResourceForkResourceSource(const Common::String &name) : ResourceSource(kSourceMacResourceFork, name) {}
+
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 } // End of namespace Sci
