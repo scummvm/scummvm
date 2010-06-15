@@ -279,6 +279,7 @@ Common::Error DrasculaEngine::run() {
 			loadPic(974, tableSurface);
 
 		if (currentChapter != 2) {
+			loadPic(99, cursorSurface);
 			loadPic(99, backSurface);
 			loadPic(97, extraSurface);
 		}
@@ -507,10 +508,13 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (rightMouseButton == 1 && _menuScreen) {
 #endif
 			delay(100);
-			if (currentChapter == 2)
+			if (currentChapter == 2) {
+				loadPic(menuBackground, cursorSurface);
 				loadPic(menuBackground, backSurface);
-			else
+			} else {
+				loadPic(99, cursorSurface);
 				loadPic(99, backSurface);
+			}
 			setPalette((byte *)&gamePalette);
 			_menuScreen = false;
 #ifndef _WIN32_WCE
@@ -535,14 +539,19 @@ bool DrasculaEngine::runCurrentChapter() {
 			characterMoved = 0;
 			if (trackProtagonist == 2)
 				trackProtagonist = 1;
-			if (currentChapter == 4)
+			if (currentChapter == 4) {
 				loadPic("icons2.alg", backSurface);
-			else if (currentChapter == 5)
+				loadPic("icons2.alg", cursorSurface);
+			} else if (currentChapter == 5) {
 				loadPic("icons3.alg", backSurface);
-			else if (currentChapter == 6)
+				loadPic("icons3.alg", cursorSurface);
+			} else if (currentChapter == 6) {
 				loadPic("iconsp.alg", backSurface);
-			else
+				loadPic("iconsp.alg", cursorSurface);
+			} else {
 				loadPic("icons.alg", backSurface);
+				loadPic("icons.alg", cursorSurface);
+			}
 			_menuScreen = true;
 #ifndef _WIN32_WCE
 			updateEvents();

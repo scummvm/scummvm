@@ -151,8 +151,7 @@ void DrasculaEngine::showFrame(Common::SeekableReadStream *stream, bool firstFra
 	free(prevFrame);
 }
 
-void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width,
-								  int height, byte *src, byte *dest) {
+void DrasculaEngine::copyBackground(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *src, byte *dest) {
 	dest += xdes + ydes * 320;
 	src += xorg + yorg * 320;
 	/* Unoptimized code
