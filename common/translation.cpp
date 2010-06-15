@@ -52,10 +52,28 @@ TranslationManager::TranslationManager() {
 	const char *locale = setlocale(LC_ALL, "");
 
 	// Detect the language from the locale
-	if (!locale)
+	if (!locale) {
 		_syslang = "C";
-	else
-		_syslang = locale;
+	} else {
+		int length = 0;
+
+		// Strip out additional information, like
+		// ".UTF-8" or the like. We do this, since
+		// our translation languages are usually
+		// specified without any charset information.
+		for (int i = 0; locale[i]; ++i) {
+			// TODO: Check whether "@" should really be checked
+			// here.
+			if (locale[i] == '.' || locale[i] == ' ' || locale[i] == '@') {
+				length = i;
+				break;
+			}
+
+			length = i;
+		}
+
+		_syslang = String(locale, length);
+	}
 #else // DETECTLANG
 	_syslang = "C";
 #endif // DETECTLANG
