@@ -365,21 +365,13 @@ protected:
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource
 	 * manager's list of sources.
-	 * @param file_name	 The name of the volume to add
+	 * @param filename	 The name of the volume to add
 	 * @param volume_nr  The volume number the map starts at, 0 for <SCI2.1
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const Common::String &filename, int volume_nr = 0);
 
 	ResourceSource *addExternalMap(const Common::FSNode *mapFile, int volume_nr = 0);
-
-	/**
-	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
-	 * @param name		The name of the resource to add
-	 * @param resNr		The map resource number
-	 * @return		A pointer to the added source structure, or NULL if an error occurred.
-	 */
-	ResourceSource *addInternalMap(const Common::String &name, int resNr);
 
 	/**
 	 * Scans newly registered resource sources for resources, earliest addition first.
