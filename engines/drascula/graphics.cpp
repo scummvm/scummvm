@@ -205,9 +205,7 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
-	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, screenBuffer);
-	_system->unlockScreen();
+	_system->copyRectToScreen(buffer + xorg + yorg * 320, 320, xdes, ydes, width, height);
 	_system->updateScreen();
 }
 
