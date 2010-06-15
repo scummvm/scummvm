@@ -196,8 +196,14 @@ const char *TranslationManager::getLangById(int id) {
 	case kTranslationBuiltinId:
 		return "C";
 	default:
-		return po2c_getlang(id - 1);
+		if (id >= 0 && id - 1 < po2c_getnumlangs())
+			return po2c_getlang(id - 1);
 	}
+
+	// In case an invalid ID was specified, we will output a warning
+	// and return the same value as the auto detection id.
+	warning("Invalid language id %d passed to TranslationManager::getLangById", id);
+	return "";
 }
 
 #else // TRANSLATION
