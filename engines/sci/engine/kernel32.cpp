@@ -834,22 +834,24 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 
 	// Get the object's plane
 	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
-	uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
-	uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
-	uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
-	uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
-	planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
-	planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+	if (!planeObject.isNull()) {
+		uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+		uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
 
-	// Adjust the bounding rectangle of the object by the object's actual X, Y coordinates
-	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-	itemY = ((itemY * g_sci->_gfxScreen->getHeight()) / planeResY);
-	itemX = ((itemX * g_sci->_gfxScreen->getWidth()) / planeResX);
-	itemY += planeTop;
-	itemX += planeLeft;
+		// Adjust the bounding rectangle of the object by the object's actual X, Y coordinates
+		itemY = ((itemY * g_sci->_gfxScreen->getHeight()) / planeResY);
+		itemX = ((itemX * g_sci->_gfxScreen->getWidth()) / planeResX);
+		itemY += planeTop;
+		itemX += planeLeft;
 
-	nsRect.translate(itemX, itemY);
+		nsRect.translate(itemX, itemY);
+	}
 
 	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
