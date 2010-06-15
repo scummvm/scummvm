@@ -40,6 +40,7 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 		}
 		updateScreen(destX, destY, destX, destY, width, height, screenSurface);
 		x += width;
+		updateEvents();
 		pause(delayVal);
 	}
 }
@@ -1961,6 +1962,7 @@ void DrasculaEngine::animation_36_2() {
 	loadPic(974, extraSurface);
 }
 
+// Use sickle on plant
 void DrasculaEngine::animation_7_2() {
 	debug(4, "animation_7_2()");
 
