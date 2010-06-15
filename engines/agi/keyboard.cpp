@@ -191,9 +191,8 @@ int AgiEngine::handleController(int key) {
 			}
 		}
 
-		v->flags &= ~ADJ_EGO_XY;
-
 		if (d || key == KEY_STATIONARY) {
+			v->flags &= ~ADJ_EGO_XY;
 			v->direction = v->direction == d ? 0 : d;
 			return true;
 		}
