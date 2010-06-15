@@ -8,6 +8,20 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Switched to the "fast" DOSBox OPL emulator.
    - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
+   - Added support for more original media layouts.
+
+  AGI:
+   - Fixed number of GFX glitches.
+   - Made PIC drawing code picture perfect.
+   - Added support of MIDI devices.
+
+  Drascula:
+   - Fixed number of GFX glitches.
+   - Made many cutscenes smoother.
+   - Changed behavior of items menu. Now it shows up on mouse up.
+
+  SAGA:
+   - Fixed graphics glithces in several scenes.
 
  Groovie:
    - Added support for the Macintosh version of The 7th Guest.
