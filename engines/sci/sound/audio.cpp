@@ -353,9 +353,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	}
 
 	if (audioSeekStream) {
-		*sampleLen = (audioSeekStream->getLength().msecs() * 10000) / 166666; // we translate msecs to ticks
-		// Original code
-		//*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		*sampleLen = (audioSeekStream->getLength().msecs() * 60) / 1000; // we translate msecs to ticks
 		audioStream = audioSeekStream;
 	}
 	// We have to make sure that we don't depend on resource manager pointers after this point, because the actual
