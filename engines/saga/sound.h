@@ -63,6 +63,7 @@ enum sndHandleType {
 struct SndHandle {
 	Audio::SoundHandle handle;
 	sndHandleType type;
+	int resId;
 };
 
 class Sound {
@@ -71,7 +72,7 @@ public:
 	Sound(SagaEngine *vm, Audio::Mixer *mixer);
 	~Sound();
 
-	void playSound(SoundBuffer &buffer, int volume, bool loop);
+	void playSound(SoundBuffer &buffer, int volume, bool loop, int resId);
 	void pauseSound();
 	void resumeSound();
 	void stopSound();

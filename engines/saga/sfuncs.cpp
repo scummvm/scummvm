@@ -1464,6 +1464,8 @@ void Script::sfPlayLoopedSound(SCRIPTFUNC_PARAMS) {
 	} else {
 		_vm->_sound->stopSound();
 	}
+
+	debug(1, "sfPlayLoopedSound(%d)", param);
 }
 
 // Script function #72 (0x48)
