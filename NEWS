@@ -11,23 +11,26 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for more original media layouts.
    - Added support for GUI localization.
 
-  AGI:
+ AGI:
    - Fixed number of GFX glitches.
    - Made PIC drawing code picture perfect.
    - Added support of MIDI devices.
    - Added support for accurate Tandy sound emulation. Switched to it as default.
 
-  Drascula:
+ Drascula:
    - Fixed number of GFX glitches.
    - Made many cutscenes smoother.
    - Changed behavior of items menu. Now it shows up on mouse up.
 
-  SAGA:
-   - Fixed graphics glithces in several scenes.
-
  Groovie:
    - Added support for the Macintosh version of The 7th Guest.
    - Added support for custom MT-32 instruments.
+
+ SAGA:
+   - Fixed graphics glithces in several scenes.
+
+ SCUMM:
+   - Several improvements in Maniac Mansion NES.
 
  PSP port:
    - Switched to new backend design which fixes minor graphical issues,
