@@ -9,6 +9,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Switched to the "fast" DOSBox OPL emulator.
    - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
    - Added support for more original media layouts.
+   - Added support for GUI localization.
 
   AGI:
    - Fixed number of GFX glitches.
