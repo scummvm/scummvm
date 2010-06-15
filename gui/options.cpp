@@ -499,7 +499,7 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
 
-	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO(~0ul);
+	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO((uint32)-1);
 
 	if (_domain != Common::ConfigManager::kApplicationDomain && // global dialog
 				(_guioptions & allFlags) && // No flags are specified
@@ -628,7 +628,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
-	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO(~0ul);
+	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO((uint32)-1);
 
 	while (md->name) {
 		if (_domain == Common::ConfigManager::kApplicationDomain || // global dialog
