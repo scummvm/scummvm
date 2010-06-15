@@ -87,7 +87,7 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	// The flags for the "adlib" driver indicates that it can do AdLib and MIDI.
 	{"adlib", _s("AdLib"), MD_ADLIB, MDT_ADLIB},
 	{"pcspk", _s("PC Speaker"), MD_PCSPK, MDT_PCSPK},
-	{"pcjr", _s("IBM PCjr"), MD_PCJR, MDT_PCSPK},
+	{"pcjr", _s("IBM PCjr"), MD_PCJR, MDT_PCSPK | MDT_PCJR},
 	{"cms", _s("Creative Music System"), MD_CMS, MDT_CMS},
 	{"towns", _s("FM Towns"), MD_TOWNS, MDT_TOWNS},
 #if defined(UNIX)
