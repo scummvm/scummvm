@@ -656,11 +656,8 @@ void AgiEngine::writePrompt() {
 	int l, fg, bg, pos;
 	int promptLength = strlen(agiSprintf(_game.strings[0]));
 
-	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL) {
-		clearPrompt();
-
+	if (!_game.inputEnabled || _game.inputMode != INPUT_NORMAL)
 		return;
-	}
 
 	l = _game.lineUserInput;
 	fg = _game.colorFg;
