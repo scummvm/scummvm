@@ -116,6 +116,8 @@ DrasculaEngine::~DrasculaEngine() {
 
 	freeRoomsTable();
 
+	delete _console;
+
 	free(_charMap);
 	free(_itemLocations);
 	free(_polX);
