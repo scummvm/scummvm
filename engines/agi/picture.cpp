@@ -476,7 +476,7 @@ void PictureMgr::plotPattern(int x, int y) {
 
 	// new purpose for temp16
 
-	temp16 =( pen_size<<1) +1;	// pen size
+	temp16 = (pen_size << 1) + 1;	// pen size
 	pen_final_y += temp16;					// the last row of this shape
 	temp16 = temp16 << 1;
 	pen_width = temp16;					// width of shape?
@@ -495,7 +495,7 @@ void PictureMgr::plotPattern(int x, int y) {
 	} else {
 		circleCond = ((_patCode & 0x10) != 0);
 		counterStep = 4;
-		ditherCond = 0x02;
+		ditherCond = 0x01;
 	}
 
 	for (; pen_y < pen_final_y; pen_y++) {
@@ -503,10 +503,12 @@ void PictureMgr::plotPattern(int x, int y) {
 
 		for (counter = 0; counter <= pen_width; counter += counterStep) {
 			if (circleCond || ((binary_list[counter>>1] & circle_word) != 0)) {
-				temp8 = t % 2;
-				t = t >> 1;
-				if (temp8 != 0)
-					t = t ^ 0xB8;
+				if ((_patCode & 0x20) != 0) {
+					temp8 = t % 2;
+					t = t >> 1;
+					if (temp8 != 0)
+						t = t ^ 0xB8;
+				}
 
 				// == box plot, != circle plot
 				if ((_patCode & 0x20) == 0 || (t & 0x03) == ditherCond)

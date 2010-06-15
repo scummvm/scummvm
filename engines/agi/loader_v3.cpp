@@ -227,19 +227,12 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 		compBuffer = (uint8 *)calloc(1, agid->clen + 32);
 		fp.read(compBuffer, agid->clen);
 
-		if (x[2] & 0x80 || agid->len == agid->clen) {
+		if (x[2] & 0x80) { // compressed pic
+			data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
+			free(compBuffer);
+		} else if (agid->len == agid->clen) {
 			// do not decompress
 			data = compBuffer;
-
-#if 0
-			// CM: added to avoid problems in
-			//     convert_v2_v3_pic() when clen > len
-			//     e.g. Sierra demo 4, first picture
-			//     (Tue Mar 16 13:13:43 EST 1999)
-			agid->len = agid->clen;
-
-			// Now removed to fix Gold Rush! in demo4
-#endif
 		} else {
 			// it is compressed
 			data = (uint8 *)calloc(1, agid->len + 32);
@@ -309,7 +302,6 @@ int AgiLoader_v3::loadResource(int t, int n) {
 			unloadResource(rPICTURE, n);
 			data = loadVolRes(&_vm->_game.dirPic[n]);
 			if (data != NULL) {
-				data = _vm->_picture->convertV3Pic(data, _vm->_game.dirPic[n].len);
 				_vm->_game.pictures[n].rdata = data;
 				_vm->_game.dirPic[n].flags |= RES_LOADED;
 			} else {
