@@ -80,12 +80,12 @@ using Common::GUIO_NONE;
 
 #define GAME3_PS(id,name,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
-#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
-#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPN(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
-#define FANMADE_SVP(name,md5,size,ver,platform) GAME_LVFPNF("agi-fanmade",name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
+#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
+#define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVP("agi-fanmade",name,md5,size,ver,platform)
 
-#define FANMADE_LVF(name,md5,lang,ver,features) GAME_LVFPNF("agi-fanmade",name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
 
 #define FANMADE_LF(name,md5,lang,features) FANMADE_LVF(name,md5,lang,0x2917,features)
 #define FANMADE_IF(id,name,md5,features) FANMADE_ILVF(id,name,md5,Common::EN_ANY,0x2917,features)
@@ -775,9 +775,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
 	FANMADE("Solar System Tour", "b5a3d0f392dfd76a6aa63f3d5f578403"),
 	FANMADE("Sorceror's Appraisal", "fe62615557b3cb7b08dd60c9d35efef1"),
-	FANMADE_I("sq0", "v1.03", "d2fd6f7404e86182458494e64375e590"),
-	FANMADE_I("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6"),
-    FANMADE_ISVP("sq0", "", "e1a8e4efcce86e1efcaa14633b9eb986", 762, 0x2440, Common::kPlatformCoCo3),
+	GAME("sq0", "v1.03", "d2fd6f7404e86182458494e64375e590", 0x2917, GID_SQ0),
+	GAME("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6", 0x2917, GID_SQ0),
+	GAME_PS("sq0", "", "e1a8e4efcce86e1efcaa14633b9eb986", 762, 0x2440, GID_SQ0, Common::kPlatformCoCo3),
 	FANMADE_I("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1"),
 	FANMADE_I("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910"),
     FANMADE_ISVP("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, Common::kPlatformCoCo3),

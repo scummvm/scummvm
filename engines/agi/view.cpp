@@ -297,14 +297,17 @@ void AgiEngine::setView(VtEntry *v, int n) {
 
 	uint16 viewFlags = 0;
 
+	// WORKAROUND
 	// When setting a view to the view table, if there's already another view set in that
 	// view table entry and it's still drawn, erase the existing view before setting the new one
 	// Fixes bug #1658643: AGI: SQ1 (2.2 DOS ENG) Graphic error, ego leaves behind copy
 	// Update: Apparently, this makes ego dissapear at times, e.g. when textboxes are shown
 	// Therefore, it's limited to view 118 in SQ1 (Roger climbing the ladder)
 	// Fixes bug #1715284: Roger sometimes disappears
+	// Update: Added case fot bug #2960557: AGI: (Fan) SQ0 - Sprite (Ego) not erased
 	if (v->viewData != NULL) {
-		if (v->currentView == 118 && v->flags & DRAWN && getGameID() == GID_SQ1) {
+		if (((v->currentView == 118 &&  getGameID() == GID_SQ1) ||
+			 (v->currentView == 2 & (n == 254 || n == 255) && getGameID() == GID_SQ0)) && v->flags & DRAWN) {
 			viewFlags = v->flags;			// Store the flags for the view
 			_sprites->eraseUpdSprites();
 

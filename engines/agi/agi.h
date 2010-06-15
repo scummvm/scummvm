@@ -110,10 +110,11 @@ enum AgiGameID {
 	GID_SQ2,
 	GID_XMASCARD,
 	GID_FANMADE,
-	GID_GETOUTTASQ,
+	GID_GETOUTTASQ,	// Fanmade
+	GID_SQ0,				// Fanmade
 	GID_MICKEY,			// PreAGI
 	GID_WINNIE,			// PreAGI
-	GID_TROLL			// PreAGI
+	GID_TROLL				// PreAGI
 };
 
 } // End of namespace Agi
