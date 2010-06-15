@@ -171,7 +171,7 @@ uint32 Resource::getAudioCompressionType() {
 ResourceSource::ResourceSource(ResSourceType type, const Common::String &name)
  : _sourceType(type), _name(name) {
 	scanned = false;
-	resourceFile = 0;
+	_resourceFile = 0;
 	volume_number = 0;
 	associated_map = NULL;
 	audioCompressionType = 0;
@@ -203,7 +203,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
 	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getName());
 
-	newsrc->resourceFile = mapFile;
+	newsrc->_resourceFile = mapFile;
 	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
@@ -229,7 +229,7 @@ ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, int number) {
 ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, const Common::FSNode *resFile, int number) {
 	assert(newsrc);
 
-	newsrc->resourceFile = resFile;
+	newsrc->_resourceFile = resFile;
 	newsrc->volume_number = number;
 	if (newsrc->getSourceType() == kSourceAudioVolume) {
 		// TODO: Move this call into the AudioVolumeResourceSource constructor.
@@ -307,8 +307,8 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	Common::List<Common::File *>::iterator it = _volumeFiles.begin();
 	Common::File *file;
 
-	if (source->resourceFile)
-		return source->resourceFile->createReadStream();
+	if (source->_resourceFile)
+		return source->_resourceFile->createReadStream();
 
 	const char *filename = source->getLocationName().c_str();
 
@@ -375,7 +375,7 @@ void ResourceManager::loadResource(Resource *res) {
 	case kSourceWave:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 		loadFromWaveFile(res, fileStream);
-		if (res->_source->resourceFile)
+		if (res->_source->_resourceFile)
 			delete fileStream;
 		return;
 
@@ -414,7 +414,7 @@ void ResourceManager::loadResource(Resource *res) {
 			case kResourceTypeAudio36:
 				// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
 				loadFromAudioVolumeSCI1(res, fileStream);
-				if (res->_source->resourceFile)
+				if (res->_source->_resourceFile)
 					delete fileStream;
 				return;
 			default:
@@ -429,7 +429,7 @@ void ResourceManager::loadResource(Resource *res) {
 		else
 			loadFromAudioVolumeSCI11(res, fileStream);
 
-		if (res->_source->resourceFile)
+		if (res->_source->_resourceFile)
 			delete fileStream;
 		return;
 
@@ -437,7 +437,7 @@ void ResourceManager::loadResource(Resource *res) {
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 		int error = decompress(res, fileStream);
 
-		if (res->_source->resourceFile)
+		if (res->_source->_resourceFile)
 			delete fileStream;
 
 		if (error) {
@@ -892,8 +892,8 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		rsrc = *it;
 
 		if (rsrc->getSourceType() == kSourceExtMap) {
-			if (rsrc->resourceFile) {
-				fileStream = rsrc->resourceFile->createReadStream();
+			if (rsrc->_resourceFile) {
+				fileStream = rsrc->_resourceFile->createReadStream();
 			} else {
 				Common::File *file = new Common::File();
 				file->open(rsrc->getLocationName());
@@ -981,8 +981,8 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		rsrc = *it;
 
 		if (rsrc->getSourceType() == kSourceVolume) {
-			if (rsrc->resourceFile) {
-				fileStream = rsrc->resourceFile->createReadStream();
+			if (rsrc->_resourceFile) {
+				fileStream = rsrc->_resourceFile->createReadStream();
 			} else {
 				Common::File *file = new Common::File();
 				file->open(rsrc->getLocationName());
@@ -1085,8 +1085,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	else if (checkForType == kResourceTypeSync36)
 		checkForType = kResourceTypeSync;
 
-	if (source->resourceFile) {
-		fileStream = source->resourceFile->createReadStream();
+	if (source->_resourceFile) {
+		fileStream = source->_resourceFile->createReadStream();
 	} else {
 		Common::File *file = new Common::File();
 		if (!file->open(source->getLocationName())) {
@@ -1292,8 +1292,8 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 	uint16 number, id;
 	uint32 offset;
 
-	if (map->resourceFile) {
-		fileStream = map->resourceFile->createReadStream();
+	if (map->_resourceFile) {
+		fileStream = map->_resourceFile->createReadStream();
 		if (!fileStream)
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
@@ -1352,8 +1352,8 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	Common::SeekableReadStream *fileStream = 0;
 	Resource *res;
 
-	if (map->resourceFile) {
-		fileStream = map->resourceFile->createReadStream();
+	if (map->_resourceFile) {
+		fileStream = map->_resourceFile->createReadStream();
 		if (!fileStream)
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
@@ -1696,12 +1696,12 @@ ResourceCompression ResourceManager::getViewCompression() {
 		ResourceCompression compression;
 
 		if (readResourceInfo(res, fileStream, szPacked, compression)) {
-			if (res->_source->resourceFile)
+			if (res->_source->_resourceFile)
 				delete fileStream;
 			continue;
 		}
 
-		if (res->_source->resourceFile)
+		if (res->_source->_resourceFile)
 			delete fileStream;
 
 		if (compression != kCompNone)

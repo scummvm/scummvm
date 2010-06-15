@@ -54,7 +54,7 @@ protected:
 
 public:
 	bool scanned;
-	const Common::FSNode *resourceFile;
+	const Common::FSNode *_resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
 	uint32 audioCompressionType;	// TODO: Move to AudioVolumeResourceSource

@@ -64,7 +64,7 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 		*offsetMapping++ = fileStream->size();
 	}
 
-	if (source->resourceFile)
+	if (source->_resourceFile)
 		delete fileStream;
 }
 
