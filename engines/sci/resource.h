@@ -205,6 +205,10 @@ public:
 	 * This method is used only by the "dump" debugger command.
 	 */
 	void writeToStream(Common::WriteStream *stream) const;
+
+	// FIXME: This audio specific method is a hack. After all, why should a
+	// Resource have audio specific methods? But for now we keep this, as it
+	// eases transition.
 	uint32 getAudioCompressionType() const;
 
 protected:

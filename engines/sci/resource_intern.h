@@ -85,8 +85,10 @@ public:
 	 */
 	virtual void loadResource(Resource *res);
 
+	// FIXME: This audio specific method is a hack. After all, why should a
+	// ResourceSource or a Resource (which uses this method) have audio
+	// specific methods? But for now we keep this, as it eases transition.
 	virtual uint32 getAudioCompressionType() const { return 0; }
-
 };
 
 class DirectoryResourceSource : public ResourceSource {
