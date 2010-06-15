@@ -311,6 +311,7 @@ void AgiEngine::startUpdate(VtEntry *v) {
 
 		v->flags |= UPDATE;
 		_sprites->blitBoth();
+		_sprites->commitBoth();
 	}
 }
 
@@ -324,6 +325,7 @@ void AgiEngine::stopUpdate(VtEntry *v) {
 
 		v->flags &= ~UPDATE;
 		_sprites->blitBoth();
+		_sprites->commitBoth();
 	}
 }
 

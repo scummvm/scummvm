@@ -741,6 +741,7 @@ cmd(draw_pic) {
 	g_sprites->eraseBoth();
 	g_picture->decodePicture(_v[p0], true);
 	g_sprites->blitBoth();
+	g_sprites->commitBoth();
 	game.pictureShown = 0;
 	debugC(6, kDebugLevelScripts, "--- end of draw pic %d ---", _v[p0]);
 
@@ -778,6 +779,7 @@ cmd(load_pic) {
 	g_sprites->eraseBoth();
 	g_agi->agiLoadResource(rPICTURE, _v[p0]);
 	g_sprites->blitBoth();
+	g_sprites->commitBoth();
 }
 
 cmd(discard_pic) {
@@ -869,7 +871,7 @@ cmd(draw) {
 	g_sprites->blitUpdSprites();
 	vt.flags &= ~DONTUPDATE;
 
-	g_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos);
+	g_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos, true);
 
 	debugC(4, kDebugLevelScripts, "vt entry #%d flags = %02x", p0, vt.flags);
 }
@@ -896,7 +898,7 @@ cmd(erase) {
 	y1 = MIN((int)MIN(vt.yPos, vt.yPos2), MIN(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
 	y2 = MAX((int)MAX(vt.yPos, vt.yPos2), MAX(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
 
-	g_sprites->commitBlock(x1, y1, x2, y2);
+	g_sprites->commitBlock(x1, y1, x2, y2, true);
 }
 
 cmd(position) {
@@ -1804,6 +1806,7 @@ int AgiEngine::runLogic(int n) {
 				}
 			} else {
 				_sprites->blitBoth();
+				_sprites->commitBoth();
 				do {
 					mainCycle();
 				} while (!_debug.steps && _debug.enabled);

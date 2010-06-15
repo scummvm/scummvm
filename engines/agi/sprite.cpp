@@ -391,7 +391,7 @@ void SpritesMgr::freeList(SpriteList &l) {
  * Copy sprites from the pic buffer to the screen buffer, and check if
  * sprites of the given list have moved.
  */
-void SpritesMgr::commitSprites(SpriteList &l) {
+void SpritesMgr::commitSprites(SpriteList &l, bool immediate) {
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
 		Sprite *s = *iter;
@@ -404,7 +404,7 @@ void SpritesMgr::commitSprites(SpriteList &l) {
 
 		s->v->celData2 = s->v->celData;
 
-		commitBlock(x1, y1, x2, y2);
+		commitBlock(x1, y1, x2, y2, immediate);
 
 		if (s->v->stepTimeCount != s->v->stepTime)
 			continue;
@@ -458,11 +458,11 @@ void SpritesMgr::blitSprites(SpriteList& l) {
  */
 
 void SpritesMgr::commitUpdSprites() {
-	commitSprites(_sprUpd);
+	commitSprites(_sprUpd, true);
 }
 
 void SpritesMgr::commitNonupdSprites() {
-	commitSprites(_sprNonupd);
+	commitSprites(_sprNonupd, true);
 }
 
 // check moves in both lists
@@ -651,7 +651,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 
 	blitBoth();
 
-	commitBlock(x1, y1, x2, y2);
+	commitBlock(x1, y1, x2, y2, true);
 }
 
 /**
@@ -682,15 +682,15 @@ void SpritesMgr::showObj(int n) {
 
 	objsSaveArea(&s);
 	blitCel(x1, y1, 15, c, _vm->_game.views[n].agi256_2);
-	commitBlock(x1, y1, x2, y2);
+	commitBlock(x1, y1, x2, y2, true);
 	_vm->messageBox(_vm->_game.views[n].descr);
 	objsRestoreArea(&s);
-	commitBlock(x1, y1, x2, y2);
+	commitBlock(x1, y1, x2, y2, true);
 
 	free(s.buffer);
 }
 
-void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
+void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2, bool immediate) {
 	int i, w, offset;
 	uint8 *q;
 
@@ -714,6 +714,9 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	}
 
 	_gfx->flushBlockA(x1, y1 + offset, x2, y2 + offset);
+
+	if (immediate)
+		_gfx->doUpdate();
 }
 
 SpritesMgr::SpritesMgr(AgiEngine *agi, GfxMgr *gfx) {
