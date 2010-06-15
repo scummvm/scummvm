@@ -1525,7 +1525,7 @@ int Resource::readResourceInfo(Common::SeekableReadStream *file,
 	ResourceType type;
 
 	ResourceManager *resMan = g_sci->getResMan();
-	switch (resMan->_volVersion) {
+	switch (resMan->getVolVersion()) {
 	case kResVersionSci0Sci1Early:
 	case kResVersionSci1Middle:
 		w = file->readUint16LE();

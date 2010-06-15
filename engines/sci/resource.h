@@ -228,7 +228,6 @@ enum ResVersion {
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to
 	// ease transition to the ResourceSource class system.
-	friend class Resource;	// For _volVersion
 	friend class ResourceSource;
 	friend class DirectoryResourceSource;
 	friend class PatchResourceSource;
@@ -301,6 +300,7 @@ public:
 	ViewType getViewType() const { return _viewType; }
 	const char *getMapVersionDesc() const { return versionDescription(_mapVersion); }
 	const char *getVolVersionDesc() const { return versionDescription(_volVersion); }
+	ResVersion getVolVersion() const { return _volVersion; }
 
 	/**
 	 * Adds the appropriate GM patch from the Sierra MIDI utility as 4.pat, without
