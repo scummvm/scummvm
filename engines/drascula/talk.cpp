@@ -700,12 +700,12 @@ void DrasculaEngine::talk_pen(const char *said, const char *filename, int talker
 		copyBackground();
 		updateRefresh_pre();
 
+		updateRefresh();
+
 		if (talkerType == 0)
 			copyRect(x_talk[face], 145, 145, 105, 25, 29, drawSurface3, screenSurface);
 		else
 			copyBackground(x_talk2[face], 171, 173, 116, 25, 28, drawSurface3, screenSurface);
-
-		updateRefresh();
 
 		if (!_subtitlesDisabled) {
 			if (talkerType == 0)
