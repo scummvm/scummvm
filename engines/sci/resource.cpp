@@ -26,6 +26,7 @@
 // Resource library
 
 #include "common/file.h"
+#include "common/macresman.h"
 
 #include "sci/resource.h"
 #include "sci/resource_intern.h"
@@ -144,7 +145,7 @@ Resource::Resource() {
 
 Resource::~Resource() {
 	delete[] data;
-	if (_source && _source->source_type == kSourcePatch)
+	if (_source && _source->getSourceType() == kSourcePatch)
 		delete _source;
 }
 
@@ -166,14 +167,33 @@ uint32 Resource::getAudioCompressionType() {
 	return _source->audioCompressionType;
 }
 
+
+ResourceSource::ResourceSource(ResSourceType type)
+ : _sourceType(type) {
+	scanned = false;
+	resourceFile = 0;
+	volume_number = 0;
+	associated_map = NULL;
+	audioCompressionType = 0;
+	audioCompressionOffsetMapping = NULL;
+
+	if (_sourceType == kSourceMacResourceFork)
+		_macResMan = new Common::MacResManager();
+	else
+		_macResMan = NULL;
+}
+
+ResourceSource::~ResourceSource() {
+	delete _macResMan;
+}
+
 //-- resMan helper functions --
 
 // Resource source list management
 
 ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource();
+	ResourceSource *newsrc = new ResourceSource(kSourceExtMap);
 
-	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
 	newsrc->volume_number = volume_nr;
 
@@ -182,9 +202,8 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volum
 }
 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource();
+	ResourceSource *newsrc = new ResourceSource(kSourceExtMap);
 
-	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = mapFile->getName();
 	newsrc->resourceFile = mapFile;
 	newsrc->volume_number = volume_nr;
@@ -194,9 +213,8 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const char *filename, int number) {
-	ResourceSource *newsrc = new ResourceSource();
+	ResourceSource *newsrc = new ResourceSource(type);
 
-	newsrc->source_type = type;
 	newsrc->location_name = filename;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
@@ -208,9 +226,8 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const Common::FSNode *resFile, int number) {
-	ResourceSource *newsrc = new ResourceSource();
+	ResourceSource *newsrc = new ResourceSource(type);
 
-	newsrc->source_type = type;
 	newsrc->location_name = resFile->getName();
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
@@ -223,9 +240,8 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 }
 
 ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
-	ResourceSource *newsrc = new ResourceSource();
+	ResourceSource *newsrc = new ResourceSource(kSourceDirectory);
 
-	newsrc->source_type = kSourceDirectory;
 	newsrc->location_name = dirname;
 
 	_sources.push_back(newsrc);
@@ -235,7 +251,7 @@ ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
 ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		ResourceSource *src = *it;
-		if ((src->source_type == kSourceVolume || src->source_type == kSourceAudioVolume)
+		if ((src->getSourceType() == kSourceVolume || src->getSourceType() == kSourceAudioVolume)
 			&& src->associated_map == map && src->volume_number == volume_nr)
 			return src;
 	}
@@ -327,11 +343,12 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 static uint32 resTypeToMacTag(ResourceType type);
 
 void ResourceManager::loadResource(Resource *res) {
-	if (res->_source->source_type == kSourcePatch && loadFromPatchFile(res))
+	if (res->_source->getSourceType() == kSourcePatch && loadFromPatchFile(res))
 		return;
 
-	if (res->_source->source_type == kSourceMacResourceFork) {
-		Common::SeekableReadStream *stream = res->_source->macResMan.getResource(resTypeToMacTag(res->_id.type), res->_id.number);
+	if (res->_source->getSourceType() == kSourceMacResourceFork) {
+		assert(res->_source->_macResMan);
+		Common::SeekableReadStream *stream = res->_source->_macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
 
 		if (!stream)
 			error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
@@ -353,7 +370,7 @@ void ResourceManager::loadResource(Resource *res) {
 		return;
 	}
 
-	switch(res->_source->source_type) {
+	switch(res->_source->getSourceType()) {
 	case kSourceWave:
 		fileStream->seek(res->_fileOffset, SEEK_SET);
 		loadFromWaveFile(res, fileStream);
@@ -605,7 +622,7 @@ void ResourceManager::scanNewSources() {
 
 		if (!source->scanned) {
 			source->scanned = true;
-			switch (source->source_type) {
+			switch (source->getSourceType()) {
 			case kSourceDirectory:
 				readResourcePatches(source);
 
@@ -874,7 +891,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
 
-		if (rsrc->source_type == kSourceExtMap) {
+		if (rsrc->getSourceType() == kSourceExtMap) {
 			if (rsrc->resourceFile) {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
@@ -884,7 +901,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 					fileStream = file;
 			}
 			break;
-		} else if (rsrc->source_type == kSourceMacResourceFork)
+		} else if (rsrc->getSourceType() == kSourceMacResourceFork)
 			return kResVersionSci11Mac;
 	}
 
@@ -963,7 +980,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
 
-		if (rsrc->source_type == kSourceVolume) {
+		if (rsrc->getSourceType() == kSourceVolume) {
 			if (rsrc->resourceFile) {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
@@ -973,7 +990,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 					fileStream = file;
 			}
 			break;
-		} else if (rsrc->source_type == kSourceMacResourceFork)
+		} else if (rsrc->getSourceType() == kSourceMacResourceFork)
 			return kResVersionSci11Mac;
 	}
 
@@ -1213,8 +1230,7 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 					delete stream;
 				}
 
-				psrcPatch = new ResourceSource;
-				psrcPatch->source_type = kSourcePatch;
+				psrcPatch = new ResourceSource(kSourcePatch);
 				psrcPatch->location_name = name;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 			}
@@ -1263,8 +1279,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			}
 
 			if (bAdd) {
-				psrcPatch = new ResourceSource;
-				psrcPatch->source_type = kSourcePatch;
+				psrcPatch = new ResourceSource(kSourcePatch);
 				psrcPatch->location_name = name;
 				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
@@ -1449,10 +1464,11 @@ static uint32 resTypeToMacTag(ResourceType type) {
 }
 
 int ResourceManager::readMacResourceFork(ResourceSource *source) {
-	if (!source->macResMan.open(source->location_name.c_str()))
+	assert(source->_macResMan);
+	if (!source->_macResMan->open(source->location_name.c_str()))
 		error("%s is not a valid Mac resource fork", source->location_name.c_str());
 
-	Common::MacResTagArray tagArray = source->macResMan.getResTagArray();
+	Common::MacResTagArray tagArray = source->_macResMan->getResTagArray();
 
 	for (uint32 i = 0; i < tagArray.size(); i++) {
 		ResourceType type = kResourceTypeInvalid;
@@ -1467,11 +1483,11 @@ int ResourceManager::readMacResourceFork(ResourceSource *source) {
 		if (type == kResourceTypeInvalid)
 			continue;
 
-		Common::MacResIDArray idArray = source->macResMan.getResIDArray(tagArray[i]);
+		Common::MacResIDArray idArray = source->_macResMan->getResIDArray(tagArray[i]);
 
 		for (uint32 j = 0; j < idArray.size(); j++) {
 			// Get the size of the file
-			Common::SeekableReadStream *stream = source->macResMan.getResource(tagArray[i], idArray[j]);
+			Common::SeekableReadStream *stream = source->_macResMan->getResource(tagArray[i], idArray[j]);
 
 			// Some IBIS resources have a size of 0, so we skip them
 			if (!stream)
@@ -1671,7 +1687,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 		if (!res)
 			continue;
 
-		if (res->_source->source_type != kSourceVolume)
+		if (res->_source->getSourceType() != kSourceVolume)
 			continue;
 
 		fileStream = getVolumeFile(res->_source);

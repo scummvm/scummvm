@@ -26,14 +26,16 @@
 #ifndef SCI_RESOURCE_INTERN_H
 #define SCI_RESOURCE_INTERN_H
 
-#include "common/macresman.h"
-
 #include "sci/resource.h"
+
+namespace Common {
+	class MacResManager;
+}
 
 namespace Sci {
 
 struct ResourceSource {
-	ResSourceType source_type;
+	const ResSourceType _sourceType;
 	bool scanned;
 	Common::String location_name;	// FIXME: Replace by FSNode ?
 	const Common::FSNode *resourceFile;
@@ -41,16 +43,14 @@ struct ResourceSource {
 	ResourceSource *associated_map;
 	uint32 audioCompressionType;
 	int32 *audioCompressionOffsetMapping;
-	Common::MacResManager macResMan;
-	ResourceSource() {
-		source_type = kSourceDirectory;
-		scanned = false;
-		resourceFile = 0;
-		volume_number = 0;
-		associated_map = NULL;
-		audioCompressionType = 0;
-		audioCompressionOffsetMapping = NULL;
-	}
+	Common::MacResManager *_macResMan;
+
+public:
+
+	ResourceSource(ResSourceType type);
+	~ResourceSource();
+
+	ResSourceType getSourceType() const { return _sourceType; }
 };
 
 

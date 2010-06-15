@@ -155,23 +155,15 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 		gmPatchFile = "TALEGM.PAT";
 
 	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
-		ResourceSource *psrcPatch = new ResourceSource;
-		psrcPatch->source_type = kSourcePatch;
-		psrcPatch->resourceFile = 0;
+		ResourceSource *psrcPatch = new ResourceSource(kSourcePatch);
 		psrcPatch->location_name = gmPatchFile;
-		psrcPatch->audioCompressionType = 0;
-		psrcPatch->audioCompressionOffsetMapping = NULL;
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
 }
 
 void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
-	ResourceSource *resSrc = new ResourceSource;
-	resSrc->source_type = kSourceWave;
-	resSrc->resourceFile = 0;
+	ResourceSource *resSrc = new ResourceSource(kSourceWave);
 	resSrc->location_name = name;
-	resSrc->volume_number = 0;
-	resSrc->audioCompressionType = 0;
 
 	Resource *newRes = 0;
 
@@ -211,7 +203,7 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 	if (_resMap.contains(resId)) {
 		Resource *res = _resMap.getVal(resId);
 
-		if (res->_source->source_type == kSourceAudioVolume) {
+		if (res->_source->getSourceType() == kSourceAudioVolume) {
 			if (res->_status == kResStatusLocked) {
 				warning("Failed to remove resource %s (still in use)", resId.toString().c_str());
 			} else {
