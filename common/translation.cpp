@@ -52,17 +52,12 @@ TranslationManager::TranslationManager() {
 	const char *locale = setlocale(LC_ALL, "");
 
 	// Detect the language from the locale
-	if (!locale) {
-		strcpy(_syslang, "C");
-	} else {
-		int len = strlen(locale);
-		if (len > 5)
-			len = 5;
-		strncpy(_syslang, locale, len);
-		_syslang[len] = 0;
-	}
+	if (!locale)
+		_syslang = "C";
+	else
+		_syslang = locale;
 #else // DETECTLANG
-	strcpy(_syslang, "C");
+	_syslang = "C";
 #endif // DETECTLANG
 
 #ifdef TERMCONV
@@ -84,7 +79,7 @@ TranslationManager::~TranslationManager() {
 
 void TranslationManager::setLanguage(const char *lang) {
 	if (*lang == '\0')
-		po2c_setlang(_syslang);
+		po2c_setlang(_syslang.c_str());
 	else
 		po2c_setlang(lang);
 

@@ -61,7 +61,7 @@ typedef Array<TLanguage> TLangArray;
  */
 class TranslationManager : public Singleton<TranslationManager> {
 private:
-	char _syslang[6];
+	Common::String _syslang;
 
 #ifdef TERMCONV
 	iconv_t _conversion;
