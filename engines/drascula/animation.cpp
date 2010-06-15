@@ -147,9 +147,9 @@ void DrasculaEngine::animation_1_1() {
 			copyBackground(0, 0, 320 - l, 0, l, 200, drawSurface3, screenSurface);
 			copyBackground(l, 0, 0, 0, 320 - l, 200, bgSurface, screenSurface);
 
-			copyRect(interf_x[l2], interf_y[l2], 156 - l, 45, 63, 31,
-					 drawSurface2, screenSurface);
+			copyRect(interf_x[l2], interf_y[l2], 156 - l, 45, 63, 31, drawSurface2, screenSurface);
 			updateScreen();
+			updateEvents();
 			p++;
 			if (p == 6) {
 				p = 0;
@@ -936,6 +936,7 @@ void DrasculaEngine::animation_23_joined() {
 		copyRect(x[n], y[n], p_x, p_y, 36, 74, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen(p_x, p_y, p_x, p_y, 36, 74, screenSurface);
+		updateEvents();
 		pause(5);
 	}
 
@@ -958,6 +959,7 @@ void DrasculaEngine::animation_23_joined2() {
 		copyRect(x[n], y[n], p_x, p_y, 33, 71, backSurface, screenSurface);
 		updateRefresh();
 		updateScreen(p_x,p_y, p_x,p_y, 33,71, screenSurface);
+		updateEvents();
 		pause(5);
 	}
 
@@ -989,6 +991,7 @@ void DrasculaEngine::animation_25_2() {
 
 		updateRefresh();
 		updateScreen();
+		updateEvents();
 	}
 
 	finishSound();
@@ -1182,6 +1185,7 @@ void DrasculaEngine::animation_6_3() {
 		copyBackground();
 		copyRect(yoda_x[frame], yoda_y[frame], px, py,	78, 90,	frontSurface, screenSurface);
 		updateScreen(px, py, px, py, 78, 90, screenSurface);
+		updateEvents();
 	}
 
 	flags[2] = 1;
@@ -1267,6 +1271,7 @@ void DrasculaEngine::animation_1_5() {
 				break;
 			updateRoom();
 			updateScreen();
+			updateEvents();
 		}
 
 		trackProtagonist = 1;
@@ -1304,6 +1309,7 @@ void DrasculaEngine::animation_5_5(){
 		copyBackground();
 		copyRect(boneX[frame], boneY[frame], pixelX, pixelY, 97, 64, backSurface, screenSurface);
 		updateScreen(pixelX, pixelY, pixelX,pixelY, 97,64, screenSurface);
+		updateEvents();
 	}
 
 	copyBackground(52, 161, 198, 81, 26, 24, drawSurface3, screenSurface);
@@ -1314,6 +1320,7 @@ void DrasculaEngine::animation_5_5(){
 		copyBackground();
 		copyRect(boneX[frame], boneY[frame], pixelX, pixelY, 97, 64, frontSurface, screenSurface);
 		updateScreen(pixelX, pixelY, pixelX,pixelY, 97, 64, screenSurface);
+		updateEvents();
 	}
 
 	flags[6] = 1;
@@ -1336,11 +1343,13 @@ void DrasculaEngine::animation_5_5(){
 		pause(3);
 		copyBackground(flyX[frame], 1, 174, 79, 61, 109, backSurface, screenSurface);
 		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
+		updateEvents();
 	}
 	for (frame = 0; frame < 5; frame++) {
 		pause(3);
 		copyBackground(flyX[frame], 1, 174, 79, 61, 109, extraSurface, screenSurface);
 		updateScreen(174, 79, 174, 79, 61, 109, screenSurface);
+		updateEvents();
 	}
 	updateScreen(0, 0, 0, 0, 320, 200, bgSurface);
 
@@ -1428,6 +1437,7 @@ void DrasculaEngine::animation_12_5() {
 		copyRect(rayX[frame], 1, 41, 0, 44, 44, backSurface, screenSurface);
 		copyRect(frusky_x[frame], 113, 205, 50, 38, 86, drawSurface3, screenSurface);
 		updateScreen();
+		updateEvents();
 	}
 
 	stopSound();
@@ -1444,6 +1454,7 @@ void DrasculaEngine::animation_12_5() {
 		updateRoom();
 		copyRect(elfrusky_x[frame], 47, 192, 39, 66, 106, backSurface, screenSurface);
 		updateScreen();
+		updateEvents();
 	}
 
 	animate("frel.bin", 16);
@@ -1504,6 +1515,7 @@ void DrasculaEngine::animation_13_5() {
 			frame = 0;
 			trackProtagonist = 3;
 		}
+		updateEvents();
 		pause(6);
 	}
 }
@@ -1622,6 +1634,7 @@ void DrasculaEngine::animation_5_6() {
 		updateRefresh();
 
 		updateScreen();
+		updateEvents();
 		pause(2);
 	}
 
@@ -1824,6 +1837,7 @@ void DrasculaEngine::animation_26_2() {
 		x = x + 50;
 		if (n == 2)
 			playSound(9);
+		updateEvents();
 		pause(3);
 	}
 
@@ -1912,6 +1926,8 @@ void DrasculaEngine::animation_32_2() {
 		x = x + 65;
 		if (n < 2)
 			pause(4);
+
+		updateEvents();
 	}
 
 	loadPic("aux18.alg", drawSurface3);
@@ -2278,6 +2294,7 @@ void DrasculaEngine::animation_8_4() {
 		pause(2);
 		copyBackground(bookcaseX[frame], bookcaseY[frame], 77, 45, 73, 72, frontSurface, screenSurface);
 		updateScreen(77, 45, 77, 45, 73, 72, screenSurface);
+		updateEvents();
 	}
 
 	loadPic(96, frontSurface);
