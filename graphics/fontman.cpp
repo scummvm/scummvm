@@ -57,7 +57,19 @@ FontManager::~FontManager() {
 	g_consolefont = 0;
 }
 
+const char *builtinFontNames[] = {
+	"builtinOSD",
+	"builtinConsole",
+	"builtinGUI",
+	"builtinBigGUI",
+	0
+};
+
 const Font *FontManager::getFontByName(const Common::String &name) const {
+	for (int i = 0; builtinFontNames[i]; i++)
+		if (!strcmp(name.c_str(), builtinFontNames[i]))
+			return getFontByUsage((FontUsage)i);
+
 	if (!_fontMap.contains(name))
 		return 0;
 	return _fontMap[name];
