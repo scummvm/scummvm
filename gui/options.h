@@ -156,6 +156,7 @@ protected:
 	// Game GUI options
 	//
 	uint32 _guioptions;
+	Common::String _guioptionsString;
 };
 
 

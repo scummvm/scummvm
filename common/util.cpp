@@ -322,9 +322,26 @@ bool checkGameGUIOption(GameGUIOption option, const String &str) {
 	return false;
 }
 
+bool checkGameGUIOptionLanguage(Language lang, const String &str) {
+	if (!str.contains("lang_")) // If no languages are specified
+		return true;
+
+	if (str.contains(getGameGUIOptionsDescriptionLanguage(lang)))
+		return true;
+
+	return false;
+}
+
+const String getGameGUIOptionsDescriptionLanguage(Language lang) {
+	if (lang == UNK_LANG)
+		return "";
+
+	return String(String("lang_") + getLanguageDescription(lang));
+}
+
 uint32 parseGameGUIOptions(const String &str) {
 	uint32 res = 0;
-
+	
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (str.contains(g_gameOptions[i].desc))
 			res |= g_gameOptions[i].option;
@@ -332,7 +349,7 @@ uint32 parseGameGUIOptions(const String &str) {
 	return res;
 }
 
-String getGameGUIOptionsDescription(uint32 options) {
+const String getGameGUIOptionsDescription(uint32 options) {
 	String res = "";
 
 	for (int i = 0; g_gameOptions[i].desc; i++)

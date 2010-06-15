@@ -66,6 +66,7 @@ public:
 
 	void appendEntry(const String &entry, uint32 tag = (uint32)-1);
 	void clearEntries();
+	int numEntries() { return _entries.size(); }
 
 	/** Select the entry at the given index. */
 	void setSelected(int item);

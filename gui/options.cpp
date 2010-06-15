@@ -126,8 +126,10 @@ void OptionsDialog::init() {
 
 	// Retrieve game GUI options
 	_guioptions = 0;
-	if (ConfMan.hasKey("guioptions", _domain))
-		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
+	if (ConfMan.hasKey("guioptions", _domain)) {
+		_guioptionsString = ConfMan.get("guioptions", _domain);
+		_guioptions = parseGameGUIOptions(_guioptionsString);
+	}
 }
 
 void OptionsDialog::open() {
@@ -138,8 +140,10 @@ void OptionsDialog::open() {
 
 	// Retrieve game GUI options
 	_guioptions = 0;
-	if (ConfMan.hasKey("guioptions", _domain))
-		_guioptions = parseGameGUIOptions(ConfMan.get("guioptions", _domain));
+	if (ConfMan.hasKey("guioptions", _domain)) {
+		_guioptionsString = ConfMan.get("guioptions", _domain);
+		_guioptions = parseGameGUIOptions(_guioptionsString);
+	}
 
 	// Graphic options
 	if (_fullscreenCheckbox) {

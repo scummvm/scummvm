@@ -228,8 +228,10 @@ enum GameGUIOption {
 };
 
 bool checkGameGUIOption(GameGUIOption option, const String &str);
+bool checkGameGUIOptionLanguage(Language lang, const String &str);
 uint32 parseGameGUIOptions(const String &str);
-String getGameGUIOptionsDescription(uint32 options);
+const String getGameGUIOptionsDescription(uint32 options);
+const String getGameGUIOptionsDescriptionLanguage(Language lang);
 
 /**
  * Updates the GUI options of the current config manager

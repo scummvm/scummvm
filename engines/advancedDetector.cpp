@@ -208,6 +208,7 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 		desc["extra"] = realDesc->extra;
 
 	desc.setGUIOptions(realDesc->guioptions | params.guioptions);
+	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
 }
 
 GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
