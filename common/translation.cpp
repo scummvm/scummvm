@@ -78,7 +78,7 @@ TranslationManager::~TranslationManager() {
 #ifdef TERMCONV
 	iconv_close(_conversion);
 	if (_convmsg)
-		delete [] _convmsg;
+		delete[] _convmsg;
 #endif // TERMCONV
 }
 
@@ -136,7 +136,7 @@ bool TranslationManager::convert(const char *message) {
 	// Do the real conversion
 	size_t result = iconv(_conversion, pmsg, &len, pconv, &len2);
 
-	delete [] msgcpy;
+	delete[] msgcpy;
 
 	return result != ((size_t)-1);
 }
@@ -152,7 +152,7 @@ const char *TranslationManager::convertTerm(const char *message) {
 
 	if (!convert(message)) {
 		// Resizing the buffer
-		delete [] _convmsg;
+		delete[] _convmsg;
 		_sizeconv = len * 2;
 		_convmsg = new char[_sizeconv];
 
