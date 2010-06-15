@@ -1505,6 +1505,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
+			_port_mk="backends/platform/gp2xwiz/gp2xwiz-bundle.mk"
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE -DUNIX"
