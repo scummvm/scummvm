@@ -400,8 +400,8 @@ void M4Surface::copyFrom(M4Surface *src, const Common::Rect &srcBounds, int dest
  * Copies a given image onto a destination surface with scaling, transferring only pixels that meet
  * the specified depth requirement on a secondary surface contain depth information
  */
-void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthsSurface, 
-						 int scale, int transparentColour) {
+void M4Surface::copyFrom(M4Surface *src, int destX, int destY, Common::Point destAdjust,
+						 int depth, M4Surface *depthsSurface, int scale, int transparentColour) {
 
 	if (scale == 100) {
 		// Copy the specified area
@@ -426,8 +426,8 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surf
 		byte *data = src->getBasePtr();
 		byte *srcPtr = data + (src->width() * copyRect.top + copyRect.left);
 		byte *depthsData = depthsSurface->getBasePtr();
-		byte *depthsPtr = depthsData + (src->width() * copyRect.top + copyRect.left);
-		byte *destPtr = (byte *)pixels + (destY * width()) + destX;
+		byte *depthsPtr = depthsData + (depthsSurface->pitch * destY) + destX;
+		byte *destPtr = (byte *)pixels + ((destY + destAdjust.y) * pitch) + destX + destAdjust.x;
 
 		// 100% scaling variation
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
@@ -520,7 +520,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surf
 	if (spriteHeight <= 0)
 		return;
 
-	byte *destPixelsP = this->getBasePtr(destX + spriteLeft, destY + spriteTop);
+	byte *destPixelsP = this->getBasePtr(destX + spriteLeft + destAdjust.x, destY + spriteTop + destAdjust.y);
 	const byte *depthPixelsP = depthsSurface->getBasePtr(destX + spriteLeft, destY + spriteTop);
 
 	spriteLeft = (spriteLeft * (normalFrame ? 1 : -1));
