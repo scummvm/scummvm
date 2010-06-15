@@ -293,12 +293,20 @@ const struct GameOpt {
 	uint32 option;
 	const char *desc;
 } g_gameOptions[] = {
-	{ GUIO_NOSUBTITLES, "sndNoSubs" },
-	{ GUIO_NOMUSIC, "sndNoMusic" },
-	{ GUIO_NOSPEECH, "sndNoSpeech" },
-	{ GUIO_NOSFX, "sndNoSFX" },
-	{ GUIO_NOMIDI, "sndNoMIDI" },
+	{ GUIO_NOSUBTITLES,	"sndNoSubs" },
+	{ GUIO_NOMUSIC,		"sndNoMusic" },
+	{ GUIO_NOSPEECH,		"sndNoSpeech" },
+	{ GUIO_NOSFX,			"sndNoSFX" },
+	{ GUIO_NOMIDI,			"sndNoMIDI" },
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
+
+	{ GUIO_MIDIPCSPK,		"midiPCSpk" },
+	{ GUIO_MIDICMS,		"midiCMS" },
+	{ GUIO_MIDIPCJR,		"midiPCJr" },
+	{ GUIO_MIDIADLIB,		"midiAdLib" },
+	{ GUIO_MIDITOWNS,	"midiTowns" },
+	{ GUIO_MIDI,				"midiMidi" },
+
 	{ GUIO_NONE, 0 }
 };
 

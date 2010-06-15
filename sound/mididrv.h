@@ -134,6 +134,8 @@ public:
 	/** Get the id of the music driver matching the given driver name, or MD_AUTO if there is no match. */
 	static MidiDriverType parseMusicDriver(const Common::String &str);
 
+	static uint32 midiDriverFlags2GUIO(uint32 flags);
+
 	/**
 	 * Get a list of all available MidiDriver types.
 	 * @return list of all available midi drivers, terminated by  a zero entry

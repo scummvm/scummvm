@@ -31,6 +31,27 @@
 #include "common/util.h"
 #include "sound/mididrv.h"
 
+static const uint32 GUIOMapping[] = {
+	MDT_PCSPK,	Common::GUIO_MIDIPCSPK,
+	MDT_CMS,		Common::GUIO_MIDICMS,
+	MDT_PCJR,		Common::GUIO_MIDIPCJR,
+	MDT_ADLIB,	Common::GUIO_MIDIADLIB,
+	MDT_TOWNS,	Common::GUIO_MIDITOWNS,
+	MDT_MIDI,		Common::GUIO_MIDI,
+	0,	0
+};
+
+uint32 MidiDriver::midiDriverFlags2GUIO(uint32 flags) {
+	uint32 res = 0;
+
+	for (int i = 0; GUIOMapping[i] || GUIOMapping[i + 1]; i += 2) {
+		if (flags & GUIOMapping[i])
+			res |= GUIOMapping[i + 1];
+	}
+
+	return res;
+}
+
 /** Internal list of all available 'midi' drivers. */
 static const MidiDriverDescription s_musicDrivers[] = {
 

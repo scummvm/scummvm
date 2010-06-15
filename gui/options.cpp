@@ -613,8 +613,13 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
+	uint32 allFlags = MidiDriver::midiDriverFlags2GUIO(~0ul);
+
 	while (md->name) {
-		_midiPopUp->appendEntry(_(md->description), md->id);
+		if (_domain == Common::ConfigManager::kApplicationDomain || // global dialog
+				!(_guioptions & allFlags) || // No flags are specified
+				_guioptions & (MidiDriver::midiDriverFlags2GUIO(md->flags))) // flag is present
+			_midiPopUp->appendEntry(_(md->description), md->id);
 		md++;
 	}
 
