@@ -265,14 +265,15 @@ void GfxFrameout::kernelFrameout() {
 						uint16 curX = itemEntry->x;
 						uint16 curY = itemEntry->y;
 						for (uint32 i = 0; i < text.size(); i++) {
+							unsigned char curChar = text[i];
 							// TODO: proper text splitting... this is a hack
-							if ((text[i] == ' ' && i > 0 && text[i - i] == ' ') || text[i] == '\n' || 
-								(curX + font->getCharWidth(text[i]) > _screen->getWidth())) {
+							if ((curChar == ' ' && i > 0 && text[i - i] == ' ') || curChar == '\n' || 
+								(curX + font->getCharWidth(curChar) > _screen->getWidth())) {
 								curY += font->getHeight();
 								curX = itemEntry->x;
 							}
-							font->draw(text[i], curY, curX, foreColor, dimmed);
-							curX += font->getCharWidth(text[i]);
+							font->draw(curChar, curY, curX, foreColor, dimmed);
+							curX += font->getCharWidth(curChar);
 						}
 						delete font;
 					}
