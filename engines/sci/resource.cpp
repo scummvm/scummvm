@@ -210,11 +210,10 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addSource(ResourceSource *map, ResourceSource *newsrc, int number) {
+ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, int number) {
 	assert(newsrc);
 
 	newsrc->volume_number = number;
-	newsrc->associated_map = map;
 	if (newsrc->getSourceType() == kSourceAudioVolume)
 		checkIfAudioVolumeIsCompressed(newsrc);
 
@@ -222,12 +221,11 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResourceSource *
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addSource(ResourceSource *map, ResourceSource *newsrc, const Common::FSNode *resFile, int number) {
+ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, const Common::FSNode *resFile, int number) {
 	assert(newsrc);
 
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
-	newsrc->associated_map = map;
 	if (newsrc->getSourceType() == kSourceAudioVolume)
 		checkIfAudioVolumeIsCompressed(newsrc);
 
@@ -459,12 +457,12 @@ int ResourceManager::addAppropriateSources() {
 			const char *dot = strrchr(name.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(map, new VolumeResourceSource(name), number);
+			addSource(new VolumeResourceSource(name, map), number);
 		}
 #ifdef ENABLE_SCI32
 		// GK1CD hires content
 		if (Common::File::exists("alt.map") && Common::File::exists("resource.alt"))
-			addSource(addExternalMap("alt.map", 10), new VolumeResourceSource("resource.alt"), 10);
+			addSource(new VolumeResourceSource("resource.alt", addExternalMap("alt.map", 10)), 10);
 #endif
 	} else if (Common::File::exists("Data1")) {
 		// Mac SCI1.1+ file naming scheme
@@ -472,7 +470,7 @@ int ResourceManager::addAppropriateSources() {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			Common::String filename = (*x)->getName();
-			addSource(0, new MacResourceForkResourceSource(filename), atoi(filename.c_str() + 4));
+			addSource(new MacResourceForkResourceSource(filename), atoi(filename.c_str() + 4));
 		}
 #ifdef ENABLE_SCI32
 		// Mac SCI32 games have extra folders for patches
@@ -484,7 +482,7 @@ int ResourceManager::addAppropriateSources() {
 
 		// There can also be a "Patches" resource fork with patches
 		if (Common::File::exists("Patches"))
-			addSource(0, new MacResourceForkResourceSource("Patches"), 100);
+			addSource(new MacResourceForkResourceSource("Patches"), 100);
 	} else {
 		// SCI2.1-SCI3 file naming scheme
 		Common::ArchiveMemberList mapFiles;
@@ -504,7 +502,7 @@ int ResourceManager::addAppropriateSources() {
 				int resNumber = atoi(strrchr(resName.c_str(), '.') + 1);
 
 				if (mapNumber == resNumber) {
-					addSource(addExternalMap(mapName, mapNumber), new VolumeResourceSource(resName), mapNumber);
+					addSource(new VolumeResourceSource(resName, addExternalMap(mapName, mapNumber)), mapNumber);
 					break;
 				}
 			}
@@ -513,7 +511,7 @@ int ResourceManager::addAppropriateSources() {
 		// SCI2.1 resource patches
 		if (Common::File::exists("resmap.pat") && Common::File::exists("ressci.pat")) {
 			// We add this resource with a map which surely won't exist
-			addSource(addExternalMap("resmap.pat", 100), new VolumeResourceSource("ressci.pat"), 100);
+			addSource(new VolumeResourceSource("ressci.pat", addExternalMap("resmap.pat", 100)), 100);
 		}
 	}
 #else
@@ -523,7 +521,7 @@ int ResourceManager::addAppropriateSources() {
 
 	addPatchDir(".");
 	if (Common::File::exists("message.map"))
-		addSource(addExternalMap("message.map"), new VolumeResourceSource("resource.msg"), 0);
+		addSource(new VolumeResourceSource("resource.msg", addExternalMap("message.map")), 0);
 
 	return 1;
 }
@@ -567,7 +565,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 
 #ifdef ENABLE_SCI32
 	if (sci21PatchMap && sci21PatchRes)
-		addSource(sci21PatchMap, new VolumeResourceSource(sci21PatchRes->getName()), sci21PatchRes, 100);
+		addSource(new VolumeResourceSource(sci21PatchRes->getName(), sci21PatchMap), sci21PatchRes, 100);
 #endif
 
 	// Now find all the resource.0?? files
@@ -582,7 +580,7 @@ int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
 			const char *dot = strrchr(filename.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(map, new VolumeResourceSource(file->getName()), file, number);
+			addSource(new VolumeResourceSource(file->getName(), map), file, number);
 		}
 	}
 
@@ -597,12 +595,12 @@ int ResourceManager::addInternalSources() {
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
 	while (itr != resources->end()) {
-		ResourceSource *src = addSource(NULL, new IntMapResourceSource("MAP"), itr->number);
+		ResourceSource *src = addSource(new IntMapResourceSource("MAP"), itr->number);
 
 		if ((itr->number == 65535) && Common::File::exists("RESOURCE.SFX"))
-			addSource(src, new AudioVolumeResourceSource("RESOURCE.SFX"), 0);
+			addSource(new AudioVolumeResourceSource("RESOURCE.SFX", src), 0);
 		else if (Common::File::exists("RESOURCE.AUD"))
-			addSource(src, new AudioVolumeResourceSource("RESOURCE.AUD"), 0);
+			addSource(new AudioVolumeResourceSource("RESOURCE.AUD", src), 0);
 
 		++itr;
 	}

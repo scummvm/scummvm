@@ -316,15 +316,12 @@ protected:
 
 	/**
 	 * Adds a source to the resource manager's list of sources.
-	 * @param map		The map associated with this source
 	 * @param source	The new source to add
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addSource(ResourceSource *map, ResourceSource *source,
-	                          int number);
+	ResourceSource *addSource(ResourceSource *source, int number);
 
-	ResourceSource *addSource(ResourceSource *map, ResourceSource *source,
-								const Common::FSNode *resFile, int number);
+	ResourceSource *addSource(ResourceSource *source, const Common::FSNode *resFile, int number);
 
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.

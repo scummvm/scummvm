@@ -56,7 +56,7 @@ public:
 	bool scanned;
 	const Common::FSNode *resourceFile;
 	int volume_number;
-	ResourceSource *associated_map;
+	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
 	uint32 audioCompressionType;
 	int32 *audioCompressionOffsetMapping;
 	Common::MacResManager *_macResMan;
@@ -82,7 +82,10 @@ public:
 
 class VolumeResourceSource : public ResourceSource {
 public:
-	VolumeResourceSource(const Common::String &name) : ResourceSource(kSourceVolume, name) {}
+	VolumeResourceSource(const Common::String &name, ResourceSource *map, ResSourceType type = kSourceVolume)
+		: ResourceSource(type, name) {
+		associated_map = map;
+	}
 };
 
 class ExtMapResourceSource : public ResourceSource {
@@ -95,9 +98,11 @@ public:
 	IntMapResourceSource(const Common::String &name) : ResourceSource(kSourceIntMap, name) {}
 };
 
-class AudioVolumeResourceSource : public ResourceSource {
+class AudioVolumeResourceSource : public VolumeResourceSource {
 public:
-	AudioVolumeResourceSource(const Common::String &name) : ResourceSource(kSourceAudioVolume, name) {}
+	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map)
+		: VolumeResourceSource(name, map, kSourceAudioVolume) {
+	}
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
