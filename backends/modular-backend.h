@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "common/timer.h"
+#include "common/savefile.h"
 #include "backends/events/default/default-events.h"
 #include "backends/audiocd/default/default-audiocd.h"
 #include "backends/mutex/null/null-mutex.h"

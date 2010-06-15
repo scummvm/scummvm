@@ -23,22 +23,14 @@
  *
  */
 
-#include "backends/base-backend.h"
+#include "backends/modular-backend.h"
 #include "base/main.h"
 
 #if defined(USE_NULL_DRIVER)
-
-#ifdef UNIX
-#include <unistd.h>
-#include <sys/time.h>
-#endif
-
-#include "common/rect.h"
-#include "graphics/colormasks.h"
-
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
+#include "common/scummsys.h"
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
@@ -51,82 +43,22 @@
 	#include "backends/fs/windows/windows-fs-factory.h"
 #endif
 
-class OSystem_NULL : public BaseBackend {
-protected:
-	Common::SaveFileManager *_savefile;
-	Audio::MixerImpl *_mixer;
-	Common::TimerManager *_timer;
-	FilesystemFactory *_fsFactory;
-
-	timeval _startTime;
+class OSystem_NULL : public ModularBackend {
 public:
-
 	OSystem_NULL();
 	virtual ~OSystem_NULL();
 
 	virtual void initBackend();
 
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
-	virtual const GraphicsMode *getSupportedGraphicsModes() const;
-	virtual int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(const char *name);
-	virtual bool setGraphicsMode(int mode);
-	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
-	virtual int16 getHeight();
-	virtual int16 getWidth();
-	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(byte *colors, uint start, uint num);
-	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
-	virtual void updateScreen();
-	virtual Graphics::Surface *lockScreen();
-	virtual void unlockScreen();
-	virtual void setShakePos(int shakeOffset);
-
-	virtual void showOverlay();
-	virtual void hideOverlay();
-	virtual void clearOverlay();
-	virtual void grabOverlay(OverlayColor *buf, int pitch);
-	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
-	virtual int16 getOverlayHeight();
-	virtual int16 getOverlayWidth();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
-
-	virtual bool showMouse(bool visible);
-
-	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
-
 	virtual bool pollEvent(Common::Event &event);
-	virtual uint32 getMillis();
-	virtual void delayMillis(uint msecs);
-
-	virtual MutexRef createMutex(void);
-	virtual void lockMutex(MutexRef mutex);
-	virtual void unlockMutex(MutexRef mutex);
-	virtual void deleteMutex(MutexRef mutex);
 
 	virtual void quit();
 
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual Audio::Mixer *getMixer();
-	virtual void getTimeAndDate(TimeDate &t) const;
-	virtual Common::TimerManager *getTimerManager();
-	FilesystemFactory *getFilesystemFactory();
-
-};
-
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{0, 0, 0}
+	virtual Common::SeekableReadStream *createConfigReadStream();
+	virtual Common::WriteStream *createConfigWriteStream();
 };
 
 OSystem_NULL::OSystem_NULL() {
-	_savefile = 0;
-	_mixer = 0;
-	_timer = 0;
-
 	#if defined(__amigaos4__)
 		_fsFactory = new AmigaOSFilesystemFactory();
 	#elif defined(UNIX)
@@ -139,20 +71,18 @@ OSystem_NULL::OSystem_NULL() {
 }
 
 OSystem_NULL::~OSystem_NULL() {
-	delete _savefile;
-	delete _mixer;
-	delete _timer;
-	delete _fsFactory;
 }
 
 void OSystem_NULL::initBackend() {
-	_savefile = new DefaultSaveFileManager();
+	_mutexManager = (MutexManager *)new NullMutexManager();
+	_timerManager = new DefaultTimerManager();
+	_eventManager = new DefaultEventManager(this);
+	_savefileManager = new DefaultSaveFileManager();
+	_graphicsManager = (GraphicsManager *)new NullGraphicsManager();
+	_audiocdManager = (AudioCDManager *)new DefaultAudioCDManager();
 	_mixer = new Audio::MixerImpl(this, 22050);
-	_timer = new DefaultTimerManager();
-
-	_mixer->setReady(false);
-
-	gettimeofday(&_startTime, NULL);
+	
+	((Audio::MixerImpl *)_mixer)->setReady(false);
 
 	// Note that both the mixer and the timer manager are useless
 	// this way; they need to be hooked into the system somehow to
@@ -161,163 +91,37 @@ void OSystem_NULL::initBackend() {
 	OSystem::initBackend();
 }
 
-bool OSystem_NULL::hasFeature(Feature f) {
-	return false;
-}
-
-void OSystem_NULL::setFeatureState(Feature f, bool enable) {
-}
-
-bool OSystem_NULL::getFeatureState(Feature f) {
-	return false;
-}
-
-const OSystem::GraphicsMode* OSystem_NULL::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
-}
-
-
-int OSystem_NULL::getDefaultGraphicsMode() const {
-	return -1;
-}
-
-bool OSystem_NULL::setGraphicsMode(const char *mode) {
-	return true;
-}
-
-bool OSystem_NULL::setGraphicsMode(int mode) {
-	return true;
-}
-
-int OSystem_NULL::getGraphicsMode() const {
-	return -1;
-}
-
-void OSystem_NULL::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
-}
-
-int16 OSystem_NULL::getHeight() {
-	return 200;
-}
-
-int16 OSystem_NULL::getWidth() {
-	return 320;
-}
-
-void OSystem_NULL::setPalette(const byte *colors, uint start, uint num) {
-}
-
-void OSystem_NULL::grabPalette(byte *colors, uint start, uint num) {
-
-}
-
-void OSystem_NULL::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-}
-
-void OSystem_NULL::updateScreen() {
-}
-
-Graphics::Surface *OSystem_NULL::lockScreen() {
-	return 0;
-}
-
-void OSystem_NULL::unlockScreen() {
-}
-
-void OSystem_NULL::setShakePos(int shakeOffset) {
-}
-
-void OSystem_NULL::showOverlay() {
-}
-
-void OSystem_NULL::hideOverlay() {
-}
-
-void OSystem_NULL::clearOverlay() {
-}
-
-void OSystem_NULL::grabOverlay(OverlayColor *buf, int pitch) {
-}
-
-void OSystem_NULL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-}
-
-int16 OSystem_NULL::getOverlayHeight() {
-	return getHeight();
-}
-
-int16 OSystem_NULL::getOverlayWidth() {
-	return getWidth();
-}
-
-
-bool OSystem_NULL::showMouse(bool visible) {
-	return true;
-}
-
-void OSystem_NULL::warpMouse(int x, int y) {
-}
-
-void OSystem_NULL::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-}
-
 bool OSystem_NULL::pollEvent(Common::Event &event) {
 	return false;
-}
-
-uint32 OSystem_NULL::getMillis() {
-#ifdef UNIX
-	timeval curTime;
-	gettimeofday(&curTime, NULL);
-	return (uint32)(((curTime.tv_sec - _startTime.tv_sec) * 1000) + \
-			((curTime.tv_usec - _startTime.tv_usec) / 1000));
-#else
-	return 0;
-#endif
-}
-
-void OSystem_NULL::delayMillis(uint msecs) {
-#ifdef UNIX
-	usleep(msecs * 1000);
-#endif
-}
-
-OSystem::MutexRef OSystem_NULL::createMutex(void) {
-	return NULL;
-}
-
-void OSystem_NULL::lockMutex(MutexRef mutex) {
-}
-
-void OSystem_NULL::unlockMutex(MutexRef mutex) {
-}
-
-void OSystem_NULL::deleteMutex(MutexRef mutex) {
 }
 
 void OSystem_NULL::quit() {
 }
 
-Common::SaveFileManager *OSystem_NULL::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
+#if defined(UNIX)
+#if defined(SAMSUNGTV)
+#define DEFAULT_CONFIG_FILE "/dtv/usb/sda1/.scummvmrc"
+#else
+#define DEFAULT_CONFIG_FILE ".scummvmrc"
+#endif
+#endif
+
+#if !defined(UNIX)
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#endif
+
+Common::SeekableReadStream *OSystem_NULL::createConfigReadStream() {
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+	return file.createReadStream();
 }
 
-Audio::Mixer *OSystem_NULL::getMixer() {
-	assert(_mixer);
-	return _mixer;
-}
-
-Common::TimerManager *OSystem_NULL::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-void OSystem_NULL::getTimeAndDate(TimeDate &t) const {
-}
-
-FilesystemFactory *OSystem_NULL::getFilesystemFactory() {
-	return _fsFactory;
+Common::WriteStream *OSystem_NULL::createConfigWriteStream() {
+#ifdef __DC__
+	return 0;
+#else
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+	return file.createWriteStream();
+#endif
 }
 
 OSystem *OSystem_NULL_create() {
@@ -330,7 +134,7 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	g_system->quit();       // TODO: Consider removing / replacing this!
+	delete (OSystem_NULL *)g_system;
 	return res;
 }
 

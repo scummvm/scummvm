@@ -32,25 +32,30 @@ static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
 
 class NullGraphicsManager : GraphicsManager {
 public:
-	~NullGraphicsManager() {}
+	virtual ~NullGraphicsManager() {}
 
 	bool hasFeature(OSystem::Feature f) { return false; }
 	void setFeatureState(OSystem::Feature f, bool enable) {}
 	bool getFeatureState(OSystem::Feature f) { return false; }
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() { return s_noGraphicsModes; }
-	int getDefaultGraphicsMode() { return 0; }
+	const OSystem::GraphicsMode *getSupportedGraphicsModes() const { return s_noGraphicsModes; }
+	int getDefaultGraphicsMode() const { return 0; }
 	bool setGraphicsMode(int mode) { return true; }
-	int getGraphicsMode() { return 0; }
+	int getGraphicsMode() const { return 0; }
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
 	};
-	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+	inline Common::List<Graphics::PixelFormat> getSupportedFormats() {
 		Common::List<Graphics::PixelFormat> list;
 		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 		return list;
 	};
 	void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) {}
+	virtual int getScreenChangeID() const { return 0; }
+
+	void beginGFXTransaction() {}
+	OSystem::TransactionError endGFXTransaction() { return OSystem::kTransactionSuccess; }
+
 	int16 getHeight() { return 0; }
 	int16 getWidth() { return 0; }
 	void setPalette(const byte *colors, uint start, uint num) {}
@@ -61,17 +66,23 @@ public:
 	void fillScreen(uint32 col) {}
 	void updateScreen() {}
 	void setShakePos(int shakeOffset) {}
+	void setFocusRectangle(const Common::Rect& rect) {}
+	void clearFocusRectangle() {}
+
 	void showOverlay() {}
 	void hideOverlay() {}
-	Graphics::PixelFormat getOverlayFormat() { return Graphics::PixelFormat(); }
+	Graphics::PixelFormat getOverlayFormat() const { return Graphics::PixelFormat(); }
 	void clearOverlay() {}
 	void grabOverlay(OverlayColor *buf, int pitch) {}
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {}
 	int16 getOverlayHeight() { return 0; }
 	int16 getOverlayWidth() { return 0; }
+
 	bool showMouse(bool visible) { return !visible; }
 	void warpMouse(int x, int y) {}
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) {}
+	void setCursorPalette(const byte *colors, uint start, uint num) {}
+	void disableCursorPalette(bool disable) {}
 };
 
 #endif
