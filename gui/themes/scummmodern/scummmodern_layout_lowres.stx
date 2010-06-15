@@ -667,20 +667,26 @@
 				/>
 			</layout>
 			<space size = '4' />
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'vertical' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleSpeechOnly'
-						type = 'Radiobutton'
-				/>
-				<widget name = 'subToggleSubOnly'
-						type = 'Radiobutton'
-				/>
-				<widget name = 'subToggleSubBoth'
-						type = 'Radiobutton'
-				/>
+				<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				  <widget name = 'subToggleSpeechOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+					/>
+				  <widget name = 'subToggleSubOnly'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				  <widget name = 'subToggleSubBoth'
+						  type = 'Radiobutton'
+						  width = '90'
+						  />
+				</layout>
 			</layout>
+			<space size = '4' />
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'subSubtitleSpeedDesc'
 						type = 'OptionsLabel'

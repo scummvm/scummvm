@@ -671,12 +671,15 @@
 				/>
 				<widget name = 'subToggleSpeechOnly'
 						type = 'Radiobutton'
+						width = '100'
 				/>
 				<widget name = 'subToggleSubOnly'
 						type = 'Radiobutton'
+						width = '100'
 				/>
 				<widget name = 'subToggleSubBoth'
 						type = 'Radiobutton'
+						width = '100'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
