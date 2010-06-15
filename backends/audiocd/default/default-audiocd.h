@@ -26,7 +26,7 @@
 #ifndef BACKENDS_AUDIOCD_DEFAULT_H
 #define BACKENDS_AUDIOCD_DEFAULT_H
 
-#include "backends/audiocd/abstract-audiocd.h"
+#include "backends/audiocd/audiocd.h"
 #include "sound/mixer.h"
 
 class DefaultAudioCDManager : AudioCDManager {

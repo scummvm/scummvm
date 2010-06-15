@@ -26,7 +26,7 @@
 #ifndef BACKENDS_MUTEX_SDL_H
 #define BACKENDS_MUTEX_SDL_H
 
-#include "backends/mutex/abstract-mutex.h"
+#include "backends/mutex/mutex.h"
 
 class SdlMutexManager : public MutexManager {
 public:

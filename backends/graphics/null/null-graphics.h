@@ -26,7 +26,7 @@
 #ifndef BACKENDS_GRAPHICS_NULL_H
 #define BACKENDS_GRAPHICS_NULL_H
 
-#include "backends/graphics/abstract-graphics.h"
+#include "backends/graphics/graphics.h"
 
 static const OSystem::GraphicsMode s_noGraphicsModes[] = { {0, 0, 0} };
 

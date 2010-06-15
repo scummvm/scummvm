@@ -26,7 +26,7 @@
 #ifndef BACKENDS_GRAPHICS_SDL_H
 #define BACKENDS_GRAPHICS_SDL_H
 
-#include "backends/graphics/abstract-graphics.h"
+#include "backends/graphics/graphics.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
 

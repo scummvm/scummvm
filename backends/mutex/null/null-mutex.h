@@ -26,7 +26,7 @@
 #ifndef BACKENDS_MUTEX_NULL_H
 #define BACKENDS_MUTEX_NULL_H
 
-#include "backends/mutex/abstract-mutex.h"
+#include "backends/mutex/mutex.h"
 
 class NullMutexManager : MutexManager {
 public:
