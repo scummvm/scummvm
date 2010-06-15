@@ -161,16 +161,21 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 	return true;
 }
 
-SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream &stream) {
+SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse) {
 	int size, rate;
 	byte *data, flags;
 
-	if (!loadAIFFFromStream(stream, size, rate, flags))
+	if (!loadAIFFFromStream(*stream, size, rate, flags)) {
+		if (disposeAfterUse == DisposeAfterUse::YES)
+			delete stream;
 		return 0;
+	}
 
 	data = (byte *)malloc(size);
 	assert(data);
-	stream.read(data, size);
+	stream->read(data, size);
+	delete stream;
 
 	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
 	return makeRawStream(data, size, rate, flags);

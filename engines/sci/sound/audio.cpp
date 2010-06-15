@@ -260,9 +260,11 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		// Compressed audio made by our tool
 		byte *compressedData = (byte *)malloc(audioRes->size);
 		assert(compressedData);
-		// We copy over the compressed data in our own buffer. If we don't do this resourcemanager may free the data
-		//  later. All other compression-types already decompress completely into an additional buffer here.
-		//  MP3/OGG/FLAC decompression works on-the-fly instead.
+		// We copy over the compressed data in our own buffer. We have to do
+		// this, because ResourceManager may free the original data late.
+		// All other compression types already decompress completely into an
+		// additional buffer here. MP3/OGG/FLAC decompression works on-the-fly
+		// instead.
 		memcpy(compressedData, audioRes->data, audioRes->size);
 		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
 		
@@ -319,8 +321,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
 
 			waveStream->seek(0, SEEK_SET);
-			audioStream = Audio::makeAIFFStream(*waveStream);
-			delete waveStream; // makeAIFFStream doesn't handle this for us
+			audioStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected
