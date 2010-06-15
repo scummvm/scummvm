@@ -227,6 +227,7 @@ Common::Error SciEngine::run() {
 		_gfxMenu = 0;
 		_gfxPaint16 = 0;
 		_gfxPorts = 0;
+		_gfxText16 = 0;
 		_gui = 0;
 		_gui32 = new SciGui32(_gamestate->_segMan, _eventMan, _gfxScreen, _gfxPalette, _gfxCache, _gfxCursor);
 	} else {
