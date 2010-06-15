@@ -214,8 +214,13 @@ ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, int number) {
 	assert(newsrc);
 
 	newsrc->volume_number = number;
-	if (newsrc->getSourceType() == kSourceAudioVolume)
+	if (newsrc->getSourceType() == kSourceAudioVolume) {
+		// TODO: Move this call into the AudioVolumeResourceSource constructor.
+		// Need to verify if this is safe, though; in particular, whether this
+		// method may be called before the new AudioVolumeResourceSource has been
+		// added to the _sources lists.
 		checkIfAudioVolumeIsCompressed(newsrc);
+	}
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -226,8 +231,13 @@ ResourceSource *ResourceManager::addSource(ResourceSource *newsrc, const Common:
 
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
-	if (newsrc->getSourceType() == kSourceAudioVolume)
+	if (newsrc->getSourceType() == kSourceAudioVolume) {
+		// TODO: Move this call into the AudioVolumeResourceSource constructor.
+		// Need to verify if this is safe, though; in particular, whether this
+		// method may be called before the new AudioVolumeResourceSource has been
+		// added to the _sources lists.
 		checkIfAudioVolumeIsCompressed(newsrc);
+	}
 
 	_sources.push_back(newsrc);
 	return newsrc;
@@ -240,11 +250,10 @@ ResourceSource *ResourceManager::addPatchDir(const Common::String &dirname) {
 	return 0;
 }
 
-ResourceSource *ResourceManager::getVolume(ResourceSource *map, int volume_nr) {
+ResourceSource *ResourceManager::findVolume(ResourceSource *map, int volume_nr) {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
-		ResourceSource *src = *it;
-		if ((src->getSourceType() == kSourceVolume || src->getSourceType() == kSourceAudioVolume)
-			&& src->associated_map == map && src->volume_number == volume_nr)
+		ResourceSource *src = (*it)->findVolume(map, volume_nr);
+		if (src)
 			return src;
 	}
 
@@ -908,7 +917,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
 		fileStream->seek(0, SEEK_SET);
 		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
-			if (getVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
+			if (findVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
 				return kResVersionSci1Middle;
 		}
 		return kResVersionSci0Sci1Early;
@@ -1318,7 +1327,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
 			res = new Resource;
-			res->_source = getVolume(map, offset >> bShift);
+			res->_source = findVolume(map, offset >> bShift);
 			if (!res->_source) {
 				warning("Could not get volume for resource %d, VolumeID %d", id, offset >> bShift);
 				if (_mapVersion != _volVersion) {
@@ -1327,7 +1336,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 					_mapVersion = _volVersion;
 					bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
 					bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
-					res->_source = getVolume(map, offset >> bShift);
+					res->_source = findVolume(map, offset >> bShift);
 				}
 			}
 			res->_fileOffset = offset & (((~bMask) << 24) | 0xFFFFFF);
@@ -1411,7 +1420,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 				// need to be used in concurrence with the volume specified in the map to get
 				// the actual resource file.
-				res->_source = getVolume(map, volume_nr + map->volume_number);
+				res->_source = findVolume(map, volume_nr + map->volume_number);
 				res->_fileOffset = off;
 			}
 		}

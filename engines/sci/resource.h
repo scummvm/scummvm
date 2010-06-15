@@ -312,7 +312,7 @@ protected:
 	 */
 	ResourceSource *addPatchDir(const Common::String &path);
 
-	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
+	ResourceSource *findVolume(ResourceSource *map, int volume_nr);
 
 	/**
 	 * Adds a source to the resource manager's list of sources.

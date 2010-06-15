@@ -260,7 +260,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
-	ResourceSource *src = getVolume(map, 0);
+	ResourceSource *src = findVolume(map, 0);
 
 	if (!src)
 		return SCI_ERROR_NO_RESOURCE_FILES_FOUND;
@@ -380,7 +380,7 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 			offset &= 0x0fffffff; // least significant 28 bits
 		}
 
-		ResourceSource *src = getVolume(map, volume_nr);
+		ResourceSource *src = findVolume(map, volume_nr);
 
 		if (src) {
 			if (unload)

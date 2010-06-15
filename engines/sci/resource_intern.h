@@ -57,9 +57,9 @@ public:
 	const Common::FSNode *resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
-	uint32 audioCompressionType;
-	int32 *audioCompressionOffsetMapping;
-	Common::MacResManager *_macResMan;
+	uint32 audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
+	int32 *audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
+	Common::MacResManager *_macResMan;	// TODO: Move to MacResourceForkResourceSource
 
 protected:
 	ResourceSource(ResSourceType type, const Common::String &name);
@@ -68,6 +68,10 @@ public:
 
 	ResSourceType getSourceType() const { return _sourceType; }
 	const Common::String &getLocationName() const { return _name; }
+
+	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
+		return NULL;
+	};
 };
 
 class DirectoryResourceSource : public ResourceSource {
@@ -86,6 +90,12 @@ public:
 		: ResourceSource(type, name) {
 		associated_map = map;
 	}
+
+	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
+		if (associated_map == map && volume_number == volume_nr)
+			return this;
+		return NULL;
+	};
 };
 
 class ExtMapResourceSource : public ResourceSource {
