@@ -250,6 +250,10 @@ bool Console::Cmd_Cont(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Room(int argc, const char **argv) {
+	if (argc == 2) {
+		_vm->newRoom(strtoul(argv[1], NULL, 0));
+	}
+
 	DebugPrintf("Current room: %d\n", _vm->getvar(0));
 
 	return true;
