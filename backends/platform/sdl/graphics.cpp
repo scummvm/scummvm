@@ -1377,6 +1377,10 @@ void OSystem_SDL::setMousePos(int x, int y) {
 void OSystem_SDL::warpMouse(int x, int y) {
 	int y1 = y;
 
+	// Don't change mouse position, when mouse is outside of our window (in case of windowed mode)
+	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS))
+		return;
+
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);
 
