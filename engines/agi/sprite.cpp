@@ -389,12 +389,8 @@ void SpritesMgr::commitSprites(SpriteList &l) {
 		Sprite *s = *iter;
 		int x1, y1, x2, y2, w, h;
 
-		w = (s->v->celData->width > s->v->celData2->width) ?
-				s->v->celData->width : s->v->celData2->width;
-
-		h = (s->v->celData->height >
-				s->v->celData2->height) ? s->v->celData->
-				height : s->v->celData2->height;
+		w = MAX(s->v->celData->width, s->v->celData2->width);
+		h = MAX(s->v->celData->height, s->v->celData2->height);
 
 		s->v->celData2 = s->v->celData;
 

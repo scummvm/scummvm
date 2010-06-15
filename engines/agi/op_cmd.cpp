@@ -889,7 +889,28 @@ cmd(erase) {
 	}
 	g_sprites->blitUpdSprites();
 
-	g_sprites->commitBlock(vt.xPos, vt.yPos - vt.ySize + 1, vt.xPos + vt.xSize - 1, vt.yPos);
+	int x1, y1, x2, y2, w, h;
+
+	w = MAX(vt.celData->width, vt.celData2->width);
+	h = MAX(vt.celData->height, vt.celData2->height);
+
+	if (vt.xPos < vt.xPos2) {
+		x1 = vt.xPos;
+		x2 = vt.xPos2 + w - 1;
+	} else {
+		x1 = vt.xPos2;
+		x2 = vt.xPos + w - 1;
+	}
+
+	if (vt.yPos < vt.yPos2) {
+		y1 = vt.yPos - h + 1;
+		y2 = vt.yPos2;
+	} else {
+		y1 = vt.yPos2 - h + 1;
+		y2 = vt.yPos;
+	}
+
+	g_sprites->commitBlock(x1, y1, x2, y2);
 }
 
 cmd(position) {
