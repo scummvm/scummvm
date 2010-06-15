@@ -698,7 +698,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // load
 		if (argc == 2) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
-			s->r_acc = g_sci->_gui->portraitLoad(resourceName);
+			s->r_acc = g_sci->_gfxPaint16->kernelPortraitLoad(resourceName);
 		} else {
 			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
@@ -715,7 +715,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint seq = argv[8].toUint16() & 0xff;
 			// argv[9] is usually 0??!!
 
-			g_sci->_gui->portraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
+			g_sci->_gfxPaint16->kernelPortraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
 			return SIGNAL_REG;
 		} else {
 			warning("kPortrait(show) called with unsupported argc %d", argc);
@@ -725,7 +725,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	case 2: { // unload
 		if (argc == 2) {
 			uint16 portraitId = argv[1].toUint16();
-			g_sci->_gui->portraitUnload(portraitId);
+			g_sci->_gfxPaint16->kernelPortraitUnload(portraitId);
 		} else {
 			warning("kPortrait(unload) called with unsupported argc %d", argc);
 		}

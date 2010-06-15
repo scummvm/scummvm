@@ -42,6 +42,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 
@@ -578,6 +579,25 @@ void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 
 		_gui->wait(3);
 	}
+}
+
+reg_t GfxPaint16::kernelPortraitLoad(Common::String resourceName) {
+	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
+	return NULL_REG;
+}
+
+void GfxPaint16::kernelPortraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), this, _screen, _palette, _audio, resourceName);
+	// TODO: cache portraits
+	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
+	//  on kDrawCel, yeah this whole stuff makes sense)
+	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
+	_screen->adjustToUpscaledCoordinates(position.y, position.x);
+	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
+	delete myPortrait;
+}
+
+void GfxPaint16::kernelPortraitUnload(uint16 portraitId) {
 }
 
 } // End of namespace Sci

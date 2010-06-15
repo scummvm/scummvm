@@ -43,7 +43,6 @@
 #include "sci/graphics/animate.h"
 #include "sci/graphics/controls.h"
 #include "sci/graphics/menu.h"
-#include "sci/graphics/portrait.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/transitions.h"
 #include "sci/graphics/view.h"
@@ -110,25 +109,6 @@ void SciGui::textFonts(int argc, reg_t *argv) {
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
 	_text16->CodeSetColors(argc, argv);
-}
-
-reg_t SciGui::portraitLoad(Common::String resourceName) {
-	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
-	return NULL_REG;
-}
-
-void SciGui::portraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), this, _screen, _palette, _audio, resourceName);
-	// TODO: cache portraits
-	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
-	//  on kDrawCel, yeah this whole stuff makes sense)
-	position.x += _ports->getPort()->left; position.y += _ports->getPort()->top;
-	_screen->adjustToUpscaledCoordinates(position.y, position.x);
-	myPortrait->doit(position, resourceId, noun, verb, cond, seq);
-	delete myPortrait;
-}
-
-void SciGui::portraitUnload(uint16 portraitId) {
 }
 
 } // End of namespace Sci

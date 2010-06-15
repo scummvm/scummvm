@@ -91,6 +91,10 @@ public:
 
 	void kernelShakeScreen(uint16 shakeCount, uint16 directions);
 
+	reg_t kernelPortraitLoad(Common::String resourceName);
+	void kernelPortraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
+	void kernelPortraitUnload(uint16 portraitId);
+
 private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;

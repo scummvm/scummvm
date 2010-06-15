@@ -57,10 +57,6 @@ public:
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
 
-	virtual reg_t portraitLoad(Common::String resourceName);
-	virtual void portraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
-	virtual void portraitUnload(uint16 portraitId);
-
 protected:
 	GfxCursor *_cursor;
 	EngineState *_s;
