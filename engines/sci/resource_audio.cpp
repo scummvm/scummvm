@@ -36,20 +36,15 @@ namespace Sci {
 AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum)
 	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
-	ResourceManager *resMan = g_sci->getResMan();
-
 	/*
 	 * Check if this audio volume got compressed by our tool. If that is the
 	 * case, set _audioCompressionType and read in the offset translation
 	 * table for later usage.
 	 */
 
-	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
-
-	if (!fileStream) {
-		warning("Failed to open %s", getLocationName().c_str());
+	Common::SeekableReadStream *fileStream = getVolumeFile(0);
+	if (!fileStream)
 		return;
-	}
 
 	fileStream->seek(0, SEEK_SET);
 	uint32 compressionType = fileStream->readUint32BE();

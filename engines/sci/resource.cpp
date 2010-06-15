@@ -351,7 +351,8 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res) {
 
 	if (!fileStream) {
 		warning("Failed to open %s", getLocationName().c_str());
-		res->unalloc();
+		if (res)
+			res->unalloc();
 	}
 
 	return fileStream;
