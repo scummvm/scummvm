@@ -130,8 +130,7 @@ bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
 	size_t len = strlen(message);
 #ifdef ICONV_USES_CONST
-	const char *msg = message;
-	const char **pmsg = &msg;
+	const char **pmsg = &message;
 #else
 	char *msgcpy = new char[len + 1];
 	strcpy(msgcpy, message);
