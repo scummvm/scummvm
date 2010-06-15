@@ -632,10 +632,6 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
-	// Exit for SCI32 for now
-	if (!g_sci->_gfxPaint16)
-		return s->r_acc;
-
 	switch (operation) {
 	case 0: { // Init
 		GuiResourceId paletteId;
