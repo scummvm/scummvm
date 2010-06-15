@@ -2349,6 +2349,18 @@ EOF
 
 		add_to_config_h_if_yes $_termconv '#define TERMCONV'
 		if test "$_termconv" = yes ; then
+			uses_const=no
+			cat > $TMPC << EOF
+#include <iconv.h>
+int main(int argc, char **argv) {
+	iconv_t iconvP;
+	const char **inbuf = 0;
+	iconv(iconvP, inbuf, 0, 0, 0);
+	return 0;
+}
+EOF
+			cc_check $LDFLAGS $LIBS $CXXFLAGS && uses_const=yes
+			add_to_config_h_if_yes $uses_const '#define ICONV_USES_CONST'
 			echo "with terminal conversion)"
 		else
 			echo "without terminal conversion)"

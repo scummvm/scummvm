@@ -119,7 +119,11 @@ bool TranslationManager::convert(const char *message) {
 	char *msgcpy = new char[len + 1];
 	strcpy(msgcpy, message);
 	char *msg = msgcpy;
+#ifdef ICONV_USES_CONST
+	const char **pmsg = &msg;
+#else
 	char **pmsg = &msg;
+#endif
 
 	// Preparing conversion destination
 	size_t len2 = _sizeconv;
