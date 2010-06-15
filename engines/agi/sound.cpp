@@ -29,9 +29,12 @@
 #include "common/random.h"
 #include "common/str-array.h"
 
+#include "sound/mididrv.h"
+
 #include "agi/agi.h"
 
 #include "agi/sound_2gs.h"
+#include "agi/sound_midi.h"
 
 namespace Agi {
 
@@ -41,7 +44,7 @@ namespace Agi {
 // TODO: add support for variable sampling rate in the output device
 //
 
-AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager) {
+AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager, int soundemu) {
 	if (data == NULL || len < 2) // Check for too small resource or no resource at all
 		return NULL;
 	uint16 type = READ_LE_UINT16(data);
@@ -50,9 +53,13 @@ AgiSound *AgiSound::createFromRawResource(uint8 *data, uint32 len, int resnum, S
 	case AGI_SOUND_SAMPLE:
 		return new IIgsSample(data, len, resnum, manager);
 	case AGI_SOUND_MIDI:
-		return new IIgsMidi  (data, len, resnum, manager);
+		return new IIgsMidi(data, len, resnum, manager);
 	case AGI_SOUND_4CHN:
-		return new PCjrSound (data, len, resnum, manager);
+		if (soundemu == SOUND_EMU_MIDI) {
+			return new MIDISound(data, len, resnum, manager);
+		} else {
+			return new PCjrSound(data, len, resnum, manager);
+		}
 	}
 
 	warning("Sound resource (%d) has unknown type (0x%04x). Not using the sound", resnum, type);
@@ -165,24 +172,29 @@ void SoundMgr::startSound(int resnum, int flag) {
 		((IIgsMidi *) _vm->_game.sounds[_playingSound])->rewind();
 		break;
 	case AGI_SOUND_4CHN:
-		PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
+		if (_vm->_soundemu == SOUND_EMU_MIDI) {
+			_musicPlayer->playMIDI((MIDISound *)_vm->_game.sounds[resnum]);
+		} else {
 
-		// Initialize channel info
-		for (i = 0; i < NUM_CHANNELS; i++) {
-			_chn[i].type = type;
-			_chn[i].flags = AGI_SOUND_LOOP;
+			PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
 
-			if (_env) {
-				_chn[i].flags |= AGI_SOUND_ENVELOPE;
-				_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
+			// Initialize channel info
+			for (i = 0; i < NUM_CHANNELS; i++) {
+				_chn[i].type = type;
+				_chn[i].flags = AGI_SOUND_LOOP;
+				
+				if (_env) {
+					_chn[i].flags |= AGI_SOUND_ENVELOPE;
+					_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
+				}
+
+				_chn[i].ins = _waveform;
+				_chn[i].size = WAVEFORM_SIZE;
+				_chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
+				_chn[i].timer = 0;
+				_chn[i].vol = 0;
+				_chn[i].end = 0;
 			}
-
-			_chn[i].ins = _waveform;
-			_chn[i].size = WAVEFORM_SIZE;
-			_chn[i].ptr = pcjrSound->getVoicePointer(i % 4);
-			_chn[i].timer = 0;
-			_chn[i].vol = 0;
-			_chn[i].end = 0;
 		}
 		break;
 	}
@@ -213,6 +225,10 @@ void SoundMgr::stopSound() {
 			_gsSound->stopSounds();
 		}
 
+		if (_vm->_soundemu == SOUND_EMU_MIDI) {
+			_musicPlayer->stop();
+		}
+
 		_playingSound = -1;
 	}
 }
@@ -240,6 +256,8 @@ int SoundMgr::initSound() {
 		break;
 	case SOUND_EMU_COCO3:
 		break;
+	case SOUND_EMU_MIDI:
+		break;
 	}
 
 	report("Initializing sound:\n");
@@ -251,7 +269,8 @@ int SoundMgr::initSound() {
 		report("disabled\n");
 	}
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
+	if (_vm->_soundemu != SOUND_EMU_MIDI)
+		_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	return r;
 }
@@ -607,12 +626,21 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_waveform = 0;
 	_disabledMidi = false;
 	_useChorus = true;	// FIXME: Currently always true?
+	_midiDriver = 0;
 
 	_gsSound = new IIgsSoundMgr;
+
+	if (_vm->_soundemu == SOUND_EMU_MIDI) {
+		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB);
+
+		_midiDriver = MidiDriver::createMidi(midiDriver);
+		_musicPlayer = new MusicPlayer(_midiDriver, this);
+	}
 }
 
 void SoundMgr::premixerCall(int16 *data, uint len) {
-	fillAudio(this, data, len);
+	if (_vm->_soundemu != SOUND_EMU_MIDI)
+		fillAudio(this, data, len);
 }
 
 void SoundMgr::setVolume(uint8 volume) {
@@ -622,6 +650,9 @@ void SoundMgr::setVolume(uint8 volume) {
 SoundMgr::~SoundMgr() {
 	free(_sndBuffer);
 	delete _gsSound;
+
+	delete _musicPlayer;
+	delete _midiDriver;
 }
 
 } // End of namespace Agi

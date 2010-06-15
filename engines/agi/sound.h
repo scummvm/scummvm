@@ -29,6 +29,8 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
+class MidiDriver;
+
 namespace Agi {
 
 #define BUFFER_SIZE	410
@@ -40,6 +42,7 @@ namespace Agi {
 #define SOUND_EMU_AMIGA	4
 #define SOUND_EMU_APPLE2GS 5
 #define SOUND_EMU_COCO3 6
+#define SOUND_EMU_MIDI 7
 
 #define WAVEFORM_SIZE   64
 #define ENV_ATTACK	10000		/**< envelope attack rate */
@@ -143,7 +146,7 @@ public:
 	 * from memory using free() or delegate the responsibility onwards to some other
 	 * function!
 	 */
-	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
+	static AgiSound *createFromRawResource(uint8 *data, uint32 len, int resnum, SoundMgr &manager, int soundemu);
 
 protected:
 	SoundMgr &_manager; ///< AGI sound manager object
@@ -154,7 +157,7 @@ protected:
 class PCjrSound : public AgiSound {
 public:
 	PCjrSound(uint8 *data, uint32 len, int resnum, SoundMgr &manager);
-	~PCjrSound() { if (_data != NULL) free(_data); }
+	~PCjrSound() { free(_data); }
 	virtual uint16 type() { return _type; }
 	const uint8 *getVoicePointer(uint voiceNum);
 protected:
@@ -166,11 +169,11 @@ protected:
 class AgiEngine;
 class AgiBase;
 class IIgsSoundMgr;
+class MusicPlayer;
 
 struct IIgsExeInfo;
 
 class SoundMgr : public Audio::AudioStream {
-	AgiBase *_vm;
 
 public:
 	SoundMgr(AgiBase *agi, Audio::Mixer *pMixer);
@@ -196,15 +199,21 @@ public:
 		return 22050;
 	}
 
+	int _endflag;
+	AgiBase *_vm;
+
 private:
 	Audio::Mixer *_mixer;
 	Audio::SoundHandle _soundHandle;
+
+	MusicPlayer *_musicPlayer;
+	MidiDriver *_midiDriver;
+
 	uint32 _sampleRate;
 
 	bool _playing;
 	ChannelInfo _chn[NUM_CHANNELS];
 	IIgsSoundMgr *_gsSound;
-	int _endflag;
 	int _playingSound;
 	uint8 _env;
 	bool _disabledMidi;

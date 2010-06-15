@@ -31,6 +31,7 @@ MODULE_OBJS := \
 	saveload.o \
 	sound.o \
 	sound_2gs.o \
+	sound_midi.o \
 	sprite.o \
 	text.o \
 	view.o \
