@@ -48,8 +48,6 @@ public:
 	GfxFont *GetFont();
 	void SetFont(GuiResourceId fontId);
 
-	void CodeSetFonts(int argc, reg_t *argv);
-	void CodeSetColors(int argc, reg_t *argv);
 	int16 CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor);
 
 	void ClearChar(int16 chr);
@@ -66,6 +64,10 @@ public:
 	void Draw_String(const char *text);
 
 	GfxFont *_font;
+
+	void kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight);
+	void kernelTextFonts(int argc, reg_t *argv);
+	void kernelTextColors(int argc, reg_t *argv);
 
 private:
 	void init();

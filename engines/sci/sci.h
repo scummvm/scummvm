@@ -66,6 +66,7 @@ class GfxPaint16;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
+class GfxText16;
 class SciGui;
 class GfxMacIconBar;
 
@@ -205,6 +206,7 @@ public:
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
+	GfxText16 *_gfxText16;
 	SciGui *_gui; /* Currently active Gui */
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 

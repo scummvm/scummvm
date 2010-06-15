@@ -69,11 +69,6 @@ SciGui32::~SciGui32() {
 void SciGui32::init() {
 }
 
-void SciGui32::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
-	*textWidth = 0;
-	*textHeight = 0;
-}
-
 void SciGui32::drawRobot(GuiResourceId robotId) {
 	Robot *test = new Robot(g_sci->getResMan(), _screen, robotId);
 	test->draw();

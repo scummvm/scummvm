@@ -68,6 +68,7 @@ SciGui::SciGui(EngineState *state, GfxScreen *screen, GfxPalette *palette, GfxCa
 	_animate = new GfxAnimate(_s, _cache, _ports, _paint16, _screen, _palette, _cursor, _transitions);
 	g_sci->_gfxAnimate = _animate;
 	_text16 = new GfxText16(g_sci->getResMan(), _cache, _ports, _paint16, _screen);
+	g_sci->_gfxText16 = _text16;
 	_controls = new GfxControls(_s->_segMan, _ports, _paint16, _text16, _screen);
 	g_sci->_gfxControls = _controls;
 	_menu = new GfxMenu(g_sci->getEventManager(), _s->_segMan, this, _ports, _paint16, _text16, _screen, _cursor);
@@ -92,23 +93,6 @@ void SciGui::init(bool usesOldGfxFunctions) {
 
 void SciGui::wait(int16 ticks) {
 	_s->wait(ticks);
-}
-
-void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
-	Common::Rect rect(0, 0, *textWidth, *textHeight);
-	_text16->Size(rect, text, font, maxWidth);
-	*textWidth = rect.width();
-	*textHeight = rect.height();
-}
-
-// Used SCI1+ for text codes
-void SciGui::textFonts(int argc, reg_t *argv) {
-	_text16->CodeSetFonts(argc, argv);
-}
-
-// Used SCI1+ for text codes
-void SciGui::textColors(int argc, reg_t *argv) {
-	_text16->CodeSetColors(argc, argv);
 }
 
 } // End of namespace Sci

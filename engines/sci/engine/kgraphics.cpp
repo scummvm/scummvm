@@ -48,6 +48,7 @@
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {
@@ -345,11 +346,12 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
 	
 #ifdef ENABLE_SCI32
-	if (g_sci->_gui32)
-		g_sci->_gui32->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
-	else
+	if (!g_sci->_gfxText16) {
+		// TODO: Implement this
+		textWidth = 0; textHeight = 0;
+	} else
 #endif
-		g_sci->_gui->textSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+		g_sci->_gfxText16->kernelTextSize(g_sci->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);
 	dest[2] = make_reg(0, textHeight);
@@ -1246,12 +1248,12 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 // New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
 //  font and/or color multiple times during kDisplay and kDrawControl
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gui->textFonts(argc, argv);
+	g_sci->_gfxText16->kernelTextFonts(argc, argv);
 	return s->r_acc;
 }
 
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gui->textColors(argc, argv);
+	g_sci->_gfxText16->kernelTextColors(argc, argv);
 	return s->r_acc;
 }
 

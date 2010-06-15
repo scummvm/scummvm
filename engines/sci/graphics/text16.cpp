@@ -73,28 +73,6 @@ void GfxText16::SetFont(GuiResourceId fontId) {
 	_ports->_curPort->fontHeight = _font->getHeight();
 }
 
-void GfxText16::CodeSetFonts(int argc, reg_t *argv) {
-	int i;
-
-	delete _codeFonts;
-	_codeFontsCount = argc;
-	_codeFonts = new GuiResourceId[argc];
-	for (i = 0; i < argc; i++) {
-		_codeFonts[i] = (GuiResourceId)argv[i].toUint16();
-	}
-}
-
-void GfxText16::CodeSetColors(int argc, reg_t *argv) {
-	int i;
-
-	delete _codeColors;
-	_codeColorsCount = argc;
-	_codeColors = new uint16[argc];
-	for (i = 0; i < argc; i++) {
-		_codeColors[i] = argv[i].toUint16();
-	}
-}
-
 void GfxText16::ClearChar(int16 chr) {
 	if (_ports->_curPort->penMode != 1)
 		return;
@@ -486,6 +464,37 @@ bool GfxText16::SwitchToFont900OnSjis(const char *text) {
 		return true;
 	}
 	return false;
+}
+
+void GfxText16::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
+	Common::Rect rect(0, 0, *textWidth, *textHeight);
+	Size(rect, text, font, maxWidth);
+	*textWidth = rect.width();
+	*textHeight = rect.height();
+}
+
+// Used SCI1+ for text codes
+void GfxText16::kernelTextFonts(int argc, reg_t *argv) {
+	int i;
+
+	delete _codeFonts;
+	_codeFontsCount = argc;
+	_codeFonts = new GuiResourceId[argc];
+	for (i = 0; i < argc; i++) {
+		_codeFonts[i] = (GuiResourceId)argv[i].toUint16();
+	}
+}
+
+// Used SCI1+ for text codes
+void GfxText16::kernelTextColors(int argc, reg_t *argv) {
+	int i;
+
+	delete _codeColors;
+	_codeColorsCount = argc;
+	_codeColors = new uint16[argc];
+	for (i = 0; i < argc; i++) {
+		_codeColors[i] = argv[i].toUint16();
+	}
 }
 
 } // End of namespace Sci
