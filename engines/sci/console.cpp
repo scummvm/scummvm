@@ -1095,6 +1095,14 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 		delete out;
 	}
 
+	out->finalize();
+        if (out->err()) {
+        	delete out;
+                warning("Writing the savegame failed.");
+        } else {
+                delete out;
+        }
+
 	return true;
 }
 
@@ -1419,6 +1427,16 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 			case SEG_TYPE_STRING_FRAG:
 				DebugPrintf("F  string fragments");
 				break;
+
+#ifdef ENABLE_SCI32
+			case SEG_TYPE_ARRAY:
+				DebugPrintf("A  SCI32 arrays (%d)", (*(ArrayTable *)mobj).entries_used);
+				break;
+
+			case SEG_TYPE_STRING:
+				DebugPrintf("T  SCI32 strings (%d)", (*(StringTable *)mobj).entries_used);
+				break;
+#endif				
 
 			default:
 				DebugPrintf("I  Invalid (type = %x)", mobj->getType());
@@ -2180,26 +2198,40 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			printObject(reg);
 			break;
 		case KSIG_REF: {
-			int size;
-			const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
-			size = block.maxSize;
+			switch (_engine->_gamestate->_segMan->getSegmentType(reg.segment)) {
+				case SEG_TYPE_STRING: {
+					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
+					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
+					break;
+				}
+				case SEG_TYPE_ARRAY: {
+					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
+					Common::hexdump((const byte *) array->getRawData(), array->getSize(), 16, 0);
+					break;
+				}
+				default: {
+					int size;
+					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
+					size = block.maxSize;
 
-			DebugPrintf("raw data\n");
+					DebugPrintf("raw data\n");
 
-			if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
-				DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-				reg_end = NULL_REG;
-			}
+					if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
+						DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
+					reg_end = NULL_REG;
+					}
 
-			if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
-				size = reg_end.offset - reg.offset;
+					if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
+						size = reg_end.offset - reg.offset;
 
-			if (reg_end.segment != 0)
-				DebugPrintf("Block size less than or equal to %d\n", size);
+					if (reg_end.segment != 0)
+						DebugPrintf("Block size less than or equal to %d\n", size);
 
-			Common::hexdump(block.raw, size, 16, 0);
+					Common::hexdump(block.raw, size, 16, 0);
+				}
 			}
 			break;
+		}
 		case KSIG_ARITHMETIC:
 			DebugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
 			break;

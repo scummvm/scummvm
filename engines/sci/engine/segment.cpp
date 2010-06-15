@@ -435,7 +435,7 @@ bool Script::isValidOffset(uint16 offset) const {
 
 SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.offset > _bufSize) {
-		warning("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
+		error("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
 				  PRINT_REG(pointer), (uint)_bufSize);
 		return SegmentRef();
 	}
