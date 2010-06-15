@@ -32,9 +32,12 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 
 	for (int n = 0; n < count; n++){
 		x++;
-		copyBackground(x, y, destX, destY, width, height, src, screenSurface);
-		if (copyRectangle)
+		if (copyRectangle) {
+			copyBackground(destX, destY, destX, destY, width, height, bgSurface, screenSurface);
 			copyRect(x, y, destX, destY, width, height, src, screenSurface);
+		} else {
+			copyBackground(x, y, destX, destY, width, height, src, screenSurface);
+		}
 		updateScreen(destX, destY, destX, destY, width, height, screenSurface);
 		x += width;
 		pause(delayVal);
@@ -1083,6 +1086,7 @@ void DrasculaEngine::animation_35_2() {
 	fadeToBlack(2);
 }
 
+// Use cross on Yoda
 void DrasculaEngine::animation_2_3() {
 	debug(4, "animation_2_3()");
 
