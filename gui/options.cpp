@@ -608,8 +608,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"), _("Specifies output sound device or sound emulator"));
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound emulator"));
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"), _("Specifies output sound device or sound card emulator"));
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();

@@ -88,8 +88,8 @@ enum {
  */
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text)
-		: EditTextWidget(boss, name, text) {
+	DomainEditTextWidget(GuiObject *boss, const String &name, const String &text, const char *tooltip = 0)
+		: EditTextWidget(boss, name, text, tooltip) {
 	}
 
 protected:
@@ -171,11 +171,11 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 
 	// GUI:  Label & edit widget for the game ID
 	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
-	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain);
+	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain, _("Short game identifier used for referring to savegames and running the game from the command line"));
 
 	// GUI:  Label & edit widget for the description
 	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
-	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
+	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description, _("Full title of the game"));
 
 	// Language popup
 	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
@@ -525,11 +525,11 @@ LauncherDialog::LauncherDialog()
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
-	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
+	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, 0, kSearchCmd);
 	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", _("Clear value"), kSearchClearCmd);
 
 	// Add list with game titles
-	_list = new ListWidget(this, "Launcher.GameList", kListSearchCmd);
+	_list = new ListWidget(this, "Launcher.GameList", 0, kListSearchCmd);
 	_list->setEditable(false);
 	_list->setNumberingMode(kListNumberingOff);
 

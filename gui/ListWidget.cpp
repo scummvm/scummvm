@@ -36,8 +36,8 @@
 
 namespace GUI {
 
-ListWidget::ListWidget(Dialog *boss, const String &name, uint32 cmd)
-	: EditableWidget(boss, name), _cmd(cmd) {
+ListWidget::ListWidget(Dialog *boss, const String &name, const char *tooltip, uint32 cmd)
+	: EditableWidget(boss, name, tooltip), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
@@ -68,8 +68,8 @@ ListWidget::ListWidget(Dialog *boss, const String &name, uint32 cmd)
 	_editColor = ThemeEngine::kFontColorNormal;
 }
 
-ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, uint32 cmd)
-	: EditableWidget(boss, x, y, w, h), _cmd(cmd) {
+ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
+	: EditableWidget(boss, x, y, w, h, tooltip), _cmd(cmd) {
 
 	_scrollBar = NULL;
 	_textWidth = NULL;
