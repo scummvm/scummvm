@@ -170,16 +170,16 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	tab->addTab(_("Game"));
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"));
+	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"), _("Short game identifier used for referring to savegames and running the game from the command line"));
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"));
+	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"), _("Full title of the game"));
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"));
-	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup");
+	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"), _("Language of the game. This will not turn your Spanish game version into English"));
+	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup", _("Language of the game. This will not turn your Spanish game version into English"));
 	_langPopUp->appendEntry(_("<default>"));
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
@@ -188,8 +188,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"));
-	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup");
+	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"), _("Platform the game was originally designed for"));
+	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup", _("Platform the game was originally designed for"));
 	_platformPopUp->appendEntry(_("<default>"));
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
@@ -250,12 +250,12 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), 0, kCmdExtraBrowser);
-	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
+	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), _("Specifies path to additional data used the game"), kCmdExtraBrowser);
+	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath, _("Specifies path to additional data used the game"));
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), 0, kCmdSaveBrowser);
-	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
+	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), _("Specifies where your savegames are put"), kCmdSaveBrowser);
+	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath, _("Specifies where your savegames are put"));
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -497,22 +497,22 @@ LauncherDialog::LauncherDialog()
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), 0, kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), 0, kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), 0, kOptionsCmd);
+	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), _("Quit ScummVM"), kQuitCmd);
+	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), _("About ScummVM"), kAboutCmd);
+	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), _("Change global ScummVM options"), kOptionsCmd);
 	_startButton =
-		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), 0, kStartCmd);
+		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), _("Start selected game"), kStartCmd);
 
 	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), 0, kLoadGameCmd);
+		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), _("Load savegame for selected game"), kLoadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
 		new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
 	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), 0, kEditGameCmd);
+		new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), _("Change game options"), kEditGameCmd);
 	_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), 0, kRemoveGameCmd);
+		new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), _("Remove game from the list. The game data files stay intact"), kRemoveGameCmd);
 
 	// Search box
 	_searchDesc = 0;

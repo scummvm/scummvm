@@ -588,8 +588,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// RenderMode popup
-	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"));
-	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup");
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
+	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
 	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
@@ -601,15 +601,15 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"));
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for 320x200 games"));
 
 	_enableGraphicSettings = true;
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"));
-	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"), _("Specifies output sound device or sound emulator"));
+	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound emulator"));
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
@@ -619,8 +619,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	}
 
 	// The OPL emulator popup & a label
-	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"));
-	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup");
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"), _("AdLib is used for music in many games"));
+	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
 
 	// Populate it
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
@@ -630,8 +630,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	}
 
 	// Sample rate settings
-	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", _("Output rate:"));
-	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup");
+	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", _("Output rate:"), _("Higher value specifies better sound quality but may be not supported by your soundcard"));
+	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup", _("Higher value specifies better sound quality but may be not supported by your soundcard"));
 
 	for (int i = 0; outputRateLabels[i]; i++) {
 		_outputRatePopUp->appendEntry(_(outputRateLabels[i]), outputRateValues[i]);
@@ -642,18 +642,18 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
 	// SoundFont
-	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), 0, kChooseSoundFontCmd);
-	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"));
+	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
 	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", _("Clear value"), kClearSoundFontCmd);
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"));
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
 
 	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"));
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"));
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
 
 	// MIDI gain setting (FluidSynth uses this)
 	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", _("MIDI gain:"));
@@ -680,9 +680,9 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 	} else {
 		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
 
-		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Spch"));
-		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subs"));
-		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"));
+		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Spch"), _("Speech"));
+		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subs"), _("Subtitles"));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"), _("Show subtitles and play speech"));
 	}
 
 	// Subtitle speed
@@ -708,8 +708,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), 0, kMuteAllChanged);
 
 
-	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"));
-	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", 0, kSfxVolumeChanged);
+	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"), _("Special sound effects volume"));
+	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", _("Special sound effects volume"), kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
@@ -792,14 +792,14 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), 0, kChooseSaveDirCmd);
-	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar");
+	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), _("Specifies where your savegames are put"), kChooseSaveDirCmd);
+	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar", _("Specifies where your savegames are put"));
 
 	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), 0, kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _("None"));
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), 0, kChooseExtraDirCmd);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _("None"));
+	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), _("Specifies path to additional data used by all games or ScummVM"), kChooseExtraDirCmd);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _("None"), _("Specifies path to additional data used by all games or ScummVM"));
 
 #ifdef DYNAMIC_MODULES
 	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), 0, kChoosePluginsDirCmd);
@@ -834,7 +834,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 
 
 #ifdef TRANSLATION
-	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("Language:"));
+	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of ScummVM GUI"));
 	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
 #ifdef DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
