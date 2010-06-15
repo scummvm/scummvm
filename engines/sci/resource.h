@@ -23,11 +23,10 @@
  *
  */
 
-#ifndef SCI_SCICORE_RESOURCE_H
-#define SCI_SCICORE_RESOURCE_H
+#ifndef SCI_RESOURCE_H
+#define SCI_RESOURCE_H
 
 #include "common/fs.h"
-#include "common/macresman.h"
 #include "common/str.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
@@ -122,27 +121,7 @@ const char *getResourceTypeName(ResourceType restype);
 
 
 class ResourceManager;
-
-struct ResourceSource {
-	ResSourceType source_type;
-	bool scanned;
-	Common::String location_name;	// FIXME: Replace by FSNode ?
-	const Common::FSNode *resourceFile;
-	int volume_number;
-	ResourceSource *associated_map;
-	uint32 audioCompressionType;
-	int32 *audioCompressionOffsetMapping;
-	Common::MacResManager macResMan;
-	ResourceSource() {
-		source_type = kSourceDirectory;
-		scanned = false;
-		resourceFile = 0;
-		volume_number = 0;
-		associated_map = NULL;
-		audioCompressionType = 0;
-		audioCompressionOffsetMapping = NULL;
-	}
-};
+struct ResourceSource;
 
 class ResourceId {
 public:
@@ -538,4 +517,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_SCICORE_RESOURCE_H
+#endif // SCI_RESOURCE_H

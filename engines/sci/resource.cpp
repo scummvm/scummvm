@@ -28,6 +28,7 @@
 #include "common/file.h"
 
 #include "sci/resource.h"
+#include "sci/resource_intern.h"
 #include "sci/util.h"
 
 namespace Sci {
