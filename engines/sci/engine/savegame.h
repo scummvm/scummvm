@@ -36,7 +36,7 @@ namespace Sci {
 struct EngineState;
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 21,
+	CURRENT_SAVEGAME_VERSION = 22,
 	MINIMUM_SAVEGAME_VERSION = 9
 };
 
@@ -47,6 +47,8 @@ struct SavegameMetadata {
 	Common::String game_version;
 	int savegame_date;
 	int savegame_time;
+	uint16 game_object_offset;
+	uint16 script0_size;
 };
 
 

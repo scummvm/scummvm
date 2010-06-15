@@ -53,6 +53,8 @@
 #include "sci/graphics/gui32.h"
 #endif
 
+#include "gui/message.h"
+
 namespace Sci {
 
 
@@ -307,6 +309,13 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 	s.skip(4, VER(9), VER(9));	// obsolete: used to be game version
 	s.syncAsSint32LE(obj.savegame_date);
 	s.syncAsSint32LE(obj.savegame_time);
+	if (s.getVersion() < 22) {
+		obj.game_object_offset = 0;
+		obj.script0_size = 0;
+	} else {
+		s.syncAsUint16LE(obj.game_object_offset);
+		s.syncAsUint16LE(obj.script0_size);
+	}
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
@@ -862,6 +871,10 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
+	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+	meta.script0_size = script0->size;
+	meta.game_object_offset = g_sci->getGameObject().offset;
+
 	if (s->executionStackBase) {
 		warning("Cannot save from below kernel function");
 		return 1;
@@ -892,13 +905,31 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
 	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
+		/*
 		if (meta.savegame_version < MINIMUM_SAVEGAME_VERSION)
-			warning("Old savegame version detected- can't load");
+			warning("Old savegame version detected, unable to load it");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d, maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+		*/
+
+		GUI::MessageDialog dialog("The format of this saved game is obsolete, unable to load it", "OK");
+		dialog.runModal();
 
 		s->r_acc = make_reg(0, 1);	// signal failure
 		return;
+	}
+
+	if (meta.game_object_offset > 0 && meta.script0_size > 0) {
+		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+		if (script0->size != meta.script0_size || g_sci->getGameObject().offset != meta.game_object_offset) {
+			//warning("This saved game was created with a different version of the game, unable to load it");
+
+			GUI::MessageDialog dialog("This saved game was created with a different version of the game, unable to load it", "OK");
+			dialog.runModal();
+
+			s->r_acc = make_reg(0, 1);	// signal failure
+			return;
+		}
 	}
 
 	if (meta.savegame_version >= 12) {
