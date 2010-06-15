@@ -123,8 +123,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette) {
 				}
 
 				switch (event.type) {
-					case Common::EVENT_MOUSEMOVE:
-					printf("Mouse Move\n");
+				case Common::EVENT_MOUSEMOVE:
 					break;
 				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_RBUTTONDOWN:
@@ -164,7 +163,7 @@ void GFXtests::mouseMovements() {
 	
 	Testsuite::clearScreen();
 	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
-	
+	g_system->delayMillis(1000);	
 }
 
 void GFXtests::unsetMouse() {
@@ -271,7 +270,7 @@ bool GFXtests::fullScreenMode() {
 			
 		g_system->delayMillis(1000);
 		
-		prompt = " Which mode do you see now ?  ";
+		prompt = "  Which screen mode do you see now ?   ";
 		
 		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
 			// User selected incorrect mode
@@ -285,7 +284,7 @@ bool GFXtests::fullScreenMode() {
 		
 		g_system->delayMillis(1000);
 		
-		prompt = "This should be your initial state.Is it?";
+		prompt = "This should be your initial state. Is it?";
 		
 		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", shouldSelect)) {
 			// User selected incorrect mode
@@ -387,7 +386,7 @@ bool GFXtests::palettizedCursors() {
 	Testsuite::clearScreen();
 
 	// Testing with game Palette
-	Testsuite::writeOnScreen("Using Game Palette to render the cursor", pt);
+	Testsuite::writeOnScreen("Using Game Palette to render the cursor, Click to finish", pt);
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	setupMouseLoop(true);
 	// done. Pop cursor now
@@ -429,7 +428,7 @@ bool GFXtests::copyRectToScreen() {
 	Common::Rect rect(x, y, x+40, y+20);
 	Testsuite::clearScreen(rect);
 	
-	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -472,7 +471,7 @@ bool GFXtests::iconifyWindow() {
 		Testsuite::displayMessage("feature not supported");
 	}
 	
-	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -523,9 +522,9 @@ bool GFXtests::shakingEffect() {
 		g_system->setShakePos(0);
 		g_system->updateScreen();
 	}
-	g_system->delayMillis(1000);
+	g_system->delayMillis(1500);
 
-	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 	Testsuite::clearScreen();
@@ -569,8 +568,8 @@ bool GFXtests::focusRectangle() {
 	
 	g_system->clearFocusRectangle();
 
-	if (Testsuite::handleInteractiveInput("Do you see a variation in focus?", "Yes", "No", kOptionRight)) {
-		printf("LOG: Focus Rectangle feature doesn't works. Check platform.");
+	if (Testsuite::handleInteractiveInput("Did you noticed a variation in focus?", "Yes", "No", kOptionRight)) {
+		printf("LOG: Focus Rectangle feature doesn't works. Check platform.\n");
 	}
 
 	return true;
