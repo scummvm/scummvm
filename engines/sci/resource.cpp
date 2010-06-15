@@ -175,7 +175,6 @@ uint32 AudioVolumeResourceSource::getAudioCompressionType() const {
 ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum, const Common::FSNode *resFile)
  : _sourceType(type), _name(name), _volumeNumber(volNum), _resourceFile(resFile) {
 	_scanned = false;
-	_associatedMap = NULL;
 }
 
 ResourceSource::~ResourceSource() {

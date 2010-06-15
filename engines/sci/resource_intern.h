@@ -56,7 +56,6 @@ public:
 	bool _scanned;
 	const Common::FSNode * const _resourceFile;
 	const int _volumeNumber;
-	ResourceSource *_associatedMap;	// TODO: Move to VolumeResourceSource
 
 protected:
 	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0, const Common::FSNode *resFile = 0);
@@ -105,15 +104,16 @@ public:
 };
 
 class VolumeResourceSource : public ResourceSource {
+protected:
+	ResourceSource * const _associatedMap;
+
 public:
 	VolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum, ResSourceType type = kSourceVolume)
-		: ResourceSource(type, name, volNum) {
-		_associatedMap = map;
+		: ResourceSource(type, name, volNum), _associatedMap(map) {
 	}
 
 	VolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum, const Common::FSNode *resFile)
-		: ResourceSource(kSourceVolume, name, volNum, resFile) {
-		_associatedMap = map;
+		: ResourceSource(kSourceVolume, name, volNum, resFile), _associatedMap(map) {
 	}
 
 	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {

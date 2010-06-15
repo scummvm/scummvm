@@ -417,7 +417,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		Common::List<ResourceSource *>::iterator it = _sources.begin();
 		while (it != _sources.end()) {
 			ResourceSource *src = *it;
-			if (src->_associatedMap == _audioMapSCI1) {
+			if (src->findVolume(_audioMapSCI1, src->_volumeNumber)) {
 				it = _sources.erase(it);
 				delete src;
 			} else {
