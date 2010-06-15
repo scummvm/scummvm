@@ -286,12 +286,14 @@ void DrasculaEngine::response(int function) {
 	playTalkSequence(function);
 
 	if (currentChapter == 2) {
+		if (function == 16 || function == 20 || function == 23 || function == 29 || function == 31)
+			loadPic(menuBackground, backSurface);
+
 		if (function == 16)
 			animation_16_2();
-		else if (function == 20) {
-			loadPic(menuBackground, backSurface);
+		else if (function == 20)
 			animation_20_2();
-		} else if (function == 23)
+		else if (function == 23)
 			animation_23_2();
 		else if (function == 29)
 			animation_29_2();
