@@ -100,6 +100,8 @@ public:
 	 */
 	const char *getTranslation(const char *message);
 
+	String getTranslation(const String &message);
+
 	/**
 	 * Converts the message into the terminal character set (which may be
 	 * different than the GUI's "native" one.

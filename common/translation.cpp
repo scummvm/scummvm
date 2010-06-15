@@ -108,6 +108,10 @@ const char *TranslationManager::getTranslation(const char *message) {
 	return po2c_gettext(message);
 }
 
+String TranslationManager::getTranslation(const String &message) {
+	return po2c_gettext(message.c_str());
+}
+
 #ifdef TERMCONV
 bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
