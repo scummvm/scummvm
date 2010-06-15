@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	predictive.o \
 	saveload.o \
 	sound.o \
+	sound_2gs.o \
 	sprite.o \
 	text.o \
 	view.o \
