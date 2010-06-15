@@ -331,11 +331,9 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateRefresh_pre();
 
-			copyBackground(bjX + 2, bjY - 1, bjX + 2, bjY - 1, 27, 40,
-						   bgSurface, screenSurface);
+			copyBackground(bjX + 2, bjY - 1, bjX + 2, bjY - 1, 27, 40, bgSurface, screenSurface);
 
-			copyRect(x_talk[face], 99, bjX + 2, bjY - 1, 27, 40,
-					 drawSurface3, screenSurface);
+			copyRect(x_talk[face], 99, bjX + 2, bjY - 1, 27, 40, drawSurface3, screenSurface);
 			moveCharacters();
 			updateRefresh();
 
@@ -353,6 +351,7 @@ void DrasculaEngine::talk_bj(int index) {
 
 			updateScreen();
 		}
+		updateEvents();
 	} while (!isTalkFinished());
 
 	updateRoom();
