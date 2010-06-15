@@ -78,7 +78,7 @@ public:
 	/**
 	 * Scan this source for TODO.
 	 */
-	virtual void scanSource() {}
+	virtual void scanSource(ResourceManager *resMan) {}
 
 	/**
 	 * Load a resource.
@@ -95,7 +95,7 @@ class DirectoryResourceSource : public ResourceSource {
 public:
 	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
 
-	virtual void scanSource();
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class PatchResourceSource : public ResourceSource {
@@ -131,7 +131,7 @@ public:
 		: ResourceSource(kSourceExtMap, name, volNum, resFile) {
 	}
 
-	virtual void scanSource();
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class IntMapResourceSource : public ResourceSource {
@@ -140,7 +140,7 @@ public:
 		: ResourceSource(kSourceIntMap, name, volNum) {
 	}
 
-	virtual void scanSource();
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
@@ -162,7 +162,7 @@ public:
 		: ResourceSource(kSourceExtAudioMap, name, volNum) {
 	}
 
-	virtual void scanSource();
+	virtual void scanSource(ResourceManager *resMan);
 };
 
 class WaveResourceSource : public ResourceSource {
@@ -183,7 +183,7 @@ public:
 	MacResourceForkResourceSource(const Common::String &name, int volNum);
 	~MacResourceForkResourceSource();
 
-	virtual void scanSource();
+	virtual void scanSource(ResourceManager *resMan);
 
 	virtual void loadResource(Resource *res);
 };

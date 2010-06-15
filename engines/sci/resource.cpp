@@ -437,15 +437,14 @@ void ResourceSource::loadResource(Resource *res) {
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 
 	int error = res->decompress(fileStream);
-
-	if (_resourceFile)
-		delete fileStream;
-
 	if (error) {
 		warning("Error %d occurred while reading %s from resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
 		res->unalloc();
 	}
+
+	if (_resourceFile)
+		delete fileStream;
 }
 
 Resource *ResourceManager::testResource(ResourceId id) {
@@ -623,13 +622,12 @@ void ResourceManager::scanNewSources() {
 
 		if (!source->_scanned) {
 			source->_scanned = true;
-			source->scanSource();
+			source->scanSource(this);
 		}
 	}
 }
 
-void DirectoryResourceSource::scanSource() {
-	ResourceManager *resMan = g_sci->getResMan();
+void DirectoryResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readResourcePatches();
 
 	// We can't use getSciVersion() at this point, thus using _volVersion
@@ -639,21 +637,18 @@ void DirectoryResourceSource::scanSource() {
 	resMan->readWaveAudioPatches();
 }
 
-void ExtMapResourceSource::scanSource() {
-	ResourceManager *resMan = g_sci->getResMan();
+void ExtMapResourceSource::scanSource(ResourceManager *resMan) {
 	if (resMan->_mapVersion < kResVersionSci1Late)
 		resMan->readResourceMapSCI0(this);
 	else
 		resMan->readResourceMapSCI1(this);
 }
 
-void ExtAudioMapResourceSource::scanSource() {
-	ResourceManager *resMan = g_sci->getResMan();
+void ExtAudioMapResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readAudioMapSCI1(this);
 }
 
-void IntMapResourceSource::scanSource() {
-	ResourceManager *resMan = g_sci->getResMan();
+void IntMapResourceSource::scanSource(ResourceManager *resMan) {
 	resMan->readAudioMapSCI11(this);
 }
 
@@ -1441,8 +1436,7 @@ static uint32 resTypeToMacTag(ResourceType type) {
 	return 0;
 }
 
-void MacResourceForkResourceSource::scanSource() {
-	ResourceManager *resMan = g_sci->getResMan();
+void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
 	if (!_macResMan->open(getLocationName().c_str()))
 		error("%s is not a valid Mac resource fork", getLocationName().c_str());
 
