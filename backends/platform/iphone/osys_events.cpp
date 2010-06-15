@@ -24,6 +24,7 @@
  */
 
 #include "gui/message.h"
+#include "common/translation.h"
 
 #include "osys_main.h"
 
@@ -335,9 +336,9 @@ bool OSystem_IPHONE::handleEvent_mouseSecondDragged(Common::Event &event, int x,
 			_touchpadModeEnabled = !_touchpadModeEnabled;
 			const char *dialogMsg;
 			if (_touchpadModeEnabled)
-				dialogMsg = "Touchpad mode enabled.";
+				dialogMsg = _("Touchpad mode enabled.");
 			else
-				dialogMsg = "Touchpad mode disabled.";
+				dialogMsg = _("Touchpad mode disabled.");
 			GUI::TimedMessageDialog dialog(dialogMsg, 1500);
 			dialog.runModal();
 			return false;
