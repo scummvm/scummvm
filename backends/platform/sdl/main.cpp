@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	((OSystem_SDL *)g_system)->deinit();
+	delete (OSystem_SDL *)g_system;
 	return res;
 }
 

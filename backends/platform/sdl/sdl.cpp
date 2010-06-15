@@ -169,9 +169,7 @@ OSystem_SDL::OSystem_SDL()
 }
 
 OSystem_SDL::~OSystem_SDL() {
-	delete _mixer;
-	delete _savefileManager;
-	delete _timerManager;
+	deinit();
 }
 
 void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
@@ -299,16 +297,22 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 void OSystem_SDL::deinit() {
 	SDL_ShowCursor(SDL_ENABLE);
 
+	delete _eventManager;
+	_eventManager = 0;
+	delete _savefileManager;
+	_savefileManager = 0;
+	delete _graphicsManager;
+	_graphicsManager = 0;
+	delete _audiocdManager;
+	_audiocdManager = 0;
 	delete _mixer;
-
+	_mixer = 0;
 	delete _timerManager;
+	_timerManager = 0;
+	delete _mutexManager;
+	_mutexManager = 0;
 
 	SDL_Quit();
-
-	// Event Manager requires save manager for storing
-	// recorded events
-	delete _eventManager;
-	delete _savefileManager;
 }
 
 void OSystem_SDL::quit() {
