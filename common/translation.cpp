@@ -49,7 +49,7 @@ namespace Common {
 TranslationManager::TranslationManager() {
 #ifdef DETECTLANG
 	// Activating current locale settings
-	const char* locale = setlocale(LC_ALL, "");
+	const char *locale = setlocale(LC_ALL, "");
 
 	// Detect the language from the locale
 	if (!locale) {
@@ -82,7 +82,7 @@ TranslationManager::~TranslationManager() {
 #endif // TERMCONV
 }
 
-void TranslationManager::setLanguage(const char* lang) {
+void TranslationManager::setLanguage(const char *lang) {
 	if (*lang == '\0')
 		po2c_setlang(_syslang);
 	else
@@ -90,10 +90,10 @@ void TranslationManager::setLanguage(const char* lang) {
 
 #ifdef TERMCONV
 	// Get the locale character set (for terminal output)
-	const char* charset_term = nl_langinfo(CODESET);
+	const char *charset_term = nl_langinfo(CODESET);
 
 	// Get the messages character set
-	const char* charset_po = po2c_getcharset();
+	const char *charset_po = po2c_getcharset();
 
 	// Delete previous conversion
 	if (_conversion)
@@ -104,23 +104,23 @@ void TranslationManager::setLanguage(const char* lang) {
 #endif // TERMCONV
 }
 
-const char* TranslationManager::getTranslation(const char* message) {
+const char *TranslationManager::getTranslation(const char *message) {
 	return po2c_gettext(message);
 }
 
 #ifdef TERMCONV
-bool TranslationManager::convert(const char* message) {
+bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
 	size_t len = strlen(message);
-	char* msgcpy = new char[len + 1];
+	char *msgcpy = new char[len + 1];
 	strcpy(msgcpy, message);
-	char* msg = msgcpy;
-	char** pmsg = &msg;
+	char *msg = msgcpy;
+	char **pmsg = &msg;
 
 	// Preparing conversion destination
 	size_t len2 = _sizeconv;
 	char *conv = _convmsg;
-	char** pconv = &conv;
+	char **pconv = &conv;
 
 	// Clean previous conversions
 	iconv(_conversion, NULL, NULL, pconv, &len2);
@@ -134,7 +134,7 @@ bool TranslationManager::convert(const char* message) {
 }
 #endif // TERMCONV
 
-const char* TranslationManager::convertTerm(const char* message) {
+const char *TranslationManager::convertTerm(const char *message) {
 #ifdef TERMCONV
 	size_t len = strlen(message);
 	if (!_convmsg) {
@@ -206,13 +206,13 @@ TranslationManager::TranslationManager() {}
 
 TranslationManager::~TranslationManager() {}
 
-void TranslationManager::setLanguage(const char* lang) {}
+void TranslationManager::setLanguage(const char *lang) {}
 
-const char* TranslationManager::getTranslation(const char* message) {
+const char *TranslationManager::getTranslation(const char *message) {
 	return message;
 }
 
-const char* TranslationManager::convertTerm(const char* message) {
+const char *TranslationManager::convertTerm(const char *message) {
 	return message;
 }
 

@@ -65,10 +65,10 @@ private:
 
 #ifdef TERMCONV
 	iconv_t _conversion;
-	char* _convmsg;
+	char *_convmsg;
 	int _sizeconv;
 
-	bool convert(const char* message);
+	bool convert(const char *message);
 #endif // TERMCONV
 
 public:
@@ -98,13 +98,13 @@ public:
 	 * message. In case the message isn't found in the translation catalog,
 	 * it returns the original untranslated message.
 	 */
-	const char* getTranslation(const char* message);
+	const char *getTranslation(const char *message);
 
 	/**
 	 * Converts the message into the terminal character set (which may be
 	 * different than the GUI's "native" one.
 	 */
-	const char* convertTerm(const char* message);
+	const char *convertTerm(const char *message);
 
 	const TLangArray getSupportedLanguages() const;
 };
