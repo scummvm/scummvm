@@ -1861,6 +1861,7 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 			if (updateFlag & UPDATE_MOUSECLICK) {
 				if (!_vm->isIHNMDemo()) {
 					_vm->_scene->clearPsychicProfile();
+					_vm->_script->wakeUpThreads(kWaitTypeDelay);
 				} else {
 					setMode(kPanelConverse);
 					_vm->_scene->_textList.clear();

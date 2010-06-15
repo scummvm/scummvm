@@ -1442,6 +1442,8 @@ void Scene::showPsychicProfile(const char *text) {
 	_vm->_interface->setMode(kPanelPlacard);
 	_vm->_gfx->savePalette();
 
+	_vm->_events->clearList();
+
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
 	event.op = kEventHide;
