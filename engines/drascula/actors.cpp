@@ -100,6 +100,7 @@ void DrasculaEngine::hiccup(int counter) {
 			if (y == 0)
 				trackCharacter = 0;
 		}
+		pause(3);
 	} while (counter > 0);
 
 	updateRoom();
