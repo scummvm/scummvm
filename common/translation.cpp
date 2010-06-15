@@ -129,27 +129,29 @@ String TranslationManager::getTranslation(const String &message) {
 bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
 	size_t len = strlen(message);
+#ifdef ICONV_USES_CONST
+	const char *msg = message;
+	const char **pmsg = &msg;
+#else
 	char *msgcpy = new char[len + 1];
 	strcpy(msgcpy, message);
 	char *msg = msgcpy;
-#ifdef ICONV_USES_CONST
-	const char **pmsg = &msg;
-#else
 	char **pmsg = &msg;
 #endif
 
 	// Preparing conversion destination
 	size_t len2 = _sizeconv;
 	char *conv = _convmsg;
-	char **pconv = &conv;
 
 	// Clean previous conversions
-	iconv(_conversion, NULL, NULL, pconv, &len2);
+	iconv(_conversion, NULL, NULL, &conv, &len2);
 
 	// Do the real conversion
-	size_t result = iconv(_conversion, pmsg, &len, pconv, &len2);
+	size_t result = iconv(_conversion, pmsg, &len, &conv, &len2);
 
+#ifndef ICONV_USES_CONST
 	delete[] msgcpy;
+#endif
 
 	return result != ((size_t)-1);
 }
