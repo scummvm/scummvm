@@ -131,7 +131,7 @@ public:
 
 	/**
 	 * Converts the message into the terminal character set (which may be
-	 * different than the GUI's "native" one.
+	 * different than the GUI's "native" one).
 	 */
 	const char *convertTerm(const char *message);
 
