@@ -117,6 +117,7 @@ void OptionsDialog::init() {
 	_speechVolumeLabel = 0;
 	_muteCheckbox = 0;
 	_subToggleDesc = 0;
+	_subToggleGroup = 0;
 	_subToggleSubOnly = 0;
 	_subToggleSpeechOnly = 0;
 	_subToggleSubBoth = 0;
