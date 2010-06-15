@@ -27,8 +27,11 @@
 #define AGI_SOUND_2GS_H
 
 #include "common/frac.h"
+#include "sound/audiostream.h"
 
 namespace Agi {
+
+#define BUFFER_SIZE	410
 
 // Apple IIGS MIDI uses 60 ticks per second (Based on tests with Apple IIGS
 // KQ1 and SQ1 under MESS 0.124a). So we make the audio buffer size to be a
@@ -268,39 +271,78 @@ protected:
 	uint8 _volume;								///< MIDI controller number 7 (Volume)
 };
 
+class SoundGen2GS : public SoundGen, public Audio::AudioStream {
+public:
+	SoundGen2GS(AgiEngine *vm, Audio::Mixer *pMixer);
+	~SoundGen2GS();
+
+	void play(int resnum);
+	void stop(void);
+
+	// AudioStream API
+	int readBuffer(int16 *buffer, const int numSamples);
+
+	bool isStereo() const {
+		return false;
+	}
+
+	bool endOfData() const {
+		return false;
+	}
+
+	int getRate() const {
+		// FIXME: Ideally, we should use _sampleRate.
+		return 22050;
+	}
+
+private:
+	bool _disabledMidi;
+	int _playingSound;
+	bool _playing;
+
+	int16 *_sndBuffer;
+
 /**
  * Class for managing Apple IIGS sound channels.
  * TODO: Check what instruments are used by default on the MIDI channels
  * FIXME: Some instrument choices sound wrong
  */
-class IIgsSoundMgr {
-public:
+private:
 	typedef Common::Array<IIgsMidiChannel>::const_iterator const_iterator;
 	typedef Common::Array<IIgsMidiChannel>::iterator iterator;
 	static const uint kSfxMidiChannel = 0; ///< The MIDI channel used for playing sound effects
-public:
-	// For initializing
-	IIgsSoundMgr();
+
+	bool loadInstruments();
+	const IIgsExeInfo *getIIgsExeInfo(enum AgiGameID gameid) const;
+
 	void setProgramChangeMapping(const MidiProgramChangeMapping *mapping);
 	bool loadInstrumentHeaders(const Common::FSNode &exePath, const IIgsExeInfo &exeInfo);
 	bool loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo &exeInfo);
+
 	// Miscellaneous methods
+	void fillAudio(int16 *stream, uint len);
+	uint32 mixSound();
+	void playSound();
 	uint activeSounds() const; ///< How many active sounds are playing?
 	void stopSounds(); ///< Stops all sounds
 	void removeStoppedSounds(); ///< Removes all stopped sounds from the MIDI channels
+
 	// For playing Apple IIGS AGI samples (Sound effects etc)
 	bool playSampleSound(const IIgsSampleHeader &sampleHeader, const int8 *sample);
+	void playMidiSound();
+	void playSampleSound();
+
 	// MIDI commands
 	void midiNoteOff(uint8 channel, uint8 note, uint8 velocity);
 	void midiNoteOn(uint8 channel, uint8 note, uint8 velocity);
 	void midiController(uint8 channel, uint8 controller, uint8 value);
 	void midiProgramChange(uint8 channel, uint8 program);
 	void midiPitchWheel(uint8 wheelPos);
-protected:
+	//protected:
 	const IIgsInstrumentHeader* getInstrument(uint8 program) const;
-public:
+	//public:
 	Common::Array<IIgsMidiChannel> _midiChannels;		///< Information about each MIDI channel
-protected:
+	//protected:
 	Common::Array<int8> _wave;							///< Sample data used by the Apple IIGS MIDI instruments
 	const MidiProgramChangeMapping *_midiProgToInst;	///< MIDI program change to instrument number mapping
 	Common::Array<IIgsInstrumentHeader> _instruments;	///< Instruments used by the Apple IIGS AGI

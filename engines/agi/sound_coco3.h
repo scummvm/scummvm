@@ -23,67 +23,30 @@
  *
  */
 
-#ifndef AGI_SOUND_PCJR_H
-#define AGI_SOUND_PCJR_H
+#ifndef AGI_SOUND_COCO3_H
+#define AGI_SOUND_COCO3_H
 
 #include "sound/audiostream.h"
 
 namespace Agi {
 
-#define CHAN_MAX 4
+struct CoCoNote {
+	uint8  freq;
+	uint8  volume;
+	uint16 duration;    ///< Note duration
 
-#define SAMPLE_RATE 22050
-
-enum GenType {
-	kGenSilence,
-	kGenTone,
-	kGenPeriod,
-	kGenWhite
+	/** Reads a CoCoNote through the given pointer. */
+	void read(const uint8 *ptr) {
+		freq = *ptr;
+		volume = *(ptr + 1);
+		duration = READ_LE_UINT16(ptr + 2);
+	}
 };
 
-struct SndGenChan {
-	const byte *data;
-	uint16 duration;
-	uint16 avail;	// turned on (1)  but when the channel's data runs out, it's set to (0)
-	uint16 dissolveCount;
-	byte attenuation;
-	byte attenuationCopy;
-	
-	GenType genType;
-	
-	// for the sample mixer
-	int freqCount;
-};
-
-struct ToneChan {
-	int avail;
-
-	int noteCount; // length of tone.. duration
-
-	int freqCount;
-	int freqCountPrev;
-	int atten;  // volume
-
-	GenType genType;
-	int genTypePrev;
-
-	int count;
-	int scale;
-	int sign;
-	unsigned int noiseState;		/* noise generator      */
-	int feedback;						/* noise feedback mask */
-};
-
-struct Tone {
-	int freqCount;
-	int atten;
-	GenType type;
-};
-
-class SoundGenPCJr : public SoundGen, public Audio::AudioStream {
+class SoundGenCoCo3 : public SoundGen, public Audio::AudioStream {
 public:
-	SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer);
-	~SoundGenPCJr();
+	SoundGenCoCo3(AgiEngine *vm, Audio::Mixer *pMixer);
+	~SoundGenCoCo3();
 
 	void play(int resnum);
 	void stop(void);
@@ -103,25 +66,8 @@ public:
 		// FIXME: Ideally, we should use _sampleRate.
 		return 22050;
 	}
-
-private:
-	int getNextNote(int ch, Tone *tone);
-	int volumeCalc(SndGenChan *chan);
-
-	int chanGen(int chan, int16 *stream, int len);
-
-	int fillNoise(ToneChan *t, int16 *buf, int len);
-	int fillSquare(ToneChan *t, int16 *buf, int len);
-
-private:
-	SndGenChan _channel[CHAN_MAX];
-	ToneChan _tchannel[CHAN_MAX];
-	int16 *_chanData;
-	int _chanAllocated;
-
-	int _dissolveMethod;
 };
 
 } // End of namespace Agi
 
-#endif /* AGI_SOUND_PCJR_H */
+#endif /* AGI_SOUND_COCO3_H */

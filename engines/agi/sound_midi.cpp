@@ -70,7 +70,10 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 		warning("Error creating MIDI sound from resource %d (Type %d, length %d)", resnum, _type, len);
 }
 
-MusicPlayer::MusicPlayer(MidiDriver *driver, SoundMgr *manager) : _parser(0), _driver(driver), _isPlaying(false), _passThrough(false), _isGM(false), _manager(manager) {
+SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _passThrough(false), _isGM(false) {
+	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB);
+	_driver = MidiDriver::createMidi(midiDriver);
+
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 255, sizeof(_channelVolume));
 	_masterVolume = 0;
@@ -79,7 +82,7 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, SoundMgr *manager) : _parser(0), _d
 	_midiMusicData = NULL;
 }
 
-MusicPlayer::~MusicPlayer() {
+SoundGenMIDI::~SoundGenMIDI() {
 	_driver->setTimerCallback(NULL, NULL);
 	stop();
 	this->close();
@@ -88,12 +91,12 @@ MusicPlayer::~MusicPlayer() {
 	delete[] _midiMusicData;
 }
 
-void MusicPlayer::setChannelVolume(int channel) {
+void SoundGenMIDI::setChannelVolume(int channel) {
 	int newVolume = _channelVolume[channel] * _masterVolume / 255;
 	_channel[channel]->volume(newVolume);
 }
 
-void MusicPlayer::setVolume(int volume) {
+void SoundGenMIDI::setVolume(int volume) {
 	Common::StackLock lock(_mutex);
 
 	volume = CLIP(volume, 0, 255);
@@ -108,7 +111,7 @@ void MusicPlayer::setVolume(int volume) {
 	}
 }
 
-int MusicPlayer::open() {
+int SoundGenMIDI::open() {
 	// Don't ever call open without first setting the output driver!
 	if (!_driver)
 		return 255;
@@ -121,14 +124,14 @@ int MusicPlayer::open() {
 	return 0;
 }
 
-void MusicPlayer::close() {
+void SoundGenMIDI::close() {
 	stop();
 	if (_driver)
 		_driver->close();
 	_driver = 0;
 }
 
-void MusicPlayer::send(uint32 b) {
+void SoundGenMIDI::send(uint32 b) {
 	if (_passThrough) {
 		_driver->send(b);
 		return;
@@ -163,11 +166,12 @@ void MusicPlayer::send(uint32 b) {
 		_channel[channel]->send(b);
 }
 
-void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
+void SoundGenMIDI::metaEvent(byte type, byte *data, uint16 length) {
 
 	switch (type) {
 	case 0x2F:	// End of Track
 		stop();
+		_vm->_sound->soundIsFinished();
 		break;
 	default:
 		//warning("Unhandled meta event: %02x", type);
@@ -175,18 +179,22 @@ void MusicPlayer::metaEvent(byte type, byte *data, uint16 length) {
 	}
 }
 
-void MusicPlayer::onTimer(void *refCon) {
-	MusicPlayer *music = (MusicPlayer *)refCon;
+void SoundGenMIDI::onTimer(void *refCon) {
+	SoundGenMIDI *music = (SoundGenMIDI *)refCon;
 	Common::StackLock lock(music->_mutex);
 
 	if (music->_parser)
 		music->_parser->onTimer();
 }
 
-void MusicPlayer::playMIDI(MIDISound *track) {
+void SoundGenMIDI::play(int resnum) {
+	MIDISound *track;
+ 
 	stop();
 
 	_isGM = true;
+
+	track = (MIDISound *)_vm->_game.sounds[resnum];
 
 	// Convert AGI Sound data to MIDI
 	int midiMusicSize = convertSND2MIDI(track->_data, &_midiMusicData);
@@ -206,7 +214,7 @@ void MusicPlayer::playMIDI(MIDISound *track) {
 	}
 }
 
-void MusicPlayer::stop() {
+void SoundGenMIDI::stop() {
 	Common::StackLock lock(_mutex);
 
 	if (!_isPlaying)
@@ -217,22 +225,19 @@ void MusicPlayer::stop() {
 		_parser->unloadMusic();
 		_parser = NULL;
 	}
-
-	if (_manager->_endflag != -1)
-		_manager->_vm->setflag(_manager->_endflag, true);
 }
 
-void MusicPlayer::pause() {
+void SoundGenMIDI::pause() {
 	setVolume(-1);
 	_isPlaying = false;
 }
 
-void MusicPlayer::resume() {
+void SoundGenMIDI::resume() {
 	syncVolume();
 	_isPlaying = true;
 }
 
-void MusicPlayer::syncVolume() {
+void SoundGenMIDI::syncVolume() {
 	int volume = ConfMan.getInt("music_volume");
 	if (ConfMan.getBool("mute")) {
 		volume = -1;

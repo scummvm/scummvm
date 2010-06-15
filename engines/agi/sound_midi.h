@@ -46,10 +46,13 @@ protected:
 	uint16 _type; ///< Sound resource type
 };
 
-class MusicPlayer : public MidiDriver {
+class SoundGenMIDI : public SoundGen, public MidiDriver {
 public:
-	MusicPlayer(MidiDriver *driver, SoundMgr *manager);
-	~MusicPlayer();
+	SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer);
+	~SoundGenMIDI();
+
+	void play(int resnum);
+	void stop();
 
 	bool isPlaying() { return _isPlaying; }
 	void setPlaying(bool playing) { _isPlaying = playing; }
@@ -60,8 +63,6 @@ public:
 
 	void setNativeMT32(bool b) { _nativeMT32 = b; }
 	bool hasNativeMT32() { return _nativeMT32; }
-	void playMIDI(MIDISound *track);
-	void stop();
 	void pause();
 	void resume();
 	void setLoop(bool loop) { _looping = loop; }
@@ -86,7 +87,7 @@ public:
 	MidiParser *_parser;
 	Common::Mutex _mutex;
 
-protected:
+private:
 
 	static void onTimer(void *data);
 	void setChannelVolume(int channel);

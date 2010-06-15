@@ -105,7 +105,7 @@ const int8 dissolveDataV3[] = {
 };
 
 
-SoundGenPCJr::SoundGenPCJr(AgiEngine *vm) : _vm(vm) {
+SoundGenPCJr::SoundGenPCJr(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer) {
 	_chanAllocated = 10240; // preallocate something which will most likely fit
 	_chanData = (int16 *)malloc(_chanAllocated << 1);
 
@@ -122,13 +122,19 @@ SoundGenPCJr::SoundGenPCJr(AgiEngine *vm) : _vm(vm) {
 		_dissolveMethod = 2;
 	else
 		_dissolveMethod = 0;
+
+	_dissolveMethod = 3;
+
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 }
 
 SoundGenPCJr::~SoundGenPCJr() {
 	free(_chanData);
+
+	_mixer->stopHandle(_soundHandle);
 }
 
-void SoundGenPCJr::play(int resnum, int flag) {
+void SoundGenPCJr::play(int resnum) {
 	PCjrSound *pcjrSound = (PCjrSound *)_vm->_game.sounds[resnum];
 
 	for (int i = 0; i < CHAN_MAX; i++) {
@@ -467,7 +473,7 @@ int SoundGenPCJr::fillNoise(ToneChan *t, int16 *buf, int len) {
 	return len;
 }
 
-void SoundGenPCJr::premixerCall(int16 *stream, int len) {
+int SoundGenPCJr::readBuffer(int16 *stream, const int len) {
 	int streamCount;
 	int16 *sPtr, *cPtr;
 
@@ -480,6 +486,8 @@ void SoundGenPCJr::premixerCall(int16 *stream, int len) {
 
 	assert(stream);
 
+	bool finished = true;
+
 	for (int i = 0; i < CHAN_MAX; i++) {
 		// get channel data(chan.userdata)
 		if (chanGen(i, _chanData, len) == 0) {
@@ -487,11 +495,18 @@ void SoundGenPCJr::premixerCall(int16 *stream, int len) {
 			streamCount = len;
 			sPtr = stream;
 			cPtr = _chanData;
-					
+
 			while (streamCount--)
 				*(sPtr++) += *(cPtr++) / CHAN_MAX;
+
+			finished = false;
 		}
 	}
+
+	if (finished)
+		_vm->_sound->soundIsFinished();
+
+	return len;
 }
 
 } // End of namespace Agi
