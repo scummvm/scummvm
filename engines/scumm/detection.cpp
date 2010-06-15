@@ -395,7 +395,7 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 			d.md5Entry = 0;
 			fileMD5Map[file->getName()] = d;
 		} else {
-			if (!directoryGlobs)
+			if (!globs)
 				continue;
 
 			bool matched = false;
@@ -411,7 +411,7 @@ static void composeFileHashMap(const Common::FSList &fslist, DescMap &fileMD5Map
 			Common::FSList files;
 
 			if (file->getChildren(files, Common::FSNode::kListAll)) {
-				composeFileHashMap(files, fileMD5Map, depth - 1, directoryGlobs);
+				composeFileHashMap(files, fileMD5Map, depth - 1, globs);
 			}
 		}
 	}
