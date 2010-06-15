@@ -779,11 +779,17 @@ void DrasculaEngine::updateEvents() {
 }
 
 void DrasculaEngine::delay(int ms) {
-	_system->delayMillis(ms * 2); // originally was 1
+	uint32 end = _system->getMillis() + ms * 2; // originally was 1
+
+	do {
+		_system->delayMillis(10);
+		updateEvents();
+		_system->updateScreen();
+	} while (_system->getMillis() < end);
 }
 
 void DrasculaEngine::pause(int duration) {
-	_system->delayMillis(duration * 30); // was originally 2
+	delay(duration * 15);
 }
 
 int DrasculaEngine::getTime() {
