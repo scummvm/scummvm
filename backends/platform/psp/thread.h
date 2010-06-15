@@ -40,8 +40,8 @@ private:
 public:
 	PspSemaphore(int initialValue, int maxValue);
 	~PspSemaphore();
-	bool take(int num) { return takeWithTimeOut(num, 0); }
-	bool takeWithTimeOut(int num, uint32 timeOut);
+	bool take() { return takeWithTimeOut(0); }
+	bool takeWithTimeOut(uint32 timeOut);
 	bool give(int num);
 	bool pollForValue(int value);	// check for a certain value
 	int numOfWaitingThreads();
@@ -51,12 +51,14 @@ public:
 class PspMutex {
 private:
 	PspSemaphore _semaphore;
+	int _recursiveCount;
+	int _ownerId;
 public:
-	PspMutex(bool initialValue) : _semaphore(initialValue ? 1 : 0, 255) {}	// initial, max value
-	bool lock() { return _semaphore.take(1); }
-	bool unlock() { return _semaphore.give(1); }
+	PspMutex(bool initialValue) : _semaphore(initialValue ? 1 : 0, 255), _recursiveCount(0), _ownerId(0) {}	// initial, max value
+	bool lock();
+	bool unlock();
 	bool poll() { return _semaphore.pollForValue(1); }
-	int getNumWaitingThreads() { return _semaphore.numOfWaitingThreads(); }
+	int numOfWaitingThreads() { return _semaphore.numOfWaitingThreads(); }
 	bool getValue() { return (bool)_semaphore.getValue(); }
 };
 

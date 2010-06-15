@@ -95,14 +95,14 @@ bool PspSemaphore::pollForValue(int value) {
 }
 
 // false: timeout or error
-bool PspSemaphore::takeWithTimeOut(int num, uint32 timeOut) {
+bool PspSemaphore::takeWithTimeOut(uint32 timeOut) {
 	DEBUG_ENTER_FUNC();
 	
 	uint32 *pTimeOut = 0;
 	if (timeOut) 
 		pTimeOut = &timeOut;
 	
-	if (sceKernelWaitSema(_handle, num, pTimeOut) < 0)
+	if (sceKernelWaitSema(_handle, 1, pTimeOut) < 0)	// we always wait for 1
 		return false;
 	return true;
 }
@@ -113,6 +113,43 @@ bool PspSemaphore::give(int num) {
 	if (sceKernelSignalSema(_handle, num) < 0)
 		return false;	
 	return true;
+}
+
+// Class PspMutex ------------------------------------------------------------
+
+bool PspMutex::lock() {
+	DEBUG_ENTER_FUNC();
+	int threadId = sceKernelGetThreadId();
+	bool ret = true;
+	
+	if (_ownerId == threadId) {
+		_recursiveCount++;
+	} else {
+		ret = _semaphore.take();
+		_ownerId = threadId;
+		_recursiveCount = 0;
+	}
+	return ret;
+}
+
+bool PspMutex::unlock() {
+	DEBUG_ENTER_FUNC();
+	int threadId = sceKernelGetThreadId();
+	bool ret = true;
+	
+	if (_ownerId != threadId) {
+		PSP_ERROR("attempt to unlock mutex by thread[%x] as opposed to owner[%x]\n",
+			threadId, _ownerId);
+		return false;
+	}
+	
+	if (_recursiveCount) {
+		_recursiveCount--;
+	} else {
+		_ownerId = 0;
+		ret = _semaphore.give(1);
+	}	
+	return ret;
 }
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
