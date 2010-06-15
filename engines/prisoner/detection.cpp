@@ -133,7 +133,9 @@ static const ADParams detectionParams = {
 	// Flags
 	0,
 	// Additional GUI options (for every game}
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1
 };
 
 class PrisonerMetaEngine : public AdvancedMetaEngine {
