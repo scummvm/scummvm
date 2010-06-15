@@ -104,10 +104,10 @@ int AgiEngine::handleController(int key) {
 	VtEntry *v = &_game.viewTable[0];
 	int i;
 
-	// AGI 3.149 games and The Black Cauldron need KEY_ESCAPE to use menus
+	// AGI 3.149 games, The Black Cauldron and King's Quest 4 need KEY_ESCAPE to use menus
 	// Games with the GF_ESCPAUSE flag need KEY_ESCAPE to pause the game
 	if (key == 0 ||
-		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && !(getFeatures() & GF_ESCPAUSE)) )
+		(key == KEY_ESCAPE && getVersion() != 0x3149 && getGameID() != GID_BC && getGameID() != GID_KQ4 && !(getFeatures() & GF_ESCPAUSE)) )
 		return false;
 
 	if ((getGameID() == GID_MH1 || getGameID() == GID_MH2) && (key == KEY_ENTER) &&
