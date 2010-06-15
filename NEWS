@@ -10,6 +10,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
    - Added support for more original media layouts.
    - Added support for GUI localization.
+   - Improved GUI by adding tooltips and radiobuttons.
+   - Improved GUI usability by hiding more irrelevant options not supported by
+     specific games.
 
  AGI:
    - Fixed number of GFX glitches.
