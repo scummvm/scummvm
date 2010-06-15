@@ -507,6 +507,7 @@ bool DrasculaEngine::runCurrentChapter() {
 #else
 		if (rightMouseButton == 1 && _menuScreen) {
 #endif
+			rightMouseButton = 0;
 			delay(100);
 			if (currentChapter == 2) {
 				loadPic(menuBackground, cursorSurface);
@@ -535,6 +536,7 @@ bool DrasculaEngine::runCurrentChapter() {
 		if (rightMouseButton == 1 && !_menuScreen &&
 			!(currentChapter == 5 && pickedObject == 16)) {
 #endif
+			rightMouseButton = 0;
 			delay(100);
 			characterMoved = 0;
 			if (trackProtagonist == 2)
@@ -760,10 +762,10 @@ void DrasculaEngine::updateEvents() {
 			leftMouseButton = 0;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			rightMouseButton = 1;
+			// We changed semantic and react only on button up event
 			break;
 		case Common::EVENT_RBUTTONUP:
-			rightMouseButton = 0;
+			rightMouseButton = 1;
 			break;
 		case Common::EVENT_QUIT:
 			// TODO
