@@ -135,8 +135,8 @@ void AgiEngine::blitTextbox(const char *p, int y, int x, int len) {
 	if (x == 0 && y == 0 && len == 0)
 		x = y = -1;
 
-	if (len <= 0 || len >= 40)
-		len = 32;
+	if (len <= 0)
+		len = 30;
 
 	xoff = x * CHAR_COLS;
 	yoff = y * CHAR_LINES;
