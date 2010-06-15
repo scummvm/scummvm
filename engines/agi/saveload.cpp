@@ -864,6 +864,10 @@ int AgiEngine::saveGameDialog() {
 	sprintf(fileName, "%s", getSavegameFilename(_firstSlot + slot));
 	debugC(8, kDebugLevelMain | kDebugLevelResources, "file is [%s]", fileName);
 
+	// Make sure all graphics was blitted to screen. This fixes bug
+	// #2960567: "AGI: Ego partly erased in Load/Save thumbnails"
+	_gfx->doUpdate();
+
 	int result = saveGame(fileName, desc);
 
 	if (result == errOK)
