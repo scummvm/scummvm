@@ -168,8 +168,8 @@ uint32 Resource::getAudioCompressionType() {
 }
 
 
-ResourceSource::ResourceSource(ResSourceType type)
- : _sourceType(type) {
+ResourceSource::ResourceSource(ResSourceType type, const Common::String &name)
+ : _sourceType(type), _name(name) {
 	scanned = false;
 	resourceFile = 0;
 	volume_number = 0;
@@ -192,9 +192,8 @@ ResourceSource::~ResourceSource() {
 // Resource source list management
 
 ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource(kSourceExtMap);
+	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, file_name);
 
-	newsrc->location_name = file_name;
 	newsrc->volume_number = volume_nr;
 
 	_sources.push_back(newsrc);
@@ -202,9 +201,8 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volum
 }
 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource(kSourceExtMap);
+	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, mapFile->getName());
 
-	newsrc->location_name = mapFile->getName();
 	newsrc->resourceFile = mapFile;
 	newsrc->volume_number = volume_nr;
 
@@ -213,9 +211,8 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const char *filename, int number) {
-	ResourceSource *newsrc = new ResourceSource(type);
+	ResourceSource *newsrc = new ResourceSource(type, filename);
 
-	newsrc->location_name = filename;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 	if (type == kSourceAudioVolume)
@@ -226,9 +223,8 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 }
 
 ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const Common::FSNode *resFile, int number) {
-	ResourceSource *newsrc = new ResourceSource(type);
+	ResourceSource *newsrc = new ResourceSource(type, resFile->getName());
 
-	newsrc->location_name = resFile->getName();
 	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
@@ -240,9 +236,7 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 }
 
 ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
-	ResourceSource *newsrc = new ResourceSource(kSourceDirectory);
-
-	newsrc->location_name = dirname;
+	ResourceSource *newsrc = new ResourceSource(kSourceDirectory, dirname);
 
 	_sources.push_back(newsrc);
 	return 0;
@@ -291,9 +285,9 @@ bool ResourceManager::loadPatch(Resource *res, Common::SeekableReadStream *file)
 
 bool ResourceManager::loadFromPatchFile(Resource *res) {
 	Common::File file;
-	const char *filename = res->_source->location_name.c_str();
+	const Common::String &filename = res->_source->getLocationName();
 	if (file.open(filename) == false) {
-		warning("Failed to open patch file %s", filename);
+		warning("Failed to open patch file %s", filename.c_str());
 		res->unalloc();
 		return false;
 	}
@@ -309,7 +303,7 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 	if (source->resourceFile)
 		return source->resourceFile->createReadStream();
 
-	const char *filename = source->location_name.c_str();
+	const char *filename = source->getLocationName().c_str();
 
 	// check if file is already opened
 	while (it != _volumeFiles.end()) {
@@ -365,7 +359,7 @@ void ResourceManager::loadResource(Resource *res) {
 	Common::SeekableReadStream *fileStream = getVolumeFile(res->_source);
 
 	if (!fileStream) {
-		warning("Failed to open %s", res->_source->location_name.c_str());
+		warning("Failed to open %s", res->_source->getLocationName().c_str());
 		res->unalloc();
 		return;
 	}
@@ -896,7 +890,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
 				Common::File *file = new Common::File();
-				file->open(rsrc->location_name);
+				file->open(rsrc->getLocationName());
 				if (file->isOpen())
 					fileStream = file;
 			}
@@ -985,7 +979,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 				fileStream = rsrc->resourceFile->createReadStream();
 			} else {
 				Common::File *file = new Common::File();
-				file->open(rsrc->location_name);
+				file->open(rsrc->getLocationName());
 				if (file->isOpen())
 					fileStream = file;
 			}
@@ -1089,8 +1083,8 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		fileStream = source->resourceFile->createReadStream();
 	} else {
 		Common::File *file = new Common::File();
-		if (!file->open(source->location_name)) {
-			warning("ResourceManager::processPatch(): failed to open %s", source->location_name.c_str());
+		if (!file->open(source->getLocationName())) {
+			warning("ResourceManager::processPatch(): failed to open %s", source->getLocationName().c_str());
 			return;
 		}
 		fileStream = file;
@@ -1098,7 +1092,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 
 	int fsize = fileStream->size();
 	if (fsize < 3) {
-		debug("Patching %s failed - file too small", source->location_name.c_str());
+		debug("Patching %s failed - file too small", source->getLocationName().c_str());
 		return;
 	}
 
@@ -1108,7 +1102,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	delete fileStream;
 
 	if (patchType != checkForType) {
-		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
+		debug("Patching %s failed - resource type mismatch", source->getLocationName().c_str());
 		return;
 	}
 
@@ -1132,7 +1126,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 
 	if (patchDataOffset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
-		      source->location_name.c_str(), patchDataOffset + 2, fsize);
+		      source->getLocationName().c_str(), patchDataOffset + 2, fsize);
 		return;
 	}
 
@@ -1150,7 +1144,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 	newrsc->size = fsize - patchDataOffset - 2;
 	newrsc->_headerSize = patchDataOffset;
 	newrsc->_fileOffset = 0;
-	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->location_name.c_str());
+	debugC(1, kDebugLevelResMan, "Patching %s - OK", source->getLocationName().c_str());
 }
 
 void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
@@ -1230,8 +1224,7 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 					delete stream;
 				}
 
-				psrcPatch = new ResourceSource(kSourcePatch);
-				psrcPatch->location_name = name;
+				psrcPatch = new ResourceSource(kSourcePatch, name);
 				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 			}
 		}
@@ -1279,8 +1272,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			}
 
 			if (bAdd) {
-				psrcPatch = new ResourceSource(kSourcePatch);
-				psrcPatch->location_name = name;
+				psrcPatch = new ResourceSource(kSourcePatch, name);
 				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
 		}
@@ -1300,7 +1292,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
 		Common::File *file = new Common::File();
-		if (!file->open(map->location_name))
+		if (!file->open(map->getLocationName()))
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		fileStream = file;
 	}
@@ -1316,7 +1308,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 		if (fileStream->eos() || fileStream->err()) {
 			delete fileStream;
-			warning("Error while reading %s", map->location_name.c_str());
+			warning("Error while reading %s", map->getLocationName().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 		if (offset == 0xFFFFFFFF)
@@ -1360,7 +1352,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 	} else {
 		Common::File *file = new Common::File();
-		if (!file->open(map->location_name))
+		if (!file->open(map->getLocationName()))
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		fileStream = file;
 	}
@@ -1407,7 +1399,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			}
 			if (fileStream->eos() || fileStream->err()) {
 				delete fileStream;
-				warning("Error while reading %s", map->location_name.c_str());
+				warning("Error while reading %s", map->getLocationName().c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId((ResourceType)type, number);
@@ -1465,8 +1457,8 @@ static uint32 resTypeToMacTag(ResourceType type) {
 
 int ResourceManager::readMacResourceFork(ResourceSource *source) {
 	assert(source->_macResMan);
-	if (!source->_macResMan->open(source->location_name.c_str()))
-		error("%s is not a valid Mac resource fork", source->location_name.c_str());
+	if (!source->_macResMan->open(source->getLocationName().c_str()))
+		error("%s is not a valid Mac resource fork", source->getLocationName().c_str());
 
 	Common::MacResTagArray tagArray = source->_macResMan->getResTagArray();
 

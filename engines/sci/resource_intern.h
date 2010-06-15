@@ -34,10 +34,13 @@ namespace Common {
 
 namespace Sci {
 
-struct ResourceSource {
+class ResourceSource {
+protected:
 	const ResSourceType _sourceType;
+	const Common::String _name;
+
+public:
 	bool scanned;
-	Common::String location_name;	// FIXME: Replace by FSNode ?
 	const Common::FSNode *resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;
@@ -46,11 +49,11 @@ struct ResourceSource {
 	Common::MacResManager *_macResMan;
 
 public:
-
-	ResourceSource(ResSourceType type);
+	ResourceSource(ResSourceType type, const Common::String &name);
 	~ResourceSource();
 
 	ResSourceType getSourceType() const { return _sourceType; }
+	const Common::String &getLocationName() const { return _name; }
 };
 
 

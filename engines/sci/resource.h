@@ -118,7 +118,7 @@ const char *getResourceTypeName(ResourceType restype);
 
 
 class ResourceManager;
-struct ResourceSource;
+class ResourceSource;
 
 class ResourceId {
 public:

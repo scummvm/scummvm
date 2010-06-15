@@ -37,7 +37,7 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 	Common::SeekableReadStream *fileStream = getVolumeFile(source);
 
 	if (!fileStream) {
-		warning("Failed to open %s", source->location_name.c_str());
+		warning("Failed to open %s", source->getLocationName().c_str());
 		return;
 	}
 
@@ -155,15 +155,13 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 		gmPatchFile = "TALEGM.PAT";
 
 	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
-		ResourceSource *psrcPatch = new ResourceSource(kSourcePatch);
-		psrcPatch->location_name = gmPatchFile;
+		ResourceSource *psrcPatch = new ResourceSource(kSourcePatch, gmPatchFile);
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
 }
 
 void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
-	ResourceSource *resSrc = new ResourceSource(kSourceWave);
-	resSrc->location_name = name;
+	ResourceSource *resSrc = new ResourceSource(kSourceWave, name);
 
 	Resource *newRes = 0;
 
@@ -352,7 +350,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 	Common::File file;
 
-	if (!file.open(map->location_name))
+	if (!file.open(map->getLocationName()))
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 
 	bool oldFormat = (file.readUint16LE() >> 11) == kResourceTypeAudio;
@@ -364,7 +362,7 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 		uint32 size = file.readUint32LE();
 
 		if (file.eos() || file.err()) {
-			warning("Error while reading %s", map->location_name.c_str());
+			warning("Error while reading %s", map->getLocationName().c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 
