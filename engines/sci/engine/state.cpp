@@ -90,13 +90,13 @@ void EngineState::reset(bool isRestoring) {
 
 		_fileHandles.resize(5);
 
-		stack_base = 0;
-		stack_top = 0;
 		abortScriptProcessing = kAbortNone;
 	}
 
 	executionStackBase = 0;
 	_executionStackPosChanged = false;
+	stack_base = 0;
+	stack_top = 0;
 
 	restAdjust = 0;
 

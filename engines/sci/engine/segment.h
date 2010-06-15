@@ -802,7 +802,7 @@ public:
 	byte getType() const { return _type; }
 	uint32 getSize() const { return _size; }
 	T *getRawData() { return _data; }
-	const T *getRawData()const { return _data; }
+	const T *getRawData() const { return _data; }
 
 protected:
 	int8 _type;
