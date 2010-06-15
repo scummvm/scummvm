@@ -37,12 +37,12 @@ enum {
 };
 
 TabWidget::TabWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h) {
+	: Widget(boss, x, y, w, h), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
 }
 
 TabWidget::TabWidget(GuiObject *boss, const String &name)
-	: Widget(boss, name) {
+	: Widget(boss, name), _bodyBackgroundType(GUI::ThemeEngine::kDialogBackgroundDefault) {
 	init();
 }
 
@@ -56,7 +56,12 @@ void TabWidget::init() {
 	_tabHeight = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Height");
 	_titleVPad = g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Padding.Top");
 
-	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.navButtonPadding.Right", 0);
+	_bodyTP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Top");
+	_bodyBP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Bottom");
+	_bodyLP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Left");
+	_bodyRP = g_gui.xmlEval()->getVar("Globals.TabWidget.Body.Padding.Right");
+
+	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButtonPadding.Right", 0);
 	_butTP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Padding.Top", 0);
 	_butW = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Width", 10);
 	_butH = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.Height", 10);
@@ -279,11 +284,14 @@ void TabWidget::drawWidget() {
 	for (int i = _firstVisibleTab; i < (int)_tabs.size(); ++i) {
 		tabs.push_back(_tabs[i].title);
 	}
+	g_gui.theme()->drawDialogBackground(Common::Rect(_x + _bodyLP, _y + _bodyTP, _x+_w-_bodyRP, _y+_h-_bodyBP), _bodyBackgroundType);
+
 	g_gui.theme()->drawTab(Common::Rect(_x, _y, _x+_w, _y+_h), _tabHeight, _tabWidth, tabs, _activeTab - _firstVisibleTab, 0, _titleVPad);
 }
 
 void TabWidget::draw() {
 	Widget::draw();
+
 	if (_tabWidth * _tabs.size() > _w) {
 		_navLeft->draw();
 		_navRight->draw();

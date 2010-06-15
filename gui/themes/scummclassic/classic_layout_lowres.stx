@@ -85,6 +85,9 @@
 				size = '45, 16'
 				padding = '0, 0, 2, 0'
 		/>
+		<widget name = 'TabWidget.Body'
+				padding = '0, 0, 0, 0'
+		/>
 		<widget name = 'TabWidget.NavButton'
 				size = '32, 18'
 				padding = '0, 3, 4, 0'
