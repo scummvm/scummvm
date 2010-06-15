@@ -59,7 +59,6 @@ public:
 	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
 	uint32 audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
 	int32 *audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
-	Common::MacResManager *_macResMan;	// TODO: Move to MacResourceForkResourceSource
 
 protected:
 	ResourceSource(ResSourceType type, const Common::String &name);
@@ -99,6 +98,8 @@ public:
 class PatchResourceSource : public ResourceSource {
 public:
 	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
+
+	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class VolumeResourceSource : public ResourceSource {
@@ -134,6 +135,8 @@ public:
 	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map)
 		: VolumeResourceSource(name, map, kSourceAudioVolume) {
 	}
+
+	//virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
@@ -146,9 +149,14 @@ public:
 class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
+
+	//virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class MacResourceForkResourceSource : public ResourceSource {
+protected:
+	Common::MacResManager *_macResMan;
+
 public:
 	MacResourceForkResourceSource(const Common::String &name);
 	~MacResourceForkResourceSource();
@@ -157,6 +165,8 @@ public:
 	 * Reads the SCI1.1+ resource file from a Mac resource fork.
 	 */
 	virtual void scanSource(ResourceManager *resMan);
+
+	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 } // End of namespace Sci

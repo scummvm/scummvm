@@ -204,9 +204,12 @@ class ResourceManager {
 	// ease transition to the ResourceSource class system.
 	friend class ResourceSource;
 	friend class DirectoryResourceSource;
+	friend class PatchResourceSource;
 	friend class ExtMapResourceSource;
 	friend class IntMapResourceSource;
+	friend class AudioVolumeResourceSource;
 	friend class ExtAudioMapResourceSource;
+	friend class WaveResourceSource;
 	friend class MacResourceForkResourceSource;
 
 public:

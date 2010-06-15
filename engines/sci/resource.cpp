@@ -176,7 +176,6 @@ ResourceSource::ResourceSource(ResSourceType type, const Common::String &name)
 	associated_map = NULL;
 	audioCompressionType = 0;
 	audioCompressionOffsetMapping = NULL;
-	_macResMan = NULL;
 }
 
 ResourceSource::~ResourceSource() {
@@ -185,6 +184,7 @@ ResourceSource::~ResourceSource() {
 MacResourceForkResourceSource::MacResourceForkResourceSource(const Common::String &name)
  : ResourceSource(kSourceMacResourceFork, name) {
 	_macResMan = new Common::MacResManager();
+	assert(_macResMan);
 }
 
 MacResourceForkResourceSource::~MacResourceForkResourceSource() {
@@ -351,27 +351,32 @@ void ResourceManager::loadResource(Resource *res) {
 	res->_source->loadResource(res, this);
 }
 
-void ResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
 
-	if (getSourceType() == kSourcePatch && resMan->loadFromPatchFile(res))
-		return;
-
-	if (getSourceType() == kSourceMacResourceFork) {
-		assert(_macResMan);
-		Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
-
-		if (!stream)
-			error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
-
-		int error = resMan->decompress(res, stream);
-		if (error) {
-			warning("Error %d occured while reading %s from Mac resource file: %s",
-				    error, res->_id.toString().c_str(), sci_error_types[error]);
-			res->unalloc();
-		}
-		return;
+void PatchResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
+	bool result = resMan->loadFromPatchFile(res);
+	if (!result) {
+		// TODO: We used to fallback to the "default" code here if loadFromPatchFile
+		// failed, but I am not sure whether that is really appropriate.
+		// In fact it looks like a bug to me, so I commented this out for now.
+		//ResourceSource::loadResource(res, resMan);
 	}
+}
 
+void MacResourceForkResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
+	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
+
+	if (!stream)
+		error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
+
+	int error = resMan->decompress(res, stream);
+	if (error) {
+		warning("Error %d occured while reading %s from Mac resource file: %s",
+				error, res->_id.toString().c_str(), sci_error_types[error]);
+		res->unalloc();
+	}
+}
+
+void ResourceSource::loadResource(Resource *res, ResourceManager *resMan) {
 	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
@@ -1471,7 +1476,6 @@ static uint32 resTypeToMacTag(ResourceType type) {
 }
 
 void MacResourceForkResourceSource::scanSource(ResourceManager *resMan) {
-	assert(_macResMan);
 	if (!_macResMan->open(getLocationName().c_str()))
 		error("%s is not a valid Mac resource fork", getLocationName().c_str());
 
