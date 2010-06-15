@@ -824,7 +824,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	}
 
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeScript);
-	sort(resources->begin(), resources->end(), ResourceIdLess());
+	Common::sort(resources->begin(), resources->end());
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
 	DebugPrintf("%d SCI1.1-SCI2.1 scripts found, performing sanity checks...\n", resources->size());
@@ -833,15 +833,15 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	while (itr != resources->end()) {
 		script = _engine->getResMan()->findResource(*itr, false);
 		if (!script)
-			DebugPrintf("Error: script %d couldn't be loaded\n", itr->number);
+			DebugPrintf("Error: script %d couldn't be loaded\n", itr->getNumber());
 
-		heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->number), false);
+		heap = _engine->getResMan()->findResource(ResourceId(kResourceTypeHeap, itr->getNumber()), false);
 		if (!heap)
-			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->number);
+			DebugPrintf("Error: script %d doesn't have a corresponding heap\n", itr->getNumber());
 
 		if (script && heap && (script->size + heap->size > 65535))
 			DebugPrintf("Error: script and heap %d together are larger than 64KB (%d bytes)\n",
-			itr->number, script->size + heap->size);
+			itr->getNumber(), script->size + heap->size);
 
 		++itr;
 	}
@@ -864,7 +864,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	parser->setMidiDriver(player);
 	
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);
-	sort(resources->begin(), resources->end(), ResourceIdLess());
+	Common::sort(resources->begin(), resources->end());
 	Common::List<ResourceId>::iterator itr = resources->begin();
 	int instruments[128];
 	bool instrumentsSongs[128][1000];
@@ -885,12 +885,12 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 	SoundResource *sound;
 
 	while (itr != resources->end()) {
-		if (songNumber >= 0 && itr->number != songNumber) {
+		if (songNumber >= 0 && itr->getNumber() != songNumber) {
 			++itr;
 			continue;
 		}
 
-		sound = new SoundResource(itr->number, _engine->getResMan(), doSoundVersion);
+		sound = new SoundResource(itr->getNumber(), _engine->getResMan(), doSoundVersion);
 		int channelFilterMask = sound->getChannelFilterMask(player->getPlayId(), player->hasRhythmChannel());
 		SoundResource::Track *track = sound->getTrackByType(player->getPlayId());
 		if (track->digitalChannelNr != -1) {
@@ -907,7 +907,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		bool endOfTrack = false;
 		bool firstOneShown = false;
 
-		DebugPrintf("Song %d: ", itr->number);
+		DebugPrintf("Song %d: ", itr->getNumber());
 
 		do {
 			while (*channelData == 0xF8)
@@ -937,7 +937,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 				DebugPrintf(" %d", instrument);
 				instruments[instrument]++;
-				instrumentsSongs[instrument][itr->number] = true;
+				instrumentsSongs[instrument][itr->getNumber()] = true;
 				}
 				break;
 			case 0xD:
@@ -1035,19 +1035,19 @@ bool Console::cmdList(int argc, const char **argv) {
 		}
 
 		Common::List<ResourceId> *resources = _engine->getResMan()->listResources(res, number);
-		sort(resources->begin(), resources->end(), ResourceIdLess());
+		Common::sort(resources->begin(), resources->end());
 		Common::List<ResourceId>::iterator itr = resources->begin();
 
 		int cnt = 0;
 		while (itr != resources->end()) {
 			if (number == -1) {
-				DebugPrintf("%8i", itr->number);
+				DebugPrintf("%8i", itr->getNumber());
 				if (++cnt % 10 == 0)
 					DebugPrintf("\n");
-			}
-			else if (number == (int)itr->number) {
-				DebugPrintf("(%3i, %3i, %3i, %3i)   ", (itr->tuple >> 24) & 0xff, (itr->tuple >> 16) & 0xff,
-							(itr->tuple >> 8) & 0xff, itr->tuple & 0xff);
+			} else if (number == (int)itr->getNumber()) {
+				const uint32 tuple = itr->getTuple();
+				DebugPrintf("(%3i, %3i, %3i, %3i)   ", (tuple >> 24) & 0xff, (tuple >> 16) & 0xff,
+							(tuple >> 8) & 0xff, tuple & 0xff);
 				if (++cnt % 4 == 0)
 					DebugPrintf("\n");
 			}

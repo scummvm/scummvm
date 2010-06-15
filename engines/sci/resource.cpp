@@ -157,7 +157,7 @@ void Resource::unalloc() {
 }
 
 void Resource::writeToStream(Common::WriteStream *stream) const {
-	stream->writeByte(_id.type | 0x80); // 0x80 is required by old sierra sci, otherwise it wont accept the patch file
+	stream->writeByte(getType() | 0x80); // 0x80 is required by old sierra sci, otherwise it wont accept the patch file
 	stream->writeByte(_headerSize);
 	if (_headerSize > 0)
 		stream->write(_header, _headerSize);
@@ -334,10 +334,10 @@ void PatchResourceSource::loadResource(Resource *res) {
 }
 
 void MacResourceForkResourceSource::loadResource(Resource *res) {
-	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->_id.type), res->_id.number);
+	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->_id.getNumber());
 
 	if (!stream)
-		error("Could not get Mac resource fork resource: %d %d", res->_id.type, res->_id.number);
+		error("Could not get Mac resource fork resource: %d %d", res->getType(), res->_id.getNumber());
 
 	int error = res->decompress(stream);
 	if (error) {
@@ -387,7 +387,7 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 				mappingTable++;
 				compressedOffset = *mappingTable;
 				// Go to next compressed offset and use that to calculate size of compressed sample
-				switch (res->_id.type) {
+				switch (res->getType()) {
 				case kResourceTypeSync:
 				case kResourceTypeSync36:
 					// we should already have a (valid) size
@@ -405,7 +405,7 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 			error("could not translate offset to compressed offset in audio volume");
 		fileStream->seek(compressedOffset, SEEK_SET);
 
-		switch (res->_id.type) {
+		switch (res->getType()) {
 		case kResourceTypeAudio:
 		case kResourceTypeAudio36:
 			// Directly read the stream, compressed audio wont have resource type id and header size for SCI1.1
@@ -604,9 +604,9 @@ int ResourceManager::addInternalSources() {
 	Common::List<ResourceId>::iterator itr = resources->begin();
 
 	while (itr != resources->end()) {
-		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->number));
+		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
 
-		if ((itr->number == 65535) && Common::File::exists("RESOURCE.SFX"))
+		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
 			addSource(new AudioVolumeResourceSource("RESOURCE.SFX", src, 0));
 		else if (Common::File::exists("RESOURCE.AUD"))
 			addSource(new AudioVolumeResourceSource("RESOURCE.AUD", src, 0));
@@ -799,7 +799,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 
 	ResourceMap::iterator itr = _resMap.begin();
 	while (itr != _resMap.end()) {
-		if ((itr->_value->_id.type == type) && ((mapNumber == -1) || (itr->_value->_id.number == mapNumber)))
+		if ((itr->_value->getType() == type) && ((mapNumber == -1) || (itr->_value->_id.getNumber() == mapNumber)))
 			resources->push_back(itr->_value->_id);
 		++itr;
 	}
@@ -1220,7 +1220,7 @@ void ResourceManager::readResourcePatchesBase36() {
 				}
 
 				psrcPatch = new PatchResourceSource(name);
-				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
+				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.getTuple());
 			}
 		}
 	}
@@ -1552,8 +1552,8 @@ int Resource::readResourceInfo(Common::SeekableReadStream *file,
 	case kResVersionSci11Mac:
 		// Doesn't store this data in the resource. Fortunately,
 		// we already have this data.
-		type = _id.type;
-		number = _id.number;
+		type = getType();
+		number = _id.getNumber();
 		szPacked = file->size();
 		szUnpacked = file->size();
 		wCompression = 0;

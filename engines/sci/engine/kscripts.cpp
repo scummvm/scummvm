@@ -61,8 +61,8 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 		if (which)
 			g_sci->getResMan()->unlockResource(which);
 		else {
-			if (id.type == kResourceTypeInvalid)
-				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.number, type);
+			if (id.getType() == kResourceTypeInvalid)
+				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
 			else
 				warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
 		}
