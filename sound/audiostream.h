@@ -129,6 +129,7 @@ public:
 
 	/**
 	 * Returns number of loops the stream has played.
+	 *
 	 * @param numLoops number of loops to play, 0 - infinite
 	 */
 	uint getCompleteIterations() const { return _completeIterations; }
@@ -148,8 +149,8 @@ private:
  * overhead down, when the code does not require any functionality only offered
  * by LoopingAudioStream.
  *
- * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
- * @param loops How often to loop (0 = infinite)
+ * @param stream  Stream to loop (will be automatically destroyed, when the looping is done)
+ * @param loops   How often to loop (0 = infinite)
  * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(RewindableAudioStream *stream, uint loops);
@@ -165,7 +166,8 @@ public:
 	 * Tries to load a file by trying all available formats.
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibility of the caller.
-	 * @param basename  a filename without an extension
+	 *
+	 * @param basename a filename without an extension
 	 * @return  an SeekableAudioStream ready to use in case of success;
 	 *          NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
@@ -211,9 +213,9 @@ public:
  * by LoopingAudioStream.
  *
  * @param stream Stream to loop (will be automatically destroyed, when the looping is done)
- * @param start Starttime of the stream interval to be looped
- * @param end End of the stream interval to be looped (a zero time, means till end)
- * @param loops How often to loop (0 = infinite)
+ * @param start  Starttime of the stream interval to be looped
+ * @param end    End of the stream interval to be looped (a zero time, means till end)
+ * @param loops  How often to loop (0 = infinite)
  * @return A new AudioStream, which offers the desired functionality.
  */
 AudioStream *makeLoopingAudioStream(SeekableAudioStream *stream, Timestamp start, Timestamp end, uint loops);
@@ -235,13 +237,13 @@ public:
 	/**
 	 * Constructor for a SubLoopingAudioStream.
 	 *
-	 * Note that on creation of the LoopingAudioStream object
+	 * Note that on creation of the SubLoopingAudioStream object
 	 * the underlying stream will be rewound.
 	 *
-	 * @param stream Stream to loop
-	 * @param loops How often the stream should be looped (0 means infinite)
-	 * @param loopStart Start of the loop (this must be smaller than loopEnd)
-	 * @param loopEnd End of the loop (thus must be greater than loopStart)
+	 * @param stream          Stream to loop
+	 * @param loops           How often the stream should be looped (0 means infinite)
+	 * @param loopStart       Start of the loop (this must be smaller than loopEnd)
+	 * @param loopEnd         End of the loop (thus must be greater than loopStart)
 	 * @param disposeAfterUse Whether the stream should be disposed, when the
 	 *                        SubLoopingAudioStream is destroyed.
 	 */
@@ -285,9 +287,9 @@ public:
 	/**
 	 * Creates a new SubSeekableAudioStream.
 	 *
-	 * @param parent parent stream object.
-	 * @param start Start time.
-	 * @param end End time.
+	 * @param parent          parent stream object.
+	 * @param start           Start time.
+	 * @param end             End time.
 	 * @param disposeAfterUse Whether the parent stream object should be destroyed on destruction of the SubSeekableAudioStream.
 	 */
 	SubSeekableAudioStream(SeekableAudioStream *parent, const Timestamp start, const Timestamp end, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES);
@@ -323,7 +325,7 @@ public:
 	 * contained in it has been played.
 	 */
 	virtual void queueAudioStream(Audio::AudioStream *audStream,
-						DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
+	                              DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES) = 0;
 
 	/**
 	 * Queue a block of raw audio data for playback. This stream plays all
@@ -333,10 +335,10 @@ public:
 	 *
 	 * @note Make sure to allocate the data block with malloc(), not with new[].
 	 *
-	 * @param data	pointer to the audio data block
-	 * @param size	length of the audio data block
-	 * @param disposeAfterUse	if equal to DisposeAfterUse::YES, the block is released using free() after use.
-	 * @param flags	a bit-ORed combination of RawFlags describing the audio data format
+	 * @param data             pointer to the audio data block
+	 * @param size             length of the audio data block
+	 * @param disposeAfterUse  if equal to DisposeAfterUse::YES, the block is released using free() after use.
+	 * @param flags            a bit-ORed combination of RawFlags describing the audio data format
 	 */
 	void queueBuffer(byte *data, uint32 size, DisposeAfterUse::Flag disposeAfterUse, byte flags);
 
@@ -363,8 +365,8 @@ QueuingAudioStream *makeQueuingAudioStream(int rate, bool stereo);
  * Converts a point in time to a precise sample offset
  * with the given parameters.
  *
- * @param where Point in time.
- * @param rate Rate of the stream.
+ * @param where    Point in time.
+ * @param rate     Rate of the stream.
  * @param isStereo Is the stream a stereo stream?
  */
 Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo);
