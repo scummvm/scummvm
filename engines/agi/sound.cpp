@@ -35,6 +35,7 @@
 
 #include "agi/sound_2gs.h"
 #include "agi/sound_midi.h"
+#include "agi/sound_pcjr.h"
 
 namespace Agi {
 
@@ -127,6 +128,15 @@ static int noteToPeriod(int note) {
 }
 #endif
 
+int SoundMgr::readBuffer(int16 *buffer, const int numSamples) {
+	if (_vm->_soundemu == SOUND_EMU_PCJR)
+		_soundGen->premixerCall(buffer, numSamples);
+	else
+		premixerCall(buffer, numSamples / 2);
+	
+	return numSamples;
+}
+
 void SoundMgr::unloadSound(int resnum) {
 	if (_vm->_game.dirSound[resnum].flags & RES_LOADED) {
 		if (_vm->_game.sounds[resnum]->isPlaying()) {
@@ -174,6 +184,8 @@ void SoundMgr::startSound(int resnum, int flag) {
 	case AGI_SOUND_4CHN:
 		if (_vm->_soundemu == SOUND_EMU_MIDI) {
 			_musicPlayer->playMIDI((MIDISound *)_vm->_game.sounds[resnum]);
+		} else if (_vm->_soundemu == SOUND_EMU_PCJR) {
+			_soundGen->play(resnum, flag);
 		} else {
 
 			PCjrSound *pcjrSound = (PCjrSound *) _vm->_game.sounds[resnum];
@@ -212,7 +224,8 @@ void SoundMgr::stopSound() {
 	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
 
 	_endflag = -1;
-	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
+
+	if (_vm->_soundemu != SOUND_EMU_APPLE2GS && _vm->_soundemu != SOUND_EMU_PCJR) {
 		for (i = 0; i < NUM_CHANNELS; i++)
 			stopNote(i);
 	}
@@ -227,6 +240,10 @@ void SoundMgr::stopSound() {
 
 		if (_vm->_soundemu == SOUND_EMU_MIDI) {
 			_musicPlayer->stop();
+		}
+
+		if (_vm->_soundemu == SOUND_EMU_PCJR) {
+			_soundGen->stop();
 		}
 
 		_playingSound = -1;
@@ -261,6 +278,9 @@ int SoundMgr::initSound() {
 		break;
 	case SOUND_EMU_MIDI:
 		break;
+	case SOUND_EMU_PCJR:
+		_soundGen = new SoundGenPCJr(_vm);
+		break;
 	}
 
 	report("Initializing sound:\n");
@@ -281,6 +301,7 @@ int SoundMgr::initSound() {
 void SoundMgr::deinitSound() {
 	debugC(3, kDebugLevelSound, "()");
 
+	stopSound();
 	_mixer->stopHandle(_soundHandle);
 }
 
@@ -617,7 +638,7 @@ void SoundMgr::fillAudio(void *udata, int16 *stream, uint len) {
 	data_available -= len;
 }
 
-SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
+SoundMgr::SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer) : _chn() {
 	_vm = agi;
 	_mixer = pMixer;
 	_sampleRate = pMixer->getOutputRate();
@@ -630,6 +651,8 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_disabledMidi = false;
 	_useChorus = true;	// FIXME: Currently always true?
 	_midiDriver = 0;
+	_musicPlayer = 0;
+	_soundGen = 0;
 
 	_gsSound = new IIgsSoundMgr;
 
@@ -654,6 +677,7 @@ SoundMgr::~SoundMgr() {
 	free(_sndBuffer);
 	delete _gsSound;
 
+	delete _soundGen;
 	delete _musicPlayer;
 	delete _midiDriver;
 }

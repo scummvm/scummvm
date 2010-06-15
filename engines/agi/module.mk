@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	sound.o \
 	sound_2gs.o \
 	sound_midi.o \
+	sound_pcjr.o \
 	sprite.o \
 	text.o \
 	view.o \

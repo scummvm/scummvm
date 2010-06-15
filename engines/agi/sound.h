@@ -37,7 +37,7 @@ namespace Agi {
 
 #define SOUND_EMU_NONE	0
 #define SOUND_EMU_PC	1
-#define SOUND_EMU_TANDY	2
+#define SOUND_EMU_PCJR	2
 #define SOUND_EMU_MAC	3
 #define SOUND_EMU_AMIGA	4
 #define SOUND_EMU_APPLE2GS 5
@@ -126,6 +126,17 @@ struct ChannelInfo {
 
 class SoundMgr;
 
+class SoundGen {
+public:
+	SoundGen() {}
+	virtual ~SoundGen() {}
+
+	virtual void play(int resnum, int flag) = 0;
+	virtual void stop(void) = 0;
+
+	virtual void premixerCall(int16 *stream, int len) = 0;
+};
+
 /**
  * AGI sound resource structure.
  */
@@ -167,7 +178,6 @@ protected:
 };
 
 class AgiEngine;
-class AgiBase;
 class IIgsSoundMgr;
 class MusicPlayer;
 
@@ -176,15 +186,12 @@ struct IIgsExeInfo;
 class SoundMgr : public Audio::AudioStream {
 
 public:
-	SoundMgr(AgiBase *agi, Audio::Mixer *pMixer);
+	SoundMgr(AgiEngine *agi, Audio::Mixer *pMixer);
 	~SoundMgr();
 	virtual void setVolume(uint8 volume);
 
 	// AudioStream API
-	int readBuffer(int16 *buffer, const int numSamples) {
-		premixerCall(buffer, numSamples / 2);
-		return numSamples;
-	}
+	int readBuffer(int16 *buffer, const int numSamples);
 
 	bool isStereo() const {
 		return false;
@@ -200,7 +207,7 @@ public:
 	}
 
 	int _endflag;
-	AgiBase *_vm;
+	AgiEngine *_vm;
 
 private:
 	Audio::Mixer *_mixer;
@@ -225,6 +232,8 @@ private:
 
 	void premixerCall(int16 *buf, uint len);
 	void fillAudio(void *udata, int16 *stream, uint len);
+
+	SoundGen *_soundGen;
 
 public:
 	void unloadSound(int);

@@ -583,15 +583,18 @@ void AgiEngine::initialize() {
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
 	} else {
-		switch (MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB)) {
+		switch (MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI)) {
 		case MD_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
+		case MD_PCJR:
+			_soundemu = SOUND_EMU_PCJR;
+			break;
 		case MD_ADLIB:
-			_soundemu = SOUND_EMU_MIDI;
+			_soundemu = SOUND_EMU_NONE;
 			break;
 		default:
-			_soundemu = SOUND_EMU_NONE;
+			_soundemu = SOUND_EMU_MIDI;
 			break;
 		}
 	}
