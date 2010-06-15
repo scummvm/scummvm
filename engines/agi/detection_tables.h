@@ -80,12 +80,12 @@ using Common::GUIO_NONE;
 
 #define GAME3_PS(id,name,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
-#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
+#define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPN(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
-#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPNF(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
-#define FANMADE_SVP(name,md5,size,ver,platform) FANMADE_ISVP("agi-fanmade",name,md5,size,ver,platform)
+#define FANMADE_ISVP(id,name,md5,size,ver,platform) GAME_LVFPN(id,name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
+#define FANMADE_SVP(name,md5,size,ver,platform) GAME_LVFPNF("agi-fanmade",name,"logdir",md5,size,Common::EN_ANY,ver,GF_FANMADE,GID_FANMADE,platform,GType_V2)
 
-#define FANMADE_LVF(name,md5,lang,ver,features) FANMADE_ILVF("agi-fanmade",name,md5,lang,ver,features)
+#define FANMADE_LVF(name,md5,lang,ver,features) GAME_LVFPNF("agi-fanmade",name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
 #define FANMADE_LF(name,md5,lang,features) FANMADE_LVF(name,md5,lang,0x2917,features)
 #define FANMADE_IF(id,name,md5,features) FANMADE_ILVF(id,name,md5,Common::EN_ANY,0x2917,features)
