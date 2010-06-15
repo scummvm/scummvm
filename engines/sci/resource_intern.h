@@ -56,7 +56,6 @@ public:
 	const Common::String &getLocationName() const { return _name; }
 };
 
-
 } // End of namespace Sci
 
 #endif // SCI_RESOURCE_INTERN_H

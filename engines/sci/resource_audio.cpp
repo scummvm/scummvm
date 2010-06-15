@@ -433,7 +433,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		return;
 	}
 
-	_audioMapSCI1 = addSource(NULL, kSourceExtAudioMap, fullname.c_str(), language);
+	_audioMapSCI1 = addSource(NULL, kSourceExtAudioMap, fullname, language);
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
@@ -443,7 +443,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		const char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
-		addSource(_audioMapSCI1, kSourceAudioVolume, name.c_str(), number);
+		addSource(_audioMapSCI1, kSourceAudioVolume, name, number);
 	}
 
 	scanNewSources();

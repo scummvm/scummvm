@@ -322,7 +322,7 @@ protected:
 	 * Add a path to the resource manager's list of sources.
 	 * @return a pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addPatchDir(const char *path);
+	ResourceSource *addPatchDir(const Common::String &path);
 
 	ResourceSource *getVolume(ResourceSource *map, int volume_nr);
 
@@ -333,7 +333,7 @@ protected:
 	 * @param filename	The name of the source to add
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const char *filename,
+	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const Common::String &filename,
 	                          int number);
 
 	ResourceSource *addSource(ResourceSource *map, ResSourceType type,
@@ -345,7 +345,7 @@ protected:
 	 * @param volume_nr  The volume number the map starts at, 0 for <SCI2.1
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addExternalMap(const char *file_name, int volume_nr = 0);
+	ResourceSource *addExternalMap(const Common::String &filename, int volume_nr = 0);
 
 	ResourceSource *addExternalMap(const Common::FSNode *mapFile, int volume_nr = 0);
 
@@ -355,7 +355,7 @@ protected:
 	 * @param resNr		The map resource number
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addInternalMap(const char *name, int resNr);
+	ResourceSource *addInternalMap(const Common::String &name, int resNr);
 
 	/**
 	 * Checks, if an audio volume got compressed by our tool. If that's the case, it will set audioCompressionType

@@ -191,8 +191,8 @@ ResourceSource::~ResourceSource() {
 
 // Resource source list management
 
-ResourceSource *ResourceManager::addExternalMap(const char *file_name, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, file_name);
+ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, int volume_nr) {
+	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, filename);
 
 	newsrc->volume_number = volume_nr;
 
@@ -210,7 +210,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, i
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const char *filename, int number) {
+ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const Common::String &filename, int number) {
 	ResourceSource *newsrc = new ResourceSource(type, filename);
 
 	newsrc->volume_number = number;
@@ -235,7 +235,7 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	return newsrc;
 }
 
-ResourceSource *ResourceManager::addPatchDir(const char *dirname) {
+ResourceSource *ResourceManager::addPatchDir(const Common::String &dirname) {
 	ResourceSource *newsrc = new ResourceSource(kSourceDirectory, dirname);
 
 	_sources.push_back(newsrc);
@@ -459,7 +459,7 @@ int ResourceManager::addAppropriateSources() {
 			const char *dot = strrchr(name.c_str(), '.');
 			int number = atoi(dot + 1);
 
-			addSource(map, kSourceVolume, name.c_str(), number);
+			addSource(map, kSourceVolume, name, number);
 		}
 #ifdef ENABLE_SCI32
 		// GK1CD hires content
@@ -472,7 +472,7 @@ int ResourceManager::addAppropriateSources() {
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			Common::String filename = (*x)->getName();
-			addSource(0, kSourceMacResourceFork, filename.c_str(), atoi(filename.c_str() + 4));
+			addSource(0, kSourceMacResourceFork, filename, atoi(filename.c_str() + 4));
 		}
 #ifdef ENABLE_SCI32
 		// Mac SCI32 games have extra folders for patches
@@ -504,7 +504,7 @@ int ResourceManager::addAppropriateSources() {
 				int resNumber = atoi(strrchr(resName.c_str(), '.') + 1);
 
 				if (mapNumber == resNumber) {
-					addSource(addExternalMap(mapName.c_str(), mapNumber), kSourceVolume, resName.c_str(), mapNumber);
+					addSource(addExternalMap(mapName, mapNumber), kSourceVolume, resName, mapNumber);
 					break;
 				}
 			}
