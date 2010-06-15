@@ -90,6 +90,8 @@ void DrasculaEngine::moveCursor() {
 }
 
 void DrasculaEngine::loadPic(const char *NamePcc, byte *targetSurface, int colorCount) {
+	debug(5, "loadPic(%s)", NamePcc);
+
 	uint dataSize = 0;
 	byte *pcxData;
 
