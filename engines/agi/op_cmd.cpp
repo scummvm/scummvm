@@ -889,26 +889,12 @@ cmd(erase) {
 	}
 	g_sprites->blitUpdSprites();
 
-	int x1, y1, x2, y2, w, h;
+	int x1, y1, x2, y2;
 
-	w = MAX(vt.celData->width, vt.celData2->width);
-	h = MAX(vt.celData->height, vt.celData2->height);
-
-	if (vt.xPos < vt.xPos2) {
-		x1 = vt.xPos;
-		x2 = vt.xPos2 + w - 1;
-	} else {
-		x1 = vt.xPos2;
-		x2 = vt.xPos + w - 1;
-	}
-
-	if (vt.yPos < vt.yPos2) {
-		y1 = vt.yPos - h + 1;
-		y2 = vt.yPos2;
-	} else {
-		y1 = vt.yPos2 - h + 1;
-		y2 = vt.yPos;
-	}
+	x1 = MIN((int)MIN(vt.xPos, vt.xPos2), MIN(vt.xPos + vt.celData->width, vt.xPos2 + vt.celData2->width));
+	x2 = MAX((int)MAX(vt.xPos, vt.xPos2), MAX(vt.xPos + vt.celData->width, vt.xPos2 + vt.celData2->width));
+	y1 = MIN((int)MIN(vt.yPos, vt.yPos2), MIN(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
+	y2 = MAX((int)MAX(vt.yPos, vt.yPos2), MAX(vt.yPos - vt.celData->height, vt.yPos2 - vt.celData2->height));
 
 	g_sprites->commitBlock(x1, y1, x2, y2);
 }

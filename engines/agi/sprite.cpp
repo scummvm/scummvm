@@ -241,6 +241,14 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 		q += xSize;
 		pos0 += _WIDTH;
 	}
+
+	// WORKAROUND
+	// When set.view command is called, current code cannot detect  this situation while updating
+	// Thus we force removal of the old sprite
+	if (s->v->viewReplaced) {
+		commitBlock(xPos, yPos, xPos + xSize, yPos + ySize);
+		s->v->viewReplaced = false;
+	}
 }
 
 
@@ -387,28 +395,14 @@ void SpritesMgr::commitSprites(SpriteList &l) {
 	SpriteList::iterator iter;
 	for (iter = l.begin(); iter != l.end(); ++iter) {
 		Sprite *s = *iter;
-		int x1, y1, x2, y2, w, h;
+		int x1, y1, x2, y2;
 
-		w = MAX(s->v->celData->width, s->v->celData2->width);
-		h = MAX(s->v->celData->height, s->v->celData2->height);
+		x1 = MIN((int)MIN(s->v->xPos, s->v->xPos2), MIN(s->v->xPos + s->v->celData->width, s->v->xPos2 + s->v->celData2->width));
+		x2 = MAX((int)MAX(s->v->xPos, s->v->xPos2), MAX(s->v->xPos + s->v->celData->width, s->v->xPos2 + s->v->celData2->width));
+		y1 = MIN((int)MIN(s->v->yPos, s->v->yPos2), MIN(s->v->yPos - s->v->celData->height, s->v->yPos2 - s->v->celData2->height));
+		y2 = MAX((int)MAX(s->v->yPos, s->v->yPos2), MAX(s->v->yPos - s->v->celData->height, s->v->yPos2 - s->v->celData2->height));
 
 		s->v->celData2 = s->v->celData;
-
-		if (s->v->xPos < s->v->xPos2) {
-			x1 = s->v->xPos;
-			x2 = s->v->xPos2 + w - 1;
-		} else {
-			x1 = s->v->xPos2;
-			x2 = s->v->xPos + w - 1;
-		}
-
-		if (s->v->yPos < s->v->yPos2) {
-			y1 = s->v->yPos - h + 1;
-			y2 = s->v->yPos2;
-		} else {
-			y1 = s->v->yPos2 - h + 1;
-			y2 = s->v->yPos;
-		}
 
 		commitBlock(x1, y1, x2, y2);
 

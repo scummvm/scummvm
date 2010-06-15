@@ -297,6 +297,7 @@ void AgiEngine::setView(VtEntry *v, int n) {
 	v->viewData = &_game.views[n];
 	v->currentView = n;
 	v->numLoops = v->viewData->numLoops;
+	v->viewReplaced = true;
 	setLoop(v, v->currentLoop >= v->numLoops ? 0 : v->currentLoop);
 }
 
