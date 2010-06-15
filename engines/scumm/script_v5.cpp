@@ -2594,6 +2594,17 @@ void ScummEngine_v5::decodeParseString() {
 					else
 						strcpy((char *)tmpBuf+16, "^19^");
 					printString(textSlot, tmpBuf);
+				} else if (_game.id == GID_MONKEY_EGA && _roomResource == 30 && vm.slot[_currentScript].number == 411 &&
+							strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT")) {
+					// WORKAROUND for bug #3003643 (MI1EGA German: Credit text incorrect)
+					// The script contains buggy text.
+					const char *tmp = strstr((const char *)_scriptPointer, "NCREDIT-NOTE-AMOUNT");
+					char tmpBuf[256];
+					const int diff = tmp - (const char *)_scriptPointer;
+					memcpy(tmpBuf, _scriptPointer, diff);
+					strcpy(tmpBuf + diff, "5000");
+					strcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1);
+					printString(textSlot, (byte *)tmpBuf);
 				} else {
 					printString(textSlot, _scriptPointer);
 				}
