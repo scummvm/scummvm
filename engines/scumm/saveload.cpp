@@ -577,6 +577,10 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// Fixes bug #1766072: MANIACNES: Music Doesn't Start On Load Game
 	if (_game.platform == Common::kPlatformNES) {
 		runScript(5, 0, 0, 0);
+
+		if (VAR(224)) {
+			_sound->addSoundToQueue(VAR(224));
+		}
 	}
 
 	return true;
