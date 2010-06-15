@@ -391,6 +391,7 @@ public:
 	// Graphics buffers/pointers
 	byte *bgSurface;
 	byte *backSurface;
+	byte *cursorSurface;
 	byte *drawSurface3;
 	byte *drawSurface2;
 	byte *tableSurface;

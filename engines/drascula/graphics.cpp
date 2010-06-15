@@ -54,6 +54,7 @@ void DrasculaEngine::allocMemory() {
 	assert(crosshairCursor);
 	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(mouseCursor);
+	cursorSurface = (byte *)malloc(64000);
 }
 
 void DrasculaEngine::freeMemory() {
@@ -67,6 +68,7 @@ void DrasculaEngine::freeMemory() {
 	free(frontSurface);
 	free(crosshairCursor);
 	free(mouseCursor);
+	free(cursorSurface);
 }
 
 void DrasculaEngine::moveCursor() {

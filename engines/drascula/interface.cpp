@@ -78,7 +78,7 @@ void DrasculaEngine::selectVerb(int verb) {
 	}
 
 	for (int i = 0; i < OBJHEIGHT; i++)
-		memcpy(mouseCursor + i * OBJWIDTH, backSurface + OBJWIDTH * verb + (c + i) * 320, OBJWIDTH);
+		memcpy(mouseCursor + i * OBJWIDTH, cursorSurface + OBJWIDTH * verb + (c + i) * 320, OBJWIDTH);
 	setCursor(kCursorCurrentItem);
 
 	if (verb > 0) {

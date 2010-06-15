@@ -244,6 +244,8 @@ Common::Error DrasculaEngine::run() {
 		if (currentChapter != 3)
 			loadPic(96, frontSurface, COMPLETE_PAL);
 
+		loadPic(99, cursorSurface);
+
 		if (currentChapter == 1) {
 		} else if (currentChapter == 2) {
 			loadPic("pts.alg", drawSurface2);
