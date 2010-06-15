@@ -26,6 +26,7 @@
 // Resource library
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/macresman.h"
 
 #include "sci/resource.h"

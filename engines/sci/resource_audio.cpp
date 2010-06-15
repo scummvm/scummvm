@@ -25,6 +25,7 @@
 
 // Resource library
 
+#include "common/archive.h"
 #include "common/file.h"
 
 #include "sci/resource.h"

@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/util.h"
 #include "common/stack.h"
 #include "graphics/primitives.h"

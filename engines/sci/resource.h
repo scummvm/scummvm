@@ -26,8 +26,9 @@
 #ifndef SCI_RESOURCE_H
 #define SCI_RESOURCE_H
 
-#include "common/fs.h"
 #include "common/str.h"
+#include "common/list.h"
+#include "common/hashmap.h"
 
 #include "sci/graphics/helpers.h"		// for ViewType
 #include "sci/decompressor.h"
@@ -35,6 +36,10 @@
 
 namespace Common {
 class File;
+class FSList;
+class FSNode;
+class WriteStream;
+class SeekableReadStream;
 }
 
 namespace Sci {
