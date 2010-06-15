@@ -452,7 +452,7 @@ void SpritesMgr::blitSprites(SpriteList& l) {
 		Sprite *s = *iter;
 
 		objsSaveArea(s);
-		debugC(8, kDebugLevelSprites, "s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
+		debugC(8, kDebugLevelSprites, "blitSprites(): s->v->entry = %d (prio %d)", s->v->entry, s->v->priority);
 		hidden = blitCel(s->xPos, s->yPos, s->v->priority, s->v->celData, s->v->viewData->agi256_2);
 
 		if (s->v->entry == 0) {	// if ego, update f1
@@ -528,7 +528,7 @@ void SpritesMgr::eraseBoth() {
  * @see blit_both()
  */
 void SpritesMgr::blitUpdSprites() {
-	debugC(7, kDebugLevelSprites, "blit updating");
+	debugC(7, kDebugLevelSprites, "blitUpdSprites()");
 	buildUpdBlitlist();
 	blitSprites(_sprUpd);
 }
@@ -542,7 +542,7 @@ void SpritesMgr::blitUpdSprites() {
  * @see blit_both()
  */
 void SpritesMgr::blitNonupdSprites() {
-	debugC(7, kDebugLevelSprites, "blit non-updating");
+	debugC(7, kDebugLevelSprites, "blitNonupdSprites()");
 	buildNonupdBlitlist();
 	blitSprites(_sprNonupd);
 }
@@ -578,7 +578,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 	int x1, y1, x2, y2, y3;
 	uint8 *p1, *p2;
 
-	debugC(3, kDebugLevelSprites, "v=%d, l=%d, c=%d, x=%d, y=%d, p=%d, m=%d", view, loop, cel, x, y, pri, mar);
+	debugC(3, kDebugLevelSprites, "addToPic(view=%d, loop=%d, cel=%d, x=%d, y=%d, pri=%d, mar=%d)", view, loop, cel, x, y, pri, mar);
 
 	_vm->recordImageStackCall(ADD_VIEW, view, loop, cel, x, y, pri, mar);
 
@@ -609,7 +609,7 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 
 	eraseBoth();
 
-	debugC(4, kDebugLevelSprites, "blit_cel (%d, %d, %d, c)", x, y, pri);
+	debugC(4, kDebugLevelSprites, "blitCel(%d, %d, %d, c)", x, y, pri);
 	blitCel(x1, y1, pri, c, _vm->_game.views[view].agi256_2);
 
 	// If margin is 0, 1, 2, or 3, the base of the cel is
@@ -659,7 +659,6 @@ void SpritesMgr::addToPic(int view, int loop, int cel, int x, int y, int pri, in
 
 	blitBoth();
 
-	debugC(4, kDebugLevelSprites, "commit_block (%d, %d, %d, %d)", x1, y1, x2, y2);
 	commitBlock(x1, y1, x2, y2);
 }
 
@@ -711,7 +710,7 @@ void SpritesMgr::commitBlock(int x1, int y1, int x2, int y2) {
 	y1 = CLIP(y1, 0, _HEIGHT - 1);
 	y2 = CLIP(y2, 0, _HEIGHT - 1);
 
-	debugC(7, kDebugLevelSprites, "%d, %d, %d, %d", x1, y1, x2, y2);
+	debugC(7, kDebugLevelSprites, "commitBlock(%d, %d, %d, %d)", x1, y1, x2, y2);
 
 	w = x2 - x1 + 1;
 	q = &_vm->_game.sbuf16c[x1 + _WIDTH * y1];
