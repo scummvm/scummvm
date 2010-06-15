@@ -860,7 +860,7 @@ static void reconstruct_sounds(EngineState *s) {
 #pragma mark -
 
 
-int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
+bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
 	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 
@@ -877,7 +877,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 
 	if (s->executionStackBase) {
 		warning("Cannot save from below kernel function");
-		return 1;
+		return false;
 	}
 
 	Common::Serializer ser(0, fh);
@@ -885,7 +885,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	Graphics::saveThumbnail(*fh);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 
-	return 0;
+	return true;
 }
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {

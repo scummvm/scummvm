@@ -1085,7 +1085,7 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 	}
 
 	// TODO: enable custom descriptions? force filename into a specific format?
-	if (gamestate_save(_engine->_gamestate, out, "debugging", version)) {
+	if (!gamestate_save(_engine->_gamestate, out, "debugging", version)) {
 		DebugPrintf("Saving the game state to '%s' failed\n", argv[1]);
 	} else {
 		out->finalize();
@@ -1094,14 +1094,6 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 		}
 		delete out;
 	}
-
-	out->finalize();
-        if (out->err()) {
-        	delete out;
-                warning("Writing the savegame failed.");
-        } else {
-                delete out;
-        }
 
 	return true;
 }

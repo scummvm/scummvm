@@ -543,7 +543,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+	if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
 		warning("Saving the game failed.");
 		s->r_acc = NULL_REG;
 	} else {

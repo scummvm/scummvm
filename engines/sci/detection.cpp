@@ -659,7 +659,7 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 		return Common::kWritingFailed;
 	}
 
-	if (gamestate_save(_gamestate, out, desc, version)) {
+	if (!gamestate_save(_gamestate, out, desc, version)) {
 		warning("Saving the game state to '%s' failed", fileName.c_str());
 		return Common::kWritingFailed;
 	} else {
