@@ -303,4 +303,29 @@ bool BufferedSeekableReadStream::seek(int32 offset, int whence) {
 	return true;	// FIXME: STREAM REWRITE
 }
 
+bool MemoryWriteStreamDynamic::seek(int32 offs, int whence) {
+	// Pre-Condition
+	assert(_pos <= _size);
+	switch (whence) {
+	case SEEK_END:
+		// SEEK_END works just like SEEK_SET, only 'reversed',
+		// i.e. from the end.
+		offs = _size + offs;
+		// Fall through
+	case SEEK_SET:
+		_ptr = _data + offs;
+		_pos = offs;
+		break;
+
+	case SEEK_CUR:
+		_ptr += offs;
+		_pos += offs;
+		break;
+	}
+	// Post-Condition
+	assert(_pos <= _size);
+
+	return true;	// FIXME: STREAM REWRITE
+}
+
 }	// End of namespace Common
