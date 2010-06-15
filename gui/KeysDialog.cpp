@@ -25,6 +25,7 @@
 
 #include "gui/KeysDialog.h"
 #include "gui/Actions.h"
+#include "common/translation.h"
 #include <SDL_keyboard.h>
 
 #ifdef _WIN32_WCE
