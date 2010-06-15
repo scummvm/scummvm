@@ -288,9 +288,10 @@ void DrasculaEngine::response(int function) {
 	if (currentChapter == 2) {
 		if (function == 16)
 			animation_16_2();
-		else if (function == 20)
+		else if (function == 20) {
+			loadPic(menuBackground, backSurface);
 			animation_20_2();
-		else if (function == 23)
+		} else if (function == 23)
 			animation_23_2();
 		else if (function == 29)
 			animation_29_2();
