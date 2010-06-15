@@ -370,12 +370,15 @@ void Script::sfStopBgdAnim(SCRIPTFUNC_PARAMS) {
 // reenabled.
 // Param1: boolean
 void Script::sfLockUser(SCRIPTFUNC_PARAMS) {
-	if (thread->pop()) {
+	int16 param = thread->pop();
+
+	if (param != 0) {
 		_vm->_interface->deactivate();
 	} else {
 		_vm->_interface->activate();
 	}
 
+	debug(1, "sfLockUser(%d)", param);
 }
 
 // Script function #12 (0x0C)
