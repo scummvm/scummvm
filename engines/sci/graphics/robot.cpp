@@ -31,17 +31,17 @@
 namespace Sci {
 
 #ifdef ENABLE_SCI32
-Robot::Robot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
+GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-Robot::~Robot() {
+GfxRobot::~GfxRobot() {
 	_resMan->unlockResource(_resource);
 }
 
-void Robot::initData(GuiResourceId resourceId) {
+void GfxRobot::initData(GuiResourceId resourceId) {
 	_resource = _resMan->findResource(ResourceId(kResourceTypeRobot, resourceId), true);
 	if (!_resource) {
 		error("robot resource %d not found", resourceId);
@@ -158,7 +158,7 @@ void Robot::initData(GuiResourceId resourceId) {
 
 // TODO: just trying around in here...
 
-void Robot::draw() {
+void GfxRobot::draw() {
 	byte *bitmapData = _resourceData + ROBOT_FILE_STARTOFDATA;
 	int x, y;
 	//int frame;

@@ -44,18 +44,24 @@
 
 #include "sci/sound/audio.h"
 #include "sci/sound/soundcmd.h"
-#include "sci/graphics/gui.h"
+#include "sci/graphics/animate.h"
+#include "sci/graphics/cache.h"
+#include "sci/graphics/compare.h"
+#include "sci/graphics/controls.h"
+#include "sci/graphics/coordadjuster.h"
+#include "sci/graphics/cursor.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/menu.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/paint32.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
-#include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
-#include "sci/graphics/cache.h"
+#include "sci/graphics/text16.h"
+#include "sci/graphics/transitions.h"
 
 #ifdef ENABLE_SCI32
-#include "sci/graphics/gui32.h"
+#include "sci/graphics/frameout.h"
 #endif
 
 namespace Sci {
@@ -183,9 +189,29 @@ Common::Error SciEngine::run() {
 	if ((getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
+	// Reset all graphics objects
+	_gfxAnimate = 0;
+	_gfxCache = 0;
+	_gfxCompare = 0;
+	_gfxControls = 0;
+	_gfxCoordAdjuster = 0;
+	_gfxCursor = 0;
+	_gfxMacIconBar = 0;
+	_gfxMenu = 0;
+	_gfxPaint = 0;
+	_gfxPaint16 = 0;
+	_gfxPalette = 0;
+	_gfxPorts = 0;
+	_gfxScreen = 0;
+	_gfxText16 = 0;
+	_gfxTransitions = 0;
+#ifdef ENABLE_SCI32
+	_gfxFrameout = 0;
+	_gfxPaint32 = 0;
+#endif
+
 	// Initialize graphics-related parts
 
-	// invokes initGraphics()
 	if (_resMan->detectHires())
 		_gfxScreen = new GfxScreen(_resMan, 640, 480);
 	else
@@ -222,23 +248,30 @@ Common::Error SciEngine::run() {
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		_gfxAnimate = 0;
-		_gfxControls = 0;
-		_gfxMenu = 0;
-		_gfxPaint16 = 0;
-		_gfxPorts = 0;
-		_gfxText16 = 0;
-		_gui = 0;
-		_gui32 = new SciGui32(_gamestate->_segMan, _eventMan, _gfxScreen, _gfxPalette, _gfxCache, _gfxCursor);
+		// SCI32 graphic objects creation
+		_gfxCoordAdjuster = new GfxCoordAdjuster32(segMan);
+		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCompare = new GfxCompare(segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxPaint32 = new GfxPaint32(g_sci->getResMan(), segMan, g_sci->getKernel(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
+		_gfxPaint = _gfxPaint32;
+		_gfxFrameout = new GfxFrameout(segMan, g_sci->getResMan(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
 	} else {
 #endif
+		// SCI0-SCI1.1 graphic objects creation
 		_gfxPorts = new GfxPorts(segMan, _gfxScreen);
-		_gui = new SciGui(_gamestate, _gfxScreen, _gfxPalette, _gfxCache, _gfxCursor, _gfxPorts, _audio);
-#ifdef ENABLE_SCI32
-		_gui32 = 0;
-		_gfxFrameout = 0;
+		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
+		_gfxCursor->init(_gfxCoordAdjuster, g_sci->getEventManager());
+		_gfxCompare = new GfxCompare(segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette, g_sci->getResMan()->isVGA());
+		_gfxPaint16 = new GfxPaint16(g_sci->getResMan(), segMan, g_sci->getKernel(), _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxPaint = _gfxPaint16;
+		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
+		_gfxText16 = new GfxText16(g_sci->getResMan(), _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
+		_gfxControls = new GfxControls(segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
+		_gfxMenu = new GfxMenu(g_sci->getEventManager(), segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
 
-		g_sci->_gfxMenu->reset();
+		_gfxMenu->reset();
+#ifdef ENABLE_SCI32
 	}
 #endif
 		
@@ -272,15 +305,23 @@ Common::Error SciEngine::run() {
 	ConfMan.flushToDisk();
 
 	delete _gamestate->_soundCmd;
-	delete _gui;
 #ifdef ENABLE_SCI32
-	delete _gui32;
+	delete _gfxFrameout;
 #endif
+	delete _gfxMenu;
+	delete _gfxControls;
+	delete _gfxText16;
+	delete _gfxAnimate;
+	delete _gfxPaint;
+	delete _gfxTransitions;
+	delete _gfxCompare;
+	delete _gfxCoordAdjuster;
 	delete _gfxPorts;
 	delete _gfxCache;
 	delete _gfxPalette;
 	delete _gfxCursor;
 	delete _gfxScreen;
+
 	delete _eventMan;
 	delete segMan;
 	delete _gamestate;

@@ -44,7 +44,10 @@ struct FrameoutEntry {
 typedef Common::List<FrameoutEntry *> FrameoutList;
 
 class GfxCache;
+class GfxCoordAdjuster32;
 class GfxPaint32;
+class GfxPalette;
+class GfxScreen;
 /**
  * Frameout class, kFrameout and relevant functions for SCI32 games
  */

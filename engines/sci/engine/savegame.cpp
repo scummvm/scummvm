@@ -39,7 +39,6 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
-#include "sci/graphics/gui.h"
 #include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
 #ifdef USE_OLD_MUSIC_FUNCTIONS
@@ -47,10 +46,6 @@
 #include "sci/sound/iterator/iterator.h"
 #else
 #include "sci/sound/music.h"
-#endif
-
-#ifdef ENABLE_SCI32
-#include "sci/graphics/gui32.h"
 #endif
 
 #include "gui/message.h"

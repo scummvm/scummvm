@@ -30,8 +30,6 @@
 #include "sci/engine/segment.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/frameout.h"
 #include "sci/graphics/screen.h"
 

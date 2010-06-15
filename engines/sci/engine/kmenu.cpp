@@ -27,7 +27,6 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/menu.h"
 

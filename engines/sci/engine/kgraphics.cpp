@@ -37,8 +37,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/animate.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/compare.h"
@@ -634,7 +632,8 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
-	if (!g_sci->_gui)
+	// Exit for SCI32 for now
+	if (!g_sci->_gfxPaint16)
 		return s->r_acc;
 
 	switch (operation) {

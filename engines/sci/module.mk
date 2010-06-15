@@ -43,7 +43,6 @@ MODULE_OBJS := \
 	graphics/cursor.o \
 	graphics/font.o \
 	graphics/fontsjis.o \
-	graphics/gui.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint.o \
@@ -78,7 +77,6 @@ ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kernel32.o \
 	graphics/frameout.o \
-	graphics/gui32.o \
 	graphics/paint32.o \
 	graphics/robot.o \
 	video/vmd_decoder.o

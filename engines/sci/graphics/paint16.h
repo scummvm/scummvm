@@ -26,7 +26,6 @@
 #ifndef SCI_GRAPHICS_PAINT16_H
 #define SCI_GRAPHICS_PAINT16_H
 
-#include "sci/graphics/gui.h"
 #include "sci/graphics/paint.h"
 
 #include "common/hashmap.h"
@@ -45,7 +44,7 @@ class GfxView;
  */
 class GfxPaint16 : public GfxPaint {
 public:
-	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGui *gui, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
+	GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio);
 	~GfxPaint16();
 
 	void init(GfxAnimate *animate, GfxText16 *text16);
@@ -100,7 +99,6 @@ private:
 	SegManager *_segMan;
 	Kernel *_kernel;
 	AudioPlayer *_audio;
-	SciGui *_gui;
 	GfxAnimate *_animate;
 	GfxCache *_cache;
 	GfxPorts *_ports;

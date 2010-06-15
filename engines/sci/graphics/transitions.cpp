@@ -31,15 +31,14 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/transitions.h"
 
 namespace Sci {
 
-GfxTransitions::GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA)
-	: _gui(gui), _screen(screen), _palette(palette), _isVGA(isVGA) {
+GfxTransitions::GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA)
+	: _screen(screen), _palette(palette), _isVGA(isVGA) {
 	init();
 }
 

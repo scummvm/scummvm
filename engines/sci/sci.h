@@ -60,15 +60,16 @@ class GfxCompare;
 class GfxControls;
 class GfxCoordAdjuster;
 class GfxCursor;
+class GfxMacIconBar;
 class GfxMenu;
 class GfxPaint;
 class GfxPaint16;
+class GfxPaint32;
 class GfxPalette;
 class GfxPorts;
 class GfxScreen;
 class GfxText16;
-class SciGui;
-class GfxMacIconBar;
+class GfxTransitions;
 
 #ifdef ENABLE_SCI32
 class SciGui32;
@@ -207,14 +208,14 @@ public:
 	GfxPalette *_gfxPalette;
 	GfxPaint *_gfxPaint;
 	GfxPaint16 *_gfxPaint16; // Painting in 16-bit gfx
+	GfxPaint32 *_gfxPaint32; // Painting in 32-bit gfx
 	GfxPorts *_gfxPorts; // Port managment for 16-bit gfx
 	GfxScreen *_gfxScreen;
 	GfxText16 *_gfxText16;
-	SciGui *_gui; /* Currently active Gui */
+	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
 
 #ifdef ENABLE_SCI32
-	SciGui32 *_gui32; // GUI for SCI32 games
 	GfxFrameout *_gfxFrameout; // kFrameout and the like for 32-bit gfx
 #endif
 

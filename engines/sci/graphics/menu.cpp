@@ -31,7 +31,6 @@
 #include "sci/event.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
@@ -43,8 +42,8 @@
 
 namespace Sci {
 
-GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, SciGui *gui, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
-	: _event(event), _segMan(segMan), _gui(gui), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
+GfxMenu::GfxMenu(EventManager *event, SegManager *segMan, GfxPorts *ports, GfxPaint16 *paint16, GfxText16 *text16, GfxScreen *screen, GfxCursor *cursor)
+	: _event(event), _segMan(segMan), _ports(ports), _paint16(paint16), _text16(text16), _screen(screen), _cursor(cursor) {
 
 	_menuSaveHandle = NULL_REG;
 	_barSaveHandle = NULL_REG;

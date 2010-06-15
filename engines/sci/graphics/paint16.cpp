@@ -48,8 +48,8 @@
 
 namespace Sci {
 
-GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, SciGui *gui, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
-	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _gui(gui), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions), _audio(audio) {
+GfxPaint16::GfxPaint16(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, GfxCache *cache, GfxPorts *ports, GfxCoordAdjuster *coordAdjuster, GfxScreen *screen, GfxPalette *palette, GfxTransitions *transitions, AudioPlayer *audio)
+	: _resMan(resMan), _segMan(segMan), _kernel(kernel), _cache(cache), _ports(ports), _coordAdjuster(coordAdjuster), _screen(screen), _palette(palette), _transitions(transitions), _audio(audio) {
 }
 
 GfxPaint16::~GfxPaint16() {
@@ -579,7 +579,7 @@ reg_t GfxPaint16::kernelPortraitLoad(Common::String resourceName) {
 }
 
 void GfxPaint16::kernelPortraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
-	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), _gui, _screen, _palette, _audio, resourceName);
+	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates
 	//  on kDrawCel, yeah this whole stuff makes sense)

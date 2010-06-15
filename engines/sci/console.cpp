@@ -43,12 +43,11 @@
 #include "sci/sound/music.h"
 #endif
 #include "sci/sound/drivers/mididriver.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/paint32.h"
 #include "sci/graphics/palette.h"
 
 #include "sci/parser/vocabulary.h"
@@ -1299,7 +1298,11 @@ bool Console::cmdDrawRobot(int argc, const char **argv) {
 
 	uint16 resourceId = atoi(argv[1]);
 
-	_engine->_gui32->drawRobot(resourceId);
+	if (_engine->_gfxPaint32) {
+		_engine->_gfxPaint32->debugDrawRobot(resourceId);
+	} else {
+		DebugPrintf("command not available in non-sci32 games");
+	}
 	return true;
 }
 #endif

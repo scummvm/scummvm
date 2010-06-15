@@ -31,7 +31,6 @@
 #include "sci/sci.h"
 #include "sci/event.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/portrait.h"
@@ -39,8 +38,8 @@
 
 namespace Sci {
 
-Portrait::Portrait(ResourceManager *resMan, EventManager *event, SciGui *gui, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
-	: _resMan(resMan), _event(event), _gui(gui), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
+Portrait::Portrait(ResourceManager *resMan, EventManager *event, GfxScreen *screen, GfxPalette *palette, AudioPlayer *audio, Common::String resourceName)
+	: _resMan(resMan), _event(event), _screen(screen), _palette(palette), _audio(audio), _resourceName(resourceName) {
 	init();
 }
 
