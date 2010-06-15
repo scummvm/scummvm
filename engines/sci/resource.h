@@ -69,18 +69,6 @@ enum {
 	MAX_OPENED_VOLUMES = 5 ///< Max number of simultaneously opened volumes
 };
 
-enum ResSourceType {
-	kSourceDirectory = 0,
-	kSourcePatch,
-	kSourceVolume,
-	kSourceExtMap,
-	kSourceIntMap,
-	kSourceAudioVolume,
-	kSourceExtAudioMap,
-	kSourceWave,
-	kSourceMacResourceFork
-};
-
 enum ResourceType {
 	kResourceTypeView = 0,
 	kResourceTypePic,
@@ -329,14 +317,13 @@ protected:
 	/**
 	 * Adds a source to the resource manager's list of sources.
 	 * @param map		The map associated with this source
-	 * @param type		The source type
-	 * @param filename	The name of the source to add
+	 * @param source	The new source to add
 	 * @return A pointer to the added source structure, or NULL if an error occurred.
 	 */
-	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const Common::String &filename,
+	ResourceSource *addSource(ResourceSource *map, ResourceSource *source,
 	                          int number);
 
-	ResourceSource *addSource(ResourceSource *map, ResSourceType type,
+	ResourceSource *addSource(ResourceSource *map, ResourceSource *source,
 								const Common::FSNode *resFile, int number);
 
 	/**

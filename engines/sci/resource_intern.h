@@ -34,6 +34,19 @@ namespace Common {
 
 namespace Sci {
 
+enum ResSourceType {
+	kSourceDirectory = 0,
+	kSourcePatch,
+	kSourceVolume,
+	kSourceExtMap,
+	kSourceIntMap,
+	kSourceAudioVolume,
+	kSourceExtAudioMap,
+	kSourceWave,
+	kSourceMacResourceFork
+};
+
+
 class ResourceSource {
 protected:
 	const ResSourceType _sourceType;
@@ -48,8 +61,9 @@ public:
 	int32 *audioCompressionOffsetMapping;
 	Common::MacResManager *_macResMan;
 
-public:
+protected:
 	ResourceSource(ResSourceType type, const Common::String &name);
+public:
 	virtual ~ResourceSource();
 
 	ResSourceType getSourceType() const { return _sourceType; }
