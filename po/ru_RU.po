@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-10 17:42+0300\n"
+"POT-Creation-Date: 2010-06-10 23:21+0300\n"
 "PO-Revision-Date: 2010-06-08 08:52-0100\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -112,13 +112,14 @@ msgstr "ID:"
 msgid "Name:"
 msgstr "Название:"
 
-#: gui/launcher.cpp:181 gui/options.cpp:839
+#: gui/launcher.cpp:181 gui/options.cpp:839 gui/options.cpp:837
 msgid "Language:"
 msgstr "Язык:"
 
 #: gui/launcher.cpp:183 gui/launcher.cpp:193 gui/options.cpp:73
 #: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
-#: sound/mididrv.cpp:38 sound/mididrv.cpp:39
+#: sound/mididrv.cpp:38 sound/mididrv.cpp:39 gui/options.cpp:79
+#: gui/options.cpp:583 gui/options.cpp:593 gui/options.cpp:840
 msgid "<default>"
 msgstr "<по умолчанию>"
 
@@ -127,10 +128,12 @@ msgid "Platform:"
 msgstr "Платформа:"
 
 #: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
+#: gui/options.cpp:747 gui/options.cpp:764
 msgid "Graphics"
 msgstr "Графика"
 
 #: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
+#: gui/options.cpp:747 gui/options.cpp:764
 msgid "GFX"
 msgstr "Грф"
 
@@ -138,7 +141,7 @@ msgstr "Грф"
 msgid "Override global graphic settings"
 msgstr "Перекрыть глобальные установки графики"
 
-#: gui/launcher.cpp:212 gui/options.cpp:772
+#: gui/launcher.cpp:212 gui/options.cpp:772 gui/options.cpp:770
 msgid "Audio"
 msgstr "Аудио"
 
@@ -146,7 +149,7 @@ msgstr "Аудио"
 msgid "Override global audio settings"
 msgstr "Перекрыть глобальные установки аудио"
 
-#: gui/launcher.cpp:222 gui/options.cpp:776
+#: gui/launcher.cpp:222 gui/options.cpp:776 gui/options.cpp:774
 msgid "Volume"
 msgstr "Громкость"
 
@@ -154,7 +157,7 @@ msgstr "Громкость"
 msgid "Override global volume settings"
 msgstr "Перекрыть глобальные установки громкости"
 
-#: gui/launcher.cpp:231 gui/options.cpp:784
+#: gui/launcher.cpp:231 gui/options.cpp:784 gui/options.cpp:782
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -162,7 +165,7 @@ msgstr "MIDI"
 msgid "Override global MIDI settings"
 msgstr "Перекрыть глобальные установки MIDI"
 
-#: gui/launcher.cpp:243 gui/options.cpp:790
+#: gui/launcher.cpp:243 gui/options.cpp:790 gui/options.cpp:788
 msgid "Paths"
 msgstr "Пути"
 
@@ -170,7 +173,7 @@ msgstr "Пути"
 msgid "Game Path:"
 msgstr "Путь к игре: "
 
-#: gui/launcher.cpp:253 gui/options.cpp:803
+#: gui/launcher.cpp:253 gui/options.cpp:803 gui/options.cpp:801
 msgid "Extra Path:"
 msgstr "Доп. путь:"
 
@@ -187,7 +190,10 @@ msgstr "Путь сохр.: "
 #: gui/options.cpp:944 gui/options.cpp:1050 gui/options.cpp:885
 #: gui/options.cpp:891 gui/options.cpp:897 gui/options.cpp:905
 #: gui/options.cpp:929 gui/options.cpp:933 gui/options.cpp:939
-#: gui/options.cpp:946 gui/options.cpp:1045
+#: gui/options.cpp:946 gui/options.cpp:1045 gui/options.cpp:222
+#: gui/options.cpp:379 gui/options.cpp:465 gui/options.cpp:511
+#: gui/options.cpp:646 gui/options.cpp:799 gui/options.cpp:802
+#: gui/options.cpp:806 gui/options.cpp:1043
 msgid "None"
 msgstr "Не задан"
 
@@ -196,6 +202,7 @@ msgid "Default"
 msgstr "По умолчанию"
 
 #: gui/launcher.cpp:391 gui/options.cpp:1044 gui/options.cpp:1039
+#: gui/options.cpp:1037
 msgid "Select SoundFont"
 msgstr "Выберите SoundFont"
 
@@ -327,43 +334,43 @@ msgstr "Просмотрено %d директорий ..."
 msgid "Discovered %d new games ..."
 msgstr "Найдено %d новых игр ..."
 
-#: gui/options.cpp:71
+#: gui/options.cpp:71 gui/options.cpp:77
 msgid "Never"
 msgstr "Никогда"
 
-#: gui/options.cpp:71
+#: gui/options.cpp:71 gui/options.cpp:77
 msgid "every 5 mins"
 msgstr "каждые 5 минут"
 
-#: gui/options.cpp:71
+#: gui/options.cpp:71 gui/options.cpp:77
 msgid "every 10 mins"
 msgstr "каждые 10 минут"
 
-#: gui/options.cpp:71
+#: gui/options.cpp:71 gui/options.cpp:77
 msgid "every 15 mins"
 msgstr "каждые 15 минут"
 
-#: gui/options.cpp:71
+#: gui/options.cpp:71 gui/options.cpp:77
 msgid "every 30 mins"
 msgstr "каждые 30 минут"
 
-#: gui/options.cpp:73
+#: gui/options.cpp:73 gui/options.cpp:79
 msgid "8 kHz"
 msgstr "8 кГц"
 
-#: gui/options.cpp:73
+#: gui/options.cpp:73 gui/options.cpp:79
 msgid "11kHz"
 msgstr "11 кГц"
 
-#: gui/options.cpp:73
+#: gui/options.cpp:73 gui/options.cpp:79
 msgid "22 kHz"
 msgstr "22 кГц"
 
-#: gui/options.cpp:73
+#: gui/options.cpp:73 gui/options.cpp:79
 msgid "44 kHz"
 msgstr "44 кГц"
 
-#: gui/options.cpp:73
+#: gui/options.cpp:73 gui/options.cpp:79
 msgid "48 kHz"
 msgstr "48 кГц"
 
@@ -383,131 +390,131 @@ msgstr "Только субтитры"
 msgid "Speech & Subs"
 msgstr "Звук и суб."
 
-#: gui/options.cpp:595
+#: gui/options.cpp:595 gui/options.cpp:580
 msgid "Graphics mode:"
 msgstr "Графический режим:"
 
-#: gui/options.cpp:606
+#: gui/options.cpp:606 gui/options.cpp:591
 msgid "Render mode:"
 msgstr "Режим растрирования:"
 
-#: gui/options.cpp:616
+#: gui/options.cpp:616 gui/options.cpp:601
 msgid "Fullscreen mode"
 msgstr "Полноэкранный режим"
 
-#: gui/options.cpp:619
+#: gui/options.cpp:619 gui/options.cpp:604
 msgid "Aspect ratio correction"
 msgstr "Коррекция соотношения сторон"
 
-#: gui/options.cpp:626
+#: gui/options.cpp:626 gui/options.cpp:611
 msgid "Music driver:"
 msgstr "Драйвер музыки:"
 
-#: gui/options.cpp:637
+#: gui/options.cpp:637 gui/options.cpp:622
 msgid "AdLib emulator:"
 msgstr "Эмулятор AdLib:"
 
-#: gui/options.cpp:648
+#: gui/options.cpp:648 gui/options.cpp:633
 msgid "Output rate:"
 msgstr "Выходная частота:"
 
-#: gui/options.cpp:660
+#: gui/options.cpp:660 gui/options.cpp:645
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:665
+#: gui/options.cpp:665 gui/options.cpp:650
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Смешанный режим AdLib/MIDI"
 
-#: gui/options.cpp:668
+#: gui/options.cpp:668 gui/options.cpp:653
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Настоящий Roland MT-32 (запретить эмуляцию GM)"
 
-#: gui/options.cpp:671
+#: gui/options.cpp:671 gui/options.cpp:656
 msgid "Enable Roland GS Mode"
 msgstr "Включить режим Roland GS"
 
-#: gui/options.cpp:674
+#: gui/options.cpp:674 gui/options.cpp:659
 msgid "MIDI gain:"
 msgstr "Усиление MIDI:"
 
-#: gui/options.cpp:687
+#: gui/options.cpp:687 gui/options.cpp:672
 msgid "Text and Speech:"
 msgstr "Текст и озвучка:"
 
-#: gui/options.cpp:691
+#: gui/options.cpp:691 gui/options.cpp:689
 msgid "Subtitle speed:"
 msgstr "Скорость субтитров:"
 
-#: gui/options.cpp:703
+#: gui/options.cpp:703 gui/options.cpp:701
 msgid "Music volume:"
 msgstr "Громкость музыки:"
 
-#: gui/options.cpp:710
+#: gui/options.cpp:710 gui/options.cpp:708
 msgid "Mute All"
 msgstr "Выключить всё"
 
-#: gui/options.cpp:713
+#: gui/options.cpp:713 gui/options.cpp:711
 msgid "SFX volume:"
 msgstr "Громкость эффектов:"
 
-#: gui/options.cpp:720
+#: gui/options.cpp:720 gui/options.cpp:718
 msgid "Speech volume:"
 msgstr "Громкость озвучки:"
 
-#: gui/options.cpp:797
+#: gui/options.cpp:797 gui/options.cpp:795
 msgid "Save Path: "
 msgstr "Путь для сохранений: "
 
-#: gui/options.cpp:800
+#: gui/options.cpp:800 gui/options.cpp:798
 msgid "Theme Path:"
 msgstr "Путь к темам:"
 
-#: gui/options.cpp:807
+#: gui/options.cpp:807 gui/options.cpp:805
 msgid "Plugins Path:"
 msgstr "Путь к плагинам:"
 
-#: gui/options.cpp:812
+#: gui/options.cpp:812 gui/options.cpp:810
 msgid "Misc"
 msgstr "Разное"
 
-#: gui/options.cpp:814
+#: gui/options.cpp:814 gui/options.cpp:812
 msgid "Theme:"
 msgstr "Тема:"
 
-#: gui/options.cpp:818
+#: gui/options.cpp:818 gui/options.cpp:816
 msgid "GUI Renderer:"
 msgstr "Растеризатор GUI:"
 
-#: gui/options.cpp:824
+#: gui/options.cpp:824 gui/options.cpp:822
 msgid "Autosave:"
 msgstr "Автосохранение:"
 
-#: gui/options.cpp:832 engines/dialogs.cpp:305
+#: gui/options.cpp:832 engines/dialogs.cpp:305 gui/options.cpp:830
 msgid "Keys"
 msgstr "Клавиши"
 
-#: gui/options.cpp:844
+#: gui/options.cpp:844 gui/options.cpp:842
 msgid "English"
 msgstr "English"
 
-#: gui/options.cpp:996 gui/options.cpp:991
+#: gui/options.cpp:996 gui/options.cpp:991 gui/options.cpp:989
 msgid "Select directory for savegames"
 msgstr "Выберите директорию для сохранений"
 
-#: gui/options.cpp:1003 gui/options.cpp:998
+#: gui/options.cpp:1003 gui/options.cpp:998 gui/options.cpp:996
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Не могу писать в выбранную директорию. Пожалуйста, укажите другую."
 
-#: gui/options.cpp:1012 gui/options.cpp:1007
+#: gui/options.cpp:1012 gui/options.cpp:1007 gui/options.cpp:1005
 msgid "Select directory for GUI themes"
 msgstr "Выберите директорию для тем GUI"
 
-#: gui/options.cpp:1022 gui/options.cpp:1017
+#: gui/options.cpp:1022 gui/options.cpp:1017 gui/options.cpp:1015
 msgid "Select directory for extra files"
 msgstr "Выберите директорию с дополнительными файлами"
 
-#: gui/options.cpp:1033 gui/options.cpp:1028
+#: gui/options.cpp:1033 gui/options.cpp:1028 gui/options.cpp:1026
 msgid "Select directory for plugins"
 msgstr "Выберите директорию с плагинами"
 
@@ -691,19 +698,19 @@ msgstr "Вернуться в главное меню"
 msgid "Save game:"
 msgstr "Сохранить игру: "
 
-#: gui/options.cpp:978
+#: gui/options.cpp:978 gui/options.cpp:976
 msgid "You have to restart ScummVM to take the effect."
 msgstr "Вы должны перезапустить ScummVM чтобы применить изменения."
 
-#: gui/ThemeEngine.cpp:333
+#: gui/ThemeEngine.cpp:333 gui/ThemeEngine.cpp:337
 msgid "Disabled GFX"
 msgstr "Без графики"
 
-#: gui/ThemeEngine.cpp:334
+#: gui/ThemeEngine.cpp:334 gui/ThemeEngine.cpp:338
 msgid "Standard Renderer (16bpp)"
 msgstr "Стандартный растеризатор (16bpp)"
 
-#: gui/ThemeEngine.cpp:336
+#: gui/ThemeEngine.cpp:336 gui/ThemeEngine.cpp:340
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
@@ -866,3 +873,23 @@ msgstr "~С~лед"
 #: engines/scumm/dialogs.cpp:289
 msgid "~C~lose"
 msgstr "~З~акрыть"
+
+#: gui/options.cpp:677
+msgid "Speech"
+msgstr "Озвучка"
+
+#: gui/options.cpp:678
+msgid "Subtitles"
+msgstr "Субтитры"
+
+#: gui/options.cpp:679 gui/options.cpp:685
+msgid "Both"
+msgstr "Всё"
+
+#: gui/options.cpp:683
+msgid "Spch"
+msgstr "Озв"
+
+#: gui/options.cpp:684
+msgid "Subs"
+msgstr "Суб"

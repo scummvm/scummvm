@@ -61,6 +61,9 @@
 		<widget name = 'Checkbox'
 				size = '-1, Globals.Line.Height'
 		/>
+		<widget name = 'Radiobutton'
+				size = '-1, Globals.Line.Height'
+		/>
 		<widget name = 'ListWidget'
 				padding = '5, 0, 8, 0'
 		/>
@@ -233,13 +236,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '3' center = 'true'>
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
@@ -400,6 +408,14 @@
 						height = 'Globals.Line.Height'
 				/>
 				<widget name = 'AutosavePeriodPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'GuiLanguagePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GuiLanguagePopup'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -655,9 +671,14 @@
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '128'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>

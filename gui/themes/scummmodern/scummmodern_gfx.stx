@@ -98,6 +98,8 @@
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
+		<bitmap filename = 'radiobutton.bmp'/>
+		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
 		<bitmap filename = 'search.bmp'/>
 	</bitmaps>
@@ -592,6 +594,42 @@
 		/>
 		<drawstep	func = 'bitmap'
 					file = 'checkbox_empty.bmp'
+		/>
+	</drawdata>
+
+	<!-- Idle radiobutton -->
+	<drawdata id = 'radiobutton_default' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
+		/>
+	</drawdata>
+
+	<!-- Selected radiobutton -->
+	<drawdata id = 'radiobutton_selected' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton.bmp'
+		/>
+	</drawdata>
+
+	<!-- Disabled radiobutton -->
+	<drawdata id = 'radiobutton_disabled' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
 		/>
 	</drawdata>
 

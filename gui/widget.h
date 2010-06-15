@@ -62,6 +62,7 @@ enum {
 	kEditTextWidget		= 'EDIT',
 	kButtonWidget		= 'BTTN',
 	kCheckboxWidget		= 'CHKB',
+	kRadiobuttonWidget	= 'RDBT',
 	kSliderWidget		= 'SLDE',
 	kListWidget			= 'LIST',
 	kScrollBarWidget	= 'SCRB',
@@ -211,6 +212,55 @@ public:
 
 protected:
 	void drawWidget();
+};
+
+class RadiobuttonWidget;
+
+class RadiobuttonGroup : public CommandSender {
+public:
+	RadiobuttonGroup(GuiObject *boss, uint32 cmd = 0);
+	~RadiobuttonGroup() {}
+
+	void addButton(RadiobuttonWidget *button) { _buttons.push_back(button); }
+	Common::Array<RadiobuttonWidget *> getButtonList() const { return _buttons; }
+
+	void setValue(int state);
+	int getValue() const { return _value; }
+
+	void setEnabled(bool ena);
+
+	void setCmd(uint32 cmd)				{ _cmd = cmd; }
+	uint32 getCmd() const				{ return _cmd; }
+
+protected:
+	Common::Array<RadiobuttonWidget *> _buttons;
+	int _value;
+	uint32	_cmd;
+};
+
+/* RadiobuttonWidget */
+class RadiobuttonWidget : public ButtonWidget {
+protected:
+	bool	_state;
+	int _value;
+	
+public:
+	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey = 0);
+
+	void handleMouseUp(int x, int y, int button, int clickCount);
+	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+
+	void setState(bool state, bool setGroup = true);
+	void toggleState()			{ setState(!_state); }
+	bool getState() const		{ return _state; }
+	int getValue() const			{ return _value; }
+
+protected:
+	void drawWidget();
+
+	RadiobuttonGroup *_group;
 };
 
 /* SliderWidget */

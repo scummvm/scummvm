@@ -335,6 +335,74 @@ void CheckboxWidget::drawWidget() {
 }
 
 #pragma mark -
+RadiobuttonGroup::RadiobuttonGroup(GuiObject *boss, uint32 cmd) : CommandSender(boss) {
+	_value = -1;
+	_cmd = cmd;
+}
+
+void RadiobuttonGroup::setValue(int value) {
+	Common::Array<RadiobuttonWidget *>::iterator button = _buttons.begin();
+	while (button != _buttons.end()) {
+		(*button)->setState((*button)->getValue() == value, false);
+
+		button++;
+	}
+
+	_value = value;
+
+	sendCommand(_cmd, _value);
+}
+
+void RadiobuttonGroup::setEnabled(bool ena) {
+	Common::Array<RadiobuttonWidget *>::iterator button = _buttons.begin();
+	while (button != _buttons.end()) {
+		(*button)->setEnabled(ena);
+
+		button++;
+	}
+}
+
+#pragma mark -
+
+RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, 0, hotkey), _state(false), _value(value), _group(group) {
+	setFlags(WIDGET_ENABLED);
+	_type = kRadiobuttonWidget;
+	_group->addButton(this);
+}
+
+RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey)
+	: ButtonWidget(boss, name, label, 0, hotkey), _state(false), _value(value), _group(group) {
+	setFlags(WIDGET_ENABLED);
+	_type = kRadiobuttonWidget;
+	_group->addButton(this);
+}
+
+void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) {
+	if (isEnabled() && x >= 0 && x < _w && y >= 0 && y < _h) {
+		toggleState();
+	}
+}
+
+void RadiobuttonWidget::setState(bool state, bool setGroup) {
+	if (setGroup) {
+		_group->setValue(_value);
+		return;
+	}
+
+	if (_state != state) {
+		_state = state;
+		//_flags ^= WIDGET_INV_BORDER;
+		draw();
+	}
+	sendCommand(_cmd, _state);
+}
+
+void RadiobuttonWidget::drawWidget() {
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x+_w, _y+_h), _label, _state, Widget::_state);
+}
+
+#pragma mark -
 
 SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
 	: Widget(boss, x, y, w, h), CommandSender(boss),

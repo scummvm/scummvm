@@ -190,6 +190,10 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDCheckboxDisabled,			"checkbox_disabled",		true,	kDDNone},
 	{kDDCheckboxSelected,			"checkbox_selected",		false,	kDDCheckboxDefault},
 
+	{kDDRadiobuttonDefault,			"radiobutton_default",			true,	kDDNone},
+	{kDDRadiobuttonDisabled,			"radiobutton_disabled",		true,	kDDNone},
+	{kDDRadiobuttonSelected,			"radiobutton_selected",		false,	kDDRadiobuttonDefault},
+
 	{kDDTabActive,					"tab_active",				false,	kDDTabInactive},
 	{kDDTabInactive,				"tab_inactive",				true,	kDDNone},
 	{kDDTabBackground,				"tab_background",			true,	kDDNone},
@@ -883,6 +887,32 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.right = r.right;
 
 	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+}
+
+void ThemeEngine::drawRadiobutton(const Common::Rect &r, const Common::String &str, bool checked, WidgetStateInfo state) {
+	if (!ready())
+		return;
+
+	Common::Rect r2 = r;
+	DrawData dd = kDDRadiobuttonDefault;
+
+	if (checked)
+		dd = kDDRadiobuttonSelected;
+
+	if (state == kStateDisabled)
+		dd = kDDRadiobuttonDisabled;
+
+	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
+
+	r2.bottom = r2.top + checkBoxSize;
+	r2.right = r2.left + checkBoxSize;
+
+	queueDD(dd, r2);
+
+	r2.left = r2.right + checkBoxSize;
+	r2.right = r.right;
+
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDRadiobuttonDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {

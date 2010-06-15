@@ -82,6 +82,10 @@ enum DrawData {
 	kDDCheckboxDisabled,
 	kDDCheckboxSelected,
 
+	kDDRadiobuttonDefault,
+	kDDRadiobuttonDisabled,
+	kDDRadiobuttonSelected,
+
 	kDDTabActive,
 	kDDTabInactive,
 	kDDTabBackground,
@@ -310,6 +314,9 @@ public:
 		WidgetStateInfo state = kStateEnabled);
 
 	void drawCheckbox(const Common::Rect &r, const Common::String &str,
+		bool checked, WidgetStateInfo state = kStateEnabled);
+
+	void drawRadiobutton(const Common::Rect &r, const Common::String &str,
 		bool checked, WidgetStateInfo state = kStateEnabled);
 
 	void drawTab(const Common::Rect &r, int tabHeight, int tabWidth,

@@ -66,6 +66,9 @@
 		<widget name = 'Checkbox'
 				size = '-1, 14'
 		/>
+		<widget name = 'Radiobutton'
+				size = '-1, Globals.Line.Height'
+		/>
 		<widget name = 'ListWidget'
 				padding = '5, 0, 8, 0'
 		/>
@@ -241,9 +244,14 @@
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '150'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
@@ -661,9 +669,14 @@
 				<widget name = 'subToggleDesc'
 						type = 'OptionsLabel'
 				/>
-				<widget name = 'subToggleButton'
-						width = '158'
-						height = 'Globals.Slider.Height'
+				<widget name = 'subToggleSpeechOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubOnly'
+						type = 'Radiobutton'
+				/>
+				<widget name = 'subToggleSubBoth'
+						type = 'Radiobutton'
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>

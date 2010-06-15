@@ -62,6 +62,12 @@ enum {
 	kChooseThemeCmd			= 'chtf'
 };
 
+enum {
+	kSubtitlesSpeech,
+	kSubtitlesSubs,
+	kSubtitlesBoth
+};
+
 #ifdef SMALL_SCREEN_DEVICE
 enum {
 	kChooseKeyMappingCmd    = 'chma'
@@ -84,18 +90,6 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 	: Dialog(name), _domain(domain), _graphicsTabId(-1), _tabWidget(0) {
 	init();
 }
-
-const char *OptionsDialog::_subModeDesc[] = {
-	_s("Speech Only"),
-	_s("Speech and Subtitles"),
-	_s("Subtitles Only")
-};
-
-const char *OptionsDialog::_lowresSubModeDesc[] = {
-	_s("Speech Only"),
-	_s("Speech & Subs"),
-	_s("Subtitles Only")
-};
 
 void OptionsDialog::init() {
 	_enableGraphicSettings = false;
@@ -123,7 +117,9 @@ void OptionsDialog::init() {
 	_speechVolumeLabel = 0;
 	_muteCheckbox = 0;
 	_subToggleDesc = 0;
-	_subToggleButton = 0;
+	_subToggleSubOnly = 0;
+	_subToggleSpeechOnly = 0;
+	_subToggleSubBoth = 0;
 	_subSpeedDesc = 0;
 	_subSpeedSlider = 0;
 	_subSpeedLabel = 0;
@@ -264,11 +260,12 @@ void OptionsDialog::open() {
 	}
 
 	// Subtitle options
-	if (_subToggleButton) {
-		int speed;		int sliderMaxValue = _subSpeedSlider->getMaxValue();
+	if (_subToggleGroup) {
+		int speed;		
+		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
 		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
-		_subToggleButton->setLabel(_(_subModeDesc[_subMode]));
+		_subToggleGroup->setValue(_subMode);
 
 		// Engines that reuse the subtitle speed widget set their own max value.
 		// Scale the config value accordingly (see addSubtitleControls)
@@ -393,21 +390,21 @@ void OptionsDialog::close() {
 		}
 
 		// Subtitle options
-		if (_subToggleButton) {
+		if (_subToggleGroup) {
 			if (_enableSubtitleSettings) {
 				bool subtitles, speech_mute;
 				int talkspeed;
 				int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
 				switch (_subMode) {
-				case 0:
+				case kSubtitlesSpeech:
 					subtitles = speech_mute = false;
 					break;
-				case 1:
+				case kSubtitlesBoth:
 					subtitles = true;
 					speech_mute = false;
 					break;
-				case 2:
+				case kSubtitlesSubs:
 				default:
 					subtitles = speech_mute = true;
 					break;
@@ -459,18 +456,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 	case kMuteAllChanged:
 		// 'true' because if control is disabled then event do not pass
 		setVolumeSettingsState(true);
-		break;
-	case kSubtitleToggle:
-		if (_subMode < 2)
-			_subMode++;
-		else
-			_subMode = 0;
-
-		_subToggleButton->setLabel(g_system->getOverlayWidth() > 320 ? _(_subModeDesc[_subMode]) : _(_lowresSubModeDesc[_subMode]));
-		_subToggleButton->draw();
-		_subSpeedDesc->draw();
-		_subSpeedSlider->draw();
-		_subSpeedLabel->draw();
 		break;
 	case kSubtitleSpeedChanged:
 		_subSpeedLabel->setValue(_subSpeedSlider->getValue());
@@ -576,7 +561,7 @@ void OptionsDialog::setSubtitleSettingsState(bool enabled) {
 	if ((_guioptions & Common::GUIO_NOSUBTITLES) || (_guioptions & Common::GUIO_NOSPEECH))
 		ena = false;
 
-	_subToggleButton->setEnabled(ena);
+	_subToggleGroup->setEnabled(ena);
 	_subToggleDesc->setEnabled(ena);
 
 	ena = enabled;
@@ -685,7 +670,20 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
 	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and Speech:"));
-	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle);
+
+	if (g_system->getOverlayWidth() > 320) {
+		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
+
+		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Speech"));
+		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subtitles"));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"));
+	} else {
+		_subToggleGroup = new RadiobuttonGroup(boss, kSubtitleToggle);
+
+		_subToggleSpeechOnly = new RadiobuttonWidget(boss, prefix + "subToggleSpeechOnly", _subToggleGroup, kSubtitlesSpeech, _("Spch"));
+		_subToggleSubOnly = new RadiobuttonWidget(boss, prefix + "subToggleSubOnly", _subToggleGroup, kSubtitlesSubs, _("Subs"));
+		_subToggleSubBoth = new RadiobuttonWidget(boss, prefix + "subToggleSubBoth", _subToggleGroup, kSubtitlesBoth, _("Both"));
+	}
 
 	// Subtitle speed
 	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
@@ -729,19 +727,19 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 
 int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 	if (_guioptions & Common::GUIO_NOSUBTITLES)
-		return 0; // Speech only
+		return kSubtitlesSpeech; // Speech only
 	if (_guioptions & Common::GUIO_NOSPEECH)
-		return 2; // Subtitles only
+		return kSubtitlesSubs; // Subtitles only
 
 	if (!subtitles && !speech_mute) // Speech only
-		return 0;
+		return kSubtitlesSpeech;
 	else if (subtitles && !speech_mute) // Speech and subtitles
-		return 1;
+		return kSubtitlesBoth;
 	else if (subtitles && speech_mute) // Subtitles only
-		return 2;
+		return kSubtitlesSubs;
 	else
 		warning("Wrong configuration: Both subtitles and speech are off. Assuming subtitles only");
-	return 2;
+	return kSubtitlesSubs;
 }
 
 void OptionsDialog::reflowLayout() {
