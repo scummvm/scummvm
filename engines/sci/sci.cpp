@@ -229,7 +229,7 @@ Common::Error SciEngine::run() {
 		
 	_kernel->loadKernelNames(_features);	// Must be called after game_init()
 
-	script_adjust_opcode_formats(_gamestate);
+	script_adjust_opcode_formats();
 
 	SciVersion soundVersion = _features->detectDoSoundType();
 

@@ -95,8 +95,7 @@ opcode_format g_opcode_formats[128][4] = {
 
 // TODO: script_adjust_opcode_formats should probably be part of the
 // constructor (?) of a VirtualMachine or a ScriptManager class.
-void script_adjust_opcode_formats(EngineState *s) {
-	// TODO: Check that this is correct
+void script_adjust_opcode_formats() {
 	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
 		g_opcode_formats[op_lofss][0] = Script_Offset;

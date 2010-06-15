@@ -202,7 +202,7 @@ enum sci_opcodes {
 
 extern opcode_format g_opcode_formats[128][4];
 
-void script_adjust_opcode_formats(EngineState *s);
+void script_adjust_opcode_formats();
 
 } // End of namespace Sci
 
