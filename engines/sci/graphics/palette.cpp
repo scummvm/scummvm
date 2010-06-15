@@ -455,7 +455,7 @@ void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
 	_palVaryId = paletteId;
 	_palVaryStart = g_system->getMillis();
 	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60, this);
 }
 
 void GfxPalette::togglePalVary(bool pause) {
