@@ -835,11 +835,12 @@ const Feature s_features[] = {
 	{     "mpeg2",      "USE_MPEG2", "libmpeg2.lib", false, "mpeg2 codec for cutscenes" },
 
 	// ScummVM feature flags
-	{   "scalers",    "USE_SCALERS", "", true, "Scalers" },
-	{ "hqscalers", "USE_HQ_SCALERS", "", true, "HQ scalers" },
-	{     "16bit",  "USE_RGB_COLOR", "", true, "16bit color support" },
-	{   "mt32emu",    "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
-	{      "nasm",       "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{     "scalers",     "USE_SCALERS", "", true, "Scalers" },
+	{   "hqscalers",  "USE_HQ_SCALERS", "", true, "HQ scalers" },
+	{       "16bit",   "USE_RGB_COLOR", "", true, "16bit color support" },
+	{     "mt32emu",     "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
+	{        "nasm",        "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
+	{ "translation", "USE_TRANSLATION", "", true, "Translation support" }
 };
 } // End of anonymous namespace
 
