@@ -28,6 +28,7 @@
 #include "gui/message.h"
 #include "scumm/scumm.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include <sdl.h>
 
@@ -37,25 +38,25 @@ namespace GUI {
 // or we put them in this file separated by #ifdefs, this one is up to you, AnotherGuest :)
 
 const Common::String actionNames[] = {
-	"Up",
-	"Down",
-	"Left",
-	"Right",
-	"Left Click",
-	"Right Click",
-	"Save",
-	"Skip",
-	"Zone",
-	"Multi Function",
-	"Swap character",
-	"Skip text",
-	"Pause",
-	"Fast mode",
-	"Quit",
-	"Debugger",
-	"Global menu",
-	"Virtual keyboard",
-	"Key mapper"
+	_s("Up"),
+	_s("Down"),
+	_s("Left"),
+	_s("Right"),
+	_s("Left Click"),
+	_s("Right Click"),
+	_s("Save"),
+	_s("Skip"),
+	_s("Zone"),
+	_s("Multi Function"),
+	_s("Swap character"),
+	_s("Skip text"),
+	_s("Pause"),
+	_s("Fast mode"),
+	_s("Quit"),
+	_s("Debugger"),
+	_s("Global menu"),
+	_s("Virtual keyboard"),
+	_s("Key mapper")
 };
 
 #ifdef UIQ
@@ -75,7 +76,7 @@ void SymbianActions::init() {
 
 
 Common::String SymbianActions::actionName(ActionType action) {
-	return actionNames[action];
+	return _(actionNames[action]);
 }
 
 int SymbianActions::size() {

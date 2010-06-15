@@ -35,6 +35,7 @@
 
 #include "common/config-manager.h"
 #include "common/scummsys.h"
+#include "common/translation.h"
 
 #include "gui/message.h"
 
@@ -442,7 +443,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 
 			case GUI::ACTION_QUIT:
 				{
-					GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
+					GUI::MessageDialog alert(_("Do you want to quit ?"), _("Yes"), _("No"));
 					if (alert.runModal() == GUI::kMessageOK)
 						quit();
 
