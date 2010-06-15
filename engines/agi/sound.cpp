@@ -231,6 +231,9 @@ void SoundMgr::stopSound() {
 
 		_playingSound = -1;
 	}
+
+	if (_endflag != -1)
+		_vm->setflag(_endflag, true);
 }
 
 int SoundMgr::initSound() {
