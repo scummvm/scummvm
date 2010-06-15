@@ -62,11 +62,11 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), kCloseCmd);
+	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), kDelCmd, 0);
+	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;

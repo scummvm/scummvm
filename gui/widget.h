@@ -135,6 +135,9 @@ public:
 	void setVisible(bool e);
 	bool isVisible() const;
 
+	uint8 parseHotkey(const Common::String &label);
+	Common::String cleanupHotkey(const Common::String &label);
+
 protected:
 	void updateState(int oldFlags, int newFlags);
 

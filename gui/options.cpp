@@ -613,10 +613,10 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), 0, 0);
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"));
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), 0, 0);
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"));
 
 	_enableGraphicSettings = true;
 }
@@ -657,18 +657,18 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
 	// SoundFont
-	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), kChooseSoundFontCmd, 0);
+	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"));
-	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd, 0);
+	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd);
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), 0, 0);
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"));
 
 	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), 0, 0);
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"));
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), 0, 0);
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"));
 
 	// MIDI gain setting (FluidSynth uses this)
 	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", _("MIDI gain:"));
@@ -685,7 +685,7 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
 	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and Speech:"));
-	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
+	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle);
 
 	// Subtitle speed
 	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
@@ -707,7 +707,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), kMuteAllChanged, 0);
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), kMuteAllChanged);
 
 
 	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"));
@@ -794,24 +794,24 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), kChooseSaveDirCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), kChooseSaveDirCmd);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar");
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), kChooseThemeDirCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), kChooseThemeDirCmd);
 	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _("None"));
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), kChooseExtraDirCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), kChooseExtraDirCmd);
 	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _("None"));
 
 #ifdef DYNAMIC_MODULES
-	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), kChoosePluginsDirCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), kChoosePluginsDirCmd);
 	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _("None"));
 #endif
 #endif
 
 	tab->addTab(_("Misc"));
 
-	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), kChooseThemeCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
@@ -829,7 +829,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	}
 
 #ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), kChooseKeyMappingCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), kChooseKeyMappingCmd);
 #endif
 
 	// TODO: joystick setting
@@ -858,8 +858,8 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), kCloseCmd, 0);
-	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), kOKCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), kCloseCmd);
+	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), kOKCmd);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();

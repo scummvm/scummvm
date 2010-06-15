@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-08 17:25+0300\n"
+"POT-Creation-Date: 2010-06-10 17:42+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,11 +35,11 @@ msgstr ""
 #: gui/browser.cpp:70 gui/KeysDialog.cpp:45 gui/launcher.cpp:265
 #: gui/massadd.cpp:95 gui/options.cpp:859 gui/saveload.cpp:65
 #: gui/saveload.cpp:157 gui/themebrowser.cpp:56 engines/dialogs.cpp:302
-#: gui/options.cpp:861
+#: gui/options.cpp:861 gui/chooser.cpp:49
 msgid "Cancel"
 msgstr ""
 
-#: gui/browser.cpp:71 gui/themebrowser.cpp:57
+#: gui/browser.cpp:71 gui/themebrowser.cpp:57 gui/chooser.cpp:50
 msgid "Choose"
 msgstr ""
 
@@ -117,7 +117,7 @@ msgstr ""
 
 #: gui/launcher.cpp:183 gui/launcher.cpp:193 gui/options.cpp:73
 #: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
-#: sound/mididrv.cpp:38
+#: sound/mididrv.cpp:38 sound/mididrv.cpp:39
 msgid "<default>"
 msgstr ""
 
@@ -702,78 +702,162 @@ msgstr ""
 msgid "Antialiased Renderer (16bpp)"
 msgstr ""
 
-#: sound/mididrv.cpp:39
+#: sound/mididrv.cpp:39 sound/mididrv.cpp:40
 msgid "No music"
 msgstr ""
 
-#: sound/mididrv.cpp:42
+#: sound/mididrv.cpp:42 sound/mididrv.cpp:43
 msgid "Windows MIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:46
+#: sound/mididrv.cpp:46 sound/mididrv.cpp:47
 msgid "ALSA"
 msgstr ""
 
-#: sound/mididrv.cpp:50
+#: sound/mididrv.cpp:50 sound/mididrv.cpp:51
 msgid "Atari ST MIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:54
+#: sound/mididrv.cpp:54 sound/mididrv.cpp:55
 msgid "SEQ"
 msgstr ""
 
-#: sound/mididrv.cpp:58
+#: sound/mididrv.cpp:58 sound/mididrv.cpp:59
 msgid "DMedia"
 msgstr ""
 
-#: sound/mididrv.cpp:62
+#: sound/mididrv.cpp:62 sound/mididrv.cpp:63
 msgid "CAMD"
 msgstr ""
 
-#: sound/mididrv.cpp:66
+#: sound/mididrv.cpp:66 sound/mididrv.cpp:67
 msgid "CoreAudio"
 msgstr ""
 
-#: sound/mididrv.cpp:68
+#: sound/mididrv.cpp:68 sound/mididrv.cpp:69
 msgid "CoreMIDI"
 msgstr ""
 
-#: sound/mididrv.cpp:73
+#: sound/mididrv.cpp:73 sound/mididrv.cpp:74
 msgid "Yamaha Pa1"
 msgstr ""
 
-#: sound/mididrv.cpp:75
+#: sound/mididrv.cpp:75 sound/mididrv.cpp:76
 msgid "Tapwave Zodiac"
 msgstr ""
 
-#: sound/mididrv.cpp:80
+#: sound/mididrv.cpp:80 sound/mididrv.cpp:81
 msgid "FluidSynth"
 msgstr ""
 
-#: sound/mididrv.cpp:83
+#: sound/mididrv.cpp:83 sound/mididrv.cpp:84
 msgid "MT-32 Emulation"
 msgstr ""
 
-#: sound/mididrv.cpp:87
+#: sound/mididrv.cpp:87 sound/mididrv.cpp:88
 msgid "AdLib"
 msgstr ""
 
-#: sound/mididrv.cpp:88
+#: sound/mididrv.cpp:88 sound/mididrv.cpp:89
 msgid "PC Speaker"
 msgstr ""
 
-#: sound/mididrv.cpp:89
+#: sound/mididrv.cpp:89 sound/mididrv.cpp:90
 msgid "IBM PCjr"
 msgstr ""
 
-#: sound/mididrv.cpp:90
+#: sound/mididrv.cpp:90 sound/mididrv.cpp:91
 msgid "Creative Music System"
 msgstr ""
 
-#: sound/mididrv.cpp:91
+#: sound/mididrv.cpp:91 sound/mididrv.cpp:92
 msgid "FM Towns"
 msgstr ""
 
-#: sound/mididrv.cpp:93
+#: sound/mididrv.cpp:93 sound/mididrv.cpp:94
 msgid "TiMidity"
+msgstr ""
+
+#: gui/launcher.cpp:500 engines/dialogs.cpp:113
+msgid "~Q~uit"
+msgstr ""
+
+#: gui/launcher.cpp:501
+msgid "A~b~out..."
+msgstr ""
+
+#: gui/launcher.cpp:502
+msgid "~O~ptions..."
+msgstr ""
+
+#: gui/launcher.cpp:504
+msgid "~S~tart"
+msgstr ""
+
+#: gui/launcher.cpp:507
+msgid "~L~oad..."
+msgstr ""
+
+#: gui/launcher.cpp:511
+msgid "~A~dd Game..."
+msgstr ""
+
+#: gui/launcher.cpp:513
+msgid "~E~dit Game..."
+msgstr ""
+
+#: gui/launcher.cpp:515
+msgid "~R~emove Game"
+msgstr ""
+
+#: engines/dialogs.cpp:89
+msgid "~R~esume"
+msgstr ""
+
+#: engines/dialogs.cpp:91
+msgid "~L~oad"
+msgstr ""
+
+#: engines/dialogs.cpp:95
+msgid "~S~ave"
+msgstr ""
+
+#: engines/dialogs.cpp:99
+msgid "~O~ptions"
+msgstr ""
+
+#: engines/dialogs.cpp:104
+msgid "~H~elp"
+msgstr ""
+
+#: engines/dialogs.cpp:107
+msgid "~A~bout"
+msgstr ""
+
+#: engines/dialogs.cpp:109
+msgid "~R~eturn to Launcher"
+msgstr ""
+
+#: engines/dialogs.cpp:301
+msgid "~O~K"
+msgstr ""
+
+#: engines/dialogs.cpp:302
+msgid "~C~ancel"
+msgstr ""
+
+#: engines/dialogs.cpp:305
+msgid "~K~eys"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:287
+msgid "~P~revious"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:288
+msgid "~N~ext"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:289
+msgid "~C~lose"
 msgstr ""

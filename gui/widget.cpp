@@ -177,6 +177,51 @@ bool Widget::isVisible() const {
 	return !(_flags & WIDGET_INVISIBLE);
 }
 
+uint8 Widget::parseHotkey(const Common::String &label) {
+	if (!label.contains('~'))
+		return 0;
+
+	int state = 0;
+	uint8 hotkey = 0;
+
+	for (uint i = 0; i < label.size() && state != 3; i++) {
+		switch (state) {
+		case 0:
+			if (label[i] == '~')
+				state = 1;
+			break;
+		case 1:
+			if (label[i] != '~') {
+				state = 2;
+				hotkey = label[i];
+			} else
+				state = 0;
+			break;
+		case 2:
+			if (label[i] == '~')
+				state = 3;
+			else
+				state = 0;
+			break;
+		}
+	}
+
+	if (state == 3)
+		return hotkey;
+
+	return 0;
+}
+
+Common::String Widget::cleanupHotkey(const Common::String &label) {
+	Common::String res;
+
+	for (uint i = 0; i < label.size() ; i++)
+		if (label[i] != '~')
+			res = res + label[i];
+	
+	return res;
+}	
+
 #pragma mark -
 
 StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align)
@@ -228,15 +273,21 @@ void StaticTextWidget::drawWidget() {
 #pragma mark -
 
 ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, label, Graphics::kTextAlignCenter), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey) {
+	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter), CommandSender(boss),
+	  _cmd(cmd) {
+
+	if (hotkey == 0)
+		_hotkey = parseHotkey(label);
+
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, label), CommandSender(boss),
-	  _cmd(cmd), _hotkey(hotkey) {
+	: StaticTextWidget(boss, name, cleanupHotkey(label)), CommandSender(boss), 
+	  _cmd(cmd) {
+	if (hotkey == 0)
+		_hotkey = parseHotkey(label);
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }

@@ -53,8 +53,8 @@ ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), kCloseCmd, 0);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), kChooseCmd);
 }
 
 void ThemeBrowser::open() {

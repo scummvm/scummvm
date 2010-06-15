@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-08 17:25+0300\n"
+"POT-Creation-Date: 2010-06-10 17:42+0300\n"
 "PO-Revision-Date: 2010-06-08 08:52-0100\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -36,11 +36,11 @@ msgstr "Вверх"
 #: gui/browser.cpp:70 gui/KeysDialog.cpp:45 gui/launcher.cpp:265
 #: gui/massadd.cpp:95 gui/options.cpp:859 gui/saveload.cpp:65
 #: gui/saveload.cpp:157 gui/themebrowser.cpp:56 engines/dialogs.cpp:302
-#: gui/options.cpp:861
+#: gui/options.cpp:861 gui/chooser.cpp:49
 msgid "Cancel"
 msgstr "Отмена"
 
-#: gui/browser.cpp:71 gui/themebrowser.cpp:57
+#: gui/browser.cpp:71 gui/themebrowser.cpp:57 gui/chooser.cpp:50
 msgid "Choose"
 msgstr "Выбрать"
 
@@ -118,7 +118,7 @@ msgstr "Язык:"
 
 #: gui/launcher.cpp:183 gui/launcher.cpp:193 gui/options.cpp:73
 #: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
-#: sound/mididrv.cpp:38
+#: sound/mididrv.cpp:38 sound/mididrv.cpp:39
 msgid "<default>"
 msgstr "<по умолчанию>"
 
@@ -707,78 +707,162 @@ msgstr "Стандартный растеризатор (16bpp)"
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Растеризатор со сглаживанием (16bpp)"
 
-#: sound/mididrv.cpp:39
+#: sound/mididrv.cpp:39 sound/mididrv.cpp:40
 msgid "No music"
 msgstr "Без музыки"
 
-#: sound/mididrv.cpp:42
+#: sound/mididrv.cpp:42 sound/mididrv.cpp:43
 msgid "Windows MIDI"
 msgstr "Windows MIDI"
 
-#: sound/mididrv.cpp:46
+#: sound/mididrv.cpp:46 sound/mididrv.cpp:47
 msgid "ALSA"
 msgstr "ALSA"
 
-#: sound/mididrv.cpp:50
+#: sound/mididrv.cpp:50 sound/mididrv.cpp:51
 msgid "Atari ST MIDI"
 msgstr "Atars ST MIDI"
 
-#: sound/mididrv.cpp:54
+#: sound/mididrv.cpp:54 sound/mididrv.cpp:55
 msgid "SEQ"
 msgstr "SEQ"
 
-#: sound/mididrv.cpp:58
+#: sound/mididrv.cpp:58 sound/mididrv.cpp:59
 msgid "DMedia"
 msgstr "DMedia"
 
-#: sound/mididrv.cpp:62
+#: sound/mididrv.cpp:62 sound/mididrv.cpp:63
 msgid "CAMD"
 msgstr "CAMD"
 
-#: sound/mididrv.cpp:66
+#: sound/mididrv.cpp:66 sound/mididrv.cpp:67
 msgid "CoreAudio"
 msgstr "CoreAudio"
 
-#: sound/mididrv.cpp:68
+#: sound/mididrv.cpp:68 sound/mididrv.cpp:69
 msgid "CoreMIDI"
 msgstr "CoreMIDI"
 
-#: sound/mididrv.cpp:73
+#: sound/mididrv.cpp:73 sound/mididrv.cpp:74
 msgid "Yamaha Pa1"
 msgstr "Yamaha Pa1"
 
-#: sound/mididrv.cpp:75
+#: sound/mididrv.cpp:75 sound/mididrv.cpp:76
 msgid "Tapwave Zodiac"
 msgstr "Tapware Zodiac"
 
-#: sound/mididrv.cpp:80
+#: sound/mididrv.cpp:80 sound/mididrv.cpp:81
 msgid "FluidSynth"
 msgstr "FluidSynth"
 
-#: sound/mididrv.cpp:83
+#: sound/mididrv.cpp:83 sound/mididrv.cpp:84
 msgid "MT-32 Emulation"
 msgstr "Эмуляция MT-32"
 
-#: sound/mididrv.cpp:87
+#: sound/mididrv.cpp:87 sound/mididrv.cpp:88
 msgid "AdLib"
 msgstr "AdLib"
 
-#: sound/mididrv.cpp:88
+#: sound/mididrv.cpp:88 sound/mididrv.cpp:89
 msgid "PC Speaker"
 msgstr "PC спикер"
 
-#: sound/mididrv.cpp:89
+#: sound/mididrv.cpp:89 sound/mididrv.cpp:90
 msgid "IBM PCjr"
 msgstr "IBM PCjr"
 
-#: sound/mididrv.cpp:90
+#: sound/mididrv.cpp:90 sound/mididrv.cpp:91
 msgid "Creative Music System"
 msgstr "Creative Music System"
 
-#: sound/mididrv.cpp:91
+#: sound/mididrv.cpp:91 sound/mididrv.cpp:92
 msgid "FM Towns"
 msgstr "FM Towns"
 
-#: sound/mididrv.cpp:93
+#: sound/mididrv.cpp:93 sound/mididrv.cpp:94
 msgid "TiMidity"
 msgstr "TiMidity"
+
+#: gui/launcher.cpp:500 engines/dialogs.cpp:113
+msgid "~Q~uit"
+msgstr "~В~ыход"
+
+#: gui/launcher.cpp:501
+msgid "A~b~out..."
+msgstr "О п~р~ограмме..."
+
+#: gui/launcher.cpp:502
+msgid "~O~ptions..."
+msgstr "~О~пции..."
+
+#: gui/launcher.cpp:504
+msgid "~S~tart"
+msgstr "П~у~ск"
+
+#: gui/launcher.cpp:507
+msgid "~L~oad..."
+msgstr "~З~агр...."
+
+#: gui/launcher.cpp:511
+msgid "~A~dd Game..."
+msgstr "~Д~об. игру..."
+
+#: gui/launcher.cpp:513
+msgid "~E~dit Game..."
+msgstr "Из~м~. игру..."
+
+#: gui/launcher.cpp:515
+msgid "~R~emove Game"
+msgstr "~У~далить игру"
+
+#: engines/dialogs.cpp:89
+msgid "~R~esume"
+msgstr "Продол~ж~ить"
+
+#: engines/dialogs.cpp:91
+msgid "~L~oad"
+msgstr "~З~агрузить"
+
+#: engines/dialogs.cpp:95
+msgid "~S~ave"
+msgstr "~З~аписать"
+
+#: engines/dialogs.cpp:99
+msgid "~O~ptions"
+msgstr "~О~пции"
+
+#: engines/dialogs.cpp:104
+msgid "~H~elp"
+msgstr "~П~омощь"
+
+#: engines/dialogs.cpp:107
+msgid "~A~bout"
+msgstr "О про~г~рамме"
+
+#: engines/dialogs.cpp:109
+msgid "~R~eturn to Launcher"
+msgstr "~В~ернуться в главное меню"
+
+#: engines/dialogs.cpp:301
+msgid "~O~K"
+msgstr "~O~K"
+
+#: engines/dialogs.cpp:302
+msgid "~C~ancel"
+msgstr "О~т~мена"
+
+#: engines/dialogs.cpp:305
+msgid "~K~eys"
+msgstr "~К~лавиши"
+
+#: engines/scumm/dialogs.cpp:287
+msgid "~P~revious"
+msgstr "~П~ред"
+
+#: engines/scumm/dialogs.cpp:288
+msgid "~N~ext"
+msgstr "~С~лед"
+
+#: engines/scumm/dialogs.cpp:289
+msgid "~C~lose"
+msgstr "~З~акрыть"

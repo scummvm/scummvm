@@ -26,6 +26,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/translation.h"
 
 #include "graphics/scaler.h"
 
@@ -283,9 +284,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	_numPages = ScummHelp::numPages(_game.id);
 
-	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", "Previous", kPrevCmd, 'P');
-	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", "Next", kNextCmd, 'N');
-	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", GUI::kCloseCmd, 'C');
+	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", _("~P~revious"), kPrevCmd);
+	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), kNextCmd);
+	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	_numLines = HELP_NUM_LINES;

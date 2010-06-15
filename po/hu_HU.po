@@ -1,18 +1,3 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR Free Software Foundation, Inc.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
-msgid ""
-msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
-"PO-Revision-Date: 2010-06-08 13:39-0100\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=CHARSET\n"
-"Content-Transfer-Encoding: 8bit\n"
-
 # LANGUAGE translation for ScummVM.
 # Copyright (C) 2009 ScummVM
 # This file is distributed under the same license as the ScummVM package.
@@ -21,15 +6,327 @@ msgstr ""
 msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
-"Report-Msgid-Bugs-To: scummvm-devel@lists.sourceforge.net\n"
-"POT-Creation-Date: 2009-11-25 07:10-0500\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
+"POT-Creation-Date: 2010-06-10 17:42+0300\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ASCII\n"
+"Content-Type: text/plain; charset=cp1250\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gui/about.cpp:117
+msgid "C2(built on "
+msgstr ""
+
+#: gui/about.cpp:125
+msgid "C1Features compiled in:"
+msgstr ""
+
+#: gui/about.cpp:132
+msgid "C1Available engines:"
+msgstr ""
+
+#: gui/browser.cpp:69
+msgid "Go up"
+msgstr ""
+
+#: gui/browser.cpp:70 gui/KeysDialog.cpp:45 gui/launcher.cpp:265
+#: gui/massadd.cpp:95 gui/options.cpp:859 gui/saveload.cpp:65
+#: gui/saveload.cpp:157 gui/themebrowser.cpp:56 engines/dialogs.cpp:302
+#: gui/options.cpp:861 gui/chooser.cpp:49
+msgid "Cancel"
+msgstr ""
+
+#: gui/browser.cpp:71 gui/themebrowser.cpp:57 gui/chooser.cpp:50
+msgid "Choose"
+msgstr ""
+
+#: gui/GuiManager.cpp:75
+msgid "Failed to load any GUI theme, aborting"
+msgstr ""
+
+#: gui/GuiManager.cpp:98
+msgid "Close"
+msgstr ""
+
+#: gui/GuiManager.cpp:101
+msgid "Mouse click"
+msgstr ""
+
+#: gui/GuiManager.cpp:104 base/main.cpp:284
+msgid "Display keyboard"
+msgstr ""
+
+#: gui/GuiManager.cpp:107 base/main.cpp:287
+msgid "Remap keys"
+msgstr ""
+
+#: gui/KeysDialog.cpp:43
+msgid "Map"
+msgstr ""
+
+#: gui/KeysDialog.cpp:44 gui/launcher.cpp:266 gui/launcher.cpp:873
+#: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:860
+#: engines/dialogs.cpp:301 gui/options.cpp:862
+msgid "OK"
+msgstr "Igen"
+
+#: gui/KeysDialog.cpp:51
+msgid "Select an action and click 'Map'"
+msgstr ""
+
+#: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
+#, c-format
+msgid "Associated key : %s"
+msgstr ""
+
+#: gui/KeysDialog.cpp:84 gui/KeysDialog.cpp:106 gui/KeysDialog.cpp:145
+#, c-format
+msgid "Associated key : none"
+msgstr ""
+
+#: gui/KeysDialog.cpp:92
+msgid "Please select an action"
+msgstr ""
+
+#: gui/KeysDialog.cpp:108
+msgid "Press the key to associate"
+msgstr ""
+
+#: gui/KeysDialog.cpp:147
+msgid "Choose an action to map"
+msgstr ""
+
+#: gui/launcher.cpp:170
+msgid "Game"
+msgstr ""
+
+#: gui/launcher.cpp:173
+msgid "ID:"
+msgstr ""
+
+#: gui/launcher.cpp:177
+msgid "Name:"
+msgstr ""
+
+#: gui/launcher.cpp:181 gui/options.cpp:839
+msgid "Language:"
+msgstr ""
+
+#: gui/launcher.cpp:183 gui/launcher.cpp:193 gui/options.cpp:73
+#: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
+#: sound/mididrv.cpp:38 sound/mididrv.cpp:39
+msgid "<default>"
+msgstr "<alapértelmezett>"
+
+#: gui/launcher.cpp:191
+msgid "Platform:"
+msgstr ""
+
+#: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
+msgid "Graphics"
+msgstr "Grafikával"
+
+#: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
+msgid "GFX"
+msgstr ""
+
+#: gui/launcher.cpp:205
+msgid "Override global graphic settings"
+msgstr ""
+
+#: gui/launcher.cpp:212 gui/options.cpp:772
+msgid "Audio"
+msgstr "Hang"
+
+#: gui/launcher.cpp:214
+msgid "Override global audio settings"
+msgstr ""
+
+#: gui/launcher.cpp:222 gui/options.cpp:776
+msgid "Volume"
+msgstr "Volumene"
+
+#: gui/launcher.cpp:224
+msgid "Override global volume settings"
+msgstr ""
+
+#: gui/launcher.cpp:231 gui/options.cpp:784
+msgid "MIDI"
+msgstr ""
+
+#: gui/launcher.cpp:233
+msgid "Override global MIDI settings"
+msgstr ""
+
+#: gui/launcher.cpp:243 gui/options.cpp:790
+msgid "Paths"
+msgstr "Ösvények"
+
+#: gui/launcher.cpp:249
+#, fuzzy
+msgid "Game Path:"
+msgstr "Extra Útvonal:"
+
+#: gui/launcher.cpp:253 gui/options.cpp:803
+msgid "Extra Path:"
+msgstr "Extra Útvonal:"
+
+#: gui/launcher.cpp:257
+#, fuzzy
+msgid "Save Path:"
+msgstr "Extra Útvonal:"
+
+#: gui/launcher.cpp:274 gui/launcher.cpp:353 gui/launcher.cpp:398
+#: gui/options.cpp:226 gui/options.cpp:382 gui/options.cpp:480
+#: gui/options.cpp:526 gui/options.cpp:661 gui/options.cpp:801
+#: gui/options.cpp:804 gui/options.cpp:808 gui/options.cpp:883
+#: gui/options.cpp:889 gui/options.cpp:895 gui/options.cpp:903
+#: gui/options.cpp:927 gui/options.cpp:931 gui/options.cpp:937
+#: gui/options.cpp:944 gui/options.cpp:1050 gui/options.cpp:885
+#: gui/options.cpp:891 gui/options.cpp:897 gui/options.cpp:905
+#: gui/options.cpp:929 gui/options.cpp:933 gui/options.cpp:939
+#: gui/options.cpp:946 gui/options.cpp:1045
+msgid "None"
+msgstr "Semmi"
+
+#: gui/launcher.cpp:279 gui/launcher.cpp:357
+#, fuzzy
+msgid "Default"
+msgstr "<alapértelmezett>"
+
+#: gui/launcher.cpp:391 gui/options.cpp:1044 gui/options.cpp:1039
+msgid "Select SoundFont"
+msgstr ""
+
+#: gui/launcher.cpp:410 gui/launcher.cpp:548
+msgid "Select directory with game data"
+msgstr ""
+
+#: gui/launcher.cpp:428
+msgid "Select additional game directory"
+msgstr ""
+
+#: gui/launcher.cpp:440
+msgid "Select directory for saved games"
+msgstr ""
+
+#: gui/launcher.cpp:459
+msgid "This game ID is already taken. Please choose another one."
+msgstr ""
+
+#: gui/launcher.cpp:500 engines/dialogs.cpp:113
+msgid "Quit"
+msgstr ""
+
+#: gui/launcher.cpp:501
+msgid "About..."
+msgstr ""
+
+#: gui/launcher.cpp:502
+msgid "Options..."
+msgstr ""
+
+#: gui/launcher.cpp:504
+msgid "Start"
+msgstr ""
+
+#: gui/launcher.cpp:507
+msgid "Load..."
+msgstr ""
+
+#: gui/launcher.cpp:511 gui/launcher.cpp:990
+msgid "Add Game..."
+msgstr ""
+
+#: gui/launcher.cpp:513
+msgid "Edit Game..."
+msgstr ""
+
+#: gui/launcher.cpp:515
+msgid "Remove Game"
+msgstr ""
+
+#: gui/launcher.cpp:526 gui/launcher.cpp:1037
+msgid "Search:"
+msgstr ""
+
+#: gui/launcher.cpp:551 engines/dialogs.cpp:117
+msgid "Load game:"
+msgstr ""
+
+#: gui/launcher.cpp:551 engines/dialogs.cpp:91 engines/dialogs.cpp:117
+msgid "Load"
+msgstr ""
+
+#: gui/launcher.cpp:660
+msgid ""
+"Do you really want to run the mass game detector? This could potentially add "
+"a huge number of games."
+msgstr ""
+
+#: gui/launcher.cpp:661 gui/launcher.cpp:810
+msgid "Yes"
+msgstr ""
+
+#: gui/launcher.cpp:661 gui/launcher.cpp:810
+#, fuzzy
+msgid "No"
+msgstr "Semmi"
+
+#: gui/launcher.cpp:708
+msgid "ScummVM couldn't open the specified directory!"
+msgstr ""
+
+#: gui/launcher.cpp:720
+msgid "ScummVM could not find any game in the specified directory!"
+msgstr ""
+
+#: gui/launcher.cpp:734
+msgid "Pick the game:"
+msgstr ""
+
+#: gui/launcher.cpp:810
+msgid "Do you really want to remove this game configuration?"
+msgstr ""
+
+#: gui/launcher.cpp:873
+msgid "This game does not support loading games from the launcher."
+msgstr ""
+
+#: gui/launcher.cpp:877
+msgid "ScummVM could not find any engine capable of running the selected game!"
+msgstr ""
+
+#: gui/launcher.cpp:989
+msgid "Mass Add..."
+msgstr ""
+
+#: gui/massadd.cpp:79 gui/massadd.cpp:82
+msgid "... progress ..."
+msgstr ""
+
+#: gui/massadd.cpp:244
+#, c-format
+msgid "Scan complete!"
+msgstr ""
+
+#: gui/massadd.cpp:247
+#, c-format
+msgid "Discovered %d new games."
+msgstr ""
+
+#: gui/massadd.cpp:251
+#, c-format
+msgid "Scanned %d directories ..."
+msgstr ""
+
+#: gui/massadd.cpp:254
+#, c-format
+msgid "Discovered %d new games ..."
+msgstr ""
 
 #: gui/options.cpp:71
 msgid "Never"
@@ -51,21 +348,16 @@ msgstr "15 percenként"
 msgid "every 30 mins"
 msgstr "30 percenként"
 
-#: gui/options.cpp:73 gui/options.cpp:598 gui/options.cpp:608
-#: gui/options.cpp:838
-msgid "<default>"
-msgstr "<alapértelmezett>"
-
-#: gui/options.cpp:73
-msgid "22 kHz"
-msgstr ""
-
 #: gui/options.cpp:73
 msgid "8 kHz"
 msgstr ""
 
 #: gui/options.cpp:73
 msgid "11kHz"
+msgstr ""
+
+#: gui/options.cpp:73
+msgid "22 kHz"
 msgstr ""
 
 #: gui/options.cpp:73
@@ -91,15 +383,6 @@ msgstr "Csak feliratok"
 #: gui/options.cpp:96
 msgid "Speech & Subs"
 msgstr "Beszéd s Feliratok"
-
-#: gui/options.cpp:226 gui/options.cpp:382 gui/options.cpp:480
-#: gui/options.cpp:526 gui/options.cpp:661 gui/options.cpp:801
-#: gui/options.cpp:804 gui/options.cpp:882 gui/options.cpp:888
-#: gui/options.cpp:894 gui/options.cpp:902 gui/options.cpp:926
-#: gui/options.cpp:930 gui/options.cpp:936 gui/options.cpp:943
-#: gui/options.cpp:1049
-msgid "None"
-msgstr "Semmi"
 
 #: gui/options.cpp:595
 msgid "Graphics mode:"
@@ -173,36 +456,6 @@ msgstr "SFX mennyisége"
 msgid "Speech volume:"
 msgstr "Beszéd mennyiség:"
 
-#: gui/options.cpp:743
-msgid ""
-"Wrong configuration: Both subtitles and speech are off. Assuming subtitles "
-"only"
-msgstr ""
-
-#: gui/options.cpp:749
-msgid "Graphics"
-msgstr "Grafikával"
-
-#: gui/options.cpp:749
-msgid "GFX"
-msgstr ""
-
-#: gui/options.cpp:772
-msgid "Audio"
-msgstr "Hang"
-
-#: gui/options.cpp:776
-msgid "Volume"
-msgstr "Volumene"
-
-#: gui/options.cpp:784
-msgid "MIDI"
-msgstr ""
-
-#: gui/options.cpp:790
-msgid "Paths"
-msgstr "Ösvények"
-
 #: gui/options.cpp:797
 msgid "Save Path: "
 msgstr ""
@@ -210,10 +463,6 @@ msgstr ""
 #: gui/options.cpp:800
 msgid "Theme Path:"
 msgstr ""
-
-#: gui/options.cpp:803
-msgid "Extra Path:"
-msgstr "Extra Útvonal:"
 
 #: gui/options.cpp:807
 msgid "Plugins Path:"
@@ -235,87 +484,390 @@ msgstr "Leképez eszköz GUI:"
 msgid "Autosave:"
 msgstr "Automatikus mentés:"
 
-#: gui/options.cpp:832
+#: gui/options.cpp:832 engines/dialogs.cpp:305
 msgid "Keys"
 msgstr "Kulcsok"
 
-#: gui/options.cpp:840
-msgid "Angol"
+#: gui/options.cpp:844
+msgid "English"
 msgstr ""
 
-#: gui/options.cpp:858
-msgid "Szakítani"
-msgstr ""
-
-#: gui/options.cpp:859
-msgid "OK"
-msgstr "Igen"
-
-#: gui/options.cpp:995
+#: gui/options.cpp:996 gui/options.cpp:991
 msgid "Select directory for savegames"
 msgstr ""
 
-#: gui/options.cpp:1002
+#: gui/options.cpp:1003 gui/options.cpp:998
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 
-#: gui/options.cpp:1011
+#: gui/options.cpp:1012 gui/options.cpp:1007
 msgid "Select directory for GUI themes"
 msgstr ""
 
-#: gui/options.cpp:1021
+#: gui/options.cpp:1022 gui/options.cpp:1017
 msgid "Select directory for extra files"
 msgstr ""
 
-#: gui/options.cpp:1032
+#: gui/options.cpp:1033 gui/options.cpp:1028
 msgid "Select directory for plugins"
 msgstr ""
 
-#: gui/options.cpp:1043
-msgid "Select SoundFont"
+#: gui/saveload.cpp:60 gui/saveload.cpp:241
+msgid "No date saved"
 msgstr ""
 
-#: gui/GuiManager.cpp:73
-msgid "Failed to load any GUI theme, aborting"
+#: gui/saveload.cpp:61 gui/saveload.cpp:242
+msgid "No time saved"
 msgstr ""
 
-#: base/main.cpp:98
+#: gui/saveload.cpp:62 gui/saveload.cpp:243
+msgid "No playtime saved"
+msgstr ""
+
+#: gui/saveload.cpp:69 gui/saveload.cpp:157
+msgid "Delete"
+msgstr ""
+
+#: gui/saveload.cpp:156
+msgid "Do you really want to delete this savegame?"
+msgstr ""
+
+#: gui/saveload.cpp:265
+msgid "Date: "
+msgstr ""
+
+#: gui/saveload.cpp:268
+#, fuzzy
+msgid "Time: "
+msgstr "Téma:"
+
+#: gui/saveload.cpp:273
+msgid "Playtime: "
+msgstr ""
+
+#: gui/saveload.cpp:286 gui/saveload.cpp:353
+msgid "Untitled savestate"
+msgstr ""
+
+#: gui/themebrowser.cpp:46
+msgid "Select a Theme"
+msgstr ""
+
+#: base/main.cpp:105
 #, c-format
 msgid "User picked target '%s' (gameid '%s')...\n"
 msgstr ""
 
-#: base/main.cpp:99
+#: base/main.cpp:106
 msgid "  Looking for a plugin supporting this gameid... "
 msgstr ""
 
-#: base/main.cpp:103
+#: base/main.cpp:110
 msgid "failed\n"
 msgstr ""
 
-#: base/main.cpp:104
+#: base/main.cpp:111
 #, c-format
 msgid ""
 "%s is an invalid gameid. Use the --list-games option to list supported gameid"
 msgstr ""
 
-#: base/main.cpp:111
+#: base/main.cpp:118
 #, c-format
 msgid "  Starting '%s'\n"
 msgstr ""
 
-#: base/main.cpp:140
-msgid "Invalid game path"
-msgstr ""
-
-#: base/main.cpp:143
-msgid "Unable to locate game data"
-msgstr ""
-
-#: base/main.cpp:146
-msgid "Unknown error"
-msgstr ""
-
-#: base/main.cpp:149
+#: base/main.cpp:147
 #, c-format
 msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
+msgstr ""
+
+#: base/main.cpp:204
+#, c-format
+msgid "Engine does not support debug level '%s'"
+msgstr ""
+
+#: base/main.cpp:272
+msgid "Menu"
+msgstr ""
+
+#: base/main.cpp:275
+msgid "Skip"
+msgstr ""
+
+#: base/main.cpp:278
+#, fuzzy
+msgid "Pause"
+msgstr "Ösvények"
+
+#: base/main.cpp:281
+msgid "Skip line"
+msgstr ""
+
+#: base/main.cpp:393
+msgid "Error running game:"
+msgstr ""
+
+#: base/main.cpp:419 base/main.cpp:420
+msgid "Could not find any engine capable of running the selected game"
+msgstr ""
+
+#: common/error.cpp:43
+msgid "Invalid Path"
+msgstr ""
+
+#: common/error.cpp:44
+msgid "Game Data not found"
+msgstr ""
+
+#: common/error.cpp:45
+msgid "Game Id not supported"
+msgstr ""
+
+#: common/error.cpp:46
+msgid "Unsupported Color Mode"
+msgstr ""
+
+#: common/error.cpp:48
+msgid "Read permission denied"
+msgstr ""
+
+#: common/error.cpp:49
+msgid "Write permission denied"
+msgstr ""
+
+#: common/error.cpp:52
+msgid "Path not exists"
+msgstr ""
+
+#: common/error.cpp:53
+msgid "Path not a directory"
+msgstr ""
+
+#: common/error.cpp:54
+msgid "Path not a file"
+msgstr ""
+
+#: common/error.cpp:56
+msgid "Cannot create file"
+msgstr ""
+
+#: common/error.cpp:57
+msgid "Reading failed"
+msgstr ""
+
+#: common/error.cpp:58
+msgid "Writing data failed"
+msgstr ""
+
+#: common/error.cpp:60 common/error.cpp:71
+msgid "Unknown Error"
+msgstr ""
+
+#: engines/dialogs.cpp:89
+msgid "Resume"
+msgstr ""
+
+#: engines/dialogs.cpp:95 engines/dialogs.cpp:119
+msgid "Save"
+msgstr ""
+
+#: engines/dialogs.cpp:99
+msgid "Options"
+msgstr ""
+
+#: engines/dialogs.cpp:104
+msgid "Help"
+msgstr ""
+
+#: engines/dialogs.cpp:107
+msgid "About"
+msgstr ""
+
+#: engines/dialogs.cpp:109
+msgid "Return to Launcher"
+msgstr ""
+
+#: engines/dialogs.cpp:119
+msgid "Save game:"
+msgstr ""
+
+#: gui/options.cpp:978
+msgid "You have to restart ScummVM to take the effect."
+msgstr ""
+
+#: gui/ThemeEngine.cpp:333
+msgid "Disabled GFX"
+msgstr ""
+
+#: gui/ThemeEngine.cpp:334
+msgid "Standard Renderer (16bpp)"
+msgstr ""
+
+#: gui/ThemeEngine.cpp:336
+msgid "Antialiased Renderer (16bpp)"
+msgstr ""
+
+#: sound/mididrv.cpp:39 sound/mididrv.cpp:40
+msgid "No music"
+msgstr ""
+
+#: sound/mididrv.cpp:42 sound/mididrv.cpp:43
+msgid "Windows MIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:46 sound/mididrv.cpp:47
+msgid "ALSA"
+msgstr ""
+
+#: sound/mididrv.cpp:50 sound/mididrv.cpp:51
+msgid "Atari ST MIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:54 sound/mididrv.cpp:55
+msgid "SEQ"
+msgstr ""
+
+#: sound/mididrv.cpp:58 sound/mididrv.cpp:59
+msgid "DMedia"
+msgstr ""
+
+#: sound/mididrv.cpp:62 sound/mididrv.cpp:63
+msgid "CAMD"
+msgstr ""
+
+#: sound/mididrv.cpp:66 sound/mididrv.cpp:67
+#, fuzzy
+msgid "CoreAudio"
+msgstr "Hang"
+
+#: sound/mididrv.cpp:68 sound/mididrv.cpp:69
+msgid "CoreMIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:73 sound/mididrv.cpp:74
+msgid "Yamaha Pa1"
+msgstr ""
+
+#: sound/mididrv.cpp:75 sound/mididrv.cpp:76
+msgid "Tapwave Zodiac"
+msgstr ""
+
+#: sound/mididrv.cpp:80 sound/mididrv.cpp:81
+msgid "FluidSynth"
+msgstr ""
+
+#: sound/mididrv.cpp:83 sound/mididrv.cpp:84
+msgid "MT-32 Emulation"
+msgstr ""
+
+#: sound/mididrv.cpp:87 sound/mididrv.cpp:88
+#, fuzzy
+msgid "AdLib"
+msgstr "Hang"
+
+#: sound/mididrv.cpp:88 sound/mididrv.cpp:89
+msgid "PC Speaker"
+msgstr ""
+
+#: sound/mididrv.cpp:89 sound/mididrv.cpp:90
+msgid "IBM PCjr"
+msgstr ""
+
+#: sound/mididrv.cpp:90 sound/mididrv.cpp:91
+msgid "Creative Music System"
+msgstr ""
+
+#: sound/mididrv.cpp:91 sound/mididrv.cpp:92
+msgid "FM Towns"
+msgstr ""
+
+#: sound/mididrv.cpp:93 sound/mididrv.cpp:94
+msgid "TiMidity"
+msgstr ""
+
+#: gui/launcher.cpp:500 engines/dialogs.cpp:113
+msgid "~Q~uit"
+msgstr ""
+
+#: gui/launcher.cpp:501
+msgid "A~b~out..."
+msgstr ""
+
+#: gui/launcher.cpp:502
+msgid "~O~ptions..."
+msgstr ""
+
+#: gui/launcher.cpp:504
+msgid "~S~tart"
+msgstr ""
+
+#: gui/launcher.cpp:507
+msgid "~L~oad..."
+msgstr ""
+
+#: gui/launcher.cpp:511
+msgid "~A~dd Game..."
+msgstr ""
+
+#: gui/launcher.cpp:513
+msgid "~E~dit Game..."
+msgstr ""
+
+#: gui/launcher.cpp:515
+msgid "~R~emove Game"
+msgstr ""
+
+#: engines/dialogs.cpp:89
+msgid "~R~esume"
+msgstr ""
+
+#: engines/dialogs.cpp:91
+msgid "~L~oad"
+msgstr ""
+
+#: engines/dialogs.cpp:95
+msgid "~S~ave"
+msgstr ""
+
+#: engines/dialogs.cpp:99
+msgid "~O~ptions"
+msgstr ""
+
+#: engines/dialogs.cpp:104
+msgid "~H~elp"
+msgstr ""
+
+#: engines/dialogs.cpp:107
+msgid "~A~bout"
+msgstr ""
+
+#: engines/dialogs.cpp:109
+msgid "~R~eturn to Launcher"
+msgstr ""
+
+#: engines/dialogs.cpp:301
+#, fuzzy
+msgid "~O~K"
+msgstr "Igen"
+
+#: engines/dialogs.cpp:302
+msgid "~C~ancel"
+msgstr ""
+
+#: engines/dialogs.cpp:305
+#, fuzzy
+msgid "~K~eys"
+msgstr "Kulcsok"
+
+#: engines/scumm/dialogs.cpp:287
+msgid "~P~revious"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:288
+msgid "~N~ext"
+msgstr ""
+
+#: engines/scumm/dialogs.cpp:289
+msgid "~C~lose"
 msgstr ""
