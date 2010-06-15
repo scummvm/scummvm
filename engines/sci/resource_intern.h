@@ -55,13 +55,13 @@ protected:
 public:
 	bool scanned;
 	const Common::FSNode *_resourceFile;
-	int volume_number;
+	const int volume_number;
 	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
 	uint32 audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
 	int32 *audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
 
 protected:
-	ResourceSource(ResSourceType type, const Common::String &name);
+	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0);
 public:
 	virtual ~ResourceSource();
 
@@ -74,7 +74,7 @@ public:
 	/**
 	 * TODO: Document this
 	 */
-	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
+	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
 		return NULL;
 	};
 
@@ -107,13 +107,13 @@ public:
 
 class VolumeResourceSource : public ResourceSource {
 public:
-	VolumeResourceSource(const Common::String &name, ResourceSource *map, ResSourceType type = kSourceVolume)
-		: ResourceSource(type, name) {
+	VolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum, ResSourceType type = kSourceVolume)
+		: ResourceSource(type, name, volNum) {
 		associated_map = map;
 	}
 
-	virtual ResourceSource *findVolume(ResourceSource *map, int volume_nr) {
-		if (associated_map == map && volume_number == volume_nr)
+	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
+		if (associated_map == map && volume_number == volNum)
 			return this;
 		return NULL;
 	};
@@ -121,30 +121,34 @@ public:
 
 class ExtMapResourceSource : public ResourceSource {
 public:
-	ExtMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtMap, name) {}
+	ExtMapResourceSource(const Common::String &name, int volNum)
+		: ResourceSource(kSourceExtMap, name, volNum) {
+	}
 
 	virtual void scanSource(ResourceManager *resMan);
 };
 
 class IntMapResourceSource : public ResourceSource {
 public:
-	IntMapResourceSource(const Common::String &name) : ResourceSource(kSourceIntMap, name) {}
+	IntMapResourceSource(const Common::String &name, int volNum)
+		: ResourceSource(kSourceIntMap, name, volNum) {
+	}
 
 	virtual void scanSource(ResourceManager *resMan);
 };
 
 class AudioVolumeResourceSource : public VolumeResourceSource {
 public:
-	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map)
-		: VolumeResourceSource(name, map, kSourceAudioVolume) {
-	}
+	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum);
 
 	virtual void loadResource(Resource *res, ResourceManager *resMan);
 };
 
 class ExtAudioMapResourceSource : public ResourceSource {
 public:
-	ExtAudioMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtAudioMap, name) {}
+	ExtAudioMapResourceSource(const Common::String &name, int volNum)
+		: ResourceSource(kSourceExtAudioMap, name, volNum) {
+	}
 
 	virtual void scanSource(ResourceManager *resMan);
 };
@@ -161,7 +165,7 @@ protected:
 	Common::MacResManager *_macResMan;
 
 public:
-	MacResourceForkResourceSource(const Common::String &name);
+	MacResourceForkResourceSource(const Common::String &name, int volNum);
 	~MacResourceForkResourceSource();
 
 	/**

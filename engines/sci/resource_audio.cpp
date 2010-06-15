@@ -33,6 +33,10 @@
 
 namespace Sci {
 
+AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum)
+	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
+}
+
 void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 	Common::SeekableReadStream *fileStream = getVolumeFile(source);
 
@@ -433,7 +437,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		return;
 	}
 
-	_audioMapSCI1 = addSource(new ExtAudioMapResourceSource(fullname), language);
+	_audioMapSCI1 = addSource(new ExtAudioMapResourceSource(fullname, language));
 
 	// Search for audio volumes for this language and add them to the source list
 	Common::ArchiveMemberList files;
@@ -443,7 +447,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		const char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
-		addSource(new AudioVolumeResourceSource(name, _audioMapSCI1), number);
+		addSource(new AudioVolumeResourceSource(name, _audioMapSCI1, number));
 	}
 
 	scanNewSources();
