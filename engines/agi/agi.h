@@ -152,7 +152,8 @@ enum AgiGameFeatures {
 	GF_MENUS =		 (1 << 7),
 	GF_ESCPAUSE =	 (1 << 8),
 	GF_OLDAMIGAV20 = (1 << 9),
-	GF_CLIPCOORDS  = (1 << 10)
+	GF_CLIPCOORDS  = (1 << 10),
+	GF_2GSOLDSOUND = (1 << 11)
 };
 
 struct AGIGameDescription;
@@ -315,6 +316,12 @@ enum AgiComputerType {
 	kAgiComputerAmiga = 5, // Newer Amiga AGI interpreters' value (Commonly used)
 	kAgiComputerApple2GS = 7,
 	kAgiComputerAmigaOld = 20 // Older Amiga AGI interpreters' value (Seldom used)
+};
+
+enum AgiSoundType {
+	kAgiSoundPC = 1,
+	kAgiSoundTandy = 3, // Tandy (This value is also used by the Amiga AGI and Apple IIGS AGI)
+	kAgiSound2GSOld = 8 // Apple IIGS's Gold Rush! (Version 1.0M 1989-02-28 (CE), AGI 3.003) uses value 8
 };
 
 /**

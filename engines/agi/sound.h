@@ -89,7 +89,7 @@ struct CoCoNote {
  * as they're simply the different used values in AGI sound resources'
  * starts (The first 16-bit little endian word, to be precise).
  */
-enum AgiSoundType {
+enum AgiSoundEmuType {
 	AGI_SOUND_SAMPLE	= 0x0001,
 	AGI_SOUND_MIDI		= 0x0002,
 	AGI_SOUND_4CHN		= 0x0008
@@ -110,7 +110,7 @@ enum AgiSoundEnv {
  * AGI engine sound channel structure.
  */
 struct ChannelInfo {
-	AgiSoundType type;
+	AgiSoundEmuType type;
 	const uint8 *ptr; // Pointer to the AgiNote data
 	const int16 *ins;
 	int32 size;

@@ -166,7 +166,7 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Gold Rush! (Apple IIgs) 1.0M 2/28/89 (CE) aka 2.01 12/22/88
 	// Menus not tested
-	GAME3_P("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformApple2GS),
+	GAME3_P("goldrush", "1.0M 1989-02-28 (CE) aka 2.01 1988-12-22", "grdir", "3f7b9ce62631434389f85371b11921d6", 0x3149, GF_2GSOLDSOUND, GID_GOLDRUSH, Common::kPlatformApple2GS),
 
 	// Gold Rush! (ST) 1.01 1/13/89 aka 2.01 12/22/88
 	GAME3_P("goldrush", "1.01 1989-01-13 aka 2.01 1988-12-22", "grdir", "4dd4d50480a3d6c206fa227ce8142735", 0x3149, 0, GID_GOLDRUSH, Common::kPlatformAtariST),

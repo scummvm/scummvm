@@ -142,7 +142,7 @@ void SoundMgr::unloadSound(int resnum) {
 
 void SoundMgr::startSound(int resnum, int flag) {
 	int i;
-	AgiSoundType type;
+	AgiSoundEmuType type;
 
 	if (_vm->_game.sounds[resnum] != NULL && _vm->_game.sounds[resnum]->isPlaying())
 		return;
@@ -152,7 +152,7 @@ void SoundMgr::startSound(int resnum, int flag) {
 	if (_vm->_game.sounds[resnum] == NULL) // Is this needed at all?
 		return;
 
-	type = (AgiSoundType)_vm->_game.sounds[resnum]->type();
+	type = (AgiSoundEmuType)_vm->_game.sounds[resnum]->type();
 
 	if (type != AGI_SOUND_SAMPLE && type != AGI_SOUND_MIDI && type != AGI_SOUND_4CHN)
 		return;

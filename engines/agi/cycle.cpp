@@ -387,27 +387,32 @@ int AgiEngine::runGame() {
 			_restartGame = false;
 		}
 
-		// Set computer type (v20 i.e. vComputer)
+		// Set computer type (v20 i.e. vComputer) and sound type
 		switch (getPlatform()) {
 		case Common::kPlatformAtariST:
 			setvar(vComputer, kAgiComputerAtariST);
+			setvar(vSoundgen, kAgiSoundPC);
 			break;
 		case Common::kPlatformAmiga:
 			if (getFeatures() & GF_OLDAMIGAV20)
 				setvar(vComputer, kAgiComputerAmigaOld);
 			else
 				setvar(vComputer, kAgiComputerAmiga);
+			setvar(vSoundgen, kAgiSoundTandy);
 			break;
 		case Common::kPlatformApple2GS:
 			setvar(vComputer, kAgiComputerApple2GS);
+			if (getFeatures() & GF_2GSOLDSOUND)
+				setvar(vSoundgen, kAgiSound2GSOld);
+			else
+				setvar(vSoundgen, kAgiSoundTandy);
 			break;
 		case Common::kPlatformPC:
 		default:
 			setvar(vComputer, kAgiComputerPC);
+			setvar(vSoundgen, kAgiSoundPC);
 			break;
 		}
-
-		setvar(vSoundgen, 1);	// IBM PC SOUND
 
 		// Set monitor type (v26 i.e. vMonitor)
 		switch (_renderMode) {
