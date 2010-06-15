@@ -2191,6 +2191,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_REF: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.segment)) {
+#ifdef ENABLE_SCI32
 				case SEG_TYPE_STRING: {
 					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
 					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
@@ -2201,6 +2202,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 					Common::hexdump((const byte *) array->getRawData(), array->getSize(), 16, 0);
 					break;
 				}
+#endif
 				default: {
 					int size;
 					const SegmentRef block = _engine->_gamestate->_segMan->dereference(reg);
