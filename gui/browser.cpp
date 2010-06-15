@@ -66,9 +66,9 @@ BrowserDialog::BrowserDialog(const char *title, bool dirBrowser)
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "Browser.Up", _("Go up"), kGoUpCmd);
-	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), kCloseCmd);
-	new ButtonWidget(this, "Browser.Choose", _("Choose"), kChooseCmd);
+	new ButtonWidget(this, "Browser.Up", _("Go up"), _("Go to previous directory level"), kGoUpCmd);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), 0, kCloseCmd);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), 0, kChooseCmd);
 }
 
 void BrowserDialog::open() {

@@ -112,6 +112,7 @@ enum TextData {
 	kTextDataDefault = 0,
 	kTextDataButton,
 	kTextDataNormalFont,
+	kTextDataTooltip,
 	kTextDataMAX
 };
 
@@ -177,7 +178,7 @@ public:
 	enum TextInversionState {
 		kTextInversionNone,	///< Indicates that the text should not be drawn inverted
 		kTextInversion,		///< Indicates that the text should be drawn inverted, but not focused
-		kTextInversionFocus	///< Indicates thte the test should be drawn inverted, and focused
+		kTextInversionFocus	///< Indicates that the text should be drawn inverted, and focused
 	};
 
 	enum ScrollbarState {
@@ -196,6 +197,7 @@ public:
 		kFontStyleFixedNormal = 3,	///< Fixed size font.
 		kFontStyleFixedBold = 4,	///< Fixed size bold font.
 		kFontStyleFixedItalic = 5,	///< Fixed size italic font.
+		kFontStyleTooltip = 6,		///< Tiny console font
 		kFontStyleMax
 	};
 
@@ -259,6 +261,17 @@ public:
 	void enable();
 	void disable();
 
+	struct StoredState {
+		Common::Rect r;
+		Graphics::Surface screen;
+		Graphics::Surface backBuffer;
+
+		StoredState() {}
+	};
+
+	StoredState *storeState(const Common::Rect &r);
+	void restoreState(StoredState *state);
+
 	/**
 	 *	Implementation of the GUI::Theme API. Called when a
 	 *	new dialog is opened. Note that the boolean parameter
@@ -284,6 +297,8 @@ public:
 	TextData fontStyleToData(FontStyle font) const {
 		if (font == kFontStyleNormal)
 			return kTextDataNormalFont;
+		if (font == kFontStyleTooltip)
+			return kTextDataTooltip;
 		return kTextDataDefault;
 	}
 
@@ -336,7 +351,7 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal, bool restore = true);
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
 

@@ -59,7 +59,7 @@ protected:
 	int				_rightPadding;
 
 public:
-	PopUpWidget(GuiObject *boss, const String &name);
+	PopUpWidget(GuiObject *boss, const String &name, const char *tooltip = 0);
 
 	void handleMouseDown(int x, int y, int button, int clickCount);
 	void handleMouseWheel(int x, int y, int direction);

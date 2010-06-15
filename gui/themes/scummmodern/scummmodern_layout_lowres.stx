@@ -48,6 +48,10 @@
 		<def var = 'KeyMapper.LabelWidth' value = '80'/>
 		<def var = 'KeyMapper.ButtonWidth' value = '60'/>
 
+		<def var = 'Tooltip.MaxWidth' value = '70'/>
+		<def var = 'Tooltip.XDelta' value = '9'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '18'/>
+
 		<widget name = 'OptionsLabel'
 				size = '100, Globals.Line.Height'
 				textalign = 'right'

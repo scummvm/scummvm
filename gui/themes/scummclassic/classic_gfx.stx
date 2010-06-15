@@ -52,6 +52,9 @@
 		<font	id = 'text_normal'
 				file = 'default'
 		/>
+		<font	id = 'tooltip_normal'
+				file = 'builtinConsole'
+		/>
 
 		<text_color	id = 'color_normal'
 				color = 'green'
@@ -484,6 +487,12 @@
 	<drawdata id = 'widget_default' cache = 'false'>
 		<drawstep	func = 'bevelsq'
 					bevel = '2'
+		/>
+	</drawdata>
+
+	<drawdata id = 'widget_small' cache = 'false'>
+		<drawstep	func = 'square'
+					stroke = '0'
 		/>
 	</drawdata>
 </render_info>

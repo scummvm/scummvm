@@ -60,6 +60,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
  */
 class GuiManager : public Common::Singleton<GuiManager> {
 	friend class Dialog;
+	friend class Tooltip;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
 	~GuiManager();
@@ -91,6 +92,9 @@ public:
 	 * @return true if the a screen change indeed occurred, false otherwise
 	 */
 	bool checkScreenChange();
+
+	Tooltip *getTooltip() { return _tooltip; }
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -113,6 +117,8 @@ protected:
 	bool		_stateIsSaved;
 
 	bool		_useStdCursor;
+
+	Tooltip *_tooltip;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct {

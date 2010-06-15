@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
+#include "common/timer.h"
 #include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
@@ -49,7 +50,7 @@ enum {
 
 // Constructor
 GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
-	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+	   _stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
 
@@ -75,10 +76,13 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 			error(_t("Failed to load any GUI theme, aborting"));
 		}
 	}
+
+	_tooltip = new Tooltip(this);
 }
 
 GuiManager::~GuiManager() {
 	delete _theme;
+	delete _tooltip;
 }
 
 #ifdef ENABLE_KEYMAPPER
@@ -220,6 +224,13 @@ Dialog *GuiManager::getTopDialog() const {
 	return _dialogStack.top();
 }
 
+static void tooltipCallback(void *ref) {
+	GuiManager *guiManager = (GuiManager *)ref;
+
+	guiManager->getTooltip()->setVisible(true);
+	g_system->getTimerManager()->removeTimerProc(&tooltipCallback);
+}
+
 void GuiManager::runLoop() {
 	Dialog *activeDialog = getTopDialog();
 	bool didSaveState = false;
@@ -278,6 +289,8 @@ void GuiManager::runLoop() {
 		}
 
 		Common::Event event;
+
+		bool eventTookplace = false;
 		while (eventMan->pollEvent(event)) {
 
 			// The top dialog can change during the event loop. In that case, flush all the
@@ -300,16 +313,21 @@ void GuiManager::runLoop() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				activeDialog->handleKeyDown(event.kbd);
+				eventTookplace = true;
 				break;
 			case Common::EVENT_KEYUP:
 				activeDialog->handleKeyUp(event.kbd);
+				eventTookplace = true;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
+				_tooltip->setMouseXY(mouse.x, mouse.y);
+				eventTookplace = true;
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
+				eventTookplace = true;
 				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 				time = _system->getMillis();
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
@@ -326,23 +344,34 @@ void GuiManager::runLoop() {
 				break;
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
+				eventTookplace = true;
 				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
 				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
 				break;
 			case Common::EVENT_WHEELUP:
+				eventTookplace = true;
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
 				break;
 			case Common::EVENT_WHEELDOWN:
+				eventTookplace = true;
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case Common::EVENT_QUIT:
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
+				eventTookplace = true;
 				screenChange();
 				break;
 			default:
 				break;
 			}
+		}
+
+		if (eventTookplace) {
+			_tooltip->setVisible(false);
+
+			_system->getTimerManager()->removeTimerProc(&tooltipCallback);
+			_system->getTimerManager()->installTimerProc(&tooltipCallback, 2*1000000, this);
 		}
 
 		// Delay for a moment

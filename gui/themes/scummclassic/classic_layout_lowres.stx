@@ -42,6 +42,10 @@
 		<def var = 'KeyMapper.LabelWidth' value = '80'/>
 		<def var = 'KeyMapper.ButtonWidth' value = '60'/>
 
+		<def var = 'Tooltip.MaxWidth' value = '70'/>
+		<def var = 'Tooltip.XDelta' value = '8'/> <!-- basically cursor size -->
+		<def var = 'Tooltip.YDelta' value = '8'/>
+
 		<widget name = 'Button'
 				size = '72, 16'
 		/>

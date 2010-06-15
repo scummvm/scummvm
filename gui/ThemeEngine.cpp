@@ -1070,7 +1070,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	}
 }
 
-void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font, FontColor color) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font, FontColor color, bool restore) {
 	if (!ready())
 		return;
 
@@ -1121,13 +1121,7 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 		return;
 	}
 
-	TextData textId = kTextDataNone;
-	if (font == kFontStyleNormal)
-		textId = kTextDataNormalFont;
-	else
-		textId = kTextDataDefault;
-
-	bool restore = true;
+	TextData textId = fontStyleToData(font);
 
 	switch (inverted) {
 	case kTextInversion:
@@ -1169,7 +1163,69 @@ void ThemeEngine::debugWidgetPosition(const char *name, const Common::Rect &r) {
 	_screen.vLine(r.right, r.top, r.bottom, 0xFFFF);
 }
 
+ThemeEngine::StoredState *ThemeEngine::storeState(const Common::Rect &r) {
+	StoredState *state = new StoredState;
+	byte *dst;
+	byte *src;
 
+	state->r.top = r.top;
+	state->r.bottom = r.bottom;
+	state->r.left = r.left;
+	state->r.right = r.right;
+
+	state->r.clip(_screen.w, _screen.h);
+
+	state->screen.create(state->r.width(), state->r.height(), _screen.bytesPerPixel);
+	state->backBuffer.create(state->r.width(), state->r.height(), _backBuffer.bytesPerPixel);
+
+	src = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
+	dst = (byte *)state->screen.getBasePtr(0, 0);
+
+	for (int i = state->r.height(); i > 0; i--) {
+		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
+		src += _screen.pitch;
+		dst += state->screen.pitch;
+	}
+
+	src = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
+	dst = (byte *)state->backBuffer.getBasePtr(0, 0);
+
+	for (int i = state->r.height(); i > 0; i--) {
+		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
+		src += _backBuffer.pitch;
+		dst += state->backBuffer.pitch;
+	}
+
+	return state;
+}
+
+void ThemeEngine::restoreState(StoredState *state) {
+	byte *dst;
+	byte *src;
+
+	if (!state)
+		return;
+
+	src = (byte *)state->screen.getBasePtr(0, 0);
+	dst = (byte *)_screen.getBasePtr(state->r.left, state->r.top);
+
+	for (int i = state->r.height(); i > 0; i--) {
+		memcpy(dst, src, state->r.width() * _screen.bytesPerPixel);
+		src += state->screen.pitch;
+		dst += _screen.pitch;
+	}
+
+	src = (byte *)state->backBuffer.getBasePtr(0, 0);
+	dst = (byte *)_backBuffer.getBasePtr(state->r.left, state->r.top);
+
+	for (int i = state->r.height(); i > 0; i--) {
+		memcpy(dst, src, state->r.width() * _backBuffer.bytesPerPixel);
+		src += state->backBuffer.pitch;
+		dst += _backBuffer.pitch;
+	}
+	
+	addDirtyRect(state->r);
+}
 
 /**********************************************************
  *	Screen/overlay management

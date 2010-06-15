@@ -32,14 +32,14 @@
 
 namespace GUI {
 
-Widget::Widget(GuiObject *boss, int x, int y, int w, int h)
-	: GuiObject(x, y, w, h), _type(0), _boss(boss),
+Widget::Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+	: GuiObject(x, y, w, h), _type(0), _boss(boss), _tooltip(tooltip),
 	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateEnabled) {
 	init();
 }
 
-Widget::Widget(GuiObject *boss, const Common::String &name)
-	: GuiObject(name), _type(0), _boss(boss),
+Widget::Widget(GuiObject *boss, const Common::String &name, const char *tooltip)
+	: GuiObject(name), _type(0), _boss(boss), _tooltip(tooltip),
 	  _id(0), _flags(0), _hasFocus(false), _state(ThemeEngine::kStateDisabled) {
 	init();
 }
@@ -224,15 +224,88 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 
 #pragma mark -
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align)
-	: Widget(boss, x, y, w, h), _align(align) {
+Tooltip::Tooltip(GuiManager *guiManager) : GuiObject(0, 0, 0, 0) {
+	_guiManager = guiManager;
+
+	_maxWidth = -1;
+	_storedState = 0;
+}
+
+void Tooltip::draw() {
+	int num = 0;
+	int h = g_gui.theme()->getFontHeight(ThemeEngine::kFontStyleTooltip) + 2;
+
+	// Make Rect bigger for compensating the shadow
+	_storedState = g_gui.theme()->storeState(Common::Rect(_x - 5, _y - 5, _x + _w + 5, _y + _h + 5));
+
+	g_gui.theme()->startBuffering();
+	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, ThemeEngine::kWidgetBackgroundBorderSmall);
+
+	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
+		g_gui.theme()->drawText(Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 +_w, _y + 1+ (num + 1) * h), *i, ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, 0, false, ThemeEngine::kFontStyleTooltip, ThemeEngine::kFontColorNormal, false);
+	}
+	g_gui.theme()->finishBuffering();
+}
+
+void Tooltip::reflowLayout() {
+}
+
+void Tooltip::setMouseXY(int x, int y) {
+	_mouseX = x;
+	_mouseY = y;
+}
+
+void Tooltip::setVisible(bool state) {
+	if (state == _visible)
+		return;
+
+	if (state) {
+		Widget *wdg = _guiManager->getTopDialog()->findWidget(_mouseX, _mouseY);
+
+		if (!wdg)
+			return;
+
+		if (wdg->getTooltip()) {
+			_visible = state;
+
+			// Cache config values.
+			// NOTE: we cannot do it in the consturctor
+			if (_maxWidth == -1) {
+				 _maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
+				 _xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
+				 _ydelta = g_gui.xmlEval()->getVar("Globals.Tooltip.YDelta", 0);
+			}
+
+			const Graphics::Font *tooltipFont = g_gui.theme()->getFont(ThemeEngine::kFontStyleTooltip);
+
+			_wrappedLines.clear();
+			_w = tooltipFont->wordWrapText(wdg->getTooltip(), _maxWidth - 4, _wrappedLines);
+			_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size();
+
+			_x = MIN<int16>(_guiManager->getTopDialog()->_x + _mouseX + _xdelta, g_gui.getWidth() - _w - 3);
+			_y = MIN<int16>(_guiManager->getTopDialog()->_y + _mouseY + _ydelta, g_gui.getHeight() - _h - 3);
+
+			draw();
+		}
+	} else {
+		_visible = state;
+
+		g_gui.theme()->restoreState(_storedState);
+		delete _storedState;
+	}
+}
+
+#pragma mark -
+
+StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip)
+	: Widget(boss, x, y, w, h, tooltip), _align(align) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
 }
 
-StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text)
-	: Widget(boss, name) {
+StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip)
+	: Widget(boss, name, tooltip) {
 	setFlags(WIDGET_ENABLED);
 	_type = kStaticTextWidget;
 	_label = text;
@@ -272,8 +345,8 @@ void StaticTextWidget::drawWidget() {
 
 #pragma mark -
 
-ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter), CommandSender(boss),
+ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
 	  _cmd(cmd) {
 
 	if (hotkey == 0)
@@ -283,8 +356,8 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 	_type = kButtonWidget;
 }
 
-ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, cleanupHotkey(label)), CommandSender(boss), 
+ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss), 
 	  _cmd(cmd) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);
@@ -303,14 +376,14 @@ void ButtonWidget::drawWidget() {
 
 #pragma mark -
 
-CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, cmd, hotkey), _state(false) {
+CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
 
-CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, label, cmd, hotkey), _state(false) {
+CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
+	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 }
@@ -364,15 +437,15 @@ void RadiobuttonGroup::setEnabled(bool ena) {
 
 #pragma mark -
 
-RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, 0, hotkey), _state(false), _value(value), _group(group) {
+RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip, uint8 hotkey)
+	: ButtonWidget(boss, x, y, w, h, label, tooltip, 0, hotkey), _state(false), _value(value), _group(group) {
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
 }
 
-RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, uint8 hotkey)
-	: ButtonWidget(boss, name, label, 0, hotkey), _state(false), _value(value), _group(group) {
+RadiobuttonWidget::RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip, uint8 hotkey)
+	: ButtonWidget(boss, name, label, tooltip, 0, hotkey), _state(false), _value(value), _group(group) {
 	setFlags(WIDGET_ENABLED);
 	_type = kRadiobuttonWidget;
 	_group->addButton(this);
@@ -404,15 +477,15 @@ void RadiobuttonWidget::drawWidget() {
 
 #pragma mark -
 
-SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
-	: Widget(boss, x, y, w, h), CommandSender(boss),
+SliderWidget::SliderWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip, uint32 cmd)
+	: Widget(boss, x, y, w, h, tooltip), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
 }
 
-SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, uint32 cmd)
-	: Widget(boss, name), CommandSender(boss),
+SliderWidget::SliderWidget(GuiObject *boss, const Common::String &name, const char *tooltip, uint32 cmd)
+	: Widget(boss, name, tooltip), CommandSender(boss),
 	  _cmd(cmd), _value(0), _oldValue(0), _valueMin(0), _valueMax(100), _isDragging(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_TRACK_MOUSE | WIDGET_CLEARBG);
 	_type = kSliderWidget;
@@ -484,14 +557,14 @@ int SliderWidget::posToValue(int pos) {
 
 #pragma mark -
 
-GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h)
-	: Widget(boss, x, y, w, h), _gfx(), _alpha(256), _transparency(false) {
+GraphicsWidget::GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip)
+	: Widget(boss, x, y, w, h, tooltip), _gfx(), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }
 
-GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name)
-	: Widget(boss, name), _gfx(), _alpha(256), _transparency(false) {
+GraphicsWidget::GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip)
+	: Widget(boss, name, tooltip), _gfx(), _alpha(256), _transparency(false) {
 	setFlags(WIDGET_ENABLED | WIDGET_CLEARBG);
 	_type = kGraphicsWidget;
 }

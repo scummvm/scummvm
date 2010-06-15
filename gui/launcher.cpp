@@ -202,7 +202,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), kCmdGlobalGraphicsOverride);
+	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), 0, kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
@@ -211,7 +211,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("Audio"));
 
-	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), kCmdGlobalAudioOverride);
+	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), 0, kCmdGlobalAudioOverride);
 
 	addAudioControls(tab, "GameOptions_Audio.");
 	addSubtitleControls(tab, "GameOptions_Audio.");
@@ -221,7 +221,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("Volume"));
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), kCmdGlobalVolumeOverride);
+	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), 0, kCmdGlobalVolumeOverride);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
 
@@ -230,7 +230,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	tab->addTab(_("MIDI"));
 
-	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), kCmdGlobalMIDIOverride);
+	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), 0, kCmdGlobalMIDIOverride);
 
 	if (_guioptions & Common::GUIO_NOMIDI)
 		_globalMIDIOverride->setEnabled(false);
@@ -246,15 +246,15 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), kCmdGameBrowser);
+	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), 0, kCmdGameBrowser);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), kCmdExtraBrowser);
+	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), 0, kCmdExtraBrowser);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), kCmdSaveBrowser);
+	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), 0, kCmdSaveBrowser);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
 
 	// Activate the first tab
@@ -262,8 +262,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), kCloseCmd);
-	new ButtonWidget(this, "GameOptions.Ok", _("OK"), kOKCmd);
+	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), 0, kCloseCmd);
+	new ButtonWidget(this, "GameOptions.Ok", _("OK"), 0, kOKCmd);
 }
 
 void EditGameDialog::open() {
@@ -497,36 +497,36 @@ LauncherDialog::LauncherDialog()
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), kQuitCmd);
-	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), kAboutCmd);
-	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), kOptionsCmd);
+	new ButtonWidget(this, "Launcher.QuitButton", _("~Q~uit"), 0, kQuitCmd);
+	new ButtonWidget(this, "Launcher.AboutButton", _("A~b~out..."), 0, kAboutCmd);
+	new ButtonWidget(this, "Launcher.OptionsButton", _("~O~ptions..."), 0, kOptionsCmd);
 	_startButton =
-		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), kStartCmd);
+		new ButtonWidget(this, "Launcher.StartButton", _("~S~tart"), 0, kStartCmd);
 
 	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), kLoadGameCmd);
+		new ButtonWidget(this, "Launcher.LoadGameButton", _("~L~oad..."), 0, kLoadGameCmd);
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), kAddGameCmd);
+		new ButtonWidget(this, "Launcher.AddGameButton", _("~A~dd Game..."), _("Hold Shift for Mass Add"), kAddGameCmd);
 	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), kEditGameCmd);
+		new ButtonWidget(this, "Launcher.EditGameButton", _("~E~dit Game..."), 0, kEditGameCmd);
 	_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), kRemoveGameCmd);
+		new ButtonWidget(this, "Launcher.RemoveGameButton", _("~R~emove Game"), 0, kRemoveGameCmd);
 
 	// Search box
 	_searchDesc = 0;
 #ifndef DISABLE_FANCY_THEMES
 	_searchPic = 0;
 	if (g_gui.xmlEval()->getVar("Globals.ShowSearchPic") == 1 && g_gui.theme()->supportsImages()) {
-		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic");
+		_searchPic = new GraphicsWidget(this, "Launcher.SearchPic", _("Search in game list"));
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
 	} else
 #endif
 		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
-	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", kSearchClearCmd);
+	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", _("Clear value"), kSearchClearCmd);
 
 	// Add list with game titles
 	_list = new ListWidget(this, "Launcher.GameList", kListSearchCmd);

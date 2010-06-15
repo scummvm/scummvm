@@ -284,9 +284,9 @@ HelpDialog::HelpDialog(const GameSettings &game)
 
 	_numPages = ScummHelp::numPages(_game.id);
 
-	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", _("~P~revious"), kPrevCmd);
-	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), kNextCmd);
-	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), GUI::kCloseCmd);
+	_prevButton = new GUI::ButtonWidget(this, "ScummHelp.Prev", _("~P~revious"), 0, kPrevCmd);
+	_nextButton = new GUI::ButtonWidget(this, "ScummHelp.Next", _("~N~ext"), 0, kNextCmd);
+	new GUI::ButtonWidget(this, "ScummHelp.Close", _("~C~lose"), 0, GUI::kCloseCmd);
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
 	_numLines = HELP_NUM_LINES;
