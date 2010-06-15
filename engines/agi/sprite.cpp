@@ -332,6 +332,8 @@ void SpritesMgr::buildList(SpriteList &l, bool (*test)(VtEntry *, AgiEngine *)) 
 		}
 	}
 
+	debugC(5, kDebugLevelSprites, "buildList() --> entries %d", i);
+
 	// now look for the smallest y value in the array and put that
 	// sprite in the list
 	for (j = 0; j < i; j++) {

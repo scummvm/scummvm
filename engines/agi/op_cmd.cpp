@@ -209,47 +209,38 @@ cmd(object_on_anything) {
 }
 
 cmd(object_on_land) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags |= ON_LAND;
 }
 
 cmd(object_on_water) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags |= ON_WATER;
 }
 
 cmd(observe_horizon) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags &= ~IGNORE_HORIZON;
 }
 
 cmd(ignore_horizon) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags |= IGNORE_HORIZON;
 }
 
 cmd(observe_objs) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags &= ~IGNORE_OBJECTS;
 }
 
 cmd(ignore_objs) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags |= IGNORE_OBJECTS;
 }
 
 cmd(observe_blocks) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags &= ~IGNORE_BLOCKS;
 }
 
 cmd(ignore_blocks) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	vt.flags |= IGNORE_BLOCKS;
 }
 
 cmd(set_horizon) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	game.horizon = p0;
 }
 
@@ -328,7 +319,6 @@ cmd(set_cel_f) {
 }
 
 cmd(set_view) {
-	debugC(4, kDebugLevelScripts, "o%d, %d", p0, p1);
 	g_agi->setView(&vt, p1);
 }
 
@@ -423,12 +413,10 @@ cmd(word_to_string) {
 }
 
 cmd(open_dialogue) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	game.hasWindow = true;
 }
 
 cmd(close_dialogue) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	game.hasWindow = false;
 }
 
@@ -1438,7 +1426,6 @@ cmd(display) {
 }
 
 cmd(display_f) {
-	debugC(4, kDebugLevelScripts, "p0 = %d", p0);
 	g_agi->printText(curLogic->texts[_v[p2] - 1], _v[p1], 0, _v[p0], 40, game.colorFg, game.colorBg);
 }
 
@@ -1781,6 +1768,9 @@ int AgiEngine::runLogic(int n) {
 	int num = 0;
 	ScriptPos sp;
 
+	debugC(2, kDebugLevelScripts, "=================");
+	debugC(2, kDebugLevelScripts, "runLogic(%d)", n);
+
 	sp.script = n;
 	sp.curIP = 0;
 	_game.execStack.push_back(sp);
@@ -1816,6 +1806,11 @@ int AgiEngine::runLogic(int n) {
 
 		_game.execStack.back().curIP = ip;
 
+		char st[101];
+		int sz = MIN(_game.execStack.size(), 100u);
+		memset(st, '.', sz);
+		st[sz] = 0;
+
 		switch (op = *(code + ip++)) {
 		case 0xff:	// if (open/close)
 			testIfCode(n);
@@ -1833,6 +1828,9 @@ int AgiEngine::runLogic(int n) {
 			}
 			break;
 		case 0x00:	// return
+			debugC(2, kDebugLevelScripts, "%sreturn() // Logic %d", st, n);
+			debugC(2, kDebugLevelScripts, "=================");
+
 			_game.execStack.pop_back();
 			return 1;
 		default:
@@ -1840,7 +1838,8 @@ int AgiEngine::runLogic(int n) {
 			memmove(p, code + ip, num);
 			memset(p + num, 0, CMD_BSIZE - num);
 
-			debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
+			debugC(2, kDebugLevelScripts, "%s%s(%d %d %d)", st, logicNamesCmd[op].name, p[0], p[1], p[2]);
+
 			agiCommand[op](this, p);
 			ip += num;
 		}
