@@ -27,6 +27,7 @@
 #define SCI_ENGINE_VM_TYPES_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Sci {
 
@@ -55,6 +56,11 @@ struct reg_t {
 
 	int16 toSint16() const {
 		return (int16) offset;
+	}
+
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		s.syncAsUint16LE(segment);
+		s.syncAsUint16LE(offset);
 	}
 };
 

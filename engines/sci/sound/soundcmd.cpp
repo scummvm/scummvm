@@ -1088,40 +1088,6 @@ void SoundCommandParser::clearPlayList() {
 #endif
 }
 
-void SoundCommandParser::syncPlayList(Common::Serializer &s) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	_music->saveLoadWithSerializer(s);
-#endif
-}
-
-void SoundCommandParser::reconstructPlayList(int savegame_version) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	Common::StackLock lock(_music->_mutex);
-
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
-			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
-			_music->soundInitSnd(*i);
-		} else {
-			(*i)->soundRes = 0;
-		}
-		if ((*i)->status == kSoundPlaying) {
-			if (savegame_version < 14) {
-				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
-				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
-
-				if (_soundVersion >= SCI_VERSION_1_LATE)
-					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
-			}
-
-			cmdPlaySound((*i)->soundObj, 0);
-		}
-	}
-
-#endif
-}
-
 void SoundCommandParser::printPlayList(Console *con) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->printPlayList(con);

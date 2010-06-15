@@ -36,6 +36,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/gui.h"
@@ -76,11 +77,6 @@ SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorT
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
 #endif
-
-static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
-	s.syncAsUint16LE(obj.segment);
-	s.syncAsUint16LE(obj.offset);
-}
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void syncSong(Common::Serializer &s, Song &obj) {
@@ -132,7 +128,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		fadeTickerStep = 0;
 	} else {
 		// A bit more optimized saving
-		sync_reg_t(s, soundObj);
+		soundObj.saveLoadWithSerializer(s);
 		s.syncAsSint16LE(resourceId);
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
@@ -217,7 +213,7 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 
 template <>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	sync_reg_t(s, obj);
+	obj.saveLoadWithSerializer(s);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -297,7 +293,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
-	sync_reg_t(s, obj.reg);
+	obj.reg.saveLoadWithSerializer(s);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -396,7 +392,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
-	sync_reg_t(s, _pos);
+	_pos.saveLoadWithSerializer(s);
 	s.skip(4, VER(9), VER(12));			// OBSOLETE: Used to be variable_names_nr
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
@@ -414,18 +410,18 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	sync_reg_t(s, obj.first);
-	sync_reg_t(s, obj.last);
+	obj.first.saveLoadWithSerializer(s);
+	obj.last.saveLoadWithSerializer(s);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	sync_reg_t(s, obj.pred);
-	sync_reg_t(s, obj.succ);
-	sync_reg_t(s, obj.key);
-	sync_reg_t(s, obj.value);
+	obj.pred.saveLoadWithSerializer(s);
+	obj.succ.saveLoadWithSerializer(s);
+	obj.key.saveLoadWithSerializer(s);
+	obj.value.saveLoadWithSerializer(s);
 }
 
 #ifdef ENABLE_SCI32
@@ -459,7 +455,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 		if (s.isSaving())
 			value = obj.getValue(i);
 
-		sync_reg_t(s, value);
+		value.saveLoadWithSerializer(s);
 
 		if (s.isLoading())
 			obj.setValue(i, value);
@@ -692,6 +688,40 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 }
 #endif
 
+void SoundCommandParser::syncPlayList(Common::Serializer &s) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	_music->saveLoadWithSerializer(s);
+#endif
+}
+
+void SoundCommandParser::reconstructPlayList(int savegame_version) {
+#ifndef USE_OLD_MUSIC_FUNCTIONS
+	Common::StackLock lock(_music->_mutex);
+
+	const MusicList::iterator end = _music->getPlayListEnd();
+	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
+			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
+			_music->soundInitSnd(*i);
+		} else {
+			(*i)->soundRes = 0;
+		}
+		if ((*i)->status == kSoundPlaying) {
+			if (savegame_version < 14) {
+				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
+				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
+
+				if (_soundVersion >= SCI_VERSION_1_LATE)
+					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
+			}
+
+			cmdPlaySound((*i)->soundObj, 0);
+		}
+	}
+
+#endif
+}
+
 #ifdef ENABLE_SCI32
 void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
 	if (ser.getVersion() < 18)
@@ -735,7 +765,13 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-// TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
+void SegManager::reconstructStack(EngineState *s) {
+	DataStack *stack = (DataStack *)(_heap[findSegmentByType(SEG_TYPE_STACK)]);
+	s->stack_base = stack->_entries;
+	s->stack_top = s->stack_base + stack->_capacity;
+}
+
+// TODO: Move this function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
 
@@ -771,12 +807,35 @@ void SegManager::reconstructScripts(EngineState *s) {
 	}
 }
 
-void SegManager::reconstructStack(EngineState *s) {
-	SegmentId stack_seg = findSegmentByType(SEG_TYPE_STACK);
-	DataStack *stack = (DataStack *)(_heap[stack_seg]);
+void SegManager::reconstructClones() {
+	for (uint i = 0; i < _heap.size(); i++) {
+		SegmentObj *mobj = _heap[i];
+		if (mobj && mobj->getType() == SEG_TYPE_CLONES) {
+			CloneTable *ct = (CloneTable *)mobj;
 
-	s->stack_base = stack->_entries;
-	s->stack_top = stack->_entries + stack->_capacity;
+			for (uint j = 0; j < ct->_table.size(); j++) {
+				// Check if the clone entry is used
+				uint entryNum = (uint)ct->first_free;
+				bool isUsed = true;
+				while (entryNum != ((uint) CloneTable::HEAPENTRY_INVALID)) {
+					if (entryNum == j) {
+						isUsed = false;
+						break;
+					}
+					entryNum = ct->_table[entryNum].next_free;
+				}
+
+				if (!isUsed)
+					continue;
+
+				CloneTable::Entry &seeker = ct->_table[j];
+				const Object *baseObj = getObject(seeker.getSpeciesSelector());
+				seeker.cloneFromObject(baseObj);
+				if (!baseObj)
+					warning("Clone entry without a base class: %d", j);
+			}	// end for
+			}	// end if
+	}	// end for
 }
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS

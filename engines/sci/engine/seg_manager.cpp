@@ -476,39 +476,6 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	return &(table->_table[offset]);
 }
 
-void SegManager::reconstructClones() {
-	for (uint i = 0; i < _heap.size(); i++) {
-		if (_heap[i]) {
-			SegmentObj *mobj = _heap[i];
-			if (mobj->getType() == SEG_TYPE_CLONES) {
-				CloneTable *ct = (CloneTable *)mobj;
-
-				for (uint j = 0; j < ct->_table.size(); j++) {
-					// Check if the clone entry is used
-					uint entryNum = (uint)ct->first_free;
-					bool isUsed = true;
-					while (entryNum != ((uint) CloneTable::HEAPENTRY_INVALID)) {
-						if (entryNum == j) {
-							isUsed = false;
-							break;
-						}
-						entryNum = ct->_table[entryNum].next_free;
-					}
-
-					if (!isUsed)
-						continue;
-
-					CloneTable::Entry &seeker = ct->_table[j];
-					const Object *baseObj = getObject(seeker.getSpeciesSelector());
-					seeker.cloneFromObject(baseObj);
-					if (!baseObj)
-						warning("Clone entry without a base class: %d", j);
-				}	// end for
-			}	// end if
-		}	// end if
-	}	// end for
-}
-
 List *SegManager::allocateList(reg_t *addr) {
 	ListTable *table;
 	int offset;
