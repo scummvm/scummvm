@@ -362,7 +362,7 @@ protected:
 	ResourceSource *addInternalMap(const Common::String &name, int resNr);
 
 	/**
-	 * Checks, if an audio volume got compressed by our tool. If that's the case, it will set audioCompressionType
+	 * Checks, if an audio volume got compressed by our tool. If that's the case, it will set _audioCompressionType
 	 *  and read in the offset translation table for later usage.
 	 */
 	void checkIfAudioVolumeIsCompressed(ResourceSource *source);

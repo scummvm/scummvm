@@ -53,12 +53,12 @@ protected:
 	const Common::String _name;
 
 public:
-	bool scanned;
+	bool _scanned;
 	const Common::FSNode *_resourceFile;
-	const int volume_number;
-	ResourceSource *associated_map;	// TODO: Move to VolumeResourceSource
-	uint32 audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
-	int32 *audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
+	const int _volumeNumber;
+	ResourceSource *_associatedMap;	// TODO: Move to VolumeResourceSource
+	uint32 _audioCompressionType;	// TODO: Move to AudioVolumeResourceSource
+	int32 *_audioCompressionOffsetMapping;	// TODO: Move to AudioVolumeResourceSource
 
 protected:
 	ResourceSource(ResSourceType type, const Common::String &name, int volNum = 0);
@@ -109,11 +109,11 @@ class VolumeResourceSource : public ResourceSource {
 public:
 	VolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum, ResSourceType type = kSourceVolume)
 		: ResourceSource(type, name, volNum) {
-		associated_map = map;
+		_associatedMap = map;
 	}
 
 	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
-		if (associated_map == map && volume_number == volNum)
+		if (_associatedMap == map && _volumeNumber == volNum)
 			return this;
 		return NULL;
 	};

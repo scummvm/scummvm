@@ -52,13 +52,13 @@ void ResourceManager::checkIfAudioVolumeIsCompressed(ResourceSource *source) {
 	case MKID_BE('OGG '):
 	case MKID_BE('FLAC'):
 		// Detected a compressed audio volume
-		source->audioCompressionType = compressionType;
+		source->_audioCompressionType = compressionType;
 		// Now read the whole offset mapping table for later usage
 		int32 recordCount = fileStream->readUint32LE();
 		if (!recordCount)
 			error("compressed audio volume doesn't contain any entries!");
 		int32 *offsetMapping = new int32[(recordCount + 1) * 2];
-		source->audioCompressionOffsetMapping = offsetMapping;
+		source->_audioCompressionOffsetMapping = offsetMapping;
 		for (int recordNo = 0; recordNo < recordCount; recordNo++) {
 			*offsetMapping++ = fileStream->readUint32LE();
 			*offsetMapping++ = fileStream->readUint32LE();
@@ -257,10 +257,10 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 	bool isEarly = true;
 	uint32 offset = 0;
-	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->volume_number), false);
+	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_volumeNumber), false);
 
 	if (!mapRes) {
-		warning("Failed to open %i.MAP", map->volume_number);
+		warning("Failed to open %i.MAP", map->_volumeNumber);
 		return SCI_ERROR_RESMAP_NOT_FOUND;
 	}
 
@@ -271,7 +271,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 
 	byte *ptr = mapRes->data;
 
-	if (map->volume_number == 65535) {
+	if (map->_volumeNumber == 65535) {
 		// Heuristic to detect late SCI1.1 map format
 		if ((mapRes->size >= 6) && (ptr[mapRes->size - 6] != 0xff))
 			isEarly = false;
@@ -324,7 +324,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				ptr += 2;
 
 				if (syncSize > 0)
-					addResource(ResourceId(kResourceTypeSync36, map->volume_number, n & 0xffffff3f), src, offset, syncSize);
+					addResource(ResourceId(kResourceTypeSync36, map->_volumeNumber, n & 0xffffff3f), src, offset, syncSize);
 			}
 
 			if (n & 0x40) {
@@ -334,7 +334,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 				ptr += 2;
 			}
 
-			addResource(ResourceId(kResourceTypeAudio36, map->volume_number, n & 0xffffff3f), src, offset + syncSize);
+			addResource(ResourceId(kResourceTypeAudio36, map->_volumeNumber, n & 0xffffff3f), src, offset + syncSize);
 		}
 	}
 
@@ -401,7 +401,7 @@ int ResourceManager::readAudioMapSCI1(ResourceSource *map, bool unload) {
 
 void ResourceManager::setAudioLanguage(int language) {
 	if (_audioMapSCI1) {
-		if (_audioMapSCI1->volume_number == language) {
+		if (_audioMapSCI1->_volumeNumber == language) {
 			// This language is already loaded
 			return;
 		}
@@ -413,7 +413,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		Common::List<ResourceSource *>::iterator it = _sources.begin();
 		while (it != _sources.end()) {
 			ResourceSource *src = *it;
-			if (src->associated_map == _audioMapSCI1) {
+			if (src->_associatedMap == _audioMapSCI1) {
 				it = _sources.erase(it);
 				delete src;
 			} else {
@@ -454,7 +454,7 @@ void ResourceManager::setAudioLanguage(int language) {
 }
 
 int ResourceManager::getAudioLanguage() const {
-	return (_audioMapSCI1 ? _audioMapSCI1->volume_number : 0);
+	return (_audioMapSCI1 ? _audioMapSCI1->_volumeNumber : 0);
 }
 
 SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {

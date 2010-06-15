@@ -164,17 +164,17 @@ void Resource::writeToStream(Common::WriteStream *stream) const {
 }
 
 uint32 Resource::getAudioCompressionType() {
-	return _source->audioCompressionType;
+	return _source->_audioCompressionType;
 }
 
 
 ResourceSource::ResourceSource(ResSourceType type, const Common::String &name, int volNum)
- : _sourceType(type), _name(name), volume_number(volNum) {
-	scanned = false;
+ : _sourceType(type), _name(name), _volumeNumber(volNum) {
+	_scanned = false;
 	_resourceFile = 0;
-	associated_map = NULL;
-	audioCompressionType = 0;
-	audioCompressionOffsetMapping = NULL;
+	_associatedMap = NULL;
+	_audioCompressionType = 0;
+	_audioCompressionOffsetMapping = NULL;
 }
 
 ResourceSource::~ResourceSource() {
@@ -397,10 +397,10 @@ void AudioVolumeResourceSource::loadResource(Resource *res, ResourceManager *res
 	if (!fileStream)
 		return;
 
-	if (audioCompressionType) {
+	if (_audioCompressionType) {
 		// this file is compressed, so lookup our offset in the offset-translation table and get the new offset
 		//  also calculate the compressed size by using the next offset
-		int32 *mappingTable = audioCompressionOffsetMapping;
+		int32 *mappingTable = _audioCompressionOffsetMapping;
 		int32 compressedOffset = 0;
 
 		do {
@@ -641,8 +641,8 @@ void ResourceManager::scanNewSources() {
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		ResourceSource *source = *it;
 
-		if (!source->scanned) {
-			source->scanned = true;
+		if (!source->_scanned) {
+			source->_scanned = true;
 			source->scanSource(this);
 		}
 	}
@@ -1439,7 +1439,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 				// need to be used in concurrence with the volume specified in the map to get
 				// the actual resource file.
-				res->_source = findVolume(map, volume_nr + map->volume_number);
+				res->_source = findVolume(map, volume_nr + map->_volumeNumber);
 				res->_fileOffset = off;
 			}
 		}
