@@ -488,6 +488,9 @@ bool AgiBase::canLoadGameStateCurrently() {
 }
 
 bool AgiBase::canSaveGameStateCurrently() {
+	if (getGameID() == GID_BC) // Technically in Black Cauldron we may save anytime
+		return true;
+	
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed && _game.inputEnabled);
 }
 
