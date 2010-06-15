@@ -20,20 +20,26 @@ GFXTestSuite::GFXTestSuite() {
 	g_system->grabPalette(_palette, 0, 3);
 	
 	// Add tests here
-	// TODO: Can do it without transactions?
+	
+	// Blitting buffer on screen
+	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	
+	// GFX Transcations
 	addTest("FullScreenMode", &GFXtests::fullScreenMode);
 	addTest("AspectRatio", &GFXtests::aspectRatio);
-	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
-	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
-	// TODO: doesn't returns back to normal states
 	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
+	
+	// Mouse Layer tests (Palettes and movements)
+	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	// TODO: need to fix it
 	// addTest("ScaledCursors", &GFXtests::scaledCursors);
+	
+	// Effects
 	addTest("shakingEffect", &GFXtests::shakingEffect);
-	// TODO: unable to notice any change, make it noticable
 	addTest("focusRectangle", &GFXtests::focusRectangle);
+
 	// TODO: unable to notice any change, make it noticable
-	addTest("Overlays", &GFXtests::overlayGraphics);
+	// addTest("Overlays", &GFXtests::overlayGraphics);
 }
 
 const char *GFXTestSuite::getName() const {
@@ -50,40 +56,122 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 
 // Helper functions used by GFX tests
 
-void GFXtests::drawCursor(const char *gfxModeName, int cursorTargetScale) {
-		
-		byte palette[3 * 4]; // Black, white and yellow
-		palette[0] = palette[1] = palette[2] = 0;
-		palette[4] = palette[5] = palette[6] = 255;
-		palette[8] = palette[9] = 255;
-		palette[10] = 0;
-		
-		byte buffer[10][10];
-		memset(&buffer[0][0], 2, 10 * 10);
-
-		// Mark the hotspot
-		for (int i = 0; i < 10; i++) {
-			buffer[i][i] = 0;
-			buffer[9 - i][i] = 0;
-		}
+void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
+	byte palette[3 * 4]; // Black, white and yellow
+	byte buffer[11][11];
 	
-		CursorMan.replaceCursorPalette(palette, 0, 3);
-		CursorMan.pushCursor(&buffer[0][0], 10, 10, 5, 5, cursorTargetScale);
-		CursorMan.showMouse(true);
-		g_system->updateScreen();
+	palette[0] = palette[1] = palette[2] = 0;
+	palette[4] = palette[5] = palette[6] = 255;
+	palette[8] = palette[9] = 255;
+	palette[10] = 0;
+		
+	memset(&buffer[0][0], 2, 11 * 11);
+	CursorMan.pushCursorPalette(palette, 0, 3);
+	
+	// Mark the hotspot
+	for (int i = 0; i < 11; i++) {
+		buffer[i][i] = 0;
+		buffer[10 - i][i] = 0;
+	}
+	
+	CursorMan.pushCursor(&buffer[0][0], 11, 11, 5, 5, cursorTargetScale);
+	CursorMan.showMouse(true);
+	
+	if (cursorPaletteDisabled) {
+		CursorMan.disableCursorPalette(true);
+	}
+	
+	g_system->updateScreen();
 
-		if (gfxModeName) {
-			Common::Point pt(0, 100);
-			char scaleFactor[10];
-			snprintf(scaleFactor, 10, "%dx", cursorTargetScale);
-			Common::String info = "GFX Mode:";
-			info = info + gfxModeName  + " Cursor scaled by:" + scaleFactor;
-			Testsuite::clearScreen();
-			Testsuite::writeOnScreen(info, pt);
-		}
-
+	if (gfxModeName) {
+		Common::Point pt(0, 100);
+		char scaleFactor[10];
+		snprintf(scaleFactor, 10, "%dx", cursorTargetScale);
+		Common::String info = "GFX Mode:";
+		info = info + gfxModeName  + " Cursor scaled by:" + scaleFactor;
+		Testsuite::clearScreen();
+		Testsuite::writeOnScreen(info, pt);
+	}
 }
 
+/**
+ * Sets up mouse loop, exits when user clicks any of the mouse button
+ */
+void GFXtests::setupMouseLoop(bool disableCursorPalette) {
+
+	bool isFeaturePresent;
+	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+
+	if (isFeaturePresent) {
+		
+		GFXtests::drawCursor(disableCursorPalette);
+
+		Common::EventManager *eventMan = g_system->getEventManager();
+		Common::Event event;
+		Common::Point pt(0, 100);
+
+		bool quitLoop = false;
+		uint32 lastRedraw = 0;
+		const uint32 waitTime = 1000 / 45;
+
+		while (!quitLoop) {
+			while (eventMan->pollEvent(event)) {
+	
+				if (lastRedraw + waitTime < g_system->getMillis()) {
+					g_system->updateScreen();
+					lastRedraw = g_system->getMillis();
+				}
+
+				switch (event.type) {
+					case Common::EVENT_MOUSEMOVE:
+					printf("Mouse Move\n");
+					break;
+				case Common::EVENT_LBUTTONDOWN:
+				case Common::EVENT_RBUTTONDOWN:
+					Testsuite::clearScreen();
+					Testsuite::writeOnScreen("Mouse Clicked", pt);
+					printf("Mouse Clicked\n");
+					g_system->delayMillis(1000);
+					quitLoop = true;
+					Testsuite::clearScreen();
+					Testsuite::writeOnScreen("TestFinished", pt);
+					g_system->delayMillis(1000);
+					break;
+				default:	
+					;// Ignore any other event
+
+				}
+			}
+		}
+	} else {
+		Testsuite::displayMessage("feature not supported");
+	}
+}
+
+void GFXtests::mouseMovements() {
+	// Testing Mouse Movements now!
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Moving mouse automatically from (0, 0) to (100, 100)", pt);
+	g_system->warpMouse(0, 0);
+	g_system->updateScreen();
+	g_system->delayMillis(1000);
+
+	for (int i = 0; i <= 100; i++) {
+		g_system->delayMillis(20);
+		g_system->warpMouse(i, i);
+		g_system->updateScreen();
+	}
+	
+	Testsuite::clearScreen();
+	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
+	
+}
+
+void GFXtests::unsetMouse() {
+	// Popping cursor
+	CursorMan.popCursorPalette();
+	CursorMan.popCursor();
+}
 
 /**
  * Used by aspectRatio()
@@ -157,6 +245,8 @@ bool GFXtests::fullScreenMode() {
 		isFeatureEnabled = g_system->getFeatureState(OSystem::kFeatureFullscreenMode);
 		shouldSelect = isFeatureEnabled ? kOptionLeft : kOptionRight;
 		
+		g_system->delayMillis(1000);
+		
 		if (isFeatureEnabled) {
 			printf("LOG: Current Mode is Fullsecreen\n");
 		} else {
@@ -192,6 +282,8 @@ bool GFXtests::fullScreenMode() {
 		g_system->beginGFXTransaction();
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, !isFeatureEnabled);
 		g_system->endGFXTransaction();
+		
+		g_system->delayMillis(1000);
 		
 		prompt = "This should be your initial state.Is it?";
 		
@@ -273,100 +365,42 @@ bool GFXtests::aspectRatio() {
  */
 
 bool GFXtests::palettizedCursors() {
+	
+	bool passed = true;
+	
 	Testsuite::displayMessage("Testing Cursors. You should expect to see a yellow colored square cursor.\n"
 	"You should be able to move it. The test finishes when the mouse(L/R) is clicked");
 	
+	// Testing with cursor Palette
 	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Using cursor Palette to render the cursor", pt);
+	setupMouseLoop();
+	// Test Automated Mouse movements (warp)
+	mouseMovements();
+	// done. Pop cursor now
+	unsetMouse();
 	
-	bool isFeaturePresent;
-	bool passed = true;
-
-	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
-
-	if (isFeaturePresent) {
-		Testsuite::writeOnScreen("Testing Palettized Cursors", pt);
-		
-		// Cursor palette is Black(0), White(1), yellow(2)
-		GFXtests::drawCursor();
-		// Change screen Palette color-value 2 to red
-		// This function exactly does this job
-		GFXTestSuite::setCustomColor(255, 0, 0);
-		// Now disable palette
-		CursorMan.disableCursorPalette(true);
-		g_system->updateScreen();
-		g_system->delayMillis(1000);
-		if (Testsuite::handleInteractiveInput("Which color does cursor appears to you?", "Yellow", "Red", kOptionRight)) {
-			printf("LOG: Couldn't use game palette for rendering cursor\n");
-			passed = false;
-		}
-		
-		// Now enable cursor palette
-		CursorMan.disableCursorPalette(false);
-		GFXtests::drawCursor();
-		
-		Common::EventManager *eventMan = g_system->getEventManager();
-		Common::Event event;
-
-		bool quitLoop = false;
-		uint32 lastRedraw = 0;
-		const uint32 waitTime = 1000 / 45;
-
-		while (!quitLoop) {
-			while (eventMan->pollEvent(event)) {
-	
-				if (lastRedraw + waitTime < g_system->getMillis()) {
-					g_system->updateScreen();
-					lastRedraw = g_system->getMillis();
-				}
-
-				switch (event.type) {
-					case Common::EVENT_MOUSEMOVE:
-					printf("Mouse Move\n");
-					break;
-				case Common::EVENT_LBUTTONDOWN:
-				case Common::EVENT_RBUTTONDOWN:
-					Testsuite::clearScreen();
-					Testsuite::writeOnScreen("Mouse Clicked", pt);
-					printf("Mouse Clicked\n");
-					g_system->delayMillis(1000);
-					quitLoop = true;
-					Testsuite::clearScreen();
-					Testsuite::writeOnScreen("TestFinished", pt);
-					g_system->delayMillis(1000);
-					break;
-				default:	
-					;// Ignore any other event
-
-				}
-			}
-		}
-	} else {
-		Testsuite::displayMessage("feature not supported");
-	}
+	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Yellow", "Any other", kOptionRight)) {
+		printf("LOG: Couldn't use cursor palette for rendering cursor\n");
+		passed = false;
+	}	
 	Testsuite::clearScreen();
 
-	// Testing Mouse Movements now!
+	// Testing with game Palette
+	Testsuite::writeOnScreen("Using Game Palette to render the cursor", pt);
+	GFXTestSuite::setCustomColor(255, 0, 0);
+	setupMouseLoop(true);
+	// done. Pop cursor now
+	unsetMouse();
 	
-	Testsuite::writeOnScreen("Moving mouse automatically from (0, 0) to (100, 100)", pt);
-	g_system->warpMouse(0, 0);
-	g_system->updateScreen();
+	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Red", "Any other", kOptionRight)) {
+		printf("LOG: Couldn't use Game palette for rendering cursor\n");
+		passed = false;
+	}	
 	g_system->delayMillis(1000);
-
-	for (int i = 0; i <= 100; i++) {
-		g_system->delayMillis(20);
-		g_system->warpMouse(i, i);
-		g_system->updateScreen();
-	}
-	
 	Testsuite::clearScreen();
-	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
-	g_system->delayMillis(1500);
-	// Popping cursor
-	CursorMan.popCursorPalette();
-	CursorMan.popCursor();
 
-	Testsuite::clearScreen();
-	if (!Testsuite::handleInteractiveInput("Did it went as you were expecting?")) {
+	if (!Testsuite::handleInteractiveInput("Did Cursor tests went as you were expecting?")) {
 		passed = false;
 	}
 	return passed;
@@ -394,6 +428,10 @@ bool GFXtests::copyRectToScreen() {
 
 	Common::Rect rect(x, y, x+40, y+20);
 	Testsuite::clearScreen(rect);
+	
+	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+		return false;
+	}
 
 	return true;
 
@@ -405,8 +443,8 @@ bool GFXtests::copyRectToScreen() {
  */
 bool GFXtests::iconifyWindow() {
 	
-	Testsuite::displayMessage("Testing Iconify Window mode.\n" 
-	"If the feature is supported by the backend, you should expect to see a toggle between minimized and normal states");
+	Testsuite::displayMessage("Testing Iconify Window mode.\n If the feature is supported by the backend,"
+	"you should expect the window to be minimized. However you would manually need to de-iconify.");
 
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing Iconifying window", pt);
@@ -433,6 +471,10 @@ bool GFXtests::iconifyWindow() {
 	} else {
 		Testsuite::displayMessage("feature not supported");
 	}
+	
+	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+		return false;
+	}
 
 	Testsuite::clearScreen(rect);
 	return true;
@@ -455,11 +497,11 @@ bool GFXtests::scaledCursors() {
 
 		//if (g_system->setGraphicsMode(gfxMode->id)) {
 		if (1) {
-			drawCursor(gfxMode->name, 1);
+			drawCursor(false, gfxMode->name, 1);
 			g_system->delayMillis(5000);
-			drawCursor(gfxMode->name, 2);
+			drawCursor(false, gfxMode->name, 2);
 			g_system->delayMillis(5000);
-			drawCursor(gfxMode->name, 3);
+			drawCursor(false, gfxMode->name, 3);
 			g_system->delayMillis(5000);
 		} else {
 			printf("Switching to graphics mode %s failed\n", gfxMode->name);
@@ -473,7 +515,7 @@ bool GFXtests::scaledCursors() {
 
 bool GFXtests::shakingEffect() {
 	Common::Point pt(0, 100);
-	Testsuite::writeOnScreen("Does this shakes!!?", pt);
+	Testsuite::writeOnScreen("If Shaking effect works,this should shake!", pt);
 	int times = 25;
 	while (times--) {
 		g_system->setShakePos(10);
@@ -481,12 +523,19 @@ bool GFXtests::shakingEffect() {
 		g_system->setShakePos(0);
 		g_system->updateScreen();
 	}
-	g_system->delayMillis(500);
+	g_system->delayMillis(1000);
+
+	if (Testsuite::handleInteractiveInput("Did the test worked as expected?", "Yes", "No", kOptionRight)) {
+		return false;
+	}
 	Testsuite::clearScreen();
 	return true;
 }
 
 bool GFXtests::focusRectangle() {
+
+	Testsuite::displayMessage("Testing : Setting and hiding Focus \n"
+	"If this feature is implemented, the focus should be toggled between the two rectangles on the corners");
 	Testsuite::clearScreen();
 
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
@@ -508,6 +557,8 @@ bool GFXtests::focusRectangle() {
 	g_system->unlockScreen();
 	g_system->updateScreen();
 
+	g_system->clearFocusRectangle();
+
 	g_system->setFocusRectangle(rectLeft);
 	g_system->updateScreen();
 	
@@ -515,6 +566,12 @@ bool GFXtests::focusRectangle() {
 
 	g_system->setFocusRectangle(rectRight);
 	g_system->updateScreen();
+	
+	g_system->clearFocusRectangle();
+
+	if (Testsuite::handleInteractiveInput("Do you see a variation in focus?", "Yes", "No", kOptionRight)) {
+		printf("LOG: Focus Rectangle feature doesn't works. Check platform.");
+	}
 
 	return true;
 }
