@@ -1201,6 +1201,12 @@ void Scene::endScene() {
 	_vm->_script->abortAllThreads();
 	_vm->_script->_skipSpeeches = false;
 
+	// WORKAROUND: Bug #2886151: "ITE: Mouse stops responding at Boar Castle"
+	// This is bug in original engine
+	if (_sceneNumber == 50) {
+		_vm->_interface->activate();
+	}
+
 	// Copy current screen to render buffer so inset rooms will get proper background
 	if (!(_sceneDescription.flags & kSceneFlagISO) && !_vm->_scene->isInIntro()) {
 		BGInfo bgInfo;
