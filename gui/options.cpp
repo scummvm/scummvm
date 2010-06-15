@@ -35,6 +35,7 @@
 #include "common/fs.h"
 #include "common/config-manager.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "graphics/scaler.h"
 
@@ -67,9 +68,9 @@ enum {
 };
 #endif
 
-static const char *savePeriodLabels[] = { "Never", "every 5 mins", "every 10 mins", "every 15 mins", "every 30 mins", 0 };
+static const char *savePeriodLabels[] = { _s("Never"), _s("every 5 mins"), _s("every 10 mins"), _s("every 15 mins"), _s("every 30 mins"), 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
-static const char *outputRateLabels[] = { "<default>", "8 kHz", "11kHz", "22 kHz", "44 kHz", "48 kHz", 0 };
+static const char *outputRateLabels[] = { _s("<default>"), _s("8 kHz"), _s("11kHz"), _s("22 kHz"), _s("44 kHz"), _s("48 kHz"), 0 };
 static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
 
@@ -85,15 +86,15 @@ OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String 
 }
 
 const char *OptionsDialog::_subModeDesc[] = {
-	"Speech Only",
-	"Speech and Subtitles",
-	"Subtitles Only"
+	_s("Speech Only"),
+	_s("Speech and Subtitles"),
+	_s("Subtitles Only")
 };
 
 const char *OptionsDialog::_lowresSubModeDesc[] = {
-	"Speech Only",
-	"Speech & Subs",
-	"Subtitles Only"
+	_s("Speech Only"),
+	_s("Speech & Subs"),
+	_s("Subtitles Only")
 };
 
 void OptionsDialog::init() {
@@ -222,7 +223,7 @@ void OptionsDialog::open() {
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
-			_soundFont->setLabel("None");
+			_soundFont->setLabel(_("None"));
 			_soundFontClearButton->setEnabled(false);
 		} else {
 			_soundFont->setLabel(soundFont);
@@ -267,7 +268,7 @@ void OptionsDialog::open() {
 		int speed;		int sliderMaxValue = _subSpeedSlider->getMaxValue();
 
 		_subMode = getSubtitleMode(ConfMan.getBool("subtitles", _domain), ConfMan.getBool("speech_mute", _domain));
-		_subToggleButton->setLabel(_subModeDesc[_subMode]);
+		_subToggleButton->setLabel(_(_subModeDesc[_subMode]));
 
 		// Engines that reuse the subtitle speed widget set their own max value.
 		// Scale the config value accordingly (see addSubtitleControls)
@@ -378,7 +379,7 @@ void OptionsDialog::close() {
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 				Common::String soundFont(_soundFont->getLabel());
-				if (!soundFont.empty() && (soundFont != "None"))
+				if (!soundFont.empty() && (soundFont != _("None")))
 					ConfMan.set("soundfont", soundFont, _domain);
 				else
 					ConfMan.removeKey("soundfont", _domain);
@@ -465,7 +466,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		else
 			_subMode = 0;
 
-		_subToggleButton->setLabel(g_system->getOverlayWidth() > 320 ? _subModeDesc[_subMode] : _lowresSubModeDesc[_subMode]);
+		_subToggleButton->setLabel(g_system->getOverlayWidth() > 320 ? _(_subModeDesc[_subMode]) : _(_lowresSubModeDesc[_subMode]));
 		_subToggleButton->draw();
 		_subSpeedDesc->draw();
 		_subSpeedSlider->draw();
@@ -476,7 +477,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_subSpeedLabel->draw();
 		break;
 	case kClearSoundFontCmd:
-		_soundFont->setLabel("None");
+		_soundFont->setLabel(_("None"));
 		_soundFontClearButton->setEnabled(false);
 		draw();
 		break;
@@ -522,7 +523,7 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	_soundFontButton->setEnabled(enabled);
 	_soundFont->setEnabled(enabled);
 
-	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != "None"))
+	if (enabled && !_soundFont->getLabel().empty() && (_soundFont->getLabel() != _("None")))
 		_soundFontClearButton->setEnabled(enabled);
 	else
 		_soundFontClearButton->setEnabled(false);
@@ -591,64 +592,64 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 
 	// The GFX mode popup
-	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", "Graphics mode:");
+	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", _("Graphics mode:"));
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
-	_gfxPopUp->appendEntry("<default>");
+	_gfxPopUp->appendEntry(_("<default>"));
 	_gfxPopUp->appendEntry("");
 	while (gm->name) {
-		_gfxPopUp->appendEntry(gm->description, gm->id);
+		_gfxPopUp->appendEntry(_(gm->description), gm->id);
 		gm++;
 	}
 
 	// RenderMode popup
-	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", "Render mode:");
+	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"));
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup");
-	_renderModePopUp->appendEntry("<default>", Common::kRenderDefault);
+	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry("");
 	const Common::RenderModeDescription *rm = Common::g_renderModes;
 	for (; rm->code; ++rm) {
-		_renderModePopUp->appendEntry(rm->description, rm->id);
+		_renderModePopUp->appendEntry(_(rm->description), rm->id);
 	}
 
 	// Fullscreen checkbox
-	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", "Fullscreen mode", 0, 0);
+	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), 0, 0);
 
 	// Aspect ratio checkbox
-	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", "Aspect ratio correction", 0, 0);
+	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), 0, 0);
 
 	_enableGraphicSettings = true;
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
 	// The MIDI mode popup & a label
-	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", "Music driver:");
+	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _("Music driver:"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup");
 
 	// Populate it
 	const MidiDriverDescription *md = MidiDriver::getAvailableMidiDrivers();
 	while (md->name) {
-		_midiPopUp->appendEntry(md->description, md->id);
+		_midiPopUp->appendEntry(_(md->description), md->id);
 		md++;
 	}
 
 	// The OPL emulator popup & a label
-	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", "AdLib emulator:");
+	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"));
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup");
 
 	// Populate it
 	const OPL::Config::EmulatorDescription *ed = OPL::Config::getAvailable();
 	while (ed->name) {
-		_oplPopUp->appendEntry(ed->description, ed->id);
+		_oplPopUp->appendEntry(_(ed->description), ed->id);
 		++ed;
 	}
 
 	// Sample rate settings
-	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", "Output rate:");
+	_outputRatePopUpDesc = new StaticTextWidget(boss, prefix + "auSampleRatePopupDesc", _("Output rate:"));
 	_outputRatePopUp = new PopUpWidget(boss, prefix + "auSampleRatePopup");
 
 	for (int i = 0; outputRateLabels[i]; i++) {
-		_outputRatePopUp->appendEntry(outputRateLabels[i], outputRateValues[i]);
+		_outputRatePopUp->appendEntry(_(outputRateLabels[i]), outputRateValues[i]);
 	}
 
 	_enableAudioSettings = true;
@@ -656,21 +657,21 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
 	// SoundFont
-	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", "SoundFont:", kChooseSoundFontCmd, 0);
-	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", "None");
+	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), kChooseSoundFontCmd, 0);
+	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"));
 	_soundFontClearButton = new ButtonWidget(boss, prefix + "mcFontClearButton", "C", kClearSoundFontCmd, 0);
 
 	// Multi midi setting
-	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", "Mixed AdLib/MIDI mode", 0, 0);
+	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), 0, 0);
 
 	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", "True Roland MT-32 (disable GM emulation)", 0, 0);
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), 0, 0);
 
 	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", "Enable Roland GS Mode", 0, 0);
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), 0, 0);
 
 	// MIDI gain setting (FluidSynth uses this)
-	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", "MIDI gain:");
+	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", _("MIDI gain:"));
 	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", kMidiGainChanged);
 	_midiGainSlider->setMinValue(0);
 	_midiGainSlider->setMaxValue(1000);
@@ -683,11 +684,11 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 // make use of the widgets. The launcher range is 0-255. SCUMM's 0-9
 void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal) {
 
-	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", "Text and Speech:");
+	_subToggleDesc = new StaticTextWidget(boss, prefix + "subToggleDesc", _("Text and Speech:"));
 	_subToggleButton = new ButtonWidget(boss, prefix + "subToggleButton", "", kSubtitleToggle, 0);
 
 	// Subtitle speed
-	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", "Subtitle speed:");
+	_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _("Subtitle speed:"));
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", kSubtitleSpeedChanged);
 	_subSpeedLabel = new StaticTextWidget(boss, prefix + "subSubtitleSpeedLabel", "100%");
 	_subSpeedSlider->setMinValue(0); _subSpeedSlider->setMaxValue(maxSliderVal);
@@ -699,24 +700,24 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &prefix) {
 
 	// Volume controllers
-	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", "Music volume:");
+	_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", "100%");
 	_musicVolumeSlider->setMinValue(0);
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", "Mute All", kMuteAllChanged, 0);
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", _("Mute All"), kMuteAllChanged, 0);
 
 
-	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", "SFX volume:");
+	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", _("SFX volume:"));
 	_sfxVolumeSlider = new SliderWidget(boss, prefix + "vcSfxSlider", kSfxVolumeChanged);
 	_sfxVolumeLabel = new StaticTextWidget(boss, prefix + "vcSfxLabel", "100%");
 	_sfxVolumeSlider->setMinValue(0);
 	_sfxVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_sfxVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , "Speech volume:");
+	_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _("Speech volume:"));
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", "100%");
 	_speechVolumeSlider->setMinValue(0);
@@ -745,7 +746,7 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 
 void OptionsDialog::reflowLayout() {
 	if (_graphicsTabId != -1 && _tabWidget)
-		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
 	Dialog::reflowLayout();
 }
@@ -762,17 +763,17 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 1) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 	addGraphicControls(tab, "GlobalOptions_Graphics.");
 
 	//
 	// 2) The audio tab
 	//
-	tab->addTab("Audio");
+	tab->addTab(_("Audio"));
 	addAudioControls(tab, "GlobalOptions_Audio.");
 	addSubtitleControls(tab, "GlobalOptions_Audio.");
 
-	tab->addTab("Volume");
+	tab->addTab(_("Volume"));
 	addVolumeControls(tab, "GlobalOptions_Volume.");
 
 	// TODO: cd drive setting
@@ -780,67 +781,85 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	//
 	// 3) The MIDI tab
 	//
-	tab->addTab("MIDI");
+	tab->addTab(_("MIDI"));
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
 	// 4) The miscellaneous tab
 	//
-	tab->addTab("Paths");
+	tab->addTab(_("Paths"));
 
 #if !( defined(__DC__) || defined(__GP32__) )
 	// These two buttons have to be extra wide, or the text will be
 	// truncated in the small version of the GUI.
 
 	// Save game path
-	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", "Save Path: ", kChooseSaveDirCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Paths.SaveButton", _("Save Path: "), kChooseSaveDirCmd, 0);
 	_savePath = new StaticTextWidget(tab, "GlobalOptions_Paths.SavePath", "/foo/bar");
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", "Theme Path:", kChooseThemeDirCmd, 0);
-	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ThemeButton", _("Theme Path:"), kChooseThemeDirCmd, 0);
+	_themePath = new StaticTextWidget(tab, "GlobalOptions_Paths.ThemePath", _("None"));
 
-	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", "Extra Path:", kChooseExtraDirCmd, 0);
-	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.ExtraButton", _("Extra Path:"), kChooseExtraDirCmd, 0);
+	_extraPath = new StaticTextWidget(tab, "GlobalOptions_Paths.ExtraPath", _("None"));
 
 #ifdef DYNAMIC_MODULES
-	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", "Plugins Path:", kChoosePluginsDirCmd, 0);
-	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", "None");
+	new ButtonWidget(tab, "GlobalOptions_Paths.PluginsButton", _("Plugins Path:"), kChoosePluginsDirCmd, 0);
+	_pluginsPath = new StaticTextWidget(tab, "GlobalOptions_Paths.PluginsPath", _("None"));
 #endif
 #endif
 
-	tab->addTab("Misc");
+	tab->addTab(_("Misc"));
 
-	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
 
-	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", "GUI Renderer:");
+	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", _("GUI Renderer:"));
 	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
 
 	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
+		_rendererPopUp->appendEntry(_(GUI::ThemeEngine::_rendererModes[i].name), GUI::ThemeEngine::_rendererModes[i].mode);
 
-	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", "Autosave:");
+	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", _("Autosave:"));
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
 	for (int i = 0; savePeriodLabels[i]; i++) {
-		_autosavePeriodPopUp->appendEntry(savePeriodLabels[i], savePeriodValues[i]);
+		_autosavePeriodPopUp->appendEntry(_(savePeriodLabels[i]), savePeriodValues[i]);
 	}
 
 #ifdef SMALL_SCREEN_DEVICE
-	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", "Keys", kChooseKeyMappingCmd, 0);
+	new ButtonWidget(tab, "GlobalOptions_Misc.KeysButton", _("Keys"), kChooseKeyMappingCmd, 0);
 #endif
 
 	// TODO: joystick setting
 
+
+#ifdef TRANSLATION
+	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("Language:"));
+	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
+#ifdef DETECTLANG
+	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
+#endif // DETECTLANG
+	_guiLanguagePopUp->appendEntry(_("English"), Common::kTranslationBuiltinId);
+	_guiLanguagePopUp->appendEntry("", 0);
+	Common::TLangArray languages = TransMan.getSupportedLanguages();
+	Common::TLangArray::iterator lang = languages.begin();
+	while (lang != languages.end()) {
+		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
+		lang++;
+	}
+	_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language").c_str()));
+
+#endif // TRANSLATION
 
 	// Activate the first tab
 	tab->setActiveTab(0);
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GlobalOptions.Cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "GlobalOptions.Ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Cancel", _("Cancel"), kCloseCmd, 0);
+	new ButtonWidget(this, "GlobalOptions.Ok", _("OK"), kOKCmd, 0);
 
 #ifdef SMALL_SCREEN_DEVICE
 	_keysDialog = new KeysDialog();
@@ -863,19 +882,19 @@ void GlobalOptionsDialog::open() {
 	Common::String extraPath(ConfMan.get("extrapath", _domain));
 
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePath->setLabel("None");
+		_savePath->setLabel(_("None"));
 	} else {
 		_savePath->setLabel(savePath);
 	}
 
 	if (themePath.empty() || !ConfMan.hasKey("themepath", _domain)) {
-		_themePath->setLabel("None");
+		_themePath->setLabel(_("None"));
 	} else {
 		_themePath->setLabel(themePath);
 	}
 
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPath->setLabel("None");
+		_extraPath->setLabel(_("None"));
 	} else {
 		_extraPath->setLabel(extraPath);
 	}
@@ -883,7 +902,7 @@ void GlobalOptionsDialog::open() {
 #ifdef DYNAMIC_MODULES
 	Common::String pluginsPath(ConfMan.get("pluginspath", _domain));
 	if (pluginsPath.empty() || !ConfMan.hasKey("pluginspath", _domain)) {
-		_pluginsPath->setLabel("None");
+		_pluginsPath->setLabel(_("None"));
 	} else {
 		_pluginsPath->setLabel(pluginsPath);
 	}
@@ -907,24 +926,24 @@ void GlobalOptionsDialog::open() {
 void GlobalOptionsDialog::close() {
 	if (getResult()) {
 		Common::String savePath(_savePath->getLabel());
-		if (!savePath.empty() && (savePath != "None"))
+		if (!savePath.empty() && (savePath != _("None")))
 			ConfMan.set("savepath", savePath, _domain);
 
 		Common::String themePath(_themePath->getLabel());
-		if (!themePath.empty() && (themePath != "None"))
+		if (!themePath.empty() && (themePath != _("None")))
 			ConfMan.set("themepath", themePath, _domain);
 		else
 			ConfMan.removeKey("themepath", _domain);
 
 		Common::String extraPath(_extraPath->getLabel());
-		if (!extraPath.empty() && (extraPath != "None"))
+		if (!extraPath.empty() && (extraPath != _("None")))
 			ConfMan.set("extrapath", extraPath, _domain);
 		else
 			ConfMan.removeKey("extrapath", _domain);
 
 #ifdef DYNAMIC_MODULES
 		Common::String pluginsPath(_pluginsPath->getLabel());
-		if (!pluginsPath.empty() && (pluginsPath != "None"))
+		if (!pluginsPath.empty() && (pluginsPath != _("None")))
 			ConfMan.set("pluginspath", pluginsPath, _domain);
 		else
 			ConfMan.removeKey("pluginspath", _domain);
@@ -940,6 +959,28 @@ void GlobalOptionsDialog::close() {
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
 			ConfMan.set("gui_renderer", cfg, _domain);
 		}
+#ifdef TRANSLATION
+		Common::String oldLang = ConfMan.get("gui_language");
+		int selLang = _guiLanguagePopUp->getSelectedTag();
+
+		ConfMan.set("gui_language", TransMan.getLangById(selLang));
+
+		Common::String newLang = ConfMan.get("gui_language").c_str();
+		if (newLang != oldLang) {
+#if 0
+			// Activate the selected language
+			TransMan.setLanguage(selLang);
+
+			// FIXME: Actually, any changes (including the theme change) should
+			// only become active *after* the options dialog has closed.
+			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), ThemeEngine::kGfxDisabled, true);
+#else
+			MessageDialog error(_("You have to restart ScummVM to take the effect."));
+			error.runModal();
+#endif
+		}
+#endif // TRANSLATION
+
 	}
 	OptionsDialog::close();
 }
@@ -947,14 +988,14 @@ void GlobalOptionsDialog::close() {
 void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	case kChooseSaveDirCmd: {
-		BrowserDialog browser("Select directory for savegames", true);
+		BrowserDialog browser(_("Select directory for savegames"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
 			if (dir.isWritable()) {
 				_savePath->setLabel(dir.getPath());
 			} else {
-				MessageDialog error("The chosen directory cannot be written to. Please select another one.");
+				MessageDialog error(_("The chosen directory cannot be written to. Please select another one."));
 				error.runModal();
 				return;
 			}
@@ -963,7 +1004,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseThemeDirCmd: {
-		BrowserDialog browser("Select directory for GUI themes", true);
+		BrowserDialog browser(_("Select directory for GUI themes"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -973,7 +1014,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 	case kChooseExtraDirCmd: {
-		BrowserDialog browser("Select directory for extra files", true);
+		BrowserDialog browser(_("Select directory for extra files"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -984,7 +1025,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #ifdef DYNAMIC_MODULES
 	case kChoosePluginsDirCmd: {
-		BrowserDialog browser("Select directory for plugins", true);
+		BrowserDialog browser(_("Select directory for plugins"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -995,13 +1036,13 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 	}
 #endif
 	case kChooseSoundFontCmd: {
-		BrowserDialog browser("Select SoundFont", false);
+		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != "None"))
+			if (!file.getPath().empty() && (file.getPath() != _("None")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);

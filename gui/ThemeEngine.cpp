@@ -30,6 +30,7 @@
 #include "common/fs.h"
 #include "common/unzip.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "graphics/colormasks.h"
 #include "graphics/cursorman.h"
@@ -329,10 +330,10 @@ ThemeEngine::~ThemeEngine() {
  *	Rendering mode management
  *********************************************************/
 const ThemeEngine::Renderer ThemeEngine::_rendererModes[] = {
-	{ "Disabled GFX", "none", kGfxDisabled },
-	{ "Standard Renderer (16bpp)", "normal_16bpp", kGfxStandard16bit },
+	{ _s("Disabled GFX"), "none", kGfxDisabled },
+	{ _s("Standard Renderer (16bpp)"), "normal_16bpp", kGfxStandard16bit },
 #ifndef DISABLE_FANCY_THEMES
-	{ "Antialiased Renderer (16bpp)", "aa_16bpp", kGfxAntialias16bit }
+	{ _s("Antialiased Renderer (16bpp)"), "aa_16bpp", kGfxAntialias16bit }
 #endif
 };
 

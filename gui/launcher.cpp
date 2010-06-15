@@ -30,6 +30,7 @@
 #include "common/util.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "gui/about.h"
 #include "gui/browser.h"
@@ -166,20 +167,20 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 1) The game tab
 	//
-	tab->addTab("Game");
+	tab->addTab(_("Game"));
 
 	// GUI:  Label & edit widget for the game ID
-	new StaticTextWidget(tab, "GameOptions_Game.Id", "ID:");
+	new StaticTextWidget(tab, "GameOptions_Game.Id", _("ID:"));
 	_domainWidget = new DomainEditTextWidget(tab, "GameOptions_Game.Domain", _domain);
 
 	// GUI:  Label & edit widget for the description
-	new StaticTextWidget(tab, "GameOptions_Game.Name", "Name:");
+	new StaticTextWidget(tab, "GameOptions_Game.Name", _("Name:"));
 	_descriptionWidget = new EditTextWidget(tab, "GameOptions_Game.Desc", description);
 
 	// Language popup
-	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", "Language:");
+	_langPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.LangPopupDesc", _("Language:"));
 	_langPopUp = new PopUpWidget(tab, "GameOptions_Game.LangPopup");
-	_langPopUp->appendEntry("<default>");
+	_langPopUp->appendEntry(_("<default>"));
 	_langPopUp->appendEntry("");
 	const Common::LanguageDescription *l = Common::g_languages;
 	for (; l->code; ++l) {
@@ -187,9 +188,9 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	// Platform popup
-	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", "Platform:");
+	_platformPopUpDesc = new StaticTextWidget(tab, "GameOptions_Game.PlatformPopupDesc", _("Platform:"));
 	_platformPopUp = new PopUpWidget(tab, "GameOptions_Game.PlatformPopup");
-	_platformPopUp->appendEntry("<default>");
+	_platformPopUp->appendEntry(_("<default>"));
 	_platformPopUp->appendEntry("");
 	const Common::PlatformDescription *p = Common::g_platforms;
 	for (; p->code; ++p) {
@@ -199,18 +200,18 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 3) The graphics tab
 	//
-	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
-	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", "Override global graphic settings", kCmdGlobalGraphicsOverride, 0);
+	_globalGraphicsOverride = new CheckboxWidget(tab, "GameOptions_Graphics.EnableTabCheckbox", _("Override global graphic settings"), kCmdGlobalGraphicsOverride, 0);
 
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
 	// 4) The audio tab
 	//
-	tab->addTab("Audio");
+	tab->addTab(_("Audio"));
 
-	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
+	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", _("Override global audio settings"), kCmdGlobalAudioOverride, 0);
 
 	addAudioControls(tab, "GameOptions_Audio.");
 	addSubtitleControls(tab, "GameOptions_Audio.");
@@ -218,18 +219,18 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 5) The volume tab
 	//
-	tab->addTab("Volume");
+	tab->addTab(_("Volume"));
 
-	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", "Override global volume settings", kCmdGlobalVolumeOverride, 0);
+	_globalVolumeOverride = new CheckboxWidget(tab, "GameOptions_Volume.EnableTabCheckbox", _("Override global volume settings"), kCmdGlobalVolumeOverride, 0);
 
 	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
 	// 6) The MIDI tab
 	//
-	tab->addTab("MIDI");
+	tab->addTab(_("MIDI"));
 
-	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
+	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", _("Override global MIDI settings"), kCmdGlobalMIDIOverride, 0);
 
 	if (_guioptions & Common::GUIO_NOMIDI)
 		_globalMIDIOverride->setEnabled(false);
@@ -239,21 +240,21 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	//
 	// 2) The 'Path' tab
 	//
-	tab->addTab("Paths");
+	tab->addTab(_("Paths"));
 
 	// These buttons have to be extra wide, or the text will be truncated
 	// in the small version of the GUI.
 
 	// GUI:  Button + Label for the game path
-	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", "Game Path:", kCmdGameBrowser, 0);
+	new ButtonWidget(tab, "GameOptions_Paths.Gamepath", _("Game Path:"), kCmdGameBrowser, 0);
 	_gamePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.GamepathText", gamePath);
 
 	// GUI:  Button + Label for the additional path
-	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", "Extra Path:", kCmdExtraBrowser, 0);
+	new ButtonWidget(tab, "GameOptions_Paths.Extrapath", _("Extra Path:"), kCmdExtraBrowser, 0);
 	_extraPathWidget = new StaticTextWidget(tab, "GameOptions_Paths.ExtrapathText", extraPath);
 
 	// GUI:  Button + Label for the save path
-	new ButtonWidget(tab, "GameOptions_Paths.Savepath", "Save Path:", kCmdSaveBrowser, 0);
+	new ButtonWidget(tab, "GameOptions_Paths.Savepath", _("Save Path:"), kCmdSaveBrowser, 0);
 	_savePathWidget = new StaticTextWidget(tab, "GameOptions_Paths.SavepathText", savePath);
 
 	// Activate the first tab
@@ -261,8 +262,8 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_tabWidget = tab;
 
 	// Add OK & Cancel buttons
-	new ButtonWidget(this, "GameOptions.Cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "GameOptions.Ok", "OK", kOKCmd, 0);
+	new ButtonWidget(this, "GameOptions.Cancel", _("Cancel"), kCloseCmd, 0);
+	new ButtonWidget(this, "GameOptions.Ok", _("OK"), kOKCmd, 0);
 }
 
 void EditGameDialog::open() {
@@ -270,12 +271,12 @@ void EditGameDialog::open() {
 
 	String extraPath(ConfMan.get("extrapath", _domain));
 	if (extraPath.empty() || !ConfMan.hasKey("extrapath", _domain)) {
-		_extraPathWidget->setLabel("None");
+		_extraPathWidget->setLabel(_("None"));
 	}
 
 	String savePath(ConfMan.get("savepath", _domain));
 	if (savePath.empty() || !ConfMan.hasKey("savepath", _domain)) {
-		_savePathWidget->setLabel("Default");
+		_savePathWidget->setLabel(_("Default"));
 	}
 
 	int sel, i;
@@ -349,11 +350,11 @@ void EditGameDialog::close() {
 			ConfMan.set("path", gamePath, _domain);
 
 		String extraPath(_extraPathWidget->getLabel());
-		if (!extraPath.empty() && (extraPath != "None"))
+		if (!extraPath.empty() && (extraPath != _("None")))
 			ConfMan.set("extrapath", extraPath, _domain);
 
 		String savePath(_savePathWidget->getLabel());
-		if (!savePath.empty() && (savePath != "Default"))
+		if (!savePath.empty() && (savePath != _("Default")))
 			ConfMan.set("savepath", savePath, _domain);
 
 		Common::Platform platform = (Common::Platform)_platformPopUp->getSelectedTag();
@@ -387,14 +388,14 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		draw();
 		break;
 	case kCmdChooseSoundFontCmd: {
-		BrowserDialog browser("Select SoundFont", false);
+		BrowserDialog browser(_("Select SoundFont"), false);
 
 		if (browser.runModal() > 0) {
 			// User made this choice...
 			Common::FSNode file(browser.getResult());
 			_soundFont->setLabel(file.getPath());
 
-			if (!file.getPath().empty() && (file.getPath() != "None"))
+			if (!file.getPath().empty() && (file.getPath() != _("None")))
 				_soundFontClearButton->setEnabled(true);
 			else
 				_soundFontClearButton->setEnabled(false);
@@ -406,7 +407,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for the game
 	case kCmdGameBrowser: {
-		BrowserDialog browser("Select directory with game data", true);
+		BrowserDialog browser(_("Select directory with game data"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -424,7 +425,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 
 	// Change path for extra game data (eg, using sword cutscenes when playing via CD)
 	case kCmdExtraBrowser: {
-		BrowserDialog browser("Select additional game directory", true);
+		BrowserDialog browser(_("Select additional game directory"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -436,7 +437,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	}
 	// Change path for stored save game (perm and temp) data
 	case kCmdSaveBrowser: {
-		BrowserDialog browser("Select directory for saved games", true);
+		BrowserDialog browser(_("Select directory for saved games"), true);
 		if (browser.runModal() > 0) {
 			// User made his choice...
 			Common::FSNode dir(browser.getResult());
@@ -455,7 +456,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 				|| newDomain.hasPrefix("_")
 				|| newDomain == ConfigManager::kApplicationDomain
 				|| ConfMan.hasGameDomain(newDomain)) {
-				MessageDialog alert("This game ID is already taken. Please choose another one.");
+				MessageDialog alert(_("This game ID is already taken. Please choose another one."));
 				alert.runModal();
 				return;
 			}
@@ -496,22 +497,22 @@ LauncherDialog::LauncherDialog()
 	new StaticTextWidget(this, "Launcher.Version", gScummVMFullVersion);
 #endif
 
-	new ButtonWidget(this, "Launcher.QuitButton", "Quit", kQuitCmd, 'Q');
-	new ButtonWidget(this, "Launcher.AboutButton", "About...", kAboutCmd, 'B');
-	new ButtonWidget(this, "Launcher.OptionsButton", "Options...", kOptionsCmd, 'O');
+	new ButtonWidget(this, "Launcher.QuitButton", _("Quit"), kQuitCmd, 'Q');
+	new ButtonWidget(this, "Launcher.AboutButton", _("About..."), kAboutCmd, 'B');
+	new ButtonWidget(this, "Launcher.OptionsButton", _("Options..."), kOptionsCmd, 'O');
 	_startButton =
-			new ButtonWidget(this, "Launcher.StartButton", "Start", kStartCmd, 'S');
+		new ButtonWidget(this, "Launcher.StartButton", _("Start"), kStartCmd, 'S');
 
 	_loadButton =
-		new ButtonWidget(this, "Launcher.LoadGameButton", "Load...", kLoadGameCmd, 'L');
+		new ButtonWidget(this, "Launcher.LoadGameButton", _("Load..."), kLoadGameCmd, 'L');
 
 	// Above the lowest button rows: two more buttons (directly below the list box)
 	_addButton =
-		new ButtonWidget(this, "Launcher.AddGameButton", "Add Game...", kAddGameCmd, 'A');
+		new ButtonWidget(this, "Launcher.AddGameButton", _("Add Game..."), kAddGameCmd, 'A');
 	_editButton =
-		new ButtonWidget(this, "Launcher.EditGameButton", "Edit Game...", kEditGameCmd, 'E');
+		new ButtonWidget(this, "Launcher.EditGameButton", _("Edit Game..."), kEditGameCmd, 'E');
 	_removeButton =
-		new ButtonWidget(this, "Launcher.RemoveGameButton", "Remove Game", kRemoveGameCmd, 'R');
+		new ButtonWidget(this, "Launcher.RemoveGameButton", _("Remove Game"), kRemoveGameCmd, 'R');
 
 	// Search box
 	_searchDesc = 0;
@@ -522,7 +523,7 @@ LauncherDialog::LauncherDialog()
 		_searchPic->setGfx(g_gui.theme()->getImageSurface(ThemeEngine::kImageSearch));
 	} else
 #endif
-		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+		_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 	_searchWidget = new EditTextWidget(this, "Launcher.Search", _search, kSearchCmd);
 	_searchClearButton = new ButtonWidget(this, "Launcher.SearchClearButton", "C", kSearchClearCmd, 0);
@@ -544,10 +545,10 @@ LauncherDialog::LauncherDialog()
 	updateButtons();
 
 	// Create file browser dialog
-	_browser = new BrowserDialog("Select directory with game data", true);
+	_browser = new BrowserDialog(_("Select directory with game data"), true);
 
 	// Create Load dialog
-	_loadDialog = new SaveLoadChooser("Load game:", "Load");
+	_loadDialog = new SaveLoadChooser(_("Load game:"), _("Load"));
 }
 
 void LauncherDialog::selectTarget(const String &target) {
@@ -619,8 +620,12 @@ void LauncherDialog::updateListing() {
 				description = g.description();
 		}
 
-		if (description.empty())
-			description = "Unknown (target " + iter->_key + ", gameid " + gameid + ")";
+		if (description.empty()) {
+			char tmp[200];
+
+			snprintf(tmp, 200, "Unknown (target %s, gameid %s)", iter->_key.c_str(), gameid.c_str());
+			description = tmp;
+		}
 
 		if (!gameid.empty() && !description.empty()) {
 			// Insert the game into the launcher list
@@ -652,8 +657,8 @@ void LauncherDialog::addGame() {
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 
 	if (massAdd) {
-		MessageDialog alert("Do you really want to run the mass game detector? "
-							"This could potentially add a huge number of games.", "Yes", "No");
+		MessageDialog alert(_("Do you really want to run the mass game detector? "
+							  "This could potentially add a huge number of games."), _("Yes"), _("No"));
 		if (alert.runModal() == GUI::kMessageOK && _browser->runModal() > 0) {
 			MassAddDialog massAddDlg(_browser->getResult());
 
@@ -700,7 +705,7 @@ void LauncherDialog::addGame() {
 			Common::FSNode dir(_browser->getResult());
 			Common::FSList files;
 			if (!dir.getChildren(files, Common::FSNode::kListAll)) {
-				MessageDialog alert("ScummVM couldn't open the specified directory!");
+				MessageDialog alert(_("ScummVM couldn't open the specified directory!"));
 				alert.runModal();
 				return;
 			}
@@ -712,7 +717,7 @@ void LauncherDialog::addGame() {
 			int idx;
 			if (candidates.empty()) {
 				// No game was found in the specified directory
-				MessageDialog alert("ScummVM could not find any game in the specified directory!");
+				MessageDialog alert(_("ScummVM could not find any game in the specified directory!"));
 				alert.runModal();
 				idx = -1;
 
@@ -726,7 +731,7 @@ void LauncherDialog::addGame() {
 				for (idx = 0; idx < (int)candidates.size(); idx++)
 					list.push_back(candidates[idx].description());
 
-				ChooserDialog dialog("Pick the game:");
+				ChooserDialog dialog(_("Pick the game:"));
 				dialog.setList(list);
 				idx = dialog.runModal();
 			}
@@ -802,7 +807,7 @@ Common::String addGameToConf(const GameDescriptor &result) {
 }
 
 void LauncherDialog::removeGame(int item) {
-	MessageDialog alert("Do you really want to remove this game configuration?", "Yes", "No");
+	MessageDialog alert(_("Do you really want to remove this game configuration?"), _("Yes"), _("No"));
 
 	if (alert.runModal() == GUI::kMessageOK) {
 		// Remove the currently selected game from the list
@@ -865,11 +870,11 @@ void LauncherDialog::loadGame(int item) {
 			}
 		} else {
 			MessageDialog dialog
-				("This game does not support loading games from the launcher.", "OK");
+				(_("This game does not support loading games from the launcher."), _("OK"));
 			dialog.runModal();
 		}
 	} else {
-		MessageDialog dialog("ScummVM could not find any engine capable of running the selected game!", "OK");
+		MessageDialog dialog(_("ScummVM could not find any engine capable of running the selected game!"), _("OK"));
 		dialog.runModal();
 	}
 }
@@ -981,8 +986,8 @@ void LauncherDialog::updateButtons() {
 	int modifiers = g_system->getEventManager()->getModifierState();
 	const bool massAdd = (modifiers & Common::KBD_SHIFT) != 0;
 	const char *newAddButtonLabel = massAdd
-		? "Mass Add..."
-		: "Add Game...";
+		? _("Mass Add...")
+		: _("Add Game...");
 
 	if (_addButton->getLabel() != newAddButtonLabel)
 		_addButton->setLabel(newAddButtonLabel);
@@ -1029,7 +1034,7 @@ void LauncherDialog::reflowLayout() {
 		}
 	} else {
 		if (!_searchDesc)
-			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", "Search:");
+			_searchDesc = new StaticTextWidget(this, "Launcher.SearchDesc", _("Search:"));
 
 		if (_searchPic) {
 			removeWidget(_searchPic);

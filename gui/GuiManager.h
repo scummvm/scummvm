@@ -71,7 +71,7 @@ public:
 
 	bool isActive() const	{ return ! _dialogStack.empty(); }
 
-	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled);
+	bool loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx = ThemeEngine::kGfxDisabled, bool force = false);
 	ThemeEngine *theme() { return _theme; }
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }

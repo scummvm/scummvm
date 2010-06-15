@@ -184,6 +184,8 @@ protected:
 	PopUpWidget *_rendererPopUp;
 	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
+	StaticTextWidget *_guiLanguagePopUpDesc;
+	PopUpWidget *_guiLanguagePopUp;
 };
 
 } // End of namespace GUI

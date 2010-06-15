@@ -22,11 +22,19 @@ MODULE_OBJS := \
 	system.o \
 	textconsole.o \
 	tokenizer.o \
+	translation.o \
 	unarj.o \
 	unzip.o \
 	util.o \
 	xmlparser.o \
 	zlib.o
+
+ifdef ENABLE_TRANSLATION
+common/translation.cpp: common/messages.cpp
+
+common/messages.cpp: $(wildcard po/*.po)
+	tools/po2c $^ > common/messages.cpp
+endif
 
 # Include common rules
 include $(srcdir)/rules.mk

@@ -26,6 +26,8 @@
 #include "gui/ListWidget.h"
 #include "gui/widget.h"
 
+#include "common/translation.h"
+
 namespace GUI {
 
 enum {
@@ -41,7 +43,7 @@ enum {
 ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_fileList = 0;
 
-	new StaticTextWidget(this, "Browser.Headline", "Select a Theme");
+	new StaticTextWidget(this, "Browser.Headline", _("Select a Theme"));
 
 	// Add file list
 	_fileList = new ListWidget(this, "Browser.List");
@@ -51,8 +53,8 @@ ThemeBrowser::ThemeBrowser() : Dialog("Browser") {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundPlain;
 
 	// Buttons
-	new ButtonWidget(this, "Browser.Cancel", "Cancel", kCloseCmd, 0);
-	new ButtonWidget(this, "Browser.Choose", "Choose", kChooseCmd, 0);
+	new ButtonWidget(this, "Browser.Cancel", _("Cancel"), kCloseCmd, 0);
+	new ButtonWidget(this, "Browser.Choose", _("Choose"), kChooseCmd, 0);
 }
 
 void ThemeBrowser::open() {

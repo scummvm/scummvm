@@ -27,6 +27,7 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
+#include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -71,7 +72,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 		// Loading the theme failed, try to load the built-in theme
 		if (!loadNewTheme("builtin", gfxMode)) {
 			// Loading the built-in theme failed as well. Bail out
-			error("Failed to load any GUI theme, aborting");
+			error(_t("Failed to load any GUI theme, aborting"));
 		}
 	}
 }
@@ -94,27 +95,28 @@ void GuiManager::initKeymap() {
 	Action *act;
 	Keymap *guiMap = new Keymap("gui");
 
-	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
+	act = new Action(guiMap, "CLOS", _("Close"), kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(guiMap, "CLIK", "Mouse click");
+	act = new Action(guiMap, "CLIK", _("Mouse click"));
 	act->addLeftClickEvent();
 
-	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act = new Action(guiMap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
-	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act = new Action(guiMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(guiMap);
 }
 #endif
 
-bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) {
+bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, bool forced) {
 	// If we are asked to reload the currently active theme, just do nothing
 	// FIXME: Actually, why? It might be desirable at times to force a theme reload...
-	if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
-		return true;
+	if (!forced)
+		if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
+			return true;
 
 	ThemeEngine *newTheme = 0;
 

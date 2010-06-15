@@ -27,6 +27,7 @@
 #include "base/version.h"
 #include "common/events.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/util.h"
 #include "gui/about.h"
 #include "gui/GuiManager.h"
@@ -92,7 +93,7 @@ AboutDialog::AboutDialog()
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date("C2""(built on ");
+	Common::String date(_s("C2""(built on "));
 	date += gScummVMBuildDate;
 	date += ')';
 	_lines.push_back(date);
@@ -100,14 +101,14 @@ AboutDialog::AboutDialog()
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(copyright_text[i]);
 
-	addLine("C1""Features compiled in:");
+	addLine(_s("C1""Features compiled in:"));
 	Common::String features("C0");
 	features += gScummVMFeatures;
 	addLine(features.c_str());
 
 	_lines.push_back("");
 
-	addLine("C1""Available engines:");
+	addLine(_s("C1""Available engines:"));
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
 	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {

@@ -406,6 +406,14 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'GuiLanguagePopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GuiLanguagePopup'
+						type = 'PopUp'
+				/>
+			</layout>
 			<widget name='KeysButton'
  				     type='Button'
 			/>

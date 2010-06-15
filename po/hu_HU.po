@@ -1,0 +1,321 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR Free Software Foundation, Inc.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"PO-Revision-Date: 2010-06-08 13:39-0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=CHARSET\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# LANGUAGE translation for ScummVM.
+# Copyright (C) 2009 ScummVM
+# This file is distributed under the same license as the ScummVM package.
+# Alex Bevilacqua <alexbevi@gmail.com>, 2009.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ScummVM VERSION\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sourceforge.net\n"
+"POT-Creation-Date: 2009-11-25 07:10-0500\n"
+"PO-Revision-Date: 2009-11-25 07:42-0500\n"
+"Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
+"Language-Team: Hungarian\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: gui/options.cpp:71
+msgid "Never"
+msgstr "Soha"
+
+#: gui/options.cpp:71
+msgid "every 5 mins"
+msgstr "5 percenként"
+
+#: gui/options.cpp:71
+msgid "every 10 mins"
+msgstr "10 percenként"
+
+#: gui/options.cpp:71
+msgid "every 15 mins"
+msgstr "15 percenként"
+
+#: gui/options.cpp:71
+msgid "every 30 mins"
+msgstr "30 percenként"
+
+#: gui/options.cpp:73 gui/options.cpp:598 gui/options.cpp:608
+#: gui/options.cpp:838
+msgid "<default>"
+msgstr "<alapértelmezett>"
+
+#: gui/options.cpp:73
+msgid "22 kHz"
+msgstr ""
+
+#: gui/options.cpp:73
+msgid "8 kHz"
+msgstr ""
+
+#: gui/options.cpp:73
+msgid "11kHz"
+msgstr ""
+
+#: gui/options.cpp:73
+msgid "44 kHz"
+msgstr ""
+
+#: gui/options.cpp:73
+msgid "48 kHz"
+msgstr ""
+
+#: gui/options.cpp:89 gui/options.cpp:95
+msgid "Speech Only"
+msgstr "Csak a beszéd"
+
+#: gui/options.cpp:90
+msgid "Speech and Subtitles"
+msgstr "Beszéd és a Feliratok"
+
+#: gui/options.cpp:91 gui/options.cpp:97
+msgid "Subtitles Only"
+msgstr "Csak feliratok"
+
+#: gui/options.cpp:96
+msgid "Speech & Subs"
+msgstr "Beszéd s Feliratok"
+
+#: gui/options.cpp:226 gui/options.cpp:382 gui/options.cpp:480
+#: gui/options.cpp:526 gui/options.cpp:661 gui/options.cpp:801
+#: gui/options.cpp:804 gui/options.cpp:882 gui/options.cpp:888
+#: gui/options.cpp:894 gui/options.cpp:902 gui/options.cpp:926
+#: gui/options.cpp:930 gui/options.cpp:936 gui/options.cpp:943
+#: gui/options.cpp:1049
+msgid "None"
+msgstr "Semmi"
+
+#: gui/options.cpp:595
+msgid "Graphics mode:"
+msgstr "Grafikus mód:"
+
+#: gui/options.cpp:606
+msgid "Render mode:"
+msgstr "Renderelési mód:"
+
+#: gui/options.cpp:616
+msgid "Fullscreen mode"
+msgstr "Teljes képerny s mód:"
+
+#: gui/options.cpp:619
+msgid "Aspect ratio correction"
+msgstr "Aspect adag korrekció"
+
+#: gui/options.cpp:626
+msgid "Music driver:"
+msgstr "Zenei vezet :"
+
+#: gui/options.cpp:637
+msgid "AdLib emulator:"
+msgstr "AdLib vezet :"
+
+#: gui/options.cpp:648
+msgid "Output rate:"
+msgstr "Kimeneti teljesítmény:"
+
+#: gui/options.cpp:660
+msgid "SoundFont:"
+msgstr ""
+
+#: gui/options.cpp:665
+msgid "Mixed AdLib/MIDI mode"
+msgstr "Vegyes AdLib/MIDI mód"
+
+#: gui/options.cpp:668
+msgid "True Roland MT-32 (disable GM emulation)"
+msgstr "Igaz Roland MT-32 (megbénít GM emuláció)"
+
+#: gui/options.cpp:671
+msgid "Enable Roland GS Mode"
+msgstr "Képessé Roland GS Mode"
+
+#: gui/options.cpp:674
+msgid "MIDI gain:"
+msgstr "MIDI nyereség:"
+
+#: gui/options.cpp:687
+msgid "Text and Speech:"
+msgstr "Szöveg és beszéd:"
+
+#: gui/options.cpp:691
+msgid "Subtitle speed:"
+msgstr "Felirat sebesség:"
+
+#: gui/options.cpp:703
+msgid "Music volume:"
+msgstr "Zene mennyiség:"
+
+#: gui/options.cpp:710
+msgid "Mute All"
+msgstr "Muta Összes"
+
+#: gui/options.cpp:713
+msgid "SFX volume:"
+msgstr "SFX mennyisége"
+
+#: gui/options.cpp:720
+msgid "Speech volume:"
+msgstr "Beszéd mennyiség:"
+
+#: gui/options.cpp:743
+msgid ""
+"Wrong configuration: Both subtitles and speech are off. Assuming subtitles "
+"only"
+msgstr ""
+
+#: gui/options.cpp:749
+msgid "Graphics"
+msgstr "Grafikával"
+
+#: gui/options.cpp:749
+msgid "GFX"
+msgstr ""
+
+#: gui/options.cpp:772
+msgid "Audio"
+msgstr "Hang"
+
+#: gui/options.cpp:776
+msgid "Volume"
+msgstr "Volumene"
+
+#: gui/options.cpp:784
+msgid "MIDI"
+msgstr ""
+
+#: gui/options.cpp:790
+msgid "Paths"
+msgstr "Ösvények"
+
+#: gui/options.cpp:797
+msgid "Save Path: "
+msgstr ""
+
+#: gui/options.cpp:800
+msgid "Theme Path:"
+msgstr ""
+
+#: gui/options.cpp:803
+msgid "Extra Path:"
+msgstr "Extra Útvonal:"
+
+#: gui/options.cpp:807
+msgid "Plugins Path:"
+msgstr ""
+
+#: gui/options.cpp:812
+msgid "Misc"
+msgstr ""
+
+#: gui/options.cpp:814
+msgid "Theme:"
+msgstr "Téma:"
+
+#: gui/options.cpp:818
+msgid "GUI Renderer:"
+msgstr "Leképez eszköz GUI:"
+
+#: gui/options.cpp:824
+msgid "Autosave:"
+msgstr "Automatikus mentés:"
+
+#: gui/options.cpp:832
+msgid "Keys"
+msgstr "Kulcsok"
+
+#: gui/options.cpp:840
+msgid "Angol"
+msgstr ""
+
+#: gui/options.cpp:858
+msgid "Szakítani"
+msgstr ""
+
+#: gui/options.cpp:859
+msgid "OK"
+msgstr "Igen"
+
+#: gui/options.cpp:995
+msgid "Select directory for savegames"
+msgstr ""
+
+#: gui/options.cpp:1002
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr ""
+
+#: gui/options.cpp:1011
+msgid "Select directory for GUI themes"
+msgstr ""
+
+#: gui/options.cpp:1021
+msgid "Select directory for extra files"
+msgstr ""
+
+#: gui/options.cpp:1032
+msgid "Select directory for plugins"
+msgstr ""
+
+#: gui/options.cpp:1043
+msgid "Select SoundFont"
+msgstr ""
+
+#: gui/GuiManager.cpp:73
+msgid "Failed to load any GUI theme, aborting"
+msgstr ""
+
+#: base/main.cpp:98
+#, c-format
+msgid "User picked target '%s' (gameid '%s')...\n"
+msgstr ""
+
+#: base/main.cpp:99
+msgid "  Looking for a plugin supporting this gameid... "
+msgstr ""
+
+#: base/main.cpp:103
+msgid "failed\n"
+msgstr ""
+
+#: base/main.cpp:104
+#, c-format
+msgid ""
+"%s is an invalid gameid. Use the --list-games option to list supported gameid"
+msgstr ""
+
+#: base/main.cpp:111
+#, c-format
+msgid "  Starting '%s'\n"
+msgstr ""
+
+#: base/main.cpp:140
+msgid "Invalid game path"
+msgstr ""
+
+#: base/main.cpp:143
+msgid "Unable to locate game data"
+msgstr ""
+
+#: base/main.cpp:146
+msgid "Unknown error"
+msgstr ""
+
+#: base/main.cpp:149
+#, c-format
+msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
+msgstr ""

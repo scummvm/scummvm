@@ -136,6 +136,8 @@ _enable_prof=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
+# GUI translation options
+_translation=yes
 # Default platform settings
 _backend=sdl
 _endian=unknown
@@ -676,6 +678,7 @@ Optional Features:
   --disable-16bit          don't enable 16bit color support
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
+  --disable-translation    don't build support for translated messages
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build process
 
@@ -760,6 +763,8 @@ for ac_option in $@; do
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
 	--disable-mt32emu)        _mt32emu=no     ;;
+	--enable-translation)     _translation=yes ;;
+	--disable-translation)    _translation=no ;;
 	--enable-vkeybd)          _vkeybd=yes     ;;
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
@@ -2310,6 +2315,47 @@ if test "$_vkeybd" = yes ; then
 fi
 if test "$_keymapper" = yes ; then
 	DEFINES="$DEFINES -DENABLE_KEYMAPPER"
+fi
+
+# Check whether to build translation support
+#
+echo_n "Building translation support... "
+add_to_config_mk_if_yes $_translation 'ENABLE_TRANSLATION = 1'
+add_to_config_h_if_yes $_translation '#define TRANSLATION'
+if test "$_translation" = no ; then
+	echo "no"
+else
+	echo_n "yes ("
+
+	cat > $TMPC << EOF
+#include <locale.h>
+int main(void) { setlocale(LC_ALL, ""); return 0; }
+EOF
+	_detectlang=no
+	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+
+	add_to_config_h_if_yes $_detectlang '#define DETECTLANG'
+	if test "$_detectlang" = yes ; then
+		echo_n "with runtime language detection, "
+
+		cat > $TMPC << EOF
+#include <langinfo.h>
+#include <iconv.h>
+int main(void) { nl_langinfo(CODESET); iconv_open(0, 0); return 0; }
+EOF
+		_termconv=no
+		cc_check_no_clean $LDFLAGS $CXXFLAGS && _termconv=yes
+		cc_check $LDFLAGS $CXXFLAGS -liconv && LIBS="$LIBS -liconv" && _termconv=yes
+
+		add_to_config_h_if_yes $_termconv '#define TERMCONV'
+		if test "$_termconv" = yes ; then
+			echo "with terminal conversion)"
+		else
+			echo "without terminal conversion)"
+		fi
+	else
+		echo "without runtime language detection)"
+	fi
 fi
 
 #

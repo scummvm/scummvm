@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/util.h"
 #include "sound/mididrv.h"
 
@@ -35,62 +36,62 @@ static const MidiDriverDescription s_musicDrivers[] = {
 
 	// The flags for the "auto" & "null" drivers indicate that they are anything
 	// you want it to be.
-	{"auto", "<default>", MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
-	{"null", "No music", MD_NULL, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
+	{"auto", _s("<default>"), MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
+	{"null", _s("No music"), MD_NULL, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	{"windows", "Windows MIDI", MD_WINDOWS, MDT_MIDI},
+	{"windows", _s("Windows MIDI"), MD_WINDOWS, MDT_MIDI},
 #endif
 
 #if defined(UNIX) && defined(USE_ALSA)
-	{"alsa", "ALSA", MD_ALSA, MDT_MIDI},
+	{"alsa", _s("ALSA"), MD_ALSA, MDT_MIDI},
 #endif
 
 #if defined(__MINT__)
-	{"stmidi", "Atari ST MIDI", MD_STMIDI, MDT_MIDI},
+	{"stmidi", _s("Atari ST MIDI"), MD_STMIDI, MDT_MIDI},
 #endif
 
 #if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
-	{"seq", "SEQ", MD_SEQ, MDT_MIDI},
+	{"seq", _s("SEQ"), MD_SEQ, MDT_MIDI},
 #endif
 
 #if defined(IRIX)
-	{"dmedia", "DMedia", MD_DMEDIA, MDT_MIDI},
+	{"dmedia", _s("DMedia"), MD_DMEDIA, MDT_MIDI},
 #endif
 
 #if defined(__amigaos4__)
-	{"camd", "CAMD", MD_CAMD, MDT_MIDI},
+	{"camd", _s("CAMD"), MD_CAMD, MDT_MIDI},
 #endif
 
 #if defined(MACOSX)
-	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
+	{"core", _s("CoreAudio"), MD_COREAUDIO, MDT_MIDI},
 //	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
-	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_MIDI},
+	{"coremidi", _s("CoreMIDI"), MD_COREMIDI, MDT_MIDI},
 #endif
 
 #if defined(PALMOS_MODE)
 #	if defined(COMPILE_CLIE)
-	{"ypa1", "Yamaha Pa1", MD_YPA1, MDT_MIDI},
+	{"ypa1", _s("Yamaha Pa1"), MD_YPA1, MDT_MIDI},
 #	elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-	{"zodiac", "Tapwave Zodiac", MD_ZODIAC, MDT_MIDI},
+	{"zodiac", _s("Tapwave Zodiac"), MD_ZODIAC, MDT_MIDI},
 #	endif
 #endif
 
 #ifdef USE_FLUIDSYNTH
-	{"fluidsynth", "FluidSynth", MD_FLUIDSYNTH, MDT_MIDI},
+	{"fluidsynth", _s("FluidSynth"), MD_FLUIDSYNTH, MDT_MIDI},
 #endif
 #ifdef USE_MT32EMU
-	{"mt32", "MT-32 Emulation", MD_MT32, MDT_MIDI},
+	{"mt32", _s("MT-32 Emulation"), MD_MT32, MDT_MIDI},
 #endif
 
 	// The flags for the "adlib" driver indicates that it can do AdLib and MIDI.
-	{"adlib", "AdLib", MD_ADLIB, MDT_ADLIB},
-	{"pcspk", "PC Speaker", MD_PCSPK, MDT_PCSPK},
-	{"pcjr", "IBM PCjr", MD_PCJR, MDT_PCSPK},
-	{"cms", "Creative Music System", MD_CMS, MDT_CMS},
-	{"towns", "FM Towns", MD_TOWNS, MDT_TOWNS},
+	{"adlib", _s("AdLib"), MD_ADLIB, MDT_ADLIB},
+	{"pcspk", _s("PC Speaker"), MD_PCSPK, MDT_PCSPK},
+	{"pcjr", _s("IBM PCjr"), MD_PCJR, MDT_PCSPK},
+	{"cms", _s("Creative Music System"), MD_CMS, MDT_CMS},
+	{"towns", _s("FM Towns"), MD_TOWNS, MDT_TOWNS},
 #if defined(UNIX)
-	{"timidity", "TiMidity", MD_TIMIDITY, MDT_MIDI},
+	{"timidity", _s("TiMidity"), MD_TIMIDITY, MDT_MIDI},
 #endif
 
 	{0, 0, MD_NULL, MDT_NONE}

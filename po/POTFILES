@@ -1,0 +1,24 @@
+#TODO: help_string & usage_string:
+
+gui/about.cpp
+gui/browser.cpp
+gui/error.cpp
+gui/GuiManager.cpp
+gui/KeysDialog.cpp
+gui/launcher.cpp
+gui/massadd.cpp
+gui/options.cpp
+gui/saveload.cpp
+gui/themebrowser.cpp
+gui/ThemeEngine.cpp
+
+base/main.cpp
+
+common/error.cpp
+
+engines/dialogs.cpp
+
+sound/mididrv.cpp
+
+
+#TODO: backends engines tools?
