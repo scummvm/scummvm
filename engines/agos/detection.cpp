@@ -84,6 +84,11 @@ static const PlainGameDescriptor simonGames[] = {
 
 #include "agos/detection_tables.h"
 
+static const char *directoryGlobs[] = {
+	"execute", // Used by Simon1 Acorn CD
+	0
+};
+
 static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)AGOS::gameDescriptions,
@@ -106,7 +111,7 @@ static const ADParams detectionParams = {
 	// Maximum directory depth
 	2,
 	// List of directory globs
-	0
+	directoryGlobs
 };
 
 using namespace AGOS;
