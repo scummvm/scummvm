@@ -43,6 +43,8 @@ void DrasculaEngine::updateAnim(int y, int destX, int destY, int width, int heig
 
 // This is the game's introduction sequence
 void DrasculaEngine::animation_1_1() {
+	debug(4, "animation_1_1()");
+
 	int l, l2, p;
 	//int pixelPos[6];
 
@@ -371,6 +373,8 @@ void DrasculaEngine::animation_1_1() {
 
 // John falls in love with BJ, who is then abducted by Drascula
 void DrasculaEngine::animation_2_1() {
+	debug(4, "animation_2_1()");
+
 	int l;
 
 	gotoObject(231, 91);
@@ -560,6 +564,8 @@ void DrasculaEngine::animation_2_1() {
 
 // John Hacker talks with the bartender to book a room
 void DrasculaEngine::animation_3_1() {
+	debug(4, "animation_3_1()");
+
 	loadPic("an11y13.alg", extraSurface);
 
 	playTalkSequence(3);	// sequence 3, chapter 1
@@ -569,6 +575,8 @@ void DrasculaEngine::animation_3_1() {
 
 // John Hacker talks with the pianist
 void DrasculaEngine::animation_4_1() {
+	debug(4, "animation_4_1()");
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(205);
@@ -605,6 +613,8 @@ void DrasculaEngine::animation_4_1() {
 }
 
 void DrasculaEngine::animation_2_2() {
+	debug(4, "animation_2_2()");
+
 	trackProtagonist = 0;
 	copyBackground();
 	moveCharacters();
@@ -640,6 +650,8 @@ void DrasculaEngine::animation_2_2() {
 }
 
 void DrasculaEngine::animation_4_2() {
+	debug(4, "animation_4_2()");
+
 	stopMusic();
 	flags[9] = 1;
 
@@ -704,6 +716,8 @@ void DrasculaEngine::animation_4_2() {
 }
 
 void DrasculaEngine::animation_14_2() {
+	debug(4, "animation_14_2()");
+
 	int cY = -160;
 	int l = 0;
 
@@ -735,6 +749,8 @@ void DrasculaEngine::animation_14_2() {
 
 // The drunk tells us about Von Braun
 void DrasculaEngine::animation_16_2() {
+	debug(4, "animation_16_2()");
+
 	char curPic[20];
 	talk_drunk(12);
 	talk(371);
@@ -812,6 +828,8 @@ asco:
 }
 
 void DrasculaEngine::animation_20_2() {
+	debug(4, "animation_20_2()");
+
 	talk_vonBraun(7, kVonBraunDoor);
 	talk_vonBraun(8, kVonBraunDoor);
 	talk(383);
@@ -842,6 +860,8 @@ void DrasculaEngine::animation_20_2() {
 }
 
 void DrasculaEngine::animation_23_2() {
+	debug(4, "animation_23_2()");
+
 	loadPic("an24.alg", frontSurface);
 
 	flags[21] = 1;
@@ -897,6 +917,8 @@ void DrasculaEngine::animation_23_2() {
 }
 
 void DrasculaEngine::animation_23_joined() {
+	debug(4, "animation_23_joined()");
+
 	int p_x = curX + 2, p_y = curY - 3;
 	int x[] = {1, 38, 75, 112, 75, 112, 75, 112, 149, 112, 149, 112, 149, 186, 223, 260,
 				1, 38, 75, 112, 149, 112, 149, 112, 149, 112, 149, 186, 223, 260, 260, 260, 260, 223};
@@ -917,6 +939,8 @@ void DrasculaEngine::animation_23_joined() {
 }
 
 void DrasculaEngine::animation_23_joined2() {
+	debug(4, "animation_23_joined2()");
+
 	int p_x = curX + 4, p_y = curY;
 	int x[] = {1, 35, 69, 103, 137, 171, 205, 239, 273, 1, 35, 69, 103, 137};
 	int y[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 73, 73, 73, 73, 73};
@@ -937,6 +961,8 @@ void DrasculaEngine::animation_23_joined2() {
 }
 
 void DrasculaEngine::animation_25_2() {
+	debug(4, "animation_25_2()");
+
 	int cY = 0;
 
 	loadPic("an14_2.alg", backSurface);
@@ -967,6 +993,8 @@ void DrasculaEngine::animation_25_2() {
 }
 
 void DrasculaEngine::animation_27_2() {
+	debug(4, "animation_27_2()");
+
 	flags[22] = 1;
 
 	selectVerb(kVerbNone);
@@ -986,6 +1014,8 @@ void DrasculaEngine::animation_27_2() {
 }
 
 void DrasculaEngine::animation_29_2() {
+	debug(4, "animation_29_2()");
+
 	if (flags[33] == 0) {
 		playTalkSequence(29);	// sequence 29, chapter 2
 	} else
@@ -1002,6 +1032,8 @@ void DrasculaEngine::animation_29_2() {
 }
 
 void DrasculaEngine::animation_31_2() {
+	debug(4, "animation_31_2()");
+
 	talk_vonBraun(44, kVonBraunNormal);
 	placeVonBraun(-50);
 	pause(15);
@@ -1020,6 +1052,8 @@ void DrasculaEngine::animation_31_2() {
 }
 
 void DrasculaEngine::animation_35_2() {
+	debug(4, "animation_35_2()");
+
 	gotoObject(96, 165);
 	gotoObject(79, 165);
 
@@ -1050,6 +1084,8 @@ void DrasculaEngine::animation_35_2() {
 }
 
 void DrasculaEngine::animation_2_3() {
+	debug(4, "animation_2_3()");
+
 	flags[0] = 1;
 	playMusic(13);
 	animation_3_3();
@@ -1070,6 +1106,8 @@ void DrasculaEngine::animation_2_3() {
 }
 
 void DrasculaEngine::animation_3_3() {
+	debug(4, "animation_3_3()");
+
 	int px = curX - 20, py = curY - 1;
 
 	loadPic("an2y_1.alg", frontSurface);
@@ -1085,6 +1123,8 @@ void DrasculaEngine::animation_3_3() {
 }
 
 void DrasculaEngine::animation_4_3() {
+	debug(4, "animation_4_3()");
+
 	int px = 120, py = 63;
 
 	loadPic("any_1.alg", frontSurface);
@@ -1100,6 +1140,8 @@ void DrasculaEngine::animation_4_3() {
 }
 
 void DrasculaEngine::animation_5_3() {
+	debug(4, "animation_5_3()");
+
 	int px = curX - 20, py = curY - 1;
 
 	loadPic("an3y_1.alg", frontSurface);
@@ -1115,6 +1157,8 @@ void DrasculaEngine::animation_5_3() {
 }
 
 void DrasculaEngine::animation_6_3() {
+	debug(4, "animation_6_3()");
+
 	int frame = 0, px = 112, py = 62;
 	int yoda_x[] = { 3 ,82, 161, 240, 3, 82 };
 	int yoda_y[] = { 3, 3, 3, 3, 94, 94 };
@@ -1144,6 +1188,8 @@ void DrasculaEngine::animation_6_3() {
 }
 
 void DrasculaEngine::animation_ray() {
+	debug(4, "animation_ray()");
+
 	loadPic("anr_1.alg", frontSurface, HALF_PAL);
 	loadPic("anr_2.alg", extraSurface);
 	loadPic("anr_3.alg", backSurface);
@@ -1171,6 +1217,8 @@ void DrasculaEngine::animation_ray() {
 }
 
 void DrasculaEngine::animation_7_4() {
+	debug(4, "animation_7_4()");
+
 	black();
 	talk(427);
 	fadeFromBlack(1);
@@ -1184,6 +1232,8 @@ void DrasculaEngine::animation_7_4() {
 }
 
 void DrasculaEngine::animation_1_5() {
+	debug(4, "animation_1_5()");
+
 	if (flags[0] == 0) {
 		talk(430);
 		talk_bj(16);
@@ -1224,6 +1274,8 @@ void DrasculaEngine::animation_1_5() {
 }
 
 void DrasculaEngine::animation_5_5(){
+	debug(4, "animation_5_5(");
+
 	int h;
 	int frame = 0;
 	int boneX[] = {1, 99, 197, 1, 99, 197, 1, 99, 197};
@@ -1299,6 +1351,8 @@ void DrasculaEngine::animation_5_5(){
 }
 
 void DrasculaEngine::animation_11_5() {
+	debug(4, "animation_11_5()");
+
 	flags[9] = 1;
 	if (flags[2] == 1 && flags[3] == 1 && flags[4] == 1)
 		animation_12_5();
@@ -1309,6 +1363,8 @@ void DrasculaEngine::animation_11_5() {
 }
 
 void DrasculaEngine::animation_12_5() {
+	debug(4, "animation_12_5()");
+
 	DacPalette256 bgPalette1;
 	DacPalette256 bgPalette2;
 	DacPalette256 bgPalette3;
@@ -1415,6 +1471,8 @@ void DrasculaEngine::animation_12_5() {
 }
 
 void DrasculaEngine::animation_13_5() {
+	debug(4, "animation_13_5()");
+
 	int frank_x = 199;
 	int frame = 0;
 	int frus_x[] = {1, 46, 91, 136, 181, 226, 271};
@@ -1446,6 +1504,8 @@ void DrasculaEngine::animation_13_5() {
 }
 
 void DrasculaEngine::animation_14_5() {
+	debug(4, "animation_14_5()");
+
 	flags[11] = 1;
 	playSound(3);
 	updateRoom();
@@ -1469,6 +1529,8 @@ void DrasculaEngine::animation_14_5() {
 }
 
 void DrasculaEngine::animation_1_6() {
+	debug(4, "animation_1_6()");
+
 	trackProtagonist = 0;
 	curX = 103;
 	curY = 108;
@@ -1540,6 +1602,8 @@ void DrasculaEngine::animation_1_6() {
 }
 
 void DrasculaEngine::animation_5_6() {
+	debug(4, "animation_5_6()");
+
 	int pY = -125;
 
 	animate("man.bin", 14);
@@ -1560,6 +1624,8 @@ void DrasculaEngine::animation_5_6() {
 }
 
 void DrasculaEngine::animation_6_6() {
+	debug(4, "animation_6_6()");
+
 	animate("rct.bin", 11);
 	clearRoom();
 	selectVerb(kVerbNone);
@@ -1584,6 +1650,8 @@ void DrasculaEngine::animation_6_6() {
 }
 
 void DrasculaEngine::animation_9_6() {
+	debug(4, "animation_9_6()");
+
 	int v_cd;
 
 	animate("fin.bin", 14);
@@ -1660,6 +1728,8 @@ void DrasculaEngine::animation_9_6() {
 }
 
 void DrasculaEngine::animation_19_6() {
+	debug(4, "animation_19_6()");
+
 	copyBackground();
 	copyBackground(140, 23, 161, 69, 35, 80, drawSurface3, screenSurface);
 
@@ -1675,6 +1745,8 @@ void DrasculaEngine::animation_19_6() {
 }
 
 void DrasculaEngine::animation_12_2() {
+	debug(4, "animation_12_2()");
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(356);
@@ -1705,6 +1777,8 @@ void DrasculaEngine::animation_12_2() {
 }
 
 void DrasculaEngine::animation_26_2() {
+	debug(4, "animation_26_2()");
+
 	loadPic("an12.alg", extraSurface);
 
 	talk(392);
@@ -1762,6 +1836,8 @@ void DrasculaEngine::animation_26_2() {
 }
 
 void DrasculaEngine::animation_11_2() {
+	debug(4, "animation_11_2()");
+
 	loadPic("an11y13.alg", extraSurface);
 
 	playTalkSequence(11);	// sequence 11, chapter 2
@@ -1770,6 +1846,8 @@ void DrasculaEngine::animation_11_2() {
 }
 
 void DrasculaEngine::animation_13_2() {
+	debug(4, "animation_13_2()");
+
 	loadPic("an11y13.alg", frontSurface);
 
 	if (flags[41] == 0) {
@@ -1780,6 +1858,8 @@ void DrasculaEngine::animation_13_2() {
 }
 
 void DrasculaEngine::animation_24_2() {
+	debug(4, "animation_24_2()");
+
 	if (curX < 178)
 		gotoObject(208, 136);
 	trackProtagonist = 3;
@@ -1810,6 +1890,8 @@ void DrasculaEngine::animation_24_2() {
 }
 
 void DrasculaEngine::animation_32_2() {
+	debug(4, "animation_32_2()");
+
 	loadPic("an32_1.alg", drawSurface3);
 	loadPic("an32_2.alg", backSurface);
 
@@ -1831,6 +1913,8 @@ void DrasculaEngine::animation_32_2() {
 }
 
 void DrasculaEngine::animation_34_2() {
+	debug(4, "animation_34_2()");
+
 	trackProtagonist = 1;
 	updateRoom();
 	updateScreen();
@@ -1858,6 +1942,8 @@ void DrasculaEngine::animation_34_2() {
 }
 
 void DrasculaEngine::animation_36_2() {
+	debug(4, "animation_36_2()");
+
 	loadPic("an11y13.alg", extraSurface);
 
 	talk(404);
@@ -1872,6 +1958,8 @@ void DrasculaEngine::animation_36_2() {
 }
 
 void DrasculaEngine::animation_7_2() {
+	debug(4, "animation_7_2()");
+
 	loadPic("an7_1.alg", backSurface);
 	loadPic("an7_2.alg", extraSurface);
 	loadPic("an7_3.alg", frontSurface);
@@ -1928,6 +2016,8 @@ void DrasculaEngine::animation_7_2() {
 }
 
 void DrasculaEngine::animation_5_2() {
+	debug(4, "animation_5_2()");
+
 	trackProtagonist = 0;
 	updateRoom();
 	updateScreen();
@@ -1964,6 +2054,8 @@ void DrasculaEngine::animation_5_2() {
 }
 
 void DrasculaEngine::animation_6_2() {
+	debug(4, "animation_6_2()");
+
 	stopMusic();
 	flags[9] = 1;
 
@@ -2005,6 +2097,8 @@ void DrasculaEngine::animation_6_2() {
 }
 
 void DrasculaEngine::animation_33_2() {
+	debug(4, "animation_33_2()");
+
 	stopMusic();
 	flags[9] = 1;
 
@@ -2052,6 +2146,8 @@ void DrasculaEngine::animation_33_2() {
 }
 
 void DrasculaEngine::animation_1_4() {
+	debug(4, "animation_1_4()");
+
 	if (flags[21] == 0) {
 		strcpy(objName[2], "igor");
 		talk(275);
@@ -2108,6 +2204,8 @@ void DrasculaEngine::animation_1_4() {
 }
 
 void DrasculaEngine::animation_5_4(){
+	debug(4, "animation_5_4(");
+
 	trackProtagonist = 3;
 	loadPic("anh_dr.alg", backSurface);
 	gotoObject(99, 160);
@@ -2136,6 +2234,8 @@ void DrasculaEngine::animation_5_4(){
 }
 
 void DrasculaEngine::animation_6_4() {
+	debug(4, "animation_6_4()");
+
 	int prevRoom = roomNumber;
 
 	roomNumber = 26;
@@ -2161,6 +2261,8 @@ void DrasculaEngine::animation_6_4() {
 }
 
 void DrasculaEngine::animation_8_4() {
+	debug(4, "animation_8_4()");
+
 	int bookcaseX[] = {1, 75, 149, 223, 1, 75, 149, 223, 149, 223, 149, 223, 149, 223};
 	int bookcaseY[] = {1, 1, 1, 1, 74, 74, 74, 74, 74, 74, 74, 74, 74, 74};
 
@@ -2177,6 +2279,8 @@ void DrasculaEngine::animation_8_4() {
 }
 
 void DrasculaEngine::activatePendulum() {
+	debug(4, "activatePendulum()");
+
 	flags[1] = 2;
 	hare_se_ve = 0;
 	roomNumber = 102;
