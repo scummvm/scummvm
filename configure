@@ -2323,8 +2323,8 @@ fi
 # Check whether to build translation support
 #
 echo_n "Building translation support... "
-add_to_config_mk_if_yes $_translation 'ENABLE_TRANSLATION = 1'
-add_to_config_h_if_yes $_translation '#define TRANSLATION'
+add_to_config_mk_if_yes $_translation 'USE_TRANSLATION = 1'
+add_to_config_h_if_yes $_translation '#define USE_TRANSLATION'
 if test "$_translation" = no ; then
 	echo "no"
 else
@@ -2337,7 +2337,7 @@ EOF
 	_detectlang=no
 	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
 
-	add_to_config_h_if_yes $_detectlang '#define DETECTLANG'
+	add_to_config_h_if_yes $_detectlang '#define USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then
 		echo_n "with runtime language detection, "
 
@@ -2350,7 +2350,7 @@ EOF
 		cc_check_no_clean $LDFLAGS $CXXFLAGS && _termconv=yes
 		cc_check $LDFLAGS $CXXFLAGS -liconv && LIBS="$LIBS -liconv" && _termconv=yes
 
-		add_to_config_h_if_yes $_termconv '#define TERMCONV'
+		add_to_config_h_if_yes $_termconv '#define USE_TERMCONV'
 		if test "$_termconv" = yes ; then
 			uses_const=no
 			cat > $TMPC << EOF

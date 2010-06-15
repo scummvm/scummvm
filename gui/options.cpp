@@ -853,12 +853,12 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	// TODO: joystick setting
 
 
-#ifdef TRANSLATION
+#ifdef USE_TRANSLATION
 	_guiLanguagePopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.GuiLanguagePopupDesc", _("GUI Language:"), _("Language of ScummVM GUI"));
 	_guiLanguagePopUp = new PopUpWidget(tab, "GlobalOptions_Misc.GuiLanguagePopup");
-#ifdef DETECTLANG
+#ifdef USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("<default>"), Common::kTranslationAutodetectId);
-#endif // DETECTLANG
+#endif // USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("English"), Common::kTranslationBuiltinId);
 	_guiLanguagePopUp->appendEntry("", 0);
 	Common::TLangArray languages = TransMan.getSupportedLanguages();
@@ -869,7 +869,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	}
 	_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language").c_str()));
 
-#endif // TRANSLATION
+#endif // USE_TRANSLATION
 
 	// Activate the first tab
 	tab->setActiveTab(0);
@@ -977,7 +977,7 @@ void GlobalOptionsDialog::close() {
 			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
 			ConfMan.set("gui_renderer", cfg, _domain);
 		}
-#ifdef TRANSLATION
+#ifdef USE_TRANSLATION
 		Common::String oldLang = ConfMan.get("gui_language");
 		int selLang = _guiLanguagePopUp->getSelectedTag();
 
@@ -997,7 +997,7 @@ void GlobalOptionsDialog::close() {
 			error.runModal();
 #endif
 		}
-#endif // TRANSLATION
+#endif // USE_TRANSLATION
 
 	}
 	OptionsDialog::close();

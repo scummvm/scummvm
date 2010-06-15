@@ -28,7 +28,7 @@
 #include "common/singleton.h"
 #include "common/str-array.h"
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 #include <iconv.h>
 #endif
 
@@ -63,13 +63,13 @@ class TranslationManager : public Singleton<TranslationManager> {
 private:
 	Common::String _syslang;
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 	iconv_t _conversion;
 	char *_convmsg;
 	int _sizeconv;
 
 	bool convert(const char *message);
-#endif // TERMCONV
+#endif // USE_TERMCONV
 
 public:
 	/**
@@ -147,7 +147,7 @@ public:
 
 #define TransMan Common::TranslationManager::instance()
 
-#ifdef TRANSLATION
+#ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
 #define _t(str) TransMan.convertTerm(_(str))
 #else

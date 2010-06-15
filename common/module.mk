@@ -29,7 +29,7 @@ MODULE_OBJS := \
 	xmlparser.o \
 	zlib.o
 
-ifdef ENABLE_TRANSLATION
+ifdef USE_TRANSLATION
 common/translation.cpp: common/messages.cpp
 
 common/messages.cpp: $(wildcard po/*.po)

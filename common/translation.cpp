@@ -26,28 +26,28 @@
 
 DECLARE_SINGLETON(Common::TranslationManager)
 
-#ifdef DETECTLANG
+#ifdef USE_DETECTLANG
 #include <locale.h>
 #endif
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 #include <langinfo.h>
 #endif
 
-#ifdef TRANSLATION
+#ifdef USE_TRANSLATION
 #include "messages.cpp"
 #endif
 
 namespace Common {
 
 
-#ifdef TRANSLATION
+#ifdef USE_TRANSLATION
 
 // Translation enabled
 
 
 TranslationManager::TranslationManager() {
-#ifdef DETECTLANG
+#ifdef USE_DETECTLANG
 	// Activating current locale settings
 	const char *locale = setlocale(LC_ALL, "");
 
@@ -74,25 +74,25 @@ TranslationManager::TranslationManager() {
 
 		_syslang = String(locale, length);
 	}
-#else // DETECTLANG
+#else // USE_DETECTLANG
 	_syslang = "C";
-#endif // DETECTLANG
+#endif // USE_DETECTLANG
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 	_convmsg = NULL;
 	_conversion = NULL;
-#endif // TERMCONV
+#endif // USE_TERMCONV
 
 	// Set the default language
 	setLanguage("");
 }
 
 TranslationManager::~TranslationManager() {
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 	iconv_close(_conversion);
 	if (_convmsg)
 		delete[] _convmsg;
-#endif // TERMCONV
+#endif // USE_TERMCONV
 }
 
 void TranslationManager::setLanguage(const char *lang) {
@@ -101,7 +101,7 @@ void TranslationManager::setLanguage(const char *lang) {
 	else
 		po2c_setlang(lang);
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 	// Get the locale character set (for terminal output)
 	const char *charset_term = nl_langinfo(CODESET);
 
@@ -114,7 +114,7 @@ void TranslationManager::setLanguage(const char *lang) {
 
 	// Initialize the conversion
 	_conversion = iconv_open(charset_term, charset_po);
-#endif // TERMCONV
+#endif // USE_TERMCONV
 }
 
 const char *TranslationManager::getTranslation(const char *message) {
@@ -125,7 +125,7 @@ String TranslationManager::getTranslation(const String &message) {
 	return po2c_gettext(message.c_str());
 }
 
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
 	size_t len = strlen(message);
@@ -154,10 +154,10 @@ bool TranslationManager::convert(const char *message) {
 
 	return result != ((size_t)-1);
 }
-#endif // TERMCONV
+#endif // USE_TERMCONV
 
 const char *TranslationManager::convertTerm(const char *message) {
-#ifdef TERMCONV
+#ifdef USE_TERMCONV
 	size_t len = strlen(message);
 	if (!_convmsg) {
 		_sizeconv = len * 2;
@@ -177,9 +177,9 @@ const char *TranslationManager::convertTerm(const char *message) {
 	}
 
 	return _convmsg;
-#else // TERMCONV
+#else // USE_TERMCONV
 	return message;
-#endif // TERMCONV
+#endif // USE_TERMCONV
 }
 
 const TLangArray TranslationManager::getSupportedLanguages() const {
@@ -225,7 +225,7 @@ const char *TranslationManager::getLangById(int id) {
 	return "";
 }
 
-#else // TRANSLATION
+#else // USE_TRANSLATION
 
 // Translation disabled
 
@@ -244,6 +244,6 @@ const char *TranslationManager::convertTerm(const char *message) {
 	return message;
 }
 
-#endif // TRANSLATION
+#endif // USE_TRANSLATION
 
 }	// End of namespace Common
