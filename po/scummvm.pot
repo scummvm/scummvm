@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-12 18:43+0300\n"
+"POT-Creation-Date: 2010-06-12 19:52+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -869,11 +869,11 @@ msgstr ""
 msgid "~C~lose"
 msgstr ""
 
-#: gui/options.cpp:677
+#: gui/options.cpp:677 gui/options.cpp:683
 msgid "Speech"
 msgstr ""
 
-#: gui/options.cpp:678
+#: gui/options.cpp:678 gui/options.cpp:684
 msgid "Subtitles"
 msgstr ""
 
@@ -903,4 +903,125 @@ msgstr ""
 
 #: gui/launcher.cpp:529 gui/options.cpp:647
 msgid "Clear value"
+msgstr ""
+
+#: gui/launcher.cpp:173 gui/launcher.cpp:174
+msgid ""
+"Short game identifier used for referring to savegames and running the game "
+"from the command line"
+msgstr ""
+
+#: gui/launcher.cpp:177 gui/launcher.cpp:178
+msgid "Full title of the game"
+msgstr ""
+
+#: gui/launcher.cpp:181 gui/launcher.cpp:182
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr ""
+
+#: gui/launcher.cpp:191 gui/launcher.cpp:192
+msgid "Platform the game was originally designed for"
+msgstr ""
+
+#: gui/launcher.cpp:253 gui/launcher.cpp:254
+msgid "Specifies path to additional data used the game"
+msgstr ""
+
+#: gui/launcher.cpp:257 gui/launcher.cpp:258 gui/options.cpp:795
+#: gui/options.cpp:796
+msgid "Specifies where your savegames are put"
+msgstr ""
+
+#: gui/launcher.cpp:500
+msgid "Quit ScummVM"
+msgstr ""
+
+#: gui/launcher.cpp:501
+msgid "About ScummVM"
+msgstr ""
+
+#: gui/launcher.cpp:502
+msgid "Change global ScummVM options"
+msgstr ""
+
+#: gui/launcher.cpp:504
+msgid "Start selected game"
+msgstr ""
+
+#: gui/launcher.cpp:507
+msgid "Load savegame for selected game"
+msgstr ""
+
+#: gui/launcher.cpp:513
+msgid "Change game options"
+msgstr ""
+
+#: gui/launcher.cpp:515
+msgid "Remove game from the list. The game data files stay intact"
+msgstr ""
+
+#: gui/options.cpp:591 gui/options.cpp:592
+msgid "Special dithering modes supported by some games"
+msgstr ""
+
+#: gui/options.cpp:604
+msgid "Correct aspect ratio for 320x200 games"
+msgstr ""
+
+#: gui/options.cpp:611 gui/options.cpp:612
+msgid "Specifies output sound device or sound emulator"
+msgstr ""
+
+#: gui/options.cpp:622 gui/options.cpp:623
+msgid "AdLib is used for music in many games"
+msgstr ""
+
+#: gui/options.cpp:633 gui/options.cpp:634
+msgid ""
+"Higher value specifies better sound quality but may be not supported by your "
+"soundcard"
+msgstr ""
+
+#: gui/options.cpp:645 gui/options.cpp:646
+msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
+msgstr ""
+
+#: gui/options.cpp:650
+msgid "Use both MIDI and AdLib sound generation"
+msgstr ""
+
+#: gui/options.cpp:653
+msgid ""
+"Check if you want to use your real hardware Roland-compatible sound device "
+"connected to your computer"
+msgstr ""
+
+#: gui/options.cpp:656
+msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
+msgstr ""
+
+#: gui/options.cpp:685
+msgid "Show subtitles and play speech"
+msgstr ""
+
+#: gui/options.cpp:711 gui/options.cpp:712
+msgid "Special sound effects volume"
+msgstr ""
+
+#: gui/options.cpp:801 gui/options.cpp:802
+msgid "Specifies path to additional data used by all games or ScummVM"
+msgstr ""
+
+#: gui/options.cpp:837
+msgid "GUI Language:"
+msgstr ""
+
+#: gui/options.cpp:837
+msgid "Language of ScummVM GUI"
+msgstr ""
+
+#: gui/options.cpp:612 gui/options.cpp:611
+msgid "Specifies output sound device or sound card emulator"
 msgstr ""

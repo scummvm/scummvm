@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-12 18:43+0300\n"
+"POT-Creation-Date: 2010-06-12 19:52+0300\n"
 "PO-Revision-Date: 2010-06-08 08:52-0100\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Russian\n"
@@ -874,11 +874,11 @@ msgstr "~С~лед"
 msgid "~C~lose"
 msgstr "~З~акрыть"
 
-#: gui/options.cpp:677
+#: gui/options.cpp:677 gui/options.cpp:683
 msgid "Speech"
 msgstr "Озвучка"
 
-#: gui/options.cpp:678
+#: gui/options.cpp:678 gui/options.cpp:684
 msgid "Subtitles"
 msgstr "Субтитры"
 
@@ -909,3 +909,137 @@ msgstr "Поиск в списке игр"
 #: gui/launcher.cpp:529 gui/options.cpp:647
 msgid "Clear value"
 msgstr "Очистить значение"
+
+#: gui/launcher.cpp:173 gui/launcher.cpp:174
+msgid ""
+"Short game identifier used for referring to savegames and running the game "
+"from the command line"
+msgstr ""
+"Короткий идентификатор, испульзуемый для игры в сохранения и для запуска из "
+"командной строки"
+
+#: gui/launcher.cpp:177 gui/launcher.cpp:178
+msgid "Full title of the game"
+msgstr "Полное название игры"
+
+#: gui/launcher.cpp:181 gui/launcher.cpp:182
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr ""
+"Язык игры. Изменение этого параметра не превратит игру на английском в "
+"русскую"
+
+#: gui/launcher.cpp:191 gui/launcher.cpp:192
+msgid "Platform the game was originally designed for"
+msgstr "Платформа, для которой игра была изначально разработана"
+
+#: gui/launcher.cpp:253 gui/launcher.cpp:254
+msgid "Specifies path to additional data used the game"
+msgstr "Указывает путь к дополнительным файлам данных для игры"
+
+#: gui/launcher.cpp:257 gui/launcher.cpp:258 gui/options.cpp:795
+#: gui/options.cpp:796
+msgid "Specifies where your savegames are put"
+msgstr "Указывает путь к сохранениям игры"
+
+#: gui/launcher.cpp:500
+msgid "Quit ScummVM"
+msgstr "Выход из ScummVM"
+
+#: gui/launcher.cpp:501
+msgid "About ScummVM"
+msgstr "О программе ScummVM"
+
+#: gui/launcher.cpp:502
+msgid "Change global ScummVM options"
+msgstr "Изменить глобальные опции ScummVM"
+
+#: gui/launcher.cpp:504
+msgid "Start selected game"
+msgstr "Запустить выбранную игру"
+
+#: gui/launcher.cpp:507
+msgid "Load savegame for selected game"
+msgstr "Загрузить сохрнение для выбранной игры"
+
+#: gui/launcher.cpp:513
+msgid "Change game options"
+msgstr "Изменить опции игры"
+
+#: gui/launcher.cpp:515
+msgid "Remove game from the list. The game data files stay intact"
+msgstr "Удалить игру из списка. Не удаляет игру с жесткого диска"
+
+#: gui/options.cpp:591 gui/options.cpp:592
+msgid "Special dithering modes supported by some games"
+msgstr "Специальные режимы рендеринга, поддерживаемые некоторыми играми"
+
+#: gui/options.cpp:604
+msgid "Correct aspect ratio for 320x200 games"
+msgstr "Корректировать соотношение сторон для игр с разрешением 320x200"
+
+#: gui/options.cpp:611 gui/options.cpp:612
+msgid "Specifies output sound device or sound emulator"
+msgstr "Указывает выходное устройство для звука или эмулятор звуковой карты"
+
+#: gui/options.cpp:622 gui/options.cpp:623
+msgid "AdLib is used for music in many games"
+msgstr "Звуковая карта AdLib используется многими играми"
+
+#: gui/options.cpp:633 gui/options.cpp:634
+msgid ""
+"Higher value specifies better sound quality but may be not supported by your "
+"soundcard"
+msgstr ""
+"Большие значения задают лучшее качество звука, однако они могут не "
+"поддерживаться вашей звуковой картой"
+
+#: gui/options.cpp:645 gui/options.cpp:646
+msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
+msgstr ""
+"SoundFontы поддердживаются некоторыми звуковыми картами, Fluidsynth и "
+"Timidity"
+
+#: gui/options.cpp:650
+msgid "Use both MIDI and AdLib sound generation"
+msgstr "Использовать и MIDI и AdLib для генерации звука"
+
+#: gui/options.cpp:653
+msgid ""
+"Check if you want to use your real hardware Roland-compatible sound device "
+"connected to your computer"
+msgstr ""
+"Отметьте у вас подключено Roland-совместимое звуковое устройство и вы хотите "
+"его использовать"
+
+#: gui/options.cpp:656
+msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
+msgstr ""
+"Выключает маппинг General MIDI для игр с звуковой дорожкой для Roland MT-32"
+
+#: gui/options.cpp:685
+msgid "Show subtitles and play speech"
+msgstr "Показывать субтитры и проигрывать речь"
+
+#: gui/options.cpp:711 gui/options.cpp:712
+msgid "Special sound effects volume"
+msgstr "Громкость специальных звуковых эффектов"
+
+#: gui/options.cpp:801 gui/options.cpp:802
+msgid "Specifies path to additional data used by all games or ScummVM"
+msgstr ""
+"Указывает путь к дополнительным файлам данных, используемых всеми играми, "
+"либо ScummVM"
+
+#: gui/options.cpp:837
+msgid "GUI Language:"
+msgstr "Язык интерфейса:"
+
+#: gui/options.cpp:837
+msgid "Language of ScummVM GUI"
+msgstr "Язык графического интерфейса ScummVM"
+
+#: gui/options.cpp:612 gui/options.cpp:611
+msgid "Specifies output sound device or sound card emulator"
+msgstr "Указывает выходное звуковое устройство или эмулятор звуковой карты"
