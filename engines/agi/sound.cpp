@@ -411,6 +411,8 @@ void SoundMgr::stopSound() {
 
 	debugC(3, kDebugLevelSound, "stopSound() --> %d", _playingSound);
 
+	_vm->setflag(_endflag, true);
+
 	_endflag = -1;
 	if (_vm->_soundemu != SOUND_EMU_APPLE2GS) {
 		for (i = 0; i < NUM_CHANNELS; i++)
