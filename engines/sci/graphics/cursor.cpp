@@ -259,6 +259,13 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 }
 
 void GfxCursor::setPosition(Common::Point pos) {
+	// Don't set position, when cursor is not visible
+	//  This fixes eco quest 1 (floppy) right at the start, which is setting mouse cursor to 0, 0 all the time during the
+	//  intro. It's escapeable (now) by moving to the left or top, but it's getting on your nerves.
+	//  This could theoretically break some things, although sierra normally sets position only when showing the cursor.
+	if (!_isVisible)
+		return;
+
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
