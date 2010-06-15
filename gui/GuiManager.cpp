@@ -73,7 +73,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 		// Loading the theme failed, try to load the built-in theme
 		if (!loadNewTheme("builtin", gfxMode)) {
 			// Loading the built-in theme failed as well. Bail out
-			error(_t("Failed to load any GUI theme, aborting"));
+			error("%s", _t("Failed to load any GUI theme, aborting"));
 		}
 	}
 

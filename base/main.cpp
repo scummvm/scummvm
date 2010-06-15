@@ -103,11 +103,11 @@ static const EnginePlugin *detectPlugin() {
 
 	// Query the plugins and find one that will handle the specified gameid
 	printf(_t("User picked target '%s' (gameid '%s')...\n"), ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf(_t("  Looking for a plugin supporting this gameid... "));
+	printf("%s", _t("  Looking for a plugin supporting this gameid... "));
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
-		printf(_t("failed\n"));
+		printf("%s", _t("failed\n"));
 		warning(_t("%s is an invalid gameid. Use the --list-games option to list supported gameid"), gameid.c_str());
 		return 0;
 	} else {
@@ -416,7 +416,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		} else {
 			// A dialog would be nicer, but we don't have any
 			// screen to draw on yet.
-			warning(_("Could not find any engine capable of running the selected game"));
+			warning("%s", _("Could not find any engine capable of running the selected game"));
 			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
 
