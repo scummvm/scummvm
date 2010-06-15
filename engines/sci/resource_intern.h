@@ -50,10 +50,55 @@ public:
 
 public:
 	ResourceSource(ResSourceType type, const Common::String &name);
-	~ResourceSource();
+	virtual ~ResourceSource();
 
 	ResSourceType getSourceType() const { return _sourceType; }
 	const Common::String &getLocationName() const { return _name; }
+};
+
+class DirectoryResourceSource : public ResourceSource {
+public:
+	DirectoryResourceSource(const Common::String &name) : ResourceSource(kSourceDirectory, name) {}
+};
+
+class PatchResourceSource : public ResourceSource {
+public:
+	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
+};
+
+class VolumeResourceSource : public ResourceSource {
+public:
+	VolumeResourceSource(const Common::String &name) : ResourceSource(kSourceVolume, name) {}
+};
+
+class ExtMapResourceSource : public ResourceSource {
+public:
+	ExtMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtMap, name) {}
+};
+
+class IntMapResourceSource : public ResourceSource {
+public:
+	IntMapResourceSource(const Common::String &name) : ResourceSource(kSourceIntMap, name) {}
+};
+
+class AudioVolumeResourceSource : public ResourceSource {
+public:
+	AudioVolumeResourceSource(const Common::String &name) : ResourceSource(kSourceAudioVolume, name) {}
+};
+
+class ExtAudioMapResourceSource : public ResourceSource {
+public:
+	ExtAudioMapResourceSource(const Common::String &name) : ResourceSource(kSourceExtAudioMap, name) {}
+};
+
+class WaveResourceSource : public ResourceSource {
+public:
+	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
+};
+
+class MacResourceForkResourceSource : public ResourceSource {
+public:
+	MacResourceForkResourceSource(const Common::String &name) : ResourceSource(kSourceMacResourceFork, name) {}
 };
 
 } // End of namespace Sci

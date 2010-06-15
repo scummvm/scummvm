@@ -192,7 +192,7 @@ ResourceSource::~ResourceSource() {
 // Resource source list management
 
 ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, filename);
+	ResourceSource *newsrc = new ExtMapResourceSource(filename);
 
 	newsrc->volume_number = volume_nr;
 
@@ -201,7 +201,7 @@ ResourceSource *ResourceManager::addExternalMap(const Common::String &filename, 
 }
 
 ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile, int volume_nr) {
-	ResourceSource *newsrc = new ResourceSource(kSourceExtMap, mapFile->getName());
+	ResourceSource *newsrc = new ExtMapResourceSource(mapFile->getName());
 
 	newsrc->resourceFile = mapFile;
 	newsrc->volume_number = volume_nr;
@@ -236,7 +236,7 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 }
 
 ResourceSource *ResourceManager::addPatchDir(const Common::String &dirname) {
-	ResourceSource *newsrc = new ResourceSource(kSourceDirectory, dirname);
+	ResourceSource *newsrc = new DirectoryResourceSource(dirname);
 
 	_sources.push_back(newsrc);
 	return 0;
@@ -1224,7 +1224,7 @@ void ResourceManager::readResourcePatchesBase36(ResourceSource *source) {
 					delete stream;
 				}
 
-				psrcPatch = new ResourceSource(kSourcePatch, name);
+				psrcPatch = new PatchResourceSource(name);
 				processPatch(psrcPatch, (ResourceType)i, resourceNr, resource36.tuple);
 			}
 		}
@@ -1272,7 +1272,7 @@ void ResourceManager::readResourcePatches(ResourceSource *source) {
 			}
 
 			if (bAdd) {
-				psrcPatch = new ResourceSource(kSourcePatch, name);
+				psrcPatch = new PatchResourceSource(name);
 				processPatch(psrcPatch, (ResourceType)i, resourceNr);
 			}
 		}

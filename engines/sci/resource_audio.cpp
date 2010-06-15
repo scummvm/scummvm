@@ -155,13 +155,13 @@ void ResourceManager::addNewGMPatch(const Common::String &gameId) {
 		gmPatchFile = "TALEGM.PAT";
 
 	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
-		ResourceSource *psrcPatch = new ResourceSource(kSourcePatch, gmPatchFile);
+		ResourceSource *psrcPatch = new PatchResourceSource(gmPatchFile);
 		processPatch(psrcPatch, kResourceTypePatch, 4);
 	}
 }
 
 void ResourceManager::processWavePatch(ResourceId resourceId, Common::String name) {
-	ResourceSource *resSrc = new ResourceSource(kSourceWave, name);
+	ResourceSource *resSrc = new WaveResourceSource(name);
 
 	Resource *newRes = 0;
 
