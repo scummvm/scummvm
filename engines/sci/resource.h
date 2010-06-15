@@ -34,10 +34,7 @@
 #include "sci/sci.h"
 
 namespace Common {
-class ReadStream;
-class WriteStream;
 class File;
-class FSNode;
 }
 
 namespace Sci {
@@ -192,6 +189,10 @@ public:
 	byte *_header;
 	uint32 _headerSize;
 
+	/**
+	 * Write the resource to the specified stream.
+	 * This method is used only by the "dump" debugger command.
+	 */
 	void writeToStream(Common::WriteStream *stream) const;
 	uint32 getAudioCompressionType();
 
