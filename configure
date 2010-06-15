@@ -1492,6 +1492,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
+			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
