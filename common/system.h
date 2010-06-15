@@ -383,7 +383,7 @@ public:
 	 * @note Backends supporting RGB color should accept game data in RGB color
 	 *       order, even if hardware uses BGR or some other color order.
 	 */
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();

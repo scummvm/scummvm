@@ -243,7 +243,7 @@ const Graphics::PixelFormat BGRList[] = {
 };
 
 // TODO: prioritize matching alpha masks
-Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
+Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() const {
 	static Common::List<Graphics::PixelFormat> list;
 	static bool inited = false;
 

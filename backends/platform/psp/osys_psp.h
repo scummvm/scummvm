@@ -87,7 +87,7 @@ public:
 	int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
 	// Screen size

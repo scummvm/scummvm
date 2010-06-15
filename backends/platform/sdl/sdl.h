@@ -98,7 +98,7 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
 	// Highest supported
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
 	// Set the size and format of the video bitmap.

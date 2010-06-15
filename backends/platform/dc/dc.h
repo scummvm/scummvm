@@ -86,7 +86,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   Graphics::PixelFormat getScreenFormat() const;
 
   // Returns a list of all pixel formats supported by the backend.
-  Common::List<Graphics::PixelFormat> getSupportedFormats();
+  Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 
   // Set the size of the video bitmap.
   // Typically, 320x200

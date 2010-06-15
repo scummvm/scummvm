@@ -379,7 +379,7 @@ inline bool DisplayManager::isTimeToUpdate() {
 	return true;
 }
 
-Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() {
+Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 
 	// In order of preference

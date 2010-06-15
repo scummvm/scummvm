@@ -209,7 +209,7 @@ Graphics::PixelFormat OSystem_Wii::getScreenFormat() const {
 	return _pfGame;
 }
 
-Common::List<Graphics::PixelFormat> OSystem_Wii::getSupportedFormats() {
+Common::List<Graphics::PixelFormat> OSystem_Wii::getSupportedFormats() const {
 	Common::List<Graphics::PixelFormat> res;
 	res.push_back(_pfRGB565);
 	res.push_back(Graphics::PixelFormat::createFormatCLUT8());

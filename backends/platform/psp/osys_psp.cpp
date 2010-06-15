@@ -148,7 +148,7 @@ Graphics::PixelFormat OSystem_PSP::getScreenFormat() const {
 	return _screen.getScummvmPixelFormat();
 }
 
-Common::List<Graphics::PixelFormat> OSystem_PSP::getSupportedFormats() {
+Common::List<Graphics::PixelFormat> OSystem_PSP::getSupportedFormats() const {
 	return _displayManager.getSupportedPixelFormats();
 }
 

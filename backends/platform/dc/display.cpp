@@ -198,7 +198,7 @@ Graphics::PixelFormat OSystem_Dreamcast::getScreenFormat() const
   return screenFormats[_screenFormat];
 }
 
-Common::List<Graphics::PixelFormat> OSystem_Dreamcast::getSupportedFormats()
+Common::List<Graphics::PixelFormat> OSystem_Dreamcast::getSupportedFormats() const
 {
   Common::List<Graphics::PixelFormat> list;
   unsigned i;

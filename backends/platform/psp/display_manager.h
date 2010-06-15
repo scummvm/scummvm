@@ -83,12 +83,12 @@ public:
 	void setSizeAndPixelFormat(uint width, uint height, const Graphics::PixelFormat *format);
 
 	// Getters
-	float getScaleX() { return _displayParams.scaleX; }
-	float getScaleY() { return _displayParams.scaleY; }
-	uint32 getOutputWidth() { return _displayParams.screenOutput.width; }
-	uint32 getOutputHeight() { return _displayParams.screenOutput.height; }
-	uint32 getOutputBitsPerPixel() { return _displayParams.outputBitsPerPixel; }
-	Common::List<Graphics::PixelFormat> getSupportedPixelFormats();
+	float getScaleX() const { return _displayParams.scaleX; }
+	float getScaleY() const { return _displayParams.scaleY; }
+	uint32 getOutputWidth() const { return _displayParams.screenOutput.width; }
+	uint32 getOutputHeight() const { return _displayParams.screenOutput.height; }
+	uint32 getOutputBitsPerPixel() const { return _displayParams.outputBitsPerPixel; }
+	Common::List<Graphics::PixelFormat> getSupportedPixelFormats() const;
 
 private:
 	struct GlobalDisplayParams {
