@@ -1153,18 +1153,6 @@ void Script::sfPlacardOff(SCRIPTFUNC_PARAMS) {
 	_vm->_scene->clearPlacard();
 }
 
-void Script::sfPsychicProfile(SCRIPTFUNC_PARAMS) {
-	thread->wait(kWaitTypePlacard);
-
-	_vm->_scene->showPsychicProfile(thread->_strings->getString(thread->pop()));
-}
-
-void Script::sfPsychicProfileOff(SCRIPTFUNC_PARAMS) {
-	// This is called a while after the psychic profile is
-	// opened, to close it automatically
-	_vm->_scene->clearPsychicProfile();
-}
-
 // Script function #50 (0x32)
 void Script::sfSetProtagState(SCRIPTFUNC_PARAMS) {
 	_vm->_actor->setProtagState(thread->pop());

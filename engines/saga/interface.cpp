@@ -544,8 +544,10 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			return true;
 		}
 
+#ifdef ENABLE_IHNM
 		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
 			_vm->_scene->showIHNMDemoSpecialScreen();
+#endif
 		break;
 	case kPanelCutaway:
 		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
@@ -555,8 +557,10 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			return true;
 		}
 
+#ifdef ENABLE_INHM
 		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
 			_vm->_scene->showIHNMDemoSpecialScreen();
+#endif
 		break;
 	case kPanelVideo:
 		if (keystate.keycode == Common::KEYCODE_ESCAPE) {
@@ -570,8 +574,10 @@ bool Interface::processAscii(Common::KeyState keystate) {
 			return true;
 		}
 
+#ifdef ENABLE_IHNM
 		if (_vm->_scene->isNonInteractiveIHNMDemoPart())
 			_vm->_scene->showIHNMDemoSpecialScreen();
+#endif
 		break;
 	case kPanelOption:
 		// TODO: check input dialog keys
@@ -1866,8 +1872,10 @@ void Interface::update(const Point& mousePoint, int updateFlag) {
 		break;
 
 	case kPanelNull:
+#ifdef ENABLE_IHNM
 		if (_vm->_scene->isNonInteractiveIHNMDemoPart() && (updateFlag & UPDATE_MOUSECLICK))
 			_vm->_scene->showIHNMDemoSpecialScreen();
+#endif
 		break;
 	}
 

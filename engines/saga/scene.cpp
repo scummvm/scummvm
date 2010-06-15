@@ -1425,6 +1425,8 @@ void Scene::clearPlacard() {
 	q_event = _vm->_events->chain(q_event, &event);
 }
 
+#ifdef ENABLE_IHNM
+
 void Scene::showPsychicProfile(const char *text) {
 	int textHeight;
 	static PalEntry cur_pal[PAL_ENTRIES];
@@ -1530,5 +1532,7 @@ void Scene::showIHNMDemoSpecialScreen() {
 	_vm->_interface->clearInventory();
 	_vm->_scene->changeScene(150, 0, kTransitionFade);
 }
+
+#endif // IHNM
 
 } // End of namespace Saga
