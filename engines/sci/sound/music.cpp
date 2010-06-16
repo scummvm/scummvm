@@ -224,8 +224,6 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
 			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
-			// Fast forward to the last position and perform associated events when loading
-			pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
 			_mutex.unlock();
 		}
 	}
@@ -316,6 +314,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			pSnd->pMidiParser->setVolume(pSnd->volume);
 			if (pSnd->status == kSoundStopped)
 				pSnd->pMidiParser->jumpToTick(0);
+			else
+				// Fast forward to the last position and perform associated events when loading
+				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
 		}
 		_mutex.unlock();
 	}
