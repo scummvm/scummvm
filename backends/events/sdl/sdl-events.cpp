@@ -52,6 +52,7 @@ SdlEventManager::SdlEventManager(Common::EventSource *boss)
 	:
 	_scrollLock(false),
 	_joystick(0),
+	_lastScreenID(0),
 	DefaultEventManager(boss) {
 
 	// reset mouse state
@@ -104,12 +105,7 @@ void SdlEventManager::fillMouseEvent(Common::Event &event, int x, int y) {
 	_km.y = y;
 
 	// Adjust for the screen scaling
-	/*if (!_overlayVisible) { // FIXME
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-	}*/
+	((OSystem_SDL *)g_system)->getGraphicsManager()->adjustMouseEvent(event);
 }
 
 void SdlEventManager::handleKbdMouse() {
@@ -211,12 +207,13 @@ bool SdlEventManager::pollSdlEvent(Common::Event &event) {
 
 	handleKbdMouse();
 
-	// If the screen mode changed, send an Common::EVENT_SCREEN_CHANGED
-	/*if (_graphicsManager->_modeChanged) { // TODO: use getScreenChangeID
-		_graphicsManager->_modeChanged = false;
+	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
+	int screenID = ((OSystem_SDL *)g_system)->getGraphicsManager()->getScreenChangeID();
+	if (screenID != _lastScreenID) {
+		_lastScreenID = screenID;
 		event.type = Common::EVENT_SCREEN_CHANGED;
 		return true;
-	}*/
+	}
 
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
@@ -271,24 +268,13 @@ bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		event.kbd.flags |= Common::KBD_SCRL;
 
 	// Alt-Return and Alt-Enter toggle full screen mode
-	// TODO: make a function in graphics manager for this
-	/*if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-		beginGFXTransaction();
-			setFullscreenMode(!_videoMode.fullscreen);
-		endGFXTransaction();
-#ifdef USE_OSD
-		if (_videoMode.fullscreen)
-			displayMessageOnOSD("Fullscreen mode");
-		else
-			displayMessageOnOSD("Windowed mode");
-#endif
-
+	if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
+		((OSystem_SDL *) g_system)->getGraphicsManager()->toggleFullScreen();
 		return false;
-	}*/
+	}
 
 	// Alt-S: Create a screenshot
-	// TODO: make a function in graphics manager for this
-	/*if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
+	if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
 		char filename[20];
 
 		for (int n = 0;; n++) {
@@ -300,12 +286,12 @@ bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 				break;
 			SDL_RWclose(file);
 		}
-		if (saveScreenshot(filename))
+		if (((OSystem_SDL *) g_system)->getGraphicsManager()->saveScreenshot(filename))
 			printf("Saved '%s'\n", filename);
 		else
 			printf("Could not save screenshot!\n");
 		return false;
-	}*/
+	}
 
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
@@ -606,6 +592,13 @@ void SdlEventManager::toggleMouseGrab() {
 		SDL_WM_GrabInput(SDL_GRAB_ON);
 	else
 		SDL_WM_GrabInput(SDL_GRAB_OFF);
+}
+
+void SdlEventManager::resetKeyboadEmulation(int16 x_max, int16 y_max) {
+	_km.x_max = x_max;
+	_km.y_max = y_max;
+	_km.delay_time = 25;
+	_km.last_time = 0;
 }
 
 #endif

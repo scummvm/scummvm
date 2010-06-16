@@ -26,6 +26,7 @@
 #if defined(WIN32) || defined(UNIX) || defined(MACOSX)
 
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "common/system.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/util.h"
@@ -37,7 +38,7 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
-#include "backends/events/default/default-events.h"
+#include "backends/events/sdl/sdl-events.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Normal (no scaling)", GFX_NORMAL},
@@ -790,11 +791,9 @@ bool SdlGraphicsManager::loadGFXMode() {
 	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
 #endif
 
-	// keyboard cursor control, some other better place for it? - FIXME
-	/*_km.x_max = _videoMode.screenWidth * _videoMode.scaleFactor - 1;
-	_km.y_max = effectiveScreenHeight() - 1;
-	_km.delay_time = 25;
-	_km.last_time = 0;*/
+	((SdlEventManager *)g_system->getEventManager())->resetKeyboadEmulation(
+		_videoMode.screenWidth * _videoMode.scaleFactor - 1,
+		effectiveScreenHeight() - 1);
 
 	// Distinguish 555 and 565 mode
 	if (_hwscreen->format->Rmask == 0x7C00)
@@ -1964,11 +1963,6 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 }
 #endif
 
-
-#pragma mark -
-#pragma mark --- Misc ---
-#pragma mark -
-
 bool SdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	// Ctrl-Alt-a toggles aspect ratio correction
 	if (key.keysym.sym == 'a') {
@@ -2072,6 +2066,27 @@ bool SdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 
 void SdlGraphicsManager::forceFullRedraw() {
 	_forceFull = true;
+}
+
+void SdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
+	if (!_overlayVisible) {
+		event.mouse.x /= _videoMode.scaleFactor;
+		event.mouse.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			event.mouse.y = aspect2Real(event.mouse.y);
+	}
+}
+
+void SdlGraphicsManager::toggleFullScreen() {
+	beginGFXTransaction();
+		setFullscreenMode(!_videoMode.fullscreen);
+	endGFXTransaction();
+#ifdef USE_OSD
+	if (_videoMode.fullscreen)
+		displayMessageOnOSD("Fullscreen mode");
+	else
+		displayMessageOnOSD("Windowed mode");
+#endif
 }
 
 #endif

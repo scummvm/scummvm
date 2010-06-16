@@ -128,10 +128,13 @@ public:
 
 	void forceFullRedraw();
 
-	bool handleScalerHotkeys(const SDL_KeyboardEvent &key); // Move this?
-	bool isScalerHotkey(const Common::Event &event); // Move this?
+	bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
+	bool isScalerHotkey(const Common::Event &event);
 
+	void adjustMouseEvent(Common::Event &event);
 	void setMousePos(int x, int y);
+	void toggleFullScreen();
+	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 protected:
 #ifdef USE_OSD
@@ -203,7 +206,7 @@ protected:
 
 	virtual void setGraphicsModeIntern(); // overloaded by CE backend
 
-	/** Force full redraw on next updateScreen */
+	// Force full redraw on next updateScreen
 	bool _forceFull;
 
 	ScalerProc *_scalerProc;
@@ -298,8 +301,6 @@ protected:
 
 	void setFullscreenMode(bool enable);
 	void setAspectRatioCorrection(bool enable);
-
-	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 	int effectiveScreenHeight() const;
 };
