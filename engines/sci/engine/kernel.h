@@ -438,6 +438,7 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv);
 reg_t kSave(EngineState *s, int argc, reg_t *argv);
 reg_t kList(EngineState *s, int argc, reg_t *argv);
 reg_t kRobot(EngineState *s, int argc, reg_t *argv);
+reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
 
 #endif

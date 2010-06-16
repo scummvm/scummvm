@@ -118,11 +118,12 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
-	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
-	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "wav");	// speech files in WAV format
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");	// music/sound files in WAV format
-	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
+	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
+	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// vmd movie files
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// is for the demo of Phantasmagoria, included in the disk
