@@ -43,9 +43,10 @@ enum SciMidiCommands {
 
 //  MidiParser_SCI
 //
-MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
+MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	MidiParser() {
 	_soundVersion = soundVersion;
+	_music = music;
 	_mixedData = NULL;
 	// mididata contains delta in 1/60th second
 	// values of ppqn and tempo are found experimentally and may be wrong
@@ -59,10 +60,6 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion) :
 	_dataincAdd = false;
 	_dataincToAdd = 0;
 	_resetOnPause = false;
-	_channelsUsed = 0;
-
-	for (int i = 0; i < 16; i++)
-		_channelRemap[i] = i;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
@@ -77,6 +74,13 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 
 	if (_pSnd)
 		setVolume(psnd->volume);
+
+	for (int i = 0; i < 15; i++) {
+		_channelUsed[i] = false;
+		_channelRemap[i] = -1;
+	}
+	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
+	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
 
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
@@ -128,21 +132,24 @@ void MidiParser_SCI::unloadMusic() {
 	// Center the pitch wheels and hold pedal in preparation for the next piece of music
 	if (_driver && _pSnd) {
 		for (int i = 0; i < 16; ++i) {
-			if (isChannelUsed(i)) {
-				_driver->send(0xE0 | i, 0, 0x40);	// Reset pitch wheel
-				_driver->send(0xB0 | i, 0x40, 0);	// Reset hold pedal
+			int16 realChannel = _channelRemap[i];
+			if (realChannel != -1) {
+				_driver->send(0xE0 | realChannel, 0, 0x40);	// Reset pitch wheel
+				_driver->send(0xB0 | realChannel, 0x40, 0);	// Reset hold pedal
 			}
 		}
 	}
+}
 
-	for (int i = 0; i < 16; i++)
-		_channelRemap[i] = i;
+void MidiParser_SCI::sendToDriver(uint32 b) {
+	// Channel remapping
+	int16 realChannel = _channelRemap[b & 0xf];
+	assert(realChannel != -1);
+	b = (b & 0xFFFFFFF0) | realChannel;
+	_driver->send(b);
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
-	// Monitor which channels are used by this song
-	setChannelUsed(info.channel());
-
 	// Set signal AFTER waiting for delta, otherwise we would set signal too soon resulting in all sorts of bugs
 	if (_dataincAdd) {
 		_dataincAdd = false;
@@ -334,8 +341,9 @@ void MidiParser_SCI::allNotesOff() {
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
-			if ((_active_notes[i] & (1 << j)) && isChannelUsed(j)){
-				_driver->send(0x80 | j, i, 0);
+			int16 realChannel = _channelRemap[j];
+			if ((_active_notes[i] & (1 << j)) && realChannel != -1){
+				_driver->send(0x80 | realChannel, i, 0);
 			}
 		}
 	}
@@ -353,8 +361,9 @@ void MidiParser_SCI::allNotesOff() {
 	// support this...).
 
 	for (i = 0; i < 16; ++i) {
-		if (isChannelUsed(i))
-			_driver->send(0xB0 | i, 0x7b, 0); // All notes off
+		int16 realChannel = _channelRemap[i];
+		if (realChannel != -1)
+			_driver->send(0xB0 | realChannel, 0x7b, 0); // All notes off
 	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));
@@ -436,19 +445,23 @@ byte *MidiParser_SCI::midiMixChannels() {
 		default: // MIDI command
 			if (command & 0x80) {
 				par1 = *channel->data++;
-
-				// TODO: Fix remapping
-
-#if 0
-				// Remap channel. Keep the upper 4 bits (command code) and change
-				// the lower 4 bits (channel)
-				byte remappedChannel = _channelRemap[par1 & 0xF];
-				par1 = (par1 & 0xF0) | (remappedChannel & 0xF);
-#endif
 			} else {// running status
 				par1 = command;
 				command = channel->prev;
 			}
+
+			// remember which channel got used for channel remapping
+			byte midiChannel = command & 0xF;
+			_channelUsed[midiChannel] = true;
+//			int16 realChannel = _channelRemap[midiChannel];
+//			if (realChannel == -1) {
+//				// We don't own this channel yet, so ask SciMusic to get it (or a remapped one)
+//				realChannel = _music->tryToOwnChannel(_pSnd, midiChannel);
+//				_channelRemap[midiChannel] = realChannel;
+//			}
+//			// Map new channel
+//			command = realChannel | (command & 0xF0);
+
 			if (command != global_prev)
 				*outData++ = command; // out command
 			*outData++ = par1;// pout par1
@@ -575,6 +588,17 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 	*outData++ = 0x00;
 
 	return _mixedData;
+}
+
+// This will get called right before actual playing and will try to own the used channels
+void MidiParser_SCI::tryToOwnChannels() {
+	for (int curChannel = 0; curChannel < 15; curChannel++) {
+		if (_channelUsed[curChannel]) {
+			if (_channelRemap[curChannel] == -1) {
+				_channelRemap[curChannel] = _music->tryToOwnChannel(_pSnd, curChannel);
+			}
+		}
+	}
 }
 
 void MidiParser_SCI::setVolume(byte volume) {

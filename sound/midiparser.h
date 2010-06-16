@@ -374,6 +374,11 @@ public:
 	void setTempo(uint32 tempo);
 	void onTimer();
 
+	virtual void sendToDriver(uint32 b);
+	void sendToDriver(byte status, byte firstOp, byte secondOp) {
+		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
+
 	bool isPlaying() const { return (_position._play_pos != 0); }
 	void stopPlaying();
 

@@ -513,7 +513,6 @@ public:
 	Track *getDigitalTrack();
 	int getChannelFilterMask(int hardwareMask, bool wantsRhythm);
 	byte getInitialVoiceCount(byte channel);
-	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
 
 private:
 	SciVersion _soundVersion;
@@ -521,9 +520,6 @@ private:
 	Track *_tracks;
 	Resource *_innerResource;
 	ResourceManager *_resMan;
-	uint16 _channelsUsed;
-
-	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
 };
 
 } // End of namespace Sci

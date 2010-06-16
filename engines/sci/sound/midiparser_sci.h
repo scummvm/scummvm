@@ -53,7 +53,7 @@ namespace Sci {
  */
 class MidiParser_SCI : public MidiParser {
 public:
-	MidiParser_SCI(SciVersion soundVersion);
+	MidiParser_SCI(SciVersion soundVersion, SciMusic *music);
 	~MidiParser_SCI();
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
 	bool loadMusic(byte *, uint32) {
@@ -73,24 +73,18 @@ public:
 
 	void allNotesOff();
 
-	void remapChannel(byte channel, byte newChannel) {
-		assert(channel < 0xF);		// don't touch special SCI channel 15
-		assert(newChannel < 0xF);	// don't touch special SCI channel 15
-		_channelRemap[channel] = newChannel;
-	}
-
-	void clearUsedChannels() { _channelsUsed = 0; }
-
 	const byte *getMixedData() const { return _mixedData; }
 
-protected:
-	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
-	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
+	void tryToOwnChannels();
 
+protected:
+	void sendToDriver(uint32 b);
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
+
+	SciMusic *_music;
 
 	SciVersion _soundVersion;
 	byte *_mixedData;
@@ -105,11 +99,8 @@ protected:
 	int16 _dataincToAdd;
 	bool _resetOnPause;
 
-	// A 16-bit mask, containing the channels used
-	// by the currently parsed song
-	uint16 _channelsUsed;
-
-	byte _channelRemap[16];
+	bool _channelUsed[16];
+	int16 _channelRemap[16];
 };
 
 } // End of namespace Sci

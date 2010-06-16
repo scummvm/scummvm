@@ -859,7 +859,8 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 
 	SciVersion doSoundVersion = _engine->_features->detectDoSoundType();
 	MidiPlayer *player = MidiPlayer_Midi_create(doSoundVersion);
-	MidiParser_SCI *parser = new MidiParser_SCI(doSoundVersion);
+	MidiParser_SCI *parser; // = new MidiParser_SCI(doSoundVersion);
+	// FIXME: add SciMusic object
 	parser->setMidiDriver(player);
 	
 	Common::List<ResourceId> *resources = _engine->getResMan()->listResources(kResourceTypeSound);

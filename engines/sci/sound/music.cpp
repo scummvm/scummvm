@@ -43,6 +43,9 @@ SciMusic::SciMusic(SciVersion soundVersion)
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
 	_playList.reserve(10);
+
+	for (int i = 0; i < 16; i++)
+		_usedChannel[i] = 0;
 }
 
 SciMusic::~SciMusic() {
@@ -174,20 +177,6 @@ void SciMusic::sortPlayList() {
 	Common::sort(_playList.begin(), _playList.end(), musicEntryCompare);
 }
 
-void SciMusic::findUsedChannels() {
-	// Reset list
-	for (int k = 0; k < 16; k++)
-		_usedChannels[k] = false;
-
-	const MusicList::const_iterator end = _playList.end();
-	for (MusicList::const_iterator i = _playList.begin(); i != end; ++i) {
-		for (int channel = 0; channel < 16; channel++) {
-			if ((*i)->soundRes && (*i)->soundRes->isChannelUsed(channel))
-				_usedChannels[channel] = true;
-		}
-	}
-}
-
 void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
@@ -224,33 +213,12 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			_mutex.lock();
 			pSnd->soundType = Audio::Mixer::kMusicSoundType;
 			if (pSnd->pMidiParser == NULL) {
-				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion);
+				pSnd->pMidiParser = new MidiParser_SCI(_soundVersion, this);
 				pSnd->pMidiParser->setMidiDriver(_pMidiDrv);
 				pSnd->pMidiParser->setTimerRate(_dwTempo);
 			}
 
 			pSnd->pauseCounter = 0;
-
-			// TODO: Fix channel remapping. This doesn't quite work... (e.g. no difference in LSL1VGA)
-#if 0
-			// Remap channels
-			findUsedChannels();
-
-			pSnd->pMidiParser->clearUsedChannels();
-
-			for (int i = 0; i < 16; i++) {
-				if (_usedChannels[i] && pSnd->soundRes->isChannelUsed(i)) {
-					int16 newChannel = getNextUnusedChannel();
-					if (newChannel >= 0) {
-						_usedChannels[newChannel] = true;
-						debug("Remapping channel %d to %d\n", i, newChannel);
-						pSnd->pMidiParser->remapChannel(i, newChannel);
-					} else {
-						warning("Attempt to remap channel %d, but no unused channels exist", i);
-					}
-				}
-			}
-#endif
 
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
@@ -261,6 +229,24 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 			_mutex.unlock();
 		}
 	}
+}
+
+// This one checks, if requested channel is available -> in that case give caller that channel
+//  Otherwise look for an unused one
+int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
+	if (!_usedChannel[bestChannel]) {
+		// currently unused, so give it to caller directly
+		_usedChannel[bestChannel] = caller;
+		return bestChannel;
+	}
+	// otherwise look for unused channel
+	for (int channelNr = 0; channelNr < 15; channelNr++) {
+		if (!_usedChannel[channelNr]) {
+			_usedChannel[channelNr] = caller;
+			return channelNr;
+		}
+	}
+	error("no free channels");
 }
 
 void SciMusic::onTimer() {
@@ -324,6 +310,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         DisposeAfterUse::NO);
 		}
 	} else {
+		pSnd->pMidiParser->tryToOwnChannels();
 		_mutex.lock();
 		if (pSnd->pMidiParser) {
 			pSnd->pMidiParser->setVolume(pSnd->volume);
@@ -388,6 +375,11 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 	_mutex.lock();
 	uint sz = _playList.size(), i;
+	// Remove used channels
+	for (i = 0; i < 15; i++) {
+		if (_usedChannel[i] == pSnd)
+			_usedChannel[i] = 0;
+	}
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {

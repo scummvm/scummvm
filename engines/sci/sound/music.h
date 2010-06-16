@@ -196,6 +196,8 @@ public:
 	// where a deadlock can occur
 	Common::Mutex _mutex;
 
+	int16 tryToOwnChannel(MusicEntry *caller, int16 bestChannel);
+
 protected:
 	void sortPlayList();
 
@@ -210,20 +212,11 @@ protected:
 	bool _bMultiMidi;
 private:
 	static void miditimerCallback(void *p);
-	void findUsedChannels();
-	int16 getNextUnusedChannel() const {
-		for (int i = 0; i < 16; i++) {
-			if (!_usedChannels[i])
-				return i;
-		}
-
-		return -1;
-	}
 
 	MusicList _playList;
 	bool _soundOn;
 	byte _masterVolume;
-	bool _usedChannels[16];
+	MusicEntry *_usedChannel[16];
 };
 
 } // End of namespace Sci
