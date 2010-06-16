@@ -879,6 +879,14 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
+	int16 multiplicant = argv[0].toSint16();
+	int16 multiplier = argv[1].toSint16();
+	int16 denominator = argv[2].toSint16();
+
+	return make_reg(0, multiplicant * multiplier / denominator);
+}
+
 } // End of namespace Sci
 
 #endif	// ENABLE_SCI32

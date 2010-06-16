@@ -387,6 +387,7 @@ SciKernelFunction kfunct_mappers[] = {
 	{ "List", kList, ".*" },
 	{ "Robot", kRobot, ".*" },
 	{ "IsOnMe", kIsOnMe, "iio.*" },
+	{ "MulDiv", kMulDiv, "iii" },
 
 #endif
 
