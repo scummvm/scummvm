@@ -48,22 +48,12 @@
 
 #include "backends/platform/psp/trace.h"
 
-#define USE_PSP_AUDIO
-
 #define	SAMPLES_PER_SEC	44100
 
 static int timer_handler(int t) {
 	DefaultTimerManager *tm = (DefaultTimerManager *)g_system->getTimerManager();
 	tm->handler();
 	return t;
-}
-
-void OSystem_PSP::initSDL() {
-#ifdef USE_PSP_AUDIO
-	SDL_Init(0);
-#else
-	SDL_Init(SDL_INIT_AUDIO);
-#endif
 }
 
 OSystem_PSP::~OSystem_PSP() {}
@@ -89,8 +79,6 @@ void OSystem_PSP::initBackend() {
 	_inputHandler.setKeyboard(&_keyboard);
 	_inputHandler.init();
 
-	initSDL();
-	
 	_savefile = new PSPSaveFileManager;
 
 	_timer = new DefaultTimerManager();
@@ -388,7 +376,6 @@ void OSystem_PSP::setupMixer(void) {
 
 	assert(!_mixer);
 
-#ifdef USE_PSP_AUDIO
 	if (!_audio.open(samplesPerSec, 2, samples, mixCallback, this)) {
 		PSP_ERROR("failed to open audio\n");
 		return;
@@ -398,46 +385,10 @@ void OSystem_PSP::setupMixer(void) {
 	assert(_mixer);
 	_mixer->setReady(true);
 	_audio.unpause();
-#else
-	SDL_AudioSpec obtained;
-	SDL_AudioSpec desired;
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	desired.samples = samples;
-	desired.callback = mixCallback;
-	desired.userdata = this;
-	
-	if (SDL_OpenAudio(&desired, &obtained) != 0) {
-		warning("Could not open audio: %s", SDL_GetError());
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(false);
-	} else {
-		// Note: This should be the obtained output rate, but it seems that at
-		// least on some platforms SDL will lie and claim it did get the rate
-		// even if it didn't. Probably only happens for "weird" rates, though.
-		samplesPerSec = obtained.freq;
-
-		// Create the mixer instance and start the sound processing
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(true);
-
-		SDL_PauseAudio(0);
-	}
-#endif /* USE_PSP_AUDIO */
 }
 
 void OSystem_PSP::quit() {
-#ifdef USE_PSP_AUDIO
 	_audio.close();
-#else
-	SDL_CloseAudio();
-#endif
-	SDL_Quit();
 	sceKernelExitGame();
 }
 

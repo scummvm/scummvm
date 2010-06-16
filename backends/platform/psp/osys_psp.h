@@ -42,8 +42,6 @@
 #include "backends/timer/psp/timer.h"
 #include "backends/platform/psp/thread.h"
 
-#include <SDL.h>
-
 class OSystem_PSP : public BaseBackend {
 private:
 
@@ -63,8 +61,6 @@ private:
 	PspAudio _audio;
 	PspTimer _pspTimer;
 	PspRtc _pspRtc;
-
-	void initSDL();	
 
 public:
 	OSystem_PSP() : _savefile(0), _mixer(0), _timer(0), _pendingUpdate(false), _pendingUpdateCounter(0) {}
