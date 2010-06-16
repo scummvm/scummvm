@@ -227,6 +227,7 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 Tooltip::Tooltip(GuiManager *guiManager) : GuiObject(0, 0, 0, 0) {
 	_guiManager = guiManager;
 
+	_visible = false;
 	_maxWidth = -1;
 	_storedState = 0;
 }
