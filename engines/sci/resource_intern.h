@@ -66,7 +66,7 @@ public:
 	const Common::String &getLocationName() const { return _name; }
 
 	// Auxiliary method, used by loadResource implementations.
-	Common::SeekableReadStream *getVolumeFile(Resource *res);
+	Common::SeekableReadStream *getVolumeFile(ResourceManager *resMan, Resource *res);
 
 	/**
 	 * TODO: Document this
@@ -83,7 +83,7 @@ public:
 	/**
 	 * Load a resource.
 	 */
-	virtual void loadResource(Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
 
 	// FIXME: This audio specific method is a hack. After all, why should a
 	// ResourceSource or a Resource (which uses this method) have audio
@@ -102,7 +102,7 @@ class PatchResourceSource : public ResourceSource {
 public:
 	PatchResourceSource(const Common::String &name) : ResourceSource(kSourcePatch, name) {}
 
-	virtual void loadResource(Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
 };
 
 class VolumeResourceSource : public ResourceSource {
@@ -149,9 +149,9 @@ protected:
 	int32 *_audioCompressionOffsetMapping;
 
 public:
-	AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum);
+	AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum);
 
-	virtual void loadResource(Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
 
 	virtual uint32 getAudioCompressionType() const;
 };
@@ -169,7 +169,7 @@ class WaveResourceSource : public ResourceSource {
 public:
 	WaveResourceSource(const Common::String &name) : ResourceSource(kSourceWave, name) {}
 
-	virtual void loadResource(Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
 };
 
 /**
@@ -185,7 +185,7 @@ public:
 
 	virtual void scanSource(ResourceManager *resMan);
 
-	virtual void loadResource(Resource *res);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
 };
 
 } // End of namespace Sci

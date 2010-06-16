@@ -319,11 +319,11 @@ Common::SeekableReadStream *ResourceManager::getVolumeFile(ResourceSource *sourc
 static uint32 resTypeToMacTag(ResourceType type);
 
 void ResourceManager::loadResource(Resource *res) {
-	res->_source->loadResource(res);
+	res->_source->loadResource(this, res);
 }
 
 
-void PatchResourceSource::loadResource(Resource *res) {
+void PatchResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	bool result = res->loadFromPatchFile();
 	if (!result) {
 		// TODO: We used to fallback to the "default" code here if loadFromPatchFile
@@ -333,13 +333,13 @@ void PatchResourceSource::loadResource(Resource *res) {
 	}
 }
 
-void MacResourceForkResourceSource::loadResource(Resource *res) {
+void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
 	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
 
 	if (!stream)
 		error("Could not get Mac resource fork resource: %d %d", res->getType(), res->getNumber());
 
-	int error = res->decompress(stream);
+	int error = res->decompress(resMan->getVolVersion(), stream);
 	if (error) {
 		warning("Error %d occurred while reading %s from Mac resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -347,8 +347,7 @@ void MacResourceForkResourceSource::loadResource(Resource *res) {
 	}
 }
 
-Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res) {
-	ResourceManager *resMan = g_sci->getResMan();
+Common::SeekableReadStream *ResourceSource::getVolumeFile(ResourceManager *resMan, Resource *res) {
 	Common::SeekableReadStream *fileStream = resMan->getVolumeFile(this);
 
 	if (!fileStream) {
@@ -360,8 +359,8 @@ Common::SeekableReadStream *ResourceSource::getVolumeFile(Resource *res) {
 	return fileStream;
 }
 
-void WaveResourceSource::loadResource(Resource *res) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res);
+void WaveResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);
 	if (!fileStream)
 		return;
 
@@ -371,8 +370,8 @@ void WaveResourceSource::loadResource(Resource *res) {
 		delete fileStream;
 }
 
-void AudioVolumeResourceSource::loadResource(Resource *res) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res);
+void AudioVolumeResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);
 	if (!fileStream)
 		return;
 
@@ -429,14 +428,14 @@ void AudioVolumeResourceSource::loadResource(Resource *res) {
 		delete fileStream;
 }
 
-void ResourceSource::loadResource(Resource *res) {
-	Common::SeekableReadStream *fileStream = getVolumeFile(res);
+void ResourceSource::loadResource(ResourceManager *resMan, Resource *res) {
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, res);
 	if (!fileStream)
 		return;
 
 	fileStream->seek(res->_fileOffset, SEEK_SET);
 
-	int error = res->decompress(fileStream);
+	int error = res->decompress(resMan->getVolVersion(), fileStream);
 	if (error) {
 		warning("Error %d occurred while reading %s from resource file: %s",
 				error, res->_id.toString().c_str(), sci_error_types[error]);
@@ -606,9 +605,9 @@ int ResourceManager::addInternalSources() {
 		ResourceSource *src = addSource(new IntMapResourceSource("MAP", itr->getNumber()));
 
 		if ((itr->getNumber() == 65535) && Common::File::exists("RESOURCE.SFX"))
-			addSource(new AudioVolumeResourceSource("RESOURCE.SFX", src, 0));
+			addSource(new AudioVolumeResourceSource(this, "RESOURCE.SFX", src, 0));
 		else if (Common::File::exists("RESOURCE.AUD"))
-			addSource(new AudioVolumeResourceSource("RESOURCE.AUD", src, 0));
+			addSource(new AudioVolumeResourceSource(this, "RESOURCE.AUD", src, 0));
 
 		++itr;
 	}
@@ -1506,7 +1505,7 @@ Resource *ResourceManager::updateResource(ResourceId resId, ResourceSource *src,
 	return res;
 }
 
-int Resource::readResourceInfo(Common::SeekableReadStream *file,
+int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream *file,
                                       uint32 &szPacked, ResourceCompression &compression) {
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
@@ -1516,8 +1515,7 @@ int Resource::readResourceInfo(Common::SeekableReadStream *file,
 	uint32 wCompression, szUnpacked;
 	ResourceType type;
 
-	ResourceManager *resMan = g_sci->getResMan();
-	switch (resMan->getVolVersion()) {
+	switch (volVersion) {
 	case kResVersionSci0Sci1Early:
 	case kResVersionSci1Middle:
 		w = file->readUint16LE();
@@ -1604,13 +1602,13 @@ int Resource::readResourceInfo(Common::SeekableReadStream *file,
 	return compression == kCompUnknown ? SCI_ERROR_UNKNOWN_COMPRESSION : 0;
 }
 
-int Resource::decompress(Common::SeekableReadStream *file) {
+int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file) {
 	int error;
 	uint32 szPacked = 0;
 	ResourceCompression compression = kCompUnknown;
 
 	// fill resource info
-	error = readResourceInfo(file, szPacked, compression);
+	error = readResourceInfo(volVersion, file, szPacked, compression);
 	if (error)
 		return error;
 
@@ -1675,7 +1673,7 @@ ResourceCompression ResourceManager::getViewCompression() {
 		uint32 szPacked;
 		ResourceCompression compression;
 
-		if (res->readResourceInfo(fileStream, szPacked, compression)) {
+		if (res->readResourceInfo(_volVersion, fileStream, szPacked, compression)) {
 			if (res->_source->_resourceFile)
 				delete fileStream;
 			continue;

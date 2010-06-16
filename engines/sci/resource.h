@@ -110,6 +110,16 @@ enum ResourceType {
 const char *getResourceTypeName(ResourceType restype);
 
 
+enum ResVersion {
+	kResVersionUnknown,
+	kResVersionSci0Sci1Early,
+	kResVersionSci1Middle,
+	kResVersionSci1Late,
+	kResVersionSci11,
+	kResVersionSci11Mac,
+	kResVersionSci32
+};
+
 class ResourceManager;
 class ResourceSource;
 
@@ -223,21 +233,11 @@ protected:
 	bool loadFromWaveFile(Common::SeekableReadStream *file);
 	bool loadFromAudioVolumeSCI1(Common::SeekableReadStream *file);
 	bool loadFromAudioVolumeSCI11(Common::SeekableReadStream *file);
-	int decompress(Common::SeekableReadStream *file);
-	int readResourceInfo(Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
+	int decompress(ResVersion volVersion, Common::SeekableReadStream *file);
+	int readResourceInfo(ResVersion volVersion, Common::SeekableReadStream *file, uint32 &szPacked, ResourceCompression &compression);
 };
 
 typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash> ResourceMap;
-
-enum ResVersion {
-	kResVersionUnknown,
-	kResVersionSci0Sci1Early,
-	kResVersionSci1Middle,
-	kResVersionSci1Late,
-	kResVersionSci11,
-	kResVersionSci11Mac,
-	kResVersionSci32
-};
 
 class ResourceManager {
 	// FIXME: These 'friend' declarations are meant to be a temporary hack to

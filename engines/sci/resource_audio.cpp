@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name, ResourceSource *map, int volNum)
+AudioVolumeResourceSource::AudioVolumeResourceSource(ResourceManager *resMan, const Common::String &name, ResourceSource *map, int volNum)
 	: VolumeResourceSource(name, map, volNum, kSourceAudioVolume) {
 
 	_audioCompressionType = 0;
@@ -46,7 +46,7 @@ AudioVolumeResourceSource::AudioVolumeResourceSource(const Common::String &name,
 	 * table for later usage.
 	 */
 
-	Common::SeekableReadStream *fileStream = getVolumeFile(0);
+	Common::SeekableReadStream *fileStream = getVolumeFile(resMan, 0);
 	if (!fileStream)
 		return;
 
@@ -439,7 +439,7 @@ void ResourceManager::setAudioLanguage(int language) {
 		const char *dot = strrchr(name.c_str(), '.');
 		int number = atoi(dot + 1);
 
-		addSource(new AudioVolumeResourceSource(name, _audioMapSCI1, number));
+		addSource(new AudioVolumeResourceSource(this, name, _audioMapSCI1, number));
 	}
 
 	scanNewSources();
