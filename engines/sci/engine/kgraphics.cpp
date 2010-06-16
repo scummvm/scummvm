@@ -1160,8 +1160,9 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	if (videoDecoder) {
 		uint16 x = (screenWidth - videoDecoder->getWidth()) / 2;
 		uint16 y = (screenHeight - videoDecoder->getHeight()) / 2;
+		bool skipVideo = false;
 
-		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {
+		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 			if (videoDecoder->needsUpdate()) {
 				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 				if (frame) {
@@ -1175,8 +1176,10 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event))
-				;
+			while (g_system->getEventManager()->pollEvent(event)) {
+				if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+					skipVideo = true;
+			}
 
 			g_system->delayMillis(10);
 		}

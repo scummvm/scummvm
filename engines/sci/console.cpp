@@ -244,8 +244,9 @@ void Console::postEnter() {
 		if (videoDecoder && videoDecoder->loadFile(_videoFile)) {
 			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
 			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+			bool skipVideo = false;
 
-			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo()) {			
+			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 				if (videoDecoder->needsUpdate()) {
 					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
 					if (frame) {
@@ -259,8 +260,10 @@ void Console::postEnter() {
 				}
 
 				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event))
-					;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+						skipVideo = true;
+				}
 
 				g_system->delayMillis(10);
 			}
