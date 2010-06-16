@@ -165,6 +165,7 @@ int GP2X_BUTTON_STATE_L					=	false;
 /* Override the SDL pollEvent with the Wiz's own event code. */
 bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	int axis;
 	byte b = 0;
 

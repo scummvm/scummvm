@@ -2263,6 +2263,7 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter) {
 
 bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	byte b = 0;
 	DWORD currentTime;
 	bool keyEvent = false;

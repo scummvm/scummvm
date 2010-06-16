@@ -229,6 +229,7 @@ int GP2X_BUTTON_STATE_L					=	false;
 
 bool OSystem_GP2X::pollEvent(Common::Event &event) {
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	int axis;
 	byte b = 0;
 
