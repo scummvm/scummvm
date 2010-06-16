@@ -884,6 +884,12 @@ reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
 	int16 multiplier = argv[1].toSint16();
 	int16 denominator = argv[2].toSint16();
 
+	// Sanity check...
+	if (!denominator) {
+		warning("kMulDiv: attempt to divide by zero (%d * %d / %d", multiplicant, multiplier, denominator);
+		return NULL_REG;
+	}
+
 	return make_reg(0, multiplicant * multiplier / denominator);
 }
 
