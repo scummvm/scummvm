@@ -157,7 +157,7 @@ public:
 	~QDM2Stream();
 
 	bool isStereo() const { return _channels == 2; }
-	bool endOfData() const { return ((_stream->pos() == _stream->size()) && (_outputSamples.size() == 0)); }
+	bool endOfData() const { return _stream->pos() >= _stream->size() && _outputSamples.size() == 0 && _subPacket == 0; }
 	int getRate() const { return _sampleRate; }
 	int readBuffer(int16 *buffer, const int numSamples);
 
@@ -199,7 +199,7 @@ private:
 	int _fftCoefsMinIndex[5];
 	int _fftCoefsMaxIndex[5];
 	int _fftLevelExp[6];
-	//RDFTContext _rdftCtx;
+	RDFTContext _rdftCtx;
 	QDM2FFT _fft;
 
 	// I/O data
@@ -230,6 +230,7 @@ private:
 	int _doSynthFilter;      // used to perform or skip synthesis filter
 
 	uint8 _subPacket; // 0 to 15
+	uint32 _superBlockStart;
 	int _noiseIdx; // index for dithering noise table
 
 	byte _emptyBuffer[FF_INPUT_BUFFER_PADDING_SIZE];
@@ -260,8 +261,6 @@ private:
 
 	float _noiseSamples[128];
 	void initNoiseSamples(void);
-
-	RDFTContext _rdftCtx;
 
 	void average_quantized_coeffs(void);
 	void build_sb_samples_from_noise(int sb);
@@ -331,8 +330,6 @@ static inline int scummvm_log2(int n) {
 static inline void initGetBits(GetBitContext *s, const uint8 *buffer, int bitSize) {
 	int bufferSize = (bitSize + 7) >> 3;
 
-	debug(1, "void initGetBits(GetBitContext *s, const uint8 *buffer, int bitSize)");
-
 	if (bufferSize < 0 || bitSize < 0) {
 		bufferSize = bitSize = 0;
 		buffer = NULL;
@@ -345,7 +342,6 @@ static inline void initGetBits(GetBitContext *s, const uint8 *buffer, int bitSiz
 }
 
 static inline int getBitsCount(GetBitContext *s) {
-	debug(1, "int getBitsCount(GetBitContext *s)");
 	return s->index;
 }
 
@@ -353,12 +349,8 @@ static inline unsigned int getBits1(GetBitContext *s) {
 	int index;
 	uint8 result;
 
-	debug(1, "unsigned int getBits1(GetBitContext *s)");
-
 	index = s->index;
 	result = s->buffer[index >> 3];
-
-	debug(1, "index : %d", index);
 
 	result >>= (index & 0x07);
 	result &= 1;
@@ -371,11 +363,7 @@ static inline unsigned int getBits1(GetBitContext *s) {
 static inline unsigned int getBits(GetBitContext *s, int n) {
 	int tmp, reCache, reIndex;
 
-	debug(1, "unsigned int getBits(GetBitContext *s, int n)");
-
 	reIndex = s->index;
-
-	debug(1, "reIndex : %d", reIndex);
 
 	reCache = READ_LE_UINT32((const uint8 *)s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
 
@@ -389,12 +377,8 @@ static inline unsigned int getBits(GetBitContext *s, int n) {
 static inline void skipBits(GetBitContext *s, int n) {
 	int reIndex, reCache;
 
-	debug(1, "void skipBits(GetBitContext *s, int n)");
-
 	reIndex = s->index;
 	reCache = 0;
-
-	debug(1, "reIndex : %d", reIndex);
 
 	reCache = READ_LE_UINT32((const uint8 *)s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
 	s->index = reIndex + n;
@@ -1331,19 +1315,11 @@ static int getVlc2(GetBitContext *s, int16 (*table)[2], int bits, int maxDepth) 
 	int code;
 	int n;
 
-	debug(1, "int getVlc2(GetBitContext *s, int16 (*table)[2], int bits, int maxDepth)");
-
 	reIndex = s->index;
 	reCache = READ_LE_UINT32(s->buffer + (reIndex >> 3)) >> (reIndex & 0x07);
 	index = reCache & (0xffffffff >> (32 - bits));
 	code = table[index][0];
 	n = table[index][1];
-
-	debug(1, "reIndex : %d", reIndex);
-	debug(1, "reCache : %d", reCache);
-	debug(1, "index : %d", index);
-	debug(1, "code : %d", code);
-	debug(1, "n : %d", n);
 
 	if (maxDepth > 1 && n < 0){
 		reIndex += bits;
@@ -1416,7 +1392,6 @@ static int build_table(VLC *vlc, int table_nb_bits,
 
 	table_size = 1 << table_nb_bits;
 	table_index = allocTable(vlc, table_size, flags & 4);
-	debug(2, "QDM2 new table index=%d size=%d code_prefix=%x n=%d", table_index, table_size, code_prefix, n_prefix);
 	if (table_index < 0)
 		return -1;
 	table = &vlc->table[table_index];
@@ -1437,7 +1412,6 @@ static int build_table(VLC *vlc, int table_nb_bits,
 			symbol = i;
 		else
 			GET_DATA(symbol, symbols, i, symbols_wrap, symbols_size);
-		debug(2, "QDM2 i=%d n=%d code=0x%x", i, n, code);
 		// if code matches the prefix, it is in the table
 		n -= n_prefix;
 		if(flags & 2)
@@ -1452,7 +1426,6 @@ static int build_table(VLC *vlc, int table_nb_bits,
 				for(k = 0; k < nb; k++) {
 					if(flags & 2)
 						j = (code >> n_prefix) + (k<<n);
-					debug(2, "QDM2 %4x: code=%d n=%d",j, i, n);
 					if (table[j][1] /*bits*/ != 0) {
 						error("QDM2 incorrect codes");
 						return -1;
@@ -1464,7 +1437,6 @@ static int build_table(VLC *vlc, int table_nb_bits,
 			} else {
 				n -= table_nb_bits;
 				j = (code >> ((flags & 2) ? n_prefix : n)) & ((1 << table_nb_bits) - 1);
-				debug(2, "QDM2 %4x: n=%d (subtable)", j, n);
 				// compute table size
 				n1 = -table[j][1]; //bits
 				if (n > n1)
@@ -1536,8 +1508,6 @@ void initVlcSparse(VLC *vlc, int nb_bits, int nb_codes,
 	} else if(vlc->table_size) {
 		error("called on a partially initialized table");
 	}
-
-	debug(2, "QDM2 build table nb_codes=%d", nb_codes);
 
 	if (build_table(vlc, nb_bits, nb_codes,
 	                bits, bits_wrap, bits_size,
@@ -1754,6 +1724,7 @@ QDM2Stream::QDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadS
 	_stream = stream;
 	_compressedData = NULL;
 	_subPacket = 0;
+	_superBlockStart = 0;
 	memset(_quantizedCoeffs, 0, sizeof(_quantizedCoeffs));
 	memset(_fftLevelExp, 0, sizeof(_fftLevelExp));
 	_noiseIdx = 0;
@@ -2015,8 +1986,6 @@ static void qdm2_decode_sub_packet_header(GetBitContext *gb, QDM2SubPacket *sub_
 
 		sub_packet->data = &gb->buffer[getBitsCount(gb) / 8]; // FIXME: this depends on bitreader internal data
 	}
-
-	debug(1, "QDM2 Subpacket: type=%d size=%d start_offs=%x", sub_packet->type, sub_packet->size, getBitsCount(gb) / 8);
 }
 
 /**
@@ -2881,7 +2850,6 @@ void QDM2Stream::qdm2_fft_init_coefficient(int sub_packet, int offset, int durat
 }
 
 void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
-	debug(1, "QDM2Stream::qdm2_fft_decode_tones() duration: %d b:%d", duration, b);
 	int channel, stereo, phase, exp;
 	int local_int_4,  local_int_8,  stereo_phase,  local_int_10;
 	int local_int_14, stereo_exp, local_int_20, local_int_28;
@@ -2896,9 +2864,7 @@ void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
 
 	while (1) {
 		if (_superblocktype_2_3) {
-			debug(1, "QDM2Stream::qdm2_fft_decode_tones() local_int_8: %d", local_int_8);
 			while ((n = qdm2_get_vlc(gb, &_vlcTabFftToneOffset[local_int_8], 1, 2)) < 2) {
-				debug(1, "QDM2Stream::qdm2_fft_decode_tones() local_int_8: %d", local_int_8);
 				offset = 1;
 				if (n == 0) {
 					local_int_4 += local_int_10;
@@ -2959,7 +2925,6 @@ void QDM2Stream::qdm2_fft_decode_tones(int duration, GetBitContext *gb, int b) {
 }
 
 void QDM2Stream::qdm2_decode_fft_packets(void) {
-	debug(1, "QDM2Stream::qdm2_decode_fft_packets()");
 	int i, j, min, max, value, type, unknown_flag;
 	GetBitContext gb;
 
@@ -2994,7 +2959,6 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 			return;
 
 		// decode FFT tones
-		debug(1, "QDM2Stream::qdm2_decode_fft_packets initGetBits() packet->size*8: %d", packet->size*8);
 		initGetBits(&gb, packet->data, packet->size*8);
 
 		if (packet->type >= 32 && packet->type < 48 && !fft_subpackets[packet->type - 16])
@@ -3008,19 +2972,16 @@ void QDM2Stream::qdm2_decode_fft_packets(void) {
 			int duration = _subSampling + 5 - (type & 15);
 
 			if (duration >= 0 && duration < 4) { // TODO: Should be <= 4?
-				debug(1, "QDM2Stream::qdm2_decode_fft_packets qdm2_fft_decode_tones() #1");
 				qdm2_fft_decode_tones(duration, &gb, unknown_flag);
 			}
 		} else if (type == 31) {
 			for (j=0; j < 4; j++) {
-				debug(1, "QDM2Stream::qdm2_decode_fft_packets qdm2_fft_decode_tones() #2");
 				qdm2_fft_decode_tones(j, &gb, unknown_flag);
 			}
 		} else if (type == 46) {
 			for (j=0; j < 6; j++)
 				_fftLevelExp[j] = getBits(&gb, 6);
 			for (j=0; j < 4; j++) {
-				debug(1, "QDM2Stream::qdm2_decode_fft_packets qdm2_fft_decode_tones() #3");
 				qdm2_fft_decode_tones(j, &gb, unknown_flag);
 			}
 		}
@@ -3151,15 +3112,11 @@ void QDM2Stream::qdm2_fft_tone_synthesizer(uint8 sub_packet) {
 }
 
 void QDM2Stream::qdm2_calculate_fft(int channel) {
-	debug(1, "QDM2Stream::qdm2_calculate_fft channel: %d", channel);
 	const float gain = (_channels == 1 && _channels == 2) ? 0.5f : 1.0f;
 	int i;
 
 	_fft.complex[channel][0].re *= 2.0f;
 	_fft.complex[channel][0].im = 0.0f;
-
-	//debug(1, "QDM2Stream::qdm2_calculate_fft _fft.complex[channel][0].re: %lf", _fft.complex[channel][0].re);
-	//debug(1, "QDM2Stream::qdm2_calculate_fft _fft.complex[channel][0].im: %lf", _fft.complex[channel][0].im);
 
 	rdftCalc(&_rdftCtx, (float *)_fft.complex[channel]);
 
@@ -3209,82 +3166,80 @@ int QDM2Stream::qdm2_decodeFrame(Common::SeekableReadStream *in) {
 	int ch, i;
 	const int frame_size = (_sFrameSize * _channels);
 
+	// If we're in any packet but the first, seek back to the first
+	if (_subPacket == 0)
+		_superBlockStart = in->pos();
+	else
+		in->seek(_superBlockStart);
+
 	// select input buffer
-	if(in->eos() || in->size() == in->pos()) {
+	if (in->eos() || in->pos() >= in->size()) {
 		debug(1, "QDM2Stream::qdm2_decodeFrame End of Input Stream");
 		return 0;
 	}
-	if((in->size() - in->pos()) < _packetSize) {
+
+	if ((in->size() - in->pos()) < _packetSize) {
 		debug(1, "QDM2Stream::qdm2_decodeFrame Insufficient Packet Data in Input Stream Found: %d Need: %d", in->size() - in->pos(), _packetSize);
 		return 0;
 	}
 
-	in->read(_compressedData, _packetSize);
-	debug(1, "QDM2Stream::qdm2_decodeFrame constructed input data");
+	if (!in->eos()) {
+		in->read(_compressedData, _packetSize);
+		debug(1, "QDM2Stream::qdm2_decodeFrame constructed input data");
+	}
 
 	// copy old block, clear new block of output samples
 	memmove(_outputBuffer, &_outputBuffer[frame_size], frame_size * sizeof(float));
 	memset(&_outputBuffer[frame_size], 0, frame_size * sizeof(float));
 	debug(1, "QDM2Stream::qdm2_decodeFrame cleared outputBuffer");
 
-	// decode block of QDM2 compressed data
-	debug(1, "QDM2Stream::qdm2_decodeFrame decode block of QDM2 compressed data");
-	if (_subPacket == 0) {
-		_hasErrors = false; // reset it for a new super block
-		debug(1, "QDM2 : Superblock follows");
-		qdm2_decode_super_block();
-	}
-
-	// parse subpackets
-	debug(1, "QDM2Stream::qdm2_decodeFrame parse subpackets");
-	if (!_hasErrors) {
-		if (_subPacket == 2) {
-			debug(1, "QDM2Stream::qdm2_decodeFrame qdm2_decode_fft_packets()");
-			qdm2_decode_fft_packets();
+	if (!in->eos()) {
+		// decode block of QDM2 compressed data
+		debug(1, "QDM2Stream::qdm2_decodeFrame decode block of QDM2 compressed data");
+		if (_subPacket == 0) {
+			_hasErrors = false; // reset it for a new super block
+			debug(1, "QDM2 : Superblock follows");
+			qdm2_decode_super_block();
 		}
 
-		debug(1, "QDM2Stream::qdm2_decodeFrame qdm2_fft_tone_synthesizer(%d)", _subPacket);
-		qdm2_fft_tone_synthesizer(_subPacket);
-	}
+		// parse subpackets
+		debug(1, "QDM2Stream::qdm2_decodeFrame parse subpackets");
+		if (!_hasErrors) {
+			if (_subPacket == 2) {
+				debug(1, "QDM2Stream::qdm2_decodeFrame qdm2_decode_fft_packets()");
+				qdm2_decode_fft_packets();
+			}
 
-	// sound synthesis stage 1 (FFT)
-	debug(1, "QDM2Stream::qdm2_decodeFrame sound synthesis stage 1 (FFT)");
-	for (ch = 0; ch < _channels; ch++) {
-		qdm2_calculate_fft(ch);
-
-		if (!_hasErrors && _subPacketListC[0].packet != NULL) {
-			error("QDM2 : has errors, and C list is not empty");
-			return 0;
+			debug(1, "QDM2Stream::qdm2_decodeFrame qdm2_fft_tone_synthesizer(%d)", _subPacket);
+			qdm2_fft_tone_synthesizer(_subPacket);
 		}
+
+		// sound synthesis stage 1 (FFT)
+		debug(1, "QDM2Stream::qdm2_decodeFrame sound synthesis stage 1 (FFT)");
+		for (ch = 0; ch < _channels; ch++) {
+			qdm2_calculate_fft(ch);
+
+			if (!_hasErrors && _subPacketListC[0].packet != NULL) {
+				error("QDM2 : has errors, and C list is not empty");
+				return 0;
+			}
+		}
+
+		// sound synthesis stage 2 (MPEG audio like synthesis filter)
+		debug(1, "QDM2Stream::qdm2_decodeFrame sound synthesis stage 2 (MPEG audio like synthesis filter)");
+		if (!_hasErrors && _doSynthFilter)
+			qdm2_synthesis_filter(_subPacket);
+
+		_subPacket = (_subPacket + 1) % 16;
+
+		if(_hasErrors)
+			warning("QDM2 Packet error...");
+
+		// clip and convert output float[] to 16bit signed samples
+		debug(1, "QDM2Stream::qdm2_decodeFrame clip and convert output float[] to 16bit signed samples");
 	}
-
-	// sound synthesis stage 2 (MPEG audio like synthesis filter)
-	debug(1, "QDM2Stream::qdm2_decodeFrame sound synthesis stage 2 (MPEG audio like synthesis filter)");
-	if (!_hasErrors && _doSynthFilter)
-		qdm2_synthesis_filter(_subPacket);
-
-	_subPacket = (_subPacket + 1) % 16;
-
-	if(_hasErrors)
-		warning("QDM2 Packet error...");
-
-	// clip and convert output float[] to 16bit signed samples
-	debug(1, "QDM2Stream::qdm2_decodeFrame clip and convert output float[] to 16bit signed samples");
-
-/*
-	debugN(1, "Input Data Packet:");
-	for(i = 0; i < _packetSize; i++) {
-		debugN(1, " %d", _compressedData[i]);
-	}
-	debugN(1, " Output Data Packet:");
-	for(i = 0; i < frame_size; i++) {
-		debugN(1, " %d", (int)_outputBuffer[i]);
-	}
-	debug(1, "");
-*/
 
 	for (i = 0; i < frame_size; i++) {
-		//debug(1, "QDM2Stream::qdm2_decodeFrame i: %d", i);
 		int value = (int)_outputBuffer[i];
 
 		if (value > SOFTCLIP_THRESHOLD)
@@ -3302,17 +3257,17 @@ int QDM2Stream::readBuffer(int16 *buffer, const int numSamples) {
 	int32 decodedSamples = _outputSamples.size();
 	int32 i;
 
-	//while((int)_outputSamples.size() < numSamples) {
-	while(!_stream->eos() && _stream->pos() != _stream->size()) {
+	while (decodedSamples < numSamples) {
 		i = qdm2_decodeFrame(_stream);
-		if(i == 0)
+		if (i == 0)
 			break; // Out Of Decode Frames...
 		decodedSamples += i;
 	}
-	if(decodedSamples > numSamples)
+
+	if (decodedSamples > numSamples)
 		decodedSamples = numSamples;
 
-	for(i = 0; i < decodedSamples; i++)
+	for (i = 0; i < decodedSamples; i++)
 		buffer[i] = _outputSamples.remove_at(0);
 
 	return decodedSamples;
