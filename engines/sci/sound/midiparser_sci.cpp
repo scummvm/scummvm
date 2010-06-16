@@ -453,14 +453,6 @@ byte *MidiParser_SCI::midiMixChannels() {
 			// remember which channel got used for channel remapping
 			byte midiChannel = command & 0xF;
 			_channelUsed[midiChannel] = true;
-//			int16 realChannel = _channelRemap[midiChannel];
-//			if (realChannel == -1) {
-//				// We don't own this channel yet, so ask SciMusic to get it (or a remapped one)
-//				realChannel = _music->tryToOwnChannel(_pSnd, midiChannel);
-//				_channelRemap[midiChannel] = realChannel;
-//			}
-//			// Map new channel
-//			command = realChannel | (command & 0xF0);
 
 			if (command != global_prev)
 				*outData++ = command; // out command
@@ -592,6 +584,9 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 
 // This will get called right before actual playing and will try to own the used channels
 void MidiParser_SCI::tryToOwnChannels() {
+	// We don't have SciMusic in case debug command show_instruments is used
+	if (!_music)
+		return;
 	for (int curChannel = 0; curChannel < 15; curChannel++) {
 		if (_channelUsed[curChannel]) {
 			if (_channelRemap[curChannel] == -1) {
