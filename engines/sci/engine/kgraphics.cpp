@@ -553,9 +553,11 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toUint16()) {
 	case 1: // Set resource palette
-		if (argc==3) {
+		if (argc == 2 || argc == 3) {
 			GuiResourceId resourceId = argv[1].toUint16();
-			bool force = argv[2].toUint16() == 2 ? true : false;
+			bool force = false;
+			if (argc == 3)
+				force = argv[2].toUint16() == 2 ? true : false;
 			g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
 		} else {
 			warning("kPalette(1) called with %d parameters", argc);
