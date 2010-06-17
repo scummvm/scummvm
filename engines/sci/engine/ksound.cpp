@@ -80,7 +80,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		// Init
 		return make_reg(0, 1);
 	default:
-		warning("kCdDoAudio: Unhandled case %d", argv[0].toUint16());
+		error("kCdDoAudio: Unhandled case %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -223,7 +223,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_audio->stopSoundSync();
 		break;
 	default:
-		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());
+		error("DoSync: Unhandled subfunction %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;

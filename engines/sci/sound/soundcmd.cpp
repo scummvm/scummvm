@@ -203,7 +203,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		_cmdUpdateCuesIndex = 17;
 		break;
 	default:
-		warning("Sound command parser: unknown sound version %d", _soundVersion);
+		error("Sound command parser: unknown sound version %d", _soundVersion);
 		break;
 	}
 }
@@ -246,7 +246,7 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 
 		(this->*(_soundCommands[command]->sndCmd))(obj, value);
 	} else {
-		warning("Invalid sound command requested (%d), valid range is 0-%d", command, _soundCommands.size() - 1);
+		error("Invalid sound command requested (%d), valid range is 0-%d", command, _soundCommands.size() - 1);
 	}
 
 	return _acc;

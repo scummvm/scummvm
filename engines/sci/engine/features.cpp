@@ -51,13 +51,13 @@ reg_t GameFeatures::getDetectionAddr(const Common::String &objName, Selector slc
 	reg_t addr;
 
 	if (objAddr.isNull()) {
-		warning("getDetectionAddr: %s object couldn't be found", objName.c_str());
+		error("getDetectionAddr: %s object couldn't be found", objName.c_str());
 		return NULL_REG;
 	}
 
 	if (methodNum == -1) {
 		if (lookupSelector(_segMan, objAddr, slc, NULL, &addr) != kSelectorMethod) {
-			warning("getDetectionAddr: target selector is not a method of object %s", objName.c_str());
+			error("getDetectionAddr: target selector is not a method of object %s", objName.c_str());
 			return NULL_REG;
 		}
 	} else {
@@ -491,7 +491,7 @@ MoveCountType GameFeatures::detectMoveCountType() {
 			_moveCountType = kIncrementMoveCount;
 		} else {
 			if (!autoDetectMoveCountType()) {
-				warning("Move count autodetection failed");
+				error("Move count autodetection failed");
 				_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
 			}
 		}

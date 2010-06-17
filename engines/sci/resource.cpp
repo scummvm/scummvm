@@ -714,7 +714,7 @@ void ResourceManager::init() {
 		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
-		warning("resMan: Couldn't determine view type");
+		error("resMan: Couldn't determine view type");
 	}
 }
 
@@ -1116,7 +1116,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 				patchDataOffset = 8;
 				break;
 			default:
-				warning("Resource patch unsupported special case %X", patchDataOffset & 0x7F);
+				error("Resource patch unsupported special case %X", patchDataOffset & 0x7F);
 				return;
 		}
 	}
@@ -1636,7 +1636,7 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 		break;
 #endif
 	default:
-		warning("Resource %s: Compression method %d not supported", _id.toString().c_str(), compression);
+		error("Resource %s: Compression method %d not supported", _id.toString().c_str(), compression);
 		return SCI_ERROR_UNKNOWN_COMPRESSION;
 	}
 
@@ -1752,7 +1752,7 @@ ViewType ResourceManager::detectViewType() {
 		}
 	}
 
-	warning("resMan: Couldn't find any views");
+	error("resMan: Couldn't find any views");
 	return kViewUnknown;
 }
 
@@ -1862,7 +1862,7 @@ void ResourceManager::detectSciVersion() {
 				}
 			}
 
-			warning("Failed to accurately determine SCI version");
+			error("Failed to accurately determine SCI version");
 			// No parser, we assume SCI_VERSION_01.
 			s_sciVersion = SCI_VERSION_01;
 			return;
@@ -1919,7 +1919,7 @@ bool ResourceManager::detectHires() {
 		}
 	}
 
-	warning("resMan: Couldn't detect hires");
+	error("resMan: Couldn't detect hires");
 	return false;
 #else
 	error("no sci32 support");
@@ -1944,7 +1944,7 @@ bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
 
 	if (!res) {
-		warning("resMan: Failed to find script.000");
+		error("resMan: Failed to find script.000");
 		return false;
 	}
 

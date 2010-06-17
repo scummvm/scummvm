@@ -365,7 +365,7 @@ bool SciEngine::initGame() {
 	_gamestate->stack_top = stack->_entries + stack->_capacity;
 
 	if (!script_instantiate(_resMan, _gamestate->_segMan, 0)) {
-		warning("initGame(): Could not instantiate script 0");
+		error("initGame(): Could not instantiate script 0");
 		return false;
 	}
 
