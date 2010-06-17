@@ -43,11 +43,11 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();
+	_isVisible = true;
+
 	// center mouse cursor
 	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
 	kernelSetMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
-
-	_isVisible = true;
 }
 
 GfxCursor::~GfxCursor() {
