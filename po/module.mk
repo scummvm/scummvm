@@ -1,8 +1,8 @@
-POTFILE := po/scummvm.pot
-POFILES := $(wildcard po/*.po)
+POTFILE := $(srcdir)/po/scummvm.pot
+POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f po/POTFILES -d scummvm --c++ -k_ -k_t -k_s -o po/scummvm.pot \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_t -k_s -o $(POTFILE) \
 		"--copyright-holder=ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_
 
@@ -11,8 +11,8 @@ updatepot:
 
 	rm $(POTFILE)_
 	if test -f $(POTFILE); then \
-		sed -f po/remove-potcdate.sed < $(POTFILE) > $(POTFILE).1 && \
-		sed -f po/remove-potcdate.sed < $(POTFILE).new > $(POTFILE).2 && \
+		sed -f $(srcdir)/po/remove-potcdate.sed < $(POTFILE) > $(POTFILE).1 && \
+		sed -f $(srcdir)/po/remove-potcdate.sed < $(POTFILE).new > $(POTFILE).2 && \
 		if cmp $(POTFILE).1 $(POTFILE).2 >/dev/null 2>&1; then \
 			rm -f $(POTFILE).new; \
 		else \
@@ -24,8 +24,8 @@ updatepot:
 		mv -f $(POTFILE).new $(POTFILE); \
 	fi;
 
-po/%.po: $(POTFILE)
-	msgmerge $@ $(POTFILE) -o $@.new
+po/%.po: $(srcdir)/$(POTFILE)
+	msgmerge $@ $(srcdir)/$(POTFILE) -o $@.new
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
