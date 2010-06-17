@@ -201,11 +201,11 @@ static const char *s_defaultKernelNames[] = {
 
 struct SciKernelFunction {
 	const char *name;
-	KernelFunc *fun; /* The actual function */
+	KernelFunc *func; /* The actual function */
 	const char *signature;  /* kfunct signature */
 };
 
-SciKernelFunction kfunct_mappers[] = {
+static SciKernelFunction s_kernelFuncMap[] = {
 	/*00*/	{ "Load", kLoad, "iii*" },
 	/*01*/	{ "UnLoad", kUnLoad, "i.*" },	// Work around SQ1 bug, when exiting the Ulence flats bar
 	/*02*/	{ "ScriptID", kScriptID, "Ioi*" },
@@ -418,10 +418,7 @@ Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 
 Kernel::~Kernel() {
 	for (KernelFuncsContainer::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
-		// TODO: Doing a const_cast is not that nice actually... But since KernelFuncWithSignature
-		// keeps the signature member as "const char *" there is no way around it.
-		// Think of a clever way to avoid this.
-		free(const_cast<char *>(i->signature));
+		free(i->signature);
 }
 
 uint Kernel::getSelectorNamesSize() const {
@@ -498,23 +495,23 @@ void Kernel::loadSelectorNames() {
 	}
 }
 
-static void kernel_compile_signature(const char **s) {
-	const char *src = *s;
+static char *compileKernelSignature(const char *s) {
+	const char *src = s;
 	char *result;
 	bool ellipsis = false;
 	int index = 0;
 
 	if (!src)
-		return; // NULL signature: Nothing to do
+		return 0; // NULL signature: Nothing to do
 
-	result = (char *)malloc(strlen(*s) + 1);
+	result = (char *)malloc(strlen(s) + 1);
 
 	while (*src) {
 		char c;
 		char v = 0;
 
 		if (ellipsis) {
-			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", *s, *src);
+			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", s, *src);
 		}
 
 		do {
@@ -558,7 +555,7 @@ static void kernel_compile_signature(const char **s) {
 				break;
 
 			default:
-				error("ERROR compiling kernel function signature '%s': (%02x / '%c') not understood", *s, c, c);
+				error("ERROR compiling kernel function signature '%s': (%02x / '%c') not understood", s, c, c);
 			}
 		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
 
@@ -567,7 +564,8 @@ static void kernel_compile_signature(const char **s) {
 	}
 
 	result[index] = 0;
-	*s = result; // Write back
+
+	return result;
 }
 
 void Kernel::mapFunctions() {
@@ -584,9 +582,9 @@ void Kernel::mapFunctions() {
 		Common::String sought_name = _kernelNames[functnr];
 
 		// Reset the table entry
-		_kernelFuncs[functnr].fun = NULL;
+		_kernelFuncs[functnr].func = NULL;
 		_kernelFuncs[functnr].signature = NULL;
-		_kernelFuncs[functnr].orig_name = sought_name;
+		_kernelFuncs[functnr].origName = sought_name;
 
 		if (sought_name.empty()) {
 			// No name was given -> must be an unknown opcode
@@ -601,10 +599,10 @@ void Kernel::mapFunctions() {
 			continue;
 		}
 
-		// If the name is known, look it up in kfunct_mappers. This table
+		// If the name is known, look it up in s_kernelFuncMap. This table
 		// maps kernel func names to actual function (pointers).
-		for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
-			if (sought_name == kfunct_mappers[seeker].name)
+		for (uint seeker = 0; (found == -1) && s_kernelFuncMap[seeker].name; seeker++)
+			if (sought_name == s_kernelFuncMap[seeker].name)
 				found = seeker; // Found a kernel function with the correct name!
 
 		if (found == -1) {
@@ -612,15 +610,14 @@ void Kernel::mapFunctions() {
 			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
 			_kernelFuncs[functnr].isDummy = true;
 		} else {
-			// A match in kfunct_mappers was found
-			if (kfunct_mappers[found].fun) {
-				_kernelFuncs[functnr].fun = kfunct_mappers[found].fun;
-				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
+			// A match in s_kernelFuncMap was found
+			if (s_kernelFuncMap[found].func) {
+				_kernelFuncs[functnr].func = s_kernelFuncMap[found].func;
+				_kernelFuncs[functnr].signature = compileKernelSignature(s_kernelFuncMap[found].signature);
 				_kernelFuncs[functnr].isDummy = false;
-				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
 			} else {
-				//warning("Ignoring function %s\n", kfunct_mappers[found].name);
+				//warning("Ignoring function %s\n", s_kernelFuncMap[found].name);
 				++ignored;
 			}
 		}

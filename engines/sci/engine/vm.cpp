@@ -590,7 +590,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 		xstack->selector = kernelFuncNum;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
-		//warning("callk %s", kernelFunc.orig_name.c_str());
+		//warning("callk %s", kernelFunc.origName.c_str());
 
 		// TODO: SCI2.1 equivalent
 		if (s->loadFromLauncher >= 0 && (
@@ -614,13 +614,13 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 				kRestoreGame(s, 2, restoreArgv);
 		} else {
 			// Call kernel function
-			s->r_acc = kernelFunc.fun(s, argc, argv);
+			s->r_acc = kernelFunc.func(s, argc, argv);
 		}
 
 		// Remove callk stack frame again
 		s->_executionStack.pop_back();
 	} else {
-		Common::String warningMsg = "Dummy function " + kernelFunc.orig_name +
+		Common::String warningMsg = "Dummy function " + kernelFunc.origName +
 									Common::String::printf("[0x%x]", kernelFuncNum) +
 									" invoked - ignoring. Params: " +
 									Common::String::printf("%d", argc) + " (";

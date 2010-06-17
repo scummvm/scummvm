@@ -115,9 +115,9 @@ enum {
 typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);
 
 struct KernelFuncWithSignature {
-	KernelFunc *fun; /**< The actual function */
-	const char *signature;  /**< KernelFunc signature */
-	Common::String orig_name; /**< Original name, in case we couldn't map it */
+	KernelFunc *func; /**< The actual function */
+	char *signature;  /**< KernelFunc signature */
+	Common::String origName; /**< Original name, in case we couldn't map it */
 	bool isDummy;
 };
 
