@@ -64,7 +64,13 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
 	//  If we use the copying over, we will get issues because some views have marked all colors as being used
 	//  and those will overwrite the current palette in that case
+	// Quest for Glory 3 demo and police quest 1 vga behave the same interpreter wise and all have glitches, if we don't
+	//  switch back
 	if (!strcmp(g_sci->getGameID(), "laurabow2") && (g_sci->isDemo()))
+		_alwaysForceRealMerge = true;
+	if (!strcmp(g_sci->getGameID(), "qfg3") && (g_sci->isDemo()))
+		_alwaysForceRealMerge = true;
+	if (!strcmp(g_sci->getGameID(), "pq1sci"))
 		_alwaysForceRealMerge = true;
 }
 
