@@ -72,7 +72,7 @@ SciEngine *g_sci = 0;
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
-		: Engine(syst), _gameDescription(desc), _system(syst) {
+		: Engine(syst), _gameDescription(desc) {
 
 	assert(g_sci == 0);
 	g_sci = this;

@@ -272,7 +272,6 @@ private:
 	EventManager *_eventMan;
 	reg_t _gameObj; /**< Pointer to the game object */
 	Console *_console;
-	OSystem *_system;
 };
 
 
