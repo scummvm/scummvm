@@ -100,16 +100,10 @@ void SegManager::initSysStrings() {
 }
 
 SegmentId SegManager::findFreeSegment() const {
-	// FIXME: This is a very crude approach: We find a free segment id by scanning
-	// from the start. This can be slow if the number of segments becomes large.
-	// Optimizations are possible and easy, but I refrain from doing any until this
-	// refactoring is complete.
-	// One very simple yet probably effective approach would be to add
-	// "int firstFreeSegment", which is updated when allocating/freeing segments.
-	// There are some scenarios where it performs badly, but we should first check
-	// whether those occur at all. If so, there are easy refinements that deal
-	// with this. Finally, we could switch to a more elaborate scheme,
-	// such as keeping track of all free segments. But I doubt this is necessary.
+	// The following is a very crude approach: We find a free segment id by
+	// scanning from the start. This can be slow if the number of segments
+	// becomes large. Optimizations are possible and easy, but I'll refrain
+	// from attempting any until we determine we actually need it.
 	uint seg = 1;
 	while (seg < _heap.size() && _heap[seg]) {
 		++seg;
@@ -516,14 +510,14 @@ reg_t SegManager::newNode(reg_t value, reg_t key) {
 
 List *SegManager::lookupList(reg_t addr) {
 	if (getSegmentType(addr.segment) != SEG_TYPE_LISTS) {
-		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
+		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
 		return NULL;
 	}
 
 	ListTable *lt = (ListTable *)_heap[addr.segment];
 
 	if (!lt->isValidEntry(addr.offset)) {
-		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
+		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
 		return NULL;
 	}
 
@@ -535,14 +529,14 @@ Node *SegManager::lookupNode(reg_t addr) {
 		return NULL; // Non-error null
 
 	if (getSegmentType(addr.segment) != SEG_TYPE_NODES) {
-		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+		error("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
 	NodeTable *nt = (NodeTable *)_heap[addr.segment];
 
 	if (!nt->isValidEntry(addr.offset)) {
-		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+		error("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
