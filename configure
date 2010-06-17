@@ -2351,6 +2351,7 @@ EOF
 		cc_check_no_clean $LDFLAGS $CXXFLAGS && _termconv=yes
 		cc_check $LDFLAGS $CXXFLAGS -liconv && LIBS="$LIBS -liconv" && _termconv=yes
 
+		add_to_config_mk_if_yes $_termconv 'USE_TERMCONV = 1'
 		add_to_config_h_if_yes $_termconv '#define USE_TERMCONV'
 		if test "$_termconv" = yes ; then
 			uses_const=no

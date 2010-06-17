@@ -101,7 +101,7 @@ ifdef USE_ZLIB
 OSX_ZLIB ?= -lz
 endif
 
-ifdef USE_TRANSLATION
+ifdef USE_TERMCONV
 OSX_ICONV ?= -liconv
 endif
 
