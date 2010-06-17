@@ -128,11 +128,11 @@ String TranslationManager::getTranslation(const String &message) {
 #ifdef USE_TERMCONV
 bool TranslationManager::convert(const char *message) {
 	// Preparing conversion origin
-	size_t len = strlen(message);
+	size_t len = strlen(message) + 1;
 #ifdef ICONV_USES_CONST
 	const char **pmsg = &message;
 #else
-	char *msgcpy = new char[len + 1];
+	char *msgcpy = new char[len];
 	strcpy(msgcpy, message);
 	char *msg = msgcpy;
 	char **pmsg = &msg;
@@ -158,7 +158,7 @@ bool TranslationManager::convert(const char *message) {
 
 const char *TranslationManager::convertTerm(const char *message) {
 #ifdef USE_TERMCONV
-	size_t len = strlen(message);
+	size_t len = strlen(message) + 1;
 	if (!_convmsg) {
 		_sizeconv = len * 2;
 		_convmsg = new char[_sizeconv];
