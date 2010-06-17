@@ -1289,7 +1289,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 1:
 	{
-		// Set VMD parameters. Called with a maximum of 5 parameters:
+		// Set VMD parameters. Called with a maximum of 6 parameters:
 		//
 		// x, y, flags, gammaBoost, gammaFirst, gammaLast
 		//
@@ -1305,33 +1305,38 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// bit 8		stretch
 
 		// gammaBoost boosts palette colors in the range gammaFirst to gammaLast, but
-		// only if bit 4 in flags is set. Percent value such that 100% = no amplification
+		// only if bit 4 in flags is set. Percent value such that 0% = no amplification
 		// These three parameters are optional if bit 4 is clear. 
 		// Also note that the x, y parameters play subtle games if used with subfx 21.
+		// The subtleness has to do with creation of temporary planes and positioning relative to such planes.
 
 		int flags = argv[3].offset;
 		Common::String flagspec;
 
-		if (flags & 1)
-			flagspec += "doubled ";
-		if (flags & 2)
-			flagspec += "dropframes ";
-		if (flags & 4)
-			flagspec += "blacklines ";
-		if (flags & 8)
-			flagspec += "bit3 ";
-		if (flags & 16)
-			flagspec += "gammaboost ";
-		if (flags & 32)
-			flagspec += "holdblack ";
-		if (flags & 64)
-			flagspec += "holdlast ";
-		if (flags & 128)
-			flagspec += "bit7 ";
-		if (flags & 256)
-			flagspec += "stretch";
+		if (argc > 3)
+		{
+			if (flags & 1)
+				flagspec += "doubled ";
+			if (flags & 2)
+				flagspec += "dropframes ";
+			if (flags & 4)
+				flagspec += "blacklines ";
+			if (flags & 8)
+				flagspec += "bit3 ";
+			if (flags & 16)
+				flagspec += "gammaboost ";
+			if (flags & 32)
+				flagspec += "holdblack ";
+			if (flags & 64)
+				flagspec += "holdlast ";
+			if (flags & 128)
+				flagspec += "bit7 ";
+			if (flags & 256)
+				flagspec += "stretch";
 
-		warning("VMDFlags: %s", flagspec.c_str());
+			warning("VMDFlags: %s", flagspec.c_str());
+		}
+
 		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
 
 		if (argc > 4 && flags & 16)
