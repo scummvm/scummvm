@@ -60,6 +60,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_dataincAdd = false;
 	_dataincToAdd = 0;
 	_resetOnPause = false;
+	_pSnd = 0;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
