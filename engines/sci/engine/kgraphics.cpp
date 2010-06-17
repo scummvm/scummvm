@@ -48,6 +48,9 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
+#ifdef ENABLE_SCI32
+#include "sci/video/vmd_decoder.h"
+#endif
 
 namespace Sci {
 
@@ -1230,6 +1233,78 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 }
+
+reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
+	uint16 operation = argv[0].toUint16();
+	Graphics::VideoDecoder *videoDecoder = 0;
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
+	Common::String fileName, warningMsg;
+
+	switch (operation) {
+	case 0:	// play
+		fileName = s->_segMan->derefString(argv[1]);
+		// TODO: argv[2] (usually 0)
+		if (argv[2] != NULL_REG)
+			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x)", PRINT_REG(argv[2]));
+
+		videoDecoder = new VMDDecoder(g_system->getMixer());
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelHide();
+
+		if (videoDecoder && videoDecoder->loadFile(fileName)) {
+			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
+			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+			bool skipVideo = false;
+
+			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+				if (videoDecoder->needsUpdate()) {
+					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+					if (frame) {
+						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+
+						if (videoDecoder->hasDirtyPalette())
+							videoDecoder->setSystemPalette();
+
+						g_system->updateScreen();
+					}
+				}
+
+				Common::Event event;
+				while (g_system->getEventManager()->pollEvent(event)) {
+					if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+						skipVideo = true;
+				}
+
+				g_system->delayMillis(10);
+			}
+		
+			// Copy video contents to screen buffer
+			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
+
+			delete videoDecoder;
+		} else
+			warning("Could not play video %s\n", fileName.c_str());
+
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelShow();
+		break;
+	default:
+		warningMsg = "PlayVMD - unsupported subop. Params: " +
+									Common::String::printf("%d", argc) + " (";
+
+		for (int i = 0; i < argc; i++) {
+			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+			warningMsg += (i == argc - 1 ? ")" : ", ");
+		}
+
+		warning("%s", warningMsg.c_str());
+		break;
+	}
+
+	return s->r_acc;
+}
+
 #endif
 
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
