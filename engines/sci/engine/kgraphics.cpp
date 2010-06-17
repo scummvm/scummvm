@@ -173,7 +173,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelSetView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		break;
 	default :
-		warning("kSetCursor: Unhandled case: %d arguments given", argc);
+		error("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;
 	}
 	return s->r_acc;
@@ -186,7 +186,7 @@ reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 	case SCI_VERSION_1_1:
 		return kSetCursorSci11(s, argc, argv);
 	default:
-		warning("Unknown SetCursor type");
+		error("Unknown SetCursor type");
 		return NULL_REG;
 	}
 }
@@ -316,7 +316,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
 
 	default:
-		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
+		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
 	}
 
 	return s->r_acc;
@@ -627,7 +627,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	default:
-		warning("kPalette(%d), not implemented", argv[0].toUint16());
+		error("kPalette(%d), not implemented", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -680,7 +680,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	default:
-		warning("kPalVary(%d), not implemented (argc = %d)", operation, argc);
+		error("kPalVary(%d), not implemented (argc = %d)", operation, argc);
 	}
 	return NULL_REG;
 }
@@ -702,7 +702,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			Common::String resourceName = s->_segMan->getString(argv[1]);
 			s->r_acc = g_sci->_gfxPaint16->kernelPortraitLoad(resourceName);
 		} else {
-			warning("kPortrait(loadResource) called with unsupported argc %d", argc);
+			error("kPortrait(loadResource) called with unsupported argc %d", argc);
 		}
 		break;
 	}
@@ -720,7 +720,7 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxPaint16->kernelPortraitShow(resourceName, position, resourceNum, noun, verb, cond, seq);
 			return SIGNAL_REG;
 		} else {
-			warning("kPortrait(show) called with unsupported argc %d", argc);
+			error("kPortrait(show) called with unsupported argc %d", argc);
 		}
 		break;
 	}
@@ -729,12 +729,12 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 			uint16 portraitId = argv[1].toUint16();
 			g_sci->_gfxPaint16->kernelPortraitUnload(portraitId);
 		} else {
-			warning("kPortrait(unload) called with unsupported argc %d", argc);
+			error("kPortrait(unload) called with unsupported argc %d", argc);
 		}
 		break;
 	}
 	default:
-		warning("kPortrait(%d), not implemented (argc = %d)", operation, argc);
+		error("kPortrait(%d), not implemented (argc = %d)", operation, argc);
 	}
 
 	return s->r_acc;
@@ -1160,7 +1160,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
 
 			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				warning("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
+				error("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
 				return NULL_REG;
 			}
 

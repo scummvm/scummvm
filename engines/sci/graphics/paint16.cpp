@@ -514,7 +514,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			bRedraw = 0;
 			break;
 		default:
-			warning("Unknown kDisplay argument %X", displayArg);
+			error("Unknown kDisplay argument %X", displayArg);
 			break;
 		}
 	}
