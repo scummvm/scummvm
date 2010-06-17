@@ -34,18 +34,19 @@
 
 namespace Sci {
 
-#define SCANCODE_ROWS_NR 3
-
 EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended), _modifierStates(0) {
 }
 
 EventManager::~EventManager() {
 }
 
-static const struct scancode_row {
+
+struct ScancodeRow {
 	int offset;
 	const char *keys;
-} scancode_rows[SCANCODE_ROWS_NR] = {
+};
+
+static const ScancodeRow s_scancodeRows[] = {
 	{0x10, "QWERTYUIOP[]"},
 	{0x1e, "ASDFGHJKL;'\\"},
 	{0x2c, "ZXCVBNM,./"}
@@ -56,9 +57,9 @@ static int altify(int ch) {
 	int row;
 	int c = toupper((char)ch);
 
-	for (row = 0; row < SCANCODE_ROWS_NR; row++) {
-		const char *keys = scancode_rows[row].keys;
-		int offset = scancode_rows[row].offset;
+	for (row = 0; row < ARRAYSIZE(s_scancodeRows); row++) {
+		const char *keys = s_scancodeRows[row].keys;
+		int offset = s_scancodeRows[row].offset;
 
 		while (*keys) {
 			if (*keys == c)
