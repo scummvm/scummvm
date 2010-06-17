@@ -1241,11 +1241,14 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	Common::String fileName, warningMsg;
 
 	switch (operation) {
-	case 0:	// play
+	case 0:	// init
+		// This is actually meant to init the video file, but we play it instead
 		fileName = s->_segMan->derefString(argv[1]);
-		// TODO: argv[2] (usually 0)
+		// TODO: argv[2] (usually null). When it exists, it points to an "Event" object,
+		// that holds no data initially (e.g. in the intro of Phantasmagoria 1 demo).
+		// Perhaps it's meant for syncing
 		if (argv[2] != NULL_REG)
-			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x)", PRINT_REG(argv[2]));
+			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
 
 		videoDecoder = new VMDDecoder(g_system->getMixer());
 
@@ -1302,6 +1305,18 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelShow();
 		break;
+	case 1:
+		// Unknown. Called with 5 extra integer parameterrs
+		// (e.g. 174, 95, 20, 0, 55, 236)
+	case 6:
+		// Play, perhaps? Or stop? This is the last call made, and takes no extra parameters
+	case 14:
+		// Takes an additional integer parameter (e.g. 3)
+	case 16:
+		// Takes an additional parameter, usually 0
+	case 21:
+		// Looks to be setting the video size and position. Called with 4 extra integer
+		// parameters (e.g. 86, 41, 235, 106)
 	default:
 		warningMsg = "PlayVMD - unsupported subop. Params: " +
 									Common::String::printf("%d", argc) + " (";
