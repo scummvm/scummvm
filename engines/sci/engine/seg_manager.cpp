@@ -535,9 +535,6 @@ Node *SegManager::lookupNode(reg_t addr) {
 		return NULL; // Non-error null
 
 	if (getSegmentType(addr.segment) != SEG_TYPE_NODES) {
-		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
-		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
-		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node", __FILE__, __LINE__, PRINT_REG(addr));
 		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
