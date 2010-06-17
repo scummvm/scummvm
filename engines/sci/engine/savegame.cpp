@@ -776,8 +776,8 @@ void SegManager::reconstructScripts(EngineState *s) {
 
 			if (getSciVersion() < SCI_VERSION_1_1) {
 				if (!obj->initBaseObject(this, addr, false)) {
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->scriptObjRemove(addr);
+					error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					//scr->scriptObjRemove(addr);
 				}
 			}
 		}
@@ -809,7 +809,7 @@ void SegManager::reconstructClones() {
 				const Object *baseObj = getObject(seeker.getSpeciesSelector());
 				seeker.cloneFromObject(baseObj);
 				if (!baseObj)
-					warning("Clone entry without a base class: %d", j);
+					error("Clone entry without a base class: %d", j);
 			}	// end for
 			}	// end if
 	}	// end for

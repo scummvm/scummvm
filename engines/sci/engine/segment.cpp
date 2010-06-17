@@ -221,7 +221,7 @@ void Script::load(ResourceManager *resMan) {
 			_localsOffset = 0;
 
 		if (_localsOffset + _localsCount * 2 + 1 >= (int)_bufSize) {
-			warning("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
+			error("Locals extend beyond end of script: offset %04x, count %d vs size %d", _localsOffset, _localsCount, _bufSize);
 			_localsCount = (_bufSize - _localsOffset) >> 1;
 		}
 	} else {
@@ -268,12 +268,14 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	return obj;
 }
 
+#if 0
 void Script::scriptObjRemove(reg_t obj_pos) {
 	if (getSciVersion() < SCI_VERSION_1_1)
 		obj_pos.offset += 8;
 
 	_objects.erase(obj_pos.toUint16());
 }
+#endif
 
 // This helper function is used by Script::relocateLocal and Object::relocate
 static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
@@ -288,7 +290,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return false;
 
 	if (rel & 1) {
-		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
+		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return false;
 	}
 	block[idx].segment = segment; // Perform relocation
@@ -372,7 +374,7 @@ uint16 Script::validateExportFunc(int pubfunct) {
 	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
 
 	if (_numExports <= pubfunct) {
-		warning("validateExportFunc(): pubfunct is invalid");
+		error("validateExportFunc(): pubfunct is invalid");
 		return 0;
 	}
 
@@ -464,7 +466,7 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
-		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
 		ret.reg = 0;
 	}
 	return ret;
@@ -551,7 +553,7 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 			for (uint i = 0; i < obj->getVarCount(); i++)
 				(*note)(param, obj->getVariable(i));
 		} else {
-			warning("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
+			error("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
 		}
 	} else {
 		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
@@ -642,7 +644,7 @@ void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 
 void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
+		error("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 
@@ -662,7 +664,7 @@ void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 
 void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
+		error("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 	const Node *node = &(_table[addr.offset]);
@@ -736,7 +738,7 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
 
 	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
-		warning("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
+		error("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
 		          propertyOffset, propertyOffset >> 1, selectors - 1);
 		return -1;
 	}
@@ -814,7 +816,7 @@ void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 
 void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
+		error("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
 	}
 

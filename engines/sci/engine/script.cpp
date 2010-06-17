@@ -277,8 +277,8 @@ void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
 					obj->initSpecies(segMan, addr);
 
 					if (!obj->initBaseObject(segMan, addr)) {
-						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						scr->scriptObjRemove(addr);
+						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						//scr->scriptObjRemove(addr);
 					}
 				}
 				break;

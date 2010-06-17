@@ -703,7 +703,7 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 
 void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
-		warning("ADLIB: Invalid patch %i requested", patch);
+		error("ADLIB: Invalid patch %i requested", patch);
 		patch = 0;
 	}
 
@@ -749,7 +749,7 @@ void MidiDriver_AdLib::playSwitch(bool play) {
 
 bool MidiDriver_AdLib::loadResource(const byte *data, uint size) {
 	if ((size != 1344) && (size != 2690) && (size != 5382)) {
-		warning("ADLIB: Unsupported patch format (%i bytes)", size);
+		error("ADLIB: Unsupported patch format (%i bytes)", size);
 		return false;
 	}
 

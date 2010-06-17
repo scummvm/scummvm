@@ -406,11 +406,13 @@ public:
 	 */
 	Object *scriptObjInit(reg_t obj_pos, bool fullObjectInit = true);
 
+#if 0
 	/**
 	 * Removes a script object
 	 * @param obj_pos	Location (segment, offset) of the object.
 	 */
 	void scriptObjRemove(reg_t obj_pos);
+#endif
 
 	/**
 	 * Processes a relocation block witin a script

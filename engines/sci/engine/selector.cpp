@@ -188,13 +188,13 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	ObjVarRef address;
 
 	if ((selectorId < 0) || (selectorId > (int)g_sci->getKernel()->getSelectorNamesSize())) {
-		warning("Attempt to write to invalid selector %d of"
+		error("Attempt to write to invalid selector %d of"
 		         " object at %04x:%04x.", selectorId, PRINT_REG(object));
 		return;
 	}
 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
-		warning("Selector '%s' of object at %04x:%04x could not be"
+		error("Selector '%s' of object at %04x:%04x could not be"
 		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	else
 		*address.getPointer(segMan) = value;
@@ -217,7 +217,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 		         g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	}
 	if (slc_type == kSelectorVariable) {
-		warning("Attempting to invoke variable selector %s of object %04x:%04x",
+		error("Attempting to invoke variable selector %s of object %04x:%04x",
 			g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	}
 

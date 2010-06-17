@@ -207,7 +207,7 @@ Common::String SciEngine::getSciLanguageString(const char *str, kLanguage lang, 
 					// Copy double-byte character
 					char c2 = *(++seeker);
 					if (!c2) {
-						warning("SJIS character %02X is missing second byte", c);
+						error("SJIS character %02X is missing second byte", c);
 						break;
 					}
 					fullWidth += c;

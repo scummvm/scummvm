@@ -128,7 +128,8 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		// The results of this are likely unpredictable...
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -137,7 +138,8 @@ static int validate_arithmetic(reg_t reg) {
 
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		// The results of this are likely unpredictable...
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -159,8 +161,8 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
-				warning("%s", txt.c_str());
-				warning("[VM] Access would be outside even of the stack (%d); access denied", total_offset);
+				// Fatal, as the game is trying to do an OOB access
+				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
@@ -298,7 +300,7 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		reg_t *var = xs.getVarPointer(s->_segMan);
 		if (!var) {
-			warning("Invalid varselector exec stack entry");
+			error("Invalid varselector exec stack entry");
 		} else {
 			// varselector access?
 			if (xs.argc) { // write?
@@ -419,7 +421,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					reg_t oldReg = *varp.getPointer(s->_segMan);
 					reg_t newReg = argp[1];
 					const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-					warning("send_selector(): argc = %d while modifying variable selector "
+					error("send_selector(): argc = %d while modifying variable selector "
 							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x", 
 							argc, selector, selectorName, PRINT_REG(send_obj),
 							objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
@@ -762,6 +764,7 @@ void run_vm(EngineState *s, bool restoring) {
 			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
+				// FIXME: Why does this happen? Are there leftover calls in the call stack?
 				warning("Running on non-existant script in segment %x", s->xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
 #ifndef DISABLE_VALIDATIONS
@@ -779,6 +782,7 @@ void run_vm(EngineState *s, bool restoring) {
 #endif
 				local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 				if (!local_script) {
+					// FIXME: Why does this happen? Is the script not loaded yet at this point?
 					warning("Could not find local script from segment %x", s->xs->local_segment);
 					local_script = NULL;
 					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
@@ -1661,7 +1665,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 //#ifndef DISABLE_VALIDATIONS
 		if (s->xs != &(s->_executionStack.back())) {
-			warning("xs is stale (%p vs %p); last command was %02x",
+			error("xs is stale (%p vs %p); last command was %02x",
 					(void *)s->xs, (void *)&(s->_executionStack.back()),
 					opcode);
 		}

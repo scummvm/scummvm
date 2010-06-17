@@ -373,14 +373,14 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = SIGNAL_REG;
 
 	if (!s->_segMan->isHeapObject(avoider)) {
-		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
+		error("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = readSelector(segMan, avoider, SELECTOR(client));
 
 	if (!s->_segMan->isHeapObject(client)) {
-		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
+		error("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
@@ -389,7 +389,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	if (!s->_segMan->isHeapObject(mover)) {
 		if (mover.segment) {
-			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
+			error("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}
 		return s->r_acc;
 	}
@@ -450,7 +450,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 				angle -= 360;
 		}
 
-		warning("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
+		error("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
 	} else {
 		int heading = readSelectorValue(segMan, client, SELECTOR(heading));
 

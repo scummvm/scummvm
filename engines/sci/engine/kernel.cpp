@@ -640,7 +640,7 @@ int Kernel::findRegType(reg_t reg) {
 		return 0; // Invalid
 
 	if (!mobj->isValidOffset(reg.offset))
-		warning("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
+		error("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:

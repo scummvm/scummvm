@@ -455,7 +455,7 @@ void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->sendToDriver(cmd);
 	else
-		warning("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
 }
 
 void SciMusic::printPlayList(Console *con) {
