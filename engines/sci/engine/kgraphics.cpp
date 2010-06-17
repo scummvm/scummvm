@@ -534,7 +534,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
-	if (!strcmp(g_sci->getGameID(), "lsl1sci") && s->currentRoomNumber() == 300) {
+	if (g_sci->getGameId() == "lsl1sci" && s->currentRoomNumber() == 300) {
 		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
 		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
 	}
@@ -807,7 +807,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			//  ALL other games use a hardcoded -1 (madness!)
 			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
 			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
-			if (!strcmp(g_sci->getGameID(), "jones"))
+			if (g_sci->getGameId() == "jones")
 				priority = readSelectorValue(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
@@ -991,7 +991,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	if (!strcmp(g_sci->getGameID(), "freddypharkas") || !strcmp(g_sci->getGameID(), "freddypharkas-demo")) {
+	if (g_sci->getGameId() == "freddypharkas" || g_sci->getGameId() == "freddypharkas-demo") {
 		// WORKAROUND
 		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
 		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
@@ -1002,7 +1002,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 			priority = 15;
 	}
 
-	if (!strcmp(g_sci->getGameID(), "laurabow2")) {
+	if (g_sci->getGameId() == "laurabow2") {
 		// WORKAROUND
 		// see the one above
 		if ((viewId == 995) && (priority == 0))

@@ -66,11 +66,11 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	//  and those will overwrite the current palette in that case
 	// Quest for Glory 3 demo and police quest 1 vga behave the same interpreter wise and all have glitches, if we don't
 	//  switch back
-	if (!strcmp(g_sci->getGameID(), "laurabow2") && (g_sci->isDemo()))
+	if (g_sci->getGameId() == "laurabow2" && (g_sci->isDemo()))
 		_alwaysForceRealMerge = true;
-	if (!strcmp(g_sci->getGameID(), "qfg3") && (g_sci->isDemo()))
+	else if (g_sci->getGameId() == "qfg3" && (g_sci->isDemo()))
 		_alwaysForceRealMerge = true;
-	if (!strcmp(g_sci->getGameID(), "pq1sci"))
+	else if (g_sci->getGameId() == "pq1sci")
 		_alwaysForceRealMerge = true;
 }
 

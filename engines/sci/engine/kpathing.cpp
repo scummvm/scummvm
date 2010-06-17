@@ -1056,7 +1056,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && !strcmp(g_sci->getGameID(), "lsl1sci")) {
+	if ((size == 19) && g_sci->getGameId() == "lsl1sci") {
 		if ((s->currentRoomNumber() == 350)
 		&& (read_point(segMan, points, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
@@ -1174,7 +1174,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 		// WORKAROUND LSL5 room 660. Priority glitch due to us choosing a different path
 		// than SSCI. Happens when Patti walks to the control room.
-		if (!strcmp(g_sci->getGameID(), "lsl5") && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
+		if (g_sci->getGameId() == "lsl5" && (s->currentRoomNumber() == 660) && (Common::Point(67, 131) == *new_start) && (Common::Point(229, 101) == *new_end)) {
 			debug(1, "[avoidpath] Applying fix for priority problem in LSL5, room 660");
 			pf_s->_prependPoint = new_start;
 			new_start = new Common::Point(77, 107);

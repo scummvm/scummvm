@@ -72,7 +72,7 @@ SciEngine *g_sci = 0;
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
-		: Engine(syst), _gameDescription(desc) {
+		: Engine(syst), _gameDescription(desc), _gameId(_gameDescription->gameid) {
 
 	assert(g_sci == 0);
 	g_sci = this;
@@ -128,7 +128,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// is for the demo of Phantasmagoria, included in the disk
-	if (strcmp(getGameID(), "kq6"))
+	if (_gameId != "kq6")
 		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
 }
 
@@ -167,7 +167,7 @@ Common::Error SciEngine::run() {
 */
 
 	// Add the after market GM patches for the specified game, if they exist
-	_resMan->addNewGMPatch(getGameID());
+	_resMan->addNewGMPatch(_gameId);
 	_gameObj = _resMan->findGameObject();
 
 	SegManager *segMan = new SegManager(_resMan);
@@ -179,10 +179,10 @@ Common::Error SciEngine::run() {
 	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
 	//  it to platform windows.
 	if (getPlatform() == Common::kPlatformWindows) {
-		if (!strcmp(getGameID(), "kq6"))
+		if (_gameId == "kq6")
 			upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 #ifdef ENABLE_SCI32
-		if (!strcmp(getGameID(), "gk1"))
+		if (_gameId == "gk1")
 			upscaledHires = GFX_SCREEN_UPSCALED_640x480;
 #endif
 	}
@@ -494,10 +494,6 @@ Console *SciEngine::getSciDebugger() {
 	return _console;
 }
 
-const char* SciEngine::getGameID() const {
-	return _gameDescription->gameid;
-}
-
 Common::Language SciEngine::getLanguage() const {
 	return _gameDescription->language;
 }
@@ -523,14 +519,12 @@ Common::String SciEngine::getSavegamePattern() const {
 }
 
 Common::String SciEngine::getFilePrefix() const {
-	const char* gameID = getGameID();
-	if (!strcmp(gameID, "qfg2")) {
+	if (_gameId == "qfg2") {
 		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
 		if (_gamestate->currentRoomNumber() == 805)
 			return "qfg1";
 		// TODO: Include import-room for qfg1vga
-	}
-	if (!strcmp(gameID, "qfg3")) {
+	} else if (_gameId == "qfg3") {
 		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
 		if (_gamestate->currentRoomNumber() == 54)
 			return "qfg2";

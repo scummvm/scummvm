@@ -151,7 +151,7 @@ public:
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
 
-	const char* getGameID() const;
+	const Common::String &getGameId() const { return _gameId; }
 	int getResourceVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
@@ -265,6 +265,7 @@ private:
 	void initStackBaseWithSelector(Selector selector);
 
 	const ADGameDescription *_gameDescription;
+	const Common::String _gameId;
 	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
 	Kernel *_kernel;

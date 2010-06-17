@@ -59,9 +59,9 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
 	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
 	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
-	if (!strcmp(g_sci->getGameID(), "lsl3") && s->currentRoomNumber() == 290)
+	if (g_sci->getGameId() == "lsl3" && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
-	if (!strcmp(g_sci->getGameID(), "iceman") && s->currentRoomNumber() == 27) {
+	if (g_sci->getGameId() == "iceman" && s->currentRoomNumber() == 27) {
 		s->_throttleTrigger = true;
 		neededSleep = 60;
 	}
