@@ -635,7 +635,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	if (sceneNumber > 0) {
 		sceneName = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneNumber, ".DAT");
 	} else {
-		strcat(buffer1, "*");
+		strcpy(buffer1, "*");
 		strcat(buffer1, resName);
 		sceneName = buffer1; // TODO: Check whether this needs to be converted to 'HAG form'
 	}

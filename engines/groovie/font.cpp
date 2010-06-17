@@ -54,6 +54,7 @@ bool T7GFont::load(Common::SeekableReadStream &stream) {
 
 	if (stream.eos()) {
 		error("Groovie::T7GFont: Couldn't read the glyph offsets");
+		delete[] glyphOffsets;
 		return false;
 	}
 

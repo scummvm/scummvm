@@ -536,6 +536,8 @@ int QuickTimeDecoder::readCMOV(MOVatom atom) {
 	unsigned long dstLen = uncompressedSize;
 	if (!Common::uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
+		free(compressedData);
+		free(uncompressedData);
 		return -1;
 	}
 
