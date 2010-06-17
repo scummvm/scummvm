@@ -1334,7 +1334,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		warning("VMDFlags: %s", flagspec.c_str());
 		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
 
-		if (argc > 4)
+		if (argc > 4 && flags & 16)
 			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].offset, argv[5].offset, argv[6].offset);
 		break;
 	}
