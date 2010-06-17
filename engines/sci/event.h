@@ -120,6 +120,7 @@ private:
 	SciEvent getScummVMEvent();
 
 	const bool _fontIsExtended;
+	int _modifierStates;
 	Common::List<SciEvent> _events;
 };
 

@@ -36,7 +36,7 @@ namespace Sci {
 
 #define SCANCODE_ROWS_NR 3
 
-EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended) {
+EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended), _modifierStates(0) {
 }
 
 EventManager::~EventManager() {
@@ -115,7 +115,6 @@ static const byte codepagemap_88591toDOS[0x80] = {
 };
 
 SciEvent EventManager::getScummVMEvent() {
-	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
 	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
