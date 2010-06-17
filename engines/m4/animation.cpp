@@ -132,9 +132,9 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 
 		for (int i = 0; i < messagesCount; ++i) {
 			AnimMessage rec;
+			rec.soundId = animStream->readUint16LE();
 			animStream->read(rec.msg, 70);
-			rec.pos.x = animStream->readUint16LE();
-			rec.pos.y = animStream->readUint16LE();
+			animStream->readUint16LE();
 			animStream->readUint16LE();
 			rec.rgb1.r = animStream->readByte();
 			rec.rgb1.g = animStream->readByte();
@@ -142,11 +142,13 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			rec.rgb2.r = animStream->readByte();
 			rec.rgb2.g = animStream->readByte();
 			rec.rgb2.b = animStream->readByte();
+			animStream->readUint16LE();
+			animStream->readUint16LE();
 			rec.kernelMsgIndex = animStream->readUint16LE();
-			animStream->skip(6);
+			rec.pos.x = animStream->readUint16LE();
+			rec.pos.y = animStream->readUint16LE();
 			rec.startFrame = animStream->readUint16LE();
 			rec.endFrame = animStream->readUint16LE();
-			animStream->readUint16LE();
 
 			_messages.push_back(rec);
 		}
@@ -201,7 +203,10 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			fontName += "*";
 		fontName += fontResource;
 
-		_font = _vm->_font->getFont(fontName);
+		if (fontName != "")
+			_font = _vm->_font->getFont(fontName);
+		else
+			warning("Attempted to set a font with an empty name");
 	}
 
 	// Load all the sprite sets for the animation
@@ -421,6 +426,9 @@ void MadsAnimation::update() {
 
 			// Add a kernel message to display the given text
 			me.kernelMsgIndex = _view->_kernelMessages.add(me.pos, colIndex * 101, 0, 0, INDEFINITE_TIMEOUT, me.msg);
+			// Play the associated sound, if it exists
+			if (me.soundId >= 0)
+				_vm->_sound->playDSRSound(me.soundId, 255, false);
 			++_messageCtr;
 		}
 	}

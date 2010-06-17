@@ -39,6 +39,7 @@ class SpriteSlotSubset;
 
 class AnimMessage {
 public:
+	int16 soundId;
 	char msg[70];
 	Common::Point pos;
 	RGB8 rgb1, rgb2;
