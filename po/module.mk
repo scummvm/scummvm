@@ -24,8 +24,8 @@ updatepot:
 		mv -f $(POTFILE).new $(POTFILE); \
 	fi;
 
-po/%.po: $(srcdir)/$(POTFILE)
-	msgmerge $@ $(srcdir)/$(POTFILE) -o $@.new
+%.po: $(POTFILE)
+	msgmerge $@ $(POTFILE) -o $@.new
 	if cmp $@ $@.new >/dev/null 2>&1; then \
 		rm -f $@.new; \
 	else \
