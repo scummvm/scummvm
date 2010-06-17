@@ -792,11 +792,15 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
 	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
 	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
-	if (nsRect.left < 0 || nsRect.top < 0) {
-		// If top and left are negative, we need to adjust coordinates by the item's x and y
-		// (e.g. happens in GK1, day 1, with detective Mosely's hotspot in his office)
-		nsRect.translate(itemX, itemY);
-	}
+
+	// If top and left are negative, we need to adjust coordinates by the item's x and y
+	// (e.g. happens in GK1, day 1, with detective Mosely's hotspot in his office)
+
+	if (nsRect.left < 0)
+		nsRect.translate(itemX, 0);
+	
+	if (nsRect.top < 0)
+		nsRect.translate(0, itemY);
 
 	// HACK: nsLeft and nsTop can be invalid, so try and fix them here using x and y
 	// (e.g. with the inventory screen in GK1)
