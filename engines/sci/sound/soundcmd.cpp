@@ -232,9 +232,8 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 		uint16 controller = argv[4].toUint16();
 		uint16 param = argv[5].toUint16();
 
-		if (!channel)
-			error("invalid channel specified on cmdSendMidi");
-		channel--; // channel is given 1-based, we are using 0-based
+		if (channel)
+			channel--; // channel is given 1-based, we are using 0-based
 
 		_midiCommand = (channel | midiCmd) | ((uint32)controller << 8) | ((uint32)param << 16);
 	}
@@ -901,7 +900,15 @@ void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
 	//SongHandle handle = FROBNICATE_HANDLE(obj);
 	//_state->sfx_send_midi(handle, value, _midiCmd, _controller, _param);
 #else
-	_music->sendMidiCommand(_midiCommand);
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		// TODO: maybe it's possible to call this with obj == 0:0 and send directly?!
+		// if so, allow it
+		//_music->sendMidiCommand(_midiCommand);
+		warning("cmdSendMidi: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return;
+	}
+	_music->sendMidiCommand(musicSlot, _midiCommand);
 #endif
 }
 

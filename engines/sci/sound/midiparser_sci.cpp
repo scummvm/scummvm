@@ -79,6 +79,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	for (int i = 0; i < 15; i++) {
 		_channelUsed[i] = false;
 		_channelRemap[i] = -1;
+		_channelMuted[i] = false;
 	}
 	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
 	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
@@ -143,8 +144,22 @@ void MidiParser_SCI::unloadMusic() {
 }
 
 void MidiParser_SCI::sendToDriver(uint32 b) {
+	byte midiChannel = b & 0xf;
+
+	if ((b & 0xFFF0) == 0x4EB0) {
+		// this is channel mute only for sci1
+		// it's velocity control for sci0
+		if (_soundVersion >= SCI_VERSION_1_EARLY) {
+			_channelMuted[midiChannel] = b & 0xFF0000 ? true : false;
+			return; // don't send this to driver at all
+		}
+	}
+
+	// Is channel muted? if so, don't send command
+	if (_channelMuted[midiChannel])
+		return;
 	// Channel remapping
-	int16 realChannel = _channelRemap[b & 0xf];
+	int16 realChannel = _channelRemap[midiChannel];
 	assert(realChannel != -1);
 	b = (b & 0xFFFFFFF0) | realChannel;
 	_driver->send(b);
@@ -249,7 +264,6 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			case 0x0A:	// pan
 			case 0x0B:	// expression
 			case 0x40:	// sustain
-			case 0x4E:	// velocity control
 			case 0x79:	// reset all
 			case 0x7B:	// notes off
 				// These are all handled by the music driver, so ignore them
@@ -263,8 +277,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				break;
 			}
 		}
-		if (info.basic.param1 == 7) // channel volume change -scale it
+		switch (info.basic.param1) {
+		case 7: // channel volume change -scale it
 			info.basic.param2 = info.basic.param2 * _volume / MUSIC_VOLUME_MAX;
+			break;
+		}
 		info.length = 0;
 		break;
 

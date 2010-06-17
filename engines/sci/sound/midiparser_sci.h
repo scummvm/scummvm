@@ -76,9 +76,9 @@ public:
 	const byte *getMixedData() const { return _mixedData; }
 
 	void tryToOwnChannels();
+	void sendToDriver(uint32 b);
 
 protected:
-	void sendToDriver(uint32 b);
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
@@ -101,6 +101,7 @@ protected:
 
 	bool _channelUsed[16];
 	int16 _channelRemap[16];
+	bool _channelMuted[16];
 };
 
 } // End of namespace Sci

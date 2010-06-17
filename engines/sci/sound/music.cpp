@@ -446,6 +446,18 @@ void SciMusic::soundSetMasterVolume(uint16 vol) {
 		_pMidiDrv->setVolume(vol);
 }
 
+void SciMusic::sendMidiCommand(uint32 cmd) {
+	Common::StackLock lock(_mutex);
+	_pMidiDrv->send(cmd);
+}
+
+void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
+	if (pSnd->pMidiParser)
+		pSnd->pMidiParser->sendToDriver(cmd);
+	else
+		warning("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+}
+
 void SciMusic::printPlayList(Console *con) {
 	Common::StackLock lock(_mutex);
 

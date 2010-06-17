@@ -179,10 +179,8 @@ public:
 	MusicList::iterator getPlayListStart() { return _playList.begin(); }
 	MusicList::iterator getPlayListEnd() { return _playList.end(); }
 
-	void sendMidiCommand(uint32 cmd) {
-		Common::StackLock lock(_mutex);
-		_pMidiDrv->send(cmd);
-	}
+	void sendMidiCommand(uint32 cmd);
+	void sendMidiCommand(MusicEntry *pSnd, uint32 cmd);
 
 	void setReverb(byte reverb);
 
