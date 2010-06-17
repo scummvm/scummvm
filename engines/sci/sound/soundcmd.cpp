@@ -232,6 +232,10 @@ reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
 		uint16 controller = argv[4].toUint16();
 		uint16 param = argv[5].toUint16();
 
+		if (!channel)
+			error("invalid channel specified on cmdSendMidi");
+		channel--; // channel is given 1-based, we are using 0-based
+
 		_midiCommand = (channel | midiCmd) | ((uint32)controller << 8) | ((uint32)param << 16);
 	}
 
