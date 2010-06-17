@@ -1288,8 +1288,56 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelShow();
 		break;
 	case 1:
-		// Unknown. Called with 5 extra integer parameterrs
-		// (e.g. 174, 95, 20, 0, 55, 236)
+	{
+		// Set VMD parameters. Called with a maximum of 5 parameters:
+		//
+		// x, y, flags, gammaBoost, gammaFirst, gammaLast
+		//
+		// Flags are as follows:
+		// bit 0		doubled
+		// bit 1		"drop frames"?
+		// bit 2		insert black lines
+		// bit 3		unknown
+		// bit 4		gamma correction
+		// bit 5		hold black frame
+		// bit 6		hold last frame
+		// bit 7		unknown
+		// bit 8		stretch
+
+		// gammaBoost boosts palette colors in the range gammaFirst to gammaLast, but
+		// only if bit 4 in flags is set. Percent value such that 100% = no amplification
+		// These three parameters are optional if bit 4 is clear. 
+		// Also note that the x, y parameters play subtle games if used with subfx 21.
+
+		int flags = argv[3].offset;
+		Common::String flagspec;
+
+		if (flags & 1)
+			flagspec += "doubled ";
+		if (flags & 2)
+			flagspec += "dropframes ";
+		if (flags & 4)
+			flagspec += "blacklines ";
+		if (flags & 8)
+			flagspec += "bit3 ";
+		if (flags & 16)
+			flagspec += "gammaboost ";
+		if (flags & 32)
+			flagspec += "holdblack ";
+		if (flags & 64)
+			flagspec += "holdlast ";
+		if (flags & 128)
+			flagspec += "bit7 ";
+		if (flags & 256)
+			flagspec += "stretch";
+
+		warning("VMDFlags: %s", flagspec.c_str());
+		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
+
+		if (argc > 4)
+			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].offset, argv[5].offset, argv[6].offset);
+		break;
+	}
 	case 6:
 		// Play, perhaps? Or stop? This is the last call made, and takes no extra parameters
 	case 14:
