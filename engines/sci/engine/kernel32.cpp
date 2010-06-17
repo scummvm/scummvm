@@ -898,9 +898,8 @@ reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 	Graphics::VideoDecoder *videoDecoder = 0;
-	Common::String fileName;
-
-	Common::String warningMsg;
+	bool reshowCursor = g_sci->_gfxCursor->isVisible();
+	Common::String fileName, warningMsg;
 
 	switch (operation) {
 	case 0:	// play
@@ -908,7 +907,8 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// TODO: argv[2] (usually 0)
 		videoDecoder = new VMDDecoder(g_system->getMixer());
 
-		g_sci->_gfxCursor->kernelHide();
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelHide();
 
 		if (videoDecoder && videoDecoder->loadFile(fileName)) {
 			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
@@ -944,8 +944,8 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		} else
 			warning("Could not play video %s\n", fileName.c_str());
 
-		g_sci->_gfxCursor->kernelShow();
-
+		if (reshowCursor)
+			g_sci->_gfxCursor->kernelShow();
 		break;
 	default:
 		warningMsg = "PlayVMD - unsupported subop. Params: " +
