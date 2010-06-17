@@ -1297,7 +1297,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 			// Copy video contents to screen buffer
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 
-			delete frameBuf;
+			delete[] frameBuf;
 			delete videoDecoder;
 		} else
 			warning("Could not play video %s\n", fileName.c_str());
