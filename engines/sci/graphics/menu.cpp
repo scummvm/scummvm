@@ -705,7 +705,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	_paint16->bitsShow(_menuRect);
 
 	while (true) {
-		curEvent = _event->get(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 
 		switch (curEvent.type) {
 		case SCI_EVENT_KEYBOARD:
@@ -795,7 +795,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 			}
 			break;
 		case SCI_EVENT_NONE:
-			_event->sleep(2500 / 1000);
+			g_sci->sleep(2500 / 1000);
 			break;
 		}
 	}
@@ -823,7 +823,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	_paint16->bitsShow(_ports->_menuRect);
 
 	while (true) {
-		curEvent = _event->get(SCI_EVENT_ANY);
+		curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 
 		switch (curEvent.type) {
 		case SCI_EVENT_MOUSE_RELEASE:
@@ -834,7 +834,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 			return curItemEntry;
 
 		case SCI_EVENT_NONE:
-			_event->sleep(2500 / 1000);
+			g_sci->sleep(2500 / 1000);
 			break;
 		}
 

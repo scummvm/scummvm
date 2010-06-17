@@ -44,7 +44,7 @@ EventManager::EventManager(ResourceManager *resMan) {
 EventManager::~EventManager() {
 }
 
-struct scancode_row {
+static const struct scancode_row {
 	int offset;
 	const char *keys;
 } scancode_rows[SCANCODE_ROWS_NR] = {
@@ -53,7 +53,7 @@ struct scancode_row {
 	{0x2c, "ZXCVBNM,./"}
 };
 
-int EventManager::altify (int ch) {
+static int altify(int ch) {
 	// Calculates a PC keyboard scancode from a character */
 	int row;
 	int c = toupper((char)ch);
@@ -74,7 +74,8 @@ int EventManager::altify (int ch) {
 	return ch;
 }
 
-int EventManager::numlockify (int c) {
+/*
+static int numlockify(int c) {
 	switch (c) {
 	case SCI_KEY_DELETE:
 		return '.';
@@ -102,6 +103,7 @@ int EventManager::numlockify (int c) {
 		return c; // Unchanged
 	}
 }
+*/
 
 static const byte codepagemap_88591toDOS[0x80] = {
 	 '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?',  '?', // 0x8x
@@ -114,7 +116,7 @@ static const byte codepagemap_88591toDOS[0x80] = {
 	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
 };
 
-sciEvent EventManager::getFromScummVM() {
+sciEvent EventManager::getScummVMEvent() {
 	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
 	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
@@ -315,7 +317,7 @@ sciEvent EventManager::getFromScummVM() {
 	return input;
 }
 
-sciEvent EventManager::get(unsigned int mask) {
+sciEvent EventManager::getSciEvent(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sciEvent event = { 0, 0, 0, 0 };
 
@@ -328,7 +330,7 @@ sciEvent EventManager::get(unsigned int mask) {
 
 	// Get all queued events from graphics driver
 	do {
-		event = getFromScummVM();
+		event = getScummVMEvent();
 		if (event.type != SCI_EVENT_NONE)
 			_events.push_back(event);
 	} while (event.type != SCI_EVENT_NONE);
@@ -384,13 +386,13 @@ sciEvent EventManager::get(unsigned int mask) {
 	return event;
 }
 
-void EventManager::sleep(uint32 msecs) {
+void SciEngine::sleep(uint32 msecs) {
 	uint32 time;
 	const uint32 wakeup_time = g_system->getMillis() + msecs;
 
 	while (true) {
 		// let backend process events and update the screen
-		get(SCI_EVENT_PEEK);
+		_eventMan->getSciEvent(SCI_EVENT_PEEK);
 		time = g_system->getMillis();
 		if (time + 10 < wakeup_time) {
 			g_system->delayMillis(10);

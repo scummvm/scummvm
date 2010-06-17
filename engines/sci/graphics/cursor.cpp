@@ -341,7 +341,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_event->get(SCI_EVENT_PEEK);
+	_event->getSciEvent(SCI_EVENT_PEEK);
 }
 
 } // End of namespace Sci

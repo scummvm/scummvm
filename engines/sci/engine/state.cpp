@@ -121,7 +121,7 @@ void EngineState::wait(int16 ticks) {
 	lastWaitTime = time;
 
 	ticks *= g_debug_sleeptime_factor;
-	g_sci->getEventManager()->sleep(ticks * 1000 / 60);
+	g_sci->sleep(ticks * 1000 / 60);
 }
 
 void EngineState::initGlobals() {

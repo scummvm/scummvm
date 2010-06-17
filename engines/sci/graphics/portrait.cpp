@@ -182,7 +182,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 		// Wait till syncTime passed, then show specific animation bitmap
 		do {
 			g_sci->getEngineState()->wait(1);
-			curEvent = _event->get(SCI_EVENT_ANY);
+			curEvent = _event->getSciEvent(SCI_EVENT_ANY);
 			if (curEvent.type == SCI_EVENT_MOUSE_PRESS ||
 				(curEvent.type == SCI_EVENT_KEYBOARD && curEvent.data == SCI_KEY_ESC) ||
 				g_engine->shouldQuit())

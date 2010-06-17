@@ -176,6 +176,8 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
+	void sleep(uint32 msecs);
+
 public:
 
 	/**

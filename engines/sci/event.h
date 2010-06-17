@@ -116,15 +116,10 @@ public:
 	EventManager(ResourceManager *resMgr);
 	~EventManager();
 
-	sciEvent get(unsigned int mask);
-
-	void sleep(uint32 msecs);
+	sciEvent getSciEvent(unsigned int mask);
 
 private:
-	int altify (int ch);
-	int shiftify (int c);
-	int numlockify (int c);
-	sciEvent getFromScummVM();
+	sciEvent getScummVMEvent();
 
 	ResourceManager *_resMan;
 
