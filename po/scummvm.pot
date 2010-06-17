@@ -1,6 +1,6 @@
-# SOME DESCRIPTIVE TITLE.
+# LANGUAGE translation for ScummVM.
 # Copyright (C) YEAR ScummVM Team
-# This file is distributed under the same license as the PACKAGE package.
+# This file is distributed under the same license as the ScummVM package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
@@ -8,23 +8,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-13 16:52+0300\n"
+"POT-Creation-Date: 2010-06-17 20:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=CHARSET\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: gui/about.cpp:117
+#: gui/about.cpp:96
 msgid "C2(built on "
 msgstr ""
 
-#: gui/about.cpp:125
+#: gui/about.cpp:104
 msgid "C1Features compiled in:"
 msgstr ""
 
-#: gui/about.cpp:132
+#: gui/about.cpp:111
 msgid "C1Available engines:"
 msgstr ""
 
@@ -32,73 +33,74 @@ msgstr ""
 msgid "Go up"
 msgstr ""
 
-#: gui/browser.cpp:70 gui/KeysDialog.cpp:45 gui/launcher.cpp:265
-#: gui/massadd.cpp:95 gui/options.cpp:859 gui/saveload.cpp:65
-#: gui/saveload.cpp:157 gui/themebrowser.cpp:56 engines/dialogs.cpp:302
-#: gui/options.cpp:861 gui/chooser.cpp:49 gui/launcher.cpp:266
-#: gui/options.cpp:878 backends/platform/wii/options.cpp:48
+#: gui/browser.cpp:69
+msgid "Go to previous directory level"
+msgstr ""
+
+#: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
+#: gui/launcher.cpp:266 gui/massadd.cpp:95 gui/options.cpp:879
+#: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
+#: backends/platform/wii/options.cpp:48
 msgid "Cancel"
 msgstr ""
 
-#: gui/browser.cpp:71 gui/themebrowser.cpp:57 gui/chooser.cpp:50
+#: gui/browser.cpp:71 gui/chooser.cpp:50 gui/themebrowser.cpp:57
 msgid "Choose"
 msgstr ""
 
-#: gui/GuiManager.cpp:75 gui/GuiManager.cpp:76
+#: gui/GuiManager.cpp:76
 msgid "Failed to load any GUI theme, aborting"
 msgstr ""
 
-#: gui/GuiManager.cpp:98 gui/GuiManager.cpp:102
-#: backends/keymapper/remap-dialog.cpp:54
+#: gui/GuiManager.cpp:102 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
 msgstr ""
 
-#: gui/GuiManager.cpp:101 gui/GuiManager.cpp:105
+#: gui/GuiManager.cpp:105
 msgid "Mouse click"
 msgstr ""
 
-#: gui/GuiManager.cpp:104 base/main.cpp:284 gui/GuiManager.cpp:108
+#: gui/GuiManager.cpp:108 base/main.cpp:284
 msgid "Display keyboard"
 msgstr ""
 
-#: gui/GuiManager.cpp:107 base/main.cpp:287 gui/GuiManager.cpp:111
+#: gui/GuiManager.cpp:111 base/main.cpp:287
 msgid "Remap keys"
 msgstr ""
 
-#: gui/KeysDialog.cpp:43
+#: gui/KeysDialog.cpp:44
 msgid "Map"
 msgstr ""
 
-#: gui/KeysDialog.cpp:44 gui/launcher.cpp:266 gui/launcher.cpp:873
-#: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:860
-#: engines/dialogs.cpp:301 gui/options.cpp:862 gui/launcher.cpp:267
-#: gui/options.cpp:879 backends/platform/wince/CELauncherDialog.cpp:56
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:267 gui/launcher.cpp:873
+#: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:880
+#: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
 msgstr ""
 
-#: gui/KeysDialog.cpp:51
+#: gui/KeysDialog.cpp:52
 msgid "Select an action and click 'Map'"
 msgstr ""
 
-#: gui/KeysDialog.cpp:82 gui/KeysDialog.cpp:104 gui/KeysDialog.cpp:143
+#: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
 #, c-format
 msgid "Associated key : %s"
 msgstr ""
 
-#: gui/KeysDialog.cpp:84 gui/KeysDialog.cpp:106 gui/KeysDialog.cpp:145
+#: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
 #, c-format
 msgid "Associated key : none"
 msgstr ""
 
-#: gui/KeysDialog.cpp:92
+#: gui/KeysDialog.cpp:93
 msgid "Please select an action"
 msgstr ""
 
-#: gui/KeysDialog.cpp:108
+#: gui/KeysDialog.cpp:109
 msgid "Press the key to associate"
 msgstr ""
 
-#: gui/KeysDialog.cpp:147
+#: gui/KeysDialog.cpp:148
 msgid "Choose an action to map"
 msgstr ""
 
@@ -110,116 +112,121 @@ msgstr ""
 msgid "ID:"
 msgstr ""
 
+#: gui/launcher.cpp:173 gui/launcher.cpp:174
+msgid ""
+"Short game identifier used for referring to savegames and running the game "
+"from the command line"
+msgstr ""
+
 #: gui/launcher.cpp:177
 msgid "Name:"
 msgstr ""
 
-#: gui/launcher.cpp:181 gui/options.cpp:839 gui/options.cpp:837
+#: gui/launcher.cpp:177 gui/launcher.cpp:178
+msgid "Full title of the game"
+msgstr ""
+
+#: gui/launcher.cpp:181
 msgid "Language:"
 msgstr ""
 
-#: gui/launcher.cpp:183 gui/launcher.cpp:193 gui/options.cpp:73
-#: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:842
-#: sound/mididrv.cpp:38 sound/mididrv.cpp:39 gui/options.cpp:79
-#: gui/options.cpp:583 gui/options.cpp:593 gui/options.cpp:840
-#: gui/launcher.cpp:194 gui/options.cpp:597 gui/options.cpp:607
-#: gui/options.cpp:859 sound/mididrv.cpp:60
+#: gui/launcher.cpp:181 gui/launcher.cpp:182
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr ""
+
+#: gui/launcher.cpp:183 gui/launcher.cpp:194 gui/options.cpp:79
+#: gui/options.cpp:598 gui/options.cpp:608 gui/options.cpp:860
+#: sound/mididrv.cpp:60
 msgid "<default>"
 msgstr ""
 
-#: gui/launcher.cpp:191 gui/launcher.cpp:192
+#: gui/launcher.cpp:192
 msgid "Platform:"
 msgstr ""
 
-#: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
-#: gui/options.cpp:747 gui/options.cpp:764 gui/launcher.cpp:204
-#: gui/options.cpp:783
+#: gui/launcher.cpp:192 gui/launcher.cpp:193
+msgid "Platform the game was originally designed for"
+msgstr ""
+
+#: gui/launcher.cpp:204 gui/options.cpp:767 gui/options.cpp:784
 msgid "Graphics"
 msgstr ""
 
-#: gui/launcher.cpp:203 gui/options.cpp:749 gui/options.cpp:766
-#: gui/options.cpp:747 gui/options.cpp:764 gui/launcher.cpp:204
-#: gui/options.cpp:783
+#: gui/launcher.cpp:204 gui/options.cpp:767 gui/options.cpp:784
 msgid "GFX"
 msgstr ""
 
-#: gui/launcher.cpp:205 gui/launcher.cpp:206
+#: gui/launcher.cpp:206
 msgid "Override global graphic settings"
 msgstr ""
 
-#: gui/launcher.cpp:212 gui/options.cpp:772 gui/options.cpp:770
-#: gui/launcher.cpp:213 gui/options.cpp:789
+#: gui/launcher.cpp:213 gui/options.cpp:790
 msgid "Audio"
 msgstr ""
 
-#: gui/launcher.cpp:214 gui/launcher.cpp:215
+#: gui/launcher.cpp:215
 msgid "Override global audio settings"
 msgstr ""
 
-#: gui/launcher.cpp:222 gui/options.cpp:776 gui/options.cpp:774
-#: gui/launcher.cpp:223 gui/options.cpp:793
+#: gui/launcher.cpp:223 gui/options.cpp:794
 msgid "Volume"
 msgstr ""
 
-#: gui/launcher.cpp:224 gui/launcher.cpp:225
+#: gui/launcher.cpp:225
 msgid "Override global volume settings"
 msgstr ""
 
-#: gui/launcher.cpp:231 gui/options.cpp:784 gui/options.cpp:782
-#: gui/launcher.cpp:232 gui/options.cpp:801
+#: gui/launcher.cpp:232 gui/options.cpp:802
 msgid "MIDI"
 msgstr ""
 
-#: gui/launcher.cpp:233 gui/launcher.cpp:234
+#: gui/launcher.cpp:234
 msgid "Override global MIDI settings"
 msgstr ""
 
-#: gui/launcher.cpp:243 gui/options.cpp:790 gui/options.cpp:788
-#: gui/launcher.cpp:244 gui/options.cpp:807
+#: gui/launcher.cpp:244 gui/options.cpp:808
 msgid "Paths"
 msgstr ""
 
-#: gui/launcher.cpp:249 gui/launcher.cpp:250
+#: gui/launcher.cpp:250
 msgid "Game Path:"
 msgstr ""
 
-#: gui/launcher.cpp:253 gui/options.cpp:803 gui/options.cpp:801
-#: gui/launcher.cpp:254 gui/options.cpp:820
+#: gui/launcher.cpp:254 gui/options.cpp:821
 msgid "Extra Path:"
 msgstr ""
 
-#: gui/launcher.cpp:257 gui/launcher.cpp:258
+#: gui/launcher.cpp:254 gui/launcher.cpp:255
+msgid "Specifies path to additional data used the game"
+msgstr ""
+
+#: gui/launcher.cpp:258
 msgid "Save Path:"
 msgstr ""
 
-#: gui/launcher.cpp:274 gui/launcher.cpp:353 gui/launcher.cpp:398
-#: gui/options.cpp:226 gui/options.cpp:382 gui/options.cpp:480
-#: gui/options.cpp:526 gui/options.cpp:661 gui/options.cpp:801
-#: gui/options.cpp:804 gui/options.cpp:808 gui/options.cpp:883
-#: gui/options.cpp:889 gui/options.cpp:895 gui/options.cpp:903
-#: gui/options.cpp:927 gui/options.cpp:931 gui/options.cpp:937
-#: gui/options.cpp:944 gui/options.cpp:1050 gui/options.cpp:885
-#: gui/options.cpp:891 gui/options.cpp:897 gui/options.cpp:905
-#: gui/options.cpp:929 gui/options.cpp:933 gui/options.cpp:939
-#: gui/options.cpp:946 gui/options.cpp:1045 gui/options.cpp:222
-#: gui/options.cpp:379 gui/options.cpp:465 gui/options.cpp:511
-#: gui/options.cpp:646 gui/options.cpp:799 gui/options.cpp:802
-#: gui/options.cpp:806 gui/options.cpp:1043 gui/launcher.cpp:275
-#: gui/options.cpp:383 gui/options.cpp:469 gui/options.cpp:525
-#: gui/options.cpp:665 gui/options.cpp:818 gui/options.cpp:821
-#: gui/options.cpp:825 gui/options.cpp:902 gui/options.cpp:908
-#: gui/options.cpp:914 gui/options.cpp:922 gui/options.cpp:950
-#: gui/options.cpp:956 gui/options.cpp:963 gui/options.cpp:1062
+#: gui/launcher.cpp:258 gui/launcher.cpp:259 gui/options.cpp:815
+#: gui/options.cpp:816
+msgid "Specifies where your savegames are put"
+msgstr ""
+
+#: gui/launcher.cpp:275 gui/launcher.cpp:353 gui/launcher.cpp:398
+#: gui/options.cpp:227 gui/options.cpp:384 gui/options.cpp:470
+#: gui/options.cpp:526 gui/options.cpp:666 gui/options.cpp:819
+#: gui/options.cpp:822 gui/options.cpp:826 gui/options.cpp:903
+#: gui/options.cpp:909 gui/options.cpp:915 gui/options.cpp:923
+#: gui/options.cpp:947 gui/options.cpp:951 gui/options.cpp:957
+#: gui/options.cpp:964 gui/options.cpp:1063
 msgid "None"
 msgstr ""
 
-#: gui/launcher.cpp:279 gui/launcher.cpp:357 gui/launcher.cpp:280
+#: gui/launcher.cpp:280 gui/launcher.cpp:357
 #: backends/platform/wii/options.cpp:56
 msgid "Default"
 msgstr ""
 
-#: gui/launcher.cpp:391 gui/options.cpp:1044 gui/options.cpp:1039
-#: gui/options.cpp:1037 gui/options.cpp:1056
+#: gui/launcher.cpp:391 gui/options.cpp:1057
 msgid "Select SoundFont"
 msgstr ""
 
@@ -240,49 +247,86 @@ msgid "This game ID is already taken. Please choose another one."
 msgstr ""
 
 #: gui/launcher.cpp:500 engines/dialogs.cpp:113
-#: backends/platform/symbian/src/SymbianActions.cpp:55
-#: backends/platform/wince/CEActionsPocket.cpp:43
-#: backends/platform/wince/CEActionsSmartphone.cpp:51
-msgid "Quit"
+msgid "~Q~uit"
+msgstr ""
+
+#: gui/launcher.cpp:500
+msgid "Quit ScummVM"
 msgstr ""
 
 #: gui/launcher.cpp:501
-msgid "About..."
+msgid "A~b~out..."
+msgstr ""
+
+#: gui/launcher.cpp:501
+msgid "About ScummVM"
 msgstr ""
 
 #: gui/launcher.cpp:502
-msgid "Options..."
+msgid "~O~ptions..."
+msgstr ""
+
+#: gui/launcher.cpp:502
+msgid "Change global ScummVM options"
 msgstr ""
 
 #: gui/launcher.cpp:504
-msgid "Start"
+msgid "~S~tart"
+msgstr ""
+
+#: gui/launcher.cpp:504
+msgid "Start selected game"
 msgstr ""
 
 #: gui/launcher.cpp:507
-msgid "Load..."
+msgid "~L~oad..."
 msgstr ""
 
-#: gui/launcher.cpp:511 gui/launcher.cpp:990
-msgid "Add Game..."
+#: gui/launcher.cpp:507
+msgid "Load savegame for selected game"
+msgstr ""
+
+#: gui/launcher.cpp:511
+msgid "~A~dd Game..."
+msgstr ""
+
+#: gui/launcher.cpp:511
+msgid "Hold Shift for Mass Add"
 msgstr ""
 
 #: gui/launcher.cpp:513
-msgid "Edit Game..."
+msgid "~E~dit Game..."
+msgstr ""
+
+#: gui/launcher.cpp:513
+msgid "Change game options"
 msgstr ""
 
 #: gui/launcher.cpp:515
-msgid "Remove Game"
+msgid "~R~emove Game"
+msgstr ""
+
+#: gui/launcher.cpp:515
+msgid "Remove game from the list. The game data files stay intact"
+msgstr ""
+
+#: gui/launcher.cpp:522
+msgid "Search in game list"
 msgstr ""
 
 #: gui/launcher.cpp:526 gui/launcher.cpp:1037
 msgid "Search:"
 msgstr ""
 
+#: gui/launcher.cpp:529 gui/options.cpp:667
+msgid "Clear value"
+msgstr ""
+
 #: gui/launcher.cpp:551 engines/dialogs.cpp:117
 msgid "Load game:"
 msgstr ""
 
-#: gui/launcher.cpp:551 engines/dialogs.cpp:91 engines/dialogs.cpp:117
+#: gui/launcher.cpp:551 engines/dialogs.cpp:117
 #: backends/platform/wince/CEActionsPocket.cpp:263
 #: backends/platform/wince/CEActionsSmartphone.cpp:225
 msgid "Load"
@@ -295,7 +339,7 @@ msgid ""
 msgstr ""
 
 #: gui/launcher.cpp:661 gui/launcher.cpp:810
-#: backends/platform/symbian/src/SymbianOS.cpp:447
+#: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -303,7 +347,7 @@ msgid "Yes"
 msgstr ""
 
 #: gui/launcher.cpp:661 gui/launcher.cpp:810
-#: backends/platform/symbian/src/SymbianOS.cpp:447
+#: backends/platform/symbian/src/SymbianOS.cpp:446
 #: backends/platform/wince/CEActionsPocket.cpp:313
 #: backends/platform/wince/CEActionsSmartphone.cpp:272
 #: backends/platform/wince/CELauncherDialog.cpp:104
@@ -338,12 +382,15 @@ msgstr ""
 msgid "Mass Add..."
 msgstr ""
 
+#: gui/launcher.cpp:990
+msgid "Add Game..."
+msgstr ""
+
 #: gui/massadd.cpp:79 gui/massadd.cpp:82
 msgid "... progress ..."
 msgstr ""
 
 #: gui/massadd.cpp:244
-#, c-format
 msgid "Scan complete!"
 msgstr ""
 
@@ -362,193 +409,255 @@ msgstr ""
 msgid "Discovered %d new games ..."
 msgstr ""
 
-#: gui/options.cpp:71 gui/options.cpp:77
+#: gui/options.cpp:77
 msgid "Never"
 msgstr ""
 
-#: gui/options.cpp:71 gui/options.cpp:77
+#: gui/options.cpp:77
 msgid "every 5 mins"
 msgstr ""
 
-#: gui/options.cpp:71 gui/options.cpp:77
+#: gui/options.cpp:77
 msgid "every 10 mins"
 msgstr ""
 
-#: gui/options.cpp:71 gui/options.cpp:77
+#: gui/options.cpp:77
 msgid "every 15 mins"
 msgstr ""
 
-#: gui/options.cpp:71 gui/options.cpp:77
+#: gui/options.cpp:77
 msgid "every 30 mins"
 msgstr ""
 
-#: gui/options.cpp:73 gui/options.cpp:79
+#: gui/options.cpp:79
 msgid "8 kHz"
 msgstr ""
 
-#: gui/options.cpp:73 gui/options.cpp:79
+#: gui/options.cpp:79
 msgid "11kHz"
 msgstr ""
 
-#: gui/options.cpp:73 gui/options.cpp:79
+#: gui/options.cpp:79
 msgid "22 kHz"
 msgstr ""
 
-#: gui/options.cpp:73 gui/options.cpp:79
+#: gui/options.cpp:79
 msgid "44 kHz"
 msgstr ""
 
-#: gui/options.cpp:73 gui/options.cpp:79
+#: gui/options.cpp:79
 msgid "48 kHz"
 msgstr ""
 
-#: gui/options.cpp:89 gui/options.cpp:95
-msgid "Speech Only"
-msgstr ""
-
-#: gui/options.cpp:90
-msgid "Speech and Subtitles"
-msgstr ""
-
-#: gui/options.cpp:91 gui/options.cpp:97
-msgid "Subtitles Only"
-msgstr ""
-
-#: gui/options.cpp:96
-msgid "Speech & Subs"
-msgstr ""
-
-#: gui/options.cpp:595 gui/options.cpp:580 gui/options.cpp:594
+#: gui/options.cpp:595
 msgid "Graphics mode:"
 msgstr ""
 
-#: gui/options.cpp:606 gui/options.cpp:591 gui/options.cpp:605
+#: gui/options.cpp:606
 msgid "Render mode:"
 msgstr ""
 
-#: gui/options.cpp:616 gui/options.cpp:601 gui/options.cpp:615
+#: gui/options.cpp:606 gui/options.cpp:607
+msgid "Special dithering modes supported by some games"
+msgstr ""
+
+#: gui/options.cpp:616
 msgid "Fullscreen mode"
 msgstr ""
 
-#: gui/options.cpp:619 gui/options.cpp:604 gui/options.cpp:618
+#: gui/options.cpp:619
 msgid "Aspect ratio correction"
 msgstr ""
 
-#: gui/options.cpp:626 gui/options.cpp:611 gui/options.cpp:625
+#: gui/options.cpp:619
+msgid "Correct aspect ratio for 320x200 games"
+msgstr ""
+
+#: gui/options.cpp:626
 msgid "Music driver:"
 msgstr ""
 
-#: gui/options.cpp:637 gui/options.cpp:622 gui/options.cpp:641
+#: gui/options.cpp:626 gui/options.cpp:627
+msgid "Specifies output sound device or sound card emulator"
+msgstr ""
+
+#: gui/options.cpp:642
 msgid "AdLib emulator:"
 msgstr ""
 
-#: gui/options.cpp:648 gui/options.cpp:633 gui/options.cpp:652
+#: gui/options.cpp:642 gui/options.cpp:643
+msgid "AdLib is used for music in many games"
+msgstr ""
+
+#: gui/options.cpp:653
 msgid "Output rate:"
 msgstr ""
 
-#: gui/options.cpp:660 gui/options.cpp:645 gui/options.cpp:664
+#: gui/options.cpp:653 gui/options.cpp:654
+msgid ""
+"Higher value specifies better sound quality but may be not supported by your "
+"soundcard"
+msgstr ""
+
+#: gui/options.cpp:665
 msgid "SoundFont:"
 msgstr ""
 
-#: gui/options.cpp:665 gui/options.cpp:650 gui/options.cpp:669
+#: gui/options.cpp:665 gui/options.cpp:666
+msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
+msgstr ""
+
+#: gui/options.cpp:670
 msgid "Mixed AdLib/MIDI mode"
 msgstr ""
 
-#: gui/options.cpp:668 gui/options.cpp:653 gui/options.cpp:672
+#: gui/options.cpp:670
+msgid "Use both MIDI and AdLib sound generation"
+msgstr ""
+
+#: gui/options.cpp:673
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr ""
 
-#: gui/options.cpp:671 gui/options.cpp:656 gui/options.cpp:675
+#: gui/options.cpp:673
+msgid ""
+"Check if you want to use your real hardware Roland-compatible sound device "
+"connected to your computer"
+msgstr ""
+
+#: gui/options.cpp:676
 msgid "Enable Roland GS Mode"
 msgstr ""
 
-#: gui/options.cpp:674 gui/options.cpp:659 gui/options.cpp:678
+#: gui/options.cpp:676
+msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
+msgstr ""
+
+#: gui/options.cpp:679
 msgid "MIDI gain:"
 msgstr ""
 
-#: gui/options.cpp:687 gui/options.cpp:672 gui/options.cpp:691
+#: gui/options.cpp:692
 msgid "Text and Speech:"
 msgstr ""
 
-#: gui/options.cpp:691 gui/options.cpp:689 gui/options.cpp:708
+#: gui/options.cpp:697 gui/options.cpp:703
+msgid "Speech"
+msgstr ""
+
+#: gui/options.cpp:698 gui/options.cpp:704
+msgid "Subtitles"
+msgstr ""
+
+#: gui/options.cpp:699 gui/options.cpp:705
+msgid "Both"
+msgstr ""
+
+#: gui/options.cpp:703
+msgid "Spch"
+msgstr ""
+
+#: gui/options.cpp:704
+msgid "Subs"
+msgstr ""
+
+#: gui/options.cpp:705
+msgid "Show subtitles and play speech"
+msgstr ""
+
+#: gui/options.cpp:709
 msgid "Subtitle speed:"
 msgstr ""
 
-#: gui/options.cpp:703 gui/options.cpp:701 gui/options.cpp:720
+#: gui/options.cpp:721
 msgid "Music volume:"
 msgstr ""
 
-#: gui/options.cpp:710 gui/options.cpp:708 gui/options.cpp:727
+#: gui/options.cpp:728
 msgid "Mute All"
 msgstr ""
 
-#: gui/options.cpp:713 gui/options.cpp:711 gui/options.cpp:730
+#: gui/options.cpp:731
 msgid "SFX volume:"
 msgstr ""
 
-#: gui/options.cpp:720 gui/options.cpp:718 gui/options.cpp:737
+#: gui/options.cpp:731 gui/options.cpp:732
+msgid "Special sound effects volume"
+msgstr ""
+
+#: gui/options.cpp:738
 msgid "Speech volume:"
 msgstr ""
 
-#: gui/options.cpp:797 gui/options.cpp:795 gui/options.cpp:814
+#: gui/options.cpp:815
 msgid "Save Path: "
 msgstr ""
 
-#: gui/options.cpp:800 gui/options.cpp:798 gui/options.cpp:817
+#: gui/options.cpp:818
 msgid "Theme Path:"
 msgstr ""
 
-#: gui/options.cpp:807 gui/options.cpp:805 gui/options.cpp:824
+#: gui/options.cpp:821 gui/options.cpp:822
+msgid "Specifies path to additional data used by all games or ScummVM"
+msgstr ""
+
+#: gui/options.cpp:825
 msgid "Plugins Path:"
 msgstr ""
 
-#: gui/options.cpp:812 gui/options.cpp:810 gui/options.cpp:829
+#: gui/options.cpp:830
 msgid "Misc"
 msgstr ""
 
-#: gui/options.cpp:814 gui/options.cpp:812 gui/options.cpp:831
+#: gui/options.cpp:832
 msgid "Theme:"
 msgstr ""
 
-#: gui/options.cpp:818 gui/options.cpp:816 gui/options.cpp:835
+#: gui/options.cpp:836
 msgid "GUI Renderer:"
 msgstr ""
 
-#: gui/options.cpp:824 gui/options.cpp:822 gui/options.cpp:841
+#: gui/options.cpp:842
 msgid "Autosave:"
 msgstr ""
 
-#: gui/options.cpp:832 engines/dialogs.cpp:305 gui/options.cpp:830
-#: gui/options.cpp:849
+#: gui/options.cpp:850
 msgid "Keys"
 msgstr ""
 
-#: gui/options.cpp:844 gui/options.cpp:842 gui/options.cpp:861
+#: gui/options.cpp:857
+msgid "GUI Language:"
+msgstr ""
+
+#: gui/options.cpp:857
+msgid "Language of ScummVM GUI"
+msgstr ""
+
+#: gui/options.cpp:862
 msgid "English"
 msgstr ""
 
-#: gui/options.cpp:996 gui/options.cpp:991 gui/options.cpp:989
-#: gui/options.cpp:1008
+#: gui/options.cpp:996
+msgid "You have to restart ScummVM to take the effect."
+msgstr ""
+
+#: gui/options.cpp:1009
 msgid "Select directory for savegames"
 msgstr ""
 
-#: gui/options.cpp:1003 gui/options.cpp:998 gui/options.cpp:996
-#: gui/options.cpp:1015
+#: gui/options.cpp:1016
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 
-#: gui/options.cpp:1012 gui/options.cpp:1007 gui/options.cpp:1005
-#: gui/options.cpp:1024
+#: gui/options.cpp:1025
 msgid "Select directory for GUI themes"
 msgstr ""
 
-#: gui/options.cpp:1022 gui/options.cpp:1017 gui/options.cpp:1015
-#: gui/options.cpp:1034
+#: gui/options.cpp:1035
 msgid "Select directory for extra files"
 msgstr ""
 
-#: gui/options.cpp:1033 gui/options.cpp:1028 gui/options.cpp:1026
-#: gui/options.cpp:1045
+#: gui/options.cpp:1046
 msgid "Select directory for plugins"
 msgstr ""
 
@@ -590,6 +699,18 @@ msgstr ""
 
 #: gui/themebrowser.cpp:46
 msgid "Select a Theme"
+msgstr ""
+
+#: gui/ThemeEngine.cpp:337
+msgid "Disabled GFX"
+msgstr ""
+
+#: gui/ThemeEngine.cpp:338
+msgid "Standard Renderer (16bpp)"
+msgstr ""
+
+#: gui/ThemeEngine.cpp:340
+msgid "Antialiased Renderer (16bpp)"
 msgstr ""
 
 #: base/main.cpp:105
@@ -706,163 +827,6 @@ msgid "Unknown Error"
 msgstr ""
 
 #: engines/dialogs.cpp:89
-msgid "Resume"
-msgstr ""
-
-#: engines/dialogs.cpp:95 engines/dialogs.cpp:119
-#: backends/platform/symbian/src/SymbianActions.cpp:47
-#: backends/platform/wince/CEActionsPocket.cpp:42
-#: backends/platform/wince/CEActionsPocket.cpp:263
-#: backends/platform/wince/CEActionsSmartphone.cpp:44
-#: backends/platform/wince/CEActionsSmartphone.cpp:225
-msgid "Save"
-msgstr ""
-
-#: engines/dialogs.cpp:99
-msgid "Options"
-msgstr ""
-
-#: engines/dialogs.cpp:104
-msgid "Help"
-msgstr ""
-
-#: engines/dialogs.cpp:107
-msgid "About"
-msgstr ""
-
-#: engines/dialogs.cpp:109
-msgid "Return to Launcher"
-msgstr ""
-
-#: engines/dialogs.cpp:119
-msgid "Save game:"
-msgstr ""
-
-#: gui/options.cpp:978 gui/options.cpp:976 gui/options.cpp:995
-msgid "You have to restart ScummVM to take the effect."
-msgstr ""
-
-#: gui/ThemeEngine.cpp:333 gui/ThemeEngine.cpp:337
-msgid "Disabled GFX"
-msgstr ""
-
-#: gui/ThemeEngine.cpp:334 gui/ThemeEngine.cpp:338
-msgid "Standard Renderer (16bpp)"
-msgstr ""
-
-#: gui/ThemeEngine.cpp:336 gui/ThemeEngine.cpp:340
-msgid "Antialiased Renderer (16bpp)"
-msgstr ""
-
-#: sound/mididrv.cpp:39 sound/mididrv.cpp:40 sound/mididrv.cpp:61
-msgid "No music"
-msgstr ""
-
-#: sound/mididrv.cpp:42 sound/mididrv.cpp:43 sound/mididrv.cpp:64
-msgid "Windows MIDI"
-msgstr ""
-
-#: sound/mididrv.cpp:46 sound/mididrv.cpp:47 sound/mididrv.cpp:68
-msgid "ALSA"
-msgstr ""
-
-#: sound/mididrv.cpp:50 sound/mididrv.cpp:51 sound/mididrv.cpp:72
-msgid "Atari ST MIDI"
-msgstr ""
-
-#: sound/mididrv.cpp:54 sound/mididrv.cpp:55 sound/mididrv.cpp:76
-msgid "SEQ"
-msgstr ""
-
-#: sound/mididrv.cpp:58 sound/mididrv.cpp:59 sound/mididrv.cpp:80
-msgid "DMedia"
-msgstr ""
-
-#: sound/mididrv.cpp:62 sound/mididrv.cpp:63 sound/mididrv.cpp:84
-msgid "CAMD"
-msgstr ""
-
-#: sound/mididrv.cpp:66 sound/mididrv.cpp:67 sound/mididrv.cpp:88
-msgid "CoreAudio"
-msgstr ""
-
-#: sound/mididrv.cpp:68 sound/mididrv.cpp:69 sound/mididrv.cpp:90
-msgid "CoreMIDI"
-msgstr ""
-
-#: sound/mididrv.cpp:73 sound/mididrv.cpp:74 sound/mididrv.cpp:95
-msgid "Yamaha Pa1"
-msgstr ""
-
-#: sound/mididrv.cpp:75 sound/mididrv.cpp:76 sound/mididrv.cpp:97
-msgid "Tapwave Zodiac"
-msgstr ""
-
-#: sound/mididrv.cpp:80 sound/mididrv.cpp:81 sound/mididrv.cpp:102
-msgid "FluidSynth"
-msgstr ""
-
-#: sound/mididrv.cpp:83 sound/mididrv.cpp:84 sound/mididrv.cpp:105
-msgid "MT-32 Emulation"
-msgstr ""
-
-#: sound/mididrv.cpp:87 sound/mididrv.cpp:88 sound/mididrv.cpp:109
-msgid "AdLib"
-msgstr ""
-
-#: sound/mididrv.cpp:88 sound/mididrv.cpp:89 sound/mididrv.cpp:110
-msgid "PC Speaker"
-msgstr ""
-
-#: sound/mididrv.cpp:89 sound/mididrv.cpp:90 sound/mididrv.cpp:111
-msgid "IBM PCjr"
-msgstr ""
-
-#: sound/mididrv.cpp:90 sound/mididrv.cpp:91 sound/mididrv.cpp:112
-msgid "Creative Music System"
-msgstr ""
-
-#: sound/mididrv.cpp:91 sound/mididrv.cpp:92 sound/mididrv.cpp:113
-msgid "FM Towns"
-msgstr ""
-
-#: sound/mididrv.cpp:93 sound/mididrv.cpp:94 sound/mididrv.cpp:115
-msgid "TiMidity"
-msgstr ""
-
-#: gui/launcher.cpp:500 engines/dialogs.cpp:113
-msgid "~Q~uit"
-msgstr ""
-
-#: gui/launcher.cpp:501
-msgid "A~b~out..."
-msgstr ""
-
-#: gui/launcher.cpp:502
-msgid "~O~ptions..."
-msgstr ""
-
-#: gui/launcher.cpp:504
-msgid "~S~tart"
-msgstr ""
-
-#: gui/launcher.cpp:507
-msgid "~L~oad..."
-msgstr ""
-
-#: gui/launcher.cpp:511
-msgid "~A~dd Game..."
-msgstr ""
-
-#: gui/launcher.cpp:513
-msgid "~E~dit Game..."
-msgstr ""
-
-#: gui/launcher.cpp:515
-msgid "~R~emove Game"
-msgstr ""
-
-#: engines/dialogs.cpp:89
 msgid "~R~esume"
 msgstr ""
 
@@ -888,6 +852,18 @@ msgstr ""
 
 #: engines/dialogs.cpp:109
 msgid "~R~eturn to Launcher"
+msgstr ""
+
+#: engines/dialogs.cpp:119
+msgid "Save game:"
+msgstr ""
+
+#: engines/dialogs.cpp:119 backends/platform/symbian/src/SymbianActions.cpp:47
+#: backends/platform/wince/CEActionsPocket.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
+msgid "Save"
 msgstr ""
 
 #: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:84
@@ -917,174 +893,6 @@ msgstr ""
 msgid "~C~lose"
 msgstr ""
 
-#: gui/options.cpp:677 gui/options.cpp:683 gui/options.cpp:696
-#: gui/options.cpp:702
-msgid "Speech"
-msgstr ""
-
-#: gui/options.cpp:678 gui/options.cpp:684 gui/options.cpp:697
-#: gui/options.cpp:703
-msgid "Subtitles"
-msgstr ""
-
-#: gui/options.cpp:679 gui/options.cpp:685 gui/options.cpp:698
-#: gui/options.cpp:704
-msgid "Both"
-msgstr ""
-
-#: gui/options.cpp:683 gui/options.cpp:702
-msgid "Spch"
-msgstr ""
-
-#: gui/options.cpp:684 gui/options.cpp:703
-msgid "Subs"
-msgstr ""
-
-#: gui/browser.cpp:69
-msgid "Go to previous directory level"
-msgstr ""
-
-#: gui/launcher.cpp:511
-msgid "Hold Shift for Mass Add"
-msgstr ""
-
-#: gui/launcher.cpp:522
-msgid "Search in game list"
-msgstr ""
-
-#: gui/launcher.cpp:529 gui/options.cpp:647 gui/options.cpp:666
-msgid "Clear value"
-msgstr ""
-
-#: gui/launcher.cpp:173 gui/launcher.cpp:174
-msgid ""
-"Short game identifier used for referring to savegames and running the game "
-"from the command line"
-msgstr ""
-
-#: gui/launcher.cpp:177 gui/launcher.cpp:178
-msgid "Full title of the game"
-msgstr ""
-
-#: gui/launcher.cpp:181 gui/launcher.cpp:182
-msgid ""
-"Language of the game. This will not turn your Spanish game version into "
-"English"
-msgstr ""
-
-#: gui/launcher.cpp:191 gui/launcher.cpp:192 gui/launcher.cpp:193
-msgid "Platform the game was originally designed for"
-msgstr ""
-
-#: gui/launcher.cpp:253 gui/launcher.cpp:254 gui/launcher.cpp:255
-msgid "Specifies path to additional data used the game"
-msgstr ""
-
-#: gui/launcher.cpp:257 gui/launcher.cpp:258 gui/options.cpp:795
-#: gui/options.cpp:796 gui/launcher.cpp:259 gui/options.cpp:814
-#: gui/options.cpp:815
-msgid "Specifies where your savegames are put"
-msgstr ""
-
-#: gui/launcher.cpp:500
-msgid "Quit ScummVM"
-msgstr ""
-
-#: gui/launcher.cpp:501
-msgid "About ScummVM"
-msgstr ""
-
-#: gui/launcher.cpp:502
-msgid "Change global ScummVM options"
-msgstr ""
-
-#: gui/launcher.cpp:504
-msgid "Start selected game"
-msgstr ""
-
-#: gui/launcher.cpp:507
-msgid "Load savegame for selected game"
-msgstr ""
-
-#: gui/launcher.cpp:513
-msgid "Change game options"
-msgstr ""
-
-#: gui/launcher.cpp:515
-msgid "Remove game from the list. The game data files stay intact"
-msgstr ""
-
-#: gui/options.cpp:591 gui/options.cpp:592 gui/options.cpp:605
-#: gui/options.cpp:606
-msgid "Special dithering modes supported by some games"
-msgstr ""
-
-#: gui/options.cpp:604 gui/options.cpp:618
-msgid "Correct aspect ratio for 320x200 games"
-msgstr ""
-
-#: gui/options.cpp:611 gui/options.cpp:612
-msgid "Specifies output sound device or sound emulator"
-msgstr ""
-
-#: gui/options.cpp:622 gui/options.cpp:623 gui/options.cpp:641
-#: gui/options.cpp:642
-msgid "AdLib is used for music in many games"
-msgstr ""
-
-#: gui/options.cpp:633 gui/options.cpp:634 gui/options.cpp:652
-#: gui/options.cpp:653
-msgid ""
-"Higher value specifies better sound quality but may be not supported by your "
-"soundcard"
-msgstr ""
-
-#: gui/options.cpp:645 gui/options.cpp:646 gui/options.cpp:664
-#: gui/options.cpp:665
-msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
-msgstr ""
-
-#: gui/options.cpp:650 gui/options.cpp:669
-msgid "Use both MIDI and AdLib sound generation"
-msgstr ""
-
-#: gui/options.cpp:653 gui/options.cpp:672
-msgid ""
-"Check if you want to use your real hardware Roland-compatible sound device "
-"connected to your computer"
-msgstr ""
-
-#: gui/options.cpp:656 gui/options.cpp:675
-msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
-msgstr ""
-
-#: gui/options.cpp:685 gui/options.cpp:704
-msgid "Show subtitles and play speech"
-msgstr ""
-
-#: gui/options.cpp:711 gui/options.cpp:712 gui/options.cpp:730
-#: gui/options.cpp:731
-msgid "Special sound effects volume"
-msgstr ""
-
-#: gui/options.cpp:801 gui/options.cpp:802 gui/options.cpp:820
-#: gui/options.cpp:821
-msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr ""
-
-#: gui/options.cpp:837 gui/options.cpp:856
-msgid "GUI Language:"
-msgstr ""
-
-#: gui/options.cpp:837 gui/options.cpp:856
-msgid "Language of ScummVM GUI"
-msgstr ""
-
-#: gui/options.cpp:612 gui/options.cpp:611 gui/options.cpp:625
-#: gui/options.cpp:626
-msgid "Specifies output sound device or sound card emulator"
-msgstr ""
-
 #: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
 msgid "~Z~ip Mode Activated"
 msgstr ""
@@ -1095,6 +903,82 @@ msgstr ""
 
 #: engines/mohawk/dialogs.cpp:116
 msgid "~W~ater Effect Enabled"
+msgstr ""
+
+#: sound/mididrv.cpp:61
+msgid "No music"
+msgstr ""
+
+#: sound/mididrv.cpp:64
+msgid "Windows MIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:68
+msgid "ALSA"
+msgstr ""
+
+#: sound/mididrv.cpp:72
+msgid "Atari ST MIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:76
+msgid "SEQ"
+msgstr ""
+
+#: sound/mididrv.cpp:80
+msgid "DMedia"
+msgstr ""
+
+#: sound/mididrv.cpp:84
+msgid "CAMD"
+msgstr ""
+
+#: sound/mididrv.cpp:88
+msgid "CoreAudio"
+msgstr ""
+
+#: sound/mididrv.cpp:90
+msgid "CoreMIDI"
+msgstr ""
+
+#: sound/mididrv.cpp:95
+msgid "Yamaha Pa1"
+msgstr ""
+
+#: sound/mididrv.cpp:97
+msgid "Tapwave Zodiac"
+msgstr ""
+
+#: sound/mididrv.cpp:102
+msgid "FluidSynth"
+msgstr ""
+
+#: sound/mididrv.cpp:105
+msgid "MT-32 Emulation"
+msgstr ""
+
+#: sound/mididrv.cpp:109
+msgid "AdLib"
+msgstr ""
+
+#: sound/mididrv.cpp:110
+msgid "PC Speaker"
+msgstr ""
+
+#: sound/mididrv.cpp:111
+msgid "IBM PCjr"
+msgstr ""
+
+#: sound/mididrv.cpp:112
+msgid "Creative Music System"
+msgstr ""
+
+#: sound/mididrv.cpp:113
+msgid "FM Towns"
+msgstr ""
+
+#: sound/mididrv.cpp:115
+msgid "TiMidity"
 msgstr ""
 
 #: backends/keymapper/remap-dialog.cpp:49
@@ -1247,6 +1131,12 @@ msgstr ""
 msgid "Fast mode"
 msgstr ""
 
+#: backends/platform/symbian/src/SymbianActions.cpp:55
+#: backends/platform/wince/CEActionsPocket.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:51
+msgid "Quit"
+msgstr ""
+
 #: backends/platform/symbian/src/SymbianActions.cpp:56
 msgid "Debugger"
 msgstr ""
@@ -1263,7 +1153,7 @@ msgstr ""
 msgid "Key mapper"
 msgstr ""
 
-#: backends/platform/symbian/src/SymbianOS.cpp:447
+#: backends/platform/symbian/src/SymbianOS.cpp:446
 msgid "Do you want to quit ?"
 msgstr ""
 
