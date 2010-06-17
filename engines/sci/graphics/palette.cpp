@@ -60,7 +60,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	_alwaysForceRealMerge = false;
 
 	// Pseudo-WORKAROUND
-	// Laura Bow 2 is an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
+	// Laura Bow 2 demo uses an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
 	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
 	//  If we use the copying over, we will get issues because some views have marked all colors as being used
 	//  and those will overwrite the current palette in that case
