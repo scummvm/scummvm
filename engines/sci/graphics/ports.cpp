@@ -95,9 +95,12 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	setPort(_wmgrPort);
 	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
 	//  We leave _wmgrPort top at 0, so the adjustment wont get done
-	if (!g_sci->_features->usesOldGfxFunctions())
+	if (!g_sci->_features->usesOldGfxFunctions()) {
 		setOrigin(0, offTop);
-	_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+		_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+	} else {
+		_wmgrPort->rect.bottom = _screen->getHeight();
+	}
 	_wmgrPort->rect.right = _screen->getWidth();
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
