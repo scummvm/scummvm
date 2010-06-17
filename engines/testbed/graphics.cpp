@@ -22,21 +22,21 @@ GFXTestSuite::GFXTestSuite() {
 	// Add tests here
 	
 	// Blitting buffer on screen
-	// addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
 	
 	// GFX Transcations
-	// addTest("FullScreenMode", &GFXtests::fullScreenMode);
-	// addTest("AspectRatio", &GFXtests::aspectRatio);
-	// addTest("IconifyingWindow", &GFXtests::iconifyWindow);
+	addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	addTest("AspectRatio", &GFXtests::aspectRatio);
+	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
 	
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
-	// TODO: need to fix it
+	// FIXME: need to fix it
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 	
 	// Effects
-	// addTest("shakingEffect", &GFXtests::shakingEffect);
-	// addTest("focusRectangle", &GFXtests::focusRectangle);
+	addTest("shakingEffect", &GFXtests::shakingEffect);
+	addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// TODO: unable to notice any change, make it noticable
 	addTest("Overlays", &GFXtests::overlayGraphics);
@@ -74,7 +74,7 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 		buffer[10 - i][i] = 0;
 	}
 	
-	CursorMan.pushCursor(&buffer[0][0], 11, 11, 5, 5, 1);
+	CursorMan.pushCursor(&buffer[0][0], 11, 11, 5, 5, cursorTargetScale);
 	CursorMan.showMouse(true);
 	
 	if (cursorPaletteDisabled) {
@@ -82,16 +82,6 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 	}
 	
 	g_system->updateScreen();
-
-	if (gfxModeName) {
-		Common::Point pt(0, 100);
-		char scaleFactor[10];
-		snprintf(scaleFactor, 10, "%dx", cursorTargetScale);
-		Common::String info = "GFX Mode:";
-		info = info + gfxModeName  + " Cursor scaled by:" + scaleFactor;
-		Testsuite::clearScreen();
-		Testsuite::writeOnScreen(info, pt);
-	}
 }
 
 /**
@@ -116,9 +106,21 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		
 		Testsuite::clearScreen();
 		Common::String info = disableCursorPalette ? "Using Game Palette" : "Using cursor palette";
-		info += "to render the cursor, Click to finish";
+		info += " to render the cursor, Click to finish";
 		
 		Testsuite::writeOnScreen(info, pt);
+		
+		info = "GFX Mode";
+		info += gfxModeName;
+		info += " ";
+
+		char cScale = cursorTargetScale + '0';
+		info += "Cursor scale: ";
+		info += cScale;
+		
+		if (!Common::String(gfxModeName).equals("")) {
+			Testsuite::writeOnScreen(info, Common::Point(0, 120));
+		}
 
 		while (!quitLoop) {
 			while (eventMan->pollEvent(event)) {
@@ -133,13 +135,9 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 					break;
 				case Common::EVENT_LBUTTONDOWN:
 				case Common::EVENT_RBUTTONDOWN:
-					Testsuite::clearScreen();
-					Testsuite::writeOnScreen("Mouse Clicked", pt);
-					printf("Mouse Clicked\n");
-					g_system->delayMillis(1000);
 					quitLoop = true;
 					Testsuite::clearScreen();
-					Testsuite::writeOnScreen("TestFinished", pt);
+					Testsuite::writeOnScreen("Mouse clicked", pt);
 					g_system->delayMillis(1000);
 					break;
 				default:	
@@ -505,7 +503,9 @@ bool GFXtests::scaledCursors() {
 			
 			setupMouseLoop(false, gfxMode->name, 3);
 			unsetMouse();
-		
+
+			break;
+
 		} else {
 			printf("Switching to graphics mode %s failed\n", gfxMode->name);
 		}
@@ -529,7 +529,7 @@ bool GFXtests::shakingEffect() {
 	g_system->delayMillis(1500);
 
 	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
-		printf("LOG: Shaking  Effect didn't worked");
+		printf("LOG: Shaking Effect didn't worked");
 		return false;
 	}
 	Testsuite::clearScreen();

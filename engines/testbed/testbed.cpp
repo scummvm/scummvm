@@ -4,6 +4,7 @@
 #include "engines/util.h"
  
 #include "testbed/testbed.h"
+#include "testbed/fs.h"
 #include "testbed/graphics.h"
  
 namespace Testbed {
@@ -60,15 +61,19 @@ Common::Error TestbedEngine::run() {
 						"If you see this, it means interactive tests would run on this system :)");
 
 	// To be set from config file
-	interactive = true;
-	Testsuite::displayMessage(prompt, "proceed?");
+	// XXX: disabling these as of now for fastly testing other tests
+	interactive = false;
 
 	if (interactive) {
-		printf("Running tests in Interactive Mode\n");		
+		printf("Running Interactive tests as well\n");		
+		Testsuite::displayMessage(prompt, "proceed?");
 		// Executing GFX Tests
-		GFXTestSuite ts;
-		ts.execute();
+		GFXTestSuite gts;
+		gts.execute();
 	}
+	
+	FSTestSuite fts;
+	fts.execute();
 	
 	return Common::kNoError;
 }

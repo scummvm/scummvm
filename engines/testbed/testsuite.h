@@ -60,10 +60,10 @@ public:
 	int getNumTestsPassed() const { return _numTestsPassed; }
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
 	void genReport() const {
-		printf("Subsystem:%s\n",getName());
-		printf("Tests executed:%d\n", _numTestsExecuted);
-		printf("Tests Passed:%d\n", _numTestsPassed);
-		printf("Tests Failed:%d\n", getNumTestsFailed());
+		printf("\nSubsystem: %s\n",getName());
+		printf("Tests executed: %d\n", _numTestsExecuted);
+		printf("Tests Passed: %d\n", _numTestsPassed);
+		printf("Tests Failed: %d\n\n", getNumTestsFailed());
 	}
 	
 	/**

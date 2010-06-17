@@ -9,10 +9,10 @@ namespace GFXtests {
 
 // Helper functions for GFX tests
 void drawEllipse(int x, int y, int a, int b);
-void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = 0, int cursorTargetScale = 1);
+void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 void unsetMouse();
 void mouseMovements();
-void drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = 0, int cursorTargetScale = 1);
+void drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
 bool fullScreenMode(); 
