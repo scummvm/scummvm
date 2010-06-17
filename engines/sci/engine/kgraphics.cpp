@@ -1253,15 +1253,27 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 			g_sci->_gfxCursor->kernelHide();
 
 		if (videoDecoder && videoDecoder->loadFile(fileName)) {
-			uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-			uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+			//uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
+			//uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
+			uint16 w = videoDecoder->getWidth() * 2;
+			uint16 h = videoDecoder->getHeight() * 2;
+			uint16 x = (g_system->getWidth() - w) / 2;
+			uint16 y = (g_system->getHeight() - h) / 2;
+			byte *frameBuf = new byte[w * h];
+
 			bool skipVideo = false;
 
 			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
 				if (videoDecoder->needsUpdate()) {
 					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+
 					if (frame) {
-						g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+						//g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
+						// All the VMD videos in SCI2.1 need to be scaled by 2
+						// TODO: This isn't optimized much, but since the VMD decoder code will be revamped, we
+						// don't really care about performance at this point anyway
+						g_sci->_gfxScreen->scale2x((byte *)frame->pixels, frameBuf, videoDecoder->getWidth(), videoDecoder->getHeight());
+						g_system->copyRectToScreen(frameBuf, frame->pitch * 2, x, y, frame->w * 2, frame->h * 2);
 
 						if (videoDecoder->hasDirtyPalette())
 							videoDecoder->setSystemPalette();
@@ -1282,6 +1294,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 			// Copy video contents to screen buffer
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
 
+			delete frameBuf;
 			delete videoDecoder;
 		} else
 			warning("Could not play video %s\n", fileName.c_str());
