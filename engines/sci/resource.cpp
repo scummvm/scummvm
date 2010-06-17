@@ -1603,14 +1603,14 @@ int Resource::readResourceInfo(ResVersion volVersion, Common::SeekableReadStream
 }
 
 int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file) {
-	int error;
+	int errorNum;
 	uint32 szPacked = 0;
 	ResourceCompression compression = kCompUnknown;
 
 	// fill resource info
-	error = readResourceInfo(volVersion, file, szPacked, compression);
-	if (error)
-		return error;
+	errorNum = readResourceInfo(volVersion, file, szPacked, compression);
+	if (errorNum)
+		return errorNum;
 
 	// getting a decompressor
 	Decompressor *dec = NULL;
@@ -1642,12 +1642,12 @@ int Resource::decompress(ResVersion volVersion, Common::SeekableReadStream *file
 
 	data = new byte[size];
 	_status = kResStatusAllocated;
-	error = data ? dec->unpack(file, data, szPacked, size) : SCI_ERROR_RESOURCE_TOO_BIG;
-	if (error)
+	errorNum = data ? dec->unpack(file, data, szPacked, size) : SCI_ERROR_RESOURCE_TOO_BIG;
+	if (errorNum)
 		unalloc();
 
 	delete dec;
-	return error;
+	return errorNum;
 }
 
 ResourceCompression ResourceManager::getViewCompression() {
