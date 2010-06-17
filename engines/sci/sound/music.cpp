@@ -232,6 +232,9 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 // This one checks, if requested channel is available -> in that case give caller that channel
 //  Otherwise look for an unused one
 int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
+	// Don't even try this for SCI0
+	if (_soundVersion <= SCI_VERSION_0_LATE)
+		return bestChannel;
 	if (!_usedChannel[bestChannel]) {
 		// currently unused, so give it to caller directly
 		_usedChannel[bestChannel] = caller;
@@ -308,9 +311,9 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         DisposeAfterUse::NO);
 		}
 	} else {
-		pSnd->pMidiParser->tryToOwnChannels();
 		_mutex.lock();
 		if (pSnd->pMidiParser) {
+			pSnd->pMidiParser->tryToOwnChannels();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
 			if (pSnd->status == kSoundStopped)
 				pSnd->pMidiParser->jumpToTick(0);

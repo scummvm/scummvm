@@ -545,6 +545,10 @@ byte *MidiParser_SCI::midiFilterChannels(int channelMask) {
 				break;
 
 			default: // MIDI command
+				// remember which channel got used for channel remapping
+				byte midiChannel = command & 0xF;
+				_channelUsed[midiChannel] = true;
+
 				if (lastCommand != command) {
 					*outData++ = command;
 					debugC(4, kDebugLevelSound, "%02X ", command);
