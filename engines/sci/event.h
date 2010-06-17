@@ -23,31 +23,29 @@
  *
  */
 
-#ifndef SCI_ENGINE_EVENT_H
-#define SCI_ENGINE_EVENT_H
+#ifndef SCI_EVENT_H
+#define SCI_EVENT_H
 
 #include "common/list.h"
 
 namespace Sci {
 
-#define SCI_INPUT_DEFAULT_CLOCKTIME 100000
-#define SCI_INPUT_DEFAULT_REDRAWTIME 30000
-
-
 struct SciEvent {
 	short type;
 	short data;
 	short modifiers;
-	short character; /* for keyboard events: 'data' after applying
-			 ** the effects of 'modifiers', e.g. if
-			 **   type == SCI_EVT_KEYBOARD
-			 **   data == 'a'
-			 **   buckybits == SCI_EVM_LSHIFT
-			 ** then
-			 **   character == 'A'
-			 ** For 'Alt', characters are interpreted by their
-			 ** PC keyboard scancodes.
-			 */
+	/**
+	 * For keyboard events: 'data' after applying
+	 * the effects of 'modifiers', e.g. if
+	 *   type == SCI_EVT_KEYBOARD
+	 *   data == 'a'
+	 *   buckybits == SCI_EVM_LSHIFT
+	 * then
+	 *   character == 'A'
+	 * For 'Alt', characters are interpreted by their
+	 * PC keyboard scancodes.
+	 */
+	short character;
 };
 
 /*Values for type*/
@@ -113,7 +111,7 @@ struct SciEvent {
 
 class EventManager {
 public:
-	EventManager(ResourceManager *resMgr);
+	EventManager(bool fontIsExtended);
 	~EventManager();
 
 	SciEvent getSciEvent(unsigned int mask);
@@ -121,9 +119,7 @@ public:
 private:
 	SciEvent getScummVMEvent();
 
-	ResourceManager *_resMan;
-
-	bool _fontIsExtended;
+	const bool _fontIsExtended;
 	Common::List<SciEvent> _events;
 };
 

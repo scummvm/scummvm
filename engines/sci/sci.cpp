@@ -237,7 +237,7 @@ Common::Error SciEngine::run() {
 	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
-	_eventMan = new EventManager(_resMan);
+	_eventMan = new EventManager(_resMan->detectFontExtended());
 
 	// The game needs to be initialized before the graphics system is initialized, as
 	// the graphics code checks parts of the seg manager upon initialization (e.g. for
