@@ -34,7 +34,7 @@ namespace Sci {
 #define SCI_INPUT_DEFAULT_REDRAWTIME 30000
 
 
-struct sciEvent {
+struct SciEvent {
 	short type;
 	short data;
 	short modifiers;
@@ -116,15 +116,15 @@ public:
 	EventManager(ResourceManager *resMgr);
 	~EventManager();
 
-	sciEvent getSciEvent(unsigned int mask);
+	SciEvent getSciEvent(unsigned int mask);
 
 private:
-	sciEvent getScummVMEvent();
+	SciEvent getScummVMEvent();
 
 	ResourceManager *_resMan;
 
 	bool _fontIsExtended;
-	Common::List<sciEvent> _events;
+	Common::List<SciEvent> _events;
 };
 
 } // End of namespace Sci

@@ -681,7 +681,7 @@ uint16 GfxMenu::mouseFindMenuItemSelection(Common::Point mousePosition, uint16 m
 }
 
 GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
-	sciEvent curEvent;
+	SciEvent curEvent;
 	uint16 newMenuId = _curMenuId;
 	uint16 newItemId = _curItemId;
 	GuiMenuItemEntry *curItemEntry = findItem(_curMenuId, _curItemId);
@@ -805,7 +805,7 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 //  The menu item that is selected at that time is chosen. If no menu item is selected we cancel
 //  No keyboard interaction is allowed, cause that wouldnt make any sense at all
 GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
-	sciEvent curEvent;
+	SciEvent curEvent;
 	uint16 newMenuId = 0, newItemId = 0;
 	uint16 curMenuId = 0, curItemId = 0;
 	Common::Point mousePosition = _cursor->getPosition();

@@ -41,7 +41,7 @@ namespace Sci {
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
-	sciEvent curEvent;
+	SciEvent curEvent;
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;

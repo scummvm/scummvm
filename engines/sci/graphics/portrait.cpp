@@ -166,7 +166,7 @@ void Portrait::doit(Common::Point position, uint16 resourceId, uint16 noun, uint
 	// Do animation depending on sync resource till audio is done playing
 	uint16 syncCue;
 	int timerPosition, curPosition;
-	sciEvent curEvent;
+	SciEvent curEvent;
 	bool userAbort = false;
 
 	while ((syncOffset < syncResource->size - 2) && (!userAbort)) {

@@ -116,9 +116,9 @@ static const byte codepagemap_88591toDOS[0x80] = {
 	 '?', 0xa4, 0x95, 0xa2, 0x93,  '?', 0x94,  '?',  '?', 0x97, 0xa3, 0x96, 0x81,  '?',  '?', 0x98  // 0xFx
 };
 
-sciEvent EventManager::getScummVMEvent() {
+SciEvent EventManager::getScummVMEvent() {
 	static int _modifierStates = 0;	// FIXME: Avoid non-const global vars
-	sciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
+	SciEvent input = { SCI_EVENT_NONE, 0, 0, 0 };
 
 	Common::EventManager *em = g_system->getEventManager();
 	Common::Event ev;
@@ -317,9 +317,9 @@ sciEvent EventManager::getScummVMEvent() {
 	return input;
 }
 
-sciEvent EventManager::getSciEvent(unsigned int mask) {
+SciEvent EventManager::getSciEvent(unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
-	sciEvent event = { 0, 0, 0, 0 };
+	SciEvent event = { 0, 0, 0, 0 };
 
 	// Update the screen here, since it's called very often.
 	// Throttle the screen update rate to 60fps.
@@ -336,7 +336,7 @@ sciEvent EventManager::getSciEvent(unsigned int mask) {
 	} while (event.type != SCI_EVENT_NONE);
 
 	// Search for matching event in queue
-	Common::List<sciEvent>::iterator iter = _events.begin();
+	Common::List<SciEvent>::iterator iter = _events.begin();
 	while (iter != _events.end() && !((*iter).type & mask))
 		++iter;
 
