@@ -1085,6 +1085,58 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
+void playVideo(Graphics::VideoDecoder *videoDecoder) {
+	if (!videoDecoder)
+		return;
+
+	byte *scaleBuffer = 0;
+	uint16 width = videoDecoder->getWidth();
+	uint16 height = videoDecoder->getHeight();
+	uint16 screenWidth = g_system->getWidth();
+	uint16 screenHeight = g_system->getHeight();
+
+	if (screenWidth == 640 && width <= 320 && height <= 240) {
+		assert(videoDecoder->getPixelFormat().bytesPerPixel == 1);
+		width *= 2;
+		height *= 2;
+		scaleBuffer = new byte[width * height];
+	}
+
+	uint16 x = (screenWidth - width) / 2;
+	uint16 y = (screenHeight - height) / 2;
+	bool skipVideo = false;
+
+	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
+		if (videoDecoder->needsUpdate()) {
+			Graphics::Surface *frame = videoDecoder->decodeNextFrame();
+			if (frame) {
+				if (scaleBuffer) {
+					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows 
+					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight());
+					g_system->copyRectToScreen(scaleBuffer, width, x, y, width, height);
+				} else
+					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
+
+				if (videoDecoder->hasDirtyPalette())
+					videoDecoder->setSystemPalette();
+
+				g_system->updateScreen();
+			}
+		}
+
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
+				skipVideo = true;
+		}
+
+		g_system->delayMillis(10);
+	}
+
+	delete[] scaleBuffer;
+	delete videoDecoder;
+}
+
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// Hide the cursor if it's showing and then show it again if it was
 	// previously visible.
@@ -1161,31 +1213,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (videoDecoder) {
-		uint16 x = (screenWidth - videoDecoder->getWidth()) / 2;
-		uint16 y = (screenHeight - videoDecoder->getHeight()) / 2;
-		bool skipVideo = false;
-
-		while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-			if (videoDecoder->needsUpdate()) {
-				Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-				if (frame) {
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-
-					if (videoDecoder->hasDirtyPalette())
-						videoDecoder->setSystemPalette();
-
-					g_system->updateScreen();
-				}
-			}
-
-			Common::Event event;
-			while (g_system->getEventManager()->pollEvent(event)) {
-				if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-					skipVideo = true;
-			}
-
-			g_system->delayMillis(10);
-		}
+		playVideo(videoDecoder);
 
 		// HACK: Switch back to 8bpp if we played a QuickTime video.
 		// We also won't be copying the screen to the SCI screen...
@@ -1193,8 +1221,6 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 			initGraphics(screenWidth, screenHeight, screenWidth > 320);
 		else
 			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
-		
-		delete videoDecoder;
 	}
 
 	if (reshowCursor)
@@ -1255,52 +1281,8 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelHide();
 
-		if (videoDecoder && videoDecoder->loadFile(fileName)) {
-			//uint16 x = (g_system->getWidth() - videoDecoder->getWidth()) / 2;
-			//uint16 y = (g_system->getHeight() - videoDecoder->getHeight()) / 2;
-			uint16 w = videoDecoder->getWidth() * 2;
-			uint16 h = videoDecoder->getHeight() * 2;
-			uint16 x = (g_system->getWidth() - w) / 2;
-			uint16 y = (g_system->getHeight() - h) / 2;
-			byte *frameBuf = new byte[w * h];
-
-			bool skipVideo = false;
-
-			while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-				if (videoDecoder->needsUpdate()) {
-					Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-
-					if (frame) {
-						//g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, frame->w, frame->h);
-						// All the VMD videos in SCI2.1 need to be scaled by 2
-						// TODO: This isn't optimized much, but since the VMD decoder code will be revamped, we
-						// don't really care about performance at this point anyway
-						g_sci->_gfxScreen->scale2x((byte *)frame->pixels, frameBuf, videoDecoder->getWidth(), videoDecoder->getHeight());
-						g_system->copyRectToScreen(frameBuf, frame->pitch * 2, x, y, frame->w * 2, frame->h * 2);
-
-						if (videoDecoder->hasDirtyPalette())
-							videoDecoder->setSystemPalette();
-
-						g_system->updateScreen();
-					}
-				}
-
-				Common::Event event;
-				while (g_system->getEventManager()->pollEvent(event)) {
-					if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-						skipVideo = true;
-				}
-
-				g_system->delayMillis(10);
-			}
-		
-			// Copy video contents to screen buffer
-			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
-
-			delete[] frameBuf;
-			delete videoDecoder;
-		} else
-			warning("Could not play video %s\n", fileName.c_str());
+		if (videoDecoder && videoDecoder->loadFile(fileName))
+			playVideo(videoDecoder);
 
 		if (reshowCursor)
 			g_sci->_gfxCursor->kernelShow();
