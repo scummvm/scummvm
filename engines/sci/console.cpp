@@ -488,7 +488,6 @@ bool Console::cmdSelector(int argc, const char **argv) {
 	}
 
 	Common::String name = argv[1];
-	name.toLowercase();
 	int seeker = _engine->getKernel()->findSelector(name.c_str());
 	if (seeker >= 0) {
 		DebugPrintf("Selector %s found at %03x (%d)\n", name.c_str(), seeker, seeker);
