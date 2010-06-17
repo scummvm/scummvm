@@ -82,7 +82,7 @@ int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
 	// sample length and return that. wPlayAudio should *not* actually start the sample.
 
 	int sampleLen = 0;
-	Audio::AudioStream *audioStream = getAudioStream(module, tuple, &sampleLen);
+	Audio::AudioStream *audioStream = getAudioStream(tuple, module, &sampleLen);
 	if (!audioStream)
 		warning("wPlayAudio: unable to create stream for audio tuple %d, module %d", tuple, module);
 	delete audioStream;

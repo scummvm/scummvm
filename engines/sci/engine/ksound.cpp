@@ -174,9 +174,19 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	case kSciAudioCD:
 		debugC(2, kDebugLevelSound, "kDoAudio: CD audio subop");
 		return kDoCdAudio(s, argc - 1, argv + 1);
-	// TODO: There are 3 more functions used in Freddy Pharkas (11, 12 and 13) and new within sierra sci
-	//			Details currently unknown
-	// kDoAudio sits at seg026:038C
+
+		// 3 new subops in Pharkas. kDoAudio in Pharkas sits at seg026:038C
+	case 11:
+		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		break;
+	case 12:
+		// Seems to be audio sync, used in Pharkas, silenced warning cause of the spam it produces
+		//warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		break;
+	case 13:
+		// Used in Pharkas whenever a speech sample starts
+		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		break;
 	default:
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 	}
