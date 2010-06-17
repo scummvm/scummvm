@@ -991,7 +991,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
-	if (g_sci->getGameId() == "freddypharkas" || g_sci->getGameId() == "freddypharkas-demo") {
+	if (g_sci->getGameId() == "freddypharkas") {
 		// WORKAROUND
 		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
 		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
