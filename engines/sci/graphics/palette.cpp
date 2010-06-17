@@ -57,6 +57,15 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	_sysPalette.colors[255].b = 255;
 
 	_sysPaletteChanged = false;
+	_alwaysForceRealMerge = false;
+
+	// Pseudo-WORKAROUND
+	// Laura Bow 2 is an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
+	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
+	//  If we use the copying over, we will get issues because some views have marked all colors as being used
+	//  and those will overwrite the current palette in that case
+	if (!strcmp(g_sci->getGameID(), "laurabow2") && (g_sci->isDemo()))
+		_alwaysForceRealMerge = true;
 }
 
 GfxPalette::~GfxPalette() {
@@ -210,6 +219,9 @@ bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 	uint16 res;
 	int i,j;
 	bool paletteChanged = false;
+
+	// for Laura Bow 2 demo
+	forceRealMerge |= _alwaysForceRealMerge;
 
 	if ((!forceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes

@@ -77,6 +77,7 @@ private:
 	uint32 _palVaryEnd;
 
 	bool _sysPaletteChanged;
+	bool _alwaysForceRealMerge;
 
 	Common::Array<PalSchedule> _schedules;
 };
