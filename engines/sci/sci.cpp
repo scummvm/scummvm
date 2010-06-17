@@ -276,7 +276,7 @@ Common::Error SciEngine::run() {
 #ifdef ENABLE_SCI32
 	}
 #endif
-		
+
 	_kernel->loadKernelNames(_features);	// Must be called after game_init()
 
 	script_adjust_opcode_formats();

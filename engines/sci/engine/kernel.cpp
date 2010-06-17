@@ -410,7 +410,8 @@ SciKernelFunction kfunct_mappers[] = {
 	{NULL, NULL, NULL} // Terminator
 };
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
+	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
 }
@@ -428,6 +429,8 @@ uint Kernel::getSelectorNamesSize() const {
 }
 
 const Common::String &Kernel::getSelectorName(uint selector) const {
+	if (selector >= _selectorNames.size())
+		return _invalid;
 	return _selectorNames[selector];
 }
 
@@ -439,9 +442,8 @@ const Common::String &Kernel::getKernelName(uint number) const {
 	// FIXME: The following check is a temporary workaround for
 	// an issue leading to crashes when using the debugger's backtrace
 	// command.
-	static const Common::String invalid = "(invalid)";
 	if (number >= _kernelNames.size())
-		return invalid;
+		return _invalid;
 	return _kernelNames[number];
 }
 

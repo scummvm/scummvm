@@ -63,9 +63,7 @@ const char *opcodeNames[] = {
 	   "-sli",      "-sti",     "-spi"
 };
 
-extern const char *selector_name(EngineState *s, int selector);
-
-DebugState g_debugState;
+DebugState g_debugState;	// FIXME: Avoid non-const global vars
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
@@ -197,7 +195,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (!obj)
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
 			else
-				printf("	(%s)", selector_name(s, obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])));
+				printf("	(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])).c_str());
 		}
 	}
 
@@ -244,7 +242,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				printf("  %s::%s[", name, (selector > kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				printf("  %s::%s[", name, g_sci->getKernel()->getSelectorName(selector).c_str());
 
 				switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
@@ -314,17 +312,15 @@ void script_debug(EngineState *s) {
 				if (paramb1 != g_debugState.seekSpecial)
 					return;
 
-			case kDebugSeekCallk: {
+			case kDebugSeekCallk:
 				if (op != op_callk)
 					return;
 				break;
-			}
 
-			case kDebugSeekLevelRet: {
+			case kDebugSeekLevelRet:
 				if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
 					return;
 				break;
-			}
 
 			case kDebugSeekGlobal:
 				if (op < op_sag)
@@ -361,7 +357,7 @@ void script_debug(EngineState *s) {
 
 	g_debugState.debugging = false;
 
-	Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+	Console *con = ((Sci::SciEngine *)g_engine)->getSciDebugger();
 	con->attach();
 }
 
@@ -491,19 +487,17 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			dumpScriptObject((char *)script->data, seeker, objsize);
 			break;
 
-		case SCI_OBJ_CODE: {
+		case SCI_OBJ_CODE:
 			printf("Code\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case 3: {
+		case 3:
 			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_SAID: {
+		case SCI_OBJ_SAID:
 			printf("Said\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
@@ -551,46 +545,40 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 				}
 			}
 			printf("\n");
-		}
-		break;
+			break;
 
-		case SCI_OBJ_STRINGS: {
+		case SCI_OBJ_STRINGS:
 			printf("Strings\n");
 			while (script->data [seeker]) {
 				printf("%04x: %s\n", seeker, script->data + seeker);
 				seeker += strlen((char *)script->data + seeker) + 1;
 			}
 			seeker++; // the ending zero byte
-		};
-		break;
+			break;
 
 		case SCI_OBJ_CLASS:
 			dumpScriptClass((char *)script->data, seeker, objsize);
 			break;
 
-		case SCI_OBJ_EXPORTS: {
+		case SCI_OBJ_EXPORTS:
 			printf("Exports\n");
 			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_POINTERS: {
+		case SCI_OBJ_POINTERS:
 			printf("Pointers\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case 9: {
+		case 9:
 			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_LOCALVARS: {
+		case SCI_OBJ_LOCALVARS:
 			printf("Local vars\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
 		default:
 			printf("Unsupported!\n");

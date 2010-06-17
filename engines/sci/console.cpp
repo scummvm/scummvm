@@ -419,13 +419,6 @@ ResourceType parseResourceType(const char *resid) {
 	return res;
 }
 
-const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)g_sci->getKernel()->getSelectorNamesSize())
-		return g_sci->getKernel()->getSelectorName(selector).c_str();
-	else
-		return "--INVALID--";
-}
-
 bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
@@ -2217,7 +2210,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 
 					if (reg_end.segment != 0 && size < reg_end.offset - reg.offset) {
 						DebugPrintf("Block end out of bounds (size %d). Resetting.\n", size);
-					reg_end = NULL_REG;
+						reg_end = NULL_REG;
 					}
 
 					if (reg_end.segment != 0 && (size >= reg_end.offset - reg.offset))
@@ -2324,11 +2317,10 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 		switch (call.type) {
 
-		case EXEC_STACK_TYPE_CALL: {// Normal function
+		case EXEC_STACK_TYPE_CALL: // Normal function
 			DebugPrintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
-			          selector_name(_engine->_gamestate, call.selector));
-		}
-		break;
+			          _engine->getKernel()->getSelectorName(call.selector).c_str());
+			break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
 			DebugPrintf(" %x:[%x]  k%s(", i, call.origin, _engine->getKernel()->getKernelName(call.selector).c_str());
@@ -2554,11 +2546,11 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	const char *selector_name = argv[2];
-	int selectorId = _engine->getKernel()->findSelector(selector_name);
+	const char *selectorName = argv[2];
+	int selectorId = _engine->getKernel()->findSelector(selectorName);
 
 	if (selectorId < 0) {
-		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
+		DebugPrintf("Unknown selector: \"%s\"\n", selectorName);
 		return true;
 	}
 
@@ -2571,7 +2563,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	SelectorType selector_type = lookupSelector(_engine->_gamestate->_segMan, object, selectorId, NULL, NULL);
 
 	if (selector_type == kSelectorNone) {
-		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
+		DebugPrintf("Object does not support selector: \"%s\"\n", selectorName);
 		return true;
 	}
 
@@ -3273,7 +3265,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("    ");
 		if (i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
-			DebugPrintf("[%03x] %s = ", varSelector, selector_name(s, varSelector));
+			DebugPrintf("[%03x] %s = ", varSelector, _engine->getKernel()->getSelectorName(varSelector).c_str());
 		} else
 			DebugPrintf("p#%x = ", i);
 
@@ -3292,7 +3284,7 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("  -- methods:\n");
 	for (i = 0; i < obj->getMethodCount(); i++) {
 		reg_t fptr = obj->getFunction(i);
-		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), selector_name(s, obj->getFuncSelector(i)), PRINT_REG(fptr));
+		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
 	}
 	if (s->_segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
 		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->_nr);

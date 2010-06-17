@@ -246,6 +246,8 @@ private:
 	// Kernel-related lists
 	Common::StringArray _selectorNames;
 	Common::StringArray _kernelNames;
+	
+	const Common::String _invalid;
 };
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
