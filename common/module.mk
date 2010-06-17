@@ -30,10 +30,10 @@ MODULE_OBJS := \
 	zlib.o
 
 ifdef USE_TRANSLATION
-common/translation.cpp: common/messages.cpp
+$(srcdir)/common/translation.cpp: $(srcdir)/common/messages.cpp
 
-common/messages.cpp: $(wildcard po/*.po)
-	tools/po2c $^ > common/messages.cpp
+$(srcdir)/common/messages.cpp: $(wildcard $(srcdir)/po/*.po)
+	$(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 endif
 
 # Include common rules
