@@ -29,6 +29,8 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 
+#include "common/file.h"
+
 namespace Sci {
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
@@ -92,6 +94,12 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	Resource *res = NULL;
 	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+
+	if (restype == kResourceTypeVMD) {
+		char fileName[50];
+		sprintf(fileName, "%d.vmd", argv[1].toUint16());
+		return make_reg(0, Common::File::exists(fileName));
+	}
 
 	if ((restype == kResourceTypeAudio36) || (restype == kResourceTypeSync36)) {
 		if (argc >= 6) {

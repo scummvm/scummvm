@@ -98,6 +98,7 @@ enum ResourceType {
 	kResourceTypeUnknown1, // Translation, currently unsupported
 	kResourceTypeUnknown2,
 	kResourceTypeRobot,
+	kResourceTypeVMD,
 	kResourceTypeInvalid,
 
 	// Mac-only resources, these resource types are self-defined
