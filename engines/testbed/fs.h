@@ -10,6 +10,7 @@ namespace FStests {
 // Helper functions for FS tests
 
 // will contain function declarations for FS tests
+bool testOpenFile();
 // add more here
 }
 
