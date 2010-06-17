@@ -748,14 +748,16 @@ void Kernel::setDefaultKernelNames() {
 		// In SCI1.1, kSetSynonyms is an empty function
 		_kernelNames[0x26] = "Empty";
 
-		// In the Windows version of KQ6 CD, the empty kSetSynonyms
-		// function has been replaced with kPortrait. In KQ6 Mac,
-		// kPlayBack has been replaced by kShowMovie.
 		if (!strcmp(g_sci->getGameID(), "kq6")) {
+			// In the Windows version of KQ6 CD, the empty kSetSynonyms
+			// function has been replaced with kPortrait. In KQ6 Mac,
+			// kPlayBack has been replaced by kShowMovie.
 			if (g_sci->getPlatform() == Common::kPlatformWindows)
 				_kernelNames[0x26] = "Portrait";
 			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
 				_kernelNames[0x84] = "ShowMovie";
+		} else if (!strcmp(g_sci->getGameID(), "qfg4") && g_sci->isDemo()) {
+			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
 		}
 
 		_kernelNames[0x71] = "PalVary";
