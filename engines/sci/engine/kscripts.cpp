@@ -36,7 +36,7 @@ namespace Sci {
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
-	int restype = argv[0].toUint16();
+	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 	int resnr = argv[1].toUint16();
 
 	// Request to dynamically allocate hunk memory for later use
@@ -76,7 +76,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 2) {
-		int restype = argv[0].toUint16();
+		ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 		reg_t resnr = argv[1];
 
 		if (restype == kResourceTypeMemory)
