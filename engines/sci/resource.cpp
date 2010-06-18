@@ -1697,6 +1697,10 @@ ViewType ResourceManager::detectViewType() {
 		Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
 
 		if (res) {
+			// Skip views coming from patch files
+			if (res->_source->getSourceType() == kSourcePatch)
+				continue;
+
 			switch (res->data[1]) {
 			case 128:
 				// If the 2nd byte is 128, it's a VGA game
