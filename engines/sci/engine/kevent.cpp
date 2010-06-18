@@ -203,7 +203,12 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mover >= 0) {
-			writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_JOYSTICK);
+			// FIXME: changing point was actually inbetween SCI1EARLY, we need to find out when it happened
+			//  and then find some method of finding out those specific games
+			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
+				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD | SCI_EVENT_JOYSTICK);
+			else
+				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_JOYSTICK);
 			writeSelectorValue(segMan, obj, SELECTOR(message), mover);
 			return make_reg(0, 1);
 		} else
