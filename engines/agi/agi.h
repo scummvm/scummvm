@@ -37,6 +37,14 @@
 
 #include "gui/debugger.h"
 
+// AGI resources
+#include "agi/console.h"
+#include "agi/view.h"
+#include "agi/picture.h"
+#include "agi/logic.h"
+#include "agi/sound.h"
+
+
 namespace Common { class RandomSource; }
 
 /**
@@ -116,17 +124,6 @@ enum AgiGameID {
 	GID_WINNIE,			// PreAGI
 	GID_TROLL				// PreAGI
 };
-
-} // End of namespace Agi
-
-// AGI resources
-#include "agi/console.h"
-#include "agi/view.h"
-#include "agi/picture.h"
-#include "agi/logic.h"
-#include "agi/sound.h"
-
-namespace Agi {
 
 enum AgiGameType {
 	GType_PreAGI = 0,
