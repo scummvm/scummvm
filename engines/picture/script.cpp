@@ -922,10 +922,12 @@ void ScriptInterpreter::sfSetGuiHeight() {
 void ScriptInterpreter::sfFindMouseInRectIndex1() {
 	int16 index = -1;
 	if (_vm->_mouseY < _vm->_cameraHeight) {
-		index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
+		int16 slotIndex = arg16(5);
+		index = _vm->findRectAtPoint(getSlotData(slotIndex) + arg16(3),
 			_vm->_mouseX + _vm->_cameraX,
 			_vm->_mouseY + _vm->_cameraY,
-			arg16(11) + 1, arg16(7));
+			arg16(11) + 1, arg16(7),
+			getSlotData(slotIndex) + _slots[slotIndex].size);
 	}
 	localWrite16(arg16(9), index);
 }
@@ -934,10 +936,12 @@ void ScriptInterpreter::sfFindMouseInRectIndex2() {
 	int16 index = -1;
 	if (_vm->_sceneResIndex != 0) {
 		if (_vm->_mouseY < _vm->_cameraHeight) {
-			index = _vm->findRectAtPoint(getSlotData(arg16(5)) + arg16(3),
+			int16 slotIndex = arg16(5);
+			index = _vm->findRectAtPoint(getSlotData(slotIndex) + arg16(3),
 				_vm->_mouseX + _vm->_cameraX,
 				_vm->_mouseY + _vm->_cameraY,
-				0, arg16(7));
+				0, arg16(7),
+				getSlotData(slotIndex) + _slots[slotIndex].size);
 		}
 	}
 	localWrite16(arg16(9), index);
@@ -1068,7 +1072,14 @@ void ScriptInterpreter::sfClearScreen() {
 void ScriptInterpreter::sfHandleInput() {
 	// TODO: Recheck what this does
 	int16 varOfs = arg16(3);
-	localWrite16(varOfs, 0);
+	int16 keyCode = 0;
+	if (_vm->_rightButtonDown) {
+		keyCode = 1;
+	} else {
+		// TODO: Handle Escape
+		// TODO: Set keyboard scancode
+	}
+	localWrite16(varOfs, keyCode);
 }
 
 void ScriptInterpreter::sfRunOptionsScreen() {
@@ -1076,7 +1087,7 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 }
 
 /* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and
-    sfDeletePrecachedFiles were used by the original engine to handle precaching
+	sfDeletePrecachedFiles were used by the original engine to handle precaching
 	of data so the game doesn't stall while playing (due to the slow speed of
 	CD-Drives back then). This is not needed in ScummVM since all supported
 	systems are fast enough to load data in-game. */

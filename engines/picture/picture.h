@@ -100,7 +100,8 @@ public:
 
 	void walk(byte *walkData);
 	
-	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize);
+	int16 findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
+		byte *rectDataEnd);
 
 public:
 
@@ -132,6 +133,7 @@ public:
 	
 	int16 _walkSpeedY, _walkSpeedX;
 
+	Common::KeyState _keyState;
 	int16 _mouseX, _mouseY;
 	int16 _mouseCounter;
 	bool _mouseButtonPressedFlag;
