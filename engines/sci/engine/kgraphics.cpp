@@ -1265,6 +1265,9 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
 			}
 			break;
+		case 1:	// LSL6 hires (startup)
+			// TODO
+			return NULL_REG;	// an integer is expected
 		case 4: {	// start
 				int id = argv[1].toUint16();
 				warning("kRobot(start), id %d", id);
