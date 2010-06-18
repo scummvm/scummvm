@@ -513,23 +513,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
-		case 4:	// Longbow demo
-			warning("Unknown kDisplay argument %X", displayArg);
-			break;
-		case 7:	// Longbow demo
-			warning("Unknown kDisplay argument %X", displayArg);
-			break;
-		case 9:	// Longbow demo
-			warning("Unknown kDisplay argument %X", displayArg);
-			break;
-		case 114:	// Longbow demo
-			warning("Unknown kDisplay argument %X", displayArg);
-			break;
-		case 115:	// Longbow demo
-			warning("Unknown kDisplay argument %X", displayArg);
-			break;
 		default:
-			error("Unknown kDisplay argument %X", displayArg);
+			warning("Unknown kDisplay argument %X", displayArg);
 			break;
 		}
 	}
