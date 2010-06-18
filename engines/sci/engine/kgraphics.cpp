@@ -1325,11 +1325,12 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		// bit 7		unknown
 		// bit 8		stretch
 
-		// gammaBoost boosts palette colors in the range gammaFirst to gammaLast, but
-		// only if bit 4 in flags is set. Percent value such that 0% = no amplification
-		// These three parameters are optional if bit 4 is clear. 
-		// Also note that the x, y parameters play subtle games if used with subfx 21.
-		// The subtleness has to do with creation of temporary planes and positioning relative to such planes.
+		// gammaBoost boosts palette colors in the range gammaFirst to
+		// gammaLast, but only if bit 4 in flags is set. Percent value such that
+		// 0% = no amplification These three parameters are optional if bit 4 is
+		// clear. Also note that the x, y parameters play subtle games if used
+		// with subfx 21. The subtleness has to do with creation of temporary
+		// planes and positioning relative to such planes.
 
 		int flags = argv[3].offset;
 		Common::String flagspec;
@@ -1392,20 +1393,21 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 #endif
 
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
-	// This call is used for KQ6's intro. It has one parameter, which is
-	// 1 when the intro begins, and 0 when it ends. It is suspected that
-	// this is actually a flag to enable video planar memory access, as
-	// the video decoder in KQ6 is specifically written for the planar
-	// memory model. Planar memory mode access was used for VGA "Mode X"
-	// (320x240 resolution, although the intro in KQ6 is 320x200).
+	// This call is used for KQ6's intro. It has one parameter, which is 1 when
+	// the intro begins, and 0 when it ends. It is suspected that this is
+	// actually a flag to enable video planar memory access, as the video
+	// decoder in KQ6 is specifically written for the planar memory model.
+	// Planar memory mode access was used for VGA "Mode X" (320x240 resolution,
+	// although the intro in KQ6 is 320x200).
 	// Refer to http://en.wikipedia.org/wiki/Mode_X
 
 	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
 	return s->r_acc;
 }
 
-// New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
-//  font and/or color multiple times during kDisplay and kDrawControl
+// New calls for SCI11. Using those is only needed when using text-codes so that
+// one is able to change font and/or color multiple times during kDisplay and
+// kDrawControl
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText16->kernelTextFonts(argc, argv);
 	return s->r_acc;

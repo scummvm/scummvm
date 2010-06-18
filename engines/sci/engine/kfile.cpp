@@ -115,15 +115,17 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
-		// If no matching savestate exists: fall back to reading from a regular file
+		// If no matching savestate exists: fall back to reading from a regular
+		// file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
-		// Special case for LSL3: It tries to create a new dummy file, LARRY3.DRV
-		// Apparently, if the file doesn't exist here, it should be created. The game
-		// scripts then go ahead and fill its contents with data. It seems to be a similar
-		// case as the dummy MEMORY.DRV file in LSL5, but LSL5 creates the file if it can't
-		// find it with a separate call to file_open()
+		// Special case for LSL3: It tries to create a new dummy file,
+		// LARRY3.DRV. Apparently, if the file doesn't exist here, it should be
+		// created. The game scripts then go ahead and fill its contents with
+		// data. It seems to be a similar case as the dummy MEMORY.DRV file in
+		// LSL5, but LSL5 creates the file if it can't find it with a separate
+		// call to file_open().
 		if (!inFile && englishName == "LARRY3.DRV") {
 			outFile = saveFileMan->openForSaving(wrappedName);
 			outFile->finalize();
@@ -144,10 +146,11 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
 			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
-		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first, closes it immediately and opens it again
-		//  with this here
-		// Perhaps other games use this for read access as well
-		// I guess changing this whole code into using virtual files and writing them after close would be more appropriate
+		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
+		// closes it immediately and opens it again with this here. Perhaps
+		// other games use this for read access as well. I guess changing this
+		// whole code into using virtual files and writing them after close
+		// would be more appropriate.
 	} else {
 		error("file_open: unsupported mode %d (filename '%s')", mode, englishName.c_str());
 	}
@@ -163,7 +166,8 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
 		handle++;
 
-	if (handle == s->_fileHandles.size()) { // Hit size limit => Allocate more space
+	if (handle == s->_fileHandles.size()) {
+		// Hit size limit => Allocate more space
 		s->_fileHandles.resize(s->_fileHandles.size() + 1);
 	}
 
@@ -274,7 +278,8 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 			SavegameDesc desc;
 			desc.id = strtol(filename.end() - 3, NULL, 10);
 			desc.date = meta.savegame_date;
-			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
+			// We need to fix date in here, because we save DDMMYYYY instead of
+			// YYYYMMDD, so sorting wouldn't work
 			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
 			desc.time = meta.savegame_time;
 			desc.version = meta.savegame_version;
@@ -429,9 +434,9 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	Common::String path = s->_segMan->getString(argv[0]);
 
 	debug(3, "kCheckFreeSpace(%s)", path.c_str());
-	// We simply always pretend that there is enough space.
-	// The alternative would be to write a big test file, which is not nice
-	// on systems where doing so is very slow.
+	// We simply always pretend that there is enough space. The alternative
+	// would be to write a big test file, which is not nice on systems where
+	// doing so is very slow.
 	return make_reg(0, 1);
 }
 
@@ -641,7 +646,8 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	_savefiles = saveFileMan->listSavefiles(wrappedMask);
 
-	// Reset the list iterator and write the first match to the output buffer, if any.
+	// Reset the list iterator and write the first match to the output buffer,
+	// if any.
 	_iter = _savefiles.begin();
 	return nextFile(segMan);
 }
@@ -671,7 +677,8 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	case K_FILEIO_OPEN : {
 		Common::String name = s->_segMan->getString(argv[1]);
 
-		// SCI32 can call K_FILEIO_OPEN with only two arguments. It seems to just be checking if it exists.
+		// SCI32 can call K_FILEIO_OPEN with only two arguments. It seems to
+		// just be checking if it exists.
 		int mode = (argc < 3) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[2].toUint16();
 
 		// SQ4 floppy prepends /\ to the filenames
@@ -680,10 +687,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			name.deleteChar(0);
 		}
 
-		// SQ4 floppy attempts to update the savegame index file sq4sg.dir
-		// when deleting saved games. We don't use an index file for saving
-		// or loading, so just stop the game from modifying the file here
-		// in order to avoid having it saved in the ScummVM save directory
+		// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
+		// deleting saved games. We don't use an index file for saving or
+		// loading, so just stop the game from modifying the file here in order
+		// to avoid having it saved in the ScummVM save directory.
 		if (name == "sq4sg.dir") {
 			debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
 			return SIGNAL_REG;
@@ -744,11 +751,13 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			name.deleteChar(0);
 		}
 
-		// Special case for SQ4 floppy: This game has hardcoded names for all of its
-		// savegames, and they are all named "sq4sg.xxx", where xxx is the slot. We just
-		// take the slot number here, and delete the appropriate save game
+		// Special case for SQ4 floppy: This game has hardcoded names for all of
+		// its savegames, and they are all named "sq4sg.xxx", where xxx is the
+		// slot. We just take the slot number here, and delete the appropriate
+		// save game.
 		if (name.hasPrefix("sq4sg.")) {
-			// Special handling for SQ4... get the slot number and construct the save game name
+			// Special handling for SQ4... get the slot number and construct the
+			// save game name.
 			int slotNum = atoi(name.c_str() + name.size() - 3);
 			Common::Array<SavegameDesc> saves;
 			listSavegames(saves);
@@ -848,14 +857,17 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			delete inFile;
 		}
 
-		// Special case for non-English versions of LSL5: The English version of LSL5 calls
-		// kFileIO(), case K_FILEIO_OPEN for reading to check if memory.drv exists (which is
-		// where the game's password is stored). If it's not found, it calls kFileIO() again,
-		// case K_FILEIO_OPEN for writing and creates a new file. Non-English versions call
-		// kFileIO(), case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be found.
-		// We create a default memory.drv file with no password, so that the game can continue
+		// Special case for non-English versions of LSL5: The English version of
+		// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
+		// memory.drv exists (which is where the game's password is stored). If
+		// it's not found, it calls kFileIO() again, case K_FILEIO_OPEN for
+		// writing and creates a new file. Non-English versions call kFileIO(),
+		// case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be
+		// found. We create a default memory.drv file with no password, so that
+		// the game can continue.
 		if (!exists && name == "memory.drv") {
-			// Create a new file, and write the bytes for the empty password string inside
+			// Create a new file, and write the bytes for the empty password
+			// string inside
 			byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
 			Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
 			for (int i = 0; i < 10; i++)
@@ -872,8 +884,8 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		Common::String oldName = s->_segMan->getString(argv[1]);
 		Common::String newName = s->_segMan->getString(argv[2]);
 
-		// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32 returns -1 on fail.
-		// We just return -1 for all versions.
+		// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
+		// returns -1 on fail. We just return -1 for all versions.
 		if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
 			return NULL_REG;
 		else

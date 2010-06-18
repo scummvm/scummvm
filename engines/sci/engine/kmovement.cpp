@@ -33,42 +33,43 @@
 
 namespace Sci {
 
-/*
-Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy.
-The gravity is assumed to be non-negative.
-
-If this was ordinary continuous physics, we would compute the desired (floating point!)
-velocity vector (vx,vy) as follows, under the assumption that vx and vy are linearly correlated
-by some constant factor c, i.e. vy = c * vx:
-   dx = t * vx
-   dy = t * vy + gy * t^2 / 2
-=> dy = c * dx + gy * (dx/vx)^2 / 2
-=> |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
-Here, the sign of vx must be chosen equal to the sign of dx, obviously.
-
-Clearly, this square root only makes sense in our context if the denominator is positive,
-or equivalently, (dy - c * dx) must be positive. For simplicity and by symmetry
-along the x-axis, we assume dx to be positive for all computations, and only adjust for
-its sign in the end. Switching the sign of c appropriately, we set tmp := (dy + c * dx)
-and compute c so that this term becomes positive.
-
-Remark #1: If the jump is straight up, i.e. dx == 0, then we should not assume the above
-linear correlation vy = c * vx of the velocities (as vx will be 0, but vy shouldn't be,
-unless we drop).
-
-
-Remark #2: We are actually in a discrete setup. The motion is computed iteratively: each iteration,
-we add vx and vy to the position, then add gy to vy. So the real formula is the following
-(where t is ideally close to an int):
-
-  dx = t * vx
-  dy = t * vy + gy * t*(t-1) / 2
-
-But the solution resulting from that is a lot more complicated, so we use the above approximation instead.
-
-Still, what we compute in the end is of course not a real velocity anymore, but an integer approximation,
-used in an iterative stepping algorithm
-*/
+/**
+ * Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to
+ * (dx,dy), with gravity constant gy. The gravity is assumed to be non-negative.
+ *
+ * If this was ordinary continuous physics, we would compute the desired
+ * (floating point!) velocity vector (vx,vy) as follows, under the assumption
+ * that vx and vy are linearly correlated by a constant c, i.e., vy = c * vx:
+ *    dx = t * vx
+ *    dy = t * vy + gy * t^2 / 2
+ * => dy = c * dx + gy * (dx/vx)^2 / 2
+ * => |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
+ * Here, the sign of vx must be chosen equal to the sign of dx, obviously.
+ *
+ * This square root only makes sense in our context if the denominator is
+ * positive, or equivalently, (dy - c * dx) must be positive. For simplicity
+ * and by symmetry along the x-axis, we assume dx to be positive for all
+ * computations, and only adjust for its sign in the end. Switching the sign of
+ * c appropriately, we set tmp := (dy + c * dx) and compute c so that this term
+ * becomes positive.
+ *
+ * Remark #1: If the jump is straight up, i.e. dx == 0, then we should not
+ * assume the above linear correlation vy = c * vx of the velocities (as vx
+ * will be 0, but vy shouldn't be, unless we drop down).
+ *
+ * Remark #2: We are actually in a discrete setup. The motion is computed
+ * iteratively: each iteration, we add vx and vy to the position, then add gy
+ * to vy. So the real formula is the following (where t ideally is close to an int):
+ *
+ *   dx = t * vx
+ *   dy = t * vy + gy * t*(t-1) / 2
+ *
+ * But the solution resulting from that is a lot more complicated, so we use
+ * the above approximation instead.
+ *
+ * Still, what we compute in the end is of course not a real velocity anymore,
+ * but an integer approximation, used in an iterative stepping algorithm.
+ */
 reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	// Input data
@@ -115,7 +116,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 			//tmp = dx * 3 / 2;  // ALMOST the resulting value, except for obvious rounding issues
 
 			// FIXME: Where is the 3 coming from? Maybe they hard/coded, by "accident", that usually gy=3 ?
-			// Then this choice of will make t equal to roughly sqrt(dx)
+			// Then this choice of scalar will make t equal to roughly sqrt(dx)
 		}
 	}
 	// POST: c >= 1

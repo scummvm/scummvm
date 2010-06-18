@@ -73,7 +73,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	int16 colorBack = (argc > 2) ? argv[2].toSint16() : g_sci->getResMan()->isVGA() ? 255 : 15;
 
 	if (!textReference.isNull()) {
-		// Sometimes this is called without giving text, if thats the case dont process it
+		// Sometimes this is called without giving text, if thats the case dont process it.
 		text = s->_segMan->getString(textReference);
 
 		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);

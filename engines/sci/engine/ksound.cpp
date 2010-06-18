@@ -110,8 +110,10 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			number = argv[1].toUint16();
 		} else if (argc == 6 || argc == 8) {
 			module = argv[1].toUint16();
-			number = ((argv[2].toUint16() & 0xff) << 24) | ((argv[3].toUint16() & 0xff) << 16) |
-					 ((argv[4].toUint16() & 0xff) <<  8) | (argv[5].toUint16() & 0xff);
+			number = ((argv[2].toUint16() & 0xff) << 24) |
+			         ((argv[3].toUint16() & 0xff) << 16) |
+			         ((argv[4].toUint16() & 0xff) <<  8) |
+			          (argv[5].toUint16() & 0xff);
 			if (argc == 8)
 				warning("kDoAudio: Play called with SQ6 extra parameters");
 		} else {
@@ -180,7 +182,8 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 		break;
 	case 12:
-		// Seems to be audio sync, used in Pharkas, silenced warning cause of the spam it produces
+		// Seems to be audio sync, used in Pharkas. Silenced the warning due to
+		// the high level of spam it produces.
 		//warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 		break;
 	case 13:

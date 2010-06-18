@@ -436,9 +436,8 @@ uint Kernel::getKernelNamesSize() const {
 }
 
 const Common::String &Kernel::getKernelName(uint number) const {
-	// FIXME: The following check is a temporary workaround for
-	// an issue leading to crashes when using the debugger's backtrace
-	// command.
+	// FIXME: The following check is a temporary workaround for an issue
+	// leading to crashes when using the debugger's backtrace command.
 	if (number >= _kernelNames.size())
 		return _invalid;
 	return _kernelNames[number];

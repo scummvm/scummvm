@@ -55,20 +55,22 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	uint32 neededSleep = 30;
 
-	// WORKAROUND:
-	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
-	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
-	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
+	// WORKAROUND: LSL3 calculates a machinespeed variable during game startup
+	// (right after the filthy questions). This one would go through w/o
+	// throttling resulting in having to do 1000 pushups or something. Another
+	// way of handling this would be delaying incrementing of "machineSpeed"
+	// selector.
 	if (g_sci->getGameId() == "lsl3" && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
-	if (g_sci->getGameId() == "iceman" && s->currentRoomNumber() == 27) {
+	else if (g_sci->getGameId() == "iceman" && s->currentRoomNumber() == 27) {
 		s->_throttleTrigger = true;
 		neededSleep = 60;
 	}
 
 	if (s->_throttleTrigger) {
-		// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
-		//  based on that (qfg2, iceman). We are now running full speed initially to avoid that.
+		// Some games seem to get the duration of main loop initially and then
+		// switch of animations for the whole game based on that (qfg2, iceman).
+		// We are now running full speed initially to avoid that.
 		// It seems like we dont need to do that anymore
 		//if (s->_throttleCounter < 50) {
 		//	s->_throttleCounter++;
@@ -332,11 +334,12 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	bool isWindows = g_sci->getPlatform() == Common::kPlatformWindows;
 
 	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
-		// This is called in KQ5CD with no parameters, where it seems to do some graphics
-		// driver check. This kernel function didn't have subfunctions then. If 0 is
-		// returned, the game functions normally, otherwise all the animations show up
-		// like a slideshow (e.g. in the intro). So we return 0. However, the behavior
-		// changed for kPlatform with no parameters in SCI32.
+		// This is called in KQ5CD with no parameters, where it seems to do some
+		// graphics driver check. This kernel function didn't have subfunctions
+		// then. If 0 is returned, the game functions normally, otherwise all
+		// the animations show up like a slideshow (e.g. in the intro). So we
+		// return 0. However, the behavior changed for kPlatform with no
+		// parameters in SCI32.
 		return NULL_REG;
 	}
 
@@ -375,10 +378,10 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
-	// Placeholder for empty kernel functions which are still called from the engine
-	// scripts (like the empty kSetSynonyms function in SCI1.1). This differs from
-	// dummy functions because it does nothing and never throws a warning when it's
-	// called
+	// Placeholder for empty kernel functions which are still called from the
+	// engine scripts (like the empty kSetSynonyms function in SCI1.1). This
+	// differs from dummy functions because it does nothing and never throws a
+	// warning when it is called.
 	return s->r_acc;
 }
 

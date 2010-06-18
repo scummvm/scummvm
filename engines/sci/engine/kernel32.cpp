@@ -378,12 +378,14 @@ void Kernel::setKernelNamesSci2() {
 }
 
 void Kernel::setKernelNamesSci21(GameFeatures *features) {
-	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
-	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
-	// to use based on where kDoSound is called from Sound::play().
+	// Some SCI games use a modified SCI2 kernel table instead of the
+	// SCI2.1/SCI3 kernel table. The GK2 demo does this as well as at
+	// least one version of KQ7. We detect which version to use based on
+	// where kDoSound is called from Sound::play().
 
-	// This is interesting because they all have the same interpreter version (2.100.002), yet
-	// they would not be compatible with other games of the same interpreter.
+	// This is interesting because they all have the same interpreter
+	// version (2.100.002), yet they would not be compatible with other
+	// games of the same interpreter.
 
 	if (features->detectSci21KernelType() == SCI_VERSION_2) {
 		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
@@ -399,7 +401,8 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 // SCI2 Kernel Functions
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
-	// Returns 0 if the screen width or height is less than 640 or 400, respectively.
+	// Returns 0 if the screen width or height is less than 640 or 400,
+	// respectively.
 	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
 		return make_reg(0, 0);
 
@@ -606,8 +609,9 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 			if (string1->getSize() < index1 + count)
 				string1->setSize(index1 + count);
 
-			// Note: We're accessing from c_str() here because the string's size ignores
-			// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
+			// Note: We're accessing from c_str() here because the
+			// string's size ignores the trailing 0 and therefore
+			// triggers an assert when doing string2[i + index2].
 			for (uint16 i = 0; i < count; i++)
 				string1->setValue(i + index1, string2[i + index2]);
 		}
@@ -793,8 +797,9 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
 	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
 
-	// If top and left are negative, we need to adjust coordinates by the item's x and y
-	// (e.g. happens in GK1, day 1, with detective Mosely's hotspot in his office)
+	// If top and left are negative, we need to adjust coordinates by
+	// the item's x and y (e.g. happens in GK1, day 1, with detective
+	// Mosely's hotspot in his office)
 
 	if (nsRect.left < 0)
 		nsRect.translate(itemX, 0);
@@ -802,8 +807,8 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	if (nsRect.top < 0)
 		nsRect.translate(0, itemY);
 
-	// HACK: nsLeft and nsTop can be invalid, so try and fix them here using x and y
-	// (e.g. with the inventory screen in GK1)
+	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+	// using x and y (e.g. with the inventory screen in GK1)
 	if (nsRect.left == itemY && nsRect.top == itemX) {
 		// Swap the values, as they're inversed (eh???)
 		nsRect.left = itemX;
@@ -821,8 +826,8 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
-	// Tests if the cursor is on the passed object, after adjusting the coordinates
-	// of the object according to the object's plane
+	// Tests if the cursor is on the passed object, after adjusting the
+	// coordinates of the object according to the object's plane
 
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
@@ -848,7 +853,8 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
 		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
 
-		// Adjust the bounding rectangle of the object by the object's actual X, Y coordinates
+		// Adjust the bounding rectangle of the object by the object's
+		// actual X, Y coordinates
 		itemY = ((itemY * g_sci->_gfxScreen->getHeight()) / planeResY);
 		itemX = ((itemX * g_sci->_gfxScreen->getWidth()) / planeResX);
 		itemY += planeTop;
