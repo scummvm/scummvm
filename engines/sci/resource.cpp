@@ -114,7 +114,7 @@ static const char *resourceTypeNames[] = {
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
 	"audio", "sync", "message", "map", "heap",
-	"audio36", "sync36", "", "", "robot"
+	"audio36", "sync36", "", "", "robot", "vmd"
 };
 
 static const char *resourceTypeSuffixes[] = {
@@ -122,7 +122,7 @@ static const char *resourceTypeSuffixes[] = {
 	"   ", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
 	"msg", "map", "hep", "aud", "syn",
-	"trn", "   ", "rbt"
+	"trn", "   ", "rbt", "vmd"
 };
 
 const char *getResourceTypeName(ResourceType restype) {
