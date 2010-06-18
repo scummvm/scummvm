@@ -2572,6 +2572,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
+	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
+	{"sq1sci", "VGA Remake", {
+		{"resource.map", 0, "5c6ad20407261b544238e8dce87afead", 5895},
+		{"resource.000", 0, "2c414644b23839069c8d1a93b721df16", 1017033},
+		{"resource.001", 0, "8744ae2ea6b316e91e2a35ab1aa301d2", 1024622},
+		{"resource.002", 0, "96860704f7a07ecc10bef223b4b2f153", 1273992},
+		{"resource.003", 0, "ae46e195e66df5a131917f0aa80b5669", 1242794},
+		{"resource.004", 0, "91d58a9eb2187c38424990afe4c12bc6", 1250949},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH
+	},
+
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
 	{"sq1sci", "VGA Remake, Demo", {
@@ -2659,6 +2671,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
+
+	// Space Quest 3 - English Mac (from Fingolfin)
+	{"sq3", "", {
+		{"resource.map", 0, "5c931675c6e01c4b418faca85d76c92c", 5844},
+		{"resource.001", 0, "0d8dfe42683b46f3131823233a91ce6a", 771917},
+		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794072},
+		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776536},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - German DOS (from Tobis87)
 	// SCI interpreter version 0.000.453 (?)
