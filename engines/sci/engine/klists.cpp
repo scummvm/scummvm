@@ -293,10 +293,13 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (argc != 3) {
-		warning("kAddAfter: Haven't got 3 arguments, aborting");
+	if (argc != 3 && argc != 4) {
+		warning("kAddAfter: Haven't got 3 or 4 arguments, aborting");
 		return NULL_REG;
 	}
+
+	if (argc == 4)	// Torin's Passage
+		warning("kAddAfter with 4 params called, 4th param is %04x:%04x", PRINT_REG(argv[3]));
 
 	if (firstnode) { // We're really appending after
 		reg_t oldnext = firstnode->succ;
