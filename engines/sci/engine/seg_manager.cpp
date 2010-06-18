@@ -532,7 +532,7 @@ Node *SegManager::lookupNode(reg_t addr) {
 
 	if (type != SEG_TYPE_NODES) {
 		if (g_sci->getGameId() == "kq1sci") {
-			// The demo of KQ1 is trying to use an invalid memory reference as a list node
+			// WORKAROUND: The demo of KQ1 is trying to use an invalid memory reference as a list node
 			warning("Attempt to use non-node %04x:%04x (type %d) as list node", PRINT_REG(addr), type);
 			return NULL;
 		}
