@@ -160,7 +160,12 @@ void MidiParser_SCI::sendToDriver(uint32 b) {
 		return;
 	// Channel remapping
 	int16 realChannel = _channelRemap[midiChannel];
-	assert(realChannel != -1);
+	if (realChannel == -1) {
+		// FIXME: Happens in SQ1VGA when the game starts
+		warning("Attempt to send to uninitialized channel %d", midiChannel);
+		return;
+	}
+
 	b = (b & 0xFFFFFFF0) | realChannel;
 	_driver->send(b);
 }
