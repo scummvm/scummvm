@@ -1911,16 +1911,18 @@ bool ResourceManager::detectHires() {
 				// SCI32 picture
 				uint16 width = READ_LE_UINT16(res->data + 10);
 				uint16 height = READ_LE_UINT16(res->data + 12);
+				// Surely lowres (e.g. QFG4CD)
 				if ((width == 320) && ((height == 190) || (height == 200)))
 					return false;
+				// Surely hires
 				if ((width >= 600) || (height >= 400))
 					return true;
 			}
 		}
 	}
 
-	// This is fine for (some?) low-res sci32 games, because in those games the picture size is specified as 0, 0
-	warning("resMan: Couldn't detect hires");
+	// We haven't been able to find hires content
+
 	return false;
 #else
 	error("no sci32 support");
