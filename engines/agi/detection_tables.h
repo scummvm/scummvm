@@ -27,10 +27,10 @@ namespace Agi {
 
 using Common::GUIO_NONE;
 
-#define GAME_LVFPN(id,name,fname,md5,size,lang,ver,features,gid,platform,interp) { \
+#define GAME_LVFPN(id,extra,fname,md5,size,lang,ver,features,gid,platform,interp) { \
 		{ \
 			id, \
-			name, \
+			extra, \
 			AD_ENTRY1s(fname,md5,size),		\
 			lang, \
 			platform, \
@@ -59,26 +59,27 @@ using Common::GUIO_NONE;
 		ver, \
 	}
 
-#define GAME(id,name,md5,ver,gid) GAME_LVFPN(id,name,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
-#define GAME3(id,name,fname,md5,ver,gid) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V3)
+#define GAME(id,extra,md5,ver,gid) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V2)
+#define GAME3(id,extra,fname,md5,ver,gid) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,Common::kPlatformPC,GType_V3)
 
-#define GAME_P(id,name,md5,ver,gid,platform) GAME_LVFPN(id,name,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2)
+#define GAME_P(id,extra,md5,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_V2)
 
-#define GAME_FP(id,name,md5,ver,flags,gid,platform) GAME_LVFPN(id,name,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2)
+#define GAME_FP(id,extra,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V2)
+#define GAME_F(id,extra,md5,ver,flags,gid) GAME_FP(id,extra,md5,ver,flags,gid,Common::kPlatformPC)
 
-#define GAME_PS(id,name,md5,size,ver,gid,platform) GAME_LVFPN(id,name,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2)
+#define GAME_PS(id,extra,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,Common::EN_ANY,ver,0,gid,platform,GType_V2)
 
-#define GAME_LPS(id,name,md5,size,lang,ver,gid,platform) GAME_LVFPN(id,name,"logdir",md5,size,lang,ver,0,gid,platform,GType_V2)
+#define GAME_LPS(id,extra,md5,size,lang,ver,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,0,gid,platform,GType_V2)
 
-#define GAME_LFPS(id,name,md5,size,lang,ver,flags,gid,platform) GAME_LVFPN(id,name,"logdir",md5,size,lang,ver,flags,gid,platform,GType_V2)
+#define GAME_LFPS(id,extra,md5,size,lang,ver,flags,gid,platform) GAME_LVFPN(id,extra,"logdir",md5,size,lang,ver,flags,gid,platform,GType_V2)
 
-#define GAME3_P(id,name,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
+#define GAME3_P(id,extra,fname,md5,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
-#define GAMEpre_P(id,name,fname,md5,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
+#define GAMEpre_P(id,extra,fname,md5,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,-1,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
 
-#define GAMEpre_PS(id,name,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
+#define GAMEpre_PS(id,extra,fname,md5,size,ver,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,0,gid,platform,GType_PreAGI)
 
-#define GAME3_PS(id,name,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,name,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
+#define GAME3_PS(id,extra,fname,md5,size,ver,flags,gid,platform) GAME_LVFPN(id,extra,fname,md5,size,Common::EN_ANY,ver,flags,gid,platform,GType_V3)
 
 #define FANMADE_ILVF(id,name,md5,lang,ver,features) GAME_LVFPNF(id,name,"logdir",md5,-1,lang,ver,(GF_FANMADE|features),GID_FANMADE,Common::kPlatformPC,GType_V2)
 
@@ -765,11 +766,12 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Save Santa (v1.3)", "f8afdb6efc5af5e7c0228b44633066af"),
 	FANMADE("Schiller (preview 1)", "ade39dea968c959cfebe1cf935d653e9"),
 	FANMADE("Schiller (preview 2)", "62cd1f8fc758bf6b4aa334e553624cef"),
-	FANMADE_IF("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", GF_AGIMOUSE|GF_AGIPAL),
-	FANMADE_IF("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
-	FANMADE_IF("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", GF_AGIMOUSE|GF_AGIPAL),
-	FANMADE_IF("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", GF_AGIMOUSE),
-	FANMADE_IF("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", GF_AGIMOUSE|GF_AGIPAL),
+	GAME_F("serguei1", "v1.0", "b86725f067e456e10cdbdf5f58e01dec", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE),
+	// FIXME: The following two entries have identical MD5 checksums?
+	GAME_F("serguei1", "v1.1 2002 Sep 5", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE),
+	GAME_F("serguei1", "v1.1 2003 Apr 10", "91975c1fb4b13b0f9a8e9ff74731030d", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE),
+	GAME_F("serguei2", "v0.1.1 Demo", "906ccbc2ddedb29b63141acc6d10cd28", 0x2917, GF_FANMADE|GF_AGIMOUSE, GID_FANMADE),
+	GAME_F("serguei2", "v1.3.1 Demo (March 22nd 2008)", "ad1308fcb8f48723cd388e012ebf5e20", 0x2917, GF_FANMADE|GF_AGIMOUSE|GF_AGIPAL, GID_FANMADE),
 	FANMADE("Shifty (v1.0)", "2a07984d27b938364bf6bd243ac75080"),
 	FANMADE_F("Sliding Tile Game (v1.00)", "949bfff5d8a81c3139152eed4d84ca75", GF_AGIMOUSE),
 	FANMADE("Snowboarding Demo (v1.0)", "24bb8f29f1eddb5c0a099705267c86e4"),
@@ -778,9 +780,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("sq0", "v1.03", "d2fd6f7404e86182458494e64375e590", 0x2917, GID_SQ0),
 	GAME("sq0", "v1.04", "2ad9d1a4624a98571ee77dcc83f231b6", 0x2917, GID_SQ0),
 	GAME_PS("sq0", "", "e1a8e4efcce86e1efcaa14633b9eb986", 762, 0x2440, GID_SQ0, Common::kPlatformCoCo3),
-	FANMADE_I("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1"),
-	FANMADE_I("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910"),
-    FANMADE_ISVP("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, Common::kPlatformCoCo3),
+	GAME("sqx", "v10.0 Feb 05", "c992ae2f8ab18360404efdf16fa9edd1", 0x2917, GID_FANMADE),
+	GAME("sqx", "v10.0 Jul 18", "812edec45cefad559d190ffde2f9c910", 0x2917, GID_FANMADE),
+	GAME_PS("sqx", "", "f0a59044475a5fa37c055d8c3eb4d1a7", 768, 0x2440, GID_FANMADE, Common::kPlatformCoCo3),
 	FANMADE_F("Space Quest 3.5", "c077bc28d7b36213dd99dc9ecb0147fc", GF_AGIMOUSE|GF_AGIPAL),
 	FANMADE_F("Space Trek (v1.0)", "807a1aeadb2ace6968831d36ab5ea37a", GF_CLIPCOORDS),
 	FANMADE("Special Delivery", "88764dfe61126b8e73612c851b510a33"),
