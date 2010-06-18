@@ -245,6 +245,7 @@ void ToltecsEngine::updateScreen() {
 	//printf("_guiHeight = %d\n", _guiHeight); fflush(stdout);
 
 	if (_screen->_guiRefresh && _guiHeight > 0 && _cameraHeight > 0) {
+		// Update the GUI when needed and it's visible
 		_system->copyRectToScreen((const byte *)_screen->_frontScreen + _cameraHeight * 640,
 			640, 0, _cameraHeight, 640, _guiHeight);
 		_screen->_guiRefresh = false;
@@ -263,6 +264,9 @@ void ToltecsEngine::updateInput() {
 	while (eventMan->pollEvent(event)) {
 	switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			_keyState = event.kbd;
+
+			//debug("key: flags = %02X; keycode = %d", _keyState.flags, _keyState.keycode);
 
 			// FIXME: This is just for debugging
 			switch (event.kbd.keycode) {
@@ -276,6 +280,9 @@ void ToltecsEngine::updateInput() {
 				break;
 			}
 
+			break;
+		case Common::EVENT_KEYUP:
+			_keyState.reset();
 			break;
 		case Common::EVENT_QUIT:
 			quitGame();
@@ -540,11 +547,12 @@ void ToltecsEngine::walk(byte *walkData) {
 
 }
 
-int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize) {
+int16 ToltecsEngine::findRectAtPoint(byte *rectData, int16 x, int16 y, int16 index, int16 itemSize, 
+	byte *rectDataEnd) {
 
 	rectData += index * itemSize;
 	
-	while (1) {
+	while (rectData < rectDataEnd) {
 		int16 rectY = READ_LE_UINT16(rectData);
 		if (rectY == -10)
 			break;
