@@ -77,6 +77,9 @@ public:
 
 	void tryToOwnChannels();
 	void sendToDriver(uint32 b);
+	void sendToDriver(byte status, byte firstOp, byte secondOp) {
+		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
 
 protected:
 	void parseNextEvent(EventInfo &info);

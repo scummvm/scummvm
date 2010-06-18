@@ -646,10 +646,10 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 		case SCI_VERSION_1_EARLY:
 		case SCI_VERSION_1_LATE:
-			// sending volume change to all active channels
-			for (int i = 0; i < _track->channelCount; i++)
-				if (_track->channels[i].number <= 0xF)
-					_driver->send(0xB0 + _track->channels[i].number, 7, _volume);
+			// sending volume change to all used channels
+			for (int i = 0; i < 15; i++)
+				if (_channelUsed[i])
+					sendToDriver(0xB0 + i, 7, _volume);
 			break;
 
 		default:
