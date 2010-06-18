@@ -29,12 +29,5 @@ MODULE_OBJS := \
 	xmlparser.o \
 	zlib.o
 
-ifdef USE_TRANSLATION
-$(srcdir)/common/translation.cpp: $(srcdir)/common/messages.cpp
-
-$(srcdir)/common/messages.cpp: $(wildcard $(srcdir)/po/*.po)
-	$(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
-endif
-
 # Include common rules
 include $(srcdir)/rules.mk
