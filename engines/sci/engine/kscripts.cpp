@@ -66,6 +66,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 			if (id.getType() == kResourceTypeInvalid)
 				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
 			else
+				// Happens in CD games (e.g. LSL6CD) with the message resource
 				warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
 		}
 		break;
@@ -163,7 +164,6 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (!victim_obj->isClone()) {
-		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;
 	}
@@ -193,9 +193,10 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		// and this call is probably used to load them in memory, ignoring
 		// the return value. If only one argument is passed, this call is done
 		// only to load the script in memory. Thus, don't show any warning,
-		// as no return value is expected
+		// as no return value is expected. If an export is requested, then
+		// it will most certainly fail with OOB access.
 		if (argc == 2)
-			warning("Script 0x%x does not have a dispatch table and export %d "
+			error("Script 0x%x does not have a dispatch table and export %d "
 					"was requested from it", script, index);
 		return NULL_REG;
 	}
