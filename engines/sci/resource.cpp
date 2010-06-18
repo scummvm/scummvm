@@ -1909,8 +1909,8 @@ bool ResourceManager::detectHires() {
 		if (res) {
 			if (READ_LE_UINT16(res->data) == 0x0e) {
 				// SCI32 picture
-				uint16 width = READ_LE_UINT16(res->data + 14);
-				uint16 height = READ_LE_UINT16(res->data + 16);
+				uint16 width = READ_LE_UINT16(res->data + 10);
+				uint16 height = READ_LE_UINT16(res->data + 12);
 				if ((width == 320) && ((height == 190) || (height == 200)))
 					return false;
 				if ((width >= 600) || (height >= 400))
