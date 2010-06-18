@@ -82,6 +82,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_EGAmapping = NULL;
 
 	// If we find a SCI1/SCI1.1 view (not amiga), we switch to that type for EGA
+	//  This could get used to make view patches for EGA games, where the new views include more colors
+	//  Users could manually adjust old views to make them look better (like removing dithered colors that aren't
+	//  caught by our undithering or even improve the graphics overall)
 	if (curViewType == kViewEga) {
 		if (_resourceData[1] == 0x80) {
 			switch (READ_LE_UINT16(_resourceData + 4)) {
