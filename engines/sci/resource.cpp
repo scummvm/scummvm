@@ -1919,7 +1919,8 @@ bool ResourceManager::detectHires() {
 		}
 	}
 
-	error("resMan: Couldn't detect hires");
+	// This is fine for (some?) low-res sci32 games, because in those games the picture size is specified as 0, 0
+	warning("resMan: Couldn't detect hires");
 	return false;
 #else
 	error("no sci32 support");
