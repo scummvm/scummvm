@@ -127,31 +127,6 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	// This function is not needed in ScummVM. The garbage collector
 	// cleans up unused objects automatically
 
-#if 0
-	List *l = s->_segMan->lookupList(argv[0]);
-
-	if (!l) {
-		// FIXME: This should be an error, but it's turned to a warning for now
-		warning("Attempt to dispose non-list at %04x:%04x", PRINT_REG(argv[0]));
-		return NULL_REG;
-	}
-
-	checkListPointer(s->_segMan, argv[0]);
-
-	if (!l->first.isNull()) {
-		reg_t n_addr = l->first;
-
-		while (!n_addr.isNull()) { // Free all nodes
-			Node *n = s->_segMan->lookupNode(n_addr);
-			n_addr = n->succ;
-
-			//s->_segMan->free_Node(n_addr);	// TODO
-		}
-	}
-
-	//s->_segMan->free_list(argv[0]);	// TODO
-#endif
-
 	return s->r_acc;
 }
 
@@ -211,9 +186,8 @@ static void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 
 	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 
-	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 	checkListPointer(s->_segMan, listbase);
 
 	new_n->succ = l->first;
@@ -234,9 +208,8 @@ static void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 
 	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 
-	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
 	checkListPointer(s->_segMan, listbase);
 
 	new_n->succ = NULL_REG;
@@ -287,9 +260,8 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 
 	checkListPointer(s->_segMan, argv[0]);
 
-	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!newnode) {
-		warning("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
+		error("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
 
