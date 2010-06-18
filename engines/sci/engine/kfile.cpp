@@ -402,8 +402,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	default:
-		// TODO: Not all sub-commands are handled. E.g. KQ5CD calls sub-command 5
-		warning("Unknown DeviceInfo() sub-command: %d", mode);
+		error("Unknown DeviceInfo() sub-command: %d", mode);
 		break;
 	}
 
