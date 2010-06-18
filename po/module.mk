@@ -33,7 +33,7 @@ updatepot:
 	fi;
 
 $(srcdir)/common/messages.cpp: $(POFILES)
-	$(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
+	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
 update-translations: updatepot $(POFILES) $(srcdir)/common/messages.cpp
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
