@@ -7,10 +7,15 @@ namespace Testbed {
 
 namespace FStests {
 
+// Note: These tests require a game-data directory
+// So would work if game-path is set in the launcher or invoked as ./scummvm --path="path-to-testbed-data" testbed 
+// from commandline
+
 // Helper functions for FS tests
 
 // will contain function declarations for FS tests
-bool testOpenFile();
+bool testReadFile();
+bool testWriteFile();
 // add more here
 }
 

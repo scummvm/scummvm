@@ -15,7 +15,7 @@ namespace Testbed {
  * compares the message contained in it, with what it expects.
  *
  */
-bool FStests::testOpenFile() {
+bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
 	
@@ -53,9 +53,45 @@ bool FStests::testOpenFile() {
 	return true;
 }
 
+/**
+ * This test creates a file testbed.out, writes a sample data and confirms if
+ * it is same by reading the file again.
+ */
+
+bool FStests::testWriteFile() {
+	const Common::String &path = ConfMan.get("path");
+	Common::FSNode gameRoot(path);
+
+	Common::FSNode fileToWrite = gameRoot.getChild("testbed.out");
+	if (!fileToWrite.isWritable()) {
+		printf("LOG: Can't open writable file in game data dir\n");
+		return false;
+	}
+	
+	Common::WriteStream *ws = fileToWrite.createWriteStream();
+	if (!ws) {
+		printf("LOG: Can't create a write stream");
+		return false;
+	}
+
+	ws->writeString("ScummVM Rocks!");
+	ws->flush();
+
+	Common::SeekableReadStream *rs = fileToWrite.createReadStream();
+	Common::String readFromFile = rs->readLine();
+
+	if (readFromFile.equals("ScummVM Rocks!")) {
+		// All good
+		printf("LOG: Data written and read correctly\n");
+		return true;
+	}
+	
+	return false;
+}
 
 FSTestSuite::FSTestSuite() {
-	addTest("openingFile", &FStests::testOpenFile);	
+	addTest("openingFile", &FStests::testReadFile);	
+	addTest("WritingFile", &FStests::testWriteFile);	
 }
 const char *FSTestSuite::getName() const {
 	return "File System";
