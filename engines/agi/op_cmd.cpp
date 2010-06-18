@@ -1563,8 +1563,8 @@ cmd(shake_screen) {
 
 	// Disables input while shaking to prevent bug
 	// #1678230: AGI: Entering text while screen is shaking
-	int originalValue = game.inputEnabled;
-	game.inputEnabled = 0;
+	bool originalValue = game.inputEnabled;
+	game.inputEnabled = false;
 
 	g_gfx->shakeStart();
 

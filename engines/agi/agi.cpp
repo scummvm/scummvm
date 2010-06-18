@@ -556,7 +556,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_restartGame = false;
 
-	_oldMode = -1;
+	_oldMode = INPUT_NONE;
 
 	_predictiveDialogRunning = false;
 	_predictiveDictText = NULL;

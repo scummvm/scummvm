@@ -132,7 +132,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	out->writeSint16BE((int16)_game.hasPrompt);
 	out->writeSint16BE((int16)_game.gameFlags);
 
-	out->writeSint16BE((int16)_game.inputEnabled);
+	out->writeSint16BE(_game.inputEnabled);
 
 	for (i = 0; i < _HEIGHT; i++)
 		out->writeByte(_game.priTable[i]);
@@ -302,7 +302,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		// TODO: played time
 	}
 
-	_game.state = in->readByte();
+	_game.state = (State)in->readByte();
 
 	in->read(loadId, 8);
 	if (strcmp(loadId, _game.id) && checkId) {
@@ -361,7 +361,7 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 	_game.echoBuffer[0] = 0;
 	_game.keypress = 0;
 
-	_game.inputMode = in->readSint16BE();
+	_game.inputMode = (InputMode)in->readSint16BE();
 	_game.lognum = in->readSint16BE();
 
 	_game.playerControl = in->readSint16BE();

@@ -177,9 +177,9 @@ void AgiEngine::updateTimer() {
 	setvar(vDays, getvar(vDays) + 1);
 }
 
-void AgiEngine::newInputMode(int i) {
+void AgiEngine::newInputMode(InputMode mode) {
 	_oldMode = _game.inputMode;
-	_game.inputMode = i;
+	_game.inputMode = mode;
 }
 
 void AgiEngine::oldInputMode() {
@@ -436,7 +436,7 @@ int AgiEngine::runGame() {
 		setvar(vFreePages, 180); // Set amount of free memory to realistic value
 		setvar(vMaxInputChars, 38);
 		_game.inputMode = INPUT_NONE;
-		_game.inputEnabled = 0;
+		_game.inputEnabled = false;
 		_game.hasPrompt = 0;
 
 		_game.state = STATE_RUNNING;

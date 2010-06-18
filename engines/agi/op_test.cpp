@@ -111,7 +111,7 @@ static uint8 testKeypressed() {
 
 	game.keypress = 0;
 	if (!x) {
-		int mode = game.inputMode;
+		InputMode mode = game.inputMode;
 
 		game.inputMode = INPUT_NONE;
 		g_agi->mainCycle();

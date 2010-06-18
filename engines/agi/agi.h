@@ -502,10 +502,32 @@ struct ScriptPos {
 	int curIP;
 };
 
-#define EGO_VIEW_TABLE	0
-#define	HORIZON		36
-#define _WIDTH		160
-#define _HEIGHT		168
+enum {
+	EGO_VIEW_TABLE	= 0,
+	HORIZON			= 36,
+	_WIDTH			= 160,
+	_HEIGHT			= 168
+};
+
+enum InputMode {
+	INPUT_NORMAL	= 0x01,
+	INPUT_GETSTRING	= 0x02,
+	INPUT_MENU		= 0x03,
+	INPUT_NONE		= 0x04
+};
+
+enum State {
+	STATE_INIT		= 0x00,
+	STATE_LOADED	= 0x01,
+	STATE_RUNNING	= 0x02
+};
+
+enum {
+	SBUF16_OFFSET = 0,
+	SBUF256_OFFSET = ((_WIDTH) * (_HEIGHT)),
+	FROM_SBUF16_TO_SBUF256_OFFSET = ((SBUF256_OFFSET) - (SBUF16_OFFSET)),
+	FROM_SBUF256_TO_SBUF16_OFFSET = ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+};
 
 /**
  * AGI game structure.
@@ -513,10 +535,7 @@ struct ScriptPos {
  * by the interpreter.
  */
 struct AgiGame {
-#define STATE_INIT	0x00
-#define STATE_LOADED	0x01
-#define STATE_RUNNING	0x02
-	int state;		/**< state of the interpreter */
+	State state;		/**< state of the interpreter */
 
 	// TODO: Check whether adjMouseX and adjMouseY must be saved and loaded when using savegames.
 	//       If they must be then loading and saving is partially broken at the moment.
@@ -540,12 +559,9 @@ struct AgiGame {
 	uint8 inputBuffer[40]; /**< buffer for user input */
 	uint8 echoBuffer[40];	/**< buffer for echo.line */
 	int keypress;
-#define INPUT_NORMAL	0x01
-#define INPUT_GETSTRING	0x02
-#define INPUT_MENU	0x03
-#define INPUT_NONE	0x04
-	int inputMode;			/**< keyboard input mode */
-	int inputEnabled;		/**< keyboard input enabled */
+
+	InputMode inputMode;			/**< keyboard input mode */
+	bool inputEnabled;		/**< keyboard input enabled */
 	int lognum;				/**< current logic number */
 	Common::Array<ScriptPos> execStack;
 
@@ -573,10 +589,7 @@ struct AgiGame {
 	char cursorChar;
 	unsigned int colorFg;
 	unsigned int colorBg;
-#define SBUF16_OFFSET 0
-#define SBUF256_OFFSET ((_WIDTH) * (_HEIGHT))
-#define FROM_SBUF16_TO_SBUF256_OFFSET ((SBUF256_OFFSET) - (SBUF16_OFFSET))
-#define FROM_SBUF256_TO_SBUF16_OFFSET ((SBUF16_OFFSET) - (SBUF256_OFFSET))
+
 	uint8 *sbufOrig;		/**< Pointer to the 160x336 AGI screen buffer that contains vertically two 160x168 screens (16 color and 256 color). */
 	uint8 *sbuf16c;			/**< 160x168 16 color (+control line & priority information) AGI screen buffer. Points at sbufOrig + SBUF16_OFFSET. */
 	uint8 *sbuf256c;		/**< 160x168 256 color AGI screen buffer (For AGI256 and AGI256-2 support). Points at sbufOrig + SBUF256_OFFSET. */
@@ -834,7 +847,7 @@ public:
 	int loadGameSimple();
 
 	uint8 *_intobj;
-	int _oldMode;
+	InputMode _oldMode;
 	bool _restartGame;
 
 	Menu* _menu;
@@ -876,7 +889,7 @@ public:
 	static void agiTimerFunctionLow(void *refCon);
 	void initPriTable();
 
-	void newInputMode(int);
+	void newInputMode(InputMode mode);
 	void oldInputMode();
 
 	int getvar(int);
