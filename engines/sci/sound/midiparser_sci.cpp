@@ -463,6 +463,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 			} while (par1 != 0xF7);
 			break;
 		case kEndOfTrack: // end of channel
+			// FIXME: Why does this need to be fixed? There's no
+			// additional information available
 			channel->time = -1; // FIXME
 			break;
 		default: // MIDI command
