@@ -302,6 +302,11 @@ protected:
 	void hangingNote(byte channel, byte note, uint32 ticks_left, bool recycle = true);
 	void hangAllActiveNotes();
 
+	virtual void sendToDriver(uint32 b);
+	void sendToDriver(byte status, byte firstOp, byte secondOp) {
+		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
+
 	/**
 	 * Platform independent BE uint32 read-and-advance.
 	 * This helper function reads Big Endian 32-bit numbers
@@ -373,11 +378,6 @@ public:
 	void setTimerRate(uint32 rate) { _timer_rate = rate; }
 	void setTempo(uint32 tempo);
 	void onTimer();
-
-	virtual void sendToDriver(uint32 b);
-	void sendToDriver(byte status, byte firstOp, byte secondOp) {
-		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
-	}
 
 	bool isPlaying() const { return (_position._play_pos != 0); }
 	void stopPlaying();
