@@ -128,8 +128,10 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		// The results of this are likely unpredictable...
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
+		// If such an error occurs, we usually need to find the last kernel function called and check its return value. Check
+		// callKernelFunc() below
+		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
 		return 0;
 	}
 
@@ -137,13 +139,7 @@ static int validate_arithmetic(reg_t reg) {
 }
 
 static int signed_validate_arithmetic(reg_t reg) {
-	if (reg.segment) {
-		// The results of this are likely unpredictable...
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		return 0;
-	}
-
-	return (int16)reg.offset;
+	return (int16)validate_arithmetic(reg);
 }
 
 static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
@@ -617,6 +613,22 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 		} else {
 			// Call kernel function
 			s->r_acc = kernelFunc.func(s, argc, argv);
+
+#if 0
+			// Used for debugging
+			Common::String debugMsg = kernelFunc.origName +
+										Common::String::printf("[0x%x]", kernelFuncNum) +
+										Common::String::printf(", %d params: ", argc) + 
+										" (";
+
+			for (int i = 0; i < argc; i++) {
+				debugMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+				debugMsg += (i == argc - 1 ? ")" : ", ");
+			}
+
+			debugMsg += ", result: " + Common::String::printf("%04x:%04x", PRINT_REG(s->r_acc));
+			debug("%s", debugMsg.c_str());
+#endif
 		}
 
 		// Remove callk stack frame again

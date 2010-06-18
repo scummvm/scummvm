@@ -705,7 +705,7 @@ void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
 		// This happens a lot at least in PQ2. This game has a small patch.003 (1344 bytes),
 		// containing 48 instruments. However it has several songs which use instruments
-		// not specified in that patch (namely, songs 1, 3, 5, 9, 15,  16, 17, 23, 25, 27,
+		// not specified in that patch (namely, songs 1, 3, 5, 9, 15, 16, 17, 23, 25, 27,
 		// 29, 32, 36, 38, 44, 45, 46 all use instruments not specified in patch.003).
 		// These were probably written for MT32. These warnings in PQ2 can probably go away
 		// if a bigger patch.003 file is used (one that contains all the instruments used
