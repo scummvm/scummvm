@@ -87,14 +87,10 @@ void GfxView::initData(GuiResourceId resourceId) {
 	//  caught by our undithering or even improve the graphics overall)
 	if (curViewType == kViewEga) {
 		if (_resourceData[1] == 0x80) {
-			switch (READ_LE_UINT16(_resourceData + 4)) {
-			case 0: // SCI1
-				curViewType = kViewVga;
-				break;
-			case 1: // SCI1.1
+			curViewType = kViewVga;
+		} else {
+			if (READ_LE_UINT16(_resourceData + 4) == 1)
 				curViewType = kViewVga11;
-				break;
-			}
 		}
 	}
 
