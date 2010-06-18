@@ -661,6 +661,11 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
+	case 2: { // Unknown
+		// Called in QFG4 demo (1 parameter)
+		warning("kPalVary(2) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		break;
+	}
 	case 3: { // DeInit
 		if (argc == 1) {
 			g_sci->_gfxPalette->stopPalVary();
@@ -672,6 +677,11 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 4: { // Unknown
 		warning("kPalVary(4) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		break;
+	}
+	case 5: { // Unknown
+		// Called in xmas 1992 demo (2 parameters)
+		warning("kPalVary(5) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
 	case 6: { // Pause
