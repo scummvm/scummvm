@@ -246,9 +246,10 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argv[0].toSint16()) {
 	case 1:
-		// Happens in GK1CD, right when it starts
+		// TODO: Happens in GK1CD, right when it starts
 		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
-		return s->r_acc;
+		// Returns an integer
+		return SIGNAL_REG;
 
 	case K_GRAPH_GET_COLORS_NR:
 		if (g_sci->getResMan()->isAmiga32color())
