@@ -197,7 +197,7 @@ void GfxPalette::setEGA() {
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
 	for (curColor = 0x10; curColor <= 0xFE; curColor++) {
-		_sysPalette.colors[curColor].used = curColor;
+		_sysPalette.colors[curColor].used = 1;
 		color1 = curColor & 0x0F; color2 = curColor >> 4;
 		_sysPalette.colors[curColor].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
 		_sysPalette.colors[curColor].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
