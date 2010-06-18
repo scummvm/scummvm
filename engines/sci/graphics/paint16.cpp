@@ -448,6 +448,8 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_WIDTH				106
 #define SCI_DISPLAY_SAVEUNDER			107
 #define SCI_DISPLAY_RESTOREUNDER		108
+#define SCI_DISPLAY_DUMMY1				114 // used in longbow-demo, not supported in sierra sci - no parameters
+#define SCI_DISPLAY_DUMMY2				115 // used in longbow-demo, not supported in sierra sci - has 1 parameter
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
@@ -513,8 +515,22 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
+
+		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
+		case SCI_DISPLAY_DUMMY1:
+		case SCI_DISPLAY_DUMMY2:
+			if (!((g_sci->getGameId() == "longbow") && (g_sci->isDemo())))
+				error("Unknown kDisplay argument %X", displayArg);
+			if (displayArg == SCI_DISPLAY_DUMMY2) {
+				if (argc) {
+					argc--; argv++;
+				} else {
+					error("No parameter left for kDisplay(0x73)");
+				}
+			}
+			break;
 		default:
-			warning("Unknown kDisplay argument %X", displayArg);
+			error("Unknown kDisplay argument %X", displayArg);
 			break;
 		}
 	}
