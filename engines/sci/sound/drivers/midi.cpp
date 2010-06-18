@@ -271,6 +271,17 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		_driver->setPitchBendRange(channel, bendRange);
 
 	_driver->send(0xc0 | channel, _patchMap[patch], 0);
+
+	// Send a pointless command to work around a firmware bug in common
+	// USB-MIDI cables. If the first MIDI command in a USB packet is a
+	// Cx or Dx command, the second command in the packet is dropped
+	// somewhere.
+	// FIXME: consider putting a workaround in the MIDI backend drivers
+	// instead.
+	// Known to be affected: alsa, coremidi
+	// Known *not* to be affected: windows (only seems to send one MIDI
+	// command per USB packet even if the device allows larger packets).
+	_driver->send(0xb0 | channel, 0x0a, _channels[channel].pan);
 }
 
 void MidiPlayer_Midi::send(uint32 b) {
