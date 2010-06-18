@@ -919,19 +919,21 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 			prevEvent = curEvent;
 			command = curEvent >> 4;
 
+			byte channel;
+
 			switch (command) {
 			case 0xC:	// program change
-				{
-				//byte channel = curEvent & 0x0F;
-				byte instrument = *channelData++;
-				if (!firstOneShown)
-					firstOneShown = true;					
-				else
-					DebugPrintf(",");
+				channel = curEvent & 0x0F;
+				if (channel != 15) {	// SCI special
+					byte instrument = *channelData++;
+					if (!firstOneShown)
+						firstOneShown = true;					
+					else
+						DebugPrintf(",");
 
-				DebugPrintf(" %d", instrument);
-				instruments[instrument]++;
-				instrumentsSongs[instrument][itr->getNumber()] = true;
+					DebugPrintf(" %d", instrument);
+					instruments[instrument]++;
+					instrumentsSongs[instrument][itr->getNumber()] = true;
 				}
 				break;
 			case 0xD:
