@@ -176,6 +176,7 @@ SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segM
 		SOUNDCOMMAND(cmdSendMidi);
 		SOUNDCOMMAND(cmdReverb);
 		SOUNDCOMMAND(cmdSetSoundHold);
+		SOUNDCOMMAND(cmdDummy);	// Longbow demo
 		_cmdUpdateCuesIndex = 11;
 		break;
 	case SCI_VERSION_1_LATE:
