@@ -61,7 +61,7 @@ uint32 RivenScript::calculateCommandSize(Common::SeekableReadStream* script) {
 	uint16 command = script->readUint16BE();
 	uint32 commandSize = 2;
 	if (command == 8) {
-		if (script->readUint16BE() != 2)
+		if (script->readUint16BE() != 2) // Arg count?
 			warning ("if-then-else unknown value is not 2");
 		script->readUint16BE();								// variable to check against
 		uint16 logicBlockCount = script->readUint16BE();	// number of logic blocks
