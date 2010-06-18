@@ -606,6 +606,9 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	if (cycle) {
 		if (!invoke(list, argc, argv))
 			return;
+
+		// Look up the list again, as it may have been modified
+		list = _s->_segMan->lookupList(listReference);
 	}
 
 	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
