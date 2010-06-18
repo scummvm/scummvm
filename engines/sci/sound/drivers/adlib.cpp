@@ -703,7 +703,8 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 
 void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
-		error("ADLIB: Invalid patch %i requested", patch);
+		// This happens a lot at least in pq2, seems to me as if it's meant for mt32 actually
+		warning("ADLIB: Invalid patch %i requested", patch);
 		patch = 0;
 	}
 
