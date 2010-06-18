@@ -528,15 +528,23 @@ Node *SegManager::lookupNode(reg_t addr) {
 	if (addr.isNull())
 		return NULL; // Non-error null
 
-	if (getSegmentType(addr.segment) != SEG_TYPE_NODES) {
-		error("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+	SegmentType type = getSegmentType(addr.segment);
+
+	if (type != SEG_TYPE_NODES) {
+		if (g_sci->getGameId() == "kq1sci") {
+			// The demo of KQ1 is trying to use an invalid memory reference as a list node
+			warning("Attempt to use non-node %04x:%04x (type %d) as list node", PRINT_REG(addr), type);
+			return NULL;
+		}
+
+		error("Attempt to use non-node %04x:%04x (type %d) as list node", PRINT_REG(addr), type);
 		return NULL;
 	}
 
 	NodeTable *nt = (NodeTable *)_heap[addr.segment];
 
 	if (!nt->isValidEntry(addr.offset)) {
-		error("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+		error("Attempt to use invalid reference %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
