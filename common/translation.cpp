@@ -236,12 +236,28 @@ TranslationManager::~TranslationManager() {}
 
 void TranslationManager::setLanguage(const char *lang) {}
 
+const char *TranslationManager::getLangById(int id) {
+	return "";
+}
+
+int TranslationManager::parseLanguage(const String lang) {
+	return kTranslationBuiltinId;
+}
+
 const char *TranslationManager::getTranslation(const char *message) {
+	return message;
+}
+
+String TranslationManager::getTranslation(const String &message) {
 	return message;
 }
 
 const char *TranslationManager::convertTerm(const char *message) {
 	return message;
+}
+
+const TLangArray TranslationManager::getSupportedLanguages() const {
+	return TLangArray();
 }
 
 #endif // USE_TRANSLATION
