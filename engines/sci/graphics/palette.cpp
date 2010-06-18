@@ -203,6 +203,7 @@ void GfxPalette::setEGA() {
 		_sysPalette.colors[curColor].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
 		_sysPalette.colors[curColor].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
 	}
+	_sysPalette.timestamp = 1;
 	setOnScreen();
 }
 

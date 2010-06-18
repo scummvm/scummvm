@@ -75,12 +75,27 @@ void GfxView::initData(GuiResourceId resourceId) {
 	byte seekEntry;
 	bool isEGA = false;
 	bool isCompressed = true;
+	ViewType curViewType = _resMan->getViewType();
 
 	_loopCount = 0;
 	_embeddedPal = false;
 	_EGAmapping = NULL;
 
-	switch (_resMan->getViewType()) {
+	// If we find a SCI1/SCI1.1 view (not amiga), we switch to that type for EGA
+	if (curViewType == kViewEga) {
+		if (_resourceData[1] == 0x80) {
+			switch (READ_LE_UINT16(_resourceData + 4)) {
+			case 0: // SCI1
+				curViewType = kViewVga;
+				break;
+			case 1: // SCI1.1
+				curViewType = kViewVga11;
+				break;
+			}
+		}
+	}
+
+	switch (curViewType) {
 	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
 		isEGA = true;
 	case kViewAmiga: // View-format Amiga (32 colors)
