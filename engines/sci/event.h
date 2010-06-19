@@ -53,7 +53,7 @@ struct SciEvent {
 #define SCI_EVENT_MOUSE_PRESS     (1<<0)
 #define SCI_EVENT_MOUSE_RELEASE   (1<<1)
 #define SCI_EVENT_KEYBOARD        (1<<2)
-#define SCI_EVENT_JOYSTICK        (1<<6)
+#define SCI_EVENT_DIRECTION       (1<<6)
 #define SCI_EVENT_SAID            (1<<7)
 /*Fake values for other events*/
 #define SCI_EVENT_ERROR           (1<<10)
@@ -115,6 +115,7 @@ public:
 	~EventManager();
 
 	SciEvent getSciEvent(unsigned int mask);
+	bool getUsesNewKeyboardDirectionType();
 
 private:
 	SciEvent getScummVMEvent();
@@ -122,6 +123,8 @@ private:
 	const bool _fontIsExtended;
 	int _modifierStates;
 	Common::List<SciEvent> _events;
+
+	bool _usesNewKeyboardDirectionType;
 };
 
 } // End of namespace Sci

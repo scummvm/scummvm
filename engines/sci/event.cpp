@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/file.h"
 
 #include "sci/sci.h"
 #include "sci/event.h"
@@ -35,11 +36,44 @@
 namespace Sci {
 
 EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended), _modifierStates(0) {
+
+	if (getSciVersion() >= SCI_VERSION_1_MIDDLE) {
+		_usesNewKeyboardDirectionType = true;
+	} else if (getSciVersion() <= SCI_VERSION_01) {
+		_usesNewKeyboardDirectionType = false;
+	} else {
+		// they changed this somewhere inbetween SCI1EGA/EARLY, so we need to check the size of the keyboard driver
+		_usesNewKeyboardDirectionType = false;
+
+		Common::File keyboardDriver;
+		if (keyboardDriver.open("IBMKBD.DRV")) {
+			switch (keyboardDriver.size()) {
+			case 442: // SCI0 (PQ2)
+			case 446: // SCI0 (SQ3)
+			case 449: // SCI1EGA (QfG2)
+				break;
+			case 537: // SCI1 (SQ4)
+			case 564: // SCI1.1 (LB2)
+			case 758: // SCI1.1 (LB2cd)
+			case 760: // SCI1.1 (Pepper)
+				_usesNewKeyboardDirectionType = true;
+				break;
+			default:
+				error("Unsupported IBMKBD.DRV size (%d)", keyboardDriver.size());
+			}
+		} else {
+			// We just default to OFF here in case the keyboard driver could not be found
+			warning("IBMKBD.DRV not found to distinguish usage of direction type");
+		}
+	}
 }
 
 EventManager::~EventManager() {
 }
 
+bool EventManager::getUsesNewKeyboardDirectionType() {
+	return _usesNewKeyboardDirectionType;
+}
 
 struct ScancodeRow {
 	int offset;
