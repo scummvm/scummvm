@@ -73,9 +73,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_pSnd = psnd;
 	_soundVersion = soundVersion;
 
-	if (_pSnd)
-		setVolume(psnd->volume);
-
 	for (int i = 0; i < 15; i++) {
 		_channelUsed[i] = false;
 		_channelRemap[i] = -1;
@@ -83,6 +80,9 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	}
 	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
 	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
+
+	if (_pSnd)
+		setVolume(psnd->volume);
 
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
