@@ -425,7 +425,7 @@ bool GFXtests::copyRectToScreen() {
 	g_system->delayMillis(1000);
 
 	Common::Rect rect(x, y, x+40, y+20);
-	Testsuite::clearScreen(rect);
+	Testsuite::clearScreen();
 	
 	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		return false;
@@ -474,7 +474,7 @@ bool GFXtests::iconifyWindow() {
 		return false;
 	}
 
-	Testsuite::clearScreen(rect);
+	Testsuite::clearScreen();
 	return true;
 }
 
@@ -485,32 +485,46 @@ bool GFXtests::iconifyWindow() {
 bool GFXtests::scaledCursors() {
 
 	// TODO : Understand and fix the problem relating scaled cursors
+	Testsuite::displayMessage("Testing : Scaled cursors\n"
+	"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3"
+	"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
+
+	int maxLimit = 1000;
+	if (!Testsuite::handleInteractiveInput("Do you want to skip other scalers", "Yes", "No", kOptionRight)) {
+		maxLimit = 3;
+	}
 
 	const OSystem::GraphicsMode *gfxMode = g_system->getSupportedGraphicsModes();
-	while (gfxMode->name) {
+	
+	while (gfxMode->name && maxLimit > 0) {
 		// for every graphics mode display cursors for cursorTargetScale 1, 2 and 3
 		// Switch Graphics mode
 		// FIXME: Doesn't works:
-		// if (g_system->setGraphicsMode(gfxMode->id)) {
-		if (1) {
-			g_system->updateScreen();
+		g_system->beginGFXTransaction();
+		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
+		g_system->initSize(320, 200);
+		g_system->endGFXTransaction();
+
+		if (isGFXModeSet) {
 			
 			setupMouseLoop(false, gfxMode->name, 1);
 			unsetMouse();
+			Testsuite::clearScreen();
 			
 			setupMouseLoop(false, gfxMode->name, 2);
 			unsetMouse();
+			Testsuite::clearScreen();
 			
 			setupMouseLoop(false, gfxMode->name, 3);
 			unsetMouse();
-
-			break;
+			Testsuite::clearScreen();
 
 		} else {
 			printf("Switching to graphics mode %s failed\n", gfxMode->name);
 		}
 		CursorMan.popAllCursors();
 		gfxMode++;
+		maxLimit--;
 	}
 
 	return true;

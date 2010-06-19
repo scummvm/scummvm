@@ -63,12 +63,14 @@ bool FStests::testWriteFile() {
 	Common::FSNode gameRoot(path);
 
 	Common::FSNode fileToWrite = gameRoot.getChild("testbed.out");
+	
+	Common::WriteStream *ws = fileToWrite.createWriteStream();
+	
 	if (!fileToWrite.isWritable()) {
 		printf("LOG: Can't open writable file in game data dir\n");
 		return false;
 	}
 	
-	Common::WriteStream *ws = fileToWrite.createWriteStream();
 	if (!ws) {
 		printf("LOG: Can't create a write stream");
 		return false;
@@ -88,6 +90,15 @@ bool FStests::testWriteFile() {
 	
 	return false;
 }
+
+/**
+ * This test creates a savefile for the given testbed-state and could be reloaded using the saveFile API.
+ * It is intended to test saving and loading from savefiles.
+ */
+/*
+GFXtests::testSavingGame() {
+	Common::SaveFileManager saveFileMan = g_system->getSavefileManager();
+}*/
 
 FSTestSuite::FSTestSuite() {
 	addTest("openingFile", &FStests::testReadFile);	
