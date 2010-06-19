@@ -81,15 +81,16 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
 	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
 
+	// we can't do this later, because otherwise we really send to unmapped channels
+	if (_pSnd)
+		setVolume(_pSnd->volume);
+
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
 		midiFilterChannels(channelFilterMask);
 	} else {
 		midiMixChannels();
 	}
-
-	if (_pSnd)
-		setVolume(_pSnd->volume);
 
 	_num_tracks = 1;
 	_tracks[0] = _mixedData;
