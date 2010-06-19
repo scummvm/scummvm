@@ -73,7 +73,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_pSnd = psnd;
 	_soundVersion = soundVersion;
 
-	for (int i = 0; i < 15; i++) {
+	for (int i = 0; i < 16; i++) {
 		_channelUsed[i] = false;
 		_channelRemap[i] = -1;
 		_channelMuted[i] = false;
