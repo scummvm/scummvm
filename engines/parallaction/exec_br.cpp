@@ -293,7 +293,7 @@ DECLARE_COMMAND_OPCODE(text) {
 
 
 DECLARE_COMMAND_OPCODE(part) {
-	warning("Parallaction_br::cmdOp_part not yet implemented");
+	_vm->_nextPart = ctxt._cmd->_counterValue;
 }
 
 

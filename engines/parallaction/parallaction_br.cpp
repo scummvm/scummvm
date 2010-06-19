@@ -86,6 +86,7 @@ Common::Error Parallaction_br::init() {
 	_walker = new PathWalker_BR;
 
 	_part = -1;
+	_nextPart = -1;
 
 	_subtitle[0] = 0;
 	_subtitle[1] = 0;
@@ -260,6 +261,8 @@ void Parallaction_br::cleanupGame() {
 	_globalFlagsNames = 0;
 	_objectsNames = 0;
 	_countersNames = 0;
+
+	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 }
 
 
@@ -272,13 +275,23 @@ void Parallaction_br::changeLocation() {
 	strcpy(location, _newLocationName.c_str());
 
 	char *partStr = strrchr(location, '.');
-	if (partStr) {
+	if (partStr || _nextPart != -1) {
 		cleanupGame();
 
-		int n = partStr - location;
-		location[n] = '\0';
+		// more cleanup needed for part changes (see also saveload)
+		_globalFlags = 0;
+		cleanInventory(true);
+		strcpy(_characterName1, "null");
 
-		_part = atoi(++partStr);
+		if (partStr) {
+			int n = partStr - location;
+			location[n] = '\0';
+
+			_part = atoi(++partStr);
+		} else {
+			_part = _nextPart;
+		}
+
 		if (getFeatures() & GF_DEMO) {
 			assert(_part == 1);
 		} else {
@@ -357,6 +370,7 @@ void Parallaction_br::changeLocation() {
 
 	_engineFlags &= ~kEngineChangeLocation;
 	_newLocationName.clear();
+	_nextPart = -1;
 }
 
 // FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.
