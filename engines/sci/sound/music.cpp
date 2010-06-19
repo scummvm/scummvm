@@ -326,9 +326,10 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		if (pSnd->pMidiParser) {
 			pSnd->pMidiParser->tryToOwnChannels();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
-			if (pSnd->status == kSoundStopped)
+			if (pSnd->status == kSoundStopped) {
+				pSnd->pMidiParser->sendInitCommands();
 				pSnd->pMidiParser->jumpToTick(0);
-			else
+			} else
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
 		}

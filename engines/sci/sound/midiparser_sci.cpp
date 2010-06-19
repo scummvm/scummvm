@@ -81,10 +81,6 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
 	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
 
-	// we can't do this later, because otherwise we really send to unmapped channels
-	if (_pSnd)
-		setVolume(_pSnd->volume);
-
 	if (channelFilterMask) {
 		// SCI0 only has 1 data stream, but we need to filter out channels depending on music hardware selection
 		midiFilterChannels(channelFilterMask);
@@ -98,24 +94,28 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 		setTrack(0);
 	_loopTick = 0;
 
+	return true;
+}
+
+void MidiParser_SCI::sendInitCommands() {
 	if (_pSnd) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			// Set initial voice count
-			for (int i = 0; i < 16; ++i) {
+			for (int i = 0; i < 15; ++i) {
 				byte voiceCount = 0;
-				if (channelFilterMask & (1 << i))
-					voiceCount = psnd->soundRes->getInitialVoiceCount(i);
-				_driver->send(0xB0 | i, 0x4B, voiceCount);
+				if (_channelUsed[i]) {
+					voiceCount = _pSnd->soundRes->getInitialVoiceCount(i);
+					_driver->send(0xB0 | i, 0x4B, voiceCount);
+				}
 			}
-		}
-
-		// Send a velocity off signal to all channels
-		for (int i = 0; i < 16; ++i) {
-			_driver->send(0xB0 | i, 0x4E, 0);	// Reset velocity
 		}
 	}
 
-	return true;
+	// Send a velocity off signal to all channels
+	for (int i = 0; i < 15; ++i) {
+		if (_channelUsed[i])
+			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
+	}
 }
 
 void MidiParser_SCI::unloadMusic() {

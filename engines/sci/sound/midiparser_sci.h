@@ -59,6 +59,7 @@ public:
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
+	void sendInitCommands();
 	void unloadMusic();
 	void setVolume(byte volume);
 	void stop() {
