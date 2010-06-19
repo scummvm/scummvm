@@ -463,7 +463,7 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	if (pSnd->pMidiParser)
-		pSnd->pMidiParser->sendToDriver(cmd);
+		pSnd->pMidiParser->sendManuallyToDriver(cmd);
 	else
 		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
 }

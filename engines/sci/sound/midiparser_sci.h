@@ -80,6 +80,7 @@ public:
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
+	void sendManuallyToDriver(uint32 b);
 
 protected:
 	void parseNextEvent(EventInfo &info);

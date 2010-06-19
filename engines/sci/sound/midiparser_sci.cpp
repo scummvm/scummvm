@@ -144,6 +144,20 @@ void MidiParser_SCI::unloadMusic() {
 	}
 }
 
+// this is used for scripts sending direct midi commands to us. we verify in that case that the channel is actually
+//  used
+void MidiParser_SCI::sendManuallyToDriver(uint32 b) {
+	byte midiChannel = b & 0xf;
+
+	if (!_channelUsed[midiChannel]) {
+		// scripts trying to send to unused channel
+		//  this happens at least in sq1vga right at the start, it's a script issue
+		return;
+	}
+
+	sendToDriver(b);
+}
+
 void MidiParser_SCI::sendToDriver(uint32 b) {
 	byte midiChannel = b & 0xf;
 
@@ -161,11 +175,7 @@ void MidiParser_SCI::sendToDriver(uint32 b) {
 		return;
 	// Channel remapping
 	int16 realChannel = _channelRemap[midiChannel];
-	if (realChannel == -1) {
-		// FIXME: Happens in SQ1VGA when the game starts
-		warning("Attempt to send to uninitialized channel %d", midiChannel);
-		return;
-	}
+	assert(realChannel != -1);
 
 	b = (b & 0xFFFFFFF0) | realChannel;
 	_driver->send(b);
