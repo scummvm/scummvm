@@ -42,6 +42,8 @@ EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended
 	} else if (getSciVersion() <= SCI_VERSION_01) {
 		_usesNewKeyboardDirectionType = false;
 	} else {
+		// TODO: maybe this is even not needed at all and we can just use the old method for sci1early
+		//        sq4 floppy doesn't have issues when using the old method although the keyboard driver is new
 		// they changed this somewhere inbetween SCI1EGA/EARLY, so we need to check the size of the keyboard driver
 		_usesNewKeyboardDirectionType = false;
 
