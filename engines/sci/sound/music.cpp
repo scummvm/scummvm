@@ -463,6 +463,7 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 }
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
+	Common::StackLock lock(_mutex);
 	if (pSnd->pMidiParser)
 		pSnd->pMidiParser->sendManuallyToDriver(cmd);
 	else
