@@ -275,11 +275,7 @@ void Parallaction_br::changeLocation() {
 		return;
 	}
 
-	char location[200];
-	strcpy(location, _newLocationName.c_str());
-
-	char *partStr = strrchr(location, '.');
-	if (partStr || _nextPart != -1) {
+	if (_nextPart != -1) {
 		cleanupGame();
 
 		// more cleanup needed for part changes (see also saveload)
@@ -287,14 +283,7 @@ void Parallaction_br::changeLocation() {
 		cleanInventory(true);
 		strcpy(_characterName1, "null");
 
-		if (partStr) {
-			int n = partStr - location;
-			location[n] = '\0';
-
-			_part = atoi(++partStr);
-		} else {
-			_part = _nextPart;
-		}
+		_part = _nextPart;
 
 		if (getFeatures() & GF_DEMO) {
 			assert(_part == 1);
@@ -322,8 +311,8 @@ void Parallaction_br::changeLocation() {
 
 	freeLocation(false);
 	// load new location
-	strcpy(_location._name, location);
-	parseLocation(location);
+	strcpy(_location._name, _newLocationName.c_str());
+	parseLocation(_location._name);
 
 	if (_location._startPosition.x != -1000) {
 		_char._ani->setFoot(_location._startPosition);
