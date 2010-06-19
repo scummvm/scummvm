@@ -216,6 +216,8 @@ private:
 	bool _soundOn;
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
+
+	int _driverFirstChannel;
 };
 
 } // End of namespace Sci

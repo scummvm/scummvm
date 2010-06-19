@@ -55,6 +55,7 @@ public:
 	bool hasRhythmChannel() const { return true; }
 	byte getPlayId();
 	int getPolyphony() const { return kVoices; }
+	int getFirstChannel();
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(byte reverb);
@@ -315,6 +316,13 @@ void MidiPlayer_Midi::send(uint32 b) {
 	default:
 		warning("Ignoring MIDI event %02x", command);
 	}
+}
+
+// We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
+int MidiPlayer_Midi::getFirstChannel() {
+	if (_isMt32)
+		return 1;
+	return 0;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {

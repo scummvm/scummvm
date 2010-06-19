@@ -103,6 +103,9 @@ void SciMusic::init() {
 	}
 
 	_bMultiMidi = ConfMan.getBool("multi_midi");
+
+	// Find out what the first possible channel is (used, when doing channel remapping)
+	_driverFirstChannel = _pMidiDrv->getFirstChannel();
 }
 
 void SciMusic::clearPlayList() {
@@ -241,7 +244,7 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 		return bestChannel;
 	}
 	// otherwise look for unused channel
-	for (int channelNr = 0; channelNr < 15; channelNr++) {
+	for (int channelNr = _driverFirstChannel; channelNr < 15; channelNr++) {
 		if (!_usedChannel[channelNr]) {
 			_usedChannel[channelNr] = caller;
 			return channelNr;
