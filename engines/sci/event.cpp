@@ -42,31 +42,15 @@ EventManager::EventManager(bool fontIsExtended) : _fontIsExtended(fontIsExtended
 	} else if (getSciVersion() <= SCI_VERSION_01) {
 		_usesNewKeyboardDirectionType = false;
 	} else {
-		// TODO: maybe this is even not needed at all and we can just use the old method for sci1early
-		//        sq4 floppy doesn't have issues when using the old method although the keyboard driver is new
-		// they changed this somewhere inbetween SCI1EGA/EARLY, so we need to check the size of the keyboard driver
+		// they changed this somewhere inbetween SCI1EGA/EARLY
 		_usesNewKeyboardDirectionType = false;
 
-		Common::File keyboardDriver;
-		if (keyboardDriver.open("IBMKBD.DRV")) {
-			switch (keyboardDriver.size()) {
-			case 442: // SCI0 (PQ2)
-			case 446: // SCI0 (SQ3)
-			case 449: // SCI1EGA (QfG2)
-				break;
-			case 537: // SCI1 (SQ4)
-			case 564: // SCI1.1 (LB2)
-			case 758: // SCI1.1 (LB2cd)
-			case 760: // SCI1.1 (Pepper)
-				_usesNewKeyboardDirectionType = true;
-				break;
-			default:
-				error("Unsupported IBMKBD.DRV size (%d)", keyboardDriver.size());
-			}
-		} else {
-			// We just default to OFF here in case the keyboard driver could not be found
-			warning("IBMKBD.DRV not found to distinguish usage of direction type");
-		}
+		// We are looking if script 933 exists, that one has the PseudoMouse class in it that handles it
+		//  The good thing is that PseudoMouse seems to only exists in games that use the new method
+		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 933)))
+			_usesNewKeyboardDirectionType = true;
+		// Checking the keyboard driver size in here would also be a valid method, but the driver is only available
+		//  in PC versions of the game
 	}
 }
 
