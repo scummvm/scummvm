@@ -776,7 +776,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 
 			if (getSciVersion() < SCI_VERSION_1_1) {
 				if (!obj->initBaseObject(this, addr, false)) {
-					error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
 					//scr->scriptObjRemove(addr);
 				}
 			}
