@@ -195,6 +195,7 @@ public:
 	Common::Mutex _mutex;
 
 	int16 tryToOwnChannel(MusicEntry *caller, int16 bestChannel);
+	void freeChannels(MusicEntry *caller);
 
 protected:
 	void sortPlayList();

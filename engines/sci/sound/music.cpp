@@ -250,6 +250,14 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	error("no free channels");
 }
 
+void SciMusic::freeChannels(MusicEntry *caller) {
+	// Remove used channels
+	for (int i = 0; i < 15; i++) {
+		if (_usedChannel[i] == caller)
+			_usedChannel[i] = 0;
+	}
+}
+
 void SciMusic::onTimer() {
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
@@ -334,10 +342,12 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	if (pSnd->pStreamAud)
 		_pMixer->stopHandle(pSnd->hCurrentAud);
 
-	_mutex.lock();
-	if (pSnd->pMidiParser)
+	if (pSnd->pMidiParser) {
+		_mutex.lock();
 		pSnd->pMidiParser->stop();
-	_mutex.unlock();
+		freeChannels(pSnd);
+		_mutex.unlock();
+	}
 }
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
@@ -379,11 +389,6 @@ void SciMusic::soundKill(MusicEntry *pSnd) {
 
 	_mutex.lock();
 	uint sz = _playList.size(), i;
-	// Remove used channels
-	for (i = 0; i < 15; i++) {
-		if (_usedChannel[i] == pSnd)
-			_usedChannel[i] = 0;
-	}
 	// Remove sound from playlist
 	for (i = 0; i < sz; i++) {
 		if (_playList[i] == pSnd) {
@@ -404,10 +409,12 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	if (pSnd->pStreamAud) {
 		_pMixer->pauseHandle(pSnd->hCurrentAud, true);
 	} else {
-		_mutex.lock();
-		if (pSnd->pMidiParser)
+		if (pSnd->pMidiParser) {
+			_mutex.lock();
 			pSnd->pMidiParser->pause();
-		_mutex.unlock();
+			freeChannels(pSnd);
+			_mutex.unlock();
+		}
 	}
 }
 
