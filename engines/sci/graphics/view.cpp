@@ -323,78 +323,41 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			memset(outPtr + pixelNo, pixel & 0x0F, MIN<uint32>(runLength, pixelCount - pixelNo));
 			pixelNo += runLength;
 		}
-		return;
-	}
-
-	rlePtr = _resourceData + celInfo->offsetRLE;
-	if (!celInfo->offsetLiteral) { // no additional literal data
-		if (_resMan->isAmiga32color()) {
-			// decompression for amiga views
-			while (pixelNo < pixelCount) {
-				pixel = *rlePtr++;
-				if (pixel & 0x07) { // fill with color
-					runLength = pixel & 0x07;
-					pixel = pixel >> 3;
-					while (runLength-- && pixelNo < pixelCount) {
-						outPtr[pixelNo++] = pixel;
-					}
-				} else { // fill with transparent
-					runLength = pixel >> 3;
-					pixelNo += runLength;
-				}
-			}
-			return;
-		} else {
-			// decompression for data that has just one combined stream
-			while (pixelNo < pixelCount) {
-				pixel = *rlePtr++;
-				runLength = pixel & 0x3F;
-				switch (pixel & 0xC0) {
-				case 0: // copy bytes as-is
-					while (runLength-- && pixelNo < pixelCount)
-						outPtr[pixelNo++] = *rlePtr++;
-					break;
-				case 0x80: // fill with color
-					memset(outPtr + pixelNo, *rlePtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
-					pixelNo += runLength;
-					break;
-				case 0xC0: // fill with transparent
-					pixelNo += runLength;
-					break;
-				}
-			}
-			return;
-		}
 	} else {
-		literalPtr = _resourceData + celInfo->offsetLiteral;
-		if (celInfo->offsetRLE) {
-			if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
-				// Crazy-Ass compression for SCI1.1+ Mac
+		// we skip over transparent pixels, so the buffer needs to be already filled with it
+		//  also some RLE compressed cels are possibly ending with the last non-transparent pixel
+		//  (is this even possible with the current code?)
+		memset(outPtr, _loop[loopNo].cel[celNo].clearKey, pixelCount);
+
+		rlePtr = _resourceData + celInfo->offsetRLE;
+		if (!celInfo->offsetLiteral) { // no additional literal data
+			if (_resMan->isAmiga32color()) {
+				// decompression for amiga views
 				while (pixelNo < pixelCount) {
-					uint32 pixelLine = pixelNo;
-					runLength = *rlePtr++;
-					pixelNo += runLength;
-					runLength = *rlePtr++;
-					while (runLength-- && pixelNo < pixelCount) {
-						outPtr[pixelNo] = *literalPtr++;
-						if (outPtr[pixelNo] == 255)
-							outPtr[pixelNo] = 0;
-						pixelNo++;
+					pixel = *rlePtr++;
+					if (pixel & 0x07) { // fill with color
+						runLength = pixel & 0x07;
+						pixel = pixel >> 3;
+						while (runLength-- && pixelNo < pixelCount) {
+							outPtr[pixelNo++] = pixel;
+						}
+					} else { // fill with transparent
+						runLength = pixel >> 3;
+						pixelNo += runLength;
 					}
-					pixelNo = pixelLine + celInfo->width;
 				}
 			} else {
-				// decompression for data that has separate rle and literal streams
+				// decompression for data that has just one combined stream
 				while (pixelNo < pixelCount) {
 					pixel = *rlePtr++;
 					runLength = pixel & 0x3F;
 					switch (pixel & 0xC0) {
 					case 0: // copy bytes as-is
 						while (runLength-- && pixelNo < pixelCount)
-							outPtr[pixelNo++] = *literalPtr++;
+							outPtr[pixelNo++] = *rlePtr++;
 						break;
 					case 0x80: // fill with color
-						memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
+						memset(outPtr + pixelNo, *rlePtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
 						pixelNo += runLength;
 						break;
 					case 0xC0: // fill with transparent
@@ -404,12 +367,50 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 				}
 			}
 		} else {
-			// literal stream only, so no compression
-			memcpy(outPtr, literalPtr, pixelCount);
+			literalPtr = _resourceData + celInfo->offsetLiteral;
+			if (celInfo->offsetRLE) {
+				if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
+					// Crazy-Ass compression for SCI1.1+ Mac
+					while (pixelNo < pixelCount) {
+						uint32 pixelLine = pixelNo;
+						runLength = *rlePtr++;
+						pixelNo += runLength;
+						runLength = *rlePtr++;
+						while (runLength-- && pixelNo < pixelCount) {
+							outPtr[pixelNo] = *literalPtr++;
+							if (outPtr[pixelNo] == 255)
+								outPtr[pixelNo] = 0;
+							pixelNo++;
+						}
+						pixelNo = pixelLine + celInfo->width;
+					}
+				} else {
+					// decompression for data that has separate rle and literal streams
+					while (pixelNo < pixelCount) {
+						pixel = *rlePtr++;
+						runLength = pixel & 0x3F;
+						switch (pixel & 0xC0) {
+						case 0: // copy bytes as-is
+							while (runLength-- && pixelNo < pixelCount)
+								outPtr[pixelNo++] = *literalPtr++;
+							break;
+						case 0x80: // fill with color
+							memset(outPtr + pixelNo, *literalPtr++, MIN<uint32>(runLength, pixelCount - pixelNo));
+							pixelNo += runLength;
+							break;
+						case 0xC0: // fill with transparent
+							pixelNo += runLength;
+							break;
+						}
+					}
+				}
+			} else {
+				// literal stream only, so no compression
+				memcpy(outPtr, literalPtr, pixelCount);
+				pixelNo = pixelCount;
+			}
 		}
-		return;
 	}
-	error("Unable to decompress view");
 }
 
 byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
@@ -425,9 +426,7 @@ byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	_loop[loopNo].cel[celNo].rawBitmap = new byte[pixelCount];
 	byte *pBitmap = _loop[loopNo].cel[celNo].rawBitmap;
 
-	// Some RLE compressed cels end with the last non-transparent pixel, thats why we fill it up here
-	//  FIXME: change this to fill the remaining bytes within unpackCel()
-	memset(pBitmap, _loop[loopNo].cel[celNo].clearKey, pixelCount);
+	// unpack the actual cel bitmap data
 	unpackCel(loopNo, celNo, pBitmap, pixelCount);
 
 	if (!_resMan->isVGA()) {
