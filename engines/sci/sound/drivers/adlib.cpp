@@ -703,11 +703,8 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 
 void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
-		// This happens with songs 1 and 23 in PQ2. Song 1 (the title song) uses an invalid
-		// instrument 80, and song 23 (car horn when the car runs over you at the airport,
-		// rooms 14/15) an invalid instrument 89. These are probably leftovers from MT32.
-		warning("ADLIB: Invalid patch %i requested (patch.003 contains %d instruments)", 
-			patch, _patches.size());
+		warning("ADLIB: Invalid patch %i requested", patch);
+		// Substitute instrument 0
 		patch = 0;
 	}
 
@@ -760,10 +757,16 @@ bool MidiDriver_AdLib::loadResource(const byte *data, uint size) {
 	for (int i = 0; i < 48; i++)
 		loadInstrument(data + (28 * i));
 
-	if (size == 2690) {
+	if (size == 1344) {
+		byte dummy[28] = {0};
+
+		// Only 48 instruments, add dummies
+		for (int i = 0; i < 48; i++)
+			loadInstrument(dummy);
+	} else if (size == 2690) {
 		for (int i = 48; i < 96; i++)
 			loadInstrument(data + 2 + (28 * i));
-	} else if (size == 5382) {
+	} else {
 		// SCI1.1 and later
 		for (int i = 48; i < 190; i++)
 			loadInstrument(data + (28 * i));
