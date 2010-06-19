@@ -98,6 +98,12 @@ public:
 	}
 };
 
+
+struct LocationPart {
+	int part;
+	const char *location;
+};
+
 class MainMenuInputState_BR : public MenuInputState {
 	Parallaction_br *_vm;
 
@@ -158,7 +164,7 @@ class MainMenuInputState_BR : public MenuInputState {
 	const char **_menuStrings;
 	const MenuOptions *_options;
 
-	static const char *_firstLocation[];
+	static LocationPart _firstLocation[];
 
 	int _availItems;
 	int _selection;
@@ -205,7 +211,8 @@ public:
 			return this;
 		}
 
-		switch (_options[_selection]) {
+		int selection = _options[_selection];
+		switch (selection) {
 		case kMenuQuit: {
 			_vm->quitGame();
 			break;
@@ -218,8 +225,10 @@ public:
 			}
 			break;
 
-		default:
-			_vm->scheduleLocationSwitch(_firstLocation[_options[_selection]]);
+		default: 
+			_vm->_nextPart = _firstLocation[selection].part;
+			_vm->scheduleLocationSwitch(_firstLocation[selection].location);
+		
 		}
 
 		_vm->_system->showMouse(false);
@@ -262,13 +271,14 @@ public:
 
 };
 
-const char *MainMenuInputState_BR::_firstLocation[] = {
-	"intro.0",
-	"museo.1",
-	"start.2",
-	"bolscoi.3",
-	"treno.4"
+LocationPart MainMenuInputState_BR::_firstLocation[] = {
+	{ 0, "intro" },
+	{ 1, "museo" },
+	{ 2, "start" },
+	{ 3, "bolscoi" },
+	{ 4, "treno" }
 };
+
 
 const char *MainMenuInputState_BR::_menuStringsAmiga[NUM_MENULINES] = {
 	"See the introduction",
