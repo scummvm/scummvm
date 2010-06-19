@@ -262,6 +262,10 @@ void Parallaction_br::cleanupGame() {
 	_objectsNames = 0;
 	_countersNames = 0;
 
+	_numLocations = 0;
+	_globalFlags = 0;
+	memset(_localFlags, 0, sizeof(_localFlags));
+	memset(_locationNames, 0, sizeof(_locationNames));
 	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 }
 
