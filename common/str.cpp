@@ -151,7 +151,11 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 		// We need to allocate storage on the heap!
 
 		// Compute a suitable new capacity limit
-		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+		// If the current capacity is sufficient we use the same capacity
+		if (new_size < curCapacity)
+			newCapacity = curCapacity;
+		else
+			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
 
 		// Allocate new storage
 		newStorage = new char[newCapacity];
