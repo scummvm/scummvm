@@ -1756,7 +1756,8 @@ ViewType ResourceManager::detectViewType() {
 		}
 	}
 
-	error("resMan: Couldn't find any views");
+	// this may happen if there are serious system issues (or trying to add a broken game)
+	warning("resMan: Couldn't find any views");
 	return kViewUnknown;
 }
 
