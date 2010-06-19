@@ -32,11 +32,12 @@ updatepot:
 		mv -f $@.new $@; \
 	fi;
 
-$(srcdir)/common/messages.cpp: $(POFILES)
-	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
+#$(srcdir)/common/messages.cpp: $(POFILES)
+#	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
-update-translations: updatepot $(srcdir)/common/messages.cpp
+update-translations: updatepot $(POFILES)
 	@$(foreach file, $(POFILES), echo -n $(notdir $(basename $(file)))": ";msgfmt --statistic $(file);)
 	@rm -f messages.mo
+	perl $(srcdir)/tools/po2c $^ > $(srcdir)/common/messages.cpp
 
 .PHONY: updatepot update-translations
