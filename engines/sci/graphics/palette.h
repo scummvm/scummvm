@@ -45,13 +45,14 @@ public:
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
+	bool insert(Palette *newPaette, Palette *destPalette);
 	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
 	uint16 matchColor(byte r, byte g, byte b);
 	void getSys(Palette *pal);
 
 	void setOnScreen();
 
-	void increaseSysTimestamp();
+	void drewPicture(GuiResourceId pictureId);
 
 	bool kernelSetFromResource(GuiResourceId resourceId, bool force);
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
@@ -68,6 +69,7 @@ public:
 	void kernelPalVaryPause(bool pause);
 	void kernelPalVaryDeinit();
 	void palVaryUpdate();
+	void palVaryPrepareForTransition();
 	void palVaryProcess(int signal, bool setPalette);
 
 	Palette _sysPalette;
@@ -75,6 +77,7 @@ public:
 private:
 	void palVaryInit();
 	void palVaryInstallTimer();
+	bool palVaryLoadTargetPalette(GuiResourceId resourceId);
 	static void palVaryCallback(void *refCon);
 	void palVaryIncreaseSignal();
 

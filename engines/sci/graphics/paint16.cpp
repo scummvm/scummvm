@@ -76,9 +76,10 @@ void GfxPaint16::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mi
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 	delete picture;
 
-	// We update our sys palette timestamp here (SCI1.1 only)
+	// We make a call to SciPalette here, for increasing sys timestamp and also loading targetpalette, if palvary active
+	//  (SCI1.1 only)
 	if (getSciVersion() == SCI_VERSION_1_1)
-		_palette->increaseSysTimestamp();
+		_palette->drewPicture(pictureId);
 }
 
 // This one is the only one that updates screen!

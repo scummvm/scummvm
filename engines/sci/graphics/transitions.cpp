@@ -167,6 +167,8 @@ void GfxTransitions::doit(Common::Rect picRect) {
 		}
 	}
 
+	_palette->palVaryPrepareForTransition();
+
 	// Now we do the actual transition to the new screen
 	doTransition(_number, false);
 

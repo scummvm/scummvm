@@ -212,13 +212,16 @@ void GfxPalette::setEGA() {
 void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
-	// Pal-Vary is taking place -> abort merge
-	if (_palVaryResourceId != -1)
-		return;
-
 	if (force || newPalette->timestamp != systime) {
 		_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
 		newPalette->timestamp = _sysPalette.timestamp;
+
+		if (_palVaryResourceId != -1) {
+			// Pal-vary currently active, we don't set at any time, but also insert into origin palette
+			insert(newPalette, &_palVaryOriginPalette);
+			return;
+		}
+
 		if (_sysPaletteChanged && _screen->_picNotValid == 0) { // && systime != _sysPalette.timestamp) {
 			// Removed timestamp checking, because this shouldnt be needed anymore. I'm leaving it commented just in
 			//  case this causes regressions
@@ -226,6 +229,24 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 			_sysPaletteChanged = false;
 		}
 	}
+}
+
+bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
+	bool paletteChanged = false;
+
+	for (int i = 1; i < 255; i++) {
+		if (newPalette->colors[i].used) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
+				destPalette->colors[i].r = newPalette->colors[i].r;
+				destPalette->colors[i].g = newPalette->colors[i].g;
+				destPalette->colors[i].b = newPalette->colors[i].b;
+				paletteChanged = true;
+			}
+			destPalette->colors[i].used = newPalette->colors[i].used;
+			newPalette->mapping[i] = i;
+		}
+	}
+	return paletteChanged;
 }
 
 bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
@@ -236,20 +257,9 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	if ((!forceRealMerge) && (!_alwaysForceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
 		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
-		for (i = 1; i < 255; i++) {
-			if (newPalette->colors[i].used) {
-				if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
-					_sysPalette.colors[i].r = newPalette->colors[i].r;
-					_sysPalette.colors[i].g = newPalette->colors[i].g;
-					_sysPalette.colors[i].b = newPalette->colors[i].b;
-					paletteChanged = true;
-				}
-				_sysPalette.colors[i].used = newPalette->colors[i].used;
-				newPalette->mapping[i] = i;
-			}
-		}
+
 		// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
-		return paletteChanged;
+		return insert(newPalette, &_sysPalette);
 
 	} else {
 		// colors 0 (black) and 255 (white) are not affected by merging
@@ -305,10 +315,15 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	return paletteChanged;
 }
 
-// This is used for SCI1.1 and called from kDrawPic. We only update sysPalette timestamp this way for SCI1.1
-void GfxPalette::increaseSysTimestamp() {
+// This is called for SCI1.1, when kDrawPic got done. We update sysPalette timestamp this way for SCI1.1 and also load
+//  target-palette, if palvary is active
+void GfxPalette::drewPicture(GuiResourceId pictureId) {
 	if (!_alwaysForceRealMerge) // Don't do this on inbetween SCI1.1 games
 		_sysPalette.timestamp++;
+
+	if (_palVaryResourceId != -1) {
+		palVaryLoadTargetPalette(pictureId);
+	}
 }
 
 uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
@@ -487,6 +502,17 @@ void GfxPalette::palVaryInit() {
 	_palVaryTicks = 0;
 }
 
+bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
+	_palVaryResourceId = resourceId;
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
+	if (palResource) {
+		// Load and initialize destination palette
+		createFromData(palResource->data, &_palVaryTargetPalette);
+		return true;
+	}
+	return false;
+}
+
 void GfxPalette::palVaryInstallTimer() {
 	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
 	// Call signal increase every [ticks]
@@ -497,11 +523,7 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 	if (_palVaryResourceId != -1)	// another palvary is taking place, return
 		return false;
 
-	_palVaryResourceId = resourceId;
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
-	if (palResource) {
-		// Load and initialize destination palette
-		createFromData(palResource->data, &_palVaryTargetPalette);
+	if (palVaryLoadTargetPalette(resourceId)) {
 		// Save current palette
 		memcpy(&_palVaryOriginPalette, &_sysPalette, sizeof(Palette));
 
@@ -575,6 +597,13 @@ void GfxPalette::palVaryUpdate() {
 	if (_palVarySignal) {
 		palVaryProcess(_palVarySignal, true);
 		_palVarySignal = 0;
+	}
+}
+
+void GfxPalette::palVaryPrepareForTransition() {
+	if (_palVaryResourceId != -1) {
+		// Before doing transitions, we have to prepare palette
+		palVaryProcess(0, false);
 	}
 }
 
