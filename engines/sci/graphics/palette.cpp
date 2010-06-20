@@ -212,6 +212,10 @@ void GfxPalette::setEGA() {
 void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
+	// Pal-Vary is taking place -> abort merge
+	if (_palVaryResourceId != -1)
+		return;
+
 	if (force || newPalette->timestamp != systime) {
 		_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
 		newPalette->timestamp = _sysPalette.timestamp;
@@ -475,17 +479,36 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 // Saving/restoring
 //         need to save start and target-palette, when palVaryOn = true
 
-void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks) {
-	kernelSetFromResource(resourceId, true);
-	return;
+void GfxPalette::palVaryInit() {
+	_palVaryResourceId = -1;
+	_palVaryPaused = 0;
+	_palVarySignal = 0;
+	_palVaryStep = 0;
+	_palVaryStepStop = 0;
+	_palVaryDirection = 0;
+}
 
-	if (_palVaryResourceId >= 0)	// another palvary is taking place, return
+void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, int16 direction) {
+	//kernelSetFromResource(resourceId, true);
+	//return;
+	if (_palVaryResourceId != -1)	// another palvary is taking place, return
 		return;
 
 	_palVaryResourceId = resourceId;
-	_palVarySignal = 0;
-	// Call signal increase every [ticks]
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
+	if (palResource) {
+		// Load and initialize destination palette
+		createFromData(palResource->data, &_palVaryTargetPalette);
+		// Save current palette
+		memcpy(&_palVaryOriginPalette, &_sysPalette, sizeof(Palette));
+
+		_palVarySignal = 0;
+		_palVaryStep = 1;
+		_palVaryStepStop = stepStop;
+		_palVaryDirection = direction;
+		// Call signal increase every [ticks]
+		g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+	}
 }
 
 void GfxPalette::kernelPalVaryToggle(bool pause) {
@@ -503,15 +526,9 @@ void GfxPalette::kernelPalVaryDeinit() {
 	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
 
 	// HACK: just set the target palette
-	kernelSetFromResource(_palVaryResourceId, true);
+	//kernelSetFromResource(_palVaryResourceId, true);
 
 	_palVaryResourceId = -1;	// invalidate the target palette
-}
-
-void GfxPalette::palVaryInit() {
-	_palVaryResourceId = -1;
-	_palVaryPaused = 0;
-	_palVarySignal = 0;
 }
 
 void GfxPalette::palVaryCallback(void *refCon) {
@@ -525,7 +542,53 @@ void GfxPalette::palVaryIncreaseSignal() {
 
 // Actually do the pal vary processing
 void GfxPalette::palVaryUpdate() {
+	if (_palVarySignal) {
+		palVaryProcess(_palVarySignal, true);
+		_palVarySignal = 0;
+	}
+}
 
+// Processes pal vary updates
+void GfxPalette::palVaryProcess(int signal, bool setPalette) {
+	int16 stepChange = signal * _palVaryDirection;
+
+	_palVaryStep += stepChange;
+	if (stepChange > 0) {
+		if (_palVaryStep > _palVaryStepStop)
+			_palVaryStep = _palVaryStepStop;
+	} else {
+		if (_palVaryStep < _palVaryStepStop) {
+			if (!signal)
+				_palVaryStep = _palVaryStepStop;
+		}
+	}
+
+	// We don't need updates anymore, if we reached end-position
+	if (_palVaryStep == _palVaryStepStop)
+		g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+
+	// Calculate inbetween palette
+	Sci::Color inbetween;
+	int16 color;
+	for (int colorNr = 1; colorNr < 255; colorNr++) {
+		inbetween.used = _sysPalette.colors[colorNr].used;
+		color = _palVaryTargetPalette.colors[colorNr].r - _palVaryOriginPalette.colors[colorNr].r;
+		inbetween.r = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].r;
+		color = _palVaryTargetPalette.colors[colorNr].g - _palVaryOriginPalette.colors[colorNr].g;
+		inbetween.g = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].g;
+		color = _palVaryTargetPalette.colors[colorNr].b - _palVaryOriginPalette.colors[colorNr].b;
+		inbetween.b = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].b;
+
+		if (memcmp(&inbetween, &_sysPalette.colors[colorNr], sizeof(Sci::Color))) {
+			_sysPalette.colors[colorNr] = inbetween;
+			_sysPaletteChanged = true;
+		}
+	}
+
+	if ((_sysPaletteChanged) && (setPalette) && (_screen->_picNotValid == 0)) {
+		setOnScreen();
+		_sysPaletteChanged = false;
+	}
 }
 
 } // End of namespace Sci

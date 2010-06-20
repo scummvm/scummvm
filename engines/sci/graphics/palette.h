@@ -62,10 +62,11 @@ public:
 	void kernelAnimateSet();
 	void kernelAssertPalette(GuiResourceId resourceId);
 
-	void kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks);
+	void kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stopPercentage, int16 direction);
 	void kernelPalVaryToggle(bool pause);
 	void kernelPalVaryDeinit();
 	void palVaryUpdate();
+	void palVaryProcess(int signal, bool setPalette);
 
 	Palette _sysPalette;
 
@@ -77,16 +78,19 @@ private:
 	GfxScreen *_screen;
 	ResourceManager *_resMan;
 
-	GuiResourceId _palVaryResourceId;
-	uint32 _palVaryStart;
-	uint32 _palVaryEnd;
-	int _palVaryPaused;
-	int _palVarySignal;
-
 	bool _sysPaletteChanged;
 	bool _alwaysForceRealMerge;
 
 	Common::Array<PalSchedule> _schedules;
+
+	GuiResourceId _palVaryResourceId;
+	Palette _palVaryOriginPalette;
+	Palette _palVaryTargetPalette;
+	uint16 _palVaryStep;
+	uint16 _palVaryStepStop;
+	int16 _palVaryDirection;
+	int _palVaryPaused;
+	int _palVarySignal;
 };
 
 } // End of namespace Sci

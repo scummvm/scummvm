@@ -646,14 +646,15 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	switch (operation) {
 	case 0: { // Init
 		GuiResourceId paletteId;
-		uint16 ticks, paletteStop, paletteDirection;
+		uint16 ticks, stepStop;
+		int16 direction;
 		if ((argc >= 3) && (argc <= 5)) {
 			paletteId = argv[1].toUint16();
 			ticks = argv[2].toUint16();
-			paletteStop = argc >= 4 ? argv[3].toUint16() : 64;
-			paletteDirection = argc >= 5 ? argv[4].toUint16() : 1;
-			g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks);
-			warning("kPalVary(init) called with paletteId = %d, ticks = %d, stop = %d, direction = %d", paletteId, ticks, paletteStop, paletteDirection);
+			stepStop = argc >= 4 ? argv[3].toUint16() : 64;
+			direction = argc >= 5 ? argv[4].toUint16() : 1;
+			g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction);
+			warning("kPalVary(init) called with paletteId = %d, ticks = %d, stop = %d, direction = %d", paletteId, ticks, stepStop, direction);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
 		}
