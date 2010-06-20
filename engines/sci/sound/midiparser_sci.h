@@ -81,7 +81,12 @@ public:
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
-	void sendManuallyToDriver(uint32 b);
+	void sendToDriverQueue(uint32 b);
+	void sendToDriverQueue(byte status, byte firstOp, byte secondOp) {
+		sendToDriverQueue(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+	}
+
+	void sendQueueToDriver();
 
 protected:
 	void parseNextEvent(EventInfo &info);
@@ -107,6 +112,9 @@ protected:
 	bool _channelUsed[16];
 	int16 _channelRemap[16];
 	bool _channelMuted[16];
+
+	int _manualCommandCount;
+	uint32 _manualCommands[200];
 };
 
 } // End of namespace Sci

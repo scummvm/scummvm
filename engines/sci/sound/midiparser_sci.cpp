@@ -61,6 +61,8 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_dataincToAdd = 0;
 	_resetOnPause = false;
 	_pSnd = 0;
+
+	_manualCommandCount = 0;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
@@ -105,7 +107,7 @@ void MidiParser_SCI::sendInitCommands() {
 				byte voiceCount = 0;
 				if (_channelUsed[i]) {
 					voiceCount = _pSnd->soundRes->getInitialVoiceCount(i);
-					_driver->send(0xB0 | i, 0x4B, voiceCount);
+					sendToDriverQueue(0xB0 | i, 0x4B, voiceCount);
 				}
 			}
 		}
@@ -113,8 +115,7 @@ void MidiParser_SCI::sendInitCommands() {
 
 	// Send a velocity off signal to all channels
 	for (int i = 0; i < 15; ++i) {
-		if (_channelUsed[i])
-			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
+		sendToDriverQueue(0xB0 | i, 0x4E, 0);	// Reset velocity
 	}
 }
 
@@ -145,17 +146,33 @@ void MidiParser_SCI::unloadMusic() {
 }
 
 // this is used for scripts sending direct midi commands to us. we verify in that case that the channel is actually
-//  used
-void MidiParser_SCI::sendManuallyToDriver(uint32 b) {
+//  used and actually store the command for getting really sent when being onTimer()
+void MidiParser_SCI::sendToDriverQueue(uint32 b) {
 	byte midiChannel = b & 0xf;
 
 	if (!_channelUsed[midiChannel]) {
-		// scripts trying to send to unused channel
-		//  this happens at least in sq1vga right at the start, it's a script issue
+		// trying to send to an unused channel
+		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
 		return;
 	}
 
-	sendToDriver(b);
+	if (_manualCommandCount >= 200)
+		error("driver queue is full");
+	_manualCommands[_manualCommandCount] = b;
+	_manualCommandCount++;
+}
+
+// This sends the stored commands from queue to driver (is supposed to get called only during onTimer())
+//  at least mt32 emulation doesn't like getting note-on commands from main thread (if we directly send, we would get
+//  a crash during piano scene in lsl5)
+void MidiParser_SCI::sendQueueToDriver() {
+	int curCommand = 0;
+
+	while (curCommand < _manualCommandCount) {
+		sendToDriver(_manualCommands[curCommand]);
+		curCommand++;
+	}
+	_manualCommandCount = 0;
 }
 
 void MidiParser_SCI::sendToDriver(uint32 b) {
@@ -375,9 +392,8 @@ void MidiParser_SCI::allNotesOff() {
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
-			int16 realChannel = _channelRemap[j];
-			if ((_active_notes[i] & (1 << j)) && realChannel != -1){
-				_driver->send(0x80 | realChannel, i, 0);
+			if ((_active_notes[i] & (1 << j))){
+				sendToDriverQueue(0x80 | j, i, 0);
 			}
 		}
 	}
@@ -385,7 +401,7 @@ void MidiParser_SCI::allNotesOff() {
 	// Turn off all hanging notes
 	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
 		if (_hanging_notes[i].time_left) {
-			_driver->send(0x80 | _hanging_notes[i].channel, _hanging_notes[i].note, 0);
+			sendToDriverQueue(0x80 | _hanging_notes[i].channel, _hanging_notes[i].note, 0);
 			_hanging_notes[i].time_left = 0;
 		}
 	}
@@ -394,11 +410,8 @@ void MidiParser_SCI::allNotesOff() {
 	// To be sure, send an "All Note Off" event (but not all MIDI devices
 	// support this...).
 
-	for (i = 0; i < 16; ++i) {
-		int16 realChannel = _channelRemap[i];
-		if (realChannel != -1)
-			_driver->send(0xB0 | realChannel, 0x7b, 0); // All notes off
-	}
+	for (i = 0; i < 16; ++i)
+		sendToDriverQueue(0xB0 | i, 0x7b, 0); // All notes off
 
 	memset(_active_notes, 0, sizeof(_active_notes));
 }
@@ -659,8 +672,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 		case SCI_VERSION_1_LATE:
 			// sending volume change to all used channels
 			for (int i = 0; i < 15; i++)
-				if (_channelUsed[i])
-					sendToDriver(0xB0 + i, 7, _volume);
+				sendToDriverQueue(0xB0 + i, 7, _volume);
 			break;
 
 		default:

@@ -465,7 +465,7 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	Common::StackLock lock(_mutex);
 	if (pSnd->pMidiParser)
-		pSnd->pMidiParser->sendManuallyToDriver(cmd);
+		pSnd->pMidiParser->sendToDriverQueue(cmd);
 	else
 		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
 }
@@ -573,6 +573,8 @@ void MusicEntry::onTimer() {
 
 	// Only process MIDI streams in this thread, not digital sound effects
 	if (pMidiParser) {
+		// Process manual commands first
+		pMidiParser->sendQueueToDriver();
 		pMidiParser->onTimer();
 		ticker = (uint16)pMidiParser->getTick();
 	}
