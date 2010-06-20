@@ -222,26 +222,24 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	}
 }
 
-bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
+bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 	bool paletteChanged = false;
 
-	// for Laura Bow 2 demo
-	forceRealMerge |= _alwaysForceRealMerge;
-
-	if ((!forceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
+	if ((!forceRealMerge) && (!_alwaysForceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
+		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
 		for (i = 1; i < 255; i++) {
-			if (pFrom->colors[i].used) {
-				if ((pFrom->colors[i].r != _sysPalette.colors[i].r) || (pFrom->colors[i].g != _sysPalette.colors[i].g) || (pFrom->colors[i].b != _sysPalette.colors[i].b)) {
-					_sysPalette.colors[i].r = pFrom->colors[i].r;
-					_sysPalette.colors[i].g = pFrom->colors[i].g;
-					_sysPalette.colors[i].b = pFrom->colors[i].b;
+			if (newPalette->colors[i].used) {
+				if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+					_sysPalette.colors[i].r = newPalette->colors[i].r;
+					_sysPalette.colors[i].g = newPalette->colors[i].g;
+					_sysPalette.colors[i].b = newPalette->colors[i].b;
 					paletteChanged = true;
 				}
-				_sysPalette.colors[i].used = pFrom->colors[i].used;
-				pFrom->mapping[i] = i;
+				_sysPalette.colors[i].used = newPalette->colors[i].used;
+				newPalette->mapping[i] = i;
 			}
 		}
 		// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
@@ -250,47 +248,47 @@ bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
 	} else {
 		// colors 0 (black) and 255 (white) are not affected by merging
 		for (i = 1 ; i < 255; i++) {
-			if (!pFrom->colors[i].used)// color is not used - so skip it
+			if (!newPalette->colors[i].used)// color is not used - so skip it
 				continue;
 			// forced palette merging or dest color is not used yet
 			if (force || (!_sysPalette.colors[i].used)) {
-				_sysPalette.colors[i].used = pFrom->colors[i].used;
-				if ((pFrom->colors[i].r != _sysPalette.colors[i].r) || (pFrom->colors[i].g != _sysPalette.colors[i].g) || (pFrom->colors[i].b != _sysPalette.colors[i].b)) {
-					_sysPalette.colors[i].r = pFrom->colors[i].r;
-					_sysPalette.colors[i].g = pFrom->colors[i].g;
-					_sysPalette.colors[i].b = pFrom->colors[i].b;
+				_sysPalette.colors[i].used = newPalette->colors[i].used;
+				if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+					_sysPalette.colors[i].r = newPalette->colors[i].r;
+					_sysPalette.colors[i].g = newPalette->colors[i].g;
+					_sysPalette.colors[i].b = newPalette->colors[i].b;
 					paletteChanged = true;
 				}
-				pFrom->mapping[i] = i;
+				newPalette->mapping[i] = i;
 				continue;
 			}
 			// is the same color already at the same position? -> match it directly w/o lookup
 			//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 			//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-			if ((_sysPalette.colors[i].r == pFrom->colors[i].r) && (_sysPalette.colors[i].g == pFrom->colors[i].g) && (_sysPalette.colors[i].b == pFrom->colors[i].b)) {
-				pFrom->mapping[i] = i;
+			if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+				newPalette->mapping[i] = i;
 				continue;
 			}
 			// check if exact color could be matched
-			res = matchColor(pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
+			res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
 			if (res & 0x8000) { // exact match was found
-				pFrom->mapping[i] = res & 0xFF;
+				newPalette->mapping[i] = res & 0xFF;
 				continue;
 			}
 			// no exact match - see if there is an unused color
 			for (j = 1; j < 256; j++)
 				if (!_sysPalette.colors[j].used) {
-					_sysPalette.colors[j].used = pFrom->colors[i].used;
-					_sysPalette.colors[j].r = pFrom->colors[i].r;
-					_sysPalette.colors[j].g = pFrom->colors[i].g;
-					_sysPalette.colors[j].b = pFrom->colors[i].b;
-					pFrom->mapping[i] = j;
+					_sysPalette.colors[j].used = newPalette->colors[i].used;
+					_sysPalette.colors[j].r = newPalette->colors[i].r;
+					_sysPalette.colors[j].g = newPalette->colors[i].g;
+					_sysPalette.colors[j].b = newPalette->colors[i].b;
+					newPalette->mapping[i] = j;
 					paletteChanged = true;
 					break;
 				}
 			// if still no luck - set an approximate color
 			if (j == 256) {
-				pFrom->mapping[i] = res & 0xFF;
+				newPalette->mapping[i] = res & 0xFF;
 				_sysPalette.colors[res & 0xFF].used |= 0x10;
 			}
 		}
