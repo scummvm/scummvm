@@ -39,10 +39,6 @@ public:
 	SdlTimerManager();
 	~SdlTimerManager();
 
-	uint32 getMillis();
-	void delayMillis(uint msecs);
-	void getTimeAndDate(TimeDate &t) const;
-
 protected:
 	SDL_TimerID _timerID;
 };

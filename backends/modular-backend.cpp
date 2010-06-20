@@ -209,21 +209,6 @@ void ModularBackend::disableCursorPalette(bool disable) {
 	_graphicsManager->disableCursorPalette(disable);
 }
 
-uint32 ModularBackend::getMillis() {
-	assert(_timerManager);
-	return _timerManager->getMillis();
-}
-
-void ModularBackend::delayMillis(uint msecs) {
-	assert(_timerManager);
-	_timerManager->delayMillis(msecs);
-}
-
-void ModularBackend::getTimeAndDate(TimeDate &t) const {
-	assert(_timerManager);
-	return _timerManager->getTimeAndDate(t);
-}
-
 Common::TimerManager *ModularBackend::getTimerManager() {
 	assert(_timerManager);
 	return _timerManager;

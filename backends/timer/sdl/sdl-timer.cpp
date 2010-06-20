@@ -27,8 +27,6 @@
 #if defined(WIN32) || defined(UNIX) || defined(MACOSX)
 
 #include "backends/timer/sdl/sdl-timer.h"
-#include "common/EventRecorder.h"
-#include <time.h>
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
@@ -45,27 +43,6 @@ SdlTimerManager::SdlTimerManager() {
 
 SdlTimerManager::~SdlTimerManager() {
 	SDL_RemoveTimer(_timerID);
-}
-
-uint32 SdlTimerManager::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void SdlTimerManager::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void SdlTimerManager::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
 }
 
 #endif

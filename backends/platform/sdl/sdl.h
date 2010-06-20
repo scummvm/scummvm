@@ -60,6 +60,10 @@ public:
 
 	virtual bool pollEvent(Common::Event &event);
 
+	uint32 getMillis();
+	void delayMillis(uint msecs);
+	void getTimeAndDate(TimeDate &td) const;
+
 protected:
 	bool _inited;
 
