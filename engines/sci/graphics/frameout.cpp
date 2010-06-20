@@ -47,7 +47,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
-	_highPlanePri = 0;
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -55,29 +54,19 @@ GfxFrameout::~GfxFrameout() {
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	_planes.push_back(object);
-	int16 planePri = readSelectorValue(_segMan, object, SELECTOR(priority)) & 0xFFFF;
-	if (planePri > _highPlanePri)
-		_highPlanePri = planePri;
+	sortPlanes();
 }
 
 void GfxFrameout::kernelUpdatePlane(reg_t object) {
+	sortPlanes();
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		if (_planes[planeNr] == object) {
-			_planes.remove_at(planeNr);
-			break;
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		if (object == *it) {
+			_planes.erase(it);
+			return;
 		}
-	}
-
-	// Recalculate highPlanePri
-	_highPlanePri = 0;
-
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		int16 planePri = readSelectorValue(_segMan, _planes[planeNr], SELECTOR(priority)) & 0xFFFF;
-		if (planePri > _highPlanePri)
-			_highPlanePri = planePri;
 	}
 }
 
@@ -96,70 +85,77 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 }
 
 int16 GfxFrameout::kernelGetHighPlanePri() {
-	return _highPlanePri;
+	sortPlanes();
+	reg_t object = _planes.back();
+	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back(), SELECTOR(priority));
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 	return (entry1->priority == entry2->priority) ? (entry1->y < entry2->y) : (entry1->priority < entry2->priority);
 }
 
+bool planeSortHelper(const reg_t entry1, const reg_t entry2) {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+
+	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
+	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
+
+	if (plane1Priority == 0xffff)
+		return true;
+
+	if (plane2Priority == 0xffff)
+		return false;
+
+	return plane1Priority < plane2Priority;
+}
+
+void GfxFrameout::sortPlanes() {
+	// First, remove any invalid planes
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end();) {
+		if (!_segMan->isObject(*it))
+			it = _planes.erase(it);
+		else
+			it++;
+	}
+
+	// Sort the rest of them
+	Common::sort(_planes.begin(), _planes.end(), planeSortHelper);
+}
+
 void GfxFrameout::kernelFrameout() {
-	int16 itemCount = 0;
-	reg_t planeObject;
-	GuiResourceId planePictureNr;
-	GfxPicture *planePicture = 0;
-	int16 planePictureCels = 0;
-	int16 planePictureCel;
-	int16 planePriority;
-	Common::Rect planeRect;
-	int16 planeResY, planeResX;
-	byte planeBack;
-
-	reg_t itemObject;
-	reg_t itemPlane;
-
-	FrameoutEntry *itemData;
-	FrameoutList itemList;
-	FrameoutEntry *itemEntry;
-
 	_palette->palVaryUpdate();
 
 	// Allocate enough space for all screen items
-	itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
+	FrameoutEntry *itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
 
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		planeObject = _planes[planeNr];
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		reg_t planeObject = *it;
+		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
-		// Remove any invalid planes
-		if (!_segMan->isObject(planeObject)) {
-			_planes.remove_at(planeNr);
-			planeNr--;
-			continue;
-		}
-
-		planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
-
-		if (planePriority == -1) // Plane currently not meant to be shown
+		if (planePriority == 0xffff) // Plane currently not meant to be shown
 			continue;
 
+		Common::Rect planeRect;
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
 		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
 		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
-		planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
-		planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
+		int16 planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
+		int16 planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
 
 		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
-		planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
-		if (planeBack) {
+		byte planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
+		if (planeBack)
 			_paint32->fillRect(planeRect, planeBack);
-		}
 
-		planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
+		GuiResourceId planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
+		GfxPicture *planePicture = 0;
+		int16 planePictureCels = 0;
+
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
 			planePicture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
@@ -168,10 +164,12 @@ void GfxFrameout::kernelFrameout() {
 		}
 
 		// Fill our itemlist for this plane
-		itemCount = 0;
-		itemEntry = itemData;
+		int16 itemCount = 0;
+		FrameoutEntry *itemEntry = itemData;
+		FrameoutList itemList;
+
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-			itemObject = _screenItems[itemNr];
+			reg_t itemObject = _screenItems[itemNr];
 
 			// Remove any invalid items
 			if (!_segMan->isObject(itemObject)) {
@@ -180,7 +178,7 @@ void GfxFrameout::kernelFrameout() {
 				continue;
 			}
 
-			itemPlane = readSelector(_segMan, itemObject, SELECTOR(plane));
+			reg_t itemPlane = readSelector(_segMan, itemObject, SELECTOR(plane));
 			if (planeObject == itemPlane) {
 				// Found an item on current plane
 				itemEntry->viewId = readSelectorValue(_segMan, itemObject, SELECTOR(view));
@@ -200,8 +198,9 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y += planeRect.top;
 				itemEntry->x += planeRect.left;
 
-				if (itemEntry->priority == 0)
-					itemEntry->priority = itemEntry->y;
+				if (!(itemEntry->signal & 0x0010)) {	// kSignalFixedPriority
+					// TODO: Change priority of this item
+				}
 
 				itemList.push_back(itemEntry);
 				itemEntry++;
@@ -213,12 +212,10 @@ void GfxFrameout::kernelFrameout() {
 		Common::sort(itemList.begin(), itemList.end(), sortHelper);
 
 		// Now display itemlist
-		planePictureCel = 0;
-
+		int16 planePictureCel = 0;
 		itemEntry = itemData;
-		FrameoutList::iterator listIterator = itemList.begin();
-		FrameoutList::iterator listEnd = itemList.end();
-		while (listIterator != listEnd) {
+
+		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			itemEntry = *listIterator;
 			if (planePicture) {
 				while ((planePictureCel <= itemEntry->priority) && (planePictureCel < planePictureCels)) {
@@ -226,23 +223,20 @@ void GfxFrameout::kernelFrameout() {
 					planePictureCel++;
 				}
 			}
+
 			if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
-				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128)) {
+				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, &itemEntry->celRect);
-				} else
+				else
 					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, &itemEntry->celRect);
 
-				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight()) {
-					listIterator++;
+				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight())
 					continue;
-				}
 
-				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= _screen->getWidth()) {
-					listIterator++;
+				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= _screen->getWidth())
 					continue;
-				}
 
 				Common::Rect clipRect;
 				clipRect = itemEntry->celRect;
@@ -282,8 +276,8 @@ void GfxFrameout::kernelFrameout() {
 					}
 				}
 			}
-			listIterator++;
 		}
+
 		if (planePicture) {
 			while (planePictureCel < planePictureCels) {
 				planePicture->drawSci32Vga(planePictureCel);
@@ -293,6 +287,7 @@ void GfxFrameout::kernelFrameout() {
 			planePicture = 0;
 		}
 	}
+
 	free(itemData);
 	_screen->copyToScreen();
 }

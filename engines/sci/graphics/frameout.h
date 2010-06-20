@@ -41,6 +41,7 @@ struct FrameoutEntry {
 	int16 scaleY;
 	Common::Rect celRect;
 };
+
 typedef Common::List<FrameoutEntry *> FrameoutList;
 
 class GfxCache;
@@ -74,8 +75,9 @@ private:
 	GfxPaint32 *_paint32;
 
 	Common::Array<reg_t> _screenItems;
-	Common::Array<reg_t> _planes;
-	int16 _highPlanePri;
+	Common::List<reg_t> _planes;
+
+	void sortPlanes();
 };
 
 } // End of namespace Sci
