@@ -292,8 +292,16 @@ bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
 			}
 		}
 	}
-	_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
+
+	// We don't update the timestamp here for SCI1.1, it's only updated on kDrawPic calls
+	if (getSciVersion() < SCI_VERSION_1_1)
+		_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
 	return paletteChanged;
+}
+
+// This is used for SCI1.1 and called from kDrawPic. We only update sysPalette timestamp this way for SCI1.1
+void GfxPalette::increaseSysTimestamp() {
+	_sysPalette.timestamp++;
 }
 
 uint16 GfxPalette::matchColor(byte r, byte g, byte b) {

@@ -51,6 +51,8 @@ public:
 
 	void setOnScreen();
 
+	void increaseSysTimestamp();
+
 	bool kernelSetFromResource(GuiResourceId resourceId, bool force);
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	void kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
