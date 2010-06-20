@@ -178,6 +178,9 @@ void AgiEngine::updateTimer() {
 }
 
 void AgiEngine::newInputMode(InputMode mode) {
+	if (mode == INPUT_MENU && !getflag(fMenusWork) && !(getFeatures() & GF_MENUS))
+		return;
+
 	_oldMode = _game.inputMode;
 	_game.inputMode = mode;
 }
