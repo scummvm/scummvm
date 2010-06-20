@@ -125,7 +125,6 @@ private:
 	RadiobuttonWidget *_subToggleSubOnly;
 	RadiobuttonWidget *_subToggleSpeechOnly;
 	RadiobuttonWidget *_subToggleSubBoth;
-	int _subMode;
 	static const char *_subModeDesc[];
 	static const char *_lowresSubModeDesc[];
 	StaticTextWidget *_subSpeedDesc;
