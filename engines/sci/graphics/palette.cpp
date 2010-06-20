@@ -244,6 +244,9 @@ bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
 				pFrom->mapping[i] = i;
 			}
 		}
+		// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
+		return paletteChanged;
+
 	} else {
 		// colors 0 (black) and 255 (white) are not affected by merging
 		for (i = 1 ; i < 255; i++) {
@@ -293,15 +296,15 @@ bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
 		}
 	}
 
-	// We don't update the timestamp here for SCI1.1, it's only updated on kDrawPic calls
-	if (getSciVersion() < SCI_VERSION_1_1)
+	if (!forceRealMerge)
 		_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
 	return paletteChanged;
 }
 
 // This is used for SCI1.1 and called from kDrawPic. We only update sysPalette timestamp this way for SCI1.1
 void GfxPalette::increaseSysTimestamp() {
-	_sysPalette.timestamp++;
+	if (!_alwaysForceRealMerge) // Don't do this on inbetween SCI1.1 games
+		_sysPalette.timestamp++;
 }
 
 uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
