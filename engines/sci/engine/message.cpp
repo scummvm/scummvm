@@ -380,7 +380,7 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 		if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
 			_segMan->strcpy(buf, str.c_str());
 		} else {
-			error("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+			warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
 
 			// Set buffer to empty string if possible
 			if (buffer_r.maxSize > 0)

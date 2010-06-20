@@ -486,9 +486,16 @@ void GfxPalette::palVaryInit() {
 	_palVaryStep = 0;
 	_palVaryStepStop = 0;
 	_palVaryDirection = 0;
+	_palVaryTicks = 0;
 }
 
-bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, int16 direction) {
+void GfxPalette::palVaryInstallTimer() {
+	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
+	// Call signal increase every [ticks]
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+}
+
+bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction) {
 	//kernelSetFromResource(resourceId, true);
 	//return;
 	if (_palVaryResourceId != -1)	// another palvary is taking place, return
@@ -503,19 +510,34 @@ bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		memcpy(&_palVaryOriginPalette, &_sysPalette, sizeof(Palette));
 
 		_palVarySignal = 0;
+		_palVaryTicks = ticks;
 		_palVaryStep = 1;
 		_palVaryStepStop = stepStop;
 		_palVaryDirection = direction;
-		if (!ticks) {
-			// if no ticks are given, jump directly to destination
+		// if no ticks are given, jump directly to destination
+		if (!_palVaryTicks)
 			_palVaryDirection = stepStop;
-			ticks = 1;
-		}
-		// Call signal increase every [ticks]
-		g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+		palVaryInstallTimer();
 		return true;
 	}
 	return false;
+}
+
+int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direction) {
+	if (_palVaryResourceId == -1)
+		return 0;
+
+	if (_palVaryStep > 64)
+		_palVaryStep = 64;
+	if (ticks != -1)
+		_palVaryTicks = ticks;
+	_palVaryStepStop = stepStop;
+	_palVaryDirection = direction != -1 ? -direction : -_palVaryDirection;
+
+	if (!_palVaryTicks)
+		_palVaryDirection = _palVaryStepStop - _palVaryStep;
+	palVaryInstallTimer();
+	return kernelPalVaryGetCurrentStep();
 }
 
 int16 GfxPalette::kernelPalVaryGetCurrentStep() {
@@ -539,9 +561,6 @@ void GfxPalette::kernelPalVaryPause(bool pause) {
 
 void GfxPalette::kernelPalVaryDeinit() {
 	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
-
-	// HACK: just set the target palette
-	//kernelSetFromResource(_palVaryResourceId, true);
 
 	_palVaryResourceId = -1;	// invalidate the target palette
 }
@@ -573,7 +592,7 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 			_palVaryStep = _palVaryStepStop;
 	} else {
 		if (_palVaryStep < _palVaryStepStop) {
-			if (!signal)
+			if (signal)
 				_palVaryStep = _palVaryStepStop;
 		}
 	}
@@ -588,11 +607,11 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 	for (int colorNr = 1; colorNr < 255; colorNr++) {
 		inbetween.used = _sysPalette.colors[colorNr].used;
 		color = _palVaryTargetPalette.colors[colorNr].r - _palVaryOriginPalette.colors[colorNr].r;
-		inbetween.r = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].r;
+		inbetween.r = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].r;
 		color = _palVaryTargetPalette.colors[colorNr].g - _palVaryOriginPalette.colors[colorNr].g;
-		inbetween.g = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].g;
+		inbetween.g = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].g;
 		color = _palVaryTargetPalette.colors[colorNr].b - _palVaryOriginPalette.colors[colorNr].b;
-		inbetween.b = ((color * _palVaryStep) >> 6) + _palVaryOriginPalette.colors[colorNr].b;
+		inbetween.b = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].b;
 
 		if (memcmp(&inbetween, &_sysPalette.colors[colorNr], sizeof(Sci::Color))) {
 			_sysPalette.colors[colorNr] = inbetween;

@@ -647,7 +647,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	case 0: { // Init
 		GuiResourceId paletteId;
 		uint16 ticks, stepStop;
-		int16 direction;
+		uint16 direction;
 		if ((argc >= 3) && (argc <= 5)) {
 			paletteId = argv[1].toUint16();
 			ticks = argv[2].toUint16();
@@ -661,9 +661,20 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case 1: { // Unknown
-		warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
-		break;
+	case 1: { // Reverse
+		int16 ticks, stepStop, direction;
+
+		if ((argc >= 1) && (argc <= 4)) {
+			ticks = argc >= 2 ? argv[1].toUint16() : -1;
+			stepStop = argc >= 3 ? argv[2].toUint16() : 0;
+			direction = argc >= 4 ? argv[3].toSint16() : -1;
+
+			int16 result = g_sci->_gfxPalette->kernelPalVaryReverse(ticks, stepStop, direction);
+			warning("kPalVary(reverse) called with ticks = %d, stop = %d, direction = %d", ticks, stepStop, direction);
+			return make_reg(0, result);
+		} else {
+			warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		}
 	}
 	case 2: { // Get Current Step
 		if (argc == 1) {
