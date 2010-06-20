@@ -488,11 +488,11 @@ void GfxPalette::palVaryInit() {
 	_palVaryDirection = 0;
 }
 
-void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, int16 direction) {
+bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, int16 direction) {
 	//kernelSetFromResource(resourceId, true);
 	//return;
 	if (_palVaryResourceId != -1)	// another palvary is taking place, return
-		return;
+		return false;
 
 	_palVaryResourceId = resourceId;
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
@@ -513,10 +513,20 @@ void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		}
 		// Call signal increase every [ticks]
 		g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+		return true;
 	}
+	return false;
 }
 
-void GfxPalette::kernelPalVaryToggle(bool pause) {
+int16 GfxPalette::kernelPalVaryGetCurrentStep() {
+	if (_palVaryDirection >= 0)
+		return _palVaryStep;
+	return -_palVaryStep;
+}
+
+void GfxPalette::kernelPalVaryPause(bool pause) {
+	if (_palVaryResourceId == -1)
+		return;
 	// this call is actually counting states, so calling this 3 times with true will require calling it later
 	// 3 times with false to actually remove pause
 	if (pause) {

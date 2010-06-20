@@ -62,8 +62,9 @@ public:
 	void kernelAnimateSet();
 	void kernelAssertPalette(GuiResourceId resourceId);
 
-	void kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stopPercentage, int16 direction);
-	void kernelPalVaryToggle(bool pause);
+	bool kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stopPercentage, int16 direction);
+	int16 kernelPalVaryGetCurrentStep();
+	void kernelPalVaryPause(bool pause);
 	void kernelPalVaryDeinit();
 	void palVaryUpdate();
 	void palVaryProcess(int signal, bool setPalette);

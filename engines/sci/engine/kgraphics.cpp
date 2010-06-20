@@ -653,7 +653,8 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			ticks = argv[2].toUint16();
 			stepStop = argc >= 4 ? argv[3].toUint16() : 64;
 			direction = argc >= 5 ? argv[4].toUint16() : 1;
-			g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction);
+			if (g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction))
+				return SIGNAL_REG;
 			warning("kPalVary(init) called with paletteId = %d, ticks = %d, stop = %d, direction = %d", paletteId, ticks, stepStop, direction);
 		} else {
 			warning("kPalVary(init) called with unsupported argc %d", argc);
@@ -664,9 +665,13 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
-	case 2: { // Unknown
-		// Called in QFG4 demo (1 parameter)
-		warning("kPalVary(2) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+	case 2: { // Get Current Step
+		if (argc == 1) {
+			int16 currentStep = g_sci->_gfxPalette->kernelPalVaryGetCurrentStep();
+			return make_reg(0, currentStep);
+		} else {
+			warning("kPalVary(GetCurrentStep) called with unsupported argc %d", argc);
+		}
 		break;
 	}
 	case 3: { // DeInit
@@ -687,11 +692,11 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		warning("kPalVary(5) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
-	case 6: { // Pause
+	case 6: { // Pause/Resume
 		bool pauseState;
 		if (argc == 2) {
 			pauseState = argv[1].isNull() ? false : true;
-			g_sci->_gfxPalette->kernelPalVaryToggle(pauseState);
+			g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
 			warning("kPalVary(pause) called with state = %d", pauseState);
 		} else {
 			warning("kPalVary(pause) called with unsupported argc %d", argc);
