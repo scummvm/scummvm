@@ -673,7 +673,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			warning("kPalVary(reverse) called with ticks = %d, stop = %d, direction = %d", ticks, stepStop, direction);
 			return make_reg(0, result);
 		} else {
-			warning("kPalVary(1) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+			warning("kPalVary(reverse) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		}
 	}
 	case 2: { // Get Current Step
@@ -694,13 +694,18 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case 4: { // Unknown
-		warning("kPalVary(4) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+	case 4: { // Change Target
+		// seems to be 1 parameter, we should find a game that is using this feature before implementing it
+		warning("kPalVary(changeTarget) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
-	case 5: { // Unknown
-		// Called in xmas 1992 demo (2 parameters)
-		warning("kPalVary(5) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+	case 5: { // Change ticks
+		if (argc == 2) {
+			uint16 ticks = argv[1].toUint16();
+			g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
+		} else {
+			warning("kPalVary(changeTicks) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		}
 		break;
 	}
 	case 6: { // Pause/Resume

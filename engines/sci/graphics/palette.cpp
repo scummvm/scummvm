@@ -519,6 +519,10 @@ void GfxPalette::palVaryInstallTimer() {
 	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
 }
 
+void GfxPalette::palVaryRemoveTimer() {
+	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+}
+
 bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction) {
 	if (_palVaryResourceId != -1)	// another palvary is taking place, return
 		return false;
@@ -564,6 +568,14 @@ int16 GfxPalette::kernelPalVaryGetCurrentStep() {
 	return -_palVaryStep;
 }
 
+void GfxPalette::kernelPalVaryChangeTicks(uint16 ticks) {
+	_palVaryTicks = ticks;
+	if (_palVaryStep - _palVaryStepStop) {
+		palVaryRemoveTimer();
+		palVaryInstallTimer();
+	}
+}
+
 void GfxPalette::kernelPalVaryPause(bool pause) {
 	if (_palVaryResourceId == -1)
 		return;
@@ -578,7 +590,7 @@ void GfxPalette::kernelPalVaryPause(bool pause) {
 }
 
 void GfxPalette::kernelPalVaryDeinit() {
-	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+	palVaryRemoveTimer();
 
 	_palVaryResourceId = -1;	// invalidate the target palette
 }
@@ -624,7 +636,7 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 
 	// We don't need updates anymore, if we reached end-position
 	if (_palVaryStep == _palVaryStepStop)
-		g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+		palVaryRemoveTimer();
 	if (_palVaryStep == 0)
 		_palVaryResourceId = -1;
 
