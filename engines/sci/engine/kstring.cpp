@@ -565,7 +565,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv) {
 	Common::String quitStr = s->_segMan->getString(argv[0]);
-	debug("Setting quit string to '%s'", quitStr.c_str());
+	//debug("Setting quit string to '%s'", quitStr.c_str());
 	return s->r_acc;
 }
 
