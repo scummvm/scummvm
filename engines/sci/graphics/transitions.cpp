@@ -194,7 +194,7 @@ void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 		verticalRollFromCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_VERTICALROLL_TOCENTER:
-		verticalRollFromCenter(blackoutFlag);
+		verticalRollToCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER:
 		horizontalRollFromCenter(blackoutFlag);
