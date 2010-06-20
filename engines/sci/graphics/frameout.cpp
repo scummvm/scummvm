@@ -37,6 +37,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/frameout.h"
 
@@ -120,6 +121,8 @@ void GfxFrameout::kernelFrameout() {
 	FrameoutEntry *itemData;
 	FrameoutList itemList;
 	FrameoutEntry *itemEntry;
+
+	_palette->palVaryUpdate();
 
 	// Allocate enough space for all screen items
 	itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
