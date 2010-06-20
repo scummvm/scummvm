@@ -207,12 +207,12 @@ void GfxPalette::setEGA() {
 	setOnScreen();
 }
 
-void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
+void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
-	if (force || sciPal->timestamp != systime) {
-		_sysPaletteChanged |= merge(sciPal, &_sysPalette, force, forceRealMerge);
-		sciPal->timestamp = _sysPalette.timestamp;
+	if (force || newPalette->timestamp != systime) {
+		_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
+		newPalette->timestamp = _sysPalette.timestamp;
 		if (_sysPaletteChanged && _screen->_picNotValid == 0) { // && systime != _sysPalette.timestamp) {
 			// Removed timestamp checking, because this shouldnt be needed anymore. I'm leaving it commented just in
 			//  case this causes regressions
@@ -222,7 +222,7 @@ void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
 	}
 }
 
-bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
+bool GfxPalette::merge(Palette *pFrom, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 	bool paletteChanged = false;
@@ -234,13 +234,13 @@ bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
 		for (i = 1; i < 255; i++) {
 			if (pFrom->colors[i].used) {
-				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
-					pTo->colors[i].r = pFrom->colors[i].r;
-					pTo->colors[i].g = pFrom->colors[i].g;
-					pTo->colors[i].b = pFrom->colors[i].b;
+				if ((pFrom->colors[i].r != _sysPalette.colors[i].r) || (pFrom->colors[i].g != _sysPalette.colors[i].g) || (pFrom->colors[i].b != _sysPalette.colors[i].b)) {
+					_sysPalette.colors[i].r = pFrom->colors[i].r;
+					_sysPalette.colors[i].g = pFrom->colors[i].g;
+					_sysPalette.colors[i].b = pFrom->colors[i].b;
 					paletteChanged = true;
 				}
-				pTo->colors[i].used = pFrom->colors[i].used;
+				_sysPalette.colors[i].used = pFrom->colors[i].used;
 				pFrom->mapping[i] = i;
 			}
 		}
@@ -250,12 +250,12 @@ bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 			if (!pFrom->colors[i].used)// color is not used - so skip it
 				continue;
 			// forced palette merging or dest color is not used yet
-			if (force || (!pTo->colors[i].used)) {
-				pTo->colors[i].used = pFrom->colors[i].used;
-				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
-					pTo->colors[i].r = pFrom->colors[i].r;
-					pTo->colors[i].g = pFrom->colors[i].g;
-					pTo->colors[i].b = pFrom->colors[i].b;
+			if (force || (!_sysPalette.colors[i].used)) {
+				_sysPalette.colors[i].used = pFrom->colors[i].used;
+				if ((pFrom->colors[i].r != _sysPalette.colors[i].r) || (pFrom->colors[i].g != _sysPalette.colors[i].g) || (pFrom->colors[i].b != _sysPalette.colors[i].b)) {
+					_sysPalette.colors[i].r = pFrom->colors[i].r;
+					_sysPalette.colors[i].g = pFrom->colors[i].g;
+					_sysPalette.colors[i].b = pFrom->colors[i].b;
 					paletteChanged = true;
 				}
 				pFrom->mapping[i] = i;
@@ -264,23 +264,23 @@ bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 			// is the same color already at the same position? -> match it directly w/o lookup
 			//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
 			//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-			if ((pTo->colors[i].r == pFrom->colors[i].r) && (pTo->colors[i].g == pFrom->colors[i].g) && (pTo->colors[i].b == pFrom->colors[i].b)) {
+			if ((_sysPalette.colors[i].r == pFrom->colors[i].r) && (_sysPalette.colors[i].g == pFrom->colors[i].g) && (_sysPalette.colors[i].b == pFrom->colors[i].b)) {
 				pFrom->mapping[i] = i;
 				continue;
 			}
 			// check if exact color could be matched
-			res = matchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
+			res = matchColor(pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
 			if (res & 0x8000) { // exact match was found
 				pFrom->mapping[i] = res & 0xFF;
 				continue;
 			}
 			// no exact match - see if there is an unused color
 			for (j = 1; j < 256; j++)
-				if (!pTo->colors[j].used) {
-					pTo->colors[j].used = pFrom->colors[i].used;
-					pTo->colors[j].r = pFrom->colors[i].r;
-					pTo->colors[j].g = pFrom->colors[i].g;
-					pTo->colors[j].b = pFrom->colors[i].b;
+				if (!_sysPalette.colors[j].used) {
+					_sysPalette.colors[j].used = pFrom->colors[i].used;
+					_sysPalette.colors[j].r = pFrom->colors[i].r;
+					_sysPalette.colors[j].g = pFrom->colors[i].g;
+					_sysPalette.colors[j].b = pFrom->colors[i].b;
 					pFrom->mapping[i] = j;
 					paletteChanged = true;
 					break;
@@ -288,25 +288,25 @@ bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealM
 			// if still no luck - set an approximate color
 			if (j == 256) {
 				pFrom->mapping[i] = res & 0xFF;
-				pTo->colors[res & 0xFF].used |= 0x10;
+				_sysPalette.colors[res & 0xFF].used |= 0x10;
 			}
 		}
 	}
-	pTo->timestamp = g_system->getMillis() * 60 / 1000;
+	_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
 	return paletteChanged;
 }
 
-uint16 GfxPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
+uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
 
 	for (int i = 1; i < 255; i++) {
-		if ((!pPal->colors[i].used))
+		if ((!_sysPalette.colors[i].used))
 			continue;
-		dr = pPal->colors[i].r - r;
-		dg = pPal->colors[i].g - g;
-		db = pPal->colors[i].b - b;
+		dr = _sysPalette.colors[i].r - r;
+		dg = _sysPalette.colors[i].g - g;
+		db = _sysPalette.colors[i].b - b;
 //		minimum squares match
 		cdiff = (dr*dr) + (dg*dg) + (db*db);
 //		minimum sum match (Sierra's)
@@ -372,7 +372,7 @@ void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 int
 }
 
 int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
-	return matchColor(&_sysPalette, r, g, b) & 0xFF;
+	return matchColor(r, g, b) & 0xFF;
 }
 
 // Returns true, if palette got changed
