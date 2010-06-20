@@ -60,7 +60,7 @@ public:
 	void kernelAnimateSet();
 	void kernelAssertPalette(GuiResourceId resourceId);
 
-	void startPalVary(uint16 paletteId, uint16 ticks);
+	void startPalVary(GuiResourceId resourceId, uint16 ticks);
 	void togglePalVary(bool pause);
 	void stopPalVary();
 
@@ -72,7 +72,7 @@ private:
 
 	GfxScreen *_screen;
 	ResourceManager *_resMan;
-	int16 _palVaryId;
+	GuiResourceId _palVaryResourceId;
 	uint32 _palVaryStart;
 	uint32 _palVaryEnd;
 

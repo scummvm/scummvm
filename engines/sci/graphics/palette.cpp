@@ -464,14 +464,14 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 // Saving/restoring
 //         need to save start and target-palette, when palVaryOn = true
 
-void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
-	kernelSetFromResource(paletteId, true);
+void GfxPalette::startPalVary(GuiResourceId resourceId, uint16 ticks) {
+	kernelSetFromResource(resourceId, true);
 	return;
 
-	if (_palVaryId >= 0)	// another palvary is taking place, return
+	if (_palVaryResourceId >= 0)	// another palvary is taking place, return
 		return;
 
-	_palVaryId = paletteId;
+	_palVaryResourceId = resourceId;
 	_palVaryStart = g_system->getMillis();
 	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
 	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60, this);
@@ -486,10 +486,11 @@ void GfxPalette::togglePalVary(bool pause) {
 
 void GfxPalette::stopPalVary() {
 	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
-	_palVaryId = -1;	// invalidate the target palette
 
 	// HACK: just set the target palette
-	kernelSetFromResource(_palVaryId, true);
+	kernelSetFromResource(_palVaryResourceId, true);
+
+	_palVaryResourceId = -1;	// invalidate the target palette
 }
 
 void GfxPalette::palVaryCallback(void *refCon) {
