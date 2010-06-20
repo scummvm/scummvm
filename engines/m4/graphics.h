@@ -40,6 +40,7 @@ namespace M4 {
 #define MADS_SCREEN_HEIGHT 200
 #define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
 
+#define TRANSPARENT_COLOUR_INDEX 0xFF
 
 struct BGR8 {
 	uint8 b, g, r;

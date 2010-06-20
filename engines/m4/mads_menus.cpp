@@ -163,7 +163,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, 
 				if (_highlightedIndex != -1) {
 					M4Sprite *spr = _menuItem->getFrame(_highlightedIndex);
 					const Common::Point &pt = _menuItemPosList[_highlightedIndex];
-					spr->copyTo(this, pt.x, row + pt.y, 0);
+					spr->copyTo(this, pt.x, row + pt.y, spr->getTransparencyIndex());
 				}
 			}
 		} else {
@@ -211,10 +211,12 @@ void RexMainMenuView::updateState() {
 				M4Sprite *spr = _menuItem->getFrame(0);
 				itemSize = _menuItem->getFrame(0)->height();
 				spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x,
-					_menuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 0);
+					_menuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 
+					spr->getTransparencyIndex());
 
 				delete _menuItem;
-				copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0);
+				copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0,
+					spr->getTransparencyIndex());
 			}
 
 			// Get the next sprite set
@@ -275,7 +277,7 @@ void RexMainMenuView::updateState() {
 	_bgSurface->copyTo(this, 0, row);
 	M4Sprite *spr = _menuItem->getFrame(_frameIndex);
 	spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x, _menuItemPosList[_menuItemIndex - 1].y +
-		row + (itemSize / 2) - (spr->height() / 2), 0);
+		row + (itemSize / 2) - (spr->height() / 2), spr->getTransparencyIndex());
 }
 
 int RexMainMenuView::getHighlightedItem(int x, int y) {
@@ -531,7 +533,7 @@ void DragonMainMenuView::updateState() {
 	_itemPalData.push_back(palData);
 
 	spr = _menuItem->getFrame(1);
-	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), (int)spr->getTransparentColor());
+	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), spr->getTransparencyIndex());
 
 	_vm->_mouse->cursorOn();
 }

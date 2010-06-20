@@ -919,7 +919,7 @@ void M4Surface::translate(RGBList *list, bool isTransparent) {
 	byte *palIndexes = list->palIndexes();
 
 	for (int i = 0; i < width() * height(); ++i, ++p) {
-		if (!isTransparent || (*p != 0)) {
+		if (!isTransparent || (*p != TRANSPARENT_COLOUR_INDEX)) {
 			assert(*p < list->size());
 			*p = palIndexes[*p];
 		}

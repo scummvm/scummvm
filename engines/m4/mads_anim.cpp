@@ -547,7 +547,7 @@ void AnimviewView::updateState() {
 }
 
 void AnimviewView::readNextCommand() {
-static bool tempFlag = true;//****DEBUG - Temporarily allow me to skip several intro scenes ****
+static bool tempFlag = false;//****DEBUG - Temporarily allow me to skip several intro scenes ****
 
 	while (!_script->eos() && !_script->err()) {
 		if (!tempFlag) {

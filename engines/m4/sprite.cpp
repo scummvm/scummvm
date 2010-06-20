@@ -131,6 +131,9 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 		byte cmd1, cmd2, count, pixel;
 
 		if (newLine) {
+			if (outp < (lineStart + w))
+				Common::set_to(outp, lineStart + w, TRANSPARENT_COLOUR_INDEX);
+
 			outp = lineStart + w;
 			lineStart = outp;
 			newLine = false;
@@ -150,7 +153,7 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 				} else {
 					pixel = source->readByte();
 					while (count--)
-						*outp++ = (pixel == 0xFD) ? 0 : pixel;
+						*outp++ = (pixel == 0xFD) ? TRANSPARENT_COLOUR_INDEX : pixel;
 				}
 			}
 		} else {
@@ -162,19 +165,17 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 					count = source->readByte();
 					pixel = source->readByte();
 					while (count--)
-						*outp++ = (pixel == 0xFD) ? 0 : pixel;
+						*outp++ = (pixel == 0xFD) ? TRANSPARENT_COLOUR_INDEX : pixel;
 				} else {
-					*outp++ = (cmd2 == 0xFD) ? 0 : cmd2;
+					*outp++ = (cmd2 == 0xFD) ? TRANSPARENT_COLOUR_INDEX : cmd2;
 				}
 			}
 		}
 	}
 }
 
-byte M4Sprite::getTransparentColor() const {
-	// FIXME: We assume that the transparent color is the color of the
-	// top left pixel.
-	return *getBasePtr(0, 0);
+byte M4Sprite::getTransparencyIndex() const {
+		return TRANSPARENT_COLOUR_INDEX;
 }
 
 } // End of namespace M4

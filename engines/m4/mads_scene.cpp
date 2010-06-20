@@ -927,7 +927,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		// Display object sprite. Note that the frame number isn't used directly, because it would result
 		// in too fast an animation
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
-		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
+		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, TRANSPARENT_COLOUR_INDEX);
 
 		if (!_madsVm->globals()->_config.invObjectsStill && !dialogVisible) {
 			// If objects need to be animated, move to the next frame
