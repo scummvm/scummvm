@@ -1246,6 +1246,11 @@ void ResourceManager::readResourcePatches() {
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 			bool bAdd = false;
 			name = (*x)->getName();
+
+			// HACK: Skip broken map in QFG4 Demo
+			if (name.equalsIgnoreCase("65535x.map"))
+				continue;
+
 			// SCI1 scheme
 			if (isdigit(name[0])) {
 				resourceNr = atoi(name.c_str());
