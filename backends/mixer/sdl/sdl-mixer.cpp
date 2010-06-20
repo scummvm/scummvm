@@ -39,7 +39,33 @@ SdlMixerImpl::SdlMixerImpl(OSystem *system)
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
-	MixerImpl(system, SAMPLES_PER_SEC) {
+	MixerImpl(system, getSamplesPerSec()) {
+	if (_openAudio) {
+		setReady(true);
+
+#if MIXER_DOUBLE_BUFFERING
+		initThreadedMixer(_obtainedRate.samples * 4);
+#endif
+
+		// start the sound system
+		SDL_PauseAudio(0);
+	}
+	else {
+		setReady(false);
+	}
+}
+
+SdlMixerImpl::~SdlMixerImpl() {
+	setReady(false);
+
+	SDL_CloseAudio();
+
+#if MIXER_DOUBLE_BUFFERING
+	deinitThreadedMixer();
+#endif
+}
+
+uint SdlMixerImpl::getSamplesPerSec() {
 	SDL_AudioSpec desired;
 
 	// Determine the desired output sampling frequency.
@@ -67,38 +93,16 @@ SdlMixerImpl::SdlMixerImpl(OSystem *system)
 
 	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
-
-		setSampleRate(samplesPerSec);
-
-		setReady(false);
+		_openAudio = false;
 	} else {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
 		samplesPerSec = _obtainedRate.freq;
 		debug(1, "Output sample rate: %d Hz", samplesPerSec);
-
-		setSampleRate(samplesPerSec);
-
-		setReady(true);
-
-#if MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_obtainedRate.samples * 4);
-#endif
-
-		// start the sound system
-		SDL_PauseAudio(0);
+		_openAudio = true;
 	}
-}
-
-SdlMixerImpl::~SdlMixerImpl() {
-	setReady(false);
-
-	SDL_CloseAudio();
-
-#if MIXER_DOUBLE_BUFFERING
-	deinitThreadedMixer();
-#endif
+	return samplesPerSec;
 }
 
 #if MIXER_DOUBLE_BUFFERING

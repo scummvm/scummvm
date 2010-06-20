@@ -51,6 +51,9 @@ public:
 
 protected:
 	SDL_AudioSpec _obtainedRate;
+	bool _openAudio;
+
+	uint getSamplesPerSec();
 
 	static void mixSdlCallback(void *s, byte *samples, int len);
 
