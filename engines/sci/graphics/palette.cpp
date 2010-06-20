@@ -596,6 +596,8 @@ void GfxPalette::palVaryProcess(int signal, bool setPalette) {
 	// We don't need updates anymore, if we reached end-position
 	if (_palVaryStep == _palVaryStepStop)
 		g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+	if (_palVaryStep == 0)
+		_palVaryResourceId = -1;
 
 	// Calculate inbetween palette
 	Sci::Color inbetween;
