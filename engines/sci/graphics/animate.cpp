@@ -35,6 +35,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/transitions.h"
@@ -591,6 +592,9 @@ void GfxAnimate::animateShowPic() {
 
 void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	byte old_picNotValid = _screen->_picNotValid;
+
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		_palette->palVaryUpdate();
 
 	if (listReference.isNull()) {
 		disposeLastCast();

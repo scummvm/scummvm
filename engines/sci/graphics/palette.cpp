@@ -72,6 +72,8 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 		_alwaysForceRealMerge = true;
 	else if (g_sci->getGameId() == "pq1sci")
 		_alwaysForceRealMerge = true;
+
+	palVaryInit();
 }
 
 GfxPalette::~GfxPalette() {
@@ -473,7 +475,7 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 // Saving/restoring
 //         need to save start and target-palette, when palVaryOn = true
 
-void GfxPalette::startPalVary(GuiResourceId resourceId, uint16 ticks) {
+void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks) {
 	kernelSetFromResource(resourceId, true);
 	return;
 
@@ -481,19 +483,23 @@ void GfxPalette::startPalVary(GuiResourceId resourceId, uint16 ticks) {
 		return;
 
 	_palVaryResourceId = resourceId;
-	_palVaryStart = g_system->getMillis();
-	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60, this);
+	_palVarySignal = 0;
+	// Call signal increase every [ticks]
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
 }
 
-void GfxPalette::togglePalVary(bool pause) {
+void GfxPalette::kernelPalVaryToggle(bool pause) {
 	// this call is actually counting states, so calling this 3 times with true will require calling it later
 	// 3 times with false to actually remove pause
-
-	// TODO
+	if (pause) {
+		_palVaryPaused++;
+	} else {
+		if (_palVaryPaused)
+			_palVaryPaused--;
+	}
 }
 
-void GfxPalette::stopPalVary() {
+void GfxPalette::kernelPalVaryDeinit() {
 	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
 
 	// HACK: just set the target palette
@@ -502,12 +508,24 @@ void GfxPalette::stopPalVary() {
 	_palVaryResourceId = -1;	// invalidate the target palette
 }
 
-void GfxPalette::palVaryCallback(void *refCon) {
-	((GfxPalette *)refCon)->doPalVary();
+void GfxPalette::palVaryInit() {
+	_palVaryResourceId = -1;
+	_palVaryPaused = 0;
+	_palVarySignal = 0;
 }
 
-void GfxPalette::doPalVary() {
-	// TODO: do palette transition here...
+void GfxPalette::palVaryCallback(void *refCon) {
+	((GfxPalette *)refCon)->palVaryIncreaseSignal();
+}
+
+void GfxPalette::palVaryIncreaseSignal() {
+	if (!_palVaryPaused)
+		_palVarySignal++;
+}
+
+// Actually do the pal vary processing
+void GfxPalette::palVaryUpdate() {
+
 }
 
 } // End of namespace Sci

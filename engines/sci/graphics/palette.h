@@ -62,21 +62,26 @@ public:
 	void kernelAnimateSet();
 	void kernelAssertPalette(GuiResourceId resourceId);
 
-	void startPalVary(GuiResourceId resourceId, uint16 ticks);
-	void togglePalVary(bool pause);
-	void stopPalVary();
+	void kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks);
+	void kernelPalVaryToggle(bool pause);
+	void kernelPalVaryDeinit();
+	void palVaryUpdate();
 
 	Palette _sysPalette;
 
 private:
+	void palVaryInit();
 	static void palVaryCallback(void *refCon);
-	void doPalVary();
+	void palVaryIncreaseSignal();
 
 	GfxScreen *_screen;
 	ResourceManager *_resMan;
+
 	GuiResourceId _palVaryResourceId;
 	uint32 _palVaryStart;
 	uint32 _palVaryEnd;
+	int _palVaryPaused;
+	int _palVarySignal;
 
 	bool _sysPaletteChanged;
 	bool _alwaysForceRealMerge;
