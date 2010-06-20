@@ -1247,14 +1247,11 @@ void ResourceManager::readResourcePatches() {
 			bool bAdd = false;
 			name = (*x)->getName();
 
-			// HACK: Skip broken map in QFG4 Demo
-			if (name.equalsIgnoreCase("65535x.map"))
-				continue;
-
 			// SCI1 scheme
 			if (isdigit(name[0])) {
-				resourceNr = atoi(name.c_str());
-				bAdd = true;
+				char *end = 0;
+				resourceNr = strtol(name.c_str(), &end, 10);
+				bAdd = (*end == '.'); // Ensure the next character is the period
 			} else {
 				// SCI0 scheme
 				int resname_len = strlen(szResType);
