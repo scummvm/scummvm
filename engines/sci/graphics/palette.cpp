@@ -506,6 +506,11 @@ void GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint1
 		_palVaryStep = 1;
 		_palVaryStepStop = stepStop;
 		_palVaryDirection = direction;
+		if (!ticks) {
+			// if no ticks are given, jump directly to destination
+			_palVaryDirection = stepStop;
+			ticks = 1;
+		}
 		// Call signal increase every [ticks]
 		g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
 	}
