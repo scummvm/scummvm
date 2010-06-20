@@ -161,6 +161,7 @@ void GfxFrameout::kernelFrameout() {
 			planePictureCels = planePicture->getSci32celCount();
 
 			_coordAdjuster->pictureSetDisplayArea(planeRect);
+			_palette->increaseSysTimestamp();
 		}
 
 		// Fill our itemlist for this plane
