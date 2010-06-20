@@ -39,7 +39,7 @@ class MadsSceneResources: public SceneResources {
 public:
 	int sceneId;
 	int artFileNum;
-	int drawStyle;
+	int depthStyle;
 	int width;
 	int height;
 	Common::Array<MadsObject> objects;

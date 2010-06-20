@@ -650,7 +650,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	int resSceneId = stream->readUint16LE();
 	assert(resSceneId == sceneNumber);
 	artFileNum = stream->readUint16LE();
-	drawStyle = stream->readUint16LE();
+	depthStyle = stream->readUint16LE();
 	width = stream->readUint16LE();
 	height = stream->readUint16LE();
 	
@@ -685,16 +685,15 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	if (!surface) {
 		surface = new M4Surface(width, height);
 		ssFlag = true;
-	}
+	} else if ((width != surface->width()) || (height != surface->height()))
+		surface->setSize(width, height);
+
 	int walkSize = gfxSize;
-	if (drawStyle == 2) {
-		width >>= 2;
-		walkSize = width * height;
-	}
 	if (!depthSurface) {
 		depthSurface = new M4Surface(width, height);
 		dsFlag = true;
-	}
+	} else if ((width != depthSurface->width()) || (height != depthSurface->height()))
+		depthSurface->setSize(width, height);
 
 
 	// For Rex Nebular, read in the scene's compressed walk surface information
@@ -708,9 +707,22 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		byte *destP = depthSurface->getBasePtr(0, 0);
 		const byte *srcP = walkData;
 		byte runLength;
+
+		// Run length encoded depth data
 		while ((runLength = *srcP++) != 0) {
-			Common::set_to(destP, destP + runLength, *srcP++);
-			destP += runLength;
+			if (depthStyle == 2) {
+				// 2-bit depth pixels
+				byte byteVal = *srcP++;
+				for (int byteCtr = 0; byteCtr < runLength; ++byteCtr) {
+					byte v = byteVal;
+					for (int bitCtr = 0; bitCtr < 4; ++bitCtr, v >>= 2)
+						*destP++ = v & 3;
+				}
+			} else {
+				// 8-bit depth pixels
+				Common::set_to(destP, destP + runLength, *srcP++);
+				destP += runLength;
+			}
 		}
 
 		free(walkData);
