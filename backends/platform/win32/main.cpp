@@ -23,21 +23,29 @@
  *
  */
 
+// Fix for bug #2895217 "MSVC compilation broken with r47595":
+// We need to keep this on top of the "common/scummsys.h" include,
+// otherwise we will get errors about the windows headers redefining
+// "ARRAYSIZE" for example.
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one...
+#undef ARRAYSIZE
+
 #include "common/scummsys.h"
 
-// Several SDL based ports use a custom main, and hence do not want to compile
-// of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO) && !defined(__SYMBIAN32__) && !defined(WIN32)
-
-
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/win32/win32.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
+
+int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
+	SDL_SetModuleHandle(GetModuleHandle(NULL));
+	return main(__argc, __argv);
+}
 
 int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance
-	g_system = new OSystem_SDL();
+	g_system = new OSystem_Win32();
 	assert(g_system);
 
 #ifdef DYNAMIC_MODULES
@@ -46,8 +54,6 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	delete (OSystem_SDL *)g_system;
+	delete (OSystem_Win32 *)g_system;
 	return res;
 }
-
-#endif

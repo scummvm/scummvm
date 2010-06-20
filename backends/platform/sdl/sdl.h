@@ -48,7 +48,7 @@ public:
 	// Quit
 	virtual void quit(); // overloaded by CE backend
 
-	void deinit();
+	virtual void deinit();
 
 	virtual void setWindowCaption(const char *caption);
 
@@ -60,14 +60,16 @@ public:
 
 	virtual bool pollEvent(Common::Event &event);
 
-	uint32 getMillis();
-	void delayMillis(uint msecs);
-	void getTimeAndDate(TimeDate &td) const;
+	virtual uint32 getMillis();
+	virtual void delayMillis(uint msecs);
+	virtual void getTimeAndDate(TimeDate &td) const;
 
 protected:
 	bool _inited;
 
 	void setupIcon();
+
+	virtual Common::String getDefaultConfigFileName();
 };
 
 #endif

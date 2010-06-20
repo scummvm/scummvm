@@ -203,7 +203,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 
 }
 
-static Common::String getDefaultConfigFileName() {
+Common::String OSystem_SDL::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 #if defined (WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 	OSVERSIONINFO win32OsVersion;
@@ -320,9 +320,7 @@ void OSystem_SDL::deinit() {
 void OSystem_SDL::quit() {
 	deinit();
 
-#if !defined(SAMSUNGTV)
 	exit(0);
-#endif
 }
 
 void OSystem_SDL::setupIcon() {

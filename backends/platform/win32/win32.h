@@ -23,31 +23,20 @@
  *
  */
 
-#include "common/scummsys.h"
-
-// Several SDL based ports use a custom main, and hence do not want to compile
-// of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO) && !defined(__SYMBIAN32__) && !defined(WIN32)
-
+#ifndef PLATFORM_WIN32_H
+#define PLATFORM_WIN32_H
 
 #include "backends/platform/sdl/sdl.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
 
-int main(int argc, char *argv[]) {
+class OSystem_Win32 : public OSystem_SDL {
+public:
+	OSystem_Win32();
+	~OSystem_Win32() {}
 
-	// Create our OSystem instance
-	g_system = new OSystem_SDL();
-	assert(g_system);
+	void initBackend();
 
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	delete (OSystem_SDL *)g_system;
-	return res;
-}
+protected:
+	Common::String getDefaultConfigFileName();
+};
 
 #endif
