@@ -681,14 +681,12 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 
 	// Initialise a copy of the surfaces if they weren't provided
 	bool dsFlag = false, ssFlag = false;
-	int gfxSize = width * height;
 	if (!surface) {
 		surface = new M4Surface(width, height);
 		ssFlag = true;
 	} else if ((width != surface->width()) || (height != surface->height()))
 		surface->setSize(width, height);
 
-	int walkSize = gfxSize;
 	if (!depthSurface) {
 		depthSurface = new M4Surface(width, height);
 		dsFlag = true;
