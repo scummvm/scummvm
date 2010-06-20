@@ -703,7 +703,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
-	case 8: { // Unknown
+	case 8: { // Unknown (seems to be SCI32 exclusive)
 		// Called in PQ4 (1 parameter)
 		warning("kPalVary(8) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
