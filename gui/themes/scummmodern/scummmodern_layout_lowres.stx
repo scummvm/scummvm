@@ -97,11 +97,11 @@
 	</globals>
 
 	<dialog name = 'Launcher' overlays = 'screen'>
-		<layout type = 'vertical' center = 'true' padding = '8, 8, 8, 4' spacing = '8'>
+		<layout type = 'vertical' center = 'true' padding = '4, 4, 2, 2' spacing = '2'>
 			<widget name = 'Version'
 					height = 'Globals.Line.Height'
 			/>
-			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+			<layout type = 'horizontal' spacing = '5' padding = '0, 0, 2, 2'>
 				<widget name = 'SearchDesc'
 						width = '50'
 						height = 'Globals.Line.Height'
@@ -118,7 +118,7 @@
 				<space />
 			</layout>
 			<widget name = 'GameList'/>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6'>
+			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
 				<widget name = 'LoadGameButton'
 						height = 'Globals.Button.Height'
 				/>
@@ -132,7 +132,7 @@
 						height = 'Globals.Button.Height'
 				/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '2'>
 				<widget name = 'QuitButton'
 						height = 'Globals.Button.Height'
 				/>
