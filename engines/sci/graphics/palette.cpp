@@ -342,8 +342,6 @@ void GfxPalette::getSys(Palette *pal) {
 }
 
 void GfxPalette::setOnScreen() {
-//	if (pal != &_sysPalette)
-//		memcpy(&_sysPalette,pal,sizeof(Palette));
 	// We dont change palette at all times for amiga
 	if (_resMan->isAmiga32color())
 		return;
@@ -355,7 +353,7 @@ void GfxPalette::setOnScreen() {
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	Palette palette;
 
 	if (palResource) {
@@ -496,13 +494,11 @@ void GfxPalette::palVaryInstallTimer() {
 }
 
 bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction) {
-	//kernelSetFromResource(resourceId, true);
-	//return;
 	if (_palVaryResourceId != -1)	// another palvary is taking place, return
 		return false;
 
 	_palVaryResourceId = resourceId;
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	if (palResource) {
 		// Load and initialize destination palette
 		createFromData(palResource->data, &_palVaryTargetPalette);
