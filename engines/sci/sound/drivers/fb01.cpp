@@ -128,8 +128,8 @@ private:
 };
 
 MidiPlayer_Fb01::MidiPlayer_Fb01(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _timerParam(NULL), _timerProc(NULL) {
-	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
-	_driver = createMidi(midiType);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
+	_driver = createMidi(dev);
 
 	_sysExBuf[0] = 0x43;
 	_sysExBuf[1] = 0x75;

@@ -228,6 +228,22 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'auPrefMt32PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefMt32Popup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
+				<widget name = 'auPrefGmPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefGmPopup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'auOPLPopupDesc'
 						type = 'OptionsLabel'
 				/>

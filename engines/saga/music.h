@@ -52,8 +52,8 @@ public:
 	void setVolume(int volume);
 	int getVolume() { return _masterVolume; }
 
-	bool isAdlib() { return _driverType == MD_ADLIB; }
-	bool isMT32() { return _driverType == MD_MT32 || _nativeMT32; }
+	bool isAdlib() { return _driverType == MT_ADLIB; }
+	bool isMT32() { return _driverType == MT_MT32 || _nativeMT32; }
 	void setGM(bool isGM) { _isGM = isGM; }
 
 	//MidiDriver interface implementation
@@ -78,7 +78,7 @@ protected:
 
 	MidiChannel *_channel[16];
 	MidiDriver *_driver;
-	MidiDriverType _driverType;
+	MusicType _driverType;
 	byte _channelVolume[16];
 	bool _isGM;
 	bool _nativeMT32;

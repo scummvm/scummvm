@@ -120,10 +120,10 @@ private:
 };
 
 MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
-	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
-	_driver = createMidi(midiType);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
+	_driver = createMidi(dev);
 
-	if (midiType == MD_MT32 || ConfMan.getBool("native_mt32"))
+	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
 		_isMt32 = true;
 
 	_sysExBuf[0] = 0x41;

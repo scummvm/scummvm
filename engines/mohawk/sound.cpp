@@ -27,11 +27,11 @@
 
 #include "common/util.h"
 
+#include "sound/musicplugin.h"
 #include "sound/audiostream.h"
 #include "sound/decoders/mp3.h"
 #include "sound/decoders/raw.h"
 #include "sound/decoders/wave.h"
-
 
 namespace Mohawk {
 
@@ -79,7 +79,7 @@ void Sound::initMidi() {
 
 	// Let's get our MIDI parser/driver
 	_midiParser = MidiParser::createParser_SMF();
-	_midiDriver = MidiDriver::createMidi(MidiDriver::detectMusicDriver(MDT_ADLIB|MDT_MIDI));
+	_midiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB|MDT_MIDI));
 
 	// Set up everything!
 	_midiDriver->open();

@@ -86,11 +86,11 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	}
 
 	// Initialize the music type variable
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	if (midiDriver == MD_ADLIB) {
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		// MIDI through AdLib
 		setVariable(0x100, 0);
-	} else if ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
 		setVariable(0x100, 2);
 	} else {

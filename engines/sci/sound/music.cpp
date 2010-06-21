@@ -61,31 +61,25 @@ void SciMusic::init() {
 	// SCI sound init
 	_dwTempo = 0;
 
-	MidiDriverType midiType;
-
 	// Default to MIDI in SCI32 games, as many don't have AdLib support.
 	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support those patches yet.
 	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
 	// default to MIDI in those games to let them run.
 	Common::Platform platform = g_sci->getPlatform();
+	uint32 dev =  MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA)) ? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI) : (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
 
-	if (getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA))
-		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI);
-	else
-		midiType = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB | MDT_MIDI);
-
-	switch (midiType) {
-	case MD_ADLIB:
+	switch (MidiDriver::getMusicType(dev)) {
+	case MT_ADLIB:
 		// FIXME: There's no Amiga sound option, so we hook it up to AdLib
 		if (g_sci->getPlatform() == Common::kPlatformAmiga)
 			_pMidiDrv = MidiPlayer_Amiga_create(_soundVersion);
 		else
 			_pMidiDrv = MidiPlayer_AdLib_create(_soundVersion);
 		break;
-	case MD_PCJR:
+	case MT_PCJR:
 		_pMidiDrv = MidiPlayer_PCJr_create(_soundVersion);
 		break;
-	case MD_PCSPK:
+	case MT_PCSPK:
 		_pMidiDrv = MidiPlayer_PCSpeaker_create(_soundVersion);
 		break;
 	default:

@@ -50,13 +50,13 @@ SoundManager::SoundManager() {
 	_soundData = NULL;
 	_paused = false;
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_isRoland = midiDriver != MD_ADLIB;
-	_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_isRoland = MidiDriver::getMusicType(dev) != MT_ADLIB;
+	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 	Common::set_to(_channelsInUse, _channelsInUse + NUM_CHANNELS, false);
 
-	_driver = MidiDriver::createMidi(midiDriver);
+	_driver = MidiDriver::createMidi(dev);
 	int statusCode = _driver->open();
 	if (statusCode) {
 		warning("Sound driver returned error code %d", statusCode);

@@ -28,6 +28,7 @@
 #include "gui/dialog.h"
 #include "gui/TabWidget.h"
 #include "common/str.h"
+#include "sound/musicplugin.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -78,6 +79,10 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	typedef bool (MidiSettingsExtraPred)(MusicDevices::iterator, Common::String, bool, MusicPlugin::List::const_iterator&);
+	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MidiSettingsExtraPred pred, MusicType preferredType = MT_NULL);
+	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MidiSettingsExtraPred pred);
+
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
 
@@ -103,6 +108,13 @@ private:
 	PopUpWidget *_oplPopUp;
 	StaticTextWidget *_outputRatePopUpDesc;
 	PopUpWidget *_outputRatePopUp;
+
+	StaticTextWidget *_mt32DevicePopUpDesc;
+	PopUpWidget *_mt32DevicePopUp;
+	StaticTextWidget *_gmDevicePopUpDesc;
+	PopUpWidget *_gmDevicePopUp;
+
+
 
 	//
 	// MIDI controls

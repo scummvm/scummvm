@@ -896,7 +896,7 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 			}
 		}
 
-		dg.setGUIOptions(x->game.guioptions | MidiDriver::midiDriverFlags2GUIO(x->game.midi));
+		dg.setGUIOptions(x->game.guioptions | MidiDriver::musicType2GUIO(x->game.midi));
 		dg.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(x->language));
 
 		detectedGames.push_back(dg);

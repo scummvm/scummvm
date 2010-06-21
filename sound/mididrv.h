@@ -30,6 +30,8 @@
 #include "common/timer.h"
 
 class MidiChannel;
+class MusicDevice;
+
 namespace Audio {
 	class Mixer;
 }
@@ -43,56 +45,28 @@ namespace Common { class String; }
  *
  * @todo Rename MidiDriverType to MusicDriverType
  */
-enum MidiDriverType {
-	// Pseudo drivers
-	MD_AUTO,
-	MD_NULL,
 
-	// Windows
-	MD_WINDOWS,
-
-	// Atari ST
-	MD_STMIDI,
-
-	// Linux
-	MD_ALSA,
-	MD_SEQ,
-
-	// Mac OS X
-	MD_QTMUSIC,
-	MD_COREAUDIO,
-	MD_COREMIDI,
-
-	// PalmOS
-	MD_YPA1,
-	MD_ZODIAC,
-
-	// IRIX
-	MD_DMEDIA,
-
-	// AMIGAOS4
-	MD_CAMD,
-
-	// MIDI softsynths
-	MD_FLUIDSYNTH,
-	MD_MT32,
-
-	// "Fake" MIDI devices
-	MD_ADLIB,
-	MD_PCSPK,
-	MD_CMS,
-	MD_PCJR,
-	MD_TOWNS,
-	MD_TIMIDITY
+/**
+ * Music types that music drivers can implement and engines can rely on.
+ */
+enum MusicType {
+	MT_NULL	 = 0,  // Null / Auto
+	MT_PCSPK = 1,  // PC Speaker
+	MT_PCJR  = 2,  // PCjr
+	MT_ADLIB = 3,  // AdLib
+	MT_TOWNS = 4,  // FM-TOWNS
+	MT_GM    = 5,  // General MIDI
+	MT_MT32  = 6,  // MT-32
+	MT_GS    = 7   // Roland GS
 };
 
 /**
- * A set of flags to be passed to detectMusicDriver() which can be used to
+ * A set of flags to be passed to detectDevice() which can be used to
  * specify what kind of music driver is preferred / accepted.
  *
  * The flags (except for MDT_PREFER_MIDI) indicate whether a given driver
  * type is acceptable. E.g. the TOWNS music driver could be returned by
- * detectMusicDriver if and only if MDT_TOWNS is specified.
+ * detectDevice if and only if MDT_TOWNS is specified.
  *
  * @todo Rename MidiDriverFlags to MusicDriverFlags
  */
@@ -104,7 +78,9 @@ enum MidiDriverFlags {
 	MDT_ADLIB  = 1 << 3,      // AdLib: Maps to MD_ADLIB
 	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MD_TOWNS
 	MDT_MIDI   = 1 << 5,      // Real MIDI
-	MDT_PREFER_MIDI = 1 << 6  // Real MIDI output is preferred
+	MDT_PREFER_MIDI = 1 << 6,  // Real MIDI output is preferred
+	MDT_PREFER_MT32 = 1 << 7,  // MT-32 output is preferred
+	MDT_PREFER_GM = 1 << 8  // GM output is preferred
 };
 
 /**
@@ -114,12 +90,6 @@ enum MidiDriverFlags {
  *
  * @todo Rename MidiDriverType to MusicDriverType
  */
-struct MidiDriverDescription {
-	const char *name;
-	const char *description;
-	MidiDriverType id;		// A unique ID for each driver
-	int flags;				// Capabilities of this driver
-};
 
 /**
  * Abstract MIDI Driver Class
@@ -128,24 +98,41 @@ struct MidiDriverDescription {
  */
 class MidiDriver {
 public:
-	/** Find the music driver matching the given driver name/description. */
-	static const MidiDriverDescription *findMusicDriver(const Common::String &str);
+	typedef uint32 DeviceHandle;
 
-	/** Get the id of the music driver matching the given driver name, or MD_AUTO if there is no match. */
-	static MidiDriverType parseMusicDriver(const Common::String &str);
+	enum DeviceStringType {
+		kDriverName,
+		kDriverId,
+		kDeviceId
+	};
 
-	static uint32 midiDriverFlags2GUIO(uint32 flags);
+	static uint32 musicType2GUIO(uint32 musicType);
 
+	/** Create music driver matching the given device handle, or MT_AUTO if there is no match. */
+	static MidiDriver *createMidi(DeviceHandle handle);
+
+	/** Returnd device handle based on the present devices and the flags parameter.
+	/ *	Returns NULl if the matching device is the null or auto device. */
+	static DeviceHandle detectDevice(int flags);
+		
 	/**
-	 * Get a list of all available MidiDriver types.
-	 * @return list of all available midi drivers, terminated by  a zero entry
+	 * Find the music driver matching the given driver name/description.
 	 */
-	static const MidiDriverDescription *getAvailableMidiDrivers();
+	static DeviceHandle getDeviceHandle(const Common::String &identifier);
 
-	static MidiDriver *createMidi(MidiDriverType midiDriver);
+	/** Get the music type matching the given device handle, or MT_AUTO if there is no match. */
+	static MusicType getMusicType(DeviceHandle handle);
 
-	static MidiDriverType detectMusicDriver(int flags);
+	/** Get the device string matching the given device handle and the given type. */
+	static Common::String getDeviceString(DeviceHandle handle, DeviceStringType type);
 
+private:
+	// If detectDevice() detects MT32 and we have a preferred MT32 device
+	// we use this to force getMusicType() to return MT_MT32 so that we don't
+	// have to rely on the 'True Roland MT-32' config manager setting (since nobody
+	// would possibly think about activating 'True Roland MT-32' when he has set
+	// 'Music Driver' to '>default>')
+	static bool _forceTypeMT32;
 
 public:
 	virtual ~MidiDriver() { }
@@ -273,29 +260,5 @@ public:
 	// SysEx messages
 	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
 };
-
-
-// Factory functions, for faster compile
-extern MidiDriver *MidiDriver_NULL_create();
-extern MidiDriver *MidiDriver_ADLIB_create();
-extern MidiDriver *MidiDriver_WIN_create();
-extern MidiDriver *MidiDriver_STMIDI_create();
-extern MidiDriver *MidiDriver_SEQ_create();
-extern MidiDriver *MidiDriver_TIMIDITY_create();
-extern MidiDriver *MidiDriver_QT_create();
-extern MidiDriver *MidiDriver_CORE_create();
-extern MidiDriver *MidiDriver_CoreMIDI_create();
-extern MidiDriver *MidiDriver_ALSA_create();
-extern MidiDriver *MidiDriver_DMEDIA_create();
-extern MidiDriver *MidiDriver_CAMD_create();
-extern MidiDriver *MidiDriver_YM2612_create();
-#ifdef USE_FLUIDSYNTH
-extern MidiDriver *MidiDriver_FluidSynth_create();
-#endif
-#ifdef USE_MT32EMU
-extern MidiDriver *MidiDriver_MT32_create();
-#endif
-extern MidiDriver *MidiDriver_YamahaPa1_create();
-extern MidiDriver *MidiDriver_Zodiac_create();
 
 #endif

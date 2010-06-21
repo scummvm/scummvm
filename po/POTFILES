@@ -21,7 +21,11 @@ engines/dialogs.cpp
 engines/scumm/dialogs.cpp
 engines/mohawk/dialogs.cpp
 
-sound/mididrv.cpp
+sound/musicplugin.cpp
+sound/null.cpp
+sound/softsynth/mt32.cpp
+sound/softsynth/adlib.cpp
+sound/softsynth/ym2612.cpp
 
 backends/keymapper/remap-dialog.cpp
 backends/platform/ds/arm9/source/dsoptions.cpp

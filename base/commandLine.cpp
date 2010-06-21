@@ -364,7 +364,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				if (MidiDriver::findMusicDriver(option) == 0)
+				if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(option)) == MT_NULL)
 					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 

@@ -386,8 +386,8 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	_midiParser = MidiParser::createParser_XMIDI();
 
 	// Create the driver
-	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = createMidi(driver);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = createMidi(dev);
 	this->open();
 
 	// Set the parser's driver
@@ -402,9 +402,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	}
 
 	// Load the Global Timbre Library
-	if (driver == MD_ADLIB) {
+	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		// MIDI through AdLib
-		_musicType = MD_ADLIB;
+		_musicType = MT_ADLIB;
 		loadTimbres(gtlName + ".ad");
 
 		// Setup the percussion channel
@@ -412,9 +412,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 			if (_timbres[i].bank == 0x7F)
 				setTimbreAD(9, _timbres[i]);
 		}
-	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
-		_musicType = MD_MT32;
+		_musicType = MT_MT32;
 		loadTimbres(gtlName + ".mt");
 	} else {
 		// GM
@@ -455,9 +455,9 @@ void MusicPlayerXMI::send(uint32 b) {
 			for (int i = 0; i < numTimbres; i++) {
 				if ((_timbres[i].bank == _chanBanks[chan]) &&
 					(_timbres[i].patch == patch)) {
-					if (_musicType == MD_ADLIB) {
+					if (_musicType == MT_ADLIB) {
 						setTimbreAD(chan, _timbres[i]);
-					} else if (_musicType == MD_MT32) {
+					} else if (_musicType == MT_MT32) {
 						setTimbreMT(chan, _timbres[i]);
 					}
 					return;
@@ -682,8 +682,8 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	_midiParser = MidiParser::createParser_SMF();
 
 	// Create the driver
-	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = createMidi(driver);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = createMidi(dev);
 	this->open();
 
 	// Set the parser's driver

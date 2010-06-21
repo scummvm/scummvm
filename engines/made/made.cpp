@@ -97,11 +97,11 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 
 	_script = new ScriptInterpreter(this);
 
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	//bool adlib = (midiDriver == MD_ADLIB);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 
-	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+	MidiDriver *driver = MidiDriver::createMidi(dev);
 	if (native_mt32)
 		driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 

@@ -27,96 +27,10 @@
 #include "common/config-manager.h"
 #include "common/str.h"
 #include "common/system.h"
-#include "common/translation.h"
 #include "common/util.h"
 #include "sound/mididrv.h"
-
-static const uint32 GUIOMapping[] = {
-	MDT_PCSPK,	Common::GUIO_MIDIPCSPK,
-	MDT_CMS,		Common::GUIO_MIDICMS,
-	MDT_PCJR,		Common::GUIO_MIDIPCJR,
-	MDT_ADLIB,	Common::GUIO_MIDIADLIB,
-	MDT_TOWNS,	Common::GUIO_MIDITOWNS,
-	MDT_MIDI,		Common::GUIO_MIDI,
-	0,	0
-};
-
-uint32 MidiDriver::midiDriverFlags2GUIO(uint32 flags) {
-	uint32 res = 0;
-
-	for (int i = 0; GUIOMapping[i] || GUIOMapping[i + 1]; i += 2) {
-		if (flags & GUIOMapping[i])
-			res |= GUIOMapping[i + 1];
-	}
-
-	return res;
-}
-
-/** Internal list of all available 'midi' drivers. */
-static const MidiDriverDescription s_musicDrivers[] = {
-
-	// The flags for the "auto" & "null" drivers indicate that they are anything
-	// you want it to be.
-	{"auto", _s("<default>"), MD_AUTO, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
-	{"null", _s("No music"), MD_NULL, MDT_MIDI | MDT_PCSPK | MDT_ADLIB | MDT_TOWNS},
-
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	{"windows", _s("Windows MIDI"), MD_WINDOWS, MDT_MIDI},
-#endif
-
-#if defined(UNIX) && defined(USE_ALSA)
-	{"alsa", _s("ALSA"), MD_ALSA, MDT_MIDI},
-#endif
-
-#if defined(__MINT__)
-	{"stmidi", _s("Atari ST MIDI"), MD_STMIDI, MDT_MIDI},
-#endif
-
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
-	{"seq", _s("SEQ"), MD_SEQ, MDT_MIDI},
-#endif
-
-#if defined(IRIX)
-	{"dmedia", _s("DMedia"), MD_DMEDIA, MDT_MIDI},
-#endif
-
-#if defined(__amigaos4__)
-	{"camd", _s("CAMD"), MD_CAMD, MDT_MIDI},
-#endif
-
-#if defined(MACOSX)
-	{"core", _s("CoreAudio"), MD_COREAUDIO, MDT_MIDI},
-//	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
-	{"coremidi", _s("CoreMIDI"), MD_COREMIDI, MDT_MIDI},
-#endif
-
-#if defined(PALMOS_MODE)
-#	if defined(COMPILE_CLIE)
-	{"ypa1", _s("Yamaha Pa1"), MD_YPA1, MDT_MIDI},
-#	elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-	{"zodiac", _s("Tapwave Zodiac"), MD_ZODIAC, MDT_MIDI},
-#	endif
-#endif
-
-#ifdef USE_FLUIDSYNTH
-	{"fluidsynth", _s("FluidSynth"), MD_FLUIDSYNTH, MDT_MIDI},
-#endif
-#ifdef USE_MT32EMU
-	{"mt32", _s("MT-32 Emulation"), MD_MT32, MDT_MIDI},
-#endif
-
-	// The flags for the "adlib" driver indicates that it can do AdLib and MIDI.
-	{"adlib", _s("AdLib"), MD_ADLIB, MDT_ADLIB},
-	{"pcspk", _s("PC Speaker"), MD_PCSPK, MDT_PCSPK},
-	{"pcjr", _s("IBM PCjr"), MD_PCJR, MDT_PCSPK | MDT_PCJR},
-	{"cms", _s("Creative Music System"), MD_CMS, MDT_CMS},
-	{"towns", _s("FM Towns"), MD_TOWNS, MDT_TOWNS},
-#if defined(UNIX)
-	{"timidity", _s("TiMidity"), MD_TIMIDITY, MDT_MIDI},
-#endif
-
-	{0, 0, MD_NULL, MDT_NONE}
-};
+#include "sound/musicplugin.h"
+#include "common/translation.h"
 
 const byte MidiDriver::_mt32ToGm[128] = {
 //	  0    1    2    3    4    5    6    7    8    9    A    B    C    D    E    F
@@ -142,169 +56,190 @@ const byte MidiDriver::_gmToMt32[128] = {
 	101, 103, 100, 120, 117, 113,  99, 128, 128, 128, 128, 124, 123, 128, 128, 128, // 7x
 };
 
-const MidiDriverDescription *MidiDriver::getAvailableMidiDrivers() {
-	return s_musicDrivers;
-}
+static const uint32 GUIOMapping[] = {
+	MT_PCSPK,		Common::GUIO_MIDIPCSPK,
+	/*MDT_CMS,		Common::GUIO_MIDICMS,*/
+	MT_PCJR,		Common::GUIO_MIDIPCJR,
+	MT_ADLIB,		Common::GUIO_MIDIADLIB,
+	MT_TOWNS,		Common::GUIO_MIDITOWNS,
+	MT_GM,			Common::GUIO_MIDIGM,
+	MT_MT32,		Common::GUIO_MIDIMT32,	
+	0,		0
+};
 
-const MidiDriverDescription *MidiDriver::findMusicDriver(const Common::String &str) {
-	if (str.empty())
-		return 0;
+uint32 MidiDriver::musicType2GUIO(uint32 musicType) {
+	uint32 res = 0;
 
-	const char *s = str.c_str();
-	int len = 0;
-	const MidiDriverDescription *md = s_musicDrivers;
-
-	// Scan for string end or a colon
-	while (s[len] != 0 && s[len] != ':')
-		len++;
-
-	while (md->name) {
-		// Compare the string passed to us with the current table entry.
-		// We ignore any characters following an (optional) colon ':'
-		// contained in str.
-		if (!scumm_strnicmp(md->name, s, len)) {
-			return md;
-		}
-		md++;
+	for (int i = 0; GUIOMapping[i] || GUIOMapping[i + 1]; i += 2) {
+		if (musicType == GUIOMapping[i] || musicType == (uint32)-1)
+			res |= GUIOMapping[i + 1];
 	}
 
-	return 0;
+	return res;
 }
 
-static MidiDriverType getDefaultMIDIDriver() {
-#if defined(WIN32) && !defined(_WIN32_WCE) &&  !defined(__SYMBIAN32__)
-	return MD_WINDOWS;
-#elif defined(MACOSX)
-	return MD_COREAUDIO;
-#elif defined(PALMOS_MODE)
-  #if defined(COMPILE_CLIE)
-	return MD_YPA1;
-  #elif defined(COMPILE_ZODIAC)
-	return MD_ZODIAC;
-  #else
-	return MD_NULL;
-  #endif
-#else
-	return MD_NULL;
-#endif
+bool MidiDriver::_forceTypeMT32 = false;
+
+MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
+	if (_forceTypeMT32)
+		return MT_MT32;
+
+	if (handle) {
+		const MusicPlugin::List p = MusicMan.getPlugins();
+		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+			MusicDevices i = (**m)->getDevices();
+			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+				if (handle == d->getHandle())
+					return d->getMusicType();
+			}
+		}
+	}
+	
+	return MT_NULL;
 }
 
-MidiDriverType MidiDriver::parseMusicDriver(const Common::String &str) {
-	const MidiDriverDescription *md = findMusicDriver(str);
-	if (md)
-		return md->id;
-	return MD_AUTO;
+Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
+	if (handle) {
+		const MusicPlugin::List p = MusicMan.getPlugins();
+		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+			MusicDevices i = (**m)->getDevices();
+			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+				if (handle == d->getHandle()) {
+					if (type == kDriverName)
+						return d->getMusicDriverName();
+					else if (type == kDriverId)
+						return d->getMusicDriverId();
+					else if (type == kDeviceId)
+						return d->getCompleteId();
+					else
+						return Common::String("auto");
+				}
+			}
+		}
+	}
+
+	return Common::String("auto");
 }
 
-MidiDriverType MidiDriver::detectMusicDriver(int flags) {
-	MidiDriverType musicDriver;
+MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
+	// Query the selected music device (defaults to MT_AUTO device).
+	DeviceHandle hdl = getDeviceHandle(ConfMan.get("music_driver"));
 
-	// Query the selected music driver (defaults to MD_AUTO).
-	const MidiDriverDescription *md = findMusicDriver(ConfMan.get("music_driver"));
+	_forceTypeMT32 = false;
 
 	// Check whether the selected music driver is compatible with the
 	// given flags.
-	if (!md || !(md->flags & flags))
-		musicDriver = MD_AUTO;
-	else
-		musicDriver = md->id;
+	switch (getMusicType(hdl)) {
+	case MT_PCSPK:
+	case MT_PCJR:
+		if (flags & MDT_PCSPK)
+			return hdl;
+		break;
 
-	// If the selected driver is MD_AUTO, we try to determine
-	// a suitable and "optimal" music driver.
-	if (musicDriver == MD_AUTO) {
+	case MT_ADLIB:
+		if (flags & MDT_ADLIB)
+			return hdl;
+		break;
+		
+	case MT_TOWNS:
+		if (flags & MDT_TOWNS)
+			return hdl;
+		break;
 
-		if (flags & MDT_PREFER_MIDI) {
-			// A MIDI music driver is preferred. Of course this implies
-			// that MIDI is actually listed in flags, so we verify that.
-			assert(flags & MDT_MIDI);
+	case MT_GM:
+	case MT_GS:
+	case MT_MT32:
+		if (flags & MDT_MIDI)
+			return hdl;
+	case MT_NULL:
+		if (getDeviceString(hdl, MidiDriver::kDriverId).equals("null"))
+			return 0;
 
-			// Query the default MIDI driver. It's possible that there
-			// is none, in which case we revert to AUTO mode.
-			musicDriver = getDefaultMIDIDriver();
-			if (musicDriver == MD_NULL)
-				musicDriver = MD_AUTO;
-		}
+	default:
+		break;
+	}
 
-		if (musicDriver == MD_AUTO) {
-			// MIDI is not preferred, or no default MIDI device is available.
-			// In this case we first try the alternate drivers before checking
-			// for a 'real' MIDI driver.
+	// If the selected driver did not match the flags setting,
+	// we try to determine a suitable and "optimal" music driver.
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	// If only MDT_MIDI but not MDT_PREFER_MIDI is set we prefer the other devices (which will always be
+	// detected since they are hard coded and cannot be disabled.
+	for (int l = (flags & MDT_PREFER_MIDI) ? 1 : 0; l < 2; l++) {
+		if ((flags & MDT_MIDI) && (l == 1)) {
+			// If a preferred MT32 or GM device has been selected that device gets returned
+			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto"), Common::ConfigManager::kApplicationDomain));
+			if (getMusicType(hdl) != MT_NULL) {
+				if (flags & MDT_PREFER_MT32)
+					// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
+					_forceTypeMT32 = true;
 
-			if (flags & MDT_TOWNS)
-				musicDriver = MD_TOWNS;
-			else if (flags & MDT_ADLIB)
-				musicDriver = MD_ADLIB;
-			else if (flags & MDT_PCSPK)
-				musicDriver = MD_PCJR;
-			else if (flags & MDT_MIDI)
-				musicDriver = getDefaultMIDIDriver();
-			else
-				musicDriver = MD_NULL;
+				return hdl;
+			}
+			
+			// If we have no specific device selected (neither in the scummvm nor in the game domain)
+			// and no preferred MT32 or GM device selected we arrive here.
+			// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
+			if (flags & MDT_PREFER_MT32) {
+				for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+					MusicDevices i = (**m)->getDevices();
+					for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+						if (getMusicType(hdl) == MT_MT32)
+							return hdl;
+					}
+				}
+			}
+			
+			// Now we default to the first available device with music type 'MT_GM'
+			for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+				MusicDevices i = (**m)->getDevices();
+				for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+					if (getMusicType(hdl) == MT_GM || getMusicType(hdl) == MT_GS)
+						return hdl;
+				}
+			}
+		} 
+		
+		MusicType tp = MT_NULL;	
+		if (flags & MDT_TOWNS)
+			tp = MT_TOWNS;
+		else if (flags & MDT_ADLIB)
+			tp = MT_ADLIB;
+		else if (flags & MDT_PCSPK)
+			tp = MT_PCSPK;
+		else
+			tp = MT_NULL;
+
+		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+			MusicDevices i = (**m)->getDevices();
+			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+				if (d->getMusicType() == tp)
+					return d->getHandle();
+			}
 		}
 	}
 
-	return musicDriver;
+	return hdl;
 }
 
-MidiDriver *MidiDriver::createMidi(MidiDriverType midiDriver) {
-	switch (midiDriver) {
-	case MD_NULL:      return MidiDriver_NULL_create();
-
-	case MD_ADLIB:     return MidiDriver_ADLIB_create();
-
-	case MD_TOWNS:     return MidiDriver_YM2612_create();
-
-	// Right now PC Speaker and PCjr are handled
-	// outside the MidiDriver architecture, so
-	// don't create anything for now.
-	case MD_PCSPK:
-	case MD_CMS:
-	case MD_PCJR:      return NULL;
-
-#ifdef USE_FLUIDSYNTH
-	case MD_FLUIDSYNTH:	return MidiDriver_FluidSynth_create();
-#endif
-
-#ifdef USE_MT32EMU
-	case MD_MT32:      return MidiDriver_MT32_create();
-#endif
-
-#if defined(PALMOS_MODE)
-#if defined(COMPILE_CLIE)
-	case MD_YPA1:      return MidiDriver_YamahaPa1_create();
-#elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-	case MD_ZODIAC:    return MidiDriver_Zodiac_create();
-#endif
-#endif
-
-#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
-	case MD_WINDOWS:   return MidiDriver_WIN_create();
-#endif
-#if defined(__MINT__)
-	case MD_STMIDI:    return MidiDriver_STMIDI_create();
-#endif
-#if defined(UNIX) && !defined(__BEOS__) && !defined(MACOSX) && !defined(__MAEMO__) && !defined(__MINT__)
-	case MD_SEQ:       return MidiDriver_SEQ_create();
-#endif
-#if defined(UNIX)
-	case MD_TIMIDITY:  return MidiDriver_TIMIDITY_create();
-#endif
-#if defined(IRIX)
-	case MD_DMEDIA:    return MidiDriver_DMEDIA_create();
-#endif
-#if defined(MACOSX)
-	case MD_COREAUDIO: return MidiDriver_CORE_create();
-	case MD_COREMIDI:  return MidiDriver_CoreMIDI_create();
-#endif
-#if defined(UNIX) && defined(USE_ALSA)
-	case MD_ALSA:      return MidiDriver_ALSA_create();
-#endif
-#if defined(__amigaos4__)
-	case MD_CAMD:      return MidiDriver_CAMD_create();
-#endif
-	default:
-		error("Invalid midi driver selected");
+MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
+	MidiDriver *driver = 0;
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+		if (getDeviceString(handle, MidiDriver::kDriverId).equals((**m)->getId()))
+			(**m)->createInstance(&driver, handle);
 	}
+	return driver;
+}
 
-	return NULL;
+MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName()))
+				return d->getHandle();
+		}
+	}	
+
+	return getDeviceHandle("auto");
 }

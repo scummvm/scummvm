@@ -71,8 +71,8 @@ MIDISound::MIDISound(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : A
 }
 
 SoundGenMIDI::SoundGenMIDI(AgiEngine *vm, Audio::Mixer *pMixer) : SoundGen(vm, pMixer), _parser(0), _isPlaying(false), _passThrough(false), _isGM(false) {
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB);
-	_driver = MidiDriver::createMidi(midiDriver);
+	DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB);
+	_driver = MidiDriver::createMidi(dev);
 
 	memset(_channel, 0, sizeof(_channel));
 	memset(_channelVolume, 255, sizeof(_channelVolume));

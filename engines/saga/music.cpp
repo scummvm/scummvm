@@ -47,8 +47,8 @@ MusicDriver::MusicDriver() : _isGM(false) {
 	_masterVolume = 0;
 	_nativeMT32 = ConfMan.getBool("native_mt32");
 
-	_driverType = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = MidiDriver::createMidi(_driverType);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	_driver = MidiDriver::createMidi(dev);
 	if (isMT32())
 		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 

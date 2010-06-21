@@ -305,7 +305,8 @@ const struct GameOpt {
 	{ GUIO_MIDIPCJR,		"midiPCJr" },
 	{ GUIO_MIDIADLIB,		"midiAdLib" },
 	{ GUIO_MIDITOWNS,	"midiTowns" },
-	{ GUIO_MIDI,				"midiMidi" },
+	{ GUIO_MIDIMT32,			"midiMt32" },
+	{ GUIO_MIDIGM,				"midiGM" },
 
 	{ GUIO_NONE, 0 }
 };

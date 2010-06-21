@@ -345,8 +345,8 @@ void GobEngine::pauseGame() {
 }
 
 bool GobEngine::initGameParts() {
-	_noMusic = MidiDriver::parseMusicDriver(ConfMan.get("music_driver")) == MD_NULL;
-
+	// just detect some devices some of which will be always there if the music is not disabled
+	_noMusic = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB) ? false : true;
 	_saveLoad = 0;
 
 	_global    = new Global(this);
