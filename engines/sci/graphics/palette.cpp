@@ -429,6 +429,8 @@ bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 		scheduleCount++;
 	}
 
+	g_sci->getEngineState()->_throttleTrigger = true;
+
 	for (scheduleNr = 0; scheduleNr < scheduleCount; scheduleNr++) {
 		if (_schedules[scheduleNr].from == fromColor) {
 			if (_schedules[scheduleNr].schedule <= now) {
