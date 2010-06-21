@@ -161,6 +161,11 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
+				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
+				// Just skip around it here so we don't error out in validate_arithmetic.
+				if (g_sci->getGameId() == "mothergoose" && getSciVersion() <= SCI_VERSION_1_1 && type == VAR_PARAM && index == 1)
+					return false;
+
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
 				return true;
