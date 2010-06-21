@@ -395,8 +395,10 @@ void GfxPalette::kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) 
 
 void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
-	if (setPalette)
+	if (setPalette) {
 		setOnScreen();
+		g_sci->getEngineState()->_throttleTrigger = true;
+	}
 }
 
 int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
