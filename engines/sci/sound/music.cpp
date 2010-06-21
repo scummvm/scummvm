@@ -118,9 +118,6 @@ void SciMusic::onTimer() {
 
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
 		(*i)->onTimer();
-
-	// for sending out fade commands immediately
-	sendMidiCommandsFromQueue();
 }
 
 void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
