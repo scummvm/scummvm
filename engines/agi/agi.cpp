@@ -272,20 +272,19 @@ void AgiEngine::processEvents() {
 }
 
 void AgiEngine::pollTimer() {
-	static uint32 m = 0;
 	uint32 dm;
 
-	if (_tickTimer < m)
-		m = 0;
+	if (_tickTimer < _lastTickTimer)
+		_lastTickTimer = 0;
 
-	while ((dm = _tickTimer - m) < 5) {
+	while ((dm = _tickTimer - _lastTickTimer) < 5) {
 		processEvents();
 		if (_console->isAttached())
 			_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
-	m = _tickTimer;
+	_lastTickTimer = _tickTimer;
 }
 
 void AgiEngine::agiTimerFunctionLow(void *refCon) {
@@ -543,6 +542,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_allowSynthetic = false;
 
 	_tickTimer = 0;
+	_lastTickTimer = 0;
 
 	_intobj = NULL;
 

@@ -816,6 +816,7 @@ public:
 private:
 
 	uint32 _tickTimer;
+	uint32 _lastTickTimer;
 
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;
