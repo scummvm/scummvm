@@ -17,7 +17,9 @@ GFXTestSuite::GFXTestSuite() {
 	// The fourth field is for alpha channel which is unused
 	// Assuming 8bpp as of now
 	g_system->setPalette(_palette, 0, 3);
-	g_system->grabPalette(_palette, 0, 3);
+	
+	// Init Mouse Palette (White-black-yellow)
+	GFXtests::initMousePalette();
 	
 	// Add tests here
 	
@@ -51,36 +53,44 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[9] = g;
 	_palette[10] = b;
 	g_system->setPalette(_palette, 0, 3);
-	g_system->grabPalette(_palette, 0, 3);
 }
 
 // Helper functions used by GFX tests
 
-void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
+void GFXtests::initMousePalette() {
 	byte palette[3 * 4]; // Black, white and yellow
-	byte buffer[11][11];
 	
 	palette[0] = palette[1] = palette[2] = 0;
 	palette[4] = palette[5] = palette[6] = 255;
 	palette[8] = palette[9] = 255;
 	palette[10] = 0;
 		
-	memset(&buffer[0][0], 2, 11 * 11);
-	CursorMan.pushCursorPalette(palette, 0, 3);
+	CursorMan.replaceCursorPalette(palette, 0, 3);
 	
-	// Mark the hotspot
+}
+
+void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
+
+	// Paint the mouse with yellow
+	byte buffer[11][11];
+	memset(&buffer[0][0], 2, sizeof(buffer));
+	
+	// Mark the hotspot with black
 	for (int i = 0; i < 11; i++) {
 		buffer[i][i] = 0;
-		buffer[10 - i][i] = 0;
+		// buffer[10 - i][i] = 0;
 	}
 	
-	CursorMan.pushCursor(&buffer[0][0], 11, 11, 5, 5, cursorTargetScale);
+	CursorMan.replaceCursor(&buffer[0][0], 11, 11, 0, 0, 255, cursorTargetScale);
 	CursorMan.showMouse(true);
 	
 	if (cursorPaletteDisabled) {
 		CursorMan.disableCursorPalette(true);
+	} else {
+		initMousePalette();
+		CursorMan.disableCursorPalette(false);
 	}
-	
+
 	g_system->updateScreen();
 }
 
@@ -168,12 +178,6 @@ void GFXtests::mouseMovements() {
 	Testsuite::clearScreen();
 	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
 	g_system->delayMillis(1000);	
-}
-
-void GFXtests::unsetMouse() {
-	// Popping cursor
-	CursorMan.popCursorPalette();
-	CursorMan.popCursor();
 }
 
 /**
@@ -368,6 +372,7 @@ bool GFXtests::aspectRatio() {
  */
 
 bool GFXtests::palettizedCursors() {
+
 	
 	bool passed = true;
 	
@@ -378,8 +383,6 @@ bool GFXtests::palettizedCursors() {
 	setupMouseLoop();
 	// Test Automated Mouse movements (warp)
 	mouseMovements();
-	// done. Pop cursor now
-	unsetMouse();
 	
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Yellow", "Any other", kOptionRight)) {
 		printf("LOG: Couldn't use cursor palette for rendering cursor\n");
@@ -389,8 +392,6 @@ bool GFXtests::palettizedCursors() {
 	// Testing with game Palette
 	GFXTestSuite::setCustomColor(255, 0, 0);
 	setupMouseLoop(true);
-	// done. Pop cursor now
-	unsetMouse();
 	
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Red", "Any other", kOptionRight)) {
 		printf("LOG: Couldn't use Game palette for rendering cursor\n");
@@ -401,6 +402,7 @@ bool GFXtests::palettizedCursors() {
 	if (!Testsuite::handleInteractiveInput("Did Cursor tests went as you were expecting?")) {
 		passed = false;
 	}
+	
 	return passed;
 }
 
@@ -490,7 +492,7 @@ bool GFXtests::scaledCursors() {
 	"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
 
 	int maxLimit = 1000;
-	if (!Testsuite::handleInteractiveInput("Do you want to skip other scalers", "Yes", "No", kOptionRight)) {
+	if (!Testsuite::handleInteractiveInput("Do you want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
 		maxLimit = 3;
 	}
 
@@ -501,28 +503,24 @@ bool GFXtests::scaledCursors() {
 		// Switch Graphics mode
 		// FIXME: Doesn't works:
 		g_system->beginGFXTransaction();
-		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
+		bool isGFXModeSet = g_system->setGraphicsMode("2x");
 		g_system->initSize(320, 200);
 		g_system->endGFXTransaction();
 
 		if (isGFXModeSet) {
 			
 			setupMouseLoop(false, gfxMode->name, 1);
-			unsetMouse();
 			Testsuite::clearScreen();
 			
 			setupMouseLoop(false, gfxMode->name, 2);
-			unsetMouse();
 			Testsuite::clearScreen();
 			
 			setupMouseLoop(false, gfxMode->name, 3);
-			unsetMouse();
 			Testsuite::clearScreen();
 
 		} else {
 			printf("Switching to graphics mode %s failed\n", gfxMode->name);
 		}
-		CursorMan.popAllCursors();
 		gfxMode++;
 		maxLimit--;
 	}

@@ -41,6 +41,7 @@ bool FStests::testReadFile() {
 	} 
 	
 	Common::String msg = readStream->readLine();
+	delete readStream;
 	printf("LOG: Message Extracted: %s\n", msg.c_str());
 
 	Common::String expectedMsg = "It works!";
@@ -66,27 +67,25 @@ bool FStests::testWriteFile() {
 	
 	Common::WriteStream *ws = fileToWrite.createWriteStream();
 	
-	if (!fileToWrite.isWritable()) {
+	if (!ws) {
 		printf("LOG: Can't open writable file in game data dir\n");
 		return false;
 	}
 	
-	if (!ws) {
-		printf("LOG: Can't create a write stream");
-		return false;
-	}
-
 	ws->writeString("ScummVM Rocks!");
 	ws->flush();
+	delete ws;
 
 	Common::SeekableReadStream *rs = fileToWrite.createReadStream();
 	Common::String readFromFile = rs->readLine();
+	delete rs;
 
 	if (readFromFile.equals("ScummVM Rocks!")) {
 		// All good
 		printf("LOG: Data written and read correctly\n");
 		return true;
 	}
+
 	
 	return false;
 }

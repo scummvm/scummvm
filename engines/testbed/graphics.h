@@ -10,7 +10,7 @@ namespace GFXtests {
 // Helper functions for GFX tests
 void drawEllipse(int x, int y, int a, int b);
 void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
-void unsetMouse();
+void initMousePalette();
 void mouseMovements();
 void drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
