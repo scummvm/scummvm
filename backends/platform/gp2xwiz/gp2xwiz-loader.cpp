@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(__GP2X__)
+#if defined(DYNAMIC_MODULES) && defined(GP2X)
 
 #include <string.h>
 #include <stdarg.h>
@@ -252,4 +252,4 @@ void dlforgetsyms(void *handle)
     ((DLObject *)handle)->discard_symtab();
 }
 
-#endif /* DYNAMIC_MODULES && __GP2X__WIZ__ */
+#endif /* DYNAMIC_MODULES && GP2X__WIZ */
