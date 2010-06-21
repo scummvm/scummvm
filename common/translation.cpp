@@ -90,8 +90,7 @@ TranslationManager::TranslationManager() {
 TranslationManager::~TranslationManager() {
 #ifdef USE_TERMCONV
 	iconv_close(_conversion);
-	if (_convmsg)
-		delete[] _convmsg;
+	delete[] _convmsg;
 #endif // USE_TERMCONV
 }
 
