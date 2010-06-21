@@ -174,21 +174,30 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	case kSciAudioCD:
-		debugC(2, kDebugLevelSound, "kDoAudio: CD audio subop");
-		return kDoCdAudio(s, argc - 1, argv + 1);
+
+		if (getSciVersion() <= SCI_VERSION_1_1) {
+			debugC(2, kDebugLevelSound, "kDoAudio: CD audio subop");
+			return kDoCdAudio(s, argc - 1, argv + 1);
+#ifdef ENABLE_SCI32
+		} else {
+			// TODO: This isn't CD Audio in SCI32 anymore
+			warning("kDoAudio: Unhandled case 10, %d extra arguments passed", argc - 1);
+			break;
+#endif
+		}
 
 		// 3 new subops in Pharkas. kDoAudio in Pharkas sits at seg026:038C
 	case 11:
-		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		warning("kDoAudio: Unhandled case 11, %d extra arguments passed", argc - 1);
 		break;
 	case 12:
 		// Seems to be audio sync, used in Pharkas. Silenced the warning due to
 		// the high level of spam it produces.
-		//warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		//warning("kDoAudio: Unhandled case 12, %d extra arguments passed", argc - 1);
 		break;
 	case 13:
 		// Used in Pharkas whenever a speech sample starts
-		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
+		warning("kDoAudio: Unhandled case 13, %d extra arguments passed", argc - 1);
 		break;
 	default:
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
