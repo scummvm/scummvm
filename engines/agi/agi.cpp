@@ -569,6 +569,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_game.lastController = 0;
 	for (int i = 0; i < MAX_DIRS; i++)
 		_game.controllerOccured[i] = false;
+
+	setupOpcodes();
 }
 
 void AgiEngine::initialize() {
