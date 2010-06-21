@@ -24,24 +24,24 @@ GFXTestSuite::GFXTestSuite() {
 	// Add tests here
 	
 	// Blitting buffer on screen
-	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	// addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
 	
 	// GFX Transcations
-	addTest("FullScreenMode", &GFXtests::fullScreenMode);
-	addTest("AspectRatio", &GFXtests::aspectRatio);
-	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
+	// addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	// addTest("AspectRatio", &GFXtests::aspectRatio);
+	// addTest("IconifyingWindow", &GFXtests::iconifyWindow);
 	
 	// Mouse Layer tests (Palettes and movements)
-	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	// addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	// FIXME: need to fix it
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 	
 	// Effects
-	addTest("shakingEffect", &GFXtests::shakingEffect);
-	addTest("focusRectangle", &GFXtests::focusRectangle);
+	// addTest("shakingEffect", &GFXtests::shakingEffect);
+	// addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// TODO: unable to notice any change, make it noticable
-	addTest("Overlays", &GFXtests::overlayGraphics);
+	// addTest("Overlays", &GFXtests::overlayGraphics);
 }
 
 const char *GFXTestSuite::getName() const {
@@ -71,17 +71,26 @@ void GFXtests::initMousePalette() {
 
 void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
 
-	// Paint the mouse with yellow
-	byte buffer[11][11];
-	memset(&buffer[0][0], 2, sizeof(buffer));
+	// Buffer initialized with yellow color
+	byte buffer[500];
+	memset(buffer, 2, sizeof(buffer));
 	
-	// Mark the hotspot with black
-	for (int i = 0; i < 11; i++) {
-		buffer[i][i] = 0;
-		// buffer[10 - i][i] = 0;
+	/* Disable HotSpot highlighting as of now
+	
+	// Paint the cursor with yellow, except the hotspot
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			if (i != j && i != 15 - j) {
+				buffer[i * 16 + j] = 2;
+			}
+		}
 	}
-	
-	CursorMan.replaceCursor(&buffer[0][0], 11, 11, 0, 0, 255, cursorTargetScale);
+
+	*/
+
+	// Uncommenting the next line and commenting the line after that would reproduce the crash
+	// CursorMan.replaceCursor(buffer, 11, 11, 0, 0, 255, cursorTargetScale);
+	CursorMan.replaceCursor(buffer, 12, 12, 0, 0, 255, cursorTargetScale);
 	CursorMan.showMouse(true);
 	
 	if (cursorPaletteDisabled) {
@@ -486,7 +495,6 @@ bool GFXtests::iconifyWindow() {
 
 bool GFXtests::scaledCursors() {
 
-	// TODO : Understand and fix the problem relating scaled cursors
 	Testsuite::displayMessage("Testing : Scaled cursors\n"
 	"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3"
 	"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
@@ -495,19 +503,22 @@ bool GFXtests::scaledCursors() {
 	if (!Testsuite::handleInteractiveInput("Do you want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
 		maxLimit = 3;
 	}
-
+	
+	const int currGFXMode = g_system->getGraphicsMode();
 	const OSystem::GraphicsMode *gfxMode = g_system->getSupportedGraphicsModes();
 	
 	while (gfxMode->name && maxLimit > 0) {
 		// for every graphics mode display cursors for cursorTargetScale 1, 2 and 3
 		// Switch Graphics mode
-		// FIXME: Doesn't works:
+		// FIXME: Crashes with "3x" mode now.:
 		g_system->beginGFXTransaction();
-		bool isGFXModeSet = g_system->setGraphicsMode("2x");
-		g_system->initSize(320, 200);
-		g_system->endGFXTransaction();
 
-		if (isGFXModeSet) {
+		bool isGFXModeSet = g_system->setGraphicsMode(gfxMode->id);
+		g_system->initSize(320, 200);
+		
+		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+		if (gfxError == OSystem::kTransactionSuccess && isGFXModeSet) {
 			
 			setupMouseLoop(false, gfxMode->name, 1);
 			Testsuite::clearScreen();
@@ -519,10 +530,22 @@ bool GFXtests::scaledCursors() {
 			Testsuite::clearScreen();
 
 		} else {
-			printf("Switching to graphics mode %s failed\n", gfxMode->name);
+			printf("LOG: Switching to graphics mode %s failed\n", gfxMode->name);
+			return false;
 		}
 		gfxMode++;
 		maxLimit--;
+	}
+
+	// Restore Original State 
+	g_system->beginGFXTransaction();
+	bool isGFXModeSet = g_system->setGraphicsMode(currGFXMode);
+	g_system->initSize(320, 200);
+	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
+
+	if (gfxError != OSystem::kTransactionSuccess || !isGFXModeSet) {
+		printf("LOG: Switcing to initial state failed\n");
+		return false;
 	}
 
 	return true;
