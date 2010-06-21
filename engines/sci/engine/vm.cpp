@@ -773,6 +773,9 @@ void run_vm(EngineState *s, bool restoring) {
 		g_debugState.old_pc_offset = s->xs->addr.pc.offset;
 		g_debugState.old_sp = s->xs->sp;
 
+		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+			return; // Stop processing
+
 		if (s->_executionStackPosChanged) {
 			Script *scr;
 			s->xs = &(s->_executionStack.back());
@@ -829,7 +832,7 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
-			return; // Emergency
+			return; // Stop processing
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
