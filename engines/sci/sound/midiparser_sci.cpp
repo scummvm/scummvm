@@ -392,6 +392,9 @@ void MidiParser_SCI::allNotesOff() {
 	// Note: we send to driver here directly, because in this case we would free previously mapped channels
 	// and onTimer() wouldn't send them to driver anymore afterwards anyway
 
+	// FIXME: the common midiparser/driver code doesn't really like getting called from various threads
+	//  but we don't have an option here... i guess midiparser/driver code should be made thread-safe
+
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
