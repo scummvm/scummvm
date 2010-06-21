@@ -47,6 +47,10 @@ extern bool isSmartphone();
 	#include <android/log.h>
 #endif
 
+#ifdef __PSP__
+	#include "backends/platform/psp/trace.h"
+#endif
+
 namespace Common {
 
 static OutputFormatter s_errorOutputFormatter = 0;
@@ -159,6 +163,11 @@ void NORETURN_PRE error(const char *s, ...) {
 #ifdef __SYMBIAN32__
 	Symbian::FatalError(buf_output);
 #endif
+
+#ifdef __PSP__
+	PspDebugTrace(false, "%s", buf_output);	// write to file
+#endif
+	
 	// Finally exit. quit() will terminate the program if g_system is present
 	if (g_system)
 		g_system->quit();

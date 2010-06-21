@@ -319,7 +319,7 @@ void Mp3PspStream::decodeMP3Data() {
 			// This function blocks. We'll want to put it in a thread
 			int ret = sceAudiocodecDecode(_codecParams, 0x1002);
 			if (ret < 0) {
-				PSP_ERROR("failed to decode MP3 data in ME. sceAudiocodecDecode returned 0x%x\n", ret);
+				PSP_INFO_PRINT("failed to decode MP3 data in ME. sceAudiocodecDecode returned 0x%x\n", ret);
 				// handle error here
 			}
 
