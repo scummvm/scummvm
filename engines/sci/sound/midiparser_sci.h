@@ -55,6 +55,10 @@ class MidiParser_SCI : public MidiParser {
 public:
 	MidiParser_SCI(SciVersion soundVersion, SciMusic *music);
 	~MidiParser_SCI();
+
+	void mainThreadBegin();
+	void mainThreadEnd();
+
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
 	bool loadMusic(byte *, uint32) {
 		return false;
@@ -77,16 +81,11 @@ public:
 	const byte *getMixedData() const { return _mixedData; }
 
 	void tryToOwnChannels();
-	void sendToDriver(uint32 b);
+	void sendFromScriptToDriver(uint32 midi);
+	void sendToDriver(uint32 midi);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {
 		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
-	void sendToDriverQueue(uint32 b);
-	void sendToDriverQueue(byte status, byte firstOp, byte secondOp) {
-		sendToDriverQueue(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
-	}
-
-	void sendQueueToDriver();
 
 protected:
 	void parseNextEvent(EventInfo &info);
@@ -95,6 +94,9 @@ protected:
 	byte midiGetNextChannel(long ticker);
 
 	SciMusic *_music;
+
+	// this is set, when main thread calls us -> we send commands to queue instead to driver
+	bool _mainThreadCalled;
 
 	SciVersion _soundVersion;
 	byte *_mixedData;
@@ -112,9 +114,6 @@ protected:
 	bool _channelUsed[16];
 	int16 _channelRemap[16];
 	bool _channelMuted[16];
-
-	int _manualCommandCount;
-	uint32 _manualCommands[200];
 };
 
 } // End of namespace Sci

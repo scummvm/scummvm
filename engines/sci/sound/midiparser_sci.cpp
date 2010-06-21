@@ -61,12 +61,18 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_dataincToAdd = 0;
 	_resetOnPause = false;
 	_pSnd = 0;
-
-	_manualCommandCount = 0;
 }
 
 MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
+}
+
+void MidiParser_SCI::mainThreadBegin() {
+	_mainThreadCalled = true;
+}
+
+void MidiParser_SCI::mainThreadEnd() {
+	_mainThreadCalled = false;
 }
 
 bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion) {
@@ -107,7 +113,7 @@ void MidiParser_SCI::sendInitCommands() {
 				byte voiceCount = 0;
 				if (_channelUsed[i]) {
 					voiceCount = _pSnd->soundRes->getInitialVoiceCount(i);
-					sendToDriverQueue(0xB0 | i, 0x4B, voiceCount);
+					sendToDriver(0xB0 | i, 0x4B, voiceCount);
 				}
 			}
 		}
@@ -115,7 +121,8 @@ void MidiParser_SCI::sendInitCommands() {
 
 	// Send a velocity off signal to all channels
 	for (int i = 0; i < 15; ++i) {
-		sendToDriverQueue(0xB0 | i, 0x4E, 0);	// Reset velocity
+		if (_channelUsed[i])
+			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
 	}
 }
 
@@ -145,44 +152,27 @@ void MidiParser_SCI::unloadMusic() {
 	}
 }
 
-// this is used for scripts sending direct midi commands to us. we verify in that case that the channel is actually
-//  used and actually store the command for getting really sent when being onTimer()
-void MidiParser_SCI::sendToDriverQueue(uint32 b) {
-	byte midiChannel = b & 0xf;
+// this is used for scripts sending midi commands to us. we verify in that case that the channel is actually
+//  used, so that channel remapping will work as well and then send them on
+void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
+	byte midiChannel = midi & 0xf;
 
 	if (!_channelUsed[midiChannel]) {
 		// trying to send to an unused channel
 		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
 		return;
 	}
-
-	if (_manualCommandCount >= 200)
-		error("driver queue is full");
-	_manualCommands[_manualCommandCount] = b;
-	_manualCommandCount++;
+	sendToDriver(midi);
 }
 
-// This sends the stored commands from queue to driver (is supposed to get called only during onTimer())
-//  at least mt32 emulation doesn't like getting note-on commands from main thread (if we directly send, we would get
-//  a crash during piano scene in lsl5)
-void MidiParser_SCI::sendQueueToDriver() {
-	int curCommand = 0;
+void MidiParser_SCI::sendToDriver(uint32 midi) {
+	byte midiChannel = midi & 0xf;
 
-	while (curCommand < _manualCommandCount) {
-		sendToDriver(_manualCommands[curCommand]);
-		curCommand++;
-	}
-	_manualCommandCount = 0;
-}
-
-void MidiParser_SCI::sendToDriver(uint32 b) {
-	byte midiChannel = b & 0xf;
-
-	if ((b & 0xFFF0) == 0x4EB0) {
+	if ((midi & 0xFFF0) == 0x4EB0) {
 		// this is channel mute only for sci1
 		// it's velocity control for sci0
 		if (_soundVersion >= SCI_VERSION_1_EARLY) {
-			_channelMuted[midiChannel] = b & 0xFF0000 ? true : false;
+			_channelMuted[midiChannel] = midi & 0xFF0000 ? true : false;
 			return; // don't send this to driver at all
 		}
 	}
@@ -194,8 +184,11 @@ void MidiParser_SCI::sendToDriver(uint32 b) {
 	int16 realChannel = _channelRemap[midiChannel];
 	assert(realChannel != -1);
 
-	b = (b & 0xFFFFFFF0) | realChannel;
-	_driver->send(b);
+	midi = (midi & 0xFFFFFFF0) | realChannel;
+	if (_mainThreadCalled)
+		_music->putMidiCommandInQueue(midi);
+	else
+		_driver->send(midi);
 }
 
 void MidiParser_SCI::parseNextEvent(EventInfo &info) {
@@ -681,7 +674,8 @@ void MidiParser_SCI::setVolume(byte volume) {
 		case SCI_VERSION_1_LATE:
 			// sending volume change to all used channels
 			for (int i = 0; i < 15; i++)
-				sendToDriverQueue(0xB0 + i, 7, _volume);
+				if (_channelUsed[i])
+					sendToDriver(0xB0 + i, 7, _volume);
 			break;
 
 		default:

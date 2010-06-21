@@ -46,6 +46,8 @@ SciMusic::SciMusic(SciVersion soundVersion)
 
 	for (int i = 0; i < 16; i++)
 		_usedChannel[i] = 0;
+
+	_queuedCommandCount = 0;
 }
 
 SciMusic::~SciMusic() {
@@ -102,6 +104,49 @@ void SciMusic::init() {
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
 }
 
+void SciMusic::miditimerCallback(void *p) {
+	SciMusic *sciMusic = (SciMusic *)p;
+
+	Common::StackLock lock(sciMusic->_mutex);
+	sciMusic->onTimer();
+}
+
+void SciMusic::onTimer() {
+	const MusicList::iterator end = _playList.end();
+	// sending out queued commands that were "sent" via main thread
+	sendMidiCommandsFromQueue();
+
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
+		(*i)->onTimer();
+
+	// for sending out fade commands immediately
+	sendMidiCommandsFromQueue();
+}
+
+void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
+	putMidiCommandInQueue(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
+}
+
+void SciMusic::putMidiCommandInQueue(uint32 midi) {
+	if (_queuedCommandCount >= 1000)
+		error("driver queue is full");
+	_queuedCommands[_queuedCommandCount] = midi;
+	_queuedCommandCount++;
+}
+
+// This sends the stored commands from queue to driver (is supposed to get called only during onTimer())
+//  at least mt32 emulation doesn't like getting note-on commands from main thread (if we directly send, we would get
+//  a crash during piano scene in lsl5)
+void SciMusic::sendMidiCommandsFromQueue() {
+	int curCommand = 0;
+
+	while (curCommand < _queuedCommandCount) {
+		_pMidiDrv->send(_queuedCommands[curCommand]);
+		curCommand++;
+	}
+	_queuedCommandCount = 0;
+}
+
 void SciMusic::clearPlayList() {
 	Common::StackLock lock(_mutex);
 
@@ -125,14 +170,6 @@ void SciMusic::stopAll() {
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundStop(*i);
 	}
-}
-
-
-void SciMusic::miditimerCallback(void *p) {
-	SciMusic *aud = (SciMusic *)p;
-
-	Common::StackLock lock(aud->_mutex);
-	aud->onTimer();
 }
 
 void SciMusic::soundSetSoundOn(bool soundOnFlag) {
@@ -219,8 +256,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 			// Find out what channels to filter for SCI0
 			channelFilterMask = pSnd->soundRes->getChannelFilterMask(_pMidiDrv->getPlayId(), _pMidiDrv->hasRhythmChannel());
-			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
 
+			pSnd->pMidiParser->mainThreadBegin();
+			pSnd->pMidiParser->loadMusic(track, pSnd, channelFilterMask, _soundVersion);
+			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}
 	}
@@ -253,12 +292,6 @@ void SciMusic::freeChannels(MusicEntry *caller) {
 		if (_usedChannel[i] == caller)
 			_usedChannel[i] = 0;
 	}
-}
-
-void SciMusic::onTimer() {
-	const MusicList::iterator end = _playList.end();
-	for (MusicList::iterator i = _playList.begin(); i != end; ++i)
-		(*i)->onTimer();
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
@@ -316,18 +349,21 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         DisposeAfterUse::NO);
 		}
 	} else {
-		_mutex.lock();
 		if (pSnd->pMidiParser) {
+			_mutex.lock();
+			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->tryToOwnChannels();
 			pSnd->pMidiParser->setVolume(pSnd->volume);
 			if (pSnd->status == kSoundStopped) {
 				pSnd->pMidiParser->sendInitCommands();
 				pSnd->pMidiParser->jumpToTick(0);
-			} else
+			} else {
 				// Fast forward to the last position and perform associated events when loading
 				pSnd->pMidiParser->jumpToTick(pSnd->ticker, true);
+			}
+			pSnd->pMidiParser->mainThreadEnd();
+			_mutex.unlock();
 		}
-		_mutex.unlock();
 	}
 
 	pSnd->status = kSoundPlaying;
@@ -342,8 +378,10 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 
 	if (pSnd->pMidiParser) {
 		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->stop();
 		freeChannels(pSnd);
+		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
 }
@@ -354,7 +392,9 @@ void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
 		_pMixer->setChannelVolume(pSnd->hCurrentAud, volume * 2); // Mixer is 0-255, SCI is 0-127
 	} else if (pSnd->pMidiParser) {
 		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->setVolume(volume);
+		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
 }
@@ -369,13 +409,15 @@ void SciMusic::soundSetPriority(MusicEntry *pSnd, byte prio) {
 void SciMusic::soundKill(MusicEntry *pSnd) {
 	pSnd->status = kSoundStopped;
 
-	_mutex.lock();
 	if (pSnd->pMidiParser) {
+		_mutex.lock();
+		pSnd->pMidiParser->mainThreadBegin();
 		pSnd->pMidiParser->unloadMusic();
+		pSnd->pMidiParser->mainThreadEnd();
 		delete pSnd->pMidiParser;
 		pSnd->pMidiParser = NULL;
+		_mutex.unlock();
 	}
-	_mutex.unlock();
 
 	if (pSnd->pStreamAud) {
 		_pMixer->stopHandle(pSnd->hCurrentAud);
@@ -409,8 +451,10 @@ void SciMusic::soundPause(MusicEntry *pSnd) {
 	} else {
 		if (pSnd->pMidiParser) {
 			_mutex.lock();
+			pSnd->pMidiParser->mainThreadBegin();
 			pSnd->pMidiParser->pause();
 			freeChannels(pSnd);
+			pSnd->pMidiParser->mainThreadEnd();
 			_mutex.unlock();
 		}
 	}
@@ -458,10 +502,12 @@ void SciMusic::sendMidiCommand(uint32 cmd) {
 
 void SciMusic::sendMidiCommand(MusicEntry *pSnd, uint32 cmd) {
 	Common::StackLock lock(_mutex);
-	if (pSnd->pMidiParser)
-		pSnd->pMidiParser->sendToDriverQueue(cmd);
-	else
+	if (!pSnd->pMidiParser)
 		error("tried to cmdSendMidi on non midi slot (%04x:%04x)", PRINT_REG(pSnd->soundObj));
+
+	pSnd->pMidiParser->mainThreadBegin();
+	pSnd->pMidiParser->sendFromScriptToDriver(cmd);
+	pSnd->pMidiParser->mainThreadEnd();
 }
 
 void SciMusic::printPlayList(Console *con) {
@@ -567,8 +613,6 @@ void MusicEntry::onTimer() {
 
 	// Only process MIDI streams in this thread, not digital sound effects
 	if (pMidiParser) {
-		// Process manual commands first
-		pMidiParser->sendQueueToDriver();
 		pMidiParser->onTimer();
 		ticker = (uint16)pMidiParser->getTick();
 	}

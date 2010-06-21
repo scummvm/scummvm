@@ -132,7 +132,15 @@ public:
 	~SciMusic();
 
 	void init();
+
 	void onTimer();
+	void putMidiCommandInQueue(byte status, byte firstOp, byte secondOp);
+	void putMidiCommandInQueue(uint32 midi);
+private:
+	static void miditimerCallback(void *p);
+	void sendMidiCommandsFromQueue();
+
+public:
 	void clearPlayList();
 	void pauseAll(bool pause);
 	void stopAll();
@@ -209,13 +217,15 @@ protected:
 	// Mixed AdLib/MIDI mode: when enabled from the ScummVM sound options screen,
 	// and a sound has a digital track, the sound from the AdLib track is played
 	bool _bMultiMidi;
-private:
-	static void miditimerCallback(void *p);
 
+private:
 	MusicList _playList;
 	bool _soundOn;
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
+
+	int _queuedCommandCount;
+	uint32 _queuedCommands[1000];
 
 	int _driverFirstChannel;
 };
