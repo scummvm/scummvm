@@ -389,19 +389,23 @@ void MidiParser_SCI::allNotesOff() {
 
 	int i, j;
 
+	// Note: we send to driver here directly, because in this case we would free previously mapped channels
+	// and onTimer() wouldn't send them to driver anymore afterwards anyway
+
 	// Turn off all active notes
 	for (i = 0; i < 128; ++i) {
 		for (j = 0; j < 16; ++j) {
-			if ((_active_notes[i] & (1 << j))){
-				sendToDriverQueue(0x80 | j, i, 0);
+			if ((_active_notes[i] & (1 << j)) && (_channelRemap[j] != -1)){
+				sendToDriver(0x80 | j, i, 0);
 			}
 		}
 	}
 
 	// Turn off all hanging notes
 	for (i = 0; i < ARRAYSIZE(_hanging_notes); i++) {
-		if (_hanging_notes[i].time_left) {
-			sendToDriverQueue(0x80 | _hanging_notes[i].channel, _hanging_notes[i].note, 0);
+		byte midiChannel = _hanging_notes[i].channel;
+		if ((_hanging_notes[i].time_left) && (_channelRemap[midiChannel] != -1)) {
+			sendToDriver(0x80 | midiChannel, _hanging_notes[i].note, 0);
 			_hanging_notes[i].time_left = 0;
 		}
 	}
@@ -410,8 +414,10 @@ void MidiParser_SCI::allNotesOff() {
 	// To be sure, send an "All Note Off" event (but not all MIDI devices
 	// support this...).
 
-	for (i = 0; i < 16; ++i)
-		sendToDriverQueue(0xB0 | i, 0x7b, 0); // All notes off
+	for (i = 0; i < 16; ++i) {
+		if (_channelRemap[i] != -1)
+			sendToDriver(0xB0 | i, 0x7b, 0); // All notes off
+	}
 
 	memset(_active_notes, 0, sizeof(_active_notes));
 }
