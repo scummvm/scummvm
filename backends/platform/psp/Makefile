@@ -147,6 +147,7 @@ OBJS := powerman.o \
 	pspkeyboard.o \
 	audio.o \
 	thread.o \
+	rtc.o \
 	mp3.o
 
 # Include common Scummvm makefile

@@ -37,6 +37,7 @@
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
 #include "backends/platform/psp/powerman.h"
+#include "backends/platform/psp/rtc.h"
 
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -64,6 +65,9 @@ OSystem_PSP::~OSystem_PSP() {}
 void OSystem_PSP::initBackend() {
 	DEBUG_ENTER_FUNC();
 
+	// Instantiate real time clock
+	PspRtc::instance();
+	
 	_cursor.enableCursorPalette(false);
 	_cursor.setXY(PSP_SCREEN_WIDTH >> 1, PSP_SCREEN_HEIGHT >> 1);	// Mouse in the middle of the screen
 
@@ -320,7 +324,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 }
 
 uint32 OSystem_PSP::getMillis() {
-	return _pspRtc.getMillis();
+	return PspRtc::instance().getMillis();
 }
 
 void OSystem_PSP::delayMillis(uint msecs) {

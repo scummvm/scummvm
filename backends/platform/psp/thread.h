@@ -73,22 +73,7 @@ public:
 	PspCondition() : _mutex(true), _waitingThreads(0), _signaledThreads(0),
 								_waitSem(0), _doneSem(0) {}
 	void wait(PspMutex &externalMutex);
-	void releaseAll();	
-};
-
-
-class PspRtc {
-private:
-	uint32 _startMillis;
-	uint32 _startMicros;
-	uint32 _lastMillis;
-	uint32 _milliOffset;		// to prevent looping around of millis
-	bool _looped;				// make sure we only loop once
-public:
-	PspRtc() : _startMillis(0), _startMicros(0), _lastMillis(0), _milliOffset(0), _looped(false) { init(); }
-	void init();
-	uint32 getMillis();
-	uint32 getMicros();
+	void releaseAll();
 };
 
 enum ThreadPriority {
