@@ -85,13 +85,13 @@ bool Mp3PspStream::initDecoder() {
 		}	
     } else {		
         if (sceUtilityLoadAvModule(PSP_AV_MODULE_AVCODEC) < 0) {
-			PSP_ERROR("failed to load AVCODEC module.\n");
+			PSP_ERROR("failed to load AVCODEC module. ME cannot start.\n");
 			_decoderFail = true;
 			return false;
 		}
 	}
 	
-	PSP_INFO_PRINT("Using PSP's ME for MP3\n");	// important to know this is happening
+	PSP_DEBUG_PRINT("Using PSP's ME for MP3\n");	// important to know this is happening
 
 	_decoderInit = true;
 	return true;
