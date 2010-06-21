@@ -28,7 +28,7 @@
 
 #include "common/singleton.h"
  
-class PspRtc : public Common::Singleton<PspRtc>{
+class PspRtc : public Common::Singleton<PspRtc> {
 private:
 	uint32 _startMillis;
 	uint32 _startMicros;
@@ -36,7 +36,12 @@ private:
 	uint32 _milliOffset;		// to prevent looping around of millis
 	bool _looped;				// make sure we only loop once - for threading
 public:
-	PspRtc() : _startMillis(0), _startMicros(0), _lastMillis(0), _milliOffset(0), _looped(false) { init(); }
+	PspRtc()
+		: _startMillis(0), _startMicros(0),
+		  _lastMillis(0), _milliOffset(0),
+		  _looped(false) {
+		init();
+	}
 	void init();
 	uint32 getMillis();
 	uint32 getMicros();
