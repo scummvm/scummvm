@@ -51,8 +51,6 @@ static AgiEngine *g_agi;
 #define testHas(obj)			(g_agi->objectGetLocation(obj) == EGO_OWNED)
 #define testObjInRoom(obj, v)	(g_agi->objectGetLocation(obj) == g_agi->getvar(v))
 
-extern int timerHack;		// For the timer loop in MH1 logic 153
-
 static uint8 testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
 	char ms2[MAX_STRINGLEN];
@@ -263,32 +261,32 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0x01:
 			ec = testEqual(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x02:
 			ec = testEqual(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x03:
 			ec = testLess(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x04:
 			ec = testLess(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x05:
 			ec = testGreater(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x06:
 			ec = testGreater(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x07:
 			ec = testIsSet(p[0]);

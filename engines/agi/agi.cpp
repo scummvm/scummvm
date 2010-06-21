@@ -571,6 +571,8 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 		_game.controllerOccured[i] = false;
 
 	setupOpcodes();
+	_curLogic = NULL;
+	_timerHack = 0;
 }
 
 void AgiEngine::initialize() {

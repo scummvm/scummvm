@@ -1047,6 +1047,8 @@ private:
 	typedef void (AgiEngine::*AgiCommand)(uint8 *);
 
 	AgiCommand _agiCommands[183];
+	AgiLogic *_curLogic;
+	int _timerHack;			// Workaround for timer loop in MH1 logic 153
 
 	void setupOpcodes();
 
