@@ -753,7 +753,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Hoyle 4 - English DOS Demo
+	{"hoyle4", "Demo", {
+		{"resource.map", 0, "60f764020a6b788bbbe415dbc2ccb9f3", 931},
+		{"resource.000", 0, "5fe3670e3ddcd4f85c10013b5453141a", 615522},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
+	// Hoyle 4 - English DOS Demo
 	// SCI interpreter version 1.001.200 (just a guess)
+	// Does anyone have this version? -clone2727
 	{"hoyle4", "Demo", {
 		{"resource.map", 0, "662087cb383e52e3cc4ae7ecb10e20aa", 938},
 		{"resource.000", 0, "24c10844792c54d476d272213cbac300", 675252},
