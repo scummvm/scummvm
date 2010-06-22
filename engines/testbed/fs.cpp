@@ -1,5 +1,7 @@
 #include "common/config-manager.h"
 #include "common/stream.h"
+#include "common/savefile.h"
+#include "common/util.h"
 
 #include "testbed/fs.h"
 
@@ -8,9 +10,7 @@ namespace Testbed {
  * This test does the following:
  * 1) acquires the game-data path
  * 2) In the game-root it navigates to "directory" and opens the file "file"
- * The former two are directories while the latter is a text file used for game engine detection
  *
- * Both the directories contain the file testbed.conf each which has a message written in it.
  * The code accesses the appropriate file using the fileSystem API, creates a read stream of it and
  * compares the message contained in it, with what it expects.
  *
@@ -29,7 +29,7 @@ bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
 	
 	Common::String msg = readStream->readLine();
 	delete readStream;
-	printf("LOG: Message Extracted from %s : %s\n", file, msg.c_str());
+	printf("LOG: Message Extracted from %s/%s : %s\n",directory.getName().c_str(), file, msg.c_str());
 
 
 	Common::String expectedMsg = "It works!";
@@ -46,40 +46,47 @@ bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
 bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
+	int numFailed = 0;
 	
 	if (!gameRoot.isDirectory()) {
 		printf("LOG:game Path should be a directory");
 		return false;
 	}
 	
-	Common::FSList dirList;
-	gameRoot.getChildren(dirList);
-	
-	const char *file[] = {"file.txt", "File.txt", "FILE.txt", "fILe.txt", "file."};
+	const char *dirList[] = {"test1" ,"Test2", "TEST3" , "tEST4", "test5"};
+	const char *file[] = {"file.txt", "File.txt", "FILE.txt", "fILe.txt", "file"};
 
-	for (unsigned int i = 0; i < dirList.size(); i++) {
+	for (unsigned int i = 0; i < ARRAYSIZE(dirList); i++) {
+		Common::String dirName = dirList[i];
 		Common::String fileName = file[i];
-		if (!readDataFromFile(dirList[i], fileName.c_str())) {
-			printf("LOG : reading from %s failed", fileName.c_str());
-			return false;
+		Common::FSNode directory = gameRoot.getChild(dirName); 
+
+		if (!readDataFromFile(directory, fileName.c_str())) {
+			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			numFailed++;
 		}
 		
+		dirName.toLowercase();
 		fileName.toLowercase();
+		directory = gameRoot.getChild(dirName); 
 		
-		if (!readDataFromFile(dirList[i], fileName.c_str())) {
-			printf("LOG : reading from %s failed", fileName.c_str());
-			return false;
+		if (!readDataFromFile(directory, fileName.c_str())) {
+			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			numFailed++;
 		}
 		
+		dirName.toUppercase();
 		fileName.toUppercase();
+		directory = gameRoot.getChild(dirName); 
 		
-		if (!readDataFromFile(dirList[i], fileName.c_str())) {
-			printf("LOG : reading from %s failed", fileName.c_str());
-			return false;
+		if (!readDataFromFile(directory, fileName.c_str())) {
+			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			numFailed++;
 		}
 	}
-
-	return true;
+	
+	printf("LOG:failed %d out of 15\n", numFailed);
+	return false;
 }
 
 /**
@@ -122,14 +129,22 @@ bool FStests::testWriteFile() {
  * This test creates a savefile for the given testbed-state and could be reloaded using the saveFile API.
  * It is intended to test saving and loading from savefiles.
  */
-/*
-GFXtests::testSavingGame() {
-	Common::SaveFileManager saveFileMan = g_system->getSavefileManager();
-}*/
+
+bool FStests::testOpeningSaveFile() {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::OutSaveFile *saveFile = saveFileMan->openForSaving("saveFile.0");
+
+	saveFile->writeString("State:FS tests");
+	saveFile->flush();
+	delete saveFile;
+
+	return true;
+}
 
 FSTestSuite::FSTestSuite() {
-	addTest("openingFile", &FStests::testReadFile);	
+	addTest("ReadingFile", &FStests::testReadFile);	
 	addTest("WritingFile", &FStests::testWriteFile);	
+	addTest("OpeningSaveFile", &FStests::testOpeningSaveFile);
 }
 const char *FSTestSuite::getName() const {
 	return "File System";

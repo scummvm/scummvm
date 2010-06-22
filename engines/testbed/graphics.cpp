@@ -90,7 +90,7 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 
 	// Uncommenting the next line and commenting the line after that would reproduce the crash
 	// CursorMan.replaceCursor(buffer, 11, 11, 0, 0, 255, cursorTargetScale);
-	CursorMan.replaceCursor(buffer, 12, 12, 0, 0, 255, cursorTargetScale);
+	CursorMan.replaceCursor(buffer, 12, 13, 0, 0, 255, cursorTargetScale);
 	CursorMan.showMouse(true);
 	
 	if (cursorPaletteDisabled) {

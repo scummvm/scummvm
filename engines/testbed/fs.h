@@ -17,6 +17,7 @@ bool readDataFromFile(Common::FSNode &directory, const char *file);
 // will contain function declarations for FS tests
 bool testReadFile();
 bool testWriteFile();
+bool testOpeningSaveFile();
 // add more here
 }
 
