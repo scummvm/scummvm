@@ -268,14 +268,12 @@ Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
 	return obj;
 }
 
-#if 0
 void Script::scriptObjRemove(reg_t obj_pos) {
 	if (getSciVersion() < SCI_VERSION_1_1)
 		obj_pos.offset += 8;
 
 	_objects.erase(obj_pos.toUint16());
 }
-#endif
 
 // This helper function is used by Script::relocateLocal and Object::relocate
 static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {

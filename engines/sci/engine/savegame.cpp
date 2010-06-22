@@ -778,11 +778,11 @@ void SegManager::reconstructScripts(EngineState *s) {
 			Object *obj = scr->scriptObjInit(addr, false);
 
 			if (getSciVersion() < SCI_VERSION_1_1) {
-				if (!obj->isFreed()) {
-					if (!obj->initBaseObject(this, addr, false)) {
-						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						//scr->scriptObjRemove(addr);
-					}
+				if (!obj->initBaseObject(this, addr, false)) {
+					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
+					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					scr->scriptObjRemove(addr);
 				}
 			}
 		}
