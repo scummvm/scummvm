@@ -960,33 +960,60 @@ void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
-	// TODO: This function is supposed to do a lot more, something like this (pseudocode):
+	// Run the gallows's carriage
 
-	// Show level pull movie
-	// Set transition up
-	// Change to up card
-	// Show movie of carriage coming down
-	// Set transition down
-	// Change back to card 276
-	// Show movie of carriage coming down
-	// if jgallows == 0
-	//	Set up timer
-	// 	Enter new input loop
-	//	if you click within the time
-	//		move forward
-	//		set transition right
-	//		change to card right
-	//		show movie of ascending
-	//		change to card 263
-	//	else
-	//		show movie of carriage ascending only
-	// else
-	//	show movie of carriage ascending only
+	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+	_vm->_video->playMovieBlocking(1);                 // Play handle movie
+	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
+	_vm->changeToCard(_vm->matchRMAPToCard(0x18e77));  // Change to card facing up
+	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor (again)
+	_vm->_video->playMovieBlocking(4);                 // Play carriage beginning to drop
+	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
+	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
+	_vm->_video->playMovieBlocking(2);
 
+	uint32 *gallows = _vm->matchVarToString("jgallows");
+	if (*gallows == 1) {
+		// If the gallows is open, play the up movie and return
+		_vm->_video->playMovieBlocking(3);
+		return;
+	}
 
-	// For now, if the gallows base is closed, assume ascension and move to that card.
-	if (*_vm->matchVarToString("jgallows") == 0)
-		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));
+	// Give the player 5 seconds to click (anywhere)
+	uint32 startTime = _vm->_system->getMillis();
+	bool gotClick = false;
+	while (_vm->_system->getMillis() - startTime <= 5000 && !gotClick) {
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_vm->_system->updateScreen();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				gotClick = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_vm->_system->delayMillis(10);
+	}
+
+	_vm->_gfx->changeCursor(kRivenHideCursor);             // Hide the cursor
+
+	if (gotClick) {
+		_vm->_gfx->scheduleTransition(16);                 // Schedule dissolve transition
+		_vm->changeToCard(_vm->matchRMAPToCard(0x18d4d));  // Move forward
+		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_system->delayMillis(500);                    // Delay a half second before changing again
+		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
+		_vm->changeToCard(_vm->matchRMAPToCard(0x18ab5));  // Turn right
+		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_video->playMovieBlocking(1);                 // Play carriage ride movie
+		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));  // We have arrived at the top
+	} else
+		_vm->_video->playMovieBlocking(3);                 // Too slow!
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
