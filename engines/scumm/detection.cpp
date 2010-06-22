@@ -488,6 +488,12 @@ static void detectGames(const Common::FSList &fslist, Common::List<DetectorResul
 					// Exact match found. Compute the precise game settings.
 					computeGameSettingsFromMD5(fslist, gfp, d.md5Entry, dr);
 
+					// Print some debug info
+					int filesize = tmp->size();
+					if (d.md5Entry->filesize != filesize)
+					debug(1, "SCUMM detector found matching file '%s' with MD5 %s, size %d\n",
+						file.c_str(), md5str, filesize);
+
 					// Sanity check: We *should* have found a matching gameid / variant at this point.
 					// If not, then there's a bug in our data tables...
 					assert(dr.game.gameid != 0);
