@@ -63,7 +63,7 @@ static const uint32 GUIOMapping[] = {
 	MT_ADLIB,		Common::GUIO_MIDIADLIB,
 	MT_TOWNS,		Common::GUIO_MIDITOWNS,
 	MT_GM,			Common::GUIO_MIDIGM,
-	MT_MT32,		Common::GUIO_MIDIMT32,	
+	MT_MT32,		Common::GUIO_MIDIMT32,
 	0,		0
 };
 
@@ -135,7 +135,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			return hdl;
 		break;
 
-	case MT_PCJR:		
+	case MT_PCJR:
 		if (flags & MDT_PCJR)
 			return hdl;
 		break;
@@ -179,7 +179,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 
 				return hdl;
 			}
-			
+
 			// If we have no specific device selected (neither in the scummvm nor in the game domain)
 			// and no preferred MT32 or GM device selected we arrive here.
 			// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
@@ -192,7 +192,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 					}
 				}
 			}
-			
+
 			// Now we default to the first available device with music type 'MT_GM'
 			for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 				MusicDevices i = (**m)->getDevices();
@@ -202,8 +202,8 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 				}
 			}
 		} 
-		
-		MusicType tp = MT_NULL;	
+
+		MusicType tp = MT_NULL;
 		if (flags & MDT_TOWNS)
 			tp = MT_TOWNS;
 		else if (flags & MDT_ADLIB)
@@ -232,6 +232,7 @@ MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 		if (getDeviceString(handle, MidiDriver::kDriverId).equals((**m)->getId()))
 			(**m)->createInstance(&driver, handle);
 	}
+
 	return driver;
 }
 
@@ -243,7 +244,7 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName()))
 				return d->getHandle();
 		}
-	}	
+	}
 
 	return getDeviceHandle("auto");
 }
