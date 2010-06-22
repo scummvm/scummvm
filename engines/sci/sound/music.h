@@ -225,7 +225,6 @@ private:
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
 
-	uint _queuedCommandCapacity;
 	MidiCommandQueue _queuedCommands;
 
 	int _driverFirstChannel;

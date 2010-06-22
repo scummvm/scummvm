@@ -47,8 +47,7 @@ SciMusic::SciMusic(SciVersion soundVersion)
 	for (int i = 0; i < 16; i++)
 		_usedChannel[i] = 0;
 
-	_queuedCommandCapacity = 1000;
-	_queuedCommands.reserve(_queuedCommandCapacity);
+	_queuedCommands.reserve(1000);
 }
 
 SciMusic::~SciMusic() {
@@ -126,11 +125,6 @@ void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
 }
 
 void SciMusic::putMidiCommandInQueue(uint32 midi) {
-	if (_queuedCommands.size() == _queuedCommandCapacity) {
-		// We need more space
-		_queuedCommandCapacity *= 2;
-		_queuedCommands.reserve(_queuedCommandCapacity);
-	}
 	_queuedCommands.push_back(midi);
 }
 
