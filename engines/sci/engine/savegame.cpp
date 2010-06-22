@@ -520,9 +520,12 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
-	s.syncAsUint32LE(_bufSize);
-	s.syncAsUint32LE(_scriptSize);
-	s.syncAsUint32LE(_heapSize);
+
+	if (s.isLoading())
+		init(_nr, g_sci->getResMan());
+	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _bufSize
+	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _scriptSize
+	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _heapSize
 
 	if (s.getVersion() <= 10) {
 		assert((s.isLoading()));
@@ -775,9 +778,11 @@ void SegManager::reconstructScripts(EngineState *s) {
 			Object *obj = scr->scriptObjInit(addr, false);
 
 			if (getSciVersion() < SCI_VERSION_1_1) {
-				if (!obj->initBaseObject(this, addr, false)) {
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					//scr->scriptObjRemove(addr);
+				if (!obj->isFreed()) {
+					if (!obj->initBaseObject(this, addr, false)) {
+						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						//scr->scriptObjRemove(addr);
+					}
 				}
 			}
 		}
