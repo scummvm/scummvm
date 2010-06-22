@@ -703,20 +703,65 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKID_BE('cmid'), fileref & 0x3FF);
 
 	if (file) {
-		// TODO: A form of LZSS, not supported by the current Groovie decoder.
-		// The offset/length uint16 is BE, but not sure the amount of length bits
-		// nor whether the offset is absolute/relative.
-		warning("TODO: Mac Compressed MIDI: cmid 0x%04x", fileref & 0x3FF);
+		// Found the resource, decompress it
+		Common::SeekableReadStream *tmp = decompressMidi(file);
 		delete file;
+		file = tmp;
+	} else {
+		// Otherwise, it's uncompressed
+		file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
+		if (!file)
+			error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
 		return false;
 	}
 
-	// Otherwise, it's uncompressed
-	file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
-	if (!file)
-		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
-
 	return loadParser(file, loop);
+}
+
+Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadStream *stream) {
+	// Initialize an output buffer of the given size
+	uint32 size = stream->readUint32BE();
+	byte *output = (byte *)malloc(size);
+
+	byte *current = output;
+	uint32 decompBytes = 0;
+	while ((decompBytes < size) && !stream->eos()) {
+		// 8 flags
+		byte flags = stream->readByte();
+
+		for (byte i = 0; (i < 8) && !stream->eos(); i++) {
+			if (flags & 1) {
+				// 1: Next byte is a literal
+				*(current++) = stream->readByte();
+				if (stream->eos())
+					continue;
+				decompBytes++;
+			} else {
+				// 0: It's a reference to part of the history
+				uint16 args = stream->readUint16BE();
+				if (stream->eos())
+					continue;
+
+				// Length = 4bit unsigned (3 minimal)
+				uint8 length = (args >> 12) + 3;
+
+				// Offset = 12bit signed (all values are negative)
+				int16 offset = (args & 0xFFF) | 0xF000;
+
+				// Copy from the past decompressed bytes
+				decompBytes += length;
+				while (length > 0) {
+					*(current) = *(current + offset);
+					current++;
+					length--;
+				}
+			}
+			flags = flags >> 1;
+		}
+	}
+
+	// Return the output buffer wrapped in a MemoryReadStream
+	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
 }
 
 } // End of Groovie namespace
