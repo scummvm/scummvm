@@ -47,7 +47,8 @@ SciMusic::SciMusic(SciVersion soundVersion)
 	for (int i = 0; i < 16; i++)
 		_usedChannel[i] = 0;
 
-	_queuedCommandCount = 0;
+	_queuedCommandCapacity = 1000;
+	_queuedCommands.reserve(_queuedCommandCapacity);
 }
 
 SciMusic::~SciMusic() {
@@ -125,23 +126,26 @@ void SciMusic::putMidiCommandInQueue(byte status, byte firstOp, byte secondOp) {
 }
 
 void SciMusic::putMidiCommandInQueue(uint32 midi) {
-	if (_queuedCommandCount >= 1000)
-		error("driver queue is full");
-	_queuedCommands[_queuedCommandCount] = midi;
-	_queuedCommandCount++;
+	if (_queuedCommands.size() == _queuedCommandCapacity) {
+		// We need more space
+		_queuedCommandCapacity *= 2;
+		_queuedCommands.reserve(_queuedCommandCapacity);
+	}
+	_queuedCommands.push_back(midi);
 }
 
 // This sends the stored commands from queue to driver (is supposed to get called only during onTimer())
 //  at least mt32 emulation doesn't like getting note-on commands from main thread (if we directly send, we would get
 //  a crash during piano scene in lsl5)
 void SciMusic::sendMidiCommandsFromQueue() {
-	int curCommand = 0;
+	uint curCommand = 0;
+	uint commandCount = _queuedCommands.size();
 
-	while (curCommand < _queuedCommandCount) {
+	while (curCommand < commandCount) {
 		_pMidiDrv->send(_queuedCommands[curCommand]);
 		curCommand++;
 	}
-	_queuedCommandCount = 0;
+	_queuedCommands.clear();
 }
 
 void SciMusic::clearPlayList() {

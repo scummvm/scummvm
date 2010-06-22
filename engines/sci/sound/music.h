@@ -120,6 +120,7 @@ public:
 };
 
 typedef Common::Array<MusicEntry *> MusicList;
+typedef Common::Array<uint32> MidiCommandQueue;
 
 class SciMusic
 #ifndef USE_OLD_MUSIC_FUNCTIONS
@@ -224,8 +225,8 @@ private:
 	byte _masterVolume;
 	MusicEntry *_usedChannel[16];
 
-	int _queuedCommandCount;
-	uint32 _queuedCommands[1000];
+	uint _queuedCommandCapacity;
+	MidiCommandQueue _queuedCommands;
 
 	int _driverFirstChannel;
 };
