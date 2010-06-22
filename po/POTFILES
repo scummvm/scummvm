@@ -22,6 +22,7 @@ engines/scumm/dialogs.cpp
 engines/mohawk/dialogs.cpp
 
 sound/musicplugin.cpp
+sound/null.h
 sound/null.cpp
 sound/softsynth/mt32.cpp
 sound/softsynth/adlib.cpp

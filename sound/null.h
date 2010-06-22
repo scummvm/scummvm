@@ -22,34 +22,35 @@
  * $Id$
  */
 
-#include "sound/null.h"
+#ifndef SOUND_NULL_H
+#define SOUND_NULL_H
 
-Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
-	*mididriver = new MidiDriver_NULL();
+#include "sound/musicplugin.h"
+#include "sound/mpu401.h"
+#include "common/translation.h"
 
-	return Common::kNoError;
-}
-
-MusicDevices NullMusicPlugin::getDevices() const {
-	MusicDevices devices;
-	devices.push_back(MusicDevice(this, _s(""), MT_NULL));
-	return devices;
-}
-
-class AutoMusicPlugin : public NullMusicPlugin {
+/* NULL driver */
+class MidiDriver_NULL : public MidiDriver_MPU401 {
 public:
-	const char *getName() const {
-		return _s("<default>");
-	}
-
-	const char *getId() const {
-		return "auto";
-	}
+	int open() { return 0; }
+	void send(uint32 b) { }
 };
 
-//#if PLUGIN_ENABLED_DYNAMIC(NULL)
-	//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
-//#else
-	REGISTER_PLUGIN_STATIC(AUTO, PLUGIN_TYPE_MUSIC, AutoMusicPlugin);
-	REGISTER_PLUGIN_STATIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
-//#endif
+
+// Plugin interface
+
+class NullMusicPlugin : public MusicPluginObject {
+public:
+	virtual const char *getName() const {
+		return _s("No music");
+	}
+
+	virtual const char *getId() const {
+		return "null";
+	}
+
+	virtual MusicDevices getDevices() const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
+};
+
+#endif

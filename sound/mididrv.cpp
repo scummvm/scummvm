@@ -131,8 +131,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// given flags.
 	switch (getMusicType(hdl)) {
 	case MT_PCSPK:
-	case MT_PCJR:
 		if (flags & MDT_PCSPK)
+			return hdl;
+		break;
+
+	case MT_PCJR:		
+		if (flags & MDT_PCJR)
 			return hdl;
 		break;
 
