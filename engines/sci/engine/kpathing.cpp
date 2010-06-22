@@ -1739,14 +1739,9 @@ reg_t kIntersections(EngineState *s, int argc, reg_t *argv) {
  * is in QFG1VGA, after killing any monster.
  */
 reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
+#if 0
 	// 3 parameters: raw polygon data, polygon list, list size
 	reg_t polygonData = argv[0];
-
-	// TODO: actually merge the polygon
-	// In QFG1VGA, there are no immediately visible side-effects
-	// of this being a stub.
-
-#if 0
 	List *list = s->_segMan->lookupList(argv[1]);
 	Node *node = s->_segMan->lookupNode(list->first);
 	// List size is not needed
@@ -1765,9 +1760,14 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	}
 #endif
 
+	// TODO: actually merge the polygon. We return an empty polygon for now.
+	// In QFG1VGA, you can walk over enemy bodies after killing them, since
+	// this is a stub.
+	reg_t output = allocateOutputArray(s->_segMan, 1);
+	SegmentRef arrayRef = s->_segMan->dereference(output);
+	writePoint(arrayRef, 0, Common::Point(POLY_LAST_POINT, POLY_LAST_POINT));
 	warning("Stub: kMergePoly");
-
-	return polygonData;
+	return output;
 }
 
 } // End of namespace Sci
