@@ -66,6 +66,7 @@ public:
 	bool kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction);
 	int16 kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direction);
 	int16 kernelPalVaryGetCurrentStep();
+	int16 kernelPalVaryChangeTarget(GuiResourceId resourceId);
 	void kernelPalVaryChangeTicks(uint16 ticks);
 	void kernelPalVaryPause(bool pause);
 	void kernelPalVaryDeinit();

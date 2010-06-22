@@ -572,6 +572,21 @@ int16 GfxPalette::kernelPalVaryGetCurrentStep() {
 	return -_palVaryStep;
 }
 
+int16 GfxPalette::kernelPalVaryChangeTarget(GuiResourceId resourceId) {
+	if (_palVaryResourceId != -1) {
+		Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
+		if (palResource) {
+			Palette insertPalette;
+			createFromData(palResource->data, &insertPalette);
+			// insert new palette into target
+			insert(&insertPalette, &_palVaryTargetPalette);
+			// update palette and set on screen
+			palVaryProcess(0, true);
+		}
+	}
+	return kernelPalVaryGetCurrentStep();
+}
+
 void GfxPalette::kernelPalVaryChangeTicks(uint16 ticks) {
 	_palVaryTicks = ticks;
 	if (_palVaryStep - _palVaryStepStop) {

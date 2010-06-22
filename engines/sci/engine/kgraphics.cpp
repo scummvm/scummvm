@@ -673,7 +673,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			warning("kPalVary(reverse) called with ticks = %d, stop = %d, direction = %d", ticks, stepStop, direction);
 			return make_reg(0, result);
 		} else {
-			warning("kPalVary(reverse) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+			warning("kPalVary(reverse) called with unsupported argc %d", argc);
 		}
 	}
 	case 2: { // Get Current Step
@@ -681,7 +681,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			int16 currentStep = g_sci->_gfxPalette->kernelPalVaryGetCurrentStep();
 			return make_reg(0, currentStep);
 		} else {
-			warning("kPalVary(GetCurrentStep) called with unsupported argc %d", argc);
+			warning("kPalVary(getCurrentStep) called with unsupported argc %d", argc);
 		}
 		break;
 	}
@@ -695,8 +695,13 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case 4: { // Change Target
-		// seems to be 1 parameter, we should find a game that is using this feature before implementing it
-		error("kPalVary(changeTarget) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		if (argc == 2) {
+			GuiResourceId paletteId = argv[1].toUint16();
+			int16 currentStep = g_sci->_gfxPalette->kernelPalVaryChangeTarget(paletteId);
+			return make_reg(0, currentStep);
+		} else {
+			warning("kPalVary(changeTarget) called with unsupported argc %d", argc);
+		}
 		break;
 	}
 	case 5: { // Change ticks
@@ -704,7 +709,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 			uint16 ticks = argv[1].toUint16();
 			g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
 		} else {
-			warning("kPalVary(changeTicks) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+			warning("kPalVary(changeTicks) called with unsupported argc %d", argc);
 		}
 		break;
 	}
