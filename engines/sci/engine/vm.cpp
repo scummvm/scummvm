@@ -417,6 +417,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (!strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
 					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
 					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
+				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == "qfg1") {
+					// QFG1VGA has a script bug in the longSong object when invoking the
+					// loop selector, which doesn't affect gameplay, thus don't diplay it
 				} else {
 					// Unknown script bug, show it
 					reg_t oldReg = *varp.getPointer(s->_segMan);
@@ -636,8 +639,9 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 #endif
 		}
 
-		// Remove callk stack frame again
-		s->_executionStack.pop_back();
+		// Remove callk stack frame again, if there's still an execution stack
+		if (s->_executionStack.begin() != s->_executionStack.end())
+			s->_executionStack.pop_back();
 	} else {
 		Common::String warningMsg = "Dummy function " + kernelFunc.origName +
 									Common::String::printf("[0x%x]", kernelFuncNum) +
