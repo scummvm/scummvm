@@ -238,6 +238,10 @@ MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
 
 MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &identifier) {
 	const MusicPlugin::List p = MusicMan.getPlugins();
+
+	if (p.begin() == p.end())
+		error("Music plugins must be loaded prior to calling this method.");
+
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {

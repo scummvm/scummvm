@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/fs.h"
 
-#include "sound/mididrv.h"
-
 #include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
@@ -364,8 +362,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(option)) == MT_NULL)
-					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")

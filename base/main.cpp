@@ -54,6 +54,7 @@
 #include "gui/error.h"
 
 #include "sound/audiocd.h"
+#include "sound/mididrv.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -340,6 +341,16 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+
+	// If we received an invalid music parameter via command line we check this here.
+	// We can't check this before loading the music plugins.
+	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
+	if (!settings["music-driver"].empty()) {
+		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_NULL) {
+				warning("Unrecognized music driver '%s'\nSwitching to default device.", settings["music-driver"].c_str());
+				settings["music-driver"] = "auto";
+		}
+	}
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
