@@ -51,7 +51,23 @@ SECTIONS {
 	.rdata ALIGN(128): { *(.rdata) }
 	.gcc_except_table ALIGN(128): { *(.gcc_except_table) }
 
-	 /*We assign the output location counter to the plugin hole made
+	.bss ALIGN(128) : {
+		*(.bss)
+		*(.bss.*)
+		*(.gnu.linkonce.b*)
+		*(COMMON)
+	}
+	_end_bss = .;
+
+	_end = . ;
+	PROVIDE(end = .);
+
+	/* Symbols needed by crt0.s.  */
+	PROVIDE(_heap_size = -1);
+	PROVIDE(_stack = -1);
+	PROVIDE(_stack_size = 128 * 1024);	
+
+	/*We assign the output location counter to the plugin hole made
    	  in main_prog.ld, then assign the small data sections to the shorts segment*/
 	. = __plugin_hole_start;
 	.lit4 ALIGN(128): { *(.lit4) } : shorts
@@ -75,19 +91,4 @@ SECTIONS {
 		*(.scommon)
 	}
 
-	.bss ALIGN(128) : {
-		*(.bss)
-		*(.bss.*)
-		*(.gnu.linkonce.b*)
-		*(COMMON)
-	}
-	_end_bss = .;
-
-	_end = . ;
-	PROVIDE(end = .);
-
-	/* Symbols needed by crt0.s.  */
-	PROVIDE(_heap_size = -1);
-	PROVIDE(_stack = -1);
-	PROVIDE(_stack_size = 128 * 1024);
 }
