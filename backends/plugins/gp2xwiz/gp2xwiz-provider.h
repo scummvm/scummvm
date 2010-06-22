@@ -30,7 +30,7 @@
 
 #if defined(DYNAMIC_MODULES) && defined(GP2XWIZ)
 
-class PS2PluginProvider : public FilePluginProvider {
+class GP2XWIZPluginProvider : public FilePluginProvider {
 protected:
 	Plugin* createPlugin(const Common::FSNode &node) const;
 
