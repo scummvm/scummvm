@@ -60,7 +60,7 @@ maniac	Maniac Mansion
 
 	7f45ddd6dbfbf8f80c0c0efea4c295bc	1972	en	DOS	V1	V1	-	Fingolfin
 
-	17f7296f63c78642724f057fd8e736a7	-1	gb	NES	NES	-	
+	17f7296f63c78642724f057fd8e736a7	2082	gb	NES	NES	-	
 	91d5db93187fab54d823f73bd6441cb6	-1	us	NES	NES	-	
 	1c7e7db2cfab1ad62746ab680a634204	-1	fr	NES	NES	-	
 	3a5ec90d556d4920976c5578bfbfaf79	-1	de	NES	NES	-	
@@ -172,7 +172,7 @@ loom	Loom
 
 	5d88b9d6a88e6f8e90cded9d01b7f082	8307	en	DOS	VGA	VGA	CD Version v1.0 from 10. Feb 92 (Talkie)	Peter Eckerlein, Fingolfin
 
-	c5d10e190d4b4d59114b824f2fdbd00e	-1	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
+	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
 	0aa050f4ad79402fbe9c4f78fb8ac494	-1	en	PC-Engine	PC-Engine	-	-	Kirben
@@ -189,7 +189,7 @@ monkey	The Secret of Monkey Island
 
 	49210e124e4c2b30f1290a9ef6306301	8357	en	DOS	EGA	EGA	8 disk v1.0, 9/18/90	Fingolfin
 	1dd3c11ea4439adfe681e4e405b624e1	-1	fr	DOS	EGA	EGA	8 disk	Andrea Petrucci
-	fc6b6148e80d67939d9a18697c0f626a	-1	de	DOS	EGA	EGA	8 disk	ghoostkilla
+	fc6b6148e80d67939d9a18697c0f626a	8367	de	DOS	EGA	EGA	8 disk	ghoostkilla
 	910e31cffb28226bd68c569668a0d6b4	-1	es	DOS	EGA	EGA	8 disk	Andrea Petrucci
 	1d05cd189e4908f79b57e78a4402f292	-1	en	DOS	EGA	EGA	4 disk	Andrea Petrucci
 	ce6a4cef315b20fef58a95bc40a2d8d3	-1	fr	DOS	EGA	EGA	4 disk	Matthieu Milan
@@ -225,12 +225,12 @@ monkey	The Secret of Monkey Island
 	c13225cb1bbd3bc9fe578301696d8021	-1	en	SEGA	SEGA	-	-	
 	057c9b456dedcc4d71b991a3072a20b3	9465	jp	SEGA	SEGA	-	-	GloKidd
 
-	8eb84cee9b429314c7f0bdcf560723eb	-1	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
+	8eb84cee9b429314c7f0bdcf560723eb	9925	en	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 	e17db1ddf91b39ca6bbc8ad3ed19e883	-1	jp	FM-TOWNS	FM-TOWNS	-	-	Paul Priest, Andrea Petrucci
 
 	71523b539491527d9860f4407faf0411	7607	en	DOS	Demo	EGA Demo	-	Fingolfin
 	771bc18ec6f93837b839c992b211904b	-1	de	DOS	Demo	EGA Demo	-	khalek
-	54a936ad06161ff7bfefcb96200f7bff	-1	en	Amiga	VGA	VGA Demo	-	khalek
+	54a936ad06161ff7bfefcb96200f7bff	7617	en	Amiga	VGA	VGA Demo	-	khalek
 
 pass	Passport to Adventure
 	e6cd81b25ab1453a8a6d3482118c391e	7857	en	DOS	-	-	v1.0 9/14/90	Fingolfin
@@ -281,7 +281,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
 	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #3017219
 
-	c7be10f775404fd9785a8b92a06d240c	-1	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
+	c7be10f775404fd9785a8b92a06d240c	12030	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
 	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	-	-	-	Andrea Petrucci
 
 	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	Floppy	Demo	-	
@@ -387,7 +387,7 @@ football	Backyard Football
 	7fc6cdb46b4c9d384c52327f4bca6416	-1	en	All	-	-	-	sev
 
 	425205754fa749f4f0b0dd9d09fa45fd	-1	en	All	-	Demo	-	Joachim Eberhard
-	5bd335265a61caa3d78956ad9f88ba23	-1	en	All	-	Demo	-	sev
+	5bd335265a61caa3d78956ad9f88ba23	23135	en	All	-	Demo	-	sev
 
 football2002	Backyard Football 2002
 	a095616d2d23ccf43b8e257711202cba	-1	en	All	-	-	-	clone2727
@@ -558,7 +558,7 @@ freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	4ce2d5b355964bbcb5e5ce73236ef868	-1	ru	Windows	HE 100	-	-	sev
 
 	6b257bb2827dd894b8109a50a1a18b5a	-1	nl	All	HE 100	Demo	-	Kirben, sev
-	45082a5c9f42ba14dacfe1fdeeba819d	-1	en	All	HE 100	Demo	-	sev
+	45082a5c9f42ba14dacfe1fdeeba819d	18422	en	All	HE 100	Demo	-	sev
 
 maze	Freddi Fish and Luther's Maze Madness
 	4f04b321a95d4315ce6d65f8e1dd0368	-1	us	All	HE 80	-	-	Kirben
@@ -589,7 +589,7 @@ airport	Let's Explore the Airport with Buzzy
 
 	7ea2da67ebabea4ac20cee9f4f9d2934	-1	en	Mac	-	Demo	-	khalek
 	8ffd618a776a4c0d8922bb28b09f8ce8	-1	en	Windows	-	Demo	-	khalek
-	e144f5f49d9241d2a9dee2576b3d09cb	-1	en	Windows	-	Demo	-	khalek
+	e144f5f49d9241d2a9dee2576b3d09cb	51152	en	Windows	-	Demo	-	khalek
 	86c9902b7bec1a17926d4dae85beaa45	-1	en	Windows	HE 71	Demo	-	khalek
 
 farm	Let's Explore the Farm with Buzzy
@@ -602,7 +602,7 @@ farm	Let's Explore the Farm with Buzzy
 	39fd6db10d0222d817025c4d3346e3b4	-1	en	Mac	-	Demo	-	Joachim Eberhard
 	bf8b52fdd9a69c67f34e8e9fec72661c	-1	en	Windows	HE 71	Demo	-	khalek, sev
 	0557df19f046a84c2fdc63507c6616cb	-1	nl	Windows	HE 72	Demo	-	adutchguy
-	8d479e36f35e80257dfc102cf4b8a912	-1	en	Windows	HE 72	Demo	-	khalek, sev
+	8d479e36f35e80257dfc102cf4b8a912	34333	en	Windows	HE 72	Demo	-	khalek, sev
 
 jungle	Let's Explore the Jungle with Buzzy
 	659942b9a6b519f123a13cca3c333a13	-1	en	Mac	-	-	-	Joachim Eberhard
@@ -655,13 +655,13 @@ pajama3	Pajama Sam 3: You Are What You Eat From Your Head to Your Feet
 	f08145577e4f13584cc90b3d6e9caa55	-1	nl	All	-	Demo	-	joostp
 	a654fb60c3b67d6317a7894ffd9f25c5	-1	us	All	-	Demo	-	sev
 	a9f2f04b1ecaab9495b59befffe9bf88	-1	us	All	-	Demo	-	sev
-	0c45eb4baff0c12c3d9dfa889c8070ab	-1	de	All	-	Demo	-	Joachim Eberhard
+	0c45eb4baff0c12c3d9dfa889c8070ab	13884	de	All	-	Demo	-	Joachim Eberhard
 	4fe6a2e8df3c4536b278fdd2fbcb181e	-1	en	Windows	-	Mini Game	-	Trekky
 	679855cf61932f9bf995c8f3677380ed	-1	fr	Windows	-	Demo	-	Mevi
 	c8c5baadcbfc8d0372ed4335abace8a7	-1	fr	Windows	-	Demo	-	Mevi
 	784b499c98d07260a30952685758636b	13911	de	Windows	-	Demo	-	George Kormendi
 	3e48298920fab9b7aec5a971e1bd1fab	-1	gb	Windows	-	Demo	-	eriktorbjorn
-	cf90b4db5486ef798db78fe6fbf897e5	-1	us	Windows	-	Demo	-	khalek
+	cf90b4db5486ef798db78fe6fbf897e5	13902	us	Windows	-	Demo	-	khalek
 
 pjgames	Pajama Sam: Games to Play on Any Day
 	8a484262363a8e18be87112454f1456b	-1	us	All	-	-	-	Kirben
@@ -753,7 +753,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	3a3e592b074f595489f7f11e150c398d	-1	us	Windows	HE 99	Updated	-	Adrian
 	c5cc7cba02a2fbd539c4439e775b0536	43470	de	Windows	HE 99	Updated	-	Lightkey
 
-	3486ede0f904789267d4bcc5537a46d4	-1	en	Mac	-	Demo	-	khalek
+	3486ede0f904789267d4bcc5537a46d4	14337	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
 	aa81aa6d5545ce172fdba81f2e2f9d36	-1	nl	Windows	-	Demo	-	DarthBo
 	de4efb910210736813c9a1185384bace	-1	en	Windows	HE 72	Demo	-	khalek
@@ -854,7 +854,7 @@ spyozon	SPY Fox 3: Operation Ozone
 	7015b059ab72cff3a0ef9fb4d5e9889d	-1	de	Windows	-	-	-	andy482
 	be39a5d4db60e8aa736b9086778cb45c	-1	gb	Windows	-	-	-	
 
-	ebd0b2c8a387f18887282afe6cad894a	-1	en	All	-	Demo	-	Kirben
+	ebd0b2c8a387f18887282afe6cad894a	15317	en	All	-	Demo	-	Kirben
 	a99c39ba65b6086be28aef576da69595	-1	fr	Windows	-	Demo	-	Mevi
 	65563295c3a06493351870f20a1630cf	5235008	All	All	HE CUP	Preview	-	sev
 
