@@ -7,7 +7,7 @@ namespace Testbed {
 /**
  * This test does the following:
  * 1) acquires the game-data path
- * 2) In the game-data dir, there are three files: testbed, TeStBeD and TESTBED
+ * 2) In the game-root it navigates to "directory" and opens the file "file"
  * The former two are directories while the latter is a text file used for game engine detection
  *
  * Both the directories contain the file testbed.conf each which has a message written in it.
@@ -15,6 +15,34 @@ namespace Testbed {
  * compares the message contained in it, with what it expects.
  *
  */
+bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
+	
+	
+	Common::FSDirectory nestedDir(directory);
+
+	Common::SeekableReadStream *readStream = nestedDir.createReadStreamForMember(file);
+
+	if (!readStream) {
+		printf("LOG:Can't open game file for reading\n");
+		return false;
+	} 
+	
+	Common::String msg = readStream->readLine();
+	delete readStream;
+	printf("LOG: Message Extracted from %s : %s\n", file, msg.c_str());
+
+
+	Common::String expectedMsg = "It works!";
+
+	if (!msg.equals(expectedMsg)) {
+		printf("LOG: Can't read Correct data from file\n");
+		return false;
+	}
+
+	return true;
+}
+
+
 bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
@@ -24,31 +52,31 @@ bool FStests::testReadFile() {
 		return false;
 	}
 	
-	Common::FSNode subDir = gameRoot.getChild("TeStBeD");
-
-	if (!subDir.exists()) {
-		printf("LOG:Unable to recognize TeStBeD Inside the game Dir");
-		return false;
-	}
+	Common::FSList dirList;
+	gameRoot.getChildren(dirList);
 	
-	Common::FSDirectory testBedDir(subDir);
+	const char *file[] = {"file.txt", "File.txt", "FILE.txt", "fILe.txt", "file."};
 
-	Common::SeekableReadStream *readStream = testBedDir.createReadStreamForMember("testbed.conf");
-
-	if (!readStream) {
-		printf("LOG:Can't open game file for reading\n");
-		return false;
-	} 
-	
-	Common::String msg = readStream->readLine();
-	delete readStream;
-	printf("LOG: Message Extracted: %s\n", msg.c_str());
-
-	Common::String expectedMsg = "It works!";
-
-	if (!msg.equals(expectedMsg)) {
-		printf("LOG: Can't read Correct data from file\n");
-		return false;
+	for (unsigned int i = 0; i < dirList.size(); i++) {
+		Common::String fileName = file[i];
+		if (!readDataFromFile(dirList[i], fileName.c_str())) {
+			printf("LOG : reading from %s failed", fileName.c_str());
+			return false;
+		}
+		
+		fileName.toLowercase();
+		
+		if (!readDataFromFile(dirList[i], fileName.c_str())) {
+			printf("LOG : reading from %s failed", fileName.c_str());
+			return false;
+		}
+		
+		fileName.toUppercase();
+		
+		if (!readDataFromFile(dirList[i], fileName.c_str())) {
+			printf("LOG : reading from %s failed", fileName.c_str());
+			return false;
+		}
 	}
 
 	return true;

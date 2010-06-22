@@ -1,4 +1,0 @@
-#!/bin/sh
-
-unzip testbed.zip
-mv testbed/testbed_mixed_case testbed/TeStBeD

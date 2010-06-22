@@ -12,6 +12,7 @@ namespace FStests {
 // from commandline
 
 // Helper functions for FS tests
+bool readDataFromFile(Common::FSNode &directory, const char *file);
 
 // will contain function declarations for FS tests
 bool testReadFile();
