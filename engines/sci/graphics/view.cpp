@@ -653,7 +653,7 @@ uint16 GfxView::getCelCount(int16 loopNo) {
 }
 
 Palette *GfxView::getPalette() {
-	return _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
+	return _embeddedPal ? &_viewPalette : NULL;
 }
 
 } // End of namespace Sci

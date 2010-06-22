@@ -30,9 +30,11 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/view.h"
 
 namespace Sci {
 
@@ -216,15 +218,16 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 		_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
 		newPalette->timestamp = _sysPalette.timestamp;
 
+		bool updatePalette = _sysPaletteChanged && _screen->_picNotValid == 0;
+
 		if (_palVaryResourceId != -1) {
 			// Pal-vary currently active, we don't set at any time, but also insert into origin palette
 			insert(newPalette, &_palVaryOriginPalette);
+			palVaryProcess(0, updatePalette);
 			return;
 		}
 
-		if (_sysPaletteChanged && _screen->_picNotValid == 0) { // && systime != _sysPalette.timestamp) {
-			// Removed timestamp checking, because this shouldnt be needed anymore. I'm leaving it commented just in
-			//  case this causes regressions
+		if (updatePalette) {
 			setOnScreen();
 			_sysPaletteChanged = false;
 		}
@@ -467,7 +470,16 @@ void GfxPalette::kernelAnimateSet() {
 }
 
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
-	warning("kAssertPalette %d", resourceId);
+	// Sometimes invalid viewIds are asked for, ignore those (e.g. qfg1vga)
+	if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
+		return;
+
+	GfxView *view = g_sci->_gfxCache->getView(resourceId);
+	Palette *viewPalette = view->getPalette();
+	if (viewPalette) {
+		// merge/insert this palette
+		set(viewPalette, true);
+	}
 }
 
 // palVary
