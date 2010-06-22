@@ -696,7 +696,7 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	}
 	case 4: { // Change Target
 		// seems to be 1 parameter, we should find a game that is using this feature before implementing it
-		warning("kPalVary(changeTarget) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
+		error("kPalVary(changeTarget) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
 		break;
 	}
 	case 5: { // Change ticks
