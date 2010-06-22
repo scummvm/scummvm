@@ -279,6 +279,7 @@ atlantis	Indiana Jones and the Fate of Atlantis
 	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
 	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
+	e8d0697906e53fee8b7e9f5652696da8	11915	jp	DOS	-	CD	-	Petr Maruska, tracker #3017219
 
 	c7be10f775404fd9785a8b92a06d240c	-1	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
 	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	-	-	-	Andrea Petrucci
