@@ -90,6 +90,9 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	Common::String gameId = g_sci->getGameId();
 	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || gameId == "hoyle4" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
 		offTop = 0;
+	// Mixed-Up Fairy Tales uses -w 26 0 200 320. If we don't also do this we will get not-fully-removed windows everywhere
+	if (gameId == "fairytales")
+		offTop = 26;
 
 	openPort(_wmgrPort);
 	setPort(_wmgrPort);
