@@ -110,17 +110,19 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	_headerSize = file->readByte();
 
 	if (type == kResourceTypeAudio) {
-		if (_headerSize != 11 && _headerSize != 12) {
+		if (_headerSize != 7 && _headerSize != 11 && _headerSize != 12) {
 			warning("Unsupported audio header");
 			unalloc();
 			return false;
 		}
 
-		// Load sample size
-		file->seek(7, SEEK_CUR);
-		size = file->readUint32LE();
-		// Adjust offset to point at the header data again
-		file->seek(-11, SEEK_CUR);
+		if (_headerSize != 7) { // Size is defined already from the map
+			// Load sample size
+			file->seek(7, SEEK_CUR);
+			size = file->readUint32LE();
+			// Adjust offset to point at the header data again
+			file->seek(-11, SEEK_CUR);
+		}
 	}
 
 	return loadPatch(file);
@@ -247,7 +249,6 @@ void ResourceManager::removeAudioResource(ResourceId resId) {
 // w syncAscSize (iff seq has bit 6 set)
 
 int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
-	bool isEarly = true;
 	uint32 offset = 0;
 	Resource *mapRes = findResource(ResourceId(kResourceTypeMap, map->_volumeNumber), false);
 
@@ -263,11 +264,16 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 
 	byte *ptr = mapRes->data;
 
-	if (map->_volumeNumber == 65535) {
-		// Heuristic to detect late SCI1.1 map format
-		if ((mapRes->size >= 6) && (ptr[mapRes->size - 6] != 0xff))
-			isEarly = false;
+	// Heuristic to detect entry size
+	uint32 entrySize = 0;
+	for (int i = mapRes->size - 1; i >= 0; --i) {
+		if (ptr[i] == 0xff)
+			entrySize++;
+		else
+			break;
+	}
 
+	if (map->_volumeNumber == 65535) {
 		while (ptr < mapRes->data + mapRes->size) {
 			uint16 n = READ_LE_UINT16(ptr);
 			ptr += 2;
@@ -275,7 +281,7 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 			if (n == 0xffff)
 				break;
 
-			if (isEarly) {
+			if (entrySize == 6) {
 				offset = READ_LE_UINT32(ptr);
 				ptr += 4;
 			} else {
@@ -285,10 +291,25 @@ int ResourceManager::readAudioMapSCI11(ResourceSource *map) {
 
 			addResource(ResourceId(kResourceTypeAudio, n), src, offset);
 		}
+	} else if (map->_volumeNumber == 0 && entrySize == 10 && ptr[3] == 0) {
+		// QFG3 demo format
+		// ptr[3] would be 'seq' in the normal format and cannot possibly be 0
+		while (ptr < mapRes->data + mapRes->size) {
+			uint16 n = READ_BE_UINT16(ptr);
+			ptr += 2;
+
+			if (n == 0xffff)
+				break;
+
+			offset = READ_LE_UINT32(ptr);
+			ptr += 4;
+			uint32 size = READ_LE_UINT32(ptr);
+			ptr += 4;
+
+			addResource(ResourceId(kResourceTypeAudio, n), src, offset, size);
+		}
 	} else {
-		// Heuristic to detect late SCI1.1 map format
-		if ((mapRes->size >= 11) && (ptr[mapRes->size - 11] == 0xff))
-			isEarly = false;
+		bool isEarly = (entrySize != 11); 
 
 		if (!isEarly) {
 			offset = READ_LE_UINT32(ptr);

@@ -182,17 +182,28 @@ static void deDPCM8(byte *soundBuf, Common::SeekableReadStream &audioStream, uin
 
 // Sierra SOL audio file reader
 // Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
-static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags) {
-	if (headerSize != 11 && headerSize != 12) {
+static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags, uint32 resSize) {
+	if (headerSize != 7 && headerSize != 11 && headerSize != 12) {
 		warning("SOL audio header of size %i not supported", headerSize);
 		return false;
 	}
 
-	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
+	uint32 tag = audioStream->readUint32BE();
+
+	if (tag != MKID_BE('SOL\0')) {
+		warning("No 'SOL' FourCC found");
+		return false;
+	}
+
 	audioRate = audioStream->readUint16LE();
 	audioFlags = audioStream->readByte();
 
-	size = audioStream->readUint32LE();
+	// For the QFG3 demo format, just use the resource size
+	// Otherwise, load it from the header
+	if (headerSize == 7)
+		size = resSize;
+	else
+		size = audioStream->readUint32LE();
 	return true;
 }
 
@@ -294,7 +305,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			// SCI1.1
 			Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
 
-			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags)) {
+			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags, audioRes->size)) {
 				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
