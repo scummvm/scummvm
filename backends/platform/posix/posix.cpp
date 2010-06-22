@@ -23,32 +23,34 @@
  *
  */
 
-#include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
-#undef ARRAYSIZE
-
-#include "backends/platform/win32/win32.h"
+#include "backends/platform/posix/posix.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/util.h"
+#include "common/EventRecorder.h"
 
-#include "backends/saves/default/default-saves.h"
+#include "backends/saves/posix/posix-saves.h"
+  
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/timer/sdl/sdl-timer.h"
 
-#include "backends/fs/windows/windows-fs-factory.h"
+#include "backends/fs/posix/posix-fs-factory.h"
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#define DEFAULT_CONFIG_FILE ".scummvmrc"
 
-OSystem_Win32::OSystem_Win32() {
-	_fsFactory = new WindowsFilesystemFactory();
+OSystem_POSIX::OSystem_POSIX() {
+	_fsFactory = new POSIXFilesystemFactory();
 }
 
-void OSystem_Win32::initBackend() {
+OSystem_POSIX::~OSystem_POSIX() {
+	deinit();
+}
+
+void OSystem_POSIX::initBackend() {
 	assert(!_inited);
 
 	uint32 sdlFlags = 0;
@@ -78,7 +80,7 @@ void OSystem_Win32::initBackend() {
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_savefileManager == 0) {
-		_savefileManager = new DefaultSaveFileManager();
+		_savefileManager = new POSIXSaveFileManager();
 	}
 
 	// Create and hook up the mixer, if none exists yet (we check for this to
@@ -107,59 +109,28 @@ void OSystem_Win32::initBackend() {
 		_audiocdManager = (AudioCDManager *)new SdlAudioCDManager();
 	}
 
-	// Setup a custom program icon.
-	setupIcon();
-
 	// Invoke parent implementation of this method
 	OSystem::initBackend();
 
 	_inited = true;
 }
 
-Common::String OSystem_Win32::getDefaultConfigFileName() {
+Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
-	OSVERSIONINFO win32OsVersion;
-	ZeroMemory(&win32OsVersion, sizeof(OSVERSIONINFO));
-	win32OsVersion.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-	GetVersionEx(&win32OsVersion);
-	// Check for non-9X version of Windows.
-	if (win32OsVersion.dwPlatformId != VER_PLATFORM_WIN32_WINDOWS) {
-		// Use the Application Data directory of the user profile.
-		if (win32OsVersion.dwMajorVersion >= 5) {
-			if (!GetEnvironmentVariable("APPDATA", configFile, sizeof(configFile)))
-				error("Unable to access application data directory");
-		} else {
-			if (!GetEnvironmentVariable("USERPROFILE", configFile, sizeof(configFile)))
-				error("Unable to access user profile directory");
-
-			strcat(configFile, "\\Application Data");
-			CreateDirectory(configFile, NULL);
-		}
-
-		strcat(configFile, "\\ScummVM");
-		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-
-		FILE *tmp = NULL;
-		if ((tmp = fopen(configFile, "r")) == NULL) {
-			// Check windows directory
-			char oldConfigFile[MAXPATHLEN];
-			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
-			if ((tmp = fopen(oldConfigFile, "r"))) {
-				strcpy(configFile, oldConfigFile);
-
-				fclose(tmp);
-			}
-		} else {
-			fclose(tmp);
-		}
-	} else {
-		// Check windows directory
-		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
-	}
+	// On UNIX type systems, by default we store the config file inside
+	// to the HOME directory of the user.
+	//
+	// GP2X is Linux based but Home dir can be read only so do not use
+	// it and put the config in the executable dir.
+	//
+	// On the iPhone, the home dir of the user when you launch the app
+	// from the Springboard, is /. Which we don't want.
+	const char *home = getenv("HOME");
+	if (home != NULL && strlen(home) < MAXPATHLEN)
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+	else
+		strcpy(configFile, DEFAULT_CONFIG_FILE);
 
 	return configFile;
 }

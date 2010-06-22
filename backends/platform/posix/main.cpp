@@ -25,19 +25,14 @@
 
 #include "common/scummsys.h"
 
-// Several SDL based ports use a custom main, and hence do not want to compile
-// of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO) && !defined(__SYMBIAN32__) && !defined(WIN32) && !defined(UNIX)
-
-
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
 int main(int argc, char *argv[]) {
 
 	// Create our OSystem instance
-	g_system = new OSystem_SDL();
+	g_system = new OSystem_POSIX();
 	assert(g_system);
 
 #ifdef DYNAMIC_MODULES
@@ -46,8 +41,6 @@ int main(int argc, char *argv[]) {
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
-	delete (OSystem_SDL *)g_system;
+	delete (OSystem_POSIX *)g_system;
 	return res;
 }
-
-#endif
