@@ -712,7 +712,6 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 		file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
 		if (!file)
 			error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
-		return false;
 	}
 
 	return loadParser(file, loop);
