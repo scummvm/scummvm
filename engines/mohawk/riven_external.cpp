@@ -1043,8 +1043,10 @@ int RivenExternal::jspitElevatorLoop() {
 void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	// If we've moved the handle down, go down a floor
 	if (changeLevel == -1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(1);
+		_vm->_video->playMovieBlocking(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1052,8 +1054,10 @@ void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	// If we've moved the handle up, go up a floor
 	if (changeLevel == 1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(1);
+		_vm->_video->playMovieBlocking(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1061,11 +1065,29 @@ void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	if (changeLevel == 0)
+		return;
+
+	// Play the handle moving video
+	if (changeLevel == 1)
+		_vm->_video->playMovieBlocking(7);
+	else
+		_vm->_video->playMovieBlocking(6);
+
+	// If the whark's mouth is open, close it
+	uint32 *mouthVar = _vm->matchVarToString("jwmouth");
+	if (*mouthVar == 1) {
+		_vm->_video->playMovieBlocking(3);
+		_vm->_video->playMovieBlocking(8);
+		*mouthVar = 0;
+	}
+
+	// Play the elevator video and then change the card
 	if (changeLevel == 1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(5);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e597));
-	} else if (changeLevel == -1) {
-		// TODO: Run movie
+	} else {
+		_vm->_video->playMovieBlocking(4);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e29c));
 	}
 }
