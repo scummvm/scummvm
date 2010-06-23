@@ -105,7 +105,11 @@ enum kMemoryInfoFunc {
 };
 
 reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
-	const uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
+	// The free heap size returned must not be 0xffff, or some memory
+	// calculations will overflow. Crazy Nick's games handle up to 32746
+	// bytes (0x7fea), otherwise they throw a warning that the memory is
+	// fragmented
+	const uint16 size = 0x7fea;
 
 	switch (argv[0].offset) {
 	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
