@@ -121,55 +121,69 @@ void M4Sprite::loadDeltaRle(Common::SeekableReadStream* rleData, int destX, int 
 
 // TODO: The sprite outlines (pixel value 0xFD) are not shown
 void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
-	byte *outp, *lineStart;
-	bool newLine = false;
+	// Set entire sprite contents to transparent pixels
+	fillRect(bounds(), TRANSPARENT_COLOUR_INDEX);
 
-	outp = getBasePtr();
-	lineStart = getBasePtr();
+	// Major line loop
+	for (int y = 0; y < h; ++y) {
+		byte *destP = getBasePtr(0, y);
+		bool newLine = false;
+		byte cmd = source->readByte();
+		int x = 0;
 
-	while (1) {
-		byte cmd1, cmd2, count, pixel;
-
-		if (newLine) {
-			if (outp < (lineStart + w))
-				Common::set_to(outp, lineStart + w, TRANSPARENT_COLOUR_INDEX);
-
-			outp = lineStart + w;
-			lineStart = outp;
-			newLine = false;
-		}
-
-		cmd1 = source->readByte();
-
-		if (cmd1 == 0xFC)
-			break;
-		else if (cmd1 == 0xFF)
+		if (cmd == 0xff)
+			// The entire line is empty
 			newLine = true;
-		else if (cmd1 == 0xFD) {
-			while (!newLine) {
-				count = source->readByte();
-				if (count == 0xFF) {
+		else if (cmd == 0xFD) {
+			// Lines contains only run lenghs of pixels
+			while (x < w) {
+				byte cmd = source->readByte();
+				if (cmd == 0xff) {
+					// End of line reached
 					newLine = true;
-				} else {
-					pixel = source->readByte();
-					while (count--)
-						*outp++ = (pixel == 0xFD) ? TRANSPARENT_COLOUR_INDEX : pixel;
+					break;
+				}
+
+				byte v = source->readByte();
+				while (cmd-- > 0) {
+					if (x < w)
+						*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
+					++x;
 				}
 			}
 		} else {
-			while (!newLine) {
-				cmd2 = source->readByte();
-				if (cmd2 == 0xFF) {
+			// Line intermixes run lengths with individual pixels
+			while (x < w) {
+				cmd = source->readByte();
+				if (cmd == 0xff) {
+					// End of line reached
 					newLine = true;
-				} else if (cmd2 == 0xFE) {
-					count = source->readByte();
-					pixel = source->readByte();
-					while (count--)
-						*outp++ = (pixel == 0xFD) ? TRANSPARENT_COLOUR_INDEX : pixel;
+					break;
+				}
+
+				if (cmd == 0xFE) {
+					// Handle repeated sequence
+					cmd = source->readByte();
+					byte v = source->readByte();
+					while (cmd-- > 0) {
+						if (x < w) {
+							*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
+						}
+						++x;
+					}
 				} else {
-					*outp++ = (cmd2 == 0xFD) ? TRANSPARENT_COLOUR_INDEX : cmd2;
+					// Handle writing out single pixel
+					*destP++ = (cmd == 0xFD) ? TRANSPARENT_COLOUR_INDEX : cmd;
+					++x;
 				}
 			}
+		}
+		
+		// Check if we need to scan forward to find the end of the line
+		if (!newLine) {
+			do {
+				assert(!source->eos());
+			} while (source->readByte() != 0xff);
 		}
 	}
 }
