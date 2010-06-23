@@ -59,6 +59,16 @@ typedef struct {
 // Should be in e_ident
 #define ELFMAG          "\177ELF\1\1"	/* ELF Magic number */
 
+// e_type values
+#define ET_NONE		0	/* no file type */
+#define ET_REL		1	/* relocatable */
+#define ET_EXEC		2	/* executable */
+#define ET_DYN		3	/* shared object */
+#define ET_CORE		4	/* core file */
+
+// e_machine values
+//#define EM_ARM		?
+
 // Program header (contains info about segment)
 typedef struct {
 	Elf32_Word    p_type;                 /* Segment type */
@@ -70,6 +80,21 @@ typedef struct {
 	Elf32_Word    p_flags;                /* Segment flags */
 	Elf32_Word    p_align;                /* Segment alignment */
 } Elf32_Phdr;
+
+// p_type values
+#define PT_NULL 		0	/* ignored */
+#define PT_LOAD			1	/* loadable segment */
+#define PT_DYNAMIC		2	/* dynamic linking info */
+#define PT_INTERP		3	/* info about interpreter */
+#define PT_NOTE			4	/* note segment */
+#define PT_SHLIB		5	/* reserved */
+#define PT_PHDR			6	/* Program header table */
+/* #define PT_REGINFO 0x70000000 register usage info */
+
+// p_flags value (don't think these are specific to architecture, but not certain)
+#define PF_X	1	/* execute */
+#define PF_W	2	/* write */
+#define PF_R	4	/* read */
 
 // Section header (contains info about section)
 typedef struct {
@@ -85,6 +110,26 @@ typedef struct {
 	Elf32_Word    sh_entsize;             /* Entry size if section holds table */
 } Elf32_Shdr;
 
+// sh_type values
+#define SHT_NULL			0	/* Inactive section */
+#define SHT_PROGBITS		1	/* Proprietary */
+#define SHT_SYMTAB			2	/* Symbol table */
+#define SHT_STRTAB			3	/* String table */
+#define SHT_RELA			4	/* Relocation entries with addend */
+#define SHT_HASH			5	/* Symbol hash table */
+#define SHT_DYNAMIC			6	/* Info for dynamic linking */
+#define SHT_NOTE			7	/* Note section */
+#define SHT_NOBITS			8	/* Occupies no space */
+#define SHT_REL				9	/* Relocation entries without addend */
+#define SHT_SHLIB			10	/* Reserved */
+#define SHT_DYNSYM			11	/* Minimal set of dynamic linking symbols */
+
+// sh_flags values
+#define SHF_WRITE		0	/* writable section */
+#define SHF_ALLOC		2	/* section occupies memory */
+#define SHF_EXECINSTR	4	/* machine instructions */
+#define SHF_MIPS_GPREL	0x10000000	/* Must be made part of global data area */
+
 // Symbol entry (contain info about a symbol)
 typedef struct {
 	Elf32_Word    st_name;                /* Symbol name (string tbl index) */
@@ -95,11 +140,34 @@ typedef struct {
 	Elf32_Section st_shndx;               /* Section index */
 } Elf32_Sym;
 
+// Extract from the st_info
+#define SYM_TYPE(x)		((x)&0xF)
+#define SYM_BIND(x)		((x)>>4)
+
+// Symbol binding values from st_info
+#define STB_LOCAL 	0	/* Symbol not visible outside object */
+#define STB_GLOBAL 	1	/* Symbol visible to all object files */
+#define STB_WEAK	2	/* Similar to STB_GLOBAL */
+
+// Symbol type values from st_info
+#define STT_NOTYPE	0	/* Not specified */
+#define STT_OBJECT	1	/* Data object e.g. variable */
+#define STT_FUNC	2	/* Function */
+#define STT_SECTION	3	/* Section */
+#define STT_FILE	4	/* Source file associated with object file */
+
+// Special section header index values from st_shndex
+#define SHN_UNDEF  		0
+#define SHN_LOPROC 		0xFF00	/* Extended values */
+#define SHN_ABS	   		0xFFF1	/* Absolute value: don't relocate */
+#define SHN_COMMON 		0xFFF2	/* Common block. Not allocated yet */
+#define SHN_HIPROC 		0xFF1F
+#define SHN_HIRESERVE 	0xFFFF
+
 // Relocation entry (info about how to relocate)
 typedef struct {
 	Elf32_Addr    r_offset;               /* Address */
 	Elf32_Word    r_info;                 /* Relocation type and symbol index */
-	Elf32_Sword   r_addend;               /* Addend */
-} Elf32_Rela;
+} Elf32_Rel;
 
 #endif /* BACKENDS_ELF_H */

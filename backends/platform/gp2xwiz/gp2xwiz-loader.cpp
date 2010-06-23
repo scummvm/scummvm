@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(GP2X)
+#if defined(DYNAMIC_MODULES) && defined(GP2XWIZ)
 
 #include <string.h>
 #include <stdarg.h>
@@ -89,7 +89,7 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size) {
 	// TODO: Loop over relocation entries
 	for (int i = 0; i < cnt; i++) {
 
-	        //Elf32_Sym *sym = ???;
+	    //Elf32_Sym *sym = ???;
 
 		//void *target = ???;
 
@@ -109,17 +109,264 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size) {
 	return true;
 }
 
+bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
+
+	/*
+	if (read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr) ||
+		memcmp(ehdr.e_ident, ELFMAG, SELFMAG) ||
+	    ehdr.e_type != 2 ||  ehdr.e_machine != 42 ||
+	    ehdr.e_phentsize < sizeof(phdr) || ehdr.e_shentsize != sizeof(*shdr) ||
+	    ehdr.e_phnum != 1) {
+	    seterror("Invalid file type.");
+	    return false;
+	}
+	*/
+
+	// Start reading the elf header. Check for errors
+	if (read(fd, ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
+	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||			// Check MAGIC
+	        ehdr->e_type != ET_EXEC ||							// Check for executable
+	        ehdr->e_machine != EM_MIPS ||						// Check for ARM machine type TODO: change EM_MIPS to ??_ARM and add to ELF32.H (figure out what ??_ARM should be)
+	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
+	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
+		seterror("Invalid file type.");
+		return false;
+	}
+
+	DBG("phoff = %d, phentsz = %d, phnum = %d\n",
+	    ehdr->e_phoff, ehdr->e_phentsize, ehdr->e_phnum);
+
+	return true;
+}
+
+bool DLObject::readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num) {
+
+	// Read program header
+	if (lseek(fd, ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
+	    read(fd, phdr, sizeof(*phdr)) != sizeof(*phdr)) {
+		seterror("Program header load failed.");
+		return false;
+	}
+
+	// Check program header values
+	if (phdr->p_type != PT_LOAD  || phdr->p_filesz > phdr->p_memsz) {
+		seterror("Invalid program header.");
+		return false;
+	}
+
+	DBG("offs = %x, filesz = %x, memsz = %x, align = %x\n",
+	    phdr->p_offset, phdr->p_filesz, phdr->p_memsz, phdr->p_align);
+
+	return true;
+
+}
+
+bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
+
+	char *baseAddress = 0;
+
+	// Attempt to allocate memory for segment
+	int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
+	DBG("extra mem is %x\n", extra);
+
+	if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
+		seterror("Out of memory.\n");
+		return false;
+	}
+	DBG("allocated segment @ %p\n", _segment);
+
+	// Get offset to load segment into
+	baseAddress = (char *)_segment + phdr->p_vaddr;
+	_segmentSize = phdr->p_memsz + extra;
+
+	// Set bss segment to 0 if necessary (assumes bss is at the end)
+	if (phdr->p_memsz > phdr->p_filesz) {
+		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
+		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
+	}
+	// Read the segment into memory
+	if (lseek(fd, phdr->p_offset, SEEK_SET) < 0 ||
+	        read(fd, baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
+		seterror("Segment load failed.");
+		return false;
+	}
+
+	return true;
+}
+
+Elf32_Shdr * DLObject::loadSectionHeaders(int fd, Elf32_Ehdr *ehdr) {
+
+	Elf32_Shdr *shdr = NULL;
+
+	// Allocate memory for section headers
+	if (!(shdr = (Elf32_Shdr *)malloc(ehdr->e_shnum * sizeof(*shdr)))) {
+		seterror("Out of memory.");
+		return NULL;
+	}
+
+	// Read from file into section headers
+	if (lseek(fd, ehdr->e_shoff, SEEK_SET) < 0 ||
+	        read(fd, shdr, ehdr->e_shnum * sizeof(*shdr)) !=
+	        (ssize_t)(ehdr->e_shnum * sizeof(*shdr))) {
+		seterror("Section headers load failed.");
+		return NULL;
+	}
+
+	return shdr;
+}
+
+int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+
+	// Loop over sections, looking for symbol table linked to a string table
+	for (int i = 0; i < ehdr->e_shnum; i++) {
+		if (shdr[i].sh_type == SHT_SYMTAB &&
+		        shdr[i].sh_entsize == sizeof(Elf32_Sym) &&
+		        shdr[i].sh_link < ehdr->e_shnum &&
+		        shdr[shdr[i].sh_link].sh_type == SHT_STRTAB &&
+		        _symtab_sect < 0) {
+			_symtab_sect = i;
+		}
+	}
+
+	// Check for no symbol table
+	if (_symtab_sect < 0) {
+		seterror("No symbol table.");
+		return -1;
+	}
+
+	DBG("Symbol section at section %d, size %x\n", _symtab_sect, shdr[_symtab_sect].sh_size);
+
+	// Allocate memory for symbol table
+	if (!(_symtab = malloc(shdr[_symtab_sect].sh_size))) {
+		seterror("Out of memory.");
+		return -1;
+	}
+
+	// Read symbol table into memory
+	if (lseek(fd, shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
+	        read(fd, _symtab, shdr[_symtab_sect].sh_size) !=
+	        (ssize_t)shdr[_symtab_sect].sh_size) {
+		seterror("Symbol table load failed.");
+		return -1;
+	}
+
+	// Set number of symbols
+	_symbol_cnt = shdr[_symtab_sect].sh_size / sizeof(Elf32_Sym);
+	DBG("Loaded %d symbols.\n", _symbol_cnt);
+
+	return _symtab_sect;
+
+}
+
+bool DLObject::loadStringTable(int fd, Elf32_Shdr *shdr) {
+
+	int string_sect = shdr[_symtab_sect].sh_link;
+
+	// Allocate memory for string table
+	if (!(_strtab = (char *)malloc(shdr[string_sect].sh_size))) {
+		seterror("Out of memory.");
+		return false;
+	}
+
+	// Read string table into memory
+	if (lseek(fd, shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
+	        read(fd, _strtab, shdr[string_sect].sh_size) !=
+	        (ssize_t)shdr[string_sect].sh_size) {
+		seterror("Symbol table strings load failed.");
+		return false;
+	}
+
+	return true;
+}
+
+void DLObject::relocateSymbols(Elf32_Addr offset) {
+
+	relocCount = 0;
+	DBG("Relocating symbols by %x\n", offset);
+
+	// Loop over symbols, add relocation offset
+	Elf32_Sym *s = (Elf32_Sym *)_symtab;
+	for (int c = _symbol_cnt; c--; s++) {
+		// Make sure we don't relocate special valued symbols
+		if (s->st_shndx < SHN_LOPROC) {
+				relocCount++;
+				s->st_value += offset;
+				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
+					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+
+		}
+
+	}
+
+	DBG("Relocated %d symbols.\n",relocCount);
+}
+
+bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+
+	// Loop over sections, finding relocation sections
+	for (int i = 0; i < ehdr->e_shnum; i++) {
+
+		Elf32_Shdr *curShdr = &(shdr[i]);
+		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
+
+		if (curShdr->sh_type == SHT_REL && 						// Check for a relocation section
+		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		    // Check for proper relocation size
+		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
+		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
+		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
+
+			if (!relocate(fd, curShdr->sh_offset, curShdr->sh_size, _segment)) {
+				return false;
+			}
+
+		}
+	}
+
+	return true;
+}
 
 bool DLObject::load(int fd) {
-	Elf32_Ehdr ehdr; // ELF header
-	Elf32_Phdr phdr; // Program header
-	Elf32_Shdr *shdr; // Section header
+	Elf32_Ehdr ehdr;
+	Elf32_Phdr phdr;
+	Elf32_Shdr *shdr;
+	bool ret = true;
 
-	//TODO: fill this out!
+	int symtab_sect = -1;
+
+	if (readElfHeader(fd, &ehdr) == false) {
+		return false;
+	}
+
+	for (int i = 0; i < ehdr.e_phnum; i++) {	//	Load our 2 segments
+
+		fprintf(stderr, "Loading segment %d\n", i);
+
+		if (readProgramHeaders(fd, &ehdr, &phdr, i) == false)
+			return false;
+
+		if (!loadSegment(fd, &phdr))
+			return false;
+	}
+
+	if ((shdr = loadSectionHeaders(fd, &ehdr)) == NULL)
+		ret = false;
+
+	if (ret && ((_symtab_sect = loadSymbolTable(fd, &ehdr, shdr)) < 0))
+		ret = false;
+
+	if (ret && (loadStringTable(fd, shdr) == false))
+		ret = false;
+
+	if (ret)
+		relocateSymbols((Elf32_Addr)_segment);	// Offset by our segment allocated address
+
+	if (ret && (relocateRels(fd, &ehdr, shdr) == false))
+		ret = false;
 
 	free(shdr);
 
-	return true;
+	return ret;
+
 }
 
 bool DLObject::open(const char *path) {
@@ -240,4 +487,4 @@ void dlforgetsyms(void *handle) {
 		((DLObject *)handle)->discard_symtab();
 }
 
-#endif /* DYNAMIC_MODULES && GP2X__WIZ */
+#endif /* DYNAMIC_MODULES && GP2XWIZ */
