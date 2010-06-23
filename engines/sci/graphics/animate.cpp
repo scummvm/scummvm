@@ -472,10 +472,12 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 				_paint16->bitsShow(lsRect);
 				workerRect = listEntry->celRect;
 			}
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft), workerRect.left);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop), workerRect.top);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight), workerRect.right);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom), workerRect.bottom);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft), listEntry->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop), listEntry->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight), listEntry->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom), listEntry->celRect.bottom);
+			// may get used for debugging
+			//_paint16->frameRect(workerRect);
 			_paint16->bitsShow(workerRect);
 
 			if (signal & kSignalHidden) {
