@@ -62,19 +62,17 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	_alwaysForceRealMerge = false;
 
 	// Pseudo-WORKAROUND
-	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest 1 vga and Nick's Picks Space Quest
+	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest 1 vga and all Nick's Picks
 	// all use an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
 	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
 	//  If we use the copying over, we will get issues because some views have marked all colors as being used
 	//  and those will overwrite the current palette in that case
-	// FIXME: the other nick's Picks may also use the same interpreter, but we can not verify
-	//			if the other games also get reported having palette issues, add them here
 	Common::String gameId = g_sci->getGameId();
 	if (g_sci->isDemo()) {
 		if (gameId == "laurabow2" || gameId == "qfg3" || gameId == "ecoquest")
 			_alwaysForceRealMerge = true;
 	} else {
-		if (gameId == "pq1sci" || gameId == "cnick-sq" || gameId == "cnick-longbow")
+		if (gameId == "pq1sci" || gameId == "cnick-sq" || gameId == "cnick-longbow" || gameId == "cnick-kq" || gameId == "cnick-laurabow" || gameId == "cnick-lsl")
 			_alwaysForceRealMerge = true;
 	}
 
