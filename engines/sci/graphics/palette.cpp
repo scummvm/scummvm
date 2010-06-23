@@ -74,7 +74,7 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 		if (gameId == "laurabow2" || gameId == "qfg3" || gameId == "ecoquest")
 			_alwaysForceRealMerge = true;
 	} else {
-		if (gameId == "pq1sci" || gameId == "cnick-sq")
+		if (gameId == "pq1sci" || gameId == "cnick-sq" || gameId == "cnick-longbow")
 			_alwaysForceRealMerge = true;
 	}
 
