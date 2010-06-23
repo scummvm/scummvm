@@ -137,7 +137,7 @@ _enable_prof=no
 _vkeybd=no
 _keymapper=no
 # Default platform settings
-_backend=posix
+_backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
@@ -625,8 +625,8 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, nds, null, posix, ps2, psp, sdl, wii, wince)
-                          [posix]
+                          linuxmoto, nds, null, ps2, psp, sdl, wii, wince)
+                          [sdl]
 
 Installation directories:
   --prefix=PREFIX         install architecture-independent files in PREFIX
@@ -1734,7 +1734,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	dreamcast | samsungtv | sdl | wii | psp | posix)
+	dreamcast | samsungtv | sdl | wii | psp)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else
@@ -2413,13 +2413,6 @@ case $_backend in
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
 		;;
-	posix)
-		find_sdlconfig
-		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
-		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
-		DEFINES="$DEFINES -DSDL_BACKEND"
-		MODULES="$MODULES backends/platform/sdl"
-		;;
 	ps2)
 		# TODO ps2
 		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
@@ -2722,3 +2715,4 @@ include \$(srcdir)/Makefile
 EOF
 
 fi
+

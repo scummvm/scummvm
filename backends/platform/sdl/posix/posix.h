@@ -31,7 +31,7 @@
 class OSystem_POSIX : public OSystem_SDL {
 public:
 	OSystem_POSIX();
-	virtual ~OSystem_POSIX();
+	virtual ~OSystem_POSIX() {}
 
 	virtual void initBackend();
 
