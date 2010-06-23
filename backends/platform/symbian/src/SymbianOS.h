@@ -42,35 +42,20 @@ public:
 	 */
 	virtual void initBackend();
 
-	int getDefaultGraphicsMode() const;
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
 	void quitWithErrorMsg(const char *msg);
+
 	virtual bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
-
-	// Set function that generates samples
-	//
-	// This function is overridden by the symbian port in order to provide MONO audio
-	// downmix is done by supplying our own audiocallback
-	//
-	virtual void setupMixer(); // overloaded by CE backend
 
 	// Overloaded from SDL_Commmon
 	void quit();
 
 	// Returns reference to File session
 	RFs& FsSession();
-protected:
-	//
-	// The mixer callback function.
-	//
-	static void symbianMixCallback(void *s, byte *samples, int len);
-
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
-public:
+
 	// vibration support
 #ifdef USE_VIBRA_SE_PXXX
 	//
