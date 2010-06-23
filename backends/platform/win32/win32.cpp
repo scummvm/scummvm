@@ -45,75 +45,8 @@
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 OSystem_Win32::OSystem_Win32() {
+	// Initialze File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
-}
-
-void OSystem_Win32::initBackend() {
-	assert(!_inited);
-
-	uint32 sdlFlags = 0;
-
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-	if (SDL_Init(sdlFlags) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
-	// Enable unicode support if possible
-	SDL_EnableUNICODE(1);
-
-	// Create and hook up the mutex manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_mutexManager == 0) {
-		_mutexManager = new SdlMutexManager();
-	}
-
-	// Create and hook up the event manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_eventManager == 0) {
-		_eventManager = new SdlEventManager(this);
-	}
-
-	// Create the savefile manager, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_savefileManager == 0) {
-		_savefileManager = new DefaultSaveFileManager();
-	}
-
-	// Create and hook up the mixer, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_mixer == 0) {
-		if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
-			error("Could not initialize SDL: %s", SDL_GetError());
-		}
-
-		_mixer = new SdlMixerImpl(this);
-	}
-
-	// Create and hook up the timer manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_timerManager == 0) {
-		_timerManager = new SdlTimerManager();
-	}
-
-	// Create and hook up the graphics manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_graphicsManager == 0) {
-		_graphicsManager = new SdlGraphicsManager();
-	}
-
-	if (_audiocdManager == 0) {
-		_audiocdManager = (AudioCDManager *)new SdlAudioCDManager();
-	}
-
-	// Setup a custom program icon.
-	setupIcon();
-
-	// Invoke parent implementation of this method
-	OSystem::initBackend();
-
-	_inited = true;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {

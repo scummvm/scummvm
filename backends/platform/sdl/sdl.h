@@ -42,12 +42,9 @@ public:
 
 	virtual void initBackend();
 
-	// Define all hardware keys for keymapper
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 
-	// Quit
-	virtual void quit(); // overloaded by CE backend
-
+	virtual void quit();
 	virtual void deinit();
 
 	virtual void setWindowCaption(const char *caption);
@@ -56,7 +53,7 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	SdlGraphicsManager *getGraphicsManager();
+	virtual SdlGraphicsManager *getGraphicsManager();
 
 	virtual bool pollEvent(Common::Event &event);
 
@@ -66,8 +63,11 @@ public:
 
 protected:
 	bool _inited;
+	bool _initedSDL;
 
-	void setupIcon();
+	virtual void initSDL();
+
+	virtual void setupIcon();
 
 	virtual Common::String getDefaultConfigFileName();
 };

@@ -66,6 +66,11 @@ SdlMixerImpl::~SdlMixerImpl() {
 }
 
 uint SdlMixerImpl::getSamplesPerSec() {
+
+	if (SDL_InitSubSystem(SDL_INIT_AUDIO) == -1) {
+		error("Could not initialize SDL: %s", SDL_GetError());
+	}
+
 	SDL_AudioSpec desired;
 
 	// Determine the desired output sampling frequency.

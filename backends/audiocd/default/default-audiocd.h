@@ -29,7 +29,7 @@
 #include "backends/audiocd/audiocd.h"
 #include "sound/mixer.h"
 
-class DefaultAudioCDManager : AudioCDManager {
+class DefaultAudioCDManager : public AudioCDManager {
 public:
 	DefaultAudioCDManager();
 	virtual ~DefaultAudioCDManager() {}

@@ -33,8 +33,6 @@ public:
 	OSystem_Win32();
 	~OSystem_Win32() {}
 
-	void initBackend();
-
 protected:
 	Common::String getDefaultConfigFileName();
 };

@@ -34,7 +34,7 @@
 #include <SDL.h>
 #endif
 
-class SdlAudioCDManager : DefaultAudioCDManager {
+class SdlAudioCDManager : public DefaultAudioCDManager {
 public:
 	SdlAudioCDManager();
 	~SdlAudioCDManager();
