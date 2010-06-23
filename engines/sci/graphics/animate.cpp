@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"

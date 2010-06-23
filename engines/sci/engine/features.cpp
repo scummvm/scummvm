@@ -24,6 +24,7 @@
  */
 
 #include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/script.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"

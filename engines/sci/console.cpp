@@ -31,6 +31,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/savegame.h"
 #include "sci/engine/gc.h"

@@ -31,6 +31,7 @@
 #include "common/rect.h"
 #include "common/str-array.h"
 
+#include "sci/engine/selector.h"
 #include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
@@ -39,6 +40,7 @@ namespace Sci {
 
 struct Node;	// from segment.h
 struct List;	// from segment.h
+struct SelectorCache;	// from selector.h
 
 /**
  * @defgroup VocabularyResources	Vocabulary resources in SCI
