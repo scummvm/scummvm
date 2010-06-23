@@ -97,7 +97,7 @@ void GfxPalette::setDefault() {
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
+void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
@@ -105,9 +105,15 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 	int colorNo = 0;
 
 	memset(paletteOut, 0, sizeof(Palette));
-	// Setup default mapping
+	// Setup 1:1 mapping
 	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
+	}
+	if (bytesLeft < 37) {
+		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
+		//  palette
+		warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette header");
+		return;
 	}
 	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0)) {
 		// SCI0/SCI1 palette
@@ -123,6 +129,11 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 	}
 	switch (palFormat) {
 		case SCI_PAL_FORMAT_CONSTANT:
+			// Check, if enough bytes left
+			if (bytesLeft < palOffset + (3 * palColorCount)) {
+				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+				return;
+			}
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = 1;
 				paletteOut->colors[colorNo].r = data[palOffset++];
@@ -131,6 +142,10 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 			}
 			break;
 		case SCI_PAL_FORMAT_VARIABLE:
+			if (bytesLeft < palOffset + (4 * palColorCount)) {
+				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+				return;
+			}
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = data[palOffset++];
 				paletteOut->colors[colorNo].r = data[palOffset++];
@@ -378,7 +393,7 @@ bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
 	Palette palette;
 
 	if (palResource) {
-		createFromData(palResource->data, &palette);
+		createFromData(palResource->data, palResource->size, &palette);
 		set(&palette, force);
 		return true;
 	}
@@ -526,7 +541,7 @@ bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
 	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	if (palResource) {
 		// Load and initialize destination palette
-		createFromData(palResource->data, &_palVaryTargetPalette);
+		createFromData(palResource->data, palResource->size, &_palVaryTargetPalette);
 		return true;
 	}
 	return false;
@@ -592,7 +607,7 @@ int16 GfxPalette::kernelPalVaryChangeTarget(GuiResourceId resourceId) {
 		Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 		if (palResource) {
 			Palette insertPalette;
-			createFromData(palResource->data, &insertPalette);
+			createFromData(palResource->data, palResource->size, &insertPalette);
 			// insert new palette into target
 			insert(&insertPalette, &_palVaryTargetPalette);
 			// update palette and set on screen

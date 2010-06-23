@@ -40,7 +40,7 @@ public:
 	~GfxPalette();
 
 	void setDefault();
-	void createFromData(byte *data, Palette *paletteOut);
+	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);
 	void setEGA();

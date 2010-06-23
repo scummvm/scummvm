@@ -86,6 +86,7 @@ private:
 	GuiResourceId _resourceId;
 	Resource *_resource;
 	byte *_resourceData;
+	int _resourceSize;
 
 	uint16 _loopCount;
 	LoopInfo *_loop;

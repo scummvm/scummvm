@@ -62,6 +62,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		error("view resource %d not found", resourceId);
 	}
 	_resourceData = _resource->data;
+	_resourceSize = _resource->size;
 
 	byte *celData, *loopData;
 	uint16 celOffset;
@@ -114,7 +115,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 			// On the other side: vga sci1 games have this pointing to a VGA palette
 			//  and ega sci1 games have this pointing to a 8x16 byte mapping table that needs to get applied then
 			if (!isEGA) {
-				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
+				_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
 				_embeddedPal = true;
 			} else {
 				// Only use the EGA-mapping, when being SCI1
@@ -197,7 +198,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(celSize >= 32);
 
 		if (palOffset) {
-			_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
+			_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
 			_embeddedPal = true;
 		}
 

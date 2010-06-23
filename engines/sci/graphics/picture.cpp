@@ -109,7 +109,7 @@ void GfxPicture::drawSci11Vga() {
 	Palette palette;
 
 	// Create palette and set it
-	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 	_palette->set(&palette, true);
 
 	// display Cel-data
@@ -147,7 +147,7 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 
 	if ((celNo == -1) || (celNo == 0)) {
 		// Create palette and set it
-		_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 		_palette->set(&palette, true);
 	}
 	if (celNo != -1) {
