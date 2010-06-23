@@ -920,10 +920,10 @@ void M4Surface::translate(RGBList *list, bool isTransparent) {
 
 	for (int i = 0; i < width() * height(); ++i, ++p) {
 		if (!isTransparent || (*p != TRANSPARENT_COLOUR_INDEX)) {
-			if (*p < list->size()) {
-				warning("Pal pointer exceeds list size");
+			if (*p < list->size())
 				*p = palIndexes[*p];
-			}
+			else
+				warning("Pal pointer exceeds list size");
 		}
 	}
 
