@@ -574,15 +574,17 @@ void DecompressorLZW::reorderView(byte *src, byte *dest) {
 	for (c = 0; c < cel_total; c++)
 		decodeRLE(&rle_ptr, &pix_ptr, cc_pos[c] + 8, cc_lengths[c]);
 
-	*writer++ = 'P';
-	*writer++ = 'A';
-	*writer++ = 'L';
+	if (pal_offset) {
+		*writer++ = 'P';
+		*writer++ = 'A';
+		*writer++ = 'L';
 
-	for (c = 0; c < 256; c++)
-		*writer++ = c;
+		for (c = 0; c < 256; c++)
+			*writer++ = c;
 
-	seeker -= 4; /* The missing four. Don't ask why. */
-	memcpy(writer, seeker, 4*256 + 4);
+		seeker -= 4; /* The missing four. Don't ask why. */
+		memcpy(writer, seeker, 4*256 + 4);
+	}
 
 	free(cc_pos);
 	free(cc_lengths);
