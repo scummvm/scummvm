@@ -923,7 +923,7 @@ void M4Surface::translate(RGBList *list, bool isTransparent) {
 			if (*p < list->size())
 				*p = palIndexes[*p];
 			else
-				warning("Pal pointer exceeds list size");
+				warning("Pal index %d exceeds list size %d", *p, list->size());
 		}
 	}
 
