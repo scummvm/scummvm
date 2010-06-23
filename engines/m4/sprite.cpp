@@ -182,7 +182,10 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 		// Check if we need to scan forward to find the end of the line
 		if (!newLine) {
 			do {
-				assert(!source->eos());
+				if (source->eos()) {
+					warning("M4Sprite::loadMadsSprite: unexpected end of data");
+					break;
+				}
 			} while (source->readByte() != 0xff);
 		}
 	}

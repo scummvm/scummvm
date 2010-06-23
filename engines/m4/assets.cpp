@@ -320,7 +320,12 @@ void SpriteAsset::loadFrameHeader(SpriteAssetFrame &frameHeader, bool isBigEndia
 }
 
 M4Sprite *SpriteAsset::getFrame(int frameIndex) {
-	return _frames[frameIndex].frame;
+	if ((uint)frameIndex < _frames.size()) {
+		return _frames[frameIndex].frame;
+	} else {
+		warning("SpriteAsset::getFrame: Invalid frame %d, out of %d", frameIndex, _frames.size());
+		return _frames[_frames.size() - 1].frame;
+	}
 }
 
 void SpriteAsset::loadStreamingFrame(M4Sprite *frame, int frameIndex, int destX, int destY) {
