@@ -84,11 +84,11 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	else
 		_styleUser = SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_TRANSPARENT;
 
-	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
+	// Jones, Slater, Hoyle 3&4 and Crazy Nicks Laura Bow/Kings Quest were called with parameter -Nw 0 0 200 320.
 	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
 	Common::String gameId = g_sci->getGameId();
-	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || gameId == "hoyle4" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
+	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || gameId == "hoyle4" || gameId == "cnick-laurabow" || gameId == "cnick-kq" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
 		offTop = 0;
 	// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't also do this we will get not-fully-removed windows everywhere
 	if (gameId == "fairytales")
