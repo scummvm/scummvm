@@ -23,11 +23,13 @@
  *
  */
 
+#ifdef WIN32
+
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
 #undef ARRAYSIZE
 
-#include "backends/platform/win32/win32.h"
+#include "backends/platform/sdl/win32/win32.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -96,3 +98,5 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 
 	return configFile;
 }
+
+#endif

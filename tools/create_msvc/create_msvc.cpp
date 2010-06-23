@@ -990,7 +990,6 @@ void ProjectProvider::createMSVCProject(const BuildSetup &setup) {
 	// File list for the ScummVM project file
 	createModuleList(setup.srcDir + "/backends", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/backends/platform/sdl", setup.defines, in, ex);
-	createModuleList(setup.srcDir + "/backends/platform/win32", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/base", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/common", setup.defines, in, ex);
 	createModuleList(setup.srcDir + "/engines", setup.defines, in, ex);

@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef WIN32
+
 // Fix for bug #2895217 "MSVC compilation broken with r47595":
 // We need to keep this on top of the "common/scummsys.h" include,
 // otherwise we will get errors about the windows headers redefining
@@ -33,7 +35,7 @@
 
 #include "common/scummsys.h"
 
-#include "backends/platform/win32/win32.h"
+#include "backends/platform/sdl/win32/win32.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
@@ -57,3 +59,5 @@ int main(int argc, char *argv[]) {
 	delete (OSystem_Win32 *)g_system;
 	return res;
 }
+
+#endif

@@ -23,7 +23,9 @@
  *
  */
 
-#include "backends/platform/posix/posix.h"
+#ifdef UNIX
+
+#include "backends/platform/sdl/posix/posix.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
@@ -74,3 +76,5 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 
 	return configFile;
 }
+
+#endif

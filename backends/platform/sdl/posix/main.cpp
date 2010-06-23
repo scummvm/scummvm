@@ -23,9 +23,11 @@
  *
  */
 
+#ifdef UNIX
+
 #include "common/scummsys.h"
 
-#include "backends/platform/posix/posix.h"
+#include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"
 
@@ -44,3 +46,5 @@ int main(int argc, char *argv[]) {
 	delete (OSystem_POSIX *)g_system;
 	return res;
 }
+
+#endif
