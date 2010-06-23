@@ -155,6 +155,8 @@ struct SelectorCache {
 	Selector scaleSignal; //< Used by kAnimate() for cel scaling (SCI1.1+)
 	Selector scaleX, scaleY;	///< SCI1.1 view scaling
 	Selector maxScale;		///< SCI1.1 view scaling, limit for cel, when using global scaling
+	Selector vanishingX;	///< SCI1.1 view scaling, used by global scaling
+	Selector vanishingY;	///< SCI1.1 view scaling, used by global scaling
 
 	// Used for auto detection purposes
 	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
