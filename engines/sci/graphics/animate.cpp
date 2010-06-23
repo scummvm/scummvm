@@ -233,18 +233,29 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		// Process global scaling, if needed
 		if (listEntry->scaleSignal & kScaleSignalDoScaling) {
 			if (listEntry->scaleSignal & kScaleSignalGlobalScaling) {
-				warning("%lx:%lx", PRINT_REG(curObject));
 				// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
 				int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
-				int16 maxCelHeight = (maxScale * view->getHeight(listEntry->loopNo, listEntry->celNo)) >> 7;
-				reg_t globalVar2 = _s->variables[VAR_GLOBAL][1]; // current room
+				int16 celHeight = view->getHeight(listEntry->loopNo, listEntry->celNo);
+				int16 maxCelHeight = (maxScale * celHeight) >> 7;
+				reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
 				int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
-				//warning("vanishingY %d maxScale %d", vanishingY, maxScale);
-				// TODO!
+
+				int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+				int16 fixedEntryY = listEntry->y - vanishingY;
+				if (!fixedEntryY)
+					fixedEntryY = 1;
+
+				if ((celHeight == 0) || (fixedPortY == 0))
+					error("global scaling panic");
+
+				listEntry->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+				listEntry->scaleY = (listEntry->scaleY * 128) / celHeight;
+
+				listEntry->scaleX = listEntry->scaleY;
 
 				// and set objects scale selectors
-				//writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), listEntry->scaleX);
-				//writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), listEntry->scaleY);
+				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), listEntry->scaleX);
+				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), listEntry->scaleY);
 			}
 		}
 
