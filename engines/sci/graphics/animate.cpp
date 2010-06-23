@@ -185,12 +185,6 @@ void GfxAnimate::makeSortedList(List *list) {
 				listEntry->scaleX = 128;
 				listEntry->scaleY = 128;
 			}
-			// TODO
-			// On scaleSignal bit 1 sierra sci does some stuff with global var 2, current Port
-			//  and some other stuff and sets scaleX/Y accordingly. It seems this functionality is needed in at
-			//  least sq5 right when starting the game before wilco exists the room. Currently we dont get scaling
-			//  but sierra sci does scaling there. I dont fully understand the code yet, that's why i didnt implement
-			//  anything.
 		} else {
 			listEntry->scaleSignal = 0;
 			listEntry->scaleX = 128;
@@ -234,6 +228,20 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
 			listEntry->celNo = 0;
 			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), listEntry->celNo);
+		}
+
+		// Process global scaling, if needed
+		if (listEntry->scaleSignal & kScaleSignalDoScaling) {
+			if (listEntry->scaleSignal & kScaleSignalGlobalScaling) {
+				// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+				int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+				int16 maxCelHeight = (maxScale * view->getHeight(listEntry->loopNo, listEntry->celNo)) >> 7;
+				// TODO!
+
+				// and set objects scale selectors
+				//writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), listEntry->scaleX);
+				//writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), listEntry->scaleY);
+			}
 		}
 
 		// Create rect according to coordinates and given cel

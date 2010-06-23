@@ -157,6 +157,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(scaleSignal);
 	FIND_SELECTOR(scaleX);
 	FIND_SELECTOR(scaleY);
+	FIND_SELECTOR(maxScale);
 	FIND_SELECTOR(iconIndex);
 
 #ifdef ENABLE_SCI32

@@ -51,9 +51,9 @@ enum ViewSignals {
 };
 
 enum ViewScaleSignals {
-	kScaleSignalDoScaling	= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
-	kScaleSignalUnknown1	= 0x0002, // seems to do something with globalvar 2, sets scaleX/scaleY
-	kScaleSignalUnknown2	= 0x0004 // really unknown
+	kScaleSignalDoScaling		= 0x0001, // enables scaling when drawing that cel (involves scaleX and scaleY)
+	kScaleSignalGlobalScaling	= 0x0002, // means that global scaling shall get applied on that cel (sets scaleX/scaleY)
+	kScaleSignalUnknown2		= 0x0004 // really unknown
 };
 
 struct AnimateEntry {

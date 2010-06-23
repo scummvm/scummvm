@@ -107,6 +107,7 @@ static const SelectorRemap sciSelectorRemap[] = {
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scaleSignal", 103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
