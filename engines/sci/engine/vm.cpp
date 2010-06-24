@@ -183,13 +183,20 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
-static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
-	{ "laurabow2",		 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",	 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",	 31, "quitWin", "open",		5, 0xf }, // is used as priority for game menu
-	{ "lsl1sci",		720, "rm720", "init",		0,	 0 }, // age check room
-	{ "islandbrain",	140, "piece", "init",		3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
-	{ NULL,				 -1, NULL, NULL,			0, 0 }
+struct UninitializedReadWorkaround {
+	const char *gameId;
+	int scriptNr;
+	const char *objectName;
+	const char *methodName;
+	int index;
+	uint16 newValue;
+} static const uninitializedReadWorkarounds[] = {
+	{ "laurabow2",       24,   "gcWin", "open",     5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",   24,   "gcWin", "open",     5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",   31, "quitWin", "open",     5, 0xf }, // is used as priority for game menu
+	{ "lsl1sci",        720,   "rm720", "init",     0,   0 }, // age check room
+	{ "islandbrain",    140,   "piece", "init",     3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
+	{ NULL,              -1,      NULL,   NULL,     0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
@@ -197,43 +204,36 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (type == VAR_TEMP && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
-			EngineState *engine = g_sci->getEngineState();
-			Script *local_script = engine->_segMan->getScriptIfLoaded(engine->xs->local_segment);
+			EngineState *state = g_sci->getEngineState();
+			Script *local_script = state->_segMan->getScriptIfLoaded(state->xs->local_segment);
 			int curScriptNr = local_script->_nr;
 
-			Common::List<ExecStack>::iterator callIterator = engine->_executionStack.begin();
+			Common::List<ExecStack>::iterator callIterator = state->_executionStack.begin();
 			ExecStack call = *callIterator;
-			while (callIterator != engine->_executionStack.end()) {
+			while (callIterator != state->_executionStack.end()) {
 				call = *callIterator;
 				callIterator++;
 			}
 
-			const char *curObjectName = engine->_segMan->getObjectName(call.sendp);
-			const char *curMethodName = "";
-			if (call.type == EXEC_STACK_TYPE_CALL) {
-				curMethodName = g_sci->getKernel()->getSelectorName(call.selector).c_str();
-			}
-			const char *gameId = g_sci->getGameId().c_str();
+			Common::String curObjectName = state->_segMan->getObjectName(call.sendp);
+			Common::String curMethodName;
+			Common::String gameId = g_sci->getGameId();
+
+			if (call.type == EXEC_STACK_TYPE_CALL)
+				curMethodName = g_sci->getKernel()->getSelectorName(call.selector);
 
 			// Search if this is a known uninitialized read
 			const UninitializedReadWorkaround *workaround = uninitializedReadWorkarounds;
 			while (workaround->gameId) {
-				if (strcmp(workaround->gameId, gameId) == 0) {
-					if (workaround->scriptNr == curScriptNr) {
-						if (strcmp(workaround->objectName, curObjectName) == 0) {
-							if (strcmp(workaround->methodName, curMethodName) == 0) {
-								if (workaround->index == index) {
-									// Workaround found
-									r[index] = make_reg(0, workaround->newValue);
-									return r[index];
-								}
-							}
-						}
-					}
+				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && workaround->objectName == curObjectName
+						&& workaround->methodName == curMethodName && workaround->index == index) {
+					// Workaround found
+					r[index] = make_reg(0, workaround->newValue);
+					return r[index];
 				}
 				workaround++;
 			}
-			error("uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName, curMethodName, curScriptNr);
+			error("Uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr);
 		}
 		return r[index];
 	} else
