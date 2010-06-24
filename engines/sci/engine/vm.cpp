@@ -210,10 +210,11 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 			Common::String gameId = g_sci->getGameId();
 			if ((gameId == "laurabow2") && (currentScriptNr == 24) && (index == 5))
-				return make_reg(0, 0xf); // priority replacement for menu
+				return make_reg(0, 0xf); // priority replacement for menu - gcWin::open
 			if ((gameId == "freddypharkas") && (currentScriptNr == 24) && (index == 5))
-				return make_reg(0, 0xf); // priority replacement for menu
+				return make_reg(0, 0xf); // priority replacement for menu - gcWin::open
 			if ((gameId == "islandbrain") && (currentScriptNr == 140) && (index == 3)) {
+				// piece::init
 				//r[index] = make_reg(0, 255);
 				//return r[index];
 			}
