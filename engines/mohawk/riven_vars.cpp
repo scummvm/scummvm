@@ -319,6 +319,7 @@ void MohawkEngine_Riven::initVars() {
 	*matchVarToString("bheat") = 1;
 	*matchVarToString("waterenabled") = 1;
 	*matchVarToString("ogehnpage") = 1;
+	*matchVarToString("bblrsw") = 1;
 
 	// Randomize the telescope combination
 	uint32 *teleCombo = matchVarToString("tcorrectorder");

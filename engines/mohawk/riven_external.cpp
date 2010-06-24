@@ -662,15 +662,17 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	// Get the variable for the valve
 	uint32 *valve = _vm->matchVarToString("bvalve");
 
-	Common::Event event;
 	int changeX = 0;
 	int changeY = 0;
+	bool done = false;
 
 	// Set the cursor to the closed position
 	_vm->_gfx->changeCursor(2004);
 	_vm->_system->updateScreen();
 
-	for (;;) {
+	while (!done) {
+		Common::Event event;
+
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
@@ -682,29 +684,52 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 				// FIXME: These values for changes in x/y could be tweaked.
 				if (*valve == 0 && changeY <= -10) {
 					*valve = 1;
-					// TODO: Play movie
+					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_video->playMovieBlocking(2);
 					_vm->refreshCard();
 				} else if (*valve == 1) {
 					if (changeX >= 0 && changeY >= 10) {
 						*valve = 0;
-						// TODO: Play movie
+						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_video->playMovieBlocking(3);
 						_vm->refreshCard();
 					} else if (changeX <= -10 && changeY <= 10) {
 						*valve = 2;
-						// TODO: Play movie
+						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_video->playMovieBlocking(1);
 						_vm->refreshCard();
 					}
 				} else if (*valve == 2 && changeX >= 10) {
 					*valve = 1;
-					// TODO: Play movie
+					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_video->playMovieBlocking(4);
 					_vm->refreshCard();
 				}
-				return;
+				done = true;
 			default:
 				break;
 			}
 		}
 		_vm->_system->delayMillis(10);
+	}
+
+	// If we changed state and the new state is that the valve is flowing to
+	// the boiler, we need to update the boiler state.
+	if (*valve == 1) {
+		if (*_vm->matchVarToString("bidvlv") == 1) { // Check which way the water is going at the boiler
+			if (*_vm->matchVarToString("bblrarm") == 1) {
+				// If the pipe is open, make sure the water is drained out
+				*_vm->matchVarToString("bheat") = 0;
+				*_vm->matchVarToString("bblrwtr") = 0;
+			} else {
+				// If the pipe is closed, fill the boiler again
+				*_vm->matchVarToString("bheat") = *_vm->matchVarToString("bblrvalve");
+				*_vm->matchVarToString("bblrwtr") = 1;
+			}
+		} else {
+			// Have the grating inside the boiler match the switch outside
+			*_vm->matchVarToString("bblrgrt") = (*_vm->matchVarToString("bblrsw") == 1) ? 0 : 1;
+		}
 	}
 }
 
