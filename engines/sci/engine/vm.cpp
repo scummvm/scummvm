@@ -101,23 +101,29 @@ static reg_t &validate_property(Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
 	// invalid. Note that we cannot just return NULL_REG, because client code
 	// may modify the value of the returned reg_t.
-	static reg_t dummyReg = NULL_REG;
+	//static reg_t dummyReg = NULL_REG;
 
 	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
 	// to all sorts of issues! Turned it into an error for now...
 	// If this occurs, it means there's probably something wrong with the garbage
 	// collector, so don't hide it with fake return values
 	if (!obj) {
-		error("Sending to disposed object");
-		return dummyReg;
+		error("validate_property: Sending to disposed object");
+		//return dummyReg;
 	}
 
-	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
-	// to all sorts of issues! Turned it into an error for now...
+	// This occurs in LSL3, binoculars scene. This gets called from kDoBresen, so fix
+	// the relevant invalid selector index. TODO: Why does this occur? This looks like
+	// a script bug.
+	EngineState *s = g_sci->getEngineState();
+	if (index == 633 && s->currentRoomNumber() == 206 && g_sci->getGameId() == "lsl3")
+		index = 37;
+
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
-		error("Invalid object property #%d (out of [0..%d]) requested!",
-			index, obj->getVarCount());
-		return dummyReg;
+		error("Invalid object property #%d (out of [0..%d]) requested! Object: %04x:%04x, %s", 
+			index, obj->getVarCount(), PRINT_REG(obj->getPos()), 
+			s->_segMan->getObjectName(obj->getPos()));
+		//return dummyReg;
 	}
 
 	return obj->getVariableRef(index);
