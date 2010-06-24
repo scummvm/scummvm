@@ -464,7 +464,10 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
-		error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		// Happens in two places during the intro of LB2CD, both from kMemory(peek):
+		// - room 160: Heap 160 has 83 local variables (0-82), and the game asks for variables at indices 83 - 90 too
+		// - room 220: Heap 220 has 114 local variables (0-113), and the game asks for variables at indices 114-120 too
+		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
 		ret.reg = 0;
 	}
 	return ret;
