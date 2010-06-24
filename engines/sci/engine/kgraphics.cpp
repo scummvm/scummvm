@@ -301,6 +301,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	case K_GRAPH_UPDATE_BOX: {
 		rect = kGraphCreateRect(x, y, x1, y1);
 		bool hiresMode = (argc > 6) ? true : false;
+		// arg5 is the map (1 for visual, etc.)
 		// argc == 7 on upscaled hires
 		g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
 		break;
