@@ -854,6 +854,25 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 	end_section();
+	
+	begin_section("Translations");
+		begin_persons();
+			add_person("Thierry Crozat", "criezy", "Translation Lead");
+		end_persons();
+		begin_section("French");
+			add_person("Thierry Crozat", "criezy", "");
+		end_section();
+		begin_section("German");
+			add_person("Simon Sawatzki", "SimSaw", "");
+			add_person("Lothar Serra Mari", "Lothar93", "");
+		end_section();
+		begin_section("Hungarian");
+			add_person("Eugene Sandulenko", "sev", "");
+		end_section();
+		begin_section("Russian");
+			add_person("Eugene Sandulenko", "sev", "");
+		end_section();
+	end_section();
 
 	begin_section("Websites (design)");
 	  begin_persons();
