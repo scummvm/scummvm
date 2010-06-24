@@ -23,15 +23,15 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_MACOSX_H
-#define BACKENDS_MIXER_MACOSX_H
+#ifndef BACKENDS_MIXER_BUFFERINGSDL_H
+#define BACKENDS_MIXER_BUFFERINGSDL_H
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
-class MacOSXMixerManager : public SdlMixerManager {
+class BufferingSDLMixerManager : public SdlMixerManager {
 public:
-	MacOSXMixerManager();
-	~MacOSXMixerManager();
+	BufferingSDLMixerManager();
+	~BufferingSDLMixerManager();
 
 protected:
 	SDL_mutex *_soundMutex;
