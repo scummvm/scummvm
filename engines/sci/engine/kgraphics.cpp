@@ -351,7 +351,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-	
+
 #ifdef ENABLE_SCI32
 	if (!g_sci->_gfxText16) {
 		// TODO: Implement this
@@ -1041,6 +1041,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
+#if 0
 	if (g_sci->getGameId() == "freddypharkas") {
 		// WORKAROUND
 		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
@@ -1058,6 +1059,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 		if ((viewId == 995) && (priority == 0))
 			priority = 15;
 	}
+#endif
 
 	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 

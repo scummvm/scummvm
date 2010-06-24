@@ -184,9 +184,28 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 }
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
-	if (validate_variable(r, stack_base, type, max, index, line))
+	if (validate_variable(r, stack_base, type, max, index, line)) {
+		if (type == VAR_TEMP && r[index].segment == 0xffff) {
+			// Uninitialized read on a temp
+			//  We need to find correct replacements for each situation manually
+			// FIXME: this should use a table which contains workarounds for gameId, scriptnumber and temp index and
+			//         a replacement value
+			Script *local_script = g_sci->getEngineState()->_segMan->getScriptIfLoaded(g_sci->getEngineState()->xs->local_segment);
+			int currentScriptNr = local_script->_nr;
+			warning("uninitialized read for temp %d, script %d", index, currentScriptNr);
+			Common::String gameId = g_sci->getGameId();
+			if ((gameId == "laurabow2") && (currentScriptNr == 24) && (index == 5))
+				return make_reg(0, 0xf); // priority replacement for menu
+			if ((gameId == "freddypharkas") && (currentScriptNr == 24) && (index == 5))
+				return make_reg(0, 0xf); // priority replacement for menu
+			if ((gameId == "islandbrain") && (currentScriptNr == 140) && (index == 3)) {
+				r[index] = make_reg(0, 255);
+				return r[index];
+			}
+			error("uninitialized read!");
+		}
 		return r[index];
-	else
+	} else
 		return default_value;
 }
 
@@ -763,9 +782,6 @@ void run_vm(EngineState *s, bool restoring) {
 	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
 	const byte *code_buf = NULL; // (Avoid spurious warning)
-	// Used for a workaround in op_link below, in order to avoid string matching (which can
-	// be slow if used in the game script interpreter)
-	bool isIslandOfDrBrain = (g_sci->getGameId() == "islandbrain");
 
 	if (!local_script) {
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
@@ -1137,14 +1153,21 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_link: // 0x1f (31)
-			if (local_script->_nr == 140 && isIslandOfDrBrain) {
-				// WORKAROUND for The Island of Dr. Brain, room 140.
-				// Script 140 runs in an endless loop if we set its
-				// variables to 0 here.
-			} else {
-				for (int i = 0; i < opparams[0]; i++)
-					s->xs->sp[i] = NULL_REG;
-			}
+			// We shouldn't initialize temp variables at all
+			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
+			for (int i = 0; i < opparams[0]; i++)
+				s->xs->sp[i] = make_reg(0xffff, 0xffff);
+//			for (int i = 0; i < opparams[0]; i++)
+//				s->xs->sp[i] = make_reg(0, 'ss');
+
+			//if (local_script->_nr == 140 && isIslandOfDrBrain) {
+			//	// WORKAROUND for The Island of Dr. Brain, room 140.
+			//	// Script 140 runs in an endless loop if we set its
+			//	// variables to 0 here.
+			//} else {
+			//	for (int i = 0; i < opparams[0]; i++)
+			//		s->xs->sp[i] = NULL_REG;
+			//}
 
 			s->xs->sp += opparams[0];
 			break;
