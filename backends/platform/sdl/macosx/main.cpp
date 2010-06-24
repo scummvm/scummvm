@@ -23,22 +23,34 @@
  *
  */
 
-#ifndef PLATFORM_SDL_POSIX_H
-#define PLATFORM_SDL_POSIX_H
+#ifdef MACOSX
 
-#include "backends/platform/sdl/sdl.h"
+#include "common/scummsys.h"
 
-class OSystem_POSIX : public OSystem_SDL {
-public:
-	OSystem_POSIX();
-	virtual ~OSystem_POSIX() {}
+#include "backends/platform/sdl/macosx/macosx.h"
+#include "backends/plugins/sdl/sdl-provider.h"
+#include "base/main.h"
 
-	virtual void init();
+int main(int argc, char *argv[]) {
 
-	virtual void initBackend();
+	// Create our OSystem instance
+	g_system = new OSystem_MacOSX();
+	assert(g_system);
 
-protected:
-	virtual Common::String getDefaultConfigFileName();
-};
+	// Pre initialize the backend
+	((OSystem_MacOSX *)g_system)->init();
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
+#endif
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+
+	// Free OSystem
+	delete (OSystem_MacOSX *)g_system;
+
+	return res;
+}
 
 #endif

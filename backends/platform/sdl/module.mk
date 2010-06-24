@@ -1,6 +1,8 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
+	macosx/main.o \
+	macosx/macosx.o \
 	posix/main.o \
 	posix/posix.o \
 	win32/main.o \

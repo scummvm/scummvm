@@ -23,22 +23,22 @@
  *
  */
 
-#ifndef PLATFORM_SDL_POSIX_H
-#define PLATFORM_SDL_POSIX_H
+#ifndef PLATFORM_SDL_MACOSX_H
+#define PLATFORM_SDL_MACOSX_H
 
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/posix/posix.h"
 
-class OSystem_POSIX : public OSystem_SDL {
+class OSystem_MacOSX : public OSystem_POSIX {
 public:
-	OSystem_POSIX();
-	virtual ~OSystem_POSIX() {}
+	OSystem_MacOSX();
+	~OSystem_MacOSX() {}
 
-	virtual void init();
+	void initBackend();
 
-	virtual void initBackend();
+	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
 protected:
-	virtual Common::String getDefaultConfigFileName();
+	Common::String getDefaultConfigFileName();
 };
 
 #endif

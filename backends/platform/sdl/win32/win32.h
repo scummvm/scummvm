@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef PLATFORM_WIN32_H
-#define PLATFORM_WIN32_H
+#ifndef PLATFORM_SDL_WIN32_H
+#define PLATFORM_SDL_WIN32_H
 
 #include "backends/platform/sdl/sdl.h"
 
