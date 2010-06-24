@@ -190,17 +190,32 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			//  We need to find correct replacements for each situation manually
 			// FIXME: this should use a table which contains workarounds for gameId, scriptnumber and temp index and
 			//         a replacement value
-			Script *local_script = g_sci->getEngineState()->_segMan->getScriptIfLoaded(g_sci->getEngineState()->xs->local_segment);
+			EngineState *engine = g_sci->getEngineState();
+			Script *local_script = engine->_segMan->getScriptIfLoaded(engine->xs->local_segment);
 			int currentScriptNr = local_script->_nr;
-			warning("uninitialized read for temp %d, script %d", index, currentScriptNr);
+
+			Common::List<ExecStack>::iterator callIterator = engine->_executionStack.begin();
+			ExecStack call = *callIterator;
+			while (callIterator != engine->_executionStack.end()) {
+				call = *callIterator;
+				callIterator++;
+			}
+
+			const char *objName = engine->_segMan->getObjectName(call.sendp);
+			const char *selectorName = "";
+			if (call.type == EXEC_STACK_TYPE_CALL) {
+				selectorName = g_sci->getKernel()->getSelectorName(call.selector).c_str();
+			}
+			warning("uninitialized read for temp %d from method %s::%s (script %d)", index, objName, selectorName, currentScriptNr);
+
 			Common::String gameId = g_sci->getGameId();
 			if ((gameId == "laurabow2") && (currentScriptNr == 24) && (index == 5))
 				return make_reg(0, 0xf); // priority replacement for menu
 			if ((gameId == "freddypharkas") && (currentScriptNr == 24) && (index == 5))
 				return make_reg(0, 0xf); // priority replacement for menu
 			if ((gameId == "islandbrain") && (currentScriptNr == 140) && (index == 3)) {
-				r[index] = make_reg(0, 255);
-				return r[index];
+				//r[index] = make_reg(0, 255);
+				//return r[index];
 			}
 			error("uninitialized read!");
 		}
