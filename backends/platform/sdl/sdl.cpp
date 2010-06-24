@@ -34,7 +34,6 @@
 #include "backends/audiocd/sdl/sdl-audiocd.h"
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
 #include "backends/timer/sdl/sdl-timer.h"
 
 #include "icons/scummvm.xpm"
@@ -46,7 +45,8 @@
 OSystem_SDL::OSystem_SDL()
 	:
 	_inited(false),
-	_initedSDL(false) {
+	_initedSDL(false),
+	_mixerManager(0) {
 
 }
 
@@ -72,8 +72,12 @@ void OSystem_SDL::initBackend() {
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager();
 
-	if (_mixer == 0)
-		_mixer = new SdlMixerImpl(this);
+	if (_mixerManager == 0) {
+		_mixerManager = new SdlMixerManager();
+
+		// Setup and start mixer
+		_mixerManager->init();
+	}
 
 	if (_timerManager == 0)
 		_timerManager = new SdlTimerManager();
@@ -166,8 +170,8 @@ void OSystem_SDL::deinit() {
 	_graphicsManager = 0;
 	delete _audiocdManager;
 	_audiocdManager = 0;
-	delete _mixer;
-	_mixer = 0;
+	delete _mixerManager;
+	_mixerManager = 0;
 	delete _timerManager;
 	_timerManager = 0;
 	delete _mutexManager;
@@ -262,4 +266,9 @@ void OSystem_SDL::getTimeAndDate(TimeDate &td) const {
 	td.tm_mday = t.tm_mday;
 	td.tm_mon = t.tm_mon;
 	td.tm_year = t.tm_year;
+}
+
+Audio::Mixer *OSystem_SDL::getMixer() {
+	assert(_mixerManager);
+	return _mixerManager->getMixer();
 }

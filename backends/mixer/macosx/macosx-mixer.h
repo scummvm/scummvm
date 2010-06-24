@@ -23,35 +23,33 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_SDL_H
-#define BACKENDS_MIXER_SDL_H
+#ifndef BACKENDS_MIXER_MACOSX_H
+#define BACKENDS_MIXER_MACOSX_H
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
+#include "backends/mixer/sdl/sdl-mixer.h"
 
-#include "sound/mixer_intern.h"
-
-class SdlMixerManager {
+class MacOSXMixerManager : public SdlMixerManager {
 public:
-	SdlMixerManager();
-	~SdlMixerManager();
-
-	virtual void init();
-
-	Audio::Mixer *getMixer() { return (Audio::Mixer *)_mixer; }
+	MacOSXMixerManager();
+	~MacOSXMixerManager();
 
 protected:
-	Audio::MixerImpl *_mixer;
-	SDL_AudioSpec _obtainedRate;
+	SDL_mutex *_soundMutex;
+	SDL_cond *_soundCond;
+	SDL_Thread *_soundThread;
+	bool _soundThreadIsRunning;
+	bool _soundThreadShouldQuit;
 
-	virtual SDL_AudioSpec getAudioSpec();
-	virtual void startAudio();
+	byte _activeSoundBuf;
+	uint _soundBufSize;
+	byte *_soundBuffers[2];
 
-	virtual void callbackHandler(byte *samples, int len);
-	static void sdlCallback(void *this_, byte *samples, int len);
+	void mixerProducerThread();
+	void deinitThreadedMixer();
+	static int SDLCALL mixerProducerThreadEntry(void *arg);
+
+	void startAudio();
+	void callbackHandler(byte *samples, int len);
 };
 
 #endif

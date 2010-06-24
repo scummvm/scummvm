@@ -34,6 +34,7 @@
 
 #include "backends/modular-backend.h"
 #include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
 
 class OSystem_SDL : public ModularBackend {
 public:
@@ -61,9 +62,12 @@ public:
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;
 
+	virtual Audio::Mixer *getMixer();
+
 protected:
 	bool _inited;
 	bool _initedSDL;
+	SdlMixerManager *_mixerManager;
 
 	virtual void initSDL();
 
