@@ -132,7 +132,7 @@ print "};\n\n";
 
 foreach my $l (keys(%msgs))
 {
-	print "static const PoMessageEntry _po2c_lang_${l}\[\] = {\n";
+	print "static const PoMessageEntry _translation_${l}\[\] = {\n";
 
 	# get the translation table for the language $l
 	my ($m) = $msgs{$l};
@@ -165,14 +165,14 @@ print "\tconst char *lang;\n";
 print "\tconst char *charset;\n";
 print "\tconst PoMessageEntry *msgs;\n";
 print "};\n\n";
-print "const PoLangEntry _po2c_langs[] = {\n";
+print "const PoLangEntry _translations[] = {\n";
 
 foreach my $l (keys(%msgs))
 {
 	$header = $msgs{$l}->{""};
 	$header =~ /charset=([^\\]+)/;
 	$charset = $1;
-	print "\t{ \"" . $l . "\", \"" . $charset . "\", _po2c_lang_${l} },\n";
+	print "\t{ \"" . $l . "\", \"" . $charset . "\", _translation_${l} },\n";
 }
 
 print "\t{ NULL, NULL, NULL }\n};\n\n";
@@ -180,54 +180,54 @@ print "\t{ NULL, NULL, NULL }\n};\n\n";
 print "// code\n";
 print << 'EOF';
 
-static const struct PoMessageEntry *_po2c_lang = NULL;
-static int _po2c_lang_size = 0;
-static const char * _po2c_charset = NULL;
+static const struct PoMessageEntry *_currentTranslation = NULL;
+static int _currentTranslationMessageEntries = 0;
+static const char *_currentTranslationCharset = NULL;
 
 void po2c_setlang(const char *lang) {
-	_po2c_lang = NULL;
-	_po2c_lang_size = 0;
-	_po2c_charset = NULL;
+	_currentTranslation = NULL;
+	_currentTranslationMessageEntries = 0;
+	_currentTranslationCharset = NULL;
 
 	// if lang is NULL or "", deactivate it
 	if (lang == NULL || *lang == '\0')
 		return;
 
 	// searches for a valid language array
-	for (int i = 0; _po2c_lang == NULL && _po2c_langs[i].lang != NULL; ++i) {
-		if (strcmp(lang, _po2c_langs[i].lang) == 0) {
-			_po2c_lang = _po2c_langs[i].msgs;
-			_po2c_charset = _po2c_langs[i].charset;
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strcmp(lang, _translations[i].lang) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
 	// try partial searches
-	for (int i = 0; _po2c_lang == NULL && _po2c_langs[i].lang != NULL; ++i) {
-		if (strncmp(lang, _po2c_langs[i].lang, 2) == 0) {
-			_po2c_lang = _po2c_langs[i].msgs;
-			_po2c_charset = _po2c_langs[i].charset;
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strncmp(lang, _translations[i].lang, 2) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
 	// if found, count entries
-	if (_po2c_lang != NULL) {
-		for (const PoMessageEntry *m = _po2c_lang; m->msgid != -1; ++m)
-			++_po2c_lang_size;
+	if (_currentTranslation != NULL) {
+		for (const PoMessageEntry *m = _currentTranslation; m->msgid != -1; ++m)
+			++_currentTranslationMessageEntries;
 	}
 }
 
 const char *po2c_gettext(const char *msgid) {
 	// if no language is set or msgid is empty, return msgid as is
-	if (_po2c_lang == NULL || *msgid == '\0')
+	if (_currentTranslation == NULL || *msgid == '\0')
 		return msgid;
 
 	// binary-search for the msgid
 	int leftIndex = 0;
-	int rightIndex = _po2c_lang_size - 1;
+	int rightIndex = _currentTranslationMessageEntries - 1;
 
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
-		const struct PoMessageEntry * const m = &_po2c_lang[midIndex];
+		const struct PoMessageEntry * const m = &_currentTranslation[midIndex];
 
 		const int compareResult = strcmp(msgid, _po2c_msgids[m->msgid]);
 
@@ -243,23 +243,19 @@ const char *po2c_gettext(const char *msgid) {
 }
 
 const char *po2c_getcharset(void) {
-	if (_po2c_charset)
-		return _po2c_charset;
+	if (_currentTranslationCharset)
+		return _currentTranslationCharset;
 	else
 		return "ASCII";
 }
 
 int po2c_getnumlangs(void) {
-	int n = 0;
-
-	while (_po2c_langs[n].lang)
-		n++;
-	
-	return n;
+	return ARRAYSIZE(_translations) - 1;
 }
 
-const char *po2c_getlang(int num) {
-	return _po2c_langs[num].lang;
+const char *po2c_getlang(const int num) {
+	assert(num < ARRAYSIZE(_translations));
+	return _translations[num].lang;
 }
 EOF
 

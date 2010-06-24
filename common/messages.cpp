@@ -325,7 +325,7 @@ struct PoMessageEntry {
 	const char *msgstr;
 };
 
-static const PoMessageEntry _po2c_lang_ru_RU[] = {
+static const PoMessageEntry _translation_ru_RU[] = {
 	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-24 23:22+0200\nPO-Revision-Date: 2010-06-13 20:55+0300\nLast-Translator: Eugene Sandulenko <sev@scummvm.org>\nLanguage-Team: Russian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1251\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n" },
 	{ 1, "   \302\373 \363\342\345\360\345\355\373, \367\362\356 \365\356\362\350\362\345 \342\373\351\362\350?   " },
 	{ 2, "  \310\371\363 \357\353\340\343\350\355 \361 \357\356\344\344\345\360\346\352\356\351 \375\362\356\343\356 gameid... " },
@@ -638,7 +638,7 @@ static const PoMessageEntry _po2c_lang_ru_RU[] = {
 	{ -1, NULL }
 };
 
-static const PoMessageEntry _po2c_lang_fr_FR[] = {
+static const PoMessageEntry _translation_fr_FR[] = {
 	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-24 23:22+0200\nPO-Revision-Date: 2010-06-19 23:43+0100\nLast-Translator: Thierry Crozat <criezy@scummvm.org>\nLanguage-Team: French <scummvm-devel@lists.sf.net>\nLanguage: fr\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n>1;\nX-Poedit-Language: French\nX-Poedit-Country: FRANCE\nX-Poedit-Basepath: /Users/criezy/Dev/scummvm/scummvm/trunk\n" },
 	{ 1, "Voulez-vous vraiment quitter?" },
 	{ 2, "Recherche d'un plugin supportant cet ID..." },
@@ -944,7 +944,7 @@ static const PoMessageEntry _po2c_lang_fr_FR[] = {
 	{ -1, NULL }
 };
 
-static const PoMessageEntry _po2c_lang_hu_HU[] = {
+static const PoMessageEntry _translation_hu_HU[] = {
 	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-24 23:22+0200\nPO-Revision-Date: 2009-11-25 07:42-0500\nLast-Translator: Alex Bevilacqua <alexbevi@gmail.com>\nLanguage-Team: Hungarian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1250\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n" },
 	{ 17, "<alap\351rtelmezett>" },
 	{ 19, "AdLib vezet :" },
@@ -1006,63 +1006,63 @@ struct PoLangEntry {
 	const PoMessageEntry *msgs;
 };
 
-const PoLangEntry _po2c_langs[] = {
-	{ "ru_RU", "cp1251", _po2c_lang_ru_RU },
-	{ "fr_FR", "iso-8859-1", _po2c_lang_fr_FR },
-	{ "hu_HU", "cp1250", _po2c_lang_hu_HU },
+const PoLangEntry _translations[] = {
+	{ "ru_RU", "cp1251", _translation_ru_RU },
+	{ "fr_FR", "iso-8859-1", _translation_fr_FR },
+	{ "hu_HU", "cp1250", _translation_hu_HU },
 	{ NULL, NULL, NULL }
 };
 
 // code
 
-static const struct PoMessageEntry *_po2c_lang = NULL;
-static int _po2c_lang_size = 0;
-static const char * _po2c_charset = NULL;
+static const struct PoMessageEntry *_currentTranslation = NULL;
+static int _currentTranslationMessageEntries = 0;
+static const char *_currentTranslationCharset = NULL;
 
 void po2c_setlang(const char *lang) {
-	_po2c_lang = NULL;
-	_po2c_lang_size = 0;
-	_po2c_charset = NULL;
+	_currentTranslation = NULL;
+	_currentTranslationMessageEntries = 0;
+	_currentTranslationCharset = NULL;
 
 	// if lang is NULL or "", deactivate it
 	if (lang == NULL || *lang == '\0')
 		return;
 
 	// searches for a valid language array
-	for (int i = 0; _po2c_lang == NULL && _po2c_langs[i].lang != NULL; ++i) {
-		if (strcmp(lang, _po2c_langs[i].lang) == 0) {
-			_po2c_lang = _po2c_langs[i].msgs;
-			_po2c_charset = _po2c_langs[i].charset;
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strcmp(lang, _translations[i].lang) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
 	// try partial searches
-	for (int i = 0; _po2c_lang == NULL && _po2c_langs[i].lang != NULL; ++i) {
-		if (strncmp(lang, _po2c_langs[i].lang, 2) == 0) {
-			_po2c_lang = _po2c_langs[i].msgs;
-			_po2c_charset = _po2c_langs[i].charset;
+	for (int i = 0; _currentTranslation == NULL && _translations[i].lang != NULL; ++i) {
+		if (strncmp(lang, _translations[i].lang, 2) == 0) {
+			_currentTranslation = _translations[i].msgs;
+			_currentTranslationCharset = _translations[i].charset;
 		}
 	}
 
 	// if found, count entries
-	if (_po2c_lang != NULL) {
-		for (const PoMessageEntry *m = _po2c_lang; m->msgid != -1; ++m)
-			++_po2c_lang_size;
+	if (_currentTranslation != NULL) {
+		for (const PoMessageEntry *m = _currentTranslation; m->msgid != -1; ++m)
+			++_currentTranslationMessageEntries;
 	}
 }
 
 const char *po2c_gettext(const char *msgid) {
 	// if no language is set or msgid is empty, return msgid as is
-	if (_po2c_lang == NULL || *msgid == '\0')
+	if (_currentTranslation == NULL || *msgid == '\0')
 		return msgid;
 
 	// binary-search for the msgid
 	int leftIndex = 0;
-	int rightIndex = _po2c_lang_size - 1;
+	int rightIndex = _currentTranslationMessageEntries - 1;
 
 	while (rightIndex >= leftIndex) {
 		const int midIndex = (leftIndex + rightIndex) / 2;
-		const struct PoMessageEntry * const m = &_po2c_lang[midIndex];
+		const struct PoMessageEntry * const m = &_currentTranslation[midIndex];
 
 		const int compareResult = strcmp(msgid, _po2c_msgids[m->msgid]);
 
@@ -1078,21 +1078,17 @@ const char *po2c_gettext(const char *msgid) {
 }
 
 const char *po2c_getcharset(void) {
-	if (_po2c_charset)
-		return _po2c_charset;
+	if (_currentTranslationCharset)
+		return _currentTranslationCharset;
 	else
 		return "ASCII";
 }
 
 int po2c_getnumlangs(void) {
-	int n = 0;
-
-	while (_po2c_langs[n].lang)
-		n++;
-	
-	return n;
+	return ARRAYSIZE(_translations) - 1;
 }
 
-const char *po2c_getlang(int num) {
-	return _po2c_langs[num].lang;
+const char *po2c_getlang(const int num) {
+	assert(num < ARRAYSIZE(_translations));
+	return _translations[num].lang;
 }
