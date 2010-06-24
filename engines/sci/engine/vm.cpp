@@ -186,8 +186,9 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ "laurabow2",		 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "freddypharkas",	 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",	 31, "quitWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "islandbrain",	140, "piece", "init",		3, 0 }, // currently unknown, new value is not right
-	{ "",				 -1, "", "",				0, 0 }
+	{ NULL,				 -1, NULL, NULL,			0, 0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
