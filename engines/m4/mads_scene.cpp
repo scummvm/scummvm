@@ -714,7 +714,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 				for (int byteCtr = 0; byteCtr < runLength; ++byteCtr) {
 					byte v = byteVal;
 					for (int bitCtr = 0; bitCtr < 4; ++bitCtr, v >>= 2)
-						*destP++ = v & 3;
+						*destP++ = (((v & 1) + 1) << 3) - 1;
 				}
 			} else {
 				// 8-bit depth pixels
