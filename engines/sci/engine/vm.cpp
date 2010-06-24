@@ -757,6 +757,9 @@ void run_vm(EngineState *s, bool restoring) {
 	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
 	const byte *code_buf = NULL; // (Avoid spurious warning)
+	// Used for a workaround in op_link below, in order to avoid string matching (which can
+	// be slow if used in the game script interpreter)
+	bool isIslandOfDrBrain = (g_sci->getGameId() == "islandbrain");
 
 	if (!local_script) {
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
@@ -1128,8 +1131,15 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_link: // 0x1f (31)
-			for (int i = 0; i < opparams[0]; i++)
-				s->xs->sp[i] = NULL_REG;
+			if (local_script->_nr == 140 && isIslandOfDrBrain) {
+				// WORKAROUND for The Island of Dr. Brain, room 140.
+				// Script 140 runs in an endless loop if we set its
+				// variables to 0 here.
+			} else {
+				for (int i = 0; i < opparams[0]; i++)
+					s->xs->sp[i] = NULL_REG;
+			}
+
 			s->xs->sp += opparams[0];
 			break;
 
