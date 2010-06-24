@@ -867,7 +867,7 @@ begin_credits("Credits");
 			add_person("Lothar Serra Mari", "Lothar93", "");
 		end_section();
 		begin_section("Hungarian");
-			add_person("Eugene Sandulenko", "sev", "");
+			add_person("Alex Bevilacqua", "", "");
 		end_section();
 		begin_section("Russian");
 			add_person("Eugene Sandulenko", "sev", "");
