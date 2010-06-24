@@ -187,6 +187,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ "laurabow2",		 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "freddypharkas",	 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "freddypharkas",	 31, "quitWin", "open",		5, 0xf }, // is used as priority for game menu
+	{ "lsl1sci",		720, "rm720", "init",		0,	 0 }, // age check room
 	{ "islandbrain",	140, "piece", "init",		3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
 	{ NULL,				 -1, NULL, NULL,			0, 0 }
 };
