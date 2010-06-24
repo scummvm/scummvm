@@ -612,8 +612,12 @@ static inline char getChar(const SegmentRef &ref, uint offset) {
 
 	reg_t val = ref.reg[offset / 2];
 
+	// segment 0xFFFF means that the scripts are using uninitialized temp-variable space
+	//  we can safely ignore this, if it isn't one of the first 2 chars.
+	//  foreign lsl3 uses kFileIO(readraw) and then immediately uses kReadNumber right at the start
 	if (val.segment != 0)
-		warning("Attempt to read character from non-raw data");
+		if ((offset > 1) && val.segment == 0xFFFF)
+			warning("Attempt to read character from non-raw data");
 
 	return (offset & 1 ? val.offset >> 8 : val.offset & 0xff);
 }
