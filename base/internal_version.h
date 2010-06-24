@@ -2,4 +2,8 @@
 #define SCUMMVM_SVN_REVISION
 #endif
 
+#ifdef RELEASE_BUILD
+#undef SCUMMVM_SVN_REVISION
+#endif
+
 #define SCUMMVM_VERSION "1.2.0svn" SCUMMVM_SVN_REVISION
