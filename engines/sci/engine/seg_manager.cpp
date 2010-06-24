@@ -649,14 +649,15 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 			::strncpy((char *)dest_r.raw, src, n);
 	} else {
 		// raw -> non-raw
-		for (uint i = 0; i < n; i++) {
+		uint i;
+		for (i = 0; i < n; i++) {
 			setChar(dest_r, i, src[i]);
 			if (!src[i])
 				break;
 		}
 		// Put an ending NUL to terminate the string
-		if ((size_t)dest_r.maxSize > n)
-			setChar(dest_r, n, 0);
+		if ((size_t)dest_r.maxSize > i)
+			setChar(dest_r, i, 0);
 	}
 }
 
