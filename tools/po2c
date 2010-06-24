@@ -113,7 +113,7 @@ print "#include <stdio.h>\n";
 print "#include <string.h>\n\n";
 
 # dump first the msgid array
-print "static const char * _po2c_msgids[] = {\n";
+print "static const char * const _po2c_msgids[] = {\n";
 
 for(my $n = 0;$n < scalar(@msgids);$n++)
 {
@@ -132,7 +132,7 @@ print "};\n\n";
 
 foreach my $l (keys(%msgs))
 {
-	print "static struct _po2c_msg _po2c_lang_${l}\[\] = {\n";
+	print "static const struct _po2c_msg _po2c_lang_${l}\[\] = {\n";
 
 	# get the translation table for the language $l
 	my ($m) = $msgs{$l};
@@ -160,10 +160,10 @@ foreach my $l (keys(%msgs))
 
 # finally, dump the languages
 
-print "static struct {\n";
+print "static const struct {\n";
 print "\tconst char * lang;\n";
 print "\tconst char * charset;\n";
-print "\tstruct _po2c_msg * msgs;\n";
+print "\tconst struct _po2c_msg * msgs;\n";
 print "} _po2c_langs[] = {\n";
 
 foreach my $l (keys(%msgs))
@@ -179,7 +179,7 @@ print "\t{ NULL, NULL, NULL }\n};\n\n";
 print "/* code */\n";
 print << 'EOF';
 
-static struct _po2c_msg * _po2c_lang=NULL;
+static const struct _po2c_msg * _po2c_lang=NULL;
 static int _po2c_lang_size=0;
 static const char * _po2c_charset=NULL;
 
@@ -216,7 +216,7 @@ void po2c_setlang(const char * lang)
 	/* if found, count entries */
 	if(_po2c_lang != NULL)
 	{
-		struct _po2c_msg * m;
+		const struct _po2c_msg * m;
 
 		for(m=_po2c_lang;m->msgid != -1;m++)
 			_po2c_lang_size++;
@@ -225,7 +225,7 @@ void po2c_setlang(const char * lang)
 
 const char * po2c_gettext(const char * msgid)
 {
-	struct _po2c_msg * m;
+	const struct _po2c_msg * m;
 	int b, t, n, c;
 
 	/* if no language is set or msgid is empty, return msgid as is */
