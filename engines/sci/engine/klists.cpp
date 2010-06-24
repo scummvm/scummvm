@@ -115,8 +115,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	reg_t listbase;
-	List *l;
-	l = s->_segMan->allocateList(&listbase);
+	List *l = s->_segMan->allocateList(&listbase);
 	l->first = l->last = NULL_REG;
 	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x", PRINT_REG(listbase));
 

@@ -402,6 +402,12 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 	retval->_entries = (reg_t *)calloc(size, sizeof(reg_t));
 	retval->_capacity = size;
 
+	// SSCI initializes the stack with "S" characters (uppercase S in SCI0-SCI1,
+	// lowercase s in SCI0 and SCI11) - probably stands for "stack"
+	byte filler = (getSciVersion() >= SCI_VERSION_01 && getSciVersion() <= SCI_VERSION_1_LATE) ? 'S' : 's';
+	for (int i = 0; i < size; i++)
+		retval->_entries[i] = make_reg(0, filler);
+
 	return retval;
 }
 
@@ -448,7 +454,7 @@ byte *SegManager::getHunkPointer(reg_t addr) {
 	HunkTable *ht = (HunkTable *)getSegment(addr.segment, SEG_TYPE_HUNK);
 
 	if (!ht || !ht->isValidEntry(addr.offset)) {
-		warning("getHunkPointer() with invalid handle");
+		warning("getHunkPointer() with invalid handle %04x:%04x", PRINT_REG(addr));
 		return NULL;
 	}
 

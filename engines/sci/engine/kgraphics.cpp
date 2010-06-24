@@ -540,7 +540,7 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
 	// till the actual problem is found
-	if (g_sci->getGameId() == "lsl1sci" && s->currentRoomNumber() == 300) {
+	if (s->currentRoomNumber() == 300 && g_sci->getGameId() == "lsl1sci") {
 		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
 		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
 	}
