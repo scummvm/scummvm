@@ -41,6 +41,12 @@ public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
+	/** Pre-initialize backend, it should be called after
+	 *  instantiating the backend. Early needed managers
+	 *  are created here.
+	 */
+	virtual void init();
+
 	virtual void initBackend();
 
 	virtual Common::HardwareKeySet *getHardwareKeySet();

@@ -47,8 +47,14 @@
 #define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 OSystem_Win32::OSystem_Win32() {
+}
+
+void OSystem_Win32::init() {
 	// Initialze File System Factory
 	_fsFactory = new WindowsFilesystemFactory();
+
+	// Invoke parent implementation of this method
+	OSystem_SDL::init();
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {

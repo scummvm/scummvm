@@ -44,8 +44,14 @@
 #define DEFAULT_CONFIG_FILE ".scummvmrc"
 
 OSystem_POSIX::OSystem_POSIX() {
+}
+
+void OSystem_Win32::init() {
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
+
+	// Invoke parent implementation of this method
+	OSystem_SDL::init();
 }
 
 void OSystem_POSIX::initBackend() {

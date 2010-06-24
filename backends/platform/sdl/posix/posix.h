@@ -33,6 +33,8 @@ public:
 	OSystem_POSIX();
 	virtual ~OSystem_POSIX() {}
 
+	virtual void init();
+
 	virtual void initBackend();
 
 protected:

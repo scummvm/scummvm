@@ -50,13 +50,19 @@ int main(int argc, char *argv[]) {
 	g_system = new OSystem_Win32();
 	assert(g_system);
 
+	// Pre initialize the backend
+	((OSystem_Win32 *)g_system)->init();
+
 #ifdef DYNAMIC_MODULES
 	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
 #endif
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);
+
+	// Free OSystem
 	delete (OSystem_Win32 *)g_system;
+
 	return res;
 }
 

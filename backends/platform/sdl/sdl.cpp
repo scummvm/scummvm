@@ -54,18 +54,25 @@ OSystem_SDL::~OSystem_SDL() {
 	deinit();
 }
 
+void OSystem_SDL::init() {
+	// Initialize SDL
+	initSDL();
+
+	// Creates the early needed managers, if they don't exist yet
+	// (we check for this to allow subclasses to provide their own).
+	if (_mutexManager == 0)
+		_mutexManager = new SdlMutexManager();
+
+	if (_timerManager == 0)
+		_timerManager = new SdlTimerManager();
+}
+
 void OSystem_SDL::initBackend() {
 	// Check if backend has not been initialized
 	assert(!_inited);
 
-	// Initialize SDL
-	initSDL();
-
 	// Creates the backend managers, if they don't exist yet (we check
 	// for this to allow subclasses to provide their own).
-	if (_mutexManager == 0)
-		_mutexManager = new SdlMutexManager();
-
 	if (_eventManager == 0)
 		_eventManager = new SdlEventManager(this);
 
@@ -78,9 +85,6 @@ void OSystem_SDL::initBackend() {
 		// Setup and start mixer
 		_mixerManager->init();
 	}
-
-	if (_timerManager == 0)
-		_timerManager = new SdlTimerManager();
 
 	if (_graphicsManager == 0)
 		_graphicsManager = new SdlGraphicsManager();
