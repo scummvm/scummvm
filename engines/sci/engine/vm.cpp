@@ -191,12 +191,13 @@ struct UninitializedReadWorkaround {
 	int index;
 	uint16 newValue;
 } static const uninitializedReadWorkarounds[] = {
-	{ "laurabow2",       24,   "gcWin", "open",     5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",   24,   "gcWin", "open",     5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",   31, "quitWin", "open",     5, 0xf }, // is used as priority for game menu
-	{ "lsl1sci",        720,   "rm720", "init",     0,   0 }, // age check room
-	{ "islandbrain",    140,   "piece", "init",     3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
-	{ NULL,              -1,      NULL,   NULL,     0,   0 }
+	{ "laurabow2",       24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",   24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",   31,  "quitWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ "lsl1sci",        720,    "rm720", "init",		 0,   0 }, // age check room
+	{ "islandbrain",    140,    "piece", "init",		 3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
+	{ "sq4",			928, "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
+	{ NULL,              -1,       NULL,   NULL,		 0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
