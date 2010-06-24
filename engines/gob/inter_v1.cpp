@@ -1331,7 +1331,8 @@ bool Inter_v1::o1_goblinFunc(OpFuncParams &params) {
 	gobParams.retVarPtr.set(*_variables, 236);
 
 	cmd = _vm->_game->_script->readInt16();
-	_vm->_game->_script->skip(2);
+	gobParams.paramCount = _vm->_game->_script->readInt16();
+
 	if ((cmd > 0) && (cmd < 17)) {
 		objDescSet = true;
 		gobParams.extraData = _vm->_game->_script->readInt16();
