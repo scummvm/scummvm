@@ -938,8 +938,6 @@ void run_vm(EngineState *s, bool restoring) {
 		s->xs->addr.pc.offset += readPMachineInstruction(code_buf + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
 
-		warning("%lx", opcode);
-
 		switch (opcode) {
 
 		case op_bnot: // 0x00 (00)
