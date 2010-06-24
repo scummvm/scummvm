@@ -1188,7 +1188,7 @@ void run_vm(EngineState *s, bool restoring) {
 			// We shouldn't initialize temp variables at all
 			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
-				s->xs->sp[i] = make_reg(0xffff, 0xffff);
+				s->xs->sp[i] = make_reg(0xffff, 0);
 //			for (int i = 0; i < opparams[0]; i++)
 //				s->xs->sp[i] = make_reg(0, 'ss');
 
