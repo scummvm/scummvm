@@ -115,12 +115,14 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 			if (argc > 2) { /* Request to modify this char */
 				tmp.offset &= 0xff00;
 				tmp.offset |= newvalue;
+				tmp.segment = 0;
 			}
 		} else {
 			value = tmp.offset >> 8;
 			if (argc > 2)  { /* Request to modify this char */
 				tmp.offset &= 0x00ff;
 				tmp.offset |= newvalue << 8;
+				tmp.segment = 0;
 			}
 		}
 	}
