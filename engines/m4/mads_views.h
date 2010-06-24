@@ -97,7 +97,7 @@ public:
 	void clear();
 	void deleteTimer(int seqIndex);
 
-	void drawBackground();
+	void drawBackground(int yOffset);
 	void drawForeground(View *view, int yOffset);
 	void setDirtyAreas();
 	void fullRefresh();

@@ -133,20 +133,22 @@ bool sortHelper(const DepthEntry &entry1, const DepthEntry &entry2) {
 
 typedef Common::List<DepthEntry> DepthList;
 
-void MadsSpriteSlots::drawBackground() {
+void MadsSpriteSlots::drawBackground(int yOffset) {
 	// Draw all active sprites onto the background surface
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
+		MadsSpriteSlot &slot = _entries[i];
+
+		if (slot.spriteType >= 0) {
 			_owner._dirtyAreas[i].active = false;
 		} else {
 			_owner._dirtyAreas[i].textActive = true;
-			_owner._dirtyAreas.setSpriteSlot(i, _entries[i]);
+			_owner._dirtyAreas.setSpriteSlot(i, slot);
 
-			if (_entries[i].spriteType == BACKGROUND_SPRITE) {
-				SpriteAsset &spriteSet = getSprite(_entries[i].spriteListIndex);
-				M4Sprite *frame = spriteSet.getFrame((_entries[i].frameNumber & 0x7fff) - 1);
-				int xp = _entries[i].xp;
-				int yp = _entries[i].yp;
+			if (slot.spriteType == BACKGROUND_SPRITE) {
+				SpriteAsset &spriteSet = getSprite(slot.spriteListIndex);
+				M4Sprite *frame = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
+				int xp = slot.xp;
+				int yp = slot.yp;
 
 				if (_entries[i].scale != -1) {
 					// Adjust position based on frame size
@@ -154,12 +156,13 @@ void MadsSpriteSlots::drawBackground() {
 					yp -= frame->height() / 2;
 				}
 
-				if (_entries[i].depth <= 1) {
-					// No depth, so simply copy the frame onto the background
-					frame->copyTo(_owner._bgSurface, xp, yp, 0);
+				if (slot.depth > 1) {
+					// Draw the frame with depth processing
+					_owner._bgSurface->copyFrom(frame, xp, yp, Common::Point(0, yOffset), slot.depth, 
+						_owner._depthSurface, 100, frame->getTransparencyIndex());
 				} else {
-					// Depth was specified, so draw frame using scene's depth information
-					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100, 0);
+					// No depth, so simply draw the image
+					frame->copyTo(_owner._bgSurface, xp, yp + yOffset, frame->getTransparencyIndex());
 				}
 			}
 		}
@@ -1201,7 +1204,7 @@ MadsView::~MadsView() {
 
 void MadsView::refresh() {
 	// Draw any sprites
-	_spriteSlots.drawBackground();
+	_spriteSlots.drawBackground(_yOffset);
 
 	// Process dirty areas
 	_textDisplay.setDirtyAreas();
