@@ -37,7 +37,7 @@
 class SdlMixerManager {
 public:
 	SdlMixerManager();
-	~SdlMixerManager();
+	virtual ~SdlMixerManager();
 
 	virtual void init();
 
