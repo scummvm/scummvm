@@ -616,7 +616,7 @@ static inline char getChar(const SegmentRef &ref, uint offset) {
 	//  we can safely ignore this, if it isn't one of the first 2 chars.
 	//  foreign lsl3 uses kFileIO(readraw) and then immediately uses kReadNumber right at the start
 	if (val.segment != 0)
-		if ((offset > 1) && val.segment == 0xFFFF)
+		if (!((val.segment == 0xFFFF) && (offset > 1)))
 			warning("Attempt to read character from non-raw data");
 
 	return (offset & 1 ? val.offset >> 8 : val.offset & 0xff);
