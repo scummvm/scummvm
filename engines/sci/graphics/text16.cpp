@@ -467,7 +467,7 @@ bool GfxText16::SwitchToFont900OnSjis(const char *text) {
 }
 
 void GfxText16::kernelTextSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
-	Common::Rect rect(0, 0, *textWidth, *textHeight);
+	Common::Rect rect(0, 0, 0, 0);
 	Size(rect, text, font, maxWidth);
 	*textWidth = rect.width();
 	*textHeight = rect.height();
