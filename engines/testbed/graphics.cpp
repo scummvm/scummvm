@@ -1,4 +1,5 @@
 #include "common/events.h"
+#include "common/random.h"
 
 #include "testbed/graphics.h"
 #include "testbed/testsuite.h"
@@ -34,14 +35,19 @@ GFXTestSuite::GFXTestSuite() {
 	// Mouse Layer tests (Palettes and movements)
 	// addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	// FIXME: need to fix it
-	addTest("ScaledCursors", &GFXtests::scaledCursors);
+	// addTest("ScaledCursors", &GFXtests::scaledCursors);
 	
 	// Effects
 	// addTest("shakingEffect", &GFXtests::shakingEffect);
 	// addTest("focusRectangle", &GFXtests::focusRectangle);
 
-	// TODO: unable to notice any change, make it noticable
+	// Overlay
 	// addTest("Overlays", &GFXtests::overlayGraphics);
+
+	// Specific Tests:
+	addTest("Palette Rotation", &GFXtests::paletteRotation);
+	addTest("Pixel Formats", &GFXtests::pixelFormats);
+		
 }
 
 const char *GFXTestSuite::getName() const {
@@ -101,6 +107,22 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 	}
 
 	g_system->updateScreen();
+}
+
+void rotatePalette(byte palette[], int size) {
+	// Ignore rotating black color, as that is background
+	// take a temporary palette color
+	byte tColor[4] = {0};
+	// save the first color in tColor
+	memcpy(tColor, &palette[4], 4 * sizeof(byte));
+
+	// Move each color upward by 1
+	for (int i = 1; i < size - 1; i++) {
+		memcpy(&palette[i * 4], &palette[(i + 1) * 4], 4 * sizeof(byte));
+	}
+	// Assign last color to tcolor
+	memcpy(&palette[(size -1) * 4], tColor, 4 * sizeof(byte));
+	g_system->setPalette(palette, 0, 10);
 }
 
 /**
@@ -617,12 +639,6 @@ bool GFXtests::focusRectangle() {
 
 bool GFXtests::overlayGraphics() {
 	
-	// TODO: ifind out if this is required?
-	g_system->beginGFXTransaction();
-	g_system->initSize(640, 400);
-	g_system->endGFXTransaction();
-
-
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 	
 	OverlayColor buffer[20 * 40];
@@ -633,8 +649,8 @@ bool GFXtests::overlayGraphics() {
 	}
 	
 	// FIXME: Not Working.
-	g_system->copyRectToOverlay(buffer, 40, 100, 100, 40, 20);
 	g_system->showOverlay();
+	g_system->copyRectToOverlay(buffer, 40, 100, 100, 40, 20);
 	g_system->updateScreen();
 	
 	g_system->delayMillis(1000);
@@ -647,6 +663,51 @@ bool GFXtests::overlayGraphics() {
 		return false;
 	}
 	return true;
+}
+
+bool GFXtests::paletteRotation() {
+	byte palette[10 * 4] = {0, 0, 0, 0,
+							255, 255, 255, 0,
+							135, 48, 21, 0,
+							205, 190, 87, 0,
+							0, 32, 64, 0,
+							181, 126, 145, 0,
+							47, 78, 36, 0,
+							185, 115, 20, 0,
+							160, 164, 137, 0,
+							43, 52, 0, 0}; // 10 colors : B, W and 8 random 
+
+	Common::RandomSource rs;
+	
+	// Initialize this palette randomly
+	g_system->setPalette(palette, 0, 10);
+
+	// Draw 10 Rectangles, each of width 100 pixels and height 10 pixels
+	byte buffer[10 * 100 * 10] = {0};
+	
+	for (int i = 0; i < 10; i++) {
+		memset(buffer + i * 1000, i, 1000 * sizeof(byte));
+	}
+	
+	g_system->copyRectToScreen(buffer, 100, 110, 50, 100, 100);
+
+	int toRotate = 10;
+
+	while (toRotate--) {
+		g_system->updateScreen();
+		g_system->delayMillis(1000);
+		rotatePalette(palette, 10);
+	}
+
+	if(Testsuite::handleInteractiveInput("Did you want to rotate the palettes?", "Yes", "No", kOptionRight)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool GFXtests::pixelFormats() {
+
 }
 
 }

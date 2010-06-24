@@ -24,6 +24,8 @@ bool scaledCursors();
 bool shakingEffect();
 bool focusRectangle();
 bool overlayGraphics();
+bool paletteRotation();
+bool pixelFormats();
 // add more here
 }
 
