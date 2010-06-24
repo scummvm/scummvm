@@ -125,19 +125,19 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 	fillRect(bounds(), TRANSPARENT_COLOUR_INDEX);
 
 	// Major line loop
-	for (int y = 0; y < h; ++y) {
+	for (int y2 = 0; y2 < h; ++y2) {
 		byte *destP = getBasePtr(0, y);
 		bool newLine = false;
 		byte cmd = source->readByte();
-		int x = 0;
+		int x2 = 0;
 
 		if (cmd == 0xff)
 			// The entire line is empty
 			newLine = true;
 		else if (cmd == 0xFD) {
 			// Lines contains only run lenghs of pixels
-			while (x < w) {
-				byte cmd = source->readByte();
+			while (x2 < w) {
+				cmd = source->readByte();
 				if (cmd == 0xff) {
 					// End of line reached
 					newLine = true;
@@ -146,14 +146,14 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 
 				byte v = source->readByte();
 				while (cmd-- > 0) {
-					if (x < w)
+					if (x2 < w)
 						*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
-					++x;
+					++x2;
 				}
 			}
 		} else {
 			// Line intermixes run lengths with individual pixels
-			while (x < w) {
+			while (x2 < w) {
 				cmd = source->readByte();
 				if (cmd == 0xff) {
 					// End of line reached
@@ -166,15 +166,15 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 					cmd = source->readByte();
 					byte v = source->readByte();
 					while (cmd-- > 0) {
-						if (x < w) {
+						if (x2 < w) {
 							*destP++ = (v == 0xFD) ? TRANSPARENT_COLOUR_INDEX : v;
 						}
-						++x;
+						++x2;
 					}
 				} else {
 					// Handle writing out single pixel
 					*destP++ = (cmd == 0xFD) ? TRANSPARENT_COLOUR_INDEX : cmd;
-					++x;
+					++x2;
 				}
 			}
 		}
