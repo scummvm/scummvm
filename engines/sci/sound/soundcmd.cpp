@@ -678,7 +678,7 @@ void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
 
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
-		warning("cmdFadeSound: fading requested, but sound is currently not playing");
+		debugC(2, kDebugLevelSound, "cmdFadeSound: fading requested, but sound is currently not playing");
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		return;
 	}
