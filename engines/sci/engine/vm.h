@@ -109,6 +109,15 @@ struct ExecStack {
 	reg_t* getVarPointer(SegManager *segMan) const;
 };
 
+struct UninitializedReadWorkaround {
+	const char *gameId;
+	int scriptNr;
+	const char *objectName;
+	const char *methodName;
+	int index;
+	uint16 newValue;
+};
+
 enum {
 	VAR_GLOBAL = 0,
 	VAR_LOCAL = 1,

@@ -183,16 +183,21 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
+static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
+	{ "laurabow2",		 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
+	{ "freddypharkas",	 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
+	{ "islandbrain",	140, "piece", "init",		3, 0 }, // currently unknown, new value is not right
+	{ "",				 -1, "", "",				0, 0 }
+};
+
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index, line)) {
 		if (type == VAR_TEMP && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
-			// FIXME: this should use a table which contains workarounds for gameId, scriptnumber and temp index and
-			//         a replacement value
 			EngineState *engine = g_sci->getEngineState();
 			Script *local_script = engine->_segMan->getScriptIfLoaded(engine->xs->local_segment);
-			int currentScriptNr = local_script->_nr;
+			int curScriptNr = local_script->_nr;
 
 			Common::List<ExecStack>::iterator callIterator = engine->_executionStack.begin();
 			ExecStack call = *callIterator;
@@ -201,24 +206,34 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				callIterator++;
 			}
 
-			const char *objName = engine->_segMan->getObjectName(call.sendp);
-			const char *selectorName = "";
+			const char *curObjectName = engine->_segMan->getObjectName(call.sendp);
+			const char *curMethodName = "";
 			if (call.type == EXEC_STACK_TYPE_CALL) {
-				selectorName = g_sci->getKernel()->getSelectorName(call.selector).c_str();
+				curMethodName = g_sci->getKernel()->getSelectorName(call.selector).c_str();
 			}
-			warning("uninitialized read for temp %d from method %s::%s (script %d)", index, objName, selectorName, currentScriptNr);
+			warning("uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName, curMethodName, curScriptNr);
 
-			Common::String gameId = g_sci->getGameId();
-			if ((gameId == "laurabow2") && (currentScriptNr == 24) && (index == 5))
-				return make_reg(0, 0xf); // priority replacement for menu - gcWin::open
-			if ((gameId == "freddypharkas") && (currentScriptNr == 24) && (index == 5))
-				return make_reg(0, 0xf); // priority replacement for menu - gcWin::open
-			if ((gameId == "islandbrain") && (currentScriptNr == 140) && (index == 3)) {
-				// piece::init
-				//r[index] = make_reg(0, 255);
-				//return r[index];
+			const char *gameId = g_sci->getGameId().c_str();
+
+			// Search if this is a known uninitialized read
+			const UninitializedReadWorkaround *workaround = uninitializedReadWorkarounds;
+			while (workaround->gameId) {
+				if (strcmp(workaround->gameId, gameId) == 0) {
+					if (workaround->scriptNr == curScriptNr) {
+						if (strcmp(workaround->objectName, curObjectName) == 0) {
+							if (strcmp(workaround->methodName, curMethodName) == 0) {
+								if (workaround->index == index) {
+									// Workaround found
+									r[index] = make_reg(0, workaround->newValue);
+									return r[index];
+								}
+							}
+						}
+					}
+				}
+				workaround++;
 			}
-			error("uninitialized read!");
+			error("unknown uninitialized read!");
 		}
 		return r[index];
 	} else

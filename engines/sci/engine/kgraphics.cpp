@@ -639,7 +639,6 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// This here is needed to make Pharkas work
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	uint16 operation = argv[0].toUint16();
 
@@ -1040,26 +1039,6 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
 	bool hiresMode = (argc > 7) ? true : false;
 	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
-
-#if 0
-	if (g_sci->getGameId() == "freddypharkas") {
-		// WORKAROUND
-		// Script 24 contains code that draws the game menu on screen. It uses a temp variable for setting priority that
-		//  is not set. in Sierra sci this happens to be 8250h. In our sci temporary variables are initialized thus we would
-		//  get 0 here resulting in broken menus.
-		if ((viewId == 995) && (loopNo == 0) && (celNo == 0) && (priority == 0)) // game menu
-			priority = 15;
-		if ((viewId == 992) && (loopNo == 0) && (celNo == 0) && (priority == 0)) // quit game
-			priority = 15;
-	}
-
-	if (g_sci->getGameId() == "laurabow2") {
-		// WORKAROUND
-		// see the one above
-		if ((viewId == 995) && (priority == 0))
-			priority = 15;
-	}
-#endif
 
 	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
