@@ -187,7 +187,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ "laurabow2",		 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "freddypharkas",	 24, "gcWin", "open",		5, 0xf }, // is used as priority for game menu
 	{ "freddypharkas",	 31, "quitWin", "open",		5, 0xf }, // is used as priority for game menu
-	{ "islandbrain",	140, "piece", "init",		3, 0 }, // currently unknown, new value is not right
+	{ "islandbrain",	140, "piece", "init",		3, 1 }, // some initialization variable
 	{ NULL,				 -1, NULL, NULL,			0, 0 }
 };
 
