@@ -29,6 +29,7 @@
 #include "backends/mixer/bufferingsdl/bufferingsdl-mixer.h"
 
 #include "common/archive.h"
+#include "common/fs.h"
 
 #include "CoreFoundation/CoreFoundation.h"
 

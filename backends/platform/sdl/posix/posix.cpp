@@ -46,7 +46,7 @@
 OSystem_POSIX::OSystem_POSIX() {
 }
 
-void OSystem_Win32::init() {
+void OSystem_POSIX::init() {
 	// Initialze File System Factory
 	_fsFactory = new POSIXFilesystemFactory();
 
