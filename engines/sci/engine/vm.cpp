@@ -101,7 +101,7 @@ static reg_t &validate_property(Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
 	// invalid. Note that we cannot just return NULL_REG, because client code
 	// may modify the value of the returned reg_t.
-	//static reg_t dummyReg = NULL_REG;
+	static reg_t dummyReg = NULL_REG;
 
 	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
 	// to all sorts of issues! Turned it into an error for now...
@@ -112,27 +112,12 @@ static reg_t &validate_property(Object *obj, int index) {
 		//return dummyReg;
 	}
 
-<<<<<<< HEAD
-	// This occurs in LSL3, binoculars scene. This gets called from kDoBresen, so fix
-	// the relevant invalid selector index. TODO: Why does this occur? This looks like
-	// a script bug.
-	EngineState *s = g_sci->getEngineState();
-	if (index == 633 && s->currentRoomNumber() == 206 && g_sci->getGameId() == "lsl3")
-		index = 37;
-
-	if (index < 0 || (uint)index >= obj->getVarCount()) {
-		error("Invalid object property #%d (out of [0..%d]) requested! Object: %04x:%04x, %s", 
-			index, obj->getVarCount(), PRINT_REG(obj->getPos()), 
-			s->_segMan->getObjectName(obj->getPos()));
-		//return dummyReg;
-=======
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
 		//  iceman script 998 (fred::canBeHere, executed right at the start)
 		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
 			index, obj->getVarCount());
 		return dummyReg;
->>>>>>> 208309a... SCI: partly reverting r50208, iceman has script code (fred::canBeHere) that asks for property 380. sierra also returned a zero when going out of bounds (see gregs engine object.cpp, ::getPropertyN - fixes iceman, lsl3 and probably more
 	}
 
 	return obj->getVariableRef(index);
