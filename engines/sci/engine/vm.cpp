@@ -212,8 +212,6 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			if (call.type == EXEC_STACK_TYPE_CALL) {
 				curMethodName = g_sci->getKernel()->getSelectorName(call.selector).c_str();
 			}
-			warning("uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName, curMethodName, curScriptNr);
-
 			const char *gameId = g_sci->getGameId().c_str();
 
 			// Search if this is a known uninitialized read
@@ -234,7 +232,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				}
 				workaround++;
 			}
-			error("unknown uninitialized read!");
+			error("uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName, curMethodName, curScriptNr);
 		}
 		return r[index];
 	} else
