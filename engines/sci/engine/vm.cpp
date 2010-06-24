@@ -112,6 +112,7 @@ static reg_t &validate_property(Object *obj, int index) {
 		//return dummyReg;
 	}
 
+<<<<<<< HEAD
 	// This occurs in LSL3, binoculars scene. This gets called from kDoBresen, so fix
 	// the relevant invalid selector index. TODO: Why does this occur? This looks like
 	// a script bug.
@@ -124,6 +125,14 @@ static reg_t &validate_property(Object *obj, int index) {
 			index, obj->getVarCount(), PRINT_REG(obj->getPos()), 
 			s->_segMan->getObjectName(obj->getPos()));
 		//return dummyReg;
+=======
+	if (index < 0 || (uint)index >= obj->getVarCount()) {
+		// This is same way sierra does it and there are some games, that contain such scripts like
+		//  iceman script 998 (fred::canBeHere, executed right at the start)
+		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
+			index, obj->getVarCount());
+		return dummyReg;
+>>>>>>> 208309a... SCI: partly reverting r50208, iceman has script code (fred::canBeHere) that asks for property 380. sierra also returned a zero when going out of bounds (see gregs engine object.cpp, ::getPropertyN - fixes iceman, lsl3 and probably more
 	}
 
 	return obj->getVariableRef(index);
@@ -928,6 +937,8 @@ void run_vm(EngineState *s, bool restoring) {
 		byte extOpcode;
 		s->xs->addr.pc.offset += readPMachineInstruction(code_buf + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
+
+		warning("%lx", opcode);
 
 		switch (opcode) {
 
