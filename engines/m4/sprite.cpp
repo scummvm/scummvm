@@ -125,8 +125,8 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 	fillRect(bounds(), TRANSPARENT_COLOUR_INDEX);
 
 	// Major line loop
-	for (int y2 = 0; y2 < h; ++y2) {
-		byte *destP = getBasePtr(0, y);
+	for (int yp = 0; yp < h; ++yp) {
+		byte *destP = getBasePtr(0, yp);
 		bool newLine = false;
 		byte cmd = source->readByte();
 		int x2 = 0;
