@@ -28,6 +28,8 @@
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/mixer/bufferingsdl/bufferingsdl-mixer.h"
 
+#include "common/archive.h"
+
 #include "CoreFoundation/CoreFoundation.h"
 
 #define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
