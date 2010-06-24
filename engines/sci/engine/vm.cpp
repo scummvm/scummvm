@@ -103,13 +103,19 @@ static reg_t &validate_property(Object *obj, int index) {
 	// may modify the value of the returned reg_t.
 	static reg_t dummyReg = NULL_REG;
 
+	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
+	// to all sorts of issues! Turned it into an error for now...
+	// If this occurs, it means there's probably something wrong with the garbage
+	// collector, so don't hide it with fake return values
 	if (!obj) {
-		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!");
+		error("Sending to disposed object");
 		return dummyReg;
 	}
 
+	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
+	// to all sorts of issues! Turned it into an error for now...
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
-		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!",
+		error("Invalid object property #%d (out of [0..%d]) requested!",
 			index, obj->getVarCount());
 		return dummyReg;
 	}
@@ -421,11 +427,11 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					// QFG1VGA has a script bug in the longSong object when invoking the
 					// loop selector, which doesn't affect gameplay, thus don't diplay it
 				} else {
-					// Unknown script bug, show it
+					// Unknown script bug, show it. Usually these aren't fatal.
 					reg_t oldReg = *varp.getPointer(s->_segMan);
 					reg_t newReg = argp[1];
 					const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-					error("send_selector(): argc = %d while modifying variable selector "
+					warning("send_selector(): argc = %d while modifying variable selector "
 							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x", 
 							argc, selector, selectorName, PRINT_REG(send_obj),
 							objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
