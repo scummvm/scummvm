@@ -150,10 +150,10 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		}
 
 		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			uint32 slot = selectorRemap->slot;
-			if (selectorRemap->slot >= names.size())
-				names.resize(selectorRemap->slot + 1);
 			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
+				const uint32 slot = selectorRemap->slot;
+				if (slot >= names.size())
+					names.resize(slot + 1);
 				names[slot] = selectorRemap->name;
 			}
 		}

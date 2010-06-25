@@ -464,10 +464,16 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
-		// Happens in two places during the intro of LB2CD, both from kMemory(peek):
-		// - room 160: Heap 160 has 83 local variables (0-82), and the game asks for variables at indices 83 - 90 too
-		// - room 220: Heap 220 has 114 local variables (0-113), and the game asks for variables at indices 114-120 too
-		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
+			&& g_sci->getGameId() == "laurabow2") {
+			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
+			// - room 160: Heap 160 has 83 local variables (0-82), and the game
+			//   asks for variables at indices 83 - 90 too.
+			// - room 220: Heap 220 has 114 local variables (0-113), and the
+			//   game asks for variables at indices 114-120 too.
+		} else {
+			error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		}
 		ret.reg = 0;
 	}
 	return ret;
@@ -514,8 +520,11 @@ SegmentRef SystemStrings::dereference(reg_t pointer) {
 	if (isValidOffset(pointer.offset))
 		ret.raw = (byte *)(_strings[pointer.offset]._value);
 	else {
-		// This occurs in KQ5CD when interacting with certain objects
-		warning("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		if (g_sci->getGameId() == "kq5") {
+			// This occurs in KQ5CD when interacting with certain objects
+		} else {
+			error("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		}
 	}
 
 	return ret;
