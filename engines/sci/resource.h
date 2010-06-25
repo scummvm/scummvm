@@ -328,6 +328,8 @@ public:
 	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)
 	bool detectFontExtended();
+	// Detects, if SCI1.1 game uses palette merging
+	bool detectForPaletteMergingForSci11();
 
 	/**
 	 * Finds the internal Sierra ID of the current game from script 0.

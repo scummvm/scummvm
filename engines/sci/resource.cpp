@@ -1949,6 +1949,21 @@ bool ResourceManager::detectFontExtended() {
 	return false;
 }
 
+// detects, if SCI1.1 game uses palette merging or copying - this is supposed to only get used on SCI1.1 games
+bool ResourceManager::detectForPaletteMergingForSci11() {
+	// Load palette 999 (default palette)
+	Resource *res = findResource(ResourceId(kResourceTypePalette, 999), false);
+
+	if ((res) && (res->size > 30)) {
+		byte *data = res->data;
+		// Old palette format used in palette resource? -> it's merging
+		if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0))
+			return true;
+		return false;
+	}
+	return false;
+}
+
 // Functions below are based on PD code by Brian Provinciano (SCI Studio)
 bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);

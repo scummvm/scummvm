@@ -36,8 +36,10 @@ class Screen;
  */
 class GfxPalette {
 public:
-	GfxPalette(ResourceManager *resMan, GfxScreen *screen);
+	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging);
 	~GfxPalette();
+
+	bool isMerging();
 
 	void setDefault();
 	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
@@ -88,7 +90,7 @@ private:
 	ResourceManager *_resMan;
 
 	bool _sysPaletteChanged;
-	bool _alwaysForceRealMerge;
+	bool _useMerging;
 
 	Common::Array<PalSchedule> _schedules;
 

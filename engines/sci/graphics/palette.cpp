@@ -38,7 +38,7 @@
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -59,7 +59,6 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	_sysPalette.colors[255].b = 255;
 
 	_sysPaletteChanged = false;
-	_alwaysForceRealMerge = false;
 
 	// Pseudo-WORKAROUND
 	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest 1 vga and all Nick's Picks
@@ -67,19 +66,16 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen)
 	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
 	//  If we use the copying over, we will get issues because some views have marked all colors as being used
 	//  and those will overwrite the current palette in that case
-	Common::String gameId = g_sci->getGameId();
-	if (g_sci->isDemo()) {
-		if (gameId == "laurabow2" || gameId == "qfg3" || gameId == "ecoquest")
-			_alwaysForceRealMerge = true;
-	} else {
-		if (gameId == "pq1sci" || gameId == "cnick-sq" || gameId == "cnick-longbow" || gameId == "cnick-kq" || gameId == "cnick-laurabow" || gameId == "cnick-lsl")
-			_alwaysForceRealMerge = true;
-	}
+	_useMerging = useMerging;
 
 	palVaryInit();
 }
 
 GfxPalette::~GfxPalette() {
+}
+
+bool GfxPalette::isMerging() {
+	return _useMerging;
 }
 
 // meant to get called only once during init of engine
@@ -231,7 +227,14 @@ void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
 	if (force || newPalette->timestamp != systime) {
-		_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
+		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
+		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
+		if ((forceRealMerge) || (_useMerging))
+			_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
+		else
+			_sysPaletteChanged |= insert(newPalette, &_sysPalette);
+
+		// Adjust timestamp on newPalette, so it wont get merged/inserted w/o need
 		newPalette->timestamp = _sysPalette.timestamp;
 
 		bool updatePalette = _sysPaletteChanged && _screen->_picNotValid == 0;
@@ -265,6 +268,7 @@ bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
 			newPalette->mapping[i] = i;
 		}
 	}
+	// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
 	return paletteChanged;
 }
 
@@ -273,59 +277,50 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	int i,j;
 	bool paletteChanged = false;
 
-	if ((!forceRealMerge) && (!_alwaysForceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
-		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
-		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
-
-		// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
-		return insert(newPalette, &_sysPalette);
-
-	} else {
-		// colors 0 (black) and 255 (white) are not affected by merging
-		for (i = 1 ; i < 255; i++) {
-			if (!newPalette->colors[i].used)// color is not used - so skip it
-				continue;
-			// forced palette merging or dest color is not used yet
-			if (force || (!_sysPalette.colors[i].used)) {
-				_sysPalette.colors[i].used = newPalette->colors[i].used;
-				if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
-					_sysPalette.colors[i].r = newPalette->colors[i].r;
-					_sysPalette.colors[i].g = newPalette->colors[i].g;
-					_sysPalette.colors[i].b = newPalette->colors[i].b;
-					paletteChanged = true;
-				}
-				newPalette->mapping[i] = i;
-				continue;
+	// colors 0 (black) and 255 (white) are not affected by merging
+	for (i = 1 ; i < 255; i++) {
+		if (!newPalette->colors[i].used)// color is not used - so skip it
+			continue;
+		// forced palette merging or dest color is not used yet
+		if (force || (!_sysPalette.colors[i].used)) {
+			_sysPalette.colors[i].used = newPalette->colors[i].used;
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+				_sysPalette.colors[i].r = newPalette->colors[i].r;
+				_sysPalette.colors[i].g = newPalette->colors[i].g;
+				_sysPalette.colors[i].b = newPalette->colors[i].b;
+				paletteChanged = true;
 			}
-			// is the same color already at the same position? -> match it directly w/o lookup
-			//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
-			//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-			if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
-				newPalette->mapping[i] = i;
-				continue;
+			newPalette->mapping[i] = i;
+			continue;
+		}
+		// is the same color already at the same position? -> match it directly w/o lookup
+		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
+		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+			newPalette->mapping[i] = i;
+			continue;
+		}
+		// check if exact color could be matched
+		res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
+		if (res & 0x8000) { // exact match was found
+			newPalette->mapping[i] = res & 0xFF;
+			continue;
+		}
+		// no exact match - see if there is an unused color
+		for (j = 1; j < 256; j++)
+			if (!_sysPalette.colors[j].used) {
+				_sysPalette.colors[j].used = newPalette->colors[i].used;
+				_sysPalette.colors[j].r = newPalette->colors[i].r;
+				_sysPalette.colors[j].g = newPalette->colors[i].g;
+				_sysPalette.colors[j].b = newPalette->colors[i].b;
+				newPalette->mapping[i] = j;
+				paletteChanged = true;
+				break;
 			}
-			// check if exact color could be matched
-			res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
-			if (res & 0x8000) { // exact match was found
-				newPalette->mapping[i] = res & 0xFF;
-				continue;
-			}
-			// no exact match - see if there is an unused color
-			for (j = 1; j < 256; j++)
-				if (!_sysPalette.colors[j].used) {
-					_sysPalette.colors[j].used = newPalette->colors[i].used;
-					_sysPalette.colors[j].r = newPalette->colors[i].r;
-					_sysPalette.colors[j].g = newPalette->colors[i].g;
-					_sysPalette.colors[j].b = newPalette->colors[i].b;
-					newPalette->mapping[i] = j;
-					paletteChanged = true;
-					break;
-				}
-			// if still no luck - set an approximate color
-			if (j == 256) {
-				newPalette->mapping[i] = res & 0xFF;
-				_sysPalette.colors[res & 0xFF].used |= 0x10;
-			}
+		// if still no luck - set an approximate color
+		if (j == 256) {
+			newPalette->mapping[i] = res & 0xFF;
+			_sysPalette.colors[res & 0xFF].used |= 0x10;
 		}
 	}
 
@@ -337,7 +332,7 @@ bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 // This is called for SCI1.1, when kDrawPic got done. We update sysPalette timestamp this way for SCI1.1 and also load
 //  target-palette, if palvary is active
 void GfxPalette::drewPicture(GuiResourceId pictureId) {
-	if (!_alwaysForceRealMerge) // Don't do this on inbetween SCI1.1 games
+	if (!_useMerging) // Don't do this on inbetween SCI1.1 games
 		_sysPalette.timestamp++;
 
 	if (_palVaryResourceId != -1) {
