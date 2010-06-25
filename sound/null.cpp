@@ -45,7 +45,14 @@ public:
 	const char *getId() const {
 		return "auto";
 	}
+	MusicDevices getDevices() const;
 };
+
+MusicDevices AutoMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, _s(""), MT_AUTO));
+	return devices;
+}
 
 //#if PLUGIN_ENABLED_DYNAMIC(NULL)
 	//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);

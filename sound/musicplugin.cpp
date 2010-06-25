@@ -60,7 +60,5 @@ Common::String MusicDevice::getCompleteId() {
 }
 
 MidiDriver::DeviceHandle MusicDevice::getHandle() {
-	if (_musicDriverId.equals("auto") || _musicDriverId.equals("null"))
-		return 0;
 	return (MidiDriver::DeviceHandle)Common::hashit(getCompleteId().c_str());
 }

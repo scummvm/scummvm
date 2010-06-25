@@ -95,7 +95,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 		}
 	}
 	
-	return MT_NULL;
+	return MT_AUTO;
 }
 
 Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
@@ -139,6 +139,11 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_PCJR)
 			return hdl;
 		break;
+	
+	case MT_CMS:
+		if (flags & MDT_CMS)
+			return hdl;
+		break;
 
 	case MT_ADLIB:
 		if (flags & MDT_ADLIB)
@@ -150,14 +155,20 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			return hdl;
 		break;
 
+	case MT_PC98:
+		if (flags & MDT_PC98)
+			return hdl;
+		break;
+
 	case MT_GM:
 	case MT_GS:
 	case MT_MT32:
 		if (flags & MDT_MIDI)
 			return hdl;
+		break;
+
 	case MT_NULL:
-		if (getDeviceString(hdl, MidiDriver::kDriverId).equals("null"))
-			return 0;
+		return hdl;
 
 	default:
 		break;
@@ -172,7 +183,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if ((flags & MDT_MIDI) && (l == 1)) {
 			// If a preferred MT32 or GM device has been selected that device gets returned
 			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto"), Common::ConfigManager::kApplicationDomain));
-			if (getMusicType(hdl) != MT_NULL) {
+			if (getMusicType(hdl) != MT_AUTO) {
 				if (flags & MDT_PREFER_MT32)
 					// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
 					_forceTypeMT32 = true;
@@ -203,7 +214,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			}
 		} 
 
-		MusicType tp = MT_NULL;
+		MusicType tp = MT_AUTO;
 		if (flags & MDT_TOWNS)
 			tp = MT_TOWNS;
 		else if (flags & MDT_ADLIB)
@@ -211,7 +222,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		else if (flags & MDT_PCSPK)
 			tp = MT_PCSPK;
 		else
-			tp = MT_NULL;
+			tp = MT_AUTO;
 
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 			MusicDevices i = (**m)->getDevices();

@@ -136,18 +136,18 @@ void OptionsDialog::init() {
 	}
 }
 
-template<class T> bool prdEqualsDeviceProperty(MusicDevices::iterator d, T lookupProp, Common::MemFunc0<T, MusicDevice> devicePropFunc) {
+template<class T> bool equalsDeviceProperty(MusicDevices::iterator d, T lookupProp, Common::MemFunc0<T, MusicDevice> devicePropFunc) {
 	return lookupProp == devicePropFunc(&*d);
 }
 
-bool prdMidiDefault(MusicDevices::iterator d, Common::String dom, bool, MusicPlugin::List::const_iterator&) {
-	return !(dom == Common::ConfigManager::kApplicationDomain && d->getMusicType() == MT_TOWNS) ? true : false;
+bool musicDeviceSkipSettingDefault(MusicDevices::iterator d, Common::String dom, MusicPlugin::List::const_iterator &m, uint32 guio) {
+	return (dom == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) || (dom != Common::ConfigManager::kApplicationDomain && (!guio || (guio & (MidiDriver::musicType2GUIO(d->getMusicType()))))) || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null" ? true : false;
 }
 
-bool prdMidiSpec(MusicDevices::iterator d, Common::String, bool isAutoPlugin, MusicPlugin::List::const_iterator &m) {
-	if (isAutoPlugin)
+bool musicDeviceSkipSettingSpec(MusicDevices::iterator d, Common::String, MusicPlugin::List::const_iterator &m, uint32) {
+	if (d->getMusicDriverId() == "auto")
 		m++;
-	return ((d->getMusicType() >= MT_GM) || isAutoPlugin) ? true : false;
+	return ((d->getMusicType() >= MT_GM) || d->getMusicDriverId() == "auto") ? true : false;
 }
 
 void OptionsDialog::open() {
@@ -208,21 +208,21 @@ void OptionsDialog::open() {
 	}
 
 	// Audio options
-	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver", prdMidiDefault))
+	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver", musicDeviceSkipSettingDefault))
 		_midiPopUp->setSelected(0);
 
-	if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", prdMidiSpec)) {
+	if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", musicDeviceSkipSettingSpec)) {
 		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-			if (!loadMusicDeviceSetting(_mt32DevicePopUp, "", prdMidiSpec, MT_MT32))
+			if (!loadMusicDeviceSetting(_mt32DevicePopUp, "", musicDeviceSkipSettingSpec, MT_MT32))
 				_mt32DevicePopUp->setSelected(0);
 		} else {
 			_mt32DevicePopUp->setSelected(0);
 		}
 	}
 
-	if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device", prdMidiSpec)) {
+	if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device", musicDeviceSkipSettingSpec)) {
 		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-			if (!loadMusicDeviceSetting(_gmDevicePopUp, "", prdMidiSpec, MT_GM))
+			if (!loadMusicDeviceSetting(_gmDevicePopUp, "", musicDeviceSkipSettingSpec, MT_GM))
 				_gmDevicePopUp->setSelected(0);
 		} else {
 			_gmDevicePopUp->setSelected(0);
@@ -364,9 +364,9 @@ void OptionsDialog::close() {
 		}
 
 		// Audio options
-		saveMusicDeviceSetting(_midiPopUp, "music_driver", prdMidiDefault);
-		saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", prdMidiSpec);
-		saveMusicDeviceSetting(_gmDevicePopUp, "gm_device", prdMidiSpec);
+		saveMusicDeviceSetting(_midiPopUp, "music_driver", musicDeviceSkipSettingDefault);
+		saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", musicDeviceSkipSettingSpec);
+		saveMusicDeviceSetting(_gmDevicePopUp, "gm_device", musicDeviceSkipSettingSpec);
 
 		if (_oplPopUp) {
 			if (_enableAudioSettings) {
@@ -667,7 +667,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
 			if ((_domain == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) || // global dialog - skip useless FM-Towns option there
 				(_domain != Common::ConfigManager::kApplicationDomain && !(_guioptions & allFlags)) || // No flags are specified
-				_guioptions & (MidiDriver::musicType2GUIO(d->getMusicType()))) // flag is present
+				_guioptions & (MidiDriver::musicType2GUIO(d->getMusicType())) // flag is present
+				 || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
 					_midiPopUp->appendEntry(d->getCompleteName(), musicId++);
 			if (d->getMusicType() >= MT_GM || m == p.begin()) {
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), midiId);
@@ -790,7 +791,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	_enableVolumeSettings = true;
 }
 
-bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MidiSettingsExtraPred pred, MusicType preferredType) {
+bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicDeviceSkipFunc skipfunc, MusicType preferredType) {
 	if (!popup || !popup->isEnabled())
 		return true;
 
@@ -801,11 +802,11 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && id != -1; m++) {
 			MusicDevices i = (**m)->getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-				if ((setting.empty() && preferredType) ? prdEqualsDeviceProperty(d, preferredType, Common::mem_fun(&MusicDevice::getMusicType)) : prdEqualsDeviceProperty(d, drv, Common::mem_fun(&MusicDevice::getCompleteId))) {
+				if ((setting.empty()) ? equalsDeviceProperty(d, preferredType, Common::mem_fun(&MusicDevice::getMusicType)) : equalsDeviceProperty(d, drv, Common::mem_fun(&MusicDevice::getCompleteId))) {
 					popup->setSelected(id);
 					id = -1;												
 					break;
-				} else if (pred(d, _domain, m == p.begin(), m)) {
+				} else if (skipfunc(d, _domain, m, _guioptions)) {
 					id++;
 				}
 			}
@@ -820,7 +821,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 	return true;
 }
 
-void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MidiSettingsExtraPred pred) {
+void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicDeviceSkipFunc skipfunc) {
 	if (!popup || !_enableAudioSettings)
 		return;
 	
@@ -834,7 +835,7 @@ void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String se
 				ConfMan.set(setting, d->getCompleteId(), _domain);
 				found = true;
 				break;
-			} else if (pred(d, _domain, m == p.begin(), m)) {
+			} else if (skipfunc(d, _domain, m, _guioptions)) {
 				id++;
 			}
 		}

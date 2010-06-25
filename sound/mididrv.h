@@ -50,14 +50,17 @@ namespace Common { class String; }
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
-	MT_NULL	 = 0,  // Null / Auto
-	MT_PCSPK = 1,  // PC Speaker
-	MT_PCJR  = 2,  // PCjr
-	MT_ADLIB = 3,  // AdLib
-	MT_TOWNS = 4,  // FM-TOWNS
-	MT_GM    = 5,  // General MIDI
-	MT_MT32  = 6,  // MT-32
-	MT_GS    = 7   // Roland GS
+	MT_AUTO = 0,		// Auto
+	MT_NULL,			// Null
+	MT_PCSPK,			// PC Speaker
+	MT_PCJR,			// PCjr
+	MT_CMS,				// CMS
+	MT_ADLIB,			// AdLib
+	MT_TOWNS,			// FM-TOWNS
+	MT_PC98,			// PC98
+	MT_GM,				// General MIDI
+	MT_MT32,			// MT-32
+	MT_GS				// Roland GS
 };
 
 /**
@@ -75,12 +78,13 @@ enum MidiDriverFlags {
 	MDT_PCSPK  = 1 << 0,      // PC Speaker: Maps to MD_PCSPK and MD_PCJR
 	MDT_CMS    = 1 << 1,      // Creative Music System / Gameblaster: Maps to MD_CMS
 	MDT_PCJR   = 1 << 2,      // Tandy/PC Junior driver
-	MDT_ADLIB  = 1 << 3,      // AdLib: Maps to MD_ADLIB
-	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MD_TOWNS
-	MDT_MIDI   = 1 << 5,      // Real MIDI
-	MDT_PREFER_MIDI = 1 << 6,  // Real MIDI output is preferred
-	MDT_PREFER_MT32 = 1 << 7,  // MT-32 output is preferred
-	MDT_PREFER_GM = 1 << 8  // GM output is preferred
+	MDT_ADLIB  = 1 << 3,      // AdLib: Maps to MT_ADLIB
+	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MT_TOWNS
+	MDT_PC98   = 1 << 5,      // FM-TOWNS: Maps to MT_PC98
+	MDT_MIDI   = 1 << 6,      // Real MIDI
+	MDT_PREFER_MIDI = 1 << 7,  // Real MIDI output is preferred
+	MDT_PREFER_MT32 = 1 << 8,  // MT-32 output is preferred
+	MDT_PREFER_GM = 1 << 9  // GM output is preferred
 };
 
 /**
