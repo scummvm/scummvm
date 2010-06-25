@@ -175,7 +175,7 @@ loom	Loom
 	c5d10e190d4b4d59114b824f2fdbd00e	7540	en	FM-TOWNS	FM-TOWNS	-	-	dhewg, Andrea Petrucci
 	31b8fda4c8c7413fa6b39997e776eba4	-1	jp	FM-TOWNS	FM-TOWNS	-	-	khalek, Andrea Petrucci
 
-	0aa050f4ad79402fbe9c4f78fb8ac494	-1	en	PC-Engine	PC-Engine	-	-	Kirben
+	0aa050f4ad79402fbe9c4f78fb8ac494	6532	en	PC-Engine	PC-Engine	-	-	Kirben
 	79b05f628586837e7166e82b2279bb50	-1	jp	PC-Engine	PC-Engine	-	-	clone2727
 
 	5a35e36fd777e9c37a49c5b2faca52f9	6108	en	DOS	EGA	EGA Demo	non-interactive	Fingolfin
@@ -326,7 +326,7 @@ samnmax	Sam &amp; Max Hit the Road
 	0f6f2e716ba896a44e5059bba1de7ca9	-1	it	All?	-	CD	-	Andrea Petrucci
 	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
 	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-	
-	166553538ff320c69edafeee29525419	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	166553538ff320c69edafeee29525419	199195304	en	Mac	-	CD	Mac bundle	Joachim Eberhard
 	3a5d13675e9a23aedac0bac7730f0ac1	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
 
 	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	Floppy	Demo	-	
@@ -756,7 +756,7 @@ puttzoo	Putt-Putt Saves the Zoo
 	3486ede0f904789267d4bcc5537a46d4	14337	en	Mac	-	Demo	-	khalek
 	d220d154aafbfa12bd6f3ab1b2dae420	-1	de	Mac	-	Demo	-	Joachim Eberhard
 	aa81aa6d5545ce172fdba81f2e2f9d36	-1	nl	Windows	-	Demo	-	DarthBo
-	de4efb910210736813c9a1185384bace	-1	en	Windows	HE 72	Demo	-	khalek
+	de4efb910210736813c9a1185384bace	14337	en	Windows	HE 72	Demo	-	khalek
 	f3d55aea441e260e9e9c7d2a187097e0	14337	en	Windows	-	Demo	-	khalek
 	65fa23d6884e8ca23d5d2406d70de7e8	-1	fr	Windows	-	Demo	-	gist974
 	2a446817ffcabfef8716e0c456ecaf81	-1	de	Windows	-	Demo	-	Joachim Eberhard
@@ -835,7 +835,7 @@ spyfox2	SPY Fox 2: Some Assembly Required
 	90e2f0af4f779629695c6394a65bb702	-1	fr	All	-	-	-	gist974, ThierryFR
 	bc4700bc0e12879f6d25d14d6be6cfdd	-1	de	All	-	-	-	Joachim Eberhard
 	cea91e3dd47f2518ea418e41611aa77f	-1	ru	All	-	-	-	sev
-	9fd66fb3b04703bd50da4356e4202558	-1	en	Mac	-	-	-	pix_climber
+	9fd66fb3b04703bd50da4356e4202558	51295	en	Mac	-	-	-	pix_climber
 	71fe97c3108678cf604f14abe342341b	-1	nl	Windows	-	-	-	adutchguy
 
 	1c792d28376d45e145cb916bca0400a2	-1	nl	All	-	Demo	-	joostp
