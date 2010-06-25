@@ -505,13 +505,13 @@ Node *SegManager::allocateNode(reg_t *addr) {
 }
 
 reg_t SegManager::newNode(reg_t value, reg_t key) {
-	reg_t nodebase;
-	Node *n = allocateNode(&nodebase);
+	reg_t nodeRef;
+	Node *n = allocateNode(&nodeRef);
 	n->pred = n->succ = NULL_REG;
 	n->key = key;
 	n->value = value;
 
-	return nodebase;
+	return nodeRef;
 }
 
 List *SegManager::lookupList(reg_t addr) {

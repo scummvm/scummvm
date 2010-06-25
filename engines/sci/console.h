@@ -147,7 +147,7 @@ private:
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
 
 	bool segmentInfo(int nr);
-	void printList(List *l);
+	void printList(List *list);
 	int printNode(reg_t addr);
 
 private:

@@ -2173,12 +2173,12 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case 0:
 			break;
 		case KSIG_LIST: {
-			List *l = _engine->_gamestate->_segMan->lookupList(reg);
+			List *list = _engine->_gamestate->_segMan->lookupList(reg);
 
 			DebugPrintf("list\n");
 
-			if (l)
-				printList(l);
+			if (list)
+				printList(list);
 			else
 				DebugPrintf("Invalid list.\n");
 		}
@@ -3173,8 +3173,8 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 	return 0;
 }
 
-void Console::printList(List *l) {
-	reg_t pos = l->first;
+void Console::printList(List *list) {
+	reg_t pos = list->first;
 	reg_t my_prev = NULL_REG;
 
 	DebugPrintf("\t<\n");
@@ -3201,9 +3201,9 @@ void Console::printList(List *l) {
 		pos = node->succ;
 	}
 
-	if (my_prev != l->last)
+	if (my_prev != list->last)
 		DebugPrintf("   WARNING: Last node was expected to be %04x:%04x, was %04x:%04x!\n",
-		          PRINT_REG(l->last), PRINT_REG(my_prev));
+		          PRINT_REG(list->last), PRINT_REG(my_prev));
 	DebugPrintf("\t>\n");
 }
 

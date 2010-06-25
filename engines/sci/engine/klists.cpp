@@ -58,20 +58,20 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 }
 
 static void checkListPointer(SegManager *segMan, reg_t addr) {
-	List *l = segMan->lookupList(addr);
+	List *list = segMan->lookupList(addr);
 
-	if (!l) {
+	if (!list) {
 		warning("isSaneListPointer (list %04x:%04x): The requested list wasn't found",
 				PRINT_REG(addr));
 		return;
 	}
 
-	if (l->first.isNull() && l->last.isNull()) {
+	if (list->first.isNull() && list->last.isNull()) {
 		// Empty list is fine
-	} else if (!l->first.isNull() && !l->last.isNull()) {
+	} else if (!list->first.isNull() && !list->last.isNull()) {
 		// Normal list
-		Node *node_a = segMan->lookupNode(l->first);
-		Node *node_z = segMan->lookupNode(l->last);
+		Node *node_a = segMan->lookupNode(list->first);
+		Node *node_z = segMan->lookupNode(list->last);
 
 		if (!node_a) {
 			warning("isSaneListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
@@ -101,25 +101,25 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 			return;
 		}
 
-		isSaneNodePointer(segMan, l->first);
+		isSaneNodePointer(segMan, list->first);
 	} else {
 		// Not sane list... it's missing pointers to the first or last element
-		if (l->first.isNull())
+		if (list->first.isNull())
 			warning("isSaneListPointer (list %04x:%04x): missing pointer to first element",
 					PRINT_REG(addr));
-		if (l->last.isNull())
+		if (list->last.isNull())
 			warning("isSaneListPointer (list %04x:%04x): missing pointer to last element",
 					PRINT_REG(addr));
 	}
 }
 
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
-	reg_t listbase;
-	List *l = s->_segMan->allocateList(&listbase);
-	l->first = l->last = NULL_REG;
-	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x", PRINT_REG(listbase));
+	reg_t listRef;
+	List *list = s->_segMan->allocateList(&listRef);
+	list->first = list->last = NULL_REG;
+	debugC(2, kDebugLevelNodes, "New listRef at %04x:%04x", PRINT_REG(listRef));
 
-	return listbase; // Return list base address
+	return listRef; // Return list base address
 }
 
 reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
@@ -136,7 +136,7 @@ reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 	reg_t nodeKey = (argc == 2) ? argv[1] : argv[0];
 	s->r_acc = s->_segMan->newNode(nodeValue, nodeKey);
 
-	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
+	debugC(2, kDebugLevelNodes, "New nodeRef at %04x:%04x", PRINT_REG(s->r_acc));
 
 	return s->r_acc;
 }
@@ -145,11 +145,11 @@ reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
-	if (l) {
+	if (list) {
 		checkListPointer(s->_segMan, argv[0]);
-		return l->first;
+		return list->first;
 	} else {
 		return NULL_REG;
 	}
@@ -159,11 +159,11 @@ reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
-	if (l) {
+	if (list) {
 		checkListPointer(s->_segMan, argv[0]);
-		return l->last;
+		return list->last;
 	} else {
 		return NULL_REG;
 	}
@@ -173,54 +173,56 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 	checkListPointer(s->_segMan, argv[0]);
 
-	return make_reg(0, ((l) ? l->first.isNull() : 0));
+	return make_reg(0, ((list) ? list->first.isNull() : 0));
 }
 
-static void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = s->_segMan->lookupList(listbase);
-	Node *new_n = s->_segMan->lookupNode(nodebase);
+static void _k_add_to_front(EngineState *s, reg_t listRef, reg_t nodeRef) {
+	List *list = s->_segMan->lookupList(listRef);
+	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
 
-	if (!new_n)
-		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	checkListPointer(s->_segMan, listbase);
+	if (!newNode)
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+	checkListPointer(s->_segMan, listRef);
 
-	new_n->succ = l->first;
-	new_n->pred = NULL_REG;
+	newNode->pred = NULL_REG;
+	newNode->succ = list->first;
+
 	// Set node to be the first and last node if it's the only node of the list
-	if (l->first.isNull())
-		l->last = nodebase;
+	if (list->first.isNull())
+		list->last = nodeRef;
 	else {
-		Node *old_n = s->_segMan->lookupNode(l->first);
-		old_n->pred = nodebase;
+		Node *oldNode = s->_segMan->lookupNode(list->first);
+		oldNode->pred = nodeRef;
 	}
-	l->first = nodebase;
+	list->first = nodeRef;
 }
 
-static void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = s->_segMan->lookupList(listbase);
-	Node *new_n = s->_segMan->lookupNode(nodebase);
+static void _k_add_to_end(EngineState *s, reg_t listRef, reg_t nodeRef) {
+	List *list = s->_segMan->lookupList(listRef);
+	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
 
-	if (!new_n)
-		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	checkListPointer(s->_segMan, listbase);
+	if (!newNode)
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+	checkListPointer(s->_segMan, listRef);
 
-	new_n->succ = NULL_REG;
-	new_n->pred = l->last;
+	newNode->pred = list->last;
+	newNode->succ = NULL_REG;
+
 	// Set node to be the first and last node if it's the only node of the list
-	if (l->last.isNull())
-		l->first = nodebase;
+	if (list->last.isNull())
+		list->first = nodeRef;
 	else {
-		Node *old_n = s->_segMan->lookupNode(l->last);
-		old_n->succ = nodebase;
+		Node *old_n = s->_segMan->lookupNode(list->last);
+		old_n->succ = nodeRef;
 	}
-	l->last = nodebase;
+	list->last = nodeRef;
 }
 
 reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
@@ -253,7 +255,7 @@ reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
 	Node *newnode = s->_segMan->lookupNode(argv[2]);
 
@@ -281,7 +283,7 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 
 		if (oldnext.isNull())  // Appended after last node?
 			// Set new node as last list node
-			l->last = argv[2];
+			list->last = argv[2];
 		else
 			s->_segMan->lookupNode(oldnext)->pred = argv[2];
 
@@ -328,16 +330,16 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, 2, argv);
 	Node *n;
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
 	if (node_pos.isNull())
 		return NULL_REG; // Signal failure
 
 	n = s->_segMan->lookupNode(node_pos);
-	if (l->first == node_pos)
-		l->first = n->succ;
-	if (l->last == node_pos)
-		l->last = n->pred;
+	if (list->first == node_pos)
+		list->first = n->succ;
+	if (list->last == node_pos)
+		list->last = n->pred;
 
 	if (!n->pred.isNull())
 		s->_segMan->lookupNode(n->pred)->succ = n->succ;
@@ -374,8 +376,6 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	reg_t order_func = argv[2];
 
 	int input_size = (int16)readSelectorValue(segMan, source, SELECTOR(size));
-	int i;
-
 	reg_t input_data = readSelector(segMan, source, SELECTOR(elements));
 	reg_t output_data = readSelector(segMan, dest, SELECTOR(elements));
 
@@ -398,7 +398,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);
 
-	i = 0;
+	int i = 0;
 	while (node) {
 		reg_t params[1] = { node->value };
 		invokeSelector(s, order_func, SELECTOR(doit), argc, argv, 1, params);
