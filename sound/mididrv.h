@@ -50,17 +50,17 @@ namespace Common { class String; }
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
-	MT_AUTO = 0,		// Auto
-	MT_NULL,			// Null
-	MT_PCSPK,			// PC Speaker
-	MT_PCJR,			// PCjr
-	MT_CMS,				// CMS
-	MT_ADLIB,			// AdLib
-	MT_TOWNS,			// FM-TOWNS
-	MT_PC98,			// PC98
-	MT_GM,				// General MIDI
-	MT_MT32,			// MT-32
-	MT_GS				// Roland GS
+	MT_AUTO = 0,        // Auto
+	MT_NULL,            // Null
+	MT_PCSPK,           // PC Speaker
+	MT_PCJR,            // PCjr
+	MT_CMS,             // CMS
+	MT_ADLIB,           // AdLib
+	MT_TOWNS,           // FM-TOWNS
+	MT_PC98,            // PC98
+	MT_GM,              // General MIDI
+	MT_MT32,            // MT-32
+	MT_GS               // Roland GS
 };
 
 /**
@@ -82,9 +82,9 @@ enum MidiDriverFlags {
 	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MT_TOWNS
 	MDT_PC98   = 1 << 5,      // FM-TOWNS: Maps to MT_PC98
 	MDT_MIDI   = 1 << 6,      // Real MIDI
-	MDT_PREFER_MIDI = 1 << 7,  // Real MIDI output is preferred
-	MDT_PREFER_MT32 = 1 << 8,  // MT-32 output is preferred
-	MDT_PREFER_GM = 1 << 9  // GM output is preferred
+	MDT_PREFER_MIDI = 1 << 7, // Real MIDI output is preferred
+	MDT_PREFER_MT32 = 1 << 8, // MT-32 output is preferred
+	MDT_PREFER_GM = 1 << 9    // GM output is preferred
 };
 
 /**
