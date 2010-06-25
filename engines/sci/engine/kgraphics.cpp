@@ -853,11 +853,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 			loopNo = (l & 0x80) ? l - 256 : l;
 			int c = readSelectorValue(s->_segMan, controlObject, SELECTOR(cel));
 			celNo = (c & 0x80) ? c - 256 : c;
-			// Game-specific: *ONLY* the jones EGA/VGA sierra interpreter contain code using priority selector
-			//  ALL other games use a hardcoded -1 (madness!)
-			// We are detecting jones/talkie as "jones" as well, but the sierra interpreter of talkie doesnt have this
-			//  "hack". Hopefully it wont cause regressions (the code causes regressions if used against kq5/floppy)
-			if (g_sci->getGameId() == "jones")
+			// Check if the control object specifies a priority selector (like in Jones)
+			if (lookupSelector(s->_segMan, controlObject, SELECTOR(priority), NULL, NULL) == kSelectorVariable)
 				priority = readSelectorValue(s->_segMan, controlObject, SELECTOR(priority));
 			else
 				priority = -1;
