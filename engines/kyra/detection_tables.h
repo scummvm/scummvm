@@ -56,9 +56,6 @@ namespace {
 #define LOL_DEMO_FLAGS FLAGS(true, true, false, false, false, false, false, Kyra::GI_LOL)
 #define LOL_KYRA2_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA2)
 
-#define EOB_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB1)
-#define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_EOB2)
-
 const KYRAGameDescription adGameDescs[] = {
 	/* disable these targets until they get supported
 	{
