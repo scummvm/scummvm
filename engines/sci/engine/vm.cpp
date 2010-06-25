@@ -1029,7 +1029,7 @@ void run_vm(EngineState *s, bool restoring) {
 					error("[VM] op_gt: comparsion between a pointer and number");
 				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
 				// Happens in SQ1, room 28, when throwing the water at Orat
-				s->r_acc = SIGNAL_REG;
+				s->r_acc = make_reg(0, 1);
 			} else
 				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
 			break;
@@ -1082,7 +1082,7 @@ void run_vm(EngineState *s, bool restoring) {
 			// It works because in those games, the maximum resource number is 999, 
 			// so any parameter value above that threshold must be a pointer. 
 			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
-				s->r_acc = SIGNAL_REG;
+				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			else
