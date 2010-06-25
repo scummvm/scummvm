@@ -826,50 +826,37 @@ void run_vm(EngineState *s, bool restoring) {
 			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
-			Script *scr;
+			Script *scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
+			if (!scr)
+				error("No script in segment %d",  s->xs->addr.pc.segment);
 			s->xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
-			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
-			if (!scr) {
-				// No script? Implicit return via fake instruction buffer
-				// FIXME: Why does this happen? Are there leftover calls in the call stack?
-				warning("Running on non-existant script in segment %x", s->xs->addr.pc.segment);
-				code_buf = _fake_return_buffer;
-				code_buf_size = 2;
-				s->xs->addr.pc.offset = 1;
-
-				scr = NULL;
-				obj = NULL;
+			obj = s->_segMan->getObject(s->xs->objp);
+			code_buf = scr->_buf;
+			code_buf_size = scr->getBufSize();
+			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
+			if (!local_script) {
+				// FIXME: Why does this happen? Is the script not loaded yet at this point?
+				warning("Could not find local script from segment %x", s->xs->local_segment);
+				local_script = NULL;
+				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
+				s->variablesMax[VAR_LOCAL] = 0;
 			} else {
-				obj = s->_segMan->getObject(s->xs->objp);
-				code_buf = scr->_buf;
-				code_buf_size = scr->getBufSize();
-				local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
-				if (!local_script) {
-					// FIXME: Why does this happen? Is the script not loaded yet at this point?
-					warning("Could not find local script from segment %x", s->xs->local_segment);
-					local_script = NULL;
+				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
+				if (local_script->_localsBlock)
+					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
+				else
 					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
+				if (local_script->_localsBlock)
+					s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
+				else
 					s->variablesMax[VAR_LOCAL] = 0;
-				} else {
-
-					s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
-					if (local_script->_localsBlock)
-						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
-					else
-						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-					if (local_script->_localsBlock)
-						s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
-					else
-						s->variablesMax[VAR_LOCAL] = 0;
-					s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
-					s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
-				}
-				s->variables[VAR_TEMP] = s->xs->fp;
-				s->variables[VAR_PARAM] = s->xs->variables_argp;
+				s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
+				s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
 			}
-
+			s->variables[VAR_TEMP] = s->xs->fp;
+			s->variables[VAR_PARAM] = s->xs->variables_argp;
 		}
 
 		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
