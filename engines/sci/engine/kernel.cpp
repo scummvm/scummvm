@@ -357,6 +357,8 @@ static SciKernelFunction s_kernelFuncMap[] = {
 	{ "TextColors", kTextColors, ".*" },
 	{ "TextFonts", kTextFonts, ".*" },
 	{ "Portrait", kPortrait, ".*" },
+	{ "PalVary", kPalVary, "ii*" },
+	{ "AssertPalette", kAssertPalette, "i" },
 	{ "Empty", kEmpty, ".*" },
 
 #ifdef ENABLE_SCI32
@@ -389,12 +391,9 @@ static SciKernelFunction s_kernelFuncMap[] = {
 	{ "PlayVMD", kPlayVMD, ".*" },
 	{ "IsOnMe", kIsOnMe, "iio.*" },
 	{ "MulDiv", kMulDiv, "iii" },
+	{ "Text", kText, ".*" },
 
 #endif
-
-	// its a stub, but its needed for Pharkas to work
-	{ "PalVary", kPalVary, "ii*" },
-	{ "AssertPalette", kAssertPalette, "i" },
 
 #if 0
 	// Stub functions

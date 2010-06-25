@@ -511,6 +511,19 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kText(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0:
+		return kTextSize(s, argc - 1, argv + 1);
+		break;
+	default:
+		warning("kText(%d)", argv[0].toUint16());
+		break;
+	}
+
+	return s->r_acc;
+}
+
 reg_t kString(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 0: { // New
