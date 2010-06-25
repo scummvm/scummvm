@@ -386,6 +386,12 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 // Returns a pointer to the TOS exec_stack element
 	assert(s);
 
+	//if (send_obj.segment == 27 && send_obj.offset == 190 && s->resmgr->_protectionCountSpec > 20) {
+		//if (s->resmgr->_protectionCountSpec == 21)
+		//	s->resmgr->_protectionCountSpec--;
+		//send_obj.offset = 1388;			
+	//}
+
 	reg_t funcp;
 	int selector;
 	int argc;

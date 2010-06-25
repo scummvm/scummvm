@@ -259,7 +259,7 @@ Common::Error SkyEngine::init() {
 
 	_systemVars.gameVersion = _skyDisk->determineGameVersion();
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI | MDT_PREFER_MT32);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32);
 	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		_systemVars.systemFlags |= SF_SBLASTER;
 		_skyMusic = new AdLibMusic(_mixer, _skyDisk);

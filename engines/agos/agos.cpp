@@ -557,7 +557,7 @@ Common::Error AGOSEngine::init() {
 		(getPlatform() == Common::kPlatformPC)) {
 
 		// Setup midi driver
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | MDT_PREFER_MIDI | (getGameType() == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (getGameType() == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
 		_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
 		_driver = MidiDriver::createMidi(dev);

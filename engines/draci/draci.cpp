@@ -127,7 +127,7 @@ int DraciEngine::init() {
 	_dubbingArchive = new SoundArchive(dubbingPath, kDubbingFrequency);
 	_sound = new Sound(_mixer);
 
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	bool native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 	//bool adlib = (MidiDriver::getMusicType(dev) == MT_ADLIB);
 

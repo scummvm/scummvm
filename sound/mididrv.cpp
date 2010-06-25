@@ -177,9 +177,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	// If the selected driver did not match the flags setting,
 	// we try to determine a suitable and "optimal" music driver.
 	const MusicPlugin::List p = MusicMan.getPlugins();
-	// If only MDT_MIDI but not MDT_PREFER_MIDI is set we prefer the other devices (which will always be
+	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled.
-	for (int l = (flags & MDT_PREFER_MIDI) ? 1 : 0; l < 2; l++) {
+	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; l++) {
 		if ((flags & MDT_MIDI) && (l == 1)) {
 			// If a preferred MT32 or GM device has been selected that device gets returned
 			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto"), Common::ConfigManager::kApplicationDomain));

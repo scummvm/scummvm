@@ -86,7 +86,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	}
 
 	// Initialize the music type variable
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
 	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		// MIDI through AdLib
 		setVariable(0x100, 0);
