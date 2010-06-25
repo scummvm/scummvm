@@ -60,6 +60,8 @@ const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
  * @param[in] argp			Heap pointer to the first parameter
  * @param[in] selector		The selector by which it was called or
  *							NULL_SELECTOR if n.a. For debugging.
+ * @param[in] exportId		The exportId by which it was called or
+ *							-1 if n.a. For debugging.
  * @param[in] sendp			Pointer to the object which the message was
  * 							sent to. Equal to objp for anything but super.
  * @param[in] origin		Number of the execution stack element this
@@ -70,7 +72,7 @@ const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
  * @return 					A pointer to the new exec stack TOS entry
  */
 static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp,
-		reg_t objp, int argc, StackPtr argp, Selector selector,
+		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId,
 		reg_t sendp, int origin, SegmentId local_segment);
 
 
@@ -191,14 +193,14 @@ struct UninitializedReadWorkaround {
 };
 
 static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
-	{ GID_LAURABOW2,      24,       "gcWin", "open",         5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  24,       "gcWin", "open",         5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  31,     "quitWin", "open",         5, 0xf }, // is used as priority for game menu
-	{ GID_LSL1,          720,       "rm720", "init",         0,   0 }, // age check room
-	{ GID_ISLANDBRAIN,   140,       "piece", "init",         3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_SQ1,           703, "fromAirlock", "<invalid>",    0,   0 }, // sub that's called from fromAirlock::changeState
-	{ GID_SQ4,           928,    "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
-	{ (SciGameId)0,       -1,          NULL, NULL,           0,   0 }
+	{ GID_LAURABOW2,      24,              "gcWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  24,              "gcWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  31,            "quitWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_LSL1,          720,              "rm720", "init",         0,   0 }, // age check room
+	{ GID_ISLANDBRAIN,   140,              "piece", "init",         3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_SQ1,           703,                   "", "export 1",     0,   0 }, // sub that's called from several objects
+	{ GID_SQ4,           928,           "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
+	{ (SciGameId)0,       -1,                 NULL, NULL,           0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
@@ -207,22 +209,22 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
 			EngineState *state = g_sci->getEngineState();
-			Script *local_script = state->_segMan->getScriptIfLoaded(state->xs->local_segment);
+			ExecStack *call = state->xs;
+			Script *local_script = state->_segMan->getScriptIfLoaded(call->local_segment);
 			int curScriptNr = local_script->_nr;
 
-			Common::List<ExecStack>::iterator callIterator = state->_executionStack.begin();
-			ExecStack call = *callIterator;
-			while (callIterator != state->_executionStack.end()) {
-				call = *callIterator;
-				callIterator++;
-			}
-
-			Common::String curObjectName = state->_segMan->getObjectName(call.sendp);
+			Common::String curObjectName = state->_segMan->getObjectName(call->sendp);
 			Common::String curMethodName;
 			const SciGameId gameId = g_sci->getGameId();
 
-			if (call.type == EXEC_STACK_TYPE_CALL)
-				curMethodName = g_sci->getKernel()->getSelectorName(call.selector);
+			if (call->type == EXEC_STACK_TYPE_CALL) {
+				if (call->selector != -1) {
+					curMethodName = g_sci->getKernel()->getSelectorName(call->selector);
+				} else if (call->exportId != -1) {
+					curObjectName = "";
+					curMethodName = curMethodName.printf("export %d", call->exportId);
+				}
+			}
 
 			// Search if this is a known uninitialized read
 			const UninitializedReadWorkaround *workaround = uninitializedReadWorkarounds;
@@ -343,7 +345,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 		}
 	}
 
-	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, calling_obj, s->_executionStack.size()-1, seg);
+	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, calling_obj, s->_executionStack.size()-1, seg);
 }
 
 
@@ -541,7 +543,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		else
 			add_exec_stack_entry(s->_executionStack, call.address.func, call.sp, work_obj,
 			                         call.argc, call.argp,
-			                         call.selector, send_obj, origin, SCI_XS_CALLEE_LOCALS);
+			                         call.selector, -1, send_obj, origin, SCI_XS_CALLEE_LOCALS);
 	}
 
 	_exec_varselectors(s);
@@ -550,7 +552,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 }
 
 static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack, reg_t objp, int argc, StackPtr argp, Selector selector, const ObjVarRef& address, int origin) {
-	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, objp, origin, SCI_XS_CALLEE_LOCALS);
+	ExecStack *xstack = add_exec_stack_entry(execStack, NULL_REG, 0, objp, argc, argp, selector, -1, objp, origin, SCI_XS_CALLEE_LOCALS);
 	// Store selector address in sp
 
 	xstack->addr.varp = address;
@@ -560,7 +562,7 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 }
 
 static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t pc, StackPtr sp, reg_t objp, int argc,
-								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId _localsSegment) {
+								   StackPtr argp, Selector selector, int exportId, reg_t sendp, int origin, SegmentId _localsSegment) {
 	// Returns new TOS element for the execution stack
 	// _localsSegment may be -1 if derived from the called object
 
@@ -585,6 +587,7 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 
 	// Additional debug information
 	xstack.selector = selector;
+	xstack.exportId = exportId;
 	xstack.origin = origin;
 
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
@@ -639,7 +642,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 		// This is useful in debugger backtraces if this
 		// kernel function calls a script itself.
 		ExecStack *xstack;
-		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
+		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, NULL_REG,
 				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 		xstack->selector = kernelFuncNum;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
@@ -1194,7 +1197,7 @@ void run_vm(EngineState *s, bool restoring) {
 											s->xs->addr.pc.offset + opparams[0]),
 											s->xs->sp, s->xs->objp,
 											(validate_arithmetic(*call_base)) + s->restAdjust,
-											call_base, NULL_SELECTOR, s->xs->objp,
+											call_base, NULL_SELECTOR, -1, s->xs->objp,
 											s->_executionStack.size()-1, s->xs->local_segment);
 			s->restAdjust = 0; // Used up the &rest adjustment
 			s->xs->sp = call_base;

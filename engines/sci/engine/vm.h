@@ -103,6 +103,7 @@ struct ExecStack {
 	SegmentId local_segment; // local variables etc
 
 	Selector selector;      // The selector which was used to call or -1 if not applicable
+	int exportId;           // The exportId which was called or -1 if not applicable
 	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
