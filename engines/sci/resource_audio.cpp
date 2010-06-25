@@ -143,27 +143,37 @@ bool Resource::loadFromAudioVolumeSCI1(Common::SeekableReadStream *file) {
 	return true;
 }
 
-void ResourceManager::addNewGMPatch(const Common::String &gameId) {
+void ResourceManager::addNewGMPatch(SciGameId gameId) {
 	Common::String gmPatchFile;
 
-	if (gameId == "ecoquest")
+	switch (gameId) {
+	case GID_ECOQUEST:
 		gmPatchFile = "ECO1GM.PAT";
-	else if (gameId == "hoyle3")
+		break;
+	case GID_HOYLE3:
 		gmPatchFile = "HOY3GM.PAT";
-	else if (gameId == "hoyle3")
-		gmPatchFile = "HOY3GM.PAT";
-	else if (gameId == "lsl1sci")
+		break;
+	case GID_LSL1:
 		gmPatchFile = "LL1_GM.PAT";
-	else if (gameId == "lsl5")
+		break;
+	case GID_LSL5:
 		gmPatchFile = "LL5_GM.PAT";
-	else if (gameId == "longbow")
+		break;
+	case GID_LONGBOW:
 		gmPatchFile = "ROBNGM.PAT";
-	else if (gameId == "sq1sci")
+		break;
+	case GID_SQ1:
 		gmPatchFile = "SQ1_GM.PAT";
-	else if (gameId == "sq4")
+		break;
+	case GID_SQ4:
 		gmPatchFile = "SQ4_GM.PAT";
-	else if (gameId == "fairytales")
+		break;
+	case GID_FAIRYTALES:
 		gmPatchFile = "TALEGM.PAT";
+		break;
+	default:
+		break;
+	}
 
 	if (!gmPatchFile.empty() && Common::File::exists(gmPatchFile)) {
 		ResourceSource *psrcPatch = new PatchResourceSource(gmPatchFile);

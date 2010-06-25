@@ -524,7 +524,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		// 2 Dummy functions, longbow-demo is using those several times but sierra sci doesn't support them at all
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
-			if (!((g_sci->getGameId() == "longbow") && (g_sci->isDemo())))
+			if (!((g_sci->getGameId() == GID_LONGBOW) && (g_sci->isDemo())))
 				error("Unknown kDisplay argument %X", displayArg);
 			if (displayArg == SCI_DISPLAY_DUMMY2) {
 				if (argc) {

@@ -323,7 +323,7 @@ public:
 	 * archive can be extracted in the extras directory, and the GM patches can be
 	 * applied per game, if applicable.
 	 */
-	void addNewGMPatch(const Common::String &gameId);
+	void addNewGMPatch(SciGameId gameId);
 
 	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)

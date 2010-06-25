@@ -40,7 +40,7 @@
 namespace Sci {
 
 // Titles of the games
-static const PlainGameDescriptor SciGameTitles[] = {
+static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sci",             "Sierra SCI Game"},
 	{"sci-fanmade",     "Fanmade SCI Game"},
 	// === SCI0 games =========================================================
@@ -117,6 +117,80 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"shivers2",        "Shivers II: Harvest of Souls"},
 	{"rama",            "RAMA"},
 	{0, 0}
+};
+
+struct GameIdStrToEnum {
+	const char *gameidStr;
+	SciGameId gameidEnum;
+};
+
+static const GameIdStrToEnum s_gameIdStrToEnum[] = {
+	{ "astrochicken",    GID_ASTROCHICKEN },
+	{ "camelot",         GID_CAMELOT },
+	{ "castlebrain",     GID_CASTLEBRAIN },
+	{ "christmas1988",   GID_CHRISTMAS1988 },
+	{ "christmas1990",   GID_CHRISTMAS1990 },
+	{ "christmas1992",   GID_CHRISTMAS1992 },
+	{ "cnick-kq",        GID_CNICK_KQ },
+	{ "cnick-laurabow",  GID_CNICK_LAURABOW },
+	{ "cnick-longbow",   GID_CNICK_LONGBOW },
+	{ "cnick-lsl",       GID_CNICK_LSL },
+	{ "cnick-sq",        GID_CNICK_SQ },
+	{ "ecoquest",        GID_ECOQUEST },
+	{ "ecoquest2",       GID_ECOQUEST2 },
+	{ "fairytales",      GID_FAIRYTALES },
+	{ "freddypharkas",   GID_FREDDYPHARKAS },
+	{ "funseeker",       GID_FUNSEEKER },
+	{ "gk1",             GID_GK1 },
+	{ "gk2",             GID_GK2 },
+	{ "hoyle1",          GID_HOYLE1 },
+	{ "hoyle2",          GID_HOYLE2 },
+	{ "hoyle3",          GID_HOYLE3 },
+	{ "hoyle4",          GID_HOYLE4 },
+	{ "iceman",          GID_ICEMAN },
+	{ "islandbrain",     GID_ISLANDBRAIN },
+	{ "jones",           GID_JONES },
+	{ "kq1sci",          GID_KQ1 },
+	{ "kq4sci",          GID_KQ4 },
+	{ "kq5",             GID_KQ5 },
+	{ "kq6",             GID_KQ6 },
+	{ "kq7",             GID_KQ7 },
+	{ "laurabow",        GID_LAURABOW },
+	{ "laurabow2",       GID_LAURABOW2 },
+	{ "lighthouse",      GID_LIGHTHOUSE },
+	{ "longbow",         GID_LONGBOW },
+	{ "lsl1sci",         GID_LSL1 },
+	{ "lsl2",            GID_LSL2 },
+	{ "lsl3",            GID_LSL3 },
+	{ "lsl5",            GID_LSL5 },
+	{ "lsl6",            GID_LSL6 },
+	{ "lsl7",            GID_LSL7 },
+	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "msastrochicken",  GID_MSASTROCHICKEN },
+	{ "pepper",          GID_PEPPER },
+	{ "phantasmagoria",  GID_PHANTASMAGORIA },
+	{ "phantasmagoria2", GID_PHANTASMAGORIA2 },
+	{ "pq1sci",          GID_PQ1 },
+	{ "pq2",             GID_PQ2 },
+	{ "pq3",             GID_PQ3 },
+	{ "pq4",             GID_PQ4 },
+	{ "pqswat",          GID_PQSWAT },
+	{ "qfg1",            GID_QFG1 },
+	{ "qfg2",            GID_QFG2 },
+	{ "qfg3",            GID_QFG3 },
+	{ "qfg4",            GID_QFG4 },
+	{ "rama",            GID_RAMA },
+	{ "sci-fanmade",     GID_FANMADE },	// FIXME: Do we really need/want this?
+	{ "shivers",         GID_SHIVERS },
+	{ "shivers2",        GID_SHIVERS2 },
+	{ "slater",          GID_SLATER },
+	{ "sq1sci",          GID_SQ1 },
+	{ "sq3",             GID_SQ3 },
+	{ "sq4",             GID_SQ4 },
+	{ "sq5",             GID_SQ5 },
+	{ "sq6",             GID_SQ6 },
+	{ "torin",           GID_TORIN },
+	{ NULL, (SciGameId)-1 }
 };
 
 struct OldNewIdTableEntry {
@@ -300,7 +374,7 @@ static const ADParams detectionParams = {
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
-	SciGameTitles,
+	s_sciGameTitles,
 	// Structure for autoupgrading obsolete targets
 	0,
 	// Name of single gameid (optional)
@@ -523,12 +597,16 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
 
-bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	const ADGameDescription *desc = (const ADGameDescription *)gd;
+bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const GameIdStrToEnum *g = s_gameIdStrToEnum;
+	for (; g->gameidStr; ++g) {
+		if (0 == strcmp(desc->gameid, g->gameidStr)) {
+			*engine = new SciEngine(syst, desc, g->gameidEnum);
+			return true;
+		}
+	}
 
-	*engine = new SciEngine(syst, desc);
-
-	return true;
+	return false;
 }
 
 bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {

@@ -158,7 +158,7 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			}
 		}
 
-		if (g_sci->getGameId() == "hoyle4") {
+		if (g_sci->getGameId() == GID_HOYLE4) {
 			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
 			// This needs two selectors, "syncTime" and "syncCue", which keep changing positions in each
 			// game. Usually, games with speech and lip sync have a selector vocabulary, so we don't need

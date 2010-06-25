@@ -169,7 +169,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 			} else {
 				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
 				// Just skip around it here so we don't error out in validate_arithmetic.
-				if (g_sci->getGameId() == "mothergoose" && getSciVersion() <= SCI_VERSION_1_1 && type == VAR_PARAM && index == 1)
+				if (g_sci->getGameId() == GID_MOTHERGOOSE && getSciVersion() <= SCI_VERSION_1_1 && type == VAR_PARAM && index == 1)
 					return false;
 
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
@@ -184,20 +184,22 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 }
 
 struct UninitializedReadWorkaround {
-	const char *gameId;
+	SciGameId gameId;
 	int scriptNr;
 	const char *objectName;
 	const char *methodName;
 	int index;
 	uint16 newValue;
-} static const uninitializedReadWorkarounds[] = {
-	{ "laurabow2",       24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",   24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ "freddypharkas",   31,  "quitWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ "lsl1sci",        720,    "rm720", "init",		 0,   0 }, // age check room
-	{ "islandbrain",    140,    "piece", "init",		 3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
-	{ "sq4",			928, "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
-	{ NULL,              -1,       NULL,   NULL,		 0,   0 }
+};
+
+static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
+	{ GID_LAURABOW2,      24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  31,  "quitWin", "open",		 5, 0xf }, // is used as priority for game menu
+	{ GID_LSL1,          720,    "rm720", "init",		 0,   0 }, // age check room
+	{ GID_ISLANDBRAIN,   140,    "piece", "init",		 3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_SQ4,           928, "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
+	{ (SciGameId)0,       -1,       NULL,   NULL,		 0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
@@ -218,14 +220,14 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 			Common::String curObjectName = state->_segMan->getObjectName(call.sendp);
 			Common::String curMethodName;
-			Common::String gameId = g_sci->getGameId();
+			const SciGameId gameId = g_sci->getGameId();
 
 			if (call.type == EXEC_STACK_TYPE_CALL)
 				curMethodName = g_sci->getKernel()->getSelectorName(call.selector);
 
 			// Search if this is a known uninitialized read
 			const UninitializedReadWorkaround *workaround = uninitializedReadWorkarounds;
-			while (workaround->gameId) {
+			while (workaround->objectName) {
 				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && workaround->objectName == curObjectName
 						&& workaround->methodName == curMethodName && workaround->index == index) {
 					// Workaround found
@@ -481,7 +483,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (!strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
 					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
 					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == "qfg1") {
+				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1) {
 					// QFG1VGA has a script bug in the longSong object when invoking the
 					// loop selector, which doesn't affect gameplay, thus don't diplay it
 				} else {

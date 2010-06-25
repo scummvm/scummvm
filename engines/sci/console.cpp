@@ -425,7 +425,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
 
-	DebugPrintf("Game ID: %s\n", _engine->getGameId().c_str());
+	DebugPrintf("Game ID: %s\n", _engine->getGameIdStr());
 	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
 	DebugPrintf("\n");
 	DebugPrintf("Detected features:\n");

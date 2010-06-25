@@ -745,7 +745,7 @@ void Kernel::setDefaultKernelNames() {
 		// In SCI1.1, kSetSynonyms is an empty function
 		_kernelNames[0x26] = "Empty";
 
-		if (g_sci->getGameId() == "kq6") {
+		if (g_sci->getGameId() == GID_KQ6) {
 			// In the Windows version of KQ6 CD, the empty kSetSynonyms
 			// function has been replaced with kPortrait. In KQ6 Mac,
 			// kPlayBack has been replaced by kShowMovie.
@@ -753,7 +753,7 @@ void Kernel::setDefaultKernelNames() {
 				_kernelNames[0x26] = "Portrait";
 			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
 				_kernelNames[0x84] = "ShowMovie";
-		} else if (g_sci->getGameId() == "qfg4" && g_sci->isDemo()) {
+		} else if (g_sci->getGameId() == GID_QFG4 && g_sci->isDemo()) {
 			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
 		}
 

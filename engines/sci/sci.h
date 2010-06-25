@@ -104,6 +104,75 @@ enum kDebugLevels {
 	kDebugLevelOnStartup  = 1 << 23
 };
 
+enum SciGameId {
+	GID_ASTROCHICKEN,
+	GID_CAMELOT,
+	GID_CASTLEBRAIN,
+	GID_CHRISTMAS1988,
+	GID_CHRISTMAS1990,
+	GID_CHRISTMAS1992,
+	GID_CNICK_KQ,
+	GID_CNICK_LAURABOW,
+	GID_CNICK_LONGBOW,
+	GID_CNICK_LSL,
+	GID_CNICK_SQ,
+	GID_ECOQUEST,
+	GID_ECOQUEST2,
+	GID_FAIRYTALES,
+	GID_FREDDYPHARKAS,
+	GID_FUNSEEKER,
+	GID_GK1,
+	GID_GK2,
+	GID_HOYLE1,
+	GID_HOYLE2,
+	GID_HOYLE3,
+	GID_HOYLE4,
+	GID_ICEMAN,
+	GID_ISLANDBRAIN,
+	GID_JONES,
+	GID_KQ1,
+	GID_KQ4,
+	GID_KQ5,
+	GID_KQ6,
+	GID_KQ7,
+	GID_LAURABOW,
+	GID_LAURABOW2,
+	GID_LIGHTHOUSE,
+	GID_LONGBOW,
+	GID_LSL1,
+	GID_LSL2,
+	GID_LSL3,
+	GID_LSL5,
+	GID_LSL6,
+	GID_LSL7,
+	GID_MOTHERGOOSE,
+	GID_MSASTROCHICKEN,
+	GID_PEPPER,
+	GID_PHANTASMAGORIA,
+	GID_PHANTASMAGORIA2,
+	GID_PQ1,
+	GID_PQ2,
+	GID_PQ3,
+	GID_PQ4,
+	GID_PQSWAT,
+	GID_QFG1,
+	GID_QFG2,
+	GID_QFG3,
+	GID_QFG4,
+	GID_RAMA,
+	GID_SHIVERS,
+	GID_SHIVERS2,
+	GID_SLATER,
+	GID_SQ1,
+	GID_SQ3,
+	GID_SQ4,
+	GID_SQ5,
+	GID_SQ6,
+	GID_TORIN,
+
+	GID_FANMADE	// FIXME: Do we really need/want this?
+};
+
 /** SCI versions */
 enum SciVersion {
 	SCI_VERSION_NONE,
@@ -136,7 +205,7 @@ enum kLanguage {
 class SciEngine : public Engine {
 	friend class Console;
 public:
-	SciEngine(OSystem *syst, const ADGameDescription *desc);
+	SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId);
 	~SciEngine();
 
 	// Engine APIs
@@ -151,7 +220,8 @@ public:
 	bool canSaveGameStateCurrently();
 	void syncSoundSettings();
 
-	const Common::String &getGameId() const { return _gameId; }
+	const SciGameId &getGameId() const { return _gameId; }
+	const char *getGameIdStr() const;
 	int getResourceVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
@@ -264,7 +334,7 @@ private:
 	void initStackBaseWithSelector(Selector selector);
 
 	const ADGameDescription *_gameDescription;
-	const Common::String _gameId;
+	const SciGameId _gameId;
 	ResourceManager *_resMan; /**< The resource manager */
 	EngineState *_gamestate;
 	Kernel *_kernel;

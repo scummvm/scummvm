@@ -71,8 +71,8 @@ SciEngine *g_sci = 0;
 
 class GfxDriver;
 
-SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
-		: Engine(syst), _gameDescription(desc), _gameId(_gameDescription->gameid) {
+SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gameId)
+		: Engine(syst), _gameDescription(desc), _gameId(gameId) {
 
 	assert(g_sci == 0);
 	g_sci = this;
@@ -128,7 +128,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 
 	// Add the patches directory, except for KQ6CD; The patches folder in some versions of KQ6CD
 	// is for the demo of Phantasmagoria, included in the disk
-	if (_gameId != "kq6")
+	if (_gameId != GID_KQ6)
 		SearchMan.addSubDirectoryMatching(gameDataDir, "patches");	// resource patches
 }
 
@@ -179,10 +179,10 @@ Common::Error SciEngine::run() {
 	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
 	//  it to platform windows.
 	if (getPlatform() == Common::kPlatformWindows) {
-		if (_gameId == "kq6")
+		if (_gameId == GID_KQ6)
 			upscaledHires = GFX_SCREEN_UPSCALED_640x440;
 #ifdef ENABLE_SCI32
-		if (_gameId == "gk1")
+		if (_gameId == GID_GK1)
 			upscaledHires = GFX_SCREEN_UPSCALED_640x480;
 #endif
 	}
@@ -503,6 +503,10 @@ Console *SciEngine::getSciDebugger() {
 	return _console;
 }
 
+const char *SciEngine::getGameIdStr() const {
+	return _gameDescription->gameid;
+}
+
 Common::Language SciEngine::getLanguage() const {
 	return _gameDescription->language;
 }
@@ -524,12 +528,12 @@ Common::String SciEngine::getSavegamePattern() const {
 }
 
 Common::String SciEngine::getFilePrefix() const {
-	if (_gameId == "qfg2") {
+	if (_gameId == GID_QFG2) {
 		// Quest for Glory 2 wants to read files from Quest for Glory 1 (EGA/VGA) to import character data
 		if (_gamestate->currentRoomNumber() == 805)
 			return "qfg1";
 		// TODO: Include import-room for qfg1vga
-	} else if (_gameId == "qfg3") {
+	} else if (_gameId == GID_QFG3) {
 		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
 		if (_gamestate->currentRoomNumber() == 54)
 			return "qfg2";

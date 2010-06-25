@@ -60,9 +60,9 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 	// throttling resulting in having to do 1000 pushups or something. Another
 	// way of handling this would be delaying incrementing of "machineSpeed"
 	// selector.
-	if (g_sci->getGameId() == "lsl3" && s->currentRoomNumber() == 290)
+	if (g_sci->getGameId() == GID_LSL3 && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
-	else if (g_sci->getGameId() == "iceman" && s->currentRoomNumber() == 27) {
+	else if (g_sci->getGameId() == GID_ICEMAN && s->currentRoomNumber() == 27) {
 		s->_throttleTrigger = true;
 		neededSleep = 60;
 	}

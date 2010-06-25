@@ -465,7 +465,7 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
 		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
-			&& g_sci->getGameId() == "laurabow2") {
+			&& g_sci->getGameId() == GID_LAURABOW2) {
 			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
 			// - room 160: Heap 160 has 83 local variables (0-82), and the game
 			//   asks for variables at indices 83 - 90 too.
@@ -520,7 +520,7 @@ SegmentRef SystemStrings::dereference(reg_t pointer) {
 	if (isValidOffset(pointer.offset))
 		ret.raw = (byte *)(_strings[pointer.offset]._value);
 	else {
-		if (g_sci->getGameId() == "kq5") {
+		if (g_sci->getGameId() == GID_KQ5) {
 			// This occurs in KQ5CD when interacting with certain objects
 		} else {
 			error("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
