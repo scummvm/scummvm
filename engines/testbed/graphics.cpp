@@ -1,4 +1,5 @@
 #include "common/events.h"
+#include "common/list.h"
 #include "common/random.h"
 
 #include "testbed/graphics.h"
@@ -695,11 +696,11 @@ bool GFXtests::paletteRotation() {
 
 	while (toRotate--) {
 		g_system->updateScreen();
-		g_system->delayMillis(1000);
+		g_system->delayMillis(300);
 		rotatePalette(palette, 10);
 	}
 
-	if(Testsuite::handleInteractiveInput("Did you want to rotate the palettes?", "Yes", "No", kOptionRight)) {
+	if(Testsuite::handleInteractiveInput("Did you saw palettes rotating?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -707,7 +708,50 @@ bool GFXtests::paletteRotation() {
 }
 
 bool GFXtests::pixelFormats() {
+	Common::List<Graphics::PixelFormat> pfList = g_system->getSupportedFormats();
+	Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin();
+	
+	Graphics::PixelFormat currPixelformat = g_system->getScreenFormat();
+	printf("Current bpp: %d List size : %d\n",currPixelformat.bytesPerPixel, pfList.size());
+	
+	while (iter != pfList.end()) {
+		printf("bpp : %d\n", (*iter).bytesPerPixel);
+		
+		// Switch to that pixelFormat
+		g_system->beginGFXTransaction();
+		g_system->initSize(320, 200, &(*iter));
+		g_system->endGFXTransaction();
+		
+		// Draw some nice gradients
+		// Pick up some colors
+		uint colors[6];
+		
+		colors[0] = iter->RGBToColor(255, 255, 255);
+		colors[1] = iter->RGBToColor(135, 48, 21);
+		colors[2] = iter->RGBToColor(205, 190, 87);
+		colors[3] = iter->RGBToColor(0, 32, 64);
+		colors[4] = iter->RGBToColor(181, 126, 145);
+		colors[5] = iter->RGBToColor(47, 78, 36);
 
+		// Draw some Rectangles, each of width 100 pixels and height 10 pixels
+		byte buffer[6 * 100 * 10] = {0};
+		int indx;
+		for (int i = 0; i < ARRAYSIZE(colors); i++) {
+			indx = i * 1000;
+			for (int j = 0; j < 1000; j++) {
+				buffer[indx + j] = colors[i];
+			}
+		}
+	
+		g_system->copyRectToScreen(buffer, 100, 110, 70, 100, 60);
+		g_system->updateScreen();
+
+		g_system->delayMillis(2000);
+		break;
+		iter++;
+	}
+
+	return true;
 }
 
 }
