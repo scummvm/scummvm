@@ -191,13 +191,14 @@ struct UninitializedReadWorkaround {
 };
 
 static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
-	{ GID_LAURABOW2,      24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  24,    "gcWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  31,  "quitWin", "open",		 5, 0xf }, // is used as priority for game menu
-	{ GID_LSL1,          720,    "rm720", "init",		 0,   0 }, // age check room
-	{ GID_ISLANDBRAIN,   140,    "piece", "init",		 3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_SQ4,           928, "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
-	{ (SciGameId)0,       -1,       NULL,   NULL,		 0,   0 }
+	{ GID_LAURABOW2,      24,       "gcWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  24,       "gcWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  31,     "quitWin", "open",         5, 0xf }, // is used as priority for game menu
+	{ GID_LSL1,          720,       "rm720", "init",         0,   0 }, // age check room
+	{ GID_ISLANDBRAIN,   140,       "piece", "init",         3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_SQ1,           703, "fromAirlock", "<invalid>",    0,   0 }, // sub that's called from fromAirlock::changeState
+	{ GID_SQ4,           928,    "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
+	{ (SciGameId)0,       -1,          NULL, NULL,           0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
