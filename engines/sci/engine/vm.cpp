@@ -931,6 +931,14 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_add: // 0x01 (01)
 			r_temp = POP32();
+
+			// Happens in SQ1, room 28, when throwing the water at Orat
+			if (s->r_acc.segment == 0xFFFF) {
+				// WORKAROUND: init uninitialized variable to 0
+				warning("op_add: attempt to write to uninitialized variable");
+				s->r_acc = NULL_REG;
+			}
+
 			if (r_temp.segment || s->r_acc.segment) {
 				reg_t r_ptr = NULL_REG;
 				int offset;
@@ -1051,6 +1059,11 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
+			} else if (r_temp.segment && !s->r_acc.segment) {
+				// Happens in SQ1, room 28, when throwing the water at Orat
+				// WORKAROUND: return false
+				warning("[VM] op_gt_: comparison between a pointer and a number");
+				s->r_acc = NULL_REG;
 			} else
 				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
 			break;
