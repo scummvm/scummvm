@@ -1226,6 +1226,11 @@ void run_vm(EngineState *s, bool restoring) {
 
 			xs_new = &(s->_executionStack.back());
 			s->_executionStackPosChanged = true;
+
+			// If a game is being loaded, stop processing
+			if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+				return; // Stop processing
+
 			break;
 		}
 

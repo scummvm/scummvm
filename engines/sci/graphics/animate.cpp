@@ -98,6 +98,11 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
+
+			// If a game is being loaded, stop processing
+			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+				return true; // Stop processing
+
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}

@@ -454,7 +454,7 @@ byte *SegManager::getHunkPointer(reg_t addr) {
 	HunkTable *ht = (HunkTable *)getSegment(addr.segment, SEG_TYPE_HUNK);
 
 	if (!ht || !ht->isValidEntry(addr.offset)) {
-		warning("getHunkPointer() with invalid handle %04x:%04x", PRINT_REG(addr));
+		error("getHunkPointer() with invalid handle %04x:%04x", PRINT_REG(addr));
 		return NULL;
 	}
 
