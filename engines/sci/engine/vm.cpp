@@ -273,6 +273,13 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			}
 		}
 
+		// If we are writing an uninitialized value into a temp, we remove the uninitialized segment
+		//  this happens at least in sq1/room 44 (slot-machine), because a send is missing parameters, then
+		//  those parameters are taken from uninitialized stack and afterwards they are copied back into temps
+		//  if we don't remove the segment, we would get false-positive uninitialized reads later
+		if (type == VAR_TEMP && value.segment == 0xffff)
+			value.segment = 0;
+
 		r[index] = value;
 	}
 }
