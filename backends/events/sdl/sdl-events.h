@@ -37,11 +37,11 @@
 class SdlEventManager : public DefaultEventManager {
 public:
 	SdlEventManager(Common::EventSource *boss);
-	~SdlEventManager();
+	virtual ~SdlEventManager();
 
 	virtual bool pollSdlEvent(Common::Event &event);
 
-	void resetKeyboadEmulation(int16 x_max, int16 y_max);
+	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
 
 protected:
 	virtual void preprocessEvents(SDL_Event *event) {}
@@ -78,9 +78,9 @@ protected:
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 
 	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
-	void toggleMouseGrab();
+	virtual void toggleMouseGrab();
 
-	void handleKbdMouse();
+	virtual void handleKbdMouse();
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
 	int _lastScreenID;

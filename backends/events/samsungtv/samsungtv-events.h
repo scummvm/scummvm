@@ -23,34 +23,18 @@
  *
  */
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV)
+#if !defined(BACKEND_EVENTS_SDL_SAMSUNGTV_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_SDL_SAMSUNGTV_H
 
-#include "common/scummsys.h"
+#include "backends/events/sdl/sdl-events.h"
 
-#include "backends/platform/sdl/posix/posix.h"
-#include "backends/plugins/sdl/sdl-provider.h"
-#include "base/main.h"
+class SdlSamsungTVEventManager : public SdlEventManager {
+public:
+	SdlSamsungTVEventManager(Common::EventSource *boss);
+	~SdlSamsungTVEventManager() {}
 
-int main(int argc, char *argv[]) {
-
-	// Create our OSystem instance
-	g_system = new OSystem_POSIX();
-	assert(g_system);
-
-	// Pre initialize the backend
-	((OSystem_POSIX *)g_system)->init();
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new SDLPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-
-	// Free OSystem
-	delete (OSystem_POSIX *)g_system;
-
-	return res;
-}
+protected:
+	bool remapKey(SDL_Event &ev, Common::Event &event);
+};
 
 #endif

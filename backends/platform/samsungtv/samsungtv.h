@@ -26,26 +26,15 @@
 #ifndef SDL_SAMSUNGTV_COMMON_H
 #define SDL_SAMSUNGTV_COMMON_H
 
-#include <SDL.h>
-
-#include "backends/base-backend.h"
-#include "backends/platform/sdl/sdl.h"
-
 #if defined(SAMSUNGTV)
 
-namespace Audio {
-	class MixerImpl;
-}
+#include "backends/platform/sdl/posix/posix.h"
 
 class OSystem_SDL_SamsungTV : public OSystem_SDL {
 public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
-
-protected:
-
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

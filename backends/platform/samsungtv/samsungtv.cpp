@@ -29,14 +29,14 @@
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
-		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureCursorHasPalette);
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
+		(f == OSystem::kFeatureCursorHasPalette);
 }
 
 void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {
 	switch (f) {
-	case kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
+	case OSystem::kFeatureAspectRatioCorrection:
+		_graphicsManager->setFeatureState(f, enable);
 		break;
 	default:
 		break;
@@ -44,11 +44,9 @@ void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
-	assert (_transactionMode == kTransactionNone);
-
 	switch (f) {
-	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
+	case OSystem::kFeatureAspectRatioCorrection:
+		return _graphicsManager->getFeatureState(f);
 	default:
 		return false;
 	}
