@@ -511,12 +511,8 @@ Common::Platform SciEngine::getPlatform() const {
 	return _gameDescription->platform;
 }
 
-uint32 SciEngine::getFlags() const {
-	return _gameDescription->flags;
-}
-
 bool SciEngine::isDemo() const {
-	return getFlags() & ADGF_DEMO;
+	return _gameDescription->flags & ADGF_DEMO;
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {

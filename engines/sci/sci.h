@@ -155,7 +155,6 @@ public:
 	int getResourceVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
-	uint32 getFlags() const;
 	bool isDemo() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
