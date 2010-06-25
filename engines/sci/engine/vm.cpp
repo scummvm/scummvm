@@ -197,12 +197,13 @@ struct UninitializedReadWorkaround {
 	{ "lsl1sci",        720,    "rm720", "init",		 0,   0 }, // age check room
 	{ "islandbrain",    140,    "piece", "init",		 3,   1 }, // some initialization variable. bnt is done on it, and it should be non-0
 	{ "sq4",			928, "Narrator", "startText", 1000,   1 }, // sq4cd: method returns this to the caller
+	{ "sq1sci",         992,       "CT", "init",         3,   0 }, // is used as cel number
 	{ NULL,              -1,       NULL,   NULL,		 0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index, line)) {
-		if (type == VAR_TEMP && r[index].segment == 0xffff) {
+		if ((type == VAR_TEMP || type == VAR_PARAM) && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
 			EngineState *state = g_sci->getEngineState();
@@ -234,7 +235,8 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				}
 				workaround++;
 			}
-			error("Uninitialized read for temp %d from method %s::%s (script %d)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr);
+			Common::String varType = (type == VAR_TEMP) ? "temp" : "param";
+			error("Uninitialized read for %s %d from method %s::%s (script %d)", varType.c_str(), index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr);
 		}
 		return r[index];
 	} else
@@ -931,14 +933,6 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_add: // 0x01 (01)
 			r_temp = POP32();
-
-			// Happens in SQ1, room 28, when throwing the water at Orat
-			if (s->r_acc.segment == 0xFFFF) {
-				// WORKAROUND: init uninitialized variable to 0
-				warning("op_add: attempt to write to uninitialized variable");
-				s->r_acc = NULL_REG;
-			}
-
 			if (r_temp.segment || s->r_acc.segment) {
 				reg_t r_ptr = NULL_REG;
 				int offset;
