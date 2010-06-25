@@ -83,8 +83,10 @@ public:
 		prompt.runModal();
 	}
 
-	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt) {
+	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, bool flag = false) {
 		const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
+		uint fillColor = kColorBlack;
+		uint textColor = kColorWhite;
 		
 		Graphics::Surface *screen = g_system->lockScreen();
 		
@@ -93,8 +95,14 @@ public:
 
 		Common::Rect rect(pt.x, pt.y, pt.x + width, pt.y + height);
 
-		screen->fillRect(rect, kColorBlack);
-		font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, kColorWhite, Graphics::kTextAlignCenter);
+		if (flag) {
+			Graphics::PixelFormat pf = g_system->getScreenFormat();
+			fillColor = pf.RGBToColor(0 , 0, 0);
+			textColor = pf.RGBToColor(255 , 255, 255);
+		}
+		
+		screen->fillRect(rect, fillColor);
+		font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, textColor, Graphics::kTextAlignCenter);
 
 		g_system->unlockScreen();
 		g_system->updateScreen();
@@ -112,8 +120,25 @@ public:
 	}
 	
 	static void clearScreen() {
-		byte buffer[200][320] = {{0}};
-		g_system->copyRectToScreen(&buffer[0][0], 320, 0, 0, 320, 200);
+		int numBytesPerLine = g_system->getWidth() * g_system->getScreenFormat().bytesPerPixel;
+		int size =  g_system->getHeight() * numBytesPerLine;
+		byte *buffer = new byte[size];
+		memset(buffer, 0, size);
+		g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), g_system->getHeight());
+		g_system->updateScreen();	
+	}
+	
+	static void clearScreen(bool flag) {
+		Graphics::Surface *screen = g_system->lockScreen();
+		uint fillColor = kColorBlack;
+		
+		if (flag) {
+			fillColor = g_system->getScreenFormat().RGBToColor(0, 0, 0);
+		}
+		
+		screen->fillRect(Common::Rect(0, 0, g_system->getWidth(), g_system->getHeight()), fillColor);
+
+		g_system->unlockScreen();
 		g_system->updateScreen();
 	}
 

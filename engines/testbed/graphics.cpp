@@ -26,24 +26,24 @@ GFXTestSuite::GFXTestSuite() {
 	// Add tests here
 	
 	// Blitting buffer on screen
-	// addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
+	addTest("BlitBitmaps", &GFXtests::copyRectToScreen);
 	
 	// GFX Transcations
-	// addTest("FullScreenMode", &GFXtests::fullScreenMode);
-	// addTest("AspectRatio", &GFXtests::aspectRatio);
-	// addTest("IconifyingWindow", &GFXtests::iconifyWindow);
+	addTest("FullScreenMode", &GFXtests::fullScreenMode);
+	addTest("AspectRatio", &GFXtests::aspectRatio);
+	addTest("IconifyingWindow", &GFXtests::iconifyWindow);
 	
 	// Mouse Layer tests (Palettes and movements)
-	// addTest("PalettizedCursors", &GFXtests::palettizedCursors);
+	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
 	// FIXME: need to fix it
-	// addTest("ScaledCursors", &GFXtests::scaledCursors);
+	addTest("ScaledCursors", &GFXtests::scaledCursors);
 	
 	// Effects
-	// addTest("shakingEffect", &GFXtests::shakingEffect);
-	// addTest("focusRectangle", &GFXtests::focusRectangle);
+	addTest("shakingEffect", &GFXtests::shakingEffect);
+	addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// Overlay
-	// addTest("Overlays", &GFXtests::overlayGraphics);
+	addTest("Overlays", &GFXtests::overlayGraphics);
 
 	// Specific Tests:
 	addTest("Palette Rotation", &GFXtests::paletteRotation);
@@ -97,7 +97,7 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 
 	// Uncommenting the next line and commenting the line after that would reproduce the crash
 	// CursorMan.replaceCursor(buffer, 11, 11, 0, 0, 255, cursorTargetScale);
-	CursorMan.replaceCursor(buffer, 12, 13, 0, 0, 255, cursorTargetScale);
+	CursorMan.replaceCursor(buffer, 12, 12, 0, 0, 255, cursorTargetScale);
 	CursorMan.showMouse(true);
 	
 	if (cursorPaletteDisabled) {
@@ -110,20 +110,20 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 	g_system->updateScreen();
 }
 
-void rotatePalette(byte palette[], int size) {
-	// Ignore rotating black color, as that is background
+void rotatePalette(byte *palette, int size) {
+	// Rotate the colors starting from address palette "size" times
+	
 	// take a temporary palette color
 	byte tColor[4] = {0};
-	// save the first color in tColor
-	memcpy(tColor, &palette[4], 4 * sizeof(byte));
+	// save first color in it.
+	memcpy(tColor, &palette[0], 4 * sizeof(byte));
 
 	// Move each color upward by 1
-	for (int i = 1; i < size - 1; i++) {
+	for (int i = 0; i < size - 1; i++) {
 		memcpy(&palette[i * 4], &palette[(i + 1) * 4], 4 * sizeof(byte));
 	}
 	// Assign last color to tcolor
 	memcpy(&palette[(size -1) * 4], tColor, 4 * sizeof(byte));
-	g_system->setPalette(palette, 0, 10);
 }
 
 /**
@@ -394,6 +394,13 @@ bool GFXtests::aspectRatio() {
 	}
 
 	g_system->delayMillis(500);
+	
+	if (Testsuite::handleInteractiveInput("This should definetely be your initial state?", "Yes, it is", "Nopes", kOptionRight)) {
+		// User selected incorrect mode
+		printf("LOG: switching back to initial state failed\n");
+		passed = false;
+	}
+	
 	Testsuite::clearScreen();
 	return passed;
 }
@@ -435,6 +442,7 @@ bool GFXtests::palettizedCursors() {
 		passed = false;
 	}
 	
+	Testsuite::clearScreen();
 	return passed;
 }
 
@@ -570,7 +578,8 @@ bool GFXtests::scaledCursors() {
 		printf("LOG: Switcing to initial state failed\n");
 		return false;
 	}
-
+	
+	Testsuite::clearScreen();
 	return true;
 }
 
@@ -598,7 +607,6 @@ bool GFXtests::focusRectangle() {
 
 	Testsuite::displayMessage("Testing : Setting and hiding Focus \n"
 	"If this feature is implemented, the focus should be toggled between the two rectangles on the corners");
-	Testsuite::clearScreen();
 
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
@@ -634,7 +642,8 @@ bool GFXtests::focusRectangle() {
 	if (Testsuite::handleInteractiveInput("Did you noticed a variation in focus?", "Yes", "No", kOptionRight)) {
 		printf("LOG: Focus Rectangle feature doesn't works. Check platform.\n");
 	}
-
+	
+	Testsuite::clearScreen();
 	return true;
 }
 
@@ -663,10 +672,15 @@ bool GFXtests::overlayGraphics() {
 		printf("LOG: Overlay Rectangle feature doesn't works\n");
 		return false;
 	}
+	
+	Testsuite::clearScreen();
 	return true;
 }
 
 bool GFXtests::paletteRotation() {
+	Common::Point pt(0, 10);
+	Testsuite::writeOnScreen("Rotating palettes, the rectangles should appear moving up!", pt);
+	
 	byte palette[10 * 4] = {0, 0, 0, 0,
 							255, 255, 255, 0,
 							135, 48, 21, 0,
@@ -686,7 +700,7 @@ bool GFXtests::paletteRotation() {
 	// Draw 10 Rectangles, each of width 100 pixels and height 10 pixels
 	byte buffer[10 * 100 * 10] = {0};
 	
-	for (int i = 0; i < 10; i++) {
+	for (int i = 2; i < 10; i++) {
 		memset(buffer + i * 1000, i, 1000 * sizeof(byte));
 	}
 	
@@ -696,14 +710,16 @@ bool GFXtests::paletteRotation() {
 
 	while (toRotate--) {
 		g_system->updateScreen();
-		g_system->delayMillis(300);
-		rotatePalette(palette, 10);
+		g_system->delayMillis(600);
+		rotatePalette(&palette[8], 8);
+		g_system->setPalette(palette, 0, 10);
 	}
 
-	if(Testsuite::handleInteractiveInput("Did you saw palettes rotating?", "Yes", "No", kOptionRight)) {
+	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
+	Testsuite::clearScreen();
 	return true;
 }
 
@@ -711,17 +727,30 @@ bool GFXtests::pixelFormats() {
 	Common::List<Graphics::PixelFormat> pfList = g_system->getSupportedFormats();
 	Common::List<Graphics::PixelFormat>::const_iterator iter = pfList.begin();
 	
-	Graphics::PixelFormat currPixelformat = g_system->getScreenFormat();
-	printf("Current bpp: %d List size : %d\n",currPixelformat.bytesPerPixel, pfList.size());
+	int numFormatsTested = 0;
+	int numPassed = 0;
+	bool numFailed = 0;
 	
-	while (iter != pfList.end()) {
-		printf("bpp : %d\n", (*iter).bytesPerPixel);
+	printf("LOG: Testing Pixel Formats. Size of list : %d\n", pfList.size());
+	
+	for (iter = pfList.begin(); iter != pfList.end(); iter++) {
 		
-		// Switch to that pixelFormat
+		numFormatsTested++;
+		if (iter->bytesPerPixel == 1) {
+			// Palettes already tested
+			continue;
+		} else if (iter->bytesPerPixel > 2) {
+			printf("LOG: Can't test pixels with bpp > 2\n");
+			continue;
+		}
+		
+		// Switch to that pixel Format
 		g_system->beginGFXTransaction();
 		g_system->initSize(320, 200, &(*iter));
 		g_system->endGFXTransaction();
+		Testsuite::clearScreen(true);
 		
+
 		// Draw some nice gradients
 		// Pick up some colors
 		uint colors[6];
@@ -733,24 +762,41 @@ bool GFXtests::pixelFormats() {
 		colors[4] = iter->RGBToColor(181, 126, 145);
 		colors[5] = iter->RGBToColor(47, 78, 36);
 
-		// Draw some Rectangles, each of width 100 pixels and height 10 pixels
-		byte buffer[6 * 100 * 10] = {0};
-		int indx;
-		for (int i = 0; i < ARRAYSIZE(colors); i++) {
-			indx = i * 1000;
-			for (int j = 0; j < 1000; j++) {
-				buffer[indx + j] = colors[i];
-			}
+		Common::Point pt(0, 10);
+		char msg[100];
+		// XXX: Can use snprintf?
+		snprintf(msg, sizeof(msg), "Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
+		Testsuite::writeOnScreen(msg, pt, true);
+
+		// CopyRectToScreen could have been used, but that may involve writing code which 
+		// already resides in graphics/surface.h
+		// So using Graphics::Surface
+
+		Graphics::Surface *screen = g_system->lockScreen();
+
+		// Draw 6 rectangles centred at (50, 160), piled over one another
+		// each with color in colors[] 
+		for (int i = 0; i < 6; i++) {
+			screen->fillRect(Common::Rect::center(160, 50 + i * 10, 100, 10), colors[i]);
 		}
-	
-		g_system->copyRectToScreen(buffer, 100, 110, 70, 100, 60);
+		
+		g_system->unlockScreen();
 		g_system->updateScreen();
-
-		g_system->delayMillis(2000);
-		break;
-		iter++;
+		g_system->delayMillis(500);
+	
+		if(Testsuite::handleInteractiveInput("Were you able to notice the colored rectangles on the screen for this format?", "Yes", "No", kOptionLeft)) {
+			numPassed++;
+		} else {
+			numFailed++;
+			printf("LOG: Testing pixel format failed for format #%d on the list\n", numFormatsTested);
+		}
 	}
-
+	if (numFailed) {
+		printf("LOG: Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
+		return false;
+	}
+	
+	Testsuite::clearScreen();
 	return true;
 }
 
