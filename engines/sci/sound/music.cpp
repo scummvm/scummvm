@@ -68,7 +68,7 @@ void SciMusic::init() {
 	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
 	// default to MIDI in those games to let them run.
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 dev =  MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA)) ? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_MT32) : (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
+	uint32 dev =  MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA)) ? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
 
 	switch (MidiDriver::getMusicType(dev)) {
 	case MT_ADLIB:
