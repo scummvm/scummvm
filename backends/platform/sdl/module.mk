@@ -1,15 +1,23 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
-	macosx/macosx-main.o \
-	macosx/macosx.o \
 	posix/posix-main.o \
 	posix/posix.o \
-	win32/win32-main.o \
-	win32/win32.o \
 	hardwarekeys.o \
 	main.o \
 	sdl.o
+
+ifdef MACOSX
+MODULE_OBJS += \
+	macosx/macosx-main.o \
+	macosx/macosx.o
+endif
+
+ifdef WIN32
+MODULE_OBJS += \
+	win32/win32-main.o \
+	win32/win32.o
+endif
 
 MODULE_DIRS += \
 	backends/platform/sdl/

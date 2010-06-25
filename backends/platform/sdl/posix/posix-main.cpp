@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef UNIX
+#if defined(UNIX) && !defined(MACOSX)
 
 #include "common/scummsys.h"
 
