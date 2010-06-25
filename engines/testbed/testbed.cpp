@@ -3,9 +3,10 @@
  
 #include "engines/util.h"
  
-#include "testbed/testbed.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
+#include "testbed/savegame.h"
+#include "testbed/testbed.h"
  
 namespace Testbed {
  
@@ -74,6 +75,9 @@ Common::Error TestbedEngine::run() {
 	
 	FSTestSuite fts;
 	fts.execute();
+
+	SaveGameTestSuite sts;
+	sts.execute();
 	
 	return Common::kNoError;
 }

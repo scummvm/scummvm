@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	detection.o \
 	fs.o \
 	graphics.o \
+	savegame.o \
 	testbed.o
  
 MODULE_DIRS += \

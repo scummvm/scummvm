@@ -1,6 +1,5 @@
 #include "common/config-manager.h"
 #include "common/stream.h"
-#include "common/savefile.h"
 #include "common/util.h"
 
 #include "testbed/fs.h"
@@ -122,26 +121,11 @@ bool FStests::testWriteFile() {
 	return false;
 }
 
-/**
- * This test creates a savefile for the given testbed-state and could be reloaded using the saveFile API.
- * It is intended to test saving and loading from savefiles.
- */
 
-bool FStests::testOpeningSaveFile() {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::OutSaveFile *saveFile = saveFileMan->openForSaving("saveFile.0");
-
-	saveFile->writeString("State:FS tests");
-	saveFile->flush();
-	delete saveFile;
-
-	return true;
-}
 
 FSTestSuite::FSTestSuite() {
 	addTest("ReadingFile", &FStests::testReadFile);	
 	addTest("WritingFile", &FStests::testWriteFile);	
-	addTest("OpeningSaveFile", &FStests::testOpeningSaveFile);
 }
 const char *FSTestSuite::getName() const {
 	return "File System";
