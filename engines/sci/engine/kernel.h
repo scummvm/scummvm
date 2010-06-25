@@ -94,7 +94,6 @@ struct SelectorCache;	// from selector.h
 //@{
 
 //#define DEBUG_PARSER	// enable for parser debugging
-//#define DISABLE_VALIDATIONS	// enable to stop validation checks
 
 // ---- Kernel signatures -----------------------------------------------------
 

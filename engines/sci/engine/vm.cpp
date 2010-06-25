@@ -95,8 +95,6 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 
 // validation functionality
 
-#ifndef DISABLE_VALIDATIONS
-
 static reg_t &validate_property(Object *obj, int index) {
 	// A static dummy reg_t, which we return if obj or index turn out to be
 	// invalid. Note that we cannot just return NULL_REG, because client code
@@ -285,19 +283,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		r[index] = value;
 	}
 }
-
-#else
-// Non-validating alternatives
-
-#  define validate_stack_addr(s, sp) sp
-#  define validate_arithmetic(r) ((r).offset)
-#  define signed_validate_arithmetic(r) ((int16)(r).offset)
-#  define validate_variable(r, sb, t, m, i, l)
-#  define validate_read_var(r, sb, t, m, i, l, dv) ((r)[i])
-#  define validate_write_var(r, sb, t, m, i, l, v, sm, k) ((r)[i] = (v))
-#  define validate_property(o, p) ((o)->_variables[p])
-
-#endif
 
 #define READ_VAR(type, index, def) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, def)
 #define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
@@ -607,10 +592,6 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 	return &(execStack.back());
 }
 
-#ifdef DISABLE_VALIDATIONS
-#  define kernel_matches_signature(a, b, c, d) 1
-#endif
-
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	SegmentObj *mobj = s->_segMan->getSegmentObj(base.segment);
 
@@ -804,9 +785,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 void run_vm(EngineState *s, bool restoring) {
 	assert(s);
 
-#ifndef DISABLE_VALIDATIONS
 	unsigned int code_buf_size = 0 ; // (Avoid spurious warning)
-#endif
 	int temp;
 	int16 aux_acc; // Auxiliary 16 bit accumulator
 	reg_t r_temp; // Temporary register
@@ -857,9 +836,7 @@ void run_vm(EngineState *s, bool restoring) {
 				// FIXME: Why does this happen? Are there leftover calls in the call stack?
 				warning("Running on non-existant script in segment %x", s->xs->addr.pc.segment);
 				code_buf = _fake_return_buffer;
-#ifndef DISABLE_VALIDATIONS
 				code_buf_size = 2;
-#endif
 				s->xs->addr.pc.offset = 1;
 
 				scr = NULL;
@@ -867,18 +844,14 @@ void run_vm(EngineState *s, bool restoring) {
 			} else {
 				obj = s->_segMan->getObject(s->xs->objp);
 				code_buf = scr->_buf;
-#ifndef DISABLE_VALIDATIONS
 				code_buf_size = scr->getBufSize();
-#endif
 				local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 				if (!local_script) {
 					// FIXME: Why does this happen? Is the script not loaded yet at this point?
 					warning("Could not find local script from segment %x", s->xs->local_segment);
 					local_script = NULL;
 					s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-#ifndef DISABLE_VALIDATIONS
 					s->variablesMax[VAR_LOCAL] = 0;
-#endif
 				} else {
 
 					s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
@@ -886,14 +859,12 @@ void run_vm(EngineState *s, bool restoring) {
 						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
 					else
 						s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-#ifndef DISABLE_VALIDATIONS
 					if (local_script->_localsBlock)
 						s->variablesMax[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
 					else
 						s->variablesMax[VAR_LOCAL] = 0;
 					s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 					s->variablesMax[VAR_PARAM] = s->xs->argc + 1;
-#endif
 				}
 				s->variables[VAR_TEMP] = s->xs->fp;
 				s->variables[VAR_PARAM] = s->xs->variables_argp;
@@ -915,7 +886,6 @@ void run_vm(EngineState *s, bool restoring) {
 			con->onFrame();
 		}
 
-#ifndef DISABLE_VALIDATIONS
 		if (s->xs->sp < s->xs->fp)
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x", 
 			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
@@ -925,7 +895,6 @@ void run_vm(EngineState *s, bool restoring) {
 		if (s->xs->addr.pc.offset >= code_buf_size)
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d", 
 			s->xs->addr.pc.offset, code_buf_size);
-#endif
 
 		// Get opcode
 		byte extOpcode;
@@ -1517,12 +1486,10 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-#ifndef DISABLE_VALIDATIONS
 			if (s->r_acc.offset >= code_buf_size) {
 				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)\n", PRINT_REG(s->r_acc), code_buf_size);
 			}
-#endif
 			break;
 
 		case op_lofss: // 0x3a (58)
@@ -1539,12 +1506,10 @@ void run_vm(EngineState *s, bool restoring) {
 				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-#ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
 				          " of script (at %04x)", PRINT_REG(r_temp), code_buf_size);
 			}
-#endif
 			PUSH32(r_temp);
 			break;
 
@@ -1781,13 +1746,11 @@ void run_vm(EngineState *s, bool restoring) {
 		if (s->_executionStackPosChanged) // Force initialization
 			s->xs = xs_new;
 
-//#ifndef DISABLE_VALIDATIONS
 		if (s->xs != &(s->_executionStack.back())) {
 			error("xs is stale (%p vs %p); last command was %02x",
 					(void *)s->xs, (void *)&(s->_executionStack.back()),
 					opcode);
 		}
-//#endif
 		++s->scriptStepCounter;
 	}
 }
