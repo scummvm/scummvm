@@ -15,12 +15,9 @@ namespace Testbed {
  * compares the message contained in it, with what it expects.
  *
  */
-bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
+bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file) {
 	
-	
-	Common::FSDirectory nestedDir(directory);
-
-	Common::SeekableReadStream *readStream = nestedDir.createReadStreamForMember(file);
+	Common::SeekableReadStream *readStream = directory->createReadStreamForMember(file);
 
 	if (!readStream) {
 		printf("LOG:Can't open game file for reading\n");
@@ -29,7 +26,7 @@ bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
 	
 	Common::String msg = readStream->readLine();
 	delete readStream;
-	printf("LOG: Message Extracted from %s/%s : %s\n",directory.getName().c_str(), file, msg.c_str());
+	printf("LOG: Message Extracted from %s/%s : %s\n",directory->getFSNode().getName().c_str(), file, msg.c_str());
 
 
 	Common::String expectedMsg = "It works!";
@@ -45,10 +42,10 @@ bool FStests::readDataFromFile(Common::FSNode &directory, const char *file) {
 
 bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
-	Common::FSNode gameRoot(path);
+	Common::FSDirectory gameRoot(path);
 	int numFailed = 0;
 	
-	if (!gameRoot.isDirectory()) {
+	if (!gameRoot.getFSNode().isDirectory()) {
 		printf("LOG:game Path should be a directory");
 		return false;
 	}
@@ -59,7 +56,7 @@ bool FStests::testReadFile() {
 	for (unsigned int i = 0; i < ARRAYSIZE(dirList); i++) {
 		Common::String dirName = dirList[i];
 		Common::String fileName = file[i];
-		Common::FSNode directory = gameRoot.getChild(dirName); 
+		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName); 
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
@@ -68,7 +65,7 @@ bool FStests::testReadFile() {
 		
 		dirName.toLowercase();
 		fileName.toLowercase();
-		directory = gameRoot.getChild(dirName); 
+		directory = gameRoot.getSubDirectory(dirName); 
 		
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
@@ -77,7 +74,7 @@ bool FStests::testReadFile() {
 		
 		dirName.toUppercase();
 		fileName.toUppercase();
-		directory = gameRoot.getChild(dirName); 
+		directory = gameRoot.getSubDirectory(dirName); 
 		
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());

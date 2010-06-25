@@ -436,13 +436,14 @@ bool GFXtests::palettizedCursors() {
 		printf("LOG: Couldn't use Game palette for rendering cursor\n");
 		passed = false;
 	}	
-	g_system->delayMillis(1000);
 
 	if (!Testsuite::handleInteractiveInput("Did Cursor tests went as you were expecting?")) {
 		passed = false;
 	}
 	
 	Testsuite::clearScreen();
+	// Done with cursors
+	CursorMan.popAllCursors();
 	return passed;
 }
 
@@ -578,6 +579,9 @@ bool GFXtests::scaledCursors() {
 		printf("LOG: Switcing to initial state failed\n");
 		return false;
 	}
+
+	// Done with cursors
+	CursorMan.popAllCursors();
 	
 	Testsuite::clearScreen();
 	return true;
@@ -651,16 +655,15 @@ bool GFXtests::overlayGraphics() {
 	
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 	
-	OverlayColor buffer[20 * 40];
+	OverlayColor buffer[50 * 100];
 	OverlayColor value = pf.RGBToColor(0, 255, 0);
 
-	for (int i = 0; i < 20 * 40; i++) {
+	for (int i = 0; i < 50 * 100; i++) {
 		buffer[i] = value;
 	}
 	
-	// FIXME: Not Working.
 	g_system->showOverlay();
-	g_system->copyRectToOverlay(buffer, 40, 100, 100, 40, 20);
+	g_system->copyRectToOverlay(buffer, 100, 270, 175, 100, 50);
 	g_system->updateScreen();
 	
 	g_system->delayMillis(1000);
@@ -762,7 +765,7 @@ bool GFXtests::pixelFormats() {
 		colors[4] = iter->RGBToColor(181, 126, 145);
 		colors[5] = iter->RGBToColor(47, 78, 36);
 
-		Common::Point pt(0, 10);
+		Common::Point pt(0, 170);
 		char msg[100];
 		// XXX: Can use snprintf?
 		snprintf(msg, sizeof(msg), "Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
@@ -777,7 +780,7 @@ bool GFXtests::pixelFormats() {
 		// Draw 6 rectangles centred at (50, 160), piled over one another
 		// each with color in colors[] 
 		for (int i = 0; i < 6; i++) {
-			screen->fillRect(Common::Rect::center(160, 50 + i * 10, 100, 10), colors[i]);
+			screen->fillRect(Common::Rect::center(160, 20 + i * 10, 100, 10), colors[i]);
 		}
 		
 		g_system->unlockScreen();
