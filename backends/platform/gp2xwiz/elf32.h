@@ -89,9 +89,10 @@ typedef struct {
 #define PT_NOTE			4	/* note segment */
 #define PT_SHLIB		5	/* reserved */
 #define PT_PHDR			6	/* Program header table */
-/* #define PT_REGINFO 0x70000000 register usage info */
+#define PT_ARM_ARCHEXT 	0x70000000 /* Platform architecture compatibility information */
+#define PT_ARM_EXIDX 	0x70000001 /* Exception unwind tables */
 
-// p_flags value (don't think these are specific to architecture, but not certain)
+// p_flags value
 #define PF_X	1	/* execute */
 #define PF_W	2	/* write */
 #define PF_R	4	/* read */
@@ -123,12 +124,14 @@ typedef struct {
 #define SHT_REL				9	/* Relocation entries without addend */
 #define SHT_SHLIB			10	/* Reserved */
 #define SHT_DYNSYM			11	/* Minimal set of dynamic linking symbols */
+#define SHT_ARM_EXIDX 		0x70000001	/* Exception Index table */
+#define SHT_ARM_PREEMPTMAP 	0x70000002	/* BPABI DLL dynamic linking pre-emption map */
+#define SHT_ARM_ATTRIBUTES 	0x70000003	/* Object file compatibility attributes */
 
 // sh_flags values
 #define SHF_WRITE		0	/* writable section */
 #define SHF_ALLOC		2	/* section occupies memory */
 #define SHF_EXECINSTR	4	/* machine instructions */
-#define SHF_MIPS_GPREL	0x10000000	/* Must be made part of global data area */
 
 // Symbol entry (contain info about a symbol)
 typedef struct {
@@ -168,7 +171,12 @@ typedef struct {
 typedef struct {
 	Elf32_Addr    r_offset;               /* Address */
 	Elf32_Word    r_info;                 /* Relocation type and symbol index */
-} Elf32_Rel;
+	Elf32_Sword   r_addend;               /* Addend */
+} Elf32_Rela;
+
+// Access macros for the relocation info
+#define REL_TYPE(x)		((unsigned char) (x))	/* Extract relocation type */
+#define REL_INDEX(x)	((x)>>8)				/* Extract relocation index into symbol table */
 
 // ARM relocation types
 #define R_ARM_NONE			0
@@ -185,9 +193,6 @@ typedef struct {
 #define R_ARM_THM_PC8			11
 #define R_ARM_BREL_ADJ			12
 #define R_ARM_TLS_DESC			13
-#define R_ARM_THM_SWI8 			14
-#define R_ARM_XPC25 			15
-#define R_ARM_THM_XPC22 		16
 #define R_ARM_TLS_DTPMOD32		17
 #define R_ARM_TLS_DTPOFF32		18
 #define R_ARM_TLS_TPOFF32		19
@@ -271,8 +276,6 @@ typedef struct {
 #define R_ARM_GOT_BREL12		97
 #define R_ARM_GOTOFF12			98
 #define R_ARM_GOTRELAX			99
-#define R_ARM_GNU_VTENTRY		100
-#define R_ARM_GNU_VTINHERIT		101
 #define R_ARM_THM_JUMP11		102
 #define R_ARM_THM_JUMP8			103
 #define R_ARM_TLS_GD32			104
@@ -299,7 +302,6 @@ typedef struct {
 #define R_ARM_PRIVATE_13		125
 #define R_ARM_PRIVATE_14		126
 #define R_ARM_PRIVATE_15		127
-#define R_ARM_ME_TOO			128
 #define R_ARM_THM_TLS_DESCSEQ16         129
 #define R_ARM_THM_TLS_DESCSEQ32 	130
 

@@ -31,27 +31,27 @@
 #define MAXDLERRLEN 80
 
 class DLObject {
- protected:
-  char *errbuf; /* For error messages, at least MAXDLERRLEN in size */
+	protected:
+		char *errbuf; /* For error messages, at least MAXDLERRLEN in size */
 
-  void *_segment, *_symtab;
-  char *_strtab;
-  int _symbol_cnt;
-  void *_dtors_start, *_dtors_end;
+		void *_segment, *_symtab;
+		char *_strtab;
+		int _symbol_cnt;
+		void *_dtors_start, *_dtors_end;
 
-  void seterror(const char *fmt, ...);
-  void unload();
-  bool relocate(int fd, unsigned long offset, unsigned long size);
-  bool load(int fd);
+		void seterror(const char *fmt, ...);
+		void unload();
+		bool relocate(int fd, unsigned long offset, unsigned long size);
+		bool load(int fd);
 
- public:
-  bool open(const char *path);
-  bool close();
-  void *symbol(const char *name);
-  void discard_symtab();
+	public:
+		bool open(const char *path);
+		bool close();
+		void *symbol(const char *name);
+		void discard_symtab();
 
-  DLObject(char *errbuf = NULL) : errbuf(_errbuf), _segment(NULL),_symtab(NULL),
-    _strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
+		DLObject(char *errbuf = NULL) : errbuf(_errbuf), _segment(NULL),_symtab(NULL),
+				_strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
 };
 
 #define RTLD_LAZY 0
