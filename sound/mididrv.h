@@ -111,22 +111,19 @@ public:
 
 	static uint32 musicType2GUIO(uint32 musicType);
 
-	/** Create music driver matching the given device handle, or MT_AUTO if there is no match. */
+	/** Create music driver matching the given device handle, or NULL if there is no match. */
 	static MidiDriver *createMidi(DeviceHandle handle);
 
-	/** Returnd device handle based on the present devices and the flags parameter.
-	/ *	Returns NULl if the matching device is the null or auto device. */
+	/** Returns device handle based on the present devices and the flags parameter. */
 	static DeviceHandle detectDevice(int flags);
 		
-	/**
-	 * Find the music driver matching the given driver name/description.
-	 */
+	/** Find the music driver matching the given driver name/description. */
 	static DeviceHandle getDeviceHandle(const Common::String &identifier);
 
 	/** Get the music type matching the given device handle, or MT_AUTO if there is no match. */
 	static MusicType getMusicType(DeviceHandle handle);
 
-	/** Get the device string matching the given device handle and the given type. */
+	/** Get the device description string matching the given device handle and the given type. */
 	static Common::String getDeviceString(DeviceHandle handle, DeviceStringType type);
 
 private:
@@ -134,7 +131,7 @@ private:
 	// we use this to force getMusicType() to return MT_MT32 so that we don't
 	// have to rely on the 'True Roland MT-32' config manager setting (since nobody
 	// would possibly think about activating 'True Roland MT-32' when he has set
-	// 'Music Driver' to '>default>')
+	// 'Music Driver' to '<default>')
 	static bool _forceTypeMT32;
 
 public:
