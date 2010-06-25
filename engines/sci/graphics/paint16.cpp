@@ -330,7 +330,8 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 
 	memoryId = _segMan->allocateHunkEntry("SaveBits()", size);
 	memoryPtr = _segMan->getHunkPointer(memoryId);
-	_screen->bitsSave(workerRect, screenMask, memoryPtr);
+	if (memoryPtr)
+		_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
 }
 
