@@ -234,12 +234,15 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	spriteStream = sprite.getItemStream(1);
 	Common::SeekableReadStream *spriteDataStream = sprite.getItemStream(3);
 	SpriteAssetFrame frame;
+	Common::Array<int> frameSizes;
 	for (curFrame = 0; curFrame < _frameCount; curFrame++) {
 		frame.stream = 0;
 		frame.comp = 0;
 		frameOffset = spriteStream->readUint32LE();
 		_frameOffsets.push_back(frameOffset);
-		spriteStream->readUint32LE();	// frame size
+		uint32 frameSize = spriteStream->readUint32LE();
+		frameSizes.push_back(frameSize);
+
 		frame.x = spriteStream->readUint16LE();
 		frame.y = spriteStream->readUint16LE();
 		frame.w = spriteStream->readUint16LE();
@@ -247,9 +250,44 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 		if (curFrame == 0)
 			debugC(1, kDebugGraphics, "%i frames, x = %i, y = %i, w = %i, h = %i\n", _frameCount, frame.x, frame.y, frame.w, frame.h);
 
-		frame.frame = new M4Sprite(spriteDataStream, frame.x, frame.y, frame.w, frame.h, false);
+		if (_mode == 0) {
+			// Create a frame and decompress the raw pixel data
+			uint32 currPos = (uint32)spriteDataStream->pos();
+			frame.frame = new M4Sprite(spriteDataStream, frame.x, frame.y, frame.w, frame.h, false);
+			assert((uint32)spriteDataStream->pos() == (currPos + frameSize));
+		}
+
 		_frames.push_back(frame);
 	}
+
+	if (_mode != 0) {
+		// Handle decompressing Fab encoded data
+		for (curFrame = 0; curFrame < _frameCount; curFrame++) {
+			FabDecompressor fab;
+
+			int srcSize = (curFrame == (_frameCount - 1)) ? spriteDataStream->size() - _frameOffsets[curFrame] :
+				_frameOffsets[curFrame + 1] - _frameOffsets[curFrame];
+			byte *srcData = (byte *)malloc(srcSize);
+			assert(srcData);
+			spriteDataStream->read(srcData, srcSize);
+
+			byte *destData = (byte *)malloc(frameSizes[curFrame]);
+			assert(destData);
+
+			fab.decompress(srcData, srcSize, destData, frameSizes[curFrame]);
+
+			// Load the frame
+			Common::MemoryReadStream *rs = new Common::MemoryReadStream(destData, frameSizes[curFrame]);
+			_frames[curFrame].frame = new M4Sprite(rs, _frames[curFrame].x, _frames[curFrame].y, 
+				_frames[curFrame].w, _frames[curFrame].h, false);
+			delete rs;
+
+			free(srcData);
+			free(destData);
+		}
+	}
+
+
 	delete spriteStream;
 	delete spriteDataStream;
 }
