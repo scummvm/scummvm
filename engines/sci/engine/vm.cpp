@@ -1056,6 +1056,12 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
+			} else if (r_temp.segment && !s->r_acc.segment) {
+				if (s->r_acc.offset >= 1000)
+					error("[VM] op_lt: comparsion between a pointer and number");
+				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
+				// Happens in SQ1, room 58, when giving id-card to robot
+				s->r_acc = make_reg(0, 1);
 			} else
 				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) < (int16)/*acc*/);
 			break;
