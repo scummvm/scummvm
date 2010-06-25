@@ -37,10 +37,12 @@
 
 namespace Mohawk {
 
-Common::Rect *g_atrusJournalRectSolo;
-Common::Rect *g_atrusJournalRect;
-Common::Rect *g_cathJournalRect;
-Common::Rect *g_trapBookRect;
+Common::Rect *g_atrusJournalRect1;
+Common::Rect *g_atrusJournalRect2;
+Common::Rect *g_cathJournalRect2;
+Common::Rect *g_atrusJournalRect3;
+Common::Rect *g_cathJournalRect3;
+Common::Rect *g_trapBookRect3;
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
@@ -58,10 +60,12 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "assets1");
 
-	g_atrusJournalRectSolo = new Common::Rect(295, 402, 313, 426);
-	g_atrusJournalRect = new Common::Rect(222, 402, 240, 426);
-	g_cathJournalRect = new Common::Rect(291, 408, 311, 419);
-	g_trapBookRect = new Common::Rect(363, 396, 386, 432);
+	g_atrusJournalRect1 = new Common::Rect(295, 402, 313, 426);
+	g_atrusJournalRect2 = new Common::Rect(259, 402, 278, 426);
+	g_cathJournalRect2 = new Common::Rect(328, 408, 348, 419);
+	g_atrusJournalRect3 = new Common::Rect(222, 402, 240, 426);
+	g_cathJournalRect3 = new Common::Rect(291, 408, 311, 419);
+	g_trapBookRect3 = new Common::Rect(363, 396, 386, 432);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -74,10 +78,12 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _loadDialog;
 	delete _optionsDialog;
 	delete _rnd;
-	delete g_atrusJournalRectSolo;
-	delete g_atrusJournalRect;
-	delete g_cathJournalRect;
-	delete g_trapBookRect;
+	delete g_atrusJournalRect1;
+	delete g_atrusJournalRect2;
+	delete g_cathJournalRect2;
+	delete g_atrusJournalRect3;
+	delete g_cathJournalRect3;
+	delete g_trapBookRect3;
 	_cardData.scripts.clear();
 }
 
@@ -479,26 +485,37 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	*matchVarToString("returncardid") = _curCard;
 
 	// See RivenGraphics::showInventory() for an explanation
-	// of why only this variable is used.
+	// of the variables' meanings.
 	bool hasCathBook = *matchVarToString("acathbook") != 0;
+	bool hasTrapBook = *matchVarToString("atrapbook") != 0;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
-		if (g_atrusJournalRectSolo->contains(_mousePos)) {
+		if (g_atrusJournalRect1->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
 		}
-	} else {
-		if (g_atrusJournalRect->contains(_mousePos)) {
+	} else if (!hasTrapBook) {
+		if (g_atrusJournalRect2->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect->contains(_mousePos)) {
+		} else if (g_cathJournalRect2->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
-		} else if (g_trapBookRect->contains(_mousePos)) {
+		}
+	} else {
+		if (g_atrusJournalRect3->contains(_mousePos)) {
+			_gfx->hideInventory();
+			changeToStack(aspit);
+			changeToCard(5);
+		} else if (g_cathJournalRect3->contains(_mousePos)) {
+			_gfx->hideInventory();
+			changeToStack(aspit);
+			changeToCard(6);
+		} else if (g_trapBookRect3->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(7);

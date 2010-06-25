@@ -607,19 +607,23 @@ void RivenGraphics::showInventory() {
 	if (_vm->getFeatures() & GF_DEMO || _vm->getCurStack() == aspit)
 		return;
 
-	// There are three books and three vars. However, there's only
-	// a possible two combinations. Either you have only Atrus'
-	// journal or you have all three books.
-	// bool hasAtrusBook = *_vm->matchVarToString("aatrusbook") != 0;
+	// There are three books and three vars. We have three different
+	// combinations. At the start you have just Atrus' journal. Later,
+	// you get Catherine's journal and the trap book. Near the end,
+	// you lose the trap book and have just the two journals.
+
 	bool hasCathBook = *_vm->matchVarToString("acathbook") != 0;
-	// bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
+	bool hasTrapBook = *_vm->matchVarToString("atrapbook") != 0;
 
 	if (!hasCathBook) {
-		drawInventoryImage(101, g_atrusJournalRectSolo);
+		drawInventoryImage(101, g_atrusJournalRect1);
+	} else if (!hasTrapBook) {
+		drawInventoryImage(101, g_atrusJournalRect2);
+		drawInventoryImage(102, g_cathJournalRect2);
 	} else {
-		drawInventoryImage(101, g_atrusJournalRect);
-		drawInventoryImage(102, g_cathJournalRect);
-		drawInventoryImage(100, g_trapBookRect);
+		drawInventoryImage(101, g_atrusJournalRect3);
+		drawInventoryImage(102, g_cathJournalRect3);
+		drawInventoryImage(100, g_trapBookRect3);
 	}
 
 	_vm->_system->updateScreen();

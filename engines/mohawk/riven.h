@@ -68,10 +68,12 @@ enum {
 
 // Rects for the inventory object positions (initialized in
 // MohawkEngine_Riven's constructor).
-extern Common::Rect *g_atrusJournalRectSolo;
-extern Common::Rect *g_atrusJournalRect;
-extern Common::Rect *g_cathJournalRect;
-extern Common::Rect *g_trapBookRect;
+extern Common::Rect *g_atrusJournalRect1;
+extern Common::Rect *g_atrusJournalRect2;
+extern Common::Rect *g_cathJournalRect2;
+extern Common::Rect *g_atrusJournalRect3;
+extern Common::Rect *g_cathJournalRect3;
+extern Common::Rect *g_trapBookRect3;
 
 struct RivenHotspot {
 	uint16 blstID;
