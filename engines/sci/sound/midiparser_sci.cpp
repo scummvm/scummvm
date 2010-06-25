@@ -672,9 +672,11 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 		case SCI_VERSION_1_EARLY:
 		case SCI_VERSION_1_LATE:
-			// sending volume change to all used channels
+			// sending volume change to all currently mapped channels
+			// FIXME?: maybe we should better store new volume if music isn't playing currently and adjust volume
+			//  when playing
 			for (int i = 0; i < 15; i++)
-				if (_channelUsed[i])
+				if (_channelRemap[i] != -1)
 					sendToDriver(0xB0 + i, 7, _volume);
 			break;
 
