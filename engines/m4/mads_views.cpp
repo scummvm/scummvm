@@ -158,11 +158,11 @@ void MadsSpriteSlots::drawBackground(int yOffset) {
 
 				if (slot.depth > 1) {
 					// Draw the frame with depth processing
-					_owner._bgSurface->copyFrom(frame, xp, yp, Common::Point(0, yOffset), slot.depth, 
+					_owner._bgSurface->copyFrom(frame, xp, yp, Common::Point(), slot.depth, 
 						_owner._depthSurface, 100, frame->getTransparencyIndex());
 				} else {
 					// No depth, so simply draw the image
-					frame->copyTo(_owner._bgSurface, xp, yp + yOffset, frame->getTransparencyIndex());
+					frame->copyTo(_owner._bgSurface, xp, yp, frame->getTransparencyIndex());
 				}
 			}
 		}
