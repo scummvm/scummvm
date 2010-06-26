@@ -46,6 +46,32 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
+// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
+reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
+	if (argc >= 2) {
+		ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+		reg_t resnr = argv[1];
+
+		// WORKAROUND for a broken script in room 320 in Castle of Dr. Brain.
+		// Script 377 tries to free the hunk memory allocated for the saved area
+		// (underbits) beneath the pop up window, which results in having the
+		// window stay on screen even when it's closed. Ignore this request here.
+		if (restype == kResourceTypeMemory && g_sci->getGameId() == GID_CASTLEBRAIN &&
+			s->currentRoomNumber() == 320)
+			return s->r_acc;
+
+		if (restype == kResourceTypeMemory)
+			s->_segMan->freeHunkEntry(resnr);
+
+		if (argc > 2)
+			warning("kUnload called with more than 2 parameters (%d)", argc);
+	} else {
+		warning("kUnload called with less than 2 parameters (%d) - ignoring", argc);
+	}
+
+	return s->r_acc;
+}
+
 reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	int state = argc > 2 ? argv[2].toUint16() : 1;
 	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
@@ -74,38 +100,12 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
-reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
-	if (argc >= 2) {
-		ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
-		reg_t resnr = argv[1];
-
-		// WORKAROUND for a broken script in room 320 in Castle of Dr. Brain.
-		// Script 377 tries to free the hunk memory allocated for the saved area
-		// (underbits) beneath the pop up window, which results in having the
-		// window stay on screen even when it's closed. Ignore this request here.
-		if (restype == kResourceTypeMemory && g_sci->getGameId() == GID_CASTLEBRAIN &&
-			s->currentRoomNumber() == 320)
-			return s->r_acc;
-
-		if (restype == kResourceTypeMemory)
-			s->_segMan->freeHunkEntry(resnr);
-
-		if (argc > 2)
-			warning("kUnload called with more than 2 parameters (%d)", argc);
-	} else {
-		warning("kUnload called with less than 2 parameters (%d) - ignoring", argc);
-	}
-
-	return s->r_acc;
-}
-
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	Resource *res = NULL;
 	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 
 	if (restype == kResourceTypeVMD) {
-		char fileName[50];
+		char fileName[10];
 		sprintf(fileName, "%d.vmd", argv[1].toUint16());
 		return make_reg(0, Common::File::exists(fileName));
 	}
