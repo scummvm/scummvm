@@ -164,11 +164,13 @@ public:
 	uint32 soundGetTempo() const { return _dwTempo; }
 
 	bool soundIsActive(MusicEntry *pSnd) {
+		Common::StackLock lock(_mutex);
 		assert(pSnd->pStreamAud != 0);
 		return _pMixer->isSoundHandleActive(pSnd->hCurrentAud);
 	}
 
 	void updateAudioStreamTicker(MusicEntry *pSnd) {
+		Common::StackLock lock(_mutex);
 		assert(pSnd->pStreamAud != 0);
 		pSnd->ticker = (uint16)(_pMixer->getSoundElapsedTime(pSnd->hCurrentAud) * 0.06);
 	}
