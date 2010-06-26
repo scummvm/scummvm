@@ -193,6 +193,7 @@ struct UninitializedReadWorkaround {
 	uint16 newValue;
 };
 
+//    gameID,       scriptNr,          object-name, method-name,    call,index,replace
 static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
