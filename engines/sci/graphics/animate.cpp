@@ -331,7 +331,8 @@ void GfxAnimate::update() {
 				writeSelectorValue(_s->_segMan, curObject, SELECTOR(underBits), 0);
 			}
 			signal &= 0xFFFF ^ kSignalForceUpdate;
-			signal &= signal & kSignalViewUpdated ? 0xFFFF ^ (kSignalViewUpdated | kSignalNoUpdate) : 0xFFFF;
+			if (signal & kSignalViewUpdated)
+				signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
 		} else if (signal & kSignalStopUpdate) {
 			signal =  (signal & (0xFFFF ^ kSignalStopUpdate)) | kSignalNoUpdate;
 		}
