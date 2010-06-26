@@ -200,9 +200,8 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
 	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
-	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects
-	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally
-	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // export 1 sub, but called locally (when shooting at aliens)
+	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
+	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,           928,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
 	{ (SciGameId)0,       -1,                 NULL, NULL,             -1,    0,   0 }
 };
