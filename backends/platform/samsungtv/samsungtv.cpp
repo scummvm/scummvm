@@ -52,4 +52,12 @@ bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
 	}
 }
 
+void OSystem_SDL_SamsungTV::quit() {
+	deinit();
+}
+
+const char *OSystem_SDL_SamsungTV::getConfigFileNameString() {
+	return "/dtv/usb/sda1/.scummvmrc";
+}
+
 #endif

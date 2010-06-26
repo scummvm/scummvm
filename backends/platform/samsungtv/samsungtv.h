@@ -30,11 +30,16 @@
 
 #include "backends/platform/sdl/posix/posix.h"
 
-class OSystem_SDL_SamsungTV : public OSystem_SDL {
+class OSystem_SDL_SamsungTV : public OSystem_POSIX {
 public:
-	virtual bool hasFeature(Feature f);
-	virtual void setFeatureState(Feature f, bool enable);
-	virtual bool getFeatureState(Feature f);
+	bool hasFeature(Feature f);
+	void setFeatureState(Feature f, bool enable);
+	bool getFeatureState(Feature f);
+
+	void quit();
+
+protected
+	const char *getConfigFileNameString();
 };
 
 #endif
