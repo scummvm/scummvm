@@ -417,12 +417,6 @@ void Script::mcpyInOut(int dst, const void *src, size_t n) {
 	}
 }
 
-int16 Script::getHeap(uint16 offset) const {
-	assert(offset + 1 < (int)_bufSize);
-	return READ_SCI11ENDIAN_UINT16(_buf + offset);
-//	return (_buf[offset] | (_buf[offset+1]) << 8);
-}
-
 SegmentRef SegmentObj::dereference(reg_t pointer) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));

@@ -501,14 +501,6 @@ public:
 	 */
 	void mcpyInOut(int dst, const void *src, size_t n);
 
-
-	/**
-	 * Retrieves a 16 bit value from within a script's heap representation.
-	 * @param offset	offset to read from
-	 * @return the value read from the specified location
-	 */
-	int16 getHeap(uint16 offset) const;
-
 	/**
 	 * Finds the pointer where a block of a specific type starts from
 	 */

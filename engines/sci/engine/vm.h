@@ -49,11 +49,6 @@ class ResourceManager;
 /** Offset of this identifier */
 #define SCRIPT_OBJECT_MAGIC_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? -8 : 0)
 
-/** Script-relative offset of the species ID */
-#define SCRIPT_SPECIES_OFFSET 8 -8
-
-#define SCRIPT_SUPERCLASS_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 10 -8 : 12)
-
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL
 

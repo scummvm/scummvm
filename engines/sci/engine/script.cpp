@@ -191,11 +191,11 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 		uint16 curOffset = oldScriptHeader ? 2 : 0;
 
 		do {
-			objType = scr->getHeap(curOffset);
+			objType = READ_SCI11ENDIAN_UINT16(scr->_buf + curOffset);
 			if (!objType)
 				break;
 
-			objLength = scr->getHeap(curOffset + 2);
+			objLength = READ_SCI11ENDIAN_UINT16(scr->_buf + curOffset + 2);
 			curOffset += 4;		// skip header
 			addr = make_reg(seg, curOffset);;
 
@@ -204,7 +204,7 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 			case SCI_OBJ_CLASS:
 				if (pass == 0 && objType == SCI_OBJ_CLASS) {
 					int classpos = curOffset + 8;	// SCRIPT_OBJECT_MAGIC_OFFSET
-					int species = scr->getHeap(classpos);
+					int species = READ_SCI11ENDIAN_UINT16(scr->_buf + classpos);
 
 					if (species == (int)classTableSize()) {
 						// Happens in the LSL2 demo
@@ -335,19 +335,16 @@ void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg)
 	do {
 		reg.offset += objLength; // Step over the last checked object
 
-		objType = scr->getHeap(reg.offset);
+		objType = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset);
 		if (!objType)
 			break;
-		objLength = scr->getHeap(reg.offset + 2);  // use SEG_UGET_HEAP ??
+		objLength = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
 
 		reg.offset += 4; // Step over header
 
 		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
-			int superclass;
-
-			reg.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
-
-			superclass = scr->getHeap(reg.offset + SCRIPT_SUPERCLASS_OFFSET); // Get superclass...
+			reg.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+			int superclass = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
 
 			if (superclass >= 0) {
 				int superclass_script = segMan->getClass(superclass).script;
