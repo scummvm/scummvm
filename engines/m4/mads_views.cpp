@@ -738,9 +738,12 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 		--bounds.left;
 		++width;
 	}
-	int right = bounds.left + width;
+
 	if (bounds.left < 0)
 		bounds.left = 0;
+	else if (bounds.left > maxWidth)
+		bounds.left = maxWidth;
+	int right = bounds.left + width;
 	if (right < 0)
 		right = 0;
 	if (right > maxWidth)
@@ -752,6 +755,8 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 
 	if (bounds.top < 0)
 		bounds.top = 0;
+	else if (bounds.top > maxHeight)
+		bounds.top = maxHeight;
 	int bottom = bounds.top + height;
 	if (bottom < 0)
 		bottom = 0;
