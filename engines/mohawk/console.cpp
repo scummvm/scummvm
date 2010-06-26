@@ -28,6 +28,7 @@
 #include "mohawk/myst_scripts.h"
 #include "mohawk/graphics.h"
 #include "mohawk/riven.h"
+#include "mohawk/riven_external.h"
 #include "mohawk/livingbooks.h"
 #include "mohawk/sound.h"
 #include "mohawk/video.h"
@@ -307,6 +308,7 @@ RivenConsole::RivenConsole(MohawkEngine_Riven *vm) : GUI::Debugger(), _vm(vm) {
 	DCmd_Register("dumpScript",     WRAP_METHOD(RivenConsole, Cmd_DumpScript));
 	DCmd_Register("listZipCards",   WRAP_METHOD(RivenConsole, Cmd_ListZipCards));
 	DCmd_Register("getRMAP",		WRAP_METHOD(RivenConsole, Cmd_GetRMAP));
+	DCmd_Register("combos",         WRAP_METHOD(RivenConsole, Cmd_Combos));
 }
 
 RivenConsole::~RivenConsole() {
@@ -605,6 +607,33 @@ bool RivenConsole::Cmd_ListZipCards(int argc, const char **argv) {
 bool RivenConsole::Cmd_GetRMAP(int argc, const char **argv) {
 	uint32 rmapCode = _vm->getCurCardRMAP();
 	DebugPrintf("RMAP for %s %d = %08x\n", _vm->getStackName(_vm->getCurStack()).c_str(), _vm->getCurCard(), rmapCode);
+	return true;
+}
+
+bool RivenConsole::Cmd_Combos(int argc, const char **argv) {
+	// In the vain of SCUMM's 'drafts' command, this command will list
+	// out all combinations needed in Riven, decoded from the variables.
+	// You'll need to look up the Rebel Tunnel puzzle on your own; the
+	// solution is constant.
+
+	uint32 teleCombo = *_vm->matchVarToString("tcorrectorder");
+	uint32 prisonCombo = *_vm->matchVarToString("pcorrectorder");
+	uint32 domeCombo = *_vm->matchVarToString("adomecombo");
+	
+	DebugPrintf("Telescope Combo:\n  ");
+	for (int i = 0; i < 5; i++)
+		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(teleCombo, i));
+
+	DebugPrintf("\nPrison Combo:\n  ");
+	for (int i = 0; i < 5; i++)
+		DebugPrintf("%d ", _vm->_externalScriptHandler->getComboDigit(prisonCombo, i));
+
+	DebugPrintf("\nDome Combo:\n  ");
+	for (int i = 1; i <= 25; i++)
+		if (domeCombo & (1 << (25 - i)))
+			DebugPrintf("%d ", i);
+
+	DebugPrintf("\n");
 	return true;
 }
 

@@ -1325,7 +1325,7 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 	_vm->_gfx->updateScreen();
 }
 
-static uint16 getComboDigit(uint32 correctCombo, uint32 digit) {
+uint16 RivenExternal::getComboDigit(uint32 correctCombo, uint32 digit) {
 	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
 	return (correctCombo % powers[digit]) / powers[digit + 1];
 }
