@@ -669,7 +669,10 @@ struct HunkTable : public Table<Hunk> {
 	virtual void freeEntry(int idx) {
 		Table<Hunk>::freeEntry(idx);
 
+		if (!_table[idx].mem)
+			warning("Attempt to free an already freed hunk");
 		free(_table[idx].mem);
+		_table[idx].mem = 0;
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
