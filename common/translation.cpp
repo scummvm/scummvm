@@ -22,20 +22,22 @@
  * $Id$
  */
 
-#ifdef USE_DETECTLANG
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 // winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
 #undef ARRAYSIZE
-#else
-#include <locale.h>
-#endif // WIN32
 #endif
 
 #include "translation.h"
 
 DECLARE_SINGLETON(Common::TranslationManager)
+
+#ifdef USE_DETECTLANG
+#ifndef WIN32
+#include <locale.h>
+#endif // !WIN32
+#endif
 
 #ifdef USE_TRANSLATION
 #include "messages.cpp"
@@ -67,8 +69,8 @@ TranslationManager::TranslationManager() {
 	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
 	// example and if it does not and we still want Windows 9x support, we should definitly
 	// think of another solution.
-	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, ARRAYSIZE(langName)) != 0 &&
-		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, ARRAYSIZE(ctryName)) != 0) {
+	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, sizeof(langName)) != 0 &&
+		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, sizeof(ctryName)) != 0) {
 		_syslang = langName;
 		_syslang += "_";
 		_syslang += ctryName;
