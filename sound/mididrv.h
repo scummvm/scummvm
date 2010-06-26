@@ -58,7 +58,7 @@ enum MusicType {
 	MT_ADLIB,           // AdLib
 	MT_TOWNS,           // FM-TOWNS
 	MT_PC98,            // PC98
-	MT_GM,				// General MIDI
+	MT_GM,              // General MIDI
 	MT_MT32,            // MT-32
 	MT_GS               // Roland GS
 };
@@ -82,8 +82,8 @@ enum MidiDriverFlags {
 	MDT_TOWNS  = 1 << 4,      // FM-TOWNS: Maps to MT_TOWNS
 	MDT_PC98   = 1 << 5,      // FM-TOWNS: Maps to MT_PC98
 	MDT_MIDI   = 1 << 6,      // Real MIDI
-	MDT_PREFER_MT32 = 1 << 7,  // MT-32 output is preferred
-	MDT_PREFER_GM = 1 << 8  // GM output is preferred
+	MDT_PREFER_MT32 = 1 << 7, // MT-32 output is preferred
+	MDT_PREFER_GM = 1 << 8    // GM output is preferred
 };
 
 /**
