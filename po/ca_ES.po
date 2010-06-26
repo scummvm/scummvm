@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-26 18:03+0200\n"
+"POT-Creation-Date: 2010-06-26 18:15+0200\n"
 "PO-Revision-Date: 2010-06-26 16:45+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
-"Language: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Catalan\n"
 
 #: gui/about.cpp:96
 #, c-format
@@ -960,11 +960,11 @@ msgstr "~T~ransicions activades"
 msgid "~W~ater Effect Enabled"
 msgstr "~E~fecte de l'aigua activat"
 
-#: sound/fmopl.cpp:50
+#: sound/fmopl.cpp:51
 msgid "MAME OPL emulator"
 msgstr "Emulador OPL de MAME"
 
-#: sound/fmopl.cpp:52
+#: sound/fmopl.cpp:53
 msgid "DOSBox OPL emulator"
 msgstr "Emulador OPL de DOSBox"
 
