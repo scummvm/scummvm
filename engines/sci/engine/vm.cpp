@@ -200,6 +200,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
 	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
+	{ GID_KQ5,            25,              "rm025", "doit",           -1,    0,   0 }, // inside witch forest
 	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,           928,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
@@ -497,7 +498,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					reg_t newReg = argp[1];
 					const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
 					warning("send_selector(): argc = %d while modifying variable selector "
-							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x", 
+							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
 							argc, selector, selectorName, PRINT_REG(send_obj),
 							objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
 				}
@@ -695,7 +696,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 			// Used for debugging
 			Common::String debugMsg = kernelFunc.origName +
 										Common::String::printf("[0x%x]", kernelFuncNum) +
-										Common::String::printf(", %d params: ", argc) + 
+										Common::String::printf(", %d params: ", argc) +
 										" (";
 
 			for (int i = 0; i < argc; i++) {
@@ -896,13 +897,13 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		if (s->xs->sp < s->xs->fp)
-			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x", 
+			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",
 			PRINT_REG(*s->xs->sp), PRINT_REG(*s->xs->fp));
 
 		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
 		if (s->xs->addr.pc.offset >= code_buf_size)
-			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d", 
+			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
 			s->xs->addr.pc.offset, code_buf_size);
 
 		// Get opcode
@@ -1107,8 +1108,8 @@ void run_vm(EngineState *s, bool restoring) {
 			// (Print "foo") // Pointer to a string
 			// (Print 420 5) // Reference to the fifth message in text resource 420
 
-			// It works because in those games, the maximum resource number is 999, 
-			// so any parameter value above that threshold must be a pointer. 
+			// It works because in those games, the maximum resource number is 999,
+			// so any parameter value above that threshold must be a pointer.
 			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
