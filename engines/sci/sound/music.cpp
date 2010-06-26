@@ -365,6 +365,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 }
 
 void SciMusic::soundStop(MusicEntry *pSnd) {
+	SoundStatus previousStatus = pSnd->status;
 	pSnd->status = kSoundStopped;
 	if (_soundVersion <= SCI_VERSION_0_LATE)
 		pSnd->isQueued = false;
@@ -374,7 +375,9 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	if (pSnd->pMidiParser) {
 		_mutex.lock();
 		pSnd->pMidiParser->mainThreadBegin();
-		pSnd->pMidiParser->stop();
+		// We shouldn't call stop in case it's paused, otherwise we would send allNotesOff() again
+		if (previousStatus == kSoundPlaying)
+			pSnd->pMidiParser->stop();
 		freeChannels(pSnd);
 		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
