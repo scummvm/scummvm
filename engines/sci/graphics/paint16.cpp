@@ -536,6 +536,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			}
 			break;
 		default:
+			if ((g_sci->getGameId() == GID_ISLANDBRAIN) && (g_sci->getEngineState()->currentRoomNumber() == 300))
+				break; // WORKAROUND: we are called there with an forwarded 0 as additional parameter (script bug)
 			error("Unknown kDisplay argument %X", displayArg);
 			break;
 		}
