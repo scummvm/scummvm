@@ -96,7 +96,7 @@ bool GP2XWIZPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 	printf("Testing name %s", filename.c_str());
-	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg")) {
+	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin")) {
 		printf(" fail.\n");
 		return false;
 	}
