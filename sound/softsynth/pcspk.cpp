@@ -151,7 +151,7 @@ public:
 
 MusicDevices PCSpeakerMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, _s(""), MT_PCSPK));
+	devices.push_back(MusicDevice(this, "", MT_PCSPK));
 	return devices;
 }
 
@@ -170,7 +170,7 @@ public:
 
 MusicDevices PCjrMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, _s(""), MT_PCJR));
+	devices.push_back(MusicDevice(this, "", MT_PCJR));
 	return devices;
 }
 

@@ -32,7 +32,7 @@ Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 
 MusicDevices NullMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, _s(""), MT_NULL));
+	devices.push_back(MusicDevice(this, "", MT_NULL));
 	return devices;
 }
 
@@ -50,7 +50,7 @@ public:
 
 MusicDevices AutoMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	devices.push_back(MusicDevice(this, _s(""), MT_AUTO));
+	devices.push_back(MusicDevice(this, "", MT_AUTO));
 	return devices;
 }
 

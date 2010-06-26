@@ -44,7 +44,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 		_strUnderscanY = "wii_video_default_underscan_y";
 	}
 
-	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, _("Ok"), 0, 'k');
+	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, _("OK"), 0, 'k');
 	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, _("Cancel"), 0, 'c');
 	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 

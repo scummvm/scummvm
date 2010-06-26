@@ -31,6 +31,7 @@
 #include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include <mmsystem.h>
 
@@ -152,7 +153,7 @@ void MidiDriver_WIN::check_error(MMRESULT result) {
 class WindowsMusicPlugin : public MusicPluginObject {
 public:
 	const char *getName() const {
-		return "Windows MIDI";
+		return _s("Windows MIDI");
 	}
 
 	const char *getId() const {

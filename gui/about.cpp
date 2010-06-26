@@ -93,22 +93,25 @@ AboutDialog::AboutDialog()
 	version += gScummVMVersion;
 	_lines.push_back(version);
 
-	Common::String date(_s("C2""(built on "));
-	date += gScummVMBuildDate;
-	date += ')';
-	_lines.push_back(date);
+	Common::String date = Common::String::printf(_("(built on %s)"), gScummVMBuildDate);
+	_lines.push_back("C2" + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(copyright_text[i]);
 
-	addLine(_s("C1""Features compiled in:"));
-	Common::String features("C0");
-	features += gScummVMFeatures;
+	Common::String features("C1");
+	features += _("Features compiled in:");
 	addLine(features.c_str());
+	Common::String featureList("C0");
+	featureList += gScummVMFeatures;
+	addLine(featureList.c_str());
 
 	_lines.push_back("");
 
-	addLine(_s("C1""Available engines:"));
+	Common::String engines("C1");
+	engines += _("Available engines:");
+	addLine(engines.c_str());
+
 	const EnginePlugin::List &plugins = EngineMan.getPlugins();
 	EnginePlugin::List::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {

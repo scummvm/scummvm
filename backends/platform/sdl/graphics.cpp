@@ -25,6 +25,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
+#include "common/translation.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
@@ -36,7 +37,7 @@
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},

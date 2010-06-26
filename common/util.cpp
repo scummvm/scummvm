@@ -24,6 +24,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "common/config-manager.h"
 
 namespace Common {
@@ -31,7 +32,7 @@ namespace Common {
 //
 // Print hexdump of the data passed in
 //
-void hexdump(const byte * data, int len, int bytesPerLine, int startOffset) {
+void hexdump(const byte *data, int len, int bytesPerLine, int startOffset) {
 	assert(1 <= bytesPerLine && bytesPerLine <= 32);
 	int i;
 	byte c;
@@ -250,8 +251,8 @@ const char *getPlatformDescription(Platform id) {
 
 
 const RenderModeDescription g_renderModes[] = {
-	{"hercGreen", "Hercules Green", kRenderHercG},
-	{"hercAmber", "Hercules Amber", kRenderHercA},
+	{"hercGreen", _s("Hercules Green"), kRenderHercG},
+	{"hercAmber", _s("Hercules Amber"), kRenderHercA},
 	{"cga", "CGA", kRenderCGA},
 	{"ega", "EGA", kRenderEGA},
 	{"amiga", "Amiga", kRenderAmiga},
