@@ -466,27 +466,22 @@ void RivenGraphics::runScheduledTransition() {
 	// transitions were found by hacking scripts.
 
 	switch (_scheduledTransition) {
+	case 0:  // Swipe Left
+	case 1:  // Swipe Right
+	case 2:  // Swipe Up
+	case 3:  // Swipe Down
 	case 12: // Pan Left
-		warning ("STUB: Pan left");
-		break;
 	case 13: // Pan Right
-		warning ("STUB: Pan right");
-		break;
 	case 14: // Pan Up
-		warning ("STUB: Pan up");
-		break;
 	case 15: // Pan Down
-		warning ("STUB: Pan down");
-		break;
 	case 16: // Dissolve
 	case 17: // Dissolve (tspit CARD 155)
-		warning ("STUB: Dissolve");
 		break;
 	default:
-		if (_scheduledTransition < 12)
-			error ("Found unused transition %d", _scheduledTransition);
+		if (_scheduledTransition >= 4 && _scheduledTransition <= 11)
+			error("Found unused transition %d", _scheduledTransition);
 		else
-			error ("Found unknown transition %d", _scheduledTransition);
+			error("Found unknown transition %d", _scheduledTransition);
 	}
 
 	// For now, just copy the image to screen without doing any transition.

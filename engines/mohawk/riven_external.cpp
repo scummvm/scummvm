@@ -284,9 +284,14 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	if (_vm->getFeatures() & GF_DEMO)
+		_vm->_sound->playSound(4, false);
+	else
+		_vm->_sound->playSound(3, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -299,9 +304,14 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	if (_vm->getFeatures() & GF_DEMO)
+		_vm->_sound->playSound(5, false);
+	else
+		_vm->_sound->playSound(4, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
@@ -349,9 +359,11 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(5, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(3);
 	_vm->_gfx->updateScreen();
 }
 
@@ -364,9 +376,11 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(6, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(2);
 	_vm->_gfx->updateScreen();
 }
 
@@ -380,12 +394,20 @@ void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
 void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
 	*_vm->matchVarToString("atrap") = 0;
+
+	// Play the page turning sound
+	_vm->_sound->playSound(8, false);
+
 	_vm->refreshCard();
 }
 
 void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
 	*_vm->matchVarToString("atrap") = 1;
+
+	// Play the page turning sound
+	_vm->_sound->playSound(9, false);
+
 	_vm->refreshCard();
 }
 
@@ -437,7 +459,11 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
+	// Play the page turning sound
+	_vm->_sound->playSound(22, false);
+
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -450,7 +476,11 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
+	// Play the page turning sound
+	_vm->_sound->playSound(23, false);
+
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
@@ -1270,9 +1300,11 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(12, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -1285,9 +1317,11 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(13, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
