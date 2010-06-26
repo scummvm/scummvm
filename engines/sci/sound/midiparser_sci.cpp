@@ -65,6 +65,9 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 
 MidiParser_SCI::~MidiParser_SCI() {
 	unloadMusic();
+	// we do this, so that MidiParser won't be able to call his own ::allNotesOff()
+	//  this one would affect all channels and we can't let that happen
+	_driver = 0;
 }
 
 void MidiParser_SCI::mainThreadBegin() {
