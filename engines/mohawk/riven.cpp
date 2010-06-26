@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 
 #include "mohawk/graphics.h"
+#include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"

@@ -29,8 +29,6 @@
 #include "common/savefile.h"
 #include "common/str.h"
 
-#include "mohawk/resource.h"
-
 namespace Mohawk {
 
 class MohawkEngine_Riven;
@@ -53,7 +51,6 @@ public:
 private:
 	MohawkEngine_Riven *_vm;
 	Common::SaveFileManager *_saveFileMan;
-	MohawkArchive *_loadFile;
 
 	Common::MemoryWriteStreamDynamic *genVERSSection();
 	Common::MemoryWriteStreamDynamic *genNAMESection();
