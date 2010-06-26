@@ -53,6 +53,9 @@ namespace Common {
 TranslationManager::TranslationManager() {
 #ifdef USE_DETECTLANG
 #ifdef WIN32
+	// We can not use "setlocale" (at least not for MSVC builds), since it
+	// will return locales like: "English_USA.1252", thus we need a special
+	// way to determine the locale string for Win32.
 	char langName[9];
 	char ctryName[9];
 
