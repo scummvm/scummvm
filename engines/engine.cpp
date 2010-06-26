@@ -23,6 +23,7 @@
  */
 
 #if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <direct.h>
 // winnt.h defines ARRAYSIZE, but we want our own one...
