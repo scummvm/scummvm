@@ -480,8 +480,8 @@ int ResourceManager::getAudioLanguage() const {
 	return (_audioMapSCI1 ? _audioMapSCI1->_volumeNumber : 0);
 }
 
-SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resNumber), true);
+SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVersion soundVersion) : _resMan(resMan), _soundVersion(soundVersion) {
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeSound, resourceNr), true);
 	int trackNr, channelNr;
 	if (!resource)
 		return;
@@ -554,6 +554,9 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 		}
 		_tracks = new Track[_trackCount];
 		data = resource->data;
+
+		byte channelCount;
+
 		for (trackNr = 0; trackNr < _trackCount; trackNr++) {
 			// Track info starts with track type:BYTE
 			// Then the channel information gets appended Unknown:WORD, ChannelOffset:WORD, ChannelSize:WORD
@@ -563,34 +566,47 @@ SoundResource::SoundResource(uint32 resNumber, ResourceManager *resMan, SciVersi
 			_tracks[trackNr].type = *data++;
 			// Counting # of channels used
 			data2 = data;
-			_tracks[trackNr].channelCount = 0;
+			channelCount = 0;
 			while (*data2 != 0xFF) {
 				data2 += 6;
+				channelCount++;
 				_tracks[trackNr].channelCount++;
 			}
-			_tracks[trackNr].channels = new Channel[_tracks[trackNr].channelCount];
+			_tracks[trackNr].channels = new Channel[channelCount];
+			_tracks[trackNr].channelCount = 0;
 			_tracks[trackNr].digitalChannelNr = -1; // No digital sound associated
 			_tracks[trackNr].digitalSampleRate = 0;
 			_tracks[trackNr].digitalSampleSize = 0;
 			_tracks[trackNr].digitalSampleStart = 0;
 			_tracks[trackNr].digitalSampleEnd = 0;
 			if (_tracks[trackNr].type != 0xF0) { // Digital track marker - not supported currently
-				for (channelNr = 0; channelNr < _tracks[trackNr].channelCount; channelNr++) {
+				channelNr = 0;
+				while (channelCount--) {
 					channel = &_tracks[trackNr].channels[channelNr];
 					channel->prio = READ_LE_UINT16(data);
-					channel->data = resource->data + READ_LE_UINT16(data + 2) + 2;
-					channel->size = READ_LE_UINT16(data + 4) - 2; // Not counting channel header
-					channel->number = *(channel->data - 2);
-					channel->poly = *(channel->data - 1);
-					channel->time = channel->prev = 0;
-					if (channel->number == 0xFE) { // Digital channel
-						_tracks[trackNr].digitalChannelNr = channelNr;
-						_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
-						_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
-						_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
-						_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
-						channel->data += 8; // Skip over header
-						channel->size -= 8;
+					uint dataOffset = READ_LE_UINT16(data + 2);
+					if (dataOffset < resource->size) {
+						channel->data = resource->data + dataOffset;
+						channel->size = READ_LE_UINT16(data + 4);
+						channel->curPos = 0;
+						channel->number = *channel->data;
+						channel->poly = *(channel->data + 1);
+						channel->time = channel->prev = 0;
+						channel->data += 2; // skip over header
+						channel->size -= 2; // remove header size
+						if (channel->number == 0xFE) { // Digital channel
+							_tracks[trackNr].digitalChannelNr = channelNr;
+							_tracks[trackNr].digitalSampleRate = READ_LE_UINT16(channel->data);
+							_tracks[trackNr].digitalSampleSize = READ_LE_UINT16(channel->data + 2);
+							_tracks[trackNr].digitalSampleStart = READ_LE_UINT16(channel->data + 4);
+							_tracks[trackNr].digitalSampleEnd = READ_LE_UINT16(channel->data + 6);
+							channel->data += 8; // Skip over header
+							channel->size -= 8;
+						}
+						_tracks[trackNr].channelCount++;
+						channelNr++;
+					} else {
+						warning("Invalid offset inside sound resource %d: track %d, channel %d", resourceNr, trackNr, channelNr);
 					}
 					data += 6;
 				}

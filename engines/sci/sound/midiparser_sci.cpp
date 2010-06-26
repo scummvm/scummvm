@@ -422,7 +422,10 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 	for (int i = 0; i < _track->channelCount; i++) {
 		if (_track->channels[i].time == -1) // channel ended
 			continue;
-		next = *_track->channels[i].data; // when the next event should occur
+		SoundResource::Channel *curChannel = &_track->channels[i];
+		if (curChannel->curPos >= curChannel->size)
+			continue;
+		next = curChannel->data[curChannel->curPos]; // when the next event should occur
 		if (next == 0xF8) // 0xF8 means 240 ticks delay
 			next = 240;
 		next += _track->channels[i].time;
@@ -449,21 +452,21 @@ byte *MidiParser_SCI::midiMixChannels() {
 	byte *outData = new byte[totalSize * 2]; // FIXME: creates overhead and still may be not enough to hold all data
 	_mixedData = outData;
 	long ticker = 0;
-	byte curr, curDelta;
+	byte channelNr, curDelta;
 	byte command = 0, par1, global_prev = 0;
 	long new_delta;
 	SoundResource::Channel *channel;
 
-	while ((curr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
-		channel = &_track->channels[curr];
-		curDelta = *channel->data++;
+	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
+		channel = &_track->channels[channelNr];
+		curDelta = channel->data[channel->curPos++];
 		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
 		new_delta = channel->time - ticker;
 		ticker += new_delta;
 
-		command = *channel->data++;
+		command = channel->data[channel->curPos++];
 		if (command != kEndOfTrack) {
 			debugC(4, kDebugLevelSound, "\nDELTA ");
 			// Write delta
@@ -481,7 +484,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 			*outData++ = command;
 			debugC(4, kDebugLevelSound, "%02X ", command);
 			do {
-				par1 = *channel->data++;
+				par1 = channel->data[channel->curPos++];
 				*outData++ = par1; // out
 			} while (par1 != 0xF7);
 			break;
@@ -492,7 +495,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 			break;
 		default: // MIDI command
 			if (command & 0x80) {
-				par1 = *channel->data++;
+				par1 = channel->data[channel->curPos++];
 			} else {// running status
 				par1 = command;
 				command = channel->prev;
@@ -506,7 +509,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 				*outData++ = command; // out command
 			*outData++ = par1;// pout par1
 			if (nMidiParams[(command >> 4) - 8] == 2)
-				*outData++ = *channel->data++; // out par2
+				*outData++ = channel->data[channel->curPos++]; // out par2
 			channel->prev = command;
 			global_prev = command;
 		}// switch(command)

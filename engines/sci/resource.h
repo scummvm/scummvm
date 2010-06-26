@@ -492,6 +492,7 @@ public:
 		uint16 prio;
 		uint16 size;
 		byte *data;
+		uint16 curPos;
 		long time;
 		byte prev;
 	};
