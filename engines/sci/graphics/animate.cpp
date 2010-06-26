@@ -290,11 +290,11 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 				|| (!(signal & kSignalHidden) && signal & kSignalRemoveView)
 				|| (signal & kSignalAlwaysUpdate))
 				old_picNotValid++;
-			signal &= 0xFFFF ^ kSignalStopUpdate;
+			signal &= ~kSignalStopUpdate;
 		} else {
 			if (signal & kSignalStopUpdate || signal & kSignalAlwaysUpdate)
 				old_picNotValid++;
-			signal &= 0xFFFF ^ kSignalForceUpdate;
+			signal &= ~kSignalForceUpdate;
 		}
 		listEntry->signal = signal;
 
@@ -330,11 +330,12 @@ void GfxAnimate::update() {
 				}
 				writeSelectorValue(_s->_segMan, curObject, SELECTOR(underBits), 0);
 			}
-			signal &= 0xFFFF ^ kSignalForceUpdate;
+			signal &= ~kSignalForceUpdate;
 			if (signal & kSignalViewUpdated)
 				signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
 		} else if (signal & kSignalStopUpdate) {
-			signal =  (signal & (0xFFFF ^ kSignalStopUpdate)) | kSignalNoUpdate;
+			signal &= ~kSignalStopUpdate;
+			signal |= kSignalNoUpdate;
 		}
 		listEntry->signal = signal;
 		listIterator--;
@@ -352,7 +353,7 @@ void GfxAnimate::update() {
 			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
 			listEntry->showBitsFlag = true;
 
-			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
+			signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
@@ -374,7 +375,7 @@ void GfxAnimate::update() {
 			if (signal & kSignalHidden) {
 				signal |= kSignalRemoveView;
 			} else {
-				signal &= 0xFFFF ^ kSignalRemoveView;
+				signal &= ~kSignalRemoveView;
 				if (signal & kSignalIgnoreActor)
 					bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
 				else
@@ -398,7 +399,7 @@ void GfxAnimate::update() {
 			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
 			listEntry->showBitsFlag = true;
 
-			if ((signal & kSignalIgnoreActor) == 0) {
+			if (!(signal & kSignalIgnoreActor)) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -434,7 +435,7 @@ void GfxAnimate::drawCels() {
 			listEntry->showBitsFlag = true;
 
 			if (signal & kSignalRemoveView) {
-				signal &= 0xFFFF ^ kSignalRemoveView;
+				signal &= ~kSignalRemoveView;
 			}
 			listEntry->signal = signal;
 
