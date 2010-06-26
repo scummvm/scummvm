@@ -254,7 +254,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				}
 				workaround++;
 			}
-			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %lx)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->localCallOffset);
+			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->localCallOffset);
 		}
 		return r[index];
 	} else
