@@ -121,6 +121,8 @@ void M4Sprite::loadDeltaRle(Common::SeekableReadStream* rleData, int destX, int 
 
 // TODO: The sprite outlines (pixel value 0xFD) are not shown
 void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
+	bool spriteEnd = false;
+
 	// Set entire sprite contents to transparent pixels
 	fillRect(bounds(), TRANSPARENT_COLOUR_INDEX);
 
@@ -131,10 +133,14 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 		byte cmd = source->readByte();
 		int x2 = 0;
 
-		if (cmd == 0xff)
+		if (cmd == 0xfc) {
+			// End of entire sprite
+			spriteEnd = true;
+			break;
+		} else if (cmd == 0xff) {
 			// The entire line is empty
 			newLine = true;
-		else if (cmd == 0xFD) {
+		} else if (cmd == 0xFD) {
 			// Lines contains only run lenghs of pixels
 			while (x2 < w) {
 				cmd = source->readByte();
@@ -188,6 +194,11 @@ void M4Sprite::loadMadsSprite(Common::SeekableReadStream* source) {
 				}
 			} while (source->readByte() != 0xff);
 		}
+	}
+
+	if (!spriteEnd) {
+		byte v = source->readByte();
+		assert(v == 0xFC);
 	}
 }
 
