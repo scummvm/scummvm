@@ -28,6 +28,7 @@
 #include "sound/softsynth/opl/mame.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace OPL {
 
