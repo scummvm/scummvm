@@ -426,6 +426,7 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
+	void scriptInitialiseObjectsSci0(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 
 	uint32 classTableSize() { return _classTable.size(); }

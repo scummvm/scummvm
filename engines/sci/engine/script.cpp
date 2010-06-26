@@ -176,6 +176,69 @@ void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
 	}
 }
 
+void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
+	Script *scr = getScript(seg);
+	int objType;
+	reg_t addr;
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	// The script is initialized in 2 passes. 
+	// Pass 1: creates a lookup table of all used classes
+	// Pass 2: loads classes and objects
+
+	for (uint16 pass = 0; pass <= 1; pass++) {
+		uint16 objLength = 0;
+		uint16 curOffset = oldScriptHeader ? 2 : 0;
+
+		do {
+			objType = scr->getHeap(curOffset);
+			if (!objType)
+				break;
+
+			objLength = scr->getHeap(curOffset + 2);
+			curOffset += 4;		// skip header
+			addr = make_reg(seg, curOffset);;
+
+			switch (objType) {
+			case SCI_OBJ_OBJECT:
+			case SCI_OBJ_CLASS:
+				if (pass == 0 && objType == SCI_OBJ_CLASS) {
+					int classpos = curOffset + 8;	// SCRIPT_OBJECT_MAGIC_OFFSET
+					int species = scr->getHeap(classpos);
+
+					if (species == (int)classTableSize()) {
+						// Happens in the LSL2 demo
+						warning("Applying workaround for an off-by-one invalid species access");
+						resizeClassTable(classTableSize() + 1);
+					} else if (species < 0 || species > (int)classTableSize()) {
+						error("Invalid species %d(0x%x) not in interval "
+								  "[0,%d) while instantiating script at segment %d\n",
+								  species, species, classTableSize(),
+								  seg);
+						return;
+					}
+
+					setClassOffset(species, make_reg(seg, classpos));
+				} else if (pass == 1) {
+					Object *obj = scr->scriptObjInit(addr);
+					obj->initSpecies(this, addr);
+
+					if (!obj->initBaseObject(this, addr)) {
+						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						//scr->scriptObjRemove(addr);
+					}
+				}
+				break;
+
+			default:
+				break;
+			}
+
+			curOffset += objLength - 4;
+		} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
+	}	// for
+}
+
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	const byte *seeker = scr->_heapStart;;
@@ -230,69 +293,6 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	}
 }
 
-void script_instantiate_sci0(Script *scr, int segmentId, SegManager *segMan) {
-	int objType;
-	reg_t addr;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	// The script is initialized in 2 passes. 
-	// Pass 1: creates a lookup table of all used classes
-	// Pass 2: loads classes and objects
-
-	for (uint16 pass = 0; pass <= 1; pass++) {
-		uint16 objLength = 0;
-		uint16 curOffset = oldScriptHeader ? 2 : 0;
-
-		do {
-			objType = scr->getHeap(curOffset);
-			if (!objType)
-				break;
-
-			objLength = scr->getHeap(curOffset + 2);
-			curOffset += 4;		// skip header
-			addr = make_reg(segmentId, curOffset);;
-
-			switch (objType) {
-			case SCI_OBJ_OBJECT:
-			case SCI_OBJ_CLASS:
-				if (pass == 0 && objType == SCI_OBJ_CLASS) {
-					int classpos = curOffset + 8;	// SCRIPT_OBJECT_MAGIC_OFFSET
-					int species = scr->getHeap(classpos);
-
-					if (species == (int)segMan->classTableSize()) {
-						// Happens in the LSL2 demo
-						warning("Applying workaround for an off-by-one invalid species access");
-						segMan->resizeClassTable(segMan->classTableSize() + 1);
-					} else if (species < 0 || species > (int)segMan->classTableSize()) {
-						error("Invalid species %d(0x%x) not in interval "
-								  "[0,%d) while instantiating script at segment %d\n",
-								  species, species, segMan->classTableSize(),
-								  segmentId);
-						return;
-					}
-
-					segMan->setClassOffset(species, make_reg(segmentId, classpos));
-				} else if (pass == 1) {
-					Object *obj = scr->scriptObjInit(addr);
-					obj->initSpecies(segMan, addr);
-
-					if (!obj->initBaseObject(segMan, addr)) {
-						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						//scr->scriptObjRemove(addr);
-					}
-				}
-				break;
-
-			default:
-				break;
-			}
-
-			curOffset += objLength - 4;
-		} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
-	}	// for
-
-}
-
 int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNum) {
 	SegmentId segmentId = segMan->getScriptSegment(scriptNum);
 	Script *scr = segMan->getScriptIfLoaded(segmentId);
@@ -315,7 +315,7 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNu
 		segMan->scriptInitialiseObjectsSci11(segmentId);
 		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
 	} else {
-		script_instantiate_sci0(scr, segmentId, segMan);
+		segMan->scriptInitialiseObjectsSci0(segmentId);
 		byte *relocationBlock = scr->findBlock(SCI_OBJ_POINTERS);
 		if (relocationBlock)
 			scr->relocate(make_reg(segmentId, relocationBlock - scr->_buf + 4));
