@@ -75,7 +75,7 @@ TranslationManager::TranslationManager() {
 		_syslang += "_";
 		_syslang += ctryName;
 	} else {
-		_syslang = "en_US";
+		_syslang = "C";
 	}
 #else // WIN32
 	// Activating current locale settings
