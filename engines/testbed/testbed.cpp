@@ -80,16 +80,16 @@ Common::Error TestbedEngine::run() {
 	// interactive mode could also be modified by a config parameter "non-interactive=1"
 	// TODO: Implement that
 
-	bool interactive;
 	Common::String prompt("Welcome to the ScummVM testbed!\n"
 						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
 						"If you see this, it means interactive tests would run on this system :)");
 
 	// To be set from config file
+	// By default Interactive tests are enabled
 	// XXX: disabling these as of now for fastly testing other tests
-	interactive = false;
+	// Testsuite::isInteractive = false;
 
-	if (interactive) {
+	if (Testsuite::isInteractive) {
 		printf("Running Interactive tests as well\n");		
 		Testsuite::displayMessage(prompt, "proceed?");
 		// Executing GFX Tests

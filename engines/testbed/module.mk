@@ -5,7 +5,8 @@ MODULE_OBJS := \
 	fs.o \
 	graphics.o \
 	savegame.o \
-	testbed.o
+	testbed.o \
+	testsuite.o
  
 MODULE_DIRS += \
 	engines/testbed
