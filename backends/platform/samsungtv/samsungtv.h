@@ -38,7 +38,7 @@ public:
 
 	void quit();
 
-protected
+protected:
 	const char *getConfigFileNameString();
 };
 
