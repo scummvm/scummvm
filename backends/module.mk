@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	audiocd/default/default-audiocd.o \
 	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
+	events/samsungtv/samsungtv-events.o \
 	events/sdl/sdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
@@ -21,6 +22,7 @@ MODULE_OBJS := \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
+	graphics/null/null-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
@@ -37,6 +39,7 @@ MODULE_OBJS := \
 	midi/windows.o \
 	mixer/bufferingsdl/bufferingsdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
+	mutex/null/null-mutex.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
