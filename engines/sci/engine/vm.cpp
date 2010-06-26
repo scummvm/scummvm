@@ -200,6 +200,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
 	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
+	{ GID_KQ5,             0,                   "", "export 29",      -1,    3,   0 }, // called when playing harp for the harpies, is used for kDoAudio
 	{ GID_KQ5,            25,              "rm025", "doit",           -1,    0,   0 }, // inside witch forest, where the walking rock is
 	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
