@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-26 18:15+0200\n"
+"POT-Creation-Date: 2010-06-26 20:02+0200\n"
 "PO-Revision-Date: 2010-06-26 16:45+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
+"Language: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: Catalan\n"
 
 #: gui/about.cpp:96
 #, c-format
@@ -47,10 +47,6 @@ msgstr "Cancel·la"
 #: gui/browser.cpp:71 gui/chooser.cpp:50 gui/themebrowser.cpp:57
 msgid "Choose"
 msgstr "Escull"
-
-#: gui/GuiManager.cpp:76
-msgid "Failed to load any GUI theme, aborting"
-msgstr "No s'ha pogut carregar cap tema de la interfície d'usuari, avortant"
 
 #: gui/GuiManager.cpp:102 backends/keymapper/remap-dialog.cpp:54
 msgid "Close"
@@ -757,38 +753,6 @@ msgstr "Pintat estàndard (16bpp)"
 msgid "Antialiased Renderer (16bpp)"
 msgstr "Pintat amb antialias (16bpp)"
 
-#: base/main.cpp:106
-#, fuzzy, c-format
-msgid "User picked target '%s' (gameid '%s')...\n"
-msgstr ""
-"L'usuari ha seleccionat el target '%s' (identificador de joc '%s')...\n"
-
-#: base/main.cpp:107
-msgid "  Looking for a plugin supporting this gameid... "
-msgstr "  Cercant un connector que suporti aquest identificador de joc... "
-
-#: base/main.cpp:111
-msgid "failed\n"
-msgstr "ha fallat\n"
-
-#: base/main.cpp:112
-#, c-format
-msgid ""
-"%s is an invalid gameid. Use the --list-games option to list supported gameid"
-msgstr ""
-"%s és un identificador de joc invàlid. Utilitzeu l'opció --list-games per "
-"llistar els identificadors de joc suportats"
-
-#: base/main.cpp:119
-#, c-format
-msgid "  Starting '%s'\n"
-msgstr "  Iniciant '%s'\n"
-
-#: base/main.cpp:148
-#, fuzzy, c-format
-msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
-msgstr "%s ha fallat l'iniciat del motor: %s (target '%s', camí '%s')"
-
 #: base/main.cpp:205
 #, c-format
 msgid "Engine does not support debug level '%s'"
@@ -1393,6 +1357,34 @@ msgstr "Pantalla"
 #: backends/platform/wince/CELauncherDialog.cpp:104
 msgid "Do you want to perform an automatic scan ?"
 msgstr "Voleu fer una cerca automàtica?"
+
+#~ msgid "Failed to load any GUI theme, aborting"
+#~ msgstr "No s'ha pogut carregar cap tema de la interfície d'usuari, avortant"
+
+#, fuzzy
+#~ msgid "User picked target '%s' (gameid '%s')...\n"
+#~ msgstr ""
+#~ "L'usuari ha seleccionat el target '%s' (identificador de joc '%s')...\n"
+
+#~ msgid "  Looking for a plugin supporting this gameid... "
+#~ msgstr "  Cercant un connector que suporti aquest identificador de joc... "
+
+#~ msgid "failed\n"
+#~ msgstr "ha fallat\n"
+
+#~ msgid ""
+#~ "%s is an invalid gameid. Use the --list-games option to list supported "
+#~ "gameid"
+#~ msgstr ""
+#~ "%s és un identificador de joc invàlid. Utilitzeu l'opció --list-games per "
+#~ "llistar els identificadors de joc suportats"
+
+#~ msgid "  Starting '%s'\n"
+#~ msgstr "  Iniciant '%s'\n"
+
+#, fuzzy
+#~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
+#~ msgstr "%s ha fallat l'iniciat del motor: %s (target '%s', camí '%s')"
 
 #~ msgid "Chinese (Taiwan)"
 #~ msgstr "Xinès (Taiwan)"

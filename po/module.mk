@@ -2,7 +2,7 @@ POTFILE := $(srcdir)/po/scummvm.pot
 POFILES := $(wildcard $(srcdir)/po/*.po)
 
 updatepot:
-	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_t -k_s -o $(POTFILE) \
+	xgettext -f $(srcdir)/po/POTFILES -D $(srcdir) -d scummvm --c++ -k_ -k_s -o $(POTFILE) \
 		"--copyright-holder=ScummVM Team" --package-name=ScummVM \
 		--package-version=$(VERSION) --msgid-bugs-address=scummvm-devel@lists.sf.net -o $(POTFILE)_
 

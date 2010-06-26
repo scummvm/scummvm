@@ -28,10 +28,6 @@
 #include "common/singleton.h"
 #include "common/str-array.h"
 
-#ifdef USE_TERMCONV
-#include <iconv.h>
-#endif
-
 namespace Common {
 
 enum TranslationIDs {
@@ -60,17 +56,6 @@ typedef Array<TLanguage> TLangArray;
  * Message translation manager.
  */
 class TranslationManager : public Singleton<TranslationManager> {
-private:
-	Common::String _syslang;
-
-#ifdef USE_TERMCONV
-	iconv_t _conversion;
-	char *_convmsg;
-	int _sizeconv;
-
-	bool convert(const char *message);
-#endif // USE_TERMCONV
-
 public:
 	/**
 	 * The constructor detects the system language and sets default
@@ -130,29 +115,24 @@ public:
 	String getTranslation(const String &message);
 
 	/**
-	 * Converts the message into the terminal character set (which may be
-	 * different than the GUI's "native" one).
-	 */
-	const char *convertTerm(const char *message);
-
-	/**
 	 * Returns a list of supported languages.
 	 *
 	 * @return The list of supported languages.
 	 */
 	const TLangArray getSupportedLanguages() const;
+
+private:
+	Common::String _syslang;
 };
 
-}	// End of namespace Common
+} // End of namespace Common
 
 #define TransMan Common::TranslationManager::instance()
 
 #ifdef USE_TRANSLATION
 #define _(str) TransMan.getTranslation(str)
-#define _t(str) TransMan.convertTerm(_(str))
 #else
 #define _(str) str
-#define _t(str) str
 #endif
 
 #define _s(str) str

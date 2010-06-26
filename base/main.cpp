@@ -103,20 +103,20 @@ static const EnginePlugin *detectPlugin() {
 	ConfMan.set("gameid", gameid);
 
 	// Query the plugins and find one that will handle the specified gameid
-	printf(_t("User picked target '%s' (gameid '%s')...\n"), ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("%s", _t("  Looking for a plugin supporting this gameid... "));
+	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
+	printf("%s", "  Looking for a plugin supporting this gameid... ");
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
-		printf("%s", _t("failed\n"));
-		warning(_t("%s is an invalid gameid. Use the --list-games option to list supported gameid"), gameid.c_str());
+		printf("failed\n");
+		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
 		return 0;
 	} else {
 		printf("%s\n", plugin->getName());
 	}
 
 	// FIXME: Do we really need this one?
-	printf(_t("  Starting '%s'\n"), game.description().c_str());
+	printf("  Starting '%s'\n", game.description().c_str());
 
 	return plugin;
 }
@@ -145,7 +145,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
 		const char *errMsg = _(Common::errorToString(err));
 
-		warning(_t("%s failed to instantiate engine: %s (target '%s', path '%s')"),
+		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
 			errMsg,
 			ConfMan.getActiveDomainName().c_str(),

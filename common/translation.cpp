@@ -30,10 +30,6 @@ DECLARE_SINGLETON(Common::TranslationManager)
 #include <locale.h>
 #endif
 
-#ifdef USE_TERMCONV
-#include <langinfo.h>
-#endif
-
 #ifdef USE_TRANSLATION
 #include "messages.cpp"
 #endif
@@ -44,7 +40,6 @@ namespace Common {
 #ifdef USE_TRANSLATION
 
 // Translation enabled
-
 
 TranslationManager::TranslationManager() {
 #ifdef USE_DETECTLANG
@@ -78,20 +73,11 @@ TranslationManager::TranslationManager() {
 	_syslang = "C";
 #endif // USE_DETECTLANG
 
-#ifdef USE_TERMCONV
-	_convmsg = NULL;
-	_conversion = NULL;
-#endif // USE_TERMCONV
-
 	// Set the default language
 	setLanguage("");
 }
 
 TranslationManager::~TranslationManager() {
-#ifdef USE_TERMCONV
-	iconv_close(_conversion);
-	delete[] _convmsg;
-#endif // USE_TERMCONV
 }
 
 void TranslationManager::setLanguage(const char *lang) {
@@ -99,21 +85,6 @@ void TranslationManager::setLanguage(const char *lang) {
 		po2c_setlang(_syslang.c_str());
 	else
 		po2c_setlang(lang);
-
-#ifdef USE_TERMCONV
-	// Get the locale character set (for terminal output)
-	const char *charset_term = nl_langinfo(CODESET);
-
-	// Get the messages character set
-	const char *charset_po = po2c_getcharset();
-
-	// Delete previous conversion
-	if (_conversion)
-		iconv_close(_conversion);
-
-	// Initialize the conversion
-	_conversion = iconv_open(charset_term, charset_po);
-#endif // USE_TERMCONV
 }
 
 const char *TranslationManager::getTranslation(const char *message) {
@@ -122,63 +93,6 @@ const char *TranslationManager::getTranslation(const char *message) {
 
 String TranslationManager::getTranslation(const String &message) {
 	return po2c_gettext(message.c_str());
-}
-
-#ifdef USE_TERMCONV
-bool TranslationManager::convert(const char *message) {
-	// Preparing conversion origin
-	size_t len = strlen(message) + 1;
-#ifdef ICONV_USES_CONST
-	const char **pmsg = &message;
-#else
-	char *msgcpy = new char[len];
-	strcpy(msgcpy, message);
-	char *msg = msgcpy;
-	char **pmsg = &msg;
-#endif
-
-	// Preparing conversion destination
-	size_t len2 = _sizeconv;
-	char *conv = _convmsg;
-
-	// Clean previous conversions
-	iconv(_conversion, NULL, NULL, &conv, &len2);
-
-	// Do the real conversion
-	size_t result = iconv(_conversion, pmsg, &len, &conv, &len2);
-
-#ifndef ICONV_USES_CONST
-	delete[] msgcpy;
-#endif
-
-	return result != ((size_t)-1);
-}
-#endif // USE_TERMCONV
-
-const char *TranslationManager::convertTerm(const char *message) {
-#ifdef USE_TERMCONV
-	size_t len = strlen(message) + 1;
-	if (!_convmsg) {
-		_sizeconv = len * 2;
-		_convmsg = new char[_sizeconv];
-	}
-
-	if (!convert(message)) {
-		// Resizing the buffer
-		delete[] _convmsg;
-		_sizeconv = len * 2;
-		_convmsg = new char[_sizeconv];
-
-		if (!convert(message)) {
-			printf("Error while converting character sets\n");
-			return "Error while converting character sets";
-		}
-	}
-
-	return _convmsg;
-#else // USE_TERMCONV
-	return message;
-#endif // USE_TERMCONV
 }
 
 const TLangArray TranslationManager::getSupportedLanguages() const {
@@ -248,10 +162,6 @@ const char *TranslationManager::getTranslation(const char *message) {
 }
 
 String TranslationManager::getTranslation(const String &message) {
-	return message;
-}
-
-const char *TranslationManager::convertTerm(const char *message) {
 	return message;
 }
 
