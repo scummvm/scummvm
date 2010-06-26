@@ -547,7 +547,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, Common::Point des
 				// Not a display pixel
 				continue;
 
-			if (depth <= *depthP)
+			if ((*srcP != transparentColour) && (depth <= *depthP))
 				*destP = *srcP;
 
 			++destP;
