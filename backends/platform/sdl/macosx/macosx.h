@@ -39,7 +39,6 @@ public:
 
 protected:
 	const char *getConfigFileNameString();
-	Common::String getDefaultConfigFileName();
 };
 
 #endif
