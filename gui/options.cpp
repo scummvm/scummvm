@@ -967,7 +967,17 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 		_guiLanguagePopUp->appendEntry(lang->name, lang->id);
 		lang++;
 	}
-	_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language").c_str()));
+
+	// Select the currently configured language or default/English if
+	// nothing is specified.
+	if (ConfMan.hasKey("gui_language"))
+		_guiLanguagePopUp->setSelectedTag(TransMan.parseLanguage(ConfMan.get("gui_language")));
+	else
+#ifdef USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationAutodetectId);
+#else // !USE_DETECTLANG
+		_guiLanguagePopUp->setSelectedTag(Common::kTranslationBuiltinId);
+#endif // USE_DETECTLANG
 
 #endif // USE_TRANSLATION
 
