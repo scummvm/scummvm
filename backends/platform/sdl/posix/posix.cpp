@@ -41,8 +41,6 @@
 
 #include "backends/fs/posix/posix-fs-factory.h"
 
-#define DEFAULT_CONFIG_FILE ".scummvmrc"
-
 OSystem_POSIX::OSystem_POSIX() {
 }
 
@@ -63,6 +61,10 @@ void OSystem_POSIX::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
+const char *OSystem_POSIX::getConfigFileNameString() {
+	return ".scummvmrc";
+}
+
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
@@ -76,9 +78,9 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	// from the Springboard, is /. Which we don't want.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, getConfigFileNameString());
 	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
+		strcpy(configFile, getConfigFileNameString());
 
 	return configFile;
 }

@@ -38,6 +38,7 @@ public:
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 
 protected:
+	const char *getConfigFileNameString();
 	Common::String getDefaultConfigFileName();
 };
 

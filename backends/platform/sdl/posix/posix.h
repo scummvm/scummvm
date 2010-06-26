@@ -38,6 +38,7 @@ public:
 	virtual void initBackend();
 
 protected:
+	virtual const char *getConfigFileNameString();
 	virtual Common::String getDefaultConfigFileName();
 };
 

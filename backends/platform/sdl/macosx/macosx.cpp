@@ -33,8 +33,6 @@
 
 #include "CoreFoundation/CoreFoundation.h"
 
-#define DEFAULT_CONFIG_FILE "Library/Preferences/ScummVM Preferences"
-
 OSystem_MacOSX::OSystem_MacOSX() {
 }
 
@@ -51,18 +49,8 @@ void OSystem_MacOSX::initBackend() {
 	OSystem_POSIX::initBackend();
 }
 
-Common::String OSystem_MacOSX::getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-
-	// On UNIX type systems, by default we store the config file inside
-	// to the HOME directory of the user.
-	const char *home = getenv("HOME");
-	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, DEFAULT_CONFIG_FILE);
-	else
-		strcpy(configFile, DEFAULT_CONFIG_FILE);
-
-	return configFile;
+const char *OSystem_MacOSX::getConfigFileNameString() {
+	return "Library/Preferences/ScummVM Preferences";
 }
 
 void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {

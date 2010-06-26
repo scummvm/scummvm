@@ -44,8 +44,6 @@
 
 #include "backends/fs/windows/windows-fs-factory.h"
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-
 OSystem_Win32::OSystem_Win32() {
 }
 
@@ -55,6 +53,10 @@ void OSystem_Win32::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
+}
+
+const char *OSystem_Win32::getConfigFileNameString() {
+	return "\\scummvm.ini";
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
@@ -80,14 +82,14 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 
 		strcat(configFile, "\\ScummVM");
 		CreateDirectory(configFile, NULL);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		strcat(configFile, getConfigFileNameString());
 
 		FILE *tmp = NULL;
 		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
 			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
+			strcat(oldConfigFile, getConfigFileNameString());
 			if ((tmp = fopen(oldConfigFile, "r"))) {
 				strcpy(configFile, oldConfigFile);
 
@@ -99,7 +101,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	} else {
 		// Check windows directory
 		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
+		strcat(configFile, getConfigFileNameString());
 	}
 
 	return configFile;

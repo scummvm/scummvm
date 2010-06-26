@@ -79,6 +79,7 @@ protected:
 
 	virtual void setupIcon();
 
+	virtual const char *getConfigFileNameString();
 	virtual Common::String getDefaultConfigFileName();
 };
 

@@ -38,8 +38,6 @@
 
 #include "icons/scummvm.xpm"
 
-#define DEFAULT_CONFIG_FILE "scummvm.ini"
-
 #include <time.h>
 
 OSystem_SDL::OSystem_SDL()
@@ -129,9 +127,13 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 
 }
 
+const char *OSystem_SDL::getConfigFileNameString() {
+	return "scummvm.ini";
+}
+
 Common::String OSystem_SDL::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
+	strcpy(configFile, getConfigFileNameString());
 	return configFile;
 }
 
