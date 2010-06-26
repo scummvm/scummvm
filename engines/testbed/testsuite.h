@@ -162,7 +162,10 @@ public:
 			printf("Executing Test:%s\n", ((*i)->featureName).c_str());
 			_numTestsExecuted++;
 			if ((*i)->driver()) {
+				printf("RESULT: Passed\n");
 				_numTestsPassed++;
+			} else {
+				printf("RESULT: Failed\n");
 			}
 		}
 		genReport();

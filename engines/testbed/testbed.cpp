@@ -63,7 +63,7 @@ Common::Error TestbedEngine::run() {
 
 	// To be set from config file
 	// XXX: disabling these as of now for fastly testing other tests
-	interactive = true;
+	interactive = false;
 
 	if (interactive) {
 		printf("Running Interactive tests as well\n");		
