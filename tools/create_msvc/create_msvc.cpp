@@ -840,7 +840,9 @@ const Feature s_features[] = {
 	{       "16bit",   "USE_RGB_COLOR", "", true, "16bit color support" },
 	{     "mt32emu",     "USE_MT32EMU", "", true, "integrated MT-32 emulator" },
 	{        "nasm",        "USE_NASM", "", true, "IA-32 assembly support" }, // This feature is special in the regard, that it needs additional handling.
-	{ "translation", "USE_TRANSLATION", "", true, "Translation support" }
+	{ "translation", "USE_TRANSLATION", "", true, "Translation support" },
+	{  "langdetect",  "USE_DETECTLANG", "", true, "System language detection support" } // This feature actually depends on "translation", there
+	                                                                                    // is just no current way of properly detecting this...
 };
 } // End of anonymous namespace
 
