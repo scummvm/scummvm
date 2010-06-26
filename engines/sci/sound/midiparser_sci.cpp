@@ -522,7 +522,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 	*outData++ = 0x00;
 	*outData++ = 0x00;
 
-	for (int channelNr = 0; channelNr < _track->channelCount; channelNr++)
+	for (channelNr = 0; channelNr < _track->channelCount; channelNr++)
 		_track->channels[channelNr].data = dataPtr[channelNr];
 
 	delete[] dataPtr;
