@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef FS_H
-#define FS_H
+#ifndef TESTBED_FS_H
+#define TESTBED_FS_H
 
 #include "common/fs.h"
 

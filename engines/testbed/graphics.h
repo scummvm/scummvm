@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#ifndef TESTBED_GRAPHICS_H
+#define TESTBED_GRAPHICS_H
 
 #include "testbed/testsuite.h"
 

@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TESTSUITE_H
-#define TESTSUITE_H
+#ifndef TESTBED_TESTSUITE_H
+#define TESTBED_TESTSUITE_H
 
 #include "common/system.h"
 #include "common/str.h"

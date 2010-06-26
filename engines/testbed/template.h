@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TEMPLATE_H
-#define TEMPLATE_H
+#ifndef TESTBED_TEMPLATE_H
+#define TESTBED_TEMPLATE_H
 
 #include "testbed/testsuite.h"
 

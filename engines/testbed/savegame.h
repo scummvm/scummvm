@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef SAVEGAME_H
-#define SAVEGAME_H
+#ifndef TESTBED_SAVEGAME_H
+#define TESTBED_SAVEGAME_H
 
 #include "testbed/testsuite.h"
 
