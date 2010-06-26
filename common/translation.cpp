@@ -22,13 +22,20 @@
  * $Id$
  */
 
+#ifdef USE_DETECTLANG
+#ifdef WIN32
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
+#undef ARRAYSIZE
+#else
+#include <locale.h>
+#endif // WIN32
+#endif
+
 #include "translation.h"
 
 DECLARE_SINGLETON(Common::TranslationManager)
-
-#ifdef USE_DETECTLANG
-#include <locale.h>
-#endif
 
 #ifdef USE_TRANSLATION
 #include "messages.cpp"
@@ -43,6 +50,32 @@ namespace Common {
 
 TranslationManager::TranslationManager() {
 #ifdef USE_DETECTLANG
+#ifdef WIN32
+	char langName[9];
+	char ctryName[9];
+
+	const LCID languageIdentifier = GetThreadLocale();
+
+	// GetLocalInfo is only supported starting from Windows 2000, according to this:
+	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
+	// On the other hand the locale constants used, seem to exist on Windows 98 too,
+	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
+	// 
+	// I am not exactly sure what is the truth now, it might be very well that this breaks
+	// support for systems older than Windows 2000....
+	//
+	// TODO: Check whether this (or ScummVM at all ;-) works on a system with Windows 98 for
+	// example and if it does not and we still want Windows 9x support, we should definitly
+	// think of another solution.
+	if (GetLocaleInfo(languageIdentifier, LOCALE_SISO639LANGNAME, langName, ARRAYSIZE(langName)) != 0 &&
+		GetLocaleInfo(languageIdentifier, LOCALE_SISO3166CTRYNAME, ctryName, ARRAYSIZE(ctryName)) != 0) {
+		_syslang = langName;
+		_syslang += "_";
+		_syslang += ctryName;
+	} else {
+		_syslang = "en_US";
+	}
+#else // WIN32
 	// Activating current locale settings
 	const char *locale = setlocale(LC_ALL, "");
 
@@ -69,6 +102,7 @@ TranslationManager::TranslationManager() {
 
 		_syslang = String(locale, length);
 	}
+#endif // WIN32
 #else // USE_DETECTLANG
 	_syslang = "C";
 #endif // USE_DETECTLANG
