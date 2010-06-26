@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	events/default/default-events.o \
 	events/samsungtv/samsungtv-events.o \
 	events/sdl/sdl-events.o \
+	events/symbiansdl/symbiansdl-events.o \
 	fs/abstract-fs.o \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
@@ -23,6 +24,7 @@ MODULE_OBJS := \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
 	graphics/sdl/sdl-graphics.o \
+	graphics/symbiansdl/symbiansdl-graphics.o \
 	keymapper/action.o \
 	keymapper/keymap.o \
 	keymapper/keymapper.o \
@@ -38,6 +40,7 @@ MODULE_OBJS := \
 	midi/windows.o \
 	mixer/bufferingsdl/bufferingsdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
+	mixer/symbiansdl/symbiansdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \

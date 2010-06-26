@@ -8,73 +8,39 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
-#ifndef PLATFORM_SDL_SYMBIAN_H
-#define PLATFORM_SDL_SYMBIAN_H
+#ifndef BACKENDS_MIXER_SYMBIAN_SDL_H
+#define BACKENDS_MIXER_SYMBIAN_SDL_H
 
-#include "backends/platform/sdl/sdl.h"
+#include "backends/mixer/sdl/sdl-mixer.h"
 
-class RFs;
-
-class OSystem_SDL_Symbian : public OSystem_SDL {
+class SymbianSdlMixerManager : public SdlMixerManager {
 public:
-	OSystem_SDL_Symbian();
-	~OSystem_SDL_Symbian();
+	SymbianSdlMixerManager();
+	~SymbianSdlMixerManager();
 
-	// Overloaded from OSystem_SDL
 	void init();
-	void initBackend();
-	void quit();
-	void engineInit();
-	void engineDone();
-	bool setGraphicsMode(const char *name);
-	Common::String getDefaultConfigFileName();
-
-	// Returns reference to File session
-	RFs& FsSession();
-
-	void quitWithErrorMsg(const char *msg);
-
-	// vibration support
-#ifdef USE_VIBRA_SE_PXXX
-	//
-	// Intialize the vibration api used if present and supported
-	//
-	void initializeVibration();
-
-	//
-	// Turn vibration on, repeat no time
-	// @param vibraLength number of repetitions
-	//
-	void vibrationOn(int vibraLength);
-
-	//
-	// Turns the vibration off
-	//
-	void vibrationOff();
 
 protected:
-	SonyEricsson::CVibration* _vibrationApi;
-#endif // USE_VIBRA_SE_PXXX
+	int _channels;
+	byte *_stereo_mix_buffer;
 
-protected:
-	// Used to intialized special game mappings
-	void checkMappings();
-
-	RFs* _RFs;
+	void callbackHandler(byte *samples, int len);
 };
 
 #endif
+
