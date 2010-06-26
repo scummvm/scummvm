@@ -34,10 +34,12 @@
 
 #include "backends/platform/gp2xwiz/gp2xwiz-loader.h"
 
+#define __WIZ_DEBUG_PLUGINS__
+
 #ifdef __WIZ_DEBUG_PLUGINS__
-#define DBG(x) printf(x, ## __VA_ARGS__)
+#define DBG(x,...) printf(x, ## __VA_ARGS__)
 #else
-#define DBG(x)
+#define DBG(x,...)
 #endif
 
 #define seterror(x,...) fprintf(stderr,x, ## __VA_ARGS__)
@@ -55,7 +57,7 @@ void DLObject::discard_symtab() {
 void DLObject::unload() {
 	discard_symtab();
 	free(_segment);
-	segment = NULL;
+	_segment = NULL;
 }
 
 /**
@@ -66,7 +68,7 @@ void DLObject::unload() {
  * @param size   	 Size of relocation section
  *
  */
-bool DLObject::relocate(int fd, unsigned long offset, unsigned long size) {
+bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rela *rela; //relocation entry
 
 	// Allocate memory for relocation table
@@ -93,15 +95,15 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size) {
 
 		//void *target = ???;
 
-		switch (/*relocation type*/) {
+	//	switch (/*relocation type*/) {
 		//case ??? :
 			//TODO: Cases for each relocation type.
 			//break;
-		default:
-			seterror("Unknown relocation type %d.", ?? ?);
+	//	default:
+			//seterror("Unknown relocation type %d.", ?? ?);
 			free(rela);
 			return false;
-		}
+	//	}
 
 	}
 
@@ -126,7 +128,7 @@ bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
 	if (read(fd, ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
 	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||			// Check MAGIC
 	        ehdr->e_type != ET_EXEC ||							// Check for executable
-	        ehdr->e_machine != EM_MIPS ||						// Check for ARM machine type TODO: change EM_MIPS to ??_ARM and add to ELF32.H (figure out what ??_ARM should be)
+	        ehdr->e_machine != EM_ARM ||						// Check for ARM machine type
 	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
 	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
 		seterror("Invalid file type.");
@@ -281,7 +283,7 @@ bool DLObject::loadStringTable(int fd, Elf32_Shdr *shdr) {
 
 void DLObject::relocateSymbols(Elf32_Addr offset) {
 
-	relocCount = 0;
+	int relocCount = 0;
 	DBG("Relocating symbols by %x\n", offset);
 
 	// Loop over symbols, add relocation offset
@@ -310,7 +312,7 @@ bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
 
 		if (curShdr->sh_type == SHT_REL && 						// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		    // Check for proper relocation size
+		        curShdr->sh_entsize == sizeof(Elf32_Rela) &&		    // Check for proper relocation size
 		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
 		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
@@ -331,7 +333,7 @@ bool DLObject::load(int fd) {
 	Elf32_Shdr *shdr;
 	bool ret = true;
 
-	int symtab_sect = -1;
+	//int symtab_sect = -1;
 
 	if (readElfHeader(fd, &ehdr) == false) {
 		return false;
@@ -375,10 +377,10 @@ bool DLObject::open(const char *path) {
 
 	DBG(("open(\"%s\")\n", path));
 
-	if ((fd = ::open(path, O_RDONLY)) < 0) {
+	/*if ((fd = ::open(path, O_RDONLY)) < 0) {
 		seterror("%s not found.", path);
 		return false;
-	}
+	} TODO: reimplement this "attempt to open" code */
 
 	// Try to load and relocate
 	if (!load(fd)) {
@@ -430,14 +432,14 @@ void *DLObject::symbol(const char *name) {
 	}
 
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
-	for (int c = symbol_cnt; c--; s++)
+	for (int c = _symbol_cnt; c--; s++)
 
 		//TODO: Figure out which symbols should be detected here
 		if ((s->st_info >> 4 == 1 || s->st_info >> 4 == 2) &&
-		        strtab[s->st_name] == '_' && !strcmp(name, strtab + s->st_name + 1)) {
+		        _strtab[s->st_name] == '_' && !strcmp(name, _strtab + s->st_name + 1)) {
 
 			// We found the symbol
-			DBG(("=> %p\n", (void*)s->st_value));
+			DBG("=> %p\n", (void*)s->st_value);
 			return (void*)s->st_value;
 		}
 

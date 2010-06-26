@@ -32,17 +32,29 @@
 
 class DLObject {
 	protected:
-		char *errbuf; /* For error messages, at least MAXDLERRLEN in size */
+		char *_errbuf; /* For error messages, at least MAXDLERRLEN in size */
 
 		void *_segment, *_symtab;
 		char *_strtab;
 		int _symbol_cnt;
+		int _symtab_sect;
 		void *_dtors_start, *_dtors_end;
+
+		int _segmentSize;
 
 		void seterror(const char *fmt, ...);
 		void unload();
-		bool relocate(int fd, unsigned long offset, unsigned long size);
+		bool relocate(int fd, unsigned long offset, unsigned long size, void *relSegment);
 		bool load(int fd);
+
+		bool readElfHeader(int fd, Elf32_Ehdr *ehdr);
+		bool readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+		bool loadSegment(int fd, Elf32_Phdr *phdr);
+		Elf32_Shdr *loadSectionHeaders(int fd, Elf32_Ehdr *ehdr);
+		int loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+		bool loadStringTable(int fd, Elf32_Shdr *shdr);
+		void relocateSymbols(Elf32_Addr offset);
+		bool relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 	public:
 		bool open(const char *path);
@@ -50,7 +62,7 @@ class DLObject {
 		void *symbol(const char *name);
 		void discard_symtab();
 
-		DLObject(char *errbuf = NULL) : errbuf(_errbuf), _segment(NULL),_symtab(NULL),
+		DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL),_symtab(NULL),
 				_strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
 };
 

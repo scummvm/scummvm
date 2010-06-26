@@ -175,8 +175,8 @@ typedef struct {
 } Elf32_Rela;
 
 // Access macros for the relocation info
-#define REL_TYPE(x)		((unsigned char) (x))	/* Extract relocation type */
-#define REL_INDEX(x)	((x)>>8)				/* Extract relocation index into symbol table */
+#define REL_TYPE(x)	((unsigned char) (x))	/* Extract relocation type */
+#define REL_INDEX(x)	((x)>>8)		/* Extract relocation index into symbol table */
 
 // ARM relocation types
 #define R_ARM_NONE			0
