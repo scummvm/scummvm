@@ -175,8 +175,10 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
+	DCmd_Register("bl",					WRAP_METHOD(Console, cmdBreakpointList));			// alias
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
 	DCmd_Register("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
+	DCmd_Register("bc",					WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
 	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointExecMethod));		// alias
 	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
@@ -391,8 +393,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" go - Executes the script\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
-	DebugPrintf(" bp_list / bplist - Lists the current breakpoints\n");
-	DebugPrintf(" bp_del / bpdel - Deletes a breakpoint with the specified index\n");
+	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
+	DebugPrintf(" bp_del / bpdel / bc - Deletes a breakpoint with the specified index\n");
 	DebugPrintf(" bp_exec_method / bpx - Sets a breakpoint on the execution of the specified method\n");
 	DebugPrintf(" bp_exec_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
@@ -2669,6 +2671,9 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 		i++;
 	}
 
+	if (!i)
+		DebugPrintf("  No breakpoints defined.\n");
+
 	return true;
 }
 
@@ -2676,6 +2681,13 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Deletes a breakpoint with the specified index.\n");
 		DebugPrintf("Usage: %s <breakpoint index>\n", argv[0]);
+		DebugPrintf("<index> * will remove all breakpoints\n");
+		return true;
+	}
+
+	if (strcmp(argv[1], "*") == 0) {
+		g_debugState._breakpoints.clear();
+		g_debugState._activeBreakpointTypes = 0;
 		return true;
 	}
 
