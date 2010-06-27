@@ -7,30 +7,28 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-26 20:02+0200\n"
-"PO-Revision-Date: 2010-06-19 23:43+0100\n"
+"POT-Creation-Date: 2010-06-27 17:48+0100\n"
+"PO-Revision-Date: 2010-06-27 17:47+0100\n"
 "Last-Translator: Thierry Crozat <criezy@scummvm.org>\n"
 "Language-Team: French <scummvm-devel@lists.sf.net>\n"
-"Language: Francais\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: Francais\n"
 "Plural-Forms: nplurals=2; plural=n>1;\n"
 
 #: gui/about.cpp:96
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s)"
-msgstr "C2(compilé sur"
+msgstr "(compilé sur %s)"
 
 #: gui/about.cpp:103
-#, fuzzy
 msgid "Features compiled in:"
-msgstr "C1Options incluses:"
+msgstr "Options incluses:"
 
 #: gui/about.cpp:112
-#, fuzzy
 msgid "Available engines:"
-msgstr "C1Moteurs disponibles:"
+msgstr "Moteurs disponibles:"
 
 #: gui/browser.cpp:69
 msgid "Go up"
@@ -164,7 +162,7 @@ msgstr "GFX"
 
 #: gui/launcher.cpp:206
 msgid "Override global graphic settings"
-msgstr "Utiliser des réglages graphiques spécifique à ce jeux"
+msgstr "Utiliser des réglages graphiques spécifiques à ce jeux"
 
 #: gui/launcher.cpp:213 gui/options.cpp:890
 msgid "Audio"
@@ -172,7 +170,7 @@ msgstr "Audio"
 
 #: gui/launcher.cpp:215
 msgid "Override global audio settings"
-msgstr "Utiliser des réglages audio spécifique à ce jeux"
+msgstr "Utiliser des réglages audio spécifiques à ce jeux"
 
 #: gui/launcher.cpp:223 gui/options.cpp:894
 msgid "Volume"
@@ -180,7 +178,7 @@ msgstr "Volume"
 
 #: gui/launcher.cpp:225
 msgid "Override global volume settings"
-msgstr "Utiliser des réglages de volume sonore spécifique à ce jeux"
+msgstr "Utiliser des réglages de volume sonore spécifiques à ce jeux"
 
 #: gui/launcher.cpp:232 gui/options.cpp:902
 msgid "MIDI"
@@ -188,7 +186,7 @@ msgstr "MIDI"
 
 #: gui/launcher.cpp:234
 msgid "Override global MIDI settings"
-msgstr "Utiliser des réglages MIDI spécifique à ce jeux"
+msgstr "Utiliser des réglages MIDI spécifiques à ce jeux"
 
 #: gui/launcher.cpp:244 gui/options.cpp:908
 msgid "Paths"
@@ -483,12 +481,13 @@ msgstr "Corrige le rapport d'aspect pour les jeu 320x200"
 
 #: gui/options.cpp:651
 msgid "Preferred Device:"
-msgstr ""
+msgstr "Périphérique Préféré:"
 
 #: gui/options.cpp:651
-#, fuzzy
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte audio"
+msgstr ""
+"Spécifie le périphérique de sortie audio ou l'émulateur de carte audio "
+"préféré"
 
 #: gui/options.cpp:652
 msgid "Specifies output sound device or sound card emulator"
@@ -496,20 +495,21 @@ msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte audio"
 
 #: gui/options.cpp:654
 msgid "MT32 Device:"
-msgstr ""
+msgstr "Périphérique MT32:"
 
 #: gui/options.cpp:654
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
+"Spécifie le périphérique audio par défaut pour la sortie Roland MT-32/LAPC1/"
+"CM32l/CM64"
 
 #: gui/options.cpp:656
 msgid "GM Device:"
-msgstr ""
+msgstr "Périphérique GM:"
 
 #: gui/options.cpp:656
-#, fuzzy
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Spécifie le périphérique de sortie audio ou l'émulateur de carte audio"
+msgstr "Spécifie le périphérique audio par défaut pour la sortie General MIDI"
 
 #: gui/options.cpp:688
 msgid "AdLib emulator:"
@@ -840,11 +840,11 @@ msgstr "Erreur inconnue"
 
 #: common/util.cpp:254
 msgid "Hercules Green"
-msgstr ""
+msgstr "Hercules Vert"
 
 #: common/util.cpp:255
 msgid "Hercules Amber"
-msgstr ""
+msgstr "Hercules Ambre"
 
 #: engines/dialogs.cpp:89
 msgid "~R~esume"
@@ -922,52 +922,44 @@ msgid "~T~ransitions Enabled"
 msgstr "T~r~ansitions activé"
 
 #: engines/mohawk/dialogs.cpp:116
-#, fuzzy
 msgid "~W~ater Effect Enabled"
-msgstr "~E~ffets de l'Eau activés"
+msgstr "~E~ffets de l'Eau Activés"
 
 #: sound/fmopl.cpp:51
-#, fuzzy
 msgid "MAME OPL emulator"
-msgstr "Émulateur AdLib:"
+msgstr "Émulateur MAME OPL"
 
 #: sound/fmopl.cpp:53
 msgid "DOSBox OPL emulator"
-msgstr ""
+msgstr "Émulateur DOSBox OPL"
 
 #: sound/null.h:45
 msgid "No music"
 msgstr "Pas de musique"
 
 #: sound/softsynth/adlib.cpp:1590
-#, fuzzy
 msgid "AdLib Emulator"
-msgstr "Émulateur AdLib:"
+msgstr "Émulateur AdLib"
 
 #: sound/softsynth/mt32.cpp:327
-#, fuzzy
 msgid "Initialising MT-32 Emulator"
-msgstr "Initialisation du réseau"
+msgstr "Initialisation de l'Émulateur MT-32"
 
 #: sound/softsynth/mt32.cpp:541
-#, fuzzy
 msgid "MT-32 Emulator"
-msgstr "Émulation MT-32"
+msgstr "Émulateur MT-32"
 
 #: sound/softsynth/pcspk.cpp:142
-#, fuzzy
 msgid "PC Speaker Emulator"
-msgstr "Haut Parleur PC"
+msgstr "Émulateur Haut Parleur PC"
 
 #: sound/softsynth/pcspk.cpp:161
-#, fuzzy
 msgid "IBM PCjr Emulator"
-msgstr "FM Towns"
+msgstr "Émulateur IBM PCjr"
 
 #: sound/softsynth/ym2612.cpp:762
-#, fuzzy
 msgid "FM Towns Emulator"
-msgstr "FM Towns"
+msgstr "Émulateur FM Towns"
 
 #: backends/keymapper/remap-dialog.cpp:49
 msgid "Keymap:"
@@ -985,7 +977,7 @@ msgstr "(Global)"
 msgid " (Game)"
 msgstr "(Jeu)"
 
-#: backends/midi/windows.cpp:156
+#: backends/midi/windows.cpp:157
 msgid "Windows MIDI"
 msgstr "MIDI Windows"
 
@@ -1073,7 +1065,7 @@ msgstr "Mode touchpad désactivé"
 #: backends/platform/wince/wince-sdl.cpp:111
 #: backends/platform/wince/wince-sdl.cpp:118
 msgid "Normal (no scaling)"
-msgstr ""
+msgstr "Normal (échelle d'origine)"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:41
 #: backends/platform/wince/CEActionsSmartphone.cpp:38
@@ -1115,11 +1107,11 @@ msgstr "Zone"
 #: backends/platform/wince/CEActionsPocket.cpp:53
 #: backends/platform/wince/CEActionsSmartphone.cpp:47
 msgid "Multi Function"
-msgstr ""
+msgstr "Fonction Multiple"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:51
 msgid "Swap character"
-msgstr ""
+msgstr "Changement de personnage"
 
 #: backends/platform/symbian/src/SymbianActions.cpp:52
 msgid "Skip text"
@@ -1171,11 +1163,11 @@ msgstr "Coup double"
 
 #: backends/platform/wii/options.cpp:60
 msgid "Horizontal underscan:"
-msgstr ""
+msgstr "Underscan horizontal:"
 
 #: backends/platform/wii/options.cpp:66
 msgid "Vertical underscan:"
-msgstr ""
+msgstr "Underscan vertical:"
 
 #: backends/platform/wii/options.cpp:71
 msgid "Input"
@@ -1313,16 +1305,19 @@ msgid "Show/Hide Cursor"
 msgstr "Afficher/Cacher le curseur"
 
 #: backends/platform/wince/CEActionsPocket.cpp:50
+#, fuzzy
 msgid "Free look"
-msgstr ""
+msgstr "Regarder autour"
 
 #: backends/platform/wince/CEActionsPocket.cpp:51
+#, fuzzy
 msgid "Zoom up"
-msgstr ""
+msgstr "Dézoomer"
 
 #: backends/platform/wince/CEActionsPocket.cpp:52
+#, fuzzy
 msgid "Zoom down"
-msgstr ""
+msgstr "Zoomer"
 
 #: backends/platform/wince/CEActionsPocket.cpp:54
 #: backends/platform/wince/CEActionsSmartphone.cpp:48
@@ -1404,8 +1399,8 @@ msgstr "Voulez-vous exécuter une recherche automatique?"
 
 #~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
 #~ msgstr ""
-#~ "Le plugin %s a échoué dans l'instanciation du moteur de jeu: %s (cible "
-#~ "'%s', chemin '%s')"
+#~ "Le plugin %s a échoué dans l'instanciation du moteur de jeu: %s (cible '%"
+#~ "s', chemin '%s')"
 
 #~ msgid "Ok"
 #~ msgstr "Ok"
