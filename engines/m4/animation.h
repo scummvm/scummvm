@@ -40,12 +40,12 @@ class SpriteSlotSubset;
 class AnimMessage {
 public:
 	int16 soundId;
-	char msg[70];
+	char msg[64];
 	Common::Point pos;
 	RGB8 rgb1, rgb2;
-	int kernelMsgIndex;
-
+	uint16 flags;
 	int startFrame, endFrame;
+	int kernelMsgIndex;
 };
 
 class AnimFrameEntry {
