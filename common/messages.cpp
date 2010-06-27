@@ -323,7 +323,7 @@ struct PoMessageEntry {
 };
 
 static const PoMessageEntry _translation_ru_RU[] = {
-	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2010-06-13 20:55+0300\nLast-Translator: Eugene Sandulenko <sev@scummvm.org>\nLanguage-Team: Russian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-5\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n" },
+	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2010-06-13 20:55+0300\nLast-Translator: Eugene Sandulenko <sev@scummvm.org>\nLanguage-Team: Russian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-5\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n" },
 	{ 1, "   \262\353 \343\322\325\340\325\335\353, \347\342\336 \345\336\342\330\342\325 \322\353\331\342\330?   " },
 	{ 2, " (\260\332\342\330\322\335\320\357)" },
 	{ 3, " (\270\323\340\353)" },
@@ -640,7 +640,7 @@ static const PoMessageEntry _translation_ru_RU[] = {
 };
 
 static const PoMessageEntry _translation_fr_FR[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2010-06-27 17:47+0100\nLast-Translator: Thierry Crozat <criezy@scummvm.org>\nLanguage-Team: French <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Francais\nPlural-Forms: nplurals=2; plural=n>1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2010-06-27 17:47+0100\nLast-Translator: Thierry Crozat <criezy@scummvm.org>\nLanguage-Team: French <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Francais\nPlural-Forms: nplurals=2; plural=n>1;\n" },
 	{ 1, "Voulez-vous vraiment quitter?" },
 	{ 2, "(Actif)" },
 	{ 3, "(Jeu)" },
@@ -957,7 +957,7 @@ static const PoMessageEntry _translation_fr_FR[] = {
 };
 
 static const PoMessageEntry _translation_it_IT[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2010-06-27 18:20+0100\nLast-Translator: Maff <matteo.maff at gmail dot com>\nLanguage-Team: Italian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Italiano\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2010-06-27 18:20+0100\nLast-Translator: Maff <matteo.maff at gmail dot com>\nLanguage-Team: Italian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Italiano\n" },
 	{ 1, "   Sei sicuro di voler uscire?   " },
 	{ 2, " (Attivo)" },
 	{ 3, " (Gioco)" },
@@ -1274,7 +1274,7 @@ static const PoMessageEntry _translation_it_IT[] = {
 };
 
 static const PoMessageEntry _translation_ca_ES[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2010-06-26 16:45+0100\nLast-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\nLanguage-Team: Catalan <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Catalan\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2010-06-26 16:45+0100\nLast-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\nLanguage-Team: Catalan <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Catalan\n" },
 	{ 2, " (Actiu)" },
 	{ 3, " (Joc)" },
 	{ 4, " (Global)" },
@@ -1585,7 +1585,7 @@ static const PoMessageEntry _translation_ca_ES[] = {
 };
 
 static const PoMessageEntry _translation_hu_HU[] = {
-	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2009-11-25 07:42-0500\nLast-Translator: Alex Bevilacqua <alexbevi@gmail.com>\nLanguage-Team: Hungarian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1250\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=2; plural=(n != 1);\n" },
+	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2009-11-25 07:42-0500\nLast-Translator: Alex Bevilacqua <alexbevi@gmail.com>\nLanguage-Team: Hungarian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1250\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=2; plural=(n != 1);\n" },
 	{ 14, "<alap\351rtelmezett>" },
 	{ 16, "AdLib vezet :" },
 	{ 17, "AdLib vezet :" },
@@ -1642,7 +1642,7 @@ static const PoMessageEntry _translation_hu_HU[] = {
 };
 
 static const PoMessageEntry _translation_de_DE[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:31+0300\nPO-Revision-Date: 2010-06-23 19:30+0100\nLast-Translator: \nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-06-27 23:36+0300\nPO-Revision-Date: 2010-06-23 19:30+0100\nLast-Translator: \nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
 	{ 1, "   M\366chten Sie wirklich beenden?    " },
 	{ 2, " (Aktiv)" },
 	{ 3, " (Spiel)" },
