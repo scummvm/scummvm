@@ -345,7 +345,7 @@ void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg)
 
 		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
 			reg.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-			int superclass = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
+			int16 superclass = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
 
 			if (superclass >= 0) {
 				int superclass_script = segMan->getClass(superclass).script;
