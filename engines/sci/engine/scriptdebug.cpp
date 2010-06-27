@@ -278,23 +278,6 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 
 void script_debug(EngineState *s) {
-	// Do we support a separate console?
-
-#if 0
-	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
-		printf("%d: acc=%04x:%04x  ", scriptStepCounter, PRINT_REG(s->r_acc));
-		disassemble(s, s->xs->addr.pc, 0, 1);
-		if (s->seeking == kDebugSeekGlobal)
-			printf("Global %d (0x%x) = %04x:%04x\n", s->seekSpecial,
-			          s->seekSpecial, PRINT_REG(s->script_000->_localsBlock->_locals[s->seekSpecial]));
-	}
-#endif
-
-#if 0
-	if (!g_debugState.debugging)
-		return;
-#endif
-
 	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
 		if (g_debugState.seeking == kDebugSeekStepOver) {
 			// are we above seek-level? resume then

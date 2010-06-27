@@ -384,50 +384,6 @@ void SfxState::thawTime() {
 	}
 }
 
-#if 0
-// Unreferenced - removed
-static void _dump_playing_list(SfxState *self, char *msg) {
-	Song *song = self->_song;
-
-	fprintf(stderr, "[] Song list : [ ");
-	song = *(self->_songlib.lib);
-	while (song) {
-		fprintf(stderr, "%08lx:%d ", song->handle, song->_status);
-		song = song->_nextPlaying;
-	}
-	fprintf(stderr, "]\n");
-
-	fprintf(stderr, "[] Play list (%s) : [ " , msg);
-
-	while (song) {
-		fprintf(stderr, "%08lx ", song->handle);
-		song = song->_nextPlaying;
-	}
-
-	fprintf(stderr, "]\n");
-}
-#endif
-
-#if 0
-static void _dump_songs(SfxState *self) {
-	Song *song = self->_song;
-
-	fprintf(stderr, "Cue iterators:\n");
-	song = *(self->_songlib.lib);
-	while (song) {
-		fprintf(stderr, "  **\tHandle %08x (p%d): status %d\n",
-		        song->handle, song->_priority, song->_status);
-		SIMSG_SEND(song->_it, SIMSG_PRINT(1));
-		song = song->_next;
-	}
-
-	if (self->_player) {
-		fprintf(stderr, "Audio iterator:\n");
-		self->_player->iterator_message(SongIterator::Message(0, SIMSG_PRINT(1)));
-	}
-}
-#endif
-
 bool SfxState::isPlaying(Song *song) {
 	Song *playing_song = _song;
 

@@ -187,20 +187,6 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 	midi_channel = cmd & 0xf;
 	paramsleft = MIDI_cmdlen[midi_op];
 
-#if 0
-	if (1) {
-		fprintf(stderr, "[IT]: off=%x, cmd=%02x, takes %d args ",
-		        channel->offset - 1, cmd, paramsleft);
-		fprintf(stderr, "[%02x %02x <%02x> %02x %02x %02x]\n",
-		        _data[channel->offset-3],
-		        _data[channel->offset-2],
-		        _data[channel->offset-1],
-		        _data[channel->offset],
-		        _data[channel->offset+1],
-		        _data[channel->offset+2]);
-	}
-#endif
-
 	buf[0] = cmd;
 
 
@@ -285,25 +271,6 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 
 		case SCI_MIDI_SET_POLYPHONY:
 			_polyphony[midi_channel] = buf[2];
-
-#if 0
-			{
-				Sci1SongIterator *self1 = (Sci1SongIterator *)this;
-				int i;
-				int voices = 0;
-				for (i = 0; i < self1->_numChannels; i++) {
-					voices += _polyphony[i];
-				}
-
-				printf("SET_POLYPHONY(%d, %d) for a total of %d voices\n", midi_channel, buf[2], voices);
-				printf("[iterator] DEBUG: Polyphony = [ ");
-				for (i = 0; i < self1->_numChannels; i++)
-					printf("%d ", _polyphony[i]);
-				printf("]\n");
-				printf("[iterator] DEBUG: Importance = [ ");
-				printf("]\n");
-			}
-#endif
 			break;
 
 		case SCI_MIDI_SET_REVERB:
@@ -359,18 +326,6 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 		return 0;
 
 	} else {
-#if 0
-		/* Perform remapping, if neccessary */
-		if (cmd != SCI_MIDI_SET_SIGNAL
-				&& cmd < 0xf0) { /* Not a generic command */
-			int chan = cmd & 0xf;
-			int op = cmd & 0xf0;
-
-			chan = channel_remap[chan];
-			buf[0] = chan | op;
-		}
-#endif
-
 		/* Process as normal MIDI operation */
 		return 0;
 	}

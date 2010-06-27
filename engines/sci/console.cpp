@@ -285,14 +285,6 @@ void Console::postEnter() {
 	}
 }
 
-
-#if 0
-// Unused
-#define LOOKUP_SPECIES(species) (\
-	(species >= 1000) ? species : *(s->_classTable[species].scriptposp) \
-		+ s->_classTable[species].class_offset)
-#endif
-
 bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("Variables\n");
