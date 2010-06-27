@@ -120,7 +120,8 @@ private:
 	bool cmdDissectScript(int argc, const char **argv);
 	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
-	bool cmdStep(int argc, const char **argv);
+	bool cmdTrace(int argc, const char **argv);
+	bool cmdStepOver(int argc, const char **argv);
 	bool cmdStepEvent(int argc, const char **argv);
 	bool cmdStepRet(int argc, const char **argv);
 	bool cmdStepGlobal(int argc, const char **argv);

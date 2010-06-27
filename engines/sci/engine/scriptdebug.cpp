@@ -296,55 +296,59 @@ void script_debug(EngineState *s) {
 #endif
 
 	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
-		SegmentObj *mobj = s->_segMan->getSegment(s->xs->addr.pc.segment, SEG_TYPE_SCRIPT);
-
-		if (mobj) {
-			Script *scr = (Script *)mobj;
-			byte *code_buf = scr->_buf;
-			int code_buf_size = scr->getBufSize();
-			int opcode = s->xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset];
-			int op = opcode >> 1;
-			int paramb1 = s->xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 : (s->xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + s->xs->addr.pc.offset + 1));
-
-			switch (g_debugState.seeking) {
-			case kDebugSeekSpecialCallk:
-				if (paramb1 != g_debugState.seekSpecial)
-					return;
-
-			case kDebugSeekCallk:
-				if (op != op_callk)
-					return;
-				break;
-
-			case kDebugSeekLevelRet:
-				if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
-					return;
-				break;
-
-			case kDebugSeekGlobal:
-				if (op < op_sag)
-					return;
-				if ((op & 0x3) > 1)
-					return; // param or temp
-				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
-					return; // locals and not running in script.000
-				if (paramf1 != g_debugState.seekSpecial)
-					return; // CORRECT global?
-				break;
-
-			case kDebugSeekSO:
-				// FIXME: Unhandled?
-				break;
-
-			case kDebugSeekNothing:
-				// We seek nothing, so just continue
-				break;
-			}
-
+		if (g_debugState.seeking == kDebugSeekStepOver) {
+			// are we above seek-level? resume then
+			if (g_debugState.seekLevel < (int)s->_executionStack.size())
+				return;
 			g_debugState.seeking = kDebugSeekNothing;
-			// OK, found whatever we were looking for
 		}
+
+		if (g_debugState.seeking != kDebugSeekNothing) {
+			SegmentObj *mobj = s->_segMan->getSegment(s->xs->addr.pc.segment, SEG_TYPE_SCRIPT);
+
+			if (mobj) {
+				Script *scr = (Script *)mobj;
+				byte *code_buf = scr->_buf;
+				int code_buf_size = scr->getBufSize();
+				int opcode = s->xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset];
+				int op = opcode >> 1;
+				int paramb1 = s->xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset + 1];
+				int paramf1 = (opcode & 1) ? paramb1 : (s->xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + s->xs->addr.pc.offset + 1));
+
+				switch (g_debugState.seeking) {
+				case kDebugSeekSpecialCallk:
+					if (paramb1 != g_debugState.seekSpecial)
+						return;
+
+				case kDebugSeekCallk:
+					if (op != op_callk)
+						return;
+					break;
+
+				case kDebugSeekLevelRet:
+					if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
+						return;
+					break;
+
+				case kDebugSeekGlobal:
+					if (op < op_sag)
+						return;
+					if ((op & 0x3) > 1)
+						return; // param or temp
+					if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
+						return; // locals and not running in script.000
+					if (paramf1 != g_debugState.seekSpecial)
+						return; // CORRECT global?
+					break;
+
+				default:
+					break;
+				}
+
+				g_debugState.seeking = kDebugSeekNothing;
+			}
+		}
+		// OK, found whatever we were looking for
 	}
 
 	printf("Step #%d\n", s->scriptStepCounter);

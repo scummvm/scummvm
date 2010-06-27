@@ -156,12 +156,15 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
 	DCmd_Register("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
-	DCmd_Register("step",				WRAP_METHOD(Console, cmdStep));
-	DCmd_Register("s",					WRAP_METHOD(Console, cmdStep));			// alias
+	DCmd_Register("trace",				WRAP_METHOD(Console, cmdTrace));
+	DCmd_Register("t",					WRAP_METHOD(Console, cmdTrace));		// alias
+	DCmd_Register("s",					WRAP_METHOD(Console, cmdTrace));		// alias
+	DCmd_Register("stepover",			WRAP_METHOD(Console, cmdStepOver));
+	DCmd_Register("p",					WRAP_METHOD(Console, cmdStepOver));		// alias
+	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
+	DCmd_Register("pret",				WRAP_METHOD(Console, cmdStepRet));		// alias
 	DCmd_Register("step_event",			WRAP_METHOD(Console, cmdStepEvent));
 	DCmd_Register("se",					WRAP_METHOD(Console, cmdStepEvent));	// alias
-	DCmd_Register("step_ret",			WRAP_METHOD(Console, cmdStepRet));
-	DCmd_Register("sret",				WRAP_METHOD(Console, cmdStepRet));		// alias
 	DCmd_Register("step_global",		WRAP_METHOD(Console, cmdStepGlobal));
 	DCmd_Register("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
 	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
@@ -378,9 +381,10 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" dissect_script - Examines a script\n");
 	DebugPrintf(" set_acc - Sets the accumulator\n");
 	DebugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
-	DebugPrintf(" step / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
+	DebugPrintf(" trace / t / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
+	DebugPrintf(" stepover / p - Executes one operation, skips over call/send\n");
+	DebugPrintf(" step_ret / pret - Steps forward until ret is called on the current execution stack level.\n");
 	DebugPrintf(" step_event / se - Steps forward until a SCI event is received.\n");
-	DebugPrintf(" step_ret / sret - Steps forward until ret is called on the current execution stack level.\n");
 	DebugPrintf(" step_global / sg - Steps until the global variable with the specified index is modified.\n");
 	DebugPrintf(" step_callk / snk - Steps forward until it hits the next callk operation, or a specific callk (specified as a parameter)\n");
 	DebugPrintf(" disasm - Disassembles a method by name\n");
@@ -2405,9 +2409,17 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdStep(int argc, const char **argv) {
+bool Console::cmdTrace(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0)
 		g_debugState.runningStep = atoi(argv[1]) - 1;
+	g_debugState.debugging = true;
+
+	return false;
+}
+
+bool Console::cmdStepOver(int argc, const char **argv) {
+	g_debugState.seeking = kDebugSeekStepOver;
+	g_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
 	g_debugState.debugging = true;
 
 	return false;
