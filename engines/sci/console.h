@@ -118,7 +118,6 @@ private:
 	bool cmdAddresses(int argc, const char **argv);
 	bool cmdRegisters(int argc, const char **argv);
 	bool cmdDissectScript(int argc, const char **argv);
-	bool cmdSetAccumulator(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdTrace(int argc, const char **argv);
 	bool cmdStepOver(int argc, const char **argv);

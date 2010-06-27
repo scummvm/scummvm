@@ -153,7 +153,6 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("addresses",			WRAP_METHOD(Console, cmdAddresses));
 	DCmd_Register("registers",			WRAP_METHOD(Console, cmdRegisters));
 	DCmd_Register("dissect_script",		WRAP_METHOD(Console, cmdDissectScript));
-	DCmd_Register("set_acc",			WRAP_METHOD(Console, cmdSetAccumulator));
 	DCmd_Register("backtrace",			WRAP_METHOD(Console, cmdBacktrace));
 	DCmd_Register("bt",					WRAP_METHOD(Console, cmdBacktrace));	// alias
 	DCmd_Register("trace",				WRAP_METHOD(Console, cmdTrace));
@@ -379,7 +378,6 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" addresses - Provides information on how to pass addresses\n");
 	DebugPrintf(" registers - Shows the current register values\n");
 	DebugPrintf(" dissect_script - Examines a script\n");
-	DebugPrintf(" set_acc - Sets the accumulator\n");
 	DebugPrintf(" backtrace / bt - Dumps the send/self/super/call/calle/callb stack\n");
 	DebugPrintf(" trace / t / s - Executes one operation (no parameters) or several operations (specified as a parameter) \n");
 	DebugPrintf(" stepover / p - Executes one operation, skips over call/send\n");
@@ -2319,27 +2317,6 @@ bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 
 bool Console::cmdScriptSteps(int argc, const char **argv) {
 	DebugPrintf("Number of executed SCI operations: %d\n", _engine->_gamestate->scriptStepCounter);
-	return true;
-}
-
-bool Console::cmdSetAccumulator(int argc, const char **argv) {
-	if (argc != 2) {
-		DebugPrintf("Sets the accumulator.\n");
-		DebugPrintf("Usage: %s <address>\n", argv[0]);
-		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
-		return true;
-	}
-
-	reg_t val;
-
-	if (parse_reg_t(_engine->_gamestate, argv[1], &val, false)) {
-		DebugPrintf("Invalid address passed.\n");
-		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
-		return true;
-	}
-
-	_engine->_gamestate->r_acc = val;
-
 	return true;
 }
 
