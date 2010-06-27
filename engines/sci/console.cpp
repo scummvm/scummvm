@@ -3237,7 +3237,7 @@ void Console::printBasicVarInfo(reg_t variable) {
 		DebugPrintf(" (list)");
 		break;
 	default:
-		DebugPrintf(" (???)");
+		DebugPrintf(" (??\?)");
 	}
 }
 
