@@ -199,7 +199,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_FREDDYPHARKAS,  24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  31,            "quitWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
 	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
-	{ GID_LSL6,          928,                  "*", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions (actually Narrator::startText)
+	{ GID_LSL6,          928,           "Narrator", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
 	{ GID_KQ5,             0,                   "", "export 29",      -1,    3,   0 }, // called when playing harp for the harpies, is used for kDoAudio
@@ -248,16 +248,25 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			}
 
 			// Search if this is a known uninitialized read
-			const UninitializedReadWorkaround *workaround = uninitializedReadWorkarounds;
-			while (workaround->objectName) {
-				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && ((workaround->objectName == curObjectName) || (*workaround->objectName == '*'))
-						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->localCallOffset && workaround->index == index) {
-					// Workaround found
-					r[index] = make_reg(0, workaround->newValue);
-					return r[index];
+			const UninitializedReadWorkaround *workaround;
+			Common::String searchObjectName = curObjectName;
+			reg_t searchObject = lastCall->sendp;
+			do {
+				workaround = uninitializedReadWorkarounds;
+				while (workaround->objectName) {
+					if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->objectName == searchObjectName)
+							&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->localCallOffset && workaround->index == index) {
+						// Workaround found
+						r[index] = make_reg(0, workaround->newValue);
+						return r[index];
+					}
+					workaround++;
 				}
-				workaround++;
-			}
+				// Go back to the parent
+				searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
+				if (!searchObject.isNull())
+					searchObjectName = state->_segMan->getObjectName(searchObject);
+			} while (!searchObject.isNull()); // no parent left?
 			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->localCallOffset);
 		}
 		return r[index];
