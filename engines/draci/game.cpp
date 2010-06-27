@@ -174,8 +174,17 @@ void Game::start() {
 
 		// Call the outer loop doing all the hard job.
 		loop(kOuterLoop, false);
-	}
 
+		if (!isReloaded()) {
+			// We are changing location.  Run the hero's LOOK
+			// program to trigger a possible cut-scene.  This is
+			// the behavior of the original game player, whose
+			// intention was to run the cut sequences after the
+			// certain location change.
+			const GameObject *dragon = getObject(kDragonObject);
+			_vm->_script->run(dragon->_program, dragon->_look);
+		}
+	}
 }
 
 void Game::init() {
