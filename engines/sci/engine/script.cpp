@@ -384,34 +384,31 @@ SegmentRef Script::dereference(reg_t pointer) {
 	return ret;
 }
 
-void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
-	Script *scr = getScript(segmentId);
-
-	LocalVariables *locals = allocLocalsSegment(scr);
+void Script::initialiseLocals(SegManager *segMan) {
+	LocalVariables *locals = segMan->allocLocalsSegment(this);
 	if (locals) {
 		if (getSciVersion() > SCI_VERSION_0_EARLY) {
-			const byte *base = (const byte *)(scr->_buf + scr->getLocalsOffset());
+			const byte *base = (const byte *)(_buf + getLocalsOffset());
 
-			for (uint16 i = 0; i < scr->getLocalsCount(); i++)
+			for (uint16 i = 0; i < getLocalsCount(); i++)
 				locals->_locals[i] = make_reg(0, READ_SCI11ENDIAN_UINT16(base + i * 2));
 		} else {
 			// In SCI0 early, locals are set at run time, thus zero them all here
-			for (uint16 i = 0; i < scr->getLocalsCount(); i++)
+			for (uint16 i = 0; i < getLocalsCount(); i++)
 				locals->_locals[i] = NULL_REG;
 		}
 	}
 }
 
-void SegManager::scriptInitialiseClasses(SegmentId seg) {
-	Script *scr = getScript(seg);
+void Script::initialiseClasses(SegManager *segMan) {
 	const byte *seeker = 0;
 	uint16 mult = 0;
 	
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+		seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
 		mult = 2;
 	} else {
-		seeker = scr->findBlock(SCI_OBJ_CLASS);
+		seeker = findBlock(SCI_OBJ_CLASS);
 		mult = 1;
 	}
 
@@ -422,7 +419,7 @@ void SegManager::scriptInitialiseClasses(SegmentId seg) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
 		uint16 marker = READ_SCI11ENDIAN_UINT16(seeker);
 		bool isClass;
-		uint16 classpos = seeker - scr->_buf;
+		uint16 classpos = seeker - _buf;
 		int16 species;
 
 		if (!marker)
@@ -439,24 +436,25 @@ void SegManager::scriptInitialiseClasses(SegmentId seg) {
 
 		if (isClass) {
 			// WORKAROUND for an invalid species access in the demo of LSL2
-			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)classTableSize())
-				resizeClassTable(classTableSize() + 1);
+			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
-			if (species < 0 || species >= (int)classTableSize())
+			if (species < 0 || species >= (int)segMan->classTableSize())
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
-						  species, species, classTableSize(), scr->_nr);
+						  species, species, segMan->classTableSize(), _nr);
 
-			setClassOffset(species, make_reg(seg, classpos));
+			SegmentId segmentId = segMan->getScriptSegment(_nr);
+			segMan->setClassOffset(species, make_reg(segmentId, classpos));
 		}
 
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * mult;
 	}
 }
 
-void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
-	Script *scr = getScript(seg);
+void Script::initialiseObjectsSci0(SegManager *segMan) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	const byte *seeker = scr->_buf + (oldScriptHeader ? 2 : 0);
+	const byte *seeker = _buf + (oldScriptHeader ? 2 : 0);
+	SegmentId segmentId = segMan->getScriptSegment(_nr);
 
 	do {
 		uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
@@ -467,14 +465,14 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS:
 			{
-				reg_t addr = make_reg(seg, seeker - scr->_buf + 4);
-				Object *obj = scr->scriptObjInit(addr);
-				obj->initSpecies(this, addr);
+				reg_t addr = make_reg(segmentId, seeker - _buf + 4);
+				Object *obj = scriptObjInit(addr);
+				obj->initSpecies(segMan, addr);
 
-				if (!obj->initBaseObject(this, addr)) {
+				if (!obj->initBaseObject(segMan, addr)) {
 					// Script 202 of KQ5 French has an invalid object. This is non-fatal.
 					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-					scr->scriptObjRemove(addr);
+					scriptObjRemove(addr);
 				}
 			}
 			break;
@@ -484,20 +482,20 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 		}
 
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
-	} while ((uint32)(seeker - scr->_buf) < scr->getScriptSize() - 2);
+	} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
 }
 
-void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
-	Script *scr = getScript(seg);
-	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+void Script::initialiseObjectsSci11(SegManager *segMan) {
+	const byte *seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
+	SegmentId segmentId = segMan->getScriptSegment(_nr);
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		reg_t reg = make_reg(seg, seeker - scr->_buf);
-		Object *obj = scr->scriptObjInit(reg);
+		reg_t reg = make_reg(segmentId, seeker - _buf);
+		Object *obj = scriptObjInit(reg);
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
+			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
 
 		// If object is instance, get -propDict- from class and set it for this object
 		//  This is needed for ::isMemberOf() to work.
@@ -505,7 +503,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		//                     clicking on ego
 		if (!obj->isClass()) {
 			reg_t classObject = obj->getSuperClassSelector();
-			Object *classObj = getObject(classObject);
+			Object *classObj = segMan->getObject(classObject);
 			obj->setPropDictSelector(classObj->getPropDictSelector());
 		}
 
@@ -515,7 +513,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		// uses this selector together with -propDict- to compare classes.
 		// For the purpose of Obj::isKindOf, using the script number appears
 		// to be sufficient.
-		obj->setClassScriptSelector(make_reg(0, scr->_nr));
+		obj->setClassScriptSelector(make_reg(0, _nr));
 
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
@@ -537,14 +535,14 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNu
 
 	scr->init(scriptNum, resMan);
 	scr->load(resMan);
-	segMan->scriptInitialiseLocals(segmentId);
-	segMan->scriptInitialiseClasses(segmentId);
+	scr->initialiseLocals(segMan);
+	scr->initialiseClasses(segMan);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		segMan->scriptInitialiseObjectsSci11(segmentId);
+		scr->initialiseObjectsSci11(segMan);
 		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
 	} else {
-		segMan->scriptInitialiseObjectsSci0(segmentId);
+		scr->initialiseObjectsSci0(segMan);
 		byte *relocationBlock = scr->findBlock(SCI_OBJ_POINTERS);
 		if (relocationBlock)
 			scr->relocate(make_reg(segmentId, relocationBlock - scr->_buf + 4));

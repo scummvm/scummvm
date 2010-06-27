@@ -139,19 +139,6 @@ public:
 	 */
 	Script *getScriptIfLoaded(SegmentId seg);
 
-
-	// 1b. Script Initialisation
-
-	// The set of functions below are intended
-	// to be used during script instantiation,
-	// i.e. loading and linking.
-
-	/**
-	 * Initializes a script's local variable block according to a prototype
-	 * @param segmentId	Segment containing the script to initialize
-	 */
-	void scriptInitialiseLocals(SegmentId segmentId);
-
 	// 2. Clones
 
 	/**
@@ -427,10 +414,6 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
-	void scriptInitialiseClasses(SegmentId seg);
-	void scriptInitialiseObjectsSci0(SegmentId seg);
-	void scriptInitialiseObjectsSci11(SegmentId seg);
-
 	uint32 classTableSize() { return _classTable.size(); }
 	Class getClass(int index) { return _classTable[index]; }
 	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
@@ -481,7 +464,6 @@ private:
 
 private:
 	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
-	LocalVariables *allocLocalsSegment(Script *scr);
 	int deallocate(SegmentId seg, bool recursive);
 	void createClassTable();
 
@@ -494,6 +476,9 @@ private:
 	 * 					'seg' is a valid segment
 	 */
 	bool check(SegmentId seg);
+
+public:
+	LocalVariables *allocLocalsSegment(Script *scr);
 };
 
 } // End of namespace Sci

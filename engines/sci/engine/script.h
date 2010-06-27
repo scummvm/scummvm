@@ -140,6 +140,30 @@ public:
 	 */
 	void relocate(reg_t block);
 
+	/**
+	 * Initializes the script's local variables
+	 * @param segMan	A reference to the segment manager
+	 */
+	void initialiseLocals(SegManager *segMan);
+
+	/**
+	 * Adds the script's classes to the segment manager's class table
+	 * @param segMan	A reference to the segment manager
+	 */
+	void initialiseClasses(SegManager *segMan);
+
+	/**
+	 * Initializes the script's objects (SCI0)
+	 * @param segMan	A reference to the segment manager
+	 */
+	void initialiseObjectsSci0(SegManager *segMan);
+
+	/**
+	 * Initializes the script's objects (SCI1.1+)
+	 * @param segMan	A reference to the segment manager
+	 */
+	void initialiseObjectsSci11(SegManager *segMan);
+
 private:
 	bool relocateLocal(SegmentId segment, int location);
 
