@@ -654,16 +654,16 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	}
 }
 
-static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
+static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 
-	if (kernelFuncNum >= (int)g_sci->getKernel()->_kernelFuncs.size())
-		error("Invalid kernel function 0x%x requested", kernelFuncNum);
+	if (kernelFuncNr >= (int)g_sci->getKernel()->_kernelFuncs.size())
+		error("Invalid kernel function 0x%x requested", kernelFuncNr);
 
-	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNum];
+	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNr];
 
 	if (kernelFunc.signature
 			&& !g_sci->getKernel()->signatureMatch(kernelFunc.signature, argc, s->xs->sp + 1)) {
-		error("[VM] Invalid arguments to kernel call %x", kernelFuncNum);
+		error("[VM] Invalid arguments to kernel call k%s (funcNr %x)", g_sci->getKernel()->getKernelName(kernelFuncNr).c_str(), kernelFuncNr);
 	}
 
 	reg_t *argv = s->xs->sp + 1;
@@ -675,15 +675,15 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 		ExecStack *xstack;
 		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
 				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-		xstack->selector = kernelFuncNum;
+		xstack->selector = kernelFuncNr;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		//warning("callk %s", kernelFunc.origName.c_str());
 
 		// TODO: SCI2.1 equivalent
 		if (s->loadFromLauncher >= 0 && (
-				(kernelFuncNum == 0x8 && getSciVersion() <= SCI_VERSION_1_1) ||     // DrawPic
-				(kernelFuncNum == 0x3d && getSciVersion() == SCI_VERSION_2)         // GetSaveDir
+				(kernelFuncNr == 0x8 && getSciVersion() <= SCI_VERSION_1_1) ||     // DrawPic
+				(kernelFuncNr == 0x3d && getSciVersion() == SCI_VERSION_2)         // GetSaveDir
 				//(kernelFuncNum == 0x28 && getSciVersion() == SCI_VERSION_2_1)       // AddPlane
 				)) {
 
@@ -726,7 +726,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNum, int argc) {
 			s->_executionStack.pop_back();
 	} else {
 		Common::String warningMsg = "Dummy function " + kernelFunc.origName +
-									Common::String::printf("[0x%x]", kernelFuncNum) +
+									Common::String::printf("[0x%x]", kernelFuncNr) +
 									" invoked - ignoring. Params: " +
 									Common::String::printf("%d", argc) + " (";
 
