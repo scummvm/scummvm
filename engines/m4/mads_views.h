@@ -170,6 +170,10 @@ public:
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
 	char msg[100];
+
+	MadsKernelMessageEntry() {
+		flags = 0;
+	}
 };
 
 class MadsKernelMessageList {
@@ -404,6 +408,7 @@ public:
 	~MadsView();
 
 	void refresh();
+	void update();
 	void clearLists();
 };
 

@@ -297,7 +297,6 @@ void MadsScene::update() {
 
 void MadsScene::updateState() {
 	_sceneLogic.sceneStep();
-	_sequenceList.tick();
 
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
@@ -307,7 +306,7 @@ void MadsScene::updateState() {
 		}
 	}
 
-	_kernelMessages.update();
+	MadsView::update();
 }
 
 int MadsScene::loadSceneSpriteSet(const char *setName) {

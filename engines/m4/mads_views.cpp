@@ -1238,6 +1238,11 @@ void MadsView::refresh() {
 	_textDisplay.cleanUp();
 }
 
+void MadsView::update() {
+	_sequenceList.tick();
+	_kernelMessages.update();
+}
+
 void MadsView::clearLists() {
 	_textDisplay.clear();
 	_kernelMessages.clear();
