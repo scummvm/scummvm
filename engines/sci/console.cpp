@@ -1958,76 +1958,109 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVars(int argc, const char **argv) {
-	if (argc < 3) {
+	if (argc < 2) {
 		DebugPrintf("Displays or changes variables in the VM\n");
 		DebugPrintf("Usage: %s <type> <varnum> [<value>]\n", argv[0]);
-		DebugPrintf("First parameter is either g(lobal), l(ocal), t(emp) or p(aram).\n");
-		DebugPrintf("Second parameter is the var number\n");
+		DebugPrintf("First parameter is either g(lobal), l(ocal), t(emp), p(aram) or a(cc).\n");
+		DebugPrintf("Second parameter is the var number (not specified on acc)\n");
 		DebugPrintf("Third parameter (if specified) is the value to set the variable to, in address form\n");
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 
 	EngineState *s = _engine->_gamestate;
-	const char *varnames[] = {"global", "local", "temp", "param"};
-	const char *varabbrev = "gltp";
-	const char *vartype_pre = strchr(varabbrev, *argv[1]);
-	int vartype;
-	int idx;
+	const char *varNames[] = {"global", "local", "temp", "param", "acc"};
+	const char *varAbbrev = "gltpa";
+	const char *varType_pre = strchr(varAbbrev, *argv[1]);
+	int varType;
+	int varIndex = 0;
+	reg_t *curValue = NULL;
+	const char *setValue = NULL;
 
-	if (!vartype_pre) {
+	if (!varType_pre) {
 		DebugPrintf("Invalid variable type '%c'\n", *argv[1]);
 		return true;
 	}
 
-	vartype = vartype_pre - varabbrev;
+	varType = varType_pre - varAbbrev;
 
-	char *endPtr = 0;
-	int idxLen = strlen(argv[2]);
-	const char *lastChar = argv[2] + idxLen - (idxLen == 0 ? 0 : 1);
-
-	if ((strncmp(argv[2], "0x", 2) == 0) || (*lastChar == 'h')) {
-		// hexadecimal number
-		idx = strtol(argv[2], &endPtr, 16);
-		if ((*endPtr != 0) && (*endPtr != 'h')) {
-			DebugPrintf("Invalid hexadecimal index '%s'\n", argv[2]);
+	switch (varType) {
+	case 0:
+	case 1:
+	case 2:
+	case 3: {
+		// for global, local, temp and param, we need an index
+		if (argc < 3) {
+			DebugPrintf("Variable number must be specified for requested type\n");
 			return true;
 		}
-	} else {
-		// decimal number
-		idx = strtol(argv[2], &endPtr, 10);
-		if (*endPtr != 0) {
-			DebugPrintf("Invalid decimal index '%s'\n", argv[2]);
+		if (argc > 4) {
+			DebugPrintf("Too many arguments\n");
 			return true;
 		}
-	}
 
-	if (idx < 0) {
-		DebugPrintf("Invalid: negative index\n");
-		return true;
-	}
+		char *endPtr = 0;
+		int idxLen = strlen(argv[2]);
+		const char *lastChar = argv[2] + idxLen - (idxLen == 0 ? 0 : 1);
 
-	if ((s->variablesMax) && (s->variablesMax[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", s->variablesMax[vartype], s->variablesMax[vartype]);
-		return true;
-	}
+		if ((strncmp(argv[2], "0x", 2) == 0) || (*lastChar == 'h')) {
+			// hexadecimal number
+			varIndex = strtol(argv[2], &endPtr, 16);
+			if ((*endPtr != 0) && (*endPtr != 'h')) {
+				DebugPrintf("Invalid hexadecimal number '%s'\n", argv[2]);
+				return true;
+			}
+		} else {
+			// decimal number
+			varIndex = strtol(argv[2], &endPtr, 10);
+			if (*endPtr != 0) {
+				DebugPrintf("Invalid decimal number '%s'\n", argv[2]);
+				return true;
+			}
+		}
+		if (varIndex < 0) {
+			DebugPrintf("Variable number may not be negative\n");
+			return true;
+		}
 
-	switch (argc) {
-	case 3:
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(s->variables[vartype][idx]));
+		if ((s->variablesMax) && (s->variablesMax[varType] <= varIndex)) {
+			DebugPrintf("Maximum variable number for this type is %d (0x%x)\n", s->variablesMax[varType], s->variablesMax[varType]);
+			return true;
+		}
+		curValue = &s->variables[varType][varIndex];
+		if (argc == 4)
+			setValue = argv[3];
 		break;
+	}
+
 	case 4:
-		if (parse_reg_t(_engine->_gamestate, argv[3], &s->variables[vartype][idx], true)) {
+		// acc
+		if (argc > 3) {
+			DebugPrintf("Too many arguments\n");
+			return true;
+		}
+		curValue = &s->r_acc;
+		if (argc == 3)
+			setValue = argv[2];
+		break;
+
+	default:
+		break;
+	}
+
+	if (!setValue) {
+		if (varType == 4)
+			DebugPrintf("%s == %04x:%04x\n", varNames[varType], PRINT_REG(*curValue));
+		else
+			DebugPrintf("%s var %d == %04x:%04x\n", varNames[varType], varIndex, PRINT_REG(*curValue));
+	} else {
+		if (parse_reg_t(s, setValue, curValue, true)) {
 			DebugPrintf("Invalid value/address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			DebugPrintf("Or pass a decimal or hexadecimal value directly (e.g. 12, 1Ah)\n");
 			return true;
 		}
-		break;
-	default:
-		DebugPrintf("Too many arguments\n");
 	}
-
 	return true;
 }
 
