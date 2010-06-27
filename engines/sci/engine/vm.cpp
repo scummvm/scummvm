@@ -826,9 +826,6 @@ static void gcCountDown(EngineState *s) {
 	}
 }
 
-static const byte _fake_return_buffer[2] = {op_ret << 1, op_ret << 1};
-
-
 int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4]) {
 	uint offset = 0;
 	extOpcode = src[offset++]; // Get "extended" opcode (lower bit has special meaning)

@@ -34,8 +34,6 @@ namespace Sci {
 struct EngineState;
 class ResourceManager;
 
-#define SCI_SCRIPTS_NR 1000
-
 enum ScriptObjectTypes {
 	SCI_OBJ_TERMINATOR,
 	SCI_OBJ_OBJECT,
