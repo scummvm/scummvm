@@ -178,9 +178,10 @@ void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
 
 void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 	Script *scr = getScript(seg);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+	const byte *seeker = 0;
 	int objType;
 	reg_t addr;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// The script is initialized in 2 passes. 
 	// Pass 1: creates a lookup table of all used classes
@@ -188,23 +189,22 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 
 	for (uint16 pass = 0; pass <= 1; pass++) {
 		uint16 objLength = 0;
-		uint16 curOffset = oldScriptHeader ? 2 : 0;
+		seeker = scr->_buf + (oldScriptHeader ? 2 : 0);
 
 		do {
-			objType = READ_SCI11ENDIAN_UINT16(scr->_buf + curOffset);
+			objType = READ_SCI11ENDIAN_UINT16(seeker);
 			if (!objType)
 				break;
 
-			objLength = READ_SCI11ENDIAN_UINT16(scr->_buf + curOffset + 2);
-			curOffset += 4;		// skip header
-			addr = make_reg(seg, curOffset);;
+			objLength = READ_SCI11ENDIAN_UINT16(seeker + 2);
+			seeker += 4;		// skip header
+			addr = make_reg(seg, seeker - scr->_buf);
 
 			switch (objType) {
 			case SCI_OBJ_OBJECT:
 			case SCI_OBJ_CLASS:
 				if (pass == 0 && objType == SCI_OBJ_CLASS) {
-					int classpos = curOffset + 8;	// SCRIPT_OBJECT_MAGIC_OFFSET
-					int species = READ_SCI11ENDIAN_UINT16(scr->_buf + classpos);
+					int species = READ_SCI11ENDIAN_UINT16(seeker + 8);	// SCRIPT_OBJECT_MAGIC_OFFSET
 
 					if (species == (int)classTableSize()) {
 						// Happens in the LSL2 demo
@@ -218,7 +218,7 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 						return;
 					}
 
-					setClassOffset(species, make_reg(seg, classpos));
+					setClassOffset(species, make_reg(seg, seeker - scr->_buf + 8));
 				} else if (pass == 1) {
 					Object *obj = scr->scriptObjInit(addr);
 					obj->initSpecies(this, addr);
@@ -234,14 +234,14 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 				break;
 			}
 
-			curOffset += objLength - 4;
-		} while (objType != 0 && curOffset < scr->getScriptSize() - 2);
+			seeker += objLength - 4;
+		} while (objType != 0 && (uint32)(seeker - scr->_buf) < scr->getScriptSize() - 2);
 	}	// for
 }
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	const byte *seeker = scr->_heapStart;;
+	const byte *seeker = scr->_heapStart;
 	uint16 entrySize = READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	seeker += entrySize;	// skip first entry
 	seeker += 4;			// skip header

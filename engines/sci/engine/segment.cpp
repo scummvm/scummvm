@@ -588,11 +588,9 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 #ifdef GC_DEBUG
-	Object *victim_obj;
+	//	assert(addr.segment == _segId);
 
-//	assert(addr.segment == _segId);
-
-	victim_obj = &(_table[addr.offset]);
+	Object *victim_obj = &(_table[addr.offset]);
 
 	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
 		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
