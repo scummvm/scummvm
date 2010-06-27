@@ -513,6 +513,8 @@ bool AnimviewView::onEvent(M4EventType eventType, int32 param, int x, int y, boo
 }
 
 void AnimviewView::updateState() {
+	MadsView::update();
+
 	if (!_script)
 		return;
 
