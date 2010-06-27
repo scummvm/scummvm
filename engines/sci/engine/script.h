@@ -250,30 +250,6 @@ public:
 	byte *findBlock(int type);
 };
 
-/**
- * Makes sure that a script and its superclasses get loaded to the heap.
- * If the script already has been loaded, only the number of lockers is
- * increased. All scripts containing superclasses of this script are loaded
- * recursively as well, unless 'recursive' is set to zero. The
- * complementary function is "script_uninstantiate()" below.
- * @param[in] resMan		The resource manager
- * @param[in] segMan	The segment manager
- * @param[in] script_nr		The script number to load
- * @return					The script's segment ID or 0 if out of heap
- */
-int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr);
-
-/**
- * Decreases the numer of lockers of a script and unloads it if that number
- * reaches zero.
- * This function will recursively unload scripts containing its
- * superclasses, if those aren't locked by other scripts as well.
- * @param[in] segMan	The segment manager
- * @param[in] version		The SCI version to use
- * @param[in] script_nr	The script number that is requestet to be unloaded
- */
-void script_uninstantiate(SegManager *segMan, int script_nr);
-
 } // End of namespace Sci
 
 #endif // SCI_ENGINE_SCRIPT_H

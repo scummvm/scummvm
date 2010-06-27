@@ -420,7 +420,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
 
 	if (!scr || scr->isMarkedAsDeleted()) { // Script not present yet?
-		seg = script_instantiate(g_sci->getResMan(), s->_segMan, script);
+		seg = s->_segMan->instantiateScript(script);
 		scr = s->_segMan->getScript(seg);
 	}
 

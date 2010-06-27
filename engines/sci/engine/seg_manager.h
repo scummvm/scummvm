@@ -117,6 +117,30 @@ public:
 	 */
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
+	/**
+	 * Makes sure that a script and its superclasses get loaded to the heap.
+	 * If the script already has been loaded, only the number of lockers is
+	 * increased. All scripts containing superclasses of this script are loaded
+	 * recursively as well, unless 'recursive' is set to zero. The
+	 * complementary function is "uninstantiateScript()" below.
+	 * @param[in] script_nr		The script number to load
+	 * @return					The script's segment ID or 0 if out of heap
+	 */
+	int instantiateScript(int script_nr);
+
+	/**
+	 * Decreases the numer of lockers of a script and unloads it if that number
+	 * reaches zero.
+	 * This function will recursively unload scripts containing its
+	 * superclasses, if those aren't locked by other scripts as well.
+	 * @param[in] script_nr	The script number that is requestet to be unloaded
+	 */
+	void uninstantiateScript(int script_nr);
+
+private:
+	void uninstantiateScriptSci0(int script_nr);
+
+public:
 	// TODO: document this
 	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
 

@@ -239,7 +239,7 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 			scr->setLockers(1);
 	}
 
-	script_uninstantiate(s->_segMan, script);
+	s->_segMan->uninstantiateScript(script);
 
 	if (argc != 2) {
 		return s->r_acc;

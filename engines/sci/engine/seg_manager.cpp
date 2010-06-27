@@ -361,7 +361,7 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
-		script_instantiate(_resMan, this, script_nr);
+		instantiateScript(script_nr);
 
 	segment = getScriptSegment(script_nr);
 
@@ -991,4 +991,110 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 		return the_class->reg;
 	}
 }
+
+int SegManager::instantiateScript(int scriptNum) {
+	SegmentId segmentId = getScriptSegment(scriptNum);
+	Script *scr = getScriptIfLoaded(segmentId);
+	if (scr) {
+		if (!scr->isMarkedAsDeleted()) {
+			scr->incrementLockers();
+			return segmentId;
+		} else {
+			scr->freeScript();
+		}
+	} else {
+		scr = allocateScript(scriptNum, &segmentId);
+	}
+
+	scr->init(scriptNum, _resMan);
+	scr->load(_resMan);
+	scr->initialiseLocals(this);
+	scr->initialiseClasses(this);
+
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		scr->initialiseObjectsSci11(this);
+		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
+	} else {
+		scr->initialiseObjectsSci0(this);
+		byte *relocationBlock = scr->findBlock(SCI_OBJ_POINTERS);
+		if (relocationBlock)
+			scr->relocate(make_reg(segmentId, relocationBlock - scr->_buf + 4));
+	}
+
+	return segmentId;
+}
+
+void SegManager::uninstantiateScript(int script_nr) {
+	SegmentId segmentId = getScriptSegment(script_nr);
+	Script *scr = getScriptIfLoaded(segmentId);
+
+	if (!scr) {   // Is it already unloaded?
+		//warning("unloading script 0x%x requested although not loaded", script_nr);
+		// This is perfectly valid SCI behaviour
+		return;
+	}
+
+	scr->decrementLockers();   // One less locker
+
+	if (scr->getLockers() > 0)
+		return;
+
+	// Free all classtable references to this script
+	for (uint i = 0; i < classTableSize(); i++)
+		if (getClass(i).reg.segment == segmentId)
+			setClassOffset(i, NULL_REG);
+
+	if (getSciVersion() < SCI_VERSION_1_1)
+		uninstantiateScriptSci0(script_nr);
+	// FIXME: Add proper script uninstantiation for SCI 1.1
+
+	if (!scr->getLockers()) {
+		// The actual script deletion seems to be done by SCI scripts themselves
+		scr->markDeleted();
+		debugC(kDebugLevelScripts, "Unloaded script 0x%x.", script_nr);
+	}
+}
+
+void SegManager::uninstantiateScriptSci0(int script_nr) {
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+	SegmentId segmentId = getScriptSegment(script_nr);
+	Script *scr = getScript(segmentId);
+	reg_t reg = make_reg(segmentId, oldScriptHeader ? 2 : 0);
+	int objType, objLength = 0;
+
+	// Make a pass over the object in order uninstantiate all superclasses
+
+	do {
+		reg.offset += objLength; // Step over the last checked object
+
+		objType = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset);
+		if (!objType)
+			break;
+		objLength = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
+
+		reg.offset += 4; // Step over header
+
+		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
+			reg.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+			int16 superclass = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
+
+			if (superclass >= 0) {
+				int superclass_script = getClass(superclass).script;
+
+				if (superclass_script == script_nr) {
+					if (scr->getLockers())
+						scr->decrementLockers();  // Decrease lockers if this is us ourselves
+				} else
+					uninstantiateScript(superclass_script);
+				// Recurse to assure that the superclass lockers number gets decreased
+			}
+
+			reg.offset += SCRIPT_OBJECT_MAGIC_OFFSET;
+		} // if object or class
+
+		reg.offset -= 4; // Step back on header
+
+	} while (objType != 0);
+}
+
 } // End of namespace Sci
