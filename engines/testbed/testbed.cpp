@@ -29,6 +29,7 @@
  
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
+#include "testbed/misc.h"
 #include "testbed/savegame.h"
 #include "testbed/testbed.h"
  
@@ -102,6 +103,9 @@ Common::Error TestbedEngine::run() {
 
 	SaveGameTestSuite sts;
 	sts.execute();
+	
+	MiscTestSuite mts;
+	mts.execute();
 	
 	return Common::kNoError;
 }
