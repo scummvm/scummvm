@@ -103,6 +103,8 @@ struct SelectorCache {
 	// perform
 	Selector moveDone;	///< used for DoBresen
 
+	Selector init;		///< Used for menu initialization when loading from the launcher
+
 	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
 	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
 	Selector topString; ///< SCI1 scroll lists use this instead of lsTop

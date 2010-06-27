@@ -145,12 +145,14 @@ void EngineState::setRoomNumber(uint16 roomNumber) {
 }
 
 void EngineState::shrinkStackToBase() {
-	uint size = executionStackBase + 1;
-	assert(_executionStack.size() >= size);
-	Common::List<ExecStack>::iterator iter = _executionStack.begin();
-	for (uint i = 0; i < size; ++i)
-		++iter;
-	_executionStack.erase(iter, _executionStack.end());
+	if (_executionStack.size() > 0) {
+		uint size = executionStackBase + 1;
+		assert(_executionStack.size() >= size);
+		Common::List<ExecStack>::iterator iter = _executionStack.begin();
+		for (uint i = 0; i < size; ++i)
+			++iter;
+		_executionStack.erase(iter, _executionStack.end());
+	}
 }
 
 static kLanguage charToLanguage(const char c) {

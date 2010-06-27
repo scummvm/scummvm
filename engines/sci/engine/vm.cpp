@@ -758,48 +758,24 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		xstack->selector = kernelFuncNr;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
-		//warning("callk %s", kernelFunc.origName.c_str());
-
-		// TODO: SCI2.1 equivalent
-		if (s->loadFromLauncher >= 0 && (
-				(kernelFuncNr == 0x8 && getSciVersion() <= SCI_VERSION_1_1) ||     // DrawPic
-				(kernelFuncNr == 0x3d && getSciVersion() == SCI_VERSION_2)         // GetSaveDir
-				//(kernelFuncNum == 0x28 && getSciVersion() == SCI_VERSION_2_1)       // AddPlane
-				)) {
-
-				// A game is being loaded from the launcher, and the game is about to draw something on
-				// screen, hence all initialization has taken place (i.e. menus have been constructed etc).
-				// Therefore, inject a kRestoreGame call here, instead of the requested function.
-				// The restore call is injected here mainly for games which have a menu, as the menu is
-				// constructed when the game starts and is not reconstructed when a saved game is loaded.
-				int saveSlot = s->loadFromLauncher;
-				s->loadFromLauncher = -1;	// invalidate slot, so that we don't load again
-
-				if (saveSlot < 0)
-					error("Requested to load invalid save slot");	// should never happen, really
-
-				reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
-				kRestoreGame(s, 2, restoreArgv);
-		} else {
-			// Call kernel function
-			s->r_acc = kernelFunc.func(s, argc, argv);
+		// Call kernel function
+		s->r_acc = kernelFunc.func(s, argc, argv);
 
 #if 0
-			// Used for debugging
-			Common::String debugMsg = kernelFunc.origName +
-										Common::String::printf("[0x%x]", kernelFuncNum) +
-										Common::String::printf(", %d params: ", argc) +
-										" (";
+		// Used for debugging
+		Common::String debugMsg = kernelFunc.origName +
+									Common::String::printf("[0x%x]", kernelFuncNum) +
+									Common::String::printf(", %d params: ", argc) +
+									" (";
 
-			for (int i = 0; i < argc; i++) {
-				debugMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-				debugMsg += (i == argc - 1 ? ")" : ", ");
-			}
-
-			debugMsg += ", result: " + Common::String::printf("%04x:%04x", PRINT_REG(s->r_acc));
-			debug("%s", debugMsg.c_str());
-#endif
+		for (int i = 0; i < argc; i++) {
+			debugMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+			debugMsg += (i == argc - 1 ? ")" : ", ");
 		}
+
+		debugMsg += ", result: " + Common::String::printf("%04x:%04x", PRINT_REG(s->r_acc));
+		debug("%s", debugMsg.c_str());
+#endif
 
 		// Remove callk stack frame again, if there's still an execution stack
 		if (s->_executionStack.begin() != s->_executionStack.end())

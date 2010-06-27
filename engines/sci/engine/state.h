@@ -152,8 +152,6 @@ public:
 	SegmentId variablesSegment[4];	///< Same as above, contains segment IDs
 	int variablesMax[4];		///< Max. values for all variables
 
-	int loadFromLauncher;
-
 	AbortGameState abortScriptProcessing;
 	bool gameWasRestarted;
 
