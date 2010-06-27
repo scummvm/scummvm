@@ -81,6 +81,7 @@ public:
 	const byte *getMixedData() const { return _mixedData; }
 
 	void tryToOwnChannels();
+	void lostChannels();
 	void sendFromScriptToDriver(uint32 midi);
 	void sendToDriver(uint32 midi);
 	void sendToDriver(byte status, byte firstOp, byte secondOp) {

@@ -648,6 +648,12 @@ void MidiParser_SCI::tryToOwnChannels() {
 	}
 }
 
+void MidiParser_SCI::lostChannels() {
+	for (int curChannel = 0; curChannel < 15; curChannel++)
+		if ((_channelUsed[curChannel]) && (curChannel != 9))
+			_channelRemap[curChannel] = -1;
+}
+
 void MidiParser_SCI::setVolume(byte volume) {
 	// FIXME: This receives values > 127... throw a warning for now and clip the variable
 	if (volume > MUSIC_VOLUME_MAX) {

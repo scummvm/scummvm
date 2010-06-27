@@ -287,6 +287,8 @@ void SciMusic::freeChannels(MusicEntry *caller) {
 		if (_usedChannel[i] == caller)
 			_usedChannel[i] = 0;
 	}
+	// Also tell midiparser, that he lost ownership
+	caller->pMidiParser->lostChannels();
 }
 
 void SciMusic::soundPlay(MusicEntry *pSnd) {
