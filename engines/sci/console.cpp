@@ -186,16 +186,18 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	DCmd_Register("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));	// alias
+	DCmd_Register("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));				// alias
+	DCmd_Register("vl",					WRAP_METHOD(Console, cmdVMVarlist));				// alias
 	DCmd_Register("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
-	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));		// alias
+	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));					// alias
+	DCmd_Register("vv",					WRAP_METHOD(Console, cmdVMVars));					// alias
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
 	DCmd_Register("view_reference",		WRAP_METHOD(Console, cmdViewReference));
-	DCmd_Register("vr",					WRAP_METHOD(Console, cmdViewReference));	// alias
+	DCmd_Register("vr",					WRAP_METHOD(Console, cmdViewReference));			// alias
 	DCmd_Register("view_object",		WRAP_METHOD(Console, cmdViewObject));
-	DCmd_Register("vo",					WRAP_METHOD(Console, cmdViewObject));		// alias
+	DCmd_Register("vo",					WRAP_METHOD(Console, cmdViewObject));				// alias
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
@@ -400,8 +402,8 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
-	DebugPrintf(" vm_varlist / vmvarlist - Shows the addresses of variables in the VM\n");
-	DebugPrintf(" vm_vars / vmvars - Displays or changes variables in the VM\n");
+	DebugPrintf(" vm_varlist / vmvarlist / vl - Shows the addresses of variables in the VM\n");
+	DebugPrintf(" vm_vars / vmvars / vv - Displays or changes variables in the VM\n");
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
