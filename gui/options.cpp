@@ -141,7 +141,7 @@ template<class T> bool equalsDeviceProperty(MusicDevices::iterator d, T lookupPr
 }
 
 bool musicDeviceSkipSettingDefault(MusicDevices::iterator d, Common::String dom, MusicPlugin::List::const_iterator &m, uint32 guio) {
-	return (dom == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) || (dom != Common::ConfigManager::kApplicationDomain && (!guio || (guio & (MidiDriver::musicType2GUIO(d->getMusicType()))))) || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null" ? true : false;
+	return (dom == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) || (dom != Common::ConfigManager::kApplicationDomain && (!(guio & MidiDriver::musicType2GUIO((uint32)-1)) || (guio & (MidiDriver::musicType2GUIO(d->getMusicType()))))) || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null" ? true : false;
 }
 
 bool musicDeviceSkipSettingSpec(MusicDevices::iterator d, Common::String, MusicPlugin::List::const_iterator &m, uint32) {
