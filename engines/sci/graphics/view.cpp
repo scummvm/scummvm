@@ -579,8 +579,8 @@ void GfxView::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect 
 	byte color;
 	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
-	uint16 scalingX[320];
-	uint16 scalingY[200];
+	uint16 scalingX[640];
+	uint16 scalingY[480];
 	int16 scaledWidth, scaledHeight;
 	int16 pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 	uint16 offsetX, offsetY;
