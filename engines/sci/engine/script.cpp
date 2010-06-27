@@ -224,8 +224,9 @@ void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 					obj->initSpecies(this, addr);
 
 					if (!obj->initBaseObject(this, addr)) {
-						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						//scr->scriptObjRemove(addr);
+						// Script 202 of KQ5 French has an invalid object
+						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+						scr->scriptObjRemove(addr);
 					}
 				}
 				break;
