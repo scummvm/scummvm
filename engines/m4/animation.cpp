@@ -138,12 +138,12 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			rec.pos.x = animStream->readSint16LE();
 			rec.pos.y = animStream->readSint16LE();
 			rec.flags = animStream->readUint16LE();
-			rec.rgb1.r = animStream->readByte();
-			rec.rgb1.g = animStream->readByte();
-			rec.rgb1.b = animStream->readByte();
-			rec.rgb2.r = animStream->readByte();
-			rec.rgb2.g = animStream->readByte();
-			rec.rgb2.b = animStream->readByte();
+			rec.rgb1.r = animStream->readByte() << 2;
+			rec.rgb1.g = animStream->readByte() << 2;
+			rec.rgb1.b = animStream->readByte() << 2;
+			rec.rgb2.r = animStream->readByte() << 2;
+			rec.rgb2.g = animStream->readByte() << 2;
+			rec.rgb2.b = animStream->readByte() << 2;
 			animStream->skip(2);	// Space for kernelMsgIndex
 			rec.kernelMsgIndex = -1;
 			animStream->skip(6);
