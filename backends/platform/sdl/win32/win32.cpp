@@ -30,22 +30,9 @@
 #undef ARRAYSIZE
 
 #include "backends/platform/sdl/win32/win32.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/util.h"
-
-#include "backends/saves/default/default-saves.h"
-#include "backends/audiocd/sdl/sdl-audiocd.h"
-#include "backends/events/sdl/sdl-events.h"
-#include "backends/mutex/sdl/sdl-mutex.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
-#include "backends/timer/sdl/sdl-timer.h"
-
 #include "backends/fs/windows/windows-fs-factory.h"
 
-OSystem_Win32::OSystem_Win32() {
-}
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 
 void OSystem_Win32::init() {
 	// Initialze File System Factory
@@ -53,10 +40,6 @@ void OSystem_Win32::init() {
 
 	// Invoke parent implementation of this method
 	OSystem_SDL::init();
-}
-
-const char *OSystem_Win32::getConfigFileNameString() {
-	return "\\scummvm.ini";
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
@@ -82,14 +65,14 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 
 		strcat(configFile, "\\ScummVM");
 		CreateDirectory(configFile, NULL);
-		strcat(configFile, getConfigFileNameString());
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 
 		FILE *tmp = NULL;
 		if ((tmp = fopen(configFile, "r")) == NULL) {
 			// Check windows directory
 			char oldConfigFile[MAXPATHLEN];
 			GetWindowsDirectory(oldConfigFile, MAXPATHLEN);
-			strcat(oldConfigFile, getConfigFileNameString());
+			strcat(oldConfigFile, "\\" DEFAULT_CONFIG_FILE);
 			if ((tmp = fopen(oldConfigFile, "r"))) {
 				strcpy(configFile, oldConfigFile);
 
@@ -101,7 +84,7 @@ Common::String OSystem_Win32::getDefaultConfigFileName() {
 	} else {
 		// Check windows directory
 		GetWindowsDirectory(configFile, MAXPATHLEN);
-		strcat(configFile, getConfigFileNameString());
+		strcat(configFile, "\\" DEFAULT_CONFIG_FILE);
 	}
 
 	return configFile;

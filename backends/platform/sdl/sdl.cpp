@@ -24,10 +24,7 @@
  */
 
 #include "backends/platform/sdl/sdl.h"
-#include "common/archive.h"
 #include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/util.h"
 #include "common/EventRecorder.h"
 
 #include "backends/saves/default/default-saves.h"
@@ -127,14 +124,8 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 
 }
 
-const char *OSystem_SDL::getConfigFileNameString() {
-	return "scummvm.ini";
-}
-
 Common::String OSystem_SDL::getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-	strcpy(configFile, getConfigFileNameString());
-	return configFile;
+	return "scummvm.ini";
 }
 
 Common::SeekableReadStream *OSystem_SDL::createConfigReadStream() {

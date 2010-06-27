@@ -60,8 +60,6 @@ public:
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual SdlGraphicsManager *getGraphicsManager();
-
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual uint32 getMillis();
@@ -70,16 +68,24 @@ public:
 
 	virtual Audio::Mixer *getMixer();
 
+	// Get the Graphics Manager instance, used by other managers
+	virtual SdlGraphicsManager *getGraphicsManager();
+
 protected:
 	bool _inited;
 	bool _initedSDL;
+
+	// Mixer manager that encapsulates the actual Audio::Mixer
 	SdlMixerManager *_mixerManager;
 
+	// Initialze SDL library
 	virtual void initSDL();
 
+	// Setup the window icon
 	virtual void setupIcon();
 
-	virtual const char *getConfigFileNameString();
+	// Get the file path where the user configuration
+	// of ScummVM will be saved
 	virtual Common::String getDefaultConfigFileName();
 };
 

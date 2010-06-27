@@ -30,15 +30,18 @@
 
 class OSystem_POSIX : public OSystem_SDL {
 public:
-	OSystem_POSIX();
+	// Let the subclasses be able to change _baseConfigName in the constructor
+	OSystem_POSIX(Common::String baseConfigName = ".scummvmrc");
 	virtual ~OSystem_POSIX() {}
 
 	virtual void init();
-
 	virtual void initBackend();
 
 protected:
-	virtual const char *getConfigFileNameString();
+	// Base string for creating the default path and filename
+	// for the configuration file
+	Common::String _baseConfigName;
+
 	virtual Common::String getDefaultConfigFileName();
 };
 

@@ -30,13 +30,9 @@
 
 class OSystem_Win32 : public OSystem_SDL {
 public:
-	OSystem_Win32();
-	~OSystem_Win32() {}
-
 	void init();
 
 protected:
-	const char *getConfigFileNameString();
 	Common::String getDefaultConfigFileName();
 };
 

@@ -26,22 +26,12 @@
 #ifdef UNIX
 
 #include "backends/platform/sdl/posix/posix.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/util.h"
-#include "common/EventRecorder.h"
-
 #include "backends/saves/posix/posix-saves.h"
-#include "backends/audiocd/sdl/sdl-audiocd.h"
-#include "backends/events/sdl/sdl-events.h"
-#include "backends/mutex/sdl/sdl-mutex.h"
-#include "backends/mixer/sdl/sdl-mixer.h"
-#include "backends/timer/sdl/sdl-timer.h"
-
 #include "backends/fs/posix/posix-fs-factory.h"
 
-OSystem_POSIX::OSystem_POSIX() {
+OSystem_POSIX::OSystem_POSIX(Common::String baseConfigName)
+	:
+	_baseConfigName(baseConfigName) {
 }
 
 void OSystem_POSIX::init() {
@@ -61,26 +51,16 @@ void OSystem_POSIX::initBackend() {
 	OSystem_SDL::initBackend();
 }
 
-const char *OSystem_POSIX::getConfigFileNameString() {
-	return ".scummvmrc";
-}
-
 Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
 
 	// On UNIX type systems, by default we store the config file inside
 	// to the HOME directory of the user.
-	//
-	// GP2X is Linux based but Home dir can be read only so do not use
-	// it and put the config in the executable dir.
-	//
-	// On the iPhone, the home dir of the user when you launch the app
-	// from the Springboard, is /. Which we don't want.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, getConfigFileNameString());
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, _baseConfigName);
 	else
-		strcpy(configFile, getConfigFileNameString());
+		strcpy(configFile, _baseConfigName);
 
 	return configFile;
 }

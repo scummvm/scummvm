@@ -33,7 +33,9 @@
 
 #include "CoreFoundation/CoreFoundation.h"
 
-OSystem_MacOSX::OSystem_MacOSX() {
+OSystem_MacOSX::OSystem_MacOSX()
+	:
+	OSystem_POSIX("Library/Preferences/ScummVM Preferences") {
 }
 
 void OSystem_MacOSX::initBackend() {
@@ -47,10 +49,6 @@ void OSystem_MacOSX::initBackend() {
 
 	// Invoke parent implementation of this method
 	OSystem_POSIX::initBackend();
-}
-
-const char *OSystem_MacOSX::getConfigFileNameString() {
-	return "Library/Preferences/ScummVM Preferences";
 }
 
 void OSystem_MacOSX::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {

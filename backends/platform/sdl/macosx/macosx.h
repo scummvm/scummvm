@@ -34,11 +34,7 @@ public:
 	~OSystem_MacOSX() {}
 
 	void initBackend();
-
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-
-protected:
-	const char *getConfigFileNameString();
 };
 
 #endif

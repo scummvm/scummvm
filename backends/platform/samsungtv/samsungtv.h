@@ -26,22 +26,17 @@
 #ifndef SDL_SAMSUNGTV_COMMON_H
 #define SDL_SAMSUNGTV_COMMON_H
 
-#if defined(SAMSUNGTV)
-
 #include "backends/platform/sdl/posix/posix.h"
 
 class OSystem_SDL_SamsungTV : public OSystem_POSIX {
 public:
+	OSystem_SDL_SamsungTV();
+
 	bool hasFeature(Feature f);
 	void setFeatureState(Feature f, bool enable);
 	bool getFeatureState(Feature f);
 
 	void quit();
-
-protected:
-	const char *getConfigFileNameString();
 };
-
-#endif
 
 #endif

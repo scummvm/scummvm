@@ -25,7 +25,10 @@
 
 #include "backends/platform/samsungtv/samsungtv.h"
 
-#if defined(SAMSUNGTV)
+OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
+	:
+	OSystem_POSIX("/dtv/usb/sda1/.scummvmrc") {
+}
 
 bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
@@ -55,9 +58,3 @@ bool OSystem_SDL_SamsungTV::getFeatureState(Feature f) {
 void OSystem_SDL_SamsungTV::quit() {
 	deinit();
 }
-
-const char *OSystem_SDL_SamsungTV::getConfigFileNameString() {
-	return "/dtv/usb/sda1/.scummvmrc";
-}
-
-#endif
