@@ -444,7 +444,7 @@ static void t2WrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 	int clipAmount;
 
 	// WORKAROUND: One of the mortician frames has several corrupt bytes in the Russian version
-	if ((pObj->hBits == 2517583660) && (_vm->getLanguage() == Common::RU_RUS)) {
+	if ((pObj->hBits == 2517583660UL) && (_vm->getLanguage() == Common::RU_RUS)) {
 		uint8 correctBytes[5] = {0xA3, 0x00, 0x89, 0xC0, 0xA6};
 		Common::copy(&correctBytes[0], &correctBytes[5], srcP);
 	}
@@ -604,7 +604,7 @@ static void PackedWrtNonZero(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP,
 
 	if (_vm->getLanguage() == Common::RU_RUS) {
 		// WORKAROUND: One of the mortician frames has several corrupt bytes in the Russian version
-		if (pObj->hBits == 2517583393) {
+		if (pObj->hBits == 2517583393UL) {
 			uint8 correctBytes[5] = {0x00, 0x00, 0x17, 0x01, 0x00};
 			Common::copy(&correctBytes[0], &correctBytes[5], srcP + 267);
 		}
