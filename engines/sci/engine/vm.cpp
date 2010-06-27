@@ -49,6 +49,86 @@ const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
+#define END Script_None
+
+opcode_format g_opcode_formats[128][4] = {
+	/*00*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_None},
+	/*04*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_None},
+	/*08*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_None},
+	/*0C*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_None},
+	/*10*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_None},
+	/*14*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative, END},
+	/*18*/
+	{Script_SRelative, END}, {Script_SRelative, END}, {Script_SVariable, END}, {Script_None},
+	/*1C*/
+	{Script_SVariable, END}, {Script_None}, {Script_None}, {Script_Variable, END},
+	/*20*/
+	{Script_SRelative, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_SVariable, Script_Byte, END},
+	/*24 (24=ret)*/
+	{Script_End}, {Script_Byte, END}, {Script_Invalid}, {Script_Invalid},
+	/*28*/
+	{Script_Variable, END}, {Script_Invalid}, {Script_Byte, END}, {Script_Variable, Script_Byte, END},
+	/*2C*/
+	{Script_SVariable, END}, {Script_SVariable, Script_Variable, END}, {Script_None}, {Script_Invalid},
+	/*30*/
+	{Script_None}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
+	/*34*/
+	{Script_Property, END}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
+	/*38*/
+	{Script_Property, END}, {Script_SRelative, END}, {Script_SRelative, END}, {Script_None},
+	/*3C*/
+	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
+	/*40-4F*/
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	/*50-5F*/
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	/*60-6F*/
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	/*70-7F*/
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
+	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END}
+};
+#undef END
+
+// TODO: script_adjust_opcode_formats should probably be part of the
+// constructor (?) of a VirtualMachine or a ScriptManager class.
+void script_adjust_opcode_formats() {
+	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
+		g_opcode_formats[op_lofsa][0] = Script_Offset;
+		g_opcode_formats[op_lofss][0] = Script_Offset;
+	}
+
+#ifdef ENABLE_SCI32
+	// In SCI32, some arguments are now words instead of bytes
+	if (getSciVersion() >= SCI_VERSION_2) {
+		g_opcode_formats[op_calle][2] = Script_Word;
+		g_opcode_formats[op_callk][1] = Script_Word;
+		g_opcode_formats[op_super][1] = Script_Word;
+		g_opcode_formats[op_send][0] = Script_Word;
+		g_opcode_formats[op_self][0] = Script_Word;
+		g_opcode_formats[op_call][1] = Script_Word;
+		g_opcode_formats[op_callb][1] = Script_Word;
+	}
+#endif
+}
+
 /**
  * Adds an entry to the top of the execution stack.
  *

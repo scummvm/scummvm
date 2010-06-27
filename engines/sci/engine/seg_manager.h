@@ -28,7 +28,9 @@
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
+#include "sci/engine/script.h"
 #include "sci/engine/vm.h"
+#include "sci/engine/vm_types.h"
 #include "sci/engine/segment.h"
 
 namespace Sci {
@@ -42,8 +44,6 @@ namespace Sci {
 		error("%s, line, %d, %s", __FILE__, __LINE__, msg); \
 	}
 
-
-
 /**
  * Parameters for getScriptSegment().
  */
@@ -53,6 +53,7 @@ enum ScriptLoadType {
 	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
 };
 
+class Script;
 
 class SegManager : public Common::Serializable {
 	friend class Console;

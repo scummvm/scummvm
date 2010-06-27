@@ -26,6 +26,7 @@
 #include "sci/sci.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
+#include "sci/engine/script.h"
 
 namespace Sci {
 
@@ -837,7 +838,6 @@ Common::String SegManager::getString(reg_t pointer, int entries) {
 	return ret;
 }
 
-
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
 	SegmentObj *mobj = allocSegment(new DynMem(), &seg);
@@ -949,4 +949,46 @@ void SegManager::freeString(reg_t addr) {
 
 #endif
 
+void SegManager::createClassTable() {
+	Resource *vocab996 = _resMan->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+
+	if (!vocab996)
+		error("SegManager: failed to open vocab 996");
+
+	int totalClasses = vocab996->size >> 2;
+	_classTable.resize(totalClasses);
+
+	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
+		uint16 scriptNr = READ_SCI11ENDIAN_UINT16(vocab996->data + classNr * 4 + 2);
+
+		_classTable[classNr].reg = NULL_REG;
+		_classTable[classNr].script = scriptNr;
+	}
+
+	_resMan->unlockResource(vocab996);
+}
+
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
+	if (classnr == 0xffff)
+		return NULL_REG;
+
+	if (classnr < 0 || (int)_classTable.size() <= classnr || _classTable[classnr].script < 0) {
+		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classTable.size());
+		return NULL_REG;
+	} else {
+		Class *the_class = &_classTable[classnr];
+		if (!the_class->reg.segment) {
+			getScriptSegment(the_class->script, lock);
+
+			if (!the_class->reg.segment) {
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;", classnr, the_class->script, the_class->script);
+				return NULL_REG;
+			}
+		} else
+			if (caller.segment != the_class->reg.segment)
+				getScript(the_class->reg.segment)->incrementLockers();
+
+		return the_class->reg;
+	}
+}
 } // End of namespace Sci
