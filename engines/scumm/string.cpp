@@ -1351,6 +1351,8 @@ void ScummEngine_v7::loadLanguageBundle() {
 				// File contains Korean text (Hangul). just ignore it
 			} else if (*ptr == 'j') {
 				// File contains Japanese text. just ignore it
+			} else if (*ptr == 'c') {
+				// File contains Chinese text. just ignore it
 			} else if (*ptr == 'e') {
 				// File is encoded!
 				enc = 0x13;
