@@ -2054,9 +2054,11 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 
 	if (!setValue) {
 		if (varType == 4)
-			DebugPrintf("%s == %04x:%04x\n", varNames[varType], PRINT_REG(*curValue));
+			DebugPrintf("%s == %04x:%04x", varNames[varType], PRINT_REG(*curValue));
 		else
-			DebugPrintf("%s var %d == %04x:%04x\n", varNames[varType], varIndex, PRINT_REG(*curValue));
+			DebugPrintf("%s var %d == %04x:%04x", varNames[varType], varIndex, PRINT_REG(*curValue));
+		printBasicVarInfo(*curValue);
+		DebugPrintf("\n");
 	} else {
 		if (parse_reg_t(s, setValue, curValue, true)) {
 			DebugPrintf("Invalid value/address passed.\n");
@@ -3205,6 +3207,36 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 	}
 
 	return 0;
+}
+
+void Console::printBasicVarInfo(reg_t variable) {
+	int segType = g_sci->getKernel()->findRegType(variable);
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+
+	segType &= KSIG_ARITHMETIC | KSIG_OBJECT | KSIG_REF | KSIG_NODE | KSIG_LIST;
+
+	switch (segType) {
+	case KSIG_ARITHMETIC: {
+		uint16 content = variable.toUint16();
+		if (content >= 10)
+			DebugPrintf(" (%dd)", content);
+		break;
+	}
+	case KSIG_OBJECT:
+		DebugPrintf(" (object '%s')", segMan->getObjectName(variable));
+		break;
+	case KSIG_REF:
+		DebugPrintf(" (reference)");
+		break;
+	case KSIG_NODE:
+		DebugPrintf(" (node)");
+		break;
+	case KSIG_LIST:
+		DebugPrintf(" (list)");
+		break;
+	default:
+		DebugPrintf(" (???)");
+	}
 }
 
 void Console::printList(List *list) {
