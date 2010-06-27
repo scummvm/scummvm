@@ -176,94 +176,95 @@ void SegManager::scriptInitialiseLocals(SegmentId segmentId) {
 	}
 }
 
+void SegManager::scriptInitialiseClasses(SegmentId seg) {
+	Script *scr = getScript(seg);
+	const byte *seeker = 0;
+	uint16 mult = 0;
+	
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
+		mult = 2;
+	} else {
+		seeker = scr->findBlock(SCI_OBJ_CLASS);
+		mult = 1;
+	}
+
+	if (!seeker)
+		return;
+
+	while (true) {
+		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
+		uint16 marker = READ_SCI11ENDIAN_UINT16(seeker);
+		bool isClass;
+		uint16 classpos = seeker - scr->_buf;
+		int16 species;
+
+		if (!marker)
+			break;
+
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			isClass = (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass);	// -info- selector
+			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
+		} else {
+			isClass = (marker == SCI_OBJ_CLASS);
+			species = READ_SCI11ENDIAN_UINT16(seeker + 12);
+			classpos += 12;
+		}
+
+		if (isClass) {
+			// WORKAROUND for an invalid species access in the demo of LSL2
+			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)classTableSize())
+				resizeClassTable(classTableSize() + 1);
+
+			if (species < 0 || species >= (int)classTableSize())
+				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
+						  species, species, classTableSize(), scr->_nr);
+
+			setClassOffset(species, make_reg(seg, classpos));
+		}
+
+		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * mult;
+	}
+}
+
 void SegManager::scriptInitialiseObjectsSci0(SegmentId seg) {
 	Script *scr = getScript(seg);
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-	const byte *seeker = 0;
-	int objType;
-	reg_t addr;
+	const byte *seeker = scr->_buf + (oldScriptHeader ? 2 : 0);
 
-	// The script is initialized in 2 passes. 
-	// Pass 1: creates a lookup table of all used classes
-	// Pass 2: loads classes and objects
+	do {
+		uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
+		if (!objType)
+			break;
 
-	for (uint16 pass = 0; pass <= 1; pass++) {
-		uint16 objLength = 0;
-		seeker = scr->_buf + (oldScriptHeader ? 2 : 0);
+		switch (objType) {
+		case SCI_OBJ_OBJECT:
+		case SCI_OBJ_CLASS:
+			{
+				reg_t addr = make_reg(seg, seeker - scr->_buf + 4);
+				Object *obj = scr->scriptObjInit(addr);
+				obj->initSpecies(this, addr);
 
-		do {
-			objType = READ_SCI11ENDIAN_UINT16(seeker);
-			if (!objType)
-				break;
-
-			objLength = READ_SCI11ENDIAN_UINT16(seeker + 2);
-			seeker += 4;		// skip header
-			addr = make_reg(seg, seeker - scr->_buf);
-
-			switch (objType) {
-			case SCI_OBJ_OBJECT:
-			case SCI_OBJ_CLASS:
-				if (pass == 0 && objType == SCI_OBJ_CLASS) {
-					int species = READ_SCI11ENDIAN_UINT16(seeker + 8);	// SCRIPT_OBJECT_MAGIC_OFFSET
-
-					if (species == (int)classTableSize()) {
-						// Happens in the LSL2 demo
-						warning("Applying workaround for an off-by-one invalid species access");
-						resizeClassTable(classTableSize() + 1);
-					} else if (species < 0 || species > (int)classTableSize()) {
-						error("Invalid species %d(0x%x) not in interval "
-								  "[0,%d) while instantiating script at segment %d\n",
-								  species, species, classTableSize(),
-								  seg);
-						return;
-					}
-
-					setClassOffset(species, make_reg(seg, seeker - scr->_buf + 8));
-				} else if (pass == 1) {
-					Object *obj = scr->scriptObjInit(addr);
-					obj->initSpecies(this, addr);
-
-					if (!obj->initBaseObject(this, addr)) {
-						// Script 202 of KQ5 French has an invalid object
-						warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
-						scr->scriptObjRemove(addr);
-					}
+				if (!obj->initBaseObject(this, addr)) {
+					// Script 202 of KQ5 French has an invalid object. This is non-fatal.
+					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					scr->scriptObjRemove(addr);
 				}
-				break;
-
-			default:
-				break;
 			}
+			break;
 
-			seeker += objLength - 4;
-		} while (objType != 0 && (uint32)(seeker - scr->_buf) < scr->getScriptSize() - 2);
-	}	// for
+		default:
+			break;
+		}
+
+		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
+	} while ((uint32)(seeker - scr->_buf) < scr->getScriptSize() - 2);
 }
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	const byte *seeker = scr->_heapStart;
-	uint16 entrySize = READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
-	seeker += entrySize;	// skip first entry
-	seeker += 4;			// skip header
+	const byte *seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 
-	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-		if (READ_SCI11ENDIAN_UINT16(seeker + 14) & kInfoFlagClass) {	// -info- selector
-			int classpos = seeker - scr->_buf;
-			int species = READ_SCI11ENDIAN_UINT16(seeker + 10);
-
-			if (species < 0 || species >= (int)_classTable.size()) {
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
-				          species, species, _classTable.size(), scr->_nr);
-				return;
-			}
-
-			setClassOffset(species, make_reg(seg, classpos));
-		}
-		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
-	}
-
-	seeker = scr->_heapStart + 4 + READ_SCI11ENDIAN_UINT16(scr->_heapStart + 2) * 2;
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg = make_reg(seg, seeker - scr->_buf);
 		Object *obj = scr->scriptObjInit(reg);
@@ -311,6 +312,7 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int scriptNu
 	scr->init(scriptNum, resMan);
 	scr->load(resMan);
 	segMan->scriptInitialiseLocals(segmentId);
+	segMan->scriptInitialiseClasses(segmentId);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
 		segMan->scriptInitialiseObjectsSci11(segmentId);

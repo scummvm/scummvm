@@ -426,6 +426,7 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
+	void scriptInitialiseClasses(SegmentId seg);
 	void scriptInitialiseObjectsSci0(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 
