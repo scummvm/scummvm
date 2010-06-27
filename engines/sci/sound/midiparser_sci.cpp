@@ -440,10 +440,8 @@ byte MidiParser_SCI::midiGetNextChannel(long ticker) {
 
 byte *MidiParser_SCI::midiMixChannels() {
 	int totalSize = 0;
-	byte **dataPtr = new byte *[_track->channelCount];
 
 	for (int i = 0; i < _track->channelCount; i++) {
-		dataPtr[i] = _track->channels[i].data;
 		_track->channels[i].time = 0;
 		_track->channels[i].prev = 0;
 		totalSize += _track->channels[i].size;
@@ -453,8 +451,8 @@ byte *MidiParser_SCI::midiMixChannels() {
 	_mixedData = outData;
 	long ticker = 0;
 	byte channelNr, curDelta;
-	byte command = 0, par1, global_prev = 0;
-	long new_delta;
+	byte midiCommand = 0, midiParam, global_prev = 0;
+	long newDelta;
 	SoundResource::Channel *channel;
 
 	while ((channelNr = midiGetNextChannel(ticker)) != 0xFF) { // there is still an active channel
@@ -463,57 +461,60 @@ byte *MidiParser_SCI::midiMixChannels() {
 		channel->time += (curDelta == 0xF8 ? 240 : curDelta); // when the command is supposed to occur
 		if (curDelta == 0xF8)
 			continue;
-		new_delta = channel->time - ticker;
-		ticker += new_delta;
+		newDelta = channel->time - ticker;
+		ticker += newDelta;
 
-		command = channel->data[channel->curPos++];
-		if (command != kEndOfTrack) {
-			debugC(4, kDebugLevelSound, "\nDELTA ");
+		midiCommand = channel->data[channel->curPos++];
+		if ((midiCommand == 0xCF) && (!ticker)) {
+			// set signal command at tick 0?
+			channel->curPos++;
+			continue; // filter it
+			// at least in kq5/french&mac the first scene in the intro has a song that sets signal to 4 immediately
+			//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
+			//  get immediately removed, so we currently filter it.
+			// TODO: find out what exactly happens in sierra sci
+		}
+		if (midiCommand != kEndOfTrack) {
 			// Write delta
-			while (new_delta > 240) {
+			while (newDelta > 240) {
 				*outData++ = 0xF8;
-				debugC(4, kDebugLevelSound, "F8 ");
-				new_delta -= 240;
+				newDelta -= 240;
 			}
-			*outData++ = (byte)new_delta;
-			debugC(4, kDebugLevelSound, "%02X ", (uint32)new_delta);
+			*outData++ = (byte)newDelta;
 		}
 		// Write command
-		switch (command) {
+		switch (midiCommand) {
 		case 0xF0: // sysEx
-			*outData++ = command;
-			debugC(4, kDebugLevelSound, "%02X ", command);
+			*outData++ = midiCommand;
 			do {
-				par1 = channel->data[channel->curPos++];
-				*outData++ = par1; // out
-			} while (par1 != 0xF7);
+				midiParam = channel->data[channel->curPos++];
+				*outData++ = midiParam;
+			} while (midiParam != 0xF7);
 			break;
 		case kEndOfTrack: // end of channel
-			// FIXME: Why does this need to be fixed? There's no
-			// additional information available
-			channel->time = -1; // FIXME
+			channel->time = -1;
 			break;
 		default: // MIDI command
-			if (command & 0x80) {
-				par1 = channel->data[channel->curPos++];
+			if (midiCommand & 0x80) {
+				midiParam = channel->data[channel->curPos++];
 			} else {// running status
-				par1 = command;
-				command = channel->prev;
+				midiParam = midiCommand;
+				midiCommand = channel->prev;
 			}
 
 			// remember which channel got used for channel remapping
-			byte midiChannel = command & 0xF;
+			byte midiChannel = midiCommand & 0xF;
 			_channelUsed[midiChannel] = true;
 
-			if (command != global_prev)
-				*outData++ = command; // out command
-			*outData++ = par1;// pout par1
-			if (nMidiParams[(command >> 4) - 8] == 2)
-				*outData++ = channel->data[channel->curPos++]; // out par2
-			channel->prev = command;
-			global_prev = command;
-		}// switch(command)
-	}// while (curr)
+			if (midiCommand != global_prev)
+				*outData++ = midiCommand;
+			*outData++ = midiParam;
+			if (nMidiParams[(midiCommand >> 4) - 8] == 2)
+				*outData++ = channel->data[channel->curPos++];
+			channel->prev = midiCommand;
+			global_prev = midiCommand;
+		}
+	}
 
 	// Insert stop event
 	*outData++ = 0;    // Delta
@@ -521,11 +522,6 @@ byte *MidiParser_SCI::midiMixChannels() {
 	*outData++ = 0x2F; // End of track (EOT)
 	*outData++ = 0x00;
 	*outData++ = 0x00;
-
-	for (channelNr = 0; channelNr < _track->channelCount; channelNr++)
-		_track->channels[channelNr].data = dataPtr[channelNr];
-
-	delete[] dataPtr;
 	return _mixedData;
 }
 
