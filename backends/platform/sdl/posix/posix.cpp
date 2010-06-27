@@ -58,9 +58,9 @@ Common::String OSystem_POSIX::getDefaultConfigFileName() {
 	// to the HOME directory of the user.
 	const char *home = getenv("HOME");
 	if (home != NULL && strlen(home) < MAXPATHLEN)
-		snprintf(configFile, MAXPATHLEN, "%s/%s", home, _baseConfigName);
+		snprintf(configFile, MAXPATHLEN, "%s/%s", home, _baseConfigName.c_str());
 	else
-		strcpy(configFile, _baseConfigName);
+		strcpy(configFile, _baseConfigName.c_str());
 
 	return configFile;
 }
