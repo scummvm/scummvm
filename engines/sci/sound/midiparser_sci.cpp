@@ -444,6 +444,7 @@ byte *MidiParser_SCI::midiMixChannels() {
 	for (int i = 0; i < _track->channelCount; i++) {
 		_track->channels[i].time = 0;
 		_track->channels[i].prev = 0;
+		_track->channels[i].curPos = 0;
 		totalSize += _track->channels[i].size;
 	}
 
