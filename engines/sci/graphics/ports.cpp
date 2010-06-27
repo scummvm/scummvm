@@ -55,7 +55,7 @@ GfxPorts::~GfxPorts() {
 }
 
 void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16) {
-	int16 offTop;
+	int16 offTop = 10;
 
 	_usesOldGfxFunctions = usesOldGfxFunctions;
 	_paint16 = paint16;
