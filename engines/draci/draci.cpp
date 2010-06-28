@@ -253,19 +253,20 @@ void DraciEngine::handleEvents() {
 				if (escRoom >= 0) {
 
 					// Schedule room change
-					// TODO: gate 0 (always present) is not
-					// always best for returning from the
-					// map, e.g. in the starting location.
-					// also, after loading the game, we
-					// shouldn't run any gate program, but
-					// rather restore the state of all
-					// objects.
+					// TODO: gate 0 (always present) is not always best for
+					// returning from the map, e.g. in the starting location.
+					// also, after loading the game, we shouldn't run any gate
+					// program, but rather restore the state of all objects.
 					_game->scheduleEnteringRoomUsingGate(escRoom, 0);
 
-					// Immediately cancel any running animation or dubbing.
+					// Immediately cancel any running animation or dubbing and
+					// end any currently running GPL programs.  In the intro it
+					// works as intended---skipping the rest of it.
+					//
+					// In the map, this causes that animation on newly
+					// discovered locations will be re-run next time and
+					// cut-scenes won't be played.
 					_game->setExitLoop(true);
-
-					// End any currently running GPL programs
 					_script->endCurrentProgram(true);
 				}
 				break;
@@ -299,6 +300,16 @@ void DraciEngine::handleEvents() {
 			case Common::KEYCODE_F5:
 				if (event.kbd.hasFlags(0)) {
 					openMainMenuDialog();
+				}
+				break;
+			case Common::KEYCODE_COMMA:
+			case Common::KEYCODE_PERIOD:
+			case Common::KEYCODE_SLASH:
+				if ((_game->getLoopStatus() == kStatusOrdinary ||
+				    _game->getLoopStatus() == kStatusInventory) &&
+				   _game->getLoopSubstatus() == kOuterLoop &&
+				   _game->getRoomNum() != _game->getMapRoom()) {
+					_game->inventorySwitch(event.kbd.keycode);
 				}
 				break;
 			default:

@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/keyboard.h"
 #include "common/serializer.h"
 #include "common/stream.h"
 #include "common/system.h"
@@ -202,7 +203,8 @@ void Game::init() {
 	_animUnderCursor = NULL;
 
 	_currentItem = _itemUnderCursor = NULL;
-
+	_previousItemPosition = -1;
+  
 	_vm->_mouse->setCursorType(kHighlightedCursor);	// anything different from kNormalCursor
 
 	_objUnderCursor = NULL;
@@ -272,8 +274,8 @@ void Game::handleOrdinaryLoop(int x, int y) {
 	if (_vm->_mouse->lButtonPressed()) {
 		_vm->_mouse->lButtonSet(false);
 
-		if (_currentItem) {
-			putItem(_currentItem, 0);
+		if (getCurrentItem()) {
+			putItem(getCurrentItem(), getPreviousItemPosition());
 			updateOrdinaryCursor();
 		} else {
 			if (_objUnderCursor) {
@@ -327,6 +329,16 @@ void Game::handleOrdinaryLoop(int x, int y) {
 	}
 }
 
+int Game::inventoryPositionFromMouse() {
+	const int column = CLIP(scummvm_lround(
+		(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
+		kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
+	const int line = CLIP(scummvm_lround(
+		(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
+		kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
+	return line * kInventoryColumns + column;
+}
+
 void Game::handleInventoryLoop() {
 	if (_loopSubstatus != kOuterLoop) {
 		return;
@@ -353,19 +365,12 @@ void Game::handleInventoryLoop() {
 
 		// If there is an inventory item under the cursor and we aren't
 		// holding any item, run its look GPL program
-		if (_itemUnderCursor && !_currentItem) {
+		if (_itemUnderCursor && !getCurrentItem()) {
 			_vm->_script->runWrapper(_itemUnderCursor->_program, _itemUnderCursor->_look, true, false);
 		// Otherwise, if we are holding an item, try to place it inside the
 		// inventory
-		} else if (_currentItem) {
-			const int column = CLIP(scummvm_lround(
-				(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
-				kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
-			const int line = CLIP(scummvm_lround(
-				(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
-				kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
-			const int index = line * kInventoryColumns + column;
-			putItem(_currentItem, index);
+		} else if (getCurrentItem()) {
+			putItem(getCurrentItem(), inventoryPositionFromMouse());
 			updateInventoryCursor();
 		}
 	} else if (_vm->_mouse->rButtonPressed()) {
@@ -381,8 +386,9 @@ void Game::handleInventoryLoop() {
 
 			// The first is that there is no item in our hands.
 			// In that case, just take the inventory item from the inventory.
-			if (!_currentItem) {
-				_currentItem = _itemUnderCursor;
+			if (!getCurrentItem()) {
+				setCurrentItem(_itemUnderCursor);
+				setPreviousItemPosition(inventoryPositionFromMouse());
 				removeItem(_itemUnderCursor);
 
 			// The second is that there *is* an item in our hands.
@@ -623,10 +629,10 @@ void Game::updateOrdinaryCursor() {
 	// If there is no game object under the cursor, try using the room itself
 	if (!_objUnderCursor) {
 		if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
-			if (!_currentItem) {
+			if (!getCurrentItem()) {
 				_vm->_mouse->setCursorType(kHighlightedCursor);
 			} else {
-				_vm->_mouse->loadItemCursor(_currentItem, true);
+				_vm->_mouse->loadItemCursor(getCurrentItem(), true);
 			}
 			mouseChanged = true;
 		}
@@ -637,10 +643,10 @@ void Game::updateOrdinaryCursor() {
 		// update the cursor image (highlight it).
 		if (_objUnderCursor->_walkDir == 0) {
 			if (_vm->_script->testExpression(_objUnderCursor->_program, _objUnderCursor->_canUse)) {
-				if (!_currentItem) {
+				if (!getCurrentItem()) {
 					_vm->_mouse->setCursorType(kHighlightedCursor);
 				} else {
-					_vm->_mouse->loadItemCursor(_currentItem, true);
+					_vm->_mouse->loadItemCursor(getCurrentItem(), true);
 				}
 				mouseChanged = true;
 			}
@@ -654,10 +660,10 @@ void Game::updateOrdinaryCursor() {
 	// Load the appropriate cursor (item image if an item is held or ordinary cursor
 	// if not)
 	if (!mouseChanged) {
-		if (!_currentItem) {
+		if (!getCurrentItem()) {
 			_vm->_mouse->setCursorType(kNormalCursor);
 		} else {
-			_vm->_mouse->loadItemCursor(_currentItem, false);
+			_vm->_mouse->loadItemCursor(getCurrentItem(), false);
 		}
 	}
 }
@@ -668,19 +674,19 @@ void Game::updateInventoryCursor() {
 
 	if (_itemUnderCursor) {
 		if (_vm->_script->testExpression(_itemUnderCursor->_program, _itemUnderCursor->_canUse)) {
-			if (!_currentItem) {
+			if (!getCurrentItem()) {
 				_vm->_mouse->setCursorType(kHighlightedCursor);
 			} else {
-				_vm->_mouse->loadItemCursor(_currentItem, true);
+				_vm->_mouse->loadItemCursor(getCurrentItem(), true);
 			}
 			mouseChanged = true;
 		}
 	}
 	if (!mouseChanged) {
-		if (!_currentItem) {
+		if (!getCurrentItem()) {
 			_vm->_mouse->setCursorType(kNormalCursor);
 		} else {
-			_vm->_mouse->loadItemCursor(_currentItem, false);
+			_vm->_mouse->loadItemCursor(getCurrentItem(), false);
 		}
 	}
 }
@@ -732,6 +738,8 @@ const GameObject *Game::getObjectWithAnimation(const Animation *anim) const {
 }
 
 void Game::removeItem(GameItem *item) {
+	if (!item)
+		return;
 	for (uint i = 0; i < kInventorySlots; ++i) {
 		if (_inventory[i] == item) {
 			_inventory[i] = NULL;
@@ -753,7 +761,7 @@ void Game::loadItemAnimation(GameItem *item) {
 
 void Game::putItem(GameItem *item, int position) {
 	// Empty our hands
-	_currentItem = NULL;
+	setCurrentItem(NULL);
 
 	if (!item)
 		return;
@@ -767,6 +775,7 @@ void Game::putItem(GameItem *item, int position) {
 			break;
 		}
 	}
+	setPreviousItemPosition(position);
 
 	const int line = position / kInventoryColumns + 1;
 	const int column = position % kInventoryColumns + 1;
@@ -853,6 +862,55 @@ void Game::inventoryReload() {
 	// savegame) by re-putting them on the same spot in the inventory.
 	for (uint i = 0; i < kInventorySlots; ++i) {
 		putItem(_inventory[i], i);
+	}
+	setPreviousItemPosition(0);
+}
+
+void Game::inventorySwitch(int keycode) {
+	switch (keycode) {
+	case Common::KEYCODE_SLASH:
+		// Switch between holding an item and the ordinary mouse cursor.
+		if (!getCurrentItem()) {
+			if (getPreviousItemPosition() >= 0) {
+				GameItem* last_item = _inventory[getPreviousItemPosition()];
+				setCurrentItem(last_item);
+				removeItem(last_item);
+			}
+		} else {
+			putItem(getCurrentItem(), getPreviousItemPosition());
+		}
+		break;
+	case Common::KEYCODE_COMMA:
+	case Common::KEYCODE_PERIOD:
+		// Iterate between the items in the inventory.
+		if (getCurrentItem()) {
+			assert(getPreviousItemPosition() >= 0);
+			int direction = keycode == Common::KEYCODE_PERIOD ? +1 : -1;
+			// Find the next available item.
+			int pos = getPreviousItemPosition() + direction;
+			while (true) {
+			      if (pos < 0)
+				      pos += kInventorySlots;
+			      else if (pos >= kInventorySlots)
+				      pos -= kInventorySlots;
+			      if (pos == getPreviousItemPosition() || _inventory[pos]) {
+				      break;
+			      }
+			      pos += direction;
+			}
+			// Swap it with the current item.
+			putItem(getCurrentItem(), getPreviousItemPosition());
+			GameItem* new_item = _inventory[pos];
+			setCurrentItem(new_item);
+			setPreviousItemPosition(pos);
+			removeItem(new_item);
+		}
+		break;
+	}
+	if (getRoomNum() != getMapRoom()) {
+		updateOrdinaryCursor();
+	} else {
+		updateInventoryCursor();
 	}
 }
 

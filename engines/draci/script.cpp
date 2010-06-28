@@ -553,6 +553,7 @@ void Script::icoStat(const Common::Array<int> &params) {
 		// arrow leading outside a location), set it to standard.
 		if (_vm->_game->getCurrentItem() == item) {
 			_vm->_game->setCurrentItem(NULL);
+			_vm->_game->setPreviousItemPosition(-1);
 			if (_vm->_mouse->getCursorType() >= kItemCursor) {
 				_vm->_mouse->setCursorType(kNormalCursor);
 			}
@@ -561,6 +562,7 @@ void Script::icoStat(const Common::Array<int> &params) {
 	} else {
 		_vm->_game->loadItemAnimation(item);
 		_vm->_game->setCurrentItem(item);
+		_vm->_game->setPreviousItemPosition(0);		// next time, try to place the item from the beginning
 		_vm->_mouse->loadItemCursor(item, false);
 	}
 }
