@@ -881,7 +881,7 @@ void Script::setPalette(const Common::Array<int> &params) {
 	}
 	// Immediately update the palette
 	_vm->_screen->copyToScreen();
-	_vm->_system->delayMillis(20);
+	_vm->_system->delayMillis(kTimeUnit);
 }
 
 void Script::quitGame(const Common::Array<int> &params) {

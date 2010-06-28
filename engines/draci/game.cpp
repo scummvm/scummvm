@@ -176,6 +176,9 @@ void Game::start() {
 		// Call the outer loop doing all the hard job.
 		loop(kOuterLoop, false);
 
+		// Fade out the palette after leaving the location.
+		fadePalette(true);
+
 		if (!isReloaded()) {
 			// We are changing location.  Run the hero's LOOK
 			// program to trigger a possible cut-scene.  This is
@@ -428,6 +431,22 @@ void Game::handleDialogueLoop() {
 	}
 }
 
+void Game::fadePalette(bool fading_out) {
+	const byte *startPal = NULL;
+	const byte *endPal = _currentRoom._palette >= 0
+		? _vm->_paletteArchive->getFile(_currentRoom._palette)->_data
+		: NULL;
+	if (fading_out) {
+		startPal = endPal;
+		endPal = NULL;
+	}
+	for (int i = 1; i <= kBlackFadingIterations; ++i) {
+		_vm->_system->delayMillis(kBlackFadingTimeUnit);
+		_vm->_screen->interpolatePalettes(startPal, endPal, 0, kNumColours, i, kBlackFadingIterations);
+		_vm->_screen->copyToScreen();
+	}
+}
+
 void Game::advanceAnimationsAndTestLoopExit() {
 	// Fade the palette if requested
 	if (_fadePhase > 0 && (_vm->_system->getMillis() - _fadeTick) >= kFadingTimeUnit) {
@@ -485,7 +504,7 @@ void Game::advanceAnimationsAndTestLoopExit() {
 	// callbacks) and redraw screen
 	_vm->_anims->drawScene(_vm->_screen->getSurface());
 	_vm->_screen->copyToScreen();
-	_vm->_system->delayMillis(20);
+	_vm->_system->delayMillis(kTimeUnit);
 
 	// If the hero has arrived at his destination, after even the last
 	// phase was correctly animated, run the callback.
@@ -1364,10 +1383,11 @@ void Game::enterNewRoom() {
 	loadRoomObjects();
 	loadOverlays();
 
-	// Set room palette
-	const BAFile *f;
-	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
-	_vm->_screen->setPalette(f->_data, 0, kNumColours);
+	// Draw the scene with the black palette and slowly fade into the right palette.
+	_vm->_screen->setPalette(NULL, 0, kNumColours);
+	_vm->_anims->drawScene(_vm->_screen->getSurface());
+	_vm->_screen->copyToScreen();
+	fadePalette(false);
 
 	// Run the program for the gate the dragon came through
 	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", _newGate);

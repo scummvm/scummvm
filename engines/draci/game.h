@@ -65,9 +65,16 @@ enum SpeechConstants {
 	kStandardSpeed = 60
 };
 
-// One fading phase is 50ms.
 enum FadeConstants {
-	kFadingTimeUnit = 50
+	// One fading phase called from the game scripts is 50ms.
+	kFadingTimeUnit = 50,
+	// Fading in/out when entering/leaving a location takes 15 iterations of (at least) 7ms each.
+	kBlackFadingIterations = 15,
+	kBlackFadingTimeUnit = 7
+};
+
+enum AnimationConstants {
+	kTimeUnit = 20
 };
 
 /** Inventory related magical constants */
@@ -334,6 +341,7 @@ private:
 	void handleDialogueLoop();
 	void updateTitle(int x, int y);
 	void updateCursor();
+	void fadePalette(bool fading_out);
 	void advanceAnimationsAndTestLoopExit();
 	void handleStatusChangeByMouse();
 
