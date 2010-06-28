@@ -69,7 +69,7 @@ DebugState g_debugState;	// FIXME: Avoid non-const global vars
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	byte *scr;
+	const byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
 	uint16 param_value;
@@ -82,7 +82,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	} else
 		script_entity = (Script *)mobj;
 
-	scr = script_entity->_buf;
+	scr = script_entity->getBuf();
 	scr_size = script_entity->getBufSize();
 
 	if (pos.offset >= scr_size) {
@@ -291,7 +291,7 @@ void script_debug(EngineState *s) {
 
 			if (mobj) {
 				Script *scr = (Script *)mobj;
-				byte *code_buf = scr->_buf;
+				const byte *code_buf = scr->getBuf();
 				int code_buf_size = scr->getBufSize();
 				int opcode = s->xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset];
 				int op = opcode >> 1;

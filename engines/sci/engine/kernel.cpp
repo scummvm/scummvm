@@ -644,7 +644,7 @@ int Kernel::findRegType(reg_t reg) {
 	case SEG_TYPE_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
 			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
-		    RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
+		    RAW_IS_OBJECT((*(Script *)mobj).getBuf(reg.offset)) ) {
 			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;
 		} else
 			return KSIG_REF;

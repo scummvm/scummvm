@@ -157,7 +157,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 
 	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
-		_scriptSegMap.erase(scr->_nr);
+		_scriptSegMap.erase(scr->getScriptNumber());
 		if (recursive && scr->_localsSegment)
 			deallocate(scr->_localsSegment, recursive);
 	}
@@ -173,7 +173,7 @@ bool SegManager::isHeapObject(reg_t pos) {
 	if (obj == NULL || (obj && obj->isFreed()))
 		return false;
 	Script *scr = getScriptIfLoaded(pos.segment);
-	return !(scr && scr->_markedAsDeleted);
+	return !(scr && scr->isMarkedAsDeleted());
 }
 
 void SegManager::deallocateScript(int script_nr) {
@@ -237,7 +237,7 @@ Object *SegManager::getObject(reg_t pos) {
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.offset <= scr->getBufSize() && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(scr->_buf + pos.offset)) {
+			        && RAW_IS_OBJECT(scr->getBuf(pos.offset))) {
 				obj = scr->getObject(pos.offset);
 			}
 		}
@@ -384,12 +384,12 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr) {
 			locals = (LocalVariables *)_heap[scr->_localsSegment];
 			VERIFY(locals != NULL, "Re-used locals segment was NULL'd out");
 			VERIFY(locals->getType() == SEG_TYPE_LOCALS, "Re-used locals segment did not consist of local variables");
-			VERIFY(locals->script_id == scr->_nr, "Re-used locals segment belonged to other script");
+			VERIFY(locals->script_id == scr->getScriptNumber(), "Re-used locals segment belonged to other script");
 		} else
 			locals = (LocalVariables *)allocSegment(new LocalVariables(), &scr->_localsSegment);
 
 		scr->_localsBlock = locals;
-		locals->script_id = scr->_nr;
+		locals->script_id = scr->getScriptNumber();
 		locals->_locals.resize(scr->getLocalsCount());
 
 		return locals;
@@ -1012,13 +1012,9 @@ int SegManager::instantiateScript(int scriptNum) {
 	scr->initialiseClasses(this);
 
 	if (getSciVersion() >= SCI_VERSION_1_1) {
-		scr->initialiseObjectsSci11(this);
-		scr->relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(scr->_heapStart)));
+		scr->initialiseObjectsSci11(this, segmentId);
 	} else {
-		scr->initialiseObjectsSci0(this);
-		byte *relocationBlock = scr->findBlock(SCI_OBJ_POINTERS);
-		if (relocationBlock)
-			scr->relocate(make_reg(segmentId, relocationBlock - scr->_buf + 4));
+		scr->initialiseObjectsSci0(this, segmentId);
 	}
 
 	return segmentId;
@@ -1067,16 +1063,16 @@ void SegManager::uninstantiateScriptSci0(int script_nr) {
 	do {
 		reg.offset += objLength; // Step over the last checked object
 
-		objType = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset);
+		objType = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.offset));
 		if (!objType)
 			break;
-		objLength = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
+		objLength = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.offset + 2));
 
 		reg.offset += 4; // Step over header
 
 		if ((objType == SCI_OBJ_OBJECT) || (objType == SCI_OBJ_CLASS)) { // object or class?
 			reg.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-			int16 superclass = READ_SCI11ENDIAN_UINT16(scr->_buf + reg.offset + 2);
+			int16 superclass = READ_SCI11ENDIAN_UINT16(scr->getBuf(reg.offset + 2));
 
 			if (superclass >= 0) {
 				int superclass_script = getClass(superclass).script;

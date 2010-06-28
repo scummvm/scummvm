@@ -299,7 +299,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			EngineState *state = g_sci->getEngineState();
 			ExecStack *lastCall = state->xs;
 			Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
-			int curScriptNr = local_script->_nr;
+			int curScriptNr = local_script->getScriptNumber();
 
 			if (lastCall->localCallOffset != -1) {
 				// if lastcall was actually a local call search back for a real call
@@ -943,7 +943,7 @@ void run_vm(EngineState *s, bool restoring) {
 			s->_executionStackPosChanged = false;
 
 			obj = s->_segMan->getObject(s->xs->objp);
-			code_buf = scr->_buf;
+			code_buf = scr->getBuf();
 			code_buf_size = scr->getBufSize();
 			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 			if (!local_script) {
@@ -1287,7 +1287,7 @@ void run_vm(EngineState *s, bool restoring) {
 //			for (int i = 0; i < opparams[0]; i++)
 //				s->xs->sp[i] = make_reg(0, 'ss');
 
-			//if (local_script->_nr == 140 && isIslandOfDrBrain) {
+			//if (local_script->getScriptNumber() == 140 && isIslandOfDrBrain) {
 			//	// WORKAROUND for The Island of Dr. Brain, room 140.
 			//	// Script 140 runs in an endless loop if we set its
 			//	// variables to 0 here.

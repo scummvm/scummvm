@@ -64,7 +64,7 @@ struct Class {
 	reg_t reg; ///< offset; script-relative offset, segment: 0 if not instantiated
 };
 
-#define RAW_IS_OBJECT(datablock) (READ_SCI11ENDIAN_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
+#define RAW_IS_OBJECT(datablock) (READ_SCI11ENDIAN_UINT16(((const byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 // A reference to an object's variable.
 // The object is stored as a reg_t, the variable as an index into _variables

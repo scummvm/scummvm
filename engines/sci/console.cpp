@@ -1381,7 +1381,7 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 
 			switch (mobj->getType()) {
 			case SEG_TYPE_SCRIPT:
-				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj)._nr, (*(Script *)mobj).getLockers());
+				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj).getScriptNumber(), (*(Script *)mobj).getLockers());
 				break;
 
 			case SEG_TYPE_CLONES:
@@ -1455,9 +1455,9 @@ bool Console::segmentInfo(int nr) {
 
 	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
-		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
+		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->getScriptNumber(), scr->getLockers(), (uint)scr->getBufSize(), (uint)scr->getBufSize());
 		if (scr->getExportTable())
-			DebugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), (int)(((const byte *)scr->getExportTable()) - ((const byte *)scr->_buf)));
+			DebugPrintf("  Exports: %4d at %d\n", scr->getExportsNr(), (int)(((const byte *)scr->getExportTable()) - ((const byte *)scr->getBuf())));
 		else
 			DebugPrintf("  Exports: none\n");
 
@@ -2377,7 +2377,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 		DebugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _engine->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			DebugPrintf(" script: %d", (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.segment])._nr);
+			DebugPrintf(" script: %d", (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.segment]).getScriptNumber());
 		DebugPrintf("\n");
 	}
 
@@ -3351,7 +3351,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), _engine->getKernel()->getSelectorName(obj->getFuncSelector(i)).c_str(), PRINT_REG(fptr));
 	}
 	if (s->_segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
-		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->_nr);
+		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->getScriptNumber());
 
 	return 0;
 }

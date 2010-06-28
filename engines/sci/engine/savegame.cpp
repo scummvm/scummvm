@@ -278,7 +278,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// If we are loading a script, hook it up in the script->segment map.
 		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
-			_scriptSegMap[((Script *)mobj)->_nr] = i;
+			_scriptSegMap[((Script *)mobj)->getScriptNumber()] = i;
 		}
 	}
 
@@ -765,7 +765,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
 
 		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
-			it->_value._baseObj = scr->_buf + it->_value.getPos().offset;
+			it->_value._baseObj = scr->getBuf(it->_value.getPos().offset);
 	}
 
 	for (i = 0; i < _heap.size(); i++) {

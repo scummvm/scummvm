@@ -51,19 +51,12 @@ enum ScriptObjectTypes {
 typedef Common::HashMap<uint16, Object> ObjMap;
 
 class Script : public SegmentObj {
-public:
+private:
 	int _nr; /**< Script number */
 	byte *_buf; /**< Static data buffer, or NULL if not used */
 	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
 
-	uint32 getScriptSize() { return _scriptSize; }
-	uint32 getHeapSize() { return _heapSize; }
-	uint32 getBufSize() { return _bufSize; }
-
-protected:
 	int _lockers; /**< Number of classes and objects that require this script */
-
-private:
 	size_t _scriptSize;
 	size_t _heapSize;
 	uint16 _bufSize;
@@ -77,19 +70,27 @@ private:
 	int _localsOffset;
 	uint16 _localsCount;
 
+	bool _markedAsDeleted;
+
 public:
 	/**
 	 * Table for objects, contains property variables.
 	 * Indexed by the TODO offset.
 	 */
 	ObjMap _objects;
-
-	int getLocalsOffset() const { return _localsOffset; }
-	uint16 getLocalsCount() const { return _localsCount; }
 	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
-	bool _markedAsDeleted;
+public:
+	int getLocalsOffset() const { return _localsOffset; }
+	uint16 getLocalsCount() const { return _localsCount; }
+
+	uint32 getScriptSize() const { return _scriptSize; }
+	uint32 getHeapSize() const { return _heapSize; }
+	uint32 getBufSize() const { return _bufSize; }
+	const byte *getBuf(uint offset = 0) const { return _buf + offset; }
+
+	int getScriptNumber() const { return _nr; }
 
 public:
 	Script();
@@ -130,15 +131,6 @@ public:
 	void scriptObjRemove(reg_t obj_pos);
 
 	/**
-	 * Processes a relocation block witin a script
-	 *  This function is idempotent, but it must only be called after all
-	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
-	 * @return			Location of the relocation block
-	 */
-	void relocate(reg_t block);
-
-	/**
 	 * Initializes the script's local variables
 	 * @param segMan	A reference to the segment manager
 	 */
@@ -153,19 +145,17 @@ public:
 	/**
 	 * Initializes the script's objects (SCI0)
 	 * @param segMan	A reference to the segment manager
+	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci0(SegManager *segMan);
+	void initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId);
 
 	/**
 	 * Initializes the script's objects (SCI1.1+)
 	 * @param segMan	A reference to the segment manager
+	 * @param segmentId	The script's segment id
 	 */
-	void initialiseObjectsSci11(SegManager *segMan);
+	void initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId);
 
-private:
-	bool relocateLocal(SegmentId segment, int location);
-
-public:
 	// script lock operations
 
 	/** Increments the number of lockers of this script by one. */
@@ -246,6 +236,18 @@ public:
 	 * Finds the pointer where a block of a specific type starts from
 	 */
 	byte *findBlock(int type);
+
+private:
+	/**
+	 * Processes a relocation block witin a script
+	 *  This function is idempotent, but it must only be called after all
+	 *  objects have been instantiated, or a run-time error will occur.
+	 * @param obj_pos	Location (segment, offset) of the block
+	 * @return			Location of the relocation block
+	 */
+	void relocate(reg_t block);
+
+	bool relocateLocal(SegmentId segment, int location);
 };
 
 } // End of namespace Sci

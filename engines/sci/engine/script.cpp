@@ -88,14 +88,13 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 	if (getSciVersion() == SCI_VERSION_0_EARLY) {
 		_bufSize += READ_LE_UINT16(script->data) * 2;
 	} else if (getSciVersion() >= SCI_VERSION_1_1) {
-		/**
-		 * In SCI11, the heap was in a separate space from the script.
-		 * We append it to the end of the script, and adjust addressing accordingly.
-		 * However, since we address the heap with a 16-bit pointer, the combined
-		 * size of the stack and the heap must be 64KB. So far this has worked
-		 * for SCI11, SCI2 and SCI21 games. SCI3 games use a different script format,
-		 * and theoretically they can exceed the 64KB boundary using relocation.
-		 */
+		// In SCI11, the heap was in a separate space from the script. We append
+		// it to the end of the script, and adjust addressing accordingly.
+		// However, since we address the heap with a 16-bit pointer, the
+		// combined size of the stack and the heap must be 64KB. So far this has
+		// worked for SCI11, SCI2 and SCI21 games. SCI3 games use a different
+		// script format, and theoretically they can exceed the 64KB boundary
+		// using relocation.
 		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 		_bufSize += heap->size;
 		_heapSize = heap->size;
@@ -109,8 +108,8 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 		// As mentioned above, the script and the heap together should not exceed 64KB
 		if (script->size + heap->size > 65535)
 			error("Script and heap sizes combined exceed 64K. This means a fundamental "
-					"design bug was made regarding SCI1.1 and newer games.\nPlease "
-					"report this error to the ScummVM team");
+					"design bug was made regarding SCI1.1 and newer games.\n"
+					"Please report this error to the ScummVM team");
 	}
 }
 
@@ -256,7 +255,7 @@ bool Script::relocateLocal(SegmentId segment, int location) {
 }
 
 void Script::relocate(reg_t block) {
-	byte *heap = _buf;
+	const byte *heap = _buf;
 	uint16 heapSize = (uint16)_bufSize;
 	uint16 heapOffset = 0;
 
@@ -452,10 +451,9 @@ void Script::initialiseClasses(SegManager *segMan) {
 	}
 }
 
-void Script::initialiseObjectsSci0(SegManager *segMan) {
+void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	const byte *seeker = _buf + (oldScriptHeader ? 2 : 0);
-	SegmentId segmentId = segMan->getScriptSegment(_nr);
 
 	do {
 		uint16 objType = READ_SCI11ENDIAN_UINT16(seeker);
@@ -487,11 +485,14 @@ void Script::initialiseObjectsSci0(SegManager *segMan) {
 
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2);
 	} while ((uint32)(seeker - _buf) < getScriptSize() - 2);
+
+	byte *relocationBlock = findBlock(SCI_OBJ_POINTERS);
+	if (relocationBlock)
+		relocate(make_reg(segmentId, relocationBlock - getBuf() + 4));
 }
 
-void Script::initialiseObjectsSci11(SegManager *segMan) {
+void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	const byte *seeker = _heapStart + 4 + READ_SCI11ENDIAN_UINT16(_heapStart + 2) * 2;
-	SegmentId segmentId = segMan->getScriptSegment(_nr);
 
 	while (READ_SCI11ENDIAN_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg = make_reg(segmentId, seeker - _buf);
@@ -521,6 +522,8 @@ void Script::initialiseObjectsSci11(SegManager *segMan) {
 
 		seeker += READ_SCI11ENDIAN_UINT16(seeker + 2) * 2;
 	}
+
+	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
 } // End of namespace Sci

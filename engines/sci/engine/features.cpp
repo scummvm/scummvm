@@ -84,7 +84,7 @@ bool GameFeatures::autoDetectSoundType() {
 		int16 opparams[4];
 		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
@@ -220,7 +220,7 @@ bool GameFeatures::autoDetectLofsType(int methodNum) {
 		int16 opparams[4];
 		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
@@ -306,7 +306,7 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 		int16 opparams[4];
 		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
@@ -409,7 +409,7 @@ bool GameFeatures::autoDetectSci21KernelType() {
 		int16 opparams[4];
 		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
@@ -462,7 +462,7 @@ bool GameFeatures::autoDetectMoveCountType() {
 		int16 opparams[4];
 		byte extOpcode;
 		byte opcode;
-		offset += readPMachineInstruction(script->_buf + offset, extOpcode, opparams);
+		offset += readPMachineInstruction(script->getBuf(offset), extOpcode, opparams);
 		opcode = extOpcode >> 1;
 
 		// Check for end of script
