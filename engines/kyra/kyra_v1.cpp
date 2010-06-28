@@ -105,8 +105,11 @@ Common::Error KyraEngine_v1::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	if (!_flags.useDigSound) {
-		// We prefer AdLib over MIDI, since generally AdLib is better supported
-		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32);
+		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
+		// MT-32/LAPC1/CM32L/CM64 device and AdLib sounds better than our incomplete MT-32 emulator and also better than
+		// MT-32/GM mapping. For Kyra 2 and LoL which have real GM tracks which sound better than AdLib tracks we prefer GM
+		// since most users have a GM compatible device.
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
