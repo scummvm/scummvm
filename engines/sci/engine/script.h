@@ -111,7 +111,6 @@ public:
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
-	Object *allocateObject(uint16 offset);
 	Object *getObject(uint16 offset);
 	const Object *getObject(uint16 offset) const;
 

@@ -181,10 +181,6 @@ void Script::load(ResourceManager *resMan) {
 	}
 }
 
-Object *Script::allocateObject(uint16 offset) {
-	return &_objects[offset];
-}
-
 Object *Script::getObject(uint16 offset) {
 	if (_objects.contains(offset))
 		return &_objects[offset];
@@ -200,17 +196,16 @@ const Object *Script::getObject(uint16 offset) const {
 }
 
 Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
-	Object *obj;
-
 	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
 		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
 
 	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
 
-	obj = allocateObject(obj_pos.offset);
-
 	VERIFY(obj_pos.offset + kOffsetFunctionArea < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
+	// Get the object at the specified position and init it. This will
+	// automatically "allocate" space for it in the _objects map if necessary.
+	Object *obj = &_objects[obj_pos.offset];
 	obj->init(_buf, obj_pos, fullObjectInit);
 
 	return obj;
@@ -508,7 +503,7 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 		// talk-clicks on the robot will act like clicking on ego
 		if (!obj->isClass()) {
 			reg_t classObject = obj->getSuperClassSelector();
-			Object *classObj = segMan->getObject(classObject);
+			const Object *classObj = segMan->getObject(classObject);
 			obj->setPropDictSelector(classObj->getPropDictSelector());
 		}
 
