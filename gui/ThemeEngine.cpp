@@ -568,10 +568,17 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	if (file == "default") {
 		_texts[textId]->_fontPtr = _font;
 	} else {
-		_texts[textId]->_fontPtr = FontMan.getFontByName(file);
+		Common::String localized = genLocalizedFontFilename(file.c_str());
+		// Try built-in fonts
+		_texts[textId]->_fontPtr = FontMan.getFontByName(localized);
 
 		if (!_texts[textId]->_fontPtr) {
-			_texts[textId]->_fontPtr = loadFont(file);
+			// First try to load localized font
+			_texts[textId]->_fontPtr = loadFont(localized);
+
+			// Fallback to non-localized font
+			if (!_texts[textId]->_fontPtr)
+				_texts[textId]->_fontPtr = loadFont(file);
 
 			if (!_texts[textId]->_fontPtr)
 				error("Couldn't load font '%s'", file.c_str());
@@ -1493,6 +1500,34 @@ Common::String ThemeEngine::genCacheFilename(const char *filename) {
 	}
 
 	return Common::String();
+}
+
+Common::String ThemeEngine::genLocalizedFontFilename(const char *filename) {
+#ifndef USE_TRANSLATION
+	return Common::String(filename);
+#else
+
+	Common::String result;
+	bool pointPassed = false;
+
+	for (const char *p = filename; *p != 0; p++) {
+		if (!pointPassed) {
+			if (*p != '.') {
+				result += *p;
+			} else {
+				result += "-";
+				result += TransMan.getCurrentCharset();
+				result += *p;
+
+				pointPassed = true;
+			}
+		} else {
+			result += *p;
+		}
+	}
+
+	return result;
+#endif
 }
 
 

@@ -57,18 +57,28 @@ FontManager::~FontManager() {
 	g_consolefont = 0;
 }
 
-const char *builtinFontNames[] = {
-	"builtinOSD",
-	"builtinConsole",
-	"builtinGUI",
-	"builtinBigGUI",
-	0
+const struct {
+	const char *name;
+	FontManager::FontUsage id;
+} builtinFontNames[] = {
+	{ "builtinOSD", FontManager::kOSDFont },
+	{ "builtinConsole", FontManager::kConsoleFont },
+	{ "fixed5x8.bdf", FontManager::kConsoleFont },
+	{ "fixed5x8-iso-8859-1.bdf", FontManager::kConsoleFont },
+	{ "fixed5x8-ascii.bdf", FontManager::kConsoleFont },
+	{ "clR6x12.bdf", FontManager::kGUIFont },
+	{ "clR6x12-iso-8859-1.bdf", FontManager::kGUIFont },
+	{ "clR6x12-ascii.bdf", FontManager::kGUIFont },
+	{ "helvB12.bdf", FontManager::kBigGUIFont },
+	{ "helvB12-iso-8859-1.bdf", FontManager::kBigGUIFont },
+	{ "helvB12-ascii.bdf", FontManager::kBigGUIFont },
+	{ 0, FontManager::kOSDFont }
 };
 
 const Font *FontManager::getFontByName(const Common::String &name) const {
-	for (int i = 0; builtinFontNames[i]; i++)
-		if (!strcmp(name.c_str(), builtinFontNames[i]))
-			return getFontByUsage((FontUsage)i);
+	for (int i = 0; builtinFontNames[i].name; i++)
+		if (!scumm_stricmp(name.c_str(), builtinFontNames[i].name))
+			return getFontByUsage(builtinFontNames[i].id);
 
 	if (!_fontMap.contains(name))
 		return 0;

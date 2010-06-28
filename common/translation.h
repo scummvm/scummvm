@@ -121,6 +121,11 @@ public:
 	 */
 	const TLangArray getSupportedLanguages() const;
 
+	/**
+	 * Returns charset specified by selected translation language
+	 */
+	const char *getCurrentCharset();
+
 private:
 	Common::String _syslang;
 };

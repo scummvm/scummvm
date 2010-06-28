@@ -130,6 +130,10 @@ const char *TranslationManager::getTranslation(const char *message) {
 	return po2c_gettext(message);
 }
 
+const char *TranslationManager::getCurrentCharset() {
+	return po2c_getcharset();
+}
+
 String TranslationManager::getTranslation(const String &message) {
 	return po2c_gettext(message.c_str());
 }
