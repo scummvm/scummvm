@@ -594,7 +594,7 @@ void GfxScreen::debugShowMap(int mapNo) {
 }
 
 void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
-	const int newWidth = srcWidth * 2;
+	int newWidth = srcWidth * 2;
 	const byte *srcPtr = src;
 
 	for (int y = 0; y < srcHeight; y++) {
@@ -606,7 +606,7 @@ void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHei
 			dst[newWidth + 1] = color;
 			dst += 2;
 		}
-		dst += srcWidth;
+		dst += newWidth;
 	}
 }
 
