@@ -31,6 +31,8 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+#include <sys/fcntl.h>
+
 
 #include "backends/platform/gp2xwiz/gp2xwiz-loader.h"
 
@@ -91,11 +93,13 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 	// TODO: Loop over relocation entries
 	for (int i = 0; i < cnt; i++) {
 
+		DBG("attempting to relocate!");
+
 	    //Elf32_Sym *sym = ???;
 
 		//void *target = ???;
 
-	//	switch (/*relocation type*/) {
+		/*switch (REL_TYPE()) {*/
 		//case ??? :
 			//TODO: Cases for each relocation type.
 			//break;
@@ -112,17 +116,6 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 }
 
 bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
-
-	/*
-	if (read(fd, &ehdr, sizeof(ehdr)) != sizeof(ehdr) ||
-		memcmp(ehdr.e_ident, ELFMAG, SELFMAG) ||
-	    ehdr.e_type != 2 ||  ehdr.e_machine != 42 ||
-	    ehdr.e_phentsize < sizeof(phdr) || ehdr.e_shentsize != sizeof(*shdr) ||
-	    ehdr.e_phnum != 1) {
-	    seterror("Invalid file type.");
-	    return false;
-	}
-	*/
 
 	// Start reading the elf header. Check for errors
 	if (read(fd, ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
@@ -377,10 +370,10 @@ bool DLObject::open(const char *path) {
 
 	DBG(("open(\"%s\")\n", path));
 
-	/*if ((fd = ::open(path, O_RDONLY)) < 0) {
+	if ((fd = ::open(path, O_RDONLY)) < 0) {
 		seterror("%s not found.", path);
 		return false;
-	} TODO: reimplement this "attempt to open" code */
+	}
 
 	// Try to load and relocate
 	if (!load(fd)) {
