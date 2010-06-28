@@ -332,8 +332,8 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			pixelNo += runLength;
 		}
 	} else {
-		// We skip over transparent pixels, so the buffer needs to be already
-		// filled with "it". (FIXME: What is "it" supposed to mean here?)
+		// We fill the buffer with transparent pixels, so that we can later skip
+		//  over pixels to automatically have them transparent
 		// Also some RLE compressed cels are possibly ending with the last
 		// non-transparent pixel (is this even possible with the current code?)
 		memset(outPtr, _loop[loopNo].cel[celNo].clearKey, pixelCount);
