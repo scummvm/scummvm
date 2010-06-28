@@ -907,7 +907,7 @@ void Game::inventorySwitch(int keycode) {
 		}
 		break;
 	}
-	if (getRoomNum() != getMapRoom()) {
+	if (getLoopStatus() == kStatusOrdinary) {
 		updateOrdinaryCursor();
 	} else {
 		updateInventoryCursor();
