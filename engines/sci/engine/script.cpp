@@ -521,4 +521,63 @@ void Script::initialiseObjectsSci11(SegManager *segMan, SegmentId segmentId) {
 	relocate(make_reg(segmentId, READ_SCI11ENDIAN_UINT16(_heapStart)));
 }
 
+reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
+	addr.offset = 0;
+	return addr;
+}
+
+void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
+	/*
+		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x", PRINT_REG(addr));
+		if (_localsSegment)
+			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000", _localsSegment);
+	*/
+
+	if (_markedAsDeleted)
+		segMan->deallocateScript(_nr);
+}
+
+Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
+	const reg_t r = make_reg(segId, 0);
+	return Common::Array<reg_t>(&r, 1);
+}
+
+Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
+	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
+		const Object *obj = getObject(addr.offset);
+		if (obj) {
+			// Note all local variables, if we have a local variable environment
+			if (_localsSegment)
+				tmp.push_back(make_reg(_localsSegment, 0));
+
+			for (uint i = 0; i < obj->getVarCount(); i++)
+				tmp.push_back(obj->getVariable(i));
+		} else {
+			error("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
+		}
+	} else {
+		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
+		/* Happens e.g. when we're looking into strings */
+	}
+	return tmp;
+}
+
+Common::Array<reg_t> Script::listObjectReferences() const {
+	Common::Array<reg_t> tmp;
+
+	// Locals, if present
+	if (_localsSegment)
+		tmp.push_back(make_reg(_localsSegment, 0));
+
+	// All objects (may be classes, may be indirectly reachable)
+	ObjMap::iterator it;
+	const ObjMap::iterator end = _objects.end();
+	for (it = _objects.begin(); it != end; ++it) {
+		tmp.push_back(it->_value.getPos());
+	}
+
+	return tmp;
+}
+
 } // End of namespace Sci
