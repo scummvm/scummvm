@@ -123,7 +123,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, size);
 
 	default:
-		warning("Unknown MemoryInfo operation: %04x", argv[0].offset);
+		error("Unknown MemoryInfo operation: %04x", argv[0].offset);
 	}
 
 	return NULL_REG;
@@ -198,7 +198,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	if (getSciVersion() <= SCI_VERSION_0_LATE && mode > 1)
-		warning("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
+		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
 	case K_NEW_GETTIME_TICKS :
@@ -218,7 +218,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
 	default:
-		warning("Attempt to use unknown GetTime mode %d", mode);
+		error("Attempt to use unknown GetTime mode %d", mode);
 		break;
 	}
 
@@ -264,7 +264,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			error("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (ref.isRaw)
@@ -280,7 +280,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -375,7 +375,7 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	case kPlatformIsItWindows:
 		return make_reg(0, isWindows);
 	default:
-		warning("Unsupported kPlatform operation %d", operation);
+		error("Unsupported kPlatform operation %d", operation);
 	}
 
 	return NULL_REG;

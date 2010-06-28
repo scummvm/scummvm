@@ -37,12 +37,12 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 		Node *node = segMan->lookupNode(addr);
 
 		if (!node) {
-			warning("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			error("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
 			return false;
 		}
 
 		if (havePrev && node->pred != prev) {
-			warning("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
+			error("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
 					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
 
 			//node->pred = prev;	// fix the problem in the node
@@ -61,7 +61,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 	List *list = segMan->lookupList(addr);
 
 	if (!list) {
-		warning("isSaneListPointer (list %04x:%04x): The requested list wasn't found",
+		error("checkListPointer (list %04x:%04x): The requested list wasn't found",
 				PRINT_REG(addr));
 		return;
 	}
@@ -74,17 +74,17 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 		Node *node_z = segMan->lookupNode(list->last);
 
 		if (!node_a) {
-			warning("isSaneListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
+			error("checkListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
 			return;
 		}
 
 		if (!node_z) {
-			warning("isSaneListPointer (list %04x:%04x): missing last node", PRINT_REG(addr));
+			error("checkListPointer (list %04x:%04x): missing last node", PRINT_REG(addr));
 			return;
 		}
 
 		if (!node_a->pred.isNull()) {
-			warning("isSaneListPointer (list %04x:%04x): First node of the list points to a predecessor node",
+			error("checkListPointer (list %04x:%04x): First node of the list points to a predecessor node",
 					PRINT_REG(addr));
 
 			//node_a->pred = NULL_REG;	// fix the problem in the node
@@ -93,7 +93,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 		}
 
 		if (!node_z->succ.isNull()) {
-			warning("isSaneListPointer (list %04x:%04x): Last node of the list points to a successor node",
+			error("checkListPointer (list %04x:%04x): Last node of the list points to a successor node",
 					PRINT_REG(addr));
 
 			//node_z->succ = NULL_REG;	// fix the problem in the node
@@ -105,10 +105,10 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 	} else {
 		// Not sane list... it's missing pointers to the first or last element
 		if (list->first.isNull())
-			warning("isSaneListPointer (list %04x:%04x): missing pointer to first element",
+			error("checkListPointer (list %04x:%04x): missing pointer to first element",
 					PRINT_REG(addr));
 		if (list->last.isNull())
-			warning("isSaneListPointer (list %04x:%04x): missing pointer to last element",
+			error("checkListPointer (list %04x:%04x): missing pointer to last element",
 					PRINT_REG(addr));
 	}
 }
@@ -267,12 +267,12 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (argc != 3 && argc != 4) {
-		warning("kAddAfter: Haven't got 3 or 4 arguments, aborting");
+		error("kAddAfter: Haven't got 3 or 4 arguments, aborting");
 		return NULL_REG;
 	}
 
 	if (argc == 4)	// Torin's Passage
-		warning("kAddAfter with 4 params called, 4th param is %04x:%04x", PRINT_REG(argv[3]));
+		error("kAddAfter with 4 params called, 4th param is %04x:%04x", PRINT_REG(argv[3]));
 
 	if (firstnode) { // We're really appending after
 		reg_t oldnext = firstnode->succ;
@@ -426,14 +426,14 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 	if (argc != 2) {
-		warning("kListAt called with %d parameters", argc);
+		error("kListAt called with %d parameters", argc);
 		return NULL_REG;
 	}
 
 	List *list = s->_segMan->lookupList(argv[0]);
 	reg_t curAddress = list->first;
 	if (list->first.isNull()) {
-		warning("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
+		error("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 	Node *curNode = s->_segMan->lookupNode(curAddress);
@@ -495,7 +495,7 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// This can only happen with 3 params (list, target selector, variable)
 			if (argc != 3) {
-				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
+				error("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
 			} else {
 				writeSelector(s->_segMan, curObject, slc, argv[2]);
 			}
@@ -527,7 +527,7 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
-			warning("kListFirstTrue: Attempted to access a variable selector");
+			error("kListFirstTrue: Attempted to access a variable selector");
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
@@ -561,7 +561,7 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
-			warning("kListAllTrue: Attempted to access a variable selector");
+			error("kListAllTrue: Attempted to access a variable selector");
 		} else {
 			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
@@ -604,15 +604,15 @@ reg_t kList(EngineState *s, int argc, reg_t *argv) {
 	case 11:
 		return kAddToEnd(s, argc - 1, argv + 1);
 	case 12:
-		warning("kList: unimplemented subfunction kAddBefore");
+		error("kList: unimplemented subfunction kAddBefore");
 		//return kAddBefore(s, argc - 1, argv + 1);
 		return NULL_REG;
 	case 13:
-		warning("kList: unimplemented subfunction kMoveToFront");
+		error("kList: unimplemented subfunction kMoveToFront");
 		//return kMoveToFront(s, argc - 1, argv + 1);
 		return NULL_REG;
 	case 14:
-		warning("kList: unimplemented subfunction kMoveToEnd");
+		error("kList: unimplemented subfunction kMoveToEnd");
 		//return kMoveToEnd(s, argc - 1, argv + 1);
 		return NULL_REG;
 	case 15:
@@ -632,7 +632,7 @@ reg_t kList(EngineState *s, int argc, reg_t *argv) {
 	case 22:
 		return kSort(s, argc - 1, argv + 1);
 	default:
-		warning("kList: Unhandled case %d", argv[0].toUint16());
+		error("kList: Unhandled case %d", argv[0].toUint16());
 		return NULL_REG;
 	}
 }
