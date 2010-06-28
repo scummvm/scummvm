@@ -364,14 +364,16 @@ void OptionsDialog::close() {
 		}
 
 		// Audio options
-		if (_enableAudioSettings) {
-			saveMusicDeviceSetting(_midiPopUp, "music_driver", musicDeviceSkipSettingDefault);
-			saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", musicDeviceSkipSettingSpec);
-			saveMusicDeviceSetting(_gmDevicePopUp, "gm_device", musicDeviceSkipSettingSpec);
-		} else {
-			ConfMan.removeKey("music_driver", _domain);
-			ConfMan.removeKey("mt32_device", _domain);
-			ConfMan.removeKey("gm_device", _domain);
+		if (_midiPopUp) {
+			if (_enableAudioSettings) {
+				saveMusicDeviceSetting(_midiPopUp, "music_driver", musicDeviceSkipSettingDefault);
+				saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device", musicDeviceSkipSettingSpec);
+				saveMusicDeviceSetting(_gmDevicePopUp, "gm_device", musicDeviceSkipSettingSpec);
+			} else {
+				ConfMan.removeKey("music_driver", _domain);
+				ConfMan.removeKey("mt32_device", _domain);
+				ConfMan.removeKey("gm_device", _domain);
+			}
 		}
 
 		if (_oplPopUp) {
