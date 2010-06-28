@@ -410,12 +410,14 @@ void Script::initialiseClasses(SegManager *segMan) {
 	if (!seeker)
 		return;
 
+	uint16 marker;
+	bool isClass;
+	uint16 classpos = seeker - _buf;
+	int16 species = 0;
+
 	while (true) {
 		// In SCI0-SCI1, this is the segment type. In SCI11, it's a marker (0x1234)
-		uint16 marker = READ_SCI11ENDIAN_UINT16(seeker);
-		bool isClass;
-		uint16 classpos = seeker - _buf;
-		int16 species;
+		marker = READ_SCI11ENDIAN_UINT16(seeker);
 
 		if (!marker)
 			break;
@@ -425,7 +427,8 @@ void Script::initialiseClasses(SegManager *segMan) {
 			species = READ_SCI11ENDIAN_UINT16(seeker + 10);
 		} else {
 			isClass = (marker == SCI_OBJ_CLASS);
-			species = READ_SCI11ENDIAN_UINT16(seeker + 12);
+			if (isClass)
+				species = READ_SCI11ENDIAN_UINT16(seeker + 12);
 			classpos += 12;
 		}
 
