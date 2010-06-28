@@ -471,8 +471,11 @@ void Script::initialiseObjectsSci0(SegManager *segMan) {
 				obj->initSpecies(segMan, addr);
 
 				if (!obj->initBaseObject(segMan, addr)) {
-					// Script 202 of KQ5 French has an invalid object. This is non-fatal.
-					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					if (_nr == 202 && g_sci->getGameId() == GID_KQ5 && g_sci->getSciLanguage() == K_LANG_FRENCH) {
+						// Script 202 of KQ5 French has an invalid object. This is non-fatal.
+					} else {
+						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
+					}
 					scriptObjRemove(addr);
 				}
 			}
