@@ -279,10 +279,8 @@ const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
 }
 
 uint16 GfxView::getCelCount(int16 loopNo) const {
-//	assert(_loopCount);
-//	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	if ((loopNo < 0) || (loopNo >= _loopCount))
-		return 0;
+	assert(_loopCount);
+	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loop[loopNo].celCount;
 }
 
