@@ -39,7 +39,7 @@ void MiscTests::timerCallback(void *arg) {
 	// Increment arg which actually points to an int
 	// arg must point to a static data, threads otherwise have their own stack
 	int &valToModify = *((int *) arg);
-	valToModify = 999; // some arrbit value
+	valToModify = 999; // some arbitrary value
 }
 
 void MiscTests::criticalSection(void *arg) {

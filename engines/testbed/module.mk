@@ -2,6 +2,7 @@ MODULE := engines/testbed
  
 MODULE_OBJS := \
 	detection.o \
+	events.o \
 	fs.o \
 	graphics.o \
 	misc.o \
