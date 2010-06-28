@@ -159,8 +159,8 @@ void GfxAnimate::makeSortedList(List *list) {
 		_lastCastData = (AnimateEntry *)malloc(listCount * sizeof(AnimateEntry));
 		if (!_lastCastData)
 			error("Could not allocate memory for _lastCastData");
-		_lastCastCount = 0;
 	}
+	_lastCastCount = 0;
 
 	// Fill the list
 	curAddress = list->first;
