@@ -115,6 +115,7 @@ protected:
 	bool _channelUsed[16];
 	int16 _channelRemap[16];
 	bool _channelMuted[16];
+	byte _channelVolume[16];
 };
 
 } // End of namespace Sci

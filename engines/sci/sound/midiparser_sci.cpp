@@ -53,7 +53,7 @@ MidiParser_SCI::MidiParser_SCI(SciVersion soundVersion, SciMusic *music) :
 	_ppqn = 1;
 	setTempo(16667);
 
-	_volume = 0;
+	_volume = 127;
 
 	_signalSet = false;
 	_signalToSet = 0;
@@ -88,6 +88,7 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 		_channelUsed[i] = false;
 		_channelRemap[i] = -1;
 		_channelMuted[i] = false;
+		_channelVolume[i] = 127;
 	}
 	_channelRemap[9] = 9; // never map channel 9, because that's used for percussion
 	_channelRemap[15] = 15; // never map channel 15, because thats used by sierra internally
@@ -109,9 +110,14 @@ bool MidiParser_SCI::loadMusic(SoundResource::Track *track, MusicEntry *psnd, in
 }
 
 void MidiParser_SCI::sendInitCommands() {
+	// reset our "global" volume and channel volumes
+	_volume = 127;
+	for (int i = 0; i < 16; i++)
+		_channelVolume[i] = 127;
+
+	// Set initial voice count
 	if (_pSnd) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			// Set initial voice count
 			for (int i = 0; i < 15; ++i) {
 				byte voiceCount = 0;
 				if (_channelUsed[i]) {
@@ -186,6 +192,17 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 	// Is channel muted? if so, don't send command
 	if (_channelMuted[midiChannel])
 		return;
+
+	if ((midi & 0xFFF0) == 0x07B0) {
+		// someone trying to set channel volume?
+		int channelVolume = (midi >> 16) & 0xFF;
+		// Remember, if we need to set it ourselves
+		_channelVolume[midiChannel] = channelVolume;
+		// Adjust volume accordingly to current "global" volume
+		channelVolume = channelVolume * _volume / 127;
+		midi = (midi & 0xFFF0) | ((channelVolume & 0xFF) << 16);
+	}
+
 	// Channel remapping
 	int16 realChannel = _channelRemap[midiChannel];
 	assert(realChannel != -1);
@@ -660,13 +677,22 @@ void MidiParser_SCI::lostChannels() {
 void MidiParser_SCI::setVolume(byte volume) {
 	// FIXME: This receives values > 127... throw a warning for now and clip the variable
 	if (volume > MUSIC_VOLUME_MAX) {
-		warning("attempted to set an invalid volume(%d)", volume);
+		// FIXME: please write where we get an invalid volume, so we can track down the issue
+		error("attempted to set an invalid volume(%d)", volume);
 		volume = MUSIC_VOLUME_MAX;	// reset
 	}
 
 	assert(volume <= MUSIC_VOLUME_MAX);
+	_volume = volume;
+	// Send previous channel volumes again to actually update the volume
+	for (int i = 0; i < 15; i++)
+		if (_channelRemap[i] != -1)
+			sendToDriver(0xB0 + i, 7, _channelVolume[i]);
+	return;
+	// TODO: old code, should be left here till we figured out that new code works fine
 	if (_volume != volume) {
 		_volume = volume;
+
 
 		switch (_soundVersion) {
 		case SCI_VERSION_0_EARLY:
