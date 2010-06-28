@@ -556,7 +556,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		case 7: // channel volume change
 			if (!_position._play_tick) {
 				// if this is tried on tick 0, ignore the command
-				// this is needed for lsl5 sound resource 274, it sets channel volume to very low at the start
+				// this is needed for lsl5 sound resource 294, it sets channel volume to very low at the start
 				//  sierra sci ignores those
 				parseNextEvent(_next_event);
 				return;
