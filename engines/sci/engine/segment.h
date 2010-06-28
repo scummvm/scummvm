@@ -105,6 +105,7 @@ public:
 
 	/**
 	 * Finds the canonic address associated with sub_reg.
+	 * Used by the garbage collector.
 	 *
 	 * For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	 * This address "governs" a in the sense that deallocating c(a) will deallocate a.
@@ -115,14 +116,15 @@ public:
 
 	/**
 	 * Deallocates all memory associated with the specified address.
+	 * Used by the garbage collector.
 	 * @param sub_addr		address (within the given segment) to deallocate
 	 */
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {}
 
 	/**
-	 * Iterates over and reports all addresses within the current segment.
-	 * @param note		Invoked for each address on which free_at_address() makes sense
-	 * @param param		parameter passed to 'note'
+	 * Iterates over and reports all addresses within the segment.
+	 * Used by the garbage collector.
+	 * @return a list of addresses within the segment
 	 */
 	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
 		return Common::Array<reg_t>();
@@ -130,9 +132,11 @@ public:
 
 	/**
 	 * Iterates over all references reachable from the specified object.
+	 * Used by the garbage collector.
 	 * @param  object	object (within the current segment) to analyse
-	 * @return refs		a list of outgoing references within the object
-	 * Note: This function may also choose to report numbers (segment 0) as adresses
+	 * @return a list of outgoing references within the object
+	 *
+	 * @note This function may also choose to report numbers (segment 0) as adresses
 	 */
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const {
 		return Common::Array<reg_t>();

@@ -107,6 +107,12 @@ public:
 	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
 	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
+	/**
+	 * Return a list of all references to objects in this script
+	 * (and also to the locals segment, if any).
+	 * Used by the garbage collector.
+	 * @return a list of outgoing references within the object
+	 */
 	Common::Array<reg_t> listObjectReferences() const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
