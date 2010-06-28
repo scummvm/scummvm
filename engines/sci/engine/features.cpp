@@ -91,10 +91,10 @@ bool GameFeatures::autoDetectSoundType() {
 		if (opcode == op_ret || offset >= script->getBufSize())
 			break;
 
-		// The play method of the Sound object pushes the DoSound command
-		// that it'll use just before it calls DoSound. We intercept that here
-		// in order to check what sound semantics are used, cause the position
-		// of the sound commands has changed at some point during SCI1 middle
+		// The play method of the Sound object pushes the DoSound command that
+		// it will use just before it calls DoSound. We intercept that here in
+		// order to check what sound semantics are used, cause the position of
+		// the sound commands has changed at some point during SCI1 middle.
 		if (opcode == op_pushi) {
 			// Load the pushi parameter
 			intParam = opparams[0];
@@ -105,8 +105,8 @@ bool GameFeatures::autoDetectSoundType() {
 			if (kFuncNum == 6) {	// kIsObject (SCI0-SCI11)
 				foundTarget = true;
 			} else if (kFuncNum == 45) {	// kDoSound (SCI1)
-				// First, check which DoSound function is called by the play method of
-				// the Sound object
+				// First, check which DoSound function is called by the play
+				// method of the Sound object
 				switch (intParam) {
 				case 1:
 					_doSoundType = SCI_VERSION_0_EARLY;
@@ -119,8 +119,8 @@ bool GameFeatures::autoDetectSoundType() {
 					break;
 				default:
 					// Unknown case... should never happen. We fall back to
-					// alternative detection here, which works in general, apart from
-					// some transitive games like Jones CD
+					// alternative detection here, which works in general, apart
+					// from some transitive games like Jones CD
 					_doSoundType = foundTarget ? SCI_VERSION_1_LATE : SCI_VERSION_1_EARLY;
 					break;
 				}
@@ -137,7 +137,8 @@ bool GameFeatures::autoDetectSoundType() {
 SciVersion GameFeatures::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_NONE) {
 		if (getSciVersion() == SCI_VERSION_0_EARLY) {
-			// This game is using early SCI0 sound code (different headers than SCI0 late)
+			// This game is using early SCI0 sound code (different headers than
+			// SCI0 late)
 			_doSoundType = SCI_VERSION_0_EARLY;
 		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
@@ -172,14 +173,16 @@ SciVersion GameFeatures::detectSetCursorType() {
 			// SCI1.1 games always use cursor views
 			_setCursorType = SCI_VERSION_1_1;
 		} else {	// SCI1 late game, detect cursor semantics
-			// If the Cursor object doesn't exist, we're using the SCI0 early kSetCursor semantics.
+			// If the Cursor object doesn't exist, we're using the SCI0 early
+			// kSetCursor semantics.
 			if (_segMan->findObjectByName("Cursor") == NULL_REG) {
 				_setCursorType = SCI_VERSION_0_EARLY;
 				debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType));
 				return _setCursorType;
 			}
 
-			// Check for the existence of the handCursor object (first found). This is based on KQ5.
+			// Check for the existence of the handCursor object (first found).
+			// This is based on KQ5.
 			reg_t objAddr = _segMan->findObjectByName("handCursor", 0);
 
 			// If that doesn't exist, we assume it uses SCI1.1 kSetCursor semantics
@@ -189,11 +192,13 @@ SciVersion GameFeatures::detectSetCursorType() {
 				return _setCursorType;
 			}
 
-			// Now we check what the number variable holds in the handCursor object.
+			// Now we check what the number variable holds in the handCursor
+			// object.
 			uint16 number = readSelectorValue(_segMan, objAddr, SELECTOR(number));
 
-			// If the number is 0, it uses views and therefore the SCI1.1 kSetCursor semantics,
-			// otherwise it uses the SCI0 early kSetCursor semantics.
+			// If the number is 0, it uses views and therefore the SCI1.1
+			// kSetCursor semantics, otherwise it uses the SCI0 early kSetCursor
+			// semantics.
 			if (number == 0)
 				_setCursorType = SCI_VERSION_1_1;
 			else
@@ -318,10 +323,10 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 			uint16 argc = opparams[1];
 
 			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
-				// If kDrawPic is called with 6 parameters from the
-				// overlay selector, the game is using old graphics functions.
+				// If kDrawPic is called with 6 parameters from the overlay
+				// selector, the game is using old graphics functions.
 				// Otherwise, if it's called with 8 parameters, it's using new
-				// graphics functions
+				// graphics functions.
 				_gfxFunctionsType = (argc == 8) ? SCI_VERSION_0_LATE : SCI_VERSION_0_EARLY;
 				return true;
 			}
@@ -345,32 +350,35 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 			reg_t rmObjAddr = _segMan->findObjectByName("Rm");
 
 			if (SELECTOR(overlay) != -1) {
-				// The game has an overlay selector, check how it calls kDrawPicto determine
-				// the graphics functions type used
+				// The game has an overlay selector, check how it calls kDrawPic
+				// to determine the graphics functions type used
 				if (lookupSelector(_segMan, rmObjAddr, SELECTOR(overlay), NULL, NULL) == kSelectorMethod) {
 					if (!autoDetectGfxFunctionsType()) {
 						warning("Graphics functions detection failed, taking an educated guess");
 
-						// Try detecting the graphics function types from the existence of the motionCue
-						// selector (which is a bit of a hack)
+						// Try detecting the graphics function types from the
+						// existence of the motionCue selector (which is a bit
+						// of a hack)
 						if (_kernel->findSelector("motionCue") != -1)
 							_gfxFunctionsType = SCI_VERSION_0_LATE;
 						else
 							_gfxFunctionsType = SCI_VERSION_0_EARLY;
 					}
 				} else {
-					// The game has an overlay selector, but it's not a method of the Rm object
-					// (like in Hoyle 1 and 2), so search for other methods
+					// The game has an overlay selector, but it's not a method
+					// of the Rm object (like in Hoyle 1 and 2), so search for
+					// other methods
 					searchRoomObj = true;
 				}
 			} else {
-				// The game doesn't have an overlay selector, so search for it manually
+				// The game doesn't have an overlay selector, so search for it
+				// manually
 				searchRoomObj = true;
 			}
 
 			if (searchRoomObj) {
-				// If requested, check if any method of the Rm object is calling kDrawPic,
-				// as the overlay selector might be missing in demos
+				// If requested, check if any method of the Rm object is calling
+				// kDrawPic, as the overlay selector might be missing in demos
 				bool found = false;
 
 				const Object *obj = _segMan->getObject(rmObjAddr);
@@ -381,8 +389,9 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				}
 
 				if (!found) {
-					// No method of the Rm object is calling kDrawPic, thus the game
-					// doesn't have overlays and is using older graphics functions
+					// No method of the Rm object is calling kDrawPic, thus the
+					// game doesn't have overlays and is using older graphics
+					// functions
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
 			}
@@ -420,9 +429,11 @@ bool GameFeatures::autoDetectSci21KernelType() {
 			uint16 kFuncNum = opparams[0];
 
 			// Here we check for the kDoSound opcode that's used in SCI2.1.
-			// Finding 0x40 as kDoSound in the Sound::play() function means the game is using
-			// the modified SCI2 kernel table found in some older SCI2.1 games (GK2 demo, KQ7 v1.4).
-			// Finding 0x75 as kDoSound means the game is using the regular SCI2.1 kernel table.
+			// Finding 0x40 as kDoSound in the Sound::play() function means the
+			// game is using the modified SCI2 kernel table found in some older
+			// SCI2.1 games (GK2 demo, KQ7 v1.4).
+			// Finding 0x75 as kDoSound means the game is using the regular
+			// SCI2.1 kernel table.
 			if (kFuncNum == 0x40) {
 				_sci21KernelType = SCI_VERSION_2;
 				return true;
