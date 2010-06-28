@@ -460,7 +460,8 @@ const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
 	int16 *unditherMemorial = _screen->unditherGetMemorial();
 
-	// It makes no sense to go further, if no memorial data from current picture is available
+	// It makes no sense to go further, if no memorial data from current picture
+	// is available
 	if (!unditherMemorial)
 		return;
 
@@ -480,7 +481,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 
 	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
 
-	// Count all seemingly dithered pixel-combinations as soon as at least 4 pixels are adjacent
+	// Count all seemingly dithered pixel-combinations as soon as at least 4
+	// pixels are adjacent
 	curPtr = bitmapPtr;
 	for (y = 0; y < height; y++) {
 		color1 = curPtr[0]; color2 = (curPtr[1] << 4) | curPtr[2];
@@ -493,13 +495,15 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		}
 	}
 
-	// Now compare both memorial tables to find out matching dithering-combinations
+	// Now compare both memorial tables to find out matching
+	// dithering-combinations
 	bool unditherTable[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 	byte color, unditherCount = 0;
 	memset(&unditherTable, false, sizeof(unditherTable));
 	for (color = 0; color < 255; color++) {
 		if ((bitmapMemorial[color] > 5) && (unditherMemorial[color] > 200)) {
-			// match found, check if colorKey is contained -> if so, we ignore of course
+			// match found, check if colorKey is contained -> if so, we ignore
+			// of course
 			color1 = color & 0x0F; color2 = color >> 4;
 			if ((color1 != clearKey) && (color2 != clearKey) && (color1 != color2)) {
 				// so set this and the reversed color-combination for undithering
@@ -533,15 +537,15 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	}
 }
 
-void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
-	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
+void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
+			int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
+	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	const byte *bitmap = getBitmap(loopNo, celNo);
-	int16 celHeight = celInfo->height, celWidth = celInfo->width;
-	int16 width, height;
-	byte clearKey = celInfo->clearKey;
-	byte color;
-	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
+	const int16 celHeight = celInfo->height;
+	const int16 celWidth = celInfo->width;
+	const byte clearKey = celInfo->clearKey;
+	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	int x, y;
 
 	if (_embeddedPal) {
@@ -549,24 +553,27 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 		_palette->set(&_viewPalette, false);
 	}
 
-	width = MIN(clipRect.width(), celWidth);
-	height = MIN(clipRect.height(), celHeight);
+	const int16 width = MIN(clipRect.width(), celWidth);
+	const int16 height = MIN(clipRect.height(), celHeight);
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 
 	if (!_EGAmapping) {
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
-				color = bitmap[x];
+				const byte color = bitmap[x];
 				if (color != clearKey) {
+					const int x2 = clipRectTranslated.left + x;
+					const int y2 = clipRectTranslated.top + y;
 					if (!upscaledHires) {
-						if (priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y))
-							_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
+						if (priority >= _screen->getPriority(x2, y2))
+							_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
 					} else {
-						// UpscaledHires means view is hires and is supposed to get drawn onto lowres screen
-						// FIXME(?): we can't read priority directly with the hires coordinates. may not be needed at all
-						//            in kq6
-						_screen->putPixelOnDisplay(clipRectTranslated.left + x, clipRectTranslated.top + y, palette->mapping[color]);
+						// UpscaledHires means view is hires and is supposed to
+						// get drawn onto lowres screen.
+						// FIXME(?): we can't read priority directly with the
+						// hires coordinates. may not be needed at all in kq6
+						_screen->putPixelOnDisplay(x2, y2, palette->mapping[color]);
 					}
 				}
 			}
@@ -575,9 +582,11 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
 		byte *EGAmapping = _EGAmapping + (EGAmappingNr * SCI_VIEW_EGAMAPPING_SIZE);
 		for (y = 0; y < height; y++, bitmap += celWidth) {
 			for (x = 0; x < width; x++) {
-				color = EGAmapping[bitmap[x]];
-				if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y))
-					_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, color, priority, 0);
+				const byte color = EGAmapping[bitmap[x]];
+				const int x2 = clipRectTranslated.left + x;
+				const int y2 = clipRectTranslated.top + y;
+				if (color != clearKey && priority >= _screen->getPriority(x2, y2))
+					_screen->putPixel(x2, y2, drawMask, color, priority, 0);
 			}
 		}
 	}
@@ -588,20 +597,19 @@ void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const
  * is definitely not pixel-perfect with the one sierra is using. It shouldn't
  * matter because the scaled cel rect is definitely the same as in sierra sci.
  */
-void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
-	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
+void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated,
+			int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
+	const Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	const byte *bitmap = getBitmap(loopNo, celNo);
-	int16 celHeight = celInfo->height, celWidth = celInfo->width;
-	byte clearKey = celInfo->clearKey;
-	byte color;
-	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
-	int x, y;
+	const int16 celHeight = celInfo->height;
+	const int16 celWidth = celInfo->width;
+	const byte clearKey = celInfo->clearKey;
+	const byte drawMask = (priority == 255) ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY;
 	uint16 scalingX[640];
 	uint16 scalingY[480];
 	int16 scaledWidth, scaledHeight;
 	int16 pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
-	uint16 offsetX, offsetY;
 
 	if (_embeddedPal) {
 		// Merge view palette in...
@@ -622,6 +630,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celHeight) {
 		scaledPixelNo = scaledPixel >> 7;
+		assert(scaledPixelNo < ARRAYSIZE(scalingY));
 		if (prevScaledPixelNo < scaledPixelNo)
 			memset(&scalingY[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
 		scalingY[scaledPixelNo] = pixelNo;
@@ -638,6 +647,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledPixel = scaledPixelNo = prevScaledPixelNo = 0;
 	while (pixelNo < celWidth) {
 		scaledPixelNo = scaledPixel >> 7;
+		assert(scaledPixelNo < ARRAYSIZE(scalingX));
 		if (prevScaledPixelNo < scaledPixelNo)
 			memset(&scalingX[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
 		scalingX[scaledPixelNo] = pixelNo;
@@ -652,14 +662,18 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);
 
-	offsetY = clipRect.top - rect.top;
-	offsetX = clipRect.left - rect.left;
+	const uint16 offsetY = clipRect.top - rect.top;
+	const uint16 offsetX = clipRect.left - rect.left;
 
-	for (y = 0; y < scaledHeight; y++) {
-		for (x = 0; x < scaledWidth; x++) {
-			color = bitmap[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];
-			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, clipRectTranslated.top + y)) {
-				_screen->putPixel(clipRectTranslated.left + x, clipRectTranslated.top + y, drawMask, palette->mapping[color], priority, 0);
+	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
+	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
+	for (int y = 0; y < scaledHeight; y++) {
+		for (int x = 0; x < scaledWidth; x++) {
+			const byte color = bitmap[scalingY[y + offsetY] * celWidth + scalingX[x + offsetX]];
+			const int x2 = clipRectTranslated.left + x;
+			const int y2 = clipRectTranslated.top + y;
+			if (color != clearKey && priority >= _screen->getPriority(x2, y2)) {
+				_screen->putPixel(x2, y2, drawMask, palette->mapping[color], priority, 0);
 			}
 		}
 	}
