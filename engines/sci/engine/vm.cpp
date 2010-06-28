@@ -279,6 +279,7 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_FREDDYPHARKAS,  24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  31,            "quitWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
 	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
+	{ GID_LSL3,          997,         "TheMenuBar", "handleEvent",    -1,    1, 0xf }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
 	{ GID_LSL6,          928,           "Narrator", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
