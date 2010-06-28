@@ -64,7 +64,6 @@ public:
 	int16 getWidth(int16 loopNo, int16 celNo) const;
 	int16 getHeight(int16 loopNo, int16 celNo) const;
 	const CelInfo *getCelInfo(int16 loopNo, int16 celNo) const;
-	const LoopInfo *getLoopInfo(int16 loopNo) const;
 	void getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const;
 	void getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const;
 	const byte *getBitmap(int16 loopNo, int16 celNo);

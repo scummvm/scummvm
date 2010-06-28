@@ -272,44 +272,49 @@ int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
 }
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
+	assert(_loopCount);
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
-	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
+	return &_loop[loopNo].cel[celNo];
 }
 
-const LoopInfo *GfxView::getLoopInfo(int16 loopNo) const {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	return _loopCount ? &_loop[loopNo] : NULL;
+uint16 GfxView::getCelCount(int16 loopNo) const {
+//	assert(_loopCount);
+//	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
+	if ((loopNo < 0) || (loopNo >= _loopCount))
+		return 0;
+	return _loop[loopNo].celCount;
+}
+
+Palette *GfxView::getPalette() {
+	return _embeddedPal ? &_viewPalette : NULL;
 }
 
 void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	if (celInfo) {
-		outRect.left = x + celInfo->displaceX - (celInfo->width >> 1);
-		outRect.right = outRect.left + celInfo->width;
-		outRect.bottom = y + celInfo->displaceY - z + 1;
-		outRect.top = outRect.bottom - celInfo->height;
-	}
+	outRect.left = x + celInfo->displaceX - (celInfo->width >> 1);
+	outRect.right = outRect.left + celInfo->width;
+	outRect.bottom = y + celInfo->displaceY - z + 1;
+	outRect.top = outRect.bottom - celInfo->height;
 }
 
 void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
 	int16 scaledDisplaceX, scaledDisplaceY;
 	int16 scaledWidth, scaledHeight;
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	if (celInfo) {
-		// Scaling displaceX/Y, Width/Height
-		scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
-		scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
-		scaledWidth = (celInfo->width * scaleX) >> 7;
-		scaledHeight = (celInfo->height * scaleY) >> 7;
-		scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
-		scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
-		outRect.left = x + scaledDisplaceX - (scaledWidth >> 1);
-		outRect.right = outRect.left + scaledWidth;
-		outRect.bottom = y + scaledDisplaceY - z + 1;
-		outRect.top = outRect.bottom - scaledHeight;
-	}
+	// Scaling displaceX/Y, Width/Height
+	scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
+	scaledDisplaceY = (celInfo->displaceY * scaleY) >> 7;
+	scaledWidth = (celInfo->width * scaleX) >> 7;
+	scaledHeight = (celInfo->height * scaleY) >> 7;
+	scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
+	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
+
+	outRect.left = x + scaledDisplaceX - (scaledWidth >> 1);
+	outRect.right = outRect.left + scaledWidth;
+	outRect.bottom = y + scaledDisplaceY - z + 1;
+	outRect.top = outRect.bottom - scaledHeight;
 }
 
 void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
@@ -658,16 +663,6 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 			}
 		}
 	}
-}
-
-uint16 GfxView::getCelCount(int16 loopNo) const {
-	if ((loopNo < 0) || (loopNo >= _loopCount))
-		return 0;
-	return _loop[loopNo].celCount;
-}
-
-Palette *GfxView::getPalette() {
-	return _embeddedPal ? &_viewPalette : NULL;
 }
 
 } // End of namespace Sci
