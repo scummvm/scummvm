@@ -301,15 +301,15 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
 			int curScriptNr = local_script->getScriptNumber();
 
-			if (lastCall->localCallOffset != -1) {
+			if (lastCall->debugLocalCallOffset != -1) {
 				// if lastcall was actually a local call search back for a real call
 				Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
 				while (callIterator != state->_executionStack.begin()) {
 					callIterator--;
 					ExecStack loopCall = *callIterator;
-					if ((loopCall.selector != -1) || (loopCall.exportId != -1)) {
-						lastCall->selector = loopCall.selector;
-						lastCall->exportId = loopCall.exportId;
+					if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
+						lastCall->debugSelector = loopCall.debugSelector;
+						lastCall->debugExportId = loopCall.debugExportId;
 						break;
 					}
 				}
@@ -320,11 +320,11 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			const SciGameId gameId = g_sci->getGameId();
 
 			if (lastCall->type == EXEC_STACK_TYPE_CALL) {
-				if (lastCall->selector != -1) {
-					curMethodName = g_sci->getKernel()->getSelectorName(lastCall->selector);
-				} else if (lastCall->exportId != -1) {
+				if (lastCall->debugSelector != -1) {
+					curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
+				} else if (lastCall->debugExportId != -1) {
 					curObjectName = "";
-					curMethodName = curMethodName.printf("export %d", lastCall->exportId);
+					curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
 				}
 			}
 
@@ -336,7 +336,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				workaround = uninitializedReadWorkarounds;
 				while (workaround->objectName) {
 					if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->objectName == searchObjectName)
-							&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->localCallOffset && workaround->index == index) {
+							&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
 						// Workaround found
 						r[index] = make_reg(0, workaround->newValue);
 						return r[index];
@@ -348,7 +348,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				if (!searchObject.isNull())
 					searchObjectName = state->_segMan->getObjectName(searchObject);
 			} while (!searchObject.isNull()); // no parent left?
-			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->localCallOffset);
+			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->debugLocalCallOffset);
 		}
 		return r[index];
 	} else
@@ -718,10 +718,10 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 	*argp = make_reg(0, argc);  // SCI code relies on the zeroeth argument to equal argc
 
 	// Additional debug information
-	xstack.selector = selector;
-	xstack.exportId = exportId;
-	xstack.localCallOffset = localCallOffset;
-	xstack.origin = origin;
+	xstack.debugSelector = selector;
+	xstack.debugExportId = exportId;
+	xstack.debugLocalCallOffset = localCallOffset;
+	xstack.debugOrigin = origin;
 
 	xstack.type = EXEC_STACK_TYPE_CALL; // Normal call
 
@@ -777,7 +777,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		ExecStack *xstack;
 		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
 				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-		xstack->selector = kernelFuncNr;
+		xstack->debugSelector = kernelFuncNr;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		// Call kernel function

@@ -2320,8 +2320,6 @@ bool Console::cmdScriptSteps(int argc, const char **argv) {
 }
 
 bool Console::cmdBacktrace(int argc, const char **argv) {
-	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
-
 	DebugPrintf("Call stack (current base: 0x%x):\n", _engine->_gamestate->executionStackBase);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
@@ -2333,19 +2331,25 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		int paramc, totalparamc;
 
 		switch (call.type) {
-
 		case EXEC_STACK_TYPE_CALL: // Normal function
-			DebugPrintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
-			          _engine->getKernel()->getSelectorName(call.selector).c_str());
+			if (call.type == EXEC_STACK_TYPE_CALL)
+			DebugPrintf(" %x: script %d - ", i, (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.segment]).getScriptNumber());
+			if (call.debugSelector != -1) {
+				DebugPrintf("%s::%s(", objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
+			} else if (call.debugExportId != -1) {
+				DebugPrintf("export %d (", call.debugExportId);
+			} else if (call.debugLocalCallOffset != -1) {
+				DebugPrintf("call %x (", call.debugLocalCallOffset);
+			}
 			break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			DebugPrintf(" %x:[%x]  k%s(", i, call.origin, _engine->getKernel()->getKernelName(call.selector).c_str());
+			DebugPrintf(" %x:[%x]  k%s(", i, call.debugOrigin, _engine->getKernel()->getKernelName(call.debugSelector).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
-			DebugPrintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname, _engine->getKernel()->getSelectorName(call.selector).c_str());
+			DebugPrintf(" %x:[%x] vs%s %s::%s (", i, call.debugOrigin, (call.argc) ? "write" : "read",
+			          objname, _engine->getKernel()->getSelectorName(call.debugSelector).c_str());
 			break;
 		}
 
@@ -2364,7 +2368,10 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		if (call.argc > 16)
 			DebugPrintf("...");
 
-		DebugPrintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
+		DebugPrintf(")\n     ");
+		if (call.debugOrigin != -1)
+			DebugPrintf("by %x ", call.debugOrigin);
+		DebugPrintf("obj@%04x:%04x", PRINT_REG(call.objp));
 		if (call.type == EXEC_STACK_TYPE_CALL) {
 			DebugPrintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
 			if (call.sp == CALL_SP_CARRY)
@@ -2377,8 +2384,6 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			DebugPrintf(" pc:none");
 
 		DebugPrintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _engine->_gamestate->stack_base));
-		if (call.type == EXEC_STACK_TYPE_CALL)
-			DebugPrintf(" script: %d", (*(Script *)_engine->_gamestate->_segMan->_heap[call.addr.pc.segment]).getScriptNumber());
 		DebugPrintf("\n");
 	}
 

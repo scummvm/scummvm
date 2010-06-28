@@ -97,10 +97,10 @@ struct ExecStack {
 	StackPtr variables_argp; // Argument pointer
 	SegmentId local_segment; // local variables etc
 
-	Selector selector;      // The selector which was used to call or -1 if not applicable
-	int exportId;           // The exportId which was called or -1 if not applicable
-	int localCallOffset;    // Local call offset or -1 if not applicable
-	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
+	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
+	int debugExportId;        // The exportId which was called or -1 if not applicable
+	int debugLocalCallOffset; // Local call offset or -1 if not applicable
+	int debugOrigin;          // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
