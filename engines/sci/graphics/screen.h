@@ -50,7 +50,9 @@ enum GfxScreenMasks {
 	GFX_SCREEN_MASK_ALL			= GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL
 };
 
-#define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
+enum {
+	SCI_SCREEN_UNDITHERMEMORIAL_SIZE = 256
+};
 
 /**
  * Screen class, actually creates 3 (4) screens internally - which is visual/display (for the user),
@@ -104,7 +106,7 @@ public:
 
 	void setVerticalShakePos(uint16 shakePos);
 
-	void scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
+	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
 

@@ -583,9 +583,9 @@ void GfxScreen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void GfxScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
+void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
 	int newWidth = srcWidth * 2;
-	byte *srcPtr = src;
+	const byte *srcPtr = src;
 
 	for (int y = 0; y < srcHeight; y++) {
 		for (int x = 0; x < srcWidth; x++) {
