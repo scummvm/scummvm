@@ -23,6 +23,7 @@
  */
 
 #include "testbed/misc.h"
+#include "common/timer.h"
 
 namespace Testbed {
 
@@ -32,6 +33,25 @@ void MiscTests::getHumanReadableFormat(TimeDate &td, Common::String &date) {
 	snprintf(strDate, 100, "%d:%d:%d on %d/%d/%d (dd/mm/yy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon, td.tm_year);
 	date = strDate;
 	return;
+}
+
+void MiscTests::timerCallback(void *arg) {
+	// Increment arg which actually points to an int
+	// arg must point to a static data, threads otherwise have their own stack
+	int &ptrToNumTimesExecuted = *((int *) arg);
+	ptrToNumTimesExecuted++;
+	printf("LOG: Inside the timed process!\n");
+}
+
+void MiscTests::criticalSection(void *arg) {
+	SharedVars &sv = *((SharedVars *) arg);
+	
+	printf("Before: %d %d\n", sv.first, sv.second);
+	sv.first++;
+	g_system->delayMillis(3000);
+	printf("After waking up: %d %d\n", sv.first, sv.second);
+	sv.second *= sv.first;
+	printf("Finally: %d %d\n", sv.first, sv.second);
 }
 
 bool MiscTests::testDateTime() {
@@ -70,16 +90,33 @@ bool MiscTests::testDateTime() {
 }
 
 bool MiscTests::testTimers() {
-	return true;
+	static int numTimesExecuted = 0;
+	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &numTimesExecuted)) {
+		g_system->delayMillis(150);
+		printf("LOG: Timed Process Invoked %d times\n", numTimesExecuted);
+		g_system->getTimerManager()->removeTimerProc(timerCallback);
+		
+		if (1 == numTimesExecuted) {
+			return true;
+		}
+	}
+	return false;
 }
 
 bool MiscTests::testMutexes() {
-	return true;
+	static SharedVars sv = {1, 1, g_system->createMutex()};
+	
+	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
+		g_system->delayMillis(150);
+		criticalSection(&sv);
+		g_system->getTimerManager()->removeTimerProc(criticalSection);
+	}
+	return false;	
 }
 
 MiscTestSuite::MiscTestSuite() {
-	addTest("Date/time", &MiscTests::testDateTime);	
-	addTest("Timers", &MiscTests::testTimers);	
+	// addTest("Date/time", &MiscTests::testDateTime);	
+	// addTest("Timers", &MiscTests::testTimers);	
 	addTest("Mutexes", &MiscTests::testMutexes);	
 }
 const char *MiscTestSuite::getName() const {

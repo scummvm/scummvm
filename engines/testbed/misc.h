@@ -30,12 +30,21 @@
 
 namespace Testbed {
 
+// Shared variables used in mutex handling test
+struct SharedVars {
+	int first;
+	int second;
+	OSystem::MutexRef mutex;
+};
+
 namespace MiscTests {
 
 // Miscellaneous tests include testing datetime, timers and mutexes
 
 // Helper functions for Misc tests
 void getHumanReadableFormat(TimeDate &td, Common::String &date);
+void timerCallback(void *arg);
+void criticalSection(void *arg);
 
 // will contain function declarations for Misc tests
 bool testDateTime();

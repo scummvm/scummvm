@@ -88,7 +88,7 @@ Common::Error TestbedEngine::run() {
 	// To be set from config file
 	// By default Interactive tests are enabled
 	// XXX: disabling these as of now for fastly testing other tests
-	// Testsuite::isInteractive = false;
+	Testsuite::isInteractive = false;
 
 	if (Testsuite::isInteractive) {
 		printf("Running Interactive tests as well\n");		
