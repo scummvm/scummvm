@@ -38,20 +38,35 @@ void MiscTests::getHumanReadableFormat(TimeDate &td, Common::String &date) {
 void MiscTests::timerCallback(void *arg) {
 	// Increment arg which actually points to an int
 	// arg must point to a static data, threads otherwise have their own stack
-	int &ptrToNumTimesExecuted = *((int *) arg);
-	ptrToNumTimesExecuted++;
-	printf("LOG: Inside the timed process!\n");
+	int &valToModify = *((int *) arg);
+	valToModify = 999; // some arrbit value
 }
 
 void MiscTests::criticalSection(void *arg) {
 	SharedVars &sv = *((SharedVars *) arg);
 	
-	printf("Before: %d %d\n", sv.first, sv.second);
+	printf("LOG: Before critical section: %d %d\n", sv.first, sv.second);
+	g_system->lockMutex(sv.mutex);
+
+	// In any case, the two vars must be equal at entry, if mutex works fine.
+	// verify this here.
+	if (sv.first != sv.second) {
+		sv.resultSoFar = false;
+	}
+
 	sv.first++;
-	g_system->delayMillis(3000);
-	printf("After waking up: %d %d\n", sv.first, sv.second);
+	g_system->delayMillis(1000);
+	// This should bring no change as well in the difference between vars
+	// verify this too.
+	if (sv.second + 1 != sv.first) {
+		sv.resultSoFar = false;
+	}
+
 	sv.second *= sv.first;
-	printf("Finally: %d %d\n", sv.first, sv.second);
+	printf("LOG: After critical section: %d %d\n", sv.first, sv.second);
+	g_system->unlockMutex(sv.mutex);
+
+	g_system->getTimerManager()->removeTimerProc(criticalSection);
 }
 
 bool MiscTests::testDateTime() {
@@ -90,13 +105,12 @@ bool MiscTests::testDateTime() {
 }
 
 bool MiscTests::testTimers() {
-	static int numTimesExecuted = 0;
-	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &numTimesExecuted)) {
+	static int valToModify = 0;
+	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &valToModify)) {
 		g_system->delayMillis(150);
-		printf("LOG: Timed Process Invoked %d times\n", numTimesExecuted);
 		g_system->getTimerManager()->removeTimerProc(timerCallback);
 		
-		if (1 == numTimesExecuted) {
+		if (999 == valToModify) {
 			return true;
 		}
 	}
@@ -104,19 +118,33 @@ bool MiscTests::testTimers() {
 }
 
 bool MiscTests::testMutexes() {
-	static SharedVars sv = {1, 1, g_system->createMutex()};
+	static SharedVars sv = {1, 1, true, g_system->createMutex()};
 	
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
 		g_system->delayMillis(150);
-		criticalSection(&sv);
-		g_system->getTimerManager()->removeTimerProc(criticalSection);
 	}
-	return false;	
+
+	g_system->lockMutex(sv.mutex);
+	sv.first++;
+	g_system->delayMillis(1000);
+	sv.second *= sv.first;
+	g_system->unlockMutex(sv.mutex);
+	// wait till timed process exits
+	g_system->delayMillis(3000);
+
+	printf("LOG: Final Value: %d %d\n", sv.first, sv.second);
+	g_system->deleteMutex(sv.mutex);
+
+	if (sv.resultSoFar && 6 == sv.second) {
+		return true;
+	}
+
+	return false;
 }
 
 MiscTestSuite::MiscTestSuite() {
-	// addTest("Date/time", &MiscTests::testDateTime);	
-	// addTest("Timers", &MiscTests::testTimers);	
+	addTest("Date/time", &MiscTests::testDateTime);	
+	addTest("Timers", &MiscTests::testTimers);	
 	addTest("Mutexes", &MiscTests::testMutexes);	
 }
 const char *MiscTestSuite::getName() const {

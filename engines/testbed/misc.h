@@ -34,6 +34,7 @@ namespace Testbed {
 struct SharedVars {
 	int first;
 	int second;
+	bool resultSoFar;
 	OSystem::MutexRef mutex;
 };
 
