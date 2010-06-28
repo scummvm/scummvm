@@ -26,7 +26,7 @@
 #ifdef MACOSX
 
 #include "backends/platform/sdl/macosx/macosx.h"
-#include "backends/mixer/bufferingsdl/bufferingsdl-mixer.h"
+#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 
 #include "common/archive.h"
 #include "common/fs.h"
@@ -41,7 +41,7 @@ OSystem_MacOSX::OSystem_MacOSX()
 void OSystem_MacOSX::initBackend() {
 	// Create the mixer manager
 	if (_mixer == 0) {
-		_mixerManager = new BufferingSDLMixerManager();
+		_mixerManager = new DoubleBufferSDLMixerManager();
 
 		// Setup and start mixer
 		_mixerManager->init();

@@ -25,20 +25,20 @@
 
 #if defined(MACOSX)
 
-#include "backends/mixer/bufferingsdl/bufferingsdl-mixer.h"
+#include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 
-BufferingSDLMixerManager::BufferingSDLMixerManager()
+DoubleBufferSDLMixerManager::DoubleBufferSDLMixerManager()
 	:
 	_soundMutex(0), _soundCond(0), _soundThread(0),
 	_soundThreadIsRunning(false), _soundThreadShouldQuit(false) {
 	
 }
 
-BufferingSDLMixerManager::~BufferingSDLMixerManager() {
+DoubleBufferSDLMixerManager::~DoubleBufferSDLMixerManager() {
 	deinitThreadedMixer();
 }
 
-void BufferingSDLMixerManager::startAudio() {
+void DoubleBufferSDLMixerManager::startAudio() {
 	_soundThreadIsRunning = false;
 	_soundThreadShouldQuit = false;
 
@@ -61,7 +61,7 @@ void BufferingSDLMixerManager::startAudio() {
 	SdlMixerManager::startAudio();
 }
 
-void BufferingSDLMixerManager::mixerProducerThread() {
+void DoubleBufferSDLMixerManager::mixerProducerThread() {
 	byte nextSoundBuffer;
 
 	SDL_LockMutex(_soundMutex);
@@ -82,14 +82,14 @@ void BufferingSDLMixerManager::mixerProducerThread() {
 	SDL_UnlockMutex(_soundMutex);
 }
 
-int SDLCALL BufferingSDLMixerManager::mixerProducerThreadEntry(void *arg) {
-	BufferingSDLMixerManager *mixer = (BufferingSDLMixerManager *)arg;
+int SDLCALL DoubleBufferSDLMixerManager::mixerProducerThreadEntry(void *arg) {
+	DoubleBufferSDLMixerManager *mixer = (DoubleBufferSDLMixerManager *)arg;
 	assert(mixer);
 	mixer->mixerProducerThread();
 	return 0;
 }
 
-void BufferingSDLMixerManager::deinitThreadedMixer() {
+void DoubleBufferSDLMixerManager::deinitThreadedMixer() {
 	// Kill thread?? _soundThread
 
 	if (_soundThreadIsRunning) {
@@ -111,8 +111,7 @@ void BufferingSDLMixerManager::deinitThreadedMixer() {
 	}
 }
 
-
-void BufferingSDLMixerManager::callbackHandler(byte *samples, int len) {
+void DoubleBufferSDLMixerManager::callbackHandler(byte *samples, int len) {
 	assert(_mixer);
 	assert((int)_soundBufSize == len);
 

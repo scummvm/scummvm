@@ -23,15 +23,15 @@
  *
  */
 
-#ifndef BACKENDS_MIXER_BUFFERINGSDL_H
-#define BACKENDS_MIXER_BUFFERINGSDL_H
+#ifndef BACKENDS_MIXER_DOUBLEBUFFERSDL_H
+#define BACKENDS_MIXER_DOUBLEBUFFERSDL_H
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
-class BufferingSDLMixerManager : public SdlMixerManager {
+class DoubleBufferSDLMixerManager : public SdlMixerManager {
 public:
-	BufferingSDLMixerManager();
-	~BufferingSDLMixerManager();
+	DoubleBufferSDLMixerManager();
+	~DoubleBufferSDLMixerManager();
 
 protected:
 	SDL_mutex *_soundMutex;
@@ -48,8 +48,8 @@ protected:
 	void deinitThreadedMixer();
 	static int SDLCALL mixerProducerThreadEntry(void *arg);
 
-	void startAudio();
-	void callbackHandler(byte *samples, int len);
+	virtual void startAudio();
+	virtual void callbackHandler(byte *samples, int len);
 };
 
 #endif
