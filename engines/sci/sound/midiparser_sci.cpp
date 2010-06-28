@@ -165,6 +165,12 @@ void MidiParser_SCI::sendFromScriptToDriver(uint32 midi) {
 		//  this happens for cmdSendMidi at least in sq1vga right at the start, it's a script issue
 		return;
 	}
+	if (_channelRemap[midiChannel] == -1) {
+		// trying to send to an unmapped channel
+		//  this happens for cmdSendMidi at least in sq1vga right at the start, scripts are pausing the sound
+		//  and then sending manually. it's a script issue
+		return;
+	}
 	sendToDriver(midi);
 }
 
