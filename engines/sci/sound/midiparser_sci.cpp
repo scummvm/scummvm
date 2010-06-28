@@ -127,6 +127,14 @@ void MidiParser_SCI::sendInitCommands() {
 		if (_channelUsed[i])
 			sendToDriver(0xB0 | i, 0x4E, 0);	// Reset velocity
 	}
+
+	// Center the pitch wheels and hold pedal in preparation for the next piece of music
+	for (int i = 0; i < 16; ++i) {
+		if (_channelUsed[i]) {
+			sendToDriver(0xE0 | i, 0, 0x40);	// Reset pitch wheel
+			sendToDriver(0xB0 | i, 0x40, 0);	// Reset hold pedal
+		}
+	}
 }
 
 void MidiParser_SCI::unloadMusic() {
@@ -141,17 +149,6 @@ void MidiParser_SCI::unloadMusic() {
 	if (_mixedData) {
 		delete[] _mixedData;
 		_mixedData = NULL;
-	}
-
-	// Center the pitch wheels and hold pedal in preparation for the next piece of music
-	if (_driver && _pSnd) {
-		for (int i = 0; i < 16; ++i) {
-			int16 realChannel = _channelRemap[i];
-			if (realChannel != -1) {
-				_driver->send(0xE0 | realChannel, 0, 0x40);	// Reset pitch wheel
-				_driver->send(0xB0 | realChannel, 0x40, 0);	// Reset hold pedal
-			}
-		}
 	}
 }
 
