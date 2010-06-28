@@ -106,8 +106,8 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_unditherState = true;
 
 	if (_resMan->isVGA() || (_resMan->isAmiga32color())) {
-		// It's not 100% accurate to set white to be 255 for amiga 32-color games
-		//  255 is defined as white in our sci at all times, so it doesnt matter
+		// It is not 100% accurate to set white to be 255 for Amiga 32-color games.
+		// But 255 is defined as white in our SCI at all times, so it doesn't matter.
 		_colorWhite = 255;
 		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;
@@ -167,7 +167,10 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	}
 }
 
-// This copies a rect to screen w/o scaling adjustment and is only meant to be used on hires graphics used in upscaled hires mode
+/**
+ * This copies a rect to screen w/o scaling adjustment and is only meant to be
+ * used on hires graphics used in upscaled hires mode.
+ */
 void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)
 		error("copyDisplayRectToScreen: not in upscaled hires mode");
@@ -218,15 +221,21 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
 		_controlScreen[offset] = control;
 }
 
-// This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
-//  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
+/**
+ * This will just change a pixel directly on displayscreen. It is supposed to be
+ * only used on upscaled-Hires games where hires content needs to get drawn ONTO
+ * the upscaled display screen (like japanese fonts, hires portraits, etc.).
+ */
 void GfxScreen::putPixelOnDisplay(int x, int y, byte color) {
 	int offset = y * _displayWidth + x;
 	_displayScreen[offset] = color;
 }
 
-// Sierra's Bresenham line drawing
-// WARNING: Do not just blindly replace this with Graphics::drawLine(), as it seems to create issues with flood fill
+/**
+ * Sierra's Bresenham line drawing.
+ * WARNING: Do not replace this with Graphics::drawLine(), as this causes issues
+ * with flood fill, due to small difference in the Bresenham logic.
+ */
 void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
 	int16 left = startPoint.x;
 	int16 top = startPoint.y;
@@ -289,7 +298,8 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	}
 }
 
-// We put hires kanji chars onto upscaled background, so we need to adjust coordinates. Caller gives use low-res ones
+// We put hires kanji chars onto upscaled background, so we need to adjust
+// coordinates. Caller gives use low-res ones.
 void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color) {
 	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
 	// we don't use outline, so color 0 is actually not used
