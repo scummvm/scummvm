@@ -150,36 +150,45 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 }
 
 void run_gc(EngineState *s) {
-	uint seg_nr;
 	SegManager *segMan = s->_segMan;
 
+	// Some debug stuff
+	debugC(2, kDebugLevelGC, "[GC] Running...");
 	const char *segnames[SEG_TYPE_MAX + 1];
 	int segcount[SEG_TYPE_MAX + 1];
-	debugC(2, kDebugLevelGC, "[GC] Running...");
+	memset(segnames, 0, sizeof(segnames));
 	memset(segcount, 0, sizeof(segcount));
 
-	reg_t_hash_map *use_map = find_all_used_references(s);
+	// Compute the set of all segments references currently in use.
+	reg_t_hash_map *activeRefs = find_all_used_references(s);
 
-	for (seg_nr = 1; seg_nr < segMan->_heap.size(); seg_nr++) {
-		if (segMan->_heap[seg_nr] != NULL) {
-			SegmentObj *mobj = segMan->_heap[seg_nr];
-			segnames[mobj->getType()] = SegmentObj::getSegmentTypeName(mobj->getType());
-			const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(seg_nr);
+	// Iterate over all segments, and check for each whether it
+	// contains stuff that can be collected.
+	for (uint seg = 1; seg < segMan->_heap.size(); seg++) {
+		SegmentObj *mobj = segMan->_heap[seg];
+		if (mobj != NULL) {
+			const SegmentType type = mobj->getType();
+			segnames[type] = SegmentObj::getSegmentTypeName(type);
+			
+			// Get a list of all deallocatable objects in this segment,
+			// then free any which are not referenced from somewhere.
+			const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(seg);
 			for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
 				const reg_t addr = *it;
-				if (!use_map->contains(addr)) {
+				if (!activeRefs->contains(addr)) {
 					// Not found -> we can free it
 					mobj->freeAtAddress(segMan, addr);
 					debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
-					segcount[mobj->getType()]++;
+					segcount[type]++;
 				}
 			}
 
 		}
 	}
 
-	delete use_map;
+	delete activeRefs;
 
+	// Output debug summary of garbage collection
 	debugC(2, kDebugLevelGC, "[GC] Summary:");
 	for (int i = 0; i <= SEG_TYPE_MAX; i++)
 		if (segcount[i])
