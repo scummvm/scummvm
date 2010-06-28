@@ -2398,7 +2398,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	},
 
 	// Quest for Glory 4 1.1 Floppy - German DOS (supplied by markcool in bug report #2723850)
-	// SCI interpreter version 2.000.000 (a guess?)
+	// Executable scanning reports "2.000.000", VERSION file reports "1.1"
 	{"qfg4", "", {
 		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
 		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
@@ -2415,27 +2415,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
-#if 0
-	// NOTE: This version looks to be exactly the same as the English one
-	// Perhaps it's the English one?
-
-	// Quest for Glory 4 - German DOS/Windows (from PCJoker 2/98)
-	{"qfg4", "", {
-		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
-		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
-		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
-#endif
-
-	// Quest for Glory 4 - German DOS/Windows Disk V1.1 (from PCJoker 2/89)
-	// SCI interpreter version 2.000.000 (a guess?)
-	{"qfg4", "", {
-		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
-		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
-		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
 #endif
 
 	// Slater & Charlie go camping
