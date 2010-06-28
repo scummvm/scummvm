@@ -665,13 +665,6 @@ void MidiParser_SCI::allNotesOff() {
 }
 
 void MidiParser_SCI::setVolume(byte volume) {
-	// FIXME: This receives values > 127... throw a warning for now and clip the variable
-	if (volume > MUSIC_VOLUME_MAX) {
-		// FIXME: please write where we get an invalid volume, so we can track down the issue
-		error("attempted to set an invalid volume(%d)", volume);
-		volume = MUSIC_VOLUME_MAX;	// reset
-	}
-
 	assert(volume <= MUSIC_VOLUME_MAX);
 	_volume = volume;
 
