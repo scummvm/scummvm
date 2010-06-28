@@ -984,8 +984,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Message state:
 	s->_msgState = new MessageState(s->_segMan);
 
-	g_sci->initGraphics();
-
 	s->abortScriptProcessing = kAbortLoadGame;
 	s->shrinkStackToBase();
 }
