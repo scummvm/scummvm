@@ -161,7 +161,7 @@ public:
 	 * @param seg	ID of the script segment to check for
 	 * @return		A pointer to the Script object, or NULL
 	 */
-	Script *getScriptIfLoaded(SegmentId seg);
+	Script *getScriptIfLoaded(SegmentId seg) const;
 
 	// 2. Clones
 
@@ -387,33 +387,33 @@ public:
 	 * @param type	The type of the segment to find
 	 * @return		The segment number, or -1 if the segment wasn't found
 	 */
-	SegmentId findSegmentByType(int type);
+	SegmentId findSegmentByType(int type) const;
 
 	// TODO: document this
-	SegmentObj *getSegmentObj(SegmentId seg);
+	SegmentObj *getSegmentObj(SegmentId seg) const;
 
 	// TODO: document this
-	SegmentType getSegmentType(SegmentId seg);
+	SegmentType getSegmentType(SegmentId seg) const;
 
 	// TODO: document this
-	SegmentObj *getSegment(SegmentId seg, SegmentType type);
+	SegmentObj *getSegment(SegmentId seg, SegmentType type) const;
 
 	/**
 	 * Retrieves an object from the specified location
 	 * @param[in] offset	Location (segment, offset) of the object
 	 * @return				The object in question, or NULL if there is none
 	 */
-	Object *getObject(reg_t pos);
+	Object *getObject(reg_t pos) const;
 
 	/**
 	 * Checks whether a heap address contains an object
 	 * @parm obj The address to check
 	 * @return True if it is an object, false otherwise
 	 */
-	bool isObject(reg_t obj) { return getObject(obj) != NULL; }
+	bool isObject(reg_t obj) const { return getObject(obj) != NULL; }
 
 	// TODO: document this
-	bool isHeapObject(reg_t pos);
+	bool isHeapObject(reg_t pos) const;
 
 	/**
 	 * Determines the name of an object

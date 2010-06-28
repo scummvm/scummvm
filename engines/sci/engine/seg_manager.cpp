@@ -168,7 +168,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 	return 1;
 }
 
-bool SegManager::isHeapObject(reg_t pos) {
+bool SegManager::isHeapObject(reg_t pos) const {
 	const Object *obj = getObject(pos);
 	if (obj == NULL || (obj && obj->isFreed()))
 		return false;
@@ -194,36 +194,36 @@ Script *SegManager::getScript(const SegmentId seg) {
 	return (Script *)_heap[seg];
 }
 
-Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
+Script *SegManager::getScriptIfLoaded(const SegmentId seg) const {
 	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != SEG_TYPE_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
 }
 
-SegmentId SegManager::findSegmentByType(int type) {
+SegmentId SegManager::findSegmentByType(int type) const {
 	for (uint i = 0; i < _heap.size(); i++)
 		if (_heap[i] && _heap[i]->getType() == type)
 			return i;
 	return 0;
 }
 
-SegmentObj *SegManager::getSegmentObj(SegmentId seg) {
+SegmentObj *SegManager::getSegmentObj(SegmentId seg) const {
 	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
 		return 0;
 	return _heap[seg];
 }
 
-SegmentType SegManager::getSegmentType(SegmentId seg) {
+SegmentType SegManager::getSegmentType(SegmentId seg) const {
 	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
 		return SEG_TYPE_INVALID;
 	return _heap[seg]->getType();
 }
 
-SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) {
+SegmentObj *SegManager::getSegment(SegmentId seg, SegmentType type) const {
 	return getSegmentType(seg) == type ? _heap[seg] : NULL;
 }
 
-Object *SegManager::getObject(reg_t pos) {
+Object *SegManager::getObject(reg_t pos) const {
 	SegmentObj *mobj = getSegmentObj(pos.segment);
 	Object *obj = NULL;
 
