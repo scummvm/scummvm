@@ -673,20 +673,14 @@ void MidiParser_SCI::setVolume(byte volume) {
 	}
 
 	assert(volume <= MUSIC_VOLUME_MAX);
-	_volume = volume;
-	// Send previous channel volumes again to actually update the volume
-	for (int i = 0; i < 15; i++)
-		if (_channelRemap[i] != -1)
-			sendToDriver(0xB0 + i, 7, _channelVolume[i]);
-	return;
-	// TODO: old code, should be left here till we figured out that new code works fine
 	if (_volume != volume) {
 		_volume = volume;
-
 
 		switch (_soundVersion) {
 		case SCI_VERSION_0_EARLY:
 		case SCI_VERSION_0_LATE: {
+			// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
+			// TODO: this should take the actual master volume into account
 			int16 globalVolume = _volume * 15 / 127;
 			((MidiPlayer *)_driver)->setVolume(globalVolume);
 			break;
@@ -694,12 +688,10 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 		case SCI_VERSION_1_EARLY:
 		case SCI_VERSION_1_LATE:
-			// sending volume change to all currently mapped channels
-			// FIXME?: maybe we should better store new volume if music isn't playing currently and adjust volume
-			//  when playing
+			// Send previous channel volumes again to actually update the volume
 			for (int i = 0; i < 15; i++)
 				if (_channelRemap[i] != -1)
-					sendToDriver(0xB0 + i, 7, _volume);
+					sendToDriver(0xB0 + i, 7, _channelVolume[i]);
 			break;
 
 		default:
