@@ -236,8 +236,9 @@ Common::Error SciEngine::run() {
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
 	// Check whether loading a savestate was requested
-	if (ConfMan.hasKey("save_slot")) {
-		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, ConfMan.getInt("save_slot")) };	// special call (argv[0] is NULL)
+	int saveSlot = ConfMan.getInt("save_slot");
+	if (saveSlot >= 0) {
+		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
 		kRestoreGame(_gamestate, 2, restoreArgv);
 
 		// Initialize the game menu, if there is one.
