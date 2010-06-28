@@ -160,15 +160,6 @@ byte *MidiParser_SCI::midiMixChannels() {
 		ticker += newDelta;
 
 		midiCommand = channel->data[channel->curPos++];
-		if ((midiCommand == 0xCF) && (!ticker)) {
-			// set signal command at tick 0?
-			channel->curPos++;
-			continue; // filter it
-			// at least in kq5/french&mac the first scene in the intro has a song that sets signal to 4 immediately
-			//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
-			//  get immediately removed, so we currently filter it.
-			// TODO: find out what exactly happens in sierra sci
-		}
 		if (midiCommand != kEndOfTrack) {
 			// Write delta
 			while (newDelta > 240) {
@@ -480,8 +471,14 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 		info.basic.param2 = 0;
 		if (info.channel() == 0xF) {// SCI special case
 			if (info.basic.param1 != kSetSignalLoop) {
-				_signalSet = true;
-				_signalToSet = info.basic.param1;
+				// at least in kq5/french&mac the first scene in the intro has a song that sets signal to 4 immediately
+				//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
+				//  get immediately removed, so we currently filter it.
+				// Sierra SCI ignores them as well at that time
+				if (_position._play_tick) {
+					_signalSet = true;
+					_signalToSet = info.basic.param1;
+				}
 			} else {
 				_loopTick = _position._play_tick + info.delta;
 			}
@@ -556,8 +553,14 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 			}
 		}
 		switch (info.basic.param1) {
-		case 7: // channel volume change -scale it
-			info.basic.param2 = info.basic.param2 * _volume / MUSIC_VOLUME_MAX;
+		case 7: // channel volume change
+			if (!_position._play_tick) {
+				// if this is tried on tick 0, ignore the command
+				// this is needed for lsl5 sound resource 274, it sets channel volume to very low at the start
+				//  sierra sci ignores those
+				parseNextEvent(_next_event);
+				return;
+			}
 			break;
 		}
 		info.length = 0;
