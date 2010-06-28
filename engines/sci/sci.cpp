@@ -245,22 +245,17 @@ Common::Error SciEngine::run() {
 		// This is not done when loading, so we must do it manually.
 		reg_t menuBarObj = _gamestate->_segMan->findObjectByName("MenuBar");
 		if (menuBarObj.isNull())
+			menuBarObj = _gamestate->_segMan->findObjectByName("TheMenuBar");	// LSL2
+		if (menuBarObj.isNull())
 			menuBarObj = _gamestate->_segMan->findObjectByName("menuBar");	// LSL6
 		if (!menuBarObj.isNull()) {
-			// Game menus are found in SCI0-SCI01 games (but not in demos), which had a selector vocabulary,
-			// thus the following code should always work (at least theoretically).
-			// The init selector is being moved around in all games, thus adding it to the list of static
-			// selectors can be tricky. An alternative way would be to call the first method of the
-			// MenuBar object (which is init), but this will require refactoring.
-			if (_kernel->_selectorCache.init != -1) {
-				// Reset abortScriptProcessing before initializing the game menu, so that the
-				// VM call performed by invokeSelector will actually run.
-				_gamestate->abortScriptProcessing = kAbortNone;
-				invokeSelector(_gamestate, menuBarObj, SELECTOR(init), 0, _gamestate->stack_base);
-				_gamestate->abortScriptProcessing = kAbortLoadGame;
-			} else {
-				warning("Game has a menu but not a selector vocabulary, skipping menu initialization");
-			}
+			// Reset abortScriptProcessing before initializing the game menu, so that the
+			// VM call performed by invokeSelector will actually run.
+			_gamestate->abortScriptProcessing = kAbortNone;
+			Object *menuBar = _gamestate->_segMan->getObject(menuBarObj);
+			// Invoke the first method (init) of the menuBar object
+			invokeSelector(_gamestate, menuBarObj, menuBar->getFuncSelector(0), 0, _gamestate->stack_base);
+			_gamestate->abortScriptProcessing = kAbortLoadGame;
 		}
 	}
 
