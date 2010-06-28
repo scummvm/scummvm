@@ -35,8 +35,34 @@
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int upscaledHires) :
-	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
+GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
+
+	// Scale the screen, if needed
+	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
+
+	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able to provide that under DOS as well, but as
+	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
+	//  it to platform windows.
+	if (g_sci->getPlatform() == Common::kPlatformWindows) {
+		if (g_sci->getGameId() == GID_KQ6)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
+#ifdef ENABLE_SCI32
+		if (g_sci->getGameId() == GID_GK1)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+#endif
+	}
+
+	if (_resMan->detectHires()) {
+		_width = 640;
+		_height = 480;
+	} else {
+		_width = 320;
+		_height = 200;
+	}
+
+	// Japanese versions of games use hi-res font on upscaled version of the game
+	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
+		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
 	_pixels = _width * _height;
 

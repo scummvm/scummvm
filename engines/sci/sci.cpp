@@ -136,14 +136,35 @@ SciEngine::~SciEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
+#ifdef ENABLE_SCI32
+	delete _gfxFrameout;
+#endif
+	delete _gfxMenu;
+	delete _gfxControls;
+	delete _gfxText16;
+	delete _gfxAnimate;
+	delete _gfxPaint;
+	delete _gfxTransitions;
+	delete _gfxCompare;
+	delete _gfxCoordAdjuster;
+	delete _gfxPorts;
+	delete _gfxCache;
+	delete _gfxPalette;
+	delete _gfxCursor;
+	delete _gfxScreen;
+
 	delete _audio;
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
-	delete _resMan;
 	delete _features;
 	delete _gfxMacIconBar;
 
+	delete _eventMan;
+	delete _gamestate->_soundCmd;
+	delete _gamestate->_segMan;
+	delete _gamestate;
+	delete _resMan;	// should be deleted last
 	g_sci = 0;
 }
 
@@ -172,74 +193,12 @@ Common::Error SciEngine::run() {
 
 	SegManager *segMan = new SegManager(_resMan);
 
-	// Scale the screen, if needed
-	int upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
-
-	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able to provide that under DOS as well, but as
-	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
-	//  it to platform windows.
-	if (getPlatform() == Common::kPlatformWindows) {
-		if (_gameId == GID_KQ6)
-			upscaledHires = GFX_SCREEN_UPSCALED_640x440;
-#ifdef ENABLE_SCI32
-		if (_gameId == GID_GK1)
-			upscaledHires = GFX_SCREEN_UPSCALED_640x480;
-#endif
-	}
-
-	// Japanese versions of games use hi-res font on upscaled version of the game
-	if ((getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
-		upscaledHires = GFX_SCREEN_UPSCALED_640x400;
-
-	// Reset all graphics objects
-	_gfxAnimate = 0;
-	_gfxCache = 0;
-	_gfxCompare = 0;
-	_gfxControls = 0;
-	_gfxCoordAdjuster = 0;
-	_gfxCursor = 0;
-	_gfxMacIconBar = 0;
-	_gfxMenu = 0;
-	_gfxPaint = 0;
-	_gfxPaint16 = 0;
-	_gfxPalette = 0;
-	_gfxPorts = 0;
-	_gfxScreen = 0;
-	_gfxText16 = 0;
-	_gfxTransitions = 0;
-#ifdef ENABLE_SCI32
-	_gfxFrameout = 0;
-	_gfxPaint32 = 0;
-#endif
-
-	// Initialize graphics-related parts
-
-	if (_resMan->detectHires())
-		_gfxScreen = new GfxScreen(_resMan, 640, 480);
-	else
-		_gfxScreen = new GfxScreen(_resMan, 320, 200, upscaledHires);
-
+	// Initialize the game screen
+	_gfxScreen = new GfxScreen(_resMan);
 	_gfxScreen->debugUnditherSetState(ConfMan.getBool("undither"));
-
-	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
-		_gfxMacIconBar = new GfxMacIconBar();
-
-	bool paletteMerging = true;
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		// there are some games that use inbetween SCI1.1 interpreter, so we have to detect if it's merging or copying
-		if (getSciVersion() == SCI_VERSION_1_1)
-			paletteMerging = _resMan->detectForPaletteMergingForSci11();
-		else
-			paletteMerging = false;
-	}
-
-	_gfxPalette = new GfxPalette(_resMan, _gfxScreen, paletteMerging);
-	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
-	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
-
 	_kernel = new Kernel(_resMan, segMan);
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0 and SCI01 games used a parser
@@ -257,35 +216,6 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-#ifdef ENABLE_SCI32
-	if (getSciVersion() >= SCI_VERSION_2) {
-		// SCI32 graphic objects creation
-		_gfxCoordAdjuster = new GfxCoordAdjuster32(segMan);
-		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
-		_gfxCompare = new GfxCompare(segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxPaint32 = new GfxPaint32(g_sci->getResMan(), segMan, g_sci->getKernel(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
-		_gfxPaint = _gfxPaint32;
-		_gfxFrameout = new GfxFrameout(segMan, g_sci->getResMan(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
-	} else {
-#endif
-		// SCI0-SCI1.1 graphic objects creation
-		_gfxPorts = new GfxPorts(segMan, _gfxScreen);
-		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
-		_gfxCursor->init(_gfxCoordAdjuster, g_sci->getEventManager());
-		_gfxCompare = new GfxCompare(segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
-		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette, g_sci->getResMan()->isVGA());
-		_gfxPaint16 = new GfxPaint16(g_sci->getResMan(), segMan, g_sci->getKernel(), _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
-		_gfxPaint = _gfxPaint16;
-		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
-		_gfxText16 = new GfxText16(g_sci->getResMan(), _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
-		_gfxControls = new GfxControls(segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
-		_gfxMenu = new GfxMenu(g_sci->getEventManager(), segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
-
-		_gfxMenu->reset();
-#ifdef ENABLE_SCI32
-	}
-#endif
-
 	_kernel->loadKernelNames(_features);	// Must be called after game_init()
 
 	script_adjust_opcode_formats();
@@ -300,6 +230,7 @@ Common::Error SciEngine::run() {
 
 	syncSoundSettings();
 
+	// Initialize all graphics related subsystems
 	initGraphics();
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
@@ -335,28 +266,6 @@ Common::Error SciEngine::run() {
 	runGame();
 
 	ConfMan.flushToDisk();
-
-	delete _gamestate->_soundCmd;
-#ifdef ENABLE_SCI32
-	delete _gfxFrameout;
-#endif
-	delete _gfxMenu;
-	delete _gfxControls;
-	delete _gfxText16;
-	delete _gfxAnimate;
-	delete _gfxPaint;
-	delete _gfxTransitions;
-	delete _gfxCompare;
-	delete _gfxCoordAdjuster;
-	delete _gfxPorts;
-	delete _gfxCache;
-	delete _gfxPalette;
-	delete _gfxCursor;
-	delete _gfxScreen;
-
-	delete _eventMan;
-	delete segMan;
-	delete _gamestate;
 
 	return Common::kNoError;
 }
@@ -422,6 +331,72 @@ bool SciEngine::initGame() {
 }
 
 void SciEngine::initGraphics() {
+
+	// Reset all graphics objects
+	_gfxAnimate = 0;
+	_gfxCache = 0;
+	_gfxCompare = 0;
+	_gfxControls = 0;
+	_gfxCoordAdjuster = 0;
+	_gfxCursor = 0;
+	_gfxMacIconBar = 0;
+	_gfxMenu = 0;
+	_gfxPaint = 0;
+	_gfxPaint16 = 0;
+	_gfxPalette = 0;
+	_gfxPorts = 0;
+	_gfxText16 = 0;
+	_gfxTransitions = 0;
+#ifdef ENABLE_SCI32
+	_gfxFrameout = 0;
+	_gfxPaint32 = 0;
+#endif
+
+	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1)
+		_gfxMacIconBar = new GfxMacIconBar();
+
+	bool paletteMerging = true;
+	if (getSciVersion() >= SCI_VERSION_1_1) {
+		// there are some games that use inbetween SCI1.1 interpreter, so we have to detect if it's merging or copying
+		if (getSciVersion() == SCI_VERSION_1_1)
+			paletteMerging = _resMan->detectForPaletteMergingForSci11();
+		else
+			paletteMerging = false;
+	}
+
+	_gfxPalette = new GfxPalette(_resMan, _gfxScreen, paletteMerging);
+	_gfxCache = new GfxCache(_resMan, _gfxScreen, _gfxPalette);
+	_gfxCursor = new GfxCursor(_resMan, _gfxPalette, _gfxScreen);
+
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		// SCI32 graphic objects creation
+		_gfxCoordAdjuster = new GfxCoordAdjuster32(_gamestate->_segMan);
+		_gfxCursor->init(_gfxCoordAdjuster, _eventMan);
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxPaint32 = new GfxPaint32(g_sci->getResMan(), _gamestate->_segMan, g_sci->getKernel(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette);
+		_gfxPaint = _gfxPaint32;
+		_gfxFrameout = new GfxFrameout(_gamestate->_segMan, g_sci->getResMan(), _gfxCoordAdjuster, _gfxCache, _gfxScreen, _gfxPalette, _gfxPaint32);
+	} else {
+#endif
+		// SCI0-SCI1.1 graphic objects creation
+		_gfxPorts = new GfxPorts(_gamestate->_segMan, _gfxScreen);
+		_gfxCoordAdjuster = new GfxCoordAdjuster16(_gfxPorts);
+		_gfxCursor->init(_gfxCoordAdjuster, g_sci->getEventManager());
+		_gfxCompare = new GfxCompare(_gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxScreen, _gfxCoordAdjuster);
+		_gfxTransitions = new GfxTransitions(_gfxScreen, _gfxPalette, g_sci->getResMan()->isVGA());
+		_gfxPaint16 = new GfxPaint16(g_sci->getResMan(), _gamestate->_segMan, g_sci->getKernel(), _gfxCache, _gfxPorts, _gfxCoordAdjuster, _gfxScreen, _gfxPalette, _gfxTransitions, _audio);
+		_gfxPaint = _gfxPaint16;
+		_gfxAnimate = new GfxAnimate(_gamestate, _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen, _gfxPalette, _gfxCursor, _gfxTransitions);
+		_gfxText16 = new GfxText16(g_sci->getResMan(), _gfxCache, _gfxPorts, _gfxPaint16, _gfxScreen);
+		_gfxControls = new GfxControls(_gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen);
+		_gfxMenu = new GfxMenu(g_sci->getEventManager(), _gamestate->_segMan, _gfxPorts, _gfxPaint16, _gfxText16, _gfxScreen, _gfxCursor);
+
+		_gfxMenu->reset();
+#ifdef ENABLE_SCI32
+	}
+#endif
+
 	if (_gfxPorts) {
 		_gfxPorts->init(_features->usesOldGfxFunctions(), _gfxPaint16, _gfxText16);
 		_gfxPaint16->init(_gfxAnimate, _gfxText16);

@@ -59,7 +59,7 @@ enum GfxScreenMasks {
  */
 class GfxScreen {
 public:
-	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, int upscaledHires = GFX_SCREEN_UPSCALED_DISABLED);
+	GfxScreen(ResourceManager *resMan);
 	~GfxScreen();
 
 	uint16 getWidth() { return _width; }
