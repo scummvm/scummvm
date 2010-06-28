@@ -80,8 +80,6 @@ enum SegmentType {
 struct SegmentObj : public Common::Serializable {
 	SegmentType _type;
 
-	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
-
 public:
 	static SegmentObj *createSegmentObj(SegmentType type);
 
@@ -125,16 +123,19 @@ public:
 	 * @param note		Invoked for each address on which free_at_address() makes sense
 	 * @param param		parameter passed to 'note'
 	 */
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {}
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+		return Common::Array<reg_t>();
+	}
 
 	/**
 	 * Iterates over all references reachable from the specified object.
-	 * @param object	object (within the current segment) to analyse
-	 * @param param		parameter passed to 'note'
-	 * @param note		Invoked for each outgoing reference within the object
+	 * @param  object	object (within the current segment) to analyse
+	 * @return refs		a list of outgoing references within the object
 	 * Note: This function may also choose to report numbers (segment 0) as adresses
 	 */
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const {}
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const {
+		return Common::Array<reg_t>();
+	}
 };
 
 
@@ -195,7 +196,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -349,7 +350,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -437,10 +438,12 @@ public:
 		entries_used--;
 	}
 
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+		Common::Array<reg_t> tmp;
 		for (uint i = 0; i < _table.size(); i++)
 			if (isValidEntry(i))
-				(*note)(param, make_reg(segId, i));
+				tmp.push_back(make_reg(segId, i));
+		return tmp;
 	}
 };
 
@@ -450,7 +453,7 @@ struct CloneTable : public Table<Clone> {
 	CloneTable() : Table<Clone>(SEG_TYPE_CLONES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -461,7 +464,7 @@ struct NodeTable : public Table<Node> {
 	NodeTable() : Table<Node>(SEG_TYPE_NODES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -472,7 +475,7 @@ struct ListTable : public Table<List> {
 	ListTable() : Table<List>(SEG_TYPE_LISTS) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -511,7 +514,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -645,7 +648,7 @@ struct ArrayTable : public Table<SciArray<reg_t> > {
 	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);

@@ -46,6 +46,11 @@ struct WorklistManager {
 		_map.setVal(reg, true);
 		_worklist.push_back(reg);
 	}
+
+	void push(const Common::Array<reg_t> &tmp) {
+		for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
+			push(*it);
+	}
 };
 
 static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *segMan, reg_t_hash_map &nonnormal_map) {
@@ -64,11 +69,6 @@ static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *segMan, reg_t_hash_map
 	return normal_map;
 }
 
-
-void add_outgoing_refs(void *refcon, reg_t addr) {
-	WorklistManager *wm = (WorklistManager *)refcon;
-	wm->push(addr);
-}
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
 	SegManager *segMan = s->_segMan;
@@ -125,15 +125,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			Script *script = (Script *)segMan->_heap[i];
 
 			if (script->getLockers()) { // Explicitly loaded?
-				// Locals, if present
-				wm.push(make_reg(script->_localsSegment, 0));
-
-				// All objects (may be classes, may be indirectly reachable)
-				ObjMap::iterator it;
-				const ObjMap::iterator end = script->_objects.end();
-				for (it = script->_objects.begin(); it != end; ++it) {
-					wm.push(it->_value.getPos());
-				}
+				wm.push(script->listObjectReferences());
 			}
 		}
 
@@ -146,8 +138,10 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		wm._worklist.pop_back();
 		if (reg.segment != stack_seg) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
-			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment])
-				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs);
+			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment]) {
+				// Valid heap object? Find its outgoing references!
+				wm.push(segMan->_heap[reg.segment]->listAllOutgoingReferences(reg));
+			}
 		}
 	}
 
@@ -167,8 +161,7 @@ struct deallocator_t {
 	reg_t_hash_map *use_map;
 };
 
-void free_unless_used(void *refcon, reg_t addr) {
-	deallocator_t *deallocator = (deallocator_t *)refcon;
+static void free_unless_used(deallocator_t *deallocator, reg_t addr) {
 	reg_t_hash_map *use_map = deallocator->use_map;
 
 	if (!use_map->contains(addr)) {
@@ -201,7 +194,11 @@ void run_gc(EngineState *s) {
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.mobj->getType()] = deallocator.mobj->type;	// FIXME: add a segment "name"
 #endif
-			deallocator.mobj->listAllDeallocatable(seg_nr, &deallocator, free_unless_used);
+			const Common::Array<reg_t> tmp = deallocator.mobj->listAllDeallocatable(seg_nr);
+			for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
+				free_unless_used(&deallocator, *it);
+			}
+
 		}
 	}
 

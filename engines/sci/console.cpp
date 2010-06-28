@@ -1847,11 +1847,6 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 	return true;
 }
 
-void _print_address(void * _, reg_t addr) {
-	if (addr.segment)
-		g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
-}
-
 bool Console::cmdGCShowReachable(int argc, const char **argv) {
 	if (argc != 2) {
 		DebugPrintf("Prints all addresses directly reachable from the memory object specified as parameter.\n");
@@ -1875,7 +1870,10 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
-	mobj->listAllOutgoingReferences(addr, NULL, _print_address);
+	const Common::Array<reg_t> tmp = mobj->listAllOutgoingReferences(addr);
+	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
+		if (it->segment)
+			g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(*it));
 
 	return true;
 }
@@ -1904,7 +1902,10 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Freeable in segment %04x:\n", addr.segment);
-	mobj->listAllDeallocatable(addr.segment, NULL, _print_address);
+	const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(addr.segment);
+	for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
+		if (it->segment)
+			g_sci->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(*it));
 
 	return true;
 }

@@ -104,8 +104,10 @@ public:
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
+
+	Common::Array<reg_t> listObjectReferences() const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 

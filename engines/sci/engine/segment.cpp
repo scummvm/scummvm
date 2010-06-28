@@ -218,20 +218,22 @@ void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 		segMan->deallocateScript(_nr);
 }
 
-void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
-	(*note)(param, make_reg(segId, 0));
+Common::Array<reg_t> Script::listAllDeallocatable(SegmentId segId) const {
+	const reg_t r = make_reg(segId, 0);
+	return Common::Array<reg_t>(&r, 1);
 }
 
-void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> Script::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
 		const Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
 			if (_localsSegment)
-				(*note)(param, make_reg(_localsSegment, 0));
+				tmp.push_back(make_reg(_localsSegment, 0));
 
 			for (uint i = 0; i < obj->getVarCount(); i++)
-				(*note)(param, obj->getVariable(i));
+				tmp.push_back(obj->getVariable(i));
 		} else {
 			error("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
 		}
@@ -239,12 +241,30 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
 		/* Happens e.g. when we're looking into strings */
 	}
+	return tmp;
 }
 
+Common::Array<reg_t> Script::listObjectReferences() const {
+	Common::Array<reg_t> tmp;
+
+	// Locals, if present
+	if (_localsSegment)
+		tmp.push_back(make_reg(_localsSegment, 0));
+
+	// All objects (may be classes, may be indirectly reachable)
+	ObjMap::iterator it;
+	const ObjMap::iterator end = _objects.end();
+	for (it = _objects.begin(); it != end; ++it) {
+		tmp.push_back(it->_value.getPos());
+	}
+
+	return tmp;
+}
 
 //-------------------- clones --------------------
 
-void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 //	assert(addr.segment == _segId);
 
 	if (!isValidEntry(addr.offset)) {
@@ -255,11 +275,13 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (uint i = 0; i < clone->getVarCount(); i++)
-		(*note)(param, clone->getVariable(i));
+		tmp.push_back(clone->getVariable(i));
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
-	(*note)(param, clone->getPos());
+	tmp.push_back(clone->getPos());
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
+
+	return tmp;
 }
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
@@ -293,11 +315,14 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return make_reg(owner_seg, 0);
 }
 
-void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 //	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
-		(*note)(param, _locals[i]);
+		tmp.push_back(_locals[i]);
+
+	return tmp;
 }
 
 
@@ -307,11 +332,14 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return addr;
 }
 
-void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
+	Common::Array<reg_t> tmp;
 	fprintf(stderr, "Emitting %d stack entries\n", _capacity);
 	for (int i = 0; i < _capacity; i++)
-		(*note)(param, _entries[i]);
+		tmp.push_back(_entries[i]);
 	fprintf(stderr, "DONE");
+
+	return tmp;
 }
 
 
@@ -320,18 +348,20 @@ void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
 		error("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
 	}
 
 	const List *list = &(_table[addr.offset]);
 
-	note(param, list->first);
-	note(param, list->last);
+	tmp.push_back(list->first);
+	tmp.push_back(list->last);
 	// We could probably get away with just one of them, but
 	// let's be conservative here.
+
+	return tmp;
 }
 
 
@@ -340,19 +370,21 @@ void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
 		error("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
 	}
 	const Node *node = &(_table[addr.offset]);
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node
-	note(param, node->pred);
-	note(param, node->succ);
-	note(param, node->key);
-	note(param, node->value);
+	tmp.push_back(node->pred);
+	tmp.push_back(node->succ);
+	tmp.push_back(node->key);
+	tmp.push_back(node->value);
+
+	return tmp;
 }
 
 
@@ -473,8 +505,9 @@ reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return addr;
 }
 
-void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
-	(*note)(param, make_reg(segId, 0));
+Common::Array<reg_t> DynMem::listAllDeallocatable(SegmentId segId) const {
+	const reg_t r = make_reg(segId, 0);
+	return Common::Array<reg_t>(&r, 1);
 }
 
 #ifdef ENABLE_SCI32
@@ -492,10 +525,10 @@ void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> ArrayTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
 		error("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
 	}
 
 	const SciArray<reg_t> *array = &(_table[addr.offset]);
@@ -503,8 +536,10 @@ void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 	for (uint32 i = 0; i < array->getSize(); i++) {
 		reg_t value = array->getValue(i);
 		if (value.segment != 0)
-			note(param, value);
+			tmp.push_back(value);
 	}
+
+	return tmp;
 }
 
 Common::String SciString::toString() const {
