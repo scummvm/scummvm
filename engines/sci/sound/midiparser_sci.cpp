@@ -673,30 +673,28 @@ void MidiParser_SCI::setVolume(byte volume) {
 	}
 
 	assert(volume <= MUSIC_VOLUME_MAX);
-	if (_volume != volume) {
-		_volume = volume;
+	_volume = volume;
 
-		switch (_soundVersion) {
-		case SCI_VERSION_0_EARLY:
-		case SCI_VERSION_0_LATE: {
-			// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
-			// TODO: this should take the actual master volume into account
-			int16 globalVolume = _volume * 15 / 127;
-			((MidiPlayer *)_driver)->setVolume(globalVolume);
-			break;
-		}
+	switch (_soundVersion) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE: {
+		// SCI0 adlib driver doesn't support channel volumes, so we need to go this way
+		// TODO: this should take the actual master volume into account
+		int16 globalVolume = _volume * 15 / 127;
+		((MidiPlayer *)_driver)->setVolume(globalVolume);
+		break;
+	}
 
-		case SCI_VERSION_1_EARLY:
-		case SCI_VERSION_1_LATE:
-			// Send previous channel volumes again to actually update the volume
-			for (int i = 0; i < 15; i++)
-				if (_channelRemap[i] != -1)
-					sendToDriver(0xB0 + i, 7, _channelVolume[i]);
-			break;
+	case SCI_VERSION_1_EARLY:
+	case SCI_VERSION_1_LATE:
+		// Send previous channel volumes again to actually update the volume
+		for (int i = 0; i < 15; i++)
+			if (_channelRemap[i] != -1)
+				sendToDriver(0xB0 + i, 7, _channelVolume[i]);
+		break;
 
-		default:
-			error("MidiParser_SCI::setVolume: Unsupported soundVersion");
-		}
+	default:
+		error("MidiParser_SCI::setVolume: Unsupported soundVersion");
 	}
 }
 
