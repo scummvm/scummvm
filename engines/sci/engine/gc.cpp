@@ -28,8 +28,6 @@
 
 namespace Sci {
 
-//#define DEBUG_GC
-
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
 	reg_t_hash_map _map;
@@ -151,68 +149,41 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	return normal_map;
 }
 
-struct deallocator_t {
-	SegManager *segMan;
-	SegmentObj *mobj;
-#ifdef DEBUG_GC
-	char *segnames[SEG_TYPE_MAX + 1];
-	int segcount[SEG_TYPE_MAX + 1];
-#endif
-	reg_t_hash_map *use_map;
-};
-
-static void free_unless_used(deallocator_t *deallocator, reg_t addr) {
-	reg_t_hash_map *use_map = deallocator->use_map;
-
-	if (!use_map->contains(addr)) {
-		// Not found -> we can free it
-		deallocator->mobj->freeAtAddress(deallocator->segMan, addr);
-#ifdef DEBUG_GC
-		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
-		deallocator->segcount[deallocator->mobj->getType()]++;
-#endif
-	}
-
-}
-
 void run_gc(EngineState *s) {
 	uint seg_nr;
-	deallocator_t deallocator;
 	SegManager *segMan = s->_segMan;
 
-#ifdef DEBUG_GC
+	const char *segnames[SEG_TYPE_MAX + 1];
+	int segcount[SEG_TYPE_MAX + 1];
 	debugC(2, kDebugLevelGC, "[GC] Running...");
-	memset(&(deallocator.segcount), 0, sizeof(int) * (SEG_TYPE_MAX + 1));
-#endif
+	memset(segcount, 0, sizeof(segcount));
 
-	deallocator.segMan = segMan;
-	deallocator.use_map = find_all_used_references(s);
+	reg_t_hash_map *use_map = find_all_used_references(s);
 
 	for (seg_nr = 1; seg_nr < segMan->_heap.size(); seg_nr++) {
 		if (segMan->_heap[seg_nr] != NULL) {
-			deallocator.mobj = segMan->_heap[seg_nr];
-#ifdef DEBUG_GC
-			deallocator.segnames[deallocator.mobj->getType()] = deallocator.mobj->type;	// FIXME: add a segment "name"
-#endif
-			const Common::Array<reg_t> tmp = deallocator.mobj->listAllDeallocatable(seg_nr);
+			SegmentObj *mobj = segMan->_heap[seg_nr];
+			segnames[mobj->getType()] = SegmentObj::getSegmentTypeName(mobj->getType());
+			const Common::Array<reg_t> tmp = mobj->listAllDeallocatable(seg_nr);
 			for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it) {
-				free_unless_used(&deallocator, *it);
+				const reg_t addr = *it;
+				if (!use_map->contains(addr)) {
+					// Not found -> we can free it
+					mobj->freeAtAddress(segMan, addr);
+					debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x", PRINT_REG(addr));
+					segcount[mobj->getType()]++;
+				}
 			}
 
 		}
 	}
 
-	delete deallocator.use_map;
+	delete use_map;
 
-#ifdef DEBUG_GC
-	{
-		int i;
-		debugC(2, kDebugLevelGC, "[GC] Summary:");
-		for (i = 0; i <= SEG_TYPE_MAX; i++)
-			if (deallocator.segcount[i])
-				debugC(2, kDebugLevelGC, "\t%d\t* %s", deallocator.segcount[i], deallocator.segnames[i]);
-	}
-#endif
+	debugC(2, kDebugLevelGC, "[GC] Summary:");
+	for (int i = 0; i <= SEG_TYPE_MAX; i++)
+		if (segcount[i])
+			debugC(2, kDebugLevelGC, "\t%d\t* %s", segcount[i], segnames[i]);
 }
 
 } // End of namespace Sci

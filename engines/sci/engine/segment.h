@@ -82,6 +82,7 @@ struct SegmentObj : public Common::Serializable {
 
 public:
 	static SegmentObj *createSegmentObj(SegmentType type);
+	static const char *getSegmentTypeName(SegmentType type);
 
 public:
 	SegmentObj(SegmentType type) : _type(type) {}

@@ -86,6 +86,50 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	return mem;
 }
 
+const char *SegmentObj::getSegmentTypeName(SegmentType type) {
+	switch (type) {
+	case SEG_TYPE_SCRIPT:
+		return "script";
+		break;
+	case SEG_TYPE_CLONES:
+		return "clones";
+		break;
+	case SEG_TYPE_LOCALS:
+		return "locals";
+		break;
+	case SEG_TYPE_SYS_STRINGS:
+		return "strings";
+		break;
+	case SEG_TYPE_STACK:
+		return "stack";
+		break;
+	case SEG_TYPE_HUNK:
+		return "hunk";
+		break;
+	case SEG_TYPE_LISTS:
+		return "lists";
+		break;
+	case SEG_TYPE_NODES:
+		return "nodes";
+		break;
+	case SEG_TYPE_DYNMEM:
+		return "dynmem";
+		break;
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_ARRAY:
+		return "array";
+		break;
+	case SEG_TYPE_STRING:
+		return "string";
+		break;
+#endif
+	default:
+		error("Unknown SegmentObj type %d", type);
+		break;
+	}
+	return NULL;
+}
+
 // This helper function is used by Script::relocateLocal and Object::relocate
 // Duplicate in segment.cpp and script.cpp
 static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
