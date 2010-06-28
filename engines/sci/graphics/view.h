@@ -60,18 +60,18 @@ public:
 	GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId);
 	~GfxView();
 
-	GuiResourceId getResourceId();
-	int16 getWidth(int16 loopNo, int16 celNo);
-	int16 getHeight(int16 loopNo, int16 celNo);
-	CelInfo *getCelInfo(int16 loopNo, int16 celNo);
-	LoopInfo *getLoopInfo(int16 loopNo);
-	void getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
-	void getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect *outRect);
-	byte *getBitmap(int16 loopNo, int16 celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires);
-	void drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY);
+	GuiResourceId getResourceId() const;
+	int16 getWidth(int16 loopNo, int16 celNo) const;
+	int16 getHeight(int16 loopNo, int16 celNo) const;
+	const CelInfo *getCelInfo(int16 loopNo, int16 celNo) const;
+	const LoopInfo *getLoopInfo(int16 loopNo) const;
+	void getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const;
+	void getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const;
+	const byte *getBitmap(int16 loopNo, int16 celNo);
+	void draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires);
+	void drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY);
 	uint16 getLoopCount() const { return _loopCount; }
-	uint16 getCelCount(int16 loopNo);
+	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
 
 private:

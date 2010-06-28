@@ -82,10 +82,11 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_embeddedPal = false;
 	_EGAmapping = NULL;
 
-	// If we find a SCI1/SCI1.1 view (not amiga), we switch to that type for EGA
-	//  This could get used to make view patches for EGA games, where the new views include more colors
-	//  Users could manually adjust old views to make them look better (like removing dithered colors that aren't
-	//  caught by our undithering or even improve the graphics overall)
+	// If we find an SCI1/SCI1.1 view (not amiga), we switch to that type for
+	// EGA. This could get used to make view patches for EGA games, where the
+	// new views include more colors. Users could manually adjust old views to
+	// make them look better (like removing dithered colors that aren't caught
+	// by our undithering or even improve the graphics overall).
 	if (curViewType == kViewEga) {
 		if (_resourceData[1] == 0x80) {
 			curViewType = kViewVga;
@@ -110,10 +111,12 @@ void GfxView::initData(GuiResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			// Some SCI0/SCI01 games also have an offset set. It seems that it points to a 16-byte mapping table
-			//  but on those games using that mapping will actually screw things up.
-			// On the other side: vga sci1 games have this pointing to a VGA palette
-			//  and ega sci1 games have this pointing to a 8x16 byte mapping table that needs to get applied then
+			// Some SCI0/SCI01 games also have an offset set. It seems that it
+			// points to a 16-byte mapping table but on those games using that
+			// mapping will actually screw things up. On the other side: VGA
+			// SCI1 games have this pointing to a VGA palette and EGA SCI1 games
+			// have this pointing to a 8x16 byte mapping table that needs to get
+			// applied then.
 			if (!isEGA) {
 				_palette->createFromData(&_resourceData[palOffset], _resourceSize - palOffset, &_viewPalette);
 				_embeddedPal = true;
@@ -122,7 +125,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 				if (getSciVersion() >= SCI_VERSION_1_EGA) {
 					_EGAmapping = &_resourceData[palOffset];
 					for (EGAmapNr = 0; EGAmapNr < SCI_VIEW_EGAMAPPING_COUNT; EGAmapNr++) {
-						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE)!=0)
+						if (memcmp(_EGAmapping, EGAmappingStraight, SCI_VIEW_EGAMAPPING_SIZE) != 0)
 							break;
 						_EGAmapping += SCI_VIEW_EGAMAPPING_SIZE;
 					}
@@ -184,12 +187,13 @@ void GfxView::initData(GuiResourceId resourceId) {
 
 	case kViewVga11: // View-format SCI1.1+
 		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
-		headerSize = READ_SCI11ENDIAN_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so its added
+		headerSize = READ_SCI11ENDIAN_UINT16(_resourceData + 0) + 2; // headerSize is not part of the header, so it's added
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
-		// FIXME: After LoopCount there is another byte and its set for view 50 within Laura Bow 2 CD, check what it means
+		// FIXME: After LoopCount there is another byte and its set for view 50
+		// within Laura Bow 2 CD, check what it means.
 
 		loopData = _resourceData + headerSize;
 		loopSize = _resourceData[12];
@@ -251,47 +255,47 @@ void GfxView::initData(GuiResourceId resourceId) {
 	}
 }
 
-GuiResourceId GfxView::getResourceId() {
+GuiResourceId GfxView::getResourceId() const {
 	return _resourceId;
 }
 
-int16 GfxView::getWidth(int16 loopNo, int16 celNo) {
+int16 GfxView::getWidth(int16 loopNo, int16 celNo) const {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
-int16 GfxView::getHeight(int16 loopNo, int16 celNo) {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
+int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
+	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
-CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) {
+const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
-LoopInfo *GfxView::getLoopInfo(int16 loopNo) {
+const LoopInfo *GfxView::getLoopInfo(int16 loopNo) const {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
-	CelInfo *celInfo = getCelInfo(loopNo, celNo);
+void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	if (celInfo) {
-		outRect->left = x + celInfo->displaceX - (celInfo->width >> 1);
-		outRect->right = outRect->left + celInfo->width;
-		outRect->bottom = y + celInfo->displaceY - z + 1;
-		outRect->top = outRect->bottom - celInfo->height;
+		outRect.left = x + celInfo->displaceX - (celInfo->width >> 1);
+		outRect.right = outRect.left + celInfo->width;
+		outRect.bottom = y + celInfo->displaceY - z + 1;
+		outRect.top = outRect.bottom - celInfo->height;
 	}
 }
 
-void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect *outRect) {
+void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, int16 scaleX, int16 scaleY, Common::Rect &outRect) const {
 	int16 scaledDisplaceX, scaledDisplaceY;
 	int16 scaledWidth, scaledHeight;
-	CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	if (celInfo) {
 		// Scaling displaceX/Y, Width/Height
 		scaledDisplaceX = (celInfo->displaceX * scaleX) >> 7;
@@ -301,15 +305,15 @@ void GfxView::getCelScaledRect(int16 loopNo, int16 celNo, int16 x, int16 y, int1
 		scaledWidth = CLIP<int16>(scaledWidth, 0, _screen->getWidth());
 		scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
-		outRect->left = x + scaledDisplaceX - (scaledWidth >> 1);
-		outRect->right = outRect->left + scaledWidth;
-		outRect->bottom = y + scaledDisplaceY - z + 1;
-		outRect->top = outRect->bottom - scaledHeight;
+		outRect.left = x + scaledDisplaceX - (scaledWidth >> 1);
+		outRect.right = outRect.left + scaledWidth;
+		outRect.bottom = y + scaledDisplaceY - z + 1;
+		outRect.top = outRect.bottom - scaledHeight;
 	}
 }
 
 void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount) {
-	CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
 	uint32 pixelNo = 0, runLength;
@@ -325,9 +329,10 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			pixelNo += runLength;
 		}
 	} else {
-		// we skip over transparent pixels, so the buffer needs to be already filled with it
-		//  also some RLE compressed cels are possibly ending with the last non-transparent pixel
-		//  (is this even possible with the current code?)
+		// We skip over transparent pixels, so the buffer needs to be already
+		// filled with "it". (FIXME: What is "it" supposed to mean here?)
+		// Also some RLE compressed cels are possibly ending with the last
+		// non-transparent pixel (is this even possible with the current code?)
 		memset(outPtr, _loop[loopNo].cel[celNo].clearKey, pixelCount);
 
 		rlePtr = _resourceData + celInfo->offsetRLE;
@@ -371,7 +376,7 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 			literalPtr = _resourceData + celInfo->offsetLiteral;
 			if (celInfo->offsetRLE) {
 				if (g_sci->getPlatform() == Common::kPlatformMacintosh && getSciVersion() >= SCI_VERSION_1_1) {
-					// Crazy-Ass compression for SCI1.1+ Mac
+					// compression for SCI1.1+ Mac
 					while (pixelNo < pixelCount) {
 						uint32 pixelLine = pixelNo;
 						runLength = *rlePtr++;
@@ -414,7 +419,7 @@ void GfxView::unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCou
 	}
 }
 
-byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
+const byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
 	if (_loop[loopNo].cel[celNo].rawBitmap)
@@ -443,8 +448,10 @@ byte *GfxView::getBitmap(int16 loopNo, int16 celNo) {
 	return _loop[loopNo].cel[celNo].rawBitmap;
 }
 
-// Called after unpacking an EGA cel, this will try to undither (parts) of the cel if the dithering in here
-//  matches dithering used by the current picture
+/**
+ * Called after unpacking an EGA cel, this will try to undither (parts) of the
+ * cel if the dithering in here matches dithering used by the current picture.
+ */
 void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
 	int16 *unditherMemorial = _screen->unditherGetMemorial();
 
@@ -453,7 +460,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		return;
 
 	// Makes no sense to process bitmaps that are 3 pixels wide or less
-	if (width <= 3) return;
+	if (width <= 3)
+		return;
 
 	// If EGA mapping is used for this view, dont do undithering as well
 	if (_EGAmapping)
@@ -490,7 +498,8 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 			color1 = color & 0x0F; color2 = color >> 4;
 			if ((color1 != clearKey) && (color2 != clearKey) && (color1 != color2)) {
 				// so set this and the reversed color-combination for undithering
-				unditherTable[color] = true; unditherTable[(color1 << 4) | color2] = true;
+				unditherTable[color] = true;
+				unditherTable[(color1 << 4) | color2] = true;
 				unditherCount++;
 			}
 		}
@@ -507,8 +516,9 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 		for (x = 1; x < width; x++) {
 			color = (color << 4) | curPtr[1];
 			if (unditherTable[color]) {
-				// some color with black? turn colors around otherwise it wont be the right color at all
-				if ((color & 0xF0)==0)
+				// Some color with black? Turn colors around, otherwise it won't
+				// be the right color at all.
+				if ((color & 0xF0) == 0)
 					color = (color << 4) | (color >> 4);
 				curPtr[0] = color; curPtr[1] = color;
 			}
@@ -518,10 +528,10 @@ void GfxView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte cl
 	}
 }
 
-void GfxView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
+void GfxView::draw(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, uint16 EGAmappingNr, bool upscaledHires) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
-	CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	byte *bitmap = getBitmap(loopNo, celNo);
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
 	int16 width, height;
 	byte clearKey = celInfo->clearKey;
@@ -568,12 +578,15 @@ void GfxView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRe
 	}
 }
 
-// We don't fully follow sierra sci here, I did the scaling algo myself and it's definitely not pixel-perfect
-//  with the one sierra is using. It shouldn't matter because the scaled cel rect is definitely the same as in sierra sci
-void GfxView::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
+/**
+ * We don't fully follow sierra sci here, I did the scaling algo myself and it
+ * is definitely not pixel-perfect with the one sierra is using. It shouldn't
+ * matter because the scaled cel rect is definitely the same as in sierra sci.
+ */
+void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect, const Common::Rect &clipRectTranslated, int16 loopNo, int16 celNo, byte priority, int16 scaleX, int16 scaleY) {
 	Palette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
-	CelInfo *celInfo = getCelInfo(loopNo, celNo);
-	byte *bitmap = getBitmap(loopNo, celNo);
+	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
+	const byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
 	byte clearKey = celInfo->clearKey;
 	byte color;
@@ -647,7 +660,7 @@ void GfxView::drawScaled(Common::Rect rect, Common::Rect clipRect, Common::Rect 
 	}
 }
 
-uint16 GfxView::getCelCount(int16 loopNo) {
+uint16 GfxView::getCelCount(int16 loopNo) const {
 	if ((loopNo < 0) || (loopNo >= _loopCount))
 		return 0;
 	return _loop[loopNo].celCount;

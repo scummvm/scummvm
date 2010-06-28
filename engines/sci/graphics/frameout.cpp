@@ -229,9 +229,9 @@ void GfxFrameout::kernelFrameout() {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, &itemEntry->celRect);
+					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 				else
-					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, &itemEntry->celRect);
+					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
 
 				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight())
 					continue;

@@ -164,12 +164,11 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 
 	GfxView *cursorView = _cachedCursors[viewNum];
 
-	CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
+	const CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
 	int16 width = celInfo->width;
 	int16 height = celInfo->height;
 	byte clearKey = celInfo->clearKey;
 	Common::Point *cursorHotspot = hotspot;
-	byte *cursorBitmap;
 
 	if (!cursorHotspot)
 		// Compute hotspot from xoffset/yoffset
@@ -182,23 +181,20 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		return;
 	}
 
-	celInfo->rawBitmap = cursorView->getBitmap(loopNum, celNum);
+	const byte *rawBitmap = cursorView->getBitmap(loopNum, celNum);
 	if (_upscaledHires) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
 		cursorHotspot->x *= 2;
 		cursorHotspot->y *= 2;
-		cursorBitmap = new byte[width * height];
-		_screen->scale2x(celInfo->rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
-	} else {
-		cursorBitmap = celInfo->rawBitmap;
-	}
-
-	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
-
-	if (_upscaledHires)
+		byte *cursorBitmap = new byte[width * height];
+		_screen->scale2x(rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
+		CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 		delete[] cursorBitmap;
+	} else {
+		CursorMan.replaceCursor(rawBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+	}
 
 	kernelShow();
 

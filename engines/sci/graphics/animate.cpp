@@ -267,9 +267,9 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 
 		// Create rect according to coordinates and given cel
 		if (listEntry->scaleSignal & kScaleSignalDoScaling) {
-			view->getCelScaledRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->scaleX, listEntry->scaleY, &listEntry->celRect);
+			view->getCelScaledRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->scaleX, listEntry->scaleY, listEntry->celRect);
 		} else {
-			view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+			view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->celRect);
 		}
 		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), listEntry->celRect.left);
 		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), listEntry->celRect.top);
@@ -583,7 +583,7 @@ void GfxAnimate::addToPicDrawCels() {
 		view = _cache->getView(listEntry->viewId);
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->celRect);
 
 		// draw corresponding cel
 		_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
@@ -601,7 +601,7 @@ void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celN
 	Common::Rect celRect;
 
 	// Create rect according to coordinates and given cel
-	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
+	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, celRect);
 	_paint16->drawCel(view, loopNo, celNo, celRect, priority, 0);
 }
 

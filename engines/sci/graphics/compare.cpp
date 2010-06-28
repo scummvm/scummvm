@@ -132,7 +132,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 	// now get cel rectangle
 	view = _cache->getView(viewId);
-	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+	view->getCelRect(loopNo, celNo, x, y, z, celRect);
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
@@ -175,10 +175,10 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
 	GfxView *tmpView = _cache->getView(viewId);
-	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+	const CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
-	byte *celData = tmpView->getBitmap(loopNo, celNo);
+	const byte *celData = tmpView->getBitmap(loopNo, celNo);
 	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
 	return result;
 }
@@ -200,7 +200,7 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		GfxView *tmpView = _cache->getView(viewId);
 		Common::Rect celRect;
 
-		tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
+		tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
 		celRect.bottom = y + 1;
 		celRect.top = celRect.bottom - yStep;
 
