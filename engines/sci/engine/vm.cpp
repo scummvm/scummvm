@@ -620,7 +620,28 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			printf(") at %04x:%04x\n", PRINT_REG(funcp));
 #endif // VM_DEBUG_SEND
 			if (printSendActions) {
-				debug("[invoke selector]\n");
+				printf("[invoke selector]");
+#ifndef VM_DEBUG_SEND
+				int displaySize = 0;
+				for (int argNr = 1; argNr <= argc; argNr++) {
+					if (argNr == 1)
+						printf(" - ");
+					reg_t curParam = argp[argNr];
+					if (curParam.segment) {
+						printf("[%04x:%04x] ", PRINT_REG(curParam));
+						displaySize += 12;
+					} else {
+						printf("[%04x] ", curParam.offset);
+						displaySize += 7;
+					}
+					if (displaySize > 50) {
+						if (argNr < argc)
+							printf("...");
+						break;
+					}
+				}
+#endif
+				printf("\n");
 				printSendActions = false;
 			}
 
