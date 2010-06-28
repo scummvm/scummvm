@@ -275,10 +275,10 @@ void Script::relocate(reg_t block) {
 
 	for (int i = 0; i < count; i++) {
 		pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
-		// This occurs in SCI01/SCI1 games where usually one export value
-		// is zero. It seems that in this situation, we should skip the
-		// export and move to the next one, though the total count of valid
-		// exports remains the same
+		// This occurs in SCI01/SCI1 games where usually one export value is
+		// zero. It seems that in this situation, we should skip the export and
+		// move to the next one, though the total count of valid exports remains
+		// the same
 		if (!pos) {
 			exportIndex++;
 			pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
@@ -286,9 +286,10 @@ void Script::relocate(reg_t block) {
 				error("Script::relocate(): Consecutive zero exports found");
 		}
 
-		// In SCI0-SCI1, script local variables, objects and code are relocated. We only relocate
-		// locals and objects here, and ignore relocation of code blocks. In SCI1.1 and newer
-		// versions, only locals and objects are relocated.
+		// In SCI0-SCI1, script local variables, objects and code are relocated.
+		// We only relocate locals and objects here, and ignore relocation of
+		// code blocks. In SCI1.1 and newer versions, only locals and objects
+		// are relocated.
 		if (!relocateLocal(block.segment, pos)) {
 			// Not a local? It's probably an object or code block. If it's an object, relocate it.
 			const ObjMap::iterator end = _objects.end();
@@ -497,10 +498,10 @@ void Script::initialiseObjectsSci11(SegManager *segMan) {
 		obj->setSuperClassSelector(
 			segMan->getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
 
-		// If object is instance, get -propDict- from class and set it for this object
-		//  This is needed for ::isMemberOf() to work.
-		// Example testcase - room 381 of sq4cd - if isMemberOf() doesn't work, talk-clicks on the robot will act like
-		//                     clicking on ego
+		// If object is instance, get -propDict- from class and set it for this
+		// object. This is needed for ::isMemberOf() to work.
+		// Example testcase - room 381 of sq4cd - if isMemberOf() doesn't work,
+		// talk-clicks on the robot will act like clicking on ego
 		if (!obj->isClass()) {
 			reg_t classObject = obj->getSuperClassSelector();
 			Object *classObj = segMan->getObject(classObject);
