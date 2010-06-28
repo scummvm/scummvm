@@ -1346,8 +1346,7 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 		int flags = argv[3].offset;
 		Common::String flagspec;
 
-		if (argc > 3)
-		{
+		if (argc > 3) {
 			if (flags & 1)
 				flagspec += "doubled ";
 			if (flags & 2)

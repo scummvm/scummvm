@@ -398,7 +398,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 	}
 }
 
-#define READ_VAR(type, index, def) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, def)
+#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, s->r_acc)
 #define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
@@ -1654,7 +1654,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lap: // 0x43 (67)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 
 		case op_lsg: // 0x44 (68)
@@ -1663,7 +1663,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lsp: // 0x47 (71)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
+			PUSH32(READ_VAR(var_type, var_number));
 			break;
 
 		case op_lagi: // 0x48 (72)
@@ -1672,7 +1672,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lapi: // 0x4b (75)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			s->r_acc = READ_VAR(var_type, var_number, s->r_acc);
+			s->r_acc = READ_VAR(var_type, var_number);
 			break;
 
 		case op_lsgi: // 0x4c (76)
@@ -1681,7 +1681,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lspi: // 0x4f (79)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			PUSH32(READ_VAR(var_type, var_number, s->r_acc));
+			PUSH32(READ_VAR(var_type, var_number));
 			break;
 
 		case op_sag: // 0x50 (80)
@@ -1730,7 +1730,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusap: // 0x63 (99)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, 1);
@@ -1745,7 +1745,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussp: // 0x67 (103)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, 1);
@@ -1761,7 +1761,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusapi: // 0x6b (107)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, 1);
@@ -1776,7 +1776,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusspi: // 0x6f (111)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, 1);
@@ -1792,7 +1792,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusap: // 0x73 (115)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, -1);
@@ -1807,7 +1807,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussp: // 0x77 (119)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, -1);
@@ -1823,7 +1823,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusapi: // 0x7b (123)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				s->r_acc = pointer_add(s, r_temp, -1);
@@ -1838,7 +1838,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusspi: // 0x7f (127)
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
-			r_temp = READ_VAR(var_type, var_number, s->r_acc);
+			r_temp = READ_VAR(var_type, var_number);
 			if (r_temp.segment) {
 				// Pointer arithmetics!
 				r_temp = pointer_add(s, r_temp, -1);
