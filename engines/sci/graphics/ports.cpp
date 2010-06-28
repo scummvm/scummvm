@@ -251,6 +251,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	r = dims;
 	if (r.width() > _screen->getWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!)
+		//  same happens very often in lsl5, sierra sci didnt fix it but it looked awful
 		warning("fixing too large window, given left&right was %d, %d", dims.left, dims.right);
 		r.left = 0;
 		r.right = _screen->getWidth() - 1;
