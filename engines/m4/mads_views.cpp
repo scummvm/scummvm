@@ -313,7 +313,7 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 void MadsTextDisplay::setDirtyAreas() {
 	// Determine dirty areas for active text areas
 	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
-		if ((_entries[idx].expire < 0) || !_entries[idx].active)
+		if ((_entries[idx].expire >= 0) || !_entries[idx].active)
 			_owner._dirtyAreas[dirtyIdx].active = false;
 		else {
 			_owner._dirtyAreas[dirtyIdx].textActive = true;
@@ -339,14 +339,6 @@ void MadsTextDisplay::draw(View *view, int yOffset) {
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
 				_entries[idx].bounds.left, _entries[idx].bounds.top + yOffset, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
-		}
-	}
-
-	// Clear up any now text display entries that are to be expired
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if (_entries[idx].expire < 0) {
-			_entries[idx].active = false;
-			_entries[idx].expire = 0;
 		}
 	}
 }
@@ -827,6 +819,7 @@ void MadsDirtyAreas::setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &te
  * @param count			Number of entries to process
  */
 void MadsDirtyAreas::merge(int startIndex, int count) {
+return;//***DEBUG***
 	if (startIndex >= count)
 		return;
 
@@ -876,6 +869,11 @@ void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset, const Co
 		if (_entries[i].active && _entries[i].bounds.isValidRect())
 			src->copyTo(dest, bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
 	}
+}
+
+void MadsDirtyAreas::clear() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i].active = false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1209,6 +1207,7 @@ MadsView::~MadsView() {
 
 void MadsView::refresh() {
 	// Draw any sprites
+	_dirtyAreas.clear();
 	_spriteSlots.drawBackground(_yOffset);
 
 	// Process dirty areas

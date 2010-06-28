@@ -294,6 +294,7 @@ public:
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
 	void copy(M4Surface *dest, M4Surface *src, int yOffset, const Common::Point &posAdjust);
+	void clear();
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
