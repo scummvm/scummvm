@@ -52,6 +52,7 @@ class Kernel;
 class GameFeatures;
 class Console;
 class AudioPlayer;
+class SoundCommandParser;
 class EventManager;
 
 class GfxAnimate;
@@ -291,6 +292,7 @@ public:
 #endif
 
 	AudioPlayer *_audio;
+	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
 
 private:

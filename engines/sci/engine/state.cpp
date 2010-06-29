@@ -87,7 +87,6 @@ void EngineState::reset(bool isRestoring) {
 
 	if (!isRestoring) {
 		_memorySegmentSize = 0;
-		_soundCmd = 0;
 
 		_fileHandles.resize(5);
 

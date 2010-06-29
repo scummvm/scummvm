@@ -219,8 +219,8 @@ void Console::preEnter() {
 	if (_engine->_gamestate)
 		_engine->_gamestate->_sound.sfx_suspend(true);
 #endif
-	if (_engine->_gamestate && _engine->_gamestate->_soundCmd)
-		_engine->_gamestate->_soundCmd->pauseAll(true);
+	if (g_sci && g_sci->_soundCmd)
+		g_sci->_soundCmd->pauseAll(true);
 }
 
 void Console::postEnter() {
@@ -228,8 +228,8 @@ void Console::postEnter() {
 	if (_engine->_gamestate)
 		_engine->_gamestate->_sound.sfx_suspend(false);
 #endif
-	if (_engine->_gamestate && _engine->_gamestate->_soundCmd)
-		_engine->_gamestate->_soundCmd->pauseAll(false);
+	if (g_sci && g_sci->_soundCmd)
+		g_sci->_soundCmd->pauseAll(false);
 
 	if (!_videoFile.empty()) {
 		_engine->_gfxCursor->kernelHide();
@@ -1662,7 +1662,7 @@ bool Console::cmdSongLib(int argc, const char **argv) {
 	} while (seeker);
 	DebugPrintf("\n");
 #else
-	_engine->_gamestate->_soundCmd->printPlayList(this);
+	g_sci->_soundCmd->printPlayList(this);
 #endif
 
 	return true;
@@ -1683,7 +1683,7 @@ bool Console::cmdSongInfo(int argc, const char **argv) {
 		return true;
 	}
 
-	_engine->_gamestate->_soundCmd->printSongInfo(addr, this);
+	g_sci->_soundCmd->printSongInfo(addr, this);
 
 	return true;
 }
@@ -1702,7 +1702,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 		return true;
 	}
 
-	_engine->_gamestate->_soundCmd->startNewSound(number);
+	g_sci->_soundCmd->startNewSound(number);
 
 	return false;
 }
@@ -1743,9 +1743,9 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	newState.toLowercase();
 
 	if (newState == "play")
-		_engine->_gamestate->_soundCmd->playSound(id);
+		g_sci->_soundCmd->playSound(id);
 	else if (newState == "stop")
-		_engine->_gamestate->_soundCmd->stopSound(id);
+		g_sci->_soundCmd->stopSound(id);
 	else
 		DebugPrintf("New state can either be 'play' or 'stop'");
 #endif
@@ -1755,7 +1755,7 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 
 bool Console::cmdStopAllSounds(int argc, const char **argv) {
 #ifndef USE_OLD_MUSIC_FUNCTIONS
-	_engine->_gamestate->_soundCmd->stopAllSounds();
+	g_sci->_soundCmd->stopAllSounds();
 #endif
 
 	DebugPrintf("All sounds have been stopped\n");

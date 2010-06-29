@@ -109,7 +109,6 @@ public:
 	SfxState _sound; /**< sound subsystem */
 	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
 #endif
-	SoundCommandParser *_soundCmd;
 
 	uint32 gameStartTime; /**< The time at which the interpreter was started */
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */

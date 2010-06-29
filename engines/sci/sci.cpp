@@ -154,6 +154,7 @@ SciEngine::~SciEngine() {
 	delete _gfxScreen;
 
 	delete _audio;
+	delete _soundCmd;
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
@@ -161,7 +162,6 @@ SciEngine::~SciEngine() {
 	delete _gfxMacIconBar;
 
 	delete _eventMan;
-	delete _gamestate->_soundCmd;
 	delete _gamestate->_segMan;
 	delete _gamestate;
 	delete _resMan;	// should be deleted last
@@ -216,16 +216,14 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	_kernel->loadKernelNames(_features);	// Must be called after game_init()
-
 	script_adjust_opcode_formats();
 
-	SciVersion soundVersion = _features->detectDoSoundType();
-
-	_gamestate->_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, soundVersion);
+	// Must be called after game_init(), as they use _features
+	_kernel->loadKernelNames(_features);
+	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
-	initGameSound(0, soundVersion);
+	initGameSound(0, _features->detectDoSoundType());
 #endif
 
 	syncSoundSettings();
@@ -463,7 +461,7 @@ void SciEngine::exitGame() {
 		initGameSound(SFX_STATE_FLAG_NOSOUND, _features->detectDoSoundType());
 #else
 		_audio->stopAllAudio();
-		_gamestate->_soundCmd->clearPlayList();
+		g_sci->_soundCmd->clearPlayList();
 #endif
 	}
 
@@ -562,9 +560,9 @@ void SciEngine::syncSoundSettings() {
 
 	int soundVolumeMusic = (mute ? 0 : ConfMan.getInt("music_volume"));
 
-	if (_gamestate && _gamestate->_soundCmd) {
+	if (_gamestate && g_sci->_soundCmd) {
 		int vol =  (soundVolumeMusic + 1) * SoundCommandParser::kMaxSciVolume / Audio::Mixer::kMaxMixerVolume;
-		_gamestate->_soundCmd->setMasterVolume(vol);
+		g_sci->_soundCmd->setMasterVolume(vol);
 	}
 #endif
 }

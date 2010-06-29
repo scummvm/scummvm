@@ -156,7 +156,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called
 		// quite often, so emulate the SCI01 behavior of cmdUpdateSoundCues with
 		// this call
-		s->_soundCmd->updateSci0Cues();
+		g_sci->_soundCmd->updateSci0Cues();
 	}
 #endif
 
