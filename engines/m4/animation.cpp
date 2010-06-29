@@ -57,9 +57,9 @@ MadsAnimation::~MadsAnimation() {
 	if (_field12) {
 		_view->_spriteSlots.deleteSprites(_spriteListIndexes[_spriteListIndex]);
 	}
-
-	delete _font;
 }
+
+#define FILENAME_SIZE 13
 
 /**
  * Initialises and loads the data of an animation
@@ -93,25 +93,35 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	_scrollTicks = animStream->readUint16LE();
 	animStream->skip(8);
 	
-	animStream->read(buffer, 13);
-	_interfaceFile = Common::String(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_interfaceFile = Common::String(buffer);
 
 	for (int i = 0; i < 10; ++i) {
-		animStream->read(buffer, 13);
-		_spriteSetNames[i] = Common::String(buffer, 13);
+		animStream->read(buffer, FILENAME_SIZE);
+		buffer[FILENAME_SIZE] = '\0';
+		_spriteSetNames[i] = Common::String(buffer);
 	}
 
 	animStream->skip(81);
-	animStream->read(buffer, 13);
-	_lbmFilename = Common::String(buffer, 13);
-	animStream->read(buffer, 13);
-	_spritesFilename = Common::String(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_lbmFilename = Common::String(buffer);
+
+	animStream->skip(365);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_spritesFilename = Common::String(buffer);
+
 	animStream->skip(48);
-	animStream->read(buffer, 13);
-	_soundName = Common::String(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_soundName = Common::String(buffer);
+
 	animStream->skip(26);
-	animStream->read(buffer, 13);
-	Common::String fontResource(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	Common::String fontResource(buffer);
 
 	if (_animMode == 4)
 		flags |= 0x4000;
@@ -205,7 +215,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		fontName += fontResource;
 
 		if (fontName != "")
-			_font = _vm->_font->getFont(fontName);
+			_font = _vm->_font->getFont(fontName.c_str());
 		else
 			warning("Attempted to set a font with an empty name");
 	}
