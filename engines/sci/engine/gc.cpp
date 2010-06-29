@@ -45,7 +45,7 @@ struct WorklistManager {
 		_worklist.push_back(reg);
 	}
 
-	void push(const Common::Array<reg_t> &tmp) {
+	void pushArray(const Common::Array<reg_t> &tmp) {
 		for (Common::Array<reg_t>::const_iterator it = tmp.begin(); it != tmp.end(); ++it)
 			push(*it);
 	}
@@ -82,22 +82,19 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	wm.push(s->r_prev);
 	// Init: Value Stack
 	// We do this one by hand since the stack doesn't know the current execution stack
-	Common::List<ExecStack>::iterator iter;
-	{
-		iter = s->_executionStack.reverse_begin();
+	Common::List<ExecStack>::iterator iter = s->_executionStack.reverse_begin();
 
-		// Skip fake kernel stack frame if it's on top
-		if (((*iter).type == EXEC_STACK_TYPE_KERNEL))
-			--iter;
+	// Skip fake kernel stack frame if it's on top
+	if (((*iter).type == EXEC_STACK_TYPE_KERNEL))
+		--iter;
 
-		assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
+	assert((iter != s->_executionStack.end()) && ((*iter).type != EXEC_STACK_TYPE_KERNEL));
 
-		ExecStack &xs = *iter;
-		reg_t *pos;
+	ExecStack &xs = *iter;
+	reg_t *pos;
 
-		for (pos = s->stack_base; pos < xs.sp; pos++)
-			wm.push(*pos);
-	}
+	for (pos = s->stack_base; pos < xs.sp; pos++)
+		wm.push(*pos);
 
 	debugC(2, kDebugLevelGC, "[GC] -- Finished adding value stack");
 
@@ -117,15 +114,16 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	debugC(2, kDebugLevelGC, "[GC] -- Finished adding execution stack");
 
 	// Init: Explicitly loaded scripts
-	for (i = 1; i < segMan->_heap.size(); i++)
+	for (i = 1; i < segMan->_heap.size(); i++) {
 		if (segMan->_heap[i]
 		        && segMan->_heap[i]->getType() == SEG_TYPE_SCRIPT) {
 			Script *script = (Script *)segMan->_heap[i];
 
 			if (script->getLockers()) { // Explicitly loaded?
-				wm.push(script->listObjectReferences());
+				wm.pushArray(script->listObjectReferences());
 			}
 		}
+	}
 
 	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set");
 
@@ -138,7 +136,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
 			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment]) {
 				// Valid heap object? Find its outgoing references!
-				wm.push(segMan->_heap[reg.segment]->listAllOutgoingReferences(reg));
+				wm.pushArray(segMan->_heap[reg.segment]->listAllOutgoingReferences(reg));
 			}
 		}
 	}
