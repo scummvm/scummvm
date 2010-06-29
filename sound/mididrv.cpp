@@ -182,7 +182,12 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; ++l) {
 		if ((flags & MDT_MIDI) && (l == 1)) {
 			// If a preferred MT32 or GM device has been selected that device gets returned
-			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto")));
+			if (flags & MDT_PREFER_MT32)
+				hdl = getDeviceHandle(ConfMan.get("mt32_device"));
+			else if (flags & MDT_PREFER_GM)
+				hdl = getDeviceHandle(ConfMan.get("gm_device"));
+			else
+				hdl = getDeviceHandle("auto");
 
 			const MusicType type = getMusicType(hdl);
 			if (type != MT_AUTO && type != MT_INVALID) {
