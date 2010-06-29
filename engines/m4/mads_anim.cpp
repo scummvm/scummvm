@@ -466,6 +466,10 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	// Set up system palette colors
 	_vm->_palette->setMadsSystemPalette();
 
+	// Block reserved palette ranges
+	_vm->_palette->blockRange(16, 2);
+	_vm->_palette->blockRange(250, 4);
+
 	clear();
 	_backgroundSurface.clear();
 
