@@ -240,7 +240,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		}
 	}
 
-	return hdl;
+	return 0;
 }
 
 MidiDriver *MidiDriver::createMidi(MidiDriver::DeviceHandle handle) {
