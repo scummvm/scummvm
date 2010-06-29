@@ -7,7 +7,7 @@ MODULE_OBJS := \
 	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
-	events/samsungtv/samsungtv-events.o \
+	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
 	fs/abstract-fs.o \

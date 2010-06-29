@@ -24,6 +24,7 @@
  */
 
 #include "backends/platform/samsungtv/samsungtv.h"
+#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 
 OSystem_SDL_SamsungTV::OSystem_SDL_SamsungTV()
 	:
@@ -34,6 +35,14 @@ bool OSystem_SDL_SamsungTV::hasFeature(Feature f) {
 	return
 		(f == OSystem::kFeatureAspectRatioCorrection) ||
 		(f == OSystem::kFeatureCursorHasPalette);
+}
+
+void OSystem_SDL_SamsungTV::initBackend() {
+	if (_eventManager == 0)
+		_eventManager = new SamsungTVSdlEventManager(this);
+
+	// Call parent implementation of this method
+	OSystem_SDL::initBackend();
 }
 
 void OSystem_SDL_SamsungTV::setFeatureState(Feature f, bool enable) {

@@ -23,17 +23,17 @@
  *
  */
 
-#if defined(SAMSUNGTV)
+#ifdef SAMSUNGTV
 
-#include "backends/events/samsungtv/samsungtv-events.h"
+#include "backends/events/samsungtvsdl/samsungtvsdl-events.h"
 
-SdlSamsungTVEventManager::SdlSamsungTVEventManager(Common::EventSource *boss)
+SamsungTVSdlEventManager::SamsungTVSdlEventManager(Common::EventSource *boss)
 	:
 	SdlEventManager(boss) {
 
 }
 
-bool SdlSamsungTVEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+bool SamsungTVSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 	switch (ev.type) {
 		case SDL_KEYDOWN:{
 			if (ev.key.keysym.sym == SDLK_POWER) {

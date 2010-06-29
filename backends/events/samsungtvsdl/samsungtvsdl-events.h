@@ -28,13 +28,13 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
-class SdlSamsungTVEventManager : public SdlEventManager {
+class SamsungTVSdlEventManager : public SdlEventManager {
 public:
-	SdlSamsungTVEventManager(Common::EventSource *boss);
-	~SdlSamsungTVEventManager() {}
+	SamsungTVSdlEventManager(Common::EventSource *boss);
+	~SamsungTVSdlEventManager() {}
 
 protected:
-	bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif
