@@ -568,15 +568,6 @@ Common::Error MadsEngine::run() {
 	_viewManager->systemHotkeys().add(Common::KEYCODE_ESCAPE, &escapeHotkeyHandler);
 	_viewManager->systemHotkeys().add(Common::KEYCODE_KP_MULTIPLY, &textviewHotkeyHandler);
 
-	// Load the general game SFX/voices
-	if (getGameType() == GType_RexNebular) {
-		_sound->loadDSRFile("rex009.dsr");
-	} else if (getGameType() == GType_Phantom) {
-		_sound->loadDSRFile("phan009.dsr");
-	} else if (getGameType() == GType_DragonSphere) {
-		_sound->loadDSRFile("drag009.dsr");
-	}
-
 	uint32 nextFrame = g_system->getMillis();
 	while (!_events->quitFlag) {
 		eventHandler();

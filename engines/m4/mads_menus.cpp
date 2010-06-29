@@ -309,7 +309,6 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		return;
 
 	case SHOW_INTRO:
-		vm->_sound->loadDSRFile("act002.dsr");
 		vm->_viewManager->showAnimView("@rexopen");
 		break;
 
