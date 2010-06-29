@@ -178,15 +178,12 @@ void GfxAnimate::makeSortedList(List *list) {
 
 void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
 	GfxView *view = NULL;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 
 		// Get the corresponding view
@@ -263,25 +260,19 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			signal &= ~kSignalForceUpdate;
 		}
 		listEntry->signal = signal;
-
-		listIterator++;
 	}
 }
 
 void GfxAnimate::update() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listBegin = _list.begin();
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 
 	// Remove all no-update cels, if requested
-	listIterator = _list.reverse_begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.reverse_begin(); listEntry != end; --listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -304,13 +295,10 @@ void GfxAnimate::update() {
 			signal |= kSignalNoUpdate;
 		}
 		listEntry->signal = signal;
-		listIterator--;
 	}
 
 	// Draw always-update cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -327,13 +315,10 @@ void GfxAnimate::update() {
 			}
 			listEntry->signal = signal;
 		}
-		listIterator++;
 	}
 
 	// Saving background for all NoUpdate-cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -350,13 +335,10 @@ void GfxAnimate::update() {
 			}
 			listEntry->signal = signal;
 		}
-		listIterator++;
 	}
 
 	// Draw NoUpdate cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -371,22 +353,18 @@ void GfxAnimate::update() {
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
-		listIterator++;
 	}
 }
 
 void GfxAnimate::drawCels() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
 	reg_t bitsHandle;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 	_lastCastData.clear();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -407,22 +385,18 @@ void GfxAnimate::drawCels() {
 			// Remember that entry in lastCast
 			_lastCastData.push_back(*listEntry);
 		}
-		listIterator++;
 	}
 }
 
 void GfxAnimate::updateScreen(byte oldPicNotValid) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 	Common::Rect lsRect;
 	Common::Rect workerRect;
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -455,8 +429,6 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 				listEntry->signal |= kSignalRemoveView;
 			}
 		}
-
-		listIterator++;
 	}
 	// use this for debug purposes
 	// _screen->copyToScreen();
@@ -464,30 +436,26 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 
 void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 
 
-	// This has to be done in a separate loop. At least in sq1 some .dispose modifies FIXEDLOOP flag in signal for
-	//  another object. In that case we would overwrite the new signal with our version of the old signal
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	// This has to be done in a separate loop. At least in sq1 some .dispose
+	// modifies FIXEDLOOP flag in signal for another object. In that case we
+	// would overwrite the new signal with our version of the old signal.
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
 		// Finally update signal
 		writeSelectorValue(_s->_segMan, curObject, SELECTOR(signal), signal);
-		listIterator++;
 	}
 
-	listIterator = _list.reverse_begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.reverse_begin(); listEntry != end; --listEntry) {
 		curObject = listEntry->object;
-		// We read out signal here again, this is not by accident but to ensure that we got an up-to-date signal
+		// We read out signal here again, this is not by accident but to ensure
+		// that we got an up-to-date signal
 		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 
 		if ((signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
@@ -499,7 +467,6 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 			// Call .delete_ method of that object
 			invokeSelector(_s, curObject, SELECTOR(delete_), argc, argv, 0);
 		}
-		listIterator--;
 	}
 }
 
@@ -524,14 +491,11 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	GfxView *view = NULL;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator listEntry;
+	const AnimateList::iterator end = _list.end();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = &*listIterator;
+	for (listEntry = _list.begin(); listEntry != end; ++listEntry) {
 		curObject = listEntry->object;
 
 		if (listEntry->priority == -1)
@@ -549,8 +513,6 @@ void GfxAnimate::addToPicDrawCels() {
 			listEntry->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
 			_paint16->fillRect(listEntry->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
-
-		listIterator++;
 	}
 }
 
