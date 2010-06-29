@@ -272,8 +272,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "ZoZo",                 NULL,            NULL },
     { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "rZrii*r*",             NULL,            NULL },
     { MAP_CALL(Display),           SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "ioi*",                 NULL,            NULL },
-	// ^^ FIXME Mac versions pass an extra 3rd parameter (ignored - always 0?)
+    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "ioi*",                 NULL,            NULL },
+    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                   NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "oo*",                  NULL,            NULL },
     { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "oo*",                  NULL,            NULL },
     { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
