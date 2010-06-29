@@ -288,6 +288,8 @@ static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
 	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,           928,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
+	{ GID_SQ6,             0,               "Game", "init",           -1,    2,   0 },
+	{ GID_SQ6,         64950,               "View", "handleEvent",    -1,    0,   0 },
 	{ (SciGameId)0,       -1,                 NULL, NULL,             -1,    0,   0 }
 };
 
