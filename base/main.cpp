@@ -346,9 +346,9 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// We can't check this before loading the music plugins.
 	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
 	if (settings.contains("music-driver")) {
-		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_NULL) {
-				warning("Unrecognized music driver '%s'\nSwitching to default device.", settings["music-driver"].c_str());
-				settings["music-driver"] = "auto";
+		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_INVALID) {
+			warning("Unrecognized music driver '%s'. Switching to default device.", settings["music-driver"].c_str());
+			settings["music-driver"] = "auto";
 		}
 	}
 

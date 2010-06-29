@@ -95,7 +95,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 		}
 	}
 	
-	return MT_AUTO;
+	return MT_INVALID;
 }
 
 Common::String MidiDriver::getDeviceString(DeviceHandle handle, DeviceStringType type) {
@@ -256,10 +256,11 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName()))
+			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
 				return d->getHandle();
+			}
 		}
 	}
 
-	return getDeviceHandle("auto");
+	return 0;
 }

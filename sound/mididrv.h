@@ -50,6 +50,7 @@ namespace Common { class String; }
  * Music types that music drivers can implement and engines can rely on.
  */
 enum MusicType {
+	MT_INVALID = -1,    // Invalid output
 	MT_AUTO = 0,        // Auto
 	MT_NULL,            // Null
 	MT_PCSPK,           // PC Speaker
@@ -101,6 +102,13 @@ enum MidiDriverFlags {
  */
 class MidiDriver {
 public:
+	/**
+	 * The device handle.
+	 *
+	 * The value 0 is reserved for an invalid device for now.
+	 * TODO: Maybe we should use -1 (i.e. 0xFFFFFFFF) as
+	 * invalid device?
+	 */
 	typedef uint32 DeviceHandle;
 
 	enum DeviceStringType {
