@@ -128,7 +128,6 @@ private:
 	MohawkArchive *_extrasFile; // We need a separate handle for the extra data
 	RivenConsole *_console;
 	RivenSaveLoad *_saveLoad;
-	GUI::SaveLoadChooser *_loadDialog;
 	RivenOptionsDialog *_optionsDialog;
 
 	// Stack/Card-related functions and variables

@@ -76,7 +76,6 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _extrasFile;
 	delete _saveLoad;
 	delete[] _vars;
-	delete _loadDialog;
 	delete _optionsDialog;
 	delete _rnd;
 	delete g_atrusJournalRect1;
@@ -100,8 +99,6 @@ Common::Error MohawkEngine_Riven::run() {
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
-	_loadDialog = new GUI::SaveLoadChooser("Load Game:", "Load");
-	_loadDialog->setSaveMode(false);
 	_optionsDialog = new RivenOptionsDialog(this);
 
 	_rnd = new Common::RandomSource();
@@ -600,7 +597,19 @@ void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
-	runDialog(*_loadDialog);
+	GUI::SaveLoadChooser slc("Load Game:", "Load");
+	slc.setSaveMode(false);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModal(plugin, ConfMan.getActiveDomainName());
+	if (slot >= 0)
+		loadGameState(slot);
+
+	slc.close();
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
