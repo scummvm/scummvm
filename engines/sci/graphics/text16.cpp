@@ -84,10 +84,10 @@ void GfxText16::ClearChar(int16 chr) {
 	_paint16->eraseRect(rect);
 }
 
-// This internal function gets called as soon as a '|' is found in a text
-//  It will process the encountered code and set new font/set color
-//  We only support one-digit codes currently, don't know if multi-digit codes are possible
-//  Returns textcode character count
+// This internal function gets called as soon as a '|' is found in a text. It
+// will process the encountered code and set new font/set color. We only support
+// one-digit codes currently, don't know if multi-digit codes are possible.
+// Returns textcode character count.
 int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
 	const char *textCode = text;
 	int16 textCodeSize = 0;
@@ -133,9 +133,11 @@ int16 GfxText16::CodeProcessing(const char *&text, GuiResourceId orgFontId, int1
 static const uint16 text16_punctuationSjis[] = {
 	0x9F82, 0xA182, 0xA382, 0xA582, 0xA782, 0xC182, 0xA782, 0xC182, 0xE182, 0xE382, 0xE582, 0xEC82,
 	0x4083, 0x4283, 0x4483, 0x4683, 0x4883, 0x6283, 0x8383, 0x8583, 0x8783, 0x8E83, 0x9583, 0x9683,
-	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0 };
+	0x5B81, 0x4181, 0x4281, 0x7681, 0x7881, 0x4981, 0x4881, 0
+};
 
-// return max # of chars to fit maxwidth with full words, does not include breaking space
+// return max # of chars to fit maxwidth with full words, does not include
+// breaking space
 int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
 	uint16 curChar = 0;
 	int16 maxChars = 0, curCharCount = 0;
@@ -195,9 +197,10 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 
 		uint16 nextChar;
 
-		// we remove the last char only, if maxWidth was actually equal width before adding the last char
-		//  otherwise we won't get the same cutting as in sierra pc98 sci
-		//  note: changing the while() instead will NOT WORK. it would break all sorts of regular sci games
+		// We remove the last char only, if maxWidth was actually equal width
+		// before adding the last char. Otherwise we won't get the same cutting
+		// as in sierra pc98 sci. Note: changing the while() instead will NOT
+		// WORK. it would break all sorts of regular sci games.
 		if (maxWidth == (width - _font->getCharWidth(curChar))) {
 			maxChars--;
 			if (curChar > 0xFF)
@@ -431,11 +434,14 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 	_ports->penColor(orgPenColor);
 
 	if (doubleByteMode) {
-		// kanji is written by pc98 rom to screen directly. Because of GetLongest() behaviour (not cutting off the last
-		//  char, that causes a new line), results in the script thinking that the text would need less space. The coordinate
-		//  adjustment in fontsjis.cpp handles the incorrect centering because of that and this code actually shows all of
-		//  the chars - if we don't do this, the scripts will only show most of the chars, but the last few pixels won't get
-		//  shown most of the time.
+		// Kanji is written by pc98 rom to screen directly. Because of
+		// GetLongest() behaviour (not cutting off the last char, that causes a
+		// new line), results in the script thinking that the text would need
+		// less space. The coordinate adjustment in fontsjis.cpp handles the
+		// incorrect centering because of that and this code actually shows all
+		// of the chars - if we don't do this, the scripts will only show most
+		// of the chars, but the last few pixels won't get shown most of the
+		// time.
 		Common::Rect kanjiRect = rect;
 		_ports->offsetRect(kanjiRect);
 		kanjiRect.left &= 0xFFC;
@@ -456,7 +462,8 @@ void GfxText16::Draw_String(const char *text) {
 	_ports->penColor(orgPenColor);
 }
 
-// Sierra did this in their PC98 interpreter only, they identify a text as being sjis and then switch to font 900
+// Sierra did this in their PC98 interpreter only, they identify a text as being
+// sjis and then switch to font 900
 bool GfxText16::SwitchToFont900OnSjis(const char *text) {
 	byte firstChar = (*(const byte *)text++);
 	if (((firstChar >= 0x81) && (firstChar <= 0x9F)) || ((firstChar >= 0xE0) && (firstChar <= 0xEF))) {

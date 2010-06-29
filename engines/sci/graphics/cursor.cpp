@@ -174,7 +174,8 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 		// Compute hotspot from xoffset/yoffset
 		cursorHotspot = new Common::Point((celInfo->width >> 1) - celInfo->displaceX, celInfo->height - celInfo->displaceY - 1);
 
-	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this
+	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the
+	// user. Some scalers don't seem to support this
 	if (width < 2 || height < 2) {
 		kernelHide();
 		delete cursorHotspot;

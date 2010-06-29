@@ -40,9 +40,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	// Scale the screen, if needed
 	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
 
-	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able to provide that under DOS as well, but as
-	//  gk1/floppy does support upscaled hires scriptswise, but doesn't actually have the hires content we need to limit
-	//  it to platform windows.
+	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
+	// to provide that under DOS as well, but as gk1/floppy does support
+	// upscaled hires scriptswise, but doesn't actually have the hires content
+	// we need to limit it to platform windows.
 	if (g_sci->getPlatform() == Common::kPlatformWindows) {
 		if (g_sci->getGameId() == GID_KQ6)
 			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
@@ -60,7 +61,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		_height = 200;
 	}
 
-	// Japanese versions of games use hi-res font on upscaled version of the game
+	// Japanese versions of games use hi-res font on upscaled version of the game.
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
@@ -106,8 +107,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_unditherState = true;
 
 	if (_resMan->isVGA() || (_resMan->isAmiga32color())) {
-		// It is not 100% accurate to set white to be 255 for Amiga 32-color games.
-		// But 255 is defined as white in our SCI at all times, so it doesn't matter.
+		// It is not 100% accurate to set white to be 255 for Amiga 32-color
+		// games. But 255 is defined as white in our SCI at all times, so it
+		// doesn't matter.
 		_colorWhite = 255;
 		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;

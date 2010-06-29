@@ -127,8 +127,8 @@ void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common:
 	}
 }
 
-// This is used as replacement for drawCelAndShow() when hires-cels are drawn to screen
-//  Hires-cels are available only SCI 1.1+
+// This is used as replacement for drawCelAndShow() when hires-cels are drawn to
+// screen. Hires-cels are available only SCI 1.1+.
 void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX, uint16 scaleY) {
 	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect, curPortRect, clipRect, clipRectTranslated;
@@ -137,9 +137,10 @@ void GfxPaint16::drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 c
 
 	if (view) {
 		if ((leftPos == 0) && (topPos == 0)) {
-			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we need to get coordinates from upscaledHiresHandle
-			//  I'm not sure if this is what we are supposed to do or if there is some other bug that actually makes
-			//  coordinates to be 0 in the first place
+			// HACK: in kq6, we get leftPos&topPos == 0 SOMETIMES, that's why we
+			// need to get coordinates from upscaledHiresHandle. I'm not sure if
+			// this is what we are supposed to do or if there is some other bug
+			// that actually makes coordinates to be 0 in the first place.
 			byte *memoryPtr = NULL;
 			memoryPtr = _segMan->getHunkPointer(upscaledHiresHandle);
 			if (memoryPtr) {
@@ -381,7 +382,8 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 }
 
 void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	// some calls are hiresMode even under kq6 DOS, that's why we check for
+	// upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
 		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	} else {
@@ -426,7 +428,8 @@ void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
 }
 
 void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode) {
-	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
+	// some calls are hiresMode even under kq6 DOS, that's why we check for
+	// upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires()))
 		bitsShow(rect);
 	else
@@ -466,7 +469,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	Common::Rect rect;
 	reg_t result = NULL_REG;
 
-	// Make a "backup" of the port settings (required for some SCI0LATE and SCI01+ only)
+	// Make a "backup" of the port settings (required for some SCI0LATE and
+	// SCI01+ only)
 	Port oldPort = *_ports->getPort();
 
 	// setting defaults
@@ -565,14 +569,20 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
 	if (!g_sci->_features->usesOldGfxFunctions()) {
-		// Restore port settings for some SCI0LATE and SCI01+ only
-		// the change actually happened inbetween .530 (hoyle1) and .566 (heros quest). We don't have any detection for
-		//  that currently, so we are using oldGfxFunctions (.502). The only games that could get regressions because of
-		//  this are hoyle1, kq4 and funseeker. If there are regressions, we should use interpreter version (which would
-		//  require exe version detection)
-		// If we restore the port for whole SCI0LATE, at least sq3old will get an issue - font 0 will get used when
-		//  scanning for planets instead of font 600 - a setfont parameter is missing in one of the kDisplay calls in
-		//  script 19. I assume this is a script bug, because it was added in sq3new.
+		// Restore port settings for some SCI0LATE and SCI01+ only.
+		//
+		// The change actually happened inbetween .530 (hoyle1) and .566 (heros
+		// quest). We don't have any detection for that currently, so we are
+		// using oldGfxFunctions (.502). The only games that could get
+		// regressions because of this are hoyle1, kq4 and funseeker. If there
+		// are regressions, we should use interpreter version (which would
+		// require exe version detection).
+		//
+		// If we restore the port for whole SCI0LATE, at least sq3old will get
+		// an issue - font 0 will get used when scanning for planets instead of
+		// font 600 - a setfont parameter is missing in one of the kDisplay
+		// calls in script 19. I assume this is a script bug, because it was
+		// added in sq3new.
 		*currport = oldPort;
 	}
 	currport->curTop = tTop;

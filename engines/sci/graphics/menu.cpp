@@ -63,8 +63,9 @@ void GfxMenu::reset() {
 	_itemList.clear();
 	_listCount = 0;
 
-	// We actually set active item in here and remember last selection of the user
-	//  sierra sci always defaulted to first item every time menu was called via ESC, we dont follow that logic
+	// We actually set active item in here and remember last selection of the
+	// user. Sierra SCI always defaulted to first item every time menu was
+	// called via ESC, we don't follow that logic.
 	_curMenuId = 1;
 	_curItemId = 1;
 }
@@ -92,15 +93,16 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 
 		beginPos = curPos;
 
-		// Now go through the content till we find end-marker and collect data about it
-		// ':' is an end-marker for each item
+		// Now go through the content till we find end-marker and collect data about it.
+		// ':' is an end-marker for each item.
 		tagPos = 0; rightAlignedPos = 0;
 		controlPos = 0; altPos = 0; functionPos = 0;
 		while ((curPos < contentSize) && (content[curPos] != ':')) {
 			switch (content[curPos]) {
 			case '=': // Set tag
-				// Special case for normal animation speed - they use right aligned "=" for that one, so we ignore it
-				//  as being recognized as tag marker
+				// Special case for normal animation speed - they use right
+				// aligned "=" for that one, so we ignore it as being recognized
+				// as tag marker.
 				if (rightAlignedPos == curPos - 1)
 					break;
 				if (tagPos)
@@ -199,8 +201,9 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 		if (separatorCount == tempPos - beginPos) {
 			itemEntry->separatorLine = true;
 		} else {
-			// we don't strSplit here, because multilingual SCI01 support language switching on the fly, so we have to do
-			//  this everytime the menu is called
+			// We don't strSplit here, because multilingual SCI01 support
+			// language switching on the fly, so we have to do this everytime
+			// the menu is called.
 			itemEntry->text = Common::String(content.c_str() + beginPos, tempPos - beginPos);
 
 			// LSL6 uses "Ctrl-" prefix string instead of ^ like all the other games do
@@ -222,10 +225,12 @@ void GfxMenu::kernelAddEntry(Common::String title, Common::String content, reg_t
 			if (tagPos && tagPos >= rightAlignedPos)
 				tempPos = tagPos;
 			itemEntry->textRightAligned = Common::String(content.c_str() + rightAlignedPos, tempPos - rightAlignedPos);
-			// Remove ending space, if there is one. Strangely sometimes there are lone spaces at the end in some games
+			// Remove ending space, if there is one. Strangely sometimes there
+			// are lone spaces at the end in some games
 			if (itemEntry->textRightAligned.hasSuffix(" "))
 				itemEntry->textRightAligned.deleteLastChar();
-			// - and + are used sometimes for volume control/animation speed, = sometimes for animation speed
+			// - and + are used sometimes for volume control/animation speed,
+			// = sometimes for animation speed
 			if (itemEntry->textRightAligned == "-") {
 				itemEntry->keyPress = '-';
 			} else if (itemEntry->textRightAligned == "+") {
@@ -392,7 +397,8 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	case SCI_EVENT_KEYBOARD:
 		keyPress = readSelectorValue(_segMan, eventObject, SELECTOR(message));
 		keyModifier = readSelectorValue(_segMan, eventObject, SELECTOR(modifiers));
-		// If tab got pressed, handle it here as if it was Ctrl-I - at least sci0 also did it that way
+		// If tab got pressed, handle it here as if it was Ctrl-I - at least
+		// sci0 also did it that way
 		if (keyPress == SCI_KEY_TAB) {
 			keyModifier = SCI_KEYMOD_CTRL;
 			keyPress = 'i';
@@ -562,7 +568,8 @@ void GfxMenu::drawMenu(uint16 oldMenuId, uint16 newMenuId) {
 	if (!maxTextRightAlignedWidth)
 		_menuRect.right -= 5;
 
-	// if part of menu window is outside the screen, move it into the screen (this happens in multilingual sq3 and lsl3)
+	// If part of menu window is outside the screen, move it into the screen
+	// (this happens in multilingual sq3 and lsl3).
 	if (_menuRect.right > _screen->getWidth()) {
 		_menuRect.translate(-(_menuRect.right - _screen->getWidth()), 0);
 	}
@@ -689,8 +696,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	GuiMenuItemEntry *newItemEntry = curItemEntry;
 	Common::Point mousePosition;
 
-	// We don't 100% follow sierra here: we select last item instead of selecting first item of first menu everytime
-	//  Also sierra sci didnt allow mouse interaction, when menu was activated via keyboard
+	// We don't 100% follow Sierra here: we select last item instead of
+	// selecting first item of first menu every time. Also sierra sci didn't
+	// allow mouse interaction, when menu was activated via keyboard.
 
 	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
@@ -710,8 +718,9 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 
 		switch (curEvent.type) {
 		case SCI_EVENT_KEYBOARD:
-			// We don't 100% follow sierra here: - sierra didn't wrap around when changing item id
-			//									 - sierra allowed item id to be 0, which didnt make any sense
+			// We don't 100% follow sierra here:
+			// - sierra didn't wrap around when changing item id
+			// - sierra allowed item id to be 0, which didn't make any sense
 			do {
 				switch (curEvent.data) {
 				case SCI_KEY_ESC:
@@ -802,9 +811,10 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	}
 }
 
-// Mouse button is currently pressed - we are now interpreting mouse coordinates till mouse button is released
-//  The menu item that is selected at that time is chosen. If no menu item is selected we cancel
-//  No keyboard interaction is allowed, cause that wouldnt make any sense at all
+// Mouse button is currently pressed - we are now interpreting mouse coordinates
+// till mouse button is released. The menu item that is selected at that time is
+// chosen. If no menu item is selected we cancel. No keyboard interaction is
+// allowed, cause that wouldnt make any sense at all.
 GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	SciEvent curEvent;
 	uint16 newMenuId = 0, newItemId = 0;
