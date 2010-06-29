@@ -90,6 +90,7 @@ private:
 	Common::String _lbmFilename;
 	Common::String _spritesFilename;
 	Common::String _soundName;
+	Common::String _dsrName;
 	Common::Array<int> _spriteListIndexes;
 
 	int _currentFrame, _oldFrameEntry;

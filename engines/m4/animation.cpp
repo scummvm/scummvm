@@ -118,7 +118,11 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	buffer[FILENAME_SIZE] = '\0';
 	_soundName = Common::String(buffer);
 
-	animStream->skip(26);
+	animStream->skip(13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_dsrName = Common::String(buffer);
+
 	animStream->read(buffer, FILENAME_SIZE);
 	buffer[FILENAME_SIZE] = '\0';
 	Common::String fontResource(buffer);
@@ -219,6 +223,10 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		else
 			warning("Attempted to set a font with an empty name");
 	}
+
+	// If a speech file is specified, then load it
+	if (!_dsrName.empty())
+		_vm->_sound->loadDSRFile(_dsrName.c_str());
 
 	// Load all the sprite sets for the animation
 	for (int i = 0; i < spriteListCount; ++i) {
