@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV)
+#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO)
 
 #include "common/scummsys.h"
 

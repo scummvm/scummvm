@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	audiocd/default/default-audiocd.o \
 	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
+	events/linuxmotosdl/linuxmotosdl-events.o \
 	events/samsungtv/samsungtv-events.o \
 	events/sdl/sdl-events.o \
 	events/symbiansdl/symbiansdl-events.o \
@@ -23,6 +24,7 @@ MODULE_OBJS := \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
+	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
 	graphics/sdl/sdl-graphics.o \
 	graphics/symbiansdl/symbiansdl-graphics.o \
 	keymapper/action.o \
@@ -38,7 +40,7 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
-	mixer/bufferingsdl/bufferingsdl-mixer.o \
+	mixer/doublebuffersdl/doublebuffersdl-mixer.o \
 	mixer/sdl/sdl-mixer.o \
 	mixer/symbiansdl/symbiansdl-mixer.o \
 	mutex/sdl/sdl-mutex.o \
