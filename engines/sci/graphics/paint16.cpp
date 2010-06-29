@@ -107,12 +107,12 @@ void GfxPaint16::drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo,
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	drawCel(_cache->getView(viewId), loopNo, celNo, celRect, priority, paletteNo, scaleX, scaleY);
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
-void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
+void GfxPaint16::drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY) {
 	Common::Rect clipRect = celRect;
 	clipRect.clip(_ports->_curPort->rect);
 	if (clipRect.isEmpty()) // nothing to draw
@@ -389,19 +389,19 @@ void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, 
 	}
 }
 
-void GfxPaint16::kernelGraphFillBoxForeground(Common::Rect rect) {
+void GfxPaint16::kernelGraphFillBoxForeground(const Common::Rect &rect) {
 	paintRect(rect);
 }
 
-void GfxPaint16::kernelGraphFillBoxBackground(Common::Rect rect) {
+void GfxPaint16::kernelGraphFillBoxBackground(const Common::Rect &rect) {
 	eraseRect(rect);
 }
 
-void GfxPaint16::kernelGraphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
+void GfxPaint16::kernelGraphFillBox(const Common::Rect &rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	fillRect(rect, colorMask, color, priority, control);
 }
 
-void GfxPaint16::kernelGraphFrameBox(Common::Rect rect, int16 color) {
+void GfxPaint16::kernelGraphFrameBox(const Common::Rect &rect, int16 color) {
 	int16 oldColor = _ports->getPort()->penClr;
 	_ports->penColor(color);
 	frameRect(rect);
@@ -413,11 +413,11 @@ void GfxPaint16::kernelGraphDrawLine(Common::Point startPoint, Common::Point end
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 }
 
-reg_t GfxPaint16::kernelGraphSaveBox(Common::Rect rect, uint16 screenMask) {
+reg_t GfxPaint16::kernelGraphSaveBox(const Common::Rect &rect, uint16 screenMask) {
 	return bitsSave(rect, screenMask);
 }
 
-reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(Common::Rect rect) {
+reg_t GfxPaint16::kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect) {
 	return bitsSave(rect, GFX_SCREEN_MASK_DISPLAY);
 }
 
@@ -425,7 +425,7 @@ void GfxPaint16::kernelGraphRestoreBox(reg_t handle) {
 	bitsRestore(handle);
 }
 
-void GfxPaint16::kernelGraphUpdateBox(Common::Rect rect, bool hiresMode) {
+void GfxPaint16::kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode) {
 	// some calls are hiresMode even under kq6 DOS, that's why we check for upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires()))
 		bitsShow(rect);
@@ -597,12 +597,12 @@ void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
 	}
 }
 
-reg_t GfxPaint16::kernelPortraitLoad(Common::String resourceName) {
+reg_t GfxPaint16::kernelPortraitLoad(const Common::String &resourceName) {
 	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
 	return NULL_REG;
 }
 
-void GfxPaint16::kernelPortraitShow(Common::String resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
+void GfxPaint16::kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceId, uint16 noun, uint16 verb, uint16 cond, uint16 seq) {
 	Portrait *myPortrait = new Portrait(g_sci->getResMan(), g_sci->getEventManager(), _screen, _palette, _audio, resourceName);
 	// TODO: cache portraits
 	// adjust given coordinates to curPort (but dont adjust coordinates on upscaledHires_Save_Box and give us hires coordinates

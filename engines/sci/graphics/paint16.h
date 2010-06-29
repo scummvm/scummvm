@@ -53,8 +53,8 @@ public:
 
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
-	void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
-	void drawCel(GfxView *view, int16 loopNo, int16 celNo, Common::Rect celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
+	void drawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
+	void drawCel(GfxView *view, int16 loopNo, int16 celNo, const Common::Rect &celRect, byte priority, uint16 paletteNo, uint16 scaleX = 128, uint16 scaleY = 128);
 	void drawHiresCelAndShow(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo, reg_t upscaledHiresHandle, uint16 scaleX = 128, uint16 scaleY = 128);
 
 	void clearScreen(byte color = 255);
@@ -75,23 +75,23 @@ public:
 	void kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	void kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle);
 
-	void kernelGraphFillBoxForeground(Common::Rect rect);
-	void kernelGraphFillBoxBackground(Common::Rect rect);
-	void kernelGraphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);
-	void kernelGraphFrameBox(Common::Rect rect, int16 color);
+	void kernelGraphFillBoxForeground(const Common::Rect &rect);
+	void kernelGraphFillBoxBackground(const Common::Rect &rect);
+	void kernelGraphFillBox(const Common::Rect &rect, uint16 colorMask, int16 color, int16 priority, int16 control);
+	void kernelGraphFrameBox(const Common::Rect &rect, int16 color);
 	void kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
-	reg_t kernelGraphSaveBox(Common::Rect rect, uint16 flags);
-	reg_t kernelGraphSaveUpscaledHiresBox(Common::Rect rect);
+	reg_t kernelGraphSaveBox(const Common::Rect &rect, uint16 flags);
+	reg_t kernelGraphSaveUpscaledHiresBox(const Common::Rect &rect);
 	void kernelGraphRestoreBox(reg_t handle);
-	void kernelGraphUpdateBox(Common::Rect rect, bool hiresMode);
+	void kernelGraphUpdateBox(const Common::Rect &rect, bool hiresMode);
 	void kernelGraphRedrawBox(Common::Rect rect);
 
 	reg_t kernelDisplay(const char *text, int argc, reg_t *argv);
 
 	void kernelShakeScreen(uint16 shakeCount, uint16 directions);
 
-	reg_t kernelPortraitLoad(Common::String resourceName);
-	void kernelPortraitShow(Common::String resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
+	reg_t kernelPortraitLoad(const Common::String &resourceName);
+	void kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void kernelPortraitUnload(uint16 portraitId);
 
 private:
