@@ -23,8 +23,46 @@
  *
  */
 
+#if defined(LINUXMOTO)
+
+#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
-#include "graphics/scaler/aspect.h"	// for aspect2Real
+
+enum {
+	GFX_HALF = 12
+};
+
+LinuxmotoSdlEventManager::LinuxmotoSdlEventManager(Common::EventSource *boss)
+	:
+	SdlEventManager(boss) {
+
+}
+
+LinuxmotoSdlEventManager::~LinuxmotoSdlEventManager() {
+
+}
+
+void LinuxmotoSdlEventManager::preprocessEvents(SDL_Event *event) {
+	if (event->type == SDL_ACTIVEEVENT) {
+		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {
+			((OSystem_SDL* )g_system)->getMixerManager()->suspendAudio();
+			for (;;) {
+				if (!SDL_WaitEvent(event)) {
+					SDL_Delay(10);
+					continue;
+				}
+				if (event->type == SDL_QUIT)
+					return;
+				if (event->type != SDL_ACTIVEEVENT)
+					continue;
+				if (event->active.state == SDL_APPINPUTFOCUS && event->active.gain) {
+					((OSystem_SDL* )g_system)->getMixerManager()->resumeAudio();
+					return;
+				}
+			}
+		}
+	}
+}
 
 static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
@@ -43,29 +81,9 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	return key;
 }
 
-void OSystem_LINUXMOTO::fillMouseEvent(Common::Event &event, int x, int y) {
-	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		event.mouse.x = x*2;
-		event.mouse.y = y*2;
-	} else {
-		event.mouse.x = x;
-		event.mouse.y = y;
-	}
+bool LinuxmotoSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
+	if (false) {}
 
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
-
-	// Adjust for the screen scaling
-	if (!_overlayVisible) {
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
-	}
-}
-
-bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 	//  Motorol A1200/E6/A1600 remapkey by Lubomyr
 #ifdef MOTOEZX
 	// Quit on MOD+Camera Key on A1200
@@ -226,3 +244,5 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 
 	return false;
 }
+
+#endif

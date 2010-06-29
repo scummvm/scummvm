@@ -23,8 +23,10 @@
  *
  */
 
-#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
+#ifdef LINUXMOTO 
 
+#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
+#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
 #include "common/mutex.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
@@ -33,22 +35,33 @@
 #include "graphics/scaler/downscaler.h"
 #include "graphics/surface.h"
 
+enum {
+	GFX_HALF = 12
+};
+
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
 	{"½x", "Downscale", GFX_HALF},
 	{0, 0, 0}
 };
 
+LinuxmotoSdlGraphicsManager::LinuxmotoSdlGraphicsManager() {
 
-const OSystem::GraphicsMode *OSystem_LINUXMOTO::getSupportedGraphicsModes() const {
+}
+
+LinuxmotoSdlGraphicsManager::~LinuxmotoSdlGraphicsManager() {
+
+}
+
+const OSystem::GraphicsMode *LinuxmotoSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-int OSystem_LINUXMOTO::getDefaultGraphicsMode() const {
+int LinuxmotoSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-bool OSystem_LINUXMOTO::setGraphicsMode(int mode) {
+bool LinuxmotoSdlGraphicsManager::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);
@@ -82,7 +95,7 @@ bool OSystem_LINUXMOTO::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_LINUXMOTO::setGraphicsModeIntern() {
+void LinuxmotoSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
@@ -112,7 +125,7 @@ void OSystem_LINUXMOTO::setGraphicsModeIntern() {
 }
 
 
-void OSystem_LINUXMOTO::initSize(uint w, uint h) {
+void LinuxmotoSdlGraphicsManager::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
@@ -125,13 +138,13 @@ void OSystem_LINUXMOTO::initSize(uint w, uint h) {
 	if	(w > 320 || h > 240) {
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		toggleMouseGrab();
+		((LinuxmotoSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
 }
 
-bool OSystem_LINUXMOTO::loadGFXMode() {
+bool LinuxmotoSdlGraphicsManager::loadGFXMode() {
 	printf("Game ScreenMode = %d*%d\n",_videoMode.screenWidth, _videoMode.screenHeight);
 	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
 		_videoMode.aspectRatioCorrection = false;
@@ -157,10 +170,10 @@ bool OSystem_LINUXMOTO::loadGFXMode() {
 		_videoMode.hardwareHeight = effectiveScreenHeight();
 	}
 
-	return OSystem_SDL::loadGFXMode();
+	return SdlGraphicsManager::loadGFXMode();
 }
 
-void OSystem_LINUXMOTO::drawMouse() {
+void LinuxmotoSdlGraphicsManager::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -226,7 +239,7 @@ void OSystem_LINUXMOTO::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void OSystem_LINUXMOTO::undrawMouse() {
+void LinuxmotoSdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -244,13 +257,13 @@ void OSystem_LINUXMOTO::undrawMouse() {
 	}
 }
 
-void OSystem_LINUXMOTO::internUpdateScreen() {
+void LinuxmotoSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined (DEBUG) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif
@@ -443,28 +456,43 @@ void OSystem_LINUXMOTO::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-void OSystem_LINUXMOTO::showOverlay() {
+void LinuxmotoSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	OSystem_SDL::showOverlay();
+	SdlGraphicsManager::showOverlay();
 }
 
-void OSystem_LINUXMOTO::hideOverlay() {
+void LinuxmotoSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF) {
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	OSystem_SDL::hideOverlay();
+	SdlGraphicsManager::hideOverlay();
 }
 
-void OSystem_LINUXMOTO::warpMouse(int x, int y) {
+void LinuxmotoSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
 			x = x / 2;
 			y = y / 2;
 		}
 	}
-	OSystem_SDL::warpMouse(x, y);
+	SdlGraphicsManager::warpMouse(x, y);
 }
+
+void LinuxmotoSdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
+	if (!_overlayVisible) {
+		if (_videoMode.mode == GFX_HALF) {
+			event.mouse.x *= 2;
+			event.mouse.y *= 2;
+		}
+		event.mouse.x /= _videoMode.scaleFactor;
+		event.mouse.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			event.mouse.y = aspect2Real(event.mouse.y);
+	}
+}
+
+#endif

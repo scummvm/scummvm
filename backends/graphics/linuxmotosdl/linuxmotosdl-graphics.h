@@ -23,19 +23,29 @@
  *
  */
 
-#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
+#ifndef BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
+#define BACKENDS_GRAPHICS_SDL_LINUXMOTO_H
 
-#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
-#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
-void OSystem_LINUXMOTO::initBackend() {
-	// Create the backend custom managers
-	if (_eventsManager == 0)
-		_eventsManager = new LinuxmotoSdlEventManager();
+class LinuxmotoSdlGraphicsManager : public SdlGraphicsManager {
+public:
+	LinuxmotoSdlGraphicsManager();
+	virtual ~LinuxmotoSdlGraphicsManager();
 
-	if (_graphicsManager == 0)
-		_graphicsManager = new LinuxmotoSdlGraphicsManager();
+	virtual void initSize(uint w, uint h);
+	virtual void setGraphicsModeIntern();
+	virtual bool setGraphicsMode(int mode);
+	virtual void internUpdateScreen();
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool loadGFXMode();
+	virtual void drawMouse();
+	virtual void undrawMouse();
+	virtual void showOverlay();
+	virtual void hideOverlay();
+	virtual void warpMouse(int x, int y);
+	virtual void adjustMouseEvent(Common::Event &event);
+};
 
-	// Call parent implementation of this method
-	OSystem_POSIX::initBackend();
-}
+#endif

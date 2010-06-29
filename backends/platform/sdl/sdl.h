@@ -71,6 +71,9 @@ public:
 	// Get the Graphics Manager instance, used by other managers
 	virtual SdlGraphicsManager *getGraphicsManager();
 
+	// Get the Sdl Mixer Manager instance (not the Audio::Mixer)
+	virtual SdlMixerManager *getMixerManager();
+
 protected:
 	bool _inited;
 	bool _initedSDL;

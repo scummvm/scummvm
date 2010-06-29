@@ -43,6 +43,8 @@ public:
 
 	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
 
+	virtual void toggleMouseGrab();
+
 protected:
 	virtual void preprocessEvents(SDL_Event *event) {}
 
@@ -77,8 +79,7 @@ protected:
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
 
-	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
-	virtual void toggleMouseGrab();
+	virtual void fillMouseEvent(Common::Event &event, int x, int y);
 
 	virtual void handleKbdMouse();
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);

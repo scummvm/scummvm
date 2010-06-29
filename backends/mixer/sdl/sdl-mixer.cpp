@@ -35,7 +35,8 @@
 
 SdlMixerManager::SdlMixerManager()
 	:
-	_mixer(0) {
+	_mixer(0),
+	_audioSuspended(false) {
 
 }
 
@@ -118,6 +119,22 @@ void SdlMixerManager::sdlCallback(void *this_, byte *samples, int len) {
 	assert(manager);
 
 	manager->callbackHandler(samples, len);
+}
+
+void SdlMixerManager::suspendAudio() {
+	SDL_CloseAudio();
+	_audioSuspended = true;
+}
+
+int SdlMixerManager::resumeAudio() {
+	if (!_audioSuspended)
+		return -2;
+	if (SDL_OpenAudio(&_obtainedRate, NULL) < 0){
+		return -1;
+	}
+	SDL_PauseAudio(0);
+	_audioSuspended = false;
+	return 0;
 }
 
 #endif

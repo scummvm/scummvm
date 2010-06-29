@@ -43,9 +43,14 @@ public:
 
 	Audio::Mixer *getMixer() { return (Audio::Mixer *)_mixer; }
 
+	// Used by LinuxMoto Port
+	virtual void suspendAudio();
+	virtual int resumeAudio();
+
 protected:
 	Audio::MixerImpl *_mixer;
 	SDL_AudioSpec _obtainedRate;
+	bool _audioSuspended;
 
 	virtual SDL_AudioSpec getAudioSpec();
 	virtual void startAudio();

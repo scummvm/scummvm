@@ -269,3 +269,8 @@ Audio::Mixer *OSystem_SDL::getMixer() {
 	assert(_mixerManager);
 	return _mixerManager->getMixer();
 }
+
+SdlMixerManager *OSystem_SDL::getMixerManager() {
+	assert(_mixerManager);
+	return _mixerManager;
+}

@@ -23,19 +23,19 @@
  *
  */
 
-#include "backends/platform/linuxmoto/linuxmoto-sdl.h"
+#if !defined(BACKEND_EVENTS_SDL_LINUXMOTO_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_SDL_LINUXMOTO_H
 
-#include "backends/graphics/linuxmotosdl/linuxmotosdl-graphics.h"
-#include "backends/events/linuxmotosdl/linuxmotosdl-events.h"
+#include "backends/events/sdl/sdl-events.h"
 
-void OSystem_LINUXMOTO::initBackend() {
-	// Create the backend custom managers
-	if (_eventsManager == 0)
-		_eventsManager = new LinuxmotoSdlEventManager();
+class LinuxmotoSdlEventManager : public SdlEventManager {
+public:
+	LinuxmotoSdlEventManager(Common::EventSource *boss);
+	virtual ~LinuxmotoSdlEventManager();
 
-	if (_graphicsManager == 0)
-		_graphicsManager = new LinuxmotoSdlGraphicsManager();
+protected:
+	virtual void preprocessEvents(SDL_Event *event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+};
 
-	// Call parent implementation of this method
-	OSystem_POSIX::initBackend();
-}
+#endif

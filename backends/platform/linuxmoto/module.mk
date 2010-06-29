@@ -1,8 +1,6 @@
 MODULE := backends/platform/linuxmoto
 
 MODULE_OBJS := \
-	linuxmoto-events.o \
-	linuxmoto-graphics.o \
 	linuxmoto-main.o \
 	linuxmoto-sdl.o \
 	hardwarekeys.o
