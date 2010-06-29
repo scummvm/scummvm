@@ -199,201 +199,227 @@ static const char *s_defaultKernelNames[] = {
 	/*0x88*/ "Dummy"	// DbugStr
 };
 
-struct SciKernelFunction {
+// [io] -> either integer or object
+// (io) -> optionally integer AND an object
+// (i) -> optional integer
+// . -> any type
+// i* -> optional multiple integers
+// .* -> any parameters afterwards (or none)
+
+struct SciKernelMapEntry {
 	const char *name;
-	KernelFunc *func; /* The actual function */
-	const char *signature;  /* kfunct signature */
+	KernelFunc *function;
+
+	SciVersion fromVersion;
+	SciVersion toVersion;
+	byte forPlatform;
+
+	const char *signature;
+	const char *subSignature; // placeholder
 };
 
-static SciKernelFunction s_kernelFuncMap[] = {
-	/*00*/	{ "Load", kLoad, "iii*" },
-	/*01*/	{ "UnLoad", kUnLoad, "i.*" },	// Work around SQ1 bug, when exiting the Ulence flats bar
-	/*02*/	{ "ScriptID", kScriptID, "Ioi*" },
-	/*03*/	{ "DisposeScript", kDisposeScript, "Oii*" }, // Work around QfG1 bug
-	/*04*/	{ "Clone", kClone, "o" },
-	/*05*/	{ "DisposeClone", kDisposeClone, "o" },
-	/*06*/	{ "IsObject", kIsObject, "." },
-	/*07*/	{ "RespondsTo", kRespondsTo, ".i" },
-	/*08*/	{ "DrawPic", kDrawPic, "i*" },
+#define SIG_SCIALL  SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI11   SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SCI16    SCI_VERSION_NONE, SCI_VERSION_1_1
+#define SIG_SCI32    SCI_VERSION_2, SCI_VERSION_NONE
 
-	/*0a*/	{ "PicNotValid", kPicNotValid, "i*" },
-	/*0b*/	{ "Animate", kAnimate, "LI*" }, // More like (li?)?
-	/*0c*/	{ "SetNowSeen", kSetNowSeen, "oi*" }, // The second parameter is ignored
-	/*0d*/	{ "NumLoops", kNumLoops, "o" },
-	/*0e*/	{ "NumCels", kNumCels, "o" },
-	/*0f*/	{ "CelWide", kCelWide, "iOi*" },
-	/*10*/	{ "CelHigh", kCelHigh, "iOi*" },
-	/*11*/	{ "DrawCel", kDrawCel, "iiiiii*i*r*" },
-	/*12*/	{ "AddToPic", kAddToPic, "Il*" },
-	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
-	/*13*/	{ "NewWindow", kNewWindow, "*." },
-	///*13*/	{ "NewWindow", kNewWindow, "iiiiZRi*" },
-	/*14*/	{ "GetPort", kGetPort, "" },
-	/*15*/	{ "SetPort", kSetPort, "ii*" },
-	/*16*/	{ "DisposeWindow", kDisposeWindow, "ii*" },
-	/*17*/	{ "DrawControl", kDrawControl, "o" },
-	/*18*/	{ "HiliteControl", kHiliteControl, "o" },
-	/*19*/	{ "EditControl", kEditControl, "ZoZo" },
-	/*1a*/	{ "TextSize", kTextSize, "rZrii*r*" },
-	/*1b*/	{ "Display", kDisplay, ".*" },
-	/*1c*/	{ "GetEvent", kGetEvent, "ioi*" },	// Mac versions pass an extra 3rd parameter (ignored - always 0?)
-	/*1d*/	{ "GlobalToLocal", kGlobalToLocal, "oo*" },
-	/*1e*/	{ "LocalToGlobal", kLocalToGlobal, "oo*" },
-	/*1f*/	{ "MapKeyToDir", kMapKeyToDir, "o" },
-	/*20*/	{ "DrawMenuBar", kDrawMenuBar, "i" },
-	/*21*/	{ "MenuSelect", kMenuSelect, "oi*" },
-	/*22*/	{ "AddMenu", kAddMenu, "rr" },
-	/*23*/	{ "DrawStatus", kDrawStatus, "Zri*" },
-	/*24*/	{ "Parse", kParse, "ro" },
-	/*25*/	{ "Said", kSaid, "Zr" },
-	/*26*/	{ "SetSynonyms", kSetSynonyms, "o" },
-	/*27*/	{ "HaveMouse", kHaveMouse, "" },
-	/*28*/	{ "SetCursor", kSetCursor, "i*" },
-	// FIXME: The number 0x28 occurs twice :-)
-	/*28*/	{ "MoveCursor", kMoveCursor, "ii" },
-	/*29*/	{ "FOpen", kFOpen, "ri" },
-	/*2a*/	{ "FPuts", kFPuts, "ir" },
-	/*2b*/	{ "FGets", kFGets, "rii" },
-	/*2c*/	{ "FClose", kFClose, "i" },
-	/*2d*/	{ "SaveGame", kSaveGame, "rirr*" },
-	/*2e*/	{ "RestoreGame", kRestoreGame, "rir*" },
-	/*2f*/	{ "RestartGame", kRestartGame, "" },
-	/*30*/	{ "GameIsRestarting", kGameIsRestarting, "i*" },
-	/*31*/	{ "DoSound", kDoSound, "iIo*" },
-	/*32*/	{ "NewList", kNewList, "" },
-	/*33*/	{ "DisposeList", kDisposeList, "l" },
-	/*34*/	{ "NewNode", kNewNode, ".." },
-	/*35*/	{ "FirstNode", kFirstNode, "Zl" },
-	/*36*/	{ "LastNode", kLastNode, "l" },
-	/*37*/	{ "EmptyList", kEmptyList, "l" },
-	/*38*/	{ "NextNode", kNextNode, "n" },
-	/*39*/	{ "PrevNode", kPrevNode, "n" },
-	/*3a*/	{ "NodeValue", kNodeValue, "Zn" },
-	/*3b*/	{ "AddAfter", kAddAfter, "lnn" },
-	/*3c*/	{ "AddToFront", kAddToFront, "ln" },
-	/*3d*/	{ "AddToEnd", kAddToEnd, "ln" },
-	/*3e*/	{ "FindKey", kFindKey, "l." },
-	/*3f*/	{ "DeleteKey", kDeleteKey, "l." },
-	/*40*/	{ "Random", kRandom, "i*" },
-	/*41*/	{ "Abs", kAbs, "Oi" },
-	/*42*/	{ "Sqrt", kSqrt, "i" },
-	/*43*/	{ "GetAngle", kGetAngle, "iiiii*" }, // occasionally KQ6 passes a 5th argument by mistake
-	/*44*/	{ "GetDistance", kGetDistance, "iiiii*" },
-	/*45*/	{ "Wait", kWait, "i" },
-	/*46*/	{ "GetTime", kGetTime, "i*" },
-	/*47*/	{ "StrEnd", kStrEnd, "r" },
-	/*48*/	{ "StrCat", kStrCat, "rr" },
-	/*49*/	{ "StrCmp", kStrCmp, "rri*" },
-	/*4a*/	{ "StrLen", kStrLen, "Zr" },
-	/*4b*/	{ "StrCpy", kStrCpy, "rZri*" },
-	/*4c*/	{ "Format", kFormat, "r.*" },
-	/*4d*/	{ "GetFarText", kGetFarText, "iiZr" },
-	/*4e*/	{ "ReadNumber", kReadNumber, "r" },
-	/*4f*/	{ "BaseSetter", kBaseSetter, "o" },
-	/*50*/	{ "DirLoop", kDirLoop, "oi" },
-	// Opcode 51 is defined twice for a reason: In older SCI versions
-	// it is CanBeHere, whereas in newer version it is CantBeHere
-	/*51*/	{ "CanBeHere", kCanBeHere, "ol*" },
-	/*51*/	{ "CantBeHere", kCantBeHere, "ol*" },
-	/*52*/	{ "OnControl", kOnControl, "i*" },
-	/*53*/	{ "InitBresen", kInitBresen, "oi*" },
-	/*54*/	{ "DoBresen", kDoBresen, "o" },
-	/*55*/	{ "DoAvoider", kDoAvoider, "o" },
-	/*56*/	{ "SetJump", kSetJump, "oiii" },
-	/*57*/	{ "SetDebug", kSetDebug, "i*" },
-	/*5c*/	{ "MemoryInfo", kMemoryInfo, "i" },
-	/*5f*/	{ "GetMenu", kGetMenu, "i." },
-	/*60*/	{ "SetMenu", kSetMenu, "i.*" },
-	/*61*/	{ "GetSaveFiles", kGetSaveFiles, "rrr" },
-	/*62*/	{ "GetCWD", kGetCWD, "r" },
-	/*63*/	{ "CheckFreeSpace", kCheckFreeSpace, "r.*" },
-	/*64*/	{ "ValidPath", kValidPath, "r" },
-	/*65*/	{ "CoordPri", kCoordPri, "ii*" },
-	/*66*/	{ "StrAt", kStrAt, "rii*" },
-	/*67*/	{ "DeviceInfo", kDeviceInfo, "i.*" },
-	/*68*/	{ "GetSaveDir", kGetSaveDir, ".*" },	// accepts a parameter in SCI2+ games
-	/*69*/	{ "CheckSaveGame", kCheckSaveGame, ".*" },
-	/*6a*/	{ "ShakeScreen", kShakeScreen, "ii*" },
-	/*6b*/	{ "FlushResources", kFlushResources, "i" },
-	/*6c*/	{ "TimesSin", kTimesSin, "ii" },
-	/*6d*/	{ "TimesCos", kTimesCos, "ii" },
-	/*6e*/	{ "6e", kTimesSin, "ii" },
-	/*6f*/	{ "6f", kTimesCos, "ii" },
-	/*70*/	{ "Graph", kGraph, ".*" },
-	/*71*/	{ "Joystick", kJoystick, ".*" },
+#define SIGFOR_ALL   0x4f
+#define SIGFOR_PC    1 << 0
+#define SIGFOR_PC98  1 << 1
+#define SIGFOR_WIN   1 << 2
+#define SIGFOR_MAC   1 << 3
+#define SIGFOR_AMIGA 1 << 4
+#define SIGFOR_ATARI 1 << 5
 
-	// Experimental functions
-	/*74*/	{ "FileIO", kFileIO, "i.*" },
-	/*(?)*/	{ "Memory", kMemory, "i.*" },
-	/*(?)*/	{ "Sort", kSort, "ooo" },
-	/*(?)*/	{ "AvoidPath", kAvoidPath, "ii.*" },
-	/*(?)*/	{ "Lock", kLock, "iii*" },
-	/*(?)*/	{ "Palette", kPalette, "i.*" },
-	/*(?)*/	{ "IsItSkip", kIsItSkip, "iiiii" },
-	/*7b*/	{ "StrSplit", kStrSplit, "rrZr" },
+#define SIG_EVERYWHERE SIG_SCI32, SIGFOR_ALL
 
-	// Non-experimental functions without a fixed ID
-	{ "CosMult", kTimesCos, "ii" },
-	{ "SinMult", kTimesSin, "ii" },
+#define MAP_CALL(_name_) #_name_, k##_name_
 
-	// Misc functions
-	/*(?)*/	{ "CosDiv", kCosDiv, "ii" },
-	/*(?)*/	{ "PriCoord", kPriCoord, "i" },
-	/*(?)*/	{ "SinDiv", kSinDiv, "ii" },
-	/*(?)*/	{ "TimesCot", kTimesCot, "ii" },
-	/*(?)*/	{ "TimesTan", kTimesTan, "ii" },
-	{ "Message", kMessage, ".*" },
-	{ "GetMessage", kGetMessage, "iiir" },
-	{ "DoAudio", kDoAudio, ".*" },
-	{ "DoSync", kDoSync, ".*" },
-	{ "MemorySegment", kMemorySegment, "iri*" },
-	{ "Intersections", kIntersections, "iiiiriiiri" },
-	{ "MergePoly", kMergePoly, "rli" },
-	{ "ResCheck", kResCheck, "iii*" },
-	{ "SetQuitStr", kSetQuitStr, "r" },
-	{ "ShowMovie", kShowMovie, ".*" },
-	{ "SetVideoMode", kSetVideoMode, "i" },
-	{ "Platform", kPlatform, ".*" },
-	{ "TextColors", kTextColors, ".*" },
-	{ "TextFonts", kTextFonts, ".*" },
-	{ "Portrait", kPortrait, ".*" },
-	{ "PalVary", kPalVary, "ii*" },
-	{ "AssertPalette", kAssertPalette, "i" },
-	{ "Empty", kEmpty, ".*" },
+//    name,                version,    platf.,       function,          signature,              subfunction-signatures
+static SciKernelMapEntry s_kernelMap[] = {
+    { MAP_CALL(Load),              SIG_EVERYWHERE,           "iii*",                 NULL },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i.*",                  NULL },
+	// ^^ FIXME - Work around SQ1 bug, when exiting the Ulence flats bar
+    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "Ioi*",                 NULL },
+    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "Oii*",                 NULL },
+	// ^^ FIXME - Work around QfG1 bug
+    { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                    NULL },
+    { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                   NULL },
+    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "LI*",                  NULL },
+	// ^^ FIXME - More like (li?)?
+    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "oi*",                  NULL },
+	// ^^ FIXME - The second parameter is ignored
+    { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "iOi*",                 NULL },
+    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "iOi*",                 NULL },
+    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiiii*i*r*",          NULL },
+    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "Il*",                  NULL },
+    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   "*.",                   NULL },
+    { MAP_CALL(NewWindow),         SIG_EVERYWHERE,           "iiiiZRi*",             NULL },
+    { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "ii*",                  NULL },
+    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "ii*",                  NULL },
+    { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "ZoZo",                 NULL },
+    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "rZrii*r*",             NULL },
+    { MAP_CALL(Display),           SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "ioi*",                 NULL },
+	// ^^ FIXME Mac versions pass an extra 3rd parameter (ignored - always 0?)
+    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "oo*",                  NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "oo*",                  NULL },
+    { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "oi*",                  NULL },
+    { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                   NULL },
+    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "Zri*",                 NULL },
+    { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                   NULL },
+    { MAP_CALL(Said),              SIG_EVERYWHERE,           "Zr",                   NULL },
+    { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                   NULL },
+    { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                   NULL },
+    { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                  NULL },
+    { MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rirr*",                NULL },
+    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir*",                 NULL },
+    { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "iIo*",                 NULL },
+    { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                    NULL },
+    { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                   NULL },
+    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "Zl",                   NULL },
+    { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                    NULL },
+    { MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                    NULL },
+    { MAP_CALL(NextNode),          SIG_EVERYWHERE,           "n",                    NULL },
+    { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                    NULL },
+    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "Zn",                   NULL },
+    { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                  NULL },
+    { MAP_CALL(AddToFront),        SIG_EVERYWHERE,           "ln",                   NULL },
+    { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                   NULL },
+    { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                   NULL },
+    { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                   NULL },
+    { MAP_CALL(Random),            SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "Oi",                   NULL },
+    { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiiii*",               NULL },
+	 // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
+    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "iiiii*",               NULL },
+    { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                    NULL },
+    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                   NULL },
+    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rri*",                 NULL },
+    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "Zr",                   NULL },
+    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "rZri*",                NULL },
+    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r.*",                  NULL },
+    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "iiZr",                 NULL },
+    { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                    NULL },
+    { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                   NULL },
+    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "ol*",                  NULL },
+    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "ol*",                  NULL },
+    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "oi*",                  NULL },
+    { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                 NULL },
+    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "i*",                   NULL },
+    { MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                   NULL },
+    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i.*",                  NULL },
+    { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                  NULL },
+    { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                    NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r.*",                  NULL },
+    { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                    NULL },
+    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "ii*",                  NULL },
+    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "rii*",                 NULL },
+    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i.*",                  NULL },
+    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           ".*",                   NULL },
+	// ^^ FIXME accepts a parameter in SCI2+ games
+    { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "ii*",                  NULL },
+    { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i.*",                  NULL },
+    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i.*",                  NULL },
+    { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                  NULL },
+    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii.*",                 NULL },
+    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "iii*",                 NULL },
+    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i.*",                  NULL },
+    { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                NULL },
+    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rrZr",                 NULL },
+    { "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                   NULL },
+    { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                   NULL },
+    { MAP_CALL(Message),           SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                 NULL },
+    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "iri*",                 NULL },
+    { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",           NULL },
+    { MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                  NULL },
+    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "iii*",                 NULL },
+    { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                    NULL },
+    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(Platform),          SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "ii*",                  NULL },
+    { MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                    NULL },
+    { MAP_CALL(Empty),             SIG_EVERYWHERE,           ".*",                   NULL },
 
 #ifdef ENABLE_SCI32
-	// SCI2 Kernel Functions
-	{ "IsHiRes", kIsHiRes, "" },
-	{ "Array", kArray, ".*" },
-	{ "ListAt", kListAt, "li" },
-	{ "String", kString, ".*" },
-	{ "AddScreenItem", kAddScreenItem, "o" },
-	{ "UpdateScreenItem", kUpdateScreenItem, "o" },
-	{ "DeleteScreenItem", kDeleteScreenItem, "o" },
-	{ "AddPlane", kAddPlane, "o" },
-	{ "DeletePlane", kDeletePlane, "o" },
-	{ "UpdatePlane", kUpdatePlane, "o" },
-	{ "RepaintPlane", kRepaintPlane, "o" },
-	{ "GetHighPlanePri", kGetHighPlanePri, "" },
-	{ "FrameOut", kFrameOut, "" },
-	{ "ListEachElementDo", kListEachElementDo, "li.*" },
-	{ "ListFirstTrue", kListFirstTrue, "li.*" },
-	{ "ListAllTrue", kListAllTrue, "li.*" },
-	{ "ListIndexOf", kListIndexOf, "lZo" },
-	{ "OnMe", kOnMe, "iio.*" },
-	{ "InPolygon", kInPolygon, "iio" },
-	{ "CreateTextBitmap", kCreateTextBitmap, "i.*" },
+    // SCI2 Kernel Functions
+    { MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(Array),             SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(ListAt),            SIG_EVERYWHERE,           "li",                   NULL },
+    { MAP_CALL(String),            SIG_EVERYWHERE,           ".*",                   NULL },
+    { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                    NULL },
+    { MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                     NULL },
+    { MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                    NULL },
+    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li.*",                NULL },
+    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li.*",                NULL },
+    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li.*",                NULL },
+    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "lZo",                 NULL },
+    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio.*",               NULL },
+    { MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                 NULL },
+    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i.*",                 NULL },
 
-	// SCI2.1 Kernel Functions
-	{ "Save", kSave, ".*" },
-	{ "List", kList, ".*" },
-	{ "Robot", kRobot, ".*" },
-	{ "PlayVMD", kPlayVMD, ".*" },
-	{ "IsOnMe", kIsOnMe, "iio.*" },
-	{ "MulDiv", kMulDiv, "iii" },
-	{ "Text", kText, ".*" },
-
+    // SCI2.1 Kernel Functions
+    { MAP_CALL(Save),              SIG_EVERYWHERE,           ".*",                  NULL },
+    { MAP_CALL(List),              SIG_EVERYWHERE,           ".*",                  NULL },
+    { MAP_CALL(Robot),             SIG_EVERYWHERE,           ".*",                  NULL },
+    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           ".*",                  NULL },
+    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio.*",               NULL },
+    { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                 NULL },
+    { MAP_CALL(Text),              SIG_EVERYWHERE,           ".*",                  NULL },
+    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                  NULL }
 #endif
+};
 
 #if 0
 	// Stub functions
@@ -405,9 +431,6 @@ static SciKernelFunction s_kernelFuncMap[] = {
 	{ "PlayBack", kPlayBack, ".*" },
 	{ "DbugStr", kDbugStr, ".*" },
 #endif
-
-	{NULL, NULL, NULL} // Terminator
-};
 
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
@@ -569,55 +592,83 @@ static char *compileKernelSignature(const char *s) {
 void Kernel::mapFunctions() {
 	int mapped = 0;
 	int ignored = 0;
-	uint functions_nr = _kernelNames.size();
+	uint functionCount = _kernelNames.size();
+	byte platformMask = 0;
 
-	_kernelFuncs.resize(functions_nr);
+	switch (g_sci->getPlatform()) {
+	case Common::kPlatformPC:
+		platformMask = SIGFOR_PC;
+		break;
+	case Common::kPlatformPC98:
+		platformMask = SIGFOR_PC98;
+		break;
+	case Common::kPlatformWindows:
+		platformMask = SIGFOR_WIN;
+		break;
+	case Common::kPlatformMacintosh:
+		platformMask = SIGFOR_MAC;
+		break;
+	case Common::kPlatformAmiga:
+		platformMask = SIGFOR_AMIGA;
+		break;
+	case Common::kPlatformAtariST:
+		platformMask = SIGFOR_ATARI;
+		break;
+	default:
+		break;
+	}
 
-	for (uint functnr = 0; functnr < functions_nr; functnr++) {
-		int found = -1;
+	_kernelFuncs.resize(functionCount);
 
+	for (uint functNr = 0; functNr < functionCount; functNr++) {
 		// First, get the name, if known, of the kernel function with number functnr
-		Common::String sought_name = _kernelNames[functnr];
+		Common::String sought_name = _kernelNames[functNr];
 
 		// Reset the table entry
-		_kernelFuncs[functnr].func = NULL;
-		_kernelFuncs[functnr].signature = NULL;
-		_kernelFuncs[functnr].origName = sought_name;
+		_kernelFuncs[functNr].func = NULL;
+		_kernelFuncs[functNr].signature = NULL;
+		_kernelFuncs[functNr].origName = sought_name;
+		_kernelFuncs[functNr].isDummy = true;
 
 		if (sought_name.empty()) {
 			// No name was given -> must be an unknown opcode
-			warning("Kernel function %x unknown", functnr);
-			_kernelFuncs[functnr].isDummy = true;
+			warning("Kernel function %x unknown", functNr);
 			continue;
 		}
 
 		// Don't map dummy functions - they will never be called
-		if (sought_name == "Dummy") {
-			_kernelFuncs[functnr].isDummy = true;
+		if (sought_name == "Dummy")
 			continue;
+
+		// If the name is known, look it up in s_kernelMap. This table
+		// maps kernel func names to actual function (pointers).
+		SciKernelMapEntry *kernelMap = s_kernelMap;
+		bool nameMatch = false;
+		while (kernelMap->name) {
+			if (sought_name == kernelMap->name) {
+				if (platformMask & kernelMap->forPlatform)
+					break;
+				nameMatch = true;
+			}
+			kernelMap++;
 		}
 
-		// If the name is known, look it up in s_kernelFuncMap. This table
-		// maps kernel func names to actual function (pointers).
-		for (uint seeker = 0; (found == -1) && s_kernelFuncMap[seeker].name; seeker++)
-			if (sought_name == s_kernelFuncMap[seeker].name)
-				found = seeker; // Found a kernel function with the correct name!
-
-		if (found == -1) {
-			// No match but a name was given -> stub
-			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
-			_kernelFuncs[functnr].isDummy = true;
-		} else {
-			// A match in s_kernelFuncMap was found
-			if (s_kernelFuncMap[found].func) {
-				_kernelFuncs[functnr].func = s_kernelFuncMap[found].func;
-				_kernelFuncs[functnr].signature = compileKernelSignature(s_kernelFuncMap[found].signature);
-				_kernelFuncs[functnr].isDummy = false;
+		if (kernelMap->name) {
+			// A match was found
+			if (kernelMap->function) {
+				_kernelFuncs[functNr].func = kernelMap->function;
+				_kernelFuncs[functNr].signature = compileKernelSignature(kernelMap->signature);
+				_kernelFuncs[functNr].isDummy = false;
 				++mapped;
 			} else {
 				//warning("Ignoring function %s\n", s_kernelFuncMap[found].name);
 				++ignored;
 			}
+		} else {
+			if (nameMatch)
+				error("kernel function %s[%x] not found for this version/platform", sought_name.c_str(), functNr);
+			// No match but a name was given -> stub
+			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functNr);
 		}
 	} // for all functions requesting to be mapped
 
