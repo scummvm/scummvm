@@ -179,11 +179,13 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	// If only MDT_MIDI but not MDT_PREFER_MT32 or MDT_PREFER_GM is set we prefer the other devices (which will always be
 	// detected since they are hard coded and cannot be disabled.
-	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; l++) {
+	for (int l = (flags & (MDT_PREFER_GM | MDT_PREFER_MT32)) ? 1 : 0; l < 2; ++l) {
 		if ((flags & MDT_MIDI) && (l == 1)) {
 			// If a preferred MT32 or GM device has been selected that device gets returned
-			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto"), Common::ConfigManager::kApplicationDomain));
-			if (getMusicType(hdl) != MT_AUTO) {
+			hdl = getDeviceHandle(ConfMan.get((flags & MDT_PREFER_MT32) ? "mt32_device" : ((flags & MDT_PREFER_GM) ? "gm_device" : "auto")));
+
+			const MusicType type = getMusicType(hdl);
+			if (type != MT_AUTO && type != MT_INVALID) {
 				if (flags & MDT_PREFER_MT32)
 					// If we have a preferred MT32 device we disable the gm/mt32 mapping (more about this in mididrv.h)
 					_forceTypeMT32 = true;
@@ -195,24 +197,24 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			// and no preferred MT32 or GM device selected we arrive here.
 			// If MT32 is preferred we try for the first available device with music type 'MT_MT32' (usually the mt32 emulator)
 			if (flags & MDT_PREFER_MT32) {
-				for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+				for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 					MusicDevices i = (**m)->getDevices();
-					for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-						if (getMusicType(hdl) == MT_MT32)
-							return hdl;
+					for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+						if (d->getMusicType() == MT_MT32)
+							return d->getHandle();
 					}
 				}
 			}
 
 			// Now we default to the first available device with music type 'MT_GM'
-			for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+			for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 				MusicDevices i = (**m)->getDevices();
-				for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-					if (getMusicType(hdl) == MT_GM || getMusicType(hdl) == MT_GS)
-						return hdl;
+				for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+					if (d->getMusicType() == MT_GM || d->getMusicType() == MT_GS)
+						return d->getHandle();
 				}
 			}
-		} 
+		}
 
 		MusicType tp = MT_AUTO;
 		if (flags & MDT_TOWNS)
@@ -224,9 +226,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		else
 			tp = MT_AUTO;
 
-		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
+		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
 			MusicDevices i = (**m)->getDevices();
-			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
+			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (d->getMusicType() == tp)
 					return d->getHandle();
 			}
