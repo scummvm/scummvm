@@ -660,8 +660,12 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);
 
-	const uint16 offsetY = clipRect.top - rect.top;
-	const uint16 offsetX = clipRect.left - rect.left;
+	const int16 offsetY = clipRect.top - rect.top;
+	const int16 offsetX = clipRect.left - rect.left;
+
+	// Happens in SQ6, first room
+	if (offsetX < 0 || offsetY < 0)
+		return;
 
 	assert(scaledHeight + offsetY <= ARRAYSIZE(scalingY));
 	assert(scaledWidth + offsetX <= ARRAYSIZE(scalingX));
