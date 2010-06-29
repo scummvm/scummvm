@@ -52,6 +52,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
 	_extrasFile = NULL;
+	_curStack = aspit;
 
 	// TODO: Add support for CD swapping
 
