@@ -33,12 +33,6 @@
 
 namespace Sci {
 
-struct reg_t_EqualTo {
-	bool operator()(const reg_t& x, const reg_t& y) const {
-		return (x.segment == y.segment) && (x.offset == y.offset);
-	}
-};
-
 struct reg_t_Hash {
 	uint operator()(const reg_t& x) const {
 		return (x.segment << 3) | x.offset;
@@ -48,7 +42,7 @@ struct reg_t_Hash {
 /*
  * The reg_t_hash_map is actually really a hashset
  */
-typedef Common::HashMap<reg_t, bool, reg_t_Hash, reg_t_EqualTo> reg_t_hash_map;
+typedef Common::HashMap<reg_t, bool, reg_t_Hash> reg_t_hash_map;
 
 /**
  * Finds all used references and normalises them to their memory addresses
