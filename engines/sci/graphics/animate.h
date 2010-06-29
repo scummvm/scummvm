@@ -73,7 +73,8 @@ struct AnimateEntry {
 	bool showBitsFlag;
 	reg_t castHandle;
 };
-typedef Common::List<AnimateEntry *> AnimateList;
+typedef Common::List<AnimateEntry> AnimateList;
+typedef Common::Array<AnimateEntry> AnimateArray;
 
 class GfxCache;
 class GfxCursor;
@@ -102,8 +103,6 @@ public:
 	void addToPicDrawCels();
 	void addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 
-	uint16 getLastCastCount() { return _lastCastCount; }
-
 	virtual void kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void kernelAddToPicList(reg_t listReference, int argc, reg_t *argv);
 	virtual void kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
@@ -123,12 +122,8 @@ private:
 	GfxCursor *_cursor;
 	GfxTransitions *_transitions;
 
-	uint16 _listCount;
-	AnimateEntry *_listData;
 	AnimateList _list;
-
-	uint16 _lastCastCount;
-	AnimateEntry *_lastCastData;
+	AnimateArray _lastCastData;
 
 	bool _ignoreFastCast;
 };
