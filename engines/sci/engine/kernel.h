@@ -169,6 +169,9 @@ public:
 	 */
 	bool signatureMatch(const char *sig, int argc, const reg_t *argv);
 
+	// Prints out debug information in case a signature check fails
+	void signatureDebug(const char *sig, int argc, const reg_t *argv);
+
 	/**
 	 * Determines the type of the object indicated by reg.
 	 * @param reg				register to check

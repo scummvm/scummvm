@@ -669,40 +669,108 @@ int Kernel::findRegType(reg_t reg) {
 	}
 }
 
+struct SignatureDebugType {
+	char typeCheck;
+	const char *text;
+};
+
+static const SignatureDebugType signatureDebugTypeList[] = {
+	{ KSIG_NULL,       "null" },
+	{ KSIG_ARITHMETIC, "value" },
+	{ KSIG_OBJECT,     "object" },
+	{ KSIG_REF,        "reference" },
+	{ KSIG_LIST,       "list" },
+	{ KSIG_NODE,       "node" },
+	{ 0,               NULL }
+};
+
+static void kernelSignatureDebugType(const char type) {
+	bool firstPrint = true;
+
+	const SignatureDebugType *list = signatureDebugTypeList;
+	while (list->typeCheck) {
+		if (type & list->typeCheck) {
+			if (!firstPrint)
+				printf(", ");
+			printf("%s", list->text);
+			firstPrint = false;
+		}
+		list++;
+	}
+}
+
+// Shows kernel call signature and current arguments for debugging purposes
+void Kernel::signatureDebug(const char *sig, int argc, const reg_t *argv) {
+	int argnr = 0;
+	while (*sig || argc) {
+		printf("parameter %d: ", argnr++);
+		if (argc) {
+			reg_t parameter = *argv;
+			printf("%04x:%04x (", PRINT_REG(parameter));
+			kernelSignatureDebugType(findRegType(parameter));
+			printf(")");
+			argv++;
+			argc--;
+		} else {
+			printf("not passed");
+		}
+		if (*sig) {
+			const char signature = *sig;
+			if ((signature & KSIG_ANY) == KSIG_ANY) {
+				printf(", may be any");
+			} else {
+				printf(", should be ");
+				kernelSignatureDebugType(signature);
+			}
+			if (signature & KSIG_ELLIPSIS)
+				printf(" (optional)");
+			sig++;
+		}
+		printf("\n");
+	}
+}
+
 bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
+	const char *checkSig = sig;
+	const reg_t *checkParam = argv;
+	int checkCount = argc;
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
-	while (*sig && argc) {
-		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = findRegType(*argv);
+	while (*checkSig && checkCount) {
+		if ((*checkSig & KSIG_ANY) != KSIG_ANY) {
+			int type = findRegType(*checkParam);
 
 			if (!type) {
-				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
+				warning("[KERNEL] call signature: couldn't determine type of ref %04x:%04x", PRINT_REG(*argv));
+				signatureDebug(sig, argc, argv);
 				return false;
 			}
 
-			if (!(type & *sig)) {
-				warning("kernel_matches_signature: %d args left, is %d, should be %d", argc, type, *sig);
+			if (!(type & *checkSig)) {
+				warning("[KERNEL] call signature: %d args left, is %d, should be %d", argc, type, *sig);
+				signatureDebug(sig, argc, argv);
 				return false;
 			}
 
 		}
-		if (!(*sig & KSIG_ELLIPSIS))
-			++sig;
-		++argv;
-		--argc;
+		if (!(*checkSig & KSIG_ELLIPSIS))
+			++checkSig;
+		++checkParam;
+		--checkCount;
 	}
 
-	if (argc) {
-		warning("kernel_matches_signature: too many arguments");
+	if (checkCount) {
+		warning("[KERNEL] call signature: too many arguments");
+		signatureDebug(sig, argc, argv);
 		return false; // Too many arguments
 	}
-	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
+	if (*checkSig == 0 || (*checkSig & KSIG_ELLIPSIS))
 		return true;
 
-	warning("kernel_matches_signature: too few arguments");
+	warning("[KERNEL] call signature: too few arguments");
+	signatureDebug(sig, argc, argv);
 	return false;
 }
 
