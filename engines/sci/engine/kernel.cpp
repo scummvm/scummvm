@@ -346,8 +346,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
     { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "rii*",                 NULL,            NULL },
     { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
-    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-	// ^^ FIXME accepts a parameter in SCI2+ games
+    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "r*",                   NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
     { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
     { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                    NULL,            NULL },
