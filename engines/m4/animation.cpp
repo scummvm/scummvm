@@ -183,7 +183,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			rec.spriteSlot.frameNumber = animStream->readUint16LE();
 			rec.spriteSlot.xp = animStream->readSint16LE();
 			rec.spriteSlot.yp = animStream->readSint16LE();
-			rec.spriteSlot.depth = animStream->readByte();
+			rec.spriteSlot.depth = animStream->readSByte();
 			rec.spriteSlot.scale = (int8)animStream->readByte();
 
 			_frameEntries.push_back(rec);
