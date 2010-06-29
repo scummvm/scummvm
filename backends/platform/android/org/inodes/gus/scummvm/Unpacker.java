@@ -34,6 +34,7 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipEntry;
 
 public class Unpacker extends Activity {
+	private final static boolean PLUGINS_ENABLED = true;
 	private final static String META_NEXT_ACTIVITY =
 		"org.inodes.gus.unpacker.nextActivity";
 	private ProgressBar mProgress;
@@ -79,7 +80,6 @@ public class Unpacker extends Activity {
 				if (cn != null) {
 					final Intent origIntent = getIntent();
 					Intent intent = new Intent();
-					intent.setPackage(origIntent.getPackage());
 					intent.setComponent(cn);
 					if (origIntent.getExtras() != null)
 						intent.putExtras(origIntent.getExtras());
@@ -294,7 +294,7 @@ public class Unpacker extends Activity {
 		Intent intent = new Intent(ScummVMApplication.ACTION_PLUGIN_QUERY);
 		List<ResolveInfo> plugins = getPackageManager()
 			.queryBroadcastReceivers(intent, 0);
-		if (plugins.isEmpty()) {
+		if (PLUGINS_ENABLED && plugins.isEmpty()) {
 			// No plugins installed
 			AlertDialog.Builder alert = new AlertDialog.Builder(this)
 				.setTitle(R.string.no_plugins_title)
