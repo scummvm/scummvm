@@ -228,6 +228,9 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 			tp = MT_ADLIB;
 		else if (flags & MDT_PCSPK)
 			tp = MT_PCSPK;
+		else if (l == 0)
+			// if we haven't tried to find a MIDI device yet we do this now.
+			continue;
 		else
 			tp = MT_AUTO;
 
