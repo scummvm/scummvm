@@ -54,7 +54,11 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_extrasFile = NULL;
 	_curStack = aspit;
 
-	// TODO: Add support for CD swapping
+	// NOTE: We can never really support CD swapping. All of the music files
+	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
+	// during install and used from there. The same goes for the extras.mhk
+	// file. The following directories allow Riven to be played directly
+	// from the DVD.
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
