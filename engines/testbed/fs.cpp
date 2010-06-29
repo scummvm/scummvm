@@ -43,19 +43,19 @@ bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file)
 	Common::SeekableReadStream *readStream = directory->createReadStreamForMember(file);
 
 	if (!readStream) {
-		printf("LOG:Can't open game file for reading\n");
+		Testsuite::logDetailedPrintf("Can't open game file for reading\n");
 		return false;
 	} 
 	
 	Common::String msg = readStream->readLine();
 	delete readStream;
-	printf("LOG: Message Extracted from %s/%s : %s\n",directory->getFSNode().getName().c_str(), file, msg.c_str());
+	Testsuite::logDetailedPrintf("Message Extracted from %s/%s : %s\n",directory->getFSNode().getName().c_str(), file, msg.c_str());
 
 
 	Common::String expectedMsg = "It works!";
 
 	if (!msg.equals(expectedMsg)) {
-		printf("LOG: Can't read Correct data from file\n");
+		Testsuite::logDetailedPrintf("Can't read Correct data from file\n");
 		return false;
 	}
 
@@ -69,7 +69,7 @@ bool FStests::testReadFile() {
 	int numFailed = 0;
 	
 	if (!gameRoot.getFSNode().isDirectory()) {
-		printf("LOG:game Path should be a directory");
+		Testsuite::logDetailedPrintf("game Path should be a directory");
 		return false;
 	}
 	
@@ -82,7 +82,7 @@ bool FStests::testReadFile() {
 		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName); 
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
-			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
 		
@@ -91,7 +91,7 @@ bool FStests::testReadFile() {
 		directory = gameRoot.getSubDirectory(dirName); 
 		
 		if (!readDataFromFile(directory, fileName.c_str())) {
-			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
 		
@@ -100,12 +100,12 @@ bool FStests::testReadFile() {
 		directory = gameRoot.getSubDirectory(dirName); 
 		
 		if (!readDataFromFile(directory, fileName.c_str())) {
-			printf("LOG : reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
+			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
 	}
 	
-	printf("LOG:failed %d out of 15\n", numFailed);
+	Testsuite::logDetailedPrintf("Failed %d out of 15\n", numFailed);
 	return false;
 }
 
@@ -123,7 +123,7 @@ bool FStests::testWriteFile() {
 	Common::WriteStream *ws = fileToWrite.createWriteStream();
 	
 	if (!ws) {
-		printf("LOG: Can't open writable file in game data dir\n");
+		Testsuite::logDetailedPrintf("Can't open writable file in game data dir\n");
 		return false;
 	}
 	
@@ -137,7 +137,7 @@ bool FStests::testWriteFile() {
 
 	if (readFromFile.equals("ScummVM Rocks!")) {
 		// All good
-		printf("LOG: Data written and read correctly\n");
+		Testsuite::logDetailedPrintf("Data written and read correctly\n");
 		return true;
 	}
 

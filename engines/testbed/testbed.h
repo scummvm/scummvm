@@ -28,7 +28,12 @@
 #include "engines/engine.h"
  
 namespace Testbed {
- 
+
+enum {
+	kTestbedLogOutput = 1 << 0,
+	kTestbedEngineDebug = 1 << 2
+};
+
 class TestbedEngine : public Engine {
 public:
 	TestbedEngine(OSystem *syst);

@@ -39,7 +39,7 @@ bool SaveGametests::writeDataToFile(const char *fileName, const char *msg) {
 	Common::OutSaveFile *saveFile = saveFileMan->openForSaving(fileName);
 
 	if (!saveFile) {
-		printf("LOG: Can't open saveFile %s\n", fileName);
+		Testsuite::logDetailedPrintf("Can't open saveFile %s\n", fileName);
 		return false;
 	}
 
@@ -56,7 +56,7 @@ bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected
 	Common::InSaveFile *loadFile = saveFileMan->openForLoading(fileName);
 	
 	if (!loadFile) {
-		printf("LOG: Can't open save File to load\n");
+		Testsuite::logDetailedPrintf("Can't open save File to load\n");
 		return false;
 	}
 
@@ -74,13 +74,13 @@ bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected
 bool SaveGametests::testSaveLoadState() {
 	// create a savefile with "ScummVM Rocks!" written on it
 	if (!writeDataToFile("tBedSavefile.0", "ScummVM Rocks!")) {
-		printf("LOG: Writing data to savefile failed\n");
+		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
 		return false;
 	}
 
 	// Verify if it contains the same data
 	if (!readAndVerifyData("tBedSavefile.0", "ScummVM Rocks!")) {
-		printf("LOG: Reading data from savefile failed\n");
+		Testsuite::logDetailedPrintf("Reading data from savefile failed\n");
 		return false;
 	}
 
@@ -93,7 +93,7 @@ bool SaveGametests::testRemovingSavefile() {
 
 	// Create a dummy savefile
 	if (!writeDataToFile("tBedSavefileToRemove.0", "Dummy Savefile!")) {
-		printf("LOG: Writing data to savefile failed\n");
+		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool SaveGametests::testRemovingSavefile() {
 	Common::InSaveFile *loadFile = saveFileMan->openForLoading("saveFile.0");
 	if (loadFile) {
 		// Removing failed
-		printf("LOG: Removing savefile failed\n");
+		Testsuite::logDetailedPrintf("Removing savefile failed\n");
 		return false;
 	}
 
@@ -115,7 +115,7 @@ bool SaveGametests::testRenamingSavefile() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	// Open a file for renaming
 	if (!writeDataToFile("tBedSomeWeirdName.0", "Rename me!")) {
-		printf("LOG: Writing data to savefile failed\n");
+		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
 		return false;
 	}
 	
@@ -124,7 +124,7 @@ bool SaveGametests::testRenamingSavefile() {
 
 	// Verify if it contains the same data
 	if (!readAndVerifyData("tBedSomeCoolName.0", "Rename me!")) {
-		printf("LOG: Renaming savefile failed\n");
+		Testsuite::logDetailedPrintf("Renaming savefile failed\n");
 		return false;
 	}
 	
@@ -145,7 +145,7 @@ bool SaveGametests::testListingSavefile() {
 
 	if ( error != Common::kNoError) {
 		// Abort. Some Error in writing files
-		printf("LOG: Error while creating savefiles: %s\n", Common::errorToString(error));
+		Testsuite::logDetailedPrintf("Error while creating savefiles: %s\n", Common::errorToString(error));
 		return false;
 	}
 
@@ -160,14 +160,14 @@ bool SaveGametests::testListingSavefile() {
 				}
 				if (savefileList.size() == j) {
 					// A match for this name not found
-					printf("LOG: Listed Names don't match\n");
+					Testsuite::logDetailedPrintf("Listed Names don't match\n");
 					return false;
 				}
 			}
 		}
 		return true;
 	} else {
-		printf("LOG: listing Savefiles failed!\n");
+		Testsuite::logDetailedPrintf("listing Savefiles failed!\n");
 		return false;
 	}
 
@@ -180,17 +180,17 @@ bool SaveGametests::testErrorMessages() {
 	saveFileMan->clearError();
 	
 	// Try opening a non existing file
-	readAndVerifyData("tBedSomeNonExistentSaveFile.0", "I don't exist!");
+	readAndVerifyData("tBedSomeNonExistentSaveFile.0", "File doesn't exists!");
 
 	Common::Error error = saveFileMan->getError();
 	if (error == Common::kNoError) {
 		// blunder! how come?
-		printf("LOG: SaveFileMan.getError() failed\n");
+		Testsuite::logDetailedPrintf("SaveFileMan.getError() failed\n");
 		return false;
 	}
 	// Can't actually predict whether which error, kInvalidPath or kPathDoesNotExist or some other?
 	// So just return true if some error
-	printf("LOG: getError returned : %s\n", saveFileMan->getErrorDesc().c_str());
+	Testsuite::logDetailedPrintf("getError returned : %s\n", saveFileMan->getErrorDesc().c_str());
 	return true;
 }
 

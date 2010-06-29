@@ -22,17 +22,93 @@
  * $Id$
  */
 
+#include "common/config-manager.h"
+#include "common/stream.h"
+
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
 
 #include "gui/message.h"
 
+#include "testbed/testbed.h"
 #include "testbed/testsuite.h"
 
 namespace Testbed {
 
 // Static public variable of Testsuite
 bool Testsuite::isInteractive = true;
+
+// Static private variable of Testsuite
+Common::String Testsuite::_logDirectory = "";
+Common::String Testsuite::_logFilename = "";
+Common::WriteStream *Testsuite::_ws = 0;
+
+void Testsuite::setLogDir(const char *dirname) {
+	_logDirectory = dirname;
+}
+
+void Testsuite::setLogFile(const char *filename) {
+	_logFilename = filename;
+}
+
+void Testsuite::deleteWriteStream() {
+	if (_ws) {
+		delete _ws;
+	}
+}
+
+void Testsuite::initLogging(const char *logdir, const char *filename, bool enable) {
+	setLogDir(logdir);
+	setLogFile(filename);
+	
+	if (enable) {
+		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
+	} else {
+		_ws = 0;
+	}
+}
+
+void Testsuite::initLogging(bool enable) {
+	setLogDir(ConfMan.get("path").c_str());
+	setLogFile("testbed.log");
+	
+	if (enable) {
+		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
+	} else {
+		_ws = 0;
+	}
+}
+
+void Testsuite::logPrintf(const char *fmt, ...) {
+	// Assuming log message size to be not greater than STRINGBUFLEN i.e 256
+	char buffer[STRINGBUFLEN];
+	va_list vl;
+	va_start(vl, fmt);
+	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
+	va_end(vl);
+	
+	if (_ws) {
+		_ws->writeString(buffer);
+	} else {
+		debugCN(kTestbedLogOutput, "%s", buffer);
+	}
+}
+
+void Testsuite::logDetailedPrintf(const char *fmt, ...) {
+	// Assuming log message size to be not greater than STRINGBUFLEN i.e 256
+	// Messages with this function would only be displayed if -d1 is specified on command line
+	char buffer[STRINGBUFLEN];
+	va_list vl;
+	va_start(vl, fmt);
+	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
+	va_end(vl);
+	
+	if (_ws) {
+		_ws->writeString(buffer);
+	} else {
+		debugCN(1, kTestbedLogOutput, "%s", buffer);
+	}
+}
 
 Testsuite::Testsuite() {
 		_numTestsPassed = 0;
@@ -46,10 +122,13 @@ Testsuite::~Testsuite() {
 }
 
 void Testsuite::genReport() const {
-	printf("\nSubsystem: %s\n",getName());
-	printf("Tests executed: %d\n", _numTestsExecuted);
-	printf("Tests Passed: %d\n", _numTestsPassed);
-	printf("Tests Failed: %d\n\n", getNumTestsFailed());
+	logPrintf("\n");
+	logPrintf("Consolidating results...\n");
+	logPrintf("Subsystem: %s ",getName());
+	logPrintf("(Tests Executed: %d)\n", _numTestsExecuted);
+	logPrintf("Passed: %d ", _numTestsPassed);
+	logPrintf("Failed: %d\n", getNumTestsFailed());
+	logPrintf("\n");
 }
 	
 bool Testsuite::handleInteractiveInput(const Common::String &textToDisplay, const char *opt1, const char *opt2, OptionSelected result) {
@@ -128,13 +207,13 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f) {
 	
 void Testsuite::execute() {
 	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
-		printf("Executing Test:%s\n", ((*i)->featureName).c_str());
+		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
 		_numTestsExecuted++;
 		if ((*i)->driver()) {
-			printf("RESULT: Passed\n");
+			logPrintf("Result: Passed\n");
 			_numTestsPassed++;
 		} else {
-			printf("RESULT: Failed\n");
+			logPrintf("Result: Failed\n");
 		}
 	}
 	genReport();

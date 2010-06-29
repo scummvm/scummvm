@@ -311,9 +311,9 @@ bool GFXtests::fullScreenMode() {
 		g_system->delayMillis(1000);
 		
 		if (isFeatureEnabled) {
-			printf("LOG: Current Mode is Fullsecreen\n");
+			Testsuite::logDetailedPrintf("Current Mode is Fullsecreen\n");
 		} else {
-			printf("LOG: Current Mode is Windowed\n");
+			Testsuite::logDetailedPrintf("Current Mode is Windowed\n");
 		}
 
 		prompt = " Which mode do you see currently ?  ";
@@ -321,7 +321,7 @@ bool GFXtests::fullScreenMode() {
 		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
 			// User selected incorrect current state
 			passed = false;
-			printf("LOG: g_system->getFeatureState() failed\n");
+			Testsuite::logDetailedPrintf("g_system->getFeatureState() failed\n");
 		}
 
 		g_system->beginGFXTransaction();
@@ -339,7 +339,7 @@ bool GFXtests::fullScreenMode() {
 		if (!Testsuite::handleInteractiveInput(prompt, "Fullscreen", "Windowed", shouldSelect)) {
 			// User selected incorrect mode
 			passed = false;
-			printf("LOG: g_system->setFeatureState() failed\n");
+			Testsuite::logDetailedPrintf("g_system->setFeatureState() failed\n");
 		}
 		
 		g_system->beginGFXTransaction();
@@ -352,7 +352,7 @@ bool GFXtests::fullScreenMode() {
 		
 		if (!Testsuite::handleInteractiveInput(prompt, "Yes, it is", "Nopes", shouldSelect)) {
 			// User selected incorrect mode
-			printf("LOG: switching back to initial state failed\n");
+			Testsuite::logDetailedPrintf("switching back to initial state failed\n");
 			passed = false;
 		}
 
@@ -393,7 +393,7 @@ bool GFXtests::aspectRatio() {
 		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
 			// User selected incorrect option
 			passed = false;
-			printf("LOG: Aspect Ratio Correction failed\n");
+			Testsuite::logDetailedPrintf("Aspect Ratio Correction failed\n");
 		}
 		
 		g_system->beginGFXTransaction();
@@ -407,7 +407,7 @@ bool GFXtests::aspectRatio() {
 		if (!Testsuite::handleInteractiveInput(prompt, "Circle", "Ellipse", shouldSelect)) {
 			// User selected incorrect option
 			passed = false;
-			printf("LOG: Aspect Ratio Correction failed\n");
+			Testsuite::logDetailedPrintf("Aspect Ratio Correction failed\n");
 		}
 		
 		g_system->beginGFXTransaction();
@@ -421,7 +421,7 @@ bool GFXtests::aspectRatio() {
 	
 	if (Testsuite::handleInteractiveInput("This should definetely be your initial state?", "Yes, it is", "Nopes", kOptionRight)) {
 		// User selected incorrect mode
-		printf("LOG: switching back to initial state failed\n");
+		Testsuite::logDetailedPrintf("Switching back to initial state failed\n");
 		passed = false;
 	}
 	
@@ -448,7 +448,7 @@ bool GFXtests::palettizedCursors() {
 	mouseMovements();
 	
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Yellow", "Any other", kOptionRight)) {
-		printf("LOG: Couldn't use cursor palette for rendering cursor\n");
+		Testsuite::logDetailedPrintf("Couldn't use cursor palette for rendering cursor\n");
 		passed = false;
 	}	
 
@@ -457,7 +457,7 @@ bool GFXtests::palettizedCursors() {
 	setupMouseLoop(true);
 	
 	if (Testsuite::handleInteractiveInput("Which color did the cursor appeared to you?", "Red", "Any other", kOptionRight)) {
-		printf("LOG: Couldn't use Game palette for rendering cursor\n");
+		Testsuite::logDetailedPrintf("Couldn't use Game palette for rendering cursor\n");
 		passed = false;
 	}	
 
@@ -586,7 +586,7 @@ bool GFXtests::scaledCursors() {
 			Testsuite::clearScreen();
 
 		} else {
-			printf("LOG: Switching to graphics mode %s failed\n", gfxMode->name);
+			Testsuite::logDetailedPrintf("Switching to graphics mode %s failed\n", gfxMode->name);
 			return false;
 		}
 		gfxMode++;
@@ -600,7 +600,7 @@ bool GFXtests::scaledCursors() {
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 	if (gfxError != OSystem::kTransactionSuccess || !isGFXModeSet) {
-		printf("LOG: Switcing to initial state failed\n");
+		Testsuite::logDetailedPrintf("Switcing to initial state failed\n");
 		return false;
 	}
 
@@ -624,7 +624,7 @@ bool GFXtests::shakingEffect() {
 	g_system->delayMillis(1500);
 
 	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
-		printf("LOG: Shaking Effect didn't worked");
+		Testsuite::logDetailedPrintf("Shaking Effect didn't worked");
 		return false;
 	}
 	Testsuite::clearScreen();
@@ -668,7 +668,7 @@ bool GFXtests::focusRectangle() {
 	g_system->clearFocusRectangle();
 
 	if (Testsuite::handleInteractiveInput("Did you noticed a variation in focus?", "Yes", "No", kOptionRight)) {
-		printf("LOG: Focus Rectangle feature doesn't works. Check platform.\n");
+		Testsuite::logDetailedPrintf("Focus Rectangle feature doesn't works. Check platform.\n");
 	}
 	
 	Testsuite::clearScreen();
@@ -696,7 +696,7 @@ bool GFXtests::overlayGraphics() {
 	g_system->updateScreen();
 
 	if (Testsuite::handleInteractiveInput("Did you see a green overlayed rectangle?", "Yes", "No", kOptionRight)) {
-		printf("LOG: Overlay Rectangle feature doesn't works\n");
+		Testsuite::logDetailedPrintf("Overlay Rectangle feature doesn't works\n");
 		return false;
 	}
 	
@@ -758,7 +758,7 @@ bool GFXtests::pixelFormats() {
 	int numPassed = 0;
 	bool numFailed = 0;
 	
-	printf("LOG: Testing Pixel Formats. Size of list : %d\n", pfList.size());
+	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 	
 	for (iter = pfList.begin(); iter != pfList.end(); iter++) {
 		
@@ -767,7 +767,7 @@ bool GFXtests::pixelFormats() {
 			// Palettes already tested
 			continue;
 		} else if (iter->bytesPerPixel > 2) {
-			printf("LOG: Can't test pixels with bpp > 2\n");
+			Testsuite::logDetailedPrintf("Can't test pixels with bpp > 2\n");
 			continue;
 		}
 		
@@ -815,11 +815,11 @@ bool GFXtests::pixelFormats() {
 			numPassed++;
 		} else {
 			numFailed++;
-			printf("LOG: Testing pixel format failed for format #%d on the list\n", numFormatsTested);
+			Testsuite::logDetailedPrintf("Testing pixel format failed for format #%d on the list\n", numFormatsTested);
 		}
 	}
 	if (numFailed) {
-		printf("LOG: Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
+		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
 		return false;
 	}
 	

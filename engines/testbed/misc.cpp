@@ -45,7 +45,7 @@ void MiscTests::timerCallback(void *arg) {
 void MiscTests::criticalSection(void *arg) {
 	SharedVars &sv = *((SharedVars *) arg);
 	
-	printf("LOG: Before critical section: %d %d\n", sv.first, sv.second);
+	Testsuite::logDetailedPrintf("Before critical section: %d %d\n", sv.first, sv.second);
 	g_system->lockMutex(sv.mutex);
 
 	// In any case, the two vars must be equal at entry, if mutex works fine.
@@ -63,7 +63,7 @@ void MiscTests::criticalSection(void *arg) {
 	}
 
 	sv.second *= sv.first;
-	printf("LOG: After critical section: %d %d\n", sv.first, sv.second);
+	Testsuite::logDetailedPrintf("After critical section: %d %d\n", sv.first, sv.second);
 	g_system->unlockMutex(sv.mutex);
 
 	g_system->getTimerManager()->removeTimerProc(criticalSection);
@@ -72,10 +72,10 @@ void MiscTests::criticalSection(void *arg) {
 bool MiscTests::testDateTime() {
 	TimeDate t1, t2;
 	g_system->getTimeAndDate(t1);
-	printf("LOG: Current Time and Date: ");
+	Testsuite::logDetailedPrintf("Current Time and Date: ");
 	Common::String dateTimeNow;
 	getHumanReadableFormat(t1, dateTimeNow);
-	printf("%s\n", dateTimeNow.c_str());
+	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 
 	if (Testsuite::isInteractive) {
 		// Directly verify date
@@ -89,9 +89,9 @@ bool MiscTests::testDateTime() {
 	// Now, Put some delay
 	g_system->delayMillis(2000);
 	g_system->getTimeAndDate(t2);
-	printf("LOG: Time and Date 2s later: ");
+	Testsuite::logDetailedPrintf("Time and Date 2s later: ");
 	getHumanReadableFormat(t2, dateTimeNow);
-	printf("%s\n", dateTimeNow.c_str());
+	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 	
 	if (t1.tm_year == t2.tm_year && t1.tm_mon == t2.tm_mon && t1.tm_mday == t2.tm_mday) {
 		if (t1.tm_mon == t2.tm_mon && t1.tm_year == t2.tm_year){
@@ -132,7 +132,7 @@ bool MiscTests::testMutexes() {
 	// wait till timed process exits
 	g_system->delayMillis(3000);
 
-	printf("LOG: Final Value: %d %d\n", sv.first, sv.second);
+	Testsuite::logDetailedPrintf("Final Value: %d %d\n", sv.first, sv.second);
 	g_system->deleteMutex(sv.mutex);
 
 	if (sv.resultSoFar && 6 == sv.second) {

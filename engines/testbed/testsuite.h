@@ -103,6 +103,18 @@ public:
 	
 	virtual const char *getName() const = 0;
 
+	static void logPrintf(const char *s, ...) GCC_PRINTF(1, 2);
+	static void logDetailedPrintf(const char *s, ...) GCC_PRINTF(1, 2);
+	/**
+	 * Note: To enable logging, this function must be called once first.
+	 */
+	static void initLogging(const char *dirname, const char *filename, bool enable = true);
+	static void initLogging(bool enable = true);
+	static void setLogDir(const char *dirname);
+	static void setLogFile(const char *filename);
+	
+	static void deleteWriteStream();
+
 protected:
 	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
@@ -115,6 +127,14 @@ public:
 	 * Used by various tests to respond accordingly
 	 */
 	static bool isInteractive;
+
+private:
+	/**
+	 * Private variables related to logging files
+	 */
+	static Common::String _logDirectory;
+	static Common::String _logFilename;
+	static Common::WriteStream *_ws;
 };
 
 }	// End of namespace testbed
