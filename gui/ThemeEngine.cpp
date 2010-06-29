@@ -397,17 +397,12 @@ bool ThemeEngine::init() {
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
 		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-#ifdef USE_ZLIB
 			Common::Archive *zipArchive = Common::makeZipArchive(node);
 
 			if (!zipArchive) {
 				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
 			}
 			_themeArchive = zipArchive;
-#else
-			warning("Trying to load theme '%s' in a Zip archive without zLib support", _themeFile.c_str());
-			return false;
-#endif
 		} else if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
 		}
@@ -1563,7 +1558,6 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 	bool foundHeader = false;
 
 	if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-#ifdef USE_ZLIB
 		Common::Archive *zipArchive = Common::makeZipArchive(node);
 		if (zipArchive && zipArchive->hasFile("THEMERC")) {
 			// Open THEMERC from the ZIP file.
@@ -1576,7 +1570,6 @@ bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &
 		// reference to zipArchive anywhere. This could change if we
 		// ever modify ZipArchive::createReadStreamForMember.
 		delete zipArchive;
-#endif
 	} else if (node.isDirectory()) {
 		Common::FSNode headerfile = node.getChild("THEMERC");
 		if (!headerfile.exists() || !headerfile.isReadable() || headerfile.isDirectory())
@@ -1672,7 +1665,6 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 	}
 
 	Common::FSList fileList;
-#ifdef USE_ZLIB
 	// Check all files. We need this to find all themes inside ZIP archives.
 	if (!node.getChildren(fileList, Common::FSNode::kListFilesOnly))
 		return;
@@ -1699,7 +1691,6 @@ void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<Them
 	}
 
 	fileList.clear();
-#endif
 
 	// Check if we exceeded the given recursion depth
 	if (depth - 1 == -1)
