@@ -178,6 +178,10 @@ Common::String OSystem_SDL_Symbian::getDefaultConfigFileName() {
 	return configFile;
 }
 
+void OSystem_SDL_Symbian::setupIcon() {
+	// Don't for Symbian: it uses the EScummVM.aif file for the icon. 
+}
+
 RFs& OSystem_SDL_Symbian::FsSession() {
 	return *_RFs;
 }

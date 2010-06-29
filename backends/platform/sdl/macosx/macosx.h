@@ -35,6 +35,7 @@ public:
 
 	void initBackend();
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	void setupIcon();
 };
 
 #endif

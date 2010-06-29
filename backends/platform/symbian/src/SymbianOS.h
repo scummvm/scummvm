@@ -42,6 +42,7 @@ public:
 	void engineDone();
 	bool setGraphicsMode(const char *name);
 	Common::String getDefaultConfigFileName();
+	void setupIcon();
 
 	// Returns reference to File session
 	RFs& FsSession();
