@@ -460,6 +460,7 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	_activeAnimation = NULL;
 	_bgLoadFlag = true;
 	_startFrame = -1;
+	_scriptDone = false;
 
 	reset();
 
@@ -519,7 +520,7 @@ bool AnimviewView::onEvent(M4EventType eventType, int32 param, int x, int y, boo
 void AnimviewView::updateState() {
 	MadsView::update();
 
-	if (!_script)
+	if (!_script || _scriptDone)
 		return;
 
 	if (!_activeAnimation) {
@@ -537,16 +538,16 @@ void AnimviewView::updateState() {
 		_backgroundSurface.reset();
 		clearLists();
 		
-		// Check if script is finished
-		if (_script->eos() ||  _script->err()) {
-			scriptDone();
-			return;
-		}
-
 		// Reset flags
 		_startFrame = -1;
 
 		readNextCommand();
+
+		// Check if script is finished
+		if (_scriptDone) {
+			scriptDone();
+			return;
+		}
 	}
 
 	refresh();
@@ -587,6 +588,12 @@ static bool tempFlag = true;//****DEBUG - Temporarily allow me to skip several i
 		// If there's something left, presume it's a resource name to process
 		if (_currentLine[0])
 			break;
+	}
+
+	if (!_currentLine[0]) {
+		// A blank line at this point means that the end of the animation has been reached
+		_scriptDone = true;
+		return;
 	}
 
 	if (strchr(_currentLine, '.') == NULL)
