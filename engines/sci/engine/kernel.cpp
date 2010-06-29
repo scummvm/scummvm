@@ -225,14 +225,15 @@ struct SciKernelMapEntry {
 #define SIG_SCI32    SCI_VERSION_2, SCI_VERSION_NONE
 
 #define SIGFOR_ALL   0x4f
-#define SIGFOR_PC    1 << 0
+#define SIGFOR_DOS   1 << 0
 #define SIGFOR_PC98  1 << 1
 #define SIGFOR_WIN   1 << 2
 #define SIGFOR_MAC   1 << 3
 #define SIGFOR_AMIGA 1 << 4
 #define SIGFOR_ATARI 1 << 5
+#define SIGFOR_PC    SIGFOR_DOS|SIGFOR_WIN
 
-#define SIG_EVERYWHERE SIG_SCI32, SIGFOR_ALL
+#define SIG_EVERYWHERE  SIG_SCIALL, SIGFOR_ALL
 
 #define MAP_CALL(_name_) #_name_, k##_name_
 
@@ -258,7 +259,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "iOi*",                 NULL,            NULL },
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "iOi*",                 NULL,            NULL },
-    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiiii*i*r*",          NULL,            NULL },
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiiii*i*r*",          NULL,            NULL },
+    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiiii*i*",            NULL,            NULL },
     { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "Il*",                  NULL,            NULL },
     { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   "*.",                   NULL,            NULL },
     { MAP_CALL(NewWindow),         SIG_EVERYWHERE,           "iiiiZRi*",             NULL,            NULL },
@@ -595,10 +597,11 @@ void Kernel::mapFunctions() {
 	int ignored = 0;
 	uint functionCount = _kernelNames.size();
 	byte platformMask = 0;
+	SciVersion myVersion = getSciVersion();
 
 	switch (g_sci->getPlatform()) {
 	case Common::kPlatformPC:
-		platformMask = SIGFOR_PC;
+		platformMask = SIGFOR_DOS;
 		break;
 	case Common::kPlatformPC98:
 		platformMask = SIGFOR_PC98;
@@ -647,8 +650,10 @@ void Kernel::mapFunctions() {
 		bool nameMatch = false;
 		while (kernelMap->name) {
 			if (sought_name == kernelMap->name) {
-				if (platformMask & kernelMap->forPlatform)
-					break;
+				if ((kernelMap->fromVersion == SCI_VERSION_NONE) || (kernelMap->fromVersion >= myVersion))
+					if ((kernelMap->toVersion == SCI_VERSION_NONE) || (kernelMap->toVersion <= myVersion))
+						if (platformMask & kernelMap->forPlatform)
+							break;
 				nameMatch = true;
 			}
 			kernelMap++;
