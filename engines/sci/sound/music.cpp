@@ -64,11 +64,16 @@ void SciMusic::init() {
 	_dwTempo = 0;
 
 	// Default to MIDI in SCI32 games, as many don't have AdLib support.
-	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support those patches yet.
-	// We also don't yet support the 7.pat file of SCI1+ Mac games or SCI0 Mac patches, so we
-	// default to MIDI in those games to let them run.
+	// WORKAROUND: Default to MIDI in Amiga SCI1_EGA+ games as we don't support
+	// those patches yet. We also don't yet support the 7.pat file of SCI1+ Mac
+	// games or SCI0 Mac patches, so we default to MIDI in those games to let
+	// them run.
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 dev =  MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh || (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA)) ? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
+	uint32 dev =  MidiDriver::detectDevice(
+						(getSciVersion() >= SCI_VERSION_2 || platform == Common::kPlatformMacintosh ||
+						 (platform == Common::kPlatformAmiga && getSciVersion() >= SCI_VERSION_1_EGA))
+						? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM)
+						: (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
 
 	switch (MidiDriver::getMusicType(dev)) {
 	case MT_ADLIB:
@@ -100,7 +105,8 @@ void SciMusic::init() {
 
 	_bMultiMidi = ConfMan.getBool("multi_midi");
 
-	// Find out what the first possible channel is (used, when doing channel remapping)
+	// Find out what the first possible channel is (used, when doing channel
+	// remapping).
 	_driverFirstChannel = _pMidiDrv->getFirstChannel();
 }
 
@@ -128,9 +134,10 @@ void SciMusic::putMidiCommandInQueue(uint32 midi) {
 	_queuedCommands.push_back(midi);
 }
 
-// This sends the stored commands from queue to driver (is supposed to get called only during onTimer())
-//  at least mt32 emulation doesn't like getting note-on commands from main thread (if we directly send, we would get
-//  a crash during piano scene in lsl5)
+// This sends the stored commands from queue to driver (is supposed to get
+// called only during onTimer()). At least mt32 emulation doesn't like getting
+// note-on commands from main thread (if we directly send, we would get a crash
+// during piano scene in lsl5).
 void SciMusic::sendMidiCommandsFromQueue() {
 	uint curCommand = 0;
 	uint commandCount = _queuedCommands.size();
@@ -210,10 +217,10 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	int channelFilterMask = 0;
 	SoundResource::Track *track = pSnd->soundRes->getTrackByType(_pMidiDrv->getPlayId());
 
-	// If MIDI device is selected but there is no digital track in sound resource
-	// try to use adlib's digital sample if possible
-	// Also, if the track couldn't be found, load the digital track, as some games
-	// depend on this (e.g. the Longbow demo)
+	// If MIDI device is selected but there is no digital track in sound
+	// resource try to use adlib's digital sample if possible. Also, if the
+	// track couldn't be found, load the digital track, as some games depend on
+	// this (e.g. the Longbow demo).
 	if (!track || (_bMultiMidi && track->digitalChannelNr == -1)) {
 		SoundResource::Track *digital = pSnd->soundRes->getDigitalTrack();
 		if (digital)
@@ -260,8 +267,8 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 	}
 }
 
-// This one checks, if requested channel is available -> in that case give caller that channel
-//  Otherwise look for an unused one
+// This one checks, if requested channel is available -> in that case give
+// caller that channel. Otherwise look for an unused one
 int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 	// Don't even try this for SCI0
 	if (_soundVersion <= SCI_VERSION_0_LATE)
@@ -316,7 +323,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		if ((_soundVersion <= SCI_VERSION_0_LATE) && (alreadyPlaying)) {
 			// Music already playing in SCI0?
 			if (pSnd->priority > alreadyPlaying->priority) {
-				// And new priority higher? pause previous music and play new one immediately
+				// And new priority higher? pause previous music and play new one immediately.
 				// Example of such case: lsl3, when getting points (jingle is played then)
 				soundPause(alreadyPlaying);
 				alreadyPlaying->isQueued = true;
@@ -339,7 +346,8 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 			                         pSnd->pLoopStream, -1, pSnd->volume, 0,
 			                         DisposeAfterUse::NO);
 		} else {
-			// Rewind in case we play the same sample multiple times (non-looped) like in pharkas right at the start
+			// Rewind in case we play the same sample multiple times
+			// (non-looped) like in pharkas right at the start
 			pSnd->pStreamAud->rewind();
 			_pMixer->playStream(pSnd->soundType, &pSnd->hCurrentAud,
 			                         pSnd->pStreamAud, -1, pSnd->volume, 0,
@@ -377,7 +385,8 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	if (pSnd->pMidiParser) {
 		_mutex.lock();
 		pSnd->pMidiParser->mainThreadBegin();
-		// We shouldn't call stop in case it's paused, otherwise we would send allNotesOff() again
+		// We shouldn't call stop in case it's paused, otherwise we would send
+		// allNotesOff() again
 		if (previousStatus == kSoundPlaying)
 			pSnd->pMidiParser->stop();
 		freeChannels(pSnd);

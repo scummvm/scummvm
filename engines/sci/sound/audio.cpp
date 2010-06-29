@@ -77,9 +77,10 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 }
 
 int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
-	// Get the audio sample length and set the wPlay flag so we return 0 on position.
-	// SSCI pre-loads the audio here, but it's much easier for us to just get the
-	// sample length and return that. wPlayAudio should *not* actually start the sample.
+	// Get the audio sample length and set the wPlay flag so we return 0 on
+	// position. SSCI pre-loads the audio here, but it's much easier for us to
+	// just get the sample length and return that. wPlayAudio should *not*
+	// actually start the sample.
 
 	int sampleLen = 0;
 	Audio::AudioStream *audioStream = getAudioStream(tuple, module, &sampleLen);
@@ -272,8 +273,8 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		byte *compressedData = (byte *)malloc(audioRes->size);
 		assert(compressedData);
 		// We copy over the compressed data in our own buffer. We have to do
-		// this, because ResourceManager may free the original data late.
-		// All other compression types already decompress completely into an
+		// this, because ResourceManager may free the original data late. All
+		// other compression types already decompress completely into an
 		// additional buffer here. MP3/OGG/FLAC decompression works on-the-fly
 		// instead.
 		memcpy(compressedData, audioRes->data, audioRes->size);
@@ -367,8 +368,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		*sampleLen = (audioSeekStream->getLength().msecs() * 60) / 1000; // we translate msecs to ticks
 		audioStream = audioSeekStream;
 	}
-	// We have to make sure that we don't depend on resource manager pointers after this point, because the actual
-	//  audio resource may get unloaded by resource manager at any time
+	// We have to make sure that we don't depend on resource manager pointers
+	// after this point, because the actual audio resource may get unloaded by
+	// resource manager at any time.
 	if (audioStream)
 		return audioStream;
 
