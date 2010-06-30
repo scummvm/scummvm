@@ -771,7 +771,11 @@ void Kernel::signatureDebug(const char *sig, int argc, const reg_t *argv) {
 		if (argc) {
 			reg_t parameter = *argv;
 			printf("%04x:%04x (", PRINT_REG(parameter));
-			kernelSignatureDebugType(findRegType(parameter));
+			int regType = findRegType(parameter);
+			if (regType)
+				kernelSignatureDebugType(regType);
+			else
+				printf("unknown type of %04x:%04x", PRINT_REG(parameter));
 			printf(")");
 			argv++;
 			argc--;
@@ -803,15 +807,11 @@ bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
 			int type = findRegType(*argv);
 
-			if (!type) {
-				warning("[KERNEL] call signature: couldn't determine type of ref %04x:%04x", PRINT_REG(*argv));
-				return false;
-			}
+			if (!type)
+				return false; // couldn't determine type
 
-			if (!(type & *sig)) {
-				warning("[KERNEL] call signature: %d args left, is %d, should be %d", argc, type, *sig);
-				return false;
-			}
+			if (!(type & *sig))
+				return false; // type mismatch
 
 		}
 		if (!(*sig & KSIG_ELLIPSIS))
@@ -820,15 +820,12 @@ bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
 		--argc;
 	}
 
-	if (argc) {
-		warning("[KERNEL] call signature: too many arguments");
+	if (argc)
 		return false; // Too many arguments
-	}
 	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
 		return true;
 
-	warning("[KERNEL] call signature: too few arguments");
-	return false;
+	return false; // Too few arguments
 }
 
 void Kernel::setDefaultKernelNames() {
