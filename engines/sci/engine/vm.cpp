@@ -266,6 +266,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 struct UninitializedReadWorkaround {
 	SciGameId gameId;
 	int scriptNr;
+	int16 inheritanceLevel;
 	const char *objectName;
 	const char *methodName;
 	int localCallOffset;
@@ -273,24 +274,24 @@ struct UninitializedReadWorkaround {
 	uint16 newValue;
 };
 
-//    gameID,       scriptNr,          object-name, method-name,    call,index,replace
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
 static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
-	{ GID_LAURABOW2,      24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  24,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  31,            "quitWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_LSL1,          720,              "rm720", "init",           -1,    0,   0 }, // age check room
-	{ GID_LSL3,          997,         "TheMenuBar", "handleEvent",    -1,    1, 0xf }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-	{ GID_LSL6,          928,           "Narrator", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-	{ GID_ISLANDBRAIN,   140,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_ISLANDBRAIN,   268,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
-	{ GID_KQ5,             0,                   "", "export 29",      -1,    3,   0 }, // called when playing harp for the harpies, is used for kDoAudio
-	{ GID_KQ5,            25,              "rm025", "doit",           -1,    0,   0 }, // inside witch forest, where the walking rock is
-	{ GID_SQ1,           703,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
-	{ GID_SQ1,           703,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
-	{ GID_SQ4,           928,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
-	{ GID_SQ6,             0,               "Game", "init",           -1,    2,   0 },
-	{ GID_SQ6,         64950,               "View", "handleEvent",    -1,    0,   0 },
-	{ (SciGameId)0,       -1,                 NULL, NULL,             -1,    0,   0 }
+	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
+	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0,   0 }, // age check room
+	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, 0xf }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
+	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
+	{ GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
+	{ GID_KQ5,             0,  0,                   "", "export 29",      -1,    3,   0 }, // called when playing harp for the harpies, is used for kDoAudio
+	{ GID_KQ5,            25,  0,              "rm025", "doit",           -1,    0,   0 }, // inside witch forest, where the walking rock is
+	{ GID_SQ1,           703,  0,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
+	{ GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
+	{ GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
+	{ GID_SQ6,             0,  0,               "Game", "init",           -1,    2,   0 },
+	{ GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0,   0 },
+	{ (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0,   0 }
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
@@ -332,12 +333,13 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 
 			// Search if this is a known uninitialized read
 			const UninitializedReadWorkaround *workaround;
+			int16 inheritanceLevel = 0;
 			Common::String searchObjectName = curObjectName;
 			reg_t searchObject = lastCall->sendp;
 			do {
 				workaround = uninitializedReadWorkarounds;
 				while (workaround->objectName) {
-					if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->objectName == searchObjectName)
+					if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->inheritanceLevel == inheritanceLevel) && (workaround->objectName == searchObjectName)
 							&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
 						// Workaround found
 						r[index] = make_reg(0, workaround->newValue);
@@ -346,6 +348,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 					workaround++;
 				}
 				// Go back to the parent
+				inheritanceLevel++;
 				searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
 				if (!searchObject.isNull())
 					searchObjectName = state->_segMan->getObjectName(searchObject);
