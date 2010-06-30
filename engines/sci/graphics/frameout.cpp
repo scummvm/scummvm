@@ -128,6 +128,8 @@ void GfxFrameout::kernelFrameout() {
 	// Allocate enough space for all screen items
 	FrameoutEntry *itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
 
+	const SciGameId gameId = g_sci->getGameId();
+
 	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = *it;
 		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
@@ -189,6 +191,14 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = readSelectorValue(_segMan, itemObject, SELECTOR(y));
 				itemEntry->z = readSelectorValue(_segMan, itemObject, SELECTOR(z));
 				itemEntry->priority = readSelectorValue(_segMan, itemObject, SELECTOR(priority));
+				if (gameId == GID_GK1) {
+					if ((itemEntry->viewId == 11000) && (itemEntry->loopNo == 0) && (itemEntry->celNo == 0) && (itemEntry->priority == 1)) {
+						itemEntry->priority = 0; // HACK for gk1 hires main menu
+					}
+					if ((itemEntry->viewId == 10100) && (itemEntry->priority == 0)) {
+						itemEntry->priority = 1; // HACK for gk1 hires main menu
+					}
+				}
 				itemEntry->signal = readSelectorValue(_segMan, itemObject, SELECTOR(signal));
 				itemEntry->scaleX = readSelectorValue(_segMan, itemObject, SELECTOR(scaleX));
 				itemEntry->scaleY = readSelectorValue(_segMan, itemObject, SELECTOR(scaleY));
@@ -228,23 +238,40 @@ void GfxFrameout::kernelFrameout() {
 			if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
+				if (view->isSci2Hires())
+					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 				else
 					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
 
-				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight())
+				int16 screenHeight = _screen->getHeight();
+				int16 screenWidth = _screen->getWidth();
+				if (view->isSci2Hires()) {
+					screenHeight = _screen->getDisplayHeight();
+					screenWidth = _screen->getDisplayWidth();
+				}
+
+				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= screenHeight)
 					continue;
 
-				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= _screen->getWidth())
+				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= screenWidth)
 					continue;
 
 				Common::Rect clipRect;
 				clipRect = itemEntry->celRect;
-				clipRect.clip(planeRect);
+				if (view->isSci2Hires()) {
+					Common::Rect upscaledPlaneRect = planeRect;
+					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.top, upscaledPlaneRect.left);
+					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.bottom, upscaledPlaneRect.right);
+					clipRect.clip(upscaledPlaneRect);
+				} else {
+					clipRect.clip(planeRect);
+				}
 
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, false);
+					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
 				else
 					view->drawScaled(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 			} else {

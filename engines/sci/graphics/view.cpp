@@ -81,6 +81,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_loopCount = 0;
 	_embeddedPal = false;
 	_EGAmapping = NULL;
+	_isSci2Hires = false;
 
 	// If we find an SCI1/SCI1.1 view (not amiga), we switch to that type for
 	// EGA. This could get used to make view patches for EGA games, where the
@@ -191,6 +192,7 @@ void GfxView::initData(GuiResourceId resourceId) {
 		assert(headerSize >= 16);
 		_loopCount = _resourceData[2];
 		assert(_loopCount);
+		_isSci2Hires = _resourceData[5] == 1 ? true : false;
 		palOffset = READ_SCI11ENDIAN_UINT32(_resourceData + 8);
 		// FIXME: After LoopCount there is another byte and its set for view 50
 		// within Laura Bow 2 CD, check what it means.
@@ -240,6 +242,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 				cel->offsetEGA = 0;
 				cel->offsetRLE = READ_SCI11ENDIAN_UINT32(celData + 24);
 				cel->offsetLiteral = READ_SCI11ENDIAN_UINT32(celData + 28);
+				// GK1-hires content is actually uncompressed, we need to swap both so that we process it as such
+				if ((cel->offsetRLE) && (!cel->offsetLiteral))
+					SWAP(cel->offsetRLE, cel->offsetLiteral);
 
 				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
@@ -286,6 +291,10 @@ uint16 GfxView::getCelCount(int16 loopNo) const {
 
 Palette *GfxView::getPalette() {
 	return _embeddedPal ? &_viewPalette : NULL;
+}
+
+bool GfxView::isSci2Hires() {
+	return _isSci2Hires;
 }
 
 void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, Common::Rect &outRect) const {

@@ -73,6 +73,8 @@ public:
 	uint16 getCelCount(int16 loopNo) const;
 	Palette *getPalette();
 
+	bool isSci2Hires();
+
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(int16 loopNo, int16 celNo, byte *outPtr, uint32 pixelCount);
@@ -91,6 +93,9 @@ private:
 	LoopInfo *_loop;
 	bool _embeddedPal;
 	Palette _viewPalette;
+
+	// set for SCI2 views in gk1/windows, means that views are hires and should be handled accordingly
+	bool _isSci2Hires;
 
 	byte *_EGAmapping;
 };
