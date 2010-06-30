@@ -158,8 +158,8 @@ void MadsSpriteSlots::drawBackground() {
 
 				if (slot.depth > 1) {
 					// Draw the frame with depth processing
-					_owner._bgSurface->copyFrom(frame, xp, yp, Common::Point(), slot.depth, 
-						_owner._depthSurface, 100, frame->getTransparencyIndex());
+					_owner._bgSurface->copyFrom(frame, xp, yp, slot.depth, _owner._depthSurface, 100, 
+						frame->getTransparencyIndex());
 				} else {
 					// No depth, so simply draw the image
 					frame->copyTo(_owner._bgSurface, xp, yp, frame->getTransparencyIndex());
@@ -199,8 +199,8 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 			// Minimalised drawing
 			assert(slot.spriteListIndex < (int)_sprites.size());
 			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
-			viewport->copyFrom(spr, slot.xp, slot.yp, Common::Point(0, 0), slot.depth, _owner._depthSurface, 
-				slot.scale, spr->getTransparencyIndex());
+			viewport->copyFrom(spr, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 
+				spr->getTransparencyIndex());
 		} else {
 			int xp, yp;
 			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
@@ -215,8 +215,7 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 
 			if (slot.depth > 1) {
 				// Draw the frame with depth processing
-				viewport->copyFrom(spr, xp, yp, Common::Point(0, 0), slot.depth, _owner._depthSurface, 100,
-					spr->getTransparencyIndex());
+				viewport->copyFrom(spr, xp, yp, slot.depth, _owner._depthSurface, 100, spr->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image
 				spr->copyTo(viewport, xp, yp, spr->getTransparencyIndex());

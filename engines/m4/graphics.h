@@ -173,7 +173,7 @@ public:
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
 	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, int transparentColour = -1);
-	void copyFrom(M4Surface *src, int destX, int destY, Common::Point destAdjust, int depth, M4Surface *depthSurface, 
+	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, 
 			int scale, int transparentColour = -1);
 
 	void update() {
@@ -196,7 +196,7 @@ public:
 	}
 	inline void copyTo(M4Surface *dest, int destX, int destY, int depth, M4Surface *depthsSurface, int scale,
 				int transparentColour = -1) {
-		dest->copyFrom(this, destX, destY, Common::Point(0, 0), depth, depthsSurface, scale, transparentColour);
+		dest->copyFrom(this, destX, destY, depth, depthsSurface, scale, transparentColour);
 	}
 
 	void scrollX(int xAmount);
