@@ -444,7 +444,7 @@ void MadsAnimation::update() {
 			_vm->_palette->setEntry(colIndex + 1, me.rgb2.r, me.rgb2.g, me.rgb2.b);
 
 			// Add a kernel message to display the given text
-			me.kernelMsgIndex = _view->_kernelMessages.add(me.pos, colIndex * 0x101, 0, 0, INDEFINITE_TIMEOUT, me.msg);
+			me.kernelMsgIndex = _view->_kernelMessages.add(me.pos, colIndex * 0x101 + 0x100, 0, 0, INDEFINITE_TIMEOUT, me.msg);
 			assert(me.kernelMsgIndex >= 0);
 
 			// Play the associated sound, if it exists
