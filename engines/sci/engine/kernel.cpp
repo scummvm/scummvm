@@ -207,12 +207,6 @@ static const char *s_defaultKernelNames[] = {
 // .* -> any parameters afterwards (or none)
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
-static const SciWorkaroundEntry kUnLoad_workarounds[] = {
-	{ GID_SQ1,           998,  0,               "View", "delete",         -1,    0, { 1,    0 } }, // exiting ulence flats bar - slotGuyBody::dispose calls view::delete resulting in parameter 1 to be a reference
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
 static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // parameter 0 is an object when leaving graveyard
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -252,7 +246,8 @@ struct SciKernelMapEntry {
 //    name,                        version/platform,         signature,              sub-signatures,  workarounds
 static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Load),              SIG_EVERYWHERE,           "iii*",                 NULL,            NULL },
-    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "iRi*",                 NULL,            kUnLoad_workarounds },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "iRi*",                 NULL,            NULL },
+	//  ^^ - in SQ1 when leaving ulence flats bar, kUnLoad is called with just one argument (FIXME?)
     { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "Ioi*",                 NULL,            NULL },
     { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "ii*",                  NULL,            kDisposeScript_workarounds },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL,            NULL },
