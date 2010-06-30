@@ -346,9 +346,11 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	if (!n->succ.isNull())
 		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
-	// Erase references to the predecessor and successor nodes
+	// Erase the node itself, as the game might reference it
+	// again before the GC is invoked
 	n->pred = NULL_REG;
 	n->succ = NULL_REG;
+	n->value = NULL_REG;
 
 	return make_reg(0, 1); // Signal success
 }
