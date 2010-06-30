@@ -271,9 +271,8 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (argc == 4)	// Torin's Passage
-		// TODO: Find out what the 4th parameter is
-		warning("kAddAfter with 4 params called, 4th param is %04x:%04x", PRINT_REG(argv[3]));
+	if (argc == 4)
+		newnode->key = argv[3];
 
 	if (firstnode) { // We're really appending after
 		reg_t oldnext = firstnode->succ;
