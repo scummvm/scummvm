@@ -46,8 +46,6 @@ public:
 	virtual void toggleMouseGrab();
 
 protected:
-	virtual void preprocessEvents(SDL_Event *event) {}
-
 	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
 	// I am keeping the rest of the code in for now, since the joystick
 	// code (or rather, "hack") uses it, too.
@@ -55,19 +53,24 @@ protected:
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
-
 	KbdMouse _km;
 
 	// Scroll lock state - since SDL doesn't track it
 	bool _scrollLock;
 	
-	// joystick
+	// Joystick
 	SDL_Joystick *_joystick;
 
+	int _lastScreenID;
+
+	// Pre process an event before it is dispatched.
+	virtual void preprocessEvents(SDL_Event *event) {}
+
+	// Dispatchs SDL events for each handler.
 	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
 
 	// Handlers for specific SDL events, called by pollEvent.
-	// This way, if a backend inherits fromt the SDL backend, it can
+	// This way, if a managers inherits fromt this SDL events manager, it can
 	// change the behavior of only a single event, without having to override all
 	// of pollEvent.
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
@@ -84,7 +87,8 @@ protected:
 	virtual void handleKbdMouse();
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
-	int _lastScreenID;
+	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 };
 
 #endif

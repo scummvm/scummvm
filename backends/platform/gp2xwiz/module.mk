@@ -1,10 +1,9 @@
 MODULE := backends/platform/gp2xwiz
 
 MODULE_OBJS := \
-	gp2xwiz-events.o \
-	gp2xwiz-graphics.o \
 	gp2xwiz-hw.o \
-	gp2xwiz-main.o
+	gp2xwiz-main.o \
+	gp2xwiz-sdl.o
 
 MODULE_DIRS += \
 	backends/platform/gp2xwiz/ 

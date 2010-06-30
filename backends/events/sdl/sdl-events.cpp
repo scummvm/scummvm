@@ -55,23 +55,22 @@ SdlEventManager::SdlEventManager(Common::EventSource *boss)
 	_lastScreenID(0),
 	DefaultEventManager(boss) {
 
-	// reset mouse state
+	// Reset mouse state
 	memset(&_km, 0, sizeof(_km));
 
 	int joystick_num = ConfMan.getInt("joystick_num");
-
 	if (joystick_num > -1) {
+		// Initialize SDL joystick subsystem
 		if (SDL_InitSubSystem(SDL_INIT_JOYSTICK) == -1) {
 			error("Could not initialize SDL: %s", SDL_GetError());
 		}
-	}
 
-	// enable joystick
-	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		printf("Using joystick: %s\n", SDL_JoystickName(0));
-		_joystick = SDL_JoystickOpen(joystick_num);
+		// Enable joystick
+		if (SDL_NumJoysticks() > 0) {
+			printf("Using joystick: %s\n", SDL_JoystickName(0));
+			_joystick = SDL_JoystickOpen(joystick_num);
+		}
 	}
-
 }
 
 SdlEventManager::~SdlEventManager() {
@@ -79,7 +78,7 @@ SdlEventManager::~SdlEventManager() {
 		SDL_JoystickClose(_joystick);
 }
 
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
+int SdlEventManager::mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 	if (key >= SDLK_F1 && key <= SDLK_F9) {
 		return key - SDLK_F1 + Common::ASCII_F1;
 	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
@@ -177,7 +176,7 @@ void SdlEventManager::handleKbdMouse() {
 	}
 }
 
-static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void SdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 	event.kbd.flags = 0;
 
@@ -203,8 +202,6 @@ static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 }
 
 bool SdlEventManager::pollSdlEvent(Common::Event &event) {
-	SDL_Event ev;
-
 	handleKbdMouse();
 
 	// If the screen changed, send an Common::EVENT_SCREEN_CHANGED
@@ -215,6 +212,7 @@ bool SdlEventManager::pollSdlEvent(Common::Event &event) {
 		return true;
 	}
 
+	SDL_Event ev;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
 		if (dispatchSDLEvent(ev, event))
@@ -484,7 +482,7 @@ bool SdlEventManager::handleJoyAxisMotion(SDL_Event &ev, Common::Event &event) {
 
 	if ( ev.jaxis.axis == JOY_XAXIS) {
 #ifdef JOY_ANALOG
-		_km.x_vel = axis/2000;
+		_km.x_vel = axis / 2000;
 		_km.x_down_count = 0;
 #else
 		if (axis != 0) {

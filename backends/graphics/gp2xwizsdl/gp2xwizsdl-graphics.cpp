@@ -23,15 +23,14 @@
  *
  */
 
-#include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
+#ifndef GP2XWIZ
+
+#include "backends/graphics/gp2xwizsdl/gp2xwizsdl-graphics.h"
+#include "backends/events/gp2xwizsdl/gp2xwizsdl-events.h"
 
 #include "common/mutex.h"
-#include "graphics/font.h"
-#include "graphics/fontman.h"
-#include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/scaler/downscaler.h"
-#include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
@@ -39,16 +38,15 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
-
-const OSystem::GraphicsMode *OSystem_GP2XWIZ::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *GP2XWIZSdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
-int OSystem_GP2XWIZ::getDefaultGraphicsMode() const {
+int GP2XWIZSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
 
-bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
+bool GP2XWIZSdlGraphicsManager::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
 
 	assert(_transactionMode == kTransactionActive);
@@ -82,7 +80,7 @@ bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
 	return true;
 }
 
-void OSystem_GP2XWIZ::setGraphicsModeIntern() {
+void GP2XWIZSdlGraphicsManager::setGraphicsModeIntern() {
 	Common::StackLock lock(_graphicsMutex);
 	ScalerProc *newScalerProc = 0;
 
@@ -111,8 +109,7 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 	blitCursor();
 }
 
-
-void OSystem_GP2XWIZ::initSize(uint w, uint h) {
+void GP2XWIZSdlGraphicsManager::initSize(uint w, uint h) {
 	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
@@ -124,13 +121,13 @@ void OSystem_GP2XWIZ::initSize(uint w, uint h) {
 	if (w > 320 || h > 240){
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		toggleMouseGrab();
+		((GP2XWIZSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;
 }
 
-bool OSystem_GP2XWIZ::loadGFXMode() {
+bool GP2XWIZSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = 320;
 	_videoMode.overlayHeight = 240;
 	_videoMode.fullscreen = true;
@@ -138,10 +135,10 @@ bool OSystem_GP2XWIZ::loadGFXMode() {
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
 		_videoMode.aspectRatioCorrection = false;
 
-	OSystem_SDL::loadGFXMode();
+	return SdlGraphicsManager::loadGFXMode();
 }
 
-void OSystem_GP2XWIZ::drawMouse() {
+void GP2XWIZSdlGraphicsManager::drawMouse() {
 	if (!_mouseVisible || !_mouseSurface) {
 		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
 		return;
@@ -207,7 +204,7 @@ void OSystem_GP2XWIZ::drawMouse() {
 	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
-void OSystem_GP2XWIZ::undrawMouse() {
+void GP2XWIZSdlGraphicsManager::undrawMouse() {
 	const int x = _mouseBackup.x;
 	const int y = _mouseBackup.y;
 
@@ -225,7 +222,7 @@ void OSystem_GP2XWIZ::undrawMouse() {
 	}
 }
 
-void OSystem_GP2XWIZ::internUpdateScreen() {
+void GP2XWIZSdlGraphicsManager::internUpdateScreen() {
 	SDL_Surface *srcSurf, *origSurf;
 	int height, width;
 	ScalerProc *scalerProc;
@@ -419,28 +416,30 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-void OSystem_GP2XWIZ::showOverlay() {
+void GP2XWIZSdlGraphicsManager::showOverlay() {
 	if (_videoMode.mode == GFX_HALF){
 		_mouseCurState.x = _mouseCurState.x / 2;
 		_mouseCurState.y = _mouseCurState.y / 2;
 	}
-	OSystem_SDL::showOverlay();
+	SdlGraphicsManager::showOverlay();
 }
 
-void OSystem_GP2XWIZ::hideOverlay() {
+void GP2XWIZSdlGraphicsManager::hideOverlay() {
 	if (_videoMode.mode == GFX_HALF){
 		_mouseCurState.x = _mouseCurState.x * 2;
 		_mouseCurState.y = _mouseCurState.y * 2;
 	}
-	OSystem_SDL::hideOverlay();
+	SdlGraphicsManager::hideOverlay();
 }
 
-void OSystem_GP2XWIZ::warpMouse(int x, int y) {
+void GP2XWIZSdlGraphicsManager::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
 		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
 			x = x / 2;
 			y = y / 2;
 		}
 	}
-	OSystem_SDL::warpMouse(x, y);
+	SdlGraphicsManager::warpMouse(x, y);
 }
+
+#endif

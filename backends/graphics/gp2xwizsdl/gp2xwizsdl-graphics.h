@@ -23,20 +23,36 @@
  *
  */
 
-#ifndef PLATFORM_SDL_GP2XWIZ_H
-#define PLATFORM_SDL_GP2XWIZ_H
+#ifndef BACKENDS_GRAPHICS_SDL_GP2XWIZ_H
+#define BACKENDS_GRAPHICS_SDL_GP2XWIZ_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
+// FIXME: For now keep hacks in this header to save polluting the SDL backend.
+enum {
+    GFX_HALF = 12
+};
 
-class OSystem_GP2XWIZ : public OSystem_POSIX {
+class GP2XWIZSdlGraphicsManager : public SdlGraphicsManager {
 public:
-	virtual void initBackend();
-	virtual void quit();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority);
+	virtual void setGraphicsModeIntern();
+	virtual bool setGraphicsMode(int mode);
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+
+	virtual void initSize(uint w, uint h);
+
+	virtual void internUpdateScreen();
+
+	virtual bool loadGFXMode();
+
+	virtual void drawMouse();
+	virtual void undrawMouse();
+
+	virtual void showOverlay();
+	virtual void hideOverlay();
+
+	virtual void warpMouse(int x, int y);
 };
 
 #endif

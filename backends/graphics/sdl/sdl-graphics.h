@@ -73,14 +73,14 @@ public:
 	SdlGraphicsManager();
 	~SdlGraphicsManager();
 
-	bool hasFeature(OSystem::Feature f);
-	void setFeatureState(OSystem::Feature f, bool enable);
-	bool getFeatureState(OSystem::Feature f);
+	virtual bool hasFeature(OSystem::Feature f);
+	virtual void setFeatureState(OSystem::Feature f, bool enable);
+	virtual bool getFeatureState(OSystem::Feature f);
 
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(int mode);
-	int getGraphicsMode() const;
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
@@ -88,52 +88,52 @@ public:
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
-	void beginGFXTransaction();
-	OSystem::TransactionError endGFXTransaction();
+	virtual void beginGFXTransaction();
+	virtual OSystem::TransactionError endGFXTransaction();
 	
 	virtual int16 getHeight();
 	virtual int16 getWidth();
-	void setPalette(const byte *colors, uint start, uint num);
-	void grabPalette(byte *colors, uint start, uint num);
+	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
-	void fillScreen(uint32 col);
-	void updateScreen();
-	void setShakePos(int shakeOffset);
-	void setFocusRectangle(const Common::Rect& rect) {}
-	void clearFocusRectangle() {}
+	virtual void fillScreen(uint32 col);
+	virtual void updateScreen();
+	virtual void setShakePos(int shakeOffset);
+	virtual void setFocusRectangle(const Common::Rect& rect) {}
+	virtual void clearFocusRectangle() {}
 
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
-	void clearOverlay();
-	void grabOverlay(OverlayColor *buf, int pitch);
-	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual void clearOverlay();
+	virtual void grabOverlay(OverlayColor *buf, int pitch);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight() { return _videoMode.overlayHeight; }
 	virtual int16 getOverlayWidth() { return _videoMode.overlayWidth; }
 
-	bool showMouse(bool visible);
+	virtual bool showMouse(bool visible);
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
-	void setCursorPalette(const byte *colors, uint start, uint num);
-	void disableCursorPalette(bool disable) {
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual void disableCursorPalette(bool disable) {
 		_cursorPaletteDisabled = disable;
 		blitCursor();
 	}
 	
 #ifdef USE_OSD
-	void displayMessageOnOSD(const char *msg);
+	virtual void displayMessageOnOSD(const char *msg);
 #endif
 
-	void forceFullRedraw();
+	virtual void forceFullRedraw();
 
-	bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
-	bool isScalerHotkey(const Common::Event &event);
+	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
+	virtual bool isScalerHotkey(const Common::Event &event);
 
-	void adjustMouseEvent(Common::Event &event);
-	void setMousePos(int x, int y);
-	void toggleFullScreen();
+	virtual void adjustMouseEvent(Common::Event &event);
+	virtual void setMousePos(int x, int y);
+	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
 
 protected:
@@ -299,10 +299,10 @@ protected:
 	virtual void unloadGFXMode(); // overloaded by CE backend
 	virtual bool hotswapGFXMode(); // overloaded by CE backend
 
-	void setFullscreenMode(bool enable);
-	void setAspectRatioCorrection(bool enable);
+	virtual void setFullscreenMode(bool enable);
+	virtual void setAspectRatioCorrection(bool enable);
 
-	int effectiveScreenHeight() const;
+	virtual int effectiveScreenHeight() const;
 };
 
 #endif
