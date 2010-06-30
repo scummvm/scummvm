@@ -265,15 +265,11 @@ GuiResourceId GfxView::getResourceId() const {
 }
 
 int16 GfxView::getWidth(int16 loopNo, int16 celNo) const {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
-	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
+	return _loopCount ? getCelInfo(loopNo, celNo)->width : 0;
 }
 
 int16 GfxView::getHeight(int16 loopNo, int16 celNo) const {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	celNo = CLIP<int16>(celNo, 0, _loop[loopNo].celCount - 1);
-	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
+	return _loopCount ? getCelInfo(loopNo, celNo)->height : 0;
 }
 
 const CelInfo *GfxView::getCelInfo(int16 loopNo, int16 celNo) const {
