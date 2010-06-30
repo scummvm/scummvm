@@ -252,7 +252,7 @@ struct SciKernelMapEntry {
 //    name,                        version/platform,         signature,              sub-signatures,  workarounds
 static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Load),              SIG_EVERYWHERE,           "iii*",                 NULL,            NULL },
-    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "ii*",                  NULL,            kUnLoad_workarounds },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "iRi*",                 NULL,            kUnLoad_workarounds },
     { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "Ioi*",                 NULL,            NULL },
     { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "ii*",                  NULL,            kDisposeScript_workarounds },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL,            NULL },
