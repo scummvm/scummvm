@@ -115,11 +115,25 @@ enum {
 /* Generic description: */
 typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);
 
+struct SciWorkaroundEntry {
+	SciGameId gameId;
+	int scriptNr;
+	int16 inheritanceLevel;
+	const char *objectName;
+	const char *methodName;
+	int localCallOffset;
+	int index;
+	reg_t newValue;
+};
+
+#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0, { 0,   0 } }
+
 struct KernelFuncWithSignature {
 	KernelFunc *func; /**< The actual function */
-	char *signature;  /**< KernelFunc signature */
 	Common::String origName; /**< Original name, in case we couldn't map it */
 	bool isDummy;
+	char *signature;
+	const SciWorkaroundEntry *workarounds;
 };
 
 enum AutoDetectedFeatures {

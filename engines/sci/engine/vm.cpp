@@ -263,35 +263,100 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
-struct UninitializedReadWorkaround {
-	SciGameId gameId;
+struct SciTrackOriginReply {
 	int scriptNr;
-	int16 inheritanceLevel;
-	const char *objectName;
-	const char *methodName;
+	Common::String objectName;
+	Common::String methodName;
 	int localCallOffset;
-	int index;
-	uint16 newValue;
 };
 
-//    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
-static const UninitializedReadWorkaround uninitializedReadWorkarounds[] = {
-	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, 0xf }, // is used as priority for game menu
-	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0,   0 }, // age check room
-	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, 0xf }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0,   0 }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-	{ GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3,   1 }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-	{ GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0,   0 }, // elements puzzle, gets used before super TextIcon
-	{ GID_KQ5,             0,  0,                   "", "export 29",      -1,    3,   0 }, // called when playing harp for the harpies, is used for kDoAudio
-	{ GID_KQ5,            25,  0,              "rm025", "doit",           -1,    0,   0 }, // inside witch forest, where the walking rock is
-	{ GID_SQ1,           703,  0,                   "", "export 1",       -1,    0,   0 }, // sub that's called from several objects while on sarien battle cruiser
-	{ GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0,   0 }, // export 1, but called locally (when shooting at aliens)
-	{ GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000,   1 }, // sq4cd: method returns this to the caller
-	{ GID_SQ6,             0,  0,               "Game", "init",           -1,    2,   0 },
-	{ GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0,   0 },
-	{ (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0,   0 }
+static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, bool &workaroundFound, SciTrackOriginReply *trackOrigin) {
+	EngineState *state = g_sci->getEngineState();
+	ExecStack *lastCall = state->xs;
+	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
+	int curScriptNr = local_script->getScriptNumber();
+
+	if (lastCall->debugLocalCallOffset != -1) {
+		// if lastcall was actually a local call search back for a real call
+		Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
+		while (callIterator != state->_executionStack.begin()) {
+			callIterator--;
+			ExecStack loopCall = *callIterator;
+			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
+				lastCall->debugSelector = loopCall.debugSelector;
+				lastCall->debugExportId = loopCall.debugExportId;
+				break;
+			}
+		}
+	}
+
+	Common::String curObjectName = state->_segMan->getObjectName(lastCall->sendp);
+	Common::String curMethodName;
+	const SciGameId gameId = g_sci->getGameId();
+
+	if (lastCall->type == EXEC_STACK_TYPE_CALL) {
+		if (lastCall->debugSelector != -1) {
+			curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
+		} else if (lastCall->debugExportId != -1) {
+			curObjectName = "";
+			curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
+		}
+	}
+
+	if (workaroundList) {
+		// Search if there is a workaround for this one
+		const SciWorkaroundEntry *workaround;
+		int16 inheritanceLevel = 0;
+		Common::String searchObjectName = curObjectName;
+		reg_t searchObject = lastCall->sendp;
+		do {
+			workaround = workaroundList;
+			while (workaround->objectName) {
+				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->inheritanceLevel == inheritanceLevel) && (workaround->objectName == searchObjectName)
+						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
+					// Workaround found
+					workaroundFound = true;
+					return workaround->newValue;
+				}
+				workaround++;
+			}
+
+			// Go back to the parent
+			inheritanceLevel++;
+			searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
+			if (!searchObject.isNull())
+				searchObjectName = state->_segMan->getObjectName(searchObject);
+		} while (!searchObject.isNull()); // no parent left?
+	}
+
+	// give caller origin data
+	trackOrigin->objectName = curObjectName;
+	trackOrigin->methodName = curMethodName;
+	trackOrigin->scriptNr = curScriptNr;
+	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
+
+	workaroundFound = false;
+	return make_reg(0xFFFF, 0xFFFF);
+}
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
+	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
+	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
+	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
+	{ GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
+	{ GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
+	{ GID_KQ5,             0,  0,                   "", "export 29",      -1,    3, { 0,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
+	{ GID_KQ5,            25,  0,              "rm025", "doit",           -1,    0, { 0,   0 } }, // inside witch forest, where the walking rock is
+	{ GID_SQ1,           703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
+	{ GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
+	{ GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
+	{ GID_SQ6,             0,  0,                "SQ6", "init",           -1,    2, { 0,   0 } },
+	{ GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0, { 0,   0 } },
+	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
@@ -299,61 +364,11 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (type == VAR_TEMP && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
-			EngineState *state = g_sci->getEngineState();
-			ExecStack *lastCall = state->xs;
-			Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
-			int curScriptNr = local_script->getScriptNumber();
-
-			if (lastCall->debugLocalCallOffset != -1) {
-				// if lastcall was actually a local call search back for a real call
-				Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
-				while (callIterator != state->_executionStack.begin()) {
-					callIterator--;
-					ExecStack loopCall = *callIterator;
-					if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
-						lastCall->debugSelector = loopCall.debugSelector;
-						lastCall->debugExportId = loopCall.debugExportId;
-						break;
-					}
-				}
-			}
-
-			Common::String curObjectName = state->_segMan->getObjectName(lastCall->sendp);
-			Common::String curMethodName;
-			const SciGameId gameId = g_sci->getGameId();
-
-			if (lastCall->type == EXEC_STACK_TYPE_CALL) {
-				if (lastCall->debugSelector != -1) {
-					curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
-				} else if (lastCall->debugExportId != -1) {
-					curObjectName = "";
-					curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
-				}
-			}
-
-			// Search if this is a known uninitialized read
-			const UninitializedReadWorkaround *workaround;
-			int16 inheritanceLevel = 0;
-			Common::String searchObjectName = curObjectName;
-			reg_t searchObject = lastCall->sendp;
-			do {
-				workaround = uninitializedReadWorkarounds;
-				while (workaround->objectName) {
-					if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->inheritanceLevel == inheritanceLevel) && (workaround->objectName == searchObjectName)
-							&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
-						// Workaround found
-						r[index] = make_reg(0, workaround->newValue);
-						return r[index];
-					}
-					workaround++;
-				}
-				// Go back to the parent
-				inheritanceLevel++;
-				searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
-				if (!searchObject.isNull())
-					searchObjectName = state->_segMan->getObjectName(searchObject);
-			} while (!searchObject.isNull()); // no parent left?
-			error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, curObjectName.c_str(), curMethodName.c_str(), curScriptNr, lastCall->debugLocalCallOffset);
+			bool workaroundFound;
+			SciTrackOriginReply originReply;
+			r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, workaroundFound, &originReply);
+			if (!workaroundFound)
+				error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		return r[index];
 	} else
@@ -770,7 +785,16 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 
 	if (kernelFunc.signature
 			&& !g_sci->getKernel()->signatureMatch(kernelFunc.signature, argc, s->xs->sp + 1)) {
-		error("[VM] Invalid arguments to kernel call k%s (funcNr %x)", g_sci->getKernel()->getKernelName(kernelFuncNr).c_str(), kernelFuncNr);
+		// signature mismatch, check if a workaround is available
+		bool workaroundFound;
+		SciTrackOriginReply originReply;
+		reg_t workaround;
+		workaround = trackOriginAndFindWorkaround(0, kernelFunc.workarounds, workaroundFound, &originReply);
+		if (!workaroundFound)
+			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", g_sci->getKernel()->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
+		if (!workaround.segment)
+			return;
 	}
 
 	reg_t *argv = s->xs->sp + 1;

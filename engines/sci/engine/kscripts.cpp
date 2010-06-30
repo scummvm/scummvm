@@ -228,10 +228,6 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	int script = argv[0].offset;
 
-	// Work around QfG1 graveyard bug
-	if (argv[0].segment)
-		return s->r_acc;
-
 	SegmentId id = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(id);
 	if (scr) {

@@ -206,6 +206,12 @@ static const char *s_defaultKernelNames[] = {
 // i* -> optional multiple integers
 // .* -> any parameters afterwards (or none)
 
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
+static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
+	{ GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // parameter 0 is an object when leaving graveyard
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 struct SciKernelMapEntry {
 	const char *name;
 	KernelFunc *function;
@@ -216,7 +222,7 @@ struct SciKernelMapEntry {
 
 	const char *signature;
 	const char *subSignatures; // placeholder
-	const char *workarounds; // placeholder
+	const SciWorkaroundEntry *workarounds;
 };
 
 #define SIG_SCIALL  SCI_VERSION_NONE, SCI_VERSION_NONE
@@ -243,7 +249,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
 	// ^^ FIXME - Work around SQ1 bug, when exiting the Ulence flats bar
     { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "Ioi*",                 NULL,            NULL },
-    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "Oii*",                 NULL,            NULL },
+    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "ii*",                  NULL,            kDisposeScript_workarounds },
 	// ^^ FIXME - Work around QfG1 bug
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                    NULL,            NULL },
@@ -664,6 +670,7 @@ void Kernel::mapFunctions() {
 			if (kernelMap->function) {
 				_kernelFuncs[functNr].func = kernelMap->function;
 				_kernelFuncs[functNr].signature = compileKernelSignature(kernelMap->signature);
+				_kernelFuncs[functNr].workarounds = kernelMap->workarounds;
 				_kernelFuncs[functNr].isDummy = false;
 				++mapped;
 			} else {
