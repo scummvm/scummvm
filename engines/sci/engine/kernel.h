@@ -32,7 +32,6 @@
 #include "common/str-array.h"
 
 #include "sci/engine/selector.h"
-#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
 
@@ -267,17 +266,6 @@ private:
 	
 	const Common::String _invalid;
 };
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-/******************** Misc functions ********************/
-
-/**
- * Get all sound events, apply their changes to the heap.
- */
-void process_sound_events(EngineState *s);
-
-/******************** Constants ********************/
-#endif
 
 /* Maximum length of a savegame name (including terminator character). */
 #define SCI_MAX_SAVENAME_LENGTH 0x24

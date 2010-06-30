@@ -81,10 +81,6 @@ EngineState::~EngineState() {
 }
 
 void EngineState::reset(bool isRestoring) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	sfx_init_flags = 0;
-#endif
-
 	if (!isRestoring) {
 		_memorySegmentSize = 0;
 

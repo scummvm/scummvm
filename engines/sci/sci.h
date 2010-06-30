@@ -42,9 +42,6 @@ struct ADGameDescription;
  */
 namespace Sci {
 
-// Uncomment this to use old music functions
-//#define USE_OLD_MUSIC_FUNCTIONS
-
 struct EngineState;
 class Vocabulary;
 class ResourceManager;
@@ -320,18 +317,6 @@ private:
 	 * @param[in] s	The state to operate on
 	 */
 	void exitGame();
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	/**
-	 * Initializes the sound part of a SCI game
-	 * This function may only be called if game_init() did not initialize
-	 * the sound data.
-	 * @param[in] s				The state to initialize the sound in
-	 * @param[in] sound_flags	Flags to pass to the sound subsystem
-	 * @param[in] soundVersion	sound-version that got detected during game init
-	 */
-	void initGameSound(int sound_flags, SciVersion soundVersion);
-#endif
 
 	void initStackBaseWithSelector(Selector selector);
 

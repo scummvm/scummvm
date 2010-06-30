@@ -222,10 +222,6 @@ Common::Error SciEngine::run() {
 	_kernel->loadKernelNames(_features);
 	_soundCmd = new SoundCommandParser(_resMan, segMan, _kernel, _audio, _features->detectDoSoundType());
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	initGameSound(0, _features->detectDoSoundType());
-#endif
-
 	syncSoundSettings();
 
 	// Initialize all graphics related subsystems
@@ -313,11 +309,6 @@ bool SciEngine::initGame() {
 
 	srand(g_system->getMillis()); // Initialize random number generator
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (_gamestate->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
-		initGameSound(0, _features->detectDoSoundType());
-#endif
-
 	// Load game language into printLang property of game object
 	setSciLanguage();
 
@@ -399,18 +390,6 @@ void SciEngine::initGraphics() {
 	_gfxPalette->setDefault();
 }
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-
-void SciEngine::initGameSound(int sound_flags, SciVersion soundVersion) {
-	if (getSciVersion() > SCI_VERSION_0_LATE)
-	 sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
-
-	_gamestate->sfx_init_flags = sound_flags;
-	_gamestate->_sound.sfx_init(_resMan, sound_flags, soundVersion);
-}
-
-#endif
-
 void SciEngine::initStackBaseWithSelector(Selector selector) {
 	_gamestate->stack_base[0] = make_reg(0, (uint16)selector);
 	_gamestate->stack_base[1] = NULL_REG;
@@ -438,9 +417,6 @@ void SciEngine::runGame() {
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-			_gamestate->_sound.sfx_reset_player();
-#endif
 			initStackBaseWithSelector(SELECTOR(play));
 			_gamestate->gameWasRestarted = true;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
@@ -455,14 +431,8 @@ void SciEngine::runGame() {
 void SciEngine::exitGame() {
 	if (_gamestate->abortScriptProcessing != kAbortLoadGame) {
 		_gamestate->_executionStack.clear();
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-		_gamestate->_sound.sfx_exit();
-		// Reinit because some other code depends on having a valid state
-		initGameSound(SFX_STATE_FLAG_NOSOUND, _features->detectDoSoundType());
-#else
 		_audio->stopAllAudio();
 		g_sci->_soundCmd->clearPlayList();
-#endif
 	}
 
 	// TODO Free parser segment here
@@ -544,16 +514,12 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 }
 
 void SciEngine::pauseEngineIntern(bool pause) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	_gamestate->_sound.sfx_suspend(pause);
-#endif
 	_mixer->pauseAll(pause);
 }
 
 void SciEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	bool mute = false;
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
@@ -564,7 +530,6 @@ void SciEngine::syncSoundSettings() {
 		int vol =  (soundVolumeMusic + 1) * SoundCommandParser::kMaxSciVolume / Audio::Mixer::kMaxMixerVolume;
 		g_sci->_soundCmd->setMasterVolume(vol);
 	}
-#endif
 }
 
 } // End of namespace Sci

@@ -41,9 +41,6 @@ namespace Common {
 
 #include "sci/parser/vocabulary.h"
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/core.h"
-#endif
 #include "sci/sound/soundcmd.h"
 
 namespace Sci {
@@ -104,11 +101,6 @@ public:
 	SegManager *_segMan; /**< The segment manager */
 
 	/* Non-VM information */
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SfxState _sound; /**< sound subsystem */
-	int sfx_init_flags; /**< flags the sfx subsystem was initialised with */
-#endif
 
 	uint32 gameStartTime; /**< The time at which the interpreter was started */
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */

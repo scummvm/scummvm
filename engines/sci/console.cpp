@@ -36,13 +36,8 @@
 #include "sci/engine/savegame.h"
 #include "sci/engine/gc.h"
 #include "sci/engine/features.h"
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/songlib.h"	// for SongLibrary
-#include "sci/sound/iterator/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
-#else
 #include "sci/sound/midiparser_sci.h"
 #include "sci/sound/music.h"
-#endif
 #include "sci/sound/drivers/mididriver.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/screen.h"
@@ -215,19 +210,11 @@ Console::~Console() {
 }
 
 void Console::preEnter() {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (_engine->_gamestate)
-		_engine->_gamestate->_sound.sfx_suspend(true);
-#endif
 	if (g_sci && g_sci->_soundCmd)
 		g_sci->_soundCmd->pauseAll(true);
 }
 
 void Console::postEnter() {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (_engine->_gamestate)
-		_engine->_gamestate->_sound.sfx_suspend(false);
-#endif
 	if (g_sci && g_sci->_soundCmd)
 		g_sci->_soundCmd->pauseAll(false);
 
@@ -846,7 +833,6 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 }
 
 bool Console::cmdShowInstruments(int argc, const char **argv) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	int songNumber = -1;
 
 	if (argc == 2)
@@ -1004,7 +990,6 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		DebugPrintf("\n\n");
 	}
 
-#endif
 	return true;
 }
 
@@ -1647,23 +1632,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 
 bool Console::cmdSongLib(int argc, const char **argv) {
 	DebugPrintf("Song library:\n");
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	Song *seeker = _engine->_gamestate->_sound._songlib._lib;
-
-	do {
-		DebugPrintf("    %p", (void *)seeker);
-
-		if (seeker) {
-			DebugPrintf("[%04lx,p=%d,s=%d]->", seeker->_handle, seeker->_priority, seeker->_status);
-			seeker = seeker->_next;
-		}
-		DebugPrintf("\n");
-	} while (seeker);
-	DebugPrintf("\n");
-#else
 	g_sci->_soundCmd->printPlayList(this);
-#endif
 
 	return true;
 }
@@ -1726,19 +1695,6 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 		return true;
 	}
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-
-	if (id.segment) {
-		SegManager *segMan = _engine->_gamestate->_segMan;	// for writeSelectorValue
-		_engine->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		_engine->_gamestate->_sound.sfx_remove_song(handle);
-		writeSelectorValue(segMan, id, SELECTOR(signal), SIGNAL_OFFSET);
-		writeSelectorValue(segMan, id, SELECTOR(nodePtr), 0);
-		writeSelectorValue(segMan, id, SELECTOR(handle), 0);
-	}
-#else
-
 	Common::String newState = argv[2];
 	newState.toLowercase();
 
@@ -1748,15 +1704,12 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 		g_sci->_soundCmd->stopSound(id);
 	else
 		DebugPrintf("New state can either be 'play' or 'stop'");
-#endif
 
 	return true;
 }
 
 bool Console::cmdStopAllSounds(int argc, const char **argv) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	g_sci->_soundCmd->stopAllSounds();
-#endif
 
 	DebugPrintf("All sounds have been stopped\n");
 	return true;
@@ -1770,36 +1723,6 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	Resource *song = _engine->getResMan()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
-	SongIterator *songit;
-	Audio::AudioStream *data;
-
-	if (!song) {
-		DebugPrintf("Not a sound resource!\n");
-		return true;
-	}
-
-	songit = songit_new(song->data, song->size, SCI_SONG_ITERATOR_TYPE_SCI0, 0xcaffe /* What do I care about the ID? */);
-
-	if (!songit) {
-		DebugPrintf("Could not convert to song iterator!\n");
-		return true;
-	}
-
-	data = songit->getAudioStream();
-	if (data) {
-		// TODO
-/*
-		DebugPrintf("\nIs sample (encoding %dHz/%s/%04x)", data->conf.rate, (data->conf.stereo) ?
-		          ((data->conf.stereo == SFX_PCM_STEREO_LR) ? "stereo-LR" : "stereo-RL") : "mono", data->conf.format);
-*/
-		delete data;
-	} else
-		DebugPrintf("Valid song, but not a sample.\n");
-
-	delete songit;
-#else
 	int16 number = atoi(argv[1]);
 
 	if (!_engine->getResMan()->testResource(ResourceId(kResourceTypeSound, number))) {
@@ -1823,7 +1746,6 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 
 	DebugPrintf("Sample size: %d, sample rate: %d, channels: %d, digital channel number: %d\n",
 			track->digitalSampleSize, track->digitalSampleRate, track->channelCount, track->digitalChannelNr);
-#endif
 
 	return true;
 }

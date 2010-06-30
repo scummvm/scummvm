@@ -26,15 +26,11 @@
 #ifndef SCI_MUSIC_H
 #define SCI_MUSIC_H
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 #include "common/serializer.h"
-#endif
 #include "common/mutex.h"
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
-//#include "sound/mididrv.h"
-//#include "sound/midiparser.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
@@ -55,11 +51,7 @@ enum SoundStatus {
 class MidiParser_SCI;
 class SegManager;
 
-class MusicEntry
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	: public Common::Serializable
-#endif
-{
+class MusicEntry : public Common::Serializable {
 public:
 	// Do not get these directly for the sound objects!
 	// It's a bad idea, as the sound code (i.e. the SciMusic
@@ -96,9 +88,6 @@ public:
 
 	Audio::Mixer::SoundType soundType;
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-//protected:
-#endif
 	MidiParser_SCI *pMidiParser;
 
 	// TODO: We need to revise how we store the different
@@ -114,19 +103,13 @@ public:
 	void doFade();
 	void onTimer();
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-#endif
 };
 
 typedef Common::Array<MusicEntry *> MusicList;
 typedef Common::Array<uint32> MidiCommandQueue;
 
-class SciMusic
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	: public Common::Serializable
-#endif
-{
+class SciMusic : public Common::Serializable {
 
 public:
 	SciMusic(SciVersion soundVersion);
@@ -193,9 +176,7 @@ public:
 
 	void setReverb(byte reverb);
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-#endif
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
 	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT

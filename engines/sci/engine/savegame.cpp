@@ -42,12 +42,7 @@
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
 #include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/core.h"
-#include "sci/sound/iterator/iterator.h"
-#else
 #include "sci/sound/music.h"
-#endif
 
 #include "gui/message.h"
 
@@ -61,39 +56,10 @@ namespace Sci {
 const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-// from ksound.cpp:
-SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
-#endif
-
-
 #pragma mark -
 
 // TODO: Many of the following sync_*() methods should be turned into member funcs
 // of the classes they are syncing.
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
-
-static void syncSong(Common::Serializer &s, Song &obj) {
-	s.syncAsSint32LE(obj._handle);
-	s.syncAsSint32LE(obj._resourceNum);
-	s.syncAsSint32LE(obj._priority);
-	s.syncAsSint32LE(obj._status);
-	s.syncAsSint32LE(obj._restoreBehavior);
-	s.syncAsSint32LE(obj._restoreTime);
-	s.syncAsSint32LE(obj._loops);
-	s.syncAsSint32LE(obj._hold);
-
-	if (s.isLoading()) {
-		obj._it = 0;
-		obj._delay = 0;
-		obj._next = 0;
-		obj._nextPlaying = 0;
-		obj._nextStopping = 0;
-	}
-}
-#else
 
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
@@ -148,7 +114,6 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		pStreamAud = 0;
 	}
 }
-#endif
 
 // Experimental hack: Use syncWithSerializer to sync. By default, this assume
 // the object to be synced is a subclass of Serializable and thus tries to invoke
@@ -380,11 +345,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 
 	syncArray<Class>(s, _segMan->_classTable);
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	sync_songlib(s, _sound._songlib);
-#else
 	g_sci->_soundCmd->syncPlayList(s);
-#endif
 }
 
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
@@ -620,30 +581,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 
 #pragma mark -
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
-	int songcount = 0;
-	if (s.isSaving())
-		songcount = obj.countSongs();
-	s.syncAsUint32LE(songcount);
-
-	if (s.isLoading()) {
-		obj._lib = 0;
-		while (songcount--) {
-			Song *newsong = new Song;
-			syncSong(s, *newsong);
-			obj.addSong(newsong);
-		}
-	} else {
-		Song *seeker = obj._lib;
-		while (seeker) {
-			seeker->_restoreTime = seeker->_it->getTimepos();
-			syncSong(s, *seeker);
-			seeker = seeker->_next;
-		}
-	}
-}
-#else
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
@@ -692,16 +629,12 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 }
-#endif
 
 void SoundCommandParser::syncPlayList(Common::Serializer &s) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->saveLoadWithSerializer(s);
-#endif
 }
 
 void SoundCommandParser::reconstructPlayList(int savegame_version) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	Common::StackLock lock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -724,8 +657,6 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 			cmdPlaySound((*i)->soundObj, 0);
 		}
 	}
-
-#endif
 }
 
 #ifdef ENABLE_SCI32
@@ -819,42 +750,6 @@ void SegManager::reconstructClones() {
 	}	// end for
 }
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void reconstruct_sounds(EngineState *s) {
-	Song *seeker;
-	SongIteratorType it_type;
-
-	if (getSciVersion() > SCI_VERSION_01)
-		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
-	else
-		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;
-
-	seeker = s->_sound._songlib._lib;
-
-	while (seeker) {
-		SongIterator *base, *ff = 0;
-		int oldstatus;
-		SongIterator::Message msg;
-
-		base = ff = build_iterator(g_sci->getResMan(), seeker->_resourceNum, it_type, seeker->_handle);
-		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
-			ff = new_fast_forward_iterator(base, seeker->_restoreTime);
-		ff->init();
-
-		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_LOOPS(seeker->_loops));
-		songit_handle_message(&ff, msg);
-		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_HOLD(seeker->_hold));
-		songit_handle_message(&ff, msg);
-
-		oldstatus = seeker->_status;
-		seeker->_status = SOUND_STATUS_STOPPED;
-		seeker->_it = ff;
-		s->_sound.sfx_song_set_status(seeker->_handle, oldstatus);
-		seeker = seeker->_next;
-	}
-}
-#endif
-
 
 #pragma mark -
 
@@ -888,10 +783,6 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 }
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongLibrary temp;
-#endif
-
 	SavegameMetadata meta;
 
 	Common::Serializer ser(fh, 0);
@@ -943,20 +834,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	s->_sound.sfx_exit();
-#endif
-
 	// Now copy all current state information
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	temp = s->_sound._songlib;
-	s->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
-	s->sfx_init_flags = s->sfx_init_flags;
-	s->_sound._songlib.freeSounds();
-	s->_sound._songlib = temp;
-	s->_soundCmd->updateSfxState(&s->_sound);
-#endif
 
 	s->_segMan->reconstructStack(s);
 	s->_segMan->reconstructScripts(s);
@@ -969,15 +847,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameStartTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	s->_sound._it = NULL;
-	s->_sound._flags = s->_sound._flags;
-	s->_sound._song = NULL;
-	s->_sound._suspended = s->_sound._suspended;
-	reconstruct_sounds(s);
-#else
 	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
-#endif
 
 	// Message state:
 	s->_msgState = new MessageState(s->_segMan);

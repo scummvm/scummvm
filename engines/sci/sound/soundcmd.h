@@ -26,8 +26,6 @@
 #ifndef SCI_SOUNDCMD_H
 #define SCI_SOUNDCMD_H
 
-#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
-
 #include "common/list.h"
 #include "sci/engine/state.h"
 
@@ -53,10 +51,6 @@ public:
 		kMaxSciVolume = 15
 	};
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	void updateSfxState(SfxState *newState) { _state = newState; }
-#endif
-
 	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 	// Functions used for game state loading
@@ -76,7 +70,6 @@ public:
 	void printPlayList(Console *con);
 	void printSongInfo(reg_t obj, Console *con);
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	/**
 	 * Synchronizes the current state of the music list to the rest of the engine, so that
 	 * the changes that the sound thread makes to the music are registered with the engine
@@ -85,7 +78,6 @@ public:
 	 * by the engine scripts themselves, so the engine itself polls for changes to the music
 	 */
 	void updateSci0Cues();
-#endif
 
 private:
 	typedef Common::Array<MusicEntryCommand *> SoundCommandContainer;
@@ -93,12 +85,7 @@ private:
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	Kernel *_kernel;
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SfxState *_state;
-	int _midiCmd, _controller, _param;
-#else
 	SciMusic *_music;
-#endif
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
 	int _argc;
@@ -131,10 +118,6 @@ private:
 	void cmdSuspendSound(reg_t obj, int16 value);
 
 	void processStopSound(reg_t obj, int16 value, bool sampleFinishedPlaying);
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	void changeSoundStatus(reg_t obj, int newStatus);
-#endif
 };
 
 } // End of namespace Sci

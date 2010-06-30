@@ -67,9 +67,6 @@ MODULE_OBJS := \
 	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
-	sound/iterator/core.o \
-	sound/iterator/iterator.o \
-	sound/iterator/songlib.o \
 	video/seq_decoder.o
 	
 	
