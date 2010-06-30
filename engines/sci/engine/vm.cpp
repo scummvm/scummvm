@@ -605,6 +605,9 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1) {
 					// QFG1VGA has a script bug in the longSong object when invoking the
 					// loop selector, which doesn't affect gameplay, thus don't diplay it
+				} else if (!strcmp(objectName, "PuzPiece") && selector == 77 && g_sci->getGameId() == GID_CASTLEBRAIN) {
+					// Castle of Dr. Brain has a script bug in the PuzPiece object when invoking
+					// the value selector, which doesn't affect gameplay, thus don't display it
 				} else {
 					// Unknown script bug, show it. Usually these aren't fatal.
 					reg_t oldReg = *varp.getPointer(s->_segMan);
