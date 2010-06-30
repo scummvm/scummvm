@@ -796,7 +796,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernel->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-		if (!workaround.segment)
+		if (workaround.segment)
 			return;
 	}
 
