@@ -123,8 +123,8 @@ int DraciEngine::init() {
 	_itemImagesArchive = new BArchive(itemImagesPath);
 	_stringsArchive = new BArchive(stringsPath);
 
-	_soundsArchive = new SoundArchive(soundsPath, kSoundsFrequency);
-	_dubbingArchive = new SoundArchive(dubbingPath, kDubbingFrequency);
+	_soundsArchive = new LegacySoundArchive(soundsPath, kSoundsFrequency);
+	_dubbingArchive = new LegacySoundArchive(dubbingPath, kDubbingFrequency);
 	_sound = new Sound(_mixer);
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);

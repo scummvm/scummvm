@@ -47,28 +47,61 @@ struct SoundSample {
 	}
 };
 
+/**
+ * An abstract wrapper around archives of sound samples or dubbing.
+ */
 class SoundArchive {
 public:
-	SoundArchive(const Common::String &path, uint defaultFreq) :
+	SoundArchive() { }
+	virtual ~SoundArchive() { }
+
+	/**
+	 * Returns the number of sound samples in the archive.  Zero means that
+	 * a fake empty archive has been opened and the caller may consider
+	 * opening a different one, for example with compressed music.
+	 */
+	virtual uint size() const = 0;
+
+	/**
+	 * Checks whether there is an archive opened. Should be called before reading
+	 * from the archive to check whether opening of the archive has succeeded.
+	 */
+	virtual bool isOpen() const = 0;
+
+	/**
+	 * Removes cached samples from memory.
+	 */
+	virtual void clearCache() = 0;
+
+	/**
+	 * Caches a given sample into memory and returns a pointer into it.  We
+	 * own the pointer.  If freq is nonzero, then the sample is played at a
+	 * different frequency (only used for uncompressed samples).
+	 */
+	virtual SoundSample *getSample(int i, uint freq) = 0;
+};
+
+/**
+ * Reads CD.SAM (with dubbing) and CD2.SAM (with sound samples) from the
+ * original game.
+ */
+class LegacySoundArchive : public SoundArchive {
+public:
+	LegacySoundArchive(const Common::String &path, uint defaultFreq) :
 	_path(), _samples(NULL), _sampleCount(0), _defaultFreq(defaultFreq), _opened(false), _f(NULL) {
 		openArchive(path);
 	}
 
-	~SoundArchive() { closeArchive(); }
+	virtual ~LegacySoundArchive() { closeArchive(); }
 
 	void closeArchive();
 	void openArchive(const Common::String &path);
-	uint size() const { return _sampleCount; }
 
-	/**
-	 * Checks whether there is an archive opened. Should be called before reading
-	 * from the archive to check whether openArchive() succeeded.
-	 */
-	bool isOpen() const { return _opened; }
+	virtual uint size() const { return _sampleCount; }
+	virtual bool isOpen() const { return _opened; }
 
-	void clearCache();
-
-	SoundSample *getSample(int i, uint freq);
+	virtual void clearCache();
+	virtual SoundSample *getSample(int i, uint freq);
 
 private:
 	Common::String _path;    ///< Path to file

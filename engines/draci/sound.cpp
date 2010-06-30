@@ -39,7 +39,7 @@
 
 namespace Draci {
 
-void SoundArchive::openArchive(const Common::String &path) {
+void LegacySoundArchive::openArchive(const Common::String &path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 
@@ -103,12 +103,12 @@ void SoundArchive::openArchive(const Common::String &path) {
 }
 
 /**
- * @brief SoundArchive close method
+ * @brief LegacySoundArchive close method
  *
  * Closes the currently opened archive. It can be called explicitly to
  * free up memory.
  */
-void SoundArchive::closeArchive() {
+void LegacySoundArchive::closeArchive() {
 	clearCache();
 	delete _f;
 	_f = NULL;
@@ -123,7 +123,7 @@ void SoundArchive::closeArchive() {
  * Clears the cache of the open files inside the archive without closing it.
  * If the files are subsequently accessed, they are read from the disk.
  */
-void SoundArchive::clearCache() {
+void LegacySoundArchive::clearCache() {
 	// Delete all cached data
 	for (uint i = 0; i < _sampleCount; ++i) {
 		_samples[i].close();
@@ -137,7 +137,7 @@ void SoundArchive::clearCache() {
  *
  * Loads individual samples from an archive to memory on demand.
  */
-SoundSample *SoundArchive::getSample(int i, uint freq) {
+SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
 	if (i < 0 || i >= (int) _sampleCount) {
 		return NULL;

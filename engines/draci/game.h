@@ -335,7 +335,7 @@ public:
 private:
 	void updateOrdinaryCursor();
 	void updateInventoryCursor();
-	int inventoryPositionFromMouse();
+	int inventoryPositionFromMouse() const;
 	void handleOrdinaryLoop(int x, int y);
 	void handleInventoryLoop();
 	void handleDialogueLoop();

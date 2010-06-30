@@ -332,7 +332,7 @@ void Game::handleOrdinaryLoop(int x, int y) {
 	}
 }
 
-int Game::inventoryPositionFromMouse() {
+int Game::inventoryPositionFromMouse() const {
 	const int column = CLIP(scummvm_lround(
 		(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
 		kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
