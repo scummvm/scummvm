@@ -795,46 +795,39 @@ void Kernel::signatureDebug(const char *sig, int argc, const reg_t *argv) {
 }
 
 bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
-	const char *checkSig = sig;
-	const reg_t *checkParam = argv;
-	int checkCount = argc;
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
-	while (*checkSig && checkCount) {
-		if ((*checkSig & KSIG_ANY) != KSIG_ANY) {
-			int type = findRegType(*checkParam);
+	while (*sig && argc) {
+		if ((*sig & KSIG_ANY) != KSIG_ANY) {
+			int type = findRegType(*argv);
 
 			if (!type) {
 				warning("[KERNEL] call signature: couldn't determine type of ref %04x:%04x", PRINT_REG(*argv));
-				signatureDebug(sig, argc, argv);
 				return false;
 			}
 
-			if (!(type & *checkSig)) {
+			if (!(type & *sig)) {
 				warning("[KERNEL] call signature: %d args left, is %d, should be %d", argc, type, *sig);
-				signatureDebug(sig, argc, argv);
 				return false;
 			}
 
 		}
-		if (!(*checkSig & KSIG_ELLIPSIS))
-			++checkSig;
-		++checkParam;
-		--checkCount;
+		if (!(*sig & KSIG_ELLIPSIS))
+			++sig;
+		++argv;
+		--argc;
 	}
 
-	if (checkCount) {
+	if (argc) {
 		warning("[KERNEL] call signature: too many arguments");
-		signatureDebug(sig, argc, argv);
 		return false; // Too many arguments
 	}
-	if (*checkSig == 0 || (*checkSig & KSIG_ELLIPSIS))
+	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
 		return true;
 
 	warning("[KERNEL] call signature: too few arguments");
-	signatureDebug(sig, argc, argv);
 	return false;
 }
 

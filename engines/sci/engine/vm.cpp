@@ -777,21 +777,24 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 }
 
 static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
+	Kernel *kernel = g_sci->getKernel();
 
-	if (kernelFuncNr >= (int)g_sci->getKernel()->_kernelFuncs.size())
+	if (kernelFuncNr >= (int)kernel->_kernelFuncs.size())
 		error("Invalid kernel function 0x%x requested", kernelFuncNr);
 
-	const KernelFuncWithSignature &kernelFunc = g_sci->getKernel()->_kernelFuncs[kernelFuncNr];
+	const KernelFuncWithSignature &kernelCall = kernel->_kernelFuncs[kernelFuncNr];
 
-	if (kernelFunc.signature
-			&& !g_sci->getKernel()->signatureMatch(kernelFunc.signature, argc, s->xs->sp + 1)) {
+	if (kernelCall.signature
+			&& !kernel->signatureMatch(kernelCall.signature, argc, s->xs->sp + 1)) {
 		// signature mismatch, check if a workaround is available
 		bool workaroundFound;
 		SciTrackOriginReply originReply;
 		reg_t workaround;
-		workaround = trackOriginAndFindWorkaround(0, kernelFunc.workarounds, workaroundFound, &originReply);
-		if (!workaroundFound)
-			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", g_sci->getKernel()->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, workaroundFound, &originReply);
+		if (!workaroundFound) {
+			kernel->signatureDebug(kernelCall.signature, argc, s->xs->sp + 1);
+			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernel->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
 		if (!workaround.segment)
 			return;
@@ -799,7 +802,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 
 	reg_t *argv = s->xs->sp + 1;
 
-	if (!kernelFunc.isDummy) {
+	if (!kernelCall.isDummy) {
 		// Add stack frame to indicate we're executing a callk.
 		// This is useful in debugger backtraces if this
 		// kernel function calls a script itself.
@@ -810,7 +813,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		// Call kernel function
-		s->r_acc = kernelFunc.func(s, argc, argv);
+		s->r_acc = kernelCall.func(s, argc, argv);
 
 #if 0
 		// Used for debugging
@@ -832,7 +835,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		if (s->_executionStack.begin() != s->_executionStack.end())
 			s->_executionStack.pop_back();
 	} else {
-		Common::String warningMsg = "Dummy function " + kernelFunc.origName +
+		Common::String warningMsg = "Dummy function " + kernelCall.origName +
 									Common::String::printf("[0x%x]", kernelFuncNr) +
 									" invoked - ignoring. Params: " +
 									Common::String::printf("%d", argc) + " (";
