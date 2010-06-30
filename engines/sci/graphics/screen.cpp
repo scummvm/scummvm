@@ -617,6 +617,24 @@ void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 	y = _upscaledMapping[y];
 }
 
+void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_640x400:
+		x /= 2;
+		y /= 2;
+		break;
+	case GFX_SCREEN_UPSCALED_640x440:
+		x /= 2;
+		y = (y * 5) / 11;
+		break;
+	case GFX_SCREEN_UPSCALED_640x480:
+		x /= 2;
+		y = (y * 5) / 12;
+	default:
+		break;
+	}
+}
+
 int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {
 	int16 oldPicNotValid;
 

@@ -130,9 +130,17 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	if (SELECTOR(z) > -1)
 		z = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(z));
 
-	// now get cel rectangle
 	view = _cache->getView(viewId);
+
+	if (view->isSci2Hires())
+		_screen->adjustToUpscaledCoordinates(y, x);
+
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
+
+	if (view->isSci2Hires()) {
+		_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+		_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+	}
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
@@ -200,7 +208,16 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		GfxView *tmpView = _cache->getView(viewId);
 		Common::Rect celRect;
 
+		if (tmpView->isSci2Hires())
+			_screen->adjustToUpscaledCoordinates(y, x);
+
 		tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
+
+		if (tmpView->isSci2Hires()) {
+			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+		}
+
 		celRect.bottom = y + 1;
 		celRect.top = celRect.bottom - yStep;
 

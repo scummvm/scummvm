@@ -112,6 +112,7 @@ public:
 	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
 	void debugUnditherSetState(bool flag);

@@ -276,21 +276,8 @@ void GfxCursor::setPosition(Common::Point pos) {
 Common::Point GfxCursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	switch (_upscaledHires) {
-	case GFX_SCREEN_UPSCALED_640x400:
-		mousePos.x /= 2;
-		mousePos.y /= 2;
-		break;
-	case GFX_SCREEN_UPSCALED_640x440:
-		mousePos.x /= 2;
-		mousePos.y = (mousePos.y * 5) / 11;
-		break;
-	case GFX_SCREEN_UPSCALED_640x480:
-		mousePos.x /= 2;
-		mousePos.y = (mousePos.y * 5) / 12;
-	default:
-		break;
-	}
+	if (_upscaledHires)
+		_screen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
 
 	return mousePos;
 }
