@@ -346,12 +346,11 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	if (!n->succ.isNull())
 		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
-	// Erase the node itself, as the game might reference it again.
-	// Happens in the intro of QFG1 and in Longbow, when exiting the
-	// cave.
+	// Erase references to the predecessor and successor nodes, as the game
+	// scripts could reference the node itself again.
+	// Happens in the intro of QFG1 and in Longbow, when exiting the cave.
 	n->pred = NULL_REG;
 	n->succ = NULL_REG;
-	n->value = NULL_REG;
 
 	return make_reg(0, 1); // Signal success
 }
