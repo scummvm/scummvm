@@ -97,6 +97,7 @@ private:
 	byte _color;
 	bool _isScreen;
 	RGBList *_rgbList;
+	bool _ownsData;
 
 	void rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData = NULL);
 	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
@@ -106,12 +107,24 @@ public:
 		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, 1);
 		_isScreen = isScreen;
 		_rgbList = NULL;
+		_ownsData = true;
 	}
 	M4Surface(int width_, int height_) {
 		create(width_, height_, 1);
 		_isScreen = false;
 		_rgbList = NULL;
+		_ownsData = true;
 	}
+	M4Surface(int width_, int height_, byte *srcPixels, int pitch_) {
+		bytesPerPixel = 1;
+		w = width_;
+		h = height_;
+		pitch = pitch_;
+		pixels = srcPixels;
+		_rgbList = NULL;
+		_ownsData = false;
+	}
+
 	virtual ~M4Surface();
 
 	// loads a .COD file into the M4Surface
@@ -143,6 +156,7 @@ public:
 	inline Common::Rect bounds() const { return Common::Rect(0, 0, width(), height()); }
 	inline int width() const { return w; }
 	inline int height() const { return h; }
+	inline int getPitch() const { return pitch; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
 	inline byte *getBasePtr() {
 		return (byte *)pixels;

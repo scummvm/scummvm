@@ -446,7 +446,7 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 
 	MadsView::_bgSurface = &_backgroundSurface;
 	MadsView::_depthSurface = &_codeSurface;
-	MadsView::_yOffset = MADS_Y_OFFSET;
+	MadsView::setViewport(Common::Rect(0, MADS_Y_OFFSET, MADS_SURFACE_WIDTH, MADS_Y_OFFSET + MADS_SURFACE_HEIGHT));
 
 	_screenType = VIEWID_ANIMVIEW;
 	_screenFlags.layer = LAYER_BACKGROUND;

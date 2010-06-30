@@ -97,8 +97,8 @@ public:
 	void clear();
 	void deleteTimer(int seqIndex);
 
-	void drawBackground(int yOffset);
-	void drawForeground(View *view, int yOffset);
+	void drawBackground();
+	void drawForeground(M4Surface *viewport);
 	void setDirtyAreas();
 	void fullRefresh();
 	void cleanUp();
@@ -139,7 +139,7 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view, int yOffset);
+	void draw(M4Surface *view);
 	void setDirtyAreas();
 	void setDirtyAreas2();
 	void cleanUp();
@@ -293,7 +293,7 @@ public:
 	void merge(int startIndex, int count);
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(M4Surface *dest, M4Surface *src, int yOffset, const Common::Point &posAdjust);
+	void copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust);
 	void clear();
 };
 
@@ -403,7 +403,7 @@ public:
 
 	M4Surface *_depthSurface;
 	M4Surface *_bgSurface;
-	int _yOffset;
+	M4Surface *_viewport;
 public:
 	MadsView(View *view);
 	~MadsView();
@@ -411,6 +411,7 @@ public:
 	void refresh();
 	void update();
 	void clearLists();
+	void setViewport(const Common::Rect &bounds);
 };
 
 }
