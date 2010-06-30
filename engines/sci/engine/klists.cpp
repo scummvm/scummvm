@@ -346,7 +346,9 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	if (!n->succ.isNull())
 		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
-	//s->_segMan->free_Node(node_pos);	// TODO
+	// Erase references to the predecessor and successor nodes
+	n->pred = NULL_REG;
+	n->succ = NULL_REG;
 
 	return make_reg(0, 1); // Signal success
 }

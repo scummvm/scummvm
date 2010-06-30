@@ -74,9 +74,7 @@ SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorT
 
 #ifdef USE_OLD_MUSIC_FUNCTIONS
 static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
-#endif
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
 static void syncSong(Common::Serializer &s, Song &obj) {
 	s.syncAsSint32LE(obj._handle);
 	s.syncAsSint32LE(obj._resourceNum);
