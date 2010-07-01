@@ -3764,8 +3764,8 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 }
 
 void TownsPC98_OpnDriver::startSoundEffect() {
-	int i = 0;
-	for (; i < 2; i++) {
+	_updateSfxFlag = 0;
+	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
 			_sfxChannels[i]->reset();
@@ -3775,7 +3775,7 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 	}
 
 	int volFlags = 0;
-	for (i = 0; i < (_numChan + _numSSG - 2); i++)
+	for (int i = 0; i < (_numChan + _numSSG - 2); i++)
 		volFlags |= (1 << i);
 	setVolumeChannelMasks(volFlags, ~volFlags);
 
