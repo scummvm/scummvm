@@ -914,8 +914,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kCD(EngineState *s, int argc, reg_t *argv)
-{
+reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 	// TODO: Stub
 	switch (argv[0].toUint16()) {
 	case 0:
