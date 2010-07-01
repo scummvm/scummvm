@@ -70,10 +70,11 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
 	} else {
-		warning("startAudio: unable to create stream for audio number %d, module %d", number, module);
+		// Don't throw a warning in this case. getAudioStream() already has. Some games
+		// do miss audio entries (perhaps because of a typo, or because they were simply
+		// forgotten).
+		return 0;
 	}
-
-	return 0;
 }
 
 int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
