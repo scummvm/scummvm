@@ -2342,7 +2342,7 @@ EOF
 
 	add_to_config_h_if_yes $_detectlang '#define USE_DETECTLANG'
 	if test "$_detectlang" = yes ; then
-		echo_n "with runtime language detection)"
+		echo "with runtime language detection)"
 	else
 		echo "without runtime language detection)"
 	fi
