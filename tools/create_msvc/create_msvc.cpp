@@ -485,6 +485,9 @@ int main(int argc, char *argv[]) {
 	StringList featureDefines = getFeatureDefines(setup.features);
 	setup.defines.splice(setup.defines.begin(), featureDefines);
 
+	// Add WIN32 define
+	setup.defines.push_back("WIN32");
+
 	setup.libraries = getFeatureLibraries(setup.features);
 
 	setup.libraries.push_back("winmm.lib");
