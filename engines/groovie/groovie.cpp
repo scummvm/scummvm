@@ -110,7 +110,7 @@ Common::Error GroovieEngine::run() {
 	// Prepare the font too
 	switch (_gameDescription->version) {
 	case kGroovieT7G:
-		if (_gameDescription->desc.platform == Common::kPlatformMacintosh) {
+		if (getPlatform() == Common::kPlatformMacintosh) {
 			_macResFork = new Common::MacResManager();
 			if (!_macResFork->open(_gameDescription->desc.filesDescriptions[0].fileName))
 				error("Could not open %s as a resource fork", _gameDescription->desc.filesDescriptions[0].fileName);
@@ -141,7 +141,7 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Create the music player
-	if (_gameDescription->desc.platform == Common::kPlatformMacintosh)
+	if (getPlatform() == Common::kPlatformMacintosh)
 		_musicPlayer = new MusicPlayerMac(this);
 	else
 		_musicPlayer = new MusicPlayerXMI(this, _gameDescription->version == kGroovieT7G ? "fat" : "sample");
@@ -154,8 +154,8 @@ Common::Error GroovieEngine::run() {
 	if (_gameDescription->version == kGroovieT7G) {
 		// Run The 7th Guest's demo if requested
 		if (ConfMan.hasKey("demo_mode") && ConfMan.getBool("demo_mode"))
-			filename = Common::String("demo.grv");
-		else if (_gameDescription->desc.platform == Common::kPlatformMacintosh)
+			filename = "demo.grv";
+		else if (getPlatform() == Common::kPlatformMacintosh)
 			filename = "script.grv"; // Stored inside the executable's resource fork
 	} else if (_gameDescription->version == kGroovieV2) {
 		// Open the disk index
@@ -305,6 +305,10 @@ Common::Error GroovieEngine::run() {
 	}
 
 	return Common::kNoError;
+}
+
+Common::Platform GroovieEngine::getPlatform() const {
+	return _gameDescription->desc.platform;
 }
 
 bool GroovieEngine::hasFeature(EngineFeature f) const {

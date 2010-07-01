@@ -111,6 +111,20 @@ void MusicPlayer::playCD(uint8 track) {
 
 	// Play the track starting at the requested offset (1000ms = 75 frames)
 	AudioCD.play(track - 1, 1, startms * 75 / 1000, 0);
+
+	// If the audio is not playing from the CD, play the "fallback" MIDI.
+	// The Mac version has no CD tracks, so it will always use the MIDI.
+	if (!AudioCD.isPlaying()) {
+		if (track == 2) {
+			// Intro MIDI fallback
+			if (_vm->getPlatform() == Common::kPlatformMacintosh)
+				playSong(70);
+			else
+				playSong((19 << 10) | 36); // XMI.GJD, file 36
+		} else if (track == 3) {
+			// TODO: Credits MIDI fallback
+		}
+	}
 }
 
 void MusicPlayer::startBackground() {

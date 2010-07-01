@@ -82,6 +82,8 @@ public:
 	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
 	~GroovieEngine();
 
+	Common::Platform getPlatform() const;
+
 protected:
 
 	// Engine APIs
