@@ -448,6 +448,18 @@ public:
 	 */
 	SegmentId getSysStringsSegment() { return _sysStringsSegId; }
 
+	/**
+	 * Get a pointer to the system string with the specified index,
+	 * or NULL if that index is invalid.
+	 *
+	 * This method is currently only used by kString().
+	 */
+	SystemString *getSystemString(uint idx) const {
+		if (idx >= SYS_STRINGS_MAX)
+			return NULL;
+		return &_sysStrings->_strings[idx];
+	}
+
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
 	// Only accessible from saveLoadWithSerializer()
@@ -476,10 +488,7 @@ private:
 
 	/* System strings */
 	SegmentId _sysStringsSegId;
-public:	// TODO: make private. Only kString() needs direct access
 	SystemStrings *_sysStrings;
-
-private:
 
 #ifdef ENABLE_SCI32
 	SegmentId _arraysSegId;

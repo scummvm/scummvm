@@ -609,13 +609,15 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
 			// Resize if necessary
 			const uint16 sysStringId = argv[1].toUint16();
-			if ((uint32)s->_segMan->_sysStrings->_strings[sysStringId]._maxSize < index1 + count) {
-				free(s->_segMan->_sysStrings->_strings[sysStringId]._value);
-				s->_segMan->_sysStrings->_strings[sysStringId]._maxSize = index1 + count;
-				s->_segMan->_sysStrings->_strings[sysStringId]._value = (char *)calloc(index1 + count, sizeof(char));
+			SystemString *sysString = s->_segMan->getSystemString(sysStringId);
+			assert(sysString);
+			if ((uint32)sysString->_maxSize < index1 + count) {
+				free(sysString->_value);
+				sysString->_maxSize = index1 + count;
+				sysString->_value = (char *)calloc(index1 + count, sizeof(char));
 			}
 
-			strncpy(s->_segMan->_sysStrings->_strings[sysStringId]._value + index1, string2 + index2, count);
+			strncpy(sysString->_value + index1, string2 + index2, count);
 		} else {
 			SciString *string1 = s->_segMan->lookupString(argv[1]);
 

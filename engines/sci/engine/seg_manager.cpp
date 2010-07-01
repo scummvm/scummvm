@@ -85,7 +85,7 @@ void SegManager::initSysStrings() {
 	_sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &_sysStringsSegId);
 
 	// Allocate static buffer for savegame and CWD directories
-	SystemString *strSaveDir = &_sysStrings->_strings[SYS_STRING_SAVEDIR];
+	SystemString *strSaveDir = getSystemString(SYS_STRING_SAVEDIR);
 	strSaveDir->_name = "savedir";
 	strSaveDir->_maxSize = MAX_SAVE_DIR_SIZE;
 	strSaveDir->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
@@ -94,7 +94,7 @@ void SegManager::initSysStrings() {
 	::strcpy(strSaveDir->_value, "");
 
 	// Allocate static buffer for the parser base
-	SystemString *strParserBase = &_sysStrings->_strings[SYS_STRING_PARSER_BASE];
+	SystemString *strParserBase = getSystemString(SYS_STRING_PARSER_BASE);
 	strParserBase->_name = "parser-base";
 	strParserBase->_maxSize = MAX_PARSER_BASE;
 	strParserBase->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
