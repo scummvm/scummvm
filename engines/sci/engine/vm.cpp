@@ -344,6 +344,8 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // called when the game starts
+	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // called when the game starts
 	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
 	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
 	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
@@ -355,8 +357,8 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_SQ1,           703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
-	{ GID_SQ6,             0,  0,                "SQ6", "init",           -1,    2, { 0,   0 } },
-	{ GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0, { 0,   0 } },
+	{ GID_SQ6,             0,  0,                "SQ6", "init",           -1,    2, { 0,   0 } }, // called when the game starts
+	{ GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0, { 0,   0 } }, // called when pressing "Start game" in the main menu
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
