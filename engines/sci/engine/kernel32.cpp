@@ -336,7 +336,7 @@ static const char *sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
-	/*0x83*/ "Dummy",
+	/*0x83*/ "PrintDebug",	// used by the Shivers 2 demo
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
