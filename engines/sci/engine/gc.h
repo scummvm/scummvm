@@ -35,21 +35,22 @@ namespace Sci {
 
 struct reg_t_Hash {
 	uint operator()(const reg_t& x) const {
-		return (x.segment << 3) | x.offset;
+		return (x.segment << 3) ^ x.offset ^ (x.offset << 16);
 	}
 };
 
 /*
- * The reg_t_hash_map is actually really a hashset
+ * The AddrSet is a "set" of reg_t values.
+ * We don't have a HashSet type, so we abuse a HashMap for this.
  */
-typedef Common::HashMap<reg_t, bool, reg_t_Hash> reg_t_hash_map;
+typedef Common::HashMap<reg_t, bool, reg_t_Hash> AddrSet;
 
 /**
  * Finds all used references and normalises them to their memory addresses
  * @param s The state to gather all information from
  * @return A hash map containing entries for all used references
  */
-reg_t_hash_map *find_all_used_references(EngineState *s);
+AddrSet *findAllActiveReferences(EngineState *s);
 
 /**
  * Runs garbage collection on the current system state

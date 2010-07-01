@@ -1757,10 +1757,10 @@ bool Console::cmdGCInvoke(int argc, const char **argv) {
 }
 
 bool Console::cmdGCObjects(int argc, const char **argv) {
-	reg_t_hash_map *use_map = find_all_used_references(_engine->_gamestate);
+	AddrSet *use_map = findAllActiveReferences(_engine->_gamestate);
 
 	DebugPrintf("Reachable object references (normalised):\n");
-	for (reg_t_hash_map::iterator i = use_map->begin(); i != use_map->end(); ++i) {
+	for (AddrSet::iterator i = use_map->begin(); i != use_map->end(); ++i) {
 		DebugPrintf(" - %04x:%04x\n", PRINT_REG(i->_key));
 	}
 

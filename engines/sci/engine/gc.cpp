@@ -30,7 +30,7 @@ namespace Sci {
 
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
-	reg_t_hash_map _map;
+	AddrSet _map;
 
 	void push(reg_t reg) {
 		if (!reg.segment) // No numbers
@@ -51,10 +51,10 @@ struct WorklistManager {
 	}
 };
 
-static reg_t_hash_map *normalizeAddresses(SegManager *segMan, reg_t_hash_map &nonnormal_map) {
-	reg_t_hash_map *normal_map = new reg_t_hash_map();
+static AddrSet *normalizeAddresses(SegManager *segMan, const AddrSet &nonnormal_map) {
+	AddrSet *normal_map = new AddrSet();
 
-	for (reg_t_hash_map::iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
+	for (AddrSet::const_iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
 		SegmentObj *mobj = segMan->getSegmentObj(reg.segment);
 
@@ -68,9 +68,9 @@ static reg_t_hash_map *normalizeAddresses(SegManager *segMan, reg_t_hash_map &no
 }
 
 
-reg_t_hash_map *find_all_used_references(EngineState *s) {
+AddrSet *findAllActiveReferences(EngineState *s) {
 	SegManager *segMan = s->_segMan;
-	reg_t_hash_map *normal_map = NULL;
+	AddrSet *normal_map = NULL;
 	WorklistManager wm;
 	uint i;
 
@@ -159,7 +159,7 @@ void run_gc(EngineState *s) {
 	memset(segcount, 0, sizeof(segcount));
 
 	// Compute the set of all segments references currently in use.
-	reg_t_hash_map *activeRefs = find_all_used_references(s);
+	AddrSet *activeRefs = findAllActiveReferences(s);
 
 	// Iterate over all segments, and check for each whether it
 	// contains stuff that can be collected.
