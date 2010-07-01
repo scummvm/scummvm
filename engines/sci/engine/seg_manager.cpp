@@ -300,14 +300,11 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 	if (result.empty())
 		return NULL_REG;
 
-	if (result.size() > 1) {
+	if (result.size() > 1 && index < 0) {
 		printf("Ambiguous:\n");
 		for (i = 0; i < result.size(); i++)
 			printf("  %3x: [%04x:%04x] %s\n", i, PRINT_REG(result[i]), name.c_str());
-		if (index < 0) {
-			printf("Ambiguous: Aborting.\n");
-			return NULL_REG; // Ambiguous
-		}
+		return NULL_REG; // Ambiguous
 	}
 
 	if (index < 0)
