@@ -23,7 +23,9 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/system.h"
+
 #include "kyra/resource.h"
 #include "kyra/sound_intern.h"
 #include "kyra/screen.h"
@@ -1491,6 +1493,9 @@ public:
 
 	void nextTick(int32 *buffer, uint32 bufferSize);
 
+	void setVolumeIntern(int volA, int volB) { _volumeA = volA; _volumeB = volB; }
+	void setVolumeChannelMasks(int channelMaskA, int channelMaskB) { _volMaskA = channelMaskA; _volMaskB = channelMaskB; }
+
 	uint8 chanEnable() const { return _chanEnable; }
 private:
 	void updatesRegs();
@@ -1530,6 +1535,11 @@ private:
 
 	uint8 **_reg;
 
+	uint16 _volumeA;
+	uint16 _volumeB;
+	int _volMaskA;
+	int _volMaskB;
+
 	bool _ready;
 };
 
@@ -1543,6 +1553,9 @@ public:
 	void writeReg(uint8 address, uint8 value);
 
 	void nextTick(int32 *buffer, uint32 bufferSize);
+
+	void setVolumeIntern(int volA, int volB) { _volumeA = volA; _volumeB = volB; }
+	void setVolumeChannelMasks(int channelMaskA, int channelMaskB) { _volMaskA = channelMaskA; _volMaskB = channelMaskB; }
 
 private:
 	struct RhtChannel {
@@ -1579,6 +1592,11 @@ private:
 
 	uint8 **_reg;
 
+	uint16 _volumeA;
+	uint16 _volumeB;
+	int _volMaskA;
+	int _volMaskB;
+
 	bool _ready;
 };
 
@@ -1605,13 +1623,19 @@ public:
 	int getRate() const { return _mixer->getOutputRate(); }
 
 protected:
-	void generateTables();
-
 	void toggleRegProtection(bool prot) { _regProtectionFlag = prot; }
 	uint8 readSSGStatus() { return _ssg->chanEnable(); }
 
 	virtual void timerCallbackA() = 0;
 	virtual void timerCallbackB() = 0;
+
+	// The audio driver can store and apply two different audio settings
+	// (usually for music and sound effects). The channel mask will determine
+	// which channels get effected by the setting. The first bits will be
+	// the normal opn channels, the next bits the ssg channels and the final
+	// bit the rhythm channel.
+	void setVolumeIntern(int volA, int volB);
+	void setVolumeChannelMasks(int channelMaskA, int channelMaskB);
 
 	const int _numChan;
 	const int _numSSG;
@@ -1619,6 +1643,7 @@ protected:
 
 	Common::Mutex _mutex;
 private:
+	void generateTables();
 	void nextTick(int32 *buffer, uint32 bufferSize);
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
 
@@ -1671,6 +1696,9 @@ private:
 
 	OpnTimer _timers[2];
 
+	int _volMaskA, _volMaskB;
+	uint16 _volumeA, _volumeB;
+
 	const float _baserate;
 	uint32 _timerbase;
 
@@ -1709,6 +1737,9 @@ public:
 
 	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
 	bool musicPlaying() { return _musicPlaying; }
+
+	void setMusicVolume(int volume) { _musicVolume = volume; setVolumeIntern(_musicVolume, _sfxVolume); }
+	void setSoundEffectVolume(int volume) { _sfxVolume = volume; setVolumeIntern(_musicVolume, _sfxVolume); }
 
 protected:
 	void startSoundEffect();
@@ -1751,6 +1782,9 @@ protected:
 	int _sfxOffs;
 	uint8 *_sfxData;
 	uint16 _sfxOffsets[2];
+
+	uint16 _musicVolume;
+	uint16 _sfxVolume;
 
 	static const uint8 _drvTables[];
 
@@ -2558,7 +2592,8 @@ bool TownsPC98_OpnChannelPCM::control_ff_endOfTrack(uint8 para) {
 TownsPC98_OpnSquareSineSource::TownsPC98_OpnSquareSineSource(const uint32 timerbase) : _tlTable(0),
 	_tleTable(0), _updateRequest(-1), _tickLength(timerbase * 27), _ready(0), _reg(0), _rand(1), _outN(1),
 	_nTick(0), _evpUpdateCnt(0), _evpTimer(0x1f), _pReslt(0x1f), _attack(0), _cont(false), _evpUpdate(true),
-	_timer(0), _noiseGenerator(0), _chanEnable(0) {
+	_timer(0), _noiseGenerator(0), _chanEnable(0),
+	_volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
 
 	memset(_channels, 0, sizeof(_channels));
 	memset(_updateRequestBuf, 0, sizeof(_updateRequestBuf));
@@ -2718,6 +2753,13 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 		}
 
 		finOut /= 3;
+
+		if ((1 << i) & _volMaskA)
+			finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
+
+		if ((1 << i) & _volMaskB)
+			finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2733,7 +2775,7 @@ void TownsPC98_OpnSquareSineSource::updatesRegs() {
 }
 
 TownsPC98_OpnPercussionSource::TownsPC98_OpnPercussionSource(const uint32 timerbase) :
-	_tickLength(timerbase * 2), _timer(0), _ready(false) {
+	_tickLength(timerbase * 2), _timer(0), _ready(false), _volMaskA(0), _volMaskB(0), _volumeA(Audio::Mixer::kMaxMixerVolume), _volumeB(Audio::Mixer::kMaxMixerVolume) {
 
 	memset(_rhChan, 0, sizeof(RhtChannel) * 6);
 	_reg = new uint8 *[40];
@@ -2892,6 +2934,12 @@ void TownsPC98_OpnPercussionSource::nextTick(int32 *buffer, uint32 bufferSize) {
 
 		finOut <<= 1;
 
+		if (1 & _volMaskA)
+			finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
+
+		if (1 & _volMaskB)
+			finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
 	}
@@ -2928,6 +2976,7 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 	_numChan(type == OD_TYPE26 ? 3 : 6), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPercussion(type == OD_TYPE86 ? true : false),
 	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()),
+	_volMaskA(0), _volMaskB(0), _volumeA(255), _volumeB(255),
 	_regProtectionFlag(false), _ready(false) {
 
 	memset(&_timers[0], 0, sizeof(OpnTimer));
@@ -2978,7 +3027,7 @@ bool TownsPC98_OpnCore::init() {
 		_prc->init(_percussionData);
 	}
 
-	_mixer->playStream(Audio::Mixer::kMusicSoundType,
+	_mixer->playStream(Audio::Mixer::kPlainSoundType,
 		&_soundHandle, this, -1, Audio::Mixer::kMaxChannelVolume, 0, DisposeAfterUse::NO, true);
 
 	_ready = true;
@@ -3229,6 +3278,26 @@ int TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
 	return numSamples;
 }
 
+void TownsPC98_OpnCore::setVolumeIntern(int volA, int volB) {
+	Common::StackLock lock(_mutex);
+	_volumeA = volA;
+	_volumeB = volB;
+	if (_ssg)
+		_ssg->setVolumeIntern(volA, volB);
+	if (_prc)
+		_prc->setVolumeIntern(volA, volB);
+}
+
+void TownsPC98_OpnCore::setVolumeChannelMasks(int channelMaskA, int channelMaskB) {
+	Common::StackLock lock(_mutex);
+	_volMaskA = channelMaskA;
+	_volMaskB = channelMaskB;
+	if (_ssg)
+		_ssg->setVolumeChannelMasks(_volMaskA >> _numChan, _volMaskB >> _numChan);
+	if (_prc)
+		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));	
+}
+
 void TownsPC98_OpnCore::generateTables() {
 	delete[] _oprRates;
 	_oprRates = new uint8[128];
@@ -3389,6 +3458,12 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 
 			int32 finOut = (output << 2) / ((_numChan + _numSSG - 3) / 3);
 
+			if ((1 << i) & _volMaskA)
+				finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
+
+			if ((1 << i) & _volMaskB)
+				finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+
 			if (_chanInternal[i].enableLeft)
 				*leftSample += finOut;
 
@@ -3409,11 +3484,14 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : To
 	_updateChannelsFlag(type == OD_TYPE26 ? 0x07 : 0x3F), _finishedChannelsFlag(0),
 	_updateSSGFlag(type == OD_TOWNS ? 0x00 : 0x07), _finishedSSGFlag(0),
 	_updateRhythmFlag(type == OD_TYPE86 ? 0x01 : 0x00), _finishedRhythmFlag(0),
-	_updateSfxFlag(type == OD_TOWNS ? 0x00 : 0x06), _finishedSfxFlag(0),
+	_updateSfxFlag(0), _finishedSfxFlag(0),
 
 	_musicTickCounter(0),
 
+	_musicVolume(255), _sfxVolume(255),
+
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
+
 	_sfxOffsets[0] = _sfxOffsets[1] = 0;
 }
 
@@ -3450,6 +3528,8 @@ bool TownsPC98_OpnDriver::init() {
 	}
 
 	TownsPC98_OpnCore::init();
+
+	setVolumeChannelMasks(-1, 0);
 
 	_channels = new TownsPC98_OpnChannel *[_numChan];
 	for (int i = 0; i < _numChan; i++) {
@@ -3665,8 +3745,11 @@ void TownsPC98_OpnDriver::timerCallbackA() {
 		_trackPtr = _musicBuffer;
 	}
 
-	if (_finishedSfxFlag == _updateSfxFlag)
+	if (_updateSfxFlag && _finishedSfxFlag == _updateSfxFlag) {
 		_sfxPlaying = false;
+		_updateSfxFlag = 0;
+		setVolumeChannelMasks(-1, 0);
+	}
 }
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
@@ -3681,13 +3764,20 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 }
 
 void TownsPC98_OpnDriver::startSoundEffect() {
-	for (int i = 0; i < 2; i++) {
+	int i = 0;
+	for (; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
 			_sfxChannels[i]->reset();
 			_sfxChannels[i]->loadData(_sfxData + _sfxOffsets[i]);
+			_updateSfxFlag |= _sfxChannels[i]->_idFlag;
 		}
 	}
+
+	int volFlags = 0;
+	for (i = 0; i < (_numChan + _numSSG - 2); i++)
+		volFlags |= (1 << i);
+	setVolumeChannelMasks(volFlags, ~volFlags);
 
 	_sfxData = 0;
 }
@@ -4049,7 +4139,9 @@ SoundPC98::~SoundPC98() {
 
 bool SoundPC98::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, TownsPC98_OpnDriver::OD_TYPE26);
-	return _driver->init();
+	bool reslt = _driver->init();
+	updateVolumeSettings();
+	return reslt;
 }
 
 void SoundPC98::loadSoundFile(uint file) {
@@ -4122,6 +4214,13 @@ void SoundPC98::playSoundEffect(uint8 track) {
 	_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
+void SoundPC98::updateVolumeSettings() {
+	if (!_driver)
+		return;
+
+	_driver->setMusicVolume(ConfMan.getInt("music_volume"));
+	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
+}
 
 //	KYRA 2
 
@@ -4160,7 +4259,9 @@ bool SoundTownsPC98_v2::init() {
 		_useFmSfx = true;
 	}
 
-	return _driver->init();
+	bool reslt = _driver->init();
+	updateVolumeSettings();
+	return reslt;
 }
 
 void SoundTownsPC98_v2::loadSoundFile(Common::String file) {
@@ -4313,6 +4414,14 @@ void SoundTownsPC98_v2::playSoundEffect(uint8 track) {
 		return;
 
 	_driver->loadSoundEffectData(_sfxTrackData, track);
+}
+
+void SoundTownsPC98_v2::updateVolumeSettings() {
+	if (!_driver)
+		return;
+
+	_driver->setMusicVolume(ConfMan.getInt("music_volume"));
+	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
 }
 
 // static resources
