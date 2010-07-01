@@ -50,11 +50,17 @@ typedef bool (*InvokingFunction)();
  */
 
 struct Test {
-	Test(Common::String name, InvokingFunction f) : featureName(name), driver(f), enabled(true), passed(false) {}
-	Common::String featureName;		///< Name of feature to be tested
-	InvokingFunction driver;	    ///< Pointer to the function that will invoke this feature test
+	Test(Common::String name, InvokingFunction f, bool interactive) : featureName(name) {
+		driver = f;
+		enabled = true;
+		passed = false;
+		isInteractive = interactive;
+	}
+	const Common::String featureName;	///< Name of feature to be tested
+	InvokingFunction driver;		///< Pointer to the function that will invoke this feature test
 	bool enabled;				    ///< Decides whether or not this test is to be executed
 	bool passed;					///< Collects and stores result of this feature test
+	bool isInteractive;				///< Decides if the test is interactive or not, An interactive testsuite may have non-interactive tests, hence this change.
 };
 
 
@@ -71,6 +77,10 @@ public:
 	int getNumTestsPassed() const { return _numTestsPassed; }
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
 	void genReport() const;
+	bool isEnabled() const { return _isTsEnabled; }
+	void enable(bool flag) {
+		_isTsEnabled = flag;
+	}
 
 	/**
 	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
@@ -92,8 +102,9 @@ public:
 	 *
 	 * @param	name the string description of the test, for display purposes
 	 * @param	f pointer to the function that invokes this test
+	 * @param	isInteractive	decides if the test is to be executed in interactive mode/ default true
 	 */
-	void addTest(const Common::String &name, InvokingFunction f);
+	void addTest(const Common::String &name, InvokingFunction f, bool isInteractive = true);
 
 	/**
 	 * The driver function for the testsuite
@@ -119,14 +130,15 @@ protected:
 	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
 	int  		_numTestsExecuted;					///< Number of tests executed
+	bool		_isTsEnabled;
 
 public:
 
 	/**
-	 * Static variable of this class that determines if the tests are interactive or not.
+	 * Static variable of this class that determines if the user initiated testing session is interactive or not.
 	 * Used by various tests to respond accordingly
 	 */
-	static bool isInteractive;
+	static bool isSessionInteractive;
 
 private:
 	/**

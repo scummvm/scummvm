@@ -26,7 +26,9 @@
 #define TESTBED_H
  
 #include "engines/engine.h"
- 
+
+#include "testbed/testsuite.h"
+
 namespace Testbed {
 
 enum {
@@ -40,6 +42,20 @@ public:
 	~TestbedEngine();
  
 	virtual Common::Error run();
+	
+	/**
+	 * All testsuites are disabled by default
+	 * To enable testsuite X, call enableTestsuite("X", true);
+	 */
+	void enableTestsuite(const char *name, bool enable);
+	
+	/**
+	 * Invokes configured testsuites.
+	 */
+	void invokeTestsuites();
+
+private:
+	Common::Array<Testsuite*> _testsuiteList;
 };
 
 } // End of namespace Testbed

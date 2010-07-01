@@ -195,11 +195,11 @@ bool SaveGametests::testErrorMessages() {
 }
 
 SaveGameTestSuite::SaveGameTestSuite() {
-	addTest("Opening SaveFile", &SaveGametests::testSaveLoadState);
-	addTest("Removing SaveFile", &SaveGametests::testRemovingSavefile);
-	addTest("Renaming SaveFile", &SaveGametests::testRenamingSavefile);
-	addTest("Listing SaveFile", &SaveGametests::testListingSavefile);
-	addTest("Verify Error Messages", &SaveGametests::testErrorMessages);
+	addTest("Opening SaveFile", &SaveGametests::testSaveLoadState, false);
+	addTest("Removing SaveFile", &SaveGametests::testRemovingSavefile, false);
+	addTest("Renaming SaveFile", &SaveGametests::testRenamingSavefile, false);
+	addTest("Listing SaveFile", &SaveGametests::testListingSavefile, false);
+	addTest("Verify Error Messages", &SaveGametests::testErrorMessages, false);
 }
 
 const char *SaveGameTestSuite::getName() const {

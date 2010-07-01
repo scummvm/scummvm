@@ -77,7 +77,7 @@ bool MiscTests::testDateTime() {
 	getHumanReadableFormat(t1, dateTimeNow);
 	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 
-	if (Testsuite::isInteractive) {
+	if (Testsuite::isSessionInteractive) {
 		// Directly verify date
 		dateTimeNow = "We expect the current date time to be " + dateTimeNow;
 		Testsuite::clearScreen();
@@ -143,12 +143,12 @@ bool MiscTests::testMutexes() {
 }
 
 MiscTestSuite::MiscTestSuite() {
-	addTest("Date/time", &MiscTests::testDateTime);	
-	addTest("Timers", &MiscTests::testTimers);	
-	addTest("Mutexes", &MiscTests::testMutexes);	
+	addTest("Date/time", &MiscTests::testDateTime, false);	
+	addTest("Timers", &MiscTests::testTimers, false);	
+	addTest("Mutexes", &MiscTests::testMutexes, false);	
 }
 const char *MiscTestSuite::getName() const {
-	return "Misc. Tests: Datetime/Timer/Mutextes";
+	return "Misc";
 }
 
 } // End of namespace Testbed

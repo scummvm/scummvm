@@ -148,11 +148,11 @@ bool FStests::testWriteFile() {
 
 
 FSTestSuite::FSTestSuite() {
-	addTest("ReadingFile", &FStests::testReadFile);	
-	addTest("WritingFile", &FStests::testWriteFile);	
+	addTest("ReadingFile", &FStests::testReadFile, false);	
+	addTest("WritingFile", &FStests::testWriteFile, false);	
 }
 const char *FSTestSuite::getName() const {
-	return "File System";
+	return "FS";
 }
 
 } // End of namespace Testbed

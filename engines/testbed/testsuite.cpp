@@ -36,7 +36,7 @@
 namespace Testbed {
 
 // Static public variable of Testsuite
-bool Testsuite::isInteractive = true;
+bool Testsuite::isSessionInteractive = true;
 
 // Static private variable of Testsuite
 Common::String Testsuite::_logDirectory = "";
@@ -113,6 +113,8 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 Testsuite::Testsuite() {
 		_numTestsPassed = 0;
 		_numTestsExecuted = 0;
+		// Initially all testsuites are disabled, enable them by calling enableTestSuite(name, true)
+		_isTsEnabled = false;
 }
 
 Testsuite::~Testsuite() {
@@ -200,13 +202,17 @@ void Testsuite::clearScreen(bool flag) {
 	g_system->updateScreen();
 }
 
-void Testsuite::addTest(const Common::String &name, InvokingFunction f) {
-	Test*  featureTest = new Test(name, f);
+void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isInteractive) {
+	Test*  featureTest = new Test(name, f, isInteractive);
 	_testsToExecute.push_back(featureTest);
 }
 	
 void Testsuite::execute() {
 	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+		if((*i)->isInteractive && !isSessionInteractive) {
+			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
+			continue;
+		}
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
 		_numTestsExecuted++;
 		if ((*i)->driver()) {
