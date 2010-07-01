@@ -160,7 +160,7 @@ int typingTimeout = 0;
 
 // Render text onto the tiled screen
 
-void drawText(int tx, int ty, char* string, bool highlight) {
+void drawText(int tx, int ty, const char *string, bool highlight) {
 
 	u16 baseValue = 0;
 
