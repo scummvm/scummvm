@@ -52,10 +52,17 @@ typedef signed int s32;
 
 #define CT_NO_TRANSPARENCY
 
+#ifndef DISABLE_TEXT_CONSOLE
 #define DISABLE_TEXT_CONSOLE
-#define DISABLE_COMMAND_LINE
+#endif
 
+#ifndef DISABLE_COMMAND_LINE
+#define DISABLE_COMMAND_LINE
+#endif
+
+#ifndef DISABLE_COMMAND_LINE
 #define STREAM_AUDIO_FROM_DISK
+#endif
 
 //#undef assert
 //#define assert(expr) consolePrintf("Asserted!")

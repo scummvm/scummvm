@@ -1138,9 +1138,12 @@ else
 	CXX=
 	for compiler in $compilers; do
 		if test_compiler $compiler; then
+			echo "success testing compiler: $1" >> "$TMPLOG"
 			CXX=$compiler
 			echo $CXX
 			break
+		else
+			echo "failure testing compiler: $1" >> "$TMPLOG"
 		fi
 	done
 fi
@@ -1389,7 +1392,7 @@ case $_host_os in
 		;;
 	nds)
 		# TODO nds
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT -I$DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1572,7 +1575,7 @@ if test -n "$_host"; then
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
 			_backend="nds"
@@ -2444,6 +2447,7 @@ case $_backend in
 		;;
 	nds)
 		# TODO nds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source -I$(srcdir)/backends/platform/ds/commoninclude'
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
@@ -2512,7 +2516,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos* | android)
+		mingw* | dreamcast | wii | gamecube | nds | psp | wince | amigaos* | android)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
