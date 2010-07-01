@@ -482,6 +482,10 @@ void MadsAnimation::setCurrentFrame(int frameNumber) {
 	_nextScrollTimer = _nextFrameTimer = _madsVm->_currentTimer;
 }
 
+int MadsAnimation::getCurrentFrame() {
+	return _currentFrame;
+}
+
 void MadsAnimation::load1(int frameNumber) {
 	if (_skipLoad)
 		return;

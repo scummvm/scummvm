@@ -69,6 +69,10 @@ void MadsSceneLogic::getAnimName() {
 	strcpy(_madsVm->scene()->_aaName, newName);
 }
 
+IntStorage &MadsSceneLogic::dataMap() {
+	return _madsVm->globals()->_dataMap;
+}
+
 /*--------------------------------------------------------------------------*/
 
 uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
@@ -239,9 +243,13 @@ void MadsSceneLogic::enterScene() {
 
 		_madsVm->scene()->getSceneResources().playerPos = Common::Point(68, 140);
 		_madsVm->scene()->getSceneResources().playerDir = 4;
-		// TODO: Flags setting
+
+		dataMap()[0x56FC] = 0;
+		dataMap()[0x5482] = 0;
+		dataMap()[0x5484] = 30;
 	}
 
+	_madsVm->globals()->_dataMap[0x5486] = 0;
 	lowRoomsEntrySound();
 }
 
@@ -250,14 +258,44 @@ void MadsSceneLogic::doAction() {
 }
 
 void MadsSceneLogic::sceneStep() {
-	// FIXME: Temporary code to display a message on-screen
-	static bool tempBool = false;
-	if (!tempBool) {
-		tempBool = true;
+	// Wake up message sequence
+	Animation *anim = _madsVm->scene()->activeAnimation();
+	if (anim) {
+		if ((anim->getCurrentFrame() == 6) && (dataMap()[0x5482] == 0)) {
+			dataMap()[0x5482]++;
+			_madsVm->scene()->_kernelMessages.add(Common::Point(63, dataMap()[0x5484]), 
+				0x1110, 0, 0, 240, _madsVm->globals()->getQuote(49));
+			dataMap()[0x5484] += 14;
+		}
 
-		_madsVm->scene()->_kernelMessages.add(Common::Point(63, 100), 0x1110, 0, 0, 240, 
-			_madsVm->globals()->getQuote(49));
-	}
+		if ((anim->getCurrentFrame() == 7) && (dataMap()[0x5482] == 1)) {
+			dataMap()[0x5482]++;
+			_madsVm->scene()->_kernelMessages.add(Common::Point(63, dataMap()[0x5484]), 
+				0x1110, 0, 0, 240, _madsVm->globals()->getQuote(54));
+			dataMap()[0x5484] += 14;
+		}
+
+		if ((anim->getCurrentFrame() == 10) && (dataMap()[0x5482] == 2)) {
+			dataMap()[0x5482]++;
+			_madsVm->scene()->_kernelMessages.add(Common::Point(63, dataMap()[0x5484]), 
+				0x1110, 0, 0, 240, _madsVm->globals()->getQuote(55));
+			dataMap()[0x5484] += 14;
+		}
+
+		if ((anim->getCurrentFrame() == 17) && (dataMap()[0x5482] == 3)) {
+			dataMap()[0x5482]++;
+			_madsVm->scene()->_kernelMessages.add(Common::Point(63, dataMap()[0x5484]), 
+				0x1110, 0, 0, 240, _madsVm->globals()->getQuote(56));
+			dataMap()[0x5484] += 14;
+		}
+
+		if ((anim->getCurrentFrame() == 20) && (dataMap()[0x5482] == 4)) {
+			dataMap()[0x5482]++;
+			_madsVm->scene()->_kernelMessages.add(Common::Point(63, dataMap()[0x5484]), 
+				0x1110, 0, 0, 240, _madsVm->globals()->getQuote(50));
+			dataMap()[0x5484] += 14;
+		}
+	}		
 }
 
 }

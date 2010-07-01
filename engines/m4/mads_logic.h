@@ -50,6 +50,8 @@ private:
 	const char *formAnimName(char sepChar, int16 suffixNum);
 	void getSceneSpriteSet();
 	void getAnimName();
+
+	IntStorage &dataMap();
 public:
 	void selectScene(int sceneNum);
 

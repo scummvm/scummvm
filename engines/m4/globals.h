@@ -28,6 +28,7 @@
 
 #include "common/scummsys.h"
 #include "common/array.h"
+#include "common/hashmap.h"
 #include "common/rect.h"
 #include "common/file.h"
 #include "common/list.h"
@@ -223,6 +224,8 @@ struct MadsConfigData {
 	int screenFades;
 };
 
+typedef Common::HashMap<uint16, uint16> IntStorage;
+
 class MadsGlobals : public Globals {
 private:
 	struct MessageItem {
@@ -250,6 +253,7 @@ public:
 	int sceneNumber;
 	int previousScene;
 	uint16 actionNouns[3];
+	IntStorage _dataMap;
 
 	void loadMadsVocab();
 	uint32 getVocabSize() { return _madsVocab.size(); }

@@ -119,6 +119,7 @@ public:
 	virtual void load(const Common::String &filename, int abortTimers);
 	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);
+	virtual int getCurrentFrame();
 
 	bool freeFlag() const { return _freeFlag; }
 	bool getAnimMode() const { return _animMode; }

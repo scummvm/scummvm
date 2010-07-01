@@ -128,6 +128,7 @@ public:
 	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
 	void loadAnimation(const Common::String &animName, int v0);
+	Animation *activeAnimation() const { return _activeAnimation; }
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
