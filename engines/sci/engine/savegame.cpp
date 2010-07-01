@@ -178,6 +178,9 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading())
+		resetSegMan();
+
 	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be reserved_id
 	s.skip(4, VER(9), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be gc_mark_bits
@@ -339,9 +342,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 
 	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
-
-	if (s.isLoading())
-		_segMan->resetSegMan();
 
 	_segMan->saveLoadWithSerializer(s);
 
