@@ -263,78 +263,58 @@ const char *SegManager::getObjectName(reg_t pos) {
 }
 
 reg_t SegManager::findObjectByName(const Common::String &name, int index) {
-	reg_t retVal = NULL_REG;
+	Common::Array<reg_t> result;
+	uint i;
 
 	// Now all values are available; iterate over all objects.
-	int timesFound = 0;
-	for (uint i = 0; i < _heap.size(); i++) {
-		SegmentObj *mobj = _heap[i];
-		int idx = 0;
-		int max_index = 0;
-		ObjMap::iterator it;
-		Script *scr = 0;
-		CloneTable *ct = 0;
+	for (i = 0; i < _heap.size(); i++) {
+		const SegmentObj *mobj = _heap[i];
 
-		if (mobj) {
-			if (mobj->getType() == SEG_TYPE_SCRIPT) {
-				scr = (Script *)mobj;
-				max_index = scr->_objects.size();
-				it = scr->_objects.begin();
-			} else if (mobj->getType() == SEG_TYPE_CLONES) {
-				ct = (CloneTable *)mobj;
-				max_index = ct->_table.size();
+		if (!mobj)
+			continue;
+
+		reg_t objpos = make_reg(i, 0);
+
+		if (mobj->getType() == SEG_TYPE_SCRIPT) {
+			// It's a script, scan all objects in it
+			const Script *scr = (const Script *)mobj;
+			for (ObjMap::const_iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it) {
+				objpos.offset = it->_value.getPos().offset;
+				if (name == getObjectName(objpos))
+					result.push_back(objpos);
 			}
-		}
-
-		// It's a script or a clone table, scan all objects in it
-		for (; idx < max_index; ++idx) {
-			const Object *obj = NULL;
-			reg_t objpos;
-			objpos.offset = 0;
-			objpos.segment = i;
-
-			if (mobj->getType() == SEG_TYPE_SCRIPT) {
-				obj = &(it->_value);
-				objpos.offset = obj->getPos().offset;
-				++it;
-			} else if (mobj->getType() == SEG_TYPE_CLONES) {
+		} else  if (mobj->getType() == SEG_TYPE_CLONES) {
+			// It's clone table, scan all objects in it
+			const CloneTable *ct = (const CloneTable *)mobj;
+			for (uint idx = 0; idx < ct->_table.size(); ++idx) {
 				if (!ct->isValidEntry(idx))
 					continue;
-				obj = &(ct->_table[idx]);
-				objpos.offset = idx;
-			}
 
-			const char *objname = getObjectName(objpos);
-			if (name == objname) {
-				// Found a match!
-				if ((index < 0) && (timesFound > 0)) {
-					if (timesFound == 1) {
-						// First time we realized the ambiguity
-						printf("Ambiguous:\n");
-						printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(retVal), name.c_str());
-					}
-					printf("  %3x: [%04x:%04x] %s\n", timesFound, PRINT_REG(objpos), name.c_str());
-				}
-				if (index < 0 || timesFound == index)
-					retVal = objpos;
-				++timesFound;
+				objpos.offset = idx;
+				if (name == getObjectName(objpos))
+					result.push_back(objpos);
 			}
 		}
-
 	}
 
-	if (!timesFound)
+	if (result.empty())
 		return NULL_REG;
 
-	if (timesFound > 1 && index < 0) {
-		printf("Ambiguous: Aborting.\n");
-		return NULL_REG; // Ambiguous
+	if (result.size() > 1) {
+		printf("Ambiguous:\n");
+		for (i = 0; i < result.size(); i++)
+			printf("  %3x: [%04x:%04x] %s\n", i, PRINT_REG(result[i]), name.c_str());
+		if (index < 0) {
+			printf("Ambiguous: Aborting.\n");
+			return NULL_REG; // Ambiguous
+		}
 	}
 
-	if (timesFound <= index)
+	if (index < 0)
+		return result[0];
+	else if (result.size() <= (uint)index)
 		return NULL_REG; // Not found
-
-	return retVal;
+	return result[index];
 }
 
 // validate the seg
