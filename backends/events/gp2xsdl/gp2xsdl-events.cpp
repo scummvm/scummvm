@@ -23,11 +23,17 @@
  *
  */
 
-#ifdef GP2XWIZ
+#if defined(GP2X) || defined(GP2XWIZ)
 
-#include "backends/events/gp2xwizsdl/gp2xwizsdl-events.h"
+#include "backends/events/gp2xsdl/gp2xsdl-events.h"
+#if defined(GP2X)
+#include "backends/platform/gp2x/gp2x-hw.h"
+#include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
+#else
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
-#include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
+#endif
+
+#include "backends/platform/sdl/sdl.h"
 
 // FIXME move joystick defines out and replace with confile file options
 // we should really allow users to map any key to a joystick button using the keymapper.
@@ -36,7 +42,7 @@
 #define JOY_XAXIS 0
 #define JOY_YAXIS 1
 
-/* GP2X Wiz: Main Joystick Mappings */
+/* GP2X: Main Joystick Mappings */
 enum {
 	GP2X_BUTTON_UP			= 0,
 	GP2X_BUTTON_UPLEFT		= 1,
@@ -55,17 +61,18 @@ enum {
 	GP2X_BUTTON_X			= 14,
 	GP2X_BUTTON_Y			= 15,
 	GP2X_BUTTON_VOLUP		= 16,
-	GP2X_BUTTON_VOLDOWN		= 17
+	GP2X_BUTTON_VOLDOWN		= 17,
+	GP2X_BUTTON_CLICK		= 18
 };
 
-GP2XWIZSdlEventManager::GP2XWIZSdlEventManager(Common::EventSource *boss)
+GP2XSdlEventManager::GP2XSdlEventManager(Common::EventSource *boss)
 	:
 	_buttonStateL(false),
 	SdlEventManager(boss) {
 
 }
 
-void GP2XWIZSdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
+void GP2XSdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 	event.kbd.flags = 0;
 
 	if (mod & KMOD_SHIFT)
@@ -76,7 +83,7 @@ void GP2XWIZSdlEventManager::SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &
 		event.kbd.flags |= Common::KBD_CTRL;
 }
 
-void GP2XWIZSdlEventManager::moveStick() {
+void GP2XSdlEventManager::moveStick() {
 	bool stickBtn[32];
 
 	memcpy(stickBtn, _stickBtn, sizeof(stickBtn));
@@ -119,7 +126,7 @@ void GP2XWIZSdlEventManager::moveStick() {
 	}
 }
 
-/* GP2X Wiz Input mappings.
+/* GP2X Input mappings.
 Single Button
 
 Movement:
@@ -136,6 +143,7 @@ GP2X_BUTTON_DOWNRIGHT       Cursor Down Right
 
 Button Emulation:
 
+GP2X_BUTTON_CLICK           Left Mouse Click (GP2X only)
 GP2X_BUTTON_A				. (Period)
 GP2X_BUTTON_B               Left Mouse Click
 GP2X_BUTTON_Y               Space Bar
@@ -153,9 +161,10 @@ GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP) or Virtual Keyboard
 GP2X_BUTTON_L &	GP2X_BUTTON_SELECT			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 GP2X_BUTTON_L &	GP2X_BUTTON_MENU			Common::EVENT_MAINMENU (ScummVM Global Main Menu)
 GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)
+GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis. (GP2X only)
 */
 
-bool GP2XWIZSdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 	SDLModToOSystemKeyFlags(SDL_GetModState(), event);
 
 	if (remapKey(ev, event))
@@ -168,7 +177,7 @@ bool GP2XWIZSdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) 
 	return true;
 }
 
-bool GP2XWIZSdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (remapKey(ev, event))
 		return true;
 
@@ -186,11 +195,16 @@ bool GP2XWIZSdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	return true;
 }
 
-bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &event) {
 	_stickBtn[ev.jbutton.button] = 1;
 	if (ev.jbutton.button == GP2X_BUTTON_B) {
 		event.type = Common::EVENT_LBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
+#ifdef GP2X
+	} else if (ev.jbutton.button == GP2X_BUTTON_CLICK) {
+		event.type = Common::EVENT_LBUTTONDOWN;
+		fillMouseEvent(event, _km.x, _km.y);
+#endif
 	} else if (ev.jbutton.button == GP2X_BUTTON_X) {
 		event.type = Common::EVENT_RBUTTONDOWN;
 		fillMouseEvent(event, _km.x, _km.y);
@@ -208,7 +222,7 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				_buttonStateL = true;
 				break;
 			case GP2X_BUTTON_R:
-				if (_buttonStateL == true) {
+				if (_buttonStateL) {
 #ifdef ENABLE_VKEYBD
 					event.kbd.keycode = Common::KEYCODE_F7;
 					event.kbd.ascii = mapKey(SDLK_F7, ev.key.keysym.mod, 0);
@@ -222,7 +236,7 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				}
 				break;
 			case GP2X_BUTTON_SELECT:
-				if (_buttonStateL == true) {
+				if (_buttonStateL) {
 					event.type = Common::EVENT_QUIT;
 				} else {
 					event.kbd.keycode = Common::KEYCODE_ESCAPE;
@@ -230,7 +244,7 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				}
 				break;
 			case GP2X_BUTTON_A:
-				if (_buttonStateL == true) {
+				if (_buttonStateL) {
 					event.type = Common::EVENT_PREDICTIVE_DIALOG;
 				} else {
 				event.kbd.keycode = Common::KEYCODE_PERIOD;
@@ -238,11 +252,19 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				}
 				break;
 			case GP2X_BUTTON_Y:
-				event.kbd.keycode = Common::KEYCODE_SPACE;
-				event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+#ifdef GP2X
+				if (_buttonStateL) {
+					((GP2XSdlGraphicsManager *)((OSystem_SDL *)g_system)->getGraphicsManager())->toggleZoomOnMouse();
+				} else {
+#endif
+					event.kbd.keycode = Common::KEYCODE_SPACE;
+					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
+#ifdef GP2X
+				}
+#endif
 				break;
 			case GP2X_BUTTON_MENU:
-				if (_buttonStateL == true) {
+				if (_buttonStateL) {
 					event.type = Common::EVENT_MAINMENU;
 				} else {
 					event.kbd.keycode = Common::KEYCODE_F5;
@@ -250,8 +272,13 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				}
 				break;
 			case GP2X_BUTTON_VOLUP:
+#ifdef GP2X
+				GP2X_HW::mixerMoveVolume(2);
+				if (GP2X_HW::volumeLevel == 100) {
+#else
 				WIZ_HW::mixerMoveVolume(2);
 				if (WIZ_HW::volumeLevel == 100) {
+#endif
 					g_system->displayMessageOnOSD("Maximum Volume");
 				} else {
 					g_system->displayMessageOnOSD("Increasing Volume");
@@ -259,8 +286,13 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 				break;
 
 			case GP2X_BUTTON_VOLDOWN:
+#ifdef GP2X
+				GP2X_HW::mixerMoveVolume(1);
+				if (GP2X_HW::volumeLevel == 0) {
+#else
 				WIZ_HW::mixerMoveVolume(1);
 				if (WIZ_HW::volumeLevel == 0) {
+#endif
 					g_system->displayMessageOnOSD("Minimal Volume");
 				} else {
 					g_system->displayMessageOnOSD("Decreasing Volume");
@@ -271,11 +303,16 @@ bool GP2XWIZSdlEventManager::handleJoyButtonDown(SDL_Event &ev, Common::Event &e
 	return true;
 }
 
-bool GP2XWIZSdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
+bool GP2XSdlEventManager::handleJoyButtonUp(SDL_Event &ev, Common::Event &event) {
 	_stickBtn[ev.jbutton.button] = 0;
 	if (ev.jbutton.button == GP2X_BUTTON_B) {
 		event.type = Common::EVENT_LBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);
+#ifdef GP2X
+	} else if (ev.jbutton.button == GP2X_BUTTON_CLICK) {
+		event.type = Common::EVENT_LBUTTONUP;
+		fillMouseEvent(event, _km.x, _km.y);
+#endif
 	} else if (ev.jbutton.button == GP2X_BUTTON_X) {
 		event.type = Common::EVENT_RBUTTONUP;
 		fillMouseEvent(event, _km.x, _km.y);

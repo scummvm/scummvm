@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(MACOSX)
+#if defined(MACOSX) || defined(GP2X)
 
 #include "backends/mixer/doublebuffersdl/doublebuffersdl-mixer.h"
 

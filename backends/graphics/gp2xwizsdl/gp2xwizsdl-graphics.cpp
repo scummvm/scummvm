@@ -23,10 +23,10 @@
  *
  */
 
-#ifndef GP2XWIZ
+#ifdef GP2XWIZ
 
 #include "backends/graphics/gp2xwizsdl/gp2xwizsdl-graphics.h"
-#include "backends/events/gp2xwizsdl/gp2xwizsdl-events.h"
+#include "backends/events/gp2xsdl/gp2xsdl-events.h"
 
 #include "common/mutex.h"
 #include "graphics/scaler/aspect.h"
@@ -121,7 +121,7 @@ void GP2XWIZSdlGraphicsManager::initSize(uint w, uint h) {
 	if (w > 320 || h > 240){
 		setGraphicsMode(GFX_HALF);
 		setGraphicsModeIntern();
-		((GP2XWIZSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
+		((GP2XSdlEventManager *)g_system->getEventManager())->toggleMouseGrab();
 	}
 
 	_transactionDetails.sizeChanged = true;

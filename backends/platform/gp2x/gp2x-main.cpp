@@ -23,27 +23,28 @@
  *
  */
 
-#if !defined(BACKEND_EVENTS_SDL_GP2XWIZ_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
-#define BACKEND_EVENTS_SDL_GP2XWIZ_H
+#include "backends/platform/gp2x/gp2x-sdl.h"
+#include "backends/plugins/posix/posix-provider.h"
+#include "base/main.h"
 
-#include "backends/events/sdl/sdl-events.h"
+int main(int argc, char *argv[]) {
 
-class GP2XWIZSdlEventManager : public SdlEventManager {
-public:
-	GP2XWIZSdlEventManager(Common::EventSource *boss);
+	// Create our OSystem instance
+	g_system = new OSystem_GP2X();
+	assert(g_system);
 
-protected:
-	bool _stickBtn[32];
-	bool _buttonStateL;
+	// Pre initialize the backend
+	((OSystem_GP2X *)g_system)->init();
 
-	void moveStick();
-
-	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
-	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
-
-	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
-};
-
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
 #endif
+
+	// Invoke the actual ScummVM main entry point:
+	int res = scummvm_main(argc, argv);
+
+	// Free OSystem
+	delete (OSystem_GP2X *)g_system;
+
+	return res;
+}

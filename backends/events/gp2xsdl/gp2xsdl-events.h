@@ -23,26 +23,27 @@
  *
  */
 
-#ifndef PLATFORM_SDL_GP2X_H
-#define PLATFORM_SDL_GP2X_H
+#if !defined(BACKEND_EVENTS_SDL_GP2X_H) && !defined(DISABLE_DEFAULT_EVENTMANAGER)
+#define BACKEND_EVENTS_SDL_GP2X_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/events/sdl/sdl-events.h"
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
-
-class OSystem_GP2X : public OSystem_POSIX {
+class GP2XSdlEventManager : public SdlEventManager {
 public:
-	OSystem_GP2X() {}
-	virtual ~OSystem_GP2X() {}
-
-	virtual void initBackend();
-	virtual void quit();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	GP2XSdlEventManager(Common::EventSource *boss);
 
 protected:
-	virtual void initSDL();
+	bool _stickBtn[32];
+	bool _buttonStateL;
+
+	void moveStick();
+
+	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
+	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
+
+	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 };
 
 #endif

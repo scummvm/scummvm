@@ -29,8 +29,11 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 
-//#define SAMPLES_PER_SEC 11025
+#ifdef GP2X
+#define SAMPLES_PER_SEC 11025
+#else
 #define SAMPLES_PER_SEC 22050
+#endif
 //#define SAMPLES_PER_SEC 44100
 
 SdlMixerManager::SdlMixerManager()

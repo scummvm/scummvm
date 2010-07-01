@@ -23,26 +23,28 @@
  *
  */
 
-#ifndef PLATFORM_SDL_GP2X_H
-#define PLATFORM_SDL_GP2X_H
+#ifndef BACKENDS_GRAPHICS_SDL_GP2X_H
+#define BACKENDS_GRAPHICS_SDL_GP2X_H
 
-#include "backends/platform/sdl/posix/posix.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
 
-#ifndef PATH_MAX
-	#define PATH_MAX 255
-#endif
-
-class OSystem_GP2X : public OSystem_POSIX {
+class GP2XSdlGraphicsManager : public SdlGraphicsManager {
 public:
-	OSystem_GP2X() {}
-	virtual ~OSystem_GP2X() {}
+	GP2XSdlGraphicsManager();
+	virtual ~GP2XSdlGraphicsManager() {}
+	
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual void drawMouse();
 
-	virtual void initBackend();
-	virtual void quit();
-	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	virtual bool hasFeature(OSystem::Feature f);
+	virtual void setFeatureState(OSystem::Feature f, bool enable);
+
+	// Toggles zoom adjust on mouse
+	void toggleZoomOnMouse();
 
 protected:
-	virtual void initSDL();
+	bool _adjustZoomOnMouse;
 };
 
 #endif

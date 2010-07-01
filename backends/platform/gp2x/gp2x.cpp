@@ -23,29 +23,19 @@
  *
  */
 
-/*
- * GP2X: Main backend.
- *
- */
-
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "backends/platform/gp2x/gp2x-hw.h"
 #include "backends/platform/gp2x/gp2x-mem.h"
-#include "common/archive.h"
-#include "common/config-manager.h"
-#include "common/debug.h"
-#include "common/EventRecorder.h"
-#include "common/events.h"
-#include "common/util.h"
 
-#include "common/file.h"
-#include "base/main.h"
-
+#include "backends/graphics/gp2xsdl/gp2xsdl-graphics.h"
+#include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #include "backends/saves/default/default-saves.h"
 
-#include "backends/timer/default/default-timer.h"
-#include "backends/plugins/posix/posix-provider.h"
-#include "sound/mixer_intern.h"
+#include "common/config-manager.h"
+#include "common/debug.h"
+
+// Disable for normal serial logging.
+#define DUMP_STDOUT
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,66 +43,11 @@
 #include <limits.h>
 #include <errno.h>
 #include <sys/stat.h>
-#include <time.h>	// for getTimeAndDate()
-
-// Disable for normal serial logging.
-#define DUMP_STDOUT
-
-#define SAMPLES_PER_SEC 11025
-//#define SAMPLES_PER_SEC 22050
-//#define SAMPLES_PER_SEC 44100
-
-#define DEFAULT_CONFIG_FILE ".scummvmrc"
-
-#include "backends/fs/posix/posix-fs-factory.h"
-
-static Uint32 timer_handler(Uint32 interval, void *param) {
-	((DefaultTimerManager *)param)->handler();
-	return interval;
-}
-
-int main(int argc, char *argv[]) {
-	g_system = new OSystem_GP2X();
-	assert(g_system);
-
-#ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new POSIXPluginProvider());
-#endif
-
-	// Invoke the actual ScummVM main entry point:
-	int res = scummvm_main(argc, argv);
-	g_system->quit();
-	return res;
-}
-
-OSystem *OSystem_GP2X_create() {
-	return new OSystem_GP2X();
-}
 
 void OSystem_GP2X::initBackend() {
-	assert(!_inited);
-
-	ConfMan.setInt("joystick_num", 0);
-	int joystick_num = ConfMan.getInt("joystick_num");
-	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_EVENTTHREAD;
-
-	if (ConfMan.hasKey("disable_sdl_parachute"))
-		sdlFlags |= SDL_INIT_NOPARACHUTE;
-
-	if (joystick_num > -1)
-		sdlFlags |= SDL_INIT_JOYSTICK;
-
-	if (SDL_Init(sdlFlags) == -1) {
-		error("Could not initialize SDL: %s", SDL_GetError());
-	}
-
 	// Setup default save path to be workingdir/saves
-	#ifndef PATH_MAX
-		#define PATH_MAX 255
-	#endif
-
-	char savePath[PATH_MAX+1];
-	char workDirName[PATH_MAX+1];
+	char savePath[PATH_MAX + 1];
+	char workDirName[PATH_MAX + 1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
 		error("Could not obtain current working directory.");
@@ -134,8 +69,8 @@ void OSystem_GP2X::initBackend() {
 	#ifdef DUMP_STDOUT
 		// The GP2X has a serial console but most users do not use this so we
 		// output all our STDOUT and STDERR to files for debug purposes.
-		char STDOUT_FILE[PATH_MAX+1];
-		char STDERR_FILE[PATH_MAX+1];
+		char STDOUT_FILE[PATH_MAX + 1];
+		char STDERR_FILE[PATH_MAX + 1];
 
 		strcpy(STDOUT_FILE, workDirName);
 		strcpy(STDERR_FILE, workDirName);
@@ -175,12 +110,7 @@ void OSystem_GP2X::initBackend() {
 		printf("%s\n", "Debug: STDOUT and STDERR redirected to text files.");
 	#endif /* DUMP_STDOUT */
 
-	_graphicsMutex = createMutex();
-
-	SDL_ShowCursor(SDL_DISABLE);
-
 	// Setup other defaults.
-
 	ConfMan.registerDefault("aspect_ratio", true);
 
 	/* Up default volume values as we use a seperate system level volume anyway. */
@@ -189,43 +119,7 @@ void OSystem_GP2X::initBackend() {
 	ConfMan.registerDefault("speech_volume", 192);
 	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
 
-	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
-	memset(&_videoMode, 0, sizeof(_videoMode));
-	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
-
-	_videoMode.mode = GFX_NORMAL;
-	_videoMode.scaleFactor = 1;
-	_scalerProc = Normal1x;
-	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
-	_scalerType = 0;
-	_adjustZoomOnMouse = false;
 	ConfMan.setBool("FM_low_quality", true);
-
-	// enable joystick
-	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
-		_joystick = SDL_JoystickOpen(joystick_num);
-	}
-
-	_savefile = new DefaultSaveFileManager();
-	// Create and hook up the mixer, if none exists yet (we check for this to
-	// allow subclasses to provide their own).
-	if (_mixer == 0) {
-		setupMixer();
-	}
-
-	// Create and hook up the timer manager, if none exists yet (we check for
-	// this to allow subclasses to provide their own).
-	if (_timer == 0) {
-		// Note: We could implement a custom SDLTimerManager by using
-		// SDL_AddTimer. That might yield better timer resolution, but it would
-		// also change the semantics of a timer: Right now, ScummVM timers
-		// *never* run in parallel, due to the way they are implemented. If we
-		// switched to SDL_AddTimer, each timer might run in a separate thread.
-		// However, not all our code is prepared for that, so we can't just
-		// switch. Still, it's a potential future change to keep in mind.
-		_timer = new DefaultTimerManager();
-		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
-	}
 
 	/* Initialise any GP2X specific stuff we may want (Batt Status, scaler etc.) */
 	GP2X_HW::deviceInit();
@@ -233,99 +127,39 @@ void OSystem_GP2X::initBackend() {
 	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */
 	GP2X_HW::mixerMoveVolume(0);
 
-	OSystem::initBackend();
+	// Create the events manager
+	if (_eventManager == 0)
+		_eventManager = new GP2XSdlEventManager(this);
 
-	_inited = true;
+	// Create the graphics manager
+	if (_graphicsManager == 0)
+		_graphicsManager = new GP2XSdlGraphicsManager();
+
+	// Call parent implementation of this method
+	OSystem_POSIX::initBackend();
 }
 
-OSystem_GP2X::OSystem_GP2X()
-	:
-	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
-	_hwscreen(0), _screen(0), _tmpscreen(0),
-	_overlayVisible(false),
-	_overlayscreen(0), _tmpscreen2(0),
-	_scalerProc(0), _modeChanged(false), _screenChangeCount(0),
-	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
-	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
-	_joystick(0),
-	_currentShakePos(0), _newShakePos(0),
-	_paletteDirtyStart(0), _paletteDirtyEnd(0),
-#ifdef MIXER_DOUBLE_BUFFERING
-	_soundMutex(0), _soundCond(0), _soundThread(0),
-	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
-#endif
-	_fsFactory(0),
-	_savefile(0),
-	_mixer(0),
-	_timer(0),
-	_screenIsLocked(false),
-	_graphicsMutex(0), _transactionMode(kTransactionNone) {
+void OSystem_GP2X::initSDL() {
+	// Check if SDL has not been initialized
+	if (!_initedSDL) {
+		uint32 sdlFlags = SDL_INIT_EVENTTHREAD;
+		if (ConfMan.hasKey("disable_sdl_parachute"))
+			sdlFlags |= SDL_INIT_NOPARACHUTE;
 
-	// allocate palette storage
-	_currentPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
-	_cursorPalette = (SDL_Color *)calloc(sizeof(SDL_Color), 256);
+		// Initialize SDL (SDL Subsystems are initiliazed in the corresponding sdl managers)
+		if (SDL_Init(sdlFlags) == -1)
+			error("Could not initialize SDL: %s", SDL_GetError());
 
-	_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+		// Enable unicode support if possible
+		SDL_EnableUNICODE(1);
 
-	// reset mouse state
-	memset(&_km, 0, sizeof(_km));
-	memset(&_mouseCurState, 0, sizeof(_mouseCurState));
-
-	_inited = false;
-	_fsFactory = new POSIXFilesystemFactory();
-}
-
-OSystem_GP2X::~OSystem_GP2X() {
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
-
-	delete _savefile;
-	delete _timer;
-}
-
-uint32 OSystem_GP2X::getMillis() {
-	uint32 millis = SDL_GetTicks();
-	g_eventRec.processMillis(millis);
-	return millis;
-}
-
-void OSystem_GP2X::delayMillis(uint msecs) {
-	SDL_Delay(msecs);
-}
-
-void OSystem_GP2X::getTimeAndDate(TimeDate &td) const {
-	time_t curTime = time(0);
-	struct tm t = *localtime(&curTime);
-	td.tm_sec = t.tm_sec;
-	td.tm_min = t.tm_min;
-	td.tm_hour = t.tm_hour;
-	td.tm_mday = t.tm_mday;
-	td.tm_mon = t.tm_mon;
-	td.tm_year = t.tm_year;
-}
-
-Common::TimerManager *OSystem_GP2X::getTimerManager() {
-	assert(_timer);
-	return _timer;
-}
-
-Common::SaveFileManager *OSystem_GP2X::getSavefileManager() {
-	assert(_savefile);
-	return _savefile;
-}
-
-FilesystemFactory *OSystem_GP2X::getFilesystemFactory() {
-	assert(_fsFactory);
-	return _fsFactory;
+		_initedSDL = true;
+	}
 }
 
 void OSystem_GP2X::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) {
 	/* Setup default extra data paths for engine data files and plugins */
-	char workDirName[PATH_MAX+1];
+	char workDirName[PATH_MAX + 1];
 
 	if (getcwd(workDirName, PATH_MAX) == NULL) {
 		error("Error: Could not obtain current working directory.");
@@ -357,78 +191,8 @@ void OSystem_GP2X::addSysArchivesToSearchSet(Common::SearchSet &s, int priority)
 	}
 }
 
-static Common::String getDefaultConfigFileName() {
-	char configFile[MAXPATHLEN];
-	strcpy(configFile, DEFAULT_CONFIG_FILE);
-	return configFile;
-}
-
-Common::SeekableReadStream *OSystem_GP2X::createConfigReadStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createReadStream();
-}
-
-Common::WriteStream *OSystem_GP2X::createConfigWriteStream() {
-	Common::FSNode file(getDefaultConfigFileName());
-	return file.createWriteStream();
-}
-
-bool OSystem_GP2X::hasFeature(Feature f) {
-	return
-		(f == kFeatureFullscreenMode) ||
-		(f == kFeatureAspectRatioCorrection) ||
-		(f == kFeatureCursorHasPalette);
-}
-
-void OSystem_GP2X::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureFullscreenMode:
-		return;
-	case kFeatureAspectRatioCorrection:
-		setAspectRatioCorrection(enable);
-		break;
-	case kFeatureDisableKeyFiltering:
-		// TODO: Extend as more support for this is added to engines.
-		return;
-	default:
-		break;
-	}
-}
-
-bool OSystem_GP2X::getFeatureState(Feature f) {
-	assert (_transactionMode == kTransactionNone);
-
-	switch (f) {
-	case kFeatureFullscreenMode:
-		return false;
-	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatioCorrection;
-	default:
-		return false;
-	}
-}
-
 void OSystem_GP2X::quit() {
-	unloadGFXMode();
-	deleteMutex(_graphicsMutex);
-
-	if (_joystick)
-		SDL_JoystickClose(_joystick);
 	GP2X_HW::deviceDeinit();
-
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-
-	free(_currentPalette);
-	free(_cursorPalette);
-	free(_mouseData);
-
-	delete _timer;
-	SDL_ShowCursor(SDL_ENABLE);
-	SDL_Quit();
-
-	delete getEventManager();
-	delete _savefile;
 
 	#ifdef DUMP_STDOUT
 		printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
@@ -436,204 +200,5 @@ void OSystem_GP2X::quit() {
 		fclose(stderr);
 	#endif /* DUMP_STDOUT */
 
-	exit(0);
-}
-
-OSystem::MutexRef OSystem_GP2X::createMutex(void) {
-	return (MutexRef) SDL_CreateMutex();
-}
-
-void OSystem_GP2X::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *) mutex);
-}
-
-void OSystem_GP2X::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *) mutex);
-}
-
-void OSystem_GP2X::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *) mutex);
-}
-
-#pragma mark -
-#pragma mark --- Audio ---
-#pragma mark -
-
-#ifdef MIXER_DOUBLE_BUFFERING
-
-void OSystem_GP2X::mixerProducerThread() {
-	byte nextSoundBuffer;
-
-	SDL_LockMutex(_soundMutex);
-	while (true) {
-		// Wait till we are allowed to produce data
-		SDL_CondWait(_soundCond, _soundMutex);
-
-		if (_soundThreadShouldQuit)
-			break;
-
-		// Generate samples and put them into the next buffer
-		nextSoundBuffer = _activeSoundBuf ^ 1;
-		_mixer->mixCallback(_soundBuffers[nextSoundBuffer], _soundBufSize);
-
-		// Swap buffers
-		_activeSoundBuf = nextSoundBuffer;
-	}
-	SDL_UnlockMutex(_soundMutex);
-}
-
-int SDLCALL OSystem_GP2X::mixerProducerThreadEntry(void *arg) {
-	OSystem_GP2X *this_ = (OSystem_GP2X *)arg;
-	assert(this_);
-	this_->mixerProducerThread();
-	return 0;
-}
-
-
-void OSystem_GP2X::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
-	_soundThreadIsRunning = false;
-	_soundThreadShouldQuit = false;
-
-	// Create mutex and condition variable
-	_soundMutex = SDL_CreateMutex();
-	_soundCond = SDL_CreateCond();
-
-	// Create two sound buffers
-	_activeSoundBuf = 0;
-	_soundBufSize = bufSize;
-	_soundBuffers[0] = (byte *)calloc(1, bufSize);
-	_soundBuffers[1] = (byte *)calloc(1, bufSize);
-
-	_soundThreadIsRunning = true;
-
-	// Finally start the thread
-	_soundThread = SDL_CreateThread(mixerProducerThreadEntry, this);
-}
-
-void OSystem_GP2X::deinitThreadedMixer() {
-	// Kill thread?? _soundThread
-
-	if (_soundThreadIsRunning) {
-		// Signal the producer thread to end, and wait for it to actually finish.
-		_soundThreadShouldQuit = true;
-		SDL_CondBroadcast(_soundCond);
-		SDL_WaitThread(_soundThread, NULL);
-
-		// Kill the mutex & cond variables.
-		// Attention: AT this point, the mixer callback must not be running
-		// anymore, else we will crash!
-		SDL_DestroyMutex(_soundMutex);
-		SDL_DestroyCond(_soundCond);
-
-		_soundThreadIsRunning = false;
-
-		free(_soundBuffers[0]);
-		free(_soundBuffers[1]);
-	}
-}
-
-
-void OSystem_GP2X::mixCallback(void *arg, byte *samples, int len) {
-	OSystem_GP2X *this_ = (OSystem_GP2X *)arg;
-	assert(this_);
-	assert(this_->_mixer);
-
-	assert((int)this_->_soundBufSize == len);
-
-	// Lock mutex, to ensure our data is not overwritten by the producer thread
-	SDL_LockMutex(this_->_soundMutex);
-
-	// Copy data from the current sound buffer
-	memcpy(samples, this_->_soundBuffers[this_->_activeSoundBuf], len);
-
-	// Unlock mutex and wake up the produced thread
-	SDL_UnlockMutex(this_->_soundMutex);
-	SDL_CondSignal(this_->_soundCond);
-}
-
-#else
-
-void OSystem_GP2X::mixCallback(void *sys, byte *samples, int len) {
-	OSystem_GP2X *this_ = (OSystem_GP2X *)sys;
-	assert(this_);
-	assert(this_->_mixer);
-
-	this_->_mixer->mixCallback(samples, len);
-}
-
-#endif
-
-void OSystem_GP2X::setupMixer() {
-	SDL_AudioSpec desired;
-	SDL_AudioSpec obtained;
-
-	// Determine the desired output sampling frequency.
-	uint32 samplesPerSec = 0;
-	if (ConfMan.hasKey("output_rate"))
-		samplesPerSec = ConfMan.getInt("output_rate");
-	if (samplesPerSec <= 0)
-		samplesPerSec = SAMPLES_PER_SEC;
-
-	// Determine the sample buffer size. We want it to store enough data for
-	// at least 1/16th of a second (though at most 8192 samples). Note
-	// that it must be a power of two. So e.g. at 22050 Hz, we request a
-	// sample buffer size of 2048.
-	uint32 samples = 8192;
-	while (samples * 16 > samplesPerSec * 2)
-		samples >>= 1;
-
-	memset(&desired, 0, sizeof(desired));
-	desired.freq = samplesPerSec;
-	desired.format = AUDIO_S16SYS;
-	desired.channels = 2;
-	//desired.samples = (uint16)samples;
-	desired.samples = 128; // Samples hack
-	desired.callback = mixCallback;
-	desired.userdata = this;
-
-	assert(!_mixer);
-	if (SDL_OpenAudio(&desired, &obtained) != 0) {
-		warning("Could not open audio device: %s", SDL_GetError());
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(false);
-	} else {
-		// Note: This should be the obtained output rate, but it seems that at
-		// least on some platforms SDL will lie and claim it did get the rate
-		// even if it didn't. Probably only happens for "weird" rates, though.
-		samplesPerSec = obtained.freq;
-		debug(1, "Output sample rate: %d Hz", samplesPerSec);
-
-		// Create the mixer instance and start the sound processing
-		_mixer = new Audio::MixerImpl(this, samplesPerSec);
-		assert(_mixer);
-		_mixer->setReady(true);
-
-#ifdef MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_mixer, obtained.samples * 4);
-#endif
-
-		// start the sound system
-		SDL_PauseAudio(0);
-	}
-}
-
-void OSystem_GP2X::closeMixer() {
-	if (_mixer)
-		_mixer->setReady(false);
-
-	SDL_CloseAudio();
-
-	delete _mixer;
-	_mixer = 0;
-
-#ifdef MIXER_DOUBLE_BUFFERING
-	deinitThreadedMixer();
-#endif
-
-}
-
-Audio::Mixer *OSystem_GP2X::getMixer() {
-	assert(_mixer);
-	return _mixer;
+	OSystem_POSIX::quit();
 }

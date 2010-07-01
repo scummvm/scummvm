@@ -6,7 +6,7 @@ MODULE_OBJS := \
 	audiocd/default/default-audiocd.o \
 	audiocd/sdl/sdl-audiocd.o \
 	events/default/default-events.o \
-	events/gp2xwizsdl/gp2xwizsdl-events.o \
+	events/gp2xsdl/gp2xsdl-events.o \
 	events/linuxmotosdl/linuxmotosdl-events.o \
 	events/samsungtvsdl/samsungtvsdl-events.o \
 	events/sdl/sdl-events.o \
@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	fs/wii/wii-fs-factory.o \
 	fs/n64/n64-fs-factory.o \
 	fs/n64/romfsstream.o \
+	graphics/gp2xsdl/gp2xsdl-graphics.o \
 	graphics/gp2xwizsdl/gp2xwizsdl-graphics.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
 	graphics/sdl/sdl-graphics.o \

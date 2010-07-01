@@ -27,7 +27,7 @@
 #include "backends/platform/gp2xwiz/gp2xwiz-hw.h"
 
 #include "backends/graphics/gp2xwizsdl/gp2xwizsdl-graphics.h"
-#include "backends/events/gp2xwizsdl/gp2xwizsdl-events.h"
+#include "backends/events/gp2xsdl/gp2xsdl-events.h"
 #include "backends/saves/default/default-saves.h"
 
 #include "common/config-manager.h"
@@ -133,7 +133,7 @@ void OSystem_GP2XWIZ::initBackend() {
 
 	// Create the events manager
 	if (_eventManager == 0)
-		_eventManager = new GP2XWIZSdlEventManager(this);
+		_eventManager = new GP2XSdlEventManager(this);
 
 	// Create the graphics manager
 	if (_graphicsManager == 0)
