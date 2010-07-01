@@ -248,6 +248,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_clonesSegId);
 	s.syncAsSint32LE(_listsSegId);
 	s.syncAsSint32LE(_nodesSegId);
+
+	syncArray<Class>(s, _classTable);
 }
 
 
@@ -342,8 +344,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		_segMan->resetSegMan();
 
 	_segMan->saveLoadWithSerializer(s);
-
-	syncArray<Class>(s, _segMan->_classTable);
 
 	g_sci->_soundCmd->syncPlayList(s);
 }

@@ -462,8 +462,6 @@ public:
 
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
-	// Only accessible from saveLoadWithSerializer()
-	Common::Array<Class> _classTable; /**< Table of all classes */
 
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
@@ -476,6 +474,8 @@ public: // TODO: make private
 #endif
 
 private:
+	// Only accessible from saveLoadWithSerializer()
+	Common::Array<Class> _classTable; /**< Table of all classes */
 	/** Map script ids to segment ids. */
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
