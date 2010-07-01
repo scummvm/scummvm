@@ -344,8 +344,9 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // called when the game starts
-	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // called when the game starts
+	{ GID_JONES,         232,  0,        "weekendText", "draw",        0x3d3,    0, { 0,   0 } }, // jones/cd only - gets called during the game
+	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // jones/ega&vga only - called when the game starts
+	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
 	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
 	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
