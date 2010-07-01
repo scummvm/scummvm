@@ -405,6 +405,18 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 
 #ifdef ENABLE_SCI32
 bool GameFeatures::autoDetectSci21KernelType() {
+	// First, check if the Sound object is loaded
+	reg_t soundObjAddr = _segMan->findObjectByName("Sound");
+	if (soundObjAddr.isNull()) {
+		// Usually, this means that the Sound object isn't loaded yet.
+		// This case doesn't occur in early SCI2.1 games, and we've only
+		// seen it happen in the RAMA demo, thus we can assume that the
+		// game is using a SCI2.1 table
+		warning("autoDetectSci21KernelType(): Sound object not loaded, assuming a SCI2.1 table");
+		_sci21KernelType = SCI_VERSION_2_1;
+		return true;
+	}
+
 	// Look up the script address
 	reg_t addr = getDetectionAddr("Sound", SELECTOR(play));
 

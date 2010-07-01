@@ -463,6 +463,13 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
+		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
+			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
+			// Happens in the RAMA demo
+			warning("kArray(Cpy): Request to copy a segment which isn't an array, ignoring");
+			return NULL_REG;
+		}
+
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
 		uint32 index1 = argv[2].toUint16();
