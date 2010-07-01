@@ -245,9 +245,9 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(Clones_seg_id);
-	s.syncAsSint32LE(Lists_seg_id);
-	s.syncAsSint32LE(Nodes_seg_id);
+	s.syncAsSint32LE(_clonesSegId);
+	s.syncAsSint32LE(_listsSegId);
+	s.syncAsSint32LE(_nodesSegId);
 }
 
 

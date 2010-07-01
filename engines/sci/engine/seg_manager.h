@@ -446,7 +446,7 @@ public:
 	/**
 	 * Obtains the system strings segment ID
 	 */
-	SegmentId getSysStringsSegment() { return sysStringsSegment; }
+	SegmentId getSysStringsSegment() { return _sysStringsSegId; }
 
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
@@ -460,7 +460,7 @@ public: // TODO: make private
 	SciString *allocateString(reg_t *addr);
 	SciString *lookupString(reg_t addr);
 	void freeString(reg_t addr);
-	SegmentId getStringSegmentId() { return String_seg_id; }
+	SegmentId getStringSegmentId() { return _stringSegId; }
 #endif
 
 private:
@@ -469,21 +469,21 @@ private:
 
 	ResourceManager *_resMan;
 
-	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
-	SegmentId Lists_seg_id; ///< ID of the (a) list segment
-	SegmentId Nodes_seg_id; ///< ID of the (a) node segment
-	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
+	SegmentId _clonesSegId; ///< ID of the (a) clones segment
+	SegmentId _listsSegId; ///< ID of the (a) list segment
+	SegmentId _nodesSegId; ///< ID of the (a) node segment
+	SegmentId _hunksSegId; ///< ID of the (a) hunk segment
 
 	/* System strings */
-	SegmentId sysStringsSegment;
+	SegmentId _sysStringsSegId;
 public:	// TODO: make private. Only kString() needs direct access
-	SystemStrings *sysStrings;
+	SystemStrings *_sysStrings;
 
 private:
 
 #ifdef ENABLE_SCI32
-	SegmentId Arrays_seg_id;
-	SegmentId String_seg_id;
+	SegmentId _arraysSegId;
+	SegmentId _stringSegId;
 #endif
 
 private:

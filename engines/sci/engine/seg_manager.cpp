@@ -40,14 +40,14 @@ enum {
 SegManager::SegManager(ResourceManager *resMan) {
 	_heap.push_back(0);
 
-	Clones_seg_id = 0;
-	Lists_seg_id = 0;
-	Nodes_seg_id = 0;
-	Hunks_seg_id = 0;
+	_clonesSegId = 0;
+	_listsSegId = 0;
+	_nodesSegId = 0;
+	_hunksSegId = 0;
 
 #ifdef ENABLE_SCI32
-	Arrays_seg_id = 0;
-	String_seg_id = 0;
+	_arraysSegId = 0;
+	_stringSegId = 0;
 #endif
 
 	_resMan = resMan;
@@ -71,10 +71,10 @@ void SegManager::resetSegMan() {
 	// And reinitialize
 	_heap.push_back(0);
 
-	Clones_seg_id = 0;
-	Lists_seg_id = 0;
-	Nodes_seg_id = 0;
-	Hunks_seg_id = 0;
+	_clonesSegId = 0;
+	_listsSegId = 0;
+	_nodesSegId = 0;
+	_hunksSegId = 0;
 
 	// Reinitialize class table
 	_classTable.clear();
@@ -82,10 +82,10 @@ void SegManager::resetSegMan() {
 }
 
 void SegManager::initSysStrings() {
-	sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &sysStringsSegment);
+	_sysStrings = (SystemStrings *)allocSegment(new SystemStrings(), &_sysStringsSegId);
 
 	// Allocate static buffer for savegame and CWD directories
-	SystemString *strSaveDir = &sysStrings->_strings[SYS_STRING_SAVEDIR];
+	SystemString *strSaveDir = &_sysStrings->_strings[SYS_STRING_SAVEDIR];
 	strSaveDir->_name = "savedir";
 	strSaveDir->_maxSize = MAX_SAVE_DIR_SIZE;
 	strSaveDir->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
@@ -94,7 +94,7 @@ void SegManager::initSysStrings() {
 	::strcpy(strSaveDir->_value, "");
 
 	// Allocate static buffer for the parser base
-	SystemString *strParserBase = &sysStrings->_strings[SYS_STRING_PARSER_BASE];
+	SystemString *strParserBase = &_sysStrings->_strings[SYS_STRING_PARSER_BASE];
 	strParserBase->_name = "parser-base";
 	strParserBase->_maxSize = MAX_PARSER_BASE;
 	strParserBase->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
@@ -412,13 +412,13 @@ reg_t SegManager::allocateHunkEntry(const char *hunk_type, int size) {
 	HunkTable *table;
 	int offset;
 
-	if (!Hunks_seg_id)
-		allocSegment(new HunkTable(), &(Hunks_seg_id));
-	table = (HunkTable *)_heap[Hunks_seg_id];
+	if (!_hunksSegId)
+		allocSegment(new HunkTable(), &(_hunksSegId));
+	table = (HunkTable *)_heap[_hunksSegId];
 
 	offset = table->allocEntry();
 
-	reg_t addr = make_reg(Hunks_seg_id, offset);
+	reg_t addr = make_reg(_hunksSegId, offset);
 	Hunk *h = &(table->_table[offset]);
 
 	if (!h)
@@ -446,14 +446,14 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	CloneTable *table;
 	int offset;
 
-	if (!Clones_seg_id)
-		table = (CloneTable *)allocSegment(new CloneTable(), &(Clones_seg_id));
+	if (!_clonesSegId)
+		table = (CloneTable *)allocSegment(new CloneTable(), &(_clonesSegId));
 	else
-		table = (CloneTable *)_heap[Clones_seg_id];
+		table = (CloneTable *)_heap[_clonesSegId];
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(Clones_seg_id, offset);
+	*addr = make_reg(_clonesSegId, offset);
 	return &(table->_table[offset]);
 }
 
@@ -461,13 +461,13 @@ List *SegManager::allocateList(reg_t *addr) {
 	ListTable *table;
 	int offset;
 
-	if (!Lists_seg_id)
-		allocSegment(new ListTable(), &(Lists_seg_id));
-	table = (ListTable *)_heap[Lists_seg_id];
+	if (!_listsSegId)
+		allocSegment(new ListTable(), &(_listsSegId));
+	table = (ListTable *)_heap[_listsSegId];
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(Lists_seg_id, offset);
+	*addr = make_reg(_listsSegId, offset);
 	return &(table->_table[offset]);
 }
 
@@ -475,13 +475,13 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	NodeTable *table;
 	int offset;
 
-	if (!Nodes_seg_id)
-		allocSegment(new NodeTable(), &(Nodes_seg_id));
-	table = (NodeTable *)_heap[Nodes_seg_id];
+	if (!_nodesSegId)
+		allocSegment(new NodeTable(), &(_nodesSegId));
+	table = (NodeTable *)_heap[_nodesSegId];
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(Nodes_seg_id, offset);
+	*addr = make_reg(_nodesSegId, offset);
 	return &(table->_table[offset]);
 }
 
@@ -851,14 +851,14 @@ SciArray<reg_t> *SegManager::allocateArray(reg_t *addr) {
 	ArrayTable *table;
 	int offset;
 
-	if (!Arrays_seg_id) {
-		table = (ArrayTable *)allocSegment(new ArrayTable(), &(Arrays_seg_id));
+	if (!_arraysSegId) {
+		table = (ArrayTable *)allocSegment(new ArrayTable(), &(_arraysSegId));
 	} else
-		table = (ArrayTable *)_heap[Arrays_seg_id];
+		table = (ArrayTable *)_heap[_arraysSegId];
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(Arrays_seg_id, offset);
+	*addr = make_reg(_arraysSegId, offset);
 	return &(table->_table[offset]);
 }
 
@@ -891,14 +891,14 @@ SciString *SegManager::allocateString(reg_t *addr) {
 	StringTable *table;
 	int offset;
 
-	if (!String_seg_id) {
-		table = (StringTable *)allocSegment(new StringTable(), &(String_seg_id));
+	if (!_stringSegId) {
+		table = (StringTable *)allocSegment(new StringTable(), &(_stringSegId));
 	} else
-		table = (StringTable *)_heap[String_seg_id];
+		table = (StringTable *)_heap[_stringSegId];
 
 	offset = table->allocEntry();
 
-	*addr = make_reg(String_seg_id, offset);
+	*addr = make_reg(_stringSegId, offset);
 	return &(table->_table[offset]);
 }
 

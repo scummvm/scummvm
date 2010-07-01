@@ -179,7 +179,7 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((list) ? list->first.isNull() : 0));
 }
 
-static void _k_add_to_front(EngineState *s, reg_t listRef, reg_t nodeRef) {
+static void addToFront(EngineState *s, reg_t listRef, reg_t nodeRef) {
 	List *list = s->_segMan->lookupList(listRef);
 	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
@@ -202,7 +202,7 @@ static void _k_add_to_front(EngineState *s, reg_t listRef, reg_t nodeRef) {
 	list->first = nodeRef;
 }
 
-static void _k_add_to_end(EngineState *s, reg_t listRef, reg_t nodeRef) {
+static void addToEnd(EngineState *s, reg_t listRef, reg_t nodeRef) {
 	List *list = s->_segMan->lookupList(listRef);
 	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
@@ -250,7 +250,7 @@ reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
-	_k_add_to_front(s, argv[0], argv[1]);
+	addToFront(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
@@ -288,14 +288,14 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 			s->_segMan->lookupNode(oldnext)->pred = argv[2];
 
 	} else { // !firstnode
-		_k_add_to_front(s, argv[0], argv[2]); // Set as initial list node
+		addToFront(s, argv[0], argv[2]); // Set as initial list node
 	}
 
 	return s->r_acc;
 }
 
 reg_t kAddToEnd(EngineState *s, int argc, reg_t *argv) {
-	_k_add_to_end(s, argv[0], argv[1]);
+	addToEnd(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
@@ -417,7 +417,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	for (i = 0;i < input_size;i++) {
 		reg_t lNode = s->_segMan->newNode(temp_array[i].value, temp_array[i].key);
-		_k_add_to_end(s, output_data, lNode);
+		addToEnd(s, output_data, lNode);
 	}
 
 	free(temp_array);
