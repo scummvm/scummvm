@@ -425,6 +425,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio.*",                NULL,            NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                  NULL,            NULL },
     { MAP_CALL(Text),              SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 #endif
 };

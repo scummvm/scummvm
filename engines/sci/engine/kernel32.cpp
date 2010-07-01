@@ -898,7 +898,7 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
 	switch (argv[0].toUint16()) {
-	case 0:
+	case 0: {
 		if (argc != 4) {
 			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
 			return NULL_REG;
@@ -906,6 +906,23 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		reg_t object = argv[3];
 		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
 		debug("kCreateTextBitmap: %s", text.c_str());
+	}
+	default:
+		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kCD(EngineState *s, int argc, reg_t *argv)
+{
+	// TODO: Stub
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Return whether the contents of disc argv[1] is available.
+		return TRUE_REG;
+	default:
+		warning("CD(%d)", argv[0].toUint16());
 	}
 
 	return NULL_REG;

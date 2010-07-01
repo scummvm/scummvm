@@ -87,6 +87,7 @@ enum {
 
 extern const reg_t NULL_REG;
 extern const reg_t SIGNAL_REG;
+extern const reg_t TRUE_REG;
 
 // Selector ID
 typedef int Selector;
