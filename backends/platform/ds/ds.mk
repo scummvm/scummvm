@@ -65,7 +65,7 @@ OBJCOPY := $(DEVKITARM)/bin/arm-eabi-objcopy
 #
 ARM7_ARCH	:=	-mthumb-interwork
 
-# note: arm9tdmi isn't the correct CPU arch, but anything newer and LD
+# note: arm7tdmi isn't the correct CPU arch, but anything newer and LD
 # *insists* it has a FPU or VFP, and it won't take no for an answer!
 ARM7_CFLAGS	:=	-g -Wall -O2\
 		-mcpu=arm7tdmi -mtune=arm7tdmi -fomit-frame-pointer\
