@@ -351,6 +351,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_KQ5,             0,  0,                   "", "export 29",      -1,    3, { 0,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
 	{ GID_KQ5,            25,  0,              "rm025", "doit",           -1,    0, { 0,   0 } }, // inside witch forest, where the walking rock is
+	{ GID_KQ6,           903,  0,         "controlWin", "open",           -1,    4, { 0,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_SQ1,           703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
 	{ GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
 	{ GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
