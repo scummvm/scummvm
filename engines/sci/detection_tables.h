@@ -768,7 +768,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
-	// Jones in the Fast Lane - English DOS
+	// Jones in the Fast Lane EGA - English DOS
+	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
+	{"jones", "", {
+		{"resource.map", 0, "be4cf9e8c1e253623ef35ae3b8a1d998", 1800},
+		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 202105},
+		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 341771},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Jones in the Fast Lane VGA - English DOS
 	// SCI interpreter version 1.000.172
 	{"jones", "", {
 		{"resource.map", 0, "65cbe19b36fffc71c8e7b2686bd49ad7", 1800},
