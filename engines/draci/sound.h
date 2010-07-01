@@ -54,7 +54,7 @@ struct SoundSample {
 	Common::SeekableReadStream* _stream;
 
 	SoundSample() : _offset(0), _length(0), _frequency(0), _format(RAW), _data(NULL), _stream(NULL) { }
-	// The standard copy constructor is good enough, since we only stored numbers and pointers.
+	// The standard copy constructor is good enough, since we only store numbers and pointers.
 	// Don't call close() automaticall in the destructor, otherwise copying causes SIGSEGV.
 	void close() {
 		delete[] _data;

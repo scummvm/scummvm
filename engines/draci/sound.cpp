@@ -180,6 +180,10 @@ SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 
 void ZipSoundArchive::openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency) {
 	closeArchive();
+	if ((_format == RAW || _format == RAW80) && !raw_frequency) {
+		error("openArchive() expects frequency for RAW data");
+		return;
+	}
 
 	_archive = Common::makeZipArchive(path);
 	_path = path;
@@ -294,17 +298,19 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	// script.cpp, which blocks until the dubbed sentence has finished
 	// playing.
 	Common::SeekableReadStream* stream;
+	const int skip = buffer._format == RAW80 ? 80 : 0;
 	if (buffer._stream) {
-		stream = new Common::SeekableSubReadStream(buffer._stream, 0, buffer._stream->size(), DisposeAfterUse::NO);
+		stream = new Common::SeekableSubReadStream(
+			buffer._stream, skip, buffer._stream->size() /* end */, DisposeAfterUse::NO);
 	} else {
-		stream = new Common::MemoryReadStream(buffer._data, buffer._length, DisposeAfterUse::NO);
+		stream = new Common::MemoryReadStream(
+			buffer._data + skip, buffer._length - skip /* length */, DisposeAfterUse::NO);
 	}
 
 	Audio::SeekableAudioStream *reader = NULL;
 	switch (buffer._format) {
-	case RAW80:
-		stream->skip(80);	// and fall-thru
 	case RAW:
+	case RAW80:
 		reader = Audio::makeRawStream(stream, buffer._frequency, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
 		break;
 #ifdef USE_MAD
