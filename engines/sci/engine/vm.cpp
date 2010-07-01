@@ -344,6 +344,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+	{ GID_GK2,            11,  0,                   "", "export 10",      -1,    3, { 0,   0 } }, // called when the game starts
 	{ GID_JONES,         232,  0,        "weekendText", "draw",        0x3d3,    0, { 0,   0 } }, // jones/cd only - gets called during the game
 	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // jones/ega&vga only - called when the game starts
