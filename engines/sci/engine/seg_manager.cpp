@@ -553,7 +553,7 @@ static void *derefPtr(SegManager *segMan, reg_t pointer, int entries, bool wantR
 
 	if (ret.isRaw != wantRaw) {
 		warning("Dereferencing pointer %04x:%04x (type %d) which is %s, but expected %s", PRINT_REG(pointer),
-			segMan->_heap[pointer.segment]->getType(),
+			segMan->getSegmentType(pointer.segment),
 			ret.isRaw ? "raw" : "not raw",
 			wantRaw ? "raw" : "not raw");
 	}

@@ -438,8 +438,8 @@ public:
 	 */
 	reg_t findObjectByName(const Common::String &name, int index = -1);
 
-	uint32 classTableSize() { return _classTable.size(); }
-	Class getClass(int index) { return _classTable[index]; }
+	uint32 classTableSize() const { return _classTable.size(); }
+	Class getClass(int index) const { return _classTable[index]; }
 	void setClassOffset(int index, reg_t offset) { _classTable[index].reg = offset;	}
 	void resizeClassTable(uint32 size) { _classTable.resize(size); }
 
@@ -460,9 +460,6 @@ public:
 		return &_sysStrings->_strings[idx];
 	}
 
-public: // TODO: make private
-	Common::Array<SegmentObj *> _heap;
-
 #ifdef ENABLE_SCI32
 	SciArray<reg_t> *allocateArray(reg_t *addr);
 	SciArray<reg_t> *lookupArray(reg_t addr);
@@ -473,8 +470,10 @@ public: // TODO: make private
 	SegmentId getStringSegmentId() { return _stringSegId; }
 #endif
 
+	const Common::Array<SegmentObj *> &getSegments() const { return _heap; }
+
 private:
-	// Only accessible from saveLoadWithSerializer()
+	Common::Array<SegmentObj *> _heap;
 	Common::Array<Class> _classTable; /**< Table of all classes */
 	/** Map script ids to segment ids. */
 	Common::HashMap<int, SegmentId> _scriptSegMap;

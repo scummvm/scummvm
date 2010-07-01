@@ -51,12 +51,12 @@ struct WorklistManager {
 	}
 };
 
-static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *segMan, reg_t_hash_map &nonnormal_map) {
+static reg_t_hash_map *normalizeAddresses(SegManager *segMan, reg_t_hash_map &nonnormal_map) {
 	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
 	for (reg_t_hash_map::iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
-		SegmentObj *mobj = (reg.segment < segMan->_heap.size()) ? segMan->_heap[reg.segment] : NULL;
+		SegmentObj *mobj = segMan->getSegmentObj(reg.segment);
 
 		if (mobj) {
 			reg = mobj->findCanonicAddress(segMan, reg);
@@ -113,11 +113,12 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 	debugC(2, kDebugLevelGC, "[GC] -- Finished adding execution stack");
 
+	const Common::Array<SegmentObj *> &heap = segMan->getSegments();
+
 	// Init: Explicitly loaded scripts
-	for (i = 1; i < segMan->_heap.size(); i++) {
-		if (segMan->_heap[i]
-		        && segMan->_heap[i]->getType() == SEG_TYPE_SCRIPT) {
-			Script *script = (Script *)segMan->_heap[i];
+	for (i = 1; i < heap.size(); i++) {
+		if (heap[i] && heap[i]->getType() == SEG_TYPE_SCRIPT) {
+			Script *script = (Script *)heap[i];
 
 			if (script->getLockers()) { // Explicitly loaded?
 				wm.pushArray(script->listObjectReferences());
@@ -134,15 +135,15 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		wm._worklist.pop_back();
 		if (reg.segment != stack_seg) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x", PRINT_REG(reg));
-			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment]) {
+			if (reg.segment < heap.size() && heap[reg.segment]) {
 				// Valid heap object? Find its outgoing references!
-				wm.pushArray(segMan->_heap[reg.segment]->listAllOutgoingReferences(reg));
+				wm.pushArray(heap[reg.segment]->listAllOutgoingReferences(reg));
 			}
 		}
 	}
 
 	// Normalise
-	normal_map = normalise_hashmap_ptrs(segMan, wm._map);
+	normal_map = normalizeAddresses(segMan, wm._map);
 
 	return normal_map;
 }
@@ -162,8 +163,9 @@ void run_gc(EngineState *s) {
 
 	// Iterate over all segments, and check for each whether it
 	// contains stuff that can be collected.
-	for (uint seg = 1; seg < segMan->_heap.size(); seg++) {
-		SegmentObj *mobj = segMan->_heap[seg];
+	const Common::Array<SegmentObj *> &heap = segMan->getSegments();
+	for (uint seg = 1; seg < heap.size(); seg++) {
+		SegmentObj *mobj = heap[seg];
 		if (mobj != NULL) {
 			const SegmentType type = mobj->getType();
 			segnames[type] = SegmentObj::getSegmentTypeName(type);
