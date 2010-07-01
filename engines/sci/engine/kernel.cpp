@@ -170,18 +170,18 @@ static const char *s_defaultKernelNames[] = {
 	/*0x6c*/ "Graph",
 	/*0x6d*/ "Joystick",
 	// End of kernel function table for SCI0
-	/*0x6e*/ "ShiftScreen",
+	/*0x6e*/ "Dummy",	// ShiftScreen
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
 	/*0x71*/ "Intersections",	// MoveCursor (SCI1 late), PalVary (SCI1.1)
 	/*0x72*/ "Memory",
-	/*0x73*/ "ListOps",
+	/*0x73*/ "Dummy",	// ListOps
 	/*0x74*/ "FileIO",
 	/*0x75*/ "DoAudio",
 	/*0x76*/ "DoSync",
 	/*0x77*/ "AvoidPath",
 	/*0x78*/ "Sort",	// StrSplit (SCI01)
-	/*0x79*/ "ATan",
+	/*0x79*/ "Dummy",	// ATan
 	/*0x7a*/ "Lock",
 	/*0x7b*/ "StrSplit",
 	/*0x7c*/ "GetMessage",	// Message (SCI1.1)
@@ -428,17 +428,6 @@ static SciKernelMapEntry s_kernelMap[] = {
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 #endif
 };
-
-#if 0
-	// Stub functions
-	/*09*/	{ "Show", kShow, "i" },
-	{ "ShiftScreen", kShiftScreen, ".*" },
-	{ "ListOps", kListOps, ".*" },
-	{ "ATan", kATan, ".*" },
-	{ "Record", kRecord, ".*" },
-	{ "PlayBack", kPlayBack, ".*" },
-	{ "DbugStr", kDbugStr, ".*" },
-#endif
 
 Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {

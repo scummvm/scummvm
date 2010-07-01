@@ -852,6 +852,11 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		}
 
 		warning("%s", warningMsg.c_str());
+
+		// Make sure that the game doesn't call a function that is considered unused. If
+		// that happens, error out.
+		if (kernelCall.origName == "Dummy")
+			error("Kernel function %d was called, which was considered to be unused", kernelFuncNr);
 	}
 }
 
