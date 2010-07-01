@@ -44,7 +44,7 @@ namespace Sci {
 
 const reg_t NULL_REG = {0, 0};
 const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
-
+const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
