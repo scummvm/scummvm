@@ -180,7 +180,7 @@ SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 
 void ZipSoundArchive::openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency) {
 	closeArchive();
-	if ((_format == RAW || _format == RAW80) && !raw_frequency) {
+	if ((format == RAW || format == RAW80) && !raw_frequency) {
 		error("openArchive() expects frequency for RAW data");
 		return;
 	}
