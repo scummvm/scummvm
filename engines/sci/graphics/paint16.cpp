@@ -317,11 +317,12 @@ reg_t GfxPaint16::bitsSave(const Common::Rect &rect, byte screenMask) {
 		return NULL_REG;
 
 	if (screenMask == GFX_SCREEN_MASK_DISPLAY) {
+		// The coordinates we are given are actually up-to-including right/bottom - we extend accordingly
+		workerRect.bottom++;
+		workerRect.right++;
 		// Adjust rect to upscaled hires, but dont adjust according to port
 		_screen->adjustToUpscaledCoordinates(workerRect.top, workerRect.left);
 		_screen->adjustToUpscaledCoordinates(workerRect.bottom, workerRect.right);
-		workerRect.bottom++;
-		workerRect.right++;
 	} else {
 		_ports->offsetRect(workerRect);
 	}
