@@ -789,6 +789,9 @@ size_t SegManager::strlen(reg_t str) {
 
 Common::String SegManager::getString(reg_t pointer, int entries) {
 	Common::String ret;
+	if (pointer.isNull())
+		return ret;	// empty text
+
 	SegmentRef src_r = dereference(pointer);
 	if (!src_r.isValid()) {
 		warning("SegManager::getString(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
