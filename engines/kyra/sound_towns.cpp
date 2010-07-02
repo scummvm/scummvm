@@ -1858,10 +1858,29 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 	_dataPtr = data;
 	_totalLevel = 0x7F;
 
-	uint8 *src_b = _dataPtr;
-	int loop = 1;
+	uint8 *tmp = _dataPtr;	
+	for (bool loop = true; loop; ) {
+		uint8 cmd = *tmp++;
+		if (cmd < 0xf0) {
+			tmp++;
+		} else if (cmd == 0xff) {
+			if (READ_LE_UINT16(tmp))
+				_drv->_looping |= _idFlag;
+			else
+				loop = false;
+		} else if (cmd == 0xf6) {
+			// reset repeat section countdown
+			tmp[0] = tmp[1];
+			tmp += 4;
+		} else {
+			tmp += _drv->_opnFxCmdLen[cmd - 240];
+		}
+	}
+
+	/*uint8 *src_b = _dataPtr;
 	uint8 cmd = 0;
-	while (loop) {
+
+	for (int loop = 1; loop; ) {
 		if (loop == 1) {
 			cmd = *src_b++;
 			if (cmd < 0xf0) {
@@ -1882,11 +1901,12 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 			src_b += _drv->_opnFxCmdLen[cmd - 240];
 			loop = 1;
 		} else if (loop == 3) {
+			// reset repeat section countdown
 			src_b[0] = src_b[1];
 			src_b += 4;
 			loop = 1;
 		}
-	}
+	}*/
 }
 
 void TownsPC98_OpnChannel::processEvents() {
@@ -2498,6 +2518,22 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 	_dataPtr = data;
 	_ssgTl = 0xff;
 	_algorithm = 0x80;
+
+	uint8 *tmp = _dataPtr;	
+	for (bool loop = true; loop; ) {
+		uint8 cmd = *tmp++;
+		if (cmd < 0xf0) {
+			tmp++;
+		} else if (cmd == 0xff && !*tmp) {
+			loop = false;
+		} else if (cmd == 0xf6) {
+			// reset repeat section countdown
+			tmp[0] = tmp[1];
+			tmp += 4;
+		} else {
+			tmp += _drv->_opnFxCmdLen[cmd - 240];
+		}
+	}
 }
 
 TownsPC98_OpnChannelPCM::TownsPC98_OpnChannelPCM(TownsPC98_OpnDriver *driver, uint8 regOffs,
@@ -2750,15 +2786,15 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				finOut += _tleTable[_channels[ii].out ? _pReslt : 0];
 			else
 				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
+
+			if ((1 << ii) & _volMaskA)
+				finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
+
+			if ((1 << ii) & _volMaskB)
+				finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
 		}
 
-		finOut /= 3;
-
-		if ((1 << i) & _volMaskA)
-			finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
-
-		if ((1 << i) & _volMaskB)
-			finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+		finOut /= 3;		
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -3764,21 +3800,21 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 }
 
 void TownsPC98_OpnDriver::startSoundEffect() {
-	_updateSfxFlag = 0;
+	int volFlags = 0;
 	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
 			_sfxChannels[i]->reset();
 			_sfxChannels[i]->loadData(_sfxData + _sfxOffsets[i]);
 			_updateSfxFlag |= _sfxChannels[i]->_idFlag;
+			volFlags |= (_sfxChannels[i]->_idFlag << _numChan);
+		} else {
+			_ssgChannels[i + 1]->restore();
+			_updateSfxFlag &= ~_sfxChannels[i]->_idFlag;
 		}
 	}
-
-	int volFlags = 0;
-	for (int i = 0; i < (_numChan + _numSSG - 2); i++)
-		volFlags |= (1 << i);
-	setVolumeChannelMasks(volFlags, ~volFlags);
-
+	
+	setVolumeChannelMasks(~volFlags, volFlags);
 	_sfxData = 0;
 }
 
