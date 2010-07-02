@@ -278,29 +278,23 @@ void GfxFrameout::kernelFrameout() {
 				// Most likely a text entry
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
-				// This doesn't work for SCI2.1 games...
-				if (getSciVersion() == SCI_VERSION_2) {
-					Kernel *kernel = g_sci->getKernel();
-					if (lookupSelector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
-						Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
-						int16 fontRes = readSelectorValue(_segMan, itemEntry->object, SELECTOR(font));
-						GfxFont *font = new GfxFontFromResource(_resMan, _screen, fontRes);
-						bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
-						uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
-						uint16 curX = itemEntry->x;
-						uint16 curY = itemEntry->y;
-						for (uint32 i = 0; i < text.size(); i++) {
-							unsigned char curChar = text[i];
-							// TODO: proper text splitting... this is a hack
-							if ((curChar == ' ' && i > 0 && text[i - i] == ' ') || curChar == '\n' || 
-								(curX + font->getCharWidth(curChar) > _screen->getWidth())) {
-								curY += font->getHeight();
-								curX = itemEntry->x;
-							}
-							font->draw(curChar, curY, curX, foreColor, dimmed);
-							curX += font->getCharWidth(curChar);
+				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
+					Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
+					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
+					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
+					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
+					uint16 curX = itemEntry->x;
+					uint16 curY = itemEntry->y;
+					for (uint32 i = 0; i < text.size(); i++) {
+						unsigned char curChar = text[i];
+						// TODO: proper text splitting... this is a hack
+						if ((curChar == ' ' && i > 0 && text[i - i] == ' ') || curChar == '\n' || 
+							(curX + font->getCharWidth(curChar) > _screen->getWidth())) {
+							curY += font->getHeight();
+							curX = itemEntry->x;
 						}
-						delete font;
+						font->draw(curChar, curY, curX, foreColor, dimmed);
+						curX += font->getCharWidth(curChar);
 					}
 				}
 			}
