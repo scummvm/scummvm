@@ -86,16 +86,30 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 		g_sci->getResMan()->findResource(id, 1);
 		break;
 	case 0 :
-		which = g_sci->getResMan()->findResource(id, 0);
+		if (id.getNumber() == 0xFFFF) {
+			// Unlock all resources of the requested type
+			Common::List<ResourceId> *resources = g_sci->getResMan()->listResources(type);
+			Common::List<ResourceId>::iterator itr = resources->begin();
 
-		if (which)
-			g_sci->getResMan()->unlockResource(which);
-		else {
-			if (id.getType() == kResourceTypeInvalid)
-				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
-			else
-				// Happens in CD games (e.g. LSL6CD) with the message resource
-				warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+			while (itr != resources->end()) {
+				Resource *res = g_sci->getResMan()->testResource(*itr);
+				if (res->isLocked())
+					g_sci->getResMan()->unlockResource(res);
+				++itr;
+			}
+
+		} else {
+			which = g_sci->getResMan()->findResource(id, 0);
+
+			if (which)
+				g_sci->getResMan()->unlockResource(which);
+			else {
+				if (id.getType() == kResourceTypeInvalid)
+					warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
+				else
+					// Happens in CD games (e.g. LSL6CD) with the message resource
+					warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+			}
 		}
 		break;
 	}

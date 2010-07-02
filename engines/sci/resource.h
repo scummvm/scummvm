@@ -210,7 +210,7 @@ public:
 
 	inline ResourceType getType() const { return _id.getType(); }
 	inline uint16 getNumber() const { return _id.getNumber(); }
-
+	bool isLocked() const { return _status == kResStatusLocked; }
 	/**
 	 * Write the resource to the specified stream.
 	 * This method is used only by the "dump" debugger command.
