@@ -71,6 +71,17 @@ void createThumbnail_4(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 
 		dstPtr += (dstPitch - 2 * width / 4);
 		src += 4 * srcPitch;
 	}
+
+	// Special case for KQ6 Windows, which runs at 640x440: fill the bottom
+	// with zeroes (a black bar)
+	if (width == 640 && height == 440) {
+		for (int y = 440; y < 480; y += 4) {
+			for (int x = 0; x < width; x += 4, dstPtr += 2)
+				*((uint16*)dstPtr) = 0;
+
+			dstPtr += (dstPitch - 2 * width / 4);
+		}
+	}
 }
 
 static void createThumbnail(const uint8 *src, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
@@ -187,6 +198,11 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 	}
 
 	uint16 newHeight = !(inHeight % 240) ? kThumbnailHeight2 : kThumbnailHeight1;
+
+	// Special case for KQ6 Windows, which runs at 640x440: expand the
+	// thumbnail so that it fits
+	if (width == 640 && inHeight == 440)
+		newHeight = kThumbnailHeight2;
 
 	out.create(kThumbnailWidth, newHeight, sizeof(uint16));
 	createThumbnail((const uint8 *)in.pixels, width * sizeof(uint16), (uint8 *)out.pixels, out.pitch, width, inHeight);
