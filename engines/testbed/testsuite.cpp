@@ -42,6 +42,7 @@ bool Testsuite::isSessionInteractive = true;
 Common::String Testsuite::_logDirectory = "";
 Common::String Testsuite::_logFilename = "";
 Common::WriteStream *Testsuite::_ws = 0;
+bool Testsuite::toQuit = false;
 
 void Testsuite::setLogDir(const char *dirname) {
 	_logDirectory = dirname;
@@ -208,6 +209,11 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isI
 }
 	
 void Testsuite::execute() {
+	// Do nothing if meant to exit
+	if (toQuit) {
+		return;
+	}
+	
 	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if((*i)->isInteractive && !isSessionInteractive) {
 			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
@@ -220,6 +226,11 @@ void Testsuite::execute() {
 			_numTestsPassed++;
 		} else {
 			logPrintf("Result: Failed\n");
+		}
+		// Check if user wants to quit
+		if (Engine::shouldQuit()) {
+			toQuit = true;
+			return;
 		}
 	}
 	genReport();

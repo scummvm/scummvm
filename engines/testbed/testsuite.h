@@ -139,6 +139,11 @@ public:
 	 * Used by various tests to respond accordingly
 	 */
 	static bool isSessionInteractive;
+	
+	/**
+	 * Used from the code to decide if the engine needs to exit
+	 */
+	static bool	toQuit;
 
 private:
 	/**
