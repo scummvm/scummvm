@@ -83,6 +83,7 @@ public:
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
+	void putFontPixel(int startingY, int x, int y, byte color);
 	void putPixelOnDisplay(int x, int y, byte color);
 	void drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte prio, byte control);
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {

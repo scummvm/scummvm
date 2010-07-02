@@ -224,6 +224,27 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
 }
 
 /**
+ * This is used to put font pixels onto the screen - we adjust differently, so that we won't
+ *  do triple pixel lines in any case on upscaled hires. That way the font will not get distorted
+ *  Sierra SCI didn't do this
+ */
+void GfxScreen::putFontPixel(int startingY, int x, int y, byte color) {
+	int offset = (startingY + y) * _width + x;
+
+	_visualScreen[offset] = color;
+	if (!_upscaledHires) {
+		_displayScreen[offset] = color;
+	} else {
+		int displayOffset = (_upscaledMapping[startingY] + y * 2) * _displayWidth + x * 2;
+		_displayScreen[displayOffset] = color;
+		_displayScreen[displayOffset + 1] = color;
+		displayOffset += _displayWidth;
+		_displayScreen[displayOffset] = color;
+		_displayScreen[displayOffset + 1] = color;
+	}
+}
+
+/**
  * This will just change a pixel directly on displayscreen. It is supposed to be
  * only used on upscaled-Hires games where hires content needs to get drawn ONTO
  * the upscaled display screen (like japanese fonts, hires portraits, etc.).
