@@ -148,8 +148,8 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		Graphics::Surface newscreen;
 		newscreen.create(width, in.h, in.bytesPerPixel);
 
-		uint8 *dst = (uint8*)newscreen.getBasePtr((320 - in.w) / 2, 0);
-		const uint8 *src = (uint8*)in.getBasePtr(0, 0);
+		uint8 *dst = (uint8 *)newscreen.getBasePtr((320 - in.w) / 2, 0);
+		const uint8 *src = (const uint8 *)in.getBasePtr(0, 0);
 		uint16 height = in.h;
 
 		while (height--) {
@@ -173,8 +173,8 @@ static bool createThumbnail(Graphics::Surface &out, Graphics::Surface &in) {
 		Graphics::Surface newscreen;
 		newscreen.create(width, 400, in.bytesPerPixel);
 
-		uint8 *dst = (uint8*)in.getBasePtr(0, (400 - 240) / 2);
-		const uint8 *src = (uint8*)in.getBasePtr(41, 28);
+		uint8 *dst = (uint8 *)newscreen.getBasePtr(0, (400 - 240) / 2);
+		const uint8 *src = (const uint8 *)in.getBasePtr(41, 28);
 
 		for (int y = 0; y < 240; ++y) {
 			memcpy(dst, src, 640 * in.bytesPerPixel);
