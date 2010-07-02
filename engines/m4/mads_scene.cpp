@@ -129,11 +129,13 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Add the scene if necessary to the list of scenes that have been visited
 	_vm->globals()->addVisitedScene(sceneNumber);
 
-	// Secondary scene load routine
-	loadScene2("*I0.AA");
+	if (_vm->getGameType() == GType_RexNebular) {
+		// Secondary scene load routine
+		loadScene2("*I0.AA");
 
-	// Do any scene specific setup
-	_sceneLogic.enterScene();
+		// Do any scene specific setup
+		_sceneLogic.enterScene();
+	}
 
 	// Purge resources
 	_vm->res()->purge();
@@ -234,12 +236,14 @@ void MadsScene::leftClick(int x, int y) {
 }
 
 void MadsScene::rightClick(int x, int y) {
-	// ***DEBUG*** - sample dialog display
-	int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
-	const char *msg = _madsVm->globals()->loadMessage(idx);
-	Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
-	_vm->_viewManager->addView(dlg);
-	_vm->_viewManager->moveToFront(dlg);
+	if (_vm->getGameType() == GType_RexNebular) {
+		// ***DEBUG*** - sample dialog display
+		int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
+		const char *msg = _madsVm->globals()->loadMessage(idx);
+		Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
+		_vm->_viewManager->addView(dlg);
+		_vm->_viewManager->moveToFront(dlg);
+	}
 }
 
 void MadsScene::setAction(int action, int objectId) {
@@ -338,7 +342,8 @@ void MadsScene::loadPlayerSprites(const char *prefix) {
 		}
 	}
 
-	error("Couldn't find player sprites");
+	// Phantom/Dragon
+	warning("Couldn't find player sprites");
 }
 
 enum boxSprites {
@@ -646,8 +651,20 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	// Basic scene info
 	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
 
-	int resSceneId = stream->readUint16LE();
-	assert(resSceneId == sceneNumber);
+	if (_vm->getGameType() == GType_RexNebular) {
+		int resSceneId = stream->readUint16LE();
+		assert(resSceneId == sceneNumber);
+	} else {
+		char roomFilename[10];
+		char roomFilenameExpected[10];
+		sprintf(roomFilenameExpected, "*RM%d", sceneNumber);
+
+		stream->read(roomFilename, 6);
+		roomFilename[6] = 0;
+		assert(!strcmp(roomFilename, roomFilenameExpected));
+	}
+
+	// TODO: The following is wrong for Phantom/Dragon
 	artFileNum = stream->readUint16LE();
 	depthStyle = stream->readUint16LE();
 	width = stream->readUint16LE();

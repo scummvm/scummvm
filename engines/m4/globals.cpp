@@ -528,7 +528,9 @@ void MadsObject::load(Common::SeekableReadStream *stream) {
 	roomNumber = READ_LE_UINT16(&obj[2]);
 	article = (MADSArticles)obj[4];
 	vocabCount = obj[5] & 0x7f;
-	assert(vocabCount <= 3);
+	// Phantom / Dragon
+	if (vocabCount > 3)
+		warning("MadsObject::load(), vocab cound > 3 (it's %d)", vocabCount);
 
 	for (int i = 0; i < vocabCount; ++i) {
 		vocabList[i].flags1 = obj[6 + i * 4];

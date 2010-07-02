@@ -537,19 +537,18 @@ Common::Error MadsEngine::run() {
 	//for (int i = 0; i < _globals->getMessagesSize(); i++)
 	//printf("%s\n----------\n", _globals->loadMessage(i));
 
-	if ((getGameType() == GType_RexNebular) || (getGameType() == GType_DragonSphere)) {
+	if (getGameType() == GType_RexNebular) {
 		_scene = NULL;
 		loadMenu(MAIN_MENU);
-
 	} else {
+		// Test code
 		_scene = new MadsScene(this);
 
-		if (getGameType() == GType_DragonSphere) {
-			_scene->loadScene(FIRST_SCENE);
-		} else if (getGameType() == GType_Phantom) {
-			//_scene->loadScene(FIRST_SCENE);
-			_scene->loadScene(106);		// a more interesting scene
-		}
+		startScene(FIRST_SCENE);
+		RGBList *_bgPalData;
+		_scene->loadBackground(FIRST_SCENE, &_bgPalData);
+		_palette->addRange(_bgPalData);
+		_scene->translate(_bgPalData);
 
 		_scene->show();
 
