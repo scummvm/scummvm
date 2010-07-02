@@ -229,7 +229,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 
 		if (x[2] & 0x80) { // compressed pic
 			data = _vm->_picture->convertV3Pic(compBuffer, agid->clen);
-			free(compBuffer);
+			// compBuffer has been freed inside convertV3Pic()
 		} else if (agid->len == agid->clen) {
 			// do not decompress
 			data = compBuffer;
