@@ -1358,7 +1358,7 @@ public:
 
 	void setOutputLevel();
 	virtual void fadeStep();
-	void reset();
+	virtual void reset();
 
 	const uint8 _idFlag;
 
@@ -1435,13 +1435,14 @@ public:
 
 	void protect();
 	void restore();
+	virtual void reset();
 
 	void fadeStep();
 
 protected:
 	void setOutputLevel(uint8 lvl);
 
-	bool control_f0_setInstr(uint8 para);
+	bool control_f0_setPatch(uint8 para);
 	bool control_f1_setTotalLevel(uint8 para);
 	bool control_f4_setAlgorithm(uint8 para);
 	bool control_f9_loadCustomPatch(uint8 para);
@@ -1461,6 +1462,7 @@ public:
 	~TownsPC98_OpnSfxChannel() {}
 
 	void loadData(uint8 *data);
+	void reset();
 };
 
 class TownsPC98_OpnChannelPCM : public TownsPC98_OpnChannel {
@@ -2202,7 +2204,7 @@ void TownsPC98_OpnChannelSSG::init() {
 
 	#define Control(x)	&TownsPC98_OpnChannelSSG::control_##x
 	static const ControlEventFunc ctrlEventsSSG[] = {
-		Control(f0_setInstr),
+		Control(f0_setPatch),
 		Control(f1_setTotalLevel),
 		Control(f2_setKeyOffTime),
 		Control(f3_setFreqLSB),
@@ -2396,6 +2398,23 @@ void TownsPC98_OpnChannelSSG::setOutputLevel(uint8 lvl) {
 	_drv->writeReg(_part, 8 + _regOffset, _ssgTl);
 }
 
+void TownsPC98_OpnChannelSSG::reset() {
+	TownsPC98_OpnChannel::reset();
+
+	// Unlike the original we restore the default patch data. This fixes a bug
+	// where certain sound effects would bring each other out of tune (e.g. the
+	// dragon's fire in Darm's house in Kyra 1 would sound different each time
+	// you triggered another sfx by dropping an item etc.)
+	uint8 i = (10 + _regOffset) << 4;
+	const uint8 *src = &_drv->_drvTables[156];
+	_drv->_ssgPatches[i] = src[i];
+	_drv->_ssgPatches[i + 3] = src[i + 3];
+	_drv->_ssgPatches[i + 4] = src[i + 4];
+	_drv->_ssgPatches[i + 6] = src[i + 6];
+	_drv->_ssgPatches[i + 8] = src[i + 8];
+	_drv->_ssgPatches[i + 12] = src[i + 12];
+}
+
 void TownsPC98_OpnChannelSSG::fadeStep() {
 	_totalLevel--;
 	if ((int8)_totalLevel < 0)
@@ -2403,7 +2422,7 @@ void TownsPC98_OpnChannelSSG::fadeStep() {
 	setOutputLevel(_ssgStartLvl);
 }
 
-bool TownsPC98_OpnChannelSSG::control_f0_setInstr(uint8 para) {
+bool TownsPC98_OpnChannelSSG::control_f0_setPatch(uint8 para) {
 	_instr = para << 4;
 	para = (para >> 3) & 0x1e;
 	if (para)
@@ -2503,6 +2522,23 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 			tmp += _drv->_opnFxCmdLen[cmd - 240];
 		}
 	}
+}
+
+void TownsPC98_OpnSfxChannel::reset() {
+	TownsPC98_OpnChannel::reset();
+
+	// Unlike the original we restore the default patch data. This fixes a bug
+	// where certain sound effects would bring each other out of tune (e.g. the
+	// dragon's fire in Darm's house in Kyra 1 would sound different each time
+	// you triggered another sfx by dropping an item etc.)
+	uint8 i = (13 + _regOffset) << 4;
+	const uint8 *src = &_drv->_drvTables[156];
+	_drv->_ssgPatches[i] = src[i];
+	_drv->_ssgPatches[i + 3] = src[i + 3];
+	_drv->_ssgPatches[i + 4] = src[i + 4];
+	_drv->_ssgPatches[i + 6] = src[i + 6];
+	_drv->_ssgPatches[i + 8] = src[i + 8];
+	_drv->_ssgPatches[i + 12] = src[i + 12];
 }
 
 TownsPC98_OpnChannelPCM::TownsPC98_OpnChannelPCM(TownsPC98_OpnDriver *driver, uint8 regOffs,
