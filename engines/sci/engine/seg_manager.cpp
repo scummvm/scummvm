@@ -643,6 +643,14 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 }
 
 void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
+	if (src.isNull()) {
+		// Clear target string instead.
+		if (n > 0)
+			strcpy(dest, "");
+
+		return;	// empty text
+	}
+
 	SegmentRef dest_r = dereference(dest);
 	const SegmentRef src_r = dereference(src);
 	if (!src_r.isValid()) {
@@ -770,6 +778,9 @@ void SegManager::memcpy(byte *dest, reg_t src, size_t n) {
 }
 
 size_t SegManager::strlen(reg_t str) {
+	if (str.isNull())
+		return 0;	// empty text
+
 	SegmentRef str_r = dereference(str);
 	if (!str_r.isValid()) {
 		warning("Attempt to call strlen on invalid pointer %04x:%04x", PRINT_REG(str));
