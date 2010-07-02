@@ -438,6 +438,11 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 		if (!_upscaledHires)
 			error("bitsRestore() called w/o being in upscaled hires mode");
 		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);
+		// WORKAROUND - we are not sure what sierra is doing. If we don't do this here, portraits won't get fully removed
+		//  from screen. Some lowres showBits() call is used for that and it's not covering the whole area
+		//  We would need to find out inside the kq6 windows interpreter, but this here works already and seems not to have
+		//  any side-effects. The whole hires is hacked into the interpreter, so maybe this is even right.
+		copyDisplayRectToScreen(rect);
 	}
 }
 
