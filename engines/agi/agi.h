@@ -792,8 +792,6 @@ public:
 };
 
 class AgiEngine : public AgiBase {
-	int _gameId;
-
 protected:
 	// Engine APIs
 	virtual Common::Error go();
@@ -806,9 +804,6 @@ protected:
 public:
 	AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc);
 	virtual ~AgiEngine();
-	int getGameId() {
-		return _gameId;
-	}
 
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *desc);

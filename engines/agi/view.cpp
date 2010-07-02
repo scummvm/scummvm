@@ -368,7 +368,7 @@ void AgiEngine::updateViewtable() {
 				break;
 			default:
 				// for KQ4
-				if (getVersion() == 0x3086 || getGameId() == GID_KQ4)
+				if (getVersion() == 0x3086 || getGameID() == GID_KQ4)
 					loop = loopTable4[v->direction];
 				break;
 			}
