@@ -1498,7 +1498,7 @@ public:
 
 	uint8 chanEnable() const { return _chanEnable; }
 private:
-	void updatesRegs();
+	void updateRegs();
 
 	uint8 _updateRequestBuf[64];
 	int _updateRequest;
@@ -1876,37 +1876,6 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 			tmp += _drv->_opnFxCmdLen[cmd - 240];
 		}
 	}
-
-	/*uint8 *src_b = _dataPtr;
-	uint8 cmd = 0;
-
-	for (int loop = 1; loop; ) {
-		if (loop == 1) {
-			cmd = *src_b++;
-			if (cmd < 0xf0) {
-				src_b++;
-				loop = 1;
-			} else {
-				if (cmd == 0xff) {
-					loop = *src_b ? 2 : 0;
-					if (READ_LE_UINT16(src_b))
-						_drv->_looping |= _idFlag;
-				} else if (cmd == 0xf6) {
-					loop = 3;
-				} else {
-					loop = 2;
-				}
-			}
-		} else if (loop == 2) {
-			src_b += _drv->_opnFxCmdLen[cmd - 240];
-			loop = 1;
-		} else if (loop == 3) {
-			// reset repeat section countdown
-			src_b[0] = src_b[1];
-			src_b += 4;
-			loop = 1;
-		}
-	}*/
 }
 
 void TownsPC98_OpnChannel::processEvents() {
@@ -2777,7 +2746,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 				}
 			}
 			_pReslt = _evpTimer ^ _attack;
-			updatesRegs();
+			updateRegs();
 		}
 
 		int32 finOut = 0;
@@ -2801,7 +2770,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 	}
 }
 
-void TownsPC98_OpnSquareSineSource::updatesRegs() {
+void TownsPC98_OpnSquareSineSource::updateRegs() {
 	for (int i = 0; i < _updateRequest;) {
 		uint8 b = _updateRequestBuf[i++];
 		uint8 a = _updateRequestBuf[i++];
@@ -3801,6 +3770,7 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 
 void TownsPC98_OpnDriver::startSoundEffect() {
 	int volFlags = 0;
+	
 	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
