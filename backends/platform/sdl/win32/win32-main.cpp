@@ -26,14 +26,12 @@
 #ifdef WIN32
 
 // Fix for bug #2895217 "MSVC compilation broken with r47595":
-// We need to keep this on top of the "common/scummsys.h" include,
+// We need to keep this on top of the "common/scummsys.h"(base/main.h) include,
 // otherwise we will get errors about the windows headers redefining
 // "ARRAYSIZE" for example.
+#define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-// winnt.h defines ARRAYSIZE, but we want our own one...
-#undef ARRAYSIZE
-
-#include "common/scummsys.h"
+#undef ARRAYSIZE // winnt.h defines ARRAYSIZE, but we want our own one...
 
 #include "backends/platform/sdl/win32/win32.h"
 #include "backends/plugins/sdl/sdl-provider.h"
@@ -45,7 +43,6 @@ int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpC
 }
 
 int main(int argc, char *argv[]) {
-
 	// Create our OSystem instance
 	g_system = new OSystem_Win32();
 	assert(g_system);

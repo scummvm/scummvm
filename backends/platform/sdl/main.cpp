@@ -23,12 +23,9 @@
  *
  */
 
-#include "common/scummsys.h"
-
 // Several SDL based ports use a custom main, and hence do not want to compile
 // of this file. The following "#if" ensures that.
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO) && !defined(__SYMBIAN32__) && !defined(WIN32) && !defined(UNIX)
-
+#if !defined(UNIX) && !defined(WIN32) && !defined(__MAEMO__) && !defined(__SYMBIAN32__)
 
 #include "backends/platform/sdl/sdl.h"
 #include "backends/plugins/sdl/sdl-provider.h"

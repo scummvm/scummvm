@@ -52,7 +52,9 @@ public:
 
 	virtual bool pollEvent(Common::Event &event);
 
-	virtual void quit();
+	virtual uint32 getMillis();
+	virtual void delayMillis(uint msecs) {}
+	virtual void getTimeAndDate(TimeDate &t) const {}
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
@@ -95,7 +97,8 @@ bool OSystem_NULL::pollEvent(Common::Event &event) {
 	return false;
 }
 
-void OSystem_NULL::quit() {
+uint32 OSystem_NULL::getMillis() {
+	return 0;
 }
 
 #if defined(UNIX)

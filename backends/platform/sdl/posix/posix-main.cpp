@@ -23,9 +23,7 @@
  *
  */
 
-#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GP2XWIZ)
-
-#include "common/scummsys.h"
+#if defined(UNIX) && !defined(MACOSX) && !defined(SAMSUNGTV) && !defined(LINUXMOTO) && !defined(GP2XWIZ) && !defined(GP2X)
 
 #include "backends/platform/sdl/posix/posix.h"
 #include "backends/plugins/sdl/sdl-provider.h"

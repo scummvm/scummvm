@@ -34,17 +34,20 @@
 #include <SDL.h>
 #endif
 
+/**
+* The SDL audio cd manager. Implements real audio cd playback.
+*/
 class SdlAudioCDManager : public DefaultAudioCDManager {
 public:
 	SdlAudioCDManager();
-	~SdlAudioCDManager();
+	virtual ~SdlAudioCDManager();
 
 protected:
-	bool openCD(int drive);
-	void updateCD();
-	bool pollCD() const;
-	void playCD(int track, int num_loops, int start_frame, int duration);
-	void stopCD();
+	virtual bool openCD(int drive);
+	virtual void updateCD();
+	virtual bool pollCD() const;
+	virtual void playCD(int track, int num_loops, int start_frame, int duration);
+	virtual void stopCD();
 
 	SDL_CD *_cdrom;
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;

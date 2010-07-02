@@ -40,6 +40,8 @@ ModularBackend::ModularBackend()
 }
 
 ModularBackend::~ModularBackend() {
+	// Delete all managers if they have not been already
+	// freed by a subclass
 	if (_eventManager != 0)
 		delete _eventManager;
 	if (_graphicsManager != 0)

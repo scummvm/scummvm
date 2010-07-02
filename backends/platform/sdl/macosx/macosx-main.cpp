@@ -25,8 +25,6 @@
 
 #ifdef MACOSX
 
-#include "common/scummsys.h"
-
 #include "backends/platform/sdl/macosx/macosx.h"
 #include "backends/plugins/sdl/sdl-provider.h"
 #include "base/main.h"

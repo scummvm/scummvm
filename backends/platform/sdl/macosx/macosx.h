@@ -31,11 +31,11 @@
 class OSystem_MacOSX : public OSystem_POSIX {
 public:
 	OSystem_MacOSX();
-	~OSystem_MacOSX() {}
+	virtual ~OSystem_MacOSX() {}
 
-	void initBackend();
-	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	void setupIcon();
+	virtual void initBackend();
+	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+	virtual void setupIcon();
 };
 
 #endif

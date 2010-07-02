@@ -29,14 +29,16 @@
 #include "common/noncopyable.h"
 
 /**
-* Abstract Audio CD manager class. Private subclasses implement the actual
+* Abstract Audio CD manager class. Subclasses implement the actual
 * functionality.
 */
 class AudioCDManager : Common::NonCopyable {
 public:
 	virtual ~AudioCDManager() {}
 
-
+	/**
+	* A structure containing the current playback information
+	*/
 	struct Status {
 		bool playing;
 		int track;
@@ -97,6 +99,7 @@ public:
 
 	/**
 	 * Initialise the specified CD drive for audio playback.
+	 * @param drive the drive id
 	 * @return true if the CD drive was inited succesfully
 	 */
 	virtual bool openCD(int drive) = 0;

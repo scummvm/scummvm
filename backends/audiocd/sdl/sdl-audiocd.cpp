@@ -64,7 +64,8 @@ bool SdlAudioCDManager::openCD(int drive) {
 	return (_cdrom != NULL);
 }
 
-void SdlAudioCDManager::stopCD() {	/* Stop CD Audio in 1/10th of a second */
+void SdlAudioCDManager::stopCD() {
+	// Stop CD Audio in 1/10th of a second
 	_cdStopTime = SDL_GetTicks() + 100;
 	_cdNumLoops = 0;
 }

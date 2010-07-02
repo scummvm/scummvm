@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SDL_COMMON_H
-#define SDL_COMMON_H
+#ifndef PLATFORM_SDL_H
+#define PLATFORM_SDL_H
 
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
@@ -36,59 +36,72 @@
 #include "backends/graphics/sdl/sdl-graphics.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 
+/** 
+ * Base OSystem class for all SDL ports.
+ */
 class OSystem_SDL : public ModularBackend {
 public:
 	OSystem_SDL();
 	virtual ~OSystem_SDL();
 
-	/** Pre-initialize backend, it should be called after
-	 *  instantiating the backend. Early needed managers
-	 *  are created here.
+	/** 
+	 * Pre-initialize backend. It should be called after
+	 * instantiating the backend. Early needed managers are
+	 * created here.
 	 */
 	virtual void init();
 
+	/**
+	 * Get the Graphics Manager instance. Used by other managers.
+	 */
+	virtual SdlGraphicsManager *getGraphicsManager();
+
+	/**
+	 * Get the Mixer Manager instance. Not to confuse with getMixer(),
+	 * that returns Audio::Mixer. The Mixer Manager is a SDL wrapper class
+	 * for the Audio::Mixer. Used by other managers.
+	 */
+	virtual SdlMixerManager *getMixerManager();
+
+	// Override functions from ModularBackend
 	virtual void initBackend();
-
 	virtual Common::HardwareKeySet *getHardwareKeySet();
-
 	virtual void quit();
 	virtual void deinit();
-
 	virtual void setWindowCaption(const char *caption);
-
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
-
 	virtual bool pollEvent(Common::Event &event);
-
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual void getTimeAndDate(TimeDate &td) const;
-
 	virtual Audio::Mixer *getMixer();
-
-	// Get the Graphics Manager instance, used by other managers
-	virtual SdlGraphicsManager *getGraphicsManager();
-
-	// Get the Sdl Mixer Manager instance (not the Audio::Mixer)
-	virtual SdlMixerManager *getMixerManager();
 
 protected:
 	bool _inited;
 	bool _initedSDL;
 
-	// Mixer manager that encapsulates the actual Audio::Mixer
+	/**
+	 * Mixer manager that configures and setups SDL for
+	 * the wrapped Audio::Mixer, the true mixer.
+	 */
 	SdlMixerManager *_mixerManager;
 
-	// Initialze SDL library
+	/**
+	 * Initialze the SDL library.
+	 */
 	virtual void initSDL();
 
-	// Setup the window icon
+	/**
+	 * Setup the window icon.
+	 */
 	virtual void setupIcon();
 
-	// Get the file path where the user configuration
-	// of ScummVM will be saved
+	/**
+	 * Get the file path where the user configuration
+	 * of ScummVM will be saved.
+	 */
 	virtual Common::String getDefaultConfigFileName();
 };
 

@@ -34,14 +34,40 @@
 #include "backends/mutex/null/null-mutex.h"
 #include "backends/graphics/null/null-graphics.h"
 
+/**
+ * Base class for modular backends.
+ * 
+ * It wraps most functions to their manager equivalent, but not
+ * all OSystem functions are implemented here.
+ * 
+ * A backend derivated from this class, will need to implement
+ * these functions on its own:
+ *   OSystem::pollEvent()
+ *   OSystem::createConfigReadStream()
+ *   OSystem::createConfigWriteStream()
+ *   OSystem::getMillis()
+ *   OSystem::delayMillis()
+ *   OSystem::getTimeAndDate()
+ * 
+ * And, it should also initialize all the managers variables
+ * declared in this class, or override their related functions.
+ */
 class ModularBackend : public OSystem, public Common::EventSource {
 public:
 	ModularBackend();
 	virtual ~ModularBackend();
 
+	/** @name Features */
+	//@{
+
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+
+	//@}
+
+	/** @name Graphics */
+	//@{
 
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
@@ -85,26 +111,56 @@ public:
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 	virtual void disableCursorPalette(bool disable);
 
+	//@}
+
+	/** @name Events and Time */
+	//@{
+	
 	virtual Common::TimerManager *getTimerManager();
 	virtual Common::EventManager *getEventManager();
 	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
+
+	//@}
+	
+	/** @name Mutex handling */
+	//@{
 
 	virtual MutexRef createMutex();
 	virtual void lockMutex(MutexRef mutex);
 	virtual void unlockMutex(MutexRef mutex);
 	virtual void deleteMutex(MutexRef mutex);
 
+	//@}
+
+	/** @name Sound */
+	//@{
+
 	virtual Audio::Mixer *getMixer();
+
+	//@}
+
+	/** @name Audio CD */
+	//@{
 
 	virtual AudioCDManager *getAudioCDManager();
 
+	//@}
+
+	/** @name Miscellaneous */
+	//@{
+
+	virtual Common::SaveFileManager *getSavefileManager();
+	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void quit() { exit(0); }
 	virtual void setWindowCaption(const char *caption) {}
 	virtual void displayMessageOnOSD(const char *msg);
-	virtual Common::SaveFileManager *getSavefileManager();
-	virtual FilesystemFactory *getFilesystemFactory();
+
+	//@}
 
 protected:
+	/** @name Managers variables */
+	//@{
+
 	FilesystemFactory *_fsFactory;
 	Common::EventManager *_eventManager;
 	Common::SaveFileManager *_savefileManager;
@@ -113,7 +169,8 @@ protected:
 	GraphicsManager *_graphicsManager;
 	Audio::Mixer *_mixer;
 	AudioCDManager *_audiocdManager;
-};
 
+	//@}
+};
 
 #endif

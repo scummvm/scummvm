@@ -30,10 +30,10 @@
 
 class OSystem_Win32 : public OSystem_SDL {
 public:
-	void init();
+	virtual void init();
 
 protected:
-	Common::String getDefaultConfigFileName();
+	virtual Common::String getDefaultConfigFileName();
 };
 
 #endif
