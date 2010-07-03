@@ -130,7 +130,7 @@ public:
 
 	int loadSceneSpriteSet(const char *setName);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
-	void loadAnimation(const Common::String &animName, int v0);
+	void loadAnimation(const Common::String &animName, int abortTimers);
 	Animation *activeAnimation() const { return _activeAnimation; }
 	void freeAnimation();
 

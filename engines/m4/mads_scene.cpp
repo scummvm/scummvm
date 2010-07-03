@@ -144,6 +144,21 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	_madsVm->_player.loadSprites(NULL);
 
+	switch (_madsVm->globals()->_config.screenFades) {
+	case 0:
+		_abortTimers2 = 2;
+		break;
+	case 2:
+		_abortTimers2 = 21;
+		break;
+	default:
+		_abortTimers2 = 20;
+		break;
+	}
+	_abortTimers = 0;
+	_abortTimersMode2 = ABORTMODE_1;
+	
+
 	// Do any scene specific setup
 	if (_vm->getGameType() == GType_RexNebular)
 		_sceneLogic.enterScene();
@@ -318,7 +333,11 @@ void MadsScene::update() {
 void MadsScene::updateState() {
 	_madsVm->_player.update();
 
+	// Step through the scene
 	_sceneLogic.sceneStep();
+
+	if (_abortTimersMode == ABORTMODE_1)
+		_abortTimers = 0;
 
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
@@ -468,12 +487,12 @@ void MadsScene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
 }
 
-void MadsScene::loadAnimation(const Common::String &animName, int v0) {
+void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 	if (_activeAnimation)
 		error("Multiple active animations are not allowed");
 
 	MadsAnimation *anim = new MadsAnimation(_vm, this);
-	anim->load(animName.c_str(), 0);
+	anim->load(animName.c_str(), abortTimers);
 	_activeAnimation = anim;
 }
 

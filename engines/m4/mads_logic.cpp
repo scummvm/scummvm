@@ -251,7 +251,7 @@ void MadsSceneLogic::enterScene() {
 	_spriteIndexes[16] = startCycledSpriteSequence(_spriteIndexes[1], 0, 4, 0, 1, 0);
 	_spriteIndexes[17] = startCycledSpriteSequence(_spriteIndexes[2], 0, 4, 0, 1, 0);
 
-//	_madsVm->scene()->_sequenceList.addSubEntry(_spriteIndexes[17], SM_FRAME_INDEX, 7, 70);
+	_madsVm->scene()->_sequenceList.addSubEntry(_spriteIndexes[17], SM_FRAME_INDEX, 7, 70);
 
 	_spriteIndexes[18] = startReversibleSpriteSequence(_spriteIndexes[3], 0, 10, 0, 0, 60);
 	_spriteIndexes[19] = startCycledSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);
@@ -294,7 +294,7 @@ void MadsSceneLogic::enterScene() {
 
 	if (_madsVm->globals()->_globals[10]) {
 		const char *animName = MADSResourceManager::getResourceName('S', 'e', EXTTYPE_AA, NULL, -1);
-		_madsVm->scene()->loadAnimation(animName, 0x47);
+		_madsVm->scene()->loadAnimation(animName, 71);
 
 		_madsVm->_player._playerPos = Common::Point(68, 140);
 		_madsVm->_player._direction = 4;
@@ -316,6 +316,25 @@ void MadsSceneLogic::doAction() {
 void MadsSceneLogic::sceneStep() {
 	// TODO: Sound handling
 	
+	switch (_madsVm->scene()->_abortTimers) {
+	case 70:
+		_madsVm->_sound->playSound(9);
+		break;
+	case 71:
+		_madsVm->globals()->_globals[10] = 0;
+		_madsVm->_player._visible = true;
+		dataMap()[0x56FC] = 0;
+
+		_madsVm->scene()->_newTimeout = _madsVm->_currentTimer - _madsVm->scene()->_ticksAmount;
+		break;
+	case 72:
+	case 73:
+		// TODO: Method that should be scripted
+		break;
+
+	default:
+		break;
+	}
 
 	// Wake up message sequence
 	Animation *anim = _madsVm->scene()->activeAnimation();
