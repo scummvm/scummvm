@@ -685,6 +685,9 @@ int Kernel::findRegType(reg_t reg) {
 	if (!reg.segment)
 		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
 
+	if (reg.segment == 0xFFFF)
+		return KSIG_UNINITIALIZED;
+
 	// Otherwise it's an object
 	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
 	if (!mobj)
@@ -728,13 +731,14 @@ struct SignatureDebugType {
 };
 
 static const SignatureDebugType signatureDebugTypeList[] = {
-	{ KSIG_NULL,       "null" },
-	{ KSIG_ARITHMETIC, "value" },
-	{ KSIG_OBJECT,     "object" },
-	{ KSIG_REF,        "reference" },
-	{ KSIG_LIST,       "list" },
-	{ KSIG_NODE,       "node" },
-	{ 0,               NULL }
+	{ KSIG_NULL,          "null" },
+	{ KSIG_ARITHMETIC,    "value" },
+	{ KSIG_UNINITIALIZED, "uninitialized" },
+	{ KSIG_OBJECT,        "object" },
+	{ KSIG_REF,           "reference" },
+	{ KSIG_LIST,          "list" },
+	{ KSIG_NODE,          "node" },
+	{ 0,                  NULL }
 };
 
 static void kernelSignatureDebugType(const char type) {

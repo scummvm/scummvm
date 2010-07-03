@@ -99,14 +99,15 @@ struct SelectorCache;	// from selector.h
 
 // Compiled signatures
 enum {
-	KSIG_LIST       = 0x01,
-	KSIG_NODE       = 0x02,
-	KSIG_OBJECT     = 0x04,
-	KSIG_REF        = 0x08,
-	KSIG_ARITHMETIC = 0x10,
-	KSIG_NULL       = 0x40,
-	KSIG_ANY        = 0x5f,
-	KSIG_ELLIPSIS   = 0x80
+	KSIG_LIST          = 0x01,
+	KSIG_NODE          = 0x02,
+	KSIG_OBJECT        = 0x04,
+	KSIG_REF           = 0x08,
+	KSIG_ARITHMETIC    = 0x10,
+	KSIG_UNINITIALIZED = 0x20,
+	KSIG_NULL          = 0x40,
+	KSIG_ANY           = 0x5f,
+	KSIG_ELLIPSIS      = 0x80
 };
 
 // ----------------------------------------------------------------------------
