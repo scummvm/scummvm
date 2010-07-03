@@ -92,7 +92,7 @@ public:
 	}
 
 	int getIndex();
-	int addSprites(const char *resName);
+	int addSprites(const char *resName, bool suppressErrors = false);
 	void deleteSprites(int listIndex);
 	void clear();
 	void deleteTimer(int seqIndex);

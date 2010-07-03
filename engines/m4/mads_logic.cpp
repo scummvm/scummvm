@@ -54,7 +54,7 @@ void MadsSceneLogic::getSceneSpriteSet() {
 		strcpy(prefix, "");
 
 	_madsVm->globals()->playerSpriteChanged = true;
-	_madsVm->scene()->loadPlayerSprites(prefix);
+	_madsVm->_player.loadSprites(prefix);
 
 //	if ((_sceneNumber == 105) ((_sceneNumber == 109) && (word_84800 != 0)))
 //		_madsVm->globals()->playerSpriteChanged = true;
@@ -150,6 +150,59 @@ void MadsSceneLogic::lowRoomsEntrySound() {
 	}
 }
 
+void MadsSceneLogic::getPlayerSpritesPrefix() {
+	_madsVm->_sound->playSound(5);
+
+	char oldName[80];
+	strcpy(oldName, _madsVm->_player._spritesPrefix);
+
+	if ((_madsVm->globals()->_nextSceneId <= 103) || (_madsVm->globals()->_nextSceneId == 111))
+		strcpy(_madsVm->_player._spritesPrefix, (_madsVm->globals()->_globals[0] == SEX_FEMALE) ? "ROX" : "RXM");
+	else if (_madsVm->globals()->_nextSceneId <= 110)
+		strcpy(_madsVm->_player._spritesPrefix, "RXSM");
+	else if (_madsVm->globals()->_nextSceneId == 112)
+		strcpy(_madsVm->_player._spritesPrefix, "");
+		
+	if (strcmp(oldName, _madsVm->_player._spritesPrefix) != 0)
+		_madsVm->_player._spritesChanged = true;
+
+	if ((_madsVm->globals()->_nextSceneId == 105) || 
+		((_madsVm->globals()->_nextSceneId == 109) && (_madsVm->globals()->_globals[15] != 0))) {
+		// TODO: unknown flag setting
+		_madsVm->_player._spritesChanged = true;
+	}
+
+	_madsVm->_palette->setEntry(16, 40, 255, 255);
+	_madsVm->_palette->setEntry(17, 40, 180, 180);
+
+}
+
+void MadsSceneLogic::getPlayerSpritesPrefix2() {
+	_madsVm->_sound->playSound(5);
+
+	char oldName[80];
+	strcpy(oldName, _madsVm->_player._spritesPrefix);
+
+	if ((_madsVm->globals()->_nextSceneId == 213) || (_madsVm->globals()->_nextSceneId == 216))
+		strcpy(_madsVm->_player._spritesPrefix, "");
+	else if (_madsVm->globals()->_globals[0] == SEX_MALE)
+		strcpy(_madsVm->_player._spritesPrefix, "RXM");
+	else
+		strcpy(_madsVm->_player._spritesPrefix, "ROX");
+
+	// TODO: unknown flag setting for next scene Id > 212
+
+	if (strcmp(oldName, _madsVm->_player._spritesPrefix) != 0)
+		_madsVm->_player._spritesChanged = true;
+
+/*	if ((_madsVm->globals()->_nextSceneId == 203) && (_madsVm->globals()->_nextSceneId == 204) &&
+		(_madsVm->globals()->_globals[0x22] == 0))
+		// TODO: unknown flag set
+*/
+	_madsVm->_palette->setEntry(16, 40, 255, 255);
+	_madsVm->_palette->setEntry(17, 40, 180, 180);
+}
+
 
 /*--------------------------------------------------------------------------*/
 
@@ -175,7 +228,9 @@ void MadsSceneLogic::setupScene() {
 //	sub_1e754(animName, 3);
 
 	if ((_sceneNumber >= 101) && (_sceneNumber <= 112))
-		getSceneSpriteSet();
+		getPlayerSpritesPrefix();
+	else
+		getPlayerSpritesPrefix2();
 
 	getAnimName();
 }
@@ -212,15 +267,15 @@ void MadsSceneLogic::enterScene() {
 	if (_madsVm->globals()->previousScene != -1)
 		_madsVm->globals()->_globals[10] = 0;
 	if (_madsVm->globals()->previousScene != -2) {
-		_madsVm->scene()->getSceneResources().playerPos = Common::Point(100, 152);
+		_madsVm->_player._playerPos = Common::Point(100, 152);
 	}
 	
 	if ((_madsVm->globals()->previousScene == 112) || 
 		((_madsVm->globals()->previousScene != -2) && (_spriteIndexes[29] != 0))) {
 		// Returning from probe cutscene?
 		_spriteIndexes[29] = -1;
-		_madsVm->scene()->getSceneResources().playerPos = Common::Point(161, 123);
-		_madsVm->scene()->getSceneResources().playerDir = 9;
+		_madsVm->_player._playerPos = Common::Point(161, 123);
+		_madsVm->_player._direction = 9;
 
 		// TODO: Extra flags setting
 		_spriteIndexes[25] = startCycledSpriteSequence(_spriteIndexes[10], 0, 3, 0, 0, 0);
@@ -241,8 +296,9 @@ void MadsSceneLogic::enterScene() {
 		const char *animName = MADSResourceManager::getResourceName('S', 'e', EXTTYPE_AA, NULL, -1);
 		_madsVm->scene()->loadAnimation(animName, 0x47);
 
-		_madsVm->scene()->getSceneResources().playerPos = Common::Point(68, 140);
-		_madsVm->scene()->getSceneResources().playerDir = 4;
+		_madsVm->_player._playerPos = Common::Point(68, 140);
+		_madsVm->_player._direction = 4;
+		_madsVm->_player._visible = false;
 
 		dataMap()[0x56FC] = 0;
 		dataMap()[0x5482] = 0;
@@ -258,6 +314,9 @@ void MadsSceneLogic::doAction() {
 }
 
 void MadsSceneLogic::sceneStep() {
+	// TODO: Sound handling
+	
+
 	// Wake up message sequence
 	Animation *anim = _madsVm->scene()->activeAnimation();
 	if (anim) {

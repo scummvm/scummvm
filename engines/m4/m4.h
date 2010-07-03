@@ -42,6 +42,7 @@
 #include "m4/events.h"
 #include "m4/font.h"
 #include "m4/scene.h"
+#include "m4/mads_player.h"
 #include "m4/mads_scene.h"
 #include "m4/m4_scene.h"
 #include "m4/actor.h"
@@ -213,6 +214,7 @@ private:
 public:
 	MadsConversation _converse;
 	uint32 _currentTimer;
+	MadsPlayer _player;
 public:
 	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~MadsEngine();

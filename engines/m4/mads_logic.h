@@ -42,6 +42,8 @@ private:
 	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
 	void activateHotspot(int idx, bool active);
 	void lowRoomsEntrySound();
+	void getPlayerSpritesPrefix();
+	void getPlayerSpritesPrefix2();
 private:
 	int _sceneNumber;
 	int16 _spriteIndexes[50];

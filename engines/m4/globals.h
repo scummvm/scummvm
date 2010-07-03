@@ -252,6 +252,7 @@ public:
 	MadsDialogType dialogType;
 	int sceneNumber;
 	int previousScene;
+	int16 _nextSceneId;
 	uint16 actionNouns[3];
 	IntStorage _dataMap;
 

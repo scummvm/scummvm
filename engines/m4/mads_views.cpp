@@ -86,7 +86,13 @@ int MadsSpriteSlots::getIndex() {
 	return startIndex++;
 }
 
-int MadsSpriteSlots::addSprites(const char *resName) {
+int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors) {
+	// If errors are suppressed, first check if the resource exists
+	if (suppressErrors) {
+		if (!_vm->res()->resourceExists(resName))
+			return -1;
+	}
+
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
 	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
