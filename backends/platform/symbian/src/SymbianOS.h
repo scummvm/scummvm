@@ -32,39 +32,40 @@ class RFs;
 class OSystem_SDL_Symbian : public OSystem_SDL {
 public:
 	OSystem_SDL_Symbian();
-	~OSystem_SDL_Symbian();
 
-	// Overloaded from OSystem_SDL
-	void init();
-	void initBackend();
-	void quit();
-	void engineInit();
-	void engineDone();
-	bool setGraphicsMode(const char *name);
-	Common::String getDefaultConfigFileName();
-	void setupIcon();
+	// Override from OSystem_SDL
+	virtual void init();
+	virtual void initBackend();
+	virtual void quit();
+	virtual void engineInit();
+	virtual void engineDone();
+	virtual bool setGraphicsMode(const char *name);
+	virtual Common::String getDefaultConfigFileName();
+	virtual void setupIcon();
 
-	// Returns reference to File session
+	/**
+	 * Returns reference to File session
+	 */
 	RFs& FsSession();
 
 	void quitWithErrorMsg(const char *msg);
 
-	// vibration support
+	// Vibration support
 #ifdef USE_VIBRA_SE_PXXX
-	//
-	// Intialize the vibration api used if present and supported
-	//
+	/**
+	 * Intialize the vibration api used if present and supported
+	 */
 	void initializeVibration();
 
-	//
-	// Turn vibration on, repeat no time
-	// @param vibraLength number of repetitions
-	//
+	/**
+	 * Turn vibration on, repeat no time
+	 * @param vibraLength number of repetitions
+	 */
 	void vibrationOn(int vibraLength);
 
-	//
-	// Turns the vibration off
-	//
+	/**
+	 * Turns the vibration off
+	 */
 	void vibrationOff();
 
 protected:
@@ -72,7 +73,9 @@ protected:
 #endif // USE_VIBRA_SE_PXXX
 
 protected:
-	// Used to intialized special game mappings
+	/**
+	 * Used to intialized special game mappings
+	 */
 	void checkMappings();
 
 	RFs* _RFs;

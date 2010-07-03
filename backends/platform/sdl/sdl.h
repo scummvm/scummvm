@@ -63,7 +63,7 @@ public:
 	 */
 	virtual SdlMixerManager *getMixerManager();
 
-	// Override functions from ModularBackend
+	// Override functions from ModularBackend and OSystem
 	virtual void initBackend();
 	virtual Common::HardwareKeySet *getHardwareKeySet();
 	virtual void quit();

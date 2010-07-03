@@ -23,9 +23,6 @@
  *
  */
 
-#include "common/scummsys.h"
-#include "common/system.h"
-
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "base/main.h"
 
@@ -34,6 +31,9 @@ int main(int argc, char *argv[]) {
 	// Create our OSystem instance
 	g_system = new OSystem_LINUXMOTO();
 	assert(g_system);
+
+	// Pre initialize the backend
+	((OSystem_POSIX *)g_system)->init();
 
 	// Invoke the actual ScummVM main entry point:
 	int res = scummvm_main(argc, argv);

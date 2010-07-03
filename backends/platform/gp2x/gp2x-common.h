@@ -34,9 +34,6 @@
 
 class OSystem_GP2X : public OSystem_POSIX {
 public:
-	OSystem_GP2X() {}
-	virtual ~OSystem_GP2X() {}
-
 	virtual void initBackend();
 	virtual void quit();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
