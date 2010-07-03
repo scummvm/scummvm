@@ -1,9 +1,15 @@
 srcdir      ?= .
 DEPDIR      := .deps
 
-#DYNAMIC_MODULES = 1
+DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
+
+ifdef DYNAMIC_MODULES
+	ENABLED = DYNAMIC_PLUGIN
+else
+	ENABLED = STATIC_PLUGIN
+endif
 
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
@@ -112,8 +118,8 @@ USE_ARM_COSTUME_ASM = 1
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
 	LOGO = logoa.bmp
-	ENABLE_SCUMM = STATIC_PLUGIN
-	DEFINES += -DENABLE_SCUMM=STATIC_PLUGIN
+	ENABLE_SCUMM = $(ENABLED)
+	DEFINES += -DENABLE_SCUMM=$(ENABLED)
 	MODULES += engines/scumm
 
 	USE_ARM_GFX_ASM = 1
@@ -123,66 +129,66 @@ endif
 ifdef DS_BUILD_B
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_B
 	LOGO = logob.bmp
-	ENABLE_SKY = STATIC_PLUGIN
-	ENABLE_QUEEN = STATIC_PLUGIN
+	ENABLE_SKY = $(ENABLED)
+	ENABLE_QUEEN = $(ENABLED)
 	BUILD=scummvm-B
 endif
 
 ifdef DS_BUILD_C
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
 	LOGO = logoc.bmp
-	ENABLE_AGOS = STATIC_PLUGIN
+	ENABLE_AGOS = $(ENABLED)
 	BUILD=scummvm-C
 endif
 
 ifdef DS_BUILD_D
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
 	LOGO = logod.bmp
-	ENABLE_GOB = STATIC_PLUGIN
-	ENABLE_CINE = STATIC_PLUGIN
-	ENABLE_AGI = STATIC_PLUGIN
+	ENABLE_GOB = $(ENABLED)
+	ENABLE_CINE = $(ENABLED)
+	ENABLE_AGI = $(ENABLED)
 	BUILD=scummvm-D
 endif
 
 ifdef DS_BUILD_E
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
 	LOGO = logoe.bmp
-	ENABLE_SAGA = STATIC_PLUGIN
+	ENABLE_SAGA = $(ENABLED)
 	BUILD=scummvm-E
 endif
 
 ifdef DS_BUILD_F
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
 	LOGO = logof.bmp
-	ENABLE_KYRA = STATIC_PLUGIN
+	ENABLE_KYRA = $(ENABLED)
 	BUILD=scummvm-F
 endif
 
 ifdef DS_BUILD_G
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
 	LOGO = logog.bmp
-	ENABLE_LURE = STATIC_PLUGIN
+	ENABLE_LURE = $(ENABLED)
 	BUILD=scummvm-G
 endif
 
 ifdef DS_BUILD_H
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
 	LOGO = logoh.bmp
-	ENABLE_PARALLACTION = STATIC_PLUGIN
+	ENABLE_PARALLACTION = $(ENABLED)
 	BUILD=scummvm-H
 endif
 
 ifdef DS_BUILD_I
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
 	LOGO = logoi.bmp
-	ENABLE_MADE = STATIC_PLUGIN
+	ENABLE_MADE = $(ENABLED)
 	BUILD=scummvm-I
 endif
 
 ifdef DS_BUILD_K
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_K
 	LOGO = logok.bmp
-	ENABLE_CRUISE = STATIC_PLUGIN
+	ENABLE_CRUISE = $(ENABLED)
 	BUILD=scummvm-K
 endif
 
@@ -190,14 +196,14 @@ endif
 #ifdef DS_BUILD_L
 #	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_L
 #	LOGO = logog.bmp
-#	ENABLE_DRASCULA = STATIC_PLUGIN
+#	ENABLE_DRASCULA = $(ENABLED)
 #	BUILD=scummvm-K
 #endif
 
 #ifdef DS_BUILD_M
 #	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_M
 #	LOGO = logog.bmp
-#	ENABLE_TUCKER = STATIC_PLUGIN
+#	ENABLE_TUCKER = $(ENABLED)
 #	BUILD=scummvm-K
 #endif
 
@@ -276,8 +282,8 @@ endif
 EXECUTABLE = scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.x plugin.syms scummvm.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-Tplugin.x,--just-symbols,scummvm.elf,--retain-symbols-file,plugin.syms -L$(ronindir)/lib
+PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms scummvm.elf
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-Tplugin.ld,--just-symbols,scummvm.elf,--retain-symbols-file,plugin.syms
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
@@ -299,6 +305,10 @@ PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(port
 		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
 		$(portdir)/source/interrupt.o
+		
+ifdef DYNAMIC_MODULES
+	PORT_OBJS += $(portdir)/source/dsloader.o
+endif
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
