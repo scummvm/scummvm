@@ -71,7 +71,7 @@ const char *dubbingPath = "CD.SAM";
 const char *musicPathMask = "HUDBA%d.MID";
 
 const uint kSoundsFrequency = 13000;
-const uint kDubbingFrequency = 22000;
+const uint kDubbingFrequency = 22050;
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst) {
@@ -105,6 +105,39 @@ bool DraciEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
+static SoundArchive* openAnyPossibleDubbing() {
+	debugC(1, kDraciGeneralDebugLevel, "Trying to find original dubbing");
+	LegacySoundArchive *legacy = new LegacySoundArchive(dubbingPath, kDubbingFrequency);
+	if (legacy->isOpen() && legacy->size()) {
+		debugC(1, kDraciGeneralDebugLevel, "Found original dubbing");
+		return legacy;
+	}
+	delete legacy;
+
+	// The original uncompressed dubbing cannot be found.  Try to open the
+	// newer compressed version.
+	debugC(1, kDraciGeneralDebugLevel, "Trying to find compressed dubbing");
+	ZipSoundArchive *zip = new ZipSoundArchive();
+
+	zip->openArchive("dub-raw.zzz", "buf", RAW80, kDubbingFrequency);
+	if (zip->isOpen() && zip->size()) return zip;
+#ifdef USE_FLAC
+	zip->openArchive("dub-flac.zzz", "flac", FLAC);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+#ifdef USE_VORBIS
+	zip->openArchive("dub-ogg.zzz", "ogg", OGG);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+#ifdef USE_MAD
+	zip->openArchive("dub-mp3.zzz", "mp3", MP3);
+	if (zip->isOpen() && zip->size()) return zip;
+#endif
+
+	// Return an empty (but initialized) archive anyway.
+	return zip;
+}
+
 int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
@@ -124,7 +157,7 @@ int DraciEngine::init() {
 	_stringsArchive = new BArchive(stringsPath);
 
 	_soundsArchive = new LegacySoundArchive(soundsPath, kSoundsFrequency);
-	_dubbingArchive = new LegacySoundArchive(dubbingPath, kDubbingFrequency);
+	_dubbingArchive = openAnyPossibleDubbing();
 	_sound = new Sound(_mixer);
 
 	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);

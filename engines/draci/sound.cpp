@@ -48,14 +48,14 @@ void LegacySoundArchive::openArchive(const char *path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 
-	debugCN(2, kDraciArchiverDebugLevel, "Loading samples %s: ", path);
+	debugCN(1, kDraciArchiverDebugLevel, "Loading samples %s: ", path);
 
 	_f = new Common::File();
 	_f->open(path);
 	if (_f->isOpen()) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");
+		debugC(1, kDraciArchiverDebugLevel, "Success");
 	} else {
-		debugC(2, kDraciArchiverDebugLevel, "Error");
+		debugC(1, kDraciArchiverDebugLevel, "Error");
 		delete _f;
 		_f = NULL;
 		return;
@@ -65,7 +65,7 @@ void LegacySoundArchive::openArchive(const char *path) {
 	_path = path;
 
 	// Read archive header
-	debugC(2, kDraciArchiverDebugLevel, "Loading header");
+	debugC(1, kDraciArchiverDebugLevel, "Loading header");
 
 	uint totalLength = _f->readUint32LE();
 	const uint kMaxSamples = 4095;	// The no-sound file is exactly 16K bytes long, so don't fail on short reads
@@ -81,7 +81,7 @@ void LegacySoundArchive::openArchive(const char *path) {
 			break;
 	}
 	if (_sampleCount > 0) {
-		debugC(2, kDraciArchiverDebugLevel, "Archive info: %d samples, %d total length",
+		debugC(1, kDraciArchiverDebugLevel, "Archive info: %d samples, %d total length",
 			_sampleCount, totalLength);
 		_samples = new SoundSample[_sampleCount];
 		for (uint i = 0; i < _sampleCount; ++i) {
@@ -92,14 +92,14 @@ void LegacySoundArchive::openArchive(const char *path) {
 		if (_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length != totalLength &&
 		    _samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length - _samples[0]._offset != totalLength) {
 			// WORKAROUND: the stored length is stored with the header for sounds and without the hader for dubbing.  Crazy.
-			debugC(2, kDraciArchiverDebugLevel, "Broken sound archive: %d != %d",
+			debugC(1, kDraciArchiverDebugLevel, "Broken sound archive: %d != %d",
 				_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length,
 				totalLength);
 			closeArchive();
 			return;
 		}
 	} else {
-		debugC(2, kDraciArchiverDebugLevel, "Archive info: empty");
+		debugC(1, kDraciArchiverDebugLevel, "Archive info: empty");
 	}
 
 	// Indicate that the archive has been successfully opened
@@ -170,7 +170,7 @@ SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 		_f->seek(_samples[i]._offset);
 		_f->read(_samples[i]._data, _samples[i]._length);
 
-		debugC(3, kDraciArchiverDebugLevel, "Read sample %d from archive %s",
+		debugC(2, kDraciArchiverDebugLevel, "Read sample %d from archive %s",
 			i, _path);
 	}
 	_samples[i]._frequency = freq ? freq : _defaultFreq;
@@ -185,6 +185,7 @@ void ZipSoundArchive::openArchive(const char *path, const char *extension, Sound
 		return;
 	}
 
+	debugCN(1, kDraciArchiverDebugLevel, "Trying to open ZIP archive %s: ", path);
 	_archive = Common::makeZipArchive(path);
 	_path = path;
 	_extension = extension;
@@ -195,6 +196,9 @@ void ZipSoundArchive::openArchive(const char *path, const char *extension, Sound
 		Common::ArchiveMemberList files;
 		_archive->listMembers(files);
 		_sampleCount = files.size();
+		debugC(1, kDraciArchiverDebugLevel, "Capacity %d", _sampleCount);
+	} else {
+		debugC(1, kDraciArchiverDebugLevel, "Failed");
 	}
 }
 
