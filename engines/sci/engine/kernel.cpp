@@ -230,7 +230,7 @@ struct SciKernelMapEntry {
 #define SIG_SCI16    SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32    SCI_VERSION_2, SCI_VERSION_NONE
 
-#define SIGFOR_ALL   0x4f
+#define SIGFOR_ALL   0x3f
 #define SIGFOR_DOS   1 << 0
 #define SIGFOR_PC98  1 << 1
 #define SIGFOR_WIN   1 << 2
