@@ -25,6 +25,10 @@ ifdef USE_PROFILER
 	PORT_OBJS += arm9/source/profiler/cyg-profile.o
 endif
 
+ifdef DYNAMIC_MODULES
+	PORT_OBJS += arm9/source/dsloader.o
+endif
+
 DATA_OBJS := \
 	arm9/data/icons.o \
 	arm9/data/keyboard.o \
