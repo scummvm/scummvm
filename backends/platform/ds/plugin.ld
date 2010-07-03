@@ -1,14 +1,15 @@
-/* Script for -z combreloc: combine and sort reloc sections */
-OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm",
-	      "elf32-littlearm")
+OUTPUT_FORMAT("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 OUTPUT_ARCH(arm)
-ENTRY(_start)
-SEARCH_DIR("/opt/devkitpro/devkitARM/arm-eabi/lib");
+/* PHDRS specifies ELF Program Headers (or segments) to the plugin linker */
+PHDRS {
+  plugin PT_LOAD ; /* Specifies that the plugin segment should be loaded from file */
+}
 SECTIONS
 {
   /* Read-only sections, merged into text segment: */
-  PROVIDE (__executable_start = SEGMENT_START("text-segment", 0x8000)); . = SEGMENT_START("text-segment", 0x8000);
-  .interp         : { *(.interp) }
+  . = 0;
+  .interp         : { *(.interp) } : plugin 	/*The ": plugin" tells the linker to assign this and
+  	             								  the following sections to the "plugin" segment*/
   .note.gnu.build-id : { *(.note.gnu.build-id) }
   .hash           : { *(.hash) }
   .gnu.hash       : { *(.gnu.hash) }
@@ -125,32 +126,17 @@ SECTIONS
   }
   .ctors          :
   {
-    /* gcc uses crtbegin.o to find the start of
-       the constructors, so we make sure it is
-       first.  Because this is a wildcard, it
-       doesn't matter if the user does not
-       actually link against crtbegin.o; the
-       linker won't look for a file to match a
-       wildcard.  The wildcard also means that it
-       doesn't matter which directory crtbegin.o
-       is in.  */
-    KEEP (*crtbegin.o(.ctors))
-    KEEP (*crtbegin?.o(.ctors))
-    /* We don't want to include the .ctor section from
-       the crtend.o file until after the sorted ctors.
-       The .ctor section from the crtend file contains the
-       end of ctors marker and it must be last */
-    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .ctors))
+    ___plugin_ctors = .;
     KEEP (*(SORT(.ctors.*)))
     KEEP (*(.ctors))
+    ___plugin_ctors_end = .;
   }
   .dtors          :
   {
-    KEEP (*crtbegin.o(.dtors))
-    KEEP (*crtbegin?.o(.dtors))
-    KEEP (*(EXCLUDE_FILE (*crtend.o *crtend?.o ) .dtors))
+    ___plugin_dtors = .;
     KEEP (*(SORT(.dtors.*)))
     KEEP (*(.dtors))
+    ___plugin_dtors_end = .;
   }
   .jcr            : { KEEP (*(.jcr)) }
   .data.rel.ro : { *(.data.rel.ro.local* .gnu.linkonce.d.rel.ro.local.*) *(.data.rel.ro* .gnu.linkonce.d.rel.ro.*) }
