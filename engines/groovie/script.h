@@ -30,11 +30,11 @@
 #include "common/rect.h"
 
 namespace Common {
-class SeekableReadStream;
+	class SeekableReadStream;
 }
 
 namespace Graphics {
-class Surface;
+	struct Surface;
 }
 
 namespace Groovie {
