@@ -40,7 +40,8 @@ private:
 
 public:
 	DefaultTimerManager();
-	~DefaultTimerManager();
+	virtual ~DefaultTimerManager();
+
 	bool installTimerProc(TimerProc proc, int32 interval, void *refCon);
 	void removeTimerProc(TimerProc proc);
 

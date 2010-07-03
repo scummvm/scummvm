@@ -28,18 +28,21 @@
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
+/**
+ * SDL mixer manager for Symbian
+ */
 class SymbianSdlMixerManager : public SdlMixerManager {
 public:
 	SymbianSdlMixerManager();
-	~SymbianSdlMixerManager();
+	virtual ~SymbianSdlMixerManager();
 
-	void init();
+	virtual void init();
 
 protected:
 	int _channels;
 	byte *_stereo_mix_buffer;
 
-	void callbackHandler(byte *samples, int len);
+	virtual void callbackHandler(byte *samples, int len);
 };
 
 #endif

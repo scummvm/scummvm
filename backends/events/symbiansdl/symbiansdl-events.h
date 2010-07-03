@@ -30,12 +30,12 @@
 
 #define TOTAL_ZONES 3
 
+/**
+ * SDL events manager for Symbian
+ */
 class SymbianSdlEventManager : public SdlEventManager {
 public:
 	SymbianSdlEventManager(Common::EventSource *boss);
-	~SymbianSdlEventManager();
-
-	bool remapKey(SDL_Event &ev, Common::Event &event);
 
 protected:
 	// Used to handle joystick navi zones
@@ -51,6 +51,8 @@ protected:
 	};
 
 	static zoneDesc _zones[TOTAL_ZONES];
+
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 };
 
 #endif

@@ -28,12 +28,15 @@
 
 #include "backends/mutex/mutex.h"
 
+/**
+ * SDL mutex manager
+ */
 class SdlMutexManager : public MutexManager {
 public:
-	OSystem::MutexRef createMutex();
-	void lockMutex(OSystem::MutexRef mutex);
-	void unlockMutex(OSystem::MutexRef mutex);
-	void deleteMutex(OSystem::MutexRef mutex);
+	virtual OSystem::MutexRef createMutex();
+	virtual void lockMutex(OSystem::MutexRef mutex);
+	virtual void unlockMutex(OSystem::MutexRef mutex);
+	virtual void deleteMutex(OSystem::MutexRef mutex);
 };
 
 

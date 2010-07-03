@@ -38,10 +38,6 @@ LinuxmotoSdlEventManager::LinuxmotoSdlEventManager(Common::EventSource *boss)
 
 }
 
-LinuxmotoSdlEventManager::~LinuxmotoSdlEventManager() {
-
-}
-
 void LinuxmotoSdlEventManager::preprocessEvents(SDL_Event *event) {
 	if (event->type == SDL_ACTIVEEVENT) {
 		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {

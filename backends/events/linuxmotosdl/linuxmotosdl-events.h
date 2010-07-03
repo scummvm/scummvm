@@ -28,10 +28,12 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
+/**
+ * SDL events manager for LINUXMOTO
+ */
 class LinuxmotoSdlEventManager : public SdlEventManager {
 public:
 	LinuxmotoSdlEventManager(Common::EventSource *boss);
-	virtual ~LinuxmotoSdlEventManager();
 
 protected:
 	virtual void preprocessEvents(SDL_Event *event);

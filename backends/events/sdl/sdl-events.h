@@ -34,45 +34,73 @@
 #include <SDL.h>
 #endif
 
+/**
+ * The SDL event manager class.
+ */
 class SdlEventManager : public DefaultEventManager {
 public:
 	SdlEventManager(Common::EventSource *boss);
 	virtual ~SdlEventManager();
 
+	/**
+	 * Gets and proccess SDL events
+	 */
 	virtual bool pollSdlEvent(Common::Event &event);
 
+	/**
+	 * Resets keyboard emulation after a video screen change
+	 */
 	virtual void resetKeyboadEmulation(int16 x_max, int16 y_max);
 
+	/**
+	 * Toggles mouse input grab
+	 */
 	virtual void toggleMouseGrab();
 
 protected:
-	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
-	// I am keeping the rest of the code in for now, since the joystick
-	// code (or rather, "hack") uses it, too.
+	/** @name Keyboard mouse emulation
+	 * Disabled by fingolfin 2004-12-18.
+	 * I am keeping the rest of the code in for now, since the joystick
+	 * code (or rather, "hack") uses it, too.
+	 */
+	//@{
+
 	struct KbdMouse {
 		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
 		uint32 last_time, delay_time, x_down_time, y_down_time;
 	};
 	KbdMouse _km;
 
-	// Scroll lock state - since SDL doesn't track it
+	//@}
+
+	/** Scroll lock state - since SDL doesn't track it */
 	bool _scrollLock;
 	
-	// Joystick
+	/** Joystick */
 	SDL_Joystick *_joystick;
 
+	/** Last screen id for checking if it was modified */
 	int _lastScreenID;
 
-	// Pre process an event before it is dispatched.
+	/**
+	 * Pre process an event before it is dispatched.
+	 */
 	virtual void preprocessEvents(SDL_Event *event) {}
 
-	// Dispatchs SDL events for each handler.
+	/**
+	 * Dispatchs SDL events for each handler.
+	 */
 	virtual bool dispatchSDLEvent(SDL_Event &ev, Common::Event &event);
 
-	// Handlers for specific SDL events, called by pollEvent.
-	// This way, if a managers inherits fromt this SDL events manager, it can
-	// change the behavior of only a single event, without having to override all
-	// of pollEvent.
+
+	/** @name Event Handlers
+	 * Handlers for specific SDL events, called by SdlEventManager::dispatchSDLEvent().
+	 * This way, if a managers inherits fromt this SDL events manager, it can
+	 * change the behavior of only a single event, without having to override all
+	 * of SdlEventManager::dispatchSDLEvent().
+	 */
+	//@{
+
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleKeyUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleMouseMotion(SDL_Event &ev, Common::Event &event);
@@ -81,13 +109,29 @@ protected:
 	virtual bool handleJoyButtonDown(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyButtonUp(SDL_Event &ev, Common::Event &event);
 	virtual bool handleJoyAxisMotion(SDL_Event &ev, Common::Event &event);
+	virtual void handleKbdMouse();
 
+	//@}
+
+	/**
+	 * Assigns the mouse coords to the mouse event
+	 */
 	virtual void fillMouseEvent(Common::Event &event, int x, int y);
 
-	virtual void handleKbdMouse();
+	/**
+	 * Remaps key events. This allows platforms to configure
+	 * their custom keys.
+	 */
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
 
+	/**
+	 * Maps the ASCII value of key
+	 */
 	virtual int mapKey(SDLKey key, SDLMod mod, Uint16 unicode);
+
+	/**
+	 * Configures the key modifiers flags status
+	 */
 	virtual void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event);
 };
 

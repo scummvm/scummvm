@@ -28,14 +28,22 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
+/**
+ * SDL events manager for GP2X and GP2XWIZ
+ */
 class GP2XSdlEventManager : public SdlEventManager {
 public:
 	GP2XSdlEventManager(Common::EventSource *boss);
 
 protected:
 	bool _stickBtn[32];
+
+	/** Button state for L button modifier */
 	bool _buttonStateL;
 
+	/**
+	 * Handles the stick movement
+	 */
 	void moveStick();
 
 	virtual bool handleKeyDown(SDL_Event &ev, Common::Event &event);

@@ -34,10 +34,14 @@
 #include <SDL.h>
 #endif
 
+/**
+ * SDL timer manager. Setups the timer callback for
+ * DefaultTimerManager.
+ */
 class SdlTimerManager : public DefaultTimerManager {
 public:
 	SdlTimerManager();
-	~SdlTimerManager();
+	virtual ~SdlTimerManager();
 
 protected:
 	SDL_TimerID _timerID;

@@ -35,8 +35,8 @@
 #endif
 
 /**
-* The SDL audio cd manager. Implements real audio cd playback.
-*/
+ * The SDL audio cd manager. Implements real audio cd playback.
+ */
 class SdlAudioCDManager : public DefaultAudioCDManager {
 public:
 	SdlAudioCDManager();

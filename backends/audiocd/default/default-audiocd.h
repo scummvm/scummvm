@@ -30,8 +30,8 @@
 #include "sound/mixer.h"
 
 /**
-* The default audio cd manager. Implements emulation of audio cd playback.
-*/
+ * The default audio cd manager. Implements emulation of audio cd playback.
+ */
 class DefaultAudioCDManager : public AudioCDManager {
 public:
 	DefaultAudioCDManager();

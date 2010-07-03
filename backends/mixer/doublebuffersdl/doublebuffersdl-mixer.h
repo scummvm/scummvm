@@ -28,10 +28,13 @@
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 
+/**
+ * SDL mixer manager with double buffering support.
+ */
 class DoubleBufferSDLMixerManager : public SdlMixerManager {
 public:
 	DoubleBufferSDLMixerManager();
-	~DoubleBufferSDLMixerManager();
+	virtual ~DoubleBufferSDLMixerManager();
 
 protected:
 	SDL_mutex *_soundMutex;
@@ -44,8 +47,19 @@ protected:
 	uint _soundBufSize;
 	byte *_soundBuffers[2];
 
+	/**
+	 * Handles and swap the sound buffers
+	 */
 	void mixerProducerThread();
+
+	/**
+	 * Finish the mixer manager
+	 */
 	void deinitThreadedMixer();
+
+	/**
+	 * Callback entry point for the sound thread
+	 */
 	static int SDLCALL mixerProducerThreadEntry(void *arg);
 
 	virtual void startAudio();

@@ -28,10 +28,12 @@
 
 #include "backends/events/sdl/sdl-events.h"
 
+/**
+ * SDL events manager for Samsung TV
+ */
 class SamsungTVSdlEventManager : public SdlEventManager {
 public:
 	SamsungTVSdlEventManager(Common::EventSource *boss);
-	~SamsungTVSdlEventManager() {}
 
 protected:
 	virtual bool remapKey(SDL_Event &ev, Common::Event &event);

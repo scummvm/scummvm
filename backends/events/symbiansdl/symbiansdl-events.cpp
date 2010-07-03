@@ -47,10 +47,6 @@ SymbianSdlEventManager::SymbianSdlEventManager(Common::EventSource *boss)
 	}
 }
 
-SymbianSdlEventManager::~SymbianSdlEventManager() {
-
-}
-
 bool SymbianSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (GUI::Actions::Instance()->mappingActive() || ev.key.keysym.sym <= SDLK_UNKNOWN)
 		return false;

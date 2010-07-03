@@ -29,6 +29,10 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 
+/**
+ * Abstract class for mutex manager. Subclasses
+ * implement the real functionality.
+ */
 class MutexManager : Common::NonCopyable {
 public:
 	virtual ~MutexManager() {}
@@ -38,6 +42,5 @@ public:
 	virtual void unlockMutex(OSystem::MutexRef mutex) = 0;
 	virtual void deleteMutex(OSystem::MutexRef mutex) = 0;
 };
-
 
 #endif

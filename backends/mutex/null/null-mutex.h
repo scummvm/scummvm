@@ -28,12 +28,15 @@
 
 #include "backends/mutex/mutex.h"
 
+/**
+ * Null mutex manager
+ */
 class NullMutexManager : MutexManager {
 public:
-	OSystem::MutexRef createMutex() { return OSystem::MutexRef(); }
-	void lockMutex(OSystem::MutexRef mutex) {}
-	void unlockMutex(OSystem::MutexRef mutex) {}
-	void deleteMutex(OSystem::MutexRef mutex) {}
+	virtual OSystem::MutexRef createMutex() { return OSystem::MutexRef(); }
+	virtual void lockMutex(OSystem::MutexRef mutex) {}
+	virtual void unlockMutex(OSystem::MutexRef mutex) {}
+	virtual void deleteMutex(OSystem::MutexRef mutex) {}
 };
 
 #endif

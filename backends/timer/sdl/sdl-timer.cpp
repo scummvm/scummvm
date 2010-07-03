@@ -34,14 +34,17 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 }
 
 SdlTimerManager::SdlTimerManager() {
+	// Initializes the SDL timer subsystem
 	if (SDL_InitSubSystem(SDL_INIT_TIMER) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	// Creates the timer callback
 	_timerID = SDL_AddTimer(10, &timer_handler, this);
 }
 
 SdlTimerManager::~SdlTimerManager() {
+	// Removes the timer callback
 	SDL_RemoveTimer(_timerID);
 }
 
