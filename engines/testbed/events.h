@@ -33,10 +33,10 @@ namespace Testbed {
 namespace EventTests {
 
 // Helper functions for Event tests
-
+char keystrokeToChar();
 // will contain function declarations for Event tests
 bool mouseEvents();
-bool keybdEvents();
+bool kbdEvents();
 // add more here
 }
 

@@ -28,6 +28,7 @@
 
 #include "engines/util.h"
  
+#include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
 #include "testbed/misc.h"
@@ -62,6 +63,9 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	_testsuiteList.push_back(ts);
 	// Misc.
 	ts = new MiscTestSuite();
+	_testsuiteList.push_back(ts);
+	// Events
+	ts = new EventTestSuite();
 	_testsuiteList.push_back(ts);
 }
  
@@ -115,21 +119,20 @@ Common::Error TestbedEngine::run() {
 	// To be set from config file
 	// By default Interactive tests are enabled
 	// XXX: disabling these as of now for fastly testing other tests
-	Testsuite::isSessionInteractive = false;
+	// Testsuite::isSessionInteractive = false;
 
 	if (Testsuite::isSessionInteractive) {
 		Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");		
 		Testsuite::displayMessage(prompt, "Proceed?");
-		// Executing GFX Tests
-		GFXTestSuite gts;
-		gts.execute();
 	}
 	
 	// Enable the testsuites you want to execute
-	enableTestsuite("FS", true);
-	enableTestsuite("GFX", true);
-	enableTestsuite("savegames", true);
-	enableTestsuite("misc", true);
+	// enableTestsuite("FS", true);
+	// enableTestsuite("GFX", true);
+	// enableTestsuite("savegames", true);
+	// enableTestsuite("misc", true);
+	// enableTestsuite("misc", true);
+	enableTestsuite("events", true);
 	// invoke them
 	invokeTestsuites();
 	
