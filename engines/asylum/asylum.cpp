@@ -59,9 +59,6 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vids");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "music");
 
-	DebugMan.enableDebugChannel("Scripts");
-	DebugMan.enableDebugChannel("Barriers");
-
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 }
 
