@@ -729,10 +729,10 @@ void Script::talk(const Common::Array<int> &params) {
 	// Speak the dubbing if possible
 	uint dubbingDuration = 0;
 	if (sample) {
-		dubbingDuration = (uint) (1000.0 * sample->_length / sample->_frequency + 500.0);
+		dubbingDuration = _vm->_sound->playVoice(sample);
 		debugC(3, kDraciSoundDebugLevel, "Playing sentence %d: %d+%d with duration %dms",
 			sentenceID, sample->_offset, sample->_length, dubbingDuration);
-		_vm->_sound->playVoice(sample);
+		dubbingDuration += 500;
 	}
 
 	// Record time

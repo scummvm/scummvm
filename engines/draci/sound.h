@@ -189,13 +189,13 @@ public:
 	Sound(Audio::Mixer *mixer);
 	~Sound() {}
 
-	void playSound(const SoundSample *buffer, int volume, bool loop);
+	uint playSound(const SoundSample *buffer, int volume, bool loop);
 	void pauseSound();
 	void resumeSound();
 	void stopSound();
 	bool isMutedSound() const { return _muteSound; }
 
-	void playVoice(const SoundSample *buffer);
+	uint playVoice(const SoundSample *buffer);
 	void pauseVoice();
 	void resumeVoice();
 	void stopVoice();
@@ -209,7 +209,8 @@ public:
 	int talkSpeed() const { return _talkSpeed; }
 
  private:
-	void playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
+	// Returns the length of the sound sample in miliseconds.
+	uint playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop);
 
 	SndHandle *getHandle();

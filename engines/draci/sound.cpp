@@ -285,11 +285,11 @@ SndHandle *Sound::getHandle() {
 	return NULL;	// for compilers that don't support NORETURN
 }
 
-void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
+uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop) {
 	if (!buffer._stream && !buffer._data) {
 		warning("Empty stream");
-		return;
+		return 0;
 	}
 	// Create a new SeekableReadStream which will be automatically disposed
 	// after the sample stops playing.  Do not dispose the original
@@ -335,22 +335,24 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 	default:
 		error("Unsupported compression format %d", static_cast<int> (buffer._format));
 		delete stream;
-		return;
+		return 0;
 	}
 
+	const uint length = reader->getLength().msecs();
 	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 	Audio::AudioStream *audio_stream = Audio::makeLoopingAudioStream(reader, loop ? 0 : 1);
 	_mixer->playStream(soundType, handle, audio_stream, -1, volume);
+	return length;
 }
 
-void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
+uint Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
 	if (!buffer || _muteSound)
-		return;
+		return 0;
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	playSoundBuffer(&handle->handle, *buffer, 2 * volume, handle->type, loop);
+	return playSoundBuffer(&handle->handle, *buffer, 2 * volume, handle->type, loop);
 }
 
 void Sound::pauseSound() {
@@ -374,13 +376,13 @@ void Sound::stopSound() {
 		}
 }
 
-void Sound::playVoice(const SoundSample *buffer) {
+uint Sound::playVoice(const SoundSample *buffer) {
 	if (!buffer || _muteVoice)
-		return;
+		return 0;
 	SndHandle *handle = getHandle();
 
 	handle->type = kVoiceHandle;
-	playSoundBuffer(&handle->handle, *buffer, Audio::Mixer::kMaxChannelVolume, handle->type, false);
+	return playSoundBuffer(&handle->handle, *buffer, Audio::Mixer::kMaxChannelVolume, handle->type, false);
 }
 
 void Sound::pauseVoice() {
