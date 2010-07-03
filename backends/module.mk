@@ -37,6 +37,7 @@ MODULE_OBJS := \
 	plugins/psp/psp-provider.o \
 	plugins/ps2/ps2-provider.o \
 	plugins/gp2xwiz/gp2xwiz-provider.o \
+	plugins/ds/ds-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \
