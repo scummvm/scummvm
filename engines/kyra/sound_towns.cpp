@@ -1866,9 +1866,10 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 		if (cmd < 0xf0) {
 			tmp++;
 		} else if (cmd == 0xff) {
-			if (READ_LE_UINT16(tmp))
+			if (READ_LE_UINT16(tmp)) {
 				_drv->_looping |= _idFlag;
-			else
+				tmp += _drv->_opnFxCmdLen[cmd - 240];
+			} else
 				loop = false;
 		} else if (cmd == 0xf6) {
 			// reset repeat section countdown
@@ -2512,7 +2513,7 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
 			tmp++;
-		} else if (cmd == 0xff && !*tmp) {
+		} else if (cmd == 0xff) {
 			loop = false;
 		} else if (cmd == 0xf6) {
 			// reset repeat section countdown
@@ -3080,7 +3081,7 @@ void TownsPC98_OpnCore::reset() {
 	for (int i = 0; i < _numChan; i++) {
 		for (int ii = 0; ii < 4; ii++)
 			_chanInternal[i].opr[ii]->reset();
-		memset(&_chanInternal[i].feedbuf, 0, 3);
+		memset(_chanInternal[i].feedbuf, 0, 3);
 		_chanInternal[i].algorithm = 0;
 		_chanInternal[i].frqTemp = 0;
 		_chanInternal[i].enableLeft = _chanInternal[i].enableRight = true;
