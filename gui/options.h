@@ -79,9 +79,8 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
-	typedef bool (MusicDeviceSkipFunc)(MusicDevices::iterator, Common::String, MusicPlugin::List::const_iterator&, uint32);
-	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicDeviceSkipFunc skipfunc, MusicType preferredType = MT_AUTO);
-	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicDeviceSkipFunc skipfunc);
+	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
+	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
