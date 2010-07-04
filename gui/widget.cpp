@@ -596,7 +596,7 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 	_gfx.free();
 	_gfx.create(w, h, sizeof(OverlayColor));
 
-	OverlayColor *dst = (OverlayColor*)_gfx.pixels;
+	OverlayColor *dst = (OverlayColor *)_gfx.pixels;
 	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
 	OverlayColor fillCol = overlayFormat.RGBToColor(r, g, b);
 	while (h--) {
@@ -607,8 +607,12 @@ void GraphicsWidget::setGfx(int w, int h, int r, int g, int b) {
 }
 
 void GraphicsWidget::drawWidget() {
-	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels)
-		g_gui.theme()->drawSurface(Common::Rect(_x, _y, _x+_w, _y+_h), _gfx, _state, _alpha, _transparency);
+	if (sizeof(OverlayColor) == _gfx.bytesPerPixel && _gfx.pixels) {
+		const int x = _x + (_w - _gfx.w) / 2;
+		const int y = _y + (_h - _gfx.h) / 2;
+
+		g_gui.theme()->drawSurface(Common::Rect(x, y, x + _gfx.w,  y + _gfx.h), _gfx, _state, _alpha, _transparency);
+	}
 }
 
 #pragma mark -
