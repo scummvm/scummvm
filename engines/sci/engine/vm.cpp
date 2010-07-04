@@ -1046,6 +1046,7 @@ void run_vm(EngineState *s, bool restoring) {
 		switch (opcode) {
 
 		case op_bnot: // 0x00 (00)
+			// Binary not
 			s->r_acc = ACC_ARITHMETIC_L(0xffff ^ /*acc*/);
 			break;
 
@@ -1129,10 +1130,12 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_shr: // 0x06 (06)
+			// Shift right logical
 			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) >> /*acc*/);
 			break;
 
 		case op_shl: // 0x07 (07)
+			// Shift left logical
 			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) << /*acc*/);
 			break;
 
@@ -1158,6 +1161,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_eq_: // 0x0d (13)
+			// ==
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, r_temp == s->r_acc);
@@ -1165,6 +1169,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ne_: // 0x0e (14)
+			// !=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			s->r_acc = make_reg(0, r_temp != s->r_acc);
@@ -1172,6 +1177,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_gt_: // 0x0f (15)
+			// >
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
@@ -1190,6 +1196,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ge_: // 0x10 (16)
+			// >=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
@@ -1201,6 +1208,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_lt_: // 0x11 (17)
+			// <
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
@@ -1218,6 +1226,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_le_: // 0x12 (18)
+			// <=
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 			if (r_temp.segment && s->r_acc.segment) {
@@ -1229,6 +1238,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ugt_: // 0x13 (19)
+			// > (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1251,6 +1261,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_uge_: // 0x14 (20)
+			// >= (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1264,6 +1275,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ult_: // 0x15 (21)
+			// < (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1277,6 +1289,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ule_: // 0x16 (22)
+			// <= (unsigned)
 			s->r_prev = s->r_acc;
 			r_temp = POP32();
 
@@ -1290,11 +1303,13 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_bt: // 0x17 (23)
+			// Branch relative if true
 			if (s->r_acc.offset || s->r_acc.segment)
 				s->xs->addr.pc.offset += opparams[0];
 			break;
 
 		case op_bnt: // 0x18 (24)
+			// Branch relative if not true
 			if (!(s->r_acc.offset || s->r_acc.segment))
 				s->xs->addr.pc.offset += opparams[0];
 			break;
@@ -1304,22 +1319,27 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ldi: // 0x1a (26)
+			// Load data immediate
 			s->r_acc = make_reg(0, opparams[0]);
 			break;
 
 		case op_push: // 0x1b (27)
+			// Push to stack
 			PUSH32(s->r_acc);
 			break;
 
 		case op_pushi: // 0x1c (28)
+			// Push immediate
 			PUSH(opparams[0]);
 			break;
 
 		case op_toss: // 0x1d (29)
+			// TOS (Top Of Stack) subtract
 			s->xs->sp--;
 			break;
 
 		case op_dup: // 0x1e (30)
+			// Duplicate TOD (Top Of Stack) element
 			r_temp = s->xs->sp[-1];
 			PUSH32(r_temp);
 			break;
@@ -1329,22 +1349,12 @@ void run_vm(EngineState *s, bool restoring) {
 			//  We put special segment 0xFFFF in there, so that uninitialized reads can get detected
 			for (int i = 0; i < opparams[0]; i++)
 				s->xs->sp[i] = make_reg(0xffff, 0);
-//			for (int i = 0; i < opparams[0]; i++)
-//				s->xs->sp[i] = make_reg(0, 'ss');
-
-			//if (local_script->getScriptNumber() == 140 && isIslandOfDrBrain) {
-			//	// WORKAROUND for The Island of Dr. Brain, room 140.
-			//	// Script 140 runs in an endless loop if we set its
-			//	// variables to 0 here.
-			//} else {
-			//	for (int i = 0; i < opparams[0]; i++)
-			//		s->xs->sp[i] = NULL_REG;
-			//}
 
 			s->xs->sp += opparams[0];
 			break;
 
 		case op_call: { // 0x20 (32)
+			// Call a script subroutine
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
 			           + 1 + s->restAdjust;
 			StackPtr call_base = s->xs->sp - argc;
@@ -1366,6 +1376,7 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		case op_callk: { // 0x21 (33)
+			// Call kernel function
 			gcCountDown(s);
 
 			s->xs->sp -= (opparams[1] >> 1) + 1;
@@ -1398,6 +1409,7 @@ void run_vm(EngineState *s, bool restoring) {
 		}
 
 		case op_callb: // 0x22 (34)
+			// Call base script
 			temp = ((opparams[1] >> 1) + s->restAdjust + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
@@ -1411,6 +1423,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_calle: // 0x23 (35)
+			// Call external script
 			temp = ((opparams[2] >> 1) + s->restAdjust + 1);
 			s_temp = s->xs->sp;
 			s->xs->sp -= temp;
@@ -1425,6 +1438,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_ret: // 0x24 (36)
+			// Return from an execution loop started by call, calle, callb, send, self or super
 			do {
 				StackPtr old_sp2 = s->xs->sp;
 				StackPtr old_fp = s->xs->fp;
@@ -1467,6 +1481,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_send: // 0x25 (37)
+			// Send for one or more selectors
 			s_temp = s->xs->sp;
 			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
@@ -1487,6 +1502,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_class: // 0x28 (40)
+			// Get class address
 			s->r_acc = s->_segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
 											s->xs->addr.pc);
 			break;
@@ -1496,6 +1512,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_self: // 0x2a (42)
+			// Send to self
 			s_temp = s->xs->sp;
 			s->xs->sp -= ((opparams[0] >> 1) + s->restAdjust); // Adjust stack
 
@@ -1511,6 +1528,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_super: // 0x2b (43)
+			// Send to any class
 			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, s->xs->addr.pc);
 
 			if (!r_temp.segment)
@@ -1533,6 +1551,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_rest: // 0x2c (44)
+			// Pushes all or part of the parameter variable list on the stack
 			temp = (uint16) opparams[0]; // First argument
 			s->restAdjust = MAX<int16>(s->xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
@@ -1542,6 +1561,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_lea: // 0x2d (45)
+			// Load Effective Address
 			temp = (uint16) opparams[0] >> 1;
 			var_number = temp & 0x03; // Get variable type
 
@@ -1560,6 +1580,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 
 		case op_selfID: // 0x2e (46)
+			// Get 'self' identity
 			s->r_acc = s->xs->objp;
 			break;
 
@@ -1568,66 +1589,60 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_pprev: // 0x30 (48)
+			// Pushes the value of the prev register, set by the last comparison
+			// bytecode (eq?, lt?, etc.), on the stack
 			PUSH32(s->r_prev);
 			break;
 
 		case op_pToa: // 0x31 (49)
+			// Property To Accumulator
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
 			break;
 
 		case op_aTop: // 0x32 (50)
+			// Accumulator To Property
 			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = s->r_acc;
 			break;
 
 		case op_pTos: // 0x33 (51)
+			// Property To Stack
 			PUSH32(OBJ_PROPERTY(obj, opparams[0] >> 1));
 			break;
 
 		case op_sTop: // 0x34 (52)
+			// Stack To Property
 			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
 		case op_ipToa: // 0x35 (53)
+			// Incement Property and copy To Accumulator
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
 			break;
 
 		case op_dpToa: { // 0x36 (54)
+			// Decrement Property and copy To Accumulator
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
-#if 0
-			// Speed throttling is possible here as well
-			// although this opens other issues like mud wrestling in lsl5 uses another local variable for delays
-			Object *var_container = obj;
-			if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
-				var_container = s->_segMan->getObject(obj->getSuperClassSelector());
-			uint16 varSelector = var_container->getVarSelector(opparams[0] >> 1);
-//			printf("%X\n", varSelector);
-//			printf("%s\n", g_sci->getKernel()->getSelectorName(varSelector).c_str());
-			if ((varSelector == 0x84) || (varSelector == 0x92))) {
-				// selectors cycles, cycleCnt from lsl5 hardcoded
-				uint32 curTime = g_system->getMillis();
-				if (s->_lastAnimateTime + 30 > curTime)
-					break;
-				s->_lastAnimateTime = curTime;
-			}
-#endif
 			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
 			break;
 		}
 
 		case op_ipTos: // 0x37 (55)
+			// Increment Property and push to Stack
 			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = ++OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
 		case op_dpTos: // 0x38 (56)
+			// Decrement Property and push to Stack
 			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = --OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
 		case op_lofsa: // 0x39 (57)
+			// Load Offset to Accumulator
 			s->r_acc.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
@@ -1648,6 +1663,7 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_lofss: // 0x3a (58)
+			// Load Offset to Stack
 			r_temp.segment = s->xs->addr.pc.segment;
 
 			switch (g_sci->_features->detectLofsType()) {
@@ -1697,6 +1713,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lal: // 0x41 (65)
 		case op_lat: // 0x42 (66)
 		case op_lap: // 0x43 (67)
+			// Load global, local, temp or param variable into the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			s->r_acc = READ_VAR(var_type, var_number);
@@ -1706,6 +1723,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lsl: // 0x45 (69)
 		case op_lst: // 0x46 (70)
 		case op_lsp: // 0x47 (71)
+			// Load global, local, temp or param variable into the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			PUSH32(READ_VAR(var_type, var_number));
@@ -1715,6 +1733,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lali: // 0x49 (73)
 		case op_lati: // 0x4a (74)
 		case op_lapi: // 0x4b (75)
+			// Load global, local, temp or param variable into the accumulator,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			s->r_acc = READ_VAR(var_type, var_number);
@@ -1724,6 +1744,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_lsli: // 0x4d (77)
 		case op_lsti: // 0x4e (78)
 		case op_lspi: // 0x4f (79)
+			// Load global, local, temp or param variable into the stack,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			PUSH32(READ_VAR(var_type, var_number));
@@ -1733,6 +1755,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_sal: // 0x51 (81)
 		case op_sat: // 0x52 (82)
 		case op_sap: // 0x53 (83)
+			// Save the accumulator into the global, local, temp or param variable
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, s->r_acc);
@@ -1742,6 +1765,7 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_ssl: // 0x55 (85)
 		case op_sst: // 0x56 (86)
 		case op_ssp: // 0x57 (87)
+			// Save the stack into the global, local, temp or param variable
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			WRITE_VAR(var_type, var_number, POP32());
@@ -1751,6 +1775,9 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_sali: // 0x59 (89)
 		case op_sati: // 0x5a (90)
 		case op_sapi: // 0x5b (91)
+			// Save the accumulator into the global, local, temp or param variable,
+			// using the accumulator as an additional index
+
 			// Special semantics because it wouldn't really make a whole lot
 			// of sense otherwise, with acc being used for two things
 			// simultaneously...
@@ -1764,6 +1791,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_ssli: // 0x5d (93)
 		case op_ssti: // 0x5e (94)
 		case op_sspi: // 0x5f (95)
+			// Save the stack into the global, local, temp or param variable,
+			// using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			WRITE_VAR(var_type, var_number, POP32());
@@ -1773,6 +1802,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusal: // 0x61 (97)
 		case op_plusat: // 0x62 (98)
 		case op_plusap: // 0x63 (99)
+			// Increment the global, local, temp or param variable and save it
+			// to the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number);
@@ -1788,6 +1819,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussl: // 0x65 (101)
 		case op_plusst: // 0x66 (102)
 		case op_plussp: // 0x67 (103)
+			// Increment the global, local, temp or param variable and save it
+			// to the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number);
@@ -1804,6 +1837,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plusali: // 0x69 (105)
 		case op_plusati: // 0x6a (106)
 		case op_plusapi: // 0x6b (107)
+			// Increment the global, local, temp or param variable and save it
+			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number);
@@ -1819,6 +1854,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_plussli: // 0x6d (109)
 		case op_plussti: // 0x6e (110)
 		case op_plusspi: // 0x6f (111)
+			// Increment the global, local, temp or param variable and save it
+			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number);
@@ -1835,6 +1872,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusal: // 0x71 (113)
 		case op_minusat: // 0x72 (114)
 		case op_minusap: // 0x73 (115)
+			// Decrement the global, local, temp or param variable and save it
+			// to the accumulator
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number);
@@ -1850,6 +1889,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussl: // 0x75 (117)
 		case op_minusst: // 0x76 (118)
 		case op_minussp: // 0x77 (119)
+			// Decrement the global, local, temp or param variable and save it
+			// to the stack
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0];
 			r_temp = READ_VAR(var_type, var_number);
@@ -1866,6 +1907,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minusali: // 0x79 (121)
 		case op_minusati: // 0x7a (122)
 		case op_minusapi: // 0x7b (123)
+			// Decrement the global, local, temp or param variable and save it
+			// to the accumulator, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number);
@@ -1881,6 +1924,8 @@ void run_vm(EngineState *s, bool restoring) {
 		case op_minussli: // 0x7d (125)
 		case op_minussti: // 0x7e (126)
 		case op_minusspi: // 0x7f (127)
+			// Decrement the global, local, temp or param variable and save it
+			// to the stack, using the accumulator as an additional index
 			var_type = opcode & 0x3; // Gets the variable type: g, l, t or p
 			var_number = opparams[0] + signed_validate_arithmetic(s->r_acc);
 			r_temp = READ_VAR(var_type, var_number);
