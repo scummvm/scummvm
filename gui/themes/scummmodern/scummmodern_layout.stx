@@ -110,7 +110,7 @@
 	<dialog name = 'Launcher' overlays = 'screen'>
 		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
 			<widget name = 'Logo'
-					width = '283'
+					width = '287'
 					height = '80'
 			/>
 			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
