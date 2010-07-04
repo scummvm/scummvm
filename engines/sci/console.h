@@ -151,6 +151,7 @@ private:
 	bool segmentInfo(int nr);
 	void printList(List *list);
 	int printNode(reg_t addr);
+	void hexDumpReg(const reg_t *data, int len, int regsPerLine = 4, int startOffset = 0, bool isArray = false);
 
 private:
 	SciEngine *_engine;

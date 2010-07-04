@@ -1558,6 +1558,15 @@ bool Console::segmentInfo(int nr) {
 		break;
 	}
 
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_STRING:
+		DebugPrintf("SCI32 strings\n");
+		break;
+	case SEG_TYPE_ARRAY:
+		DebugPrintf("SCI32 arrays\n");
+		break;
+#endif
+
 	default :
 		DebugPrintf("Invalid type %d\n", mobj->getType());
 		break;
@@ -2112,7 +2121,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		return true;
 	}
 
-	if (reg_end.segment != reg.segment) {
+	if (reg_end.segment != reg.segment && reg_end != NULL_REG) {
 		DebugPrintf("Ending segment different from starting segment. Assuming no bound on dump.\n");
 		reg_end = NULL_REG;
 	}
@@ -2151,13 +2160,15 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.segment)) {
 #ifdef ENABLE_SCI32
 				case SEG_TYPE_STRING: {
+					DebugPrintf("SCI32 string\n");
 					const SciString *str = _engine->_gamestate->_segMan->lookupString(reg);
 					Common::hexdump((const byte *) str->getRawData(), str->getSize(), 16, 0);
 					break;
 				}
 				case SEG_TYPE_ARRAY: {
+					DebugPrintf("SCI32 array:\n");
 					const SciArray<reg_t> *array = _engine->_gamestate->_segMan->lookupArray(reg);
-					Common::hexdump((const byte *) array->getRawData(), array->getSize(), 16, 0);
+					hexDumpReg(array->getRawData(), array->getSize(), 4, 0, true);
 					break;
 				}
 #endif
@@ -2179,7 +2190,10 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 					if (reg_end.segment != 0)
 						DebugPrintf("Block size less than or equal to %d\n", size);
 
-					Common::hexdump(block.raw, size, 16, 0);
+					if (block.isRaw)
+						Common::hexdump(block.raw, size, 16, 0);
+					else
+						hexDumpReg(block.reg, size / 2, 4, 0);
 				}
 			}
 			break;
@@ -3282,6 +3296,60 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("\nOwner script: %d\n", s->_segMan->getScript(pos.segment)->getScriptNumber());
 
 	return 0;
+}
+
+void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startOffset, bool isArray) {
+	// reg_t version of Common::hexdump
+	assert(1 <= regsPerLine && regsPerLine <= 8);
+	int i;
+	byte c;
+	int offset = startOffset;
+	while (len >= regsPerLine) {
+		printf("%06x: ", offset);
+		for (i = 0; i < regsPerLine; i++) {
+			printf("%04x:%04x  ", PRINT_REG(data[i]));
+		}
+		printf(" |");
+		for (i = 0; i < regsPerLine; i++) {
+			c = data[i].toUint16() >> 8;
+			if (c < 32 || c >= 127)
+				c = '.';
+			printf("%c", c);
+			c = data[i].toUint16() & 0xff;
+			if (c < 32 || c >= 127)
+				c = '.';
+			printf("%c", c);
+		}
+		printf("|\n");
+		data += regsPerLine;
+		len -= regsPerLine;
+		offset += regsPerLine * (isArray ? 1 : 2);
+	}
+
+	if (len <= 0)
+		return;
+
+	printf("%06x: ", offset);
+	for (i = 0; i < regsPerLine; i++) {
+		if (i < len)
+			printf("%04x:%04x  ", PRINT_REG(data[i]));
+		else
+			printf("           ");
+	}
+	printf(" |");
+	for (i = 0; i < len; i++) {
+		c = data[i].toUint16() >> 8;
+		if (c < 32 || c >= 127)
+			c = '.';
+		printf("%c", c);
+		c = data[i].toUint16() & 0xff;
+		if (c < 32 || c >= 127)
+			c = '.';
+		printf("%c", c);
+	}
+	for (; i < regsPerLine; i++)
+		printf("  ");
+	printf("|\n");
 }
 
 } // End of namespace Sci
