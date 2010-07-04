@@ -583,6 +583,11 @@ void GraphicsWidget::setGfx(const Graphics::Surface *gfx) {
 	if (!gfx || !gfx->pixels)
 		return;
 
+	if (gfx->w > _w || gfx->h > _h) {
+		warning("GraphicsWidget has size %dx%d, but a surface with %dx%d is to be set", _w, _h, gfx->w, gfx->h);
+		return;
+	}
+
 	// TODO: add conversion to OverlayColor
 	_gfx.copyFrom(*gfx);
 }
