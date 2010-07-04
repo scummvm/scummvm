@@ -136,10 +136,6 @@ void OptionsDialog::init() {
 	}
 }
 
-template<class T> bool equalsDeviceProperty(MusicDevices::iterator d, T lookupProp, Common::MemFunc0<T, MusicDevice> devicePropFunc) {
-	return lookupProp == devicePropFunc(&*d);
-}
-
 bool musicDeviceSkipSettingDefault(MusicDevices::iterator d, Common::String dom, MusicPlugin::List::const_iterator &m, uint32 guio) {
 	return (dom == Common::ConfigManager::kApplicationDomain && d->getMusicType() != MT_TOWNS) || (dom != Common::ConfigManager::kApplicationDomain && (!(guio & MidiDriver::musicType2GUIO((uint32)-1)) || (guio & (MidiDriver::musicType2GUIO(d->getMusicType()))))) || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null" ? true : false;
 }
@@ -810,9 +806,9 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && id != -1; m++) {
 			MusicDevices i = (**m)->getDevices();
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-				if ((setting.empty()) ? equalsDeviceProperty(d, preferredType, Common::mem_fun(&MusicDevice::getMusicType)) : equalsDeviceProperty(d, drv, Common::mem_fun(&MusicDevice::getCompleteId))) {
+				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
 					popup->setSelected(id);
-					id = -1;												
+					id = -1;
 					break;
 				} else if (skipfunc(d, _domain, m, _guioptions)) {
 					id++;
@@ -821,7 +817,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		}
 		if (id != -1)
 			// midi device turned off or whatever
-			return false;		
+			return false;
 	} else {
 		return false;
 	}
