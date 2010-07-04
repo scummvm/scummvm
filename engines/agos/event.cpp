@@ -481,7 +481,7 @@ void AGOSEngine::delay(uint amount) {
 						_aboutDialog = new GUI::AboutDialog();
 						_aboutDialog->runModal();
 					} else if (event.kbd.keycode == Common::KEYCODE_f) {
-						_fastMode ^= 1;
+						_fastMode = !_fastMode;
 					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
 					} else if (event.kbd.keycode == Common::KEYCODE_s) {
@@ -568,7 +568,7 @@ void AGOSEngine_Feeble::timerProc() {
 	_videoLockOut |= 2;
 
 	if (!(_videoLockOut & 0x10)) {
-		_syncFlag2 ^= 1;
+		_syncFlag2 = !_syncFlag2;
 		if (!_syncFlag2) {
 			processVgaEvents();
 		} else {
@@ -637,7 +637,7 @@ void AGOSEngine_PN::timerProc() {
 
 		processVgaEvents();
 		processVgaEvents();
-		_cepeFlag ^= 1;
+		_cepeFlag = !_cepeFlag;
 		if (!_cepeFlag)
 			processVgaEvents();
 	}
@@ -663,7 +663,7 @@ void AGOSEngine::timerProc() {
 	if (!(_videoLockOut & 0x10)) {
 		processVgaEvents();
 		processVgaEvents();
-		_cepeFlag ^= 1;
+		_cepeFlag = !_cepeFlag;
 		if (!_cepeFlag)
 			processVgaEvents();
 	}

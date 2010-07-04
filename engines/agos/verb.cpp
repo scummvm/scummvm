@@ -207,7 +207,7 @@ static const char *const czech_verb_prep_names[] = {
 void AGOSEngine_Feeble::clearName() {
 	stopAnimateSimon2(2, 6);
 	_lastNameOn = NULL;
-	_animatePointer = 0;
+	_animatePointer = false;
 	_mouseAnim = 1;
 	return;
 }
@@ -898,7 +898,7 @@ void AGOSEngine::displayName(HitArea *ha) {
 		if (getBitFlag(99))
 			_animatePointer = ((ha->flags & kBFTextBox) == 0);
 		else
-			_animatePointer = 1;
+			_animatePointer = true;
 
 		if (!getBitFlag(73))
 			return;
@@ -933,7 +933,7 @@ void AGOSEngine_Feeble::invertBox(HitArea *ha, bool state) {
 			_mouseCursor = _oldMouseCursor;
 		} else if (_mouseCursor != 18) {
 			_oldMouseCursor = _mouseCursor;
-			_animatePointer = 0;
+			_animatePointer = false;
 			_oldMouseAnimMax = _mouseAnimMax;
 			_mouseAnimMax = 2;
 			_mouseCursor = 18;
