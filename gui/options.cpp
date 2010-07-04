@@ -681,7 +681,8 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
 				_mt32DevicePopUp->appendEntry(d->getCompleteName(), midiId);
 				if (d->getMusicType() != MT_MT32)
-					_gmDevicePopUp->appendEntry(d->getCompleteName(), midiId++);
+					_gmDevicePopUp->appendEntry(d->getCompleteName(), midiId);
+				++midiId;
 			}
 		}
 	}
