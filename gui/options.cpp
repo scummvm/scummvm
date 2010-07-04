@@ -803,8 +803,8 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 	if (!popup || !popup->isEnabled())
 		return true;
 
-	if (ConfMan.hasKey(setting, _domain) || preferredType) {
-		const Common::String drv = ConfMan.get(setting, _domain);
+	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
+		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain); 
 		const MusicPlugin::List p = MusicMan.getPlugins();
 		int id = 0;
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && id != -1; m++) {
