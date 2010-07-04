@@ -184,7 +184,8 @@ bool EventTests::kbdEvents() {
 	char letter;
 	while ((letter = keystrokeToChar()) != 0) {
 		Testsuite::clearScreen(rect);
-		text = text + letter;
+		text += letter;
+		rect = Testsuite::writeOnScreen(text, pt);
 	}
 	return true;
 }
