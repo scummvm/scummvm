@@ -75,6 +75,7 @@ public:
 	int size() { return _size; }
 	RGB8 &operator[](int idx) { return _data[idx]; }
 	void setRange(int start, int count, const RGB8 *src);
+	RGBList *clone() const;
 };
 
 // M4Surface
@@ -203,6 +204,7 @@ public:
 	void scrollY(int yAmount);
 
 	void translate(RGBList *list, bool isTransparent = false);
+	M4Surface *flipHorizontal() const;
 };
 
 enum FadeType {FT_TO_GREY, FT_TO_COLOR, FT_TO_BLOCK};

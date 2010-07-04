@@ -65,6 +65,15 @@ void RGBList::setRange(int start, int count, const RGB8 *src) {
 	Common::copy(&src[0], &src[count], &_data[start]);
 }
 
+/**
+ * Creates a duplicate of the given rgb list
+ */
+RGBList *RGBList::clone() const {
+	RGBList *dest = new RGBList(_size, _data, false);
+	_madsVm->_palette->addRange(dest);
+	return dest;
+}
+
 //--------------------------------------------------------------------------
 
 #define VGA_COLOR_TRANS(x) (x == 0x3f ? 255 : x << 2)
@@ -929,6 +938,21 @@ void M4Surface::translate(RGBList *list, bool isTransparent) {
 	}
 
 	freeData();
+}
+
+M4Surface *M4Surface::flipHorizontal() const {
+	M4Surface *dest = new M4Surface(width(), height());
+	dest->_rgbList = (this->_rgbList == NULL) ? NULL : this->_rgbList->clone();
+	
+	byte *destP = dest->getBasePtr();
+
+	for (int y = 0; y < height(); ++y) {
+		const byte *srcP = getBasePtr(width() - 1, y);
+		for (int x = 0; x < width(); ++x)
+			*destP++ = *srcP--;
+	}
+
+	return dest;
 }
 
 //--------------------------------------------------------------------------

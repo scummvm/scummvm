@@ -201,15 +201,23 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 		assert(slot.spriteListIndex < (int)_sprites.size());
 		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
+		// Get the sprite frame
+		int frameNumber = slot.frameNumber & 0x7fff;
+		bool flipped = (slot.frameNumber & 0x8000) != 0;
+		M4Sprite *sprite = spriteSet.getFrame(frameNumber - 1);
+
+		M4Surface *spr = sprite;
+		if (flipped) {
+			// Create a flipped copy of the sprite temporarily
+			spr = sprite->flipHorizontal();
+		}
+
 		if ((slot.scale < 100) && (slot.scale != -1)) {
 			// Minimalised drawing
-			assert(slot.spriteListIndex < (int)_sprites.size());
-			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
 			viewport->copyFrom(spr, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 
-				spr->getTransparencyIndex());
+				sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
-			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
 
 			if (slot.scale == -1) {
 				xp = slot.xp - _owner._posAdjust.x;
@@ -221,12 +229,16 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 
 			if (slot.depth > 1) {
 				// Draw the frame with depth processing
-				viewport->copyFrom(spr, xp, yp, slot.depth, _owner._depthSurface, 100, spr->getTransparencyIndex());
+				viewport->copyFrom(spr, xp, yp, slot.depth, _owner._depthSurface, 100, sprite->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image
-				spr->copyTo(viewport, xp, yp, spr->getTransparencyIndex());
+				spr->copyTo(viewport, xp, yp, sprite->getTransparencyIndex());
 			}
 		}
+
+		// Free sprite if it was a flipped one
+		if (flipped)
+			delete spr;
 	}
 }
 
