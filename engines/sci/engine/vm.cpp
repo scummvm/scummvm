@@ -228,7 +228,7 @@ static int signed_validate_arithmetic(reg_t reg) {
 	return (int16)validate_arithmetic(reg);
 }
 
-static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index, int line) {
+static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int index) {
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
@@ -364,8 +364,8 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t default_value) {
-	if (validate_variable(r, stack_base, type, max, index, line)) {
+static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
+	if (validate_variable(r, stack_base, type, max, index)) {
 		if (type == VAR_TEMP && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
@@ -380,8 +380,8 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		return default_value;
 }
 
-static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value, SegManager *segMan, Kernel *kernel) {
-	if (validate_variable(r, stack_base, type, max, index, line)) {
+static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t value, SegManager *segMan, Kernel *kernel) {
+	if (validate_variable(r, stack_base, type, max, index)) {
 
 		// WORKAROUND: This code is needed to work around a probable script bug, or a
 		// limitation of the original SCI engine, which can be observed in LSL5.
@@ -423,8 +423,8 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 	}
 }
 
-#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, s->r_acc)
-#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, __LINE__, value, s->_segMan, g_sci->getKernel())
+#define READ_VAR(type, index) validate_read_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, s->r_acc)
+#define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 #define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
