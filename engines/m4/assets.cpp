@@ -98,7 +98,8 @@ long *DataAsset::getRow(int index) {
 	return &_data[_recSize * index];
 }
 
-SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, bool asStream) : 
+SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int size, const char *name, 
+						 bool asStream, int flags) : 
 			BaseAsset(vm) {
 	_stream = stream;
 	_palInterface = NULL;
@@ -107,7 +108,7 @@ SpriteAsset::SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, i
 	if (_vm->isM4()) {
 		loadM4SpriteAsset(vm, stream, asStream);
 	} else {
-		loadMadsSpriteAsset(vm, stream);
+		loadMadsSpriteAsset(vm, stream, flags);
 	}
 }
 
@@ -119,7 +120,7 @@ SpriteAsset::SpriteAsset(MadsM4Engine *vm, const char *name): BaseAsset(vm) {
 	if (_vm->isM4()) {
 		loadM4SpriteAsset(vm, _stream, true);
 	} else {
-		loadMadsSpriteAsset(vm, _stream);
+		loadMadsSpriteAsset(vm, _stream, 0);
 	}
 
 	vm->res()->toss(name);
@@ -136,6 +137,8 @@ SpriteAsset::~SpriteAsset() {
 	for (Common::Array<SpriteAssetFrame>::iterator it = _frames.begin(); it != _frames.end(); ++it) {
 		delete (*it).frame;
 	}
+
+	delete _charInfo;
 }
 
 void SpriteAsset::loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, bool asStream) {
@@ -200,7 +203,7 @@ void SpriteAsset::loadM4SpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream
 
 }
 
-void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream) {
+void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStream* stream, int flags) {
 	int curFrame = 0;
 	uint32 frameOffset = 0;
 	MadsPack sprite(stream);
@@ -217,7 +220,12 @@ void SpriteAsset::loadMadsSpriteAsset(MadsM4Engine *vm, Common::SeekableReadStre
 	_isBackground = (type1 != 0) && (type2 < 4);
 	spriteStream->skip(32);
 	_frameCount = spriteStream->readUint16LE();
-	// we skip the rest of the data
+
+	if (_vm->isM4() || ((flags & SPRITE_SET_CHAR_INFO) == 0))
+		_charInfo = NULL;
+	else
+		_charInfo = new MadsSpriteSetCharInfo(spriteStream);
+
 	delete spriteStream;
 
 	// Get the palette data
@@ -619,6 +627,25 @@ M4Sprite *AssetManager::getSpriteFrame(int32 hash, int frameIndex) {
 int32 AssetManager::getSpriteFrameCount(int32 hash) {
 	assert(_CELS[hash] != NULL);
 	return _CELS[hash]->getCount();
+}
+
+//--------------------------------------------------------------------------
+
+MadsSpriteSetCharInfo::MadsSpriteSetCharInfo(Common::SeekableReadStream *s) {
+	_frameNumber = s->readByte();
+	s->skip(1);
+	_hasIdling = s->readUint16LE() != 0;
+	
+	for (int i = 0; i < 16; ++i)
+		_frameList[i] = s->readUint16LE();
+	for (int i = 0; i < 16; ++i)
+		_frameList2[i] = s->readUint16LE();
+	for (int i = 0; i < 16; ++i)
+		_ticksList[i] = s->readUint16LE();
+
+	_unk1 = s->readUint16LE();
+	_ticksAmount = s->readByte();
+	_yScale = s->readByte();
 }
 
 } // End of namespace M4

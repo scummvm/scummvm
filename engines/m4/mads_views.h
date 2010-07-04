@@ -92,7 +92,8 @@ public:
 	}
 
 	int getIndex();
-	int addSprites(const char *resName, bool suppressErrors = false);
+	int addSprites(const char *resName, bool suppressErrors = false, int flags = 0);
+	int addSprites(SpriteAsset *spriteSet);
 	void deleteSprites(int listIndex);
 	void clear();
 	void deleteTimer(int seqIndex);

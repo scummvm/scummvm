@@ -86,7 +86,7 @@ int MadsSpriteSlots::getIndex() {
 	return startIndex++;
 }
 
-int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors) {
+int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int flags) {
 	// If errors are suppressed, first check if the resource exists
 	if (suppressErrors) {
 		if (!_vm->res()->resourceExists(resName))
@@ -95,12 +95,18 @@ int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors) {
 
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, flags);
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 
 	_sprites.push_back(spriteSet);
 	_vm->res()->toss(resName);
+
+	return _sprites.size() - 1;
+}
+
+int MadsSpriteSlots::addSprites(SpriteAsset *spriteSet) {
+	_sprites.push_back(spriteSet);
 
 	return _sprites.size() - 1;
 }

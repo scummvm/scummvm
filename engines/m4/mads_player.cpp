@@ -29,6 +29,10 @@
 
 namespace M4 {
 
+const int MadsPlayer::_directionListIndexes[32] = {
+	0, 7, 4, 3, 6, 0, 2, 5, 0, 1, 9, 4, 1, 2, 7, 9, 3, 8, 9, 6, 7, 2, 3, 6, 1, 7, 9, 4, 7, 8, 0, 0
+};
+
 MadsPlayer::MadsPlayer() {
 	_playerPos = Common::Point(160, 78);
 	_direction = 0;
@@ -48,6 +52,11 @@ MadsPlayer::MadsPlayer() {
 		_spriteSetIndexes[idx] = 0;
 	_frameNum = 0;
 	_frameOffset = 0;
+	_unk1 = 0;
+	_newFrame = 0;
+	_frameListIndex = 0;
+	_actionIndex = 0;
+	resetActionList();
 }
 
 /**
@@ -79,7 +88,7 @@ bool MadsPlayer::loadSprites(const char *prefix) {
 			*digitP = suffixList[idx];
 			_spriteSetIndexes[idx] = -1;
 
-			int setIndex = _madsVm->scene()->_spriteSlots.addSprites(setName, true);
+			int setIndex = _madsVm->scene()->_spriteSlots.addSprites(setName, true, SPRITE_SET_CHAR_INFO);
 			if (setIndex < 0) {
 				if (idx < 7)
 					break;
@@ -165,7 +174,66 @@ void MadsPlayer::update() {
 	_forceRefresh = false;
 }
 
+/**
+ * Idling animation for player
+ */
 void MadsPlayer::idle() {
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	assert(spriteSet._charInfo);
+
+	if (!spriteSet._charInfo->_hasIdling) {
+		_frameNum = 1;
+	} else {
+		_frameListIndex = _actionList[_actionIndex];
+
+		if (!_visible) {
+			_unk2 = 0;
+		} else {
+			_unk2 = _actionList2[_actionIndex];
+			
+			if (_actionIndex > 0)
+				--_actionIndex;
+		}
+
+		// Set the player frame number
+		int frameIndex = ABS(_frameListIndex);
+		_frameNum = (_frameListIndex <= 0) ? spriteSet._charInfo->_frameList[frameIndex] :
+			spriteSet._charInfo->_frameList2[frameIndex];
+
+		// Set next waiting period in ticks
+		if (frameIndex == 0)
+			setTicksAmount();
+		else
+			_madsVm->scene()->_ticksAmount = spriteSet._charInfo->_ticksList[frameIndex];
+	}
+}
+
+void MadsPlayer::setupFrame() {
+	resetActionList();
+	_frameOffset = 0;
+	_spriteListIdx2 = _directionListIndexes[_direction];
+	if (_spriteSetIndexes[_spriteListIdx2] == 0) {
+		_spriteListIdx2 = 4;
+		_frameOffset = 0x8000;
+	}
+
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	assert(spriteSet._charInfo);
+	_unk1 = MAX(spriteSet._charInfo->_unk1, 100);
+	setTicksAmount();
+
+	_newFrame = spriteSet._charInfo->_frameNumber;
+	if (_newFrame == 0)
+		_newFrame = spriteSet.getCount();
+
+	_yScale = spriteSet._charInfo->_yScale;
+	
+	if ((_frameNum <= 0) || (_frameNum > _newFrame))
+		_frameNum = 1;
+	_forceRefresh = true;
+}
+
+void MadsPlayer::step() {
 
 }
 
@@ -188,6 +256,36 @@ int MadsPlayer::getSpriteSlot() {
 			return i;
 	}
 	return -1;
+}
+
+void MadsPlayer::setTicksAmount() {
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	assert(spriteSet._charInfo);
+	_madsVm->scene()->_ticksAmount = spriteSet._charInfo->_ticksAmount;
+	if (_madsVm->scene()->_ticksAmount == 0)
+		_madsVm->scene()->_ticksAmount = 6;
+}
+
+void MadsPlayer::resetActionList() {
+	_actionList[0] = 0;
+	_actionList2[0] = 0;
+	_actionIndex = 0;
+	_unk2 = 0;
+	_unk3 = 0;
+}
+
+int MadsPlayer::queueAction(int action1, int action2) {
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	assert(spriteSet._charInfo);
+
+	if ((spriteSet._charInfo->_hasIdling) && (_actionIndex < 11)) {
+		++_actionIndex;
+		_actionList[_actionIndex] = action1;
+		_actionList2[_actionIndex] = action2;
+		return false;
+	}
+
+	return true;
 }
 
 } // End of namespace M4

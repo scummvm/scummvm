@@ -36,6 +36,9 @@ class MadsPlayer {
 private:
 	int getScale(int yp);
 	int getSpriteSlot();
+	void setTicksAmount();
+	void resetActionList();
+	int queueAction(int v0, int v1);
 public:
 	char _spritesPrefix[16];
 	int _spriteSetCount;
@@ -51,14 +54,26 @@ public:
 	int16 _currentDepth;
 	int16 _spriteListIdx, _spriteListIdx2;
 	bool _spritesChanged;
-	int16 _frameOffset, _frameNum;
+	uint16 _frameOffset, _frameNum;
 	bool _moving;
+	int _unk1;
+	int _newFrame;
+	int _frameListIndex;
+	int _actionIndex;
+	int _actionList[12];
+	int _actionList2[12];
+	int _unk2;
+	int _unk3;
+
+	static const int _directionListIndexes[32];
 public:
 	MadsPlayer();
 
 	bool loadSprites(const char *prefix);
 	void update();
 	void idle();
+	void setupFrame();
+	void step();
 };
 
 } // End of namespace M4
