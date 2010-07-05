@@ -133,8 +133,7 @@ void *operator new (size_t size) {
 	void *res = __real_malloc(size);
 	s_total_malloc += size;
 
-	if (!res)
-	{
+	if (!res) {
 //		*((u8 *) NULL) = 0;
 		consolePrintf("Failed alloc (new) %d (%d)\n", size, s_total_malloc);
 		return NULL;

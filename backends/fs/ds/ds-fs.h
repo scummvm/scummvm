@@ -173,7 +173,9 @@ struct fileHandle {
 
 class DSFileStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
 protected:
-	static const int WRITE_BUFFER_SIZE = 512;
+	enum {
+		WRITE_BUFFER_SIZE = 512
+	};
 
 	/** File handle to the actual file. */
 	void 	*_handle;

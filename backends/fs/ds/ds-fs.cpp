@@ -416,18 +416,12 @@ bool DSFileStream::eos() const {
 }
 
 int32 DSFileStream::pos() const {
-	if (_writeBufferPos > 0) {
-		// Discard constness.  Bad, but I can't see another way.
-		((DSFileStream *) (this))->flush();
-	}
+	assert(_writeBufferPos == 0);	// This method may only be called when reading!
 	return std_ftell((FILE *)_handle);
 }
 
 int32 DSFileStream::size() const {
-	if (_writeBufferPos > 0) {
-		// Discard constness.  Bad, but I can't see another way.
-		((DSFileStream *) (this))->flush();
-	}
+	assert(_writeBufferPos == 0);	// This method may only be called when reading!
 	int32 oldPos = std_ftell((FILE *)_handle);
 	std_fseek((FILE *)_handle, 0, SEEK_END);
 	int32 length = std_ftell((FILE *)_handle);
@@ -659,10 +653,10 @@ size_t std_fread(void *ptr, size_t size, size_t numItems, FILE *handle) {
 		return bytes / size;
 	}
 
-	if ((int)(handle->pos + size * numItems) > handle->size) {
+	if (handle->pos > handle->size)
+		numItems = 0;
+	else if ((int)(handle->pos + size * numItems) > handle->size)
 		numItems = (handle->size - handle->pos) / size;
-		if (numItems < 0) numItems = 0;
-	}
 
 //	consolePrintf("read %d  ", size * numItems);
 

@@ -463,7 +463,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
-	static int cnt = 0;
+//	static int cnt = 0;
 //	consolePrintf("updatescr %d\n", cnt++);
 
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
