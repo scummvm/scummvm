@@ -66,6 +66,11 @@
 #define DEFAULT_CONFIG_FILE "scummvmj.ini"
 #elif defined(DS_BUILD_K)
 #define DEFAULT_CONFIG_FILE "scummvmk.ini"
+#else
+	// Use the "scummvm.ini" as config file if no build was specified. This
+	// currently only happens with builds made using the regular ScummVM build
+	// system (as opposed to the nds specific build system).
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
 OSystem_DS* OSystem_DS::_instance = NULL;

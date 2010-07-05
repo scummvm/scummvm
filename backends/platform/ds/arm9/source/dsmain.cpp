@@ -97,7 +97,7 @@
 #endif
 #include "ramsave.h"
 #include "blitters.h"
-#include "cartreset_nolibfat.h"
+#include "libcartreset/cartreset_nolibfat.h"
 #include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
@@ -3344,6 +3344,11 @@ int main(void) {
 	const char *argv[] = {"/scummvmds", "--config=scummvmj.ini"};
 #elif defined(DS_BUILD_K)
 	const char *argv[] = {"/scummvmds", "--config=scummvmk.ini"};
+#else
+	// Use the default config file if no build was specified. This currently
+	// only happens with builds made using the regular ScummVM build system (as
+	// opposed to the nds specific build system).
+	const char *argv[] = {"/scummvmds"};
 #endif
 
 

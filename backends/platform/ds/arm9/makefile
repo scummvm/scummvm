@@ -202,7 +202,6 @@ endif
 #endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
-ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++

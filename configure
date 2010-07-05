@@ -1392,7 +1392,12 @@ case $_host_os in
 		;;
 	ds)
 		# TODO Nintendo DS
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT -I$DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
+		LIBS="$LIBS -lnds9"
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1575,18 +1580,18 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="ds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/ds/ds.mk"
-			# TODO: Enable more ARM optimizations -- requires testing!
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			;;
 		neuros)
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
@@ -2445,7 +2450,9 @@ case $_backend in
 		;;
 	ds)
 		# TODO ds
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source -I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"

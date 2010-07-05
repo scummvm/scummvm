@@ -21,10 +21,6 @@ PORT_OBJS := \
 	arm9/source/wordcompletion.o \
 	arm9/source/interrupt.o
 
-ifdef USE_PROFILER
-	PORT_OBJS += arm9/source/profiler/cyg-profile.o
-endif
-
 DATA_OBJS := \
 	arm9/data/icons.o \
 	arm9/data/keyboard.o \
@@ -55,8 +51,8 @@ FAT_OBJS :=  arm9/source/fat/disc_io.o arm9/source/fat/gba_nds_fat.o\
 #	arm9/source/fat/io_sd_common.o arm9/source/fat/io_scsd_s.o \
 #	arm9/source/fat/io_sc_common.o arm9/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS := 
-	#arm9/source/libcartreset/cartreset.o
+LIBCARTRESET_OBJS := \
+#	arm9/source/libcartreset/cartreset.o
 
 
 #MODULE_OBJS := $(PORT_OBJS) $(DATA_OBJS) $(FAT_OBJS)
@@ -68,35 +64,56 @@ MODULE_OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS)
 #---------------------------------------------------------------------------------
 define bin2o
 	bin2s $< | $(AS) -mthumb -mthumb-interwork -o $(@)
-	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
-	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
-	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(<F) | tr . _)`.h
 endef
 
-#---------------------------------------------------------------------------------
-%.o	:	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
+define bin2h
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > $@
+	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> $@
+	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> $@
+endef
 
-#---------------------------------------------------------------------------------
-%.o	:	%.raw
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
+vpath %.raw $(srcdir)
+vpath %.pal $(srcdir)
+vpath %.bin $(srcdir)
 
-#---------------------------------------------------------------------------------
-%.o	:	%.pal
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
+%.o: %.raw
+	$(bin2o)
+
+%_raw.h: %.raw
+	$(bin2h)
+
+%.o: %.pal
+	$(bin2o)
+
+%_raw.h: %.pal
+	$(bin2h)
+
+%.o: %.bin
+	$(bin2o)
+
+%_raw.h: %.bin
+	$(bin2h)
 
 
+# Mark files which require the *_raw.h files manually (for now, at least)
+$(MODULE)/arm9/source/dsmain.o: \
+	$(MODULE)/arm9/data/icons_raw.h \
+	$(MODULE)/arm9/data/keyboard_raw.h \
+	$(MODULE)/arm9/data/keyboard_pal_raw.h
+
+$(MODULE)/arm9/source/touchkeyboard.o: \
+	$(MODULE)/arm9/data/keyboard_raw.h \
+	$(MODULE)/arm9/data/keyboard_pal_raw.h \
+	$(MODULE)/arm9/data/8x8font_tga_raw.h
 
 
-# TODO: Should add more dirs to MODULE_DIRS so that "make distclean" can remove .deps dirs.
 MODULE_DIRS += \
-	backends/platform/ds/
+	backends/platform/ds \
+	backends/platform/ds/arm7/source \
+	backends/platform/ds/arm7/source/libcartreset \
+	backends/platform/ds/arm9/source \
+	backends/platform/ds/arm9/source/fat \
+	backends/platform/ds/arm9/source/libcartreset
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)

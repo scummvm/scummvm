@@ -1,6 +1,62 @@
-# Repeat "all" target here, to make sure it is the first target
-# Currently disabled, so only arm7.bin gets build
-#all:
+# To approximate the DS builds A, B, C, ... run our configure like this
+#   configure --host=ds --disable-all-engines OPTIONS
+# where OPTIONS is...
+# build A:  --enable-scumm
+# build B:  --enable-sky --enable-queen
+# build C:  --enable-ago
+# build D:  --enable-gob --enable-cine --enable-agi
+# build E:  --enable-saga --disable-mad
+# build F:  --enable-kyra --disable-mad
+# build G:  --enable-lure
+# build H:  --enable-parallaction
+# build I:  --enable-made --disable-mad
+# build K:  --enable-cruise --disable-mad
+#
+# This does not currently take care of some things:
+# * It does not #define DS_BUILD_A etc. -- most uses of that should be
+#   eliminated, though. Only usage should be for selecting the default config
+#   file (and for that we should really rather allow overriding the value of
+#   DEFAULT_CONFIG_FILE).
+#   There are a few game specific hacks which are currently controlled by this,
+#   too; we need to investigate those.
+# * It does not currently adjust the logo. Ideally, if we ever get real plugin
+#   support, that should be necessary anymore anyway.
+# * ...
+
+# Set location of ndsdir so that we can easily refer to files in it
+ndsdir = backends/platform/ds
+
+
+# Until we fix logo support, always use the A logo
+LOGO = logoa.bmp
+
+# Uncomment the following line to enable support for the
+# ace DS Debugger (remembering to make the same change in the arm7 makefile):
+#USE_DEBUGGER = 1
+# TODO: Need to reimplement this (for arm9 and arm7).
+#ifdef USE_DEBUGGER
+#	DEFINES += -DUSE_DEBUGGER
+#	CFLAGS += -g
+#endif
+
+# Uncomment the following line to enable the profiler
+#USE_PROFILER = 1
+# TODO: Need to reimplement this; and maybe replace it by the --enable-profiling
+#       configure directive. Below is USE_PROFILER related code from the old NDS
+#       build system:
+#ifdef USE_PROFILER
+#	CFLAGS += -mpoke-function-name -finstrument-functions -g
+#	DEFINES += -DUSE_PROFILER
+#endif
+# And this for module.mk:
+#ifdef USE_PROFILER
+#	PORT_OBJS += arm9/source/profiler/cyg-profile.o
+#endif
+
+
+
+# NOTE: The header and libs for the debugger is assumed to be in the libnds
+# folder.
 
 
 
@@ -28,16 +84,25 @@ OPT_SIZE := -Os -mthumb
 
 
 
+#############################################################################
+#
+# ARM9 rules.
+#
+#############################################################################
 
+all: scummvm.nds scummvm.ds.gba
 
+%.nds: %.bin $(ndsdir)/arm7/arm7.bin
+	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.bin -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
+
+%.ds.gba: %.nds
+	dsbuild $< -o $@ -l $(srcdir)/$(ndsdir)/arm9/ndsloader.bin
+	padbin 16 $@
 
 #############################################################################
 #############################################################################
 #############################################################################
 
-
-#ndsdir = $(srcdir)/backends/platform/ds
-ndsdir = backends/platform/ds
 
 #############################################################################
 #
@@ -46,12 +111,6 @@ ndsdir = backends/platform/ds
 # extra rules for .o files below
 #
 #############################################################################
-
-$(ndsdir)/arm7/arm7.bin: $(ndsdir)/arm7/arm7.elf
-
-$(ndsdir)/arm7/arm7.elf: \
-	$(ndsdir)/arm7/source/libcartreset/cartreset.o \
-	$(ndsdir)/arm7/source/main.o
 
 # HACK/FIXME: C compiler, for cartreset.c -- we should switch this to use CXX
 # as soon as possible.
@@ -89,7 +148,6 @@ ARM7_LDFLAGS	:= -g $(ARM7_ARCH) -mno-fpu
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CC) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
-
 # Set custom build flags for cartreset.o
 $(ndsdir)/arm7/source/libcartreset/cartreset.o: CXXFLAGS=$(ARM7_CFLAGS)
 $(ndsdir)/arm7/source/libcartreset/cartreset.o: CPPFLAGS=
@@ -98,14 +156,28 @@ $(ndsdir)/arm7/source/libcartreset/cartreset.o: CPPFLAGS=
 $(ndsdir)/arm7/source/main.o: CXXFLAGS=$(ARM7_CXXFLAGS)
 $(ndsdir)/arm7/source/main.o: CPPFLAGS=
 
-# Rule for creating ARM7 .bin files from .elf files
-#%.bin: %.elf
-#	@echo ------
-#	@echo Building $@...
-#	$(OBJCOPY) -O binary  $< $@
-
 # Rule for creating ARM7 .elf files by linking .o files together with a special linker script
-%.elf:
-	@echo ------
-	@echo Building $@...
-	$(CXX)  $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L/opt/devkitPro/libnds/lib -lnds7  -o $@
+$(ndsdir)/arm7/arm7.elf: \
+	$(ndsdir)/arm7/source/libcartreset/cartreset.o \
+	$(ndsdir)/arm7/source/main.o
+	$(CXX) $(ARM7_LDFLAGS) -specs=ds_arm7.specs $+ -L$(DEVKITPRO)/libnds/lib -lnds7  -o $@
+
+# Rule for creating ARM7 .bin files from .elf files
+$(ndsdir)/arm7/arm7.bin: $(ndsdir)/arm7/arm7.elf
+	$(OBJCOPY) -O binary  $< $@
+
+
+
+
+
+
+
+# Command to build libmad is:
+# ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork'
+#
+# I actually had to use
+# ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' LDFLAGS='C:/Progra~1/devkitpro/libnds/lib/libnds9.a' --disable-shared --disable-debugging
+#
+# Fingolfin used
+# CXX=arm-eabi-g++ CC=arm-eabi-gcc ./configure --host=arm-elf --enable-speed --enable-sso -enable-fpm=arm CFLAGS='-specs=ds_arm9.specs -mthumb-interwork' --disable-shared --disable-debugging LDFLAGS=$DEVKITPRO/libnds/lib/libnds9.a
+
