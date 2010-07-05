@@ -63,10 +63,12 @@ MODULE_OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS)
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
 define bin2o
+	$(MKDIR) $(*D)
 	bin2s $< | $(AS) -mthumb -mthumb-interwork -o $(@)
 endef
 
 define bin2h
+	$(MKDIR) $(*D)
 	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > $@
 	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> $@
 	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> $@

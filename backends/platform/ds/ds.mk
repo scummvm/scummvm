@@ -3,7 +3,7 @@
 # where OPTIONS is...
 # build A:  --enable-scumm
 # build B:  --enable-sky --enable-queen
-# build C:  --enable-ago
+# build C:  --enable-agos
 # build D:  --enable-gob --enable-cine --enable-agi
 # build E:  --enable-saga --disable-mad
 # build F:  --enable-kyra --disable-mad
