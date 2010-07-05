@@ -92,6 +92,10 @@ OPT_SIZE := -Os -mthumb
 
 all: scummvm.nds scummvm.ds.gba
 
+%.bin: %.elf
+	$(OBJCOPY) -S $< $(<F)-stripped.elf
+	$(OBJCOPY) -O binary $(<F)-stripped.elf $@
+
 %.nds: %.bin $(ndsdir)/arm7/arm7.bin
 	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.bin -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
 
