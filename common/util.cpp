@@ -107,29 +107,29 @@ bool parseBool(const Common::String &val, bool &valAsBool) {
 
 
 const LanguageDescription g_languages[] = {
-	{"zh-cn", "Chinese (China)", ZH_CNA},
-	{"zh", "Chinese (Taiwan)", ZH_TWN},
-	{"cz", "Czech", CZ_CZE},
-	{"nl", "Dutch", NL_NLD},
-	{"en", "English", EN_ANY}, // Generic English (when only one game version exist)
-	{"gb", "English (GB)", EN_GRB},
-	{"us", "English (US)", EN_USA},
-	{"fr", "French", FR_FRA},
-	{"de", "German", DE_DEU},
-	{"gr", "Greek", GR_GRE},
-	{"he", "Hebrew", HE_ISR},
-	{"hb", "Hebrew", HE_ISR}, // Deprecated
-	{"hu", "Hungarian", HU_HUN},
-	{"it", "Italian", IT_ITA},
-	{"jp", "Japanese", JA_JPN},
-	{"kr", "Korean", KO_KOR},
-	{"nb", "Norwegian Bokm\xE5l", NB_NOR},
-	{"pl", "Polish", PL_POL},
-	{"br", "Portuguese", PT_BRA},
-	{"ru", "Russian", RU_RUS},
-	{"es", "Spanish", ES_ESP},
-	{"se", "Swedish", SE_SWE},
-	{0, 0, UNK_LANG}
+	{ "zh-cn", "Chinese (China)", ZH_CNA },
+	{ "zh", "Chinese (Taiwan)", ZH_TWN },
+	{ "cz", "Czech", CZ_CZE },
+	{ "nl", "Dutch", NL_NLD },
+	{ "en", "English", EN_ANY }, // Generic English (when only one game version exist)
+	{ "gb", "English (GB)", EN_GRB },
+	{ "us", "English (US)", EN_USA },
+	{ "fr", "French", FR_FRA },
+	{ "de", "German", DE_DEU },
+	{ "gr", "Greek", GR_GRE },
+	{ "he", "Hebrew", HE_ISR },
+	{ "hb", "Hebrew", HE_ISR }, // Deprecated
+	{ "hu", "Hungarian", HU_HUN },
+	{ "it", "Italian", IT_ITA },
+	{ "jp", "Japanese", JA_JPN },
+	{ "kr", "Korean", KO_KOR },
+	{ "nb", "Norwegian Bokm\xE5l", NB_NOR },
+	{ "pl", "Polish", PL_POL },
+	{ "br", "Portuguese", PT_BRA },
+	{ "ru", "Russian", RU_RUS },
+	{ "es", "Spanish", ES_ESP },
+	{ "se", "Swedish", SE_SWE },
+	{ 0, 0, UNK_LANG }
 };
 
 Language parseLanguage(const String &str) {
@@ -168,32 +168,32 @@ const char *getLanguageDescription(Language id) {
 
 
 const PlatformDescription g_platforms[] = {
-	{"2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS},
-	{"3do", "3do", "3do", "3DO", kPlatform3DO},
-	{"acorn", "acorn", "acorn", "Acorn", kPlatformAcorn},
-	{"amiga", "ami", "amiga", "Amiga", kPlatformAmiga},
-	{"atari", "atari-st", "st", "Atari ST", kPlatformAtariST},
-	{"c64", "c64", "c64", "Commodore 64", kPlatformC64},
-	{"pc", "dos", "ibm", "DOS", kPlatformPC},
-	{"pc98", "pc98", "pc98", "PC-98", kPlatformPC98},
-	{"wii", "wii", "wii", "Nintendo Wii", kPlatformWii},
-	{"coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3},
+	{ "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{ "3do", "3do", "3do", "3DO", kPlatform3DO },
+	{ "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
+	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
+	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
+	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
+	{ "pc", "dos", "ibm", "DOS", kPlatformPC },
+	{ "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
+	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
+	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },
 
 	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
 	// However, on the net many variations can be seen, like "FMTOWNS",
 	// "FM TOWNS", "FmTowns", etc.
-	{"fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns},
+	{ "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
 
-	{"linux", "linux", "linux", "Linux", kPlatformLinux},
-	{"macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh},
-	{"pce", "pce", "pce", "PC-Engine", kPlatformPCEngine},
-	{"nes", "nes", "nes", "NES", kPlatformNES},
-	{"segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD},
-	{"windows", "win", "win", "Windows", kPlatformWindows},
-	{"playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX},
-	{"cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi},
+	{ "linux", "linux", "linux", "Linux", kPlatformLinux },
+	{ "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
+	{ "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
+	{ "nes", "nes", "nes", "NES", kPlatformNES },
+	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
+	{ "windows", "win", "win", "Windows", kPlatformWindows },
+	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
+	{ "cdi", "cdi", "cdi", "Phillips CD-i", kPlatformCDi },
 
-	{0, 0, 0, "Default", kPlatformUnknown}
+	{ 0, 0, 0, "Default", kPlatformUnknown }
 };
 
 Platform parsePlatform(const String &str) {
@@ -251,11 +251,11 @@ const char *getPlatformDescription(Platform id) {
 
 
 const RenderModeDescription g_renderModes[] = {
-	{"hercGreen", _s("Hercules Green"), kRenderHercG},
-	{"hercAmber", _s("Hercules Amber"), kRenderHercA},
-	{"cga", "CGA", kRenderCGA},
-	{"ega", "EGA", kRenderEGA},
-	{"amiga", "Amiga", kRenderAmiga},
+	{ "hercGreen", _s("Hercules Green"), kRenderHercG },
+	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
+	{ "cga", "CGA", kRenderCGA },
+	{ "ega", "EGA", kRenderEGA },
+	{ "amiga", "Amiga", kRenderAmiga },
 	{0, 0, kRenderDefault}
 };
 
@@ -294,21 +294,22 @@ const struct GameOpt {
 	uint32 option;
 	const char *desc;
 } g_gameOptions[] = {
-	{ GUIO_NOSUBTITLES,	"sndNoSubs" },
-	{ GUIO_NOMUSIC,		"sndNoMusic" },
-	{ GUIO_NOSPEECH,		"sndNoSpeech" },
-	{ GUIO_NOSFX,			"sndNoSFX" },
-	{ GUIO_NOMIDI,			"sndNoMIDI" },
+	{ GUIO_NOSUBTITLES,  "sndNoSubs" },
+	{ GUIO_NOMUSIC,      "sndNoMusic" },
+	{ GUIO_NOSPEECH,     "sndNoSpeech" },
+	{ GUIO_NOSFX,        "sndNoSFX" },
+	{ GUIO_NOMIDI,       "sndNoMIDI" },
+
 	{ GUIO_NOLAUNCHLOAD, "launchNoLoad" },
 
-	{ GUIO_MIDIPCSPK,		"midiPCSpk" },
-	{ GUIO_MIDICMS,		"midiCMS" },
-	{ GUIO_MIDIPCJR,		"midiPCJr" },
-	{ GUIO_MIDIADLIB,		"midiAdLib" },
-	{ GUIO_MIDITOWNS,	"midiTowns" },
-	{ GUIO_MIDIPC98,	"midiPC98" },
-	{ GUIO_MIDIMT32,			"midiMt32" },
-	{ GUIO_MIDIGM,				"midiGM" },
+	{ GUIO_MIDIPCSPK,    "midiPCSpk" },
+	{ GUIO_MIDICMS,      "midiCMS" },
+	{ GUIO_MIDIPCJR,     "midiPCJr" },
+	{ GUIO_MIDIADLIB,    "midiAdLib" },
+	{ GUIO_MIDITOWNS,    "midiTowns" },
+	{ GUIO_MIDIPC98,     "midiPC98" },
+	{ GUIO_MIDIMT32,     "midiMt32" },
+	{ GUIO_MIDIGM,       "midiGM" },
 
 	{ GUIO_NONE, 0 }
 };
