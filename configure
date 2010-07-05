@@ -343,7 +343,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | gamecube | nds | ps2 | psp | wii)
+	dreamcast | gamecube | ds | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gp2x-linux)
@@ -627,7 +627,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, nds, null, ps2, psp, sdl, wii, wince)
+                          linuxmoto, ds, null, ps2, psp, sdl, wii, wince)
                           [sdl]
 
 Installation directories:
@@ -657,7 +657,7 @@ Special configuration feature:
                                            gamecube for Nintendo GameCube
                                            iphone for Apple iPhone
                                            linupy for Yopy PDA
-                                           nds for Nintendo DS
+                                           ds for Nintendo DS
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
                                            wii for Nintendo Wii
@@ -949,8 +949,8 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-nds)
-	_host_os=nds
+ds)
+	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-eabi
 	;;
@@ -1070,7 +1070,7 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-gamecube | nds | wii)
+gamecube | ds | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1390,8 +1390,8 @@ case $_host_os in
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
-	nds)
-		# TODO nds
+	ds)
+		# TODO Nintendo DS
 		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT -I$DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
 		;;
 	os2-emx*)
@@ -1570,15 +1570,14 @@ if test -n "$_host"; then
 			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
-		nds)
+		ds)
 			# TODO: complete this
-			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			_backend="nds"
+			_backend="ds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/ds/ds.mk"
@@ -2444,8 +2443,8 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
-	nds)
-		# TODO nds
+	ds)
+		# TODO ds
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source -I$(srcdir)/backends/platform/ds/commoninclude'
 		;;
 	null)
@@ -2539,7 +2538,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | nds | psp | wince | amigaos* | android)
+		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
