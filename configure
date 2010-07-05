@@ -1007,7 +1007,7 @@ wince)
 android)
 	_host_os=android
 	_host_cpu=arm
-	_host_alias=arm-android-eabi
+	_host_alias=arm-oe-linux-androideabi
 	;;
 *)
 	if test -n "$_host"; then
@@ -1687,7 +1687,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
-			_build_hq_scalers="no"
 			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
@@ -1990,7 +1989,7 @@ add_to_config_mk_if_yes "$_indeo3" 'USE_INDEO3 = 1'
 cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
-cc_check -lm && LDFLAGS="$LDFLAGS -lm"
+cc_check -lm && LIBS="$LIBS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -2494,12 +2493,36 @@ case $_backend in
 		LIBS="$LIBS -static -lSDL"
 		;;
 	android)
+		static_libs=''
+		system_libs=''
+		for lib in $LIBS; do
+			case $lib in
+			-lz|-lm)
+				system_libs="$system_libs $lib"
+				;;
+			*)
+				static_libs="$static_libs $lib"
+				;;
+			esac
+		done
+
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="$LIBS -lgcc -lstdc++ -llog -lGLESv1_CM -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -lstdc++ -llog -lGLESv1_CM -lEGL"
 		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
+
+		# Work around an Android 2.0+ run-time linker bug:
+		# The linker doesn't actually look in previously
+		# loaded libraries when trying to resolve symbols -
+		# effectively turning all dlopen(RTLD_GLOBAL) calls
+		# into dlopen(RTLD_LOCAL).  It *does* look in
+		# DT_NEEDED libraries, so the workaround is to add an
+		# (otherwise unnecessary) dependency from plugins back
+		# to the main libscummvm.so.
+		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
+		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"

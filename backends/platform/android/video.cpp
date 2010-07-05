@@ -47,7 +47,7 @@
 #define ENTER(args...) /**/
 #endif
 
-#if 1
+#if 0
 #define CHECK_GL_ERROR() checkGlError(__FILE__, __LINE__)
 static const char* getGlErrStr(GLenum error) {
 	switch (error) {
