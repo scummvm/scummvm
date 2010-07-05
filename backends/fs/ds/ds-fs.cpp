@@ -181,10 +181,10 @@ AbstractFSNode *DSFileSystemNode::getParent() const {
 	DSFileSystemNode *p;
 
 	if (_path != "ds:/") {
-		char *path = (char *) _path.c_str();
+		const char *path = (const char *)_path.c_str();
 		int lastSlash = 4;
 
-		for (int r = 4; r < (int) _path.size(); r++) {
+		for (uint r = 4; r < _path.size(); r++) {
 			if (path[r] == '\\') {
 				lastSlash = r;
 			}
@@ -262,7 +262,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path) {
 	_path = path;
 }
 
-GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDirectory) {
+GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDir) {
 	//consolePrintf("'%s'",path.c_str());
 
 	int lastSlash = 3;
@@ -275,7 +275,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDire
 	_displayName = Common::String(path.c_str() + lastSlash + 1);
 	_path = path;
 	_isValid = true;
-	_isDirectory = isDirectory;
+	_isDirectory = isDir;
 }
 
 
@@ -356,10 +356,10 @@ AbstractFSNode *GBAMPFileSystemNode::getParent() const {
 	GBAMPFileSystemNode *p;
 
 	if (_path != "mp:/") {
-		char *path = (char *) _path.c_str();
+		const char *path = (const char *)_path.c_str();
 		int lastSlash = 4;
 
-		for (int r = 4; r < (int) strlen((char *) path); r++) {
+		for (uint r = 4; r < strlen(path); r++) {
 			if (path[r] == '/') {
 				lastSlash = r;
 			}
@@ -447,7 +447,7 @@ uint32 DSFileStream::read(void *ptr, uint32 len) {
 	if (_writeBufferPos > 0) {
 		flush();
 	}
-	return std_fread((byte *)ptr, 1, len, (FILE *)_handle);
+	return std_fread(ptr, 1, len, (FILE *)_handle);
 }
 
 uint32 DSFileStream::write(const void *ptr, uint32 len) {
@@ -501,15 +501,15 @@ FILE *std_fopen(const char *name, const char *mode) {
 		currentDir[0] = '\0';
 	}
 
-	char *realName = (char *) name;
+	char realName[MAXPATHLEN];
 
 	// Remove file system prefix
 	if ((name[0] == 'd') && (name[1] == 's') && (name[2] == ':') && (name[3] == '/')) {
-		realName += 4;
-	}
-
-	if ((name[0] == 'm') && (name[1] == 'p') && (name[2] == ':') && (name[3] == '/')) {
-		realName += 4;
+		strlcpy(realName, name + 4, MAXPATHLEN);
+	} else if ((name[0] == 'm') && (name[1] == 'p') && (name[2] == ':') && (name[3] == '/')) {
+		strlcpy(realName, name + 4, MAXPATHLEN);
+	} else {
+		strlcpy(realName, name, MAXPATHLEN);
 	}
 
 //	consolePrintf("Open file:");
@@ -521,7 +521,8 @@ FILE *std_fopen(const char *name, const char *mode) {
 		// Turn all back slashes into forward slashes for gba_nds_fat
 		char *p = realName;
 		while (*p) {
-			if (*p == '\\') *p = '/';
+			if (*p == '\\')
+				*p = '/';
 			p++;
 		}
 
@@ -535,7 +536,7 @@ FILE *std_fopen(const char *name, const char *mode) {
 		}
 //		MT_memoryReport();
 
-		return (FILE *) result;
+		return (FILE *)result;
 	}
 
 	// Fail to open file for writing.  It's in ROM!
@@ -550,10 +551,10 @@ FILE *std_fopen(const char *name, const char *mode) {
 #ifdef GBA_SRAM_SAVE
 	if (strchr(mode, 'w')) {
 //		consolePrintf("Writing %s\n", realName);
-		s_handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, true);
+		s_handle[r].sramFile = DSSaveFileManager::instance()->openSavefile(realName, true);
 	} else {
 //		consolePrintf("Reading %s\n", realName);
-		s_handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, false);
+		s_handle[r].sramFile = DSSaveFileManager::instance()->openSavefile(realName, false);
 	}
 #endif
 
@@ -593,7 +594,7 @@ FILE *std_fopen(const char *name, const char *mode) {
 		zip->setAllFilesVisible(false);
 
 		// Allocate a file handle
-		int r = 0;
+		r = 0;
 		while (s_handle[r].used)
 			r++;
 
@@ -626,13 +627,13 @@ void std_fclose(FILE *handle) {
 	}
 }
 
-size_t std_fread(const void *ptr, size_t size, size_t numItems, FILE *handle) {
+size_t std_fread(void *ptr, size_t size, size_t numItems, FILE *handle) {
 //	consolePrintf("fread %d,%d %d ", size, numItems, ptr);
 
 	if (DS::isGBAMPAvailable()) {
 		readPastEndOfFile = false;
 
-		int bytes = FAT_fread((void *) ptr, size, numItems, (FAT_FILE *) handle);
+		int bytes = FAT_fread(ptr, size, numItems, (FAT_FILE *) handle);
 		if (!FAT_feof((FAT_FILE *) handle)) {
 			return numItems;
 		} else {
@@ -665,14 +666,15 @@ size_t std_fread(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 
 //	consolePrintf("read %d  ", size * numItems);
 
-	memcpy((void *) ptr, handle->data + handle->pos, size * numItems);
+	memcpy(ptr, handle->data + handle->pos, size * numItems);
 	handle->pos += size * numItems;
 
 	return numItems;
 }
 
 size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle) {
-	if ((handle == stdin)) return 0;
+	if ((handle == stdin))
+		return 0;
 
 	if ((handle == stderr) || (handle == stdout)) {
 //		consolePrintf((char *) ptr);
@@ -682,7 +684,7 @@ size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 	//consolePrintf("fwrite size=%d\n", size * numItems);
 
 	if (DS::isGBAMPAvailable()) {
-		FAT_fwrite(((char *) (ptr)), size, numItems, (FAT_FILE *) handle);
+		FAT_fwrite(ptr, size, numItems, (FAT_FILE *) handle);
 		return numItems;
 
 		int length = size * numItems;

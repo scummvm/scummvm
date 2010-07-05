@@ -162,7 +162,7 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 	}
 
 
-	DS::std_fread((const void *) &waveHeader, sizeof(waveHeader), 1, file);
+	DS::std_fread(&waveHeader, sizeof(waveHeader), 1, file);
 
 	consolePrintf("File: %s\n", fname.c_str());
 
@@ -186,11 +186,11 @@ void playTrack(int track, int numLoops, int startFrame, int duration) {
 
 	// Skip chunks until we reach the data chunk
 	chunkHeader chunk;
-	DS::std_fread((const void *) &chunk, sizeof(chunkHeader), 1, file);
+	DS::std_fread(&chunk, sizeof(chunkHeader), 1, file);
 
 	while (!((chunk.name[0] == 'd') && (chunk.name[1] == 'a') && (chunk.name[2] == 't') && (chunk.name[3] == 'a'))) {
 		DS::std_fseek(file, chunk.size, SEEK_CUR);
-		DS::std_fread((const void *) &chunk, sizeof(chunkHeader), 1, file);
+		DS::std_fread(&chunk, sizeof(chunkHeader), 1, file);
 	}
 
 	dataChunkStart = DS::std_ftell(file);
@@ -266,7 +266,7 @@ void decompressBlock() {
 
 
 	do {
-		DS::std_fread((const void *) &blockHeader, sizeof(blockHeader), 1, file);
+		DS::std_fread(&blockHeader, sizeof(blockHeader), 1, file);
 
 		DS::std_fread(&block[0], waveHeader.fmtBlockAlign - sizeof(blockHeader), 1, file);
 

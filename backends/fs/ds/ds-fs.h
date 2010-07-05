@@ -209,16 +209,16 @@ public:
 #undef stdout
 #undef stdin
 
-#define stdout ((DS::fileHandle*) -1)
-#define stderr ((DS::fileHandle*) -2)
-#define stdin ((DS::fileHandle*) -3)
+#define stdout ((DS::fileHandle *) -1)
+#define stderr ((DS::fileHandle *) -2)
+#define stdin ((DS::fileHandle *) -3)
 
 #define FILE DS::fileHandle
 
 // Please do not remove any of these prototypes that appear not to be required.
 FILE*	std_fopen(const char *name, const char *mode);
 void	std_fclose(FILE *handle);
-size_t	std_fread(const void *ptr, size_t size, size_t numItems, FILE *handle);
+size_t	std_fread(void *ptr, size_t size, size_t numItems, FILE *handle);
 size_t	std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle);
 bool	std_feof(FILE *handle);
 long int std_ftell(FILE *handle);
