@@ -28,7 +28,7 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
-#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__)
+#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__) && !defined(__ANDROID__)
 
 #include "common/util.h"
 #include "sound/musicplugin.h"

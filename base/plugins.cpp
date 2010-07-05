@@ -175,7 +175,7 @@ public:
 		#if defined(UNIX) && defined(USE_ALSA)
 		LINK_PLUGIN(ALSA)
 		#endif
-		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__)
+		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__) && !defined(__ANDROID__)
 		LINK_PLUGIN(SEQ)
 		#endif
 		#if defined(__MINT__)
