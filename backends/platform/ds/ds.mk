@@ -92,9 +92,17 @@ OPT_SIZE := -Os -mthumb
 
 all: scummvm.nds scummvm.ds.gba
 
+clean: dsclean
+
+dsclean:
+	$(RM) scummvm.nds scummvm.ds.gba
+
+.PHONY: dsclean
+
+# TODO: Add a 'dsdist' target ?
+
 %.bin: %.elf
-	$(OBJCOPY) -S $< $(<F)-stripped.elf
-	$(OBJCOPY) -O binary $(<F)-stripped.elf $@
+	$(OBJCOPY) -S -O binary $< $@
 
 %.nds: %.bin $(ndsdir)/arm7/arm7.bin
 	ndstool -c $@ -9 $< -7 $(ndsdir)/arm7/arm7.bin -b $(srcdir)/$(ndsdir)/$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
