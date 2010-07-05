@@ -2834,6 +2834,8 @@ bool getIndyFightState() {
 ///////////////////
 
 #define FAST_RAM_SIZE (24000)
+#define ITCM_DATA	__attribute__((section(".itcm")))
+
 u8 *fastRamPointer;
 u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 

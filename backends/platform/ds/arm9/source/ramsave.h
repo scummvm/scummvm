@@ -26,8 +26,10 @@
 #ifndef _RAMSAVE_H_
 #define _RAMSAVE_H_
 
+#include <nds/ndstypes.h>
 #include "common/system.h"
 #include "common/savefile.h"
+
 
 // SaveFileManager class
 

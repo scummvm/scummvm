@@ -24,6 +24,7 @@
  */
 
 
+#include "common/scummsys.h"
 #include "zipreader.h"
 
 ZipFile::ZipFile() {

@@ -26,24 +26,8 @@
 #ifndef _PORTDEFS_H_
 #define _PORTDEFS_H_
 
-
-
-/*
-typedef unsigned char u8;
-typedef signed char s8;
-
-typedef unsigned short u16;
-typedef signed short s16;
-
-typedef unsigned int u32;
-typedef signed int s32;
-*/
-
-#include "nds/ndstypes.h"
-
-
-// Somebody removed these from scummsys.h, but they're still required, so I'm adding them here
-// in the hope that they'll stay.
+// Somebody removed these from scummsys.h, but they're still required, so I'm
+// adding them here in the hope that they'll stay.
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -53,8 +37,6 @@ typedef signed int s32;
 
 #define double float
 
-#define CT_NO_TRANSPARENCY
-
 #ifndef DISABLE_TEXT_CONSOLE
 #define DISABLE_TEXT_CONSOLE
 #endif
@@ -63,14 +45,11 @@ typedef signed int s32;
 #define DISABLE_COMMAND_LINE
 #endif
 
-#ifndef DISABLE_COMMAND_LINE
+#ifndef STREAM_AUDIO_FROM_DISK
 #define STREAM_AUDIO_FROM_DISK
 #endif
 
-//#undef assert
-//#define assert(expr) consolePrintf("Asserted!")
 #define NO_DEBUG_MSGS
-
 
 // This is defined in dsmain.cpp
 #ifdef __cplusplus
@@ -86,14 +65,16 @@ void consolePrintf(const char *format, ...);
 #undef assert
 #endif
 
-#define assert(s) if (!(s)) consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__)
+#define assert(s) \
+	do { \
+		if (!(s)) \
+			consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__); \
+	} while (0)
 
 //#include "ds-fs.h"
 
 //#define debug(fmt, ...) consolePrintf(fmt, ##__VA_ARGS__)
 //#define debug(fmt, ...) debug(0, fmt, ##__VA_ARGS__)
-
-#define ITCM_DATA	__attribute__((section(".itcm")))
 
 // FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
 // This define changes the mouse-relative motion which doesn't make sense on a touch screen to
