@@ -294,9 +294,9 @@ u16 getRTCtoFileTime (void)
 {
 #ifdef NDS
 	return (
-		( ( (IPC->rtc_hours > 11 ? IPC->rtc_hours - 40 : IPC->rtc_hours) & 0x1F) << 11) |
-		( (IPC->rtc_minutes & 0x3F) << 5) |
-		( (IPC->rtc_seconds >> 1) & 0x1F) );
+		( ( (IPC->rtc.hours > 11 ? IPC->rtc.hours - 40 : IPC->rtc.hours) & 0x1F) << 11) |
+		( (IPC->rtc.minutes & 0x3F) << 5) |
+		( (IPC->rtc.seconds >> 1) & 0x1F) );
 #else
 	return 0;
 #endif
@@ -306,9 +306,9 @@ u16 getRTCtoFileDate (void)
 {
 #ifdef NDS
 	return (
-		( ((IPC->rtc_year + 20) & 0x7F) <<9) |
-		( (IPC->rtc_month & 0xF) << 5) |
-		(IPC->rtc_day & 0x1F) );
+		( ((IPC->rtc.year + 20) & 0x7F) <<9) |
+		( (IPC->rtc.month & 0xF) << 5) |
+		(IPC->rtc.day & 0x1F) );
 #else
 	return 0;
 #endif
