@@ -43,6 +43,14 @@ enum OptionSelected {
 	kOptionRight = 0
 };
 
+enum {
+	kEngineQuit = 0,
+	kSkipNext = 1,
+	kLoopNormal = 2,
+	// Event handling time,(in ms) used in parseEvent()
+	kEventHandlingTime = 50
+};
+
 typedef bool (*InvokingFunction)();
 
 /**
@@ -111,6 +119,7 @@ public:
 	 * All code should go in here.
 	 */
 	virtual void execute();
+	static uint parseEvents();
 	
 	virtual const char *getName() const = 0;
 
@@ -143,7 +152,7 @@ public:
 	/**
 	 * Used from the code to decide if the engine needs to exit
 	 */
-	static bool	toQuit;
+	static uint	toQuit;
 
 private:
 	/**

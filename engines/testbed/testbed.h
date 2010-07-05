@@ -54,6 +54,8 @@ public:
 	 */
 	void invokeTestsuites();
 
+	bool hasFeature(EngineFeature f) const;
+
 private:
 	Common::Array<Testsuite*> _testsuiteList;
 };

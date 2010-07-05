@@ -25,6 +25,8 @@
 #include "common/events.h"
 #include "common/keyboard.h"
 
+#include "engines/engine.h"
+
 #include "graphics/cursorman.h"
 
 #include "testbed/events.h"
@@ -71,8 +73,15 @@ char EventTests::keystrokeToChar() {
 	// handle all keybd events
 	while (!quitLoop) {
 		while (eventMan->pollEvent(event)) {
+
+			// Quit if explicitly requested!
+			if (Engine::shouldQuit()) {
+				return 0;
+			}
+
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN :
+				
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					return 0;
 				}
@@ -81,8 +90,9 @@ char EventTests::keystrokeToChar() {
 						return keyCodeLUT[i].value;
 					}
 				}
+				break;
 			default:
-				; // Ignore other events
+				break;	// Ignore other events
 			}
 		}
 	}
@@ -109,6 +119,10 @@ bool EventTests::mouseEvents() {
 		g_system->updateScreen();
 		
 		while (eventMan->pollEvent(event)) {
+			// Quit if explicitly requested
+			if (Engine::shouldQuit()) {
+				return passed;
+			}
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
 				// Movements havee already been tested in GFX
@@ -190,9 +204,17 @@ bool EventTests::kbdEvents() {
 	return true;
 }
 
+bool EventTests::showMainMenu() {
+	Common::EventManager *eventMan = g_system->getEventManager();
+	Common::Event mainMenuEvent;
+	mainMenuEvent.type = Common::EVENT_QUIT;
+	eventMan->pushEvent(mainMenuEvent);	
+}
+
 EventTestSuite::EventTestSuite() {
 	addTest("Mouse Events", &EventTests::mouseEvents);
 	addTest("Keyboard Events", &EventTests::kbdEvents);
+	addTest("Mainmenu Event", &EventTests::showMainMenu);
 }
 const char *EventTestSuite::getName() const {
 	return "Events";

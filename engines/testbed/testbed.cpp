@@ -37,6 +37,10 @@
  
 namespace Testbed {
  
+bool TestbedEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsRTL) ? true : false;
+}
+
 TestbedEngine::TestbedEngine(OSystem *syst) 
  : Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -128,9 +132,8 @@ Common::Error TestbedEngine::run() {
 	
 	// Enable the testsuites you want to execute
 	// enableTestsuite("FS", true);
-	// enableTestsuite("GFX", true);
+	enableTestsuite("GFX", true);
 	// enableTestsuite("savegames", true);
-	// enableTestsuite("misc", true);
 	// enableTestsuite("misc", true);
 	enableTestsuite("events", true);
 	// invoke them

@@ -23,6 +23,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/events.h"
 #include "common/stream.h"
 
 #include "graphics/fontman.h"
@@ -42,7 +43,7 @@ bool Testsuite::isSessionInteractive = true;
 Common::String Testsuite::_logDirectory = "";
 Common::String Testsuite::_logFilename = "";
 Common::WriteStream *Testsuite::_ws = 0;
-bool Testsuite::toQuit = false;
+uint Testsuite::toQuit = kLoopNormal;
 
 void Testsuite::setLogDir(const char *dirname) {
 	_logDirectory = dirname;
@@ -207,18 +208,54 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isI
 	Test*  featureTest = new Test(name, f, isInteractive);
 	_testsToExecute.push_back(featureTest);
 }
-	
+
+uint Testsuite::parseEvents() {
+	uint startTime = g_system->getMillis();
+	uint end = startTime + kEventHandlingTime;
+	do {
+		Common::Event ev;
+		while (g_system->getEventManager()->pollEvent(ev)) {
+			switch (ev.type) {
+			case Common::EVENT_KEYDOWN:
+				if (ev.kbd.keycode == Common::KEYCODE_ESCAPE) {
+					return kSkipNext;
+				}
+				break;
+			case Common::EVENT_QUIT:
+			case Common::EVENT_RTL:
+				return kEngineQuit;
+				break;
+			default:
+				break;
+			}
+		}
+		g_system->delayMillis(10);
+		startTime = g_system->getMillis();
+	} while (startTime <= end);
+
+	return kLoopNormal;
+}
+
 void Testsuite::execute() {
+	// Main Loop for a testsuite
+
 	// Do nothing if meant to exit
-	if (toQuit) {
+	if (toQuit == kEngineQuit) {
 		return;
 	}
 	
 	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+		if (toQuit == kSkipNext) {
+			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
+			toQuit = kLoopNormal;
+			continue;
+		}
+
 		if((*i)->isInteractive && !isSessionInteractive) {
 			logPrintf("Info! Skipping Test: %s, non-interactive environment is selected\n", ((*i)->featureName).c_str());
 			continue;
 		}
+
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
 		_numTestsExecuted++;
 		if ((*i)->driver()) {
@@ -227,11 +264,17 @@ void Testsuite::execute() {
 		} else {
 			logPrintf("Result: Failed\n");
 		}
-		// Check if user wants to quit
+		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
+		// Check if user wants to quit/RTL/Skip next test by parsing events. 
+		// Quit directly if explicitly requested
+		
 		if (Engine::shouldQuit()) {
-			toQuit = true;
+			toQuit = kEngineQuit;
+			genReport();
 			return;
 		}
+
+		toQuit = parseEvents();	
 	}
 	genReport();
 }

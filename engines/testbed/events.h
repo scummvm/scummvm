@@ -37,6 +37,7 @@ char keystrokeToChar();
 // will contain function declarations for Event tests
 bool mouseEvents();
 bool kbdEvents();
+bool showMainMenu();
 // add more here
 }
 

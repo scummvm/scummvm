@@ -26,6 +26,8 @@
 #include "common/list.h"
 #include "common/random.h"
 
+#include "engines/engine.h"
+
 #include "testbed/graphics.h"
 #include "testbed/testsuite.h"
 
@@ -190,7 +192,10 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 
 		while (!quitLoop) {
 			while (eventMan->pollEvent(event)) {
-	
+				if (Engine::shouldQuit()) {
+					// Quit directly
+					return;
+				}
 				if (lastRedraw + waitTime < g_system->getMillis()) {
 					g_system->updateScreen();
 					lastRedraw = g_system->getMillis();
@@ -207,7 +212,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 					g_system->delayMillis(1000);
 					break;
 				default:	
-					;// Ignore any other event
+					break;// Ignore handling any other event
 
 				}
 			}
