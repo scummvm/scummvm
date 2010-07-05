@@ -1343,6 +1343,10 @@ void SdlGraphicsManager::setCursorPalette(const byte *colors, uint start, uint n
 	blitCursor();
 }
 
+void SdlGraphicsManager::disableCursorPalette(bool disable) {
+	_cursorPaletteDisabled = disable;
+	blitCursor();
+}
 
 void SdlGraphicsManager::setShakePos(int shake_pos) {
 	assert (_transactionMode == kTransactionNone);

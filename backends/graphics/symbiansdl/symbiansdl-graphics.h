@@ -30,15 +30,12 @@
 
 class SymbianSdlGraphicsManager : public SdlGraphicsManager {
 public:
-	SymbianSdlGraphicsManager ();
-	~SymbianSdlGraphicsManager ();
+	virtual bool hasFeature(OSystem::Feature f);
+	virtual void setFeatureState(OSystem::Feature f, bool enable);
 
-	bool hasFeature(OSystem::Feature f);
-	void setFeatureState(OSystem::Feature f, bool enable);
-
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(int mode);
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
 };
 
 #endif

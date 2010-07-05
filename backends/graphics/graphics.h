@@ -29,6 +29,10 @@
 #include "common/system.h"
 #include "common/noncopyable.h"
 
+/**
+ * Abstract class for graphics manager. Subclasses
+ * implement the real functionality.
+ */
 class GraphicsManager : Common::NonCopyable {
 public:
 	virtual ~GraphicsManager() {}

@@ -28,12 +28,6 @@
 #include "backends/graphics/symbiansdl/symbiansdl-graphics.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 
-SdlGraphicsManager::SdlGraphicsManager() {
-}
-
-SdlGraphicsManager::~SdlGraphicsManager() {
-}
-
 int SymbianSdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }

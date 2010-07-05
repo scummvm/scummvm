@@ -30,8 +30,6 @@
 
 class GP2XSdlGraphicsManager : public SdlGraphicsManager {
 public:
-	GP2XSdlGraphicsManager();
-	virtual ~GP2XSdlGraphicsManager() {}
 	
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;

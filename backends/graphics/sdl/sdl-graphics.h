@@ -56,6 +56,7 @@ enum {
 	GFX_DOTMATRIX = 11
 };
 
+
 class AspectRatio {
 	int _kw, _kh;
 public:
@@ -68,10 +69,13 @@ public:
 	int kh() const { return _kh; }
 };
 
+/**
+ * SDL graphics manager
+ */
 class SdlGraphicsManager : public GraphicsManager {
 public:
 	SdlGraphicsManager();
-	~SdlGraphicsManager();
+	virtual ~SdlGraphicsManager();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
@@ -117,53 +121,79 @@ public:
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
-	virtual void disableCursorPalette(bool disable) {
-		_cursorPaletteDisabled = disable;
-		blitCursor();
-	}
+	virtual void disableCursorPalette(bool disable);
 	
 #ifdef USE_OSD
 	virtual void displayMessageOnOSD(const char *msg);
 #endif
 
+	/**
+	 * Marks the screen for a full redraw
+	 */
 	virtual void forceFullRedraw();
 
+	/**
+	 * Handles the scalar hotkeys
+	 */
 	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
+
+	/**
+	 * Returns if the event passed is a hotkey for the graphics scalers
+	 */
 	virtual bool isScalerHotkey(const Common::Event &event);
 
+	/**
+	 * Adjusts mouse event coords for the current scaler
+	 */
 	virtual void adjustMouseEvent(Common::Event &event);
+
+	/**
+	 * Updates the mouse cursor position
+	 */
 	virtual void setMousePos(int x, int y);
+
+	/**
+	 * Toggles fullscreen
+	 */
 	virtual void toggleFullScreen();
-	virtual bool saveScreenshot(const char *filename); // overloaded by CE backend
+
+	/**
+	 * Saves a screenshot to a file
+	 */
+	virtual bool saveScreenshot(const char *filename);
 
 protected:
 #ifdef USE_OSD
+	/** Surface containing the OSD message */
 	SDL_Surface *_osdSurface;
-	Uint8 _osdAlpha;			// Transparency level of the OSD
-	uint32 _osdFadeStartTime;	// When to start the fade out
+	/** Transparency level of the OSD */
+	Uint8 _osdAlpha;
+	/** When to start the fade out */
+	uint32 _osdFadeStartTime; 
+	/** Enum with OSD options */
 	enum {
-		kOSDFadeOutDelay = 2 * 1000,	// Delay before the OSD is faded out (in milliseconds)
-		kOSDFadeOutDuration = 500,		// Duration of the OSD fade out (in milliseconds)
-		kOSDColorKey = 1,
-		kOSDInitialAlpha = 80			// Initial alpha level, in percent
+		kOSDFadeOutDelay = 2 * 1000,	/** < Delay before the OSD is faded out (in milliseconds) */
+		kOSDFadeOutDuration = 500,		/** < Duration of the OSD fade out (in milliseconds) */
+		kOSDColorKey = 1,				/** < Transparent color key */
+		kOSDInitialAlpha = 80			/** < Initial alpha level, in percent */
 	};
 #endif
 
-	// hardware screen
+	/** Hardware screen */
 	SDL_Surface *_hwscreen;
 
-	// unseen game screen
+	/** Unseen game screen */
 	SDL_Surface *_screen;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
 #endif
 
-	// temporary screen (for scalers)
+	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen;
+	/** Temporary screen (for scalers) */
 	SDL_Surface *_tmpscreen2;
 
-	// overlay
 	SDL_Surface *_overlayscreen;
 	bool _overlayVisible;
 	Graphics::PixelFormat _overlayFormat;
@@ -204,9 +234,7 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	virtual void setGraphicsModeIntern(); // overloaded by CE backend
-
-	// Force full redraw on next updateScreen
+	/** Force full redraw on next updateScreen */
 	bool _forceFull;
 
 	ScalerProc *_scalerProc;
@@ -256,7 +284,7 @@ protected:
 	bool _mouseNeedsRedraw;
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
-	MousePos _mouseCurState; // Move to events?
+	MousePos _mouseCurState;
 #ifdef USE_RGB_COLOR
 	uint32 _mouseKeyColor;
 #else
@@ -287,22 +315,24 @@ protected:
 	 */
 	OSystem::MutexRef _graphicsMutex;
 
-	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false); // overloaded by CE backend
+	virtual void addDirtyRect(int x, int y, int w, int h, bool realCoordinates = false);
 
-	virtual void drawMouse(); // overloaded by CE backend
-	virtual void undrawMouse(); // overloaded by CE backend (FIXME)
-	virtual void blitCursor(); // overloaded by CE backend (FIXME)
+	virtual void drawMouse();
+	virtual void undrawMouse();
+	virtual void blitCursor();
 
-	virtual void internUpdateScreen(); // overloaded by CE backend
+	virtual void internUpdateScreen();
 
-	virtual bool loadGFXMode(); // overloaded by CE backend
-	virtual void unloadGFXMode(); // overloaded by CE backend
-	virtual bool hotswapGFXMode(); // overloaded by CE backend
+	virtual bool loadGFXMode();
+	virtual void unloadGFXMode();
+	virtual bool hotswapGFXMode();
 
 	virtual void setFullscreenMode(bool enable);
 	virtual void setAspectRatioCorrection(bool enable);
 
 	virtual int effectiveScreenHeight() const;
+
+	virtual void setGraphicsModeIntern();
 };
 
 #endif
