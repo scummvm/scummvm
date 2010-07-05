@@ -41,7 +41,6 @@
 
 #include <GLES/gl.h>
 #include <GLES/glext.h>
-#include <EGL/egl.h>
 #include <android/log.h>
 
 #include "common/archive.h"
@@ -166,12 +165,11 @@ private:
 	jmethodID MID_getPluginDirectories;
 	jmethodID MID_setupScummVMSurface;
 	jmethodID MID_destroyScummVMSurface;
+	jmethodID MID_swapBuffers;
 
 	int _screen_changeid;
-	EGLDisplay _egl_display;
-	EGLSurface _egl_surface;
-	EGLint _egl_surface_width;
-	EGLint _egl_surface_height;
+	int _egl_surface_width;
+	int _egl_surface_height;
 
 	bool _force_redraw;
 
@@ -223,6 +221,10 @@ public:
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;
 	void enableZoning(bool enable) { _enable_zoning = enable; }
+	void setSurfaceSize(int width, int height) {
+		_egl_surface_width = width;
+		_egl_surface_height = height;
+	}
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -303,8 +305,6 @@ public:
 
 OSystem_Android::OSystem_Android(jobject am)
 	: _back_ptr(0),
-	  _egl_display(EGL_NO_DISPLAY),
-	  _egl_surface(EGL_NO_SURFACE),
 	  _screen_changeid(0),
 	  _force_redraw(false),
 	  _game_texture(NULL),
@@ -369,6 +369,7 @@ bool OSystem_Android::initJavaHooks(JNIEnv* env, jobject self) {
 	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
 	FIND_METHOD(setupScummVMSurface, "()V");
 	FIND_METHOD(destroyScummVMSurface, "()V");
+	FIND_METHOD(swapBuffers, "()Z");
 
 #undef FIND_METHOD
 
@@ -581,6 +582,7 @@ int OSystem_Android::getGraphicsMode() const {
 }
 
 void OSystem_Android::setupScummVMSurface() {
+	ENTER("setupScummVMSurface");
 	JNIEnv* env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_setupScummVMSurface);
 	if (env->ExceptionCheck())
@@ -588,36 +590,7 @@ void OSystem_Android::setupScummVMSurface() {
 
 	// EGL set up with a new surface.  Initialise OpenGLES context.
 
-	_egl_display = eglGetCurrentDisplay();
-	_egl_surface = eglGetCurrentSurface(EGL_DRAW);
-
-	static bool log_version = true;
-	if (log_version) {
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG,
-							"Using EGL %s (%s); GL %s/%s (%s)",
-							eglQueryString(_egl_display, EGL_VERSION),
-							eglQueryString(_egl_display, EGL_VENDOR),
-							glGetString(GL_VERSION),
-							glGetString(GL_RENDERER),
-							glGetString(GL_VENDOR));
-		log_version = false;		// only log this once
-	}
-
 	GLESTexture::initGLExtensions();
-
-	if (!eglQuerySurface(_egl_display, _egl_surface,
-						 EGL_WIDTH, &_egl_surface_width) ||
-		!eglQuerySurface(_egl_display, _egl_surface,
-						 EGL_HEIGHT, &_egl_surface_height)) {
-		JNU_ThrowByName(env, "java/lang/RuntimeException",
-						"Error fetching EGL surface width/height");
-		return;
-	}
-	__android_log_print(ANDROID_LOG_INFO, LOG_TAG,
-						"New surface is %dx%d",
-						_egl_surface_width, _egl_surface_height);
-
-	CHECK_GL_ERROR();
 
 	// Turn off anything that looks like 3D ;)
 	glDisable(GL_CULL_FACE);
@@ -664,7 +637,6 @@ void OSystem_Android::setupScummVMSurface() {
 }
 
 void OSystem_Android::destroyScummVMSurface() {
-	_egl_surface = EGL_NO_SURFACE;
 	JNIEnv* env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_destroyScummVMSurface);
 	// Can't use OpenGLES functions after this
@@ -745,8 +717,11 @@ void OSystem_Android::updateScreen() {
 
 	glPushMatrix();
 
-	if (_shake_offset != 0) {
-		// This is the only case where _game_texture doesn't
+	if (_shake_offset != 0 ||
+		(!_focus_rect.isEmpty() &&
+		 !Common::Rect(_game_texture->width(),
+					   _game_texture->height()).contains(_focus_rect))) {
+		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
 		glClearColorx(0, 0, 0, 1 << 16);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -759,16 +734,6 @@ void OSystem_Android::updateScreen() {
 		_game_texture->drawTexture(0, 0,
 								   _egl_surface_width, _egl_surface_height);
 	} else {
-		// Need to ensure any exposed out-of-bounds region doesn't go
-		// all hall-of-mirrors.  If _shake_offset != 0, we've already
-		// done this above.
-		const Common::Rect
-			screen_bounds(_game_texture->width(), _game_texture->height());
-		if (!screen_bounds.contains(_focus_rect) && _shake_offset != 0) {
-			glClearColorx(0, 0, 0, 1 << 16);
-			glClear(GL_COLOR_BUFFER_BIT);
-		}
-
 		glPushMatrix();
 		glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
 				 xdiv(_egl_surface_height, _focus_rect.height()),
@@ -831,14 +796,11 @@ void OSystem_Android::updateScreen() {
 
 	CHECK_GL_ERROR();
 
-	if (!eglSwapBuffers(_egl_display, _egl_surface)) {
-		EGLint error = eglGetError();
-		warning("eglSwapBuffers exited with error 0x%x", error);
-		// Some errors mean we need to reinit GL
-		if (error == EGL_CONTEXT_LOST) {
-			destroyScummVMSurface();
-			setupScummVMSurface();
-		}
+	JNIEnv* env = JNU_GetEnv();
+	if (!env->CallBooleanMethod(_back_ptr, MID_swapBuffers)) {
+		// Context lost -> need to reinit GL
+		destroyScummVMSurface();
+		setupScummVMSurface();
 	}
 }
 
@@ -1365,6 +1327,12 @@ static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
 	cpp_obj->enableZoning(enable);
 }
 
+static void ScummVM_setSurfaceSize(JNIEnv* env, jobject self,
+								   jint width, jint height) {
+	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+	cpp_obj->setSurfaceSize(width, height);	
+}
+
 const static JNINativeMethod gMethods[] = {
 	{ "create", "(Landroid/content/res/AssetManager;)V",
 	  (void*)ScummVM_create },
@@ -1381,6 +1349,8 @@ const static JNINativeMethod gMethods[] = {
 	  (void*)ScummVM_setConfManString },
 	{ "enableZoning", "(Z)V",
 	  (void*)ScummVM_enableZoning },
+	{ "setSurfaceSize", "(II)V",
+	  (void*)ScummVM_setSurfaceSize },
 };
 
 JNIEXPORT jint JNICALL

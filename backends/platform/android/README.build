@@ -2,9 +2,8 @@ Building the ScummVM Android port
 =================================
 
 You will need these things to build:
-1. Android EGL headers and library
-2. Android SDK
-3. An arm-oe-linux-androideabi GCC toolchain(*)
+1. Android SDK
+2. An arm-oe-linux-androideabi GCC toolchain(*)
 
 In the example commands, we are going to build against the Android 1.5
 native ABI (but using the Android 1.6 SDK tools).  Other version
@@ -18,21 +17,13 @@ you have some other prefix variation.
 
 In detail:
 
-1. Android EGL headers and library
+1. Android SDK
 
-You can build these from the full Android source, but it is far easier
-to just download the 3 Android EGL headers from here:
- http://android.git.kernel.org/?p=platform/frameworks/base.git;a=tree;f=opengl/include/EGL;hb=HEAD
- (copy them to a directory called "EGL" somewhere)
+Download the SDK from http://developer.android.com/ and install
+somewhere.  You will need both the API level 8 (aka Android 2.2) and
+API level 3 (aka Android 1.5) platforms.
 
-... and grab libEGL.so off an existing phone/emulator:
- adb pull /system/lib/libEGL.so /tmp
-
-2. Android SDK
-
-Download and install somewhere.
-
-3. arm-*-linux-androideabi GCC toolchain
+2. arm-*-linux-androideabi GCC toolchain
 
 You have several choices for toolchains:
 
@@ -95,11 +86,6 @@ Then build ScummVM:
 
  export ANDROID_TOP=<root of built Android source>
 
- EGL_INC="-I<location of EGL/ header directory>"
- EGL_LIBS="-L<location of libEGL.so>"
-
- CPPFLAGS="$EGL_INC" \
- LDFLAGS="-g $EGL_LIBS" \
  ./configure --backend=android --host=android --enable-zlib #and any other flags
  make scummvm.apk
 
