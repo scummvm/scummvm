@@ -582,7 +582,7 @@ FILE *std_fopen(const char *name, const char *mode) {
 
 	if (currentDir[0] != 0) {
 		char nameWithPath[128];
-		sprintf(nameWithPath, "%s\%s", currentDir, realName);
+		sprintf(nameWithPath, "%s\\%s", currentDir, realName);
 		strcpy(realName, nameWithPath);
 	}
 
