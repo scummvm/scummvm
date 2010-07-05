@@ -109,12 +109,12 @@ $(MODULE)/arm9/source/touchkeyboard.o: \
 
 
 MODULE_DIRS += \
-	backends/platform/ds \
-	backends/platform/ds/arm7/source \
-	backends/platform/ds/arm7/source/libcartreset \
-	backends/platform/ds/arm9/source \
-	backends/platform/ds/arm9/source/fat \
-	backends/platform/ds/arm9/source/libcartreset
+	backends/platform/ds/ \
+	backends/platform/ds/arm7/source/ \
+	backends/platform/ds/arm7/source/libcartreset/ \
+	backends/platform/ds/arm9/source/ \
+	backends/platform/ds/arm9/source/fat/ \
+	backends/platform/ds/arm9/source/libcartreset/
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
