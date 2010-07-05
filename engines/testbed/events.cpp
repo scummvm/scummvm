@@ -173,6 +173,8 @@ bool EventTests::mouseEvents() {
 
 		}
 	}
+	
+	CursorMan.showMouse(false);
 
 	// Verify results now!
 	if (Testsuite::handleInteractiveInput("Were mouse clicks L/R/M buttons identfied?", "Yes", "No", kOptionRight)) {
@@ -201,14 +203,32 @@ bool EventTests::kbdEvents() {
 		text += letter;
 		rect = Testsuite::writeOnScreen(text, pt);
 	}
-	return true;
+	
+	bool passed = true;
+	
+	if (Testsuite::handleInteractiveInput("Was the word you entered same as that displayed on screen?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Keyboard Events failed");
+		passed = false;
+	}
+
+	Testsuite::clearScreen();
+	return passed;
 }
 
 bool EventTests::showMainMenu() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	Common::Event mainMenuEvent;
-	mainMenuEvent.type = Common::EVENT_QUIT;
-	eventMan->pushEvent(mainMenuEvent);	
+	mainMenuEvent.type = Common::EVENT_MAINMENU;
+	eventMan->pushEvent(mainMenuEvent);
+
+	bool passed = true;
+	
+	if (Testsuite::handleInteractiveInput("Were you able to see a main menu widget?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Event MAINMENU failed");
+		passed = false;
+	}
+	
+	return passed;
 }
 
 EventTestSuite::EventTestSuite() {
