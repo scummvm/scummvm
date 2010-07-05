@@ -1005,6 +1005,10 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		debug(1, "Using MD5 '%s'", res.md5.c_str());
 	}
 
+	// If the GUI options were updated, we catch this here and update them in the users config
+	// file transparently.
+	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
+
 	// Check for a user override of the platform. We allow the user to override
 	// the platform, to make it possible to add games which are not yet in
 	// our MD5 database but require a specific platform setting.
@@ -1021,11 +1025,6 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 	// TODO: Maybe allow the null driver, too?
 	if (res.game.platform == Common::kPlatformFMTowns && res.game.version == 3)
 		res.game.midi = MDT_TOWNS;
-
-	// If the GUI options were updated, we catch this here and update them in the users config
-	// file transparently.
-	Common::updateGameGUIOptions(res.game.guioptions, getGameGUIOptionsDescriptionLanguage(res.language));
-
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
 	switch (res.game.version) {
