@@ -33,10 +33,10 @@ namespace DS {
 void asmDrawStripToScreen(int height, int width, byte const *text, byte const *src, byte *dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch) {
 
-
-	if (height <= 0) height = 1;
-	if (width < 4) return;
-
+	if (height <= 0)
+		height = 1;
+	if (width < 4)
+		return;
 
 	width &= ~4;
 //	src = (const byte *) (((int) (src)) & (~4));
@@ -144,22 +144,19 @@ void asmCopy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 static bool isDivBy5Ready = false;
 static u32  DIV_BY_5[160];
 
-void ComputeDivBy5TableIFN()
-{
+void ComputeDivBy5TableIFN() {
     if (isDivBy5Ready)
         return;
     isDivBy5Ready = true;
 
-    for (int i=0; i<160; ++i)
-    {
+    for (int i = 0; i < 160; ++i) {
         DIV_BY_5[i] = (2*i+5)/10;
     }
 }
 
 #ifdef PERFECT_5_TO_4_RESCALING
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
-                                                    u16 *dest)
-{
+                                                    u16 *dest) {
     u32 bs0 = s0 & 0x1F;
     u32 bs1 = s1 & 0x1F;
     u32 bs2 = s2 & 0x1F;
@@ -233,8 +230,7 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 }
 #else
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
-                                                    u16 *dest)
-{
+                                                    u16 *dest) {
     static const u32 MASK = 0x03E07C1F;
 
     u32 argbargbs0 = u32(s0) | (u32(s0) << 16);
@@ -282,8 +278,7 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 #endif
 
 static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3, u32 s4,
-                                                    u16 *dest)
-{
+                                                    u16 *dest) {
     u32 d0 = 4*s0 +   s1;
     u32 d1 = 2*s1 +   s1 + 2*s2;
 
@@ -320,12 +315,10 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
 
 // Can't work in place
 #ifdef PERFECT_5_TO_4_RESCALING
-static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u32 *palette)
-{
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u32 *palette) {
     ComputeDivBy5TableIFN();
 
-    for (size_t i=0; i<64; ++i)
-    {
+    for (size_t i = 0; i < 64; ++i) {
         u32 s0 = palette[src[5*i+0]];
         u32 s1 = palette[src[5*i+1]];
         u32 s2 = palette[src[5*i+2]];
@@ -336,10 +329,8 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const
     }
 }
 #else
-static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u16 *palette)
-{
-    for (size_t i=0; i<64; ++i)
-    {
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u16 *palette) {
+    for (size_t i = 0; i < 64; ++i) {
         u16 s0 = palette[src[5*i+0]];
         u16 s1 = palette[src[5*i+1]];
         u16 s2 = palette[src[5*i+2]];
@@ -353,12 +344,10 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const
 
 
 // Can work in place, because it's a contraction
-static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16 *dest, const u16 *src)
-{
+static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16 *dest, const u16 *src) {
     ComputeDivBy5TableIFN();
 
-    for (size_t i=0; i<64; ++i)
-    {
+    for (size_t i = 0; i < 64; ++i) {
         u16 s0 = src[5*i+0];
         u16 s1 = src[5*i+1];
         u16 s2 = src[5*i+2];
@@ -370,13 +359,11 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16 *dest, const
 }
 
 #ifdef PERFECT_5_TO_4_RESCALING
-void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette)
-{
+void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette) {
 	u32 fastRam[768];
 
     // Palette lookup -> 0_888
-    for (size_t i=0; i<256; ++i)
-    {
+    for (size_t i = 0; i < 256; ++i) {
         u32 col = palette[i];
         u32 result = col & 0x0000001F;
         result |= (col << 3) & 0x00001F00;
@@ -385,29 +372,24 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStri
         fastRam[i] = result;
     }
 
-	for (size_t i=0; i<200; ++i)
-	{
+	for (size_t i = 0; i < 200; ++i) {
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);
 	}
 }
 #else
-void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette)
-{
+void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette) {
 	u16 fastRam[256];
-    for (size_t i=0; i<128; ++i)
+    for (size_t i = 0; i < 128; ++i)
         ((u32*)fastRam)[i] = ((const u32*)palette)[i];
 
-	for (size_t i=0; i<200; ++i)
-	{
+	for (size_t i = 0; i < 200; ++i) {
 		Rescale_320xPAL8Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride, fastRam);
 	}
 }
 #endif
 
-void Rescale_320x256x1555_To_256x256x1555(u16 *dest, const u16 *src, int destStride, int srcStride)
-{
-	for (size_t i=0; i<200; ++i)
-	{
+void Rescale_320x256x1555_To_256x256x1555(u16 *dest, const u16 *src, int destStride, int srcStride) {
+	for (size_t i = 0; i < 200; ++i) {
 		Rescale_320x1555Scanline_To_256x1555Scanline(dest + i*destStride, src + i *srcStride);
 	}
 }

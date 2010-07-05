@@ -423,7 +423,7 @@ void setOptions() {
 
 		DS::setTrackPadStyleEnable(enable);
 
-		if ((enable) and (firstLoad)) {
+		if (enable && firstLoad) {
 			// If we've just booted up, want to swap screens when trackpad mode is in use
 			// but not every time we enter the options dialog.
 			DS::setGameScreenSwap(true);

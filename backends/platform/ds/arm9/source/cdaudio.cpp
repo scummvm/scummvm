@@ -328,45 +328,30 @@ void decompressBlock() {
 		int offset = 0;
 
 		switch (7 - (r & 0x0007)) {
-			case 0: {
-				offset = (word & 0xF0000000) >> 28;
-				break;
-			}
-
-			case 1: {
-				offset = (word & 0x0F000000) >> 24;
-				break;
-			}
-
-			case 2: {
-				offset = (word & 0x00F00000) >> 20;
-				break;
-			}
-
-			case 3: {
-				offset = (word & 0x000F0000) >> 16;
-				break;
-			}
-
-			case 4: {
-				offset = (word & 0x0000F000) >> 12;
-				break;
-			}
-
-			case 5: {
-				offset = (word & 0x00000F00) >> 8;
-				break;
-			}
-
-			case 6: {
-				offset = (word & 0x000000F0) >> 4;
-				break;
-			}
-
-			case 7: {
-				offset = (word & 0x0000000F);
-				break;
-			}
+		case 0:
+			offset = (word & 0xF0000000) >> 28;
+			break;
+		case 1:
+			offset = (word & 0x0F000000) >> 24;
+			break;
+		case 2:
+			offset = (word & 0x00F00000) >> 20;
+			break;
+		case 3:
+			offset = (word & 0x000F0000) >> 16;
+			break;
+		case 4:
+			offset = (word & 0x0000F000) >> 12;
+			break;
+		case 5:
+			offset = (word & 0x00000F00) >> 8;
+			break;
+		case 6:
+			offset = (word & 0x000000F0) >> 4;
+			break;
+		case 7:
+			offset = (word & 0x0000000F);
+			break;
 		}
 
 		int diff = 0;
@@ -409,7 +394,8 @@ void decompressBlock() {
 }
 
 void playNextBlock() {
-	if (!isPlayingFlag) return;
+	if (!isPlayingFlag)
+		return;
 	int lastBlockId = -1;
 
 	while (IPC->adpcm.semaphore);		// Wait for buffer to become free if needed
@@ -445,9 +431,6 @@ void playNextBlock() {
 //			DC_FlushAll();
 
 		}
-
-
-
 	}
 
 
@@ -463,7 +446,8 @@ void playNextBlock() {
 }
 
 void stopTrack() {
-	if (!isPlayingFlag) return;
+	if (!isPlayingFlag)
+		return;
 
 	DS::std_fclose(s_file);
 
@@ -473,7 +457,7 @@ void stopTrack() {
 		audioBuffer[r] = 0;
 	}
 
-	for (int r= 0; r < waveHeader.fmtExtra; r++) {
+	for (int r = 0; r < waveHeader.fmtExtra; r++) {
 		decompressionBuffer[r] = 0;
 	}
 //	DS::stopSound(1);

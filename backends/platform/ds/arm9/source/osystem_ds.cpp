@@ -208,8 +208,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_DS::restoreHardwarePalette()
-{
+void OSystem_DS::restoreHardwarePalette() {
 	// Set the hardware palette up based on the stored palette
 
 	for (int r = 0; r < 255; r++) {

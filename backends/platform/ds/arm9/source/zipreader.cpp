@@ -79,7 +79,6 @@ bool ZipFile::restartFile() {
 	bool more = true;
 
 	while (!currentFileInFolder() && more) {
-		char name[128];
 		getFileName(name);
 		more = skipFile();
 	}

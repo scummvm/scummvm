@@ -44,7 +44,7 @@ struct key_data {
 #define DS_CAPSLOCK 1
 
 
-key_data keys[DS_NUM_KEYS] = {
+static key_data keys[DS_NUM_KEYS] = {
 	// Key number		x		y		character
 
 	// Numbers
@@ -137,27 +137,27 @@ key_data keys[DS_NUM_KEYS] = {
 
 };
 
-int keyboardX;
-int keyboardY;
+static int keyboardX;
+static int keyboardY;
 
 static int s_mapBase;
 static int s_tileBase;
 
-u16 *baseAddress;
+static u16 *baseAddress;
 
-bool shiftState;
-bool capsLockState;
+static bool shiftState;
+static bool capsLockState;
 
-bool closed;
+static bool closed;
 
-char autoCompleteWord[NUM_WORDS][32];
-int autoCompleteCount;
+static char autoCompleteWord[NUM_WORDS][32];
+static int autoCompleteCount;
 
-char autoCompleteBuffer[128];
+static char autoCompleteBuffer[128];
 
-int selectedCompletion = -1;
-int charactersEntered = 0;
-int typingTimeout = 0;
+static int selectedCompletion = -1;
+static int charactersEntered = 0;
+static int typingTimeout = 0;
 
 // Render text onto the tiled screen
 
@@ -396,8 +396,7 @@ void updateTypeEvents() {
 		event.type = Common::EVENT_KEYUP;
 		system->addEvent(event);
 
-		for (int r = 0; r < (int)strlen(autoCompleteBuffer); r++)
-		{
+		for (int r = 0; r < (int)strlen(autoCompleteBuffer); r++) {
 			autoCompleteBuffer[r] = autoCompleteBuffer[r + 1];
 		}
 
@@ -405,8 +404,7 @@ void updateTypeEvents() {
 	}
 }
 
-void createKeyEvent(int keyNum, Common::Event& event)
-{
+void createKeyEvent(int keyNum, Common::Event& event) {
 	event.kbd.flags = 0;
 
 	if ((keys[keyNum].character >= '0') && (keys[keyNum].character <= '9')) {

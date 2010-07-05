@@ -1026,8 +1026,9 @@ u16 *get16BitBackBuffer() {
 }
 
 s32 get8BitBackBufferStride() {
-	// When the CPU scaler is enabled, the back buffer is in system RAM and is 320 pixels wide
-	// When the CPU scaler is disabled, the back buffer is in video memory and therefore must have a 512 pixel stride
+	// When the CPU scaler is enabled, the back buffer is in system RAM and is
+	// 320 pixels wide. When the CPU scaler is disabled, the back buffer is in
+	// video memory and therefore must have a 512 pixel stride.
 
 	if (isCpuScalerEnabled()){
 		return 320;
@@ -1371,8 +1372,7 @@ void doScreenTapMode(OSystem_DS *system) {
 	system->addEvent(event);
 }
 
-void doButtonSelectMode(OSystem_DS *system)
-{
+void doButtonSelectMode(OSystem_DS *system) {
 	Common::Event event;
 
 
@@ -1670,11 +1670,8 @@ void addEventsToQueue() {
 
 		if (!keyboardEnable) {
 
-
 			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState)) && (displayModeIs8Bit)) {
 				// Controls specific to the control method
-
-
 
 				if (s_currentGame->control == CONT_SKY) {
 					// Extra controls for Beneath a Steel Sky
@@ -1686,7 +1683,6 @@ void addEventsToQueue() {
 
 				if (s_currentGame->control == CONT_AGI) {
 					// Extra controls for Leisure Suit Larry and KQ4
-
 					if ((getKeysHeld() & KEY_UP) && (getKeysHeld() & KEY_START)
 						/*&& (!strcmp(gameName, "LLLLL"))*/) {
 						consolePrintf("Cheat key!\n");
@@ -1699,10 +1695,7 @@ void addEventsToQueue() {
 						event.type = Common::EVENT_KEYUP;
 						system->addEvent(event);
 					}
-
 				}
-
-
 
 				if (s_currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
@@ -1718,8 +1711,6 @@ void addEventsToQueue() {
 						system->addEvent(event);
 					}
 				}
-
-
 
 				if (s_currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
@@ -1803,9 +1794,7 @@ void addEventsToQueue() {
 		}
 
 		consumeKeys();
-
 		consumePenEvents();
-
 	}
 }
 
@@ -1835,23 +1824,19 @@ void updateStatus() {
 	if (displayModeIs8Bit) {
 		if (!tapScreenClicks) {
 			switch (mouseMode) {
-				case MOUSE_LEFT: {
-					offs = 1;
-					break;
-				}
-				case MOUSE_RIGHT: {
-					offs = 2;
-					break;
-				}
- 				case MOUSE_HOVER: {
-					offs = 0;
-					break;
-				}
-				default: {
-					// Nothing!
-					offs = 0;
-					break;
-				}
+			case MOUSE_LEFT:
+				offs = 1;
+				break;
+			case MOUSE_RIGHT:
+				offs = 2;
+				break;
+			case MOUSE_HOVER:
+				offs = 0;
+				break;
+			default:
+				// Nothing!
+				offs = 0;
+				break;
 			}
 
 			setIcon(0, 208, 150, offs, 0, true);
@@ -1935,15 +1920,12 @@ void setMainScreenScale(int x, int y) {
 		SUB_BG3_YDX = 0;
 		SUB_BG3_YDY = y;
 	} else*/ {
-		if (isCpuScalerEnabled() && (x==320))
-		{
+		if (isCpuScalerEnabled() && (x==320)) {
 			BG3_XDX = 256;
 			BG3_XDY = 0;
 			BG3_YDX = 0;
 			BG3_YDY = y;
-		}
-		else
-		{
+		} else {
 			BG3_XDX = x;
 			BG3_XDY = 0;
 			BG3_YDX = 0;
@@ -2028,8 +2010,6 @@ void VBlankHandler(void) {
 
 	IPC->tweak = tweak;
 	soundUpdate();
-
-
 
 
 	if ((!gameScreenSwap) && (!(getKeysHeld() & KEY_L) && !(getKeysHeld() & KEY_R))) {
@@ -2606,9 +2586,6 @@ void penUpdate() {
 						penDownY = IPC->touchYpx;
 
 					}
-				}
-				else
-				{
 				}
 
 			} else {
