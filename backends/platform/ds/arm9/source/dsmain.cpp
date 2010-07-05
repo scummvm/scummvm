@@ -264,7 +264,7 @@ static SpriteEntry spritesMain[128];
 static int tweak;
 
 // Shake
-static int shakePos = 0;
+static int s_shakePos = 0;
 
 // Keyboard
 static bool keyboardEnable = false;
@@ -1018,7 +1018,7 @@ void displayMode16BitFlipBuffer() {
 }
 
 void setShakePos(int shakePos) {
-	shakePos = shakePos;
+	s_shakePos = shakePos;
 }
 
 
@@ -2127,7 +2127,7 @@ void VBlankHandler(void) {
 		SUB_BG3_CX = subScX + 64;
 	}
 
-	SUB_BG3_CY = subScY + (shakePos << 8);*/
+	SUB_BG3_CY = subScY + (s_shakePos << 8);*/
 
 	/*SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
 	SUB_BG3_XDY = 0;
@@ -2267,7 +2267,7 @@ void VBlankHandler(void) {
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 
 
-			setMainScreenScroll(scX << 8, (scY << 8) + (shakePos << 8));
+			setMainScreenScroll(scX << 8, (scY << 8) + (s_shakePos << 8));
 			setMainScreenScale(256, 256);		// 1:1 scale
 
 		} else {
@@ -2283,7 +2283,7 @@ void VBlankHandler(void) {
 			setZoomedScreenScroll(subScX, subScY, (subScreenWidth != 256) && (subScreenWidth != 128));
 			setZoomedScreenScale(subScreenWidth, ((subScreenHeight * (256 << 8)) / 192) >> 8);
 
-			setMainScreenScroll(64, (scY << 8) + (shakePos << 8));
+			setMainScreenScroll(64, (scY << 8) + (s_shakePos << 8));
 			setMainScreenScale(320, 256);		// 1:1 scale
 
 		}
