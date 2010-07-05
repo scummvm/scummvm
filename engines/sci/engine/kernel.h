@@ -107,7 +107,7 @@ enum {
 	SIG_TYPE_NODE          =  0x80, // may be node      [n]
 	SIG_IS_OPTIONAL        = 0x100, // is optional
 	SIG_NEEDS_MORE         = 0x200, // needs at least one additional parameter following
-	SIG_MORE_MAY_FOLLOW    = 0x400, // may have more parameters of the same type following
+	SIG_MORE_MAY_FOLLOW    = 0x400  // may have more parameters of the same type following
 };
 
 // this does not include SIG_TYPE_UNINITIALIZED, because we can not allow uninitialized values anywhere
