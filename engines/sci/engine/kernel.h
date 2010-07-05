@@ -96,19 +96,22 @@ struct SelectorCache;	// from selector.h
 
 // ---- Kernel signatures -----------------------------------------------------
 
-
-// Compiled signatures
+// internal kernel signature data
 enum {
-	KSIG_LIST          = 0x01,
-	KSIG_NODE          = 0x02,
-	KSIG_OBJECT        = 0x04,
-	KSIG_REF           = 0x08,
-	KSIG_ARITHMETIC    = 0x10,
-	KSIG_UNINITIALIZED = 0x20,
-	KSIG_NULL          = 0x40,
-	KSIG_ANY           = 0x5f,
-	KSIG_ELLIPSIS      = 0x80
+	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]
+	SIG_TYPE_INTEGER       =  0x02, // may be 0:*       [i], automatically also allows null
+	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparsion
+	SIG_TYPE_OBJECT        =  0x10, // may be object    [o]
+	SIG_TYPE_REFERENCE     =  0x20, // may be reference [r]
+	SIG_TYPE_LIST          =  0x40, // may be list      [l]
+	SIG_TYPE_NODE          =  0x80, // may be node      [n]
+	SIG_IS_OPTIONAL        = 0x100, // is optional
+	SIG_NEEDS_MORE         = 0x200, // needs at least one additional parameter following
+	SIG_MORE_MAY_FOLLOW    = 0x400, // may have more parameters of the same type following
 };
+
+// this does not include SIG_TYPE_UNINITIALIZED, because we can not allow uninitialized values anywhere
+#define SIG_MAYBE_ANY    (SIG_TYPE_NULL | SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_LIST | SIG_TYPE_NODE)
 
 // ----------------------------------------------------------------------------
 
@@ -132,7 +135,7 @@ struct KernelFuncWithSignature {
 	KernelFunc *func; /**< The actual function */
 	Common::String origName; /**< Original name, in case we couldn't map it */
 	bool isDummy;
-	char *signature;
+	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
 };
 
@@ -175,16 +178,15 @@ public:
 	 * If no signature is given (i.e., if sig is NULL), this is always
 	 * treated as a match.
 	 *
-	 * @param segMan pointer to the segment manager
 	 * @param sig	 signature to test against
 	 * @param argc	 number of arguments to test
 	 * @param argv	 argument list
 	 * @return true if the signature was matched, false otherwise
 	 */
-	bool signatureMatch(const char *sig, int argc, const reg_t *argv);
+	bool signatureMatch(const uint16 *sig, int argc, const reg_t *argv);
 
 	// Prints out debug information in case a signature check fails
-	void signatureDebug(const char *sig, int argc, const reg_t *argv);
+	void signatureDebug(const uint16 *sig, int argc, const reg_t *argv);
 
 	/**
 	 * Determines the type of the object indicated by reg.

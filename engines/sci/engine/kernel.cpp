@@ -206,7 +206,7 @@ static const char *s_defaultKernelNames[] = {
 // i* -> optional multiple integers
 // .* -> any parameters afterwards (or none)
 
-//    gameID,       scriptNr,lvl,         object-name, method-name,    call,index,replace
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // parameter 0 is an object when leaving graveyard
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -226,6 +226,8 @@ struct SciKernelMapEntry {
 };
 
 #define SIG_SCIALL  SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0    SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1    SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
 #define SIG_SCI11   SCI_VERSION_1_1, SCI_VERSION_1_1
 #define SIG_SCI16    SCI_VERSION_NONE, SCI_VERSION_1_1
 #define SIG_SCI32    SCI_VERSION_2, SCI_VERSION_NONE
@@ -245,129 +247,133 @@ struct SciKernelMapEntry {
 
 //    name,                        version/platform,         signature,              sub-signatures,  workarounds
 static SciKernelMapEntry s_kernelMap[] = {
-    { MAP_CALL(Load),              SIG_EVERYWHERE,           "iii*",                 NULL,            NULL },
-    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "iRi*",                 NULL,            NULL },
+    { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",               NULL,            NULL },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                NULL,            NULL },
 	//  ^^ - in SQ1 when leaving ulence flats bar, kUnLoad is called with just one argument (FIXME?)
-    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "Ioi*",                 NULL,            NULL },
-    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "ii*",                  NULL,            kDisposeScript_workarounds },
+    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",              NULL,            NULL },
+    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                NULL,            kDisposeScript_workarounds },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                    NULL,            NULL },
     { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                   NULL,            NULL },
-    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
-    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
-    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "LI*",                  NULL,            NULL },
-	// ^^ FIXME - More like (li?)?
-    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "oi*",                  NULL,            NULL },
-	// ^^ FIXME - The second parameter is ignored
+    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i(i)(i)(i)",           NULL,            NULL },
+    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
+    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",              NULL,            NULL },
+    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
     { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "iOi*",                 NULL,            NULL },
-    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "iOi*",                 NULL,            NULL },
-    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiiii*i*r*",          NULL,            NULL },
-    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiiii*i*",            NULL,            NULL },
-    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "Il*",                  NULL,            NULL },
-    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   "*.",                   NULL,            NULL },
-    { MAP_CALL(NewWindow),         SIG_EVERYWHERE,           "iiiiZRi*",             NULL,            NULL },
+    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
+    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r)",       NULL,            NULL },
+    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",          NULL,            NULL },
+    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "[il](iiiiii)",         NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                   NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI0, SIGFOR_ALL,     "iiii[r0]i(i)(i)(i)",   NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI1, SIGFOR_ALL,     "iiii[ir]i(i)(i)([ir])(i)(i)(i)(i)", NULL, NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI11, SIGFOR_ALL,    "iiiiiiii[r0]i(i)(i)(i)", NULL,          NULL },
     { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
-    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
+    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iii)(i)(i)(i)",      NULL,            NULL },
+    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                 NULL,            NULL },
     { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "ZoZo",                 NULL,            NULL },
-    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "rZrii*r*",             NULL,            NULL },
-    { MAP_CALL(Display),           SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "ioi*",                 NULL,            NULL },
+    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",             NULL,            NULL },
+    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",        NULL,            NULL },
+    { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir]*)",          NULL,            NULL }, // subop
+    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",               NULL,            NULL },
     { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                   NULL,            NULL },
-    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "oo*",                  NULL,            NULL },
-    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "oo*",                  NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                   NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                   NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "oi*",                  NULL,            NULL },
+    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
     { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                   NULL,            NULL },
-    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "Zri*",                 NULL,            NULL },
+    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "[r0](i)(i)",           NULL,            NULL },
     { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                   NULL,            NULL },
-    { MAP_CALL(Said),              SIG_EVERYWHERE,           "Zr",                   NULL,            NULL },
+    { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                 NULL,            NULL },
     { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
+    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i*)",                NULL,            NULL },
     { MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                   NULL,            NULL },
     { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                   NULL,            NULL },
     { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                  NULL,            NULL },
     { MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rirr*",                NULL,            NULL },
-    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir*",                 NULL,            NULL },
+    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",               NULL,            NULL },
+    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                  NULL,            NULL },
     { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
-    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "iIo*",                 NULL,            NULL },
+    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(iii)(i)",   NULL,            NULL }, // subop
     { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                    NULL,            NULL },
     { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                   NULL,            NULL },
-    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "Zl",                   NULL,            NULL },
+    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                 NULL,            NULL },
     { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                    NULL,            NULL },
     { MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                    NULL,            NULL },
     { MAP_CALL(NextNode),          SIG_EVERYWHERE,           "n",                    NULL,            NULL },
     { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                    NULL,            NULL },
-    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "Zn",                   NULL,            NULL },
+    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "[n0]",                 NULL,            NULL },
     { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                  NULL,            NULL },
     { MAP_CALL(AddToFront),        SIG_EVERYWHERE,           "ln",                   NULL,            NULL },
     { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                   NULL,            NULL },
     { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                   NULL,            NULL },
     { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                   NULL,            NULL },
-    { MAP_CALL(Random),            SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
-    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "Oi",                   NULL,            NULL },
+    { MAP_CALL(Random),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
+    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "[io]",                 NULL,            NULL },
+	//  ^^ FIXME hoyle
     { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiiii*",               NULL,            NULL },
+    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                 NULL,            NULL },
 	 // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
-    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "iiiii*",               NULL,            NULL },
+    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",       NULL,            NULL },
     { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
+    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
     { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                    NULL,            NULL },
     { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                   NULL,            NULL },
-    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rri*",                 NULL,            NULL },
-    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "Zr",                   NULL,            NULL },
-    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "rZri*",                NULL,            NULL },
-    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r.*",                  NULL,            NULL },
-    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "iiZr",                 NULL,            NULL },
+    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                NULL,            NULL },
+    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                 NULL,            NULL },
+    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",             NULL,            NULL },
+    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                NULL,            NULL },
+    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "ii[r0]",               NULL,            NULL },
     { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                    NULL,            NULL },
     { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                   NULL,            NULL },
-    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "ol*",                  NULL,            NULL },
-    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "ol*",                  NULL,            NULL },
-    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
-    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "oi*",                  NULL,            NULL },
+    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                 NULL,            NULL },
+    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                 NULL,            NULL },
+    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",          NULL,            NULL },
+    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
     { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                 NULL,            NULL },
-    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "i*",                   NULL,            NULL },
+    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
     { MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                    NULL,            NULL },
     { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                   NULL,            NULL },
-    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
+    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL },
     { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                  NULL,            NULL },
     { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r.*",                  NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                  NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                    NULL,            NULL },
     { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
-    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "rii*",                 NULL,            NULL },
-    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
-    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "r*",                   NULL,            NULL },
+    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                 NULL,            NULL },
+    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                NULL,            NULL },
+    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",           NULL,            NULL }, // subop
+    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                 NULL,            NULL },
     { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
+    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",               NULL,            NULL },
     { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                    NULL,            NULL },
     { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Graph),             SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
-    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
     { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                  NULL,            NULL },
-    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii.*",                 NULL,            NULL },
-    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "iii*",                 NULL,            NULL },
-    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
+    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",               NULL,            NULL },
+    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
+    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
     { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                NULL,            NULL },
-    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rrZr",                 NULL,            NULL },
+    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",               NULL,            NULL },
     { "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
@@ -375,31 +381,31 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Message),           SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(Message),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
     { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                 NULL,            NULL },
-    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "iri*",                 NULL,            NULL },
+    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "ir(i)",                NULL,            NULL }, // subop
     { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",           NULL,            NULL },
     { MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                  NULL,            NULL },
-    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "iii*",                 NULL,            NULL },
+    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",             NULL,            NULL },
     { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
     { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(Platform),          SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "ii*",                  NULL,            NULL },
+    { MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
+    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
+    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                NULL,            NULL }, // subop
     { MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(Empty),             SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
 
 #ifdef ENABLE_SCI32
     // SCI2 Kernel Functions
     { MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(Array),             SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
     { MAP_CALL(ListAt),            SIG_EVERYWHERE,           "li",                   NULL,            NULL },
-    { MAP_CALL(String),            SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
     { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                    NULL,            NULL },
@@ -409,23 +415,23 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li.*",                 NULL,            NULL },
-    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li.*",                 NULL,            NULL },
-    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li.*",                 NULL,            NULL },
-    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "lZo",                  NULL,            NULL },
-    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio.*",                NULL,            NULL },
+    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
+    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
+    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
+    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                NULL,            NULL },
+    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio(.*)",              NULL,            NULL },
     { MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                  NULL,            NULL },
-    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i.*",                  NULL,            NULL },
+    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL },
 
     // SCI2.1 Kernel Functions
-    { MAP_CALL(Save),              SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(List),              SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(Robot),             SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio.*",                NULL,            NULL },
+    { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",              NULL,            NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                  NULL,            NULL },
-    { MAP_CALL(Text),              SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
+    { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
 #endif
 };
@@ -514,77 +520,349 @@ void Kernel::loadSelectorNames() {
 	}
 }
 
-static char *compileKernelSignature(const char *s) {
-	const char *src = s;
-	char *result;
-	bool ellipsis = false;
-	int index = 0;
+// this parses a written kernel signature into an internal memory format
+// [io] -> either integer or object
+// (io) -> optionally integer AND an object
+// (i) -> optional integer
+// . -> any type
+// i* -> optional multiple integers
+// .* -> any parameters afterwards (or none)
+static uint16 *parseKernelSignature(const char *kernelName, const char *writtenSig) {
+	const char *curPos;
+	char curChar;
+	uint16 *result = NULL;
+	uint16 *writePos = NULL;
+	int size = 0;
+	bool validType = false;
+	bool optionalType = false;
+	bool eitherOr = false;
+	bool optional = false;
+	bool hadOptional = false;
 
-	if (!src)
-		return 0; // NULL signature: Nothing to do
-
-	result = (char *)malloc(strlen(s) + 1);
-
-	while (*src) {
-		char c;
-		char v = 0;
-
-		if (ellipsis) {
-			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", s, *src);
-		}
-
-		do {
-			char cc;
-			cc = c = *src++;
-			if (c >= 'A' || c <= 'Z')
-				cc = c | KSIG_SPEC_SUM_DONE;
-
-			switch (cc) {
-			case KSIG_SPEC_LIST:
-				v |= KSIG_LIST;
-				break;
-
-			case KSIG_SPEC_NODE:
-				v |= KSIG_NODE;
-				break;
-
-			case KSIG_SPEC_REF:
-				v |= KSIG_REF;
-				break;
-
-			case KSIG_SPEC_OBJECT:
-				v |= KSIG_OBJECT;
-				break;
-
-			case KSIG_SPEC_ARITHMETIC:
-				v |= KSIG_ARITHMETIC;
-				break;
-
-			case KSIG_SPEC_NULL:
-				v |= KSIG_NULL;
-				break;
-
-			case KSIG_SPEC_ANY:
-				v |= KSIG_ANY;
-				break;
-
-			case KSIG_SPEC_ELLIPSIS:
-				v |= KSIG_ELLIPSIS;
-				ellipsis = true;
-				break;
-
-			default:
-				error("ERROR compiling kernel function signature '%s': (%02x / '%c') not understood", s, c, c);
+	// First, we check how many bytes the result will be
+	//  we also check, if the written signature makes any sense
+	curPos = writtenSig;
+	while (*curPos) {
+		switch (*curPos) {
+		case '[': // either or
+			if (eitherOr)
+				error("signature for k%s: '[' used within '[]'", kernelName);
+			eitherOr = true;
+			validType = false;
+			break;
+		case ']': // either or end
+			if (!eitherOr)
+				error("signature for k%s: ']' used without leading '['", kernelName);
+			if (!validType)
+				error("signature for k%s: '[]' does not surround valid type(s)", kernelName);
+			eitherOr = false;
+			validType = false;
+			size++;
+			break;
+		case '(': // optional
+			if (optional)
+				error("signature for k%s: '(' used within '()' brackets", kernelName);
+			if (eitherOr)
+				error("signature for k%s: '(' used within '[]' brackets", kernelName);
+			optional = true;
+			validType = false;
+			optionalType = false;
+			break;
+		case ')': // optional end
+			if (!optional)
+				error("signature for k%s: ')' used without leading '('", kernelName);
+			if (!optionalType)
+				error("signature for k%s: '()' does not to surround valid type(s)", kernelName);
+			optional = false;
+			validType = false;
+			hadOptional = true;
+			break;
+		case '0': // allowed types
+		case 'i':
+		case 'o':
+		case 'r':
+		case 'l':
+		case 'n':
+		case '.':
+			if ((hadOptional) & (!optional))
+				error("signature for k%s: non-optional type may not follow optional type", kernelName);
+			validType = true;
+			if (optional)
+				optionalType = true;
+			if (!eitherOr)
+				size++;
+			break;
+		case '*': // accepts more of the same parameter (must be last char)
+			if (!validType) {
+				if ((writtenSig == curPos) || (*(curPos - 1) != ']'))
+					error("signature for k%s: a valid type must be in front of '*'", kernelName);
 			}
-		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
-
-		// To handle sum types
-		result[index++] = v;
+			if (eitherOr)
+				error("signature for k%s: '*' may not be inside '[]'", kernelName);
+			if (optional) {
+				if ((*(curPos + 1) != ')') || (*(curPos + 2) != 0))
+					error("signature for k%s: '*' may only be used for last type", kernelName);
+			} else {
+				if (*(curPos + 1) != 0)
+					error("signature for k%s: '*' may only be used for last type", kernelName);
+			}
+			break;
+		default:
+			error("signature for k%s: '%c' unknown", kernelName, *curPos);
+		}
+		curPos++;
 	}
 
-	result[index] = 0;
+	uint16 signature = 0;
+
+	// Now we allocate buffer with required size and fill it
+	result = new uint16[size + 1];
+	writePos = result;
+	curPos = writtenSig;
+	do {
+		curChar = *curPos;
+		if (!eitherOr) {
+			// not within either-or, check if next character forces output
+			switch (curChar) {
+			case 0:
+			case '[':
+			case '(':
+			case ')':
+			case 'i':
+			case 'o':
+			case 'r':
+			case 'l':
+			case 'n':
+			case '.':
+				// and we also got some signature pending?
+				if (signature) {
+					if (optional) {
+						signature |= SIG_IS_OPTIONAL;
+						if (curChar != ')')
+							signature |= SIG_NEEDS_MORE;
+					}
+					*writePos = signature;
+					writePos++;
+					signature = 0;
+				}
+			}
+		}
+		switch (curChar) {
+		case '[': // either or
+			eitherOr = true;
+			break;
+		case ']': // either or end
+			eitherOr = false;
+			break;
+		case '(': // optional
+			optional = true;
+			break;
+		case ')': // optional end
+			optional = false;
+			break;
+		case '0':
+			if (signature & SIG_TYPE_NULL)
+				error("signature for k%s: NULL specified more than once", kernelName);
+			signature |= SIG_TYPE_NULL;
+			break;
+		case 'i':
+			if (signature & SIG_TYPE_INTEGER)
+				error("signature for k%s: integer specified more than once", kernelName);
+			signature |= SIG_TYPE_INTEGER | SIG_TYPE_NULL;
+			break;
+		case 'o':
+			if (signature & SIG_TYPE_OBJECT)
+				error("signature for k%s: object specified more than once", kernelName);
+			signature |= SIG_TYPE_OBJECT;
+			break;
+		case 'r':
+			if (signature & SIG_TYPE_REFERENCE)
+				error("signature for k%s: reference specified more than once", kernelName);
+			signature |= SIG_TYPE_REFERENCE;
+			break;
+		case 'l':
+			if (signature & SIG_TYPE_LIST)
+				error("signature for k%s: list specified more than once", kernelName);
+			signature |= SIG_TYPE_LIST;
+			break;
+		case 'n':
+			if (signature & SIG_TYPE_NODE)
+				error("signature for k%s: node specified more than once", kernelName);
+			signature |= SIG_TYPE_NODE;
+			break;
+		case '.':
+			signature |= SIG_MAYBE_ANY;
+			break;
+		case '*': // accepts more of the same parameter
+			signature |= SIG_MORE_MAY_FOLLOW;
+			break;
+		default:
+			break;
+		}
+		curPos++;
+	} while (curChar);
+
+	// Write terminator
+	*writePos = 0;
 
 	return result;
+}
+
+int Kernel::findRegType(reg_t reg) {
+	// No segment? Must be integer
+	if (!reg.segment)
+		return SIG_TYPE_INTEGER | (reg.offset ? 0 : SIG_TYPE_NULL);
+
+	if (reg.segment == 0xFFFF)
+		return SIG_TYPE_UNINITIALIZED;
+
+	// Otherwise it's an object
+	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
+	if (!mobj)
+		return 0; // Invalid
+
+	if (!mobj->isValidOffset(reg.offset))
+		error("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
+
+	switch (mobj->getType()) {
+	case SEG_TYPE_SCRIPT:
+		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
+			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
+		    RAW_IS_OBJECT((*(Script *)mobj).getBuf(reg.offset)) ) {
+			return ((Script *)mobj)->getObject(reg.offset) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
+		} else
+			return SIG_TYPE_REFERENCE;
+	case SEG_TYPE_CLONES:
+		return SIG_TYPE_OBJECT;
+	case SEG_TYPE_LOCALS:
+	case SEG_TYPE_STACK:
+	case SEG_TYPE_SYS_STRINGS:
+	case SEG_TYPE_DYNMEM:
+	case SEG_TYPE_HUNK:
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_ARRAY:
+	case SEG_TYPE_STRING:
+#endif
+		return SIG_TYPE_REFERENCE;
+	case SEG_TYPE_LISTS:
+		return SIG_TYPE_LIST;
+	case SEG_TYPE_NODES:
+		return SIG_TYPE_NODE;
+	default:
+		return 0;
+	}
+}
+
+struct SignatureDebugType {
+	uint16 typeCheck;
+	const char *text;
+};
+
+static const SignatureDebugType signatureDebugTypeList[] = {
+	{ SIG_TYPE_NULL,          "null" },
+	{ SIG_TYPE_INTEGER,       "integer" },
+	{ SIG_TYPE_UNINITIALIZED, "uninitialized" },
+	{ SIG_TYPE_OBJECT,        "object" },
+	{ SIG_TYPE_REFERENCE,     "reference" },
+	{ SIG_TYPE_LIST,          "list" },
+	{ SIG_TYPE_NODE,          "node" },
+	{ 0,                      NULL }
+};
+
+static void kernelSignatureDebugType(const uint16 type) {
+	bool firstPrint = true;
+
+	const SignatureDebugType *list = signatureDebugTypeList;
+	while (list->typeCheck) {
+		if (type & list->typeCheck) {
+			if (!firstPrint)
+				printf(", ");
+			printf("%s", list->text);
+			firstPrint = false;
+		}
+		list++;
+	}
+}
+
+// Shows kernel call signature and current arguments for debugging purposes
+void Kernel::signatureDebug(const uint16 *sig, int argc, const reg_t *argv) {
+	int argnr = 0;
+	while (*sig || argc) {
+		printf("parameter %d: ", argnr++);
+		if (argc) {
+			reg_t parameter = *argv;
+			printf("%04x:%04x (", PRINT_REG(parameter));
+			int regType = findRegType(parameter);
+			if (regType)
+				kernelSignatureDebugType(regType);
+			else
+				printf("unknown type of %04x:%04x", PRINT_REG(parameter));
+			printf(")");
+			argv++;
+			argc--;
+		} else {
+			printf("not passed");
+		}
+		if (*sig) {
+			const uint16 signature = *sig;
+			if ((signature & SIG_MAYBE_ANY) == SIG_MAYBE_ANY) {
+				printf(", may be any");
+			} else {
+				printf(", should be ");
+				kernelSignatureDebugType(signature);
+			}
+			if (signature & SIG_IS_OPTIONAL)
+				printf(" (optional)");
+			if (signature & SIG_NEEDS_MORE)
+				printf(" (needs more)");
+			if (signature & SIG_MORE_MAY_FOLLOW)
+				printf(" (more may follow)");
+			sig++;
+		}
+		printf("\n");
+	}
+}
+
+bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
+	uint16 nextSig = *sig;
+	uint16 curSig = nextSig;
+	while (nextSig && argc) {
+		curSig = nextSig;
+		int type = findRegType(*argv);
+		if (!type)
+			return false; // couldn't determine type
+
+		if (!(type & curSig))
+			return false; // type mismatch
+
+		if (!(curSig & SIG_MORE_MAY_FOLLOW)) {
+			sig++;
+			nextSig = *sig;
+		} else {
+			nextSig |= SIG_IS_OPTIONAL; // more may follow -> assumes followers are optional
+		}
+		argv++;
+		argc--;
+	}
+
+	// Too many arguments?
+	if (argc)
+		return false;
+	// Signature end reached?
+	if (nextSig == 0)
+		return true;
+	// current parameter is optional?
+	if (curSig & SIG_IS_OPTIONAL) {
+		// yes, check if nothing more is required
+		if (!(curSig & SIG_NEEDS_MORE))
+			return true;
+	} else {
+		// no, check if next parameter is optional
+		if (nextSig & SIG_IS_OPTIONAL)
+			return true;
+	}
+	// Too few arguments or more optional arguments required
+	return false;
 }
 
 void Kernel::mapFunctions() {
@@ -645,8 +923,8 @@ void Kernel::mapFunctions() {
 		bool nameMatch = false;
 		while (kernelMap->name) {
 			if (sought_name == kernelMap->name) {
-				if ((kernelMap->fromVersion == SCI_VERSION_NONE) || (kernelMap->fromVersion >= myVersion))
-					if ((kernelMap->toVersion == SCI_VERSION_NONE) || (kernelMap->toVersion <= myVersion))
+				if ((kernelMap->fromVersion == SCI_VERSION_NONE) || (kernelMap->fromVersion <= myVersion))
+					if ((kernelMap->toVersion == SCI_VERSION_NONE) || (kernelMap->toVersion >= myVersion))
 						if (platformMask & kernelMap->forPlatform)
 							break;
 				nameMatch = true;
@@ -658,7 +936,7 @@ void Kernel::mapFunctions() {
 			// A match was found
 			if (kernelMap->function) {
 				_kernelFuncs[functNr].func = kernelMap->function;
-				_kernelFuncs[functNr].signature = compileKernelSignature(kernelMap->signature);
+				_kernelFuncs[functNr].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
 				_kernelFuncs[functNr].workarounds = kernelMap->workarounds;
 				_kernelFuncs[functNr].isDummy = false;
 				++mapped;
@@ -678,147 +956,6 @@ void Kernel::mapFunctions() {
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
-}
-
-int Kernel::findRegType(reg_t reg) {
-	// No segment? Must be arithmetic
-	if (!reg.segment)
-		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
-
-	if (reg.segment == 0xFFFF)
-		return KSIG_UNINITIALIZED;
-
-	// Otherwise it's an object
-	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
-	if (!mobj)
-		return 0; // Invalid
-
-	if (!mobj->isValidOffset(reg.offset))
-		error("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
-
-	switch (mobj->getType()) {
-	case SEG_TYPE_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
-			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
-		    RAW_IS_OBJECT((*(Script *)mobj).getBuf(reg.offset)) ) {
-			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;
-		} else
-			return KSIG_REF;
-	case SEG_TYPE_CLONES:
-		return KSIG_OBJECT;
-	case SEG_TYPE_LOCALS:
-	case SEG_TYPE_STACK:
-	case SEG_TYPE_SYS_STRINGS:
-	case SEG_TYPE_DYNMEM:
-	case SEG_TYPE_HUNK:
-#ifdef ENABLE_SCI32
-	case SEG_TYPE_ARRAY:
-	case SEG_TYPE_STRING:
-#endif
-		return KSIG_REF;
-	case SEG_TYPE_LISTS:
-		return KSIG_LIST;
-	case SEG_TYPE_NODES:
-		return KSIG_NODE;
-	default:
-		return 0;
-	}
-}
-
-struct SignatureDebugType {
-	char typeCheck;
-	const char *text;
-};
-
-static const SignatureDebugType signatureDebugTypeList[] = {
-	{ KSIG_NULL,          "null" },
-	{ KSIG_ARITHMETIC,    "value" },
-	{ KSIG_UNINITIALIZED, "uninitialized" },
-	{ KSIG_OBJECT,        "object" },
-	{ KSIG_REF,           "reference" },
-	{ KSIG_LIST,          "list" },
-	{ KSIG_NODE,          "node" },
-	{ 0,                  NULL }
-};
-
-static void kernelSignatureDebugType(const char type) {
-	bool firstPrint = true;
-
-	const SignatureDebugType *list = signatureDebugTypeList;
-	while (list->typeCheck) {
-		if (type & list->typeCheck) {
-			if (!firstPrint)
-				printf(", ");
-			printf("%s", list->text);
-			firstPrint = false;
-		}
-		list++;
-	}
-}
-
-// Shows kernel call signature and current arguments for debugging purposes
-void Kernel::signatureDebug(const char *sig, int argc, const reg_t *argv) {
-	int argnr = 0;
-	while (*sig || argc) {
-		printf("parameter %d: ", argnr++);
-		if (argc) {
-			reg_t parameter = *argv;
-			printf("%04x:%04x (", PRINT_REG(parameter));
-			int regType = findRegType(parameter);
-			if (regType)
-				kernelSignatureDebugType(regType);
-			else
-				printf("unknown type of %04x:%04x", PRINT_REG(parameter));
-			printf(")");
-			argv++;
-			argc--;
-		} else {
-			printf("not passed");
-		}
-		if (*sig) {
-			const char signature = *sig;
-			if ((signature & KSIG_ANY) == KSIG_ANY) {
-				printf(", may be any");
-			} else {
-				printf(", should be ");
-				kernelSignatureDebugType(signature);
-			}
-			if (signature & KSIG_ELLIPSIS)
-				printf(" (optional)");
-			sig++;
-		}
-		printf("\n");
-	}
-}
-
-bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
-	// Always "match" if no signature is given
-	if (!sig)
-		return true;
-
-	while (*sig && argc) {
-		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = findRegType(*argv);
-
-			if (!type)
-				return false; // couldn't determine type
-
-			if (!(type & *sig))
-				return false; // type mismatch
-
-		}
-		if (!(*sig & KSIG_ELLIPSIS))
-			++sig;
-		++argv;
-		--argc;
-	}
-
-	if (argc)
-		return false; // Too many arguments
-	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
-		return true;
-
-	return false; // Too few arguments
 }
 
 void Kernel::setDefaultKernelNames() {

@@ -2042,18 +2042,18 @@ bool Console::cmdValueType(int argc, const char **argv) {
 	int t = g_sci->getKernel()->findRegType(val);
 
 	switch (t) {
-	case KSIG_LIST:
+	case SIG_TYPE_LIST:
 		DebugPrintf("List");
 		break;
-	case KSIG_OBJECT:
+	case SIG_TYPE_OBJECT:
 		DebugPrintf("Object");
 		break;
-	case KSIG_REF:
+	case SIG_TYPE_REFERENCE:
 		DebugPrintf("Reference");
 		break;
-	case KSIG_ARITHMETIC:
-		DebugPrintf("Arithmetic");
-	case KSIG_ARITHMETIC | KSIG_NULL:
+	case SIG_TYPE_INTEGER:
+		DebugPrintf("Integer");
+	case SIG_TYPE_INTEGER | SIG_TYPE_NULL:
 		DebugPrintf("Null");
 		break;
 	default:
@@ -2137,7 +2137,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		switch (type) {
 		case 0:
 			break;
-		case KSIG_LIST: {
+		case SIG_TYPE_LIST: {
 			List *list = _engine->_gamestate->_segMan->lookupList(reg);
 
 			DebugPrintf("list\n");
@@ -2148,15 +2148,15 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 				DebugPrintf("Invalid list.\n");
 		}
 			break;
-		case KSIG_NODE:
+		case SIG_TYPE_NODE:
 			DebugPrintf("list node\n");
 			printNode(reg);
 			break;
-		case KSIG_OBJECT:
+		case SIG_TYPE_OBJECT:
 			DebugPrintf("object\n");
 			printObject(reg);
 			break;
-		case KSIG_REF: {
+		case SIG_TYPE_REFERENCE: {
 			switch (_engine->_gamestate->_segMan->getSegmentType(reg.segment)) {
 #ifdef ENABLE_SCI32
 				case SEG_TYPE_STRING: {
@@ -2198,7 +2198,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			}
 			break;
 		}
-		case KSIG_ARITHMETIC:
+		case SIG_TYPE_INTEGER:
 			DebugPrintf("arithmetic value\n  %d (%04x)\n", (int16) reg.offset, reg.offset);
 			break;
 		default:
@@ -3149,26 +3149,29 @@ void Console::printBasicVarInfo(reg_t variable) {
 	int segType = g_sci->getKernel()->findRegType(variable);
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
-	segType &= KSIG_ARITHMETIC | KSIG_OBJECT | KSIG_REF | KSIG_NODE | KSIG_LIST;
+	segType &= SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_NODE | SIG_TYPE_LIST | SIG_TYPE_UNINITIALIZED;
 
 	switch (segType) {
-	case KSIG_ARITHMETIC: {
+	case SIG_TYPE_INTEGER: {
 		uint16 content = variable.toUint16();
 		if (content >= 10)
 			DebugPrintf(" (%dd)", content);
 		break;
 	}
-	case KSIG_OBJECT:
+	case SIG_TYPE_OBJECT:
 		DebugPrintf(" (object '%s')", segMan->getObjectName(variable));
 		break;
-	case KSIG_REF:
+	case SIG_TYPE_REFERENCE:
 		DebugPrintf(" (reference)");
 		break;
-	case KSIG_NODE:
+	case SIG_TYPE_NODE:
 		DebugPrintf(" (node)");
 		break;
-	case KSIG_LIST:
+	case SIG_TYPE_LIST:
 		DebugPrintf(" (list)");
+		break;
+	case SIG_TYPE_UNINITIALIZED:
+		DebugPrintf(" (uninitialized)");
 		break;
 	default:
 		DebugPrintf(" (??\?)");
