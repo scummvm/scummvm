@@ -33,31 +33,29 @@
 //////////////////////////////////////////////////////////////////////
 
 
-typedef struct sTransferSoundData {
-//---------------------------------------------------------------------------------
-        const void *data;
-        u32 len;
-        u32 rate;
-        u8 vol;
-        u8 pan;
-        u8 format;
-        u8 PADDING;
-} TransferSoundData, * pTransferSoundData;
+typedef struct {
+	const void *data;
+	u32 len;
+	u32 rate;
+	u8 vol;
+	u8 pan;
+	u8 format;
+	u8 PADDING;
+} TransferSoundData;
 
 
 
 
 //---------------------------------------------------------------------------------
-typedef struct sTransferSound {
-//---------------------------------------------------------------------------------
-  TransferSoundData data[16];
-  u8 count;
-  u8 PADDING[3];
-} TransferSound, * pTransferSound;
+typedef struct {
+	TransferSoundData data[16];
+	u8 count;
+	u8 PADDING[3];
+} TransferSound;
 
 
 
-typedef struct _adpcmBuffer {
+typedef struct {
 	u8 *buffer[8];
 	bool filled[8];
 	u8 *arm7Buffer[8];
@@ -97,7 +95,7 @@ typedef struct scummvmTransferRegion {
   uint16 battery;            // battery life ??  hopefully.  :)
   uint16 aux;                // i have no idea...
 
-  pTransferSound soundData;
+  TransferSound *soundData;
 
   adpcmBuffer adpcm;
 
@@ -127,7 +125,7 @@ typedef struct scummvmTransferRegion {
   // Streaming sound
   bool streamFillNeeded[4];
   int streamPlayingSection;
-} scummTransferRegion, * pscummTransferRegion;
+} scummTransferRegion;
 
 //////////////////////////////////////////////////////////////////////
 

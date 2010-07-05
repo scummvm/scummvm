@@ -85,6 +85,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "NDS/scummvm_ipc.h"
 #include "dsmain.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"

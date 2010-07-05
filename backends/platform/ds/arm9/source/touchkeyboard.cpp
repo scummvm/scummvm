@@ -20,6 +20,7 @@
  *
  */
 #include <nds.h>
+#include "NDS/scummvm_ipc.h"
 #include "touchkeyboard.h"
 #include "keyboard_raw.h"
 #include "keyboard_pal_raw.h"

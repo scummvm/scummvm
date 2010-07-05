@@ -28,7 +28,6 @@
 
 #include <nds.h>
 #include "osystem_ds.h"
-#include "NDS/scummvm_ipc.h"
 
 namespace DS {
 

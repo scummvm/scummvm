@@ -1,5 +1,5 @@
 # To approximate the DS builds A, B, C, ... run our configure like this
-#   configure --host=ds --disable-all-engines OPTIONS
+#   configure --host=ds --disable-translation --disable-all-engines OPTIONS
 # where OPTIONS is...
 # build A:  --enable-scumm
 # build B:  --enable-sky --enable-queen
