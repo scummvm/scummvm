@@ -264,7 +264,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                    NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
-    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r)",       NULL,            NULL },
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",      NULL,            NULL }, // for kq6 hires
     { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",          NULL,            NULL },
     { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "[il](iiiiii)",         NULL,            NULL },
     { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                   NULL,            NULL },
