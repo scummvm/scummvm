@@ -304,7 +304,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                  NULL,            NULL },
     { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
-    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(iii)(i)",   NULL,            NULL }, // subop
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", NULL,           NULL }, // subop
     { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
     { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                    NULL,            NULL },
     { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                   NULL,            NULL },
