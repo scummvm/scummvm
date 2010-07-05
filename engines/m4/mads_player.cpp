@@ -49,7 +49,7 @@ MadsPlayer::MadsPlayer() {
 	_currentScale = 0;
 	strcpy(_spritesPrefix, "");
 	for (int idx = 0; idx < 8; ++idx)
-		_spriteSetIndexes[idx] = 0;
+		_spriteSetsPresent[idx] = false;
 	_frameNum = 0;
 	_frameOffset = 0;
 	_unk1 = 0;
@@ -76,7 +76,7 @@ bool MadsPlayer::loadSprites(const char *prefix) {
 	if (prefixLen == 0) {
 		// No player sprites at at all
 		for (int idx = 0; idx < 8; ++idx)
-			_spriteSetIndexes[idx] = 0;
+			_spriteSetsPresent[idx] = false;
 	} else {
 		strcpy(setName, "*");
 		strcat(setName, _spritesPrefix);
@@ -86,13 +86,13 @@ bool MadsPlayer::loadSprites(const char *prefix) {
 
 		for (int idx = 0; idx < 8; ++idx) {
 			*digitP = suffixList[idx];
-			_spriteSetIndexes[idx] = -1;
+			_spriteSetsPresent[idx] = true;
 
 			int setIndex = _madsVm->scene()->_spriteSlots.addSprites(setName, true, SPRITE_SET_CHAR_INFO);
 			if (setIndex < 0) {
 				if (idx < 7)
 					break;
-				_spriteSetIndexes[idx] = 0;
+				_spriteSetsPresent[idx] = false;
 			} else {
 				++_spriteSetCount;
 			}
@@ -212,8 +212,9 @@ void MadsPlayer::setupFrame() {
 	resetActionList();
 	_frameOffset = 0;
 	_spriteListIdx2 = _directionListIndexes[_direction];
-	if (_spriteSetIndexes[_spriteListIdx2] == 0) {
-		_spriteListIdx2 = 4;
+	if (!_spriteSetsPresent[_spriteListIdx2]) {
+		// Direction isn't present, so use alternate direction, with entries flipped
+		_spriteListIdx2 -= 4;
 		_frameOffset = 0x8000;
 	}
 

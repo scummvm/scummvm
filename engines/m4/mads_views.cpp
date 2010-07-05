@@ -95,7 +95,7 @@ int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int fl
 
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, flags);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, false, flags);
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 

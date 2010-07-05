@@ -166,6 +166,7 @@ void MadsScene::loadScene(int sceneNumber) {
 	// Miscellaneous player setup
 	_madsVm->_player._destPos = _madsVm->_player._destPos;
 	_madsVm->_player._direction2 = _madsVm->_player._direction;
+	_madsVm->_player.setupFrame();
 	_madsVm->_player.idle();
 
 	// Purge resources

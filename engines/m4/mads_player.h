@@ -42,7 +42,7 @@ private:
 public:
 	char _spritesPrefix[16];
 	int _spriteSetCount;
-	int _spriteSetIndexes[8];
+	bool _spriteSetsPresent[8];
 	Common::Point _playerPos;
 	Common::Point _destPos;
 	int16 _direction, _direction2;
