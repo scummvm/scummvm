@@ -59,7 +59,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves=TARGET	    Display a list of savegames for the game (TARGET) specified\n"
+	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
