@@ -240,7 +240,7 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang);
  * domain, when they differ to the ones passed as
  * parameter.
  */
-void updateGameGUIOptions(const uint32 options);
+void updateGameGUIOptions(const uint32 options, const String &langOption);
 
 }	// End of namespace Common
 

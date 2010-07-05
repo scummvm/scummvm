@@ -365,12 +365,15 @@ const String getGameGUIOptionsDescription(uint32 options) {
 	return res;
 }
 
-void updateGameGUIOptions(const uint32 options) {
+void updateGameGUIOptions(const uint32 options, const String &langOption) {
+	const String newOptionString = getGameGUIOptionsDescription(options) + " " + langOption;
+
 	if ((options && !ConfMan.hasKey("guioptions")) ||
-	    (ConfMan.hasKey("guioptions") && options != parseGameGUIOptions(ConfMan.get("guioptions")))) {
-		ConfMan.set("guioptions", getGameGUIOptionsDescription(options));
+	    (ConfMan.hasKey("guioptions") && ConfMan.get("guioptions") != newOptionString)) {
+		ConfMan.set("guioptions", newOptionString);
 		ConfMan.flushToDisk();
 	}
 }
 
-}	// End of namespace Common
+} // End of namespace Common
+
