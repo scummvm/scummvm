@@ -194,9 +194,6 @@ enum MouseMode {
 #define SCUMM_GAME_HEIGHT 142
 #define SCUMM_GAME_WIDTH 227
 
-static int textureID;
-static u16* texture;
-
 static int frameCount;
 static int currentTimeMillis;
 
@@ -235,7 +232,6 @@ static bool indyFightState;
 static bool indyFightRight;
 
 static OSystem_DS::SoundProc soundCallback;
-static void *soundParam;
 static int lastCallbackFrame;
 static bool bufferFirstHalf;
 static bool bufferSecondHalf;
@@ -1450,7 +1446,6 @@ void doButtonSelectMode(OSystem_DS* system)
 			}
 
 			if (rightButtonDown) {
-				Common::Event event;
 				event.mouse = Common::Point(getPenX(), getPenY());
 				event.type = Common::EVENT_RBUTTONUP;
 				system->addEvent(event);
@@ -1464,7 +1459,6 @@ void doButtonSelectMode(OSystem_DS* system)
 				} else {
 					// If we're playing sam and max, click and release the right mouse
 					// button to change verb
-					Common::Event event;
 
 					if (s_currentGame->control == CONT_FUTURE_WARS) {
 						event.mouse = Common::Point(320 - 128, 200 - 128);
@@ -1579,8 +1573,7 @@ void addEventsToQueue() {
 				bool release = getKeysReleased() & (KEY_LEFT | KEY_RIGHT | KEY_UP | KEY_DOWN);
 				bool shoulders = getKeysHeld() & (KEY_L | KEY_R);
 
-				if ( (down && (!shoulders)) || release)
-				{
+				if ( (down && (!shoulders)) || release) {
 
 					if (getKeysChanged() & KEY_LEFT) {
 						event.kbd.keycode = Common::KEYCODE_LEFT;
@@ -1658,8 +1651,6 @@ void addEventsToQueue() {
 
 		updateStatus();
 
-		Common::Event event;
-
 
 		if ((tapScreenClicks) && (getIsDisplayMode8Bit())) {
 			if ((!keyboardEnable) || (!isInsideKeyboard(penDownX, penDownY))) {
@@ -1713,8 +1704,6 @@ void addEventsToQueue() {
 				if (s_currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
 					if ((getKeysDown() & KEY_DOWN)) {
-						Common::Event event;
-
 						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = Common::KEYCODE_F10;		// F10 or # - show hotspots
 						event.kbd.ascii = Common::ASCII_F10;
@@ -1732,8 +1721,6 @@ void addEventsToQueue() {
 				if (s_currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
 					if ((getKeysDown() & KEY_DOWN)) {
-						Common::Event event;
-
 						event.type = Common::EVENT_KEYDOWN;
 						event.kbd.keycode = Common::KEYCODE_PERIOD;		// Full stop - skips current dialogue line
 						event.kbd.ascii = '.';
@@ -2371,7 +2358,7 @@ void uploadSpriteGfx() {
 	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
 	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
-	u8* srcTex = (u8 *) ::icons_raw;
+	const u8* srcTex = (const u8 *) ::icons_raw;
 	for (int r = 32 * 256 ; r >= 0; r--) {
 		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
@@ -3361,7 +3348,6 @@ extern "C" void consolePrintf(char * format, ...) __attribute__ ((no_instrument_
 
 
 extern "C" void consolePrintf(const char * format, ...) {
-	char buffer[256];
 	va_list args;
 	va_start(args, format);
 	viprintf(format, args);

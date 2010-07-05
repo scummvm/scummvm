@@ -27,9 +27,11 @@
 
 namespace DS {
 
-static const int NUM_WORDS = 12;
-static const int KEYBOARD_DATA_SIZE = 4736 * 2;
-static const int KEYBOARD_BOTTOM_Y = 105;
+enum {
+	NUM_WORDS = 12,
+	KEYBOARD_DATA_SIZE = 4736 * 2,
+	KEYBOARD_BOTTOM_Y = 105
+};
 
 void createKeyEvent(int keyNum, Common::Event& event);
 

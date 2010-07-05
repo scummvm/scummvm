@@ -136,8 +136,8 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 
-	void addEvent(Common::Event& e);
-	bool isEventQueueEmpty() { return queuePos == 0; }
+	void addEvent(const Common::Event& e);
+	bool isEventQueueEmpty() const { return queuePos == 0; }
 
 	virtual bool grabRawScreen(Graphics::Surface* surf);
 
@@ -161,8 +161,8 @@ public:
 	virtual void clearAutoComplete();
 	virtual void setCharactersEntered(int count);
 
-	u16 getDSPaletteEntry(u32 entry) { return _palette[entry]; }
-	u16 getDSCursorPaletteEntry(u32 entry) { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
+	u16 getDSPaletteEntry(u32 entry) const { return _palette[entry]; }
+	u16 getDSCursorPaletteEntry(u32 entry) const { return !_disableCursorPalette? _cursorPalette[entry]: _palette[entry]; }
 
 	virtual void setCursorPalette(const byte *colors, uint start, uint num);
 

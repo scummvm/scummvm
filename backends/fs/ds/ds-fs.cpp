@@ -451,9 +451,8 @@ uint32 DSFileStream::write(const void *ptr, uint32 len) {
 	if (_writeBufferPos + len < WRITE_BUFFER_SIZE) {
 		memcpy(_writeBuffer + _writeBufferPos, ptr, len);
 		_writeBufferPos += len;
-	}
-	else
-	{
+		return len;
+	} else {
 		if (_writeBufferPos > 0) {
 			flush();
 		}
@@ -483,15 +482,17 @@ DSFileStream *DSFileStream::makeFromPath(const Common::String &path, bool writeM
 
 
 // Stdio replacements
-#define MAX_FILE_HANDLES 32
+enum {
+	MAX_FILE_HANDLES = 32
+};
 
-bool inited = false;
-DS::fileHandle handle[MAX_FILE_HANDLES];
+static bool inited = false;
+static DS::fileHandle s_handle[MAX_FILE_HANDLES];
 
 FILE* std_fopen(const char* name, const char* mode) {
 	if (!inited) {
 		for (int r = 0; r < MAX_FILE_HANDLES; r++) {
-			handle[r].used = false;
+			s_handle[r].used = false;
 		}
 		inited = true;
 		currentDir[0] = '\0';
@@ -538,7 +539,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 
 	// Allocate a file handle
 	int r = 0;
-	while (handle[r].used) {
+	while (s_handle[r].used) {
 		r++;
 		assert(r < MAX_FILE_HANDLES);
 	}
@@ -546,20 +547,20 @@ FILE* std_fopen(const char* name, const char* mode) {
 #ifdef GBA_SRAM_SAVE
 	if (strchr(mode, 'w')) {
 //		consolePrintf("Writing %s\n", realName);
-		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, true);
+		s_handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, true);
 	} else {
 //		consolePrintf("Reading %s\n", realName);
-		handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, false);
+		s_handle[r].sramFile = (DSSaveFile *) DSSaveFileManager::instance()->openSavefile(realName, false);
 	}
 #endif
 
-	if (handle[r].sramFile) {
-		handle[r].used = true;
-		handle[r].pos = 0;
-		handle[r].data = NULL;
-		handle[r].size = handle[r].sramFile->getSize();
+	if (s_handle[r].sramFile) {
+		s_handle[r].used = true;
+		s_handle[r].pos = 0;
+		s_handle[r].data = NULL;
+		s_handle[r].size = s_handle[r].sramFile->getSize();
 //		consolePrintf("Found it");
-		return &handle[r];
+		return &s_handle[r];
 	}
 
 //	consolePrintf("Not in SRAM!");
@@ -590,16 +591,17 @@ FILE* std_fopen(const char* name, const char* mode) {
 
 		// Allocate a file handle
 		int r = 0;
-		while (handle[r].used) r++;
+		while (s_handle[r].used)
+			r++;
 
 
-		handle[r].used = true;
-		handle[r].pos = 0;
-		handle[r].data = data;
-		handle[r].size = zip->getFileSize();
+		s_handle[r].used = true;
+		s_handle[r].pos = 0;
+		s_handle[r].data = data;
+		s_handle[r].size = zip->getFileSize();
 
 //		consolePrintf("Opened file %d: %s (%s)   ", r, realName, name);
-		return &handle[r];
+		return &s_handle[r];
 	} else {
 		zip->setAllFilesVisible(false);
 //		consolePrintf("Not found: %s (%s)  ", realName, name);

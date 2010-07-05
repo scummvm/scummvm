@@ -310,7 +310,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 			for (int dy = y; dy < y + h; dy++) {
 				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
-				u8* src = (u8 *) buf + (pitch * by);
+				const u8* src = (const u8 *) buf + (pitch * by);
 
 				u32 dx;
 
@@ -362,7 +362,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 			for (int dy = y; dy < y + h; dy++) {
 				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
 				u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-				u8* src = (u8 *) buf + (pitch * by);
+				const u8* src = (const u8 *) buf + (pitch * by);
 
 				u32 dx;
 
@@ -591,7 +591,7 @@ void OSystem_DS::refreshCursor() {
 	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
 }
 
-void OSystem_DS::addEvent(Common::Event& e) {
+void OSystem_DS::addEvent(const Common::Event& e) {
 	eventQueue[queuePos++] = e;
 }
 

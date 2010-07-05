@@ -38,7 +38,7 @@ enum controlType {
 	CONT_FUTURE_WARS,
 	CONT_AGI,
 	CONT_GOBLINS,
-	CONT_NIPPON,
+	CONT_NIPPON
 };
 
 struct gameListType {

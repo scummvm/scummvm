@@ -47,100 +47,100 @@ key_data keys[DS_NUM_KEYS] = {
 	// Key number		x		y		character
 
 	// Numbers
-	{28,				3,		0,		'1'},
-	{29,				5,		0,		'2'},
-	{30,				7,		0,		'3'},
-	{31,				9,		0,		'4'},
-	{32,				11,		0,		'5'},
-	{33,				13,		0,		'6'},
-	{34,				15,		0,		'7'},
-	{35,				17,		0,		'8'},
-	{36,				19,		0,		'9'},
-	{27,				21,		0,		'0'},
-	{45,				23,		0,		Common::KEYCODE_MINUS},
-	{50,				25,		0,		Common::KEYCODE_EQUALS},
-	{52,				27,		0,		Common::KEYCODE_BACKSPACE},
+	{28,				3,		0,		'1', false},
+	{29,				5,		0,		'2', false},
+	{30,				7,		0,		'3', false},
+	{31,				9,		0,		'4', false},
+	{32,				11,		0,		'5', false},
+	{33,				13,		0,		'6', false},
+	{34,				15,		0,		'7', false},
+	{35,				17,		0,		'8', false},
+	{36,				19,		0,		'9', false},
+	{27,				21,		0,		'0', false},
+	{45,				23,		0,		Common::KEYCODE_MINUS, false},
+	{50,				25,		0,		Common::KEYCODE_EQUALS, false},
+	{52,				27,		0,		Common::KEYCODE_BACKSPACE, false},
 
 	// Top row
-	{'Q'-'A' + 1,		4,		2,		'Q'},
-	{'W'-'A' + 1,		6,		2,		'W'},
-	{'E'-'A' + 1,		8,		2,		'E'},
-	{'R'-'A' + 1,		10,		2,		'R'},
-	{'T'-'A' + 1,		12,		2,		'T'},
-	{'Y'-'A' + 1,		14,		2,		'Y'},
-	{'U'-'A' + 1,		16,		2,		'U'},
-	{'I'-'A' + 1,		18,		2,		'I'},
-	{'O'-'A' + 1,		20,		2,		'O'},
-	{'P'-'A' + 1,		22,		2,		'P'},
-	{43,				24,		2,		Common::KEYCODE_LEFTBRACKET},
-	{44,				26,		2,		Common::KEYCODE_RIGHTBRACKET},
+	{'Q'-'A' + 1,		4,		2,		'Q', false},
+	{'W'-'A' + 1,		6,		2,		'W', false},
+	{'E'-'A' + 1,		8,		2,		'E', false},
+	{'R'-'A' + 1,		10,		2,		'R', false},
+	{'T'-'A' + 1,		12,		2,		'T', false},
+	{'Y'-'A' + 1,		14,		2,		'Y', false},
+	{'U'-'A' + 1,		16,		2,		'U', false},
+	{'I'-'A' + 1,		18,		2,		'I', false},
+	{'O'-'A' + 1,		20,		2,		'O', false},
+	{'P'-'A' + 1,		22,		2,		'P', false},
+	{43,				24,		2,		Common::KEYCODE_LEFTBRACKET, false},
+	{44,				26,		2,		Common::KEYCODE_RIGHTBRACKET, false},
 
 	// Middle row
-	{55,				3,		4,		DS_CAPSLOCK},
-	{'A'-'A' + 1,		5,		4,		'A'},
-	{'S'-'A' + 1,		7,		4,		'S'},
-	{'D'-'A' + 1,		9,		4,		'D'},
-	{'F'-'A' + 1,		11,		4,		'F'},
-	{'G'-'A' + 1,		13,		4,		'G'},
-	{'H'-'A' + 1,		15,		4,		'H'},
-	{'J'-'A' + 1,		17,		4,		'J'},
-	{'K'-'A' + 1,		19,		4,		'K'},
-	{'L'-'A' + 1,		21,		4,		'L'},
-	{42,				23,		4,		Common::KEYCODE_SEMICOLON},
-	{41,				25,		4,		Common::KEYCODE_QUOTE},
-	{46,				27,		4,		Common::KEYCODE_RETURN},
+	{55,				3,		4,		DS_CAPSLOCK, false},
+	{'A'-'A' + 1,		5,		4,		'A', false},
+	{'S'-'A' + 1,		7,		4,		'S', false},
+	{'D'-'A' + 1,		9,		4,		'D', false},
+	{'F'-'A' + 1,		11,		4,		'F', false},
+	{'G'-'A' + 1,		13,		4,		'G', false},
+	{'H'-'A' + 1,		15,		4,		'H', false},
+	{'J'-'A' + 1,		17,		4,		'J', false},
+	{'K'-'A' + 1,		19,		4,		'K', false},
+	{'L'-'A' + 1,		21,		4,		'L', false},
+	{42,				23,		4,		Common::KEYCODE_SEMICOLON, false},
+	{41,				25,		4,		Common::KEYCODE_QUOTE, false},
+	{46,				27,		4,		Common::KEYCODE_RETURN, false},
 
 	// Bottom row
-	{51,				4,		6,		DS_SHIFT},
-	{'Z'-'A' + 1,		6,		6,		'Z'},
-	{'X'-'A' + 1,		8,		6,		'X'},
-	{'C'-'A' + 1,		10,		6,		'C'},
-	{'V'-'A' + 1,		12,		6,		'V'},
-	{'B'-'A' + 1,		14,		6,		'B'},
-	{'N'-'A' + 1,		16,		6,		'N'},
-	{'M'-'A' + 1,		18,		6,		'M'},
-	{38,				20,		6,		Common::KEYCODE_COMMA},
-	{39,				22,		6,		Common::KEYCODE_PERIOD},
-	{40,				24,		6,		Common::KEYCODE_SLASH},
+	{51,				4,		6,		DS_SHIFT, false},
+	{'Z'-'A' + 1,		6,		6,		'Z', false},
+	{'X'-'A' + 1,		8,		6,		'X', false},
+	{'C'-'A' + 1,		10,		6,		'C', false},
+	{'V'-'A' + 1,		12,		6,		'V', false},
+	{'B'-'A' + 1,		14,		6,		'B', false},
+	{'N'-'A' + 1,		16,		6,		'N', false},
+	{'M'-'A' + 1,		18,		6,		'M', false},
+	{38,				20,		6,		Common::KEYCODE_COMMA, false},
+	{39,				22,		6,		Common::KEYCODE_PERIOD, false},
+	{40,				24,		6,		Common::KEYCODE_SLASH, false},
 
 	// Space bar
-	{47,				9,		8,		Common::KEYCODE_SPACE},
-	{48,				11,		8,		Common::KEYCODE_SPACE},
-	{48,				13,		8,		Common::KEYCODE_SPACE},
-	{48,				15,		8,		Common::KEYCODE_SPACE},
-	{48,				17,		8,		Common::KEYCODE_SPACE},
-	{49,				19,		8,		Common::KEYCODE_SPACE},
+	{47,				9,		8,		Common::KEYCODE_SPACE, false},
+	{48,				11,		8,		Common::KEYCODE_SPACE, false},
+	{48,				13,		8,		Common::KEYCODE_SPACE, false},
+	{48,				15,		8,		Common::KEYCODE_SPACE, false},
+	{48,				17,		8,		Common::KEYCODE_SPACE, false},
+	{49,				19,		8,		Common::KEYCODE_SPACE, false},
 
 	// Cursor arrows
-	{52,				27,		8,		Common::KEYCODE_LEFT},
-	{54,				29,		8,		Common::KEYCODE_DOWN},
-	{53,				31,		8,		Common::KEYCODE_RIGHT},
-	{51,				29,		6,		Common::KEYCODE_UP},
+	{52,				27,		8,		Common::KEYCODE_LEFT, false},
+	{54,				29,		8,		Common::KEYCODE_DOWN, false},
+	{53,				31,		8,		Common::KEYCODE_RIGHT, false},
+	{51,				29,		6,		Common::KEYCODE_UP, false},
 
 	// Close button
-	{56,				30,		0,		Common::KEYCODE_INVALID},
+	{56,				30,		0,		Common::KEYCODE_INVALID, false},
 
 	// Function keys (needed for AGI)
-	{57,				4,		-2,		Common::KEYCODE_F1},
-	{58,				6,		-2,		Common::KEYCODE_F2},
-	{59,				8,		-2,		Common::KEYCODE_F3},
-	{60,				10,		-2,		Common::KEYCODE_F4},
-	{61,				14,		-2,		Common::KEYCODE_F5},
-	{62,				16,		-2,		Common::KEYCODE_F6},
-	{63,				18,		-2,		Common::KEYCODE_F7},
-	{64,				20,		-2,		Common::KEYCODE_F8},
-	{65,				24,		-2,		Common::KEYCODE_F9},
-	{66,				26,		-2,		Common::KEYCODE_F10},
-	{67,				28,		-2,		Common::KEYCODE_F11},
-	{68,				30,		-2,		Common::KEYCODE_F12},
+	{57,				4,		-2,		Common::KEYCODE_F1, false},
+	{58,				6,		-2,		Common::KEYCODE_F2, false},
+	{59,				8,		-2,		Common::KEYCODE_F3, false},
+	{60,				10,		-2,		Common::KEYCODE_F4, false},
+	{61,				14,		-2,		Common::KEYCODE_F5, false},
+	{62,				16,		-2,		Common::KEYCODE_F6, false},
+	{63,				18,		-2,		Common::KEYCODE_F7, false},
+	{64,				20,		-2,		Common::KEYCODE_F8, false},
+	{65,				24,		-2,		Common::KEYCODE_F9, false},
+	{66,				26,		-2,		Common::KEYCODE_F10, false},
+	{67,				28,		-2,		Common::KEYCODE_F11, false},
+	{68,				30,		-2,		Common::KEYCODE_F12, false},
 
 };
 
 int keyboardX;
 int keyboardY;
 
-int mapBase;
-int tileBase;
+static int s_mapBase;
+static int s_tileBase;
 
 u16* baseAddress;
 
@@ -212,7 +212,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	for (int tile = 0; tile < 94; tile++) {
 
 		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
-		u8* src = ((u8 *) (::_8x8font_tga_raw)) + 18 + tile * 8;
+		const u8* src = ((const u8 *) (::_8x8font_tga_raw)) + 18 + tile * 8;
 
 		for (int y = 0 ; y < 8; y++) {
 			for (int x = 0; x < 2; x++) {
@@ -247,8 +247,8 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	keyboardX = -2;
 	keyboardY = 2;
 
-	DS::mapBase = mapBase;
-	DS::tileBase = tileBase;
+	DS::s_mapBase = mapBase;
+	DS::s_tileBase = tileBase;
 
 	shiftState = false;
 	capsLockState = false;
@@ -314,7 +314,7 @@ bool getKeyboardClosed() {
 }
 
 void setKeyHighlight(int key, bool highlight) {
-	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(DS::mapBase));
+	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(DS::s_mapBase));
 
 	if (highlight) {
 		base[(keyboardY + keys[key].y) * 32 + keyboardX + keys[key].x] |= 0x1000;
