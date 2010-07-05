@@ -586,5 +586,4 @@ void addKeyboardEvents() {
 
 }
 
-}
-
+}	// End of namespace DS

@@ -148,4 +148,5 @@ uint32 keysUp(void) {
 }
 
 
-} // namespace ds
+}	// End of namespace DS
+
