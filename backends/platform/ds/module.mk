@@ -12,7 +12,6 @@ PORT_OBJS := \
 	arm9/source/gbampsave.o \
 	arm9/source/scummhelp.o \
 	arm9/source/osystem_ds.o \
-	arm9/source/portdefs.o \
 	arm9/source/ramsave.o \
 	arm9/source/touchkeyboard.o \
 	arm9/source/zipreader.o \

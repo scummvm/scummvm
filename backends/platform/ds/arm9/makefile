@@ -247,9 +247,6 @@ endif
 
 DEFINES += -DREDUCE_MEMORY_USAGE
 
-# Removed, as these are done in portdefs.h
-# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE
-
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
 ifdef WRAP_MALLOC
@@ -294,7 +291,7 @@ endif
 
 PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
-		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
+		$(portdir)/source/osystem_ds.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
 		$(portdir)/source/interrupt.o
