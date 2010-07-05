@@ -798,7 +798,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 			for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
 				if (setting.empty() ? (preferredType == d->getMusicType()) : (drv == d->getCompleteId())) {
 					popup->setSelectedTag(d->getHandle());
-					return true;
+					return popup->getSelected() == -1 ? false : true;
 				}
 			}
 		}
