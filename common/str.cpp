@@ -105,8 +105,6 @@ String::String(char c)
 	_storage[0] = c;
 	_storage[1] = 0;
 
-	// TODO/FIXME: There is no reason for the following check -- we *do*
-	// allow strings to contain 0 bytes!
 	_size = (c == 0) ? 0 : 1;
 }
 
@@ -256,9 +254,11 @@ String &String::operator=(const String &str) {
 String &String::operator=(char c) {
 	decRefCount(_extern._refCount);
 	_str = _storage;
-	_size = 1;
+
 	_str[0] = c;
 	_str[1] = 0;
+
+	_size = (c == 0) ? 0 : 1;
 	return *this;
 }
 
