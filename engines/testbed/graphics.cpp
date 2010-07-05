@@ -823,12 +823,21 @@ bool GFXtests::pixelFormats() {
 			Testsuite::logDetailedPrintf("Testing pixel format failed for format #%d on the list\n", numFormatsTested);
 		}
 	}
+
+	// Revert back to 8bpp
+	g_system->beginGFXTransaction();
+	g_system->initSize(320, 200);
+	g_system->endGFXTransaction();
+	GFXTestSuite::setCustomColor(255, 0, 0);
+	initMousePalette();
+	Testsuite::clearScreen();
+
+
 	if (numFailed) {
 		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
 		return false;
 	}
 	
-	Testsuite::clearScreen();
 	return true;
 }
 
