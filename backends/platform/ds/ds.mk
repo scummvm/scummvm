@@ -18,7 +18,7 @@ OPT_SIZE := -Os -mthumb
 #-mthumb -fno-gcse -fno-schedule-insns2
 
 
-OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
+#OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
 
 
 # TODO: Handle files in OPTLIST.
@@ -99,10 +99,10 @@ $(ndsdir)/arm7/source/main.o: CXXFLAGS=$(ARM7_CXXFLAGS)
 $(ndsdir)/arm7/source/main.o: CPPFLAGS=
 
 # Rule for creating ARM7 .bin files from .elf files
-%.bin: %.elf
-	@echo ------
-	@echo Building $@...
-	$(OBJCOPY) -O binary  $< $@
+#%.bin: %.elf
+#	@echo ------
+#	@echo Building $@...
+#	$(OBJCOPY) -O binary  $< $@
 
 # Rule for creating ARM7 .elf files by linking .o files together with a special linker script
 %.elf:
