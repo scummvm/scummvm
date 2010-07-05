@@ -80,8 +80,9 @@
 //#include <ARM9/console.h> //basic print funcionality
 
 #include <stdlib.h>
+#include <string.h>
+
 #include "dsmain.h"
-#include "string.h"
 #include "osystem_ds.h"
 #include "icons_raw.h"
 #include "fat/gba_nds_fat.h"
@@ -102,12 +103,14 @@
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
 #endif
-#include "backends/fs/ds/ds-fs.h"
-#include "base/version.h"
 #include "engine.h"
 
+#include "backends/fs/ds/ds-fs.h"
+#include "base/version.h"
+#include "common/util.h"
+
 extern "C" void OurIntrMain(void);
-extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
+extern "C" u32 getExceptionAddress(u32 opcodeAddress, u32 thumbState);
 
 extern const char __itcm_start[];
 static const char *registerNames[] =
@@ -118,20 +121,19 @@ static const char *registerNames[] =
 
 extern "C" void* __real_malloc(size_t size);
 
-int total = 0;
+static int s_total_malloc = 0;
 
-void* operator new (size_t size)
-{
+void *operator new (size_t size) {
 	register unsigned int reg asm("lr");
 	volatile unsigned int poo = reg;
 
-	void* res = __real_malloc(size);
-	total += size;
+	void *res = __real_malloc(size);
+	s_total_malloc += size;
 
 	if (!res)
 	{
 //		*((u8 *) NULL) = 0;
-		consolePrintf("Failed alloc (new) %d (%d)\n", size, total);
+		consolePrintf("Failed alloc (new) %d (%d)\n", size, s_total_malloc);
 		return NULL;
 	}
 
@@ -139,7 +141,7 @@ void* operator new (size_t size)
 }
 
 
-extern "C" void* __wrap_malloc(size_t size) {
+extern "C" void *__wrap_malloc(size_t size) {
 /*	u32 addr;
 
 	asm("mov %0, lr"
@@ -151,8 +153,7 @@ extern "C" void* __wrap_malloc(size_t size) {
 	volatile unsigned int poo = reg;
 
 
-	if (size == 0)
-	{
+	if (size == 0) {
 		static int zeroSize = 0;
 		consolePrintf("0 size malloc (%d)", zeroSize++);
 	}
@@ -162,12 +163,12 @@ extern "C" void* __wrap_malloc(size_t size) {
 		if (size > 50 * 1024) {
 			consolePrintf("Allocated %d (%x)\n", size, poo);
 		}
-		total += size;
+		s_total_malloc += size;
 		return res;
 	} else {
 
 //		*((u8 *) NULL) = 0;
-		consolePrintf("Failed alloc %d (%d)\n", size, total);
+		consolePrintf("Failed alloc %d (%d)\n", size, s_total_malloc);
 		return NULL;
 	}
 }
@@ -193,112 +194,113 @@ enum MouseMode {
 #define SCUMM_GAME_HEIGHT 142
 #define SCUMM_GAME_WIDTH 227
 
-int textureID;
-u16* texture;
+static int textureID;
+static u16* texture;
 
-int frameCount;
-int currentTimeMillis;
+static int frameCount;
+static int currentTimeMillis;
 
 // Timer Callback
-int callbackInterval;
-int callbackTimer;
-OSystem_DS::TimerProc callback;
+static int callbackInterval;
+static int callbackTimer;
+static OSystem_DS::TimerProc callback;
 
 // Scaled
-bool scaledMode;
-int scX;
-int scY;
+static bool scaledMode;
+static int scX;
+static int scY;
 
-int subScX;
-int subScY;
-int subScTargetX;
-int subScTargetY;
-int subScreenWidth = SCUMM_GAME_WIDTH;
-int subScreenHeight = SCUMM_GAME_HEIGHT;
-int subScreenScale = 256;
+static int subScX;
+static int subScY;
+static int subScTargetX;
+static int subScTargetY;
+static int subScreenWidth = SCUMM_GAME_WIDTH;
+static int subScreenHeight = SCUMM_GAME_HEIGHT;
+static int subScreenScale = 256;
 
 
 
 // Sound
-int bufferSize;
-s16* soundBuffer;
-int bufferFrame;
-int bufferRate;
-int bufferSamples;
-bool soundHiPart;
-int soundFrequency;
+static int bufferSize;
+static s16* soundBuffer;
+static int bufferFrame;
+static int bufferRate;
+static int bufferSamples;
+static bool soundHiPart;
+static int soundFrequency;
 
 // Events
-int lastEventFrame;
-bool indyFightState;
-bool indyFightRight;
+static int lastEventFrame;
+static bool indyFightState;
+static bool indyFightRight;
 
-OSystem_DS::SoundProc soundCallback;
-void* soundParam;
-int lastCallbackFrame;
-bool bufferFirstHalf;
-bool bufferSecondHalf;
+static OSystem_DS::SoundProc soundCallback;
+static void *soundParam;
+static int lastCallbackFrame;
+static bool bufferFirstHalf;
+static bool bufferSecondHalf;
 
 // Saved buffers
-bool highBuffer;
-bool displayModeIs8Bit = false;
+static bool highBuffer;
+static bool displayModeIs8Bit = false;
 
 // Game id
-u8 gameID;
+static u8 gameID;
 
-bool snapToBorder = false;
-bool consoleEnable = false;
-bool gameScreenSwap = false;
+static bool snapToBorder = false;
+static bool consoleEnable = false;
+static bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
 
-MouseMode mouseMode = MOUSE_LEFT;
+static MouseMode mouseMode = MOUSE_LEFT;
 
-int storedMouseX = 0;
-int storedMouseY = 0;
+static int storedMouseX = 0;
+static int storedMouseY = 0;
 
 // Sprites
-SpriteEntry sprites[128];
-SpriteEntry spritesMain[128];
-int tweak;
+static SpriteEntry sprites[128];
+static SpriteEntry spritesMain[128];
+static int tweak;
 
 // Shake
-int shakePos = 0;
+static int shakePos = 0;
 
 // Keyboard
-bool keyboardEnable = false;
-bool leftHandedMode = false;
-bool keyboardIcon = false;
+static bool keyboardEnable = false;
+static bool leftHandedMode = false;
+static bool keyboardIcon = false;
 
 // Touch
-int touchScX, touchScY, touchX, touchY;
-int mouseHotspotX, mouseHotspotY;
-bool cursorEnable = false;
-bool mouseCursorVisible = true;
-bool rightButtonDown = false;
-bool touchPadStyle = false;
-int touchPadSensitivity = 8;
-bool tapScreenClicks = true;
+static int touchScX, touchScY, touchX, touchY;
+static int mouseHotspotX, mouseHotspotY;
+static bool cursorEnable = false;
+static bool mouseCursorVisible = true;
+static bool leftButtonDown = false;
+static bool rightButtonDown = false;
+static bool touchPadStyle = false;
+static int touchPadSensitivity = 8;
+static bool tapScreenClicks = true;
 
-int tapCount = 0;
-int tapTimeout = 0;
-int tapComplete = 0;
+static int tapCount = 0;
+static int tapTimeout = 0;
+static int tapComplete = 0;
 
 // Dragging
-int dragStartX, dragStartY;
-bool dragging = false;
-int dragScX, dragScY;
+static int dragStartX, dragStartY;
+static bool dragging = false;
+static int dragScX, dragScY;
 
 // Interface styles
-char gameName[32];
+static char gameName[32];
 
 // 8-bit surface size
-int gameWidth = 320;
-int gameHeight = 200;
+static int gameWidth = 320;
+static int gameHeight = 200;
 
 // Scale
-bool twoHundredPercentFixedScale = false;
-bool cpuScalerEnable = false;
+static bool twoHundredPercentFixedScale = false;
+static bool cpuScalerEnable = false;
 
 		// 100    256
 		// 150	  192
@@ -309,14 +311,14 @@ bool cpuScalerEnable = false;
 
 
 #ifdef USE_PROFILER
-int hBlankCount = 0;
+static int hBlankCount = 0;
 #endif
 
-u8* scalerBackBuffer = NULL;
+static u8 *scalerBackBuffer = NULL;
 
 #define NUM_SUPPORTED_GAMES 21
 
-gameListType gameList[NUM_SUPPORTED_GAMES] = {
+static const gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	// Unknown game - use normal SCUMM controls
 	{"unknown", 	CONT_SCUMM_ORIGINAL},
 
@@ -345,31 +347,29 @@ gameListType gameList[NUM_SUPPORTED_GAMES] = {
 	{"parallaction",	CONT_NIPPON},
 };
 
-gameListType* currentGame = NULL;
+static const gameListType *s_currentGame = NULL;
 
 // Stylus
-#define ABS(x) ((x)>0?(x):-(x))
+static bool penDown = FALSE;
+static bool penHeld = FALSE;
+static bool penReleased = FALSE;
+static bool penDownLastFrame = FALSE;
+static s32 penX = 0, penY = 0;
+static s32 penDownX = 0, penDownY = 0;
+static int keysDownSaved = 0;
+static int keysReleasedSaved = 0;
+static int keysChangedSaved = 0;
 
-bool penDown = FALSE;
-bool penHeld = FALSE;
-bool penReleased = FALSE;
-bool penDownLastFrame = FALSE;
-s32 penX = 0, penY = 0;
-s32 penDownX = 0, penDownY = 0;
-int keysDownSaved = 0;
-int keysReleasedSaved = 0;
-int keysChangedSaved = 0;
+static bool penDownSaved = FALSE;
+static bool penReleasedSaved = FALSE;
+static int penDownFrames = 0;
+static int touchXOffset = 0;
+static int touchYOffset = 0;
 
-bool penDownSaved = FALSE;
-bool penReleasedSaved = FALSE;
-int penDownFrames = 0;
-int touchXOffset = 0;
-int touchYOffset = 0;
+static int triggeredIcon = 0;
+static int triggeredIconTimeout = 0;
 
-int triggeredIcon = 0;
-int triggeredIconTimeout = 0;
-
-u16 savedPalEntry255 = RGB15(31, 31, 31);
+static u16 savedPalEntry255 = RGB15(31, 31, 31);
 
 
 extern "C" int scummvm_main(int argc, char *argv[]);
@@ -382,7 +382,7 @@ void setIcon(int num, int x, int y, int imageNum, int flags, bool enable);
 void setIconMain(int num, int x, int y, int imageNum, int flags, bool enable);
 void uploadSpriteGfx();
 
-TransferSound soundControl;
+static TransferSound soundControl;
 
 
 bool isCpuScalerEnabled() {
@@ -430,7 +430,7 @@ void setTopScreenZoom(int percentage) {
 //	return (ConfMan.hasKey("cpu_scaler", "ds") && ConfMan.getBool("cpu_scaler", "ds"));
 
 controlType getControlType() {
-	return currentGame->control;
+	return s_currentGame->control;
 }
 
 
@@ -551,21 +551,8 @@ int getSoundFrequency() {
 	return soundFrequency;
 }
 
-void setControls(char* gameName) {
-
-	for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
-		if (!stricmp(gameName, gameList[r].gameId)) {
-			currentGame = &gameList[r];
-			consolePrintf("Current game set to: %s\n", gameName);
-			return;
-		}
-	}
-
-	consolePrintf("Failed to set current game to: %s\n", gameName);
-}
-
 void exitGame() {
-	currentGame = NULL;
+	s_currentGame = NULL;
 }
 
 void initGame() {
@@ -580,17 +567,17 @@ void initGame() {
 	setOptions();
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
-	if (currentGame == NULL) {
+	if (s_currentGame == NULL) {
 
 		strcpy(gameName, ConfMan.get("gameid").c_str());
 	//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
 
-		currentGame = &gameList[0];		// Default game
+		s_currentGame = &gameList[0];		// Default game
 
 		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
 			if (!stricmp(gameName, gameList[r].gameId)) {
-				currentGame = &gameList[r];
-	//			consolePrintf("Game list num: %d\n", currentGame);
+				s_currentGame = &gameList[r];
+	//			consolePrintf("Game list num: %d\n", s_currentGame);
 			}
 		}
 	}
@@ -785,7 +772,7 @@ void checkSleepMode() {
 }
 
 void setShowCursor(bool enable) {
-	if ((currentGame) && (currentGame->control == CONT_SCUMM_SAMNMAX)) {
+	if ((s_currentGame) && (s_currentGame->control == CONT_SCUMM_SAMNMAX)) {
 		if (cursorEnable) {
 			sprites[1].attribute[0] = ATTR0_BMP | 150;
 		} else {
@@ -833,7 +820,7 @@ void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, 
 		}
 	}
 
-	if (currentGame->control != CONT_SCUMM_SAMNMAX)
+	if (s_currentGame->control != CONT_SCUMM_SAMNMAX)
 		return;
 
 	uint16 border = RGB15(24,24,24) | 0x8000;
@@ -1035,7 +1022,7 @@ void setShakePos(int shakePos) {
 }
 
 
-u16* get16BitBackBuffer() {
+u16 *get16BitBackBuffer() {
 	return BG_GFX + 0x20000;
 }
 
@@ -1319,8 +1306,7 @@ bool getIsDisplayMode8Bit() {
 	return displayModeIs8Bit;
 }
 
-void doScreenTapMode(OSystem_DS* system)
-{
+void doScreenTapMode(OSystem_DS* system) {
 	Common::Event event;
 	static bool left = false, right = false;
 
@@ -1398,9 +1384,6 @@ void doButtonSelectMode(OSystem_DS* system)
 		//consolePrintf("x=%d   y=%d  \n", getPenX(), getPenY());
 	}
 
-	static bool leftButtonDown = false;
-	static bool rightButtonDown = false;
-
 	if (getPenReleased() && (leftButtonDown || rightButtonDown)) {
 		if (leftButtonDown) {
 			event.type = Common::EVENT_LBUTTONUP;
@@ -1476,14 +1459,14 @@ void doButtonSelectMode(OSystem_DS* system)
 
 
 			if (getKeysDown() & KEY_RIGHT) {
-				if ((currentGame->control != CONT_SCUMM_SAMNMAX) && (currentGame->control != CONT_FUTURE_WARS) && (currentGame->control != CONT_GOBLINS)) {
+				if ((s_currentGame->control != CONT_SCUMM_SAMNMAX) && (s_currentGame->control != CONT_FUTURE_WARS) && (s_currentGame->control != CONT_GOBLINS)) {
 					mouseMode = MOUSE_RIGHT;
 				} else {
 					// If we're playing sam and max, click and release the right mouse
 					// button to change verb
 					Common::Event event;
 
-					if (currentGame->control == CONT_FUTURE_WARS) {
+					if (s_currentGame->control == CONT_FUTURE_WARS) {
 						event.mouse = Common::Point(320 - 128, 200 - 128);
 						event.type = Common::EVENT_MOUSEMOVE;
 						system->addEvent(event);
@@ -1558,7 +1541,7 @@ void addEventsToQueue() {
 			if (!indyFightState) {
 
 				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {
-					if (currentGame->control == CONT_AGI) {
+					if (s_currentGame->control == CONT_AGI) {
 						event.kbd.keycode = Common::KEYCODE_RETURN;
 						event.kbd.ascii = 13;
 						event.kbd.flags = 0;
@@ -1699,7 +1682,7 @@ void addEventsToQueue() {
 
 
 
-				if (currentGame->control == CONT_SKY) {
+				if (s_currentGame->control == CONT_SKY) {
 					// Extra controls for Beneath a Steel Sky
 					if ((getKeysDown() & KEY_DOWN)) {
 						penY = 0;
@@ -1707,7 +1690,7 @@ void addEventsToQueue() {
 					}
 				}
 
-				if (currentGame->control == CONT_AGI) {
+				if (s_currentGame->control == CONT_AGI) {
 					// Extra controls for Leisure Suit Larry and KQ4
 
 					if ((getKeysHeld() & KEY_UP) && (getKeysHeld() & KEY_START)
@@ -1727,7 +1710,7 @@ void addEventsToQueue() {
 
 
 
-				if (currentGame->control == CONT_SIMON) {
+				if (s_currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
 					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
@@ -1746,7 +1729,7 @@ void addEventsToQueue() {
 
 
 
-				if (currentGame->control == CONT_SCUMM_ORIGINAL) {
+				if (s_currentGame->control == CONT_SCUMM_ORIGINAL) {
 					// Extra controls for Scumm v1-5 games
 					if ((getKeysDown() & KEY_DOWN)) {
 						Common::Event event;
@@ -1806,14 +1789,14 @@ void addEventsToQueue() {
 		if ((getKeysChanged() & KEY_START)) {
 			event.kbd.flags = 0;
 			event.type = getKeyEvent(KEY_START);
-			if (currentGame->control == CONT_FUTURE_WARS) {
+			if (s_currentGame->control == CONT_FUTURE_WARS) {
 				event.kbd.keycode = Common::KEYCODE_F10;
 				event.kbd.ascii = Common::ASCII_F10;
-			} else if (currentGame->control == CONT_GOBLINS) {
+			} else if (s_currentGame->control == CONT_GOBLINS) {
 				event.kbd.keycode = Common::KEYCODE_F1;
 				event.kbd.ascii = Common::ASCII_F1;
 //				consolePrintf("!!!!!F1!!!!!");
-			} else if (currentGame->control == CONT_AGI) {
+			} else if (s_currentGame->control == CONT_AGI) {
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
 			} else {
@@ -2060,8 +2043,8 @@ void VBlankHandler(void) {
 
 
 	if ((!gameScreenSwap) && (!(getKeysHeld() & KEY_L) && !(getKeysHeld() & KEY_R))) {
-		if (currentGame) {
-			if (currentGame->control != CONT_SCUMM_SAMNMAX) {
+		if (s_currentGame) {
+			if (s_currentGame->control != CONT_SCUMM_SAMNMAX) {
 				if (getPenHeld() && (getPenY() < SCUMM_GAME_HEIGHT)) {
 					setTopScreenTarget(getPenX(), getPenY());
 				}
@@ -2854,10 +2837,6 @@ void setIndyFightState(bool st) {
 
 bool getIndyFightState() {
 	return indyFightState;
-}
-
-gameListType* getCurrentGame() {
-	return currentGame;
 }
 
 ///////////////////
