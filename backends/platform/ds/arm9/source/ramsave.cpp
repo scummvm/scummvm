@@ -38,7 +38,7 @@ DSSaveFile::DSSaveFile() {
 	isTempFile = false;
 }
 
-DSSaveFile::DSSaveFile(SCUMMSave* s, bool compressed, u8* data) {
+DSSaveFile::DSSaveFile(SCUMMSave *s, bool compressed, u8 *data) {
 	save = *s;
 	saveData = data;
 	ptr = 0;
@@ -46,7 +46,7 @@ DSSaveFile::DSSaveFile(SCUMMSave* s, bool compressed, u8* data) {
 	isOpenFlag = true;
 
 	if (saveCompressed) {
-		u8* uncompressed = new unsigned char[save.size];
+		u8 *uncompressed = new unsigned char[save.size];
 		if (!uncompressed) consolePrintf("Out of memory allocating %d!\n", save.size);
 		LZ_Uncompress(saveData, uncompressed, save.compressedSize);
 		saveData = uncompressed;
@@ -79,7 +79,7 @@ DSSaveFile::~DSSaveFile() {
 	}
 }
 
-bool DSSaveFile::loadFromSaveRAM(vu8* address) {
+bool DSSaveFile::loadFromSaveRAM(vu8 *address) {
 
 	SCUMMSave newSave;
 
@@ -113,7 +113,7 @@ bool DSSaveFile::loadFromSaveRAM(vu8* address) {
 
 void DSSaveFile::compress() {
 	if (!saveCompressed) {
-		unsigned char* compBuffer = new unsigned char[(save.size * 110) / 100];
+		unsigned char *compBuffer = new unsigned char[(save.size * 110) / 100];
 		int compSize = LZ_Compress((u8 *) saveData, compBuffer, save.size);
 		save.compressedSize = compSize;
 
@@ -127,9 +127,9 @@ void DSSaveFile::compress() {
 	}
 }
 
-int DSSaveFile::saveToSaveRAM(vu8* address) {
+int DSSaveFile::saveToSaveRAM(vu8 *address) {
 
-	unsigned char* compBuffer;
+	unsigned char *compBuffer;
 	bool failed;
 
 
@@ -356,7 +356,7 @@ void DSSaveFileManager::listFiles() {
 	consolePrintf("SRAM free: %d bytes\n", getBytesFree());
 }
 
-DSSaveFileManager* DSSaveFileManager::instancePtr = NULL;
+DSSaveFileManager *DSSaveFileManager::instancePtr = NULL;
 
 DSSaveFile *DSSaveFileManager::openSavefile(const char *filename, bool saveOrLoad) {
 	for (int r = 0; r < 8; r++) {
@@ -379,12 +379,12 @@ DSSaveFile *DSSaveFileManager::openSavefile(const char *filename, bool saveOrLoa
 
 
 
-DSSaveFile* DSSaveFile::clone() {
+DSSaveFile *DSSaveFile::clone() {
 //	consolePrintf("Clone %s %d\n", save.name, save.size);
 	return new DSSaveFile(&save, saveCompressed, saveData);
 }
 
-void DSSaveFileManager::deleteFile(const char* name) {
+void DSSaveFileManager::deleteFile(const char *name) {
 //	consolePrintf("Deleting %s", name);
 	for (int r = 0; r < 8; r++) {
 		if (gbaSave[r].isValid() && (gbaSave[r].matches(name))) {
@@ -506,7 +506,7 @@ void DSSaveFileManager::setExtraData(int data) {
 	// Offset of extra data is 31.  This overlaps the padding and reserved bytes of the first save entry.
 	// which have not been used up until now.  So it should be safe.
 
-	vu8* sram = CART_RAM + 31;
+	vu8 *sram = CART_RAM + 31;
 
 	*(sram + 0) = 0xF0;		// This is an identifier to check
 	*(sram + 1) = 0x0D;		// that extra data is present.
@@ -518,14 +518,14 @@ void DSSaveFileManager::setExtraData(int data) {
 }
 
 bool DSSaveFileManager::isExtraDataPresent() {
-	vu8* sram = CART_RAM + 31;
+	vu8 *sram = CART_RAM + 31;
 
 	// Check for the identifier
 	return ((*(sram + 0) == 0xF0) && (*(sram + 1) == 0x0D));
 }
 
 int DSSaveFileManager::getExtraData() {
-	vu8* sram = CART_RAM + 31;
+	vu8 *sram = CART_RAM + 31;
 
 	if (isExtraDataPresent()) {
 		int value = (*(sram + 2) << 24) | (*(sram + 3) << 16) | (*(sram + 4) << 8) | (*(sram + 5));

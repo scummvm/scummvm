@@ -14,7 +14,7 @@ namespace DS {
 char wordBuffer[WORD_BUFFER_SIZE];
 int wordBufferPos = 0;
 
-char* wordBufferPtr[MAX_WORD_COUNT];
+char *wordBufferPtr[MAX_WORD_COUNT];
 int wordBufferPtrPos = 0;
 
 void addAutoCompleteLine(const char *line) {
@@ -53,7 +53,7 @@ void addAutoCompleteLine(const char *line) {
 	}
 }
 
-int stringCompare(const void* a, const void* b) {
+int stringCompare(const void *a, const void *b) {
 	const char** as = (const char **) a;
 	const char** bs = (const char **) b;
 
@@ -71,7 +71,7 @@ void sortAutoCompleteWordList() {
 }
 
 // Sends the current available words to the virtual keyboard code for display
-bool findWordCompletions(const char* input) {
+bool findWordCompletions(const char *input) {
 	int min = 0;
 	int max = wordBufferPtrPos - 1;
 	char *word;
@@ -82,7 +82,7 @@ bool findWordCompletions(const char* input) {
 	if (wordBufferPtrPos == 0)
 		return false;
 
-	OSystem_DS* system = (OSystem_DS *) g_system;
+	OSystem_DS *system = (OSystem_DS *) g_system;
 	system->clearAutoComplete();
 
 	int start = 0;

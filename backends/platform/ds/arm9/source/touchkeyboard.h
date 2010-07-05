@@ -35,13 +35,13 @@ enum {
 
 void createKeyEvent(int keyNum, Common::Event& event);
 
-void drawKeyboard(int tileBase, int mapBase, u16* saveSpace);
-void restoreVRAM(int tileBase, int mapBase, u16* saveSpace);
+void drawKeyboard(int tileBase, int mapBase, u16 *saveSpace);
+void restoreVRAM(int tileBase, int mapBase, u16 *saveSpace);
 void addKeyboardEvents();
 bool getKeyboardClosed();
 bool isInsideKeyboard(int x, int y);
 
-void addAutoComplete(const char* word);
+void addAutoComplete(const char *word);
 void clearAutoComplete();
 void setCharactersEntered(int count);
 void releaseAllKeys();

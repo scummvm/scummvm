@@ -115,7 +115,7 @@ DSFileSystemNode::DSFileSystemNode(const Common::String& path, bool isDir) {
 //	consolePrintf("Found: %d, Dir: %d\n", _isValid, _isDirectory);
 }
 
-DSFileSystemNode::DSFileSystemNode(const DSFileSystemNode* node) {
+DSFileSystemNode::DSFileSystemNode(const DSFileSystemNode *node) {
 	//TODO: not implemented?
 }
 
@@ -144,7 +144,7 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 			_zipFile->changeToRoot();
 
 /*			// This is the root dir, so add the RAM folder
-			DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/ram");
+			DSFileSystemNode *dsfsn = new DSFileSystemNode("ds:/ram");
 			dsfsn->_isDirectory = true;
 			dirList->push_back(wrap(dsfsn));
 */
@@ -162,7 +162,7 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 			if ( (_zipFile->isDirectory() && ((mode == Common::FSNode::kListDirectoriesOnly) || (mode == Common::FSNode::kListAll)) )
 				|| (!_zipFile->isDirectory() && ((mode == Common::FSNode::kListFilesOnly) || (mode == Common::FSNode::kListAll)) ) )
 			{
-				DSFileSystemNode* dsfsn = new DSFileSystemNode("ds:/" + Common::String(n), _zipFile->isDirectory());
+				DSFileSystemNode *dsfsn = new DSFileSystemNode("ds:/" + Common::String(n), _zipFile->isDirectory());
 				dsfsn->_isDirectory = _zipFile->isDirectory();
 				dirList.push_back((dsfsn));
 			}
@@ -173,7 +173,7 @@ bool DSFileSystemNode::getChildren(AbstractFSList &dirList, ListMode mode, bool 
 	return true;
 }
 
-AbstractFSNode* DSFileSystemNode::getParent() const {
+AbstractFSNode *DSFileSystemNode::getParent() const {
 //	consolePrintf("parent\n");
 	DSFileSystemNode *p;
 
@@ -276,7 +276,7 @@ GBAMPFileSystemNode::GBAMPFileSystemNode(const Common::String& path, bool isDire
 }
 
 
-GBAMPFileSystemNode::GBAMPFileSystemNode(const GBAMPFileSystemNode* node) {
+GBAMPFileSystemNode::GBAMPFileSystemNode(const GBAMPFileSystemNode *node) {
 	//TODO: not implemented?
 }
 
@@ -319,7 +319,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 
 		if ( ((entryType == TYPE_DIR) && ((mode == Common::FSNode::kListDirectoriesOnly) || (mode == Common::FSNode::kListAll)))
 		||   ((entryType == TYPE_FILE) && ((mode == Common::FSNode::kListFilesOnly) || (mode == Common::FSNode::kListAll))) ) {
-			GBAMPFileSystemNode* dsfsn;
+			GBAMPFileSystemNode *dsfsn;
 
 			//consolePrintf("Fname: %s\n", fname);
 
@@ -348,7 +348,7 @@ bool GBAMPFileSystemNode::getChildren(AbstractFSList& dirList, ListMode mode, bo
 	return true;
 }
 
-AbstractFSNode* GBAMPFileSystemNode::getParent() const {
+AbstractFSNode *GBAMPFileSystemNode::getParent() const {
 //	consolePrintf("parent\n");
 	GBAMPFileSystemNode *p;
 
@@ -489,7 +489,7 @@ enum {
 static bool inited = false;
 static DS::fileHandle s_handle[MAX_FILE_HANDLES];
 
-FILE* std_fopen(const char* name, const char* mode) {
+FILE *std_fopen(const char *name, const char *mode) {
 	if (!inited) {
 		for (int r = 0; r < MAX_FILE_HANDLES; r++) {
 			s_handle[r].used = false;
@@ -498,7 +498,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 		currentDir[0] = '\0';
 	}
 
-	char* realName = (char *) name;
+	char *realName = (char *) name;
 
 	// Remove file system prefix
 	if ((name[0] == 'd') && (name[1] == 's') && (name[2] == ':') && (name[3] == '/')) {
@@ -516,13 +516,13 @@ FILE* std_fopen(const char* name, const char* mode) {
 		FAT_chdir("/");
 
 		// Turn all back slashes into forward slashes for gba_nds_fat
-		char* p = realName;
+		char *p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
 			p++;
 		}
 
-		FAT_FILE* result = FAT_fopen(realName, mode);
+		FAT_FILE *result = FAT_fopen(realName, mode);
 
 		if (result == 0) {
 //			consolePrintf("Error code %d\n", result);
@@ -565,9 +565,9 @@ FILE* std_fopen(const char* name, const char* mode) {
 
 //	consolePrintf("Not in SRAM!");
 
-	char* data;
+	char *data;
 
-	ZipFile* zip = DSFileSystemNode::getZip();
+	ZipFile *zip = DSFileSystemNode::getZip();
 	if (!zip) {
 //		consolePrintf("No zip yet!");
 		return NULL;
@@ -609,7 +609,7 @@ FILE* std_fopen(const char* name, const char* mode) {
 	}
 }
 
-void std_fclose(FILE* handle) {
+void std_fclose(FILE *handle) {
 
 	if (DS::isGBAMPAvailable()) {
 		FAT_fclose((FAT_FILE *) handle);
@@ -623,7 +623,7 @@ void std_fclose(FILE* handle) {
 	}
 }
 
-size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
+size_t std_fread(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 //	consolePrintf("fread %d,%d %d ", size, numItems, ptr);
 
 	if (DS::isGBAMPAvailable()) {
@@ -668,7 +668,7 @@ size_t std_fread(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	return numItems;
 }
 
-size_t std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
+size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 	if ((handle == stdin)) return 0;
 
 	if ((handle == stderr) || (handle == stdout)) {
@@ -704,7 +704,7 @@ size_t std_fwrite(const void* ptr, size_t size, size_t numItems, FILE* handle) {
 	}
 }
 
-bool std_feof(FILE* handle) {
+bool std_feof(FILE *handle) {
 //	consolePrintf("feof ");
 
 	if (DS::isGBAMPAvailable()) {
@@ -719,13 +719,13 @@ bool std_feof(FILE* handle) {
 	return handle->pos >= handle->size;
 }
 
-int std_fflush(FILE* handle) {
+int std_fflush(FILE *handle) {
 	//FIXME: not implemented?
 //	consolePrintf("fflush ");
 	return 0;
 }
 
-long int std_ftell(FILE* handle) {
+long int std_ftell(FILE *handle) {
 	if (DS::isGBAMPAvailable()) {
 		return FAT_ftell((FAT_FILE *) handle);
 	}
@@ -733,7 +733,7 @@ long int std_ftell(FILE* handle) {
 	return handle->pos;
 }
 
-int std_fseek(FILE* handle, long int offset, int whence) {
+int std_fseek(FILE *handle, long int offset, int whence) {
 //	consolePrintf("fseek %d %d ", offset, whence);
 
 	if (DS::isGBAMPAvailable()) {
@@ -758,14 +758,14 @@ int std_fseek(FILE* handle, long int offset, int whence) {
 	return 0;
 }
 
-int std_ferror(FILE* handle) {
+int std_ferror(FILE *handle) {
 	//FIXME: not implemented?
 //	consolePrintf("ferror ");
 
 	return readPastEndOfFile;
 }
 
-void std_clearerr(FILE* handle) {
+void std_clearerr(FILE *handle) {
 	//FIXME: not implemented?
 	readPastEndOfFile = false;
 //	consolePrintf("clearerr ");

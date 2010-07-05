@@ -74,13 +74,13 @@ struct decoderFormat {
 bool active = false;
 WaveHeader waveHeader;
 Header blockHeader;
-FILE* file;
+FILE *file;
 int fillPos;
 bool isPlayingFlag = false;
 
-s16* audioBuffer;
+s16 *audioBuffer;
 u32 sampleNum;
-s16* decompressionBuffer;
+s16 *decompressionBuffer;
 int numLoops;
 int blockCount;
 int dataChunkStart;
@@ -495,7 +495,7 @@ bool trackExists(int num) {
 	}
 	consolePrintf("Looking for %s...", path.c_str());
 
-	FILE* file;
+	FILE *file;
 	if ((file = DS::std_fopen(path.c_str(), "r"))) {
 		consolePrintf("Success!\n");
 		setActive(true);

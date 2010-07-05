@@ -28,7 +28,7 @@ ZipFile::ZipFile() {
 
 //	consolePrintf("ZIP file check...");
 
-	char* p = (char *) ZF_SEARCH_START;
+	char *p = (char *) ZF_SEARCH_START;
 	bool found = false;
 
 	_zipFile = NULL;
@@ -112,7 +112,7 @@ bool ZipFile::currentFileInFolder() {
 	return false;
 }
 
-void ZipFile::getFileName(char* name) {
+void ZipFile::getFileName(char *name) {
 	strncpy(name, (char *) (_currentFile + 1), _currentFile->nameLength);
 
 	for (int r = 0; name[r] != 0; r++) {
@@ -207,7 +207,7 @@ void ZipFile::changeToRoot() {
 	_directory[0] = 0;
 }
 
-void ZipFile::changeDirectory(const char* dir) {
+void ZipFile::changeDirectory(const char *dir) {
 //	consolePrintf("Current dir now '%s'\n", dir);
 
 	assert(dir && *dir);

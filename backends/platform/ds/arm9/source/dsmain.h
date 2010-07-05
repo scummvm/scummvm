@@ -76,8 +76,8 @@ void 	displayMode16Bit();										// Switch to 16-bit mode5
 void 	displayMode16BitFlipBuffer();
 
 // Get address of current back buffer
-u16* 	get16BitBackBuffer();
-u16* 	get8BitBackBuffer();
+u16 *	get16BitBackBuffer();
+u16 *	get8BitBackBuffer();
 s32 	get8BitBackBufferStride();
 u16*	getScalerBuffer();
 
@@ -96,7 +96,7 @@ void 	doTimerCallback();												// Call callback function if required
 void 	doSoundCallback();
 void 	startSound(int freq, int buffer);	// Start sound hardware
 // Call function if sound buffers need more data
-void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
+void 	playSound(const void *data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);
 int		getSoundFrequency();
 
@@ -106,7 +106,7 @@ void 	VBlankHandler();
 
 // Sam and Max Stuff
 void 	setGameID(int id);
-void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
+void 	setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
 void	setShowCursor(bool enable);
 void	setMouseCursorVisible(bool visible);
 

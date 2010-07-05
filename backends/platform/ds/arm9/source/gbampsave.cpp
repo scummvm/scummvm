@@ -29,7 +29,7 @@
 // GBAMP Save File
 /////////////////////////
 
-GBAMPSaveFile::GBAMPSaveFile(char* name, bool saveOrLoad) {
+GBAMPSaveFile::GBAMPSaveFile(char *name, bool saveOrLoad) {
 	handle = DS::std_fopen(name, saveOrLoad? "w": "r");
 //	consolePrintf("%s handle is %d\n", name, handle);
 //	consolePrintf("Created %s\n", name);
@@ -196,7 +196,7 @@ Common::StringArray GBAMPSaveFileManager::listSavefiles(const Common::String &pa
 
 	//	consolePrintf("Real cwd:%d\n", realName);
 
-		char* p = realName;
+		char *p = realName;
 		while (*p) {
 			if (*p == '\\') *p = '/';
 			p++;

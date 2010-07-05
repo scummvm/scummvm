@@ -366,7 +366,7 @@ void showOptionsDialog() {
 	DS::displayMode16Bit();
 
 
-	DSOptionsDialog* d = new DSOptionsDialog();
+	DSOptionsDialog *d = new DSOptionsDialog();
 	d->runModal();
 	delete d;
 

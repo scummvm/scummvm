@@ -25,7 +25,7 @@
 #include "osystem_ds.h"
 
 /*
-extern "C" time_t __wrap_time(time_t* t) {
+extern "C" time_t __wrap_time(time_t *t) {
 	if (t) {
 		*t = OSystem_DS::instance()->getMillis() / 1000;
 	}

@@ -43,12 +43,12 @@ class ZipFile {
 		u16 extraLength;	// Length of any extra data
 	} __attribute__ ((packed));
 
-	char* _zipFile;
+	char *_zipFile;
 	char _directory[128];
 
 	bool _allFilesVisible;
 
-	FileHeader* _currentFile;
+	FileHeader *_currentFile;
 
 public:
 	ZipFile();
@@ -61,13 +61,13 @@ public:
 	bool findFile(const char *search);
 
 	// These return the file's data and information
-	char* getFile();
+	char *getFile();
 	int getFileSize();
-	void getFileName(char* name);
+	void getFileName(char *name);
 	bool isDirectory();
 
 	// These set the current directory
-	void changeDirectory(const char* name);
+	void changeDirectory(const char *name);
 	void changeToRoot();
 	void setAllFilesVisible(bool state) { _allFilesVisible = state; }
 

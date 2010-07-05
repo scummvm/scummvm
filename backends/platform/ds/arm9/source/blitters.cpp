@@ -27,7 +27,7 @@
 
 namespace DS {
 
-void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst,
+void asmDrawStripToScreen(int height, int width, byte const *text, byte const *src, byte *dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch) {
 
 
@@ -111,7 +111,7 @@ void asmDrawStripToScreen(int height, int width, byte const* text, byte const* s
 
 
 
-void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height) {
+void asmCopy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 	asm("ands r0, %3, #1\n"
 		 "addne %3, %3, #1\n"
 		 "bne roll2\n"
@@ -155,7 +155,7 @@ void ComputeDivBy5TableIFN()
 
 #ifdef PERFECT_5_TO_4_RESCALING
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
-                                                    u16* dest)
+                                                    u16 *dest)
 {
     u32 bs0 = s0 & 0x1F;
     u32 bs1 = s1 & 0x1F;
@@ -230,7 +230,7 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 }
 #else
 static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3, u16 s4,
-                                                    u16* dest)
+                                                    u16 *dest)
 {
     static const u32 MASK = 0x03E07C1F;
 
@@ -279,7 +279,7 @@ static inline void RescaleBlock_5x1555_To_4x1555( u16 s0, u16 s1, u16 s2, u16 s3
 #endif
 
 static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3, u32 s4,
-                                                    u16* dest)
+                                                    u16 *dest)
 {
     u32 d0 = 4*s0 +   s1;
     u32 d1 = 2*s1 +   s1 + 2*s2;
@@ -317,7 +317,7 @@ static inline void RescaleBlock_5x8888_To_4x1555( u32 s0, u32 s1, u32 s2, u32 s3
 
 // Can't work in place
 #ifdef PERFECT_5_TO_4_RESCALING
-static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u32* palette)
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u32 *palette)
 {
     ComputeDivBy5TableIFN();
 
@@ -333,7 +333,7 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const
     }
 }
 #else
-static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const u8* src, const u16* palette)
+static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16 *dest, const u8 *src, const u16 *palette)
 {
     for (size_t i=0; i<64; ++i)
     {
@@ -350,7 +350,7 @@ static inline void Rescale_320xPAL8Scanline_To_256x1555Scanline(u16* dest, const
 
 
 // Can work in place, because it's a contraction
-static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const u16* src)
+static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16 *dest, const u16 *src)
 {
     ComputeDivBy5TableIFN();
 
@@ -367,7 +367,7 @@ static inline void Rescale_320x1555Scanline_To_256x1555Scanline(u16* dest, const
 }
 
 #ifdef PERFECT_5_TO_4_RESCALING
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette)
+void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette)
 {
 	u32 fastRam[768];
 
@@ -388,7 +388,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStri
 	}
 }
 #else
-void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStride, int srcStride, const u16* palette)
+void Rescale_320x256xPAL8_To_256x256x1555(u16 *dest, const u8 *src, int destStride, int srcStride, const u16 *palette)
 {
 	u16 fastRam[256];
     for (size_t i=0; i<128; ++i)
@@ -401,7 +401,7 @@ void Rescale_320x256xPAL8_To_256x256x1555(u16* dest, const u8* src, int destStri
 }
 #endif
 
-void Rescale_320x256x1555_To_256x256x1555(u16* dest, const u16* src, int destStride, int srcStride)
+void Rescale_320x256x1555_To_256x256x1555(u16 *dest, const u16 *src, int destStride, int srcStride)
 {
 	for (size_t i=0; i<200; ++i)
 	{

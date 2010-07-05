@@ -48,13 +48,13 @@ protected:
 	DSSaveFileManager saveManager;
 #endif
 	GBAMPSaveFileManager mpSaveManager;
-	Audio::MixerImpl* _mixer;
-	DefaultTimerManager* _timer;
+	Audio::MixerImpl *_mixer;
+	DefaultTimerManager *_timer;
 	Graphics::Surface _framebuffer;
 	bool _frameBufferExists;
 	bool _graphicsEnable;
 
-	static OSystem_DS* _instance;
+	static OSystem_DS *_instance;
 
 	u16 _palette[256];
 	u16 _cursorPalette[256];
@@ -68,7 +68,7 @@ protected:
 	int _cursorScale;
 
 
-	Graphics::Surface* createTempFrameBuffer();
+	Graphics::Surface *createTempFrameBuffer();
 	bool _disableCursorPalette;
 
 	int _gammaValue;
@@ -94,7 +94,7 @@ public:
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual void setPalette(const byte *colors, uint start, uint num);
-	virtual void grabPalette(unsigned char* colors, uint start, uint num);
+	virtual void grabPalette(unsigned char *colors, uint start, uint num);
 	void restoreHardwarePalette();
 
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
@@ -139,7 +139,7 @@ public:
 	void addEvent(const Common::Event& e);
 	bool isEventQueueEmpty() const { return queuePos == 0; }
 
-	virtual bool grabRawScreen(Graphics::Surface* surf);
+	virtual bool grabRawScreen(Graphics::Surface *surf);
 
 	virtual void setFocusRectangle(const Common::Rect& rect);
 
@@ -150,10 +150,10 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 
-	virtual Audio::Mixer* getMixer() { return _mixer; }
-	Audio::MixerImpl* getMixerImpl() { return _mixer; }
+	virtual Audio::Mixer *getMixer() { return _mixer; }
+	Audio::MixerImpl *getMixerImpl() { return _mixer; }
 
-	virtual Common::TimerManager* getTimerManager() { return _timer; }
+	virtual Common::TimerManager *getTimerManager() { return _timer; }
 	static int timerHandler(int t);
 
 
@@ -172,8 +172,8 @@ public:
 
 	void refreshCursor();
 
-	Common::WriteStream* createConfigWriteStream();
-	Common::SeekableReadStream* createConfigReadStream();
+	Common::WriteStream *createConfigWriteStream();
+	Common::SeekableReadStream *createConfigReadStream();
 
 	u16 applyGamma(u16 colour);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }

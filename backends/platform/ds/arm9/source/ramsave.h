@@ -48,15 +48,15 @@ class DSSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
 	} __attribute__ ((packed));
 
 	SCUMMSave save;
-	u8* saveData;
-	SCUMMSave* origHeader;
+	u8 *saveData;
+	SCUMMSave *origHeader;
 	bool isOpenFlag;
 	bool isTempFile;
 	bool eosReached;
 
 public:
 	DSSaveFile();
-	DSSaveFile(SCUMMSave* s, bool saveCompressed, u8* data);
+	DSSaveFile(SCUMMSave *s, bool saveCompressed, u8 *data);
 	~DSSaveFile();
 
 	void reset();
@@ -74,7 +74,7 @@ public:
 	uint32 write(const void *buf, uint32 size);
 
 	void setName(char *name);
-	char* getName() { return save.name; }
+	char *getName() { return save.name; }
 
 	bool isValid() { return save.isValid; }
 	bool isTemp() { return isTempFile; }
@@ -85,14 +85,14 @@ public:
 	void compress();
 
 	int getRamUsage() { return sizeof(save) + save.compressedSize; }
-	char* getRamImage() { return (char *) &save; }
+	char *getRamImage() { return (char *) &save; }
 
 	int getSize() { return save.size; }
 
-	DSSaveFile* clone();
+	DSSaveFile *clone();
 
-	bool loadFromSaveRAM(vu8* address);
-	int saveToSaveRAM(vu8* address);
+	bool loadFromSaveRAM(vu8 *address);
+	int saveToSaveRAM(vu8 *address);
 
 
 
@@ -111,19 +111,19 @@ public:
 class DSSaveFileManager : public Common::SaveFileManager {
 
 	DSSaveFile gbaSave[8];
-	static DSSaveFileManager* instancePtr;
+	static DSSaveFileManager *instancePtr;
 	int sramBytesFree;
 
 public:
 	DSSaveFileManager();
 	~DSSaveFileManager();
 
-	static DSSaveFileManager* instance() { return instancePtr; }
+	static DSSaveFileManager *instance() { return instancePtr; }
 
 	DSSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 
-	virtual Common::OutSaveFile* openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
-	virtual Common::InSaveFile* openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
+	virtual Common::InSaveFile *openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
 
 	virtual bool removeSavefile(const Common::String &filename);
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);
@@ -133,7 +133,7 @@ public:
 	void addBytesFree(int size) { sramBytesFree += size; }
 	int getBytesFree() { return sramBytesFree; }
 
-	void deleteFile(char* name);
+	void deleteFile(char *name);
 	void listFiles();
 	void formatSram();
 

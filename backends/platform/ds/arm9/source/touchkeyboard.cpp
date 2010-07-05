@@ -142,7 +142,7 @@ int keyboardY;
 static int s_mapBase;
 static int s_tileBase;
 
-u16* baseAddress;
+u16 *baseAddress;
 
 bool shiftState;
 bool capsLockState;
@@ -181,7 +181,7 @@ void drawText(int tx, int ty, const char *string, bool highlight) {
 
 
 
-void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
+void restoreVRAM(int tileBase, int mapBase, u16 *saveSpace) {
 /*	for (int r = 0; r < 32 * 32; r++) {
 		((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase))[r] = *saveSpace++;
 	}
@@ -191,7 +191,7 @@ void restoreVRAM(int tileBase, int mapBase, u16* saveSpace) {
 	}*/
 }
 
-void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
+void drawKeyboard(int tileBase, int mapBase, u16 *saveSpace) {
  	/* int keyboardDataSize = 4736 * 2; */
 
 	for (int r = 0; r < 32 * 32; r++) {
@@ -211,8 +211,8 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	// this is the font
 	for (int tile = 0; tile < 94; tile++) {
 
-		u16* tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
-		const u8* src = ((const u8 *) (::_8x8font_tga_raw)) + 18 + tile * 8;
+		u16 *tileAddr = (u16 *) (CHAR_BASE_BLOCK_SUB(tileBase) + ((KEYBOARD_DATA_SIZE) + (tile * 32)));
+		const u8 *src = ((const u8 *) (::_8x8font_tga_raw)) + 18 + tile * 8;
 
 		for (int y = 0 ; y < 8; y++) {
 			for (int x = 0; x < 2; x++) {
@@ -256,7 +256,7 @@ void drawKeyboard(int tileBase, int mapBase, u16* saveSpace) {
 	int x = keyboardX;
 	int y = keyboardY;
 
-	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase));
+	u16 *base = ((u16 *) SCREEN_BASE_BLOCK_SUB(mapBase));
 	baseAddress = base;
 
 	for (int r = 0; r < DS_NUM_KEYS; r++) {
@@ -314,7 +314,7 @@ bool getKeyboardClosed() {
 }
 
 void setKeyHighlight(int key, bool highlight) {
-	u16* base = ((u16 *) SCREEN_BASE_BLOCK_SUB(DS::s_mapBase));
+	u16 *base = ((u16 *) SCREEN_BASE_BLOCK_SUB(DS::s_mapBase));
 
 	if (highlight) {
 		base[(keyboardY + keys[key].y) * 32 + keyboardX + keys[key].x] |= 0x1000;
@@ -329,7 +329,7 @@ void setKeyHighlight(int key, bool highlight) {
 	}
 }
 
-void addAutoComplete(const char* word) {
+void addAutoComplete(const char *word) {
 	if (autoCompleteCount == NUM_WORDS) return;
 	strcpy(&autoCompleteWord[autoCompleteCount++][0], word);
 	drawAutoComplete();
@@ -353,7 +353,7 @@ void clearAutoComplete() {
 
 void typeCompletion(int current) {
 	Common::Event event;
-   	/* OSystem_DS* system = OSystem_DS::instance(); */
+	/* OSystem_DS *system = OSystem_DS::instance(); */
 
 	strcat(autoCompleteBuffer, &autoCompleteWord[current][charactersEntered]);
 	strcat(autoCompleteBuffer, " ");
@@ -384,7 +384,7 @@ void typeCompletion(int current) {
 void updateTypeEvents() {
 	if (autoCompleteBuffer[0] != '\0') {
 		Common::Event event;
-   		OSystem_DS* system = OSystem_DS::instance();
+		OSystem_DS *system = OSystem_DS::instance();
 
 		event.kbd.keycode = (Common::KeyCode) autoCompleteBuffer[0];
 		event.kbd.ascii = autoCompleteBuffer[0];
@@ -443,7 +443,7 @@ void releaseAllKeys() {
 		if (keys[r].pressed) {
 			DS::setKeyHighlight(r, false);
 
-			OSystem_DS* system = OSystem_DS::instance();
+			OSystem_DS *system = OSystem_DS::instance();
 
 			Common::Event event;
 			createKeyEvent(r, event);
@@ -502,7 +502,7 @@ void addKeyboardEvents() {
 		for (int r = 0; r < DS_NUM_KEYS; r++) {
 			if (( (tx >= keys[r].x) && (tx <= keys[r].x + 1)) &&
 				   (ty >= keys[r].y) && (ty <= keys[r].y + 1)) {
-			   	OSystem_DS* system = OSystem_DS::instance();
+				OSystem_DS *system = OSystem_DS::instance();
 				Common::Event event;
 
 //				consolePrintf("Key: %d\n", r);
@@ -551,7 +551,7 @@ void addKeyboardEvents() {
 			if (keys[r].pressed) {
 				DS::setKeyHighlight(r, false);
 
-			   	OSystem_DS* system = OSystem_DS::instance();
+				OSystem_DS *system = OSystem_DS::instance();
 
 				Common::Event event;
 				if ((keys[r].character == Common::KEYCODE_INVALID)) {

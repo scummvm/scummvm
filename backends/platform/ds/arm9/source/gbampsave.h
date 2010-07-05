@@ -29,14 +29,14 @@
 #define SAVE_BUFFER_SIZE 100000
 
 class GBAMPSaveFile : public Common::InSaveFile, public Common::OutSaveFile {
-	DS::fileHandle* handle;
+	DS::fileHandle *handle;
 	char buffer[SAVE_BUFFER_SIZE];
 	int bufferPos;
 	int saveSize;
 	int flushed;
 
 public:
-	GBAMPSaveFile(char* name, bool saveOrLoad);
+	GBAMPSaveFile(char *name, bool saveOrLoad);
 	virtual ~GBAMPSaveFile();
 
 	virtual uint32 read(void *buf, uint32 size);
@@ -62,12 +62,12 @@ public:
 	GBAMPSaveFileManager();
 	~GBAMPSaveFileManager();
 
-//	static GBAMPSaveFileManager* instance() { return instancePtr; }
+//	static GBAMPSaveFileManager *instance() { return instancePtr; }
 
 	GBAMPSaveFile *openSavefile(const char *filename, bool saveOrLoad);
 
-	virtual Common::OutSaveFile* openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
-	virtual Common::InSaveFile* openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
+	virtual Common::OutSaveFile *openForSaving(const Common::String &filename) { return openSavefile(filename.c_str(), true); }
+	virtual Common::InSaveFile *openForLoading(const Common::String &filename) { return openSavefile(filename.c_str(), false); }
 
 	virtual bool removeSavefile(const Common::String &filename) { return false; } // TODO: Implement this
 	virtual Common::StringArray listSavefiles(const Common::String &pattern);

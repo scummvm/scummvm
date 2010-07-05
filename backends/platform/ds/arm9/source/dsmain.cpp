@@ -119,7 +119,7 @@ static const char *registerNames[] =
 
 #ifdef WRAP_MALLOC
 
-extern "C" void* __real_malloc(size_t size);
+extern "C" void *__real_malloc(size_t size);
 
 static int s_total_malloc = 0;
 
@@ -158,7 +158,7 @@ extern "C" void *__wrap_malloc(size_t size) {
 		consolePrintf("0 size malloc (%d)", zeroSize++);
 	}
 
-	void* res = __real_malloc(size);
+	void *res = __real_malloc(size);
 	if (res) {
 		if (size > 50 * 1024) {
 			consolePrintf("Allocated %d (%x)\n", size, poo);
@@ -219,7 +219,7 @@ static int subScreenScale = 256;
 
 // Sound
 static int bufferSize;
-static s16* soundBuffer;
+static s16 *soundBuffer;
 static int bufferFrame;
 static int bufferRate;
 static int bufferSamples;
@@ -431,7 +431,7 @@ controlType getControlType() {
 
 
 //plays an 8 bit mono sample at 11025Hz
-void playSound(const void* data, u32 length, bool loop, bool adpcm, int rate) {
+void playSound(const void *data, u32 length, bool loop, bool adpcm, int rate) {
 
 	if (!IPC->soundData) {
 		soundControl.count = 0;
@@ -784,7 +784,7 @@ void setMouseCursorVisible(bool enable) {
 	mouseCursorVisible = enable;
 }
 
-void setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY) {
+void setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY) {
 
 	int off;
 
@@ -965,7 +965,7 @@ void displayMode16BitFlipBuffer() {
 	consolePrintf("Flip %s...", displayModeIs8Bit ? "8bpp" : "16bpp");
 	#endif
 	if (!displayModeIs8Bit) {
-		u16* back = get16BitBackBuffer();
+		u16 *back = get16BitBackBuffer();
 
 //		highBuffer = !highBuffer;
 //		BG3_CR = BG_BMP16_512x256 |	BG_BMP_RAM(highBuffer? 1: 0);
@@ -984,8 +984,8 @@ void displayMode16BitFlipBuffer() {
 		TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
 		u16 t0 = TIMER1_DATA;
 		#endif
-		const u8* back = (const u8*)get8BitBackBuffer();
-		u16* base = BG_GFX + 0x10000;
+		const u8 *back = (const u8*)get8BitBackBuffer();
+		u16 *base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555(
 			base,
 			back,
@@ -1033,11 +1033,11 @@ s32 get8BitBackBufferStride() {
 	}
 }
 
-u16* getScalerBuffer() {
+u16 *getScalerBuffer() {
 	return (u16 *) scalerBackBuffer;
 }
 
-u16* get8BitBackBuffer() {
+u16 *get8BitBackBuffer() {
 	if (isCpuScalerEnabled())
 		return (u16 *) scalerBackBuffer;
 	else
@@ -1107,7 +1107,7 @@ void soundUpdate() {
 
 void memoryReport() {
 	int r = 0;
-	int* p;
+	int *p;
 	do {
 		p = (int *) malloc(r * 8192);
 		free(p);
@@ -1115,7 +1115,7 @@ void memoryReport() {
 	} while ((p) && (r < 512));
 
 	int t = -1;
-	void* block[1024];
+	void *block[1024];
 	do {
 		t++;
 		block[t] = (int *) malloc(4096);
@@ -1130,7 +1130,7 @@ void memoryReport() {
 
 
 void addIndyFightingKeys() {
-	OSystem_DS* system = OSystem_DS::instance();
+	OSystem_DS *system = OSystem_DS::instance();
 	Common::Event event;
 
 	event.type = Common::EVENT_KEYDOWN;
@@ -1230,7 +1230,7 @@ void addIndyFightingKeys() {
 void setKeyboardEnable(bool en) {
 	if (en == keyboardEnable) return;
 	keyboardEnable = en;
-	u16* backupBank = (u16 *) 0x6040000;
+	u16 *backupBank = (u16 *) 0x6040000;
 
 	if (keyboardEnable) {
 
@@ -1266,7 +1266,7 @@ void setKeyboardEnable(bool en) {
 		if (displayModeIs8Bit) {
 			// Copy the sub screen VRAM from the top screen - they should always be
 			// the same.
-			u16* buffer = get8BitBackBuffer();
+			u16 *buffer = get8BitBackBuffer();
 			s32 stride = get8BitBackBufferStride();
 
 			for (int y = 0; y < gameHeight; y++) {
@@ -1302,7 +1302,7 @@ bool getIsDisplayMode8Bit() {
 	return displayModeIs8Bit;
 }
 
-void doScreenTapMode(OSystem_DS* system) {
+void doScreenTapMode(OSystem_DS *system) {
 	Common::Event event;
 	static bool left = false, right = false;
 
@@ -1368,7 +1368,7 @@ void doScreenTapMode(OSystem_DS* system) {
 	system->addEvent(event);
 }
 
-void doButtonSelectMode(OSystem_DS* system)
+void doButtonSelectMode(OSystem_DS *system)
 {
 	Common::Event event;
 
@@ -1492,7 +1492,7 @@ void addEventsToQueue() {
 	#ifdef HEAVY_LOGGING
 	consolePrintf("addEventsToQueue\n");
 	#endif
-	OSystem_DS* system = OSystem_DS::instance();
+	OSystem_DS *system = OSystem_DS::instance();
 	Common::Event event;
 
 #ifdef USE_PROFILER
@@ -2358,7 +2358,7 @@ void uploadSpriteGfx() {
 	vramSetBankE(VRAM_E_MAIN_SPRITE);
 
 	// Convert texture from 24bit 888 to 16bit 1555, remembering to set top bit!
-	const u8* srcTex = (const u8 *) ::icons_raw;
+	const u8 *srcTex = (const u8 *) ::icons_raw;
 	for (int r = 32 * 256 ; r >= 0; r--) {
 		SPRITE_GFX_SUB[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
 		SPRITE_GFX[r] = 0x8000 | (srcTex[r * 3] >> 3) | ((srcTex[r * 3 + 1] >> 3) << 5) | ((srcTex[r * 3 + 2] >> 3) << 10);
@@ -2831,11 +2831,11 @@ bool getIndyFightState() {
 ///////////////////
 
 #define FAST_RAM_SIZE (24000)
-u8* fastRamPointer;
+u8 *fastRamPointer;
 u8 fastRamData[FAST_RAM_SIZE] ITCM_DATA;
 
-void* fastRamAlloc(int size) {
-	void* result = (void *) fastRamPointer;
+void *fastRamAlloc(int size) {
+	void *result = (void *) fastRamPointer;
 	fastRamPointer += size;
 	if(fastRamPointer > fastRamData + FAST_RAM_SIZE) {
 		consolePrintf("FastRam (ITCM) allocation failed!\n");
@@ -2892,7 +2892,7 @@ void initDebugger() {
 
 
 // Ensure the function is processed with C linkage
-extern "C" void debug_print_stub(char* string);
+extern "C" void debug_print_stub(char *string);
 
 void debug_print_stub(char *string) {
 	consolePrintf(string);
@@ -3252,7 +3252,7 @@ int main(void) {
 */
 	// Create a file system node to force search for a zip file in GBA rom space
 
-	DSFileSystemNode* node = new DSFileSystemNode();
+	DSFileSystemNode *node = new DSFileSystemNode();
 	if (!node->getZip() || (!node->getZip()->isReady())) {
 		// If not found, init CF/SD driver
 		initGBAMP(mode);

@@ -58,9 +58,9 @@ typedef struct sTransferSound {
 
 
 typedef struct _adpcmBuffer {
-	u8* buffer[8];
+	u8 *buffer[8];
 	bool filled[8];
-	u8* arm7Buffer[8];
+	u8 *arm7Buffer[8];
 	bool arm7Dirty[8];
 	bool semaphore;
 } adpcmBuffer;

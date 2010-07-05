@@ -46,30 +46,30 @@ protected:
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void updateConfigManager();
 
-	GUI::TabWidget* _tab;
+	GUI::TabWidget *_tab;
 
-	GUI::StaticTextWidget* _sensitivityLabel;
+	GUI::StaticTextWidget *_sensitivityLabel;
 
-	GUI::SliderWidget* _touchX;
-	GUI::SliderWidget* _touchY;
-	GUI::SliderWidget* _sensitivity;
-	GUI::SliderWidget* _gammaCorrection;
-	GUI::CheckboxWidget* _leftHandedCheckbox;
-	GUI::CheckboxWidget* _unscaledCheckbox;
-	GUI::CheckboxWidget* _100PercentCheckbox;
-	GUI::CheckboxWidget* _150PercentCheckbox;
-	GUI::CheckboxWidget* _200PercentCheckbox;
-	GUI::CheckboxWidget* _indyFightCheckbox;
-	GUI::CheckboxWidget* _highQualityAudioCheckbox;
-	GUI::CheckboxWidget* _disablePowerOff;
-	GUI::CheckboxWidget* _showCursorCheckbox;
-	GUI::CheckboxWidget* _snapToBorderCheckbox;
+	GUI::SliderWidget *_touchX;
+	GUI::SliderWidget *_touchY;
+	GUI::SliderWidget *_sensitivity;
+	GUI::SliderWidget *_gammaCorrection;
+	GUI::CheckboxWidget *_leftHandedCheckbox;
+	GUI::CheckboxWidget *_unscaledCheckbox;
+	GUI::CheckboxWidget *_100PercentCheckbox;
+	GUI::CheckboxWidget *_150PercentCheckbox;
+	GUI::CheckboxWidget *_200PercentCheckbox;
+	GUI::CheckboxWidget *_indyFightCheckbox;
+	GUI::CheckboxWidget *_highQualityAudioCheckbox;
+	GUI::CheckboxWidget *_disablePowerOff;
+	GUI::CheckboxWidget *_showCursorCheckbox;
+	GUI::CheckboxWidget *_snapToBorderCheckbox;
 
-	GUI::CheckboxWidget* _hardScaler;
-	GUI::CheckboxWidget* _cpuScaler;
+	GUI::CheckboxWidget *_hardScaler;
+	GUI::CheckboxWidget *_cpuScaler;
 
-	GUI::CheckboxWidget* _touchPadStyle;
-	GUI::CheckboxWidget* _screenTaps;
+	GUI::CheckboxWidget *_touchPadStyle;
+	GUI::CheckboxWidget *_screenTaps;
 
 	bool	_radioButtonMode;
 
