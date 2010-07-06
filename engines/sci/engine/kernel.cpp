@@ -719,10 +719,10 @@ int Kernel::findRegType(reg_t reg) {
 	// Otherwise it's an object
 	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
 	if (!mobj)
-		return 0; // Invalid
+		return SIG_TYPE_INVALID;
 
 	if (!mobj->isValidOffset(reg.offset))
-		error("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
+		return SIG_TYPE_INVALID;
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
@@ -762,6 +762,7 @@ static const SignatureDebugType signatureDebugTypeList[] = {
 	{ SIG_TYPE_NULL,          "null" },
 	{ SIG_TYPE_INTEGER,       "integer" },
 	{ SIG_TYPE_UNINITIALIZED, "uninitialized" },
+	{ SIG_TYPE_INVALID,       "invalid" },
 	{ SIG_TYPE_OBJECT,        "object" },
 	{ SIG_TYPE_REFERENCE,     "reference" },
 	{ SIG_TYPE_LIST,          "list" },

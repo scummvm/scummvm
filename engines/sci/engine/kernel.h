@@ -101,6 +101,7 @@ enum {
 	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]
 	SIG_TYPE_INTEGER       =  0x02, // may be 0:*       [i], automatically also allows null
 	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparsion
+	SIG_TYPE_INVALID       =  0x08, // invalid segment or offset -> not allowable, only used for comparsion
 	SIG_TYPE_OBJECT        =  0x10, // may be object    [o]
 	SIG_TYPE_REFERENCE     =  0x20, // may be reference [r]
 	SIG_TYPE_LIST          =  0x40, // may be list      [l]
