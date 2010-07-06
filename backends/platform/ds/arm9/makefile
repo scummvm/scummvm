@@ -333,13 +333,11 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp i
 
 # Compiler options for files which should be optimised for speed
 ifdef DS_BUILD_E
-# Another attempt to save some RAM in ITE
-OPT_SPEED := -O3 -mthumb
+  # Another attempt to save some RAM in ITE
+  OPT_SPEED := -O3 -mthumb
 else
-#OPT_SPEED := -O3
-
-OPT_SPEED := -Os -mthumb
-
+ #OPT_SPEED := -O3
+ OPT_SPEED := -Os -mthumb
 endif
 
 # Compiler options for files which should be optimised for space
@@ -379,36 +377,12 @@ dist : SCUMMVM.BIN plugins plugin_dist
 #---------------------------------------------------------------------------------
 # canned command sequence for binary data
 #---------------------------------------------------------------------------------
-#define bin2o
-#	bin2s $< | $(AS) -mthumb -mthumb-interwork -o $(@)
-#	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_raw_end[];" > `(echo $(<F) | tr . _)`.h
-#	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_raw[];" >> `(echo $(<F) | tr . _)`.h
-#	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_raw_size";" >> `(echo $(<F) | tr . _)`.h
-#endef
-
-
 define bin2o
 	bin2s $< | $(AS) -mthumb -mthumb-interwork -o $(@)
 	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"_end[];" > `(echo $(<F) | tr . _)`.h
 	echo "extern const u8" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`"[];" >> `(echo $(<F) | tr . _)`.h
 	echo "extern const u32" `(echo $(<F) | sed -e 's/^\([0-9]\)/_\1/' | tr . _)`_size";" >> `(echo $(<F) | tr . _)`.h
 endef
-
-
-#define bin2o
-#	@echo $(*)
-#	cp $(<) $(*).tmp
-#	$(OBJCOPY) -I binary -O elf32-littlearm -B arm \
-#	--rename-section .data=.rodata \
-#	--redefine-sym _binary_$(subst .,_,$(subst /,_,$(*)))_tmp_start=$(notdir $*)\
-#	--redefine-sym _binary_$(subst .,_,$(subst /,_,$(*)))_tmp_end=$(notdir $*)_end\
-#	$(*).tmp $(@)
-#	echo "extern const u8" $(notdir $*)"[] __attribute__ ((aligned (4)));" > $(*).h
-#	echo "extern const u32" $(notdir $(*))_size[]";" >> $(*).h
-#
-#	echo $(*).h
-#	rm $(*).tmp
-#endef
 
 
 ##############
@@ -474,10 +448,8 @@ endef
 	padbin 16 $(basename $@).ds.gba
 
 #---------------------------------------------------------------------------------
-# FIXME: The following rule hardcodes the input & output filename -- shouldn't it use $< and $@ instead?
 %.bin: %.elf
-	$(OBJCOPY) -S scummvm.elf scummvm-stripped.elf
-	$(OBJCOPY) -O binary scummvm-stripped.elf scummvm.bin
+	$(OBJCOPY) -S -O binary $< $@
 
 #%.o: %.s
 #	$(MKDIR) $(*D)/$(DEPDIR)
