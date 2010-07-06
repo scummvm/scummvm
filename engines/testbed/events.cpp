@@ -30,6 +30,7 @@
 #include "graphics/cursorman.h"
 
 #include "testbed/events.h"
+#include "testbed/graphics.h"
 
 namespace Testbed {
 
@@ -62,7 +63,8 @@ struct keycodeToChar {
 		{Common::KEYCODE_w, 'w'},
 		{Common::KEYCODE_x, 'x'},
 		{Common::KEYCODE_y, 'y'},
-		{Common::KEYCODE_z, 'z'}
+		{Common::KEYCODE_z, 'z'},
+		{Common::KEYCODE_SPACE, ' '}
 	};
 
 char EventTests::keystrokeToChar() {
@@ -108,16 +110,18 @@ bool EventTests::mouseEvents() {
 	pt.y = 120; 
 	Testsuite::writeOnScreen("Testbed should be able to detect them, Press X to exit", pt);
 
+	// Init Mouse Palette
+	GFXtests::initMousePalette();
 
 	bool quitLoop = false;
 	bool passed = true;
 	// handle all mouse events
 	Common::Event event;
 	while (!quitLoop) {
-		//  show mouse
+		// Show mouse
 		CursorMan.showMouse(true);
 		g_system->updateScreen();
-		
+
 		while (eventMan->pollEvent(event)) {
 			// Quit if explicitly requested
 			if (Engine::shouldQuit()) {
@@ -153,7 +157,7 @@ bool EventTests::mouseEvents() {
 				break;
 			case Common::EVENT_WHEELUP:
 				Testsuite::clearScreen();
-				Testsuite::writeOnScreen("Mouse wheel moved down", pt);
+				Testsuite::writeOnScreen("Mouse wheel moved up", pt);
 				break;
 			case Common::EVENT_MBUTTONUP:
 				Testsuite::clearScreen();
@@ -191,7 +195,7 @@ bool EventTests::mouseEvents() {
 
 bool EventTests::kbdEvents() {
 	// Make user type some word and display the output on screen
-	Common::String text = "You Entered :";
+	Common::String text = "You Entered : ";
 	Common::Point pt(0, 100);
 	Testsuite::clearScreen();
 	Testsuite::writeOnScreen("Enter your word, press ESC when done, it will be echoed back", pt);

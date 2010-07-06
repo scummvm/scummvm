@@ -61,7 +61,7 @@ GFXTestSuite::GFXTestSuite() {
 	
 	// Mouse Layer tests (Palettes and movements)
 	addTest("PalettizedCursors", &GFXtests::palettizedCursors);
-	// FIXME: need to fix it
+	// FIXME: Scaled cursor crsh with odd dimmensions
 	addTest("ScaledCursors", &GFXtests::scaledCursors);
 	
 	// Effects
@@ -471,8 +471,8 @@ bool GFXtests::palettizedCursors() {
 	}
 	
 	Testsuite::clearScreen();
-	// Done with cursors
-	CursorMan.popAllCursors();
+	// Done with cursors, make them invisible, any other test the could simply make it visible
+	CursorMan.showMouse(false);
 	return passed;
 }
 
@@ -609,9 +609,8 @@ bool GFXtests::scaledCursors() {
 		return false;
 	}
 
-	// Done with cursors
-	CursorMan.popAllCursors();
-	
+	// Done with cursors, Make them invisible, any other test may enable and use it.
+	CursorMan.showMouse(false);
 	Testsuite::clearScreen();
 	return true;
 }
