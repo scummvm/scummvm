@@ -90,10 +90,17 @@ reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[0];
-	//bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
+	bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : true;
+	reg_t result;
 
-	// TODO: pauseSound implementation
-	return g_sci->_gfxMenu->kernelSelect(eventObject);
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(true);
+
+	result = g_sci->_gfxMenu->kernelSelect(eventObject);
+
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(false);
+	return result;
 }
 
 } // End of namespace Sci
