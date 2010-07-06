@@ -61,9 +61,6 @@ LOGO = logoa.bmp
 
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
-#OPTLIST :=
-
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3
 
@@ -71,16 +68,32 @@ OPT_SPEED := -O3
 OPT_SIZE := -Os -mthumb
 
 
-#-mthumb -fno-gcse -fno-schedule-insns2
-
-
-#OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
-
-
-# TODO: Handle files in OPTLIST.
-#   For this, the list should be made explicit. So, replace actor.cpp by path/to/actor.cpp --
-#   in fact, there are several actor.cpp files, and right now all are "optimized", but
-#   I think Neil only had the SAGA one in mind. Same for gfx.cpp
+# TODO: The original list contained three more files that should be optimized
+# for size: actor.cpp gfx.cpp sprite.cpp -- but there are many files with these
+# names, which are the "right" ones?
+$(ndsdir)/arm9/source/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+$(ndsdir)/arm9/source/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+$(ndsdir)/arm9/source/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+$(ndsdir)/arm9/source/ds_main.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/isomap.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+sound/rate.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/actor_walk.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/actor_path.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/image.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+sound/fmopl.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/scumm/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/m4/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/scumm/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/cine/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/agos/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/saga/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/m4/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+engines/agi/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+# TODO: Fingolfin says: optimizing staticres for size would
+# save about 30k, so maybe consider that?
+#engines/kyra/staticres.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
 
 
 
