@@ -428,10 +428,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 #define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
-#define ACC_AUX_LOAD() aux_acc = signed_validate_arithmetic(s->r_acc)
-#define ACC_AUX_STORE() s->r_acc = make_reg(0, aux_acc)
-
-#define OBJ_PROPERTY(o, p) (validate_property(o, p))
 
 // Operating on the stack
 // 16 bit:
@@ -940,27 +936,23 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 void run_vm(EngineState *s, bool restoring) {
 	assert(s);
 
-	unsigned int code_buf_size = 0 ; // (Avoid spurious warning)
 	int temp;
-	int16 aux_acc; // Auxiliary 16 bit accumulator
 	reg_t r_temp; // Temporary register
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	s->restAdjust = 0;
-	// &rest adjusts the parameter count by this value
+	s->restAdjust = 0;	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	s->xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
 	Object *obj = s->_segMan->getObject(s->xs->objp);
+	Script *scr = 0;
 	Script *local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 	int old_executionStackBase = s->executionStackBase;
 	// Used to detect the stack bottom, for "physical" returns
-	const byte *code_buf = NULL; // (Avoid spurious warning)
 
-	if (!local_script) {
+	if (!local_script)
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
-	}
 
 	if (!restoring)
 		s->executionStackBase = s->_executionStack.size() - 1;
@@ -981,15 +973,13 @@ void run_vm(EngineState *s, bool restoring) {
 			return; // Stop processing
 
 		if (s->_executionStackPosChanged) {
-			Script *scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
+			scr = s->_segMan->getScriptIfLoaded(s->xs->addr.pc.segment);
 			if (!scr)
 				error("No script in segment %d",  s->xs->addr.pc.segment);
 			s->xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
 			obj = s->_segMan->getObject(s->xs->objp);
-			code_buf = scr->getBuf();
-			code_buf_size = scr->getBufSize();
 			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 			if (!local_script) {
 				// FIXME: Why does this happen? Is the script not loaded yet at this point?
@@ -1034,13 +1024,13 @@ void run_vm(EngineState *s, bool restoring) {
 
 		s->variablesMax[VAR_TEMP] = s->xs->sp - s->xs->fp;
 
-		if (s->xs->addr.pc.offset >= code_buf_size)
+		if (s->xs->addr.pc.offset >= scr->getBufSize())
 			error("run_vm(): program counter gone astray, addr: %d, code buffer size: %d",
-			s->xs->addr.pc.offset, code_buf_size);
+			s->xs->addr.pc.offset, scr->getBufSize());
 
 		// Get opcode
 		byte extOpcode;
-		s->xs->addr.pc.offset += readPMachineInstruction(code_buf + s->xs->addr.pc.offset, extOpcode, opparams);
+		s->xs->addr.pc.offset += readPMachineInstruction(scr->getBuf() + s->xs->addr.pc.offset, extOpcode, opparams);
 		const byte opcode = extOpcode >> 1;
 
 		switch (opcode) {
@@ -1117,18 +1107,16 @@ void run_vm(EngineState *s, bool restoring) {
 			s->r_acc = ACC_ARITHMETIC_L(((int16)POP()) * (int16)/*acc*/);
 			break;
 
-		case op_div: // 0x04 (04)
-			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((int16)POP()) / aux_acc : 0;
-			ACC_AUX_STORE();
+		case op_div: { // 0x04 (04)
+			int16 divisor = signed_validate_arithmetic(s->r_acc);
+			s->r_acc = make_reg(0, (divisor != 0 ? ((int16)POP()) / divisor : 0));
 			break;
-
-		case op_mod: // 0x05 (05)
-			ACC_AUX_LOAD();
-			aux_acc = aux_acc != 0 ? ((int16)POP()) % aux_acc : 0;
-			ACC_AUX_STORE();
+		}
+		case op_mod: { // 0x05 (05)
+			int16 modulo = signed_validate_arithmetic(s->r_acc);
+			s->r_acc = make_reg(0, (modulo != 0 ? ((int16)POP()) % modulo : 0));
 			break;
-
+		}
 		case op_shr: // 0x06 (06)
 			// Shift right logical
 			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) >> /*acc*/);
@@ -1596,48 +1584,48 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_pToa: // 0x31 (49)
 			// Property To Accumulator
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
+			s->r_acc = validate_property(obj, (opparams[0] >> 1));
 			break;
 
 		case op_aTop: // 0x32 (50)
 			// Accumulator To Property
-			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = s->r_acc;
+			validate_property(obj, (opparams[0] >> 1)) = s->r_acc;
 			break;
 
 		case op_pTos: // 0x33 (51)
 			// Property To Stack
-			PUSH32(OBJ_PROPERTY(obj, opparams[0] >> 1));
+			PUSH32(validate_property(obj, opparams[0] >> 1));
 			break;
 
 		case op_sTop: // 0x34 (52)
 			// Stack To Property
-			OBJ_PROPERTY(obj, (opparams[0] >> 1)) = POP32();
+			validate_property(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
 		case op_ipToa: // 0x35 (53)
 			// Incement Property and copy To Accumulator
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
+			s->r_acc = validate_property(obj, (opparams[0] >> 1));
+			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
 			break;
 
 		case op_dpToa: { // 0x36 (54)
 			// Decrement Property and copy To Accumulator
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1));
-			s->r_acc = OBJ_PROPERTY(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
+			s->r_acc = validate_property(obj, (opparams[0] >> 1));
+			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
 			break;
 		}
 
 		case op_ipTos: // 0x37 (55)
 			// Increment Property and push to Stack
-			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
-			temp = ++OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
+			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
+			temp = ++validate_property(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
 		case op_dpTos: // 0x38 (56)
 			// Decrement Property and push to Stack
-			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
-			temp = --OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
+			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
+			temp = --validate_property(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
@@ -1656,9 +1644,9 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-			if (s->r_acc.offset >= code_buf_size) {
+			if (s->r_acc.offset >= scr->getBufSize()) {
 				error("VM: lofsa operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)\n", PRINT_REG(s->r_acc), code_buf_size);
+				          " of script (at %04x)\n", PRINT_REG(s->r_acc), scr->getBufSize());
 			}
 			break;
 
@@ -1677,9 +1665,9 @@ void run_vm(EngineState *s, bool restoring) {
 				r_temp.offset = s->xs->addr.pc.offset + opparams[0];
 			}
 
-			if (r_temp.offset >= code_buf_size) {
+			if (r_temp.offset >= scr->getBufSize()) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)", PRINT_REG(r_temp), code_buf_size);
+				          " of script (at %04x)", PRINT_REG(r_temp), scr->getBufSize());
 			}
 			PUSH32(r_temp);
 			break;
@@ -1701,6 +1689,7 @@ void run_vm(EngineState *s, bool restoring) {
 				PUSH32(s->xs->objp);
 			} else {
 				// Debug opcode op_file, skip null-terminated string (file name)
+				const byte *code_buf = scr->getBuf();
 				while (code_buf[s->xs->addr.pc.offset++]) ;
 			}
 			break;
