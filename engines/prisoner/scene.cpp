@@ -58,7 +58,7 @@ bool PrisonerEngine::isEnterSceneScriptFinished() {
 		_enterSceneScriptIndex = -1;
 		_inventoryBarEnabled = true;
 		_inventoryBarFlag = false;
-		setUserInput(1);
+		setUserInput(true);
 		finished = true;
 	}
 	return finished;
@@ -234,7 +234,11 @@ void PrisonerEngine::leaveScene() {
 			_moduleScriptVars[i] = -1;
 		unloadDialogPanel();
 		unloadInventoryItems();
-		// TODO: resPurgeCache, resPurgeCacheDesperate
+		// Free all unused resources
+		_res->purge();
+		/* CHECKME: The original defragments the system memory here,
+			I don't think that's neccessary on any supported platform.
+		*/
 	}
 
 	resetFrameValues();

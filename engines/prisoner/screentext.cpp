@@ -227,7 +227,7 @@ void PrisonerEngine::updateScreenTexts() {
 				// TODO: Dirty rectangle
 				_screen->setClipRect(0, 82, 639, 397);
 				if (_inventoryActive) {
-					// TODO: Draw frame for inventory text
+					// Draw frame for inventory text
 					AnimationResource *anim = _res->get<AnimationResource>(_inventoryBoxResourceCacheSlot);
 					int16 rx1 = x1 - 6;
 					int16 rx2 = rx1 + screenText->width;

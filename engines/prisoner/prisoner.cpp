@@ -34,6 +34,8 @@
 #include "base/plugins.h"
 #include "base/version.h"
 
+//#include "graphics/cursorman.h"
+
 #include "engines/util.h"
 
 #include "sound/mididrv.h"
@@ -798,6 +800,7 @@ void PrisonerEngine::getInteractMessage(Common::String &pakName, int16 pakSlot, 
 // TODO: Move MIDI code to own class
 
 void PrisonerEngine::initializeMidi() {
+/*
 	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
 	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
 	MidiDriver *driver = MidiDriver::createMidi(midiDriver);
@@ -806,10 +809,13 @@ void PrisonerEngine::initializeMidi() {
 	_midi = new MidiPlayer(this, driver);
 	_midi->setGM(true);
 	_midi->setNativeMT32(native_mt32);
+*/
 }
 
 void PrisonerEngine::shutdownMidi() {
+/*
 	delete _midi;
+*/
 }
 
 void PrisonerEngine::setBackgroundObjects(Common::String &pakName, int16 pakSlot) {
