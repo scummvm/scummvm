@@ -383,6 +383,9 @@ void uploadSpriteGfx();
 
 static TransferSound soundControl;
 
+static bool isScrollingWithDPad() {
+	return (getKeysHeld() & (KEY_L | KEY_R)) != 0;
+}
 
 bool isCpuScalerEnabled() {
 	return cpuScalerEnable || !displayModeIs8Bit;
@@ -1339,7 +1342,7 @@ void doScreenTapMode(OSystem_DS *system) {
 		right = true;
 	}
 
-	if (!(getKeysHeld() & (KEY_L | KEY_R))) {
+	if (!isScrollingWithDPad()) {
 
 		if (getKeysDown() & KEY_LEFT) {
 			event.type = Common::EVENT_LBUTTONDOWN;
@@ -1376,7 +1379,7 @@ void doButtonSelectMode(OSystem_DS *system) {
 	Common::Event event;
 
 
-	if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
+	if (!isScrollingWithDPad()) {
 		event.type = Common::EVENT_MOUSEMOVE;
 		event.mouse = Common::Point(getPenX(), getPenY());
 		system->addEvent(event);
@@ -1399,7 +1402,7 @@ void doButtonSelectMode(OSystem_DS *system) {
 
 
 	if ((mouseMode != MOUSE_HOVER) || (!displayModeIs8Bit)) {
-		if (getPenDown() && (!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R))) {
+		if (getPenDown() && !isScrollingWithDPad()) {
 			if (mouseMode == MOUSE_LEFT) {
 				event.type = Common::EVENT_LBUTTONDOWN;
 				leftButtonDown = true;
@@ -1441,7 +1444,7 @@ void doButtonSelectMode(OSystem_DS *system) {
 		}
 	}
 
-	if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
+	if (!isScrollingWithDPad() && !getIndyFightState() && !getKeyboardEnable()) {
 
 		if (!getPenHeld() || (mouseMode != MOUSE_HOVER)) {
 			if (getKeysDown() & KEY_LEFT) {
@@ -1537,7 +1540,7 @@ void addEventsToQueue() {
 
 			if (!indyFightState) {
 
-				if ((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_B)) {
+				if (!isScrollingWithDPad() && (getKeysDown() & KEY_B)) {
 					if (s_currentGame->control == CONT_AGI) {
 						event.kbd.keycode = Common::KEYCODE_RETURN;
 						event.kbd.ascii = 13;
@@ -1609,7 +1612,7 @@ void addEventsToQueue() {
 
 			}
 
-			if (!((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (!getIndyFightState()) && (!getKeyboardEnable())) {
+			if (!isScrollingWithDPad() && !getIndyFightState() && !getKeyboardEnable()) {
 
 				if ((getKeysDown() & KEY_A) && (!indyFightState)) {
 					gameScreenSwap = !gameScreenSwap;
@@ -1648,7 +1651,7 @@ void addEventsToQueue() {
 			}
 		}
 
-		if (!getIndyFightState() && !((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) && (getKeysDown() & KEY_X)) {
+		if (!getIndyFightState() && !isScrollingWithDPad() && (getKeysDown() & KEY_X)) {
 			setKeyboardEnable(!keyboardEnable);
 		}
 
@@ -1670,7 +1673,7 @@ void addEventsToQueue() {
 
 		if (!keyboardEnable) {
 
-			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState)) && (displayModeIs8Bit)) {
+			if ((isScrollingWithDPad() || (indyFightState)) && (displayModeIs8Bit)) {
 				// Controls specific to the control method
 
 				if (s_currentGame->control == CONT_SKY) {
@@ -2012,7 +2015,7 @@ void VBlankHandler(void) {
 	soundUpdate();
 
 
-	if ((!gameScreenSwap) && (!(getKeysHeld() & KEY_L) && !(getKeysHeld() & KEY_R))) {
+	if ((!gameScreenSwap) && !isScrollingWithDPad()) {
 		if (s_currentGame) {
 			if (s_currentGame->control != CONT_SCUMM_SAMNMAX) {
 				if (getPenHeld() && (getPenY() < SCUMM_GAME_HEIGHT)) {
@@ -2054,7 +2057,7 @@ void VBlankHandler(void) {
 		callbackTimer -= FRAME_TIME;
 	}
 
-	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
+	if (isScrollingWithDPad()) {
 
 		if ((!dragging) && (getPenHeld()) && (penDownFrames > 5)) {
 			dragging = true;
@@ -2108,7 +2111,7 @@ void VBlankHandler(void) {
 
 	bool zooming = false;
 
-	if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
+	if (isScrollingWithDPad()) {
 		if ((getKeysHeld() & KEY_A) && (subScreenScale < ratio)) {
 			subScreenScale += 1;
 			zooming = true;
@@ -2185,7 +2188,7 @@ void VBlankHandler(void) {
 
 	if (displayModeIs8Bit) {
 
-		if ((getKeysHeld() & KEY_L) || (getKeysHeld() & KEY_R)) {
+		if (isScrollingWithDPad()) {
 
 			int offsX = 0, offsY = 0;
 
