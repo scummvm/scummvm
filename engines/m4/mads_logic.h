@@ -63,6 +63,11 @@ public:
 	void sceneStep();
 };
 
+class MadsGameLogic {
+public:
+	static void initialiseGlobals();
+};
+
 }
 
 #endif

@@ -29,6 +29,114 @@
 
 namespace M4 {
 
+void MadsGameLogic::initialiseGlobals() {
+	// Clear the entire globals list
+	Common::set_to(&_madsVm->globals()->_globals[0], &_madsVm->globals()->_globals[TOTAL_NUM_VARIABLES], 0);
+
+	SET_GLOBAL(4, 8);
+	SET_GLOBAL(33, 1);
+	SET_GLOBAL(10, 0xFFFF);
+	SET_GLOBAL(13, 0xFFFF);
+	SET_GLOBAL(15, 0xFFFF);
+	SET_GLOBAL(19, 0xFFFF);
+	SET_GLOBAL(20, 0xFFFF);
+	SET_GLOBAL(21, 0xFFFF);
+	SET_GLOBAL(95, 0xFFFF);
+
+	// TODO: unknown sub call
+
+	// Put the values 0 through 3 in a random ordering in global slots 83 - 86
+	for (int idx = 0; idx < 4; ) {
+		int randVal = _madsVm->_random->getRandomNumber(4);
+		SET_GLOBAL(83 + idx, randVal);
+
+		// Check whether the given value has already been used
+		bool flag = false;
+		for (int idx2 = 0; idx2 < idx; ++idx2) {
+			if (randVal == GET_GLOBAL(83 + idx2))
+				flag = true;
+		}
+
+		if (!flag)
+			++idx;
+	}
+
+	// Put the values 0 through 3 in a random ordering in global slots 87 - 90
+	for (int idx = 0; idx < 4; ) {
+		int randVal = _madsVm->_random->getRandomNumber(3);
+		SET_GLOBAL(87 + idx, randVal);
+
+		// Check whether the given value has already been used
+		bool flag = false;
+		for (int idx2 = 0; idx2 < idx; ++idx2) {
+			if (randVal == GET_GLOBAL(87 + idx2))
+				flag = true;
+		}
+
+		if (!flag)
+			++idx;
+	}
+
+	// Miscellaneous global settings
+	SET_GLOBAL(120, 501);
+	SET_GLOBAL(121, 0xFFFF);
+	SET_GLOBAL(110, 0xFFFF);
+	SET_GLOBAL(119, 1);
+	SET_GLOBAL(134, 4);
+	SET_GLOBAL(190, 201);
+	SET_GLOBAL(191, 301);
+	SET_GLOBAL(192, 413);
+	SET_GLOBAL(193, 706);
+	SET_GLOBAL(194, 801);
+	SET_GLOBAL(195, 551);
+	SET_GLOBAL(196, 752);
+
+	// Fill out the globals 200 - 209 with unique random number values less than 10000
+	for (int idx = 0; idx < 10; ) {
+		int randVal = _madsVm->_random->getRandomNumber(9999);
+		SET_GLOBAL(200 + idx, randVal);
+
+		// Check whether the given value has already been used
+		bool flag = false;
+		for (int idx2 = 0; idx2 < idx; ++idx2) {
+			if (randVal == GET_GLOBAL(87 + idx2))
+				flag = true;
+		}
+
+		if (!flag)
+			++idx;
+	}
+
+	switch (_madsVm->globals()->_difficultyLevel) {
+	case 1:
+		// Very hard
+		SET_GLOBAL(35, 0);
+		// TODO: object set room
+		SET_GLOBAL(137, 5);
+		SET_GLOBAL(136, 0);
+		break;
+
+	case 2:
+		// Hard
+		SET_GLOBAL(35, 0);
+		// TODO: object set room
+		SET_GLOBAL(136, 0xFFFF);
+		SET_GLOBAL(137, 6);
+		break;
+
+	case 3:
+		// Easy
+		SET_GLOBAL(35, 2);
+		// TODO: object set room
+		break;
+	}
+
+	_madsVm->_player._direction = 8;
+	_madsVm->_player._direction2 = 8;
+
+	// TODO: unknown processing routine getting called for 'RXM' and 'ROX'
+}
+
 /*--------------------------------------------------------------------------*/
 
 const char *MadsSceneLogic::formAnimName(char sepChar, int16 suffixNum) {
@@ -299,6 +407,7 @@ void MadsSceneLogic::enterScene() {
 		_madsVm->_player._playerPos = Common::Point(68, 140);
 		_madsVm->_player._direction = 4;
 		_madsVm->_player._visible = false;
+		_madsVm->_player._stepEnabled = false;
 
 		dataMap()[0x56FC] = 0;
 		dataMap()[0x5482] = 0;
@@ -323,9 +432,9 @@ void MadsSceneLogic::sceneStep() {
 	case 71:
 		_madsVm->globals()->_globals[10] = 0;
 		_madsVm->_player._visible = true;
-		dataMap()[0x56FC] = 0;
+		_madsVm->_player._stepEnabled = true;
 
-		_madsVm->scene()->_newTimeout = _madsVm->_currentTimer - _madsVm->scene()->_ticksAmount;
+		_madsVm->_player._priorTimer = _madsVm->_currentTimer - _madsVm->_player._ticksAmount;
 		break;
 	case 72:
 	case 73:

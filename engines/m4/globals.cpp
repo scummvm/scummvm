@@ -284,6 +284,7 @@ MadsGlobals::MadsGlobals(MadsEngine *vm): Globals(vm) {
 	sceneNumber = -1;
 	for (int i = 0; i < 3; ++i)
 		actionNouns[i] = 0;
+	_difficultyLevel = 0;
 }
 
 MadsGlobals::~MadsGlobals() {
