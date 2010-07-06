@@ -92,7 +92,7 @@ public:
 	reg_t kernelGetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId);
 
 	void drawBar();
-	reg_t kernelSelect(reg_t eventObject);
+	reg_t kernelSelect(reg_t eventObject, bool pauseSound);
 
 	void kernelDrawStatus(const char *text, int16 colorPen, int16 colorBack);
 	void kernelDrawMenuBar(bool clear);
@@ -103,8 +103,8 @@ private:
 	void calculateMenuAndItemWidth();
 	void drawMenu(uint16 oldMenuId, uint16 newMenuId);
 	void invertMenuSelection(uint16 itemId);
-	void interactiveShowMouse();
-	void interactiveRestoreMouse();
+	void interactiveStart(bool pauseSound);
+	void interactiveEnd(bool pauseSound);
 	GuiMenuItemEntry *interactiveWithKeyboard();
 	GuiMenuItemEntry *interactiveWithMouse();
 	uint16 mouseFindMenuSelection(Common::Point mousePosition);

@@ -382,7 +382,7 @@ void GfxMenu::calculateMenuAndItemWidth() {
 	}
 }
 
-reg_t GfxMenu::kernelSelect(reg_t eventObject) {
+reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	int16 eventType = readSelectorValue(_segMan, eventObject, SELECTOR(type));
 	int16 keyPress, keyModifier;
 	Common::Point mousePosition;
@@ -407,9 +407,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 		case 0:
 			break;
 		case SCI_KEY_ESC:
-			interactiveShowMouse();
+			interactiveStart(pauseSound);
 			itemEntry = interactiveWithKeyboard();
-			interactiveRestoreMouse();
+			interactiveEnd(pauseSound);
 			forceClaimed = true;
 			break;
 		default:
@@ -445,9 +445,9 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject) {
 	case SCI_EVENT_MOUSE_PRESS:
 		mousePosition = _cursor->getPosition();
 		if (mousePosition.y < 10) {
-			interactiveShowMouse();
+			interactiveStart(pauseSound);
 			itemEntry = interactiveWithMouse();
-			interactiveRestoreMouse();
+			interactiveEnd(pauseSound);
 			forceClaimed = true;
 		}
 		break;
@@ -632,12 +632,16 @@ void GfxMenu::invertMenuSelection(uint16 itemId) {
 	_paint16->bitsShow(itemRect);
 }
 
-void GfxMenu::interactiveShowMouse() {
+void GfxMenu::interactiveStart(bool pauseSound) {
 	_mouseOldState = _cursor->isVisible();
 	_cursor->kernelShow();
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(true);
 }
 
-void GfxMenu::interactiveRestoreMouse() {
+void GfxMenu::interactiveEnd(bool pauseSound) {
+	if (pauseSound)
+		g_sci->_soundCmd->pauseAll(false);
 	if (!_mouseOldState)
 		_cursor->kernelHide();
 }
