@@ -167,7 +167,7 @@ void MadsScene::loadScene(int sceneNumber) {
 	_madsVm->_player._destPos = _madsVm->_player._destPos;
 	_madsVm->_player._direction2 = _madsVm->_player._direction;
 	_madsVm->_player.setupFrame();
-	_madsVm->_player.idle();
+	_madsVm->_player.updateFrame();
 
 	// Purge resources
 	_vm->res()->purge();
@@ -337,9 +337,15 @@ void MadsScene::updateState() {
 	// Step through the scene
 	_sceneLogic.sceneStep();
 
+	_madsVm->_player.step();
+	_madsVm->_player._unk3 = 0;
+
 	if (_abortTimersMode == ABORTMODE_1)
 		_abortTimers = 0;
 
+	// Handle updating the player frame
+	_madsVm->_player.nextFrame();
+	
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
 		if (((MadsAnimation *) _activeAnimation)->freeFlag()) {

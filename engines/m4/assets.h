@@ -106,8 +106,8 @@ class MadsSpriteSetCharInfo {
 public:
 	MadsSpriteSetCharInfo(Common::SeekableReadStream *s);
 
-	int _frameNumber;
-	int _hasIdling;
+	int _totalFrames;
+	int _numEntries;
 	int _frameList2[16];
 	int _frameList[16];
 	int _ticksList[16];

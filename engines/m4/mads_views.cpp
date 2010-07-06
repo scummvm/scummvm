@@ -426,15 +426,15 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	for (int i = 0; i < 3; ++i)
 		rec.actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
-	if (flags & KMSG_OWNER_TIMEOUT)
-		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
+	if (flags & KMSG_PLAYER_TIMEOUT)
+		rec.frameTimer = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	return idx;
 }
 
 int MadsKernelMessageList::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
-	return add(Common::Point(0, 0), 0x1110, KMSG_OWNER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
+	return add(Common::Point(0, 0), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
 }
 
 void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -450,8 +450,8 @@ void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quote
 	_entries[msgIndex].asciiChar = *msgP;
 	_entries[msgIndex].asciiChar2 = *(msgP + 1);
 
-	if (_entries[msgIndex].flags & KMSG_OWNER_TIMEOUT)
-		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
+	if (_entries[msgIndex].flags & KMSG_PLAYER_TIMEOUT)
+		_entries[msgIndex].frameTimer2 = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
 }
@@ -545,7 +545,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		}
 	}
 	
-	if (msg.flags & KMSG_OWNER_TIMEOUT) {
+	if (msg.flags & KMSG_PLAYER_TIMEOUT) {
 		if (word_8469E != 0) {
 			// TODO: Figure out various flags
 		} else {
@@ -1211,7 +1211,6 @@ MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceL
 		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
 		
 	_textSpacing = -1;
-	_ticksAmount = 3;
 	_newTimeout = 0;
 	_abortTimers = 0;
 	_abortTimers2 = 0;

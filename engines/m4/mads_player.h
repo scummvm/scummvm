@@ -39,13 +39,19 @@ private:
 	void setTicksAmount();
 	void resetActionList();
 	int queueAction(int v0, int v1);
+	void idle();
+	void move();
+	void dirChanged();
 public:
 	char _spritesPrefix[16];
 	int _spriteSetCount;
 	bool _spriteSetsPresent[8];
 	Common::Point _playerPos;
 	Common::Point _destPos;
+	uint32 _priorTimer;
+	uint _ticksAmount;
 	int16 _direction, _direction2;
+	bool _stepEnabled;
 	bool _visible, _priorVisible;
 	bool _visible3;
 	bool _forceRefresh;
@@ -57,7 +63,7 @@ public:
 	uint16 _frameOffset, _frameNum;
 	bool _moving;
 	int _unk1;
-	int _newFrame;
+	int _frameCount;
 	int _frameListIndex;
 	int _actionIndex;
 	int _actionList[12];
@@ -71,9 +77,10 @@ public:
 
 	bool loadSprites(const char *prefix);
 	void update();
-	void idle();
+	void updateFrame();
 	void setupFrame();
 	void step();
+	void nextFrame();
 };
 
 } // End of namespace M4

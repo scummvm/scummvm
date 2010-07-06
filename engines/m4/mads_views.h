@@ -149,7 +149,7 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
 	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageEntry {
@@ -395,7 +395,6 @@ public:
 	MadsDirtyAreas _dirtyAreas;
 
 	int _textSpacing;
-	int _ticksAmount;
 	uint32 _newTimeout;
 	int _abortTimers;
 	int8 _abortTimers2;

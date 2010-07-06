@@ -632,9 +632,9 @@ int32 AssetManager::getSpriteFrameCount(int32 hash) {
 //--------------------------------------------------------------------------
 
 MadsSpriteSetCharInfo::MadsSpriteSetCharInfo(Common::SeekableReadStream *s) {
-	_frameNumber = s->readByte();
+	_totalFrames = s->readByte();
 	s->skip(1);
-	_hasIdling = s->readUint16LE() != 0;
+	_numEntries = s->readUint16LE();
 	
 	for (int i = 0; i < 16; ++i)
 		_frameList[i] = s->readUint16LE();

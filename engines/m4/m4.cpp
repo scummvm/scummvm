@@ -538,6 +538,8 @@ Common::Error MadsEngine::run() {
 	//printf("%s\n----------\n", _globals->loadMessage(i));
 
 	if (getGameType() == GType_RexNebular) {
+		MadsGameLogic::initialiseGlobals();
+
 		_scene = NULL;
 		loadMenu(MAIN_MENU);
 	} else {
