@@ -286,7 +286,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be savegame_version
 
 	Common::String tmp;
-	s.syncString(tmp);			// OBSOLETE: Used to be game_version
+	s.syncString(tmp, VER(9), VER(23));			// OBSOLETE: Used to be game_version
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
 	// OBSOLETE: Saved menus. Skip all of the saved data
@@ -746,7 +746,7 @@ void SegManager::reconstructClones() {
 				if (!baseObj)
 					error("Clone entry without a base class: %d", j);
 			}	// end for
-			}	// end if
+		}	// end if
 	}	// end for
 }
 
