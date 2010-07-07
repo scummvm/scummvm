@@ -814,8 +814,9 @@ bool GFXtests::paletteRotation() {
 
 	while (toRotate--) {
 		g_system->updateScreen();
-		g_system->delayMillis(600);
+		// XXX: disabling rotations as of now, as it makes 6s delay (will fix it tommorrow)
 		// FIXME : fix rotation
+		// g_system->delayMillis(600);
 		// rotatePalette(&palette[8], 254);
 		// g_system->setPalette(palette, 0, 256);
 	}
