@@ -38,7 +38,7 @@
 
 namespace Testbed {
 
-byte GFXTestSuite::_palette[3 * 4] = {0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0};
+byte GFXTestSuite::_palette[256 * 4] = {0, 0, 0, 0, 255, 255, 255, 0, 255, 255, 255, 0};
 
 GFXTestSuite::GFXTestSuite() {
 	// Initialize color palettes
@@ -85,7 +85,7 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[8] = r; 
 	_palette[9] = g;
 	_palette[10] = b;
-	g_system->setPalette(_palette, 0, 3);
+	g_system->setPalette(_palette, 0, 256);
 }
 
 // Helper functions used by GFX tests
@@ -100,6 +100,69 @@ void GFXtests::initMousePalette() {
 		
 	CursorMan.replaceCursorPalette(palette, 0, 3);
 	
+}
+
+void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, int val) {
+	
+	float r = rComp;
+	float g = gComp;
+	float b = bComp;
+
+	float h = hue * (360 / 254.0); // two colors are left for bg and fg
+	float s = sat;
+	float v = val;
+
+	int i;
+	float f, p, q, t;
+
+	if (s == 0) {
+		r = g = b = v * 255;
+		return;
+	}
+
+	h /= 60;	
+	i = (int) h;
+	f = h - i;
+	p = v * (1 - s);
+	q = v * (1 - s * f);
+	t = v * (1 - s * (1 - f));
+
+	switch (i) {
+		case 0:
+			r = v;
+			g = t;
+			b = p;
+			break;
+		case 1:
+			r = q;
+			g = v;
+			b = p;
+			break;
+		case 2:
+			r = p;
+			g = v;
+			b = t;
+			break;
+		case 3:
+			r = p;
+			g = q;
+			b = v;
+			break;
+		case 4:
+			r = t;
+			g = p;
+			b = v;
+			break;
+		default:	
+			r = v;
+			g = p;
+			b = q;
+			break;
+	}
+
+	rComp = r * 255;
+	gComp = g * 255;
+	bComp = b * 255;
 }
 
 void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
@@ -712,38 +775,49 @@ bool GFXtests::paletteRotation() {
 	Common::Point pt(0, 10);
 	Testsuite::writeOnScreen("Rotating palettes, the rectangles should appear moving up!", pt);
 	
-	byte palette[10 * 4] = {0, 0, 0, 0,
-							255, 255, 255, 0,
-							135, 48, 21, 0,
-							205, 190, 87, 0,
-							0, 32, 64, 0,
-							181, 126, 145, 0,
-							47, 78, 36, 0,
-							185, 115, 20, 0,
-							160, 164, 137, 0,
-							43, 52, 0, 0}; // 10 colors : B, W and 8 random 
+	// Use 256 colors
+	byte palette[256 * 4] = {0, 0, 0, 0,
+							 255, 255, 255, 0};
 
-	Common::RandomSource rs;
-	
-	// Initialize this palette randomly
-	g_system->setPalette(palette, 0, 10);
+	int r, g, b;
+	int colIndx;
 
-	// Draw 10 Rectangles, each of width 100 pixels and height 10 pixels
-	byte buffer[10 * 100 * 10] = {0};
-	
-	for (int i = 2; i < 10; i++) {
-		memset(buffer + i * 1000, i, 1000 * sizeof(byte));
+	for (int i = 2; i < 256; i++) {
+		HSVtoRGB(r, g, b, i - 2, 1, 1);
+		colIndx = i * 4;
+		palette[colIndx] = r;
+		palette[colIndx + 1] = g;
+		palette[colIndx + 2] = b;
 	}
 	
-	g_system->copyRectToScreen(buffer, 100, 110, 50, 100, 100);
+	// Initialize this palette.
+	g_system->setPalette(palette, 0, 256);
+
+	// Draw 254 Rectangles, each 1 pixel wide and 10 pixels long
+	byte buffer[254 * 10] = {0};
+
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 254; j++) {
+			buffer[i * 256 + j] = j + 2;
+		}
+	}
+	
+	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 10);
+	g_system->updateScreen();
+	g_system->delayMillis(2000);
+	
+	// Reset initial palettes
+	GFXTestSuite::setCustomColor(255, 0, 0);
+	Testsuite::clearScreen();
 
 	int toRotate = 10;
 
 	while (toRotate--) {
 		g_system->updateScreen();
 		g_system->delayMillis(600);
-		rotatePalette(&palette[8], 8);
-		g_system->setPalette(palette, 0, 10);
+		// FIXME : fix rotation
+		// rotatePalette(&palette[8], 254);
+		// g_system->setPalette(palette, 0, 256);
 	}
 
 	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {

@@ -36,6 +36,7 @@ void drawEllipse(int x, int y, int a, int b);
 void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 void initMousePalette();
 void mouseMovements();
+void HSVtoRGB(int& rComp, int& gComp,int& bComp, int hue, int sat, int val);
 void drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
@@ -75,8 +76,9 @@ private:
 	 * 0 (R:0, G:0, B:0) Black (kColorBlack)
 	 * 1 (R:255, G:255, B:255) White (kColorWhite)
 	 * 2 (R:255, G:255, B:255) your customized color (by default white) (kColorCustom)
+	 * The remaining values are zero
 	 */
-	static byte _palette[3 * 4];
+	static byte _palette[256 * 4];
 };
 
 }	// End of namespace Testbed
