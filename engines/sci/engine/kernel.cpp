@@ -364,7 +364,9 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                    NULL,            NULL },
     { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
     { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",             NULL,            NULL }, // subop
+	// ^^ we allow invalid references here, because kGraph(restoreBox) gets called with old non-existant handles often
+	//    this should get limited to this call only as soon as subop signatures are available
     { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
     { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
     { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
@@ -543,7 +545,8 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 	//  we also check, if the written signature makes any sense
 	curPos = writtenSig;
 	while (*curPos) {
-		switch (*curPos) {
+		curChar = *curPos;
+		switch (curChar) {
 		case '[': // either or
 			if (eitherOr)
 				error("signature for k%s: '[' used within '[]'", kernelName);
@@ -584,6 +587,7 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 		case 'l':
 		case 'n':
 		case '.':
+		case '!':
 			if ((hadOptional) & (!optional))
 				error("signature for k%s: non-optional type may not follow optional type", kernelName);
 			validType = true;
@@ -634,8 +638,13 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 			case 'l':
 			case 'n':
 			case '.':
+			case '!':
 				// and we also got some signature pending?
 				if (signature) {
+					if (!(signature & SIG_MAYBE_ANY))
+						error("signature for k%s: invalid ('!') may only get used in combination with a real type", kernelName);
+					if ((signature & SIG_IS_INVALID) && ((signature & SIG_MAYBE_ANY) == (SIG_TYPE_NULL | SIG_TYPE_INTEGER)))
+						error("signature for k%s: invalid ('!') should not be used on exclusive null/integer type", kernelName);
 					if (optional) {
 						signature |= SIG_IS_OPTIONAL;
 						if (curChar != ')')
@@ -662,36 +671,43 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 			break;
 		case '0':
 			if (signature & SIG_TYPE_NULL)
-				error("signature for k%s: NULL specified more than once", kernelName);
+				error("signature for k%s: NULL ('0') specified more than once", kernelName);
 			signature |= SIG_TYPE_NULL;
 			break;
 		case 'i':
 			if (signature & SIG_TYPE_INTEGER)
-				error("signature for k%s: integer specified more than once", kernelName);
+				error("signature for k%s: integer ('i') specified more than once", kernelName);
 			signature |= SIG_TYPE_INTEGER | SIG_TYPE_NULL;
 			break;
 		case 'o':
 			if (signature & SIG_TYPE_OBJECT)
-				error("signature for k%s: object specified more than once", kernelName);
+				error("signature for k%s: object ('o') specified more than once", kernelName);
 			signature |= SIG_TYPE_OBJECT;
 			break;
 		case 'r':
 			if (signature & SIG_TYPE_REFERENCE)
-				error("signature for k%s: reference specified more than once", kernelName);
+				error("signature for k%s: reference ('r') specified more than once", kernelName);
 			signature |= SIG_TYPE_REFERENCE;
 			break;
 		case 'l':
 			if (signature & SIG_TYPE_LIST)
-				error("signature for k%s: list specified more than once", kernelName);
+				error("signature for k%s: list ('l') specified more than once", kernelName);
 			signature |= SIG_TYPE_LIST;
 			break;
 		case 'n':
 			if (signature & SIG_TYPE_NODE)
-				error("signature for k%s: node specified more than once", kernelName);
+				error("signature for k%s: node ('n') specified more than once", kernelName);
 			signature |= SIG_TYPE_NODE;
 			break;
 		case '.':
+			if (signature & SIG_MAYBE_ANY)
+				error("signature for k%s: maybe-any ('.') shouldn't get specified with other types in front of it", kernelName);
 			signature |= SIG_MAYBE_ANY;
+			break;
+		case '!':
+			if (signature & SIG_IS_INVALID)
+				error("signature for k%s: invalid ('!') specified more than once", kernelName);
+			signature |= SIG_IS_INVALID;
 			break;
 		case '*': // accepts more of the same parameter
 			signature |= SIG_MORE_MAY_FOLLOW;
@@ -708,7 +724,7 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 	return result;
 }
 
-int Kernel::findRegType(reg_t reg) {
+uint16 Kernel::findRegType(reg_t reg) {
 	// No segment? Must be integer
 	if (!reg.segment)
 		return SIG_TYPE_INTEGER | (reg.offset ? 0 : SIG_TYPE_NULL);
@@ -719,21 +735,24 @@ int Kernel::findRegType(reg_t reg) {
 	// Otherwise it's an object
 	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
 	if (!mobj)
-		return SIG_TYPE_INVALID;
+		return SIG_TYPE_ERROR;
 
+	uint16 result = 0;
 	if (!mobj->isValidOffset(reg.offset))
-		return SIG_TYPE_INVALID;
+		result |= SIG_IS_INVALID;
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
 			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
 		    RAW_IS_OBJECT((*(Script *)mobj).getBuf(reg.offset)) ) {
-			return ((Script *)mobj)->getObject(reg.offset) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
+			result |= ((Script *)mobj)->getObject(reg.offset) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
 		} else
-			return SIG_TYPE_REFERENCE;
+			result |= SIG_TYPE_REFERENCE;
+		break;
 	case SEG_TYPE_CLONES:
-		return SIG_TYPE_OBJECT;
+		result |= SIG_TYPE_OBJECT;
+		break;
 	case SEG_TYPE_LOCALS:
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_SYS_STRINGS:
@@ -743,14 +762,18 @@ int Kernel::findRegType(reg_t reg) {
 	case SEG_TYPE_ARRAY:
 	case SEG_TYPE_STRING:
 #endif
-		return SIG_TYPE_REFERENCE;
+		result |= SIG_TYPE_REFERENCE;
+		break;
 	case SEG_TYPE_LISTS:
-		return SIG_TYPE_LIST;
+		result |= SIG_TYPE_LIST;
+		break;
 	case SEG_TYPE_NODES:
-		return SIG_TYPE_NODE;
+		result |= SIG_TYPE_NODE;
+		break;
 	default:
-		return 0;
+		return SIG_TYPE_ERROR;
 	}
+	return result;
 }
 
 struct SignatureDebugType {
@@ -762,11 +785,12 @@ static const SignatureDebugType signatureDebugTypeList[] = {
 	{ SIG_TYPE_NULL,          "null" },
 	{ SIG_TYPE_INTEGER,       "integer" },
 	{ SIG_TYPE_UNINITIALIZED, "uninitialized" },
-	{ SIG_TYPE_INVALID,       "invalid" },
 	{ SIG_TYPE_OBJECT,        "object" },
 	{ SIG_TYPE_REFERENCE,     "reference" },
 	{ SIG_TYPE_LIST,          "list" },
 	{ SIG_TYPE_NODE,          "node" },
+	{ SIG_TYPE_ERROR,         "error" },
+	{ SIG_IS_INVALID,         "invalid" },
 	{ 0,                      NULL }
 };
 
@@ -830,10 +854,11 @@ bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
 	while (nextSig && argc) {
 		curSig = nextSig;
 		int type = findRegType(*argv);
-		if (!type)
-			return false; // couldn't determine type
 
-		if (!(type & curSig))
+		if ((type & SIG_IS_INVALID) && (!(curSig & SIG_IS_INVALID)))
+			return false; // pointer is invalid and signature doesn't allow that?
+
+		if (!((type & ~SIG_IS_INVALID) & curSig))
 			return false; // type mismatch
 
 		if (!(curSig & SIG_MORE_MAY_FOLLOW)) {

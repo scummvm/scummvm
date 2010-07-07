@@ -3157,10 +3157,11 @@ bool Console::parseInteger(const char *argument, int &result) {
 }
 
 void Console::printBasicVarInfo(reg_t variable) {
-	int segType = g_sci->getKernel()->findRegType(variable);
+	int regType = g_sci->getKernel()->findRegType(variable);
+	int segType = regType;
 	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
-	segType &= SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_NODE | SIG_TYPE_LIST | SIG_TYPE_UNINITIALIZED | SIG_TYPE_INVALID;
+	segType &= SIG_TYPE_INTEGER | SIG_TYPE_OBJECT | SIG_TYPE_REFERENCE | SIG_TYPE_NODE | SIG_TYPE_LIST | SIG_TYPE_UNINITIALIZED | SIG_TYPE_ERROR;
 
 	switch (segType) {
 	case SIG_TYPE_INTEGER: {
@@ -3184,12 +3185,15 @@ void Console::printBasicVarInfo(reg_t variable) {
 	case SIG_TYPE_UNINITIALIZED:
 		DebugPrintf(" (uninitialized)");
 		break;
-	case SIG_TYPE_INVALID:
-		DebugPrintf(" (invalid)");
+	case SIG_TYPE_ERROR:
+		DebugPrintf(" (error)");
 		break;
 	default:
 		DebugPrintf(" (??\?)");
 	}
+
+	if (regType & SIG_IS_INVALID)
+		DebugPrintf(" IS INVALID!");
 }
 
 void Console::printList(List *list) {
