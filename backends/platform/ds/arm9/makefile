@@ -265,12 +265,7 @@ ifdef USE_DEBUGGER
 	LIBS += -ldsdebugger -ldswifi9
 endif
 
-#-Lscumm -lscumm -Lbase -lbase -Lcommon -lcommon -Lgraphics -lgraphics -Lgui -lgui -Lsound -lsound
 EXECUTABLE = scummvm.elf
-PLUGIN_PREFIX =
-PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.x plugin.syms scummvm.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-Tplugin.x,--just-symbols,scummvm.elf,--retain-symbols-file,plugin.syms -L$(ronindir)/lib
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
@@ -279,12 +274,6 @@ RANLIB = arm-eabi-ranlib
 OBJCOPY = arm-eabi-objcopy
 AS = arm-eabi-as
 HAVE_GCC3 = true
-
-ifdef DYNAMIC_MODULES
-DEFINES += -DDYNAMIC_MODULES
-PRE_OBJS_FLAGS = -Wl,--whole-archive
-POST_OBJS_FLAGS = -Wl,--no-whole-archive
-endif
 
 PORT_OBJS := \
 	$(portdir)/source/blitters_arm.o \
@@ -332,10 +321,6 @@ FAT_OBJS :=
 	$(portdir)/source/fat/m3sd.o
 
 
-#			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
-#			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
-#			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
-
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
 OPTLIST := actor.cpp dsmain.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp script.cpp
 #OPTLIST :=
@@ -371,11 +356,6 @@ clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
 	rm -fr $(BUILD)
 
-plugin_dist :
-	find . -name '*.plg' | while read p; do \
-	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
-	done
-
 dist : SCUMMVM.BIN plugins plugin_dist
 
 
@@ -394,25 +374,11 @@ endef
 # Replacement rule for the one in makefile.common
 ##############
 %.o: %.cpp
-#	echo !!!!!!!!!!!! $(notdir $<)
-#	ifeq ( $(notdir $<), $(findstring $(notdir $<), $(OPTLIST)) )
-#	 OPTFLAG=-O3
-#	else
-#	 OPTFLAG=-Os
-#	endif
-#	export OPTFLAG = ;
-#	echo !!!!!!!! $(OPTFLAG)
 	$(MKDIR) $(*D)/$(DEPDIR)
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 
 #---------------------------------------------------------------------------------
-
-#---------------------------------------------------------------------------------
-%.o	:	%.pcx
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
 
 #---------------------------------------------------------------------------------
 %.o	:	%.bin
@@ -433,20 +399,7 @@ endef
 	@$(bin2o)
 
 #---------------------------------------------------------------------------------
-%.o	:	%.map
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-#---------------------------------------------------------------------------------
-%.o	:	%.mdl
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
-
-#---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
 	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
 	dsbuild $@ -l ../ndsloader.bin
 

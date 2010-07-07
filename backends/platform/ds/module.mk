@@ -45,12 +45,6 @@ FAT_OBJS := \
 	arm9/source/fat/m3sd.o
 
 
-#	arm9/source/fat/io_cf_common.o arm9/source/fat/io_m3_common.o\
-#	arm9/source/fat/io_sd_common.o arm9/source/fat/io_scsd_s.o \
-#	arm9/source/fat/io_sc_common.o arm9/source/fat/io_sd_common.o
-
-
-#MODULE_OBJS := $(PORT_OBJS) $(DATA_OBJS) $(FAT_OBJS)
 MODULE_OBJS := $(DATA_OBJS) $(PORT_OBJS) $(FAT_OBJS)
 
 
