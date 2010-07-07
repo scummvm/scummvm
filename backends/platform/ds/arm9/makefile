@@ -18,7 +18,7 @@ ifeq ($(SCUMM_BUILD),k)
 	DS_BUILD_K = 1
 else
  ifeq ($(SCUMM_BUILD),j)
- 	DS_BUILD_J = 1
+	DS_BUILD_J = 1
  else
   ifeq ($(SCUMM_BUILD),i)
         DS_BUILD_I = 1
@@ -72,7 +72,6 @@ else
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
 	# claw some back.
 
-	
 
 	else
 		ifdef DS_BUILD_I
@@ -116,7 +115,7 @@ USE_ARM_COSTUME_ASM = 1
 #WRAP_MALLOC = 1
 
 ifdef DS_BUILD_A
-	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
+	DEFINES += -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
 	LOGO = logoa.bmp
 	ENABLE_SCUMM = $(ENABLED)
 	DEFINES += -DENABLE_SCUMM=$(ENABLED)
@@ -127,7 +126,7 @@ ifdef DS_BUILD_A
 endif
 
 ifdef DS_BUILD_B
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_B
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_B
 	LOGO = logob.bmp
 	ENABLE_SKY = $(ENABLED)
 	ENABLE_QUEEN = $(ENABLED)
@@ -135,14 +134,14 @@ ifdef DS_BUILD_B
 endif
 
 ifdef DS_BUILD_C
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_C
 	LOGO = logoc.bmp
 	ENABLE_AGOS = $(ENABLED)
 	BUILD=scummvm-C
 endif
 
 ifdef DS_BUILD_D
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_D
 	LOGO = logod.bmp
 	ENABLE_GOB = $(ENABLED)
 	ENABLE_CINE = $(ENABLED)
@@ -151,42 +150,42 @@ ifdef DS_BUILD_D
 endif
 
 ifdef DS_BUILD_E
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_E
 	LOGO = logoe.bmp
 	ENABLE_SAGA = $(ENABLED)
 	BUILD=scummvm-E
 endif
 
 ifdef DS_BUILD_F
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_F
 	LOGO = logof.bmp
 	ENABLE_KYRA = $(ENABLED)
 	BUILD=scummvm-F
 endif
 
 ifdef DS_BUILD_G
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_G
 	LOGO = logog.bmp
 	ENABLE_LURE = $(ENABLED)
 	BUILD=scummvm-G
 endif
 
 ifdef DS_BUILD_H
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
 	LOGO = logoh.bmp
 	ENABLE_PARALLACTION = $(ENABLED)
 	BUILD=scummvm-H
 endif
 
 ifdef DS_BUILD_I
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
 	LOGO = logoi.bmp
 	ENABLE_MADE = $(ENABLED)
 	BUILD=scummvm-I
 endif
 
 ifdef DS_BUILD_K
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_K
+	DEFINES += -DDS_NON_SCUMM_BUILD -DDS_BUILD_K
 	LOGO = logok.bmp
 	ENABLE_CRUISE = $(ENABLED)
 	BUILD=scummvm-K
@@ -275,12 +274,19 @@ ifdef USE_DEBUGGER
 	LIBS += -ldsdebugger -ldswifi9
 endif
 
+
+ifeq ($(DYNAMIC_MODULES),1)
+DEFINES += -DDYNAMIC_MODULES
+PRE_OBJS_FLAGS = -Wl,--whole-archive
+POST_OBJS_FLAGS = -Wl,--no-whole-archive
+endif
+
 #-Lscumm -lscumm -Lbase -lbase -Lcommon -lcommon -Lgraphics -lgraphics -Lgui -lgui -Lsound -lsound
-EXECUTABLE = scummvm.elf
+EXECUTABLE = $(portdir)/$(BUILD)/scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = $(portdir)/plugin.ld $(portdir)/plugin.syms $(EXECUTABLE)
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-T$(portdir)/plugin.ld,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(portdir)/plugin.syms -lstdc++ -lc 
+PLUGIN_EXTRA_DEPS = $(portdir)/source/plugin.ld $(portdir)/source/plugin.syms $(EXECUTABLE)
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-T$(portdir)/source/plugin.ld,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc 
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
@@ -290,11 +296,6 @@ OBJCOPY = arm-eabi-objcopy
 AS = arm-eabi-as
 HAVE_GCC3 = true
 
-ifeq ($(DYNAMIC_MODULES),1)
-DEFINES += -DDYNAMIC_MODULES
-PRE_OBJS_FLAGS = -Wl,--whole-archive
-POST_OBJS_FLAGS = -Wl,--no-whole-archive
-endif
 
 PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
