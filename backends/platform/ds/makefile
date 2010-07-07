@@ -1,8 +1,6 @@
 #SUBDIRS:= `ls | egrep -v '^(CVS|tools)$$'`
 
 
-
-
 export PATH	:=	$(DEVKITARM)/bin:$(PATH)
 
 export portdir = $(CURDIR)/arm9

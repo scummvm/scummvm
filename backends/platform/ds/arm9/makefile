@@ -5,7 +5,7 @@ DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
 
-ifdef DYNAMIC_MODULES
+ifeq ($(DYNAMIC_MODULES),1)
 	ENABLED = DYNAMIC_PLUGIN
 else
 	ENABLED = STATIC_PLUGIN
@@ -81,7 +81,7 @@ else
 			ifdef DS_BUILD_K
 
 			else
-				USE_MAD = 1
+				#USE_MAD = 1
 			endif
 		endif
 	endif
@@ -208,7 +208,6 @@ endif
 #endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
-ICON		:= -b ../../../logo.bmp "ScummVM;By Neil Millstone;"
 
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
@@ -254,9 +253,6 @@ endif
 
 DEFINES += -DREDUCE_MEMORY_USAGE
 
-# Removed, as these are done in portdefs.h
-# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE
-
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
 ifdef WRAP_MALLOC
@@ -269,6 +265,7 @@ INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/source -I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
 			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
 
+CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP 
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
 ifdef USE_MAD
@@ -282,8 +279,8 @@ endif
 EXECUTABLE = scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms scummvm.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-Tplugin.ld,--just-symbols,scummvm.elf,--retain-symbols-file,plugin.syms
+PLUGIN_EXTRA_DEPS = $(portdir)/plugin.ld $(portdir)/plugin.syms $(EXECUTABLE)
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-T$(portdir)/plugin.ld,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(portdir)/plugin.syms -lstdc++ -lc 
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
@@ -293,7 +290,7 @@ OBJCOPY = arm-eabi-objcopy
 AS = arm-eabi-as
 HAVE_GCC3 = true
 
-ifdef DYNAMIC_MODULES
+ifeq ($(DYNAMIC_MODULES),1)
 DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
@@ -301,14 +298,11 @@ endif
 
 PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
-		$(portdir)/source/osystem_ds.o $(portdir)/source/portdefs.o $(portdir)/source/ramsave.o\
+		$(portdir)/source/osystem_ds.o $(portdir)/source/ramsave.o\
 		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
-		$(portdir)/source/interrupt.o
-		
-ifdef DYNAMIC_MODULES
-	PORT_OBJS += $(portdir)/source/dsloader.o
-endif
+		$(portdir)/source/interrupt.o\
+		$(portdir)/source/dsloader.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
@@ -365,9 +359,7 @@ OPT_SIZE := -Os -mthumb
 
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
 
-
-
-MODULE_DIRS += .
+MODULE_DIRS += ./
 
 ndsall:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
@@ -489,6 +481,7 @@ endef
 
 #---------------------------------------------------------------------------------
 # FIXME: The following rule hardcodes the input & output filename -- shouldn't it use $< and $@ instead?
+
 %.bin: %.elf
 	$(OBJCOPY) -S scummvm.elf scummvm-stripped.elf
 	$(OBJCOPY) -O binary scummvm-stripped.elf scummvm.bin

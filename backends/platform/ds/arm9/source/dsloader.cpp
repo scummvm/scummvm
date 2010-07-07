@@ -33,7 +33,7 @@
 #include <unistd.h>
 #include <sys/fcntl.h>
 
-#include "backends/platform/ds/dsloader.h"
+#include "backends/platform/ds/arm9/source/dsloader.h"
 
 #define __DS_DEBUG_PLUGINS__
 
