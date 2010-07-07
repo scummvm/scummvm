@@ -60,40 +60,42 @@ LOGO = logoa.bmp
 
 
 
-# Files in this list will be optimisied for speed, otherwise they will be optimised for space
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
 
+# By default optimize for size
+CXXFLAGS += $(OPT_SIZE)
 
-# TODO: The original list contained three more files that should be optimized
-# for size: actor.cpp gfx.cpp sprite.cpp -- but there are many files with these
+# Files listed below will be optimisied for speed, otherwise they will be optimised for space
+# TODO: speed original list contained three more files that should be optimized
+# for speed: actor.cpp gfx.cpp sprite.cpp -- but there are many files with these
 # names, which are the "right" ones?
-$(ndsdir)/arm9/source/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-$(ndsdir)/arm9/source/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-$(ndsdir)/arm9/source/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-$(ndsdir)/arm9/source/ds_main.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/isomap.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-sound/rate.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/actor_walk.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/actor_path.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/image.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-sound/fmopl.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/scumm/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/m4/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/scumm/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/cine/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/agos/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/saga/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/m4/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
-engines/agi/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+$(ndsdir)/arm9/source/dsmain.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/arm9/source/osystem_ds.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/arm9/source/blitters.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+$(ndsdir)/arm9/source/ds_main.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/isomap.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+sound/rate.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/actor_walk.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/actor_path.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/image.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+sound/fmopl.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/scumm/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/m4/actor.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/scumm/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/cine/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/agos/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/gfx.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/saga/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/m4/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
+engines/agi/sprite.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 # TODO: Fingolfin says: optimizing staticres for size would
 # save about 30k, so maybe consider that?
-#engines/kyra/staticres.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SIZE)
+#engines/kyra/staticres.o: CXXFLAGS:=$(CXXFLAGS) $(OPT_SPEED)
 
 
 
@@ -108,7 +110,7 @@ all: scummvm.nds scummvm.ds.gba
 clean: dsclean
 
 dsclean:
-	$(RM) scummvm.nds scummvm.ds.gba
+	$(RM) $(addprefix $(ndsdir)/, $(ARM7_MODULE_OBJS)) scummvm.nds scummvm.ds.gba
 
 .PHONY: dsclean
 
