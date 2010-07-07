@@ -345,7 +345,7 @@ MODULE_DIRS += .
 
 ndsall:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	make -C ./$(BUILD) -f ../makefile scummvm.nds
+	make -C ./$(BUILD) -f ../makefile scummvm.nds scummvm.ds.gba
 
 include $(srcdir)/Makefile.common
 
@@ -400,10 +400,11 @@ endef
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
-	dsbuild $@ -l ../ndsloader.bin
+	ndstool -c $@ -9 $< $(ARM7BIN) -b ../../$(LOGO) "$(@F);ScummVM $(VERSION);DS Port"
 
-	padbin 16 $(basename $@).ds.gba
+%.ds.gba: %.nds
+	dsbuild $< -o $@ -l $(portdir)/ndsloader.bin
+	padbin 16 $@
 
 #---------------------------------------------------------------------------------
 %.bin: %.elf
