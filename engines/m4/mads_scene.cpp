@@ -165,7 +165,7 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Miscellaneous player setup
 	_madsVm->_player._destPos = _madsVm->_player._destPos;
-	_madsVm->_player._direction2 = _madsVm->_player._direction;
+	_madsVm->_player._newDirection = _madsVm->_player._direction;
 	_madsVm->_player.setupFrame();
 	_madsVm->_player.updateFrame();
 
@@ -1192,9 +1192,9 @@ bool MadsInterfaceView::handleKeypress(int32 keycode) {
 			warning("TODO: Activate sound");
 			break;
 
-		case Common::KEYCODE_u:
-			// Rotate player
-			warning("TODO: Rotate player");
+		case Common::KEYCODE_t:
+			// Rotate player - This was Ctrl-U in the original, but in ScummVM Ctrl-U is a global mute key
+			_madsVm->_player._newDirection = _madsVm->_player._directionListIndexes[_madsVm->_player._newDirection + 10];
 			break;
 
 		case Common::KEYCODE_v: {

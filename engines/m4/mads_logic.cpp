@@ -132,7 +132,7 @@ void MadsGameLogic::initialiseGlobals() {
 	}
 
 	_madsVm->_player._direction = 8;
-	_madsVm->_player._direction2 = 8;
+	_madsVm->_player._newDirection = 8;
 
 	// TODO: unknown processing routine getting called for 'RXM' and 'ROX'
 }

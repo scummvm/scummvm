@@ -50,7 +50,7 @@ public:
 	Common::Point _destPos;
 	uint32 _priorTimer;
 	uint _ticksAmount;
-	int16 _direction, _direction2;
+	int16 _direction, _newDirection;
 	bool _stepEnabled;
 	bool _visible, _priorVisible;
 	bool _visible3;
@@ -58,7 +58,7 @@ public:
 	int16 _currentScale;
 	int16 _yScale;
 	int16 _currentDepth;
-	int16 _spriteListIdx, _spriteListIdx2;
+	int16 _spriteListStart, _spriteListIdx;
 	bool _spritesChanged;
 	uint16 _frameOffset, _frameNum;
 	bool _moving;

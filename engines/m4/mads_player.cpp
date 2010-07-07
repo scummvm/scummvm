@@ -36,7 +36,7 @@ const int MadsPlayer::_directionListIndexes[32] = {
 MadsPlayer::MadsPlayer() {
 	_playerPos = Common::Point(160, 78);
 	_direction = 0;
-	_direction2 = 0;
+	_newDirection = 0;
 	_forceRefresh = true;
 	_stepEnabled = true;
 	_ticksAmount = 3;
@@ -46,8 +46,8 @@ MadsPlayer::MadsPlayer() {
 	_visible3 = false;
 	_yScale = 0;
 	_moving = false;
+	_spriteListStart = 0;
 	_spriteListIdx = 0;
-	_spriteListIdx2 = 0;
 	_spritesChanged = true;
 	_currentScale = 0;
 	strcpy(_spritesPrefix, "");
@@ -93,7 +93,7 @@ bool MadsPlayer::loadSprites(const char *prefix) {
 
 			int setIndex = _madsVm->scene()->_spriteSlots.addSprites(setName, true, SPRITE_SET_CHAR_INFO);
 			if (setIndex < 0) {
-				if (idx < 7)
+				if (idx < 5)
 					break;
 				_spriteSetsPresent[idx] = false;
 			} else {
@@ -101,7 +101,7 @@ bool MadsPlayer::loadSprites(const char *prefix) {
 			}
 
 			if (idx == 0)
-				_spriteListIdx = setIndex;
+				_spriteListStart = setIndex;
 		}
 
 		result = 0;
@@ -141,7 +141,7 @@ void MadsPlayer::update() {
 			MadsSpriteSlot slot;
 			slot.spriteType = FOREGROUND_SPRITE;
 			slot.seqIndex = PLAYER_SEQ_INDEX;
-			slot.spriteListIndex = _spriteListIdx + _spriteListIdx2;
+			slot.spriteListIndex = _spriteListStart + _spriteListIdx;
 			slot.frameNumber = _frameOffset + _frameNum;
 			slot.xp = _playerPos.x;
 			slot.yp = _playerPos.y + (_yScale * newScale) / 100;
@@ -181,7 +181,7 @@ void MadsPlayer::update() {
  * Updates the animation frame for the player
  */
 void MadsPlayer::updateFrame() {
-	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
 	assert(spriteSet._charInfo);
 
 	if (!spriteSet._charInfo->_numEntries) {
@@ -214,14 +214,14 @@ void MadsPlayer::updateFrame() {
 void MadsPlayer::setupFrame() {
 	resetActionList();
 	_frameOffset = 0;
-	_spriteListIdx2 = _directionListIndexes[_direction];
-	if (!_spriteSetsPresent[_spriteListIdx2]) {
+	_spriteListIdx = _directionListIndexes[_direction];
+	if (!_spriteSetsPresent[_spriteListIdx]) {
 		// Direction isn't present, so use alternate direction, with entries flipped
-		_spriteListIdx2 -= 4;
+		_spriteListIdx -= 4;
 		_frameOffset = 0x8000;
 	}
 
-	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
 	assert(spriteSet._charInfo);
 	_unk1 = MAX(spriteSet._charInfo->_unk1, 100);
 	setTicksAmount();
@@ -238,7 +238,7 @@ void MadsPlayer::setupFrame() {
 }
 
 void MadsPlayer::step() {
-	if (_visible && _stepEnabled && !_moving && (_direction == _direction2) && (_madsVm->_currentTimer >= GET_GLOBAL32(2))) {
+	if (_visible && _stepEnabled && !_moving && (_direction == _newDirection) && (_madsVm->_currentTimer >= GET_GLOBAL32(2))) {
 		if (_actionIndex == 0) {
 			int randVal = _vm->_random->getRandomNumber(29999);
 
@@ -347,7 +347,7 @@ int MadsPlayer::getSpriteSlot() {
 }
 
 void MadsPlayer::setTicksAmount() {
-	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
 	assert(spriteSet._charInfo);
 	_madsVm->_player._ticksAmount = spriteSet._charInfo->_ticksAmount;
 	if (_madsVm->_player._ticksAmount == 0)
@@ -363,7 +363,7 @@ void MadsPlayer::resetActionList() {
 }
 
 int MadsPlayer::queueAction(int action1, int action2) {
-	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
 	assert(spriteSet._charInfo);
 
 	if ((action1 < spriteSet._charInfo->_numEntries) && (_actionIndex < 11)) {
@@ -377,13 +377,13 @@ int MadsPlayer::queueAction(int action1, int action2) {
 }
 
 void MadsPlayer::idle() {
-	if (_direction != _direction2) {
+	if (_direction != _newDirection) {
 		// The direction has changed, so reset for new direction
 		dirChanged();
 		return;
 	}
 
-	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListIdx + _spriteListIdx2);
+	SpriteAsset &spriteSet = _madsVm->scene()->_spriteSlots.getSprite(_spriteListStart + _spriteListIdx);
 	assert(spriteSet._charInfo);
 	if (spriteSet._charInfo->_numEntries == 0)
 		// No entries, so exit immediately
@@ -418,34 +418,34 @@ void MadsPlayer::dirChanged() {
 	int dirIndex = 0, dirIndex2 = 0;
 	int newDir = 0, newDir2 = 0;
 
-	if (_direction != _direction2) {
+	if (_direction != _newDirection) {
 		// Find the index for the given direction in the player direction list
 		int tempDir = _direction;
 		do {
 			++dirIndex;
 			newDir += tempDir;
 			tempDir = _directionListIndexes[tempDir + 10];
-		} while (tempDir != _direction2);
+		} while (tempDir != _newDirection);
 	}
 
 
-	if (_direction != _direction2) {
+	if (_direction != _newDirection) {
 		// Find the index for the given direction in the player direction list
 		int tempDir = _direction;
 		do {
 			++dirIndex2;
 			newDir2 += tempDir;
-			tempDir = _directionListIndexes[tempDir + 10];
-		} while (tempDir != _direction2);
+			tempDir = _directionListIndexes[tempDir + 20];
+		} while (tempDir != _newDirection);
 	}
 
 	int diff = dirIndex - dirIndex2;
 	if (diff == 0)
 		diff = newDir - newDir2;
 
-	_direction = (diff >= 0) ? _directionListIndexes[_direction] : _directionListIndexes[_direction + 10];
+	_direction = (diff >= 0) ? _directionListIndexes[_direction + 20] : _directionListIndexes[_direction + 10];
 	setupFrame();
-	if ((_direction == _direction2) && !_moving)
+	if ((_direction == _newDirection) && !_moving)
 		updateFrame();
 
 	_priorTimer += 1;
