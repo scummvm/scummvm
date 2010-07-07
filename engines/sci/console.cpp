@@ -1581,7 +1581,7 @@ bool Console::cmdSegmentInfo(int argc, const char **argv) {
 		DebugPrintf("Provides information on the specified segment(s)\n");
 		DebugPrintf("Usage: %s <segment number>\n", argv[0]);
 		DebugPrintf("<segment number> can be a number, which shows the information of the segment with\n");
-		DebugPrintf("the specified number, or \"all\" to show information on all active segments");
+		DebugPrintf("the specified number, or \"all\" to show information on all active segments\n");
 		return true;
 	}
 
@@ -1589,9 +1589,11 @@ bool Console::cmdSegmentInfo(int argc, const char **argv) {
 		for (uint i = 0; i < _engine->_gamestate->_segMan->_heap.size(); i++)
 			segmentInfo(i);
 	} else {
-		int nr = atoi(argv[1]);
-		if (!segmentInfo(nr))
-			DebugPrintf("Segment %04x does not exist\n", nr);
+		int segmentNr;
+		if (!parseInteger(argv[1], segmentNr))
+			return true;
+		if (!segmentInfo(segmentNr))
+			DebugPrintf("Segment %04xh does not exist\n", segmentNr);
 	}
 
 	return true;
@@ -1604,21 +1606,23 @@ bool Console::cmdKillSegment(int argc, const char **argv) {
 		DebugPrintf("Usage: %s <segment number>\n", argv[0]);
 		return true;
 	}
-
-	_engine->_gamestate->_segMan->getScript(atoi(argv[1]))->setLockers(0);
+	int segmentNumber;
+	if (!parseInteger(argv[1], segmentNumber))
+		return true;
+	_engine->_gamestate->_segMan->getScript(segmentNumber)->setLockers(0);
 
 	return true;
 }
 
 bool Console::cmdShowMap(int argc, const char **argv) {
 	if (argc != 2) {
-		DebugPrintf("Shows one of the screen maps\n");
+		DebugPrintf("Switches to one of the following screen maps\n");
 		DebugPrintf("Usage: %s <screen map>\n", argv[0]);
 		DebugPrintf("Screen maps:\n");
-		DebugPrintf("- 0: visual map (back buffer)\n");
-		DebugPrintf("- 1: priority map (back buffer)\n");
-		DebugPrintf("- 2: control map (static buffer)\n");
-		DebugPrintf("- 3: display screen (newgui only)\n");
+		DebugPrintf("- 0: visual map\n");
+		DebugPrintf("- 1: priority map\n");
+		DebugPrintf("- 2: control map\n");
+		DebugPrintf("- 3: display screen\n");
 		return true;
 	}
 
@@ -1929,25 +1933,9 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 			return true;
 		}
 
-		char *endPtr = 0;
-		int idxLen = strlen(argv[2]);
-		const char *lastChar = argv[2] + idxLen - (idxLen == 0 ? 0 : 1);
+		if (!parseInteger(argv[2], varIndex))
+			return true;
 
-		if ((strncmp(argv[2], "0x", 2) == 0) || (*lastChar == 'h')) {
-			// hexadecimal number
-			varIndex = strtol(argv[2], &endPtr, 16);
-			if ((*endPtr != 0) && (*endPtr != 'h')) {
-				DebugPrintf("Invalid hexadecimal number '%s'\n", argv[2]);
-				return true;
-			}
-		} else {
-			// decimal number
-			varIndex = strtol(argv[2], &endPtr, 10);
-			if (*endPtr != 0) {
-				DebugPrintf("Invalid decimal number '%s'\n", argv[2]);
-				return true;
-			}
-		}
 		if (varIndex < 0) {
 			DebugPrintf("Variable number may not be negative\n");
 			return true;
@@ -3143,6 +3131,29 @@ static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeV
 	}
 
 	return 0;
+}
+
+bool Console::parseInteger(const char *argument, int &result) {
+	char *endPtr = 0;
+	int idxLen = strlen(argument);
+	const char *lastChar = argument + idxLen - (idxLen == 0 ? 0 : 1);
+
+	if ((strncmp(argument, "0x", 2) == 0) || (*lastChar == 'h')) {
+		// hexadecimal number
+		result = strtol(argument, &endPtr, 16);
+		if ((*endPtr != 0) && (*endPtr != 'h')) {
+			DebugPrintf("Invalid hexadecimal number '%s'\n", argument);
+			return false;
+		}
+	} else {
+		// decimal number
+		result = strtol(argument, &endPtr, 10);
+		if (*endPtr != 0) {
+			DebugPrintf("Invalid decimal number '%s'\n", argument);
+			return false;
+		}
+	}
+	return true;
 }
 
 void Console::printBasicVarInfo(reg_t variable) {

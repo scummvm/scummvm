@@ -146,6 +146,8 @@ private:
 	bool cmdViewActiveObject(int argc, const char **argv);
 	bool cmdViewAccumulatorObject(int argc, const char **argv);
 
+	bool parseInteger(const char *argument, int &result);
+
 	void printBasicVarInfo(reg_t variable);
 
 	bool segmentInfo(int nr);
