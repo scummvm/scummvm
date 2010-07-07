@@ -315,7 +315,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 				u32 pixelsLeft = w;
 
-				if (MISALIGNED16(dest))	{
+				if (MISALIGNED16(dest)) {
 					// Read modify write
 
 					dest--;
@@ -332,7 +332,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 				// We can now assume dest is aligned
 				u16 *dest16 = (u16 *) dest;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+				for (dx = 0; dx < pixelsLeft; dx+=2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
@@ -367,7 +367,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 				u32 pixelsLeft = w;
 
-				if (MISALIGNED16(dest))	{
+				if (MISALIGNED16(dest)) {
 					// Read modify write
 
 					dest--;
@@ -387,7 +387,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 				u16 *dest16 = (u16 *) dest;
 				u16 *destSub16 = (u16 *) destSub;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+				for (dx = 0; dx < pixelsLeft; dx+=2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
