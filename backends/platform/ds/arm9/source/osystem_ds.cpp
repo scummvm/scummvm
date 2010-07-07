@@ -729,26 +729,10 @@ void OSystem_DS::quit() {
 }
 
 Common::SaveFileManager *OSystem_DS::getSavefileManager() {
-	bool forceSram;
-
-	if (ConfMan.hasKey("forcesramsave", "ds")) {
-		forceSram = ConfMan.getBool("forcesramsave", "ds");
-	} else {
-		forceSram = false;
-	}
-	if (forceSram) {
-		consolePrintf("Using SRAM save method!\n");
-	}
-
-	if (DS::isGBAMPAvailable() && (!forceSram)) {
+	if (DS::isGBAMPAvailable()) {
 		return &mpSaveManager;
-	} else {
-#ifdef GBA_SRAM_SAVE
-		return &saveManager;
-#else
-		return NULL;
-#endif
 	}
+	return NULL;
 }
 
 

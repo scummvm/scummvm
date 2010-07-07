@@ -30,7 +30,6 @@
 #include "backends/base-backend.h"
 #include "common/events.h"
 #include "nds.h"
-#include "ramsave.h"
 #include "gbampsave.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -47,9 +46,6 @@ protected:
 	Common::Event eventQueue[96];
 	int queuePos;
 
-#ifdef GBA_SRAM_SAVE
-	DSSaveFileManager saveManager;
-#endif
 	GBAMPSaveFileManager mpSaveManager;
 	Audio::MixerImpl *_mixer;
 	DefaultTimerManager *_timer;

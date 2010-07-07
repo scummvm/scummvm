@@ -26,12 +26,12 @@
 #ifndef _DS_FS_H
 #define _DS_FS_H
 
-//#include <NDS/ARM9/console.h>
 #include "common/fs.h"
-#include "zipreader.h"
-#include "ramsave.h"
-#include "fat/gba_nds_fat.h"
+#include "common/stream.h"
 #include "backends/fs/abstract-fs.h"
+
+#include "zipreader.h"
+#include "fat/gba_nds_fat.h"
 
 namespace DS {
 
@@ -166,8 +166,6 @@ struct fileHandle {
 	bool used;
 	char *data;
 	int size;
-
-	DSSaveFile *sramFile;
 };
 
 

@@ -542,27 +542,6 @@ FILE *std_fopen(const char *name, const char *mode) {
 		assert(r < MAX_FILE_HANDLES);
 	}
 
-#ifdef GBA_SRAM_SAVE
-	if (strchr(mode, 'w')) {
-//		consolePrintf("Writing %s\n", realName);
-		s_handle[r].sramFile = DSSaveFileManager::instance()->openSavefile(realName, true);
-	} else {
-//		consolePrintf("Reading %s\n", realName);
-		s_handle[r].sramFile = DSSaveFileManager::instance()->openSavefile(realName, false);
-	}
-#endif
-
-	if (s_handle[r].sramFile) {
-		s_handle[r].used = true;
-		s_handle[r].pos = 0;
-		s_handle[r].data = NULL;
-		s_handle[r].size = s_handle[r].sramFile->getSize();
-//		consolePrintf("Found it");
-		return &s_handle[r];
-	}
-
-//	consolePrintf("Not in SRAM!");
-
 	char *data;
 
 	ZipFile *zip = DSFileSystemNode::getZip();
@@ -615,10 +594,6 @@ void std_fclose(FILE *handle) {
 	}
 
 	handle->used = false;
-	if (handle->sramFile) {
-		delete handle->sramFile;
-		handle->sramFile = NULL;
-	}
 }
 
 size_t std_fread(void *ptr, size_t size, size_t numItems, FILE *handle) {
@@ -636,21 +611,6 @@ size_t std_fread(void *ptr, size_t size, size_t numItems, FILE *handle) {
 			return bytes / size;
 		}
 		return numItems;
-	}
-
-	if (handle->sramFile) {
-		int bytes = 0;
-		int result = 1;
-		//consolePrintf("fread size=", size * numItems);
-		for (int r = 0; (r < (s32) size * (s32) numItems) && (result > 0); r++) {
-			result = handle->sramFile->read((void *) ( ((char *) (ptr)) + r), 1);
-			bytes += result;
-			//consolePrintf("'%d',", ((char *) (ptr))[0]);
-		}
-
-		handle->pos += bytes;
-
-		return bytes / size;
 	}
 
 	if (handle->pos > handle->size)
@@ -695,12 +655,7 @@ size_t std_fwrite(const void *ptr, size_t size, size_t numItems, FILE *handle) {
 		return numItems;
 	}
 
-	if (handle->sramFile) {
-		handle->sramFile->write(ptr, size);
-		return size;
-	} else {
-		return 0;
-	}
+	return 0;
 }
 
 bool std_feof(FILE *handle) {
@@ -708,10 +663,6 @@ bool std_feof(FILE *handle) {
 
 	if (DS::isGBAMPAvailable()) {
 		return readPastEndOfFile && FAT_feof((FAT_FILE *) handle);
-	}
-
-	if (handle->sramFile) {
-		return handle->sramFile->eos();
 	}
 
 //	consolePrintf("feof %s", handle->pos >= handle->size? "true": "false");

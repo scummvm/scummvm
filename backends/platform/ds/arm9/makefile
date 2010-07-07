@@ -253,7 +253,7 @@ endif
 
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
-			-I$(portdir)/source -I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
+			-I$(portdir)/source -I$(portdir)/source/mad \
 			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
 
 
@@ -286,46 +286,58 @@ PRE_OBJS_FLAGS = -Wl,--whole-archive
 POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
-PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
-		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
-		$(portdir)/source/osystem_ds.o $(portdir)/source/ramsave.o\
-		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
-		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
-		$(portdir)/source/interrupt.o
+PORT_OBJS := \
+	$(portdir)/source/blitters_arm.o \
+	$(portdir)/source/cdaudio.o \
+	$(portdir)/source/dsmain.o \
+	$(portdir)/../../../fs/ds/ds-fs.o \
+	$(portdir)/source/gbampsave.o \
+	$(portdir)/source/scummhelp.o \
+	$(portdir)/source/osystem_ds.o \
+	$(portdir)/source/touchkeyboard.o \
+	$(portdir)/source/zipreader.o \
+	$(portdir)/source/dsoptions.o \
+	$(portdir)/source/keys.o \
+	$(portdir)/source/wordcompletion.o \
+	$(portdir)/source/interrupt.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
 endif
 
 
-DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
+DATA_OBJS :=
+	$(portdir)/data/icons.o \
+	$(portdir)/data/keyboard.o \
+	$(portdir)/data/keyboard_pal.o \
+	$(portdir)/data/default_font.o \
+	$(portdir)/data/8x8font_tga.o
 
-COMPRESSOR_OBJS :=
-#$(portdir)/source/compressor/lz.o
-
-FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
-			$(portdir)/source/fat/io_fcsr.o $(portdir)/source/fat/io_m3cf.o\
-			$(portdir)/source/fat/io_mpcf.o $(portdir)/source/fat/io_sccf.o\
-			$(portdir)/source/fat/io_m3sd.o\
-			$(portdir)/source/fat/io_nmmc.o $(portdir)/source/fat/io_scsd.o \
-			$(portdir)/source/fat/io_scsd_asm.o \
-			$(portdir)/source/fat/io_njsd.o \
-			$(portdir)/source/fat/io_mmcf.o \
-			$(portdir)/source/fat/io_sd_common.o \
-			$(portdir)/source/fat/io_m3_common.o \
-			$(portdir)/source/fat/io_dldi.o \
-			$(portdir)/source/fat/m3sd.o
+FAT_OBJS :=
+	$(portdir)/source/fat/disc_io.o \
+	$(portdir)/source/fat/gba_nds_fat.o \
+	$(portdir)/source/fat/io_fcsr.o \
+	$(portdir)/source/fat/io_m3cf.o \
+	$(portdir)/source/fat/io_mpcf.o \
+	$(portdir)/source/fat/io_sccf.o \
+	$(portdir)/source/fat/io_m3sd.o \
+	$(portdir)/source/fat/io_nmmc.o \
+	$(portdir)/source/fat/io_scsd.o \
+	$(portdir)/source/fat/io_scsd_asm.o \
+	$(portdir)/source/fat/io_njsd.o \
+	$(portdir)/source/fat/io_mmcf.o \
+	$(portdir)/source/fat/io_sd_common.o \
+	$(portdir)/source/fat/io_m3_common.o \
+	$(portdir)/source/fat/io_dldi.o \
+	$(portdir)/source/fat/m3sd.o
 
 
 #			$(portdir)/source/fat/io_cf_common.o $(portdir)/source/fat/io_m3_common.o\
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS :=
-#$(portdir)/source/libcartreset/cartreset.o
-
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp script.cpp
+OPTLIST := actor.cpp dsmain.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp script.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
@@ -333,18 +345,14 @@ ifdef DS_BUILD_E
   # Another attempt to save some RAM in ITE
   OPT_SPEED := -O3 -mthumb
 else
- #OPT_SPEED := -O3
- OPT_SPEED := -Os -mthumb
+  OPT_SPEED := -O3
 endif
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
 
 
-#-mthumb -fno-gcse -fno-schedule-insns2
-
-
-OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
+OBJS := $(DATA_OBJS) $(PORT_OBJS) $(FAT_OBJS)
 
 
 

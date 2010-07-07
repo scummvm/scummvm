@@ -73,8 +73,6 @@
 
 
 
-//#define USE_LIBCARTRESET
-
 #include <nds.h>
 #include <nds/registers_alt.h>
 #include <nds/arm9/exceptions.h>
@@ -100,9 +98,7 @@
 #ifdef USE_DEBUGGER
 #include "user_debugger.h"
 #endif
-#include "ramsave.h"
 #include "blitters.h"
-#include "libcartreset/cartreset_nolibfat.h"
 #include "keys.h"
 #ifdef USE_PROFILER
 #include "profiler/cyg-profile.h"
@@ -2775,31 +2771,6 @@ GLvector getPenPos() {
 	return v;
 }
 
-#ifdef GBA_SRAM_SAVE
-
-void formatSramOption() {
-	consolePrintf("The following files are present in save RAM:\n");
-	DSSaveFileManager::instance()->listFiles();
-
-	consolePrintf("\nAre you sure you want to\n");
-	consolePrintf("DELETE all files?\n");
-	consolePrintf("A = Yes, X = No\n");
-
-	while (true) {
-		if (keysHeld() & KEY_A) {
-			DSSaveFileManager::instance()->formatSram();
-			consolePrintf("SRAM cleared!\n");
-			return;
-		}
-
-		if (keysHeld() & KEY_X) {
-			consolePrintf("Whew, that was close!\n");
-			return;
-		}
-	}
-}
-#endif
-
 void setIndyFightState(bool st) {
 	indyFightState = st;
 	indyFightRight = true;
@@ -2884,61 +2855,6 @@ void debug_print_stub(char *string) {
 }
 #endif
 
-#ifdef USE_LIBCARTRESET
-
-struct cardTranslate {
-	int cartResetId;
-	int svmId;
-	char dldiId[5];
-};
-
-cardTranslate cardReaderTable[] = {
-	{DEVICE_TYPE_M3SD,		DEVICE_M3SD,	"M3SD"},
-	{DEVICE_TYPE_M3CF,		DEVICE_M3CF,	"M3CF"},
-	{DEVICE_TYPE_MPCF,		DEVICE_MPCF,	"MPCF"},
-	{DEVICE_TYPE_SCCF,		DEVICE_SCCF,	"SCCF"},
-	{DEVICE_TYPE_SCSD,		DEVICE_SCSD,	"SCSD"},
-	{DEVICE_TYPE_SCSD,		DEVICE_SCSD,	"SCLT"},
-	{DEVICE_TYPE_NMMC,		DEVICE_NMMC,	"NMMC"},
-};
-
-void reboot() {
-	int deviceType = -1;
-
-
-	if (disc_getDeviceId() == DEVICE_DLDI) {
-
-		char id[6];
-		disc_getDldiId(id);
-
-		consolePrintf("DLDI Device ID: %s\n", id);
-
-		for (int r = 0; r < ARRAYSIZE(cardReaderTable); r++) {
-			if (!stricmp(id, cardReaderTable[r].dldiId)) {
-				deviceType = cardReaderTable[r].cartResetId;
-			}
-		}
-	} else {
-		for (int r = 0; r < ARRAYSIZE(cardReaderTable); r++) {
-			if (disc_getDeviceId() == cardReaderTable[r].svmId) {
-				deviceType = cardReaderTable[r].cartResetId;
-			}
-		}
-	}
-
-
-	consolePrintf("Device number: %x\n", deviceType);
-
-	if (deviceType == -1) {
-		IPC->reset = true;				// Send message to ARM7 to turn power off
-	} else {
-		cartSetMenuMode(deviceType);
-		passmeloopEnter();
-	}
-
-	while (true);		// Stop the program continuing beyond this point
-}
-#endif
 
 void powerOff() {
 	while (keysHeld() != 0) {		// Wait for all keys to be released.
@@ -2953,12 +2869,10 @@ void powerOff() {
 		while (true);
 	} else {
 
-#ifdef USE_LIBCARTRESET
-		reboot();
-#else
 		IPC->reset = true;				// Send message to ARM7 to turn power off
-		while (true);		// Stop the program continuing beyond this point
-#endif
+		while (true) {
+			// Stop the program from continuing beyond this point
+		}
 	}
 }
 
@@ -2979,7 +2893,7 @@ void dsExceptionHandler() {
 
 	int offset = 8;
 
-	if ( currentMode == 0x17 ) {
+	if (currentMode == 0x17) {
 		consolePrintf("\x1b[10Cdata abort!\n\n");
 		codeAddress = exceptionRegisters[15] - offset;
 		if (	(codeAddress > 0x02000000 && codeAddress < 0x02400000) ||
@@ -3002,16 +2916,19 @@ void dsExceptionHandler() {
 
 
 	int i;
-	for ( i=0; i < 8; i++ ) {
+	for (i = 0; i < 8; i++) {
 		consolePrintf("  %s: %08X   %s: %08X\n",
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
-	while(1);
+
+	while(1)
+		;	// endles loop
+
 	u32 *stack = (u32 *)exceptionRegisters[13];
 
 
-	for ( i=0; i<10; i++ ) {
+	for (i = 0; i < 10; i++) {
 		consolePrintf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
 	}
 
@@ -3261,12 +3178,6 @@ int main(void) {
 
 	g_system = new OSystem_DS();
 	assert(g_system);
-
-#ifdef GBA_SRAM_SAVE
-	if ((keysHeld() & KEY_L) && (keysHeld() & KEY_R)) {
-		formatSramOption();
-	}
-#endif
 
 	IPC->adpcm.semaphore = false;
 
