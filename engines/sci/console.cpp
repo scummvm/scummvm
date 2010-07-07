@@ -1401,10 +1401,6 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				DebugPrintf("M  dynmem: %d bytes", (*(DynMem *)mobj)._size);
 				break;
 
-			case SEG_TYPE_STRING_FRAG:
-				DebugPrintf("F  string fragments");
-				break;
-
 #ifdef ENABLE_SCI32
 			case SEG_TYPE_ARRAY:
 				DebugPrintf("A  SCI32 arrays (%d)", (*(ArrayTable *)mobj).entries_used);
@@ -1552,11 +1548,6 @@ bool Console::segmentInfo(int nr) {
 		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
 	}
 	break;
-
-	case SEG_TYPE_STRING_FRAG: {
-		DebugPrintf("string frags\n");
-		break;
-	}
 
 #ifdef ENABLE_SCI32
 	case SEG_TYPE_STRING:

@@ -67,7 +67,7 @@ enum SegmentType {
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
-	SEG_TYPE_STRING_FRAG = 10,	// obsolete, we keep it to be able to load old saves
+	// 10 used to be string fragments, now obsolete
 
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,

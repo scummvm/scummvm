@@ -37,7 +37,7 @@ struct EngineState;
 
 enum {
 	CURRENT_SAVEGAME_VERSION = 23,
-	MINIMUM_SAVEGAME_VERSION = 9
+	MINIMUM_SAVEGAME_VERSION = 12
 };
 
 // Savegame metadata

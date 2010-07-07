@@ -181,27 +181,11 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading())
 		resetSegMan();
 
-	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be reserved_id
-	s.skip(4, VER(9), VER(18));		// OBSOLETE: Used to be _exportsAreWide
-	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be gc_mark_bits
+	s.skip(4, VER(12), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 
 	if (s.isLoading()) {
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
-
-		if (s.getVersion() <= 9) {
-			// OBSOLETE: Skip over the old id_seg_map when loading (we now
-			// regenerate the equivalent data, in _scriptSegMap, from scratch).
-
-			s.skip(4);	// base_value
-			while (true) {
-				uint32 key = 0;
-				s.syncAsSint32LE(key);
-				if (key == INTMAPPER_MAGIC_KEY)
-					break;
-				s.skip(4);	// idx
-			}
-		}
 	}
 
 
@@ -217,35 +201,24 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// If we were saving and mobj == 0, or if we are loading and this is an
 		// entry marked as empty -> skip to next
-		if (type == SEG_TYPE_INVALID) {
+		if (type == SEG_TYPE_INVALID)
 			continue;
-		}
-
-		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 
 		// Don't save or load HunkTable segments
-		if (type == SEG_TYPE_HUNK) {
+		if (type == SEG_TYPE_HUNK)
 			continue;
-		}
 
-		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
-		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
-			continue;
-		}
-
-
-		if (s.isLoading()) {
+		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);
-		}
+
 		assert(mobj);
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
 
 		// If we are loading a script, hook it up in the script->segment map.
-		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
+		if (s.isLoading() && type == SEG_TYPE_SCRIPT)
 			_scriptSegMap[((Script *)mobj)->getScriptNumber()] = i;
-		}
 	}
 
 	s.syncAsSint32LE(_clonesSegId);
@@ -270,7 +243,6 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
 	obj.savegame_version = s.getVersion();
 	s.syncString(obj.game_version);
-	s.skip(4, VER(9), VER(9));	// obsolete: used to be game version
 	s.syncAsSint32LE(obj.savegame_date);
 	s.syncAsSint32LE(obj.savegame_time);
 	if (s.getVersion() < 22) {
@@ -283,11 +255,8 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be savegame_version
-
 	Common::String tmp;
-	s.syncString(tmp, VER(9), VER(23));			// OBSOLETE: Used to be game_version
-	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
+	s.syncString(tmp, VER(12), VER(23));			// OBSOLETE: Used to be game_version
 
 	// OBSOLETE: Saved menus. Skip all of the saved data
 	if (s.getVersion() < 14) {
@@ -306,7 +275,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			for (int j = 0; j < menuLength; j++) {
 				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
 				s.syncString(tmp);					// OBSOLETE: Used to be _keytext
-				s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
 
 				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
 				s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
@@ -341,8 +309,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
 	}
 
-	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
-
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
@@ -357,7 +323,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
 	_pos.saveLoadWithSerializer(s);
-	s.skip(4, VER(9), VER(12));			// OBSOLETE: Used to be variable_names_nr
+	s.skip(4, VER(12), VER(12));			// OBSOLETE: Used to be variable_names_nr
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -483,25 +449,12 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading())
 		init(_nr, g_sci->getResMan());
-	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _bufSize
-	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _scriptSize
-	s.skip(4, VER(9), VER(22));		// OBSOLETE: Used to be _heapSize
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _bufSize
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _scriptSize
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _heapSize
 
-	if (s.getVersion() <= 10) {
-		assert((s.isLoading()));
-		// OBSOLETE: Skip over the old _objIndices data when loading
-		s.skip(4);	// base_value
-		while (true) {
-			uint32 key = 0;
-			s.syncAsSint32LE(key);
-			if (key == INTMAPPER_MAGIC_KEY)
-				break;
-			s.skip(4);	// idx
-		}
-	}
-
-	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numExports
-	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numSynonyms
+	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numExports
+	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -529,7 +482,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.skip(4, VER(9), VER(20));		// OBSOLETE: Used to be _localsOffset
+	s.skip(4, VER(12), VER(20));		// OBSOLETE: Used to be _localsOffset
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
@@ -822,14 +775,12 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 		}
 	}
 
-	if (meta.savegame_version >= 12) {
-		// We don't need the thumbnail here, so just read it and discard it
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		Graphics::loadThumbnail(*fh, *thumbnail);
-		delete thumbnail;
-		thumbnail = 0;
-	}
+	// We don't need the thumbnail here, so just read it and discard it
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	assert(thumbnail);
+	Graphics::loadThumbnail(*fh, *thumbnail);
+	delete thumbnail;
+	thumbnail = 0;
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
