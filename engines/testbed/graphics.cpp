@@ -813,9 +813,6 @@ bool GFXtests::paletteRotation() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 	
-	// Reset initial palettes
-	// GFXTestSuite::setCustomColor(255, 0, 0);
-	// Testsuite::clearScreen();
 
 	bool toRotate = true;
 	Common::Event event;
@@ -844,6 +841,9 @@ bool GFXtests::paletteRotation() {
 	}
 	
 	CursorMan.showMouse(false);
+	// Reset initial palettes
+	GFXTestSuite::setCustomColor(255, 0, 0);
+	Testsuite::clearScreen();
 
 	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
 		return false;
