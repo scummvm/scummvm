@@ -73,7 +73,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// Specific Tests:
 	addTest("Palette Rotation", &GFXtests::paletteRotation);
-	addTest("Pixel Formats", &GFXtests::pixelFormats);
+	//addTest("Pixel Formats", &GFXtests::pixelFormats);
 		
 }
 
@@ -773,7 +773,7 @@ bool GFXtests::overlayGraphics() {
 
 bool GFXtests::paletteRotation() {
 	Common::Point pt(0, 10);
-	Testsuite::writeOnScreen("Rotating palettes, the rectangles should appear moving up!", pt);
+	Testsuite::writeOnScreen("Rotating palettes, palettes rotate towards left, click to stop!", pt);
 	
 	// Use 256 colors
 	byte palette[256 * 4] = {0, 0, 0, 0,
@@ -794,32 +794,56 @@ bool GFXtests::paletteRotation() {
 	g_system->setPalette(palette, 0, 256);
 
 	// Draw 254 Rectangles, each 1 pixel wide and 10 pixels long
-	byte buffer[254 * 10] = {0};
+	// one for 0-255 color range other for 0-127-255 range
+	byte buffer[254 * 30] = {0};
 
-	for (int i = 0; i < 10; i++) {
+	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 254; j++) {
-			buffer[i * 256 + j] = j + 2;
+			if (i < 10) {
+				buffer[i * 256 + j] = j + 2;
+			} else if (i < 20) {
+				buffer[i * 256 + j] = 0;
+			} else {
+				buffer[i * 256 + j] = ((j + 127) % 254) + 2;
+			}
 		}
 	}
 	
-	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 10);
+	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 30);
 	g_system->updateScreen();
-	g_system->delayMillis(2000);
+	g_system->delayMillis(1000);
 	
 	// Reset initial palettes
-	GFXTestSuite::setCustomColor(255, 0, 0);
-	Testsuite::clearScreen();
+	// GFXTestSuite::setCustomColor(255, 0, 0);
+	// Testsuite::clearScreen();
 
-	int toRotate = 10;
+	bool toRotate = true;
+	Common::Event event;
+	CursorMan.showMouse(true);
 
-	while (toRotate--) {
+	while (toRotate) {
+		while (g_system->getEventManager()->pollEvent(event)) {
+			if (event.type == Common::EVENT_LBUTTONDOWN || event.type == Common::EVENT_RBUTTONDOWN) {
+				toRotate = false;
+			}
+		}
+
+		/*for (int i = 2; i < 256; i++) {
+			debug("Palette: (%d %d %d) #", palette[i*4], palette[i*4+1], palette[i*4+2]);
+		}*/
+
+		rotatePalette(&palette[8], 254);
+		
+		/*for (int i = 2; i < 256; i++) {
+			debug("Palette: (%d %d %d) #", palette[i*4], palette[i*4+1], palette[i*4+2]);
+		}*/
+
+		g_system->delayMillis(10);
+		g_system->setPalette(palette, 2, 254);
 		g_system->updateScreen();
-		// XXX: disabling rotations as of now, as it makes 6s delay (will fix it tommorrow)
-		// FIXME : fix rotation
-		// g_system->delayMillis(600);
-		// rotatePalette(&palette[8], 254);
-		// g_system->setPalette(palette, 0, 256);
 	}
+	
+	CursorMan.showMouse(false);
 
 	if(Testsuite::handleInteractiveInput("Did you saw a rotation in colors of rectangles displayed on screen?", "Yes", "No", kOptionRight)) {
 		return false;

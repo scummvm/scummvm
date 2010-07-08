@@ -135,7 +135,7 @@ Common::Error TestbedEngine::run() {
 	enableTestsuite("GFX", true);
 	// enableTestsuite("savegames", true);
 	// enableTestsuite("misc", true);
-	enableTestsuite("events", true);
+	// enableTestsuite("events", true);
 	// invoke them
 	invokeTestsuites();
 	
