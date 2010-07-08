@@ -216,10 +216,10 @@ struct SciKernelMapSubEntry {
 	SciVersion fromVersion;
 	SciVersion toVersion;
 
-	uint16 subNr;
+	uint16 id;
 
 	const char *name;
-	KernelFunc *function;
+	KernelFunctionCall *function;
 
 	const char *signature;
 	const SciWorkaroundEntry *workarounds;
@@ -236,7 +236,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
 
 // SCI-Sound-Version
-#define SIG_SOUNDSCI0      SCI_VERSION_1_EARLY, SCI_VERSION_0_LATE
+#define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
 #define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
 #define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
 
@@ -310,14 +310,14 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 
 struct SciKernelMapEntry {
 	const char *name;
-	KernelFunc *function;
+	KernelFunctionCall *function;
 
 	SciVersion fromVersion;
 	SciVersion toVersion;
 	byte forPlatform;
 
 	const char *signature;
-	const SciKernelMapSubEntry *subSignatures;
+	const SciKernelMapSubEntry *subFunctions;
 	const SciWorkaroundEntry *workarounds;
 };
 
@@ -521,7 +521,7 @@ Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 }
 
 Kernel::~Kernel() {
-	for (KernelFuncsContainer::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
+	for (KernelFunctionArray::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
 		free(i->signature);
 }
 
@@ -999,24 +999,26 @@ void Kernel::mapFunctions() {
 
 	_kernelFuncs.resize(functionCount);
 
-	for (uint functNr = 0; functNr < functionCount; functNr++) {
+	for (uint id = 0; id < functionCount; id++) {
 		// First, get the name, if known, of the kernel function with number functnr
-		Common::String sought_name = _kernelNames[functNr];
+		Common::String kernelName = _kernelNames[id];
 
 		// Reset the table entry
-		_kernelFuncs[functNr].func = NULL;
-		_kernelFuncs[functNr].signature = NULL;
-		_kernelFuncs[functNr].origName = sought_name;
-		_kernelFuncs[functNr].isDummy = true;
-
-		if (sought_name.empty()) {
+		_kernelFuncs[id].function = NULL;
+		_kernelFuncs[id].signature = NULL;
+		_kernelFuncs[id].origName = kernelName;
+		_kernelFuncs[id].isDummy = true;
+		_kernelFuncs[id].workarounds = NULL;
+		_kernelFuncs[id].subFunctions = NULL;
+		_kernelFuncs[id].subFunctionCount = 0;
+		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
-			warning("Kernel function %x unknown", functNr);
+			warning("Kernel function %x unknown", id);
 			continue;
 		}
 
 		// Don't map dummy functions - they will never be called
-		if (sought_name == "Dummy")
+		if (kernelName == "Dummy")
 			continue;
 
 		// If the name is known, look it up in s_kernelMap. This table
@@ -1024,7 +1026,7 @@ void Kernel::mapFunctions() {
 		SciKernelMapEntry *kernelMap = s_kernelMap;
 		bool nameMatch = false;
 		while (kernelMap->name) {
-			if (sought_name == kernelMap->name) {
+			if (kernelName == kernelMap->name) {
 				if ((kernelMap->fromVersion == SCI_VERSION_NONE) || (kernelMap->fromVersion <= myVersion))
 					if ((kernelMap->toVersion == SCI_VERSION_NONE) || (kernelMap->toVersion >= myVersion))
 						if (platformMask & kernelMap->forPlatform)
@@ -1037,10 +1039,49 @@ void Kernel::mapFunctions() {
 		if (kernelMap->name) {
 			// A match was found
 			if (kernelMap->function) {
-				_kernelFuncs[functNr].func = kernelMap->function;
-				_kernelFuncs[functNr].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
-				_kernelFuncs[functNr].workarounds = kernelMap->workarounds;
-				_kernelFuncs[functNr].isDummy = false;
+				_kernelFuncs[id].function = kernelMap->function;
+				_kernelFuncs[id].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
+				_kernelFuncs[id].workarounds = kernelMap->workarounds;
+				_kernelFuncs[id].isDummy = false;
+				if (kernelMap->subFunctions) {
+					// Get version for subfunction identification
+					SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
+					// Now check whats the highest subfunction-id for this version
+					const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
+					uint16 subFunctionCount = 0;
+					while (kernelSubMap->function) {
+						if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+							if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion))
+								if (subFunctionCount <= kernelSubMap->id)
+									subFunctionCount = kernelSubMap->id + 1;
+						kernelSubMap++;
+					}
+					if (!subFunctionCount)
+						error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
+					// Now allocate required memory and go through it again
+					_kernelFuncs[id].subFunctionCount = subFunctionCount;
+					KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
+					_kernelFuncs[id].subFunctions = subFunctions;
+					memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
+					// And fill this info out
+					kernelSubMap = kernelMap->subFunctions;
+					while (kernelSubMap->function) {
+						if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+							if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
+								uint subId = kernelSubMap->id;
+								subFunctions[subId].function = kernelSubMap->function;
+								subFunctions[subId].name = kernelSubMap->name;
+								if (kernelSubMap->signature)
+									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
+								subFunctions[subId].workarounds = kernelSubMap->workarounds;
+							}
+						kernelSubMap++;
+					}
+					// Now we check, if all filled out entries got signatures
+					//  If a signature is missing go through the subfunctions table again and use the last signature
+					//  specified before our entry. If no signature is found at all -> bomb out
+					// TODO
+				}
 				++mapped;
 			} else {
 				//warning("Ignoring function %s\n", s_kernelFuncMap[found].name);
@@ -1048,9 +1089,9 @@ void Kernel::mapFunctions() {
 			}
 		} else {
 			if (nameMatch)
-				error("kernel function %s[%x] not found for this version/platform", sought_name.c_str(), functNr);
+				error("k%s[%x]: not found for this version/platform", kernelName.c_str(), id);
 			// No match but a name was given -> stub
-			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functNr);
+			warning("k%s[%x]: unmapped", kernelName.c_str(), id);
 		}
 	} // for all functions requesting to be mapped
 

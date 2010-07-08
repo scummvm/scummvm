@@ -39,6 +39,8 @@ namespace Sci {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, g_sci->_features->detectDoSoundType());
 	return g_sci->_soundCmd->parseCommand(argc, argv, s->r_acc);
 }
 

@@ -786,7 +786,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 	if (kernelFuncNr >= (int)kernel->_kernelFuncs.size())
 		error("Invalid kernel function 0x%x requested", kernelFuncNr);
 
-	const KernelFuncWithSignature &kernelCall = kernel->_kernelFuncs[kernelFuncNr];
+	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernelFuncNr];
 
 	if (kernelCall.signature
 			&& !kernel->signatureMatch(kernelCall.signature, argc, s->xs->sp + 1)) {
@@ -817,7 +817,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		// Call kernel function
-		s->r_acc = kernelCall.func(s, argc, argv);
+		s->r_acc = kernelCall.function(s, argc, argv);
 
 #if 0
 		// Used for debugging

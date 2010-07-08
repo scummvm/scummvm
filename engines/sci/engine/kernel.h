@@ -118,7 +118,7 @@ enum {
 // ----------------------------------------------------------------------------
 
 /* Generic description: */
-typedef reg_t KernelFunc(EngineState *s, int argc, reg_t *argv);
+typedef reg_t KernelFunctionCall(EngineState *s, int argc, reg_t *argv);
 
 struct SciWorkaroundEntry {
 	SciGameId gameId;
@@ -133,12 +133,21 @@ struct SciWorkaroundEntry {
 
 #define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0, { 0,   0 } }
 
-struct KernelFuncWithSignature {
-	KernelFunc *func; /**< The actual function */
+struct KernelSubFunction {
+	KernelFunctionCall *function;
+	const char *name;
+	uint16 *signature;
+	const SciWorkaroundEntry *workarounds;
+};
+
+struct KernelFunction {
+	KernelFunctionCall *function;
 	Common::String origName; /**< Original name, in case we couldn't map it */
 	bool isDummy;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
+	const KernelSubFunction *subFunctions;
+	uint16 subFunctionCount;
 };
 
 enum AutoDetectedFeatures {
@@ -172,8 +181,8 @@ public:
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
 	SelectorCache _selectorCache; /**< Shortcut list for important selectors. */
-	typedef Common::Array<KernelFuncWithSignature> KernelFuncsContainer;
-	KernelFuncsContainer _kernelFuncs; /**< Table of kernel functions. */
+	typedef Common::Array<KernelFunction> KernelFunctionArray;
+	KernelFunctionArray _kernelFuncs; /**< Table of kernel functions. */
 
 	/**
 	 * Determines whether a list of registers matches a given signature.
