@@ -5,11 +5,7 @@ DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
 
-ifeq ($(DYNAMIC_MODULES),1)
-	ENABLED = DYNAMIC_PLUGIN
-else
-	ENABLED = STATIC_PLUGIN
-endif
+ENABLED = DYNAMIC_PLUGIN
 
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
@@ -70,8 +66,7 @@ ifdef DS_BUILD_F
 else
 	ifdef DS_BUILD_E
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
-	# claw some back.
-
+	# claw some back.	
 
 	else
 		ifdef DS_BUILD_I
@@ -118,8 +113,8 @@ ifdef DS_BUILD_A
 	DEFINES += -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
 	LOGO = logoa.bmp
 	ENABLE_SCUMM = $(ENABLED)
-	DEFINES += -DENABLE_SCUMM=$(ENABLED)
-	MODULES += engines/scumm
+	#DEFINES += -DENABLE_SCUMM=$(ENABLED)
+	#MODULES += engines/scumm
 
 	USE_ARM_GFX_ASM = 1
 	BUILD=scummvm-A
@@ -206,7 +201,7 @@ endif
 #	BUILD=scummvm-K
 #endif
 
-ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
+ARM7BIN	:= -7 $(CURDIR)/../arm7/arm7.bin
 
 CC      = arm-eabi-gcc
 CXX     = arm-eabi-g++
@@ -259,12 +254,10 @@ ifdef WRAP_MALLOC
 	DEFINES += -DWRAP_MALLOC
 endif
 
-INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
+INCLUDES= -I$(portdir) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
 			-I$(portdir)/source -I$(portdir)/source/mad -I$(portdir)/source/libcartreset \
 			-I$(libndsdir)/include -include $(srcdir)/common/scummsys.h
-
-CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP 
 
 LIBS	= -lm -L$(libndsdir)/lib -L$(portdir)/lib -lnds9
 ifdef USE_MAD
@@ -274,7 +267,6 @@ ifdef USE_DEBUGGER
 	LIBS += -ldsdebugger -ldswifi9
 endif
 
-
 ifeq ($(DYNAMIC_MODULES),1)
 DEFINES += -DDYNAMIC_MODULES
 PRE_OBJS_FLAGS = -Wl,--whole-archive
@@ -282,11 +274,11 @@ POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
 #-Lscumm -lscumm -Lbase -lbase -Lcommon -lcommon -Lgraphics -lgraphics -Lgui -lgui -Lsound -lsound
-EXECUTABLE = $(portdir)/$(BUILD)/scummvm.elf
+EXECUTABLE = scummvm.elf#$(portdir)/$(BUILD)/scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = $(portdir)/source/plugin.ld $(portdir)/source/plugin.syms $(EXECUTABLE)
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,-T$(portdir)/source/plugin.ld,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc 
+PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(portdir)/source/plugin.ld,--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu -Wl,--gc-sections -mno-crt0 $(DEVKITPRO)/devkitARM/arm-eabi/lib/ds_arm9_crt0.o
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
@@ -295,7 +287,6 @@ RANLIB = arm-eabi-ranlib
 OBJCOPY = arm-eabi-objcopy
 AS = arm-eabi-as
 HAVE_GCC3 = true
-
 
 PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(portdir)/source/dsmain.o \
 		$(portdir)/../../../fs/ds/ds-fs.o $(portdir)/source/gbampsave.o $(portdir)/source/scummhelp.o\
@@ -360,11 +351,10 @@ OPT_SIZE := -Os -mthumb
 
 OBJS := $(DATA_OBJS) $(LIBCARTRESET_OBJS) $(PORT_OBJS) $(COMPRESSOR_OBJS) $(FAT_OBJS)
 
-MODULE_DIRS += ./
+MODULE_DIRS += .
 
-ndsall:
-	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	make -C ./$(BUILD) -f ../makefile scummvm.nds
+ndsall: plugins
+	make -f makefile scummvm.nds
 
 include $(srcdir)/Makefile.common
 
@@ -373,15 +363,14 @@ semiclean:
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
-	rm -fr $(BUILD)
+	rm -rf gui engines sound common plugins base backends graphics scummvm.nds scummvm.elf scummvm-stripped.elf scummvm.ds.gba *.h
 
 plugin_dist :
-	find . -name '*.plg' | while read p; do \
-	  sh-elf-strip -g -o "`basename \"$$p\" | tr '[:lower:]' '[:upper:]'`" "$$p"; \
+	for p in $(PLUGINS); do \
+	  arm-elf-strip -g -o "`basename \"$$p\" | LC_CTYPE=C tr '[:lower:]' '[:upper:]'`" "$$p"; \
 	done
 
 dist : SCUMMVM.BIN plugins plugin_dist
-
 
 #---------------------------------------------------------------------------------
 # canned command sequence for binary data
@@ -474,9 +463,9 @@ endef
 
 #---------------------------------------------------------------------------------
 %.nds: %.bin
-	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
-	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
-	dsbuild $@ -l ../ndsloader.bin
+	@echo ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
+	ndstool -c $@ -9 scummvm.bin $(ARM7BIN) -b ../$(LOGO) "$(shell basename $@);ScummVM $(VERSION);DS Port"
+	dsbuild $@ -l ndsloader.bin
 
 	padbin 16 $(basename $@).ds.gba
 
