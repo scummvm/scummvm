@@ -42,6 +42,30 @@ reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	return g_sci->_soundCmd->parseCommand(argc, argv, s->r_acc);
 }
 
+#define CREATE_FORWARD(_name_, _forward_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->##_forward_(argc, argv, s->r_acc); }
+
+CREATE_FORWARD(DoSoundInit, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundPlay, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundDummy, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundDispose, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundMute, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundStop, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundPause, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundResume, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundMasterVolume, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundUpdate, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundFade, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundGetPolyphony, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundUpdateCues, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSendMidi, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundReverb, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSetHold, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundGetAudioCapability, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSuspend, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSetVolume, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSetPriority, _soundCmd->parseCommand)
+CREATE_FORWARD(DoSoundSetLoop, _soundCmd->parseCommand)
+
 reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case kSciAudioPlay: {

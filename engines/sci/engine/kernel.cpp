@@ -212,25 +212,33 @@ static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-struct SciKernelMapEntry {
+struct SciKernelMapSubEntry {
+	SciVersion fromVersion;
+	SciVersion toVersion;
+
+	uint16 subNr;
+
 	const char *name;
 	KernelFunc *function;
 
-	SciVersion fromVersion;
-	SciVersion toVersion;
-	byte forPlatform;
-
 	const char *signature;
-	const char *subSignatures; // placeholder
 	const SciWorkaroundEntry *workarounds;
 };
 
-#define SIG_SCIALL  SCI_VERSION_NONE, SCI_VERSION_NONE
-#define SIG_SCI0    SCI_VERSION_NONE, SCI_VERSION_01
-#define SIG_SCI1    SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
-#define SIG_SCI11   SCI_VERSION_1_1, SCI_VERSION_1_1
-#define SIG_SCI16    SCI_VERSION_NONE, SCI_VERSION_1_1
-#define SIG_SCI32    SCI_VERSION_2, SCI_VERSION_NONE
+#define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
+
+
+#define SIG_SCIALL         SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
+#define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
+#define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
+
+// SCI-Sound-Version
+#define SIG_SOUNDSCI0      SCI_VERSION_1_EARLY, SCI_VERSION_0_LATE
+#define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
+#define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
 
 #define SIGFOR_ALL   0x3f
 #define SIGFOR_DOS   1 << 0
@@ -245,196 +253,264 @@ struct SciKernelMapEntry {
 
 #define MAP_CALL(_name_) #_name_, k##_name_
 
+static const SciKernelMapSubEntry kDoSound_subops[] = {
+    { SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundDummy),              "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       6, MAP_CALL(DoSoundPause),              "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       7, MAP_CALL(DoSoundResume),             "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       8, MAP_CALL(DoSoundMasterVolume),       "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       9, MAP_CALL(DoSoundUpdate),             "(o)",                  NULL },
+    { SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "(o)",                  NULL },
+    { SIG_SOUNDSCI0,      11, MAP_CALL(DoSoundGetPolyphony),       "(o)",                  NULL },
+    { SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStop),               "(o)",                  NULL },
+    { SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  6, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  7, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    //  ^^ Longbow demo
+    { SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+struct SciKernelMapEntry {
+	const char *name;
+	KernelFunc *function;
+
+	SciVersion fromVersion;
+	SciVersion toVersion;
+	byte forPlatform;
+
+	const char *signature;
+	const SciKernelMapSubEntry *subSignatures;
+	const SciWorkaroundEntry *workarounds;
+};
+
 //    name,                        version/platform,         signature,              sub-signatures,  workarounds
 static SciKernelMapEntry s_kernelMap[] = {
-    { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",               NULL,            NULL },
-    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                NULL,            NULL },
-	//  ^^ - in SQ1 when leaving ulence flats bar, kUnLoad is called with just one argument (FIXME?)
-    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",              NULL,            NULL },
-    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                NULL,            kDisposeScript_workarounds },
-    { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                    NULL,            NULL },
-    { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                   NULL,            NULL },
-    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i(i)(i)(i)",           NULL,            NULL },
-    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
-    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",              NULL,            NULL },
-    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
-    { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
-    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
-    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",      NULL,            NULL }, // for kq6 hires
-    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",          NULL,            NULL },
-    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "[il](iiiiii)",         NULL,            NULL },
-    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                   NULL,            NULL },
-    { MAP_CALL(NewWindow),         SIG_SCI0, SIGFOR_ALL,     "iiii[r0]i(i)(i)(i)",   NULL,            NULL },
-    { MAP_CALL(NewWindow),         SIG_SCI1, SIGFOR_ALL,     "iiii[ir]i(i)(i)([ir])(i)(i)(i)(i)", NULL, NULL },
-    { MAP_CALL(NewWindow),         SIG_SCI11, SIGFOR_ALL,    "iiiiiiii[r0]i(i)(i)(i)", NULL,          NULL },
-    { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iii)(i)(i)(i)",      NULL,            NULL },
-    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                 NULL,            NULL },
-    { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",             NULL,            NULL },
-    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",        NULL,            NULL },
-    { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir]*)",          NULL,            NULL }, // subop
-    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",               NULL,            NULL },
-    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                   NULL,            NULL },
-    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                   NULL,            NULL },
-    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                   NULL,            NULL },
-    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
-    { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                   NULL,            NULL },
-    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "[r0](i)(i)",           NULL,            NULL },
-    { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                   NULL,            NULL },
-    { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                 NULL,            NULL },
-    { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i*)",                NULL,            NULL },
-    { MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                   NULL,            NULL },
-    { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                   NULL,            NULL },
-    { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                  NULL,            NULL },
-    { MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",               NULL,            NULL },
-    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                  NULL,            NULL },
-    { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
-    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", NULL,           NULL }, // subop
-    { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                    NULL,            NULL },
-    { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                   NULL,            NULL },
-    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                 NULL,            NULL },
-    { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                    NULL,            NULL },
-    { MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                    NULL,            NULL },
-    { MAP_CALL(NextNode),          SIG_EVERYWHERE,           "n",                    NULL,            NULL },
-    { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                    NULL,            NULL },
-    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "[n0]",                 NULL,            NULL },
-    { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                  NULL,            NULL },
-    { MAP_CALL(AddToFront),        SIG_EVERYWHERE,           "ln",                   NULL,            NULL },
-    { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                   NULL,            NULL },
-    { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                   NULL,            NULL },
-    { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                   NULL,            NULL },
-    { MAP_CALL(Random),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "[io]",                 NULL,            NULL },
+    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "[io]",                  NULL,            NULL },
 	//  ^^ FIXME hoyle
-    { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                 NULL,            NULL },
+    { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                   NULL,            NULL },
+    { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+    { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                    NULL,            NULL },
+    { MAP_CALL(AddToFront),        SIG_EVERYWHERE,           "ln",                    NULL,            NULL },
+    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "[il](iiiiii)",          NULL,            NULL },
+    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",               NULL,            NULL },
+    { MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
+    { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
+    { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
+    { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
+    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            NULL }, // subop
+    { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir]*)",           NULL,            NULL }, // subop
+    { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                    NULL,            NULL },
+    { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
+    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
+    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", kDoSound_subops, NULL }, // subop
+    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            NULL }, // for kq6 hires
+    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",           NULL,            NULL },
+    { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i(i)(i)(i)",            NULL,            NULL },
+    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "[r0](i)(i)",            NULL,            NULL },
+    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",              NULL,            NULL },
+    { MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
+    { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+    { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
+    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
+    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
+    { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                 NULL,            NULL },
+    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            NULL },
 	 // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
-    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",       NULL,            NULL },
-    { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                  NULL,            NULL },
-    { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                   NULL,            NULL },
-    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                NULL,            NULL },
-    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                 NULL,            NULL },
-    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",             NULL,            NULL },
-    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                NULL,            NULL },
-    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "ii[r0]",               NULL,            NULL },
-    { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                   NULL,            NULL },
-    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                 NULL,            NULL },
-    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                 NULL,            NULL },
-    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",          NULL,            NULL },
-    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                 NULL,            NULL },
-    { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                 NULL,            NULL },
-    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
-    { MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                   NULL,            NULL },
-    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL },
-    { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                  NULL,            NULL },
-    { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                  NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                 NULL,            NULL },
-    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                NULL,            NULL },
-    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",           NULL,            NULL }, // subop
-    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                 NULL,            NULL },
-    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                   NULL,            NULL },
-    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",               NULL,            NULL },
-    { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",             NULL,            NULL }, // subop
+    { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",        NULL,            NULL },
+    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",                NULL,            NULL },
+    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                    NULL,            NULL },
+    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "ii[r0]",                NULL,            NULL },
+    { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
+    { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
+    { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
+    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",              NULL,            NULL }, // subop
 	// ^^ we allow invalid references here, because kGraph(restoreBox) gets called with old non-existant handles often
 	//    this should get limited to this call only as soon as subop signatures are available
-    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                  NULL,            NULL },
-    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",               NULL,            NULL },
-    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                NULL,            NULL },
-    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                NULL,            NULL },
-    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",               NULL,            NULL },
-    { "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                   NULL,            NULL },
-    { MAP_CALL(Message),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                 NULL,            NULL },
-    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "ir(i)",                NULL,            NULL }, // subop
-    { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",           NULL,            NULL },
-    { MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                  NULL,            NULL },
-    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",             NULL,            NULL },
-    { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                    NULL,            NULL },
-    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
-    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                 NULL,            NULL },
-    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL }, // subop
-    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                NULL,            NULL }, // subop
-    { MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                    NULL,            NULL },
-    { MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
+    { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",            NULL,            NULL },
+    { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                 NULL,            NULL },
+    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                     NULL,            NULL },
+    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "ir(i)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                   NULL,            NULL },
+    { MAP_CALL(Message),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI0, SIGFOR_ALL,     "iiii[r0]i(i)(i)(i)",    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI1, SIGFOR_ALL,     "iiii[ir]i(i)(i)([ir])(i)(i)(i)(i)", NULL, NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI11, SIGFOR_ALL,    "iiiiiiii[r0]i(i)(i)(i)", NULL,          NULL },
+    { MAP_CALL(NextNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
+    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "[n0]",                  NULL,            NULL },
+    { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",           NULL,            NULL },
+    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
+    { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(Random),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
+    { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
+    { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                   NULL,            NULL },
+    { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
+    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",                NULL,            NULL },
+    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
+    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i*)",                 NULL,            NULL },
+    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
+    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iii)(i)(i)(i)",       NULL,            NULL },
+    { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
+    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
+    { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            NULL },
+    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
+    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",              NULL,            NULL },
+    { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
+    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
+    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",         NULL,            NULL },
+    { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                 NULL,            NULL },
+	//  ^^ - in SQ1 when leaving ulence flats bar, kUnLoad is called with just one argument (FIXME?)
+    { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
 #ifdef ENABLE_SCI32
     // SCI2 Kernel Functions
-    { MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(ListAt),            SIG_EVERYWHERE,           "li",                   NULL,            NULL },
-    { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                    NULL,            NULL },
-    { MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                     NULL,            NULL },
-    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
-    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
-    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li(.*)",               NULL,            NULL },
-    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                NULL,            NULL },
-    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio(.*)",              NULL,            NULL },
-    { MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                  NULL,            NULL },
-    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                NULL,            NULL },
+    { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+    { MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
+    { MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListAt),            SIG_EVERYWHERE,           "li",                    NULL,            NULL },
+    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
+    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
     // SCI2.1 Kernel Functions
-    { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",              NULL,            NULL },
-    { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                  NULL,            NULL },
-    { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                 NULL,            NULL },
-    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                   NULL,            NULL }
+    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
+    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
 #endif
 };
 
