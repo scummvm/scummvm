@@ -210,16 +210,21 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 
 reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
+		// SCI0 games give us 0/1 for either resuming or pausing the current music
+		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
 		uint16 value = argv[0].toUint16();
 		MusicEntry *musicSlot = _music->getActiveSci0MusicSlot();
 		switch (value) {
 		case 1:
-			if ((musicSlot) && (musicSlot->status == kSoundPlaying))
+			if ((musicSlot) && (musicSlot->status == kSoundPlaying)) {
 				_music->soundPause(musicSlot);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
+			}
 			return make_reg(0, 0);
 		case 0:
 			if ((musicSlot) && (musicSlot->status == kSoundPaused)) {
 				_music->soundResume(musicSlot);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
 				return make_reg(0, 1);
 			}
 			return make_reg(0, 0);
@@ -231,13 +236,6 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
 	uint16 value = argc > 1 ? argv[1].toUint16() : 0;
 	if (!obj.segment) {		// pause the whole playlist
-		// SCI0 games (up to including qfg1) give us 0/1 for either resuming or pausing the current music
-		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
-
-		// Pausing/Resuming the whole playlist was introduced in the SCI1 late sound scheme.
-		if (_soundVersion <= SCI_VERSION_1_EARLY)
-			return acc;
-
 		_music->pauseAll(value);
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
@@ -246,13 +244,7 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 			return acc;
 		}
 
-		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			// Always pause the sound in SCI0 games. It's resumed in cmdResumeSound()
-			writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
-			_music->soundPause(musicSlot);
-		} else {
-			_music->soundToggle(musicSlot, value);
-		}
+		_music->soundToggle(musicSlot, value);
 	}
 	return acc;
 }
