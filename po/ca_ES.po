@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-06-30 23:20+0100\n"
+"POT-Creation-Date: 2010-07-09 18:10+0100\n"
 "PO-Revision-Date: 2010-06-26 16:45+0100\n"
 "Last-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\n"
 "Language-Team: Catalan <scummvm-devel@lists.sf.net>\n"
@@ -38,7 +38,7 @@ msgid "Go to previous directory level"
 msgstr "Torna al nivell de directoris anterior"
 
 #: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
-#: gui/launcher.cpp:266 gui/massadd.cpp:95 gui/options.cpp:997
+#: gui/launcher.cpp:266 gui/massadd.cpp:95 gui/options.cpp:972
 #: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
 #: backends/platform/wii/options.cpp:48
 msgid "Cancel"
@@ -69,7 +69,7 @@ msgid "Map"
 msgstr "Mapeja"
 
 #: gui/KeysDialog.cpp:45 gui/launcher.cpp:267 gui/launcher.cpp:873
-#: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:998
+#: gui/launcher.cpp:877 gui/massadd.cpp:92 gui/options.cpp:973
 #: backends/platform/wii/options.cpp:47
 #: backends/platform/wince/CELauncherDialog.cpp:56
 msgid "OK"
@@ -138,7 +138,7 @@ msgstr ""
 "Anglès"
 
 #: gui/launcher.cpp:183 gui/launcher.cpp:194 gui/options.cpp:80
-#: gui/options.cpp:631 gui/options.cpp:641 gui/options.cpp:968
+#: gui/options.cpp:617 gui/options.cpp:627 gui/options.cpp:943
 #: sound/null.cpp:42
 msgid "<default>"
 msgstr "<per defecte>"
@@ -151,11 +151,11 @@ msgstr "Plataforma:"
 msgid "Platform the game was originally designed for"
 msgstr "Plataforma per la que el joc es va dissenyar originalment"
 
-#: gui/launcher.cpp:204 gui/options.cpp:875 gui/options.cpp:892
+#: gui/launcher.cpp:204 gui/options.cpp:850 gui/options.cpp:867
 msgid "Graphics"
 msgstr "Gràfics"
 
-#: gui/launcher.cpp:204 gui/options.cpp:875 gui/options.cpp:892
+#: gui/launcher.cpp:204 gui/options.cpp:850 gui/options.cpp:867
 msgid "GFX"
 msgstr "GFX"
 
@@ -163,7 +163,7 @@ msgstr "GFX"
 msgid "Override global graphic settings"
 msgstr "Fer canvis sobre les opcions globals de gràfics"
 
-#: gui/launcher.cpp:213 gui/options.cpp:898
+#: gui/launcher.cpp:213 gui/options.cpp:873
 msgid "Audio"
 msgstr "Àudio"
 
@@ -171,7 +171,7 @@ msgstr "Àudio"
 msgid "Override global audio settings"
 msgstr "Fer canvis sobre les opcions globals d'àudio"
 
-#: gui/launcher.cpp:223 gui/options.cpp:902
+#: gui/launcher.cpp:223 gui/options.cpp:877
 msgid "Volume"
 msgstr "Volum"
 
@@ -179,7 +179,7 @@ msgstr "Volum"
 msgid "Override global volume settings"
 msgstr "Fer canvis sobre les opcions globals de volum"
 
-#: gui/launcher.cpp:232 gui/options.cpp:910
+#: gui/launcher.cpp:232 gui/options.cpp:885
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -187,7 +187,7 @@ msgstr "MIDI"
 msgid "Override global MIDI settings"
 msgstr "Fer canvis sobre les opcions globals de MIDI"
 
-#: gui/launcher.cpp:244 gui/options.cpp:916
+#: gui/launcher.cpp:244 gui/options.cpp:891
 msgid "Paths"
 msgstr "Camins"
 
@@ -195,7 +195,7 @@ msgstr "Camins"
 msgid "Game Path:"
 msgstr "Camí del Joc:"
 
-#: gui/launcher.cpp:254 gui/options.cpp:929
+#: gui/launcher.cpp:254 gui/options.cpp:904
 msgid "Extra Path:"
 msgstr "Camí Extra:"
 
@@ -207,18 +207,18 @@ msgstr "Especifica el camí de dades addicionals utilitzades pel joc"
 msgid "Save Path:"
 msgstr "Camí de les Partides:"
 
-#: gui/launcher.cpp:258 gui/launcher.cpp:259 gui/options.cpp:923
-#: gui/options.cpp:924
+#: gui/launcher.cpp:258 gui/launcher.cpp:259 gui/options.cpp:898
+#: gui/options.cpp:899
 msgid "Specifies where your savegames are put"
 msgstr "Especifica on es desaran les partides"
 
 #: gui/launcher.cpp:275 gui/launcher.cpp:353 gui/launcher.cpp:398
-#: gui/options.cpp:259 gui/options.cpp:414 gui/options.cpp:500
-#: gui/options.cpp:559 gui/options.cpp:720 gui/options.cpp:927
-#: gui/options.cpp:930 gui/options.cpp:934 gui/options.cpp:1021
-#: gui/options.cpp:1027 gui/options.cpp:1033 gui/options.cpp:1041
-#: gui/options.cpp:1065 gui/options.cpp:1069 gui/options.cpp:1075
-#: gui/options.cpp:1082 gui/options.cpp:1181
+#: gui/options.cpp:245 gui/options.cpp:400 gui/options.cpp:486
+#: gui/options.cpp:545 gui/options.cpp:706 gui/options.cpp:902
+#: gui/options.cpp:905 gui/options.cpp:909 gui/options.cpp:996
+#: gui/options.cpp:1002 gui/options.cpp:1008 gui/options.cpp:1016
+#: gui/options.cpp:1040 gui/options.cpp:1044 gui/options.cpp:1050
+#: gui/options.cpp:1057 gui/options.cpp:1156
 msgid "None"
 msgstr "Cap"
 
@@ -227,7 +227,7 @@ msgstr "Cap"
 msgid "Default"
 msgstr "Per defecte"
 
-#: gui/launcher.cpp:391 gui/options.cpp:1175
+#: gui/launcher.cpp:391 gui/options.cpp:1150
 msgid "Select SoundFont"
 msgstr "Seleccioneu el fitxer SoundFont"
 
@@ -322,7 +322,7 @@ msgstr "Cerca a la llista de jocs"
 msgid "Search:"
 msgstr "Cerca:"
 
-#: gui/launcher.cpp:529 gui/options.cpp:721
+#: gui/launcher.cpp:529 gui/options.cpp:707
 msgid "Clear value"
 msgstr "Neteja el valor"
 
@@ -456,74 +456,79 @@ msgstr "44 kHz"
 msgid "48 kHz"
 msgstr "48 kHz"
 
-#: gui/options.cpp:628
+#: gui/options.cpp:614
 msgid "Graphics mode:"
 msgstr "Mode gràfic:"
 
-#: gui/options.cpp:639
+#: gui/options.cpp:625
 msgid "Render mode:"
 msgstr "Mode de pintat:"
 
-#: gui/options.cpp:639 gui/options.cpp:640
+#: gui/options.cpp:625 gui/options.cpp:626
 msgid "Special dithering modes supported by some games"
 msgstr "Modes de dispersió especials suportats per alguns jocs"
 
-#: gui/options.cpp:649
+#: gui/options.cpp:635
 msgid "Fullscreen mode"
 msgstr "Mode pantalla completa"
 
-#: gui/options.cpp:652
+#: gui/options.cpp:638
 msgid "Aspect ratio correction"
 msgstr "Correcció del rati d'aspecte"
 
-#: gui/options.cpp:652
+#: gui/options.cpp:638
 msgid "Correct aspect ratio for 320x200 games"
 msgstr "Corregeix la relació d'aspecte per jocs de 320x200"
 
-#: gui/options.cpp:659
+#: gui/options.cpp:645
 msgid "Preferred Device:"
 msgstr "Dispositiu Preferit:"
 
-#: gui/options.cpp:659
+#: gui/options.cpp:645
+#, fuzzy
+msgid "Music Device:"
+msgstr "Dispositiu GM:"
+
+#: gui/options.cpp:645
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so preferit"
 
-#: gui/options.cpp:660
+#: gui/options.cpp:645 gui/options.cpp:646
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Especifica el dispositiu de so o l'emulador de tarja de so de sortida"
 
-#: gui/options.cpp:662
+#: gui/options.cpp:648
 msgid "MT32 Device:"
 msgstr "Dispositiu MT32:"
 
-#: gui/options.cpp:662
+#: gui/options.cpp:648
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr ""
 "Especifica el dispositiu de so per defecte per a la sortida de Roland MT-32/"
 "LAPC1/CM32l/CM64"
 
-#: gui/options.cpp:664
+#: gui/options.cpp:650
 msgid "GM Device:"
 msgstr "Dispositiu GM:"
 
-#: gui/options.cpp:664
+#: gui/options.cpp:650
 msgid "Specifies default sound device for General MIDI output"
 msgstr ""
 "Especifica el dispositiu de so per defecte per a la sortida General MIDI"
 
-#: gui/options.cpp:696
+#: gui/options.cpp:682
 msgid "AdLib emulator:"
 msgstr "Emulador d'AdLib:"
 
-#: gui/options.cpp:696 gui/options.cpp:697
+#: gui/options.cpp:682 gui/options.cpp:683
 msgid "AdLib is used for music in many games"
 msgstr "AdLib s'utilitza per la música de molts jocs"
 
-#: gui/options.cpp:707
+#: gui/options.cpp:693
 msgid "Output rate:"
 msgstr "Freqüència de sortida:"
 
-#: gui/options.cpp:707 gui/options.cpp:708
+#: gui/options.cpp:693 gui/options.cpp:694
 msgid ""
 "Higher value specifies better sound quality but may be not supported by your "
 "soundcard"
@@ -531,27 +536,27 @@ msgstr ""
 "Valors més alts especifiquen millor qualitat de so però pot ser que la "
 "vostra tarja de so no ho suporti"
 
-#: gui/options.cpp:719
+#: gui/options.cpp:705
 msgid "SoundFont:"
 msgstr "Fitxer SoundFont:"
 
-#: gui/options.cpp:719 gui/options.cpp:720
+#: gui/options.cpp:705 gui/options.cpp:706
 msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
 msgstr "Algunes targes de so, Fluidsynth i Timidity suporten SoundFont"
 
-#: gui/options.cpp:724
+#: gui/options.cpp:710
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Mode combinat AdLib/MIDI"
 
-#: gui/options.cpp:724
+#: gui/options.cpp:710
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Utilitza MIDI i la generació de so AdLib alhora"
 
-#: gui/options.cpp:727
+#: gui/options.cpp:713
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Roland MT-32 real (desactiva l'emulació GM)"
 
-#: gui/options.cpp:727
+#: gui/options.cpp:713
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -559,145 +564,145 @@ msgstr ""
 "Marqueu si voleu utilitzar el vostre dispositiu hardware real de so "
 "compatible amb Roland connectat al vostre ordinador"
 
-#: gui/options.cpp:730
+#: gui/options.cpp:716
 msgid "Enable Roland GS Mode"
 msgstr "Activa el Mode Roland GS"
 
-#: gui/options.cpp:730
+#: gui/options.cpp:716
 msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
 msgstr ""
 "Desactiva la conversió General MIDI pels jocs que tenen banda sonora per a "
 "Roland MT-32"
 
-#: gui/options.cpp:733
+#: gui/options.cpp:719
 msgid "MIDI gain:"
 msgstr "Guany MIDI:"
 
-#: gui/options.cpp:746
+#: gui/options.cpp:732
 msgid "Text and Speech:"
 msgstr "Text i Veus:"
 
-#: gui/options.cpp:751 gui/options.cpp:757
+#: gui/options.cpp:737 gui/options.cpp:743
 msgid "Speech"
 msgstr "Veus"
 
-#: gui/options.cpp:752 gui/options.cpp:758
+#: gui/options.cpp:738 gui/options.cpp:744
 msgid "Subtitles"
 msgstr "Subtítols"
 
-#: gui/options.cpp:753 gui/options.cpp:759
+#: gui/options.cpp:739 gui/options.cpp:745
 msgid "Both"
 msgstr "Ambdós"
 
-#: gui/options.cpp:757
+#: gui/options.cpp:743
 msgid "Spch"
 msgstr "Veus"
 
-#: gui/options.cpp:758
+#: gui/options.cpp:744
 msgid "Subs"
 msgstr "Subt"
 
-#: gui/options.cpp:759
+#: gui/options.cpp:745
 msgid "Show subtitles and play speech"
 msgstr "Mostra els subtítols i reprodueix la veu"
 
-#: gui/options.cpp:763
+#: gui/options.cpp:749
 msgid "Subtitle speed:"
 msgstr "Velocitat dels subtítols:"
 
-#: gui/options.cpp:775
+#: gui/options.cpp:761
 msgid "Music volume:"
 msgstr "Volum de la música:"
 
-#: gui/options.cpp:782
+#: gui/options.cpp:768
 msgid "Mute All"
 msgstr "Silenciar tot"
 
-#: gui/options.cpp:785
+#: gui/options.cpp:771
 msgid "SFX volume:"
 msgstr "Volum dels efectes:"
 
-#: gui/options.cpp:785 gui/options.cpp:786
+#: gui/options.cpp:771 gui/options.cpp:772
 msgid "Special sound effects volume"
 msgstr "Volum dels sons d'efectes especials"
 
-#: gui/options.cpp:792
+#: gui/options.cpp:778
 msgid "Speech volume:"
 msgstr "Volum de la veu:"
 
-#: gui/options.cpp:923
+#: gui/options.cpp:898
 msgid "Save Path: "
 msgstr "Camí de les Partides: "
 
-#: gui/options.cpp:926
+#: gui/options.cpp:901
 msgid "Theme Path:"
 msgstr "Camí dels Temes:"
 
-#: gui/options.cpp:929 gui/options.cpp:930
+#: gui/options.cpp:904 gui/options.cpp:905
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr ""
 "Especifica el camí de les dades addicionals utilitzades per tots els jocs o "
 "pel ScummVM"
 
-#: gui/options.cpp:933
+#: gui/options.cpp:908
 msgid "Plugins Path:"
 msgstr "Camí dels connectors:"
 
-#: gui/options.cpp:938
+#: gui/options.cpp:913
 msgid "Misc"
 msgstr "Misc"
 
-#: gui/options.cpp:940
+#: gui/options.cpp:915
 msgid "Theme:"
 msgstr "Tema:"
 
-#: gui/options.cpp:944
+#: gui/options.cpp:919
 msgid "GUI Renderer:"
 msgstr "Mode de pintat de la interfície d'usuari:"
 
-#: gui/options.cpp:950
+#: gui/options.cpp:925
 msgid "Autosave:"
 msgstr "Desat automàtic:"
 
-#: gui/options.cpp:958
+#: gui/options.cpp:933
 msgid "Keys"
 msgstr "Tecles"
 
-#: gui/options.cpp:965
+#: gui/options.cpp:940
 msgid "GUI Language:"
 msgstr "Idioma de la interfície d'usuari:"
 
-#: gui/options.cpp:965
+#: gui/options.cpp:940
 msgid "Language of ScummVM GUI"
 msgstr "Idioma de la interfície d'usuari de ScummVM"
 
-#: gui/options.cpp:970
+#: gui/options.cpp:945
 msgid "English"
 msgstr "Anglès"
 
-#: gui/options.cpp:1114
+#: gui/options.cpp:1089
 msgid "You have to restart ScummVM to take the effect."
 msgstr "Heu de reiniciar ScummVM perquè tots els canvis tingui efecte."
 
-#: gui/options.cpp:1127
+#: gui/options.cpp:1102
 msgid "Select directory for savegames"
 msgstr "Seleccioneu el directori de les partides desades"
 
-#: gui/options.cpp:1134
+#: gui/options.cpp:1109
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr ""
 "No es pot escriure al directori seleccionat. Si us plau, escolliu-ne un "
 "altre."
 
-#: gui/options.cpp:1143
+#: gui/options.cpp:1118
 msgid "Select directory for GUI themes"
 msgstr "Seleccioneu el directori dels temes de la Interfície d'Usuari"
 
-#: gui/options.cpp:1153
+#: gui/options.cpp:1128
 msgid "Select directory for extra files"
 msgstr "Seleccioneu el directori dels fitxers extra"
 
-#: gui/options.cpp:1164
+#: gui/options.cpp:1139
 msgid "Select directory for plugins"
 msgstr "Seleccioneu el directori dels connectors"
 
@@ -908,7 +913,7 @@ msgid "~N~ext"
 msgstr "~S~egüent"
 
 #: engines/scumm/dialogs.cpp:289
-#: backends/platform/ds/arm9/source/dsoptions.cpp:56
+#: backends/platform/ds/arm9/source/dsoptions.cpp:59
 msgid "~C~lose"
 msgstr "~T~anca"
 
@@ -980,75 +985,75 @@ msgstr " (Joc)"
 msgid "Windows MIDI"
 msgstr "MIDI de Windows"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:57
+#: backends/platform/ds/arm9/source/dsoptions.cpp:60
 msgid "ScummVM Main Menu"
 msgstr "Menú Principal de ScummVM"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:63
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
 msgid "~L~eft handed mode"
 msgstr "Mode ~e~squerrà"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:64
+#: backends/platform/ds/arm9/source/dsoptions.cpp:67
 msgid "~I~ndy fight controls"
 msgstr "Controls de lluita de l'~I~ndy"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:65
+#: backends/platform/ds/arm9/source/dsoptions.cpp:68
 msgid "Show mouse cursor"
 msgstr "Mostra el cursor del ratolí"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+#: backends/platform/ds/arm9/source/dsoptions.cpp:69
 msgid "Snap to edges"
 msgstr ""
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:68
+#: backends/platform/ds/arm9/source/dsoptions.cpp:71
 msgid "Touch X Offset"
 msgstr "Desplaçament X del toc"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:75
+#: backends/platform/ds/arm9/source/dsoptions.cpp:78
 msgid "Touch Y Offset"
 msgstr "Desplaçament Y del toc"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:87
+#: backends/platform/ds/arm9/source/dsoptions.cpp:90
 msgid "Use laptop trackpad-style cursor control"
 msgstr "Utilitza el control del cursor a l'estil del trackpad dels portàtils"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:88
+#: backends/platform/ds/arm9/source/dsoptions.cpp:91
 msgid "Tap for left click, double tap right click"
 msgstr "Toc per a clic esquerre, doble toc per a clic dret"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:90
+#: backends/platform/ds/arm9/source/dsoptions.cpp:93
 msgid "Sensitivity"
 msgstr "Sensibilitat"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:99
+#: backends/platform/ds/arm9/source/dsoptions.cpp:102
 msgid "Initial top screen scale:"
 msgstr "Escalat inicial de la pantalla superior:"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:105
+#: backends/platform/ds/arm9/source/dsoptions.cpp:108
 msgid "Main screen scaling:"
 msgstr "Escalat de la pantalla principal:"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:107
+#: backends/platform/ds/arm9/source/dsoptions.cpp:110
 msgid "Hardware scale (fast, but low quality)"
 msgstr "Escalat per hardware (ràpid, però de baixa qualitat)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:108
+#: backends/platform/ds/arm9/source/dsoptions.cpp:111
 msgid "Software scale (good quality, but slower)"
 msgstr "Escalat per software (bona qualitat, però més lent)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:109
+#: backends/platform/ds/arm9/source/dsoptions.cpp:112
 msgid "Unscaled (you must scroll left and right)"
 msgstr "Sense escalar (haureu de desplaçar-vos a esquerra i dreta)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:111
+#: backends/platform/ds/arm9/source/dsoptions.cpp:114
 msgid "Brightness:"
 msgstr "Brillantor:"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:121
+#: backends/platform/ds/arm9/source/dsoptions.cpp:124
 msgid "High quality audio (slower) (reboot)"
 msgstr "Alta qualitat d'àudio (més lent) (reiniciar)"
 
-#: backends/platform/ds/arm9/source/dsoptions.cpp:122
+#: backends/platform/ds/arm9/source/dsoptions.cpp:125
 msgid "Disable power off"
 msgstr "Desactiva l'apagat automàtic"
 
