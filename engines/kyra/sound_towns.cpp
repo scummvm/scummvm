@@ -2788,16 +2788,15 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 
 		int32 finOut = 0;
 		for (int ii = 0; ii < 3; ii++) {
-			if ((_channels[ii].vol >> 4) & 1)
-				finOut += _tleTable[_channels[ii].out ? _pReslt : 0];
-			else
-				finOut += _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
+			int32 finOutTemp = ((_channels[ii].vol >> 4) & 1) ? _tleTable[_channels[ii].out ? _pReslt : 0] : _tlTable[_channels[ii].out ? (_channels[ii].vol & 0x0f) : 0];
 
 			if ((1 << ii) & _volMaskA)
-				finOut = (finOut * _volumeA) / Audio::Mixer::kMaxMixerVolume;
+				finOutTemp = (finOutTemp * _volumeA) / Audio::Mixer::kMaxMixerVolume;
 
 			if ((1 << ii) & _volMaskB)
-				finOut = (finOut * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+				finOutTemp = (finOutTemp * _volumeB) / Audio::Mixer::kMaxMixerVolume;
+
+			finOut += finOutTemp;
 		}
 
 		finOut /= 3;		
