@@ -619,6 +619,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"tortoise",
+			"Demo",
+			AD_ENTRY1("The Tortoise and the Hare Demo", "35d571806838667743c7c15a133e9335"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
 			"arthur",
 			"",
 			AD_ENTRY1("PAGES.512", "1550a361454ec452fe7d2328aac2003c"),
@@ -650,8 +665,38 @@ static const MohawkGameDescription gameDescriptions[] = {
 	{
 		{
 			"arthur",
+			"Demo v1.1",
+			AD_ENTRY1("ARTHUR.512", "f19e824e0a2f2745ed698e6aaf44f838"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"arthur",
 			"Demo",
 			AD_ENTRY1("Bookoutline", "7e2691611ff4c7b89c05221736628059"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"arthur",
+			"Demo",
+			AD_ENTRY1("Arthur's Teacher Trouble Demo", "dcbd8af6bf25854df8ad36fd13665d08"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
@@ -697,6 +742,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"grandma",
 			"Demo",
 			AD_ENTRY1("Bookoutline", "553c93891b9631d1e1d269599e1efa6c"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"grandma",
+			"Demo",
+			AD_ENTRY1("Just Grandma and Me Demo", "552d8729fa77a4a83c88283c7d79bd31"),
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO,
@@ -769,6 +829,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"newkid",
+			"Demo",
+			AD_ENTRY1("The New Kid on the Block Demo", "7d33237e0ea452a97f2a3acdfb9e1286"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
 			"arthurrace",
 			"",
 			AD_ENTRY1("RACE.LB", "1645f36bcb36e440d928e920aa48c373"),
@@ -794,6 +869,66 @@ static const MohawkGameDescription gameDescriptions[] = {
 			Common::GUIO_NONE
 		},
 		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	{
+		{
+			"arthurbday",
+			"Demo",
+			AD_ENTRY1("BIRTHDAY.512", "fb73e387cfec65c5c930db068a8f468a"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"arthurbday",
+			"Demo",
+			AD_ENTRY1("Arthur's Birthday Demo", "0d974ec635eea615475368e865f1b1c8"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		GF_DEMO,
+		0
+	},
+
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("MONSTER.512", "e7b24bf8f59106b5c4df51b39eb8c0ef"),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
+		0,
+		0
+	},
+
+	{
+		{
+			"lilmonster",
+			"",
+			AD_ENTRY1("BookOutline", "970409f9d967d63c05e63113f8e78fe2"),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		GType_LIVINGBOOKSV1,
 		0,
 		0
 	},
