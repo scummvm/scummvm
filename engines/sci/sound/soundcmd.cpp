@@ -425,11 +425,11 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 
 reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
-	byte channel = argv[2].toUint16() & 0xf;
-	byte midiCmd = argv[3].toUint16() & 0xff;
+	byte channel = argv[1].toUint16() & 0xf;
+	byte midiCmd = argv[2].toUint16() & 0xff;
 
-	uint16 controller = argv[4].toUint16();
-	uint16 param = argv[5].toUint16();
+	uint16 controller = argv[3].toUint16();
+	uint16 param = argv[4].toUint16();
 
 	if (channel)
 		channel--; // channel is given 1-based, we are using 0-based
