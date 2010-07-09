@@ -278,18 +278,18 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
+    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+    { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             "i",                    NULL },
+    { SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
+    { SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
     //  ^^ Longbow demo
     { SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
+    { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "",                     NULL },
     { SIG_SOUNDSCI1LATE,   6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
@@ -298,9 +298,9 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
+    { SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
+    { SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
     { SIG_SOUNDSCI1LATE,  17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
@@ -1065,22 +1065,37 @@ void Kernel::mapFunctions() {
 					memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
 					// And fill this info out
 					kernelSubMap = kernelMap->subFunctions;
+					uint kernelSubNr = 0;
 					while (kernelSubMap->function) {
 						if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
 							if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
 								uint subId = kernelSubMap->id;
 								subFunctions[subId].function = kernelSubMap->function;
 								subFunctions[subId].name = kernelSubMap->name;
-								if (kernelSubMap->signature)
-									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
 								subFunctions[subId].workarounds = kernelSubMap->workarounds;
+								if (kernelSubMap->signature) {
+									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
+								} else {
+									// we go back the submap to find the previous signature for that kernel call
+									const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
+									uint kernelSubLeft = kernelSubNr;
+									while (kernelSubLeft) {
+										kernelSubLeft--;
+										kernelSubMapBack--;
+										if (kernelSubMapBack->name == kernelSubMap->name) {
+											if (kernelSubMapBack->signature) {
+												subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
+												break;
+											}
+										}
+									}
+									if (!subFunctions[subId].signature)
+										error("k%s: no previous signatures", kernelSubMap->name);
+								}
 							}
 						kernelSubMap++;
+						kernelSubNr++;
 					}
-					// Now we check, if all filled out entries got signatures
-					//  If a signature is missing go through the subfunctions table again and use the last signature
-					//  specified before our entry. If no signature is found at all -> bomb out
-					// TODO
 				}
 				++mapped;
 			} else {
