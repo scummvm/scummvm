@@ -787,24 +787,23 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		error("Invalid kernel function 0x%x requested", kernelFuncNr);
 
 	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernelFuncNr];
+	reg_t *argv = s->xs->sp + 1;
 
 	if (kernelCall.signature
-			&& !kernel->signatureMatch(kernelCall.signature, argc, s->xs->sp + 1)) {
+			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
 		bool workaroundFound;
 		SciTrackOriginReply originReply;
 		reg_t workaround;
 		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, workaroundFound, &originReply);
 		if (!workaroundFound) {
-			kernel->signatureDebug(kernelCall.signature, argc, s->xs->sp + 1);
+			kernel->signatureDebug(kernelCall.signature, argc, argv);
 			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernel->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
 		if (workaround.segment)
 			return;
 	}
-
-	reg_t *argv = s->xs->sp + 1;
 
 	if (!kernelCall.isDummy) {
 		// Add stack frame to indicate we're executing a callk.
@@ -817,7 +816,26 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		// Call kernel function
-		s->r_acc = kernelCall.function(s, argc, argv);
+		if (!kernelCall.subFunctionCount) {
+			s->r_acc = kernelCall.function(s, argc, argv);
+		} else {
+			// Sub-functions available, check signature and call that one directly
+			if (argc < 1)
+				error("[VM] k%s: no subfunction-id parameter given");
+			const uint16 subId = argv[0].toUint16();
+			// Skip over subfunction-id
+			argc--;
+			argv++;
+			if (subId >= kernelCall.subFunctionCount)
+				error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.origName, subId);
+			const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
+			if (!kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
+				// Signature mismatch
+				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
+				error("[VM] k%s: subfunction signature mismatch", kernelSubCall.name);
+			}
+			s->r_acc = kernelSubCall.function(s, argc, argv);
+		}
 
 #if 0
 		// Used for debugging

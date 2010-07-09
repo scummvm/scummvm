@@ -607,7 +607,7 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
 			}
 
-			cmdPlaySound((*i)->soundObj, 0);
+			processPlaySound((*i)->soundObj);
 		}
 	}
 }

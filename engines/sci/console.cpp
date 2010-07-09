@@ -1703,9 +1703,9 @@ bool Console::cmdToggleSound(int argc, const char **argv) {
 	newState.toLowercase();
 
 	if (newState == "play")
-		g_sci->_soundCmd->playSound(id);
+		g_sci->_soundCmd->processPlaySound(id);
 	else if (newState == "stop")
-		g_sci->_soundCmd->stopSound(id);
+		g_sci->_soundCmd->processStopSound(id, false);
 	else
 		DebugPrintf("New state can either be 'play' or 'stop'");
 

@@ -473,6 +473,7 @@ reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundDispose(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundStop(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundStopAll(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundPause(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundResume(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundMasterVolume(EngineState *s, int argc, reg_t *argv);

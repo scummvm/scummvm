@@ -41,32 +41,33 @@ namespace Sci {
 reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	if (!s)
 		return make_reg(0, g_sci->_features->detectDoSoundType());
-	return g_sci->_soundCmd->parseCommand(argc, argv, s->r_acc);
+	error("not supposed to call this");
 }
 
-#define CREATE_FORWARD(_name_, _forward_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_##_forward_(argc, argv, s->r_acc); }
+#define CREATE_DOSOUND_FORWARD(_name_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(argc, argv, s->r_acc); }
 
-CREATE_FORWARD(DoSoundInit, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundPlay, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundDummy, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundDispose, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundMute, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundStop, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundPause, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundResume, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundMasterVolume, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundUpdate, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundFade, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundGetPolyphony, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundUpdateCues, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSendMidi, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundReverb, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSetHold, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundGetAudioCapability, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSuspend, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSetVolume, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSetPriority, soundCmd->parseCommand)
-CREATE_FORWARD(DoSoundSetLoop, soundCmd->parseCommand)
+CREATE_DOSOUND_FORWARD(DoSoundInit)
+CREATE_DOSOUND_FORWARD(DoSoundPlay)
+CREATE_DOSOUND_FORWARD(DoSoundDummy)
+CREATE_DOSOUND_FORWARD(DoSoundDispose)
+CREATE_DOSOUND_FORWARD(DoSoundMute)
+CREATE_DOSOUND_FORWARD(DoSoundStop)
+CREATE_DOSOUND_FORWARD(DoSoundStopAll)
+CREATE_DOSOUND_FORWARD(DoSoundPause)
+CREATE_DOSOUND_FORWARD(DoSoundResume)
+CREATE_DOSOUND_FORWARD(DoSoundMasterVolume)
+CREATE_DOSOUND_FORWARD(DoSoundUpdate)
+CREATE_DOSOUND_FORWARD(DoSoundFade)
+CREATE_DOSOUND_FORWARD(DoSoundGetPolyphony)
+CREATE_DOSOUND_FORWARD(DoSoundUpdateCues)
+CREATE_DOSOUND_FORWARD(DoSoundSendMidi)
+CREATE_DOSOUND_FORWARD(DoSoundReverb)
+CREATE_DOSOUND_FORWARD(DoSoundSetHold)
+CREATE_DOSOUND_FORWARD(DoSoundGetAudioCapability)
+CREATE_DOSOUND_FORWARD(DoSoundSuspend)
+CREATE_DOSOUND_FORWARD(DoSoundSetVolume)
+CREATE_DOSOUND_FORWARD(DoSoundSetPriority)
+CREATE_DOSOUND_FORWARD(DoSoundSetLoop)
 
 reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
