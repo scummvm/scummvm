@@ -233,6 +233,10 @@ void Sound::playSLST(uint16 index, uint16 card) {
 
 		if (slstRecord.index == index) {
 			playSLST(slstRecord);
+			delete[] slstRecord.sound_ids;
+			delete[] slstRecord.volumes;
+			delete[] slstRecord.balances;
+			delete[] slstRecord.u2;
 			delete slstStream;
 			return;
 		}
@@ -244,6 +248,7 @@ void Sound::playSLST(uint16 index, uint16 card) {
 	}
 
 	delete slstStream;
+
 	// No matching records, assume we need to stop all SLST's
 	stopAllSLST();
 }
@@ -277,8 +282,11 @@ void Sound::playSLST(SLSTRecord slstRecord) {
 }
 
 void Sound::stopAllSLST() {
-	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++)
+	for (uint16 i = 0; i < _currentSLSTSounds.size(); i++) {
 		_vm->_mixer->stopHandle(*_currentSLSTSounds[i].handle);
+		delete _currentSLSTSounds[i].handle;
+	}
+
 	_currentSLSTSounds.clear();
 }
 
@@ -314,6 +322,7 @@ void Sound::playSLSTSound(uint16 id, bool fade, bool loop, uint16 volume, int16 
 void Sound::stopSLSTSound(uint16 index, bool fade) {
 	// TODO: Fade out, mixer needs to be extended to get volume on a handle
 	_vm->_mixer->stopHandle(*_currentSLSTSounds[index].handle);
+	delete _currentSLSTSounds[index].handle;
 	_currentSLSTSounds.remove_at(index);
 }
 
