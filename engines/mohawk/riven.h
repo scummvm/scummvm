@@ -113,6 +113,7 @@ public:
 	RivenGraphics *_gfx;
 	RivenExternal *_externalScriptHandler;
 	Common::RandomSource *_rnd;
+	RivenScriptManager *_scriptMan;
 
 	Card _cardData;
 

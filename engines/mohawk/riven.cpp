@@ -53,6 +53,7 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_ignoreNextMouseUp = false;
 	_extrasFile = NULL;
 	_curStack = aspit;
+	_hotspots = NULL;
 
 	// NOTE: We can never really support CD swapping. All of the music files
 	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
@@ -80,16 +81,17 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _externalScriptHandler;
 	delete _extrasFile;
 	delete _saveLoad;
+	delete _scriptMan;
 	delete[] _vars;
 	delete _optionsDialog;
 	delete _rnd;
+	delete[] _hotspots;
 	delete g_atrusJournalRect1;
 	delete g_atrusJournalRect2;
 	delete g_cathJournalRect2;
 	delete g_atrusJournalRect3;
 	delete g_cathJournalRect3;
 	delete g_trapBookRect3;
-	_cardData.scripts.clear();
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {
@@ -105,6 +107,7 @@ Common::Error MohawkEngine_Riven::run() {
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
 	_optionsDialog = new RivenOptionsDialog(this);
+	_scriptMan = new RivenScriptManager(this);
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "riven");
@@ -347,13 +350,13 @@ void MohawkEngine_Riven::refreshCard() {
 }
 
 void MohawkEngine_Riven::loadCard(uint16 id) {
-	// NOTE: Do not clear the card scripts because it may delete a currently running script!
+	// NOTE: The card scripts are cleared by the RivenScriptManager automatically.
 
 	Common::SeekableReadStream* inStream = getRawData(ID_CARD, id);
 
 	_cardData.name = inStream->readSint16BE();
 	_cardData.zipModePlace = inStream->readUint16BE();
-	_cardData.scripts = RivenScript::readScripts(this, inStream);
+	_cardData.scripts = _scriptMan->readScripts(inStream);
 	_cardData.hasData = true;
 
 	delete inStream;
@@ -371,7 +374,10 @@ void MohawkEngine_Riven::loadCard(uint16 id) {
 }
 
 void MohawkEngine_Riven::loadHotspots(uint16 id) {
-	// NOTE: Do not clear the hotspots because it may delete a currently running script!
+	// Clear old hotspots
+	delete[] _hotspots;
+	
+	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
 	Common::SeekableReadStream* inStream = getRawData(ID_HSPT, id);
 
@@ -413,7 +419,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
 
 		// Read in the scripts now
-		_hotspots[i].scripts = RivenScript::readScripts(this, inStream);
+		_hotspots[i].scripts = _scriptMan->readScripts(inStream);
 	}
 
 	delete inStream;
@@ -649,4 +655,4 @@ bool ZipMode::operator== (const ZipMode &z) const {
 	return z.name == name && z.id == id;
 }
 
-}
+} // End of namespace Mohawk

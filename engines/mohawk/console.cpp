@@ -558,9 +558,11 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		printf ("==================================\n\n");
 		Common::SeekableReadStream *cardStream = _vm->getRawData(MKID_BE('CARD'), (uint16)atoi(argv[3]));
 		cardStream->seek(4);
-		RivenScriptList scriptList = RivenScript::readScripts(_vm, cardStream);
-		for (uint32 i = 0; i < scriptList.size(); i++)
+		RivenScriptList scriptList = _vm->_scriptMan->readScripts(cardStream, false);
+		for (uint32 i = 0; i < scriptList.size(); i++) {
 			scriptList[i]->dumpScript(varNames, xNames, 0);
+			delete scriptList[i];
+		}
 		delete cardStream;
 	} else if (!scumm_stricmp(argv[2], "HSPT")) {
 		printf ("\n\nDumping scripts for %s\'s card %d hotspots!\n", argv[1], (uint16)atoi(argv[3]));
@@ -573,9 +575,11 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 		for (uint16 i = 0; i < hotspotCount; i++) {
 			printf ("Hotspot %d:\n", i);
 			hsptStream->seek(22, SEEK_CUR);	// Skip non-script related stuff
-			RivenScriptList scriptList = RivenScript::readScripts(_vm, hsptStream);
-			for (uint32 j = 0; j < scriptList.size(); j++)
+			RivenScriptList scriptList = _vm->_scriptMan->readScripts(hsptStream, false);
+			for (uint32 j = 0; j < scriptList.size(); j++) {
 				scriptList[j]->dumpScript(varNames, xNames, 1);
+				delete scriptList[j];
+			}
 		}
 
 		delete hsptStream;
