@@ -831,7 +831,12 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
 				if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
 					kernel->signatureDebug(kernelSubCall.signature, argc, argv);
-					error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+					int callNameLen = strlen(kernelCall.name);
+					if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
+						const char *subCallName = kernelSubCall.name + callNameLen;
+						error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+					}
+					error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 				}
 				// FIXME: implement some real workaround type logic - ignore call, still do call etc.
 				if (workaround.segment)
