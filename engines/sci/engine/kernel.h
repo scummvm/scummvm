@@ -141,13 +141,14 @@ struct KernelSubFunction {
 };
 
 struct KernelFunction {
-	KernelFunctionCall *function;
-	Common::String origName; /**< Original name, in case we couldn't map it */
 	bool isDummy;
+	KernelFunctionCall *function;
+	const char *name;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
 	const KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
+	bool debugCalls;
 };
 
 enum AutoDetectedFeatures {

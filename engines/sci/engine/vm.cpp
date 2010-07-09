@@ -798,7 +798,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, workaroundFound, &originReply);
 		if (!workaroundFound) {
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernel->getKernelName(kernelFuncNr).c_str(), kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
 		if (workaround.segment)
@@ -827,7 +827,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 			argc--;
 			argv++;
 			if (subId >= kernelCall.subFunctionCount)
-				error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.origName, subId);
+				error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
 			const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 			if (!kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 				// Signature mismatch
@@ -857,7 +857,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		if (s->_executionStack.begin() != s->_executionStack.end())
 			s->_executionStack.pop_back();
 	} else {
-		Common::String warningMsg = "Dummy function " + kernelCall.origName +
+		Common::String warningMsg = "Dummy function " + kernel->getKernelName(kernelFuncNr) +
 									Common::String::printf("[0x%x]", kernelFuncNr) +
 									" invoked - ignoring. Params: " +
 									Common::String::printf("%d", argc) + " (";
@@ -871,7 +871,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 
 		// Make sure that the game doesn't call a function that is considered unused. If
 		// that happens, error out.
-		if (kernelCall.origName == "Dummy")
+		if (kernel->getKernelName(kernelFuncNr) == "Dummy")
 			error("Kernel function %d was called, which was considered to be unused", kernelFuncNr);
 	}
 }

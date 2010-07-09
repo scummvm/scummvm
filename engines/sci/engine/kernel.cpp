@@ -1006,11 +1006,12 @@ void Kernel::mapFunctions() {
 		// Reset the table entry
 		_kernelFuncs[id].function = NULL;
 		_kernelFuncs[id].signature = NULL;
-		_kernelFuncs[id].origName = kernelName;
+		_kernelFuncs[id].name = NULL;
 		_kernelFuncs[id].isDummy = true;
 		_kernelFuncs[id].workarounds = NULL;
 		_kernelFuncs[id].subFunctions = NULL;
 		_kernelFuncs[id].subFunctionCount = 0;
+		_kernelFuncs[id].debugCalls = false;
 		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
 			warning("Kernel function %x unknown", id);
@@ -1038,70 +1039,66 @@ void Kernel::mapFunctions() {
 
 		if (kernelMap->name) {
 			// A match was found
-			if (kernelMap->function) {
-				_kernelFuncs[id].function = kernelMap->function;
-				_kernelFuncs[id].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
-				_kernelFuncs[id].workarounds = kernelMap->workarounds;
-				_kernelFuncs[id].isDummy = false;
-				if (kernelMap->subFunctions) {
-					// Get version for subfunction identification
-					SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
-					// Now check whats the highest subfunction-id for this version
-					const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
-					uint16 subFunctionCount = 0;
-					while (kernelSubMap->function) {
-						if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
-							if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion))
-								if (subFunctionCount <= kernelSubMap->id)
-									subFunctionCount = kernelSubMap->id + 1;
-						kernelSubMap++;
-					}
-					if (!subFunctionCount)
-						error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
-					// Now allocate required memory and go through it again
-					_kernelFuncs[id].subFunctionCount = subFunctionCount;
-					KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
-					_kernelFuncs[id].subFunctions = subFunctions;
-					memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
-					// And fill this info out
-					kernelSubMap = kernelMap->subFunctions;
-					uint kernelSubNr = 0;
-					while (kernelSubMap->function) {
-						if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
-							if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
-								uint subId = kernelSubMap->id;
-								subFunctions[subId].function = kernelSubMap->function;
-								subFunctions[subId].name = kernelSubMap->name;
-								subFunctions[subId].workarounds = kernelSubMap->workarounds;
-								if (kernelSubMap->signature) {
-									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
-								} else {
-									// we go back the submap to find the previous signature for that kernel call
-									const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
-									uint kernelSubLeft = kernelSubNr;
-									while (kernelSubLeft) {
-										kernelSubLeft--;
-										kernelSubMapBack--;
-										if (kernelSubMapBack->name == kernelSubMap->name) {
-											if (kernelSubMapBack->signature) {
-												subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
-												break;
-											}
+			_kernelFuncs[id].function = kernelMap->function;
+			_kernelFuncs[id].name = kernelMap->name;
+			_kernelFuncs[id].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
+			_kernelFuncs[id].workarounds = kernelMap->workarounds;
+			_kernelFuncs[id].isDummy = false;
+			if (kernelMap->subFunctions) {
+				// Get version for subfunction identification
+				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
+				// Now check whats the highest subfunction-id for this version
+				const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
+				uint16 subFunctionCount = 0;
+				while (kernelSubMap->function) {
+					if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+						if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion))
+							if (subFunctionCount <= kernelSubMap->id)
+								subFunctionCount = kernelSubMap->id + 1;
+					kernelSubMap++;
+				}
+				if (!subFunctionCount)
+					error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
+				// Now allocate required memory and go through it again
+				_kernelFuncs[id].subFunctionCount = subFunctionCount;
+				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
+				_kernelFuncs[id].subFunctions = subFunctions;
+				memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
+				// And fill this info out
+				kernelSubMap = kernelMap->subFunctions;
+				uint kernelSubNr = 0;
+				while (kernelSubMap->function) {
+					if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+						if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
+							uint subId = kernelSubMap->id;
+							subFunctions[subId].function = kernelSubMap->function;
+							subFunctions[subId].name = kernelSubMap->name;
+							subFunctions[subId].workarounds = kernelSubMap->workarounds;
+							if (kernelSubMap->signature) {
+								subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
+							} else {
+								// we go back the submap to find the previous signature for that kernel call
+								const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
+								uint kernelSubLeft = kernelSubNr;
+								while (kernelSubLeft) {
+									kernelSubLeft--;
+									kernelSubMapBack--;
+									if (kernelSubMapBack->name == kernelSubMap->name) {
+										if (kernelSubMapBack->signature) {
+											subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
+											break;
 										}
 									}
-									if (!subFunctions[subId].signature)
-										error("k%s: no previous signatures", kernelSubMap->name);
 								}
+								if (!subFunctions[subId].signature)
+									error("k%s: no previous signatures", kernelSubMap->name);
 							}
-						kernelSubMap++;
-						kernelSubNr++;
-					}
+						}
+					kernelSubMap++;
+					kernelSubNr++;
 				}
-				++mapped;
-			} else {
-				//warning("Ignoring function %s\n", s_kernelFuncMap[found].name);
-				++ignored;
 			}
+			++mapped;
 		} else {
 			if (nameMatch)
 				error("k%s[%x]: not found for this version/platform", kernelName.c_str(), id);
