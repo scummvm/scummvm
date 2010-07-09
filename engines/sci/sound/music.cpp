@@ -166,8 +166,6 @@ void SciMusic::pauseAll(bool pause) {
 }
 
 void SciMusic::stopAll() {
-	Common::StackLock lock(_mutex);
-
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 		soundStop(*i);
@@ -197,6 +195,24 @@ MusicEntry *SciMusic::getSlot(reg_t obj) {
 	}
 
 	return NULL;
+}
+
+// We return the currently active music slot for SCI0
+MusicEntry *SciMusic::getActiveSci0MusicSlot() {
+	const MusicList::iterator end = _playList.end();
+	MusicEntry *highestPrioritySlot = NULL;
+	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
+		MusicEntry *playSlot = *i;
+		if (playSlot->pMidiParser) {
+			if (playSlot->status == kSoundPlaying)
+				return playSlot;
+			if (playSlot->status == kSoundPaused) {
+				if ((!highestPrioritySlot) || (highestPrioritySlot->priority < playSlot->priority))
+					highestPrioritySlot = playSlot;
+			}
+		}
+	}
+	return highestPrioritySlot;
 }
 
 void SciMusic::setReverb(byte reverb) {

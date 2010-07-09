@@ -157,6 +157,7 @@ public:
 	}
 
 	MusicEntry *getSlot(reg_t obj);
+	MusicEntry *getActiveSci0MusicSlot();
 
 	void pushBackSlot(MusicEntry *slotEntry) {
 		Common::StackLock lock(_mutex);

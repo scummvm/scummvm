@@ -213,8 +213,28 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	uint16 value = argc > 1 ? argv[1].toUint16() : 0;
 
 	if (!obj.segment) {		// pause the whole playlist
-		// Pausing/Resuming the whole playlist was introduced in the SCI1 late
-		// sound scheme.
+		// SCI0 games (up to including qfg1) give us 0/1 for either resuming or pausing the current music
+		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
+		if (_soundVersion <= SCI_VERSION_0_LATE) {
+			// TODO: this code doesn't work right currently
+			return make_reg(0, 0);
+			MusicEntry *musicSlot = _music->getActiveSci0MusicSlot();
+			switch (obj.offset) {
+			case 1:
+				if ((musicSlot) && (musicSlot->status == kSoundPlaying))
+					_music->soundPause(musicSlot);
+				return make_reg(0, 0);
+			case 0:
+				if ((musicSlot) && (musicSlot->status == kSoundPaused))
+					_music->soundResume(musicSlot);
+					return make_reg(0, 1);
+				return make_reg(0, 0);
+			default:
+				error("kDoSoundPause: parameter 0 is invalid for sound-sci0");
+			}
+		}
+
+		// Pausing/Resuming the whole playlist was introduced in the SCI1 late sound scheme.
 		if (_soundVersion <= SCI_VERSION_1_EARLY)
 			return acc;
 
