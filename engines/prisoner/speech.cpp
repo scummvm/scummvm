@@ -26,7 +26,6 @@
 #include "prisoner/prisoner.h"
 #include "prisoner/resource.h"
 #include "prisoner/screen.h"
-#include "prisoner/speech.h"
 
 namespace Prisoner {
 
