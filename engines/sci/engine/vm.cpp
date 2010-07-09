@@ -270,7 +270,7 @@ struct SciTrackOriginReply {
 	int localCallOffset;
 };
 
-static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, bool &workaroundFound, SciTrackOriginReply *trackOrigin) {
+static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
 	EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
 	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
@@ -315,7 +315,6 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->inheritanceLevel == inheritanceLevel) && (workaround->objectName == searchObjectName)
 						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
 					// Workaround found
-					workaroundFound = true;
 					return workaround->newValue;
 				}
 				workaround++;
@@ -334,8 +333,6 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 	trackOrigin->methodName = curMethodName;
 	trackOrigin->scriptNr = curScriptNr;
 	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
-
-	workaroundFound = false;
 	return make_reg(0xFFFF, 0xFFFF);
 }
 
@@ -369,10 +366,9 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (type == VAR_TEMP && r[index].segment == 0xffff) {
 			// Uninitialized read on a temp
 			//  We need to find correct replacements for each situation manually
-			bool workaroundFound;
 			SciTrackOriginReply originReply;
-			r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, workaroundFound, &originReply);
-			if (!workaroundFound)
+			r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
+			if ((r[index].segment == 0xFFFF) && (r[index].offset == 0xFFFF))
 				error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		return r[index];
@@ -780,25 +776,24 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	}
 }
 
-static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
+static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
 
-	if (kernelFuncNr >= (int)kernel->_kernelFuncs.size())
-		error("Invalid kernel function 0x%x requested", kernelFuncNr);
+	if (kernelCallNr >= (int)kernel->_kernelFuncs.size())
+		error("Invalid kernel function 0x%x requested", kernelCallNr);
 
-	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernelFuncNr];
+	const KernelFunction &kernelCall = kernel->_kernelFuncs[kernelCallNr];
 	reg_t *argv = s->xs->sp + 1;
 
 	if (kernelCall.signature
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
-		bool workaroundFound;
 		SciTrackOriginReply originReply;
 		reg_t workaround;
-		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, workaroundFound, &originReply);
-		if (!workaroundFound) {
+		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
+		if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelFuncNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
 		if (workaround.segment)
@@ -812,7 +807,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		ExecStack *xstack;
 		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
 				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-		xstack->debugSelector = kernelFuncNr;
+		xstack->debugSelector = kernelCallNr;
 		xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 		// Call kernel function
@@ -821,7 +816,7 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		} else {
 			// Sub-functions available, check signature and call that one directly
 			if (argc < 1)
-				error("[VM] k%s: no subfunction-id parameter given");
+				error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
 			const uint16 subId = argv[0].toUint16();
 			// Skip over subfunction-id
 			argc--;
@@ -831,8 +826,16 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 			const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
 			if (!kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 				// Signature mismatch
-				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
-				error("[VM] k%s: subfunction signature mismatch", kernelSubCall.name);
+				SciTrackOriginReply originReply;
+				reg_t workaround;
+				workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
+				if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+					kernel->signatureDebug(kernelSubCall.signature, argc, argv);
+					error("[VM] k%s (%x) signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				}
+				// FIXME: implement some real workaround type logic - ignore call, still do call etc.
+				if (workaround.segment)
+					return;
 			}
 			s->r_acc = kernelSubCall.function(s, argc, argv);
 		}
@@ -857,8 +860,8 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 		if (s->_executionStack.begin() != s->_executionStack.end())
 			s->_executionStack.pop_back();
 	} else {
-		Common::String warningMsg = "Dummy function " + kernel->getKernelName(kernelFuncNr) +
-									Common::String::printf("[0x%x]", kernelFuncNr) +
+		Common::String warningMsg = "Dummy function " + kernel->getKernelName(kernelCallNr) +
+									Common::String::printf("[0x%x]", kernelCallNr) +
 									" invoked - ignoring. Params: " +
 									Common::String::printf("%d", argc) + " (";
 
@@ -871,8 +874,8 @@ static void callKernelFunc(EngineState *s, int kernelFuncNr, int argc) {
 
 		// Make sure that the game doesn't call a function that is considered unused. If
 		// that happens, error out.
-		if (kernel->getKernelName(kernelFuncNr) == "Dummy")
-			error("Kernel function %d was called, which was considered to be unused", kernelFuncNr);
+		if (kernel->getKernelName(kernelCallNr) == "Dummy")
+			error("Kernel function %d was called, which was considered to be unused", kernelCallNr);
 	}
 }
 
