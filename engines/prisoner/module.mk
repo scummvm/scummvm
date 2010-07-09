@@ -2,7 +2,6 @@ MODULE := engines/prisoner
 
 MODULE_OBJS = \
 	actor.o \
-	actorframesound.o \
 	background.o \
 	clickbox.o \
 	cursor.o \

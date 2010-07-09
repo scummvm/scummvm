@@ -939,4 +939,65 @@ void PrisonerEngine::setActorAltAnimationAtPos(int16 actorIndex, int16 altAnimat
 
 }
 
+/* ActorFrameSounds */
+
+void PrisonerEngine::updateActorFrameSounds() {
+	// TODO
+}
+
+int16 PrisonerEngine::addActorFrameSound(int16 actorIndex, int16 soundIndex, int16 volume, int16 frameNum, int16 unk1) {
+
+	int16 actorFrameSoundIndex = _actorFrameSounds.getFreeSlot();
+	ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
+
+	actorFrameSound->actorIndex = actorIndex;
+	actorFrameSound->soundIndex = soundIndex;
+	actorFrameSound->frameNum = frameNum;
+	actorFrameSound->unk1 = unk1;
+	actorFrameSound->volume = volume;
+	actorFrameSound->unk2 = 0;
+
+	_actorFrameSoundItemsCount++;
+
+	return actorFrameSoundIndex;
+}
+
+void PrisonerEngine::removeActorFrameSound(int16 actorFrameSoundIndex) {
+	_actorFrameSounds[actorFrameSoundIndex].actorIndex = -1;
+	_actorFrameSoundItemsCount--;
+}
+
+void PrisonerEngine::clearActorFrameSoundsBySoundIndex(int16 soundIndex) {
+	for (int16 actorFrameSoundIndex = 0; actorFrameSoundIndex < kMaxActorFrameSounds; actorFrameSoundIndex++) {
+		ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
+		if (actorFrameSound->soundIndex == soundIndex) {
+			actorFrameSound->actorIndex = -1;
+		}
+	}
+}
+
+void PrisonerEngine::clearActorFrameSoundsByActorIndex(int16 actorIndex) {
+	for (int16 actorFrameSoundIndex = 0; actorFrameSoundIndex < kMaxActorFrameSounds; actorFrameSoundIndex++) {
+		ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
+		if (actorFrameSound->actorIndex == actorIndex) {
+			actorFrameSound->actorIndex = -1;
+		}
+	}
+}
+
+void PrisonerEngine::setActorFrameSound(int16 actorFrameSoundIndex, int16 soundIndex, int16 volume) {
+	ActorFrameSound *actorFrameSound = &_actorFrameSounds[actorFrameSoundIndex];
+	if (soundIndex != -1)
+		actorFrameSound->soundIndex = soundIndex;
+	if (volume != -1)
+		actorFrameSound->volume = volume;
+}
+
+void PrisonerEngine::clearActorFrameSounds() {
+	_actorFrameSoundItemsCount = 0;
+	for (int16 actorFrameSoundIndex = 0; actorFrameSoundIndex < kMaxActorFrameSounds; actorFrameSoundIndex++) {
+		_actorFrameSounds[actorFrameSoundIndex].actorIndex = -1;
+	}
+}
+
 } // End of namespace Prisoner
