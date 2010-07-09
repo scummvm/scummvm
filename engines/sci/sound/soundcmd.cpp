@@ -584,8 +584,6 @@ void SoundCommandParser::updateSci0Cues() {
 	bool noOnePlaying = true;
 	MusicEntry *pWaitingForPlay = NULL;
 
-	_music->_mutex.lock();
-
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
@@ -604,7 +602,6 @@ void SoundCommandParser::updateSci0Cues() {
 		processUpdateCues((*i)->soundObj);
 		noOnePlaying = false;
 	}
-	_music->_mutex.unlock();
 
 	if (noOnePlaying && pWaitingForPlay) {
 		// If there is a queued entry, play it now ffs: SciMusic::soundPlay()
