@@ -256,6 +256,12 @@ static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
+	{ GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // parameter 1 is not passed, script error when leaving ulence flats bar
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -371,7 +377,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
     { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
     { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 NULL },
-    { SIG_SCIALL,         11, MAP_CALL(GraphFillBoxAny),           "iiiiii(i)(i)",         NULL },
+    { SIG_SCIALL,         11, MAP_CALL(GraphFillBoxAny),           "iiiiii(i)(i)",         kGraphFillBoxAny_workarounds },
     { SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)(r)",           NULL },
     { SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 NULL },
     { SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
