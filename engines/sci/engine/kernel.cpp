@@ -294,6 +294,7 @@ struct SciKernelMapSubEntry {
 
 #define MAP_CALL(_name_) #_name_, k##_name_
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
     { SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
@@ -349,6 +350,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
     { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
     { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
@@ -369,6 +371,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
     { SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
@@ -381,6 +384,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+//    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalette_subops[] = {
     { SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
     { SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
