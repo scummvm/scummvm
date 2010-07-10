@@ -141,7 +141,6 @@ struct KernelSubFunction {
 };
 
 struct KernelFunction {
-	bool isDummy;
 	KernelFunctionCall *function;
 	const char *name;
 	uint16 *signature;
@@ -490,6 +489,18 @@ reg_t kDoSoundSuspend(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetPriority(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv);
+
+reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphRestoreBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxBackground(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphUpdateBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphRedrawBox(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv);
+reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv);
 
 reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryReverse(EngineState *s, int argc, reg_t *argv);

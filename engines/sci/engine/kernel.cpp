@@ -199,6 +199,41 @@ static const char *s_defaultKernelNames[] = {
 	/*0x88*/ "Dummy"	// DbugStr
 };
 
+reg_t kStub(EngineState *s, int argc, reg_t *argv) {
+	Kernel *kernel = g_sci->getKernel();
+	int kernelCallNr = -1;
+
+	Common::List<ExecStack>::iterator callIterator = s->_executionStack.end();
+	if (callIterator != s->_executionStack.begin()) {
+		callIterator--;
+		ExecStack lastCall = *callIterator;
+		kernelCallNr = lastCall.debugSelector;
+	}
+
+	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
+								Common::String::printf("[%x]", kernelCallNr) +
+								" invoked. Params: " +
+								Common::String::printf("%d", argc) + " (";
+
+	for (int i = 0; i < argc; i++) {
+		warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+		warningMsg += (i == argc - 1 ? ")" : ", ");
+	}
+
+	warning("%s", warningMsg.c_str());
+	return s->r_acc;
+}
+
+reg_t kStubNull(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	return NULL_REG;
+}
+
+reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	error("Kernel function was called, which was considered to be unused - see log for details");
+}
+
 // [io] -> either integer or object
 // (io) -> optionally integer AND an object
 // (i) -> optional integer
@@ -308,6 +343,26 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+static const SciKernelMapSubEntry kGraph_subops[] = {
+    { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+    { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
+    // 3 - set palette via resource
+    { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          NULL },
+    // 5 - nop
+    // 6 - draw pattern
+    { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                NULL },
+    { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                NULL },
+    // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
+    { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
+    { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 NULL },
+    { SIG_SCIALL,         11, MAP_CALL(GraphFillBoxAny),           "iiiiii(i)(i)",         NULL },
+    { SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)(r)",           NULL },
+    { SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 NULL },
+    { SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
+    { SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii",                 NULL }, // kq6 hires
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
     { SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
@@ -372,6 +427,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            NULL }, // subop
     { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir!]*)",          NULL,            NULL },
 	// ^ we allow invalid references here, because kDisplay gets called with those in e.g. pq3 during intro
+	//    restoreBits() checks and skips invalid handles, so that's fine. Sierra SCI behaved the same
     { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                    NULL,            NULL },
     { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
@@ -417,9 +473,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",              NULL,            NULL }, // subop
-	// ^^ we allow invalid references here, because kGraph(restoreBox) gets called with old non-existant handles often
-	//    this should get limited to this call only as soon as subop signatures are available
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",              kGraph_subops,   NULL },
     { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
     { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
@@ -1032,7 +1086,6 @@ void Kernel::mapFunctions() {
 		_kernelFuncs[id].function = NULL;
 		_kernelFuncs[id].signature = NULL;
 		_kernelFuncs[id].name = NULL;
-		_kernelFuncs[id].isDummy = true;
 		_kernelFuncs[id].workarounds = NULL;
 		_kernelFuncs[id].subFunctions = NULL;
 		_kernelFuncs[id].subFunctionCount = 0;
@@ -1044,8 +1097,10 @@ void Kernel::mapFunctions() {
 		}
 
 		// Don't map dummy functions - they will never be called
-		if (kernelName == "Dummy")
+		if (kernelName == "Dummy") {
+			_kernelFuncs[id].function = kDummy;
 			continue;
+		}
 
 		// If the name is known, look it up in s_kernelMap. This table
 		// maps kernel func names to actual function (pointers).
@@ -1068,7 +1123,6 @@ void Kernel::mapFunctions() {
 			_kernelFuncs[id].name = kernelMap->name;
 			_kernelFuncs[id].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
 			_kernelFuncs[id].workarounds = kernelMap->workarounds;
-			_kernelFuncs[id].isDummy = false;
 			if (kernelMap->subFunctions) {
 				// Get version for subfunction identification
 				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
@@ -1129,6 +1183,7 @@ void Kernel::mapFunctions() {
 				error("k%s[%x]: not found for this version/platform", kernelName.c_str(), id);
 			// No match but a name was given -> stub
 			warning("k%s[%x]: unmapped", kernelName.c_str(), id);
+			_kernelFuncs[id].function = kStub;
 		}
 	} // for all functions requesting to be mapped
 

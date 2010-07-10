@@ -800,50 +800,51 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			return;
 	}
 
-	if (!kernelCall.isDummy) {
-		// Add stack frame to indicate we're executing a callk.
-		// This is useful in debugger backtraces if this
-		// kernel function calls a script itself.
-		ExecStack *xstack;
-		xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
-				  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-		xstack->debugSelector = kernelCallNr;
-		xstack->type = EXEC_STACK_TYPE_KERNEL;
+	// Add stack frame to indicate we're executing a callk.
+	// This is useful in debugger backtraces if this
+	// kernel function calls a script itself.
+	ExecStack *xstack;
+	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
+			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack->debugSelector = kernelCallNr;
+	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
-		// Call kernel function
-		if (!kernelCall.subFunctionCount) {
-			s->r_acc = kernelCall.function(s, argc, argv);
-		} else {
-			// Sub-functions available, check signature and call that one directly
-			if (argc < 1)
-				error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
-			const uint16 subId = argv[0].toUint16();
-			// Skip over subfunction-id
-			argc--;
-			argv++;
-			if (subId >= kernelCall.subFunctionCount)
-				error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
-			const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
-			if (!kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
-				// Signature mismatch
-				SciTrackOriginReply originReply;
-				reg_t workaround;
-				workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
-				if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
-					kernel->signatureDebug(kernelSubCall.signature, argc, argv);
-					int callNameLen = strlen(kernelCall.name);
-					if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
-						const char *subCallName = kernelSubCall.name + callNameLen;
-						error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
-					}
-					error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+	// Call kernel function
+	if (!kernelCall.subFunctionCount) {
+		s->r_acc = kernelCall.function(s, argc, argv);
+	} else {
+		// Sub-functions available, check signature and call that one directly
+		if (argc < 1)
+			error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
+		const uint16 subId = argv[0].toUint16();
+		// Skip over subfunction-id
+		argc--;
+		argv++;
+		if (subId >= kernelCall.subFunctionCount)
+			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+		const KernelSubFunction &kernelSubCall = kernelCall.subFunctions[subId];
+		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
+			// Signature mismatch
+			SciTrackOriginReply originReply;
+			reg_t workaround;
+			workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
+			if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
+				int callNameLen = strlen(kernelCall.name);
+				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
+					const char *subCallName = kernelSubCall.name + callNameLen;
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 				}
-				// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-				if (workaround.segment)
-					return;
+				error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 			}
-			s->r_acc = kernelSubCall.function(s, argc, argv);
+			// FIXME: implement some real workaround type logic - ignore call, still do call etc.
+			if (workaround.segment)
+				return;
 		}
+		if (!kernelSubCall.function)
+			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+		s->r_acc = kernelSubCall.function(s, argc, argv);
+	}
 
 #if 0
 		// Used for debugging
@@ -861,27 +862,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		debug("%s", debugMsg.c_str());
 #endif
 
-		// Remove callk stack frame again, if there's still an execution stack
-		if (s->_executionStack.begin() != s->_executionStack.end())
-			s->_executionStack.pop_back();
-	} else {
-		Common::String warningMsg = "Dummy function " + kernel->getKernelName(kernelCallNr) +
-									Common::String::printf("[0x%x]", kernelCallNr) +
-									" invoked - ignoring. Params: " +
-									Common::String::printf("%d", argc) + " (";
-
-		for (int i = 0; i < argc; i++) {
-			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-			warningMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		warning("%s", warningMsg.c_str());
-
-		// Make sure that the game doesn't call a function that is considered unused. If
-		// that happens, error out.
-		if (kernel->getKernelName(kernelCallNr) == "Dummy")
-			error("Kernel function %d was called, which was considered to be unused", kernelCallNr);
-	}
+	// Remove callk stack frame again, if there's still an execution stack
+	if (s->_executionStack.begin() != s->_executionStack.end())
+		s->_executionStack.pop_back();
 }
 
 static void gcCountDown(EngineState *s) {

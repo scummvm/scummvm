@@ -207,126 +207,106 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxScreen->kernelPicNotValid(newPicNotValid));
 }
 
-Common::Rect kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
+static Common::Rect getGraphRect(reg_t *argv) {
+	int16 x = argv[1].toSint16();
+	int16 y = argv[0].toSint16();
+	int16 x1 = argv[3].toSint16();
+	int16 y1 = argv[2].toSint16();
 	if (x > x1) SWAP(x, x1);
 	if (y > y1) SWAP(y, y1);
 	return Common::Rect(x, y, x1, y1);
 }
 
-// Graph subfunctions
-enum {
-	K_GRAPH_GET_COLORS_NR = 2,
-	// 3 - SET PALETTE VIA RESOURCE
-	K_GRAPH_DRAW_LINE = 4,
-	// 5 - NOP
-	// 6 - DRAW PATTERN
-	K_GRAPH_SAVE_BOX = 7,
-	K_GRAPH_RESTORE_BOX = 8,
-	K_GRAPH_FILL_BOX_BACKGROUND = 9,
-	K_GRAPH_FILL_BOX_FOREGROUND = 10,
-	K_GRAPH_FILL_BOX_ANY = 11,
-	K_GRAPH_UPDATE_BOX = 12,
-	K_GRAPH_REDRAW_BOX = 13,
-	K_GRAPH_ADJUST_PRIORITY = 14,
-	K_GRAPH_SAVE_UPSCALEDHIRES_BOX = 15	// KQ6CD Windows version
-};
+static Common::Point getGraphPoint(reg_t *argv) {
+	int16 x = argv[1].toSint16();
+	int16 y = argv[0].toSint16();
+	return Common::Point(x, y);
+}
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
-	int16 x = 0, y = 0, x1 = 0, y1 = 0;
-	uint16 screenMask;
-	int16 priority, control, color, colorMask;
-	Common::Rect rect;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	if (argc >= 5) {
-		x = argv[2].toSint16();
-		y = argv[1].toSint16();
-		x1 = argv[4].toSint16();
-		y1 = argv[3].toSint16();
-	}
+reg_t kGraphGetColorCount(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isAmiga32color())
+		return make_reg(0, 32);
+	return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+}
 
-	switch (argv[0].toSint16()) {
-	case 1:
-		// TODO: Happens in GK1CD, right when it starts
-		warning("Unsupported kGraph() operation %04x", argv[0].toSint16());
-		// Returns an integer
-		return SIGNAL_REG;
+reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
+	int16 color = argv[4].toSint16();
+	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
+	int16 control = (argc > 6) ? argv[6].toSint16() : -1;
 
-	case K_GRAPH_GET_COLORS_NR:
-		if (g_sci->getResMan()->isAmiga32color())
-			return make_reg(0, 32);
-		return make_reg(0, !g_sci->getResMan()->isVGA() ? 16 : 256);
+	// TODO: Find out why we get >15 for color in EGA
+	if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
+		color &= 0x0F;
 
-	case K_GRAPH_DRAW_LINE:
-		priority = (argc > 6) ? argv[6].toSint16() : -1;
-		control = (argc > 7) ? argv[7].toSint16() : -1;
-		color = argv[5].toSint16();
-
-		// TODO: Find out why we get >15 for color in EGA
-		if (!g_sci->getResMan()->isVGA() && !g_sci->getResMan()->isAmiga32color())
-			color &= 0x0F;
-
-		g_sci->_gfxPaint16->kernelGraphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
-		break;
-
-	case K_GRAPH_SAVE_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		screenMask = (argc > 5) ? argv[5].toUint16() : 0;
-		return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
-
-	case K_GRAPH_RESTORE_BOX:
-		// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
-		g_sci->_gfxPaint16->kernelGraphRestoreBox(argv[1]);
-		break;
-
-	case K_GRAPH_FILL_BOX_BACKGROUND:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBoxBackground(rect);
-		break;
-
-	case K_GRAPH_FILL_BOX_FOREGROUND:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBoxForeground(rect);
-		break;
-
-	case K_GRAPH_FILL_BOX_ANY:
-		priority = (argc > 7) ? argv[7].toSint16() : -1;
-		control = (argc > 8) ? argv[8].toSint16() : -1;
-		color = argv[6].toSint16();
-		colorMask = argv[5].toUint16();
-
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
-		break;
-
-	case K_GRAPH_UPDATE_BOX: {
-		rect = kGraphCreateRect(x, y, x1, y1);
-		bool hiresMode = (argc > 6) ? true : false;
-		// arg5 is the map (1 for visual, etc.)
-		// argc == 7 on upscaled hires
-		g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
-		break;
-	}
-
-	case K_GRAPH_REDRAW_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		g_sci->_gfxPaint16->kernelGraphRedrawBox(rect);
-		break;
-
-	case K_GRAPH_ADJUST_PRIORITY:
-		// Seems to be only implemented for SCI0/SCI01 games
-		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)", argv[1].toUint16(), argv[2].toUint16());
-		g_sci->_gfxPorts->kernelGraphAdjustPriority(argv[1].toUint16(), argv[2].toUint16());
-		break;
-
-	case K_GRAPH_SAVE_UPSCALEDHIRES_BOX:
-		rect = kGraphCreateRect(x, y, x1, y1);
-		return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
-
-	default:
-		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
-	}
-
+	g_sci->_gfxPaint16->kernelGraphDrawLine(getGraphPoint(argv), getGraphPoint(argv + 2), color, priority, control);
 	return s->r_acc;
+}
+
+reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	uint16 screenMask = (argc > 4) ? argv[4].toUint16() : 0;
+	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
+}
+
+reg_t kGraphRestoreBox(EngineState *s, int argc, reg_t *argv) {
+	// This may be called with a memoryhandle from SAVE_BOX or SAVE_UPSCALEDHIRES_BOX
+	g_sci->_gfxPaint16->kernelGraphRestoreBox(argv[0]);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxBackground(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphFillBoxBackground(rect);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxForeground(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphFillBoxForeground(rect);
+	return s->r_acc;
+}
+
+reg_t kGraphFillBoxAny(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	int16 colorMask = argv[4].toUint16();
+	int16 color = argv[5].toSint16();
+	int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
+	int16 control = (argc > 7) ? argv[7].toSint16() : -1;
+
+	g_sci->_gfxPaint16->kernelGraphFillBox(rect, colorMask, color, priority, control);
+	return s->r_acc;
+}
+
+reg_t kGraphUpdateBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	// argv[4] is the map (1 for visual, etc.)
+	// argc == 6 on upscaled hires
+	bool hiresMode = (argc > 5) ? true : false;
+	g_sci->_gfxPaint16->kernelGraphUpdateBox(rect, hiresMode);
+	return s->r_acc;
+}
+
+reg_t kGraphRedrawBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	g_sci->_gfxPaint16->kernelGraphRedrawBox(rect);
+	return s->r_acc;
+}
+
+// Seems to be only implemented for SCI0/SCI01 games
+reg_t kGraphAdjustPriority(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPorts->kernelGraphAdjustPriority(argv[0].toUint16(), argv[1].toUint16());
+	return s->r_acc;
+}
+
+reg_t kGraphSaveUpscaledHiresBox(EngineState *s, int argc, reg_t *argv) {
+	Common::Rect rect = getGraphRect(argv);
+	return g_sci->_gfxPaint16->kernelGraphSaveUpscaledHiresBox(rect);
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
