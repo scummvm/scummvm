@@ -686,7 +686,7 @@ reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
-	bool pauseState = pauseState = argv[1].isNull() ? false : true;
+	bool pauseState = argv[1].isNull() ? false : true;
 	g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
 	return NULL_REG;
 }
