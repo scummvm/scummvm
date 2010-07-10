@@ -308,6 +308,18 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+static const SciKernelMapSubEntry kPalVary_subops[] = {
+    { SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
+    { SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
+    { SIG_SCIALL,          2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
+    { SIG_SCIALL,          3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
+    { SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
+    { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
+    { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 struct SciKernelMapEntry {
 	const char *name;
 	KernelFunctionCall *function;
@@ -355,7 +367,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", kDoSound_subops, NULL }, // subop
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", kDoSound_subops, NULL },
     { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            NULL }, // for kq6 hires
     { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",           NULL,            NULL },
@@ -426,7 +438,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",           NULL,            NULL },
-    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                 kPalVary_subops, NULL },
     { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
     { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },

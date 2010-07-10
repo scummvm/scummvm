@@ -641,97 +641,58 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (operation) {
-	case 0: { // Init
-		GuiResourceId paletteId;
-		uint16 ticks, stepStop;
-		uint16 direction;
-		if ((argc >= 3) && (argc <= 5)) {
-			paletteId = argv[1].toUint16();
-			ticks = argv[2].toUint16();
-			stepStop = argc >= 4 ? argv[3].toUint16() : 64;
-			direction = argc >= 5 ? argv[4].toUint16() : 1;
-			warning("kPalVary(init) called with paletteId = %d, ticks = %d, stop = %d, direction = %d", paletteId, ticks, stepStop, direction);
-			if (g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction))
-				return SIGNAL_REG;
-		} else {
-			warning("kPalVary(init) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 1: { // Reverse
-		int16 ticks, stepStop, direction;
+reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[0].toUint16();
+	uint16 ticks = argv[1].toUint16();
+	uint16 stepStop = argc >= 3 ? argv[2].toUint16() : 64;
+	uint16 direction = argc >= 4 ? argv[3].toUint16() : 1;
+	if (g_sci->_gfxPalette->kernelPalVaryInit(paletteId, ticks, stepStop, direction))
+		return SIGNAL_REG;
+	return NULL_REG;
+}
 
-		if ((argc >= 1) && (argc <= 4)) {
-			ticks = argc >= 2 ? argv[1].toUint16() : -1;
-			stepStop = argc >= 3 ? argv[2].toUint16() : 0;
-			direction = argc >= 4 ? argv[3].toSint16() : -1;
+reg_t kPalVaryReverse(EngineState *s, int argc, reg_t *argv) {
+	int16 ticks = argc >= 1 ? argv[0].toUint16() : -1;
+	int16 stepStop = argc >= 2 ? argv[1].toUint16() : 0;
+	int16 direction = argc >= 3 ? argv[2].toSint16() : -1;
 
-			int16 result = g_sci->_gfxPalette->kernelPalVaryReverse(ticks, stepStop, direction);
-			warning("kPalVary(reverse) called with ticks = %d, stop = %d, direction = %d", ticks, stepStop, direction);
-			return make_reg(0, result);
-		} else {
-			warning("kPalVary(reverse) called with unsupported argc %d", argc);
-		}
-	}
-	case 2: { // Get Current Step
-		if (argc == 1) {
-			int16 currentStep = g_sci->_gfxPalette->kernelPalVaryGetCurrentStep();
-			return make_reg(0, currentStep);
-		} else {
-			warning("kPalVary(getCurrentStep) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 3: { // DeInit
-		if (argc == 1) {
-			g_sci->_gfxPalette->kernelPalVaryDeinit();
-			warning("kPalVary(deinit)");
-		} else {
-			warning("kPalVary(deinit) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 4: { // Change Target
-		if (argc == 2) {
-			GuiResourceId paletteId = argv[1].toUint16();
-			int16 currentStep = g_sci->_gfxPalette->kernelPalVaryChangeTarget(paletteId);
-			return make_reg(0, currentStep);
-		} else {
-			warning("kPalVary(changeTarget) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 5: { // Change ticks
-		if (argc == 2) {
-			uint16 ticks = argv[1].toUint16();
-			g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
-		} else {
-			warning("kPalVary(changeTicks) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 6: { // Pause/Resume
-		bool pauseState;
-		if (argc == 2) {
-			pauseState = argv[1].isNull() ? false : true;
-			g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
-			warning("kPalVary(pause) called with state = %d", pauseState);
-		} else {
-			warning("kPalVary(pause) called with unsupported argc %d", argc);
-		}
-		break;
-	}
-	case 8: { // Unknown (seems to be SCI32 exclusive)
-		// Called in PQ4 (1 parameter)
-		warning("kPalVary(8) called with parameter %d (argc %d)", argv[1].toUint16(), argc);
-		break;
-	}
-	default:
-		error("kPalVary(%d), not implemented (argc = %d)", operation, argc);
-	}
+	return make_reg(0, g_sci->_gfxPalette->kernelPalVaryReverse(ticks, stepStop, direction));
+}
+
+reg_t kPalVaryGetCurrentStep(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxPalette->kernelPalVaryGetCurrentStep());
+}
+
+reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxPalette->kernelPalVaryDeinit();
+	return NULL_REG;
+}
+
+reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId paletteId = argv[1].toUint16();
+	int16 currentStep = g_sci->_gfxPalette->kernelPalVaryChangeTarget(paletteId);
+	return make_reg(0, currentStep);
+}
+
+reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv) {
+	uint16 ticks = argv[1].toUint16();
+	g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
+	return NULL_REG;
+}
+
+reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
+	bool pauseState = pauseState = argv[1].isNull() ? false : true;
+	g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
+	return NULL_REG;
+}
+
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
+	// Unknown (seems to be SCI32 exclusive)
 	return NULL_REG;
 }
 

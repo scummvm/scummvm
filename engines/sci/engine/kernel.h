@@ -491,6 +491,15 @@ reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetPriority(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundSetLoop(EngineState *s, int argc, reg_t *argv);
 
+reg_t kPalVaryInit(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryReverse(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryGetCurrentStep(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
+
 //@}
 
 } // End of namespace Sci
