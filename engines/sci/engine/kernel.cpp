@@ -247,6 +247,12 @@ static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kUnLoad_workarounds[] = {
+	{ GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // parameter 1 is not passed, script error when leaving ulence flats bar
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 struct SciKernelMapSubEntry {
 	SciVersion fromVersion;
 	SciVersion toVersion;
@@ -552,8 +558,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
     { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
     { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
-    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                 NULL,            NULL },
-	//  ^^ - in SQ1 when leaving ulence flats bar, kUnLoad is called with just one argument (FIXME?)
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                 NULL,            kUnLoad_workarounds },
     { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
