@@ -135,17 +135,17 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		}
 
 		if (!inFile)
-			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", englishName.c_str());
+			warning("  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
+			warning("  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
+			warning("  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
@@ -156,7 +156,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	}
 
 	if (!inFile && !outFile) { // Failed
-		debug(3, "file_open() failed");
+		debugC(2, kDebugLevelFile, "  -> file_open() failed");
 		s->r_acc = SIGNAL_REG;
 		return;
 	}
@@ -177,14 +177,14 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	s->r_acc = make_reg(0, handle);
 
-	debug(3, " -> opened file '%s' with handle %d", englishName.c_str(), handle);
+	debugC(2, kDebugLevelFile, "  -> opened file '%s' with handle %d", englishName.c_str(), handle);
 }
 
 reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	int mode = argv[1].toUint16();
 
-	debug(3, "kFOpen(%s,0x%x)", name.c_str(), mode);
+	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
 	file_open(s, name.c_str(), mode);
 	return s->r_acc;
 }
@@ -204,7 +204,7 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 }
 
 reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
-	debug(3, "kFClose(%d)", argv[0].toUint16());
+	debugC(2, kDebugLevelFile, "kFClose(%d)", argv[0].toUint16());
 	if (argv[0] != SIGNAL_REG) {
 		FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 		if (f)
@@ -225,8 +225,6 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
-	debugC(2, kDebugLevelFile, "FGets'ing %d bytes from handle %d", maxsize, handle);
-
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return;
@@ -248,7 +246,7 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		*dest = f->_in->readByte();
 	}
 
-	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
+	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
 }
 
 static bool _savegame_index_struct_compare(const SavegameDesc &l, const SavegameDesc &r) {
@@ -316,7 +314,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[maxsize];
 	int handle = argv[2].toUint16();
 
-	debug(3, "kFGets(%d,%d)", handle, maxsize);
+	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	return argv[0];
@@ -331,7 +329,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
 	s->_segMan->strcpy(argv[0], "/");
 
-	debug(3, "kGetCWD() -> %s", "/");
+	debugC(2, kDebugLevelFile, "kGetCWD() -> %s", "/");
 
 	return argv[0];
 }
@@ -700,12 +698,12 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			warning("Attempted to open a file with an empty filename");
 			return SIGNAL_REG;
 		}
+		debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
 		file_open(s, name.c_str(), mode);
-		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name.c_str(), mode);
 		break;
 	}
 	case K_FILEIO_CLOSE : {
-		debug(3, "K_FILEIO_CLOSE(%d)", argv[1].toUint16());
+		debugC(2, kDebugLevelFile, "kFileIO(close): %d", argv[1].toUint16());
 
 		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
 		if (f)
@@ -716,8 +714,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
 		char *buf = new char[size];
-		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
-
+		debugC(2, kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
 		
 		FileHandle *f = getFileFromHandle(s, handle);
 		if (f) {
@@ -733,7 +730,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int size = argv[3].toUint16();
 		char *buf = new char[size];
 		s->_segMan->memcpy((byte*)buf, argv[2], size);
-		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
+		debugC(2, kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
 
 		FileHandle *f = getFileFromHandle(s, handle);
 		if (f)
@@ -769,7 +766,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			saveFileMan->removeSavefile(wrappedName);
 		}
 
-		debug(3, "K_FILEIO_UNLINK(%s)", name.c_str());
+		debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
 
 		// TODO/FIXME: Should we return something (like, a bool indicating
 		// whether deleting the save succeeded or failed)?
@@ -779,7 +776,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int size = argv[2].toUint16();
 		char *buf = new char[size];
 		int handle = argv[3].toUint16();
-		debug(3, "K_FILEIO_READ_STRING(%d,%d)", handle, size);
+		debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
 
 		fgets_wrapper(s, buf, size, handle);
 		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
@@ -790,7 +787,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
 		Common::String str = s->_segMan->getString(argv[2]);
-		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
+		debugC(2, kDebugLevelFile, "kFileIO(writeString): %d, %d", handle, size);
 
 		// CHECKME: Is the size parameter used at all?
 		// In the LSL5 password protection it is zero, and we should
@@ -806,7 +803,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int handle = argv[1].toUint16();
 		int offset = argv[2].toUint16();
 		int whence = argv[3].toUint16();
-		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
+		debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
 		
 		FileHandle *f = getFileFromHandle(s, handle);
 		if (f)
@@ -817,7 +814,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		Common::String mask = s->_segMan->getString(argv[1]);
 		reg_t buf = argv[2];
 		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
-		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask.c_str(), attr);
+		debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
 
 		// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
 		if (mask == "*.*")
@@ -835,7 +832,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_FIND_NEXT : {
-		debug(3, "K_FILEIO_FIND_NEXT()");
+		debugC(2, kDebugLevelFile, "kFileIO(findNext)");
 		s->r_acc = s->_dirseeker.nextFile(s->_segMan);
 		break;
 	}
@@ -877,7 +874,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			exists = true;
 		}
 
-		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name.c_str(), exists);
+		debugC(2, kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
 		return make_reg(0, exists);
 	}
 	case K_FILEIO_RENAME: {
@@ -925,7 +922,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 #endif
 	default:
-		error("Unknown FileIO() sub-command: %d", func_nr);
+		error("kFileIO(): unknown sub-command: %d", func_nr);
 	}
 
 	return s->r_acc;

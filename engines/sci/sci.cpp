@@ -97,10 +97,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelFuncCheck, "Func", "Function parameter debugging");
 	DebugMan.addDebugChannel(kDebugLevelBresen, "Bresenham", "Bresenham algorithms debugging");
 	DebugMan.addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
-	DebugMan.addDebugChannel(kDebugLevelGfxDriver, "Gfxdriver", "Gfx driver debugging");
 	DebugMan.addDebugChannel(kDebugLevelBaseSetter, "Base", "Base Setter debugging");
 	DebugMan.addDebugChannel(kDebugLevelParser, "Parser", "Parser debugging");
-	DebugMan.addDebugChannel(kDebugLevelMenu, "Menu", "Menu handling debugging");
 	DebugMan.addDebugChannel(kDebugLevelSaid, "Said", "Said specs debugging");
 	DebugMan.addDebugChannel(kDebugLevelFile, "File", "File I/O debugging");
 	DebugMan.addDebugChannel(kDebugLevelTime, "Time", "Time debugging");
@@ -110,7 +108,6 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	DebugMan.addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	DebugMan.addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	DebugMan.addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
-	DebugMan.addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
 	DebugMan.addDebugChannel(kDebugLevelResMan, "ResMan", "Resource manager debugging");
 	DebugMan.addDebugChannel(kDebugLevelOnStartup, "OnStartup", "Enter debugger at start of game");
 
