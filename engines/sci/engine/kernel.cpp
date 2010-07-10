@@ -242,6 +242,14 @@ reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
 // .* -> any parameters afterwards (or none)
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kAbs_workarounds[] = {
+	{ GID_HOYLE1,          1,  0,              "room1", "doit",           -1,    0, { 2, 0x3e9 } }, // crazy eights - called with objects instead of integers
+	{ GID_HOYLE1,          2,  0,              "room2", "doit",           -1,    0, { 2, 0x3e9 } }, // old maid - called with objects instead of integers
+	{ GID_HOYLE1,          3,  0,              "room3", "doit",           -1,    0, { 2, 0x3e9 } }, // hearts - called with objects instead of integers
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // parameter 0 is an object when leaving graveyard
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -412,8 +420,7 @@ struct SciKernelMapEntry {
 
 //    name,                        version/platform,         signature,              sub-signatures,  workarounds
 static SciKernelMapEntry s_kernelMap[] = {
-    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "[io]",                  NULL,            NULL },
-	//  ^^ FIXME hoyle
+    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "i",                     NULL,            kAbs_workarounds },
     { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                   NULL,            NULL },
     { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
     { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                    NULL,            NULL },

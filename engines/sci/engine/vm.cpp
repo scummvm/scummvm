@@ -796,6 +796,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 		}
 		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
+		if (workaround.segment == 2)
+			s->r_acc = make_reg(0, workaround.offset);
 		if (workaround.segment)
 			return;
 	}
@@ -838,6 +840,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 			}
 			// FIXME: implement some real workaround type logic - ignore call, still do call etc.
+			if (workaround.segment == 2)
+				s->r_acc = make_reg(0, workaround.offset);
 			if (workaround.segment)
 				return;
 		}
