@@ -25,10 +25,9 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-
-OpenGLSDLGraphicsManager::OpenGLSDLGraphicsManager() {
+OpenGLSDLGraphicsManager::OpenGLSDLGraphicsManager()
+	:
+	_hwscreen(0) {
 
 }
 
@@ -40,6 +39,8 @@ void OpenGLSDLGraphicsManager::init() {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
+
+	SDL_ShowCursor(SDL_DISABLE);
 
 	OpenGLGraphicsManager::init();
 }
@@ -70,4 +71,24 @@ void OpenGLSDLGraphicsManager::toggleFullScreen() {
 
 bool OpenGLSDLGraphicsManager::saveScreenshot(const char *filename) {
 	return false;
+}
+
+//
+// Protected
+//
+
+bool OpenGLSDLGraphicsManager::loadGFXMode() {
+	return false;
+}
+
+void OpenGLSDLGraphicsManager::unloadGFXMode() {
+
+}
+
+bool OpenGLSDLGraphicsManager::hotswapGFXMode() {
+	return false;
+}
+
+void OpenGLSDLGraphicsManager::internUpdateScreen() {
+	
 }

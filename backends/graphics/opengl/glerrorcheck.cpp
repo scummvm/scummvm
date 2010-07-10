@@ -34,7 +34,7 @@
 #include <GL/gl.h>
 #endif
 
-static const char* getGlErrStr(GLenum error) {
+static const char *getGlErrStr(GLenum error) {
 	switch (error) {
 	case GL_NO_ERROR:		   return "GL_NO_ERROR";
 	case GL_INVALID_ENUM:	   return "GL_INVALID_ENUM";
@@ -49,7 +49,7 @@ static const char* getGlErrStr(GLenum error) {
 	return buf;
 }
 
-void checkGlError(const char* file, int line) {
+void checkGlError(const char *file, int line) {
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 		warning("%s:%d: GL error: %s", file, line, getGlErrStr(error));

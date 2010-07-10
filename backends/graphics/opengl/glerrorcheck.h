@@ -33,6 +33,6 @@
 // If in debug, check for an error after a GL call
 #define CHECK_GL_ERROR(call) ((call), checkGlError(__FILE__, __LINE__))
 
-void checkGlError(const char* file, int line);
+void checkGlError(const char *file, int line);
 
 #endif

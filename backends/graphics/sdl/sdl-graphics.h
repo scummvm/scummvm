@@ -26,15 +26,9 @@
 #ifndef BACKENDS_GRAPHICS_SDL_H
 #define BACKENDS_GRAPHICS_SDL_H
 
-#include "backends/graphics/graphics.h"
+#include "backends/graphics/sdl/basesdl-graphics.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
-
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
-#include <SDL.h>
-#endif
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
@@ -72,7 +66,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public GraphicsManager {
+class SdlGraphicsManager : public BaseSdlGraphicsManager {
 public:
 	SdlGraphicsManager();
 	virtual ~SdlGraphicsManager();
@@ -127,39 +121,12 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 #endif
 
-	/**
-	 * Marks the screen for a full redraw
-	 */
 	virtual void forceFullRedraw();
-
-	/**
-	 * Handles the scalar hotkeys
-	 */
 	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
-
-	/**
-	 * Returns if the event passed is a hotkey for the graphics scalers
-	 */
 	virtual bool isScalerHotkey(const Common::Event &event);
-
-	/**
-	 * Adjusts mouse event coords for the current scaler
-	 */
 	virtual void adjustMouseEvent(Common::Event &event);
-
-	/**
-	 * Updates the mouse cursor position
-	 */
 	virtual void setMousePos(int x, int y);
-
-	/**
-	 * Toggles fullscreen
-	 */
 	virtual void toggleFullScreen();
-
-	/**
-	 * Saves a screenshot to a file
-	 */
 	virtual bool saveScreenshot(const char *filename);
 
 protected:

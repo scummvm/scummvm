@@ -26,9 +26,8 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_H
 #define BACKENDS_GRAPHICS_OPENGL_H
 
+#include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
-
-#include "graphics/surface.h"
 
 enum {
 	GFX_NORMAL = 0,
@@ -41,6 +40,8 @@ class OpenGLGraphicsManager : public GraphicsManager {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
+
+	virtual void init();
 
 	virtual bool hasFeature(OSystem::Feature f);
 	virtual void setFeatureState(OSystem::Feature f, bool enable);
@@ -91,7 +92,17 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 
 protected:
+	GLTexture* _gameTexture;
+	GLTexture* _overlayTexture;
+	GLTexture* _mouseTexture;
+
+
 	Graphics::Surface _lockedScreen;
+
+	virtual void internUpdateScreen();
+	virtual bool loadGFXMode();
+	virtual void unloadGFXMode();
+	virtual bool hotswapGFXMode();
 };
 
 #endif

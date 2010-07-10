@@ -26,6 +26,12 @@
 #ifndef BACKENDS_GRAPHICS_OPENGLSDL_H
 #define BACKENDS_GRAPHICS_OPENGLSDL_H
 
+#include <SDL.h>
+#if defined(ARRAYSIZE) && !defined(_WINDOWS_)
+#undef ARRAYSIZE
+#endif
+#include <SDL_opengl.h>
+
 #include "backends/graphics/opengl/opengl-graphics.h"
 
 /**
@@ -45,6 +51,16 @@ public:
 	virtual void setMousePos(int x, int y);
 	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename);
+
+protected:
+	virtual void internUpdateScreen();
+
+	virtual bool loadGFXMode();
+	virtual void unloadGFXMode();
+	virtual bool hotswapGFXMode();
+
+	// Hardware screen
+	SDL_Surface *_hwscreen;
 };
 
 #endif

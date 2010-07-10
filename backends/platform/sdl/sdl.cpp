@@ -32,6 +32,8 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
+//#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
 #include "icons/scummvm.xpm"
 
@@ -81,8 +83,13 @@ void OSystem_SDL::initBackend() {
 		_mixerManager->init();
 	}
 
-	if (_graphicsManager == 0)
-		_graphicsManager = new SdlGraphicsManager();
+	if (_graphicsManager == 0) {
+		// Changed to OpenGL for testing
+		//_graphicsManager = new SdlGraphicsManager();
+		_graphicsManager = new OpenGLSDLGraphicsManager();
+
+		((OpenGLSDLGraphicsManager *)_graphicsManager)->init();
+	}
 
 	if (_audiocdManager == 0)
 		_audiocdManager = new SdlAudioCDManager();
@@ -234,9 +241,9 @@ void OSystem_SDL::setupIcon() {
 	free(icon);
 }
 
-SdlGraphicsManager *OSystem_SDL::getGraphicsManager() {
+BaseSdlGraphicsManager *OSystem_SDL::getGraphicsManager() {
 	assert(_graphicsManager);
-	return (SdlGraphicsManager *)_graphicsManager;
+	return (BaseSdlGraphicsManager *)_graphicsManager;
 }
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {

@@ -24,12 +24,18 @@
  */
 
 #include "backends/graphics/opengl/opengl-graphics.h"
+#include "common/mutex.h"
 
-OpenGLGraphicsManager::OpenGLGraphicsManager() {
-
+OpenGLGraphicsManager::OpenGLGraphicsManager()
+	:
+	_gameTexture(0), _overlayTexture(0), _mouseTexture(0) 	{
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
+
+}
+
+void OpenGLGraphicsManager::init() {
 
 }
 
@@ -63,7 +69,7 @@ const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedGraphicsModes() 
 }
 
 int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
-	return 0;
+	return GFX_NORMAL;
 }
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
@@ -225,4 +231,24 @@ void OpenGLGraphicsManager::disableCursorPalette(bool disable) {
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 
+}
+
+//
+// Intern
+//
+
+void OpenGLGraphicsManager::internUpdateScreen() {
+
+}
+
+bool OpenGLGraphicsManager::loadGFXMode() {
+	return false;
+}
+
+void OpenGLGraphicsManager::unloadGFXMode() {
+
+}
+
+bool OpenGLGraphicsManager::hotswapGFXMode() {
+	return false;
 }
