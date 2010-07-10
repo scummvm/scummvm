@@ -704,8 +704,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithKeyboard() {
 	// selecting first item of first menu every time. Also sierra sci didn't
 	// allow mouse interaction, when menu was activated via keyboard.
 
-	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
+	calculateMenuAndItemWidth();
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
@@ -827,8 +827,8 @@ GuiMenuItemEntry *GfxMenu::interactiveWithMouse() {
 	bool firstMenuChange = true;
 	GuiMenuItemEntry *curItemEntry = NULL;
 
-	calculateMenuAndItemWidth();
 	_oldPort = _ports->setPort(_ports->_menuPort);
+	calculateMenuAndItemWidth();
 	_barSaveHandle = _paint16->bitsSave(_ports->_menuRect, GFX_SCREEN_MASK_VISUAL);
 
 	_ports->penColor(0);
