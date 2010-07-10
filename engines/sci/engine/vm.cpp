@@ -776,6 +776,17 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	}
 }
 
+static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc, reg_t *argv) {
+	// Add stack frame to indicate we're executing a callk.
+	// This is useful in debugger backtraces if this
+	// kernel function calls a script itself.
+	ExecStack *xstack;
+	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
+			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	xstack->debugSelector = kernelCallNr;
+	xstack->type = EXEC_STACK_TYPE_KERNEL;
+}
+
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
 
@@ -802,17 +813,10 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			return;
 	}
 
-	// Add stack frame to indicate we're executing a callk.
-	// This is useful in debugger backtraces if this
-	// kernel function calls a script itself.
-	ExecStack *xstack;
-	xstack = add_exec_stack_entry(s->_executionStack, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, -1, -1, NULL_REG,
-			  s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->debugSelector = kernelCallNr;
-	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
+		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 	} else {
 		// Sub-functions available, check signature and call that one directly
@@ -847,6 +851,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		}
 		if (!kernelSubCall.function)
 			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
+		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 	}
 
