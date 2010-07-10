@@ -67,28 +67,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 		neededSleep = 60;
 	}
 
-	if (s->_throttleTrigger) {
-		// Some games seem to get the duration of main loop initially and then
-		// switch of animations for the whole game based on that (qfg2, iceman).
-		// We are now running full speed initially to avoid that.
-		// It seems like we dont need to do that anymore
-		//if (s->_throttleCounter < 50) {
-		//	s->_throttleCounter++;
-		//	return s->r_acc;
-		//}
-
-		uint32 curTime = g_system->getMillis();
-		uint32 duration = curTime - s->_throttleLastTime;
-
-		if (duration < neededSleep) {
-			g_sci->sleep(neededSleep - duration);
-			s->_throttleLastTime = g_system->getMillis();
-		} else {
-			s->_throttleLastTime = curTime;
-		}
-		s->_throttleTrigger = false;
-	}
-
+	s->speedThrottler(neededSleep);
 	return s->r_acc;
 }
 

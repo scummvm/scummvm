@@ -857,8 +857,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 #if 0
 		// Used for debugging
-		Common::String debugMsg = kernelFunc.origName +
-									Common::String::printf("[0x%x]", kernelFuncNr) +
+		Common::String debugMsg = Common::String::printf("%s [0x%x]", kernelCall.name, kernelCallNr) +
 									Common::String::printf(", %d params: ", argc) +
 									" (";
 

@@ -106,6 +106,7 @@ public:
 	uint32 lastWaitTime; /**< The last time the game invoked Wait() */
 	uint32 _screenUpdateTime;	/**< The last time the game updated the screen */
 
+	void speedThrottler(uint32 neededSleep);
 	void wait(int16 ticks);
 
 	uint32 _throttleCounter; /**< total times kAnimate was invoked */

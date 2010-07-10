@@ -411,7 +411,11 @@ void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 int
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
 	if (setPalette) {
 		setOnScreen();
-		g_sci->getEngineState()->_throttleTrigger = true;
+		EngineState *state = g_sci->getEngineState();
+		// Call speed throttler from here as well just in case we need it
+		//  At least in kq6 intro the scripts call us in a tight loop for fadein/fadeout
+		state->speedThrottler(30);
+		state->_throttleTrigger = true;
 	}
 }
 

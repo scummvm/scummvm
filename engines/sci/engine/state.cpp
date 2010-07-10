@@ -111,6 +111,21 @@ void EngineState::reset(bool isRestoring) {
 	scriptGCInterval = GC_INTERVAL;
 }
 
+void EngineState::speedThrottler(uint32 neededSleep) {
+	if (_throttleTrigger) {
+		uint32 curTime = g_system->getMillis();
+		uint32 duration = curTime - _throttleLastTime;
+
+		if (duration < neededSleep) {
+			g_sci->sleep(neededSleep - duration);
+			_throttleLastTime = g_system->getMillis();
+		} else {
+			_throttleLastTime = curTime;
+		}
+		_throttleTrigger = false;
+	}
+}
+
 void EngineState::wait(int16 ticks) {
 	uint32 time = g_system->getMillis();
 	r_acc = make_reg(0, ((long)time - (long)lastWaitTime) * 60 / 1000);
