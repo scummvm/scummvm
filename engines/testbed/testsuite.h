@@ -86,7 +86,7 @@ public:
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
 	void genReport() const;
 	bool isEnabled() const { return _isTsEnabled; }
-	void enable(bool flag) {
+	virtual void enable(bool flag) {
 		_isTsEnabled = flag;
 	}
 

@@ -60,7 +60,7 @@ public:
 	FSTestSuite();
 	~FSTestSuite(){}
 	const char *getName() const;
-
+	void enable(bool flag);
 };
 
 }	// End of namespace Testbed

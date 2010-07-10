@@ -131,7 +131,7 @@ Common::Error TestbedEngine::run() {
 	}
 	
 	// Enable the testsuites you want to execute
-	// enableTestsuite("FS", true);
+	enableTestsuite("FS", true);
 	enableTestsuite("GFX", true);
 	// enableTestsuite("savegames", true);
 	// enableTestsuite("misc", true);

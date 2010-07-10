@@ -151,8 +151,21 @@ FSTestSuite::FSTestSuite() {
 	addTest("ReadingFile", &FStests::testReadFile, false);	
 	addTest("WritingFile", &FStests::testWriteFile, false);	
 }
+
 const char *FSTestSuite::getName() const {
 	return "FS";
+}
+
+void FSTestSuite::enable(bool flag) {
+	const Common::String &path = ConfMan.get("path");
+	Common::FSNode gameRoot(path);
+
+	Common::FSNode gameIdentificationFile = gameRoot.getChild("TESTBED");
+	if (!gameIdentificationFile.exists()) {
+		logPrintf("WARNING! : Game Data not found. Skipping FS tests\n");
+		return;
+	}
+	Testsuite::enable(flag);
 }
 
 } // End of namespace Testbed
