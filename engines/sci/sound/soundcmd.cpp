@@ -73,7 +73,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
-	debugC(2, kDebugLevelSound, "cmdInitSound, number %d, loop %d, prio %d, vol %d", resourceId, 
+	debugC(2, kDebugLevelSound, "kDoSound(init): number %d, loop %d, prio %d, vol %d", resourceId, 
 			newSound->loop, newSound->priority, newSound->volume);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
@@ -112,7 +112,7 @@ reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processPlaySound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdPlaySound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -142,7 +142,7 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
-	debugC(2, kDebugLevelSound, "cmdPlaySound, number %d, loop %d, prio %d, vol %d", resourceId, 
+	debugC(2, kDebugLevelSound, "kDoSound(play): number %d, loop %d, prio %d, vol %d", resourceId, 
 			musicSlot->loop, musicSlot->priority, musicSlot->volume);
 
 	_music->soundPlay(musicSlot);
@@ -161,7 +161,7 @@ reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processDisposeSound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdDisposeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(dispose): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -183,7 +183,7 @@ reg_t SoundCommandParser::kDoSoundStop(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdStopSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(stop): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -229,7 +229,7 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 			}
 			return make_reg(0, 0);
 		default:
-			error("kDoSoundPause: parameter 0 is invalid for sound-sci0");
+			error("kDoSound(pause): parameter 0 is invalid for sound-sci0");
 		}
 	}
 
@@ -240,7 +240,7 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
-			warning("cmdPauseSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+			warning("kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
 			return acc;
 		}
 
@@ -255,7 +255,7 @@ reg_t SoundCommandParser::kDoSoundResume(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdResumeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(resume):: Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -274,7 +274,7 @@ reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc)
 	acc = make_reg(0, _music->soundGetMasterVolume());
 
 	if (argc > 0) {
-		debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", argv[0].toSint16());
+		debugC(2, kDebugLevelSound, "kDoSound(masterVolume): %d", argv[0].toSint16());
 		int vol = CLIP<int16>(argv[0].toSint16(), 0, kMaxSciVolume);
 		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
 		ConfMan.setInt("music_volume", vol);
@@ -289,7 +289,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdFadeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -297,7 +297,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
-		debugC(2, kDebugLevelSound, "cmdFadeSound: fading requested, but sound is currently not playing");
+		debugC(2, kDebugLevelSound, "kDoSound(fade): fading requested, but sound is currently not playing");
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		return acc;
 	}
@@ -322,10 +322,10 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		break;
 
 	default:
-		error("cmdFadeSound: unsupported argc %d", argc);
+		error("kDoSound(fade): unsupported argc %d", argc);
 	}
 
-	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
+	debugC(2, kDebugLevelSound, "kDoSound(fade): to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 	return acc;
 }
 
@@ -338,7 +338,7 @@ reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdUpdateSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(update): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -360,7 +360,7 @@ reg_t SoundCommandParser::kDoSoundUpdateCues(int argc, reg_t *argv, reg_t acc) {
 void SoundCommandParser::processUpdateCues(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdUpdateCues: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(updateCues): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -453,7 +453,7 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 		// TODO: maybe it's possible to call this with obj == 0:0 and send directly?!
 		// if so, allow it
 		//_music->sendMidiCommand(_midiCommand);
-		warning("cmdSendMidi: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(sendMidi): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 	_music->sendMidiCommand(musicSlot, midiCommand);
@@ -470,7 +470,7 @@ reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdSetSoundHold: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(setHold): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -516,7 +516,7 @@ reg_t SoundCommandParser::kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc) {
 		return acc;
 	}
 
-	debugC(2, kDebugLevelSound, "cmdSetSoundVolume: %d", value);
+	debugC(2, kDebugLevelSound, "kDoSound(setVolume): %d", value);
 
 	value = CLIP<int>(value, 0, MUSIC_VOLUME_MAX);
 
@@ -534,7 +534,7 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdSetSoundPriority: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return acc;
 	}
 
@@ -544,7 +544,7 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 		if (song->data[0] == 0xf0)
 			_music->soundSetPriority(musicSlot, song->data[1]);
 		else
-			warning("cmdSetSoundPriority: Attempt to unset song priority when there is no built-in value");
+			warning("kDoSound(setPriority): Attempt to unset song priority when there is no built-in value");
 
 		//pSnd->prio=0;field_15B=0
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
@@ -570,7 +570,7 @@ reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 		// request to loop the sound, so in this case, don't throw any warning,
 		// otherwise do, because the sound won't be looped.
 		if (value == -1) {
-			warning("cmdSetSoundLoop: Slot not found (%04x:%04x) and the song was requested to be looped", PRINT_REG(obj));
+			warning("kDoSound(setLoop): Slot not found (%04x:%04x) and the song was requested to be looped", PRINT_REG(obj));
 		} else {
 			// Doesn't really matter
 		}
@@ -588,7 +588,7 @@ reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 
 reg_t SoundCommandParser::kDoSoundSuspend(int argc, reg_t *argv, reg_t acc) {
 	// TODO
-	warning("STUB: cmdSuspendSound");
+	warning("kDoSound(suspend): STUB");
 	return acc;
 }
 
