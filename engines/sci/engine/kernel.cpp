@@ -320,6 +320,18 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
+static const SciKernelMapSubEntry kPalette_subops[] = {
+    { SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
+    { SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
+    { SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  NULL },
+    { SIG_SCIALL,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
+    { SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+    { SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
+    { SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
+    { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
 struct SciKernelMapEntry {
 	const char *name;
 	KernelFunctionCall *function;
@@ -439,7 +451,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",           NULL,            NULL },
     { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                 kPalVary_subops, NULL },
-    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 kPalette_subops, NULL },
     { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
     { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
     { MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },

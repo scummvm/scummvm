@@ -500,6 +500,15 @@ reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv);
 reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv);
 
+reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv);
+reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv);
+
 //@}
 
 } // End of namespace Sci

@@ -482,8 +482,9 @@ void GfxPalette::kernelAnimateSet() {
 
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 	// Sometimes invalid viewIds are asked for, ignore those (e.g. qfg1vga)
-	if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
-		return;
+	//if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
+	//	return;
+	// maybe we took the wrong parameter before, if this causes invalid view again, enable to commented out code again
 
 	GfxView *view = g_sci->_gfxCache->getView(resourceId);
 	Palette *viewPalette = view->getPalette();

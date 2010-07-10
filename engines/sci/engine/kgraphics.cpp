@@ -555,66 +555,72 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// we are called on EGA/amiga games as well, this doesnt make sense.
+//  doing this would actually break the system EGA/amiga palette
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
-	// we are called on EGA/amiga games as well, this doesnt make sense.
-	//  doing this would actually break the system EGA/amiga palette
-	if (!g_sci->getResMan()->isVGA())
-		return s->r_acc;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
 
-	switch (argv[0].toUint16()) {
-	case 1: // Set resource palette
-		if (argc == 2 || argc == 3) {
-			GuiResourceId resourceId = argv[1].toUint16();
-			bool force = false;
-			if (argc == 3)
-				force = argv[2].toUint16() == 2 ? true : false;
-			g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
-		} else {
-			warning("kPalette(1) called with %d parameters", argc);
-		}
-		break;
-	case 2: { // Set palette-flag(s)
-		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-		uint16 flags = argv[3].toUint16();
+reg_t kPaletteSetFromResource(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		GuiResourceId resourceId = argv[0].toUint16();
+		bool force = false;
+		if (argc == 2)
+			force = argv[1].toUint16() == 2 ? true : false;
+		g_sci->_gfxPalette->kernelSetFromResource(resourceId, force);
+	}
+	return s->r_acc;
+}
+
+reg_t kPaletteSetFlag(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 flags = argv[2].toUint16();
 		g_sci->_gfxPalette->kernelSetFlag(fromColor, toColor, flags);
-		break;
 	}
-	case 3:	{ // Remove palette-flag(s)
-		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-		uint16 flags = argv[3].toUint16();
+	return s->r_acc;
+}
+
+reg_t kPaletteUnsetFlag(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 flags = argv[2].toUint16();
 		g_sci->_gfxPalette->kernelUnsetFlag(fromColor, toColor, flags);
-		break;
 	}
-	case 4:	{ // Set palette intensity
-		switch (argc) {
-		case 4:
-		case 5: {
-			uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
-			uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
-			uint16 intensity = argv[3].toUint16();
-			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
+	return s->r_acc;
+}
 
-			g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
-			break;
-		}
-		default:
-			warning("kPalette(4) called with %d parameters", argc);
-		}
-		break;
+reg_t kPaletteSetIntensity(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 fromColor = CLIP<uint16>(argv[0].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 intensity = argv[2].toUint16();
+		bool setPalette = (argc < 4) ? true : (argv[3].isNull()) ? true : false;
+
+		g_sci->_gfxPalette->kernelSetIntensity(fromColor, toColor, intensity, setPalette);
 	}
-	case 5: { // Find closest color
-		uint16 r = argv[1].toUint16();
-		uint16 g = argv[2].toUint16();
-		uint16 b = argv[3].toUint16();
+	return s->r_acc;
+}
 
+reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		uint16 r = argv[0].toUint16();
+		uint16 g = argv[1].toUint16();
+		uint16 b = argv[2].toUint16();
 		return make_reg(0, g_sci->_gfxPalette->kernelFindColor(r, g, b));
 	}
-	case 6: { // Animate
+	return NULL_REG;
+}
+
+reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
 		int16 argNr;
 		bool paletteChanged = false;
-		for (argNr = 1; argNr < argc; argNr += 3) {
+		for (argNr = 0; argNr < argc; argNr += 3) {
 			uint16 fromColor = argv[argNr].toUint16();
 			uint16 toColor = argv[argNr + 1].toUint16();
 			int16 speed = argv[argNr + 2].toSint16();
@@ -623,20 +629,21 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		}
 		if (paletteChanged)
 			g_sci->_gfxPalette->kernelAnimateSet();
-		break;
 	}
-	case 7: { // Save palette to heap
-		warning("kPalette(7), save palette to heap STUB");
-		break;
-	}
-	case 8: { // Restore palette from heap
-		warning("kPalette(8), set stored palette STUB");
-		break;
-	}
-	default:
-		error("kPalette(%d), not implemented", argv[0].toUint16());
-	}
+	return s->r_acc;
+}
 
+reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		warning("kPalette(7), save palette to heap STUB");
+	}
+	return NULL_REG;
+}
+
+reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getResMan()->isVGA()) {
+		warning("kPalette(8), restore palette from heap STUB");
+	}
 	return s->r_acc;
 }
 
@@ -674,19 +681,19 @@ reg_t kPalVaryDeinit(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalVaryChangeTarget(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[1].toUint16();
+	GuiResourceId paletteId = argv[0].toUint16();
 	int16 currentStep = g_sci->_gfxPalette->kernelPalVaryChangeTarget(paletteId);
 	return make_reg(0, currentStep);
 }
 
 reg_t kPalVaryChangeTicks(EngineState *s, int argc, reg_t *argv) {
-	uint16 ticks = argv[1].toUint16();
+	uint16 ticks = argv[0].toUint16();
 	g_sci->_gfxPalette->kernelPalVaryChangeTicks(ticks);
 	return NULL_REG;
 }
 
 reg_t kPalVaryPauseResume(EngineState *s, int argc, reg_t *argv) {
-	bool pauseState = !argv[1].isNull();
+	bool pauseState = !argv[0].isNull();
 	g_sci->_gfxPalette->kernelPalVaryPause(pauseState);
 	return NULL_REG;
 }
@@ -697,7 +704,7 @@ reg_t kPalVaryUnknown(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
-	GuiResourceId paletteId = argv[1].toUint16();
+	GuiResourceId paletteId = argv[0].toUint16();
 
 	g_sci->_gfxPalette->kernelAssertPalette(paletteId);
 	return s->r_acc;
