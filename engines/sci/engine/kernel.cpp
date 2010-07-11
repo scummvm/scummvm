@@ -1180,27 +1180,29 @@ void Kernel::mapFunctions() {
 					if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
 						if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
 							uint subId = kernelSubMap->id;
-							subFunctions[subId].function = kernelSubMap->function;
-							subFunctions[subId].name = kernelSubMap->name;
-							subFunctions[subId].workarounds = kernelSubMap->workarounds;
-							if (kernelSubMap->signature) {
-								subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
-							} else {
-								// we go back the submap to find the previous signature for that kernel call
-								const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
-								uint kernelSubLeft = kernelSubNr;
-								while (kernelSubLeft) {
-									kernelSubLeft--;
-									kernelSubMapBack--;
-									if (kernelSubMapBack->name == kernelSubMap->name) {
-										if (kernelSubMapBack->signature) {
-											subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
-											break;
+							if (!subFunctions[subId].function) {
+								subFunctions[subId].function = kernelSubMap->function;
+								subFunctions[subId].name = kernelSubMap->name;
+								subFunctions[subId].workarounds = kernelSubMap->workarounds;
+								if (kernelSubMap->signature) {
+									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
+								} else {
+									// we go back the submap to find the previous signature for that kernel call
+									const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
+									uint kernelSubLeft = kernelSubNr;
+									while (kernelSubLeft) {
+										kernelSubLeft--;
+										kernelSubMapBack--;
+										if (kernelSubMapBack->name == kernelSubMap->name) {
+											if (kernelSubMapBack->signature) {
+												subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
+												break;
+											}
 										}
 									}
+									if (!subFunctions[subId].signature)
+										error("k%s: no previous signatures", kernelSubMap->name);
 								}
-								if (!subFunctions[subId].signature)
-									error("k%s: no previous signatures", kernelSubMap->name);
 							}
 						}
 					kernelSubMap++;
