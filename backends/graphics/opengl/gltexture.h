@@ -32,9 +32,12 @@
 #undef ARRAYSIZE
 #endif
 
-#ifdef USE_GLES
+#if defined(USE_GLES)
 #include <GLES/gl.h>
 #include <GLES/glext.h>
+#elif defined(MACOSX)
+#include <gl.h>
+#include <glext.h>
 #else
 #include <GL/gl.h>
 #include <GL/glext.h>

@@ -1994,20 +1994,21 @@ bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 	int newMode = -1;
 	int factor = _videoMode.scaleFactor - 1;
+	SDLKey sdlKey = (SDLKey)key;
 
 	// Increase/decrease the scale factor
-	if (key == SDLK_EQUALS || key == SDLK_PLUS || key == SDLK_MINUS ||
-		key == SDLK_KP_PLUS || key == SDLK_KP_MINUS) {
-		factor += (key == SDLK_MINUS || key == SDLK_KP_MINUS) ? -1 : +1;
+	if (sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
+		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
+		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
 		if (0 <= factor && factor <= 3) {
 			newMode = s_gfxModeSwitchTable[_scalerType][factor];
 		}
 	}
 
-	const bool isNormalNumber = (SDLK_1 <= key && key <= SDLK_9);
-	const bool isKeypadNumber = (SDLK_KP1 <= key && key <= SDLK_KP9);
+	const bool isNormalNumber = (SDLK_1 <= sdlKey && sdlKey <= SDLK_9);
+	const bool isKeypadNumber = (SDLK_KP1 <= sdlKey && sdlKey <= SDLK_KP9);
 	if (isNormalNumber || isKeypadNumber) {
-		_scalerType = key - (isNormalNumber ? SDLK_1 : SDLK_KP1);
+		_scalerType = sdlKey - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 			return false;
 

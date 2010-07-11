@@ -30,7 +30,7 @@
 #include "backends/graphics/graphics.h"
 
 enum {
-	GFX_NORMAL = 0,
+	GFX_NORMAL = 0
 };
 
 /**

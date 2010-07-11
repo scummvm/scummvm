@@ -1335,7 +1335,8 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
-		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		CXXFLAGS="$CXXFLAGS -I/System/Library/Frameworks/OpenGL.framework/Headers"
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL"
 		add_line_to_config_mk 'MACOSX = 1'
 		;;
 	dreamcast)
