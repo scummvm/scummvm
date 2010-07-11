@@ -49,6 +49,8 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 }
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
+//  behaviour of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
+//  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 2) {
 		ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
@@ -64,11 +66,6 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 
 		if (restype == kResourceTypeMemory)
 			s->_segMan->freeHunkEntry(resnr);
-
-		if (argc > 2)
-			warning("kUnload called with more than 2 parameters (%d)", argc);
-	} else {
-		warning("kUnload called with less than 2 parameters (%d) - ignoring", argc);
 	}
 
 	return s->r_acc;
