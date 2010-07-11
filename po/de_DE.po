@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.2.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
 "POT-Creation-Date: 2010-07-09 18:10+0100\n"
-"PO-Revision-Date: 2010-07-08 19:11+0100\n"
+"PO-Revision-Date: 2010-07-09 20:37+0100\n"
 "Last-Translator: Simon Sawatzki\n"
 "Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
 "<SimSaw@gmx.de>\n"
@@ -487,9 +487,8 @@ msgid "Preferred Device:"
 msgstr "Standard-Gerät:"
 
 #: gui/options.cpp:645
-#, fuzzy
 msgid "Music Device:"
-msgstr "GM-Gerät:"
+msgstr "Musikgerät:"
 
 #: gui/options.cpp:645
 msgid "Specifies preferred sound device or sound card emulator"

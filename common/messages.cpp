@@ -1648,7 +1648,7 @@ static const PoMessageEntry _translation_hu_HU[] = {
 };
 
 static const PoMessageEntry _translation_de_DE[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-07-08 19:11+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-07-09 20:37+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
 	{ 1, "   M\366chten Sie wirklich beenden?    " },
 	{ 2, " (Aktiv)" },
 	{ 3, " (Spiel)" },
@@ -1787,7 +1787,7 @@ static const PoMessageEntry _translation_de_DE[] = {
 	{ 136, "SMB einbinden" },
 	{ 137, "Mausklick" },
 	{ 138, "Multifunktion" },
-	{ 139, "GM-Ger\344t:" },
+	{ 139, "Musikger\344t:" },
 	{ 140, "Musiklautst\344rke:" },
 	{ 141, "Alles aus" },
 	{ 142, "Name:" },
