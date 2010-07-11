@@ -790,6 +790,11 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		mode = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(max));
 		cursorPos = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
+		if (cursorPos > text.size()) {
+			// if cursor is outside of text, adjust accordingly
+			cursorPos = text.size();
+			writeSelectorValue(s->_segMan, controlObject, SELECTOR(cursor), cursorPos);
+		}
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
 		g_sci->_gfxControls->kernelDrawTextEdit(rect, controlObject, g_sci->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
@@ -879,6 +884,18 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	if (objName == "changeDirI") {
 		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
 		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
+	}
+	if (objName == "DEdit") {
+		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
+		if (!textReference.isNull()) {
+			Common::String text = s->_segMan->getString(textReference);
+			if (text == "a:hq1_hero.sav") {
+				// Remove "a:" from hero quest export default filename
+				text.deleteChar(0);
+				text.deleteChar(0);
+				s->_segMan->strcpy(textReference, text.c_str());
+			}
+		}
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
