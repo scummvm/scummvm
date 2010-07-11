@@ -312,7 +312,9 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 		do {
 			workaround = workaroundList;
 			while (workaround->objectName) {
-				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr && (workaround->inheritanceLevel == inheritanceLevel) && (workaround->objectName == searchObjectName)
+				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr
+						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
+						&& (workaround->objectName == searchObjectName)
 						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
 					// Workaround found
 					return workaround->newValue;
@@ -347,7 +349,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
 	{ GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-	{ GID_LSL6,          928,  1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
+	{ GID_LSL6,          928, -1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
 	{ GID_KQ5,             0,  0,                   "", "export 29",      -1,    3, { 0,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
