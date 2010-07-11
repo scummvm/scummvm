@@ -86,9 +86,9 @@ void OSystem_SDL::initBackend() {
 	if (_graphicsManager == 0) {
 		// Changed to OpenGL for testing
 		//_graphicsManager = new SdlGraphicsManager();
-		_graphicsManager = new OpenGLSDLGraphicsManager();
+		_graphicsManager = new OpenGLSdlGraphicsManager();
 
-		((OpenGLSDLGraphicsManager *)_graphicsManager)->init();
+		((OpenGLSdlGraphicsManager *)_graphicsManager)->init();
 	}
 
 	if (_audiocdManager == 0)
@@ -239,11 +239,6 @@ void OSystem_SDL::setupIcon() {
 	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
 	free(icon);
-}
-
-BaseSdlGraphicsManager *OSystem_SDL::getGraphicsManager() {
-	assert(_graphicsManager);
-	return (BaseSdlGraphicsManager *)_graphicsManager;
 }
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {

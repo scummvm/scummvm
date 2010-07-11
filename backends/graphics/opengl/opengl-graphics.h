@@ -96,13 +96,54 @@ protected:
 	GLTexture* _overlayTexture;
 	GLTexture* _mouseTexture;
 
-
-	Graphics::Surface _lockedScreen;
-
 	virtual void internUpdateScreen();
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 	virtual bool hotswapGFXMode();
+
+	Graphics::Surface _lockedScreen;
+	int _screenChangeCount;
+
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenFormat;
+	Graphics::PixelFormat _cursorFormat;
+#endif
+
+	enum {
+		kTransactionNone = 0,
+		kTransactionActive = 1,
+		kTransactionRollback = 2
+	};
+
+	struct TransactionDetails {
+		bool sizeChanged;
+		bool needHotswap;
+		bool needUpdatescreen;
+#ifdef USE_RGB_COLOR
+		bool formatChanged;
+#endif
+	};
+	TransactionDetails _transactionDetails;
+	int _transactionMode;
+
+	struct VideoState {
+		bool setup;
+
+		bool fullscreen;
+		//bool aspectRatioCorrection;
+		//AspectRatio desiredAspectRatio;
+
+		int mode;
+		int scaleFactor;
+
+		int screenWidth, screenHeight;
+		int overlayWidth, overlayHeight;
+		int hardwareWidth, hardwareHeight;
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat format;
+#endif
+	};
+	VideoState _videoMode, _oldVideoMode;
 };
 
 #endif

@@ -69,6 +69,7 @@ public:
 	/** @name Graphics */
 	//@{
 
+	virtual GraphicsManager *getGraphicsManager();
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);

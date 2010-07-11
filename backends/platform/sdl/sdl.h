@@ -33,7 +33,6 @@
 #endif
 
 #include "backends/modular-backend.h"
-#include "backends/graphics/sdl/basesdl-graphics.h"
 #include "backends/mixer/sdl/sdl-mixer.h"
 
 /** 
@@ -50,11 +49,6 @@ public:
 	 * created here.
 	 */
 	virtual void init();
-
-	/**
-	 * Get the Graphics Manager instance. Used by other managers.
-	 */
-	virtual BaseSdlGraphicsManager *getGraphicsManager();
 
 	/**
 	 * Get the Mixer Manager instance. Not to confuse with getMixer(),

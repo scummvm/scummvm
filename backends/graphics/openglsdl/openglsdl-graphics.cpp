@@ -25,17 +25,17 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
-OpenGLSDLGraphicsManager::OpenGLSDLGraphicsManager()
+OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
 	_hwscreen(0) {
 
 }
 
-OpenGLSDLGraphicsManager::~OpenGLSDLGraphicsManager() {
+OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 
 }
 
-void OpenGLSDLGraphicsManager::init() {
+void OpenGLSdlGraphicsManager::init() {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
@@ -45,50 +45,74 @@ void OpenGLSDLGraphicsManager::init() {
 	OpenGLGraphicsManager::init();
 }
 
-void OpenGLSDLGraphicsManager::forceFullRedraw() {
+void OpenGLSdlGraphicsManager::forceFullRedraw() {
 
 }
 
-bool OpenGLSDLGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
+bool OpenGLSdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	return false;
 }
 
-bool OpenGLSDLGraphicsManager::isScalerHotkey(const Common::Event &event) {
+bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void OpenGLSDLGraphicsManager::adjustMouseEvent(Common::Event &event) {
+void OpenGLSdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
 
 }
 
-void OpenGLSDLGraphicsManager::setMousePos(int x, int y) {
+void OpenGLSdlGraphicsManager::setMousePos(int x, int y) {
 
 }
 
-void OpenGLSDLGraphicsManager::toggleFullScreen() {
+void OpenGLSdlGraphicsManager::toggleFullScreen() {
 
 }
 
-bool OpenGLSDLGraphicsManager::saveScreenshot(const char *filename) {
+bool OpenGLSdlGraphicsManager::saveScreenshot(const char *filename) {
 	return false;
 }
 
 //
-// Protected
+// Intern
 //
 
-bool OpenGLSDLGraphicsManager::loadGFXMode() {
+bool OpenGLSdlGraphicsManager::loadGFXMode() {
+	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+
+
+	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
+		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : SDL_OPENGL
+	);
+	if (_hwscreen == NULL) {
+		// DON'T use error(), as this tries to bring up the debug
+		// console, which WON'T WORK now that _hwscreen is hosed.
+
+		if (!_oldVideoMode.setup) {
+			warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
+			g_system->quit();
+		} else {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+void OpenGLSdlGraphicsManager::unloadGFXMode() {
+	if (_hwscreen) {
+		SDL_FreeSurface(_hwscreen);
+		_hwscreen = NULL;
+	}
+}
+
+bool OpenGLSdlGraphicsManager::hotswapGFXMode() {
 	return false;
 }
 
-void OpenGLSDLGraphicsManager::unloadGFXMode() {
-
-}
-
-bool OpenGLSDLGraphicsManager::hotswapGFXMode() {
-	return false;
-}
-
-void OpenGLSDLGraphicsManager::internUpdateScreen() {
+void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	
 }

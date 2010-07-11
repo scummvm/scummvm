@@ -26,9 +26,15 @@
 #ifndef BACKENDS_GRAPHICS_SDL_H
 #define BACKENDS_GRAPHICS_SDL_H
 
-#include "backends/graphics/sdl/basesdl-graphics.h"
+#include "backends/graphics/graphics.h"
 #include "common/system.h"
 #include "graphics/scaler.h"
+
+#if defined(__SYMBIAN32__)
+#include <esdl\SDL.h>
+#else
+#include <SDL.h>
+#endif
 
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 // Uncomment this to enable the 'on screen display' code.
@@ -66,7 +72,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public BaseSdlGraphicsManager {
+class SdlGraphicsManager : public GraphicsManager {
 public:
 	SdlGraphicsManager();
 	virtual ~SdlGraphicsManager();
@@ -122,7 +128,7 @@ public:
 #endif
 
 	virtual void forceFullRedraw();
-	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
+	virtual bool handleScalerHotkeys(Common::KeyCode key);
 	virtual bool isScalerHotkey(const Common::Event &event);
 	virtual void adjustMouseEvent(Common::Event &event);
 	virtual void setMousePos(int x, int y);

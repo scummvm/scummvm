@@ -28,6 +28,7 @@
 
 #include "common/system.h"
 #include "common/noncopyable.h"
+#include "common/keyboard.h"
 
 /**
  * Abstract class for graphics manager. Subclasses
@@ -84,6 +85,41 @@ public:
 	virtual void disableCursorPalette(bool disable) = 0;
 
 	virtual void displayMessageOnOSD(const char *msg) {}
+
+	/**
+	 * Marks the screen for a full redraw
+	 */
+	virtual void forceFullRedraw() {};
+
+	/**
+	 * Handles the scalar hotkeys
+	 */
+	virtual bool handleScalerHotkeys(Common::KeyCode key) { return false; };
+
+	/**
+	 * Returns if the event passed is a hotkey for the graphics scalers
+	 */
+	virtual bool isScalerHotkey(const Common::Event &event) { return false; };
+
+	/**
+	 * Adjusts mouse event coords for the current scaler
+	 */
+	virtual void adjustMouseEvent(Common::Event &event) {};
+
+	/**
+	 * Updates the mouse cursor position
+	 */
+	virtual void setMousePos(int x, int y) {};
+
+	/**
+	 * Toggles fullscreen
+	 */
+	virtual void toggleFullScreen() {};
+
+	/**
+	 * Saves a screenshot to a file
+	 */
+	virtual bool saveScreenshot(const char *filename) { return false; };
 };
 
 #endif

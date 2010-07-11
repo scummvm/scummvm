@@ -37,10 +37,10 @@
 /**
  * SDL OpenGL graphics manager
  */
-class OpenGLSDLGraphicsManager : public OpenGLGraphicsManager {
+class OpenGLSdlGraphicsManager : public OpenGLGraphicsManager {
 public:
-	OpenGLSDLGraphicsManager();
-	virtual ~OpenGLSDLGraphicsManager();
+	OpenGLSdlGraphicsManager();
+	virtual ~OpenGLSdlGraphicsManager();
 
 	virtual void init();
 

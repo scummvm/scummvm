@@ -1967,9 +1967,10 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 }
 #endif
 
-bool SdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
+bool SdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
+
 	// Ctrl-Alt-a toggles aspect ratio correction
-	if (key.keysym.sym == 'a') {
+	if (key == 'a') {
 		beginGFXTransaction();
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
 		endGFXTransaction();
@@ -1995,18 +1996,18 @@ bool SdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 	int factor = _videoMode.scaleFactor - 1;
 
 	// Increase/decrease the scale factor
-	if (key.keysym.sym == SDLK_EQUALS || key.keysym.sym == SDLK_PLUS || key.keysym.sym == SDLK_MINUS ||
-		key.keysym.sym == SDLK_KP_PLUS || key.keysym.sym == SDLK_KP_MINUS) {
-		factor += (key.keysym.sym == SDLK_MINUS || key.keysym.sym == SDLK_KP_MINUS) ? -1 : +1;
+	if (key == SDLK_EQUALS || key == SDLK_PLUS || key == SDLK_MINUS ||
+		key == SDLK_KP_PLUS || key == SDLK_KP_MINUS) {
+		factor += (key == SDLK_MINUS || key == SDLK_KP_MINUS) ? -1 : +1;
 		if (0 <= factor && factor <= 3) {
 			newMode = s_gfxModeSwitchTable[_scalerType][factor];
 		}
 	}
 
-	const bool isNormalNumber = (SDLK_1 <= key.keysym.sym && key.keysym.sym <= SDLK_9);
-	const bool isKeypadNumber = (SDLK_KP1 <= key.keysym.sym && key.keysym.sym <= SDLK_KP9);
+	const bool isNormalNumber = (SDLK_1 <= key && key <= SDLK_9);
+	const bool isKeypadNumber = (SDLK_KP1 <= key && key <= SDLK_KP9);
 	if (isNormalNumber || isKeypadNumber) {
-		_scalerType = key.keysym.sym - (isNormalNumber ? SDLK_1 : SDLK_KP1);
+		_scalerType = key - (isNormalNumber ? SDLK_1 : SDLK_KP1);
 		if (_scalerType >= ARRAYSIZE(s_gfxModeSwitchTable))
 			return false;
 
