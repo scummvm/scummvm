@@ -256,6 +256,12 @@ static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
+	{ GID_KQ6,           989,  0,        "globalSound", "fade",           -1,    0, { 0,    0 } }, // parameter 4 is an object during the intro
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
 	{ GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -351,7 +357,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             NULL },
+    { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             kDoSoundFade_workarounds },
     { SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
