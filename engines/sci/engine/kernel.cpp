@@ -243,34 +243,35 @@ reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kAbs_workarounds[] = {
-	{ GID_HOYLE1,          1,  0,              "room1", "doit",           -1,    0, { 2, 0x3e9 } }, // crazy eights - called with objects instead of integers
-	{ GID_HOYLE1,          2,  0,              "room2", "doit",           -1,    0, { 2, 0x3e9 } }, // old maid - called with objects instead of integers
-	{ GID_HOYLE1,          3,  0,              "room3", "doit",           -1,    0, { 2, 0x3e9 } }, // hearts - called with objects instead of integers
-	SCI_WORKAROUNDENTRY_TERMINATOR
+    { GID_HOYLE1,          1,  0,              "room1", "doit",           -1,    0, { 2, 0x3e9 } }, // crazy eights - called with objects instead of integers
+    { GID_HOYLE1,          2,  0,              "room2", "doit",           -1,    0, { 2, 0x3e9 } }, // old maid - called with objects instead of integers
+    { GID_HOYLE1,          3,  0,              "room3", "doit",           -1,    0, { 2, 0x3e9 } }, // hearts - called with objects instead of integers
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
-	{ GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // parameter 0 is an object when leaving graveyard
-	SCI_WORKAROUNDENTRY_TERMINATOR
+    { GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // when leaving graveyard, parameter 0 is an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
-	{ GID_KQ6,           989,  0,        "globalSound", "fade",           -1,    0, { 0,    0 } }, // parameter 4 is an object during the intro
-	SCI_WORKAROUNDENTRY_TERMINATOR
+    { GID_KQ6,           989,  0,        "globalSound", "fade",           -1,    0, { 0,    0 } }, // during intro, parameter 4 is an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
-	{ GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
-	SCI_WORKAROUNDENTRY_TERMINATOR
+    { GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kUnLoad_workarounds[] = {
-	{ GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // parameter 1 is not passed, script error when leaving ulence flats bar
-	SCI_WORKAROUNDENTRY_TERMINATOR
+    { GID_LSL6,          130,  0,    "recruitLarryScr", "changeState",    -1,    0, { 1,    0 } }, // during intro, a 3rd parameter is passed by accident
+    { GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 struct SciKernelMapSubEntry {
