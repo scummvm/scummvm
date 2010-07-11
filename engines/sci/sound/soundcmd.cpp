@@ -251,6 +251,9 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 
 // SCI0 only command
 reg_t SoundCommandParser::kDoSoundResume(int argc, reg_t *argv, reg_t acc) {
+	// this doesn't seem to do what we think it's doing
+	//  it's called with no arguments at all (just restore a game in qfg1)
+	return acc;
 	reg_t obj = argv[0];
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
