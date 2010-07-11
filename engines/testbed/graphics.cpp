@@ -102,6 +102,28 @@ void GFXtests::initMousePalette() {
 	
 }
 
+Common::Rect GFXtests::computeSize(Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale) {
+	if (cursorTargetScale == 1 || scalingFactor == 1) {
+		// Game data and cursor would be scaled equally.
+		// so dimensions would be same.
+		return Common::Rect(cursorRect.width(), cursorRect.height());
+	}
+
+	if (scalingFactor == 2) {
+		// Game data is scaled by 2, cursor is said to be scaled by 2 or 3. so it wud not be scaled any further
+		// So a w/2 x h/2 rectangle when scaled would match the cursor
+		return Common::Rect(cursorRect.width() / 2, cursorRect.height() / 2);
+	}
+	
+	if (scalingFactor == 3) {
+		// Cursor traget scale is 2 or 3.
+		return Common::Rect((cursorRect.width() / cursorTargetScale), (cursorRect.height() / cursorTargetScale));
+	} else {
+		Testsuite::logPrintf("Unsupported scaler %dx\n", scalingFactor);
+		return Common::Rect();
+	}
+}
+
 void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, int val) {
 	
 	float r = rComp;
@@ -165,11 +187,14 @@ void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, in
 	bComp = b * 255;
 }
 
-void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
+Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {	
 
 	// Buffer initialized with yellow color
 	byte buffer[500];
 	memset(buffer, 2, sizeof(buffer));
+
+	int cursorWidth = 12;
+	int cursorHeight = 12;
 	
 	/* Disable HotSpot highlighting as of now
 	
@@ -197,6 +222,7 @@ void GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, i
 	}
 
 	g_system->updateScreen();
+	return Common::Rect(0, 0, cursorWidth, cursorHeight);
 }
 
 void rotatePalette(byte *palette, int size) {
@@ -222,10 +248,11 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 
 	bool isFeaturePresent;
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
+	Common::Rect cursorRect;
 
 	if (isFeaturePresent) {
 		
-		GFXtests::drawCursor(disableCursorPalette, gfxModeName, cursorTargetScale);
+		cursorRect = GFXtests::drawCursor(disableCursorPalette, gfxModeName, cursorTargetScale);
 
 		Common::EventManager *eventMan = g_system->getEventManager();
 		Common::Event event;
@@ -248,9 +275,35 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		char cScale = cursorTargetScale + '0';
 		info += "Cursor scale: ";
 		info += cScale;
+
+		Common::String gfxScalarMode(gfxModeName);
+		Common::Rect estimatedCursorRect;
 		
-		if (!Common::String(gfxModeName).equals("")) {
+		if (!gfxScalarMode.equals("")) {
+
+			if (gfxScalarMode.contains("1x")) {
+				estimatedCursorRect = computeSize(cursorRect, 1, cursorTargetScale);
+			} else if (gfxScalarMode.contains("2x")) {
+				estimatedCursorRect = computeSize(cursorRect, 2, cursorTargetScale);
+			} else if (gfxScalarMode.contains("3x")){
+				estimatedCursorRect = computeSize(cursorRect, 3, cursorTargetScale);
+			} else {
+				// If unable to detect scaler, default to 2
+				Testsuite::writeOnScreen("Unable to detect scaling factor, assuming 2x", Common::Point(0, 5));
+				estimatedCursorRect = computeSize(cursorRect, 2, cursorTargetScale);
+			}
 			Testsuite::writeOnScreen(info, Common::Point(0, 120));
+
+			// Move cursor to (20, 20)
+			g_system->warpMouse(20, 20);
+			// Move estimated rect to (20, 20)
+			estimatedCursorRect.moveTo(20, 20);
+
+			Graphics::Surface *screen = g_system->lockScreen();
+			GFXTestSuite::setCustomColor(255, 0, 0);
+			screen->fillRect(estimatedCursorRect, 2);
+			g_system->unlockScreen();
+			g_system->updateScreen();
 		}
 
 		while (!quitLoop) {
@@ -620,7 +673,8 @@ bool GFXtests::iconifyWindow() {
 bool GFXtests::scaledCursors() {
 
 	Testsuite::displayMessage("Testing : Scaled cursors\n"
-	"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3"
+	"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3.\n"
+	"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
 	"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
 
 	int maxLimit = 1000;
