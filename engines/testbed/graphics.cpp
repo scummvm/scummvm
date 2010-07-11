@@ -800,16 +800,16 @@ bool GFXtests::paletteRotation() {
 	for (int i = 0; i < 30; i++) {
 		for (int j = 0; j < 254; j++) {
 			if (i < 10) {
-				buffer[i * 256 + j] = j + 2;
+				buffer[i * 254 + j] = j + 2;
 			} else if (i < 20) {
-				buffer[i * 256 + j] = 0;
+				buffer[i * 254 + j] = 0;
 			} else {
-				buffer[i * 256 + j] = ((j + 127) % 254) + 2;
+				buffer[i * 254 + j] = ((j + 127) % 254) + 2;
 			}
 		}
 	}
 	
-	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 30);
+	g_system->copyRectToScreen(buffer, 254, 22, 50, 254, 30);
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 	
@@ -836,7 +836,7 @@ bool GFXtests::paletteRotation() {
 		}*/
 
 		g_system->delayMillis(10);
-		g_system->setPalette(palette, 2, 254);
+		g_system->setPalette(palette, 0, 256);
 		g_system->updateScreen();
 	}
 	
