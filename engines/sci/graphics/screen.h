@@ -106,7 +106,8 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void setPalette(Palette*pal);
+	void getPalette(Palette *pal);
+	void setPalette(Palette *pal);
 
 	void setVerticalShakePos(uint16 shakePos);
 

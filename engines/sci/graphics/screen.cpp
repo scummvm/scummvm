@@ -499,7 +499,19 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void GfxScreen::setPalette(Palette*pal) {
+void GfxScreen::getPalette(Palette *pal) {
+	// just copy palette to system
+	byte bpal[4 * 256];
+	// Get current palette, update it and put back
+	g_system->grabPalette(bpal, 0, 256);
+	for (int16 i = 1; i < 255; i++) {
+		pal->colors[i].r = bpal[i * 4];
+		pal->colors[i].g = bpal[i * 4 + 1];
+		pal->colors[i].b = bpal[i * 4 + 2];
+	}
+}
+
+void GfxScreen::setPalette(Palette *pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back

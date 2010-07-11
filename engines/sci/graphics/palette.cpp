@@ -498,6 +498,10 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 	}
 }
 
+void GfxPalette::kernelSyncScreenPalette() {
+	_screen->getPalette(&_sysPalette);
+}
+
 // palVary
 //  init - only does, if palVaryOn == false
 //         target, start, new palette allocation

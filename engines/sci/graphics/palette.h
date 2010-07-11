@@ -65,6 +65,8 @@ public:
 	void kernelAnimateSet();
 	void kernelAssertPalette(GuiResourceId resourceId);
 
+	void kernelSyncScreenPalette();
+
 	bool kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction);
 	int16 kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direction);
 	int16 kernelPalVaryGetCurrentStep();
