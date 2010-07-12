@@ -839,6 +839,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
 			error("[VM] k%s[%x]: no subfunction-id parameter given", kernelCall.name, kernelCallNr);
+		if (argv[0].segment)
+			error("[VM] k%s[%x]: given subfunction-id is actually a pointer", kernelCall.name, kernelCallNr);
 		const uint16 subId = argv[0].toUint16();
 		// Skip over subfunction-id
 		argc--;

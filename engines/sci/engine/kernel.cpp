@@ -262,6 +262,13 @@ static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
+    { GID_LSL6,           86,  0,             "LL6Inv", "show",           -1,    0, { 1,    0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
+    // ^^ TODO: check, if this is really a script error or an issue with our restore code
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
     { GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
     SCI_WORKAROUNDENTRY_TERMINATOR
@@ -380,7 +387,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     // 5 - nop
     // 6 - draw pattern
     { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                NULL },
-    { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                NULL },
+    { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                kGraphRestoreBox_workarounds },
     // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
     { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
     { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 NULL },
@@ -504,7 +511,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-    { MAP_CALL(Graph),             SIG_EVERYWHERE,           "i([!.]*)",              kGraph_subops,   NULL },
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
     { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
     { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
@@ -725,6 +732,10 @@ static uint16 *parseKernelSignature(const char *kernelName, const char *writtenS
 	bool eitherOr = false;
 	bool optional = false;
 	bool hadOptional = false;
+
+	// No signature given? no signature out
+	if (!writtenSig)
+		return NULL;
 
 	// First, we check how many bytes the result will be
 	//  we also check, if the written signature makes any sense
