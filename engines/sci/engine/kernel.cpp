@@ -263,10 +263,17 @@ static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
+    { GID_LSL6,           85,  0,          "rScroller", "hide",           -1,    0, { 0,    0 } }, // happens when restoring (sometimes), same as the one below
     { GID_LSL6,           85,  0,          "lScroller", "hide",           -1,    0, { 0,    0 } }, // happens when restoring (sometimes), same as the one below
     { GID_LSL6,           86,  0,             "LL6Inv", "show",           -1,    0, { 0,    0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
     // ^^ TODO: check, if this is really a script error or an issue with our restore code
     { GID_LSL6,           86,  0,             "LL6Inv", "hide",           -1,    0, { 0,    0 } }, // happens during the game, gets called with 1 extra parameter
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[] = {
+    { GID_LSL6,            0,  0,               "LSL6", "hideControls",   -1,    0, { 0,    0 } }, // happens when giving the bungee key to merrily - gets called with additional 5th parameter
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -392,7 +399,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                kGraphRestoreBox_workarounds },
     // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
     { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
-    { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 NULL },
+    { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 kGraphFillBoxForeground_workarounds },
     { SIG_SCIALL,         11, MAP_CALL(GraphFillBoxAny),           "iiiiii(i)(i)",         kGraphFillBoxAny_workarounds },
     { SIG_SCI11,          12, MAP_CALL(GraphUpdateBox),            "iiii(i)(r0)",          NULL }, // kq6 hires
     { SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)",              NULL },
