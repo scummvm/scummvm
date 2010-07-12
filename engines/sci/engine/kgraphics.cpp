@@ -790,7 +790,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		mode = readSelectorValue(s->_segMan, controlObject, SELECTOR(mode));
 		maxChars = readSelectorValue(s->_segMan, controlObject, SELECTOR(max));
 		cursorPos = readSelectorValue(s->_segMan, controlObject, SELECTOR(cursor));
-		if (cursorPos > text.size()) {
+		if (cursorPos > (int)text.size()) {
 			// if cursor is outside of text, adjust accordingly
 			cursorPos = text.size();
 			writeSelectorValue(s->_segMan, controlObject, SELECTOR(cursor), cursorPos);
