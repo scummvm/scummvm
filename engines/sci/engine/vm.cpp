@@ -365,13 +365,25 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index)) {
-		if (type == VAR_TEMP && r[index].segment == 0xffff) {
-			// Uninitialized read on a temp
-			//  We need to find correct replacements for each situation manually
-			SciTrackOriginReply originReply;
-			r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
-			if ((r[index].segment == 0xFFFF) && (r[index].offset == 0xFFFF))
-				error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+		if (r[index].segment == 0xffff) {
+			switch (type) {
+			case VAR_TEMP: {
+				// Uninitialized read on a temp
+				//  We need to find correct replacements for each situation manually
+				SciTrackOriginReply originReply;
+				r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
+				if ((r[index].segment == 0xFFFF) && (r[index].offset == 0xFFFF))
+					error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				break;
+			}
+			case VAR_PARAM:
+				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
+				//  We return 0 currently in that case
+				warning("Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				return NULL_REG;
+			default:
+				break;
+			}
 		}
 		return r[index];
 	} else
