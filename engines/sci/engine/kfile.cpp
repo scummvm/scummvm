@@ -438,6 +438,9 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
+// TODO: we need NOT to assign our own ids to saved-games, but use the filename-id and pass that to the scripts
+//        LSL6 is using the last used saved-game-id for quicksaving and this won't match correctly otherwise
+
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
 	uint16 savedir_nr = argv[1].toUint16();
