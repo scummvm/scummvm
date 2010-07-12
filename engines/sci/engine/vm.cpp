@@ -30,7 +30,6 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/debug.h"	// for g_debugState
 #include "sci/resource.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
@@ -474,18 +473,18 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	}
 
 	// Check if a breakpoint is set on this method
-	if (g_debugState._activeBreakpointTypes & BREAK_EXPORT) {
+	if (g_sci->_debugState._activeBreakpointTypes & BREAK_EXPORT) {
 		uint32 bpaddress;
 
 		bpaddress = (script << 16 | pubfunct);
 
 		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
+		for (bp = g_sci->_debugState._breakpoints.begin(); bp != g_sci->_debugState._breakpoints.end(); ++bp) {
 			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
 				Console *con = g_sci->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				g_debugState.debugging = true;
-				g_debugState.breakpointWasHit = true;
+				g_sci->_debugState.debugging = true;
+				g_sci->_debugState.breakpointWasHit = true;
 				break;
 			}
 		}
@@ -553,13 +552,13 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 		// Check if a breakpoint is set on this method
-		if (g_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
+		if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
 			char method_name[256];
 
 			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str());
 
 			Common::List<Breakpoint>::const_iterator bp;
-			for (bp = g_debugState._breakpoints.begin(); bp != g_debugState._breakpoints.end(); ++bp) {
+			for (bp = g_sci->_debugState._breakpoints.begin(); bp != g_sci->_debugState._breakpoints.end(); ++bp) {
 				int cmplen = bp->name.size();
 				if (bp->name.lastChar() != ':')
 					cmplen = 256;
@@ -568,8 +567,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					Console *con = g_sci->getSciDebugger();
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					printSendActions = true;
-					g_debugState.debugging = true;
-					g_debugState.breakpointWasHit = true;
+					g_sci->_debugState.debugging = true;
+					g_sci->_debugState.breakpointWasHit = true;
 					break;
 				}
 			}
@@ -1003,8 +1002,8 @@ void run_vm(EngineState *s, bool restoring) {
 		int var_type; // See description below
 		int var_number;
 
-		g_debugState.old_pc_offset = s->xs->addr.pc.offset;
-		g_debugState.old_sp = s->xs->sp;
+		g_sci->_debugState.old_pc_offset = s->xs->addr.pc.offset;
+		g_sci->_debugState.old_sp = s->xs->sp;
 
 		if (s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
 			return; // Stop processing
@@ -1046,9 +1045,9 @@ void run_vm(EngineState *s, bool restoring) {
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
-		if (g_debugState.debugging /* sci_debug_flags*/) {
-			script_debug(s);
-			g_debugState.breakpointWasHit = false;
+		if (g_sci->_debugState.debugging /* sci_debug_flags*/) {
+			g_sci->scriptDebug();
+			g_sci->_debugState.breakpointWasHit = false;
 		}
 		Console *con = g_sci->getSciDebugger();
 		if (con->isAttached()) {

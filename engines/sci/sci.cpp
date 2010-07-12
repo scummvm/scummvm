@@ -448,12 +448,12 @@ void SciEngine::exitGame() {
 GUI::Debugger *SciEngine::getDebugger() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
-		xs->addr.pc.offset = g_debugState.old_pc_offset;
-		xs->sp = g_debugState.old_sp;
+		xs->addr.pc.offset = _debugState.old_pc_offset;
+		xs->sp = _debugState.old_sp;
 	}
 
-	g_debugState.runningStep = 0; // Stop multiple execution
-	g_debugState.seeking = kDebugSeekNothing; // Stop special seeks
+	_debugState.runningStep = 0; // Stop multiple execution
+	_debugState.seeking = kDebugSeekNothing; // Stop special seeks
 
 	return _console;
 }

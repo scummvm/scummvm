@@ -28,7 +28,8 @@
 
 #include "engines/engine.h"
 #include "common/util.h"
-#include "engine/vm_types.h"	// for Selector
+#include "sci/engine/vm_types.h"	// for Selector
+#include "sci/debug.h"	// for DebugState
 
 struct ADGameDescription;
 
@@ -243,6 +244,8 @@ public:
 
 	void sleep(uint32 msecs);
 
+	void scriptDebug();
+
 public:
 
 	/**
@@ -289,6 +292,8 @@ public:
 	AudioPlayer *_audio;
 	SoundCommandParser *_soundCmd;
 	GameFeatures *_features;
+
+	DebugState _debugState;
 
 private:
 	/**

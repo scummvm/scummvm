@@ -157,6 +157,7 @@ private:
 
 private:
 	SciEngine *_engine;
+	DebugState &_debugState;
 	bool _mouseVisible;
 	Common::String _videoFile;
 	int _videoFrameDelay;

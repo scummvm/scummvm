@@ -78,8 +78,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
 		s->abortScriptProcessing = kAbortQuitGame; // Terminate VM
-		g_debugState.seeking = kDebugSeekNothing;
-		g_debugState.runningStep = 0;
+		g_sci->_debugState.seeking = kDebugSeekNothing;
+		g_sci->_debugState.runningStep = 0;
 		break;
 
 	case SCI_EVENT_KEYBOARD:
@@ -124,8 +124,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (g_debugState.stopOnEvent)) {
-		g_debugState.stopOnEvent = false;
+	if ((s->r_acc.offset) && (g_sci->_debugState.stopOnEvent)) {
+		g_sci->_debugState.stopOnEvent = false;
 
 		// A SCI event occurred, and we have been asked to stop, so open the debug console
 		Console *con = g_sci->getSciDebugger();

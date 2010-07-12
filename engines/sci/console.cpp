@@ -66,8 +66,8 @@ bool g_debug_track_mouse_clicks = false;
 // Refer to the "addresses" command on how to pass address parameters
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest, bool mayBeValue);
 
-Console::Console(SciEngine *engine) : GUI::Debugger() {
-	_engine = engine;
+Console::Console(SciEngine *engine) : GUI::Debugger(),
+	_engine(engine), _debugState(engine->_debugState) {
 
 	// Variables
 	DVar_Register("sleeptime_factor",	&g_debug_sleeptime_factor, DVAR_INT, 0);
@@ -196,14 +196,14 @@ Console::Console(SciEngine *engine) : GUI::Debugger() {
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
-	g_debugState.seeking = kDebugSeekNothing;
-	g_debugState.seekLevel = 0;
-	g_debugState.runningStep = 0;
-	g_debugState.stopOnEvent = false;
-	g_debugState.debugging = false;
-	g_debugState.breakpointWasHit = false;
-	g_debugState._breakpoints.clear(); // No breakpoints defined
-	g_debugState._activeBreakpointTypes = 0;
+	_debugState.seeking = kDebugSeekNothing;
+	_debugState.seekLevel = 0;
+	_debugState.runningStep = 0;
+	_debugState.stopOnEvent = false;
+	_debugState.debugging = false;
+	_debugState.breakpointWasHit = false;
+	_debugState._breakpoints.clear(); // No breakpoints defined
+	_debugState._activeBreakpointTypes = 0;
 }
 
 Console::~Console() {
@@ -2307,31 +2307,31 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 bool Console::cmdTrace(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0)
-		g_debugState.runningStep = atoi(argv[1]) - 1;
-	g_debugState.debugging = true;
+		_debugState.runningStep = atoi(argv[1]) - 1;
+	_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdStepOver(int argc, const char **argv) {
-	g_debugState.seeking = kDebugSeekStepOver;
-	g_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
-	g_debugState.debugging = true;
+	_debugState.seeking = kDebugSeekStepOver;
+	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
+	_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
-	g_debugState.stopOnEvent = true;
-	g_debugState.debugging = true;
+	_debugState.stopOnEvent = true;
+	_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
-	g_debugState.seeking = kDebugSeekLevelRet;
-	g_debugState.seekLevel = _engine->_gamestate->_executionStack.size() - 1;
-	g_debugState.debugging = true;
+	_debugState.seeking = kDebugSeekLevelRet;
+	_debugState.seekLevel = _engine->_gamestate->_executionStack.size() - 1;
+	_debugState.debugging = true;
 
 	return false;
 }
@@ -2343,9 +2343,9 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 		return true;
 	}
 
-	g_debugState.seeking = kDebugSeekGlobal;
-	g_debugState.seekSpecial = atoi(argv[1]);
-	g_debugState.debugging = true;
+	_debugState.seeking = kDebugSeekGlobal;
+	_debugState.seekSpecial = atoi(argv[1]);
+	_debugState.debugging = true;
 
 	return false;
 }
@@ -2373,12 +2373,12 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 			}
 		}
 
-		g_debugState.seeking = kDebugSeekSpecialCallk;
-		g_debugState.seekSpecial = callk_index;
+		_debugState.seeking = kDebugSeekSpecialCallk;
+		_debugState.seekSpecial = callk_index;
 	} else {
-		g_debugState.seeking = kDebugSeekCallk;
+		_debugState.seeking = kDebugSeekCallk;
 	}
-	g_debugState.debugging = true;
+	_debugState.debugging = true;
 
 	return false;
 }
@@ -2560,7 +2560,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 
 bool Console::cmdGo(int argc, const char **argv) {
 	// CHECKME: is this necessary?
-	g_debugState.seeking = kDebugSeekNothing;
+	_debugState.seeking = kDebugSeekNothing;
 
 	return Cmd_Exit(argc, argv);
 }
@@ -2571,8 +2571,8 @@ bool Console::cmdBreakpointList(int argc, const char **argv) {
 
 	DebugPrintf("Breakpoint list:\n");
 
-	Common::List<Breakpoint>::const_iterator bp = g_debugState._breakpoints.begin();
-	Common::List<Breakpoint>::const_iterator end = g_debugState._breakpoints.end();
+	Common::List<Breakpoint>::const_iterator bp = _debugState._breakpoints.begin();
+	Common::List<Breakpoint>::const_iterator end = _debugState._breakpoints.end();
 	for (; bp != end; ++bp) {
 		DebugPrintf("  #%i: ", i);
 		switch (bp->type) {
@@ -2603,16 +2603,16 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	}
 
 	if (strcmp(argv[1], "*") == 0) {
-		g_debugState._breakpoints.clear();
-		g_debugState._activeBreakpointTypes = 0;
+		_debugState._breakpoints.clear();
+		_debugState._activeBreakpointTypes = 0;
 		return true;
 	}
 
 	const int idx = atoi(argv[1]);
 
 	// Find the breakpoint at index idx.
-	Common::List<Breakpoint>::iterator bp = g_debugState._breakpoints.begin();
-	const Common::List<Breakpoint>::iterator end = g_debugState._breakpoints.end();
+	Common::List<Breakpoint>::iterator bp = _debugState._breakpoints.begin();
+	const Common::List<Breakpoint>::iterator end = _debugState._breakpoints.end();
 	for (int i = 0; bp != end && i < idx; ++bp, ++i) {
 		// do nothing
 	}
@@ -2623,15 +2623,15 @@ bool Console::cmdBreakpointDelete(int argc, const char **argv) {
 	}
 
 	// Delete it
-	g_debugState._breakpoints.erase(bp);
+	_debugState._breakpoints.erase(bp);
 
 	// Update EngineState::_activeBreakpointTypes.
 	int type = 0;
-	for (bp = g_debugState._breakpoints.begin(); bp != end; ++bp) {
+	for (bp = _debugState._breakpoints.begin(); bp != end; ++bp) {
 		type |= bp->type;
 	}
 
-	g_debugState._activeBreakpointTypes = type;
+	_debugState._activeBreakpointTypes = type;
 
 	return true;
 }
@@ -2653,8 +2653,8 @@ bool Console::cmdBreakpointExecMethod(int argc, const char **argv) {
 	bp.type = BREAK_SELECTOR;
 	bp.name = argv[1];
 
-	g_debugState._breakpoints.push_back(bp);
-	g_debugState._activeBreakpointTypes |= BREAK_SELECTOR;
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_SELECTOR;
 
 	return true;
 }
@@ -2674,8 +2674,8 @@ bool Console::cmdBreakpointExecFunction(int argc, const char **argv) {
 	bp.type = BREAK_EXPORT;
 	bp.address = (atoi(argv[1]) << 16 | atoi(argv[2]));
 
-	g_debugState._breakpoints.push_back(bp);
-	g_debugState._activeBreakpointTypes |= BREAK_EXPORT;
+	_debugState._breakpoints.push_back(bp);
+	_debugState._activeBreakpointTypes |= BREAK_EXPORT;
 
 	return true;
 }
@@ -2876,8 +2876,8 @@ bool Console::cmdQuit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		_engine->_gamestate->abortScriptProcessing = kAbortQuitGame; // Terminate VM
-		g_debugState.seeking = kDebugSeekNothing;
-		g_debugState.runningStep = 0;
+		_debugState.seeking = kDebugSeekNothing;
+		_debugState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully

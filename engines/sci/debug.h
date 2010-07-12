@@ -26,8 +26,8 @@
 #ifndef SCI_DEBUG_H
 #define SCI_DEBUG_H
 
+#include "common/list.h"
 #include "sci/engine/vm_types.h"	// for StackPtr
-#include "sci/engine/vm.h"			// for ExecStack
 
 namespace Sci {
 
@@ -79,7 +79,6 @@ struct DebugState {
 extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
-extern DebugState g_debugState;
 
 } // End of namespace Sci
 

@@ -63,8 +63,6 @@ const char *opcodeNames[] = {
 	   "-sli",      "-sti",     "-spi"
 };
 
-DebugState g_debugState;	// FIXME: Avoid non-const global vars
-
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
@@ -277,30 +275,32 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 }
 
 
-void script_debug(EngineState *s) {
-	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
-		if (g_debugState.seeking == kDebugSeekStepOver) {
+void SciEngine::scriptDebug() {
+	EngineState *s = _gamestate;
+	if (_debugState.seeking && !_debugState.breakpointWasHit) { // Are we looking for something special?
+		if (_debugState.seeking == kDebugSeekStepOver) {
 			// are we above seek-level? resume then
-			if (g_debugState.seekLevel < (int)s->_executionStack.size())
+			if (_debugState.seekLevel < (int)s->_executionStack.size())
 				return;
-			g_debugState.seeking = kDebugSeekNothing;
+			_debugState.seeking = kDebugSeekNothing;
 		}
 
-		if (g_debugState.seeking != kDebugSeekNothing) {
-			SegmentObj *mobj = s->_segMan->getSegment(s->xs->addr.pc.segment, SEG_TYPE_SCRIPT);
+		if (_debugState.seeking != kDebugSeekNothing) {
+			const reg_t pc = s->xs->addr.pc;
+			SegmentObj *mobj = s->_segMan->getSegment(pc.segment, SEG_TYPE_SCRIPT);
 
 			if (mobj) {
 				Script *scr = (Script *)mobj;
 				const byte *code_buf = scr->getBuf();
 				int code_buf_size = scr->getBufSize();
-				int opcode = s->xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset];
+				int opcode = pc.offset >= code_buf_size ? 0 : code_buf[pc.offset];
 				int op = opcode >> 1;
-				int paramb1 = s->xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset + 1];
-				int paramf1 = (opcode & 1) ? paramb1 : (s->xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + s->xs->addr.pc.offset + 1));
+				int paramb1 = pc.offset + 1 >= code_buf_size ? 0 : code_buf[pc.offset + 1];
+				int paramf1 = (opcode & 1) ? paramb1 : (pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.offset + 1));
 
-				switch (g_debugState.seeking) {
+				switch (_debugState.seeking) {
 				case kDebugSeekSpecialCallk:
-					if (paramb1 != g_debugState.seekSpecial)
+					if (paramb1 != _debugState.seekSpecial)
 						return;
 
 				case kDebugSeekCallk:
@@ -309,7 +309,7 @@ void script_debug(EngineState *s) {
 					break;
 
 				case kDebugSeekLevelRet:
-					if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
+					if ((op != op_ret) || (_debugState.seekLevel < (int)s->_executionStack.size()-1))
 						return;
 					break;
 
@@ -320,7 +320,7 @@ void script_debug(EngineState *s) {
 						return; // param or temp
 					if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 						return; // locals and not running in script.000
-					if (paramf1 != g_debugState.seekSpecial)
+					if (paramf1 != _debugState.seekSpecial)
 						return; // CORRECT global?
 					break;
 
@@ -328,7 +328,7 @@ void script_debug(EngineState *s) {
 					break;
 				}
 
-				g_debugState.seeking = kDebugSeekNothing;
+				_debugState.seeking = kDebugSeekNothing;
 			}
 		}
 		// OK, found whatever we were looking for
@@ -337,15 +337,14 @@ void script_debug(EngineState *s) {
 	printf("Step #%d\n", s->scriptStepCounter);
 	disassemble(s, s->xs->addr.pc, 0, 1);
 
-	if (g_debugState.runningStep) {
-		g_debugState.runningStep--;
+	if (_debugState.runningStep) {
+		_debugState.runningStep--;
 		return;
 	}
 
-	g_debugState.debugging = false;
+	_debugState.debugging = false;
 
-	Console *con = ((Sci::SciEngine *)g_engine)->getSciDebugger();
-	con->attach();
+	_console->attach();
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
