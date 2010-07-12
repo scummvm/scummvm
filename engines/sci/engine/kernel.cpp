@@ -263,8 +263,9 @@ static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
-    { GID_LSL6,           86,  0,             "LL6Inv", "show",           -1,    0, { 1,    0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
+    { GID_LSL6,           86,  0,             "LL6Inv", "show",           -1,    0, { 0,    0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
     // ^^ TODO: check, if this is really a script error or an issue with our restore code
+    { GID_LSL6,           86,  0,             "LL6Inv", "hide",           -1,    0, { 0,    0 } }, // happens during the game, gets called with 1 extra parameter
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
