@@ -245,6 +245,8 @@ public:
 	void sleep(uint32 msecs);
 
 	void scriptDebug();
+	bool checkExportBreakpoint(uint16 script, uint16 pubfunct);
+	bool checkSelectorBreakpoint(reg_t send_obj, int selector);
 
 public:
 

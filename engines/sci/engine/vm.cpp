@@ -450,6 +450,26 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
 
+bool SciEngine::checkExportBreakpoint(uint16 script, uint16 pubfunct) {
+	if (_debugState._activeBreakpointTypes & BREAK_EXPORT) {
+		uint32 bpaddress;
+
+		bpaddress = (script << 16 | pubfunct);
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
+				_console->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;;
+			}
+		}
+	}
+
+	return false;
+}
+
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
 	int seg = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(seg);
@@ -473,22 +493,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	}
 
 	// Check if a breakpoint is set on this method
-	if (g_sci->_debugState._activeBreakpointTypes & BREAK_EXPORT) {
-		uint32 bpaddress;
-
-		bpaddress = (script << 16 | pubfunct);
-
-		Common::List<Breakpoint>::const_iterator bp;
-		for (bp = g_sci->_debugState._breakpoints.begin(); bp != g_sci->_debugState._breakpoints.end(); ++bp) {
-			if (bp->type == BREAK_EXPORT && bp->address == bpaddress) {
-				Console *con = g_sci->getSciDebugger();
-				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				g_sci->_debugState.debugging = true;
-				g_sci->_debugState.breakpointWasHit = true;
-				break;
-			}
-		}
-	}
+	g_sci->checkExportBreakpoint(script, pubfunct);
 
 	return add_exec_stack_entry(s->_executionStack, make_reg(seg, temp), sp, calling_obj, argc, argp, -1, pubfunct, -1, calling_obj, s->_executionStack.size()-1, seg);
 }
@@ -528,6 +533,30 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
+bool SciEngine::checkSelectorBreakpoint(reg_t send_obj, int selector) {
+	if (_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
+		char method_name[256];
+
+		sprintf(method_name, "%s::%s", _gamestate->_segMan->getObjectName(send_obj), getKernel()->getSelectorName(selector).c_str());
+
+		Common::List<Breakpoint>::const_iterator bp;
+		for (bp = _debugState._breakpoints.begin(); bp != _debugState._breakpoints.end(); ++bp) {
+			int cmplen = bp->name.size();
+			if (bp->name.lastChar() != ':')
+				cmplen = 256;
+
+			if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
+				_console->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
+				_debugState.debugging = true;
+				_debugState.breakpointWasHit = true;
+				return true;
+			}
+		}
+	}
+
+	return false;
+}
+
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 // send_obj and work_obj are equal for anything but 'super'
 // Returns a pointer to the TOS exec_stack element
@@ -552,27 +581,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 		// Check if a breakpoint is set on this method
-		if (g_sci->_debugState._activeBreakpointTypes & BREAK_SELECTOR) {
-			char method_name[256];
-
-			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), g_sci->getKernel()->getSelectorName(selector).c_str());
-
-			Common::List<Breakpoint>::const_iterator bp;
-			for (bp = g_sci->_debugState._breakpoints.begin(); bp != g_sci->_debugState._breakpoints.end(); ++bp) {
-				int cmplen = bp->name.size();
-				if (bp->name.lastChar() != ':')
-					cmplen = 256;
-
-				if (bp->type == BREAK_SELECTOR && !strncmp(bp->name.c_str(), method_name, cmplen)) {
-					Console *con = g_sci->getSciDebugger();
-					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
-					printSendActions = true;
-					g_sci->_debugState.debugging = true;
-					g_sci->_debugState.breakpointWasHit = true;
-					break;
-				}
-			}
-		}
+		printSendActions = g_sci->checkSelectorBreakpoint(send_obj, selector);
 
 #ifdef VM_DEBUG_SEND
 		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, g_sci->getKernel()->getSelectorName(selector).c_str());
