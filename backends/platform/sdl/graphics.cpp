@@ -263,9 +263,6 @@ void OSystem_SDL::detectSupportedFormats() {
 		Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
 	};
 
-	bool BGR = false;
-	int listLength = ARRAYSIZE(RGBList);
-
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
 		// Get our currently set hardware format
@@ -281,25 +278,28 @@ void OSystem_SDL::detectSupportedFormats() {
 
 		// Push it first, as the prefered format.
 		_supportedFormats.push_back(format);
-
-		if (format.bShift > format.rShift)
-			BGR = true;
 	}
 
 	// TODO: prioritize matching alpha masks
-	for (int i = 0; i < listLength; i++) {
+	int i;
+
+	// Push some RGB formats
+	for (i = 0; i < ARRAYSIZE(RGBList); i++) {
 		if (_hwscreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
-		if (BGR) {
-			if (BGRList[i] != format)
-				_supportedFormats.push_back(BGRList[i]);
+		if (RGBList[i] != format)
 			_supportedFormats.push_back(RGBList[i]);
-		} else {
-			if (RGBList[i] != format)
-				_supportedFormats.push_back(RGBList[i]);
-			_supportedFormats.push_back(BGRList[i]);
-		}
 	}
+
+	// Push some BGR formats
+	for (i = 0; i < ARRAYSIZE(BGRList); i++) {
+		if (_hwscreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (BGRList[i] != format)
+			_supportedFormats.push_back(BGRList[i]);
+	}
+
+	// Finally, we always supposed 8 bit palette graphics
 	_supportedFormats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 }
 
