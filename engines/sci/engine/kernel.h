@@ -150,10 +150,6 @@ struct KernelFunction {
 	bool debugCalls;
 };
 
-enum AutoDetectedFeatures {
-	kFeatureOldScriptHeader = 1 << 0
-};
-
 class Kernel {
 public:
 	/**
