@@ -76,6 +76,17 @@ enum {
 	MAX_SAVE_DIR_SIZE = MAXPATHLEN
 };
 
+enum {
+	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
+};
+
+// We assume that scripts give us savegameId 0->999 for creating a new save slot
+//  and savegameId 1000->1999 for existing save slots ffs. kfile.cpp
+enum {
+	SAVEGAMEID_OFFICIALRANGE_START = 1000,
+	SAVEGAMEID_OFFICIALRANGE_END = 1999
+};
+
 class FileHandle {
 public:
 	Common::String _name;
@@ -118,6 +129,9 @@ public:
 	Common::Array<FileHandle> _fileHandles; /**< Array of file handles. Dynamically increased if required. */
 
 	DirSeeker _dirseeker;
+
+	uint _lastSaveVirtualId; // last virtual id fed to kSaveGame, if no kGetSaveFiles was called inbetween
+	uint _lastSaveNewId;    // last newly created filename-id by kSaveGame
 
 public:
 	/* VM Information */

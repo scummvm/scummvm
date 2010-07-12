@@ -36,12 +36,9 @@
 
 namespace Sci {
 
-enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
-};
-
 struct SavegameDesc {
-	int id;
+	uint id;
+	int virtualId; // straight numbered, according to id but w/o gaps
 	int date;
 	int time;
 	int version;
@@ -249,66 +246,6 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
 }
 
-static bool _savegame_index_struct_compare(const SavegameDesc &l, const SavegameDesc &r) {
-	if (l.date != r.date)
-		return (l.date > r.date);
-	return (l.time > r.time);
-}
-
-void listSavegames(Common::Array<SavegameDesc> &saves) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
-	// Load all saves
-	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
-
-	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
-		Common::String filename = *iter;
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
-				// invalid
-				delete in;
-				continue;
-			}
-			delete in;
-
-			SavegameDesc desc;
-			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.savegame_date;
-			// We need to fix date in here, because we save DDMMYYYY instead of
-			// YYYYMMDD, so sorting wouldn't work
-			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.savegame_time;
-			desc.version = meta.savegame_version;
-
-			if (meta.savegame_name.lastChar() == '\n')
-				meta.savegame_name.deleteLastChar();
-
-			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
-
-			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
-
-			saves.push_back(desc);
-		}
-	}
-
-	// Sort the list by creation date of the saves
-	Common::sort(saves.begin(), saves.end(), _savegame_index_struct_compare);
-}
-
-bool Console::cmdListSaves(int argc, const char **argv) {
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-
-	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
-	}
-
-	return true;
-}
-
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	int maxsize = argv[1].toUint16();
 	char *buf = new char[maxsize];
@@ -333,6 +270,9 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 
 	return argv[0];
 }
+
+static void listSavegames(Common::Array<SavegameDesc> &saves);
+static int findSavegame(Common::Array<SavegameDesc> &saves, uint saveId);
 
 enum {
 	K_DEVICE_INFO_GET_DEVICE = 0,
@@ -392,17 +332,22 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
 		Common::String game_prefix = s->_segMan->getString(argv[2]);
-		int savegame_id = argv[3].toUint16();
+		uint virtualId = argv[3].toUint16();
 		s->_segMan->strcpy(argv[1], "__throwaway");
-		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), savegame_id, "__throwaway");
+		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), virtualId, "__throwaway");
+		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+			error("kDeviceInfo(deleteSave): invalid savegame-id specified");
+		uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 		Common::Array<SavegameDesc> saves;
 		listSavegames(saves);
-		int savedir_nr = saves[savegame_id].id;
-		Common::String filename = g_sci->getSavegameName(savedir_nr);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		saveFileMan->removeSavefile(filename);
+		if (findSavegame(saves, savegameId) != -1) {
+			// Confirmed that this id still lives...
+			Common::String filename = g_sci->getSavegameName(savegameId);
+			Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+			saveFileMan->removeSavefile(filename);
 		}
 		break;
+	}
 
 	default:
 		error("Unknown DeviceInfo() sub-command: %d", mode);
@@ -438,24 +383,102 @@ reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
-// TODO: we need NOT to assign our own ids to saved-games, but use the filename-id and pass that to the scripts
-//        LSL6 is using the last used saved-game-id for quicksaving and this won't match correctly otherwise
+static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) {
+	if (l.date != r.date)
+		return (l.date > r.date);
+	return (l.time > r.time);
+}
+
+// Create a sorted array containing all found savedgames
+static void listSavegames(Common::Array<SavegameDesc> &saves) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	// Load all saves
+	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
+
+	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
+		Common::String filename = *iter;
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
+				// invalid
+				delete in;
+				continue;
+			}
+			delete in;
+
+			SavegameDesc desc;
+			desc.id = strtol(filename.end() - 3, NULL, 10);
+			desc.date = meta.savegame_date;
+			// We need to fix date in here, because we save DDMMYYYY instead of
+			// YYYYMMDD, so sorting wouldn't work
+			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
+			desc.time = meta.savegame_time;
+			desc.version = meta.savegame_version;
+
+			if (meta.savegame_name.lastChar() == '\n')
+				meta.savegame_name.deleteLastChar();
+
+			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+
+			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
+
+			saves.push_back(desc);
+		}
+	}
+
+	// Sort the list by creation date of the saves
+	Common::sort(saves.begin(), saves.end(), _savegame_sort_byDate);
+}
+
+// Find a savedgame according to virtualId and return the position within our array
+static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
+	for (uint saveNr = 0; saveNr < saves.size(); saveNr++) {
+		if (saves[saveNr].id == savegameId)
+			return saveNr;
+	}
+	return -1;
+}
+
+// The scripts get IDs ranging from 1000->1999, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+//  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
+//  SCI1.1 actually recycles ids, in that case we will currently get "0".
+// This behaviour is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
+//  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
+//  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
+
+bool Console::cmdListSaves(int argc, const char **argv) {
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
+	}
+
+	return true;
+}
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	uint16 savedir_nr = argv[1].toUint16();
+	uint16 virtualId = argv[1].toUint16();
 
-	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), savedir_nr);
+	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), virtualId);
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	// Check for savegame slot being out of range
-	if (savedir_nr >= saves.size())
+	// Find saved-game
+	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+		error("kCheckSaveGame: called with invalid savegameId!");
+	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	int savegameNr = findSavegame(saves, savegameId);
+	if (savegameNr == -1)
 		return NULL_REG;
 
 	// Check for compatible savegame version
-	int ver = saves[savedir_nr].version;
+	int ver = saves[savegameNr].version;
 	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
 		return NULL_REG;
 
@@ -468,9 +491,12 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
+	// Scripts ask for current save files, we can assume that if afterwards they ask us to create a new slot they really
+	//  mean new slot instead of overwriting the old one
+	s->_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
-
 	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
 
 	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
@@ -485,7 +511,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, i); // Store slot
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame-id ffs. see above
 		strcpy(saveNamePtr, saves[i].name);
 		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
 	}
@@ -500,46 +526,51 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	int savedir_nr = argv[1].toUint16();
-	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
+	uint virtualId = argv[1].toUint16();
 	Common::String game_description = s->_segMan->getString(argv[2]);
 	Common::String version;
 	if (argc > 3)
 		version = s->_segMan->getString(argv[3]);
 
-	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), savedir_nr, game_description.c_str(), version.c_str());
+	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	if (savedir_nr >= 0 && (uint)savedir_nr < saves.size()) {
-		// Overwrite
-		savedir_id = saves[savedir_nr].id;
-	} else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
-		uint i = 0;
-
-		savedir_id = 0;
-
-		// First, look for holes
-		while (i < saves.size()) {
-			if (saves[i].id == savedir_id) {
-				++savedir_id;
-				i = 0;
-			} else
-				++i;
-		}
-		if (savedir_id >= MAX_SAVEGAME_NR) {
-			warning("Internal error: Free savegame ID is %d, shouldn't happen", savedir_id);
+	uint savegameId;
+	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
+		// savegameId is an actual Id, so search for it just to make sure
+		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+		if (findSavegame(saves, savegameId) != -1)
 			return NULL_REG;
+	} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
+		// virtualId is low, we assume that scripts expect us to create new slot
+		if (virtualId == s->_lastSaveVirtualId) {
+			// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+			savegameId = s->_lastSaveNewId;
+		} else {
+			uint savegameNr;
+			// savegameId is in lower range, scripts expect us to create a new slot
+			for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+				for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+					if (savegameId == saves[savegameNr].id)
+						break;
+				}
+				if (savegameNr == saves.size())
+					break;
+			}
+			if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+				error("kSavegame: no more savegame slots available");
 		}
-
-		// This loop terminates when savedir_id is not in [x | ex. n. saves	[n].id = x]
 	} else {
-		warning("Savegame ID %d is not allowed", savedir_nr);
-		return NULL_REG;
+		error("kSaveGame: invalid savegameId used");
 	}
 
-	Common::String filename = g_sci->getSavegameName(savedir_id);
+	// Save in case caller wants to overwrite last newly created save
+	s->_lastSaveVirtualId = virtualId;
+	s->_lastSaveNewId = savegameId;
+
+	Common::String filename = g_sci->getSavegameName(savegameId);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename))) {
@@ -568,35 +599,37 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
-	int savedir_nr = argv[1].toUint16();
+	uint savegameId = argv[1].toUint16();
 
-	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savedir_nr);
+	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
-	if (!argv[0].isNull()) {
-		Common::Array<SavegameDesc> saves;
-		listSavegames(saves);
+	if ((savegameId < 1000) || (savegameId > 1999)) {
+		warning("Savegame ID %d is not allowed", savegameId);
+		return TRUE_REG;
+	}
+	savegameId -= 1000;
 
-		savedir_nr = saves[savedir_nr].id;
-	} else {
-		// Loading from launcher, no change necessary
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+	if (findSavegame(saves, savegameId) == -1) {
+		warning("Savegame ID %d not found", savegameId);
+		return TRUE_REG;
 	}
 
-	if (savedir_nr > -1) {
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		Common::String filename = g_sci->getSavegameName(savedir_nr);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			// found a savegame file
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::String filename = g_sci->getSavegameName(savegameId);
+	Common::SeekableReadStream *in;
+	if ((in = saveFileMan->openForLoading(filename))) {
+		// found a savegame file
 
-			gamestate_restore(s, in);
-			delete in;
+		gamestate_restore(s, in);
+		delete in;
 
-			return s->r_acc;
-		}
+		return s->r_acc;
 	}
 
-	s->r_acc = make_reg(0, 1);
-	warning("Savegame #%d not found", savedir_nr);
+	s->r_acc = TRUE_REG;
+	warning("Savegame #%d not found", savegameId);
 
 	return s->r_acc;
 }

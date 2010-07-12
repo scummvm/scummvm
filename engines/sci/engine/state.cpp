@@ -107,6 +107,9 @@ void EngineState::reset(bool isRestoring) {
 	_throttleLastTime = 0;
 	_throttleTrigger = false;
 
+	_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
+	_lastSaveNewId = 0;
+
 	scriptStepCounter = 0;
 	scriptGCInterval = GC_INTERVAL;
 }
