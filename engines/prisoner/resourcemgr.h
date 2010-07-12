@@ -45,13 +45,11 @@ public:
 
 struct ResourceSlot {
 	int16 type;
-	// UNUSED? byte unk1;
 	uint refCount;
 	Common::String pakName;
-	Common::String soundPakName;
 	int16 pakSlot;
 	BaseResource *resource;
-	ResourceSlot() : type(-1), refCount(0), resource(NULL) {}
+	ResourceSlot() : type(-1), refCount(0), resource(NULL), pakSlot(-1) {}
 };
 
 class ResourceLoader {
@@ -76,7 +74,6 @@ public:
 	~ResourceManager();
 	template<class T>
 	int16 load(Common::String &pakName, int16 pakSlot, int16 type) {
-		//debug("ResourceManager::load() %s:%d(%d)", pakName.c_str(), pakSlot, type);
 		int16 slotIndex = find(pakName, pakSlot, type);
 		if (slotIndex != -1) {
 			_slots[slotIndex].refCount++;

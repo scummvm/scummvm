@@ -176,7 +176,6 @@ int16 ResourceManager::add(Common::String &pakName, int16 pakSlot, int16 type) {
 	slot->type = type;
 	slot->refCount = 1;
 	slot->pakName = pakName;
-	slot->soundPakName = "???";
 	slot->pakSlot = pakSlot;
 
 	_freeSlotsCount--;

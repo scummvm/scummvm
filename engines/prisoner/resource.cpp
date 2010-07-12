@@ -216,6 +216,10 @@ AnimationElement::~AnimationElement() {
 		delete (*iter);
 }
 
+AnimationCel::~AnimationCel() {
+	delete[] data;
+}
+
 AnimationFrameList::~AnimationFrameList() {
 	for (Common::Array<AnimationFrame*>::iterator iter = frames.begin(); iter != frames.end(); iter++)
 		delete (*iter);

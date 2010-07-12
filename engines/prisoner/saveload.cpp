@@ -440,7 +440,9 @@ void AltActorAnimation::load(PrisonerEngine *vm, Common::ReadStream *in) {
 	resourceCacheSlot = in->readUint16LE();
 	if (resourceCacheSlot != -1) {
 		value = in->readByte();
-		resourceCacheSlot = loadResourceCacheSlotInfo<ScriptResource>(vm->_res, in);
+		debug("AltActorAnimation::load>");
+		resourceCacheSlot = loadResourceCacheSlotInfo<AnimationResource>(vm->_res, in);
+		debug("AltActorAnimation::load<");
 	}
 }
 

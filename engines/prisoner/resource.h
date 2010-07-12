@@ -177,6 +177,7 @@ struct AnimationCel {
 	uint16 width, height;
 	uint32 dataSize;
 	byte *data;
+	~AnimationCel();
 };
 
 struct AnimationFrame {
