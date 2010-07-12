@@ -61,6 +61,8 @@ class PCMMusicPlayer;
 class Scheduler;
 class SoundManager;
 
+typedef Common::List<Common::Rect> RectList;
+
 enum TinselGameID {
 	GID_DW1 = 0,
 	GID_DW2 = 1
@@ -202,6 +204,10 @@ public:
 
 	/** Stack of pending keypresses. */
 	Common::List<Common::Event> _keypresses;
+
+
+	/** List of all clip rectangles. */
+	RectList _clipRects;
 
 private:
 	//MidiMusicPlayer *_midiMusic;
