@@ -873,7 +873,7 @@ begin_credits("Credits");
 			add_person("Alex Bevilacqua", "", "");
 		end_section();
 		begin_section("Italian");
-			add_person("Matteo Angelino", "", "");
+			add_person("Matteo Angelino", "Maff", "");
 		end_section();
 		begin_section("Russian");
 			add_person("Eugene Sandulenko", "sev", "");
