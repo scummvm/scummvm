@@ -29,8 +29,11 @@
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	:
 	_gameTexture(0), _overlayTexture(0), _mouseTexture(0),
+	_overlayVisible(false),
+	_mouseVisible(false), _mouseNeedsRedraw(false),
 	_screenChangeCount(0),
-	_transactionMode(0)
+	_currentShakePos(0), _newShakePos(0),
+	_transactionMode(kTransactionNone)
 	
 	{
 
@@ -48,7 +51,23 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 }
 
 void OpenGLGraphicsManager::init() {
+	GLTexture::initGLExtensions();
 
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_FOG);
+	glDisable(GL_DITHER);
+	glShadeModel(GL_FLAT);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 //
@@ -85,21 +104,17 @@ int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
 }
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
-	return false;
+	return true;
 }
 
 int OpenGLGraphicsManager::getGraphicsMode() const {
-	return 0;
+	return GFX_NORMAL;
 }
 
 #ifdef USE_RGB_COLOR
 
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {
-	return Graphics::PixelFormat();
-}
-
-Common::List<Graphics::PixelFormat> OpenGLGraphicsManager::getSupportedFormats() {
-	return Common::List<Graphics::PixelFormat>();
+	return _screenFormat;
 }
 
 #endif
@@ -135,7 +150,7 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 }
 
 int OpenGLGraphicsManager::getScreenChangeID() const {
-	return 0;
+	return _screenChangeCount;
 }
 
 //
@@ -267,28 +282,32 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-
+	_gameTexture->updateBuffer(buf, pitch, x, y, w, h);
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
-	_lockedScreen = Graphics::Surface();
-	return &_lockedScreen;
+	return _gameTexture->getSurface();
 }
 
 void OpenGLGraphicsManager::unlockScreen() {
-
+	_gameTexture->refresh();
 }
 
 void OpenGLGraphicsManager::fillScreen(uint32 col) {
+	if (_gameTexture == NULL)
+		return;
 
+	_gameTexture->fillBuffer(col);
 }
 
 void OpenGLGraphicsManager::updateScreen() {
-
+	assert (_transactionMode == kTransactionNone);
+	internUpdateScreen();
 }
 
 void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
-
+	assert (_transactionMode == kTransactionNone);
+	_newShakePos = shakeOffset;
 }
 
 void OpenGLGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
@@ -304,27 +323,43 @@ void OpenGLGraphicsManager::clearFocusRectangle() {
 //
 
 void OpenGLGraphicsManager::showOverlay() {
+	assert (_transactionMode == kTransactionNone);
 
+	_overlayVisible = true;
 }
 
 void OpenGLGraphicsManager::hideOverlay() {
+	assert (_transactionMode == kTransactionNone);
 
+	_overlayVisible = false;
 }
 
 Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
-	return Graphics::PixelFormat();
+	return _overlayFormat;
 }
 
 void OpenGLGraphicsManager::clearOverlay() {
-
+	_overlayTexture->fillBuffer(0);
 }
 
 void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-
+	const Graphics::Surface* surface = _overlayTexture->getSurface();
+	assert(surface->bytesPerPixel == sizeof(buf[0]));
+	int h = surface->h;
+	do {
+		//memcpy(buf, surface->pixels, surface->w * sizeof(buf[0]));
+		memset(buf, 0, surface->w * sizeof(buf[0]));
+		buf += pitch;
+	} while (--h);
 }
 
 void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	assert (_transactionMode == kTransactionNone);
 
+	if (_overlayTexture == NULL)
+		return;
+
+	_overlayTexture->updateBuffer(buf, pitch * sizeof(buf[0]), x, y, w, h);
 }
 
 int16 OpenGLGraphicsManager::getOverlayHeight() {
@@ -340,11 +375,26 @@ int16 OpenGLGraphicsManager::getOverlayWidth() {
 //
 
 bool OpenGLGraphicsManager::showMouse(bool visible) {
-	return false;
+	if (_mouseVisible == visible)
+		return visible;
+
+	bool last = _mouseVisible;
+	_mouseVisible = visible;
+	_mouseNeedsRedraw = true;
+
+	return last;
+}
+
+void OpenGLGraphicsManager::setMousePos(int x, int y) {
+	if (x != _mouseCurState.x || y != _mouseCurState.y) {
+		_mouseNeedsRedraw = true;
+		_mouseCurState.x = x;
+		_mouseCurState.y = y;
+	}
 }
 
 void OpenGLGraphicsManager::warpMouse(int x, int y) {
-
+	setMousePos(x, y);
 }
 
 void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
@@ -371,12 +421,72 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 // Intern
 //
 
+void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type) {
+	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
+		bpp = 4;
+		glFormat = GL_RGBA;
+		type = GL_UNSIGNED_BYTE;
+	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) {  // RGB888
+		bpp = 3;
+		glFormat = GL_RGB;
+		type = GL_UNSIGNED_BYTE;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {  // RGB565
+		bpp = 2;
+		glFormat = GL_RGB;
+		type = GL_UNSIGNED_SHORT_5_6_5;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {  // RGB555
+		bpp = 2;
+		glFormat = GL_RGB;
+		type = GL_UNSIGNED_SHORT_5_5_5_1;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {  // RGBA4444
+		bpp = 2;
+		glFormat = GL_RGBA;
+		type = GL_UNSIGNED_SHORT_4_4_4_4;
+	} else if (pixelFormat == Graphics::PixelFormat::createFormatCLUT8()) {  // CLUT8
+		bpp = 1;
+		glFormat = GL_RGB;
+		type = GL_COLOR_INDEX;
+	} else {
+		error("Not supported format");
+	}
+}
+
 void OpenGLGraphicsManager::internUpdateScreen() {
 
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
-	return false;
+	if (!_gameTexture) {
+		byte bpp;
+		GLenum format;
+		GLenum type;
+		getGLPixelFormat(_screenFormat, bpp, format, type);
+		_gameTexture = new GLTexture(bpp, format, type);
+	} else
+		_gameTexture->refresh();
+
+	if (!_overlayTexture)
+		_overlayTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
+	else
+		_overlayTexture->refresh();
+
+	if (!_mouseTexture)
+		_mouseTexture = new GLTexture(4, GL_RGBA, GL_UNSIGNED_BYTE);
+	else
+		_mouseTexture->refresh();
+
+	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
+	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
+
+	glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
+	return true;
 }
 
 void OpenGLGraphicsManager::unloadGFXMode() {

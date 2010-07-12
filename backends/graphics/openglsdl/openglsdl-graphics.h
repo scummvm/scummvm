@@ -44,11 +44,16 @@ public:
 
 	virtual void init();
 
+#ifdef USE_RGB_COLOR
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+#endif
+
+	virtual void warpMouse(int x, int y);
+
 	virtual void forceFullRedraw();
 	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
 	virtual bool isScalerHotkey(const Common::Event &event);
 	virtual void adjustMouseEvent(Common::Event &event);
-	virtual void setMousePos(int x, int y);
 	virtual void toggleFullScreen();
 	virtual bool saveScreenshot(const char *filename);
 

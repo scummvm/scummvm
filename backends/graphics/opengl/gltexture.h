@@ -55,61 +55,32 @@ class GLTexture {
 public:
 	static void initGLExtensions();
 
-	GLTexture();
+	GLTexture(byte bpp, GLenum format, GLenum type);
 	virtual ~GLTexture();
 
 	virtual void refresh();
 
 	virtual void allocBuffer(GLuint width, GLuint height);
 	virtual void fillBuffer(byte x);
-	virtual void updateBuffer(GLuint x, GLuint y, GLuint width, GLuint height,
-							  const void* buf, int pitch);
+	virtual void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
+		GLuint w, GLuint h);
 
 	virtual void drawTexture() { drawTexture(0, 0, _surface.w, _surface.h); }
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
-	const Graphics::Surface* getSurface() const { return &_surface; }
+	Graphics::Surface *getSurface() { return &_surface; }
 
 	GLuint getWidth() const { return _surface.w; }
 	GLuint getHeight() const { return _surface.h; }
 	GLuint getTextureName() const { return _textureName; }
 
 protected:
-	virtual byte bytesPerPixel() const = 0;
-	virtual GLenum glFormat() const = 0;
-	virtual GLenum glType() const = 0;
+	const byte _bytesPerPixel;
+	const GLenum _glFormat;
+	const GLenum _glType;
+
 	Graphics::Surface _surface;
 	GLuint _textureName;
 	GLuint _textureWidth;
 	GLuint _textureHeight;
-};
-
-/**
- * OpenGL RGBA 32 bit texture
- */
-class GL32Texture : public GLTexture {
-protected:
-	virtual byte bytesPerPixel() const { return 4; }
-	virtual GLenum glFormat() const { return GL_RGBA; }
-	virtual GLenum glType() const { return GL_UNSIGNED_BYTE; }
-};
-
-/**
- * OpenGL RGBA4444 texture
- */
-class GL4444Texture : public GLTexture {
-protected:
-	virtual byte bytesPerPixel() const { return 2; }
-	virtual GLenum glFormat() const { return GL_RGBA; }
-	virtual GLenum glType() const { return GL_UNSIGNED_SHORT_4_4_4_4; }
-};
-
-/**
- * OpenGL RGB565 texture
- */
-class GL565Texture : public GLTexture {
-protected:
-	virtual byte bytesPerPixel() const { return 2; }
-	virtual GLenum glFormat() const { return GL_RGB; }
-	virtual GLenum glType() const { return GL_UNSIGNED_SHORT_5_6_5; }
 };

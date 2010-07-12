@@ -53,7 +53,7 @@ public:
 	virtual int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const;
@@ -91,10 +91,14 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg);
 
+	virtual void setMousePos(int x, int y);
+
 protected:
 	GLTexture* _gameTexture;
 	GLTexture* _overlayTexture;
 	GLTexture* _mouseTexture;
+
+	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type);
 
 	virtual void internUpdateScreen();
 	virtual bool loadGFXMode();
@@ -108,6 +112,9 @@ protected:
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
 #endif
+
+	bool _overlayVisible;
+	Graphics::PixelFormat _overlayFormat;
 
 	enum {
 		kTransactionNone = 0,
@@ -144,6 +151,40 @@ protected:
 #endif
 	};
 	VideoState _videoMode, _oldVideoMode;
+
+
+	struct MousePos {
+		// The mouse position, using either virtual (game) or real
+		// (overlay) coordinates.
+		int16 x, y;
+
+		// The size and hotspot of the original cursor image.
+		int16 w, h;
+		int16 hotX, hotY;
+
+		// The size and hotspot of the pre-scaled cursor image, in real
+		// coordinates.
+		int16 rW, rH;
+		int16 rHotX, rHotY;
+
+		// The size and hotspot of the pre-scaled cursor image, in game
+		// coordinates.
+		int16 vW, vH;
+		int16 vHotX, vHotY;
+
+		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
+		             rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
+		             vHotX(0), vHotY(0)
+			{ }
+	};
+
+	MousePos _mouseCurState;
+	bool _mouseVisible;
+	bool _mouseNeedsRedraw;
+
+	// Shake mode
+	int _currentShakePos;
+	int _newShakePos;
 };
 
 #endif

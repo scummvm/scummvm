@@ -60,7 +60,11 @@ void GLTexture::initGLExtensions() {
 	}
 }
 
-GLTexture::GLTexture() :
+GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
+	:
+	_bytesPerPixel(bpp),
+	_glFormat(format),
+	_glType(type),
 	_textureWidth(0),
 	_textureHeight(0) {
 
@@ -81,29 +85,29 @@ GLTexture::~GLTexture() {
 
 void GLTexture::refresh() {
 	// Generates the texture ID for GL
-	CHECK_GL_ERROR( glGenTextures(1, &_textureName) );
+	//CHECK_GL_ERROR( glGenTextures(1, &_textureName) );
+	updateBuffer(_surface.pixels, _surface.bytesPerPixel, 0, 0, _surface.w, _surface.h);
 }
 
 void GLTexture::allocBuffer(GLuint w, GLuint h) {
-	int bpp = bytesPerPixel();
 	_surface.w = w;
 	_surface.h = h;
-	_surface.bytesPerPixel = bpp;
+	_surface.bytesPerPixel = _bytesPerPixel;
 
 	if (w <= _textureWidth && h <= _textureHeight)
 		// Already allocated a sufficiently large buffer
 		return;
 
 	if (npot_supported) {
-		_textureWidth = _surface.w;
-		_textureHeight = _surface.h;
+		_textureWidth = w;
+		_textureHeight = h;
 	} else {
-		_textureWidth = nextHigher2(_surface.w);
-		_textureHeight = nextHigher2(_surface.h);
+		_textureWidth = nextHigher2(w);
+		_textureHeight = nextHigher2(h);
 	}
-	_surface.pitch = _textureWidth * bpp;
+	_surface.pitch = w * _bytesPerPixel;
 
-	_surface.create(w, h, bytesPerPixel());
+	//_surface.create(w, h, _bytesPerPixel);
 
 	// Allocate room for the texture now, but pixel data gets uploaded
 	// later (perhaps with multiple TexSubImage2D operations).
@@ -112,26 +116,26 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	CHECK_GL_ERROR( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST) );
 	CHECK_GL_ERROR( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
 	CHECK_GL_ERROR( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
-	CHECK_GL_ERROR( glTexImage2D(GL_TEXTURE_2D, 0, glFormat(),
+	CHECK_GL_ERROR( glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
 		     _textureWidth, _textureHeight,
-		     0, glFormat(), glType(), NULL) );
+		     0, _glFormat, _glType, NULL) );
 }
 
-void GLTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h, const void* buf, int pitch) {
+void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLuint w, GLuint h) {
 	CHECK_GL_ERROR( glBindTexture(GL_TEXTURE_2D, _textureName) );
 
-	if (static_cast<int>(w) * bytesPerPixel() == pitch) {
+	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
 		CHECK_GL_ERROR( glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
-						glFormat(), glType(), buf) );
-		memcpy(_surface.pixels, buf, w * pitch);
+						_glFormat, _glType, buf) );
+		//memcpy(_surface.pixels, buf, w * pitch);
 	} else {
 		// GLES removed the ability to specify pitch, so we
 		// have to do this row by row.
 		const byte* src = static_cast<const byte*>(buf);
 		do {
 			CHECK_GL_ERROR( glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
-							w, 1, glFormat(), glType(), src) );
-			memcpy(_surface.pixels, src, pitch);
+							w, 1, _glFormat, _glType, src) );
+			//memcpy(_surface.pixels, src, pitch);
 			++y;
 			src += pitch;
 		} while (--h);
@@ -139,11 +143,11 @@ void GLTexture::updateBuffer(GLuint x, GLuint y, GLuint w, GLuint h, const void*
 }
 
 void GLTexture::fillBuffer(byte x) {
-	byte* tmpbuf = new byte[_surface.h * _surface.w * bytesPerPixel()];
-	memset(tmpbuf, 0, _surface.h * _surface.w * bytesPerPixel());
+	byte* tmpbuf = new byte[_surface.h * _surface.w * _bytesPerPixel];
+	memset(tmpbuf, 0, _surface.h * _surface.w * _bytesPerPixel);
 	CHECK_GL_ERROR( glBindTexture(GL_TEXTURE_2D, _textureName) );
 	CHECK_GL_ERROR( glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _surface.w, _surface.h,
-					glFormat(), glType(), tmpbuf) );
+					_glFormat, _glType, tmpbuf) );
 	delete[] tmpbuf;
 }
 

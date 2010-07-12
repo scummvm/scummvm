@@ -45,6 +45,81 @@ void OpenGLSdlGraphicsManager::init() {
 	OpenGLGraphicsManager::init();
 }
 
+#ifdef USE_RGB_COLOR
+
+const Graphics::PixelFormat RGBList[] = {
+#if defined(ENABLE_32BIT)
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), // RGBA8888
+	Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),  // RGB888
+#endif
+	Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),  // RGB565
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),  // RGB555
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  // RGBA4444
+};
+
+Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() {
+	static Common::List<Graphics::PixelFormat> list;
+	static bool inited = false;
+
+	if (inited)
+		return list;
+
+	int listLength = ARRAYSIZE(RGBList);
+
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	if (_hwscreen) {
+		// Get our currently set hardware format
+		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel,
+			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss,
+			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss,
+			_hwscreen->format->Rshift, _hwscreen->format->Gshift,
+			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
+
+		// Workaround to MacOSX SDL not providing an accurate Aloss value.
+		if (_hwscreen->format->Amask == 0)
+			format.aLoss = 8;
+
+		// Push it first, as the prefered format.
+		for (int i = 0; i < listLength; i++) {
+			if (RGBList[i] == format) {
+				list.push_back(format);
+				break;
+			}
+		}
+
+		// Mark that we don't need to do this any more.
+		inited = true;
+	}
+
+	for (int i = 0; i < listLength; i++) {
+		if (inited && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (RGBList[i] != format)
+			list.push_back(RGBList[i]);
+	}
+	//list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+	return list;
+}
+
+#endif
+
+void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+		int y1 = y;
+
+		/*if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+			y1 = real2Aspect(y);*/
+
+		if (!_overlayVisible)
+			SDL_WarpMouse(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
+		else
+			SDL_WarpMouse(x, y1);
+
+		setMousePos(x, y);
+	}
+}
+
+
 void OpenGLSdlGraphicsManager::forceFullRedraw() {
 
 }
@@ -58,10 +133,6 @@ bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 }
 
 void OpenGLSdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
-
-}
-
-void OpenGLSdlGraphicsManager::setMousePos(int x, int y) {
 
 }
 
@@ -83,7 +154,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
-
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : SDL_OPENGL
 	);
@@ -99,7 +169,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		}
 	}
 
-	return true;
+	return OpenGLGraphicsManager::loadGFXMode();
 }
 
 void OpenGLSdlGraphicsManager::unloadGFXMode() {
