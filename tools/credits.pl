@@ -944,7 +944,7 @@ begin_credits("Credits");
 		add_person("Ravi I.", "", "SCI0 sound resource specification");
 		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
 		add_person("Rune Orsval", "", "Configuration file editor");
-		add_person("Rickard Lind", "", "MT32->GM MIDI mapping magic, sound research");
+		add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
 		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
 		add_person("Robey Pointer", "", "Bug tracking system hosting");
 		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
@@ -955,8 +955,8 @@ begin_credits("Credits");
 		add_person("Sean Terrell", "", "");
 	  end_persons();
 	  add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
-					  "for allowing the FreeSCI VM extension as a ".
-					  "course project in his Advanced OS course.");
+	                "for allowing the FreeSCI VM extension as a ".
+	                "course project in his Advanced OS course.");
 	  add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
 	end_section();
 

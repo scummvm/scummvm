@@ -335,9 +335,6 @@ Other contributions
     Hungarian:
        Alex Bevilacqua
 
-    Italian:
-       Matteo Angelino
-
     Russian:
        Eugene Sandulenko
 
@@ -418,7 +415,7 @@ Other contributions
      Ravi I.               - SCI0 sound resource specification
      Ruediger Hanke        - Port to the MorphOS platform
      Rune Orsval           - Configuration file editor
-     Rickard Lind          - MT32->GM MIDI mapping magic, sound research
+     Rickard Lind          - MT-32->GM MIDI mapping magic, sound research
      Rink Springer         - Port to the DOS platform, several bug fixes
      Robey Pointer         - Bug tracking system hosting
      Sergey Lapin          - Port of Carl's type 2 decompression code

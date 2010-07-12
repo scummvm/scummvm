@@ -7,14 +7,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM VERSION\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
-"POT-Creation-Date: 2010-07-09 18:10+0100\n"
+"POT-Creation-Date: 2010-07-12 17:44+0200\n"
 "PO-Revision-Date: 2009-11-25 07:42-0500\n"
 "Last-Translator: Alex Bevilacqua <alexbevi@gmail.com>\n"
 "Language-Team: Hungarian\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=cp1250\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: \n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: gui/about.cpp:96
@@ -493,8 +493,9 @@ msgid "Specifies output sound device or sound card emulator"
 msgstr ""
 
 #: gui/options.cpp:648
-msgid "MT32 Device:"
-msgstr ""
+#, fuzzy
+msgid "MT-32 Device:"
+msgstr "Zene mennyiség:"
 
 #: gui/options.cpp:648
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"

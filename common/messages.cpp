@@ -128,8 +128,8 @@ static const char * const _messageIds[] = {
 	/* 124 */ "MAME OPL emulator",
 	/* 125 */ "MIDI",
 	/* 126 */ "MIDI gain:",
-	/* 127 */ "MT-32 Emulator",
-	/* 128 */ "MT32 Device:",
+	/* 127 */ "MT-32 Device:",
+	/* 128 */ "MT-32 Emulator",
 	/* 129 */ "Main screen scaling:",
 	/* 130 */ "Map",
 	/* 131 */ "Mass Add...",
@@ -324,7 +324,7 @@ struct PoMessageEntry {
 };
 
 static const PoMessageEntry _translation_ru_RU[] = {
-	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-06-13 20:55+0300\nLast-Translator: Eugene Sandulenko <sev@scummvm.org>\nLanguage-Team: Russian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-5\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n" },
+	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2010-06-13 20:55+0300\nLast-Translator: Eugene Sandulenko <sev@scummvm.org>\nLanguage-Team: Russian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-5\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=3;     plural=n%10==1 && n%100!=11 ? 0 :            n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n" },
 	{ 1, "   \262\353 \343\322\325\340\325\335\353, \347\342\336 \345\336\342\330\342\325 \322\353\331\342\330?   " },
 	{ 2, " (\260\332\342\330\322\335\320\357)" },
 	{ 3, " (\270\323\340\353)" },
@@ -451,8 +451,8 @@ static const PoMessageEntry _translation_ru_RU[] = {
 	{ 124, "\315\334\343\333\357\342\336\340 MAME OPL:" },
 	{ 125, "MIDI" },
 	{ 126, "\303\341\330\333\325\335\330\325 MIDI:" },
-	{ 127, "\315\334\343\333\357\342\336\340 MT-32" },
-	{ 128, "\303\341\342\340\336\331\341\342\322\336 MT32:" },
+	{ 127, "\303\341\342\340\336\331\341\342\322\336 MT32:" },
+	{ 128, "\315\334\343\333\357\342\336\340 MT-32" },
 	{ 129, "\274\320\341\350\342\320\321 \323\333\320\322\335\336\323\336 \355\332\340\320\335\320:" },
 	{ 130, "\275\320\327\335\320\347\330\342\354" },
 	{ 131, "\264\336\321. \334\335\336\323\336..." },
@@ -642,7 +642,7 @@ static const PoMessageEntry _translation_ru_RU[] = {
 };
 
 static const PoMessageEntry _translation_fr_FR[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-07-09 18:17+0100\nLast-Translator: Thierry Crozat <criezy@scummvm.org>\nLanguage-Team: French <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Francais\nPlural-Forms: nplurals=2; plural=n>1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2010-07-09 18:17+0100\nLast-Translator: Thierry Crozat <criezy@scummvm.org>\nLanguage-Team: French <scummvm-devel@lists.sf.net>\nLanguage: Francais\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n>1;\n" },
 	{ 1, "Voulez-vous vraiment quitter?" },
 	{ 2, "(Actif)" },
 	{ 3, "(Jeu)" },
@@ -769,8 +769,8 @@ static const PoMessageEntry _translation_fr_FR[] = {
 	{ 124, "\311mulateur MAME OPL" },
 	{ 125, "MIDI" },
 	{ 126, "Gain MIDI:" },
-	{ 127, "\311mulateur MT-32" },
-	{ 128, "Sortie MT-32:" },
+	{ 127, "Sortie MT-32:" },
+	{ 128, "\311mulateur MT-32" },
 	{ 129, "\311chelle de l'\351cran principal" },
 	{ 130, "Affecter" },
 	{ 131, "Ajout Massif..." },
@@ -960,7 +960,7 @@ static const PoMessageEntry _translation_fr_FR[] = {
 };
 
 static const PoMessageEntry _translation_it_IT[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-06-30 23:56+0100\nLast-Translator: Maff <matteo.maff at gmail dot com>\nLanguage-Team: Italian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Italiano\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2010-06-30 23:56+0100\nLast-Translator: Maff <matteo.maff at gmail dot com>\nLanguage-Team: Italian\nLanguage: Italiano\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\n" },
 	{ 1, "   Sei sicuro di voler uscire?   " },
 	{ 2, " (Attivo)" },
 	{ 3, " (Gioco)" },
@@ -1087,8 +1087,8 @@ static const PoMessageEntry _translation_it_IT[] = {
 	{ 124, "Emulatore OPL MAME" },
 	{ 125, "MIDI" },
 	{ 126, "Guadagno MIDI:" },
-	{ 127, "Emulatore MT-32" },
-	{ 128, "Disposit. MT32:" },
+	{ 127, "Disposit. MT32:" },
+	{ 128, "Emulatore MT-32" },
 	{ 129, "Schermo principale:" },
 	{ 130, "Mappa" },
 	{ 131, "Agg. in massa..." },
@@ -1278,7 +1278,7 @@ static const PoMessageEntry _translation_it_IT[] = {
 };
 
 static const PoMessageEntry _translation_ca_ES[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-06-26 16:45+0100\nLast-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\nLanguage-Team: Catalan <scummvm-devel@lists.sf.net>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Catalan\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2010-06-26 16:45+0100\nLast-Translator: Jordi Vilalta Prat <jvprat@gmail.com>\nLanguage-Team: Catalan <scummvm-devel@lists.sf.net>\nLanguage: Catalan\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\n" },
 	{ 2, " (Actiu)" },
 	{ 3, " (Joc)" },
 	{ 4, " (Global)" },
@@ -1402,8 +1402,8 @@ static const PoMessageEntry _translation_ca_ES[] = {
 	{ 124, "Emulador OPL de MAME" },
 	{ 125, "MIDI" },
 	{ 126, "Guany MIDI:" },
-	{ 127, "Emulador de MT-32" },
-	{ 128, "Dispositiu MT32:" },
+	{ 127, "Dispositiu MT32:" },
+	{ 128, "Emulador de MT-32" },
 	{ 129, "Escalat de la pantalla principal:" },
 	{ 130, "Mapeja" },
 	{ 131, "Addici\363 Massiva..." },
@@ -1590,7 +1590,7 @@ static const PoMessageEntry _translation_ca_ES[] = {
 };
 
 static const PoMessageEntry _translation_hu_HU[] = {
-	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2009-11-25 07:42-0500\nLast-Translator: Alex Bevilacqua <alexbevi@gmail.com>\nLanguage-Team: Hungarian\nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1250\nContent-Transfer-Encoding: 8bit\nLanguage: \nPlural-Forms: nplurals=2; plural=(n != 1);\n" },
+	{ 0, "Project-Id-Version: ScummVM VERSION\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2009-11-25 07:42-0500\nLast-Translator: Alex Bevilacqua <alexbevi@gmail.com>\nLanguage-Team: Hungarian\nLanguage: \nMIME-Version: 1.0\nContent-Type: text/plain; charset=cp1250\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=(n != 1);\n" },
 	{ 14, "<alap\351rtelmezett>" },
 	{ 16, "AdLib vezet :" },
 	{ 17, "AdLib vezet :" },
@@ -1611,6 +1611,7 @@ static const PoMessageEntry _translation_hu_HU[] = {
 	{ 115, "Kulcsok" },
 	{ 124, "AdLib vezet :" },
 	{ 126, "MIDI nyeres\351g:" },
+	{ 127, "Zene mennyis\351g:" },
 	{ 134, "Vegyes AdLib/MIDI m\363d" },
 	{ 139, "Zene mennyis\351g:" },
 	{ 140, "Zene mennyis\351g:" },
@@ -1648,7 +1649,7 @@ static const PoMessageEntry _translation_hu_HU[] = {
 };
 
 static const PoMessageEntry _translation_de_DE[] = {
-	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-09 18:10+0100\nPO-Revision-Date: 2010-07-09 20:37+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nLanguage: Deutsch\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
+	{ 0, "Project-Id-Version: ScummVM 1.2.0svn\nReport-Msgid-Bugs-To: scummvm-devel@lists.sf.net\nPOT-Creation-Date: 2010-07-12 17:44+0200\nPO-Revision-Date: 2010-07-09 20:37+0100\nLast-Translator: Simon Sawatzki\nLanguage-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki <SimSaw@gmx.de>\nLanguage: Deutsch\nMIME-Version: 1.0\nContent-Type: text/plain; charset=iso-8859-1\nContent-Transfer-Encoding: 8bit\nPlural-Forms: nplurals=2; plural=n != 1;\n" },
 	{ 1, "   M\366chten Sie wirklich beenden?    " },
 	{ 2, " (Aktiv)" },
 	{ 3, " (Spiel)" },
@@ -1775,8 +1776,8 @@ static const PoMessageEntry _translation_de_DE[] = {
 	{ 124, "MAME-OPL-Emulator" },
 	{ 125, "MIDI" },
 	{ 126, "MIDI-Lautst\344rke:" },
-	{ 127, "MT-32-Emulation" },
-	{ 128, "MT32-Ger\344t:" },
+	{ 127, "MT32-Ger\344t:" },
+	{ 128, "MT-32-Emulation" },
 	{ 129, "Hauptbildschirm-Skalierung:" },
 	{ 130, "Zuweisen" },
 	{ 131, "Durchsuchen" },
