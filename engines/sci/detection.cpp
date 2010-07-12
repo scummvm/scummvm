@@ -105,6 +105,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	// TODO: Inside The Chest/Behind the Developer's Shield
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
+	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"shivers",         "Shivers"},
@@ -164,6 +165,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "lsl3",            GID_LSL3 },
 	{ "lsl5",            GID_LSL5 },
 	{ "lsl6",            GID_LSL6 },
+	{ "lsl6hires",       GID_LSL6HIRES },
 	{ "lsl7",            GID_LSL7 },
 	{ "mothergoose",     GID_MOTHERGOOSE },
 	{ "msastrochicken",  GID_MSASTROCHICKEN },
