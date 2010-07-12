@@ -358,6 +358,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_KQ6,           500,  0,              "rm500", "init",           -1,    0, { 0,   0 } }, // going to island of the beast
     { GID_KQ6,           520,  0,              "rm520", "init",           -1,    0, { 0,   0 } }, // going to boiling water trap on beast isle
     { GID_KQ6,            30,  0,               "rats", "changeState",    -1,    0, { 0,   0 } }, // rats in the catacombs
+    { GID_LSL6,           85,  0,          "washcloth", "doVerb",         -1,    0, { 0,   0 } }, // washcloth in inventory
     { GID_SQ1,           703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
     { GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
     { GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
