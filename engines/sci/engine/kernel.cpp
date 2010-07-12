@@ -286,6 +286,7 @@ static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kUnLoad_workarounds[] = {
     { GID_LSL6,          130,  0,    "recruitLarryScr", "changeState",    -1,    0, { 1,    0 } }, // during intro, a 3rd parameter is passed by accident
+    { GID_LSL6,          740,  0,        "showCartoon", "changeState",    -1,    0, { 1,    0 } }, // during end, intro, a 4 additional parameters are passed by accident
     { GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
