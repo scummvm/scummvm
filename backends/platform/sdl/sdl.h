@@ -274,6 +274,13 @@ protected:
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
+	Common::List<Graphics::PixelFormat> _supportedFormats;
+
+	/**
+	 * Update the list of supported pixel formats.
+	 * This method is invoked by loadGFXMode().
+	 */
+	void detectSupportedFormats();
 #endif
 
 	// temporary screen (for scalers)
