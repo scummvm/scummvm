@@ -307,6 +307,8 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 	if (!_addToFlag)
 		clearColor = _screen->getColorWhite();
 
+	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
+
 	ptr = celBitmap;
 	if (!_mirroredFlag) {
 		// Draw bitmap to screen
@@ -314,7 +316,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, drawMask, curByte, priority, 0);
 
 			x++;
 
@@ -331,7 +333,7 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, drawMask, curByte, priority, 0);
 			
 			if (x == leftX) {
 				if (width > rightX - leftX) // Skip extra pixels at the end of the row
@@ -658,8 +660,6 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					if (pic_priority == 255)
-						_priority = 0; // if priority not set, use priority 0
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
