@@ -187,7 +187,8 @@ void Testsuite::clearScreen() {
 	byte *buffer = new byte[size];
 	memset(buffer, 0, size);
 	g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), g_system->getHeight());
-	g_system->updateScreen();	
+	g_system->updateScreen();
+	delete[] buffer;
 }
 	
 void Testsuite::clearScreen(bool flag) {

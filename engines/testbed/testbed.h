@@ -27,6 +27,8 @@
  
 #include "engines/engine.h"
 
+#include "gui/options.h"
+
 #include "testbed/testsuite.h"
 
 namespace Testbed {
@@ -47,7 +49,7 @@ public:
 	 * All testsuites are disabled by default
 	 * To enable testsuite X, call enableTestsuite("X", true);
 	 */
-	void enableTestsuite(const char *name, bool enable);
+	void enableTestsuite(const Common::String &name, bool enable);
 	
 	/**
 	 * Invokes configured testsuites.
@@ -57,7 +59,22 @@ public:
 	bool hasFeature(EngineFeature f) const;
 
 private:
-	Common::Array<Testsuite*> _testsuiteList;
+	Common::Array<Testsuite *> _testsuiteList;
+};
+
+class TestbedOptionsDialog : public GUI::OptionsDialog {
+public:
+	TestbedOptionsDialog();
+	~TestbedOptionsDialog();
+	void addCheckbox(const Common::String &tsName);
+	bool isEnabled(const Common::String &tsName);
+
+private:
+	Common::Array<GUI::CheckboxWidget *> _checkBoxes;
+	const int _hOffset; // current offset from left
+	int _vOffset; // current offset from top
+	const int _boxWidth;
+	const int _boxHeight;
 };
 
 } // End of namespace Testbed
