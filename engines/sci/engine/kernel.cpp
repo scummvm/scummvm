@@ -33,26 +33,6 @@
 
 namespace Sci {
 
-// Uncompiled kernel signatures are formed from a string of letters.
-// each corresponding to a type of a parameter (see below).
-// Use small letters to indicate end of sum type.
-// Use capital letters for sum types, e.g.
-// "LNoLr" for a function which takes two arguments:
-// (1) list, node or object
-// (2) list or ref
-#define KSIG_SPEC_LIST 'l'
-#define KSIG_SPEC_NODE 'n'
-#define KSIG_SPEC_OBJECT 'o'
-#define KSIG_SPEC_REF 'r' // Said Specs and strings
-#define KSIG_SPEC_ARITHMETIC 'i'
-#define KSIG_SPEC_NULL 'z'
-#define KSIG_SPEC_ANY '.'
-#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
-
-#define KSIG_SPEC_SUM_DONE ('a' - 'A')
-
-
-
 /** Default kernel name table. */
 static const char *s_defaultKernelNames[] = {
 	/*0x00*/ "Load",
