@@ -519,7 +519,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					_dataincToAdd = 1;
 					break;
 				default:
-					break;
+					error("unsupported _soundVersion");
 				}
 				break;
 			case kResetOnPause:
