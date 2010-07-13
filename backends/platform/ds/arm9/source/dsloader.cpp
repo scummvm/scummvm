@@ -31,19 +31,26 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
-#include <sys/fcntl.h>
+#include <sys/_default_fcntl.h>
+
+#include "common/str.h"
+#include "common/util.h"
+#include "backends/fs/stdiostream.h"
+#include "backends/fs/ds/ds-fs.h"
+#include "dsmain.h"
+#include "fat/gba_nds_fat.h"
 
 #include "backends/platform/ds/arm9/source/dsloader.h"
 
 #define __DS_DEBUG_PLUGINS__
 
 #ifdef __DS_DEBUG_PLUGINS__
-#define DBG(x,...) printf(x, ## __VA_ARGS__)
+#define DBG(x,...) consolePrintf(x, ## __VA_ARGS__)
 #else
 #define DBG(x,...)
 #endif
 
-#define seterror(x,...) fprintf(stderr,x, ## __VA_ARGS__)
+#define seterror(x,...) consolePrintf(x, ## __VA_ARGS__)
 
 // Expel the symbol table from memory
 void DLObject::discard_symtab() {
@@ -333,7 +340,7 @@ bool DLObject::load(int fd) {
 
 	for (int i = 0; i < ehdr.e_phnum; i++) {	//	Load our 2 segments
 
-		fprintf(stderr, "Loading segment %d\n", i);
+		DBG("Loading segment %d\n", i);
 
 		if (readProgramHeaders(fd, &ehdr, &phdr, i) == false)
 			return false;
@@ -365,16 +372,22 @@ bool DLObject::load(int fd) {
 
 bool DLObject::open(const char *path) {
 	int fd;
+
+	Common::SeekableReadStream* DLFile; //TODO: reimplement everything with SeekableReadStream instead of fd
 	void *ctors_start, *ctors_end;
 
-	DBG(("open(\"%s\")\n", path));
+	DBG("open(\"%s\")\n", path);
 
-	if ((fd = ::open(path, O_RDONLY)) < 0) {
+	Common::FSNode file(path);
+
+	if (!(DLFile = file.createReadStream())) {
 		seterror("%s not found.", path);
 		return false;
 	}
 
-	// Try to load and relocate
+	DBG("%s found!\n", path);
+
+	/*Try to load and relocate*/
 	if (!load(fd)) {
 		::close(fd);
 		unload();
@@ -403,6 +416,7 @@ bool DLObject::open(const char *path) {
 		(**f)();
 
 	DBG(("%s opened ok.\n", path));
+	return false;
 	return true;
 }
 
