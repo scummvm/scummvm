@@ -31,49 +31,49 @@
 #define MAXDLERRLEN 80
 
 class DLObject {
-	protected:
-		char *_errbuf; /* For error messages, at least MAXDLERRLEN in size */
+protected:
+    char *_errbuf; /* For error messages, at least MAXDLERRLEN in size */
 
-		void *_segment, *_symtab;
-		char *_strtab;
-		int _symbol_cnt;
-		int _symtab_sect;
-		void *_dtors_start, *_dtors_end;
+    void *_segment, *_symtab;
+    char *_strtab;
+    int _symbol_cnt;
+    int _symtab_sect;
+    void *_dtors_start, *_dtors_end;
 
-		int _segmentSize;
+    int _segmentSize;
 
-		void seterror(const char *fmt, ...);
-		void unload();
-		bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
-		bool load(Common::SeekableReadStream* DLFile);
+    void seterror(const char *fmt, ...);
+    void unload();
+    bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+    bool load(Common::SeekableReadStream* DLFile);
 
-		bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
-		bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
-		bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
-		Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
-		int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-		bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
-		void relocateSymbols(Elf32_Addr offset);
-		bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+    bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+    bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+    bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+    Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+    int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+    bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
+    void relocateSymbols(Elf32_Addr offset);
+    bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
-	public:
-		bool open(const char *path);
-		bool close();
-		void *symbol(const char *name);
-		void discard_symtab();
+public:
+    bool open(const char *path);
+    bool close();
+    void *symbol(const char *name);
+    void discard_symtab();
 
-		DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL),_symtab(NULL),
-				_strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
+    DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL), _symtab(NULL),
+            _strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
 };
 
 #define RTLD_LAZY 0
 
 extern "C" {
-  void *dlopen(const char *filename, int flags);
-  int dlclose(void *handle);
-  void *dlsym(void *handle, const char *symbol);
-  const char *dlerror();
-  void dlforgetsyms(void *handle);
+    void *dlopen(const char *filename, int flags);
+    int dlclose(void *handle);
+    void *dlsym(void *handle, const char *symbol);
+    const char *dlerror();
+    void dlforgetsyms(void *handle);
 }
 
 #endif /* DS_LOADER_H */
