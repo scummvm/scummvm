@@ -889,8 +889,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 		if (!textReference.isNull()) {
 			Common::String text = s->_segMan->getString(textReference);
-			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav")) {
-				// Remove "a:" from hero quest / quest for glory 1 export default filename
+			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav")) {
+				// Remove "a:" from hero quest / quest for glory export default filenames
 				text.deleteChar(0);
 				text.deleteChar(0);
 				s->_segMan->strcpy(textReference, text.c_str());
