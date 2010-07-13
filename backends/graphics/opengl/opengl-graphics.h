@@ -29,9 +29,15 @@
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
 
+namespace OpenGL {
+
 enum {
-	GFX_NORMAL = 0
+	GFX_NORMAL = 0,
+	GFX_DOUBLESIZE = 1,
+	GFX_TRIPLESIZE = 2
 };
+
+}
 
 /**
  * Open GL graphics manager

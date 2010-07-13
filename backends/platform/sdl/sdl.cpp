@@ -32,8 +32,10 @@
 #include "backends/events/sdl/sdl-events.h"
 #include "backends/mutex/sdl/sdl-mutex.h"
 #include "backends/timer/sdl/sdl-timer.h"
-//#include "backends/graphics/sdl/sdl-graphics.h"
+#include "backends/graphics/sdl/sdl-graphics.h"
+#ifdef USE_OPENGL
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#endif
 
 #include "icons/scummvm.xpm"
 
@@ -84,11 +86,31 @@ void OSystem_SDL::initBackend() {
 	}
 
 	if (_graphicsManager == 0) {
-		// Changed to OpenGL for testing
-		//_graphicsManager = new SdlGraphicsManager();
-		_graphicsManager = new OpenGLSdlGraphicsManager();
+#ifdef USE_OPENGL
+		/*if (ConfMan.hasKey("gfx_mode")) {
+			Common::String gfxMode(ConfMan.get("gfx_mode"));
 
+			_openglGraphicsMode = OpenGLSdlGraphicsManager::getSupportedGraphicsModes();
+
+			bool use_opengl = false;
+
+			while (_openglGraphicsMode->name) {
+				if (scumm_stricmp(_openglGraphicsMode->name, gfxMode.c_str()) == 0)
+					use_opengl = true;
+
+				_openglGraphicsMode++;
+			}
+
+			if (use_opengl) {
+				_graphicsManager = new OpenGLSdlGraphicsManager();
+				((OpenGLSdlGraphicsManager *)_graphicsManager)->init();
+			}
+		}*/
+		_graphicsManager = new OpenGLSdlGraphicsManager();
 		((OpenGLSdlGraphicsManager *)_graphicsManager)->init();
+#endif
+		if (_graphicsManager == 0)
+			_graphicsManager = new SdlGraphicsManager();
 	}
 
 	if (_audiocdManager == 0)

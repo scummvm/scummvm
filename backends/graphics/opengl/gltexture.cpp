@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef USE_OPENGL
+
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/opengl/glerrorcheck.h"
 
@@ -175,3 +177,5 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
 	CHECK_GL_ERROR( glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2) );
 }
+
+#endif

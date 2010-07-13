@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef USE_OPENGL
+
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
@@ -186,3 +188,5 @@ bool OpenGLSdlGraphicsManager::hotswapGFXMode() {
 void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	
 }
+
+#endif

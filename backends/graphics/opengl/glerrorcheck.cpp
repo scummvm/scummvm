@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DEBUG) //&& defined(USE_OPENGL)
+#if defined(DEBUG) && defined(USE_OPENGL)
 
 #include "backends/graphics/opengl/glerrorcheck.h"
 #include "common/debug.h"

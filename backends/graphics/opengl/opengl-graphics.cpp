@@ -23,8 +23,11 @@
  *
  */
 
+#ifdef USE_OPENGL
+
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "common/mutex.h"
+#include "common/translation.h"
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	:
@@ -41,7 +44,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	memset(&_videoMode, 0, sizeof(_videoMode));
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
-	_videoMode.mode = GFX_NORMAL;
+	_videoMode.mode = OpenGL::GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.fullscreen = false;
 }
@@ -91,7 +94,11 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 //
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Normal", GFX_NORMAL},
+	{"gl1x", _s("OpenGL Normal (no scaling)"), OpenGL::GFX_NORMAL},
+#ifdef USE_SCALERS
+	{"gl2x", "OpenGL 2x", OpenGL::GFX_DOUBLESIZE},
+	{"gl3x", "OpenGL 3x", OpenGL::GFX_TRIPLESIZE},
+#endif
 	{0, 0, 0}
 };
 
@@ -100,7 +107,7 @@ const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedGraphicsModes() 
 }
 
 int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
-	return GFX_NORMAL;
+	return OpenGL::GFX_NORMAL;
 }
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
@@ -108,7 +115,7 @@ bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
 }
 
 int OpenGLGraphicsManager::getGraphicsMode() const {
-	return GFX_NORMAL;
+	return OpenGL::GFX_NORMAL;
 }
 
 #ifdef USE_RGB_COLOR
@@ -496,3 +503,5 @@ void OpenGLGraphicsManager::unloadGFXMode() {
 bool OpenGLGraphicsManager::hotswapGFXMode() {
 	return false;
 }
+
+#endif
