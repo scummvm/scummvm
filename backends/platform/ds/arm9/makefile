@@ -1,6 +1,7 @@
 srcdir      ?= .
 DEPDIR      := .deps
 
+VERBOSE_BUILD = 1
 DYNAMIC_MODULES = 1
 libndsdir = $(DEVKITPRO)/libnds
 #libndsdir = /home/neil/devkitpror21/libnds
@@ -247,7 +248,7 @@ endif
 
 DEFINES += -DREDUCE_MEMORY_USAGE
 
-LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
+LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt#-Wl,--gc-sections
 
 ifdef WRAP_MALLOC
 	LDFLAGS += -Wl,--wrap,malloc
@@ -274,11 +275,11 @@ POST_OBJS_FLAGS = -Wl,--no-whole-archive
 endif
 
 #-Lscumm -lscumm -Lbase -lbase -Lcommon -lcommon -Lgraphics -lgraphics -Lgui -lgui -Lsound -lsound
-EXECUTABLE = scummvm.elf#$(portdir)/$(BUILD)/scummvm.elf
+EXECUTABLE = scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = $(portdir)/source/plugin.ld $(portdir)/source/plugin.syms $(EXECUTABLE)
-PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(portdir)/source/plugin.ld,--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu -Wl,--gc-sections -mno-crt0 $(DEVKITPRO)/devkitARM/arm-eabi/lib/ds_arm9_crt0.o
+PLUGIN_LDFLAGS += -mno-crt0 $(DEVKITPRO)/devkitARM/arm-eabi/lib/ds_arm9_crt0.o -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),-T$(portdir)/source/plugin.ld,--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu#-Wl,--gc-sections
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf
