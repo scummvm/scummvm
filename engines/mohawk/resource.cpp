@@ -103,7 +103,7 @@ void MohawkArchive::open(Common::SeekableReadStream *stream) {
 		else
 			debug (3, "Type[%02d]: Tag = \'%s\' ResTable Offset = %04x  NameTable Offset = %04x", i, tag2str(_types[i].tag), _types[i].resource_table_offset, _types[i].name_table_offset);
 
-		//Resource Table
+		// Resource Table
 		_mhk->seek(_rsrc.abs_offset + _types[i].resource_table_offset);
 		_types[i].resTable.resources = _mhk->readUint16BE();
 

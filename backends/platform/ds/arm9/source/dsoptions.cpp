@@ -8,15 +8,18 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
  *
  */
 
@@ -30,6 +33,8 @@
 #include "engines/scumm/scumm.h"
 #include "touchkeyboard.h"
 #include "gui/PopUpWidget.h"
+
+#include "common/translation.h"
 
 #define ALLOW_CPU_SCALER
 
@@ -51,27 +56,27 @@ static int confGetInt(Common::String key, int defaultVal) {
 
 DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
-	new GUI::ButtonWidget(this, 10, 170, 72, 16, "Close", GUI::kCloseCmd, 'C');
-	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, "ScummVM Main Menu", 0x40000000, 'M');
+	new GUI::ButtonWidget(this, 10, 170, 72, 16, _("~C~lose"), 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, 320 - 10 - 130, 170, 120, 16, _("ScummVM Main Menu"), 0, 0x40000000, 'M');
 
 	_tab = new GUI::TabWidget(this, 10, 5, 300, 230 - 20 - 40 - 20);
 
 	_tab->addTab("Controls");
 
-	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, "Left handed mode", 0, 'L');
-	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, "Indy fight controls", 0, 'I');
-	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, "Show mouse cursor", 0, 'T');
-	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, "Snap to edges", 0, 'T');
+	_leftHandedCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 130, 20, _("~L~eft handed mode"));
+	_indyFightCheckbox = new GUI::CheckboxWidget(_tab, 5, 20, 140, 20, _("~I~ndy fight controls"));
+	_showCursorCheckbox = new GUI::CheckboxWidget(_tab, 150, 5, 130, 20, _("Show mouse cursor"), 0, 0, 'T');
+	_snapToBorderCheckbox = new GUI::CheckboxWidget(_tab, 150, 20, 130, 20, _("Snap to edges"), 0, 0, 'T');
 
-	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, "Touch X Offset", Graphics::kTextAlignLeft);
-	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, 1);
+	new GUI::StaticTextWidget(_tab, 20, 35, 100, 15, _("Touch X Offset"), Graphics::kTextAlignLeft);
+	_touchX = new GUI::SliderWidget(_tab, 130, 35, 130, 12, "TODO: Add tooltip", 1);
 	_touchX->setMinValue(-8);
 	_touchX->setMaxValue(+8);
 	_touchX->setValue(0);
 	_touchX->setFlags(GUI::WIDGET_CLEARBG);
 
-	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, "Touch Y Offset", Graphics::kTextAlignLeft);
-	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, 2);
+	new GUI::StaticTextWidget(_tab, 20, 50, 100, 15, _("Touch Y Offset"), Graphics::kTextAlignLeft);
+	_touchY = new GUI::SliderWidget(_tab, 130, 50, 130, 12, "TODO: Add tooltip", 2);
 	_touchY->setMinValue(-8);
 	_touchY->setMaxValue(+8);
 	_touchY->setValue(0);
@@ -82,11 +87,11 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	new GUI::StaticTextWidget(_tab, 130 - 20, 65, 20, 15, "-8", Graphics::kTextAlignCenter);
 
 
-	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, "Use laptop trackpad-style cursor control", 0x20000001, 'T');
-	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, "Tap for left click, double tap right click", 0x20000002, 'T');
+	_touchPadStyle = new GUI::CheckboxWidget(_tab, 5, 80, 270, 20, _("Use laptop trackpad-style cursor control"), 0, 0x20000001, 'T');
+	_screenTaps = new GUI::CheckboxWidget(_tab, 5, 95, 285, 20, _("Tap for left click, double tap right click"), 0, 0x20000002, 'T');
 
-	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, "Sensitivity", Graphics::kTextAlignLeft);
-	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, 1);
+	_sensitivityLabel = new GUI::StaticTextWidget(_tab, 20, 110, 110, 15, _("Sensitivity"), Graphics::kTextAlignLeft);
+	_sensitivity = new GUI::SliderWidget(_tab, 130, 110, 130, 12, "TODO: Add tooltip", 1);
 	_sensitivity->setMinValue(4);
 	_sensitivity->setMaxValue(16);
 	_sensitivity->setValue(8);
@@ -94,20 +99,20 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab("Graphics");
 
-	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, "Initial top screen scale:", Graphics::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, _("Initial top screen scale:"), Graphics::kTextAlignLeft);
 
-	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, "100%", 0x30000001, 'T');
-	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 97, 80, 20, "150%", 0x30000002, 'T');
-	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 112, 80, 20, "200%", 0x30000003, 'T');
+	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, "100%", "TODO: Add tooltip", 0x30000001, 'T');
+	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 97, 80, 20, "150%", "TODO: Add tooltip", 0x30000002, 'T');
+	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 112, 80, 20, "200%", "TODO: Add tooltip", 0x30000003, 'T');
 
-	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, "Main screen scaling:", Graphics::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, _("Main screen scaling:"), Graphics::kTextAlignLeft);
 
-	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, "Hardware scale (fast, but low quality)", 0x10000001, 'T');
-	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, "Software scale (good quality, but slower)", 0x10000002, 'S');
-	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, "Unscaled (you must scroll left and right)", 0x10000003, 'S');
+	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, _("Hardware scale (fast, but low quality)"), 0, 0x10000001, 'T');
+	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, _("Software scale (good quality, but slower)"), 0, 0x10000002, 'S');
+	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, _("Unscaled (you must scroll left and right)"), 0, 0x10000003, 'S');
 
-	new GUI::StaticTextWidget(_tab, 5, 125, 110, 15, "Brightness:", Graphics::kTextAlignLeft);
-	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, 1);
+	new GUI::StaticTextWidget(_tab, 5, 125, 110, 15, _("Brightness:"), Graphics::kTextAlignLeft);
+	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, "TODO: Add tooltip", 1);
 	_gammaCorrection->setMinValue(0);
 	_gammaCorrection->setMaxValue(8);
 	_gammaCorrection->setValue(0);
@@ -116,8 +121,8 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab("General");
 
-	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, "High quality audio (slower) (reboot)", 0, 'T');
-	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, "Disable power off", 0, 'T');
+	_highQualityAudioCheckbox = new GUI::CheckboxWidget(_tab, 5, 5, 250, 20, _("High quality audio (slower) (reboot)"), 0, 0, 'T');
+	_disablePowerOff = new GUI::CheckboxWidget(_tab, 5, 20, 200, 20, _("Disable power off"), 0, 0, 'T');
 
 	_tab->setActiveTab(0);
 
@@ -125,7 +130,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 #ifdef DS_SCUMM_BUILD
 	if (!DS::isGBAMPAvailable()) {
-//		addButton(this, 100, 140, "Delete Save", 'dels', 'D');
+//		addButton(this, 100, 140, "Delete Save", 0, 'dels', 'D');
 	}
 #endif
 
@@ -133,7 +138,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 
 //#ifdef ALLOW_CPU_SCALER
-//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 'T');
+//	_cpuScaler = new GUI::CheckboxWidget(this, 160, 115, 90, 20, "CPU scaler", 0, 0, 'T');
 //#endif
 
 
@@ -364,7 +369,7 @@ void showOptionsDialog() {
 	DS::displayMode16Bit();
 
 
-	DSOptionsDialog* d = new DSOptionsDialog();
+	DSOptionsDialog *d = new DSOptionsDialog();
 	d->runModal();
 	delete d;
 
@@ -418,7 +423,7 @@ void setOptions() {
 
 		DS::setTrackPadStyleEnable(enable);
 
-		if ((enable) and (firstLoad)) {
+		if (enable && firstLoad) {
 			// If we've just booted up, want to swap screens when trackpad mode is in use
 			// but not every time we enter the options dialog.
 			DS::setGameScreenSwap(true);
@@ -436,4 +441,5 @@ void setOptions() {
 	firstLoad = false;
 }
 
-}
+}	// End of namespace DS
+

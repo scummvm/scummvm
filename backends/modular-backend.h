@@ -76,7 +76,7 @@ public:
 	virtual int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const;

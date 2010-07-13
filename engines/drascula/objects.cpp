@@ -78,8 +78,11 @@ void DrasculaEngine::gotoObject(int pointX, int pointY) {
 	for (;;) {
 		updateRoom();
 		updateScreen();
+		updateEvents();
 		if (characterMoved == 0)
 			break;
+
+		pause(3);
 	}
 
 	if (walkToObject == 1) {

@@ -50,16 +50,21 @@ enum GfxScreenMasks {
 	GFX_SCREEN_MASK_ALL			= GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY|GFX_SCREEN_MASK_CONTROL
 };
 
-#define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
+enum {
+	SCI_SCREEN_UNDITHERMEMORIAL_SIZE = 256
+};
 
 /**
- * Screen class, actually creates 3 (4) screens internally - which is visual/display (for the user),
- *  priority (contains priority information) and control (contains control information). Handles all operations to it
- *  and copies parts of visual/display screen to the actual screen, so the user can really see it.
+ * Screen class, actually creates 3 (4) screens internally:
+ * - visual/display (for the user),
+ * - priority (contains priority information) and
+ * - control (contains control information).
+ * Handles all operations to it and copies parts of visual/display screen to
+ * the actual screen, so the user can really see it.
  */
 class GfxScreen {
 public:
-	GfxScreen(ResourceManager *resMan, int16 width = 320, int16 height = 200, int upscaledHires = GFX_SCREEN_UPSCALED_DISABLED);
+	GfxScreen(ResourceManager *resMan);
 	~GfxScreen();
 
 	uint16 getWidth() { return _width; }
@@ -78,15 +83,16 @@ public:
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
+	void putFontPixel(int startingY, int x, int y, byte color);
 	void putPixelOnDisplay(int x, int y, byte color);
 	void drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte prio, byte control);
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
 	}
-	int getUpscaledHires() {
+	int getUpscaledHires() const {
 		return _upscaledHires;
 	}
-	bool getUnditherState() {
+	bool getUnditherState() const {
 		return _unditherState;
 	}
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
@@ -100,13 +106,15 @@ public:
 	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
 	void bitsRestore(byte *memoryPtr);
 
-	void setPalette(Palette*pal);
+	void getPalette(Palette *pal);
+	void setPalette(Palette *pal);
 
 	void setVerticalShakePos(uint16 shakePos);
 
-	void scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
+	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
+	void adjustBackUpscaledCoordinates(int16 &y, int16 &x);
 
 	void dither(bool addToFlag);
 	void debugUnditherSetState(bool flag);
@@ -138,27 +146,34 @@ private:
 	bool _unditherState;
 	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 
-	// these screens have the real resolution of the game engine (320x200 for SCI0/SCI1/SCI11 games, 640x480 for SCI2 games)
-	//  SCI0 games will be dithered in here at any time
+	// These screens have the real resolution of the game engine (320x200 for
+	// SCI0/SCI1/SCI11 games, 640x480 for SCI2 games). SCI0 games will be
+	// dithered in here at any time.
 	byte *_visualScreen;
 	byte *_priorityScreen;
 	byte *_controlScreen;
 
-	// this screen is the one that is actually displayed to the user. It may be 640x400 for japanese SCI1 games
-	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
+	// This screen is the one that is actually displayed to the user. It may be
+	// 640x400 for japanese SCI1 games. SCI0 games may be undithered in here.
+	// Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
 
 	Common::Rect getScaledRect(Common::Rect rect);
 
 	ResourceManager *_resMan;
 
-	// this is a pointer to the currently active screen (changing it only required for debug purposes)
+	/**
+	 * Pointer to the currently active screen (changing it only required for
+	 * debug purposes).
+	 */
 	byte *_activeScreen;
 
-	// this variable defines, if upscaled hires is active and what upscaled mode is used
+	// This variable defines, if upscaled hires is active and what upscaled mode
+	// is used.
 	int _upscaledHires;
 
-	// this here holds a translation for vertical coordinates between native (visual) and actual (display) screen
+	// This here holds a translation for vertical coordinates between native
+	// (visual) and actual (display) screen.
 	int _upscaledMapping[SCI_SCREEN_UPSCALEDMAXHEIGHT + 1];
 };
 

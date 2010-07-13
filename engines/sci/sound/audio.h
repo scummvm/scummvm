@@ -33,8 +33,7 @@
 namespace Sci {
 
 enum AudioCommands {
-	// TODO: find the difference between kSci1AudioWPlay and kSci1AudioPlay
-	kSciAudioWPlay = 1, /* Plays an audio stream */
+	kSciAudioWPlay = 1, /* Loads an audio stream */
 	kSciAudioPlay = 2, /* Plays an audio stream */
 	kSciAudioStop = 3, /* Stops an audio stream */
 	kSciAudioPause = 4, /* Pauses an audio stream */
@@ -69,6 +68,7 @@ public:
 	Audio::RewindableAudioStream *getAudioStream(uint32 number, uint32 volume, int *sampleLen);
 	int getAudioPosition();
 	int startAudio(uint16 module, uint32 tuple);
+	int wPlayAudio(uint16 module, uint32 tuple);
 	void stopAudio();
 	void pauseAudio();
 	void resumeAudio();
@@ -92,6 +92,7 @@ private:
 	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
 	uint _syncOffset;
 	uint32 _audioCdStart;
+	bool _wPlayFlag;
 };
 
 } // End of namespace Sci

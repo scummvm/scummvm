@@ -23,17 +23,12 @@
  *
  */
 
-#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/iterator.h"	// for SongIteratorStatus
-#endif
-
 #include "common/config-manager.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
 #include "sci/sound/soundcmd.h"
 
+#include "sci/engine/kernel.h"
 #include "sci/engine/selector.h"
 
 namespace Sci {
@@ -41,258 +36,29 @@ namespace Sci {
 #define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
 #define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#define FROBNICATE_HANDLE(reg) ((reg).segment << 16 | (reg).offset)
-#define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
-#endif
-
-#define SOUNDCOMMAND(x) _soundCommands.push_back(new MusicEntryCommand(#x, &SoundCommandParser::x))
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void script_set_priority(ResourceManager *resMan, SegManager *segMan, SfxState *state, reg_t obj, int priority) {
-	int song_nr = readSelectorValue(segMan, obj, SELECTOR(number));
-	Resource *song = resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
-	int flags = readSelectorValue(segMan, obj, SELECTOR(flags));
-
-	if (priority == -1) {
-		if (song->data[0] == 0xf0)
-			priority = song->data[1];
-		else
-			warning("Attempt to unset song priority when there is no built-in value");
-
-		flags &= ~SCI1_SOUND_FLAG_SCRIPTED_PRI;
-	} else flags |= SCI1_SOUND_FLAG_SCRIPTED_PRI;
-
-	state->sfx_song_renice(FROBNICATE_HANDLE(obj), priority);
-	writeSelectorValue(segMan, obj, SELECTOR(flags), flags);
-}
-
-SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id) {
-	Resource *song = resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
-
-	if (!song)
-		return NULL;
-
-	return songit_new(song->data, song->size, type, id);
-}
-
-void process_sound_events(EngineState *s) { /* Get all sound events, apply their changes to the heap */
-	int result;
-	SongHandle handle;
-	int cue;
-	SegManager *segMan = s->_segMan;
-
-	if (getSciVersion() > SCI_VERSION_01)
-		return;
-	// SCI1 and later explicitly poll for everything
-
-	while ((result = s->_sound.sfx_poll(&handle, &cue))) {
-		reg_t obj = DEFROBNICATE_HANDLE(handle);
-		if (!s->_segMan->isObject(obj)) {
-			warning("Non-object %04x:%04x received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
-			return;
-		}
-
-		switch (result) {
-
-		case SI_LOOP:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)",
-			          PRINT_REG(obj), cue);
-			/*			writeSelectorValue(segMan, obj, SELECTOR(loops), readSelectorValue(segMan, obj, SELECTOR(loop));; - 1);*/
-			writeSelectorValue(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-			break;
-
-		case SI_RELATIVE_CUE:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d",
-			          PRINT_REG(obj), cue);
-			writeSelectorValue(segMan, obj, SELECTOR(signal), cue + 0x7f);
-			break;
-
-		case SI_ABSOLUTE_CUE:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d",
-			          PRINT_REG(obj), cue);
-			writeSelectorValue(segMan, obj, SELECTOR(signal), cue);
-			break;
-
-		case SI_FINISHED:
-			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished",
-			          PRINT_REG(obj));
-			writeSelectorValue(segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-			writeSelectorValue(segMan, obj, SELECTOR(state), kSoundStopped);
-			break;
-
-		default:
-			warning("Unexpected result from sfx_poll: %d", result);
-			break;
-		}
-	}
-}
-
-#endif
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	// The following hack is needed to ease the change from old to new sound code (because the new sound code does not use SfxState)
-	_state = &g_sci->getEngineState()->_sound;	// HACK
-#endif
-
-	#ifndef USE_OLD_MUSIC_FUNCTIONS
-		_music = new SciMusic(_soundVersion);
-		_music->init();
-	#endif
-
-	switch (_soundVersion) {
-	case SCI_VERSION_0_EARLY:
-	case SCI_VERSION_0_LATE:
-		SOUNDCOMMAND(cmdInitSound);
-		SOUNDCOMMAND(cmdPlaySound);
-		SOUNDCOMMAND(cmdDummy);
-		SOUNDCOMMAND(cmdDisposeSound);
-		SOUNDCOMMAND(cmdMuteSound);
-		SOUNDCOMMAND(cmdStopSound);
-		SOUNDCOMMAND(cmdPauseSound);
-		SOUNDCOMMAND(cmdResumeSound);
-		SOUNDCOMMAND(cmdMasterVolume);
-		SOUNDCOMMAND(cmdUpdateSound);
-		SOUNDCOMMAND(cmdFadeSound);
-		SOUNDCOMMAND(cmdGetPolyphony);
-		SOUNDCOMMAND(cmdStopAllSounds);
-		_cmdUpdateCuesIndex = -1;
-		break;
-	case SCI_VERSION_1_EARLY:
-		SOUNDCOMMAND(cmdMasterVolume);
-		SOUNDCOMMAND(cmdMuteSound);
-		SOUNDCOMMAND(cmdDummy);
-		SOUNDCOMMAND(cmdGetPolyphony);
-		SOUNDCOMMAND(cmdUpdateSound);
-		SOUNDCOMMAND(cmdInitSound);
-		SOUNDCOMMAND(cmdDisposeSound);
-		SOUNDCOMMAND(cmdPlaySound);
-		SOUNDCOMMAND(cmdStopSound);
-		SOUNDCOMMAND(cmdPauseSound);
-		SOUNDCOMMAND(cmdFadeSound);
-		SOUNDCOMMAND(cmdUpdateCues);
-		SOUNDCOMMAND(cmdSendMidi);
-		SOUNDCOMMAND(cmdReverb);
-		SOUNDCOMMAND(cmdSetSoundHold);
-		_cmdUpdateCuesIndex = 11;
-		break;
-	case SCI_VERSION_1_LATE:
-		SOUNDCOMMAND(cmdMasterVolume);
-		SOUNDCOMMAND(cmdMuteSound);
-		SOUNDCOMMAND(cmdDummy);
-		SOUNDCOMMAND(cmdGetPolyphony);
-		SOUNDCOMMAND(cmdGetAudioCapability);
-		SOUNDCOMMAND(cmdSuspendSound);
-		SOUNDCOMMAND(cmdInitSound);
-		SOUNDCOMMAND(cmdDisposeSound);
-		SOUNDCOMMAND(cmdPlaySound);
-		SOUNDCOMMAND(cmdStopSound);
-		SOUNDCOMMAND(cmdPauseSound);
-		SOUNDCOMMAND(cmdFadeSound);
-		SOUNDCOMMAND(cmdSetSoundHold);
-		SOUNDCOMMAND(cmdDummy);
-		SOUNDCOMMAND(cmdSetSoundVolume);
-		SOUNDCOMMAND(cmdSetSoundPriority);
-		SOUNDCOMMAND(cmdSetSoundLoop);
-		SOUNDCOMMAND(cmdUpdateCues);
-		SOUNDCOMMAND(cmdSendMidi);
-		SOUNDCOMMAND(cmdReverb);
-		SOUNDCOMMAND(cmdUpdateSound);
-		_cmdUpdateCuesIndex = 17;
-		break;
-	default:
-		warning("Sound command parser: unknown sound version %d", _soundVersion);
-		break;
-	}
+	_music = new SciMusic(_soundVersion);
+	_music->init();
 }
 
 SoundCommandParser::~SoundCommandParser() {
-	for (SoundCommandContainer::iterator i = _soundCommands.begin(); i != _soundCommands.end(); ++i)
-		delete *i;
-
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	delete _music;
-#endif
 }
 
-reg_t SoundCommandParser::parseCommand(int argc, reg_t *argv, reg_t acc) {
-	uint16 command = argv[0].toUint16();
-	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
-	int16 value = (argc > 2) ? argv[2].toSint16() : 0;
-	_acc = acc;
-	_argc = argc;
-	_argv = argv;
-
-	if (argc == 6) {	// cmdSendMidi
-		byte channel = argv[2].toUint16() & 0xf;
-		byte midiCmd = argv[3].toUint16() & 0xff;
-
-		uint16 controller = argv[4].toUint16();
-		uint16 param = argv[5].toUint16();
-
-		_midiCommand = (channel | midiCmd) | ((uint32)controller << 8) | ((uint32)param << 16);
-	}
-
-	if (command < _soundCommands.size()) {
-		if (command != _cmdUpdateCuesIndex) {
-			//printf("%s, object %04x:%04x\n", _soundCommands[command]->desc, PRINT_REG(obj));	// debug
-			debugC(2, kDebugLevelSound, "%s, object %04x:%04x", _soundCommands[command]->desc, PRINT_REG(obj));
-		}
-
-		(this->*(_soundCommands[command]->sndCmd))(obj, value);
-	} else {
-		warning("Invalid sound command requested (%d), valid range is 0-%d", command, _soundCommands.size() - 1);
-	}
-
-	return _acc;
+reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
+	processInitSound(argv[0]);
+	return acc;
 }
 
-void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
-
+void SoundCommandParser::processInitSound(reg_t obj) {
 	int resourceId = readSelectorValue(_segMan, obj, SELECTOR(number));
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-
-	if (_soundVersion != SCI_VERSION_1_LATE) {
-		if (!obj.segment)
-			return;
-	}
-
-	SongIteratorType type = (_soundVersion <= SCI_VERSION_0_LATE) ? SCI_SONG_ITERATOR_TYPE_SCI0 : SCI_SONG_ITERATOR_TYPE_SCI1;
-
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		if (readSelectorValue(_segMan, obj, SELECTOR(nodePtr))) {
-			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-			_state->sfx_remove_song(handle);
-		}
-	}
-
-	if (!obj.segment || !_resMan->testResource(ResourceId(kResourceTypeSound, resourceId)))
-		return;
-
-	_state->sfx_add_song(build_iterator(_resMan, resourceId, type, handle), 0, handle, resourceId);
-
-
-	// Notify the engine
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundInitialized);
-	else
-		writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
-
-	writeSelector(_segMan, obj, SELECTOR(handle), obj);
-
-#else
 
 	// Check if a track with the same sound object is already playing
 	MusicEntry *oldSound = _music->getSlot(obj);
 	if (oldSound)
-		cmdDisposeSound(obj, value);
+		processDisposeSound(obj);
 
 	MusicEntry *newSound = new MusicEntry();
 	newSound->resourceId = resourceId;
@@ -306,6 +72,9 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 	newSound->priority = readSelectorValue(_segMan, obj, SELECTOR(pri)) & 0xFF;
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
+
+	debugC(2, kDebugLevelSound, "kDoSound(init): number %d, loop %d, prio %d, vol %d", resourceId, 
+			newSound->loop, newSound->priority, newSound->volume);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -333,98 +102,28 @@ void SoundCommandParser::cmdInitSound(reg_t obj, int16 value) {
 
 		writeSelector(_segMan, obj, SELECTOR(handle), obj);
 	}
-#endif
-
 }
 
-void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
+	processPlaySound(argv[0]);
+	return acc;
+}
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-
-	if (_soundVersion <= SCI_VERSION_0_LATE) {
-		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
-		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundPlaying);
-	} else if (_soundVersion == SCI_VERSION_1_EARLY) {
-		_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
-		_state->sfx_song_renice(handle, readSelectorValue(_segMan, obj, SELECTOR(pri)));
-		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) value;		/* Too lazy to look up a default value for this */
-		_state->_songlib.setSongRestoreBehavior(handle, rb);
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
-	} else if (_soundVersion == SCI_VERSION_1_LATE) {
-		int looping = readSelectorValue(_segMan, obj, SELECTOR(loop));
-		//int vol = readSelectorValue(_segMan, obj, SELECTOR(vol));
-		int pri = readSelectorValue(_segMan, obj, SELECTOR(pri));
-		int sampleLen = 0;
-		Song *song = _state->_songlib.findSong(handle);
-		int songNumber = readSelectorValue(_segMan, obj, SELECTOR(number));
-
-		if (readSelectorValue(_segMan, obj, SELECTOR(nodePtr)) && (song && songNumber != song->_resourceNum)) {
-			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-			_state->sfx_remove_song(handle);
-			writeSelector(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
-		}
-
-		if (!readSelectorValue(_segMan, obj, SELECTOR(nodePtr)) && obj.segment) {
-			// In SCI1.1 games, sound effects are started from here. If we can find
-			// a relevant audio resource, play it, otherwise switch to synthesized
-			// effects. If the resource exists, play it using map 65535 (sound
-			// effects map)
-			if (_resMan->testResource(ResourceId(kResourceTypeAudio, songNumber)) &&
-				getSciVersion() >= SCI_VERSION_1_1) {
-				// Found a relevant audio resource, play it
-				_audio->stopAudio();
-				warning("Initializing audio resource instead of requested sound resource %d", songNumber);
-				sampleLen = _audio->startAudio(65535, songNumber);
-				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
-				_state->sfx_add_song(new_timer_iterator(sampleLen), 0, handle, songNumber);
-			} else {
-				if (!_resMan->testResource(ResourceId(kResourceTypeSound, songNumber))) {
-					warning("Could not open song number %d", songNumber);
-					// Send a "stop handle" event so that the engine won't wait forever here
-					_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-					writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-					return;
-				}
-				debugC(2, kDebugLevelSound, "Initializing song number %d", songNumber);
-				_state->sfx_add_song(build_iterator(_resMan, songNumber, SCI_SONG_ITERATOR_TYPE_SCI1,
-				                          handle), 0, handle, songNumber);
-			}
-
-			writeSelector(_segMan, obj, SELECTOR(nodePtr), obj);
-			writeSelector(_segMan, obj, SELECTOR(handle), obj);
-		}
-
-		if (obj.segment) {
-			_state->sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-			_state->sfx_song_set_loops(handle, looping);
-			_state->sfx_song_renice(handle, pri);
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), 0);
-		}
-	}
-
-#else
-
+void SoundCommandParser::processPlaySound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdPlaySound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(play): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
 	int resourceId = obj.segment ? readSelectorValue(_segMan, obj, SELECTOR(number)) : -1;
 
 	if (musicSlot->resourceId != resourceId) { // another sound loaded into struct
-		cmdDisposeSound(obj, value);
-		cmdInitSound(obj, value);
+		processDisposeSound(obj);
+		processInitSound(obj);
 		// Find slot again :)
 		musicSlot = _music->getSlot(obj);
 	}
-	int16 loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
-	debugC(2, kDebugLevelSound, "cmdPlaySound: resource number %d, loop %d", resourceId, loop);
 
 	writeSelector(_segMan, obj, SELECTOR(handle), obj);
 
@@ -442,51 +141,31 @@ void SoundCommandParser::cmdPlaySound(reg_t obj, int16 value) {
 	musicSlot->priority = readSelectorValue(_segMan, obj, SELECTOR(priority));
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
+
+	debugC(2, kDebugLevelSound, "kDoSound(play): number %d, loop %d, prio %d, vol %d", resourceId, 
+			musicSlot->loop, musicSlot->priority, musicSlot->volume);
+
 	_music->soundPlay(musicSlot);
-
-#endif
-
 }
 
-void SoundCommandParser::cmdDummy(reg_t obj, int16 value) {
+reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
 	warning("cmdDummy invoked");	// not supposed to occur
+	return acc;
 }
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-void SoundCommandParser::changeSoundStatus(reg_t obj, int newStatus) {
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	if (obj.segment) {
-		_state->sfx_song_set_status(handle, newStatus);
-		if (_soundVersion <= SCI_VERSION_0_LATE)
-			writeSelectorValue(_segMan, obj, SELECTOR(state), newStatus);
-	}
+reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
+	processDisposeSound(argv[0]);
+	return acc;
 }
-#endif
 
-void SoundCommandParser::cmdDisposeSound(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	changeSoundStatus(obj, SOUND_STATUS_STOPPED);
-
-	if (obj.segment) {
-		_state->sfx_remove_song(handle);
-
-		if (_soundVersion <= SCI_VERSION_0_LATE)
-			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0x0000);
-	}
-
-#else
-
+void SoundCommandParser::processDisposeSound(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdDisposeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(dispose): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
-	cmdStopSound(obj, value);
+	processStopSound(obj, false);
 
 	_music->soundKill(musicSlot);
 	writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
@@ -494,26 +173,17 @@ void SoundCommandParser::cmdDisposeSound(reg_t obj, int16 value) {
 		writeSelector(_segMan, obj, SELECTOR(nodePtr), NULL_REG);
 	else
 		writeSelectorValue(_segMan, obj, SELECTOR(state), kSoundStopped);
-#endif
 }
 
-void SoundCommandParser::cmdStopSound(reg_t obj, int16 value) {
-	processStopSound(obj, value, false);
+reg_t SoundCommandParser::kDoSoundStop(int argc, reg_t *argv, reg_t acc) {
+	processStopSound(argv[0], false);
+	return acc;
 }
 
-void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFinishedPlaying) {
-	if (!obj.segment)
-		return;
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	changeSoundStatus(obj, SOUND_STATUS_STOPPED);
-
-	if (_soundVersion >= SCI_VERSION_1_EARLY)
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-#else
+void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdStopSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(stop): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -523,204 +193,156 @@ void SoundCommandParser::processStopSound(reg_t obj, int16 value, bool sampleFin
 		writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
 	}
 
-	// Set signal selector in sound SCI0 games only, when the sample has finished playing
-	//  If we don't set it at all, we get a problem when using vaporizer on the 2 guys
-	//  If we set it all the time, we get no music in sq3new and kq1
-	// FIXME: this *may* be wrong, it's impossible to find out in sierra DOS sci, because SCI0 under DOS didn't have
-	//         sfx drivers included
-	// We need to set signal in sound SCI1+ games all the time
+	// Set signal selector in sound SCI0 games only, when the sample has
+	// finished playing. If we don't set it at all, we get a problem when using
+	// vaporizer on the 2 guys. If we set it all the time, we get no music in
+	// sq3new and kq1.
+	// FIXME: This *may* be wrong, it's impossible to find out in Sierra DOS
+	//        SCI, because SCI0 under DOS didn't have sfx drivers included.
+	// We need to set signal in sound SCI1+ games all the time.
 	if ((_soundVersion > SCI_VERSION_0_LATE) || sampleFinishedPlaying)
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 
 	musicSlot->dataInc = 0;
 	musicSlot->signal = 0;
 	_music->soundStop(musicSlot);
-#endif
 }
 
-void SoundCommandParser::cmdPauseSound(reg_t obj, int16 value) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
+	if (_soundVersion <= SCI_VERSION_0_LATE) {
+		// SCI0 games give us 0/1 for either resuming or pausing the current music
+		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
+		uint16 value = argv[0].toUint16();
+		MusicEntry *musicSlot = _music->getActiveSci0MusicSlot();
+		switch (value) {
+		case 1:
+			if ((musicSlot) && (musicSlot->status == kSoundPlaying)) {
+				_music->soundPause(musicSlot);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
+			}
+			return make_reg(0, 0);
+		case 0:
+			if ((musicSlot) && (musicSlot->status == kSoundPaused)) {
+				_music->soundResume(musicSlot);
+				writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
+				return make_reg(0, 1);
+			}
+			return make_reg(0, 0);
+		default:
+			error("kDoSound(pause): parameter 0 is invalid for sound-sci0");
+		}
+	}
 
-	if (_soundVersion <= SCI_VERSION_0_LATE)
-		changeSoundStatus(obj, SOUND_STATUS_SUSPENDED);
-	else
-		changeSoundStatus(obj, value ? SOUND_STATUS_SUSPENDED : SOUND_STATUS_PLAYING);
-#else
-
+	reg_t obj = argv[0];
+	uint16 value = argc > 1 ? argv[1].toUint16() : 0;
 	if (!obj.segment) {		// pause the whole playlist
-		// Pausing/Resuming the whole playlist was introduced
-		// in the SCI1 late sound scheme
-		if (_soundVersion <= SCI_VERSION_1_EARLY)
-			return;
-
 		_music->pauseAll(value);
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
-			warning("cmdPauseSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
-			return;
+			warning("kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
+			return acc;
 		}
 
-		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			// Always pause the sound in SCI0 games. It's resumed in cmdResumeSound()
-			writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPaused);
-			_music->soundPause(musicSlot);
-		} else {
-			_music->soundToggle(musicSlot, value);
-		}
+		_music->soundToggle(musicSlot, value);
 	}
-
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdResumeSound(reg_t obj, int16 value) {
-	// SCI0 only command
+// SCI0 only command
+reg_t SoundCommandParser::kDoSoundResume(int argc, reg_t *argv, reg_t acc) {
+	// this doesn't seem to do what we think it's doing
+	//  it's called with no arguments at all (just restore a game in qfg1)
+	return acc;
+	reg_t obj = argv[0];
 
-	if (!obj.segment)
-		return;
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	changeSoundStatus(obj, SOUND_STATUS_PLAYING);
-#else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdResumeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(resume):: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
 	}
 
 	writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
 	_music->soundResume(musicSlot);
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdMuteSound(reg_t obj, int16 value) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	if (_argc > 1)	// the first parameter is the sound command
-		_music->soundSetSoundOn(obj.toUint16());
-	_acc = make_reg(0, _music->soundGetSoundOn());
-#endif
+reg_t SoundCommandParser::kDoSoundMute(int argc, reg_t *argv, reg_t acc) {
+	if (argc > 0)
+		_music->soundSetSoundOn(argv[0].toUint16());
+	return make_reg(0, _music->soundGetSoundOn());
 }
 
-void SoundCommandParser::cmdMasterVolume(reg_t obj, int16 value) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	_acc = make_reg(0, _state->sfx_getVolume());
+reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc) {
+	acc = make_reg(0, _music->soundGetMasterVolume());
 
-	if (obj != SIGNAL_REG)
-		_state->sfx_setVolume(obj.toSint16());
-#else
-	debugC(2, kDebugLevelSound, "cmdMasterVolume: %d", value);
-	_acc = make_reg(0, _music->soundGetMasterVolume());
-
-	if (_argc > 1)	{ // the first parameter is the sound command
-		int vol = CLIP<int16>(obj.toSint16(), 0, kMaxSciVolume);
+	if (argc > 0) {
+		debugC(2, kDebugLevelSound, "kDoSound(masterVolume): %d", argv[0].toSint16());
+		int vol = CLIP<int16>(argv[0].toSint16(), 0, kMaxSciVolume);
 		vol = vol * Audio::Mixer::kMaxMixerVolume / kMaxSciVolume;
 		ConfMan.setInt("music_volume", vol);
 		ConfMan.setInt("sfx_volume", vol);
 		g_engine->syncSoundSettings();
 	}
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdFadeSound(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	if (_soundVersion != SCI_VERSION_1_LATE) {
-		/* FIXME: The next couple of lines actually STOP the handle, rather
-		** than fading it! */
-		_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		if (_soundVersion <= SCI_VERSION_0_LATE)
-			writeSelectorValue(_segMan, obj, SELECTOR(state), SOUND_STATUS_STOPPED);
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-	} else {
-		fade_params_t fade;
-		fade.final_volume = _argv[2].toUint16();
-		fade.ticks_per_step = _argv[3].toUint16();
-		fade.step_size = _argv[4].toUint16();
-		fade.action = _argv[5].toUint16() ?
-		              FADE_ACTION_FADE_AND_STOP :
-		              FADE_ACTION_FADE_AND_CONT;
-
-		_state->sfx_song_set_fade(handle,  &fade);
-
-		/* FIXME: The next couple of lines actually STOP the handle, rather
-		** than fading it! */
-		if (_argv[5].toUint16()) {
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-			_state->sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-		} else {
-			// FIXME: Support fade-and-continue. For now, send signal right away.
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		}
-	}
-#else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdFadeSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(fade): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
 	}
 
 	int volume = musicSlot->volume;
 
-	switch (_argc) {
-	case 2: // SCI0
-		// SCI0 fades out all the time and when fadeout is done it will also stop the music from playing
+	// If sound is not playing currently, set signal directly
+	if (musicSlot->status != kSoundPlaying) {
+		debugC(2, kDebugLevelSound, "kDoSound(fade): fading requested, but sound is currently not playing");
+		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
+		return acc;
+	}
+
+	switch (argc) {
+	case 1: // SCI0
+		// SCI0 fades out all the time and when fadeout is done it will also
+		// stop the music from playing
 		musicSlot->fadeTo = 0;
 		musicSlot->fadeStep = -5;
 		musicSlot->fadeTickerStep = 10 * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
 		break;
 
-	case 5: // SCI01+
-	case 6: // SCI1+ (SCI1 late sound scheme), with fade and continue
-		musicSlot->fadeTo = CLIP<uint16>(_argv[2].toUint16(), 0, MUSIC_VOLUME_MAX);
-		musicSlot->fadeStep = volume > _argv[2].toUint16() ? -_argv[4].toUint16() : _argv[4].toUint16();
-		musicSlot->fadeTickerStep = _argv[3].toUint16() * 16667 / _music->soundGetTempo();
+	case 4: // SCI01+
+	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
+		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
+		musicSlot->fadeStep = volume > argv[1].toUint16() ? -argv[3].toUint16() : argv[3].toUint16();
+		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
-		musicSlot->stopAfterFading = (_argc == 6) ? (_argv[5].toUint16() != 0) : false;
+		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
 		break;
 
 	default:
-		error("cmdFadeSound: unsupported argc %d", _argc);
+		error("kDoSound(fade): unsupported argc %d", argc);
 	}
 
-	// If sound is not playing currently, set signal directly
-	if (musicSlot->status != kSoundPlaying) {
-		warning("cmdFadeSound: fading requested, but sound is currently not playing");
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-	}
-
-	debugC(2, kDebugLevelSound, "cmdFadeSound: to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
-#endif
+	debugC(2, kDebugLevelSound, "kDoSound(fade): to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
+	return acc;
 }
 
-void SoundCommandParser::cmdGetPolyphony(reg_t obj, int16 value) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	_acc = make_reg(0, _state->sfx_get_player_polyphony());
-#else
-	_acc = make_reg(0, _music->soundGetVoices());	// Get the number of voices
-#endif
+reg_t SoundCommandParser::kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc) {
+	return make_reg(0, _music->soundGetVoices());	// Get the number of voices
 }
 
-void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	if (_soundVersion <= SCI_VERSION_0_LATE && obj.segment) {
-		_state->sfx_song_set_loops(handle, readSelectorValue(_segMan, obj, SELECTOR(loop)));
-		script_set_priority(_resMan, _segMan, _state, obj, readSelectorValue(_segMan, obj, SELECTOR(pri)));
-	}
-#else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdUpdateSound: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(update): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
 	}
 
 	musicSlot->loop = readSelectorValue(_segMan, obj, SELECTOR(loop));
@@ -730,88 +352,18 @@ void SoundCommandParser::cmdUpdateSound(reg_t obj, int16 value) {
 	uint32 objPrio = readSelectorValue(_segMan, obj, SELECTOR(pri));
 	if (objPrio != musicSlot->priority)
 		_music->soundSetPriority(musicSlot, objPrio);
-
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundUpdateCues(int argc, reg_t *argv, reg_t acc) {
+	processUpdateCues(argv[0]);
+	return acc;
+}
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	int signal = 0;
-	int min = 0;
-	int sec = 0;
-	int frame = 0;
-	int result = SI_LOOP; // small hack
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-
-	while (result == SI_LOOP)
-		result = _state->sfx_poll_specific(handle, &signal);
-
-	switch (result) {
-	case SI_ABSOLUTE_CUE:
-		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d",
-		          PRINT_REG(obj), signal);
-		debugC(2, kDebugLevelSound, "abs-signal %04X", signal);
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), signal);
-		break;
-
-	case SI_RELATIVE_CUE:
-		debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Relative Cue: %d",
-		          PRINT_REG(obj), signal);
-
-		/* FIXME to match commented-out semantics
-		 * below, with proper storage of dataInc and
-		 * signal in the iterator code. */
-		writeSelectorValue(_segMan, obj, SELECTOR(dataInc), signal);
-		debugC(2, kDebugLevelSound, "rel-signal %04X", signal);
-		if (_soundVersion == SCI_VERSION_1_EARLY)
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), signal);
-		else
-			writeSelectorValue(_segMan, obj, SELECTOR(signal), signal + 127);
-		break;
-
-	case SI_FINISHED:
-		debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x", PRINT_REG(obj));
-		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		break;
-
-	case SI_LOOP:
-		break; // Doesn't happen
-	}
-
-	//switch (signal) {
-	//case 0x00:
-	//	if (dataInc != readSelectorValue(segMan, obj, SELECTOR(dataInc))) {
-	//		writeSelectorValue(segMan, obj, SELECTOR(dataInc), dataInc);
-	//		writeSelectorValue(segMan, obj, SELECTOR(signal), dataInc+0x7f);
-	//	} else {
-	//		writeSelectorValue(segMan, obj, SELECTOR(signal), signal);
-	//	}
-	//	break;
-	//case 0xFF: // May be unnecessary
-	//	s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-	//	break;
-	//default :
-	//	if (dataInc != readSelectorValue(segMan, obj, SELECTOR(dataInc))) {
-	//		writeSelectorValue(segMan, obj, SELECTOR(dataInc), dataInc);
-	//		writeSelectorValue(segMan, obj, SELECTOR(signal), dataInc + 0x7f);
-	//	} else {
-	//		writeSelectorValue(segMan, obj, SELECTOR(signal), signal);
-	//	}
-	//	break;
-	//}
-
-	if (_soundVersion == SCI_VERSION_1_EARLY) {
-		writeSelectorValue(_segMan, obj, SELECTOR(min), min);
-		writeSelectorValue(_segMan, obj, SELECTOR(sec), sec);
-		writeSelectorValue(_segMan, obj, SELECTOR(frame), frame);
-	}
-#else
+void SoundCommandParser::processUpdateCues(reg_t obj) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdUpdateCues: Slot not found (%04x:%04x)", PRINT_REG(obj));
+		warning("kDoSound(updateCues): Slot not found (%04x:%04x)", PRINT_REG(obj));
 		return;
 	}
 
@@ -828,7 +380,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
 		if ((!_music->soundIsActive(musicSlot)) && (musicSlot->status != kSoundPaused)) {
-			processStopSound(obj, 0, true);
+			processStopSound(obj, true);
 		} else {
 			_music->updateAudioStreamTicker(musicSlot);
 		}
@@ -841,7 +393,7 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		// Update MIDI slots
 		if (musicSlot->signal == 0) {
 			if (musicSlot->dataInc != readSelectorValue(_segMan, obj, SELECTOR(dataInc))) {
-				if (_kernel->_selectorCache.dataInc > -1)
+				if (SELECTOR(dataInc) > -1)
 					writeSelectorValue(_segMan, obj, SELECTOR(dataInc), musicSlot->dataInc);
 				writeSelectorValue(_segMan, obj, SELECTOR(signal), musicSlot->dataInc + 127);
 			}
@@ -850,13 +402,15 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 			writeSelectorValue(_segMan, obj, SELECTOR(signal), musicSlot->signal);
 			// We need to do this especially because state selector needs to get updated
 			if (musicSlot->signal == SIGNAL_OFFSET)
-				cmdStopSound(obj, 0);
+				processStopSound(obj, false);
 		}
 	} else {
-		// Slot actually has no data (which would mean that a sound-resource w/ unsupported data is used
+		// Slot actually has no data (which would mean that a sound-resource w/
+		// unsupported data is used.
 		//  (example lsl5 - sound resource 744 - it's roland exclusive
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
-		// If we don't set signal here, at least the switch to the mud wrestling room in lsl5 will not work
+		// If we don't set signal here, at least the switch to the mud wrestling
+		// room in lsl5 will not work.
 	}
 
 	if (musicSlot->fadeCompleted) {
@@ -864,10 +418,10 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		// We need signal for sci0 at least in iceman as well (room 14, fireworks)
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
-			cmdStopSound(obj, 0);
+			processStopSound(obj, false);
 		} else {
 			if (musicSlot->stopAfterFading)
-				cmdStopSound(obj, 0);
+				processStopSound(obj, false);
 		}
 	}
 
@@ -882,48 +436,58 @@ void SoundCommandParser::cmdUpdateCues(reg_t obj, int16 value) {
 		writeSelectorValue(_segMan, obj, SELECTOR(sec), musicSlot->ticker % 3600 / 60);
 		writeSelectorValue(_segMan, obj, SELECTOR(frame), musicSlot->ticker);
 	}
-
-#endif
 }
 
-void SoundCommandParser::cmdSendMidi(reg_t obj, int16 value) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	//SongHandle handle = FROBNICATE_HANDLE(obj);
-	//_state->sfx_send_midi(handle, value, _midiCmd, _controller, _param);
-#else
-	_music->sendMidiCommand(_midiCommand);
-#endif
-}
+reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
+	byte channel = argv[1].toUint16() & 0xf;
+	byte midiCmd = argv[2].toUint16() & 0xff;
 
-void SoundCommandParser::cmdReverb(reg_t obj, int16 value) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	_music->setReverb(obj.toUint16() & 0xF);
-#endif
-}
+	uint16 controller = argv[3].toUint16();
+	uint16 param = argv[4].toUint16();
 
-void SoundCommandParser::cmdSetSoundHold(reg_t obj, int16 value) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongHandle handle = FROBNICATE_HANDLE(obj);
-	_state->sfx_song_set_hold(handle, value);
-#else
+	if (channel)
+		channel--; // channel is given 1-based, we are using 0-based
+
+	uint32 midiCommand = (channel | midiCmd) | ((uint32)controller << 8) | ((uint32)param << 16);
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdSetSoundHold: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		// TODO: maybe it's possible to call this with obj == 0:0 and send directly?!
+		// if so, allow it
+		//_music->sendMidiCommand(_midiCommand);
+		warning("kDoSound(sendMidi): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
+	}
+	_music->sendMidiCommand(musicSlot, midiCommand);
+	return acc;
+}
+
+reg_t SoundCommandParser::kDoSoundReverb(int argc, reg_t *argv, reg_t acc) {
+	_music->setReverb(argv[0].toUint16() & 0xF);
+	return acc;
+}
+
+reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
+
+	MusicEntry *musicSlot = _music->getSlot(obj);
+	if (!musicSlot) {
+		warning("kDoSound(setHold): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
 	}
 
 	// Set the special hold marker ID where the song should be looped at.
-	musicSlot->hold = value;
-#endif
+	musicSlot->hold = argv[1].toSint16();
+	return acc;
 }
 
-void SoundCommandParser::cmdGetAudioCapability(reg_t obj, int16 value) {
+reg_t SoundCommandParser::kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_t acc) {
 	// Tests for digital audio support
-	_acc = make_reg(0, 1);
+	return make_reg(0, 1);
 }
 
-void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
+reg_t SoundCommandParser::kDoSoundStopAll(int argc, reg_t *argv, reg_t acc) {
 	Common::StackLock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -931,32 +495,31 @@ void SoundCommandParser::cmdStopAllSounds(reg_t obj, int16 value) {
 		if (_soundVersion <= SCI_VERSION_0_LATE) {
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(state), kSoundStopped);
 		} else {
-			writeSelectorValue(_segMan, obj, SELECTOR(handle), 0);
+			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(handle), 0);
 			writeSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal), SIGNAL_OFFSET);
 		}
 
 		(*i)->dataInc = 0;
 		_music->soundStop(*i);
 	}
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdSetSoundVolume(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
+	int16 value = argv[1].toSint16();
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		// Do not throw a warning if the sound can't be found, as in some games
-		// this is called before the actual sound is loaded (e.g. SQ4CD, with the
-		// drum sounds of the energizer bunny at the beginning), so this is normal
-		// behavior
+		// this is called before the actual sound is loaded (e.g. SQ4CD, with
+		// the drum sounds of the energizer bunny at the beginning), so this is
+		// normal behavior.
 		//warning("cmdSetSoundVolume: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		return acc;
 	}
 
-	debugC(2, kDebugLevelSound, "cmdSetSoundVolume: %d", value);
+	debugC(2, kDebugLevelSound, "kDoSound(setVolume): %d", value);
 
 	value = CLIP<int>(value, 0, MUSIC_VOLUME_MAX);
 
@@ -965,20 +528,17 @@ void SoundCommandParser::cmdSetSoundVolume(reg_t obj, int16 value) {
 		_music->soundSetVolume(musicSlot, value);
 		writeSelectorValue(_segMan, obj, SELECTOR(vol), value);
 	}
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
+	int16 value = argv[1].toSint16();
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	script_set_priority(_resMan, _segMan, _state, obj, value);
-#else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
-		warning("cmdSetSoundPriority: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return;
+		warning("kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
+		return acc;
 	}
 
 	if (value == -1) {
@@ -987,7 +547,7 @@ void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
 		if (song->data[0] == 0xf0)
 			_music->soundSetPriority(musicSlot, song->data[1]);
 		else
-			warning("cmdSetSoundPriority: Attempt to unset song priority when there is no built-in value");
+			warning("kDoSound(setPriority): Attempt to unset song priority when there is no built-in value");
 
 		//pSnd->prio=0;field_15B=0
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) & 0xFD);
@@ -998,32 +558,26 @@ void SoundCommandParser::cmdSetSoundPriority(reg_t obj, int16 value) {
 		writeSelectorValue(_segMan, obj, SELECTOR(flags), readSelectorValue(_segMan, obj, SELECTOR(flags)) | 2);
 		//DoSOund(0xF,hobj,w)
 	}
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdSetSoundLoop(reg_t obj, int16 value) {
-	if (!obj.segment)
-		return;
+reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
+	reg_t obj = argv[0];
+	int16 value = argv[1].toSint16();
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	if (!readSelector(_segMan, obj, SELECTOR(nodePtr)).isNull()) {
-		SongHandle handle = FROBNICATE_HANDLE(obj);
-		_state->sfx_song_set_loops(handle, value);
-	}
-#else
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		// Apparently, it's perfectly normal for a game to call cmdSetSoundLoop
 		// before actually initializing the sound and adding it to the playlist
 		// with cmdInitSound. Usually, it doesn't matter if the game doesn't
 		// request to loop the sound, so in this case, don't throw any warning,
-		// otherwise do, because the sound won't be looped
+		// otherwise do, because the sound won't be looped.
 		if (value == -1) {
-			warning("cmdSetSoundLoop: Slot not found (%04x:%04x) and the song was requested to be looped", PRINT_REG(obj));
+			warning("kDoSound(setLoop): Slot not found (%04x:%04x) and the song was requested to be looped", PRINT_REG(obj));
 		} else {
 			// Doesn't really matter
 		}
-		return;
+		return acc;
 	}
 	if (value == -1) {
 		musicSlot->loop = 0xFFFF;
@@ -1032,40 +586,37 @@ void SoundCommandParser::cmdSetSoundLoop(reg_t obj, int16 value) {
 	}
 
 	writeSelectorValue(_segMan, obj, SELECTOR(loop), musicSlot->loop);
-#endif
+	return acc;
 }
 
-void SoundCommandParser::cmdSuspendSound(reg_t obj, int16 value) {
+reg_t SoundCommandParser::kDoSoundSuspend(int argc, reg_t *argv, reg_t acc) {
 	// TODO
-	warning("STUB: cmdSuspendSound");
+	warning("kDoSound(suspend): STUB");
+	return acc;
 }
-
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 
 void SoundCommandParser::updateSci0Cues() {
 	bool noOnePlaying = true;
 	MusicEntry *pWaitingForPlay = NULL;
 
-	_music->_mutex.lock();
-
 	const MusicList::iterator end = _music->getPlayListEnd();
 	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
 		// Is the sound stopped, and the sound object updated too? If yes, skip
-		// this sound, as SCI0 only allows one active song
+		// this sound, as SCI0 only allows one active song.
 		if  ((*i)->isQueued) {
 			pWaitingForPlay = (*i);
-			// FIXME (?) - in iceman 2 songs are queued when playing the door sound - if we use the first song for resuming
-			//              then it's the wrong one. Both songs have same priority. Maybe the new sound function in sci0
-			//              is somehow responsible
+			// FIXME(?): In iceman 2 songs are queued when playing the door
+			// sound - if we use the first song for resuming then it's the wrong
+			// one. Both songs have same priority. Maybe the new sound function
+			// in sci0 is somehow responsible.
 			continue;
 		}
 		if ((*i)->signal == 0 && (*i)->status != kSoundPlaying)
 			continue;
 
-		cmdUpdateCues((*i)->soundObj, 0);
+		processUpdateCues((*i)->soundObj);
 		noOnePlaying = false;
 	}
-	_music->_mutex.unlock();
 
 	if (noOnePlaying && pWaitingForPlay) {
 		// If there is a queued entry, play it now ffs: SciMusic::soundPlay()
@@ -1074,90 +625,40 @@ void SoundCommandParser::updateSci0Cues() {
 	}
 }
 
-#endif
-
 void SoundCommandParser::clearPlayList() {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->clearPlayList();
-#endif
-}
-
-void SoundCommandParser::syncPlayList(Common::Serializer &s) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	_music->saveLoadWithSerializer(s);
-#endif
-}
-
-void SoundCommandParser::reconstructPlayList(int savegame_version) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	Common::StackLock lock(_music->_mutex);
-
-	const MusicList::iterator end = _music->getPlayListEnd();
-	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
-		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
-			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
-			_music->soundInitSnd(*i);
-		} else {
-			(*i)->soundRes = 0;
-		}
-		if ((*i)->status == kSoundPlaying) {
-			if (savegame_version < 14) {
-				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
-				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
-
-				if (_soundVersion >= SCI_VERSION_1_LATE)
-					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
-			}
-
-			cmdPlaySound((*i)->soundObj, 0);
-		}
-	}
-
-#endif
 }
 
 void SoundCommandParser::printPlayList(Console *con) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->printPlayList(con);
-#endif
 }
 
 void SoundCommandParser::printSongInfo(reg_t obj, Console *con) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->printSongInfo(obj, con);
-#endif
 }
 
 void SoundCommandParser::stopAllSounds() {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->stopAll();
-#endif
 }
 
 void SoundCommandParser::startNewSound(int number) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	Common::StackLock lock(_music->_mutex);
 
 	// Overwrite the first sound in the playlist
 	MusicEntry *song = *_music->getPlayListStart();
 	reg_t soundObj = song->soundObj;
-	cmdDisposeSound(soundObj, 0);
+	processDisposeSound(soundObj);
 	writeSelectorValue(_segMan, soundObj, SELECTOR(number), number);
-	cmdInitSound(soundObj, 0);
-	cmdPlaySound(soundObj, 0);
-#endif
+	processInitSound(soundObj);
+	processPlaySound(soundObj);
 }
 
 void SoundCommandParser::setMasterVolume(int vol) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->soundSetMasterVolume(vol);
-#endif
 }
 
 void SoundCommandParser::pauseAll(bool pause) {
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	_music->pauseAll(pause);
-#endif
 }
 
 } // End of namespace Sci

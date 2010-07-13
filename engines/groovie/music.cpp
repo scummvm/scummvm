@@ -110,6 +110,20 @@ void MusicPlayer::playCD(uint8 track) {
 
 	// Play the track starting at the requested offset (1000ms = 75 frames)
 	g_system->getAudioCDManager()->play(track - 1, 1, startms * 75 / 1000, 0);
+
+	// If the audio is not playing from the CD, play the "fallback" MIDI.
+	// The Mac version has no CD tracks, so it will always use the MIDI.
+	if (!g_system->getAudioCDManager()->isPlaying()) {
+		if (track == 2) {
+			// Intro MIDI fallback
+			if (_vm->getPlatform() == Common::kPlatformMacintosh)
+				playSong(70);
+			else
+				playSong((19 << 10) | 36); // XMI.GJD, file 36
+		} else if (track == 3) {
+			// TODO: Credits MIDI fallback
+		}
+	}
 }
 
 void MusicPlayer::startBackground() {
@@ -385,8 +399,8 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	_midiParser = MidiParser::createParser_XMIDI();
 
 	// Create the driver
-	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = createMidi(driver);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = createMidi(dev);
 	this->open();
 
 	// Set the parser's driver
@@ -401,9 +415,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 	}
 
 	// Load the Global Timbre Library
-	if (driver == MD_ADLIB) {
+	if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 		// MIDI through AdLib
-		_musicType = MD_ADLIB;
+		_musicType = MT_ADLIB;
 		loadTimbres(gtlName + ".ad");
 
 		// Setup the percussion channel
@@ -411,9 +425,9 @@ MusicPlayerXMI::MusicPlayerXMI(GroovieEngine *vm, const Common::String &gtlName)
 			if (_timbres[i].bank == 0x7F)
 				setTimbreAD(9, _timbres[i]);
 		}
-	} else if ((driver == MD_MT32) || ConfMan.getBool("native_mt32")) {
+	} else if ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32")) {
 		// MT-32
-		_musicType = MD_MT32;
+		_musicType = MT_MT32;
 		loadTimbres(gtlName + ".mt");
 	} else {
 		// GM
@@ -454,9 +468,9 @@ void MusicPlayerXMI::send(uint32 b) {
 			for (int i = 0; i < numTimbres; i++) {
 				if ((_timbres[i].bank == _chanBanks[chan]) &&
 					(_timbres[i].patch == patch)) {
-					if (_musicType == MD_ADLIB) {
+					if (_musicType == MT_ADLIB) {
 						setTimbreAD(chan, _timbres[i]);
-					} else if (_musicType == MD_MT32) {
+					} else if (_musicType == MT_MT32) {
 						setTimbreMT(chan, _timbres[i]);
 					}
 					return;
@@ -681,8 +695,8 @@ MusicPlayerMac::MusicPlayerMac(GroovieEngine *vm) : MusicPlayerMidi(vm) {
 	_midiParser = MidiParser::createParser_SMF();
 
 	// Create the driver
-	MidiDriverType driver = detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_driver = createMidi(driver);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+	_driver = createMidi(dev);
 	this->open();
 
 	// Set the parser's driver
@@ -702,20 +716,64 @@ bool MusicPlayerMac::load(uint32 fileref, bool loop) {
 	Common::SeekableReadStream *file = _vm->_macResFork->getResource(MKID_BE('cmid'), fileref & 0x3FF);
 
 	if (file) {
-		// TODO: A form of LZSS, not supported by the current Groovie decoder.
-		// The offset/length uint16 is BE, but not sure the amount of length bits
-		// nor whether the offset is absolute/relative.
-		warning("TODO: Mac Compressed MIDI: cmid 0x%04x", fileref & 0x3FF);
+		// Found the resource, decompress it
+		Common::SeekableReadStream *tmp = decompressMidi(file);
 		delete file;
-		return false;
+		file = tmp;
+	} else {
+		// Otherwise, it's uncompressed
+		file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
+		if (!file)
+			error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
 	}
 
-	// Otherwise, it's uncompressed
-	file = _vm->_macResFork->getResource(MKID_BE('Midi'), fileref & 0x3FF);
-	if (!file)
-		error("Groovie::Music: Couldn't find resource 0x%04X", fileref);
-
 	return loadParser(file, loop);
+}
+
+Common::SeekableReadStream *MusicPlayerMac::decompressMidi(Common::SeekableReadStream *stream) {
+	// Initialize an output buffer of the given size
+	uint32 size = stream->readUint32BE();
+	byte *output = (byte *)malloc(size);
+
+	byte *current = output;
+	uint32 decompBytes = 0;
+	while ((decompBytes < size) && !stream->eos()) {
+		// 8 flags
+		byte flags = stream->readByte();
+
+		for (byte i = 0; (i < 8) && !stream->eos(); i++) {
+			if (flags & 1) {
+				// 1: Next byte is a literal
+				*(current++) = stream->readByte();
+				if (stream->eos())
+					continue;
+				decompBytes++;
+			} else {
+				// 0: It's a reference to part of the history
+				uint16 args = stream->readUint16BE();
+				if (stream->eos())
+					continue;
+
+				// Length = 4bit unsigned (3 minimal)
+				uint8 length = (args >> 12) + 3;
+
+				// Offset = 12bit signed (all values are negative)
+				int16 offset = (args & 0xFFF) | 0xF000;
+
+				// Copy from the past decompressed bytes
+				decompBytes += length;
+				while (length > 0) {
+					*(current) = *(current + offset);
+					current++;
+					length--;
+				}
+			}
+			flags = flags >> 1;
+		}
+	}
+
+	// Return the output buffer wrapped in a MemoryReadStream
+	return new Common::MemoryReadStream(output, size, DisposeAfterUse::YES);
 }
 
 } // End of Groovie namespace

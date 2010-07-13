@@ -1091,7 +1091,7 @@ void DrasculaEngine::updateRefresh() {
 	sprintf(rm, "update_%d", roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomUpdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomUpdaters[i]->desc)) {
-			debug(4, "Calling room updater %d", roomNumber);
+			debug(8, "Calling room updater %d", roomNumber);
 			(this->*(_roomHandlers->roomUpdaters[i]->proc))();
 			break;
 		}
@@ -1129,7 +1129,7 @@ void DrasculaEngine::updateRefresh_pre() {
 	sprintf(rm, "update_%d_pre", roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomPreupdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomPreupdaters[i]->desc)) {
-			debug(4, "Calling room preupdater %d", roomNumber);
+			debug(8, "Calling room preupdater %d", roomNumber);
 			(this->*(_roomHandlers->roomPreupdaters[i]->proc))();
 			break;
 		}

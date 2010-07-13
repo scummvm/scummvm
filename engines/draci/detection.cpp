@@ -94,7 +94,11 @@ const ADParams detectionParams = {
 	// Flags
 	0,
 	// Global GUI options
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 class DraciMetaEngine : public AdvancedMetaEngine {

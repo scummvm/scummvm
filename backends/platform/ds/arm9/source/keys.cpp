@@ -74,7 +74,6 @@
 #include <nds/system.h>
 #include <nds/arm9/input.h>
 
-//------------------------------------------------------------------------------
 
 #define KEYS_CUR (( ((~REG_KEYINPUT)&0x3ff) | (((~IPC->buttons)&3)<<10) | (((~IPC->buttons)<<6) & (KEY_TOUCH|KEY_LID) ))^KEY_LID)
 
@@ -89,63 +88,50 @@ static u8 delay = 60, repeat = 30, count = 60;
 static uint16 oldx = 0;
 static uint16 oldy = 0;
 
-//------------------------------------------------------------------------------
 void scanKeys(void) {
-//------------------------------------------------------------------------------
 	keysold = keys;
 	keys = KEYS_CUR;
 
 	oldx = IPC->touchXpx;
 	oldy = IPC->touchYpx;
-    if ( delay != 0 ) {
-        if ( keys != keysold ) {
-            count = delay ;
-            keysrepeat = keysDown() ;
+    if (delay != 0) {
+        if (keys != keysold) {
+            count = delay;
+            keysrepeat = keysDown();
         }
         count--;
-        if ( count == 0 ) {
+        if (count == 0) {
             count = repeat;
             keysrepeat = keys;
         }
     }
 }
 
-//------------------------------------------------------------------------------
 uint32 keysHeld(void) {
-//------------------------------------------------------------------------------
 	return keys;
 }
 
-//------------------------------------------------------------------------------
 uint32 keysDown(void) {
-//------------------------------------------------------------------------------
 	return (keys ^ keysold) & keys;
 }
 
-//------------------------------------------------------------------------------
 uint32 keysDownRepeat(void) {
-//------------------------------------------------------------------------------
 	uint32 tmp = keysrepeat;
-
     keysrepeat = 0;
-
     return tmp;
 }
 
-//------------------------------------------------------------------------------
 void keysSetRepeat( u8 setDelay, u8 setRepeat ) {
-//------------------------------------------------------------------------------
-    delay = setDelay ;
-    repeat = setRepeat ;
-    count = delay ;
-    keysrepeat = 0 ;
+    delay = setDelay;
+    repeat = setRepeat;
+    count = delay;
+    keysrepeat = 0;
 }
 
-//------------------------------------------------------------------------------
 uint32 keysUp(void) {
-//------------------------------------------------------------------------------
 	return (keys ^ keysold) & (~keys);
 }
 
 
-} // namespace ds
+}	// End of namespace DS
+

@@ -525,7 +525,6 @@ public:
 	SndRes *_sndRes;
 	Sound *_sound;
 	Music *_music;
-	MidiDriver *_driver;
 	Anim *_anim;
 	Render *_render;
 	IsoMap *_isoMap;

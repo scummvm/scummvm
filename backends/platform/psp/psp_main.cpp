@@ -110,12 +110,13 @@ int exit_callback(void) {
 }
 
 /* Function for handling suspend/resume */
-void power_callback(int , int powerinfo) {
+int power_callback(int , int powerinfo, void *) {
 	if (powerinfo & PSP_POWER_CB_POWER_SWITCH || powerinfo & PSP_POWER_CB_SUSPENDING) {
 		PowerMan.suspend();
 	} else if (powerinfo & PSP_POWER_CB_RESUME_COMPLETE) {
 		PowerMan.resume();
 	}
+	return 0;
 }
 
 /* Callback thread */

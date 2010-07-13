@@ -36,9 +36,6 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
-	// This is a hack, but so is the code in Hoyle1 that needs it.
-	if (argv[0].segment)
-		return make_reg(0, 0x3e9); // Yes people, this is an object
 	return make_reg(0, abs(argv[0].toSint16()));
 }
 
@@ -112,7 +109,7 @@ reg_t kCosDiv(EngineState *s, int argc, reg_t *argv) {
 	double cosval = cos(angle * PI / 180.0);
 
 	if ((cosval < 0.0001) && (cosval > -0.0001)) {
-		warning("kCosDiv: Attempted division by zero");
+		error("kCosDiv: Attempted division by zero");
 		return SIGNAL_REG;
 	} else
 		return make_reg(0, (int16)(value / cosval));
@@ -124,7 +121,7 @@ reg_t kSinDiv(EngineState *s, int argc, reg_t *argv) {
 	double sinval = sin(angle * PI / 180.0);
 
 	if ((sinval < 0.0001) && (sinval > -0.0001)) {
-		warning("kSinDiv: Attempted division by zero");
+		error("kSinDiv: Attempted division by zero");
 		return SIGNAL_REG;
 	} else
 		return make_reg(0, (int16)(value / sinval));
@@ -136,7 +133,7 @@ reg_t kTimesTan(EngineState *s, int argc, reg_t *argv) {
 
 	param -= 90;
 	if ((param % 90) == 0) {
-		warning("kTimesTan: Attempted tan(pi/2)");
+		error("kTimesTan: Attempted tan(pi/2)");
 		return SIGNAL_REG;
 	} else
 		return make_reg(0, (int16) - (tan(param * PI / 180.0) * scale));
@@ -147,10 +144,28 @@ reg_t kTimesCot(EngineState *s, int argc, reg_t *argv) {
 	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
 	if ((param % 90) == 0) {
-		warning("kTimesCot: Attempted tan(pi/2)");
+		error("kTimesCot: Attempted tan(pi/2)");
 		return SIGNAL_REG;
 	} else
 		return make_reg(0, (int16)(tan(param * PI / 180.0) * scale));
 }
+
+#ifdef ENABLE_SCI32
+
+reg_t kMulDiv(EngineState *s, int argc, reg_t *argv) {
+	int16 multiplicant = argv[0].toSint16();
+	int16 multiplier = argv[1].toSint16();
+	int16 denominator = argv[2].toSint16();
+
+	// Sanity check...
+	if (!denominator) {
+		error("kMulDiv: attempt to divide by zero (%d * %d / %d", multiplicant, multiplier, denominator);
+		return NULL_REG;
+	}
+
+	return make_reg(0, multiplicant * multiplier / denominator);
+}
+
+#endif
 
 } // End of namespace Sci

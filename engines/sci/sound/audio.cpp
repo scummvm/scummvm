@@ -24,20 +24,21 @@
  */
 
 #include "sci/resource.h"
-#include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/sound/audio.h"
 
-#include "common/system.h"
 #include "common/file.h"
+#include "common/system.h"
 
 #include "sound/audiostream.h"
-#include "sound/decoders/raw.h"
-#include "sound/decoders/wave.h"
+#include "sound/decoders/aiff.h"
 #include "sound/decoders/flac.h"
 #include "sound/decoders/mp3.h"
+#include "sound/decoders/raw.h"
 #include "sound/decoders/vorbis.h"
+#include "sound/decoders/wave.h"
 
 namespace Sci {
 
@@ -45,6 +46,7 @@ AudioPlayer::AudioPlayer(ResourceManager *resMan) : _resMan(resMan), _audioRate(
 		_syncResource(NULL), _syncOffset(0), _audioCdStart(0) {
 
 	_mixer = g_system->getMixer();
+	_wPlayFlag = false;
 }
 
 AudioPlayer::~AudioPlayer() {
@@ -63,11 +65,30 @@ int AudioPlayer::startAudio(uint16 module, uint32 number) {
 	Audio::AudioStream *audioStream = getAudioStream(number, module, &sampleLen);
 
 	if (audioStream) {
+		_wPlayFlag = false;
 		_mixer->playStream(Audio::Mixer::kSpeechSoundType, &_audioHandle, audioStream);
 		return sampleLen;
+	} else {
+		// Don't throw a warning in this case. getAudioStream() already has. Some games
+		// do miss audio entries (perhaps because of a typo, or because they were simply
+		// forgotten).
+		return 0;
 	}
+}
 
-	return 0;
+int AudioPlayer::wPlayAudio(uint16 module, uint32 tuple) {
+	// Get the audio sample length and set the wPlay flag so we return 0 on
+	// position. SSCI pre-loads the audio here, but it's much easier for us to
+	// just get the sample length and return that. wPlayAudio should *not*
+	// actually start the sample.
+
+	int sampleLen = 0;
+	Audio::AudioStream *audioStream = getAudioStream(tuple, module, &sampleLen);
+	if (!audioStream)
+		warning("wPlayAudio: unable to create stream for audio tuple %d, module %d", tuple, module);
+	delete audioStream;
+	_wPlayFlag = true;
+	return sampleLen;
 }
 
 void AudioPlayer::stopAudio() {
@@ -85,6 +106,8 @@ void AudioPlayer::resumeAudio() {
 int AudioPlayer::getAudioPosition() {
 	if (_mixer->isSoundHandleActive(_audioHandle))
 		return _mixer->getSoundElapsedTime(_audioHandle) * 6 / 100; // return elapsed time in ticks
+	else if (_wPlayFlag)
+		return 0; // Sound has "loaded" so return that it hasn't started
 	else
 		return -1; // Sound finished
 }
@@ -160,17 +183,28 @@ static void deDPCM8(byte *soundBuf, Common::SeekableReadStream &audioStream, uin
 
 // Sierra SOL audio file reader
 // Check here for more info: http://wiki.multimedia.cx/index.php?title=Sierra_Audio
-static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags) {
-	if (headerSize != 11 && headerSize != 12) {
+static bool readSOLHeader(Common::SeekableReadStream *audioStream, int headerSize, uint32 &size, uint16 &audioRate, byte &audioFlags, uint32 resSize) {
+	if (headerSize != 7 && headerSize != 11 && headerSize != 12) {
 		warning("SOL audio header of size %i not supported", headerSize);
 		return false;
 	}
 
-	audioStream->readUint32LE();			// skip "SOL" + 0 (4 bytes)
+	uint32 tag = audioStream->readUint32BE();
+
+	if (tag != MKID_BE('SOL\0')) {
+		warning("No 'SOL' FourCC found");
+		return false;
+	}
+
 	audioRate = audioStream->readUint16LE();
 	audioFlags = audioStream->readByte();
 
-	size = audioStream->readUint32LE();
+	// For the QFG3 demo format, just use the resource size
+	// Otherwise, load it from the header
+	if (headerSize == 7)
+		size = resSize;
+	else
+		size = audioStream->readUint32LE();
 	return true;
 }
 
@@ -238,9 +272,11 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		// Compressed audio made by our tool
 		byte *compressedData = (byte *)malloc(audioRes->size);
 		assert(compressedData);
-		// We copy over the compressed data in our own buffer. If we don't do this resourcemanager may free the data
-		//  later. All other compression-types already decompress completely into an additional buffer here.
-		//  MP3/OGG/FLAC decompression works on-the-fly instead.
+		// We copy over the compressed data in our own buffer. We have to do
+		// this, because ResourceManager may free the original data late. All
+		// other compression types already decompress completely into an
+		// additional buffer here. MP3/OGG/FLAC decompression works on-the-fly
+		// instead.
 		memcpy(compressedData, audioRes->data, audioRes->size);
 		Common::MemoryReadStream *compressedStream = new Common::MemoryReadStream(compressedData, audioRes->size, DisposeAfterUse::YES);
 		
@@ -270,7 +306,7 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 			// SCI1.1
 			Common::MemoryReadStream headerStream(audioRes->_header, audioRes->_headerSize, DisposeAfterUse::NO);
 
-			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags)) {
+			if (readSOLHeader(&headerStream, audioRes->_headerSize, size, _audioRate, audioFlags, audioRes->size)) {
 				Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 				data = readSOLAudio(&dataStream, size, audioFlags, flags);
 			}
@@ -286,6 +322,18 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 
 			waveStream->seek(0, SEEK_SET);
 			audioStream = Audio::makeWAVStream(waveStream, DisposeAfterUse::YES);
+		} else if (audioRes->size > 4 && READ_BE_UINT32(audioRes->data) == MKID_BE('FORM')) {
+			// AIFF detected
+			Common::MemoryReadStream *waveStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
+
+			// Calculate samplelen from AIFF header
+			int waveSize = 0, waveRate = 0;
+			byte waveFlags = 0;
+			Audio::loadAIFFFromStream(*waveStream, waveSize, waveRate, waveFlags);
+			*sampleLen = (waveFlags & Audio::FLAG_16BITS ? waveSize >> 1 : waveSize) * 60 / waveRate;
+
+			waveStream->seek(0, SEEK_SET);
+			audioStream = Audio::makeAIFFStream(waveStream, DisposeAfterUse::YES);
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected
@@ -317,13 +365,12 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 	}
 
 	if (audioSeekStream) {
-		*sampleLen = (audioSeekStream->getLength().msecs() * 10000) / 166666; // we translate msecs to ticks
-		// Original code
-		//*sampleLen = (flags & Audio::FLAG_16BITS ? size >> 1 : size) * 60 / _audioRate;
+		*sampleLen = (audioSeekStream->getLength().msecs() * 60) / 1000; // we translate msecs to ticks
 		audioStream = audioSeekStream;
 	}
-	// We have to make sure that we don't depend on resource manager pointers after this point, because the actual
-	//  audio resource may get unloaded by resource manager at any time
+	// We have to make sure that we don't depend on resource manager pointers
+	// after this point, because the actual audio resource may get unloaded by
+	// resource manager at any time.
 	if (audioStream)
 		return audioStream;
 

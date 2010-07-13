@@ -54,11 +54,10 @@ GfxPorts::~GfxPorts() {
 	delete _menuPort;
 }
 
-void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16) {
+void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16) {
 	int16 offTop = 10;
 
 	_usesOldGfxFunctions = usesOldGfxFunctions;
-	_gui = gui;
 	_paint16 = paint16;
 	_text16 = text16;
 
@@ -85,20 +84,44 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	else
 		_styleUser = SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_TRANSPARENT;
 
-	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
-	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use SetPort so we don't need to set the other fields.
+	// Jones, Slater, Hoyle 3&4 and Crazy Nicks Laura Bow/Kings Quest were
+	// called with parameter -Nw 0 0 200 320.
+	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use
+	// SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
-	Common::String gameId = g_sci->getGameID();
-	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
+	switch (g_sci->getGameId()) {
+	case GID_JONES:
+	case GID_SLATER:
+	case GID_HOYLE3:
+	case GID_HOYLE4:
+	case GID_CNICK_LAURABOW:
+	case GID_CNICK_KQ:
 		offTop = 0;
+		break;
+	case GID_MOTHERGOOSE:
+		if (getSciVersion() == SCI_VERSION_1_EARLY)
+			offTop = 0;
+		break;
+	case GID_FAIRYTALES:
+		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
+		// also do this we will get not-fully-removed windows everywhere.
+		offTop = 26;
+		break;
+	default:
+		offTop = 10;
+		break;
+	}
 
 	openPort(_wmgrPort);
 	setPort(_wmgrPort);
 	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
 	//  We leave _wmgrPort top at 0, so the adjustment wont get done
-	if (!g_sci->_features->usesOldGfxFunctions())
+	if (!g_sci->_features->usesOldGfxFunctions()) {
 		setOrigin(0, offTop);
-	_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+		_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+	} else {
+		_wmgrPort->rect.bottom = _screen->getHeight();
+	}
 	_wmgrPort->rect.right = _screen->getWidth();
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
@@ -214,7 +237,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	Common::Rect r;
 
 	if (!pwnd) {
-		warning("Can't open window!");
+		error("Can't open window!");
 		return 0;
 	}
 
@@ -228,6 +251,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	r = dims;
 	if (r.width() > _screen->getWidth()) {
 		// We get invalid dimensions at least at the end of sq3 (script bug!)
+		//  same happens very often in lsl5, sierra sci didnt fix it but it looked awful
 		warning("fixing too large window, given left&right was %d, %d", dims.left, dims.right);
 		r.left = 0;
 		r.right = _screen->getWidth() - 1;
@@ -496,6 +520,11 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isnt meant to be used on hires)
 	for (y = _priorityBottom; y < 200; y++)
 		_priorityBands[y] = _priorityBandCount;
+
+	// adjust, if bottom is 200 (one over the actual screen range) - we could otherwise go possible out of bounds
+	//  sierra sci also adjust accordingly
+	if (_priorityBottom == 200)
+		_priorityBottom--;
 }
 
 void GfxPorts::priorityBandsInit(byte *data) {

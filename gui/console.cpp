@@ -156,7 +156,9 @@ void ConsoleDialog::open() {
 	_slideMode = kDownSlideMode;
 
 	Dialog::open();
-	if (_promptStartPos == -1) {
+	if ((_promptStartPos == -1) || (_currentPos > _promptEndPos)) {
+		// we print a prompt, if this is the first time we are called or if the
+		//  engine wrote onto us since the last call
 		print(PROMPT);
 		_promptStartPos = _promptEndPos = _currentPos;
 	}

@@ -59,7 +59,7 @@ namespace M4 {
 
 class Font {
 public:
-	Font(MadsM4Engine *vm, const Common::String &filename);
+	Font(MadsM4Engine *vm, const char *filename);
 	~Font();
 
 	void setColour(uint8 colour);
@@ -73,7 +73,7 @@ public:
 		return write(surface, text, x, y, width, spaceWidth, _fontColors);
 	}
 public:
-	const Common::String _filename;
+	char _filename[20];
 private:
 	void setFontM4(const char *filename);
 	void setFontMads(const char *filename);
@@ -108,8 +108,8 @@ public:
 	FontManager(MadsM4Engine *vm): _vm(vm) { _currentFont = NULL; }
 	~FontManager();
 
-	Font *getFont(const Common::String &filename);
-	void setFont(const Common::String &filename);
+	Font *getFont(const char *filename);
+	void setFont(const char *filename);
 
 	Font *current() { 
 		assert(_currentFont);

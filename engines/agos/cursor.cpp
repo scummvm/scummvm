@@ -459,7 +459,7 @@ void AGOSEngine_Simon1::handleMouseMoved() {
 		_leftButtonDown = false;
 		x = 1;
 	} else {
-		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
+		if (!_litBoxFlag && _needHitAreaRecalc == 0)
 			goto get_out;
 	}
 
@@ -473,7 +473,7 @@ get_out:
 	drawMousePointer();
 
 	_needHitAreaRecalc = 0;
-	_litBoxFlag = 0;
+	_litBoxFlag = false;
 }
 
 void AGOSEngine_PN::handleMouseMoved() {
@@ -538,7 +538,7 @@ void AGOSEngine_PN::handleMouseMoved() {
 	drawMousePointer();
 
 	_needHitAreaRecalc = 0;
-	_litBoxFlag = 0;
+	_litBoxFlag = false;
 }
 
 void AGOSEngine::handleMouseMoved() {
@@ -610,7 +610,7 @@ void AGOSEngine::handleMouseMoved() {
 		_oneClick = 0;
 		x = 1;
 	} else {
-		if (_litBoxFlag == 0 && _needHitAreaRecalc == 0)
+		if (!_litBoxFlag && _needHitAreaRecalc == 0)
 			goto get_out;
 	}
 
@@ -622,7 +622,7 @@ get_out:
 	drawMousePointer();
 
 	_needHitAreaRecalc = 0;
-	_litBoxFlag = 0;
+	_litBoxFlag = false;
 }
 
 void AGOSEngine::mouseOff() {
@@ -706,10 +706,10 @@ void AGOSEngine_Feeble::drawMousePointer() {
 	uint cursor;
 	int image, offs;
 
-	if (_animatePointer != 0) {
+	if (_animatePointer) {
 		if (getBitFlag(99)) {
-			_mouseToggle ^= 1;
-			if (_mouseToggle != 0)
+			_mouseToggle = !_mouseToggle;
+			if (_mouseToggle)
 				_mouseAnim++;
 		} else {
 			_mouseAnim++;
@@ -720,7 +720,7 @@ void AGOSEngine_Feeble::drawMousePointer() {
 
 	cursor = _mouseCursor;
 
-	if (_animatePointer == 0 && getBitFlag(99)) {
+	if (!_animatePointer && getBitFlag(99)) {
 		_mouseAnim = 1;
 		cursor = 6;
 	} else if (_mouseCursor != 5 && getBitFlag(72)) {

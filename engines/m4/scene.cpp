@@ -55,6 +55,7 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 
 Scene::~Scene() {
 	leaveScene();
+	_vm->_scene = NULL;
 }
 
 void Scene::loadScene(int sceneNumber) {

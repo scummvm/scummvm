@@ -40,6 +40,7 @@ namespace M4 {
 #define MADS_SCREEN_HEIGHT 200
 #define MADS_Y_OFFSET ((MADS_SCREEN_HEIGHT - MADS_SURFACE_HEIGHT) / 2)
 
+#define TRANSPARENT_COLOUR_INDEX 0xFF
 
 struct BGR8 {
 	uint8 b, g, r;
@@ -74,6 +75,7 @@ public:
 	int size() { return _size; }
 	RGB8 &operator[](int idx) { return _data[idx]; }
 	void setRange(int start, int count, const RGB8 *src);
+	RGBList *clone() const;
 };
 
 // M4Surface
@@ -96,6 +98,7 @@ private:
 	byte _color;
 	bool _isScreen;
 	RGBList *_rgbList;
+	bool _ownsData;
 
 	void rexLoadBackground(Common::SeekableReadStream *source, RGBList **palData = NULL);
 	void madsLoadBackground(int roomNumber, RGBList **palData = NULL);
@@ -105,12 +108,24 @@ public:
 		create(g_system->getWidth(), isScreen ? g_system->getHeight() : MADS_SURFACE_HEIGHT, 1);
 		_isScreen = isScreen;
 		_rgbList = NULL;
+		_ownsData = true;
 	}
 	M4Surface(int width_, int height_) {
 		create(width_, height_, 1);
 		_isScreen = false;
 		_rgbList = NULL;
+		_ownsData = true;
 	}
+	M4Surface(int width_, int height_, byte *srcPixels, int pitch_) {
+		bytesPerPixel = 1;
+		w = width_;
+		h = height_;
+		pitch = pitch_;
+		pixels = srcPixels;
+		_rgbList = NULL;
+		_ownsData = false;
+	}
+
 	virtual ~M4Surface();
 
 	// loads a .COD file into the M4Surface
@@ -142,6 +157,7 @@ public:
 	inline Common::Rect bounds() const { return Common::Rect(0, 0, width(), height()); }
 	inline int width() const { return w; }
 	inline int height() const { return h; }
+	inline int getPitch() const { return pitch; }
 	void setSize(int sizeX, int sizeY) { create(sizeX, sizeY, 1); }
 	inline byte *getBasePtr() {
 		return (byte *)pixels;
@@ -154,12 +170,12 @@ public:
 	}
 	void freeData();
 	void clear();
+	void reset();
 	void frameRect(const Common::Rect &r, uint8 color);
 	void fillRect(const Common::Rect &r, uint8 color);
-	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, 
-			int transparentColour = -1);
-	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, int scale,
-			int transparentColour = -1);
+	void copyFrom(M4Surface *src, const Common::Rect &srcBounds, int destX, int destY, int transparentColour = -1);
+	void copyFrom(M4Surface *src, int destX, int destY, int depth, M4Surface *depthSurface, 
+			int scale, int transparentColour = -1);
 
 	void update() {
 		if (_isScreen) {
@@ -188,6 +204,7 @@ public:
 	void scrollY(int yAmount);
 
 	void translate(RGBList *list, bool isTransparent = false);
+	M4Surface *flipHorizontal() const;
 };
 
 enum FadeType {FT_TO_GREY, FT_TO_COLOR, FT_TO_BLOCK};

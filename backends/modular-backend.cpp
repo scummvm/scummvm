@@ -92,13 +92,15 @@ int ModularBackend::getGraphicsMode() const {
 }
 
 #ifdef USE_RGB_COLOR
+
 Graphics::PixelFormat ModularBackend::getScreenFormat() const {
 	return _graphicsManager->getScreenFormat();
 }
 
-Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() {
+Common::List<Graphics::PixelFormat> ModularBackend::getSupportedFormats() const {
 	return _graphicsManager->getSupportedFormats();
 }
+
 #endif
 
 void ModularBackend::initSize(uint w, uint h, const Graphics::PixelFormat *format ) {

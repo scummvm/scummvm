@@ -29,19 +29,6 @@
 #include "sound/mididrv.h"
 #include "common/list.h"
 
-/**
- * Music types that music drivers can implement and engines can rely on.
- */
-enum MusicType {
-	MT_PCSPK = 1,  // PC Speaker
-	MT_PCJR  = 2,  // PCjr
-	MT_ADLIB = 3,  // AdLib
-	MT_TOWNS = 4,  // FM-TOWNS
-	MT_GM    = 5,  // General MIDI
-	MT_MT32  = 6,  // MT-32
-	MT_GS    = 7   // Roland GS
-};
-
 class MusicPluginObject;
 
 /**
@@ -63,6 +50,14 @@ public:
 	 * device name (if it isn't the default one) and the name of the driver.
 	 */
 	Common::String getCompleteName();
+	
+	/**
+	 * Returns a user readable string that contains the name of the current
+	 * device name (if it isn't the default one) and the id of the driver.
+	 */
+	Common::String getCompleteId();
+
+	MidiDriver::DeviceHandle getHandle();
 
 private:
 	Common::String _name;
@@ -94,15 +89,18 @@ public:
 	virtual MusicDevices getDevices() const = 0;
 
 	/**
-	 * Tries to instantiate a MIDI Driver instance based on the settings of
-	 * the currently active ConfMan target. That is, the MusicPluginObject
-	 * should query the ConfMan singleton for the device name, port, etc.
+	 * Tries to instantiate a MIDI Driver instance based on the device
+	 * previously detected via MidiDriver::detectDevice()
 	 *
 	 * @param mididriver	Pointer to a pointer which the MusicPluginObject sets
 	 *				to the newly create MidiDriver, or 0 in case of an error
+	 *
+	* @param dev	Pointer to a device to be used then creating the driver instance.
+	 *				Default value of zero for driver types without devices.
+	 *
 	 * @return		a Common::Error describing the error which occurred, or kNoError
 	 */
-	virtual Common::Error createInstance(MidiDriver **mididriver) const = 0;
+	virtual Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const = 0;
 };
 
 

@@ -548,6 +548,9 @@ public:
 	const char **_audioCommandsNamesRes;
 	static const char *_partNames[];
 	int			_part;
+	int			_nextPart;
+
+
 #if 0	// disabled since I couldn't find any references to lip sync in the scripts
 	int16		_lipSyncVal;
 	uint		_subtitleLipSync;

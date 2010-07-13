@@ -213,6 +213,7 @@ bool SdlEventManager::pollSdlEvent(Common::Event &event) {
 	}
 
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	while (SDL_PollEvent(&ev)) {
 		preprocessEvents(&ev);
 		if (dispatchSDLEvent(ev, event))

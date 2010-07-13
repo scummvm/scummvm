@@ -83,7 +83,6 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	_sndRes = NULL;
 	_sound = NULL;
 	_music = NULL;
-	_driver = NULL;
 	_anim = NULL;
 	_render = NULL;
 	_isoMap = NULL;
@@ -198,9 +197,6 @@ SagaEngine::~SagaEngine() {
 	delete _sound;
 	_sound = NULL;
 
-	delete _driver;
-	_driver = NULL;
-
 	delete _gfx;
 	_gfx = NULL;
 
@@ -285,17 +281,7 @@ Common::Error SagaEngine::run() {
 	_console = new Console(this);
 
 	// Graphics should be initialized before music
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	bool adlib = (midiDriver == MD_ADLIB);
-
-	_driver = MidiDriver::createMidi(midiDriver);
-	if (native_mt32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_music = new Music(this, _mixer, _driver);
-	_music->setNativeMT32(native_mt32);
-	_music->setAdLib(adlib);
+	_music = new Music(this, _mixer);
 	_render = new Render(this, _system);
 	if (!_render->initialized()) {
 		return Common::kUnknownError;
@@ -433,7 +419,7 @@ void SagaEngine::loadStrings(StringsTable &stringsTable, const byte *stringsPoin
 		offset = scriptS.readUint16();
 		// In some rooms in IHNM, string offsets can be greater than the maximum value than a 16-bit integer can hold
 		// We detect this by checking the previous offset, and if it was bigger than the current one, an overflow
-		// occured (since the string offsets are sequential), so we're adding the missing part of the number
+		// occurred (since the string offsets are sequential), so we're adding the missing part of the number
 		// Fixes bug #1895205 - "IHNM: end game text/caption error"
 		if (prevOffset > offset)
 			offset += 65536;

@@ -753,14 +753,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Hoyle 4 - English DOS Demo
+	{"hoyle4", "Demo", {
+		{"resource.map", 0, "60f764020a6b788bbbe415dbc2ccb9f3", 931},
+		{"resource.000", 0, "5fe3670e3ddcd4f85c10013b5453141a", 615522},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
+	// Hoyle 4 - English DOS Demo
 	// SCI interpreter version 1.001.200 (just a guess)
+	// Does anyone have this version? -clone2727
 	{"hoyle4", "Demo", {
 		{"resource.map", 0, "662087cb383e52e3cc4ae7ecb10e20aa", 938},
 		{"resource.000", 0, "24c10844792c54d476d272213cbac300", 675252},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
-	// Jones in the Fast Lane - English DOS
+	// Jones in the Fast Lane EGA - English DOS
+	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
+	{"jones", "", {
+		{"resource.map", 0, "be4cf9e8c1e253623ef35ae3b8a1d998", 1800},
+		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 202105},
+		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 341771},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Jones in the Fast Lane VGA - English DOS
 	// SCI interpreter version 1.000.172
 	{"jones", "", {
 		{"resource.map", 0, "65cbe19b36fffc71c8e7b2686bd49ad7", 1800},
@@ -1667,7 +1684,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #ifdef ENABLE_SCI32
 	// Larry 6 - English/German DOS CD - HIRES
 	// SCI interpreter version 2.100.002
-	{"lsl6", "", {
+	{"lsl6hires", "", {
 		{"resource.map", 0, "0c0804434ea62278dd15032b1947426c", 8872},
 		{"resource.000", 0, "9a9f4870504444cda863dd14d077a680", 18520872},
 		{NULL, 0, NULL, 0}},
@@ -1675,7 +1692,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - German DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 2.100.002
-	{"lsl6", "", {
+	{"lsl6hires", "", {
 		{"resource.map", 0, "badfdf446ffed569a310d2c63a249421", 8896},
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18534274},
 		{NULL, 0, NULL, 0}},
@@ -1683,7 +1700,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Larry 6 - French DOS CD - HIRES (provided by richiefs in bug report #2670691)
 	// SCI interpreter version 2.100.002
-	{"lsl6", "", {
+	{"lsl6hires", "", {
 		{"resource.map", 0, "d184e9aa4f2d4b5670ddb3669db82cda", 8896},
 		{"resource.000", 0, "bd944d2b06614a5b39f1586906f0ee88", 18538987},
 		{NULL, 0, NULL, 0}},
@@ -2390,7 +2407,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	},
 
 	// Quest for Glory 4 1.1 Floppy - German DOS (supplied by markcool in bug report #2723850)
-	// SCI interpreter version 2.000.000 (a guess?)
+	// Executable scanning reports "2.000.000", VERSION file reports "1.1"
 	{"qfg4", "", {
 		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
 		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
@@ -2407,27 +2424,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
-#if 0
-	// NOTE: This version looks to be exactly the same as the English one
-	// Perhaps it's the English one?
-
-	// Quest for Glory 4 - German DOS/Windows (from PCJoker 2/98)
-	{"qfg4", "", {
-		{"resource.map", 0, "aba367f2102e81782d961b14fbe3d630", 10246},
-		{"resource.000", 0, "263dce4aa34c49d3ad29bec889007b1c", 11571394},
-		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
-#endif
-
-	// Quest for Glory 4 - German DOS/Windows Disk V1.1 (from PCJoker 2/89)
-	// SCI interpreter version 2.000.000 (a guess?)
-	{"qfg4", "", {
-		{"resource.map", 0, "9e0abba8746f40565bc7eb5720522ecd", 9301},
-		{"resource.000", 0, "57f22cdc54eeb35fce1f26b31b5c3ee1", 11076197},
-		{NULL, 0, NULL, 0}},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH
-	},
 #endif
 
 	// Slater & Charlie go camping
@@ -2572,6 +2568,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
 
+	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
+	{"sq1sci", "VGA Remake", {
+		{"resource.map", 0, "5c6ad20407261b544238e8dce87afead", 5895},
+		{"resource.000", 0, "2c414644b23839069c8d1a93b721df16", 1017033},
+		{"resource.001", 0, "8744ae2ea6b316e91e2a35ab1aa301d2", 1024622},
+		{"resource.002", 0, "96860704f7a07ecc10bef223b4b2f153", 1273992},
+		{"resource.003", 0, "ae46e195e66df5a131917f0aa80b5669", 1242794},
+		{"resource.004", 0, "91d58a9eb2187c38424990afe4c12bc6", 1250949},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH
+	},
+
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
 	{"sq1sci", "VGA Remake, Demo", {
@@ -2659,6 +2667,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
+
+	// Space Quest 3 - English Mac (from Fingolfin)
+	{"sq3", "", {
+		{"resource.map", 0, "5c931675c6e01c4b418faca85d76c92c", 5844},
+		{"resource.001", 0, "0d8dfe42683b46f3131823233a91ce6a", 771917},
+		{"resource.002", 0, "0d8dfe42683b46f3131823233a91ce6a", 794072},
+		{"resource.003", 0, "0d8dfe42683b46f3131823233a91ce6a", 776536},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH },
 
 	// Space Quest 3 - German DOS (from Tobis87)
 	// SCI interpreter version 0.000.453 (?)

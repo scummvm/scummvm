@@ -44,6 +44,7 @@ MadsAnimation::MadsAnimation(MadsM4Engine *vm, MadsView *view): Animation(vm), _
 	_currentFrame = 0;
 	_oldFrameEntry = 0;
 	_nextFrameTimer = _madsVm->_currentTimer;
+	_nextScrollTimer = 0;
 }
 
 MadsAnimation::~MadsAnimation() {
@@ -56,14 +57,14 @@ MadsAnimation::~MadsAnimation() {
 	if (_field12) {
 		_view->_spriteSlots.deleteSprites(_spriteListIndexes[_spriteListIndex]);
 	}
-
-	delete _font;
 }
+
+#define FILENAME_SIZE 13
 
 /**
  * Initialises and loads the data of an animation
  */
-void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface) {
+void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) {
 	MadsPack anim(filename.c_str(), _vm);
 	bool madsRes = filename[0] == '*';
 	char buffer[20];
@@ -87,34 +88,49 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 	animStream->skip(2);
 	_field12 = animStream->readUint16LE() != 0;
 	_spriteListIndex = animStream->readUint16LE();
-	_scrollX = animStream->readUint16LE();
+	_scrollX = animStream->readSint16LE();
 	_scrollY = animStream->readSint16LE();
-	animStream->skip(10);
+	_scrollTicks = animStream->readUint16LE();
+	animStream->skip(8);
 	
-	animStream->read(buffer, 13);
-	_interfaceFile = Common::String(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_interfaceFile = Common::String(buffer);
 
 	for (int i = 0; i < 10; ++i) {
-		animStream->read(buffer, 13);
-		_spriteSetNames[i] = Common::String(buffer, 13);
+		animStream->read(buffer, FILENAME_SIZE);
+		buffer[FILENAME_SIZE] = '\0';
+		_spriteSetNames[i] = Common::String(buffer);
 	}
 
 	animStream->skip(81);
-	animStream->read(buffer, 13);
-	_lbmFilename = Common::String(buffer, 13);
-	animStream->read(buffer, 13);
-	_spritesFilename = Common::String(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_lbmFilename = Common::String(buffer);
+
+	animStream->skip(365);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_spritesFilename = Common::String(buffer);
+
 	animStream->skip(48);
-	animStream->read(buffer, 13);
-	_soundName = Common::String(buffer, 13);
-	animStream->skip(26);
-	animStream->read(buffer, 13);
-	Common::String fontResource(buffer, 13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_soundName = Common::String(buffer);
+
+	animStream->skip(13);
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	_dsrName = Common::String(buffer);
+
+	animStream->read(buffer, FILENAME_SIZE);
+	buffer[FILENAME_SIZE] = '\0';
+	Common::String fontResource(buffer);
 
 	if (_animMode == 4)
 		flags |= 0x4000;
 	if (flags & 0x100)
-		loadInterface(interfaceSurface, sceneSurface);
+		loadInterface(surface, depthSurface);
 
 	// Initialise the reference list
 	for (int i = 0; i < spriteListCount; ++i)
@@ -130,21 +146,24 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 
 		for (int i = 0; i < messagesCount; ++i) {
 			AnimMessage rec;
-			animStream->read(rec.msg, 70);
-			rec.pos.x = animStream->readUint16LE();
-			rec.pos.y = animStream->readUint16LE();
-			animStream->readUint16LE();
-			rec.rgb1.r = animStream->readByte();
-			rec.rgb1.g = animStream->readByte();
-			rec.rgb1.b = animStream->readByte();
-			rec.rgb2.r = animStream->readByte();
-			rec.rgb2.g = animStream->readByte();
-			rec.rgb2.b = animStream->readByte();
-			rec.kernelMsgIndex = animStream->readUint16LE();
+			rec.soundId = animStream->readSint16LE();
+			animStream->read(rec.msg, 64);
+			animStream->skip(4);
+			rec.pos.x = animStream->readSint16LE();
+			rec.pos.y = animStream->readSint16LE();
+			rec.flags = animStream->readUint16LE();
+			rec.rgb1.r = animStream->readByte() << 2;
+			rec.rgb1.g = animStream->readByte() << 2;
+			rec.rgb1.b = animStream->readByte() << 2;
+			rec.rgb2.r = animStream->readByte() << 2;
+			rec.rgb2.g = animStream->readByte() << 2;
+			rec.rgb2.b = animStream->readByte() << 2;
+			animStream->skip(2);	// Space for kernelMsgIndex
+			rec.kernelMsgIndex = -1;
 			animStream->skip(6);
 			rec.startFrame = animStream->readUint16LE();
 			rec.endFrame = animStream->readUint16LE();
-			animStream->readUint16LE();
+			animStream->skip(2);
 
 			_messages.push_back(rec);
 		}
@@ -162,9 +181,9 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			rec.seqIndex = animStream->readByte();
 			rec.spriteSlot.spriteListIndex = animStream->readByte();
 			rec.spriteSlot.frameNumber = animStream->readUint16LE();
-			rec.spriteSlot.xp = animStream->readUint16LE();
-			rec.spriteSlot.yp = animStream->readUint16LE();
-			rec.spriteSlot.depth = animStream->readByte();
+			rec.spriteSlot.xp = animStream->readSint16LE();
+			rec.spriteSlot.yp = animStream->readSint16LE();
+			rec.spriteSlot.depth = animStream->readSByte();
 			rec.spriteSlot.scale = (int8)animStream->readByte();
 
 			_frameEntries.push_back(rec);
@@ -180,7 +199,7 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		for (int i = 0; i < miscEntriesCount; ++i) {
 			AnimMiscEntry rec;
 			rec.soundNum = animStream->readByte();
-			animStream->skip(1);
+			rec.msgIndex = animStream->readSByte();
 			rec.numTicks = animStream->readUint16LE();
 			rec.posAdjust.x = animStream->readUint16LE();
 			rec.posAdjust.y = animStream->readUint16LE();
@@ -199,8 +218,15 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 			fontName += "*";
 		fontName += fontResource;
 
-		_font = _vm->_font->getFont(fontName);
+		if (fontName != "")
+			_font = _vm->_font->getFont(fontName.c_str());
+		else
+			warning("Attempted to set a font with an empty name");
 	}
+
+	// If a speech file is specified, then load it
+	if (!_dsrName.empty())
+		_vm->_sound->loadDSRFile(_dsrName.c_str());
 
 	// Load all the sprite sets for the animation
 	for (int i = 0; i < spriteListCount; ++i) {
@@ -232,6 +258,9 @@ void MadsAnimation::initialise(const Common::String &filename, uint16 flags, M4S
 		int idx = _frameEntries[i].spriteSlot.spriteListIndex;
 		_frameEntries[i].spriteSlot.spriteListIndex = _spriteListIndexes[idx];
 	}
+
+	if (hasScroll())
+		_nextScrollTimer = _madsVm->_currentTimer + _scrollTicks;
 }
 
 /**
@@ -259,7 +288,7 @@ void MadsAnimation::load(const Common::String &filename, int abortTimers) {
 	_abortMode = _madsVm->scene()->_abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
 	// Initialise kernel message list
 	for (uint i = 0; i < _messages.size(); ++i)
@@ -282,9 +311,24 @@ void MadsAnimation::update() {
 			load1(newIndex);
 	}
 
+	// Check for scroll change
+	bool screenChanged = false;
+
+	// Handle any scrolling of the screen surface
+	if (hasScroll() && (_madsVm->_currentTimer >= _nextScrollTimer)) {
+		_view->_bgSurface->scrollX(_scrollX);
+		_view->_bgSurface->scrollY(_scrollY);
+
+		_nextScrollTimer = _madsVm->_currentTimer + _scrollTicks;
+		screenChanged = true;
+	}
+
 	// If it's not time for the next frame, then exit
-	if (_madsVm->_currentTimer < _nextFrameTimer)
+	if (_madsVm->_currentTimer < _nextFrameTimer) {
+		if (screenChanged)
+			_view->_spriteSlots.fullRefresh();
 		return;
+	}
 
 	// Loop checks for any prior animation sprite slots to be expired
 	for (int slotIndex = 0; slotIndex < _view->_spriteSlots.startIndex; ++slotIndex) {
@@ -311,25 +355,17 @@ void MadsAnimation::update() {
 	if (misc.soundNum)
 		_vm->_sound->playSound(misc.soundNum);
 
-	bool screenChanged = false;
-
-	// Handle any scrolling of the screen surface
-	if ((_scrollX != 0) || (_scrollY != 0)) {
-		_view->_bgSurface->scrollX(_scrollX);
-		_view->_bgSurface->scrollY(_scrollY);
-
-		screenChanged = true;
-	}
-
 	// Handle any offset adjustment for sprites as of this frame
 	if (_view->_posAdjust.x != misc.posAdjust.x) {
-		misc.posAdjust.x = _view->_posAdjust.x;
+		_view->_posAdjust.x = misc.posAdjust.x;
 		screenChanged = true;
 	}
 	if (_view->_posAdjust.y != misc.posAdjust.y) {
-		misc.posAdjust.y = _view->_posAdjust.y;
+		_view->_posAdjust.y = misc.posAdjust.y;
 		screenChanged = true;
 	}
+
+
 	if (screenChanged) {
 		// Signal the entire screen needs refreshing
 		_view->_spriteSlots.fullRefresh();
@@ -408,7 +444,12 @@ void MadsAnimation::update() {
 			_vm->_palette->setEntry(colIndex + 1, me.rgb2.r, me.rgb2.g, me.rgb2.b);
 
 			// Add a kernel message to display the given text
-			me.kernelMsgIndex = _view->_kernelMessages.add(me.pos, colIndex * 101, 0, 0, INDEFINITE_TIMEOUT, me.msg);
+			me.kernelMsgIndex = _view->_kernelMessages.add(me.pos, colIndex * 0x101 + 0x100, 0, 0, INDEFINITE_TIMEOUT, me.msg);
+			assert(me.kernelMsgIndex >= 0);
+
+			// Play the associated sound, if it exists
+			if (me.soundId > 0)
+				_vm->_sound->playDSRSound(me.soundId - 1, 255, false);
 			++_messageCtr;
 		}
 	}
@@ -424,7 +465,7 @@ void MadsAnimation::update() {
 			if (_abortMode != ABORTMODE_1) {
 				// Copy the noun list
 				for (int i = 0; i < 3; ++i)
-					_madsVm->scene()->actionNouns[i] = _actionNouns[i];
+					_madsVm->globals()->actionNouns[i] = _actionNouns[i];
 			}
 		}
 	}
@@ -437,6 +478,12 @@ void MadsAnimation::setCurrentFrame(int frameNumber) {
 	_currentFrame = frameNumber;
 	_oldFrameEntry = 0;
 	_freeFlag = false;
+
+	_nextScrollTimer = _nextFrameTimer = _madsVm->_currentTimer;
+}
+
+int MadsAnimation::getCurrentFrame() {
+	return _currentFrame;
 }
 
 void MadsAnimation::load1(int frameNumber) {

@@ -136,6 +136,8 @@ _enable_prof=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
+# GUI translation options
+_translation=yes
 # Default platform settings
 _backend=sdl
 _endian=unknown
@@ -341,7 +343,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | gamecube | nds | ps2 | psp | wii)
+	dreamcast | gamecube | ds | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gp2x-linux)
@@ -625,7 +627,7 @@ Usage: $0 [OPTIONS]...
 Configuration:
   -h, --help              display this help and exit
   --backend=BACKEND       backend to build (dc, gp2x, gp2xwiz, iphone,
-                          linuxmoto, nds, null, ps2, psp, sdl, wii, wince)
+                          linuxmoto, ds, null, ps2, psp, sdl, wii, wince)
                           [sdl]
 
 Installation directories:
@@ -655,7 +657,7 @@ Special configuration feature:
                                            gamecube for Nintendo GameCube
                                            iphone for Apple iPhone
                                            linupy for Yopy PDA
-                                           nds for Nintendo DS
+                                           ds for Nintendo DS
                                            ps2 for PlayStation 2
                                            psp for PlayStation Portable
                                            wii for Nintendo Wii
@@ -676,6 +678,7 @@ Optional Features:
   --disable-16bit          don't enable 16bit color support
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
+  --disable-translation    don't build support for translated messages
   --enable-text-console    use text console instead of graphical console
   --enable-verbose-build   enable regular echoing of commands during build process
 
@@ -760,6 +763,8 @@ for ac_option in $@; do
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
 	--disable-mt32emu)        _mt32emu=no     ;;
+	--enable-translation)     _translation=yes ;;
+	--disable-translation)    _translation=no ;;
 	--enable-vkeybd)          _vkeybd=yes     ;;
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
@@ -944,8 +949,8 @@ motomagx)
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
 	;;
-nds)
-	_host_os=nds
+ds)
+	_host_os=ds
 	_host_cpu=arm
 	_host_alias=arm-eabi
 	;;
@@ -1002,7 +1007,7 @@ wince)
 android)
 	_host_os=android
 	_host_cpu=arm
-	_host_alias=arm-android-eabi
+	_host_alias=arm-oe-linux-androideabi
 	;;
 *)
 	if test -n "$_host"; then
@@ -1037,7 +1042,9 @@ fi
 if test "$_release_build" = yes; then
 	# Release mode enabled: enable optimizations. This also
 	# makes it possible to use -Wuninitialized, so let's do that.
-	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized"
+	# We will also add a define, which indicates we are doing
+	# an build for a release version.
+	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized -DRELEASE_BUILD"
 fi
 
 
@@ -1063,7 +1070,7 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-gamecube | nds | wii)
+gamecube | ds | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1131,9 +1138,12 @@ else
 	CXX=
 	for compiler in $compilers; do
 		if test_compiler $compiler; then
+			echo "success testing compiler: $1" >> "$TMPLOG"
 			CXX=$compiler
 			echo $CXX
 			break
+		else
+			echo "failure testing compiler: $1" >> "$TMPLOG"
 		fi
 	done
 fi
@@ -1351,7 +1361,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib"
+		# libogc is required to link the cc tests (includes _start())
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib -logc"
 		;;
 	haiku*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1380,9 +1391,14 @@ case $_host_os in
 	mint*)
 		DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		;;
-	nds)
-		# TODO nds
+	ds)
+		# TODO Nintendo DS
 		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
+		LIBS="$LIBS -lnds9"
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1404,7 +1420,8 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib"
+		# libogc is required to link the cc tests (includes _start())
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib -logc"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale"
@@ -1486,6 +1503,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
+			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
 			;;
 		gp2xwiz)
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
@@ -1501,6 +1519,7 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_vkeybd="yes"
+			_port_mk="backends/platform/gp2xwiz/gp2xwiz-bundle.mk"
 			;;
 		iphone)
 			DEFINES="$DEFINES -DIPHONE -DUNIX"
@@ -1557,24 +1576,23 @@ if test -n "$_host"; then
 			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
-		nds)
+		ds)
 			# TODO: complete this
-			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_need_memalign=yes
-			_backend="nds"
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="ds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/ds/ds.mk"
-			# TODO: Enable more ARM optimizations -- requires testing!
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			#add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			;;
 		neuros)
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
@@ -1666,7 +1684,6 @@ if test -n "$_host"; then
 			;;
 		android)
 			DEFINES="$DEFINES -DANDROID -DUNIX -DUSE_ARM_SMUSH_ASM"
-			_endian=little
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
@@ -1675,7 +1692,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			_backend="android"
 			_port_mk="backends/platform/android/android.mk"
-			_build_hq_scalers="no"
 			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
@@ -1978,7 +1994,7 @@ add_to_config_mk_if_yes "$_indeo3" 'USE_INDEO3 = 1'
 cat > $TMPC << EOF
 int main(void) { return 0; }
 EOF
-cc_check -lm && LDFLAGS="$LDFLAGS -lm"
+cc_check -lm && LIBS="$LIBS -lm"
 
 #
 # Check for Ogg Vorbis
@@ -2314,6 +2330,31 @@ if test "$_keymapper" = yes ; then
 	DEFINES="$DEFINES -DENABLE_KEYMAPPER"
 fi
 
+# Check whether to build translation support
+#
+echo_n "Building translation support... "
+add_to_config_mk_if_yes $_translation 'USE_TRANSLATION = 1'
+add_to_config_h_if_yes $_translation '#define USE_TRANSLATION'
+if test "$_translation" = no ; then
+	echo "no"
+else
+	echo_n "yes ("
+
+	cat > $TMPC << EOF
+#include <locale.h>
+int main(void) { setlocale(LC_ALL, ""); return 0; }
+EOF
+	_detectlang=no
+	cc_check $LDFLAGS $CXXFLAGS && _detectlang=yes
+
+	add_to_config_h_if_yes $_detectlang '#define USE_DETECTLANG'
+	if test "$_detectlang" = yes ; then
+		echo "with runtime language detection)"
+	else
+		echo "without runtime language detection)"
+	fi
+fi
+
 #
 # Figure out installation directories
 #
@@ -2408,8 +2449,11 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
-	nds)
-		# TODO nds
+	ds)
+		# TODO ds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
@@ -2424,14 +2468,7 @@ case $_backend in
 		;;
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
-		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
-		LIBS="$LIBS -lpng -lSDL -Wl,-Map,mapfile.txt"
-		SDLLIBS=`$PSPDEV/psp/bin/sdl-config --libs`
-
-		if `echo "$SDLLIBS" | grep ".*-lGL.*" 1>/dev/null 2>&1`
-		then
-			LIBS="$LIBS -lGL"
-		fi
+		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
 		;;
 	samsungtv)
 		find_sdlconfig
@@ -2463,12 +2500,36 @@ case $_backend in
 		LIBS="$LIBS -static -lSDL"
 		;;
 	android)
+		static_libs=''
+		system_libs=''
+		for lib in $LIBS; do
+			case $lib in
+			-lz|-lm)
+				system_libs="$system_libs $lib"
+				;;
+			*)
+				static_libs="$static_libs $lib"
+				;;
+			esac
+		done
+
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
 		# than pick up anything unhygenic from the Android libs.
-		LIBS="$LIBS -lgcc -lstdc++ -llog -lGLESv1_CM -lEGL"
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -lstdc++ -llog -lGLESv1_CM"
 		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
 		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
+
+		# Work around an Android 2.0+ run-time linker bug:
+		# The linker doesn't actually look in previously
+		# loaded libraries when trying to resolve symbols -
+		# effectively turning all dlopen(RTLD_GLOBAL) calls
+		# into dlopen(RTLD_LOCAL).  It *does* look in
+		# DT_NEEDED libraries, so the workaround is to add an
+		# (otherwise unnecessary) dependency from plugins back
+		# to the main libscummvm.so.
+		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
+		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
@@ -2485,7 +2546,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos* | android)
+		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)

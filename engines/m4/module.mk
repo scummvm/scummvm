@@ -22,6 +22,7 @@ MODULE_OBJS = \
 	mads_anim.o \
 	mads_logic.o \
 	mads_menus.o \
+	mads_player.o \
 	mads_scene.o \
 	mads_views.o \
 	midi.o \

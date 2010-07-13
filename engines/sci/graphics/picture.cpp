@@ -109,7 +109,7 @@ void GfxPicture::drawSci11Vga() {
 	Palette palette;
 
 	// Create palette and set it
-	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 	_palette->set(&palette, true);
 
 	// display Cel-data
@@ -147,7 +147,7 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 
 	if ((celNo == -1) || (celNo == 0)) {
 		// Create palette and set it
-		_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+		_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 		_palette->set(&palette, true);
 	}
 	if (celNo != -1) {
@@ -437,7 +437,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 			memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
 		memcpy(&EGApriority, &vector_defaultEGApriority, sizeof(vector_defaultEGApriority));
 
-		if (strcmp(g_sci->getGameID(), "iceman") == 0) {
+		if (g_sci->getGameId() == GID_ICEMAN) {
 			// WORKAROUND: we remove certain visual&priority lines in underwater rooms of iceman, when not dithering the
 			//              picture. Normally those lines aren't shown, because they share the same color as the dithered
 			//              fill color combination. When not dithering, those lines would appear and get distracting.
@@ -532,7 +532,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 		//  inside picture data for such games
 		case PIC_OP_SET_PATTERN:
 			if (_resourceType >= SCI_PICTURE_TYPE_SCI11) {
-				if (strcmp(g_sci->getGameID(), "sq4") == 0) {
+				if (g_sci->getGameId() == GID_SQ4) {
 					// WORKAROUND: For SQ4 / for some pictures handle this like a terminator
 					//  This picture includes garbage data, first a set pattern w/o parameter and then short pattern
 					//  I guess that garbage is a left over from the sq4-floppy (sci1) to sq4-cd (sci1.1) conversion

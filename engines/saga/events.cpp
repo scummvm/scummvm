@@ -306,7 +306,6 @@ int Events::handleOneShot(Event *event) {
 		_vm->_sndRes->playVoice(event->param);
 		break;
 	case kMusicEvent:
-		_vm->_music->stop();
 		if (event->op == kEventPlay)
 			_vm->_music->play(event->param, (MusicFlags)event->param2);
 		break;

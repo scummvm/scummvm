@@ -29,6 +29,7 @@ MODULE_OBJS := \
 	graphics/gp2xwizsdl/gp2xwizsdl-graphics.o \
 	graphics/linuxmotosdl/linuxmotosdl-graphics.o \
 	graphics/opengl/glerrorcheck.o \
+	graphics/opengl/gltexture.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/openglsdl/openglsdl-graphics.o \
 	graphics/sdl/sdl-graphics.o \

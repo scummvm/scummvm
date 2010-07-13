@@ -33,59 +33,6 @@
 
 namespace Sci {
 
-#if 0
-
-#define VOCAB_RESOURCE_CLASSES 996
-/**
- * Vocabulary class names.
- * These strange names were taken from an SCI01 interpreter.
- */
-const char *class_names[] = {"",
-                             "",
-                             "conj",   // conjunction
-                             "ass",    // ?
-                             "pos",    // preposition ?
-                             "art",    // article
-                             "adj",    // adjective
-                             "pron",   // pronoun
-                             "noun",   // noun
-                             "auxv",   // auxillary verb
-                             "adv",    // adverb
-                             "verb",   // verb
-                             "",
-                             "",
-                             "",
-                             ""
-                            };
-
-int *vocab_get_classes(ResourceManager *resMan, int* count) {
-	Resource* r;
-	int *c;
-	unsigned int i;
-
-	if ((r = resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == NULL)
-		return 0;
-
-	c = (int *)malloc(sizeof(int) * r->size / 2);
-	for (i = 2; i < r->size; i += 4) {
-		c[i/4] = READ_LE_UINT16(r->data + i);
-	}
-	*count = r->size / 4;
-
-	return c;
-}
-
-int vocab_get_class_count(ResourceManager *resMan) {
-	Resource* r;
-
-	if ((r = resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == 0)
-		return 0;
-
-	return r->size / 4;
-}
-
-#endif
-
 Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 	_parserRules = NULL;
 	_vocabVersion = kVocabularySCI0;

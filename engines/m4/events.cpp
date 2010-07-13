@@ -57,6 +57,10 @@ Events::Events(MadsM4Engine *vm) : _vm(vm) {
 		_console = new MadsConsole(_madsVm);
 }
 
+Events::~Events() {
+	delete _console;
+}
+
 M4EventType Events::handleEvents() {
 	static int oldX = -1, oldY = -1;
 	static uint32 dclickTime = 0;
@@ -252,7 +256,8 @@ bool Mouse::setCursorNum(int cursorIndex) {
 	_cursor = _cursorSprites->getFrame(cursorIndex);
 
 	// Set the cursor to the sprite
-	CursorMan.replaceCursor((const byte *)_cursor->getBasePtr(), _cursor->width(), _cursor->height(), _cursor->xOffset, _cursor->yOffset, 0);
+	CursorMan.replaceCursor((const byte *)_cursor->getBasePtr(), _cursor->width(), _cursor->height(), 
+		_cursor->xOffset, _cursor->yOffset, TRANSPARENT_COLOUR_INDEX);
 
 	return true;
 }

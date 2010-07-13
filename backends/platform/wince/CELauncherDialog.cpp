@@ -38,6 +38,8 @@
 
 #include "common/config-manager.h"
 
+#include "common/translation.h"
+
 using namespace GUI;
 using namespace Common;
 
@@ -51,13 +53,13 @@ public:
 		// needs fixing, or remove it!
 		const int buttonWidth = g_gui.xmlEval()->getVar("Globals.Button.Width", 0);
 		const int buttonHeight = g_gui.xmlEval()->getVar("Globals.Button.Height", 0);
-		new ButtonWidget(this, (_w - buttonWidth) / 2, 45, buttonWidth, buttonHeight, "OK", kCloseCmd, '\r');	// Close dialog - FIXME
+		new ButtonWidget(this, (_w - buttonWidth) / 2, 45, buttonWidth, buttonHeight, _("OK"), 0, kCloseCmd, '\r');	// Close dialog - FIXME
 
-		Common::String videoDriver("Using SDL driver ");
+		Common::String videoDriver(_("Using SDL driver "));
 		SDL_VideoDriverName(tempo, sizeof(tempo));
 		videoDriver += tempo;
 		new StaticTextWidget(this, 0, 10, _w, kLineHeight, videoDriver, Graphics::kTextAlignCenter);
-		Common::String displayInfos("Display ");
+		Common::String displayInfos(_("Display "));
 		sprintf(tempo, "%dx%d (real %dx%d)", GetSystemMetrics(SM_CXSCREEN), GetSystemMetrics(SM_CYSCREEN), OSystem_WINCE3::getScreenWidth(), OSystem_WINCE3::getScreenHeight());
 		displayInfos += tempo;
 		new StaticTextWidget(this, 0, 20, _w, kLineHeight, displayInfos, Graphics::kTextAlignCenter);
@@ -99,7 +101,7 @@ void CELauncherDialog::automaticScanDirectory(const Common::FSNode &node) {
  * returns some illegal paths atm.
  */
 void CELauncherDialog::addGame() {
-	MessageDialog alert("Do you want to perform an automatic scan ?", "Yes", "No");
+	MessageDialog alert(_("Do you want to perform an automatic scan ?"), _("Yes"), _("No"));
 	if (alert.runModal() == kMessageOK && _browser->runModal() > 0) {
 		// Clear existing domains
 		ConfigManager::DomainMap &domains = (ConfigManager::DomainMap&)ConfMan.getGameDomains();

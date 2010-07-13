@@ -87,7 +87,7 @@ public:
 	virtual int getGraphicsMode() const;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format = NULL);
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
@@ -160,6 +160,13 @@ protected:
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
+	Common::List<Graphics::PixelFormat> _supportedFormats;
+
+	/**
+	 * Update the list of supported pixel formats.
+	 * This method is invoked by loadGFXMode().
+	 */
+	void detectSupportedFormats();
 #endif
 
 	/** Temporary screen (for scalers) */

@@ -246,16 +246,19 @@ public:
 	}
 
 	void waitWalk(void *threadObj) {
+		debug(3, "waitWalk()");
 		wait(kWaitTypeWalk);
 		_threadObj = threadObj;
 	}
 
 	void waitDelay(int sleepTime) {
+		debug(3, "waitDelay(%d)", sleepTime);
 		wait(kWaitTypeDelay);
 		_sleepTime = sleepTime;
 	}
 
 	void waitFrames(int frames) {
+		debug(3, "waitFrames(%d)", frames);
 		wait(kWaitTypeWaitFrames);
 		_frameWait = frames;
 	}

@@ -33,10 +33,28 @@
 
 namespace Sci {
 
-// Default kernel name table
-#define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
+// Uncompiled kernel signatures are formed from a string of letters.
+// each corresponding to a type of a parameter (see below).
+// Use small letters to indicate end of sum type.
+// Use capital letters for sum types, e.g.
+// "LNoLr" for a function which takes two arguments:
+// (1) list, node or object
+// (2) list or ref
+#define KSIG_SPEC_LIST 'l'
+#define KSIG_SPEC_NODE 'n'
+#define KSIG_SPEC_OBJECT 'o'
+#define KSIG_SPEC_REF 'r' // Said Specs and strings
+#define KSIG_SPEC_ARITHMETIC 'i'
+#define KSIG_SPEC_NULL 'z'
+#define KSIG_SPEC_ANY '.'
+#define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
 
-static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
+#define KSIG_SPEC_SUM_DONE ('a' - 'A')
+
+
+
+/** Default kernel name table. */
+static const char *s_defaultKernelNames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",
@@ -152,18 +170,18 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x6c*/ "Graph",
 	/*0x6d*/ "Joystick",
 	// End of kernel function table for SCI0
-	/*0x6e*/ "ShiftScreen",
+	/*0x6e*/ "Dummy",	// ShiftScreen
 	/*0x6f*/ "Palette",
 	/*0x70*/ "MemorySegment",
 	/*0x71*/ "Intersections",	// MoveCursor (SCI1 late), PalVary (SCI1.1)
 	/*0x72*/ "Memory",
-	/*0x73*/ "ListOps",
+	/*0x73*/ "Dummy",	// ListOps
 	/*0x74*/ "FileIO",
 	/*0x75*/ "DoAudio",
 	/*0x76*/ "DoSync",
 	/*0x77*/ "AvoidPath",
 	/*0x78*/ "Sort",	// StrSplit (SCI01)
-	/*0x79*/ "ATan",
+	/*0x79*/ "Dummy",	// ATan
 	/*0x7a*/ "Lock",
 	/*0x7b*/ "StrSplit",
 	/*0x7c*/ "GetMessage",	// Message (SCI1.1)
@@ -181,227 +199,456 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x88*/ "Dummy"	// DbugStr
 };
 
-struct SciKernelFunction {
-	const char *name;
-	KernelFunc *fun; /* The actual function */
-	const char *signature;  /* kfunct signature */
+reg_t kStub(EngineState *s, int argc, reg_t *argv) {
+	Kernel *kernel = g_sci->getKernel();
+	int kernelCallNr = -1;
+
+	Common::List<ExecStack>::iterator callIterator = s->_executionStack.end();
+	if (callIterator != s->_executionStack.begin()) {
+		callIterator--;
+		ExecStack lastCall = *callIterator;
+		kernelCallNr = lastCall.debugSelector;
+	}
+
+	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
+								Common::String::printf("[%x]", kernelCallNr) +
+								" invoked. Params: " +
+								Common::String::printf("%d", argc) + " (";
+
+	for (int i = 0; i < argc; i++) {
+		warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+		warningMsg += (i == argc - 1 ? ")" : ", ");
+	}
+
+	warning("%s", warningMsg.c_str());
+	return s->r_acc;
+}
+
+reg_t kStubNull(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	return NULL_REG;
+}
+
+reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	error("Kernel function was called, which was considered to be unused - see log for details");
+}
+
+// [io] -> either integer or object
+// (io) -> optionally integer AND an object
+// (i) -> optional integer
+// . -> any type
+// i* -> optional multiple integers
+// .* -> any parameters afterwards (or none)
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kAbs_workarounds[] = {
+    { GID_HOYLE1,          1,  0,              "room1", "doit",           -1,    0, { 2, 0x3e9 } }, // crazy eights - called with objects instead of integers
+    { GID_HOYLE1,          2,  0,              "room2", "doit",           -1,    0, { 2, 0x3e9 } }, // old maid - called with objects instead of integers
+    { GID_HOYLE1,          3,  0,              "room3", "doit",           -1,    0, { 2, 0x3e9 } }, // hearts - called with objects instead of integers
+    SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-#define DEFUN(name, fun, sig) {name, fun, sig}
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
+    { GID_QFG1,           64,  0,               "rm64", "dispose",        -1,    0, { 1,    0 } }, // when leaving graveyard, parameter 0 is an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
 
-SciKernelFunction kfunct_mappers[] = {
-	/*00*/	DEFUN("Load", kLoad, "iii*"),
-	/*01*/	DEFUN("UnLoad", kUnLoad, "i.*"),	// Work around SQ1 bug, when exiting the Ulence flats bar
-	/*02*/	DEFUN("ScriptID", kScriptID, "Ioi*"),
-	/*03*/	DEFUN("DisposeScript", kDisposeScript, "Oii*"), // Work around QfG1 bug
-	/*04*/	DEFUN("Clone", kClone, "o"),
-	/*05*/	DEFUN("DisposeClone", kDisposeClone, "o"),
-	/*06*/	DEFUN("IsObject", kIsObject, "."),
-	/*07*/	DEFUN("RespondsTo", kRespondsTo, ".i"),
-	/*08*/	DEFUN("DrawPic", kDrawPic, "i*"),
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
+    { GID_KQ6,           989,  0,        "globalSound", "fade",           -1,    0, { 0,    0 } }, // during intro, parameter 4 is an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
 
-	/*0a*/	DEFUN("PicNotValid", kPicNotValid, "i*"),
-	/*0b*/	DEFUN("Animate", kAnimate, "LI*"), // More like (li?)?
-	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), // The second parameter is ignored
-	/*0d*/	DEFUN("NumLoops", kNumLoops, "o"),
-	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
-	/*0f*/	DEFUN("CelWide", kCelWide, "iOi*"),
-	/*10*/	DEFUN("CelHigh", kCelHigh, "iOi*"),
-	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*i*r*"),
-	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
-	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
-	/*13*/	DEFUN("NewWindow", kNewWindow, "*."),
-	///*13*/	DEFUN("NewWindow", kNewWindow, "iiiiZRi*"),
-	/*14*/	DEFUN("GetPort", kGetPort, ""),
-	/*15*/	DEFUN("SetPort", kSetPort, "ii*"),
-	/*16*/	DEFUN("DisposeWindow", kDisposeWindow, "ii*"),
-	/*17*/	DEFUN("DrawControl", kDrawControl, "o"),
-	/*18*/	DEFUN("HiliteControl", kHiliteControl, "o"),
-	/*19*/	DEFUN("EditControl", kEditControl, "ZoZo"),
-	/*1a*/	DEFUN("TextSize", kTextSize, "rZrii*r*"),
-	/*1b*/	DEFUN("Display", kDisplay, ".*"),
-	/*1c*/	DEFUN("GetEvent", kGetEvent, "ioi*"),	// Mac versions pass an extra 3rd parameter (ignored - always 0?)
-	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "oo*"),
-	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "oo*"),
-	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
-	/*20*/	DEFUN("DrawMenuBar", kDrawMenuBar, "i"),
-	/*21*/	DEFUN("MenuSelect", kMenuSelect, "oi*"),
-	/*22*/	DEFUN("AddMenu", kAddMenu, "rr"),
-	/*23*/	DEFUN("DrawStatus", kDrawStatus, "Zri*"),
-	/*24*/	DEFUN("Parse", kParse, "ro"),
-	/*25*/	DEFUN("Said", kSaid, "Zr"),
-	/*26*/	DEFUN("SetSynonyms", kSetSynonyms, "o"),
-	/*27*/	DEFUN("HaveMouse", kHaveMouse, ""),
-	/*28*/	DEFUN("SetCursor", kSetCursor, "i*"),
-	// FIXME: The number 0x28 occurs twice :-)
-	/*28*/	DEFUN("MoveCursor", kMoveCursor, "ii"),
-	/*29*/	DEFUN("FOpen", kFOpen, "ri"),
-	/*2a*/	DEFUN("FPuts", kFPuts, "ir"),
-	/*2b*/	DEFUN("FGets", kFGets, "rii"),
-	/*2c*/	DEFUN("FClose", kFClose, "i"),
-	/*2d*/	DEFUN("SaveGame", kSaveGame, "rirr*"),
-	/*2e*/	DEFUN("RestoreGame", kRestoreGame, "rir*"),
-	/*2f*/	DEFUN("RestartGame", kRestartGame, ""),
-	/*30*/	DEFUN("GameIsRestarting", kGameIsRestarting, "i*"),
-	/*31*/	DEFUN("DoSound", kDoSound, "iIo*"),
-	/*32*/	DEFUN("NewList", kNewList, ""),
-	/*33*/	DEFUN("DisposeList", kDisposeList, "l"),
-	/*34*/	DEFUN("NewNode", kNewNode, ".."),
-	/*35*/	DEFUN("FirstNode", kFirstNode, "Zl"),
-	/*36*/	DEFUN("LastNode", kLastNode, "l"),
-	/*37*/	DEFUN("EmptyList", kEmptyList, "l"),
-	/*38*/	DEFUN("NextNode", kNextNode, "n"),
-	/*39*/	DEFUN("PrevNode", kPrevNode, "n"),
-	/*3a*/	DEFUN("NodeValue", kNodeValue, "Zn"),
-	/*3b*/	DEFUN("AddAfter", kAddAfter, "lnn"),
-	/*3c*/	DEFUN("AddToFront", kAddToFront, "ln"),
-	/*3d*/	DEFUN("AddToEnd", kAddToEnd, "ln"),
-	/*3e*/	DEFUN("FindKey", kFindKey, "l."),
-	/*3f*/	DEFUN("DeleteKey", kDeleteKey, "l."),
-	/*40*/	DEFUN("Random", kRandom, "i*"),
-	/*41*/	DEFUN("Abs", kAbs, "Oi"),
-	/*42*/	DEFUN("Sqrt", kSqrt, "i"),
-	/*43*/	DEFUN("GetAngle", kGetAngle, "iiiii*"), // occasionally KQ6 passes a 5th argument by mistake
-	/*44*/	DEFUN("GetDistance", kGetDistance, "iiiii*"),
-	/*45*/	DEFUN("Wait", kWait, "i"),
-	/*46*/	DEFUN("GetTime", kGetTime, "i*"),
-	/*47*/	DEFUN("StrEnd", kStrEnd, "r"),
-	/*48*/	DEFUN("StrCat", kStrCat, "rr"),
-	/*49*/	DEFUN("StrCmp", kStrCmp, "rri*"),
-	/*4a*/	DEFUN("StrLen", kStrLen, "Zr"),
-	/*4b*/	DEFUN("StrCpy", kStrCpy, "rZri*"),
-	/*4c*/	DEFUN("Format", kFormat, "r.*"),
-	/*4d*/	DEFUN("GetFarText", kGetFarText, "iiZr"),
-	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
-	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
-	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),
-	// Opcode 51 is defined twice for a reason: In older SCI versions
-	// it is CanBeHere, whereas in newer version it is CantBeHere
-	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
-	/*51*/	DEFUN("CantBeHere", kCantBeHere, "ol*"),
-	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
-	/*53*/	DEFUN("InitBresen", kInitBresen, "oi*"),
-	/*54*/	DEFUN("DoBresen", kDoBresen, "o"),
-	/*55*/	DEFUN("DoAvoider", kDoAvoider, "o"),
-	/*56*/	DEFUN("SetJump", kSetJump, "oiii"),
-	/*57*/	DEFUN("SetDebug", kSetDebug, "i*"),
-	/*5c*/	DEFUN("MemoryInfo", kMemoryInfo, "i"),
-	/*5f*/	DEFUN("GetMenu", kGetMenu, "i."),
-	/*60*/	DEFUN("SetMenu", kSetMenu, "i.*"),
-	/*61*/	DEFUN("GetSaveFiles", kGetSaveFiles, "rrr"),
-	/*62*/	DEFUN("GetCWD", kGetCWD, "r"),
-	/*63*/	DEFUN("CheckFreeSpace", kCheckFreeSpace, "r.*"),
-	/*64*/	DEFUN("ValidPath", kValidPath, "r"),
-	/*65*/	DEFUN("CoordPri", kCoordPri, "ii*"),
-	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
-	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
-	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ".*"),	// accepts a parameter in SCI2+ games
-	/*69*/	DEFUN("CheckSaveGame", kCheckSaveGame, ".*"),
-	/*6a*/	DEFUN("ShakeScreen", kShakeScreen, "ii*"),
-	/*6b*/	DEFUN("FlushResources", kFlushResources, "i"),
-	/*6c*/	DEFUN("TimesSin", kTimesSin, "ii"),
-	/*6d*/	DEFUN("TimesCos", kTimesCos, "ii"),
-	/*6e*/	DEFUN("6e", kTimesSin, "ii"),
-	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
-	/*70*/	DEFUN("Graph", kGraph, ".*"),
-	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
+    { GID_LSL6,           85,  0,          "rScroller", "hide",           -1,    0, { 0,    0 } }, // happens when restoring (sometimes), same as the one below
+    { GID_LSL6,           85,  0,          "lScroller", "hide",           -1,    0, { 0,    0 } }, // happens when restoring (sometimes), same as the one below
+    { GID_LSL6,           86,  0,             "LL6Inv", "show",           -1,    0, { 0,    0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
+    // ^^ TODO: check, if this is really a script error or an issue with our restore code
+    { GID_LSL6,           86,  0,             "LL6Inv", "hide",           -1,    0, { 0,    0 } }, // happens during the game, gets called with 1 extra parameter
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
 
-	// Experimental functions
-	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
-	/*(?)*/	DEFUN("Memory", kMemory, "i.*"),
-	/*(?)*/	DEFUN("Sort", kSort, "ooo"),
-	/*(?)*/	DEFUN("AvoidPath", kAvoidPath, "ii.*"),
-	/*(?)*/	DEFUN("Lock", kLock, "iii*"),
-	/*(?)*/	DEFUN("Palette", kPalette, "i.*"),
-	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
-	/*7b*/	DEFUN("StrSplit", kStrSplit, "rrZr"),
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[] = {
+    { GID_LSL6,            0,  0,               "LSL6", "hideControls",   -1,    0, { 0,    0 } }, // happens when giving the bungee key to merrily - gets called with additional 5th parameter
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
 
-	// Non-experimental functions without a fixed ID
-	DEFUN("CosMult", kTimesCos, "ii"),
-	DEFUN("SinMult", kTimesSin, "ii"),
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
+    { GID_SQ4,           818,  0,     "iconTextSwitch", "show",           -1,    0, { 0,    0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
 
-	// Misc functions
-	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
-	/*(?)*/	DEFUN("PriCoord", kPriCoord, "i"),
-	/*(?)*/	DEFUN("SinDiv", kSinDiv, "ii"),
-	/*(?)*/	DEFUN("TimesCot", kTimesCot, "ii"),
-	/*(?)*/	DEFUN("TimesTan", kTimesTan, "ii"),
-	DEFUN("Message", kMessage, ".*"),
-	DEFUN("GetMessage", kGetMessage, "iiir"),
-	DEFUN("DoAudio", kDoAudio, ".*"),
-	DEFUN("DoSync", kDoSync, ".*"),
-	DEFUN("MemorySegment", kMemorySegment, "iri*"),
-	DEFUN("Intersections", kIntersections, "iiiiriiiri"),
-	DEFUN("MergePoly", kMergePoly, "rli"),
-	DEFUN("ResCheck", kResCheck, "iii*"),
-	DEFUN("SetQuitStr", kSetQuitStr, "r"),
-	DEFUN("ShowMovie", kShowMovie, ".*"),
-	DEFUN("SetVideoMode", kSetVideoMode, "i"),
-	DEFUN("Platform", kPlatform, ".*"),
-	DEFUN("TextColors", kTextColors, ".*"),
-	DEFUN("TextFonts", kTextFonts, ".*"),
-	DEFUN("Portrait", kPortrait, ".*"),
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kUnLoad_workarounds[] = {
+    { GID_LSL6,          130,  0,    "recruitLarryScr", "changeState",    -1,    0, { 1,    0 } }, // during intro, a 3rd parameter is passed by accident
+    { GID_LSL6,          740,  0,        "showCartoon", "changeState",    -1,    0, { 1,    0 } }, // during ending, 4 additional parameters are passed by accident
+    { GID_SQ1,           303,  0,            "slotGuy", "dispose",        -1,    0, { 1,    0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+struct SciKernelMapSubEntry {
+	SciVersion fromVersion;
+	SciVersion toVersion;
+
+	uint16 id;
+
+	const char *name;
+	KernelFunctionCall *function;
+
+	const char *signature;
+	const SciWorkaroundEntry *workarounds;
+};
+
+#define SCI_SUBOPENTRY_TERMINATOR { SCI_VERSION_NONE, SCI_VERSION_NONE, 0, NULL, NULL, NULL, NULL }
+
+
+#define SIG_SCIALL         SCI_VERSION_NONE, SCI_VERSION_NONE
+#define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
+#define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
+#define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
+#define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
+
+// SCI-Sound-Version
+#define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
+#define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
+#define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
+
+#define SIGFOR_ALL   0x3f
+#define SIGFOR_DOS   1 << 0
+#define SIGFOR_PC98  1 << 1
+#define SIGFOR_WIN   1 << 2
+#define SIGFOR_MAC   1 << 3
+#define SIGFOR_AMIGA 1 << 4
+#define SIGFOR_ATARI 1 << 5
+#define SIGFOR_PC    SIGFOR_DOS|SIGFOR_WIN
+
+#define SIG_EVERYWHERE  SIG_SCIALL, SIGFOR_ALL
+
+#define MAP_CALL(_name_) #_name_, k##_name_
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kDoSound_subops[] = {
+    { SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
+    { SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
+    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundDummy),              "o",                    NULL },
+    { SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "o",                    NULL },
+    { SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
+    { SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "o",                    NULL },
+    { SIG_SOUNDSCI0,       6, MAP_CALL(DoSoundPause),              "i",                    NULL },
+    { SIG_SOUNDSCI0,       7, MAP_CALL(DoSoundResume),             "",                     NULL },
+    { SIG_SOUNDSCI0,       8, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
+    { SIG_SOUNDSCI0,       9, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
+    { SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "o",                    NULL },
+    { SIG_SOUNDSCI0,      11, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
+    { SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
+    { SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  6, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  7, MAP_CALL(DoSoundPlay),               "oi",                   NULL },
+    { SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
+    { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                NULL },
+    { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
+    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+    { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             "oi",                   NULL },
+    { SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
+    { SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
+    //  ^^ Longbow demo
+    { SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundDummy),              "",                     NULL },
+    { SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
+    { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
+    { SIG_SOUNDSCI1LATE,   6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,   9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             kDoSoundFade_workarounds },
+    { SIG_SOUNDSCI1LATE,  12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  14, MAP_CALL(DoSoundSetVolume),          "oi",                   NULL },
+    { SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
+    { SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
+    { SIG_SOUNDSCI1LATE,  17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kGraph_subops[] = {
+    { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+    { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
+    // 3 - set palette via resource
+    { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          NULL },
+    // 5 - nop
+    // 6 - draw pattern
+    { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                NULL },
+    { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                kGraphRestoreBox_workarounds },
+    // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
+    { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
+    { SIG_SCIALL,         10, MAP_CALL(GraphFillBoxForeground),    "iiii",                 kGraphFillBoxForeground_workarounds },
+    { SIG_SCIALL,         11, MAP_CALL(GraphFillBoxAny),           "iiiiii(i)(i)",         kGraphFillBoxAny_workarounds },
+    { SIG_SCI11,          12, MAP_CALL(GraphUpdateBox),            "iiii(i)(r0)",          NULL }, // kq6 hires
+    { SIG_SCIALL,         12, MAP_CALL(GraphUpdateBox),            "iiii(i)",              NULL },
+    { SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 NULL },
+    { SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
+    { SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii",                 NULL }, // kq6 hires
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPalVary_subops[] = {
+    { SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
+    { SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
+    { SIG_SCIALL,          2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
+    { SIG_SCIALL,          3, MAP_CALL(PalVaryDeinit),             "",                     NULL },
+    { SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
+    { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
+    { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
+    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kPalette_subops[] = {
+    { SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
+    { SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
+    { SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  NULL },
+    { SIG_SCIALL,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
+    { SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
+    { SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
+    { SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
+    { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "i",                    NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+
+struct SciKernelMapEntry {
+	const char *name;
+	KernelFunctionCall *function;
+
+	SciVersion fromVersion;
+	SciVersion toVersion;
+	byte forPlatform;
+
+	const char *signature;
+	const SciKernelMapSubEntry *subFunctions;
+	const SciWorkaroundEntry *workarounds;
+};
+
+//    name,                        version/platform,         signature,              sub-signatures,  workarounds
+static SciKernelMapEntry s_kernelMap[] = {
+    { MAP_CALL(Abs),               SIG_EVERYWHERE,           "i",                     NULL,            kAbs_workarounds },
+    { MAP_CALL(AddAfter),          SIG_EVERYWHERE,           "lnn",                   NULL,            NULL },
+    { MAP_CALL(AddMenu),           SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+    { MAP_CALL(AddToEnd),          SIG_EVERYWHERE,           "ln",                    NULL,            NULL },
+    { MAP_CALL(AddToFront),        SIG_EVERYWHERE,           "ln",                    NULL,            NULL },
+    { MAP_CALL(AddToPic),          SIG_EVERYWHERE,           "[il](iiiiii)",          NULL,            NULL },
+    { MAP_CALL(Animate),           SIG_EVERYWHERE,           "(l0)(i)",               NULL,            NULL },
+    { MAP_CALL(AssertPalette),     SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
+    { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+    { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+    { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
+    { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
+    { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
+    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            NULL }, // subop
+    { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir!]*)",          NULL,            NULL },
+	// ^ we allow invalid references here, because kDisplay gets called with those in e.g. pq3 during intro
+	//    restoreBits() checks and skips invalid handles, so that's fine. Sierra SCI behaved the same
+    { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                    NULL,            NULL },
+    { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(DisposeScript),     SIG_EVERYWHERE,           "i(i*)",                 NULL,            kDisposeScript_workarounds },
+    { MAP_CALL(DisposeWindow),     SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
+    { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", kDoSound_subops, NULL },
+    { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            NULL }, // for kq6 hires
+    { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",           NULL,            NULL },
+    { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(DrawPic),           SIG_EVERYWHERE,           "i(i)(i)(i)",            NULL,            NULL },
+    { MAP_CALL(DrawStatus),        SIG_EVERYWHERE,           "[r0](i)(i)",            NULL,            NULL },
+    { MAP_CALL(EditControl),       SIG_EVERYWHERE,           "[o0][o0]",              NULL,            NULL },
+    { MAP_CALL(Empty),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(EmptyList),         SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(FClose),            SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
+    { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
+    { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
+    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
+    { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
+    { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                 NULL,            NULL },
+    { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            NULL },
+	 // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
+    { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",        NULL,            NULL },
+    { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",                NULL,            NULL },
+    { MAP_CALL(GetEvent),          SIG_EVERYWHERE,           "io",                    NULL,            NULL },
+    { MAP_CALL(GetFarText),        SIG_EVERYWHERE,           "ii[r0]",                NULL,            NULL },
+    { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
+    { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
+    { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
+    { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
+    { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(HiliteControl),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",            NULL,            NULL },
+    { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                 NULL,            NULL },
+    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                     NULL,            NULL },
+    { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
+    { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
+    { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Memory),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MemoryInfo),        SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(MemorySegment),     SIG_EVERYWHERE,           "ir(i)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MenuSelect),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(MergePoly),         SIG_EVERYWHERE,           "rli",                   NULL,            NULL },
+    { MAP_CALL(Message),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(MoveCursor),        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(NewList),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(NewNode),           SIG_EVERYWHERE,           "..",                    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCIALL, SIGFOR_MAC,   ".*",                    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI0, SIGFOR_ALL,     "iiii[r0]i(i)(i)(i)",    NULL,            NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI1, SIGFOR_ALL,     "iiii[ir]i(i)(i)([ir])(i)(i)(i)(i)", NULL, NULL },
+    { MAP_CALL(NewWindow),         SIG_SCI11, SIGFOR_ALL,    "iiiiiiii[r0]i(i)(i)(i)", NULL,          NULL },
+    { MAP_CALL(NextNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
+    { MAP_CALL(NodeValue),         SIG_EVERYWHERE,           "[n0]",                  NULL,            NULL },
+    { MAP_CALL(NumCels),           SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(NumLoops),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(OnControl),         SIG_EVERYWHERE,           "ii(i)(i)(i)",           NULL,            NULL },
+    { MAP_CALL(PalVary),           SIG_EVERYWHERE,           "i(i*)",                 kPalVary_subops, NULL },
+    { MAP_CALL(Palette),           SIG_EVERYWHERE,           "i(.*)",                 kPalette_subops, NULL },
+    { MAP_CALL(Parse),             SIG_EVERYWHERE,           "ro",                    NULL,            NULL },
+    { MAP_CALL(PicNotValid),       SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
+    { MAP_CALL(Platform),          SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
+    { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(Random),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
+    { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
+    { MAP_CALL(RestartGame),       SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(RestoreGame),       SIG_EVERYWHERE,           "rir",                   NULL,            NULL },
+    { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
+    { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",                NULL,            NULL },
+    { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
+    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i*)",                 NULL,            NULL },
+    { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
+    { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+    { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
+    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iii)(i)(i)(i)",       NULL,            NULL },
+    { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(ShakeScreen),       SIG_EVERYWHERE,           "(i)(i)",                NULL,            NULL },
+    { MAP_CALL(ShowMovie),         SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(SinDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(Sort),              SIG_EVERYWHERE,           "ooo",                   NULL,            NULL },
+    { MAP_CALL(Sqrt),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
+    { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            NULL },
+    { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
+    { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
+    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",              NULL,            NULL },
+    { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
+    { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
+    { MAP_CALL(TextColors),        SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(TextFonts),         SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
+    { MAP_CALL(TextSize),          SIG_EVERYWHERE,           "r[r0]i(i)(r0)",         NULL,            NULL },
+    { MAP_CALL(TimesCos),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { "CosMult", kTimesCos,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesCot),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesSin),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { "SinMult", kTimesSin,        SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(TimesTan),          SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(UnLoad),            SIG_EVERYWHERE,           "i[ri]",                 NULL,            kUnLoad_workarounds },
+    { MAP_CALL(ValidPath),         SIG_EVERYWHERE,           "r",                     NULL,            NULL },
+    { MAP_CALL(Wait),              SIG_EVERYWHERE,           "i",                     NULL,            NULL },
 
 #ifdef ENABLE_SCI32
-	// SCI2 Kernel Functions
-	DEFUN("IsHiRes", kIsHiRes, ""),
-	DEFUN("Array", kArray, ".*"),
-	DEFUN("ListAt", kListAt, "li"),
-	DEFUN("String", kString, ".*"),
-	DEFUN("AddScreenItem", kAddScreenItem, "o"),
-	DEFUN("UpdateScreenItem", kUpdateScreenItem, "o"),
-	DEFUN("DeleteScreenItem", kDeleteScreenItem, "o"),
-	DEFUN("AddPlane", kAddPlane, "o"),
-	DEFUN("DeletePlane", kDeletePlane, "o"),
-	DEFUN("UpdatePlane", kUpdatePlane, "o"),
-	DEFUN("RepaintPlane", kRepaintPlane, "o"),
-	DEFUN("GetHighPlanePri", kGetHighPlanePri, ""),
-	DEFUN("FrameOut", kFrameOut, ""),
-	DEFUN("ListEachElementDo", kListEachElementDo, "li.*"),
-	DEFUN("ListFirstTrue", kListFirstTrue, "li.*"),
-	DEFUN("ListAllTrue", kListAllTrue, "li.*"),
-	DEFUN("ListIndexOf", kListIndexOf, "lZo"),
-	DEFUN("OnMe", kOnMe, "iio.*"),
-	DEFUN("InPolygon", kInPolygon, "iio"),
-	DEFUN("CreateTextBitmap", kCreateTextBitmap, "i.*"),
+    // SCI2 Kernel Functions
+    { MAP_CALL(AddPlane),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(AddScreenItem),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(Array),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(CreateTextBitmap),  SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
+    { MAP_CALL(DeletePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(DeleteScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(FrameOut),          SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(GetHighPlanePri),   SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(InPolygon),         SIG_EVERYWHERE,           "iio",                   NULL,            NULL },
+    { MAP_CALL(IsHiRes),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
+    { MAP_CALL(ListAllTrue),       SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListAt),            SIG_EVERYWHERE,           "li",                    NULL,            NULL },
+    { MAP_CALL(ListEachElementDo), SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListFirstTrue),     SIG_EVERYWHERE,           "li(.*)",                NULL,            NULL },
+    { MAP_CALL(ListIndexOf),       SIG_EVERYWHERE,           "l[o0]",                 NULL,            NULL },
+    { MAP_CALL(OnMe),              SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { MAP_CALL(RepaintPlane),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(String),            SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(UpdatePlane),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
+    { MAP_CALL(UpdateScreenItem),  SIG_EVERYWHERE,           "o",                     NULL,            NULL },
 
-	// SCI2.1 Kernel Functions
-	DEFUN("Save", kSave, ".*"),
-	DEFUN("List", kList, ".*"),
-	DEFUN("Robot", kRobot, ".*"),
-	DEFUN("IsOnMe", kOnMe, "iio.*"),	// TODO: this seems right, but verify...
-
+    // SCI2.1 Kernel Functions
+    { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
+    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
+    { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
 #endif
-
-	// its a stub, but its needed for Pharkas to work
-	DEFUN("PalVary", kPalVary, "ii*"),
-	DEFUN("AssertPalette", kAssertPalette, "i"),
-
-#if 0
-	// Stub functions
-	/*09*/	DEFUN("Show", kShow, "i"),
-	DEFUN("ShiftScreen", kShiftScreen, ".*"),
-	DEFUN("ListOps", kListOps, ".*"),
-	DEFUN("ATan", kATan, ".*"),
-	DEFUN("Record", kRecord, ".*"),
-	DEFUN("PlayBack", kPlayBack, ".*"),
-	DEFUN("DbugStr", kDbugStr, ".*"),
-#endif
-
-	{NULL, NULL, NULL} // Terminator
 };
 
-Kernel::Kernel(ResourceManager *resMan, SegManager *segMan) : _resMan(resMan), _segMan(segMan) {
+Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
+	: _resMan(resMan), _segMan(segMan), _invalid("<invalid>") {
 	loadSelectorNames();
 	mapSelectors();      // Map a few special selectors for later use
 }
 
 Kernel::~Kernel() {
-	for (KernelFuncsContainer::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
-		// TODO: Doing a const_cast is not that nice actually... But since KernelFuncWithSignature
-		// keeps the signature member as "const char *" there is no way around it.
-		// Think of a clever way to avoid this.
-		free(const_cast<char *>(i->signature));
+	for (KernelFunctionArray::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
+		free(i->signature);
 }
 
 uint Kernel::getSelectorNamesSize() const {
@@ -409,6 +656,8 @@ uint Kernel::getSelectorNamesSize() const {
 }
 
 const Common::String &Kernel::getSelectorName(uint selector) const {
+	if (selector >= _selectorNames.size())
+		return _invalid;
 	return _selectorNames[selector];
 }
 
@@ -417,12 +666,10 @@ uint Kernel::getKernelNamesSize() const {
 }
 
 const Common::String &Kernel::getKernelName(uint number) const {
-	// FIXME: The following check is a temporary workaround for
-	// an issue leading to crashes when using the debugger's backtrace
-	// command.
-	static const Common::String invalid = "(invalid)";
+	// FIXME: The following check is a temporary workaround for an issue
+	// leading to crashes when using the debugger's backtrace command.
 	if (number >= _kernelNames.size())
-		return invalid;
+		return _invalid;
 	return _kernelNames[number];
 }
 
@@ -477,165 +724,241 @@ void Kernel::loadSelectorNames() {
 	}
 }
 
-static void kernel_compile_signature(const char **s) {
-	const char *src = *s;
-	char *result;
-	int ellipsis = 0;
-	char v;
-	int index = 0;
+// this parses a written kernel signature into an internal memory format
+// [io] -> either integer or object
+// (io) -> optionally integer AND an object
+// (i) -> optional integer
+// . -> any type
+// i* -> optional multiple integers
+// .* -> any parameters afterwards (or none)
+static uint16 *parseKernelSignature(const char *kernelName, const char *writtenSig) {
+	const char *curPos;
+	char curChar;
+	uint16 *result = NULL;
+	uint16 *writePos = NULL;
+	int size = 0;
+	bool validType = false;
+	bool optionalType = false;
+	bool eitherOr = false;
+	bool optional = false;
+	bool hadOptional = false;
 
-	if (!src)
-		return; // NULL signature: Nothing to do
+	// No signature given? no signature out
+	if (!writtenSig)
+		return NULL;
 
-	result = (char *)malloc(strlen(*s) + 1);
-
-	while (*src) {
-		char c;
-		v = 0;
-
-		if (ellipsis) {
-			error("Failed compiling kernel function signature '%s': non-terminal ellipsis '%c'", *s, *src);
-		}
-
-		do {
-			char cc;
-			cc = c = *src++;
-			if (c >= 'A' || c <= 'Z')
-				cc = c | KSIG_SPEC_SUM_DONE;
-
-			switch (cc) {
-			case KSIG_SPEC_LIST:
-				v |= KSIG_LIST;
-				break;
-
-			case KSIG_SPEC_NODE:
-				v |= KSIG_NODE;
-				break;
-
-			case KSIG_SPEC_REF:
-				v |= KSIG_REF;
-				break;
-
-			case KSIG_SPEC_OBJECT:
-				v |= KSIG_OBJECT;
-				break;
-
-			case KSIG_SPEC_ARITHMETIC:
-				v |= KSIG_ARITHMETIC;
-				break;
-
-			case KSIG_SPEC_NULL:
-				v |= KSIG_NULL;
-				break;
-
-			case KSIG_SPEC_ANY:
-				v |= KSIG_ANY;
-				break;
-
-			case KSIG_SPEC_ELLIPSIS:
-				v |= KSIG_ELLIPSIS;
-				ellipsis = 1;
-				break;
-
-			default:
-				error("INTERNAL ERROR when compiling kernel function signature '%s': (%02x) not understood (aka"
-				          " '%c')\n", *s, c, c);
+	// First, we check how many bytes the result will be
+	//  we also check, if the written signature makes any sense
+	curPos = writtenSig;
+	while (*curPos) {
+		curChar = *curPos;
+		switch (curChar) {
+		case '[': // either or
+			if (eitherOr)
+				error("signature for k%s: '[' used within '[]'", kernelName);
+			eitherOr = true;
+			validType = false;
+			break;
+		case ']': // either or end
+			if (!eitherOr)
+				error("signature for k%s: ']' used without leading '['", kernelName);
+			if (!validType)
+				error("signature for k%s: '[]' does not surround valid type(s)", kernelName);
+			eitherOr = false;
+			validType = false;
+			size++;
+			break;
+		case '(': // optional
+			if (optional)
+				error("signature for k%s: '(' used within '()' brackets", kernelName);
+			if (eitherOr)
+				error("signature for k%s: '(' used within '[]' brackets", kernelName);
+			optional = true;
+			validType = false;
+			optionalType = false;
+			break;
+		case ')': // optional end
+			if (!optional)
+				error("signature for k%s: ')' used without leading '('", kernelName);
+			if (!optionalType)
+				error("signature for k%s: '()' does not to surround valid type(s)", kernelName);
+			optional = false;
+			validType = false;
+			hadOptional = true;
+			break;
+		case '0': // allowed types
+		case 'i':
+		case 'o':
+		case 'r':
+		case 'l':
+		case 'n':
+		case '.':
+		case '!':
+			if ((hadOptional) & (!optional))
+				error("signature for k%s: non-optional type may not follow optional type", kernelName);
+			validType = true;
+			if (optional)
+				optionalType = true;
+			if (!eitherOr)
+				size++;
+			break;
+		case '*': // accepts more of the same parameter (must be last char)
+			if (!validType) {
+				if ((writtenSig == curPos) || (*(curPos - 1) != ']'))
+					error("signature for k%s: a valid type must be in front of '*'", kernelName);
 			}
-		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
-
-		// To handle sum types
-		result[index++] = v;
+			if (eitherOr)
+				error("signature for k%s: '*' may not be inside '[]'", kernelName);
+			if (optional) {
+				if ((*(curPos + 1) != ')') || (*(curPos + 2) != 0))
+					error("signature for k%s: '*' may only be used for last type", kernelName);
+			} else {
+				if (*(curPos + 1) != 0)
+					error("signature for k%s: '*' may only be used for last type", kernelName);
+			}
+			break;
+		default:
+			error("signature for k%s: '%c' unknown", kernelName, *curPos);
+		}
+		curPos++;
 	}
 
-	result[index] = 0;
-	*s = result; // Write back
-}
+	uint16 signature = 0;
 
-void Kernel::mapFunctions() {
-	int mapped = 0;
-	int ignored = 0;
-	uint functions_nr = _kernelNames.size();
-
-	_kernelFuncs.resize(functions_nr);
-
-	for (uint functnr = 0; functnr < functions_nr; functnr++) {
-		int found = -1;
-
-		// First, get the name, if known, of the kernel function with number functnr
-		Common::String sought_name = _kernelNames[functnr];
-
-		// Reset the table entry
-		_kernelFuncs[functnr].fun = NULL;
-		_kernelFuncs[functnr].signature = NULL;
-		_kernelFuncs[functnr].orig_name = sought_name;
-
-		if (sought_name.empty()) {
-			// No name was given -> must be an unknown opcode
-			warning("Kernel function %x unknown", functnr);
-			_kernelFuncs[functnr].isDummy = true;
-			continue;
-		}
-
-		// Don't map dummy functions - they will never be called
-		if (sought_name == "Dummy") {
-			_kernelFuncs[functnr].isDummy = true;
-			continue;
-		}
-
-		// If the name is known, look it up in kfunct_mappers. This table
-		// maps kernel func names to actual function (pointers).
-		for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
-			if (sought_name == kfunct_mappers[seeker].name)
-				found = seeker; // Found a kernel function with the correct name!
-
-		if (found == -1) {
-			// No match but a name was given -> stub
-			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
-			_kernelFuncs[functnr].isDummy = true;
-		} else {
-			// A match in kfunct_mappers was found
-			if (kfunct_mappers[found].fun) {
-				_kernelFuncs[functnr].fun = kfunct_mappers[found].fun;
-				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
-				_kernelFuncs[functnr].isDummy = false;
-				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
-				++mapped;
-			} else {
-				//warning("Ignoring function %s\n", kfunct_mappers[found].name);
-				++ignored;
+	// Now we allocate buffer with required size and fill it
+	result = new uint16[size + 1];
+	writePos = result;
+	curPos = writtenSig;
+	do {
+		curChar = *curPos;
+		if (!eitherOr) {
+			// not within either-or, check if next character forces output
+			switch (curChar) {
+			case 0:
+			case '[':
+			case '(':
+			case ')':
+			case 'i':
+			case 'o':
+			case 'r':
+			case 'l':
+			case 'n':
+			case '.':
+			case '!':
+				// and we also got some signature pending?
+				if (signature) {
+					if (!(signature & SIG_MAYBE_ANY))
+						error("signature for k%s: invalid ('!') may only get used in combination with a real type", kernelName);
+					if ((signature & SIG_IS_INVALID) && ((signature & SIG_MAYBE_ANY) == (SIG_TYPE_NULL | SIG_TYPE_INTEGER)))
+						error("signature for k%s: invalid ('!') should not be used on exclusive null/integer type", kernelName);
+					if (optional) {
+						signature |= SIG_IS_OPTIONAL;
+						if (curChar != ')')
+							signature |= SIG_NEEDS_MORE;
+					}
+					*writePos = signature;
+					writePos++;
+					signature = 0;
+				}
 			}
 		}
-	} // for all functions requesting to be mapped
+		switch (curChar) {
+		case '[': // either or
+			eitherOr = true;
+			break;
+		case ']': // either or end
+			eitherOr = false;
+			break;
+		case '(': // optional
+			optional = true;
+			break;
+		case ')': // optional end
+			optional = false;
+			break;
+		case '0':
+			if (signature & SIG_TYPE_NULL)
+				error("signature for k%s: NULL ('0') specified more than once", kernelName);
+			signature |= SIG_TYPE_NULL;
+			break;
+		case 'i':
+			if (signature & SIG_TYPE_INTEGER)
+				error("signature for k%s: integer ('i') specified more than once", kernelName);
+			signature |= SIG_TYPE_INTEGER | SIG_TYPE_NULL;
+			break;
+		case 'o':
+			if (signature & SIG_TYPE_OBJECT)
+				error("signature for k%s: object ('o') specified more than once", kernelName);
+			signature |= SIG_TYPE_OBJECT;
+			break;
+		case 'r':
+			if (signature & SIG_TYPE_REFERENCE)
+				error("signature for k%s: reference ('r') specified more than once", kernelName);
+			signature |= SIG_TYPE_REFERENCE;
+			break;
+		case 'l':
+			if (signature & SIG_TYPE_LIST)
+				error("signature for k%s: list ('l') specified more than once", kernelName);
+			signature |= SIG_TYPE_LIST;
+			break;
+		case 'n':
+			if (signature & SIG_TYPE_NODE)
+				error("signature for k%s: node ('n') specified more than once", kernelName);
+			signature |= SIG_TYPE_NODE;
+			break;
+		case '.':
+			if (signature & SIG_MAYBE_ANY)
+				error("signature for k%s: maybe-any ('.') shouldn't get specified with other types in front of it", kernelName);
+			signature |= SIG_MAYBE_ANY;
+			break;
+		case '!':
+			if (signature & SIG_IS_INVALID)
+				error("signature for k%s: invalid ('!') specified more than once", kernelName);
+			signature |= SIG_IS_INVALID;
+			break;
+		case '*': // accepts more of the same parameter
+			signature |= SIG_MORE_MAY_FOLLOW;
+			break;
+		default:
+			break;
+		}
+		curPos++;
+	} while (curChar);
 
-	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
-				mapped + ignored, _kernelNames.size(), mapped, ignored);
+	// Write terminator
+	*writePos = 0;
 
-	return;
+	return result;
 }
 
-int Kernel::findRegType(reg_t reg) {
-	// No segment? Must be arithmetic
+uint16 Kernel::findRegType(reg_t reg) {
+	// No segment? Must be integer
 	if (!reg.segment)
-		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
+		return SIG_TYPE_INTEGER | (reg.offset ? 0 : SIG_TYPE_NULL);
+
+	if (reg.segment == 0xFFFF)
+		return SIG_TYPE_UNINITIALIZED;
 
 	// Otherwise it's an object
 	SegmentObj *mobj = _segMan->getSegmentObj(reg.segment);
 	if (!mobj)
-		return 0; // Invalid
+		return SIG_TYPE_ERROR;
 
+	uint16 result = 0;
 	if (!mobj->isValidOffset(reg.offset))
-		warning("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
+		result |= SIG_IS_INVALID;
 
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj).getBufSize() &&
 			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
-		    RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
-			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;
+		    RAW_IS_OBJECT((*(Script *)mobj).getBuf(reg.offset)) ) {
+			result |= ((Script *)mobj)->getObject(reg.offset) ? SIG_TYPE_OBJECT : SIG_TYPE_REFERENCE;
 		} else
-			return KSIG_REF;
+			result |= SIG_TYPE_REFERENCE;
+		break;
 	case SEG_TYPE_CLONES:
-		return KSIG_OBJECT;
+		result |= SIG_TYPE_OBJECT;
+		break;
 	case SEG_TYPE_LOCALS:
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_SYS_STRINGS:
@@ -645,54 +968,286 @@ int Kernel::findRegType(reg_t reg) {
 	case SEG_TYPE_ARRAY:
 	case SEG_TYPE_STRING:
 #endif
-		return KSIG_REF;
+		result |= SIG_TYPE_REFERENCE;
+		break;
 	case SEG_TYPE_LISTS:
-		return KSIG_LIST;
+		result |= SIG_TYPE_LIST;
+		break;
 	case SEG_TYPE_NODES:
-		return KSIG_NODE;
+		result |= SIG_TYPE_NODE;
+		break;
 	default:
-		return 0;
+		return SIG_TYPE_ERROR;
+	}
+	return result;
+}
+
+struct SignatureDebugType {
+	uint16 typeCheck;
+	const char *text;
+};
+
+static const SignatureDebugType signatureDebugTypeList[] = {
+	{ SIG_TYPE_NULL,          "null" },
+	{ SIG_TYPE_INTEGER,       "integer" },
+	{ SIG_TYPE_UNINITIALIZED, "uninitialized" },
+	{ SIG_TYPE_OBJECT,        "object" },
+	{ SIG_TYPE_REFERENCE,     "reference" },
+	{ SIG_TYPE_LIST,          "list" },
+	{ SIG_TYPE_NODE,          "node" },
+	{ SIG_TYPE_ERROR,         "error" },
+	{ SIG_IS_INVALID,         "invalid" },
+	{ 0,                      NULL }
+};
+
+static void kernelSignatureDebugType(const uint16 type) {
+	bool firstPrint = true;
+
+	const SignatureDebugType *list = signatureDebugTypeList;
+	while (list->typeCheck) {
+		if (type & list->typeCheck) {
+			if (!firstPrint)
+				printf(", ");
+			printf("%s", list->text);
+			firstPrint = false;
+		}
+		list++;
 	}
 }
 
-bool Kernel::signatureMatch(const char *sig, int argc, const reg_t *argv) {
-	// Always "match" if no signature is given
-	if (!sig)
-		return true;
-
-	while (*sig && argc) {
-		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = findRegType(*argv);
-
-			if (!type) {
-				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
-				return false;
-			}
-
-			if (!(type & *sig)) {
-				warning("kernel_matches_signature: %d args left, is %d, should be %d", argc, type, *sig);
-				return false;
-			}
-
+// Shows kernel call signature and current arguments for debugging purposes
+void Kernel::signatureDebug(const uint16 *sig, int argc, const reg_t *argv) {
+	int argnr = 0;
+	while (*sig || argc) {
+		printf("parameter %d: ", argnr++);
+		if (argc) {
+			reg_t parameter = *argv;
+			printf("%04x:%04x (", PRINT_REG(parameter));
+			int regType = findRegType(parameter);
+			if (regType)
+				kernelSignatureDebugType(regType);
+			else
+				printf("unknown type of %04x:%04x", PRINT_REG(parameter));
+			printf(")");
+			argv++;
+			argc--;
+		} else {
+			printf("not passed");
 		}
-		if (!(*sig & KSIG_ELLIPSIS))
-			++sig;
-		++argv;
-		--argc;
+		if (*sig) {
+			const uint16 signature = *sig;
+			if ((signature & SIG_MAYBE_ANY) == SIG_MAYBE_ANY) {
+				printf(", may be any");
+			} else {
+				printf(", should be ");
+				kernelSignatureDebugType(signature);
+			}
+			if (signature & SIG_IS_OPTIONAL)
+				printf(" (optional)");
+			if (signature & SIG_NEEDS_MORE)
+				printf(" (needs more)");
+			if (signature & SIG_MORE_MAY_FOLLOW)
+				printf(" (more may follow)");
+			sig++;
+		}
+		printf("\n");
+	}
+}
+
+bool Kernel::signatureMatch(const uint16 *sig, int argc, const reg_t *argv) {
+	uint16 nextSig = *sig;
+	uint16 curSig = nextSig;
+	while (nextSig && argc) {
+		curSig = nextSig;
+		int type = findRegType(*argv);
+
+		if ((type & SIG_IS_INVALID) && (!(curSig & SIG_IS_INVALID)))
+			return false; // pointer is invalid and signature doesn't allow that?
+
+		if (!((type & ~SIG_IS_INVALID) & curSig))
+			return false; // type mismatch
+
+		if (!(curSig & SIG_MORE_MAY_FOLLOW)) {
+			sig++;
+			nextSig = *sig;
+		} else {
+			nextSig |= SIG_IS_OPTIONAL; // more may follow -> assumes followers are optional
+		}
+		argv++;
+		argc--;
 	}
 
-	if (argc) {
-		warning("kernel_matches_signature: too many arguments");
-		return false; // Too many arguments
-	}
-	if (*sig == 0 || (*sig & KSIG_ELLIPSIS))
+	// Too many arguments?
+	if (argc)
+		return false;
+	// Signature end reached?
+	if (nextSig == 0)
 		return true;
-	warning("kernel_matches_signature: too few arguments");
+	// current parameter is optional?
+	if (curSig & SIG_IS_OPTIONAL) {
+		// yes, check if nothing more is required
+		if (!(curSig & SIG_NEEDS_MORE))
+			return true;
+	} else {
+		// no, check if next parameter is optional
+		if (nextSig & SIG_IS_OPTIONAL)
+			return true;
+	}
+	// Too few arguments or more optional arguments required
 	return false;
 }
 
-void Kernel::setDefaultKernelNames(Common::String gameId) {
-	_kernelNames = Common::StringArray(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
+void Kernel::mapFunctions() {
+	int mapped = 0;
+	int ignored = 0;
+	uint functionCount = _kernelNames.size();
+	byte platformMask = 0;
+	SciVersion myVersion = getSciVersion();
+
+	switch (g_sci->getPlatform()) {
+	case Common::kPlatformPC:
+		platformMask = SIGFOR_DOS;
+		break;
+	case Common::kPlatformPC98:
+		platformMask = SIGFOR_PC98;
+		break;
+	case Common::kPlatformWindows:
+		platformMask = SIGFOR_WIN;
+		break;
+	case Common::kPlatformMacintosh:
+		platformMask = SIGFOR_MAC;
+		break;
+	case Common::kPlatformAmiga:
+		platformMask = SIGFOR_AMIGA;
+		break;
+	case Common::kPlatformAtariST:
+		platformMask = SIGFOR_ATARI;
+		break;
+	default:
+		break;
+	}
+
+	_kernelFuncs.resize(functionCount);
+
+	for (uint id = 0; id < functionCount; id++) {
+		// First, get the name, if known, of the kernel function with number functnr
+		Common::String kernelName = _kernelNames[id];
+
+		// Reset the table entry
+		_kernelFuncs[id].function = NULL;
+		_kernelFuncs[id].signature = NULL;
+		_kernelFuncs[id].name = NULL;
+		_kernelFuncs[id].workarounds = NULL;
+		_kernelFuncs[id].subFunctions = NULL;
+		_kernelFuncs[id].subFunctionCount = 0;
+		_kernelFuncs[id].debugCalls = false;
+		if (kernelName.empty()) {
+			// No name was given -> must be an unknown opcode
+			warning("Kernel function %x unknown", id);
+			continue;
+		}
+
+		// Don't map dummy functions - they will never be called
+		if (kernelName == "Dummy") {
+			_kernelFuncs[id].function = kDummy;
+			continue;
+		}
+
+		// If the name is known, look it up in s_kernelMap. This table
+		// maps kernel func names to actual function (pointers).
+		SciKernelMapEntry *kernelMap = s_kernelMap;
+		bool nameMatch = false;
+		while (kernelMap->name) {
+			if (kernelName == kernelMap->name) {
+				if ((kernelMap->fromVersion == SCI_VERSION_NONE) || (kernelMap->fromVersion <= myVersion))
+					if ((kernelMap->toVersion == SCI_VERSION_NONE) || (kernelMap->toVersion >= myVersion))
+						if (platformMask & kernelMap->forPlatform)
+							break;
+				nameMatch = true;
+			}
+			kernelMap++;
+		}
+
+		if (kernelMap->name) {
+			// A match was found
+			_kernelFuncs[id].function = kernelMap->function;
+			_kernelFuncs[id].name = kernelMap->name;
+			_kernelFuncs[id].signature = parseKernelSignature(kernelMap->name, kernelMap->signature);
+			_kernelFuncs[id].workarounds = kernelMap->workarounds;
+			if (kernelMap->subFunctions) {
+				// Get version for subfunction identification
+				SciVersion mySubVersion = (SciVersion)kernelMap->function(NULL, 0, NULL).offset;
+				// Now check whats the highest subfunction-id for this version
+				const SciKernelMapSubEntry *kernelSubMap = kernelMap->subFunctions;
+				uint16 subFunctionCount = 0;
+				while (kernelSubMap->function) {
+					if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+						if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion))
+							if (subFunctionCount <= kernelSubMap->id)
+								subFunctionCount = kernelSubMap->id + 1;
+					kernelSubMap++;
+				}
+				if (!subFunctionCount)
+					error("k%s[%x]: no subfunctions found for requested version", kernelName.c_str(), id);
+				// Now allocate required memory and go through it again
+				_kernelFuncs[id].subFunctionCount = subFunctionCount;
+				KernelSubFunction *subFunctions = new KernelSubFunction[subFunctionCount];
+				_kernelFuncs[id].subFunctions = subFunctions;
+				memset(subFunctions, 0, sizeof(KernelSubFunction) * subFunctionCount);
+				// And fill this info out
+				kernelSubMap = kernelMap->subFunctions;
+				uint kernelSubNr = 0;
+				while (kernelSubMap->function) {
+					if ((kernelSubMap->fromVersion == SCI_VERSION_NONE) || (kernelSubMap->fromVersion <= mySubVersion))
+						if ((kernelSubMap->toVersion == SCI_VERSION_NONE) || (kernelSubMap->toVersion >= mySubVersion)) {
+							uint subId = kernelSubMap->id;
+							if (!subFunctions[subId].function) {
+								subFunctions[subId].function = kernelSubMap->function;
+								subFunctions[subId].name = kernelSubMap->name;
+								subFunctions[subId].workarounds = kernelSubMap->workarounds;
+								if (kernelSubMap->signature) {
+									subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMap->signature);
+								} else {
+									// we go back the submap to find the previous signature for that kernel call
+									const SciKernelMapSubEntry *kernelSubMapBack = kernelSubMap;
+									uint kernelSubLeft = kernelSubNr;
+									while (kernelSubLeft) {
+										kernelSubLeft--;
+										kernelSubMapBack--;
+										if (kernelSubMapBack->name == kernelSubMap->name) {
+											if (kernelSubMapBack->signature) {
+												subFunctions[subId].signature = parseKernelSignature(kernelSubMap->name, kernelSubMapBack->signature);
+												break;
+											}
+										}
+									}
+									if (!subFunctions[subId].signature)
+										error("k%s: no previous signatures", kernelSubMap->name);
+								}
+							}
+						}
+					kernelSubMap++;
+					kernelSubNr++;
+				}
+			}
+			++mapped;
+		} else {
+			if (nameMatch)
+				error("k%s[%x]: not found for this version/platform", kernelName.c_str(), id);
+			// No match but a name was given -> stub
+			warning("k%s[%x]: unmapped", kernelName.c_str(), id);
+			_kernelFuncs[id].function = kStub;
+		}
+	} // for all functions requesting to be mapped
+
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.",
+				mapped + ignored, _kernelNames.size(), mapped, ignored);
+
+	return;
+}
+
+void Kernel::setDefaultKernelNames() {
+	_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
 	if (_selectorCache.cantBeHere != -1)
@@ -727,14 +1282,19 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 		break;
 
 	case SCI_VERSION_1_1:
-		// In KQ6 CD, the empty kSetSynonyms function has been replaced
-		// with kPortrait. In KQ6 Mac, kPlayBack has been replaced by
-		// kShowMovie.
-		if (gameId == "kq6") {
-			if (g_sci->getPlatform() == Common::kPlatformMacintosh)
-				_kernelNames[0x84] = "ShowMovie";
-			else
+		// In SCI1.1, kSetSynonyms is an empty function
+		_kernelNames[0x26] = "Empty";
+
+		if (g_sci->getGameId() == GID_KQ6) {
+			// In the Windows version of KQ6 CD, the empty kSetSynonyms
+			// function has been replaced with kPortrait. In KQ6 Mac,
+			// kPlayBack has been replaced by kShowMovie.
+			if (g_sci->getPlatform() == Common::kPlatformWindows)
 				_kernelNames[0x26] = "Portrait";
+			else if (g_sci->getPlatform() == Common::kPlatformMacintosh)
+				_kernelNames[0x84] = "ShowMovie";
+		} else if (g_sci->getGameId() == GID_QFG4 && g_sci->isDemo()) {
+			_kernelNames[0x7b] = "RemapColors"; // QFG4 Demo has this SCI2 function instead of StrSplit
 		}
 
 		_kernelNames[0x71] = "PalVary";
@@ -747,20 +1307,19 @@ void Kernel::setDefaultKernelNames(Common::String gameId) {
 	}
 }
 
-bool Kernel::loadKernelNames(Common::String gameId) {
+void Kernel::loadKernelNames(GameFeatures *features) {
 	_kernelNames.clear();
 
 #ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2_1)
-		setKernelNamesSci21();
+		setKernelNamesSci21(features);
 	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else
 #endif
-		setDefaultKernelNames(gameId);
+		setDefaultKernelNames();
 
 	mapFunctions();
-	return true;
 }
 
 Common::String Kernel::lookupText(reg_t address, int index) {
@@ -769,31 +1328,28 @@ Common::String Kernel::lookupText(reg_t address, int index) {
 
 	if (address.segment)
 		return _segMan->getString(address);
-	else {
-		int textlen;
-		int _index = index;
-		textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
-		if (!textres) {
-			error("text.%03d not found", address.offset);
-			return NULL; /* Will probably segfault */
-		}
+	int textlen;
+	int _index = index;
+	textres = _resMan->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
-		textlen = textres->size;
-		seeker = (char *) textres->data;
-
-		while (index--)
-			while ((textlen--) && (*seeker++))
-				;
-
-		if (textlen)
-			return seeker;
-		else {
-			error("Index %d out of bounds in text.%03d", _index, address.offset);
-			return NULL;
-		}
-
+	if (!textres) {
+		error("text.%03d not found", address.offset);
+		return NULL; /* Will probably segfault */
 	}
+
+	textlen = textres->size;
+	seeker = (char *) textres->data;
+
+	while (index--)
+		while ((textlen--) && (*seeker++))
+			;
+
+	if (textlen)
+		return seeker;
+
+	error("Index %d out of bounds in text.%03d", _index, address.offset);
+	return NULL;
 }
 
 } // End of namespace Sci

@@ -27,7 +27,6 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/menu.h"
 
@@ -74,7 +73,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	int16 colorBack = (argc > 2) ? argv[2].toSint16() : g_sci->getResMan()->isVGA() ? 255 : 15;
 
 	if (!textReference.isNull()) {
-		// Sometimes this is called without giving text, if thats the case dont process it
+		// Sometimes this is called without giving text, if thats the case dont process it.
 		text = s->_segMan->getString(textReference);
 
 		g_sci->_gfxMenu->kernelDrawStatus(g_sci->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
@@ -91,10 +90,9 @@ reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	reg_t eventObject = argv[0];
-	//bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : false;
+	bool pauseSound = argc > 1 ? (argv[1].isNull() ? false : true) : true;
 
-	// TODO: pauseSound implementation
-	return g_sci->_gfxMenu->kernelSelect(eventObject);
+	return g_sci->_gfxMenu->kernelSelect(eventObject, pauseSound);
 }
 
 } // End of namespace Sci

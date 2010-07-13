@@ -45,7 +45,7 @@ public:
 	GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *screen);
 	~GfxCursor();
 
-	void init(GfxCoordAdjuster *coordAdjuster, SciEvent *event);
+	void init(GfxCoordAdjuster *coordAdjuster, EventManager *event);
 
 	void kernelShow();
 	void kernelHide();
@@ -74,7 +74,7 @@ private:
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 	GfxCoordAdjuster *_coordAdjuster;
-	SciEvent *_event;
+	EventManager *_event;
 
 	int _upscaledHires;
 

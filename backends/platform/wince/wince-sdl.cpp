@@ -30,6 +30,7 @@
 #include "common/events.h"
 #include "common/util.h"
 #include "common/timer.h"
+#include "common/translation.h"
 
 #include "engines/engine.h"
 
@@ -107,14 +108,14 @@ bool _hasSmartphoneResolution = false;
 // Low end devices 240x320
 
 static const OSystem::GraphicsMode s_supportedGraphicsModesLow[] = {
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 	{0, 0, 0}
 };
 
 // High end device 480x640
 
 static const OSystem::GraphicsMode s_supportedGraphicsModesHigh[] = {
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 	{"2x", "2x", GFX_DOUBLESIZE},
 #ifndef _MSC_VER // EVC breaks template functions, and I'm tired of fixing them :)
 	{"2xsai", "2xSAI", GFX_2XSAI},
@@ -2263,6 +2264,7 @@ static int mapKeyCE(SDLKey key, SDLMod mod, Uint16 unicode, bool unfilter) {
 
 bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 	byte b = 0;
 	DWORD currentTime;
 	bool keyEvent = false;

@@ -23,6 +23,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "gui/ListWidget.h"
 #include "gui/message.h"
@@ -56,16 +57,16 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 
 	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
 
-	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", Graphics::kTextAlignCenter);
-	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", Graphics::kTextAlignCenter);
-	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", Graphics::kTextAlignCenter);
+	_date = new StaticTextWidget(this, 0, 0, 10, 10, _("No date saved"), Graphics::kTextAlignCenter);
+	_time = new StaticTextWidget(this, 0, 0, 10, 10, _("No time saved"), Graphics::kTextAlignCenter);
+	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, _("No playtime saved"), Graphics::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", _("Cancel"), 0, kCloseCmd);
+	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, 0, kChooseCmd);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", "Delete", kDelCmd, 0);
+	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", _("Delete"), 0, kDelCmd);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -152,8 +153,8 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 		break;
 	case kDelCmd:
 		if (selItem >= 0 && _delSupport) {
-			MessageDialog alert("Do you really want to delete this savegame?",
-								"Delete", "Cancel");
+			MessageDialog alert(_("Do you really want to delete this savegame?"),
+								_("Delete"), _("Cancel"));
 			if (alert.runModal() == GUI::kMessageOK) {
 				(*_plugin)->removeSaveState(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
@@ -181,7 +182,7 @@ void SaveLoadChooser::reflowLayout() {
 			error("Error when loading position data for Save/Load Thumbnails.");
 
 		int thumbW = kThumbnailWidth;
-		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
+		int thumbH = kThumbnailHeight2;
 		int thumbX = x + (w >> 1) - (thumbW >> 1);
 		int thumbY = y + kLineHeight;
 
@@ -237,9 +238,9 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	bool startEditMode = _list->isEditable();
 
 	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
-	_date->setLabel("No date saved");
-	_time->setLabel("No time saved");
-	_playtime->setLabel("No playtime saved");
+	_date->setLabel(_("No date saved"));
+	_time->setLabel(_("No time saved"));
+	_playtime->setLabel(_("No playtime saved"));
 
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
@@ -261,15 +262,15 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 
 		if (_saveDateSupport) {
 			if (desc.contains("save_date"))
-				_date->setLabel("Date: " + desc.getVal("save_date"));
+				_date->setLabel(_("Date: ") + desc.getVal("save_date"));
 
 			if (desc.contains("save_time"))
-				_time->setLabel("Time: " + desc.getVal("save_time"));
+				_time->setLabel(_("Time: ") + desc.getVal("save_time"));
 		}
 
 		if (_playTimeSupport) {
 			if (desc.contains("play_time"))
-				_playtime->setLabel("Playtime: " + desc.getVal("play_time"));
+				_playtime->setLabel(_("Playtime: ") + desc.getVal("play_time"));
 		}
 	}
 
@@ -282,7 +283,7 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		if (startEditMode) {
 			_list->startEditMode();
 
-			if (_chooseButton->isEnabled() && _list->getSelectedString() == "Untitled savestate" &&
+			if (_chooseButton->isEnabled() && _list->getSelectedString() == _("Untitled savestate") &&
 					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
 				_list->setEditString("");
 				_list->setEditColor(ThemeEngine::kFontColorNormal);
@@ -349,7 +350,7 @@ void SaveLoadChooser::updateSaveList() {
 		Common::String trimmedDescription = description;
 		trimmedDescription.trim();
 		if (trimmedDescription.empty()) {
-			description = "Untitled savestate";
+			description = _("Untitled savestate");
 			colors.push_back(ThemeEngine::kFontColorAlternate);
 		} else {
 			colors.push_back(ThemeEngine::kFontColorNormal);

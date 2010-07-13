@@ -1788,7 +1788,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 
 		// There is a constant delay of ppqn/3 before the music starts.
 		if (ppqn / 3 >= 128)
-			*ptr++ = (ppqn / 3 >> 7) | 0x80;
+			*ptr++ = ((ppqn / 3) >> 7) | 0x80;
 		*ptr++ = ppqn / 3 & 0x7f;
 
 		// Now copy the actual music data

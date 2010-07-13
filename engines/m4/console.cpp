@@ -196,7 +196,7 @@ bool Console::cmdShowSprite(int argc, const char **argv) {
 			if (y >= bg->height())
 				break;
 
-			spr->copyTo(bg, x, y, (int)spr->getTransparentColor());
+			spr->copyTo(bg, x, y, (int)spr->getTransparencyIndex());
 
 			x += spr->width();
 			yMax = MAX(yMax, spr->height());

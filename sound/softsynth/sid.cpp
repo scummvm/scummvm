@@ -506,7 +506,7 @@ Filter::Filter() {
 		+ sizeof(f0_points_6581)/sizeof(*f0_points_6581) - 1,
 		PointPlotter<sound_sample>(f0_6581), 1.0);
 
-	mixer_DC = -0xfff*0xff/18 >> 7;
+	mixer_DC = (-0xfff*0xff/18) >> 7;
 
 	f0 = f0_6581;
 	f0_points = f0_points_6581;

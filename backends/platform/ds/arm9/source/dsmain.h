@@ -8,15 +8,18 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
  *
  */
 
@@ -25,7 +28,6 @@
 
 #include <nds.h>
 #include "osystem_ds.h"
-#include "NDS/scummvm_ipc.h"
 
 namespace DS {
 
@@ -38,7 +40,7 @@ enum controlType {
 	CONT_FUTURE_WARS,
 	CONT_AGI,
 	CONT_GOBLINS,
-	CONT_NIPPON,
+	CONT_NIPPON
 };
 
 struct gameListType {
@@ -68,9 +70,6 @@ int 	leftHandedSwap(int keys);
 void	setGameScreenSwap(bool enable);
 void	setSensitivity(int sensitivity);
 
-// Controls options
-void	setControls(char* gameName);
-
 // Video
 void 	displayMode8Bit();											// Switch to 8-bit mode5
 void 	displayMode16Bit();										// Switch to 16-bit mode5
@@ -79,8 +78,8 @@ void 	displayMode16Bit();										// Switch to 16-bit mode5
 void 	displayMode16BitFlipBuffer();
 
 // Get address of current back buffer
-u16* 	get16BitBackBuffer();
-u16* 	get8BitBackBuffer();
+u16 *	get16BitBackBuffer();
+u16 *	get8BitBackBuffer();
 s32 	get8BitBackBufferStride();
 u16*	getScalerBuffer();
 
@@ -99,7 +98,7 @@ void 	doTimerCallback();												// Call callback function if required
 void 	doSoundCallback();
 void 	startSound(int freq, int buffer);	// Start sound hardware
 // Call function if sound buffers need more data
-void 	playSound(const void* data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
+void 	playSound(const void *data, u32 length, bool loop, bool adpcm = false, int rate = 22050);		// Start a sound
 void 	stopSound(int channel);
 int		getSoundFrequency();
 
@@ -109,7 +108,7 @@ void 	VBlankHandler();
 
 // Sam and Max Stuff
 void 	setGameID(int id);
-void 	setCursorIcon(const u8* icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
+void 	setCursorIcon(const u8 *icon, uint w, uint h, byte keycolor, int hotspotX, int hotspotY);
 void	setShowCursor(bool enable);
 void	setMouseCursorVisible(bool visible);
 
@@ -155,10 +154,10 @@ void	fastRamReset();
 void*	fastRamAlloc(int size);
 
 void 	exitGame();
-gameListType* getCurrentGame();
 
 
-}
+}	// End of namespace DS
+
 
 
 int cygprofile_getHBlanks();

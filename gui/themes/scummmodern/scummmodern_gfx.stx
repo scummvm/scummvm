@@ -98,19 +98,36 @@
 		<bitmap filename = 'cursor_small.bmp'/>
 		<bitmap filename = 'checkbox.bmp'/>
 		<bitmap filename = 'checkbox_empty.bmp'/>
+		<bitmap filename = 'radiobutton.bmp'/>
+		<bitmap filename = 'radiobutton_empty.bmp'/>
 		<bitmap filename = 'logo_small.bmp'/>
 		<bitmap filename = 'search.bmp'/>
 	</bitmaps>
 
 	<fonts>
 		<font	id = 'text_default'
-				file = 'default'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_default'
+				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_button'
-				file = 'default'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_button'
+				file = 'clR6x12.bdf'
 		/>
 		<font	id = 'text_normal'
-				file = 'helvr12-l1.bdf'
+				file = 'helvb12.bdf'
+		/>
+		<font	resolution = '320xY, 256x240'
+		   		id = 'text_normal'
+				file = 'clR6x12.bdf'
+		/>
+		<font	id = 'tooltip_normal'
+				file = 'fixed5x8.bdf'
 		/>
 
 		<text_color	id = 'color_normal'
@@ -595,6 +612,42 @@
 		/>
 	</drawdata>
 
+	<!-- Idle radiobutton -->
+	<drawdata id = 'radiobutton_default' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
+		/>
+	</drawdata>
+
+	<!-- Selected radiobutton -->
+	<drawdata id = 'radiobutton_selected' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton.bmp'
+		/>
+	</drawdata>
+
+	<!-- Disabled radiobutton -->
+	<drawdata id = 'radiobutton_disabled' cache = 'false'>
+		<text	font = 'text_default'
+				text_color = 'color_normal_disabled'
+				vertical_align = 'center'
+				horizontal_align = 'left'
+		/>
+		<drawstep	func = 'bitmap'
+					file = 'radiobutton_empty.bmp'
+		/>
+	</drawdata>
+
 	<!-- Background of the list widget (the games list and the list in the choosers) -->
 	<!-- TODO: Have separate options for the games list (with gradient background) and the list in the choosers (without gradient) -->
 	<drawdata id = 'widget_default' cache = 'false'>
@@ -611,10 +664,8 @@
 		/>
 	</drawdata>
 
-	<!-- Where is it used? -->
 	<drawdata id = 'widget_small' cache = 'false'>
-		<drawstep	func = 'roundedsq'
-					radius = '6'
+		<drawstep	func = 'square'
 					stroke = '0'
 					gradient_start = 'blandyellow'
 					gradient_end = 'xtrabrightred'

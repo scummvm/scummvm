@@ -44,7 +44,7 @@ namespace Graphics {
  *
  * @param stream       the SeekableReadStream from which to read the FLAC data
  * @param extraData    the QuickTime extra data stream
- * @return   a new AudioStream, or NULL, if an error occured
+ * @return   a new AudioStream, or NULL, if an error occurred
  */
 Audio::AudioStream *makeQDM2Stream(Common::SeekableReadStream *stream, Common::SeekableReadStream *extraData);
 

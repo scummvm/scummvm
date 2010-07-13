@@ -105,8 +105,6 @@ String::String(char c)
 	_storage[0] = c;
 	_storage[1] = 0;
 
-	// TODO/FIXME: There is no reason for the following check -- we *do*
-	// allow strings to contain 0 bytes!
 	_size = (c == 0) ? 0 : 1;
 }
 
@@ -151,7 +149,11 @@ void String::ensureCapacity(uint32 new_size, bool keep_old) {
 		// We need to allocate storage on the heap!
 
 		// Compute a suitable new capacity limit
-		newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
+		// If the current capacity is sufficient we use the same capacity
+		if (new_size < curCapacity)
+			newCapacity = curCapacity;
+		else
+			newCapacity = MAX(curCapacity * 2, computeCapacity(new_size+1));
 
 		// Allocate new storage
 		newStorage = new char[newCapacity];
@@ -252,9 +254,11 @@ String &String::operator=(const String &str) {
 String &String::operator=(char c) {
 	decRefCount(_extern._refCount);
 	_str = _storage;
-	_size = 1;
+
 	_str[0] = c;
 	_str[1] = 0;
+
+	_size = (c == 0) ? 0 : 1;
 	return *this;
 }
 

@@ -28,6 +28,7 @@
 #include "gui/dialog.h"
 #include "gui/TabWidget.h"
 #include "common/str.h"
+#include "sound/musicplugin.h"
 
 #ifdef SMALL_SCREEN_DEVICE
 #include "gui/KeysDialog.h"
@@ -78,6 +79,9 @@ protected:
 	void setVolumeSettingsState(bool enabled);
 	void setSubtitleSettingsState(bool enabled);
 
+	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
+	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
+
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
 
@@ -104,6 +108,13 @@ private:
 	StaticTextWidget *_outputRatePopUpDesc;
 	PopUpWidget *_outputRatePopUp;
 
+	StaticTextWidget *_mt32DevicePopUpDesc;
+	PopUpWidget *_mt32DevicePopUp;
+	StaticTextWidget *_gmDevicePopUpDesc;
+	PopUpWidget *_gmDevicePopUp;
+
+
+
 	//
 	// MIDI controls
 	//
@@ -121,8 +132,10 @@ private:
 	int getSubtitleMode(bool subtitles, bool speech_mute);
 	bool _enableSubtitleSettings;
 	StaticTextWidget *_subToggleDesc;
-	ButtonWidget *_subToggleButton;
-	int _subMode;
+	RadiobuttonGroup *_subToggleGroup;
+	RadiobuttonWidget *_subToggleSubOnly;
+	RadiobuttonWidget *_subToggleSpeechOnly;
+	RadiobuttonWidget *_subToggleSubBoth;
 	static const char *_subModeDesc[];
 	static const char *_lowresSubModeDesc[];
 	StaticTextWidget *_subSpeedDesc;
@@ -153,6 +166,7 @@ protected:
 	// Game GUI options
 	//
 	uint32 _guioptions;
+	Common::String _guioptionsString;
 };
 
 
@@ -184,6 +198,8 @@ protected:
 	PopUpWidget *_rendererPopUp;
 	StaticTextWidget *_autosavePeriodPopUpDesc;
 	PopUpWidget *_autosavePeriodPopUp;
+	StaticTextWidget *_guiLanguagePopUpDesc;
+	PopUpWidget *_guiLanguagePopUp;
 };
 
 } // End of namespace GUI

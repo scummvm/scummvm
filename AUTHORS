@@ -318,6 +318,29 @@ Other contributions
        Chris Gray            - (retired)
        Johannes Schickel
 
+  Translations
+  ------------
+     Thierry Crozat        - Translation Lead
+
+    Catalan:
+       Jordi Vilalta Prat
+
+    French:
+       Thierry Crozat
+
+    German:
+       Simon Sawatzki
+       Lothar Serra Mari
+
+    Hungarian:
+       Alex Bevilacqua
+
+    Italian:
+       Matteo Angelino
+
+    Russian:
+       Eugene Sandulenko
+
   Websites (design)
   -----------------
      Dobo Balazs           - Website design
@@ -395,7 +418,7 @@ Other contributions
      Ravi I.               - SCI0 sound resource specification
      Ruediger Hanke        - Port to the MorphOS platform
      Rune Orsval           - Configuration file editor
-     Rickard Lind          - MT32->GM MIDI mapping magic, sound research
+     Rickard Lind          - MT-32->GM MIDI mapping magic, sound research
      Rink Springer         - Port to the DOS platform, several bug fixes
      Robey Pointer         - Bug tracking system hosting
      Sergey Lapin          - Port of Carl's type 2 decompression code

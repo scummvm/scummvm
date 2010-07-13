@@ -176,9 +176,9 @@ void AGOSEngine::animateSprites() {
 
 			_windowNum = 4;
 
-			_backFlag = 1;
+			_backFlag = true;
 			drawImage(&state);
-			_backFlag = 0;
+			_backFlag = false;
 
 			_vgaSpriteChanged++;
 		}
@@ -451,14 +451,14 @@ void AGOSEngine::restoreBackGround() {
 		state.paletteMod = 0;
 		state.flags = kDFNonTrans;
 
-		_backFlag = 1;
+		_backFlag = true;
 		drawImage(&state);
 
 		if (getGameType() != GType_SIMON1 && getGameType() != GType_SIMON2) {
 			animTable->srcPtr = 0;
 		}
 	}
-	_backFlag = 0;
+	_backFlag = false;
 
 	if (getGameType() == GType_SIMON1 || getGameType() == GType_SIMON2) {
 		AnimTable *animTableTmp;

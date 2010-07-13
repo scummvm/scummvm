@@ -23,31 +23,29 @@
  *
  */
 
-#ifndef SCI_ENGINE_EVENT_H
-#define SCI_ENGINE_EVENT_H
+#ifndef SCI_EVENT_H
+#define SCI_EVENT_H
 
 #include "common/list.h"
 
 namespace Sci {
 
-#define SCI_INPUT_DEFAULT_CLOCKTIME 100000
-#define SCI_INPUT_DEFAULT_REDRAWTIME 30000
-
-
-struct sciEvent {
+struct SciEvent {
 	short type;
 	short data;
 	short modifiers;
-	short character; /* for keyboard events: 'data' after applying
-			 ** the effects of 'modifiers', e.g. if
-			 **   type == SCI_EVT_KEYBOARD
-			 **   data == 'a'
-			 **   buckybits == SCI_EVM_LSHIFT
-			 ** then
-			 **   character == 'A'
-			 ** For 'Alt', characters are interpreted by their
-			 ** PC keyboard scancodes.
-			 */
+	/**
+	 * For keyboard events: 'data' after applying
+	 * the effects of 'modifiers', e.g. if
+	 *   type == SCI_EVT_KEYBOARD
+	 *   data == 'a'
+	 *   buckybits == SCI_EVM_LSHIFT
+	 * then
+	 *   character == 'A'
+	 * For 'Alt', characters are interpreted by their
+	 * PC keyboard scancodes.
+	 */
+	short character;
 };
 
 /*Values for type*/
@@ -55,7 +53,7 @@ struct sciEvent {
 #define SCI_EVENT_MOUSE_PRESS     (1<<0)
 #define SCI_EVENT_MOUSE_RELEASE   (1<<1)
 #define SCI_EVENT_KEYBOARD        (1<<2)
-#define SCI_EVENT_JOYSTICK        (1<<6)
+#define SCI_EVENT_DIRECTION       (1<<6)
 #define SCI_EVENT_SAID            (1<<7)
 /*Fake values for other events*/
 #define SCI_EVENT_ERROR           (1<<10)
@@ -111,25 +109,22 @@ struct sciEvent {
 #define SCI_KEYMOD_NO_FOOLOCK      (~(SCI_KEYMOD_SCRLOCK | SCI_KEYMOD_NUMLOCK | SCI_KEYMOD_CAPSLOCK | SCI_KEYMOD_INSERT))
 #define SCI_KEYMOD_ALL             0xFF
 
-class SciEvent {
+class EventManager {
 public:
-	SciEvent(ResourceManager *resMgr);
-	~SciEvent();
+	EventManager(bool fontIsExtended);
+	~EventManager();
 
-	sciEvent get(unsigned int mask);
-
-	void sleep(uint32 msecs);
+	SciEvent getSciEvent(unsigned int mask);
+	bool getUsesNewKeyboardDirectionType();
 
 private:
-	int altify (int ch);
-	int shiftify (int c);
-	int numlockify (int c);
-	sciEvent getFromScummVM();
+	SciEvent getScummVMEvent();
 
-	ResourceManager *_resMan;
+	const bool _fontIsExtended;
+	int _modifierStates;
+	Common::List<SciEvent> _events;
 
-	bool _fontIsExtended;
-	Common::List<sciEvent> _events;
+	bool _usesNewKeyboardDirectionType;
 };
 
 } // End of namespace Sci

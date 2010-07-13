@@ -77,7 +77,7 @@ enum {
  * Creates a thumbnail from the current screen (without overlay).
  *
  * @param surf	a surface (will always have 16 bpp after this for now)
- * @return		false if a error occured
+ * @return		false if a error occurred
  */
 extern bool createThumbnailFromScreen(Graphics::Surface *surf);
 

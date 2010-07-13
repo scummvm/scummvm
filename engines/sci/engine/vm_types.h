@@ -27,6 +27,7 @@
 #define SCI_ENGINE_VM_TYPES_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace Sci {
 
@@ -56,6 +57,11 @@ struct reg_t {
 	int16 toSint16() const {
 		return (int16) offset;
 	}
+
+	void saveLoadWithSerializer(Common::Serializer &s) {
+		s.syncAsUint16LE(segment);
+		s.syncAsUint16LE(offset);
+	}
 };
 
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
@@ -81,6 +87,7 @@ enum {
 
 extern const reg_t NULL_REG;
 extern const reg_t SIGNAL_REG;
+extern const reg_t TRUE_REG;
 
 // Selector ID
 typedef int Selector;

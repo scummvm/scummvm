@@ -107,7 +107,7 @@ static void SkinsFormExit(Boolean bSave) {
 	listP = (ListType *)GetObjectPtr(SkinsSkinList);
 	selected = LstGetSelection(listP);
 
-	if (bSave && selected == -1)	{	// may never occured...
+	if (bSave && selected == -1)	{	// may never occurred...
 		FrmCustomAlert(FrmWarnAlert, "You didn't select a skin.", 0, 0);
 		return;
 	}
@@ -164,7 +164,7 @@ static void SkinsFormBeam() {
 	listP = (ListType *)GetObjectPtr(SkinsSkinList);
 	selected = LstGetSelection(listP);
 
-	if (selected == -1)	{	// may never occured...
+	if (selected == -1)	{	// may never occurred...
 		FrmCustomAlert(FrmWarnAlert, "You didn't select a skin.", 0, 0);
 		return;
 	}
@@ -187,7 +187,7 @@ static void SkinsFormDelete() {
 	listP = (ListType *)GetObjectPtr(SkinsSkinList);
 	selected = LstGetSelection(listP);
 
-	if (selected == -1)	{	// may never occured...
+	if (selected == -1)	{	// may never occurred...
 		FrmCustomAlert(FrmInfoAlert, "You didn't select a skin.", 0, 0);
 		return;
 	}

@@ -33,24 +33,18 @@
 #include "sci/event.h"
 
 #include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
+#include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
-#include "sci/graphics/gui.h"
 #include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-#include "sci/sound/iterator/core.h"
-#include "sci/sound/iterator/iterator.h"
-#else
 #include "sci/sound/music.h"
-#endif
 
-#ifdef ENABLE_SCI32
-#include "sci/graphics/gui32.h"
-#endif
+#include "gui/message.h"
 
 namespace Sci {
 
@@ -62,46 +56,10 @@ namespace Sci {
 const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-// from ksound.cpp:
-SongIterator *build_iterator(ResourceManager *resMan, int song_nr, SongIteratorType type, songit_id_t id);
-#endif
-
-
 #pragma mark -
 
 // TODO: Many of the following sync_*() methods should be turned into member funcs
 // of the classes they are syncing.
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib(Common::Serializer &s, SongLibrary &obj);
-#endif
-
-static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
-	s.syncAsUint16LE(obj.segment);
-	s.syncAsUint16LE(obj.offset);
-}
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void syncSong(Common::Serializer &s, Song &obj) {
-	s.syncAsSint32LE(obj._handle);
-	s.syncAsSint32LE(obj._resourceNum);
-	s.syncAsSint32LE(obj._priority);
-	s.syncAsSint32LE(obj._status);
-	s.syncAsSint32LE(obj._restoreBehavior);
-	s.syncAsSint32LE(obj._restoreTime);
-	s.syncAsSint32LE(obj._loops);
-	s.syncAsSint32LE(obj._hold);
-
-	if (s.isLoading()) {
-		obj._it = 0;
-		obj._delay = 0;
-		obj._next = 0;
-		obj._nextPlaying = 0;
-		obj._nextStopping = 0;
-	}
-}
-#else
 
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
@@ -132,7 +90,7 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		fadeTickerStep = 0;
 	} else {
 		// A bit more optimized saving
-		sync_reg_t(s, soundObj);
+		soundObj.saveLoadWithSerializer(s);
 		s.syncAsSint16LE(resourceId);
 		s.syncAsSint16LE(dataInc);
 		s.syncAsSint16LE(ticker);
@@ -156,7 +114,6 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 		pStreamAud = 0;
 	}
 }
-#endif
 
 // Experimental hack: Use syncWithSerializer to sync. By default, this assume
 // the object to be synced is a subclass of Serializable and thus tries to invoke
@@ -217,31 +174,18 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 
 template <>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	sync_reg_t(s, obj);
+	obj.saveLoadWithSerializer(s);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be reserved_id
-	s.skip(4, VER(9), VER(18));		// OBSOLETE: Used to be _exportsAreWide
-	s.skip(4, VER(9), VER(9));		// OBSOLETE: Used to be gc_mark_bits
+	if (s.isLoading())
+		resetSegMan();
+
+	s.skip(4, VER(12), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 
 	if (s.isLoading()) {
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
-
-		if (s.getVersion() <= 9) {
-			// OBSOLETE: Skip over the old id_seg_map when loading (we now
-			// regenerate the equivalent data, in _scriptSegMap, from scratch).
-
-			s.skip(4);	// base_value
-			while (true) {
-				uint32 key = 0;
-				s.syncAsSint32LE(key);
-				if (key == INTMAPPER_MAGIC_KEY)
-					break;
-				s.skip(4);	// idx
-			}
-		}
 	}
 
 
@@ -257,57 +201,38 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// If we were saving and mobj == 0, or if we are loading and this is an
 		// entry marked as empty -> skip to next
-		if (type == SEG_TYPE_INVALID) {
+		if (type == SEG_TYPE_INVALID)
 			continue;
-		}
-
-		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 
 		// Don't save or load HunkTable segments
-		if (type == SEG_TYPE_HUNK) {
+		if (type == SEG_TYPE_HUNK)
 			continue;
-		}
 
-		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
-		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
-			continue;
-		}
-
-
-		if (s.isLoading()) {
+		if (s.isLoading())
 			mobj = SegmentObj::createSegmentObj(type);
-		}
+
 		assert(mobj);
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
 
 		// If we are loading a script, hook it up in the script->segment map.
-		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
-			_scriptSegMap[((Script *)mobj)->_nr] = i;
-		}
+		if (s.isLoading() && type == SEG_TYPE_SCRIPT)
+			_scriptSegMap[((Script *)mobj)->getScriptNumber()] = i;
 	}
 
-	s.syncAsSint32LE(Clones_seg_id);
-	s.syncAsSint32LE(Lists_seg_id);
-	s.syncAsSint32LE(Nodes_seg_id);
+	s.syncAsSint32LE(_clonesSegId);
+	s.syncAsSint32LE(_listsSegId);
+	s.syncAsSint32LE(_nodesSegId);
+
+	syncArray<Class>(s, _classTable);
 }
-
-static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
-	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
-
-	if (s.isLoading())
-		obj->resetSegMan();
-
-	obj->saveLoadWithSerializer(s);
-}
-
 
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
-	sync_reg_t(s, obj.reg);
+	obj.reg.saveLoadWithSerializer(s);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -318,17 +243,20 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 	s.syncVersion(CURRENT_SAVEGAME_VERSION);
 	obj.savegame_version = s.getVersion();
 	s.syncString(obj.game_version);
-	s.skip(4, VER(9), VER(9));	// obsolete: used to be game version
 	s.syncAsSint32LE(obj.savegame_date);
 	s.syncAsSint32LE(obj.savegame_time);
+	if (s.getVersion() < 22) {
+		obj.game_object_offset = 0;
+		obj.script0_size = 0;
+	} else {
+		s.syncAsUint16LE(obj.game_object_offset);
+		s.syncAsUint16LE(obj.script0_size);
+	}
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be savegame_version
-
 	Common::String tmp;
-	s.syncString(tmp);			// OBSOLETE: Used to be game_version
-	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
+	s.syncString(tmp, VER(12), VER(23));			// OBSOLETE: Used to be game_version
 
 	// OBSOLETE: Saved menus. Skip all of the saved data
 	if (s.getVersion() < 14) {
@@ -347,7 +275,6 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 			for (int j = 0; j < menuLength; j++) {
 				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
 				s.syncString(tmp);					// OBSOLETE: Used to be _keytext
-				s.skip(4, VER(9), VER(9)); 			// OBSOLETE: Used to be keytext_size
 
 				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
 				s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
@@ -362,16 +289,14 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
 	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
 
-	if (s.getVersion() >= 13 && g_sci->_gui) {
-		// Save/Load picPort as well (cause sierra sci also does this)
+	if (s.getVersion() >= 13 && getSciVersion() <= SCI_VERSION_1_1) {
+		// Save/Load picPort as well for SCI0-SCI1.1. Necessary for Castle of Dr. Brain,
+		// as the picPort has been changed when loading during the intro
 		int16 picPortTop, picPortLeft;
 		Common::Rect picPortRect;
 
-		if (s.isSaving()) {
-			// FIXME: _gfxPorts is 0 when using SCI32 code
-			assert(g_sci->_gfxPorts);
+		if (s.isSaving())
 			picPortRect = g_sci->_gfxPorts->kernelGetPicWindow(picPortTop, picPortLeft);
-		}
 
 		s.syncAsSint16LE(picPortRect.top);
 		s.syncAsSint16LE(picPortRect.left);
@@ -379,17 +304,14 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 		s.syncAsSint16LE(picPortRect.right);
 		s.syncAsSint16LE(picPortTop);
 		s.syncAsSint16LE(picPortLeft);
+
+		if (s.isLoading())
+			g_sci->_gfxPorts->kernelSetPicWindow(picPortRect, picPortTop, picPortLeft, false);
 	}
 
-	sync_SegManagerPtr(s, _segMan);
+	_segMan->saveLoadWithSerializer(s);
 
-	syncArray<Class>(s, _segMan->_classTable);
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	sync_songlib(s, _sound._songlib);
-#else
-	_soundCmd->syncPlayList(s);
-#endif
+	g_sci->_soundCmd->syncPlayList(s);
 }
 
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
@@ -400,8 +322,8 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
-	sync_reg_t(s, _pos);
-	s.skip(4, VER(9), VER(12));			// OBSOLETE: Used to be variable_names_nr
+	_pos.saveLoadWithSerializer(s);
+	s.skip(4, VER(12), VER(12));			// OBSOLETE: Used to be variable_names_nr
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -418,18 +340,18 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	sync_reg_t(s, obj.first);
-	sync_reg_t(s, obj.last);
+	obj.first.saveLoadWithSerializer(s);
+	obj.last.saveLoadWithSerializer(s);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	sync_reg_t(s, obj.pred);
-	sync_reg_t(s, obj.succ);
-	sync_reg_t(s, obj.key);
-	sync_reg_t(s, obj.value);
+	obj.pred.saveLoadWithSerializer(s);
+	obj.succ.saveLoadWithSerializer(s);
+	obj.key.saveLoadWithSerializer(s);
+	obj.value.saveLoadWithSerializer(s);
 }
 
 #ifdef ENABLE_SCI32
@@ -463,7 +385,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 		if (s.isSaving())
 			value = obj.getValue(i);
 
-		sync_reg_t(s, value);
+		value.saveLoadWithSerializer(s);
 
 		if (s.isLoading())
 			obj.setValue(i, value);
@@ -524,25 +446,15 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_nr);
-	s.syncAsUint32LE(_bufSize);
-	s.syncAsUint32LE(_scriptSize);
-	s.syncAsUint32LE(_heapSize);
 
-	if (s.getVersion() <= 10) {
-		assert((s.isLoading()));
-		// OBSOLETE: Skip over the old _objIndices data when loading
-		s.skip(4);	// base_value
-		while (true) {
-			uint32 key = 0;
-			s.syncAsSint32LE(key);
-			if (key == INTMAPPER_MAGIC_KEY)
-				break;
-			s.skip(4);	// idx
-		}
-	}
+	if (s.isLoading())
+		init(_nr, g_sci->getResMan());
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _bufSize
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _scriptSize
+	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _heapSize
 
-	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numExports
-	s.skip(4, VER(9), VER(19));		// OBSOLETE: Used to be _numSynonyms
+	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numExports
+	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -570,7 +482,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.syncAsSint32LE(_localsOffset);
+	s.skip(4, VER(12), VER(20));		// OBSOLETE: Used to be _localsOffset
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
@@ -622,30 +534,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 
 #pragma mark -
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void sync_songlib(Common::Serializer &s, SongLibrary &obj) {
-	int songcount = 0;
-	if (s.isSaving())
-		songcount = obj.countSongs();
-	s.syncAsUint32LE(songcount);
-
-	if (s.isLoading()) {
-		obj._lib = 0;
-		while (songcount--) {
-			Song *newsong = new Song;
-			syncSong(s, *newsong);
-			obj.addSong(newsong);
-		}
-	} else {
-		Song *seeker = obj._lib;
-		while (seeker) {
-			seeker->_restoreTime = seeker->_it->getTimepos();
-			syncSong(s, *seeker);
-			seeker = seeker->_next;
-		}
-	}
-}
-#else
 void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 	// Sync song lib data. When loading, the actual song lib will be initialized
 	// afterwards in gamestate_restore()
@@ -694,7 +582,35 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 }
-#endif
+
+void SoundCommandParser::syncPlayList(Common::Serializer &s) {
+	_music->saveLoadWithSerializer(s);
+}
+
+void SoundCommandParser::reconstructPlayList(int savegame_version) {
+	Common::StackLock lock(_music->_mutex);
+
+	const MusicList::iterator end = _music->getPlayListEnd();
+	for (MusicList::iterator i = _music->getPlayListStart(); i != end; ++i) {
+		if ((*i)->resourceId && _resMan->testResource(ResourceId(kResourceTypeSound, (*i)->resourceId))) {
+			(*i)->soundRes = new SoundResource((*i)->resourceId, _resMan, _soundVersion);
+			_music->soundInitSnd(*i);
+		} else {
+			(*i)->soundRes = 0;
+		}
+		if ((*i)->status == kSoundPlaying) {
+			if (savegame_version < 14) {
+				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
+				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
+
+				if (_soundVersion >= SCI_VERSION_1_LATE)
+					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
+			}
+
+			processPlaySound((*i)->soundObj);
+		}
+	}
+}
 
 #ifdef ENABLE_SCI32
 void ArrayTable::saveLoadWithSerializer(Common::Serializer &ser) {
@@ -712,43 +628,13 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 #endif
 
-#pragma mark -
-
-
-int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
-	TimeDate curTime;
-	g_system->getTimeAndDate(curTime);
-
-	SavegameMetadata meta;
-	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
-	meta.savegame_name = savename;
-	meta.game_version = version;
-	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
-	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
-
-	if (s->execution_stack_base) {
-		warning("Cannot save from below kernel function");
-		return 1;
-	}
-
-	Common::Serializer ser(0, fh);
-	sync_SavegameMetadata(ser, meta);
-	Graphics::saveThumbnail(*fh);
-	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
-
-	return 0;
+void SegManager::reconstructStack(EngineState *s) {
+	DataStack *stack = (DataStack *)(_heap[findSegmentByType(SEG_TYPE_STACK)]);
+	s->stack_base = stack->_entries;
+	s->stack_top = s->stack_base + stack->_capacity;
 }
 
-// TODO: This should probably be turned into an EngineState or DataStack method.
-static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
-	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
-
-	retval->stack_base = stack->_entries;
-	retval->stack_top = stack->_entries + stack->_capacity;
-}
-
-// TODO: Move thie function to a more appropriate place, such as vm.cpp or script.cpp
+// TODO: Move this function to a more appropriate place, such as vm.cpp or script.cpp
 void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
 
@@ -761,7 +647,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
 
 		for (ObjMap::iterator it = scr->_objects.begin(); it != scr->_objects.end(); ++it)
-			it->_value._baseObj = scr->_buf + it->_value.getPos().offset;
+			it->_value._baseObj = scr->getBuf(it->_value.getPos().offset);
 	}
 
 	for (i = 0; i < _heap.size(); i++) {
@@ -776,6 +662,8 @@ void SegManager::reconstructScripts(EngineState *s) {
 
 			if (getSciVersion() < SCI_VERSION_1_1) {
 				if (!obj->initBaseObject(this, addr, false)) {
+					// TODO/FIXME: This should not be happening at all. It might indicate a possible issue
+					// with the garbage collector. It happens for example in LSL5 (German, perhaps English too).
 					warning("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
 					scr->scriptObjRemove(addr);
 				}
@@ -784,47 +672,70 @@ void SegManager::reconstructScripts(EngineState *s) {
 	}
 }
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-static void reconstruct_sounds(EngineState *s) {
-	Song *seeker;
-	SongIteratorType it_type;
+void SegManager::reconstructClones() {
+	for (uint i = 0; i < _heap.size(); i++) {
+		SegmentObj *mobj = _heap[i];
+		if (mobj && mobj->getType() == SEG_TYPE_CLONES) {
+			CloneTable *ct = (CloneTable *)mobj;
 
-	if (getSciVersion() > SCI_VERSION_01)
-		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
-	else
-		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;
+			for (uint j = 0; j < ct->_table.size(); j++) {
+				// Check if the clone entry is used
+				uint entryNum = (uint)ct->first_free;
+				bool isUsed = true;
+				while (entryNum != ((uint) CloneTable::HEAPENTRY_INVALID)) {
+					if (entryNum == j) {
+						isUsed = false;
+						break;
+					}
+					entryNum = ct->_table[entryNum].next_free;
+				}
 
-	seeker = s->_sound._songlib._lib;
+				if (!isUsed)
+					continue;
 
-	while (seeker) {
-		SongIterator *base, *ff = 0;
-		int oldstatus;
-		SongIterator::Message msg;
-
-		base = ff = build_iterator(g_sci->getResMan(), seeker->_resourceNum, it_type, seeker->_handle);
-		if (seeker->_restoreBehavior == RESTORE_BEHAVIOR_CONTINUE)
-			ff = new_fast_forward_iterator(base, seeker->_restoreTime);
-		ff->init();
-
-		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_LOOPS(seeker->_loops));
-		songit_handle_message(&ff, msg);
-		msg = SongIterator::Message(seeker->_handle, SIMSG_SET_HOLD(seeker->_hold));
-		songit_handle_message(&ff, msg);
-
-		oldstatus = seeker->_status;
-		seeker->_status = SOUND_STATUS_STOPPED;
-		seeker->_it = ff;
-		s->_sound.sfx_song_set_status(seeker->_handle, oldstatus);
-		seeker = seeker->_next;
-	}
+				CloneTable::Entry &seeker = ct->_table[j];
+				const Object *baseObj = getObject(seeker.getSpeciesSelector());
+				seeker.cloneFromObject(baseObj);
+				if (!baseObj)
+					error("Clone entry without a base class: %d", j);
+			}	// end for
+		}	// end if
+	}	// end for
 }
-#endif
+
+
+#pragma mark -
+
+
+bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
+	TimeDate curTime;
+	g_system->getTimeAndDate(curTime);
+
+	SavegameMetadata meta;
+	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
+	meta.savegame_name = savename;
+	meta.game_version = version;
+	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
+	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
+
+	Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+	meta.script0_size = script0->size;
+	meta.game_object_offset = g_sci->getGameObject().offset;
+
+	if (s->executionStackBase) {
+		warning("Cannot save from below kernel function");
+		return false;
+	}
+
+	Common::Serializer ser(0, fh);
+	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
+	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
+
+	return true;
+}
 
 void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SongLibrary temp;
-#endif
-
 	SavegameMetadata meta;
 
 	Common::Serializer ser(fh, 0);
@@ -837,85 +748,62 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
 	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
+		/*
 		if (meta.savegame_version < MINIMUM_SAVEGAME_VERSION)
-			warning("Old savegame version detected- can't load");
+			warning("Old savegame version detected, unable to load it");
 		else
-			warning("Savegame version is %d- maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d, maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+		*/
+
+		GUI::MessageDialog dialog("The format of this saved game is obsolete, unable to load it", "OK");
+		dialog.runModal();
 
 		s->r_acc = make_reg(0, 1);	// signal failure
 		return;
 	}
 
-	if (meta.savegame_version >= 12) {
-		// We don't need the thumbnail here, so just read it and discard it
-		Graphics::Surface *thumbnail = new Graphics::Surface();
-		assert(thumbnail);
-		Graphics::loadThumbnail(*fh, *thumbnail);
-		delete thumbnail;
-		thumbnail = 0;
+	if (meta.game_object_offset > 0 && meta.script0_size > 0) {
+		Resource *script0 = g_sci->getResMan()->findResource(ResourceId(kResourceTypeScript, 0), false);
+		if (script0->size != meta.script0_size || g_sci->getGameObject().offset != meta.game_object_offset) {
+			//warning("This saved game was created with a different version of the game, unable to load it");
+
+			GUI::MessageDialog dialog("This saved game was created with a different version of the game, unable to load it", "OK");
+			dialog.runModal();
+
+			s->r_acc = make_reg(0, 1);	// signal failure
+			return;
+		}
 	}
+
+	// We don't need the thumbnail here, so just read it and discard it
+	Graphics::Surface *thumbnail = new Graphics::Surface();
+	assert(thumbnail);
+	Graphics::loadThumbnail(*fh, *thumbnail);
+	delete thumbnail;
+	thumbnail = 0;
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	s->_sound.sfx_exit();
-#endif
-
-	// Set exec stack base to zero
-	s->execution_stack_base = 0;
-
 	// Now copy all current state information
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	temp = s->_sound._songlib;
-	s->_sound.sfx_init(g_sci->getResMan(), s->sfx_init_flags, g_sci->_features->detectDoSoundType());
-	s->sfx_init_flags = s->sfx_init_flags;
-	s->_sound._songlib.freeSounds();
-	s->_sound._songlib = temp;
-	s->_soundCmd->updateSfxState(&retval->_sound);
-#endif
-
-	reconstruct_stack(s);
+	s->_segMan->reconstructStack(s);
 	s->_segMan->reconstructScripts(s);
 	s->_segMan->reconstructClones();
-	s->_gameObj = s->_gameObj;
-	s->script_000 = s->_segMan->getScript(s->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
-	s->gc_countdown = GC_INTERVAL - 1;
+	s->initGlobals();
+	s->gcCountDown = GC_INTERVAL - 1;
 
 	// Time state:
-	s->last_wait_time = g_system->getMillis();
-	s->game_start_time = g_system->getMillis();
+	s->lastWaitTime = g_system->getMillis();
+	s->gameStartTime = g_system->getMillis();
+	s->_screenUpdateTime = g_system->getMillis();
 
-	s->restoring = false;
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	s->_sound._it = NULL;
-	s->_sound._flags = s->_sound._flags;
-	s->_sound._song = NULL;
-	s->_sound._suspended = s->_sound._suspended;
-	reconstruct_sounds(s);
-#else
-	s->_soundCmd->reconstructPlayList(meta.savegame_version);
-#endif
+	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
 
 	// Message state:
 	s->_msgState = new MessageState(s->_segMan);
 
-#ifdef ENABLE_SCI32
-	if (g_sci->_gui32) {
-		g_sci->_gui32->init();
-	} else {
-#endif
-		g_sci->_gui->resetEngineState(s);
-		g_sci->_gui->init(g_sci->_features->usesOldGfxFunctions());
-#ifdef ENABLE_SCI32
-	}
-#endif
-
-
-	s->restoring = true;
-	s->script_abort_flag = 2; // Abort current game with replay
+	s->abortScriptProcessing = kAbortLoadGame;
 	s->shrinkStackToBase();
 }
 

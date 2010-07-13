@@ -30,9 +30,8 @@
 #include "sci/engine/segment.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/frameout.h"
+#include "sci/graphics/screen.h"
 
 #include "common/system.h"
 
@@ -337,7 +336,7 @@ static const char *sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
-	/*0x83*/ "Dummy",
+	/*0x83*/ "PrintDebug",	// used by the Shivers 2 demo
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
@@ -378,15 +377,17 @@ void Kernel::setKernelNamesSci2() {
 	_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesSci2);
 }
 
-void Kernel::setKernelNamesSci21() {
-	// Some SCI games use a modified SCI2 kernel table instead of the SCI2.1/SCI3 kernel table.
-	// The GK2 demo does this as well as at least one version of KQ7. We detect which version
-	// to use based on where kDoSound is called from Sound::play().
+void Kernel::setKernelNamesSci21(GameFeatures *features) {
+	// Some SCI games use a modified SCI2 kernel table instead of the
+	// SCI2.1/SCI3 kernel table. The GK2 demo does this as well as at
+	// least one version of KQ7. We detect which version to use based on
+	// where kDoSound is called from Sound::play().
 
-	// This is interesting because they all have the same interpreter version (2.100.002), yet
-	// they would not be compatible with other games of the same interpreter.
+	// This is interesting because they all have the same interpreter
+	// version (2.100.002), yet they would not be compatible with other
+	// games of the same interpreter.
 
-	if (g_sci->_features->detectSci21KernelType() == SCI_VERSION_2) {
+	if (features->detectSci21KernelType() == SCI_VERSION_2) {
 		_kernelNames = Common::StringArray(sci2_default_knames, kKernelEntriesGk2Demo);
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
@@ -400,7 +401,8 @@ void Kernel::setKernelNamesSci21() {
 // SCI2 Kernel Functions
 
 reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
-	// Returns 0 if the screen width or height is less than 640 or 400, respectively.
+	// Returns 0 if the screen width or height is less than 640 or 400,
+	// respectively.
 	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
 		return make_reg(0, 0);
 
@@ -461,6 +463,13 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 		return argv[1];
 	}
 	case 6: { // Cpy
+		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
+			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
+			// Happens in the RAMA demo
+			warning("kArray(Cpy): Request to copy a segment which isn't an array, ignoring");
+			return NULL_REG;
+		}
+
 		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
 		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
 		uint32 index1 = argv[2].toUint16();
@@ -507,6 +516,19 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	return NULL_REG;
+}
+
+reg_t kText(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0:
+		return kTextSize(s, argc - 1, argv + 1);
+	default:
+		// TODO: Other subops here too, perhaps kTextColors and kTextFonts
+		warning("kText(%d)", argv[0].toUint16());
+		break;
+	}
+
+	return s->r_acc;
 }
 
 reg_t kString(EngineState *s, int argc, reg_t *argv) {
@@ -594,21 +616,24 @@ reg_t kString(EngineState *s, int argc, reg_t *argv) {
 		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
 			// Resize if necessary
 			const uint16 sysStringId = argv[1].toUint16();
-			if ((uint32)s->_segMan->sysStrings->_strings[sysStringId]._maxSize < index1 + count) {
-				free(s->_segMan->sysStrings->_strings[sysStringId]._value);
-				s->_segMan->sysStrings->_strings[sysStringId]._maxSize = index1 + count;
-				s->_segMan->sysStrings->_strings[sysStringId]._value = (char *)calloc(index1 + count, sizeof(char));
+			SystemString *sysString = s->_segMan->getSystemString(sysStringId);
+			assert(sysString);
+			if ((uint32)sysString->_maxSize < index1 + count) {
+				free(sysString->_value);
+				sysString->_maxSize = index1 + count;
+				sysString->_value = (char *)calloc(index1 + count, sizeof(char));
 			}
 
-			strncpy(s->_segMan->sysStrings->_strings[sysStringId]._value + index1, string2 + index2, count);
+			strncpy(sysString->_value + index1, string2 + index2, count);
 		} else {
 			SciString *string1 = s->_segMan->lookupString(argv[1]);
 
 			if (string1->getSize() < index1 + count)
 				string1->setSize(index1 + count);
 
-			// Note: We're accessing from c_str() here because the string's size ignores
-			// the trailing 0 and therefore triggers an assert when doing string2[i + index2].
+			// Note: We're accessing from c_str() here because the
+			// string's size ignores the trailing 0 and therefore
+			// triggers an assert when doing string2[i + index2].
 			for (uint16 i = 0; i < count; i++)
 				string1->setValue(i + index1, string2[i + index2]);
 		}
@@ -791,8 +816,76 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
 	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
 
-	//warning("kOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+	// If top and left are negative, we need to adjust coordinates by
+	// the item's x and y (e.g. happens in GK1, day 1, with detective
+	// Mosely's hotspot in his office)
+
+	if (nsRect.left < 0)
+		nsRect.translate(itemX, 0);
+	
+	if (nsRect.top < 0)
+		nsRect.translate(0, itemY);
+
+	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+	// using x and y (e.g. with the inventory screen in GK1)
+	if (nsRect.left == itemY && nsRect.top == itemX) {
+		// Swap the values, as they're inversed (eh???)
+		nsRect.left = itemX;
+		nsRect.top = itemY;
+	}
+
+	/*
+	warning("kOnMe: (%d, %d) on object %04x:%04x (%s), rect (%d, %d, %d, %d), parameter %d", 
+		argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]), 
+		nsRect.left, nsRect.top, nsRect.right, nsRect.bottom,
+		argv[3].toUint16());
+	*/
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object, after adjusting the
+	// coordinates of the object according to the object's plane
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// Get the object's plane
+	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
+	if (!planeObject.isNull()) {
+		uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+		uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+
+		// Adjust the bounding rectangle of the object by the object's
+		// actual X, Y coordinates
+		itemY = ((itemY * g_sci->_gfxScreen->getHeight()) / planeResY);
+		itemX = ((itemX * g_sci->_gfxScreen->getWidth()) / planeResX);
+		itemY += planeTop;
+		itemX += planeLeft;
+
+		nsRect.translate(itemX, itemY);
+	}
+
+	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
 	return make_reg(0, nsRect.contains(x, y));
 }
@@ -805,7 +898,7 @@ reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
 reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
 	switch (argv[0].toUint16()) {
-	case 0:
+	case 0: {
 		if (argc != 4) {
 			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
 			return NULL_REG;
@@ -813,6 +906,22 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		reg_t object = argv[3];
 		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
 		debug("kCreateTextBitmap: %s", text.c_str());
+	}
+	default:
+		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kCD(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Stub
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Return whether the contents of disc argv[1] is available.
+		return TRUE_REG;
+	default:
+		warning("CD(%d)", argv[0].toUint16());
 	}
 
 	return NULL_REG;

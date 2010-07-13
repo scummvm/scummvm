@@ -26,8 +26,6 @@
 #ifndef SCI_GRAPHICS_GFX_H
 #define SCI_GRAPHICS_GFX_H
 
-#include "sci/graphics/gui.h"
-
 #include "common/hashmap.h"
 
 namespace Sci {

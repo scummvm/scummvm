@@ -30,13 +30,118 @@
 
 #include "sci/engine/vm_types.h"	// for reg_t
 #include "sci/engine/vm.h"
-#include "sci/engine/kernel.h"		// for Kernel::_selectorCache
 
 namespace Sci {
 
-enum SelectorInvocation {
-	kStopOnInvalidSelector = 0,
-	kContinueOnInvalidSelector = 1
+/** Contains selector IDs for a few selected selectors */
+struct SelectorCache {
+	SelectorCache() {
+		memset(this, 0, sizeof(*this));
+	}
+
+	// Statically defined selectors, (almost the) same in all SCI versions
+	Selector y;
+	Selector x;
+	Selector view, loop, cel; ///< Description of a specific image
+	Selector underBits; ///< Used by the graphics subroutines to store backupped BG pic data
+	Selector nsTop, nsLeft, nsBottom, nsRight; ///< View boundaries ('now seen')
+	Selector lsTop, lsLeft, lsBottom, lsRight; ///< Used by Animate() subfunctions and scroll list controls
+	Selector signal; ///< Used by Animate() to control a view's behaviour
+	Selector illegalBits; ///< Used by CanBeHere
+	Selector brTop, brLeft, brBottom, brRight; ///< Bounding Rectangle
+	// name, key, time
+	Selector text; ///< Used by controls
+	Selector elements; ///< Used by SetSynonyms()
+	// color, back
+	Selector mode; ///< Used by text controls (-> DrawControl())
+	// style
+	Selector state, font, type;///< Used by controls
+	// window
+	Selector cursor, max; ///< Used by EditControl
+	// mark, who
+	Selector message; ///< Used by GetEvent
+	// edit
+	Selector play; ///< Play function (first function to be called)
+	Selector number;
+	Selector handle;	///< Replaced by nodePtr in SCI1+
+	Selector nodePtr;	///< Replaces handle in SCI1+
+	Selector client; ///< The object that wants to be moved
+	Selector dx, dy; ///< Deltas
+	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
+	Selector xStep, yStep; ///< BR adjustments
+	Selector moveSpeed; ///< Used for DoBresen
+	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
+	Selector heading, mover; ///< Used in DoAvoider
+	Selector doit; ///< Called (!) by the Animate() system call
+	Selector isBlocked, looper;	///< Used in DoAvoider
+	Selector priority;
+	Selector modifiers; ///< Used by GetEvent
+	Selector replay; ///< Replay function
+	// setPri, at, next, done, width
+	Selector wordFail, syntaxFail; ///< Used by Parse()
+	// semanticFail, pragmaFail
+	// said
+	Selector claimed; ///< Used generally by the event mechanism
+	// value, save, restore, title, button, icon, draw
+	Selector delete_; ///< Called by Animate() to dispose a view object
+	Selector z;
+
+	// SCI1+ static selectors
+	Selector parseLang;
+	Selector printLang; ///< Used for i18n
+	Selector subtitleLang;
+	Selector size;
+	Selector points; ///< Used by AvoidPath()
+	Selector palette;
+	Selector dataInc;
+	// handle (in SCI1)
+	Selector min; ///< SMPTE time format
+	Selector sec;
+	Selector frame;
+	Selector vol;
+	Selector pri;
+	// perform
+	Selector moveDone;	///< used for DoBresen
+
+	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
+	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
+	Selector topString; ///< SCI1 scroll lists use this instead of lsTop
+	Selector flags;
+
+	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in
+	// CD talkie games
+	Selector syncCue; ///< Used by DoSync()
+	Selector syncTime;
+
+	// SCI1.1 specific selectors
+	Selector scaleSignal; //< Used by kAnimate() for cel scaling (SCI1.1+)
+	Selector scaleX, scaleY;	///< SCI1.1 view scaling
+	Selector maxScale;		///< SCI1.1 view scaling, limit for cel, when using global scaling
+	Selector vanishingX;	///< SCI1.1 view scaling, used by global scaling
+	Selector vanishingY;	///< SCI1.1 view scaling, used by global scaling
+
+	// Used for auto detection purposes
+	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
+
+	// SCI1.1 Mac icon bar selectors
+	Selector iconIndex; ///< Used to index icon bar objects
+
+#ifdef ENABLE_SCI32
+	Selector data; // Used by Array()/String()
+	Selector picture; // Used to hold the picture ID for SCI32 pictures
+
+	Selector plane;
+	Selector top;
+	Selector left;
+	Selector bottom;
+	Selector right;
+	Selector resX;
+	Selector resY;
+
+	Selector fore;
+	Selector back;
+	Selector dimmed;
+#endif
 };
 
 /**
@@ -71,18 +176,8 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 /**
  * Invokes a selector from an object.
  */
-int invokeSelector(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...);
-int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, const reg_t *argv);
-
-/**
- * Kludge for use with invokeSelector(). Used for compatibility with compilers
- * that cannot handle vararg macros.
- */
-#define INV_SEL(s, _object_, _selector_, _noinvalid_) \
-	s, _object_,  g_sci->getKernel()->_selectorCache._selector_, _noinvalid_, argc, argv
-
+void invokeSelector(EngineState *s, reg_t object, int selectorId, 
+	int k_argc, StackPtr k_argp, int argc = 0, const reg_t *argv = 0);
 
 } // End of namespace Sci
 

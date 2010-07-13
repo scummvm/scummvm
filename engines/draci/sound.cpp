@@ -23,11 +23,13 @@
  *
  */
 
+#include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/unzip.h"
 
 #include "draci/sound.h"
 #include "draci/draci.h"
@@ -36,21 +38,24 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "sound/decoders/raw.h"
+#include "sound/decoders/mp3.h"
+#include "sound/decoders/vorbis.h"
+#include "sound/decoders/flac.h"
 
 namespace Draci {
 
-void SoundArchive::openArchive(const Common::String &path) {
+void LegacySoundArchive::openArchive(const char *path) {
 	// Close previously opened archive (if any)
 	closeArchive();
 
-	debugCN(2, kDraciArchiverDebugLevel, "Loading samples %s: ", path.c_str());
+	debugCN(1, kDraciArchiverDebugLevel, "Loading samples %s: ", path);
 
 	_f = new Common::File();
 	_f->open(path);
 	if (_f->isOpen()) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");
+		debugC(1, kDraciArchiverDebugLevel, "Success");
 	} else {
-		debugC(2, kDraciArchiverDebugLevel, "Error");
+		debugC(1, kDraciArchiverDebugLevel, "Error");
 		delete _f;
 		_f = NULL;
 		return;
@@ -60,7 +65,7 @@ void SoundArchive::openArchive(const Common::String &path) {
 	_path = path;
 
 	// Read archive header
-	debugC(2, kDraciArchiverDebugLevel, "Loading header");
+	debugC(1, kDraciArchiverDebugLevel, "Loading header");
 
 	uint totalLength = _f->readUint32LE();
 	const uint kMaxSamples = 4095;	// The no-sound file is exactly 16K bytes long, so don't fail on short reads
@@ -76,26 +81,25 @@ void SoundArchive::openArchive(const Common::String &path) {
 			break;
 	}
 	if (_sampleCount > 0) {
-		debugC(2, kDraciArchiverDebugLevel, "Archive info: %d samples, %d total length",
+		debugC(1, kDraciArchiverDebugLevel, "Archive info: %d samples, %d total length",
 			_sampleCount, totalLength);
 		_samples = new SoundSample[_sampleCount];
 		for (uint i = 0; i < _sampleCount; ++i) {
 			_samples[i]._offset = sampleStarts[i];
 			_samples[i]._length = sampleStarts[i+1] - sampleStarts[i];
 			_samples[i]._frequency = 0;	// set in getSample()
-			_samples[i]._data = NULL;
 		}
 		if (_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length != totalLength &&
 		    _samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length - _samples[0]._offset != totalLength) {
 			// WORKAROUND: the stored length is stored with the header for sounds and without the hader for dubbing.  Crazy.
-			debugC(2, kDraciArchiverDebugLevel, "Broken sound archive: %d != %d",
+			debugC(1, kDraciArchiverDebugLevel, "Broken sound archive: %d != %d",
 				_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length,
 				totalLength);
 			closeArchive();
 			return;
 		}
 	} else {
-		debugC(2, kDraciArchiverDebugLevel, "Archive info: empty");
+		debugC(1, kDraciArchiverDebugLevel, "Archive info: empty");
 	}
 
 	// Indicate that the archive has been successfully opened
@@ -103,12 +107,12 @@ void SoundArchive::openArchive(const Common::String &path) {
 }
 
 /**
- * @brief SoundArchive close method
+ * @brief LegacySoundArchive close method
  *
  * Closes the currently opened archive. It can be called explicitly to
  * free up memory.
  */
-void SoundArchive::closeArchive() {
+void LegacySoundArchive::closeArchive() {
 	clearCache();
 	delete _f;
 	_f = NULL;
@@ -123,7 +127,7 @@ void SoundArchive::closeArchive() {
  * Clears the cache of the open files inside the archive without closing it.
  * If the files are subsequently accessed, they are read from the disk.
  */
-void SoundArchive::clearCache() {
+void LegacySoundArchive::clearCache() {
 	// Delete all cached data
 	for (uint i = 0; i < _sampleCount; ++i) {
 		_samples[i].close();
@@ -137,30 +141,119 @@ void SoundArchive::clearCache() {
  *
  * Loads individual samples from an archive to memory on demand.
  */
-SoundSample *SoundArchive::getSample(int i, uint freq) {
+SoundSample *LegacySoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
 	if (i < 0 || i >= (int) _sampleCount) {
 		return NULL;
 	}
 
 	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d from archive %s... ",
-		i, _path.c_str());
+		i, _path);
 
 	// Check if file has already been opened and return that
 	if (_samples[i]._data) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");
+		debugC(2, kDraciArchiverDebugLevel, "Cached");
 	} else {
+		// It would be nice to unify the approach with ZipSoundArchive
+		// and allocate a MemoryReadStream with buffer stored inside it
+		// that playSoundBuffer() would just play.  Unfortunately,
+		// streams are not thread-safe and the same sample couldn't
+		// thus be played more than once at the same time (this holds
+		// even if we create a SeekableSubReadStream from it as this
+		// just uses the parent).  The only thread-safe solution is to
+		// share a read-only buffer and allocate separate
+		// MemoryReadStream's on top of it.
+		_samples[i]._data = new byte[_samples[i]._length];
+		_samples[i]._format = RAW;
+
 		// Read in the file (without the file header)
 		_f->seek(_samples[i]._offset);
-		_samples[i]._data = new byte[_samples[i]._length];
 		_f->read(_samples[i]._data, _samples[i]._length);
 
-		debugC(3, kDraciArchiverDebugLevel, "Cached sample %d from archive %s",
-			i, _path.c_str());
+		debugC(2, kDraciArchiverDebugLevel, "Read sample %d from archive %s",
+			i, _path);
 	}
 	_samples[i]._frequency = freq ? freq : _defaultFreq;
 
 	return _samples + i;
+}
+
+void ZipSoundArchive::openArchive(const char *path, const char *extension, SoundFormat format, int raw_frequency) {
+	closeArchive();
+	if ((format == RAW || format == RAW80) && !raw_frequency) {
+		error("openArchive() expects frequency for RAW data");
+		return;
+	}
+
+	debugCN(1, kDraciArchiverDebugLevel, "Trying to open ZIP archive %s: ", path);
+	_archive = Common::makeZipArchive(path);
+	_path = path;
+	_extension = extension;
+	_format = format;
+	_defaultFreq = raw_frequency;
+
+	if (_archive) {
+		Common::ArchiveMemberList files;
+		_archive->listMembers(files);
+		_sampleCount = files.size();
+		debugC(1, kDraciArchiverDebugLevel, "Capacity %d", _sampleCount);
+	} else {
+		debugC(1, kDraciArchiverDebugLevel, "Failed");
+	}
+}
+
+void ZipSoundArchive::closeArchive() {
+	clearCache();
+	delete _archive;
+	_archive = NULL;
+	_path = _extension = NULL;
+	_sampleCount = _defaultFreq = 0;
+	_format = RAW;
+}
+
+void ZipSoundArchive::clearCache() {
+	// Just deallocate the link-list of (very short) headers for each
+	// dubbed sentence played in the current location.  If the callers have
+	// not called .close() on any of the items, call them now.
+	for (Common::List<SoundSample>::iterator it = _cache.begin(); it != _cache.end(); ++it) {
+		it->close();
+	}
+	_cache.clear();
+}
+
+SoundSample *ZipSoundArchive::getSample(int i, uint freq) {
+	if (i < 0 || i >= (int) _sampleCount) {
+		return NULL;
+	}
+	debugCN(2, kDraciArchiverDebugLevel, "Accessing sample %d.%s from archive %s (format %d@%d, capacity %d): ",
+		i, _extension, _path, static_cast<int> (_format), _defaultFreq, _sampleCount);
+	if (freq != 0 && (_format != RAW && _format != RAW80)) {
+		error("Cannot resample a sound in compressed format");
+		return NULL;
+	}
+
+	// We cannot really cache anything, because createReadStreamForMember()
+	// returns the data as a ReadStream, which is not thread-safe.  We thus
+	// read it again each time even if it has possibly been already cached
+	// a while ago.  This is not such a problem for dubbing as for regular
+	// sound samples.
+	SoundSample sample;
+	sample._frequency = freq ? freq : _defaultFreq;
+	sample._format = _format;
+	// Read in the file (without the file header)
+	char file_name[20];
+	sprintf(file_name, "%d.%s", i+1, _extension);
+	sample._stream = _archive->createReadStreamForMember(file_name);
+	if (!sample._stream) {
+		debugC(2, kDraciArchiverDebugLevel, "Doesn't exist");
+		return NULL;
+	} else {
+		debugC(2, kDraciArchiverDebugLevel, "Read");
+		_cache.push_back(sample);
+		// Return a pointer that we own and which we will deallocate
+		// including its contents.
+		return &_cache.back();
+	}
 }
 
 Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _muteSound(false), _muteVoice(false),
@@ -192,28 +285,74 @@ SndHandle *Sound::getHandle() {
 	return NULL;	// for compilers that don't support NORETURN
 }
 
-void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
+uint Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
 				sndHandleType handleType, bool loop) {
+	if (!buffer._stream && !buffer._data) {
+		warning("Empty stream");
+		return 0;
+	}
+	// Create a new SeekableReadStream which will be automatically disposed
+	// after the sample stops playing.  Do not dispose the original
+	// data/stream though.
+	// Beware that if the sample comes from an archive (i.e., is stored in
+	// buffer._stream), then you must NOT play it more than once at the
+	// same time, because streams are not thread-safe.  Playing it
+	// repeatedly is OK.  Currently this is ensured by that archives are
+	// only used for dubbing, which is only played from one place in
+	// script.cpp, which blocks until the dubbed sentence has finished
+	// playing.
+	Common::SeekableReadStream* stream;
+	const int skip = buffer._format == RAW80 ? 80 : 0;
+	if (buffer._stream) {
+		stream = new Common::SeekableSubReadStream(
+			buffer._stream, skip, buffer._stream->size() /* end */, DisposeAfterUse::NO);
+	} else {
+		stream = new Common::MemoryReadStream(
+			buffer._data + skip, buffer._length - skip /* length */, DisposeAfterUse::NO);
+	}
 
-	byte flags = Audio::FLAG_UNSIGNED;
+	Audio::SeekableAudioStream *reader = NULL;
+	switch (buffer._format) {
+	case RAW:
+	case RAW80:
+		reader = Audio::makeRawStream(stream, buffer._frequency, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES);
+		break;
+#ifdef USE_MAD
+	case MP3:
+		reader = Audio::makeMP3Stream(stream, DisposeAfterUse::YES);
+		break;
+#endif
+#ifdef USE_VORBIS
+	case OGG:
+		reader = Audio::makeVorbisStream(stream, DisposeAfterUse::YES);
+		break;
+#endif
+#ifdef USE_FLAC
+	case FLAC:
+		reader = Audio::makeFLACStream(stream, DisposeAfterUse::YES);
+		break;
+#endif
+	default:
+		error("Unsupported compression format %d", static_cast<int> (buffer._format));
+		delete stream;
+		return 0;
+	}
 
+	const uint length = reader->getLength().msecs();
 	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ?
 				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
-
-	// Don't use DisposeAfterUse::YES, because our caching system deletes samples by itself.
-	Audio::AudioStream *stream = Audio::makeLoopingAudioStream(
-			Audio::makeRawStream(buffer._data, buffer._length, buffer._frequency, flags, DisposeAfterUse::NO),
-			loop ? 0 : 1);
-	_mixer->playStream(soundType, handle, stream, -1, volume);
+	Audio::AudioStream *audio_stream = Audio::makeLoopingAudioStream(reader, loop ? 0 : 1);
+	_mixer->playStream(soundType, handle, audio_stream, -1, volume);
+	return length;
 }
 
-void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
+uint Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
 	if (!buffer || _muteSound)
-		return;
+		return 0;
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
-	playSoundBuffer(&handle->handle, *buffer, 2 * volume, handle->type, loop);
+	return playSoundBuffer(&handle->handle, *buffer, 2 * volume, handle->type, loop);
 }
 
 void Sound::pauseSound() {
@@ -237,13 +376,13 @@ void Sound::stopSound() {
 		}
 }
 
-void Sound::playVoice(const SoundSample *buffer) {
+uint Sound::playVoice(const SoundSample *buffer) {
 	if (!buffer || _muteVoice)
-		return;
+		return 0;
 	SndHandle *handle = getHandle();
 
 	handle->type = kVoiceHandle;
-	playSoundBuffer(&handle->handle, *buffer, Audio::Mixer::kMaxChannelVolume, handle->type, false);
+	return playSoundBuffer(&handle->handle, *buffer, Audio::Mixer::kMaxChannelVolume, handle->type, false);
 }
 
 void Sound::pauseVoice() {

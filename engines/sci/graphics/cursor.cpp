@@ -43,18 +43,18 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 	: _resMan(resMan), _palette(palette), _screen(screen) {
 
 	_upscaledHires = _screen->getUpscaledHires();
+	_isVisible = true;
+
 	// center mouse cursor
 	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
 	kernelSetMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
-
-	_isVisible = true;
 }
 
 GfxCursor::~GfxCursor() {
 	purgeCache();
 }
 
-void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, SciEvent *event) {
+void GfxCursor::init(GfxCoordAdjuster *coordAdjuster, EventManager *event) {
 	_coordAdjuster = coordAdjuster;
 	_event = event;
 }
@@ -120,7 +120,7 @@ void GfxCursor::kernelSetShape(GuiResourceId resourceId) {
 	colorMapping[0] = 0; // Black is hardcoded
 	colorMapping[1] = _screen->getColorWhite(); // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
-	colorMapping[3] = _palette->matchColor(&_palette->_sysPalette, 170, 170, 170); // Grey
+	colorMapping[3] = _palette->matchColor(170, 170, 170); // Grey
 
 	// Seek to actual data
 	resourceData += 4;
@@ -164,41 +164,38 @@ void GfxCursor::kernelSetView(GuiResourceId viewNum, int loopNum, int celNum, Co
 
 	GfxView *cursorView = _cachedCursors[viewNum];
 
-	CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
+	const CelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
 	int16 width = celInfo->width;
 	int16 height = celInfo->height;
 	byte clearKey = celInfo->clearKey;
 	Common::Point *cursorHotspot = hotspot;
-	byte *cursorBitmap;
 
 	if (!cursorHotspot)
 		// Compute hotspot from xoffset/yoffset
 		cursorHotspot = new Common::Point((celInfo->width >> 1) - celInfo->displaceX, celInfo->height - celInfo->displaceY - 1);
 
-	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this
+	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the
+	// user. Some scalers don't seem to support this
 	if (width < 2 || height < 2) {
 		kernelHide();
 		delete cursorHotspot;
 		return;
 	}
 
-	celInfo->rawBitmap = cursorView->getBitmap(loopNum, celNum);
+	const byte *rawBitmap = cursorView->getBitmap(loopNum, celNum);
 	if (_upscaledHires) {
 		// Scale cursor by 2x - note: sierra didn't do this, but it looks much better
 		width *= 2;
 		height *= 2;
 		cursorHotspot->x *= 2;
 		cursorHotspot->y *= 2;
-		cursorBitmap = new byte[width * height];
-		_screen->scale2x(celInfo->rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
-	} else {
-		cursorBitmap = celInfo->rawBitmap;
-	}
-
-	CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
-
-	if (_upscaledHires)
+		byte *cursorBitmap = new byte[width * height];
+		_screen->scale2x(rawBitmap, cursorBitmap, celInfo->width, celInfo->height);
+		CursorMan.replaceCursor(cursorBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
 		delete[] cursorBitmap;
+	} else {
+		CursorMan.replaceCursor(rawBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+	}
 
 	kernelShow();
 
@@ -209,7 +206,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-402.html
 	// for more information.
 
-	// View 998 seems to be a fake resource used to call for for the Mac CURS resources
+	// View 998 seems to be a fake resource used to call for the Mac CURS resources.
 	// For other resources, they're still in the views, so use them.
 	if (viewNum != 998) {
 		kernelSetView(viewNum, loopNum, celNum, hotspot);
@@ -219,6 +216,7 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 	// TODO: What about the 2000 resources? Inventory items? How to handle?
 	// TODO: What games does this work for? At least it does for KQ6.
 	// TODO: Stop asking rhetorical questions.
+	// TODO: It was fred all along!
 
 	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeCursor, 1000 + celNum), false);
 
@@ -258,6 +256,15 @@ void GfxCursor::kernelSetMacCursor(GuiResourceId viewNum, int loopNum, int celNu
 }
 
 void GfxCursor::setPosition(Common::Point pos) {
+	// Don't set position, when cursor is not visible.
+	// This fixes eco quest 1 (floppy) right at the start, which is setting
+	// mouse cursor to (0,0) all the time during the intro. It's escapeable
+	// (now) by moving to the left or top, but it's getting on your nerves. This
+	// could theoretically break some things, although sierra normally sets
+	// position only when showing the cursor.
+	if (!_isVisible)
+		return;
+
 	if (!_upscaledHires) {
 		g_system->warpMouse(pos.x, pos.y);
 	} else {
@@ -269,21 +276,8 @@ void GfxCursor::setPosition(Common::Point pos) {
 Common::Point GfxCursor::getPosition() {
 	Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
-	switch (_upscaledHires) {
-	case GFX_SCREEN_UPSCALED_640x400:
-		mousePos.x /= 2;
-		mousePos.y /= 2;
-		break;
-	case GFX_SCREEN_UPSCALED_640x440:
-		mousePos.x /= 2;
-		mousePos.y = (mousePos.y * 5) / 11;
-		break;
-	case GFX_SCREEN_UPSCALED_640x480:
-		mousePos.x /= 2;
-		mousePos.y = (mousePos.y * 5) / 12;
-	default:
-		break;
-	}
+	if (_upscaledHires)
+		_screen->adjustBackUpscaledCoordinates(mousePos.y, mousePos.x);
 
 	return mousePos;
 }
@@ -333,7 +327,7 @@ void GfxCursor::kernelMoveCursor(Common::Point pos) {
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	_event->get(SCI_EVENT_PEEK);
+	_event->getSciEvent(SCI_EVENT_PEEK);
 }
 
 } // End of namespace Sci

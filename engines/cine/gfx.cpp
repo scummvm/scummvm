@@ -772,7 +772,7 @@ const char *FWRenderer::getBgName(uint idx) const {
  * Restore active and backup palette from save
  * @param fHandle Savefile open for reading
  */
-void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
+void FWRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version) {
 	byte buf[kLowPalNumBytes];
 
 	// Load the active 16 color palette from file
@@ -819,9 +819,8 @@ void FWRenderer::savePalette(Common::OutSaveFile &fHandle) {
 void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
 	byte buf[kHighPalNumBytes];
 
-	// Make sure the active palette has the correct format and color count
-	assert(_activePal.colorFormat() == kHighPalFormat);
-	assert(_activePal.colorCount() == kHighPalNumColors);
+	// We can have 16 color palette in many cases
+	fHandle.writeUint16LE(_activePal.colorCount());
 
 	// Write the active 256 color palette.
 	_activePal.save(buf, sizeof(buf), CINE_LITTLE_ENDIAN);
@@ -836,12 +835,18 @@ void OSRenderer::savePalette(Common::OutSaveFile &fHandle) {
  * Restore active and backup palette from save
  * @param fHandle Savefile open for reading
  */
-void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle) {
+void OSRenderer::restorePalette(Common::SeekableReadStream &fHandle, int version) {
 	byte buf[kHighPalNumBytes];
+	uint colorCount = (version > 0) ? fHandle.readUint16LE() : kHighPalNumBytes;
 
-	// Load the active 256 color palette from file
 	fHandle.read(buf, kHighPalNumBytes);
-	_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+
+	if (colorCount == kHighPalNumBytes) {
+		// Load the active 256 color palette from file
+		_activePal.load(buf, sizeof(buf), kHighPalFormat, kHighPalNumColors, CINE_LITTLE_ENDIAN);
+	} else {
+		_activePal.load(buf, sizeof(buf), kLowPalFormat, kLowPalNumColors, CINE_LITTLE_ENDIAN);
+	}
 
 	// Jump over the backup 256 color palette.
 	// FIXME: Load the backup 256 color palette and use it properly.

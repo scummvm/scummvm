@@ -385,7 +385,7 @@ public:
 	 * @note Backends supporting RGB color should accept game data in RGB color
 	 *       order, even if hardware uses BGR or some other color order.
 	 */
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
@@ -881,7 +881,7 @@ public:
 
 	/**
 	 * Create a new mutex.
-	 * @return the newly created mutex, or 0 if an error occured.
+	 * @return the newly created mutex, or 0 if an error occurred.
 	 */
 	virtual MutexRef createMutex() = 0;
 

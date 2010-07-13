@@ -61,8 +61,8 @@ Common::Error Parallaction_br::init() {
 			_disk = new DosDisk_br(this);
 		}
 		_disk->setLanguage(2);					// NOTE: language is now hardcoded to English. Original used command-line parameters.
-		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-		MidiDriver *driver = MidiDriver::createMidi(midiDriver);
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_ADLIB | MDT_PREFER_GM);
+		MidiDriver *driver = MidiDriver::createMidi(dev);
 		_soundManI = new DosSoundMan_br(this, driver);
 	} else {
 		_disk = new AmigaDisk_br(this);
@@ -86,6 +86,7 @@ Common::Error Parallaction_br::init() {
 	_walker = new PathWalker_BR;
 
 	_part = -1;
+	_nextPart = -1;
 
 	_subtitle[0] = 0;
 	_subtitle[1] = 0;
@@ -260,6 +261,12 @@ void Parallaction_br::cleanupGame() {
 	_globalFlagsNames = 0;
 	_objectsNames = 0;
 	_countersNames = 0;
+
+	_numLocations = 0;
+	_globalFlags = 0;
+	memset(_localFlags, 0, sizeof(_localFlags));
+	memset(_locationNames, 0, sizeof(_locationNames));
+	memset(_zoneFlags, 0, sizeof(_zoneFlags));
 }
 
 
@@ -268,17 +275,16 @@ void Parallaction_br::changeLocation() {
 		return;
 	}
 
-	char location[200];
-	strcpy(location, _newLocationName.c_str());
-
-	char *partStr = strrchr(location, '.');
-	if (partStr) {
+	if (_nextPart != -1) {
 		cleanupGame();
 
-		int n = partStr - location;
-		location[n] = '\0';
+		// more cleanup needed for part changes (see also saveload)
+		_globalFlags = 0;
+		cleanInventory(true);
+		strcpy(_characterName1, "null");
 
-		_part = atoi(++partStr);
+		_part = _nextPart;
+
 		if (getFeatures() & GF_DEMO) {
 			assert(_part == 1);
 		} else {
@@ -305,8 +311,8 @@ void Parallaction_br::changeLocation() {
 
 	freeLocation(false);
 	// load new location
-	strcpy(_location._name, location);
-	parseLocation(location);
+	strcpy(_location._name, _newLocationName.c_str());
+	parseLocation(_location._name);
 
 	if (_location._startPosition.x != -1000) {
 		_char._ani->setFoot(_location._startPosition);
@@ -357,6 +363,7 @@ void Parallaction_br::changeLocation() {
 
 	_engineFlags &= ~kEngineChangeLocation;
 	_newLocationName.clear();
+	_nextPart = -1;
 }
 
 // FIXME: Parallaction_br::parseLocation() is now a verbatim copy of the same routine from Parallaction_ns.

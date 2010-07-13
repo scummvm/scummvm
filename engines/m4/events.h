@@ -78,6 +78,7 @@ private:
 public:
 	bool quitFlag;
 	Events(MadsM4Engine *vm);
+	virtual ~Events();
 
 	Common::Event &event() { return _event; }
 	Common::EventType type() { return _event.type; }

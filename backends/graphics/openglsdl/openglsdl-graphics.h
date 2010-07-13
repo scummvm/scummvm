@@ -45,7 +45,7 @@ public:
 	virtual void init();
 
 #ifdef USE_RGB_COLOR
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 
 	virtual void warpMouse(int x, int y);

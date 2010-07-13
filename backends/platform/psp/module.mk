@@ -15,6 +15,7 @@ MODULE_OBJS := powerman.o \
 	pspkeyboard.o \
 	audio.o \
 	thread.o \
+	rtc.o \
 	mp3.o
 
 MODULE_DIRS += \

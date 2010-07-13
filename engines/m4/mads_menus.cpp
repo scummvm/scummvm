@@ -163,7 +163,7 @@ bool RexMainMenuView::onEvent(M4EventType eventType, int32 param, int x, int y, 
 				if (_highlightedIndex != -1) {
 					M4Sprite *spr = _menuItem->getFrame(_highlightedIndex);
 					const Common::Point &pt = _menuItemPosList[_highlightedIndex];
-					spr->copyTo(this, pt.x, row + pt.y, 0);
+					spr->copyTo(this, pt.x, row + pt.y, spr->getTransparencyIndex());
 				}
 			}
 		} else {
@@ -211,10 +211,12 @@ void RexMainMenuView::updateState() {
 				M4Sprite *spr = _menuItem->getFrame(0);
 				itemSize = _menuItem->getFrame(0)->height();
 				spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x,
-					_menuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 0);
+					_menuItemPosList[_menuItemIndex - 1].y + row + (itemSize / 2) - (spr->height() / 2), 
+					spr->getTransparencyIndex());
 
 				delete _menuItem;
-				copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0);
+				copyTo(_bgSurface, Common::Rect(0, row, width(), row + MADS_SURFACE_HEIGHT), 0, 0,
+					spr->getTransparencyIndex());
 			}
 
 			// Get the next sprite set
@@ -275,7 +277,7 @@ void RexMainMenuView::updateState() {
 	_bgSurface->copyTo(this, 0, row);
 	M4Sprite *spr = _menuItem->getFrame(_frameIndex);
 	spr->copyTo(this, _menuItemPosList[_menuItemIndex - 1].x, _menuItemPosList[_menuItemIndex - 1].y +
-		row + (itemSize / 2) - (spr->height() / 2), 0);
+		row + (itemSize / 2) - (spr->height() / 2), spr->getTransparencyIndex());
 }
 
 int RexMainMenuView::getHighlightedItem(int x, int y) {
@@ -293,7 +295,7 @@ int RexMainMenuView::getHighlightedItem(int x, int y) {
 }
 
 void RexMainMenuView::handleAction(MadsGameAction action) {
-	MadsM4Engine *vm = _vm;
+	MadsEngine *vm = (MadsEngine *)_vm;
 	vm->_mouse->cursorOff();
 	vm->_viewManager->deleteView(this);
 
@@ -303,8 +305,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 		// Load a sample starting scene - note that, currently, calling loadScene automatically
 		// removes this menu screen from being displayed
 		vm->_mouse->cursorOn();
-		vm->_scene->show();
-		vm->_scene->loadScene(101);
+		vm->startScene(101);
 		return;
 
 	case SHOW_INTRO:
@@ -325,7 +326,7 @@ void RexMainMenuView::handleAction(MadsGameAction action) {
 
 			// Activate the scene display with the specified scene
 			bool altAdvert = vm->_random->getRandomNumber(1000) >= 500;
-			vm->_scene->loadScene(altAdvert ? 995 : 996);
+			vm->startScene(altAdvert ? 995 : 996);
 			vm->_viewManager->addView(vm->_scene);
 
 			vm->_viewManager->refreshAll();
@@ -532,7 +533,7 @@ void DragonMainMenuView::updateState() {
 	_itemPalData.push_back(palData);
 
 	spr = _menuItem->getFrame(1);
-	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), (int)spr->getTransparentColor());
+	spr->copyTo(this, spr->xOffset - 140, spr->yOffset - spr->height(), spr->getTransparencyIndex());
 
 	_vm->_mouse->cursorOn();
 }

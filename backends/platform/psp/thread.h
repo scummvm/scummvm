@@ -34,18 +34,46 @@ public:
 	static void delayMicros(uint32 us);
 };
 
-class PspRtc {
+class PspSemaphore {
 private:
-	uint32 _startMillis;
-	uint32 _startMicros;
-	uint32 _lastMillis;
-	uint32 _milliOffset;		// to prevent looping around of millis
-	bool _looped;				// make sure we only loop once
+	uint32 _handle;
 public:
-	PspRtc() : _startMillis(0), _startMicros(0), _lastMillis(0), _milliOffset(0), _looped(false) { init(); }
-	void init();
-	uint32 getMillis();
-	uint32 getMicros();
+	PspSemaphore(int initialValue, int maxValue=255);
+	~PspSemaphore();
+	bool take() { return takeWithTimeOut(0); }
+	bool takeWithTimeOut(uint32 timeOut);
+	bool give(int num=1);
+	bool pollForValue(int value);	// check for a certain value
+	int numOfWaitingThreads();
+	int getValue();
+};
+
+class PspMutex {
+private:
+	PspSemaphore _semaphore;
+	int _recursiveCount;
+	int _ownerId;
+public:
+	PspMutex(bool initialValue) : _semaphore(initialValue ? 1 : 0, 255), _recursiveCount(0), _ownerId(0) {}	// initial, max value
+	bool lock();
+	bool unlock();
+	bool poll() { return _semaphore.pollForValue(1); }
+	int numOfWaitingThreads() { return _semaphore.numOfWaitingThreads(); }
+	bool getValue() { return (bool)_semaphore.getValue(); }
+};
+
+class PspCondition {
+private:
+	PspMutex _mutex;
+	int _waitingThreads;
+	int _signaledThreads;
+	PspSemaphore _waitSem;
+	PspSemaphore _doneSem;
+public:
+	PspCondition() : _mutex(true), _waitingThreads(0), _signaledThreads(0),
+								_waitSem(0), _doneSem(0) {}
+	void wait(PspMutex &externalMutex);
+	void releaseAll();
 };
 
 enum ThreadPriority {

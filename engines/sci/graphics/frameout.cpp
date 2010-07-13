@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
@@ -37,6 +38,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/picture.h"
 #include "sci/graphics/frameout.h"
 
@@ -46,7 +48,6 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
-	_highPlanePri = 0;
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -54,29 +55,19 @@ GfxFrameout::~GfxFrameout() {
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	_planes.push_back(object);
-	int16 planePri = readSelectorValue(_segMan, object, SELECTOR(priority)) & 0xFFFF;
-	if (planePri > _highPlanePri)
-		_highPlanePri = planePri;
+	sortPlanes();
 }
 
 void GfxFrameout::kernelUpdatePlane(reg_t object) {
+	sortPlanes();
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		if (_planes[planeNr] == object) {
-			_planes.remove_at(planeNr);
-			break;
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		if (object == *it) {
+			_planes.erase(it);
+			return;
 		}
-	}
-
-	// Recalculate highPlanePri
-	_highPlanePri = 0;
-
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		int16 planePri = readSelectorValue(_segMan, _planes[planeNr], SELECTOR(priority)) & 0xFFFF;
-		if (planePri > _highPlanePri)
-			_highPlanePri = planePri;
 	}
 }
 
@@ -95,73 +86,102 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 }
 
 int16 GfxFrameout::kernelGetHighPlanePri() {
-	return _highPlanePri;
+	sortPlanes();
+	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back(), SELECTOR(priority));
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 	return (entry1->priority == entry2->priority) ? (entry1->y < entry2->y) : (entry1->priority < entry2->priority);
 }
 
+bool planeSortHelper(const reg_t entry1, const reg_t entry2) {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+
+	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
+	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
+
+	if (plane1Priority == 0xffff)
+		return true;
+
+	if (plane2Priority == 0xffff)
+		return false;
+
+	return plane1Priority < plane2Priority;
+}
+
+void GfxFrameout::sortPlanes() {
+	// First, remove any invalid planes
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end();) {
+		if (!_segMan->isObject(*it))
+			it = _planes.erase(it);
+		else
+			it++;
+	}
+
+	// Sort the rest of them
+	Common::sort(_planes.begin(), _planes.end(), planeSortHelper);
+}
+
 void GfxFrameout::kernelFrameout() {
-	int16 itemCount = 0;
-	reg_t planeObject;
-	GuiResourceId planePictureNr;
-	GfxPicture *planePicture = 0;
-	int16 planePictureCels = 0;
-	int16 planePictureCel;
-	int16 planePriority;
-	Common::Rect planeRect;
-	int16 planeResY, planeResX;
-	byte planeBack;
-
-	reg_t itemObject;
-	reg_t itemPlane;
-
-	FrameoutEntry *itemData;
-	FrameoutList itemList;
-	FrameoutEntry *itemEntry;
+	_palette->palVaryUpdate();
 
 	// Allocate enough space for all screen items
-	itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
+	FrameoutEntry *itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
 
-	for (uint32 planeNr = 0; planeNr < _planes.size(); planeNr++) {
-		planeObject = _planes[planeNr];
-		planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+	const SciGameId gameId = g_sci->getGameId();
 
-		if (planePriority == -1) // Plane currently not meant to be shown
+	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		reg_t planeObject = *it;
+		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+
+		if (planePriority == 0xffff) // Plane currently not meant to be shown
 			continue;
 
+		Common::Rect planeRect;
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
 		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
 		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
-		planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
-		planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
+		int16 planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
+		int16 planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
 
 		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
-		planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
-		if (planeBack) {
+		byte planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
+		if (planeBack)
 			_paint32->fillRect(planeRect, planeBack);
-		}
 
-		planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
+		GuiResourceId planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
+		GfxPicture *planePicture = 0;
+		int16 planePictureCels = 0;
+
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
 			planePicture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, planePictureNr, false);
 			planePictureCels = planePicture->getSci32celCount();
 
 			_coordAdjuster->pictureSetDisplayArea(planeRect);
+			_palette->drewPicture(planePictureNr);
 		}
 
 		// Fill our itemlist for this plane
-		itemCount = 0;
-		itemEntry = itemData;
+		int16 itemCount = 0;
+		FrameoutEntry *itemEntry = itemData;
+		FrameoutList itemList;
+
 		for (uint32 itemNr = 0; itemNr < _screenItems.size(); itemNr++) {
-			itemObject = _screenItems[itemNr];
-			itemPlane = readSelector(_segMan, itemObject, SELECTOR(plane));
+			reg_t itemObject = _screenItems[itemNr];
+
+			// Remove any invalid items
+			if (!_segMan->isObject(itemObject)) {
+				_screenItems.remove_at(itemNr);
+				itemNr--;
+				continue;
+			}
+
+			reg_t itemPlane = readSelector(_segMan, itemObject, SELECTOR(plane));
 			if (planeObject == itemPlane) {
 				// Found an item on current plane
 				itemEntry->viewId = readSelectorValue(_segMan, itemObject, SELECTOR(view));
@@ -171,6 +191,14 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = readSelectorValue(_segMan, itemObject, SELECTOR(y));
 				itemEntry->z = readSelectorValue(_segMan, itemObject, SELECTOR(z));
 				itemEntry->priority = readSelectorValue(_segMan, itemObject, SELECTOR(priority));
+				if (gameId == GID_GK1) {
+					if ((itemEntry->viewId == 11000) && (itemEntry->loopNo == 0) && (itemEntry->celNo == 0) && (itemEntry->priority == 1)) {
+						itemEntry->priority = 0; // HACK for gk1 hires main menu
+					}
+					if ((itemEntry->viewId == 10100) && (itemEntry->priority == 0)) {
+						itemEntry->priority = 1; // HACK for gk1 hires main menu
+					}
+				}
 				itemEntry->signal = readSelectorValue(_segMan, itemObject, SELECTOR(signal));
 				itemEntry->scaleX = readSelectorValue(_segMan, itemObject, SELECTOR(scaleX));
 				itemEntry->scaleY = readSelectorValue(_segMan, itemObject, SELECTOR(scaleY));
@@ -181,8 +209,9 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y += planeRect.top;
 				itemEntry->x += planeRect.left;
 
-				if (itemEntry->priority == 0)
-					itemEntry->priority = itemEntry->y;
+				if (!(itemEntry->signal & 0x0010)) {	// kSignalFixedPriority
+					// TODO: Change priority of this item
+				}
 
 				itemList.push_back(itemEntry);
 				itemEntry++;
@@ -194,12 +223,10 @@ void GfxFrameout::kernelFrameout() {
 		Common::sort(itemList.begin(), itemList.end(), sortHelper);
 
 		// Now display itemlist
-		planePictureCel = 0;
-
+		int16 planePictureCel = 0;
 		itemEntry = itemData;
-		FrameoutList::iterator listIterator = itemList.begin();
-		FrameoutList::iterator listEnd = itemList.end();
-		while (listIterator != listEnd) {
+
+		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			itemEntry = *listIterator;
 			if (planePicture) {
 				while ((planePictureCel <= itemEntry->priority) && (planePictureCel < planePictureCels)) {
@@ -207,63 +234,72 @@ void GfxFrameout::kernelFrameout() {
 					planePictureCel++;
 				}
 			}
+
 			if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
-				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128)) {
-					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, &itemEntry->celRect);
-				} else
-					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, &itemEntry->celRect);
+				if (view->isSci2Hires())
+					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
 
-				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= _screen->getHeight()) {
-					listIterator++;
-					continue;
+				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
+				else
+					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
+
+				int16 screenHeight = _screen->getHeight();
+				int16 screenWidth = _screen->getWidth();
+				if (view->isSci2Hires()) {
+					screenHeight = _screen->getDisplayHeight();
+					screenWidth = _screen->getDisplayWidth();
 				}
 
-				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= _screen->getWidth()) {
-					listIterator++;
+				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= screenHeight)
 					continue;
-				}
+
+				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= screenWidth)
+					continue;
 
 				Common::Rect clipRect;
 				clipRect = itemEntry->celRect;
-				clipRect.clip(planeRect);
+				if (view->isSci2Hires()) {
+					Common::Rect upscaledPlaneRect = planeRect;
+					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.top, upscaledPlaneRect.left);
+					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.bottom, upscaledPlaneRect.right);
+					clipRect.clip(upscaledPlaneRect);
+				} else {
+					clipRect.clip(planeRect);
+				}
 
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, false);
+					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
 				else
 					view->drawScaled(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
 			} else {
 				// Most likely a text entry
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
-				// This doesn't work for SCI2.1 games...
-				if (getSciVersion() == SCI_VERSION_2) {
-					Kernel *kernel = g_sci->getKernel();
-					if (lookupSelector(_segMan, itemEntry->object, kernel->_selectorCache.text, NULL, NULL) == kSelectorVariable) {
-						Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
-						int16 fontRes = readSelectorValue(_segMan, itemEntry->object, SELECTOR(font));
-						GfxFont *font = new GfxFontFromResource(_resMan, _screen, fontRes);
-						bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
-						uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
-						uint16 curX = itemEntry->x;
-						uint16 curY = itemEntry->y;
-						for (uint32 i = 0; i < text.size(); i++) {
-							// TODO: proper text splitting... this is a hack
-							if ((text[i] == ' ' && i > 0 && text[i - i] == ' ') || text[i] == '\n' || 
-								(curX + font->getCharWidth(text[i]) > _screen->getWidth())) {
-								curY += font->getHeight();
-								curX = itemEntry->x;
-							}
-							font->draw(text[i], curY, curX, foreColor, dimmed);
-							curX += font->getCharWidth(text[i]);
+				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
+					Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
+					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
+					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
+					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
+					uint16 curX = itemEntry->x;
+					uint16 curY = itemEntry->y;
+					for (uint32 i = 0; i < text.size(); i++) {
+						unsigned char curChar = text[i];
+						// TODO: proper text splitting... this is a hack
+						if ((curChar == ' ' && i > 0 && text[i - i] == ' ') || curChar == '\n' || 
+							(curX + font->getCharWidth(curChar) > _screen->getWidth())) {
+							curY += font->getHeight();
+							curX = itemEntry->x;
 						}
-						delete font;
+						font->draw(curChar, curY, curX, foreColor, dimmed);
+						curX += font->getCharWidth(curChar);
 					}
 				}
 			}
-			listIterator++;
 		}
+
 		if (planePicture) {
 			while (planePictureCel < planePictureCels) {
 				planePicture->drawSci32Vga(planePictureCel);
@@ -273,6 +309,7 @@ void GfxFrameout::kernelFrameout() {
 			planePicture = 0;
 		}
 	}
+
 	free(itemData);
 	_screen->copyToScreen();
 }

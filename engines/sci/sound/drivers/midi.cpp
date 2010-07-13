@@ -55,6 +55,7 @@ public:
 	bool hasRhythmChannel() const { return true; }
 	byte getPlayId();
 	int getPolyphony() const { return kVoices; }
+	int getFirstChannel();
 	void setVolume(byte volume);
 	int getVolume();
 	void setReverb(byte reverb);
@@ -119,10 +120,10 @@ private:
 };
 
 MidiPlayer_Midi::MidiPlayer_Midi(SciVersion version) : MidiPlayer(version), _playSwitch(true), _masterVolume(15), _isMt32(false), _hasReverb(false), _isOldPatchFormat(true) {
-	MidiDriverType midiType = MidiDriver::detectMusicDriver(MDT_MIDI);
-	_driver = createMidi(midiType);
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI);
+	_driver = createMidi(dev);
 
-	if (midiType == MD_MT32 || ConfMan.getBool("native_mt32"))
+	if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
 		_isMt32 = true;
 
 	_sysExBuf[0] = 0x41;
@@ -271,6 +272,17 @@ void MidiPlayer_Midi::setPatch(int channel, int patch) {
 		_driver->setPitchBendRange(channel, bendRange);
 
 	_driver->send(0xc0 | channel, _patchMap[patch], 0);
+
+	// Send a pointless command to work around a firmware bug in common
+	// USB-MIDI cables. If the first MIDI command in a USB packet is a
+	// Cx or Dx command, the second command in the packet is dropped
+	// somewhere.
+	// FIXME: consider putting a workaround in the MIDI backend drivers
+	// instead.
+	// Known to be affected: alsa, coremidi
+	// Known *not* to be affected: windows (only seems to send one MIDI
+	// command per USB packet even if the device allows larger packets).
+	_driver->send(0xb0 | channel, 0x0a, _channels[channel].pan);
 }
 
 void MidiPlayer_Midi::send(uint32 b) {
@@ -304,6 +316,13 @@ void MidiPlayer_Midi::send(uint32 b) {
 	default:
 		warning("Ignoring MIDI event %02x", command);
 	}
+}
+
+// We return 1 for mt32, because if we remap channels to 0 for mt32, those won't get played at all
+int MidiPlayer_Midi::getFirstChannel() {
+	if (_isMt32)
+		return 1;
+	return 0;
 }
 
 void MidiPlayer_Midi::setVolume(byte volume) {

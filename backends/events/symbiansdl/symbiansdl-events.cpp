@@ -28,6 +28,7 @@
 #include "backends/events/symbiansdl/symbiansdl-events.h"
 #include "backends/platform/symbian/src/SymbianActions.h"
 #include "gui/message.h"
+#include "common/translation.h"
 
 #include <bautils.h>
 
@@ -183,7 +184,7 @@ bool SymbianSdlEventManager::remapKey(SDL_Event &ev, Common::Event &event) {
 
 			case GUI::ACTION_QUIT:
 				{
-					GUI::MessageDialog alert("Do you want to quit ?", "Yes", "No");
+					GUI::MessageDialog alert(_("Do you want to quit ?"), _("Yes"), _("No"));
 					if (alert.runModal() == GUI::kMessageOK)
 						g_system->quit();
 

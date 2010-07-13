@@ -94,8 +94,8 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	ResultWordList words;
 	reg_t event = argv[1];
 	Vocabulary *voc = g_sci->getVocabulary();
-
 	voc->parser_event = event;
+	reg_t params[2] = { voc->parser_base, stringpos };
 
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
 	voc->parserIsValid = false; /* not valid */
@@ -118,7 +118,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = make_reg(0, 1);
 			writeSelectorValue(segMan, event, SELECTOR(claimed), 1);
 
-			invokeSelector(INV_SEL(s, s->_gameObj, syntaxFail, kStopOnInvalidSelector), 2, voc->parser_base, stringpos);
+			invokeSelector(s, g_sci->getGameObject(), SELECTOR(syntaxFail), argc, argv, 2, params);
 			/* Issue warning */
 
 			debugC(2, kDebugLevelParser, "Tree building failed");
@@ -141,7 +141,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelParser, "Word unknown: %s", error);
 			/* Issue warning: */
 
-			invokeSelector(INV_SEL(s, s->_gameObj, wordFail, kStopOnInvalidSelector), 2, voc->parser_base, stringpos);
+			invokeSelector(s, g_sci->getGameObject(), SELECTOR(wordFail), argc, argv, 2, params);
 			free(error);
 			return make_reg(0, 1); /* Tell them that it didn't work */
 		}

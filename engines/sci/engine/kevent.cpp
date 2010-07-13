@@ -31,8 +31,6 @@
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/event.h"
-#include "sci/graphics/gui.h"
-#include "sci/graphics/gui32.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/cursor.h"
 
@@ -43,7 +41,7 @@ namespace Sci {
 reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
-	sciEvent curEvent;
+	SciEvent curEvent;
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_KEYMOD_ALL : SCI_KEYMOD_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
@@ -67,7 +65,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	oldx = mousePos.x;
 	oldy = mousePos.y;
-	curEvent = s->_event->get(mask);
+	curEvent = g_sci->getEventManager()->getSciEvent(mask);
 
 	if (g_sci->getVocabulary())
 		g_sci->getVocabulary()->parser_event = NULL_REG; // Invalidate parser event
@@ -79,7 +77,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	switch (curEvent.type) {
 	case SCI_EVENT_QUIT:
-		quit_vm(s);
+		s->abortScriptProcessing = kAbortQuitGame; // Terminate VM
+		g_sci->_debugState.seeking = kDebugSeekNothing;
+		g_sci->_debugState.runningStep = 0;
 		break;
 
 	case SCI_EVENT_KEYBOARD:
@@ -124,12 +124,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (g_debugState.stopOnEvent)) {
-		g_debugState.stopOnEvent = false;
+	if ((s->r_acc.offset) && (g_sci->_debugState.stopOnEvent)) {
+		g_sci->_debugState.stopOnEvent = false;
 
-		// A SCI event occured, and we have been asked to stop, so open the debug console
+		// A SCI event occurred, and we have been asked to stop, so open the debug console
 		Console *con = g_sci->getSciDebugger();
-		con->DebugPrintf("SCI event occured: ");
+		con->DebugPrintf("SCI event occurred: ");
 		switch (curEvent.type) {
 		case SCI_EVENT_QUIT:
 			con->DebugPrintf("quit event\n");
@@ -149,16 +149,14 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		con->onFrame();
 	}
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
 		// If we're running a SCI0 game, update the sound cues, to compensate
 		// for the fact that SCI0 does not poll to update the sound cues itself,
 		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called
 		// quite often, so emulate the SCI01 behavior of cmdUpdateSoundCues with
 		// this call
-		s->_soundCmd->updateSci0Cues();
+		g_sci->_soundCmd->updateSci0Cues();
 	}
-#endif
 
 	return s->r_acc;
 }
@@ -203,7 +201,10 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mover >= 0) {
-			writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_JOYSTICK);
+			if (g_sci->getEventManager()->getUsesNewKeyboardDirectionType())
+				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_KEYBOARD | SCI_EVENT_DIRECTION);
+			else
+				writeSelectorValue(segMan, obj, SELECTOR(type), SCI_EVENT_DIRECTION);
 			writeSelectorValue(segMan, obj, SELECTOR(message), mover);
 			return make_reg(0, 1);
 		} else

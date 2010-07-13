@@ -10,7 +10,6 @@ MODULE_OBJS := \
 	sci.o \
 	util.o \
 	engine/features.o \
-	engine/game.o \
 	engine/gc.o \
 	engine/kernel.o \
 	engine/kevent.o \
@@ -44,7 +43,6 @@ MODULE_OBJS := \
 	graphics/cursor.o \
 	graphics/font.o \
 	graphics/fontsjis.o \
-	graphics/gui.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint.o \
@@ -69,9 +67,6 @@ MODULE_OBJS := \
 	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
-	sound/iterator/core.o \
-	sound/iterator/iterator.o \
-	sound/iterator/songlib.o \
 	video/seq_decoder.o
 	
 	
@@ -79,7 +74,6 @@ ifdef ENABLE_SCI32
 MODULE_OBJS += \
 	engine/kernel32.o \
 	graphics/frameout.o \
-	graphics/gui32.o \
 	graphics/paint32.o \
 	graphics/robot.o \
 	video/vmd_decoder.o

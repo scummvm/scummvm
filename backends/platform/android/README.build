@@ -2,41 +2,38 @@ Building the ScummVM Android port
 =================================
 
 You will need these things to build:
-1. Android EGL headers and library
-2. Android SDK
-3. An arm-android-eabi GCC toolchain
+1. Android SDK
+2. An arm-oe-linux-androideabi GCC toolchain(*)
 
 In the example commands, we are going to build against the Android 1.5
 native ABI (but using the Android 1.6 SDK tools).  Other version
 combinations might/should be possible with a bit of tweaking.
 
+(*) Any other sane Android toolchain should be easy to use, but this
+is the toolchain prefix that is used by default.  You can trivially
+find and modify the single location where it appears in ./configure if
+you have some other prefix variation.
+
+
 In detail:
 
-1. Android EGL headers and library
+1. Android SDK
 
-You can build these from the full Android source, but it is far easier
-to just download the 3 Android EGL headers from here:
- http://android.git.kernel.org/?p=platform/frameworks/base.git;a=tree;f=opengl/include/EGL;hb=HEAD
- (copy them to a directory called "EGL" somewhere)
+Download the SDK from http://developer.android.com/ and install
+somewhere.  You will need both the API level 8 (aka Android 2.2) and
+API level 3 (aka Android 1.5) platforms.
 
-... and grab libEGL.so off an existing phone/emulator:
- adb pull /system/lib/libEGL.so /tmp
-
-2. Android SDK
-
-Download and install somewhere.
-
-3. arm-android-eabi GCC toolchain
+2. arm-*-linux-androideabi GCC toolchain
 
 You have several choices for toolchains:
 
-- Use Google arm-eabi prebuilt toolchain.
+ - Use Google arm-eabi prebuilt toolchain.
 
 This is shipped with both the Android source release and Android NDK.
 The problem is that "arm-eabi-gcc" can't actually link anything
 successfully without extra command line flags.  To use this with the
 ScummVM configure/build environment you will need to create a family
-of shell wrapper scripts that convert "arm-android-eabi-foo" to
+of shell wrapper scripts that convert "arm-oe-linux-androideabi-foo" to
 "arm-eabi-foo -mandroid".
 
 For example, I use this script:
@@ -44,17 +41,24 @@ For example, I use this script:
  exec arm-eabi-${0##*-} -mandroid -DANDROID "$@"
 
 ... and create a family of symlinks/hardlinks pointing to it called
-arm-android-eabi-gcc, arm-android-eabi-g++, etc.  For tools that don't
-take a "-mandroid" argument - like arm-eabi-strip - I bypass the shell
-wrapper and just create an arm-android-eabi-strip symlink to the tool
-directly.
+arm-oe-android-linuxeabi-gcc, arm-oe-android-linuxeabi-g++, etc.  For
+tools that don't take a "-mandroid" argument - like arm-eabi-strip - I
+bypass the shell wrapper and just create an arm-oe-android-linuxeabi-strip
+symlink to the tool directly.
 
-- Build your own arm-android-eabi toolchain from GCC source.
+In practice you will probably need significant linker command line
+massaging in order to get the crtbegin/end and libraries all linked in
+the right way.  It's not hard to do manually, but it is annoying to
+script in a general purpose way.
 
-This is lots of fun.  I suggest my Android openembedded patches, see:
-  http://wiki.github.com/anguslees/openembedded-android/
-(You just need to have lots of disk space and type a few commands)
-If you get stuck, ask 
+ - Build your own arm-*-linux-androideabi toolchain from GCC source.
+
+This is lots of fun, but will become significantly easier once gcc-4.6
+is released.  In the interim, I suggest using my precompiled Android
+openembedded-based toolchain:
+ wget http://commondatastorage.googleapis.com/anr/sdk/android-2.2-i686-linux-armv5te-linux-androideabi-toolchain-android.tar.bz2
+ sudo tar jxf android-2.2-i686-linux-armv5te-linux-androideabi-toolchain-android.tar.bz2 -C /
+ . /usr/local/android/arm/environment-setup
 
 Alternatively, do a websearch - there are several other cross-compile
 toolchains around.
@@ -63,18 +67,25 @@ toolchains around.
 Building ScummVM
 ================
 
+Apply the theme engine patch:
+
+ patch -p1 < backends/platform/android/scummvm-android-themeengine.patch
+
+(Optionally) compress scummmodern.zip:
+(ScummVM usually ships it uncompressed, but Android can read it more
+efficiently if it is compressed *before* adding it to the apk)
+
+ ( cd gui/themes/scummmodern && zip -f ../scummmodern.zip )
+
+Then build ScummVM:
+
  export ANDROID_SDK=<root of Android SDK>
 
  PATH=$ANDROID_SDK/platforms/android-1.6/tools:$ANDROID_SDK/tools:$PATH
- # You also want to ensure your arm-android-eabi toolchain is in your $PATH
+ # You also want to ensure your arm-oe-linux-androideabi toolchain is in $PATH
 
  export ANDROID_TOP=<root of built Android source>
 
- EGL_INC="-I<location of EGL/ header directory>"
- EGL_LIBS="-L<location of libEGL.so>"
-
- CPPFLAGS="$EGL_INC" \
- LDFLAGS="-g $EGL_LIBS" \
  ./configure --backend=android --host=android --enable-zlib #and any other flags
  make scummvm.apk
 

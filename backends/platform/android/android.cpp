@@ -31,10 +31,6 @@
 
 #if defined(ANDROID_BACKEND)
 
-#define ANDROID_VERSION_GE(major,minor) \
-  (ANDROID_MAJOR_VERSION > (major) || \
-   (ANDROID_MAJOR_VERSION == (major) && ANDROID_MINOR_VERSION >= (minor)))
-
 #include <jni.h>
 
 #include <string.h>
@@ -45,7 +41,6 @@
 
 #include <GLES/gl.h>
 #include <GLES/glext.h>
-#include <EGL/egl.h>
 #include <android/log.h>
 
 #include "common/archive.h"
@@ -77,6 +72,14 @@
 // Fix JNIEXPORT declaration to actually do something useful
 #undef JNIEXPORT
 #define JNIEXPORT __attribute__ ((visibility("default")))
+
+// This replaces the bionic libc assert message with something that
+// actually prints the assertion failure before aborting.
+extern "C"
+void __assert(const char *file, int line, const char *expr) {
+	__android_log_assert(expr, LOG_TAG, "%s:%d: Assertion failure: %s",
+						 file, line, expr);
+}
 
 static JavaVM *cached_jvm;
 static jfieldID FID_Event_type;
@@ -162,20 +165,19 @@ private:
 	jmethodID MID_getPluginDirectories;
 	jmethodID MID_setupScummVMSurface;
 	jmethodID MID_destroyScummVMSurface;
+	jmethodID MID_swapBuffers;
 
 	int _screen_changeid;
-	EGLDisplay _egl_display;
-	EGLSurface _egl_surface;
-	EGLint _egl_surface_width;
-	EGLint _egl_surface_height;
+	int _egl_surface_width;
+	int _egl_surface_height;
 
 	bool _force_redraw;
 
 	// Game layer
 	GLESPaletteTexture* _game_texture;
 	int _shake_offset;
+	Common::Rect _focus_rect;
 	bool _full_screen_dirty;
-	Common::Array<Common::Rect> _dirty_rects;
 
 	// Overlay layer
 	GLES4444Texture* _overlay_texture;
@@ -195,6 +197,7 @@ private:
 	pthread_t _timer_thread;
 	static void* timerThreadFunc(void* arg);
 
+	bool _enable_zoning;
 	bool _virtkeybd_on;
 
 	Common::SaveFileManager *_savefile;
@@ -217,6 +220,11 @@ public:
 	static OSystem_Android* fromJavaObject(JNIEnv* env, jobject obj);
 	virtual void initBackend();
 	void addPluginDirectories(Common::FSList &dirs) const;
+	void enableZoning(bool enable) { _enable_zoning = enable; }
+	void setSurfaceSize(int width, int height) {
+		_egl_surface_width = width;
+		_egl_surface_height = height;
+	}
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -297,8 +305,6 @@ public:
 
 OSystem_Android::OSystem_Android(jobject am)
 	: _back_ptr(0),
-	  _egl_display(EGL_NO_DISPLAY),
-	  _egl_surface(EGL_NO_SURFACE),
 	  _screen_changeid(0),
 	  _force_redraw(false),
 	  _game_texture(NULL),
@@ -307,6 +313,7 @@ OSystem_Android::OSystem_Android(jobject am)
 	  _use_mouse_palette(false),
 	  _show_mouse(false),
 	  _show_overlay(false),
+	  _enable_zoning(false),
 	  _savefile(0),
 	  _mixer(0),
 	  _timer(0),
@@ -362,6 +369,7 @@ bool OSystem_Android::initJavaHooks(JNIEnv* env, jobject self) {
 	FIND_METHOD(getPluginDirectories, "()[Ljava/lang/String;");
 	FIND_METHOD(setupScummVMSurface, "()V");
 	FIND_METHOD(destroyScummVMSurface, "()V");
+	FIND_METHOD(swapBuffers, "()Z");
 
 #undef FIND_METHOD
 
@@ -574,6 +582,7 @@ int OSystem_Android::getGraphicsMode() const {
 }
 
 void OSystem_Android::setupScummVMSurface() {
+	ENTER("setupScummVMSurface");
 	JNIEnv* env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_setupScummVMSurface);
 	if (env->ExceptionCheck())
@@ -581,36 +590,7 @@ void OSystem_Android::setupScummVMSurface() {
 
 	// EGL set up with a new surface.  Initialise OpenGLES context.
 
-	_egl_display = eglGetCurrentDisplay();
-	_egl_surface = eglGetCurrentSurface(EGL_DRAW);
-
-	static bool log_version = true;
-	if (log_version) {
-		__android_log_print(ANDROID_LOG_INFO, LOG_TAG,
-							"Using EGL %s (%s); GL %s/%s (%s)",
-							eglQueryString(_egl_display, EGL_VERSION),
-							eglQueryString(_egl_display, EGL_VENDOR),
-							glGetString(GL_VERSION),
-							glGetString(GL_RENDERER),
-							glGetString(GL_VENDOR));
-		log_version = false;		// only log this once
-	}
-
 	GLESTexture::initGLExtensions();
-
-	if (!eglQuerySurface(_egl_display, _egl_surface,
-						 EGL_WIDTH, &_egl_surface_width) ||
-		!eglQuerySurface(_egl_display, _egl_surface,
-						 EGL_HEIGHT, &_egl_surface_height)) {
-		JNU_ThrowByName(env, "java/lang/RuntimeException",
-						"Error fetching EGL surface width/height");
-		return;
-	}
-	__android_log_print(ANDROID_LOG_INFO, LOG_TAG,
-						"New surface is %dx%d",
-						_egl_surface_width, _egl_surface_height);
-
-	CHECK_GL_ERROR();
 
 	// Turn off anything that looks like 3D ;)
 	glDisable(GL_CULL_FACE);
@@ -645,20 +625,18 @@ void OSystem_Android::setupScummVMSurface() {
 		_mouse_texture->reinitGL();
 
 	glViewport(0, 0, _egl_surface_width, _egl_surface_height);
+
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrthof(0, _egl_surface_width, _egl_surface_height, 0, -1, 1);
-
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 
+	clearFocusRectangle();
 	CHECK_GL_ERROR();
-
-	_force_redraw = true;
 }
 
 void OSystem_Android::destroyScummVMSurface() {
-	_egl_surface = EGL_NO_SURFACE;
 	JNIEnv* env = JNU_GetEnv();
 	env->CallVoidMethod(_back_ptr, MID_destroyScummVMSurface);
 	// Can't use OpenGLES functions after this
@@ -676,7 +654,7 @@ void OSystem_Android::initSize(uint width, uint height,
 	_overlay_texture->allocBuffer(overlay_width, overlay_height);
 
 	// Don't know mouse size yet - it gets reallocated in
-	// setMouseCursor.	We need the palette allocated before
+	// setMouseCursor.  We need the palette allocated before
 	// setMouseCursor however, so just take a guess at the desired
 	// size (it's small).
 	_mouse_texture->allocBuffer(20, 20);
@@ -691,7 +669,7 @@ int16 OSystem_Android::getWidth() {
 }
 
 void OSystem_Android::setPalette(const byte* colors, uint start, uint num) {
-		ENTER("setPalette(%p, %u, %u)", colors, start, num);
+	ENTER("setPalette(%p, %u, %u)", colors, start, num);
 
 	if (!_use_mouse_palette)
 		_setCursorPalette(colors, start, num);
@@ -739,8 +717,11 @@ void OSystem_Android::updateScreen() {
 
 	glPushMatrix();
 
-	if (_shake_offset != 0) {
-		// This is the only case where _game_texture doesn't
+	if (_shake_offset != 0 ||
+		(!_focus_rect.isEmpty() &&
+		 !Common::Rect(_game_texture->width(),
+					   _game_texture->height()).contains(_focus_rect))) {
+		// These are the only cases where _game_texture doesn't
 		// cover the entire screen.
 		glClearColorx(0, 0, 0, 1 << 16);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -749,15 +730,29 @@ void OSystem_Android::updateScreen() {
 		glTranslatex(0, -_shake_offset << 16, 0);
 	}
 
-	_game_texture->drawTexture(0, 0,
-				   _egl_surface_width, _egl_surface_height);
+	if (_focus_rect.isEmpty()) {
+		_game_texture->drawTexture(0, 0,
+								   _egl_surface_width, _egl_surface_height);
+	} else {
+		glPushMatrix();
+		glScalex(xdiv(_egl_surface_width, _focus_rect.width()),
+				 xdiv(_egl_surface_height, _focus_rect.height()),
+				 1 << 16);
+		glTranslatex(-_focus_rect.left << 16, -_focus_rect.top << 16, 0);
+		glScalex(xdiv(_game_texture->width(), _egl_surface_width),
+				 xdiv(_game_texture->height(), _egl_surface_height),
+				 1 << 16);
+		_game_texture->drawTexture(0, 0,
+								   _egl_surface_width, _egl_surface_height);
+		glPopMatrix();
+	}
 
 	CHECK_GL_ERROR();
 
 	if (_show_overlay) {
 		_overlay_texture->drawTexture(0, 0,
-						  _egl_surface_width,
-						  _egl_surface_height);
+									  _egl_surface_width,
+									  _egl_surface_height);
 		CHECK_GL_ERROR();
 	}
 
@@ -765,8 +760,8 @@ void OSystem_Android::updateScreen() {
 		glPushMatrix();
 
 		glTranslatex(-_mouse_hotspot.x << 16,
-				 -_mouse_hotspot.y << 16,
-				 0);
+					 -_mouse_hotspot.y << 16,
+					 0);
 
 		// Scale up ScummVM -> OpenGL (pixel) coordinates
 		int texwidth, texheight;
@@ -778,8 +773,8 @@ void OSystem_Android::updateScreen() {
 			texheight = getHeight();
 		}
 		glScalex(xdiv(_egl_surface_width, texwidth),
-			 xdiv(_egl_surface_height, texheight),
-			 1 << 16);
+				 xdiv(_egl_surface_height, texheight),
+				 1 << 16);
 
 		// Note the extra half texel to position the mouse in
 		// the middle of the x,y square:
@@ -801,14 +796,11 @@ void OSystem_Android::updateScreen() {
 
 	CHECK_GL_ERROR();
 
-	if (!eglSwapBuffers(_egl_display, _egl_surface)) {
-		EGLint error = eglGetError();
-		warning("eglSwapBuffers exited with error 0x%x", error);
-		// Some errors mean we need to reinit GL
-		if (error == EGL_CONTEXT_LOST) {
-			destroyScummVMSurface();
-			setupScummVMSurface();
-		}
+	JNIEnv* env = JNU_GetEnv();
+	if (!env->CallBooleanMethod(_back_ptr, MID_swapBuffers)) {
+		// Context lost -> need to reinit GL
+		destroyScummVMSurface();
+		setupScummVMSurface();
 	}
 }
 
@@ -841,26 +833,18 @@ void OSystem_Android::fillScreen(uint32 col) {
 void OSystem_Android::setFocusRectangle(const Common::Rect& rect) {
 	ENTER("setFocusRectangle(%d,%d,%d,%d)",
 		  rect.left, rect.top, rect.right, rect.bottom);
-#if 0
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(rect.left, rect.right, rect.top, rect.bottom, 0, 1);
-	glMatrixMode(GL_MODELVIEW);
-
-	_force_redraw = true;
-#endif
+	if (_enable_zoning) {
+		_focus_rect = rect;
+		_force_redraw = true;
+	}
 }
 
 void OSystem_Android::clearFocusRectangle() {
 	ENTER("clearFocusRectangle()");
-#if 0
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrthof(0, _egl_surface_width, _egl_surface_height, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-
-	_force_redraw = true;
-#endif
+	if (_enable_zoning) {
+		_focus_rect = Common::Rect();
+		_force_redraw = true;
+	}
 }
 
 void OSystem_Android::showOverlay() {
@@ -1338,6 +1322,17 @@ void AndroidPluginProvider::addCustomDirectories(Common::FSList &dirs) const {
 }
 #endif
 
+static void ScummVM_enableZoning(JNIEnv* env, jobject self, jboolean enable) {
+	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+	cpp_obj->enableZoning(enable);
+}
+
+static void ScummVM_setSurfaceSize(JNIEnv* env, jobject self,
+								   jint width, jint height) {
+	OSystem_Android* cpp_obj = OSystem_Android::fromJavaObject(env, self);
+	cpp_obj->setSurfaceSize(width, height);	
+}
+
 const static JNINativeMethod gMethods[] = {
 	{ "create", "(Landroid/content/res/AssetManager;)V",
 	  (void*)ScummVM_create },
@@ -1352,6 +1347,10 @@ const static JNINativeMethod gMethods[] = {
 	  (void*)ScummVM_setConfManInt },
 	{ "setConfMan", "(Ljava/lang/String;Ljava/lang/String;)V",
 	  (void*)ScummVM_setConfManString },
+	{ "enableZoning", "(Z)V",
+	  (void*)ScummVM_enableZoning },
+	{ "setSurfaceSize", "(II)V",
+	  (void*)ScummVM_setSurfaceSize },
 };
 
 JNIEXPORT jint JNICALL

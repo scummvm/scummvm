@@ -135,7 +135,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices ZodiacMusicPlugin::getDevices() const {
@@ -146,19 +146,10 @@ MusicDevices ZodiacMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error ZodiacMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error ZodiacMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_Zodiac();
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_Zodiac_create() {
-	MidiDriver *mididriver;
-
-	ZodiacMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(ZODIAC)

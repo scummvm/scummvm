@@ -28,17 +28,15 @@
 #include "tinsel/graphics.h"	// normal object drawing
 #include "tinsel/object.h"
 #include "tinsel/palette.h"
+#include "tinsel/tinsel.h"		// for _vm
 
 namespace Tinsel {
-
-/** list of all clip rectangles */
-static RectList s_rectList;
 
 /**
  * Resets the clipping rectangle allocator.
  */
 void ResetClipRect() {
-	s_rectList.clear();
+	_vm->_clipRects.clear();
 }
 
 /**
@@ -46,11 +44,11 @@ void ResetClipRect() {
  * @param pClip			clip rectangle dimensions to allocate
  */
 void AddClipRect(const Common::Rect &pClip) {
-	s_rectList.push_back(pClip);
+	_vm->_clipRects.push_back(pClip);
 }
 
 const RectList &GetClipRects() {
-	return s_rectList;
+	return _vm->_clipRects;
 }
 
 /**
@@ -175,6 +173,8 @@ void FindMovingObjects(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pCli
  * the total number of clip rectangles.
  */
 void MergeClipRect() {
+	RectList &s_rectList = _vm->_clipRects;
+
 	if (s_rectList.size() <= 1)
 		return;
 

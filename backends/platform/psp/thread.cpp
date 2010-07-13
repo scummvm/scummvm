@@ -23,13 +23,12 @@
  *
  */
 
-#include <time.h> 
-#include <psptypes.h>
-#include <psprtc.h>
 #include <pspthreadman.h> 
 
 #include "backends/platform/psp/thread.h"
 #include "backends/platform/psp/trace.h"
+ 
+// Class PspThread -------------------------------------------------- 
  
 void PspThread::delayMillis(uint32 ms) {
 	sceKernelDelayThread(ms * 1000);
@@ -39,49 +38,154 @@ void PspThread::delayMicros(uint32 us) {
 	sceKernelDelayThread(us);
 }
 
-void PspRtc::init() {						// init our starting ticks
-	uint32 ticks[2];
-	sceRtcGetCurrentTick((u64 *)ticks);
+// Class PspSemaphore ------------------------------------------------
+//#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
+//#define __PSP_DEBUG_PRINT__	/* For debug printouts */
 
-	_startMillis = ticks[0]/1000;
-	_startMicros = ticks[0];
-	//_lastMillis = ticks[0]/1000;	//debug - only when we don't subtract startMillis
+#include "backends/platform/psp/trace.h"
+
+PspSemaphore::PspSemaphore(int initialValue, int maxValue/*=255*/) {
+	DEBUG_ENTER_FUNC();
+	_handle = 0;
+	_handle = (uint32)sceKernelCreateSema("ScummVM Sema", 0 /* attr */, 
+								  initialValue, maxValue, 
+								  0 /*option*/);
+	if (!_handle)
+		PSP_ERROR("failed to create semaphore.\n");
 }
 
-#define MS_LOOP_AROUND 4294967				/* We loop every 2^32 / 1000 = 71 minutes */
-#define MS_LOOP_CHECK  60000				/* Threading can cause weird mixups without this */
+PspSemaphore::~PspSemaphore() {
+	DEBUG_ENTER_FUNC();
+	if (_handle)
+		if (sceKernelDeleteSema((SceUID)_handle) < 0)
+			PSP_ERROR("failed to delete semaphore.\n");
+}
 
-// Note that after we fill up 32 bits ie 50 days we'll loop back to 0, which may cause 
-// unpredictable results
-uint32 PspRtc::getMillis() {
-	uint32 ticks[2];
+int PspSemaphore::numOfWaitingThreads() {
+	DEBUG_ENTER_FUNC();
+	SceKernelSemaInfo info;
+	info.numWaitThreads = 0;
 	
-	sceRtcGetCurrentTick((u64 *)ticks);		// can introduce weird thread delays
-	
-	uint32 millis = ticks[0]/1000;
-	millis -= _startMillis;					// get ms since start of program
+	if (sceKernelReferSemaStatus((SceUID)_handle, &info) < 0)
+		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
+		
+	return info.numWaitThreads;
+}
 
-	if ((int)_lastMillis - (int)millis > MS_LOOP_CHECK) {		// we must have looped around
-		if (_looped == false) {					// check to make sure threads do this once
-			_looped = true;
-			_milliOffset += MS_LOOP_AROUND;		// add the needed offset
-			PSP_DEBUG_PRINT("looping around. last ms[%d], curr ms[%d]\n", _lastMillis, millis);
-		}	
+int PspSemaphore::getValue() {
+	DEBUG_ENTER_FUNC();
+	SceKernelSemaInfo info;
+	info.currentCount = 0;
+	
+	if (sceKernelReferSemaStatus((SceUID)_handle, &info) < 0)
+		PSP_ERROR("failed to retrieve semaphore info for handle %d\n", _handle);
+		
+	return info.currentCount;
+}
+
+bool PspSemaphore::pollForValue(int value) {
+	DEBUG_ENTER_FUNC();
+	if (sceKernelPollSema((SceUID)_handle, value) < 0)
+		return false;
+	
+	return true;
+}
+
+// false: timeout or error
+bool PspSemaphore::takeWithTimeOut(uint32 timeOut) {
+	DEBUG_ENTER_FUNC();
+	
+	uint32 *pTimeOut = 0;
+	if (timeOut) 
+		pTimeOut = &timeOut;
+	
+	if (sceKernelWaitSema(_handle, 1, pTimeOut) < 0)	// we always wait for 1
+		return false;
+	return true;
+}
+
+bool PspSemaphore::give(int num /*=1*/) {
+	DEBUG_ENTER_FUNC();
+	
+	if (sceKernelSignalSema((SceUID)_handle, num) < 0)
+		return false;	
+	return true;
+}
+
+// Class PspMutex ------------------------------------------------------------
+
+bool PspMutex::lock() {
+	DEBUG_ENTER_FUNC();
+	int threadId = sceKernelGetThreadId();
+	bool ret = true;
+	
+	if (_ownerId == threadId) {
+		_recursiveCount++;
 	} else {
-		_looped = false;
+		ret = _semaphore.take();
+		_ownerId = threadId;
+		_recursiveCount = 0;
+	}
+	return ret;
+}
+
+bool PspMutex::unlock() {
+	DEBUG_ENTER_FUNC();
+	int threadId = sceKernelGetThreadId();
+	bool ret = true;
+	
+	if (_ownerId != threadId) {
+		PSP_ERROR("attempt to unlock mutex by thread[%x] as opposed to owner[%x]\n",
+			threadId, _ownerId);
+		return false;
 	}
 	
-	_lastMillis = millis;	
-	
-	return millis + _milliOffset;
+	if (_recursiveCount) {
+		_recursiveCount--;
+	} else {
+		_ownerId = 0;
+		ret = _semaphore.give(1);
+	}	
+	return ret;
 }
 
-uint32 PspRtc::getMicros() {
-	uint32 ticks[2];
-	
-	sceRtcGetCurrentTick((u64 *)ticks);
-	ticks[0] -= _startMicros;
-	
-	return ticks[0]; 
+// Class PspCondition -------------------------------------------------
+
+// Release all threads waiting on the condition
+void PspCondition::releaseAll() {
+        _mutex.lock();
+        if (_waitingThreads > _signaledThreads) {	// we have signals to issue
+                int numWaiting = _waitingThreads - _signaledThreads;	// threads we haven't signaled
+                _signaledThreads = _waitingThreads;
+                
+				_waitSem.give(numWaiting);
+                _mutex.unlock();
+                for (int i=0; i<numWaiting; i++)	// wait for threads to tell us they're awake
+					_doneSem.take();
+        } else {
+                _mutex.unlock();
+        }
+}
+
+// Mutex must be taken before entering wait
+void PspCondition::wait(PspMutex &externalMutex) {
+        _mutex.lock();
+        _waitingThreads++;
+        _mutex.unlock();
+
+        externalMutex.unlock();	// must unlock external mutex
+
+		_waitSem.take();	// sleep on the wait semaphore
+
+		// let the signaling thread know we're done
+		_mutex.lock();
+        if (_signaledThreads > 0 ) {
+                _doneSem.give();	// let the thread know
+                _signaledThreads--;
+        }
+        _waitingThreads--;
+        _mutex.unlock();
+
+        externalMutex.lock();		// must lock external mutex here for continuation
 }
 

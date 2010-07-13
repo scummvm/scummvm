@@ -26,8 +26,6 @@
 #ifndef SCI_SOUNDCMD_H
 #define SCI_SOUNDCMD_H
 
-#include "sci/sci.h"	// for USE_OLD_MUSIC_FUNCTIONS
-
 #include "common/list.h"
 #include "sci/engine/state.h"
 
@@ -36,13 +34,13 @@ namespace Sci {
 class Console;
 class SciMusic;
 class SoundCommandParser;
-typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
+//typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
 
-struct MusicEntryCommand {
-	MusicEntryCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
-	SoundCommand sndCmd;
-	const char *desc;
-};
+//struct MusicEntryCommand {
+//	MusicEntryCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
+//	SoundCommand sndCmd;
+//	const char *desc;
+//};
 
 class SoundCommandParser {
 public:
@@ -53,11 +51,7 @@ public:
 		kMaxSciVolume = 15
 	};
 
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	void updateSfxState(SfxState *newState) { _state = newState; }
-#endif
-
-	reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
+	//reg_t parseCommand(int argc, reg_t *argv, reg_t acc);
 
 	// Functions used for game state loading
 	void clearPlayList();
@@ -69,14 +63,14 @@ public:
 	void pauseAll(bool pause);
 
 	// Debug console functions
-	void playSound(reg_t obj) { cmdPlaySound(obj, 0); }
-	void stopSound(reg_t obj) { cmdStopSound(obj, 0); }
 	void startNewSound(int number);
 	void stopAllSounds();
 	void printPlayList(Console *con);
 	void printSongInfo(reg_t obj, Console *con);
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
+	void processPlaySound(reg_t obj);
+	void processStopSound(reg_t obj, bool sampleFinishedPlaying);
+
 	/**
 	 * Synchronizes the current state of the music list to the rest of the engine, so that
 	 * the changes that the sound thread makes to the music are registered with the engine
@@ -85,56 +79,43 @@ public:
 	 * by the engine scripts themselves, so the engine itself polls for changes to the music
 	 */
 	void updateSci0Cues();
-#endif
+
+	reg_t kDoSoundInit(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundPlay(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundDummy(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundMute(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundPause(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundResume(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundStop(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundStopAll(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundDispose(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundFade(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundUpdate(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundUpdateCues(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundReverb(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSetHold(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSetVolume(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundSuspend(int argc, reg_t *argv, reg_t acc);
 
 private:
-	typedef Common::Array<MusicEntryCommand *> SoundCommandContainer;
-	SoundCommandContainer _soundCommands;
+	//typedef Common::Array<MusicEntryCommand *> SoundCommandContainer;
+	//SoundCommandContainer _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	Kernel *_kernel;
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	SfxState *_state;
-	int _midiCmd, _controller, _param;
-#else
 	SciMusic *_music;
-#endif
 	AudioPlayer *_audio;
 	SciVersion _soundVersion;
-	int _argc;
-	reg_t *_argv;	// for cmdFadeSound
-	uint32 _midiCommand;	// for cmdSendMidi
-	reg_t _acc;
-	int _cmdUpdateCuesIndex;
 
-	void cmdInitSound(reg_t obj, int16 value);
-	void cmdPlaySound(reg_t obj, int16 value);
-	void cmdDummy(reg_t obj, int16 value);
-	void cmdMuteSound(reg_t obj, int16 value);
-	void cmdPauseSound(reg_t obj, int16 value);
-	void cmdResumeSound(reg_t obj, int16 value);
-	void cmdStopSound(reg_t obj, int16 value);
-	void cmdDisposeSound(reg_t obj, int16 value);
-	void cmdMasterVolume(reg_t obj, int16 value);
-	void cmdFadeSound(reg_t obj, int16 value);
-	void cmdGetPolyphony(reg_t obj, int16 value);
-	void cmdStopAllSounds(reg_t obj, int16 value);
-	void cmdUpdateSound(reg_t obj, int16 value);
-	void cmdUpdateCues(reg_t obj, int16 value);
-	void cmdSendMidi(reg_t obj, int16 value);
-	void cmdReverb(reg_t obj, int16 value);
-	void cmdSetSoundHold(reg_t obj, int16 value);
-	void cmdGetAudioCapability(reg_t obj, int16 value);
-	void cmdSetSoundVolume(reg_t obj, int16 value);
-	void cmdSetSoundPriority(reg_t obj, int16 value);
-	void cmdSetSoundLoop(reg_t obj, int16 value);
-	void cmdSuspendSound(reg_t obj, int16 value);
-
-	void processStopSound(reg_t obj, int16 value, bool sampleFinishedPlaying);
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-	void changeSoundStatus(reg_t obj, int newStatus);
-#endif
+	void processInitSound(reg_t obj);
+	void processDisposeSound(reg_t obj);
+	void processUpdateCues(reg_t obj);
 };
 
 } // End of namespace Sci

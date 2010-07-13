@@ -31,17 +31,14 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/gc.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/maciconbar.h"
 
 namespace Sci {
 
 reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
-	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
-
 	s->shrinkStackToBase();
 
-	s->script_abort_flag = 1; // Force vm to abort ASAP
+	s->abortScriptProcessing = kAbortRestartGame; // Force vm to abort ASAP
 	return NULL_REG;
 }
 
@@ -49,47 +46,28 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
+	s->r_acc = make_reg(0, s->gameWasRestarted);
 
 	if (argc) { // Only happens during replay
 		if (!argv[0].toUint16()) // Set restarting flag
-			s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED;
+			s->gameWasRestarted = false;
 	}
 
 	uint32 neededSleep = 30;
 
-	// WORKAROUND:
-	// LSL3 calculates a machinespeed variable during game startup (right after the filthy questions)
-	//  This one would go through w/o throttling resulting in having to do 1000 pushups or something
-	//  Another way of handling this would be delaying incrementing of "machineSpeed" selector
-	if (!strcmp(g_sci->getGameID(), "lsl3") && s->currentRoomNumber() == 290)
+	// WORKAROUND: LSL3 calculates a machinespeed variable during game startup
+	// (right after the filthy questions). This one would go through w/o
+	// throttling resulting in having to do 1000 pushups or something. Another
+	// way of handling this would be delaying incrementing of "machineSpeed"
+	// selector.
+	if (g_sci->getGameId() == GID_LSL3 && s->currentRoomNumber() == 290)
 		s->_throttleTrigger = true;
-	if (!strcmp(g_sci->getGameID(), "iceman") && s->currentRoomNumber() == 27) {
+	else if (g_sci->getGameId() == GID_ICEMAN && s->currentRoomNumber() == 27) {
 		s->_throttleTrigger = true;
 		neededSleep = 60;
 	}
 
-	if (s->_throttleTrigger) {
-		// Some games seem to get the duration of main loop initially and then switch of animations for the whole game
-		//  based on that (qfg2, iceman). We are now running full speed initially to avoid that.
-		// It seems like we dont need to do that anymore
-		//if (s->_throttleCounter < 50) {
-		//	s->_throttleCounter++;
-		//	return s->r_acc;
-		//}
-
-		uint32 curTime = g_system->getMillis();
-		uint32 duration = curTime - s->_throttleLastTime;
-
-		if (duration < neededSleep) {
-			s->_event->sleep(neededSleep - duration);
-			s->_throttleLastTime = g_system->getMillis();
-		} else {
-			s->_throttleLastTime = curTime;
-		}
-		s->_throttleTrigger = false;
-	}
-
+	s->speedThrottler(neededSleep);
 	return s->r_acc;
 }
 
@@ -106,7 +84,11 @@ enum kMemoryInfoFunc {
 };
 
 reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
-	const uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
+	// The free heap size returned must not be 0xffff, or some memory
+	// calculations will overflow. Crazy Nick's games handle up to 32746
+	// bytes (0x7fea), otherwise they throw a warning that the memory is
+	// fragmented
+	const uint16 size = 0x7fea;
 
 	switch (argv[0].offset) {
 	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
@@ -120,7 +102,7 @@ reg_t kMemoryInfo(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, size);
 
 	default:
-		warning("Unknown MemoryInfo operation: %04x", argv[0].offset);
+		error("Unknown MemoryInfo operation: %04x", argv[0].offset);
 	}
 
 	return NULL_REG;
@@ -172,8 +154,8 @@ reg_t kFlushResources(EngineState *s, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
 	printf("Debug mode activated\n");
 
-	g_debugState.seeking = kDebugSeekNothing;
-	g_debugState.runningStep = 0;
+	g_sci->_debugState.seeking = kDebugSeekNothing;
+	g_sci->_debugState.runningStep = 0;
 	return s->r_acc;
 }
 
@@ -190,12 +172,12 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
-	elapsedTime = g_system->getMillis() - s->game_start_time;
+	elapsedTime = g_system->getMillis() - s->gameStartTime;
 
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	if (getSciVersion() <= SCI_VERSION_0_LATE && mode > 1)
-		warning("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
+		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
 	case K_NEW_GETTIME_TICKS :
@@ -215,7 +197,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
 	default:
-		warning("Attempt to use unknown GetTime mode %d", mode);
+		error("Attempt to use unknown GetTime mode %d", mode);
 		break;
 	}
 
@@ -261,7 +243,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			error("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 		if (ref.isRaw)
@@ -277,7 +259,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
-			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
+			error("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
@@ -335,11 +317,12 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	bool isWindows = g_sci->getPlatform() == Common::kPlatformWindows;
 
 	if (argc == 0 && getSciVersion() < SCI_VERSION_2) {
-		// This is called in KQ5CD with no parameters, where it seems to do some graphics
-		// driver check. This kernel function didn't have subfunctions then. If 0 is
-		// returned, the game functions normally, otherwise all the animations show up
-		// like a slideshow (e.g. in the intro). So we return 0. However, the behavior
-		// changed for kPlatform with no parameters in SCI32.
+		// This is called in KQ5CD with no parameters, where it seems to do some
+		// graphics driver check. This kernel function didn't have subfunctions
+		// then. If 0 is returned, the game functions normally, otherwise all
+		// the animations show up like a slideshow (e.g. in the intro). So we
+		// return 0. However, the behavior changed for kPlatform with no
+		// parameters in SCI32.
 		return NULL_REG;
 	}
 
@@ -371,10 +354,18 @@ reg_t kPlatform(EngineState *s, int argc, reg_t *argv) {
 	case kPlatformIsItWindows:
 		return make_reg(0, isWindows);
 	default:
-		warning("Unsupported kPlatform operation %d", operation);
+		error("Unsupported kPlatform operation %d", operation);
 	}
 
 	return NULL_REG;
+}
+
+reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
+	// Placeholder for empty kernel functions which are still called from the
+	// engine scripts (like the empty kSetSynonyms function in SCI1.1). This
+	// differs from dummy functions because it does nothing and never throws a
+	// warning when it is called.
+	return s->r_acc;
 }
 
 } // End of namespace Sci

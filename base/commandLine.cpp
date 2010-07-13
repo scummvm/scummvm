@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/fs.h"
 
-#include "sound/mididrv.h"
-
 #include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
@@ -61,7 +59,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves=TARGET	    Display a list of savegames for the game (TARGET) specified\n"
+	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
@@ -364,8 +362,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				if (MidiDriver::findMusicDriver(option) == 0)
-					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")

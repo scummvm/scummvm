@@ -42,6 +42,8 @@ private:
 	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
 	void activateHotspot(int idx, bool active);
 	void lowRoomsEntrySound();
+	void getPlayerSpritesPrefix();
+	void getPlayerSpritesPrefix2();
 private:
 	int _sceneNumber;
 	int16 _spriteIndexes[50];
@@ -50,6 +52,8 @@ private:
 	const char *formAnimName(char sepChar, int16 suffixNum);
 	void getSceneSpriteSet();
 	void getAnimName();
+
+	IntStorage &dataMap();
 public:
 	void selectScene(int sceneNum);
 
@@ -57,6 +61,11 @@ public:
 	void enterScene();
 	void doAction();
 	void sceneStep();
+};
+
+class MadsGameLogic {
+public:
+	static void initialiseGlobals();
 };
 
 }

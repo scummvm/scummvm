@@ -102,7 +102,7 @@ int16 GfxCache::kernelViewGetLoopCount(GuiResourceId viewId) {
 }
 
 int16 GfxCache::kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo) {
-	return getView(viewId)->getLoopInfo(loopNo)->celCount;
+	return getView(viewId)->getCelCount(loopNo);
 }
 
 } // End of namespace Sci

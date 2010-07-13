@@ -26,15 +26,11 @@
 #ifndef SCI_MUSIC_H
 #define SCI_MUSIC_H
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 #include "common/serializer.h"
-#endif
 #include "common/mutex.h"
 
 #include "sound/mixer.h"
 #include "sound/audiostream.h"
-//#include "sound/mididrv.h"
-//#include "sound/midiparser.h"
 
 #include "sci/sci.h"
 #include "sci/resource.h"
@@ -55,11 +51,7 @@ enum SoundStatus {
 class MidiParser_SCI;
 class SegManager;
 
-class MusicEntry
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	: public Common::Serializable
-#endif
-{
+class MusicEntry : public Common::Serializable {
 public:
 	// Do not get these directly for the sound objects!
 	// It's a bad idea, as the sound code (i.e. the SciMusic
@@ -96,9 +88,6 @@ public:
 
 	Audio::Mixer::SoundType soundType;
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-//protected:
-#endif
 	MidiParser_SCI *pMidiParser;
 
 	// TODO: We need to revise how we store the different
@@ -114,25 +103,28 @@ public:
 	void doFade();
 	void onTimer();
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-#endif
 };
 
 typedef Common::Array<MusicEntry *> MusicList;
+typedef Common::Array<uint32> MidiCommandQueue;
 
-class SciMusic
-#ifndef USE_OLD_MUSIC_FUNCTIONS
-	: public Common::Serializable
-#endif
-{
+class SciMusic : public Common::Serializable {
 
 public:
 	SciMusic(SciVersion soundVersion);
 	~SciMusic();
 
 	void init();
+
 	void onTimer();
+	void putMidiCommandInQueue(byte status, byte firstOp, byte secondOp);
+	void putMidiCommandInQueue(uint32 midi);
+private:
+	static void miditimerCallback(void *p);
+	void sendMidiCommandsFromQueue();
+
+public:
 	void clearPlayList();
 	void pauseAll(bool pause);
 	void stopAll();
@@ -165,6 +157,7 @@ public:
 	}
 
 	MusicEntry *getSlot(reg_t obj);
+	MusicEntry *getActiveSci0MusicSlot();
 
 	void pushBackSlot(MusicEntry *slotEntry) {
 		Common::StackLock lock(_mutex);
@@ -179,22 +172,21 @@ public:
 	MusicList::iterator getPlayListStart() { return _playList.begin(); }
 	MusicList::iterator getPlayListEnd() { return _playList.end(); }
 
-	void sendMidiCommand(uint32 cmd) {
-		Common::StackLock lock(_mutex);
-		_pMidiDrv->send(cmd);
-	}
+	void sendMidiCommand(uint32 cmd);
+	void sendMidiCommand(MusicEntry *pSnd, uint32 cmd);
 
 	void setReverb(byte reverb);
 
-#ifndef USE_OLD_MUSIC_FUNCTIONS
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-#endif
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
 	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT
 	// include references to the mixer, otherwise there will probably be situations
 	// where a deadlock can occur
 	Common::Mutex _mutex;
+
+	int16 tryToOwnChannel(MusicEntry *caller, int16 bestChannel);
+	void freeChannels(MusicEntry *caller);
 
 protected:
 	void sortPlayList();
@@ -208,22 +200,16 @@ protected:
 	// Mixed AdLib/MIDI mode: when enabled from the ScummVM sound options screen,
 	// and a sound has a digital track, the sound from the AdLib track is played
 	bool _bMultiMidi;
+
 private:
-	static void miditimerCallback(void *p);
-	void findUsedChannels();
-	int16 getNextUnusedChannel() const {
-		for (int i = 0; i < 16; i++) {
-			if (!_usedChannels[i])
-				return i;
-		}
-
-		return -1;
-	}
-
 	MusicList _playList;
 	bool _soundOn;
 	byte _masterVolume;
-	bool _usedChannels[16];
+	MusicEntry *_usedChannel[16];
+
+	MidiCommandQueue _queuedCommands;
+
+	int _driverFirstChannel;
 };
 
 } // End of namespace Sci

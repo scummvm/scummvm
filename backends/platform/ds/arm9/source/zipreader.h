@@ -8,21 +8,26 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
  *
  */
 
 #ifndef _ZIPREADER_H_
 #define _ZIPREADER_H_
-#include "portdefs.h"
+
+#include <nds/ndstypes.h>
+
 #define ZF_SEARCH_START 0x08000000
 #define ZF_SEARCH_END 0x09000000
 #define ZF_SEARCH_STRIDE 16
@@ -43,12 +48,12 @@ class ZipFile {
 		u16 extraLength;	// Length of any extra data
 	} __attribute__ ((packed));
 
-	char* _zipFile;
+	char *_zipFile;
 	char _directory[128];
 
 	bool _allFilesVisible;
 
-	FileHeader* _currentFile;
+	FileHeader *_currentFile;
 
 public:
 	ZipFile();
@@ -61,13 +66,13 @@ public:
 	bool findFile(const char *search);
 
 	// These return the file's data and information
-	char* getFile();
+	char *getFile();
 	int getFileSize();
-	void getFileName(char* name);
+	void getFileName(char *name);
 	bool isDirectory();
 
 	// These set the current directory
-	void changeDirectory(const char* name);
+	void changeDirectory(const char *name);
 	void changeToRoot();
 	void setAllFilesVisible(bool state) { _allFilesVisible = state; }
 

@@ -105,10 +105,20 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundBuffer &buffe
 		_mixer->playStream(soundType, handle, Audio::makeLoopingAudioStream(stream, loop ? 0 : 1), -1, volume);
 }
 
-void Sound::playSound(SoundBuffer &buffer, int volume, bool loop) {
+void Sound::playSound(SoundBuffer &buffer, int volume, bool loop, int resId) {
+	// WORKAROUND
+	// Prevent playing same looped sound for several times
+	// Fixes bug #2886141: "ITE: Cumulative Snoring sounds in Prince's Bedroom"
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle && _handles[i].resId == resId) {
+			debug(1, "Skipped playing SFX #%d", resId);
+			return;
+		}
+
 	SndHandle *handle = getHandle();
 
 	handle->type = kEffectHandle;
+	handle->resId = resId;
 	playSoundBuffer(&handle->handle, buffer, 2 * volume, handle->type, loop);
 }
 
@@ -129,6 +139,7 @@ void Sound::stopSound() {
 		if (_handles[i].type == kEffectHandle) {
 			_mixer->stopHandle(_handles[i].handle);
 			_handles[i].type = kFreeHandle;
+			_handles[i].resId = -1;
 		}
 }
 

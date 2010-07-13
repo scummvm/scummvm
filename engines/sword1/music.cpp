@@ -107,7 +107,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.aif", fileBase);
 		if (_file.open(fileName))
-			_audioSource = Audio::makeLoopingAudioStream(Audio::makeAIFFStream(_file), loop ? 0 : 1);
+			_audioSource = Audio::makeLoopingAudioStream(Audio::makeAIFFStream(&_file, DisposeAfterUse::NO), loop ? 0 : 1);
 	}
 
 	if (!_audioSource)

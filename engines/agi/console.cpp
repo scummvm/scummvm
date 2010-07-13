@@ -64,7 +64,7 @@ void Console::postEnter() {
 
 bool Console::Cmd_SetVar(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>");
+		DebugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -76,7 +76,7 @@ bool Console::Cmd_SetVar(int argc, const char **argv) {
 
 bool Console::Cmd_SetFlag(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>");
+		DebugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -88,7 +88,7 @@ bool Console::Cmd_SetFlag(int argc, const char **argv) {
 
 bool Console::Cmd_SetObj(int argc, const char **argv) {
 	if (argc != 3) {
-		DebugPrintf("Usage: setvar <varnum> <value>");
+		DebugPrintf("Usage: setvar <varnum> <value>\n");
 		return true;
 	}
 	int p1 = (int)atoi(argv[1]);
@@ -99,6 +99,11 @@ bool Console::Cmd_SetObj(int argc, const char **argv) {
 }
 
 bool Console::Cmd_RunOpcode(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Usage: runopcode <name> <parameter0> ....\n");
+		return true;
+	}
+
 	for (int i = 0; logicNamesCmd[i].name; i++) {
 		if (!strcmp(argv[1], logicNamesCmd[i].name)) {
 			uint8 p[16];
@@ -119,6 +124,8 @@ bool Console::Cmd_RunOpcode(int argc, const char **argv) {
 			return true;
 		}
 	}
+
+	DebugPrintf("Unknown opcode\n");
 
 	return true;
 }
@@ -243,6 +250,10 @@ bool Console::Cmd_Cont(int argc, const char **argv) {
 }
 
 bool Console::Cmd_Room(int argc, const char **argv) {
+	if (argc == 2) {
+		_vm->newRoom(strtoul(argv[1], NULL, 0));
+	}
+
 	DebugPrintf("Current room: %d\n", _vm->getvar(0));
 
 	return true;

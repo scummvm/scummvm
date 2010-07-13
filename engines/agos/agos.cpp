@@ -201,19 +201,19 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	_scanFlag = false;
 
 	_scriptVar2 = 0;
-	_runScriptReturn1 = 0;
-	_skipVgaWait = 0;
-	_noParentNotify = 0;
-	_beardLoaded = 0;
-	_litBoxFlag = 0;
-	_mortalFlag = 0;
+	_runScriptReturn1 = false;
+	_skipVgaWait = false;
+	_noParentNotify = false;
+	_beardLoaded = false;
+	_litBoxFlag = false;
+	_mortalFlag = false;
 	_displayFlag = 0;
-	_syncFlag2 = 0;
-	_inCallBack = 0;
-	_cepeFlag = 0;
-	_fastMode = 0;
+	_syncFlag2 = false;
+	_inCallBack = false;
+	_cepeFlag = false;
+	_fastMode = false;
 
-	_backFlag = 0;
+	_backFlag = false;
 
 	_debugMode = 0;
 	_dumpScripts = false;
@@ -556,10 +556,10 @@ Common::Error AGOSEngine::init() {
 		(getPlatform() == Common::kPlatformPC)) {
 
 		// Setup midi driver
-		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_ADLIB | MDT_MIDI);
-		_nativeMT32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (getGameType() == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
+		_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-		_driver = MidiDriver::createMidi(midiDriver);
+		_driver = MidiDriver::createMidi(dev);
 
 		if (_nativeMT32) {
 			_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
@@ -630,9 +630,11 @@ Common::Error AGOSEngine::init() {
 
 	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
 		if (getGameId() == GID_SIMON1DOS)
-			_midi._enable_sfx ^= 1;
-		else
-			_sound->effectsPause(_effectsPaused ^= 1);
+			_midi._enable_sfx = !_midi._enable_sfx;
+		else {
+			_effectsPaused = !_effectsPaused;
+			_sound->effectsPause(_effectsPaused);
+		}
 	}
 
 	_copyProtection = ConfMan.getBool("copy_protection");
@@ -647,7 +649,7 @@ Common::Error AGOSEngine::init() {
 
 		if (getGameType() == GType_SIMON1) {
 			// English and German versions don't have full subtitles
-			 if (_language == Common::EN_ANY || _language == Common::DE_DEU)
+			if (_language == Common::EN_ANY || _language == Common::DE_DEU)
 				_subtitles = false;
 			// Other versions require speech to be enabled
 			else

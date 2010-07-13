@@ -31,6 +31,8 @@
 
 #include "backends/platform/psp/psploader.h"
 
+#include "backends/platform/psp/trace.h"
+
 
 class PSPPlugin : public DynamicPlugin {
 protected:
@@ -95,13 +97,13 @@ Plugin* PSPPluginProvider::createPlugin(const Common::FSNode &node) const {
 bool PSPPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
-	fprintf(stderr, "Testing name %s", filename.c_str());
+	PSP_DEBUG_PRINT("Testing name %s", filename.c_str());
 	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg")) {
-		fprintf(stderr," fail.\n");
+		PSP_DEBUG_PRINT(" fail.\n");
 		return false;
 	}
 
-	fprintf(stderr," success!\n");
+	PSP_DEBUG_PRINT(" success!\n");
 	return true;
 }
 

@@ -39,8 +39,8 @@
 	#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)
 #endif /* PSP_PRINT_TO_FILE/SCREEN */
 
-/* Error function */
-#define PSP_ERROR(format,...)					__PSP_PRINT__("Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
+/* Error function - always print to file as well */
+#define PSP_ERROR(format,...)					PspDebugTrace(true, "Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
 
 /* Do the indent */
 #define __PSP_INDENT__							for(int _i=psp_debug_indent; _i>0; _i--) \
@@ -52,7 +52,7 @@
 #define PSP_INFO_PRINT_INDENT(format,...)		{ __PSP_INDENT__; \
 												__PSP_PRINT__(format, ## __VA_ARGS__); }
 
-void PSPDebugTrace(bool alsoToScreen, const char *format, ...);
+void PspDebugTrace(bool alsoToScreen, const char *format, ...);
 
 extern int psp_debug_indent;
 

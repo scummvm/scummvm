@@ -105,8 +105,11 @@ Common::Error KyraEngine_v1::init() {
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 
 	if (!_flags.useDigSound) {
-		// We prefer AdLib over MIDI, since generally AdLib is better supported
-		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_MIDI | MDT_ADLIB);
+		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
+		// MT-32/LAPC1/CM32L/CM64 device and AdLib sounds better than our incomplete MT-32 emulator and also better than
+		// MT-32/GM mapping. For Kyra 2 and LoL which have real GM tracks which sound better than AdLib tracks we prefer GM
+		// since most users have a GM compatible device.
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
@@ -120,24 +123,24 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			_sound = new SoundAmiga(this, _mixer);
-		} else if (midiDriver == MD_ADLIB) {
+		} else if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 			_sound = new SoundAdLibPC(this, _mixer);
 		} else {
 			Sound::kType type;
 
-			if (midiDriver == MD_PCSPK)
+			if (MidiDriver::getMusicType(dev) == MT_PCSPK)
 				type = Sound::kPCSpkr;
-			else if (midiDriver == MD_MT32 || ConfMan.getBool("native_mt32"))
+			else if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
 				type = Sound::kMidiMT32;
 			else
 				type = Sound::kMidiGM;
 
 			MidiDriver *driver = 0;
 
-			if (midiDriver == MD_PCSPK) {
+			if (MidiDriver::getMusicType(dev) == MT_PCSPK) {
 				driver = new MidiDriver_PCSpeaker(_mixer);
 			} else {
-				driver = MidiDriver::createMidi(midiDriver);
+				driver = MidiDriver::createMidi(dev);
 				if (type == Sound::kMidiMT32)
 					driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 			}

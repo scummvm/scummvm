@@ -258,7 +258,7 @@ static void MusicFormInit(UInt16 index) {
 		ogameInfoP = (GameInfoType *)MemHandleLock(recordH);
 
 		if (!ogameInfoP) {
-			FrmCustomAlert(FrmErrorAlert, "An error occured.",0,0);
+			FrmCustomAlert(FrmErrorAlert, "An error occurred.",0,0);
 			return;
 		}
 

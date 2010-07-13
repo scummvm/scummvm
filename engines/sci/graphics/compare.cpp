@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/graphics/compare.h"
@@ -126,14 +127,22 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	int16 x = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(x));
 	int16 y = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(y));
 	int16 z = 0;
-	if (_kernel->_selectorCache.z > -1)
+	if (SELECTOR(z) > -1)
 		z = (int16)readSelectorValue(_segMan, objectReference, SELECTOR(z));
 
-	// now get cel rectangle
 	view = _cache->getView(viewId);
-	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
-	if (lookupSelector(_segMan, objectReference, _kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
+	if (view->isSci2Hires())
+		_screen->adjustToUpscaledCoordinates(y, x);
+
+	view->getCelRect(loopNo, celNo, x, y, z, celRect);
+
+	if (view->isSci2Hires()) {
+		_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+		_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+	}
+
+	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsRight), celRect.right);
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsTop), celRect.top);
@@ -174,19 +183,19 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
 	GfxView *tmpView = _cache->getView(viewId);
-	CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
+	const CelInfo *celInfo = tmpView->getCelInfo(loopNo, celNo);
 	position.x = CLIP<int>(position.x, 0, celInfo->width - 1);
 	position.y = CLIP<int>(position.y, 0, celInfo->height - 1);
-	byte *celData = tmpView->getBitmap(loopNo, celNo);
+	const byte *celData = tmpView->getBitmap(loopNo, celNo);
 	bool result = (celData[position.y * celInfo->width + position.x] == celInfo->clearKey);
 	return result;
 }
 
 void GfxCompare::kernelBaseSetter(reg_t object) {
-	if (lookupSelector(_segMan, object, _kernel->_selectorCache.brLeft, NULL, NULL) == kSelectorVariable) {
+	if (lookupSelector(_segMan, object, SELECTOR(brLeft), NULL, NULL) == kSelectorVariable) {
 		int16 x = readSelectorValue(_segMan, object, SELECTOR(x));
 		int16 y = readSelectorValue(_segMan, object, SELECTOR(y));
-		int16 z = (_kernel->_selectorCache.z > -1) ? readSelectorValue(_segMan, object, SELECTOR(z)) : 0;
+		int16 z = (SELECTOR(z) > -1) ? readSelectorValue(_segMan, object, SELECTOR(z)) : 0;
 		int16 yStep = readSelectorValue(_segMan, object, SELECTOR(yStep));
 		GuiResourceId viewId = readSelectorValue(_segMan, object, SELECTOR(view));
 		int16 loopNo = readSelectorValue(_segMan, object, SELECTOR(loop));
@@ -199,7 +208,16 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		GfxView *tmpView = _cache->getView(viewId);
 		Common::Rect celRect;
 
-		tmpView->getCelRect(loopNo, celNo, x, y, z, &celRect);
+		if (tmpView->isSci2Hires())
+			_screen->adjustToUpscaledCoordinates(y, x);
+
+		tmpView->getCelRect(loopNo, celNo, x, y, z, celRect);
+
+		if (tmpView->isSci2Hires()) {
+			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+		}
+
 		celRect.bottom = y + 1;
 		celRect.top = celRect.bottom - yStep;
 

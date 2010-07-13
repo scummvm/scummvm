@@ -86,15 +86,27 @@ int MadsSpriteSlots::getIndex() {
 	return startIndex++;
 }
 
-int MadsSpriteSlots::addSprites(const char *resName) {
+int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int flags) {
+	// If errors are suppressed, first check if the resource exists
+	if (suppressErrors) {
+		if (!_vm->res()->resourceExists(resName))
+			return -1;
+	}
+
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, false, flags);
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 
 	_sprites.push_back(spriteSet);
 	_vm->res()->toss(resName);
+
+	return _sprites.size() - 1;
+}
+
+int MadsSpriteSlots::addSprites(SpriteAsset *spriteSet) {
+	_sprites.push_back(spriteSet);
 
 	return _sprites.size() - 1;
 }
@@ -136,17 +148,19 @@ typedef Common::List<DepthEntry> DepthList;
 void MadsSpriteSlots::drawBackground() {
 	// Draw all active sprites onto the background surface
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
+		MadsSpriteSlot &slot = _entries[i];
+
+		if (slot.spriteType >= 0) {
 			_owner._dirtyAreas[i].active = false;
 		} else {
 			_owner._dirtyAreas[i].textActive = true;
-			_owner._dirtyAreas.setSpriteSlot(i, _entries[i]);
+			_owner._dirtyAreas.setSpriteSlot(i, slot);
 
-			if (_entries[i].spriteType == BACKGROUND_SPRITE) {
-				SpriteAsset &spriteSet = getSprite(_entries[i].spriteListIndex);
-				M4Sprite *frame = spriteSet.getFrame((_entries[i].frameNumber & 0x7fff) - 1);
-				int xp = _entries[i].xp;
-				int yp = _entries[i].yp;
+			if (slot.spriteType == BACKGROUND_SPRITE) {
+				SpriteAsset &spriteSet = getSprite(slot.spriteListIndex);
+				M4Sprite *frame = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
+				int xp = slot.xp;
+				int yp = slot.yp;
 
 				if (_entries[i].scale != -1) {
 					// Adjust position based on frame size
@@ -154,12 +168,13 @@ void MadsSpriteSlots::drawBackground() {
 					yp -= frame->height() / 2;
 				}
 
-				if (_entries[i].depth <= 1) {
-					// No depth, so simply copy the frame onto the background
-					frame->copyTo(_owner._bgSurface, xp, yp, 0);
+				if (slot.depth > 1) {
+					// Draw the frame with depth processing
+					_owner._bgSurface->copyFrom(frame, xp, yp, slot.depth, _owner._depthSurface, 100, 
+						frame->getTransparencyIndex());
 				} else {
-					// Depth was specified, so draw frame using scene's depth information
-					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100, 0);
+					// No depth, so simply draw the image
+					frame->copyTo(_owner._bgSurface, xp, yp, frame->getTransparencyIndex());
 				}
 			}
 		}
@@ -170,7 +185,7 @@ void MadsSpriteSlots::drawBackground() {
 		_owner._dirtyAreas[i].active = false;
 }
 
-void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
+void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 	DepthList depthList;
 
 	// Get a list of sprite object depths for active objects
@@ -192,14 +207,23 @@ void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 		assert(slot.spriteListIndex < (int)_sprites.size());
 		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
-		if (slot.scale < 100) {
+		// Get the sprite frame
+		int frameNumber = slot.frameNumber & 0x7fff;
+		bool flipped = (slot.frameNumber & 0x8000) != 0;
+		M4Sprite *sprite = spriteSet.getFrame(frameNumber - 1);
+
+		M4Surface *spr = sprite;
+		if (flipped) {
+			// Create a flipped copy of the sprite temporarily
+			spr = sprite->flipHorizontal();
+		}
+
+		if ((slot.scale < 100) && (slot.scale != -1)) {
 			// Minimalised drawing
-			assert(slot.spriteListIndex < (int)_sprites.size());
-			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
-			spr->copyTo(view, slot.xp, slot.yp + yOffset, slot.depth, _owner._depthSurface, slot.scale, 0);
+			viewport->copyFrom(spr, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 
+				sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
-			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
 
 			if (slot.scale == -1) {
 				xp = slot.xp - _owner._posAdjust.x;
@@ -211,12 +235,16 @@ void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 
 			if (slot.depth > 1) {
 				// Draw the frame with depth processing
-				spr->copyTo(view, xp, yp + yOffset, slot.depth, _owner._depthSurface, 100, 0);
+				viewport->copyFrom(spr, xp, yp, slot.depth, _owner._depthSurface, 100, sprite->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image
-				spr->copyTo(view, xp, yp + yOffset, 0);
+				spr->copyTo(viewport, xp, yp, sprite->getTransparencyIndex());
 			}
 		}
+
+		// Free sprite if it was a flipped one
+		if (flipped)
+			delete spr;
 	}
 }
 
@@ -270,6 +298,7 @@ MadsTextDisplay::MadsTextDisplay(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
 		MadsTextDisplayEntry rec;
 		rec.active = false;
+		rec.expire = 0;
 		_entries.push_back(rec);
 	}
 }
@@ -307,7 +336,7 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 void MadsTextDisplay::setDirtyAreas() {
 	// Determine dirty areas for active text areas
 	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
-		if ((_entries[idx].expire < 0) || !_entries[idx].active)
+		if ((_entries[idx].expire >= 0) || !_entries[idx].active)
 			_owner._dirtyAreas[dirtyIdx].active = false;
 		else {
 			_owner._dirtyAreas[dirtyIdx].textActive = true;
@@ -326,21 +355,13 @@ void MadsTextDisplay::setDirtyAreas2() {
 	}
 }
 
-void MadsTextDisplay::draw(View *view, int yOffset) {
+void MadsTextDisplay::draw(M4Surface *view) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
 			_entries[idx].font->setColours(_entries[idx].colour1, _entries[idx].colour2, 0);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
-				_entries[idx].bounds.left, _entries[idx].bounds.top + yOffset, _entries[idx].bounds.width(),
+				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
-		}
-	}
-
-	// Clear up any now text display entries that are to be expired
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if (_entries[idx].expire < 0) {
-			_entries[idx].active = false;
-			_entries[idx].expire = 0;
 		}
 	}
 }
@@ -403,17 +424,17 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	rec.abortMode = _owner._abortTimersMode2;
 	
 	for (int i = 0; i < 3; ++i)
-		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		rec.actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
-	if (flags & KMSG_OWNER_TIMEOUT)
-		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
+	if (flags & KMSG_PLAYER_TIMEOUT)
+		rec.frameTimer = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	return idx;
 }
 
 int MadsKernelMessageList::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
-	return add(Common::Point(0, 0), 0x1110, KMSG_OWNER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
+	return add(Common::Point(0, 0), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
 }
 
 void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -429,8 +450,8 @@ void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quote
 	_entries[msgIndex].asciiChar = *msgP;
 	_entries[msgIndex].asciiChar2 = *(msgP + 1);
 
-	if (_entries[msgIndex].flags & KMSG_OWNER_TIMEOUT)
-		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
+	if (_entries[msgIndex].flags & KMSG_PLAYER_TIMEOUT)
+		_entries[msgIndex].frameTimer2 = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
 }
@@ -503,7 +524,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 			if (_owner._abortTimersMode != ABORTMODE_1) {
 				for (int i = 0; i < 3; ++i)
-					_madsVm->scene()->actionNouns[i] = msg.actionNouns[i];
+					_madsVm->globals()->actionNouns[i] = msg.actionNouns[i];
 			}
 		}
 	}
@@ -524,7 +545,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		}
 	}
 	
-	if (msg.flags & KMSG_OWNER_TIMEOUT) {
+	if (msg.flags & KMSG_PLAYER_TIMEOUT) {
 		if (word_8469E != 0) {
 			// TODO: Figure out various flags
 		} else {
@@ -732,9 +753,12 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 		--bounds.left;
 		++width;
 	}
-	int right = bounds.left + width;
+
 	if (bounds.left < 0)
 		bounds.left = 0;
+	else if (bounds.left > maxWidth)
+		bounds.left = maxWidth;
+	int right = bounds.left + width;
 	if (right < 0)
 		right = 0;
 	if (right > maxWidth)
@@ -746,6 +770,8 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 
 	if (bounds.top < 0)
 		bounds.top = 0;
+	else if (bounds.top > maxHeight)
+		bounds.top = maxHeight;
 	int bottom = bounds.top + height;
 	if (bottom < 0)
 		bottom = 0;
@@ -816,6 +842,7 @@ void MadsDirtyAreas::setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &te
  * @param count			Number of entries to process
  */
 void MadsDirtyAreas::merge(int startIndex, int count) {
+return;//***DEBUG***
 	if (startIndex >= count)
 		return;
 
@@ -855,11 +882,21 @@ void MadsDirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1.textActive = true;
 }
 
-void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset) {
+void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust) {
 	for (uint i = 0; i < _entries.size(); ++i) {
+		const Common::Rect &srcBounds = _entries[i].bounds;
+
+		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
+			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+
 		if (_entries[i].active && _entries[i].bounds.isValidRect())
-			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
+			src->copyTo(dest, bounds, _entries[i].bounds.left, _entries[i].bounds.top);
 	}
+}
+
+void MadsDirtyAreas::clear() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i].active = false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -937,7 +974,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	_entries[seqIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_entries[seqIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_entries[seqIndex].actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
 	return seqIndex;
 }
@@ -1174,25 +1211,29 @@ MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceL
 		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
 		
 	_textSpacing = -1;
-	_ticksAmount = 3;
 	_newTimeout = 0;
 	_abortTimers = 0;
 	_abortTimers2 = 0;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
 
-	_yOffset = 0;
 	_depthSurface = NULL;
 	_bgSurface = NULL;
+	_viewport = NULL;
 	_sceneAnimation = new MadsAnimation(_vm, this);
 }
 
 MadsView::~MadsView() {
 	delete _sceneAnimation;
+	delete _viewport;
 }
 
 void MadsView::refresh() {
+	if (!_viewport)
+		setViewport(_view->bounds());
+
 	// Draw any sprites
+	_dirtyAreas.clear();
 	_spriteSlots.drawBackground();
 
 	// Process dirty areas
@@ -1202,7 +1243,7 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 	
 	// Copy dirty areas to the main display surface 
-	_dirtyAreas.copy(_view, _bgSurface, _yOffset);
+	_dirtyAreas.copy(_viewport, _bgSurface, _posAdjust);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
@@ -1210,16 +1251,33 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw foreground sprites
-	_spriteSlots.drawForeground(_view, _yOffset);
+	_spriteSlots.drawForeground(_viewport);
 
 	// Draw text elements onto the view
-	_textDisplay.draw(_view, _yOffset);
+	_textDisplay.draw(_viewport);
 
 	// Remove any sprite slots that are no longer needed
 	_spriteSlots.cleanUp();
 
 	// Deactivate any text display entries that are no longer needed
 	_textDisplay.cleanUp();
+}
+
+void MadsView::update() {
+	_sequenceList.tick();
+	_kernelMessages.update();
+}
+
+void MadsView::clearLists() {
+	_textDisplay.clear();
+	_kernelMessages.clear();
+	_spriteSlots.clear();
+}
+
+void MadsView::setViewport(const Common::Rect &bounds) {
+	delete _viewport;
+	_viewport = new M4Surface(bounds.width(), bounds.height(), _view->getBasePtr(bounds.left, bounds.top),
+		_view->getPitch());
 }
 
 } // End of namespace M4

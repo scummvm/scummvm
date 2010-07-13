@@ -31,15 +31,14 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/graphics/gui.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/transitions.h"
 
 namespace Sci {
 
-GfxTransitions::GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA)
-	: _gui(gui), _screen(screen), _palette(palette), _isVGA(isVGA) {
+GfxTransitions::GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA)
+	: _screen(screen), _palette(palette), _isVGA(isVGA) {
 	init();
 }
 
@@ -159,7 +158,8 @@ void GfxTransitions::doit(Common::Rect picRect) {
 	}
 
 	if (_blackoutFlag) {
-		// We need to find out what transition we are supposed to use for blackout
+		// We need to find out what transition we are supposed to use for
+		// blackout
 		translationEntry = translateNumber(_number, blackoutTransitionIDs);
 		if (translationEntry) {
 			doTransition(translationEntry->newId, true);
@@ -168,12 +168,15 @@ void GfxTransitions::doit(Common::Rect picRect) {
 		}
 	}
 
+	_palette->palVaryPrepareForTransition();
+
 	// Now we do the actual transition to the new screen
 	doTransition(_number, false);
 
 	if (picRect.bottom != _screen->getHeight()) {
 		// TODO: this is a workaround for lsl6 not showing menubar when playing
-		//  There is some new code in the sierra sci in ShowPic that seems to do something similar to this
+		//  There is some new code in the sierra sci in ShowPic that seems to do
+		//  something similar to this
 		_screen->copyToScreen();
 		g_system->updateScreen();
 	}
@@ -181,8 +184,8 @@ void GfxTransitions::doit(Common::Rect picRect) {
 	_screen->_picNotValid = 0;
 }
 
-// This may get called twice, if blackoutFlag is set. It will get once called with blackoutFlag set and another time
-//  with no blackoutFlag.
+// This may get called twice, if blackoutFlag is set. It will get once called
+// with blackoutFlag set and another time with no blackoutFlag.
 void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 	if (number != SCI_TRANSITIONS_FADEPALETTE) {
 		setNewPalette(blackoutFlag);
@@ -193,7 +196,7 @@ void GfxTransitions::doTransition(int16 number, bool blackoutFlag) {
 		verticalRollFromCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_VERTICALROLL_TOCENTER:
-		verticalRollFromCenter(blackoutFlag);
+		verticalRollToCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER:
 		horizontalRollFromCenter(blackoutFlag);
@@ -277,7 +280,8 @@ void GfxTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag
 	}
 }
 
-// Note: dont do too many steps in here, otherwise cpu will crap out because of the load
+// Note: don't do too many steps in here, otherwise cpu will crap out because of
+// the load
 void GfxTransitions::fadeOut() {
 	byte oldPalette[4 * 256], workPalette[4 * 256];
 	int16 stepNr, colorNr;
@@ -291,23 +295,24 @@ void GfxTransitions::fadeOut() {
 			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
 		}
 		g_system->setPalette(workPalette + 4, 1, 254);
-		_gui->wait(2);
+		g_sci->getEngineState()->wait(2);
 	}
 }
 
-// Note: dont do too many steps in here, otherwise cpu will crap out because of the load
+// Note: don't do too many steps in here, otherwise cpu will crap out because of
+// the load
 void GfxTransitions::fadeIn() {
 	int16 stepNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
 		_palette->kernelSetIntensity(1, 255, stepNr, true);
-		_gui->wait(2);
+		g_sci->getEngineState()->wait(2);
 	}
 }
 
-// pixelates the new picture over the old one - works against the whole screen
+// Pixelates the new picture over the old one - works against the whole screen.
 // TODO: it seems this needs to get applied on _picRect only if possible
-void GfxTransitions::pixelation (bool blackoutFlag) {
+void GfxTransitions::pixelation(bool blackoutFlag) {
 	uint16 mask = 0x40, stepNr = 0;
 	Common::Rect pixelRect;
 
@@ -327,7 +332,7 @@ void GfxTransitions::pixelation (bool blackoutFlag) {
 	} while (mask != 0x40);
 }
 
-// like pixelation but uses 8x8 blocks - works against the whole screen
+// Like pixelation but uses 8x8 blocks - works against the whole screen.
 // TODO: it seems this needs to get applied on _picRect only if possible
 void GfxTransitions::blocks(bool blackoutFlag) {
 	uint16 mask = 0x40, stepNr = 0;
@@ -349,7 +354,8 @@ void GfxTransitions::blocks(bool blackoutFlag) {
 	} while (mask != 0x40);
 }
 
-// directly shows new screen starting up/down/left/right and going to the opposite direction - works on _picRect area only
+// Directly shows new screen starting up/down/left/right and going to the
+// opposite direction - works on _picRect area only
 void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 	int16 stepNr = 0;
 	Common::Rect newScreenRect = _picRect;
@@ -401,7 +407,8 @@ void GfxTransitions::straight(int16 number, bool blackoutFlag) {
 	}
 }
 
-// scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area only
+// Scroll old screen (up/down/left/right) and insert new screen that way - works
+// on _picRect area only.
 void GfxTransitions::scroll(int16 number) {
 	int16 screenWidth, screenHeight;
 	byte *oldScreenPtr;
@@ -440,8 +447,12 @@ void GfxTransitions::scroll(int16 number) {
 			}
 			stepNr++;
 		}
-		if ((stepNr & 1) == 0)
-			g_system->updateScreen();
+		if ((stepNr & 1) == 0) {
+			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+				g_system->updateScreen();
+				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+			}
+		}
 		break;
 
 	case SCI_TRANSITIONS_SCROLL_RIGHT:
@@ -461,8 +472,12 @@ void GfxTransitions::scroll(int16 number) {
 			}
 			stepNr++;
 		}
-		if ((stepNr & 1) == 0)
-			g_system->updateScreen();
+		if ((stepNr & 1) == 0) {
+			if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
+				g_system->updateScreen();
+				g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
+			}
+		}
 		break;
 
 	case SCI_TRANSITIONS_SCROLL_UP:
@@ -503,7 +518,8 @@ void GfxTransitions::scroll(int16 number) {
 	}
 }
 
-// vertically displays new screen starting from center - works on _picRect area only
+// Vertically displays new screen starting from center - works on _picRect area
+// only
 void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
 	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) -1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right, _picRect.top, leftRect.right + 1, _picRect.bottom);
@@ -519,7 +535,8 @@ void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
 	}
 }
 
-// vertically displays new screen starting from edges - works on _picRect area only
+// Vertically displays new screen starting from edges - works on _picRect area
+// only
 void GfxTransitions::verticalRollToCenter(bool blackoutFlag) {
 	Common::Rect leftRect = Common::Rect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right - 1, _picRect.top, leftRect.right, _picRect.bottom);
@@ -531,7 +548,8 @@ void GfxTransitions::verticalRollToCenter(bool blackoutFlag) {
 	}
 }
 
-// horizontally displays new screen starting from center - works on _picRect area only
+// Horizontally displays new screen starting from center - works on _picRect
+// area only
 void GfxTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top + (_picRect.height() / 2) - 1, _picRect.right, _picRect.top + (_picRect.height() / 2));
 	Common::Rect lowerRect = Common::Rect(upperRect.left, upperRect.bottom, upperRect.right, upperRect.bottom + 1);
@@ -547,7 +565,8 @@ void GfxTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 	}
 }
 
-// horizontally displays new screen starting from upper and lower edge - works on _picRect area only
+// Horizontally displays new screen starting from upper and lower edge - works
+// on _picRect area only
 void GfxTransitions::horizontalRollToCenter(bool blackoutFlag) {
 	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
 	Common::Rect lowerRect = Common::Rect(upperRect.left, _picRect.bottom - 1, upperRect.right, _picRect.bottom);
@@ -559,8 +578,8 @@ void GfxTransitions::horizontalRollToCenter(bool blackoutFlag) {
 	}
 }
 
-// diagonally displays new screen starting from center - works on _picRect area only
-//  assumes that height of rect is larger than width
+// Diagonally displays new screen starting from center - works on _picRect area
+// only. Assumes that height of rect is larger than width.
 void GfxTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 	int16 halfHeight = _picRect.height() / 2;
 	Common::Rect upperRect(_picRect.left + halfHeight - 2, _picRect.top + halfHeight, _picRect.right - halfHeight + 1, _picRect.top + halfHeight + 1);
@@ -589,8 +608,8 @@ void GfxTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 	}
 }
 
-// diagonally displays new screen starting from edges - works on _picRect area only
-//  assumes that height of rect is larger than width
+// Diagonally displays new screen starting from edges - works on _picRect area
+// only. Assumes that height of rect is larger than width.
 void GfxTransitions::diagonalRollToCenter(bool blackoutFlag) {
 	Common::Rect upperRect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
 	Common::Rect lowerRect(_picRect.left, _picRect.bottom - 1, _picRect.right, _picRect.bottom);

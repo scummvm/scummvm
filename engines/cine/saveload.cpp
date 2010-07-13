@@ -566,7 +566,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	}
 
 	loadObjectTable(in);
-	renderer->restorePalette(in);
+	renderer->restorePalette(in, hdr.version);
 	globalVars.load(in, NUM_MAX_VAR);
 	loadZoneData(in);
 	loadCommandVariables(in);
@@ -698,7 +698,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadObjectTable(in);
 
 	// At 0x2043 (i.e. 0x005F + 2 * 2 + 255 * 32):
-	renderer->restorePalette(in);
+	renderer->restorePalette(in, 0);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
 	globalVars.load(in, NUM_MAX_VAR);

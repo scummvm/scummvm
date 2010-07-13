@@ -230,7 +230,7 @@ public:
 	}
 
 	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
+	Common::Error createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle = 0) const;
 };
 
 MusicDevices FluidSynthMusicPlugin::getDevices() const {
@@ -239,19 +239,10 @@ MusicDevices FluidSynthMusicPlugin::getDevices() const {
 	return devices;
 }
 
-Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error FluidSynthMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_FluidSynth(g_system->getMixer());
 
 	return Common::kNoError;
-}
-
-MidiDriver *MidiDriver_FluidSynth_create() {
-	MidiDriver *mididriver;
-
-	FluidSynthMusicPlugin p;
-	p.createInstance(&mididriver);
-
-	return mididriver;
 }
 
 //#if PLUGIN_ENABLED_DYNAMIC(FLUIDSYNTH)

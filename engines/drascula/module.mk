@@ -3,6 +3,7 @@ MODULE := engines/drascula
 MODULE_OBJS := \
 	actors.o \
 	animation.o \
+	console.o \
 	converse.o \
 	detection.o \
 	drascula.o \

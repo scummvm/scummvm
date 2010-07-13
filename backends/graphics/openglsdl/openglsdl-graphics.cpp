@@ -57,7 +57,7 @@ const Graphics::PixelFormat RGBList[] = {
 	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),  // RGBA4444
 };
 
-Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() {
+Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() const {
 	static Common::List<Graphics::PixelFormat> list;
 	static bool inited = false;
 

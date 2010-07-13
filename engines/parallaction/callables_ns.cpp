@@ -453,14 +453,15 @@ void Parallaction_ns::_c_startIntro(void *parm) {
 }
 
 void Parallaction_ns::_c_endIntro(void *parm) {
-	// NOTE: suspend command execution queue, to
-	// avoid running the QUIT command before
-	// credits are displayed. This solves bug
-	// #2619824.
-	// Execution of the command list will resume
-	// as soon as runGameFrame is run.
-	_cmdExec->suspend();
-
+	if (getFeatures() & GF_DEMO) {
+		// NOTE: suspend command execution queue, to
+		// avoid running the QUIT command before
+		// credits are displayed. This solves bug
+		// #2619824.
+		// Execution of the command list will resume
+		// as soon as runGameFrame is run.
+		_cmdExec->suspend();
+	}
 	startCreditSequence();
 	_intro = false;
 }

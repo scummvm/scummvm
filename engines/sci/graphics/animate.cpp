@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/vm.h"
@@ -35,6 +36,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/palette.h"
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/transitions.h"
@@ -48,28 +50,25 @@ GfxAnimate::GfxAnimate(EngineState *state, GfxCache *cache, GfxPorts *ports, Gfx
 }
 
 GfxAnimate::~GfxAnimate() {
-	free(_listData);
-	free(_lastCastData);
 }
 
 void GfxAnimate::init() {
-	_listData = NULL;
-	_listCount = 0;
-	_lastCastData = NULL;
-	_lastCastCount = 0;
+	_lastCastData.clear();
 
 	_ignoreFastCast = false;
 	// fastCast object is not found in any SCI games prior SCI1
 	if (getSciVersion() <= SCI_VERSION_01)
 		_ignoreFastCast = true;
 	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesnt do kAnimate aborts
-	//  (found in larry 1)
-	if (!_s->_segMan->findObjectByName("fastCast").isNull())
-		_ignoreFastCast = true;
+	//  (found in Larry 1)
+	if (getSciVersion() > SCI_VERSION_0_EARLY) {
+		if (!_s->_segMan->findObjectByName("fastCast").isNull())
+			_ignoreFastCast = true;
+	}
 }
 
 void GfxAnimate::disposeLastCast() {
-	_lastCastCount = 0;
+	_lastCastData.clear();
 }
 
 bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
@@ -84,10 +83,8 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 		if (!_ignoreFastCast) {
 			// Check if the game has a fastCast object set
 			//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
-			reg_t global84 = _s->script_000->_localsBlock->_locals[84];
-
-			if (!global84.isNull()) {
-				if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast"))
+			if (!_s->variables[VAR_GLOBAL][84].isNull()) {
+				if (!strcmp(_s->_segMan->getObjectName(_s->variables[VAR_GLOBAL][84]), "fastCast"))
 					return false;
 			}
 		}
@@ -95,7 +92,12 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
-			invokeSelector(_s, curObject, g_sci->getKernel()->_selectorCache.doit, kContinueOnInvalidSelector, argc, argv, 0);
+			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
+
+			// If a game is being loaded, stop processing
+			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
+				return true; // Stop processing
+
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
 		}
@@ -108,99 +110,64 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 	return true;
 }
 
-bool sortHelper(const AnimateEntry* entry1, const AnimateEntry* entry2) {
-	if (entry1->y == entry2->y) {
+bool sortHelper(const AnimateEntry &entry1, const AnimateEntry &entry2) {
+	if (entry1.y == entry2.y) {
 		// if both y and z are the same, use the order we were given originally
 		//  this is needed for special cases like iceman room 35
-		if (entry1->z == entry2->z)
-			return entry1->givenOrderNo < entry2->givenOrderNo;
+		if (entry1.z == entry2.z)
+			return entry1.givenOrderNo < entry2.givenOrderNo;
 		else
-			return entry1->z < entry2->z;
+			return entry1.z < entry2.z;
 	}
-	return entry1->y < entry2->y;
+	return entry1.y < entry2.y;
 }
 
 void GfxAnimate::makeSortedList(List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
-	reg_t curObject;
-	AnimateEntry *listEntry;
-	int16 listNr, listCount = 0;
+	int16 listNr;
 
-	// Count the list entries
-	while (curNode) {
-		listCount++;
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
-	}
-
+	// Clear lists
 	_list.clear();
-
-	// No entries -> exit immediately
-	if (listCount == 0)
-		return;
-
-	// Adjust list size, if needed
-	if ((_listData == NULL) || (_listCount < listCount)) {
-		free(_listData);
-		_listData = (AnimateEntry *)malloc(listCount * sizeof(AnimateEntry));
-		if (!_listData)
-			error("Could not allocate memory for _listData");
-		_listCount = listCount;
-
-		free(_lastCastData);
-		_lastCastData = (AnimateEntry *)malloc(listCount * sizeof(AnimateEntry));
-		if (!_lastCastData)
-			error("Could not allocate memory for _lastCastData");
-		_lastCastCount = 0;
-	}
+	_lastCastData.clear();
 
 	// Fill the list
-	curAddress = list->first;
-	curNode = _s->_segMan->lookupNode(curAddress);
-	listEntry = _listData;
-	for (listNr = 0; listNr < listCount; listNr++) {
-		curObject = curNode->value;
-		listEntry->object = curObject;
+	for (listNr = 0; curNode != 0; listNr++) {
+		AnimateEntry listEntry;
+		const reg_t curObject = curNode->value;
+		listEntry.object = curObject;
 
 		// Get data from current object
-		listEntry->givenOrderNo = listNr;
-		listEntry->viewId = readSelectorValue(_s->_segMan, curObject, SELECTOR(view));
-		listEntry->loopNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(loop));
-		listEntry->celNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(cel));
-		listEntry->paletteNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(palette));
-		listEntry->x = readSelectorValue(_s->_segMan, curObject, SELECTOR(x));
-		listEntry->y = readSelectorValue(_s->_segMan, curObject, SELECTOR(y));
-		listEntry->z = readSelectorValue(_s->_segMan, curObject, SELECTOR(z));
-		listEntry->priority = readSelectorValue(_s->_segMan, curObject, SELECTOR(priority));
-		listEntry->signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
+		listEntry.givenOrderNo = listNr;
+		listEntry.viewId = readSelectorValue(_s->_segMan, curObject, SELECTOR(view));
+		listEntry.loopNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(loop));
+		listEntry.celNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(cel));
+		listEntry.paletteNo = readSelectorValue(_s->_segMan, curObject, SELECTOR(palette));
+		listEntry.x = readSelectorValue(_s->_segMan, curObject, SELECTOR(x));
+		listEntry.y = readSelectorValue(_s->_segMan, curObject, SELECTOR(y));
+		listEntry.z = readSelectorValue(_s->_segMan, curObject, SELECTOR(z));
+		listEntry.priority = readSelectorValue(_s->_segMan, curObject, SELECTOR(priority));
+		listEntry.signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (getSciVersion() >= SCI_VERSION_1_1) {
 			// Cel scaling
-			listEntry->scaleSignal = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleSignal));
-			if (listEntry->scaleSignal & kScaleSignalDoScaling) {
-				listEntry->scaleX = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX));
-				listEntry->scaleY = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY));
+			listEntry.scaleSignal = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleSignal));
+			if (listEntry.scaleSignal & kScaleSignalDoScaling) {
+				listEntry.scaleX = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX));
+				listEntry.scaleY = readSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY));
 			} else {
-				listEntry->scaleX = 128;
-				listEntry->scaleY = 128;
+				listEntry.scaleX = 128;
+				listEntry.scaleY = 128;
 			}
-			// TODO
-			// On scaleSignal bit 1 sierra sci does some stuff with global var 2, current Port
-			//  and some other stuff and sets scaleX/Y accordingly. It seems this functionality is needed in at
-			//  least sq5 right when starting the game before wilco exists the room. Currently we dont get scaling
-			//  but sierra sci does scaling there. I dont fully understand the code yet, that's why i didnt implement
-			//  anything.
 		} else {
-			listEntry->scaleSignal = 0;
-			listEntry->scaleX = 128;
-			listEntry->scaleY = 128;
+			listEntry.scaleSignal = 0;
+			listEntry.scaleX = 128;
+			listEntry.scaleY = 128;
 		}
-		// listEntry->celRect is filled in AnimateFill()
-		listEntry->showBitsFlag = false;
+		// listEntry.celRect is filled in AnimateFill()
+		listEntry.showBitsFlag = false;
 
 		_list.push_back(listEntry);
 
-		listEntry++;
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
@@ -211,47 +178,73 @@ void GfxAnimate::makeSortedList(List *list) {
 
 void GfxAnimate::fill(byte &old_picNotValid) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
 	GfxView *view = NULL;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
 
 		// Get the corresponding view
-		view = _cache->getView(listEntry->viewId);
+		view = _cache->getView(it->viewId);
 
 		// adjust loop and cel, if any of those is invalid
-		if (listEntry->loopNo >= view->getLoopCount()) {
-			listEntry->loopNo = 0;
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), listEntry->loopNo);
+		if (it->loopNo >= view->getLoopCount()) {
+			it->loopNo = 0;
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(loop), it->loopNo);
 		}
-		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
-			listEntry->celNo = 0;
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), listEntry->celNo);
+		if (it->celNo >= view->getCelCount(it->loopNo)) {
+			it->celNo = 0;
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(cel), it->celNo);
+		}
+
+		// Process global scaling, if needed
+		if (it->scaleSignal & kScaleSignalDoScaling) {
+			if (it->scaleSignal & kScaleSignalGlobalScaling) {
+				// Global scaling uses global var 2 and some other stuff to calculate scaleX/scaleY
+				int16 maxScale = readSelectorValue(_s->_segMan, curObject, SELECTOR(maxScale));
+				int16 celHeight = view->getHeight(it->loopNo, it->celNo);
+				int16 maxCelHeight = (maxScale * celHeight) >> 7;
+				reg_t globalVar2 = _s->variables[VAR_GLOBAL][2]; // current room object
+				int16 vanishingY = readSelectorValue(_s->_segMan, globalVar2, SELECTOR(vanishingY));
+
+				int16 fixedPortY = _ports->getPort()->rect.bottom - vanishingY;
+				int16 fixedEntryY = it->y - vanishingY;
+				if (!fixedEntryY)
+					fixedEntryY = 1;
+
+				if ((celHeight == 0) || (fixedPortY == 0))
+					error("global scaling panic");
+
+				it->scaleY = ( maxCelHeight * fixedEntryY ) / fixedPortY;
+				it->scaleY = (it->scaleY * 128) / celHeight;
+
+				it->scaleX = it->scaleY;
+
+				// and set objects scale selectors
+				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleX), it->scaleX);
+				writeSelectorValue(_s->_segMan, curObject, SELECTOR(scaleY), it->scaleY);
+			}
 		}
 
 		// Create rect according to coordinates and given cel
-		if (listEntry->scaleSignal & kScaleSignalDoScaling) {
-			view->getCelScaledRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, listEntry->scaleX, listEntry->scaleY, &listEntry->celRect);
+		if (it->scaleSignal & kScaleSignalDoScaling) {
+			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
 		} else {
-			view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), listEntry->celRect.left);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), listEntry->celRect.top);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), listEntry->celRect.right);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), listEntry->celRect.bottom);
+		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
+		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
+		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
+		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
 
-		signal = listEntry->signal;
+		signal = it->signal;
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & kSignalFixedPriority)) {
-			listEntry->priority = _ports->kernelCoordinateToPriority(listEntry->y);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(priority), listEntry->priority);
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(priority), it->priority);
 		}
 
 		if (signal & kSignalNoUpdate) {
@@ -260,177 +253,154 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 				|| (!(signal & kSignalHidden) && signal & kSignalRemoveView)
 				|| (signal & kSignalAlwaysUpdate))
 				old_picNotValid++;
-			signal &= 0xFFFF ^ kSignalStopUpdate;
+			signal &= ~kSignalStopUpdate;
 		} else {
 			if (signal & kSignalStopUpdate || signal & kSignalAlwaysUpdate)
 				old_picNotValid++;
-			signal &= 0xFFFF ^ kSignalForceUpdate;
+			signal &= ~kSignalForceUpdate;
 		}
-		listEntry->signal = signal;
-
-		listIterator++;
+		it->signal = signal;
 	}
 }
 
 void GfxAnimate::update() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listBegin = _list.begin();
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 
 	// Remove all no-update cels, if requested
-	listIterator = _list.reverse_begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.reverse_begin(); it != end; --it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		if (signal & kSignalNoUpdate) {
 			if (!(signal & kSignalRemoveView)) {
 				bitsHandle = readSelector(_s->_segMan, curObject, SELECTOR(underBits));
 				if (_screen->_picNotValid != 1) {
 					_paint16->bitsRestore(bitsHandle);
-					listEntry->showBitsFlag = true;
+					it->showBitsFlag = true;
 				} else	{
 					_paint16->bitsFree(bitsHandle);
 				}
 				writeSelectorValue(_s->_segMan, curObject, SELECTOR(underBits), 0);
 			}
-			signal &= 0xFFFF ^ kSignalForceUpdate;
-			signal &= signal & kSignalViewUpdated ? 0xFFFF ^ (kSignalViewUpdated | kSignalNoUpdate) : 0xFFFF;
+			signal &= ~kSignalForceUpdate;
+			if (signal & kSignalViewUpdated)
+				signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
 		} else if (signal & kSignalStopUpdate) {
-			signal =  (signal & (0xFFFF ^ kSignalStopUpdate)) | kSignalNoUpdate;
+			signal &= ~kSignalStopUpdate;
+			signal |= kSignalNoUpdate;
 		}
-		listEntry->signal = signal;
-		listIterator--;
+		it->signal = signal;
 	}
 
 	// Draw always-update cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		if (signal & kSignalAlwaysUpdate) {
 			// draw corresponding cel
-			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
-			listEntry->showBitsFlag = true;
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+			it->showBitsFlag = true;
 
-			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
+			signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 			if ((signal & kSignalIgnoreActor) == 0) {
-				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
+				rect = it->celRect;
+				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
-			listEntry->signal = signal;
+			it->signal = signal;
 		}
-		listIterator++;
 	}
 
 	// Saving background for all NoUpdate-cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		if (signal & kSignalNoUpdate) {
 			if (signal & kSignalHidden) {
 				signal |= kSignalRemoveView;
 			} else {
-				signal &= 0xFFFF ^ kSignalRemoveView;
+				signal &= ~kSignalRemoveView;
 				if (signal & kSignalIgnoreActor)
-					bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
+					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
 				else
-					bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_ALL);
+					bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_ALL);
 				writeSelector(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 			}
-			listEntry->signal = signal;
+			it->signal = signal;
 		}
-		listIterator++;
 	}
 
 	// Draw NoUpdate cels
-	listIterator = listBegin;
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		if (signal & kSignalNoUpdate && !(signal & kSignalHidden)) {
 			// draw corresponding cel
-			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
-			listEntry->showBitsFlag = true;
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+			it->showBitsFlag = true;
 
-			if ((signal & kSignalIgnoreActor) == 0) {
-				rect = listEntry->celRect;
-				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);
+			if (!(signal & kSignalIgnoreActor)) {
+				rect = it->celRect;
+				rect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, rect.top, rect.bottom - 1);
 				_paint16->fillRect(rect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
-		listIterator++;
 	}
 }
 
 void GfxAnimate::drawCels() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
-	AnimateEntry *lastCastEntry = _lastCastData;
 	uint16 signal;
 	reg_t bitsHandle;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
-	_lastCastCount = 0;
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
+	_lastCastData.clear();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		if (!(signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
 			// Save background
-			bitsHandle = _paint16->bitsSave(listEntry->celRect, GFX_SCREEN_MASK_ALL);
+			bitsHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_ALL);
 			writeSelector(_s->_segMan, curObject, SELECTOR(underBits), bitsHandle);
 
 			// draw corresponding cel
-			_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo, listEntry->scaleX, listEntry->scaleY);
-			listEntry->showBitsFlag = true;
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
+			it->showBitsFlag = true;
 
 			if (signal & kSignalRemoveView) {
-				signal &= 0xFFFF ^ kSignalRemoveView;
+				signal &= ~kSignalRemoveView;
 			}
-			listEntry->signal = signal;
+			it->signal = signal;
 
 			// Remember that entry in lastCast
-			memcpy(lastCastEntry, listEntry, sizeof(AnimateEntry));
-			lastCastEntry++; _lastCastCount++;
+			_lastCastData.push_back(*it);
 		}
-		listIterator++;
 	}
 }
 
 void GfxAnimate::updateScreen(byte oldPicNotValid) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 	Common::Rect lsRect;
 	Common::Rect workerRect;
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
-		if (listEntry->showBitsFlag || !(signal & (kSignalRemoveView | kSignalNoUpdate) ||
+		if (it->showBitsFlag || !(signal & (kSignalRemoveView | kSignalNoUpdate) ||
 										(!(signal & kSignalRemoveView) && (signal & kSignalNoUpdate) && oldPicNotValid))) {
 			lsRect.left = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft));
 			lsRect.top = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop));
@@ -438,27 +408,27 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 			lsRect.bottom = readSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom));
 
 			workerRect = lsRect;
-			workerRect.clip(listEntry->celRect);
+			workerRect.clip(it->celRect);
 
 			if (!workerRect.isEmpty()) {
 				workerRect = lsRect;
-				workerRect.extend(listEntry->celRect);
+				workerRect.extend(it->celRect);
 			} else {
 				_paint16->bitsShow(lsRect);
-				workerRect = listEntry->celRect;
+				workerRect = it->celRect;
 			}
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft), workerRect.left);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop), workerRect.top);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight), workerRect.right);
-			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom), workerRect.bottom);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(lsBottom), it->celRect.bottom);
+			// may get used for debugging
+			//_paint16->frameRect(workerRect);
 			_paint16->bitsShow(workerRect);
 
 			if (signal & kSignalHidden) {
-				listEntry->signal |= kSignalRemoveView;
+				it->signal |= kSignalRemoveView;
 			}
 		}
-
-		listIterator++;
 	}
 	// use this for debug purposes
 	// _screen->copyToScreen();
@@ -466,30 +436,26 @@ void GfxAnimate::updateScreen(byte oldPicNotValid) {
 
 void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	uint16 signal;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 
 
-	// This has to be done in a separate loop. At least in sq1 some .dispose modifies FIXEDLOOP flag in signal for
-	//  another object. In that case we would overwrite the new signal with our version of the old signal
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		signal = listEntry->signal;
+	// This has to be done in a separate loop. At least in sq1 some .dispose
+	// modifies FIXEDLOOP flag in signal for another object. In that case we
+	// would overwrite the new signal with our version of the old signal.
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
+		signal = it->signal;
 
 		// Finally update signal
 		writeSelectorValue(_s->_segMan, curObject, SELECTOR(signal), signal);
-		listIterator++;
 	}
 
-	listIterator = _list.reverse_begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
-		// We read out signal here again, this is not by accident but to ensure that we got an up-to-date signal
+	for (it = _list.reverse_begin(); it != end; --it) {
+		curObject = it->object;
+		// We read out signal here again, this is not by accident but to ensure
+		// that we got an up-to-date signal
 		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 
 		if ((signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
@@ -499,31 +465,24 @@ void GfxAnimate::restoreAndDelete(int argc, reg_t *argv) {
 
 		if (signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
-			invokeSelector(_s, curObject, g_sci->getKernel()->_selectorCache.delete_, kContinueOnInvalidSelector, argc, argv, 0);
+			invokeSelector(_s, curObject, SELECTOR(delete_), argc, argv, 0);
 		}
-		listIterator--;
 	}
 }
 
 void GfxAnimate::reAnimate(Common::Rect rect) {
-	AnimateEntry *lastCastEntry;
-	uint16 lastCastCount;
-
-	if (_lastCastCount > 0) {
-		lastCastEntry = _lastCastData;
-		lastCastCount = _lastCastCount;
-		while (lastCastCount > 0) {
-			lastCastEntry->castHandle = _paint16->bitsSave(lastCastEntry->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
-			_paint16->drawCel(lastCastEntry->viewId, lastCastEntry->loopNo, lastCastEntry->celNo, lastCastEntry->celRect, lastCastEntry->priority, lastCastEntry->paletteNo, lastCastEntry->scaleX, lastCastEntry->scaleY);
-			lastCastEntry++; lastCastCount--;
+	if (!_lastCastData.empty()) {
+		AnimateArray::iterator it;
+		AnimateArray::iterator end = _lastCastData.end();
+		for (it = _lastCastData.begin(); it != end; ++it) {
+			it->castHandle = _paint16->bitsSave(it->celRect, GFX_SCREEN_MASK_VISUAL|GFX_SCREEN_MASK_PRIORITY);
+			_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo, it->scaleX, it->scaleY);
 		}
 		_paint16->bitsShow(rect);
 		// restoring
-		lastCastCount = _lastCastCount;
-		while (lastCastCount > 0) {
-			lastCastEntry--;
-			_paint16->bitsRestore(lastCastEntry->castHandle);
-			lastCastCount--;
+		while (it != _lastCastData.begin()) {		// FIXME: HACK, this iterator use is not very safe
+			it--;
+			_paint16->bitsRestore(it->castHandle);
 		}
 	} else {
 		_paint16->bitsShow(rect);
@@ -532,33 +491,28 @@ void GfxAnimate::reAnimate(Common::Rect rect) {
 
 void GfxAnimate::addToPicDrawCels() {
 	reg_t curObject;
-	AnimateEntry *listEntry;
 	GfxView *view = NULL;
-	AnimateList::iterator listIterator;
-	AnimateList::iterator listEnd = _list.end();
+	AnimateList::iterator it;
+	const AnimateList::iterator end = _list.end();
 
-	listIterator = _list.begin();
-	while (listIterator != listEnd) {
-		listEntry = *listIterator;
-		curObject = listEntry->object;
+	for (it = _list.begin(); it != end; ++it) {
+		curObject = it->object;
 
-		if (listEntry->priority == -1)
-			listEntry->priority = _ports->kernelCoordinateToPriority(listEntry->y);
+		if (it->priority == -1)
+			it->priority = _ports->kernelCoordinateToPriority(it->y);
 
 		// Get the corresponding view
-		view = _cache->getView(listEntry->viewId);
+		view = _cache->getView(it->viewId);
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 
 		// draw corresponding cel
-		_paint16->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
-		if ((listEntry->signal & kSignalIgnoreActor) == 0) {
-			listEntry->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
-			_paint16->fillRect(listEntry->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
+		_paint16->drawCel(it->viewId, it->loopNo, it->celNo, it->celRect, it->priority, it->paletteNo);
+		if ((it->signal & kSignalIgnoreActor) == 0) {
+			it->celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(it->priority) - 1, it->celRect.top, it->celRect.bottom - 1);
+			_paint16->fillRect(it->celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
-
-		listIterator++;
 	}
 }
 
@@ -567,7 +521,7 @@ void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celN
 	Common::Rect celRect;
 
 	// Create rect according to coordinates and given cel
-	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
+	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, celRect);
 	_paint16->drawCel(view, loopNo, celNo, celRect, priority, 0);
 }
 
@@ -592,6 +546,9 @@ void GfxAnimate::animateShowPic() {
 void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	byte old_picNotValid = _screen->_picNotValid;
 
+	if (getSciVersion() >= SCI_VERSION_1_1)
+		_palette->palVaryUpdate();
+
 	if (listReference.isNull()) {
 		disposeLastCast();
 		if (_screen->_picNotValid)
@@ -606,6 +563,9 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	if (cycle) {
 		if (!invoke(list, argc, argv))
 			return;
+
+		// Look up the list again, as it may have been modified
+		list = _s->_segMan->lookupList(listReference);
 	}
 
 	Port *oldPort = _ports->setPort((Port *)_ports->_picWind);
@@ -615,9 +575,9 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	fill(old_picNotValid);
 
 	if (old_picNotValid) {
-		// beginUpdate()/endUpdate() were introduced SCI1
-		//  calling those for SCI0 will work most of the time but breaks minor stuff like percentage bar of qfg1ega
-		//   at the character skill screen
+		// beginUpdate()/endUpdate() were introduced SCI1.
+		// Calling those for SCI0 will work most of the time but breaks minor
+		// stuff like percentage bar of qfg1ega at the character skill screen.
 		if (getSciVersion() >= SCI_VERSION_1_EGA)
 			_ports->beginUpdate(_ports->_picWind);
 		update();
@@ -633,7 +593,7 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	updateScreen(old_picNotValid);
 	restoreAndDelete(argc, argv);
 
-	if (getLastCastCount() > 1)
+	if (_lastCastData.size() > 1)
 		_s->_throttleTrigger = true;
 
 	_ports->setPort(oldPort);

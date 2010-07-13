@@ -115,12 +115,14 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 			if (argc > 2) { /* Request to modify this char */
 				tmp.offset &= 0xff00;
 				tmp.offset |= newvalue;
+				tmp.segment = 0;
 			}
 		} else {
 			value = tmp.offset >> 8;
 			if (argc > 2)  { /* Request to modify this char */
 				tmp.offset &= 0x00ff;
 				tmp.offset |= newvalue << 8;
+				tmp.segment = 0;
 			}
 		}
 	}
@@ -141,19 +143,22 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	int16 result = 0;
 
 	if (*source == '$') {
-		// hexadecimal input
+		// Hexadecimal input
 		result = (int16)strtol(source + 1, NULL, 16);
 	} else {
-		// decimal input, we can not use strtol/atoi in here, because sierra used atoi BUT it was a non standard compliant
-		//  atoi, that didnt do clipping. In SQ4 we get the door code in here and that's even larger than uint32!
+		// Decimal input. We can not use strtol/atoi in here, because while
+		// Sierra used atoi, it was a non standard compliant atoi, that didn't
+		// do clipping. In SQ4 we get the door code in here and that's even
+		// larger than uint32!
 		if (*source == '-') {
 			result = -1;
 			source++;
 		}
 		while (*source) {
 			if ((*source < '0') || (*source > '9')) {
-				// Sierras atoi stopped processing at anything different than number
-				//  Sometimes the input has a trailing space, that's fine (example: lsl3)
+				// Sierra's atoi stopped processing at anything which is not
+				// a digit. Sometimes the input has a trailing space, that's
+				// fine (example: lsl3)
 				if (*source != ' ') {
 					// TODO: this happens in lsl5 right in the intro -> we get '1' '3' 0xCD 0xCD 0xCD 0xCD 0xCD
 					//       find out why this happens and fix it
@@ -423,15 +428,16 @@ reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 
 	seeker = (char *)textres->data;
 	
-	// The second parameter (counter) determines the number of the string inside the text
-	// resource.
+	// The second parameter (counter) determines the number of the string
+	// inside the text resource.
 	while (counter--) {
 		while (*seeker++)
 			;
 	}
 
-	// If the third argument is NULL, allocate memory for the destination. This occurs in
-	// SCI1 Mac games. The memory will later be freed by the game's scripts.
+	// If the third argument is NULL, allocate memory for the destination. This
+	// occurs in SCI1 Mac games. The memory will later be freed by the game's
+	// scripts.
 	if (argv[2] == NULL_REG)
 		s->_segMan->allocDynmem(strlen(seeker) + 1, "Mac FarText", &argv[2]);
 
@@ -561,7 +567,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv) {
 	Common::String quitStr = s->_segMan->getString(argv[0]);
-	debug("Setting quit string to '%s'", quitStr.c_str());
+	//debug("Setting quit string to '%s'", quitStr.c_str());
 	return s->r_acc;
 }
 
@@ -578,7 +584,8 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 	// Make sure target buffer is large enough
 	SegmentRef buf_r = s->_segMan->dereference(argv[0]);
 	if (!buf_r.isValid() || buf_r.maxSize < (int)str.size() + 1) {
-		warning("StrSplit: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(argv[0]), str.size() + 1, str.c_str());
+		warning("StrSplit: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'",
+						PRINT_REG(argv[0]), str.size() + 1, str.c_str());
 		return NULL_REG;
 	}
 	s->_segMan->strcpy(argv[0], str.c_str());

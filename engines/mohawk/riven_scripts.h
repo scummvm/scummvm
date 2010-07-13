@@ -50,19 +50,20 @@ enum {
 };
 
 class RivenScript;
-typedef Common::Array<Common::SharedPtr<RivenScript> > RivenScriptList;
 
 class RivenScript {
 public:
-	RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType);
+	RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard);
 	~RivenScript();
 
 	void runScript();
 	void dumpScript(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
 	uint16 getScriptType() { return _scriptType; }
+	uint16 getParentStack() { return _parentStack; }
+	uint16 getParentCard() { return _parentCard; }
+	bool isRunning() { return _isRunning; }
 
-	// Read in an array of script objects from a stream
-	static RivenScriptList readScripts(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream);
+	static uint32 calculateScriptSize(Common::SeekableReadStream *script);
 
 private:
 	typedef void (RivenScript::*OpcodeProcRiven)(uint16 op, uint16 argc, uint16 *argv);
@@ -70,18 +71,18 @@ private:
 		OpcodeProcRiven proc;
 		const char *desc;
 	};
-	const RivenOpcode* _opcodes;
+	const RivenOpcode *_opcodes;
 	void setupOpcodes();
 
 	MohawkEngine_Riven *_vm;
 	Common::SeekableReadStream *_stream;
-	uint16 _scriptType;
+	uint16 _scriptType, _parentStack, _parentCard, _parentHotspot;
+	bool _isRunning;
 
 	void dumpCommands(Common::StringArray varNames, Common::StringArray xNames, byte tabs);
 	void processCommands(bool runCommands);
 
-	static uint32 calculateCommandSize(Common::SeekableReadStream* script);
-	static uint32 calculateScriptSize(Common::SeekableReadStream* script);
+	static uint32 calculateCommandSize(Common::SeekableReadStream *script);
 
 	DECLARE_OPCODE(empty) { warning ("Unknown Opcode %04x", op); }
 
@@ -120,7 +121,21 @@ private:
 	DECLARE_OPCODE(activateFLST);
 	DECLARE_OPCODE(zipMode);
 	DECLARE_OPCODE(activateMLST);
-	DECLARE_OPCODE(activateSLSTWithVolume);
+};
+
+typedef Common::Array<RivenScript*> RivenScriptList;
+
+class RivenScriptManager {
+public:
+	RivenScriptManager(MohawkEngine_Riven *vm);
+	~RivenScriptManager();
+
+	RivenScriptList readScripts(Common::SeekableReadStream *stream, bool garbageCollect = true);
+
+private:
+	void unloadUnusedScripts();
+	RivenScriptList _currentScripts;
+	MohawkEngine_Riven *_vm;
 };
 
 } // End of namespace Mohawk

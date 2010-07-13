@@ -854,6 +854,31 @@ begin_credits("Credits");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 	end_section();
+	
+	begin_section("Translations");
+		begin_persons();
+			add_person("Thierry Crozat", "criezy", "Translation Lead");
+		end_persons();
+		begin_section("Catalan");
+			add_person("Jordi Vilalta Prat", "jvprat", "");
+		end_section();
+		begin_section("French");
+			add_person("Thierry Crozat", "criezy", "");
+		end_section();
+		begin_section("German");
+			add_person("Simon Sawatzki", "SimSaw", "");
+			add_person("Lothar Serra Mari", "Lothar93", "");
+		end_section();
+		begin_section("Hungarian");
+			add_person("Alex Bevilacqua", "", "");
+		end_section();
+		begin_section("Italian");
+			add_person("Matteo Angelino", "Maff", "");
+		end_section();
+		begin_section("Russian");
+			add_person("Eugene Sandulenko", "sev", "");
+		end_section();
+	end_section();
 
 	begin_section("Websites (design)");
 	  begin_persons();
@@ -922,7 +947,7 @@ begin_credits("Credits");
 		add_person("Ravi I.", "", "SCI0 sound resource specification");
 		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
 		add_person("Rune Orsval", "", "Configuration file editor");
-		add_person("Rickard Lind", "", "MT32->GM MIDI mapping magic, sound research");
+		add_person("Rickard Lind", "", "MT-32->GM MIDI mapping magic, sound research");
 		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
 		add_person("Robey Pointer", "", "Bug tracking system hosting");
 		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
@@ -933,8 +958,8 @@ begin_credits("Credits");
 		add_person("Sean Terrell", "", "");
 	  end_persons();
 	  add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
-					  "for allowing the FreeSCI VM extension as a ".
-					  "course project in his Advanced OS course.");
+	                "for allowing the FreeSCI VM extension as a ".
+	                "course project in his Advanced OS course.");
 	  add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
 	end_section();
 

@@ -191,8 +191,10 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 }
 
 void QuickTimeDecoder::startAudio() {
-	if (_audStream) // No audio/audio not supported
+	if (_audStream) { // No audio/audio not supported
+		updateAudioBuffer();
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
+	}
 }
 
 void QuickTimeDecoder::stopAudio() {
@@ -534,6 +536,8 @@ int QuickTimeDecoder::readCMOV(MOVatom atom) {
 	unsigned long dstLen = uncompressedSize;
 	if (!Common::uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
+		free(compressedData);
+		free(uncompressedData);
 		return -1;
 	}
 

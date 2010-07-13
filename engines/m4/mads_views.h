@@ -92,13 +92,14 @@ public:
 	}
 
 	int getIndex();
-	int addSprites(const char *resName);
+	int addSprites(const char *resName, bool suppressErrors = false, int flags = 0);
+	int addSprites(SpriteAsset *spriteSet);
 	void deleteSprites(int listIndex);
 	void clear();
 	void deleteTimer(int seqIndex);
 
 	void drawBackground();
-	void drawForeground(View *view, int yOffset);
+	void drawForeground(M4Surface *viewport);
 	void setDirtyAreas();
 	void fullRefresh();
 	void cleanUp();
@@ -139,7 +140,7 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view, int yOffset);
+	void draw(M4Surface *view);
 	void setDirtyAreas();
 	void setDirtyAreas2();
 	void cleanUp();
@@ -148,7 +149,7 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
 	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageEntry {
@@ -170,6 +171,10 @@ public:
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
 	char msg[100];
+
+	MadsKernelMessageEntry() {
+		flags = 0;
+	}
 };
 
 class MadsKernelMessageList {
@@ -289,7 +294,8 @@ public:
 	void merge(int startIndex, int count);
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(M4Surface *dest, M4Surface *src, int yOffset);
+	void copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust);
+	void clear();
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -367,10 +373,11 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
 	virtual void load(const Common::String &filename, int v0) = 0;
 	virtual void update() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;
+	virtual int getCurrentFrame() = 0;
 };
 	
 
@@ -388,7 +395,6 @@ public:
 	MadsDirtyAreas _dirtyAreas;
 
 	int _textSpacing;
-	int _ticksAmount;
 	uint32 _newTimeout;
 	int _abortTimers;
 	int8 _abortTimers2;
@@ -398,12 +404,15 @@ public:
 
 	M4Surface *_depthSurface;
 	M4Surface *_bgSurface;
-	int _yOffset;
+	M4Surface *_viewport;
 public:
 	MadsView(View *view);
 	~MadsView();
 
 	void refresh();
+	void update();
+	void clearLists();
+	void setViewport(const Common::Rect &bounds);
 };
 
 }

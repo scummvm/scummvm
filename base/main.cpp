@@ -47,10 +47,13 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "common/tokenizer.h"
+#include "common/translation.h"
 
 #include "gui/GuiManager.h"
 #include "gui/message.h"
 #include "gui/error.h"
+
+#include "sound/mididrv.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -100,7 +103,7 @@ static const EnginePlugin *detectPlugin() {
 
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
-	printf("  Looking for a plugin supporting this gameid... ");
+	printf("%s", "  Looking for a plugin supporting this gameid... ");
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
 
 	if (plugin == 0) {
@@ -139,7 +142,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 		// Is a separate dialog here still required?
 
 		//GUI::displayErrorDialog("ScummVM could not find any game in the specified directory!");
-		const char *errMsg = Common::errorToString(err);
+		const char *errMsg = _(Common::errorToString(err));
 
 		warning("%s failed to instantiate engine: %s (target '%s', path '%s')",
 			plugin->getName(),
@@ -198,7 +201,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 		if (!DebugMan.enableDebugChannel(token))
-			warning("Engine does not support debug level '%s'", token.c_str());
+			warning(_("Engine does not support debug level '%s'"), token.c_str());
 	}
 
 	// Inform backend that the engine is about to be run
@@ -266,22 +269,22 @@ static void setupKeymapper(OSystem &system) {
 	mapper->registerHardwareKeySet(keySet);
 
 	// Now create the global keymap
-	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act = new Action(globalMap, "MENU", _("Menu"), kGenericActionType, kSelectKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
 
-	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act = new Action(globalMap, "SKCT", _("Skip"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act = new Action(globalMap, "PAUS", _("Pause"), kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
 
-	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act = new Action(globalMap, "SKLI", _("Skip line"), kGenericActionType, kActionKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
 
-	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act = new Action(globalMap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
-	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act = new Action(globalMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(globalMap);
@@ -317,6 +320,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Update the config file
 	ConfMan.set("versioninfo", gScummVMVersion, Common::ConfigManager::kApplicationDomain);
 
+	// Enable translation
+	TransMan.setLanguage(ConfMan.get("gui_language").c_str());
 
 	// Load and setup the debuglevel and the debug flags. We do this at the
 	// soonest possible moment to ensure debug output starts early on, if
@@ -335,6 +340,16 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+
+	// If we received an invalid music parameter via command line we check this here.
+	// We can't check this before loading the music plugins.
+	// On the other hand we cannot load the plugins before we know the file paths (in case of external plugins).
+	if (settings.contains("music-driver")) {
+		if (MidiDriver::getMusicType(MidiDriver::getDeviceHandle(settings["music-driver"])) == MT_INVALID) {
+			warning("Unrecognized music driver '%s'. Switching to default device.", settings["music-driver"].c_str());
+			settings["music-driver"] = "auto";
+		}
+	}
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
@@ -385,7 +400,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			// Did an error occur ?
 			if (result != Common::kNoError) {
 				// Shows an informative error dialog if starting the selected game failed.
-				GUI::displayErrorDialog(result, "Error running game:");
+				GUI::displayErrorDialog(result, _("Error running game:"));
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
@@ -411,8 +426,8 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		} else {
 			// A dialog would be nicer, but we don't have any
 			// screen to draw on yet.
-			warning("Could not find any engine capable of running the selected game");
-			GUI::displayErrorDialog("Could not find any engine capable of running the selected game");
+			warning("%s", _("Could not find any engine capable of running the selected game"));
+			GUI::displayErrorDialog(_("Could not find any engine capable of running the selected game"));
 		}
 
 		// reset the graphics to default

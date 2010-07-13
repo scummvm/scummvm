@@ -63,6 +63,7 @@ struct VtEntry {
 	int16 xPos;
 	int16 yPos;
 	uint8 currentView;
+	bool viewReplaced;
 	struct AgiView *viewData;
 	uint8 currentLoop;
 	uint8 numLoops;

@@ -105,6 +105,7 @@ sub print_manifest {
 	'package' => "org.inodes.gus.scummvm.plugin.$info->{name}",
 	[ANDROID, 'versionCode'] => $package_versionCode,
 	[ANDROID, 'versionName'] => $package_versionName,
+	[ANDROID, 'installLocation'] => 'preferExternal',
 	);
 
     $writer->startTag(

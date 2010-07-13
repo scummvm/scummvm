@@ -68,8 +68,8 @@ void PreAgiEngine::initialize() {
 	//       drivers, and I'm not sure what they are. For now, they might
 	//       as well be called "PC Speaker" and "Not PC Speaker".
 
-	switch (MidiDriver::detectMusicDriver(MDT_PCSPK)) {
-	case MD_PCSPK:
+	switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK))) {
+	case MT_PCSPK:
 		_soundemu = SOUND_EMU_PC;
 		break;
 	default:

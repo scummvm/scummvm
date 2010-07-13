@@ -35,22 +35,26 @@ namespace M4 {
 #define INTERFACE_HEIGHT 106
 class MadsInterfaceView;
 
+#define DEPTH_BANDS_SIZE 15
+
 class MadsSceneResources: public SceneResources {
 public:
-	int sceneId;
-	int artFileNum;
-	int drawStyle;
-	int width;
-	int height;
-	Common::Array<MadsObject> objects;
-	Common::Array<Common::String> setNames;
-	
-	Common::Point playerPos;
-	int playerDir;
+	int _sceneId;
+	int _artFileNum;
+	int _depthStyle;
+	int _width;
+	int _height;
+	Common::Array<MadsObject> _objects;
+	Common::Array<Common::String> _setNames;
+	int _yBandsStart, _yBandsEnd;
+	int _maxScale, _minScale;
+	int _depthBands[DEPTH_BANDS_SIZE];
 
-	MadsSceneResources() { playerDir = 0; }
+	MadsSceneResources() {}
 	~MadsSceneResources() {}
 	void load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface);
+	int bandsRange() const { return _yBandsEnd - _yBandsStart; }
+	int scaleRange() const { return _maxScale - _minScale; }
 };
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
@@ -99,7 +103,7 @@ private:
 	SpriteAsset *_playerSprites;
 
 	void drawElements();
-	void loadScene2(const char *aaName);
+	void loadScene2(const char *aaName, int sceneNumber);
 	void loadSceneTemporary();
 	void loadSceneHotspots(int sceneNumber);
 	void clearAction();
@@ -107,7 +111,6 @@ private:
 	void setAction();
 public:
 	char _aaName[100];
-	uint16 actionNouns[3];
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
@@ -126,9 +129,10 @@ public:
 	virtual void updateState();
 
 	int loadSceneSpriteSet(const char *setName);
-	void loadPlayerSprites(const char *prefix);
 	void showMADSV2TextBox(char *text, int x, int y, char *faceName);
-	void loadAnimation(const Common::String &animName, int v0);
+	void loadAnimation(const Common::String &animName, int abortTimers);
+	Animation *activeAnimation() const { return _activeAnimation; }
+	void freeAnimation();
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }

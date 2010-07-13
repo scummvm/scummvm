@@ -38,6 +38,7 @@
 #include "sci/graphics/view.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/robot.h"
 
 namespace Sci {
 
@@ -77,6 +78,12 @@ void GfxPaint32::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, 
 
 void GfxPaint32::kernelGraphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 	_screen->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
+}
+
+void GfxPaint32::debugDrawRobot(GuiResourceId robotId) {
+	GfxRobot *test = new GfxRobot(g_sci->getResMan(), _screen, robotId);
+	test->draw();
+	delete test;
 }
 
 } // End of namespace Sci

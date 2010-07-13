@@ -28,6 +28,7 @@
 #include "sound/softsynth/opl/mame.h"
 
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 namespace OPL {
 
@@ -47,9 +48,9 @@ OPL::OPL() {
 
 const Config::EmulatorDescription Config::_drivers[] = {
 	{ "auto", "<default>", kAuto, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
-	{ "mame", "MAME OPL emulator", kMame, kFlagOpl2 },
+	{ "mame", _s("MAME OPL emulator"), kMame, kFlagOpl2 },
 #ifndef DISABLE_DOSBOX_OPL
-	{ "db", "DOSBox OPL emulator", kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
+	{ "db", _s("DOSBox OPL emulator"), kDOSBox, kFlagOpl2 | kFlagDualOpl2 | kFlagOpl3 },
 #endif
 	{ 0, 0, 0, 0 }
 };

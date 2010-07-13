@@ -468,7 +468,7 @@ Boolean StartScummVM(Int16 engine) {
 		return false;
 	}
 
-	// reset mode if screen rotation occured (DIA only)
+	// reset mode if screen rotation occurred (DIA only)
 	if (!direct && OPTIONS_TST(kOptCollapsible)) {
 		UInt8 mode = PalmScreenSize(0,0, &(gVars->screenFullWidth), &(gVars->screenFullHeight));
 		OPTIONS_RST(kOptModeLandscape);

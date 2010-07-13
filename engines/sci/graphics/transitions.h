@@ -65,7 +65,7 @@ class Screen;
  */
 class GfxTransitions {
 public:
-	GfxTransitions(SciGui *gui, GfxScreen *screen, GfxPalette *palette, bool isVGA);
+	GfxTransitions(GfxScreen *screen, GfxPalette *palette, bool isVGA);
 	~GfxTransitions();
 
 	void setup(int16 number, bool blackoutFlag);
@@ -92,7 +92,6 @@ private:
 	void diagonalRollToCenter(bool blackoutFlag);
 	void updateScreenAndWait(int msec);
 
-	SciGui *_gui;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 

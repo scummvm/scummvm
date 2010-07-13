@@ -161,6 +161,9 @@ public:
 
 protected:
 	bool load(uint32 fileref, bool loop);
+
+private:
+	Common::SeekableReadStream *decompressMidi(Common::SeekableReadStream *stream);
 };
 
 } // End of Groovie namespace

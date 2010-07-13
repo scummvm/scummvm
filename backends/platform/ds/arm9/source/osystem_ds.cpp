@@ -66,9 +66,14 @@
 #define DEFAULT_CONFIG_FILE "scummvmj.ini"
 #elif defined(DS_BUILD_K)
 #define DEFAULT_CONFIG_FILE "scummvmk.ini"
+#else
+	// Use the "scummvm.ini" as config file if no build was specified. This
+	// currently only happens with builds made using the regular ScummVM build
+	// system (as opposed to the nds specific build system).
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
 #endif
 
-OSystem_DS* OSystem_DS::_instance = NULL;
+OSystem_DS *OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false),
@@ -128,7 +133,7 @@ bool OSystem_DS::getFeatureState(Feature f) {
 	return false;
 }
 
-const OSystem::GraphicsMode* OSystem_DS::getSupportedGraphicsModes() const {
+const OSystem::GraphicsMode *OSystem_DS::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
 
@@ -203,8 +208,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 	}
 }
 
-void OSystem_DS::restoreHardwarePalette()
-{
+void OSystem_DS::restoreHardwarePalette() {
 	// Set the hardware palette up based on the stored palette
 
 	for (int r = 0; r < 255; r++) {
@@ -238,13 +242,13 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	refreshCursor();
 }
 
-bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
+bool OSystem_DS::grabRawScreen(Graphics::Surface *surf) {
 	surf->create(DS::getGameWidth(), DS::getGameHeight(), 1);
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 
 
-	const u16* image = (const u16 *) DS::get8BitBackBuffer();
+	const u16 *image = (const u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++) {
 		DC_FlushRange(image + (y << 8), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
@@ -277,9 +281,9 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 //	consolePrintf("CopyRectToScreen %d\n", w * h);
 
-	u16* bg;
+	u16 *bg;
 	s32 stride;
-	u16* bgSub = (u16 *)BG_GFX_SUB;
+	u16 *bgSub = (u16 *)BG_GFX_SUB;
 
 	// The DS video RAM doesn't support 8-bit writes because Nintendo wanted
 	// to save a few pennies/euro cents on the hardware.
@@ -304,14 +308,14 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 			// the keyboard image uses the same VRAM addresses.
 
 			for (int dy = y; dy < y + h; dy++) {
-				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
-				u8* src = (u8 *) buf + (pitch * by);
+				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
+				const u8 *src = (const u8 *) buf + (pitch * by);
 
 				u32 dx;
 
 				u32 pixelsLeft = w;
 
-				if (MISALIGNED16(dest))	{
+				if (MISALIGNED16(dest)) {
 					// Read modify write
 
 					dest--;
@@ -326,9 +330,9 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 				}
 
 				// We can now assume dest is aligned
-				u16* dest16 = (u16 *) dest;
+				u16 *dest16 = (u16 *) dest;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+				for (dx = 0; dx < pixelsLeft; dx+=2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
@@ -355,15 +359,15 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 			// When they keyboard is not on screen, update both vram copies
 
 			for (int dy = y; dy < y + h; dy++) {
-				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
-				u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-				u8* src = (u8 *) buf + (pitch * by);
+				u8 *dest = ((u8 *) (bg)) + (dy * stride) + x;
+				u8 *destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
+				const u8 *src = (const u8 *) buf + (pitch * by);
 
 				u32 dx;
 
 				u32 pixelsLeft = w;
 
-				if (MISALIGNED16(dest))	{
+				if (MISALIGNED16(dest)) {
 					// Read modify write
 
 					dest--;
@@ -380,10 +384,10 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 				}
 
 				// We can now assume dest is aligned
-				u16* dest16 = (u16 *) dest;
-				u16* destSub16 = (u16 *) destSub;
+				u16 *dest16 = (u16 *) dest;
+				u16 *destSub16 = (u16 *) destSub;
 
-				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+				for (dx = 0; dx < pixelsLeft; dx+=2) {
 					u16 mix;
 
 					mix = *src + (*(src + 1) << 8);
@@ -417,12 +421,12 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 		// Stuff is aligned to 16-bit boundaries, so it's safe to do DMA.
 
-		u16* src = (u16 *) buf;
+		u16 *src = (u16 *) buf;
 
 		if (DS::getKeyboardEnable()) {
 
 			for (int dy = y; dy < y + h; dy++) {
-				u16* dest = bg + (dy * (stride >> 1)) + (x >> 1);
+				u16 *dest = bg + (dy * (stride >> 1)) + (x >> 1);
 
 				DC_FlushRange(src, w << 1);
 				DC_FlushRange(dest, w << 1);
@@ -435,8 +439,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 		} else {
 			for (int dy = y; dy < y + h; dy++) {
-				u16* dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
-				u16* dest2 = bgSub + (dy << 8) + (x >> 1);
+				u16 *dest1 = bg + (dy * (stride >> 1)) + (x >> 1);
+				u16 *dest2 = bgSub + (dy << 8) + (x >> 1);
 
 				DC_FlushRange(src, w << 1);
 				DC_FlushRange(dest1, w << 1);
@@ -458,7 +462,7 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
-	static int cnt = 0;
+//	static int cnt = 0;
 //	consolePrintf("updatescr %d\n", cnt++);
 
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
@@ -498,13 +502,13 @@ void OSystem_DS::clearOverlay() {
 //	consolePrintf("clearovl\n");
 }
 
-void OSystem_DS::grabOverlay(OverlayColor* buf, int pitch) {
+void OSystem_DS::grabOverlay(OverlayColor *buf, int pitch) {
 //	consolePrintf("grabovl\n")
-	u16* start = DS::get16BitBackBuffer();
+	u16 *start = DS::get16BitBackBuffer();
 
 	for (int y = 0; y < 200; y++) {
-		u16* src = start + (y * 320);
-		u16* dest = ((u16 *) (buf)) + (y * pitch);
+		u16 *src = start + (y * 320);
+		u16 *dest = ((u16 *) (buf)) + (y * pitch);
 
 		for (int x = 0; x < 320; x++) {
 			*dest++ =  *src++;
@@ -514,8 +518,8 @@ void OSystem_DS::grabOverlay(OverlayColor* buf, int pitch) {
 }
 
 void OSystem_DS::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	u16* bg = (u16 *) DS::get16BitBackBuffer();
-	const u16* src = (const u16 *) buf;
+	u16 *bg = (u16 *) DS::get16BitBackBuffer();
+	const u16 *src = (const u16 *) buf;
 
 //	if (x + w > 256) w = 256 - x;
 	//if (x + h > 256) h = 256 - y;
@@ -586,7 +590,7 @@ void OSystem_DS::refreshCursor() {
 	DS::setCursorIcon(_cursorImage, _cursorW, _cursorH, _cursorKey, _cursorHotX, _cursorHotY);
 }
 
-void OSystem_DS::addEvent(Common::Event& e) {
+void OSystem_DS::addEvent(const Common::Event& e) {
 	eventQueue[queuePos++] = e;
 }
 
@@ -724,31 +728,15 @@ void OSystem_DS::quit() {
 	swiSoftReset();*/
 }
 
-Common::SaveFileManager* OSystem_DS::getSavefileManager() {
-	bool forceSram;
-
-	if (ConfMan.hasKey("forcesramsave", "ds")) {
-		forceSram = ConfMan.getBool("forcesramsave", "ds");
-	} else {
-		forceSram = false;
-	}
-	if (forceSram) {
-		consolePrintf("Using SRAM save method!\n");
-	}
-
-	if (DS::isGBAMPAvailable() && (!forceSram)) {
+Common::SaveFileManager *OSystem_DS::getSavefileManager() {
+	if (DS::isGBAMPAvailable()) {
 		return &mpSaveManager;
-	} else {
-#ifdef GBA_SRAM_SAVE
-		return &saveManager;
-#else
-		return NULL;
-#endif
 	}
+	return NULL;
 }
 
 
-Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
+Graphics::Surface *OSystem_DS::createTempFrameBuffer() {
 
 	// Ensure we copy using 16 bit quantities due to limitation of VRAM addressing
 
@@ -773,13 +761,13 @@ Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
 		s32 width = DS::getGameWidth();
 		s32 stride = DS::get8BitBackBufferStride();
 
-		u16* src = DS::get8BitBackBuffer();
-		u16* dest = DS::getScalerBuffer();
+		u16 *src = DS::get8BitBackBuffer();
+		u16 *dest = DS::getScalerBuffer();
 
 		for (int y = 0; y < height; y++) {
 
-			u16* destLine = dest + (y * (width / 2));
-			u16* srcLine = src + (y * (stride / 2));
+			u16 *destLine = dest + (y * (width / 2));
+			u16 *srcLine = src + (y * (stride / 2));
 
 			DC_FlushRange(srcLine, width);
 
@@ -800,7 +788,7 @@ Graphics::Surface* OSystem_DS::createTempFrameBuffer() {
 	size_t imageStrideInBytes = DS::get8BitBackBufferStride();
 	size_t imageStrideInWords = imageStrideInBytes / 2;
 
-	u16* image = (u16 *) DS::get8BitBackBuffer();
+	u16 *image = (u16 *) DS::get8BitBackBuffer();
 	for (int y = 0; y <  DS::getGameHeight(); y++) {
 		DC_FlushRange(image + (y * imageStrideInWords), DS::getGameWidth());
 		for (int x = 0; x < DS::getGameWidth() >> 1; x++) {
@@ -846,13 +834,13 @@ void OSystem_DS::setCharactersEntered(int count) {
 	DS::setCharactersEntered(count);
 }
 
-Common::SeekableReadStream* OSystem_DS::createConfigReadStream() {
+Common::SeekableReadStream *OSystem_DS::createConfigReadStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 //	consolePrintf("R %s", DEFAULT_CONFIG_FILE);
 	return file.createReadStream();
 }
 
-Common::WriteStream* OSystem_DS::createConfigWriteStream() {
+Common::WriteStream *OSystem_DS::createConfigWriteStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
 //	consolePrintf("W %s", DEFAULT_CONFIG_FILE);
 	return file.createWriteStream();

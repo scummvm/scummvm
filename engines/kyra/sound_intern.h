@@ -180,6 +180,8 @@ public:
 	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) { return -1; }
 	void playSoundEffect(uint8);
 
+	void updateVolumeSettings();
+
 protected:
 	int _lastTrack;
 	uint8 *_musicTrackData;
@@ -206,6 +208,8 @@ public:
 
 	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx);
 	void playSoundEffect(uint8 track);
+
+	void updateVolumeSettings();
 
 protected:
 	Audio::AudioStream *_currentSFX;

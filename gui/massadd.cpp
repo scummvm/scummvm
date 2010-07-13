@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/func.h"
 #include "common/config-manager.h"
+#include "common/translation.h"
 
 #include "gui/launcher.h"	// For addGameToConf()
 #include "gui/massadd.h"
@@ -75,10 +76,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 //	new StaticTextWidget(this, "massadddialog_caption",	"Mass Add Dialog");
 
 	_dirProgressText = new StaticTextWidget(this, "MassAdd.DirProgressText",
-											"... progress ...");
+											_("... progress ..."));
 
 	_gameProgressText = new StaticTextWidget(this, "MassAdd.GameProgressText",
-											 "... progress ...");
+											 _("... progress ..."));
 
 	_dirProgressText->setAlign(Graphics::kTextAlignCenter);
 	_gameProgressText->setAlign(Graphics::kTextAlignCenter);
@@ -88,10 +89,10 @@ MassAddDialog::MassAddDialog(const Common::FSNode &startDir)
 	_list->setNumberingMode(kListNumberingOff);
 	_list->setList(l);
 
-	_okButton = new ButtonWidget(this, "MassAdd.Ok", "OK", kOkCmd, Common::ASCII_RETURN);
+	_okButton = new ButtonWidget(this, "MassAdd.Ok", _("OK"), 0, kOkCmd, Common::ASCII_RETURN);
 	_okButton->setEnabled(false);
 
-	new ButtonWidget(this, "MassAdd.Cancel", "Cancel", kCancelCmd, Common::ASCII_ESCAPE);
+	new ButtonWidget(this, "MassAdd.Cancel", _("Cancel"), 0, kCancelCmd, Common::ASCII_ESCAPE);
 
 	// Build a map from all configured game paths to the targets using them
 	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
@@ -240,17 +241,17 @@ void MassAddDialog::handleTickle() {
 		// Enable the OK button
 		_okButton->setEnabled(true);
 
-		snprintf(buf, sizeof(buf), "Scan complete!");
+		snprintf(buf, sizeof(buf), "%s", _("Scan complete!"));
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), "Discovered %d new games.", _games.size());
+		snprintf(buf, sizeof(buf), _("Discovered %d new games."), _games.size());
 		_gameProgressText->setLabel(buf);
 
 	} else {
-		snprintf(buf, sizeof(buf), "Scanned %d directories ...", _dirsScanned);
+		snprintf(buf, sizeof(buf), _("Scanned %d directories ..."), _dirsScanned);
 		_dirProgressText->setLabel(buf);
 
-		snprintf(buf, sizeof(buf), "Discovered %d new games ...", _games.size());
+		snprintf(buf, sizeof(buf), _("Discovered %d new games ..."), _games.size());
 		_gameProgressText->setLabel(buf);
 	}
 

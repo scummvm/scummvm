@@ -100,13 +100,24 @@ static const SelectorRemap sciSelectorRemap[] = {
     {    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,   "moveDone", 170 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,     "points", 316 },
 	{    SCI_VERSION_0_EARLY,     SCI_VERSION_0_LATE,      "flags", 368 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,    "nodePtr",  44 },
-	{     SCI_VERSION_1_LATE,        SCI_VERSION_1_1, "cantBeHere",  57 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,  "topString", 101 },
-	{    SCI_VERSION_1_EARLY,        SCI_VERSION_1_1,      "flags", 102 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,    "nodePtr",  44 },
+	{     SCI_VERSION_1_LATE,     SCI_VERSION_1_LATE, "cantBeHere",  57 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,  "topString", 101 },
+	{    SCI_VERSION_1_EARLY,     SCI_VERSION_1_LATE,      "flags", 102 },
+	// SCI1.1
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,    "nodePtr",  41 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "cantBeHere",  54 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,  "topString",  98 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,      "flags",  99 },
+	// quitGame
+	// restart
+	// hide
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,"scaleSignal", 103 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleX", 104 },
 	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,     "scaleY", 105 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1,   "maxScale", 106 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingX", 107 },
+	{        SCI_VERSION_1_1,        SCI_VERSION_1_1, "vanishingY", 108 },
 	{ SCI_VERSION_NONE,             SCI_VERSION_NONE,            0,   0 }
 };
 
@@ -139,16 +150,26 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 		}
 
 		for (const SelectorRemap *selectorRemap = sciSelectorRemap; selectorRemap->slot; ++selectorRemap) {
-			uint32 slot = selectorRemap->slot;
-			if (selectorRemap->slot >= names.size())
-				names.resize(selectorRemap->slot + 1);
 			if (getSciVersion() >= selectorRemap->minVersion && getSciVersion() <= selectorRemap->maxVersion) {
-				// The SCI1 selectors we use exist in SCI1.1 too, offset by 3
-				if (selectorRemap->minVersion >= SCI_VERSION_1_EARLY && getSciVersion() == SCI_VERSION_1_1)
-					slot -= 3;
+				const uint32 slot = selectorRemap->slot;
+				if (slot >= names.size())
+					names.resize(slot + 1);
 				names[slot] = selectorRemap->name;
 			}
 		}
+
+		if (g_sci->getGameId() == GID_HOYLE4) {
+			// The demo of Hoyle 4 is one of the few demos with lip syncing and no selector vocabulary.
+			// This needs two selectors, "syncTime" and "syncCue", which keep changing positions in each
+			// game. Usually, games with speech and lip sync have a selector vocabulary, so we don't need
+			// to set these two selectors, but we need for Hoyle...
+			if (names.size() < 276)
+				names.resize(276);
+
+			names[274] = "syncTime";
+			names[275] = "syncCue";
+		}
+
 #ifdef ENABLE_SCI32
 	} else {
 		// SCI2+

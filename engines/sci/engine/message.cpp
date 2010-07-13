@@ -161,7 +161,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		reader = new MessageReaderV4(res->data, res->size);
 		break;
 	default:
-		warning("Message: unsupported resource version %d", version);
+		error("Message: unsupported resource version %d", version);
 		return false;
 	}
 
@@ -259,7 +259,7 @@ void MessageState::popCursorStack() {
 	if (!_cursorStackStack.empty())
 		_cursorStack = _cursorStackStack.pop();
 	else
-		warning("Message: attempt to pop from empty stack");
+		error("Message: attempt to pop from empty stack");
 }
 
 int MessageState::hexDigitToInt(char h) {
@@ -330,7 +330,8 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 		}
 
 		// If we find a lowercase character or a digit, it's not a stage direction
-		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9')))
+		// SCI32 seems to support having digits in stage directions
+		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
 			return false;
 	}
 

@@ -106,6 +106,8 @@ void DrasculaEngine::fadeToBlack(int fadeSpeed) {
 		pause(fadeSpeed);
 
 		setPalette((byte *)&palFade);
+
+		updateEvents();
 	}
 }
 
@@ -124,6 +126,8 @@ void DrasculaEngine::fadeFromBlack(int fadeSpeed) {
 		pause(fadeSpeed);
 
 		setPalette((byte *)&palFade);
+
+		updateEvents();
 	}
 }
 

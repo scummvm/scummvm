@@ -33,42 +33,43 @@
 
 namespace Sci {
 
-/*
-Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy.
-The gravity is assumed to be non-negative.
-
-If this was ordinary continuous physics, we would compute the desired (floating point!)
-velocity vector (vx,vy) as follows, under the assumption that vx and vy are linearly correlated
-by some constant factor c, i.e. vy = c * vx:
-   dx = t * vx
-   dy = t * vy + gy * t^2 / 2
-=> dy = c * dx + gy * (dx/vx)^2 / 2
-=> |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
-Here, the sign of vx must be chosen equal to the sign of dx, obviously.
-
-Clearly, this square root only makes sense in our context if the denominator is positive,
-or equivalently, (dy - c * dx) must be positive. For simplicity and by symmetry
-along the x-axis, we assume dx to be positive for all computations, and only adjust for
-its sign in the end. Switching the sign of c appropriately, we set tmp := (dy + c * dx)
-and compute c so that this term becomes positive.
-
-Remark #1: If the jump is straight up, i.e. dx == 0, then we should not assume the above
-linear correlation vy = c * vx of the velocities (as vx will be 0, but vy shouldn't be,
-unless we drop).
-
-
-Remark #2: We are actually in a discrete setup. The motion is computed iteratively: each iteration,
-we add vx and vy to the position, then add gy to vy. So the real formula is the following
-(where t is ideally close to an int):
-
-  dx = t * vx
-  dy = t * vy + gy * t*(t-1) / 2
-
-But the solution resulting from that is a lot more complicated, so we use the above approximation instead.
-
-Still, what we compute in the end is of course not a real velocity anymore, but an integer approximation,
-used in an iterative stepping algorithm
-*/
+/**
+ * Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to
+ * (dx,dy), with gravity constant gy. The gravity is assumed to be non-negative.
+ *
+ * If this was ordinary continuous physics, we would compute the desired
+ * (floating point!) velocity vector (vx,vy) as follows, under the assumption
+ * that vx and vy are linearly correlated by a constant c, i.e., vy = c * vx:
+ *    dx = t * vx
+ *    dy = t * vy + gy * t^2 / 2
+ * => dy = c * dx + gy * (dx/vx)^2 / 2
+ * => |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
+ * Here, the sign of vx must be chosen equal to the sign of dx, obviously.
+ *
+ * This square root only makes sense in our context if the denominator is
+ * positive, or equivalently, (dy - c * dx) must be positive. For simplicity
+ * and by symmetry along the x-axis, we assume dx to be positive for all
+ * computations, and only adjust for its sign in the end. Switching the sign of
+ * c appropriately, we set tmp := (dy + c * dx) and compute c so that this term
+ * becomes positive.
+ *
+ * Remark #1: If the jump is straight up, i.e. dx == 0, then we should not
+ * assume the above linear correlation vy = c * vx of the velocities (as vx
+ * will be 0, but vy shouldn't be, unless we drop down).
+ *
+ * Remark #2: We are actually in a discrete setup. The motion is computed
+ * iteratively: each iteration, we add vx and vy to the position, then add gy
+ * to vy. So the real formula is the following (where t ideally is close to an int):
+ *
+ *   dx = t * vx
+ *   dy = t * vy + gy * t*(t-1) / 2
+ *
+ * But the solution resulting from that is a lot more complicated, so we use
+ * the above approximation instead.
+ *
+ * Still, what we compute in the end is of course not a real velocity anymore,
+ * but an integer approximation, used in an iterative stepping algorithm.
+ */
 reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	// Input data
@@ -115,7 +116,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 			//tmp = dx * 3 / 2;  // ALMOST the resulting value, except for obvious rounding issues
 
 			// FIXME: Where is the 3 coming from? Maybe they hard/coded, by "accident", that usually gy=3 ?
-			// Then this choice of will make t equal to roughly sqrt(dx)
+			// Then this choice of scalar will make t equal to roughly sqrt(dx)
 		}
 	}
 	// POST: c >= 1
@@ -315,11 +316,11 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
-	if (g_sci->getKernel()->_selectorCache.cantBeHere != -1) {
-		invokeSelector(INV_SEL(s, client, cantBeHere, kStopOnInvalidSelector), 0);
+	if (SELECTOR(cantBeHere) != -1) {
+		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 		s->r_acc = make_reg(0, !s->r_acc.offset);
 	} else {
-		invokeSelector(INV_SEL(s, client, canBeHere, kStopOnInvalidSelector), 0);
+		invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 	}
 
 	if (!s->r_acc.offset) { // Contains the return value
@@ -335,7 +336,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
-			invokeSelector(INV_SEL(s, mover, moveDone, kStopOnInvalidSelector), 0);
+			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
 	return make_reg(0, completed);
 }
@@ -373,14 +374,14 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = SIGNAL_REG;
 
 	if (!s->_segMan->isHeapObject(avoider)) {
-		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
+		error("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = readSelector(segMan, avoider, SELECTOR(client));
 
 	if (!s->_segMan->isHeapObject(client)) {
-		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
+		error("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
@@ -389,7 +390,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	if (!s->_segMan->isHeapObject(mover)) {
 		if (mover.segment) {
-			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
+			error("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}
 		return s->r_acc;
 	}
@@ -399,20 +400,13 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
 
-	if (invokeSelector(INV_SEL(s, mover, doit, kContinueOnInvalidSelector) , 0)) {
-		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, mover, SELECTOR(doit), argc, argv);
 
 	mover = readSelector(segMan, client, SELECTOR(mover));
 	if (!mover.segment) // Mover has been disposed?
 		return s->r_acc; // Return gracefully.
 
-	if (invokeSelector(INV_SEL(s, client, isBlocked, kContinueOnInvalidSelector) , 0)) {
-		error("Client %04x:%04x of avoider %04x:%04x doesn't"
-		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, client, SELECTOR(isBlocked), argc, argv);
 
 	dx = destx - readSelectorValue(segMan, client, SELECTOR(x));
 	dy = desty - readSelectorValue(segMan, client, SELECTOR(y));
@@ -439,11 +433,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
 
-			if (invokeSelector(INV_SEL(s, client, canBeHere, kContinueOnInvalidSelector) , 0)) {
-				error("Client %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-				return NULL_REG;
-			}
+			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy);
@@ -461,7 +451,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 				angle -= 360;
 		}
 
-		warning("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
+		error("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
 	} else {
 		int heading = readSelectorValue(segMan, client, SELECTOR(heading));
 
@@ -472,12 +462,11 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 		s->r_acc = make_reg(0, angle);
 
+		reg_t params[2] = { make_reg(0, angle), client };
+
 		if (looper.segment) {
-			if (invokeSelector(INV_SEL(s, looper, doit, kContinueOnInvalidSelector), 2, angle, client)) {
-				error("Looper %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
-			} else
-				return s->r_acc;
+			invokeSelector(s, looper, SELECTOR(doit), argc, argv, 2, params);
+			return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
 			_k_dirloop(client, (uint16)angle, s, argc, argv);
