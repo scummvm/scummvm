@@ -44,17 +44,17 @@ class DLObject {
 
 		void seterror(const char *fmt, ...);
 		void unload();
-		bool relocate(int fd, unsigned long offset, unsigned long size, void *relSegment);
-		bool load(int fd);
+		bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+		bool load(Common::SeekableReadStream* DLFile);
 
-		bool readElfHeader(int fd, Elf32_Ehdr *ehdr);
-		bool readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
-		bool loadSegment(int fd, Elf32_Phdr *phdr);
-		Elf32_Shdr *loadSectionHeaders(int fd, Elf32_Ehdr *ehdr);
-		int loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-		bool loadStringTable(int fd, Elf32_Shdr *shdr);
+		bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+		bool readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+		bool loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr);
+		Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
+		int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+		bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
 		void relocateSymbols(Elf32_Addr offset);
-		bool relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+		bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 	public:
 		bool open(const char *path);
