@@ -334,7 +334,17 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  6, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY,  7, MAP_CALL(DoSoundPlay),               "oi",                   NULL },
+	// DoSound (play) is called by 2 methods of the Sound object: play and
+	// playBed. The methods are the same, apart from the second integer
+	// parameter: it's 0 in play and 1 in playBed, to distinguish the caller.
+	// In SCI2, the playBed method is removed (thus the second parameter
+	// is now meaningless), and in SCI2.1 the second parameter is removed
+	// altogether. Thus, make the second parameter optional and check for
+	// its existence inside the function itself, so that the signature
+	// doesn't bomb out in SCI2.1 games. Another way would be to add SCI
+	// version checking here, but until then this is the only way to prevent
+	// the signature check from failing in SCI2.1 games.
+    { SIG_SOUNDSCI1EARLY,  7, MAP_CALL(DoSoundPlay),               "o(i)",                 NULL },
     { SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
     { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                NULL },
