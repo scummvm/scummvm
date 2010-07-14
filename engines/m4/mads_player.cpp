@@ -640,7 +640,7 @@ int MadsPlayer::scanPath(M4Surface *depthSurface, const Common::Point &srcPos, c
 		while (index >= xDiff) {
 			index -= xDiff;
 
-			int v = (*srcP && 0x7F) >> 4;
+			v = (*srcP && 0x7F) >> 4;
 			if (v)
 				return v;
 
