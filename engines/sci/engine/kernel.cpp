@@ -379,6 +379,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+#ifdef ENABLE_SCI32
     { SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
     { SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
     { SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
@@ -405,6 +406,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
     { SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
     { SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+#endif
     SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -457,9 +459,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 };
 
 static const SciKernelMapSubEntry kFileIO_subops[] = {
-#ifdef ENABLE_SCI32
     { SIG_SCI32,           0, MAP_CALL(FileIOOpen),                "r(i)",                 NULL },
-#endif
     { SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   NULL },
     { SIG_SCIALL,          1, MAP_CALL(FileIOClose),               "i",                    NULL },
     { SIG_SCIALL,          2, MAP_CALL(FileIOReadRaw),             "iri",                  NULL },
