@@ -27,6 +27,7 @@
 #define DS_LOADER_H
 
 #include "elf32.h"
+#include "common/list.h"
 
 #define MAXDLERRLEN 80
 
@@ -63,7 +64,8 @@ public:
     void discard_symtab();
 
     DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL), _symtab(NULL),
-            _strtab(NULL), _symbol_cnt(0), _dtors_start(NULL), _dtors_end(NULL) {}
+            _strtab(NULL), _symbol_cnt(0), _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL),
+            _segmentSize(0) {}
 };
 
 #define RTLD_LAZY 0

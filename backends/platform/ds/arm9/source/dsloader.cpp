@@ -73,29 +73,29 @@ void DLObject::unload() {
  *
  */
 bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
-	Elf32_Rela *rela; //relocation entry
+	Elf32_Rel *rel = NULL; //relocation entry
 
 	// Allocate memory for relocation table
-	if (!(rela = (Elf32_Rela *)malloc(size))) {
+	if (!(rel = (Elf32_Rel *)malloc(size))) {
 		seterror("Out of memory.");
 		return false;
 	}
 
 	// Read in our relocation table
 	if (DLFile->seek(offset, SEEK_SET) < 0 ||
-	        DLFile->read(rela, size) != (ssize_t)size) {
+	        DLFile->read(rel, size) != (ssize_t)size) {
 		seterror("Relocation table load failed.");
-		free(rela);
+		free(rel);
 		return false;
 	}
 
 	// Treat each relocation entry. Loop over all of them
-	int cnt = size / sizeof(*rela);
+	int cnt = size / sizeof(*rel);
+
+	DBG("# of relocation entries is %d.\n", cnt);
 
 	// TODO: Loop over relocation entries
 	for (int i = 0; i < cnt; i++) {
-
-		DBG("attempting to relocate!");
 
 	    //Elf32_Sym *sym = ???;
 
@@ -107,13 +107,13 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 			//break;
 	//	default:
 			//seterror("Unknown relocation type %d.", ?? ?);
-			free(rela);
+			free(rel);
 			return false;
 	//	}
 
 	}
 
-	free(rela);
+	free(rel);
 	return true;
 }
 
@@ -170,23 +170,32 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 		seterror("Out of memory.\n");
 		return false;
 	}
+
 	DBG("allocated segment @ %p\n", _segment);
 
 	// Get offset to load segment into
 	baseAddress = (char *)_segment + phdr->p_vaddr;
 	_segmentSize = phdr->p_memsz + extra;
 
+	DBG("base address is %p\n", baseAddress);
+	DBG("_segmentSize is %p\n", _segmentSize);
+
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
 		DBG("Setting %p to %p to 0 for bss\n", baseAddress + phdr->p_filesz, baseAddress + phdr->p_memsz);
 		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
+
+	DBG("Reading the segment into memory\n");
+
 	// Read the segment into memory
 	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
 	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
 		seterror("Segment load failed.");
 		return false;
 	}
+
+	DBG("Segment has been read into memory\n");
 
 	return true;
 }
@@ -288,8 +297,8 @@ void DLObject::relocateSymbols(Elf32_Addr offset) {
 		if (s->st_shndx < SHN_LOPROC) {
 				relocCount++;
 				s->st_value += offset;
-				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
-					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+				//if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
+					//seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
 
 		}
 
@@ -307,7 +316,7 @@ bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr
 		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
 
 		if (curShdr->sh_type == SHT_REL && 						// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rela) &&		    // Check for proper relocation size
+		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		// Check for proper relocation size
 		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
 		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
@@ -328,13 +337,11 @@ bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	Elf32_Shdr *shdr;
 	bool ret = true;
 
-	//int symtab_sect = -1;
-
 	if (readElfHeader(DLFile, &ehdr) == false) {
 		return false;
 	}
 
-	for (int i = 0; i < ehdr.e_phnum; i++) {	//	Load our 2 segments
+	for (int i = 0; i < ehdr.e_phnum; i++) {	//Load our segments
 
 		DBG("Loading segment %d\n", i);
 
@@ -389,9 +396,11 @@ bool DLObject::open(const char *path) {
 		return false;
 	}
 
+	DBG("loaded!/n");
+
 	//DLFile->finalize();
 
-	//TODO: flush data cache
+	//TODO?: flush data cache
 
 	ctors_start = symbol("___plugin_ctors");
 	ctors_end = symbol("___plugin_ctors_end");
@@ -411,7 +420,7 @@ bool DLObject::open(const char *path) {
 		(**f)();
 
 	DBG(("%s opened ok.\n", path));
-	return false;
+
 	return true;
 }
 
