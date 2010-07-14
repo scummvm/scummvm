@@ -271,6 +271,12 @@ static const SciWorkaroundEntry kUnLoad_workarounds[] = {
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kStrCpy_workarounds[] = {
+    { GID_ISLANDBRAIN,          45,  0,    "aWord", "addOn",             -1,    0, { 0,    0 } }, // Hominy Homonym puzzle, room 260
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 struct SciKernelMapSubEntry {
 	SciVersion fromVersion;
 	SciVersion toVersion;
@@ -613,7 +619,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(StrAt),             SIG_EVERYWHERE,           "ri(i)",                 NULL,            NULL },
     { MAP_CALL(StrCat),            SIG_EVERYWHERE,           "rr",                    NULL,            NULL },
     { MAP_CALL(StrCmp),            SIG_EVERYWHERE,           "rr(i)",                 NULL,            NULL },
-    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",              NULL,            NULL },
+    { MAP_CALL(StrCpy),            SIG_EVERYWHERE,           "[r0]r(i)",              NULL,            kStrCpy_workarounds },
     { MAP_CALL(StrEnd),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(StrLen),            SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
     { MAP_CALL(StrSplit),          SIG_EVERYWHERE,           "rr[r0]",                NULL,            NULL },
