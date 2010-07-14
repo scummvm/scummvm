@@ -177,7 +177,6 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
 	delete _driver;
 	_parser->setMidiDriver(NULL);
 	delete _parser;
