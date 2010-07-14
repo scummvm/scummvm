@@ -382,7 +382,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
-	SCI_SUBOPENTRY_TERMINATOR
+    SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
@@ -404,7 +404,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     { SIG_SCIALL,         13, MAP_CALL(GraphRedrawBox),            "iiii",                 NULL },
     { SIG_SCIALL,         14, MAP_CALL(GraphAdjustPriority),       "ii",                   NULL },
     { SIG_SCI11,          15, MAP_CALL(GraphSaveUpscaledHiresBox), "iiii",                 NULL }, // kq6 hires
-	SCI_SUBOPENTRY_TERMINATOR
+    SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
@@ -417,7 +417,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
     { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
     { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
-	SCI_SUBOPENTRY_TERMINATOR
+    SCI_SUBOPENTRY_TERMINATOR
 };
 
 //    version,         subId, function-mapping,                    signature,              workarounds
@@ -430,7 +430,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
     { SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
     { SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
     { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "i",                    NULL },
-	SCI_SUBOPENTRY_TERMINATOR
+    SCI_SUBOPENTRY_TERMINATOR
 };
 
 #ifdef ENABLE_SCI32
@@ -438,33 +438,33 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
 static const SciKernelMapSubEntry kList_subops[] = {
     { SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
     { SIG_SCI21,           1, MAP_CALL(DisposeList),               "l",                    NULL },
-	{ SIG_SCI21,           2, MAP_CALL(NewNode),                   ".",                    NULL },
-	{ SIG_SCI21,           3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
-	{ SIG_SCI21,           4, MAP_CALL(LastNode),                  "l",                    NULL },
-	{ SIG_SCI21,           5, MAP_CALL(EmptyList),                 "l",                    NULL },
-	{ SIG_SCI21,           6, MAP_CALL(NextNode),                  "n",                    NULL },
-	{ SIG_SCI21,           7, MAP_CALL(PrevNode),                  "n",                    NULL },
-	{ SIG_SCI21,           8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
-	{ SIG_SCI21,           9, MAP_CALL(AddAfter),                  "lnn.",                 NULL },
-	{ SIG_SCI21,          10, MAP_CALL(AddToFront),                "ln.",                  NULL },
-	{ SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln.",                  NULL },
-	{ SIG_SCI21,          12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
-	{ SIG_SCI21,          13, MAP_CALL(MoveToFront),               "ln",                   NULL },
-	{ SIG_SCI21,          14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
-	{ SIG_SCI21,          15, MAP_CALL(FindKey),                   "l.",                   NULL },
-	{ SIG_SCI21,          16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
-	{ SIG_SCI21,          17, MAP_CALL(ListAt),                    "li",                   NULL },
-	// FIXME: This doesn't seem to be ListIndexOf. In Torin demo, an index is
-	// passed as a second parameter instead of an object. Thus, it seems to
-	// be something like ListAt instead... If we swap the two subops though,
-	// Torin demo crashes complaining that it tried to send to a non-object,
-	// therefore the semantics might be different here
-	{ SIG_SCI21,          18, MAP_CALL(ListIndexOf),               "l[o0]",                NULL },
-	{ SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
-	{ SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
-	{ SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
-	{ SIG_SCI21,          22, MAP_CALL(Sort),                      "ooo",                  NULL },
-	SCI_SUBOPENTRY_TERMINATOR
+    { SIG_SCI21,           2, MAP_CALL(NewNode),                   ".",                    NULL },
+    { SIG_SCI21,           3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
+    { SIG_SCI21,           4, MAP_CALL(LastNode),                  "l",                    NULL },
+    { SIG_SCI21,           5, MAP_CALL(EmptyList),                 "l",                    NULL },
+    { SIG_SCI21,           6, MAP_CALL(NextNode),                  "n",                    NULL },
+    { SIG_SCI21,           7, MAP_CALL(PrevNode),                  "n",                    NULL },
+    { SIG_SCI21,           8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
+    { SIG_SCI21,           9, MAP_CALL(AddAfter),                  "lnn.",                 NULL },
+    { SIG_SCI21,          10, MAP_CALL(AddToFront),                "ln.",                  NULL },
+    { SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln.",                  NULL },
+    { SIG_SCI21,          12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
+    { SIG_SCI21,          13, MAP_CALL(MoveToFront),               "ln",                   NULL },
+    { SIG_SCI21,          14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
+    { SIG_SCI21,          15, MAP_CALL(FindKey),                   "l.",                   NULL },
+    { SIG_SCI21,          16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
+    { SIG_SCI21,          17, MAP_CALL(ListAt),                    "li",                   NULL },
+    // FIXME: This doesn't seem to be ListIndexOf. In Torin demo, an index is
+    // passed as a second parameter instead of an object. Thus, it seems to
+    // be something like ListAt instead... If we swap the two subops though,
+    // Torin demo crashes complaining that it tried to send to a non-object,
+    // therefore the semantics might be different here
+    { SIG_SCI21,          18, MAP_CALL(ListIndexOf),               "l[o0]",                NULL },
+    { SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
+    { SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
+    { SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
+    { SIG_SCI21,          22, MAP_CALL(Sort),                      "ooo",                  NULL },
+    SCI_SUBOPENTRY_TERMINATOR
 };
 #endif
 
@@ -506,8 +506,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
     { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            NULL }, // subop
     { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir!]*)",          NULL,            NULL },
-	// ^ we allow invalid references here, because kDisplay gets called with those in e.g. pq3 during intro
-	//    restoreBits() checks and skips invalid handles, so that's fine. Sierra SCI behaved the same
+    // ^ we allow invalid references here, because kDisplay gets called with those in e.g. pq3 during intro
+    //    restoreBits() checks and skips invalid handles, so that's fine. Sierra SCI behaved the same
     { MAP_CALL(DirLoop),           SIG_EVERYWHERE,           "oi",                    NULL,            NULL },
     { MAP_CALL(DisposeClone),      SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DisposeList),       SIG_EVERYWHERE,           "l",                     NULL,            NULL },
@@ -538,7 +538,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Format),            SIG_EVERYWHERE,           "r(.*)",                 NULL,            NULL },
     { MAP_CALL(GameIsRestarting),  SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
     { MAP_CALL(GetAngle),          SIG_EVERYWHERE,           "iiii",                  NULL,            NULL },
-	 // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
+    // ^^ FIXME - occasionally KQ6 passes a 5th argument by mistake
     { MAP_CALL(GetCWD),            SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(GetDistance),       SIG_EVERYWHERE,           "ii(i)(i)(i)(i)",        NULL,            NULL },
     { MAP_CALL(GetEvent),          SIG_SCIALL, SIGFOR_MAC,   "io(i*)",                NULL,            NULL },
