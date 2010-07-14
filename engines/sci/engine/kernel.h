@@ -461,6 +461,9 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
 
+reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);

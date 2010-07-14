@@ -292,7 +292,8 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
 #define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
-#define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
+#define SIG_SCI2           SCI_VERSION_2, SCI_VERSION_NONE
+#define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_NONE
 
 // SCI-Sound-Version
 #define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
@@ -380,7 +381,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
-    { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+    { SIG_SCI2,            1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
     { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
     // 3 - set palette via resource
     { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          NULL },
@@ -409,7 +410,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
     { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
     { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
-    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
+    { SIG_SCI2,            8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -425,6 +426,41 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
     { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "i",                    NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
+
+#ifdef ENABLE_SCI32
+//    version,         subId, function-mapping,                    signature,              workarounds
+static const SciKernelMapSubEntry kList_subops[] = {
+    { SIG_SCI21,           0, MAP_CALL(NewList),                   "",                     NULL },
+    { SIG_SCI21,           1, MAP_CALL(DisposeList),               "l",                    NULL },
+	{ SIG_SCI21,           2, MAP_CALL(NewNode),                   ".",                    NULL },
+	{ SIG_SCI21,           3, MAP_CALL(FirstNode),                 "[l0]",                 NULL },
+	{ SIG_SCI21,           4, MAP_CALL(LastNode),                  "l",                    NULL },
+	{ SIG_SCI21,           5, MAP_CALL(EmptyList),                 "l",                    NULL },
+	{ SIG_SCI21,           6, MAP_CALL(NextNode),                  "n",                    NULL },
+	{ SIG_SCI21,           7, MAP_CALL(PrevNode),                  "n",                    NULL },
+	{ SIG_SCI21,           8, MAP_CALL(NodeValue),                 "[n0]",                 NULL },
+	{ SIG_SCI21,           9, MAP_CALL(AddAfter),                  "lnn.",                 NULL },
+	{ SIG_SCI21,          10, MAP_CALL(AddToFront),                "ln.",                  NULL },
+	{ SIG_SCI21,          11, MAP_CALL(AddToEnd),                  "ln.",                  NULL },
+	{ SIG_SCI21,          12, MAP_CALL(AddBefore),                 "ln.",                  NULL },
+	{ SIG_SCI21,          13, MAP_CALL(MoveToFront),               "ln",                   NULL },
+	{ SIG_SCI21,          14, MAP_CALL(MoveToEnd),                 "ln",                   NULL },
+	{ SIG_SCI21,          15, MAP_CALL(FindKey),                   "l.",                   NULL },
+	{ SIG_SCI21,          16, MAP_CALL(DeleteKey),                 "l.",                   NULL },
+	{ SIG_SCI21,          17, MAP_CALL(ListAt),                    "li",                   NULL },
+	// FIXME: This doesn't seem to be ListIndexOf. In Torin demo, an index is
+	// passed as a second parameter instead of an object. Thus, it seems to
+	// be something like ListAt instead... If we swap the two subops though,
+	// Torin demo crashes complaining that it tried to send to a non-object,
+	// therefore the semantics might be different here
+	{ SIG_SCI21,          18, MAP_CALL(ListIndexOf),               "l[o0]",                NULL },
+	{ SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
+	{ SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
+	{ SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
+	{ SIG_SCI21,          22, MAP_CALL(Sort),                      "ooo",                  NULL },
+	SCI_SUBOPENTRY_TERMINATOR
+};
+#endif
 
 struct SciKernelMapEntry {
 	const char *name;
@@ -455,7 +491,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI2, SIGFOR_ALL,     "r.*",                   NULL,            NULL },
     { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -505,11 +541,11 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
     { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
     { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
-    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_SCI2, SIGFOR_ALL,     "(r*)",                  NULL,            NULL },
     { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
     { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
     { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
-    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_SCI2, SIGFOR_ALL,     "oo",                    NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
     { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -521,7 +557,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
     { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
-    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_SCI2, SIGFOR_ALL,     "oo",                    NULL,            NULL },
     { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -620,7 +656,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
-    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                  kList_subops,    NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
     { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
