@@ -73,7 +73,7 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	_screenItems.push_back(object);
-	warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _segMan->getObjectName(object));
+	//warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _segMan->getObjectName(object));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
