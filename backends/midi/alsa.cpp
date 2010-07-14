@@ -150,10 +150,13 @@ int MidiDriver_ALSA::open() {
 }
 
 void MidiDriver_ALSA::close() {
-	_isOpen = false;
-	MidiDriver_MPU401::close();
-	if (seq_handle)
-		snd_seq_close(seq_handle);
+	if (_isOpen) {
+		_isOpen = false;
+		MidiDriver_MPU401::close();
+		if (seq_handle)
+			snd_seq_close(seq_handle);
+	} else
+		warning("MidiDriver_ALSA: Closing the driver before opening it");
 }
 
 void MidiDriver_ALSA::send(uint32 b) {
