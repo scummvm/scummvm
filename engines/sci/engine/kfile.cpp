@@ -782,6 +782,8 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 	case K_FILEIO_UNLINK : {
 		Common::String name = s->_segMan->getString(argv[1]);
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+		bool result;
+
 		// SQ4 floppy prepends /\ to the filenames
 		if (name.hasPrefix("/\\")) {
 			name.deleteChar(0);
@@ -800,17 +802,16 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 			listSavegames(saves);
 			int savedir_nr = saves[slotNum].id;
 			name = g_sci->getSavegameName(savedir_nr);
-			saveFileMan->removeSavefile(name);
+			result = saveFileMan->removeSavefile(name);
 		} else {
 			const Common::String wrappedName = g_sci->wrapFilename(name);
-			saveFileMan->removeSavefile(wrappedName);
+			result = saveFileMan->removeSavefile(wrappedName);
 		}
 
 		debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
-
-		// TODO/FIXME: Should we return something (like, a bool indicating
-		// whether deleting the save succeeded or failed)?
-		break;
+		if (result)
+			return NULL_REG;
+		return make_reg(0, 2); // DOS - file not found error code
 	}
 	case K_FILEIO_READ_STRING : {
 		int size = argv[2].toUint16();
