@@ -273,7 +273,7 @@ static const SciWorkaroundEntry kUnLoad_workarounds[] = {
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kStrCpy_workarounds[] = {
-    { GID_ISLANDBRAIN,          45,  0,    "aWord", "addOn",             -1,    0, { 0,    0 } }, // Hominy Homonym puzzle, room 260
+    { GID_ISLANDBRAIN,          45,  0,    "aWord", "addOn",             -1,     0, { 0,    0 } }, // Hominy Homonym puzzle, room 260
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
