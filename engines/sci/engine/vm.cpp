@@ -337,6 +337,29 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 	return make_reg(0xFFFF, 0xFFFF);
 }
 
+static bool validate_signedInteger(reg_t reg, int16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = (int16)reg.offset;
+	return true;
+}
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
+    { GID_QFG1VGA,       928,  0,              "Blink", "init",           -1,    0, { 0,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+extern const char *opcodeNames[]; // from scriptdebug.cpp
+
+static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
+	SciTrackOriginReply originReply;
+	reg_t workaroundValue = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
+	if ((workaroundValue.segment == 0xFFFF) && (workaroundValue.offset == 0xFFFF))
+		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, localCall %x)", opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+	return workaroundValue;
+}
+
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
@@ -1154,8 +1177,13 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_div: { // 0x04 (04)
-			int16 divisor = signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, (divisor != 0 ? ((int16)POP()) / divisor : 0));
+			r_temp = POP32();
+			int16 divisor;
+			int16 dividend;
+			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
+				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
 			break;
 		}
 		case op_mod: { // 0x05 (05)
