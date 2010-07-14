@@ -80,7 +80,7 @@ struct Test {
 class Testsuite {
 public:
 	Testsuite();
-	virtual ~Testsuite();	
+	virtual ~Testsuite();
 	int getNumTests() const { return _testsToExecute.size(); }
 	int getNumTestsPassed() const { return _numTestsPassed; }
 	int getNumTestsFailed() const { return _numTestsExecuted - _numTestsPassed; }
@@ -96,11 +96,11 @@ public:
 	 *
 	 * @param	textToDisplay Display text
 	 * @return	true if "Yes" false otherwise
-	 */ 
+	 */
 	static bool handleInteractiveInput(const Common::String &textToDisplay, const char *opt1 = "Yes", const char *opt2 = "No", OptionSelected result = kOptionLeft);
-	
+
 	static void displayMessage(const Common::String &textToDisplay, const char *defaultButton = "OK", const char *altButton = 0);
-	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, bool flag = false);	
+	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, bool flag = false);
 	static void clearScreen(const Common::Rect &rect);
 	static void clearScreen();
 	static void clearScreen(bool flag);
@@ -120,7 +120,7 @@ public:
 	 */
 	virtual void execute();
 	static uint parseEvents();
-	
+
 	virtual const char *getName() const = 0;
 
 	static void logPrintf(const char *s, ...) GCC_PRINTF(1, 2);
@@ -132,13 +132,13 @@ public:
 	static void initLogging(bool enable = true);
 	static void setLogDir(const char *dirname);
 	static void setLogFile(const char *filename);
-	
+
 	static void deleteWriteStream();
 
 protected:
 	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
-	int  		_numTestsExecuted;					///< Number of tests executed
+	int			_numTestsExecuted;					///< Number of tests executed
 	bool		_isTsEnabled;
 
 public:
@@ -148,7 +148,7 @@ public:
 	 * Used by various tests to respond accordingly
 	 */
 	static bool isSessionInteractive;
-	
+
 	/**
 	 * Used from the code to decide if the engine needs to exit
 	 */

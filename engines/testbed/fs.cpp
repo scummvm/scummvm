@@ -39,14 +39,14 @@ namespace Testbed {
  *
  */
 bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file) {
-	
+
 	Common::SeekableReadStream *readStream = directory->createReadStreamForMember(file);
 
 	if (!readStream) {
 		Testsuite::logDetailedPrintf("Can't open game file for reading\n");
 		return false;
-	} 
-	
+	}
+
 	Common::String msg = readStream->readLine();
 	delete readStream;
 	Testsuite::logDetailedPrintf("Message Extracted from %s/%s : %s\n",directory->getFSNode().getName().c_str(), file, msg.c_str());
@@ -67,44 +67,44 @@ bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSDirectory gameRoot(path);
 	int numFailed = 0;
-	
+
 	if (!gameRoot.getFSNode().isDirectory()) {
 		Testsuite::logDetailedPrintf("game Path should be a directory");
 		return false;
 	}
-	
+
 	const char *dirList[] = {"test1" ,"Test2", "TEST3" , "tEST4", "test5"};
 	const char *file[] = {"file.txt", "File.txt", "FILE.txt", "fILe.txt", "file"};
 
 	for (unsigned int i = 0; i < ARRAYSIZE(dirList); i++) {
 		Common::String dirName = dirList[i];
 		Common::String fileName = file[i];
-		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName); 
+		Common::FSDirectory *directory = gameRoot.getSubDirectory(dirName);
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
-		
+
 		dirName.toLowercase();
 		fileName.toLowercase();
-		directory = gameRoot.getSubDirectory(dirName); 
-		
+		directory = gameRoot.getSubDirectory(dirName);
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
-		
+
 		dirName.toUppercase();
 		fileName.toUppercase();
-		directory = gameRoot.getSubDirectory(dirName); 
-		
+		directory = gameRoot.getSubDirectory(dirName);
+
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
 	}
-	
+
 	Testsuite::logDetailedPrintf("Failed %d out of 15\n", numFailed);
 	return false;
 }
@@ -119,14 +119,14 @@ bool FStests::testWriteFile() {
 	Common::FSNode gameRoot(path);
 
 	Common::FSNode fileToWrite = gameRoot.getChild("testbed.out");
-	
+
 	Common::WriteStream *ws = fileToWrite.createWriteStream();
-	
+
 	if (!ws) {
 		Testsuite::logDetailedPrintf("Can't open writable file in game data dir\n");
 		return false;
 	}
-	
+
 	ws->writeString("ScummVM Rocks!");
 	ws->flush();
 	delete ws;
@@ -141,15 +141,15 @@ bool FStests::testWriteFile() {
 		return true;
 	}
 
-	
+
 	return false;
 }
 
 
 
 FSTestSuite::FSTestSuite() {
-	addTest("ReadingFile", &FStests::testReadFile, false);	
-	addTest("WritingFile", &FStests::testWriteFile, false);	
+	addTest("ReadingFile", &FStests::testReadFile, false);
+	addTest("WritingFile", &FStests::testWriteFile, false);
 }
 
 const char *FSTestSuite::getName() const {

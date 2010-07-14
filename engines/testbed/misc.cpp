@@ -44,7 +44,7 @@ void MiscTests::timerCallback(void *arg) {
 
 void MiscTests::criticalSection(void *arg) {
 	SharedVars &sv = *((SharedVars *) arg);
-	
+
 	Testsuite::logDetailedPrintf("Before critical section: %d %d\n", sv.first, sv.second);
 	g_system->lockMutex(sv.mutex);
 
@@ -92,7 +92,7 @@ bool MiscTests::testDateTime() {
 	Testsuite::logDetailedPrintf("Time and Date 2s later: ");
 	getHumanReadableFormat(t2, dateTimeNow);
 	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
-	
+
 	if (t1.tm_year == t2.tm_year && t1.tm_mon == t2.tm_mon && t1.tm_mday == t2.tm_mday) {
 		if (t1.tm_mon == t2.tm_mon && t1.tm_year == t2.tm_year){
 			// Ignore lag due to processing time
@@ -109,7 +109,7 @@ bool MiscTests::testTimers() {
 	if (g_system->getTimerManager()->installTimerProc(timerCallback, 100000, &valToModify)) {
 		g_system->delayMillis(150);
 		g_system->getTimerManager()->removeTimerProc(timerCallback);
-		
+
 		if (999 == valToModify) {
 			return true;
 		}
@@ -119,7 +119,7 @@ bool MiscTests::testTimers() {
 
 bool MiscTests::testMutexes() {
 	static SharedVars sv = {1, 1, true, g_system->createMutex()};
-	
+
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
 		g_system->delayMillis(150);
 	}
@@ -143,9 +143,9 @@ bool MiscTests::testMutexes() {
 }
 
 MiscTestSuite::MiscTestSuite() {
-	addTest("Date/time", &MiscTests::testDateTime, false);	
-	addTest("Timers", &MiscTests::testTimers, false);	
-	addTest("Mutexes", &MiscTests::testMutexes, false);	
+	addTest("Date/time", &MiscTests::testDateTime, false);
+	addTest("Timers", &MiscTests::testTimers, false);
+	addTest("Mutexes", &MiscTests::testMutexes, false);
 }
 const char *MiscTestSuite::getName() const {
 	return "Misc";

@@ -62,7 +62,7 @@ void Testsuite::deleteWriteStream() {
 void Testsuite::initLogging(const char *logdir, const char *filename, bool enable) {
 	setLogDir(logdir);
 	setLogFile(filename);
-	
+
 	if (enable) {
 		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
 	} else {
@@ -73,7 +73,7 @@ void Testsuite::initLogging(const char *logdir, const char *filename, bool enabl
 void Testsuite::initLogging(bool enable) {
 	setLogDir(ConfMan.get("path").c_str());
 	setLogFile("testbed.log");
-	
+
 	if (enable) {
 		_ws = Common::FSNode(_logDirectory).getChild(_logFilename).createWriteStream();
 	} else {
@@ -88,7 +88,7 @@ void Testsuite::logPrintf(const char *fmt, ...) {
 	va_start(vl, fmt);
 	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
 	va_end(vl);
-	
+
 	if (_ws) {
 		_ws->writeString(buffer);
 	} else {
@@ -104,7 +104,7 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 	va_start(vl, fmt);
 	vsnprintf(buffer, STRINGBUFLEN, fmt, vl);
 	va_end(vl);
-	
+
 	if (_ws) {
 		_ws->writeString(buffer);
 	} else {
@@ -134,7 +134,7 @@ void Testsuite::genReport() const {
 	logPrintf("Failed: %d\n", getNumTestsFailed());
 	logPrintf("\n");
 }
-	
+
 bool Testsuite::handleInteractiveInput(const Common::String &textToDisplay, const char *opt1, const char *opt2, OptionSelected result) {
 	GUI::MessageDialog	prompt(textToDisplay, opt1, opt2);
 	return prompt.runModal() == result ? true : false;
@@ -151,7 +151,7 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 	uint textColor = kColorWhite;
 
 	Graphics::Surface *screen = g_system->lockScreen();
-	
+
 	int height = font.getFontHeight();
 	int width = screen->w;
 
@@ -162,7 +162,7 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 		fillColor = pf.RGBToColor(0 , 0, 0);
 		textColor = pf.RGBToColor(255 , 255, 255);
 	}
-	
+
 	screen->fillRect(rect, fillColor);
 	font.drawString(screen, textToDisplay, rect.left, rect.top, screen->w, textColor, Graphics::kTextAlignCenter);
 
@@ -174,13 +174,13 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 
 void Testsuite::clearScreen(const Common::Rect &rect) {
 	Graphics::Surface *screen = g_system->lockScreen();
-	
+
 	screen->fillRect(rect, kColorBlack);
 
 	g_system->unlockScreen();
 	g_system->updateScreen();
 }
-	
+
 void Testsuite::clearScreen() {
 	int numBytesPerLine = g_system->getWidth() * g_system->getScreenFormat().bytesPerPixel;
 	int size =  g_system->getHeight() * numBytesPerLine;
@@ -190,7 +190,7 @@ void Testsuite::clearScreen() {
 	g_system->updateScreen();
 	delete[] buffer;
 }
-	
+
 void Testsuite::clearScreen(bool flag) {
 	Graphics::Surface *screen = g_system->lockScreen();
 	uint fillColor = kColorBlack;
@@ -244,7 +244,7 @@ void Testsuite::execute() {
 	if (toQuit == kEngineQuit) {
 		return;
 	}
-	
+
 	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (toQuit == kSkipNext) {
 			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
@@ -266,16 +266,16 @@ void Testsuite::execute() {
 			logPrintf("Result: Failed\n");
 		}
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
-		// Check if user wants to quit/RTL/Skip next test by parsing events. 
+		// Check if user wants to quit/RTL/Skip next test by parsing events.
 		// Quit directly if explicitly requested
-		
+
 		if (Engine::shouldQuit()) {
 			toQuit = kEngineQuit;
 			genReport();
 			return;
 		}
 
-		toQuit = parseEvents();	
+		toQuit = parseEvents();
 	}
 	genReport();
 }

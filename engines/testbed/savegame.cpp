@@ -54,7 +54,7 @@ bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected
 
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::InSaveFile *loadFile = saveFileMan->openForLoading(fileName);
-	
+
 	if (!loadFile) {
 		Testsuite::logDetailedPrintf("Can't open save File to load\n");
 		return false;
@@ -88,7 +88,7 @@ bool SaveGametests::testSaveLoadState() {
 }
 
 bool SaveGametests::testRemovingSavefile() {
-	
+
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
 	// Create a dummy savefile
@@ -118,7 +118,7 @@ bool SaveGametests::testRenamingSavefile() {
 		Testsuite::logDetailedPrintf("Writing data to savefile failed\n");
 		return false;
 	}
-	
+
 	// Rename it
 	saveFileMan->renameSavefile("tBedSomeWeirdName.0", "tBedSomeCoolName.0");
 
@@ -127,11 +127,11 @@ bool SaveGametests::testRenamingSavefile() {
 		Testsuite::logDetailedPrintf("Renaming savefile failed\n");
 		return false;
 	}
-	
+
 	return true;
 }
 
-bool SaveGametests::testListingSavefile() {	
+bool SaveGametests::testListingSavefile() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->clearError();
 
@@ -175,10 +175,10 @@ bool SaveGametests::testListingSavefile() {
 }
 
 
-bool SaveGametests::testErrorMessages() {	
+bool SaveGametests::testErrorMessages() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	saveFileMan->clearError();
-	
+
 	// Try opening a non existing file
 	readAndVerifyData("tBedSomeNonExistentSaveFile.0", "File doesn't exists!");
 

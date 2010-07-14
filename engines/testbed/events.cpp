@@ -71,7 +71,7 @@ char EventTests::keystrokeToChar() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 	bool quitLoop = false;
 	Common::Event event;
-	
+
 	// handle all keybd events
 	while (!quitLoop) {
 		while (eventMan->pollEvent(event)) {
@@ -83,7 +83,7 @@ char EventTests::keystrokeToChar() {
 
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN :
-				
+
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					return 0;
 				}
@@ -107,7 +107,7 @@ bool EventTests::mouseEvents() {
 
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Generate mouse events make L/R/M button clicks", pt);
-	pt.y = 120; 
+	pt.y = 120;
 	Testsuite::writeOnScreen("Testbed should be able to detect them, Press X to exit", pt);
 
 	// Init Mouse Palette
@@ -166,7 +166,7 @@ bool EventTests::mouseEvents() {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_x) {
 					Testsuite::clearScreen();
-					Testsuite::writeOnScreen("Exit requested", pt);	
+					Testsuite::writeOnScreen("Exit requested", pt);
 					quitLoop = true;
 				}
 				break;
@@ -177,7 +177,7 @@ bool EventTests::mouseEvents() {
 
 		}
 	}
-	
+
 	CursorMan.showMouse(false);
 
 	// Verify results now!
@@ -207,9 +207,9 @@ bool EventTests::kbdEvents() {
 		text += letter;
 		rect = Testsuite::writeOnScreen(text, pt);
 	}
-	
+
 	bool passed = true;
-	
+
 	if (Testsuite::handleInteractiveInput("Was the word you entered same as that displayed on screen?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Keyboard Events failed");
 		passed = false;
@@ -226,12 +226,12 @@ bool EventTests::showMainMenu() {
 	eventMan->pushEvent(mainMenuEvent);
 
 	bool passed = true;
-	
+
 	if (Testsuite::handleInteractiveInput("Were you able to see a main menu widget?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Event MAINMENU failed");
 		passed = false;
 	}
-	
+
 	return passed;
 }
 
