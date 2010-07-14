@@ -113,7 +113,7 @@ typedef struct {
 
 // sh_type values
 #define SHT_NULL			0	/* Inactive section */
-#define SHT_PROGBITS                    1	/* Proprietary */
+#define SHT_PROGBITS        1	/* Proprietary */
 #define SHT_SYMTAB			2	/* Symbol table */
 #define SHT_STRTAB			3	/* String table */
 #define SHT_RELA			4	/* Relocation entries with addend */
@@ -165,14 +165,13 @@ typedef struct {
 #define SHN_ABS	   		0xFFF1	/* Absolute value: don't relocate */
 #define SHN_COMMON 		0xFFF2	/* Common block. Not allocated yet */
 #define SHN_HIPROC 		0xFF1F
-#define SHN_HIRESERVE 	        0xFFFF
+#define SHN_HIRESERVE 	0xFFFF
 
 // Relocation entry (info about how to relocate)
 typedef struct {
 	Elf32_Addr    r_offset;               /* Address */
 	Elf32_Word    r_info;                 /* Relocation type and symbol index */
-	Elf32_Sword   r_addend;               /* Addend */
-} Elf32_Rela;
+} Elf32_Rel;
 
 // Access macros for the relocation info
 #define REL_TYPE(x)	((unsigned char) (x))	/* Extract relocation type */
