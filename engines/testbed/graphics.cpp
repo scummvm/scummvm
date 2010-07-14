@@ -179,9 +179,9 @@ void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, in
 		break;
 	}
 
-	rComp = r * 255;
-	gComp = g * 255;
-	bComp = b * 255;
+	rComp = (int)(r * 255);
+	gComp = (int)(g * 255);
+	bComp = (int)(b * 255);
 }
 
 Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {
