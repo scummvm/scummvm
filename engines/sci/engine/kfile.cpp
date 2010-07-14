@@ -603,11 +603,15 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
-	if ((savegameId < 1000) || (savegameId > 1999)) {
-		warning("Savegame ID %d is not allowed", savegameId);
-		return TRUE_REG;
+	if (argv[0].isNull()) {
+		// Loading from the launcher, don't adjust the ID of the saved game
+	} else {
+		if ((savegameId < 1000) || (savegameId > 1999)) {
+			warning("Savegame ID %d is not allowed", savegameId);
+			return TRUE_REG;
+		}
+		savegameId -= 1000;
 	}
-	savegameId -= 1000;
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
