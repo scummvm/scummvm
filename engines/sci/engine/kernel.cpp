@@ -297,9 +297,10 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
 #define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
 #define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_2_1
+
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
-#define SIG_SCI2           SCI_VERSION_2, SCI_VERSION_NONE
-#define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_NONE
+#define SIG_SCI32          SCI_VERSION_2, SCI_VERSION_NONE
 
 // SCI-Sound-Version
 #define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
@@ -386,7 +387,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kGraph_subops[] = {
-    { SIG_SCI2,            1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
+    { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
     { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
     // 3 - set palette via resource
     { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          NULL },
@@ -415,7 +416,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
     { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
     { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
-    { SIG_SCI2,            8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
+    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
 	SCI_SUBOPENTRY_TERMINATOR
 };
 
@@ -496,7 +497,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_SCI2, SIGFOR_ALL,     "r.*",                   NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
     { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -546,11 +547,11 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(GetMenu),           SIG_EVERYWHERE,           "i.",                    NULL,            NULL },
     { MAP_CALL(GetMessage),        SIG_EVERYWHERE,           "iiir",                  NULL,            NULL },
     { MAP_CALL(GetPort),           SIG_EVERYWHERE,           "",                      NULL,            NULL },
-    { MAP_CALL(GetSaveDir),        SIG_SCI2, SIGFOR_ALL,     "(r*)",                  NULL,            NULL },
+    { MAP_CALL(GetSaveDir),        SIG_SCI32, SIGFOR_ALL,    "(r*)",                  NULL,            NULL },
     { MAP_CALL(GetSaveDir),        SIG_EVERYWHERE,           "",                      NULL,            NULL },
     { MAP_CALL(GetSaveFiles),      SIG_EVERYWHERE,           "rrr",                   NULL,            NULL },
     { MAP_CALL(GetTime),           SIG_EVERYWHERE,           "(i)",                   NULL,            NULL },
-    { MAP_CALL(GlobalToLocal),     SIG_SCI2, SIGFOR_ALL,     "oo",                    NULL,            NULL },
+    { MAP_CALL(GlobalToLocal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
     { MAP_CALL(GlobalToLocal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Graph),             SIG_EVERYWHERE,           NULL,                    kGraph_subops,   NULL },
     { MAP_CALL(HaveMouse),         SIG_EVERYWHERE,           "",                      NULL,            NULL },
@@ -562,7 +563,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
     { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
-    { MAP_CALL(LocalToGlobal),     SIG_SCI2, SIGFOR_ALL,     "oo",                    NULL,            NULL },
+    { MAP_CALL(LocalToGlobal),     SIG_SCI32, SIGFOR_ALL,    "oo",                    NULL,            NULL },
     { MAP_CALL(LocalToGlobal),     SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(Lock),              SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(MapKeyToDir),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
@@ -661,7 +662,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     // SCI2.1 Kernel Functions
     { MAP_CALL(CD),           	   SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(IsOnMe),            SIG_EVERYWHERE,           "iio(.*)",               NULL,            NULL },
-    { MAP_CALL(List),              SIG_EVERYWHERE,           "(.*)",                  kList_subops,    NULL },
+    { MAP_CALL(List),              SIG_SCI21, SIGFOR_ALL,    "(.*)",                  kList_subops,    NULL },
     { MAP_CALL(MulDiv),            SIG_EVERYWHERE,           "iii",                   NULL,            NULL },
     { MAP_CALL(PlayVMD),           SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
