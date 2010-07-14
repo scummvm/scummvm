@@ -1221,8 +1221,8 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			} else if (r_temp.segment && !s->r_acc.segment) {
 				if (s->r_acc.offset >= 1000)
-					error("[VM] op_gt: comparsion between a pointer and number");
-				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
+					error("[VM] op_gt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 28, when throwing the water at Orat
 				s->r_acc = make_reg(0, 1);
 			} else
@@ -1251,8 +1251,8 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			} else if (r_temp.segment && !s->r_acc.segment) {
 				if (s->r_acc.offset >= 1000)
-					error("[VM] op_lt: comparsion between a pointer and number");
-				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
+					error("[VM] op_lt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 58, when giving id-card to robot
 				s->r_acc = make_reg(0, 1);
 			} else
