@@ -580,7 +580,7 @@ void AgiEngine::initialize() {
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK))) {
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
