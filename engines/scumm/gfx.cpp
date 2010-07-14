@@ -1482,7 +1482,7 @@ void GdiV2::prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
 	// Since V3, all graphics data was encoded in strips, which is very efficient
 	// for redrawing only parts of the screen. However, V2 is different: here
 	// the whole graphics are encoded as one big chunk. That makes it rather
-	// dificult to draw only parts of a room/object. We handle the V2 graphics
+	// difficult to draw only parts of a room/object. We handle the V2 graphics
 	// differently from all other (newer) graphic formats for this reason.
 	//
 	StripTable *table = (_objectMode ? 0 : _roomStrips);
