@@ -127,7 +127,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		// the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
 		if (g_sci->getGameId() == GID_KQ6)
 			initGraphics(_displayWidth, _displayHeight + 26, _displayWidth > 320);
-		else if (g_sci->getGameId() == GID_QFG1)
+		else if (g_sci->getGameId() == GID_QFG1VGA)
 			initGraphics(_displayWidth, _displayHeight + 20, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");

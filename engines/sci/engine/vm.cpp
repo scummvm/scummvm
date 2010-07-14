@@ -626,7 +626,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				if (!strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
 					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
 					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1) {
+				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1VGA) {
 					// QFG1VGA has a script bug in the longSong object when invoking the
 					// loop selector, which doesn't affect gameplay, thus don't diplay it
 				} else if (!strcmp(objectName, "PuzPiece") && selector == 77 && g_sci->getGameId() == GID_CASTLEBRAIN) {

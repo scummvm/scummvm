@@ -2252,7 +2252,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS
 	// Executable scanning reports "2.000.411"
-	{"qfg1", "VGA Remake", {
+	{"qfg1vga", "VGA Remake", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
 		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
 		{NULL, 0, NULL, 0}},
@@ -2261,7 +2261,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.029
-	{"qfg1", "VGA Remake, Demo", {
+	{"qfg1vga", "VGA Remake, Demo", {
 		{"resource.map", 0, "ac0257051c95a59c0cdc0be24d9b11fa", 729},
 		{"resource.000", 0, "ec6f5cf369054dd3e5392995e9975b9e", 768218},
 		{NULL, 0, NULL, 0}},
@@ -2270,7 +2270,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
 	// VERSION file reports "2.0"
-	{"qfg1", "VGA Remake", {
+	{"qfg1vga", "VGA Remake", {
 		{"Data1", 0, "14f26bc75f24bb1ecc94532df17b5371", 1768155},
 		{"Data2", 0, "a7aee8bd46fc9cef7fd3bea93ef173e0", 6586422},
 		{NULL, 0, NULL, 0}},
