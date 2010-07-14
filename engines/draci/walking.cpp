@@ -324,7 +324,7 @@ void WalkingMap::drawOverlayRectangle(const Common::Point &p, byte colour, byte 
 }
 
 int WalkingMap::pointsBetween(const Common::Point &p1, const Common::Point &p2) {
-	return MAX(abs(p2.x - p1.x), abs(p2.y - p1.y));
+	return MAX(ABS(p2.x - p1.x), ABS(p2.y - p1.y));
 }
 
 Common::Point WalkingMap::interpolate(const Common::Point &p1, const Common::Point &p2, int i, int n) {
@@ -636,7 +636,7 @@ bool WalkingState::walkOnNextEdge() {
 Movement WalkingState::animationForDirection(const Common::Point &here, const Common::Point &there) {
 	const int dx = there.x - here.x;
 	const int dy = there.y - here.y;
-	if (abs(dx) >= abs(dy)) {
+	if (ABS(dx) >= ABS(dy)) {
 		return dx >= 0 ? kMoveRight : kMoveLeft;
 	} else {
 		return dy >= 0 ? kMoveDown : kMoveUp;
