@@ -297,6 +297,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SCI0           SCI_VERSION_NONE, SCI_VERSION_01
 #define SIG_SCI1           SCI_VERSION_1_EGA, SCI_VERSION_1_LATE
 #define SIG_SCI11          SCI_VERSION_1_1, SCI_VERSION_1_1
+#define SIG_SINCE_SCI11    SCI_VERSION_1_1, SCI_VERSION_NONE
 #define SIG_SCI21          SCI_VERSION_2_1, SCI_VERSION_2_1
 
 #define SIG_SCI16          SCI_VERSION_NONE, SCI_VERSION_1_1
@@ -455,6 +456,32 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
     SCI_SUBOPENTRY_TERMINATOR
 };
 
+static const SciKernelMapSubEntry kFileIO_subops[] = {
+#ifdef ENABLE_SCI32
+    { SIG_SCI32,           0, MAP_CALL(FileIOOpen),                "r(i)",                 NULL },
+#endif
+    { SIG_SCIALL,          0, MAP_CALL(FileIOOpen),                "ri",                   NULL },
+    { SIG_SCIALL,          1, MAP_CALL(FileIOClose),               "i",                    NULL },
+    { SIG_SCIALL,          2, MAP_CALL(FileIOReadRaw),             "iri",                  NULL },
+    { SIG_SCIALL,          3, MAP_CALL(FileIOWriteRaw),            "iri",                  NULL },
+    { SIG_SCIALL,          4, MAP_CALL(FileIOUnlink),              "r",                    NULL },
+    { SIG_SCIALL,          5, MAP_CALL(FileIOReadString),          "rii",                  NULL },
+    { SIG_SCIALL,          6, MAP_CALL(FileIOWriteString),         "ir",                   NULL },
+    { SIG_SCIALL,          7, MAP_CALL(FileIOSeek),                "iii",                  NULL },
+    { SIG_SCIALL,          8, MAP_CALL(FileIOFindFirst),           "rri",                  NULL },
+    { SIG_SCIALL,          9, MAP_CALL(FileIOFindNext),            "r",                    NULL },
+    { SIG_SCIALL,         10, MAP_CALL(FileIOExists),              "r",                    NULL },
+    { SIG_SINCE_SCI11,    11, MAP_CALL(FileIORename),              "rr",                   NULL },
+#ifdef ENABLE_SCI32
+    { SIG_SCI32,          13, MAP_CALL(FileIOReadByte),            "i",                    NULL },
+    { SIG_SCI32,          14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
+    { SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
+    { SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
+    { SIG_SCI32,          19, MAP_CALL(Stub),                      "",                     NULL }, // for Torin demo
+#endif
+    SCI_SUBOPENTRY_TERMINATOR
+};
+
 #ifdef ENABLE_SCI32
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kList_subops[] = {
@@ -553,7 +580,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(FGets),             SIG_EVERYWHERE,           "rii",                   NULL,            NULL },
     { MAP_CALL(FOpen),             SIG_EVERYWHERE,           "ri",                    NULL,            NULL },
     { MAP_CALL(FPuts),             SIG_EVERYWHERE,           "ir",                    NULL,            NULL },
-    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
+    { MAP_CALL(FileIO),            SIG_EVERYWHERE,           "i(.*)",                 kFileIO_subops,  NULL },
     { MAP_CALL(FindKey),           SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
     { MAP_CALL(FirstNode),         SIG_EVERYWHERE,           "[l0]",                  NULL,            NULL },
     { MAP_CALL(FlushResources),    SIG_EVERYWHERE,           "i",                     NULL,            NULL },

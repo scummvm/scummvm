@@ -98,7 +98,7 @@ enum {
 
 
 
-void file_open(EngineState *s, const char *filename, int mode) {
+reg_t file_open(EngineState *s, const char *filename, int mode) {
 	// QfG3 character import prepends /\ to the filenames.
 	if (filename[0] == '/' && filename[1] == '\\')
 		filename += 2;
@@ -154,8 +154,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	if (!inFile && !outFile) { // Failed
 		debugC(2, kDebugLevelFile, "  -> file_open() failed");
-		s->r_acc = SIGNAL_REG;
-		return;
+		return SIGNAL_REG;
 	}
 
 	// Find a free file handle
@@ -172,9 +171,8 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	s->_fileHandles[handle]._out = outFile;
 	s->_fileHandles[handle]._name = englishName;
 
-	s->r_acc = make_reg(0, handle);
-
 	debugC(2, kDebugLevelFile, "  -> opened file '%s' with handle %d", englishName.c_str(), handle);
+	return make_reg(0, handle);
 }
 
 reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
@@ -182,8 +180,7 @@ reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	int mode = argv[1].toUint16();
 
 	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	file_open(s, name.c_str(), mode);
-	return s->r_acc;
+	return file_open(s, name.c_str(), mode);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -647,28 +644,6 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
-enum {
-	K_FILEIO_OPEN			= 0,
-	K_FILEIO_CLOSE			= 1,
-	K_FILEIO_READ_RAW		= 2,
-	K_FILEIO_WRITE_RAW		= 3,
-	K_FILEIO_UNLINK			= 4,
-	K_FILEIO_READ_STRING	= 5,
-	K_FILEIO_WRITE_STRING	= 6,
-	K_FILEIO_SEEK			= 7,
-	K_FILEIO_FIND_FIRST		= 8,
-	K_FILEIO_FIND_NEXT		= 9,
-	K_FILEIO_FILE_EXISTS	= 10,
-	// SCI1.1
-	K_FILEIO_RENAME         = 11,
-	// SCI32
-	// 12?
-	K_FILEIO_READ_BYTE      = 13,
-	K_FILEIO_WRITE_BYTE     = 14,
-	K_FILEIO_READ_WORD      = 15,
-	K_FILEIO_WRITE_WORD     = 16
-};
-
 reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
@@ -709,264 +684,264 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 }
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
-	int func_nr = argv[0].toUint16();
-
-	switch (func_nr) {
-	case K_FILEIO_OPEN : {
-		Common::String name = s->_segMan->getString(argv[1]);
-
-		// SCI32 can call K_FILEIO_OPEN with only two arguments. It seems to
-		// just be checking if it exists.
-		int mode = (argc < 3) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[2].toUint16();
-
-		// SQ4 floppy prepends /\ to the filenames
-		if (name.hasPrefix("/\\")) {
-			name.deleteChar(0);
-			name.deleteChar(0);
-		}
-
-		// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
-		// deleting saved games. We don't use an index file for saving or
-		// loading, so just stop the game from modifying the file here in order
-		// to avoid having it saved in the ScummVM save directory.
-		if (name == "sq4sg.dir") {
-			debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
-			return SIGNAL_REG;
-		}
-
-		if (name.empty()) {
-			warning("Attempted to open a file with an empty filename");
-			return SIGNAL_REG;
-		}
-		debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
-		file_open(s, name.c_str(), mode);
-		break;
-	}
-	case K_FILEIO_CLOSE : {
-		debugC(2, kDebugLevelFile, "kFileIO(close): %d", argv[1].toUint16());
-
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->close();
-		break;
-	}
-	case K_FILEIO_READ_RAW : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		char *buf = new char[size];
-		debugC(2, kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f) {
-			s->r_acc = make_reg(0, f->_in->read(buf, size));
-			s->_segMan->memcpy(argv[2], (const byte*)buf, size);
-		}
-
-		delete[] buf;
-		break;
-	}
-	case K_FILEIO_WRITE_RAW : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		char *buf = new char[size];
-		s->_segMan->memcpy((byte*)buf, argv[2], size);
-		debugC(2, kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
-
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			f->_out->write(buf, size);
-
-		delete[] buf;
-		break;
-	}
-	case K_FILEIO_UNLINK : {
-		Common::String name = s->_segMan->getString(argv[1]);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		bool result;
-
-		// SQ4 floppy prepends /\ to the filenames
-		if (name.hasPrefix("/\\")) {
-			name.deleteChar(0);
-			name.deleteChar(0);
-		}
-
-		// Special case for SQ4 floppy: This game has hardcoded names for all of
-		// its savegames, and they are all named "sq4sg.xxx", where xxx is the
-		// slot. We just take the slot number here, and delete the appropriate
-		// save game.
-		if (name.hasPrefix("sq4sg.")) {
-			// Special handling for SQ4... get the slot number and construct the
-			// save game name.
-			int slotNum = atoi(name.c_str() + name.size() - 3);
-			Common::Array<SavegameDesc> saves;
-			listSavegames(saves);
-			int savedir_nr = saves[slotNum].id;
-			name = g_sci->getSavegameName(savedir_nr);
-			result = saveFileMan->removeSavefile(name);
-		} else {
-			const Common::String wrappedName = g_sci->wrapFilename(name);
-			result = saveFileMan->removeSavefile(wrappedName);
-		}
-
-		debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
-		if (result)
-			return NULL_REG;
-		return make_reg(0, 2); // DOS - file not found error code
-	}
-	case K_FILEIO_READ_STRING : {
-		int size = argv[2].toUint16();
-		char *buf = new char[size];
-		int handle = argv[3].toUint16();
-		debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
-
-		fgets_wrapper(s, buf, size, handle);
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
-		delete[] buf;
-		return argv[1];
-	}
-	case K_FILEIO_WRITE_STRING : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		Common::String str = s->_segMan->getString(argv[2]);
-		debugC(2, kDebugLevelFile, "kFileIO(writeString): %d, %d", handle, size);
-
-		// CHECKME: Is the size parameter used at all?
-		// In the LSL5 password protection it is zero, and we should
-		// then write a full string. (Not sure if it should write the
-		// terminating zero.)
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			f->_out->write(str.c_str(), str.size());
-		break;
-	}
-	case K_FILEIO_SEEK : {
-		int handle = argv[1].toUint16();
-		int offset = argv[2].toUint16();
-		int whence = argv[3].toUint16();
-		debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			s->r_acc = make_reg(0, f->_in->seek(offset, whence));
-		break;
-	}
-	case K_FILEIO_FIND_FIRST : {
-		Common::String mask = s->_segMan->getString(argv[1]);
-		reg_t buf = argv[2];
-		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
-		debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
-
-		// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
-		if (mask == "*.*")
-			mask = "*";
-
-		// QfG3 uses this mask for the character import
-		if (mask == "/\\*.*")
-			mask = "*";
-//#ifndef WIN32
-//		if (mask == "*.*")
-//			mask = "*"; // For UNIX
-//#endif
-		s->r_acc = s->_dirseeker.firstFile(mask, buf, s->_segMan);
-
-		break;
-	}
-	case K_FILEIO_FIND_NEXT : {
-		debugC(2, kDebugLevelFile, "kFileIO(findNext)");
-		s->r_acc = s->_dirseeker.nextFile(s->_segMan);
-		break;
-	}
-	case K_FILEIO_FILE_EXISTS : {
-		Common::String name = s->_segMan->getString(argv[1]);
-
-		// Check for regular file
-		bool exists = Common::File::exists(name);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		const Common::String wrappedName = g_sci->wrapFilename(name);
-
-		if (!exists)
-			exists = !saveFileMan->listSavefiles(name).empty();
-
-		if (!exists) {
-			// Try searching for the file prepending target-
-			Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
-			exists = (inFile != 0);
-			delete inFile;
-		}
-
-		// Special case for non-English versions of LSL5: The English version of
-		// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
-		// memory.drv exists (which is where the game's password is stored). If
-		// it's not found, it calls kFileIO() again, case K_FILEIO_OPEN for
-		// writing and creates a new file. Non-English versions call kFileIO(),
-		// case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be
-		// found. We create a default memory.drv file with no password, so that
-		// the game can continue.
-		if (!exists && name == "memory.drv") {
-			// Create a new file, and write the bytes for the empty password
-			// string inside
-			byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
-			Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
-			for (int i = 0; i < 10; i++)
-				outFile->writeByte(defaultContent[i]);
-			outFile->finalize();
-			delete outFile;
-			exists = true;
-		}
-
-		debugC(2, kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
-		return make_reg(0, exists);
-	}
-	case K_FILEIO_RENAME: {
-		Common::String oldName = s->_segMan->getString(argv[1]);
-		Common::String newName = s->_segMan->getString(argv[2]);
-
-		// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
-		// returns -1 on fail. We just return -1 for all versions.
-		if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
-			return NULL_REG;
-		else
-			return SIGNAL_REG;
-	}
-#ifdef ENABLE_SCI32
-	case K_FILEIO_READ_BYTE: {
-		// Read the byte into the low byte of the accumulator
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (!f)
-			return NULL_REG;
-		
-		return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
-	}
-	case K_FILEIO_WRITE_BYTE: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->_out->writeByte(argv[2].toUint16() & 0xff);
-		break;
-	}
-	case K_FILEIO_READ_WORD: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (!f)
-			return NULL_REG;
-	
-		return make_reg(0, f->_in->readUint16LE());
-	}
-	case K_FILEIO_WRITE_WORD: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->_out->writeUint16LE(argv[2].toUint16());
-		break;
-	}
-	case 19:
-		// TODO: Torin's Passage uses this early on in the Sierra logo
-		warning("kFileIO(19)");
-		break;
-#endif
-	default:
-		error("kFileIO(): unknown sub-command: %d", func_nr);
-	}
-
-	return s->r_acc;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
 }
+
+reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+
+	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
+	// just be checking if it exists.
+	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
+
+	// SQ4 floppy prepends /\ to the filenames
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
+
+	// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
+	// deleting saved games. We don't use an index file for saving or
+	// loading, so just stop the game from modifying the file here in order
+	// to avoid having it saved in the ScummVM save directory.
+	if (name == "sq4sg.dir") {
+		debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
+		return SIGNAL_REG;
+	}
+
+	if (name.empty()) {
+		warning("Attempted to open a file with an empty filename");
+		return SIGNAL_REG;
+	}
+	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
+	return file_open(s, name.c_str(), mode);
+}
+
+reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
+	debugC(2, kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
+
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f) {
+		f->close();
+		return SIGNAL_REG;
+	}
+	return NULL_REG;
+}
+
+reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int size = argv[2].toUint16();
+	int bytesRead = 0;
+	char *buf = new char[size];
+	debugC(2, kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
+		
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		bytesRead = f->_in->read(buf, size);
+		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+	}
+
+	delete[] buf;
+	return make_reg(0, bytesRead);
+}
+
+reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int size = argv[2].toUint16();
+	char *buf = new char[size];
+	bool success = false;
+	s->_segMan->memcpy((byte*)buf, argv[1], size);
+	debugC(2, kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
+
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		f->_out->write(buf, size);
+		success = true;
+	}
+
+	delete[] buf;
+	if (success)
+		return NULL_REG;
+	return make_reg(0, 6); // DOS - invalid handle
+}
+
+reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	bool result;
+
+	// SQ4 floppy prepends /\ to the filenames
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
+
+	// Special case for SQ4 floppy: This game has hardcoded names for all of
+	// its savegames, and they are all named "sq4sg.xxx", where xxx is the
+	// slot. We just take the slot number here, and delete the appropriate
+	// save game.
+	if (name.hasPrefix("sq4sg.")) {
+		// Special handling for SQ4... get the slot number and construct the
+		// save game name.
+		int slotNum = atoi(name.c_str() + name.size() - 3);
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+		int savedir_nr = saves[slotNum].id;
+		name = g_sci->getSavegameName(savedir_nr);
+		result = saveFileMan->removeSavefile(name);
+	} else {
+		const Common::String wrappedName = g_sci->wrapFilename(name);
+		result = saveFileMan->removeSavefile(wrappedName);
+	}
+
+	debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
+	if (result)
+		return NULL_REG;
+	return make_reg(0, 2); // DOS - file not found error code
+}
+
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
+	int size = argv[1].toUint16();
+	char *buf = new char[size];
+	int handle = argv[2].toUint16();
+	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+
+	fgets_wrapper(s, buf, size, handle);
+	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
+	delete[] buf;
+	return argv[1];
+}
+
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	Common::String str = s->_segMan->getString(argv[1]);
+	debugC(2, kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		f->_out->write(str.c_str(), str.size());
+		return NULL_REG;
+	return make_reg(0, 6); // DOS - invalid handle
+}
+
+reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int offset = argv[1].toUint16();
+	int whence = argv[2].toUint16();
+	debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
+		
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+	return SIGNAL_REG;
+}
+
+reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
+	Common::String mask = s->_segMan->getString(argv[0]);
+	reg_t buf = argv[1];
+	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
+	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
+
+	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
+	if (mask == "*.*")
+		mask = "*";
+
+	// QfG3 uses this mask for the character import
+	if (mask == "/\\*.*")
+		mask = "*";
+	return s->_dirseeker.firstFile(mask, buf, s->_segMan);
+}
+
+reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
+	debugC(2, kDebugLevelFile, "kFileIO(findNext)");
+	return s->_dirseeker.nextFile(s->_segMan);
+}
+
+reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+
+	// Check for regular file
+	bool exists = Common::File::exists(name);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	const Common::String wrappedName = g_sci->wrapFilename(name);
+
+	if (!exists)
+		exists = !saveFileMan->listSavefiles(name).empty();
+
+	if (!exists) {
+		// Try searching for the file prepending target-
+		Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
+		exists = (inFile != 0);
+		delete inFile;
+	}
+
+	// Special case for non-English versions of LSL5: The English version of
+	// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
+	// memory.drv exists (which is where the game's password is stored). If
+	// it's not found, it calls kFileIO() again, case K_FILEIO_OPEN for
+	// writing and creates a new file. Non-English versions call kFileIO(),
+	// case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be
+	// found. We create a default memory.drv file with no password, so that
+	// the game can continue.
+	if (!exists && name == "memory.drv") {
+		// Create a new file, and write the bytes for the empty password
+		// string inside
+		byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
+		Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
+		for (int i = 0; i < 10; i++)
+			outFile->writeByte(defaultContent[i]);
+		outFile->finalize();
+		delete outFile;
+		exists = true;
+	}
+
+	debugC(2, kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
+	return make_reg(0, exists);
+}
+
+reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
+	Common::String oldName = s->_segMan->getString(argv[0]);
+	Common::String newName = s->_segMan->getString(argv[1]);
+
+	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
+	// returns -1 on fail. We just return -1 for all versions.
+	if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
+		return NULL_REG;
+	else
+		return SIGNAL_REG;
+}
+
+#ifdef ENABLE_SCI32
+reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv) {
+	// Read the byte into the low byte of the accumulator
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (!f)
+		return NULL_REG;
+	return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
+}
+
+reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f)
+		f->_out->writeByte(argv[1].toUint16() & 0xff);
+	return s->r_acc; // FIXME: does this really doesn't return anything?
+}
+
+reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (!f)
+		return NULL_REG;
+	return make_reg(0, f->_in->readUint16LE());
+}
+
+reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f)
+		f->_out->writeUint16LE(argv[1].toUint16());
+	return s->r_acc; // FIXME: does this really doesn't return anything?
+}
+#endif
 
 } // End of namespace Sci

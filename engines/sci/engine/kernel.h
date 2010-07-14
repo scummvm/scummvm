@@ -519,6 +519,25 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv);
 
+reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIORename(EngineState *s, int argc, reg_t *argv);
+#ifdef ENABLE_SCI32
+reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv);
+#endif
+
 //@}
 
 } // End of namespace Sci
