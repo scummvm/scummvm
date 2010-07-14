@@ -1706,6 +1706,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
+	// SCI interpreter version 2.100.002
+	{"lsl7", "Demo", {
+		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
+		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
 #ifdef ENABLE_SCI3_GAMES
 	// Larry 7 - English DOS CD (from spookypeanut)
 	// SCI interpreter version 3.000.000
@@ -1746,14 +1754,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
-
-	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
-	// SCI interpreter version 2.100.002
-	{"lsl7", "Demo", {
-		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
-		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
-		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
