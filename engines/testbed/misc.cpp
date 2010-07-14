@@ -43,7 +43,7 @@ void MiscTests::timerCallback(void *arg) {
 }
 
 void MiscTests::criticalSection(void *arg) {
-	SharedVars &sv = *((SharedVars *) arg);
+	SharedVars &sv = *((SharedVars *)arg);
 
 	Testsuite::logDetailedPrintf("Before critical section: %d %d\n", sv.first, sv.second);
 	g_system->lockMutex(sv.mutex);
@@ -56,6 +56,7 @@ void MiscTests::criticalSection(void *arg) {
 
 	sv.first++;
 	g_system->delayMillis(1000);
+
 	// This should bring no change as well in the difference between vars
 	// verify this too.
 	if (sv.second + 1 != sv.first) {
@@ -94,7 +95,7 @@ bool MiscTests::testDateTime() {
 	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 
 	if (t1.tm_year == t2.tm_year && t1.tm_mon == t2.tm_mon && t1.tm_mday == t2.tm_mday) {
-		if (t1.tm_mon == t2.tm_mon && t1.tm_year == t2.tm_year){
+		if (t1.tm_mon == t2.tm_mon && t1.tm_year == t2.tm_year) {
 			// Ignore lag due to processing time
 			if (t1.tm_sec + 2 == t2.tm_sec) {
 				return true;
@@ -129,6 +130,7 @@ bool MiscTests::testMutexes() {
 	g_system->delayMillis(1000);
 	sv.second *= sv.first;
 	g_system->unlockMutex(sv.mutex);
+
 	// wait till timed process exits
 	g_system->delayMillis(3000);
 
@@ -147,6 +149,7 @@ MiscTestSuite::MiscTestSuite() {
 	addTest("Timers", &MiscTests::testTimers, false);
 	addTest("Mutexes", &MiscTests::testMutexes, false);
 }
+
 const char *MiscTestSuite::getName() const {
 	return "Misc";
 }

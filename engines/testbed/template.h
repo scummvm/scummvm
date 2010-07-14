@@ -37,7 +37,8 @@ namespace XXXtests {
 
 // will contain function declarations for XXX tests
 // add more here
-}
+
+} // End of namespace XXXtests
 
 class XXXTestSuite : public Testsuite {
 public:
@@ -50,11 +51,11 @@ public:
 	 * @see addTest()
 	 */
 	XXXTestSuite();
-	~XXXTestSuite(){}
+	~XXXTestSuite() {}
 	const char *getName() const;
 
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_TEMPLATE_H

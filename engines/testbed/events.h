@@ -27,7 +27,6 @@
 
 #include "testbed/testsuite.h"
 
-
 namespace Testbed {
 
 namespace EventTests {
@@ -39,7 +38,8 @@ bool mouseEvents();
 bool kbdEvents();
 bool showMainMenu();
 // add more here
-}
+
+} // End of namespace EventTests
 
 class EventTestSuite : public Testsuite {
 public:
@@ -52,11 +52,10 @@ public:
 	 * @see addTest()
 	 */
 	EventTestSuite();
-	~EventTestSuite(){}
+	~EventTestSuite() {}
 	const char *getName() const;
-
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_EVENTS_H

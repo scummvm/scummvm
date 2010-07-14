@@ -79,13 +79,13 @@ TestbedEngine::~TestbedEngine() {
 	// Remove all of our debug levels here
 	DebugMan.clearAllDebugChannels();
 
-	for (Common::Array<Testsuite*>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
+	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
 		delete (*i);
 	}
 }
 
 void TestbedEngine::enableTestsuite(const Common::String &name, bool enable) {
-	Common::Array<Testsuite*>::const_iterator iter;
+	Common::Array<Testsuite *>::const_iterator iter;
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if (name.equalsIgnoreCase((*iter)->getName())) {
@@ -98,13 +98,13 @@ void TestbedEngine::enableTestsuite(const Common::String &name, bool enable) {
 }
 
 void TestbedEngine::invokeTestsuites() {
-	Common::Array<Testsuite*>::const_iterator iter;
+	Common::Array<Testsuite *>::const_iterator iter;
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if ((*iter)->isEnabled()) {
 			(*iter)->execute();
-			}
 		}
+	}
 }
 
 TestbedOptionsDialog::TestbedOptionsDialog() : GUI::OptionsDialog("Select", 120, 120, 360, 200), _hOffset(15), _vOffset(15), _boxWidth(300), _boxHeight(10) {

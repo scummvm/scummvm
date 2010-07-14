@@ -52,7 +52,8 @@ bool testDateTime();
 bool testTimers();
 bool testMutexes();
 // add more here
-}
+
+} // End of namespace MiscTests
 
 class MiscTestSuite : public Testsuite {
 public:
@@ -65,11 +66,10 @@ public:
 	 * @see addTest()
 	 */
 	MiscTestSuite();
-	~MiscTestSuite(){}
+	~MiscTestSuite() {}
 	const char *getName() const;
-
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_MISC_H

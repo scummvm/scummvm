@@ -74,7 +74,6 @@ GFXTestSuite::GFXTestSuite() {
 	// Specific Tests:
 	addTest("Palette Rotation", &GFXtests::paletteRotation);
 	//addTest("Pixel Formats", &GFXtests::pixelFormats);
-
 }
 
 const char *GFXTestSuite::getName() const {
@@ -99,7 +98,6 @@ void GFXtests::initMousePalette() {
 	palette[10] = 0;
 
 	CursorMan.replaceCursorPalette(palette, 0, 3);
-
 }
 
 Common::Rect GFXtests::computeSize(Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale) {
@@ -124,8 +122,7 @@ Common::Rect GFXtests::computeSize(Common::Rect &cursorRect, int scalingFactor, 
 	}
 }
 
-void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, int val) {
-
+void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val) {
 	float r = rComp;
 	float g = gComp;
 	float b = bComp;
@@ -143,43 +140,43 @@ void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, in
 	}
 
 	h /= 60;
-	i = (int) h;
+	i = (int)h;
 	f = h - i;
 	p = v * (1 - s);
 	q = v * (1 - s * f);
 	t = v * (1 - s * (1 - f));
 
 	switch (i) {
-		case 0:
-			r = v;
-			g = t;
-			b = p;
-			break;
-		case 1:
-			r = q;
-			g = v;
-			b = p;
-			break;
-		case 2:
-			r = p;
-			g = v;
-			b = t;
-			break;
-		case 3:
-			r = p;
-			g = q;
-			b = v;
-			break;
-		case 4:
-			r = t;
-			g = p;
-			b = v;
-			break;
-		default:
-			r = v;
-			g = p;
-			b = q;
-			break;
+	case 0:
+		r = v;
+		g = t;
+		b = p;
+		break;
+	case 1:
+		r = q;
+		g = v;
+		b = p;
+		break;
+	case 2:
+		r = p;
+		g = v;
+		b = t;
+		break;
+	case 3:
+		r = p;
+		g = q;
+		b = v;
+		break;
+	case 4:
+		r = t;
+		g = p;
+		b = v;
+		break;
+	default:
+		r = v;
+		g = p;
+		b = q;
+		break;
 	}
 
 	rComp = r * 255;
@@ -188,7 +185,6 @@ void GFXtests::HSVtoRGB(int& rComp, int& gComp, int& bComp, int hue, int sat, in
 }
 
 Common::Rect GFXtests::drawCursor(bool cursorPaletteDisabled, const char *gfxModeName, int cursorTargetScale) {
-
 	// Buffer initialized with yellow color
 	byte buffer[500];
 	memset(buffer, 2, sizeof(buffer));
@@ -238,14 +234,13 @@ void rotatePalette(byte *palette, int size) {
 		memcpy(&palette[i * 4], &palette[(i + 1) * 4], 4 * sizeof(byte));
 	}
 	// Assign last color to tcolor
-	memcpy(&palette[(size -1) * 4], tColor, 4 * sizeof(byte));
+	memcpy(&palette[(size - 1) * 4], tColor, 4 * sizeof(byte));
 }
 
 /**
  * Sets up mouse loop, exits when user clicks any of the mouse button
  */
 void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName, int cursorTargetScale) {
-
 	bool isFeaturePresent;
 	isFeaturePresent = g_system->hasFeature(OSystem::kFeatureCursorHasPalette);
 	Common::Rect cursorRect;
@@ -285,7 +280,7 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 				estimatedCursorRect = computeSize(cursorRect, 1, cursorTargetScale);
 			} else if (gfxScalarMode.contains("2x")) {
 				estimatedCursorRect = computeSize(cursorRect, 2, cursorTargetScale);
-			} else if (gfxScalarMode.contains("3x")){
+			} else if (gfxScalarMode.contains("3x")) {
 				estimatedCursorRect = computeSize(cursorRect, 3, cursorTargetScale);
 			} else {
 				// If unable to detect scaler, default to 2
@@ -360,11 +355,8 @@ void GFXtests::mouseMovements() {
 /**
  * Used by aspectRatio()
  */
-
 void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
-
 	// Take a buffer of screen size
-
 	byte buffer[200][320] = {{0}};
 	float theta;
 	int x, y, x1, y1;
@@ -374,7 +366,7 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 
 	// Illuminate the points lying on ellipse
 
-	for (theta = 0; theta <= PI / 2; theta += PI / 360  ) {
+	for (theta = 0; theta <= PI / 2; theta += PI / 360) {
 		x = (int)(b * sin(theta) + 0.5);
 		y = (int)(a * cos(theta) + 0.5);
 
@@ -410,9 +402,7 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 /**
  * Tests the fullscreen mode by: toggling between fullscreen and windowed mode
  */
-
 bool GFXtests::fullScreenMode() {
-
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
 
@@ -488,10 +478,8 @@ bool GFXtests::fullScreenMode() {
 /**
  * Tests the aspect ratio correction by: drawing an ellipse, when corrected the ellipse should render to a circle
  */
-
 bool GFXtests::aspectRatio() {
 	// Draw an ellipse on the screen
-
 	drawEllipse(100, 160, 72, 60);
 
 	Common::Point pt(0, 180);
@@ -554,14 +542,11 @@ bool GFXtests::aspectRatio() {
  * Tests Palettized cursors.
  * Method: Create a yellow colored cursor, should be able to move it. Once you click test terminates
  */
-
 bool GFXtests::palettizedCursors() {
-
-
 	bool passed = true;
 
 	Testsuite::displayMessage("Testing Cursors. You should expect to see a yellow colored square cursor.\n"
-	"You should be able to move it. The test finishes when the mouse(L/R) is clicked");
+		"You should be able to move it. The test finishes when the mouse(L/R) is clicked");
 
 	// Testing with cursor Palette
 	setupMouseLoop();
@@ -599,7 +584,7 @@ bool GFXtests::palettizedCursors() {
  */
 bool GFXtests::copyRectToScreen() {
 	Testsuite::displayMessage("Testing Blitting a Bitmap to screen.\n"
-	"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.");
+		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.");
 
 	GFXTestSuite::setCustomColor(255, 255, 0);
 	byte buffer[20 * 40];
@@ -612,7 +597,7 @@ bool GFXtests::copyRectToScreen() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
-	Common::Rect rect(x, y, x+40, y+20);
+	Common::Rect rect(x, y, x + 40, y + 20);
 	Testsuite::clearScreen();
 
 	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
@@ -620,7 +605,6 @@ bool GFXtests::copyRectToScreen() {
 	}
 
 	return true;
-
 }
 
 /**
@@ -628,9 +612,8 @@ bool GFXtests::copyRectToScreen() {
  * It is expected the screen minimizes when this feature is enabled
  */
 bool GFXtests::iconifyWindow() {
-
 	Testsuite::displayMessage("Testing Iconify Window mode.\n If the feature is supported by the backend,"
-	"you should expect the window to be minimized. However you would manually need to de-iconify.");
+		"you should expect the window to be minimized. However you would manually need to de-iconify.");
 
 	Common::Point pt(0, 100);
 	Common::Rect rect = Testsuite::writeOnScreen("Testing Iconifying window", pt);
@@ -669,13 +652,12 @@ bool GFXtests::iconifyWindow() {
 /**
  * Testing feature: Scaled cursors
  */
-
 bool GFXtests::scaledCursors() {
 
 	Testsuite::displayMessage("Testing : Scaled cursors\n"
-	"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3.\n"
-	"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
-	"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
+		"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3.\n"
+		"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
+		"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x");
 
 	int maxLimit = 1000;
 	if (!Testsuite::handleInteractiveInput("Do you want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
@@ -697,7 +679,6 @@ bool GFXtests::scaledCursors() {
 		OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
 		if (gfxError == OSystem::kTransactionSuccess && isGFXModeSet) {
-
 			setupMouseLoop(false, gfxMode->name, 1);
 			Testsuite::clearScreen();
 
@@ -706,7 +687,6 @@ bool GFXtests::scaledCursors() {
 
 			setupMouseLoop(false, gfxMode->name, 3);
 			Testsuite::clearScreen();
-
 		} else {
 			Testsuite::logDetailedPrintf("Switching to graphics mode %s failed\n", gfxMode->name);
 			return false;
@@ -753,9 +733,8 @@ bool GFXtests::shakingEffect() {
 }
 
 bool GFXtests::focusRectangle() {
-
 	Testsuite::displayMessage("Testing : Setting and hiding Focus \n"
-	"If this feature is implemented, the focus should be toggled between the two rectangles on the corners");
+		"If this feature is implemented, the focus should be toggled between the two rectangles on the corners");
 
 	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont));
 
@@ -797,7 +776,6 @@ bool GFXtests::focusRectangle() {
 }
 
 bool GFXtests::overlayGraphics() {
-
 	Graphics::PixelFormat pf = g_system->getOverlayFormat();
 
 	OverlayColor buffer[50 * 100];
@@ -867,7 +845,6 @@ bool GFXtests::paletteRotation() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
-
 	bool toRotate = true;
 	Common::Event event;
 	CursorMan.showMouse(true);
@@ -880,13 +857,13 @@ bool GFXtests::paletteRotation() {
 		}
 
 		/*for (int i = 2; i < 256; i++) {
-			debug("Palette: (%d %d %d) #", palette[i*4], palette[i*4+1], palette[i*4+2]);
+			debug("Palette: (%d %d %d) #", palette[i * 4], palette[i * 4 + 1], palette[i * 4 + 2]);
 		}*/
 
 		rotatePalette(&palette[8], 254);
 
 		/*for (int i = 2; i < 256; i++) {
-			debug("Palette: (%d %d %d) #", palette[i*4], palette[i*4+1], palette[i*4+2]);
+			debug("Palette: (%d %d %d) #", palette[i * 4], palette[i * 4 + 1], palette[i * 4 + 2]);
 		}*/
 
 		g_system->delayMillis(10);
@@ -918,7 +895,6 @@ bool GFXtests::pixelFormats() {
 	Testsuite::logDetailedPrintf("Testing Pixel Formats. Size of list : %d\n", pfList.size());
 
 	for (iter = pfList.begin(); iter != pfList.end(); iter++) {
-
 		numFormatsTested++;
 		if (iter->bytesPerPixel == 1) {
 			// Palettes already tested
@@ -933,7 +909,6 @@ bool GFXtests::pixelFormats() {
 		g_system->initSize(320, 200, &(*iter));
 		g_system->endGFXTransaction();
 		Testsuite::clearScreen(true);
-
 
 		// Draw some nice gradients
 		// Pick up some colors
@@ -984,7 +959,6 @@ bool GFXtests::pixelFormats() {
 	initMousePalette();
 	Testsuite::clearScreen();
 
-
 	if (numFailed) {
 		Testsuite::logDetailedPrintf("Pixel Format test: Failed : %d, Passed : %d, Ignored %d\n",numFailed, numPassed, numFormatsTested - (numPassed + numFailed));
 		return false;
@@ -993,4 +967,4 @@ bool GFXtests::pixelFormats() {
 	return true;
 }
 
-}
+} // End of namespace Testbed

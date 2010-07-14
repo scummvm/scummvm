@@ -41,7 +41,8 @@ bool testRenamingSavefile();
 bool testListingSavefile();
 bool testErrorMessages();
 // add more here
-}
+
+} // End of namespace SaveGametests
 
 class SaveGameTestSuite : public Testsuite {
 public:
@@ -54,11 +55,10 @@ public:
 	 * @see addTest()
 	 */
 	SaveGameTestSuite();
-	~SaveGameTestSuite(){}
+	~SaveGameTestSuite() {}
 	const char *getName() const;
-
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_SAVEGAME_H

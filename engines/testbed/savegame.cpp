@@ -32,9 +32,7 @@ namespace Testbed {
  * This test creates a savefile for the given testbed-state and could be reloaded using the saveFile API.
  * It is intended to test saving and loading from savefiles.
  */
-
 bool SaveGametests::writeDataToFile(const char *fileName, const char *msg) {
-
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::OutSaveFile *saveFile = saveFileMan->openForSaving(fileName);
 
@@ -51,7 +49,6 @@ bool SaveGametests::writeDataToFile(const char *fileName, const char *msg) {
 }
 
 bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected) {
-
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 	Common::InSaveFile *loadFile = saveFileMan->openForLoading(fileName);
 
@@ -70,7 +67,6 @@ bool SaveGametests::readAndVerifyData(const char *fileName, const char *expected
 	return false;
 }
 
-
 bool SaveGametests::testSaveLoadState() {
 	// create a savefile with "ScummVM Rocks!" written on it
 	if (!writeDataToFile("tBedSavefile.0", "ScummVM Rocks!")) {
@@ -88,7 +84,6 @@ bool SaveGametests::testSaveLoadState() {
 }
 
 bool SaveGametests::testRemovingSavefile() {
-
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
 
 	// Create a dummy savefile
@@ -143,7 +138,7 @@ bool SaveGametests::testListingSavefile() {
 
 	Common::Error error = saveFileMan->getError();
 
-	if ( error != Common::kNoError) {
+	if (error != Common::kNoError) {
 		// Abort. Some Error in writing files
 		Testsuite::logDetailedPrintf("Error while creating savefiles: %s\n", Common::errorToString(error));
 		return false;
@@ -173,7 +168,6 @@ bool SaveGametests::testListingSavefile() {
 
 	return false;
 }
-
 
 bool SaveGametests::testErrorMessages() {
 	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
@@ -206,4 +200,4 @@ const char *SaveGameTestSuite::getName() const {
 	return "SaveGames";
 }
 
-} // End of namespace testbed
+} // End of namespace Testbed

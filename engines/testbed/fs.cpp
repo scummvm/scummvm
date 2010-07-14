@@ -29,6 +29,7 @@
 #include "testbed/fs.h"
 
 namespace Testbed {
+
 /**
  * This test does the following:
  * 1) acquires the game-data path
@@ -49,8 +50,8 @@ bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file)
 
 	Common::String msg = readStream->readLine();
 	delete readStream;
-	Testsuite::logDetailedPrintf("Message Extracted from %s/%s : %s\n",directory->getFSNode().getName().c_str(), file, msg.c_str());
 
+	Testsuite::logDetailedPrintf("Message Extracted from %s/%s : %s\n", directory->getFSNode().getName().c_str(), file, msg.c_str());
 
 	Common::String expectedMsg = "It works!";
 
@@ -61,7 +62,6 @@ bool FStests::readDataFromFile(Common::FSDirectory *directory, const char *file)
 
 	return true;
 }
-
 
 bool FStests::testReadFile() {
 	const Common::String &path = ConfMan.get("path");
@@ -113,7 +113,6 @@ bool FStests::testReadFile() {
  * This test creates a file testbed.out, writes a sample data and confirms if
  * it is same by reading the file again.
  */
-
 bool FStests::testWriteFile() {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
@@ -140,7 +139,6 @@ bool FStests::testWriteFile() {
 		Testsuite::logDetailedPrintf("Data written and read correctly\n");
 		return true;
 	}
-
 
 	return false;
 }

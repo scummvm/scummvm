@@ -136,7 +136,7 @@ public:
 	static void deleteWriteStream();
 
 protected:
-	Common::Array<Test*> _testsToExecute;			///< List of tests to be executed
+	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
 	int			_numTestsExecuted;					///< Number of tests executed
 	bool		_isTsEnabled;
@@ -163,6 +163,6 @@ private:
 	static Common::WriteStream *_ws;
 };
 
-}	// End of namespace testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_TESTSUITE_H

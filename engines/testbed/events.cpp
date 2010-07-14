@@ -38,34 +38,34 @@ struct keycodeToChar {
 	Common::KeyCode code;
 	char value;
 } keyCodeLUT[] = {
-		{Common::KEYCODE_a, 'a'},
-		{Common::KEYCODE_b, 'b'},
-		{Common::KEYCODE_c, 'c'},
-		{Common::KEYCODE_d, 'd'},
-		{Common::KEYCODE_e, 'e'},
-		{Common::KEYCODE_f, 'f'},
-		{Common::KEYCODE_g, 'g'},
-		{Common::KEYCODE_h, 'h'},
-		{Common::KEYCODE_i, 'i'},
-		{Common::KEYCODE_j, 'j'},
-		{Common::KEYCODE_k, 'k'},
-		{Common::KEYCODE_l, 'l'},
-		{Common::KEYCODE_m, 'm'},
-		{Common::KEYCODE_n, 'n'},
-		{Common::KEYCODE_o, 'o'},
-		{Common::KEYCODE_p, 'p'},
-		{Common::KEYCODE_q, 'q'},
-		{Common::KEYCODE_r, 'r'},
-		{Common::KEYCODE_s, 's'},
-		{Common::KEYCODE_t, 't'},
-		{Common::KEYCODE_u, 'u'},
-		{Common::KEYCODE_v, 'v'},
-		{Common::KEYCODE_w, 'w'},
-		{Common::KEYCODE_x, 'x'},
-		{Common::KEYCODE_y, 'y'},
-		{Common::KEYCODE_z, 'z'},
-		{Common::KEYCODE_SPACE, ' '}
-	};
+	{Common::KEYCODE_a, 'a'},
+	{Common::KEYCODE_b, 'b'},
+	{Common::KEYCODE_c, 'c'},
+	{Common::KEYCODE_d, 'd'},
+	{Common::KEYCODE_e, 'e'},
+	{Common::KEYCODE_f, 'f'},
+	{Common::KEYCODE_g, 'g'},
+	{Common::KEYCODE_h, 'h'},
+	{Common::KEYCODE_i, 'i'},
+	{Common::KEYCODE_j, 'j'},
+	{Common::KEYCODE_k, 'k'},
+	{Common::KEYCODE_l, 'l'},
+	{Common::KEYCODE_m, 'm'},
+	{Common::KEYCODE_n, 'n'},
+	{Common::KEYCODE_o, 'o'},
+	{Common::KEYCODE_p, 'p'},
+	{Common::KEYCODE_q, 'q'},
+	{Common::KEYCODE_r, 'r'},
+	{Common::KEYCODE_s, 's'},
+	{Common::KEYCODE_t, 't'},
+	{Common::KEYCODE_u, 'u'},
+	{Common::KEYCODE_v, 'v'},
+	{Common::KEYCODE_w, 'w'},
+	{Common::KEYCODE_x, 'x'},
+	{Common::KEYCODE_y, 'y'},
+	{Common::KEYCODE_z, 'z'},
+	{Common::KEYCODE_SPACE, ' '}
+};
 
 char EventTests::keystrokeToChar() {
 	Common::EventManager *eventMan = g_system->getEventManager();
@@ -75,15 +75,13 @@ char EventTests::keystrokeToChar() {
 	// handle all keybd events
 	while (!quitLoop) {
 		while (eventMan->pollEvent(event)) {
-
 			// Quit if explicitly requested!
 			if (Engine::shouldQuit()) {
 				return 0;
 			}
 
 			switch (event.type) {
-			case Common::EVENT_KEYDOWN :
-
+			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 					return 0;
 				}
@@ -170,9 +168,8 @@ bool EventTests::mouseEvents() {
 					quitLoop = true;
 				}
 				break;
-
 			default:
-					break;
+				break;
 			}
 
 		}
@@ -240,6 +237,7 @@ EventTestSuite::EventTestSuite() {
 	addTest("Keyboard Events", &EventTests::kbdEvents);
 	addTest("Mainmenu Event", &EventTests::showMainMenu);
 }
+
 const char *EventTestSuite::getName() const {
 	return "Events";
 }

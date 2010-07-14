@@ -113,14 +113,14 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 }
 
 Testsuite::Testsuite() {
-		_numTestsPassed = 0;
-		_numTestsExecuted = 0;
-		// Initially all testsuites are disabled, enable them by calling enableTestSuite(name, true)
-		_isTsEnabled = false;
+	_numTestsPassed = 0;
+	_numTestsExecuted = 0;
+	// Initially all testsuites are disabled, enable them by calling enableTestSuite(name, true)
+	_isTsEnabled = false;
 }
 
 Testsuite::~Testsuite() {
-	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		delete (*i);
 	}
 }
@@ -128,7 +128,7 @@ Testsuite::~Testsuite() {
 void Testsuite::genReport() const {
 	logPrintf("\n");
 	logPrintf("Consolidating results...\n");
-	logPrintf("Subsystem: %s ",getName());
+	logPrintf("Subsystem: %s ", getName());
 	logPrintf("(Tests Executed: %d)\n", _numTestsExecuted);
 	logPrintf("Passed: %d ", _numTestsPassed);
 	logPrintf("Failed: %d\n", getNumTestsFailed());
@@ -136,12 +136,12 @@ void Testsuite::genReport() const {
 }
 
 bool Testsuite::handleInteractiveInput(const Common::String &textToDisplay, const char *opt1, const char *opt2, OptionSelected result) {
-	GUI::MessageDialog	prompt(textToDisplay, opt1, opt2);
+	GUI::MessageDialog prompt(textToDisplay, opt1, opt2);
 	return prompt.runModal() == result ? true : false;
 }
 
 void Testsuite::displayMessage(const Common::String &textToDisplay, const char *defaultButton, const char *altButton) {
-	GUI::MessageDialog	prompt(textToDisplay, defaultButton);
+	GUI::MessageDialog prompt(textToDisplay, defaultButton);
 	prompt.runModal();
 }
 
@@ -159,8 +159,8 @@ Common::Rect Testsuite::writeOnScreen(const Common::String &textToDisplay, const
 
 	if (flag) {
 		Graphics::PixelFormat pf = g_system->getScreenFormat();
-		fillColor = pf.RGBToColor(0 , 0, 0);
-		textColor = pf.RGBToColor(255 , 255, 255);
+		fillColor = pf.RGBToColor(0, 0, 0);
+		textColor = pf.RGBToColor(255, 255, 255);
 	}
 
 	screen->fillRect(rect, fillColor);
@@ -206,7 +206,7 @@ void Testsuite::clearScreen(bool flag) {
 }
 
 void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isInteractive) {
-	Test*  featureTest = new Test(name, f, isInteractive);
+	Test *featureTest = new Test(name, f, isInteractive);
 	_testsToExecute.push_back(featureTest);
 }
 
@@ -245,7 +245,7 @@ void Testsuite::execute() {
 		return;
 	}
 
-	for (Common::Array<Test*>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (toQuit == kSkipNext) {
 			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
 			toQuit = kLoopNormal;
@@ -280,5 +280,4 @@ void Testsuite::execute() {
 	genReport();
 }
 
-} // end of namespace Testebed
-
+} // End of namespace Testebed

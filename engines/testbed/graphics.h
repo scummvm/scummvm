@@ -37,7 +37,7 @@ void setupMouseLoop(bool disableCursorPalette = false, const char *gfxModeName =
 void initMousePalette();
 void mouseMovements();
 Common::Rect computeSize(Common::Rect &cursorRect, int scalingFactor, int cursorTargetScale);
-void HSVtoRGB(int& rComp, int& gComp,int& bComp, int hue, int sat, int val);
+void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
 Common::Rect drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
@@ -53,7 +53,8 @@ bool overlayGraphics();
 bool paletteRotation();
 bool pixelFormats();
 // add more here
-}
+
+} // End of namespace GFXtests
 
 class GFXTestSuite : public Testsuite {
 public:
@@ -66,7 +67,7 @@ public:
 	 * @see addTest()
 	 */
 	GFXTestSuite();
-	~GFXTestSuite(){}
+	~GFXTestSuite() {}
 	const char *getName() const;
 	static void setCustomColor(uint r, uint g, uint b);
 
@@ -82,6 +83,6 @@ private:
 	static byte _palette[256 * 4];
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_GRAPHICS_H

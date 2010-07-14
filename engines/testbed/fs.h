@@ -45,7 +45,8 @@ bool testReadFile();
 bool testWriteFile();
 bool testOpeningSaveFile();
 // add more here
-}
+
+} // End of namespace FStests
 
 class FSTestSuite : public Testsuite {
 public:
@@ -58,11 +59,11 @@ public:
 	 * @see addTest()
 	 */
 	FSTestSuite();
-	~FSTestSuite(){}
+	~FSTestSuite() {}
 	const char *getName() const;
 	void enable(bool flag);
 };
 
-}	// End of namespace Testbed
+} // End of namespace Testbed
 
-#endif
+#endif // TESTBED_FS_H
