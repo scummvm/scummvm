@@ -541,7 +541,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
 		// savegameId is an actual Id, so search for it just to make sure
 		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
-		if (findSavegame(saves, savegameId) != -1)
+		if (findSavegame(saves, savegameId) == -1)
 			return NULL_REG;
 	} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
 		// virtualId is low, we assume that scripts expect us to create new slot
