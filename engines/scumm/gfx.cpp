@@ -2823,7 +2823,7 @@ void GdiPCEngine::decodePCEngineObject(const byte *ptr, int xpos, int ypos, int 
 	free(stripOffsets);
 }
 
-void setTileData(byte *tile, int index, byte byte0, byte byte1) {
+void GdiPCEngine::setTileData(byte *tile, int index, byte byte0, byte byte1) {
 	int row = index % 8;
 	int plane = (index / 8) * 2;
 	int plane02Bit, plane13Bit;
