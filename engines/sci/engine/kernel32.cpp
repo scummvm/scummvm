@@ -180,7 +180,7 @@ static const char *sci2_default_knames[] = {
 	/*0x89*/ "TextWidth",
 	/*0x8a*/ "PointSize",
 
-	// GK2 Demo only kernel functions
+	// GK2 Demo (and similar) only kernel functions
 	/*0x8b*/ "AddLine",
 	/*0x8c*/ "DeleteLine",
 	/*0x8d*/ "UpdateLine",
@@ -291,7 +291,7 @@ static const char *sci21_default_knames[] = {
 	/*0x53*/ "MapKeyToDir",
 	/*0x54*/ "HaveMouse",
 	/*0x55*/ "SetCursor",
-	/*0x56*/ "VibrateMouse", // NOTE: Not in SCI3, instead replaced by Dummy.
+	/*0x56*/ "VibrateMouse",
 	/*0x57*/ "Dummy",
 	/*0x58*/ "Dummy",
 	/*0x59*/ "Dummy",
@@ -336,7 +336,7 @@ static const char *sci21_default_knames[] = {
 	/*0x80*/ "Dummy",
 	/*0x81*/ "Dummy",
 	/*0x82*/ "Dummy",
-	/*0x83*/ "PrintDebug",	// used by the Shivers 2 demo
+	/*0x83*/ "PrintDebug",	// used by Shivers 2 (demo and full)
 	/*0x84*/ "Dummy",
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
@@ -359,8 +359,6 @@ static const char *sci21_default_knames[] = {
 	/*0x97*/ "SetWindowsOption", // Windows only
 	/*0x98*/ "GetWindowsOption", // Windows only
 	/*0x99*/ "WinDLL", // Windows only
-
-	// SCI3
 	/*0x9a*/ "Dummy",
 	/*0x9b*/ "Dummy",
 	/*0x9c*/ "DeletePic"
@@ -369,8 +367,7 @@ static const char *sci21_default_knames[] = {
 enum {
 	kKernelEntriesSci2 = 0x8b,
 	kKernelEntriesGk2Demo = 0xa0,
-	kKernelEntriesSci21 = 0x9a,
-	kKernelEntriesSci3 = 0x9d
+	kKernelEntriesSci21 = 0x9d
 };
 
 void Kernel::setKernelNamesSci2() {
@@ -379,9 +376,9 @@ void Kernel::setKernelNamesSci2() {
 
 void Kernel::setKernelNamesSci21(GameFeatures *features) {
 	// Some SCI games use a modified SCI2 kernel table instead of the
-	// SCI2.1/SCI3 kernel table. The GK2 demo does this as well as at
-	// least one version of KQ7. We detect which version to use based on
-	// where kDoSound is called from Sound::play().
+	// SCI2.1 kernel table. The GK2 demo does this as well as at least
+	// one version of KQ7 (1.4). We detect which version to use based on
+	// how kDoSound is called from Sound::play().
 
 	// This is interesting because they all have the same interpreter
 	// version (2.100.002), yet they would not be compatible with other
@@ -392,10 +389,8 @@ void Kernel::setKernelNamesSci21(GameFeatures *features) {
 		// OnMe is IsOnMe here, but they should be compatible
 		_kernelNames[0x23] = "Robot"; // Graph in SCI2
 		_kernelNames[0x2e] = "Priority"; // DisposeTextBitmap in SCI2
-	} else {
-		// TODO: Differentiate between SCI2.1/3
-		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci3);
-	}
+	} else
+		_kernelNames = Common::StringArray(sci21_default_knames, kKernelEntriesSci21);
 }
 
 // SCI2 Kernel Functions
