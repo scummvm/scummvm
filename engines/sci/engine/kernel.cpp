@@ -480,8 +480,8 @@ static const SciKernelMapSubEntry kList_subops[] = {
     // passed as a second parameter instead of an object. Thus, it seems to
     // be something like ListAt instead... If we swap the two subops though,
     // Torin demo crashes complaining that it tried to send to a non-object,
-    // therefore the semantics might be different here
-    { SIG_SCI21,          18, MAP_CALL(ListIndexOf),               "l[o0]",                NULL },
+    // therefore the semantics might be different here (signature was l[o0])
+    { SIG_SCI21,          18, MAP_CALL(StubNull),                  "li",                   NULL },
     { SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
     { SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
     { SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
