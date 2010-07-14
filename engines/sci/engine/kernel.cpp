@@ -386,10 +386,12 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
     { SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
     { SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
-    { SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    NULL },
+    { SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o(i)",                 NULL },
     // ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
     //     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
     //     I guess there are many more changes somewhere
+    // TODO: Quest for Glory 4 (SCI2.1) uses the old scheme, we need to detect it accordingly
+    //        signature for SCI21 should be "o"
     { SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
     { SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   NULL },
