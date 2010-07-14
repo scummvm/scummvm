@@ -306,6 +306,7 @@ struct SciKernelMapSubEntry {
 #define SIG_SOUNDSCI0      SCI_VERSION_0_EARLY, SCI_VERSION_0_LATE
 #define SIG_SOUNDSCI1EARLY SCI_VERSION_1_EARLY, SCI_VERSION_1_EARLY
 #define SIG_SOUNDSCI1LATE  SCI_VERSION_1_LATE, SCI_VERSION_1_LATE
+#define SIG_SOUNDSCI21     SCI_VERSION_2_1, SCI_VERSION_2_1
 
 #define SIGFOR_ALL   0x3f
 #define SIGFOR_DOS   1 << 0
@@ -364,12 +365,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
     { SIG_SOUNDSCI1LATE,   6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               "o(i)",                 NULL },
-    // ^^ HACK: In SCI2, the playBed method is removed (thus the second parameter
-    //  is now meaningless, but it's still passed and needed), and in SCI2.1 the second parameter is removed
-    //  altogether. We should actually create a new sound version called SCI21 to change the signature only
-    //  for this version and above. There should be no signature here at all, so that the signature for SCI1LATE
-    //  is taken from SCI1EARLY.
+    { SIG_SOUNDSCI1LATE,   8, MAP_CALL(DoSoundPlay),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  11, MAP_CALL(DoSoundFade),               "oiiii(i)",             kDoSoundFade_workarounds },
@@ -382,6 +378,30 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
+    { SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
+    { SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
+    { SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
+    { SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
+    { SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
+    { SIG_SOUNDSCI21,      6, MAP_CALL(DoSoundInit),               NULL,                   NULL },
+    { SIG_SOUNDSCI21,      7, MAP_CALL(DoSoundDispose),            NULL,                   NULL },
+    { SIG_SOUNDSCI21,      8, MAP_CALL(DoSoundPlay),               "o",                    NULL },
+    // ^^ TODO: if this is really the only change between SCI1LATE AND SCI21, we could rename the
+    //     SIG_SOUNDSCI1LATE #define to SIG_SINCE_SOUNDSCI1LATE and make it being SCI1LATE+. Although
+    //     I guess there are many more changes somewhere
+    { SIG_SOUNDSCI21,      9, MAP_CALL(DoSoundStop),               NULL,                   NULL },
+    { SIG_SOUNDSCI21,     10, MAP_CALL(DoSoundPause),              NULL,                   NULL },
+    { SIG_SOUNDSCI21,     11, MAP_CALL(DoSoundFade),               NULL,                   NULL },
+    { SIG_SOUNDSCI21,     12, MAP_CALL(DoSoundSetHold),            NULL,                   NULL },
+    { SIG_SOUNDSCI21,     13, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI21,     14, MAP_CALL(DoSoundSetVolume),          NULL,                   NULL },
+    { SIG_SOUNDSCI21,     15, MAP_CALL(DoSoundSetPriority),        NULL,                   NULL },
+    { SIG_SOUNDSCI21,     16, MAP_CALL(DoSoundSetLoop),            NULL,                   NULL },
+    { SIG_SOUNDSCI21,     17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
+    { SIG_SOUNDSCI21,     18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
+    { SIG_SOUNDSCI21,     19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
+    { SIG_SOUNDSCI21,     20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
     SCI_SUBOPENTRY_TERMINATOR
 };
 

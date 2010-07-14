@@ -516,6 +516,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
+				case SCI_VERSION_2_1:
 					_dataincToAdd = 1;
 					break;
 				default:
@@ -672,6 +673,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_2_1:
 		// Send previous channel volumes again to actually update the volume
 		for (int i = 0; i < 15; i++)
 			if (_channelRemap[i] != -1)
