@@ -37,6 +37,13 @@ class MadsInterfaceView;
 
 #define DEPTH_BANDS_SIZE 15
 
+class SceneNode {
+public:
+	Common::Point pt;
+
+	void load(Common::SeekableReadStream *stream);
+};
+
 class MadsSceneResources: public SceneResources {
 public:
 	int _sceneId;
@@ -44,7 +51,7 @@ public:
 	int _depthStyle;
 	int _width;
 	int _height;
-	Common::Array<MadsObject> _objects;
+	Common::Array<SceneNode> _nodes;
 	Common::Array<Common::String> _setNames;
 	int _yBandsStart, _yBandsEnd;
 	int _maxScale, _minScale;
@@ -55,6 +62,7 @@ public:
 	void load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface);
 	int bandsRange() const { return _yBandsEnd - _yBandsStart; }
 	int scaleRange() const { return _maxScale - _minScale; }
+	void setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface);
 };
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
@@ -138,6 +146,8 @@ public:
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
 	MadsAction &getAction() { return _action; }
 	void setStatusText(const char *text) {}//***DEPRECATED***
+	bool getDepthHighBit(const Common::Point &pt);
+	bool getDepthHighBits(const Common::Point &pt);
 };
 
 #define CHEAT_SEQUENCE_MAX 8

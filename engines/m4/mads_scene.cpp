@@ -48,6 +48,17 @@ static const int SCROLLER_DELAY = 200;
 
 //--------------------------------------------------------------------------
 
+void SceneNode::load(Common::SeekableReadStream *stream) {
+	// Get the next data block
+	uint8 obj[0x30];
+	stream->read(obj, 0x30);
+
+	pt.x = READ_LE_UINT16(&obj[0]);
+	pt.y = READ_LE_UINT16(&obj[2]);
+}
+
+//--------------------------------------------------------------------------
+
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 	_activeAnimation = NULL;
@@ -265,6 +276,10 @@ void MadsScene::leftClick(int x, int y) {
 		statusText[0] = toupper(statusText[0]);	// capitalize first letter
 		setStatusText(statusText);
 	}
+
+	// **DEBUG** - being used for movement testing
+	_madsVm->_player.moveComplete();
+	_madsVm->_player.setDest(x, y, 2);
 }
 
 void MadsScene::rightClick(int x, int y) {
@@ -503,6 +518,22 @@ void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 	_activeAnimation = anim;
 }
 
+bool MadsScene::getDepthHighBit(const Common::Point &pt) {
+	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
+	if (_sceneResources._depthStyle == 2) 
+		return ((*p << 4) & 0x80) != 0;
+
+	return (*p & 0x80) != 0;
+}
+
+bool MadsScene::getDepthHighBits(const Common::Point &pt) {
+	if (_sceneResources._depthStyle == 2)
+		return 0;
+
+	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
+	return (*p & 0x70) >> 4;
+}
+
 /*--------------------------------------------------------------------------*/
 
 MadsAction::MadsAction() {
@@ -733,9 +764,9 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 
 	// Load in any scene objects
 	for (int i = 0; i < objectCount; ++i) {
-		MadsObject rec;
+		SceneNode rec;
 		rec.load(stream);
-		_objects.push_back(rec);
+		_nodes.push_back(rec);
 	}
 	for (int i = 0; i < 20 - objectCount; ++i)
 		stream->skip(48);
@@ -810,6 +841,9 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		delete depthSurface;
 }
 
+void MadsSceneResources::setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface) {
+	// TODO
+}
 
 /*--------------------------------------------------------------------------*/
 

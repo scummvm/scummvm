@@ -35,20 +35,27 @@ const int MadsPlayer::_directionListIndexes[32] = {
 
 MadsPlayer::MadsPlayer() {
 	_playerPos = Common::Point(160, 78);
-	_direction = 0;
-	_newDirection = 0;
+	_ticksAmount = 3;
 	_forceRefresh = true;
 	_stepEnabled = true;
-	_ticksAmount = 3;
-	_priorTimer = 0;
 	_visible = true;
-	_priorVisible = false;
-	_visible3 = false;
 	_yScale = 0;
 	_moving = false;
+
 	_spriteListStart = 0;
-	_spriteListIdx = 0;
+	//TODO:unknown vars
+	_special = 0;
+	_next = 0;
+	_unk4 = false;
+
 	_spritesChanged = true;
+	
+	_direction = 0;
+	_newDirection = 0;
+	_priorTimer = 0;
+	_priorVisible = false;
+	_visible3 = false;
+	_spriteListIdx = 0;
 	_currentScale = 0;
 	strcpy(_spritesPrefix, "");
 	for (int idx = 0; idx < 8; ++idx)
@@ -59,6 +66,8 @@ MadsPlayer::MadsPlayer() {
 	_frameCount = 0;
 	_frameListIndex = 0;
 	_actionIndex = 0;
+	_routeCount = 0;
+
 	resetActionList();
 }
 
@@ -168,7 +177,7 @@ void MadsPlayer::update() {
 				_madsVm->scene()->_spriteSlots[slotIndex] = slot;
 			}
 
-			// TODO: Meaning of word_844c0 block
+			// TODO: Meaning of _v844c0 block
 
 		}
 	}
@@ -325,6 +334,34 @@ void MadsPlayer::nextFrame() {
 	}
 }
 
+void MadsPlayer::setDest(int destX, int destY, int facing) {
+	resetActionList();
+	setTicksAmount();
+	_moving = true;
+	_destFacing = facing;
+	
+	_madsVm->scene()->getSceneResources().setRouteNode(_madsVm->scene()->getSceneResources()._nodes.size() - 2,
+		_playerPos, _madsVm->scene()->_depthSurface);
+	_madsVm->scene()->getSceneResources().setRouteNode(_madsVm->scene()->getSceneResources()._nodes.size() - 1,
+		Common::Point(destX, destY), _madsVm->scene()->_depthSurface);
+
+	bool v = _madsVm->scene()->getDepthHighBit(Common::Point(destX, destY));
+	setupRoute(v);
+	_next = 0;
+
+	if (_routeCount > 0) {
+		Common::Point srcPos = _playerPos;
+		for (int routeCtr = _routeCount - 1; (routeCtr >= 0) && (_next == 0); --routeCtr) {
+			int idx = _routeIndexes[routeCtr];
+			const Common::Point &pt = _madsVm->scene()->getSceneResources()._nodes[idx].pt;
+
+			_next = scanPath(_madsVm->scene()->_depthSurface, srcPos, pt);
+			srcPos = pt;
+		}
+	}
+}
+
+
 int MadsPlayer::getScale(int yp) {
 	MadsSceneResources &r = _madsVm->scene()->getSceneResources();
 
@@ -411,7 +448,98 @@ void MadsPlayer::idle() {
 }
 
 void MadsPlayer::move() {
-	// TODO: Handle player movement
+	bool routeFlag = false;
+
+	if (_moving) {
+		int idx = _routeCount; 
+		while (!_v844C0 && (_destPos.x == _playerPos.x) && (_destPos.y == _playerPos.y)) {
+			if (idx != 0) {
+				--idx;
+				SceneNode &node = _madsVm->scene()->getSceneResources()._nodes[_routeIndexes[idx]];
+				_destPos = node.pt;
+				routeFlag = true;
+			} else if (_v844BE == idx) {
+				// End of walking path
+				_routeCount = 0;
+				_moving = false;
+				turnToDestFacing();
+				routeFlag = true;
+				idx = _routeCount;
+			} else {
+				_v844C0 = _v844BE;
+				_v844BC = true;
+				_v844BE = 0;
+				_stepEnabled = true;
+				routeFlag = false;
+			}
+
+			if (!_moving)
+				break;
+		}
+		_routeCount = idx;
+	}
+
+	if (routeFlag && _moving)
+		startMovement();
+
+	if (_newDirection != _direction)
+		dirChanged();
+	else if (!_moving)
+		updateFrame();
+
+	int var1 = _unk1;
+	if (_unk4 && (_hypotenuse > 0)) {
+		int v1 = -(_currentScale - 100) * (_posDiff.x - 1) / _hypotenuse + _currentScale;
+		var1 = MAX(1, 10000 / (v1 * _currentScale * var1));
+	}
+
+	if (!_moving || (_direction != _newDirection))
+		return;
+
+	Common::Point newPos = _playerPos;
+
+	if (_v8452E < var1) {
+		do {
+			if (_v8452C < _posDiff.x)
+				_v8452C += _posDiff.y;
+			if (_v8452C >= _posDiff.x) {
+				if ((_posChange.y <= 0) || (_v844C0 != 0))
+					newPos.y += _yDirection;
+				--_posChange.y;
+				_v8452C -= _posDiff.x;
+			}
+
+			if (_v8452C < _posDiff.x) {
+				if ((_posChange.x <= 0) || (_v844C0 != 0))
+					newPos.x += _xDirection;
+				--_posChange.x;
+			}
+
+			if ((_v844BC == 0) && (_v844C0 == 0) && (_v844BE == 0)) {
+				routeFlag = _madsVm->scene()->getDepthHighBit(newPos);
+
+				if (_special == 0)
+					_special = _madsVm->scene()->getDepthHighBits(newPos);
+			}
+
+			_v8452E += _v84530;
+
+		} while ((_v8452E < var1) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0)));
+	}
+
+	if (routeFlag)
+		moveComplete();
+	else {
+		if (!_v844C0) {
+			// If the move is complete, make sure the position is exactly on the given destination
+			if (_posChange.x == 0)
+				newPos.x = _destPos.x;
+			if (_posChange.y == 0)
+				newPos.y = _destPos.y;
+		}
+
+		_playerPos = newPos;
+	}
 }
 
 void MadsPlayer::dirChanged() {
@@ -449,6 +577,177 @@ void MadsPlayer::dirChanged() {
 		updateFrame();
 
 	_priorTimer += 1;
+}
+
+void MadsPlayer::moveComplete() {
+	reset();
+	//todo: Unknown flag
+}
+
+void MadsPlayer::reset() {
+	_destPos = _playerPos;
+	_destFacing = 5;
+	_newDirection = _direction;
+
+	_moving = false;
+	_v844BC = false;
+	_v844C0 = false;
+	_v844BE = 0;
+	_next = 0;
+	_routeCount = 0;
+}
+
+/**
+ * Scans along an edge connecting two points within the depths/walk surface, and returns the information of the first
+ * pixel high nibble encountered with a non-zero value
+ */
+int MadsPlayer::scanPath(M4Surface *depthSurface, const Common::Point &srcPos, const Common::Point &destPos) {
+	// For compressed depth surfaces, always return 0
+	if (_madsVm->scene()->getSceneResources()._depthStyle != 2)
+		return 0;
+
+	int yDiff = destPos.y - srcPos.y;
+	int yAmount = MADS_SURFACE_WIDTH;
+
+	if (yDiff < 0) {
+		yDiff = -yDiff;
+		yAmount = -yAmount;
+	}
+
+	int xDiff = destPos.x - srcPos.y;
+	int xDirection = 1;
+	int xAmount = 0;
+	if (xDiff < 0) {
+		xDiff = -xDiff;
+		xDirection = -xDirection;
+		xAmount = MIN(yDiff, xDiff);
+	}
+
+	++xDiff;
+	++yDiff;
+
+	const byte *srcP = depthSurface->getBasePtr(srcPos.x, srcPos.y);
+	int index = xAmount;
+
+	// Outer horizontal movement loop
+	for (int yIndex = 0; yIndex < yDiff; ++yIndex) {
+		index += yDiff;
+		int v = (*srcP && 0x7F) >> 4;
+		if (v)
+			return v;
+
+		// Inner loop for handling vertical movement
+		while (index >= xDiff) {
+			index -= xDiff;
+
+			int v = (*srcP && 0x7F) >> 4;
+			if (v)
+				return v;
+
+			srcP += yAmount;
+		}
+
+		srcP += xDirection;
+	}
+	
+	return 0;
+}
+
+/**
+ * Starts a player moving to a given destination
+ */
+void MadsPlayer::startMovement() {
+	int xDiff = _destPos.x - _playerPos.x;
+	int yDiff = _destPos.y - _playerPos.y;
+	int srcScale = getScale(_playerPos.y);
+	int destScale = getScale(_destPos.y);
+
+	// Sets the X direction
+	if (xDiff > 0)
+		_xDirection = 1;
+	else if (xDiff < 0)
+		_xDirection = -1;
+	else
+		_xDirection = 0;
+
+	// Sets the Y direction
+	if (yDiff > 0)
+		_yDirection = 1;
+	else if (yDiff < 0)
+		_yDirection = -1;
+	else
+		_yDirection = 0;
+
+	xDiff = ABS(xDiff);
+	yDiff = ABS(yDiff);
+	int scaleDiff = ABS(srcScale - destScale);
+
+	int xAmt100 = xDiff * 100;
+	int yAmt100 = yDiff * 100;
+	int xAmt33 = xDiff * 33;
+
+	int scaleAmount = (_unk4 ? scaleDiff * 3 : 0) + 100 * yDiff / 100;
+	int scaleAmount100 = scaleAmount * 100;
+
+	// Figure out direction that will need to be moved in
+	int majorDir;
+	if (xDiff == 0)
+		majorDir = 1;
+	else if (yDiff == 0)
+		majorDir = 3;
+	else {
+		if ((scaleAmount >= xDiff) && ((xAmt33 / scaleAmount) >= 141))
+			majorDir = 3;
+		else if (yDiff <= xDiff)
+			majorDir = 2;
+		else if ((scaleAmount100 / xDiff) >= 141)
+			majorDir = 1;
+		else
+			majorDir = 2;
+	}
+
+	switch (majorDir) {
+	case 1:
+		_newDirection = (_yDirection <= 0) ? 8 : 2;
+		break;
+	case 2: {
+		_newDirection = ((_yDirection <= 0) ? 9 : 3) - ((_xDirection <= 0) ? 2 : 0);
+		break;
+	}
+	case 3:
+		_newDirection = (_xDirection <= 0) ? 4 : 6;
+		break;
+	default:
+		break;
+	}
+
+	_hypotenuse = SqrtF16(xAmt100 * xAmt100 + yAmt100 * yAmt100);
+	_posDiff.x = xDiff + 1;
+	_posDiff.y = yDiff + 1;
+	_posChange.x = xDiff;
+	_posChange.y = yDiff;
+
+	scaleAmount = MAX(xDiff, yDiff);
+	_v84530  = (scaleAmount == 0) ? 0 : _hypotenuse / scaleAmount;
+	
+	if (_playerPos.x > _destPos.x)
+		_v8452C = MAX(_posChange.x, _posChange.y);
+	else
+		_v8452C = 0;
+	
+	_hypotenuse /= 100;
+	_v8452E = -_v84530;
+}
+
+void MadsPlayer::turnToDestFacing() {
+	if (_destFacing != 5)
+		_newDirection = _destFacing;
+}
+
+void MadsPlayer::setupRoute(bool bitFlag) {
+	// TODO: Properly Implement route setup
+	_routeIndexes[0] = _madsVm->scene()->getSceneResources()._nodes.size() - 1;
+	_routeCount = 1;
 }
 
 } // End of namespace M4
