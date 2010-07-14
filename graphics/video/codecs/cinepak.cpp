@@ -53,8 +53,11 @@ CinepakDecoder::CinepakDecoder() : Codec() {
 }
 
 CinepakDecoder::~CinepakDecoder() {
-	if (_curFrame.surface)
+	if (_curFrame.surface) {
 		_curFrame.surface->free();
+		delete _curFrame.surface;
+	}
+
 	delete[] _curFrame.strips;
 }
 
