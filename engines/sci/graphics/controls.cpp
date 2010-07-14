@@ -89,7 +89,7 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	_text16->SetFont(fontId);
 	fontSize = _ports->_curPort->fontHeight;
 	_ports->penColor(_ports->_curPort->penClr); _ports->backColor(_ports->_curPort->backClr);
-	workerRect.bottom = workerRect.top + 9;
+	workerRect.bottom = workerRect.top + fontSize;
 	lastYpos = rect.bottom - fontSize;
 
 	// Write actual text
