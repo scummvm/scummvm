@@ -391,7 +391,7 @@ reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
 	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, canBeHere.isNull() ? 0 : 1);
+	return canBeHere;
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
