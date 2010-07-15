@@ -27,8 +27,8 @@
 #include "common/system.h"
 
 #include "engines/util.h"
-#include "gui/options.h"
 
+#include "testbed/config.h"
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
@@ -84,19 +84,6 @@ TestbedEngine::~TestbedEngine() {
 	}
 }
 
-void TestbedEngine::enableTestsuite(const Common::String &name, bool enable) {
-	Common::Array<Testsuite *>::const_iterator iter;
-
-	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
-		if (name.equalsIgnoreCase((*iter)->getName())) {
-			(*iter)->enable(enable);
-			break;
-		}
-	}
-
-	return;
-}
-
 void TestbedEngine::invokeTestsuites() {
 	Common::Array<Testsuite *>::const_iterator iter;
 
@@ -107,34 +94,6 @@ void TestbedEngine::invokeTestsuites() {
 	}
 }
 
-TestbedOptionsDialog::TestbedOptionsDialog() : GUI::OptionsDialog("Select", 120, 120, 360, 200), _hOffset(15), _vOffset(15), _boxWidth(300), _boxHeight(10) {
-	new GUI::StaticTextWidget(this, _hOffset, _vOffset, _boxWidth, _boxHeight, "Select testsuites to Execute", Graphics::kTextAlignCenter);
-	_vOffset += 20;
-	addCheckbox("FS");
-	addCheckbox("GFX");
-	addCheckbox("Savegames");
-	addCheckbox("Misc");
-	addCheckbox("Events");
-	new GUI::ButtonWidget(this, 80 , _vOffset + 10, 80, 25, "Continue", GUI::kOKCmd, 'C');
-	new GUI::ButtonWidget(this, 200, _vOffset + 10, 80, 25, "Exit", GUI::kCloseCmd, 'X');
-}
-
-TestbedOptionsDialog::~TestbedOptionsDialog() {}
-
-void TestbedOptionsDialog::addCheckbox(const Common::String &tsName) {
-	_checkBoxes.push_back(new GUI::CheckboxWidget(this, _hOffset, _vOffset, _boxWidth, _boxHeight, tsName));
-	_vOffset += 20;
-}
-
-bool TestbedOptionsDialog::isEnabled(const Common::String &tsName) {
-	for (uint i = 0; i < _checkBoxes.size(); i++) {
-		if (_checkBoxes[i]->getLabel().equalsIgnoreCase(tsName)) {
-			return _checkBoxes[i]->getState();
-		}
-	}
-	return false;
-}
-
 Common::Error TestbedEngine::run() {
 	// Initialize graphics using following:
 	initGraphics(320, 200, false);
@@ -143,37 +102,8 @@ Common::Error TestbedEngine::run() {
 	// interactive mode could also be modified by a config parameter "non-interactive=1"
 	// TODO: Implement that
 
-	Common::String prompt("Welcome to the ScummVM testbed!\n"
-						"It is a framework to test the various ScummVM subsystems namely GFX, Sound, FS, events etc.\n"
-						"If you see this, it means interactive tests would run on this system :)");
-
-	// To be set from config file
-	// By default Interactive tests are enabled
-	// XXX: disabling these as of now for fastly testing other tests
-	// Testsuite::isSessionInteractive = false;
-
-	if (Testsuite::isSessionInteractive) {
-		Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");
-		Testsuite::displayMessage(prompt, "Proceed?");
-	}
-
-	// Select testsuites using checkboxes
-	TestbedOptionsDialog tbd;
-	tbd.runModal();
-
-	// check if user wanted to exit.
-	if (shouldQuit()) {
-		return Common::kNoError;
-	}
-
-	// Enable selected testsuites
-	Common::String tsName;
-	for (uint i = 0; i < _testsuiteList.size(); i++) {
-		tsName = _testsuiteList[i]->getName();
-		if (tbd.isEnabled(tsName)) {
-			enableTestsuite(tsName, true);
-		}
-	}
+	TestbedConfigManager cfMan(_testsuiteList);
+	cfMan.selectTestsuites();
 
 	invokeTestsuites();
 	return Common::kNoError;

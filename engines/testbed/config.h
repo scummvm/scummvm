@@ -22,46 +22,41 @@
  * $Id$
  */
 
-#ifndef TESTBED_H
-#define TESTBED_H
-
-#include "engines/engine.h"
-
-#include "gui/options.h"
+#ifndef TESTBED_CONFIG_H
+#define TESTBED_CONFIG_H
 
 #include "testbed/testsuite.h"
+#include "common/array.h"
+#include "gui/options.h"
 
 namespace Testbed {
 
-enum {
-	kTestbedLogOutput = 1 << 0,
-	kTestbedEngineDebug = 1 << 2
+class TestbedConfigManager {
+public:
+	TestbedConfigManager(Common::Array<Testsuite *> &tList) : _testsuiteList(tList) {}
+	~TestbedConfigManager() {}
+	void selectTestsuites();
+private:
+	Common::Array<Testsuite *> &_testsuiteList;
+	void enableTestsuite(const Common::String &name, bool enable);
+	void parseConfigFile() {}
 };
 
-class TestbedEngine : public Engine {
+class TestbedOptionsDialog : public GUI::OptionsDialog {
 public:
-	TestbedEngine(OSystem *syst);
-	~TestbedEngine();
-
-	virtual Common::Error run();
-
-	/**
-	 * All testsuites are disabled by default
-	 * To enable testsuite X, call enableTestsuite("X", true);
-	 */
-	void enableTestsuite(const Common::String &name, bool enable);
-
-	/**
-	 * Invokes configured testsuites.
-	 */
-	void invokeTestsuites();
-
-	bool hasFeature(EngineFeature f) const;
+	TestbedOptionsDialog();
+	~TestbedOptionsDialog();
+	void addCheckbox(const Common::String &tsName);
+	bool isEnabled(const Common::String &tsName);
 
 private:
-	Common::Array<Testsuite *> _testsuiteList;
+	Common::Array<GUI::CheckboxWidget *> _checkBoxes;
+	const int _hOffset; // current offset from left
+	int _vOffset; // current offset from top
+	const int _boxWidth;
+	const int _boxHeight;
 };
 
 } // End of namespace Testbed
 
-#endif // TESTBED_H
+#endif // TESTBED_CONFIG_H

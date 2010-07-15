@@ -1,6 +1,7 @@
 MODULE := engines/testbed
 
 MODULE_OBJS := \
+	config.o \
 	detection.o \
 	events.o \
 	fs.o \
