@@ -109,6 +109,7 @@ private:
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
+	int _mouseMsgIndex;
 
 	void drawElements();
 	void loadScene2(const char *aaName, int sceneNumber);
@@ -119,6 +120,7 @@ private:
 	void setAction();
 public:
 	char _aaName[100];
+	bool _showMousePos;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

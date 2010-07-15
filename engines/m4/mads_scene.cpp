@@ -66,6 +66,8 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
 	_interfaceSurface = new MadsInterfaceView(vm);
+	_showMousePos = false;
+	_mouseMsgIndex = -1;
 }
 
 MadsScene::~MadsScene() {
@@ -348,6 +350,16 @@ void MadsScene::update() {
 
 void MadsScene::updateState() {
 	_madsVm->_player.update();
+
+	// Handle refreshing the mouse position display
+	if (_mouseMsgIndex != -1)
+		_madsVm->scene()->_kernelMessages.remove(_mouseMsgIndex);
+	if (_showMousePos) {
+		char buffer[20];
+		sprintf(buffer, "(%d,%d)", _madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y);
+
+		_mouseMsgIndex = _madsVm->scene()->_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, buffer);
+	}
 
 	// Step through the scene
 	_sceneLogic.sceneStep();
@@ -1158,8 +1170,13 @@ bool MadsInterfaceView::handleCheatKey(int32 keycode) {
 		// TODO: Move player to current destination
 		return true;
 
-	case Common::KEYCODE_t | (Common::KEYCODE_LALT):
-	case Common::KEYCODE_t | (Common::KEYCODE_RALT):
+	case Common::KEYCODE_c | (Common::KBD_CTRL << 24):
+		// Toggle display of mouse position
+		_madsVm->scene()->_showMousePos = !_madsVm->scene()->_showMousePos;
+		break;
+
+	case Common::KEYCODE_t | (Common::KEYCODE_LALT << 24):
+	case Common::KEYCODE_t | (Common::KEYCODE_RALT << 24):
 	{
 		// Teleport to room
 		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
