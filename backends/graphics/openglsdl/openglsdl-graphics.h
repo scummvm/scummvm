@@ -42,8 +42,6 @@ public:
 	OpenGLSdlGraphicsManager();
 	virtual ~OpenGLSdlGraphicsManager();
 
-	virtual void init();
-
 #ifdef USE_RGB_COLOR
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif

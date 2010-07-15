@@ -53,26 +53,6 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 
 }
 
-void OpenGLGraphicsManager::init() {
-	GLTexture::initGLExtensions();
-
-	glDisable(GL_CULL_FACE);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_LIGHTING);
-	glDisable(GL_FOG);
-	glDisable(GL_DITHER);
-	glShadeModel(GL_FLAT);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-
-	glEnable(GL_TEXTURE_2D);
-}
-
 //
 // Feature
 //
@@ -463,6 +443,32 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
+	GLTexture::initGLExtensions();
+
+	glDisable(GL_CULL_FACE);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_LIGHTING);
+	glDisable(GL_FOG);
+	glDisable(GL_DITHER);
+	glShadeModel(GL_FLAT);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+	glEnable(GL_TEXTURE_2D);
+
+	glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	if (!_gameTexture) {
 		byte bpp;
 		GLenum format;
@@ -484,14 +490,6 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
-
-	glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
-
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
 
 	return true;
 }

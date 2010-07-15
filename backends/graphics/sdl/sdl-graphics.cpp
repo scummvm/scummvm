@@ -921,7 +921,8 @@ void SdlGraphicsManager::internUpdateScreen() {
 	ScalerProc *scalerProc;
 	int scale1;
 
-#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+	// definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+#if defined (DEBUG) && !defined(WIN32) && !defined(_WIN32_WCE)
 	assert(_hwscreen != NULL);
 	assert(_hwscreen->map->sw_data != NULL);
 #endif

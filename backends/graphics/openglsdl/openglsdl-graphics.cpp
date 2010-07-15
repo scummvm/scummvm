@@ -31,20 +31,15 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
 	_hwscreen(0) {
 
-}
-
-OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
-
-}
-
-void OpenGLSdlGraphicsManager::init() {
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
 	SDL_ShowCursor(SDL_DISABLE);
+}
 
-	OpenGLGraphicsManager::init();
+OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
+
 }
 
 #ifdef USE_RGB_COLOR

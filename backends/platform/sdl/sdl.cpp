@@ -107,7 +107,6 @@ void OSystem_SDL::initBackend() {
 			}
 		}*/
 		_graphicsManager = new OpenGLSdlGraphicsManager();
-		((OpenGLSdlGraphicsManager *)_graphicsManager)->init();
 #endif
 		if (_graphicsManager == 0)
 			_graphicsManager = new SdlGraphicsManager();
