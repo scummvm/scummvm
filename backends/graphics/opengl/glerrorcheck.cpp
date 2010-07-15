@@ -37,7 +37,9 @@
 #undef ARRAYSIZE
 #endif
 
-#ifdef USE_GLES
+#ifdef MACOSX
+#include <gl.h>
+#elif defined(USE_GLES)
 #include <GLES/gl.h>
 #else
 #include <GL/gl.h>

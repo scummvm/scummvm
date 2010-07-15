@@ -123,6 +123,7 @@ _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
 _16bit=auto
+_opengl=auto
 _readline=auto
 # Default option behaviour yes/no
 _debug_build=auto
@@ -676,6 +677,7 @@ Optional Features:
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-16bit          don't enable 16bit color support
+  --disable-opengl         don't enable OpenGL (ES)
   --disable-scalers        exclude scalers
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-translation    don't build support for translated messages
@@ -704,6 +706,9 @@ Optional Libraries:
 
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
+
+  --with-opengl-prefix=DIR Prefix where OpenGL (ES) is installed (optional)
+  --disable-opengl         disable OpenGL (ES) support [autodetect]
 
   --disable-indeo3         disable Indeo3 decoder [autodetect]
 
@@ -758,6 +763,8 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-opengl)          _opengl=yes     ;;
+	--disable-opengl)         _opengl=no      ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
@@ -820,6 +827,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		READLINE_CFLAGS="-I$arg/include"
 		READLINE_LIBS="-L$arg/lib"
+		;;
+	--with-opengl-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		OPENGL_CFLAGS="-I$arg/include"
+		OPENGL_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -1345,8 +1357,10 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
-		CXXFLAGS="$CXXFLAGS -I/System/Library/Frameworks/OpenGL.framework/Headers"
-		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI -framework OpenGL"
+		CXXFLAGS="$CXXFLAGS"
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		OPENGL_CFLAGS="-I/System/Library/Frameworks/OpenGL.framework/Headers"
+		OPENGL_LIBS="-framework OpenGL"
 		add_line_to_config_mk 'MACOSX = 1'
 		;;
 	dreamcast)
@@ -1438,6 +1452,14 @@ case $_host_os in
 		echo "WARNING: could not establish system type, assuming unix like"
 		DEFINES="$DEFINES -DUNIX"
 		;;
+esac
+
+# HACK: On non-OSX systems, add the GL library
+case $_host_os in
+	*darwin*)
+		;;
+	*)
+		OPENGL_LIBS="$OPENGL_LIBS -lGL"
 esac
 
 if test -n "$_host"; then
@@ -2260,6 +2282,28 @@ if test "$_text_console" = yes ; then
 else
 	_def_text_console='#undef USE_TEXT_CONSOLE'
 fi
+
+#
+# Check for OpenGL (ES)
+#
+echocheck "OpenGL (ES)"
+if test "$_opengl" = auto ; then
+# TODO: This is just a quick hack until actual detection is added, which
+# will be a pain because of the various directories that OpenGL can have
+# its headers in. Maybe we should force the platforms to automatically
+# include the directory that includes gl.h?
+	_opengl=yes
+fi
+if test "$_opengl" = yes ; then
+	_def_opengl='#define USE_OPENGL'
+	LIBS="$LIBS $OPENGL_LIBS"
+	INCLUDES="$INCLUDES $OPENGL_CFLAGS"
+	DEFINES="$DEFINES -DUSE_OPENGL"
+else
+	_def_opengl='#undef USE_OPENGL'
+fi
+
+echo "$_opengl"
 
 #
 # Check for nasm
