@@ -76,13 +76,13 @@ void DLObject::unload() {
 /**
  * Follow the instruction of a relocation section.
  *
- * @param fd 		 File Descriptor
+ * @param DLFile 	 SeekableReadStream of File
  * @param offset 	 Offset into the File
  * @param size   	 Size of relocation section
  * @param relSegment Base address of relocated segment in memory (memory offset)
  *
  */
-bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *relSegment) {
+bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = NULL;	// relocation entry
 
 	// Allocate memory for relocation table
@@ -92,8 +92,8 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 	}
 
 	// Read in our relocation table
-	if (lseek(fd, offset, SEEK_SET) < 0 ||
-	        read(fd, rel, size) != (ssize_t)size) {
+	if (DLFile->seek(offset, SEEK_SET) < 0 ||
+	        DLFile->read(rel, size) != (ssize_t)size) {
 		seterror("Relocation table load failed.");
 		free(rel);
 		return false;
@@ -266,9 +266,9 @@ bool DLObject::relocate(int fd, unsigned long offset, unsigned long size, void *
 	return true;
 }
 
-bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
+bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
 	// Start reading the elf header. Check for errors
-	if (read(fd, ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
+	if (DLFile->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
 	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||					// Check MAGIC
 	        ehdr->e_type != ET_EXEC ||									// Check for executable
 	        ehdr->e_machine != EM_MIPS ||								// Check for MIPS machine type
@@ -284,10 +284,10 @@ bool DLObject::readElfHeader(int fd, Elf32_Ehdr *ehdr) {
 	return true;
 }
 
-bool DLObject::readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num) {
+bool DLObject::readProgramHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num) {
 	// Read program header
-	if (lseek(fd, ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
-	        read(fd, phdr, sizeof(*phdr)) != sizeof(*phdr)) {
+	if (DLFile->seek(ehdr->e_phoff + sizeof(*phdr)*num, SEEK_SET) < 0 ||
+	        DLFile->read(phdr, sizeof(*phdr)) != sizeof(*phdr)) {
 		seterror("Program header load failed.");
 		return false;
 	}
@@ -305,7 +305,7 @@ bool DLObject::readProgramHeaders(int fd, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, in
 
 }
 
-bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
+bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr) {
 
 	char *baseAddress = 0;
 
@@ -342,8 +342,8 @@ bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
 		memset(baseAddress + phdr->p_filesz, 0, phdr->p_memsz - phdr->p_filesz);
 	}
 	// Read the segment into memory
-	if (lseek(fd, phdr->p_offset, SEEK_SET) < 0 ||
-	        read(fd, baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
+	if (DLFile->seek(phdr->p_offset, SEEK_SET) < 0 ||
+	        DLFile->read(baseAddress, phdr->p_filesz) != (ssize_t)phdr->p_filesz) {
 		seterror("Segment load failed.");
 		return false;
 	}
@@ -352,7 +352,7 @@ bool DLObject::loadSegment(int fd, Elf32_Phdr *phdr) {
 }
 
 
-Elf32_Shdr * DLObject::loadSectionHeaders(int fd, Elf32_Ehdr *ehdr) {
+Elf32_Shdr * DLObject::loadSectionHeaders(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
 
 	Elf32_Shdr *shdr = NULL;
 
@@ -363,8 +363,8 @@ Elf32_Shdr * DLObject::loadSectionHeaders(int fd, Elf32_Ehdr *ehdr) {
 	}
 
 	// Read from file into section headers
-	if (lseek(fd, ehdr->e_shoff, SEEK_SET) < 0 ||
-	        read(fd, shdr, ehdr->e_shnum * sizeof(*shdr)) !=
+	if (DLFile->seek(ehdr->e_shoff, SEEK_SET) < 0 ||
+	        DLFile->read(shdr, ehdr->e_shnum * sizeof(*shdr)) !=
 	        (ssize_t)(ehdr->e_shnum * sizeof(*shdr))) {
 		seterror("Section headers load failed.");
 		return NULL;
@@ -373,7 +373,7 @@ Elf32_Shdr * DLObject::loadSectionHeaders(int fd, Elf32_Ehdr *ehdr) {
 	return shdr;
 }
 
-int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+int DLObject::loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Loop over sections, looking for symbol table linked to a string table
 	for (int i = 0; i < ehdr->e_shnum; i++) {
@@ -404,8 +404,8 @@ int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 	}
 
 	// Read symbol table into memory
-	if (lseek(fd, shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
-	        read(fd, _symtab, shdr[_symtab_sect].sh_size) !=
+	if (DLFile->seek(shdr[_symtab_sect].sh_offset, SEEK_SET) < 0 ||
+	        DLFile->read(_symtab, shdr[_symtab_sect].sh_size) !=
 	        (ssize_t)shdr[_symtab_sect].sh_size) {
 		seterror("Symbol table load failed.");
 		return -1;
@@ -419,7 +419,7 @@ int DLObject::loadSymbolTable(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 }
 
-bool DLObject::loadStringTable(int fd, Elf32_Shdr *shdr) {
+bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr) {
 
 	int string_sect = shdr[_symtab_sect].sh_link;
 
@@ -430,8 +430,8 @@ bool DLObject::loadStringTable(int fd, Elf32_Shdr *shdr) {
 	}
 
 	// Read string table into memory
-	if (lseek(fd, shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
-	        read(fd, _strtab, shdr[string_sect].sh_size) !=
+	if (DLFile->seek(shdr[string_sect].sh_offset, SEEK_SET) < 0 ||
+	        DLFile->read(_strtab, shdr[string_sect].sh_size) !=
 	        (ssize_t)shdr[string_sect].sh_size) {
 		seterror("Symbol table strings load failed.");
 		return false;
@@ -468,7 +468,7 @@ void DLObject::relocateSymbols(Elf32_Addr offset, Elf32_Addr shortsOffset) {
 	DBG("Relocated %d short symbols, %d others.\n", shortsCount, othersCount);
 }
 
-bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Loop over sections, finding relocation sections
 	for (int i = 0; i < ehdr->e_shnum; i++) {
@@ -482,11 +482,11 @@ bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
 			if (!ShortsMan.inGeneralSegment((char *)shdr[curShdr->sh_info].sh_addr)) {			// regular segment
-				if (!relocate(fd, curShdr->sh_offset, curShdr->sh_size, _segment)) {
+				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
 					return false;
 				}
 			} else { 	// In Shorts segment
-				if (!relocate(fd, curShdr->sh_offset, curShdr->sh_size, (void *)_shortsSegment->getOffset())) {
+				if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, (void *)_shortsSegment->getOffset())) {
 					return false;
 				}
 			}
@@ -498,7 +498,7 @@ bool DLObject::relocateRels(int fd, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 }
 
 
-bool DLObject::load(int fd) {
+bool DLObject::load(Common::SeekableReadStream* DLFile) {
 	fprintf(stderr, "In DLObject::load\n");
 
 	Elf32_Ehdr ehdr;	// ELF header
@@ -506,7 +506,7 @@ bool DLObject::load(int fd) {
 	Elf32_Shdr *shdr;	// Section header
 	bool ret = true;
 
-	if (readElfHeader(fd, &ehdr) == false) {
+	if (readElfHeader(DLFile, &ehdr) == false) {
 		return false;
 	}
 
@@ -514,26 +514,26 @@ bool DLObject::load(int fd) {
 
 		fprintf(stderr, "Loading segment %d\n", i);
 
-		if (readProgramHeaders(fd, &ehdr, &phdr, i) == false)
+		if (readProgramHeaders(DLFile, &ehdr, &phdr, i) == false)
 			return false;
 
-		if (!loadSegment(fd, &phdr))
+		if (!loadSegment(DLFile, &phdr))
 			return false;
 	}
 
-	if ((shdr = loadSectionHeaders(fd, &ehdr)) == NULL)
+	if ((shdr = loadSectionHeaders(DLFile, &ehdr)) == NULL)
 		ret = false;
 
-	if (ret && ((_symtab_sect = loadSymbolTable(fd, &ehdr, shdr)) < 0))
+	if (ret && ((_symtab_sect = loadSymbolTable(DLFile, &ehdr, shdr)) < 0))
 		ret = false;
 
-	if (ret && (loadStringTable(fd, shdr) == false))
+	if (ret && (loadStringTable(DLFile, shdr) == false))
 		ret = false;
 
 	if (ret)
 		relocateSymbols((Elf32_Addr)_segment, _shortsSegment->getOffset());	// Offset by our segment allocated address
 
-	if (ret && (relocateRels(fd, &ehdr, shdr) == false))
+	if (ret && (relocateRels(DLFile, &ehdr, shdr) == false))
 		ret = false;
 
 	free(shdr);
@@ -542,7 +542,7 @@ bool DLObject::load(int fd) {
 }
 
 bool DLObject::open(const char *path) {
-	int fd;
+	Common::SeekableReadStream* DLFile;
 	void *ctors_start, *ctors_end;
 
 	DBG("open(\"%s\")\n", path);
@@ -551,25 +551,21 @@ bool DLObject::open(const char *path) {
 	_gpVal = (unsigned int) & _gp;
 	DBG("_gpVal is %x\n", _gpVal);
 
-	//PS2 has no "PowerMan" for suspending the system.
-	//PowerMan.beginCriticalSection();
+	Common::FSNode file(path);
 
-	if ((fd = ::open(path, O_RDONLY)) < 0) {
+	if (!(DLFile = file.createReadStream())) {
 		seterror("%s not found.", path);
 		return false;
 	}
 
 	// Try to load and relocate
-	if (!load(fd)) {
-		::close(fd);
+	if (!load(DLFile)) {
+		//::close(fd);
 		unload();
 		return false;
 	}
 
-	::close(fd);
-
-	//PS2 has no "PowerMan" for suspending the system.
-	//PowerMan.endCriticalSection();
+	//::close(fd);
 
 	// flush data cache
 	DBG("Flushing data cache");
