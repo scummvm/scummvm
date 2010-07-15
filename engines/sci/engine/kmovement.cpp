@@ -316,14 +316,21 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
+	bool collision = false;
+	reg_t cantBeHere = NULL_REG;
+
 	if (SELECTOR(cantBeHere) != -1) {
 		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
-		s->r_acc = make_reg(0, !s->r_acc.offset);
+		if (!s->r_acc.isNull())
+			collision = true;
+		cantBeHere = s->r_acc;
 	} else {
 		invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
+		if (s->r_acc.isNull())
+			collision = true;
 	}
 
-	if (!s->r_acc.offset) { // Contains the return value
+	if (collision) {
 		signal = readSelectorValue(segMan, client, SELECTOR(signal));
 
 		writeSelectorValue(segMan, client, SELECTOR(x), oldx);
@@ -332,12 +339,15 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
 		// we shall not set completed in this case, sierra sci also doesn't do it
+		//  if we set call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
 			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
+	if (SELECTOR(cantBeHere) != -1)
+		return cantBeHere;
 	return make_reg(0, completed);
 }
 
