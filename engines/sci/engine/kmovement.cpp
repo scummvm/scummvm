@@ -331,7 +331,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, client, SELECTOR(signal), (signal | kSignalHitObstacle));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
-		completed = 1;
+		// we shall not set completed in this case, sierra sci also doesn't do it
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))

@@ -517,14 +517,6 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	g_sci->_gfxCompare->kernelBaseSetter(object);
-
-	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
-	// till the actual problem is found
-	if (s->currentRoomNumber() == 300 && g_sci->getGameId() == GID_LSL1) {
-		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
-		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
-	}
-
 	return s->r_acc;
 }
 
