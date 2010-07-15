@@ -41,14 +41,14 @@ static inline GLint xdiv(int numerator, int denominator) {
 	return (numerator << 16) / denominator;
 }
 
-template <class T>
-static T nextHigher2(T k) {
+static GLuint nextHigher2(GLuint k) {
 	if (k == 0)
 		return 1;
-	--k;
-	for (uint i = 1; i < sizeof(T) * CHAR_BIT; i <<= 1)
-		k = k | k >> i;
-	return k + 1;
+	GLuint nextPow = 1;
+	while (nextPow <= k) {
+		nextPow <<= 1;
+	}
+	return nextPow;
 }
 
 void GLTexture::initGLExtensions() {
