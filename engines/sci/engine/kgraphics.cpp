@@ -382,17 +382,16 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return make_reg(0, canBeHere.isNull() ? 1 : 0);
 }
 
-// kCantBeHere does the same thing as kCanBeHere, except that it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, !canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return make_reg(0, canBeHere.isNull() ? 0 : 1);
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {

@@ -70,7 +70,7 @@ uint16 GfxCompare::isOnControl(uint16 screenMask, const Common::Rect &rect) {
 	return result;
 }
 
-bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list) {
+reg_t GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _segMan->lookupNode(curAddress);
 	reg_t curObject;
@@ -96,14 +96,14 @@ bool GfxCompare::canBeHereCheckRectList(reg_t checkObject, const Common::Rect &c
 				    curRect.left < checkRect.right &&
 				    curRect.bottom > checkRect.top &&
 				    curRect.top < checkRect.bottom) {
-					return false;
+					return curObject;
 				}
 			}
 		}
 		curAddress = curNode->succ;
 		curNode = _segMan->lookupNode(curAddress);
 	}
-	return true;
+	return NULL_REG;
 }
 
 uint16 GfxCompare::kernelOnControl(byte screenMask, const Common::Rect &rect) {
@@ -150,11 +150,11 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	}
 }
 
-bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
+reg_t GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 	Common::Rect checkRect;
 	Common::Rect adjustedRect;
 	uint16 signal, controlMask;
-	bool result;
+	uint16 result;
 
 	checkRect.left = readSelectorValue(_segMan, curObject, SELECTOR(brLeft));
 	checkRect.top = readSelectorValue(_segMan, curObject, SELECTOR(brTop));
@@ -163,22 +163,22 @@ bool GfxCompare::kernelCanBeHere(reg_t curObject, reg_t listReference) {
 
 	if (!checkRect.isValidRect()) {	// can occur in Iceman - HACK? TODO: is this really occuring in sierra sci? check this
 		warning("kCan(t)BeHere - invalid rect %d, %d -> %d, %d", checkRect.left, checkRect.top, checkRect.right, checkRect.bottom);
-		return false;
+		return NULL_REG;
 	}
 
 	adjustedRect = _coordAdjuster->onControl(checkRect);
 
 	signal = readSelectorValue(_segMan, curObject, SELECTOR(signal));
 	controlMask = readSelectorValue(_segMan, curObject, SELECTOR(illegalBits));
-	result = (isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask) ? false : true;
-	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
+	result = isOnControl(GFX_SCREEN_MASK_CONTROL, adjustedRect) & controlMask;
+	if ((!result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _segMan->lookupList(listReference);
 		if (!list)
 			error("kCanBeHere called with non-list as parameter");
 
-		result = canBeHereCheckRectList(curObject, checkRect, list);
+		return canBeHereCheckRectList(curObject, checkRect, list);
 	}
-	return result;
+	return make_reg(0, result);
 }
 
 bool GfxCompare::kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position) {
