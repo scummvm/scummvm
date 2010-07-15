@@ -2122,7 +2122,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		// Alt-Return and Alt-Enter toggle full screen mode
 		if (event.kbd.hasFlags(Common::KBD_ALT) &&
 			(event.kbd.keycode == Common::KEYCODE_RETURN ||
-			event.kbd.keycode == SDLK_KP_ENTER)) {
+			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
 			toggleFullScreen();
 			return true;
 		}
@@ -2170,6 +2170,8 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	/*case SDL_VIDEOEXPOSE:
 		_forceFull = true;
 		return false;*/
+	default:
+		break;
 	}
 
 	return false;
