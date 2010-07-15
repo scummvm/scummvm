@@ -102,9 +102,6 @@ void SdlEventManager::fillMouseEvent(Common::Event &event, int x, int y) {
 	// Update the "keyboard mouse" coords
 	_km.x = x;
 	_km.y = y;
-
-	// Adjust for the screen scaling
-	((OSystem_SDL *)g_system)->getGraphicsManager()->adjustMouseEvent(event);
 }
 
 void SdlEventManager::handleKbdMouse() {
@@ -241,10 +238,6 @@ bool SdlEventManager::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_JOYAXISMOTION:
 		return handleJoyAxisMotion(ev, event);
 
-	case SDL_VIDEOEXPOSE:
-		((OSystem_SDL *) g_system)->getGraphicsManager()->forceFullRedraw();
-		break;
-
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
 		return true;
@@ -265,32 +258,6 @@ bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
-
-	// Alt-Return and Alt-Enter toggle full screen mode
-	if (event.kbd.hasFlags(Common::KBD_ALT) && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-		((OSystem_SDL *) g_system)->getGraphicsManager()->toggleFullScreen();
-		return false;
-	}
-
-	// Alt-S: Create a screenshot
-	if (event.kbd.hasFlags(Common::KBD_ALT) && ev.key.keysym.sym == 's') {
-		char filename[20];
-
-		for (int n = 0;; n++) {
-			SDL_RWops *file;
-
-			sprintf(filename, "scummvm%05d.bmp", n);
-			file = SDL_RWFromFile(filename, "r");
-			if (!file)
-				break;
-			SDL_RWclose(file);
-		}
-		if (((OSystem_SDL *) g_system)->getGraphicsManager()->saveScreenshot(filename))
-			printf("Saved '%s'\n", filename);
-		else
-			printf("Could not save screenshot!\n");
-		return false;
-	}
 
 	// Ctrl-m toggles mouse capture
 	if (event.kbd.hasFlags(Common::KBD_CTRL) && ev.key.keysym.sym == 'm') {
@@ -323,12 +290,6 @@ bool SdlEventManager::handleKeyDown(SDL_Event &ev, Common::Event &event) {
 		return true;
 	}
 
-	// Ctrl-Alt-<key> will change the GFX mode
-	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
-		if (((OSystem_SDL *) g_system)->getGraphicsManager()->handleScalerHotkeys((Common::KeyCode)ev.key.keysym.sym))
-			return false;
-	}
-
 	if (remapKey(ev, event))
 		return true;
 
@@ -354,10 +315,6 @@ bool SdlEventManager::handleKeyUp(SDL_Event &ev, Common::Event &event) {
 	if (_scrollLock)
 		event.kbd.flags |= Common::KBD_SCRL;
 
-	if (((OSystem_SDL *) g_system)->getGraphicsManager()->isScalerHotkey(event))
-		// Swallow these key up events
-		return false;
-
 	return true;
 }
 
@@ -365,7 +322,6 @@ bool SdlEventManager::handleMouseMotion(SDL_Event &ev, Common::Event &event) {
 	event.type = Common::EVENT_MOUSEMOVE;
 	fillMouseEvent(event, ev.motion.x, ev.motion.y);
 
-	((OSystem_SDL *) g_system)->getGraphicsManager()->setMousePos(event.mouse.x, event.mouse.y);
 	return true;
 }
 

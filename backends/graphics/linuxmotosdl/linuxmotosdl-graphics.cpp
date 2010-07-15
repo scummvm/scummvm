@@ -474,16 +474,21 @@ void LinuxmotoSdlGraphicsManager::warpMouse(int x, int y) {
 	SdlGraphicsManager::warpMouse(x, y);
 }
 
-void LinuxmotoSdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
-	if (!_overlayVisible) {
-		if (_videoMode.mode == GFX_HALF) {
-			event.mouse.x *= 2;
-			event.mouse.y *= 2;
+void LinuxmotoSdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
+	if (!event.synthetic) {
+		Common::Event newEvent(event);
+		newEvent.synthetic = true;
+		if (!_overlayVisible) {
+			if (_videoMode.mode == GFX_HALF) {
+				event.mouse.x *= 2;
+				event.mouse.y *= 2;
+			}
+			newEvent.mouse.x /= _videoMode.scaleFactor;
+			newEvent.mouse.y /= _videoMode.scaleFactor;
+			if (_videoMode.aspectRatioCorrection)
+				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
 		}
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
+		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
 

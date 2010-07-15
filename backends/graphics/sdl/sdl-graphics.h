@@ -27,8 +27,9 @@
 #define BACKENDS_GRAPHICS_SDL_H
 
 #include "backends/graphics/graphics.h"
-#include "common/system.h"
 #include "graphics/scaler.h"
+#include "common/events.h"
+#include "common/system.h"
 
 #if defined(__SYMBIAN32__)
 #include <esdl\SDL.h>
@@ -72,7 +73,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public GraphicsManager {
+class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver  {
 public:
 	SdlGraphicsManager();
 	virtual ~SdlGraphicsManager();
@@ -127,13 +128,8 @@ public:
 	virtual void displayMessageOnOSD(const char *msg);
 #endif
 
-	virtual void forceFullRedraw();
-	virtual bool handleScalerHotkeys(Common::KeyCode key);
-	virtual bool isScalerHotkey(const Common::Event &event);
-	virtual void adjustMouseEvent(Common::Event &event);
-	virtual void setMousePos(int x, int y);
-	virtual void toggleFullScreen();
-	virtual bool saveScreenshot(const char *filename);
+	// Override from Common::EventObserver
+	bool notifyEvent(const Common::Event &event);
 
 protected:
 #ifdef USE_OSD
@@ -313,6 +309,13 @@ protected:
 	virtual int effectiveScreenHeight() const;
 
 	virtual void setGraphicsModeIntern();
+
+	virtual bool handleScalerHotkeys(Common::KeyCode key);
+	virtual bool isScalerHotkey(const Common::Event &event);
+	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void setMousePos(int x, int y);
+	virtual void toggleFullScreen();
+	virtual bool saveScreenshot(const char *filename);
 };
 
 #endif

@@ -122,30 +122,6 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 }
 
 
-void OpenGLSdlGraphicsManager::forceFullRedraw() {
-
-}
-
-bool OpenGLSdlGraphicsManager::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
-	return false;
-}
-
-bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
-	return false;
-}
-
-void OpenGLSdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
-
-}
-
-void OpenGLSdlGraphicsManager::toggleFullScreen() {
-
-}
-
-bool OpenGLSdlGraphicsManager::saveScreenshot(const char *filename) {
-	return false;
-}
-
 //
 // Intern
 //

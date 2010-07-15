@@ -50,13 +50,6 @@ public:
 
 	virtual void warpMouse(int x, int y);
 
-	virtual void forceFullRedraw();
-	virtual bool handleScalerHotkeys(const SDL_KeyboardEvent &key);
-	virtual bool isScalerHotkey(const Common::Event &event);
-	virtual void adjustMouseEvent(Common::Event &event);
-	virtual void toggleFullScreen();
-	virtual bool saveScreenshot(const char *filename);
-
 protected:
 	virtual void internUpdateScreen();
 

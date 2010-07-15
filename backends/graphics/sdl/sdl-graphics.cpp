@@ -184,6 +184,9 @@ SdlGraphicsManager::SdlGraphicsManager()
 #else
 	_videoMode.fullscreen = true;
 #endif
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 }
 
 SdlGraphicsManager::~SdlGraphicsManager() {
@@ -2087,16 +2090,17 @@ bool SdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 	return false;
 }
 
-void SdlGraphicsManager::forceFullRedraw() {
-	_forceFull = true;
-}
-
-void SdlGraphicsManager::adjustMouseEvent(Common::Event &event) {
-	if (!_overlayVisible) {
-		event.mouse.x /= _videoMode.scaleFactor;
-		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatioCorrection)
-			event.mouse.y = aspect2Real(event.mouse.y);
+void SdlGraphicsManager::adjustMouseEvent(const Common::Event &event) {
+	if (!event.synthetic) {
+		Common::Event newEvent(event);
+		newEvent.synthetic = true;
+		if (!_overlayVisible) {
+			newEvent.mouse.x /= _videoMode.scaleFactor;
+			newEvent.mouse.y /= _videoMode.scaleFactor;
+			if (_videoMode.aspectRatioCorrection)
+				newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+		}
+		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
 
@@ -2110,6 +2114,65 @@ void SdlGraphicsManager::toggleFullScreen() {
 	else
 		displayMessageOnOSD("Windowed mode");
 #endif
+}
+
+bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		// Alt-Return and Alt-Enter toggle full screen mode
+		if (event.kbd.hasFlags(Common::KBD_ALT) &&
+			(event.kbd.keycode == Common::KEYCODE_RETURN ||
+			event.kbd.keycode == SDLK_KP_ENTER)) {
+			toggleFullScreen();
+			return true;
+		}
+
+		// Alt-S: Create a screenshot
+		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
+			char filename[20];
+
+			for (int n = 0;; n++) {
+				SDL_RWops *file;
+
+				sprintf(filename, "scummvm%05d.bmp", n);
+				file = SDL_RWFromFile(filename, "r");
+				if (!file)
+					break;
+				SDL_RWclose(file);
+			}
+			if (saveScreenshot(filename))
+				printf("Saved '%s'\n", filename);
+			else
+				printf("Could not save screenshot!\n");
+			return true;
+		}
+
+		// Ctrl-Alt-<key> will change the GFX mode
+		if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+			if (handleScalerHotkeys(event.kbd.keycode))
+				return true;
+		}
+	case Common::EVENT_KEYUP:
+		return isScalerHotkey(event);
+	case Common::EVENT_MOUSEMOVE:
+		if (event.synthetic)
+			setMousePos(event.mouse.x, event.mouse.y);
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONUP:
+		adjustMouseEvent(event);
+		return !event.synthetic;
+	/*case SDL_VIDEOEXPOSE:
+		_forceFull = true;
+		return false;*/
+	}
+
+	return false;
 }
 
 #endif
