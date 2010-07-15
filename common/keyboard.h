@@ -281,7 +281,7 @@ struct KeyState {
 	 * you can write
 	 *    if (keystate.flags & KBD_CTRL) { ... }
 	 */
-	bool hasFlags(byte f) {
+	bool hasFlags(byte f) const {
 		return f == (flags & ~(KBD_NUM|KBD_CAPS|KBD_SCRL));
 	}
 
