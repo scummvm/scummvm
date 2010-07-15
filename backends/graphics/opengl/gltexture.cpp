@@ -41,17 +41,24 @@ static inline GLint xdiv(int numerator, int denominator) {
 	return (numerator << 16) / denominator;
 }
 
-static GLuint nextHigher2(GLuint k) {
-	if (k == 0)
+static GLuint nextHigher2(GLuint v) {
+	if (v == 0)
 		return 1;
-	GLuint nextPow = 1;
-	while (nextPow <= k) {
-		nextPow <<= 1;
-	}
-	return nextPow;
+	v--;
+	v |= v >> 1;
+	v |= v >> 2;
+	v |= v >> 4;
+	v |= v >> 8;
+	v |= v >> 16;
+	return v++;
 }
 
 void GLTexture::initGLExtensions() {
+	static bool inited = false;
+
+	if (inited)
+		return;
+
 	const char* ext_string =
 		reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 	Common::StringTokenizer tokenizer(ext_string, " ");
@@ -60,6 +67,7 @@ void GLTexture::initGLExtensions() {
 		if (token == "GL_ARB_texture_non_power_of_two")
 			npot_supported = true;
 	}
+	inited = true;
 }
 
 GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
@@ -99,6 +107,12 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	if (w <= _textureWidth && h <= _textureHeight)
 		// Already allocated a sufficiently large buffer
 		return;
+
+	nextHigher2(0);
+	nextHigher2(100);
+	nextHigher2(1025);
+	nextHigher2(9999);
+
 
 	if (npot_supported) {
 		_textureWidth = w;
