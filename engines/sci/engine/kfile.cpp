@@ -844,12 +844,14 @@ reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
 	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
 	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
 
+	// QfG3 uses "/\*.*" for the character import, QfG4 uses "/\*"
+	if (mask.hasPrefix("/\\")) {
+		mask.deleteChar(0);
+		mask.deleteChar(0);
+	}
+
 	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
 	if (mask == "*.*")
-		mask = "*";
-
-	// QfG3 uses this mask for the character import
-	if (mask == "/\\*.*")
 		mask = "*";
 	return s->_dirseeker.firstFile(mask, buf, s->_segMan);
 }

@@ -497,8 +497,11 @@ Common::String SciEngine::getFilePrefix() const {
 		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
 		if (_gamestate->currentRoomNumber() == 54)
 			return "qfg2";
+	} else if (_gameId == GID_QFG4) {
+		// Quest for Glory 4 wants to read files from Quest for Glory 3 to import character data
+		if (_gamestate->currentRoomNumber() == 54)
+			return "qfg3";
 	}
-	// TODO: Implement the same for qfg4, when sci32 is good enough
 	return _targetName;
 }
 
