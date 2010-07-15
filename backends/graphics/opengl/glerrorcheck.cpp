@@ -28,6 +28,15 @@
 #include "backends/graphics/opengl/glerrorcheck.h"
 #include "common/debug.h"
 
+#ifdef WIN32
+#if defined(ARRAYSIZE) && !defined(_WINDOWS_)
+#undef ARRAYSIZE
+#endif
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef ARRAYSIZE
+#endif
+
 #ifdef USE_GLES
 #include <GLES/gl.h>
 #else
