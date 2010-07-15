@@ -503,14 +503,14 @@ void MadsPlayer::move() {
 			if (_v8452C < _posDiff.x)
 				_v8452C += _posDiff.y;
 			if (_v8452C >= _posDiff.x) {
-				if ((_posChange.y <= 0) || (_v844C0 != 0))
+				if ((_posChange.y > 0) || (_v844C0 != 0))
 					newPos.y += _yDirection;
 				--_posChange.y;
 				_v8452C -= _posDiff.x;
 			}
 
 			if (_v8452C < _posDiff.x) {
-				if ((_posChange.x <= 0) || (_v844C0 != 0))
+				if ((_posChange.x > 0) || (_v844C0 != 0))
 					newPos.x += _xDirection;
 				--_posChange.x;
 			}
@@ -524,8 +524,10 @@ void MadsPlayer::move() {
 
 			_v8452E += _v84530;
 
-		} while ((_v8452E < var1) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0)));
+		} while ((_v8452E < var1) && !routeFlag && ((_posChange.x > 0) || (_posChange.y > 0) || (_v844C0 != 0)));
 	}
+
+	_v8452E -= var1;
 
 	if (routeFlag)
 		moveComplete();
@@ -696,7 +698,7 @@ void MadsPlayer::startMovement() {
 	else if (yDiff == 0)
 		majorDir = 3;
 	else {
-		if ((scaleAmount >= xDiff) && ((xAmt33 / scaleAmount) >= 141))
+		if ((scaleAmount < xDiff) && ((xAmt33 / scaleAmount) >= 141))
 			majorDir = 3;
 		else if (yDiff <= xDiff)
 			majorDir = 2;
@@ -727,8 +729,8 @@ void MadsPlayer::startMovement() {
 	_posChange.x = xDiff;
 	_posChange.y = yDiff;
 
-	scaleAmount = MAX(xDiff, yDiff);
-	_v84530  = (scaleAmount == 0) ? 0 : _hypotenuse / scaleAmount;
+	int majorChange = MAX(xDiff, yDiff);
+	_v84530  = (majorChange == 0) ? 0 : _hypotenuse / majorChange;
 	
 	if (_playerPos.x > _destPos.x)
 		_v8452C = MAX(_posChange.x, _posChange.y);

@@ -854,7 +854,9 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 }
 
 void MadsSceneResources::setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface) {
-	// TODO
+	_nodes[nodeIndex].pt = pt;
+
+	// TODO: Implement the rest of the logic of this method
 }
 
 /*--------------------------------------------------------------------------*/
