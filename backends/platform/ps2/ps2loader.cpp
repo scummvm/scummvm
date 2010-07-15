@@ -32,7 +32,8 @@
 #include <unistd.h>
 #include <sys/fcntl.h>
 
-//#include <ps2utils.h> do these exist?
+#include "savefilemgr.h"
+#include "backends/fs/ps2/ps2-fs-factory.h"
 
 #include "backends/platform/ps2/ps2loader.h"
 
