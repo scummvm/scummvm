@@ -99,17 +99,17 @@ protected:
 
 	void seterror(const char *fmt, ...);
 	void unload();
-	bool relocate(Common::SeekableReadStream, unsigned long offset, unsigned long size, void *);
-	bool load(Common::SeekableReadStream);
+	bool relocate(Common::SeekableReadStream*, unsigned long offset, unsigned long size, void *);
+	bool load(Common::SeekableReadStream*);
 
-	bool readElfHeader(Common::SeekableReadStream, Elf32_Ehdr *ehdr);
-	bool readProgramHeaders(Common::SeekableReadStream, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
-	bool loadSegment(Common::SeekableReadStream, Elf32_Phdr *phdr);
-	Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream, Elf32_Ehdr *ehdr);
-	int loadSymbolTable(Common::SeekableReadStream, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
-	bool loadStringTable(Common::SeekableReadStream, Elf32_Shdr *shdr);
+	bool readElfHeader(Common::SeekableReadStream*, Elf32_Ehdr *ehdr);
+	bool readProgramHeaders(Common::SeekableReadStream*, Elf32_Ehdr *ehdr, Elf32_Phdr *phdr, int num);
+	bool loadSegment(Common::SeekableReadStream*, Elf32_Phdr *phdr);
+	Elf32_Shdr *loadSectionHeaders(Common::SeekableReadStream*, Elf32_Ehdr *ehdr);
+	int loadSymbolTable(Common::SeekableReadStream*, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	bool loadStringTable(Common::SeekableReadStream*, Elf32_Shdr *shdr);
 	void relocateSymbols(Elf32_Addr offset, Elf32_Addr shortsOffset);
-	bool relocateRels(Common::SeekableReadStream, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+	bool relocateRels(Common::SeekableReadStream*, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
 
 public:
 	bool open(const char *path);
