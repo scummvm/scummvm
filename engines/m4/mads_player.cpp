@@ -747,9 +747,44 @@ void MadsPlayer::turnToDestFacing() {
 }
 
 void MadsPlayer::setupRoute(bool bitFlag) {
-	// TODO: Properly Implement route setup
-	_routeIndexes[0] = _madsVm->scene()->getSceneResources()._nodes.size() - 1;
-	_routeCount = 1;
+	// Reset the flag set of nodes in use
+	SceneNodeList &nodes = _madsVm->scene()->getSceneResources()._nodes;
+	for (uint i = 0; i < nodes.size(); ++i)
+		nodes[i].active = false;
+
+	// Start constructing route node list
+	_routeLength = 0x3FFF;
+	_routeCount = 0;
+
+	setupRouteNode(_tempRoute, nodes.size() - 1, bitFlag ? 0xC000 : 0x8000, 0);
+}
+
+void MadsPlayer::setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength) {
+	SceneNodeList &nodes = _madsVm->scene()->getSceneResources()._nodes;
+	SceneNode &currentNode = nodes[nodeIndex];
+	currentNode.active = true;
+
+	*routeIndexP++ = nodeIndex;
+
+	int subIndex = nodes.size() - 2;
+	int indexVal = nodes[nodeIndex].indexes[subIndex];
+	if (indexVal & flags) {
+		routeLength += indexVal & 0x3FFF;
+		if (routeLength < _routeLength) {
+			// Found a new shorter route to destination, so set up the route with the found one
+			Common::copy(_tempRoute, routeIndexP, _routeIndexes);
+			_routeCount = routeIndexP - _tempRoute;
+			_routeLength = indexVal & 0x3FFF;
+		}
+	} else {
+		for (int idx = nodes.size() - 2; idx > 0; --idx) {
+			int nodePos = idx - 1;
+			if (!nodes[nodePos].active && ((currentNode.indexes[nodePos] & flags) != 0))
+				setupRouteNode(routeIndexP, nodePos, 0x8000, indexVal & 0x3fff);
+		}
+	}
+
+	currentNode.active = false;
 }
 
 } // End of namespace M4

@@ -27,11 +27,11 @@
 #define M4_MADS_PLAYER_H
 
 #include "common/scummsys.h"
+#include "m4/mads_scene.h"
 
 namespace M4 {
 
 #define PLAYER_SEQ_INDEX -2
-#define MAX_ROUTE_NODES 22
 
 class MadsPlayer {
 private:
@@ -46,6 +46,7 @@ private:
 	void reset();
 	int scanPath(M4Surface *depthSurface, const Common::Point &srcPos, const Common::Point &destPos);
 	void startMovement();
+	void setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength);
 public:
 	char _spritesPrefix[16];
 	int _spriteSetCount;
@@ -92,6 +93,7 @@ public:
 	int _v8452E;
 	int _v8452C;
 	int _v84530;
+	int _routeLength;
 
 	static const int _directionListIndexes[32];
 public:

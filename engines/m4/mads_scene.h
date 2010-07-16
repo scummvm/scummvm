@@ -36,22 +36,34 @@ namespace M4 {
 class MadsInterfaceView;
 
 #define DEPTH_BANDS_SIZE 15
+#define MAX_ROUTE_NODES 22
 
 class SceneNode {
 public:
 	Common::Point pt;
+	int indexes[MAX_ROUTE_NODES];
+
+	bool active;
+
+	SceneNode() {
+		active = false;
+	}
 
 	void load(Common::SeekableReadStream *stream);
 };
 
+typedef Common::Array<SceneNode> SceneNodeList;
+
 class MadsSceneResources: public SceneResources {
+private:
+	int getRouteFlags(const Common::Point &src, const Common::Point &dest, M4Surface *depthSurface);
 public:
 	int _sceneId;
 	int _artFileNum;
 	int _depthStyle;
 	int _width;
 	int _height;
-	Common::Array<SceneNode> _nodes;
+	SceneNodeList _nodes;
 	Common::Array<Common::String> _setNames;
 	int _yBandsStart, _yBandsEnd;
 	int _maxScale, _minScale;

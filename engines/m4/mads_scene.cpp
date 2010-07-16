@@ -50,11 +50,11 @@ static const int SCROLLER_DELAY = 200;
 
 void SceneNode::load(Common::SeekableReadStream *stream) {
 	// Get the next data block
-	uint8 obj[0x30];
-	stream->read(obj, 0x30);
+	pt.x = stream->readUint16LE();
+	pt.y = stream->readUint16LE();
 
-	pt.x = READ_LE_UINT16(&obj[0]);
-	pt.y = READ_LE_UINT16(&obj[2]);
+	for (int i = 0; i < MAX_ROUTE_NODES; ++i)
+		indexes[i] = stream->readUint16LE();
 }
 
 //--------------------------------------------------------------------------
@@ -860,9 +860,82 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 }
 
 void MadsSceneResources::setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface) {
+	int flags, hypotenuse;
+
 	_nodes[nodeIndex].pt = pt;
 
-	// TODO: Implement the rest of the logic of this method
+	// Recalculate inter-node lengths
+	for (uint idx = 0; idx < _nodes.size(); ++idx) {
+		int entry;
+		if (idx == (uint)nodeIndex) {
+			entry = 0x3FFF;
+		} else {
+			// Process the node
+			flags = getRouteFlags(pt, _nodes[idx].pt, depthSurface);
+
+			int xDiff = ABS(_nodes[idx].pt.x - pt.x);
+			int yDiff = ABS(_nodes[idx].pt.y - pt.y);
+			hypotenuse = SqrtF16(xDiff * xDiff + yDiff * yDiff);
+
+			if (hypotenuse >= 0x3FFF)
+				// Shouldn't ever be this large
+				hypotenuse = 0x3FFF;
+			
+			entry = hypotenuse | flags;
+			_nodes[idx].indexes[nodeIndex] = entry;
+			_nodes[nodeIndex].indexes[idx] = entry;
+		}
+	}
+}
+
+int MadsSceneResources::getRouteFlags(const Common::Point &src, const Common::Point &dest, M4Surface *depthSurface) {
+	int result = 0x8000;
+	bool flag = false;
+
+	int xDiff = ABS(dest.x - src.x);
+	int yDiff = ABS(dest.y - src.y);
+	int xDirection = dest.x >= src.x ? 1 : -1;
+	int yDirection = dest.y >= src.y ? depthSurface->width() : -depthSurface->width();
+	int majorDiff = 0;
+	if (dest.x < src.x)
+		majorDiff = MAX(xDiff, yDiff);
+	++xDiff;
+	++yDiff;
+
+	byte *srcP = depthSurface->getBasePtr(src.x, src.y);
+	
+	int totalCtr = majorDiff;
+	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
+		totalCtr += yDiff;
+
+		if ((*srcP & 0x80) == 0)
+			flag = false;
+		else if (!flag) {
+			flag = true;
+			result -= 0x4000;
+			if (result == 0)
+				break;
+		}
+
+		while (totalCtr >= xDiff) {
+			totalCtr -= xDiff;
+
+			if ((*srcP & 0x80) == 0)
+				flag = false;
+			else if (!flag) {
+				flag = true;
+				result -= 0x4000;
+				if (result == 0)
+					break;
+			}
+
+			srcP += yDirection;
+		}
+		if (result == 0)
+			break;
+	}
+
+	return result;
 }
 
 /*--------------------------------------------------------------------------*/
