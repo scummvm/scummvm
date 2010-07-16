@@ -634,7 +634,7 @@ int MadsPlayer::scanPath(M4Surface *depthSurface, const Common::Point &srcPos, c
 	// Outer horizontal movement loop
 	for (int yIndex = 0; yIndex < yDiff; ++yIndex) {
 		index += yDiff;
-		int v = (*srcP && 0x7F) >> 4;
+		int v = (*srcP & 0x7F) >> 4;
 		if (v)
 			return v;
 
@@ -642,7 +642,7 @@ int MadsPlayer::scanPath(M4Surface *depthSurface, const Common::Point &srcPos, c
 		while (index >= xDiff) {
 			index -= xDiff;
 
-			v = (*srcP && 0x7F) >> 4;
+			v = (*srcP & 0x7F) >> 4;
 			if (v)
 				return v;
 
