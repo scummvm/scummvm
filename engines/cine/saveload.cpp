@@ -976,7 +976,7 @@ void CineEngine::makeSave(char *saveFileName) {
 		// restoreScreen();
 		checkDataDisk(-1);
 	} else {
-		if (g_cine->getGameType() == GType_FW) {
+		if (getGameType() == GType_FW) {
 			makeSaveFW(*fHandle);
 		} else {
 			makeSaveOS(*fHandle);

@@ -71,7 +71,7 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 }
 
 CineEngine::~CineEngine() {
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (getGameType() == Cine::GType_OS) {
 		freeErrmessDat();
 	}
 	DebugMan.clearAllDebugChannels();
@@ -81,7 +81,7 @@ Common::Error CineEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
-	if (g_cine->getPlatform() == Common::kPlatformPC) {
+	if (getPlatform() == Common::kPlatformPC) {
 		g_sound = new PCSound(_mixer, this);
 	} else {
 		// Paula chipset for Amiga and Atari versions
@@ -145,9 +145,9 @@ void CineEngine::initialize() {
 	_timerDelayMultiplier = 12; // Set default speed
 	setupOpcodes();
 
-	initLanguage(g_cine->getLanguage());
+	initLanguage(getLanguage());
 
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (getGameType() == Cine::GType_OS) {
 		renderer = new OSRenderer;
 	} else {
 		renderer = new FWRenderer;
@@ -161,13 +161,13 @@ void CineEngine::initialize() {
 	// Its size will change when loading data into it with the loadPart function.
 	partBuffer.clear();
 
-	if (g_cine->getGameType() == Cine::GType_OS) {
+	if (getGameType() == Cine::GType_OS) {
 		readVolCnf();
 	}
 
 	loadTextData("texte.dat");
 
-	if (g_cine->getGameType() == Cine::GType_OS && !(g_cine->getFeatures() & GF_DEMO)) {
+	if (getGameType() == Cine::GType_OS && !(getFeatures() & GF_DEMO)) {
 		loadPoldatDat("poldat.dat");
 		loadErrmessDat("errmess.dat");
 	}
