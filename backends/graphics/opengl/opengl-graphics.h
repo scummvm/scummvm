@@ -28,6 +28,7 @@
 
 #include "backends/graphics/opengl/gltexture.h"
 #include "backends/graphics/graphics.h"
+#include "common/events.h"
 
 namespace OpenGL {
 
@@ -42,7 +43,7 @@ enum {
 /**
  * Open GL graphics manager
  */
-class OpenGLGraphicsManager : public GraphicsManager {
+class OpenGLGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
 	OpenGLGraphicsManager();
 	virtual ~OpenGLGraphicsManager();
@@ -95,7 +96,8 @@ public:
 
 	virtual void displayMessageOnOSD(const char *msg);
 
-	virtual void setMousePos(int x, int y);
+	// Override from Common::EventObserver
+	bool notifyEvent(const Common::Event &event);
 
 protected:
 	GLTexture* _gameTexture;
@@ -185,6 +187,12 @@ protected:
 	MousePos _mouseCurState;
 	bool _mouseVisible;
 	bool _mouseNeedsRedraw;
+
+	uint8 *_cursorPalette;
+	bool _cursorPaletteDisabled;
+
+	virtual void adjustMouseEvent(const Common::Event &event);
+	virtual void setMousePos(int x, int y);
 
 	// Shake mode
 	int _currentShakePos;

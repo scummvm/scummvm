@@ -73,7 +73,7 @@ public:
 /**
  * SDL graphics manager
  */
-class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver  {
+class SdlGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
 	SdlGraphicsManager();
 	virtual ~SdlGraphicsManager();

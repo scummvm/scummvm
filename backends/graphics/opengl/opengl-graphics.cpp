@@ -47,10 +47,23 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.mode = OpenGL::GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.fullscreen = false;
+
+	_cursorPalette = (uint8 *)calloc(sizeof(uint8), 256);
+
+	// Register the graphics manager as a event observer
+	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher() != NULL)
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
 
+	free(_cursorPalette);
+
+	delete _gameTexture;
+	delete _overlayTexture;
+	delete _mouseTexture;
 }
 
 //
@@ -58,7 +71,7 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 //
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
-	return false;
+	return (f == OSystem::kFeatureCursorHasPalette);
 }
 
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
@@ -74,7 +87,7 @@ bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
 //
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"gl1x", _s("OpenGL Normal (no scaling)"), OpenGL::GFX_NORMAL},
+	{"gl1x", _s("OpenGL Normal"), OpenGL::GFX_NORMAL},
 #ifdef USE_SCALERS
 	{"gl2x", "OpenGL 2x", OpenGL::GFX_DOUBLESIZE},
 	{"gl3x", "OpenGL 3x", OpenGL::GFX_TRIPLESIZE},
@@ -113,7 +126,7 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
-		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+		newFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);//Graphics::PixelFormat::createFormatCLUT8();
 	else
 		newFormat = *format;
 
@@ -385,15 +398,66 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 }
 
 void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+	assert(keycolor < 256);
 
+	// Set cursor info
+	_mouseCurState.w = w;
+	_mouseCurState.h = h;
+	_mouseCurState.hotX = hotspotX;
+	_mouseCurState.hotY = hotspotY;
+
+	// Allocate a texture big enough for cursor
+	_mouseTexture->allocBuffer(w, h);
+
+	// Set the key color alpha to 0
+	_cursorPalette[keycolor * 4 + 3] = 0;
+
+	// Create a temporary surface
+	uint8 *surface = new uint8[w * h * 4];
+
+	// Convert the paletted cursor
+	const uint8 *src = _cursorPalette;
+	uint8 *dst = surface;
+	for (uint i = 0; i < w * h; i++) {
+		dst[0] = src[buf[i] * 4];
+		dst[1] = src[buf[i] * 4 + 1];
+		dst[2] = src[buf[i] * 4 + 2];
+		dst[3] = src[buf[i] * 4 + 3];
+		if (i == (w * 5 + 3)) {
+			printf("%d,%d,%d,%d - %d,%d,%d,%d - %d\n", dst[0],dst[1],dst[2],dst[3],src[buf[i] * 4],src[buf[i] * 4+1],src[buf[i] * 4+2],src[buf[i] * 4+3],buf[i]);
+		}
+		dst += 4;
+	}
+
+	// Set keycolor alpha back to normal
+	_cursorPalette[keycolor * 4] = 255;
+
+	// Update the texture with new cursor
+	_mouseTexture->updateBuffer(surface, w * 4, 0, 0, w, h);
+
+	// Free the temp surface
+	delete[] surface;
 }
 
 void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
+	assert(colors);
+	
+	// Save the cursor palette
+	uint8 *dst = _cursorPalette + start * 4;
+	do {
+		dst[0] = colors[0];
+		dst[1] = colors[1];
+		dst[2] = colors[2];
+		dst[3] = 255;
+		dst += 4;
+		colors += 4;
+	} while(num--);
 
+	_cursorPaletteDisabled = false;
 }
 
 void OpenGLGraphicsManager::disableCursorPalette(bool disable) {
-
+	_cursorPaletteDisabled = disable;
 }
 
 //
@@ -439,10 +503,18 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 }
 
 void OpenGLGraphicsManager::internUpdateScreen() {
+	// Clear the screen
 	glClear( GL_COLOR_BUFFER_BIT );
+
+	// Draw the game texture
 	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+
+	// Draw the overlay texture
 	_overlayTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
-	_mouseTexture->drawTexture(_mouseCurState.x, _mouseCurState.y, _mouseCurState.w, _mouseCurState.h);
+
+	// Draw the mouse texture
+	_mouseTexture->drawTexture(_mouseCurState.x - _mouseCurState.hotX,
+		_mouseCurState.y - _mouseCurState.hotY, _mouseCurState.w, _mouseCurState.h);
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
@@ -509,6 +581,42 @@ void OpenGLGraphicsManager::unloadGFXMode() {
 }
 
 bool OpenGLGraphicsManager::hotswapGFXMode() {
+	return false;
+}
+
+void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
+	if (!event.synthetic) {
+		Common::Event newEvent(event);
+		newEvent.synthetic = true;
+		if (!_overlayVisible) {
+			newEvent.mouse.x /= _videoMode.scaleFactor;
+			newEvent.mouse.y /= _videoMode.scaleFactor;
+			//if (_videoMode.aspectRatioCorrection)
+			//	newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+		}
+		g_system->getEventManager()->pushEvent(newEvent);
+	}
+}
+
+bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
+	switch (event.type) {
+	case Common::EVENT_MOUSEMOVE:
+		if (event.synthetic)
+			setMousePos(event.mouse.x, event.mouse.y);
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_WHEELUP:
+	case Common::EVENT_WHEELDOWN:
+	case Common::EVENT_MBUTTONDOWN:
+	case Common::EVENT_LBUTTONUP:
+	case Common::EVENT_RBUTTONUP:
+	case Common::EVENT_MBUTTONUP:
+		adjustMouseEvent(event);
+		return !event.synthetic;
+	default:
+		break;
+	}
+
 	return false;
 }
 

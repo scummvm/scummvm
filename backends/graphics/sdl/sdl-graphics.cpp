@@ -190,6 +190,10 @@ SdlGraphicsManager::SdlGraphicsManager()
 }
 
 SdlGraphicsManager::~SdlGraphicsManager() {
+	// Unregister the event observer
+	if (g_system->getEventManager()->getEventDispatcher() != NULL)
+		g_system->getEventManager()->getEventDispatcher()->unregisterObserver(this);
+
 	unloadGFXMode();
 	g_system->deleteMutex(_graphicsMutex);
 

@@ -187,12 +187,12 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 void OSystem_SDL::deinit() {
 	SDL_ShowCursor(SDL_ENABLE);
 
-	delete _eventManager;
-	_eventManager = 0;
 	delete _savefileManager;
 	_savefileManager = 0;
 	delete _graphicsManager;
 	_graphicsManager = 0;
+	delete _eventManager;
+	_eventManager = 0;
 	delete _audiocdManager;
 	_audiocdManager = 0;
 	delete _mixerManager;
