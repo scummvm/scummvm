@@ -1396,7 +1396,13 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				// for SCI2.1 and SCI3 maps that are not resmap.000. The resmap.* files' numbers
 				// need to be used in concurrence with the volume specified in the map to get
 				// the actual resource file.
-				addResource(resId, findVolume(map, volume_nr + map->_volumeNumber), off);
+				int mapVolumeNr = volume_nr + map->_volumeNumber;
+				ResourceSource *source = findVolume(map, mapVolumeNr);
+				// FIXME: this code has serious issues with multiple RESMAP.* files (like in unmodified gk2)
+				//         adding a resource with source == NULL would crash later on
+				if (!source)
+					error("Unable to find volume for map %s volumeNr %d", map->getLocationName().c_str(), mapVolumeNr);
+				addResource(resId, source, off);
 			}
 		}
 	}
