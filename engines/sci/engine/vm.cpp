@@ -377,6 +377,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_KQ6,           520,  0,              "rm520", "init",           -1,    0, { 0,   0 } }, // going to boiling water trap on beast isle
     { GID_KQ6,           903,  0,         "controlWin", "open",           -1,    4, { 0,   0 } }, // when opening the controls window (save, load etc)
     { GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+    { GID_LSL1,          250,  0,           "increase", "handleEvent",    -1,    2, { 0,   0 } }, // casino, playing game, increasing bet
     { GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
     { GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
     { GID_LSL6,           85,  0,          "washcloth", "doVerb",         -1,    0, { 0,   0 } }, // washcloth in inventory
