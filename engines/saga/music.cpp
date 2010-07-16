@@ -158,6 +158,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			_driver->setGM(_vm->getGameId() != GID_ITE);
 		} else {
 			_parser = MidiParser::createParser_SMF();
+			// ITE with standalone MIDI files is General MIDI
+			_driver->setGM(_vm->getGameId() == GID_ITE);
 		}
 		free(resourceData);
 	}
