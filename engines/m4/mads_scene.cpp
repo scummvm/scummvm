@@ -765,7 +765,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	
 	stream->skip(24);
 
-	int objectCount = stream->readUint16LE();
+	int nodeCount = stream->readUint16LE();
 	_yBandsEnd = stream->readUint16LE();
 	_yBandsStart = stream->readUint16LE();
 	_maxScale = stream->readSint16LE();
@@ -775,13 +775,19 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	stream->skip(2);
 
 	// Load in any scene objects
-	for (int i = 0; i < objectCount; ++i) {
+	for (int i = 0; i < nodeCount; ++i) {
 		SceneNode rec;
 		rec.load(stream);
 		_nodes.push_back(rec);
 	}
-	for (int i = 0; i < 20 - objectCount; ++i)
+	for (int i = 0; i < 20 - nodeCount; ++i)
 		stream->skip(48);
+
+	// Add two extra nodes in that will be used for player movement
+	for (int i = 0; i < 2; ++i) {
+		SceneNode rec;
+		_nodes.push_back(rec);
+	}
 
 	int setCount = stream->readUint16LE();
 	stream->readUint16LE();
