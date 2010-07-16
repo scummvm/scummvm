@@ -100,10 +100,8 @@ void WagProperty::setDefaults() {
 }
 
 void WagProperty::deleteData() {
-	if (_propData != NULL) {
-		delete _propData;
-		_propData = NULL;
-	}
+	delete _propData;
+	_propData = NULL;
 }
 
 WagFileParser::WagFileParser() :
