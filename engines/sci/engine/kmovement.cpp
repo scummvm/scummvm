@@ -267,13 +267,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
-	if ((getSciVersion() >= SCI_VERSION_1_MIDDLE)) {
-		// Introduced inbetween SCI1MIDDLE, lsl5 demo doesn't have it, longbow demo has
-		if (SELECTOR(xLast) != -1) {
-			// save last position into mover
-			writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
-			writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
-		}
+	if ((getSciVersion() >= SCI_VERSION_1_LATE)) {
+		// save last position into mover
+		writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
+		writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
 	}
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
