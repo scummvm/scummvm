@@ -443,6 +443,11 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 	byte channel = argv[1].toUint16() & 0xf;
 	byte midiCmd = argv[2].toUint16() & 0xff;
 
+	// TODO: first there is a 4-parameter variant of this call which needs to get reversed
+	//        second the current code isn't 100% accurate, sierra sci does checks on the 4th parameter
+	if (argc == 4)
+		return acc;
+
 	uint16 controller = argv[3].toUint16();
 	uint16 param = argv[4].toUint16();
 

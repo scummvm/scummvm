@@ -353,7 +353,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
     { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                NULL },
     { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
-    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiiii",                NULL },
+    { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiii",                 NULL },
     { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             "oi",                   NULL },
     { SIG_SOUNDSCI1EARLY, 14, MAP_CALL(DoSoundSetHold),            "oi",                   NULL },
     { SIG_SOUNDSCI1EARLY, 15, MAP_CALL(DoSoundDummy),              "",                     NULL },
@@ -376,7 +376,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI1LATE,  15, MAP_CALL(DoSoundSetPriority),        "oi",                   NULL },
     { SIG_SOUNDSCI1LATE,  16, MAP_CALL(DoSoundSetLoop),            "oi",                   NULL },
     { SIG_SOUNDSCI1LATE,  17, MAP_CALL(DoSoundUpdateCues),         NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           NULL,                   NULL },
+    { SIG_SOUNDSCI1LATE,  18, MAP_CALL(DoSoundSendMidi),           "oiii(i)",              NULL },
     { SIG_SOUNDSCI1LATE,  19, MAP_CALL(DoSoundReverb),             NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,  20, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
 #ifdef ENABLE_SCI32
@@ -565,7 +565,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DoAudio),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(DoAvoider),         SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
-    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i([io])(i)(ii[io])(i)", kDoSound_subops, NULL },
+    { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },
     { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            NULL }, // for kq6 hires
     { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",           NULL,            NULL },
