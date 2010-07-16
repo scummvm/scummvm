@@ -579,7 +579,7 @@ void GUI_LoK::setupSavegames(Menu &menu, int num) {
 	for (int i = startSlot; i < num; ++i)
 		menu.item[i].enabled = 0;
 
-	KyraEngine_v1::SaveHeader header;
+	KyraEngine_LoK::SaveHeader header;
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); i++) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header))) {
 			Common::strlcpy(savenames[i], header.description.c_str(), ARRAYSIZE(savenames[0]));
