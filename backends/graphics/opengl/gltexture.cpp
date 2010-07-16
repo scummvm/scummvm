@@ -50,7 +50,7 @@ static GLuint nextHigher2(GLuint v) {
 	v |= v >> 4;
 	v |= v >> 8;
 	v |= v >> 16;
-	return v++;
+	return ++v;
 }
 
 void GLTexture::initGLExtensions() {
