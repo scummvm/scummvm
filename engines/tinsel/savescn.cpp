@@ -162,10 +162,8 @@ void InitialiseSaveScenes() {
 }
 
 void FreeSaveScenes() {
-	if (ssData) {
-		free(ssData);
-		ssData = NULL;
-	}
+	free(ssData);
+	ssData = NULL;
 }
 
 /**
