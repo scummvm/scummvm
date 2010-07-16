@@ -27,7 +27,6 @@
 
 #include <string.h>
 #include <stdarg.h>
-#include <stdarg.h>
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
@@ -35,6 +34,7 @@
 
 //#include "backends/fs/stdiostream.h"
 #include "backends/fs/ds/ds-fs.h"
+#include "dsmain.h"
 
 #include "backends/platform/ds/arm9/source/dsloader.h"
 
@@ -92,24 +92,74 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 	// Treat each relocation entry. Loop over all of them
 	int cnt = size / sizeof(*rel);
 
-	DBG("# of relocation entries is %d.\n", cnt);
+	DBG("Loaded relocation table. %d entries. base address=%p\n", cnt, relSegment);
 
-	// TODO: Loop over relocation entries
+	int a = 0;
+	unsigned int relocation = 0;
+
 	for (int i = 0; i < cnt; i++) {
 
-	    //Elf32_Sym *sym = ???;
+		Elf32_Sym *sym = (Elf32_Sym *)(_symtab) + (REL_INDEX(rel[i].r_info));
 
-		//void *target = ???;
+		unsigned int *target = (unsigned int *)((char *)relSegment + rel[i].r_offset);
 
-		/*switch (REL_TYPE()) {*/
-		//case ??? :
-			//TODO: Cases for each relocation type.
-			//break;
-	//	default:
-			//seterror("Unknown relocation type %d.", ?? ?);
+		unsigned int origTarget = *target;	// Save for debugging
+
+		//DBG("%d, ", REL_TYPE(rel[i].r_info));
+
+		switch (REL_TYPE(rel[i].r_info)) {
+
+		case R_ARM_ABS32:
+			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
+				a = *target;							// Get full 32 bits of addend
+				relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
+
+				/*TODO:
+				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
+				 * 	relocation |= 1;
+				 * }
+				 */
+
+				*target = relocation;
+
+				DBG("R_ARM_ABS32: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+			}
+			break;
+
+		case R_ARM_THM_CALL:
+
+			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
+				a = *target & 0x00000fff;				// Get the correct bits for addend:
+				a += ((*target & 0x0fff0000) >> 4);		// Bits 0-11 of the first half-word encode the 12 most significant bits of the branch offset,
+														// bits 0-11 of the next half-word encode the 12 least significant bits.
+				a = (a << 8) >> 8;						// sign-extend
+				a = a << 1;								// branch offset is in units of half-bytes
+
+				relocation = a + (Elf32_Addr)_segment;	// Shift by main offset
+
+				/*TODO:
+				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
+				 * 	relocation |= 1;
+				 * }
+				 */
+
+				relocation -= rel[i].r_offset;
+
+				*target = relocation;
+
+				DBG("R_ARM_THM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+			}
+			break;
+
+		case R_ARM_V4BX:
+			DBG("R_ARM_V4BX: No relocation calculation necessary\n");
+			break;
+
+		default:
+			seterror("Unknown relocation type %d.", REL_TYPE(rel[i].r_info));
 			free(rel);
 			return false;
-	//	}
+		}
 
 	}
 
@@ -400,7 +450,8 @@ bool DLObject::open(const char *path) {
 
 	//DLFile->finalize();
 
-	//TODO?: flush data cache
+	//flush data cache
+	DC_FlushAll();
 
 	ctors_start = symbol("___plugin_ctors");
 	ctors_end = symbol("___plugin_ctors_end");
@@ -444,9 +495,9 @@ void *DLObject::symbol(const char *name) {
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++)
 
-		//TODO: Figure out which symbols should be detected here
-		if ((s->st_info >> 4 == 1 || s->st_info >> 4 == 2) &&
-		        _strtab[s->st_name] == '_' && !strcmp(name, _strtab + s->st_name + 1)) {
+		// We can only import symbols that are global or weak in the plugin
+		if ((SYM_BIND(s->st_info) == STB_GLOBAL || SYM_BIND(s->st_info) == STB_WEAK) &&
+		       !strcmp(name, _strtab + s->st_name)) {
 
 			// We found the symbol
 			DBG("=> %p\n", (void*)s->st_value);

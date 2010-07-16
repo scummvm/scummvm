@@ -174,18 +174,13 @@ typedef struct {
 } Elf32_Rel;
 
 // Access macros for the relocation info
-#define REL_TYPE(x)	((unsigned char) (x))	/* Extract relocation type */
+#define REL_TYPE(x)		((unsigned char) (x))	/* Extract relocation type */
 #define REL_INDEX(x)	((x)>>8)		/* Extract relocation index into symbol table */
 
 // ARM relocation types
 #define R_ARM_NONE			0
-#define R_ARM_PC24			1
 #define R_ARM_ABS32			2
-#define R_ARM_COPY			20
-#define R_ARM_GLOB_DAT			21
-#define R_ARM_JUMP_SLOT			22
-#define R_ARM_BASE_PREL			25
-#define R_ARM_GOT_BREL			26
-#define R_ARM_PLT32			27
+#define R_ARM_THM_CALL      10
+#define R_ARM_V4BX 			40
 
 #endif /* BACKENDS_ELF_H */
