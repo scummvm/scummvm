@@ -408,43 +408,48 @@ void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
 // Intern
 //
 
-void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type) {
+void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &gltype) {
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 		bpp = 4;
 		glFormat = GL_RGBA;
-		type = GL_UNSIGNED_BYTE;
+		gltype = GL_UNSIGNED_BYTE;
 	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) {  // RGB888
 		bpp = 3;
 		glFormat = GL_RGB;
-		type = GL_UNSIGNED_BYTE;
+		gltype = GL_UNSIGNED_BYTE;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {  // RGB565
 		bpp = 2;
 		glFormat = GL_RGB;
-		type = GL_UNSIGNED_SHORT_5_6_5;
+		gltype = GL_UNSIGNED_SHORT_5_6_5;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {  // RGB555
 		bpp = 2;
 		glFormat = GL_RGB;
-		type = GL_UNSIGNED_SHORT_5_5_5_1;
+		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {  // RGBA4444
 		bpp = 2;
 		glFormat = GL_RGBA;
-		type = GL_UNSIGNED_SHORT_4_4_4_4;
+		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
 	} else if (pixelFormat == Graphics::PixelFormat::createFormatCLUT8()) {  // CLUT8
 		bpp = 1;
-		glFormat = GL_RGB;
-		type = GL_COLOR_INDEX;
+		glFormat = GL_COLOR_INDEX;
+		gltype = GL_UNSIGNED_BYTE;
 	} else {
 		error("Not supported format");
 	}
 }
 
 void OpenGLGraphicsManager::internUpdateScreen() {
-
+	glClear( GL_COLOR_BUFFER_BIT );
+	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	_overlayTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	_mouseTexture->drawTexture(_mouseCurState.x, _mouseCurState.y, _mouseCurState.w, _mouseCurState.h);
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
+	// Check available GL Extensions
 	GLTexture::initGLExtensions();
 
+	// Disable 3D properties
 	glDisable(GL_CULL_FACE);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
@@ -478,6 +483,8 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 	} else
 		_gameTexture->refresh();
 
+	_overlayFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
+
 	if (!_overlayTexture)
 		_overlayTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
 	else
@@ -490,6 +497,9 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
+	_mouseTexture->allocBuffer(16, 16);
+
+	internUpdateScreen();
 
 	return true;
 }

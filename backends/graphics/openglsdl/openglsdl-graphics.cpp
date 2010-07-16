@@ -157,7 +157,9 @@ bool OpenGLSdlGraphicsManager::hotswapGFXMode() {
 }
 
 void OpenGLSdlGraphicsManager::internUpdateScreen() {
-	
+	OpenGLGraphicsManager::internUpdateScreen();
+
+	SDL_GL_SwapBuffers(); 
 }
 
 #endif

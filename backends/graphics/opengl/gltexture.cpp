@@ -78,7 +78,8 @@ GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
 	_textureWidth(0),
 	_textureHeight(0) {
 
-	refresh();
+	// Generates the texture ID for GL
+	CHECK_GL_ERROR( glGenTextures(1, &_textureName) );
 
 	// This all gets reset later in allocBuffer:
 	_surface.w = 0;
@@ -107,12 +108,6 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	if (w <= _textureWidth && h <= _textureHeight)
 		// Already allocated a sufficiently large buffer
 		return;
-
-	nextHigher2(0);
-	nextHigher2(100);
-	nextHigher2(1025);
-	nextHigher2(9999);
-
 
 	if (npot_supported) {
 		_textureWidth = w;
@@ -160,7 +155,7 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 
 void GLTexture::fillBuffer(byte x) {
 	byte* tmpbuf = new byte[_surface.h * _surface.w * _bytesPerPixel];
-	memset(tmpbuf, 0, _surface.h * _surface.w * _bytesPerPixel);
+	memset(tmpbuf, x, _surface.h * _surface.w * _bytesPerPixel);
 	CHECK_GL_ERROR( glBindTexture(GL_TEXTURE_2D, _textureName) );
 	CHECK_GL_ERROR( glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _surface.w, _surface.h,
 					_glFormat, _glType, tmpbuf) );
@@ -170,13 +165,13 @@ void GLTexture::fillBuffer(byte x) {
 void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	CHECK_GL_ERROR( glBindTexture(GL_TEXTURE_2D, _textureName) );
 
-	const GLint tex_width = xdiv(_surface.w, _textureWidth);
-	const GLint tex_height = xdiv(_surface.h, _textureHeight);
+	const GLint texWidth = 1;//xdiv(_surface.w, _textureWidth);
+	const GLint texHeight = 1;//xdiv(_surface.h, _textureHeight);
 	const GLint texcoords[] = {
 		0, 0,
-		tex_width, 0,
-		0, tex_height,
-		tex_width, tex_height,
+		texWidth, 0,
+		0, texHeight,
+		texWidth, texHeight,
 	};
 	CHECK_GL_ERROR( glTexCoordPointer(2, GL_INT, 0, texcoords) );
 
@@ -188,8 +183,7 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	};
 	CHECK_GL_ERROR( glVertexPointer(2, GL_SHORT, 0, vertices) );
 
-	assert(ARRAYSIZE(vertices) == ARRAYSIZE(texcoords));
-	CHECK_GL_ERROR( glDrawArrays(GL_TRIANGLE_STRIP, 0, ARRAYSIZE(vertices) / 2) );
+	CHECK_GL_ERROR( glDrawArrays(GL_TRIANGLE_STRIP, 0, 4) );
 }
 
 #endif
