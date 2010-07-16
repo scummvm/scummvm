@@ -268,8 +268,9 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
 	if ((getSciVersion() >= SCI_VERSION_1_MIDDLE)) {
+		// Introduced inbetween SCI1MIDDLE, lsl5 demo doesn't have it, longbow demo has
 		if (SELECTOR(xLast) != -1) {
-			// Introduced SCI1MIDDLE (it seems) - save last position into mover
+			// save last position into mover
 			writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
 			writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
 		}
