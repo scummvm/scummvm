@@ -48,10 +48,9 @@
 
 namespace Cine {
 
-Sound *g_sound;
-Common::SaveFileManager *g_saveFileMan;
+Sound *g_sound = 0;
 
-CineEngine *g_cine;
+CineEngine *g_cine = 0;
 
 CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	DebugMan.addDebugChannel(kCineDebugScript, "Script", "Script debug level");
@@ -88,7 +87,6 @@ Common::Error CineEngine::run() {
 		// Paula chipset for Amiga and Atari versions
 		g_sound = new PaulaSound(_mixer, this);
 	}
-	g_saveFileMan = _saveFileMan;
 
 	_restartRequested = false;
 

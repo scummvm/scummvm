@@ -190,8 +190,6 @@ enum {
 };
 
 
-extern Common::SaveFileManager *g_saveFileMan; // TEMP
-
 } // End of namespace Cine
 
 #endif

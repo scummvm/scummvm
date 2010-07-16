@@ -450,7 +450,7 @@ void CineEngine::makeSystemMenu() {
 
 						snprintf(tmp, 80, "%s.dir", _targetName.c_str());
 
-						Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(tmp);
+						Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(tmp);
 						if (!fHandle) {
 							warning("Unable to open file %s for saving", tmp);
 							break;

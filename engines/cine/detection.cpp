@@ -251,7 +251,7 @@ Common::Error CineEngine::saveGameState(int slot, const char *desc) {
 	char indexFile[80];
 	snprintf(indexFile, 80, "%s.dir", _targetName.c_str());
 
-	Common::OutSaveFile *fHandle = g_saveFileMan->openForSaving(indexFile);
+	Common::OutSaveFile *fHandle = _saveFileMan->openForSaving(indexFile);
 	if (!fHandle) {
 		warning("Unable to open file %s for saving", indexFile);
 		return Common::kUnknownError;

@@ -465,7 +465,7 @@ bool CineEngine::loadSaveDirectory() {
 	char tmp[80];
 
 	snprintf(tmp, 80, "%s.dir", _targetName.c_str());
-	fHandle = g_saveFileMan->openForLoading(tmp);
+	fHandle = _saveFileMan->openForLoading(tmp);
 
 	if (!fHandle) {
 		return false;
@@ -771,7 +771,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 }
 
 bool CineEngine::makeLoad(char *saveName) {
-	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
+	Common::SharedPtr<Common::InSaveFile> saveFile(_saveFileMan->openForLoading(saveName));
 
 	if (!saveFile) {
 		renderer->drawString(otherMessages[0], 0);
@@ -966,7 +966,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 }
 
 void CineEngine::makeSave(char *saveFileName) {
-	Common::SharedPtr<Common::OutSaveFile> fHandle(g_saveFileMan->openForSaving(saveFileName));
+	Common::SharedPtr<Common::OutSaveFile> fHandle(_saveFileMan->openForSaving(saveFileName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
