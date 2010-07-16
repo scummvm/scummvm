@@ -104,6 +104,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR2(b_incr, "b-incr");
 	FIND_SELECTOR(xStep);
 	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(xLast);
+	FIND_SELECTOR(yLast);
 	FIND_SELECTOR(moveSpeed);
 	FIND_SELECTOR(canBeHere);	// cantBeHere
 	FIND_SELECTOR(heading);

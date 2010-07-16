@@ -267,6 +267,12 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
+	if (SELECTOR(xLast) != -1) {
+		// Introduced SCI1MIDDLE (it seems) - save last position into mover
+		writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
+		writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
+	}
+
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (g_sci->_features->handleMoveCount()) {
