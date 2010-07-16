@@ -597,21 +597,15 @@ Towns_EuphonyDriver::~Towns_EuphonyDriver() {
 
 	MidiDriver_YM2612::removeLookupTables();
 
-	if (_fmInstruments) {
-		delete[] _fmInstruments;
-		_fmInstruments = 0;
-	}
+	delete[] _fmInstruments;
+	_fmInstruments = 0;
 
-	if (_waveInstruments) {
-		delete[] _waveInstruments;
-		_waveInstruments = 0;
-	}
+	delete[] _waveInstruments;
+	_waveInstruments = 0;
 
 	for (int i = 0; i < 10; i++) {
-		if (_waveSounds[i]) {
-			delete[] _waveSounds[i];
-			_waveSounds[i] = 0;
-		}
+		delete[] _waveSounds[i];
+		_waveSounds[i] = 0;
 	}
 
 	if (_queue) {
