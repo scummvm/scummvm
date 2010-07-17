@@ -527,8 +527,12 @@ int ResourceManager::addAppropriateSources() {
 #endif
 
 	addPatchDir(".");
+
 	if (Common::File::exists("message.map"))
 		addSource(new VolumeResourceSource("resource.msg", addExternalMap("message.map"), 0));
+
+	if (Common::File::exists("altres.map"))
+		addSource(new VolumeResourceSource("altres.000", addExternalMap("altres.map"), 0));
 
 	return 1;
 }
