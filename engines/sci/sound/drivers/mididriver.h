@@ -86,7 +86,7 @@ public:
 
 	virtual byte getPlayId() = 0;
 	virtual int getPolyphony() const = 0;
-	virtual int getFirstChannel() { return 0; };
+	virtual int getFirstChannel() { return 0; }
 
 	virtual void setVolume(byte volume) {
 		if(_driver)

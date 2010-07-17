@@ -73,7 +73,7 @@ public:
 	 */
 	virtual ResourceSource *findVolume(ResourceSource *map, int volNum) {
 		return NULL;
-	};
+	}
 
 	/**
 	 * Scan this source for TODO.
@@ -122,7 +122,7 @@ public:
 		if (_associatedMap == map && _volumeNumber == volNum)
 			return this;
 		return NULL;
-	};
+	}
 };
 
 class ExtMapResourceSource : public ResourceSource {
