@@ -2025,6 +2025,14 @@ static int said_parse_spec(byte *spec) {
 
 	} while ((nextitem != SAID_TERM) && (said_tokens_nr < MAX_SAID_TOKENS));
 
+	if ((said_tokens_nr > 2) && (said_tokens[0] == 0xF500) && (said_tokens[1] == 0xFFE) && (said_tokens[2] == 0xF600)) {
+		// HACK: "[!*]" found at the start, remove it - occurs in iceman
+		for (int saidNr = 3; saidNr < said_tokens_nr; saidNr++) {
+			said_tokens[saidNr - 3] = said_tokens[saidNr];
+		}
+		// FIXME: this should get properly implemented, but the parser code goes way over my head
+	}
+
 	if (nextitem == SAID_TERM)
 		yyparse();
 	else {
