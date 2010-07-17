@@ -85,6 +85,24 @@ bool Vocabulary::loadParserWords() {
 		return false; // NOT critical: SCI1 games and some demos don't have one!
 	}
 
+	if (_vocabVersion == kVocabularySCI0) {
+		if (resource->size < 26 * 2) {
+			warning("Invalid main vocabulary encountered: Much too small");
+			return false;
+		}
+		// Check the alphabet-offset table for any content
+		int alphabetNr;
+		for (alphabetNr = 0; alphabetNr < 26; alphabetNr++) {
+			if (READ_LE_UINT16(resource->data + alphabetNr * 2))
+				break;
+		}
+		// If all of them were empty, we are definitely seeing SCI01 vocab in disguise (e.g. pq2 japanese)
+		if (alphabetNr == 26) {
+			warning("SCI0: Found SCI01 vocabulary in disguise");
+			_vocabVersion = kVocabularySCI1;
+		}
+	}
+
 	unsigned int seeker;
 	if (_vocabVersion == kVocabularySCI1)
 		seeker = 255 * 2; // vocab.900 starts with 255 16-bit pointers which we don't use
