@@ -155,11 +155,6 @@ void NORETURN_PRE error(const char *s, ...) {
 	__android_log_assert("Fatal error", "ScummVM", "%s", buf_output);
 #endif
 
-#ifdef PALMOS_MODE
-	extern void PalmFatalError(const char *err);
-	PalmFatalError(buf_output);
-#endif
-
 #ifdef __SYMBIAN32__
 	Symbian::FatalError(buf_output);
 #endif

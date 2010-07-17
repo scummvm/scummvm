@@ -698,10 +698,6 @@ begin_credits("Credits");
 		  add_person("Neil Millstone", "agent-q", "");
 	  end_section();
 
-	  begin_section("PalmOS");
-		  add_person("Chris Apers", "chrilith ", "");
-	  end_section();
-
 	  begin_section("PocketPC / WinCE");
 		add_person("Nicolas Bacca", "arisme", "(retired)");
 		add_person("Kostas Nakos", "Jubanka", "");
@@ -775,6 +771,7 @@ begin_credits("Credits");
 
     begin_section("Retired Team Members");
 	  begin_persons();
+		  add_person("Chris Apers", "chrilith ", "Former PalmOS porter");
 		  add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
 		  add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
 		  add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");

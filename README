@@ -859,17 +859,13 @@ Supported platforms include (but are not limited to):
         Nintendo DS
         Nintendo Wii
         OS/2
-        PalmOS
         PlayStation 2
         PlayStation Portable
         Symbian
 
 The Dreamcast port does not support The Curse of Monkey Island, nor The
-Dig. The PalmOS port does not support The Curse of Monkey Island,
-Beneath a Steel Sky, nor either Simon the Sorcerer 1 or 2. The Dig will
-only work on some Palm devices (those with a large dynamic heap). The
-Nintendo DS port does not support Full Throttle, The Dig, or The Curse
-of Monkey Island.
+Dig. The Nintendo DS port does not support Full Throttle, The Dig, or
+The Curse of Monkey Island.
 For more platform specific limitations, please refer to our Wiki:
   http://wiki.scummvm.org/index.php/Platforms
 

@@ -191,13 +191,6 @@ public:
 		LINK_PLUGIN(COREAUDIO)
 		LINK_PLUGIN(COREMIDI)
 		#endif
-		#if defined(PALMOS_MODE)
-		#  if defined(COMPILE_CLIE)
-		LINK_PLUGIN(YPA1)
-		#  elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-		LINK_PLUGIN(ZODIAC)
-		#  endif
-		#endif
 		#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)
 		#endif

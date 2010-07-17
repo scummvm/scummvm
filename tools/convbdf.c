@@ -919,7 +919,7 @@ int gen_c_source(struct font* pf, char *path) {
 			bbuf,
 			pf->defaultchar);
 
-	fprintf(ofp, "\n" "#if !(defined(PALMOS_ARM) || defined(PALMOS_DEBUG) || defined(__GP32__))\n");
+	fprintf(ofp, "\n" "#if !(defined(__GP32__))\n");
 	fprintf(ofp, "extern const NewFont g_sysfont(desc);\n");
 	fprintf(ofp, "#else\n");
 	fprintf(ofp, "DEFINE_FONT(g_sysfont)\n");

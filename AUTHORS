@@ -190,9 +190,6 @@ ScummVM Team
     Nintendo DS:
        Neil Millstone
 
-    PalmOS:
-       Chris Apers
-
     PocketPC / WinCE:
        Nicolas Bacca         - (retired)
        Kostas Nakos
@@ -256,6 +253,7 @@ ScummVM Team
 
   Retired Team Members
   --------------------
+     Chris Apers           - Former PalmOS porter
      Ralph Brorsen         - Help with GUI implementation
      Jamieson Christian    - iMUSE, MIDI, all things musical
      Felix Jakschitsch     - Zak256 reverse engineering

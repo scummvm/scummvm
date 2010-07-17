@@ -7,7 +7,6 @@ MODULE_OBJS := \
 	fs/stdiostream.o \
 	fs/amigaos4/amigaos4-fs-factory.o \
 	fs/ds/ds-fs-factory.o \
-	fs/palmos/palmos-fs-factory.o \
 	fs/posix/posix-fs-factory.o \
 	fs/ps2/ps2-fs-factory.o \
 	fs/psp/psp-fs-factory.o \

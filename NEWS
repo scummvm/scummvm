@@ -6,6 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Android port.
 
  General:
+   - Removed the outdated PalmOS port.
    - Switched to the "fast" DOSBox OPL emulator.
    - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
    - Added support for more original media layouts.

@@ -669,11 +669,7 @@ int ConsoleDialog::printf(const char *format, ...) {
 }
 
 int ConsoleDialog::vprintf(const char *format, va_list argptr) {
-#ifdef PALMOS_MODE
-	char	buf[256];
-#else
 	char	buf[2048];
-#endif
 
 #if defined(WIN32)
 	int count = _vsnprintf(buf, sizeof(buf), format, argptr);

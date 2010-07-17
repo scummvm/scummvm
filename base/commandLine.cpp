@@ -49,7 +49,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(PALMOS_MODE) || defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -944,7 +944,7 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__) && !defined(ANDROID)
+#if !defined(_WIN32_WCE) && !defined(__GP32__) && !defined(ANDROID)
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {

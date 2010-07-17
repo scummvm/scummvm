@@ -167,12 +167,7 @@ extern int16 autoTrack;
 
 extern int16 currentDiskNumber;
 
-#ifdef PALMOS_MODE
-extern Common::File *_currentVolumeFile;
-#define currentVolumeFile	(*_currentVolumeFile)
-#else
 extern Common::File currentVolumeFile;
-#endif
 
 extern int16 volumeNumEntry;
 extern fileEntry *volumePtrToFileDescriptor;
