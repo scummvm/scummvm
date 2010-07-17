@@ -264,6 +264,12 @@ static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
 };
 
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kSetPort_workarounds[] = {
+    { GID_LSL6,          740,  0,              "rm740", "drawPic",        -1,    0, { 1,    0 } }, // ending scene, is called with additional 3 (!) parameters
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kUnLoad_workarounds[] = {
     { GID_LSL6,          130,  0,    "recruitLarryScr", "changeState",    -1,    0, { 1,    0 } }, // during intro, a 3rd parameter is passed by accident
     { GID_LSL6,          740,  0,        "showCartoon", "changeState",    -1,    0, { 1,    0 } }, // during ending, 4 additional parameters are passed by accident
@@ -656,7 +662,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
     { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },
     { MAP_CALL(SetNowSeen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
-    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iii)(i)(i)(i)",       NULL,            NULL },
+    { MAP_CALL(SetPort),           SIG_EVERYWHERE,           "i(iiiii)(i)",           NULL,            kSetPort_workarounds },
     { MAP_CALL(SetQuitStr),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(SetSynonyms),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(SetVideoMode),      SIG_EVERYWHERE,           "i",                     NULL,            NULL },
