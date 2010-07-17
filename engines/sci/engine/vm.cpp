@@ -1085,9 +1085,7 @@ void run_vm(EngineState *s, bool restoring) {
 			g_sci->_debugState.breakpointWasHit = false;
 		}
 		Console *con = g_sci->getSciDebugger();
-		if (con->isAttached()) {
-			con->onFrame();
-		}
+		con->onFrame();
 
 		if (s->xs->sp < s->xs->fp)
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",

@@ -220,10 +220,8 @@ Common::Error GroovieEngine::run() {
 		_system->openCD(cd_num);
 
 	while (!shouldQuit()) {
-		// Show the debugger if required
-		if (_debugger->isAttached()) {
-			_debugger->onFrame();
-		}
+		// Give the debugger a chance to act
+		_debugger->onFrame();
 
 		// Handle input
 		Common::Event ev;

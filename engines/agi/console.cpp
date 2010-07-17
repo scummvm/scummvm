@@ -53,15 +53,6 @@ Console::Console(AgiEngine *vm) : GUI::Debugger() {
 	DCmd_Register("bt",         WRAP_METHOD(Console, Cmd_BT));
 }
 
-Console::~Console() {
-}
-
-void Console::preEnter() {
-}
-
-void Console::postEnter() {
-}
-
 bool Console::Cmd_SetVar(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Usage: setvar <varnum> <value>\n");

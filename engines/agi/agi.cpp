@@ -279,8 +279,7 @@ void AgiEngine::pollTimer() {
 
 	while ((dm = _tickTimer - _lastTickTimer) < 5) {
 		processEvents();
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}

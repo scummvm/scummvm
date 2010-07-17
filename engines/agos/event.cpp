@@ -431,8 +431,7 @@ void AGOSEngine::delay(uint amount) {
 
 	AudioCD.updateCD();
 
-	if (_debugger->isAttached())
-		_debugger->onFrame();
+	_debugger->onFrame();
 
 	vgaPeriod = (_fastMode) ? 10 : _vgaPeriod;
 	if (getGameType() == GType_PP && getGameId() != GID_DIMP) {

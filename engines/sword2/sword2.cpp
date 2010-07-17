@@ -458,8 +458,7 @@ Common::Error Sword2Engine::run() {
 	_screen->initialiseRenderCycle();
 
 	while (1) {
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 #ifdef SWORD2_DEBUG
 		if (_stepOneCycle) {

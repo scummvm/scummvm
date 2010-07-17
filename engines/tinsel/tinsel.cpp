@@ -1001,8 +1001,7 @@ Common::Error TinselEngine::run() {
 	uint32 timerVal = 0;
 	while (!shouldQuit()) {
 		assert(_console);
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 
 		// Check for time to do next game cycle
 		if ((g_system->getMillis() > timerVal + GAME_FRAME_DELAY)) {

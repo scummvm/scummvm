@@ -281,8 +281,7 @@ void Game::execute() {
 			system.updateScreen();
 			system.delayMillis(10);
 
-			if (_debugger->isAttached())
-				_debugger->onFrame();
+			_debugger->onFrame();
 		}
 
 		room.leaveRoom();

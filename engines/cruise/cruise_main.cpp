@@ -1833,19 +1833,17 @@ void CruiseEngine::mainLoop() {
 				if (!skipEvents)
 					skipEvents = manageEvents();
 
-				if (playerDontAskQuit) break;
+				if (playerDontAskQuit)
+					break;
 
-				if (_vm->getDebugger()->isAttached())
-					_vm->getDebugger()->onFrame();
+				_vm->getDebugger()->onFrame();
 			} while (currentTick < lastTick + _gameSpeed);
 		} else {
 			manageEvents();
 
 			if (currentTick >= (lastTickDebug + 10)) {
 				lastTickDebug = currentTick;
-
-				if (_vm->getDebugger()->isAttached())
-					_vm->getDebugger()->onFrame();
+				_vm->getDebugger()->onFrame();
 			}
 		}
 		if (playerDontAskQuit)
