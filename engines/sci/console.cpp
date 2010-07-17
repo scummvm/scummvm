@@ -1176,8 +1176,9 @@ bool Console::cmdParse(int argc, const char **argv) {
 	char string[1000];
 
 	// Construct the string
-	strcpy(string, argv[2]);
+	strcpy(string, argv[1]);
 	for (int i = 2; i < argc; i++) {
+		strcat(string, " ");
 		strcat(string, argv[i]);
 	}
 
