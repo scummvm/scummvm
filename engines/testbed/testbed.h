@@ -46,12 +46,6 @@ public:
 	virtual Common::Error run();
 
 	/**
-	 * All testsuites are disabled by default
-	 * To enable testsuite X, call enableTestsuite("X", true);
-	 */
-	void enableTestsuite(const Common::String &name, bool enable);
-
-	/**
 	 * Invokes configured testsuites.
 	 */
 	void invokeTestsuites();

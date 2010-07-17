@@ -25,36 +25,70 @@
 #ifndef TESTBED_CONFIG_H
 #define TESTBED_CONFIG_H
 
-#include "testbed/testsuite.h"
+
 #include "common/array.h"
+#include "common/str-array.h"
+#include "common/tokenizer.h"
+
 #include "gui/options.h"
+#include "gui/ThemeEngine.h"
+#include "gui/ListWidget.h"
+
+#include "testbed/testsuite.h"
 
 namespace Testbed {
+
+enum {
+	kSelectionToggle = 99 // Some random Number
+};
 
 class TestbedConfigManager {
 public:
 	TestbedConfigManager(Common::Array<Testsuite *> &tList) : _testsuiteList(tList) {}
 	~TestbedConfigManager() {}
 	void selectTestsuites();
+	Testsuite *getTestsuiteByName(const Common::String &name);
+	bool isEnabled(const Common::String &tsName);
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
 	void enableTestsuite(const Common::String &name, bool enable);
 	void parseConfigFile() {}
 };
 
-class TestbedOptionsDialog : public GUI::OptionsDialog {
+class TestbedListWidget : public GUI::ListWidget {
 public:
-	TestbedOptionsDialog();
+	TestbedListWidget(GUI::Dialog *boss, const Common::String &name) : GUI::ListWidget(boss, name){}
+	void handleMouseUp(int x, int y, int button, int clickCount) {
+		// If the mouse is clicked once, toggle the selection as it happens in checkboxes.
+		sendCommand(kSelectionToggle, _selectedItem);
+	}
+
+	void changeColor() {
+		// Using Font Color Mechanism to highlight selected entries.
+		// Might not be detectable in some cases
+		if (_listColors.size() >= 2) {
+			if (GUI::ThemeEngine::kFontColorNormal == _listColors[_selectedItem]) {
+				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorAlternate;
+			} else if (GUI::ThemeEngine::kFontColorAlternate == _listColors[_selectedItem]) {
+				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorNormal;
+			}
+			draw();
+		}
+	}
+
+};
+
+class TestbedOptionsDialog : public GUI::Dialog {
+public:
+	TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan);
 	~TestbedOptionsDialog();
-	void addCheckbox(const Common::String &tsName);
-	bool isEnabled(const Common::String &tsName);
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
 private:
-	Common::Array<GUI::CheckboxWidget *> _checkBoxes;
-	const int _hOffset; // current offset from left
-	int _vOffset; // current offset from top
-	const int _boxWidth;
-	const int _boxHeight;
+	GUI::ListWidget::ColorList _colors;
+	Common::StringArray _testSuiteArray;
+	TestbedListWidget *_testListDisplay;
+	TestbedConfigManager *_testbedConfMan;
 };
 
 } // End of namespace Testbed

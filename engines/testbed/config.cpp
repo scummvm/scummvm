@@ -27,48 +27,70 @@
 
 namespace Testbed {
 
-TestbedOptionsDialog::TestbedOptionsDialog() : GUI::OptionsDialog("Select", 120, 120, 360, 200), _hOffset(15), _vOffset(15), _boxWidth(300), _boxHeight(10) {
-	new GUI::StaticTextWidget(this, _hOffset, _vOffset, _boxWidth, _boxHeight, "Select testsuites to Execute", Graphics::kTextAlignCenter);
-	_vOffset += 20;
-	addCheckbox("FS");
-	addCheckbox("GFX");
-	addCheckbox("Savegames");
-	addCheckbox("Misc");
-	addCheckbox("Events");
-	new GUI::ButtonWidget(this, 80 , _vOffset + 10, 80, 25, "Continue", GUI::kOKCmd, 'C');
-	new GUI::ButtonWidget(this, 200, _vOffset + 10, 80, 25, "Exit", GUI::kCloseCmd, 'X');
+TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser") {
+	
+	_testbedConfMan = tsConfMan;
+	
+	new GUI::StaticTextWidget(this, "Browser.Headline", "Select testsuites to Execute, selected entries are shown in dark");
+	_testListDisplay = new TestbedListWidget(this, "Browser.List");
+	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
+
+	// Construct a String Array
+	Common::Array<Testsuite *>::const_iterator iter;
+
+	for (iter = tsList.begin(); iter != tsList.end(); iter++) {
+		_testSuiteArray.push_back((*iter)->getName());
+		_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
+	}
+	
+	_testListDisplay->setList(_testSuiteArray, &_colors);
+
+	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd, 'C');
+	// XXX: Add more commands for this
+	new GUI::ButtonWidget(this, "Browser.Choose", "Exit", GUI::kCloseCmd, 'X');
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
 
-void TestbedOptionsDialog::addCheckbox(const Common::String &tsName) {
-	_checkBoxes.push_back(new GUI::CheckboxWidget(this, _hOffset, _vOffset, _boxWidth, _boxHeight, tsName));
-	_vOffset += 20;
+void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	Testsuite *ts;
+	switch (cmd) {
+	case kSelectionToggle:
+		ts  = _testbedConfMan->getTestsuiteByName(_testListDisplay->getSelectedString());
+		if (ts) {
+			ts->enable(!ts->isEnabled());
+			_testListDisplay->changeColor();
+		}
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
 }
 
-bool TestbedOptionsDialog::isEnabled(const Common::String &tsName) {
-	for (uint i = 0; i < _checkBoxes.size(); i++) {
-		if (_checkBoxes[i]->getLabel().equalsIgnoreCase(tsName)) {
-			return _checkBoxes[i]->getState();
-		}
-	}
-	return false;
+bool TestbedConfigManager::isEnabled(const Common::String &tsName) {
+	Testsuite *ts = getTestsuiteByName(tsName);
+	return ts ? ts->isEnabled() : false;
 }
+
 
 void TestbedConfigManager::enableTestsuite(const Common::String &name, bool enable) {
+	Testsuite *ts = getTestsuiteByName(name);
+	if (ts) {
+		ts->enable(enable);
+	} else {
+		warning("No matches found for %s\n", name.c_str());
+	}
+}
+
+Testsuite *TestbedConfigManager::getTestsuiteByName(const Common::String &name) {
 	Common::Array<Testsuite *>::const_iterator iter;
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if (name.equalsIgnoreCase((*iter)->getName())) {
-			(*iter)->enable(enable);
-			break;
+			return *iter;
 		}
 	}
-
-	return;
+	return 0;
 }
-
-
 
 void TestbedConfigManager::selectTestsuites() {
 
@@ -96,21 +118,12 @@ void TestbedConfigManager::selectTestsuites() {
 	if (Testsuite::handleInteractiveInput(prompt, "Proceed?", "Customize", kOptionRight)) {
 
 		// Select testsuites using checkboxes
-		TestbedOptionsDialog tbd;
+		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();
 
 		// check if user wanted to exit.
 		if (Engine::shouldQuit()) {
 			return;
-		}
-
-		// Enable selected testsuites
-		Common::String tsName;
-		for (uint i = 0; i < _testsuiteList.size(); i++) {
-			tsName = _testsuiteList[i]->getName();
-			if (tbd.isEnabled(tsName)) {
-				enableTestsuite(tsName, true);
-			}
 		}
 
 	}
