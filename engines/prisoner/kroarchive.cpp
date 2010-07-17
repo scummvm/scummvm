@@ -156,7 +156,7 @@ int uncompress (Bytef *dest, uint32 *destLen, Bytef *source, uint32 sourceLen) {
 	stream.avail_out = (uInt)*destLen;
 	stream.zalloc = (alloc_func)0;
 	stream.zfree = (free_func)0;
-	err = inflateInit2_(&stream, -DEF_WBITS, ZLIB_VERSION, sizeof(z_stream));
+	err = inflateInit2_(&stream, -MAX_WBITS, ZLIB_VERSION, sizeof(z_stream));
 	if (err != Z_OK) return err;
 	err = inflate(&stream, Z_FINISH);
 	if (err != Z_STREAM_END) {

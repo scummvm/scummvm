@@ -32,10 +32,8 @@
 #if defined(USE_ZLIB)
   #ifdef __SYMBIAN32__
 	#include <zlib\zlib.h>
-	#include <zlib\zutil.h>
   #else
 	#include <zlib.h>
-	#include <zutil.h>
   #endif
 #else
   #error Sorry, zlib is required for the Prisoner engine
