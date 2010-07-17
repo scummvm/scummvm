@@ -2020,6 +2020,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Police Quest 2 - Japanese PC-98
+	// SCI interpreter version unknown
+	{"pq2", "", {
+		{"resource.map", 0, "883804c616dca1d82373bf9fda3a71d2", 4656},
+		{"resource.001", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 669319},
+		{"resource.002", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 637662},
+		{"resource.003", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 684395},
+		{NULL, 0, NULL, 0}},
+		Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH
+	}, // also includes english language
+
 	// Police Quest 3 - English Amiga
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
