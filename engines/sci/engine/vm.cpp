@@ -364,6 +364,7 @@ static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaround
 static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
     { GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
+    { GID_GK1,         64950,  1,            "Feature", "handleEvent",    -1,    0, { 0,   0 } }, // sometimes when walk-clicking
     { GID_GK2,            11,  0,                   "", "export 10",      -1,    3, { 0,   0 } }, // called when the game starts
     { GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
     { GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
