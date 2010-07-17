@@ -379,6 +379,10 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
     { GID_LSL1,          250,  0,           "increase", "handleEvent",    -1,    2, { 0,   0 } }, // casino, playing game, increasing bet
     { GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
+    { GID_LSL3,          340,  0,        "ComicScript", "changeState",    -1,  200, { 0,   0 } }, // right after entering the 3 ethnic groups inside comedy club
+    { GID_LSL3,          340,  0,        "ComicScript", "changeState",    -1,  201, { 0,   0 } }, // see above
+    { GID_LSL3,          340,  0,        "ComicScript", "changeState",    -1,  202, { 0,   0 } }, // see above
+    { GID_LSL3,          340,  0,        "ComicScript", "changeState",    -1,  203, { 0,   0 } }, // see above
     { GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
     { GID_LSL6,           85,  0,          "washcloth", "doVerb",         -1,    0, { 0,   0 } }, // washcloth in inventory
     { GID_LSL6,          928, -1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
