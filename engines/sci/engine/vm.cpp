@@ -646,14 +646,15 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				// result of a script bug
 
 				const char *objectName = s->_segMan->getObjectName(send_obj);
+				const SciGameId gameId = g_sci->getGameId();
 
-				if (!strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
+				if (gameId == GID_SQ4 && !strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
 					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
 					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1VGA) {
+				} else if (gameId == GID_QFG1VGA && !strcmp(objectName, "longSong") && selector == 3) {
 					// QFG1VGA has a script bug in the longSong object when invoking the
 					// loop selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "PuzPiece") && selector == 77 && g_sci->getGameId() == GID_CASTLEBRAIN) {
+				} else if (gameId == GID_CASTLEBRAIN && !strcmp(objectName, "PuzPiece") && selector == 77) {
 					// Castle of Dr. Brain has a script bug in the PuzPiece object when invoking
 					// the value selector, which doesn't affect gameplay, thus don't display it
 				} else {
