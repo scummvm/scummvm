@@ -489,7 +489,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 
 			printf("%04x: ", seeker);
 			while (seeker < _seeker) {
-				unsigned char nextitem = script->data [seeker++];
+				uint16 nextitem = script->data [seeker++];
 				if (nextitem == 0xFF)
 					printf("\n%04x: ", seeker);
 				else if (nextitem >= 0xF0) {

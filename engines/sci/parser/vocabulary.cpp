@@ -142,10 +142,13 @@ bool Vocabulary::loadParserWords() {
 const char *Vocabulary::getAnyWordFromGroup(int group) {
 	if (group == VOCAB_MAGIC_NUMBER_GROUP)
 		return "{number}";
+	if (group == VOCAB_MAGIC_NOTHING_GROUP)
+		return "{nothing}";
 
-	for (WordMap::const_iterator i = _parserWords.begin(); i != _parserWords.end(); ++i)
+	for (WordMap::const_iterator i = _parserWords.begin(); i != _parserWords.end(); ++i) {
 		if (i->_value._group == group)
 			return i->_key.c_str();
+	}
 
 	return "{invalid}";
 }
@@ -301,7 +304,7 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 }
 
 void Vocabulary::decipherSaidBlock(byte *addr) {
-	byte nextitem;
+	uint16 nextitem;
 
 	do {
 		nextitem = *addr++;

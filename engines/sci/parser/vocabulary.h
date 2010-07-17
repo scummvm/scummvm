@@ -78,6 +78,7 @@ enum {
 
 /* This word class is used for numbers */
 #define VOCAB_MAGIC_NUMBER_GROUP 0xffd /* 0xffe ? */
+#define VOCAB_MAGIC_NOTHING_GROUP 0xffe
 
 /* Number of nodes for each parse_tree_node structure */
 #define VOCAB_TREE_NODES 500
