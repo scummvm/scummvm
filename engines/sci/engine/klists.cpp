@@ -37,7 +37,12 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 		Node *node = segMan->lookupNode(addr);
 
 		if (!node) {
-			error("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			if ((g_sci->getGameId() == GID_ICEMAN) && (g_sci->getEngineState()->currentRoomNumber() == 40)) {
+				// ICEMAN: when plotting course, unDrawLast is called by startPlot::changeState
+				//  there is no previous entry so we get 0 in here
+			} else {
+				error("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			}
 			return false;
 		}
 
