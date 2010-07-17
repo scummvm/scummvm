@@ -531,6 +531,12 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
 
+	// We check here, we don't want to delete a users save in case we are within a kernel function
+	if (s->executionStackBase) {
+		warning("kSaveGame - won't save from within kernel function");
+		return NULL_REG;
+	}
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 

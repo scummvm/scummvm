@@ -722,6 +722,7 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savenam
 	meta.script0_size = script0->size;
 	meta.game_object_offset = g_sci->getGameObject().offset;
 
+	// Checking here again
 	if (s->executionStackBase) {
 		warning("Cannot save from below kernel function");
 		return false;
