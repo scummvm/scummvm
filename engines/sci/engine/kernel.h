@@ -122,6 +122,7 @@ typedef reg_t KernelFunctionCall(EngineState *s, int argc, reg_t *argv);
 
 struct SciWorkaroundEntry {
 	SciGameId gameId;
+	int roomNr;
 	int scriptNr;
 	int16 inheritanceLevel;
 	const char *objectName;
@@ -131,7 +132,7 @@ struct SciWorkaroundEntry {
 	reg_t newValue;
 };
 
-#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0, { 0,   0 } }
+#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { 0, 0 } }
 
 struct KernelSubFunction {
 	KernelFunctionCall *function;
