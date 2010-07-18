@@ -36,10 +36,10 @@
 // Supported GL extensions
 static bool npot_supported = false;
 
-static inline GLint xdiv(int numerator, int denominator) {
+/*static inline GLint xdiv(int numerator, int denominator) {
 	assert(numerator < (1 << 16));
 	return (numerator << 16) / denominator;
-}
+}*/
 
 static GLuint nextHigher2(GLuint v) {
 	if (v == 0)
@@ -61,6 +61,7 @@ void GLTexture::initGLExtensions() {
 
 	const char* ext_string =
 		reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+	CHECK_GL_ERROR(0);
 	Common::StringTokenizer tokenizer(ext_string, " ");
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
@@ -128,8 +129,7 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	CHECK_GL_ERROR( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE) );
 	CHECK_GL_ERROR( glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE) );
 	CHECK_GL_ERROR( glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
-		     _textureWidth, _textureHeight,
-		     0, _glFormat, _glType, NULL) );
+		     _textureWidth, _textureHeight, 0, _glFormat, _glType, NULL) );
 }
 
 void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLuint w, GLuint h) {
@@ -165,15 +165,15 @@ void GLTexture::fillBuffer(byte x) {
 void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	CHECK_GL_ERROR( glBindTexture(GL_TEXTURE_2D, _textureName) );
 
-	const GLint texWidth = 1;//xdiv(_surface.w, _textureWidth);
-	const GLint texHeight = 1;//xdiv(_surface.h, _textureHeight);
-	const GLint texcoords[] = {
+	const GLfloat texWidth = (GLfloat)_surface.w / _textureWidth;//xdiv(_surface.w, _textureWidth);
+	const GLfloat texHeight = (GLfloat)_surface.h / _textureHeight;//xdiv(_surface.h, _textureHeight);
+	const GLfloat texcoords[] = {
 		0, 0,
 		texWidth, 0,
 		0, texHeight,
 		texWidth, texHeight,
 	};
-	CHECK_GL_ERROR( glTexCoordPointer(2, GL_INT, 0, texcoords) );
+	CHECK_GL_ERROR( glTexCoordPointer(2, GL_FLOAT, 0, texcoords) );
 
 	const GLshort vertices[] = {
 		x,	   y,

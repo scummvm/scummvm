@@ -127,6 +127,13 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
+	// Setup OpenGL attributes for SDL
+	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
+	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
+	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : SDL_OPENGL
 	);
