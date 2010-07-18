@@ -846,7 +846,6 @@ bool MidiDriver_Amiga::loadInstrumentsSCI0Mac(Common::SeekableReadStream &file) 
 		uint32 loop_offset = seg_size[0];
 
 		instrument->samples = (int8 *)malloc(size + 1);
-		uint32 startPos = file.pos();
 		if (file.read(instrument->samples, size) < size) {
 			warning("[sfx:seq:amiga] failed to read instrument sample");
 			free(instrument->samples);
