@@ -338,6 +338,13 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 	return make_reg(0xFFFF, 0xFFFF);
 }
 
+static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = reg.offset;
+	return true;
+}
+
 static bool validate_signedInteger(reg_t reg, int16 &integer) {
 	if (reg.segment)
 		return false;
@@ -348,6 +355,12 @@ static bool validate_signedInteger(reg_t reg, int16 &integer) {
 //    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
     { GID_QFG1VGA,       928,  0,              "Blink", "init",           -1,    0, { 0,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
+    { GID_LSL6,          938,  0,               "ROsc", "cycleDone",      -1,    0, { 0,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -1693,8 +1706,13 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_dpToa: { // 0x36 (54)
 			// Decrement Property and copy To Accumulator
-			s->r_acc = validate_property(obj, (opparams[0] >> 1));
-			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty - 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDptoaWorkarounds, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
 		}
 
