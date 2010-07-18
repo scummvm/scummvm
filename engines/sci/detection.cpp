@@ -626,8 +626,8 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
 		//(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime); // ||
+		//(f == kSupportsSavingDuringRuntime);
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {
