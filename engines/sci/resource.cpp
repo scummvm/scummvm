@@ -133,86 +133,43 @@ const char *getResourceTypeName(ResourceType restype) {
 		return "invalid";
 }
 
-struct ResTypeMap {
-	byte sciType;
-	ResourceType type;
-};
-
-static const ResTypeMap s_resTypeMapSci0[] = {
-	{ 0, kResourceTypeView },
-	{ 1, kResourceTypePic },
-	{ 2, kResourceTypeScript },
-	{ 3, kResourceTypeText },
-	{ 4, kResourceTypeSound },
-	{ 5, kResourceTypeMemory },
-	{ 6, kResourceTypeVocab },
-	{ 7, kResourceTypeFont },
-	{ 8, kResourceTypeCursor },
-	{ 9, kResourceTypePatch },
-	{ 10, kResourceTypeBitmap },
-	{ 11, kResourceTypePalette },
-	{ 12, kResourceTypeCdAudio },
-	{ 13, kResourceTypeAudio },
-	{ 14, kResourceTypeSync },
-	{ 15, kResourceTypeMessage },
-	{ 16, kResourceTypeMap },
-	{ 17, kResourceTypeHeap },
-	{ 18, kResourceTypeAudio36 },
-	{ 19, kResourceTypeSync36 },
-	{ 20, kResourceTypeTranslation },
+static const ResourceType s_resTypeMapSci0[] = {
+	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeText,          // 0x00-0x03
+	kResourceTypeSound, kResourceTypeMemory, kResourceTypeVocab, kResourceTypeFont,       // 0x04-0x07
+	kResourceTypeCursor, kResourceTypePatch, kResourceTypeBitmap, kResourceTypePalette,   // 0x08-0x0B
+	kResourceTypeCdAudio, kResourceTypeAudio, kResourceTypeSync, kResourceTypeMessage,    // 0x0C-0x0F
+	kResourceTypeMap, kResourceTypeHeap, kResourceTypeAudio36, kResourceTypeSync36,       // 0x10-0x13
+	kResourceTypeTranslation                                                              // 0x14
 };
 
 #ifdef ENABLE_SCI32
-static const ResTypeMap s_resTypeMapSci21[] = {
-	{ 0, kResourceTypeView },
-	{ 1, kResourceTypePic },
-	{ 2, kResourceTypeScript },
-	{ 3, kResourceTypeText },
-	{ 4, kResourceTypeSound },
-	{ 5, kResourceTypeMemory },
-	{ 6, kResourceTypeVocab },
-	{ 7, kResourceTypeFont },
-	{ 8, kResourceTypeCursor },
-	{ 9, kResourceTypePatch },
-	{ 10, kResourceTypeBitmap },
-	{ 11, kResourceTypePalette },
-	// 12 is Wave, but SCI seems to just store it in Audio resources
-	{ 13, kResourceTypeAudio },
-	{ 14, kResourceTypeSync },
-	{ 15, kResourceTypeMessage },
-	{ 16, kResourceTypeMap },
-	{ 17, kResourceTypeHeap },
-	{ 18, kResourceTypeChunk },
-	{ 19, kResourceTypeAudio36 },
-	{ 20, kResourceTypeSync36 },
-	{ 21, kResourceTypeTranslation },
-	{ 22, kResourceTypeRobot },
-	{ 23, kResourceTypeVMD }
+// TODO: 12 should be "Wave", but SCI seems to just store it in Audio resources
+static const ResourceType s_resTypeMapSci21[] = {
+	kResourceTypeView, kResourceTypePic, kResourceTypeScript, kResourceTypeText,          // 0x00-0x03
+	kResourceTypeSound, kResourceTypeMemory, kResourceTypeVocab, kResourceTypeFont,       // 0x04-0x07
+	kResourceTypeCursor, kResourceTypePatch, kResourceTypeBitmap, kResourceTypePalette,   // 0x08-0x0B
+	kResourceTypeInvalid, kResourceTypeAudio, kResourceTypeSync, kResourceTypeMessage,    // 0x0C-0x0F
+	kResourceTypeMap, kResourceTypeHeap, kResourceTypeChunk, kResourceTypeAudio36,        // 0x10-0x13
+	kResourceTypeSync36, kResourceTypeTranslation, kResourceTypeRobot, kResourceTypeVMD   // 0x14-0x17
 };
 #endif
 
 ResourceType ResourceManager::convertResType(byte type) {
 	type &= 0x7f;
-	uint32 tableSize = 0;
-	const ResTypeMap *map = 0;
 
 	if (_mapVersion != kResVersionSci32) {
 		// SCI0 - SCI2
-		tableSize = ARRAYSIZE(s_resTypeMapSci0);
-		map = s_resTypeMapSci0;
+		if (type < ARRAYSIZE(s_resTypeMapSci0))
+			return s_resTypeMapSci0[type];
 	} else {
 		// SCI2.1+
 #ifdef ENABLE_SCI32
-		tableSize = ARRAYSIZE(s_resTypeMapSci21);
-		map = s_resTypeMapSci21;
+		if (type < ARRAYSIZE(s_resTypeMapSci21))
+			return s_resTypeMapSci21[type];
 #else
 		error("SCI32 support not compiled in");
 #endif
 	}
-
-	for (uint32 i = 0; i < tableSize; i++)
-		if (map[i].sciType == type)
-			return map[i].type;
 
 	return kResourceTypeInvalid;
 }
