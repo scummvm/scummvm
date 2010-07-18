@@ -39,7 +39,9 @@
 namespace Testbed {
 
 enum {
-	kSelectionToggle = 99 // Some random Number
+	kSelectionToggle = 16799, // Some random Number (A better way to do this?)
+	kTestbedQuitCmd,
+	kTestbedSelectAll
 };
 
 class TestbedConfigManager {
@@ -74,6 +76,19 @@ public:
 			}
 			draw();
 		}
+	}
+
+	void setColorAll(GUI::ThemeEngine::FontColor color) {
+		for (uint i = 0; i < _listColors.size(); i++) {
+			_listColors[i] = color;
+		}
+		draw();;
+	}
+	
+	void setColor(uint32 indx, GUI::ThemeEngine::FontColor color) {
+		assert(indx < _listColors.size());
+		_listColors[indx] = color;
+		draw();
 	}
 
 };

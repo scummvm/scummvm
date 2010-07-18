@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#include "testbed/config.h"
 #include "engines/engine.h"
+#include "testbed/config.h"
 
 namespace Testbed {
 
@@ -31,7 +31,8 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	
 	_testbedConfMan = tsConfMan;
 	
-	new GUI::StaticTextWidget(this, "Browser.Headline", "Select testsuites to Execute, selected entries are shown in dark");
+	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
+	new GUI::StaticTextWidget(this, "Browser.Path", "Selected entries shown in dark, click to select");
 	_testListDisplay = new TestbedListWidget(this, "Browser.List");
 	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
 
@@ -45,9 +46,10 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	
 	_testListDisplay->setList(_testSuiteArray, &_colors);
 
-	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd, 'C');
+	new GUI::ButtonWidget(this, "Browser.Up", "Select All", kTestbedSelectAll, 0);
+	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd);
 	// XXX: Add more commands for this
-	new GUI::ButtonWidget(this, "Browser.Choose", "Exit", GUI::kCloseCmd, 'X');
+	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
@@ -61,6 +63,20 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 			ts->enable(!ts->isEnabled());
 			_testListDisplay->changeColor();
 		}
+		break;
+	case kTestbedQuitCmd:
+		Engine::quitGame();
+		close();
+		break;
+	case kTestbedSelectAll:
+		for (uint i = 0; i < _testSuiteArray.size(); i++) {
+			ts  = _testbedConfMan->getTestsuiteByName(_testSuiteArray[i]);
+			if (ts) {
+				ts->enable(true);
+			}
+		}
+		_testListDisplay->setColorAll(GUI::ThemeEngine::kFontColorNormal);
+		break;
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	}
@@ -121,10 +137,7 @@ void TestbedConfigManager::selectTestsuites() {
 		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();
 
-		// check if user wanted to exit.
-		if (Engine::shouldQuit()) {
-			return;
-		}
+		
 
 	}
 }

@@ -104,7 +104,12 @@ Common::Error TestbedEngine::run() {
 
 	TestbedConfigManager cfMan(_testsuiteList);
 	cfMan.selectTestsuites();
-
+	
+	// check if user wanted to exit.
+	if (Engine::shouldQuit()) {
+		return Common::kNoError;
+	}
+	
 	invokeTestsuites();
 	return Common::kNoError;
 }
