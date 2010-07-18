@@ -30,7 +30,7 @@ namespace Testbed {
 void MiscTests::getHumanReadableFormat(TimeDate &td, Common::String &date) {
 	// XXX: can use snprintf?
 	char strDate[100];
-	snprintf(strDate, 100, "%d:%d:%d on %d/%d/%d (dd/mm/yy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon, td.tm_year);
+	snprintf(strDate, 100, "%d:%d:%d on %d/%d/%d (dd/mm/yy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon, td.tm_year + 1900);
 	date = strDate;
 	return;
 }
@@ -76,7 +76,6 @@ bool MiscTests::testDateTime() {
 	Testsuite::logDetailedPrintf("Current Time and Date: ");
 	Common::String dateTimeNow;
 	getHumanReadableFormat(t1, dateTimeNow);
-	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 
 	if (Testsuite::isSessionInteractive) {
 		// Directly verify date
@@ -87,6 +86,9 @@ bool MiscTests::testDateTime() {
 		}
 	}
 
+	g_system->getTimeAndDate(t1);
+	getHumanReadableFormat(t1, dateTimeNow);
+	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 	// Now, Put some delay
 	g_system->delayMillis(2000);
 	g_system->getTimeAndDate(t2);
