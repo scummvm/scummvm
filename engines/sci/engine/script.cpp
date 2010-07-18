@@ -437,6 +437,9 @@ void Script::initialiseClasses(SegManager *segMan) {
 			// WORKAROUND for an invalid species access in the demo of LSL2
 			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			// WORKAROUND for an invalid species access in LSL3 script 500
+			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
