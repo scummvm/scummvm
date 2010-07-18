@@ -388,7 +388,6 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	}
 
-	pSnd->fadeStep = 0; // just make sure that previous fading isn't continued
 	pSnd->status = kSoundPlaying;
 }
 
@@ -411,6 +410,8 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 		pSnd->pMidiParser->mainThreadEnd();
 		_mutex.unlock();
 	}
+
+	pSnd->fadeStep = 0; // end fading, if fading was in progress
 }
 
 void SciMusic::soundSetVolume(MusicEntry *pSnd, byte volume) {
