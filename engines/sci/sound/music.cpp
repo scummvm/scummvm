@@ -388,6 +388,7 @@ void SciMusic::soundPlay(MusicEntry *pSnd) {
 		}
 	}
 
+	pSnd->fadeStep = 0; // just make sure that previous fading isn't continued
 	pSnd->status = kSoundPlaying;
 }
 
