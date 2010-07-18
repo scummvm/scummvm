@@ -108,28 +108,113 @@ static const char *sci_error_types[] = {
 	"SCI version is unsupported"
 };
 
-// These are the 20 resource types supported by SCI1.1
-static const char *resourceTypeNames[] = {
+static const char *s_resourceTypeNames[] = {
 	"view", "pic", "script", "text", "sound",
 	"memory", "vocab", "font", "cursor",
 	"patch", "bitmap", "palette", "cdaudio",
 	"audio", "sync", "message", "map", "heap",
-	"audio36", "sync36", "", "", "robot", "vmd"
+	"audio36", "sync36", "xlate", "robot", "vmd",
+	"chunk", "macibin", "macibis", "macpict"
 };
 
-static const char *resourceTypeSuffixes[] = {
+static const char *s_resourceTypeSuffixes[] = {
 	"v56", "p56", "scr", "tex", "snd",
-	"   ", "voc", "fon", "cur", "pat",
+	   "", "voc", "fon", "cur", "pat",
 	"bit", "pal", "cda", "aud", "syn",
-	"msg", "map", "hep", "aud", "syn",
-	"trn", "   ", "rbt", "vmd"
-};
+	"msg", "map", "hep",    "",    "",
+	"trn", "rbt", "vmd", "chk",    "",
+	   "",    ""
+}; 
 
 const char *getResourceTypeName(ResourceType restype) {
 	if (restype != kResourceTypeInvalid)
-		return resourceTypeNames[restype];
+		return s_resourceTypeNames[restype];
 	else
 		return "invalid";
+}
+
+struct ResTypeMap {
+	byte sciType;
+	ResourceType type;
+};
+
+static const ResTypeMap s_resTypeMapSci0[] = {
+	{ 0, kResourceTypeView },
+	{ 1, kResourceTypePic },
+	{ 2, kResourceTypeScript },
+	{ 3, kResourceTypeText },
+	{ 4, kResourceTypeSound },
+	{ 5, kResourceTypeMemory },
+	{ 6, kResourceTypeVocab },
+	{ 7, kResourceTypeFont },
+	{ 8, kResourceTypeCursor },
+	{ 9, kResourceTypePatch },
+	{ 10, kResourceTypeBitmap },
+	{ 11, kResourceTypePalette },
+	{ 12, kResourceTypeCdAudio },
+	{ 13, kResourceTypeAudio },
+	{ 14, kResourceTypeSync },
+	{ 15, kResourceTypeMessage },
+	{ 16, kResourceTypeMap },
+	{ 17, kResourceTypeHeap },
+	{ 18, kResourceTypeAudio36 },
+	{ 19, kResourceTypeSync36 },
+	{ 20, kResourceTypeTranslation },
+};
+
+#ifdef ENABLE_SCI32
+static const ResTypeMap s_resTypeMapSci21[] = {
+	{ 0, kResourceTypeView },
+	{ 1, kResourceTypePic },
+	{ 2, kResourceTypeScript },
+	{ 3, kResourceTypeText },
+	{ 4, kResourceTypeSound },
+	{ 5, kResourceTypeMemory },
+	{ 6, kResourceTypeVocab },
+	{ 7, kResourceTypeFont },
+	{ 8, kResourceTypeCursor },
+	{ 9, kResourceTypePatch },
+	{ 10, kResourceTypeBitmap },
+	{ 11, kResourceTypePalette },
+	// 12 is Wave, but SCI seems to just store it in Audio resources
+	{ 13, kResourceTypeAudio },
+	{ 14, kResourceTypeSync },
+	{ 15, kResourceTypeMessage },
+	{ 16, kResourceTypeMap },
+	{ 17, kResourceTypeHeap },
+	{ 18, kResourceTypeChunk },
+	{ 19, kResourceTypeAudio36 },
+	{ 20, kResourceTypeSync36 },
+	{ 21, kResourceTypeTranslation },
+	{ 22, kResourceTypeRobot },
+	{ 23, kResourceTypeVMD }
+};
+#endif
+
+ResourceType ResourceManager::convertResType(byte type) {
+	type &= 0x7f;
+	uint32 tableSize = 0;
+	const ResTypeMap *map = 0;
+
+	if (_mapVersion != kResVersionSci32) {
+		// SCI0 - SCI2
+		tableSize = ARRAYSIZE(s_resTypeMapSci0);
+		map = s_resTypeMapSci0;
+	} else {
+		// SCI2.1+
+#ifdef ENABLE_SCI32
+		tableSize = ARRAYSIZE(s_resTypeMapSci21);
+		map = s_resTypeMapSci21;
+#else
+		error("SCI32 support not compiled in");
+#endif
+	}
+
+	for (uint32 i = 0; i < tableSize; i++)
+		if (map[i].sciType == type)
+			return map[i].type;
+
+	return kResourceTypeInvalid;
 }
 
 //-- Resource main functions --
@@ -337,7 +422,7 @@ void MacResourceForkResourceSource::loadResource(ResourceManager *resMan, Resour
 	Common::SeekableReadStream *stream = _macResMan->getResource(resTypeToMacTag(res->getType()), res->getNumber());
 
 	if (!stream)
-		error("Could not get Mac resource fork resource: %d %d", res->getType(), res->getNumber());
+		error("Could not get Mac resource fork resource: %s %d", getResourceTypeName(res->getType()), res->getNumber());
 
 	int error = res->decompress(resMan->getVolVersion(), stream);
 	if (error) {
@@ -1097,7 +1182,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType resource
 		return;
 	}
 
-	byte patchType = fileStream->readByte() & 0x7F;
+	byte patchType = convertResType(fileStream->readByte());
 	byte patchDataOffset = fileStream->readByte();
 
 	delete fileStream;
@@ -1235,7 +1320,11 @@ void ResourceManager::readResourcePatches() {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i <= kResourceTypeHeap; ++i) {
+	for (int i = kResourceTypeView; i <= kResourceTypeInvalid; ++i) {
+		// Ignore the types that can't be patched (and Robot/VMD is handled externally for now)
+		if (!s_resourceTypeSuffixes[i] || i == kResourceTypeRobot || i == kResourceTypeVMD)
+			continue;
+
 		files.clear();
 		szResType = getResourceTypeName((ResourceType)i);
 		// SCI0 naming - type.nnn
@@ -1244,7 +1333,7 @@ void ResourceManager::readResourcePatches() {
 		SearchMan.listMatchingMembers(files, mask);
 		// SCI1 and later naming - nnn.typ
 		mask = "*.";
-		mask += resourceTypeSuffixes[i];
+		mask += s_resourceTypeSuffixes[i];
 		SearchMan.listMatchingMembers(files, mask);
 
 		for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
@@ -1308,7 +1397,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		if (offset == 0xFFFFFFFF)
 			break;
 
-		type = (ResourceType)(id >> 11);
+		type = convertResType(id >> 11);
 		number = id & 0x7FF;
 		ResourceId resId = ResourceId(type, number);
 		// adding a new resource
@@ -1393,7 +1482,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				warning("Error while reading %s", map->getLocationName().c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
-			resId = ResourceId((ResourceType)type, number);
+			resId = ResourceId(convertResType(type), number);
 			// adding new resource only if it does not exist
 			if (_resMap.contains(resId) == false) {
 				// NOTE: We add the map's volume number here to the specified volume number
