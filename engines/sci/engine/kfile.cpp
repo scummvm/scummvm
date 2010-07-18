@@ -817,7 +817,7 @@ reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
 	fgets_wrapper(s, buf, size, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
 	delete[] buf;
-	return argv[1];
+	return argv[0];
 }
 
 reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
