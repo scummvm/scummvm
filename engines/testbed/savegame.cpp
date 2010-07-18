@@ -196,8 +196,4 @@ SaveGameTestSuite::SaveGameTestSuite() {
 	addTest("Verify Error Messages", &SaveGametests::testErrorMessages, false);
 }
 
-const char *SaveGameTestSuite::getName() const {
-	return "SaveGames";
-}
-
 } // End of namespace Testbed

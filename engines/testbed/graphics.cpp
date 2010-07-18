@@ -76,10 +76,6 @@ GFXTestSuite::GFXTestSuite() {
 	//addTest("Pixel Formats", &GFXtests::pixelFormats);
 }
 
-const char *GFXTestSuite::getName() const {
-	return "GFX";
-}
-
 void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[8] = r;
 	_palette[9] = g;

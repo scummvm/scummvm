@@ -60,7 +60,12 @@ public:
 	 */
 	FSTestSuite();
 	~FSTestSuite() {}
-	const char *getName() const;
+	const char *getName() const {
+		return "FS";
+	}
+	const char *getDescription() const {
+		return "File system tests (Navigation, Read/Write)";
+	}
 	void enable(bool flag);
 };
 

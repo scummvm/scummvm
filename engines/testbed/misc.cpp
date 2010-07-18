@@ -150,8 +150,4 @@ MiscTestSuite::MiscTestSuite() {
 	addTest("Mutexes", &MiscTests::testMutexes, false);
 }
 
-const char *MiscTestSuite::getName() const {
-	return "Misc";
-}
-
 } // End of namespace Testbed

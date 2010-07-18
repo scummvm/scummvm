@@ -122,6 +122,7 @@ public:
 	static uint parseEvents();
 
 	virtual const char *getName() const = 0;
+	virtual const char *getDescription() const = 0;
 
 	static void logPrintf(const char *s, ...) GCC_PRINTF(1, 2);
 	static void logDetailedPrintf(const char *s, ...) GCC_PRINTF(1, 2);

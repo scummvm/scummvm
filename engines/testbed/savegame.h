@@ -56,7 +56,12 @@ public:
 	 */
 	SaveGameTestSuite();
 	~SaveGameTestSuite() {}
-	const char *getName() const;
+	const char *getName() const {
+		return "SaveGames";
+	}
+	const char *getDescription() const {
+		return "Saving Game state tests";
+	}
 };
 
 } // End of namespace Testbed

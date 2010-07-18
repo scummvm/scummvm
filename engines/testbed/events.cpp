@@ -238,8 +238,4 @@ EventTestSuite::EventTestSuite() {
 	addTest("Mainmenu Event", &EventTests::showMainMenu);
 }
 
-const char *EventTestSuite::getName() const {
-	return "Events";
-}
-
 } // End of namespace Testbed

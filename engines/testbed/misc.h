@@ -67,7 +67,12 @@ public:
 	 */
 	MiscTestSuite();
 	~MiscTestSuite() {}
-	const char *getName() const;
+	const char *getName() const {
+		return "Misc";
+	}
+	const char *getDescription() const {
+		return "Miscellaneous: Timers/Mutexes/Datetime";
+	}
 };
 
 } // End of namespace Testbed

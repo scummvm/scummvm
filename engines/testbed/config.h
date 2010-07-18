@@ -39,9 +39,9 @@
 namespace Testbed {
 
 enum {
-	kSelectionToggle = 16799, // Some random Number (A better way to do this?)
-	kTestbedQuitCmd,
-	kTestbedSelectAll
+	kSelectionToggle = 'Tgle',
+	kTestbedQuitCmd = 'Quit',
+	kTestbedSelectAll = 'sAll'
 };
 
 class TestbedConfigManager {
@@ -102,6 +102,7 @@ public:
 private:
 	GUI::ListWidget::ColorList _colors;
 	Common::StringArray _testSuiteArray;
+	Common::StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
 	TestbedConfigManager *_testbedConfMan;
 };

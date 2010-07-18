@@ -68,7 +68,12 @@ public:
 	 */
 	GFXTestSuite();
 	~GFXTestSuite() {}
-	const char *getName() const;
+	const char *getName() const {
+		return "GFX";
+	}
+	const char *getDescription() const {
+		return "Graphics Subsystem";
+	}
 	static void setCustomColor(uint r, uint g, uint b);
 
 private:

@@ -41,10 +41,11 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 
 	for (iter = tsList.begin(); iter != tsList.end(); iter++) {
 		_testSuiteArray.push_back((*iter)->getName());
+		_testSuiteDescArray.push_back((*iter)->getDescription());
 		_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}
 	
-	_testListDisplay->setList(_testSuiteArray, &_colors);
+	_testListDisplay->setList(_testSuiteDescArray, &_colors);
 
 	new GUI::ButtonWidget(this, "Browser.Up", "Select All", kTestbedSelectAll, 0);
 	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd);
@@ -58,7 +59,7 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	Testsuite *ts;
 	switch (cmd) {
 	case kSelectionToggle:
-		ts  = _testbedConfMan->getTestsuiteByName(_testListDisplay->getSelectedString());
+		ts  = _testbedConfMan->getTestsuiteByName(_testSuiteArray[_testListDisplay->getSelected()]);
 		if (ts) {
 			ts->enable(!ts->isEnabled());
 			_testListDisplay->changeColor();

@@ -53,7 +53,12 @@ public:
 	 */
 	EventTestSuite();
 	~EventTestSuite() {}
-	const char *getName() const;
+	const char *getName() const {
+		return "Events";
+	}
+	const char *getDescription() const {
+		return "Events : Keyboard/Mouse/RTL";
+	}
 };
 
 } // End of namespace Testbed

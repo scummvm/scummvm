@@ -150,10 +150,6 @@ FSTestSuite::FSTestSuite() {
 	addTest("WritingFile", &FStests::testWriteFile, false);
 }
 
-const char *FSTestSuite::getName() const {
-	return "FS";
-}
-
 void FSTestSuite::enable(bool flag) {
 	const Common::String &path = ConfMan.get("path");
 	Common::FSNode gameRoot(path);
