@@ -83,6 +83,7 @@ public:
 	void setColorAll(GUI::ThemeEngine::FontColor color) {
 		for (uint i = 0; i < _listColors.size(); i++) {
 			_listColors[i] = color;
+			_list[i] += " (selected)";
 		}
 		draw();;
 	}
