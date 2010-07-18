@@ -314,7 +314,8 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
 						&& (workaround->objectName == searchObjectName)
-						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
+						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset
+						&& ((workaround->index == -1) || (workaround->index == index))) {
 					// Workaround found
 					return workaround->newValue;
 				}
@@ -366,6 +367,9 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
     { GID_GK1,         64950,  1,            "Feature", "handleEvent",    -1,    0, { 0,   0 } }, // sometimes when walk-clicking
     { GID_GK2,            11,  0,                   "", "export 10",      -1,    3, { 0,   0 } }, // called when the game starts
+    { GID_HOYLE3,          0,  1,          "Character", "say",            -1,  504, { 0,   0 } }, // when starting checkers, first time a character says something
+    { GID_HOYLE3,          0,  1,          "Character", "say",            -1,  505, { 0,   0 } }, // when starting checkers, first time a character says something
+    { GID_HOYLE3,        700,  0,           "gcWindow", "open",           -1,   -1, { 0,   0 } }, // when entering control menu
     { GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
     { GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
     { GID_JONES,         232,  0,        "weekendText", "draw",        0x3d3,    0, { 0,   0 } }, // jones/cd only - gets called during the game
