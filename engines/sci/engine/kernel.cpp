@@ -736,7 +736,7 @@ Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 
 Kernel::~Kernel() {
 	for (KernelFunctionArray::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
-		free(i->signature);
+		delete[] i->signature;
 }
 
 uint Kernel::getSelectorNamesSize() const {
