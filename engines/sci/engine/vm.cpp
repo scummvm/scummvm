@@ -1277,8 +1277,13 @@ void run_vm(EngineState *s, bool restoring) {
 				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 28, when throwing the water at Orat
 				s->r_acc = make_reg(0, 1);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ge_: // 0x10 (16)
@@ -1289,8 +1294,13 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) >= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_lt_: // 0x11 (17)
@@ -1307,8 +1317,13 @@ void run_vm(EngineState *s, bool restoring) {
 				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 58, when giving id-card to robot
 				s->r_acc = make_reg(0, 1);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) < (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_le_: // 0x12 (18)
@@ -1319,8 +1334,13 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) <= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ugt_: // 0x13 (19)
@@ -1342,8 +1362,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_uge_: // 0x14 (20)
@@ -1356,8 +1381,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) >= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ult_: // 0x15 (21)
@@ -1370,8 +1400,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) < /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ule_: // 0x16 (22)
@@ -1384,8 +1419,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) <= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_bt: // 0x17 (23)
