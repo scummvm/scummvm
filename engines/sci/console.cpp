@@ -3440,11 +3440,11 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 		}
 		printf(" |");
 		for (i = 0; i < regsPerLine; i++) {
-			c = data[i].toUint16() >> 8;
+			c = data[i].toUint16() & 0xff;
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
-			c = data[i].toUint16() & 0xff;
+			c = data[i].toUint16() >> 8;
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
@@ -3467,11 +3467,11 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	}
 	printf(" |");
 	for (i = 0; i < len; i++) {
-		c = data[i].toUint16() >> 8;
+		c = data[i].toUint16() & 0xff;
 		if (c < 32 || c >= 127)
 			c = '.';
 		printf("%c", c);
-		c = data[i].toUint16() & 0xff;
+		c = data[i].toUint16() >> 8;
 		if (c < 32 || c >= 127)
 			c = '.';
 		printf("%c", c);
