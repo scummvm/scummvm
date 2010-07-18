@@ -1130,7 +1130,11 @@ void run_vm(EngineState *s, bool restoring) {
 
 		case op_bnot: // 0x00 (00)
 			// Binary not
-			s->r_acc = ACC_ARITHMETIC_L(0xffff ^ /*acc*/);
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, 0xffff ^ value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
 
 		case op_add: // 0x01 (01)
@@ -1197,13 +1201,17 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 
 		case op_mul: // 0x03 (03)
-			s->r_acc = ACC_ARITHMETIC_L(((int16)POP()) * (int16)/*acc*/);
+			r_temp = POP32();
+			int16 value1, value2;
+			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
+				s->r_acc = make_reg(0, value1 * value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
 
 		case op_div: { // 0x04 (04)
 			r_temp = POP32();
-			int16 divisor;
-			int16 dividend;
+			int16 divisor, dividend;
 			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
 				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
 			else
@@ -1211,8 +1219,12 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 		}
 		case op_mod: { // 0x05 (05)
-			int16 modulo = signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, (modulo != 0 ? ((int16)POP()) % modulo : 0));
+			r_temp = POP32();
+			int16 modulo, value;
+			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value))
+				s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
 		}
 		case op_shr: // 0x06 (06)
