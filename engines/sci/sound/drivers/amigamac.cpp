@@ -35,14 +35,14 @@ namespace Sci {
 
 /* #define DEBUG */
 
-class MidiDriver_Amiga : public MidiDriver_Emulated {
+class MidiDriver_AmigaMac : public MidiDriver_Emulated {
 public:
 	enum {
 		kVoices = 4
 	};
 
-	MidiDriver_Amiga(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15) { }
-	virtual ~MidiDriver_Amiga() { }
+	MidiDriver_AmigaMac(Audio::Mixer *mixer) : MidiDriver_Emulated(mixer), _playSwitch(true), _masterVolume(15) { }
+	virtual ~MidiDriver_AmigaMac() { }
 
 	// MidiDriver
 	int open();
@@ -159,7 +159,7 @@ private:
 	bool loadInstrumentsSCI1(Common::SeekableReadStream &file);
 };
 
-void MidiDriver_Amiga::setEnvelope(Voice *channel, Envelope *envelope, int phase) {
+void MidiDriver_AmigaMac::setEnvelope(Voice *channel, Envelope *envelope, int phase) {
 	channel->envelope = phase;
 	channel->envelope_samples = envelope[phase].length;
 
@@ -169,7 +169,7 @@ void MidiDriver_Amiga::setEnvelope(Voice *channel, Envelope *envelope, int phase
 		channel->velocity = envelope[phase - 1].target;
 }
 
-int MidiDriver_Amiga::interpolate(int8 *samples, frac_t offset, bool isUnsigned) {
+int MidiDriver_AmigaMac::interpolate(int8 *samples, frac_t offset, bool isUnsigned) {
 	int x = fracToInt(offset);
 
 	if (isUnsigned) {
@@ -183,7 +183,7 @@ int MidiDriver_Amiga::interpolate(int8 *samples, frac_t offset, bool isUnsigned)
 	return (samples[x] << 8) + fracToInt(diff * (offset & FRAC_LO_MASK));
 }
 
-void MidiDriver_Amiga::playInstrument(int16 *dest, Voice *channel, int count) {
+void MidiDriver_AmigaMac::playInstrument(int16 *dest, Voice *channel, int count) {
 	int index = 0;
 	int vol = _channels[channel->hw_channel].volume;
 	InstrumentSample *instrument = findInstrument(channel->instrument, channel->note);
@@ -285,7 +285,7 @@ void MidiDriver_Amiga::playInstrument(int16 *dest, Voice *channel, int count) {
 	}
 }
 
-void MidiDriver_Amiga::changeInstrument(int channel, int instrument) {
+void MidiDriver_AmigaMac::changeInstrument(int channel, int instrument) {
 #ifdef DEBUG
 	if (_bank.instruments[instrument][0])
 		printf("[sfx:seq:amiga] Setting channel %i to \"%s\" (%i)\n", channel, _bank.instruments[instrument]->name, instrument);
@@ -295,7 +295,7 @@ void MidiDriver_Amiga::changeInstrument(int channel, int instrument) {
 	_channels[channel].instrument = instrument;
 }
 
-void MidiDriver_Amiga::stopChannel(int ch) {
+void MidiDriver_AmigaMac::stopChannel(int ch) {
 	int i;
 
 	/* Start decay phase for note on this hw channel, if any */
@@ -308,7 +308,7 @@ void MidiDriver_Amiga::stopChannel(int ch) {
 		}
 }
 
-void MidiDriver_Amiga::pitchWheel(int ch, uint16 pitch) {
+void MidiDriver_AmigaMac::pitchWheel(int ch, uint16 pitch) {
 	_channels[ch].pitch = pitch;
 
 	for (int i = 0; i < kChannels; i++)
@@ -316,7 +316,7 @@ void MidiDriver_Amiga::pitchWheel(int ch, uint16 pitch) {
 			setOutputFrac(i);
 }
 
-void MidiDriver_Amiga::stopNote(int ch, int note) {
+void MidiDriver_AmigaMac::stopNote(int ch, int note) {
 	int channel;
 
 	for (channel = 0; channel < kChannels; channel++)
@@ -339,7 +339,7 @@ void MidiDriver_Amiga::stopNote(int ch, int note) {
 		setEnvelope(&_voices[channel], instrument->envelope, 2);
 }
 
-MidiDriver_Amiga::InstrumentSample *MidiDriver_Amiga::findInstrument(int instrument, int note) {
+MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::findInstrument(int instrument, int note) {
 	if ((uint)instrument >= _bank.instruments.size())
 		return 0;
 
@@ -352,7 +352,7 @@ MidiDriver_Amiga::InstrumentSample *MidiDriver_Amiga::findInstrument(int instrum
 	return 0;
 }
 
-void MidiDriver_Amiga::setOutputFrac(int voice) {
+void MidiDriver_AmigaMac::setOutputFrac(int voice) {
 	InstrumentSample *instrument = findInstrument(_voices[voice].instrument, _voices[voice].note);
 
 	int fnote = 0;
@@ -398,7 +398,7 @@ void MidiDriver_Amiga::setOutputFrac(int voice) {
 	_voices[voice].rate = doubleToFrac(freq / _frequency);
 }
 
-void MidiDriver_Amiga::startNote(int ch, int note, int velocity) {
+void MidiDriver_AmigaMac::startNote(int ch, int note, int velocity) {
 	int channel;
 
 	if (_channels[ch].instrument < 0 || _channels[ch].instrument > 255) {
@@ -442,7 +442,7 @@ void MidiDriver_Amiga::startNote(int ch, int note, int velocity) {
 	setOutputFrac(channel);
 }
 
-MidiDriver_Amiga::InstrumentSample *MidiDriver_Amiga::readInstrumentSCI0(Common::SeekableReadStream &file, int *id) {
+MidiDriver_AmigaMac::InstrumentSample *MidiDriver_AmigaMac::readInstrumentSCI0(Common::SeekableReadStream &file, int *id) {
 	byte header[61];
 
 	if (file.read(header, 61) < 61) {
@@ -542,7 +542,7 @@ MidiDriver_Amiga::InstrumentSample *MidiDriver_Amiga::readInstrumentSCI0(Common:
 	return instrument;
 }
 
-uint32 MidiDriver_Amiga::property(int prop, uint32 param) {
+uint32 MidiDriver_AmigaMac::property(int prop, uint32 param) {
 	switch(prop) {
 	case MIDI_PROP_MASTER_VOLUME:
 		if (param != 0xffff)
@@ -554,7 +554,7 @@ uint32 MidiDriver_Amiga::property(int prop, uint32 param) {
 	return 0;
 }
 
-int MidiDriver_Amiga::open() {
+int MidiDriver_AmigaMac::open() {
 	_isSci1 = false;
 
 	for (int i = 0; i < 48; i++)
@@ -621,7 +621,7 @@ int MidiDriver_Amiga::open() {
 	return Common::kNoError;
 }
 
-void MidiDriver_Amiga::close() {
+void MidiDriver_AmigaMac::close() {
 	_mixer->stopHandle(_mixerSoundHandle);
 
 	for (uint i = 0; i < _bank.size; i++) {
@@ -636,15 +636,15 @@ void MidiDriver_Amiga::close() {
 	}
 }
 
-void MidiDriver_Amiga::playSwitch(bool play) {
+void MidiDriver_AmigaMac::playSwitch(bool play) {
 	_playSwitch = play;
 }
 
-void MidiDriver_Amiga::setVolume(byte volume_) {
+void MidiDriver_AmigaMac::setVolume(byte volume_) {
 	_masterVolume = volume_;
 }
 
-void MidiDriver_Amiga::send(uint32 b) {
+void MidiDriver_AmigaMac::send(uint32 b) {
 	byte command = b & 0xf0;
 	byte channel = b & 0xf;
 	byte op1 = (b >> 8) & 0xff;
@@ -688,7 +688,7 @@ void MidiDriver_Amiga::send(uint32 b) {
 	}
 }
 
-void MidiDriver_Amiga::generateSamples(int16 *data, int len) {
+void MidiDriver_AmigaMac::generateSamples(int16 *data, int len) {
 	if (len == 0)
 		return;
 
@@ -731,7 +731,7 @@ void MidiDriver_Amiga::generateSamples(int16 *data, int len) {
 	free(buffers);
 }
 
-bool MidiDriver_Amiga::loadInstrumentsSCI0(Common::File &file) {
+bool MidiDriver_AmigaMac::loadInstrumentsSCI0(Common::File &file) {
 	_isSci1 = false;
 
 	byte header[40];
@@ -772,7 +772,7 @@ bool MidiDriver_Amiga::loadInstrumentsSCI0(Common::File &file) {
 	return true;
 }
 
-bool MidiDriver_Amiga::loadInstrumentsSCI0Mac(Common::SeekableReadStream &file) {
+bool MidiDriver_AmigaMac::loadInstrumentsSCI0Mac(Common::SeekableReadStream &file) {
 	byte header[40];
 
 	if (file.read(header, 40) < 40) {
@@ -876,7 +876,7 @@ bool MidiDriver_Amiga::loadInstrumentsSCI0Mac(Common::SeekableReadStream &file) 
 	return true;
 }
 
-bool MidiDriver_Amiga::loadInstrumentsSCI1(Common::SeekableReadStream &file) {
+bool MidiDriver_AmigaMac::loadInstrumentsSCI1(Common::SeekableReadStream &file) {
 	_bank.size = 128;
 
 	Common::Array<uint32> instrumentOffsets;
@@ -963,22 +963,22 @@ bool MidiDriver_Amiga::loadInstrumentsSCI1(Common::SeekableReadStream &file) {
 	return true;
 }
 
-class MidiPlayer_Amiga : public MidiPlayer {
+class MidiPlayer_AmigaMac : public MidiPlayer {
 public:
-	MidiPlayer_Amiga(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_Amiga(g_system->getMixer()); }
+	MidiPlayer_AmigaMac(SciVersion version) : MidiPlayer(version) { _driver = new MidiDriver_AmigaMac(g_system->getMixer()); }
 	byte getPlayId();
-	int getPolyphony() const { return MidiDriver_Amiga::kVoices; }
+	int getPolyphony() const { return MidiDriver_AmigaMac::kVoices; }
 	bool hasRhythmChannel() const { return false; }
-	void setVolume(byte volume) { static_cast<MidiDriver_Amiga *>(_driver)->setVolume(volume); }
-	void playSwitch(bool play) { static_cast<MidiDriver_Amiga *>(_driver)->playSwitch(play); }
+	void setVolume(byte volume) { static_cast<MidiDriver_AmigaMac *>(_driver)->setVolume(volume); }
+	void playSwitch(bool play) { static_cast<MidiDriver_AmigaMac *>(_driver)->playSwitch(play); }
 	void loadInstrument(int idx, byte *data);
 };
 
-MidiPlayer *MidiPlayer_Amiga_create(SciVersion version) {
-	return new MidiPlayer_Amiga(version);
+MidiPlayer *MidiPlayer_AmigaMac_create(SciVersion version) {
+	return new MidiPlayer_AmigaMac(version);
 }
 
-byte MidiPlayer_Amiga::getPlayId() {
+byte MidiPlayer_AmigaMac::getPlayId() {
 	if (_version > SCI_VERSION_0_LATE)
 		return 0x06;
 
