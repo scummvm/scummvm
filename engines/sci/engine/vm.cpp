@@ -1740,11 +1740,17 @@ void run_vm(EngineState *s, bool restoring) {
 			validate_property(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
-		case op_ipToa: // 0x35 (53)
-			// Incement Property and copy To Accumulator
-			s->r_acc = validate_property(obj, (opparams[0] >> 1));
-			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
+		case op_ipToa: { // 0x35 (53)
+			// Increment Property and copy To Accumulator
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty + 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
+		}
 
 		case op_dpToa: { // 0x36 (54)
 			// Decrement Property and copy To Accumulator
@@ -1758,19 +1764,31 @@ void run_vm(EngineState *s, bool restoring) {
 			break;
 		}
 
-		case op_ipTos: // 0x37 (55)
+		case op_ipTos: { // 0x37 (55)
 			// Increment Property and push to Stack
-			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
-			temp = ++validate_property(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty++;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
 			break;
+		}
 
-		case op_dpTos: // 0x38 (56)
+		case op_dpTos: { // 0x38 (56)
 			// Decrement Property and push to Stack
-			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
-			temp = --validate_property(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty--;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
 			break;
+		}
 
 		case op_lofsa: // 0x39 (57)
 			// Load Offset to Accumulator
