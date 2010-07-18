@@ -146,6 +146,10 @@ optcont :	 /* empty */
 
 leftspec :	/* empty */
 			{ $$ = SAID_BRANCH_NULL; }
+		| YY_BRACKETSO expr YY_BRACKETSC
+			{ $$ = said_aug_branch(0x152, 0x141, said_aug_branch(0x141, 0x149, $2, SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
+		| YY_BRACKETSO expr YY_BRACKETSC cwordrefset
+			{ $$ = said_aug_branch(0x141, 0x149, said_attach_branch(said_aug_branch(0x152, 0x141, $2, SAID_BRANCH_NULL), $4), SAID_BRANCH_NULL); }
 		| expr
 			{ $$ = said_paren(said_value(0x141, said_value(0x149, $1)), SAID_BRANCH_NULL); }
 		;
@@ -154,6 +158,10 @@ leftspec :	/* empty */
 
 midspec :	 YY_SLASH expr
 			{ $$ = said_aug_branch(0x142, 0x14a, $2, SAID_BRANCH_NULL); }
+		| YY_SLASH YY_BRACKETSO expr YY_BRACKETSC
+			{ $$ = said_aug_branch(0x142, 0x14a, $3, SAID_BRANCH_NULL); }
+		| YY_SLASH YY_BRACKETSO expr YY_BRACKETSC cwordrefset
+			{ $$ = said_aug_branch(0x142, 0x14a, said_attach_branch(said_aug_branch(0x152, 0x142, $3, SAID_BRANCH_NULL), $5), SAID_BRANCH_NULL); }
 		| YY_BRACKETSO_SLASH YY_SLASH expr YY_BRACKETSC
 			{ $$ = said_aug_branch(0x152, 0x142, said_aug_branch(0x142, 0x14a, $3, SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
 		| YY_SLASH
@@ -164,6 +172,10 @@ midspec :	 YY_SLASH expr
 
 rightspec :	 YY_SLASH expr
 			{ $$ = said_aug_branch(0x143, 0x14a, $2, SAID_BRANCH_NULL); }
+		| YY_SLASH YY_BRACKETSO expr YY_BRACKETSC
+			{ $$ = said_aug_branch(0x143, 0x14a, $3, SAID_BRANCH_NULL); }
+		| YY_SLASH YY_BRACKETSO expr YY_BRACKETSC cwordrefset
+			{ $$ = said_aug_branch(0x143, 0x14a, said_attach_branch(said_aug_branch(0x152, 0x143, $3, SAID_BRANCH_NULL), $5), SAID_BRANCH_NULL); }
 		| YY_BRACKETSO_SLASH YY_SLASH expr YY_BRACKETSC
 			{ $$ = said_aug_branch(0x152, 0x143, said_aug_branch(0x143, 0x14a, $3, SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
 		| YY_SLASH
@@ -176,30 +188,21 @@ word :		 WGROUP
 		;
 
 
-cwordset :	wordset
-			{ $$ = said_aug_branch(0x141, 0x14f, $1, SAID_BRANCH_NULL); }
-		| YY_BRACKETSO wordset YY_BRACKETSC
-			{ $$ = said_aug_branch(0x141, 0x14f, said_aug_branch(0x152, 0x14c, said_aug_branch(0x141, 0x14f, $2, SAID_BRANCH_NULL), SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
-		;
-
-
 wordset :	 word
 			{ $$ = $1; }
 		| YY_PARENO expr YY_PARENC
 			{ $$ = said_aug_branch(0x141, 0x14c, $2, SAID_BRANCH_NULL); }
 		| wordset YY_COMMA wordset
 			{ $$ = said_attach_branch($1, $3); }
-		| wordset YY_BRACKETSO_LT wordrefset YY_BRACKETSC
-			{ $$ = said_attach_branch($1, $3); }
 		| wordset YY_COMMA YY_BRACKETSO wordset YY_BRACKETSC
-			{ $$ = said_attach_branch($1, $3); }
+			{ $$ = said_attach_branch($1, $3); } // CHECKME
 		;
 
 
-expr :		 cwordset cwordrefset
-			{ $$ = said_attach_branch($1, $2); }
-		| cwordset
-			{ $$ = $1; }
+expr :	wordset cwordrefset
+			{ $$ = said_attach_branch(said_aug_branch(0x141, 0x14f, $1, SAID_BRANCH_NULL), $2); }
+		| wordset
+			{ $$ = said_aug_branch(0x141, 0x14f, $1, SAID_BRANCH_NULL); }
 		| cwordrefset
 			{ $$ = $1; }
 		;
@@ -217,11 +220,11 @@ cwordrefset :	 wordrefset
 wordrefset :	YY_LT word recref
 			{ $$ = said_aug_branch(0x144, 0x14f, $2, $3); }
 		| YY_LT_PARENO YY_PARENO expr YY_PARENC
-		{ $$ = said_aug_branch(0x144, 0x14f, said_aug_branch(0x141, 0x144, $2, SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
+		{ $$ = said_aug_branch(0x144, 0x14f, $3, SAID_BRANCH_NULL); }
 		| YY_LT wordset
 			{ $$ = said_aug_branch(0x144, 0x14f, $2, SAID_BRANCH_NULL); }
 		| YY_LT_BRACKETSO YY_BRACKETSO wordset YY_BRACKETSC
-			{ $$ = said_aug_branch(0x152, 0x144, said_aug_branch(0x144, 0x14f, $3, SAID_BRANCH_NULL), SAID_BRANCH_NULL); }
+			{ $$ = said_aug_branch(0x144, 0x14f, $3, SAID_BRANCH_NULL); }
 		;
 
 
@@ -380,14 +383,6 @@ static int said_parse_spec(byte *spec) {
 			said_tokens[said_tokens_nr++] = SAID_LONG(nextitem);
 
 	} while ((nextitem != SAID_TERM) && (said_tokens_nr < MAX_SAID_TOKENS));
-
-	if ((said_tokens_nr > 2) && (said_tokens[0] == 0xF500) && (said_tokens[1] == 0xFFE) && (said_tokens[2] == 0xF600)) {
-		// HACK: "[!*]" found at the start, remove it - occurs in iceman
-		for (int saidNr = 3; saidNr < said_tokens_nr; saidNr++) {
-			said_tokens[saidNr - 3] = said_tokens[saidNr];
-		}
-		// FIXME: this should get properly implemented, but the parser code goes way over my head
-	}
 
 	if (nextitem == SAID_TERM)
 		yyparse();
@@ -588,6 +583,9 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 	switch (major) {
 
 	case WORD_TYPE_BASE:
+
+		// Iterate over children, and succeed if ANY child matches
+
 		while (cpos) {
 			if (cminor == AUGMENT_SENTENCE_MINOR_MATCH_WORD) {
 				int word = aug_get_wgroup(saidt, cpos);
@@ -688,6 +686,9 @@ static int augment_sentence_expression(parse_tree_node_t *saidt, int augment_pos
 					int *ref_words, int ref_words_nr) {
 	int check_major, check_minor;
 	int check_pos = aug_get_first_child(saidt, augment_pos, &check_major, &check_minor);
+
+	// Iterate over all children of the said node, and succeed if they ALL match
+
 	do {
 		if (!(augment_match_expression_p(saidt, check_pos, parset, parse_branch, check_major, check_minor,
 						base_words, base_words_nr, ref_words, ref_words_nr)))
@@ -720,6 +721,10 @@ static int augment_sentence_part(parse_tree_node_t *saidt, int augment_pos, pars
 		scidprintf("augment_sentence_part(): Unexpected sentence part major number %03x\n", major);
 		return 0;
 	}
+
+
+	// Iterative over the parse tree to find ANY matching subtree of the
+	// right major type.
 
 	while ((parse_branch = aug_get_next_sibling(parset, parse_branch, &pmajor, &pminor))) {
 		if (pmajor == major) { // found matching sentence part
