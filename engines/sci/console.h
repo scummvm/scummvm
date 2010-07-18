@@ -65,6 +65,7 @@ private:
 	bool cmdSentenceFragments(int argc, const char **argv);
 	bool cmdParse(int argc, const char **argv);
 	bool cmdSetParseNodes(int argc, const char **argv);
+	bool cmdSaid(int argc, const char **argv);
 	// Resources
 	bool cmdDiskDump(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
