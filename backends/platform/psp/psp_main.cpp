@@ -44,11 +44,14 @@
 #include "backends/plugins/psp/psp-provider.h"
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
+#include "backends/platform/psp/tests.h"
 #include "backends/platform/psp/trace.h"
 
 #ifdef ENABLE_PROFILING
 	#include <pspprof.h>
 #endif
+
+#define ENABLE_TESTS	/* to enable tests of PSP architecture */
 
 /**
  * Define the module info section
@@ -153,7 +156,7 @@ int SetupCallbacks(void) {
 #undef main
 int main(void) {
 	//change clock rate to 333mhz
-	scePowerSetClockFrequency(333, 333, 166);
+	scePowerSetClockFrequency(222, 222, 111);
 
 	PowerManager::instance();	// Setup power manager
 
@@ -169,6 +172,12 @@ int main(void) {
 	PluginManager::instance().addPluginProvider(new PSPPluginProvider());
 #endif
 
+#ifdef ENABLE_TESTS
+	PSP_INFO_PRINT("running tests\n");
+	tests();
+	sceKernelSleepThread();
+#endif
+	
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
