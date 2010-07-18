@@ -1125,7 +1125,7 @@ void run_vm(EngineState *s, bool restoring) {
 
 		switch (opcode) {
 
-		case op_bnot: // 0x00 (00)
+		case op_bnot: { // 0x00 (00)
 			// Binary not
 			int16 value;
 			if (validate_signedInteger(s->r_acc, value))
@@ -1133,6 +1133,7 @@ void run_vm(EngineState *s, bool restoring) {
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
+		}
 
 		case op_add: // 0x01 (01)
 			r_temp = POP32();
