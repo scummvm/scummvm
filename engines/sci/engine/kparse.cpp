@@ -106,7 +106,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 #ifdef DEBUG_PARSER
-			debugC(2, kDebugLevelParser, "Parsed to the following blocks:", 0);
+			debugC(2, kDebugLevelParser, "Parsed to the following blocks:");
 
 			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]", i->_class, i->_group);
