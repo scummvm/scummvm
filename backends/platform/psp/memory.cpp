@@ -26,7 +26,7 @@
 #include "common/scummsys.h"
 #include "common/singleton.h"
 #include "common/list.h"
-#include "backends/platform/psp/PSPPixelFormat.h"
+#include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/memory.h"
 
 // Class Copier --------------------------------------------------------------------------
