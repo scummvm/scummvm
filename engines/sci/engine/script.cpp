@@ -438,7 +438,7 @@ void Script::initialiseClasses(SegManager *segMan) {
 			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
 			// WORKAROUND for an invalid species access in LSL3 script 500
-			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && species == (int)segMan->classTableSize())
+			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500 && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
