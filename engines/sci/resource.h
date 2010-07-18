@@ -125,7 +125,7 @@ class ResourceSource;
 
 class ResourceId {
 	static inline ResourceType fixupType(ResourceType type) {
-		if (type == kResourceTypeInvalid)
+		if (type >= kResourceTypeInvalid)
 			return kResourceTypeInvalid;
 		return type;
 	}
