@@ -73,8 +73,8 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
-	debugC(2, kDebugLevelSound, "kDoSound(init): number %d, loop %d, prio %d, vol %d", resourceId, 
-			newSound->loop, newSound->priority, newSound->volume);
+	debugC(2, kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
+			resourceId,	newSound->loop, newSound->priority, newSound->volume);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -142,8 +142,8 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
-	debugC(2, kDebugLevelSound, "kDoSound(play): number %d, loop %d, prio %d, vol %d", resourceId, 
-			musicSlot->loop, musicSlot->priority, musicSlot->volume);
+	debugC(2, kDebugLevelSound, "kDoSound(play): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
+			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume);
 
 	_music->soundPlay(musicSlot);
 }
@@ -328,7 +328,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		error("kDoSound(fade): unsupported argc %d", argc);
 	}
 
-	debugC(2, kDebugLevelSound, "kDoSound(fade): to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
+	debugC(2, kDebugLevelSound, "kDoSound(fade): %04x:%04x to %d, step %d, ticker %d", PRINT_REG(obj), musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 	return acc;
 }
 
