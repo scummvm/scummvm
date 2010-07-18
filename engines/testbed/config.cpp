@@ -32,9 +32,7 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testbedConfMan = tsConfMan;
 	
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
-	new GUI::StaticTextWidget(this, "Browser.Path", "Selected entries shown in dark, click to select");
-	_testListDisplay = new TestbedListWidget(this, "Browser.List");
-	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
+	new GUI::StaticTextWidget(this, "Browser.Path", "Use Double click to select / deselect");
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
@@ -45,7 +43,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 		_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}
 	
+	_testListDisplay = new TestbedListWidget(this, "Browser.List", _testSuiteDescArray);
+	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
 	_testListDisplay->setList(_testSuiteDescArray, &_colors);
+
+	// This list shouldn't be editable
+	_testListDisplay->setEditable(false);
 
 	new GUI::ButtonWidget(this, "Browser.Up", "Select All", kTestbedSelectAll, 0);
 	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd);
@@ -58,7 +61,7 @@ TestbedOptionsDialog::~TestbedOptionsDialog() {}
 void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	Testsuite *ts;
 	switch (cmd) {
-	case kSelectionToggle:
+	case GUI::kListItemDoubleClickedCmd:
 		ts  = _testbedConfMan->getTestsuiteByName(_testSuiteArray[_testListDisplay->getSelected()]);
 		if (ts) {
 			ts->enable(!ts->isEnabled());

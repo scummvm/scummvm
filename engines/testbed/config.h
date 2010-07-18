@@ -30,16 +30,15 @@
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
+#include "gui/ListWidget.h"
 #include "gui/options.h"
 #include "gui/ThemeEngine.h"
-#include "gui/ListWidget.h"
 
 #include "testbed/testsuite.h"
 
 namespace Testbed {
 
 enum {
-	kSelectionToggle = 'Tgle',
 	kTestbedQuitCmd = 'Quit',
 	kTestbedSelectAll = 'sAll'
 };
@@ -59,23 +58,26 @@ private:
 
 class TestbedListWidget : public GUI::ListWidget {
 public:
-	TestbedListWidget(GUI::Dialog *boss, const Common::String &name) : GUI::ListWidget(boss, name){}
-	void handleMouseUp(int x, int y, int button, int clickCount) {
-		// If the mouse is clicked once, toggle the selection as it happens in checkboxes.
-		sendCommand(kSelectionToggle, _selectedItem);
-	}
+	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::StringArray &tsDescArr) : GUI::ListWidget(boss, name), _testSuiteDescArray(tsDescArr) {}
 
 	void changeColor() {
 		// Using Font Color Mechanism to highlight selected entries.
-		// Might not be detectable in some cases
+		// Might not be detectable with some themes
 		if (_listColors.size() >= 2) {
 			if (GUI::ThemeEngine::kFontColorNormal == _listColors[_selectedItem]) {
 				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorAlternate;
 			} else if (GUI::ThemeEngine::kFontColorAlternate == _listColors[_selectedItem]) {
 				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorNormal;
 			}
-			draw();
 		}
+
+		// Also append (selected) to each selected entry
+		if (_list[_selectedItem].contains("selected")) {
+			_list[_selectedItem] = _testSuiteDescArray[_selectedItem];	
+		} else {
+			_list[_selectedItem] += " (selected)";
+		}
+		draw();
 	}
 
 	void setColorAll(GUI::ThemeEngine::FontColor color) {
@@ -91,6 +93,8 @@ public:
 		draw();
 	}
 
+private:
+	const Common::StringArray	_testSuiteDescArray;
 };
 
 class TestbedOptionsDialog : public GUI::Dialog {
