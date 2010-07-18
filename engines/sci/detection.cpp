@@ -628,6 +628,13 @@ bool SciEngine::hasFeature(EngineFeature f) const {
 		//(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime); // ||
 		//(f == kSupportsSavingDuringRuntime);
+		// We can't allow saving through ScummVM menu, because
+		//  a) lots of games don't like saving everywhere (e.g. castle of dr. brain)
+		//  b) some games even dont allow saving in certain rooms (e.g. lsl6)
+		//  c) somehow some games even get mad when doing this (execstackbase was 1 all of a sudden in lsl3)
+		//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
+		// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
+		//  and some other times it won't work.
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {
