@@ -489,12 +489,9 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
-#define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
-
 // Operating on the stack
 // 16 bit:
 #define PUSH(v) PUSH32(make_reg(0, v))
-#define POP() (validate_arithmetic(POP32()))
 // 32 bit:
 #define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
@@ -1200,7 +1197,7 @@ void run_vm(EngineState *s, bool restoring) {
 			}
 			break;
 
-		case op_mul: // 0x03 (03)
+		case op_mul: { // 0x03 (03)
 			r_temp = POP32();
 			int16 value1, value2;
 			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
@@ -1208,6 +1205,7 @@ void run_vm(EngineState *s, bool restoring) {
 			else
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
+		}
 
 		case op_div: { // 0x04 (04)
 			r_temp = POP32();
@@ -1218,6 +1216,7 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
 			break;
 		}
+
 		case op_mod: { // 0x05 (05)
 			r_temp = POP32();
 			int16 modulo, value;
@@ -1227,31 +1226,67 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
 		}
-		case op_shr: // 0x06 (06)
+
+		case op_shr: { // 0x06 (06)
 			// Shift right logical
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) >> /*acc*/);
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value >> shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_shl: // 0x07 (07)
+		case op_shl: { // 0x07 (07)
 			// Shift left logical
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) << /*acc*/);
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value << shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_xor: // 0x08 (08)
-			s->r_acc = ACC_ARITHMETIC_L(POP() ^ /*acc*/);
+		case op_xor: { // 0x08 (08)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 ^ value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_and: // 0x09 (09)
-			s->r_acc = ACC_ARITHMETIC_L(POP() & /*acc*/);
+		case op_and: { // 0x09 (09)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 & value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_or: // 0x0a (10)
-			s->r_acc = ACC_ARITHMETIC_L(POP() | /*acc*/);
+		case op_or: { // 0x0a (10)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 | value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_neg: // 0x0b (11)
-			s->r_acc = ACC_ARITHMETIC_L(-/*acc*/);
+		case op_neg: { // 0x0b (11)
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, -value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
+		}
 
 		case op_not: // 0x0c (12)
 			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
