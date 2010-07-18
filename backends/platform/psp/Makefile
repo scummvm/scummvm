@@ -148,7 +148,8 @@ OBJS := powerman.o \
 	audio.o \
 	thread.o \
 	rtc.o \
-	mp3.o
+	mp3.o \
+	tests.o
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common

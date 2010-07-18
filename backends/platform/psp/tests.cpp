@@ -23,6 +23,13 @@
  *
  */
 
+// PSP speed and unit tests. Activate in tests.h 
+// You may also want to build without any engines. 
+ 
+#include "backends/platform/psp/tests.h"
+
+#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)	
+ 
 #include "common/scummsys.h"
 #include <pspiofilemgr_fcntl.h>
 #include <pspiofilemgr_stat.h>
@@ -51,7 +58,36 @@
   
 #include "backends/platform/psp/trace.h" 
 
-void test_ticks() {
+class PspSpeedTests {
+public:
+	void tickSpeed();
+	void getMicrosSpeed();
+	void seekSpeed();
+	void msReadSpeed();
+	void threadFunctionsSpeed();
+	void semaphoreSpeed(); 
+	static int threadFunc(SceSize args, void *argp);
+	void semaphoreManyThreadSpeed();
+	void fastCopySpeed();
+	
+private:
+	enum {
+		MEMCPY_BUFFER_SIZE = 8192
+	};
+	static PspSemaphore _sem;	// semaphore
+
+	void readAndTime(uint32 bytes, char *buffer, FILE *file);
+	void seekAndTime(int bytes, int origin, FILE *file);
+	void fastCopySpecificSize(byte *dst, byte *src, uint32 bytes);
+	void fastCopyDifferentSizes(byte *dst, byte *src);
+	int getThreadIdSpeed();
+	void getPrioritySpeed();
+	void changePrioritySpeed(int id, int priority);
+};
+
+PspSemaphore PspSpeedTests::_sem(0);
+
+void PspSpeedTests::tickSpeed() {
 	uint32 ticksPerSecond = sceRtcGetTickResolution();
 	PSP_INFO_PRINT("ticksPerSecond[%d]\n", ticksPerSecond);
 
@@ -75,7 +111,7 @@ void test_ticks() {
 	PSP_INFO_PRINT("time2, year[%d] month[%d] day[%d] hour[%d] minutes[%d] seconds[%d] us[%d]\n", time2.year, time2.month, time2.day, time2.hour, time2.minutes, time2.seconds, time2.microseconds);
 }
 
-void test_getMicros() {
+void PspSpeedTests::getMicrosSpeed() {
 	uint32 time1, time2, time3, time4;
 	time1 = PspRtc::instance().getMicros();
 	time2 = PspRtc::instance().getMicros();
@@ -85,7 +121,7 @@ void test_getMicros() {
 	PSP_INFO_PRINT("getMicros() times: %d, %d, %d\n", time4-time3, time3-time2, time2-time1);
 }
 
-void read_and_time(uint32 bytes, char *buffer, FILE *file) {
+void PspSpeedTests::readAndTime(uint32 bytes, char *buffer, FILE *file) {
 	uint32 time1 = PspRtc::instance().getMicros();
 	// test minimal read
 	fread(buffer, bytes, 1, file);
@@ -101,18 +137,8 @@ void read_and_time(uint32 bytes, char *buffer, FILE *file) {
 	Reading 50 byte takes 8us / 11
 	Reading 100 byte takes 8us / 11
 	Reading 1000 byte takes 915us / 1131
-	Reading 1000 byte takes 911us
-	Reading 1000 byte takes 914us
-	Reading 1000 byte takes 943us
-	Reading 1000 byte takes 915us
-	Reading 1000 byte takes 923us
-	Reading 1000 byte takes 22us
-	Reading 1000 byte takes 916us 
-	Reading 1000 byte takes 913us / 1,120
-	Reading 1000 byte takes 909us / 1,122
 	Reading 2000 byte takes 1806us / 2,284
 	Reading 3000 byte takes 2697us / 3,374
-	Reading 4000 byte takes 3652us / 4,592
 	Reading 5000 byte takes 4551us / 5,544
 	Reading 6000 byte takes 5356us / 6,676
 	Reading 7000 byte takes 6800us / 8,358
@@ -120,47 +146,40 @@ void read_and_time(uint32 bytes, char *buffer, FILE *file) {
 	Reading 9000 byte takes 6782us / 8,563
 	Reading 10000 byte takes 8497us / 10,631
 	Reading 30000 byte takes 25995us / 32,473
-	Reading 50000 byte takes 42467us / 52,893
 	Reading 80000 byte takes 68457us / 85,291
 	Reading 100000 byte takes 85103us / 106,163
-	Reading 500000 byte takes 427337us / 531,679
-	Reading 1000000 byte takes 854831us / 1,063,107
 */
 // Function to test the impact of MS reads
 // These tests can't be done from shell - the cache screws them up
-void test_ms_reads() {
+void PspSpeedTests::msReadSpeed() {
 	FILE *file;
 	file = fopen("ms0:/psp/music/track1.mp3", "r");
 
 	char *buffer = (char *)malloc(2 * 1024 * 1024);
 	
-	read_and_time(1, buffer, file);
-	read_and_time(10, buffer, file);
-	read_and_time(50, buffer, file);
-	read_and_time(100, buffer, file);
-	for (int i = 0; i< 10; i++)
-		read_and_time(1000, buffer, file);
-	read_and_time(2000, buffer, file);
-	read_and_time(3000, buffer, file);
-	read_and_time(4000, buffer, file);
-	read_and_time(5000, buffer, file);
-	read_and_time(6000, buffer, file);
-	read_and_time(7000, buffer, file);
-	read_and_time(8000, buffer, file);
-	read_and_time(9000, buffer, file);	
-	read_and_time(10000, buffer, file);
-	read_and_time(30000, buffer, file);
-	read_and_time(50000, buffer, file);
-	read_and_time(80000, buffer, file);
-	read_and_time(100000, buffer, file);
-	read_and_time(500000, buffer, file);
-	read_and_time(1000000, buffer, file);	
+	readAndTime(1, buffer, file);
+	readAndTime(10, buffer, file);
+	readAndTime(50, buffer, file);
+	readAndTime(100, buffer, file);
+	readAndTime(1000, buffer, file);
+	readAndTime(2000, buffer, file);
+	readAndTime(3000, buffer, file);
+	readAndTime(5000, buffer, file);
+	readAndTime(6000, buffer, file);
+	readAndTime(7000, buffer, file);
+	readAndTime(8000, buffer, file);
+	readAndTime(9000, buffer, file);	
+	readAndTime(10000, buffer, file);
+	readAndTime(30000, buffer, file);
+	readAndTime(50000, buffer, file);
+	readAndTime(80000, buffer, file);
+	readAndTime(100000, buffer, file);
 	
 	fclose(file);
 	free(buffer);	
 }
  
-void seek_and_time(int bytes, int origin, FILE *file) {
+void PspSpeedTests::seekAndTime(int bytes, int origin, FILE *file) {
 	char buffer[1000];
 	
 	uint32 time1 = PspRtc::instance().getMicros();
@@ -202,26 +221,26 @@ Seeking 10000 byte from 2 took 3636us
 Reading 1000 bytes took 110us
 */
 
-void test_seeks() {
+void PspSpeedTests::seekSpeed() {
 	FILE *file;
 	file = fopen("ms0:/psp/music/track1.mp3", "r");
 
-	seek_and_time(0, SEEK_SET, file);
-	seek_and_time(5, SEEK_SET, file);
-	seek_and_time(1000, SEEK_SET, file);
-	seek_and_time(100, SEEK_SET, file);
-	seek_and_time(10000, SEEK_SET, file);
-	seek_and_time(-5, SEEK_CUR, file);
-	seek_and_time(-100, SEEK_CUR, file);
-	seek_and_time(100, SEEK_CUR, file);
-	seek_and_time(0, SEEK_END, file);
-	seek_and_time(-10000, SEEK_END, file);
+	seekAndTime(0, SEEK_SET, file);
+	seekAndTime(5, SEEK_SET, file);
+	seekAndTime(1000, SEEK_SET, file);
+	seekAndTime(100, SEEK_SET, file);
+	seekAndTime(10000, SEEK_SET, file);
+	seekAndTime(-5, SEEK_CUR, file);
+	seekAndTime(-100, SEEK_CUR, file);
+	seekAndTime(100, SEEK_CUR, file);
+	seekAndTime(0, SEEK_END, file);
+	seekAndTime(-10000, SEEK_END, file);
 
 	fclose(file);
 }
 
 // 222: 5-7us
-int testGetThreadId() {
+int PspSpeedTests::getThreadIdSpeed() {
 	uint32 time1 = PspRtc::instance().getMicros();
 	int threadId = sceKernelGetThreadId();
 	uint32 time2 = PspRtc::instance().getMicros();
@@ -232,7 +251,7 @@ int testGetThreadId() {
 }
 
 // 222: 4-5us
-void testGetPriority() {
+void PspSpeedTests::getPrioritySpeed() {
 	uint32 time1 = PspRtc::instance().getMicros();
 	int priority = sceKernelGetThreadCurrentPriority();
 	uint32 time2 = PspRtc::instance().getMicros();
@@ -241,7 +260,7 @@ void testGetPriority() {
 }
 
 // 222: 9-10us
-void testChangePriority(int id, int priority) {
+void PspSpeedTests::changePrioritySpeed(int id, int priority) {
 	uint32 time1 = PspRtc::instance().getMicros();
 	sceKernelChangeThreadPriority(id, priority);
 	uint32 time2 = PspRtc::instance().getMicros();
@@ -249,15 +268,16 @@ void testChangePriority(int id, int priority) {
 	PSP_INFO_PRINT("Changing thread priority to %d for id %d took %dus\n", priority, id, time2-time1);
 }
 
-void test_thread() {
+void PspSpeedTests::threadFunctionsSpeed() {
+	// very unscientific -- just ballpark
 	int id;
-	id = testGetThreadId();
-	testGetThreadId();
-	testGetPriority();
-	testGetPriority();
-	testChangePriority(id, 30);
-	testChangePriority(id, 35);
-	testChangePriority(id, 25);
+	id = getThreadIdSpeed();
+	getThreadIdSpeed();
+	getPrioritySpeed();
+	getPrioritySpeed();
+	changePrioritySpeed(id, 30);
+	changePrioritySpeed(id, 35);
+	changePrioritySpeed(id, 25);
 	
 	// test context switch time
 	for (int i=0; i<10; i++) {
@@ -268,118 +288,12 @@ void test_thread() {
 	}	
 }
  
-int test_mem_read(uint32 words) {
-	uint32 __attribute__((aligned(64))) buffer[1024];
-	register uint32 r = 0;
-	
-	// uncached
-	uint32 *pBuffer = (uint32 *)UNCACHED(buffer);
-
-	uint32 time1 = PspRtc::instance().getMicros();
-	
-	for (int i=0; i<words; i++) {
-		r += *pBuffer;
-		pBuffer++;
-	}
-	uint32 time2 = PspRtc::instance().getMicros();
-	
-	PSP_INFO_PRINT("read of %d words from uncached took %dus\n", words, time2-time1);
-	
-	// flush cache
-	sceKernelDcacheWritebackInvalidateAll();
-	
-	// cached
-	pBuffer = buffer;
-
-	time1 = PspRtc::instance().getMicros();
-	
-	for (int i=0; i<words; i++) {
-		r += *pBuffer;
-		pBuffer++;
-	}
-	time2 = PspRtc::instance().getMicros();
-	
-	PSP_INFO_PRINT("read of %d words from cached took %dus\n", words, time2-time1);
-
-	return r;
-} 
-
-void test_mem_write(uint32 words) {
-	uint32 __attribute__((aligned(64))) buffer[1024];
-	register uint32 r = 0;
-	
-	// uncached
-	uint32 *pBuffer = (uint32 *)UNCACHED(buffer);
-
-	uint32 time1 = PspRtc::instance().getMicros();
-	
-	for (int i=0; i<words; i++) {
-		*pBuffer = r;
-		pBuffer++;
-	}
-	uint32 time2 = PspRtc::instance().getMicros();
-	
-	PSP_INFO_PRINT("write of %d words to uncached took %dus\n", words, time2-time1);
-	
-	// flush cache
-	sceKernelDcacheWritebackInvalidateAll();
-
-	// cached
-	pBuffer = buffer;
-	
-	time1 = PspRtc::instance().getMicros();
-	
-	for (int i=0; i<words; i++) {
-		*pBuffer = r;
-		pBuffer++;
-	}
-	time2 = PspRtc::instance().getMicros();
-	
-	PSP_INFO_PRINT("writeof %d words to cached took %dus\n", words, time2-time1);	
-}
-
-/*
-read of 1 words from uncached took 2us
-read of 1 words from cached took 3us
-read of 64 words from uncached took 12us
-read of 64 words from cached took 6us
-read of 65 words from uncached took 12us
-read of 65 words from cached took 6us
-read of 128 words from uncached took 24us
-read of 128 words from cached took 8us
-read of 1024 words from uncached took 168us
-read of 1024 words from cached took 50us
-write of 1 words to uncached took 2us
-writeof 1 words to cached took 2us
-write of 64 words to uncached took 4us
-writeof 64 words to cached took 5us
-write of 65 words to uncached took 5us
-writeof 65 words to cached took 5us
-write of 128 words to uncached took 5us
-writeof 128 words to cached took 8us
-write of 1024 words to uncached took 32us
-writeof 1024 words to cached took 45us
-*/ 
-void test_memory() {
-	test_mem_read(1);
-	test_mem_read(64);
-	test_mem_read(65);
-	test_mem_read(128);
-	test_mem_read(1024);
-	test_mem_write(1);
-	test_mem_write(64);
-	test_mem_write(65);
-	test_mem_write(128);
-	test_mem_write(1024);	
-}
-
-void test_semaphore() { 
-	// create semaphore
-	int sem = sceKernelCreateSema("testSemaphore", 0, 1, 1, 0);
+void PspSpeedTests::semaphoreSpeed() { 
+	PspSemaphore sem(1);
 	
 	uint32 time1 = PspRtc::instance().getMicros();
 	
-	sceKernelWaitSema(sem, 1, 0);
+	sem.take();
 	
 	uint32 time2 = PspRtc::instance().getMicros();
 	
@@ -387,181 +301,47 @@ void test_semaphore() {
 	
 	uint32 time3 = PspRtc::instance().getMicros();
 	
-	sceKernelSignalSema(sem, 1);
+	sem.give();
 	
 	uint32 time4 = PspRtc::instance().getMicros();
 	PSP_INFO_PRINT("releasing semaphore took %d us\n", time4-time3);	//10us-55us
 }
 
-int globalSem = 0;	// semaphore
-
-int threadFunc(SceSize args, void *argp) {
+int PspSpeedTests::threadFunc(SceSize args, void *argp) {
 	PSP_INFO_PRINT("thread %x created.\n", sceKernelGetThreadId());
 	
-	sceKernelWaitSema(globalSem, 1, 0);	// grab semaphore
+	_sem.take();
+	
 	PSP_INFO_PRINT("grabbed semaphore. Quitting thread\n");
 	
 	return 0;
 }
 
-void test_semaphore_many_threads() {	
-	globalSem = sceKernelCreateSema("testSemaphore2", 0, 0, 255, 0);
-
+void PspSpeedTests::semaphoreManyThreadSpeed() {	
+	
 	// create 4 threads
 	for (int i=0; i<4; i++) {
-		int thid = sceKernelCreateThread("my_thread", threadFunc, 0x18, 0x10000, THREAD_ATTR_USER, NULL);
+		int thid = sceKernelCreateThread("my_thread", PspSpeedTests::threadFunc, 0x18, 0x10000, THREAD_ATTR_USER, NULL);
 		sceKernelStartThread(thid, 0, 0);
 	}
 		
 	PSP_INFO_PRINT("main thread. created threads\n");
 
-	SceKernelSemaInfo info;
-	int waitingThreads = 0;
-	while (waitingThreads < 4) {
-		sceKernelReferSemaStatus(globalSem, &info);
-		waitingThreads = info.numWaitThreads;
-		PSP_INFO_PRINT("main thread: waiting threads[%d]\n", waitingThreads);
+	uint32 threads = _sem.numOfWaitingThreads();
+	while (threads < 4) {
+		threads = _sem.numOfWaitingThreads();
+		PSP_INFO_PRINT("main thread: waiting threads[%d]\n", threads);
 	}
 	
-	PSP_INFO_PRINT("main: semaphore value[%d]\n", info.currentCount);
-	PSP_INFO_PRINT("main thread: waiting threads[%d]\n", info.numWaitThreads);
+	PSP_INFO_PRINT("main: semaphore value[%d]\n", _sem.getValue());
+	PSP_INFO_PRINT("main thread: waiting threads[%d]\n", _sem.numOfWaitingThreads());
 	
-	sceKernelSignalSema(globalSem, 4);
+	_sem.give(4);
 }
 
-void test_sce_ms_reads() { 
-	SceUID file;
-	char *buffer = (char *)malloc(2 * 1024 * 1024);
-	{
-		// get file size
-		SceIoStat stat;
-		
-		uint32 time1 = PspRtc::instance().getMicros();
-		
-		sceIoGetstat("ms0:/psp/music/track1.mp3", &stat);
-		
-		uint32 time2 = PspRtc::instance().getMicros();
-		
-		PSP_INFO_PRINT("getting size of %lld took %d us\n", stat.st_size, time2-time1); // 3180 us before an open
-	}
-	{
-		// open file
-		uint32 time1 = PspRtc::instance().getMicros();
-
-		file = sceIoOpen("ms0:/psp/music/track1.mp3", PSP_O_RDONLY, 0777);
-		
-		uint32 time2 = PspRtc::instance().getMicros();
-		
-		PSP_INFO_PRINT("opening scefile took %d us\n", time2-time1);	// 3355us (or 1223us if already got size)
-	}
-	{
-		// get file size
-		SceIoStat stat;
-		
-		uint32 time1 = PspRtc::instance().getMicros();
-		
-		sceIoGetstat("ms0:/psp/music/track1.mp3", &stat);
-		
-		uint32 time2 = PspRtc::instance().getMicros();
-		
-		PSP_INFO_PRINT("getting size of %lld took %d us\n", stat.st_size, time2-time1); // 1223us after an open
-	}
-	{
-		uint32 time1 = PspRtc::instance().getMicros();
-	
-		// asynchronous read
-		sceIoReadAsync(file, buffer, 100000);
-		
-		uint32 time2 = PspRtc::instance().getMicros();
-		
-		PSP_INFO_PRINT("async read of 100000 took %d us\n", time2-time1);  // 146us
-		
-		// poll for completion
-		SceInt64 result;
-		for (int i=0; i<10; i++) {
-			sceIoPollAsync(file, &result);
-			uint time3 = PspRtc::instance().getMicros();
-			PSP_INFO_PRINT("poll %d. result = %lld. Time = %d us.\n", i, result, time3-time1);
-			PspThread::delayMicros(100);
-		}	
-	
-	}
-	{
-		uint32 time1 = PspRtc::instance().getMicros();
-		sceIoClose(file);
-		uint32 time2 = PspRtc::instance().getMicros();
-		PSP_INFO_PRINT("file close took %d us\n", time2-time1);	// 230us
-	}
-	free(buffer);
-}
-
-#define MEMCPY_BUFFER_SIZE 4096
-
-void test_fastCopy_specific(byte *dst, byte *src, uint32 bytes) {
-	memset(dst, 0, bytes);
-	PspMemory::fastCopy(dst, src, bytes);
-	PSP_INFO_PRINT("\n");
-}
-
-void test_fastCopy_different_sizes(byte *dst, byte *src) {
-	test_fastCopy_specific(dst, src, 1);
-	test_fastCopy_specific(dst, src, 2);
-	test_fastCopy_specific(dst, src, 4);
-	test_fastCopy_specific(dst, src, 6);
-	test_fastCopy_specific(dst, src, 8);
-	test_fastCopy_specific(dst, src, 9);
-	test_fastCopy_specific(dst, src, 16);
-	test_fastCopy_specific(dst, src, 17);
-	test_fastCopy_specific(dst, src, 32);
-	test_fastCopy_specific(dst, src, 33);
-	test_fastCopy_specific(dst, src, 34);
-	test_fastCopy_specific(dst, src, 35);
-	test_fastCopy_specific(dst, src, 36);
-}
-
-void test_fastcopy() {
-	PSP_INFO_PRINT("running fastcopy test\n");
-
-	uint32 *bufferSrc32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
-	uint32 *bufferDst32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
-	
-	// fill buffer 1
-	for (int i=0; i<MEMCPY_BUFFER_SIZE/4; i++)
-		bufferSrc32[i] = i | (((MEMCPY_BUFFER_SIZE/4)-i)<<16);
-		
-	// print buffer
-	for (int i=0; i<50; i++)
-		PSP_INFO_PRINT("%x ", bufferSrc32[i]);
-	PSP_INFO_PRINT("\n");
-	
-	byte *bufferSrc = ((byte *)bufferSrc32);
-	byte *bufferDst = ((byte *)bufferDst32);
-	
-	//test_fastCopy_different_sizes(bufferDst, bufferSrc);
-	//test_fastCopy_different_sizes(bufferDst+1, bufferSrc+1);
-	//test_fastCopy_different_sizes(bufferDst+2, bufferSrc+2);
-	//test_fastCopy_different_sizes(bufferDst+3, bufferSrc+3);
-	//test_fastCopy_different_sizes(bufferDst, bufferSrc+1);
-	//test_fastCopy_different_sizes(bufferDst, bufferSrc+2);
-	//test_fastCopy_different_sizes(bufferDst, bufferSrc+3);
-	test_fastCopy_different_sizes(bufferDst+1, bufferSrc+2);
-	test_fastCopy_different_sizes(bufferDst+1, bufferSrc+3);
-	test_fastCopy_different_sizes(bufferDst+2, bufferSrc+1);
-	test_fastCopy_different_sizes(bufferDst+2, bufferSrc+3);
-	test_fastCopy_different_sizes(bufferDst+3, bufferSrc+1);
-	test_fastCopy_different_sizes(bufferDst+3, bufferSrc+2);	
-	
-	free(bufferSrc32);
-	free(bufferDst32);
-}
-
-void test_fastcopy_speed_specific(byte *dst, byte *src, uint32 bytes) {
-	byte *dstUncached = UNCACHED(dst);
-	byte *srcUncached = UNCACHED(src);
-//	byte *dstUncached = dst;
-//	byte *srcUncached = src;
-	
+void PspSpeedTests::fastCopySpecificSize(byte *dst, byte *src, uint32 bytes) {
 	uint32 time1, time2;
+	uint32 fastcopyTime, memcpyTime;
 	const int iterations = 2000;
 	int intc;
 	
@@ -569,51 +349,115 @@ void test_fastcopy_speed_specific(byte *dst, byte *src, uint32 bytes) {
 	
 	time1 = PspRtc::instance().getMicros();
 	for (int i=0; i<iterations; i++) {
-		PspMemory::fastCopy(dstUncached, srcUncached, bytes);
+		PspMemory::fastCopy(dst, src, bytes);
 	}	
 	time2 = PspRtc::instance().getMicros();
 	
 	pspSdkEnableInterrupts(intc);
 	
-	PSP_INFO_PRINT("fastcppy() results: bytes[%d], iters[%d], time[%d]us\n",
-		bytes, iterations, time2-time1);
+	fastcopyTime = time2-time1;
 	
 	intc = pspSdkDisableInterrupts();
 	
 	time1 = PspRtc::instance().getMicros();
 	for (int i=0; i<iterations; i++) {
-		memcpy(dstUncached, srcUncached, bytes);
+		memcpy(dst, src, bytes);
 	}	
 	time2 = PspRtc::instance().getMicros();
 	
 	pspSdkEnableInterrupts(intc);
 	
-	PSP_INFO_PRINT("memcpy() results: bytes[%d], iters[%d], time[%d]us\n\n",
-		bytes, iterations, time2-time1);
-
+	memcpyTime = time2-time1;
+	
+	PSP_INFO_PRINT("%d bytes. memcpy[%d], fastcopy[%d]\n", bytes, memcpyTime, fastcopyTime);
 }
 
-void test_fastcopy_speed_bunch(byte *dst, byte *src) {
-	PSP_INFO_PRINT("new test bunch ******************\n");
-	PSP_INFO_PRINT("src[%p], dst[%p]\n", src, dst);
-	test_fastcopy_speed_specific(dst, src, 1);
-	test_fastcopy_speed_specific(dst, src, 2);
-	test_fastcopy_speed_specific(dst, src, 3);
-	test_fastcopy_speed_specific(dst, src, 4);
-	test_fastcopy_speed_specific(dst, src, 5);
-	test_fastcopy_speed_specific(dst, src, 8);
-	test_fastcopy_speed_specific(dst, src, 10);
-	test_fastcopy_speed_specific(dst, src, 16);
-	test_fastcopy_speed_specific(dst, src, 32);
-	test_fastcopy_speed_specific(dst, src, 50);
-	test_fastcopy_speed_specific(dst, src, 100);
-	test_fastcopy_speed_specific(dst, src, 500);
-	test_fastcopy_speed_specific(dst, src, 1024);
-	test_fastcopy_speed_specific(dst, src, 2048);
+void PspSpeedTests::fastCopyDifferentSizes(byte *dst, byte *src) {
+	PSP_INFO_PRINT("\nsrc[%p], dst[%p]\n", src, dst);
+	fastCopySpecificSize(dst, src, 1);
+	fastCopySpecificSize(dst, src, 2);
+	fastCopySpecificSize(dst, src, 3);
+	fastCopySpecificSize(dst, src, 4);
+	fastCopySpecificSize(dst, src, 5);
+	fastCopySpecificSize(dst, src, 8);
+	fastCopySpecificSize(dst, src, 10);
+	fastCopySpecificSize(dst, src, 16);
+	fastCopySpecificSize(dst, src, 32);
+	fastCopySpecificSize(dst, src, 50);
+	fastCopySpecificSize(dst, src, 100);
+	fastCopySpecificSize(dst, src, 500);
+	fastCopySpecificSize(dst, src, 1024);
+	fastCopySpecificSize(dst, src, 2048);
 }
 
-void test_fastcopy_speed() {
-	PSP_INFO_PRINT("running fastcopy speed test\n");
+void PspSpeedTests::fastCopySpeed() {
+	PSP_INFO_PRINT("running fastCopy speed test\n");
+
+	uint32 *bufferSrc32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
+	uint32 *bufferDst32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
+	
+	// fill buffer 1
+	for (int i=0; i<MEMCPY_BUFFER_SIZE/4; i++)
+		bufferSrc32[i] = i | (((MEMCPY_BUFFER_SIZE/4)-i)<<16);
+		
+	// print buffer
+	for (int i=0; i<50; i++)
+		PSP_INFO_PRINT("%x ", bufferSrc32[i]);
+	PSP_INFO_PRINT("\n");
+	
+	byte *bufferSrc = ((byte *)bufferSrc32);
+	byte *bufferDst = ((byte *)bufferDst32);
+
+	PSP_INFO_PRINT("\n\ndst and src cached: -----------------\n");
+	fastCopyDifferentSizes(bufferDst, bufferSrc);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc);
+	
+	PSP_INFO_PRINT("\n\ndst cached, src uncached: -----------------\n");
+	bufferSrc = UNCACHED(bufferSrc);
+	fastCopyDifferentSizes(bufferDst, bufferSrc);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc);
+
+	PSP_INFO_PRINT("\n\ndst uncached, src uncached: --------------\n");
+	bufferDst = UNCACHED(bufferDst);
+	fastCopyDifferentSizes(bufferDst, bufferSrc);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc);
+	
+	PSP_INFO_PRINT("\n\ndst uncached, src cached: -------------------\n");
+	bufferSrc = CACHED(bufferSrc);
+	fastCopyDifferentSizes(bufferDst, bufferSrc);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc);
+
+	
+	free(bufferSrc32);
+	free(bufferDst32);
+}
+
+//-------Unit Tests -------------------------------
+
+class PspUnitTests {
+public:
+	void testFastCopy();
+
+private:
+	enum {
+		MEMCPY_BUFFER_SIZE = 8192
+	};
+	
+	void fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool swap = false);
+	void fastCopyDifferentSizes(byte *dst, byte *src, bool swap = false);
+};	
+
+void PspUnitTests::testFastCopy() {
+	PSP_INFO_PRINT("running fastcopy unit test ***********\n");
+	PSP_INFO_PRINT("this test requires the test flag to be on in fastCopy\n\n");
 
 	uint32 *bufferSrc32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
 	uint32 *bufferDst32 = (uint32 *)memalign(16, MEMCPY_BUFFER_SIZE);
@@ -630,27 +474,92 @@ void test_fastcopy_speed() {
 	byte *bufferSrc = ((byte *)bufferSrc32);
 	byte *bufferDst = ((byte *)bufferDst32);
 	
-	test_fastcopy_speed_bunch(bufferDst, bufferSrc);
-	test_fastcopy_speed_bunch(bufferDst+1, bufferSrc+1);
-	test_fastcopy_speed_bunch(bufferDst, bufferSrc+1);
-	test_fastcopy_speed_bunch(bufferDst+1, bufferSrc);
+	fastCopyDifferentSizes(bufferDst, bufferSrc, true);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc+2, true);
+	fastCopyDifferentSizes(bufferDst+3, bufferSrc+3);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+2, true);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc, true);
+	fastCopyDifferentSizes(bufferDst, bufferSrc+3);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+2);
+	fastCopyDifferentSizes(bufferDst+1, bufferSrc+3);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+2, bufferSrc+3);
+	fastCopyDifferentSizes(bufferDst+3, bufferSrc+1);
+	fastCopyDifferentSizes(bufferDst+3, bufferSrc+2);	
 	
 	free(bufferSrc32);
 	free(bufferDst32);
 }
+	
+void PspUnitTests::fastCopyDifferentSizes(byte *dst, byte *src, bool swap) {
+	fastCopySpecificSize(dst, src, 1);
+	fastCopySpecificSize(dst, src, 2, swap);
+	fastCopySpecificSize(dst, src, 4, swap);
+	fastCopySpecificSize(dst, src, 6, swap);
+	fastCopySpecificSize(dst, src, 8, swap);
+	fastCopySpecificSize(dst, src, 9);
+	fastCopySpecificSize(dst, src, 10, swap);
+	fastCopySpecificSize(dst, src, 11);
+	fastCopySpecificSize(dst, src, 12, swap);
+	fastCopySpecificSize(dst, src, 13);
+	fastCopySpecificSize(dst, src, 14, swap);
+	fastCopySpecificSize(dst, src, 15);	
+	fastCopySpecificSize(dst, src, 16, swap);
+	fastCopySpecificSize(dst, src, 17);
+	fastCopySpecificSize(dst, src, 18, swap);
+	fastCopySpecificSize(dst, src, 19);
+	fastCopySpecificSize(dst, src, 20, swap);
+	fastCopySpecificSize(dst, src, 32, swap);
+	fastCopySpecificSize(dst, src, 33);
+	fastCopySpecificSize(dst, src, 34, swap);
+	fastCopySpecificSize(dst, src, 35);
+	fastCopySpecificSize(dst, src, 36, swap);
+	fastCopySpecificSize(dst, src, 50, swap);
+	fastCopySpecificSize(dst, src, 100, swap);
+	fastCopySpecificSize(dst, src, 500, swap);
+	fastCopySpecificSize(dst, src, 1000, swap);
+}
 
+void PspUnitTests::fastCopySpecificSize(byte *dst, byte *src, uint32 bytes, bool swap) {
+	memset(dst, 0, bytes);
+	PspMemory::fastCopy(dst, src, bytes);
+	
+	if (swap) {	// test swap also
+		memset(dst, 0, bytes);
+		
+		// pixelformat for swap
+		PSPPixelFormat format;
+		format.set(PSPPixelFormat::Type_4444, true);
+	
+		PspMemory::fastSwap(dst, src, bytes, format);
+	}	
+}
 
- void tests() {
+void psp_tests() {
 	PSP_INFO_PRINT("in tests\n");
-	//test_ticks();
-	//test_getMicros();
-	//test_ms_reads();
-	//test_seeks();
-	//test_thread();
-	//test_memory();
-	//test_sce_ms_reads();
-	//test_semaphore();	
-	//test_semaphore_many_threads();
-	//test_fastcopy();
-	test_fastcopy_speed();
+	
+#ifdef PSP_ENABLE_SPEED_TESTS
+	// Speed tests
+	PspSpeedTests speedTests;
+	speedTests.tickSpeed();
+	speedTests.getMicrosSpeed();
+	speedTests.msReadSpeed();
+	speedTests.seekSpeed();
+	speedTests.msReadSpeed();
+	speedTests.threadFunctionsSpeed();
+	speedTests.semaphoreSpeed();	
+	speedTests.semaphoreManyThreadSpeed();
+	speedTests.fastCopySpeed();
+#endif	
+	
+#ifdef PSP_ENABLE_UNIT_TESTS
+	// Unit tests
+	PspUnitTests unitTests;
+	
+	unitTests.testFastCopy();
+#endif	
 }	
+
+#endif /* (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS) */

@@ -46,6 +46,7 @@
 class PspMemory {
 private:
 	static void testCopy(const byte *debugDst, const byte *debugSrc, uint32 debugBytes);
+	static void testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format);
 	static void copy(byte *dst, const byte *src, uint32 bytes);
 	static void swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
 	static void copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes);
@@ -60,7 +61,7 @@ private:
 		PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
 		uint32 shorts = bytes >> 1;
 
-		for (; shorts > 0 ; shorts--) {
+		while (shorts--) {
 			*dst16++ = format.swapRedBlue16(*src16++);
 		}
 	}

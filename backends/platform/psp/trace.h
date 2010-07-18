@@ -30,6 +30,8 @@
 
 #include "common/str.h"
 
+#define __PSP_PRINT_TO_FILE_AND_SCREEN__
+
 /* Choose to print to file/screen/both */
 #ifdef __PSP_PRINT_TO_FILE__
 	#define __PSP_PRINT__(format,...)			PspDebugTrace(false, format, ## __VA_ARGS__)
