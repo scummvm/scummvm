@@ -100,28 +100,9 @@ public:
 	bool notifyEvent(const Common::Event &event);
 
 protected:
-	GLTexture* _gameTexture;
-	GLTexture* _overlayTexture;
-	GLTexture* _mouseTexture;
-
-	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type);
-
-	virtual void internUpdateScreen();
-	virtual bool loadGFXMode();
-	virtual void unloadGFXMode();
-	virtual bool hotswapGFXMode();
-
-	Graphics::Surface _lockedScreen;
-	int _screenChangeCount;
-
-#ifdef USE_RGB_COLOR
-	Graphics::PixelFormat _screenFormat;
-	Graphics::PixelFormat _cursorFormat;
-#endif
-
-	bool _overlayVisible;
-	Graphics::PixelFormat _overlayFormat;
-
+	//
+	// GFX and video
+	//
 	enum {
 		kTransactionNone = 0,
 		kTransactionActive = 1,
@@ -158,7 +139,39 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
+	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type);
 
+	virtual void internUpdateScreen();
+	virtual bool loadGFXMode();
+	virtual void unloadGFXMode();
+	virtual bool hotswapGFXMode();
+
+	//
+	// Game screen
+	//
+	GLTexture* _gameTexture;
+	Graphics::Surface _lockedScreen;
+	int _screenChangeCount;
+
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenFormat;
+#endif
+	byte *_gamePalette;
+
+	// Shake mode
+	int _currentShakePos;
+	int _newShakePos;
+
+	//
+	// Overlay
+	//
+	GLTexture* _overlayTexture;
+	bool _overlayVisible;
+	Graphics::PixelFormat _overlayFormat;
+
+	//
+	// Mouse
+	//
 	struct MousePos {
 		// The mouse position, using either virtual (game) or real
 		// (overlay) coordinates.
@@ -184,19 +197,22 @@ protected:
 			{ }
 	};
 
-	MousePos _mouseCurState;
-	bool _mouseVisible;
-	bool _mouseNeedsRedraw;
-
-	uint8 *_cursorPalette;
+	GLTexture* _cursorTexture;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _cursorFormat;
+#endif
+	byte *_cursorPalette;
 	bool _cursorPaletteDisabled;
+	MousePos _cursorState;
+	bool _cursorVisible;
+	byte *_cursorData;
+	uint32 _cursorKeyColor;
+	int _cursorTargetScale;
+	bool _cursorNeedsRedraw;
 
+	virtual void refreshCursor();
 	virtual void adjustMouseEvent(const Common::Event &event);
 	virtual void setMousePos(int x, int y);
-
-	// Shake mode
-	int _currentShakePos;
-	int _newShakePos;
 };
 
 #endif

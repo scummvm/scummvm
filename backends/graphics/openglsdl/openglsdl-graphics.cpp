@@ -101,7 +101,7 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 #endif
 
 void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
-	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+	if (_cursorState.x != x || _cursorState.y != y) {
 		int y1 = y;
 
 		/*if (_videoMode.aspectRatioCorrection && !_overlayVisible)
