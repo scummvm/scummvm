@@ -82,6 +82,12 @@ Vocabulary::~Vocabulary() {
 	freeSuffixes();
 }
 
+void Vocabulary::reset() {
+	parserIsValid = false; // Invalidate parser
+	parser_event = NULL_REG; // Invalidate parser event
+	parser_base = make_reg(g_sci->getEngineState()->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
+}
+
 bool Vocabulary::loadParserWords() {
 	char currentWord[VOCAB_MAX_WORDLENGTH] = "";
 	int currentWordPos = 0;

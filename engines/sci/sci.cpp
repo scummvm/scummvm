@@ -301,9 +301,7 @@ bool SciEngine::initGame() {
 
 	// Reset parser
 	if (_vocabulary) {
-		_vocabulary->parserIsValid = false; // Invalidate parser
-		_vocabulary->parser_event = NULL_REG; // Invalidate parser event
-		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
+		_vocabulary->reset();
 	}
 
 	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();

@@ -332,6 +332,7 @@ void SciEngine::checkVocabularySwitch() {
 	if (parserLanguage != _vocabularyLanguage) {
 		delete _vocabulary;
 		_vocabulary = new Vocabulary(_resMan, parserLanguage > 1 ? true : false);
+		_vocabulary->reset();
 		_vocabularyLanguage = parserLanguage;
 	}
 }

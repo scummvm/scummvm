@@ -174,6 +174,9 @@ public:
 	Vocabulary(ResourceManager *resMan, bool foreign);
 	~Vocabulary();
 
+	// reset parser status
+	void reset();
+
 	/**
 	 * Gets any word from the specified group. For debugging only.
 	 * @param group		Group number
