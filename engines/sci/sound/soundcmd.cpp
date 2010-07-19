@@ -497,6 +497,11 @@ reg_t SoundCommandParser::kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_
 }
 
 reg_t SoundCommandParser::kDoSoundStopAll(int argc, reg_t *argv, reg_t acc) {
+	// TODO: this can't be right, this gets called in kq1 - e.g. being in witch house, getting the note
+	//  now the point jingle plays and after a messagebox they call this - and would stop the background effects with it
+	//  this doesn't make sense, so i disable it for now
+	return acc;
+
 	Common::StackLock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
