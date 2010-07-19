@@ -253,7 +253,7 @@ static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[] = {
-    { GID_LSL6,          240,     0,  0,               "LSL6", "hideControls",   -1,    0, { 0,    0 } }, // happens when giving the bungee key to merrily - gets called with additional 5th parameter
+    { GID_LSL6,           -1,     0,  0,               "LSL6", "hideControls",   -1,    0, { 0,    0 } }, // happens when giving the bungee key to merrily (room 240) and at least in room 650 too - gets called with additional 5th parameter
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
