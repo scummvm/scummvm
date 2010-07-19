@@ -376,7 +376,7 @@ void Vocabulary::decipherSaidBlock(byte *addr) {
 bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, char **error) {
 	const char *lastword = sentence;
 	int pos_in_sentence = 0;
-	char c;
+	unsigned char c;
 	int wordlen = 0;
 
 	*error = NULL;
@@ -385,7 +385,7 @@ bool Vocabulary::tokenizeString(ResultWordList &retval, const char *sentence, ch
 
 		c = sentence[pos_in_sentence++];
 
-		if (isalnum(c) || (c == '-' && wordlen))
+		if (isalnum(c) || (c == '-' && wordlen) || (c >= 0x80))
 			++wordlen;
 		// Continue on this word */
 		// Words may contain a '-', but may not
