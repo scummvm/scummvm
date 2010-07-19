@@ -134,7 +134,8 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
-		newFormat = Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0);//Graphics::PixelFormat::createFormatCLUT8();
+		newFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
+		//newFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else
 		newFormat = *format;
 
@@ -551,7 +552,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 		if (_cursorNeedsRedraw)
 			refreshCursor();
 		_cursorTexture->drawTexture(_cursorState.x - _cursorState.hotX,
-			_cursorState.y - _cursorState.hotY, _cursorState.w, _cursorState.h);
+		_cursorState.y - _cursorState.hotY,	_cursorState.w, _cursorState.h);
 	}
 }
 
@@ -568,16 +569,20 @@ void OpenGLGraphicsManager::initGL() {
 	CHECK_GL_ERROR( glShadeModel(GL_FLAT) );
 	CHECK_GL_ERROR( glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST) );
 
+	// Setup alpha blend (For overlay and cursor)
 	CHECK_GL_ERROR( glEnable(GL_BLEND) );
 	CHECK_GL_ERROR( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
 
+	// Enable rendering with vertex and coord arrays
 	CHECK_GL_ERROR( glEnableClientState(GL_VERTEX_ARRAY) );
 	CHECK_GL_ERROR( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
 
 	CHECK_GL_ERROR( glEnable(GL_TEXTURE_2D) );
 
+	// Setup the GL viewport
 	CHECK_GL_ERROR( glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight) );
 
+	// Setup coordinates system
 	CHECK_GL_ERROR( glMatrixMode(GL_PROJECTION) );
 	CHECK_GL_ERROR( glLoadIdentity() );
 	CHECK_GL_ERROR( glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1) );
@@ -586,6 +591,7 @@ void OpenGLGraphicsManager::initGL() {
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
+	// Initialize OpenGL settings
 	initGL();
 
 	if (!_gameTexture) {
@@ -645,6 +651,10 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 			//if (_videoMode.aspectRatioCorrection)
 			//	newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
 		}
+		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+			newEvent.mouse.x /= (float)_videoMode.hardwareWidth / _videoMode.overlayWidth;
+		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+			newEvent.mouse.y /= (float)_videoMode.hardwareHeight / _videoMode.overlayHeight;
 		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
@@ -652,7 +662,7 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	switch (event.type) {
 	case Common::EVENT_MOUSEMOVE:
-		if (event.synthetic)
+		if (!event.synthetic)
 			setMousePos(event.mouse.x, event.mouse.y);
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:

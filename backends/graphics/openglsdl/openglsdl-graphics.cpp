@@ -279,8 +279,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;*/
 	// HACK: Handle special SDL event
 	case OSystem_SDL::kSdlEventResize:
-		_videoMode.overlayWidth = event.mouse.x;
-		_videoMode.overlayHeight = event.mouse.y;
 		_videoMode.hardwareWidth = event.mouse.x;
 		_videoMode.hardwareHeight = event.mouse.y;
 		initGL();
