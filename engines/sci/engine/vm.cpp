@@ -1444,7 +1444,8 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
+			// PQ2 japanese compares pointers to 2000 to find out if its a pointer or a resourceid
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000) || (s->r_acc == make_reg(0, 2000))))
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
