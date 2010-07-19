@@ -49,8 +49,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.scaleFactor = 1;
 	_videoMode.fullscreen = false;
 
-	_gamePalette = (byte *)calloc(sizeof(byte), 256);
-	_cursorPalette = (byte *)calloc(sizeof(byte), 256);
+	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
+	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
 	
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
@@ -285,7 +285,7 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 #endif
 
 	// Save the screen palette
-	memcpy(_cursorPalette + start * 4, colors, num * 4);
+	memcpy(_gamePalette + start * 4, colors, num * 4);
 
 	if (_cursorPaletteDisabled)
 		_cursorNeedsRedraw = true;
@@ -299,7 +299,7 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 #endif
 
 	// Copies current palette to buffer
-	memcpy(colors, _cursorPalette + start * 4, num * 4);
+	memcpy(colors, _gamePalette + start * 4, num * 4);
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
