@@ -85,6 +85,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_gamestate = 0;
 	_kernel = 0;
 	_vocabulary = 0;
+	_vocabularyLanguage = -1;
 	_eventMan = 0;
 	_console = 0;
 
@@ -202,7 +203,7 @@ Common::Error SciEngine::run() {
 	_kernel = new Kernel(_resMan, segMan);
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0 and SCI01 games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
+	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan, false) : NULL;
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());

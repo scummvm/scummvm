@@ -33,9 +33,8 @@
 
 namespace Sci {
 
-Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
+Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan), _foreign(foreign) {
 	_parserRules = NULL;
-	_vocabVersion = kVocabularySCI0;
 
 	memset(_parserNodes, 0, sizeof(_parserNodes));
 	// Mark parse tree as unused
@@ -45,6 +44,23 @@ Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 	_synonyms.clear(); // No synonyms
 
 	debug(2, "Initializing vocabulary");
+	if (_resMan->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
+		_vocabVersion = kVocabularySCI0;
+		_resourceIdWords = VOCAB_RESOURCE_SCI0_MAIN_VOCAB;
+		_resourceIdSuffixes = VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB;
+		_resourceIdBranches = VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES;
+	} else {
+		warning("Could not find a main vocabulary, trying SCI01");
+		_vocabVersion = kVocabularySCI1;
+		_resourceIdWords = VOCAB_RESOURCE_SCI1_MAIN_VOCAB;
+		_resourceIdSuffixes = VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB;
+		_resourceIdBranches = VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES;
+		if (_foreign) {
+			_resourceIdWords += 10;
+			_resourceIdSuffixes += 10;
+			_resourceIdBranches += 10;
+		}
+	}
 
 	if (getSciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
 		loadSuffixes();
@@ -72,16 +88,10 @@ bool Vocabulary::loadParserWords() {
 	int currentwordpos = 0;
 
 	// First try to load the SCI0 vocab resource.
-	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB), 0);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdWords), 0);
 
 	if (!resource) {
-		warning("SCI0: Could not find a main vocabulary, trying SCI01");
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB), 0);
-		_vocabVersion = kVocabularySCI1;
-	}
-
-	if (!resource) {
-		warning("SCI1: Could not find a main vocabulary");
+		warning("Could not find a main vocabulary");
 		return false; // NOT critical: SCI1 games and some demos don't have one!
 	}
 
@@ -175,13 +185,7 @@ const char *Vocabulary::getAnyWordFromGroup(int group) {
 
 bool Vocabulary::loadSuffixes() {
 	// Determine if we can find a SCI1 suffix vocabulary first
-	Resource* resource = NULL;
-
-	if (_vocabVersion == kVocabularySCI0)
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 1);
-	else
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 1);
-
+	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), 1);
 	if (!resource)
 		return false; // No vocabulary found
 
@@ -214,13 +218,7 @@ bool Vocabulary::loadSuffixes() {
 }
 
 void Vocabulary::freeSuffixes() {
-	Resource* resource = NULL;
-
-	if (_vocabVersion == kVocabularySCI0)
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 0);
-	else
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 0);
-
+	Resource* resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdSuffixes), 0);
 	if (resource)
 		_resMan->unlockResource(resource);
 
@@ -228,12 +226,7 @@ void Vocabulary::freeSuffixes() {
 }
 
 bool Vocabulary::loadBranches() {
-	Resource *resource = NULL;
-
-	if (_vocabVersion == kVocabularySCI0)
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES), 0);
-	else
-		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES), 0);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, _resourceIdBranches), 0);
 
 	_parserBranches.clear();
 

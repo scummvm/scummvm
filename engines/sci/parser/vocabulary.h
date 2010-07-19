@@ -169,7 +169,7 @@ enum VocabularyVersions {
 
 class Vocabulary {
 public:
-	Vocabulary(ResourceManager *resMan);
+	Vocabulary(ResourceManager *resMan, bool foreign);
 	~Vocabulary();
 
 	/**
@@ -301,6 +301,11 @@ private:
 
 	ResourceManager *_resMan;
 	VocabularyVersions _vocabVersion;
+
+	bool _foreign;
+	uint16 _resourceIdWords;
+	uint16 _resourceIdSuffixes;
+	uint16 _resourceIdBranches;
 
 	// Parser-related lists
 	SuffixList _parserSuffixes;

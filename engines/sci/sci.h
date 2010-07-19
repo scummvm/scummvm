@@ -267,6 +267,9 @@ public:
 
 	Common::String getSciLanguageString(const char *str, kLanguage lang, kLanguage *lang2 = NULL) const;
 
+	// Check if vocabulary needs to get switched (in multilingual parser games)
+	void checkVocabularySwitch();
+
 	// Initializes ports and paint16 for non-sci32 games, also sets default palette
 	void initGraphics();
 
@@ -332,6 +335,7 @@ private:
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;
+	int16 _vocabularyLanguage;
 	EventManager *_eventMan;
 	reg_t _gameObj; /**< Pointer to the game object */
 	Console *_console;

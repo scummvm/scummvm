@@ -93,6 +93,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
+	g_sci->checkVocabularySwitch();
 	Vocabulary *voc = g_sci->getVocabulary();
 	voc->parser_event = event;
 	reg_t params[2] = { voc->parser_base, stringpos };

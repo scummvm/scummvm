@@ -324,4 +324,16 @@ Common::String SciEngine::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
+void SciEngine::checkVocabularySwitch() {
+	uint16 parserLanguage = 1;
+	if (SELECTOR(parseLang) != -1)
+		parserLanguage = readSelectorValue(_gamestate->_segMan, _gameObj, SELECTOR(parseLang));
+		
+	if (parserLanguage != _vocabularyLanguage) {
+		delete _vocabulary;
+		_vocabulary = new Vocabulary(_resMan, parserLanguage > 1 ? true : false);
+		_vocabularyLanguage = parserLanguage;
+	}
+}
+
 } // End of namespace Sci
