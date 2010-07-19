@@ -66,7 +66,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// Effects
 	addTest("shakingEffect", &GFXtests::shakingEffect);
-	addTest("focusRectangle", &GFXtests::focusRectangle);
+	// addTest("focusRectangle", &GFXtests::focusRectangle);
 
 	// Overlay
 	addTest("Overlays", &GFXtests::overlayGraphics);
@@ -352,13 +352,17 @@ void GFXtests::mouseMovements() {
  * Used by aspectRatio()
  */
 void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
+	
 	// Take a buffer of screen size
-	byte buffer[200][320] = {{0}};
+	int width = g_system->getWidth();
+	int height = Testsuite::getDisplayRegionCoordinates().y;
+	byte *buffer = new byte[height * width];
 	float theta;
 	int x, y, x1, y1;
 
+	memset(buffer, 0, sizeof(byte) * width * height);
 	// Illuminate the center
-	buffer[cx][cy] = 1;
+	buffer[cx * width + cy] = 1;
 
 	// Illuminate the points lying on ellipse
 
@@ -371,26 +375,27 @@ void GFXtests::drawEllipse(int cx, int cy, int a, int b) {
 		x1 = x + cx;
 		y1 = y + cy;
 
-		buffer[x1][y1] = 1;
+		buffer[x1 * width + y1] = 1;
 
 		x1 = (-1) * x + cx;
 		y1 = y + cy;
 
-		buffer[x1][y1] = 1;
+		buffer[x1 * width + y1] = 1;
 
 		x1 = x + cx;
 		y1 = (-1) * y + cy;
 
-		buffer[x1][y1] = 1;
+		buffer[x1 * width + y1] = 1;
 
 		x1 = (-1) * x + cx;
 		y1 = (-1) * y + cy;
 
-		buffer[x1][y1] = 1;
+		buffer[x1 * width + y1] = 1;
 	}
 
-	g_system->copyRectToScreen(&buffer[0][0], 320, 0, 0, 320, 200);
+	g_system->copyRectToScreen(buffer, width, 0, 0, width, height);
 	g_system->updateScreen();
+	delete[] buffer;
 }
 
 // GFXtests go here
@@ -476,10 +481,7 @@ bool GFXtests::fullScreenMode() {
  */
 bool GFXtests::aspectRatio() {
 	// Draw an ellipse on the screen
-	drawEllipse(100, 160, 72, 60);
-
-	Common::Point pt(0, 180);
-	Testsuite::writeOnScreen("Testing Aspect Ratio Correction!", pt);
+	drawEllipse(80, 160, 72, 60);
 
 	bool isFeaturePresent;
 	bool isFeatureEnabled;
@@ -720,7 +722,7 @@ bool GFXtests::shakingEffect() {
 	}
 	g_system->delayMillis(1500);
 
-	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did the shaking test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Shaking Effect didn't worked");
 		return false;
 	}

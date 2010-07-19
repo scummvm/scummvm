@@ -31,6 +31,7 @@
 
 #include "gui/message.h"
 
+#include "testbed/graphics.h"
 #include "testbed/testbed.h"
 #include "testbed/testsuite.h"
 
@@ -42,6 +43,7 @@ bool Testsuite::isSessionInteractive = true;
 // Static private variable of Testsuite
 Common::String Testsuite::_logDirectory = "";
 Common::String Testsuite::_logFilename = "";
+Graphics::FontManager::FontUsage Testsuite::_displayFont = Graphics::FontManager::kGUIFont;
 Common::WriteStream *Testsuite::_ws = 0;
 uint Testsuite::toQuit = kLoopNormal;
 
@@ -183,10 +185,13 @@ void Testsuite::clearScreen(const Common::Rect &rect) {
 
 void Testsuite::clearScreen() {
 	int numBytesPerLine = g_system->getWidth() * g_system->getScreenFormat().bytesPerPixel;
-	int size =  g_system->getHeight() * numBytesPerLine;
+	int height = getDisplayRegionCoordinates().y;
+	
+	// Don't clear test info display region
+	int size =  height * numBytesPerLine;
 	byte *buffer = new byte[size];
 	memset(buffer, 0, size);
-	g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), g_system->getHeight());
+	g_system->copyRectToScreen(buffer, numBytesPerLine, 0, 0, g_system->getWidth(), height);
 	g_system->updateScreen();
 	delete[] buffer;
 }
@@ -237,6 +242,37 @@ uint Testsuite::parseEvents() {
 	return kLoopNormal;
 }
 
+void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, uint numTests, Common::Point pt) {
+	Common::String text = Common::String::printf(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
+	writeOnScreen(text, pt);
+	// below the text a rectangle denoting the progress in the testsuite can be drawn.
+	int separation = getLineSeparation();
+	pt.y += separation;
+	int wRect = 200;
+	int lRect = 7;
+	pt.x = g_system->getWidth() / 2 - 100;
+	byte *buffer = new byte[lRect * wRect];
+	memset(buffer, 0, sizeof(byte) * lRect * wRect);
+
+	int wShaded = (int) (wRect * (((float)testNum - 1) / numTests));
+
+	// draw the boundary
+	memset(buffer, 1, sizeof(byte) * wRect);
+	memset(buffer + (wRect * (lRect - 1)) , 1, sizeof(byte) * wRect);
+	
+	for (int i = 0; i < lRect; i++) {
+		for (int j = 0; j < wRect; j++) {
+			if (j < wShaded) {
+				buffer[i * wRect + j] = 1;
+			}
+		}
+		buffer[i * wRect + 0] = 1;
+		buffer[i * wRect + wRect - 1] = 1;
+	}
+	g_system->copyRectToScreen(buffer, wRect, pt.x, pt.y, wRect, lRect);
+	g_system->updateScreen();
+}
+
 void Testsuite::execute() {
 	// Main Loop for a testsuite
 
@@ -244,6 +280,10 @@ void Testsuite::execute() {
 	if (toQuit == kEngineQuit) {
 		return;
 	}
+
+	uint count = 1;
+	Common::Point pt = getDisplayRegionCoordinates();
+	pt.y += getLineSeparation();
 
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (toQuit == kSkipNext) {
@@ -258,6 +298,7 @@ void Testsuite::execute() {
 		}
 
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
+		updateStats("Test", ((*i)->featureName).c_str(), count++, _testsToExecute.size(), pt);
 		_numTestsExecuted++;
 		if ((*i)->driver()) {
 			logPrintf("Result: Passed\n");
@@ -265,6 +306,7 @@ void Testsuite::execute() {
 		} else {
 			logPrintf("Result: Failed\n");
 		}
+		updateStats("Test", ((*i)->featureName).c_str(), count, _testsToExecute.size(), pt);
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
 		// Check if user wants to quit/RTL/Skip next test by parsing events.
 		// Quit directly if explicitly requested

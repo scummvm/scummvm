@@ -86,9 +86,12 @@ TestbedEngine::~TestbedEngine() {
 
 void TestbedEngine::invokeTestsuites() {
 	Common::Array<Testsuite *>::const_iterator iter;
+	uint count = 1;
+	Common::Point pt = Testsuite::getDisplayRegionCoordinates();
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if ((*iter)->isEnabled()) {
+			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, _testsuiteList.size(), pt);
 			(*iter)->execute();
 		}
 	}

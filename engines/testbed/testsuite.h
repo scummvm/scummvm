@@ -29,6 +29,7 @@
 #include "common/str.h"
 #include "common/array.h"
 
+#include "graphics/fontman.h"
 
 namespace Testbed {
 
@@ -136,6 +137,33 @@ public:
 
 	static void deleteWriteStream();
 
+	// Progress bar (Information Display) related methods.
+	/** 
+	 * Display region is in the bottom. Probably 1/4th of the game screen.
+	 * It contains:
+	 * 1) Information about executing testsuite.
+	 * 2) Total progress within this testsuite.
+	 * 3) Total overall progress in the number of testsuites
+	 */
+
+	static Common::Point getDisplayRegionCoordinates() {
+		Common::Point pt(0, 0);
+		// start from bottom
+		pt.y = g_system->getHeight();
+		// Will Contain 3 lines
+		pt.y -= (FontMan.getFontByUsage(_displayFont)->getFontHeight() * 3 + 15); // Buffer of 5 pixels per line
+		return pt;
+	}
+
+	static uint getLineSeparation() {
+		return FontMan.getFontByUsage(_displayFont)->getFontHeight() + 5;
+	}
+	static Graphics::FontManager::FontUsage getCurrentFontUsageType() { return _displayFont; }
+	static void setCurrentFontUsageType(Graphics::FontManager::FontUsage f) { _displayFont = f; }
+
+	static void updateStats(const char *prefix, const char *info, uint numTests, uint testNum, Common::Point pt);
+
+
 protected:
 	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed
 	int		    _numTestsPassed;					///< Number of tests passed
@@ -162,6 +190,11 @@ private:
 	static Common::String _logDirectory;
 	static Common::String _logFilename;
 	static Common::WriteStream *_ws;
+
+	/**
+	 * Private variable used for font
+	 */
+	static Graphics::FontManager::FontUsage	_displayFont;
 };
 
 } // End of namespace Testbed
