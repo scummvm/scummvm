@@ -555,7 +555,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 	}
 }
 
-bool OpenGLGraphicsManager::loadGFXMode() {
+void OpenGLGraphicsManager::initGL() {
 	// Check available GL Extensions
 	GLTexture::initGLExtensions();
 
@@ -583,6 +583,10 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 	CHECK_GL_ERROR( glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1) );
 	CHECK_GL_ERROR( glMatrixMode(GL_MODELVIEW) );
 	CHECK_GL_ERROR( glLoadIdentity() );
+}
+
+bool OpenGLGraphicsManager::loadGFXMode() {
+	initGL();
 
 	if (!_gameTexture) {
 		byte bpp;
@@ -622,6 +626,15 @@ bool OpenGLGraphicsManager::hotswapGFXMode() {
 	return false;
 }
 
+void OpenGLGraphicsManager::setScale(int newScale) {
+	if (newScale == _videoMode.scaleFactor)
+		return;
+
+	_videoMode.scaleFactor = newScale;
+
+	_transactionDetails.sizeChanged = true;
+}
+
 void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 	if (!event.synthetic) {
 		Common::Event newEvent(event);
@@ -651,10 +664,15 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_MBUTTONUP:
 		adjustMouseEvent(event);
 		return !event.synthetic;
+
 	default:
 		break;
 	}
 
+	return false;
+}
+
+bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	return false;
 }
 

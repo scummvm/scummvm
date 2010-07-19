@@ -48,12 +48,20 @@ public:
 
 	virtual void warpMouse(int x, int y);
 
+	virtual bool notifyEvent(const Common::Event &event);
+
 protected:
 	virtual void internUpdateScreen();
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 	virtual bool hotswapGFXMode();
+
+	virtual void setFullscreenMode(bool enable);
+
+	virtual bool handleScalerHotkeys(Common::KeyCode key);
+	virtual bool isScalerHotkey(const Common::Event &event);
+	virtual void toggleFullScreen();
 
 	// Hardware screen
 	SDL_Surface *_hwscreen;

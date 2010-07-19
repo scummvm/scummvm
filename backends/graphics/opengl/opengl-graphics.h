@@ -100,6 +100,9 @@ public:
 	bool notifyEvent(const Common::Event &event);
 
 protected:
+
+	virtual void initGL();
+
 	//
 	// GFX and video
 	//
@@ -145,6 +148,8 @@ protected:
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
 	virtual bool hotswapGFXMode();
+
+	virtual void setScale(int newScale);
 
 	//
 	// Game screen
@@ -213,6 +218,11 @@ protected:
 	virtual void refreshCursor();
 	virtual void adjustMouseEvent(const Common::Event &event);
 	virtual void setMousePos(int x, int y);
+
+	//
+	// Misc
+	//
+	virtual bool saveScreenshot(const char *filename);
 };
 
 #endif

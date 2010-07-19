@@ -26,6 +26,7 @@
 #ifdef USE_OPENGL
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
+#include "backends/platform/sdl/sdl.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
@@ -135,7 +136,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
-		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : SDL_OPENGL
+		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
 	);
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
@@ -167,6 +168,129 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 	OpenGLGraphicsManager::internUpdateScreen();
 
 	SDL_GL_SwapBuffers(); 
+}
+
+bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
+
+	// Ctrl-Alt-a toggles aspect ratio correction
+	/*if (key == 'a') {
+		beginGFXTransaction();
+			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
+		endGFXTransaction();
+#ifdef USE_OSD
+		char buffer[128];
+		if (_videoMode.aspectRatioCorrection)
+			sprintf(buffer, "Enabled aspect ratio correction\n%d x %d -> %d x %d",
+				_videoMode.screenWidth, _videoMode.screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+		else
+			sprintf(buffer, "Disabled aspect ratio correction\n%d x %d -> %d x %d",
+				_videoMode.screenWidth, _videoMode.screenHeight,
+				_hwscreen->w, _hwscreen->h
+				);
+		displayMessageOnOSD(buffer);
+#endif
+		internUpdateScreen();
+		return true;
+	}*/
+
+	SDLKey sdlKey = (SDLKey)key;
+
+	// Increase/decrease the scale factor
+	if (sdlKey == SDLK_EQUALS || sdlKey == SDLK_PLUS || sdlKey == SDLK_MINUS ||
+		sdlKey == SDLK_KP_PLUS || sdlKey == SDLK_KP_MINUS) {
+		int factor = _videoMode.scaleFactor;
+		factor += (sdlKey == SDLK_MINUS || sdlKey == SDLK_KP_MINUS) ? -1 : +1;
+		if (0 < factor && factor < 4) {
+			beginGFXTransaction();
+				setScale(factor);
+			endGFXTransaction();
+		}	
+	}
+	return false;
+}
+
+void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
+
+}
+
+bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
+	if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
+			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
+
+		return (isScaleKey || event.kbd.keycode == 'a');
+	}
+	return false;
+}
+
+void OpenGLSdlGraphicsManager::toggleFullScreen() {
+	beginGFXTransaction();
+		setFullscreenMode(!_videoMode.fullscreen);
+	endGFXTransaction();
+#ifdef USE_OSD
+	if (_videoMode.fullscreen)
+		displayMessageOnOSD("Fullscreen mode");
+	else
+		displayMessageOnOSD("Windowed mode");
+#endif
+}
+
+bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
+	switch ((int)event.type) {
+	case Common::EVENT_KEYDOWN:
+		// Alt-Return and Alt-Enter toggle full screen mode
+		if (event.kbd.hasFlags(Common::KBD_ALT) &&
+			(event.kbd.keycode == Common::KEYCODE_RETURN ||
+			event.kbd.keycode == (Common::KeyCode)SDLK_KP_ENTER)) {
+			toggleFullScreen();
+			return true;
+		}
+
+		// Alt-S: Create a screenshot
+		if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == 's') {
+			char filename[20];
+
+			for (int n = 0;; n++) {
+				SDL_RWops *file;
+
+				sprintf(filename, "scummvm%05d.bmp", n);
+				file = SDL_RWFromFile(filename, "r");
+				if (!file)
+					break;
+				SDL_RWclose(file);
+			}
+			if (saveScreenshot(filename))
+				printf("Saved '%s'\n", filename);
+			else
+				printf("Could not save screenshot!\n");
+			return true;
+		}
+
+		// Ctrl-Alt-<key> will change the GFX mode
+		if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+			if (handleScalerHotkeys(event.kbd.keycode))
+				return true;
+		}
+	case Common::EVENT_KEYUP:
+		return isScalerHotkey(event);
+	/*case OSystem_SDL::kSdlEventExpose:
+		break;*/
+	// HACK: Handle special SDL event
+	case OSystem_SDL::kSdlEventResize:
+		_videoMode.overlayWidth = event.mouse.x;
+		_videoMode.overlayHeight = event.mouse.y;
+		_videoMode.hardwareWidth = event.mouse.x;
+		_videoMode.hardwareHeight = event.mouse.y;
+		initGL();
+		return true;
+
+	default:
+		break;
+	}
+
+	return OpenGLGraphicsManager::notifyEvent(event);
 }
 
 #endif
