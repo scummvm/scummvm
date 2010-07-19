@@ -98,7 +98,7 @@ GLTexture::~GLTexture() {
 void GLTexture::refresh() {
 	// Generates the texture ID for GL
 	//CHECK_GL_ERROR( glGenTextures(1, &_textureName) );
-	updateBuffer(_surface.pixels, _surface.bytesPerPixel, 0, 0, _surface.w, _surface.h);
+	//updateBuffer(_surface.pixels, _surface.bytesPerPixel, 0, 0, _surface.w, _surface.h);
 }
 
 void GLTexture::allocBuffer(GLuint w, GLuint h) {
@@ -117,7 +117,7 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 		_textureWidth = nextHigher2(w);
 		_textureHeight = nextHigher2(h);
 	}
-	_surface.pitch = w * _bytesPerPixel;
+	_surface.pitch = _textureWidth * _bytesPerPixel;
 
 	//_surface.create(w, h, _bytesPerPixel);
 
