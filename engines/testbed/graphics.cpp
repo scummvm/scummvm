@@ -918,9 +918,9 @@ bool GFXtests::pixelFormats() {
 		colors[5] = iter->RGBToColor(47, 78, 36);
 
 		Common::Point pt(0, 170);
-		char msg[100];
+		Common::String msg;
 		// XXX: Can use snprintf?
-		snprintf(msg, sizeof(msg), "Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
+		msg = Common::String::printf("Testing Pixel Formats, %d of %d", numFormatsTested, pfList.size());
 		Testsuite::writeOnScreen(msg, pt, true);
 
 		// CopyRectToScreen could have been used, but that may involve writing code which

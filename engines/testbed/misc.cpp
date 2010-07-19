@@ -27,12 +27,8 @@
 
 namespace Testbed {
 
-void MiscTests::getHumanReadableFormat(TimeDate &td, Common::String &date) {
-	// XXX: can use snprintf?
-	char strDate[100];
-	snprintf(strDate, 100, "%d:%d:%d on %d/%d/%d (dd/mm/yy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon, td.tm_year + 1900);
-	date = strDate;
-	return;
+Common::String MiscTests::getHumanReadableFormat(TimeDate &td) {
+	return Common::String::printf("%d:%d:%d on %d/%d/%d (dd/mm/yyyy)", td.tm_hour, td.tm_min, td.tm_sec, td.tm_mday, td.tm_mon + 1, td.tm_year + 1900);
 }
 
 void MiscTests::timerCallback(void *arg) {
@@ -75,7 +71,7 @@ bool MiscTests::testDateTime() {
 	g_system->getTimeAndDate(t1);
 	Testsuite::logDetailedPrintf("Current Time and Date: ");
 	Common::String dateTimeNow;
-	getHumanReadableFormat(t1, dateTimeNow);
+	dateTimeNow = getHumanReadableFormat(t1);
 
 	if (Testsuite::isSessionInteractive) {
 		// Directly verify date
@@ -87,13 +83,13 @@ bool MiscTests::testDateTime() {
 	}
 
 	g_system->getTimeAndDate(t1);
-	getHumanReadableFormat(t1, dateTimeNow);
+	dateTimeNow = getHumanReadableFormat(t1);
 	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 	// Now, Put some delay
 	g_system->delayMillis(2000);
 	g_system->getTimeAndDate(t2);
 	Testsuite::logDetailedPrintf("Time and Date 2s later: ");
-	getHumanReadableFormat(t2, dateTimeNow);
+	dateTimeNow = getHumanReadableFormat(t2);
 	Testsuite::logDetailedPrintf("%s\n", dateTimeNow.c_str());
 
 	if (t1.tm_year == t2.tm_year && t1.tm_mon == t2.tm_mon && t1.tm_mday == t2.tm_mday) {
