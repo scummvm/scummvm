@@ -379,10 +379,12 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		if ((!_music->soundIsActive(musicSlot)) && (musicSlot->status != kSoundPaused)) {
-			processStopSound(obj, true);
-		} else {
-			_music->updateAudioStreamTicker(musicSlot);
+		if (musicSlot->status == kSoundPlaying) {
+			if (!_music->soundIsActive(musicSlot)) {
+				processStopSound(obj, true);
+			} else {
+				_music->updateAudioStreamTicker(musicSlot);
+			}
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
