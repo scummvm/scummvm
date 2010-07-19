@@ -85,7 +85,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_gamestate = 0;
 	_kernel = 0;
 	_vocabulary = 0;
-	_vocabularyLanguage = -1;
+	_vocabularyLanguage = 1; // we load english vocabulary on startup
 	_eventMan = 0;
 	_console = 0;
 
