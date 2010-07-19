@@ -44,10 +44,6 @@
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 
-#if defined(MACOSX) || defined(IPHONE)
-#include <CoreFoundation/CoreFoundation.h>
-#endif
-
 #define GUI_ENABLE_BUILTIN_THEME
 
 namespace GUI {
@@ -396,15 +392,23 @@ bool ThemeEngine::init() {
 	// Try to create a Common::Archive with the files of the theme.
 	if (!_themeArchive && !_themeFile.empty()) {
 		Common::FSNode node(_themeFile);
-		if (node.getName().hasSuffix(".zip") && !node.isDirectory()) {
-			Common::Archive *zipArchive = Common::makeZipArchive(node);
-
-			if (!zipArchive) {
-				warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
-			}
-			_themeArchive = zipArchive;
-		} else if (node.isDirectory()) {
+		if (node.isDirectory()) {
 			_themeArchive = new Common::FSDirectory(node);
+		} else if (_themeFile.hasSuffix(".zip")) {
+			// TODO: Also use "node" directly?
+			// Look for the zip file via SearchMan
+			Common::ArchiveMemberPtr member = SearchMan.getMember(_themeFile);
+			if (member) {
+				_themeArchive = Common::makeZipArchive(member->createReadStream());
+				if (!_themeArchive) {
+					warning("Failed to open Zip archive '%s'.", member->getDisplayName().c_str());
+				}
+			} else {
+				_themeArchive = Common::makeZipArchive(node);
+				if (!_themeArchive) {
+					warning("Failed to open Zip archive '%s'.", node.getPath().c_str());
+				}
+			}
 		}
 	}
 
@@ -1553,6 +1557,28 @@ bool ThemeEngine::themeConfigParseHeader(Common::String header, Common::String &
 	return tok.empty();
 }
 
+bool ThemeEngine::themeConfigUsable(const Common::ArchiveMember &member, Common::String &themeName) {
+	Common::File stream;
+	bool foundHeader = false;
+
+	if (member.getName().hasSuffix(".zip")) {
+		Common::Archive *zipArchive = Common::makeZipArchive(member.createReadStream());
+
+		if (zipArchive && zipArchive->hasFile("THEMERC")) {
+			stream.open("THEMERC", *zipArchive);
+		}
+
+		delete zipArchive;
+	}
+
+	if (stream.isOpen()) {
+		Common::String stxHeader = stream.readLine();
+		foundHeader = themeConfigParseHeader(stxHeader, themeName);
+	}
+
+	return foundHeader;
+}
+
 bool ThemeEngine::themeConfigUsable(const Common::FSNode &node, Common::String &themeName) {
 	Common::File stream;
 	bool foundHeader = false;
@@ -1608,26 +1634,7 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 	if (ConfMan.hasKey("themepath"))
 		listUsableThemes(Common::FSNode(ConfMan.get("themepath")), list);
 
-#ifdef DATA_PATH
-	listUsableThemes(Common::FSNode(DATA_PATH), list);
-#endif
-
-#if defined(MACOSX) || defined(IPHONE)
-	CFURLRef resourceUrl = CFBundleCopyResourcesDirectoryURL(CFBundleGetMainBundle());
-	if (resourceUrl) {
-		char buf[256];
-		if (CFURLGetFileSystemRepresentation(resourceUrl, true, (UInt8 *)buf, 256)) {
-			Common::FSNode resourcePath(buf);
-			listUsableThemes(resourcePath, list);
-		}
-		CFRelease(resourceUrl);
-	}
-#endif
-
-	if (ConfMan.hasKey("extrapath"))
-		listUsableThemes(Common::FSNode(ConfMan.get("extrapath")), list);
-
-	listUsableThemes(Common::FSNode("."), list, 1);
+	listUsableThemes(SearchMan, list);
 
 	// Now we need to strip all duplicates
 	// TODO: It might not be the best idea to strip duplicates. The user might
@@ -1644,6 +1651,32 @@ void ThemeEngine::listUsableThemes(Common::List<ThemeDescriptor> &list) {
 
 	list = output;
 	output.clear();
+}
+
+void ThemeEngine::listUsableThemes(Common::Archive &archive, Common::List<ThemeDescriptor> &list) {
+	ThemeDescriptor td;
+
+	Common::ArchiveMemberList fileList;
+	archive.listMatchingMembers(fileList, "*.zip");
+	for (Common::ArchiveMemberList::iterator i = fileList.begin();
+	     i != fileList.end(); ++i) {
+		td.name.clear();
+		if (themeConfigUsable(**i, td.name)) {
+			td.filename = (*i)->getName();
+			td.id = (*i)->getDisplayName();
+
+			// If the name of the node object also contains
+			// the ".zip" suffix, we will strip it.
+			if (td.id.hasSuffix(".zip")) {
+				for (int j = 0; j < 4; ++j)
+					td.id.deleteLastChar();
+			}
+
+			list.push_back(td);
+		}
+	}
+
+	fileList.clear();
 }
 
 void ThemeEngine::listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth) {
