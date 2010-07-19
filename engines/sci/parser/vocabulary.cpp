@@ -55,11 +55,11 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 		_resourceIdWords = VOCAB_RESOURCE_SCI1_MAIN_VOCAB;
 		_resourceIdSuffixes = VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB;
 		_resourceIdBranches = VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES;
-		if (_foreign) {
-			_resourceIdWords += 10;
-			_resourceIdSuffixes += 10;
-			_resourceIdBranches += 10;
-		}
+	}
+	if (_foreign) {
+		_resourceIdWords += 10;
+		_resourceIdSuffixes += 10;
+		_resourceIdBranches += 10;
 	}
 
 	if (getSciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
