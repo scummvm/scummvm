@@ -238,6 +238,18 @@ bool SdlEventManager::dispatchSDLEvent(SDL_Event &ev, Common::Event &event) {
 	case SDL_JOYAXISMOTION:
 		return handleJoyAxisMotion(ev, event);
 
+	case SDL_VIDEOEXPOSE:
+		// HACK: Send a fake event, handled by SdlGraphicsManager
+		event.type = (Common::EventType)OSystem_SDL::kSdlEventExpose;
+		return true;
+
+	case SDL_VIDEORESIZE:
+		// HACK: Send a fake event, handled by OpenGLSdlGraphicsManager
+		event.type = (Common::EventType)OSystem_SDL::kSdlEventResize;
+		event.mouse.x = ev.resize.w;
+		event.mouse.y = ev.resize.h;
+		return true;
+
 	case SDL_QUIT:
 		event.type = Common::EVENT_QUIT;
 		return true;

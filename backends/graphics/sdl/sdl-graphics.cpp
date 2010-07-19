@@ -26,7 +26,8 @@
 #if defined(WIN32) || defined(UNIX) || defined(MACOSX)
 
 #include "backends/graphics/sdl/sdl-graphics.h"
-#include "common/system.h"
+#include "backends/events/sdl/sdl-events.h"
+#include "backends/platform/sdl/sdl.h"
 #include "common/config-manager.h"
 #include "common/mutex.h"
 #include "common/translation.h"
@@ -39,7 +40,6 @@
 #include "graphics/scaler.h"
 #include "graphics/scaler/aspect.h"
 #include "graphics/surface.h"
-#include "backends/events/sdl/sdl-events.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
@@ -2122,7 +2122,7 @@ void SdlGraphicsManager::toggleFullScreen() {
 }
 
 bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
-	switch (event.type) {
+	switch ((int)event.type) {
 	case Common::EVENT_KEYDOWN:
 		// Alt-Return and Alt-Enter toggle full screen mode
 		if (event.kbd.hasFlags(Common::KBD_ALT) &&
@@ -2172,9 +2172,11 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_MBUTTONUP:
 		adjustMouseEvent(event);
 		return !event.synthetic;
-	/*case SDL_VIDEOEXPOSE:
+
+	// HACK: Handle special SDL event
+	case OSystem_SDL::kSdlEventExpose:
 		_forceFull = true;
-		return false;*/
+		return false;
 	default:
 		break;
 	}
