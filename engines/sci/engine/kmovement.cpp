@@ -268,9 +268,12 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
 	if ((getSciVersion() >= SCI_VERSION_1_LATE)) {
-		// save last position into mover
-		writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
-		writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
+		// Mixed-Up Fairy Tales has no xLast/yLast selectors
+		if (SELECTOR(xLast) != -1) {
+			// save last position into mover
+			writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
+			writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
+		}
 	}
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
