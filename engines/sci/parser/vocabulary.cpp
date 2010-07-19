@@ -85,7 +85,9 @@ bool Vocabulary::loadParserWords() {
 		return false; // NOT critical: SCI1 games and some demos don't have one!
 	}
 
-	if (_vocabVersion == kVocabularySCI0) {
+	VocabularyVersions resourceType = _vocabVersion;
+
+	if (resourceType == kVocabularySCI0) {
 		if (resource->size < 26 * 2) {
 			warning("Invalid main vocabulary encountered: Much too small");
 			return false;
@@ -99,12 +101,12 @@ bool Vocabulary::loadParserWords() {
 		// If all of them were empty, we are definitely seeing SCI01 vocab in disguise (e.g. pq2 japanese)
 		if (alphabetNr == 26) {
 			warning("SCI0: Found SCI01 vocabulary in disguise");
-			_vocabVersion = kVocabularySCI1;
+			resourceType = kVocabularySCI1;
 		}
 	}
 
 	unsigned int seeker;
-	if (_vocabVersion == kVocabularySCI1)
+	if (resourceType == kVocabularySCI1)
 		seeker = 255 * 2; // vocab.900 starts with 255 16-bit pointers which we don't use
 	else
 		seeker = 26 * 2; // vocab.000 starts with 26 16-bit pointers which we don't use
@@ -122,7 +124,7 @@ bool Vocabulary::loadParserWords() {
 
 		currentwordpos = resource->data[seeker++]; // Parts of previous words may be re-used
 
-		if (_vocabVersion == kVocabularySCI1) {
+		if (resourceType == kVocabularySCI1) {
 			c = 1;
 			while (seeker < resource->size && currentwordpos < 255 && c) {
 				c = resource->data[seeker++];
