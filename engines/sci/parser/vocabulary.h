@@ -73,6 +73,8 @@ enum {
 	kParseNumber = 4
 };
 
+#define VOCAB_MAX_WORDLENGTH 256
+
 /* Anywords are ignored by the parser */
 #define VOCAB_CLASS_ANYWORD 0xff
 
@@ -116,7 +118,7 @@ struct ResultWord {
 
 typedef Common::List<ResultWord> ResultWordList;
 
-typedef Common::HashMap<Common::String, ResultWord, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> WordMap;
+typedef Common::HashMap<Common::String, ResultWord, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
 
 
 struct ParseRuleList;
