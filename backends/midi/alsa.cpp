@@ -290,7 +290,7 @@ MusicDevices AlsaMusicPlugin::getDevices() const {
 	MusicDevices devices;
 
 	snd_seq_t *seq;
-	if (snd_seq_open(&seq, "default", SND_SEQ_OPEN_DUPLEX, 0) < 0)
+	if (my_snd_seq_open(&seq) < 0)
 		return devices; // can't open sequencer
 
 	snd_seq_client_info_t *cinfo;
