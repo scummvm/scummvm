@@ -385,6 +385,8 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 			} else {
 				_music->updateAudioStreamTicker(musicSlot);
 			}
+		} else if (musicSlot->status == kSoundPaused) {
+			_music->updateAudioStreamTicker(musicSlot);
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
 		if (musicSlot->fadeSetVolume) {
