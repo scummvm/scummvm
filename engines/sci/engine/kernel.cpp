@@ -237,6 +237,7 @@ static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
+    { GID_KQ1,            -1,   989,  0,          "gameSound", "fade",           -1,    0, { 1,    0 } }, // gets called in several scenes (e.g. graham cracker) with 0:0
     { GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { 0,    0 } }, // floppy: during intro, parameter 4 is an object
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
@@ -340,7 +341,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI0,       7, MAP_CALL(DoSoundResumeAfterRestore), "",                     NULL },
     { SIG_SOUNDSCI0,       8, MAP_CALL(DoSoundMasterVolume),       "(i)",                  NULL },
     { SIG_SOUNDSCI0,       9, MAP_CALL(DoSoundUpdate),             "o",                    NULL },
-    { SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "o",                    NULL },
+    { SIG_SOUNDSCI0,      10, MAP_CALL(DoSoundFade),               "o",                    kDoSoundFade_workarounds },
     { SIG_SOUNDSCI0,      11, MAP_CALL(DoSoundGetPolyphony),       "",                     NULL },
     { SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
     { SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
