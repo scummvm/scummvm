@@ -269,7 +269,7 @@ struct SciTrackOriginReply {
 	int localCallOffset;
 };
 
-static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
+static SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
 	EngineState *state = g_sci->getEngineState();
 	ExecStack *lastCall = state->xs;
 	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
@@ -337,7 +337,11 @@ static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *w
 	trackOrigin->methodName = curMethodName;
 	trackOrigin->scriptNr = curScriptNr;
 	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
-	return make_reg(0xFFFF, 0xFFFF);
+
+	SciWorkaroundSolution noneFound;
+	noneFound.type = WORKAROUND_NONE;
+	noneFound.value = 0;
+	return noneFound;
 }
 
 static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
@@ -354,15 +358,15 @@ static bool validate_signedInteger(reg_t reg, int16 &integer) {
 	return true;
 }
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
-    { GID_QFG1VGA,       301,   928,  0,              "Blink", "init",           -1,    0, { 0,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
+    { GID_QFG1VGA,       301,   928,  0,              "Blink", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
-    { GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { 0,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
+    { GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -370,54 +374,57 @@ extern const char *opcodeNames[]; // from scriptdebug.cpp
 
 static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
 	SciTrackOriginReply originReply;
-	reg_t workaroundValue = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
-	if ((workaroundValue.segment == 0xFFFF) && (workaroundValue.offset == 0xFFFF))
+	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
+	if (solution.type == WORKAROUND_NONE)
 		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, localCall %x)", opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
-	return workaroundValue;
+	assert(solution.type == WORKAROUND_FAKE);
+	return make_reg(0, solution.value);
 }
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
+#define FAKE WORKAROUND_FAKE
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,     workaround
 static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
-    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  504, { 0,   0 } }, // checkers, like in hoyle 3
-    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { 0,   0 } }, // checkers, like in hoyle 3
-    { GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { 0,   0 } }, // when entering control menu, like in hoyle 3
-    { GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { 0,   0 } }, // when starting the game
-    { GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { 0,   0 } }, // sometimes when walk-clicking
-    { GID_GK2,            34,    11,  0,                   "", "export 10",      -1,    3, { 0,   0 } }, // called when the game starts
-    { GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { 0,   0 } }, // Gin Rummy / right when the game starts
-    { GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { 0,   0 } }, // Cribbage / during the game
-    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  504, { 0,   0 } }, // when starting checkers, first time a character says something
-    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  505, { 0,   0 } }, // when starting checkers, first time a character says something
-    { GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { 0,   0 } }, // when entering control menu
-    { GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-    { GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
-    { GID_JONES,           1,   232,  0,        "weekendText", "draw",        0x3d3,    0, { 0,   0 } }, // jones/cd only - gets called during the game
-    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_KQ5,            90,     0,  0,                   "", "export 29",      -1,    3, { 0,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
-    { GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { 0,   0 } }, // inside witch forest, when going to the room where the walking rock is
-    { GID_KQ6,            30,    30,  0,               "rats", "changeState",    -1,    0, { 0,   0 } }, // rats in the catacombs
-    { GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { 0,   0 } }, // going to island of the beast
-    { GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { 0,   0 } }, // going to boiling water trap on beast isle
-    { GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { 0,   0 } }, // when opening the controls window (save, load etc)
-    { GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { 0,   0 } }, // casino, playing game, increasing bet
-    { GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  200, { 0,   0 } }, // right after entering the 3 ethnic groups inside comedy club
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  201, { 0,   0 } }, // see above
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  202, { 0,   0 } }, // see above
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  203, { 0,   0 } }, // see above
-    { GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-    { GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",         -1,    0, { 0,   0 } }, // washcloth in inventory
-    { GID_LSL6,           -1,   928, -1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-    { GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { 0,   0 } }, // accessing the inventory
-    { GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
-    { GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
-    { GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
-    { GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { 0,   0 } }, // called when the game starts
-    { GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { 0,   0 } }, // called when pressing "Start game" in the main menu
+    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  504, { FAKE,   0 } }, // checkers, like in hoyle 3
+    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { FAKE,   0 } }, // checkers, like in hoyle 3
+    { GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { FAKE,   0 } }, // when entering control menu, like in hoyle 3
+    { GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { FAKE,   0 } }, // when starting the game
+    { GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
+    { GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
+    { GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { FAKE,   0 } }, // sometimes when walk-clicking
+    { GID_GK2,            34,    11,  0,                   "", "export 10",      -1,    3, { FAKE,   0 } }, // called when the game starts
+    { GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { FAKE,   0 } }, // Gin Rummy / right when the game starts
+    { GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { FAKE,   0 } }, // Cribbage / during the game
+    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  504, { FAKE,   0 } }, // when starting checkers, first time a character says something
+    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  505, { FAKE,   0 } }, // when starting checkers, first time a character says something
+    { GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { FAKE,   0 } }, // when entering control menu
+    { GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
+    { GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
+    { GID_JONES,           1,   232,  0,        "weekendText", "draw",        0x3d3,    0, { FAKE,   0 } }, // jones/cd only - gets called during the game
+    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { FAKE,   0 } }, // jones/ega&vga only - called when the game starts
+    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { FAKE,   0 } }, // jones/ega&vga only - called when the game starts
+    { GID_KQ5,            90,     0,  0,                   "", "export 29",      -1,    3, { FAKE,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
+    { GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
+    { GID_KQ6,            30,    30,  0,               "rats", "changeState",    -1,    0, { FAKE,   0 } }, // rats in the catacombs
+    { GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { FAKE,   0 } }, // going to island of the beast
+    { GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { FAKE,   0 } }, // going to boiling water trap on beast isle
+    { GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { FAKE,   0 } }, // when opening the controls window (save, load etc)
+    { GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
+    { GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { FAKE,   0 } }, // casino, playing game, increasing bet
+    { GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { FAKE,   0 } }, // age check room
+    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  200, { FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club
+    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  201, { FAKE,   0 } }, // see above
+    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  202, { FAKE,   0 } }, // see above
+    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  203, { FAKE,   0 } }, // see above
+    { GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { FAKE, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
+    { GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",         -1,    0, { FAKE,   0 } }, // washcloth in inventory
+    { GID_LSL6,           -1,   928, -1,           "Narrator", "startText",      -1,    0, { FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
+    { GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { FAKE,   0 } }, // accessing the inventory
+    { GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
+    { GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
+    { GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { FAKE,   1 } }, // sq4cd: method returns this to the caller
+    { GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { FAKE,   0 } }, // called when the game starts
+    { GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { FAKE,   0 } }, // called when pressing "Start game" in the main menu
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -429,9 +436,11 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				// Uninitialized read on a temp
 				//  We need to find correct replacements for each situation manually
 				SciTrackOriginReply originReply;
-				r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
-				if ((r[index].segment == 0xFFFF) && (r[index].offset == 0xFFFF))
+				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
+				if (solution.type == WORKAROUND_NONE)
 					error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				assert(solution.type == WORKAROUND_FAKE);
+				r[index] = make_reg(0, solution.value);
 				break;
 			}
 			case VAR_PARAM:
@@ -879,20 +888,18 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
 		SciTrackOriginReply originReply;
-		reg_t workaround;
-		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
-		if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
+		switch (solution.type) {
+		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
 			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
-		}
-		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-		switch (workaround.segment) {
-		case 0: // don't do kernel call, leave acc alone
-			return;
-		case 1: // call kernel anyway
 			break;
-		case 2: // don't do kernel call, fake acc
-			s->r_acc = make_reg(0, workaround.offset);
+		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
+			return;
+		case WORKAROUND_STILLCALL: // call kernel anyway
+			break;
+		case WORKAROUND_FAKE: // don't do kernel call, fake acc
+			s->r_acc = make_reg(0, solution.value);
 			return;
 		default:
 			error("unknown workaround type");
@@ -920,9 +927,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
 			SciTrackOriginReply originReply;
-			reg_t workaround;
-			workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
-			if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
+			switch (solution.type) {
+			case WORKAROUND_NONE: {
 				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
@@ -930,15 +937,14 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 				}
 				error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
-			}
-			// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-			switch (workaround.segment) {
-			case 0: // don't do kernel call, leave acc alone
-				return;
-			case 1: // call kernel anyway
 				break;
-			case 2: // don't do kernel call, fake acc
-				s->r_acc = make_reg(0, workaround.offset);
+			}
+			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
+				return;
+			case WORKAROUND_STILLCALL: // call kernel anyway
+				break;
+			case WORKAROUND_FAKE: // don't do kernel call, fake acc
+				s->r_acc = make_reg(0, solution.value);
 				return;
 			default:
 				error("unknown workaround type");

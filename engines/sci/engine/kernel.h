@@ -120,6 +120,18 @@ enum {
 /* Generic description: */
 typedef reg_t KernelFunctionCall(EngineState *s, int argc, reg_t *argv);
 
+enum SciWorkaroundType {
+	WORKAROUND_NONE,      // only used by terminator or when no workaround was found
+	WORKAROUND_IGNORE,    // ignore kernel call
+	WORKAROUND_STILLCALL, // still do kernel call
+	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
+};
+
+struct SciWorkaroundSolution {
+	SciWorkaroundType type;
+	uint16 value;
+};
+
 struct SciWorkaroundEntry {
 	SciGameId gameId;
 	int roomNr;
@@ -129,10 +141,10 @@ struct SciWorkaroundEntry {
 	const char *methodName;
 	int localCallOffset;
 	int index;
-	reg_t newValue;
+	SciWorkaroundSolution newValue;
 };
 
-#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { 0, 0 } }
+#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { WORKAROUND_NONE, 0 } }
 
 struct KernelSubFunction {
 	KernelFunctionCall *function;
