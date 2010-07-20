@@ -226,9 +226,9 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	}
 
 #ifdef USE_RGB_COLOR
-	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
+	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged || _transactionDetails.needHotswap) {
 #else
-	if (_transactionDetails.sizeChanged) {
+	if (_transactionDetails.sizeChanged || _transactionDetails.needHotswap) {
 #endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {
@@ -242,20 +242,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 
 			_videoMode.setup = true;
 			_screenChangeCount++;
-		}
-	} else if (_transactionDetails.needHotswap) {
-		//setGraphicsModeIntern();
-		if (!hotswapGFXMode()) {
-			if (_oldVideoMode.setup) {
-				_transactionMode = kTransactionRollback;
-				errors |= endGFXTransaction();
-			}
-		} else {
-			_videoMode.setup = true;
-			_screenChangeCount++;
-
-			if (_transactionDetails.needUpdatescreen)
-				internUpdateScreen();
 		}
 	} else if (_transactionDetails.needUpdatescreen) {
 		//setGraphicsModeIntern();
@@ -365,13 +351,16 @@ void OpenGLGraphicsManager::clearOverlay() {
 }
 
 void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-	const Graphics::Surface* surface = _overlayTexture->getSurface();
+	const Graphics::Surface *surface = _overlayTexture->getSurface();
 	assert(surface->bytesPerPixel == sizeof(buf[0]));
-	int h = surface->h;
+	uint w = _overlayTexture->getWidth();
+	uint h = _overlayTexture->getHeight();
+	const byte *src = (byte *)surface->pixels;
 	do {
-		//memcpy(buf, surface->pixels, surface->w * sizeof(buf[0]));
-		memset(buf, 0, surface->w * sizeof(buf[0]));
+		//memset(buf, 0, w * sizeof(buf[0]));
+		memcpy(buf, src, w * sizeof(buf[0]));
 		buf += pitch;
+		src += surface->pitch;
 	} while (--h);
 }
 
@@ -600,19 +589,19 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 		GLenum type;
 		getGLPixelFormat(_screenFormat, bpp, format, type);
 		_gameTexture = new GLTexture(bpp, format, type);
-	} else
+	} else if (_transactionDetails.newContext)
 		_gameTexture->refresh();
 
 	_overlayFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
 
 	if (!_overlayTexture)
 		_overlayTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
-	else
+	else if (_transactionDetails.newContext)
 		_overlayTexture->refresh();
 
 	if (!_cursorTexture)
 		_cursorTexture = new GLTexture(4, GL_RGBA, GL_UNSIGNED_BYTE);
-	else
+	else if (_transactionDetails.newContext)
 		_cursorTexture->refresh();
 
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
@@ -626,10 +615,6 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 
 void OpenGLGraphicsManager::unloadGFXMode() {
 
-}
-
-bool OpenGLGraphicsManager::hotswapGFXMode() {
-	return false;
 }
 
 void OpenGLGraphicsManager::setScale(int newScale) {

@@ -116,6 +116,7 @@ protected:
 		bool sizeChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
+		bool newContext;
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
@@ -147,7 +148,6 @@ protected:
 	virtual void internUpdateScreen();
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
-	virtual bool hotswapGFXMode();
 
 	virtual void setScale(int newScale);
 

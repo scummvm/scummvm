@@ -55,7 +55,6 @@ protected:
 
 	virtual bool loadGFXMode();
 	virtual void unloadGFXMode();
-	virtual bool hotswapGFXMode();
 
 	virtual void setFullscreenMode(bool enable);
 

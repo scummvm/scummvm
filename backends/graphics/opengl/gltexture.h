@@ -65,13 +65,13 @@ public:
 	virtual void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
 		GLuint w, GLuint h);
 
-	virtual void drawTexture() { drawTexture(0, 0, _surface.w, _surface.h); }
+	virtual void drawTexture() { drawTexture(0, 0, _realWidth, _realHeight); }
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
 	Graphics::Surface *getSurface() { return &_surface; }
 
-	GLuint getWidth() const { return _surface.w; }
-	GLuint getHeight() const { return _surface.h; }
+	GLuint getWidth() const { return _realWidth; }
+	GLuint getHeight() const { return _realHeight; }
 	GLuint getTextureName() const { return _textureName; }
 
 protected:
@@ -80,7 +80,10 @@ protected:
 	const GLenum _glType;
 
 	Graphics::Surface _surface;
+	GLuint _realWidth;
+	GLuint _realHeight;
 	GLuint _textureName;
 	GLuint _textureWidth;
 	GLuint _textureHeight;
+	bool _refresh;
 };

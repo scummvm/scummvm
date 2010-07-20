@@ -139,6 +139,35 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	if (_videoMode.fullscreen) {
+		SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
+		const SDL_Rect *bestMode = NULL;
+		uint bestMetric = (uint)-1;
+		while (const SDL_Rect *mode = *availableModes++) {
+			if (mode->w < _videoMode.hardwareWidth)
+				continue;
+			if (mode->h < _videoMode.hardwareHeight)
+				continue;
+
+			uint metric = mode->w * mode->h - _videoMode.hardwareWidth * _videoMode.hardwareHeight;
+			if (metric > bestMetric)
+				continue;
+
+			bestMode = mode;
+			bestMetric = metric;
+		}
+
+		if (bestMode) {
+			_videoMode.hardwareWidth = bestMode->w;
+			_videoMode.hardwareHeight = bestMode->h;
+		} else {
+			_videoMode.fullscreen = false;
+		}
+	}
+
+	if (_oldVideoMode.fullscreen != _videoMode.fullscreen)
+		_transactionDetails.newContext = true;
+
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
 	);
@@ -162,10 +191,6 @@ void OpenGLSdlGraphicsManager::unloadGFXMode() {
 		SDL_FreeSurface(_hwscreen);
 		_hwscreen = NULL;
 	}
-}
-
-bool OpenGLSdlGraphicsManager::hotswapGFXMode() {
-	return false;
 }
 
 void OpenGLSdlGraphicsManager::internUpdateScreen() {
@@ -216,7 +241,13 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 }
 
 void OpenGLSdlGraphicsManager::setFullscreenMode(bool enable) {
+	if (_oldVideoMode.setup && _oldVideoMode.fullscreen == enable)
+		return;
 
+	if (_transactionMode == kTransactionActive) {
+		_videoMode.fullscreen = enable;
+		_transactionDetails.needHotswap = true;
+	}
 }
 
 bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
