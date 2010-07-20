@@ -250,20 +250,9 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 }
 
 // SCI0 only command
-reg_t SoundCommandParser::kDoSoundResume(int argc, reg_t *argv, reg_t acc) {
-	// this doesn't seem to do what we think it's doing
-	//  it's called with no arguments at all (just restore a game in qfg1)
-	return acc;
-	reg_t obj = argv[0];
-
-	MusicEntry *musicSlot = _music->getSlot(obj);
-	if (!musicSlot) {
-		warning("kDoSound(resume):: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return acc;
-	}
-
-	writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
-	_music->soundResume(musicSlot);
+//  It's called right after restoring a game - it's responsible to kick off playing music again
+//  we don't need this at all, so we don't do anything here
+reg_t SoundCommandParser::kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_t acc) {
 	return acc;
 }
 
