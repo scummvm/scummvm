@@ -30,7 +30,8 @@
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
-	_hwscreen(0) {
+	_hwscreen(0),
+	_screenResized(false) {
 
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
@@ -125,8 +126,11 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
-	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-	_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+	if (!_screenResized) {
+		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+	}
+	_screenResized = false;
 
 	// Setup OpenGL attributes for SDL
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -279,9 +283,12 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		break;*/
 	// HACK: Handle special SDL event
 	case OSystem_SDL::kSdlEventResize:
-		_videoMode.hardwareWidth = event.mouse.x;
-		_videoMode.hardwareHeight = event.mouse.y;
-		initGL();
+		beginGFXTransaction();
+			_videoMode.hardwareWidth = event.mouse.x;
+			_videoMode.hardwareHeight = event.mouse.y;
+			_screenResized = true;
+			_transactionDetails.sizeChanged = true;
+		endGFXTransaction();
 		return true;
 
 	default:

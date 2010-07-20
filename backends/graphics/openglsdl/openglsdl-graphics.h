@@ -65,6 +65,8 @@ protected:
 
 	// Hardware screen
 	SDL_Surface *_hwscreen;
+
+	bool _screenResized;
 };
 
 #endif
