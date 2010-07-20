@@ -426,6 +426,7 @@ static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { FAKE,   1 } }, // sq4cd: method returns this to the caller
     { GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { FAKE,   0 } }, // called when the game starts
     { GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { FAKE,   0 } }, // called when pressing "Start game" in the main menu
+    { GID_SQ6,            -1, 64964,  0,              "DPath", "init",           -1,    1, { FAKE,   0 } }, // during the game
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

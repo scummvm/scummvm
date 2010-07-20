@@ -447,6 +447,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
 
 //    version,         subId, function-mapping,                    signature,              workarounds
 static const SciKernelMapSubEntry kPalVary_subops[] = {
+    { SIG_SCI21,           0, MAP_CALL(PalVaryInit),               "ii(i)(i)(i)",          NULL },
     { SIG_SCIALL,          0, MAP_CALL(PalVaryInit),               "ii(i)(i)",             NULL },
     { SIG_SCIALL,          1, MAP_CALL(PalVaryReverse),            "(i)(i)(i)",            NULL },
     { SIG_SCIALL,          2, MAP_CALL(PalVaryGetCurrentStep),     "",                     NULL },
@@ -521,7 +522,8 @@ static const SciKernelMapSubEntry kList_subops[] = {
     // be something like ListAt instead... If we swap the two subops though,
     // Torin demo crashes complaining that it tried to send to a non-object,
     // therefore the semantics might be different here (signature was l[o0])
-    { SIG_SCI21,          18, MAP_CALL(StubNull),                  "li",                   NULL },
+	// In SQ6 object is passed right when skipping the intro
+    { SIG_SCI21,          18, MAP_CALL(StubNull),                  "l[io]",                NULL },
     { SIG_SCI21,          19, MAP_CALL(ListEachElementDo),         "li(.*)",               NULL },
     { SIG_SCI21,          20, MAP_CALL(ListFirstTrue),             "li(.*)",               NULL },
     { SIG_SCI21,          21, MAP_CALL(ListAllTrue),               "li(.*)",               NULL },
