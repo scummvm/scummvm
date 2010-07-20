@@ -243,6 +243,12 @@ static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
+static const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
+    { GID_SQ1,            43,    43,  0,        "someoneDied", "changeState",    -1,    0, { 1,    0 } }, // happens when ordering beer, gets called with 1 extra parameter
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
 static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
     { GID_LSL6,           -1,    85,  0,          "rScroller", "hide",           -1,    0, { 1,    0 } }, // happens when restoring (sometimes), same as the one below
     { GID_LSL6,           -1,    85,  0,          "lScroller", "hide",           -1,    0, { 1,    0 } }, // happens when restoring (sometimes), same as the one below
@@ -422,7 +428,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     { SIG_SCI32,           1, MAP_CALL(StubNull),                  "",                     NULL }, // called by gk1 sci32 right at the start
     { SIG_SCIALL,          2, MAP_CALL(GraphGetColorCount),        "",                     NULL },
     // 3 - set palette via resource
-    { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          NULL },
+    { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          kGraphDrawLine_workarounds },
     // 5 - nop
     // 6 - draw pattern
     { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                NULL },
