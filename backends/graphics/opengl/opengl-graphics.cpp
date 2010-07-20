@@ -637,9 +637,9 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 			//	newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
 		}
 		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-			newEvent.mouse.x /= (float)_videoMode.hardwareWidth / _videoMode.overlayWidth;
+			newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
 		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-			newEvent.mouse.y /= (float)_videoMode.hardwareHeight / _videoMode.overlayHeight;
+			newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
 		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
