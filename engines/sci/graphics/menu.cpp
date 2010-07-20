@@ -467,8 +467,10 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		_paint16->bitsShow(_ports->_menuRect);
 		_barSaveHandle = NULL_REG;
 	}
-	if (_oldPort)
+	if (_oldPort) {
 		_ports->setPort(_oldPort);
+		_oldPort = NULL;
+	}
 
 	if ((itemEntry) || (forceClaimed))
 		writeSelector(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));
