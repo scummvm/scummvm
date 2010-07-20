@@ -527,7 +527,7 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 
 void OpenGLGraphicsManager::internUpdateScreen() {
 	// Clear the screen
-	CHECK_GL_ERROR( glClear(GL_COLOR_BUFFER_BIT) );
+	glClear(GL_COLOR_BUFFER_BIT); CHECK_GL_ERROR();
 
 	// Draw the game screen
 	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
@@ -550,33 +550,33 @@ void OpenGLGraphicsManager::initGL() {
 	GLTexture::initGLExtensions();
 
 	// Disable 3D properties
-	CHECK_GL_ERROR( glDisable(GL_CULL_FACE) );
-	CHECK_GL_ERROR( glDisable(GL_DEPTH_TEST) );
-	CHECK_GL_ERROR( glDisable(GL_LIGHTING) );
-	CHECK_GL_ERROR( glDisable(GL_FOG) );
-	CHECK_GL_ERROR( glDisable(GL_DITHER) );
-	CHECK_GL_ERROR( glShadeModel(GL_FLAT) );
-	CHECK_GL_ERROR( glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST) );
+	glDisable(GL_CULL_FACE); CHECK_GL_ERROR();
+	glDisable(GL_DEPTH_TEST); CHECK_GL_ERROR();
+	glDisable(GL_LIGHTING); CHECK_GL_ERROR();
+	glDisable(GL_FOG); CHECK_GL_ERROR();
+	glDisable(GL_DITHER); CHECK_GL_ERROR();
+	glShadeModel(GL_FLAT); CHECK_GL_ERROR();
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST); CHECK_GL_ERROR();
 
 	// Setup alpha blend (For overlay and cursor)
-	CHECK_GL_ERROR( glEnable(GL_BLEND) );
-	CHECK_GL_ERROR( glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA) );
+	glEnable(GL_BLEND); CHECK_GL_ERROR();
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA); CHECK_GL_ERROR();
 
 	// Enable rendering with vertex and coord arrays
-	CHECK_GL_ERROR( glEnableClientState(GL_VERTEX_ARRAY) );
-	CHECK_GL_ERROR( glEnableClientState(GL_TEXTURE_COORD_ARRAY) );
+	glEnableClientState(GL_VERTEX_ARRAY); CHECK_GL_ERROR();
+	glEnableClientState(GL_TEXTURE_COORD_ARRAY); CHECK_GL_ERROR();
 
-	CHECK_GL_ERROR( glEnable(GL_TEXTURE_2D) );
+	glEnable(GL_TEXTURE_2D); CHECK_GL_ERROR();
 
 	// Setup the GL viewport
-	CHECK_GL_ERROR( glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight) );
+	glViewport(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight); CHECK_GL_ERROR();
 
 	// Setup coordinates system
-	CHECK_GL_ERROR( glMatrixMode(GL_PROJECTION) );
-	CHECK_GL_ERROR( glLoadIdentity() );
-	CHECK_GL_ERROR( glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1) );
-	CHECK_GL_ERROR( glMatrixMode(GL_MODELVIEW) );
-	CHECK_GL_ERROR( glLoadIdentity() );
+	glMatrixMode(GL_PROJECTION); CHECK_GL_ERROR();
+	glLoadIdentity(); CHECK_GL_ERROR();
+	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
+	glMatrixMode(GL_MODELVIEW); CHECK_GL_ERROR();
+	glLoadIdentity(); CHECK_GL_ERROR();
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {

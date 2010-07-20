@@ -25,13 +25,13 @@
 
 #if !defined(DEBUG)
 
-// If not in debug, just do the GL call
-#define CHECK_GL_ERROR(call) (call)
+// If not in debug, do nothing
+#define CHECK_GL_ERROR() do {} while (false)
 
 #else
 
 // If in debug, check for an error after a GL call
-#define CHECK_GL_ERROR(call) ((call), checkGlError(__FILE__, __LINE__))
+#define CHECK_GL_ERROR() checkGlError(__FILE__, __LINE__)
 
 void checkGlError(const char *file, int line);
 
