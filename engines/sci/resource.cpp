@@ -1277,7 +1277,7 @@ void ResourceManager::readResourcePatches() {
 	const char *szResType;
 	ResourceSource *psrcPatch;
 
-	for (int i = kResourceTypeView; i <= kResourceTypeInvalid; ++i) {
+	for (int i = kResourceTypeView; i < kResourceTypeInvalid; ++i) {
 		// Ignore the types that can't be patched (and Robot/VMD is handled externally for now)
 		if (!s_resourceTypeSuffixes[i] || i == kResourceTypeRobot || i == kResourceTypeVMD)
 			continue;
