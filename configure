@@ -2256,12 +2256,13 @@ int main(void) {
 	char *x = readline("");
 }
 EOF
-		cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		cc_check_no_clean $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		if test "$_readline" = no ; then
 			_READLINE_LIBS="-lreadline -ltermcap"
-			cc_check $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+			cc_check_no_clean $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
 		fi
 	fi
+	cc_check_clean
 	echo "$_readline"
 else
 	_readline=no
