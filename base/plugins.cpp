@@ -172,7 +172,7 @@ public:
 		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 		LINK_PLUGIN(WINDOWS)
 		#endif
-		#if defined(UNIX) && defined(USE_ALSA)
+		#if defined(USE_ALSA)
 		LINK_PLUGIN(ALSA)
 		#endif
 		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__) && !defined(__ANDROID__)

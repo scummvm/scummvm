@@ -24,7 +24,7 @@
 
 #include "common/scummsys.h"
 
-#if defined(UNIX) && defined(USE_ALSA)
+#if defined(USE_ALSA)
 
 #include "common/config-manager.h"
 #include "common/util.h"
