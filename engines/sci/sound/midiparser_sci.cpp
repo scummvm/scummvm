@@ -475,7 +475,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
 				//  get immediately removed, so we currently filter it.
 				// Sierra SCI ignores them as well at that time
-				if (_position._play_tick) {
+				if ((_position._play_tick) || (info.delta)) {
 					_signalSet = true;
 					_signalToSet = info.basic.param1;
 				}
