@@ -744,9 +744,17 @@ uint Kernel::getSelectorNamesSize() const {
 	return _selectorNames.size();
 }
 
-const Common::String &Kernel::getSelectorName(uint selector) const {
-	if (selector >= _selectorNames.size())
-		return _invalid;
+const Common::String &Kernel::getSelectorName(uint selector) {
+	if (selector >= _selectorNames.size()) {
+		// This should only occur in games w/o a selector-table
+		//  We need this for proper workaround tables
+		// TODO: maybe check, if there is a fixed selector-table and error() out in that case
+		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; loopSelector++) {
+			Common::String newSelectorName;
+			newSelectorName = newSelectorName.printf("<noname %d>", loopSelector);
+			_selectorNames.push_back(newSelectorName);
+		}
+	}
 	return _selectorNames[selector];
 }
 

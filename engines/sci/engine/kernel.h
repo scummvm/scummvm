@@ -160,7 +160,7 @@ public:
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
-	const Common::String &getSelectorName(uint selector) const;
+	const Common::String &getSelectorName(uint selector);
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;
