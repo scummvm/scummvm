@@ -238,7 +238,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	xstack->sp += argc + 2;
 	xstack->fp += argc + 2;
 
-	run_vm(s, false); // Start a new vm
+	run_vm(s); // Start a new vm
 }
 
 SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {

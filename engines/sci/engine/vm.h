@@ -315,9 +315,8 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
  * It executes the code on s->heap[pc] until it hits a 'ret' operation
  * while (stack_base == stack_pos). Requires s to be set up correctly.
  * @param[in] s			The state to use
- * @param[in] restoring	true if s has just been restored, false otherwise
  */
-void run_vm(EngineState *s, bool restoring);
+void run_vm(EngineState *s);
 
 /**
  * Debugger functionality

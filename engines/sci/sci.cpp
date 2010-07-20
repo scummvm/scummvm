@@ -410,7 +410,7 @@ void SciEngine::runGame() {
 
 	do {
 		_gamestate->_executionStackPosChanged = false;
-		run_vm(_gamestate, (_gamestate->abortScriptProcessing == kAbortLoadGame));
+		run_vm(_gamestate);
 		exitGame();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {

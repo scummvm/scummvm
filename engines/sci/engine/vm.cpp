@@ -1053,7 +1053,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
-void run_vm(EngineState *s, bool restoring) {
+void run_vm(EngineState *s) {
 	assert(s);
 
 	int temp;
@@ -1074,7 +1074,8 @@ void run_vm(EngineState *s, bool restoring) {
 	if (!local_script)
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
 
-	if (!restoring)
+	// TODO: Revise this
+	if (s->abortScriptProcessing != kAbortLoadGame)
 		s->executionStackBase = s->_executionStack.size() - 1;
 
 	s->variablesSegment[VAR_TEMP] = s->variablesSegment[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
