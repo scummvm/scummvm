@@ -1869,6 +1869,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
+
+	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (English/French/German/Spanish)
+	// Executable scanning reports "2.100.002"
+	{"mothergoose", "", {
+		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
+		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
 #endif // ENABLE_SCI32
 
 	// Ms. Astro Chicken - English DOS
