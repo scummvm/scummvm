@@ -97,16 +97,18 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 	int a = 0;
 	unsigned int relocation = 0;
 
+	// Loop over relocation entries
 	for (int i = 0; i < cnt; i++) {
 
+		// Get the symbol this relocation entry is referring to
 		Elf32_Sym *sym = (Elf32_Sym *)(_symtab) + (REL_INDEX(rel[i].r_info));
 
+		// Get the target instruction in the code
 		unsigned int *target = (unsigned int *)((char *)relSegment + rel[i].r_offset);
 
 		unsigned int origTarget = *target;	// Save for debugging
 
-		//DBG("%d, ", REL_TYPE(rel[i].r_info));
-
+		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
 
 		case R_ARM_ABS32:
@@ -148,6 +150,48 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 				*target = relocation;
 
 				DBG("R_ARM_THM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+			}
+			break;
+
+		case R_ARM_CALL:
+			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
+				a = *target & 0x00ffffff;
+				a = (a << 8) >> 6;				// Calculate addend by sign-extending (insn[23:0] << 2)
+				relocation = a + (Elf32_Addr)_segment;  // Shift by main offset
+
+				/*TODO:
+				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
+				 * 	relocation |= 1;
+				 * }
+				 */
+
+				relocation = relocation - rel[i].r_offset;
+				relocation = relocation >> 2;
+				*target &= 0xff000000;					// Clean lower 26 target bits
+				*target |= (relocation & 0x00ffffff);
+
+				DBG("R_ARM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+			}
+			break;
+
+		case R_ARM_JUMP24:
+			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
+				a = *target & 0x00ffffff;
+				a = (a << 8) >> 6;				// Calculate addend by sign-extending (insn[23:0] << 2)
+				relocation = a + (Elf32_Addr)_segment;  // Shift by main offset
+
+				/*TODO:
+				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
+				 * 	relocation |= 1;
+				 * }
+				 */
+
+				relocation = relocation - rel[i].r_offset;
+				relocation = relocation >> 2;
+				*target &= 0xff000000;					// Clean lower 26 target bits
+				*target |= (relocation & 0x00ffffff);
+
+				DBG("R_ARM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
 			}
 			break;
 
@@ -365,11 +409,16 @@ bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr
 		Elf32_Shdr *curShdr = &(shdr[i]);
 		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
 
-		if (curShdr->sh_type == SHT_REL && 						// Check for a relocation section
+		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
 		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		// Check for proper relocation size
 		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
 		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
 		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
+
+			if (curShdr->sh_type == SHT_RELA) {
+					seterror("RELA entries not supported for ARM yet!\n");
+					return false;
+			}
 
 			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
 				return false;
