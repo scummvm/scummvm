@@ -364,7 +364,7 @@ static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call, index,   replace
+//    gameID,           room,script,lvl,          object-name, method-name,    call, index,            workaround
 static const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
     { GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
     SCI_WORKAROUNDENTRY_TERMINATOR
@@ -383,7 +383,7 @@ static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaround
 
 #define FAKE WORKAROUND_FAKE
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,     workaround
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  504, { FAKE,   0 } }, // checkers, like in hoyle 3
     { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { FAKE,   0 } }, // checkers, like in hoyle 3
