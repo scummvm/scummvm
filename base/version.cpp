@@ -86,7 +86,7 @@ const char *gScummVMFeatures = ""
 	"ALSA "
 #endif
 
-#ifdef USE_ALSA
+#ifdef USE_SEQ_MIDI
 	"SEQ "
 #endif
 

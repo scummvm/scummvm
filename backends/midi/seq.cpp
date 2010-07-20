@@ -28,6 +28,8 @@
  *    both the QuickTime support and (vkeybd http://www.alsa-project.org/~iwai/alsa.html)
  */
 
+#include "common/scummsys.h"
+
 #if defined(USE_SEQ_MIDI)
 
 #include "common/util.h"
