@@ -546,6 +546,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					//  This picture includes garbage data, first a set pattern w/o parameter and then short pattern
 					//  I guess that garbage is a left over from the sq4-floppy (sci1) to sq4-cd (sci1.1) conversion
 					switch (_resourceId) {
+					case 35:
 					case 381:
 					case 376:
 						return;
