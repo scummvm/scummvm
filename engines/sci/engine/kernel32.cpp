@@ -859,6 +859,7 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
 
 	// Get the object's plane
+#if 0
 	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
 	if (!planeObject.isNull()) {
 		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
@@ -879,7 +880,7 @@ reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
 
 		nsRect.translate(planeLeft, planeTop);
 	}
-
+#endif
 	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
 
 	return make_reg(0, nsRect.contains(x, y));

@@ -101,14 +101,11 @@ void GfxCoordAdjuster32::kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObje
 	uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
 	uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
 
-	planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
-	planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+	y = ((y * planeResY) / g_sci->_gfxScreen->getHeight());
+	x = ((x * planeResX) / g_sci->_gfxScreen->getWidth());
 
 	y -= planeTop;
 	x -= planeLeft;
-
-	y = ((y * planeResY) / g_sci->_gfxScreen->getHeight());
-	x = ((x * planeResX) / g_sci->_gfxScreen->getWidth());
 }
 void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject) {
 	EngineState *s = g_sci->getEngineState();
@@ -117,14 +114,11 @@ void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObje
 	uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
 	uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
 
-	planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
-	planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+	x += planeLeft;
+	y += planeTop;
 
 	y = ((y * g_sci->_gfxScreen->getHeight()) / planeResY);
 	x = ((x * g_sci->_gfxScreen->getWidth()) / planeResX);
-
-	x += planeLeft;
-	y += planeTop;
 }
 
 Common::Rect GfxCoordAdjuster32::onControl(Common::Rect rect) {

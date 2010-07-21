@@ -215,7 +215,7 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t obj = argv[0];
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
@@ -234,7 +234,7 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t obj = argv[0];
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
