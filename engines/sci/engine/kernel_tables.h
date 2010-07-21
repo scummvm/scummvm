@@ -238,7 +238,7 @@ static const SciKernelMapSubEntry kFileIO_subops[] = {
     { SIG_SCI32,          14, MAP_CALL(FileIOWriteByte),           "ii",                   NULL },
     { SIG_SCI32,          15, MAP_CALL(FileIOReadWord),            "i",                    NULL },
     { SIG_SCI32,          16, MAP_CALL(FileIOWriteWord),           "ii",                   NULL },
-    { SIG_SCI32,          19, MAP_CALL(Stub),                      "",                     NULL }, // for Torin demo
+    { SIG_SCI32,          19, MAP_CALL(Stub),                      "r",                    NULL }, // for Torin / Torin demo
 #endif
     SCI_SUBOPENTRY_TERMINATOR
 };
