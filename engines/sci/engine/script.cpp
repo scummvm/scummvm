@@ -434,16 +434,17 @@ void Script::initialiseClasses(SegManager *segMan) {
 		}
 
 		if (isClass) {
-			// WORKAROUND for an invalid species access in the demo of LSL2
+			// WORKAROUNDs for off-by-one script errors
 			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
-			// WORKAROUND for an invalid species access in LSL3 script 500
 			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500 && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93 && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
-						  species, species, segMan->classTableSize(), _nr);
+				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
+						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			SegmentId segmentId = segMan->getScriptSegment(_nr);
 			segMan->setClassOffset(species, make_reg(segmentId, classpos));
