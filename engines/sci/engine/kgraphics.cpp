@@ -427,6 +427,11 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 	celWidth = g_sci->_gfxCache->kernelViewGetCelWidth(viewId, loopNo, celNo);
 
+	if (getSciVersion() == SCI_VERSION_2_1)
+		celWidth = celWidth / 2; // half the width returned here, fixes lsl6 action icon placements
+	// the scripts work low-res and add the returned value from here to the coordinate
+	// TODO: check, if this is actually right. I'm slightly confused by this, but even GK1CD has some idivs in this
+	//  code, so it seems plausible.
 	return make_reg(0, celWidth);
 }
 
