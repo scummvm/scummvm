@@ -194,7 +194,7 @@ void PrisonerEngine::updateDialog(int16 x, int16 y) {
 	if (_dialogActiveKeywordsCount > 1) {
 		int16 textX = _dialogRectX1 + _dialogXAdd;
 		int16 textY = _dialogRectY1 + _dialogYAdd + _dialogFontHeight - getActiveFontUnk2();
-		int16 currKeyword = -1, currKeywordY;
+		int16 currKeyword = -1, currKeywordY = -1;
 		if (x > _dialogRectX1 && y > _dialogRectY1 && x < _dialogRectX2 && y < _dialogRectY2)
 			currKeyword = CLIP((y - _dialogRectY1 - _dialogYAdd) / _dialogFontHeight, 0, _dialogActiveKeywordsCount - 1);
 		for (int16 i = 0; i < _dialogActiveKeywordsCount; i++) {

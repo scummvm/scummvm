@@ -314,7 +314,7 @@ void MuxPlayer::decodeFrame(byte *buf1, byte *buf2, byte *dest, uint32 bufSize1,
 	byte *dst = dest;
 	byte *buf2p = buf2, *buf2e = buf2 + bufSize2;
 	bool whichNibble = true;
-	uint16 copyLen, copyLenTmp;
+	uint16 copyLen, copyLenTmp = 0;
 
 	while (buf2p < buf2e) {
 		if (src.readBit() == 0) {

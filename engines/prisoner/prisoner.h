@@ -628,7 +628,7 @@ public:
 	bool _cameraFocusActor;
 	int16 _cameraFollowsActorIndex;
 	bool _backgroundCameraLocked;
-	bool _backgroundFlag;
+	int16 _backgroundFlag;
 
 	/* Palette */
 	bool _needToUpdatePalette;
