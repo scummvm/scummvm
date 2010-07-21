@@ -441,6 +441,8 @@ void Script::initialiseClasses(SegManager *segMan) {
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
 			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93 && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99 && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
 				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
