@@ -1039,12 +1039,21 @@ uint32 AGOSEngine::getTime() const {
 }
 
 void AGOSEngine::syncSoundSettings() {
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	// Sync the engine with the config manager
+	int soundVolumeMusic = ConfMan.getInt("music_volume");
+	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	int soundVolumeSpeech = ConfMan.getInt("speech_volume");
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
 
 	if (_midiEnabled)
-		_midi.setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
+		_midi.setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
 }
 
 } // End of namespace AGOS
