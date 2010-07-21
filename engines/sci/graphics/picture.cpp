@@ -79,7 +79,7 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 #ifdef ENABLE_SCI32
 	case 0x0e: // SCI32 VGA picture
 		_resourceType = SCI_PICTURE_TYPE_SCI32;
-		drawSci32Vga();
+		//drawSci32Vga();
 		break;
 #endif
 	default:
@@ -131,7 +131,7 @@ int16 GfxPicture::getSci32celCount() {
 	return inbuffer[2];
 }
 
-void GfxPicture::drawSci32Vga(int16 celNo) {
+void GfxPicture::drawSci32Vga(int16 celNo, uint16 planeResY, uint16 planeResX) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
@@ -162,6 +162,11 @@ void GfxPicture::drawSci32Vga(int16 celNo) {
 		cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
 		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
+
+		// This is really weird, adjusting picture data to plane resolution - why...
+		cel_relYpos = ((cel_relYpos * g_sci->_gfxScreen->getHeight()) / planeResY);
+		cel_relXpos = ((cel_relXpos * g_sci->_gfxScreen->getWidth()) / planeResX);
+
 		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos);
 		cel_headerPos += 42;
 		celCount--;

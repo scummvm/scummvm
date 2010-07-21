@@ -230,7 +230,7 @@ void GfxFrameout::kernelFrameout() {
 			itemEntry = *listIterator;
 			if (planePicture) {
 				while ((planePictureCel <= itemEntry->priority) && (planePictureCel < planePictureCels)) {
-					planePicture->drawSci32Vga(planePictureCel);
+					planePicture->drawSci32Vga(planePictureCel, planeResY, planeResX);
 					planePictureCel++;
 				}
 			}
@@ -302,7 +302,7 @@ void GfxFrameout::kernelFrameout() {
 
 		if (planePicture) {
 			while (planePictureCel < planePictureCels) {
-				planePicture->drawSci32Vga(planePictureCel);
+				planePicture->drawSci32Vga(planePictureCel, planeResY, planeResX);
 				planePictureCel++;
 			}
 			delete planePicture;
