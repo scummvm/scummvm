@@ -173,6 +173,13 @@ typedef struct {
 	Elf32_Word    r_info;                 /* Relocation type and symbol index */
 } Elf32_Rel;
 
+typedef struct
+{
+  Elf32_Addr    r_offset;               /* Address */
+  Elf32_Word    r_info;                 /* Relocation type and symbol index */
+  Elf32_Sword   r_addend;               /* Addend */
+} Elf32_Rela;
+
 // Access macros for the relocation info
 #define REL_TYPE(x)		((unsigned char) (x))	/* Extract relocation type */
 #define REL_INDEX(x)	((x)>>8)		/* Extract relocation index into symbol table */
@@ -181,6 +188,8 @@ typedef struct {
 #define R_ARM_NONE			0
 #define R_ARM_ABS32			2
 #define R_ARM_THM_CALL      10
+#define R_ARM_CALL			28
+#define R_ARM_JUMP24		29
 #define R_ARM_V4BX 			40
 
 #endif /* BACKENDS_ELF_H */

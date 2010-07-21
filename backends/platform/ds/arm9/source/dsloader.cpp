@@ -116,12 +116,6 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 				a = *target;							// Get full 32 bits of addend
 				relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
 
-				/*TODO:
-				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
-				 * 	relocation |= 1;
-				 * }
-				 */
-
 				*target = relocation;
 
 				DBG("R_ARM_ABS32: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
@@ -129,74 +123,19 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 			break;
 
 		case R_ARM_THM_CALL:
-
-			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
-				a = *target & 0x00000fff;				// Get the correct bits for addend:
-				a += ((*target & 0x0fff0000) >> 4);		// Bits 0-11 of the first half-word encode the 12 most significant bits of the branch offset,
-														// bits 0-11 of the next half-word encode the 12 least significant bits.
-				a = (a << 8) >> 8;						// sign-extend
-				a = a << 1;								// branch offset is in units of half-bytes
-
-				relocation = a + (Elf32_Addr)_segment;	// Shift by main offset
-
-				/*TODO:
-				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
-				 * 	relocation |= 1;
-				 * }
-				 */
-
-				relocation -= rel[i].r_offset;
-
-				*target = relocation;
-
-				DBG("R_ARM_THM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
-			}
+			DBG("R_ARM_THM_CALL: PC-relative jump, ld takes care of necessary relocation work for us.\n");
 			break;
 
 		case R_ARM_CALL:
-			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
-				a = *target & 0x00ffffff;
-				a = (a << 8) >> 6;				// Calculate addend by sign-extending (insn[23:0] << 2)
-				relocation = a + (Elf32_Addr)_segment;  // Shift by main offset
-
-				/*TODO:
-				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
-				 * 	relocation |= 1;
-				 * }
-				 */
-
-				relocation = relocation - rel[i].r_offset;
-				relocation = relocation >> 2;
-				*target &= 0xff000000;					// Clean lower 26 target bits
-				*target |= (relocation & 0x00ffffff);
-
-				DBG("R_ARM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
-			}
+			DBG("R_ARM_CALL: PC-relative jump, ld takes care of necessary relocation work for us.\n");
 			break;
 
 		case R_ARM_JUMP24:
-			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
-				a = *target & 0x00ffffff;
-				a = (a << 8) >> 6;				// Calculate addend by sign-extending (insn[23:0] << 2)
-				relocation = a + (Elf32_Addr)_segment;  // Shift by main offset
-
-				/*TODO:
-				 * if (SYM_TYPE(sym->st_info) == STT_FUNC && symbol addresses a thumb instruction) {
-				 * 	relocation |= 1;
-				 * }
-				 */
-
-				relocation = relocation - rel[i].r_offset;
-				relocation = relocation >> 2;
-				*target &= 0xff000000;					// Clean lower 26 target bits
-				*target |= (relocation & 0x00ffffff);
-
-				DBG("R_ARM_CALL: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
-			}
+			DBG("R_ARM_JUMP24: PC-relative jump, ld takes care of all relocation work for us.\n");
 			break;
 
 		case R_ARM_V4BX:
-			DBG("R_ARM_V4BX: No relocation calculation necessary\n");
+			DBG("R_ARM_V4BX: No relocation calculation necessary.\n");
 			break;
 
 		default:
