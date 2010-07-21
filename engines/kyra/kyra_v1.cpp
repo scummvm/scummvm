@@ -100,9 +100,7 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 
 Common::Error KyraEngine_v1::init() {
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
 		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
