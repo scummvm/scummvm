@@ -57,7 +57,7 @@ bool FlicDecoder::load(Common::SeekableReadStream &stream) {
 		return false;
 	}
 
-	
+
 	_frameCount = _fileStream->readUint16LE();
 	uint16 width = _fileStream->readUint16LE();
 	uint16 height = _fileStream->readUint16LE();
@@ -265,7 +265,7 @@ Surface *FlicDecoder::decodeNextFrame() {
 			delete[] data;
 		}
 	}
-	
+
 	_curFrame++;
 
 	if (_curFrame == 0)

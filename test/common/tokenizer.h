@@ -5,7 +5,7 @@
 class TokenizerTestSuite : public CxxTest::TestSuite {
 public:
 	void test_nextToken() {
-		
+
 		// test normal behavior
 		Common::StringTokenizer strTokenizer("Now, this is a test!", " ,!");
 		Common::String tokenArray[] = {"Now", "this", "is", "a", "test"};
@@ -17,7 +17,7 @@ public:
 		TS_ASSERT(strTokenizer.empty());
 
 		// Test edge cases:
-	
+
 		// empty string
 		Common::StringTokenizer s1("");
 		TS_ASSERT_EQUALS("", s1.nextToken());
@@ -37,7 +37,7 @@ public:
 		TS_ASSERT_EQUALS("af", s4.nextToken());
 	}
 
-	void test_resetAndEmpty() {	
+	void test_resetAndEmpty() {
 		Common::StringTokenizer strTokenizer("Just, another test!", " ,!");
 
 		// test reset()
@@ -48,10 +48,10 @@ public:
 		TS_ASSERT_EQUALS(token2, "Just");
 
 		// test empty()
-		TS_ASSERT(!strTokenizer.empty()); 
+		TS_ASSERT(!strTokenizer.empty());
 		strTokenizer.nextToken(); //another
 		strTokenizer.nextToken(); //test
-		TS_ASSERT(strTokenizer.empty()); 
+		TS_ASSERT(strTokenizer.empty());
 	}
 
 };

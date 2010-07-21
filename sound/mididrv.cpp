@@ -94,7 +94,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 			}
 		}
 	}
-	
+
 	return MT_INVALID;
 }
 
@@ -139,7 +139,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_PCJR)
 			return hdl;
 		break;
-	
+
 	case MT_CMS:
 		if (flags & MDT_CMS)
 			return hdl;
@@ -149,7 +149,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_ADLIB)
 			return hdl;
 		break;
-		
+
 	case MT_TOWNS:
 		if (flags & MDT_TOWNS)
 			return hdl;

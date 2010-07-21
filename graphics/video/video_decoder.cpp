@@ -64,7 +64,7 @@ void VideoDecoder::setSystemPalette() {
 	delete[] sysPalette;
 }
 
-bool VideoDecoder::needsUpdate() const {	
+bool VideoDecoder::needsUpdate() const {
 	return !endOfVideo() && getTimeToNextFrame() == 0;
 }
 

@@ -1229,7 +1229,7 @@ void ThemeEngine::restoreState(StoredState *state) {
 		src += state->backBuffer.pitch;
 		dst += _backBuffer.pitch;
 	}
-	
+
 	addDirtyRect(state->r);
 }
 

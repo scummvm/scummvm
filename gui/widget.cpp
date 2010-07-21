@@ -218,9 +218,9 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 	for (uint i = 0; i < label.size() ; i++)
 		if (label[i] != '~')
 			res = res + label[i];
-	
+
 	return res;
-}	
+}
 
 #pragma mark -
 
@@ -361,7 +361,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss), 
+	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
 	  _cmd(cmd) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);

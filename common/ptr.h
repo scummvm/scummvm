@@ -242,7 +242,7 @@ public:
 	 */
 	operator bool() const { return _pointer != 0; }
 
-	~ScopedPtr() { 
+	~ScopedPtr() {
 		delete _pointer;
 	}
 
@@ -255,14 +255,14 @@ public:
 	}
 
 	/**
-	 * Returns the plain pointer value. 
+	 * Returns the plain pointer value.
 	 *
 	 * @return the pointer the ScopedPtr manages
 	 */
 	PointerType get() const { return _pointer; }
 
 	/**
-	 * Returns the plain pointer value and releases ScopedPtr. 
+	 * Returns the plain pointer value and releases ScopedPtr.
 	 * After release() call you need to delete object yourself
 	 *
 	 * @return the pointer the ScopedPtr manages

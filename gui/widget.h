@@ -164,7 +164,7 @@ class GuiManager;
 class Tooltip : public GuiObject {
 public:
 	Tooltip(GuiManager *guiManager);
-	
+
 	bool isVisible() const { return _visible; }
 	void draw();
 	void reflowLayout();
@@ -272,7 +272,7 @@ class RadiobuttonWidget : public ButtonWidget {
 protected:
 	bool	_state;
 	int _value;
-	
+
 public:
 	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);

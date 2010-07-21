@@ -65,7 +65,7 @@ TranslationManager::TranslationManager() {
 	// http://msdn.microsoft.com/en-us/library/dd318101%28VS.85%29.aspx
 	// On the other hand the locale constants used, seem to exist on Windows 98 too,
 	// check this for that: http://msdn.microsoft.com/en-us/library/dd464799%28v=VS.85%29.aspx
-	// 
+	//
 	// I am not exactly sure what is the truth now, it might be very well that this breaks
 	// support for systems older than Windows 2000....
 	//

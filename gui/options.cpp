@@ -790,7 +790,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 		return true;
 
 	if (_domain != Common::ConfigManager::kApplicationDomain || ConfMan.hasKey(setting, _domain) || preferredType) {
-		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain); 
+		const Common::String drv = ConfMan.get(setting, (_domain != Common::ConfigManager::kApplicationDomain && !ConfMan.hasKey(setting, _domain)) ? Common::ConfigManager::kApplicationDomain : _domain);
 		const MusicPlugin::List p = MusicMan.getPlugins();
 
 		for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
@@ -810,7 +810,7 @@ bool OptionsDialog::loadMusicDeviceSetting(PopUpWidget *popup, Common::String se
 void OptionsDialog::saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting) {
 	if (!popup || !_enableAudioSettings)
 		return;
-	
+
 	const MusicPlugin::List p = MusicMan.getPlugins();
 	bool found = false;
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end() && !found; ++m) {

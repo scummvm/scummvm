@@ -206,7 +206,7 @@ void QuickTimeDecoder::stopAudio() {
 
 void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 	if (_audStream)
-		g_system->getMixer()->pauseHandle(_audHandle, pause);		
+		g_system->getMixer()->pauseHandle(_audHandle, pause);
 }
 
 Surface *QuickTimeDecoder::decodeNextFrame() {
