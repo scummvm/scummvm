@@ -31,6 +31,8 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 
+//#define DEBUG_PARSER
+
 namespace Sci {
 
 /*************************************************************/

@@ -39,7 +39,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 	memset(_parserNodes, 0, sizeof(_parserNodes));
 	// Mark parse tree as unused
 	_parserNodes[0].type = kParseTreeLeafNode;
-	_parserNodes[0].content.value = 0;
+	_parserNodes[0].value = 0;
 
 	_synonyms.clear(); // No synonyms
 
@@ -466,30 +466,25 @@ void Vocabulary::printParserWords() const {
 	con->DebugPrintf("\n");
 }
 
-void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {
-	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
-		printf("Error(%04x)", nr);
-		return;
-	}
+void _vocab_recursive_ptree_dump_treelike(ParseTreeNode *tree) {
+	assert(tree);
 
-	if (nodes[nr].type == kParseTreeLeafNode)
-		//printf("[%03x]%04x", nr, nodes[nr].content.value);
-		printf("%x", nodes[nr].content.value);
+	if (tree->type == kParseTreeLeafNode)
+		printf("%x", tree->value);
 	else {
-		int lbranch = nodes[nr].content.branches[0];
-		int rbranch = nodes[nr].content.branches[1];
-		//printf("<[%03x]", nr);
+		ParseTreeNode* lbranch = tree->left;
+		ParseTreeNode* rbranch = tree->right;
 		printf("<");
 
 		if (lbranch)
-			_vocab_recursive_ptree_dump_treelike(nodes, lbranch, nr);
+			_vocab_recursive_ptree_dump_treelike(lbranch);
 		else
 			printf("NULL");
 
 		printf(",");
 
 		if (rbranch)
-			_vocab_recursive_ptree_dump_treelike(nodes, rbranch, nr);
+			_vocab_recursive_ptree_dump_treelike(rbranch);
 		else
 			printf("NULL");
 
@@ -497,55 +492,52 @@ void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int 
 	}
 }
 
-void _vocab_recursive_ptree_dump(parse_tree_node_t *nodes, int nr, int prevnr, int blanks) {
-	int lbranch = nodes[nr].content.branches[0];
-	int rbranch = nodes[nr].content.branches[1];
+void _vocab_recursive_ptree_dump(ParseTreeNode *tree, int blanks) {
+	assert(tree);
+
+	ParseTreeNode* lbranch = tree->left;
+	ParseTreeNode* rbranch = tree->right;
 	int i;
 
-	if (nodes[nr].type == kParseTreeLeafNode) {
-		printf("vocab_dump_parse_tree: Error: consp is nil for element %03x\n", nr);
-		return;
-	}
-
-	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
-		printf("Error(%04x))", nr);
+	if (tree->type == kParseTreeLeafNode) {
+		printf("vocab_dump_parse_tree: Error: consp is nil\n");
 		return;
 	}
 
 	if (lbranch) {
-		if (nodes[lbranch].type == kParseTreeBranchNode) {
+		if (lbranch->type == kParseTreeBranchNode) {
 			printf("\n");
 			for (i = 0; i < blanks; i++)
 				printf("    ");
 			printf("(");
-			_vocab_recursive_ptree_dump(nodes, lbranch, nr, blanks + 1);
+			_vocab_recursive_ptree_dump(lbranch, blanks + 1);
 			printf(")\n");
 			for (i = 0; i < blanks; i++)
 				printf("    ");
 		} else
-			printf("%x", nodes[lbranch].content.value);
+			printf("%x", lbranch->value);
 		printf(" ");
 	}/* else printf ("nil");*/
 
 	if (rbranch) {
-		if (nodes[rbranch].type == kParseTreeBranchNode)
-			_vocab_recursive_ptree_dump(nodes, rbranch, nr, blanks);
+		if (rbranch->type == kParseTreeBranchNode)
+			_vocab_recursive_ptree_dump(rbranch, blanks);
 		else
-			printf("%x", nodes[rbranch].content.value);
+			printf("%x", rbranch->value);
 	}/* else printf("nil");*/
 }
 
-void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes) {
+void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes) {
 	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq %s \n'(", tree_name);
-	_vocab_recursive_ptree_dump(nodes, 0, 0, 1);
+	_vocab_recursive_ptree_dump(nodes, 1);
 	printf("))\n");
 }
 
 void Vocabulary::dumpParseTree() {
 	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
 	printf("(setq parse-tree \n'(");
-	_vocab_recursive_ptree_dump(_parserNodes, 0, 0, 1);
+	_vocab_recursive_ptree_dump(_parserNodes, 1);
 	printf("))\n");
 }
 
@@ -565,10 +557,10 @@ void Vocabulary::printParserNodes(int num) {
 	for (int i = 0; i < num; i++) {
 		con->DebugPrintf(" Node %03x: ", i);
 		if (_parserNodes[i].type == kParseTreeLeafNode)
-			con->DebugPrintf("Leaf: %04x\n", _parserNodes[i].content.value);
+			con->DebugPrintf("Leaf: %04x\n", _parserNodes[i].value);
 		else
-			con->DebugPrintf("Branch: ->%04x, ->%04x\n", _parserNodes[i].content.branches[0],
-			          _parserNodes[i].content.branches[1]);
+			con->DebugPrintf("Branch: ->%04x, ->%04x\n", _parserNodes[i].left,
+			          _parserNodes[i].right);
 	}
 }
 
@@ -581,7 +573,7 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 
 	if (type == kParseNumber) {
 		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
-		_parserNodes[*pos].content.value = nr;
+		_parserNodes[*pos].value = nr;
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {
@@ -613,7 +605,15 @@ int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const c
 			}
 		}
 
-		if ((newPos = _parserNodes[oldPos].content.branches[j] = parseNodes(i, pos, nextToken, nextValue, argc, argv)) == -1)
+		newPos = parseNodes(i, pos, nextToken, nextValue, argc, argv);
+
+		if (j == 0)
+			 _parserNodes[oldPos].left = &_parserNodes[newPos];
+		else
+			 _parserNodes[oldPos].right = &_parserNodes[newPos];
+
+
+		if (newPos == -1)
 			return -1;
 	}
 

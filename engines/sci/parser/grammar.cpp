@@ -422,44 +422,44 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	return tlist;
 }
 
-static int _vbpt_pareno(parse_tree_node_t *nodes, int *pos, int base) {
+static int _vbpt_pareno(ParseTreeNode *nodes, int *pos, int base) {
 	// Opens parentheses
-	nodes[base].content.branches[0] = (*pos) + 1;
+	nodes[base].left = &nodes[(*pos) + 1];
 	nodes[++(*pos)].type = kParseTreeBranchNode;
-	nodes[*pos].content.branches[0] = 0;
-	nodes[*pos].content.branches[1] = 0;
+	nodes[*pos].left = 0;
+	nodes[*pos].right = 0;
 	return *pos;
 }
 
-static int _vbpt_parenc(parse_tree_node_t *nodes, int *pos, int paren) {
+static int _vbpt_parenc(ParseTreeNode *nodes, int *pos, int paren) {
 	// Closes parentheses for appending
-	nodes[paren].content.branches[1] = ++(*pos);
+	nodes[paren].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
-	nodes[*pos].content.branches[0] = 0;
-	nodes[*pos].content.branches[1] = 0;
+	nodes[*pos].left = 0;
+	nodes[*pos].right = 0;
 	return *pos;
 }
 
-static int _vbpt_append(parse_tree_node_t *nodes, int *pos, int base, int value) {
+static int _vbpt_append(ParseTreeNode *nodes, int *pos, int base, int value) {
 	// writes one value to an existing base node and creates a successor node for writing
-	nodes[base].content.branches[0] = ++(*pos);
+	nodes[base].left = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeLeafNode;
-	nodes[*pos].content.value = value;
-	nodes[base].content.branches[1] = ++(*pos);
+	nodes[*pos].value = value;
+	nodes[base].right = &nodes[++(*pos)];
 	nodes[*pos].type = kParseTreeBranchNode;
-	nodes[*pos].content.branches[0] = 0;
-	nodes[*pos].content.branches[1] = 0;
+	nodes[*pos].left = 0;
+	nodes[*pos].right = 0;
 	return *pos;
 }
 
-static int _vbpt_terminate(parse_tree_node_t *nodes, int *pos, int base, int value) {
+static int _vbpt_terminate(ParseTreeNode *nodes, int *pos, int base, int value) {
 	// Terminates, overwriting a nextwrite forknode
 	nodes[base].type = kParseTreeLeafNode;
-	nodes[base].content.value = value;
+	nodes[base].value = value;
 	return *pos;
 }
 
-static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, ParseRule *rule, uint rulepos, int writepos) {
+static int _vbpt_write_subexpression(ParseTreeNode *nodes, int *pos, ParseRule *rule, uint rulepos, int writepos) {
 	uint token;
 
 	while ((token = ((rulepos < rule->_data.size()) ? rule->_data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
@@ -565,15 +565,15 @@ int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 		int temp, pos;
 
 		_parserNodes[0].type = kParseTreeBranchNode;
-		_parserNodes[0].content.branches[0] = 1;
-		_parserNodes[0].content.branches[1] = 2;
+		_parserNodes[0].left = &_parserNodes[1];
+		_parserNodes[0].right = &_parserNodes[2];
 
 		_parserNodes[1].type = kParseTreeLeafNode;
-		_parserNodes[1].content.value = 0x141;
+		_parserNodes[1].value = 0x141;
 
 		_parserNodes[2].type = kParseTreeBranchNode;
-		_parserNodes[2].content.branches[0] = 0;
-		_parserNodes[2].content.branches[1] = 0;
+		_parserNodes[2].left = 0;
+		_parserNodes[2].right = 0;
 
 		pos = 2;
 

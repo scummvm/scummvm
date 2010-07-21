@@ -82,7 +82,7 @@ enum {
 #define VOCAB_MAGIC_NUMBER_GROUP 0xffd /* 0xffe ? */
 #define VOCAB_MAGIC_NOTHING_GROUP 0xffe
 
-/* Number of nodes for each parse_tree_node structure */
+/* Number of nodes for each ParseTreeNode structure */
 #define VOCAB_TREE_NODES 500
 
 #define VOCAB_TREE_NODE_LAST_WORD_STORAGE 0x140
@@ -152,16 +152,16 @@ struct parse_tree_branch_t {
 };
 
 enum ParseTypes {
-	kParseTreeLeafNode = 0,
-	kParseTreeBranchNode = 1
+	kParseTreeWordNode = 4,
+	kParseTreeLeafNode = 5,
+	kParseTreeBranchNode = 6
 };
 
-struct parse_tree_node_t {
+struct ParseTreeNode {
 	ParseTypes type;  /**< leaf or branch */
-	union {
-		int value;  /**< For leaves */
-		short branches[2]; /**< For branches */
-	} content;
+	int value; /**< For leaves */
+	ParseTreeNode* left; /**< Left child, for branches */
+	ParseTreeNode* right; /**< Right child, for branches */
 };
 
 enum VocabularyVersions {
@@ -321,7 +321,7 @@ private:
 
 public:
 	// Accessed by said()
-	parse_tree_node_t _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
+	ParseTreeNode _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
 
 	// Parser data:
 	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
@@ -334,7 +334,7 @@ public:
  * @param tree_name		Name of the tree to dump (free-form)
  * @param nodes			The nodes containing the parse tree
  */
-void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
+void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes);
 
 
 
