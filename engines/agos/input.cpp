@@ -602,7 +602,7 @@ bool AGOSEngine::processSpecialKeys() {
 		if (_midiEnabled) {
 			_midi.pause(_musicPaused);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
+		syncSoundSettings();
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS) {

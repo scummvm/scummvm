@@ -1048,7 +1048,7 @@ void AGOSEngine::syncSoundSettings() {
 	if (ConfMan.hasKey("mute"))
 		mute = ConfMan.getBool("mute");
 
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : soundVolumeMusic));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (mute ? 0 : (_musicPaused ? 0 : soundVolumeMusic)));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, (mute ? 0 : soundVolumeSFX));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, (mute ? 0 : soundVolumeSpeech));
 
