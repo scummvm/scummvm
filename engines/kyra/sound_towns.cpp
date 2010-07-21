@@ -1854,7 +1854,7 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 	_dataPtr = data;
 	_totalLevel = 0x7F;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -2502,7 +2502,7 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 	_ssgTl = 0xff;
 	_algorithm = 0x80;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -2793,7 +2793,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 			finOut += finOutTemp;
 		}
 
-		finOut /= 3;		
+		finOut /= 3;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -3330,7 +3330,7 @@ void TownsPC98_OpnCore::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 	if (_ssg)
 		_ssg->setVolumeChannelMasks(_volMaskA >> _numChan, _volMaskB >> _numChan);
 	if (_prc)
-		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));	
+		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));
 }
 
 void TownsPC98_OpnCore::generateTables() {
@@ -3800,7 +3800,7 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 
 void TownsPC98_OpnDriver::startSoundEffect() {
 	int volFlags = 0;
-	
+
 	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
@@ -3813,7 +3813,7 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 			_updateSfxFlag &= ~_sfxChannels[i]->_idFlag;
 		}
 	}
-	
+
 	setVolumeChannelMasks(~volFlags, volFlags);
 	_sfxData = 0;
 }
