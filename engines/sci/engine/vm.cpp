@@ -38,6 +38,7 @@
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
+#include "sci/engine/workarounds.h"
 
 namespace Sci {
 
@@ -358,18 +359,6 @@ static bool validate_signedInteger(reg_t reg, int16 &integer) {
 	return true;
 }
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
-    { GID_QFG1VGA,       301,   928,  0,              "Blink", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // when entering inn, gets called with 1 parameter, but 2nd parameter is used for div which happens to be an object
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call, index,            workaround
-static const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
-    { GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
 extern const char *opcodeNames[]; // from scriptdebug.cpp
 
 static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
@@ -380,56 +369,6 @@ static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaround
 	assert(solution.type == WORKAROUND_FAKE);
 	return make_reg(0, solution.value);
 }
-
-#define FAKE WORKAROUND_FAKE
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
-static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
-    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  504, { FAKE,   0 } }, // checkers, like in hoyle 3
-    { GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { FAKE,   0 } }, // checkers, like in hoyle 3
-    { GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { FAKE,   0 } }, // when entering control menu, like in hoyle 3
-    { GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { FAKE,   0 } }, // when starting the game
-    { GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
-    { GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
-    { GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { FAKE,   0 } }, // sometimes when walk-clicking
-    { GID_GK2,            34,    11,  0,                   "", "export 10",      -1,    3, { FAKE,   0 } }, // called when the game starts
-    { GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { FAKE,   0 } }, // Gin Rummy / right when the game starts
-    { GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { FAKE,   0 } }, // Cribbage / during the game
-    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  504, { FAKE,   0 } }, // when starting checkers, first time a character says something
-    { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  505, { FAKE,   0 } }, // when starting checkers, first time a character says something
-    { GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { FAKE,   0 } }, // when entering control menu
-    { GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-    { GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
-    { GID_JONES,           1,   232,  0,        "weekendText", "draw",        0x3d3,    0, { FAKE,   0 } }, // jones/cd only - gets called during the game
-    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { FAKE,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { FAKE,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_KQ5,            90,     0,  0,                   "", "export 29",      -1,    3, { FAKE,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
-    { GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
-    { GID_KQ6,            30,    30,  0,               "rats", "changeState",    -1,    0, { FAKE,   0 } }, // rats in the catacombs
-    { GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { FAKE,   0 } }, // going to island of the beast
-    { GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { FAKE,   0 } }, // going to boiling water trap on beast isle
-    { GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { FAKE,   0 } }, // when opening the controls window (save, load etc)
-    { GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { FAKE, 0xf } }, // is used as priority for game menu
-    { GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { FAKE,   0 } }, // casino, playing game, increasing bet
-    { GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { FAKE,   0 } }, // age check room
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  200, { FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  201, { FAKE,   0 } }, // see above
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  202, { FAKE,   0 } }, // see above
-    { GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  203, { FAKE,   0 } }, // see above
-    { GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { FAKE, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-    { GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",         -1,    0, { FAKE,   0 } }, // washcloth in inventory
-    { GID_LSL6,           -1,   928, -1,           "Narrator", "startText",      -1,    0, { FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-    { GID_LSL6HIRES,       0,    85,  0,             "LL6Inv", "init",           -1,    0, { FAKE,   0 } }, // on startup
-    { GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { FAKE,   0 } }, // at least when entering swimming pool area
-    { GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { FAKE,   0 } }, // accessing the inventory
-    { GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
-    { GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
-    { GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { FAKE,   1 } }, // sq4cd: method returns this to the caller
-    { GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { FAKE,   0 } }, // called when the game starts
-    { GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { FAKE,   0 } }, // called when pressing "Start game" in the main menu
-    { GID_SQ6,            -1, 64964,  0,              "DPath", "init",           -1,    1, { FAKE,   0 } }, // during the game
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index)) {

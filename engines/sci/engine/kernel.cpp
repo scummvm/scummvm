@@ -28,6 +28,7 @@
 #include "sci/event.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
+#include "sci/engine/workarounds.h"
 
 #include "common/system.h"
 
@@ -220,75 +221,6 @@ reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
 // . -> any type
 // i* -> optional multiple integers
 // .* -> any parameters afterwards (or none)
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kAbs_workarounds[] = {
-    { GID_HOYLE1,          1,     1,  0,              "room1", "doit",           -1,    0, { WORKAROUND_FAKE,  0x3e9 } }, // crazy eights - called with objects instead of integers
-    { GID_HOYLE1,          2,     2,  0,              "room2", "doit",           -1,    0, { WORKAROUND_FAKE,  0x3e9 } }, // old maid - called with objects instead of integers
-    { GID_HOYLE1,          3,     3,  0,              "room3", "doit",           -1,    0, { WORKAROUND_FAKE,  0x3e9 } }, // hearts - called with objects instead of integers
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kDisposeScript_workarounds[] = {
-    { GID_QFG1,           64,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
-    { GID_KQ1,            -1,   989,  0,          "gameSound", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in several scenes (e.g. graham cracker) with 0:0
-    { GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
-    { GID_SQ1,            43,    43,  0,        "someoneDied", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when ordering beer, gets called with 1 extra parameter
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kGraphRestoreBox_workarounds[] = {
-    { GID_LSL6,           -1,    85,  0,          "rScroller", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring (sometimes), same as the one below
-    { GID_LSL6,           -1,    85,  0,          "lScroller", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring (sometimes), same as the one below
-    { GID_LSL6,           -1,    86,  0,             "LL6Inv", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when restoring, is called with hunk segment, but hunk is not allocated at that time
-    // ^^ TODO: check, if this is really a script error or an issue with our restore code
-    { GID_LSL6,           -1,    86,  0,             "LL6Inv", "hide",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens during the game, gets called with 1 extra parameter
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[] = {
-    { GID_LSL6,           -1,     0,  0,               "LSL6", "hideControls",   -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when giving the bungee key to merrily (room 240) and at least in room 650 too - gets called with additional 5th parameter
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kGraphFillBoxAny_workarounds[] = {
-    { GID_SQ4,            -1,   818,  0,     "iconTextSwitch", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // game menu "text/speech" display - parameter 5 is missing, but the right color number is on the stack
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kSetPort_workarounds[] = {
-    { GID_LSL6,          740,   740,  0,              "rm740", "drawPic",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // ending scene, is called with additional 3 (!) parameters
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kUnLoad_workarounds[] = {
-    { GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
-    { GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
-    { GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-static const SciWorkaroundEntry kStrCpy_workarounds[] = {
-    { GID_ISLANDBRAIN,   260,    45,  0,        "aWord", "addOn",                -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Hominy Homonym puzzle
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
 
 struct SciKernelMapSubEntry {
 	SciVersion fromVersion;
