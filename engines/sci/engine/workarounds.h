@@ -26,7 +26,36 @@
 #ifndef SCI_ENGINE_WORKAROUNDS_H
 #define SCI_ENGINE_WORKAROUNDS_H
 
+#include "sci/engine/vm_types.h"
+#include "sci/sci.h"
+
 namespace Sci {
+
+enum SciWorkaroundType {
+	WORKAROUND_NONE,      // only used by terminator or when no workaround was found
+	WORKAROUND_IGNORE,    // ignore kernel call
+	WORKAROUND_STILLCALL, // still do kernel call
+	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
+};
+
+struct SciWorkaroundSolution {
+	SciWorkaroundType type;
+	uint16 value;
+};
+
+struct SciWorkaroundEntry {
+	SciGameId gameId;
+	int roomNr;
+	int scriptNr;
+	int16 inheritanceLevel;
+	const char *objectName;
+	const char *methodName;
+	int localCallOffset;
+	int index;
+	SciWorkaroundSolution newValue;
+};
+
+#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { WORKAROUND_NONE, 0 } }
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 static const SciWorkaroundEntry opcodeDivWorkarounds[] = {
@@ -158,6 +187,8 @@ static const SciWorkaroundEntry kStrCpy_workarounds[] = {
     { GID_ISLANDBRAIN,   260,    45,  0,        "aWord", "addOn",                -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Hominy Homonym puzzle
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
+
+#undef FAKE
 
 } // End of namespace Sci
 
