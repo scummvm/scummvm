@@ -132,14 +132,35 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 	view = _cache->getView(viewId);
 
-	if (view->isSci2Hires())
-		_screen->adjustToUpscaledCoordinates(y, x);
+	switch (getSciVersion()) {
+	case SCI_VERSION_2:
+		if (view->isSci2Hires())
+			_screen->adjustToUpscaledCoordinates(y, x);
+		break;
+	case SCI_VERSION_2_1:
+		_coordAdjuster->kernelLocalToGlobal(x, y, readSelector(_segMan, objectReference, SELECTOR(plane)));
+		break;
+	default:
+		break;
+	}
 
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
 
-	if (view->isSci2Hires()) {
-		_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
-		_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+	switch (getSciVersion()) {
+	case SCI_VERSION_2:
+		if (view->isSci2Hires()) {
+			_screen->adjustBackUpscaledCoordinates(celRect.top, celRect.left);
+			_screen->adjustBackUpscaledCoordinates(celRect.bottom, celRect.right);
+		}
+		break;
+	case SCI_VERSION_2_1: {
+		reg_t planeObj = readSelector(_segMan, objectReference, SELECTOR(plane));
+		_coordAdjuster->kernelGlobalToLocal(celRect.left, celRect.top, planeObj);
+		_coordAdjuster->kernelGlobalToLocal(celRect.right, celRect.bottom, planeObj);
+		break;
+	}
+	default:
+		break;
 	}
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
