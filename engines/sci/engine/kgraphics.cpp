@@ -49,6 +49,7 @@
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
+#include "sci/graphics/frameout.h"
 #include "sci/video/vmd_decoder.h"
 #endif
 
@@ -1220,7 +1221,234 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
+	// This call is used for KQ6's intro. It has one parameter, which is 1 when
+	// the intro begins, and 0 when it ends. It is suspected that this is
+	// actually a flag to enable video planar memory access, as the video
+	// decoder in KQ6 is specifically written for the planar memory model.
+	// Planar memory mode access was used for VGA "Mode X" (320x240 resolution,
+	// although the intro in KQ6 is 320x200).
+	// Refer to http://en.wikipedia.org/wiki/Mode_X
+
+	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
+	return s->r_acc;
+}
+
+// New calls for SCI11. Using those is only needed when using text-codes so that
+// one is able to change font and/or color multiple times during kDisplay and
+// kDrawControl
+reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText16->kernelTextFonts(argc, argv);
+	return s->r_acc;
+}
+
+reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
+	g_sci->_gfxText16->kernelTextColors(argc, argv);
+	return s->r_acc;
+}
+
 #ifdef ENABLE_SCI32
+
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
+	// Returns 0 if the screen width or height is less than 640 or 400,
+	// respectively.
+	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
+		return make_reg(0, 0);
+
+	return make_reg(0, 1);
+}
+
+reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddScreenItem(viewObj);
+	return NULL_REG;
+}
+
+reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
+	//reg_t viewObj = argv[0];
+
+	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeleteScreenItem(viewObj);
+
+	/*
+	reg_t viewObj = argv[0];
+	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
+	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
+	//int16 control = 0;
+	*/
+
+	// TODO
+
+	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
+	warning("kAddPlane object %04x:%04x", PRINT_REG(planeObj));
+	return NULL_REG;
+}
+
+reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
+	warning("kDeletePlane object %04x:%04x", PRINT_REG(planeObj));
+	return NULL_REG;
+}
+
+reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelUpdatePlane(planeObj);
+	return s->r_acc;
+}
+
+reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+
+	// TODO
+
+	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
+	warning("kGetHighPlanePri: %d", g_sci->_gfxFrameout->kernelGetHighPlanePri());
+	return make_reg(0, g_sci->_gfxFrameout->kernelGetHighPlanePri());
+}
+
+reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+	// This kernel call likely seems to be doing the screen updates,
+	// as its called right after a view is updated
+
+	// TODO
+	g_sci->_gfxFrameout->kernelFrameout();
+
+	return NULL_REG;
+}
+
+reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+
+	// If top and left are negative, we need to adjust coordinates by
+	// the item's x and y (e.g. happens in GK1, day 1, with detective
+	// Mosely's hotspot in his office)
+
+	if (nsRect.left < 0)
+		nsRect.translate(itemX, 0);
+	
+	if (nsRect.top < 0)
+		nsRect.translate(0, itemY);
+
+	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+	// using x and y (e.g. with the inventory screen in GK1)
+	if (nsRect.left == itemY && nsRect.top == itemX) {
+		// Swap the values, as they're inversed (eh???)
+		nsRect.left = itemX;
+		nsRect.top = itemY;
+	}
+
+	/*
+	warning("kOnMe: (%d, %d) on object %04x:%04x (%s), rect (%d, %d, %d, %d), parameter %d", 
+		argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]), 
+		nsRect.left, nsRect.top, nsRect.right, nsRect.bottom,
+		argv[3].toUint16());
+	*/
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object, after adjusting the
+	// coordinates of the object according to the object's plane
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// Get the object's plane
+#if 0
+	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
+	if (!planeObject.isNull()) {
+		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+		//uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+
+		// Adjust the bounding rectangle of the object by the object's
+		// actual X, Y coordinates
+		nsRect.top = ((nsRect.top * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.left = ((nsRect.left * g_sci->_gfxScreen->getWidth()) / planeResX);
+		nsRect.bottom = ((nsRect.bottom * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.right = ((nsRect.right * g_sci->_gfxScreen->getWidth()) / planeResX);
+
+		nsRect.translate(planeLeft, planeTop);
+	}
+#endif
+	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
+	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
+	switch (argv[0].toUint16()) {
+	case 0: {
+		if (argc != 4) {
+			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		debug("kCreateTextBitmap: %s", text.c_str());
+	}
+	default:
+		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
 reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
 
 	int16 subop = argv[0].toUint16();
@@ -1363,31 +1591,5 @@ reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
 }
 
 #endif
-
-reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
-	// This call is used for KQ6's intro. It has one parameter, which is 1 when
-	// the intro begins, and 0 when it ends. It is suspected that this is
-	// actually a flag to enable video planar memory access, as the video
-	// decoder in KQ6 is specifically written for the planar memory model.
-	// Planar memory mode access was used for VGA "Mode X" (320x240 resolution,
-	// although the intro in KQ6 is 320x200).
-	// Refer to http://en.wikipedia.org/wiki/Mode_X
-
-	//warning("STUB: SetVideoMode %d", argv[0].toUint16());
-	return s->r_acc;
-}
-
-// New calls for SCI11. Using those is only needed when using text-codes so that
-// one is able to change font and/or color multiple times during kDisplay and
-// kDrawControl
-reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxText16->kernelTextFonts(argc, argv);
-	return s->r_acc;
-}
-
-reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
-	g_sci->_gfxText16->kernelTextColors(argc, argv);
-	return s->r_acc;
-}
 
 } // End of namespace Sci

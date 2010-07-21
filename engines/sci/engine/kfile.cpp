@@ -950,6 +950,36 @@ reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
 		f->_out->writeUint16LE(argv[1].toUint16());
 	return s->r_acc; // FIXME: does this really doesn't return anything?
 }
+
+reg_t kCD(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Stub
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Return whether the contents of disc argv[1] is available.
+		return TRUE_REG;
+	default:
+		warning("CD(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kSave(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 2: // GetSaveDir
+		// Yay! Reusing the old kernel function!
+		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 8:
+		// TODO
+		// This function has to return something other than 0 to proceed
+		return s->r_acc;
+	default:
+		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
 #endif
 
 } // End of namespace Sci

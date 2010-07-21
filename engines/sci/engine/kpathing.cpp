@@ -1770,4 +1770,13 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	return output;
 }
 
+#ifdef ENABLE_SCI32
+
+reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
+	// kAvoidPath already implements this
+	return kAvoidPath(s, argc, argv);
+}
+
+#endif
+
 } // End of namespace Sci

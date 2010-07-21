@@ -72,7 +72,6 @@ MODULE_OBJS := \
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
-	engine/kernel32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \
 	graphics/robot.o \

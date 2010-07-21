@@ -614,6 +614,115 @@ reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kArray(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: { // New
+		reg_t arrayHandle;
+		SciArray<reg_t> *array = s->_segMan->allocateArray(&arrayHandle);
+		array->setType(argv[2].toUint16());
+		array->setSize(argv[1].toUint16());
+		return arrayHandle;
+	}
+	case 1: { // Size
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return make_reg(0, array->getSize());
+	}
+	case 2: { // At (return value at an index)
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return array->getValue(argv[2].toUint16());
+	}
+	case 3: { // Atput (put value at an index)
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+
+		uint32 index = argv[2].toUint16();
+		uint32 count = argc - 3;
+
+		if (index + count > 65535)
+			break;
+
+		if (array->getSize() < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[i + 3]);
+
+		return argv[1]; // We also have to return the handle
+	}
+	case 4: // Free
+		// Freeing of arrays is handled by the garbage collector
+		return s->r_acc;
+	case 5: { // Fill
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		uint16 index = argv[2].toUint16();
+
+		// A count of -1 means fill the rest of the array
+		uint16 count = argv[3].toSint16() == -1 ? array->getSize() - index : argv[3].toUint16();
+		uint16 arraySize = array->getSize();
+
+		if (arraySize < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[4]);
+
+		return argv[1];
+	}
+	case 6: { // Cpy
+		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
+			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
+			// Happens in the RAMA demo
+			warning("kArray(Cpy): Request to copy a segment which isn't an array, ignoring");
+			return NULL_REG;
+		}
+
+		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
+		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
+		uint32 index1 = argv[2].toUint16();
+		uint32 index2 = argv[4].toUint16();
+
+		// The original engine ignores bad copies too
+		if (index2 > array2->getSize())
+			break;
+
+		// A count of -1 means fill the rest of the array
+		uint32 count = argv[5].toSint16() == -1 ? array2->getSize() - index2 : argv[5].toUint16();
+
+		if (array1->getSize() < index1 + count)
+			array1->setSize(index1 + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array1->setValue(i + index1, array2->getValue(i + index2));
+
+		return argv[1];
+	}
+	case 7: // Cmp
+		// Not implemented in SSCI
+		return s->r_acc;
+	case 8: { // Dup
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		reg_t arrayHandle;
+		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
+
+		dupArray->setType(array->getType());
+		dupArray->setSize(array->getSize());
+
+		for (uint32 i = 0; i < array->getSize(); i++)
+			dupArray->setValue(i, array->getValue(i));
+
+		return arrayHandle;
+	}
+	case 9: // Getdata
+		if (!s->_segMan->isHeapObject(argv[1]))
+			return argv[1];
+
+		return readSelector(s->_segMan, argv[1], SELECTOR(data));
+	default:
+		error("Unknown kArray subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
 #endif
 
 } // End of namespace Sci
