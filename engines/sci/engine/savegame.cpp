@@ -805,7 +805,6 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->_msgState = new MessageState(s->_segMan);
 
 	s->abortScriptProcessing = kAbortLoadGame;
-	s->shrinkStackToBase();
 }
 
 bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata *meta) {

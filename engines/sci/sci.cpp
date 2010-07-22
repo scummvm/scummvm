@@ -414,13 +414,16 @@ void SciEngine::runGame() {
 		exitGame();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
+			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
 			_gamestate->gameWasRestarted = true;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
+			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
+			_gamestate->shrinkStackToBase();
 		} else {
 			break;	// exit loop
 		}

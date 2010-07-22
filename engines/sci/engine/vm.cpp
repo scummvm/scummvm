@@ -934,9 +934,7 @@ void run_vm(EngineState *s) {
 	if (!local_script)
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
 
-	// TODO: Revise this
-	if (s->abortScriptProcessing != kAbortLoadGame)
-		s->executionStackBase = s->_executionStack.size() - 1;
+	s->executionStackBase = s->_executionStack.size() - 1;
 
 	s->variablesSegment[VAR_TEMP] = s->variablesSegment[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	s->variablesBase[VAR_TEMP] = s->variablesBase[VAR_PARAM] = s->stack_base;
