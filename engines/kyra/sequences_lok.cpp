@@ -147,6 +147,9 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->fadeToBlack();
 	}
 
+	if (shouldQuit())
+		return;
+
 	_screen->clearPage(0);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
