@@ -71,6 +71,7 @@ extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
 extern const SciWorkaroundEntry kGraphRestoreBox_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxAny_workarounds[];
+extern const SciWorkaroundEntry kGraphRedrawBox_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
