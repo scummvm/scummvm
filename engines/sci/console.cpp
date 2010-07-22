@@ -411,6 +411,13 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
+	Common::String gameVersion = "N/A";
+
+	Common::File versionFile;
+	if (versionFile.open("VERSION")) {
+		gameVersion = versionFile.readLine();
+		versionFile.close();
+	}
 
 	DebugPrintf("Game ID: %s\n", _engine->getGameIdStr());
 	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
@@ -427,6 +434,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	DebugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
+	DebugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	DebugPrintf("\n");
 
 	return true;
