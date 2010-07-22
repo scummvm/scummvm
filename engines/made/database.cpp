@@ -515,6 +515,8 @@ int16 GameDatabaseV2::loadgame(const char *filename, int16 version) {
 		_objects[i]->load(*in);
 	}
 	delete in;
+	
+	_objectPropertyCache.clear();	// make sure to clear cache
 	return result;
 }
 
@@ -644,6 +646,8 @@ void GameDatabaseV3::load(Common::SeekableReadStream &sourceS) {
 void GameDatabaseV3::reloadFromStream(Common::SeekableReadStream &sourceS) {
 	sourceS.seek(_gameStateOffs);
 	sourceS.read(_gameState, _gameStateSize);
+	
+	_objectPropertyCache.clear();	// make sure to clear cache
 }
 
 bool GameDatabaseV3::getSavegameDescription(const char *filename, Common::String &description, int16 version) {
@@ -734,6 +738,9 @@ int16 GameDatabaseV3::loadgame(const char *filename, int16 version) {
 	in->skip(64); // skip savegame description
 	in->read(_gameState, _gameStateSize);
 	delete in;
+	
+	_objectPropertyCache.clear();	// make sure to clear cache
+	
 	return 0;
 }
 
