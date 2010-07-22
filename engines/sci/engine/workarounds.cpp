@@ -82,6 +82,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
     { GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
     { GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
+    { GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sq4cd: called when rummaging in Software Excess bargain bin
     { GID_SQ4,            -1,   928,  0,           "Narrator", "startText",      -1, 1000, { WORKAROUND_FAKE,   1 } }, // sq4cd: method returns this to the caller
     { GID_SQ6,           100,     0,  0,                "SQ6", "init",           -1,    2, { WORKAROUND_FAKE,   0 } }, // called when the game starts
     { GID_SQ6,           100, 64950,  0,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // called when pressing "Start game" in the main menu
