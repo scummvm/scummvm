@@ -126,7 +126,7 @@ void GfxFrameout::kernelFrameout() {
 	_palette->palVaryUpdate();
 
 	// Allocate enough space for all screen items
-	FrameoutEntry *itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
+	FrameoutEntry *itemData = new FrameoutEntry[_screenItems.size()];
 
 	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = *it;
@@ -218,7 +218,7 @@ void GfxFrameout::kernelFrameout() {
 			// Show base picture
 //			planePicture->drawSci32Vga(0, planePicture->getSci32celX(0), planePicture->getSci32celY(0), planePictureMirrored);
 			// Allocate memory for picture cels
-			pictureCels = (FrameoutEntry *)malloc(planePicture->getSci32celCount() * sizeof(FrameoutEntry));
+			pictureCels = new FrameoutEntry[planePicture->getSci32celCount()];
 			// Add following cels to the itemlist
 			FrameoutEntry *picEntry = pictureCels;
 			for (int pictureCelNr = 0; pictureCelNr < planePictureCels; pictureCelNr++) {
@@ -323,13 +323,13 @@ void GfxFrameout::kernelFrameout() {
 		}
 
 		if (planePicture) {
-			free(pictureCels);
+			delete[] pictureCels;
 			delete planePicture;
 			planePicture = 0;
 		}
 	}
 
-	free(itemData);
+	delete[] itemData;
 	_screen->copyToScreen();
 }
 
