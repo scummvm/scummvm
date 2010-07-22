@@ -98,8 +98,10 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
 				return true; // Stop processing
 
-			// Lookup node again, since the nodetable it was in may have been reallocated
-			curNode = _s->_segMan->lookupNode(curAddress);
+			// Lookup node again, since the nodetable it was in may have been reallocated.
+			// The node might have been deallocated at this point (e.g. LSL2, room 42),
+			// in which case the node reference will be null and the loop will stop below.
+			curNode = _s->_segMan->lookupNode(curAddress, false);
 		}
 
 		if (curNode) {

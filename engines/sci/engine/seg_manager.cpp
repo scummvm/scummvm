@@ -508,7 +508,7 @@ List *SegManager::lookupList(reg_t addr) {
 	return &(lt->_table[addr.offset]);
 }
 
-Node *SegManager::lookupNode(reg_t addr) {
+Node *SegManager::lookupNode(reg_t addr, bool stopOnDiscarded) {
 	if (addr.isNull())
 		return NULL; // Non-error null
 
@@ -522,6 +522,9 @@ Node *SegManager::lookupNode(reg_t addr) {
 	NodeTable *nt = (NodeTable *)_heap[addr.segment];
 
 	if (!nt->isValidEntry(addr.offset)) {
+		if (!stopOnDiscarded)
+			return NULL;
+
 		error("Attempt to use invalid or discarded reference %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
