@@ -74,6 +74,8 @@ public:
 	GLuint getHeight() const { return _realHeight; }
 	GLuint getTextureName() const { return _textureName; }
 
+	void setFilter(GLint filter) { _filter = filter; }
+
 protected:
 	const byte _bytesPerPixel;
 	const GLenum _glFormat;
@@ -86,4 +88,5 @@ protected:
 	GLuint _textureWidth;
 	GLuint _textureHeight;
 	bool _refresh;
+	GLint _filter;
 };

@@ -80,7 +80,8 @@ GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
 	_textureHeight(0),
 	_realWidth(0),
 	_realHeight(0),
-	_refresh(false) {
+	_refresh(false),
+	_filter(GL_NEAREST) {
 
 	// Generates the texture ID for GL
 	glGenTextures(1, &_textureName); CHECK_GL_ERROR();
@@ -122,8 +123,8 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	// Allocate room for the texture now, but pixel data gets uploaded
 	// later (perhaps with multiple TexSubImage2D operations).
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); CHECK_GL_ERROR();
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); CHECK_GL_ERROR();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _filter); CHECK_GL_ERROR();
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _filter); CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
 	glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
@@ -131,6 +132,8 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 
 	if (_surface.w != _textureWidth || _surface.h != _textureHeight)
 		_surface.create(_textureWidth, _textureHeight, _bytesPerPixel);
+	else if (_refresh)
+		updateBuffer(_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
 
 	_refresh = false;
 }
@@ -141,13 +144,15 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						_glFormat, _glType, buf); CHECK_GL_ERROR();
-		memcpy(_surface.getBasePtr(x, y), buf, h * pitch);
+		if (buf != _surface.pixels)
+			memcpy(_surface.getBasePtr(x, y), buf, h * pitch);
 	} else {
 		const byte* src = static_cast<const byte*>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 							w, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
-			memcpy(_surface.getBasePtr(x, y), src, w * _bytesPerPixel);
+			if (buf != _surface.pixels)
+				memcpy(_surface.getBasePtr(x, y), src, w * _bytesPerPixel);
 			++y;
 			src += pitch;
 		} while (--h);

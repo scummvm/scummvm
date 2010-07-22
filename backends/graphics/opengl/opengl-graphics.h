@@ -102,6 +102,7 @@ public:
 protected:
 
 	virtual void initGL();
+	virtual void loadTextures();
 
 	//
 	// GFX and video
@@ -117,6 +118,7 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool newContext;
+		bool filterChanged;
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
@@ -133,6 +135,7 @@ protected:
 
 		int mode;
 		int scaleFactor;
+		bool antialiasing;
 
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;

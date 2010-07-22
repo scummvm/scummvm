@@ -48,6 +48,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.mode = OpenGL::GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_videoMode.fullscreen = false;
+	_videoMode.antialiasing = false;
 
 	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
 	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
@@ -112,11 +113,44 @@ int OpenGLGraphicsManager::getDefaultGraphicsMode() const {
 }
 
 bool OpenGLGraphicsManager::setGraphicsMode(int mode) {
+	assert(_transactionMode == kTransactionActive);
+
+	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+		return true;
+
+	int newScaleFactor = 1;
+
+	switch (mode) {
+	case OpenGL::GFX_NORMAL:
+		newScaleFactor = 1;
+		break;
+#ifdef USE_SCALERS
+	case OpenGL::GFX_DOUBLESIZE:
+		newScaleFactor = 2;
+		break;
+	case OpenGL::GFX_TRIPLESIZE:
+		newScaleFactor = 3;
+		break;
+#endif
+	default:
+		warning("unknown gfx mode %d", mode);
+		return false;
+	}
+
+	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
+		_transactionDetails.needHotswap = true;
+
+	_transactionDetails.needUpdatescreen = true;
+
+	_videoMode.mode = mode;
+	_videoMode.scaleFactor = newScaleFactor;
+
 	return true;
 }
 
 int OpenGLGraphicsManager::getGraphicsMode() const {
-	return OpenGL::GFX_NORMAL;
+	assert (_transactionMode == kTransactionNone);
+	return _videoMode.mode;
 }
 
 #ifdef USE_RGB_COLOR
@@ -131,7 +165,7 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	assert(_transactionMode == kTransactionActive);
 
 #ifdef USE_RGB_COLOR
-	//avoid redundant format changes
+	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
 		newFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
@@ -173,6 +207,8 @@ void OpenGLGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.sizeChanged = false;
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
+	_transactionDetails.newContext = false;
+	_transactionDetails.filterChanged = false;
 #ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
 #endif
@@ -237,14 +273,15 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 				errors |= endGFXTransaction();
 			}
 		} else {
-			//setGraphicsModeIntern();
-			//clearOverlay();
+			clearOverlay();
 
 			_videoMode.setup = true;
 			_screenChangeCount++;
 		}
+	} else if (_transactionDetails.filterChanged) {
+		loadTextures();
+		internUpdateScreen();
 	} else if (_transactionDetails.needUpdatescreen) {
-		//setGraphicsModeIntern();
 		internUpdateScreen();
 	}
 
@@ -579,34 +616,44 @@ void OpenGLGraphicsManager::initGL() {
 	glLoadIdentity(); CHECK_GL_ERROR();
 }
 
-bool OpenGLGraphicsManager::loadGFXMode() {
-	// Initialize OpenGL settings
-	initGL();
-
+void OpenGLGraphicsManager::loadTextures() {
 	if (!_gameTexture) {
 		byte bpp;
 		GLenum format;
 		GLenum type;
 		getGLPixelFormat(_screenFormat, bpp, format, type);
 		_gameTexture = new GLTexture(bpp, format, type);
-	} else if (_transactionDetails.newContext)
-		_gameTexture->refresh();
+	} 
 
 	_overlayFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
 
 	if (!_overlayTexture)
 		_overlayTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
-	else if (_transactionDetails.newContext)
-		_overlayTexture->refresh();
 
 	if (!_cursorTexture)
 		_cursorTexture = new GLTexture(4, GL_RGBA, GL_UNSIGNED_BYTE);
-	else if (_transactionDetails.newContext)
+		
+	GLint filter = _videoMode.antialiasing ? GL_LINEAR : GL_NEAREST;
+	_gameTexture->setFilter(filter);
+	_overlayTexture->setFilter(filter);
+	_cursorTexture->setFilter(filter);
+
+	if (_transactionDetails.newContext || _transactionDetails.filterChanged) {
+		_gameTexture->refresh();
+		_overlayTexture->refresh();
 		_cursorTexture->refresh();
+	}
 
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
-	_cursorTexture->allocBuffer(16, 16);
+	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
+}
+
+bool OpenGLGraphicsManager::loadGFXMode() {
+	// Initialize OpenGL settings
+	initGL();
+
+	loadTextures();
 
 	internUpdateScreen();
 

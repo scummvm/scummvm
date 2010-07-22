@@ -165,7 +165,7 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		}
 	}
 
-	if (_oldVideoMode.fullscreen != _videoMode.fullscreen)
+	if (_oldVideoMode.fullscreen || _videoMode.fullscreen)
 		_transactionDetails.newContext = true;
 
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
@@ -224,6 +224,15 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		return true;
 	}*/
 
+	// Ctrl-Alt-f toggles antialiasing
+	if (key == 'f') {
+		beginGFXTransaction();
+			_videoMode.antialiasing = !_videoMode.antialiasing;
+			_transactionDetails.filterChanged = true;
+		endGFXTransaction();
+		return true;
+	}
+
 	SDLKey sdlKey = (SDLKey)key;
 
 	// Increase/decrease the scale factor
@@ -235,7 +244,8 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			beginGFXTransaction();
 				setScale(factor);
 			endGFXTransaction();
-		}	
+			return true;
+		}
 	}
 	return false;
 }
@@ -255,7 +265,7 @@ bool OpenGLSdlGraphicsManager::isScalerHotkey(const Common::Event &event) {
 		const bool isScaleKey = (event.kbd.keycode == Common::KEYCODE_EQUALS || event.kbd.keycode == Common::KEYCODE_PLUS || event.kbd.keycode == Common::KEYCODE_MINUS ||
 			event.kbd.keycode == Common::KEYCODE_KP_PLUS || event.kbd.keycode == Common::KEYCODE_KP_MINUS);
 
-		return (isScaleKey || event.kbd.keycode == 'a');
+		return (isScaleKey || event.kbd.keycode == 'a' || event.kbd.keycode == 'f');
 	}
 	return false;
 }
