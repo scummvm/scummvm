@@ -148,6 +148,17 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
+		Common::Rect planeClipRect(planeRect.width(), planeRect.height());
+
+		Common::Rect upscaledPlaneRect = planeRect;
+		Common::Rect upscaledPlaneClipRect = planeClipRect;
+		if (_screen->getUpscaledHires()) {
+			_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.top, upscaledPlaneRect.left);
+			_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.bottom, upscaledPlaneRect.right);
+			_screen->adjustToUpscaledCoordinates(upscaledPlaneClipRect.top, upscaledPlaneClipRect.left);
+			_screen->adjustToUpscaledCoordinates(upscaledPlaneClipRect.bottom, upscaledPlaneClipRect.right);
+		}
+
 		byte planeBack = readSelectorValue(_segMan, planeObject, SELECTOR(back));
 		if (planeBack)
 			_paint32->fillRect(planeRect, planeBack);
@@ -201,11 +212,6 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->scaleY = readSelectorValue(_segMan, itemObject, SELECTOR(scaleY));
 				itemEntry->object = itemObject;
 
-				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
-				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
-				itemEntry->y += planeRect.top;
-				itemEntry->x += planeRect.left;
-
 				itemList.push_back(itemEntry);
 				itemEntry++;
 				itemCount++;
@@ -227,14 +233,7 @@ void GfxFrameout::kernelFrameout() {
 				picEntry->y = planePicture->getSci32celY(pictureCelNr);
 				picEntry->x = planePicture->getSci32celX(pictureCelNr);
 
-				int16 celHeight = planePicture->getSci32celHeight(pictureCelNr);
-				if (_screen->getWidth() > 320)
-					celHeight = celHeight / 2;
-
-				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr); // picEntry->y + celHeight;
-
-				picEntry->y = ((picEntry->y * _screen->getHeight()) / planeResY);
-				picEntry->x = ((picEntry->x * _screen->getWidth()) / planeResX);
+				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
 				itemList.push_back(picEntry);
 				picEntry++;
@@ -252,6 +251,9 @@ void GfxFrameout::kernelFrameout() {
 
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
+				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
+				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+
 				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
@@ -260,13 +262,45 @@ void GfxFrameout::kernelFrameout() {
 
 //				warning("view %s %d", _segMan->getObjectName(itemEntry->object), itemEntry->priority);
 
-				if (view->isSci2Hires())
-					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+				switch (getSciVersion()) {
+				case SCI_VERSION_2:
+					if (view->isSci2Hires())
+						_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+					break;
+				case SCI_VERSION_2_1:
+					itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
+					itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
+					break;
+				default:
+					break;
+				}
 
 				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 				else
 					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
+
+				Common::Rect nsRect = itemEntry->celRect;
+				switch (getSciVersion()) {
+				case SCI_VERSION_2:
+					if (view->isSci2Hires()) {
+						_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+						_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+					}
+					break;
+				case SCI_VERSION_2_1:
+					nsRect.top = (nsRect.top * planeResY) / _screen->getHeight();
+					nsRect.left = (nsRect.left * planeResX) / _screen->getWidth();
+					nsRect.bottom = (nsRect.bottom * planeResY) / _screen->getHeight();
+					nsRect.right = (nsRect.right * planeResX) / _screen->getWidth();
+					break;
+				default:
+					break;
+				}
+				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
+				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
+				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);
+				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsBottom), nsRect.bottom);
 
 				int16 screenHeight = _screen->getHeight();
 				int16 screenWidth = _screen->getWidth();
@@ -275,27 +309,30 @@ void GfxFrameout::kernelFrameout() {
 					screenWidth = _screen->getDisplayWidth();
 				}
 
-				if (itemEntry->celRect.top < 0 || itemEntry->celRect.top >= screenHeight)
+				if (itemEntry->celRect.bottom < 0 || itemEntry->celRect.top >= screenHeight)
 					continue;
 
-				if (itemEntry->celRect.left < 0 || itemEntry->celRect.left >= screenWidth)
+				if (itemEntry->celRect.right < 0 || itemEntry->celRect.left >= screenWidth)
 					continue;
 
-				Common::Rect clipRect;
+				Common::Rect clipRect, translatedClipRect;
 				clipRect = itemEntry->celRect;
 				if (view->isSci2Hires()) {
-					Common::Rect upscaledPlaneRect = planeRect;
-					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.top, upscaledPlaneRect.left);
-					_screen->adjustToUpscaledCoordinates(upscaledPlaneRect.bottom, upscaledPlaneRect.right);
-					clipRect.clip(upscaledPlaneRect);
+					clipRect.clip(upscaledPlaneClipRect);
+					translatedClipRect = clipRect;
+					translatedClipRect.translate(upscaledPlaneRect.left, upscaledPlaneRect.top);
 				} else {
-					clipRect.clip(planeRect);
+					clipRect.clip(planeClipRect);
+					translatedClipRect = clipRect;
+					translatedClipRect.translate(planeRect.left, planeRect.top);
 				}
 
-				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->draw(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
-				else
-					view->drawScaled(itemEntry->celRect, clipRect, clipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
+				if (!clipRect.isEmpty()) {
+					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+						view->draw(itemEntry->celRect, clipRect, translatedClipRect, itemEntry->loopNo, itemEntry->celNo, 255, 0, view->isSci2Hires());
+					else
+						view->drawScaled(itemEntry->celRect, clipRect, translatedClipRect, itemEntry->loopNo, itemEntry->celNo, 255, itemEntry->scaleX, itemEntry->scaleY);
+				}
 			} else {
 				// Most likely a text entry
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
@@ -305,8 +342,8 @@ void GfxFrameout::kernelFrameout() {
 					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
 					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
 					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
-					uint16 curX = itemEntry->x;
-					uint16 curY = itemEntry->y;
+					uint16 curX = itemEntry->x + planeRect.left;
+					uint16 curY = itemEntry->y + planeRect.top;
 					for (uint32 i = 0; i < text.size(); i++) {
 						unsigned char curChar = text[i];
 						// TODO: proper text splitting... this is a hack
