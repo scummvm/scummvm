@@ -33,9 +33,6 @@
 
 namespace Sci {
 
-#define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
-#define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
-
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
