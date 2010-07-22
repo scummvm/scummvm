@@ -473,6 +473,8 @@ protected:
 	int8 _charSayUnk2;
 	int8 _charSayUnk3;
 	int8 _currHeadShape;
+	int8 _disabledTalkAnimObject;
+	int8 _enabledTalkAnimObject;
 	uint8 _currSentenceColor[3];
 	int8 _startSentencePalIndex;
 	bool _fadeText;
