@@ -137,6 +137,14 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->fadeToBlack();
 		if (!_abortIntroFlag)
 			snd_playWanderScoreViaMap(_flags.platform == Common::kPlatformFMTowns ? 57 : 2, 0);
+	} else if (_flags.platform == Common::kPlatformMacintosh && _res->exists("MP_GOLD.CPS")) {
+		_screen->loadPalette("MP_GOLD.COL", _screen->getPalette(0));
+		_screen->loadBitmap("MP_GOLD.CPS", 3, 3, 0);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
+		_screen->updateScreen();
+		_screen->fadeFromBlack();
+		delay(120 * _tickLength);
+		_screen->fadeToBlack();
 	}
 
 	_screen->clearPage(0);
