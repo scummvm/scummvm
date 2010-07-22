@@ -198,14 +198,6 @@ void GfxFrameout::kernelFrameout() {
 				if (readSelectorValue(_segMan, itemObject, SELECTOR(fixPriority)) == 0)
 					itemEntry->priority = itemEntry->y;
 
-				if (gameId == GID_GK1) {
-					if ((itemEntry->viewId == 11000) && (itemEntry->loopNo == 0) && (itemEntry->celNo == 0) && (itemEntry->priority == 1)) {
-						itemEntry->priority = 0; // HACK for gk1 hires main menu
-					}
-					if ((itemEntry->viewId == 10100) && (itemEntry->priority == 0)) {
-						itemEntry->priority = 1; // HACK for gk1 hires main menu
-					}
-				}
 				itemEntry->signal = readSelectorValue(_segMan, itemObject, SELECTOR(signal));
 				itemEntry->scaleX = readSelectorValue(_segMan, itemObject, SELECTOR(scaleX));
 				itemEntry->scaleY = readSelectorValue(_segMan, itemObject, SELECTOR(scaleY));
@@ -226,7 +218,7 @@ void GfxFrameout::kernelFrameout() {
 
 		if (planePicture) {
 			// Show base picture
-			planePicture->drawSci32Vga(0, 0, 0, planePictureMirrored);
+			planePicture->drawSci32Vga(0, planePicture->getSci32celX(0), planePicture->getSci32celY(0), planePictureMirrored);
 			// Allocate memory for picture cels
 			pictureCels = (FrameoutEntry *)malloc(planePicture->getSci32celCount() * sizeof(FrameoutEntry));
 			// Add following cels to the itemlist
