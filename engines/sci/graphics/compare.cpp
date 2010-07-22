@@ -132,6 +132,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 
 	view = _cache->getView(viewId);
 
+#ifdef ENABLE_SCI32
 	switch (getSciVersion()) {
 	case SCI_VERSION_2:
 		if (view->isSci2Hires())
@@ -143,9 +144,11 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	default:
 		break;
 	}
+#endif
 
 	view->getCelRect(loopNo, celNo, x, y, z, celRect);
 
+#ifdef ENABLE_SCI32
 	switch (getSciVersion()) {
 	case SCI_VERSION_2:
 		if (view->isSci2Hires()) {
@@ -162,6 +165,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 	default:
 		break;
 	}
+#endif
 
 	if (lookupSelector(_segMan, objectReference, SELECTOR(nsTop), NULL, NULL) == kSelectorVariable) {
 		writeSelectorValue(_segMan, objectReference, SELECTOR(nsLeft), celRect.left);
