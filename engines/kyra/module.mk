@@ -84,6 +84,7 @@ MODULE_OBJS += \
 	sequences_lol.o \
 	sound_lol.o \
 	sprites_lol.o \
+	staticres_lol.o \
 	text_lol.o \
 	timer_lol.o
 endif
