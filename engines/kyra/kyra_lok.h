@@ -132,7 +132,7 @@ public:
 	int _paletteChanged;
 	int16 _northExitHeight;
 
-	typedef void (KyraEngine_LoK::*IntroProc)();
+	typedef bool (KyraEngine_LoK::*IntroProc)();
 
 	// static data access
 	const char * const *seqWSATable() { return _seq_WSATable; }
@@ -157,11 +157,11 @@ protected:
 
 	// -> intro
 	void seq_intro();
-	void seq_introLogos();
-	void seq_introStory();
-	void seq_introMalcolmTree();
-	void seq_introKallakWriting();
-	void seq_introKallakMalcolm();
+	bool seq_introLogos();
+	bool seq_introStory();
+	bool seq_introMalcolmTree();
+	bool seq_introKallakWriting();
+	bool seq_introKallakMalcolm();
 
 	// -> ingame animations
 	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
