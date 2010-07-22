@@ -218,12 +218,12 @@ void GfxFrameout::kernelFrameout() {
 
 		if (planePicture) {
 			// Show base picture
-			planePicture->drawSci32Vga(0, planePicture->getSci32celX(0), planePicture->getSci32celY(0), planePictureMirrored);
+//			planePicture->drawSci32Vga(0, planePicture->getSci32celX(0), planePicture->getSci32celY(0), planePictureMirrored);
 			// Allocate memory for picture cels
 			pictureCels = (FrameoutEntry *)malloc(planePicture->getSci32celCount() * sizeof(FrameoutEntry));
 			// Add following cels to the itemlist
 			FrameoutEntry *picEntry = pictureCels;
-			for (int pictureCelNr = 1; pictureCelNr < planePictureCels; pictureCelNr++) {
+			for (int pictureCelNr = 0; pictureCelNr < planePictureCels; pictureCelNr++) {
 				picEntry->celNo = pictureCelNr;
 				picEntry->object = NULL_REG;
 				picEntry->y = planePicture->getSci32celY(pictureCelNr);
@@ -233,7 +233,7 @@ void GfxFrameout::kernelFrameout() {
 				if (_screen->getWidth() > 320)
 					celHeight = celHeight / 2;
 
-				picEntry->priority = picEntry->y + celHeight;
+				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr); // picEntry->y + celHeight;
 
 				picEntry->y = ((picEntry->y * _screen->getHeight()) / planeResY);
 				picEntry->x = ((picEntry->x * _screen->getWidth()) / planeResX);
