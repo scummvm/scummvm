@@ -106,7 +106,12 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 	if (bytesLeft < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
-		warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette header");
+
+		if (g_sci->getGameId() == GID_SQ5 && g_sci->getEngineState()->currentRoomNumber() == 110 && bytesLeft == 28) {
+			// Known case for SQ5, which doesn't affect gameplay, thus don't throw a warning
+		} else {
+			warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette header");
+		}
 		return;
 	}
 	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
