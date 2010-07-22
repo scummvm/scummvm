@@ -128,8 +128,6 @@ void GfxFrameout::kernelFrameout() {
 	// Allocate enough space for all screen items
 	FrameoutEntry *itemData = (FrameoutEntry *)malloc(_screenItems.size() * sizeof(FrameoutEntry));
 
-	const SciGameId gameId = g_sci->getGameId();
-
 	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = *it;
 		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
