@@ -203,7 +203,7 @@ bool Vocabulary::loadSuffixes() {
 		suffix.alt_suffix_length = strlen(suffix.alt_suffix);
 		seeker += suffix.alt_suffix_length + 1; // Hit end of string
 
-		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
+		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
 		seeker += 2;
 
 		// Beginning of next string - skip leading '*'
@@ -213,7 +213,7 @@ bool Vocabulary::loadSuffixes() {
 		suffix.word_suffix_length = strlen(suffix.word_suffix);
 		seeker += suffix.word_suffix_length + 1;
 
-		suffix.result_class = (int16)READ_BE_UINT16(resource->data + seeker);
+		suffix.class_mask = (int16)READ_BE_UINT16(resource->data + seeker);
 		seeker += 3; // Next entry
 
 		_parserSuffixes.push_back(suffix);
