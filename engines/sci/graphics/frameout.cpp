@@ -342,6 +342,10 @@ void GfxFrameout::kernelFrameout() {
 					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
 					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
 					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
+
+					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
+					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+
 					uint16 curX = itemEntry->x + planeRect.left;
 					uint16 curY = itemEntry->y + planeRect.top;
 					for (uint32 i = 0; i < text.size(); i++) {
