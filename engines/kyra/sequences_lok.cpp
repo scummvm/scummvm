@@ -319,6 +319,7 @@ void KyraEngine_LoK::seq_introKallakWriting() {
 	_screen->_charWidth = -2;
 	_screen->clearPage(3);
 	_seq->playSequence(_seq_KallakWriting, true);
+	_seq->freeHandShapes();
 }
 
 void KyraEngine_LoK::seq_introKallakMalcolm() {
