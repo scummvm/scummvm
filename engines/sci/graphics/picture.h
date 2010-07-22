@@ -56,7 +56,10 @@ public:
 
 #ifdef ENABLE_SCI32
 	int16 getSci32celCount();
-	void drawSci32Vga(int16 celNo, uint16 planeResY, uint16 planeResX);
+	int16 getSci32celY(int16 celNo);
+	int16 getSci32celX(int16 celNo);
+	int16 getSci32celHeight(int16 celNo);
+	void drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, bool mirrored);
 #endif
 
 private:

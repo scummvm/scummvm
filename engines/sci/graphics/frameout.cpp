@@ -157,6 +157,7 @@ void GfxFrameout::kernelFrameout() {
 		GuiResourceId planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
 		GfxPicture *planePicture = 0;
 		int16 planePictureCels = 0;
+		bool planePictureMirrored = false;
 
 		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
 			planePicture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, planePictureNr, false);
@@ -164,6 +165,9 @@ void GfxFrameout::kernelFrameout() {
 
 			_coordAdjuster->pictureSetDisplayArea(planeRect);
 			_palette->drewPicture(planePictureNr);
+
+			if (readSelectorValue(_segMan, planeObject, SELECTOR(mirrored)))
+				planePictureMirrored = true;
 		}
 
 		// Fill our itemlist for this plane
@@ -191,6 +195,9 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = readSelectorValue(_segMan, itemObject, SELECTOR(y));
 				itemEntry->z = readSelectorValue(_segMan, itemObject, SELECTOR(z));
 				itemEntry->priority = readSelectorValue(_segMan, itemObject, SELECTOR(priority));
+				if (readSelectorValue(_segMan, itemObject, SELECTOR(fixPriority)) == 0)
+					itemEntry->priority = itemEntry->y;
+
 				if (gameId == GID_GK1) {
 					if ((itemEntry->viewId == 11000) && (itemEntry->loopNo == 0) && (itemEntry->celNo == 0) && (itemEntry->priority == 1)) {
 						itemEntry->priority = 0; // HACK for gk1 hires main menu
@@ -209,13 +216,38 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y += planeRect.top;
 				itemEntry->x += planeRect.left;
 
-				if (!(itemEntry->signal & 0x0010)) {	// kSignalFixedPriority
-					// TODO: Change priority of this item
-				}
-
 				itemList.push_back(itemEntry);
 				itemEntry++;
 				itemCount++;
+			}
+		}
+
+		FrameoutEntry *pictureCels = NULL;
+
+		if (planePicture) {
+			// Show base picture
+			planePicture->drawSci32Vga(0, 0, 0, planePictureMirrored);
+			// Allocate memory for picture cels
+			pictureCels = (FrameoutEntry *)malloc(planePicture->getSci32celCount() * sizeof(FrameoutEntry));
+			// Add following cels to the itemlist
+			FrameoutEntry *picEntry = pictureCels;
+			for (int pictureCelNr = 1; pictureCelNr < planePictureCels; pictureCelNr++) {
+				picEntry->celNo = pictureCelNr;
+				picEntry->object = NULL_REG;
+				picEntry->y = planePicture->getSci32celY(pictureCelNr);
+				picEntry->x = planePicture->getSci32celX(pictureCelNr);
+
+				int16 celHeight = planePicture->getSci32celHeight(pictureCelNr);
+				if (_screen->getWidth() > 320)
+					celHeight = celHeight / 2;
+
+				picEntry->priority = picEntry->y + celHeight;
+
+				picEntry->y = ((picEntry->y * _screen->getHeight()) / planeResY);
+				picEntry->x = ((picEntry->x * _screen->getWidth()) / planeResX);
+
+				itemList.push_back(picEntry);
+				picEntry++;
 			}
 		}
 
@@ -223,20 +255,20 @@ void GfxFrameout::kernelFrameout() {
 		Common::sort(itemList.begin(), itemList.end(), sortHelper);
 
 		// Now display itemlist
-		int16 planePictureCel = 0;
 		itemEntry = itemData;
 
 		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			itemEntry = *listIterator;
-			if (planePicture) {
-				while ((planePictureCel <= itemEntry->priority) && (planePictureCel < planePictureCels)) {
-					planePicture->drawSci32Vga(planePictureCel, planeResY, planeResX);
-					planePictureCel++;
-				}
-			}
 
-			if (itemEntry->viewId != 0xFFFF) {
+			if (itemEntry->object.isNull()) {
+				// Picture cel data
+				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planePictureMirrored);
+//				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
+
+			} else if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
+
+//				warning("view %s %d", _segMan->getObjectName(itemEntry->object), itemEntry->priority);
 
 				if (view->isSci2Hires())
 					_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
@@ -301,10 +333,7 @@ void GfxFrameout::kernelFrameout() {
 		}
 
 		if (planePicture) {
-			while (planePictureCel < planePictureCels) {
-				planePicture->drawSci32Vga(planePictureCel, planeResY, planeResX);
-				planePictureCel++;
-			}
+			free(pictureCels);
 			delete planePicture;
 			planePicture = 0;
 		}

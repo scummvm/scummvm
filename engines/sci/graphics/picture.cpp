@@ -131,7 +131,28 @@ int16 GfxPicture::getSci32celCount() {
 	return inbuffer[2];
 }
 
-void GfxPicture::drawSci32Vga(int16 celNo, uint16 planeResY, uint16 planeResX) {
+int16 GfxPicture::getSci32celY(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_LE_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_LE_UINT16(inbuffer + cel_headerPos + 40);
+}
+
+int16 GfxPicture::getSci32celX(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_LE_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_LE_UINT16(inbuffer + cel_headerPos + 38);
+}
+
+int16 GfxPicture::getSci32celHeight(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_LE_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_LE_UINT16(inbuffer + cel_headerPos + 2);
+}
+
+void GfxPicture::drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, bool mirrored) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
@@ -139,11 +160,11 @@ void GfxPicture::drawSci32Vga(int16 celNo, uint16 planeResY, uint16 planeResX) {
 	int celCount = inbuffer[2];
 	int cel_headerPos = header_size;
 	int cel_RlePos, cel_LiteralPos;
-	int cel_relXpos, cel_relYpos;
+//	int cel_relXpos, cel_relYpos;
 	Palette palette;
 
 	// HACK
-	_mirroredFlag = false;
+	_mirroredFlag = mirrored;
 	_addToFlag = false;
 	_resourceType = SCI_PICTURE_TYPE_SCI32;
 
@@ -160,14 +181,14 @@ void GfxPicture::drawSci32Vga(int16 celNo, uint16 planeResY, uint16 planeResX) {
 	while (celCount > 0) {
 		cel_RlePos = READ_LE_UINT32(inbuffer + cel_headerPos + 24);
 		cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
-		cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
-		cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
+		//cel_relXpos = READ_LE_UINT16(inbuffer + cel_headerPos + 38);
+		//cel_relYpos = READ_LE_UINT16(inbuffer + cel_headerPos + 40);
 
 		// This is really weird, adjusting picture data to plane resolution - why...
-		cel_relYpos = ((cel_relYpos * g_sci->_gfxScreen->getHeight()) / planeResY);
-		cel_relXpos = ((cel_relXpos * g_sci->_gfxScreen->getWidth()) / planeResX);
+		//cel_relYpos = ((cel_relYpos * g_sci->_gfxScreen->getHeight()) / planeResY);
+		//cel_relXpos = ((cel_relXpos * g_sci->_gfxScreen->getWidth()) / planeResX);
 
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, cel_relXpos, cel_relYpos);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, callerX, callerY);
 		cel_headerPos += 42;
 		celCount--;
 	}

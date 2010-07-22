@@ -142,6 +142,9 @@ struct SelectorCache {
 	Selector fore;
 	Selector back;
 	Selector dimmed;
+
+	Selector fixPriority;
+	Selector mirrored;
 #endif
 };
 
