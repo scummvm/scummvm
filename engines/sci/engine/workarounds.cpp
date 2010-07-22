@@ -164,7 +164,8 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kStrCpy_workarounds[] = {
-    { GID_ISLANDBRAIN,   260,    45,  0,        "aWord", "addOn",                -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Hominy Homonym puzzle
+	// seems not to be needed, because the signature was wrong
+    //{ GID_ISLANDBRAIN,   260,    45,  0,        "aWord", "addOn",                -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Hominy Homonym puzzle
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
