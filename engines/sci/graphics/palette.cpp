@@ -60,12 +60,12 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 
 	_sysPaletteChanged = false;
 
-	// Pseudo-WORKAROUND
-	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest 1 vga and all Nick's Picks
-	// all use an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
-	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
-	//  If we use the copying over, we will get issues because some views have marked all colors as being used
-	//  and those will overwrite the current palette in that case
+	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest
+	// 1 vga and all Nick's Picks all use the older palette format and thus are
+	// not using the SCI1.1 palette merging (copying over all the colors) but
+	// the real merging done in earlier games. If we use the copying over, we
+	// will get issues because some views have marked all colors as being used
+	// and those will overwrite the current palette in that case
 	_useMerging = useMerging;
 
 	palVaryInit();
@@ -106,12 +106,7 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 	if (bytesLeft < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
-
-		if (g_sci->getGameId() == GID_SQ5 && g_sci->getEngineState()->currentRoomNumber() == 110 && bytesLeft == 28) {
-			// Known case for SQ5, which doesn't affect gameplay, thus don't throw a warning
-		} else {
-			warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette header");
-		}
+		debugC(2, "GfxPalette::createFromData() - not enough bytes in resource (%d), expected palette header", bytesLeft);
 		return;
 	}
 	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
