@@ -75,8 +75,8 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 		// Empty list is fine
 	} else if (!list->first.isNull() && !list->last.isNull()) {
 		// Normal list
-		Node *node_a = segMan->lookupNode(list->first);
-		Node *node_z = segMan->lookupNode(list->last);
+		Node *node_a = segMan->lookupNode(list->first, false);
+		Node *node_z = segMan->lookupNode(list->last, false);
 
 		if (!node_a) {
 			error("checkListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
