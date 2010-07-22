@@ -117,8 +117,8 @@ void Testsuite::logDetailedPrintf(const char *fmt, ...) {
 Testsuite::Testsuite() {
 	_numTestsPassed = 0;
 	_numTestsExecuted = 0;
-	// Initially all testsuites are disabled, enable them by calling enableTestSuite(name, true)
-	_isTsEnabled = false;
+	// Initially all testsuites are enabled, disable them by calling enableTestSuite(name, false)
+	_isTsEnabled = true;
 }
 
 Testsuite::~Testsuite() {

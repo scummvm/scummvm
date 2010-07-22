@@ -40,7 +40,8 @@ namespace Testbed {
 
 enum {
 	kTestbedQuitCmd = 'Quit',
-	kTestbedSelectAll = 'sAll'
+	kTestbedSelectAll = 'sAll',
+	kTestbedDeselectAll = 'dAll'
 };
 
 class TestbedConfigManager {
@@ -48,46 +49,29 @@ public:
 	TestbedConfigManager(Common::Array<Testsuite *> &tList) : _testsuiteList(tList) {}
 	~TestbedConfigManager() {}
 	void selectTestsuites();
-	Testsuite *getTestsuiteByName(const Common::String &name);
-	bool isEnabled(const Common::String &tsName);
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
-	void enableTestsuite(const Common::String &name, bool enable);
 	void parseConfigFile() {}
 };
 
 class TestbedListWidget : public GUI::ListWidget {
 public:
-	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::StringArray &tsDescArr) : GUI::ListWidget(boss, name), _testSuiteDescArray(tsDescArr) {}
+	TestbedListWidget(GUI::Dialog *boss, const Common::String &name, Common::Array<Testsuite *> tsArray) : GUI::ListWidget(boss, name), _testSuiteArray(tsArray) {}
 
-	void changeColor() {
-		// Using Font Color Mechanism to highlight selected entries.
-		// Might not be detectable with some themes
-		if (_listColors.size() >= 2) {
-			if (GUI::ThemeEngine::kFontColorNormal == _listColors[_selectedItem]) {
-				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorAlternate;
-			} else if (GUI::ThemeEngine::kFontColorAlternate == _listColors[_selectedItem]) {
-				_listColors[_selectedItem] = GUI::ThemeEngine::kFontColorNormal;
-			}
+	void markAsSelected(int i) {
+		if (!_list[i].contains("selected")) {
+			_list[i] += " (selected)";
 		}
-
-		// Also append (selected) to each selected entry
-		if (_list[_selectedItem].contains("selected")) {
-			_list[_selectedItem] = _testSuiteDescArray[_selectedItem];	
-		} else {
-			_list[_selectedItem] += " (selected)";
-		}
+		_listColors[i] = GUI::ThemeEngine::kFontColorNormal;
 		draw();
 	}
-
-	void setColorAll(GUI::ThemeEngine::FontColor color) {
-		for (uint i = 0; i < _listColors.size(); i++) {
-			if (!_list[i].contains("selected")) {
-				_listColors[i] = color;
-				_list[i] += " (selected)";
-			}
+	
+	void markAsDeselected(int i) {
+		if (_list[i].contains("selected")) {
+			_list[i] = _testSuiteArray[i]->getDescription();
 		}
-		draw();;
+		_listColors[i] = GUI::ThemeEngine::kFontColorAlternate;
+		draw();
 	}
 	
 	void setColor(uint32 indx, GUI::ThemeEngine::FontColor color) {
@@ -97,7 +81,7 @@ public:
 	}
 
 private:
-	const Common::StringArray	_testSuiteDescArray;
+	Common::Array<Testsuite *>	_testSuiteArray;
 };
 
 class TestbedOptionsDialog : public GUI::Dialog {
@@ -108,10 +92,10 @@ public:
 
 private:
 	GUI::ListWidget::ColorList _colors;
-	Common::StringArray _testSuiteArray;
+	GUI::ButtonWidget	*_selectButton;
+	Common::Array<Testsuite *> _testSuiteArray;
 	Common::StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
-	TestbedConfigManager *_testbedConfMan;
 };
 
 } // End of namespace Testbed

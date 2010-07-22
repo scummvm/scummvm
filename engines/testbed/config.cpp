@@ -29,30 +29,34 @@ namespace Testbed {
 
 TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser") {
 	
-	_testbedConfMan = tsConfMan;
-	
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
 	new GUI::StaticTextWidget(this, "Browser.Path", "Use Double click to select / deselect");
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
+	Common::String description;
 
 	for (iter = tsList.begin(); iter != tsList.end(); iter++) {
-		_testSuiteArray.push_back((*iter)->getName());
-		_testSuiteDescArray.push_back((*iter)->getDescription());
-		_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
+		_testSuiteArray.push_back(*iter);
+		description = (*iter)->getDescription();
+		if ((*iter)->isEnabled()) {
+			_testSuiteDescArray.push_back(description + "(selected)");
+			_colors.push_back(GUI::ThemeEngine::kFontColorNormal);
+		} else {
+			_testSuiteDescArray.push_back(description);
+			_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
+		}
 	}
 	
-	_testListDisplay = new TestbedListWidget(this, "Browser.List", _testSuiteDescArray);
+	_testListDisplay = new TestbedListWidget(this, "Browser.List", _testSuiteArray);
 	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
 	_testListDisplay->setList(_testSuiteDescArray, &_colors);
 
 	// This list shouldn't be editable
 	_testListDisplay->setEditable(false);
 
-	new GUI::ButtonWidget(this, "Browser.Up", "Select All", kTestbedSelectAll, 0);
+	_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Deselect All", kTestbedDeselectAll, 0);
 	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd);
-	// XXX: Add more commands for this
 	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", kTestbedQuitCmd);
 }
 
@@ -62,54 +66,52 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	Testsuite *ts;
 	switch (cmd) {
 	case GUI::kListItemDoubleClickedCmd:
-		ts  = _testbedConfMan->getTestsuiteByName(_testSuiteArray[_testListDisplay->getSelected()]);
+		ts  = _testSuiteArray[_testListDisplay->getSelected()];
 		if (ts) {
+			if (ts->isEnabled()) {
+				ts->enable(false);
+				_testListDisplay->markAsDeselected(_testListDisplay->getSelected());
+			} else {
+				ts->enable(true);
+				_testListDisplay->markAsSelected(_testListDisplay->getSelected());
+			}
 			ts->enable(!ts->isEnabled());
-			_testListDisplay->changeColor();
 		}
 		break;
+
 	case kTestbedQuitCmd:
 		Engine::quitGame();
 		close();
 		break;
-	case kTestbedSelectAll:
+
+	case kTestbedDeselectAll:
+		_selectButton->setLabel("Select All");
+		_selectButton->setCmd(kTestbedSelectAll);
 		for (uint i = 0; i < _testSuiteArray.size(); i++) {
-			ts  = _testbedConfMan->getTestsuiteByName(_testSuiteArray[i]);
+			_testListDisplay->markAsDeselected(i);
+			ts  = _testSuiteArray[i];
+			if (ts) {
+				ts->enable(false);
+			}
+		}
+		break;
+
+	case kTestbedSelectAll:
+		_selectButton->setLabel("Deselect All");
+		_selectButton->setCmd(kTestbedDeselectAll);
+		for (uint i = 0; i < _testSuiteArray.size(); i++) {
+			_testListDisplay->markAsSelected(i);
+			ts  = _testSuiteArray[i];
 			if (ts) {
 				ts->enable(true);
 			}
 		}
-		_testListDisplay->setColorAll(GUI::ThemeEngine::kFontColorNormal);
 		break;
+
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
+	
 	}
-}
-
-bool TestbedConfigManager::isEnabled(const Common::String &tsName) {
-	Testsuite *ts = getTestsuiteByName(tsName);
-	return ts ? ts->isEnabled() : false;
-}
-
-
-void TestbedConfigManager::enableTestsuite(const Common::String &name, bool enable) {
-	Testsuite *ts = getTestsuiteByName(name);
-	if (ts) {
-		ts->enable(enable);
-	} else {
-		warning("No matches found for %s\n", name.c_str());
-	}
-}
-
-Testsuite *TestbedConfigManager::getTestsuiteByName(const Common::String &name) {
-	Common::Array<Testsuite *>::const_iterator iter;
-
-	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
-		if (name.equalsIgnoreCase((*iter)->getName())) {
-			return *iter;
-		}
-	}
-	return 0;
 }
 
 void TestbedConfigManager::selectTestsuites() {
