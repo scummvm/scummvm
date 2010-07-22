@@ -91,8 +91,6 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 
 		signal = readSelectorValue(_s->_segMan, curObject, SELECTOR(signal));
 		if (!(signal & kSignalFrozen)) {
-			reg_t nextNode = curNode->succ;
-
 			// Call .doit method of that object
 			invokeSelector(_s, curObject, SELECTOR(doit), argc, argv, 0);
 
@@ -103,11 +101,9 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			// Lookup node again, since the nodetable it was in may have been reallocated.
 			// The node might have been deallocated at this point (e.g. LSL2, room 42),
 			// in which case the node reference will be null and the loop will stop below.
+			// If the node is deleted from kDeleteKey, it won't have a successor node, thus
+			// list processing will stop here (which is what SSCI does).
 			curNode = _s->_segMan->lookupNode(curAddress, false);
-			
-			// Sanity check: If the node has been deleted, it shouldn't have a successor node
-			if (!curNode && !nextNode.isNull())
-				error("kAnimate: list node has been deleted, but it has a successor node");
 		}
 
 		if (curNode) {
