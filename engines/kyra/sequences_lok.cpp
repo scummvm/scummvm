@@ -93,6 +93,7 @@ void KyraEngine_LoK::seq_intro() {
 		_res->loadPakFile("INTRO.VRM");
 
 	static const IntroProc introProcTable[] = {
+		&KyraEngine_LoK::seq_introPublisherLogos,
 		&KyraEngine_LoK::seq_introLogos,
 		&KyraEngine_LoK::seq_introStory,
 		&KyraEngine_LoK::seq_introMalcolmTree,
@@ -132,16 +133,17 @@ void KyraEngine_LoK::seq_intro() {
 		_res->unloadPakFile("INTRO.VRM");
 }
 
-bool KyraEngine_LoK::seq_introLogos() {
+bool KyraEngine_LoK::seq_introPublisherLogos() {
 	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		_screen->loadBitmap("LOGO.CPS", 3, 3, &_screen->getPalette(0));
 		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
 		delay(90 * _tickLength);
-		_screen->fadeToBlack();
-		if (!_abortIntroFlag)
+		if (!_abortIntroFlag) {
+			_screen->fadeToBlack();
 			snd_playWanderScoreViaMap(_flags.platform == Common::kPlatformFMTowns ? 57 : 2, 0);
+		}
 	} else if (_flags.platform == Common::kPlatformMacintosh && _res->exists("MP_GOLD.CPS")) {
 		_screen->loadPalette("MP_GOLD.COL", _screen->getPalette(0));
 		_screen->loadBitmap("MP_GOLD.CPS", 3, 3, 0);
@@ -149,12 +151,14 @@ bool KyraEngine_LoK::seq_introLogos() {
 		_screen->updateScreen();
 		_screen->fadeFromBlack();
 		delay(120 * _tickLength);
-		_screen->fadeToBlack();
+		if (!_abortIntroFlag)
+			_screen->fadeToBlack();
 	}
 
-	if (_abortIntroFlag || shouldQuit())
-		return false;
+	return _abortIntroFlag;
+}
 
+bool KyraEngine_LoK::seq_introLogos() {
 	_screen->clearPage(0);
 
 	if (_flags.platform == Common::kPlatformAmiga) {

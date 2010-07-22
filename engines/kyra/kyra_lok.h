@@ -157,6 +157,7 @@ protected:
 
 	// -> intro
 	void seq_intro();
+	bool seq_introPublisherLogos();
 	bool seq_introLogos();
 	bool seq_introStory();
 	bool seq_introMalcolmTree();
