@@ -28,6 +28,8 @@
 #include "sci/graphics/screen.h"
 #include "sci/graphics/robot.h"
 
+#include "common/file.h"
+
 namespace Sci {
 
 #ifdef ENABLE_SCI32
@@ -38,15 +40,29 @@ GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId res
 }
 
 GfxRobot::~GfxRobot() {
-	_resMan->unlockResource(_resource);
+	delete[] _resourceData;
 }
 
 void GfxRobot::initData(GuiResourceId resourceId) {
-	_resource = _resMan->findResource(ResourceId(kResourceTypeRobot, resourceId), true);
-	if (!_resource) {
-		error("robot resource %d not found", resourceId);
+	char fileName[10];
+	sprintf(fileName, "%d.rbt", resourceId);
+
+	Common::File robotFile;
+	if (robotFile.open(fileName)) {
+		_resourceData = new byte[robotFile.size()];
+		robotFile.read(_resourceData, robotFile.size());
+		robotFile.close();
+	} else {
+		warning("Unable to open robot file %s", fileName);
+		return;
 	}
-	_resourceData = _resource->data;
+	
+	byte version = _resourceData[6];
+
+	if (version != 4 && version != 5) {
+		warning("Robot version %d isn't supported yet", version);
+		return;
+	}
 
 // sample data:
 //  Header - 14 bytes
@@ -152,8 +168,11 @@ void GfxRobot::initData(GuiResourceId resourceId) {
 //                          ^ ??
 // 00000120: 70 70 70 70 70 70 70 70-70 70 70 70 70 70 70 70  pppppppppppppppp
 
-	_frameCount = READ_LE_UINT16(_resourceData + 12);
-	_frameSize = READ_LE_UINT32(_resourceData + 34);
+	_frameCount = READ_LE_UINT16(_resourceData + 14);
+	//_frameSize = READ_LE_UINT32(_resourceData + 34);
+	byte hasSound = _resourceData[25];
+
+	debug("Robot %d, %d frames, sound: %d\n", resourceId, _frameCount, hasSound);
 }
 
 // TODO: just trying around in here...
