@@ -171,6 +171,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	_screen->fadeFromBlack();
 
 	if (_seq->playSequence(_seq_WestwoodLogo, skipFlag()) || shouldQuit()) {
+		resetSkipFlag();
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
@@ -186,6 +187,7 @@ void KyraEngine_LoK::seq_introLogos() {
 	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 
 	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
+		resetSkipFlag();
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
