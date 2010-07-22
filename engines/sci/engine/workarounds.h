@@ -43,6 +43,12 @@ struct SciWorkaroundSolution {
 	uint16 value;
 };
 
+/**
+ * A structure describing a 'workaround' for a SCI script bug.
+ *
+ * Arrays of SciWorkaroundEntry instances are terminated by
+ * a fake entry in which "objectName" is NULL.
+ */
 struct SciWorkaroundEntry {
 	SciGameId gameId;
 	int roomNr;
@@ -55,10 +61,6 @@ struct SciWorkaroundEntry {
 	SciWorkaroundSolution newValue;
 };
 
-#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { WORKAROUND_NONE, 0 } }
-#define FAKE WORKAROUND_FAKE
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 extern const SciWorkaroundEntry opcodeDivWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
@@ -72,8 +74,6 @@ extern const SciWorkaroundEntry kGraphFillBoxAny_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
-
-#undef FAKE
 
 } // End of namespace Sci
 
