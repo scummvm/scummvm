@@ -36,6 +36,7 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/static_selectors.o \
 	engine/vm.o \
+	engine/workarounds.o \
 	graphics/animate.o \
 	graphics/cache.o \
 	graphics/compare.o \
