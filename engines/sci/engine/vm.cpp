@@ -541,30 +541,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 			if (argc > 1) {
 				// argc can indeed be bigger than 1 in some cases, and it's usually the
-				// result of a script bug
+				// result of a script bug. Usually these aren't fatal.
 
 				const char *objectName = s->_segMan->getObjectName(send_obj);
-				const SciGameId gameId = g_sci->getGameId();
 
-				if (gameId == GID_SQ4 && !strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
-					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
-					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (gameId == GID_QFG1VGA && !strcmp(objectName, "longSong") && selector == 3) {
-					// QFG1VGA has a script bug in the longSong object when invoking the
-					// loop selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (gameId == GID_CASTLEBRAIN && !strcmp(objectName, "PuzPiece") && selector == 77) {
-					// Castle of Dr. Brain has a script bug in the PuzPiece object when invoking
-					// the value selector, which doesn't affect gameplay, thus don't display it
-				} else {
-					// Unknown script bug, show it. Usually these aren't fatal.
-					reg_t oldReg = *varp.getPointer(s->_segMan);
-					reg_t newReg = argp[1];
-					const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-					warning("send_selector(): argc = %d while modifying variable selector "
-							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
-							argc, selector, selectorName, PRINT_REG(send_obj),
-							objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
-				}
+				reg_t oldReg = *varp.getPointer(s->_segMan);
+				reg_t newReg = argp[1];
+				const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
+				debug(2, "send_selector(): argc = %d while modifying variable selector "
+						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
+						argc, selector, selectorName, PRINT_REG(send_obj),
+						objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
 			}
 
 			{
