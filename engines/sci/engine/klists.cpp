@@ -34,7 +34,7 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 	reg_t prev = addr;
 
 	do {
-		Node *node = segMan->lookupNode(addr);
+		Node *node = segMan->lookupNode(addr, false);
 
 		if (!node) {
 			if ((g_sci->getGameId() == GID_ICEMAN) && (g_sci->getEngineState()->currentRoomNumber() == 40)) {
