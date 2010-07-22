@@ -190,6 +190,7 @@ typedef struct
 #define R_ARM_THM_CALL      10
 #define R_ARM_CALL			28
 #define R_ARM_JUMP24		29
+#define R_ARM_TARGET1		38
 #define R_ARM_V4BX 			40
 
 #endif /* BACKENDS_ELF_H */

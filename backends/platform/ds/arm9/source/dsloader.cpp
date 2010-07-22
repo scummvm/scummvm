@@ -106,7 +106,7 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 		// Get the target instruction in the code
 		unsigned int *target = (unsigned int *)((char *)relSegment + rel[i].r_offset);
 
-		unsigned int origTarget = *target;	// Save for debugging
+		unsigned int origTarget = *target;	//Save for debugging
 
 		// Act differently based on the type of relocation
 		switch (REL_TYPE(rel[i].r_info)) {
@@ -132,6 +132,18 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 
 		case R_ARM_JUMP24:
 			DBG("R_ARM_JUMP24: PC-relative jump, ld takes care of all relocation work for us.\n");
+			break;
+
+		case R_ARM_TARGET1:
+			if (sym->st_shndx < SHN_LOPROC) {			// Only shift for plugin section.
+				a = *target;							// Get full 32 bits of addend
+				relocation = a + (Elf32_Addr)_segment;			   // Shift by main offset
+
+				*target = relocation;
+
+				DBG("R_ARM_TARGET1: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
+				seterror("WARNING: THIS RELOCATION CODE UNTESTED!\n"); //TODO: test cruise for corpse on ARM target!
+			}
 			break;
 
 		case R_ARM_V4BX:
