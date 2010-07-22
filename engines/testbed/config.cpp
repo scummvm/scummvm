@@ -30,7 +30,7 @@ namespace Testbed {
 TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser") {
 	
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
-	new GUI::StaticTextWidget(this, "Browser.Path", "Use Double click to select / deselect");
+	new GUI::StaticTextWidget(this, "Browser.Path", "Use Doubleclick to select/deselect");
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
@@ -56,7 +56,7 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Deselect All", kTestbedDeselectAll, 0);
-	new GUI::ButtonWidget(this, "Browser.Cancel", "Continue", GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "Browser.Cancel", "Run tests", GUI::kCloseCmd);
 	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", kTestbedQuitCmd);
 }
 
@@ -75,7 +75,6 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 				ts->enable(true);
 				_testListDisplay->markAsSelected(_testListDisplay->getSelected());
 			}
-			ts->enable(!ts->isEnabled());
 		}
 		break;
 

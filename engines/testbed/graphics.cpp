@@ -258,6 +258,12 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		Common::String info = disableCursorPalette ? "Using Game Palette" : "Using cursor palette";
 		info += " to render the cursor, Click to finish";
 
+		Common::String gfxScalarMode(gfxModeName);
+
+		if (!gfxScalarMode.equals("")) {
+			info = "The cursor size (yellow) should match the red rectangle.";
+		}
+		
 		Testsuite::writeOnScreen(info, pt);
 
 		info = "GFX Mode";
@@ -268,7 +274,6 @@ void GFXtests::setupMouseLoop(bool disableCursorPalette, const char *gfxModeName
 		info += "Cursor scale: ";
 		info += cScale;
 
-		Common::String gfxScalarMode(gfxModeName);
 		Common::Rect estimatedCursorRect;
 
 		if (!gfxScalarMode.equals("")) {
@@ -572,7 +577,7 @@ bool GFXtests::palettizedCursors() {
 		passed = false;
 	}
 
-	if (!Testsuite::handleInteractiveInput("Did Cursor tests went as you were expecting?")) {
+	if (!Testsuite::handleInteractiveInput("Did test run as was described?")) {
 		passed = false;
 	}
 
@@ -593,16 +598,22 @@ bool GFXtests::mouseMovements() {
 	CursorMan.showMouse(true);
 	
 	Common::String info = "Testing Automated Mouse movements.\n"
-						"You should expect cursor to automatically move from (0, 0) to (100, 100)";
+						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
+						"There we have a rectangle drawn, finally the rectangle should symmetrically contain the cursor.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements");
 		return true;
 	}
 	
+	// Draw Rectangle
+	Graphics::Surface *screen = g_system->lockScreen();
+	screen->fillRect(Common::Rect::center(106, 106, 14, 14), 2);
+	g_system->unlockScreen();
+
 	// Testing Mouse Movements now!
-	Common::Point pt(0, 100);
-	Testsuite::writeOnScreen("Moving mouse automatically from (0, 0) to (100, 100)", pt);
+	Common::Point pt(0, 10);
+	Testsuite::writeOnScreen("Moving mouse hotspot automatically from (0, 0) to (100, 100)", pt);
 	g_system->warpMouse(0, 0);
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
@@ -613,11 +624,11 @@ bool GFXtests::mouseMovements() {
 		g_system->updateScreen();
 	}
 
-	Testsuite::clearScreen();
-	Testsuite::writeOnScreen("Mouse Moved to (100, 100)", pt);
-	g_system->delayMillis(1000);
+	Testsuite::writeOnScreen("Mouse hotspot Moved to (100, 100)", pt);
+	g_system->delayMillis(1500);
+	CursorMan.showMouse(false);
 
-	if (Testsuite::handleInteractiveInput("Were you able to see an automated mouse movement?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Was the cursor symmetrically contained in the rectangle at (100, 100)?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -652,7 +663,7 @@ bool GFXtests::copyRectToScreen() {
 	g_system->updateScreen();
 	g_system->delayMillis(1000);
 
-	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did you see yellow rectangle?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -666,7 +677,7 @@ bool GFXtests::copyRectToScreen() {
 bool GFXtests::iconifyWindow() {
 	
 	Testsuite::clearScreen();
-	Common::String info = "Testing Iconify Window mode.\n If the feature is supported by the backend,"
+	Common::String info = "Testing Iconify Window mode.\n If the feature is supported by the backend, "
 		"you should expect the window to be minimized.\n However you would manually need to de-iconify.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
@@ -700,7 +711,7 @@ bool GFXtests::iconifyWindow() {
 		Testsuite::displayMessage("feature not supported");
 	}
 
-	if (Testsuite::handleInteractiveInput("Did the test worked as you were expecting?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did you see window minimized?", "Yes", "No", kOptionRight)) {
 		return false;
 	}
 
@@ -714,9 +725,9 @@ bool GFXtests::scaledCursors() {
 
 	Testsuite::clearScreen();
 	Common::String info = "Testing : Scaled cursors\n"
-		"Here every graphics mode is tried with a cursorTargetScale of 1,2 and 3.\n"
+		"Here every graphics mode is tried with a cursorTargetScale of 1, 2 and 3.\n"
 		"The expected cursor size is drawn as a rectangle, the cursor should entirely cover that rectangle.\n"
-		"This may take time, You may skip the later scalers and just examine the first three i.e 1x,2x and 3x";
+		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors");
@@ -724,7 +735,7 @@ bool GFXtests::scaledCursors() {
 	}
 
 	int maxLimit = 1000;
-	if (!Testsuite::handleInteractiveInput("Do you want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
+	if (!Testsuite::handleInteractiveInput("Do You want to restrict scalers to 1x, 2x and 3x only?", "Yes", "No", kOptionRight)) {
 		maxLimit = 3;
 	}
 
@@ -786,7 +797,7 @@ bool GFXtests::shakingEffect() {
 	}
 
 	Common::Point pt(0, 100);
-	Testsuite::writeOnScreen("If Shaking effect works,this should shake!", pt);
+	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
 	int times = 35;
 	while (times--) {
 		g_system->setShakePos(10);
@@ -796,7 +807,7 @@ bool GFXtests::shakingEffect() {
 	}
 	g_system->delayMillis(1500);
 
-	if (Testsuite::handleInteractiveInput("Did the shaking test worked as you were expecting?", "Yes", "No", kOptionRight)) {
+	if (Testsuite::handleInteractiveInput("Did the Shaking test worked as you were expecting?", "Yes", "No", kOptionRight)) {
 		Testsuite::logDetailedPrintf("Shaking Effect didn't worked");
 		return false;
 	}

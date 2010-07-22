@@ -67,6 +67,16 @@ void MiscTests::criticalSection(void *arg) {
 }
 
 bool MiscTests::testDateTime() {
+	
+	if (Testsuite::isSessionInteractive) {
+		if (Testsuite::handleInteractiveInput("Testing the date time API implementation", "Continue", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("Info! Date time tests skipped by the user.\n");
+			return true;
+		}
+		
+		Testsuite::writeOnScreen("Verifying Date-Time...", Common::Point(0, 100));
+	}
+	
 	TimeDate t1, t2;
 	g_system->getTimeAndDate(t1);
 	Testsuite::logDetailedPrintf("Current Time and Date: ");
@@ -76,7 +86,6 @@ bool MiscTests::testDateTime() {
 	if (Testsuite::isSessionInteractive) {
 		// Directly verify date
 		dateTimeNow = "We expect the current date time to be " + dateTimeNow;
-		Testsuite::clearScreen();
 		if (Testsuite::handleInteractiveInput(dateTimeNow, "Correct!", "Wrong", kOptionRight)) {
 			return false;
 		}
@@ -117,6 +126,15 @@ bool MiscTests::testTimers() {
 }
 
 bool MiscTests::testMutexes() {
+	
+	if (Testsuite::isSessionInteractive) {
+		if (Testsuite::handleInteractiveInput("Testing the Mutual Exclusion API implementation", "Continue", "Skip", kOptionRight)) {
+			Testsuite::logPrintf("Info! Mutex tests skipped by the user.\n");
+			return true;
+		}
+		Testsuite::writeOnScreen("Installing mutex", Common::Point(0, 100));
+	}
+
 	static SharedVars sv = {1, 1, true, g_system->createMutex()};
 
 	if (g_system->getTimerManager()->installTimerProc(criticalSection, 100000, &sv)) {
@@ -130,6 +148,9 @@ bool MiscTests::testMutexes() {
 	g_system->unlockMutex(sv.mutex);
 
 	// wait till timed process exits
+	if (Testsuite::isSessionInteractive) {
+		Testsuite::writeOnScreen("Waiting for 3s so that timed processes finish", Common::Point(0, 100));
+	}
 	g_system->delayMillis(3000);
 
 	Testsuite::logDetailedPrintf("Final Value: %d %d\n", sv.first, sv.second);
