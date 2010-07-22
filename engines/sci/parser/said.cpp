@@ -1113,7 +1113,14 @@ True
 said depth correct & [!*] < 8b1 / 22
 True
 
+said depth acknowledged & / 46d , 460 , 44d < 8b1
+True
 
+said depth confirmed & / 46d , 460 , 44d < 8b1
+True
+
+said depth attained & / 46d , 460 , 44d < 8b1
+True
 
 
 */
