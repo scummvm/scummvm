@@ -48,11 +48,11 @@ void KyraEngine_LoK::setupTimers() {
 	for (int i = 10; i <= 13; ++i)
 		_timer->addTimer(i, 0, 420, 1);
 
-	_timer->addTimer(14, TimerV1(timerCheckAnimFlag2), 600, 1);
+	_timer->addTimer(14, TimerV1(timerAsWillowispTimeout), 600, 1);
 	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, 1);
-	_timer->addTimer(16, TimerV1(timerSetFlags1), 7200, 1);
+	_timer->addTimer(16, TimerV1(timerTulipCreator), 7200, 1);
 	_timer->addTimer(17, 0 /*sub_15120*/, 7200, 1);
-	_timer->addTimer(18, TimerV1(timerCheckAnimFlag1), 600, 1);
+	_timer->addTimer(18, TimerV1(timerAsInvisibleTimeout), 600, 1);
 	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, 1);
 
 	_timer->addTimer(20, 0, 7200, 1);
@@ -67,8 +67,8 @@ void KyraEngine_LoK::setupTimers() {
 	_timer->addTimer(30, 0, 10800, 1);
 
 	_timer->addTimer(31, TimerV1(timerFadeText), -1, 1);
-	_timer->addTimer(32, TimerV1(updateAnimFlag1), 9, 1);
-	_timer->addTimer(33, TimerV1(updateAnimFlag2), 3, 1);
+	_timer->addTimer(32, TimerV1(timerWillowispFrameTimer), 9, 1);
+	_timer->addTimer(33, TimerV1(timerInvisibleFrameTimer), 3, 1);
 }
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
@@ -89,7 +89,7 @@ void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	_animator->animRefreshNPC(_talkingCharNum);
 }
 
-void KyraEngine_LoK::timerSetFlags1(int timerNum) {
+void KyraEngine_LoK::timerTulipCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
@@ -111,16 +111,14 @@ void KyraEngine_LoK::timerFadeText(int timerNum) {
 	_fadeText = true;
 }
 
-void KyraEngine_LoK::updateAnimFlag1(int timerNum) {
-	if (_brandonStatusBit & 2) {
+void KyraEngine_LoK::timerWillowispFrameTimer(int timerNum) {
+	if (_brandonStatusBit & 2)
 		_brandonStatusBit0x02Flag = 1;
-	}
 }
 
-void KyraEngine_LoK::updateAnimFlag2(int timerNum) {
-	if (_brandonStatusBit & 0x20) {
+void KyraEngine_LoK::timerInvisibleFrameTimer(int timerNum) {
+	if (_brandonStatusBit & 0x20)
 		_brandonStatusBit0x20Flag = 1;
-	}
 }
 
 void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
@@ -130,19 +128,14 @@ void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
 	_timer->setCountdown(31, countdown*60);
 }
 
-void KyraEngine_LoK::timerSetFlags2(int timerNum) {
-	if (!((uint32 *)(_flagsTable+0x2D))[timerNum])
-		((uint32 *)(_flagsTable+0x2D))[timerNum] = 1;
-}
-
-void KyraEngine_LoK::timerCheckAnimFlag1(int timerNum) {
+void KyraEngine_LoK::timerAsInvisibleTimeout(int timerNum) {
 	if (_brandonStatusBit & 0x20) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(18, -1);
 	}
 }
 
-void KyraEngine_LoK::timerCheckAnimFlag2(int timerNum) {
+void KyraEngine_LoK::timerAsWillowispTimeout(int timerNum) {
 	if (_brandonStatusBit & 0x2) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(14, -1);
