@@ -1682,7 +1682,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 	              "\t\tSubSystem=\"1\"\n"
 	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
-				  "\t\tAdditionalLibraryDirectories=\"%(SCUMMVM_LIBS)\\libs\\" << (isWin32 ? "x86" : "x64") << "\"\n"
+	              "\t\tAdditionalLibraryDirectories=\"%(SCUMMVM_LIBS)\\libs\\" << (isWin32 ? "x86" : "x64") << "\"\n"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
@@ -2053,7 +2053,7 @@ void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, 
 	              "\t\t<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
 	              "\t\t<ExecutablePath>%(SCUMMVM_LIBS)\\bin;$(ExecutablePath)</ExecutablePath>\n"
 	              "\t\t<LibraryPath>%(SCUMMVM_LIBS)\\libs\\" << (isWin32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
-				  "\t\t<IncludePath>%(SCUMMVM_LIBS)\\include;$(IncludePath)</IncludePath>\n"
+	              "\t\t<IncludePath>%(SCUMMVM_LIBS)\\include;$(IncludePath)</IncludePath>\n"
 	              "\t\t<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
 	              "\t\t<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
 	              "\t</PropertyGroup>\n"
@@ -2104,7 +2104,7 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	              "\t\t<LinkIncremental>" << (isRelease ? "false" : "true") << "</LinkIncremental>\n"
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
-				  "\t\t<ClCompile>\n";
+	              "\t\t<ClCompile>\n";
 
 
 
