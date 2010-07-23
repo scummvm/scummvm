@@ -59,9 +59,10 @@ public:
 	virtual ~GLTexture();
 
 	virtual void refresh();
+	virtual void refreshBuffer();
 
 	virtual void allocBuffer(GLuint width, GLuint height);
-	virtual void fillBuffer(byte x);
+	virtual void fillBuffer(uint32 x);
 	virtual void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
 		GLuint w, GLuint h);
 

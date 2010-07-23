@@ -104,6 +104,10 @@ void GLTexture::refresh() {
 	_refresh = true;
 }
 
+void GLTexture::refreshBuffer() {
+	updateBuffer(_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
+}
+
 void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	_realWidth = w;
 	_realHeight = h;
@@ -133,7 +137,7 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	if (_surface.w != _textureWidth || _surface.h != _textureHeight)
 		_surface.create(_textureWidth, _textureHeight, _bytesPerPixel);
 	else if (_refresh)
-		updateBuffer(_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
+		refreshBuffer();
 
 	_refresh = false;
 }
@@ -147,7 +151,7 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 		if (buf != _surface.pixels)
 			memcpy(_surface.getBasePtr(x, y), buf, h * pitch);
 	} else {
-		const byte* src = static_cast<const byte*>(buf);
+		const byte *src = static_cast<const byte *>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 							w, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
@@ -159,8 +163,15 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	}
 }
 
-void GLTexture::fillBuffer(byte x) {
-	memset(_surface.pixels, x, _surface.h * _surface.pitch);
+void GLTexture::fillBuffer(uint32 x) {
+	if (_bytesPerPixel == 1) 
+		memset(_surface.pixels, x, _surface.w * _surface.h);
+	else {
+		for (int i = 0; i < _surface.w * _surface.h; i++) {
+			memcpy(_surface.pixels, &x, _bytesPerPixel);
+		}
+	}
+
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _surface.w, _surface.h,
 		_glFormat, _glType, _surface.pixels);  CHECK_GL_ERROR();

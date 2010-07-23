@@ -168,8 +168,7 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
-		newFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0);
-		//newFormat = Graphics::PixelFormat::createFormatCLUT8();
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else
 		newFormat = *format;
 
@@ -327,7 +326,30 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	_gameTexture->updateBuffer(buf, pitch, x, y, w, h);
+	if (_screenFormat == Graphics::PixelFormat::createFormatCLUT8()) {
+		// Create a temporary RGBA888 surface
+		byte *surface = new byte[w * h * 3];
+
+		// Convert the paletted buffer to RGBA888
+		const byte *src = buf;
+		byte *dst = surface;
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				dst[0] = _gamePalette[src[j] * 4];
+				dst[1] = _gamePalette[src[j] * 4 + 1];
+				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst += 3;
+			}
+			src += pitch;
+		}
+
+		// Update the texture
+		_gameTexture->updateBuffer(surface, w * 3, x, y, w, h);
+
+		// Free the temp surface
+		delete[] surface;
+	} else
+		_gameTexture->updateBuffer(buf, pitch, x, y, w, h);
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
@@ -335,7 +357,7 @@ Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
 }
 
 void OpenGLGraphicsManager::unlockScreen() {
-	_gameTexture->refresh();
+	_gameTexture->refreshBuffer();
 }
 
 void OpenGLGraphicsManager::fillScreen(uint32 col) {
@@ -545,17 +567,18 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		bpp = 2;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_SHORT_5_6_5;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0)) {  // RGB555
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) {  // RGB5551
 		bpp = 2;
-		glFormat = GL_RGB;
+		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {  // RGBA4444
 		bpp = 2;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
 	} else if (pixelFormat == Graphics::PixelFormat::createFormatCLUT8()) {  // CLUT8
-		bpp = 1;
-		glFormat = GL_COLOR_INDEX;
+		// If uses a palette, create as RGBA888, then convert
+		bpp = 3;
+		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
 	} else {
 		error("Not supported format");
@@ -621,14 +644,23 @@ void OpenGLGraphicsManager::loadTextures() {
 		byte bpp;
 		GLenum format;
 		GLenum type;
+#ifdef USE_RGB_COLOR
 		getGLPixelFormat(_screenFormat, bpp, format, type);
+#else
+		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, format, type);
+#endif
 		_gameTexture = new GLTexture(bpp, format, type);
 	} 
 
-	_overlayFormat = Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0);
+	_overlayFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 
-	if (!_overlayTexture)
-		_overlayTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_4_4_4_4);
+	if (!_overlayTexture) {
+		byte bpp;
+		GLenum format;
+		GLenum type;
+		getGLPixelFormat(_overlayFormat, bpp, format, type);
+		_overlayTexture = new GLTexture(bpp, format, type);
+	}
 
 	if (!_cursorTexture)
 		_cursorTexture = new GLTexture(4, GL_RGBA, GL_UNSIGNED_BYTE);

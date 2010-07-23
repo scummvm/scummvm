@@ -127,8 +127,8 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 	if (!_screenResized) {
-		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-		_videoMode.hardwareHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+		_videoMode.hardwareWidth = _videoMode.overlayWidth;
+		_videoMode.hardwareHeight = _videoMode.overlayHeight;
 	}
 	_screenResized = false;
 
