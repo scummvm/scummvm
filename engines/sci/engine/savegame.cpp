@@ -255,6 +255,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	_segMan->saveLoadWithSerializer(s);
 
 	g_sci->_soundCmd->syncPlayList(s);
+	g_sci->_gfxPalette->saveLoadWithSerializer(s);
 }
 
 void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
