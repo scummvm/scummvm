@@ -544,7 +544,7 @@ void Kernel::mapFunctions() {
 		_kernelFuncs[id].workarounds = NULL;
 		_kernelFuncs[id].subFunctions = NULL;
 		_kernelFuncs[id].subFunctionCount = 0;
-		_kernelFuncs[id].debugCalls = false;
+		_kernelFuncs[id].debugLogging = false;
 		if (kernelName.empty()) {
 			// No name was given -> must be an unknown opcode
 			warning("Kernel function %x unknown", id);
@@ -648,6 +648,18 @@ void Kernel::mapFunctions() {
 				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
+}
+
+bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
+	for (uint id = 0; id < _kernelFuncs.size(); id++) {
+		if (_kernelFuncs[id].name) {
+			if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
+				_kernelFuncs[id].debugLogging = logging;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Kernel::setDefaultKernelNames() {

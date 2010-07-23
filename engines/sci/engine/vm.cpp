@@ -642,6 +642,38 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 }
 
+static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int argc, reg_t *argv) {
+	Kernel *kernel = g_sci->getKernel();
+	printf("k%s: ", kernelCall->name);
+	for (int parmNr = 0; parmNr < argc; parmNr++) {
+		if (parmNr)
+			printf(", ");
+		uint16 regType = kernel->findRegType(argv[parmNr]);
+		if (regType & SIG_TYPE_NULL)
+			printf("NULL");
+		else if (regType & SIG_TYPE_UNINITIALIZED)
+			printf("UNINIT");
+		else if (regType & SIG_IS_INVALID)
+			printf("INVALID");
+		else if (regType & SIG_TYPE_INTEGER)
+			printf("%04x", argv[parmNr].offset);
+		else {
+			printf("%04x:%04x", PRINT_REG(argv[parmNr]));
+			switch (regType) {
+			case SIG_TYPE_OBJECT:
+				printf(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
+				break;
+			case SIG_TYPE_REFERENCE:
+				printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	printf("\n");
+}
+
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
 
@@ -676,6 +708,8 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
+		if (kernelCall.debugLogging)
+			logKernelCall(&kernelCall, s, argc, argv);
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
 	} else {

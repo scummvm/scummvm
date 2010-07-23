@@ -135,7 +135,7 @@ struct KernelFunction {
 	const SciWorkaroundEntry *workarounds;
 	const KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
-	bool debugCalls;
+	bool debugLogging;
 };
 
 class Kernel {
@@ -215,6 +215,11 @@ public:
 	 * name table of the resource (the format changed between version 0 and 1).
 	 */
 	void loadKernelNames(GameFeatures *features);
+
+	/**
+	 * Sets debugCalls flag for a kernel function
+	 */
+	bool debugSetFunctionLogging(const char *kernelName, bool debugCalls);
 
 private:
 	/**

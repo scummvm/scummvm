@@ -168,6 +168,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
+	DCmd_Register("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -374,6 +375,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
 	DebugPrintf(" send - Sends a message to an object\n");
 	DebugPrintf(" go - Executes the script\n");
+	DebugPrintf(" logkernel - Logs kernel calls\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
@@ -2688,6 +2690,31 @@ bool Console::cmdGo(int argc, const char **argv) {
 	_debugState.seeking = kDebugSeekNothing;
 
 	return Cmd_Exit(argc, argv);
+}
+
+bool Console::cmdLogKernel(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Logs calls to specified kernel function.\n");
+		DebugPrintf("Usage: %s <kernel-function> <on/off>\n", argv[0]);
+		DebugPrintf("Example: %s StrCpy on\n", argv[0]);
+		return true;
+	}
+
+	bool logging;
+	if (strcmp(argv[2], "on") == 0)
+		logging = true;
+	else if (strcmp(argv[2], "off") == 0)
+		logging = false;
+	else {
+		DebugPrintf("2nd parameter must be either on or off\n");
+		return true;
+	}
+
+	if (g_sci->getKernel()->debugSetFunctionLogging(argv[1], logging))
+		DebugPrintf("Logging %s for k%s\n", logging ? "enabled" : "disabled", argv[1]);
+	else
+		DebugPrintf("Unknown kernel function %s\n", argv[1]);
+	return true;
 }
 
 bool Console::cmdBreakpointList(int argc, const char **argv) {
