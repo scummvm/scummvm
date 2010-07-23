@@ -96,87 +96,47 @@ void KyraEngine_LoK::timerTulipCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 3);
-
-	for (int i = 0; i < 4; i++) {
-		if (!queryGameFlag(rndNr + 17)) {
-			setGameFlag(rndNr + 17);
-			break;
-		} else {
-			rndNr++;
-			if (rndNr > 3)
-				rndNr = 0;
-		}
-	}
+	setItemCreationFlags(17, 3);
 }
 
 void KyraEngine_LoK::timerRubyCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x23)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 3);
-
-	for (int i = 0; i < 4; i++) {
-		if (!queryGameFlag(rndNr + 22)) {
-			setGameFlag(rndNr + 22);
-			break;
-		} else {
-			rndNr++;
-			if (rndNr > 3)
-				rndNr = 0;
-		}
-	}
+	setItemCreationFlags(22, 4);
 }
 
 void KyraEngine_LoK::timerLavenderRoseCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x06)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 4);
-
-	for (int i = 0; i < 5; i++) {
-		if (!queryGameFlag(rndNr)) {
-			setGameFlag(rndNr);
-			break;
-		} else {
-			rndNr++;
-			if (rndNr > 4)
-				rndNr = 0;
-		}
-	}
+	setItemCreationFlags(0, 4);
 }
 
 void KyraEngine_LoK::timerAcornCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x1F)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 5);
-
-	for (int i = 0; i < 6; i++) {
-		if (!queryGameFlag(rndNr + 72)) {
-			setGameFlag(rndNr + 72);
-			break;
-		} else {
-			rndNr++;
-			if (rndNr > 5)
-				rndNr = 0;
-		}
-	}
+	setItemCreationFlags(72, 5);
 }
 
 void KyraEngine_LoK::timerBlueberryCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x28)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 7);
+	setItemCreationFlags(26, 7);
+}
 
-	for (int i = 0; i < 8; i++) {
-		if (!queryGameFlag(rndNr + 26)) {
-			setGameFlag(rndNr + 26);
+void KyraEngine_LoK::setItemCreationFlags(int offset, int count) {
+	int rndNr = _rnd.getRandomNumberRng(0, count);
+
+	for (int i = 0; i <= count; i++) {
+		if (!queryGameFlag(rndNr + offset)) {
+			setGameFlag(rndNr + offset);
 			break;
 		} else {
 			rndNr++;
-			if (rndNr > 7)
+			if (rndNr > count)
 				rndNr = 0;
 		}
 	}

@@ -390,6 +390,8 @@ protected:
 	void setTextFadeTimerCountdown(int16 countdown);
 	void setWalkspeed(uint8 newSpeed);
 
+	void setItemCreationFlags(int offset, int count);
+
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
 
