@@ -375,10 +375,14 @@ protected:
 	void setupTimers();
 	void timerUpdateHeadAnims(int timerNum);
 	void timerTulipCreator(int timerNum);
+	void timerRubyCreator(int timerNum);
 	void timerAsInvisibleTimeout(int timerNum);
 	void timerAsWillowispTimeout(int timerNum);
 	void checkAmuletAnimFlags();
 	void timerRedrawAmulet(int timerNum);
+	void timerLavenderRoseCreator(int timerNum);
+	void timerAcornCreator(int timerNum);
+	void timerBlueberryCreator(int timerNum);
 	void timerFadeText(int timerNum);
 	void timerWillowispFrameTimer(int timerNum);
 	void timerInvisibleFrameTimer(int timerNum);

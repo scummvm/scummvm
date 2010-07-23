@@ -51,16 +51,19 @@ void KyraEngine_LoK::setupTimers() {
 	_timer->addTimer(14, TimerV1(timerAsWillowispTimeout), 600, 1);
 	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, 1);
 	_timer->addTimer(16, TimerV1(timerTulipCreator), 7200, 1);
-	_timer->addTimer(17, 0 /*sub_15120*/, 7200, 1);
+	_timer->addTimer(17, TimerV1(timerRubyCreator), 7200, 1);
 	_timer->addTimer(18, TimerV1(timerAsInvisibleTimeout), 600, 1);
 	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, 1);
 
 	_timer->addTimer(20, 0, 7200, 1);
-	_timer->addTimer(21, 0/*sub_1517C*/, 18000, 1);
+	_timer->addTimer(21, TimerV1(timerLavenderRoseCreator), 18000, 1);
 	_timer->addTimer(22, 0, 7200, 1);
 
-	for (int i = 23; i <= 27; ++i)
-		_timer->addTimer(i, 0, 10800, 1);
+	_timer->addTimer(23, 0, 10800, 1);
+	_timer->addTimer(24, TimerV1(timerAcornCreator), 10800, 1);
+	_timer->addTimer(25, 0, 10800, 1);
+	_timer->addTimer(26, TimerV1(timerBlueberryCreator), 10800, 1);
+	_timer->addTimer(27, 0, 10800, 1);
 
 	_timer->addTimer(28, 0, 21600, 1);
 	_timer->addTimer(29, 0, 7200, 1);
@@ -102,6 +105,78 @@ void KyraEngine_LoK::timerTulipCreator(int timerNum) {
 		} else {
 			rndNr++;
 			if (rndNr > 3)
+				rndNr = 0;
+		}
+	}
+}
+
+void KyraEngine_LoK::timerRubyCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x23)
+		return;
+
+	int rndNr = _rnd.getRandomNumberRng(0, 3);
+
+	for (int i = 0; i < 4; i++) {
+		if (!queryGameFlag(rndNr + 22)) {
+			setGameFlag(rndNr + 22);
+			break;
+		} else {
+			rndNr++;
+			if (rndNr > 3)
+				rndNr = 0;
+		}
+	}
+}
+
+void KyraEngine_LoK::timerLavenderRoseCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x06)
+		return;
+
+	int rndNr = _rnd.getRandomNumberRng(0, 4);
+
+	for (int i = 0; i < 5; i++) {
+		if (!queryGameFlag(rndNr)) {
+			setGameFlag(rndNr);
+			break;
+		} else {
+			rndNr++;
+			if (rndNr > 4)
+				rndNr = 0;
+		}
+	}
+}
+
+void KyraEngine_LoK::timerAcornCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x1F)
+		return;
+
+	int rndNr = _rnd.getRandomNumberRng(0, 5);
+
+	for (int i = 0; i < 6; i++) {
+		if (!queryGameFlag(rndNr + 72)) {
+			setGameFlag(rndNr + 72);
+			break;
+		} else {
+			rndNr++;
+			if (rndNr > 5)
+				rndNr = 0;
+		}
+	}
+}
+
+void KyraEngine_LoK::timerBlueberryCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x28)
+		return;
+
+	int rndNr = _rnd.getRandomNumberRng(0, 7);
+
+	for (int i = 0; i < 8; i++) {
+		if (!queryGameFlag(rndNr + 26)) {
+			setGameFlag(rndNr + 26);
+			break;
+		} else {
+			rndNr++;
+			if (rndNr > 7)
 				rndNr = 0;
 		}
 	}
