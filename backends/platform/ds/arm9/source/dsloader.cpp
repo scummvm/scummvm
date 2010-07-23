@@ -142,7 +142,7 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 				*target = relocation;
 
 				DBG("R_ARM_TARGET1: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
-				seterror("WARNING: THIS RELOCATION CODE UNTESTED!\n"); //TODO: test cruise for corpse on ARM target!
+				DBG("Make sure --target1-abs is a flag to LD.\n");
 			}
 			break;
 
