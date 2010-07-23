@@ -480,7 +480,10 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	_ports->textGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
-		displayArg = argv[0].toUint16();
+		if (argv[0].segment)
+			displayArg = 0xFFFF;
+		else
+			displayArg = argv[0].toUint16();
 		argc--; argv++;
 		switch (displayArg) {
 		case SCI_DISPLAY_MOVEPEN:
@@ -543,6 +546,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		default:
 			if ((g_sci->getGameId() == GID_ISLANDBRAIN) && (g_sci->getEngineState()->currentRoomNumber() == 300))
 				break; // WORKAROUND: we are called there with an forwarded 0 as additional parameter (script bug)
+			if ((g_sci->getGameId() == GID_SQ4) && (g_sci->getEngineState()->currentRoomNumber() == 391))
+				break; // WORKAROUND: we get a pointer as parameter, skip it (sub 84h)
 			error("Unknown kDisplay argument %X", displayArg);
 			break;
 		}
