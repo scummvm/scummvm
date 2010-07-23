@@ -650,13 +650,13 @@ static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int 
 			printf(", ");
 		uint16 regType = kernel->findRegType(argv[parmNr]);
 		if (regType & SIG_TYPE_NULL)
-			printf("NULL");
+			printf("0");
 		else if (regType & SIG_TYPE_UNINITIALIZED)
 			printf("UNINIT");
 		else if (regType & SIG_IS_INVALID)
 			printf("INVALID");
 		else if (regType & SIG_TYPE_INTEGER)
-			printf("%04x", argv[parmNr].offset);
+			printf("%d", argv[parmNr].offset);
 		else {
 			printf("%04x:%04x", PRINT_REG(argv[parmNr]));
 			switch (regType) {
