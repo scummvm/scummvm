@@ -458,11 +458,11 @@ void SpritesMgr::blitSprites(SpriteList& l) {
  */
 
 void SpritesMgr::commitUpdSprites() {
-	commitSprites(_sprUpd, true);
+	commitSprites(_sprUpd);
 }
 
 void SpritesMgr::commitNonupdSprites() {
-	commitSprites(_sprNonupd, true);
+	commitSprites(_sprNonupd);
 }
 
 // check moves in both lists
