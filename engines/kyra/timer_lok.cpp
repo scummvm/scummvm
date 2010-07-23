@@ -76,8 +76,11 @@ void KyraEngine_LoK::setupTimers() {
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	static int8 currentFrame = 0;
-	static const int8 frameTable[] = {4, 5, 4, 5, 4, 5, 0, 1, 4, 5,
-								4, 4, 6, 4, 8, 1, 9, 4, -1};
+	static const int8 frameTable[] = {
+		4, 5, 4, 5, 4, 5, 0, 1,
+		4, 5, 4, 4, 6, 4, 8, 1,
+		9, 4, -1
+	};
 
 	if (_talkingCharNum < 0)
 		return;
