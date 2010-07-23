@@ -783,7 +783,8 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
+	if (_currentShakePos != _newShakePos || 
+		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
@@ -1681,7 +1682,7 @@ void OSystem_SDL::undrawMouse() {
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+		addDirtyRect(x, y - _currentShakePos, _mouseBackup.w, _mouseBackup.h);
 }
 
 void OSystem_SDL::drawMouse() {
