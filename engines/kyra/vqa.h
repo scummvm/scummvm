@@ -56,9 +56,6 @@ public:
 	// It's unlikely that we ever want to change the movie position from
 	// its default.
 
-	void setX(int x) { _x = x; }
-	void setY(int y) { _y = y; }
-
 	void setDrawPage(int page) { _drawPage = page; }
 
 	bool open(const char *filename);
