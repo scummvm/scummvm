@@ -2695,7 +2695,7 @@ bool Console::cmdGo(int argc, const char **argv) {
 bool Console::cmdLogKernel(int argc, const char **argv) {
 	if (argc < 3) {
 		DebugPrintf("Logs calls to specified kernel function.\n");
-		DebugPrintf("Usage: %s <kernel-function> <on/off>\n", argv[0]);
+		DebugPrintf("Usage: %s <kernel-function/*> <on/off>\n", argv[0]);
 		DebugPrintf("Example: %s StrCpy on\n", argv[0]);
 		return true;
 	}

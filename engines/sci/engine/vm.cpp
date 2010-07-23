@@ -642,7 +642,7 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 }
 
-static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int argc, reg_t *argv) {
+static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
 	Kernel *kernel = g_sci->getKernel();
 	printf("k%s: ", kernelCall->name);
 	for (int parmNr = 0; parmNr < argc; parmNr++) {
@@ -671,7 +671,10 @@ static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int 
 			}
 		}
 	}
-	printf("\n");
+	if (result.segment)
+		printf(" = %04x:%04x\n", PRINT_REG(result));
+	else
+		printf(" = %04x\n", result.offset);
 }
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
@@ -708,10 +711,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 	// Call kernel function
 	if (!kernelCall.subFunctionCount) {
-		if (kernelCall.debugLogging)
-			logKernelCall(&kernelCall, s, argc, argv);
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
+
+		if (kernelCall.debugLogging)
+			logKernelCall(&kernelCall, s, argc, argv, s->r_acc);
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -756,21 +760,6 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
 	}
-
-#if 0
-		// Used for debugging
-		Common::String debugMsg = Common::String::printf("%s [0x%x]", kernelCall.name, kernelCallNr) +
-									Common::String::printf(", %d params: ", argc) +
-									" (";
-
-		for (int i = 0; i < argc; i++) {
-			debugMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-			debugMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		debugMsg += ", result: " + Common::String::printf("%04x:%04x", PRINT_REG(s->r_acc));
-		debug("%s", debugMsg.c_str());
-#endif
 
 	// Remove callk stack frame again, if there's still an execution stack
 	if (s->_executionStack.begin() != s->_executionStack.end())

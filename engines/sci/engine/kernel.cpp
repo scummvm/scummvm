@@ -651,15 +651,23 @@ void Kernel::mapFunctions() {
 }
 
 bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
-	for (uint id = 0; id < _kernelFuncs.size(); id++) {
-		if (_kernelFuncs[id].name) {
-			if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
-				_kernelFuncs[id].debugLogging = logging;
-				return true;
+	if (strcmp(kernelName, "*")) {
+		for (uint id = 0; id < _kernelFuncs.size(); id++) {
+			if (_kernelFuncs[id].name) {
+				if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
+					_kernelFuncs[id].debugLogging = logging;
+					return true;
+				}
 			}
 		}
+		return false;
 	}
-	return false;
+	// Set debugLogging for all calls
+	for (uint id = 0; id < _kernelFuncs.size(); id++) {
+		if (_kernelFuncs[id].name)
+			_kernelFuncs[id].debugLogging = logging;
+	}
+	return true;
 }
 
 void Kernel::setDefaultKernelNames() {
