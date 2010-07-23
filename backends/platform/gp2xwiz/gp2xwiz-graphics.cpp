@@ -138,7 +138,7 @@ bool OSystem_GP2XWIZ::loadGFXMode() {
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
 		_videoMode.aspectRatioCorrection = false;
 
-	OSystem_SDL::loadGFXMode();
+	return OSystem_SDL::loadGFXMode();
 }
 
 void OSystem_GP2XWIZ::drawMouse() {
