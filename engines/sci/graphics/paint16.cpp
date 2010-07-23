@@ -32,6 +32,7 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/workarounds.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
@@ -544,11 +545,11 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			}
 			break;
 		default:
-			if ((g_sci->getGameId() == GID_ISLANDBRAIN) && (g_sci->getEngineState()->currentRoomNumber() == 300))
-				break; // WORKAROUND: we are called there with an forwarded 0 as additional parameter (script bug)
-			if ((g_sci->getGameId() == GID_SQ4) && (g_sci->getEngineState()->currentRoomNumber() == 391))
-				break; // WORKAROUND: we get a pointer as parameter, skip it (sub 84h)
-			error("Unknown kDisplay argument %X", displayArg);
+			SciTrackOriginReply originReply;
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
+			if (solution.type == WORKAROUND_NONE)
+				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", PRINT_REG(argv[0]), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			assert(solution.type == WORKAROUND_IGNORE);
 			break;
 		}
 	}

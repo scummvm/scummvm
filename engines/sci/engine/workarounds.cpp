@@ -23,6 +23,9 @@
  *
  */
 
+#include "sci/engine/kernel.h"
+#include "sci/engine/state.h"
+#include "sci/engine/vm.h"
 #include "sci/engine/workarounds.h"
 
 #define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0, -1, -1, 0, NULL, NULL, -1, 0, { WORKAROUND_NONE, 0 } }
@@ -101,6 +104,13 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kDisplay_workarounds[] = {
+    { GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
+    { GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // clicking on catalog in roboter sale - a parameter is an object
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisposeScript_workarounds[] = {
     { GID_QFG1,           64,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
     SCI_WORKAROUNDENTRY_TERMINATOR
@@ -115,7 +125,8 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
-    { GID_SQ1,            43,    43,  0,        "someoneDied", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // happens when ordering beer, gets called with 1 extra parameter
+    { GID_ISLANDBRAIN,   300,   300,  0,         "dudeViewer", "show",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when looking at the gene explanation chart, gets called with 1 extra parameter
+    { GID_SQ1,            43,    43,  0,        "someoneDied", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when ordering beer, gets called with 1 extra parameter
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -171,5 +182,80 @@ const SciWorkaroundEntry kStrCpy_workarounds[] = {
     //{ GID_ISLANDBRAIN,   260,    45,  0,        "aWord", "addOn",                -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Hominy Homonym puzzle
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
+
+SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
+	EngineState *state = g_sci->getEngineState();
+	ExecStack *lastCall = state->xs;
+	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
+	int curScriptNr = local_script->getScriptNumber();
+
+	if (lastCall->debugLocalCallOffset != -1) {
+		// if lastcall was actually a local call search back for a real call
+		Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
+		while (callIterator != state->_executionStack.begin()) {
+			callIterator--;
+			ExecStack loopCall = *callIterator;
+			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
+				lastCall->debugSelector = loopCall.debugSelector;
+				lastCall->debugExportId = loopCall.debugExportId;
+				break;
+			}
+		}
+	}
+
+	Common::String curObjectName = state->_segMan->getObjectName(lastCall->sendp);
+	Common::String curMethodName;
+	const SciGameId gameId = g_sci->getGameId();
+	const int curRoomNumber = state->currentRoomNumber();
+
+	if (lastCall->type == EXEC_STACK_TYPE_CALL) {
+		if (lastCall->debugSelector != -1) {
+			curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
+		} else if (lastCall->debugExportId != -1) {
+			curObjectName = "";
+			curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
+		}
+	}
+
+	if (workaroundList) {
+		// Search if there is a workaround for this one
+		const SciWorkaroundEntry *workaround;
+		int16 inheritanceLevel = 0;
+		Common::String searchObjectName = curObjectName;
+		reg_t searchObject = lastCall->sendp;
+		do {
+			workaround = workaroundList;
+			while (workaround->objectName) {
+				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr
+						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
+						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
+						&& (workaround->objectName == searchObjectName)
+						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset
+						&& ((workaround->index == -1) || (workaround->index == index))) {
+					// Workaround found
+					return workaround->newValue;
+				}
+				workaround++;
+			}
+
+			// Go back to the parent
+			inheritanceLevel++;
+			searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
+			if (!searchObject.isNull())
+				searchObjectName = state->_segMan->getObjectName(searchObject);
+		} while (!searchObject.isNull()); // no parent left?
+	}
+
+	// give caller origin data
+	trackOrigin->objectName = curObjectName;
+	trackOrigin->methodName = curMethodName;
+	trackOrigin->scriptNr = curScriptNr;
+	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
+
+	SciWorkaroundSolution noneFound;
+	noneFound.type = WORKAROUND_NONE;
+	noneFound.value = 0;
+	return noneFound;
+}
 
 } // End of namespace Sci

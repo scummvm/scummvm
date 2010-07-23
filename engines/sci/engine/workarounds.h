@@ -38,6 +38,13 @@ enum SciWorkaroundType {
 	WORKAROUND_FAKE       // fake kernel call / replace temp value / fake opcode
 };
 
+struct SciTrackOriginReply {
+	int scriptNr;
+	Common::String objectName;
+	Common::String methodName;
+	int localCallOffset;
+};
+
 struct SciWorkaroundSolution {
 	SciWorkaroundType type;
 	uint16 value;
@@ -65,6 +72,7 @@ extern const SciWorkaroundEntry opcodeDivWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
+extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
@@ -75,6 +83,8 @@ extern const SciWorkaroundEntry kGraphRedrawBox_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 extern const SciWorkaroundEntry kStrCpy_workarounds[];
+
+extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
 
 } // End of namespace Sci
 
