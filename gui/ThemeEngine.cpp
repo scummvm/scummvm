@@ -165,6 +165,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDMainDialogBackground,		"mainmenu_bg",		true,	kDDNone},
 	{kDDSpecialColorBackground,		"special_bg",		true,	kDDNone},
 	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
+	{kDDTooltipBackground,			"tooltip_bg",		true,	kDDNone},
 	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
 	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
 	{kDDTextSelectionFocusBackground,	"text_selection_focus",	false,	kDDNone},
@@ -982,6 +983,10 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 
 	case kDialogBackgroundPlain:
 		queueDD(kDDPlainColorBackground, r);
+		break;
+
+	case kDialogBackgroundTooltip:
+		queueDD(kDDTooltipBackground, r);
 		break;
 
 	case kDialogBackgroundDefault:

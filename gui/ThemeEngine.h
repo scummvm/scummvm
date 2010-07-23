@@ -61,6 +61,7 @@ enum DrawData {
 	kDDMainDialogBackground,
 	kDDSpecialColorBackground,
 	kDDPlainColorBackground,
+	kDDTooltipBackground,
 	kDDDefaultBackground,
 	kDDTextSelectionBackground,
 	kDDTextSelectionFocusBackground,
@@ -162,6 +163,7 @@ public:
 		kDialogBackgroundMain,
 		kDialogBackgroundSpecial,
 		kDialogBackgroundPlain,
+		kDialogBackgroundTooltip,
 		kDialogBackgroundDefault
 	};
 

@@ -45,11 +45,12 @@ namespace GUI {
 
 enum {
 	kDoubleClickDelay = 500, // milliseconds
-	kCursorAnimateDelay = 250
+	kCursorAnimateDelay = 250,
+	kTooltipDelay = 1250
 };
 
 // Constructor
-GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
+GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _tooltipCheck(false),
 	   _stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
@@ -77,7 +78,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 		}
 	}
 
-	_tooltip = new Tooltip(this);
+	_tooltip = 0;
 }
 
 GuiManager::~GuiManager() {
@@ -224,13 +225,6 @@ Dialog *GuiManager::getTopDialog() const {
 	return _dialogStack.top();
 }
 
-static void tooltipCallback(void *ref) {
-	GuiManager *guiManager = (GuiManager *)ref;
-
-	guiManager->getTooltip()->setVisible(true);
-	g_system->getTimerManager()->removeTimerProc(&tooltipCallback);
-}
-
 void GuiManager::runLoop() {
 	Dialog *activeDialog = getTopDialog();
 	bool didSaveState = false;
@@ -321,7 +315,14 @@ void GuiManager::runLoop() {
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
-				_tooltip->setMouseXY(mouse.x, mouse.y);
+
+				if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
+					_lastMousePosition.x = mouse.x;
+					_lastMousePosition.y = mouse.y;
+					_lastMousePosition.time = _system->getMillis();
+				}
+
+				_tooltipCheck = true;
 				eventTookplace = true;
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
@@ -367,11 +368,16 @@ void GuiManager::runLoop() {
 			}
 		}
 
-		if (eventTookplace) {
-			_tooltip->setVisible(false);
+		if (_tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis()) {
+			if (_tooltip == 0)
+				_tooltip = new Tooltip();
 
-			_system->getTimerManager()->removeTimerProc(&tooltipCallback);
-			_system->getTimerManager()->installTimerProc(&tooltipCallback, 2*1000000, this);
+			_tooltipCheck = false;
+			_tooltip->tooltipModal(_lastMousePosition.x, _lastMousePosition.y);
+		}
+
+		if (eventTookplace && _tooltip) {
+			_tooltip->mustClose();
 		}
 
 		// Delay for a moment
