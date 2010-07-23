@@ -674,7 +674,7 @@ static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int 
 	if (result.segment)
 		printf(" = %04x:%04x\n", PRINT_REG(result));
 	else
-		printf(" = %04x\n", result.offset);
+		printf(" = %d\n", result.offset);
 }
 
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
