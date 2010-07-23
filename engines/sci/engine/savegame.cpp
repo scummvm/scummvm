@@ -40,6 +40,7 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/vm_types.h"
 #include "sci/engine/script.h"	// for SCI_OBJ_EXPORTS and SCI_OBJ_SYNONYMS
+#include "sci/graphics/palette.h"
 #include "sci/graphics/ports.h"
 #include "sci/sound/audio.h"
 #include "sci/sound/music.h"
@@ -627,6 +628,27 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 	sync_Table<StringTable>(ser, *this);
 }
 #endif
+
+void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.getVersion() < 24)
+		return;
+
+	if (s.isLoading() && _palVaryResourceId != -1)
+		palVaryRemoveTimer();
+
+	s.syncAsSint32LE(_palVaryResourceId);
+	_palVaryOriginPalette.saveLoadWithSerializer(s);
+	_palVaryTargetPalette.saveLoadWithSerializer(s);
+	s.syncAsSint16LE(_palVaryStep);
+	s.syncAsSint16LE(_palVaryStepStop);
+	s.syncAsSint16LE(_palVaryDirection);
+	s.syncAsUint16LE(_palVaryTicks);
+	s.syncAsSint32LE(_palVaryPaused);
+	s.syncAsSint32LE(_palVarySignal);
+
+	if (s.isLoading() && _palVaryResourceId != -1)
+		palVaryInstallTimer();
+}
 
 void SegManager::reconstructStack(EngineState *s) {
 	DataStack *stack = (DataStack *)(_heap[findSegmentByType(SEG_TYPE_STACK)]);

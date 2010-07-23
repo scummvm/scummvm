@@ -34,7 +34,7 @@ class Screen;
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
-class GfxPalette {
+class GfxPalette : public Common::Serializable {
 public:
 	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging);
 	~GfxPalette();
@@ -79,6 +79,8 @@ public:
 	void palVaryProcess(int signal, bool setPalette);
 
 	Palette _sysPalette;
+
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
 
 private:
 	void palVaryInit();
