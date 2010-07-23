@@ -173,7 +173,7 @@ reg_t GfxPorts::kernelGetActive() {
 reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	Window *wnd = NULL;
 
-	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
+	if (restoreRect.bottom != 0 && restoreRect.right != 0)
 		wnd = newWindow(dims, &restoreRect, title, style, priority, false);
 	else
 		wnd = newWindow(dims, NULL, title, style, priority, false);
@@ -367,7 +367,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_paint16->bitsShow(pWnd->restoreRect);
+		_paint16->bitsShow(pWnd->dims);
 	}
 	setPort(oldport);
 }
