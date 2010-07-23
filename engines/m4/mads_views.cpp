@@ -242,8 +242,10 @@ void MadsAction::refresh() {
 			}
 
 			// Add a new text display entry to display the status text at the bottom of the screen area
+			uint colours = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
+
 			_statusTextIndex = _owner._textDisplay.add(160 - (strWidth / 2), 
-				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, 3, textSpacing, _statusText, font);
+				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colours, textSpacing, _statusText, font);
 		}
 	}
 

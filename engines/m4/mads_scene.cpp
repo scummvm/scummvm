@@ -308,19 +308,6 @@ void MadsScene::update() {
 	drawElements();
 
 	_action.set();
-	const char *sStatusText = _action.statusText();
-
-	// Handle display of any status text
-	if (sStatusText[0]) {
-		// Text colors are inverted in Dragonsphere
-		if (_vm->getGameType() == GType_DragonSphere)
-			_vm->_font->current()->setColours(_vm->_palette->BLACK, _vm->_palette->WHITE, _vm->_palette->BLACK);
-		else
-			_vm->_font->current()->setColours(_vm->_palette->WHITE, _vm->_palette->BLACK, _vm->_palette->BLACK);
-
-		_vm->_font->setFont(FONT_MAIN_MADS);
-		_vm->_font->current()->writeString(this, sStatusText, (width() - _vm->_font->current()->getWidth(sStatusText)) / 2, 142, 0);
-	}
 }
 
 void MadsScene::updateState() {
