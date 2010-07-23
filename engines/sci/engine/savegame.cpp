@@ -637,17 +637,20 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 		palVaryRemoveTimer();
 
 	s.syncAsSint32LE(_palVaryResourceId);
-	_palVaryOriginPalette.saveLoadWithSerializer(s);
-	_palVaryTargetPalette.saveLoadWithSerializer(s);
-	s.syncAsSint16LE(_palVaryStep);
-	s.syncAsSint16LE(_palVaryStepStop);
-	s.syncAsSint16LE(_palVaryDirection);
-	s.syncAsUint16LE(_palVaryTicks);
-	s.syncAsSint32LE(_palVaryPaused);
-	s.syncAsSint32LE(_palVarySignal);
+	if (_palVaryResourceId != -1) {
+		_palVaryOriginPalette.saveLoadWithSerializer(s);
+		_palVaryTargetPalette.saveLoadWithSerializer(s);
+		s.syncAsSint16LE(_palVaryStep);
+		s.syncAsSint16LE(_palVaryStepStop);
+		s.syncAsSint16LE(_palVaryDirection);
+		s.syncAsUint16LE(_palVaryTicks);
+		s.syncAsSint32LE(_palVaryPaused);
+	}
 
-	if (s.isLoading() && _palVaryResourceId != -1)
+	if (s.isLoading() && _palVaryResourceId != -1) {
+		_palVarySignal = 0;
 		palVaryInstallTimer();
+	}
 }
 
 void SegManager::reconstructStack(EngineState *s) {
