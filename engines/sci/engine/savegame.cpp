@@ -65,47 +65,20 @@ const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
 #define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
 void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.getVersion() < 14) {
-		// Old sound system data. This data is only loaded, never saved (as we're never
-		// saving in the older version format)
-		uint32 handle = 0;
-		s.syncAsSint32LE(handle);
-		soundObj = DEFROBNICATE_HANDLE(handle);
-		s.syncAsSint32LE(resourceId);
-		s.syncAsSint32LE(priority);
-		s.syncAsSint32LE(status);
-		s.skip(4);	// restoreBehavior
-		uint32 restoreTime = 0;
-		s.syncAsSint32LE(restoreTime);
-		ticker = restoreTime * 60 / 1000;
-		s.syncAsSint32LE(loop);
-		s.syncAsSint32LE(hold);
-		// volume and dataInc will be synced from the sound objects
-		// when the sound list is reconstructed in gamestate_restore()
-		volume = MUSIC_VOLUME_MAX;
-		dataInc = 0;
-		// No fading info
-		fadeTo = 0;
-		fadeStep = 0;
-		fadeTicker = 0;
-		fadeTickerStep = 0;
-	} else {
-		// A bit more optimized saving
-		soundObj.saveLoadWithSerializer(s);
-		s.syncAsSint16LE(resourceId);
-		s.syncAsSint16LE(dataInc);
-		s.syncAsSint16LE(ticker);
-		s.syncAsSint16LE(signal, VER(17));
-		s.syncAsByte(priority);
-		s.syncAsSint16LE(loop, VER(17));
-		s.syncAsByte(volume);
-		s.syncAsByte(hold, VER(17));
-		s.syncAsByte(fadeTo);
-		s.syncAsSint16LE(fadeStep);
-		s.syncAsSint32LE(fadeTicker);
-		s.syncAsSint32LE(fadeTickerStep);
-		s.syncAsByte(status);
-	}
+	soundObj.saveLoadWithSerializer(s);
+	s.syncAsSint16LE(resourceId);
+	s.syncAsSint16LE(dataInc);
+	s.syncAsSint16LE(ticker);
+	s.syncAsSint16LE(signal, VER(17));
+	s.syncAsByte(priority);
+	s.syncAsSint16LE(loop, VER(17));
+	s.syncAsByte(volume);
+	s.syncAsByte(hold, VER(17));
+	s.syncAsByte(fadeTo);
+	s.syncAsSint16LE(fadeStep);
+	s.syncAsSint32LE(fadeTicker);
+	s.syncAsSint32LE(fadeTickerStep);
+	s.syncAsByte(status);
 
 	// pMidiParser and pStreamAud will be initialized when the
 	// sound list is reconstructed in gamestate_restore()
@@ -182,7 +155,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading())
 		resetSegMan();
 
-	s.skip(4, VER(12), VER(18));		// OBSOLETE: Used to be _exportsAreWide
+	s.skip(4, VER(14), VER(18));		// OBSOLETE: Used to be _exportsAreWide
 
 	if (s.isLoading()) {
 		// Reset _scriptSegMap, to be restored below
@@ -257,40 +230,9 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::String tmp;
-	s.syncString(tmp, VER(12), VER(23));			// OBSOLETE: Used to be game_version
+	s.syncString(tmp, VER(14), VER(23));			// OBSOLETE: Used to be game_version
 
-	// OBSOLETE: Saved menus. Skip all of the saved data
-	if (s.getVersion() < 14) {
-		int totalMenus = 0;
-		s.syncAsUint32LE(totalMenus);
-
-		// Now iterate through the obsolete saved menu data
-		for (int i = 0; i < totalMenus; i++) {
-			s.syncString(tmp);				// OBSOLETE: Used to be _title
-			s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _titleWidth
-			s.skip(4, VER(12), VER(12));	// OBSOLETE: Used to be _width
-
-			int menuLength = 0;
-			s.syncAsUint32LE(menuLength);
-
-			for (int j = 0; j < menuLength; j++) {
-				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _type
-				s.syncString(tmp);					// OBSOLETE: Used to be _keytext
-
-				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _flags
-				s.skip(64, VER(12), VER(12));		// OBSOLETE: Used to be MENU_SAID_SPEC_SIZE
-				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _saidPos
-				s.syncString(tmp);					// OBSOLETE: Used to be _text
-				s.skip(4, VER(12), VER(12));		// OBSOLETE: Used to be _textPos
-				s.skip(4 * 4, VER(12), VER(12));	// OBSOLETE: Used to be _modifiers, _key, _enabled and _tag
-			}
-		}
-	}
-
-	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_foreground
-	s.skip(4, VER(12), VER(12));	// obsolete: used to be status_bar_background
-
-	if (s.getVersion() >= 13 && getSciVersion() <= SCI_VERSION_1_1) {
+	if (getSciVersion() <= SCI_VERSION_1_1) {
 		// Save/Load picPort as well for SCI0-SCI1.1. Necessary for Castle of Dr. Brain,
 		// as the picPort has been changed when loading during the intro
 		int16 picPortTop, picPortLeft;
@@ -324,7 +266,6 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
 	_pos.saveLoadWithSerializer(s);
-	s.skip(4, VER(12), VER(12));			// OBSOLETE: Used to be variable_names_nr
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -450,12 +391,12 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 
 	if (s.isLoading())
 		init(_nr, g_sci->getResMan());
-	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _bufSize
-	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _scriptSize
-	s.skip(4, VER(12), VER(22));		// OBSOLETE: Used to be _heapSize
+	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _bufSize
+	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _scriptSize
+	s.skip(4, VER(14), VER(22));		// OBSOLETE: Used to be _heapSize
 
-	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numExports
-	s.skip(4, VER(12), VER(19));		// OBSOLETE: Used to be _numSynonyms
+	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numExports
+	s.skip(4, VER(14), VER(19));		// OBSOLETE: Used to be _numSynonyms
 	s.syncAsSint32LE(_lockers);
 
 	// Sync _objects. This is a hashmap, and we use the following on disk format:
@@ -483,7 +424,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 	}
 
-	s.skip(4, VER(12), VER(20));		// OBSOLETE: Used to be _localsOffset
+	s.skip(4, VER(14), VER(20));		// OBSOLETE: Used to be _localsOffset
 	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
@@ -600,14 +541,6 @@ void SoundCommandParser::reconstructPlayList(int savegame_version) {
 			(*i)->soundRes = 0;
 		}
 		if ((*i)->status == kSoundPlaying) {
-			if (savegame_version < 14) {
-				(*i)->dataInc = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(dataInc));
-				(*i)->signal = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(signal));
-
-				if (_soundVersion >= SCI_VERSION_1_LATE)
-					(*i)->volume = readSelectorValue(_segMan, (*i)->soundObj, SELECTOR(vol));
-			}
-
 			processPlaySound((*i)->soundObj);
 		}
 	}
