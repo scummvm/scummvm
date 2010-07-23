@@ -47,7 +47,7 @@ GfxCursor::GfxCursor(ResourceManager *resMan, GfxPalette *palette, GfxScreen *sc
 
 	// center mouse cursor
 	setPosition(Common::Point(_screen->getWidth() / 2, _screen->getHeight() / 2));
-	kernelSetMoveZone(Common::Rect(0, 0, _screen->getDisplayWidth(), _screen->getDisplayHeight()));
+	_moveZoneActive = false;
 }
 
 GfxCursor::~GfxCursor() {
@@ -283,32 +283,39 @@ Common::Point GfxCursor::getPosition() {
 }
 
 void GfxCursor::refreshPosition() {
-	bool clipped = false;
-	Common::Point mousePoint = getPosition();
+	if (_moveZoneActive) {
+		bool clipped = false;
+		Common::Point mousePoint = getPosition();
 
-	if (mousePoint.x < _moveZone.left) {
-		mousePoint.x = _moveZone.left;
-		clipped = true;
-	} else if (mousePoint.x >= _moveZone.right) {
-		mousePoint.x = _moveZone.right - 1;
-		clipped = true;
+		if (mousePoint.x < _moveZone.left) {
+			mousePoint.x = _moveZone.left;
+			clipped = true;
+		} else if (mousePoint.x >= _moveZone.right) {
+			mousePoint.x = _moveZone.right - 1;
+			clipped = true;
+		}
+
+		if (mousePoint.y < _moveZone.top) {
+			mousePoint.y = _moveZone.top;
+			clipped = true;
+		} else if (mousePoint.y >= _moveZone.bottom) {
+			mousePoint.y = _moveZone.bottom - 1;
+			clipped = true;
+		}
+
+		// FIXME: Do this only when mouse is grabbed?
+		if (clipped)
+			setPosition(mousePoint);
 	}
+}
 
-	if (mousePoint.y < _moveZone.top) {
-		mousePoint.y = _moveZone.top;
-		clipped = true;
-	} else if (mousePoint.y >= _moveZone.bottom) {
-		mousePoint.y = _moveZone.bottom - 1;
-		clipped = true;
-	}
-
-	// FIXME: Do this only when mouse is grabbed?
-	if (clipped)
-		setPosition(mousePoint);
+void GfxCursor::kernelResetMoveZone() {
+	_moveZoneActive = false;
 }
 
 void GfxCursor::kernelSetMoveZone(Common::Rect zone) {
-	 _moveZone = zone;
+	_moveZone = zone;
+	_moveZoneActive = true;
 }
 
 void GfxCursor::kernelSetPos(Common::Point pos) {

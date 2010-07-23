@@ -129,9 +129,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
+			//  Does something with magCursor, which is set on argc = 10, which we don't support
 			break;
 		case -2:
-			// TODO: Special case at least in kq6, check disassembly
+			g_sci->_gfxCursor->kernelResetMoveZone();
 			break;
 		default:
 			g_sci->_gfxCursor->kernelShow();
