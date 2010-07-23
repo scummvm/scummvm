@@ -184,7 +184,7 @@ bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &cap
 		rightClick(x, y);
 		break;
 	case MEVENT_MOVE:
-		checkHotspotAtMousePos(x, y);
+		mouseMove(x, y);
 		break;
 	default:
 		return false;

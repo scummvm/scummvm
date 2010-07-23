@@ -207,7 +207,7 @@ void M4Scene::leaveScene() {
 	Scene::leaveScene();
 }
 
-void M4Scene::checkHotspotAtMousePos(int x, int y) {
+void M4Scene::mouseMove(int x, int y) {
 	if (_vm->getGameType() == GType_Riddle)
 		return;
 

@@ -36,6 +36,53 @@ namespace M4 {
 
 class MadsView;
 
+enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
+
+struct ActionDetails {
+	int hotspotId;
+	int objectNameId;
+	int indirectObjectId;
+};
+
+class MadsAction {
+private:
+	MadsView &_owner;
+	char _statusText[100];
+
+	void appendVocab(int vocabId, bool capitalise = false);
+public:
+	ActionDetails _action;
+	int _currentAction;
+	int8 _flags1, _flags2;
+	MadsActionMode _actionMode;
+	MAdsActionMode2 _actionMode2;
+	int _articleNumber;
+	bool _lookFlag;
+	int _selectedRow;
+	bool _textChanged;
+	int _selectedAction;
+	bool _verbNounFlag;
+	int _statusTextIndex;
+	int _hotspotId;
+
+	// Unknown fields
+	int16 _word_86F3A;
+	int16 _word_86F42;
+	int16 _word_86F4E;
+	int16 _word_86F4A;
+	int16 _word_86F4C;
+	int _v83338;
+
+public:
+	MadsAction(MadsView &owner);
+
+	void clear();
+	void set();
+	const char *statusText() const { return _statusText; }
+	void refresh();
+};
+
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 class SpriteSlotSubset {
@@ -211,10 +258,20 @@ public:
 
 class ScreenObjects {
 private:
+	MadsView &_owner;
 	Common::Array<ScreenObjectEntry> _entries;
 public:
-	ScreenObjects() {}
+	int _v832EC;
+	int _v7FECA;
+	int _v7FED6;
+	int _v8332A;
+	int _yp;
+	int _v8333C;
+	int _selectedObject;
+	int _category;
+	int _objectIndex;
 
+	ScreenObjects(MadsView &owner);
 	ScreenObjectEntry &operator[](uint idx) {
 		assert(idx <= _entries.size());
 		return _entries[idx - 1];
@@ -226,6 +283,7 @@ public:
 	int scan(int xp, int yp, int layer);
 	int scanBackwards(int xp, int yp, int layer);
 	void setActive(int category, int idx, bool active);
+	void check(bool scanFlag, bool mouseClick);
 };
 
 class DynamicHotspot {
@@ -251,7 +309,7 @@ private:
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
 public:
-	bool _flag;
+	bool _changed;
 public:
 	MadsDynamicHotspots(MadsView &owner);
 
@@ -261,6 +319,9 @@ public:
 	int set17(int index, int v);
 	void remove(int index);
 	void reset();
+	void refresh() {
+		// TODO
+	}
 };
 
 class MadsDirtyArea {
@@ -393,6 +454,7 @@ public:
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
 	MadsDirtyAreas _dirtyAreas;
+	MadsAction _action;
 
 	int _textSpacing;
 	uint32 _newTimeout;

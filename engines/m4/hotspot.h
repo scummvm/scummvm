@@ -73,6 +73,8 @@ public:
 	int getFeetY() { return _feetY; }
 	int8 getArticle() const { return _articleNumber; }
 	Common::Rect getRect() const;
+	int getIndex() const { return _index; }
+	void setIndex(int index) { _index = index; }
 
 	int32 area() const { return (_rect.width() - 1) * (_rect.height() - 1); }
 	bool pointInside(int x, int y) { return _rect.contains(x, y); }
@@ -83,6 +85,7 @@ private:
 	bool _active;
 	int _feetX, _feetY;
 	uint8 _facing, _cursor;
+	int _index;
 
 	// Unused in Orion Burger, used in MADS games
 	uint8 _syntax;

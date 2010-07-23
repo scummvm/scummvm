@@ -206,6 +206,7 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 		y2 = readHotSpotInteger(hotspotStream);
 		index = add(new HotSpot(x1, y1, x2, y2), i == 0);
 		currentHotSpot = get(index);
+		currentHotSpot->setIndex(index);
 		feetX = readHotSpotInteger(hotspotStream);
 		feetY = readHotSpotInteger(hotspotStream);
 		currentHotSpot->setFeet(feetX, feetY);

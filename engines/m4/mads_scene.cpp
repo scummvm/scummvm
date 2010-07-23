@@ -241,44 +241,20 @@ void MadsScene::loadSceneCodes(int sceneNumber, int index) {
 	}
 }
 
-void MadsScene::checkHotspotAtMousePos(int x, int y) {
+void MadsScene::mouseMove(int x, int y) {
 	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
 	if (currentHotSpot != NULL) {
 		_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
 
-		// This is the "easy" interface, which updates the status text when the mouse is moved
-		// TODO: toggle this code for easy/normal interface mode
-		char statusText[50];
-		int verbId = 0;//***DEBUG****_currentAction;
-		if (verbId == kVerbNone)
-			verbId = currentHotSpot->getVerbID();
-		if (verbId == kVerbNone)
-			verbId = kVerbWalkTo;
+		_action._hotspotId = currentHotSpot->getIndex();
+	
 
-		sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(verbId), currentHotSpot->getVocab());
-
-		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setStatusText(statusText);
 	} else {
 		_vm->_mouse->setCursorNum(0);
-		setStatusText("");
 	}
 }
 
 void MadsScene::leftClick(int x, int y) {
-	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-	if (currentHotSpot != NULL) {
-		char statusText[50];
-		if (currentHotSpot->getVerbID() != 0) {
-			sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
-		} else {
-			sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
-		}
-
-		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setStatusText(statusText);
-	}
-
 	// **DEBUG** - being used for movement testing
 	_madsVm->_player.moveComplete();
 	_madsVm->_player.setDest(x, y, 2);
@@ -297,7 +273,6 @@ void MadsScene::rightClick(int x, int y) {
 
 void MadsScene::setAction(int action, int objectId) {
 	VALIDATE_MADS;
-	char statusText[50];
 
 	error("todo");
 	// TODO: Actually executing actions directly for objects. Also, some object actions are special in that
@@ -314,7 +289,7 @@ void MadsScene::setAction(int action, int objectId) {
 		_currentAction = action;
 	}
 */
-	setStatusText(statusText);
+//	setStatusText(statusText);
 }
 
 /**
@@ -349,6 +324,17 @@ void MadsScene::update() {
 }
 
 void MadsScene::updateState() {
+	if ((_action._selectedAction != 0) || !_madsVm->_player._stepEnabled)
+		_action.clear();
+
+	if (!_abortTimers && !_madsVm->_player._unk3) {
+		if (_dynamicHotspots._changed)
+			_dynamicHotspots.refresh();
+
+//		int v = (_madsVm->_player._stepEnabled && !_action._verbNounFlag && !_abortTimers2) ? 1 : 0;
+//		_screenObjects.check(v, false);
+	}
+
 	_madsVm->_player.update();
 
 	// Handle refreshing the mouse position display
@@ -360,6 +346,9 @@ void MadsScene::updateState() {
 
 		_mouseMsgIndex = _madsVm->scene()->_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, buffer);
 	}
+
+	if (_madsVm->globals()->_config.easyMouse)
+		_action.refresh();
 
 	// Step through the scene
 	_sceneLogic.sceneStep();
@@ -544,181 +533,6 @@ bool MadsScene::getDepthHighBits(const Common::Point &pt) {
 
 	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
 	return (*p & 0x70) >> 4;
-}
-
-/*--------------------------------------------------------------------------*/
-
-MadsAction::MadsAction() {
-	clear();
-}
-
-void MadsAction::clear() {
-	_actionMode = ACTMODE_NONE;
-	_actionMode2 = ACTMODE2_0;
-	_word_86F42 = 0;
-	_word_86F4E = 0;
-	_articleNumber = 0;
-	_lookFlag = false;
-	_word_86F4A = 0;
-	_statusText[0] = '\0';
-	_selectedRow = -1;
-	_currentHotspot = -1;
-	_word_86F3A = -1;
-	_word_86F4C = -1;
-	//word_86F3A/word_86F4C
-	_currentAction = kVerbNone;
-	_objectNameId = -1;
-	_objectDescId = -1;
-	_word_83334 = -1;
-}
-
-void MadsAction::appendVocab(int vocabId, bool capitalise) {
-	char *s = _statusText + strlen(_statusText);
-	const char *vocabStr = _madsVm->globals()->getVocab(vocabId);
-	strcpy(s, vocabStr);
-	if (capitalise)
-		*s = toupper(*s);
-
-	strcat(s, " ");
-}
-
-void MadsAction::set() {
-	int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
-	bool flag = false;
-	_currentAction = -1;
-	_objectNameId = -1;
-	_objectDescId = -1;
-
-	if (_actionMode == ACTMODE_TALK) {
-		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
-		if (_selectedRow >= 0) {
-			const char *desc = _madsVm->_converse[_selectedRow].desc;
-			if (desc)
-				strcpy(_statusText, desc);
-		}
-	} else if (_lookFlag && (_selectedRow == 0)) {
-		// Two 'look' actions in succession, so the action becomes 'Look around'
-		strcpy(_statusText, lookAroundStr);
-	} else {
-		if ((_actionMode == ACTMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
-			// Use/to action
-			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
-			
-			_objectNameId = objEntry->descId;
-			_currentAction = objEntry->vocabList[_selectedRow].vocabId;
-
-			// Set up the status text stirng
-			strcpy(_statusText, useStr);
-			appendVocab(_objectNameId);
-			strcpy(_statusText, toStr);
-			appendVocab(_currentAction);
-		} else {
-			// Handling for if an action has been selected
-			if (_selectedRow >= 0) {
-				if (_actionMode == ACTMODE_VERB) {
-					// Standard verb action
-					_currentAction = verbList[_selectedRow].verb;
-				} else {
-					// Selected action on an inventory object
-					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
-
-					_currentAction = objEntry->vocabList[_selectedRow].vocabId;
-				}
-
-				appendVocab(_currentAction, true);
-
-				if (_currentAction == kVerbLook) {
-					// Add in the word 'add'
-					strcat(_statusText, atStr);
-					strcat(_statusText, " ");
-				}
-			}
-
-			// Handling for if a hotspot has been selected/highlighted
-			if ((_currentHotspot >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
-				flag = true;
-
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
-				strcat(_statusText, " ");
-			}
-
-			if (_currentHotspot >= 0) {
-				if (_selectedRow < 0) {
-					int verbId;
-
-					if (_currentHotspot < hotspotCount) {
-						// Get the verb Id from the hotspot
-						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVerbID();
-					} else {
-						// Get the verb Id from the scene object
-						verbId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot - hotspotCount].getVerbID();
-					}
-
-					if (verbId > 0) {
-						// Set the specified action
-						_currentAction = verbId;
-						appendVocab(_currentAction, true);
-					} else {
-						// Default to a standard 'walk to'
-						_currentAction = kVerbWalkTo;
-						strcat(_statusText, walkToStr);
-					}
-				}
-
-				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
-					// Get name from given inventory object
-					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
-					_objectNameId = _madsVm->globals()->getObject(objectId)->descId;
-				} else if (_currentHotspot < hotspotCount) {
-					// Get name from scene hotspot
-					_objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVocabID();
-				} else {
-					// Get name from temporary scene hotspot
-					_objectNameId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot].getVocabID();
-				}
-			}
-		}
-
-		if ((_currentHotspot >= 0) && (_articleNumber > 0) && !flag) {
-			if (_articleNumber == -1) {
-				if (_word_86F3A >= 0) {
-					int articleNum = 0;
-
-					if ((_word_86F42 == 2) || (_word_86F42 == 5)) {
-						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
-						articleNum = _madsVm->globals()->getObject(objectId)->article;
-					} else if (_word_86F3A < hotspotCount) {
-						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getArticle();
-					} else {
-
-					}
-				}
-
-			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
-				(strcmp(_madsVm->globals()->getVocab(_objectDescId), fenceStr) != 0)) {
-				// Write out the article
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
-			} else {
-				// Special case for a 'fence' entry in Rex Nebular
-				strcat(_statusText, overStr);
-			}
-
-			strcat(_statusText, " ");
-		}
-
-		// Append object description if necessary
-		if (_word_86F3A >= 0)
-			appendVocab(_objectDescId);
-
-		// Remove any trailing space character
-		int statusLen = strlen(_statusText);
-		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
-			_statusText[statusLen - 1] = '\0';
-	}
-
-	_word_83334 = -1;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -1151,7 +965,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
-	MadsAction &act = _madsVm->scene()->getAction();
+	MadsAction &act = _madsVm->scene()->_action;
 
 	// If the mouse isn't being held down, then reset the repeated scroll timer
 	if (eventType != MEVENT_LEFT_HOLD)
@@ -1198,7 +1012,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 					act._flags1 = obj->vocabList[1].flags1;
 					act._flags2 = obj->vocabList[1].flags2;
 
-					act._currentHotspot = _selectedObject;
+					act._action.hotspotId = _selectedObject;
 					act._articleNumber = act._flags2;
 				}
 			}

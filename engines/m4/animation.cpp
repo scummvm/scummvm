@@ -287,8 +287,8 @@ void MadsAnimation::load(const Common::String &filename, int abortTimers) {
 	_abortTimers = abortTimers;
 	_abortMode = _madsVm->scene()->_abortTimersMode2;
 
-	for (int i = 0; i < 3; ++i)
-		_actionNouns[i] = _madsVm->globals()->actionNouns[i];
+	if (_madsVm->_scene)
+		_actionNouns = _madsVm->scene()->_action._action;
 
 	// Initialise kernel message list
 	for (uint i = 0; i < _messages.size(); ++i)
@@ -464,8 +464,8 @@ void MadsAnimation::update() {
 
 			if (_abortMode != ABORTMODE_1) {
 				// Copy the noun list
-				for (int i = 0; i < 3; ++i)
-					_madsVm->globals()->actionNouns[i] = _actionNouns[i];
+				if (_madsVm->_scene)
+					_madsVm->scene()->_action._action = _actionNouns;
 			}
 		}
 	}

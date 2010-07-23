@@ -104,8 +104,7 @@ private:
 	int _messageCtr;
 	int _abortTimers;
 	AbortTimerMode _abortMode;
-	uint16 _actionNouns[3];
-
+	ActionDetails _actionNouns;
 
 	void load1(int frameNumber);
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);

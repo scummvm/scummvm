@@ -69,7 +69,7 @@ public:
 	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void mouseMove(int x, int y);
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void update();
