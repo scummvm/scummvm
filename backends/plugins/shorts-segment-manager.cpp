@@ -25,7 +25,7 @@
 
 #if defined(DYNAMIC_MODULES) //TODO: && defined (MIPS target)
 
-#include "MIPS-loader.h"
+//#include "MIPS-loader.h"
 #include "shorts-segment-manager.h"
 
 DECLARE_SINGLETON(ShortSegmentManager);	// For singleton

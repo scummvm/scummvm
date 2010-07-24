@@ -77,15 +77,4 @@ private:
 	char *_highestAddress;
 };
 
-class MIPS_DLObject : public DLObject {
-protected:
-	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
-	unsigned int _gpVal;									// Value of Global Pointer
-
-public:
-	MIPS_DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _shortsSegment(NULL), _segment(NULL), _symtab(NULL),
-			_strtab(NULL), _symbol_cnt(0), _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL), _gpVal(0) ,
-			_segmentSize(0) {}
-};
-
 #endif /* SHORTS_SEGMENT_MANAGER_H */

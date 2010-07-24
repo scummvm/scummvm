@@ -26,7 +26,7 @@
 #ifndef LOADER_H
 #define LOADER_H
 
-#include "elf32.h"
+#include "backends/plugins/elf32.h"
 #include "common/list.h"
 
 #define MAXDLERRLEN 80
@@ -77,5 +77,9 @@ extern "C" {
     const char *dlerror();
     void dlforgetsyms(void *handle);
 }
+
+//The following need to be defined by specific ports.
+extern void flushDataCache();
+extern bool dlRelocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
 
 #endif /* LOADER_H */
