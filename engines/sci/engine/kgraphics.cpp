@@ -436,15 +436,6 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 
 	celWidth = g_sci->_gfxCache->kernelViewGetCelWidth(viewId, loopNo, celNo);
 
-#ifdef ENABLE_SCI32
-	if (getSciVersion() == SCI_VERSION_2_1) {
-		if (g_sci->_gfxScreen->getWidth() > 320)
-			celWidth = celWidth / 2; // half the width returned here, fixes lsl6 action icon placements
-	}
-	// the scripts work low-res and add the returned value from here to the coordinate
-	// TODO: check, if this is actually right. I'm slightly confused by this, but even GK1CD has some idivs in this
-	//  code, so it seems plausible.
-#endif
 	return make_reg(0, celWidth);
 }
 
@@ -1158,6 +1149,8 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
+
+	warning("AddPlane %s", s->_segMan->getObjectName(argv[0]));
 
 	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
 	return NULL_REG;

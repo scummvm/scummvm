@@ -30,6 +30,7 @@ namespace Sci {
 
 struct CelInfo {
 	int16 width, height;
+	int16 scriptWidth, scriptHeight;
 	int16 displaceX;
 	int16 displaceY;
 	byte clearKey;

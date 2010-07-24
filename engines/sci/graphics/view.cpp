@@ -160,8 +160,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 				// For EGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
 				cel = &_loop[loopNo].cel[celNo];
-				cel->width = READ_LE_UINT16(celData);
-				cel->height = READ_LE_UINT16(celData + 2);
+				cel->scriptWidth = cel->width = READ_LE_UINT16(celData);
+				cel->scriptHeight = cel->height = READ_LE_UINT16(celData + 2);
 				cel->displaceX = (signed char)celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
@@ -231,8 +231,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
 				cel = &_loop[loopNo].cel[celNo];
-				cel->width = READ_SCI11ENDIAN_UINT16(celData);
-				cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
+				cel->scriptWidth = cel->width = READ_SCI11ENDIAN_UINT16(celData);
+				cel->scriptHeight = cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
 				cel->displaceX = READ_SCI11ENDIAN_UINT16(celData + 4);
 				cel->displaceY = READ_SCI11ENDIAN_UINT16(celData + 6);
 
@@ -253,6 +253,36 @@ void GfxView::initData(GuiResourceId resourceId) {
 				celData += celSize;
 			}
 		}
+#ifdef ENABLE_SCI32
+		// adjust width/height returned to scripts
+		switch (getSciVersion()) {
+		case SCI_VERSION_2:
+			if (_isSci2Hires) {
+				for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+					for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+						_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+					}
+				}
+			}
+			break;
+
+		case SCI_VERSION_2_1:
+			// half the width returned here, fixes lsl6 action icon placements
+			// the scripts work low-res and add the returned value from here to the coordinate
+			// TODO: check, if this is actually right. I'm slightly confused by this, but even GK1CD has some idivs in this
+			//  code, so it seems plausible.
+			if (_screen->getDisplayWidth() > 320) {
+				for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+					for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+						_loop[loopNo].cel[celNo].scriptWidth /= 2;
+						_loop[loopNo].cel[celNo].scriptHeight /= 2;
+					}
+				}
+			}
+		default:
+			break;
+		}
+#endif
 		break;
 
 	default:
