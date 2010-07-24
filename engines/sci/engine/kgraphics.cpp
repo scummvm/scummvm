@@ -1198,43 +1198,58 @@ reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
 	uint16 x = argv[0].toUint16();
 	uint16 y = argv[1].toUint16();
 	reg_t targetObject = argv[2];
-	// TODO: argv[3] - it's usually 0
+	uint16 illegalBits = argv[3].offset;
 	Common::Rect nsRect;
+
+	// we assume that x, y are local coordinates
 
 	// Get the bounding rectangle of the object
 	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
 	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
 	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
 	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
-	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
-	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+
+	// nsRect top/left may be negative, adjust accordingly
+	Common::Rect checkRect = nsRect;
+	if (checkRect.top < 0)
+		checkRect.top = 0;
+	if (checkRect.left < 0)
+		checkRect.left = 0;
+
+	bool contained = checkRect.contains(x, y);
+	if (contained && illegalBits) {
+		// If illegalbits are set, we check the color of the pixel that got clicked on
+		//  for now, we return false if the pixel is transparent
+		//  although illegalBits may get differently set, don't know yet how this really works out
+		uint16 viewId = readSelectorValue(s->_segMan, targetObject, SELECTOR(view));
+		int16 loopNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(loop));
+		int16 celNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(cel));
+		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
+			contained = false;
+	}
+// these hacks shouldn't be needed anymore
+//	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+//	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
 
 	// If top and left are negative, we need to adjust coordinates by
 	// the item's x and y (e.g. happens in GK1, day 1, with detective
 	// Mosely's hotspot in his office)
 
-	if (nsRect.left < 0)
-		nsRect.translate(itemX, 0);
-	
-	if (nsRect.top < 0)
-		nsRect.translate(0, itemY);
+//	if (nsRect.left < 0)
+//		nsRect.translate(itemX, 0);
+//	
+//	if (nsRect.top < 0)
+//		nsRect.translate(0, itemY);
 
-	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
-	// using x and y (e.g. with the inventory screen in GK1)
-	if (nsRect.left == itemY && nsRect.top == itemX) {
-		// Swap the values, as they're inversed (eh???)
-		nsRect.left = itemX;
-		nsRect.top = itemY;
-	}
+//	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+//	// using x and y (e.g. with the inventory screen in GK1)
+//	if (nsRect.left == itemY && nsRect.top == itemX) {
+//		// Swap the values, as they're inversed (eh???)
+//		nsRect.left = itemX;
+//		nsRect.top = itemY;
+//	}
 
-	/*
-	warning("kOnMe: (%d, %d) on object %04x:%04x (%s), rect (%d, %d, %d, %d), parameter %d", 
-		argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]), 
-		nsRect.left, nsRect.top, nsRect.right, nsRect.bottom,
-		argv[3].toUint16());
-	*/
-
-	return make_reg(0, nsRect.contains(x, y));
+	return make_reg(0, contained);
 }
 
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {

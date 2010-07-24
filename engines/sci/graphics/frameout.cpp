@@ -419,7 +419,8 @@ void GfxFrameout::kernelFrameout() {
 	delete[] itemData;
 	_screen->copyToScreen();
 
-	g_sci->getEngineState()->_throttleTrigger = true;
+	//g_sci->getEngineState()->_throttleTrigger = true;
+	// currently disabled because clones computer is too slow :P
 }
 
 } // End of namespace Sci
