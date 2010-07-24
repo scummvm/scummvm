@@ -1160,7 +1160,6 @@ reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
 	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
-	warning("kAddPlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
 
@@ -1168,7 +1167,6 @@ reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
 	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
-	warning("kDeletePlane object %04x:%04x", PRINT_REG(planeObj));
 	return NULL_REG;
 }
 
@@ -1189,7 +1187,6 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
-	warning("kGetHighPlanePri: %d", g_sci->_gfxFrameout->kernelGetHighPlanePri());
 	return make_reg(0, g_sci->_gfxFrameout->kernelGetHighPlanePri());
 }
 
@@ -1302,7 +1299,6 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		}
 		reg_t object = argv[3];
 		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
-		debug("kCreateTextBitmap: %s", text.c_str());
 	}
 	default:
 		warning("CreateTextBitmap(%d)", argv[0].toUint16());
