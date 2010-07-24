@@ -406,6 +406,8 @@ void GfxFrameout::kernelFrameout() {
 
 	delete[] itemData;
 	_screen->copyToScreen();
+
+	g_sci->getEngineState()->_throttleTrigger = true;
 }
 
 } // End of namespace Sci
