@@ -1151,8 +1151,6 @@ reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
 reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
 	reg_t planeObj = argv[0];
 
-	warning("AddPlane %s", s->_segMan->getObjectName(argv[0]));
-
 	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
 	return NULL_REG;
 }
@@ -1293,6 +1291,7 @@ reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
 		}
 		reg_t object = argv[3];
 		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		break;
 	}
 	default:
 		warning("CreateTextBitmap(%d)", argv[0].toUint16());
