@@ -534,7 +534,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
 			if (!((g_sci->getGameId() == GID_LONGBOW) && (g_sci->isDemo())))
-				error("Unknown kDisplay argument %X", displayArg);
+				error("Unknown kDisplay argument %X", displayArg.offset);
 			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
 				if (argc) {
 					argc--; argv++;
