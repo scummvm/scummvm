@@ -298,45 +298,56 @@ void GfxFrameout::kernelFrameout() {
 
 //				warning("view %s %d", _segMan->getObjectName(itemEntry->object), itemEntry->priority);
 
-				switch (getSciVersion()) {
-				case SCI_VERSION_2:
-					if (view->isSci2Hires())
-						_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
-					break;
-				case SCI_VERSION_2_1:
-					itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
-					itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
-					break;
-				default:
-					break;
-				}
-
-				if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
-					view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
-				else
-					view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
-
-				Common::Rect nsRect = itemEntry->celRect;
-				switch (getSciVersion()) {
-				case SCI_VERSION_2:
-					if (view->isSci2Hires()) {
-						_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
-						_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
+				if (useInsetRect) {
+					itemEntry->celRect.top = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inTop));
+					itemEntry->celRect.left = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inLeft));
+					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom)) + 1;
+					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight)) + 1;
+					itemEntry->celRect.translate(itemEntry->x, itemEntry->y);
+					// TODO: maybe we should clip the cels rect with this, i'm not sure
+					//  the only currently known usage is game menu of gk1
+				} else {
+					switch (getSciVersion()) {
+					case SCI_VERSION_2:
+						if (view->isSci2Hires())
+							_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+						break;
+					case SCI_VERSION_2_1:
+						itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
+						itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
+						break;
+					default:
+						break;
 					}
-					break;
-				case SCI_VERSION_2_1:
-					nsRect.top = (nsRect.top * planeResY) / _screen->getHeight();
-					nsRect.left = (nsRect.left * planeResX) / _screen->getWidth();
-					nsRect.bottom = (nsRect.bottom * planeResY) / _screen->getHeight();
-					nsRect.right = (nsRect.right * planeResX) / _screen->getWidth();
-					break;
-				default:
-					break;
+
+					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
+						view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
+					else
+						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
+
+					Common::Rect nsRect = itemEntry->celRect;
+					switch (getSciVersion()) {
+					case SCI_VERSION_2:
+						if (view->isSci2Hires()) {
+							_screen->adjustBackUpscaledCoordinates(nsRect.top, nsRect.left);
+							_screen->adjustBackUpscaledCoordinates(nsRect.bottom, nsRect.right);
+						}
+						break;
+					case SCI_VERSION_2_1:
+						nsRect.top = (nsRect.top * planeResY) / _screen->getHeight();
+						nsRect.left = (nsRect.left * planeResX) / _screen->getWidth();
+						nsRect.bottom = (nsRect.bottom * planeResY) / _screen->getHeight();
+						nsRect.right = (nsRect.right * planeResX) / _screen->getWidth();
+						break;
+					default:
+						break;
+					}
+					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
+					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
+					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);
+					writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsBottom), nsRect.bottom);
 				}
-				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsLeft), nsRect.left);
-				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsTop), nsRect.top);
-				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsRight), nsRect.right);
-				writeSelectorValue(_segMan, itemEntry->object, SELECTOR(nsBottom), nsRect.bottom);
 
 				int16 screenHeight = _screen->getHeight();
 				int16 screenWidth = _screen->getWidth();

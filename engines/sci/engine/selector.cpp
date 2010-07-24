@@ -180,6 +180,11 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(back);
 	FIND_SELECTOR(fixPriority);
 	FIND_SELECTOR(mirrored);
+	FIND_SELECTOR(useInsetRect);
+	FIND_SELECTOR(inTop);
+	FIND_SELECTOR(inLeft);
+	FIND_SELECTOR(inBottom);
+	FIND_SELECTOR(inRight);
 #endif
 }
 
