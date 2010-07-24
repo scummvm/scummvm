@@ -599,7 +599,7 @@ bool GFXtests::mouseMovements() {
 	
 	Common::String info = "Testing Automated Mouse movements.\n"
 						"You should expect cursor hotspot(top-left corner) to automatically move from (0, 0) to (100, 100).\n"
-						"There we have a rectangle drawn, finally the rectangle should symmetrically contain the cursor.";
+						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : Mouse Movements");

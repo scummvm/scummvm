@@ -27,6 +27,7 @@
 
 
 #include "common/array.h"
+#include "common/config-file.h"
 #include "common/str-array.h"
 #include "common/tokenizer.h"
 
@@ -56,12 +57,14 @@ public:
 	Common::WriteStream *getConfigWriteStream();
 	void writeTestbedConfigToStream(Common::WriteStream *ws);
 	Testsuite *getTestsuiteByName(const Common::String &name);
-	bool getConfigParamValue(const Common::String param);
+	bool stringToBool(const Common::String str) { return str.equalsIgnoreCase("true") ? true : false; }
+	Common::String boolToString(bool val) { return val ? "true" : "false"; }
+	void initConfigFile(Common::WriteStream *ws);
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
 	Common::String	_configFileName;
+	Common::ConfigFile	_configFileInterface;
 	void parseConfigFile();
-	void editSettingParam(Common::String param, bool value);
 };
 
 class TestbedListWidget : public GUI::ListWidget {
