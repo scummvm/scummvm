@@ -100,13 +100,14 @@ void OptionsDialog::init() {
 	_aspectCheckbox = 0;
 	_enableAudioSettings = false;
 	_midiPopUp = 0;
-	_mt32DevicePopUp = 0;
-	_gmDevicePopUp = 0;
 	_oplPopUp = 0;
 	_outputRatePopUp = 0;
 	_enableMIDISettings = false;
+	_gmDevicePopUp = 0;
 	_multiMidiCheckbox = 0;
+	_enableMT32Settings = false;
 	_mt32Checkbox = 0;
+	_mt32DevicePopUp = 0;
 	_enableGSCheckbox = 0;
 	_enableVolumeSettings = false;
 	_musicVolumeDesc = 0;
@@ -197,24 +198,6 @@ void OptionsDialog::open() {
 	if (!loadMusicDeviceSetting(_midiPopUp, "music_driver"))
 		_midiPopUp->setSelected(0);
 
-	if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device")) {
-		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-			if (!loadMusicDeviceSetting(_mt32DevicePopUp, Common::String(), MT_MT32))
-				_mt32DevicePopUp->setSelected(0);
-		} else {
-			_mt32DevicePopUp->setSelected(0);
-		}
-	}
-
-	if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device")) {
-		if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-			if (!loadMusicDeviceSetting(_gmDevicePopUp, Common::String(), MT_GM))
-				_gmDevicePopUp->setSelected(0);
-		} else {
-			_gmDevicePopUp->setSelected(0);
-		}
-	}
-
 	if (_oplPopUp) {
 		OPL::Config::DriverId id = MAX<OPL::Config::DriverId>(OPL::Config::parse(ConfMan.get("opl_driver", _domain)), 0);
 		_oplPopUp->setSelectedTag(id);
@@ -230,15 +213,17 @@ void OptionsDialog::open() {
 	}
 
 	if (_multiMidiCheckbox) {
+		if (!loadMusicDeviceSetting(_gmDevicePopUp, "gm_device")) {
+			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+				if (!loadMusicDeviceSetting(_gmDevicePopUp, Common::String(), MT_GM))
+					_gmDevicePopUp->setSelected(0);
+			} else {
+				_gmDevicePopUp->setSelected(0);
+			}
+		}
 
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
-
-		// Native mt32 setting
-		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
-
-		// GS extensions setting
-		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (soundFont.empty() || !ConfMan.hasKey("soundfont", _domain)) {
@@ -255,6 +240,24 @@ void OptionsDialog::open() {
 		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
 		sprintf(buf, "%.2f", (double)_midiGainSlider->getValue() / 100.0);
 		_midiGainLabel->setLabel(buf);
+	}
+
+	// MT-32 options
+	if (_mt32DevicePopUp) {
+		if (!loadMusicDeviceSetting(_mt32DevicePopUp, "mt32_device")) {
+			if (_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+				if (!loadMusicDeviceSetting(_mt32DevicePopUp, Common::String(), MT_MT32))
+					_mt32DevicePopUp->setSelected(0);
+			} else {
+				_mt32DevicePopUp->setSelected(0);
+			}
+		}
+
+		// Native mt32 setting
+		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
+
+		// GS extensions setting
+		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 	}
 
 	// Volume options
@@ -353,12 +356,8 @@ void OptionsDialog::close() {
 		if (_midiPopUp) {
 			if (_enableAudioSettings) {
 				saveMusicDeviceSetting(_midiPopUp, "music_driver");
-				saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
-				saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
 			} else {
 				ConfMan.removeKey("music_driver", _domain);
-				ConfMan.removeKey("mt32_device", _domain);
-				ConfMan.removeKey("gm_device", _domain);
 			}
 		}
 
@@ -391,9 +390,9 @@ void OptionsDialog::close() {
 		// MIDI options
 		if (_multiMidiCheckbox) {
 			if (_enableMIDISettings) {
+				saveMusicDeviceSetting(_gmDevicePopUp, "gm_device");
+
 				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
-				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
-				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
 
 				Common::String soundFont(_soundFont->getLabel());
@@ -402,12 +401,22 @@ void OptionsDialog::close() {
 				else
 					ConfMan.removeKey("soundfont", _domain);
 			} else {
+				ConfMan.removeKey("gm_device", _domain);
 				ConfMan.removeKey("multi_midi", _domain);
-				ConfMan.removeKey("native_mt32", _domain);
-				ConfMan.removeKey("enable_gs", _domain);
 				ConfMan.removeKey("midi_gain", _domain);
 				ConfMan.removeKey("soundfont", _domain);
 			}
+		}
+
+		// MT-32 options
+		if (_enableMT32Settings) {
+			saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
+			ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+			ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+		} else {
+			ConfMan.removeKey("mt32_device", _domain);
+			ConfMan.removeKey("native_mt32", _domain);
+			ConfMan.removeKey("enable_gs", _domain);
 		}
 
 		// Subtitle options
@@ -513,10 +522,6 @@ void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 	_midiPopUpDesc->setEnabled(enabled);
 	_midiPopUp->setEnabled(enabled);
-	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
-	_mt32DevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
-	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
-	_gmDevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
 
 	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
 
@@ -537,6 +542,9 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 	if (_guioptions & Common::GUIO_NOMIDI)
 		enabled = false;
 
+	_gmDevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_gmDevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+
 	_enableMIDISettings = enabled;
 
 	_soundFontButton->setEnabled(enabled);
@@ -548,11 +556,19 @@ void OptionsDialog::setMIDISettingsState(bool enabled) {
 		_soundFontClearButton->setEnabled(false);
 
 	_multiMidiCheckbox->setEnabled(enabled);
-	_mt32Checkbox->setEnabled(enabled);
-	_enableGSCheckbox->setEnabled(enabled);
 	_midiGainDesc->setEnabled(enabled);
 	_midiGainSlider->setEnabled(enabled);
 	_midiGainLabel->setEnabled(enabled);
+}
+
+void OptionsDialog::setMT32SettingsState(bool enabled) {
+	_enableMT32Settings = enabled;
+
+	_mt32DevicePopUpDesc->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+	_mt32DevicePopUp->setEnabled(_domain.equals(Common::ConfigManager::kApplicationDomain) ? enabled : false);
+
+	_mt32Checkbox->setEnabled(enabled);
+	_enableGSCheckbox->setEnabled(enabled);
 }
 
 void OptionsDialog::setVolumeSettingsState(bool enabled) {
@@ -645,11 +661,6 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	_midiPopUpDesc = new StaticTextWidget(boss, prefix + "auMidiPopupDesc", _domain == Common::ConfigManager::kApplicationDomain ? _("Preferred Device:") : _("Music Device:"), _domain == Common::ConfigManager::kApplicationDomain ? _("Specifies preferred sound device or sound card emulator") : _("Specifies output sound device or sound card emulator"));
 	_midiPopUp = new PopUpWidget(boss, prefix + "auMidiPopup", _("Specifies output sound device or sound card emulator"));
 
-	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
-	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
-	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", _("GM Device:"), _("Specifies default sound device for General MIDI output"));
-	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
-
 	// Populate it
 	uint32 allFlags = MidiDriver::musicType2GUIO((uint32)-1);
 
@@ -668,20 +679,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 			    || (deviceGuiOption == Common::GUIO_MIDIGM && (_guioptions & Common::GUIO_MIDIMT32))
 			    || d->getMusicDriverId() == "auto" || d->getMusicDriverId() == "null") // always add default and null device
 					_midiPopUp->appendEntry(d->getCompleteName(), d->getHandle());
-
-			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
-				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-				if (d->getMusicType() != MT_MT32)
-					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
-			}
 		}
-	}
-
-	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
-		_mt32DevicePopUpDesc->setEnabled(false);
-		_mt32DevicePopUp->setEnabled(false);
-		_gmDevicePopUpDesc->setEnabled(false);
-		_gmDevicePopUp->setEnabled(false);
 	}
 
 	// The OPL emulator popup & a label
@@ -707,6 +705,26 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 }
 
 void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefix) {
+	_gmDevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefGmPopupDesc", _("GM Device:"), _("Specifies default sound device for General MIDI output"));
+	_gmDevicePopUp = new PopUpWidget(boss, prefix + "auPrefGmPopup");
+
+	// Populate
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+				if (d->getMusicType() != MT_MT32)
+					_gmDevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
+			}
+		}
+	}
+
+	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+		_gmDevicePopUpDesc->setEnabled(false);
+		_gmDevicePopUp->setEnabled(false);
+	}
+
 	// SoundFont
 	_soundFontButton = new ButtonWidget(boss, prefix + "mcFontButton", _("SoundFont:"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"), kChooseSoundFontCmd);
 	_soundFont = new StaticTextWidget(boss, prefix + "mcFontPath", _("None"), _("SoundFont is supported by some audio cards, Fluidsynth and Timidity"));
@@ -715,18 +733,40 @@ void OptionsDialog::addMIDIControls(GuiObject *boss, const Common::String &prefi
 	// Multi midi setting
 	_multiMidiCheckbox = new CheckboxWidget(boss, prefix + "mcMixedCheckbox", _("Mixed AdLib/MIDI mode"), _("Use both MIDI and AdLib sound generation"));
 
-	// Native mt32 setting
-	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
-
-	// GS Extensions setting
-	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
-
 	// MIDI gain setting (FluidSynth uses this)
 	_midiGainDesc = new StaticTextWidget(boss, prefix + "mcMidiGainText", _("MIDI gain:"));
 	_midiGainSlider = new SliderWidget(boss, prefix + "mcMidiGainSlider", 0, kMidiGainChanged);
 	_midiGainSlider->setMinValue(0);
 	_midiGainSlider->setMaxValue(1000);
 	_midiGainLabel = new StaticTextWidget(boss, prefix + "mcMidiGainLabel", "1.00");
+
+	_enableMIDISettings = true;
+}
+
+void OptionsDialog::addMT32Controls(GuiObject *boss, const Common::String &prefix) {
+	_mt32DevicePopUpDesc = new StaticTextWidget(boss, prefix + "auPrefMt32PopupDesc", _("MT-32 Device:"), _("Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"));
+	_mt32DevicePopUp = new PopUpWidget(boss, prefix + "auPrefMt32Popup");
+
+	// Native mt32 setting
+	_mt32Checkbox = new CheckboxWidget(boss, prefix + "mcMt32Checkbox", _("True Roland MT-32 (disable GM emulation)"), _("Check if you want to use your real hardware Roland-compatible sound device connected to your computer"));
+
+	// GS Extensions setting
+	_enableGSCheckbox = new CheckboxWidget(boss, prefix + "mcGSCheckbox", _("Enable Roland GS Mode"), _("Turns off General MIDI mapping for games with Roland MT-32 soundtrack"));
+
+	const MusicPlugin::List p = MusicMan.getPlugins();
+	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); ++m) {
+		MusicDevices i = (**m)->getDevices();
+		for (MusicDevices::iterator d = i.begin(); d != i.end(); ++d) {
+			if (d->getMusicType() >= MT_GM || d->getMusicDriverId() == "auto") {
+				_mt32DevicePopUp->appendEntry(d->getCompleteName(), d->getHandle());
+			}
+		}
+	}
+
+	if (!_domain.equals(Common::ConfigManager::kApplicationDomain)) {
+		_mt32DevicePopUpDesc->setEnabled(false);
+		_mt32DevicePopUp->setEnabled(false);
+	}
 
 	_enableMIDISettings = true;
 }
@@ -892,7 +932,13 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	addMIDIControls(tab, "GlobalOptions_MIDI.");
 
 	//
-	// 4) The miscellaneous tab
+	// 4) The MT-32 tab
+	//
+	tab->addTab(_("MT-32"));
+	addMT32Controls(tab, "GlobalOptions_MT32.");
+
+	//
+	// 5) The Paths tab
 	//
 	tab->addTab(_("Paths"));
 
@@ -916,6 +962,9 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif
 #endif
 
+	//
+	// 6) The miscellaneous tab
+	//
 	tab->addTab(_("Misc"));
 
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", _("Theme:"), 0, kChooseThemeCmd);
