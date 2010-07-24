@@ -44,14 +44,24 @@ enum {
 	kTestbedDeselectAll = 'dAll'
 };
 
+
+
 class TestbedConfigManager {
 public:
-	TestbedConfigManager(Common::Array<Testsuite *> &tList) : _testsuiteList(tList) {}
+	TestbedConfigManager(Common::Array<Testsuite *> &tList, const Common::String fName) : _testsuiteList(tList), _configFileName(fName) {}
 	~TestbedConfigManager() {}
 	void selectTestsuites();
+	void setConfigFile(const Common::String fName) { _configFileName = fName; }
+	Common::SeekableReadStream *getConfigReadStream();
+	Common::WriteStream *getConfigWriteStream();
+	void writeTestbedConfigToStream(Common::WriteStream *ws);
+	Testsuite *getTestsuiteByName(const Common::String &name);
+	bool getConfigParamValue(const Common::String param);
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
-	void parseConfigFile() {}
+	Common::String	_configFileName;
+	void parseConfigFile();
+	void editSettingParam(Common::String param, bool value);
 };
 
 class TestbedListWidget : public GUI::ListWidget {
@@ -96,6 +106,7 @@ private:
 	Common::Array<Testsuite *> _testSuiteArray;
 	Common::StringArray _testSuiteDescArray;
 	TestbedListWidget *_testListDisplay;
+	TestbedConfigManager *_testbedConfMan;
 };
 
 } // End of namespace Testbed

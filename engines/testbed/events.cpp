@@ -266,9 +266,9 @@ bool EventTests::showMainMenu() {
 }
 
 EventTestSuite::EventTestSuite() {
-	addTest("Mouse Events", &EventTests::mouseEvents);
-	addTest("Keyboard Events", &EventTests::kbdEvents);
-	addTest("Mainmenu Event", &EventTests::showMainMenu);
+	addTest("MouseEvents", &EventTests::mouseEvents);
+	addTest("KeyboardEvents", &EventTests::kbdEvents);
+	addTest("MainmenuEvent", &EventTests::showMainMenu);
 }
 
 } // End of namespace Testbed

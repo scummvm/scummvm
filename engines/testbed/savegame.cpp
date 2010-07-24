@@ -189,11 +189,11 @@ bool SaveGametests::testErrorMessages() {
 }
 
 SaveGameTestSuite::SaveGameTestSuite() {
-	addTest("Opening SaveFile", &SaveGametests::testSaveLoadState, false);
-	addTest("Removing SaveFile", &SaveGametests::testRemovingSavefile, false);
-	addTest("Renaming SaveFile", &SaveGametests::testRenamingSavefile, false);
-	addTest("Listing SaveFile", &SaveGametests::testListingSavefile, false);
-	addTest("Verify Error Messages", &SaveGametests::testErrorMessages, false);
+	addTest("OpeningSaveFile", &SaveGametests::testSaveLoadState, false);
+	addTest("RemovingSaveFile", &SaveGametests::testRemovingSavefile, false);
+	addTest("RenamingSaveFile", &SaveGametests::testRenamingSavefile, false);
+	addTest("ListingSaveFile", &SaveGametests::testListingSavefile, false);
+	addTest("VerifyErrorMessages", &SaveGametests::testErrorMessages, false);
 }
 
 } // End of namespace Testbed

@@ -164,7 +164,7 @@ bool MiscTests::testMutexes() {
 }
 
 MiscTestSuite::MiscTestSuite() {
-	addTest("Date/time", &MiscTests::testDateTime, false);
+	addTest("Datetime", &MiscTests::testDateTime, false);
 	addTest("Timers", &MiscTests::testTimers, false);
 	addTest("Mutexes", &MiscTests::testMutexes, false);
 }

@@ -22,12 +22,26 @@
  * $Id$
  */
 
+#include "common/fs.h"
+#include "common/stream.h"
+#include "common/config-manager.h"
 #include "engines/engine.h"
 #include "testbed/config.h"
 
 namespace Testbed {
 
-TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser") {
+/**
+ * Stores testbed setting to be accessed/modified from config file.
+ * As of now there is only one entry "isSessionInteractive"
+ */
+struct TestbedSettings {
+	const char *name;
+	bool value;
+} testbedSettings[] = {
+	{"isSessionInteractive", true}
+};
+
+TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, TestbedConfigManager *tsConfMan) : GUI::Dialog("Browser"), _testbedConfMan(tsConfMan) {
 	
 	new GUI::StaticTextWidget(this, "Browser.Headline", "Select Testsuites to Execute");
 	new GUI::StaticTextWidget(this, "Browser.Path", "Use Doubleclick to select/deselect");
@@ -64,6 +78,7 @@ TestbedOptionsDialog::~TestbedOptionsDialog() {}
 
 void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	Testsuite *ts;
+	Common::WriteStream *ws;
 	switch (cmd) {
 	case GUI::kListItemDoubleClickedCmd:
 		ts  = _testSuiteArray[_testListDisplay->getSelected()];
@@ -106,11 +121,182 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 			}
 		}
 		break;
-
+	case GUI::kCloseCmd:
+		// This is final selected state, write it to config file.
+		ws = _testbedConfMan->getConfigWriteStream();
+		_testbedConfMan->writeTestbedConfigToStream(ws);
+		delete ws;
 	default:
 		GUI::Dialog::handleCommand(sender, cmd, data);
 	
 	}
+}
+
+void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
+	Common::String wStr;
+	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {
+		// Construct the string
+		wStr = "[";
+		wStr += (*i)->getName();
+		wStr += " = ";
+		wStr += (*i)->isEnabled() ? "true" : "false";
+		wStr += "]\n";
+		ws->writeString(wStr);
+		// TODO : for every test
+		const Common::Array<Test *> &testList = (*i)->getTestList();
+		for (Common::Array<Test *>::const_iterator j = testList.begin(); j != testList.end(); j++) {
+			wStr = (*j)->featureName;
+			wStr += " = ";
+			wStr += (*j)->enabled ? "true\n": "false\n";
+			ws->writeString(wStr);
+		}
+		ws->writeString("\n");
+	}
+}
+
+Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
+	// Look for config file in game-path
+	const Common::String &path = ConfMan.get("path");
+	Common::FSDirectory gameRoot(path);
+	Common::SeekableReadStream *rs = gameRoot.createReadStreamForMember(_configFileName);
+	return rs;
+}
+
+Common::WriteStream *TestbedConfigManager::getConfigWriteStream() {
+	// Look for config file in game-path
+	const Common::String &path = ConfMan.get("path");
+	Common::FSNode gameRoot(path);
+	Common::FSNode config = gameRoot.getChild(_configFileName);
+	if (!config.exists()) {
+		Testsuite::logPrintf("Info! No config file found, creating new one");
+	}
+	return config.createWriteStream();
+}
+
+void TestbedConfigManager::editSettingParam(Common::String param, bool value) {
+	for (int i = 0; i < ARRAYSIZE(testbedSettings); i++) {
+		if (param.equalsIgnoreCase(testbedSettings[i].name)) {
+			testbedSettings[i].value = value;
+		}
+	}
+}
+
+void TestbedConfigManager::parseConfigFile() {	
+	Common::SeekableReadStream *rs = getConfigReadStream();
+	if (!rs) {
+		Testsuite::logPrintf("Info! No config file found, using default configuration.\n");
+		return;
+	}
+	Testsuite *currTS = 0;
+	bool globalSettings = true;
+
+	int lineno = 0;
+	while (!rs->eos() && !rs->err()) {
+		Common::String line = rs->readLine();
+		lineno++;
+		// Trim leading / trailing whitespaces
+		line.trim();
+
+		if (0 ==line.size() || '#' == line[0]) {
+			// Skip blank lines and comments
+			continue;
+		}
+
+		if (line.contains("[Global]") || line.contains("[global]")) {
+			// Global settings.
+			globalSettings = true;
+			continue;
+		}
+
+		if (globalSettings) {
+			const char* t = line.c_str();
+			const char *p = strchr(t, '=');
+			Common::String key(t, p);
+			Common::String value(p + 1);
+			// trim both of spaces
+			key.trim();
+			value.trim();
+			if (value.equalsIgnoreCase("true")) {
+				editSettingParam(key, true);
+			} else {
+				editSettingParam(key, false);
+			}
+			continue;
+		}
+
+		// Check testsuites first
+		if ('[' == line[0]) {
+			// This is a testsuite, extract key value
+			const char* t = line.c_str() + 1;
+			const char *p = strchr(t, '=');
+			
+			if (!p) {
+				Testsuite::logPrintf("Error! Parsing : Malformed config file, token '=' missing at line %d\n", lineno);
+				break;
+			}
+
+			Common::String tsName(t, p);
+			Common::String toEnable(p + 1);
+			// trim both of spaces
+			tsName.trim();
+			toEnable.trim();
+			
+			currTS = getTestsuiteByName(tsName);
+			globalSettings = false;
+			if (!currTS) {	
+				Testsuite::logPrintf("Error! Parsing : Unrecognized testsuite name at line %d\n", lineno);
+				break;
+			}
+			toEnable.toLowercase();
+			if (toEnable.contains("true")) {
+				currTS->enable(true);
+			} else {
+				currTS->enable(false);
+			}
+		} else {
+			// A test under "currTS" testsuite
+			if (!currTS) {
+				Testsuite::logPrintf("Error! Parsing : Malformed config file, No testsuite corresponding to test at line %d\n", lineno);
+				break;
+			}
+			// Extract key value
+			const char* t = line.c_str();
+			const char *p = strchr(t, '=');
+			Common::String key(t, p);
+			Common::String value(p + 1);
+			// trim both of spaces
+			key.trim();
+			value.trim();
+			bool isValid = true;
+			if (value.equalsIgnoreCase("true")) {
+				isValid = currTS->enableTest(key, true);
+			} else {
+				isValid = currTS->enableTest(key, false);
+			}
+			if (!isValid) {
+				Testsuite::logPrintf("Error! Parsing : Unrecognized test for testsuite %s at line %d\n", currTS->getName(), lineno);
+			}
+		}
+	}
+	delete rs;
+}
+
+Testsuite *TestbedConfigManager::getTestsuiteByName(const Common::String &name) {
+	for (uint i = 0; i < _testsuiteList.size(); i++) {
+		if (name.equalsIgnoreCase(_testsuiteList[i]->getName())) {
+			return _testsuiteList[i];
+		}
+	}
+	return 0;
+}
+
+bool TestbedConfigManager::getConfigParamValue(const Common::String param) {
+	for (int i = 0; i < ARRAYSIZE(testbedSettings); i++) {
+		if (param.equalsIgnoreCase(testbedSettings[i].name)) {
+			return testbedSettings[i].value;
+		}
+	}
+	return false;
 }
 
 void TestbedConfigManager::selectTestsuites() {
@@ -122,7 +308,7 @@ void TestbedConfigManager::selectTestsuites() {
 	// TODO : Implement this method
 
 	parseConfigFile();
-
+	Testsuite::isSessionInteractive = getConfigParamValue("isSessionInteractive");
 	if (!Testsuite::isSessionInteractive) {
 		// Non interactive sessions don't need to go beyond
 		return;

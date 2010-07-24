@@ -105,7 +105,7 @@ Common::Error TestbedEngine::run() {
 	// interactive mode could also be modified by a config parameter "non-interactive=1"
 	// TODO: Implement that
 
-	TestbedConfigManager cfMan(_testsuiteList);
+	TestbedConfigManager cfMan(_testsuiteList, "testbed.config");
 	cfMan.selectTestsuites();
 	
 	// check if user wanted to exit.

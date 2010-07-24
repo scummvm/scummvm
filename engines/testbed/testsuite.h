@@ -90,6 +90,7 @@ public:
 	virtual void enable(bool flag) {
 		_isTsEnabled = flag;
 	}
+	bool enableTest(const Common::String &testName, bool enable);
 
 	/**
 	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
@@ -162,6 +163,7 @@ public:
 	static void setCurrentFontUsageType(Graphics::FontManager::FontUsage f) { _displayFont = f; }
 
 	static void updateStats(const char *prefix, const char *info, uint numTests, uint testNum, Common::Point pt);
+	const Common::Array<Test *>& getTestList() { return _testsToExecute; }
 
 
 protected:

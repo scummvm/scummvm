@@ -273,6 +273,16 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	g_system->updateScreen();
 }
 
+bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
+	for (uint i = 0; i < _testsToExecute.size(); i++) {
+		if (_testsToExecute[i]->featureName.equalsIgnoreCase(testName)) {
+			_testsToExecute[i]->enabled = toEnable;
+			return true;
+		}
+	}
+	return false;
+}
+
 void Testsuite::execute() {
 	// Main Loop for a testsuite
 
@@ -286,6 +296,11 @@ void Testsuite::execute() {
 	pt.y += getLineSeparation();
 
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+		if (!(*i)->enabled) {
+			logPrintf("Info! Skipping Test: %s, Skipped by configuration.\n", ((*i)->featureName).c_str());
+			continue;	
+		}
+
 		if (toQuit == kSkipNext) {
 			logPrintf("Info! Skipping Test: %s, Skipped by user.\n", ((*i)->featureName).c_str());
 			toQuit = kLoopNormal;

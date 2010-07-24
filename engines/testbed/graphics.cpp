@@ -73,7 +73,7 @@ GFXTestSuite::GFXTestSuite() {
 	addTest("Overlays", &GFXtests::overlayGraphics);
 
 	// Specific Tests:
-	addTest("Palette Rotation", &GFXtests::paletteRotation);
+	addTest("PaletteRotation", &GFXtests::paletteRotation);
 	//addTest("Pixel Formats", &GFXtests::pixelFormats);
 }
 
@@ -800,7 +800,7 @@ bool GFXtests::shakingEffect() {
 	Testsuite::writeOnScreen("If Shaking Effect works, this should shake!", pt);
 	int times = 35;
 	while (times--) {
-		g_system->setShakePos(10);
+		g_system->setShakePos(25);
 		g_system->updateScreen();
 		g_system->setShakePos(0);
 		g_system->updateScreen();
