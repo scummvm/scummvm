@@ -189,30 +189,30 @@ uint16 MadsSceneLogic::loadSpriteSet(uint16 suffixNum, uint16 sepChar) {
 	return _madsVm->scene()->loadSceneSpriteSet(resName);
 }
 
-uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
+uint16 MadsSceneLogic::startReversibleSpriteSequence(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
-	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		true, 100, depth - 1, 1, ANIMTYPE_REVERSIBLE, 0, 0);
 }
 
-uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
+uint16 MadsSceneLogic::startCycledSpriteSequence(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
-	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		true, 100, depth - 1, 1, ANIMTYPE_CYCLED, 0, 0);
 }
 
-uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
+uint16 MadsSceneLogic::startSpriteSequence3(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks) {
 	M4Sprite *spriteFrame = _madsVm->scene()->_spriteSlots.getSprite(srcSpriteIdx).getFrame(0);
 	uint8 depth = _madsVm->_rails->getDepth(Common::Point(spriteFrame->x + (spriteFrame->width() / 2),
 		spriteFrame->y + (spriteFrame->height() / 2)));
 
-	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, v0, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
+	return _madsVm->scene()->_sequenceList.add(srcSpriteIdx, flipped, 1, triggerCountdown, timeoutTicks, extraTicks, numTicks, 0, 0, 
 		true, 100, depth - 1, -1, ANIMTYPE_CYCLED, 0, 0);
 }
 
@@ -354,20 +354,18 @@ void MadsSceneLogic::enterScene() {
 	_spriteIndexes[12] = loadSpriteSet(8, 'x');
 	_spriteIndexes[13] = loadSpriteSet(0, 'x');
 
-	_spriteIndexes[15] = startCycledSpriteSequence(_spriteIndexes[0], 0, 5, 0, 0, 25);
-
-	_spriteIndexes[16] = startCycledSpriteSequence(_spriteIndexes[1], 0, 4, 0, 1, 0);
-	_spriteIndexes[17] = startCycledSpriteSequence(_spriteIndexes[2], 0, 4, 0, 1, 0);
+	_spriteIndexes[15] = startCycledSpriteSequence(_spriteIndexes[0], false, 5, 0, 0, 25);
+	_spriteIndexes[16] = startCycledSpriteSequence(_spriteIndexes[1], false, 4, 0, 1, 0);
+	_spriteIndexes[17] = startCycledSpriteSequence(_spriteIndexes[2], false, 4, 0, 1, 0);
 
 	_madsVm->scene()->_sequenceList.addSubEntry(_spriteIndexes[17], SM_FRAME_INDEX, 7, 70);
 
-	_spriteIndexes[18] = startReversibleSpriteSequence(_spriteIndexes[3], 0, 10, 0, 0, 60);
-	_spriteIndexes[19] = startCycledSpriteSequence(_spriteIndexes[4], 0, 5, 0, 1, 0);
-	_spriteIndexes[20] = startCycledSpriteSequence(_spriteIndexes[5], 0, 10, 0, 2, 0);
-	_spriteIndexes[21] = startCycledSpriteSequence(_spriteIndexes[6], 0, 6, 0, 0, 0);
-
-	_spriteIndexes[23] = startCycledSpriteSequence(_spriteIndexes[8], 0, 6, 0, 10, 4);
-	_spriteIndexes[24] = startCycledSpriteSequence(_spriteIndexes[9], 0, 6, 0, 32, 47);
+	_spriteIndexes[18] = startReversibleSpriteSequence(_spriteIndexes[3], false, 10, 0, 0, 60);
+	_spriteIndexes[19] = startCycledSpriteSequence(_spriteIndexes[4], false, 5, 0, 1, 0);
+	_spriteIndexes[20] = startCycledSpriteSequence(_spriteIndexes[5], false, 10, 0, 2, 0);
+	_spriteIndexes[21] = startCycledSpriteSequence(_spriteIndexes[6], false, 6, 0, 0, 0);
+	_spriteIndexes[23] = startCycledSpriteSequence(_spriteIndexes[8], false, 6, 0, 10, 4);
+	_spriteIndexes[24] = startCycledSpriteSequence(_spriteIndexes[9], false, 6, 0, 32, 47);
 
 	activateHotspot(0x137, false);		// SHIELD MODULATOR
 	// shield_panel_opened = 0;
@@ -386,7 +384,7 @@ void MadsSceneLogic::enterScene() {
 		_madsVm->_player._direction = 9;
 
 		// TODO: Extra flags setting
-		_spriteIndexes[25] = startCycledSpriteSequence(_spriteIndexes[10], 0, 3, 0, 0, 0);
+		_spriteIndexes[25] = startCycledSpriteSequence(_spriteIndexes[10], false, 3, 0, 0, 0);
 		_madsVm->scene()->_sequenceList.setAnimRange(_spriteIndexes[25], 17, 17);
 		activateHotspot(0x47, false);	// CHAIR
 		/*timer_unk1 = */_madsVm->scene()->_dynamicHotspots.add(0x47, 0x13F /*SIT_IN*/, -1,
@@ -395,7 +393,8 @@ void MadsSceneLogic::enterScene() {
 		//if (_madsVm->globals()->previousScene == 112)
 		//	room101Check();
 	} else {
-		_spriteIndexes[26] = startCycledSpriteSequence(_spriteIndexes[11], 0, 6, 0, 0, 0);
+		_spriteIndexes[26] = startCycledSpriteSequence(_spriteIndexes[11], false, 6, 0, 0, 0);
+		_madsVm->scene()->_sequenceList.setDepth(_spriteIndexes[26], 4);
 	}
 
 	_madsVm->globals()->loadQuoteSet(0x31, 0x32, 0x37, 0x38, 0x39, -1);

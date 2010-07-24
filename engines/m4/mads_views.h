@@ -392,8 +392,7 @@ struct MadsSequenceSubEntries {
 struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
-	
-	int field_2;
+	bool flipped;
 	
 	int frameIndex;
 	int frameStart;
@@ -433,9 +432,9 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
-		int numSprites, int frameStart);
+	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, 
+		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
+		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
@@ -443,6 +442,7 @@ public:
 	void delay(uint32 v1, uint32 v2);
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
+	void setDepth(int seqIndex, int depth);
 };
 
 class Animation {

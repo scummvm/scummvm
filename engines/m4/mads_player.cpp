@@ -136,7 +136,7 @@ void MadsPlayer::update() {
 		int yp = MIN(_playerPos.y, (int16)155);
 	
 		for (int idx = 1; idx < 15; ++idx) {
-			if (_madsVm->scene()->getSceneResources().depthTable[newDepth] >= yp)
+			if (_madsVm->scene()->getSceneResources()._depthBands[newDepth] >= yp)
 				newDepth = idx + 1;
 		}
 		_currentDepth = newDepth;

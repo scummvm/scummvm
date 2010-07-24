@@ -1262,7 +1262,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 	return false;
 }
 
-int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
+int MadsSequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
@@ -1283,7 +1283,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	// Set the list entry fields
 	_entries[seqIndex].active = true;
 	_entries[seqIndex].spriteListIndex = spriteListIndex;
-	_entries[seqIndex].field_2 = v0;
+	_entries[seqIndex].flipped = flipped;
 	_entries[seqIndex].frameIndex = frameIndex;
 	_entries[seqIndex].frameStart = frameStart;
 	_entries[seqIndex].numSprites = numSprites;
@@ -1329,7 +1329,7 @@ void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
 	spriteSlot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
-	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
+	spriteSlot.frameNumber = (timerEntry.flipped ? 0x8000 : 0) | timerEntry.frameIndex;
 	spriteSlot.depth = timerEntry.depth;
 	spriteSlot.scale = timerEntry.scale;
 	
@@ -1528,6 +1528,13 @@ void MadsSequenceList::scan() {
 			setSpriteSlot(i, _owner._spriteSlots[idx]);
 		}
 	}
+}
+
+/**
+ * Sets the depth of the specified entry in the sequence list
+ */
+void MadsSequenceList::setDepth(int seqIndex, int depth) {
+	_entries[seqIndex].depth = depth;
 }
 
 //--------------------------------------------------------------------------
