@@ -299,29 +299,33 @@ void GfxFrameout::kernelFrameout() {
 
 //				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
 
+				switch (getSciVersion()) {
+				case SCI_VERSION_2:
+					if (view->isSci2Hires())
+						_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+					break;
+				case SCI_VERSION_2_1:
+					itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
+					itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
+					break;
+				default:
+					break;
+				}
+
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
 					itemEntry->celRect.top = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inTop));
 					itemEntry->celRect.left = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inLeft));
 					itemEntry->celRect.bottom = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inBottom)) + 1;
 					itemEntry->celRect.right = readSelectorValue(_segMan, itemEntry->object, SELECTOR(inRight)) + 1;
+					if (view->isSci2Hires()) {
+						_screen->adjustToUpscaledCoordinates(itemEntry->celRect.top, itemEntry->celRect.left);
+						_screen->adjustToUpscaledCoordinates(itemEntry->celRect.bottom, itemEntry->celRect.right);
+					}
 					itemEntry->celRect.translate(itemEntry->x, itemEntry->y);
 					// TODO: maybe we should clip the cels rect with this, i'm not sure
 					//  the only currently known usage is game menu of gk1
 				} else {
-					switch (getSciVersion()) {
-					case SCI_VERSION_2:
-						if (view->isSci2Hires())
-							_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
-						break;
-					case SCI_VERSION_2_1:
-						itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
-						itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
-						break;
-					default:
-						break;
-					}
-
 					if ((itemEntry->scaleX == 128) && (itemEntry->scaleY == 128))
 						view->getCelRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->celRect);
 					else
