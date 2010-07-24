@@ -43,10 +43,11 @@ GfxPicture::GfxPicture(ResourceManager *resMan, GfxCoordAdjuster *coordAdjuster,
 }
 
 GfxPicture::~GfxPicture() {
+	_resMan->unlockResource(_resource);
 }
 
 void GfxPicture::initData(GuiResourceId resourceId) {
-	_resource = _resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
+	_resource = _resMan->findResource(ResourceId(kResourceTypePic, resourceId), true);
 	if (!_resource) {
 		error("picture resource %d not found", resourceId);
 	}
