@@ -37,22 +37,31 @@ namespace M4 {
 class MadsView;
 
 enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
-enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
 
 struct ActionDetails {
-	int hotspotId;
+	int verbId;
 	int objectNameId;
 	int indirectObjectId;
+};
+
+struct MadsActionSavedFields {
+	int articleNumber;
+	int actionMode;
+	int actionMode2;
+	bool lookFlag;
+	int selectedRow;
 };
 
 class MadsAction {
 private:
 	MadsView &_owner;
 	char _statusText[100];
+	char _dialogTitle[100];
 
 	void appendVocab(int vocabId, bool capitalise = false);
 public:
-	ActionDetails _action;
+	ActionDetails _action, _activeAction;
 	int _currentAction;
 	int8 _flags1, _flags2;
 	MadsActionMode _actionMode;
@@ -65,14 +74,19 @@ public:
 	bool _verbNounFlag;
 	int _statusTextIndex;
 	int _hotspotId;
+	MadsActionSavedFields _savedFields;
+	bool _walkFlag;
+	Common::Point _customDest;
 
 	// Unknown fields
-	int16 _word_86F3A;
-	int16 _word_86F42;
-	int16 _word_86F4E;
-	int16 _word_86F4A;
-	int16 _word_86F4C;
+	int16 _v86F3A;
+	int16 _v86F42;
+	int16 _v86F4E;
+	bool _v86F4A;
+	int16 _v86F4C;
 	int _v83338;
+	int _v84538;
+	bool _v8453A;
 
 public:
 	MadsAction(MadsView &owner);
@@ -81,6 +95,9 @@ public:
 	void set();
 	const char *statusText() const { return _statusText; }
 	void refresh();
+	void startAction();
+	void checkAction();
+	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
 };
 
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};

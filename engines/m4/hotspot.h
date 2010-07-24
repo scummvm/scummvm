@@ -104,6 +104,7 @@ public:
 	int add(HotSpot *hotspot, bool head = false);
 	HotSpot *get(int index) { return _hotspots[index]; }
 	HotSpot &operator[](int idx) { return *get(idx); }
+	int size() const { return _hotspots.size(); }
 	void remove(HotSpot *hotspot);
 	void unlinkItem(HotSpot *hotspot);
 	void clear();

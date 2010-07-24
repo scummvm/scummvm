@@ -44,7 +44,7 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 	_screenType = VIEWID_SCENE;
 
 	_sceneResources->hotspots = new HotSpotList();
-	_sceneResources->props = new HotSpotList();
+	_sceneResources->dynamicHotspots = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_walkSurface = new M4Surface();
 	_palData = NULL;
@@ -123,14 +123,14 @@ void Scene::showHotSpots() {
 	HotSpot *currentHotSpot;
 
 	// hotspots (green)
-	for (i = 0; i < _sceneResources->hotspotCount; i++) {
+	for (i = 0; i < _sceneResources->hotspots->size(); i++) {
 		currentHotSpot = _sceneResources->hotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->GREEN);
 	}
 
-	// props (red)
-	for (i = 0; i < _sceneResources->propsCount; i++) {
-		currentHotSpot = _sceneResources->props->get(i);
+	// Dynamic hotspots (red)
+	for (i = 0; i < _sceneResources->dynamicHotspots->size(); i++) {
+		currentHotSpot = _sceneResources->dynamicHotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->RED);
 	}
 }

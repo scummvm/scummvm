@@ -49,20 +49,21 @@ void MadsAction::clear() {
 	_v83338 = 1;
 	_actionMode = ACTMODE_NONE;
 	_actionMode2 = ACTMODE2_0;
-	_word_86F42 = 0;
-	_word_86F4E = 0;
+	_v86F42 = 0;
+	_v86F4E = 0;
 	_articleNumber = 0;
 	_lookFlag = false;
-	_word_86F4A = 0;
+	_v86F4A = 0;
 	_statusText[0] = '\0';
 	_selectedRow = -1;
 	_hotspotId = -1;
-	_word_86F3A = -1;
-	_word_86F4C = -1;
-	_action.hotspotId = -1;
+	_v86F3A = -1;
+	_v86F4C = -1;
+	_action.verbId = -1;
 	_action.objectNameId = -1;
 	_action.indirectObjectId = -1;
 	_textChanged = true;
+	_walkFlag = false;
 }
 
 void MadsAction::appendVocab(int vocabId, bool capitalise) {
@@ -76,7 +77,7 @@ void MadsAction::appendVocab(int vocabId, bool capitalise) {
 }
 
 void MadsAction::set() {
-	int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
+	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
 	bool flag = false;
 	strcpy(_statusText, "");
 
@@ -148,7 +149,7 @@ void MadsAction::set() {
 						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVerbID();
 					} else {
 						// Get the verb Id from the scene object
-						verbId = (*_madsVm->scene()->getSceneResources().props)[_hotspotId - hotspotCount].getVerbID();
+						verbId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId - hotspotCount].getVerbID();
 					}
 
 					if (verbId > 0) {
@@ -171,7 +172,7 @@ void MadsAction::set() {
 					_action.objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVocabID();
 				} else {
 					// Get name from temporary scene hotspot
-					_action.objectNameId = (*_madsVm->scene()->getSceneResources().props)[_hotspotId].getVocabID();
+					_action.objectNameId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId].getVocabID();
 				}
 				appendVocab(_action.objectNameId);
 			}
@@ -179,13 +180,13 @@ void MadsAction::set() {
 
 		if ((_hotspotId >= 0) && (_articleNumber > 0) && !flag) {
 			if (_articleNumber == -1) {
-				if (_word_86F3A >= 0) {
+				if (_v86F3A >= 0) {
 					int articleNum = 0;
 
-					if ((_word_86F42 == 2) || (_word_86F42 == 5)) {
+					if ((_v86F42 == 2) || (_v86F42 == 5)) {
 						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
 						articleNum = _madsVm->globals()->getObject(objectId)->article;
-					} else if (_word_86F3A < hotspotCount) {
+					} else if (_v86F3A < hotspotCount) {
 						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getArticle();
 					} else {
 
@@ -205,7 +206,7 @@ void MadsAction::set() {
 		}
 
 		// Append object description if necessary
-		if (_word_86F3A >= 0)
+		if (_v86F3A >= 0)
 			appendVocab(_action.indirectObjectId);
 
 		// Remove any trailing space character
@@ -250,6 +251,86 @@ void MadsAction::refresh() {
 	}
 
 	_textChanged = false;
+}
+
+void MadsAction::startAction() {
+	_madsVm->_player.moveComplete();
+
+	_v84538 = -1;
+	_v8453A = 0;
+	_savedFields.selectedRow = _selectedRow;
+	_savedFields.articleNumber = _articleNumber;
+	_savedFields.actionMode = _actionMode;
+	_savedFields.actionMode2 = _actionMode2;
+	_savedFields.lookFlag = _lookFlag;
+	int savedHotspotId = _hotspotId;
+	int savedV86F3A = _v86F3A;
+	int savedV86F42 = _v86F42;
+
+	// Copy the action to be active
+	_activeAction = _action;
+	strcpy(_dialogTitle, _statusText);
+
+	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
+		_v8453A = true;
+
+	_verbNounFlag = false;
+	int hotspotId = -1;
+	HotSpotList &dynHotspots = *_madsVm->scene()->getSceneResources().dynamicHotspots;
+	HotSpotList &hotspots = *_madsVm->scene()->getSceneResources().hotspots;
+
+	if (!_savedFields.lookFlag && (_madsVm->scene()->_screenObjects._v832EC != 1)) {
+		if (_savedFields.actionMode2 == ACTMODE2_4)
+			hotspotId = savedHotspotId;
+		else if (savedV86F42 == 4)
+			hotspotId = savedV86F3A;
+
+		if (hotspotId >= hotspots.size()) {
+			HotSpot &hs = dynHotspots[hotspotId - hotspots.size()];
+			if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+				if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+					_verbNounFlag = true;
+					_madsVm->scene()->_destPos = _customDest;
+				}
+			} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+				_verbNounFlag = true;
+				_madsVm->scene()->_destPos.x = hs.getFeetX();
+				_madsVm->scene()->_destPos.y = hs.getFeetY();
+			}
+			_madsVm->scene()->_destFacing = hs.getFacing();
+		}
+		hotspotId = -1;
+	}
+
+	if (hotspotId >= 0) {
+		HotSpot &hs = hotspots[hotspotId];
+		if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+			if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+				_verbNounFlag = true;
+				_madsVm->scene()->_destPos = _customDest;
+			}
+		} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+			_verbNounFlag = true;
+			_madsVm->scene()->_destPos.x = hs.getFeetX();
+			_madsVm->scene()->_destPos.y = hs.getFeetY();
+		}
+		_madsVm->scene()->_destFacing = hs.getFacing();
+	}
+}
+
+void MadsAction::checkAction() {
+	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
+		_verbNounFlag = 0;
+}
+
+bool MadsAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
+	if (_activeAction.verbId != verbId)
+		return false;
+	if ((objectNameId != 0) && (_activeAction.objectNameId != objectNameId))
+		return false;
+	if ((indirectObjectId != 0) && (_activeAction.indirectObjectId != indirectObjectId))
+		return false;
+	return true;
 }
 
 //--------------------------------------------------------------------------
@@ -407,8 +488,8 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 
 	// Get a list of sprite object depths for active objects
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
-			DepthEntry rec(_entries[i].depth, i);
+		if (_entries[i].spriteType >= SPRITE_ZERO) {
+			DepthEntry rec(16 - _entries[i].depth, i);
 			depthList.push_back(rec);
 		}
 	}

@@ -45,7 +45,7 @@ M4Scene::M4Scene(M4Engine *vm): _sceneResources(), Scene(vm, &_sceneResources) {
 
 	_sceneResources.hotspots = new HotSpotList();
 	_sceneResources.parallax = new HotSpotList();
-	_sceneResources.props = new HotSpotList();
+	_sceneResources.dynamicHotspots = new HotSpotList();
 	_interfaceSurface = new M4InterfaceView(vm);
 }
 
@@ -74,9 +74,9 @@ void M4Scene::loadSceneResources(int sceneNumber) {
 	if (sceneS != NULL) {
 		sceneS->read(_sceneResources.artBase, MAX_CHK_FILENAME_SIZE);
 		sceneS->read(_sceneResources.pictureBase, MAX_CHK_FILENAME_SIZE);
-		_sceneResources.hotspotCount = sceneS->readUint32LE();
+		int hotspotCount = sceneS->readUint32LE();
 		_sceneResources.parallaxCount = sceneS->readUint32LE();
-		_sceneResources.propsCount = sceneS->readUint32LE();
+		int dynHotspotCount = sceneS->readUint32LE();
 		_sceneResources.frontY = sceneS->readUint32LE();
 		_sceneResources.backY = sceneS->readUint32LE();
 		_sceneResources.frontScale = sceneS->readUint32LE();
@@ -99,11 +99,11 @@ void M4Scene::loadSceneResources(int sceneNumber) {
 		// Clear current hotspot lists
 		_sceneResources.hotspots->clear();
 		_sceneResources.parallax->clear();
-		_sceneResources.props->clear();
+		_sceneResources.dynamicHotspots->clear();
 
-		_sceneResources.hotspots->loadHotSpots(sceneS, _sceneResources.hotspotCount);
+		_sceneResources.hotspots->loadHotSpots(sceneS, hotspotCount);
 		_sceneResources.parallax->loadHotSpots(sceneS, _sceneResources.parallaxCount);
-		_sceneResources.props->loadHotSpots(sceneS, _sceneResources.propsCount);
+		_sceneResources.dynamicHotspots->loadHotSpots(sceneS, dynHotspotCount);
 
 		// Note that toss() deletes the MemoryReadStream
 		_vm->res()->toss(filename);

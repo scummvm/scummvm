@@ -418,8 +418,12 @@ void MadsSceneLogic::enterScene() {
 	lowRoomsEntrySound();
 }
 
-void MadsSceneLogic::doAction() {
+void MadsSceneLogic::doPreactions() {
+	warning("Still to do preactions logic");
+}
 
+void MadsSceneLogic::doAction() {
+	warning("Still to do actions logic");
 }
 
 void MadsSceneLogic::sceneStep() {

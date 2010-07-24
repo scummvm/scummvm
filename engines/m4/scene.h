@@ -53,17 +53,16 @@ enum MADSVerbs {
 	kVerbPull	= 10,
 	kVerbClose	= 11,
 	kVerbThrow	= 12,
-	kVerbWalkTo	= 13
+	kVerbWalkTo	= 13,
+	kVerbLookAt = 209
 };
 
 class SceneResources {
 public:
 	char artBase[MAX_CHK_FILENAME_SIZE];
 	char pictureBase[MAX_CHK_FILENAME_SIZE];
-	int32 hotspotCount;
 	HotSpotList *hotspots;
-	int32 propsCount;
-	HotSpotList *props;
+	HotSpotList *dynamicHotspots;
 	int32 frontY, backY;
 	int32 frontScale, backScale;
 	int16 depthTable[16];

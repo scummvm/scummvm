@@ -59,6 +59,7 @@ public:
 
 	void setupScene();
 	void enterScene();
+	void doPreactions();
 	void doAction();
 	void sceneStep();
 };

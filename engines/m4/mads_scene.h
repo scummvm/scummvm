@@ -98,9 +98,13 @@ private:
 	void clearAction();
 	void appendActionVocab(int vocabId, bool capitalise);
 	void setAction();
+	void checkStartWalk();
+	void doPreactions();
 public:
 	char _aaName[100];
 	bool _showMousePos;
+	Common::Point _destPos;
+	int _destFacing;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

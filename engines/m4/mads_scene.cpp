@@ -195,24 +195,21 @@ void MadsScene::loadSceneHotspots(int sceneNumber) {
 	int hotspotCount = hotspotStream->readUint16LE();
 	delete hotspotStream;
 
-	_sceneResources.hotspotCount = hotspotCount;
-
 	hotspotStream = hotSpotData.getItemStream(1);
 
 	// Clear current hotspot lists
 	_sceneResources.hotspots->clear();
-
-	_sceneResources.hotspots->loadHotSpots(hotspotStream, _sceneResources.hotspotCount);
+	_sceneResources.hotspots->loadHotSpots(hotspotStream, hotspotCount);
 
 	delete hotspotStream;
 }
 
 void MadsScene::leaveScene() {
 	_sceneResources.hotspots->clear();
-	_sceneResources.props->clear();
+	_sceneResources.dynamicHotspots->clear();
 
 	delete _sceneResources.hotspots;
-	delete _sceneResources.props;
+	delete _sceneResources.dynamicHotspots;
 	delete _walkSurface;
 
 	if (_activeAnimation) {
@@ -322,6 +319,21 @@ void MadsScene::updateState() {
 //		_screenObjects.check(v, false);
 	}
 
+	// Handle starting off any selected action
+	bool lookFlag = false;
+	if ((_action._selectedAction != 0) && _madsVm->_player._stepEnabled &&
+			!_action._verbNounFlag && !_abortTimers && !_madsVm->_player._unk3) {
+		// Start the action
+		_action.startAction();
+
+		lookFlag = (_action._action.verbId == kVerbLookAt) || (_action._action.verbId == kVerbLook);
+	}
+	if (lookFlag || ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_2)))
+		doPreactions();
+
+	checkStartWalk();
+
+	// Update the player
 	_madsVm->_player.update();
 
 	// Handle refreshing the mouse position display
@@ -362,6 +374,25 @@ void MadsScene::updateState() {
 	// Remove the animation if it's been completed
 	if ((_activeAnimation) && ((MadsAnimation *)_activeAnimation)->freeFlag())
 		freeAnimation();
+}
+
+void MadsScene::checkStartWalk() {
+	if (_action._verbNounFlag && _action._walkFlag) {
+		_madsVm->_player.setDest(_destPos.x, _destPos.y, _destFacing);
+		_action._verbNounFlag = false;
+	}
+}
+
+void MadsScene::doPreactions() {
+	if ((_screenObjects._v832EC == 0) || (_screenObjects._v832EC == 2)) {
+		_abortTimersMode2 = ABORTMODE_2;
+		_action.checkAction();
+
+		_sceneLogic.doPreactions();
+
+		if (_abortTimersMode == ABORTMODE_2)
+			_abortTimers = 0;
+	}
 }
 
 /**
@@ -999,7 +1030,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 					act._flags1 = obj->vocabList[1].flags1;
 					act._flags2 = obj->vocabList[1].flags2;
 
-					act._action.hotspotId = _selectedObject;
+					act._action.verbId = _selectedObject;
 					act._articleNumber = act._flags2;
 				}
 			}
