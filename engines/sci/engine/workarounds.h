@@ -76,6 +76,7 @@ extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
+extern const SciWorkaroundEntry kGraphSaveBox_workarounds[];
 extern const SciWorkaroundEntry kGraphRestoreBox_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxForeground_workarounds[];
 extern const SciWorkaroundEntry kGraphFillBoxAny_workarounds[];

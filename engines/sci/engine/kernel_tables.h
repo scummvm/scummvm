@@ -178,7 +178,7 @@ static const SciKernelMapSubEntry kGraph_subops[] = {
     { SIG_SCIALL,          4, MAP_CALL(GraphDrawLine),             "iiiii(i)(i)",          kGraphDrawLine_workarounds },
     // 5 - nop
     // 6 - draw pattern
-    { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                NULL },
+    { SIG_SCIALL,          7, MAP_CALL(GraphSaveBox),              "iiiii",                kGraphSaveBox_workarounds },
     { SIG_SCIALL,          8, MAP_CALL(GraphRestoreBox),           "[r0!]",                kGraphRestoreBox_workarounds },
     // ^ this may get called with invalid references, we check them within restoreBits() and sierra sci behaves the same
     { SIG_SCIALL,          9, MAP_CALL(GraphFillBoxBackground),    "iiii",                 NULL },
