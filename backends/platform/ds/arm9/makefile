@@ -295,7 +295,8 @@ PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(port
 		$(portdir)/source/touchkeyboard.o $(portdir)/source/zipreader.o\
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
 		$(portdir)/source/interrupt.o\
-		$(portdir)/source/dsloader.o
+		$(srcdir)/backends/plugins/elf-loader.o\
+		$(srcdir)/backends/plugins/ds/ds-loader.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o
