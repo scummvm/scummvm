@@ -138,8 +138,8 @@ void GfxFrameout::kernelFrameout() {
 		Common::Rect planeRect;
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
-		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom));
-		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right));
+		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom)) + 1;
+		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right)) + 1;
 		int16 planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
 		int16 planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
 
