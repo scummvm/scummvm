@@ -321,54 +321,58 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 	return retval;
 }
 
-void Vocabulary::decipherSaidBlock(byte *addr) {
-	uint16 nextitem;
+void Vocabulary::debugDecipherSaidBlock(const byte *addr) {
+	bool first = true;
+	uint16 nextItem;
 
 	do {
-		nextitem = *addr++;
+		nextItem = *addr++;
+		if (nextItem != 0xff) {
+			if ((!first) && (nextItem != 0xf0))
+				printf(" ");
+			first = false;
 
-		if (nextitem < 0xf0) {
-			nextitem = nextitem << 8 | *addr++;
-			printf(" %s[%03x]", getAnyWordFromGroup(nextitem), nextitem);
+			if (nextItem < 0xf0) {
+				nextItem = nextItem << 8 | *addr++;
+				printf("%s{%03x}", getAnyWordFromGroup(nextItem), nextItem);
 
-			nextitem = 42; // Make sure that group 0xff doesn't abort
-		} else switch (nextitem) {
-			case 0xf0:
-				printf(" ,");
-				break;
-			case 0xf1:
-				printf(" &");
-				break;
-			case 0xf2:
-				printf(" /");
-				break;
-			case 0xf3:
-				printf(" (");
-				break;
-			case 0xf4:
-				printf(" )");
-				break;
-			case 0xf5:
-				printf(" [");
-				break;
-			case 0xf6:
-				printf(" ]");
-				break;
-			case 0xf7:
-				printf(" #");
-				break;
-			case 0xf8:
-				printf(" <");
-				break;
-			case 0xf9:
-				printf(" >");
-				break;
-			case 0xff:
-				break;
+				nextItem = 0; // Make sure that group 0xff doesn't abort
+			} else switch (nextItem) {
+				case 0xf0:
+					printf(",");
+					break;
+				case 0xf1:
+					printf("&");
+					break;
+				case 0xf2:
+					printf("/");
+					break;
+				case 0xf3:
+					printf("(");
+					break;
+				case 0xf4:
+					printf(")");
+					break;
+				case 0xf5:
+					printf("[");
+					break;
+				case 0xf6:
+					printf("]");
+					break;
+				case 0xf7:
+					printf("#");
+					break;
+				case 0xf8:
+					printf("<");
+					break;
+				case 0xf9:
+					printf(">");
+					break;
+				case 0xff:
+					break;
 			}
-	} while (nextitem != 0xff);
-
-	printf("\n");
+		}
+	} while (nextItem != 0xff);
 }
 
 static const byte lowerCaseMap[256] = {

@@ -1302,7 +1302,8 @@ bool Console::cmdSaid(int argc, const char **argv) {
 	spec[len++] = 0xFF;
 
 	printf("Matching '%s' against:", string);
-	_engine->getVocabulary()->decipherSaidBlock(spec);
+	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
+	printf("\n");
 
 	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {

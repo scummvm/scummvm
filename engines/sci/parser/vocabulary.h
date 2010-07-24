@@ -235,7 +235,7 @@ public:
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */
-	void decipherSaidBlock(byte *pos);
+	void debugDecipherSaidBlock(const byte *pos);
 
 	/**
 	 * Prints the parser suffixes to the debug console.

@@ -664,8 +664,18 @@ static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int 
 				printf(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
 				break;
 			case SIG_TYPE_REFERENCE:
-				printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
-				break;
+				if (kernelCall->function == kSaid) {
+					SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+					if (saidSpec.isRaw) {
+						printf(" ('");
+						g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+						printf("')");
+					} else {
+						printf(" (non-raw said-spec)");
+					}
+				} else {
+					printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+				}
 			default:
 				break;
 			}

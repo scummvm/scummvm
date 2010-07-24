@@ -1003,11 +1003,8 @@ int said(EngineState *s, byte *spec, bool verbose) {
 	ParseTreeNode *parse_tree_ptr = voc->_parserNodes;
 
 	if (voc->parserIsValid) {
-		if (said_parse_spec(spec)) {
-			scidprintf("Offending spec was: ");
-			voc->decipherSaidBlock(spec);
+		if (said_parse_spec(spec))
 			return SAID_NO_MATCH;
-		}
 
 		if (verbose)
 			vocab_dump_parse_tree("Said-tree", said_tree);
