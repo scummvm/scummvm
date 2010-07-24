@@ -464,7 +464,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
-	int displayArg;
+	reg_t displayArg;
 	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
@@ -481,12 +481,11 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	_ports->textGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
-		if (argv[0].segment)
-			displayArg = 0xFFFF;
-		else
-			displayArg = argv[0].toUint16();
+		displayArg = argv[0];
+		if (displayArg.segment)
+			displayArg.offset = 0xFFFF;
 		argc--; argv++;
-		switch (displayArg) {
+		switch (displayArg.offset) {
 		case SCI_DISPLAY_MOVEPEN:
 			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
@@ -536,7 +535,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DUMMY2:
 			if (!((g_sci->getGameId() == GID_LONGBOW) && (g_sci->isDemo())))
 				error("Unknown kDisplay argument %X", displayArg);
-			if (displayArg == SCI_DISPLAY_DUMMY2) {
+			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
 				if (argc) {
 					argc--; argv++;
 				} else {
@@ -548,7 +547,7 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			SciTrackOriginReply originReply;
 			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
 			if (solution.type == WORKAROUND_NONE)
-				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", PRINT_REG(argv[0]), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
 			assert(solution.type == WORKAROUND_IGNORE);
 			break;
 		}

@@ -107,6 +107,7 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 const SciWorkaroundEntry kDisplay_workarounds[] = {
     { GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
     { GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // clicking on catalog in roboter sale - a parameter is an object
+    { GID_SQ4,           391,   391,  0,         "choosePlug", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // ordering connector in roboter sale - a parameter is an object
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
