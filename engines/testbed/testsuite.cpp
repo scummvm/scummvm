@@ -254,7 +254,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	byte *buffer = new byte[lRect * wRect];
 	memset(buffer, 0, sizeof(byte) * lRect * wRect);
 
-	int wShaded = (int) (wRect * (((float)testNum - 1) / numTests));
+	int wShaded = (int) (wRect * (((float)testNum) / numTests));
 
 	// draw the boundary
 	memset(buffer, 1, sizeof(byte) * wRect);
@@ -291,7 +291,7 @@ void Testsuite::execute() {
 		return;
 	}
 
-	uint count = 1;
+	uint count = 0;
 	Common::Point pt = getDisplayRegionCoordinates();
 	pt.y += getLineSeparation();
 

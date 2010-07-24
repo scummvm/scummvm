@@ -74,6 +74,7 @@ GFXTestSuite::GFXTestSuite() {
 
 	// Specific Tests:
 	addTest("PaletteRotation", &GFXtests::paletteRotation);
+	addTest("cursorTrailsInGUI", &GFXtests::cursorTrails);
 	//addTest("Pixel Formats", &GFXtests::pixelFormats);
 }
 
@@ -399,7 +400,7 @@ bool GFXtests::fullScreenMode() {
 	Common::Rect rect = Testsuite::writeOnScreen("Testing fullscreen mode", pt);
 	
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : FullScreenMode");
+		Testsuite::logPrintf("Info! Skipping test : FullScreenMode\n");
 		return true;
 	}
 
@@ -481,7 +482,7 @@ bool GFXtests::aspectRatio() {
 	" an ellipse otherwise.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Aspect Ratio");
+		Testsuite::logPrintf("Info! Skipping test : Aspect Ratio\n");
 		return true;
 	}
 	// Draw an ellipse on the screen
@@ -554,7 +555,7 @@ bool GFXtests::palettizedCursors() {
 
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Palettized Cursors");
+		Testsuite::logPrintf("Info! Skipping test : Palettized Cursors\n");
 		return true;
 	}
 	
@@ -602,7 +603,7 @@ bool GFXtests::mouseMovements() {
 						"There we have a rectangle drawn, finally the cursor would lie centred in that rectangle.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Mouse Movements");
+		Testsuite::logPrintf("Info! Skipping test : Mouse Movements\n");
 		return true;
 	}
 	
@@ -648,7 +649,7 @@ bool GFXtests::copyRectToScreen() {
 		"You should expect to see a 20x40 yellow horizontal rectangle centred at the screen.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap");
+		Testsuite::logPrintf("Info! Skipping test : Blitting Bitmap\n");
 		return true;
 	}
 	
@@ -681,7 +682,7 @@ bool GFXtests::iconifyWindow() {
 		"you should expect the window to be minimized.\n However you would manually need to de-iconify.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Iconifying window");
+		Testsuite::logPrintf("Info! Skipping test : Iconifying window\n");
 		return true;
 	}
 	
@@ -730,7 +731,7 @@ bool GFXtests::scaledCursors() {
 		"This may take time, You may skip the later scalers and just examine the first three i.e 1x, 2x and 3x";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors");
+		Testsuite::logPrintf("Info! Skipping test : Scaled Cursors\n");
 		return true;
 	}
 
@@ -792,7 +793,7 @@ bool GFXtests::shakingEffect() {
 	Common::String info = "Shaking test. You should expect the graphics(text/bars etc) drawn on the screen to shake!";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Shaking Effect");
+		Testsuite::logPrintf("Info! Skipping test : Shaking Effect\n");
 		return true;
 	}
 
@@ -821,7 +822,7 @@ bool GFXtests::focusRectangle() {
 		"If this feature is implemented, the focus should be toggled between the two rectangles on the corners";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : focus Rectangle");
+		Testsuite::logPrintf("Info! Skipping test : focus Rectangle\n");
 		return true;
 	}
 	
@@ -868,7 +869,7 @@ bool GFXtests::overlayGraphics() {
 	Common::String info = "Overlay Graphics. You should expect to see a green colored rectangle on the screen";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Overlay Graphics");
+		Testsuite::logPrintf("Info! Skipping test : Overlay Graphics\n");
 		return true;
 	}
 	
@@ -905,7 +906,7 @@ bool GFXtests::paletteRotation() {
 						"Note that the screen graphics change without having to draw anything.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : palette Rotation");
+		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
 		return true;
 	}
 	Common::Point pt(0, 10);
@@ -982,13 +983,33 @@ bool GFXtests::paletteRotation() {
 	return true;
 }
 
+bool GFXtests::cursorTrails() {
+	Common::String info = "With some shake offset the cursor was known to leave trails in the GUI\n"
+						"Here we set some offset and ask user to check for mouse trails, \n"
+						"the test is passed when there are no trails";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Cursor Trails\n");
+		return true;
+	}
+	bool passed = false;
+	g_system->setShakePos(25);
+	g_system->updateScreen();
+	if (Testsuite::handleInteractiveInput("Does the cursor leaves trails while moving?", "Yes", "No", kOptionRight)) {
+		passed = true;
+	}
+	g_system->setShakePos(0);
+	g_system->updateScreen();
+	return passed;
+}
+
 bool GFXtests::pixelFormats() {
 	Testsuite::clearScreen();
 	Common::String info = "Testing pixel formats. Here we iterate over all the supported pixel formats and display some colors using them\n"
 		"This may take long, especially if the backend supports many pixel formats";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : focus Rectangle");
+		Testsuite::logPrintf("Info! Skipping test : focus Rectangle\n");
 		return true;
 	}
 

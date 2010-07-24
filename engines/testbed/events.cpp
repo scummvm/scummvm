@@ -108,7 +108,7 @@ bool EventTests::mouseEvents() {
 	"Press X to exit";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : keyboard events");
+		Testsuite::logPrintf("Info! Skipping test : keyboard events\n");
 		return true;
 	}
 	
@@ -209,7 +209,7 @@ bool EventTests::kbdEvents() {
 	"Press ESC key when done of the input.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : keyboard events");
+		Testsuite::logPrintf("Info! Skipping test : keyboard events\n");
 		return true;
 	}
 
@@ -247,7 +247,7 @@ bool EventTests::showMainMenu() {
 	"Click 'resume' to continue testbed.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
-		Testsuite::logPrintf("Info! Skipping test : Main Menu");
+		Testsuite::logPrintf("Info! Skipping test : Main Menu\n");
 		return true;
 	}
 	Common::EventManager *eventMan = g_system->getEventManager();

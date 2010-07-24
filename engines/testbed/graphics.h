@@ -40,6 +40,7 @@ void HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, int val);
 Common::Rect drawCursor(bool cursorPaletteDisabled = false, const char *gfxModeName = "", int cursorTargetScale = 1);
 
 // will contain function declarations for GFX tests
+bool cursorTrails();
 bool fullScreenMode();
 bool aspectRatio();
 bool palettizedCursors();
