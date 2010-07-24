@@ -132,9 +132,6 @@ void GfxFrameout::kernelFrameout() {
 		reg_t planeObject = *it;
 		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
-		if (planePriority == 0xffff) // Plane currently not meant to be shown
-			continue;
-
 		Common::Rect planeRect;
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
@@ -147,6 +144,12 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
+
+		if (planePriority == 0xffff) { // Plane currently not meant to be shown
+			// TODO: better remember previous state and only delete if it got hidden now
+			_paint32->fillRect(planeRect, 0);
+			continue;
+		}
 
 		Common::Rect planeClipRect(planeRect.width(), planeRect.height());
 
