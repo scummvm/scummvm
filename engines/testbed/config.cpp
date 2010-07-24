@@ -127,50 +127,19 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	}
 }
 
-void TestbedConfigManager::initConfigFile(Common::WriteStream *ws) {
-	Common::String wStr;
-	// Global Params
-	wStr = "[Global]\n";
-	ws->writeString(wStr);
-	wStr = "isSessionInteractive";
-	wStr += "=";
-	wStr += "true\n";
-	ws->writeString(wStr);
-	ws->writeString("\n");
-
-	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {		
-		// Construct the string
-		wStr = "[";
-		wStr += (*i)->getName();
-		wStr += "]\n";
-		ws->writeString(wStr);
-		wStr = "this";
-		wStr += "=";
-		wStr += boolToString((*i)->isEnabled());
-		wStr += "\n";
-		ws->writeString(wStr);
-		
-		const Common::Array<Test *> &testList = (*i)->getTestList();
-		for (Common::Array<Test *>::const_iterator j = testList.begin(); j != testList.end(); j++) {
-			wStr = (*j)->featureName;
-			wStr += "=";
-			wStr += boolToString((*j)->enabled);
-			wStr += "\n";
-			ws->writeString(wStr);
-		}
-		ws->writeString("\n");
-	}
+void TestbedConfigManager::initDefaultConfiguration() {
+	// Default Configuration
+	// Add Global configuration Parameters here.
+	_configFileInterface.setKey("isSessionInteractive", "Global", "true");
 }
 
 void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 	Common::String wStr;
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i < _testsuiteList.end(); i++) {
-		if (_configFileInterface.hasSection((*i)->getName())) {
-			_configFileInterface.setKey("this", (*i)->getName(), boolToString((*i)->isEnabled()));
-			const Common::Array<Test *> &testList = (*i)->getTestList();
-			for (Common::Array<Test *>::const_iterator j = testList.begin(); j != testList.end(); j++) {
-				_configFileInterface.setKey((*j)->featureName, (*i)->getName(), boolToString((*j)->enabled));
-			}
+		_configFileInterface.setKey("this", (*i)->getName(), boolToString((*i)->isEnabled()));
+		const Common::Array<Test *> &testList = (*i)->getTestList();
+		for (Common::Array<Test *>::const_iterator j = testList.begin(); j != testList.end(); j++) {
+			_configFileInterface.setKey((*j)->featureName, (*i)->getName(), boolToString((*j)->enabled));
 		}
 	}
 	_configFileInterface.saveToStream(*ws);
@@ -191,10 +160,6 @@ Common::WriteStream *TestbedConfigManager::getConfigWriteStream() {
 	Common::FSNode gameRoot(path);
 	Common::FSNode config = gameRoot.getChild(_configFileName);
 	ws = config.createWriteStream();
-	if (!config.exists()) {
-		Testsuite::logPrintf("Info! No config file found, creating new one\n");
-		initConfigFile(ws);
-	}
 	return ws;
 }
 
@@ -203,6 +168,7 @@ void TestbedConfigManager::parseConfigFile() {
 	
 	if (!rs) {
 		Testsuite::logPrintf("Info! No config file found, using default configuration.\n");
+		initDefaultConfiguration();
 		return;
 	}
 	_configFileInterface.loadFromStream(*rs);

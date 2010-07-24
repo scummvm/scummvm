@@ -59,7 +59,7 @@ public:
 	Testsuite *getTestsuiteByName(const Common::String &name);
 	bool stringToBool(const Common::String str) { return str.equalsIgnoreCase("true") ? true : false; }
 	Common::String boolToString(bool val) { return val ? "true" : "false"; }
-	void initConfigFile(Common::WriteStream *ws);
+	void initDefaultConfiguration();
 private:
 	Common::Array<Testsuite *> &_testsuiteList;
 	Common::String	_configFileName;
