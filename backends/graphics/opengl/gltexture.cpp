@@ -56,18 +56,22 @@ static GLuint nextHigher2(GLuint v) {
 void GLTexture::initGLExtensions() {
 	static bool inited = false;
 
+	// Return if extensions already checked
 	if (inited)
 		return;
 
+	// Get a string with all extensions
 	const char* ext_string =
 		reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
 	CHECK_GL_ERROR();
 	Common::StringTokenizer tokenizer(ext_string, " ");
+	// Iterate all string tokens
 	while (!tokenizer.empty()) {
 		Common::String token = tokenizer.nextToken();
 		if (token == "GL_ARB_texture_non_power_of_two")
 			npot_supported = true;
 	}
+
 	inited = true;
 }
 
@@ -83,29 +87,19 @@ GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
 	_refresh(false),
 	_filter(GL_NEAREST) {
 
-	// Generates the texture ID for GL
+	// Generate the texture ID
 	glGenTextures(1, &_textureName); CHECK_GL_ERROR();
-
-	// This all gets reset later in allocBuffer:
-	_surface.w = 0;
-	_surface.h = 0;
-	_surface.pitch = 0;
-	_surface.pixels = NULL;
-	_surface.bytesPerPixel = 0;
 }
 
 GLTexture::~GLTexture() {
+	// Delete the texture
 	glDeleteTextures(1, &_textureName); CHECK_GL_ERROR();
 }
 
 void GLTexture::refresh() {
-	// Generates the texture ID for GL
+	// Generate the texture ID
 	glGenTextures(1, &_textureName); CHECK_GL_ERROR();
 	_refresh = true;
-}
-
-void GLTexture::refreshBuffer() {
-	updateBuffer(_surface.pixels, _surface.pitch, 0, 0, _surface.w, _surface.h);
 }
 
 void GLTexture::allocBuffer(GLuint w, GLuint h) {
@@ -124,62 +118,47 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 		_textureHeight = nextHigher2(h);
 	}
 
-	// Allocate room for the texture now, but pixel data gets uploaded
-	// later (perhaps with multiple TexSubImage2D operations).
+	// Select this OpenGL texture
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
+
+	// Set the texture parameters
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, _filter); CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _filter); CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
+
+	// Allocate room for the texture
 	glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
 		     _textureWidth, _textureHeight, 0, _glFormat, _glType, NULL); CHECK_GL_ERROR();
-
-	if (_surface.w != _textureWidth || _surface.h != _textureHeight)
-		_surface.create(_textureWidth, _textureHeight, _bytesPerPixel);
-	else if (_refresh)
-		refreshBuffer();
 
 	_refresh = false;
 }
 
 void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLuint w, GLuint h) {
+	// Select this OpenGL texture
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
+	// Check if the buffer has its data contiguously
 	if (static_cast<int>(w) * _bytesPerPixel == pitch) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						_glFormat, _glType, buf); CHECK_GL_ERROR();
-		if (buf != _surface.pixels)
-			memcpy(_surface.getBasePtr(x, y), buf, h * pitch);
 	} else {
+		// Update the texture row by row
 		const byte *src = static_cast<const byte *>(buf);
 		do {
 			glTexSubImage2D(GL_TEXTURE_2D, 0, x, y,
 							w, 1, _glFormat, _glType, src); CHECK_GL_ERROR();
-			if (buf != _surface.pixels)
-				memcpy(_surface.getBasePtr(x, y), src, w * _bytesPerPixel);
 			++y;
 			src += pitch;
 		} while (--h);
 	}
 }
 
-void GLTexture::fillBuffer(uint32 x) {
-	if (_bytesPerPixel == 1) 
-		memset(_surface.pixels, x, _surface.w * _surface.h);
-	else {
-		for (int i = 0; i < _surface.w * _surface.h; i++) {
-			memcpy(_surface.pixels, &x, _bytesPerPixel);
-		}
-	}
-
-	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
-	glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, _surface.w, _surface.h,
-		_glFormat, _glType, _surface.pixels);  CHECK_GL_ERROR();
-}
-
 void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
+	// Select this OpenGL texture
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
+	// Calculate the texture rect that will be drawn
 	const GLfloat texWidth = (GLfloat)_realWidth / _textureWidth;//xdiv(_surface.w, _textureWidth);
 	const GLfloat texHeight = (GLfloat)_realHeight / _textureHeight;//xdiv(_surface.h, _textureHeight);
 	const GLfloat texcoords[] = {
@@ -190,6 +169,7 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	};
 	glTexCoordPointer(2, GL_FLOAT, 0, texcoords); CHECK_GL_ERROR();
 
+	// Calculate the screen rect where the texture will be drawn
 	const GLshort vertices[] = {
 		x,	   y,
 		x + w, y,
@@ -198,6 +178,7 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 	};
 	glVertexPointer(2, GL_SHORT, 0, vertices); CHECK_GL_ERROR();
 
+	// Draw the texture to the screen buffer
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4); CHECK_GL_ERROR();
 }
 

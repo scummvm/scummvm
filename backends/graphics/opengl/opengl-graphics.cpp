@@ -33,20 +33,20 @@
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	:
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
-	_screenChangeCount(0),
+	_screenChangeCount(0), _screenNeedsRedraw(false),
 	_currentShakePos(0), _newShakePos(0),
-	_overlayVisible(false),
+	_overlayVisible(false), _overlayNeedsRedraw(false),
 	_transactionMode(kTransactionNone),
 	_cursorNeedsRedraw(false), _cursorPaletteDisabled(true),
-	_cursorVisible(false), _cursorData(0), _cursorKeyColor(0),
+	_cursorVisible(false), _cursorKeyColor(0),
 	_cursorTargetScale(1) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
 	memset(&_transactionDetails, 0, sizeof(_transactionDetails));
 
-	_videoMode.mode = OpenGL::GFX_NORMAL;
-	_videoMode.scaleFactor = 1;
+	_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
+	_videoMode.scaleFactor = 2;
 	_videoMode.fullscreen = false;
 	_videoMode.antialiasing = false;
 
@@ -64,8 +64,6 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 
 	free(_gamePalette);
 	free(_cursorPalette);
-	if (_cursorData != NULL)
-		free(_cursorData);
 
 	if (_gameTexture != NULL)
 		delete _gameTexture;
@@ -80,11 +78,19 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 //
 
 bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) {
-	return (f == OSystem::kFeatureCursorHasPalette);
+	return
+		(f == OSystem::kFeatureAspectRatioCorrection) ||
+		(f == OSystem::kFeatureCursorHasPalette);
 }
 
 void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
-
+	switch (f) {
+	case OSystem::kFeatureAspectRatioCorrection:
+		setAspectRatioCorrection(enable ? -1 : 0);
+		break;
+	default:
+		break;
+	}
 }
 
 bool OpenGLGraphicsManager::getFeatureState(OSystem::Feature f) {
@@ -225,10 +231,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 			errors |= OSystem::kTransactionFullscreenFailed;
 
 			_videoMode.fullscreen = _oldVideoMode.fullscreen;
-		/*} else if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
+		} else if (_videoMode.aspectRatioCorrection != _oldVideoMode.aspectRatioCorrection) {
 			errors |= OSystem::kTransactionAspectRatioFailed;
 
-			_videoMode.aspectRatioCorrection = _oldVideoMode.aspectRatioCorrection;*/
+			_videoMode.aspectRatioCorrection = _oldVideoMode.aspectRatioCorrection;
 		} else if (_videoMode.mode != _oldVideoMode.mode) {
 			errors |= OSystem::kTransactionModeSwitchFailed;
 
@@ -251,7 +257,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 
 		if (_videoMode.fullscreen == _oldVideoMode.fullscreen &&
-			//_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
+			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
 		   	_videoMode.screenHeight == _oldVideoMode.screenHeight) {
@@ -310,6 +316,8 @@ void OpenGLGraphicsManager::setPalette(const byte *colors, uint start, uint num)
 	// Save the screen palette
 	memcpy(_gamePalette + start * 4, colors, num * 4);
 
+	_screenNeedsRedraw = true;
+
 	if (_cursorPaletteDisabled)
 		_cursorNeedsRedraw = true;
 }
@@ -326,45 +334,65 @@ void OpenGLGraphicsManager::grabPalette(byte *colors, uint start, uint num) {
 }
 
 void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	if (_screenFormat == Graphics::PixelFormat::createFormatCLUT8()) {
-		// Create a temporary RGBA888 surface
-		byte *surface = new byte[w * h * 3];
+	assert(x >= 0 && x < _screenData.w);
+	assert(y >= 0 && y < _screenData.h);
+	assert(h > 0 && y + h <= _screenData.h);
+	assert(w > 0 && x + w <= _screenData.w);
 
-		// Convert the paletted buffer to RGBA888
-		const byte *src = buf;
-		byte *dst = surface;
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				dst[0] = _gamePalette[src[j] * 4];
-				dst[1] = _gamePalette[src[j] * 4 + 1];
-				dst[2] = _gamePalette[src[j] * 4 + 2];
-				dst += 3;
-			}
-			src += pitch;
-		}
+	// Copy buffer data to game screen internal buffer
+	const byte *src = buf;
+	byte *dst = (byte *)_screenData.pixels + y * _screenData.pitch;
+	for (int i = 0; i < h; i++) {
+		memcpy(dst + x * _screenData.bytesPerPixel, src, w * _screenData.bytesPerPixel);
+		src += pitch;
+		dst += _screenData.pitch;
+	}
 
-		// Update the texture
-		_gameTexture->updateBuffer(surface, w * 3, x, y, w, h);
-
-		// Free the temp surface
-		delete[] surface;
-	} else
-		_gameTexture->updateBuffer(buf, pitch, x, y, w, h);
+	if (!_screenNeedsRedraw) {
+		const Common::Rect dirtyRect(x, y, x + w, y + h);
+		_screenDirtyRect.extend(dirtyRect);
+	}
 }
 
 Graphics::Surface *OpenGLGraphicsManager::lockScreen() {
-	return _gameTexture->getSurface();
+	return &_screenData;
 }
 
 void OpenGLGraphicsManager::unlockScreen() {
-	_gameTexture->refreshBuffer();
+	_screenNeedsRedraw = true;
 }
 
 void OpenGLGraphicsManager::fillScreen(uint32 col) {
 	if (_gameTexture == NULL)
 		return;
 
-	_gameTexture->fillBuffer(col);
+	if (_screenFormat.bytesPerPixel == 1) {
+		memset(_screenData.pixels, col, _screenData.h * _screenData.pitch);
+	} else if (_screenFormat.bytesPerPixel == 2) {
+		uint16 *pixels = (uint16 *)_screenData.pixels;
+		uint16 col16 = (uint16)col;
+		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
+			pixels[i] = col16;
+		}
+	} else if (_screenFormat.bytesPerPixel == 3) {
+		uint8 *pixels = (uint8 *)_screenData.pixels;
+		byte r =  (col >> 16) & 0xFF;
+		byte g =  (col >> 8) & 0xFF;
+		byte b =  col & 0xFF;
+		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
+			pixels[0] = r;
+			pixels[1] = g;
+			pixels[2] = b;
+			pixels += 3;
+		}
+	} else if (_screenFormat.bytesPerPixel == 4) {
+		uint32 *pixels = (uint32 *)_screenData.pixels;
+		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
+			pixels[i] = col;
+		}
+	}
+
+	_screenNeedsRedraw = true;
 }
 
 void OpenGLGraphicsManager::updateScreen() {
@@ -392,13 +420,23 @@ void OpenGLGraphicsManager::clearFocusRectangle() {
 void OpenGLGraphicsManager::showOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
+	if (_overlayVisible)
+		return;
+
 	_overlayVisible = true;
+
+	clearOverlay();
 }
 
 void OpenGLGraphicsManager::hideOverlay() {
 	assert (_transactionMode == kTransactionNone);
 
+	if (!_overlayVisible)
+		return;
+
 	_overlayVisible = false;
+
+	clearOverlay();
 }
 
 Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
@@ -406,21 +444,18 @@ Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
 }
 
 void OpenGLGraphicsManager::clearOverlay() {
-	_overlayTexture->fillBuffer(0);
+	memset(_overlayData.pixels, 0, _overlayData.h * _overlayData.pitch);
+	_overlayNeedsRedraw = true;
 }
 
 void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
-	const Graphics::Surface *surface = _overlayTexture->getSurface();
-	assert(surface->bytesPerPixel == sizeof(buf[0]));
-	uint w = _overlayTexture->getWidth();
-	uint h = _overlayTexture->getHeight();
-	const byte *src = (byte *)surface->pixels;
-	do {
-		//memset(buf, 0, w * sizeof(buf[0]));
-		memcpy(buf, src, w * sizeof(buf[0]));
+	assert(_overlayData.bytesPerPixel == sizeof(buf[0]));
+	const byte *src = (byte *)_overlayData.pixels;
+	for (int i = 0; i < _overlayData.h; i++) {
+		memcpy(buf, src, _overlayData.pitch);
 		buf += pitch;
-		src += surface->pitch;
-	} while (--h);
+		src += _overlayData.pitch;
+	}
 }
 
 void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
@@ -429,7 +464,40 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 	if (_overlayTexture == NULL)
 		return;
 
-	_overlayTexture->updateBuffer(buf, pitch * sizeof(buf[0]), x, y, w, h);
+	// Clip the coordinates
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y; buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _overlayData.w - x)
+		w = _overlayData.w - x;
+
+	if (h > _overlayData.h - y)
+		h = _overlayData.h - y;
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	// Copy buffer data to internal overlay surface
+	const byte *src = (byte *)buf;
+	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+	for (int i = 0; i < h; i++) {
+		memcpy(dst + x * _overlayData.bytesPerPixel, src, w * _overlayData.bytesPerPixel);
+		src += pitch * sizeof(buf[0]);
+		dst += _overlayData.pitch;
+	}
+
+	if (!_overlayNeedsRedraw) {
+		const Common::Rect dirtyRect(x, y, x + w, y + h);
+		_overlayDirtyRect.extend(dirtyRect);
+	}
 }
 
 int16 OpenGLGraphicsManager::getOverlayHeight() {
@@ -474,9 +542,8 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 #endif
 
 	// Save cursor data
-	free(_cursorData);
-	_cursorData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
-	memcpy(_cursorData, buf, w * h * _cursorFormat.bytesPerPixel);
+	_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
+	memcpy(_cursorData.pixels, buf, h * _cursorData.pitch);
 
 	// Set cursor info
 	_cursorState.w = w;
@@ -503,10 +570,106 @@ void OpenGLGraphicsManager::disableCursorPalette(bool disable) {
 	_cursorNeedsRedraw = true;
 }
 
+//
+// Misc
+//
+
+void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
+
+}
+
+//
+// Intern
+//
+
+void OpenGLGraphicsManager::refreshGameScreen() {
+	if (_screenNeedsRedraw)
+		_screenDirtyRect = Common::Rect(0, 0, _screenData.w, _screenData.h);
+
+	int x = _screenDirtyRect.left;
+	int y = _screenDirtyRect.top;
+	int w = _screenDirtyRect.width();
+	int h = _screenDirtyRect.height();
+
+	if (_screenData.bytesPerPixel == 1) {
+		// Create a temporary RGB888 surface
+		byte *surface = new byte[w * h * 3];
+
+		// Convert the paletted buffer to RGB888
+		const byte *src = (byte *)_screenData.pixels + y * _screenData.pitch;
+		src += x * _screenData.bytesPerPixel;
+		byte *dst = surface;
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				dst[0] = _gamePalette[src[j] * 4];
+				dst[1] = _gamePalette[src[j] * 4 + 1];
+				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst += 3;
+			}
+			src += _screenData.pitch;
+		}
+
+		// Update the texture
+		_gameTexture->updateBuffer(surface, w * 3, x, y, w, h);
+
+		// Free the temp surface
+		delete[] surface;
+	} else {
+		// Update the texture
+		_gameTexture->updateBuffer((byte *)_screenData.pixels + y * _screenData.pitch +
+			x * _screenData.bytesPerPixel, _screenData.pitch, x, y, w, h);
+	}
+
+	_screenNeedsRedraw = false;
+	_screenDirtyRect = Common::Rect();
+}
+
+void OpenGLGraphicsManager::refreshOverlay() {
+	if (_overlayNeedsRedraw)
+		_overlayDirtyRect = Common::Rect(0, 0, _overlayData.w, _overlayData.h);
+
+	int x = _overlayDirtyRect.left;
+	int y = _overlayDirtyRect.top;
+	int w = _overlayDirtyRect.width();
+	int h = _overlayDirtyRect.height();
+
+	if (_overlayData.bytesPerPixel == 1) {
+		// Create a temporary RGB888 surface
+		byte *surface = new byte[w * h * 3];
+
+		// Convert the paletted buffer to RGB888
+		const byte *src = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+		src += x * _overlayData.bytesPerPixel;
+		byte *dst = surface;
+		for (int i = 0; i < h; i++) {
+			for (int j = 0; j < w; j++) {
+				dst[0] = _gamePalette[src[j] * 4];
+				dst[1] = _gamePalette[src[j] * 4 + 1];
+				dst[2] = _gamePalette[src[j] * 4 + 2];
+				dst += 3;
+			}
+			src += _screenData.pitch;
+		}
+
+		// Update the texture
+		_overlayTexture->updateBuffer(surface, w * 3, x, y, w, h);
+
+		// Free the temp surface
+		delete[] surface;
+	} else {
+		// Update the texture
+		_overlayTexture->updateBuffer((byte *)_overlayData.pixels + y * _overlayData.pitch +
+			x * _overlayData.bytesPerPixel, _overlayData.pitch, x, y, w, h);
+	}
+
+	_overlayNeedsRedraw = false;
+	_overlayDirtyRect = Common::Rect();
+}
+
 void OpenGLGraphicsManager::refreshCursor() {
 	_cursorNeedsRedraw = false;
 
-	if (_cursorFormat == Graphics::PixelFormat::createFormatCLUT8()) {
+	if (_cursorFormat.bytesPerPixel == 1) {
 		// Create a temporary RGBA8888 surface
 		byte *surface = new byte[_cursorState.w * _cursorState.h * 4];
 		memset(surface, 0, _cursorState.w * _cursorState.h * 4);
@@ -519,13 +682,14 @@ void OpenGLGraphicsManager::refreshCursor() {
 			palette = _cursorPalette;
 
 		// Convert the paletted cursor to RGBA8888
+		const byte *src = (byte *)_cursorData.pixels;
 		byte *dst = surface;
 		for (int i = 0; i < _cursorState.w * _cursorState.h; i++) {
 			// Check for keycolor
-			if (_cursorData[i] != _cursorKeyColor) {
-				dst[0] = palette[_cursorData[i] * 4];
-				dst[1] = palette[_cursorData[i] * 4 + 1];
-				dst[2] = palette[_cursorData[i] * 4 + 2];
+			if (src[i] != _cursorKeyColor) {
+				dst[0] = palette[src[i] * 4];
+				dst[1] = palette[src[i] * 4 + 1];
+				dst[2] = palette[src[i] * 4 + 2];
 				dst[3] = 255;
 			}
 			dst += 4;
@@ -541,18 +705,6 @@ void OpenGLGraphicsManager::refreshCursor() {
 		delete[] surface;
 	}
 }
-
-//
-// Misc
-//
-
-void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
-
-}
-
-//
-// Intern
-//
 
 void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &gltype) {
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
@@ -575,13 +727,14 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		bpp = 2;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
-	} else if (pixelFormat == Graphics::PixelFormat::createFormatCLUT8()) {  // CLUT8
-		// If uses a palette, create as RGBA888, then convert
+	} else if (pixelFormat.bytesPerPixel == 1) {  // CLUT8
+		// If uses a palette, create texture as RGB888. The pixel data will be converted
+		// later.
 		bpp = 3;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
 	} else {
-		error("Not supported format");
+		error("Pixel format not supported");
 	}
 }
 
@@ -590,16 +743,29 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 	glClear(GL_COLOR_BUFFER_BIT); CHECK_GL_ERROR();
 
 	// Draw the game screen
+	if (_screenNeedsRedraw || !_screenDirtyRect.isEmpty())
+		// Refresh texture if dirty
+		refreshGameScreen();
+
 	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 
 	// Draw the overlay
-	if (_overlayVisible)
+	if (_overlayVisible) {
+
+		// Refresh texture if dirty
+		if (_overlayNeedsRedraw || !_overlayDirtyRect.isEmpty())
+			refreshOverlay();
+
 		_overlayTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	}
 
 	// Draw the cursor
 	if (_cursorVisible) {
+
+		// Refresh texture if dirty
 		if (_cursorNeedsRedraw)
 			refreshCursor();
+
 		_cursorTexture->drawTexture(_cursorState.x - _cursorState.hotX,
 		_cursorState.y - _cursorState.hotY,	_cursorState.w, _cursorState.h);
 	}
@@ -640,6 +806,11 @@ void OpenGLGraphicsManager::initGL() {
 }
 
 void OpenGLGraphicsManager::loadTextures() {
+#ifdef USE_RGB_COLOR
+	if (_transactionDetails.formatChanged && _gameTexture)
+		delete _gameTexture;
+#endif
+
 	if (!_gameTexture) {
 		byte bpp;
 		GLenum format;
@@ -679,6 +850,21 @@ void OpenGLGraphicsManager::loadTextures() {
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
 	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
+
+	if (_transactionDetails.formatChanged || 
+			_oldVideoMode.screenWidth != _videoMode.screenWidth ||
+			_oldVideoMode.screenHeight != _videoMode.screenHeight)
+		_screenData.create(_videoMode.screenWidth, _videoMode.screenHeight,
+			_screenFormat.bytesPerPixel);
+
+	if (_oldVideoMode.overlayWidth != _videoMode.overlayWidth ||
+		_oldVideoMode.overlayHeight != _videoMode.overlayHeight)
+		_overlayData.create(_videoMode.overlayWidth, _videoMode.overlayHeight,
+			_overlayFormat.bytesPerPixel);
+	
+	_screenNeedsRedraw = true;
+	_overlayNeedsRedraw = true;
+	_cursorNeedsRedraw = true;
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
@@ -703,6 +889,19 @@ void OpenGLGraphicsManager::setScale(int newScale) {
 	_videoMode.scaleFactor = newScale;
 
 	_transactionDetails.sizeChanged = true;
+}
+
+void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
+	if (_oldVideoMode.setup && _oldVideoMode.aspectRatioCorrection == ratio)
+		return;
+
+	if (_transactionMode == kTransactionActive) {
+		if (ratio == -1)
+			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 4;
+		else
+			_videoMode.aspectRatioCorrection = ratio;
+		_transactionDetails.needHotswap = true;
+	}
 }
 
 void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {

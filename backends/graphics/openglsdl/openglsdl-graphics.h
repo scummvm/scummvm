@@ -42,6 +42,9 @@ public:
 	OpenGLSdlGraphicsManager();
 	virtual ~OpenGLSdlGraphicsManager();
 
+	virtual bool hasFeature(OSystem::Feature f);
+	virtual void setFeatureState(OSystem::Feature f, bool enable);
+
 #ifdef USE_RGB_COLOR
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif

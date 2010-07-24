@@ -44,6 +44,28 @@ OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
 
 }
 
+
+bool OpenGLSdlGraphicsManager::hasFeature(OSystem::Feature f) {
+	return
+		(f == OSystem::kFeatureFullscreenMode) ||
+		(f == OSystem::kFeatureIconifyWindow) ||
+		OpenGLGraphicsManager::hasFeature(f);
+}
+
+void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
+	switch (f) {
+	case OSystem::kFeatureFullscreenMode:
+		setFullscreenMode(enable);
+		break;
+	case OSystem::kFeatureIconifyWindow:
+		if (enable)
+			SDL_WM_IconifyWindow();
+		break;
+	default:
+		OpenGLGraphicsManager::setFeatureState(f, enable);
+	}
+}
+
 #ifdef USE_RGB_COLOR
 
 const Graphics::PixelFormat RGBList[] = {
@@ -202,9 +224,9 @@ void OpenGLSdlGraphicsManager::internUpdateScreen() {
 bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 
 	// Ctrl-Alt-a toggles aspect ratio correction
-	/*if (key == 'a') {
+	if (key == 'a') {
 		beginGFXTransaction();
-			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !_videoMode.aspectRatioCorrection);
+			setAspectRatioCorrection(-1);
 		endGFXTransaction();
 #ifdef USE_OSD
 		char buffer[128];
@@ -222,7 +244,7 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 #endif
 		internUpdateScreen();
 		return true;
-	}*/
+	}
 
 	// Ctrl-Alt-f toggles antialiasing
 	if (key == 'f') {
@@ -329,6 +351,7 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			_videoMode.hardwareHeight = event.mouse.y;
 			_screenResized = true;
 			_transactionDetails.sizeChanged = true;
+			_transactionDetails.newContext = true;
 		endGFXTransaction();
 		return true;
 

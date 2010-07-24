@@ -53,28 +53,50 @@
  */
 class GLTexture {
 public:
+	/**
+	 * Initialize OpenGL Extensions
+	 */
 	static void initGLExtensions();
 
 	GLTexture(byte bpp, GLenum format, GLenum type);
 	virtual ~GLTexture();
 
+	/**
+	 * Refresh the texture after a context change. The
+	 * process will be completed on next allocBuffer call.
+	 */
 	virtual void refresh();
-	virtual void refreshBuffer();
 
+	/**
+	 * Allocates memory needed for the given size.
+	 */
 	virtual void allocBuffer(GLuint width, GLuint height);
-	virtual void fillBuffer(uint32 x);
+
+	/**
+	 * Updates the texture pixels.
+	 */
 	virtual void updateBuffer(const void *buf, int pitch, GLuint x, GLuint y,
 		GLuint w, GLuint h);
 
-	virtual void drawTexture() { drawTexture(0, 0, _realWidth, _realHeight); }
+	/**
+	 * Draws the texture to the screen buffer.
+	 */
 	virtual void drawTexture(GLshort x, GLshort y, GLshort w, GLshort h);
 
-	Graphics::Surface *getSurface() { return &_surface; }
-
+	/**
+	 * Get the texture width.
+	 */
 	GLuint getWidth() const { return _realWidth; }
-	GLuint getHeight() const { return _realHeight; }
-	GLuint getTextureName() const { return _textureName; }
 
+	/**
+	 * Get the texture height.
+	 */
+	GLuint getHeight() const { return _realHeight; }
+
+	/**
+	 * Set the texture filter.
+	 * GL_NEAREST or GL_LINEAR should be passed.
+	 */
 	void setFilter(GLint filter) { _filter = filter; }
 
 protected:
@@ -82,12 +104,11 @@ protected:
 	const GLenum _glFormat;
 	const GLenum _glType;
 
-	Graphics::Surface _surface;
 	GLuint _realWidth;
 	GLuint _realHeight;
 	GLuint _textureName;
 	GLuint _textureWidth;
 	GLuint _textureHeight;
-	bool _refresh;
 	GLint _filter;
+	bool _refresh;
 };

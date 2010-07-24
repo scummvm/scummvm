@@ -126,12 +126,18 @@ protected:
 	TransactionDetails _transactionDetails;
 	int _transactionMode;
 
+	enum {
+		kAspectRatioNone,
+		kAspectRatioConserve,
+		kAspectRatio4_3,
+		kAspectRatio16_10
+	};
+
 	struct VideoState {
 		bool setup;
 
 		bool fullscreen;
-		//bool aspectRatioCorrection;
-		//AspectRatio desiredAspectRatio;
+		int aspectRatioCorrection;
 
 		int mode;
 		int scaleFactor;
@@ -153,18 +159,23 @@ protected:
 	virtual void unloadGFXMode();
 
 	virtual void setScale(int newScale);
+	virtual void setAspectRatioCorrection(int mode);
 
 	//
 	// Game screen
 	//
 	GLTexture* _gameTexture;
-	Graphics::Surface _lockedScreen;
+	Graphics::Surface _screenData;
 	int _screenChangeCount;
+	bool _screenNeedsRedraw;
+	Common::Rect _screenDirtyRect;
 
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 #endif
 	byte *_gamePalette;
+
+	virtual void refreshGameScreen();
 
 	// Shake mode
 	int _currentShakePos;
@@ -174,8 +185,13 @@ protected:
 	// Overlay
 	//
 	GLTexture* _overlayTexture;
-	bool _overlayVisible;
+	Graphics::Surface _overlayData;
 	Graphics::PixelFormat _overlayFormat;
+	bool _overlayVisible;
+	bool _overlayNeedsRedraw;
+	Common::Rect _overlayDirtyRect;
+	
+	virtual void refreshOverlay();
 
 	//
 	// Mouse
@@ -191,21 +207,22 @@ protected:
 
 		// The size and hotspot of the pre-scaled cursor image, in real
 		// coordinates.
-		int16 rW, rH;
-		int16 rHotX, rHotY;
+		//int16 rW, rH;
+		//int16 rHotX, rHotY;
 
 		// The size and hotspot of the pre-scaled cursor image, in game
 		// coordinates.
-		int16 vW, vH;
-		int16 vHotX, vHotY;
+		//int16 vW, vH;
+		//int16 vHotX, vHotY;
 
-		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
+		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0)/*,
 		             rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
-		             vHotX(0), vHotY(0)
+		             vHotX(0), vHotY(0)*/
 			{ }
 	};
 
 	GLTexture* _cursorTexture;
+	Graphics::Surface _cursorData;
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
 #endif
@@ -213,7 +230,6 @@ protected:
 	bool _cursorPaletteDisabled;
 	MousePos _cursorState;
 	bool _cursorVisible;
-	byte *_cursorData;
 	uint32 _cursorKeyColor;
 	int _cursorTargetScale;
 	bool _cursorNeedsRedraw;
