@@ -87,13 +87,6 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 	error("kUpdatePlane called on plane that wasn't added before");
 }
 
-	reg_t object;
-	uint16 priority;
-	GuiResourceId pictureId;
-	GfxPicture *picture;
-	uint16 lastPriority;
-
-
 void GfxFrameout::kernelDeletePlane(reg_t object) {
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		if (it->object == object) {
@@ -304,7 +297,7 @@ void GfxFrameout::kernelFrameout() {
 			} else if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
 
-//				warning("view %s %d", _segMan->getObjectName(itemEntry->object), itemEntry->priority);
+//				warning("view %s %04x:%04x", _segMan->getObjectName(itemEntry->object), PRINT_REG(itemEntry->object));
 
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
