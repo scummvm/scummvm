@@ -28,6 +28,16 @@
 
 namespace Sci {
 
+struct PlaneEntry {
+	reg_t object;
+	uint16 priority;
+	GuiResourceId pictureId;
+	GfxPicture *picture;
+	uint16 lastPriority;
+};
+
+typedef Common::List<PlaneEntry> PlaneList;
+
 struct FrameoutEntry {
 	reg_t object;
 	GuiResourceId viewId;
@@ -75,7 +85,7 @@ private:
 	GfxPaint32 *_paint32;
 
 	Common::Array<reg_t> _screenItems;
-	Common::List<reg_t> _planes;
+	PlaneList _planes;
 
 	void sortPlanes();
 };

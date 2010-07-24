@@ -43,6 +43,7 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/robot.h"
 #include "sci/graphics/screen.h"

@@ -54,17 +54,49 @@ GfxFrameout::~GfxFrameout() {
 }
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
-	_planes.push_back(object);
-	sortPlanes();
+	PlaneEntry newPlane;
+	newPlane.object = object;
+	newPlane.pictureId = 0xFFFF;
+	newPlane.picture = NULL;
+	newPlane.lastPriority = 0xFFFF; // hidden
+	_planes.push_back(newPlane);
+
+	kernelUpdatePlane(object);
 }
 
 void GfxFrameout::kernelUpdatePlane(reg_t object) {
-	sortPlanes();
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		if (it->object == object) {
+			// Read some information
+			it->priority = readSelectorValue(_segMan, object, SELECTOR(priority));
+			GuiResourceId lastPictureId = it->pictureId;
+			it->pictureId = readSelectorValue(_segMan, object, SELECTOR(picture));
+			if (lastPictureId != it->pictureId) {
+				// picture got changed, load new picture
+				if ((it->pictureId != 0xFFFF) && (it->pictureId != 0xFFFE)) {
+					it->picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, it->pictureId, false);
+				} else {
+					delete it->picture;
+					it->picture = NULL;
+				}
+			}
+			sortPlanes();
+			return;
+		}
+	}
+	error("kUpdatePlane called on plane that wasn't added before");
 }
 
+	reg_t object;
+	uint16 priority;
+	GuiResourceId pictureId;
+	GfxPicture *picture;
+	uint16 lastPriority;
+
+
 void GfxFrameout::kernelDeletePlane(reg_t object) {
-	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
-		if (object == *it) {
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		if (it->object == object) {
 			_planes.erase(it);
 			return;
 		}
@@ -73,7 +105,6 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 
 void GfxFrameout::kernelAddScreenItem(reg_t object) {
 	_screenItems.push_back(object);
-	//warning("addScreenItem %X:%X (%s)", object.segment, object.offset, _segMan->getObjectName(object));
 }
 
 void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
@@ -87,32 +118,32 @@ void GfxFrameout::kernelDeleteScreenItem(reg_t object) {
 
 int16 GfxFrameout::kernelGetHighPlanePri() {
 	sortPlanes();
-	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back(), SELECTOR(priority));
+	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back().object, SELECTOR(priority));
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 	return (entry1->priority == entry2->priority) ? (entry1->y < entry2->y) : (entry1->priority < entry2->priority);
 }
 
-bool planeSortHelper(const reg_t entry1, const reg_t entry2) {
-	SegManager *segMan = g_sci->getEngineState()->_segMan;
+bool planeSortHelper(const PlaneEntry &entry1, const PlaneEntry &entry2) {
+//	SegManager *segMan = g_sci->getEngineState()->_segMan;
 
-	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
-	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
+//	uint16 plane1Priority = readSelectorValue(segMan, entry1, SELECTOR(priority));
+//	uint16 plane2Priority = readSelectorValue(segMan, entry2, SELECTOR(priority));
 
-	if (plane1Priority == 0xffff)
+	if (entry1.priority == 0xffff)
 		return true;
 
-	if (plane2Priority == 0xffff)
+	if (entry2.priority == 0xffff)
 		return false;
 
-	return plane1Priority < plane2Priority;
+	return entry1.priority < entry2.priority;
 }
 
 void GfxFrameout::sortPlanes() {
 	// First, remove any invalid planes
-	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end();) {
-		if (!_segMan->isObject(*it))
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end();) {
+		if (!_segMan->isObject(it->object))
 			it = _planes.erase(it);
 		else
 			it++;
@@ -128,9 +159,10 @@ void GfxFrameout::kernelFrameout() {
 	// Allocate enough space for all screen items
 	FrameoutEntry *itemData = new FrameoutEntry[_screenItems.size()];
 
-	for (Common::List<reg_t>::iterator it = _planes.begin(); it != _planes.end(); it++) {
-		reg_t planeObject = *it;
-		uint16 planePriority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
+		reg_t planeObject = it->object;
+		uint16 planePriority = it->priority;
+		uint16 planeLastPriority = it->lastPriority;
 
 		Common::Rect planeRect;
 		planeRect.top = readSelectorValue(_segMan, planeObject, SELECTOR(top));
@@ -145,9 +177,11 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
 
+		it->lastPriority = planePriority;
 		if (planePriority == 0xffff) { // Plane currently not meant to be shown
-			// TODO: better remember previous state and only delete if it got hidden now
-			_paint32->fillRect(planeRect, 0);
+			// If plane was shown before, delete plane rect
+			if (planePriority != planeLastPriority)
+				_paint32->fillRect(planeRect, 0);
 			continue;
 		}
 
@@ -166,13 +200,12 @@ void GfxFrameout::kernelFrameout() {
 		if (planeBack)
 			_paint32->fillRect(planeRect, planeBack);
 
-		GuiResourceId planePictureNr = readSelectorValue(_segMan, planeObject, SELECTOR(picture));
-		GfxPicture *planePicture = 0;
+		GuiResourceId planePictureNr = it->pictureId;
+		GfxPicture *planePicture = it->picture;
 		int16 planePictureCels = 0;
 		bool planePictureMirrored = false;
 
-		if ((planePictureNr != 0xFFFF) && (planePictureNr != 0xFFFE)) {
-			planePicture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, planePictureNr, false);
+		if (planePicture) {
 			planePictureCels = planePicture->getSci32celCount();
 
 			_coordAdjuster->pictureSetDisplayArea(planeRect);
@@ -368,8 +401,6 @@ void GfxFrameout::kernelFrameout() {
 
 		if (planePicture) {
 			delete[] pictureCels;
-			delete planePicture;
-			planePicture = 0;
 		}
 	}
 

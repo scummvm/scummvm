@@ -54,6 +54,7 @@
 #include "sci/graphics/menu.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
