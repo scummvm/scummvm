@@ -1067,12 +1067,16 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 		if (i == active)
 			continue;
 
+		if (r.left + i * tabWidth > r.right || r.left + (i + 1) * tabWidth > r.right)
+			continue;
+
 		Common::Rect tabRect(r.left + i * tabWidth, r.top, r.left + (i + 1) * tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
 		queueDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 
-	if (active >= 0) {
+	if (active >= 0 &&
+			(r.left + active * tabWidth < r.right) && (r.left + (active + 1) * tabWidth < r.right)) {
 		Common::Rect tabRect(r.left + active * tabWidth, r.top, r.left + (active + 1) * tabWidth, r.top + tabHeight);
 		const uint16 tabLeft = active * tabWidth;
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
