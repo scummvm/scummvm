@@ -154,8 +154,21 @@ void Scene::showCodes() {
 		colors[255 * 4 + 2] = 255;
 		_vm->_palette->setPalette(colors, 0, 256);
 	} else {
-		// For MADS, simply copy the walk data to the background, in whatever current palette is active
+		// MADS handling
+		
+		// copy the walk data to the background, in whatever current palette is active
 		_walkSurface->copyTo(_backgroundSurface);
+
+		// Show all the scene's walk nodes
+		SceneNodeList &nodeList = _madsVm->scene()->getSceneResources()._nodes;
+		_backgroundSurface->setColour(_madsVm->_palette->WHITE);
+		for (uint i = 0; i < nodeList.size() - 2; ++i) {
+			// Draw a little cross at the node's position
+			_backgroundSurface->hLine(nodeList[i].pt.x - 2, nodeList[i].pt.x + 2, nodeList[i].pt.y);
+			_backgroundSurface->vLine(nodeList[i].pt.x, nodeList[i].pt.y - 2, nodeList[i].pt.y + 2);
+		}
+
+		((MadsScene *)this)->_spriteSlots.fullRefresh();
 	}
 }
 
