@@ -122,7 +122,12 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
-	return (entry1->priority == entry2->priority) ? (entry1->y < entry2->y) : (entry1->priority < entry2->priority);
+	if (entry1->priority == entry2->priority) {
+		if (entry1->y == entry2->y)
+			return (entry1->givenOrderNr < entry2->givenOrderNr);
+		return (entry1->y < entry2->y);
+	}
+	return (entry1->priority < entry2->priority);
 }
 
 bool planeSortHelper(const PlaneEntry &entry1, const PlaneEntry &entry2) {
@@ -247,6 +252,7 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->scaleX = readSelectorValue(_segMan, itemObject, SELECTOR(scaleX));
 				itemEntry->scaleY = readSelectorValue(_segMan, itemObject, SELECTOR(scaleY));
 				itemEntry->object = itemObject;
+				itemEntry->givenOrderNr = itemNr;
 
 				itemList.push_back(itemEntry);
 				itemEntry++;
@@ -281,6 +287,8 @@ void GfxFrameout::kernelFrameout() {
 
 		// Now display itemlist
 		itemEntry = itemData;
+
+//		warning("Plane %s", _segMan->getObjectName(planeObject));
 
 		for (FrameoutList::iterator listIterator = itemList.begin(); listIterator != itemList.end(); listIterator++) {
 			itemEntry = *listIterator;

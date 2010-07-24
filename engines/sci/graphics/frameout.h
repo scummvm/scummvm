@@ -39,6 +39,7 @@ struct PlaneEntry {
 typedef Common::List<PlaneEntry> PlaneList;
 
 struct FrameoutEntry {
+	uint16 givenOrderNr;
 	reg_t object;
 	GuiResourceId viewId;
 	int16 loopNo;
