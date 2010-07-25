@@ -74,6 +74,7 @@ public:
 	void kernelAddScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
+	void kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId);
 	void kernelFrameout();
 
 private:

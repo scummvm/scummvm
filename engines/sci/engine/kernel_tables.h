@@ -481,6 +481,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Robot),             SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Save),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
     { MAP_CALL(Text),              SIG_EVERYWHERE,           "(.*)",                  NULL,            NULL },
+    { MAP_CALL(AddPicAt),          SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
     { NULL, NULL,                  SIG_EVERYWHERE,           NULL,                    NULL,            NULL }
 #endif
 };

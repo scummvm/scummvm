@@ -139,6 +139,15 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 	return readSelectorValue(g_sci->getEngineState()->_segMan, _planes.back().object, SELECTOR(priority));
 }
 
+// No idea yet how to implement this
+void GfxFrameout::kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId) {
+	//if (forWidth == 320) {
+	//	writeSelectorValue(_segMan, planeObj, SELECTOR(left), 0);
+	//	writeSelectorValue(_segMan, planeObj, SELECTOR(picture), pictureId);
+	//	kernelUpdatePlane(planeObj);
+	//}
+}
+
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
 	if (entry1->priority == entry2->priority) {
 		if (entry1->y == entry2->y)

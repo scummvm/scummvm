@@ -1186,6 +1186,16 @@ reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+	GuiResourceId pictureId = argv[1].toUint16();
+	int16 forWidth = argv[2].toSint16();
+	// argv[3] seems to be 0 most of the time
+
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, forWidth, pictureId);
+	return s->r_acc;
+}
+
 reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, g_sci->_gfxFrameout->kernelGetHighPlanePri());
 }
