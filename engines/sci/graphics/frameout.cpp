@@ -104,6 +104,18 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		if (it->object == object) {
 			_planes.erase(it);
+			Common::Rect planeRect;
+			planeRect.top = readSelectorValue(_segMan, object, SELECTOR(top));
+			planeRect.left = readSelectorValue(_segMan, object, SELECTOR(left));
+			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
+			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
+
+			planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
+			planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
+			planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
+			planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
+			// Blackout removed plane rect
+			_paint32->fillRect(planeRect, 0);
 			return;
 		}
 	}
