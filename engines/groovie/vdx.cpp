@@ -489,7 +489,7 @@ void VDXPlayer::decodeBlockDelta(uint32 offset, byte *colours, uint16 imageWidth
 	// Move the pointers to the beginning of the current block
 	int32 blockOff = _origX + _origY * imageWidth;
 	dest += blockOff;
-	byte *fgBuf;
+	byte *fgBuf = 0;
 	if (_flagSeven) {
 		fgBuf = (byte *)_fg->getBasePtr(0, 0) + offset + blockOff;
 		//byte *bgBuf = (byte *)_bg->getBasePtr(0, 0) + offset + blockOff;
