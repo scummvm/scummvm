@@ -428,6 +428,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 // "Screen items" in SCI32 are views
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);

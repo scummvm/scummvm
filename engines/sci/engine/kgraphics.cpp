@@ -1112,6 +1112,14 @@ reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, 1);
 }
 
+// SCI32 variant, can't work like sci16 variants
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
+//	reg_t curObject = argv[0];
+//	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
+	
+	return NULL_REG;
+}
+
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
 	reg_t viewObj = argv[0];
 
