@@ -111,12 +111,6 @@ void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObje
 	y += planeTop;
 }
 
-Common::Rect GfxCoordAdjuster32::onControl(Common::Rect rect) {
-	Common::Rect adjustedRect = rect;
-	adjustedRect.translate(0, 10);
-	return adjustedRect;
-}
-
 void GfxCoordAdjuster32::setScriptsResolution(uint16 width, uint16 height) {
 	scriptsRunningWidth = width;
 	scriptsRunningHeight = height;

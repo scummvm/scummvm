@@ -87,8 +87,6 @@ public:
 	void kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 	void kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject = NULL_REG);
 
-	Common::Rect onControl(Common::Rect rect);
-
 	void setScriptsResolution(uint16 width, uint16 height);
 	void fromScriptToDisplay(int16 &y, int16 &x);
 	void fromDisplayToScript(int16 &y, int16 &x);
