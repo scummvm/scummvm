@@ -188,6 +188,11 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
 
+		// We get negative left in kq7 in scrolling rooms
+		if (planeRect.left < 0)
+			planeRect.left = 0;
+		if (planeRect.top < 0)
+			planeRect.top = 0;
 		// We get bad plane-bottom in sq6
 		if (planeRect.right > _screen->getWidth())
 			planeRect.right = _screen->getWidth();

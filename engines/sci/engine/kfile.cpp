@@ -966,6 +966,8 @@ reg_t kCD(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSave(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
+	case 0: // Called by kq7 when starting chapters
+		return SIGNAL_REG;
 	case 2: // GetSaveDir
 		// Yay! Reusing the old kernel function!
 		return kGetSaveDir(s, argc - 1, argv + 1);
