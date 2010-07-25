@@ -121,6 +121,8 @@ Testsuite::Testsuite() {
 	_numTestsExecuted = 0;
 	// Initially all testsuites are enabled, disable them by calling enableTestSuite(name, false)
 	_isTsEnabled = true;
+	// Set custom color for progress bar
+	GFXTestSuite::setCustomColor(0, 0, 0);
 }
 
 Testsuite::~Testsuite() {
@@ -247,6 +249,7 @@ uint Testsuite::parseEvents() {
 void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, uint numTests, Common::Point pt) {
 	Common::String text = Common::String::printf(" Running %s: %s (%d of %d) ", prefix, info, testNum, numTests);
 	writeOnScreen(text, pt);
+	uint barColor = kColorSpecial; 
 	// below the text a rectangle denoting the progress in the testsuite can be drawn.
 	int separation = getLineSeparation();
 	pt.y += separation;
@@ -259,17 +262,17 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	int wShaded = (int) (wRect * (((float)testNum) / numTests));
 
 	// draw the boundary
-	memset(buffer, 1, sizeof(byte) * wRect);
-	memset(buffer + (wRect * (lRect - 1)) , 1, sizeof(byte) * wRect);
+	memset(buffer, barColor, sizeof(byte) * wRect);
+	memset(buffer + (wRect * (lRect - 1)) , barColor, sizeof(byte) * wRect);
 	
 	for (int i = 0; i < lRect; i++) {
 		for (int j = 0; j < wRect; j++) {
 			if (j < wShaded) {
-				buffer[i * wRect + j] = 1;
+				buffer[i * wRect + j] = barColor;
 			}
 		}
-		buffer[i * wRect + 0] = 1;
-		buffer[i * wRect + wRect - 1] = 1;
+		buffer[i * wRect + 0] = barColor;
+		buffer[i * wRect + wRect - 1] = barColor;
 	}
 	g_system->copyRectToScreen(buffer, wRect, pt.x, pt.y, wRect, lRect);
 	g_system->updateScreen();

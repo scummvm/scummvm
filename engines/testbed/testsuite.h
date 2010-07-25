@@ -36,7 +36,8 @@ namespace Testbed {
 enum {
 	kColorBlack = 0,
 	kColorWhite = 1,
-	kColorCustom = 2
+	kColorCustom = 2,
+	kColorSpecial = 5 	///< some random number
 };
 
 enum OptionSelected {
@@ -104,6 +105,12 @@ public:
 	static void displayMessage(const Common::String &textToDisplay, const char *defaultButton = "OK", const char *altButton = 0);
 	static Common::Rect writeOnScreen(const Common::String &textToDisplay, const Common::Point &pt, bool flag = false);
 	static void clearScreen(const Common::Rect &rect);
+	static void clearEntireScreen() {
+		const int width = g_system->getWidth();
+		const int height = g_system->getHeight();
+		Common::Rect r(0, 0, width, height);
+		clearScreen(r);
+	}
 	static void clearScreen();
 	static void clearScreen(bool flag);
 

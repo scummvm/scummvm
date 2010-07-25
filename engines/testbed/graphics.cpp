@@ -82,6 +82,12 @@ void GFXTestSuite::setCustomColor(uint r, uint g, uint b) {
 	_palette[8] = r;
 	_palette[9] = g;
 	_palette[10] = b;
+	
+	// Set colorNum kColorSpecial with a special color.
+	int absIndx = kColorSpecial * 4;
+	_palette[absIndx + 1] = 173;
+	_palette[absIndx + 2] = 255;
+	_palette[absIndx + 3] = 47;
 	g_system->setPalette(_palette, 0, 256);
 }
 
@@ -125,7 +131,7 @@ void GFXtests::HSVtoRGB(int &rComp, int &gComp, int &bComp, int hue, int sat, in
 	float g = gComp;
 	float b = bComp;
 
-	float h = hue * (360 / 254.0); // two colors are left for bg and fg
+	float h = hue * (360 / 256.0); // All colors are tried
 	float s = sat;
 	float v = val;
 
@@ -901,26 +907,25 @@ bool GFXtests::overlayGraphics() {
 
 bool GFXtests::paletteRotation() {
 	
-	Testsuite::clearScreen();
 	Common::String info = "Palette rotation. Here we draw a full 256 colored rainbow and then rotate it.\n"
-						"Note that the screen graphics change without having to draw anything.";
+						"Note that the screen graphics change without having to draw anything.\n"
+						"The palette should appear to rotate, Click the mouse button to exit.";
 
 	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
 		Testsuite::logPrintf("Info! Skipping test : palette Rotation\n");
 		return true;
 	}
 	Common::Point pt(0, 10);
-	Testsuite::writeOnScreen("Rotating palettes, palettes rotate towards left, click to stop!", pt);
+	Testsuite::clearEntireScreen();
 
 	// Use 256 colors
-	byte palette[256 * 4] = {0, 0, 0, 0,
-							 255, 255, 255, 0};
+	byte palette[256 * 4] = {0};
 
 	int r, g, b;
 	int colIndx;
 
-	for (int i = 2; i < 256; i++) {
-		HSVtoRGB(r, g, b, i - 2, 1, 1);
+	for (int i = 0; i < 256; i++) {
+		HSVtoRGB(r, g, b, i, 1, 1);
 		colIndx = i * 4;
 		palette[colIndx] = r;
 		palette[colIndx + 1] = g;
@@ -930,29 +935,28 @@ bool GFXtests::paletteRotation() {
 	// Initialize this palette.
 	g_system->setPalette(palette, 0, 256);
 
-	// Draw 254 Rectangles, each 1 pixel wide and 10 pixels long
+	// Draw 256 Rectangles, each 1 pixel wide and 10 pixels long
 	// one for 0-255 color range other for 0-127-255 range
-	byte buffer[254 * 30] = {0};
+	byte buffer[256 * 30] = {0};
 
 	for (int i = 0; i < 30; i++) {
-		for (int j = 0; j < 254; j++) {
+		for (int j = 0; j < 256; j++) {
 			if (i < 10) {
-				buffer[i * 254 + j] = j + 2;
+				buffer[i * 256 + j] = j + 2;
 			} else if (i < 20) {
-				buffer[i * 254 + j] = 0;
+				buffer[i * 256 + j] = 0;
 			} else {
-				buffer[i * 254 + j] = ((j + 127) % 254) + 2;
+				buffer[i * 256 + j] = ((j + 127) % 256) + 2;
 			}
 		}
 	}
 
-	g_system->copyRectToScreen(buffer, 254, 22, 50, 254, 30);
+	g_system->copyRectToScreen(buffer, 256, 22, 50, 256, 30);
 	
 	// Show mouse
 	CursorMan.showMouse(true);
 	g_system->updateScreen();
 
-	g_system->delayMillis(1000);
 
 	bool toRotate = true;
 	Common::Event event;
@@ -964,7 +968,7 @@ bool GFXtests::paletteRotation() {
 			}
 		}
 
-		rotatePalette(&palette[8], 254);
+		rotatePalette(palette, 256);
 
 		g_system->delayMillis(10);
 		g_system->setPalette(palette, 0, 256);
