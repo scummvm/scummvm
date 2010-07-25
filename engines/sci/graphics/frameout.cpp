@@ -179,16 +179,14 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.left = readSelectorValue(_segMan, planeObject, SELECTOR(left));
 		planeRect.bottom = readSelectorValue(_segMan, planeObject, SELECTOR(bottom)) + 1;
 		planeRect.right = readSelectorValue(_segMan, planeObject, SELECTOR(right)) + 1;
-		int16 planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
-		int16 planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
 
 		// Update priority here, sq6 sets it w/o UpdatePlane
 		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
-		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
-		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
-		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
-		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
+		planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
+		planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
+		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
+		planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
 
 		// We get bad plane-bottom in sq6
 		if (planeRect.right > _screen->getWidth())
@@ -309,8 +307,8 @@ void GfxFrameout::kernelFrameout() {
 
 			if (itemEntry->object.isNull()) {
 				// Picture cel data
-				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
-				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
+				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 
 				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
@@ -322,12 +320,16 @@ void GfxFrameout::kernelFrameout() {
 
 				switch (getSciVersion()) {
 				case SCI_VERSION_2:
-					if (view->isSci2Hires())
+					if (view->isSci2Hires()) {
+						int16 dummyX = 0;
 						_screen->adjustToUpscaledCoordinates(itemEntry->y, itemEntry->x);
+						_screen->adjustToUpscaledCoordinates(itemEntry->z, dummyX);
+					}
 					break;
 				case SCI_VERSION_2_1:
-					itemEntry->y = (itemEntry->y * _screen->getHeight()) / planeResY;
-					itemEntry->x = (itemEntry->x * _screen->getWidth()) / planeResX;
+					itemEntry->y = (itemEntry->y * _screen->getHeight()) / scriptsRunningHeight;
+					itemEntry->x = (itemEntry->x * _screen->getWidth()) / scriptsRunningWidth;
+					itemEntry->z = (itemEntry->z * _screen->getHeight()) / scriptsRunningHeight;
 					break;
 				default:
 					break;
@@ -361,10 +363,10 @@ void GfxFrameout::kernelFrameout() {
 						}
 						break;
 					case SCI_VERSION_2_1:
-						nsRect.top = (nsRect.top * planeResY) / _screen->getHeight();
-						nsRect.left = (nsRect.left * planeResX) / _screen->getWidth();
-						nsRect.bottom = (nsRect.bottom * planeResY) / _screen->getHeight();
-						nsRect.right = (nsRect.right * planeResX) / _screen->getWidth();
+						nsRect.top = (nsRect.top * scriptsRunningHeight) / _screen->getHeight();
+						nsRect.left = (nsRect.left * scriptsRunningWidth) / _screen->getWidth();
+						nsRect.bottom = (nsRect.bottom * scriptsRunningHeight) / _screen->getHeight();
+						nsRect.right = (nsRect.right * scriptsRunningWidth) / _screen->getWidth();
 						break;
 					default:
 						break;
@@ -416,8 +418,8 @@ void GfxFrameout::kernelFrameout() {
 					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
 					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
 
-					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / planeResY);
-					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / planeResX);
+					itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
+					itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 
 					uint16 curX = itemEntry->x + planeRect.left;
 					uint16 curY = itemEntry->y + planeRect.top;
