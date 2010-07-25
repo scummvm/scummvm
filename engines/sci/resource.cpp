@@ -164,8 +164,15 @@ ResourceType ResourceManager::convertResType(byte type) {
 	} else {
 		// SCI2.1+
 #ifdef ENABLE_SCI32
-		if (type < ARRAYSIZE(s_resTypeMapSci21))
-			return s_resTypeMapSci21[type];
+		if (type < ARRAYSIZE(s_resTypeMapSci21)) {
+			// LSL6 hires doesn't have the chunk resource type, to match
+			// the resource types of the lowres version, thus we use the
+			// older resource types here
+			if (g_sci && g_sci->getGameId() == GID_LSL6HIRES)
+				return s_resTypeMapSci0[type];
+			else
+				return s_resTypeMapSci21[type];
+		}
 #else
 		error("SCI32 support not compiled in");
 #endif
