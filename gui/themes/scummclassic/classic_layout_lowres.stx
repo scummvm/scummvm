@@ -342,12 +342,6 @@
 			<widget name = 'mcMixedCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'mcMt32Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'mcGSCheckbox'
-					type = 'Checkbox'
-			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'mcMidiGainText'
 						type = 'OptionsLabel'
