@@ -202,7 +202,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
     { SIG_SCIALL,          4, MAP_CALL(PalVaryChangeTarget),       "i",                    NULL },
     { SIG_SCIALL,          5, MAP_CALL(PalVaryChangeTicks),        "i",                    NULL },
     { SIG_SCIALL,          6, MAP_CALL(PalVaryPauseResume),        "i",                    NULL },
-    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "",                     NULL },
+    { SIG_SCI32,           8, MAP_CALL(PalVaryUnknown),            "i",                    NULL },
     SCI_SUBOPENTRY_TERMINATOR
 };
 
