@@ -50,6 +50,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// Limit the mouse cursor position, if necessary
 	g_sci->_gfxCursor->refreshPosition();
 	mousePos = g_sci->_gfxCursor->getPosition();
+	g_sci->_gfxCoordAdjuster->getEvent(mousePos);
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event

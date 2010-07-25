@@ -48,6 +48,8 @@ GfxFrameout::GfxFrameout(SegManager *segMan, ResourceManager *resMan, GfxCoordAd
 	: _segMan(segMan), _resMan(resMan), _cache(cache), _screen(screen), _palette(palette), _paint32(paint32) {
 
 	_coordAdjuster = (GfxCoordAdjuster32 *)coordAdjuster;
+	scriptsRunningWidth = 320;
+	scriptsRunningHeight = 200;
 }
 
 GfxFrameout::~GfxFrameout() {
@@ -55,6 +57,15 @@ GfxFrameout::~GfxFrameout() {
 
 void GfxFrameout::kernelAddPlane(reg_t object) {
 	PlaneEntry newPlane;
+
+	if (_planes.empty()) {
+		// There has to be another way for sierra sci to do this or maybe script resolution is compiled into
+		//  interpreter (TODO)
+		scriptsRunningHeight = readSelectorValue(_segMan, object, SELECTOR(resY));
+		scriptsRunningWidth = readSelectorValue(_segMan, object, SELECTOR(resX));
+		_coordAdjuster->setScriptsResolution(scriptsRunningWidth, scriptsRunningHeight);
+	}
+
 	newPlane.object = object;
 	newPlane.pictureId = 0xFFFF;
 	newPlane.picture = NULL;
@@ -74,7 +85,9 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			if (lastPictureId != it->pictureId) {
 				// picture got changed, load new picture
 				if ((it->pictureId != 0xFFFF) && (it->pictureId != 0xFFFE)) {
-					it->picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, it->pictureId, false);
+					// SQ6 gives us a bad picture number for the control menu
+					if (_resMan->testResource(ResourceId(kResourceTypePic, it->pictureId)))
+						it->picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, it->pictureId, false);
 				} else {
 					delete it->picture;
 					it->picture = NULL;
@@ -159,7 +172,6 @@ void GfxFrameout::kernelFrameout() {
 
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		reg_t planeObject = it->object;
-		uint16 planePriority = it->priority;
 		uint16 planeLastPriority = it->lastPriority;
 
 		Common::Rect planeRect;
@@ -170,10 +182,19 @@ void GfxFrameout::kernelFrameout() {
 		int16 planeResY = readSelectorValue(_segMan, planeObject, SELECTOR(resY));
 		int16 planeResX = readSelectorValue(_segMan, planeObject, SELECTOR(resX));
 
+		// Update priority here, sq6 sets it w/o UpdatePlane
+		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
+
 		planeRect.top = (planeRect.top * _screen->getHeight()) / planeResY;
 		planeRect.left = (planeRect.left * _screen->getWidth()) / planeResX;
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / planeResY;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / planeResX;
+
+		// We get bad plane-bottom in sq6
+		if (planeRect.right > _screen->getWidth())
+			planeRect.right = _screen->getWidth();
+		if (planeRect.bottom > _screen->getHeight())
+			planeRect.bottom = _screen->getHeight();
 
 		it->lastPriority = planePriority;
 		if (planePriority == 0xffff) { // Plane currently not meant to be shown

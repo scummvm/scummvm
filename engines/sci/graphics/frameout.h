@@ -89,6 +89,9 @@ private:
 	PlaneList _planes;
 
 	void sortPlanes();
+
+	uint16 scriptsRunningWidth;
+	uint16 scriptsRunningHeight;
 };
 
 } // End of namespace Sci

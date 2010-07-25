@@ -50,6 +50,9 @@ public:
 	virtual void setCursorPos(Common::Point &pos) { }
 	virtual void moveCursor(Common::Point &pos) { }
 
+	virtual void setScriptsResolution(uint16 width, uint16 height) { }
+	virtual void getEvent(Common::Point &pos) { }
+
 	virtual Common::Rect pictureGetDisplayArea() { return Common::Rect(0, 0); }
 private:
 };
@@ -85,6 +88,9 @@ public:
 
 	Common::Rect onControl(Common::Rect rect);
 
+	void setScriptsResolution(uint16 width, uint16 height);
+	void getEvent(Common::Point &pos);
+
 	void pictureSetDisplayArea(Common::Rect displayArea);
 	Common::Rect pictureGetDisplayArea();
 	
@@ -92,6 +98,9 @@ private:
 	SegManager *_segMan;
 
 	Common::Rect _pictureDisplayArea;
+
+	uint16 scriptsRunningWidth;
+	uint16 scriptsRunningHeight;
 };
 #endif
 
