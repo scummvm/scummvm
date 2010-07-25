@@ -54,7 +54,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
     { GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
     { GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
-    { GID_GK2,            34,    11,  0,                   "", "export 10",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when the game starts
+    { GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when the game starts
+    { GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    4, { WORKAROUND_FAKE,   0 } }, // called during the game
     { GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
     { GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { WORKAROUND_FAKE,   0 } }, // Cribbage / during the game
     { GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // when starting checkers, first time a character says something
