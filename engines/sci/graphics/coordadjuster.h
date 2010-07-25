@@ -51,7 +51,8 @@ public:
 	virtual void moveCursor(Common::Point &pos) { }
 
 	virtual void setScriptsResolution(uint16 width, uint16 height) { }
-	virtual void getEvent(Common::Point &pos) { }
+	virtual void fromScriptToDisplay(int16 &y, int16 &x) { }
+	virtual void fromDisplayToScript(int16 &y, int16 &x) { }
 
 	virtual Common::Rect pictureGetDisplayArea() { return Common::Rect(0, 0); }
 private:
@@ -89,7 +90,8 @@ public:
 	Common::Rect onControl(Common::Rect rect);
 
 	void setScriptsResolution(uint16 width, uint16 height);
-	void getEvent(Common::Point &pos);
+	void fromScriptToDisplay(int16 &y, int16 &x);
+	void fromDisplayToScript(int16 &y, int16 &x);
 
 	void pictureSetDisplayArea(Common::Rect displayArea);
 	Common::Rect pictureGetDisplayArea();

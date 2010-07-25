@@ -122,9 +122,14 @@ void GfxCoordAdjuster32::setScriptsResolution(uint16 width, uint16 height) {
 	scriptsRunningHeight = height;
 }
 
-void GfxCoordAdjuster32::getEvent(Common::Point &pos) {
-	pos.y = ((pos.y * scriptsRunningHeight) / g_sci->_gfxScreen->getHeight());
-	pos.x = ((pos.x * scriptsRunningWidth) / g_sci->_gfxScreen->getWidth());
+void GfxCoordAdjuster32::fromDisplayToScript(int16 &y, int16 &x) {
+	y = ((y * scriptsRunningHeight) / g_sci->_gfxScreen->getHeight());
+	x = ((x * scriptsRunningWidth) / g_sci->_gfxScreen->getWidth());
+}
+
+void GfxCoordAdjuster32::fromScriptToDisplay(int16 &y, int16 &x) {
+	y = ((y * g_sci->_gfxScreen->getHeight()) / scriptsRunningHeight);
+	x = ((x * g_sci->_gfxScreen->getWidth()) / scriptsRunningWidth);
 }
 
 void GfxCoordAdjuster32::pictureSetDisplayArea(Common::Rect displayArea) {

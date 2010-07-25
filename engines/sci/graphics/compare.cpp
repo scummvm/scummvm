@@ -139,7 +139,7 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 			_screen->adjustToUpscaledCoordinates(y, x);
 		break;
 	case SCI_VERSION_2_1:
-		_coordAdjuster->kernelLocalToGlobal(x, y, readSelector(_segMan, objectReference, SELECTOR(plane)));
+		_coordAdjuster->fromScriptToDisplay(y, x);
 		break;
 	default:
 		break;
@@ -157,9 +157,8 @@ void GfxCompare::kernelSetNowSeen(reg_t objectReference) {
 		}
 		break;
 	case SCI_VERSION_2_1: {
-		reg_t planeObj = readSelector(_segMan, objectReference, SELECTOR(plane));
-		_coordAdjuster->kernelGlobalToLocal(celRect.left, celRect.top, planeObj);
-		_coordAdjuster->kernelGlobalToLocal(celRect.right, celRect.bottom, planeObj);
+		_coordAdjuster->fromDisplayToScript(celRect.top, celRect.left);
+		_coordAdjuster->fromDisplayToScript(celRect.bottom, celRect.right);
 		break;
 	}
 	default:
