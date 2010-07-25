@@ -107,6 +107,9 @@ Common::Error TestbedEngine::run() {
 
 	TestbedConfigManager cfMan(_testsuiteList, "testbed.config");
 	cfMan.selectTestsuites();
+
+	// Init logging
+	Testsuite::initLogging(true);
 	
 	// check if user wanted to exit.
 	if (Engine::shouldQuit()) {
