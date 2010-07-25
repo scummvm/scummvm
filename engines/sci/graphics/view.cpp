@@ -28,6 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {
@@ -35,6 +36,7 @@ namespace Sci {
 GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
+	_coordAdjuster = g_sci->_gfxCoordAdjuster;
 	initData(resourceId);
 }
 
@@ -267,16 +269,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 			break;
 
 		case SCI_VERSION_2_1:
-			// half the width returned here, fixes lsl6 action icon placements
-			// the scripts work low-res and add the returned value from here to the coordinate
-			// TODO: check, if this is actually right. I'm slightly confused by this, but even GK1CD has some idivs in this
-			//  code, so it seems plausible.
-			if (_screen->getDisplayWidth() > 320) {
-				for (loopNo = 0; loopNo < _loopCount; loopNo++) {
-					for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
-						_loop[loopNo].cel[celNo].scriptWidth /= 2;
-						_loop[loopNo].cel[celNo].scriptHeight /= 2;
-					}
+			for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+					_coordAdjuster->fromDisplayToScript(_loop[loopNo].cel[celNo].scriptHeight, _loop[loopNo].cel[celNo].scriptWidth);
 				}
 			}
 		default:
