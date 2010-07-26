@@ -277,10 +277,6 @@ bool SciEngine::initGame() {
 	}
 
 	_gamestate->initGlobals();
-
-	if (_gamestate->abortScriptProcessing == kAbortRestartGame && _gfxMenu)
-		_gfxMenu->reset();
-
 	_gamestate->_segMan->initSysStrings();
 
 	_gamestate->r_acc = _gamestate->r_prev = NULL_REG;
@@ -415,16 +411,19 @@ void SciEngine::runGame() {
 		exitGame();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
-			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
 			_gamestate->gameWasRestarted = true;
+			if (_gfxMenu)
+				_gfxMenu->reset();
+			_gamestate->abortScriptProcessing = kAbortNone;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
 			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
 			_gamestate->shrinkStackToBase();
+			_gamestate->abortScriptProcessing = kAbortNone;
 		} else {
 			break;	// exit loop
 		}
