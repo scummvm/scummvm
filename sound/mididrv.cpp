@@ -261,7 +261,7 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	const MusicPlugin::List p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
-		error("Music plugins must be loaded prior to calling this method.");
+		error("Music plugins must be loaded prior to calling this method");
 
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
