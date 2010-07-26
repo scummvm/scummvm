@@ -260,7 +260,7 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
-	uint16 screenMask = (argc > 4) ? argv[4].toUint16() : 0;
+	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
 	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
 }
 
