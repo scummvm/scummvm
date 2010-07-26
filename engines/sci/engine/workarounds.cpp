@@ -112,12 +112,6 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
-const SciWorkaroundEntry kDrawCel_workarounds[] = {
-	{ GID_QFG4,           371,   22,  0,        "GloryWindow", "<noname 196>",   -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when Dr. Cranium talks, gets called with 1 extra parameter
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
     { GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
     { GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // clicking on catalog in roboter sale - a parameter is an object

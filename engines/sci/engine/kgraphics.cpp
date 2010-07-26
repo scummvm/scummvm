@@ -1000,9 +1000,8 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	// QFG4 demo calls this with an extra integer parameter (room 22, when Dr. Cranium speaks)
-	bool hiresMode = (argc > 7 && argv[6].segment != 0) ? true : false;
-	reg_t upscaledHiresHandle = (argc > 7 && argv[6].segment != 0) ? argv[7] : NULL_REG;
+	bool hiresMode = (argc > 7) ? true : false;
+	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
 
 	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
 
