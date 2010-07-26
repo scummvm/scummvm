@@ -210,7 +210,7 @@ static const SciKernelMapSubEntry kPalVary_subops[] = {
 static const SciKernelMapSubEntry kPalette_subops[] = {
     { SIG_SCIALL,          1, MAP_CALL(PaletteSetFromResource),    "i(i)",                 NULL },
     { SIG_SCIALL,          2, MAP_CALL(PaletteSetFlag),            "iii",                  NULL },
-    { SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  NULL },
+    { SIG_SCIALL,          3, MAP_CALL(PaletteUnsetFlag),          "iii",                  kPaletteUnsetFlag_workarounds },
     { SIG_SCIALL,          4, MAP_CALL(PaletteSetIntensity),       "iii(i)",               NULL },
     { SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
     { SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
@@ -332,7 +332,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(DoBresen),          SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DoSound),           SIG_EVERYWHERE,           "i(.*)",                 kDoSound_subops, NULL },
     { MAP_CALL(DoSync),            SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
-    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            NULL }, // for kq6 hires
+    { MAP_CALL(DrawCel),           SIG_SCI11, SIGFOR_PC,     "iiiii(i)(i)(r0)",       NULL,            kDrawCel_workarounds }, // for kq6 hires and qfg4 demo
     { MAP_CALL(DrawCel),           SIG_EVERYWHERE,           "iiiii(i)(i)",           NULL,            NULL },
     { MAP_CALL(DrawControl),       SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(DrawMenuBar),       SIG_EVERYWHERE,           "i",                     NULL,            NULL },
