@@ -539,7 +539,7 @@ void GfxTransitions::verticalRollFromCenter(bool blackoutFlag) {
 // only
 void GfxTransitions::verticalRollToCenter(bool blackoutFlag) {
 	Common::Rect leftRect = Common::Rect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
-	Common::Rect rightRect = Common::Rect(leftRect.right - 1, _picRect.top, leftRect.right, _picRect.bottom);
+	Common::Rect rightRect = Common::Rect(_picRect.right - 1, _picRect.top, _picRect.right, _picRect.bottom);
 
 	while (leftRect.left < rightRect.right) {
 		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
