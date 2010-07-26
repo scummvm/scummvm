@@ -58,6 +58,7 @@ public:
 	int16 getSci32celCount();
 	int16 getSci32celY(int16 celNo);
 	int16 getSci32celX(int16 celNo);
+	int16 getSci32celWidth(int16 celNo);
 	int16 getSci32celPriority(int16 celNo);
 	void drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, int16 pictureX, bool mirrored);
 #endif

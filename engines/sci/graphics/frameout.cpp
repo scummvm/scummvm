@@ -68,7 +68,6 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.pictureId = 0xFFFF;
-	newPlane.picture = NULL;
 	newPlane.lastPriority = 0xFFFF; // hidden
 	_planes.push_back(newPlane);
 
@@ -84,13 +83,11 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 			it->pictureId = readSelectorValue(_segMan, object, SELECTOR(picture));
 			if (lastPictureId != it->pictureId) {
 				// picture got changed, load new picture
+				deletePlanePictures(object);
 				if ((it->pictureId != 0xFFFF) && (it->pictureId != 0xFFFE)) {
 					// SQ6 gives us a bad picture number for the control menu
 					if (_resMan->testResource(ResourceId(kResourceTypePic, it->pictureId)))
-						it->picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, it->pictureId, false);
-				} else {
-					delete it->picture;
-					it->picture = NULL;
+						addPlanePicture(object, it->pictureId, 0);
 				}
 			}
 			sortPlanes();
@@ -101,6 +98,7 @@ void GfxFrameout::kernelUpdatePlane(reg_t object) {
 }
 
 void GfxFrameout::kernelDeletePlane(reg_t object) {
+	deletePlanePictures(object);
 	for (PlaneList::iterator it = _planes.begin(); it != _planes.end(); it++) {
 		if (it->object == object) {
 			_planes.erase(it);
@@ -116,6 +114,26 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
+			return;
+		}
+	}
+}
+
+void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX) {
+	PlanePictureEntry newPicture;
+	newPicture.object = object;
+	newPicture.pictureId = pictureId;
+	newPicture.picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
+	newPicture.startX = startX;
+	_planePictures.push_back(newPicture);
+}
+
+void GfxFrameout::deletePlanePictures(reg_t object) {
+	for (PlanePictureList::iterator it = _planePictures.begin(); it != _planePictures.end(); it++) {
+		if (it->object == object) {
+			delete it->picture;
+			_planePictures.erase(it);
+			deletePlanePictures(object);
 			return;
 		}
 	}
@@ -141,11 +159,7 @@ int16 GfxFrameout::kernelGetHighPlanePri() {
 
 // No idea yet how to implement this
 void GfxFrameout::kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId) {
-	//if (forWidth == 320) {
-	//	writeSelectorValue(_segMan, planeObj, SELECTOR(left), 0);
-	//	writeSelectorValue(_segMan, planeObj, SELECTOR(picture), pictureId);
-	//	kernelUpdatePlane(planeObj);
-	//}
+	addPlanePicture(planeObj, pictureId, forWidth);
 }
 
 bool sortHelper(const FrameoutEntry* entry1, const FrameoutEntry* entry2) {
@@ -247,20 +261,14 @@ void GfxFrameout::kernelFrameout() {
 		if (planeBack)
 			_paint32->fillRect(planeRect, planeBack);
 
-		GuiResourceId planePictureNr = it->pictureId;
-		GfxPicture *planePicture = it->picture;
-		int16 planePictureCels = 0;
+		GuiResourceId planeMainPictureId = it->pictureId;
+
 		bool planePictureMirrored = false;
+		if (readSelectorValue(_segMan, planeObject, SELECTOR(mirrored)))
+			planePictureMirrored = true;
 
-		if (planePicture) {
-			planePictureCels = planePicture->getSci32celCount();
-
-			_coordAdjuster->pictureSetDisplayArea(planeRect);
-			_palette->drewPicture(planePictureNr);
-
-			if (readSelectorValue(_segMan, planeObject, SELECTOR(mirrored)))
-				planePictureMirrored = true;
-		}
+		_coordAdjuster->pictureSetDisplayArea(planeRect);
+		_palette->drewPicture(planeMainPictureId);
 
 		// Fill our itemlist for this plane
 		int16 itemCount = 0;
@@ -302,23 +310,28 @@ void GfxFrameout::kernelFrameout() {
 			}
 		}
 
-		FrameoutEntry *pictureCels = NULL;
+		for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
+			if (pictureIt->object == planeObject) {
+				GfxPicture *planePicture = pictureIt->picture;
+				// Allocate memory for picture cels
+				pictureIt->pictureCels = new FrameoutEntry[planePicture->getSci32celCount()];
 
-		if (planePicture) {
-			// Allocate memory for picture cels
-			pictureCels = new FrameoutEntry[planePicture->getSci32celCount()];
-			// Add following cels to the itemlist
-			FrameoutEntry *picEntry = pictureCels;
-			for (int pictureCelNr = 0; pictureCelNr < planePictureCels; pictureCelNr++) {
-				picEntry->celNo = pictureCelNr;
-				picEntry->object = NULL_REG;
-				picEntry->y = planePicture->getSci32celY(pictureCelNr);
-				picEntry->x = planePicture->getSci32celX(pictureCelNr);
+				// Add following cels to the itemlist
+				FrameoutEntry *picEntry = pictureIt->pictureCels;
+				int planePictureCels = planePicture->getSci32celCount();
+				for (int pictureCelNr = 0; pictureCelNr < planePictureCels; pictureCelNr++) {
+					picEntry->celNo = pictureCelNr;
+					picEntry->object = NULL_REG;
+					picEntry->picture = planePicture;
+					picEntry->y = planePicture->getSci32celY(pictureCelNr);
+					picEntry->x = planePicture->getSci32celX(pictureCelNr);
+					picEntry->picStartX = pictureIt->startX;
 
-				picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
+					picEntry->priority = planePicture->getSci32celPriority(pictureCelNr);
 
-				itemList.push_back(picEntry);
-				picEntry++;
+					itemList.push_back(picEntry);
+					picEntry++;
+				}
 			}
 		}
 
@@ -337,9 +350,31 @@ void GfxFrameout::kernelFrameout() {
 				// Picture cel data
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
+				itemEntry->picStartX = ((itemEntry->picStartX * _screen->getWidth()) / scriptsRunningWidth);
 
-				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planeOffsetX, planePictureMirrored);
-//				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
+				// Out of view
+				int16 pictureCelStartX = itemEntry->picStartX + itemEntry->x;
+				int16 pictureCelEndX = pictureCelStartX + itemEntry->picture->getSci32celWidth(itemEntry->celNo);
+				int16 planeStartX = planeOffsetX;
+				int16 planeEndX = planeStartX + planeRect.width();
+				if (pictureCelEndX < planeStartX)
+					continue;
+				if (pictureCelStartX > planeEndX)
+					continue;
+
+				int16 pictureOffsetX = planeOffsetX;
+				int16 pictureX = itemEntry->x;
+				if (planeOffsetX) {
+					if (planeOffsetX <= itemEntry->picStartX) {
+						pictureX += itemEntry->picStartX - planeOffsetX;
+						pictureOffsetX = 0;
+					} else {
+						pictureOffsetX = planeOffsetX - itemEntry->picStartX;
+					}
+				}
+
+				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, planePictureMirrored);
+				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
@@ -468,8 +503,10 @@ void GfxFrameout::kernelFrameout() {
 			}
 		}
 
-		if (planePicture) {
-			delete[] pictureCels;
+		for (PlanePictureList::iterator pictureIt = _planePictures.begin(); pictureIt != _planePictures.end(); pictureIt++) {
+			if (pictureIt->object == planeObject) {
+				delete[] pictureIt->pictureCels;
+			}
 		}
 	}
 

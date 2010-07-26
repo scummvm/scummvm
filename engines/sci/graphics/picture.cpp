@@ -146,6 +146,13 @@ int16 GfxPicture::getSci32celX(int16 celNo) {
 	return READ_LE_UINT16(inbuffer + cel_headerPos + 38);
 }
 
+int16 GfxPicture::getSci32celWidth(int16 celNo) {
+	byte *inbuffer = _resource->data;
+	int header_size = READ_LE_UINT16(inbuffer);
+	int cel_headerPos = header_size + 42 * celNo;
+	return READ_LE_UINT16(inbuffer + cel_headerPos + 0);
+}
+
 int16 GfxPicture::getSci32celPriority(int16 celNo) {
 	byte *inbuffer = _resource->data;
 	int header_size = READ_LE_UINT16(inbuffer);

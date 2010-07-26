@@ -31,9 +31,8 @@ namespace Sci {
 struct PlaneEntry {
 	reg_t object;
 	uint16 priority;
-	GuiResourceId pictureId;
-	GfxPicture *picture;
 	uint16 lastPriority;
+	GuiResourceId pictureId;
 };
 
 typedef Common::List<PlaneEntry> PlaneList;
@@ -51,9 +50,21 @@ struct FrameoutEntry {
 	int16 scaleX;
 	int16 scaleY;
 	Common::Rect celRect;
+	GfxPicture *picture;
+	int16 picStartX;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
+
+struct PlanePictureEntry {
+	reg_t object;
+	int16 startX;
+	GuiResourceId pictureId;
+	GfxPicture *picture;
+	FrameoutEntry *pictureCels; // temporary
+};
+
+typedef Common::List<PlanePictureEntry> PlanePictureList;
 
 class GfxCache;
 class GfxCoordAdjuster32;
@@ -77,6 +88,9 @@ public:
 	void kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId);
 	void kernelFrameout();
 
+	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX);
+	void deletePlanePictures(reg_t object);
+
 private:
 	SegManager *_segMan;
 	ResourceManager *_resMan;
@@ -88,6 +102,7 @@ private:
 
 	Common::Array<reg_t> _screenItems;
 	PlaneList _planes;
+	PlanePictureList _planePictures;
 
 	void sortPlanes();
 
