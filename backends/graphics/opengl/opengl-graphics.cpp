@@ -29,9 +29,14 @@
 #include "backends/graphics/opengl/glerrorcheck.h"
 #include "common/mutex.h"
 #include "common/translation.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
 
 OpenGLGraphicsManager::OpenGLGraphicsManager()
 	:
+#ifdef USE_OSD
+	_osdTexture(0), _osdAlpha(0), _osdFadeStartTime(0),
+#endif
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
 	_screenChangeCount(0), _screenNeedsRedraw(false),
 	_currentShakePos(0), _newShakePos(0),
@@ -593,7 +598,72 @@ void OpenGLGraphicsManager::disableCursorPalette(bool disable) {
 //
 
 void OpenGLGraphicsManager::displayMessageOnOSD(const char *msg) {
+	assert (_transactionMode == kTransactionNone);
+	assert(msg);
 
+	// The font we are going to use:
+	const Graphics::Font *font = FontMan.getFontByUsage(Graphics::FontManager::kOSDFont);
+
+	if (_osdSurface.w != _osdTexture->getWidth() || _osdSurface.h != _osdTexture->getHeight())
+		_osdSurface.create(_osdTexture->getWidth(), _osdTexture->getHeight(), 2);
+	else
+		// Clear everything
+		memset(_osdSurface.pixels, 0, _osdSurface.h * _osdSurface.pitch);
+
+	// Split the message into separate lines.
+	Common::Array<Common::String> lines;
+	const char *ptr;
+	for (ptr = msg; *ptr; ++ptr) {
+		if (*ptr == '\n') {
+			lines.push_back(Common::String(msg, ptr - msg));
+			msg = ptr + 1;
+		}
+	}
+	lines.push_back(Common::String(msg, ptr - msg));
+
+	// Determine a rect which would contain the message string (clipped to the
+	// screen dimensions).
+	const int vOffset = 6;
+	const int lineSpacing = 1;
+	const int lineHeight = font->getFontHeight() + 2 * lineSpacing;
+	int width = 0;
+	int height = lineHeight * lines.size() + 2 * vOffset;
+	for (uint i = 0; i < lines.size(); i++) {
+		width = MAX(width, font->getStringWidth(lines[i]) + 14);
+	}
+
+	// Clip the rect
+	if (width > _osdSurface.w)
+		width = _osdSurface.w;
+	if (height > _osdSurface.h)
+		height = _osdSurface.h;
+
+	int dstX = (_osdSurface.w - width) / 2;
+	int dstY = (_osdSurface.h - height) / 2;
+
+	// Draw a dark gray rect
+	uint16 color = 0x294B;
+	uint16 *dst = (uint16 *)_osdSurface.pixels + dstY * _osdSurface.w + dstX;
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++)
+			dst[j] = color;
+		dst += _osdSurface.w;
+	}
+
+	// Render the message, centered, and in white
+	for (uint i = 0; i < lines.size(); i++) {
+		font->drawString(&_osdSurface, lines[i],
+							dstX, dstY + i * lineHeight + vOffset + lineSpacing, width,
+							0xFFFF, Graphics::kTextAlignCenter);
+	}
+
+	// Update the texture
+	_osdTexture->updateBuffer(_osdSurface.pixels, _osdSurface.pitch, 0, 0, 
+		_osdSurface.w, _osdSurface.h);
+
+	// Init the OSD display parameters, and the fade out
+	_osdAlpha = kOSDInitialAlpha;
+	_osdFadeStartTime = g_system->getMillis() + kOSDFadeOutDelay;
 }
 
 //
@@ -725,9 +795,8 @@ void OpenGLGraphicsManager::refreshCursor() {
 }
 
 void OpenGLGraphicsManager::refreshCursorScale() {
-	float scaleFactorX = (float)_videoMode.hardwareWidth / _videoMode.screenWidth;
-	float scaleFactorY = (float)_videoMode.hardwareHeight / _videoMode.screenHeight;
-	float scaleFactor = scaleFactorX < scaleFactorY ? scaleFactorX : scaleFactorY;
+	float scaleFactor = MIN((float)_videoMode.hardwareWidth / _videoMode.screenWidth,
+		(float)_videoMode.hardwareHeight / _videoMode.screenHeight);
 
 	if (_cursorTargetScale >= scaleFactor && _videoMode.scaleFactor >= scaleFactor) {
 		_cursorState.rW = _cursorState.w;
@@ -812,6 +881,30 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			_cursorTexture->drawTexture(_cursorState.x - _cursorState.vHotX,
 				_cursorState.y - _cursorState.vHotY, _cursorState.vW, _cursorState.vH);
 	}
+
+#ifdef USE_OSD
+	if (_osdAlpha > 0) {
+		// Updated alpha value
+		const int diff = g_system->getMillis() - _osdFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency
+				_osdAlpha = 0;
+			} else {
+				// Do a fade out
+				_osdAlpha = kOSDInitialAlpha - diff * kOSDInitialAlpha / kOSDFadeOutDuration;
+			}
+		}
+		// Set the osd transparency
+		glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+
+		// Draw the osd texture
+		_osdTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+
+		// Reset color
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+	}
+#endif
 }
 
 void OpenGLGraphicsManager::initGL() {
@@ -908,6 +1001,15 @@ void OpenGLGraphicsManager::loadTextures() {
 	_screenNeedsRedraw = true;
 	_overlayNeedsRedraw = true;
 	_cursorNeedsRedraw = true;
+
+#ifdef USE_OSD
+	if (!_osdTexture)
+		_osdTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
+
+	if (_transactionDetails.newContext || _transactionDetails.filterChanged)
+		_osdTexture->refresh();
+	_osdTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
+#endif
 }
 
 bool OpenGLGraphicsManager::loadGFXMode() {
@@ -931,13 +1033,16 @@ void OpenGLGraphicsManager::setScale(int newScale) {
 	if (newScale == _videoMode.scaleFactor)
 		return;
 
-	switch (newScale) {
+	switch (newScale - 1) {
 	case OpenGL::GFX_NORMAL:
 		_videoMode.mode = OpenGL::GFX_NORMAL;
+		break;
 	case OpenGL::GFX_DOUBLESIZE:
 		_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
+		break;
 	case OpenGL::GFX_TRIPLESIZE:
 		_videoMode.mode = OpenGL::GFX_TRIPLESIZE;
+		break;
 	}
 
 	_videoMode.scaleFactor = newScale;

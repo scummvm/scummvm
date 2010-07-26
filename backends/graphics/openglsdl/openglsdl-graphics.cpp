@@ -254,6 +254,12 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			_videoMode.antialiasing = !_videoMode.antialiasing;
 			_transactionDetails.filterChanged = true;
 		endGFXTransaction();
+#ifdef USE_OSD
+		if (_videoMode.antialiasing)
+			displayMessageOnOSD("Active filter mode: Linear");
+		else
+			displayMessageOnOSD("Active filter mode: Nearest");
+#endif
 		return true;
 	}
 
@@ -268,6 +274,26 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 			beginGFXTransaction();
 				setScale(factor);
 			endGFXTransaction();
+#ifdef USE_OSD
+			const char *newScalerName = 0;
+			const OSystem::GraphicsMode *g = getSupportedGraphicsModes();
+			while (g->name) {
+				if (g->id == _videoMode.mode) {
+					newScalerName = g->description;
+					break;
+				}
+				g++;
+			}
+			if (newScalerName) {
+				char buffer[128];
+				sprintf(buffer, "Active graphics mode: %s\n%d x %d -> %d x %d",
+					newScalerName,
+					_videoMode.screenWidth, _videoMode.screenHeight,
+					_hwscreen->w, _hwscreen->h
+					);
+				displayMessageOnOSD(buffer);
+			}
+#endif
 			return true;
 		}
 	}

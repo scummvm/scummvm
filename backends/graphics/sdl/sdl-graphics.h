@@ -136,7 +136,7 @@ protected:
 	/** Surface containing the OSD message */
 	SDL_Surface *_osdSurface;
 	/** Transparency level of the OSD */
-	Uint8 _osdAlpha;
+	uint8 _osdAlpha;
 	/** When to start the fade out */
 	uint32 _osdFadeStartTime; 
 	/** Enum with OSD options */

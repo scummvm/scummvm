@@ -30,6 +30,9 @@
 #include "backends/graphics/graphics.h"
 #include "common/events.h"
 
+// Uncomment this to enable the 'on screen display' code.
+#define USE_OSD	1
+
 namespace OpenGL {
 
 enum {
@@ -242,6 +245,18 @@ protected:
 	// Misc
 	//
 	virtual bool saveScreenshot(const char *filename);
+
+#ifdef USE_OSD
+	GLTexture *_osdTexture;
+	Graphics::Surface _osdSurface;
+	uint8 _osdAlpha;
+	uint32 _osdFadeStartTime; 
+	enum {
+		kOSDFadeOutDelay = 2 * 1000,
+		kOSDFadeOutDuration = 500,
+		kOSDInitialAlpha = 80
+	};
+#endif
 };
 
 #endif
