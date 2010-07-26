@@ -1000,10 +1000,26 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	bool hiresMode = (argc > 7) ? true : false;
-	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
+	bool hiresMode = false;
+	reg_t upscaledHiresHandle = NULL_REG;
+	uint16 scaleX = 128;
+	uint16 scaleY = 128;
 
-	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
+	if (argc > 7) {
+		// this is either kq6 hires or scaling
+		if (paletteNo > 0) {
+			// it's scaling
+			scaleX = argv[6].toUint16();
+			scaleY = argv[7].toUint16();
+			paletteNo = 0;
+		} else {
+			// KQ6 hires
+			hiresMode = true;
+			upscaledHiresHandle = argv[7];
+		}
+	}
+
+	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, scaleX, scaleY, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }
