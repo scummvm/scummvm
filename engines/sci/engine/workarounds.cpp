@@ -181,8 +181,7 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kMemory_workarounds[] = {
     { GID_LAURABOW2,     160,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when exiting the train
-	// TODO
-	//{ GID_LAURABOW2,     220,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when talking to Mr. Augustini
+	{ GID_LAURABOW2,     220,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when talking to Mr. Augustini
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
