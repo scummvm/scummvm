@@ -374,7 +374,7 @@ void GfxFrameout::kernelFrameout() {
 				}
 
 				itemEntry->picture->drawSci32Vga(itemEntry->celNo, pictureX, itemEntry->y, pictureOffsetX, planePictureMirrored);
-				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
+//				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
 				GfxView *view = _cache->getView(itemEntry->viewId);
