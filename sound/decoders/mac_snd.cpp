@@ -88,7 +88,7 @@ SeekableAudioStream *makeMacSndStream(Common::SeekableReadStream *stream,
 
 	uint32 soundDataOffset = stream->readUint32BE();
 	uint32 size = stream->readUint32BE();
-	uint16 rate = stream->readUint32BE() >> 16; // Really floating point, but we only support integer rates
+	uint16 rate = stream->readUint32BE() >> 16; // Really fixed point, but we only support integer rates
 	stream->readUint32BE(); // loop start
 	stream->readUint32BE(); // loop end
 	byte encoding = stream->readByte();
