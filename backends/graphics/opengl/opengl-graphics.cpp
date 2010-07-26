@@ -554,8 +554,11 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 	assert(keycolor <= 255);
 #endif
 
+	// Allocate space for cursor data
+	if (_cursorData.w != w || _cursorData.h != h)
+		_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
+
 	// Save cursor data
-	_cursorData.create(w, h, _cursorFormat.bytesPerPixel);
 	memcpy(_cursorData.pixels, buf, h * _cursorData.pitch);
 
 	// Set cursor info
@@ -566,6 +569,8 @@ void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int 
 	_cursorKeyColor = keycolor;
 	_cursorTargetScale = cursorTargetScale;
 	_cursorNeedsRedraw = true;
+
+	refreshCursorScale();
 }
 
 void OpenGLGraphicsManager::setCursorPalette(const byte *colors, uint start, uint num) {
@@ -719,6 +724,29 @@ void OpenGLGraphicsManager::refreshCursor() {
 	}
 }
 
+void OpenGLGraphicsManager::refreshCursorScale() {
+	float scaleFactorX = (float)_videoMode.hardwareWidth / _videoMode.screenWidth;
+	float scaleFactorY = (float)_videoMode.hardwareHeight / _videoMode.screenHeight;
+	float scaleFactor = scaleFactorX < scaleFactorY ? scaleFactorX : scaleFactorY;
+
+	if (_cursorTargetScale >= scaleFactor && _videoMode.scaleFactor >= scaleFactor) {
+		_cursorState.rW = _cursorState.w;
+		_cursorState.rH = _cursorState.h;
+		_cursorState.rHotX = _cursorState.hotX;
+		_cursorState.rHotY = _cursorState.hotY;
+	} else {
+		_cursorState.rW = _cursorState.w * scaleFactor;
+		_cursorState.rH = _cursorState.h * scaleFactor;
+		_cursorState.rHotX = _cursorState.hotX * scaleFactor;
+		_cursorState.rHotY = _cursorState.hotY * scaleFactor;
+	}
+
+	_cursorState.vW = _cursorState.w * scaleFactor;
+	_cursorState.vH = _cursorState.h * scaleFactor;
+	_cursorState.vHotX = _cursorState.hotX * scaleFactor;
+	_cursorState.vHotY = _cursorState.hotY * scaleFactor;
+}
+
 void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &gltype) {
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 		bpp = 4;
@@ -764,7 +792,6 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 
 	// Draw the overlay
 	if (_overlayVisible) {
-
 		// Refresh texture if dirty
 		if (_overlayNeedsRedraw || !_overlayDirtyRect.isEmpty())
 			refreshOverlay();
@@ -774,13 +801,16 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 
 	// Draw the cursor
 	if (_cursorVisible) {
-
 		// Refresh texture if dirty
 		if (_cursorNeedsRedraw)
 			refreshCursor();
 
-		_cursorTexture->drawTexture(_cursorState.x - _cursorState.hotX,
-		_cursorState.y - _cursorState.hotY,	_cursorState.w, _cursorState.h);
+		if (_overlayVisible)
+			_cursorTexture->drawTexture(_cursorState.x - _cursorState.rHotX,
+				_cursorState.y - _cursorState.rHotY, _cursorState.rW, _cursorState.rH);
+		else
+			_cursorTexture->drawTexture(_cursorState.x - _cursorState.vHotX,
+				_cursorState.y - _cursorState.vHotY, _cursorState.vW, _cursorState.vH);
 	}
 }
 
@@ -885,6 +915,8 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 	initGL();
 
 	loadTextures();
+
+	refreshCursorScale();
 
 	internUpdateScreen();
 

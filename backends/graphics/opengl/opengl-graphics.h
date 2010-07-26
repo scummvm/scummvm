@@ -205,20 +205,19 @@ protected:
 		int16 w, h;
 		int16 hotX, hotY;
 
-		// The size and hotspot of the pre-scaled cursor image, in real
+		// The size and hotspot of the scaled cursor, in real
 		// coordinates.
-		//int16 rW, rH;
-		//int16 rHotX, rHotY;
+		int16 rW, rH;
+		int16 rHotX, rHotY;
 
-		// The size and hotspot of the pre-scaled cursor image, in game
+		// The size and hotspot of the scaled cursor, in game
 		// coordinates.
-		//int16 vW, vH;
-		//int16 vHotX, vHotY;
+		int16 vW, vH;
+		int16 vHotX, vHotY;
 
-		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0)/*,
+		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
 		             rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
-		             vHotX(0), vHotY(0)*/
-			{ }
+		             vHotX(0), vHotY(0)	{}
 	};
 
 	GLTexture* _cursorTexture;
@@ -235,6 +234,7 @@ protected:
 	bool _cursorNeedsRedraw;
 
 	virtual void refreshCursor();
+	virtual void refreshCursorScale();
 	virtual void adjustMouseEvent(const Common::Event &event);
 	virtual void setMousePos(int x, int y);
 
