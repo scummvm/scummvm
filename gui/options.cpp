@@ -409,14 +409,16 @@ void OptionsDialog::close() {
 		}
 
 		// MT-32 options
-		if (_enableMT32Settings) {
-			saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
-			ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
-			ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
-		} else {
-			ConfMan.removeKey("mt32_device", _domain);
-			ConfMan.removeKey("native_mt32", _domain);
-			ConfMan.removeKey("enable_gs", _domain);
+		if (_mt32DevicePopUp) {
+			if (_enableMT32Settings) {
+				saveMusicDeviceSetting(_mt32DevicePopUp, "mt32_device");
+				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
+				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
+			} else {
+				ConfMan.removeKey("mt32_device", _domain);
+				ConfMan.removeKey("native_mt32", _domain);
+				ConfMan.removeKey("enable_gs", _domain);
+			}
 		}
 
 		// Subtitle options
