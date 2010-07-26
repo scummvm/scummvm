@@ -267,7 +267,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
-		   	_videoMode.screenHeight == _oldVideoMode.screenHeight) {
+			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
 
 			_oldVideoMode.setup = false;
 		}
@@ -383,9 +383,9 @@ void OpenGLGraphicsManager::fillScreen(uint32 col) {
 		}
 	} else if (_screenFormat.bytesPerPixel == 3) {
 		uint8 *pixels = (uint8 *)_screenData.pixels;
-		byte r =  (col >> 16) & 0xFF;
-		byte g =  (col >> 8) & 0xFF;
-		byte b =  col & 0xFF;
+		byte r = (col >> 16) & 0xFF;
+		byte g = (col >> 8) & 0xFF;
+		byte b = col & 0xFF;
 		for (int i = 0; i < _screenData.w * _screenData.h; i++) {
 			pixels[0] = r;
 			pixels[1] = g;
@@ -823,23 +823,23 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		bpp = 4;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_BYTE;
-	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) {  // RGB888
+	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
 		bpp = 3;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) {  // RGB565
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
 		bpp = 2;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_SHORT_5_6_5;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) {  // RGB5551
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) { // RGB5551
 		bpp = 2;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
-	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) {  // RGBA4444
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) { // RGBA4444
 		bpp = 2;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
-	} else if (pixelFormat.bytesPerPixel == 1) {  // CLUT8
+	} else if (pixelFormat.bytesPerPixel == 1) { // CLUT8
 		// If uses a palette, create texture as RGB888. The pixel data will be converted
 		// later.
 		bpp = 3;

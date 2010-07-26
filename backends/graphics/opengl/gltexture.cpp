@@ -129,7 +129,7 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 
 	// Allocate room for the texture
 	glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
-		     _textureWidth, _textureHeight, 0, _glFormat, _glType, NULL); CHECK_GL_ERROR();
+		_textureWidth, _textureHeight, 0, _glFormat, _glType, NULL); CHECK_GL_ERROR();
 
 	_refresh = false;
 }
@@ -171,10 +171,10 @@ void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
 
 	// Calculate the screen rect where the texture will be drawn
 	const GLshort vertices[] = {
-		x,	   y,
-		x + w, y,
-		x,	   y + h,
-		x + w, y + h,
+		x,		y,
+		x + w,	y,
+		x,		y + h,
+		x + w,	y + h,
 	};
 	glVertexPointer(2, GL_SHORT, 0, vertices); CHECK_GL_ERROR();
 

@@ -251,8 +251,8 @@ protected:
 		int16 vHotX, vHotY;
 
 		MousePos() : x(0), y(0), w(0), h(0), hotX(0), hotY(0),
-		             rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
-		             vHotX(0), vHotY(0)
+					rW(0), rH(0), rHotX(0), rHotY(0), vW(0), vH(0),
+					vHotX(0), vHotY(0)
 			{ }
 	};
 

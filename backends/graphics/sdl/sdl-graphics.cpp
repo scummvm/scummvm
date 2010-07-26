@@ -100,8 +100,8 @@ AspectRatio::AspectRatio(int w, int h) {
 #if !defined(_WIN32_WCE) && !defined(__SYMBIAN32__) && defined(USE_SCALERS)
 static AspectRatio getDesiredAspectRatio() {
 	const size_t AR_COUNT = 4;
-	const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
-	const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
+	const char *desiredAspectRatioAsStrings[AR_COUNT] = {	"auto",				"4/3",				"16/9",				"16/10" };
+	const AspectRatio desiredAspectRatios[AR_COUNT] = {		AspectRatio(0, 0),	AspectRatio(4,3),	AspectRatio(16,9),	AspectRatio(16,10) };
 
 	//TODO : We could parse an arbitrary string, if we code enough proper validation
 	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
@@ -305,7 +305,7 @@ OSystem::TransactionError SdlGraphicsManager::endGFXTransaction() {
 			_videoMode.aspectRatioCorrection == _oldVideoMode.aspectRatioCorrection &&
 			_videoMode.mode == _oldVideoMode.mode &&
 			_videoMode.screenWidth == _oldVideoMode.screenWidth &&
-		   	_videoMode.screenHeight == _oldVideoMode.screenHeight) {
+			_videoMode.screenHeight == _oldVideoMode.screenHeight) {
 
 			// Our new video mode would now be exactly the same as the
 			// old one. Since we still can not assume SDL_SetVideoMode
@@ -1049,7 +1049,7 @@ void SdlGraphicsManager::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 				scalerProc((byte *)srcSurf->pixels + (r->x * 2 + 2) + (r->y + 1) * srcPitch, srcPitch,
-						   (byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
+					(byte *)_hwscreen->pixels + rx1 * 2 + dst_y * dstPitch, dstPitch, r->w, dst_h);
 			}
 
 			r->x = rx1;
@@ -1983,7 +1983,7 @@ void SdlGraphicsManager::displayMessageOnOSD(const char *msg) {
 	SDL_UnlockSurface(_osdSurface);
 
 	// Init the OSD display parameters, and the fade out
-	_osdAlpha = SDL_ALPHA_TRANSPARENT +  kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+	_osdAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
 	_osdFadeStartTime = SDL_GetTicks() + kOSDFadeOutDelay;
 	SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
 
