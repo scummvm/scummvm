@@ -485,13 +485,26 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 	if (w <= 0 || h <= 0)
 		return;
 
-	// Copy buffer data to internal overlay surface
-	const byte *src = (byte *)buf;
-	byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
-	for (int i = 0; i < h; i++) {
-		memcpy(dst + x * _overlayData.bytesPerPixel, src, w * _overlayData.bytesPerPixel);
-		src += pitch * sizeof(buf[0]);
-		dst += _overlayData.pitch;
+	if (_overlayFormat.aBits() == 1) {
+		// Copy buffer with the alpha bit on for all pixels for correct
+		// overlay drawing.
+		const uint16 *src = (uint16 *)buf;
+		uint16 *dst = (uint16 *)_overlayData.pixels + y * _overlayData.w + x;
+		for (int i = 0; i < h; i++) {
+			for (int e = 0; e < w; e++)
+				dst[e] = src[e] | 0x1;
+			src += pitch;
+			dst += _overlayData.w;
+		}
+	} else {
+		// Copy buffer data to internal overlay surface
+		const byte *src = (byte *)buf;
+		byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
+		for (int i = 0; i < h; i++) {
+			memcpy(dst + x * _overlayData.bytesPerPixel, src, w * _overlayData.bytesPerPixel);
+			src += pitch * sizeof(buf[0]);
+			dst += _overlayData.pitch;
+		}
 	}
 
 	if (!_overlayNeedsRedraw) {
