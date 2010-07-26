@@ -24,7 +24,7 @@
  */
 
 #include "backends/fs/ds/ds-fs.h"
-#include "../elf-loader.h"
+#include "elf-loader.h"
 #include "dsmain.h"
 
 #define __DEBUG_PLUGINS__
@@ -38,13 +38,6 @@
 #define seterror(x,...) consolePrintf(x, ## __VA_ARGS__)
 
 /**
- * Flushes the data cache.
- */
-void flushDataCache() {
-  DC_FlushAll();
-}
-
-/**
  * Follow the instruction of a relocation section.
  *
  * @param DLFile 	 SeekableReadStream of File
@@ -52,7 +45,7 @@ void flushDataCache() {
  * @param size   	 Size of relocation section
  *
  */
-bool dlRelocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
+bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = NULL; //relocation entry
 
 	// Allocate memory for relocation table

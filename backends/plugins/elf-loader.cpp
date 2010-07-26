@@ -48,6 +48,20 @@
 
 #define seterror(x,...) printf(x, ## __VA_ARGS__)
 
+/**
+ * Flushes the data cache.
+ */
+void flushDataCache() {
+#ifdef __DS__
+  DC_FlushAll();
+#endif
+#ifdef __PLAYSTATION2__
+  FlushCache(0);
+  FlushCache(2);
+#endif
+}
+
+
 // Expel the symbol table from memory
 void DLObject::discard_symtab() {
 	free(_symtab);
