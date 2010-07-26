@@ -289,6 +289,8 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 
 	if (fontId != -1)
 		SetFont(fontId);
+	else
+		fontId = oldFontId;
 
 	if (g_sci->getLanguage() == Common::JA_JPN)
 		SwitchToFont900OnSjis(text);
@@ -296,7 +298,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	rect.top = rect.left = 0;
 
 	if (maxWidth < 0) { // force output as single line
-		StringWidth(text, oldFontId, textWidth, textHeight);
+		StringWidth(text, fontId, textWidth, textHeight);
 		rect.bottom = textHeight;
 		rect.right = textWidth;
 	} else {
@@ -308,7 +310,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 			charCount = GetLongest(curPos, rect.right, oldFontId);
 			if (charCount == 0)
 				break;
-			Width(curPos, 0, charCount, oldFontId, textWidth, textHeight);
+			Width(curPos, 0, charCount, fontId, textWidth, textHeight);
 			maxTextWidth = MAX(textWidth, maxTextWidth);
 			totalHeight += textHeight;
 			curPos += charCount;
@@ -390,6 +392,8 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 
 	if (fontId != -1)
 		SetFont(fontId);
+	else
+		fontId = orgFontId;
 
 	if (g_sci->getLanguage() == Common::JA_JPN) {
 		if (SwitchToFont900OnSjis(text))
@@ -420,9 +424,9 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		_ports->moveTo(rect.left + offset, rect.top + hline);
 
 		if (bshow) {
-			Show(text, 0, charCount, orgFontId, orgPenColor);
+			Show(text, 0, charCount, fontId, orgPenColor);
 		} else {
-			Draw(text, 0, charCount, orgFontId, orgPenColor);
+			Draw(text, 0, charCount, fontId, orgPenColor);
 		}
 
 		hline += textHeight;
