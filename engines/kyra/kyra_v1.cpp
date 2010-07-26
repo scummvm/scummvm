@@ -257,7 +257,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	int keys = 0;
 	int8 mouseWheel = 0;
 
-	while (_eventList.size()) {
+	while (!_eventList.empty()) {
 		Common::Event event = *_eventList.begin();
 		bool breakLoop = false;
 
@@ -281,6 +281,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					if (_debugger)
 						_debugger->attach();
+					breakLoop = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_q) {
 					quitGame();
 				}
