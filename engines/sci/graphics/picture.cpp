@@ -117,7 +117,7 @@ void GfxPicture::drawSci11Vga() {
 
 	// display Cel-data
 	if (has_cel)
-		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0);
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0, 0);
 
 	// process vector data
 	drawVectorData(inbuffer + vector_dataPos, vector_size);
@@ -153,7 +153,7 @@ int16 GfxPicture::getSci32celPriority(int16 celNo) {
 	return READ_LE_UINT16(inbuffer + cel_headerPos + 36);
 }
 
-void GfxPicture::drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, bool mirrored) {
+void GfxPicture::drawSci32Vga(int16 celNo, int16 drawX, int16 drawY, int16 pictureX, bool mirrored) {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int header_size = READ_LE_UINT16(inbuffer);
@@ -187,18 +187,18 @@ void GfxPicture::drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, bool mi
 	if (mirrored) {
 		// switch around relativeXpos
 		Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
-		callerX = displayArea.width() - callerX - READ_LE_UINT16(inbuffer + cel_headerPos + 0);
+		drawX = displayArea.width() - drawX - READ_LE_UINT16(inbuffer + cel_headerPos + 0);
 	}
 
 	cel_RlePos = READ_LE_UINT32(inbuffer + cel_headerPos + 24);
 	cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 
-	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, callerX, callerY);
+	drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, drawX, drawY, pictureX);
 	cel_headerPos += 42;
 }
 #endif
 
-void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY) {
+void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX) {
 	byte *celBitmap = NULL;
 	byte *ptr = NULL;
 	byte *headerPtr = inbuffer + headerPos;
@@ -326,54 +326,71 @@ void GfxPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos
 
 	Common::Rect displayArea = _coordAdjuster->pictureGetDisplayArea();
 
-	y = callerY + displayArea.top;
-	lastY = MIN<int16>(height + y, displayArea.bottom);
-	leftX = callerX + displayArea.left;
-	rightX = MIN<int16>(width + leftX, displayArea.right);
-
-	// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
-	//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)
-	//  SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
-	//  the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra
-	if (!_addToFlag)
-		clearColor = _screen->getColorWhite();
-
-	byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
-
-	ptr = celBitmap;
-	if (!_mirroredFlag) {
-		// Draw bitmap to screen
-		x = leftX;
-		while (y < lastY) {
-			curByte = *ptr++;
-			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, drawMask, curByte, priority, 0);
-
-			x++;
-
-			if (x >= rightX) {
-				if (width > rightX - leftX) // Skip extra pixels at the end of the row
-					ptr += width - (rightX - leftX);
-				x = leftX;
-				y++;
-			}
+	uint16 skipCelBitmapPixels = 0;
+	int16 displayWidth = width;
+	if (pictureX) {
+		// scroll position for picture active, we need to adjust drawX accordingly
+		drawX -= pictureX;
+		if (drawX < 0) {
+			skipCelBitmapPixels = -drawX;
+			displayWidth -= skipCelBitmapPixels;
+			drawX = 0;
 		}
-	} else {
-		// Draw bitmap to screen (mirrored)
-		x = rightX - 1;
-		while (y < lastY) {
-			curByte = *ptr++;
-			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, drawMask, curByte, priority, 0);
-			
-			if (x == leftX) {
-				if (width > rightX - leftX) // Skip extra pixels at the end of the row
-					ptr += width - (rightX - leftX);
-				x = rightX;
-				y++;
-			}
+	}
 
-			x--;
+	if (displayWidth > 0) {
+		y = displayArea.top + drawY;
+		lastY = MIN<int16>(height + y, displayArea.bottom);
+		leftX = displayArea.left + drawX;
+		rightX = MIN<int16>(displayWidth + leftX, displayArea.right);
+
+		uint16 sourcePixelSkipPerRow = 0;
+		if (width > rightX - leftX)
+			sourcePixelSkipPerRow = width - (rightX - leftX);
+
+		// Change clearcolor to white, if we dont add to an existing picture. That way we will paint everything on screen
+		//  but white and that wont matter because the screen is supposed to be already white. It seems that most (if not all)
+		//  SCI1.1 games use color 0 as transparency and SCI1 games use color 255 as transparency. Sierra SCI seems to paint
+		//  the whole data to screen and wont skip over transparent pixels. So this will actually make it work like Sierra
+		if (!_addToFlag)
+			clearColor = _screen->getColorWhite();
+
+		byte drawMask = priority == 255 ? GFX_SCREEN_MASK_VISUAL : GFX_SCREEN_MASK_VISUAL | GFX_SCREEN_MASK_PRIORITY;
+
+		ptr = celBitmap;
+		ptr += skipCelBitmapPixels;
+		if (!_mirroredFlag) {
+			// Draw bitmap to screen
+			x = leftX;
+			while (y < lastY) {
+				curByte = *ptr++;
+				if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+					_screen->putPixel(x, y, drawMask, curByte, priority, 0);
+
+				x++;
+
+				if (x >= rightX) {
+					ptr += sourcePixelSkipPerRow;
+					x = leftX;
+					y++;
+				}
+			}
+		} else {
+			// Draw bitmap to screen (mirrored)
+			x = rightX - 1;
+			while (y < lastY) {
+				curByte = *ptr++;
+				if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+					_screen->putPixel(x, y, drawMask, curByte, priority, 0);
+			
+				if (x == leftX) {
+					ptr += sourcePixelSkipPerRow;
+					x = rightX;
+					y++;
+				}
+
+				x--;
+			}
 		}
 	}
 
@@ -652,7 +669,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -692,7 +709,7 @@ void GfxPicture::drawVectorData(byte *data, int dataSize) {
 					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
-					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y, 0);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:

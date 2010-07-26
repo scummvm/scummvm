@@ -209,9 +209,13 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
 		planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
 
+		int16 planeOffsetX = 0;
+
 		// We get negative left in kq7 in scrolling rooms
-		if (planeRect.left < 0)
+		if (planeRect.left < 0) {
+			planeOffsetX = -planeRect.left;
 			planeRect.left = 0;
+		}
 		if (planeRect.top < 0)
 			planeRect.top = 0;
 		// We get bad plane-bottom in sq6
@@ -301,8 +305,6 @@ void GfxFrameout::kernelFrameout() {
 		FrameoutEntry *pictureCels = NULL;
 
 		if (planePicture) {
-			// Show base picture
-//			planePicture->drawSci32Vga(0, planePicture->getSci32celX(0), planePicture->getSci32celY(0), planePictureMirrored);
 			// Allocate memory for picture cels
 			pictureCels = new FrameoutEntry[planePicture->getSci32celCount()];
 			// Add following cels to the itemlist
@@ -336,7 +338,7 @@ void GfxFrameout::kernelFrameout() {
 				itemEntry->y = ((itemEntry->y * _screen->getHeight()) / scriptsRunningHeight);
 				itemEntry->x = ((itemEntry->x * _screen->getWidth()) / scriptsRunningWidth);
 
-				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planePictureMirrored);
+				planePicture->drawSci32Vga(itemEntry->celNo, itemEntry->x, itemEntry->y, planeOffsetX, planePictureMirrored);
 //				warning("picture cel %d %d", itemEntry->celNo, itemEntry->priority);
 
 			} else if (itemEntry->viewId != 0xFFFF) {
@@ -360,6 +362,8 @@ void GfxFrameout::kernelFrameout() {
 				default:
 					break;
 				}
+				// Adjust according to current scroll position
+				itemEntry->x -= planeOffsetX;
 
 				uint16 useInsetRect = readSelectorValue(_segMan, itemEntry->object, SELECTOR(useInsetRect));
 				if (useInsetRect) {
