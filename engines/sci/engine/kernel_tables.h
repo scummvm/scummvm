@@ -305,7 +305,9 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(AvoidPath),         SIG_EVERYWHERE,           "ii(.*)",                NULL,            NULL },
     { MAP_CALL(BaseSetter),        SIG_EVERYWHERE,           "o",                     NULL,            NULL },
     { MAP_CALL(CanBeHere),         SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
+#ifdef ENABLE_SCI32
     { "CantBeHere", kCantBeHere32, SIG_SCI32, SIGFOR_ALL,    "ol",                    NULL,            NULL },
+#endif
     { MAP_CALL(CantBeHere),        SIG_EVERYWHERE,           "o(l)",                  NULL,            NULL },
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },

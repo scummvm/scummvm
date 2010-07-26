@@ -149,11 +149,11 @@ public:
 	Common::String toString() const {
 		char buf[32];
 
-		snprintf(buf, 32, "%s.%i", getResourceTypeName(_type), _number);
+		snprintf(buf, 32, "%s.%d", getResourceTypeName(_type), _number);
 		Common::String retStr = buf;
 
 		if (_tuple != 0) {
-			snprintf(buf, 32, "(%i, %i, %i, %i)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
+			snprintf(buf, 32, "(%d, %d, %d, %d)", _tuple >> 24, (_tuple >> 16) & 0xff, (_tuple >> 8) & 0xff, _tuple & 0xff);
 			retStr += buf;
 		}
 
