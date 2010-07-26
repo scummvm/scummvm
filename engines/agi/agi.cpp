@@ -609,6 +609,8 @@ void AgiEngine::initialize() {
 			_renderMode = Common::kRenderEGA;
 			break;
 		}
+	} else {
+		_renderMode = Common::kRenderDefault;
 	}
 
 	_buttonStyle = AgiButtonStyle(_renderMode);
