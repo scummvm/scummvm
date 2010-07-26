@@ -931,8 +931,16 @@ void OpenGLGraphicsManager::setScale(int newScale) {
 	if (newScale == _videoMode.scaleFactor)
 		return;
 
-	_videoMode.scaleFactor = newScale;
+	switch (newScale) {
+	case OpenGL::GFX_NORMAL:
+		_videoMode.mode = OpenGL::GFX_NORMAL;
+	case OpenGL::GFX_DOUBLESIZE:
+		_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
+	case OpenGL::GFX_TRIPLESIZE:
+		_videoMode.mode = OpenGL::GFX_TRIPLESIZE;
+	}
 
+	_videoMode.scaleFactor = newScale;
 	_transactionDetails.sizeChanged = true;
 }
 

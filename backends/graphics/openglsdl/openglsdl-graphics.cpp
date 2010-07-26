@@ -183,6 +183,8 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			_videoMode.hardwareWidth = bestMode->w;
 			_videoMode.hardwareHeight = bestMode->h;
 		} else {
+			if (_oldVideoMode.fullscreen)
+				return false;
 			_videoMode.fullscreen = false;
 		}
 	}
