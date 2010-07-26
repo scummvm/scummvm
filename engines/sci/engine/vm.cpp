@@ -1101,7 +1101,7 @@ void run_vm(EngineState *s) {
 			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
 				s->r_acc = make_reg(0, value1 | value2);
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeOrWorkarounds, r_temp, s->r_acc);
 			break;
 		}
 

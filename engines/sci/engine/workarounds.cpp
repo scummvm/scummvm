@@ -38,6 +38,12 @@ const SciWorkaroundEntry opcodeDivWorkarounds[] = {
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeOrWorkarounds[] = {
+    { GID_ECOQUEST2,       100,   0,  0,              "Rain", "points",       0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number
+    SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,            workaround
 const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
     { GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
