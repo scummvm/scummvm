@@ -34,6 +34,7 @@
 #include "testbed/graphics.h"
 #include "testbed/misc.h"
 #include "testbed/savegame.h"
+#include "testbed/sound.h"
 #include "testbed/testbed.h"
 
 namespace Testbed {
@@ -71,6 +72,9 @@ TestbedEngine::TestbedEngine(OSystem *syst)
 	_testsuiteList.push_back(ts);
 	// Events
 	ts = new EventTestSuite();
+	_testsuiteList.push_back(ts);
+	// Sound
+	ts = new SoundSubsystemTestSuite();
 	_testsuiteList.push_back(ts);
 }
 

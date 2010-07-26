@@ -22,46 +22,29 @@
  * $Id$
  */
 
-#ifndef TESTBED_TEMPLATE_H
-#define TESTBED_TEMPLATE_H
-
-#include "testbed/testsuite.h"
-
-// This file can be used as template for header files of other newer testsuites.
+#include "sound/mixer.h"
+#include "testbed/sound.h"
+#include "sound/softsynth/pcspk.h"
 
 namespace Testbed {
 
-namespace XXXtests {
+bool SoundSubsystem::playPCSpkSound() {
+	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
+	Audio::Mixer *mixer = g_system->getMixer();
+	Audio::SoundHandle handle;
+	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, speaker);
+	speaker->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
+	g_system->delayMillis(1000);
+	mixer->setChannelBalance(handle, -127);
+	g_system->delayMillis(1000);
+	mixer->setChannelBalance(handle, 127);
+	g_system->delayMillis(1000);
+	mixer->stopAll();
+	return true;
+}
 
-// Helper functions for XXX tests
+SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
+	addTest("PCSpkrSound", &SoundSubsystem::playPCSpkSound, true);
+}
 
-// will contain function declarations for XXX tests
-// add more here
-
-} // End of namespace XXXtests
-
-class XXXTestSuite : public Testsuite {
-public:
-	/**
-	 * The constructor for the XXXTestSuite
-	 * For every test to be executed one must:
-	 * 1) Create a function that would invoke the test
-	 * 2) Add that test to list by executing addTest()
-	 *
-	 * @see addTest()
-	 */
-	XXXTestSuite();
-	~XXXTestSuite() {}
-	const char *getName() const {
-		return "Dummy Template";
-	}
-	
-	const char *getDescription() const {
-		return "Some Arbit description";
-	}
-
-};
-
-} // End of namespace Testbed
-
-#endif // TESTBED_TEMPLATE_H
+}	// End of namespace Testbed

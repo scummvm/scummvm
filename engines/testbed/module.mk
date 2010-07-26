@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	graphics.o \
 	misc.o \
 	savegame.o \
+	sound.o \
 	testbed.o \
 	testsuite.o
 

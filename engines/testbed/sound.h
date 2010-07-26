@@ -22,46 +22,44 @@
  * $Id$
  */
 
-#ifndef TESTBED_TEMPLATE_H
-#define TESTBED_TEMPLATE_H
+#ifndef TESTBED_SOUND_H
+#define TESTBED_SOUND_H
 
 #include "testbed/testsuite.h"
 
-// This file can be used as template for header files of other newer testsuites.
-
 namespace Testbed {
 
-namespace XXXtests {
+namespace SoundSubsystem {
 
-// Helper functions for XXX tests
+// Helper functions for SoundSubsystem tests
 
-// will contain function declarations for XXX tests
-// add more here
+// will contain function declarations for SoundSubsystem tests
+bool playPCSpkSound();
+}
 
-} // End of namespace XXXtests
-
-class XXXTestSuite : public Testsuite {
+class SoundSubsystemTestSuite : public Testsuite {
 public:
 	/**
-	 * The constructor for the XXXTestSuite
+	 * The constructor for the SoundSubsystemTestSuite
 	 * For every test to be executed one must:
 	 * 1) Create a function that would invoke the test
 	 * 2) Add that test to list by executing addTest()
 	 *
 	 * @see addTest()
 	 */
-	XXXTestSuite();
-	~XXXTestSuite() {}
+	SoundSubsystemTestSuite();
+	~SoundSubsystemTestSuite() {}
+	
 	const char *getName() const {
-		return "Dummy Template";
+		return "SoundSubsystem";
 	}
 	
 	const char *getDescription() const {
-		return "Some Arbit description";
+		return "Sound Subsystem";
 	}
 
 };
 
 } // End of namespace Testbed
 
-#endif // TESTBED_TEMPLATE_H
+#endif // TESTBED_SOUND_H
