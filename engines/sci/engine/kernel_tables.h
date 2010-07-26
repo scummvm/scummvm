@@ -373,7 +373,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(InitBresen),        SIG_EVERYWHERE,           "o(i)",                  NULL,            NULL },
     { MAP_CALL(Intersections),     SIG_EVERYWHERE,           "iiiiriiiri",            NULL,            NULL },
     { MAP_CALL(IsItSkip),          SIG_EVERYWHERE,           "iiiii",                 NULL,            NULL },
-    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                     NULL,            NULL },
+    { MAP_CALL(IsObject),          SIG_EVERYWHERE,           ".",                     NULL,            kIsObject_workarounds },
     { MAP_CALL(Joystick),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(LastNode),          SIG_EVERYWHERE,           "l",                     NULL,            NULL },
     { MAP_CALL(Load),              SIG_EVERYWHERE,           "ii(i*)",                NULL,            NULL },
