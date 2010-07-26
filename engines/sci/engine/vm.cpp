@@ -704,7 +704,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		switch (solution.type) {
 		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+				originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
 			break;
 		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
 			return;
@@ -749,9 +751,13 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+						originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
 				}
-				error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				error("[VM] k%s: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+					originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
 				break;
 			}
 			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
