@@ -266,7 +266,10 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
+			// The music driver id isn't unique, but it will match
+			// driver's first device. This is useful when selecting
+			// the driver from the command line.
+			if (identifier.equals(d->getMusicDriverId()) || identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
 				return d->getHandle();
 			}
 		}
