@@ -207,6 +207,8 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		}
 	}
 
+	_formatBGR = _hwscreen->format->Rshift != 0;
+
 	return OpenGLGraphicsManager::loadGFXMode();
 }
 

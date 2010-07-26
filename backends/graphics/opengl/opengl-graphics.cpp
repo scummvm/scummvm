@@ -27,6 +27,7 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/glerrorcheck.h"
+#include "common/file.h"
 #include "common/mutex.h"
 #include "common/translation.h"
 #include "graphics/font.h"
@@ -44,7 +45,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_transactionMode(kTransactionNone),
 	_cursorNeedsRedraw(false), _cursorPaletteDisabled(true),
 	_cursorVisible(false), _cursorKeyColor(0),
-	_cursorTargetScale(1) {
+	_cursorTargetScale(1),
+	_formatBGR(false) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -1104,7 +1106,46 @@ bool OpenGLGraphicsManager::notifyEvent(const Common::Event &event) {
 }
 
 bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
-	return false;
+	int width = _videoMode.hardwareWidth;
+	int height = _videoMode.hardwareHeight;
+	
+	// Allocate space for screenshot
+	uint8 *pixels = new uint8[width * height * 3];
+
+	// Get pixel data from opengl buffer
+	if (_formatBGR)
+		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels);
+	else
+		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+
+	// Open file
+	Common::DumpFile out;
+	out.open(filename);
+
+	// Write BMP header
+	out.writeByte('B');
+	out.writeByte('M');
+	out.writeUint32LE(height * width * 3 + 52);
+	out.writeUint32LE(0);
+	out.writeUint32LE(52);
+	out.writeUint32LE(40);
+	out.writeUint32LE(width);
+	out.writeUint32LE(height);
+	out.writeUint16LE(1);
+	out.writeUint16LE(24);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0);
+	out.writeUint32LE(0); 
+
+	// Write pixel data to BMP
+	out.write(pixels, width * height * 3);
+
+	delete[] pixels;
+
+	return true;
 }
 
 #endif

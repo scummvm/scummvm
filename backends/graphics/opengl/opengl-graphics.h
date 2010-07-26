@@ -164,6 +164,8 @@ protected:
 	virtual void setScale(int newScale);
 	virtual void setAspectRatioCorrection(int mode);
 
+	bool _formatBGR;
+
 	//
 	// Game screen
 	//
