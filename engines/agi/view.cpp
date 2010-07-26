@@ -157,8 +157,7 @@ int AgiEngine::decodeView(int n) {
 		return errNoLoopsInView;
 
 	// allocate memory for all views
-	_game.views[n].loop = (ViewLoop *)
-			calloc(_game.views[n].numLoops, sizeof(ViewLoop));
+	_game.views[n].loop = (ViewLoop *)calloc(_game.views[n].numLoops, sizeof(ViewLoop));
 
 	if (_game.views[n].loop == NULL)
 		return errNotEnoughMemory;

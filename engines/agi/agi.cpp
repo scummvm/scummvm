@@ -343,7 +343,7 @@ int AgiEngine::agiInit() {
 
 	// clear view table
 	for (i = 0; i < MAX_VIEWTABLE; i++)
-		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
+		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
 
 	initWords();
 

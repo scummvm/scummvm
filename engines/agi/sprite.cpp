@@ -245,7 +245,7 @@ void SpritesMgr::objsRestoreArea(Sprite *s) {
 	// WORKAROUND (see ScummVM bug #1945716)
 	// When set.view command is called, current code cannot detect  this situation while updating
 	// Thus we force removal of the old sprite
-	if (s->v->viewReplaced) {
+	if (s->v && s->v->viewReplaced) {
 		commitBlock(xPos, yPos, xPos + xSize, yPos + ySize);
 		s->v->viewReplaced = false;
 	}
@@ -679,6 +679,7 @@ void SpritesMgr::showObj(int n) {
 	s.xSize = c->width;
 	s.ySize = c->height;
 	s.buffer = (uint8 *)malloc(s.xSize * s.ySize);
+	s.v = 0;
 
 	objsSaveArea(&s);
 	blitCel(x1, y1, 15, c, _vm->_game.views[n].agi256_2);
