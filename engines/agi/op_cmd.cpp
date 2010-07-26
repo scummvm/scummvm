@@ -1228,8 +1228,7 @@ void AgiEngine::cmd_quit(uint8 *p) {
 	if (p0) {
 		quitGame();
 	} else {
-		if (selectionBox
-				(" Quit the _game, or continue? \n\n\n", buttons) == 0) {
+		if (selectionBox(" Quit the game, or continue? \n\n\n", buttons) == 0) {
 			quitGame();
 		}
 	}
