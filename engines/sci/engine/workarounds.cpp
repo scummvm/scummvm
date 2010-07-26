@@ -214,6 +214,11 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
     { GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
     { GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
     { GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
+	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident
+	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident
+	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident
+	{ GID_LAURABOW2,       6,     6,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the murder, a 3rd parameter is passed by accident
+	{ GID_LAURABOW2,       7,     7,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the logo is shown, a 3rd parameter is passed by accident
     SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
