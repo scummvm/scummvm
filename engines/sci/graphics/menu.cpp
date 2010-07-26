@@ -271,8 +271,13 @@ GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 
 void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
-	if (!itemEntry)
-		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+	if (!itemEntry) {
+		// Check if the game actually has a menu. PQ2 demo calls this, for example, but has no menus.
+		if (_itemList.size() == 0)
+			return;
+		else
+			error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+	}
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
 		itemEntry->enabled = value.isNull() ? false : true;
