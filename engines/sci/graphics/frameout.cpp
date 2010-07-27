@@ -420,6 +420,8 @@ void GfxFrameout::kernelFrameout() {
 						view->getCelScaledRect(itemEntry->loopNo, itemEntry->celNo, itemEntry->x, itemEntry->y, itemEntry->z, itemEntry->scaleX, itemEntry->scaleY, itemEntry->celRect);
 
 					Common::Rect nsRect = itemEntry->celRect;
+					// Translate back to actual coordinate within scrollable plane
+					nsRect.translate(planeOffsetX, 0);
 					switch (getSciVersion()) {
 					case SCI_VERSION_2:
 						if (view->isSci2Hires()) {
