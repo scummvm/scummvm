@@ -97,6 +97,9 @@ GLTexture::~GLTexture() {
 }
 
 void GLTexture::refresh() {
+	// Delete previous texture
+	glDeleteTextures(1, &_textureName); CHECK_GL_ERROR();
+
 	// Generate the texture ID
 	glGenTextures(1, &_textureName); CHECK_GL_ERROR();
 	_refresh = true;

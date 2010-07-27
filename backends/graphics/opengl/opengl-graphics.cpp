@@ -355,6 +355,7 @@ void OpenGLGraphicsManager::copyRectToScreen(const byte *buf, int pitch, int x, 
 		dst += _screenData.pitch;
 	}
 
+	// Extend dirty area if not full screen redraw is flagged
 	if (!_screenNeedsRedraw) {
 		const Common::Rect dirtyRect(x, y, x + w, y + h);
 		_screenDirtyRect.extend(dirtyRect);
@@ -514,6 +515,7 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 		}
 	}
 
+	// Extend dirty area if not full screen redraw is flagged
 	if (!_overlayNeedsRedraw) {
 		const Common::Rect dirtyRect(x, y, x + w, y + h);
 		_overlayDirtyRect.extend(dirtyRect);
@@ -797,21 +799,27 @@ void OpenGLGraphicsManager::refreshCursor() {
 }
 
 void OpenGLGraphicsManager::refreshCursorScale() {
+	// Get the window minimum scale factor. The cursor will mantain its original aspect
+	// ratio, and we do not want it to get too big if only one dimension is resized
 	float scaleFactor = MIN((float)_videoMode.hardwareWidth / _videoMode.screenWidth,
 		(float)_videoMode.hardwareHeight / _videoMode.screenHeight);
 
 	if (_cursorTargetScale >= scaleFactor && _videoMode.scaleFactor >= scaleFactor) {
+		// If the cursor target scale and the video mode scale factor are bigger than
+		// the current window scale, do not scale the cursor for the overlay
 		_cursorState.rW = _cursorState.w;
 		_cursorState.rH = _cursorState.h;
 		_cursorState.rHotX = _cursorState.hotX;
 		_cursorState.rHotY = _cursorState.hotY;
 	} else {
+		// Otherwise, scale the cursor for the overlay
 		_cursorState.rW = _cursorState.w * scaleFactor;
 		_cursorState.rH = _cursorState.h * scaleFactor;
 		_cursorState.rHotX = _cursorState.hotX * scaleFactor;
 		_cursorState.rHotY = _cursorState.hotY * scaleFactor;
 	}
 
+	// Always scale the cursor for the game
 	_cursorState.vW = _cursorState.w * scaleFactor;
 	_cursorState.vH = _cursorState.h * scaleFactor;
 	_cursorState.vHotX = _cursorState.hotX * scaleFactor;
@@ -846,36 +854,36 @@ void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, 
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
 	} else {
-		error("Pixel format not supported");
+		error("OpenGLGraphicsManager: Pixel format not supported");
 	}
 }
 
 void OpenGLGraphicsManager::internUpdateScreen() {
-	// Clear the screen
+	// Clear the screen buffer
 	glClear(GL_COLOR_BUFFER_BIT); CHECK_GL_ERROR();
 
-	// Draw the game screen
 	if (_screenNeedsRedraw || !_screenDirtyRect.isEmpty())
 		// Refresh texture if dirty
 		refreshGameScreen();
 
+	// Draw the game screen
 	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 
-	// Draw the overlay
 	if (_overlayVisible) {
-		// Refresh texture if dirty
 		if (_overlayNeedsRedraw || !_overlayDirtyRect.isEmpty())
+			// Refresh texture if dirty
 			refreshOverlay();
 
+		// Draw the overlay
 		_overlayTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 
-	// Draw the cursor
 	if (_cursorVisible) {
-		// Refresh texture if dirty
 		if (_cursorNeedsRedraw)
+			// Refresh texture if dirty
 			refreshCursor();
 
+		// Draw the cursor
 		if (_overlayVisible)
 			_cursorTexture->drawTexture(_cursorState.x - _cursorState.rHotX,
 				_cursorState.y - _cursorState.rHotY, _cursorState.rW, _cursorState.rH);
@@ -886,7 +894,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 
 #ifdef USE_OSD
 	if (_osdAlpha > 0) {
-		// Updated alpha value
+		// Update alpha value
 		const int diff = g_system->getMillis() - _osdFadeStartTime;
 		if (diff > 0) {
 			if (diff >= kOSDFadeOutDuration) {
@@ -898,13 +906,13 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			}
 		}
 		// Set the osd transparency
-		glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, _osdAlpha / 100.0f); CHECK_GL_ERROR();
 
 		// Draw the osd texture
 		_osdTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 
 		// Reset color
-		glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+		glColor4f(1.0f, 1.0f, 1.0f, 1.0f); CHECK_GL_ERROR();
 	}
 #endif
 }
@@ -980,11 +988,14 @@ void OpenGLGraphicsManager::loadTextures() {
 	_cursorTexture->setFilter(filter);
 
 	if (_transactionDetails.newContext || _transactionDetails.filterChanged) {
+		// If the context was destroyed or it is needed to change the texture filter
+		// we need to recreate the textures
 		_gameTexture->refresh();
 		_overlayTexture->refresh();
 		_cursorTexture->refresh();
 	}
 
+	// Allocate texture memory and finish refreshing
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
 	_overlayTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
 	_cursorTexture->allocBuffer(_cursorState.w, _cursorState.h);
@@ -1113,10 +1124,11 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	uint8 *pixels = new uint8[width * height * 3];
 
 	// Get pixel data from opengl buffer
-	if (_formatBGR)
-		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels);
-	else
-		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels);
+	if (_formatBGR) {
+		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
+	} else {
+		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
+	}
 
 	// Open file
 	Common::DumpFile out;

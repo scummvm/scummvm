@@ -118,7 +118,7 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 		if (RGBList[i] != format)
 			list.push_back(RGBList[i]);
 	}
-	//list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
 	return list;
 }
 
@@ -148,6 +148,8 @@ void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
 	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+
+	// If the screen was resized, do not change its size
 	if (!_screenResized) {
 		_videoMode.hardwareWidth = _videoMode.overlayWidth;
 		_videoMode.hardwareHeight = _videoMode.overlayHeight;
@@ -161,10 +163,13 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
+	// Find the best mode for fullscreen
 	if (_videoMode.fullscreen) {
 		SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
 		const SDL_Rect *bestMode = NULL;
 		uint bestMetric = (uint)-1;
+
+		// Iterate over all available fullscreen modes
 		while (const SDL_Rect *mode = *availableModes++) {
 			if (mode->w < _videoMode.hardwareWidth)
 				continue;
@@ -180,18 +185,24 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		}
 
 		if (bestMode) {
+			// If there is a suiting mode, use it
 			_videoMode.hardwareWidth = bestMode->w;
 			_videoMode.hardwareHeight = bestMode->h;
 		} else {
+			// If the last mode was in fullscreen, cancel GFX load
 			if (_oldVideoMode.fullscreen)
 				return false;
+
 			_videoMode.fullscreen = false;
 		}
 	}
 
+	// If changing to any fullscreen mode or from fullscreen,
+	// the OpenGL context is destroyed
 	if (_oldVideoMode.fullscreen || _videoMode.fullscreen)
 		_transactionDetails.newContext = true;
 
+	// Create our window
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
 	);
@@ -202,13 +213,15 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		if (!_oldVideoMode.setup) {
 			warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
 			g_system->quit();
-		} else {
+		} else
+			// Cancel GFX load, and go back to last mode
 			return false;
-		}
 	}
 
+	// Check if the screen is BGR format
 	_formatBGR = _hwscreen->format->Rshift != 0;
 
+	// Call and return parent implementation of this method
 	return OpenGLGraphicsManager::loadGFXMode();
 }
 
@@ -220,8 +233,10 @@ void OpenGLSdlGraphicsManager::unloadGFXMode() {
 }
 
 void OpenGLSdlGraphicsManager::internUpdateScreen() {
+	// Call to parent implementation of this method
 	OpenGLGraphicsManager::internUpdateScreen();
 
+	// Swap OpenGL buffers
 	SDL_GL_SwapBuffers(); 
 }
 
@@ -377,10 +392,15 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	// HACK: Handle special SDL event
 	case OSystem_SDL::kSdlEventResize:
 		beginGFXTransaction();
+			// Set the new screen size. It is saved on the mouse event as part of HACK,
+			// there is no common resize event
 			_videoMode.hardwareWidth = event.mouse.x;
 			_videoMode.hardwareHeight = event.mouse.y;
 			_screenResized = true;
 			_transactionDetails.sizeChanged = true;
+			// The OpenGL context is not always destroyed during resizing,
+			// however it is better to waste some time recreating it than
+			// getting a blank screen
 			_transactionDetails.newContext = true;
 		endGFXTransaction();
 		return true;
