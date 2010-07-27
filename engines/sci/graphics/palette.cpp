@@ -72,6 +72,8 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 }
 
 GfxPalette::~GfxPalette() {
+	if (_palVaryResourceId != -1)
+		palVaryRemoveTimer();
 }
 
 bool GfxPalette::isMerging() {
