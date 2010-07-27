@@ -48,6 +48,7 @@ const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
 	{ GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
 	{ GID_LSL6HIRES,      360,64938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
+	{ GID_SQ5,            200,  939,  0,               "Osc", "cycleDone",       -1,    0, { WORKAROUND_FAKE,   1 } }, // when going back to bridge the crew is goofing off, we get an object as cycle count
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
