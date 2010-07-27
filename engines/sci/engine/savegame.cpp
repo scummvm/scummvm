@@ -563,6 +563,18 @@ void StringTable::saveLoadWithSerializer(Common::Serializer &ser) {
 }
 #endif
 
+void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette) {
+	s.syncBytes(palette->mapping, 256);
+	s.syncAsUint32LE(palette->timestamp);
+	for (int i = 0; i < 256; i++) {
+		s.syncAsByte(palette->colors[i].used);
+		s.syncAsByte(palette->colors[i].r);
+		s.syncAsByte(palette->colors[i].g);
+		s.syncAsByte(palette->colors[i].b);
+	}
+	s.syncBytes(palette->intensity, 256);
+}
+
 void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.getVersion() < 24)
 		return;
@@ -572,8 +584,8 @@ void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
 
 	s.syncAsSint32LE(_palVaryResourceId);
 	if (_palVaryResourceId != -1) {
-		_palVaryOriginPalette.saveLoadWithSerializer(s);
-		_palVaryTargetPalette.saveLoadWithSerializer(s);
+		palVarySaveLoadPalette(s, &_palVaryOriginPalette);
+		palVarySaveLoadPalette(s, &_palVaryTargetPalette);
 		s.syncAsSint16LE(_palVaryStep);
 		s.syncAsSint16LE(_palVaryStepStop);
 		s.syncAsSint16LE(_palVaryDirection);

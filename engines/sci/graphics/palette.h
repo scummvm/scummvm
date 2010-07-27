@@ -63,6 +63,8 @@ public:
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
+	reg_t kernelSave();
+	void kernelRestore(reg_t memoryHandle);
 	void kernelAssertPalette(GuiResourceId resourceId);
 
 	void kernelSyncScreenPalette();
@@ -81,6 +83,7 @@ public:
 	Palette _sysPalette;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
 private:
 	void palVaryInit();

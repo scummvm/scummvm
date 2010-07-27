@@ -215,7 +215,7 @@ static const SciKernelMapSubEntry kPalette_subops[] = {
     { SIG_SCIALL,          5, MAP_CALL(PaletteFindColor),          "iii",                  NULL },
     { SIG_SCIALL,          6, MAP_CALL(PaletteAnimate),            "i*",                   NULL },
     { SIG_SCIALL,          7, MAP_CALL(PaletteSave),               "",                     NULL },
-    { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "i",                    NULL },
+    { SIG_SCIALL,          8, MAP_CALL(PaletteRestore),            "[r0]",                 NULL },
     SCI_SUBOPENTRY_TERMINATOR
 };
 

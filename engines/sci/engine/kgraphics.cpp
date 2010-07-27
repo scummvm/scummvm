@@ -616,16 +616,16 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getResMan()->isVGA()) {
-		warning("kPalette(7), save palette to heap STUB");
+		return g_sci->_gfxPalette->kernelSave();
 	}
 	return NULL_REG;
 }
 
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getResMan()->isVGA()) {
-		warning("kPalette(8), restore palette from heap STUB");
+		g_sci->_gfxPalette->kernelRestore(argv[0]);
 	}
-	return s->r_acc;
+	return argv[0];
 }
 
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {

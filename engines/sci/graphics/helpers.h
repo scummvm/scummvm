@@ -83,13 +83,6 @@ struct Window : public Port {
 struct Color {
 	byte used;
 	byte r, g, b;
-
-	void saveLoadWithSerializer(Common::Serializer &s) {
-		s.syncAsByte(used);
-		s.syncAsByte(r);
-		s.syncAsByte(g);
-		s.syncAsByte(b);
-	}
 };
 
 struct Palette {
@@ -97,14 +90,6 @@ struct Palette {
 	uint32 timestamp;
 	Color colors[256];
 	byte intensity[256];
-
-	void saveLoadWithSerializer(Common::Serializer &s) {
-		s.syncBytes(mapping, 256);
-		s.syncAsUint32LE(timestamp);
-		for (int i = 0; i < 256; i++)
-			colors[i].saveLoadWithSerializer(s);
-		s.syncBytes(intensity, 256);
-	}
 };
 
 struct PalSchedule {

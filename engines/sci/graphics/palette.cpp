@@ -488,6 +488,42 @@ void GfxPalette::kernelAnimateSet() {
 	setOnScreen();
 }
 
+reg_t GfxPalette::kernelSave() {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	reg_t memoryId = segMan->allocateHunkEntry("kPalette(save)", 1024);
+	byte *memoryPtr = segMan->getHunkPointer(memoryId);
+	if (memoryPtr) {
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			*memoryPtr++ = _sysPalette.colors[colorNr].used;
+			*memoryPtr++ = _sysPalette.colors[colorNr].r;
+			*memoryPtr++ = _sysPalette.colors[colorNr].g;
+			*memoryPtr++ = _sysPalette.colors[colorNr].b;
+		}
+	}
+	return memoryId;
+}
+
+void GfxPalette::kernelRestore(reg_t memoryHandle) {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	if (!memoryHandle.isNull()) {
+		byte *memoryPtr = segMan->getHunkPointer(memoryHandle);
+		if (!memoryPtr)
+			error("Bad handle used for kPalette(restore)");
+
+		Palette restoredPalette;
+
+		restoredPalette.timestamp = 0;
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			restoredPalette.colors[colorNr].used = *memoryPtr++;
+			restoredPalette.colors[colorNr].r = *memoryPtr++;
+			restoredPalette.colors[colorNr].g = *memoryPtr++;
+			restoredPalette.colors[colorNr].b = *memoryPtr++;
+		}
+
+		set(&restoredPalette, true);
+	}
+}
+
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 	// Sometimes invalid viewIds are asked for, ignore those (e.g. qfg1vga)
 	//if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
