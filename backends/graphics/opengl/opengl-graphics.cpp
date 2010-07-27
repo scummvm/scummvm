@@ -40,7 +40,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #endif
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
 	_screenChangeCount(0), _screenNeedsRedraw(false),
-	_currentShakePos(0), _newShakePos(0),
+	_shakePos(0),
 	_overlayVisible(false), _overlayNeedsRedraw(false),
 	_transactionMode(kTransactionNone),
 	_cursorNeedsRedraw(false), _cursorPaletteDisabled(true),
@@ -410,7 +410,7 @@ void OpenGLGraphicsManager::updateScreen() {
 
 void OpenGLGraphicsManager::setShakePos(int shakeOffset) {
 	assert (_transactionMode == kTransactionNone);
-	_newShakePos = shakeOffset;
+	_shakePos = shakeOffset;
 }
 
 void OpenGLGraphicsManager::setFocusRectangle(const Common::Rect& rect) {
@@ -866,8 +866,16 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 		// Refresh texture if dirty
 		refreshGameScreen();
 
+	int scaleFactor = _videoMode.hardwareHeight / _videoMode.screenHeight;
+
+	glPushMatrix();
+
+	glTranslatef(0, _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
+
 	// Draw the game screen
 	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+
+	glPopMatrix();
 
 	if (_overlayVisible) {
 		if (_overlayNeedsRedraw || !_overlayDirtyRect.isEmpty())
@@ -883,6 +891,9 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			// Refresh texture if dirty
 			refreshCursor();
 
+		glPushMatrix();
+		glTranslatef(0, _overlayVisible ? 0 : _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
+
 		// Draw the cursor
 		if (_overlayVisible)
 			_cursorTexture->drawTexture(_cursorState.x - _cursorState.rHotX,
@@ -890,6 +901,8 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 		else
 			_cursorTexture->drawTexture(_cursorState.x - _cursorState.vHotX,
 				_cursorState.y - _cursorState.vHotY, _cursorState.vW, _cursorState.vH);
+
+		glPopMatrix();
 	}
 
 #ifdef USE_OSD

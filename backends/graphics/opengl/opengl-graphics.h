@@ -183,8 +183,7 @@ protected:
 	virtual void refreshGameScreen();
 
 	// Shake mode
-	int _currentShakePos;
-	int _newShakePos;
+	int _shakePos;
 
 	//
 	// Overlay
