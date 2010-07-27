@@ -126,8 +126,13 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	_pauseStart = 0;
 
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
+	bool muteSFX   = ConfMan.getBool("mute") || ConfMan.getBool("sfx_mute");
+	bool muteMusic = ConfMan.getBool("mute") || ConfMan.getBool("music_mute");
+
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType,
+			muteSFX   ? 0 : ConfMan.getInt("sfx_volume"));
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType,
+			muteMusic ? 0 : ConfMan.getInt("music_volume"));
 
 	_copyProtection = ConfMan.getBool("copy_protection");
 
