@@ -134,8 +134,6 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	if (g_sci->_features->usesOldGfxFunctions())
 		_picWind->top = offTop;
 
-	priorityBandsMemoryActive = false;
-
 	kernelInitPriorityBands();
 }
 
@@ -541,22 +539,14 @@ void GfxPorts::priorityBandsInit(byte *data) {
 		_priorityBands[i++] = inx;
 }
 
-// Gets used by picture class to remember priority bands data from sci1.1 pictures that need to get applied when
-//  transitioning to that picture
-void GfxPorts::priorityBandsRemember(byte *data) {
-	int bandNo;
-	for (bandNo = 0; bandNo < 14; bandNo++) {
-		priorityBandsMemory[bandNo] = READ_LE_UINT16(data);
+// Gets used to read priority bands data from sci1.1 pictures
+void GfxPorts::priorityBandsInitSci11(byte *data) {
+	byte priorityBands[14];
+	for (int bandNo = 0; bandNo < 14; bandNo++) {
+		priorityBands[bandNo] = READ_LE_UINT16(data);
 		data += 2;
 	}
-	priorityBandsMemoryActive = true;
-}
-
-void GfxPorts::priorityBandsRecall() {
-	if (priorityBandsMemoryActive) {
-		priorityBandsInit((byte *)&priorityBandsMemory);
-		priorityBandsMemoryActive = false;
-	}
+	priorityBandsInit(priorityBands);
 }
 
 void GfxPorts::kernelInitPriorityBands() {

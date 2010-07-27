@@ -542,9 +542,6 @@ void GfxAnimate::animateShowPic() {
 	_transitions->doit(picRect);
 	if (previousCursorState)
 		_cursor->kernelShow();
-
-	// We set SCI1.1 priority band information here
-	_ports->priorityBandsRecall();
 }
 
 void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
