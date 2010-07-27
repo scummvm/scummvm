@@ -456,7 +456,8 @@ enum kMessageFunc {
 	K_MESSAGE_REFNOUN,
 	K_MESSAGE_PUSH,
 	K_MESSAGE_POP,
-	K_MESSAGE_LASTMESSAGE
+	K_MESSAGE_LASTMESSAGE,
+	K_MESSAGE_ECOQUEST1_DEMO = 99
 };
 
 reg_t kGetMessage(EngineState *s, int argc, reg_t *argv) {
@@ -558,6 +559,18 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 		return NULL_REG;
 	}
+	case K_MESSAGE_ECOQUEST1_DEMO:
+		// The EcoQuest 1 demo uses a special version of kMessage. It's one of the
+		// earliest SCI 1.1 games. The noun is always 99 in this case, so we can
+		// treat it as a subop. If any other games require this syntax, we can change
+		// this to work with those games too.
+
+		if (g_sci->getGameId() != GID_ECOQUEST || !g_sci->isDemo())
+			error("kMessage called with EcoQuest 1 demo syntax in a different game");
+
+		tuple.noun = argv[0].toUint16();
+		tuple.verb = argv[2].toUint16();
+		return make_reg(0, s->_msgState->getMessage(argv[1].toUint16(), tuple, argv[3]));
 	default:
 		warning("Message: subfunction %i invoked (not implemented)", func);
 	}
