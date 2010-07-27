@@ -229,19 +229,20 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 		if (viewId == 0xFFFF)	// invalid view
 			return;
 
-		uint16 scaleSignal = 0;
-		if (getSciVersion() >= SCI_VERSION_1_1) {
-			scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal)) & kScaleSignalDoScaling;
-			if (scaleSignal) {
-				int16 scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
-				if (scaleY < 64)
-					scaleSignal = 0;
-			}
-		}
+		// must be something wrong with this TODO check - currently it breaks qfg3 right after the intro
+		//uint16 scaleSignal = 0;
+		//if (getSciVersion() >= SCI_VERSION_1_1) {
+		//	scaleSignal = readSelectorValue(_segMan, object, SELECTOR(scaleSignal)) & kScaleSignalDoScaling;
+		//	if (scaleSignal) {
+		//		int16 scaleY = readSelectorValue(_segMan, object, SELECTOR(scaleY));
+		//		if (scaleY < 64)
+		//			scaleSignal = 0;
+		//	}
+		//}
 
 		Common::Rect celRect;
 
-		if (!scaleSignal) {
+		//if (!scaleSignal) {
 			GfxView *tmpView = _cache->getView(viewId);
 			if (tmpView->isSci2Hires())
 				_screen->adjustToUpscaledCoordinates(y, x);
@@ -255,12 +256,12 @@ void GfxCompare::kernelBaseSetter(reg_t object) {
 
 			celRect.bottom = y + 1;
 			celRect.top = celRect.bottom - yStep;
-		} else {
-			celRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
-			celRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
-			celRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
-			celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
-		}
+		//} else {
+		//	celRect.left = readSelectorValue(_segMan, object, SELECTOR(nsLeft));
+		//	celRect.right = readSelectorValue(_segMan, object, SELECTOR(nsRight));
+		//	celRect.top = readSelectorValue(_segMan, object, SELECTOR(nsTop));
+		//	celRect.bottom = readSelectorValue(_segMan, object, SELECTOR(nsBottom));
+		//}
 
 		writeSelectorValue(_segMan, object, SELECTOR(brLeft), celRect.left);
 		writeSelectorValue(_segMan, object, SELECTOR(brRight), celRect.right);
