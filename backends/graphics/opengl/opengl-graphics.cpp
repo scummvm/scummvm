@@ -813,10 +813,10 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 		_cursorState.rHotY = _cursorState.hotY;
 	} else {
 		// Otherwise, scale the cursor for the overlay
-		_cursorState.rW = _cursorState.w * scaleFactor;
-		_cursorState.rH = _cursorState.h * scaleFactor;
-		_cursorState.rHotX = _cursorState.hotX * scaleFactor;
-		_cursorState.rHotY = _cursorState.hotY * scaleFactor;
+		_cursorState.rW = _cursorState.w * (scaleFactor - _cursorTargetScale + 1);
+		_cursorState.rH = _cursorState.h * (scaleFactor - _cursorTargetScale + 1);
+		_cursorState.rHotX = _cursorState.hotX * (scaleFactor - _cursorTargetScale + 1);
+		_cursorState.rHotY = _cursorState.hotY * (scaleFactor - _cursorTargetScale + 1);
 	}
 
 	// Always scale the cursor for the game
