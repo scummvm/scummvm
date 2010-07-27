@@ -134,3 +134,31 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 	free(rel);
 	return true;
 }
+
+bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+
+	// Loop over sections, finding relocation sections
+	for (int i = 0; i < ehdr->e_shnum; i++) {
+
+		Elf32_Shdr *curShdr = &(shdr[i]);
+
+		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
+		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		// Check for proper relocation size
+		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
+		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
+		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
+
+			if (curShdr->sh_type == SHT_RELA) {
+				seterror("RELA entries not supported yet!\n");
+				return false;
+			}
+
+			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
+				return false;
+			}
+
+		}
+	}
+
+	return true;
+}

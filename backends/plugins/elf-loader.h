@@ -23,11 +23,16 @@
  *
  */
 
-#ifndef LOADER_H
-#define LOADER_H
+#ifndef ELF_LOADER_H
+#define ELF_LOADER_H
 
-#include "backends/plugins/elf32.h"
-#include "common/list.h"
+#include "elf32.h"
+#include "common/stream.h"
+
+#if defined(__PLAYSTATION2__) || defined(__PSP__)
+#define MIPS_TARGET
+#include "shorts-segment-manager.h"
+#endif
 
 #define MAXDLERRLEN 80
 
@@ -42,6 +47,11 @@ protected:
     void *_dtors_start, *_dtors_end;
 
     int _segmentSize;
+
+#ifdef MIPS_TARGET
+	ShortSegmentManager::Segment *_shortsSegment;			// For assigning shorts ranges
+	unsigned int _gpVal;									// Value of Global Pointer
+#endif
 
     void seterror(const char *fmt, ...);
     void unload();
@@ -65,7 +75,13 @@ public:
 
     DLObject(char *errbuf = NULL) : _errbuf(_errbuf), _segment(NULL), _symtab(NULL),
             _strtab(NULL), _symbol_cnt(0), _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL),
-            _segmentSize(0) {}
+            _segmentSize(0) {
+#ifdef MIPS_TARGET
+		_shortsSegment = NULL;
+		_gpVal = 0;
+#endif
+    }
+
 };
 
 #define RTLD_LAZY 0
@@ -78,8 +94,6 @@ extern "C" {
     void dlforgetsyms(void *handle);
 }
 
-//The following need to be defined by specific ports.
 extern void flushDataCache();
-extern bool dlRelocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
 
 #endif /* LOADER_H */

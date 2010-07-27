@@ -30,12 +30,11 @@
 #include <stdio.h>
 #include <malloc.h>
 #include <unistd.h>
+#include <sys/fcntl.h>
 #include <sys/_default_fcntl.h>
 
-//#include "backends/fs/stdiostream.h"
-//#include "backends/fs/ds/ds-fs.h"
-#include "dsmain.h"
-
+#include "common/file.h"
+#include "common/fs.h"
 #include "elf-loader.h"
 
 #define __DEBUG_PLUGINS__
@@ -61,7 +60,6 @@ void flushDataCache() {
 #endif
 }
 
-
 // Expel the symbol table from memory
 void DLObject::discard_symtab() {
 	free(_symtab);
@@ -76,18 +74,13 @@ void DLObject::unload() {
 	discard_symtab();
 	free(_segment);
 	_segment = NULL;
-}
 
-/**
- * Follow the instruction of a relocation section.
- *
- * @param DLFile 	 SeekableReadStream of File
- * @param offset 	 Offset into the File
- * @param size   	 Size of relocation section
- *
- */
-bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
-	dlRelocate(DLFile, offset, size, relSegment);
+#ifdef MIPS_TARGET
+	if (_shortsSegment) {
+		ShortsMan.deleteSegment(_shortsSegment);
+		_shortsSegment = NULL;
+	}
+#endif
 }
 
 bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr) {
@@ -135,6 +128,33 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 
 	char *baseAddress = 0;
 
+#ifdef MIPS_TARGET
+	// We need to take account of non-allocated segment for shorts
+	if (phdr->p_flags & PF_X) {	// This is a relocated segment
+
+		// Attempt to allocate memory for segment
+		int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
+		DBG("extra mem is %x\n", extra);
+
+		if (phdr->p_align < 0x10000) phdr->p_align = 0x10000;	// Fix for wrong alignment on e.g. AGI
+
+		if (!(_segment = (char *)memalign(phdr->p_align, phdr->p_memsz + extra))) {
+			seterror("Out of memory.\n");
+			return false;
+		}
+		DBG("allocated segment @ %p\n", _segment);
+
+		// Get offset to load segment into
+		baseAddress = (char *)_segment + phdr->p_vaddr;
+		_segmentSize = phdr->p_memsz + extra;
+	} else {						// This is a shorts section.
+		_shortsSegment = ShortsMan.newSegment(phdr->p_memsz, (char *)phdr->p_vaddr);
+
+		baseAddress = _shortsSegment->getStart();
+		DBG("shorts segment @ %p to %p. Segment wants to be at %x. Offset=%x\n",
+		    _shortsSegment->getStart(), _shortsSegment->getEnd(), phdr->p_vaddr, _shortsSegment->getOffset());
+	}
+#else
 	// Attempt to allocate memory for segment
 	int extra = phdr->p_vaddr % phdr->p_align;	// Get extra length TODO: check logic here
 	DBG("extra mem is %x\n", extra);
@@ -149,9 +169,7 @@ bool DLObject::loadSegment(Common::SeekableReadStream* DLFile, Elf32_Phdr *phdr)
 	// Get offset to load segment into
 	baseAddress = (char *)_segment + phdr->p_vaddr;
 	_segmentSize = phdr->p_memsz + extra;
-
-	DBG("base address is %p\n", baseAddress);
-	DBG("_segmentSize is %p\n", _segmentSize);
+#endif
 
 	// Set bss segment to 0 if necessary (assumes bss is at the end)
 	if (phdr->p_memsz > phdr->p_filesz) {
@@ -260,12 +278,30 @@ bool DLObject::loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *s
 
 void DLObject::relocateSymbols(Elf32_Addr offset) {
 
-	int relocCount = 0;
-	DBG("Relocating symbols by %x\n", offset);
+	int mainCount = 0;
+	int shortsCount= 0;
 
 	// Loop over symbols, add relocation offset
 	Elf32_Sym *s = (Elf32_Sym *)_symtab;
 	for (int c = _symbol_cnt; c--; s++) {
+
+#ifdef MIPS_TARGET
+		// Make sure we don't relocate special valued symbols
+		if (s->st_shndx < SHN_LOPROC) {
+			if (!ShortsMan.inGeneralSegment((char *)s->st_value)) {
+				mainCount++;
+				s->st_value += offset;
+				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
+					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+			} else {	// shorts section
+				shortsCount++;
+				s->st_value += _shortsSegment->getOffset();
+				if (!_shortsSegment->inSegment((char *)s->st_value))
+					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
+			}
+
+		}
+#else
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
 				relocCount++;
@@ -274,39 +310,9 @@ void DLObject::relocateSymbols(Elf32_Addr offset) {
 					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);
 
 		}
+#endif
 
 	}
-
-	DBG("Relocated %d symbols.\n",relocCount);
-}
-
-bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
-
-	// Loop over sections, finding relocation sections
-	for (int i = 0; i < ehdr->e_shnum; i++) {
-
-		Elf32_Shdr *curShdr = &(shdr[i]);
-		//Elf32_Shdr *linkShdr = &(shdr[curShdr->sh_info]);
-
-		if ((curShdr->sh_type == SHT_REL || curShdr->sh_type == SHT_RELA) &&		// Check for a relocation section
-		        curShdr->sh_entsize == sizeof(Elf32_Rel) &&		// Check for proper relocation size
-		        (int)curShdr->sh_link == _symtab_sect &&			// Check that the sh_link connects to our symbol table
-		        curShdr->sh_info < ehdr->e_shnum &&					// Check that the relocated section exists
-		        (shdr[curShdr->sh_info].sh_flags & SHF_ALLOC)) {  	// Check if relocated section resides in memory
-
-			if (curShdr->sh_type == SHT_RELA) {
-				seterror("RELA entries not supported yet!\n");
-				return false;
-			}
-
-			if (!relocate(DLFile, curShdr->sh_offset, curShdr->sh_size, _segment)) {
-				return false;
-			}
-
-		}
-	}
-
-	return true;
 }
 
 bool DLObject::load(Common::SeekableReadStream* DLFile) {

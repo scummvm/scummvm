@@ -278,8 +278,8 @@ endif
 EXECUTABLE = scummvm.elf
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = $(portdir)/source/plugin.ld $(portdir)/source/plugin.syms $(EXECUTABLE)
-PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--target1-abs,--just-symbols,$(EXECUTABLE),-T$(portdir)/source/plugin.ld,--retain-symbols-file,$(portdir)/source/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu#-Wl,--gc-sections -mno-crt0 $(DEVKITPRO)/devkitARM/arm-eabi/lib/ds_arm9_crt0.o
+PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/ds/plugin.ld $(srcdir)/backends/plugins/plugin.syms $(EXECUTABLE)
+PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--target1-abs,--just-symbols,$(EXECUTABLE),-T$(srcdir)/backends/plugins/ds/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc -mthumb-interwork -mno-fpu#-Wl,--gc-sections -mno-crt0 $(DEVKITPRO)/devkitARM/arm-eabi/lib/ds_arm9_crt0.o
 MKDIR = mkdir -p
 RM = rm -f
 RM_REC = rm -rf

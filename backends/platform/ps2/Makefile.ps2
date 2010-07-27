@@ -87,9 +87,9 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 # Variables for dynamic plugin building
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.ld plugin.syms elf/scummvm.elf
+PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/plugin.syms elf/scummvm.elf
 PLUGIN_LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o
-PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
+PLUGIN_LDFLAGS += -nostartfiles -Wl,-q,--just-symbols,elf/scummvm.elf,-T$(srcdir)/backends/plugins/ps2/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc
 
 LDFLAGS = -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T main_prog.ld
 LDFLAGS += -L $(PS2SDK)/ee/lib -L .
@@ -111,7 +111,9 @@ OBJS := $(srcdir)/backends/platform/ps2/DmaPipe.o \
 	$(srcdir)/backends/platform/ps2/systemps2.o \
 	$(srcdir)/backends/platform/ps2/ps2mutex.o \
 	$(srcdir)/backends/platform/ps2/ps2time.o \
-	$(srcdir)/backends/platform/ps2/ps2loader.o \
+	$(srcdir)/backends/plugins/elf-loader.o \
+	$(srcdir)/backends/plugins/mips-relocs.o \
+	$(srcdir)/backends/plugins/shorts-segment-manager.o \
 	$(srcdir)/backends/platform/ps2/ps2debug.o
 
 include $(srcdir)/Makefile.common

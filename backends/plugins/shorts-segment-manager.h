@@ -26,8 +26,9 @@
 #ifndef SHORTS_SEGMENT_MANAGER_H
 #define SHORTS_SEGMENT_MANAGER_H
 
-#include "loader.h"
 #include "common/singleton.h"
+#include "common/list.h"
+#include "elf32.h"
 
 #define ShortsMan ShortSegmentManager::instance()
 

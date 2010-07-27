@@ -88,8 +88,8 @@ CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 # Variables for dynamic plugin building
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
-PLUGIN_EXTRA_DEPS = plugin.syms scummvm-psp.elf
-PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-psp.org.elf,-Tplugin.ld,--retain-symbols-file,plugin.syms -lstdc++ -lc
+PLUGIN_EXTRA_DEPS = $(srcdir)/backends/plugins/plugin.syms scummvm-psp.elf
+PLUGIN_LDFLAGS = -nostartfiles -Wl,-q,--just-symbols=scummvm-psp.org.elf,-T$(srcdir)/backends/plugins/psp/plugin.ld,--retain-symbols-file,$(srcdir)/backends/plugins/plugin.syms -lstdc++ -lc
 
 # PSP-specific variables
 STRIP   = psp-strip

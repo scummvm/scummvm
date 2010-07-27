@@ -25,8 +25,19 @@
 
 #if defined(DYNAMIC_MODULES) //TODO: && defined (MIPS target)
 
-//#include "MIPS-loader.h"
 #include "shorts-segment-manager.h"
+
+extern char __plugin_hole_start;	// Indicates start of hole in program file for shorts
+extern char __plugin_hole_end;		// Indicates end of hole in program file
+extern char _gp[];			// Value of gp register
+
+#ifdef DEBUG_PLUGINS
+#define DBG(x,...) printf(x, ## __VA_ARGS__)
+#else
+#define DBG(x,...)
+#endif
+
+#define seterror(x,...) printf(x, ## __VA_ARGS__)
 
 DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
 
