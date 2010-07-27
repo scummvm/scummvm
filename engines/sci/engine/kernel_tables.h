@@ -312,7 +312,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(CelHigh),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(CelWide),           SIG_EVERYWHERE,           "ii(i)",                 NULL,            NULL },
     { MAP_CALL(CheckFreeSpace),    SIG_SCI32, SIGFOR_ALL,    "r.*",                   NULL,            NULL },
-    { MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "ri",                    NULL,            NULL },
+    { MAP_CALL(CheckFreeSpace),    SIG_SCI11, SIGFOR_ALL,    "r(i)",                  NULL,            NULL },
     { MAP_CALL(CheckFreeSpace),    SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(CheckSaveGame),     SIG_EVERYWHERE,           ".*",                    NULL,            NULL },
     { MAP_CALL(Clone),             SIG_EVERYWHERE,           "o",                     NULL,            NULL },
