@@ -175,7 +175,9 @@ SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream,
 	data = (byte *)malloc(size);
 	assert(data);
 	stream->read(data, size);
-	delete stream;
+
+	if (disposeAfterUse == DisposeAfterUse::YES)
+		delete stream;
 
 	// Since we allocated our own buffer for the data, we must specify DisposeAfterUse::YES.
 	return makeRawStream(data, size, rate, flags);
