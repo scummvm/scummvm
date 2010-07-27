@@ -365,11 +365,25 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	// TODO: SCI32 uses a parameter here.
-	if (argc > 1)
-		warning("kCheckFreeSpace called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[1]));
-#endif
+	if (argc > 1) {
+		// SCI1.1/SCI32
+		// TODO: don't know if those are right for SCI32 as well
+		// Please note that sierra sci supported both calls either w/ or w/o opcode in SCI1.1
+		switch (argv[1].toUint16()) {
+		case 0: // return saved game size
+			return make_reg(0, 0); // we return 0
+
+		case 1: // return free harddisc space (shifted right somehow)
+			return make_reg(0, 0x7fff); // we return maximum
+
+		case 2: // same as call w/o opcode
+			break;
+			return make_reg(0, 1);
+
+		default:
+			error("kCheckFreeSpace: called with unknown sub-op %d", argv[1].toUint16());
+		}
+	}
 
 	Common::String path = s->_segMan->getString(argv[0]);
 
