@@ -498,7 +498,7 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 	if (_overlayFormat.aBits() == 1) {
 		// Copy buffer with the alpha bit on for all pixels for correct
 		// overlay drawing.
-		const uint16 *src = (uint16 *)buf;
+		const uint16 *src = (const uint16 *)buf;
 		uint16 *dst = (uint16 *)_overlayData.pixels + y * _overlayData.w + x;
 		for (int i = 0; i < h; i++) {
 			for (int e = 0; e < w; e++)
@@ -508,7 +508,7 @@ void OpenGLGraphicsManager::copyRectToOverlay(const OverlayColor *buf, int pitch
 		}
 	} else {
 		// Copy buffer data to internal overlay surface
-		const byte *src = (byte *)buf;
+		const byte *src = (const byte *)buf;
 		byte *dst = (byte *)_overlayData.pixels + y * _overlayData.pitch;
 		for (int i = 0; i < h; i++) {
 			memcpy(dst + x * _overlayData.bytesPerPixel, src, w * _overlayData.bytesPerPixel);
@@ -816,17 +816,18 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 	} else {
 		// Otherwise, scale the cursor for the overlay
 		float targetScaleFactor = MIN(_cursorTargetScale, _videoMode.scaleFactor);
-		_cursorState.rW = _cursorState.w * (screenScaleFactor - targetScaleFactor + 1);
-		_cursorState.rH = _cursorState.h * (screenScaleFactor - targetScaleFactor + 1);
-		_cursorState.rHotX = _cursorState.hotX * (screenScaleFactor - targetScaleFactor + 1);
-		_cursorState.rHotY = _cursorState.hotY * (screenScaleFactor - targetScaleFactor + 1);
+		float actualFactor = (screenScaleFactor - targetScaleFactor + 1);
+		_cursorState.rW = (int16)(_cursorState.w * actualFactor);
+		_cursorState.rH = (int16)(_cursorState.h * actualFactor);
+		_cursorState.rHotX = (int16)(_cursorState.hotX * actualFactor);
+		_cursorState.rHotY = (int16)(_cursorState.hotY * actualFactor);
 	}
 
 	// Always scale the cursor for the game
-	_cursorState.vW = _cursorState.w * screenScaleFactor;
-	_cursorState.vH = _cursorState.h * screenScaleFactor;
-	_cursorState.vHotX = _cursorState.hotX * screenScaleFactor;
-	_cursorState.vHotY = _cursorState.hotY * screenScaleFactor;
+	_cursorState.vW = (int16)(_cursorState.w * screenScaleFactor);
+	_cursorState.vH = (int16)(_cursorState.h * screenScaleFactor);
+	_cursorState.vHotX = (int16)(_cursorState.hotX * screenScaleFactor);
+	_cursorState.vHotY = (int16)(_cursorState.hotY * screenScaleFactor);
 }
 
 void OpenGLGraphicsManager::refreshAspectRatio() {
