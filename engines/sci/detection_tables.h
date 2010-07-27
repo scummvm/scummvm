@@ -83,6 +83,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Castle of Dr. Brain - English DOS Floppy EGA (from omer_mor, bug report #3035349)
+	{"castlebrain", "EGA", {
+		{"resource.map", 0, "88d106f945f7fd9d1aeda961cfec38a9", 2646},
+		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 25325},
+		{"resource.001", 0, "1d806162f6d3cfbe3c0135414efe6f88", 99931},
+		{"resource.002", 0, "6a41a0eb5237778427dddf92ae07cf9b", 294772},
+		{"resource.003", 0, "0c6ab4efb3be4d991ae9762e19f17c92", 306378},
+		{"resource.004", 0, "5e7b90949422de005f80285979972e43", 292423},
+		{"resource.005", 0, "8a5ed3ba96e2eaf18e36fedfaab89419", 297838},
+		{"resource.006", 0, "dceed92e709cad1bd9582809a235b0a0", 266682},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Castle of Dr. Brain - English DOS Floppy (from jvprat)
 	// Executable scanning reports "1.000.044", Floppy label reports "1.0, 10.30.91", VERSION file reports "1.000"
 	// SCI interpreter version 1.000.510
@@ -1802,6 +1815,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Mixed-Up Fairy Tales - English DOS Floppy EGA (from omer_mor, bug report #3035350)
+	{"fairytales", "EGA", {
+		{"resource.map", 0, "daa94e9f327be6657eb97a51b490dbb1", 3219},
+		{"resource.000", 0, "6dc287611e510793b72e73110bbdd45d", 17819},
+		{"resource.001", 0, "5ad26e7af4d4c3a3185c66a44abd5220", 478401},
+		{"resource.002", 0, "4db83250f821607b634c99d663cae74a", 663713},
+		{"resource.003", 0, "509b2467ba779100d5933ed51a9ae32f", 560255},
+		{"resource.004", 0, "93afc85d5ffa60ea555d6cc336d22c03", 651109},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
 	// Executable scanning reports "1.000.145"
 	{"fairytales", "", {
@@ -1834,6 +1858,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "fb552ae550ca1dac19ed8f6a3767612d", 817191},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
+
+	// Mixed-Up Mother Goose - English DOS Floppy EGA (from omer_mor, bug report #3035354)
+	{"mothergoose", "EGA", {
+		{"resource.map", 0, "3490f85dab47e504c41b7eb3312e285e", 2598},
+		{"resource.001", 0, "d893892d62b3f061357291d66775e360", 239906},
+		{"resource.002", 0, "d893892d62b3f061357291d66775e360", 719398},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #2723795)
 	// Executable scanning reports "1.001.031"
