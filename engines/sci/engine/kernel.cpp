@@ -670,7 +670,7 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 	return true;
 }
 
-void Kernel::setDefaultKernelNames() {
+void Kernel::setDefaultKernelNames(GameFeatures *features) {
 	_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
@@ -722,7 +722,11 @@ void Kernel::setDefaultKernelNames() {
 		}
 
 		_kernelNames[0x71] = "PalVary";
-		_kernelNames[0x7c] = "Message";
+
+		// At least EcoQuest 1 demo uses kGetMessage instead of kMessage.
+		// Detect which function to use.
+		if (features->detectMessageFunctionType() == SCI_VERSION_1_1)
+			_kernelNames[0x7c] = "Message";
 		break;
 
 	default:
@@ -774,7 +778,7 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		setKernelNamesSci2();
 	else
 #endif
-		setDefaultKernelNames();
+		setDefaultKernelNames(features);
 
 	mapFunctions();
 }

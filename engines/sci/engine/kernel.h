@@ -225,7 +225,7 @@ private:
 	/**
 	 * Sets the default kernel function names, based on the SCI version used.
 	 */
-	void setDefaultKernelNames();
+	void setDefaultKernelNames(GameFeatures *features);
 
 #ifdef ENABLE_SCI32
 	/**
