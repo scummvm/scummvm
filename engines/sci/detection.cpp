@@ -94,7 +94,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},	// floppy is SCI1.1, CD SCI2.1
+	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	// === SCI2 games =========================================================
@@ -107,6 +107,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
 	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
+	{"mothergoosehires","Mixed-Up Mother Goose"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"shivers",         "Shivers"},
@@ -169,6 +170,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "lsl6hires",       GID_LSL6HIRES },
 	{ "lsl7",            GID_LSL7 },
 	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
 	{ "msastrochicken",  GID_MSASTROCHICKEN },
 	{ "pepper",          GID_PEPPER },
 	{ "phantasmagoria",  GID_PHANTASMAGORIA },

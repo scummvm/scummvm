@@ -143,6 +143,7 @@ enum SciGameId {
 	GID_LSL6HIRES, // We have a separate ID for LSL6 SCI32, because it's actually a completely different game
 	GID_LSL7,
 	GID_MOTHERGOOSE,
+	GID_MOTHERGOOSEHIRES, // We have a separate ID for Mother Goose SCI32, because it's actually a completely different game
 	GID_MSASTROCHICKEN,
 	GID_PEPPER,
 	GID_PHANTASMAGORIA,

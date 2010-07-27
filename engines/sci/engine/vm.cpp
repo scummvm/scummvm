@@ -169,7 +169,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 			} else {
 				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
 				// Just skip around it here so we don't error out in validate_arithmetic.
-				if (g_sci->getGameId() == GID_MOTHERGOOSE && getSciVersion() <= SCI_VERSION_1_1 && type == VAR_PARAM && index == 1)
+				if (g_sci->getGameId() == GID_MOTHERGOOSE && type == VAR_PARAM && index == 1)
 					return false;
 
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());

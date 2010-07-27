@@ -416,6 +416,8 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Said),              SIG_EVERYWHERE,           "[r0]",                  NULL,            NULL },
     { MAP_CALL(SaveGame),          SIG_EVERYWHERE,           "rir(r)",                NULL,            NULL },
     { MAP_CALL(ScriptID),          SIG_EVERYWHERE,           "[io](i)",               NULL,            NULL },
+    { MAP_CALL(SetCursor),         SIG_SCI21, SIGFOR_ALL,    "i(i)([io])(i*)",        NULL,            NULL },
+    // TODO: SCI2.1 may supply an object optionally (mother goose sci21 right on startup) - find out why
     { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i*)",                 NULL,            NULL },
     { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
     { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
