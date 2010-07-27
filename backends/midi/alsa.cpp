@@ -48,6 +48,17 @@
 #define my_snd_seq_open(seqp) snd_seq_open(seqp, SND_SEQ_OPEN)
 #endif
 
+#define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
+
+static int check_permission(snd_seq_port_info_t *pinfo)
+{
+	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE)) {
+		if (!(snd_seq_port_info_get_capability(pinfo) & SND_SEQ_PORT_CAP_NO_EXPORT))
+			return 1;
+	}
+	return 0;
+}
+
 /*
  * parse address string
  */
@@ -109,7 +120,41 @@ int MidiDriver_ALSA::open() {
 	}
 
 	if (seq_client != SND_SEQ_ADDRESS_SUBSCRIBERS) {
-		// subscribe to MIDI port
+		// Subscribe to MIDI port. Prefer one that doesn't already have
+		// any connections, unless we've forced a port number already.
+		if (seq_port == -1) {
+			snd_seq_client_info_t *cinfo;
+			snd_seq_port_info_t *pinfo;
+
+			snd_seq_client_info_alloca(&cinfo);
+			snd_seq_port_info_alloca(&pinfo);
+
+			snd_seq_get_any_client_info(seq_handle, seq_client, cinfo);
+
+			int first_port = -1;
+			int found_port = -1;
+
+			snd_seq_port_info_set_client(pinfo, seq_client);
+			snd_seq_port_info_set_port(pinfo, -1);
+			while (found_port == -1 && snd_seq_query_next_port(seq_handle, pinfo) >= 0) {
+				if (check_permission(pinfo)) {
+					if (first_port == -1)
+						first_port = snd_seq_port_info_get_port(pinfo);
+					if (found_port == -1 && snd_seq_port_info_get_write_use(pinfo) == 0)
+						found_port = snd_seq_port_info_get_port(pinfo);
+				}
+			}
+
+			if (found_port == -1) {
+				// Should we abort here? For now, use the first
+				// available port.
+				seq_port = first_port;
+				warning("MidiDriver_ALSA: All ports on client %d (%s) are already in use", seq_client, snd_seq_client_info_get_name(cinfo));
+			} else {
+				seq_port = found_port;
+			}
+		}
+
 		if (snd_seq_connect_to(seq_handle, my_port, seq_client, seq_port) < 0) {
 			error("Can't subscribe to MIDI port (%d:%d) see README for help", seq_client, seq_port);
 		}
@@ -217,23 +262,21 @@ void MidiDriver_ALSA::send_event(int do_flush) {
 
 class AlsaDevice {
 public:
-	AlsaDevice(Common::String name, MusicType mt, int client, int port);
+	AlsaDevice(Common::String name, MusicType mt, int client);
 	Common::String getName();
 	MusicType getType();
 	int getClient();
-	int getPort();
 
 private:
 	Common::String _name;
 	MusicType _type;
 	int _client;
-	int _port;
 };
 
 typedef Common::List<AlsaDevice> AlsaDevices;
 
-AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client, int port)
-	: _name(name), _type(mt), _client(client), _port(port) {
+AlsaDevice::AlsaDevice(Common::String name, MusicType mt, int client)
+	: _name(name), _type(mt), _client(client) {
 }
 
 Common::String AlsaDevice::getName() {
@@ -246,10 +289,6 @@ MusicType AlsaDevice::getType() {
 
 int AlsaDevice::getClient() {
 	return _client;
-}
-
-int AlsaDevice::getPort() {
-	return _port;
 }
 
 class AlsaMusicPlugin : public MusicPluginObject {
@@ -269,17 +308,6 @@ public:
 private:
 	static int parse_addr(const char *arg, int *client, int *port);
 };
-
-#define perm_ok(pinfo,bits) ((snd_seq_port_info_get_capability(pinfo) & (bits)) == (bits))
-
-static int check_permission(snd_seq_port_info_t *pinfo)
-{
-	if (perm_ok(pinfo, SND_SEQ_PORT_CAP_WRITE|SND_SEQ_PORT_CAP_SUBS_WRITE)) {
-		if (!(snd_seq_port_info_get_capability(pinfo) & SND_SEQ_PORT_CAP_NO_EXPORT))
-			return 1;
-	}
-	return 0;
-}
 
 AlsaDevices AlsaMusicPlugin::getAlsaDevices() const {
 	AlsaDevices devices;
@@ -306,9 +334,7 @@ AlsaDevices AlsaMusicPlugin::getAlsaDevices() const {
 				// TODO: Can we figure out the appropriate music type?
 				MusicType type = MT_GM;
 				int client = snd_seq_client_info_get_client(cinfo);
-				int port = snd_seq_port_info_get_port(pinfo);
-
-				devices.push_back(AlsaDevice(name, type, client, port));
+				devices.push_back(AlsaDevice(name, type, client));
 			}
 		}
 	}
@@ -395,7 +421,7 @@ Common::Error AlsaMusicPlugin::createInstance(MidiDriver **mididriver, MidiDrive
 			if (device.getCompleteId().equals(MidiDriver::getDeviceString(dev, MidiDriver::kDeviceId))) {
 				found = true;
 				seq_client = d->getClient();
-				seq_port = d->getPort();
+				seq_port = -1;
 				break;
 			}
 		}
