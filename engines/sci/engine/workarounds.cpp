@@ -78,6 +78,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
 	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs
+	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    2, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs
 	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
