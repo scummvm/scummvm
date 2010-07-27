@@ -33,6 +33,8 @@
 
 namespace Testbed {
 
+class TestbedConfigManager;
+
 enum {
 	kTestbedLogOutput = 1 << 0,
 	kTestbedEngineDebug = 1 << 2
@@ -48,7 +50,7 @@ public:
 	/**
 	 * Invokes configured testsuites.
 	 */
-	void invokeTestsuites();
+	void invokeTestsuites(TestbedConfigManager &cfMan);
 
 	bool hasFeature(EngineFeature f) const;
 

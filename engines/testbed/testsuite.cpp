@@ -219,6 +219,17 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isI
 	_testsToExecute.push_back(featureTest);
 }
 
+const int Testsuite::getNumTestsEnabled() {
+	int count = 0;
+	Common::Array<Test *>::const_iterator iter;
+	for (iter = _testsToExecute.begin(); iter != _testsToExecute.end(); iter++) {
+		if ((*iter)->enabled) {
+			count++;
+		}
+	}
+	return count;
+}
+
 uint Testsuite::parseEvents() {
 	uint startTime = g_system->getMillis();
 	uint end = startTime + kEventHandlingTime;
@@ -288,6 +299,7 @@ bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
 	return false;
 }
 
+
 void Testsuite::execute() {
 	// Main Loop for a testsuite
 
@@ -299,6 +311,7 @@ void Testsuite::execute() {
 	uint count = 0;
 	Common::Point pt = getDisplayRegionCoordinates();
 	pt.y += getLineSeparation();
+	int numEnabledTests = getNumTestsEnabled();
 
 	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
 		if (!(*i)->enabled) {
@@ -318,7 +331,7 @@ void Testsuite::execute() {
 		}
 
 		logPrintf("Info! Executing Test: %s\n", ((*i)->featureName).c_str());
-		updateStats("Test", ((*i)->featureName).c_str(), count++, _testsToExecute.size(), pt);
+		updateStats("Test", ((*i)->featureName).c_str(), count++, numEnabledTests, pt);
 		_numTestsExecuted++;
 		if ((*i)->driver()) {
 			logPrintf("Result: Passed\n");
@@ -326,7 +339,7 @@ void Testsuite::execute() {
 		} else {
 			logPrintf("Result: Failed\n");
 		}
-		updateStats("Test", ((*i)->featureName).c_str(), count, _testsToExecute.size(), pt);
+		updateStats("Test", ((*i)->featureName).c_str(), count, numEnabledTests, pt);
 		// TODO: Display a screen here to user with details of upcoming test, he can skip it or Quit or RTL
 		// Check if user wants to quit/RTL/Skip next test by parsing events.
 		// Quit directly if explicitly requested

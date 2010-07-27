@@ -200,6 +200,15 @@ void TestbedConfigManager::parseConfigFile() {
 	delete rs;
 }
 
+int TestbedConfigManager::getNumSuitesEnabled() {
+	int count = 0;
+	for (uint i = 0; i < _testsuiteList.size(); i++) {
+        if (_testsuiteList[i]->isEnabled()) {
+        	count++;
+		}
+    }
+    return count;
+}
 
 Testsuite *TestbedConfigManager::getTestsuiteByName(const Common::String &name) {
 	for (uint i = 0; i < _testsuiteList.size(); i++) {

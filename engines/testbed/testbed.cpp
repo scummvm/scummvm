@@ -88,14 +88,15 @@ TestbedEngine::~TestbedEngine() {
 	}
 }
 
-void TestbedEngine::invokeTestsuites() {
+void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 	Common::Array<Testsuite *>::const_iterator iter;
 	uint count = 1;
 	Common::Point pt = Testsuite::getDisplayRegionCoordinates();
+	int numSuitesEnabled = cfMan.getNumSuitesEnabled();
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
 		if ((*iter)->isEnabled()) {
-			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, _testsuiteList.size(), pt);
+			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, numSuitesEnabled, pt);
 			(*iter)->execute();
 		}
 	}
@@ -120,7 +121,7 @@ Common::Error TestbedEngine::run() {
 		return Common::kNoError;
 	}
 	
-	invokeTestsuites();
+	invokeTestsuites(cfMan);
 	return Common::kNoError;
 }
 
