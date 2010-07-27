@@ -48,7 +48,7 @@ const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
 	{ GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
 	{ GID_LSL6HIRES,      360,64938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
-	{ GID_SQ5,            200,  939,  0,               "Osc", "cycleDone",       -1,    0, { WORKAROUND_FAKE,   1 } }, // when going back to bridge the crew is goofing off, we get an object as cycle count
+	{ GID_SQ5,            200,  939,  0,                "Osc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when going back to bridge the crew is goofing off, we get an object as cycle count
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -65,8 +65,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_GK2,            -1,    11,  0,                   "", "export 10",      -1,    4, { WORKAROUND_FAKE,   0 } }, // called during the game
 	{ GID_HOYLE1,          4,   104,  0,   "GinRummyCardList", "calcRuns",       -1,    4, { WORKAROUND_FAKE,   0 } }, // Gin Rummy / right when the game starts
 	{ GID_HOYLE1,          5,   204,  0,            "tableau", "checkRuns",      -1,    2, { WORKAROUND_FAKE,   0 } }, // Cribbage / during the game
-	{ GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // when starting checkers, first time a character says something
-	{ GID_HOYLE3,        200,     0,  1,          "Character", "say",            -1,  505, { WORKAROUND_FAKE,   0 } }, // when starting checkers, first time a character says something
+	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,  504, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something
+	{ GID_HOYLE3,         -1,     0,  1,          "Character", "say",            -1,  505, { WORKAROUND_FAKE,   0 } }, // when starting checkers or dominoes, first time a character says something
 	{ GID_HOYLE3,         -1,   700,  0,           "gcWindow", "open",           -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu
 	{ GID_ISLANDBRAIN,   140,   140,  0,              "piece", "init",           -1,    3, { WORKAROUND_FAKE,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
 	{ GID_ISLANDBRAIN,   200,   268,  0,          "anElement", "select",         -1,    0, { WORKAROUND_FAKE,   0 } }, // elements puzzle, gets used before super TextIcon
