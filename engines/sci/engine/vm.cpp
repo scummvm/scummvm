@@ -704,7 +704,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		switch (solution.type) {
 		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall 0x%x)", 
 				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
 				originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
 			break;
