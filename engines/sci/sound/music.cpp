@@ -65,7 +65,7 @@ void SciMusic::init() {
 
 	// Default to MIDI in SCI2.1+ games, as many don't have AdLib support.
 	Common::Platform platform = g_sci->getPlatform();
-	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_ADLIB | MDT_MIDI));
+	uint32 dev = MidiDriver::detectDevice((getSciVersion() >= SCI_VERSION_2_1) ? (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI | MDT_PREFER_GM) : (MDT_PCSPK | MDT_PCJR | MDT_ADLIB | MDT_MIDI));
 
 	switch (MidiDriver::getMusicType(dev)) {
 	case MT_ADLIB:
