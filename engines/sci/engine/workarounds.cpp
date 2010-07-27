@@ -96,6 +96,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
     { GID_LSL6HIRES,      -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // at least when entering swimming pool area
     { GID_LSL6HIRES,      -1, 64964,  0,              "DPath", "init",           -1,    1, { WORKAROUND_FAKE,   0 } }, // during the game
     { GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
+    { GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,    0, { WORKAROUND_FAKE,   0 } }, // spanish (and maybe early versions?) only: when moving cursor over input pad
     { GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser
     { GID_SQ1,            -1,   703,  0,         "firePulsar", "changeState", 0x18a,    0, { WORKAROUND_FAKE,   0 } }, // export 1, but called locally (when shooting at aliens)
     { GID_SQ4,            -1,   398,  0,            "showBox", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sq4cd: called when rummaging in Software Excess bargain bin
