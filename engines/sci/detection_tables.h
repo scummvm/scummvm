@@ -1906,7 +1906,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "87f9dc1cafc4d4fa835fb2f00cf3a6ef", 4560},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 2070072},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH
 	},
 
 #ifdef ENABLE_SCI32
