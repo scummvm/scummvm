@@ -93,9 +93,14 @@ int MidiDriver_ALSA::open() {
 	}
 	snd_seq_set_client_group(seq_handle, "input");
 
-	my_port = snd_seq_create_simple_port(seq_handle, "SCUMMVM port 0",
-		SND_SEQ_PORT_CAP_WRITE | SND_SEQ_PORT_CAP_SUBS_WRITE |
-		SND_SEQ_PORT_CAP_READ, SND_SEQ_PORT_TYPE_MIDI_GENERIC);
+	// According to http://www.alsa-project.org/~tiwai/alsa-subs.html
+	// you can set read or write capabilities to allow other clients to
+	// read or write the port. I don't think we need that, unless maybe
+	// to be able to record the sound, but I can't get that to work even
+	// with those capabilities.
+
+	my_port = snd_seq_create_simple_port(seq_handle, "SCUMMVM port 0", 0,
+		SND_SEQ_PORT_TYPE_MIDI_GENERIC | SND_SEQ_PORT_TYPE_APPLICATION);
 
 	if (my_port < 0) {
 		snd_seq_close(seq_handle);
