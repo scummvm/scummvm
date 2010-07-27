@@ -33,6 +33,7 @@ namespace EventTests {
 
 // Helper functions for Event tests
 char keystrokeToChar();
+Common::Rect drawFinishZone();
 // will contain function declarations for Event tests
 bool mouseEvents();
 bool kbdEvents();

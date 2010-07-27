@@ -100,6 +100,22 @@ char EventTests::keystrokeToChar() {
 	return 0;
 }
 
+Common::Rect EventTests::drawFinishZone() {
+	Graphics::Surface *screen = g_system->lockScreen();
+	const Graphics::Font &font(*FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont));
+	int width = 35;
+	int height = 20;
+	int right = g_system->getWidth();
+	Common::Rect rect(0, 0, right, height);
+	Common::Rect rect2(0, 0, right - width, height);
+	screen->fillRect(rect, kColorSpecial);
+	screen->fillRect(rect2, kColorBlack);
+	g_system->unlockScreen();
+	font.drawString(screen, "Close", rect.left, rect.top, screen->w, kColorBlack, Graphics::kTextAlignRight);
+	g_system->updateScreen();
+	return Common::Rect(right - width, 0, right, height);
+}
+
 bool EventTests::mouseEvents() {
 	
 	Testsuite::clearScreen();
@@ -115,12 +131,13 @@ bool EventTests::mouseEvents() {
 	Common::EventManager *eventMan = g_system->getEventManager();
 
 	Common::Point pt(0, 100);
-	Testsuite::writeOnScreen("Generate mouse events make L/R/M button clicks", pt);
+	Common::Rect rect = Testsuite::writeOnScreen("Generate mouse events make L/R/M button clicks", pt);
 	pt.y = 120;
 	Testsuite::writeOnScreen("Testbed should be able to detect them, Press X to exit", pt);
 
 	// Init Mouse Palette
 	GFXtests::initMousePalette();
+	Common::Rect finishZone = drawFinishZone();
 
 	bool quitLoop = false;
 	bool passed = true;
@@ -141,40 +158,43 @@ bool EventTests::mouseEvents() {
 				// Movements havee already been tested in GFX
 				break;
 			case Common::EVENT_LBUTTONDOWN:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse left-button pressed", pt);
 				break;
 			case Common::EVENT_RBUTTONDOWN:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse right-button pressed", pt);
 				break;
 			case Common::EVENT_WHEELDOWN:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse wheel moved down", pt);
 				break;
 			case Common::EVENT_MBUTTONDOWN:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse middle-button pressed ", pt);
 				break;
 			case Common::EVENT_LBUTTONUP:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
+				if (finishZone.contains(eventMan->getMousePos())) {
+					quitLoop = true;
+				}
 				Testsuite::writeOnScreen("Mouse left-button released", pt);
 				break;
 			case Common::EVENT_RBUTTONUP:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse right-button released", pt);
 				break;
 			case Common::EVENT_WHEELUP:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse wheel moved up", pt);
 				break;
 			case Common::EVENT_MBUTTONUP:
-				Testsuite::clearScreen();
+				Testsuite::clearScreen(rect);
 				Testsuite::writeOnScreen("Mouse middle-button released ", pt);
 				break;
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_x) {
-					Testsuite::clearScreen();
+					Testsuite::clearScreen(rect);
 					Testsuite::writeOnScreen("Exit requested", pt);
 					quitLoop = true;
 				}
