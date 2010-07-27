@@ -314,46 +314,41 @@ AlsaDevices AlsaMusicPlugin::getAlsaDevices() const {
 
 MusicDevices AlsaMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	Common::Array<bool> used;
 	AlsaDevices::iterator d;
-	int i;
 
 	AlsaDevices alsaDevices = getAlsaDevices();
-
-	for (i = 0, d = alsaDevices.begin(); d != alsaDevices.end(); ++i, ++d) {
-		used.push_back(false);
-	}
 
 	// Since the default behaviour is to use the first device in the list,
 	// try to put something sensible there. We used to have 17:0 and 65:0
 	// as defaults.
 
-	for (i = 0, d = alsaDevices.begin(); d != alsaDevices.end(); ++i, ++d) {
-		int client = d->getClient();
+	for (d = alsaDevices.begin(); d != alsaDevices.end();) {
+		const int client = d->getClient();
+
 		if (client == 17 || client == 65) {
 			devices.push_back(MusicDevice(this, d->getName(), d->getType()));
-			used[i] = true;
+			d = alsaDevices.erase(d);
+		} else {
+			++d;
 		}
 	}
 
 	// 128:0 is probably TiMidity, or something like that, so that's
 	// probably a good second choice.
 
-	for (i = 0, d = alsaDevices.begin(); d != alsaDevices.end(); ++i, ++d) {
+	for (d = alsaDevices.begin(); d != alsaDevices.end();) {
 		if (d->getClient() == 128) {
 			devices.push_back(MusicDevice(this, d->getName(), d->getType()));
-			used[i] = true;
+			d = alsaDevices.erase(d);
+		} else {
+			++d;
 		}
 	}
 
 	// Add the remaining devices in the order they were found.
 
-	for (i = 0, d = alsaDevices.begin(); d != alsaDevices.end(); ++i, ++d) {
-
-		if (!used[i]) {
-			devices.push_back(MusicDevice(this, d->getName(), d->getType()));
-		}
-	}
+	for (d = alsaDevices.begin(); d != alsaDevices.end(); ++d)
+		devices.push_back(MusicDevice(this, d->getName(), d->getType()));
 
 	return devices;
 }
