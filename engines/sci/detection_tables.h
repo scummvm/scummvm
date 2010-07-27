@@ -1580,7 +1580,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Larry 5 - German DOS (from Tobis87)
-	// SCI interpreter version 1.000.510 (just a guess)
+	// SCI interpreter version T.A00.196
 	{"lsl5", "", {
 		{"resource.map", 0, "c97297aa76d4dd2ed144c7b7769e2caf", 6867},
 		{"resource.000", 0, "4c00c14b8181ad47076a51d86097d97e", 759095},
