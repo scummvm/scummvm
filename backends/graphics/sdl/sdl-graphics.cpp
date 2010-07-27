@@ -2153,7 +2153,7 @@ bool SdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		}
 
 		// Ctrl-Alt-<key> will change the GFX mode
-		if ((event.kbd.flags & (Common::KBD_CTRL|Common::KBD_ALT)) == (Common::KBD_CTRL|Common::KBD_ALT)) {
+		if (event.kbd.hasFlags(Common::KBD_CTRL|Common::KBD_ALT)) {
 			if (handleScalerHotkeys(event.kbd.keycode))
 				return true;
 		}

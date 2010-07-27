@@ -63,7 +63,7 @@ protected:
 
 	virtual bool handleScalerHotkeys(Common::KeyCode key);
 	virtual bool isScalerHotkey(const Common::Event &event);
-	virtual void toggleFullScreen();
+	virtual void toggleFullScreen(bool loop);
 
 	// Hardware screen
 	SDL_Surface *_hwscreen;

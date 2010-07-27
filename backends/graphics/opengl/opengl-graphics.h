@@ -133,6 +133,7 @@ protected:
 		kAspectRatioNone,
 		kAspectRatioConserve,
 		kAspectRatio4_3,
+		kAspectRatio16_9,
 		kAspectRatio16_10
 	};
 
@@ -140,6 +141,7 @@ protected:
 		bool setup;
 
 		bool fullscreen;
+		int activeFullscreenMode;
 		int aspectRatioCorrection;
 
 		int mode;
@@ -162,7 +164,16 @@ protected:
 	virtual void unloadGFXMode();
 
 	virtual void setScale(int newScale);
+
+	int _aspectX;
+	int _aspectY;
+	int _aspectWidth;
+	int _aspectHeight;
+
 	virtual void setAspectRatioCorrection(int mode);
+	virtual void refreshAspectRatio();
+	virtual Common::String getAspectRatioName();
+	virtual float getAspectRatio();
 
 	bool _formatBGR;
 

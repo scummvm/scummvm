@@ -46,7 +46,8 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_cursorNeedsRedraw(false), _cursorPaletteDisabled(true),
 	_cursorVisible(false), _cursorKeyColor(0),
 	_cursorTargetScale(1),
-	_formatBGR(false) {
+	_formatBGR(false),
+	_aspectX(0), _aspectY(0), _aspectWidth(0), _aspectHeight(0) {
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
 	memset(&_videoMode, 0, sizeof(_videoMode));
@@ -56,6 +57,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	_videoMode.scaleFactor = 2;
 	_videoMode.fullscreen = false;
 	_videoMode.antialiasing = false;
+	_videoMode.aspectRatioCorrection = 0;
 
 	_gamePalette = (byte *)calloc(sizeof(byte) * 4, 256);
 	_cursorPalette = (byte *)calloc(sizeof(byte) * 4, 256);
@@ -801,10 +803,10 @@ void OpenGLGraphicsManager::refreshCursor() {
 void OpenGLGraphicsManager::refreshCursorScale() {
 	// Get the window minimum scale factor. The cursor will mantain its original aspect
 	// ratio, and we do not want it to get too big if only one dimension is resized
-	float scaleFactor = MIN((float)_videoMode.hardwareWidth / _videoMode.screenWidth,
+	float screenScaleFactor = MIN((float)_videoMode.hardwareWidth / _videoMode.screenWidth,
 		(float)_videoMode.hardwareHeight / _videoMode.screenHeight);
 
-	if (_cursorTargetScale >= scaleFactor && _videoMode.scaleFactor >= scaleFactor) {
+	if (_cursorTargetScale >= screenScaleFactor && _videoMode.scaleFactor >= screenScaleFactor) {
 		// If the cursor target scale and the video mode scale factor are bigger than
 		// the current window scale, do not scale the cursor for the overlay
 		_cursorState.rW = _cursorState.w;
@@ -813,17 +815,34 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 		_cursorState.rHotY = _cursorState.hotY;
 	} else {
 		// Otherwise, scale the cursor for the overlay
-		_cursorState.rW = _cursorState.w * (scaleFactor - _cursorTargetScale + 1);
-		_cursorState.rH = _cursorState.h * (scaleFactor - _cursorTargetScale + 1);
-		_cursorState.rHotX = _cursorState.hotX * (scaleFactor - _cursorTargetScale + 1);
-		_cursorState.rHotY = _cursorState.hotY * (scaleFactor - _cursorTargetScale + 1);
+		float targetScaleFactor = MIN(_cursorTargetScale, _videoMode.scaleFactor);
+		_cursorState.rW = _cursorState.w * (screenScaleFactor - targetScaleFactor + 1);
+		_cursorState.rH = _cursorState.h * (screenScaleFactor - targetScaleFactor + 1);
+		_cursorState.rHotX = _cursorState.hotX * (screenScaleFactor - targetScaleFactor + 1);
+		_cursorState.rHotY = _cursorState.hotY * (screenScaleFactor - targetScaleFactor + 1);
 	}
 
 	// Always scale the cursor for the game
-	_cursorState.vW = _cursorState.w * scaleFactor;
-	_cursorState.vH = _cursorState.h * scaleFactor;
-	_cursorState.vHotX = _cursorState.hotX * scaleFactor;
-	_cursorState.vHotY = _cursorState.hotY * scaleFactor;
+	_cursorState.vW = _cursorState.w * screenScaleFactor;
+	_cursorState.vH = _cursorState.h * screenScaleFactor;
+	_cursorState.vHotX = _cursorState.hotX * screenScaleFactor;
+	_cursorState.vHotY = _cursorState.hotY * screenScaleFactor;
+}
+
+void OpenGLGraphicsManager::refreshAspectRatio() {
+	_aspectWidth = _videoMode.hardwareWidth;
+	_aspectHeight = _videoMode.hardwareHeight;
+
+	float aspectRatio = (float)_videoMode.hardwareWidth / _videoMode.hardwareHeight;
+	float desiredAspectRatio = getAspectRatio();
+
+	if (aspectRatio < desiredAspectRatio)
+		_aspectHeight = (int)(_aspectWidth / desiredAspectRatio + 0.5f);
+	else if (aspectRatio > desiredAspectRatio)
+		_aspectWidth = (int)(_aspectHeight * desiredAspectRatio + 0.5f);
+
+	_aspectX = (_videoMode.hardwareWidth - _aspectWidth) / 2;
+	_aspectY = (_videoMode.hardwareHeight - _aspectHeight) / 2;
 }
 
 void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &gltype) {
@@ -873,7 +892,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 	glTranslatef(0, _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
 
 	// Draw the game screen
-	_gameTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	_gameTexture->drawTexture(_aspectX, _aspectY, _aspectWidth, _aspectHeight);
 
 	glPopMatrix();
 
@@ -883,7 +902,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			refreshOverlay();
 
 		// Draw the overlay
-		_overlayTexture->drawTexture(0, 0, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+		_overlayTexture->drawTexture(_aspectX, _aspectY, _aspectWidth, _aspectHeight);
 	}
 
 	if (_cursorVisible) {
@@ -1046,6 +1065,8 @@ bool OpenGLGraphicsManager::loadGFXMode() {
 
 	refreshCursorScale();
 
+	refreshAspectRatio();
+
 	internUpdateScreen();
 
 	return true;
@@ -1081,10 +1102,41 @@ void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
 
 	if (_transactionMode == kTransactionActive) {
 		if (ratio == -1)
-			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 4;
+			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 5;
 		else
 			_videoMode.aspectRatioCorrection = ratio;
 		_transactionDetails.needHotswap = true;
+	}
+}
+
+Common::String OpenGLGraphicsManager::getAspectRatioName() {
+	switch (_videoMode.aspectRatioCorrection) {
+	case kAspectRatioNone:
+		return "None";
+	case kAspectRatioConserve:
+		return "Conserve";
+	case kAspectRatio4_3:
+		return "4/3";
+	case kAspectRatio16_9:
+		return "16/9";
+	case kAspectRatio16_10:
+		return "16/10";
+	}
+	return "";
+}
+
+float OpenGLGraphicsManager::getAspectRatio() {
+	switch (_videoMode.aspectRatioCorrection) {
+	case kAspectRatioConserve:
+		return (float)_videoMode.screenWidth / _videoMode.screenHeight;
+	case kAspectRatio4_3:
+		return 4.0f / 3.0f;
+	case kAspectRatio16_9:
+		return 16.0f / 9.0f;
+	case kAspectRatio16_10:
+		return 16.0f / 10.0f;
+	default:
+		return (float)_videoMode.hardwareWidth / _videoMode.hardwareHeight;
 	}
 }
 
@@ -1092,16 +1144,35 @@ void OpenGLGraphicsManager::adjustMouseEvent(const Common::Event &event) {
 	if (!event.synthetic) {
 		Common::Event newEvent(event);
 		newEvent.synthetic = true;
-		if (!_overlayVisible) {
-			newEvent.mouse.x /= _videoMode.scaleFactor;
-			newEvent.mouse.y /= _videoMode.scaleFactor;
-			//if (_videoMode.aspectRatioCorrection)
-			//	newEvent.mouse.y = aspect2Real(newEvent.mouse.y);
+
+		if (!_videoMode.aspectRatioCorrection) {
+			if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+				newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
+			if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+				newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
+
+			if (!_overlayVisible) {
+				newEvent.mouse.x /= _videoMode.scaleFactor;
+				newEvent.mouse.y /= _videoMode.scaleFactor;
+			}
+
+		} else {
+			newEvent.mouse.x -= _aspectX;
+			newEvent.mouse.y -= _aspectY;
+
+			if (_overlayVisible) {
+				if (_aspectWidth != _videoMode.overlayWidth)
+					newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _aspectWidth;
+				if (_aspectHeight != _videoMode.overlayHeight)
+					newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _aspectHeight;
+			} else {
+				if (_aspectWidth != _videoMode.screenWidth)
+					newEvent.mouse.x = newEvent.mouse.x * _videoMode.screenWidth / _aspectWidth;
+				if (_aspectHeight != _videoMode.screenHeight)
+					newEvent.mouse.y = newEvent.mouse.y * _videoMode.screenHeight / _aspectHeight;
+			}
 		}
-		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
-			newEvent.mouse.x = newEvent.mouse.x * _videoMode.overlayWidth / _videoMode.hardwareWidth;
-		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
-			newEvent.mouse.y = newEvent.mouse.y * _videoMode.overlayHeight / _videoMode.hardwareHeight;
+
 		g_system->getEventManager()->pushEvent(newEvent);
 	}
 }
