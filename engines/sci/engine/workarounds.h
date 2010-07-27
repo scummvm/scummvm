@@ -76,6 +76,7 @@ extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];
+extern const SciWorkaroundEntry kFindKey_workarounds[];
 extern const SciWorkaroundEntry kGetAngle_workarounds[];
 extern const SciWorkaroundEntry kGraphDrawLine_workarounds[];
 extern const SciWorkaroundEntry kGraphSaveBox_workarounds[];
@@ -89,7 +90,6 @@ extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
-extern const SciWorkaroundEntry kStrCpy_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
 
