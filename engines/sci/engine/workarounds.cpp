@@ -83,6 +83,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
 	{ GID_LAURABOW,       44,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // second dialog box after the intro, when talking with Lillian
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
+	{ GID_LAURABOW2,     230,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when asking the reporter about the burglary
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // age check room
 	{ GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  200, { WORKAROUND_FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club
