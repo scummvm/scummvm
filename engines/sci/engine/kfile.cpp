@@ -132,17 +132,17 @@ reg_t file_open(EngineState *s, const char *filename, int mode) {
 		}
 
 		if (!inFile)
-			warning("  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
 		// closes it immediately and opens it again with this here. Perhaps
 		// other games use this for read access as well. I guess changing this
