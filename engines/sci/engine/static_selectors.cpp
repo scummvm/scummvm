@@ -168,6 +168,13 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[274] = "syncTime";
 			names[275] = "syncCue";
+		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
+			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
+			// game's workaround.
+			if (names.size() < 111)
+				names.resize(111);
+
+			names[110] = "init";
 		}
 
 #ifdef ENABLE_SCI32
