@@ -973,6 +973,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 5 EGA (supplied by markcoolio in bug report #2829470)
 	// SCI interpreter version 1.000.060
+	// VERSION file reports "0.000.055"
 	{"kq5", "EGA", {
 		{"resource.map", 0, "baf888a4e4797ce0de0b19d4e183583c", 7662},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394242},
@@ -983,6 +984,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669919},
 		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666527},
 		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541743},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// King's Quest 5 EGA (supplied by omer_mor in bug report #3035421)
+	// VERSION file reports "0.000.062"
+	{"kq5", "EGA", {
+		{"resource.map", 0, "e17cfb38175382b9188da75c53bbab64", 7656},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394072},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 561444},
+		{"resource.002", 0, "076aa0bf1d8d2c147d64aeffbe2928e5", 597580},
+		{"resource.003", 0, "ecb47cd04d06b2ab2f9f883667db6e81", 487633},
+		{"resource.004", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 620749},
+		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669961},
+		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666541},
+		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541762},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
