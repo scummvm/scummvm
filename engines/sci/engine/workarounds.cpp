@@ -58,11 +58,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
-    { GID_ECOQUEST,      140,   140,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when solving the mosaic puzzle
-    { GID_ECOQUEST,      160,   160,  0,      "seatedSenator", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when clicking on the senator
-    { GID_ECOQUEST,      180,   180,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when clicking on the plant/coral
-    { GID_ECOQUEST,      200,   200,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when clicking on moss or other things :P
-    { GID_ECOQUEST,      400,   400,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the cabinet/certificate/computer/photo/rug
+    { GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking everywhere triggers this in almost all rooms
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
@@ -317,7 +313,8 @@ SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroun
 		do {
 			workaround = workaroundList;
 			while (workaround->methodName) {
-				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr
+				if (workaround->gameId == gameId
+						&& ((workaround->scriptNr == -1) || (workaround->scriptNr == curScriptNr))
 						&& ((workaround->roomNr == -1) || (workaround->roomNr == curRoomNumber))
 						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
 						&& ((workaround->objectName == NULL) || (workaround->objectName == searchObjectName))
