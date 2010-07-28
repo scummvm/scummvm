@@ -29,7 +29,7 @@
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include "backends/platform/ps2/ps2loader.h"
+#include "backends/plugins/elf-loader.h"
 
 
 class PS2Plugin : public DynamicPlugin {
