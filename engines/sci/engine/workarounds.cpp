@@ -99,6 +99,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_MOTHERGOOSEHIRES,-1,64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // right when clicking on a child at the start and probably also later
     { GID_MOTHERGOOSEHIRES,-1,64950,  1,               "View", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // see above
 	{ GID_QFG2,           -1,    71,  0,        "theInvSheet", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // accessing the inventory
+    { GID_QFG2,           -1,   701,  0,              "Alley", "at",             -1,    0, { WORKAROUND_FAKE,   0 } }, // when walking inside the alleys in the town - bug #3035835
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,    1, { WORKAROUND_FAKE,   0 } }, // spanish (and maybe early versions?) only: when moving cursor over input pad
 	{ GID_SQ1,           103,   103,  0,               "hand", "internalEvent",  -1,    2, { WORKAROUND_FAKE,   0 } }, // spanish (and maybe early versions?) only: when moving cursor over input pad
 	{ GID_SQ1,            -1,   703,  0,                   "", "export 1",       -1,    0, { WORKAROUND_FAKE,   0 } }, // sub that's called from several objects while on sarien battle cruiser

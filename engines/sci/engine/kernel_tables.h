@@ -86,7 +86,7 @@ struct SciKernelMapSubEntry {
 static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
     { SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
-    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundDummy),              "o",                    NULL },
+    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundDummy),              "(o)",                  NULL },
     { SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "o",                    NULL },
     { SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
     { SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "o",                    NULL },
