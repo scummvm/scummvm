@@ -1938,14 +1938,18 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
-		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
-		if (hasSci1Voc900()) {
-			s_sciVersion = SCI_VERSION_1_EGA;
-			return;
+		// New decompressors. It's either SCI_VERSION_0_LATE, SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
+		if (testResource(ResourceId(kResourceTypeVocab, 900))) {
+			if (hasSci1Voc900()) {
+				s_sciVersion = SCI_VERSION_1_EGA;
+				return;
+			} else {
+				s_sciVersion = SCI_VERSION_0_LATE;
+				return;
+			}
 		}
 
-		// SCI_VERSION_1_EARLY EGA versions seem to be lacking a valid vocab.900.
-		// If this turns out to be unreliable, we could do some pic resource checks instead.
+		// SCI_VERSION_1_EARLY EGA versions lack the parser vocab
 		s_sciVersion = SCI_VERSION_1_EARLY;
 		return;
 	case kResVersionSci1Middle:
