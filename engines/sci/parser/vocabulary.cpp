@@ -50,12 +50,12 @@ Vocabulary::Vocabulary(ResourceManager *resMan, bool foreign) : _resMan(resMan),
 		_resourceIdSuffixes = VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB;
 		_resourceIdBranches = VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES;
 	} else {
-		warning("Could not find a main vocabulary, trying SCI01");
 		_vocabVersion = kVocabularySCI1;
 		_resourceIdWords = VOCAB_RESOURCE_SCI1_MAIN_VOCAB;
 		_resourceIdSuffixes = VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB;
 		_resourceIdBranches = VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES;
 	}
+
 	if (_foreign) {
 		_resourceIdWords += 10;
 		_resourceIdSuffixes += 10;
