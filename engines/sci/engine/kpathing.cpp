@@ -988,8 +988,13 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 			if (cont != CONT_OUTSIDE) {
 				if (s->_appendPoint != NULL) {
 					// We shouldn't get here twice
+					// Happens in LB2CD, inside the speakeasy when walking from the
+					// speakeasy (room 310) into the bathroom (room 320), after having
+					// consulted the notebook (bug #3036299).
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: end point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				// The original end position is in an invalid location, so we move the point
