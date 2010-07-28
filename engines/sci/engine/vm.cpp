@@ -203,7 +203,10 @@ static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaround
 	SciTrackOriginReply originReply;
 	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
 	if (solution.type == WORKAROUND_NONE)
-		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, localCall %x)", opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
+		opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), 
+		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
+		originReply.localCallOffset);
 	assert(solution.type == WORKAROUND_FAKE);
 	return make_reg(0, solution.value);
 }
@@ -218,7 +221,9 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				SciTrackOriginReply originReply;
 				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
 				if (solution.type == WORKAROUND_NONE)
-					error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
 				assert(solution.type == WORKAROUND_FAKE);
 				r[index] = make_reg(0, solution.value);
 				break;
