@@ -124,13 +124,13 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kCelHigh_workarounds[] = {
-	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_FAKE,     66 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
+	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kCelWide_workarounds[] = {
-	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_FAKE,     78 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
+	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
