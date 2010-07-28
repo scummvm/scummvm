@@ -102,19 +102,29 @@ void GfxPicture::drawSci11Vga() {
 	int size = _resource->size;
 	int priorityBandsCount = inbuffer[3];
 	int has_cel = inbuffer[4];
-	int vector_dataPos = READ_LE_UINT16(inbuffer + 16);
+	int vector_dataPos = READ_LE_UINT32(inbuffer + 16);
 	int vector_size = size - vector_dataPos;
-	int palette_data_ptr = READ_LE_UINT16(inbuffer + 28);
-	int cel_headerPos = READ_LE_UINT16(inbuffer + 32);
-	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
-	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
+	int palette_data_ptr = READ_LE_UINT32(inbuffer + 28);
+	int cel_headerPos = READ_LE_UINT32(inbuffer + 32);
+	int cel_RlePos = READ_LE_UINT32(inbuffer + cel_headerPos + 24);
+	int cel_LiteralPos = READ_LE_UINT32(inbuffer + cel_headerPos + 28);
 	Palette palette;
+
+	// Header
+	// [headerSize:WORD] [unknown:BYTE] [priorityBandCount:BYTE] [hasCel:BYTE] [unknown:BYTE]
+	// [unknown:WORD] [unknown:WORD] [unknown:WORD] [unknown:WORD] [unknown:WORD]
+	// Offset 16
+	// [vectorDataOffset:DWORD] [unknown:DWORD] [unknown:DWORD] [paletteDataOffset:DWORD]
+	// Offset 32
+	// [celHeaderOffset:DWORD] [unknown:DWORD]
+	// [priorityBandData:WORD] * priorityBandCount
+	// [priority:BYTE] [unknown:BYTE]
 
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 	_palette->set(&palette, true);
 
-	// priority bands are supposed to be 14
+	// priority bands are supposed to be 14 for sci1.1 pictures
 	assert(priorityBandsCount == 14);
 
 	if (_addToFlag) {
