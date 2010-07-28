@@ -93,7 +93,12 @@ bool DLObject::readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehd
 	if (DLFile->read(ehdr, sizeof(*ehdr)) != sizeof(*ehdr) ||
 	        memcmp(ehdr->e_ident, ELFMAG, SELFMAG) ||			// Check MAGIC
 	        ehdr->e_type != ET_EXEC ||							// Check for executable
+#ifdef ARM_TARGET
 	        ehdr->e_machine != EM_ARM ||						// Check for ARM machine type
+#endif
+#ifdef MIPS_TARGET
+	        ehdr->e_machine != EM_MIPS ||
+#endif
 	        ehdr->e_phentsize < sizeof(Elf32_Phdr)	 ||			// Check for size of program header
 	        ehdr->e_shentsize != sizeof(Elf32_Shdr)) {			// Check for size of section header
 		seterror("Invalid file type.");

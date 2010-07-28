@@ -34,6 +34,10 @@
 #include "shorts-segment-manager.h"
 #endif
 
+#if defined(__DS__)
+#define ARM_TARGET
+#endif
+
 #define MAXDLERRLEN 80
 
 class DLObject {
