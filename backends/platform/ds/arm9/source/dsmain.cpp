@@ -111,7 +111,7 @@
 #include "engine.h"
 
 
-#include "backends/plugins/ds/ds-provider.h"
+#include "backends/plugins/elf-provider.h"
 
 #include "backends/fs/ds/ds-fs.h"
 #include "base/version.h"
@@ -3304,7 +3304,7 @@ int main(void) {
 #endif
 
 #ifdef DYNAMIC_MODULES
-	PluginManager::instance().addPluginProvider(new DSPluginProvider());
+	PluginManager::instance().addPluginProvider(new ELFPluginProvider());
 #endif
 
 	while (1) {

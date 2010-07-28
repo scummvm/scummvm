@@ -30,14 +30,13 @@ MODULE_OBJS := \
 	midi/timidity.o \
 	midi/dmedia.o \
 	midi/windows.o \
+	plugins/elf-provider.o \
 	plugins/dc/dc-provider.o \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
 	plugins/psp/psp-provider.o \
-	plugins/ps2/ps2-provider.o \
 	plugins/gp2xwiz/gp2xwiz-provider.o \
-	plugins/ds/ds-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \

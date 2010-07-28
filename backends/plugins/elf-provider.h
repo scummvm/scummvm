@@ -23,14 +23,14 @@
  *
  */
 
-#ifndef BACKENDS_PLUGINS_DS_DS_PROVIDER_H
-#define BACKENDS_PLUGINS_DS_DS_PROVIDER_H
+#ifndef BACKENDS_PLUGINS_ELF_PROVIDER_H
+#define BACKENDS_PLUGINS_ELF_PROVIDER_H
 
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__DS__)
+#if defined(DYNAMIC_MODULES) // TODO: && defined(ELF-loader target)
 
-class DSPluginProvider : public FilePluginProvider {
+class ELFPluginProvider : public FilePluginProvider {
 protected:
 	Plugin* createPlugin(const Common::FSNode &node) const;
 
@@ -38,6 +38,6 @@ protected:
 
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(__DS__)
+#endif // defined(DYNAMIC_MODULES)
 
-#endif /* BACKENDS_PLUGINS_DS_DS_PROVIDER_H */
+#endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */

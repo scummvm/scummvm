@@ -23,16 +23,16 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) && defined(__DS__)
+#if defined(DYNAMIC_MODULES) //TODO: && defined(ELF loader target)
 
-#include "backends/plugins/ds/ds-provider.h"
+#include "backends/plugins/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
 #include "backends/plugins/elf-loader.h"
 
 
-class DSPlugin : public DynamicPlugin {
+class ELFPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
 	Common::String _filename;
@@ -53,10 +53,10 @@ protected:
 	}
 
 public:
-	DSPlugin(const Common::String &filename)
+	ELFPlugin(const Common::String &filename)
 		: _dlHandle(0), _filename(filename) {}
 
-	~DSPlugin() {
+	~ELFPlugin() {
 		if (_dlHandle) unloadPlugin();
 	}
 
@@ -88,11 +88,11 @@ public:
 };
 
 
-Plugin* DSPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new DSPlugin(node.getPath());
+Plugin* ELFPluginProvider::createPlugin(const Common::FSNode &node) const {
+	return new ELFPlugin(node.getPath());
 }
 
-bool DSPluginProvider::isPluginFilename(const Common::FSNode &node) const {
+bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
 	Common::String filename = node.getName();
 	printf("Testing name %s", filename.c_str());
@@ -105,4 +105,4 @@ bool DSPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-#endif // defined(DYNAMIC_MODULES) && defined(__DS__)
+#endif // defined(DYNAMIC_MODULES)
