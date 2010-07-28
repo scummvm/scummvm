@@ -86,7 +86,6 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_KQ7,            30, 64996,  0,               "User", "handleEvent",    -1,    1, { WORKAROUND_FAKE,   0 } }, // called when pushing a keyboard key
 	{ GID_LAURABOW,       44,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // second dialog box after the intro, when talking with Lillian - bug #3034985
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
-	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "<noname 189>",   -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu (floppy version, which doesn't have a selector vocabulary) - bug #3035694
 	{ GID_LAURABOW2,     230,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when asking the reporter about the burglary - bug #3035068
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // age check room

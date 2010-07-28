@@ -175,6 +175,13 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 				names.resize(111);
 
 			names[110] = "init";
+		} else if (g_sci->getGameId() == GID_LAURABOW2) {
+			// The floppy of version needs the open selector set to match up with the CD version's
+			// workaround - bug #3035694
+			if (names.size() < 190)
+				names.resize(190);
+
+			names[189] = "open";
 		}
 
 #ifdef ENABLE_SCI32
