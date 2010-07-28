@@ -58,8 +58,11 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
-    { GID_ECOQUEST,      400,   400,  0,                "rug", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the rug
+    { GID_ECOQUEST,      400,   400,  0,            "cabinet", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the cabinet
+    { GID_ECOQUEST,      400,   400,  0,          "certUpper", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the certificate
     { GID_ECOQUEST,      400,   400,  0,           "computer", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the computer
+    { GID_ECOQUEST,      400,   400,  0,              "photo", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the photo
+    { GID_ECOQUEST,      400,   400,  0,                "rug", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the rug
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_FREDDYPHARKAS,  -1,    31,  0,            "quitWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_GK1,            -1, 64950,  1,            "Feature", "handleEvent",    -1,    0, { WORKAROUND_FAKE,   0 } }, // sometimes when walk-clicking
@@ -258,6 +261,7 @@ const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000
 	{ GID_CASTLEBRAIN,   320,   377,  0,              "SWord", "upDate",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // after solving the cross-word-puzzle, trying to unload invalid reference
 	{ GID_CASTLEBRAIN,   320,   377,  0,            "theWord", "show",           -1,    0, { WORKAROUND_IGNORE, 0 } }, // 2nd word puzzle, when exiting before solving, trying to unload invalid reference - bug #3034473
+    { GID_ECOQUEST,      380,    61,  0,              "gotIt", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // after talking to the dolphin the first time
 	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident - bug #3034902
