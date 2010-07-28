@@ -345,7 +345,7 @@ void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes);
  * @param verbose	Whether to display the parse tree after building it
  * @return 1 on a match, 0 otherwise
  */
-int said(EngineState *s, byte *spec, bool verbose);
+int said(EngineState *s, const byte *spec, bool verbose);
 
 } // End of namespace Sci
 

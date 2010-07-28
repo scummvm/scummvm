@@ -657,7 +657,7 @@ static bool buildSaidTree() {
 	return true;
 }
 
-static int said_parse_spec(byte *spec) {
+static int said_parse_spec(const byte *spec) {
 	int nextitem;
 
 	said_token = 0;
@@ -996,7 +996,7 @@ static int augment_parse_nodes(ParseTreeNode *parseT, ParseTreeNode *saidT) {
 /**** Main code ****/
 /*******************/
 
-int said(EngineState *s, byte *spec, bool verbose) {
+int said(EngineState *s, const byte *spec, bool verbose) {
 	int retval;
 	Vocabulary *voc = g_sci->getVocabulary();
 

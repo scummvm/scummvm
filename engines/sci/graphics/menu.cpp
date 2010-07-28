@@ -397,7 +397,6 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
 	EngineState *s;
-	byte saidSpec[64];
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
@@ -437,8 +436,13 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			itemEntry = *itemIterator;
 
 			if (!itemEntry->saidVmPtr.isNull()) {
-				// TODO: get a pointer to saidVmPtr or make said() work on VmPtrs
-				_segMan->memcpy(saidSpec, itemEntry->saidVmPtr, 64);
+				byte *saidSpec = _segMan->derefBulkPtr(itemEntry->saidVmPtr, 0);
+
+				if (!saidSpec) {
+					warning("Could not dereference saidSpec");
+					continue;
+				}
+
 				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
 					break;
 			}
