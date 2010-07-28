@@ -60,6 +60,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
     { GID_ECOQUEST,      140,   140,  0,              "rm140", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when solving the mosaic puzzle
     { GID_ECOQUEST,      140,   140,  0,       "mosaicPuzzle", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when solving the mosaic puzzle
+    { GID_ECOQUEST,      160,   160,  0,      "seatedSenator", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when clicking on the senator
     { GID_ECOQUEST,      400,   400,  0,            "cabinet", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the cabinet
     { GID_ECOQUEST,      400,   400,  0,          "certUpper", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the certificate
     { GID_ECOQUEST,      400,   400,  0,           "computer", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the computer
