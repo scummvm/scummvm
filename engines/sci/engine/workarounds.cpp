@@ -58,6 +58,8 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
 	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
+    { GID_ECOQUEST,      140,   140,  0,              "rm140", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when solving the mosaic puzzle
+    { GID_ECOQUEST,      140,   140,  0,       "mosaicPuzzle", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when solving the mosaic puzzle
     { GID_ECOQUEST,      400,   400,  0,            "cabinet", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the cabinet
     { GID_ECOQUEST,      400,   400,  0,          "certUpper", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the certificate
     { GID_ECOQUEST,      400,   400,  0,           "computer", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // when looking at the computer
