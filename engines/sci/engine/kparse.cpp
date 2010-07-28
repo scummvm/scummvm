@@ -63,7 +63,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef DEBUG_PARSER
 		printf("Said block: ");
-		g_sci->getVocabulary()->decipherSaidBlock(said_block);
+		g_sci->getVocabulary()->debugDecipherSaidBlock(said_block);
 #endif
 
 	if (voc->parser_event.isNull() || (readSelectorValue(s->_segMan, voc->parser_event, SELECTOR(claimed)))) {
