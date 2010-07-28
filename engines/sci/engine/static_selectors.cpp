@@ -170,7 +170,7 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 			names[275] = "syncCue";
 		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
 			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
-			// game's workaround.
+			// game's workaround - bug #3035033
 			if (names.size() < 111)
 				names.resize(111);
 

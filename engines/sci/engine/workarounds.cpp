@@ -40,7 +40,7 @@ const SciWorkaroundEntry opcodeDivWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeOrWorkarounds[] = {
-	{ GID_ECOQUEST2,       100,   0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number
+	{ GID_ECOQUEST2,       100,   0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -75,18 +75,18 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_JONES,           1,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/cd only - called when a game ends
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   13, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
 	{ GID_JONES,         764,   255,  0,                   "", "export 0",       -1,   14, { WORKAROUND_FAKE,   0 } }, // jones/ega&vga only - called when the game starts
-	{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio
+	{ GID_KQ5,            -1,     0,  0,                   "", "export 29",      -1,    3, { WORKAROUND_FAKE,   0 } }, // called when playing harp for the harpies or when aborting dialog in toy shop, is used for kDoAudio - bug #3034700
 	{ GID_KQ5,            25,    25,  0,              "rm025", "doit",           -1,    0, { WORKAROUND_FAKE,   0 } }, // inside witch forest, when going to the room where the walking rock is
-	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs
-	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    2, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs
-	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room
+	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs - bug #3034597
+	{ GID_KQ6,            -1,    30,  0,               "rats", "changeState",    -1,    2, { WORKAROUND_FAKE,   0 } }, // rats in the catacombs - bug #3035495
+	{ GID_KQ6,           210,   210,  0,              "rm210", "scriptCheck",    -1,    0, { WORKAROUND_FAKE,   1 } }, // using inventory in that room - bug #3034565
 	{ GID_KQ6,           500,   500,  0,              "rm500", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to island of the beast
 	{ GID_KQ6,           520,   520,  0,              "rm520", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // going to boiling water trap on beast isle
 	{ GID_KQ6,            -1,   903,  0,         "controlWin", "open",           -1,    4, { WORKAROUND_FAKE,   0 } }, // when opening the controls window (save, load etc)
-	{ GID_LAURABOW,       44,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // second dialog box after the intro, when talking with Lillian
+	{ GID_LAURABOW,       44,   967,  0,             "myIcon", "cycle",          -1,    1, { WORKAROUND_FAKE,   0 } }, // second dialog box after the intro, when talking with Lillian - bug #3034985
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
 	{ GID_LAURABOW2,      -1,    24,  0,              "gcWin", "<noname 189>",   -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu (floppy version, which doesn't have a selector vocabulary) - bug #3035694
-	{ GID_LAURABOW2,     230,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when asking the reporter about the burglary
+	{ GID_LAURABOW2,     230,    21,  0,      "dropCluesCode", "doit",           -1,    1, { WORKAROUND_FAKE,   0 } }, // when asking the reporter about the burglary - bug #3035068
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // age check room
 	{ GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,  200, { WORKAROUND_FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club
@@ -131,7 +131,7 @@ const SciWorkaroundEntry kCelHigh_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kCelWide_workarounds[] = {
-	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
+	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_STILLCALL, 0 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu - bug #3035720
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -148,28 +148,28 @@ const SciWorkaroundEntry kDisposeScript_workarounds[] = {
 	{ GID_QFG1,           64,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
 	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // during fight with vohaul, parameter 0 is an object
 	{ GID_SQ4,           150,   152,  0,       "driveCloseUp", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object
-	{ GID_LAURABOW,      777,   777,  0,             "myStab", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: after the will is signed, parameter 0 is an object
+	{ GID_LAURABOW,      777,   777,  0,             "myStab", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: after the will is signed, parameter 0 is an object - bug #3034907
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
-	{ GID_CAMELOT,        -1,   989,  0,            "rmMusic", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called frequently with a NULL reference (i.e. 0:0)
+	{ GID_CAMELOT,        -1,   989,  0,            "rmMusic", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called frequently with a NULL reference (i.e. 0:0) - bug #3035149
 	{ GID_KQ1,            -1,   989,  0,          "gameSound", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in several scenes (e.g. graham cracker) with 0:0
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
-	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object
+	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #3034567
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGetAngle_workarounds[] = {
-	{ GID_KQ6,           740,   752,  0,        "throwDazzle", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after the Genie is exposed in the Palace (short and long ending), it starts shooting lightning bolts around. An extra 5th parameter is passed.
+	{ GID_KQ6,           740,   752,  0,        "throwDazzle", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after the Genie is exposed in the Palace (short and long ending), it starts shooting lightning bolts around. An extra 5th parameter is passed - bug #3034610
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kFindKey_workarounds[] = {
-	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed.
+	{ GID_ECOQUEST2,     100,   999,  0,            "myList", "contains",        -1,    0, { WORKAROUND_FAKE, 0 } }, // When Noah Greene gives Adam the Ecorder, and just before the game gives a demonstration, a null reference to a list is passed - bug #3035186
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -183,7 +183,7 @@ const SciWorkaroundEntry kGraphDrawLine_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 	{ GID_CASTLEBRAIN,   420,   427,  0,          "alienIcon", "select",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when selecting a card during the alien card game, gets called with 1 extra parameter
-	{ GID_ISLANDBRAIN,   290,   291,  0,         "upElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // when testing in the elevator puzzle, gets called with 1 argument less - 15 is on stack
+	{ GID_ISLANDBRAIN,   290,   291,  0,         "upElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // when testing in the elevator puzzle, gets called with 1 argument less - 15 is on stack - bug #3034485
 	{ GID_ISLANDBRAIN,   290,   291,  0,       "downElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // see above
 	{ GID_ISLANDBRAIN,   290,   291,  0,    "correctElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // see above (when testing the correct solution)
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -223,27 +223,27 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kIsObject_workarounds[] = {
-	{ GID_GK1,           50,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // GK1 demo, when asking Grace for messages it gets called with an invalid parameter (type "error")
+	{ GID_GK1,           50,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // GK1 demo, when asking Grace for messages it gets called with an invalid parameter (type "error") - bug #3034519
     { GID_QFG3,          -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when asking for something, gets called with type error parameter
-	{ GID_ISLANDBRAIN,   -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when going to the game options, choosing "Info" and selecting anything from the list, gets called with an invalid parameter (type "error")
+	{ GID_ISLANDBRAIN,   -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when going to the game options, choosing "Info" and selecting anything from the list, gets called with an invalid parameter (type "error") - bug #3035262
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kMemory_workarounds[] = {
-	{ GID_LAURABOW2,      -1,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when exiting the train, talking to Mr. Augustini, etc.
+	{ GID_LAURABOW2,      -1,   999,  0,                   "", "export 6",       -1,    0, { WORKAROUND_FAKE,    0 } }, // during the intro, when exiting the train, talking to Mr. Augustini, etc. - bug #3034490
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kNewWindow_workarounds[] = {
-	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "<noname 178>",   -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call.
+	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "<noname 178>",   -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
-	{ GID_QFG4,          100,   100,  0,            "doMovie", "<noname 144>",   -1,    0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless
+	{ GID_QFG4,          100,   100,  0,            "doMovie", "<noname 144>",   -1,    0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #3034506
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -256,18 +256,18 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_CASTLEBRAIN,   320,   377,  0,              "SWord", "upDate",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // after solving the cross-word-puzzle, trying to unload invalid reference
-	{ GID_CASTLEBRAIN,   320,   377,  0,            "theWord", "show",           -1,    0, { WORKAROUND_IGNORE, 0 } }, // 2nd word puzzle, when exiting before solving, trying to unload invalid reference
+	{ GID_CASTLEBRAIN,   320,   377,  0,            "theWord", "show",           -1,    0, { WORKAROUND_IGNORE, 0 } }, // 2nd word puzzle, when exiting before solving, trying to unload invalid reference - bug #3034473
 	{ GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
 	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
 	{ GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
-	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident
-	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident
-	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident
-	{ GID_LAURABOW2,       6,     6,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the murder, a 3rd parameter is passed by accident
-	{ GID_LAURABOW2,       7,     7,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the logo is shown, a 3rd parameter is passed by accident
-	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid
-	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid
+	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_LAURABOW2,       6,     6,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the murder, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_LAURABOW2,       7,     7,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the logo is shown, a 3rd parameter is passed by accident - bug #3034902
+	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid - bug #3035000
+	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

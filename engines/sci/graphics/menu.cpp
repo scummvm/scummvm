@@ -273,6 +273,7 @@ void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeI
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
 	if (!itemEntry) {
 		// Check if the game actually has a menu. PQ2 demo calls this, for example, but has no menus.
+		// (bug report #3034507)
 		if (_itemList.size() == 0)
 			return;
 		else
