@@ -37,6 +37,7 @@ GfxRobot::GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId res
 	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
+	_resourceData = 0;
 }
 
 GfxRobot::~GfxRobot() {
