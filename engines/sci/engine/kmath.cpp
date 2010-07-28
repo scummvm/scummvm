@@ -29,10 +29,9 @@
 namespace Sci {
 
 reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
-	// SCI1 actually supported those argcs as well
-	// SCI0 only supported argc = 1 to reset the seed (no input was used, it was reset to 0)
 	switch (argc) {
 	case 1: // set seed to argv[0]
+		// SCI0/SCI01 just reset the seed to 0 instead of using argv[0] at all
 		return NULL_REG;
 
 	case 2: { // get random number
@@ -43,6 +42,7 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	case 3: // get seed
+		// SCI0/01 did not support this at all
 		// Actually we would have to return the previous seed
 		error("kRandom: scripts asked for previous seed");
 		break;

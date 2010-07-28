@@ -407,9 +407,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(Portrait),          SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL }, // subop
     { MAP_CALL(PrevNode),          SIG_EVERYWHERE,           "n",                     NULL,            NULL },
     { MAP_CALL(PriCoord),          SIG_EVERYWHERE,           "i",                     NULL,            NULL },
-    { MAP_CALL(Random),            SIG_SCI11, SIGFOR_ALL,    "i(i)(i)",               NULL,            NULL },
-    // ^^ they actually changed it in SCI1, but it seems its never called that way ffs. kRandom
-    { MAP_CALL(Random),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
+    { MAP_CALL(Random),            SIG_EVERYWHERE,           "i(i)(i)",               NULL,            NULL },
     { MAP_CALL(ReadNumber),        SIG_EVERYWHERE,           "r",                     NULL,            NULL },
     { MAP_CALL(ResCheck),          SIG_EVERYWHERE,           "ii(iiii)",              NULL,            NULL },
     { MAP_CALL(RespondsTo),        SIG_EVERYWHERE,           ".i",                    NULL,            NULL },
