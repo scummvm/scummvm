@@ -73,8 +73,6 @@ void GfxPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int1
 	switch (headerSize) {
 	case 0x26: // SCI 1.1 VGA picture
 		_resourceType = SCI_PICTURE_TYPE_SCI11;
-		if (_addToFlag)
-			_priority = 15;
 		drawSci11Vga();
 		break;
 #ifdef ENABLE_SCI32
@@ -102,7 +100,8 @@ void GfxPicture::reset() {
 void GfxPicture::drawSci11Vga() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
-	int has_cel = READ_LE_UINT16(inbuffer + 4);
+	int priorityBandsCount = inbuffer[3];
+	int has_cel = inbuffer[4];
 	int vector_dataPos = READ_LE_UINT16(inbuffer + 16);
 	int vector_size = size - vector_dataPos;
 	int palette_data_ptr = READ_LE_UINT16(inbuffer + 28);
@@ -114,6 +113,13 @@ void GfxPicture::drawSci11Vga() {
 	// Create palette and set it
 	_palette->createFromData(inbuffer + palette_data_ptr, size - palette_data_ptr, &palette);
 	_palette->set(&palette, true);
+
+	// priority bands are supposed to be 14
+	assert(priorityBandsCount == 14);
+
+	if (_addToFlag) {
+		_priority = inbuffer[40 + priorityBandsCount * 2] & 0xF;
+	}
 
 	// display Cel-data
 	if (has_cel)
