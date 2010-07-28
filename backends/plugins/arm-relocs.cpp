@@ -115,7 +115,7 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 				*target = relocation;
 
 				DBG("R_ARM_TARGET1: i=%d, a=%x, origTarget=%x, target=%x\n", i, a, origTarget, *target);
-				DBG("Make sure --target1-abs is a flag to LD.\n");
+				DBG("Make sure --target1-abs is a flag to LD!\n");
 			}
 			break;
 

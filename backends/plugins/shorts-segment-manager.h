@@ -32,6 +32,12 @@
 
 #define ShortsMan ShortSegmentManager::instance()
 
+/**
+ * Manages the segments of small data put in the gp-relative area for MIPS processors,
+ * and lets these segments be handled differently in the ELF loader.
+ * Since there's no true dynamic linker to change the GP register between plugins and the main engine,
+ * custom linker scripts ensure the GP-area is in the same place for both.
+ */
 class ShortSegmentManager : public Common::Singleton<ShortSegmentManager> {
 private:
 	char *_shortsStart;
@@ -41,6 +47,8 @@ public:
 	char *getShortsStart() {
 		return _shortsStart;
 	}
+
+	// Returns whether or not an absolute address is in the GP-relative section.
 	bool inGeneralSegment(char *addr) {
 		return ((char *)addr >= _shortsStart && (char *)addr < _shortsEnd);
 	}

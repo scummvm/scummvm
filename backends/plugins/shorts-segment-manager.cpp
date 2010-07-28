@@ -42,8 +42,8 @@ extern char _gp[];			// Value of gp register
 DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
 
 ShortSegmentManager::ShortSegmentManager() {
-	_shortsStart = &__plugin_hole_start ;
-	_shortsEnd = &__plugin_hole_end;
+	_shortsStart = &__plugin_hole_start ;	//shorts segment begins at the plugin hole we made when linking
+	_shortsEnd = &__plugin_hole_end;		//and ends at the end of that hole.
 }
 
 ShortSegmentManager::Segment *ShortSegmentManager::newSegment(int size, char *origAddr) {
