@@ -37,6 +37,10 @@
 #include "common/fs.h"
 #include "elf-loader.h"
 
+#ifdef __DS__
+#include <nds.h>
+#endif
+
 #define __DEBUG_PLUGINS__
 
 #ifdef __DEBUG_PLUGINS__
@@ -48,7 +52,7 @@
 #define seterror(x,...) printf(x, ## __VA_ARGS__)
 
 /**
- * Flushes the data cache.
+ * Flushes the data cache (Platform Specific).
  */
 void flushDataCache() {
 #ifdef __DS__
@@ -304,7 +308,7 @@ void DLObject::relocateSymbols(Elf32_Addr offset) {
 #else
 		// Make sure we don't relocate special valued symbols
 		if (s->st_shndx < SHN_LOPROC) {
-				relocCount++;
+				mainCount++;
 				s->st_value += offset;
 				if (s->st_value < (Elf32_Addr)_segment || s->st_value > (Elf32_Addr)_segment + _segmentSize)
 					seterror("Symbol out of bounds! st_value = %x\n", s->st_value);

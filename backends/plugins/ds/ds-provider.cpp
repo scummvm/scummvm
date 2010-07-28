@@ -29,7 +29,7 @@
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
-#include "backends/platform/ds/arm9/source/dsloader.h"
+#include "backends/plugins/elf-loader.h"
 
 
 class DSPlugin : public DynamicPlugin {
