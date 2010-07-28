@@ -73,6 +73,8 @@ extern const SciWorkaroundEntry opcodeOrWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
+extern const SciWorkaroundEntry kCelHigh_workarounds[];
+extern const SciWorkaroundEntry kCelWide_workarounds[];
 extern const SciWorkaroundEntry kDisplay_workarounds[];
 extern const SciWorkaroundEntry kDisposeScript_workarounds[];
 extern const SciWorkaroundEntry kDoSoundFade_workarounds[];

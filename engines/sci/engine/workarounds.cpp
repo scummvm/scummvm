@@ -123,6 +123,18 @@ const SciWorkaroundEntry kAbs_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kCelHigh_workarounds[] = {
+	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_FAKE,     66 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kCelWide_workarounds[] = {
+	{ GID_SQ1,             1,   255,  0,              "DIcon", "setSize",        -1,    0, { WORKAROUND_FAKE,     78 } }, // DEMO: Called with 2nd/3rd parameters as objects when clicking on the menu
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // clicking on catalog in roboter sale - a parameter is an object
