@@ -944,7 +944,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				}
 
 				if ((type == POLY_BARRED_ACCESS) || (type == POLY_CONTAINED_ACCESS))
-					warning("AvoidPath: start position at unreachable location");
+					debug("AvoidPath: start position at unreachable location");
 
 				// The original start position is in an invalid location, so we
 				// use the moved point and add the original one to the final path
