@@ -145,10 +145,10 @@ const SciWorkaroundEntry kDisplay_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisposeScript_workarounds[] = {
+	{ GID_LAURABOW,      777,   777,  0,             "myStab", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: after the will is signed, parameter 0 is an object - bug #3034907
 	{ GID_QFG1,           64,    64,  0,               "rm64", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when leaving graveyard, parameter 0 is an object
 	{ GID_SQ4,           150,   151,  0,        "fightScript", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // during fight with vohaul, parameter 0 is an object
 	{ GID_SQ4,           150,   152,  0,       "driveCloseUp", "dispose",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // when choosing "beam download", parameter 0 is an object
-	{ GID_LAURABOW,      777,   777,  0,             "myStab", "changeState",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // DEMO: after the will is signed, parameter 0 is an object - bug #3034907
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -224,8 +224,8 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kIsObject_workarounds[] = {
 	{ GID_GK1,           50,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // GK1 demo, when asking Grace for messages it gets called with an invalid parameter (type "error") - bug #3034519
-    { GID_QFG3,          -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when asking for something, gets called with type error parameter
 	{ GID_ISLANDBRAIN,   -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when going to the game options, choosing "Info" and selecting anything from the list, gets called with an invalid parameter (type "error") - bug #3035262
+    { GID_QFG3,          -1,   999,  0,                "List", "eachElementDo",  -1,    0, { WORKAROUND_FAKE, 0 } }, // when asking for something, gets called with type error parameter
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -255,19 +255,19 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kUnLoad_workarounds[] = {
+	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid - bug #3035000
+	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000
 	{ GID_CASTLEBRAIN,   320,   377,  0,              "SWord", "upDate",         -1,    0, { WORKAROUND_IGNORE, 0 } }, // after solving the cross-word-puzzle, trying to unload invalid reference
 	{ GID_CASTLEBRAIN,   320,   377,  0,            "theWord", "show",           -1,    0, { WORKAROUND_IGNORE, 0 } }, // 2nd word puzzle, when exiting before solving, trying to unload invalid reference - bug #3034473
-	{ GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
-	{ GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
-	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
-	{ GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
 	{ GID_LAURABOW2,       1,     1,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       2,     2,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: during the intro, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       4,     4,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: inside the museum, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       6,     6,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the murder, a 3rd parameter is passed by accident - bug #3034902
 	{ GID_LAURABOW2,       7,     7,  0,           "sCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: after the logo is shown, a 3rd parameter is passed by accident - bug #3034902
-	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid - bug #3035000
-	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000
+	{ GID_LSL6,          130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
+	{ GID_LSL6,          740,   740,  0,        "showCartoon", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during ending, 4 additional parameters are passed by accident
+	{ GID_LSL6HIRES,     130,   130,  0,    "recruitLarryScr", "changeState",    -1,    0, { WORKAROUND_IGNORE, 0 } }, // during intro, a 3rd parameter is passed by accident
+	{ GID_SQ1,            43,   303,  0,            "slotGuy", "dispose",        -1,    0, { WORKAROUND_IGNORE, 0 } }, // when leaving ulence flats bar, parameter 1 is not passed - script error
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
