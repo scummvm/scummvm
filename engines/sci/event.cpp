@@ -313,6 +313,10 @@ SciEvent EventManager::getScummVMEvent() {
 			input.type = SCI_EVENT_MOUSE_PRESS;
 			input.data = 2;
 			break;
+		case Common::EVENT_MBUTTONDOWN:
+			input.type = SCI_EVENT_MOUSE_PRESS;
+			input.data = 3;
+			break;
 		case Common::EVENT_LBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 1;
@@ -320,6 +324,10 @@ SciEvent EventManager::getScummVMEvent() {
 		case Common::EVENT_RBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 2;
+			break;
+		case Common::EVENT_MBUTTONUP:
+			input.type = SCI_EVENT_MOUSE_RELEASE;
+			input.data = 3;
 			break;
 
 			// Misc events
