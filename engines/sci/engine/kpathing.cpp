@@ -933,9 +933,11 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 		case POLY_NEAREST_ACCESS:
 			if (cont == CONT_INSIDE) {
 				if (s->_prependPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: start point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {
@@ -987,7 +989,7 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 		case POLY_NEAREST_ACCESS:
 			if (cont != CONT_OUTSIDE) {
 				if (s->_appendPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
 					// Happens in LB2CD, inside the speakeasy when walking from the
 					// speakeasy (room 310) into the bathroom (room 320), after having
 					// consulted the notebook (bug #3036299).
