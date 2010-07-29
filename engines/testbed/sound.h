@@ -26,8 +26,22 @@
 #define TESTBED_SOUND_H
 
 #include "testbed/testsuite.h"
+#include "gui/dialog.h"
 
 namespace Testbed {
+
+class SoundSubsystemDialog : public GUI::Dialog {
+public:
+	SoundSubsystemDialog();
+	~SoundSubsystemDialog() {}
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+private:
+	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
+	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding);
+	Common::Array<GUI::ButtonWidget *> _buttonArray;
+	uint _xOffset;
+	uint _yOffset;
+};
 
 namespace SoundSubsystem {
 
@@ -35,6 +49,7 @@ namespace SoundSubsystem {
 
 // will contain function declarations for SoundSubsystem tests
 bool playPCSpkSound();
+bool mixSounds(); 
 }
 
 class SoundSubsystemTestSuite : public Testsuite {

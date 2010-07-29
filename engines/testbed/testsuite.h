@@ -171,7 +171,7 @@ public:
 
 	static void updateStats(const char *prefix, const char *info, uint numTests, uint testNum, Common::Point pt);
 	const Common::Array<Test *>& getTestList() { return _testsToExecute; }
-	const int getNumTestsEnabled();
+	int getNumTestsEnabled();
 
 protected:
 	Common::Array<Test *> _testsToExecute;			///< List of tests to be executed

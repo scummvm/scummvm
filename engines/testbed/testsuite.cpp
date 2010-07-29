@@ -219,7 +219,7 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isI
 	_testsToExecute.push_back(featureTest);
 }
 
-const int Testsuite::getNumTestsEnabled() {
+int Testsuite::getNumTestsEnabled() {
 	int count = 0;
 	Common::Array<Test *>::const_iterator iter;
 	for (iter = _testsToExecute.begin(); iter != _testsToExecute.end(); iter++) {

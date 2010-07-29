@@ -28,6 +28,76 @@
 
 namespace Testbed {
 
+enum {
+	kPlayChannel1 = 'pch1',
+	kPlayChannel2 = 'pch2',
+	kPlayChannel3 = 'pch3',
+	kPauseChannel1 = 'pac1',
+	kPauseChannel2 = 'pac2',
+	kPauseChannel3 = 'pac3'
+};
+
+SoundSubsystemDialog::SoundSubsystemDialog() : GUI::Dialog(80, 60, 400, 170) {	
+	_xOffset = 25;
+	_yOffset = 0;
+	Common::String text = "Sound Subsystem Tests: Test Mixing of Audio Streams.";
+	addText(350, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
+	addButton(200, 20, "Play Channel #1", kPlayChannel1);
+	addButton(200, 20, "Play Channel #2", kPlayChannel2);
+	addButton(200, 20, "Play Channel #3", kPlayChannel3);
+	addButton(50, 20, "Close", GUI::kCloseCmd, 160, 15);
+}
+
+void SoundSubsystemDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
+	if (!xOffset) {
+		xOffset = _xOffset;
+	}
+	_yOffset += yPadding;
+	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text, textAlign);
+	_yOffset += h;
+}
+
+void SoundSubsystemDialog::addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset, uint yPadding) {
+	if (!xOffset) {
+		xOffset = _xOffset;
+	}
+	_yOffset += yPadding;
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, cmd));
+	_yOffset += h;
+}
+
+void SoundSubsystemDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+		case kPlayChannel1:
+			_buttonArray[0]->setLabel("Pause Channel #1");
+			_buttonArray[0]->setCmd(kPauseChannel1);
+			// TODO: Play music #1 here
+			break;
+		case kPlayChannel2:
+			_buttonArray[1]->setLabel("Pause Channel #2");
+			_buttonArray[1]->setCmd(kPauseChannel2);
+			break;
+		case kPlayChannel3:
+			_buttonArray[2]->setLabel("Pause Channel #3");
+			_buttonArray[2]->setCmd(kPauseChannel3);
+			break;
+		case kPauseChannel1:
+			_buttonArray[0]->setLabel("Play Channel #1");
+			_buttonArray[0]->setCmd(kPlayChannel1);
+			break;
+		case kPauseChannel2:
+			_buttonArray[1]->setLabel("Play Channel #2");
+			_buttonArray[1]->setCmd(kPlayChannel2);
+			break;
+		case kPauseChannel3:
+			_buttonArray[2]->setLabel("Play Channel #3");
+			_buttonArray[2]->setCmd(kPlayChannel3);
+			break;
+		default:
+			GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
 bool SoundSubsystem::playPCSpkSound() {
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
 	Audio::Mixer *mixer = g_system->getMixer();
@@ -43,8 +113,15 @@ bool SoundSubsystem::playPCSpkSound() {
 	return true;
 }
 
+bool SoundSubsystem::mixSounds() {
+	SoundSubsystemDialog sDialog;
+	sDialog.runModal();
+	return true;
+}
+
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("PCSpkrSound", &SoundSubsystem::playPCSpkSound, true);
+	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
 }
 
 }	// End of namespace Testbed
