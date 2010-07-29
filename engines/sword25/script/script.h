@@ -17,21 +17,21 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef SCRIPT_H
-#define SCRIPT_H
+#ifndef SWORD25_SCRIPT_H
+#define SWORD25_SCRIPT_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/service.h"
-#include "kernel/persistable.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/service.h"
+#include "sword25/kernel/persistable.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <string>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Forward declarations

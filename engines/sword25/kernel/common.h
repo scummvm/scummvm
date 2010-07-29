@@ -38,8 +38,8 @@
 #define BS_ACTIVATE_LOGGING	// Wenn definiert, wird Logging aktiviert
 
 // Engine Includes
-#include "memleaks.h"
-#include "log.h"
+#include "sword25/kernel/memleaks.h"
+#include "sword25/kernel/log.h"
 
 #define BS_ASSERT(EXP) assert(EXP)
 

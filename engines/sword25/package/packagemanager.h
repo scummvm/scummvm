@@ -32,13 +32,13 @@
 	Autor: Malte Thiesen, $author$
 */
 
-#ifndef BS_PACKAGE_MANAGER_H
-#define BS_PACKAGE_MANAGER_H
+#ifndef SWORD25_PACKAGE_MANAGER_H
+#define SWORD25_PACKAGE_MANAGER_H
 
 // Includes
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "kernel/service.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/service.h"
 
 // Klassendefinition
 /**
