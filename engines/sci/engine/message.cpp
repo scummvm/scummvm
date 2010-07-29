@@ -383,7 +383,6 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 			// LSL6 sets an exit text here, but the buffer size allocated
 			// is too small. Don't display a warning in this case, as we
 			// don't use the exit text anyway - bug report #3035533
-			const char *foo = str.c_str();
 			if (g_sci->getGameId() == GID_LSL6 && str.hasPrefix("\r\n(c) 1993 Sierra On-Line, Inc")) {
 				// LSL6 buggy exit text, don't show warning
 			} else {
