@@ -27,20 +27,23 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_KERNEL_H
-#define _BS_KERNEL_H
+#ifndef SWORD25_KERNEL_H
+#define SWORD25_KERNEL_H
+
+#include "common/util.h"
+#include "engines/engine.h"
 
 // Includes
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <stack>
 #include <string>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "common.h"
-#include "bs_stdint.h"
-#include "window.h"
-#include "resmanager.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/bs_stdint.h"
+#include "sword25/kernel/window.h"
+#include "sword25/kernel/resmanager.h"
 
 
 // Klassendefinition

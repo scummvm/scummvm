@@ -27,12 +27,11 @@
 #include <iostream>
 using namespace std;
 
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "kernel/filesystemutil.h"
-#include "kernel/debug/memorydumper.h"
-#include "script/script.h"
-#include "package/packagemanager.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/filesystemutil.h"
+#include "sword25/script/script.h"
+#include "sword25/package/packagemanager.h"
 
 #define BS_LOG_PREFIX "MAIN"
 
@@ -198,7 +197,7 @@ bool main2(int argc, char ** argv)
 	for (int i = 0; i < argc; ++i) CommandLineParameters.push_back(string(argv[i]));
 	if (!AppStart(CommandLineParameters))
 	{
-		MessageBoxA(0, ENGINE_STARTUP_ERROR_MESSAGE, ENGINE_STARTUP_ERROR_CAPTION, MB_ICONERROR);
+		warning("A fatal error occured during engine startup.");
 		AppEnd();
 		return 1;
 	}

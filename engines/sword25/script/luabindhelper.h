@@ -20,12 +20,12 @@
 #ifndef LUABINDHELPER_H
 #define LUABINDHELPER_H
 
-#include "kernel/common.h"
+#include "sword25/kernel/common.h"
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
+	#include <sword25/util/lua/lua.h>
+	#include <sword25/util/lua/lauxlib.h>
 }
 
 #define lua_pushbooleancpp(L, b) (lua_pushboolean(L, b ? 1 : 0))

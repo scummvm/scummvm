@@ -21,7 +21,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "movieplayer.h"
+#include "sword25/fmv/movieplayer.h"
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 

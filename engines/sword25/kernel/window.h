@@ -27,11 +27,11 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_WINDOW_H
-#define _BS_WINDOW_H
+#ifndef SWORD25_WINDOW_H
+#define SWORD25_WINDOW_H
 
 // Includes
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 // Klassendefinition
 /**

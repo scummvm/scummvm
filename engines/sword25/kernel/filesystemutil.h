@@ -25,21 +25,21 @@
 	implementieren.
 */
 
-#ifndef BS_FILESYSTEMUTIL_H
-#define BS_FILESYSTEMUTIL_H
+#ifndef SWORD25_FILESYSTEMUTIL_H
+#define SWORD25_FILESYSTEMUTIL_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/bs_stdint.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/bs_stdint.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <string>
 #include <vector>
 #include <ctime>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

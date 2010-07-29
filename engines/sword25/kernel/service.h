@@ -31,11 +31,11 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_SERVICE_H
-#define _BS_SERVICE_H
+#ifndef SWORD25_SERVICE_H
+#define SWORD25_SERVICE_H
 
 // Includes
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 // Klassendefinition
 class BS_Kernel;

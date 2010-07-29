@@ -17,19 +17,19 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_MOVIEPLAYER_H
-#define BS_MOVIEPLAYER_H
+#ifndef SWORD25_MOVIEPLAYER_H
+#define SWORD25_MOVIEPLAYER_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/service.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/service.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <string>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

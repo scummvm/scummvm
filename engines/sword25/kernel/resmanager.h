@@ -17,16 +17,16 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_RESOURCEMANAGER_H
-#define BS_RESOURCEMANAGER_H
+#ifndef SWORD25_RESOURCEMANAGER_H
+#define SWORD25_RESOURCEMANAGER_H
 
 // Includes
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <list>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 // Klassendefinition
 class BS_ResourceService;
@@ -35,7 +35,7 @@ class BS_Kernel;
 
 class BS_ResourceManager
 {
-friend BS_Kernel;
+friend class BS_Kernel;
 
 public:
 	/**

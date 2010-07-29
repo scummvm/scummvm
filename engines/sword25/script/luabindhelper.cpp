@@ -21,9 +21,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/kernel.h"
-#include "luabindhelper.h"
-#include "luascript.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/script/luabindhelper.h"
+#include "sword25/script/luascript.h"
 #include <sstream>
 
 #define BS_LOG_PREFIX "LUABINDHELPER"
