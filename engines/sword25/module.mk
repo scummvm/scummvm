@@ -2,7 +2,6 @@ MODULE := engines/sword25
 
 MODULE_OBJS := \
 	main.o \
-	main_win.o \
 	fmv/movieplayer.o \
 	fmv/movieplayer_script.o \
 	fmv/oggtheora/audiobuffer.o \

@@ -190,3 +190,24 @@ bool AppMain()
 
 	return true;
 }
+
+bool main2(int argc, char ** argv)
+{
+	// Engine initialisieren.
+	vector<string> CommandLineParameters;
+	for (int i = 0; i < argc; ++i) CommandLineParameters.push_back(string(argv[i]));
+	if (!AppStart(CommandLineParameters))
+	{
+		MessageBoxA(0, ENGINE_STARTUP_ERROR_MESSAGE, ENGINE_STARTUP_ERROR_CAPTION, MB_ICONERROR);
+		AppEnd();
+		return 1;
+	}
+
+	// Engine starten.
+	bool RunSuccess = AppMain();
+
+	// Engine deinitialisieren.
+	bool DeinitSuccess = AppEnd();
+
+	return (RunSuccess && DeinitSuccess) ? 0 : 1;
+}
