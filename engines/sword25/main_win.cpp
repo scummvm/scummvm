@@ -33,7 +33,6 @@ using namespace std;
 
 #include "kernel/common.h"
 #include "kernel/kernel.h"
-#include "kernel/debug/memorydumper.h"
 
 #define BS_LOG_PREFIX "MAIN_WIN"
 
@@ -96,11 +95,6 @@ namespace
 
 		// Memorydump schreiben
 		std::string Filename;
-		BS_MemoryDumper Dumper;
-		if (Dumper.WriteDump(ExceptionPointersPtr, Filename))
-		{
-			BS_LOGLN("Memory dump written to \"%s\".", Filename.c_str());
-		}
 
 		return EXCEPTION_EXECUTE_HANDLER;
 	}

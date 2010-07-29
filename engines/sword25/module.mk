@@ -47,7 +47,6 @@ MODULE_OBJS := \
 	input/stdwininput.o \
 	kernel/callbackregistry.o \
 	kernel/debug/debugtools.o \
-	kernel/debug/memorydumper.o \
 	kernel/filesystemutil_win32.o \
 	kernel/inputpersistenceblock.o \
 	kernel/kernel.o \
