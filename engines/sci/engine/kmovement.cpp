@@ -328,6 +328,8 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bool collision = false;
 	reg_t cantBeHere = NULL_REG;
 
+	// FIXME here -> cantBeHere detection doesn't work in hoyle 3
+	//  it's using kCanBeHere but it just has a selector called cantBeHere, so this here doesn't work
 	if (SELECTOR(cantBeHere) != -1) {
 		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 		if (!s->r_acc.isNull())
@@ -349,17 +351,14 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
 		// We shall not set completed in this case, sierra sci also doesn't do it
 		//  if we set call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
-		// Update: however, it seems that Hoyle 3 (full and demo) does need to end here.
-		// TODO/FIXME: Find out why Hoyle 3 needs this.
-		// The following fixes bugs #3035077, #3035080, #3035081 and #3035242
-		if (g_sci->getGameId() == GID_HOYLE3)
-			completed = 1;
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
 			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
+	// FIXME here -> cantBeHere detection doesn't work in hoyle 3
+	//  it's using kCanBeHere but it just has a selector called cantBeHere, so this here doesn't work
 	if (SELECTOR(cantBeHere) != -1)
 		return cantBeHere;
 	return make_reg(0, completed);
