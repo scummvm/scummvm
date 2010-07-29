@@ -40,9 +40,10 @@ namespace M4 {
 MadsAction::MadsAction(MadsView &owner): _owner(owner) {
 	clear();
 	_currentAction = kVerbNone;
-	_verbNounFlag = false;
+	_startWalkFlag = false;
 	_statusTextIndex = -1;
 	_selectedAction = 0;
+	_inProgress = false;
 }
 
 void MadsAction::clear() {
@@ -256,7 +257,7 @@ void MadsAction::refresh() {
 void MadsAction::startAction() {
 	_madsVm->_player.moveComplete();
 
-	_v84538 = -1;
+	_inProgress = true;
 	_v8453A = 0;
 	_savedFields.selectedRow = _selectedRow;
 	_savedFields.articleNumber = _articleNumber;
@@ -274,7 +275,7 @@ void MadsAction::startAction() {
 	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
 		_v8453A = true;
 
-	_verbNounFlag = false;
+	_startWalkFlag = false;
 	int hotspotId = -1;
 	HotSpotList &dynHotspots = *_madsVm->scene()->getSceneResources().dynamicHotspots;
 	HotSpotList &hotspots = *_madsVm->scene()->getSceneResources().hotspots;
@@ -289,11 +290,11 @@ void MadsAction::startAction() {
 			HotSpot &hs = dynHotspots[hotspotId - hotspots.size()];
 			if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
 				if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
-					_verbNounFlag = true;
-					_madsVm->scene()->_destPos = _customDest;
+					_startWalkFlag = true;
+					_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
 				}
 			} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
-				_verbNounFlag = true;
+				_startWalkFlag = true;
 				_madsVm->scene()->_destPos.x = hs.getFeetX();
 				_madsVm->scene()->_destPos.y = hs.getFeetY();
 			}
@@ -306,21 +307,23 @@ void MadsAction::startAction() {
 		HotSpot &hs = hotspots[hotspotId];
 		if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
 			if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
-				_verbNounFlag = true;
-				_madsVm->scene()->_destPos = _customDest;
+				_startWalkFlag = true;
+				_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
 			}
 		} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
-			_verbNounFlag = true;
+			_startWalkFlag = true;
 			_madsVm->scene()->_destPos.x = hs.getFeetX();
 			_madsVm->scene()->_destPos.y = hs.getFeetY();
 		}
 		_madsVm->scene()->_destFacing = hs.getFacing();
 	}
+
+	_walkFlag = _startWalkFlag;
 }
 
 void MadsAction::checkAction() {
 	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
-		_verbNounFlag = 0;
+		_startWalkFlag = 0;
 }
 
 bool MadsAction::isAction(int verbId, int objectNameId, int indirectObjectId) {

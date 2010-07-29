@@ -252,9 +252,12 @@ void MadsScene::mouseMove(int x, int y) {
 }
 
 void MadsScene::leftClick(int x, int y) {
-	// **DEBUG** - being used for movement testing
-	_madsVm->_player.moveComplete();
-	_madsVm->_player.setDest(x, y, 2);
+	// TODO: figure out the rest of Scene_leftClick, and implements relevant parts in the interface class
+	_action._v86F4C = -1;
+	_action._v86F4E = 0;
+	_customDest = _madsVm->_mouse->currentPos();
+	_action._selectedAction = -1;
+	_action._v86F4A = true;
 }
 
 void MadsScene::rightClick(int x, int y) {
@@ -308,62 +311,74 @@ void MadsScene::update() {
 }
 
 void MadsScene::updateState() {
-	if ((_action._selectedAction != 0) || !_madsVm->_player._stepEnabled)
-		_action.clear();
-
 	if (!_abortTimers && !_madsVm->_player._unk3) {
 		if (_dynamicHotspots._changed)
 			_dynamicHotspots.refresh();
 
-//		int v = (_madsVm->_player._stepEnabled && !_action._verbNounFlag && !_abortTimers2) ? 1 : 0;
+//		int v = (_madsVm->_player._stepEnabled && !_action._startWalkFlag && !_abortTimers2) ? 1 : 0;
 //		_screenObjects.check(v, false);
 	}
 
 	// Handle starting off any selected action
-	bool lookFlag = false;
+	bool doPreAction = false;
 	if ((_action._selectedAction != 0) && _madsVm->_player._stepEnabled &&
-			!_action._verbNounFlag && !_abortTimers && !_madsVm->_player._unk3) {
+			!_action._startWalkFlag && !_abortTimers && !_madsVm->_player._unk3) {
 		// Start the action
 		_action.startAction();
 
-		lookFlag = (_action._action.verbId == kVerbLookAt) || (_action._action.verbId == kVerbLook);
+		if (_action._action.verbId == kVerbLookAt) {
+			_action._action.verbId = kVerbLook;
+			_action._savedFields.selectedRow = 0;
+		}
+		doPreAction = true;
 	}
-	if (lookFlag || ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_2)))
+	if (doPreAction || ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_2)))
 		doPreactions();
 
 	checkStartWalk();
 
-	// Update the player
-	_madsVm->_player.update();
+	if (_action._inProgress && !_madsVm->_player._moving && !_action._startWalkFlag &&
+		(_madsVm->_player._newDirection == _madsVm->_player._direction)) {
+		// Reached the end of action movement, so ready to actually do action
+			doAction();
+	} else if ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_0))
+		// Do an action designated by scripts
+		doAction();
 
-	// Handle refreshing the mouse position display
-	if (_mouseMsgIndex != -1)
-		_madsVm->scene()->_kernelMessages.remove(_mouseMsgIndex);
-	if (_showMousePos) {
-		char buffer[20];
-		sprintf(buffer, "(%d,%d)", _madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y);
+	bool freeFlag = false;
+	if (_currentScene != _nextScene)
+		freeFlag = true;
+	else {
+		doSceneStep();
 
-		_mouseMsgIndex = _madsVm->scene()->_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, buffer);
+		if (_currentScene != _nextScene)
+			freeFlag = true;
+		else {
+			// Update the player
+			_madsVm->_player.nextFrame();
+
+			// Handle updating the animation
+			if (!_abortTimers && (_activeAnimation))
+				_activeAnimation->update();
+
+			// Handle refreshing the mouse position display
+			if (_mouseMsgIndex != -1)
+				_madsVm->scene()->_kernelMessages.remove(_mouseMsgIndex);
+			if (_showMousePos) {
+				char buffer[20];
+				sprintf(buffer, "(%d,%d)", _madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y);
+
+				_mouseMsgIndex = _madsVm->scene()->_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, buffer);
+			}
+		}
 	}
 
 	if (_madsVm->globals()->_config.easyMouse)
 		_action.refresh();
-
-	// Step through the scene
-	_sceneLogic.sceneStep();
-
-	_madsVm->_player.step();
-	_madsVm->_player._unk3 = 0;
-
-	if (_abortTimersMode == ABORTMODE_1)
-		_abortTimers = 0;
-
-	// Handle updating the player frame
-	_madsVm->_player.nextFrame();
 	
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
-		if (((MadsAnimation *) _activeAnimation)->freeFlag()) {
+		if (((MadsAnimation *) _activeAnimation)->freeFlag() || freeFlag) {
 			delete _activeAnimation;
 			_activeAnimation = NULL;
 		}
@@ -374,12 +389,17 @@ void MadsScene::updateState() {
 	// Remove the animation if it's been completed
 	if ((_activeAnimation) && ((MadsAnimation *)_activeAnimation)->freeFlag())
 		freeAnimation();
+
+	if ((_action._selectedAction != 0) || !_madsVm->_player._stepEnabled) {
+		_action.clear();
+		_action._selectedAction = 0;
+	}
 }
 
 void MadsScene::checkStartWalk() {
-	if (_action._verbNounFlag && _action._walkFlag) {
+	if (_action._startWalkFlag && _action._walkFlag) {
 		_madsVm->_player.setDest(_destPos.x, _destPos.y, _destFacing);
-		_action._verbNounFlag = false;
+		_action._startWalkFlag = false;
 	}
 }
 
@@ -394,6 +414,22 @@ void MadsScene::doPreactions() {
 			_abortTimers = 0;
 	}
 }
+
+void MadsScene::doSceneStep() {
+	// Step through the scene
+	_sceneLogic.doSceneStep();
+
+	_madsVm->_player.step();
+	_madsVm->_player._unk3 = 0;
+
+	if (_abortTimersMode == ABORTMODE_1)
+		_abortTimers = 0;
+}
+
+void MadsScene::doAction() {
+	warning("TODO MadsScene::doAction");
+}
+
 
 /**
  * Does extra work at cleaning up the animation, and then deletes it

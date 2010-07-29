@@ -425,7 +425,7 @@ void MadsSceneLogic::doAction() {
 	warning("Still to do actions logic");
 }
 
-void MadsSceneLogic::sceneStep() {
+void MadsSceneLogic::doSceneStep() {
 	// TODO: Sound handling
 	
 	switch (_madsVm->scene()->_abortTimers) {

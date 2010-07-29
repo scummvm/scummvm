@@ -100,11 +100,14 @@ private:
 	void setAction();
 	void checkStartWalk();
 	void doPreactions();
+	void doSceneStep();
+	void doAction();
 public:
 	char _aaName[100];
 	bool _showMousePos;
 	Common::Point _destPos;
 	int _destFacing;
+	Common::Point _customDest;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();

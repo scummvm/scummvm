@@ -61,7 +61,7 @@ public:
 	void enterScene();
 	void doPreactions();
 	void doAction();
-	void sceneStep();
+	void doSceneStep();
 };
 
 class MadsGameLogic {

@@ -591,6 +591,8 @@ void MadsPlayer::reset() {
 	_destFacing = 5;
 	_newDirection = _direction;
 
+	_madsVm->scene()->_action._startWalkFlag = false;
+	_madsVm->scene()->_action._walkFlag = false;
 	_moving = false;
 	_v844BC = false;
 	_v844C0 = false;

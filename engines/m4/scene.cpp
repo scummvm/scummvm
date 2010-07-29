@@ -61,6 +61,7 @@ Scene::~Scene() {
 void Scene::loadScene(int sceneNumber) {
 	_previousScene = _currentScene;
 	_currentScene = sceneNumber;
+	_nextScene = sceneNumber;
 }
 
 void Scene::leaveScene() {

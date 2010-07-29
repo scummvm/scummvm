@@ -71,12 +71,11 @@ public:
 	int _selectedRow;
 	bool _textChanged;
 	int _selectedAction;
-	bool _verbNounFlag;
+	bool _startWalkFlag;
 	int _statusTextIndex;
 	int _hotspotId;
 	MadsActionSavedFields _savedFields;
 	bool _walkFlag;
-	Common::Point _customDest;
 
 	// Unknown fields
 	int16 _v86F3A;
@@ -85,7 +84,7 @@ public:
 	bool _v86F4A;
 	int16 _v86F4C;
 	int _v83338;
-	int _v84538;
+	bool _inProgress;
 	bool _v8453A;
 
 public:
