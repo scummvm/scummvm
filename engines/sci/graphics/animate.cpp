@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -596,6 +597,10 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 
 	if (_lastCastData.size() > 1)
 		_s->_throttleTrigger = true;
+
+	// We update the screen here as well, some scenes like EQ1 credits run w/o calling kGetEvent thus we wouldn't update
+	//  screen at all
+	g_sci->getEventManager()->updateScreen();
 
 	_ports->setPort(oldPort);
 }

@@ -114,6 +114,7 @@ public:
 	EventManager(bool fontIsExtended);
 	~EventManager();
 
+	void updateScreen();
 	SciEvent getSciEvent(unsigned int mask);
 	bool getUsesNewKeyboardDirectionType();
 
