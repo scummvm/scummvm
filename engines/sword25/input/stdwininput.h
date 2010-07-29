@@ -1,0 +1,88 @@
+// -----------------------------------------------------------------------------
+// This file is part of Broken Sword 2.5
+// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
+//
+// Broken Sword 2.5 is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// Broken Sword 2.5 is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Broken Sword 2.5; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+// -----------------------------------------------------------------------------
+
+#ifndef BS_STDWININPUT_H
+#define BS_STDWININPUT_H
+
+/// Includes
+#include "kernel/memlog_off.h"
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#include <list>
+#include "kernel/memlog_on.h"
+
+#include "kernel/common.h"
+#include "inputengine.h"
+
+/// Klassendefinitionen
+class BS_Kernel;
+
+/// Klassendefinition
+class BS_StdWinInput : public BS_InputEngine
+{
+public:
+	BS_StdWinInput(BS_Kernel* pKernel);
+	virtual ~BS_StdWinInput();
+	
+	virtual bool Init();
+	virtual void Update();
+	virtual bool IsLeftMouseDown();
+	virtual bool IsRightMouseDown();
+	virtual bool WasLeftMouseDown();
+	virtual bool WasRightMouseDown();
+	virtual bool IsLeftDoubleClick();
+	virtual int GetMouseX();
+	virtual int GetMouseY();
+	virtual bool IsKeyDown(unsigned int KeyCode);
+	virtual bool WasKeyDown(unsigned int KeyCode);
+	virtual void SetMouseX(int PosX);
+	virtual void SetMouseY(int PosY);
+	virtual bool RegisterCharacterCallback(CharacterCallback Callback);
+	virtual bool UnregisterCharacterCallback(CharacterCallback Callback);
+	virtual bool RegisterCommandCallback(CommandCallback Callback);
+	virtual bool UnregisterCommandCallback(CommandCallback Callback);
+	virtual void ReportCharacter(unsigned char Character);
+	virtual void ReportCommand(KEY_COMMANDS Command);
+
+	bool Persist(BS_OutputPersistenceBlock & Writer);
+	bool Unpersist(BS_InputPersistenceBlock & Reader);
+
+private:
+	void TestForLeftDoubleClick();
+
+	BYTE							m_KeyboardState[2][256];
+	bool							m_LeftMouseState[2];
+	bool							m_RightMouseState[2];
+	unsigned int					m_CurrentState;
+	int								m_MouseX;
+	int								m_MouseY;
+	bool							m_LeftMouseDown;
+	bool							m_RightMouseDown;
+	bool							m_LeftDoubleClick;
+	unsigned int					m_DoubleClickTime;
+	int								m_DoubleClickRectWidth;
+	int								m_DoubleClickRectHeight;
+	unsigned int					m_LastLeftClickTime;
+	int								m_LastLeftClickMouseX;
+	int								m_LastLeftClickMouseY;
+	std::list<CommandCallback>		m_CommandCallbacks;
+	std::list<CharacterCallback>	m_CharacterCallbacks;
+};
+
+#endif

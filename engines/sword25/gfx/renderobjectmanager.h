@@ -1,0 +1,115 @@
+// -----------------------------------------------------------------------------
+// This file is part of Broken Sword 2.5
+// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
+//
+// Broken Sword 2.5 is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// Broken Sword 2.5 is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Broken Sword 2.5; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+// -----------------------------------------------------------------------------
+
+/*
+	BS_RenderObjectManager
+	----------------------
+	Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
+	
+	Sie sorgt z.B. dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden.
+
+	Autor: Malte Thiesen
+*/
+
+#ifndef _BS_RENDEROBJECTMANAGER_H
+#define _BS_RENDEROBJECTMANAGER_H
+
+// Includes
+#include "kernel/memlog_off.h"
+#include <vector>
+#include "kernel/memlog_on.h"
+
+#include "kernel/common.h"
+#include "renderobjectptr.h"
+#include "kernel/persistable.h"
+
+// Klassendefinition
+class BS_Kernel;
+class BS_Rect;
+class BS_RenderObject;
+class BS_TimedRenderObject;
+
+/**
+	@brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
+	
+	Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die 
+	BS_RenderObjects über einen String.
+*/
+class BS_RenderObjectManager : public BS_Persistable
+{
+public:
+	/**
+		@brief Erzeugt ein neues BS_RenderObjectManager-Objekt.
+		@param Width die horizontale Bildschirmauflösung in Pixeln
+		@param Height die vertikale Bildschirmauflösung in Pixeln
+		@param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
+	*/
+	BS_RenderObjectManager(int Width, int Height, int FramebufferCount);
+	virtual ~BS_RenderObjectManager();
+	
+	// Interface
+	// ---------
+	/**
+	 	@brief Initialisiert den Manager für einen neuen Frame.
+		@remark Alle Veränderungen an Objekten müssen nach einem Aufruf dieser Methode geschehen, damit sichergestellt ist, dass diese
+				visuell umgesetzt werden.<br>
+				Mit dem Aufruf dieser Methode werden die Rückgabewerte von GetUpdateRects() und GetUpdateRectCount() auf ihre Startwerte
+				zurückgesetzt. Wenn man also mit diesen Werten arbeiten möchten, muss man dies nach einem Aufruf von Render() und vor
+				einem Aufruf von StartFrame() tun.
+	 */
+	void StartFrame();
+	/**
+	 	@brief Rendert alle Objekte die sich während des letzten Aufrufes von Render() verändert haben.
+		@return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
+	 */
+	bool Render();
+	/**
+	 	@brief Gibt einen Pointer auf die Wurzel des Objektbaumes zurück.
+	 */
+	BS_RenderObjectPtr<BS_RenderObject> GetTreeRoot() { return m_RootPtr; }
+	/**
+		@brief Fügt ein BS_TimedRenderObject in die Liste der zeitabhängigen Render-Objekte.
+
+		Alle Objekte die sich in dieser Liste befinden werden vor jedem Frame über die seit dem letzten Frame
+		vergangene Zeit informiert, so dass sich ihren Zustand zeitabhängig verändern können.
+
+		@param RenderObject das einzufügende BS_TimedRenderObject
+	*/
+	void AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
+	/**
+		@brief Entfernt ein BS_TimedRenderObject aus der Liste für zeitabhängige Render-Objekte.
+	*/
+	void DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
+
+	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+
+private:
+	bool m_FrameStarted;
+	typedef std::vector<BS_RenderObjectPtr<BS_TimedRenderObject> > RenderObjectList;
+	RenderObjectList m_TimedRenderObjects;
+
+	// RenderObject-Tree Variablen
+	// ---------------------------
+	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
+	// Zu weiteren Informationen siehe: "renderobject.h"
+	BS_RenderObjectPtr<BS_RenderObject>		m_RootPtr;		// Die Wurzel der Baumes
+};
+
+#endif

@@ -1,0 +1,85 @@
+// -----------------------------------------------------------------------------
+// This file is part of Broken Sword 2.5
+// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
+//
+// Broken Sword 2.5 is free software; you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// Broken Sword 2.5 is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with Broken Sword 2.5; if not, write to the Free Software
+// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+// -----------------------------------------------------------------------------
+
+#ifndef BS_GL_IMAGE_H
+#define BS_GL_IMAGE_H
+
+// -----------------------------------------------------------------------------
+// INCLUDES
+// -----------------------------------------------------------------------------
+
+#include "kernel/common.h"
+#include "gfx/image/image.h"
+#include "gfx/graphicengine.h"
+
+#include <vector>
+
+// -----------------------------------------------------------------------------
+// FORWARD DECLARATION
+// -----------------------------------------------------------------------------
+
+typedef void * GLS_Sprite;
+
+// -----------------------------------------------------------------------------
+// CLASS DEFINITION
+// -----------------------------------------------------------------------------
+
+class BS_GLImage : public BS_Image
+{
+public:
+	BS_GLImage(const std::string & Filename, bool & Result);
+
+	/**
+		@brief Erzeugt ein leeres BS_GLImage
+
+		@param Width die Breite des zu erzeugenden Bildes.
+		@param Height die Höhe des zu erzeugenden Bildes
+		@param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
+					  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
+	*/
+	BS_GLImage(unsigned int Width, unsigned int Height, bool & Result);
+	virtual ~BS_GLImage();
+
+	virtual int GetWidth() const { return m_Width; }
+	virtual int GetHeight() const { return m_Height; }
+	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const { return BS_GraphicEngine::CF_ARGB32; }
+
+	virtual bool Blit(int PosX = 0, int PosY = 0, 
+					  int Flipping = BS_Image::FLIP_NONE, 
+					  BS_Rect* pPartRect = NULL,
+					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+					  int Width = -1, int Height = -1);
+	virtual bool Fill(const BS_Rect* pFillRect, unsigned int Color);
+	virtual bool SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0);
+	virtual unsigned int GetPixel(int X, int Y);
+
+	virtual bool IsBlitSource() const				{ return true; }
+	virtual bool IsBlitTarget() const				{ return false; }
+	virtual bool IsScalingAllowed() const			{ return true; }
+	virtual bool IsFillingAllowed() const			{ return false; }
+	virtual bool IsAlphaAllowed() const				{ return true; }
+	virtual bool IsColorModulationAllowed() const	{ return true; }
+	virtual bool IsSetContentAllowed() const		{ return true; }
+private:
+	GLS_Sprite	m_Sprite;
+	int			m_Width;
+	int			m_Height;
+};
+
+#endif
