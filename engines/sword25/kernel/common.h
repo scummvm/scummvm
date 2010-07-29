@@ -41,15 +41,6 @@
 #include "memleaks.h"
 #include "log.h"
 
-#ifdef DEBUG
-#define BS_ASSERT(EXP) \
-	if (!(EXP)) \
-	{ \
-		BS_Log::Log("!!ASSERTION FAILED!! - FILE: %s - LINE: %d.\n", __FILE__, __LINE__); \
-		__asm { int 3 }; \
-	}
-#else
-#define BS_ASSERT(EXP) do { (void)(EXP); } while(0) 
-#endif
+#define BS_ASSERT(EXP) assert(EXP)
 
 #endif

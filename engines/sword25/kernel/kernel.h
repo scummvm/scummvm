@@ -236,11 +236,7 @@ public:
 	*/
 	void Crash() const
 	{
-		__asm
-		{
-			xor eax, eax
-			mov [eax], 0
-		}
+		error(0);
 	}
 	
 private:
