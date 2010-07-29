@@ -254,7 +254,7 @@ void AnimationResource::load(Common::MemoryReadStream &stream) {
 	stream.seek(sectionOffsets[0]);
 	loadOffsets(stream, offsets);
 	for (uint i = 0; i < offsets.size(); i++) {
-		if (sectionOffsets[0] + offsets[i] < stream.size()) {
+		if (sectionOffsets[0] + offsets[i] < (uint32)stream.size()) {
 			stream.seek(sectionOffsets[0] + offsets[i]);
 			AnimationElement *animationElement = loadAnimationElement(stream);
 			_elements.push_back(animationElement);
@@ -265,12 +265,12 @@ void AnimationResource::load(Common::MemoryReadStream &stream) {
 	uint32 sectionEndOfs = sectionOffsets[2];
 	stream.seek(sectionOffsets[1]);
 	loadOffsets(stream, offsets);
-	for (int i = 3; i < sectionOffsets.size(); i++)
+	for (uint i = 3; i < sectionOffsets.size(); i++)
 		if (sectionEndOfs == 0 || (sectionOffsets[i] < sectionEndOfs && sectionOffsets[i] > sectionOffsets[1]))
 			sectionEndOfs = sectionOffsets[i];
 	offsets.push_back(sectionEndOfs - sectionOffsets[1] + 2);
 	for (uint i = 0; i < offsets.size() - 1; i++) {
-		if (sectionOffsets[1] + offsets[i] - 2 < stream.size()) {
+		if (sectionOffsets[1] + offsets[i] - 2 < (uint32)stream.size()) {
 			stream.seek(sectionOffsets[1] + offsets[i] - 2);
 			AnimationCel *animationCel = new AnimationCel();
 			animationCel->flags = stream.readUint16LE();
@@ -289,7 +289,7 @@ void AnimationResource::load(Common::MemoryReadStream &stream) {
 		stream.seek(sectionOffsets[2]);
 		loadOffsets(stream, offsets);
 		for (uint i = 0; i < offsets.size(); i++) {
-			if (sectionOffsets[2] + offsets[i] < stream.size()) {
+			if (sectionOffsets[2] + offsets[i] < (uint32)stream.size()) {
 				stream.seek(sectionOffsets[2] + offsets[i]);
 				AnimationFrameList *animationFrameList = loadAnimationFrameList(stream);
 				_anims.push_back(animationFrameList);
