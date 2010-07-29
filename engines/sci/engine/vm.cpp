@@ -647,9 +647,19 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 }
 
-static void	logKernelCall(const KernelFunction *kernelCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
 	Kernel *kernel = g_sci->getKernel();
-	printf("k%s: ", kernelCall->name);
+	if (!kernelSubCall) {
+		printf("k%s: ", kernelCall->name);
+	} else {
+		int callNameLen = strlen(kernelCall->name);
+		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
+			const char *subCallName = kernelSubCall->name + callNameLen;
+			printf("k%s(%s): ", kernelCall->name, subCallName);
+		} else {
+			printf("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+		}
+	}
 	for (int parmNr = 0; parmNr < argc; parmNr++) {
 		if (parmNr)
 			printf(", ");
@@ -732,7 +742,7 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		s->r_acc = kernelCall.function(s, argc, argv);
 
 		if (kernelCall.debugLogging)
-			logKernelCall(&kernelCall, s, argc, argv, s->r_acc);
+			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -780,6 +790,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
+
+		if (kernelSubCall.debugLogging)
+			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
 	}
 
 	// Remove callk stack frame again, if there's still an execution stack

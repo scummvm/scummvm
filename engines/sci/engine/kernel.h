@@ -126,6 +126,7 @@ struct KernelSubFunction {
 	const char *name;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
+	bool debugLogging;
 };
 
 struct KernelFunction {
@@ -133,7 +134,7 @@ struct KernelFunction {
 	const char *name;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
-	const KernelSubFunction *subFunctions;
+	KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
 	bool debugLogging;
 };

@@ -654,9 +654,15 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 	if (strcmp(kernelName, "*")) {
 		for (uint id = 0; id < _kernelFuncs.size(); id++) {
 			if (_kernelFuncs[id].name) {
-				if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
-					_kernelFuncs[id].debugLogging = logging;
-					return true;
+				if (!_kernelFuncs[id].subFunctions) {
+					// No sub-functions, enable actual kernel function
+					if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
+						_kernelFuncs[id].debugLogging = logging;
+						return true;
+					}
+				} else {
+					// Sub-Functions available
+					// TODO: do this
 				}
 			}
 		}
@@ -664,8 +670,21 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 	}
 	// Set debugLogging for all calls
 	for (uint id = 0; id < _kernelFuncs.size(); id++) {
-		if (_kernelFuncs[id].name)
-			_kernelFuncs[id].debugLogging = logging;
+		if (_kernelFuncs[id].name) {
+			if (!_kernelFuncs[id].subFunctions) {
+				// No sub-functions, enable actual kernel function
+				_kernelFuncs[id].debugLogging = logging;
+			} else {
+				// Sub-Functions available, enable those too
+				KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
+				uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
+				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
+					if (kernelSubCall->function)
+						kernelSubCall->debugLogging = logging;
+					kernelSubCall++;
+				}
+			}
+		}
 	}
 	return true;
 }
