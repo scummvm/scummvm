@@ -380,7 +380,15 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 		if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
 			_segMan->strcpy(buf, str.c_str());
 		} else {
-			warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+			// LSL6 sets an exit text here, but the buffer size allocated
+			// is too small. Don't display a warning in this case, as we
+			// don't use the exit text anyway - bug report #3035533
+			const char *foo = str.c_str();
+			if (g_sci->getGameId() == GID_LSL6 && str.hasPrefix("\r\n(c) 1993 Sierra On-Line, Inc")) {
+				// LSL6 buggy exit text, don't show warning
+			} else {
+				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+			}
 
 			// Set buffer to empty string if possible
 			if (buffer_r.maxSize > 0)
