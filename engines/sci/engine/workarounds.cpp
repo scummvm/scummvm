@@ -220,6 +220,8 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_SQ4,           410,   410,  0,       "swimAfterEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,           411,   411,  0,       "swimAndShoot", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // skateOrama when "swimming" in the air - accidental additional parameter specified
 	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
+	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #3036331
+	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
