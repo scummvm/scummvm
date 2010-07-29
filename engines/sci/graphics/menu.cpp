@@ -271,14 +271,15 @@ GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 
 void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
+
 	if (!itemEntry) {
-		// Check if the game actually has a menu. PQ2 demo calls this, for example, but has no menus.
-		// (bug report #3034507)
-		if (_itemList.size() == 0)
-			return;
-		else
-			error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+		// PQ2 demo calls this, for example, but has no menus (bug report #3034507). Some SCI
+		// fan games (Al Pond 2, Aquarius) call this too on non-existent menu items. The
+		// original interpreter ignored these as well.
+		debugC(2, kDebugLevelGraphics, "Tried to setAttribute() on non-existent menu-item %d:%d", menuId, itemId);
+		return;
 	}
+
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
 		itemEntry->enabled = value.isNull() ? false : true;
