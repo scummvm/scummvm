@@ -37,7 +37,6 @@
 #include "script/script.h"
 #include "fmv/movieplayer.h"
 #include "persistenceservice.h"
-#include "cpuinfo.h"
 
 #define BS_LOG_PREFIX "KERNEL"
 
@@ -54,23 +53,6 @@ BS_Kernel::BS_Kernel() :
 	// TODO:
 	// Messagebox ausgeben wenn nicht gelogged werden kann -> log.txt schreibgeschützt
 	BS_LOGLN("created.");
-
-	// CPU-Daten in die Log-Datei schreiben
-	const BS_CPUInfo & CI = BS_CPUInfo::GetInstance();
-	BS_LOGLN("CPU detected (vendor name: \"%s\", CPU name: \"%s\").", CI.GetVendorString().c_str(), CI.GetCPUName().c_str());
-	BS_LOGLN("CPU features: %s%s%s%s%s.",
-		CI.IsMMXSupported() ? "MMX" : "",
-		CI.IsSSESupported() ? " SSE" : "",
-		CI.IsSSE2Supported() ? " SSE2" : "",
-		CI.Is3DNowSupported() ? " 3DNow!" : "",
-		CI.Is3DNowExtSupported() ? " 3DNow!Ext" : "");
-
-	// Sicherstellen, dass der Prozessor über MMX verfügt
-	if (!CI.IsMMXSupported())
-	{
-		BS_LOG_ERRORLN("MMX support needed.");
-		return;
-	}
 
 	// Feststellen, ob der Timer unterstützt wird.
 	if (!BS_Timer::IsTimerAvaliable())

@@ -46,7 +46,6 @@ MODULE_OBJS := \
 	input/inputengine_script.o \
 	input/stdwininput.o \
 	kernel/callbackregistry.o \
-	kernel/cpuinfo.o \
 	kernel/debug/debugtools.o \
 	kernel/debug/memorydumper.o \
 	kernel/filesystemutil_win32.o \
