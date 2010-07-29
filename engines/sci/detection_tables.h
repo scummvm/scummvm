@@ -3170,6 +3170,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Quest for the Cheat", "a359d4cf27f98264b42b55c017671214", 882, "8a943029f73c4bc85d454b7f473455ba", 455209),
 	FANMADE("SCI Capture the Flag", "4cd679a51d93b8b27c6b38d81be24b8b", 432, "98ae1f6ed7b4c21f88addbf643dd1d2f", 147878),
 	FANMADE("SCI Companion Template", "ad54d4f504086cd597aa2348d0aa3b09", 354, "6798b7b601ce8154c1d1bc0f0edcdd18", 113061),
+	FANMADE("SCI Programming April 2010 Competition Template", "36e5c4011dd7c92e1ae4c6fede7d698d", 456, "20c87fbb7f73e2a3eb2c5dfab4d76b5a", 142221),
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
