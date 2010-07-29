@@ -328,9 +328,10 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bool collision = false;
 	reg_t cantBeHere = NULL_REG;
 
-	// FIXME here -> cantBeHere detection doesn't work in hoyle 3
-	//  it's using kCanBeHere but it just has a selector called cantBeHere, so this here doesn't work
 	if (SELECTOR(cantBeHere) != -1) {
+		// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
+		//  get a collision otherwise
+		s->r_acc = NULL_REG;
 		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
 		if (!s->r_acc.isNull())
 			collision = true;
@@ -357,8 +358,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		if (completed)
 			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
-	// FIXME here -> cantBeHere detection doesn't work in hoyle 3
-	//  it's using kCanBeHere but it just has a selector called cantBeHere, so this here doesn't work
 	if (SELECTOR(cantBeHere) != -1)
 		return cantBeHere;
 	return make_reg(0, completed);

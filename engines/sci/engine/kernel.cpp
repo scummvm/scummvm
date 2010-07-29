@@ -716,8 +716,11 @@ void Kernel::setDefaultKernelNames(GameFeatures *features) {
 	_kernelNames = Common::StringArray(s_defaultKernelNames, ARRAYSIZE(s_defaultKernelNames));
 
 	// Some (later) SCI versions replaced CanBeHere by CantBeHere
-	if (_selectorCache.cantBeHere != -1)
-		_kernelNames[0x4d] = "CantBeHere";
+	if (_selectorCache.cantBeHere != -1) {
+		// hoyle 3 has cantBeHere selector but is assuming to call kCanBeHere
+		if (g_sci->getGameId() != GID_HOYLE3)
+			_kernelNames[0x4d] = "CantBeHere";
+	}
 
 	switch (getSciVersion()) {
 	case SCI_VERSION_0_EARLY:
