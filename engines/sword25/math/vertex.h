@@ -24,12 +24,12 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_VERTEX_H
-#define _BS_VERTEX_H
+#ifndef SWORD25_VERTEX_H
+#define SWORD25_VERTEX_H
 
 // Includes
 #include <math.h>
-#include "../kernel/common.h"
+#include "sword25/kernel/common.h"
 
 // Forward-Declarations
 struct lua_State;

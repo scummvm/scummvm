@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef LUASCRIPT_H
-#define LUASCRIPT_H
+#ifndef SWORD25_LUASCRIPT_H
+#define SWORD25_LUASCRIPT_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "script.h"
+#include "sword25/kernel/common.h"
+#include "sword25/script/script.h"
 
 // -----------------------------------------------------------------------------
 // Forward declarations

@@ -21,8 +21,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/cpuinfo.h"
-#include "yuvtorgba.h"
+#include "sword25/kernel/cpuinfo.h"
+#include "sword25/fmv/ogghteora/yuvtorgba.h"
 
 #include <mmintrin.h>
 

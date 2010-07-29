@@ -21,22 +21,22 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <memory>
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "gfx/graphicengine.h"
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "script/script.h"
-#include "script/luabindhelper.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/script/script.h"
+#include "sword25/script/luabindhelper.h"
 
-#include "geometry.h"
-#include "region.h"
-#include "regionregistry.h"
-#include "walkregion.h"
-#include "vertex.h"
+#include "sword25/math/geometry.h"
+#include "sword25/math/region.h"
+#include "sword25/math/regionregistry.h"
+#include "sword25/math/walkregion.h"
+#include "sword25/math/vertex.h"
 
 // -----------------------------------------------------------------------------
 

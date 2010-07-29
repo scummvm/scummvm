@@ -17,11 +17,11 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "kernel/kernel.h"
-#include "kernel/callbackregistry.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "stdwininput.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/callbackregistry.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/input/stdwininput.h"
 
 #include <algorithm>
 using namespace std;

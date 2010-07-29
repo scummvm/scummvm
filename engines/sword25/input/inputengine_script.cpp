@@ -24,14 +24,14 @@
 #include <string>
 #include <algorithm>
 
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "kernel/callbackregistry.h"
-#include "script/script.h"
-#include "script/luabindhelper.h"
-#include "script/luacallback.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/callbackregistry.h"
+#include "sword25/script/script.h"
+#include "sword25/script/luabindhelper.h"
+#include "sword25/script/luacallback.h"
 
-#include "inputengine.h"
+#include "sword25/input/inputengine.h"
 
 #define BS_LOG_PREFIX "INPUTENGINE"
 

@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef DEBUGTOOLS_H
-#define DEBUGTOOLS_H
+#ifndef SWORD25_DEBUGTOOLS_H
+#define SWORD25_DEBUGTOOLS_H
 
 class BS_Debugtools
 {

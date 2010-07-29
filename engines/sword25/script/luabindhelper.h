@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef LUABINDHELPER_H
-#define LUABINDHELPER_H
+#ifndef SWORD25_LUABINDHELPER_H
+#define SWORD25_LUABINDHELPER_H
 
 #include "sword25/kernel/common.h"
 
 extern "C"
 {
-	#include <sword25/util/lua/lua.h>
-	#include <sword25/util/lua/lauxlib.h>
+	#include "sword25/util/lua/lua.h"
+	#include "sword25/util/lua/lauxlib.h"
 }
 
 #define lua_pushbooleancpp(L, b) (lua_pushboolean(L, b ? 1 : 0))

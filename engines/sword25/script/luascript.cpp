@@ -25,22 +25,22 @@
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lualib.h>
-	#include <lauxlib.h>
-	#include "util/pluto/pluto.h"
+	#include "sword25/util/lua/lua.h"
+	#include "sword25/util/lua/lualib.h"
+	#include "sword25/util/lua/lauxlib.h"
+	#include "sword25/util/pluto/pluto.h"
 }
 
-#include "package/packagemanager.h"
-#include "luascript.h"
-#include "luabindhelper.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/script/luascript.h"
+#include "sword25/script/luabindhelper.h"
 
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 using namespace std;
 

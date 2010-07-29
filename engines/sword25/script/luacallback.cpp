@@ -21,13 +21,13 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "luacallback.h"
-#include "luabindhelper.h"
+#include "sword25/script/luacallback.h"
+#include "sword25/script/luabindhelper.h"
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
+	#include "sword25/util/lua/lua.h"
+	#include "sword25/util/lua/lauxlib.h"
 }
 
 #define BS_LOG_PREFIX "LUA"

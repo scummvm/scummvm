@@ -27,9 +27,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "fmod.h"
-#include "fmodexexception.h"
-#include "fmodexchannel.h"
+#include "sword25/sfx/fmodexexception.h"
+#include "sword25/sfx/fmodexchannel.h"
 
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion

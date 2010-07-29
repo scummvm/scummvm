@@ -21,17 +21,12 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "physfspackagemanager.h"
-#include "util/physfs/physfs.h"
-extern "C"
-{
-	#include "util/physfs/extras/globbing.h"
-};
+#include "sword25/package/physfspackagemanager.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <sstream>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 using namespace std;
 

@@ -17,30 +17,30 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_OGGTHEORA_H
-#define BS_OGGTHEORA_H
+#ifndef SWORD25_OGGTHEORA_H
+#define SWORD25_OGGTHEORA_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <memory>
 #include <queue>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "kernel/bs_stdint.h"
-#include "gfx/bitmap.h"
-#include "gfx/renderobjectptr.h"
-#include "fmv/movieplayer.h"
-#include "vorbisstate.h"
-#include "theorastate.h"
-#include "oggstate.h"
-#include "oggstreamstate.h"
-#include "moviefile.h"
-#include "audiobuffer.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/bs_stdint.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/renderobjectptr.h"
+#include "sword25/fmv/movieplayer.h"
+#include "sword25/fmv/oggtheora/vorbisstate.h"
+#include "sword25/fmv/oggtheora/theorastate.h"
+#include "sword25/fmv/oggtheora/oggstate.h"
+#include "sword25/fmv/oggtheora/oggstreamstate.h"
+#include "sword25/fmv/oggtheora/moviefile.h"
+#include "sword25/fmv/oggtheora/audiobuffer.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

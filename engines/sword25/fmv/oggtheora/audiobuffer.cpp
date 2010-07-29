@@ -21,7 +21,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "audiobuffer.h"
+#include "sword25/fmv/oggtheora/audiobuffer.h"
 #include <windows.h>
 #include <queue>
 

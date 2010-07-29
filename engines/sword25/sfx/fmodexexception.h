@@ -17,15 +17,14 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_FMODEXEXCEPTION_H
-#define BS_FMODEXEXCEPTION_H
+#ifndef SWORD25_FMODEXEXCEPTION_H
+#define SWROD25_FMODEXEXCEPTION_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "fmod_errors.h"
+#include "sword25/kernel/common.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

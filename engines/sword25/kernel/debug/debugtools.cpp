@@ -30,9 +30,9 @@
 #include <fstream>
 using namespace std;
 
-#include "kernel/md5.h"
-#include "kernel/filesystemutil.h"
-#include "debugtools.h"
+#include "sword25/kernel/md5.h"
+#include "sword25/kernel/filesystemutil.h"
+#include "sword25/kernel/debug/debugtools.h"
 
 // -----------------------------------------------------------------------------
 // Konstanten und Hilfsfunktionen

@@ -28,11 +28,10 @@
 // -----------------------------------------------------------------------------
 
 #include <memory>
-#include "fmod.h"
-#include "fmodexexception.h"
-#include "fmodexchannel.h"
-#include "package/packagemanager.h"
-#include "fmodexresource.h"
+#include "sword25/sfx/fmodexexception.h"
+#include "sword25/sfx/fmodexchannel.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/sfx/fmodexresource.h"
 
 // -----------------------------------------------------------------------------
 // Konstanten

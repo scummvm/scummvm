@@ -26,13 +26,13 @@
 	Autor: Alex Arnst
 **/
 
-#ifndef BS_INPUTENGINE_H
-#define BS_INPUTENGINE_H
+#ifndef SWORD25_INPUTENGINE_H
+#define SWORD25_INPUTENGINE_H
 
 /// Includes
-#include "kernel/common.h"
-#include "kernel/service.h"
-#include "kernel/persistable.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/service.h"
+#include "sword25/kernel/persistable.h"
 
 /// Klassendefinition
 class BS_InputEngine : public BS_Service, public BS_Persistable

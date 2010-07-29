@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_VORBISSTATE_H
-#define BS_VORBISSTATE_H
+#ifndef SWORD25_VORBISSTATE_H
+#define SWORD25_VORBISSTATE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "vorbis/codec.h"
+#include "sword25/kernel/common.h"
+#include <vorbis/codec.h>
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

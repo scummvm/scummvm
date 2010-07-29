@@ -17,18 +17,18 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_STDWININPUT_H
-#define BS_STDWININPUT_H
+#ifndef SWORD25_STDWININPUT_H
+#define SWORD25_STDWININPUT_H
 
 /// Includes
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <list>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "inputengine.h"
+#include "sword25/kernel/common.h"
+#include "sword25/input/inputengine.h"
 
 /// Klassendefinitionen
 class BS_Kernel;

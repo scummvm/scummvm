@@ -29,16 +29,16 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_SOUNDENGINE_H
-#define BS_SOUNDENGINE_H
+#ifndef SWORD25_SOUNDENGINE_H
+#define SWORD25_SOUNDENGINE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/resservice.h"
-#include "kernel/persistable.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/resservice.h"
+#include "sword25/kernel/persistable.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

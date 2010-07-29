@@ -17,23 +17,21 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef FMODEXSOUND_H
-#define FMODEXSOUND_H
+#ifndef SWORD25_FMODEXSOUND_H
+#define SWORD25_FMODEXSOUND_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <map>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "kernel/hashmap.h"
-#include "soundengine.h"
-
-#include "fmod.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/hashmap.h"
+#include "sword25/sfx/soundengine.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

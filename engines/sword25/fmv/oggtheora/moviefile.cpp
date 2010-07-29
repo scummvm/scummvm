@@ -27,10 +27,10 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/kernel.h"
-#include "package/packagemanager.h"
-#include "oggstate.h"
-#include "moviefile.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/fmv/oggtheora/oggstate.h"
+#include "sword25/fmv/oggtheora/moviefile.h"
 
 // -----------------------------------------------------------------------------
 

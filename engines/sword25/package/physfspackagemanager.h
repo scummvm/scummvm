@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_PHYSFS_PACKAGE_MANAGER_H
-#define BS_PHYSFS_PACKAGE_MANAGER_H
+#ifndef SWORD25_PHYSFS_PACKAGE_MANAGER_H
+#define SWORD25_PHYSFS_PACKAGE_MANAGER_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "packagemanager.h"
+#include "sword25/kernel/common.h"
+#include "sword25/package/packagemanager.h"
 
 // -----------------------------------------------------------------------------
 // Forward declarations

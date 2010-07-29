@@ -29,14 +29,14 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_LINE_H_
-#define _BS_LINE_H_
+#ifndef SWORD25_LINE_H
+#define SWORD25_LINE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
+#include "sword25/kernel/common.h"
 
 // -----------------------------------------------------------------------------
 

@@ -17,12 +17,12 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "vertex.h"
+#include "sword25/math/vertex.h"
 
 extern "C"
 {
-	#include <lua.h>
-	#include <lauxlib.h>
+	#include "sword25/util/lua/lua.h"
+	#include "sword25/util/lua/lauxlib.h"
 }
 
 // -----------------------------------------------------------------------------

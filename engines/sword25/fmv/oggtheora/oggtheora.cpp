@@ -59,18 +59,17 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <algorithm>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 #include <float.h>
 
-#include "package/packagemanager.h"
-#include "kernel/cpuinfo.h"
-#include "sfx/soundengine.h"
-#include "gfx/graphicengine.h"
-#include "gfx/panel.h"
-#include "oggtheora.h"
-#include "yuvtorgba.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/sfx/soundengine.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/fmv/oggtheora/oggtheora.h"
+#include "sword25/fmv/oggtheora/yuvtorgba.h"
 
 using namespace std;
 

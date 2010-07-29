@@ -17,18 +17,18 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <utility>
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 #include <math.h>
 
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
-#include "polygon.h"
-#include "line.h"
+#include "sword25/math/polygon.h"
+#include "sword25/math/line.h"
 
 #define max(a,b) (((a) > (b)) ? (a) : (b))
 

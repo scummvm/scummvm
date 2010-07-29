@@ -27,10 +27,10 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
-#include "regionregistry.h"
-#include "region.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/math/regionregistry.h"
+#include "sword25/math/region.h"
 
 // -----------------------------------------------------------------------------
 // Implementation

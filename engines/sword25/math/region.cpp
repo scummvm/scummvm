@@ -17,12 +17,12 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "region.h"
-#include "walkregion.h"
-#include "regionregistry.h"
+#include "sword25/math/region.h"
+#include "sword25/math/walkregion.h"
+#include "sword25/math/regionregistry.h"
 
 #define BS_LOG_PREFIX "REGION"
 

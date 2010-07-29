@@ -33,7 +33,7 @@
 
 class BS_Panel : public BS_RenderObject
 {
-friend BS_RenderObject;
+friend class BS_RenderObject;
 
 private:
 	BS_Panel(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, int Width, int Height, unsigned int Color);

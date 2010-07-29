@@ -19,10 +19,10 @@
 
 #include <list>
 #include <algorithm>
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "walkregion.h"
-#include "line.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/math/walkregion.h"
+#include "sword25/math/line.h"
 
 #define BS_LOG_PREFIX "WALKREGION"
 

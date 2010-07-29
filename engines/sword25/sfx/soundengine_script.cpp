@@ -21,12 +21,12 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "script/script.h"
-#include "script/luabindhelper.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/script/script.h"
+#include "sword25/script/luabindhelper.h"
 
-#include "soundengine.h"
+#include "sword25/sfx/soundengine.h"
 
 // -----------------------------------------------------------------------------
 

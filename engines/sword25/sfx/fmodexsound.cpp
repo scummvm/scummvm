@@ -31,16 +31,14 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "fmod.h"
-#include "fmod_errors.h"
-#include "fmodexexception.h"
-#include "fmodexchannel.h"
-#include "fmodexresource.h"
-#include "kernel/string.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "package/packagemanager.h"
-#include "fmodexsound.h"
+#include "sword25/sfx/fmodexexception.h"
+#include "sword25/sfx/fmodexchannel.h"
+#include "sword25/sfx/fmodexresource.h"
+#include "sword25/kernel/string.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/sfx/fmodexsound.h"
 
 // -----------------------------------------------------------------------------
 // Konstanten und lokale Funktionen

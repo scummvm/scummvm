@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_FMODRESOURCE_H
-#define BS_FMODRESOURCE_H
+#ifndef SWORD25_FMODRESOURCE_H
+#define SWORD25_FMODRESOURCE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/resource.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/resource.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

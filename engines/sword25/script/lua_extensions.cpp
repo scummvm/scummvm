@@ -21,8 +21,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "luascript.h"
-#include "luabindhelper.h"
+#include "sword25/script/luascript.h"
+#include "sword25/script/luabindhelper.h"
 
 // -----------------------------------------------------------------------------
 

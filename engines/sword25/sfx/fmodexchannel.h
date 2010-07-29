@@ -17,14 +17,14 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef FMODEXCHANNEL_H
-#define FMODEXCHANNEL_H
+#ifndef SWORD25_FMODEXCHANNEL_H
+#define SWORD25_FMODEXCHANNEL_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
+#include "sword25/kernel/common.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations
