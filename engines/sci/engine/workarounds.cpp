@@ -90,6 +90,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LAURABOW2,     240,   240,  0,     "sSteveAnimates", "changeState",    -1,    0, { WORKAROUND_FAKE,   0 } }, // Steve Dorian's idle animation at the docks - bug #3036291
 	{ GID_LSL1,          250,   250,  0,           "increase", "handleEvent",    -1,    2, { WORKAROUND_FAKE,   0 } }, // casino, playing game, increasing bet
 	{ GID_LSL1,          720,   720,  0,              "rm720", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // age check room
+	{ GID_LSL2,           38,    38,  0,        "cloudScript", "changeState",    -1,    1, { WORKAROUND_FAKE,   0 } }, // entering the room in the middle deck of the ship - bug #3036483
 	{ GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club (temps 200, 201, 202, 203)
 	{ GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { WORKAROUND_FAKE, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
 	{ GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // washcloth in inventory
