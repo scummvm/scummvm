@@ -598,7 +598,7 @@ MusicEntry::MusicEntry() {
 	priority = 0;
 	loop = 0;
 	volume = MUSIC_VOLUME_DEFAULT;
-	hold = 0;
+	hold = -1;
 
 	pauseCounter = 0;
 	sampleLoopCounter = 0;

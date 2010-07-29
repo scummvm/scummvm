@@ -652,6 +652,14 @@ void Kernel::mapFunctions() {
 
 bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 	if (strcmp(kernelName, "*")) {
+		const char *kernelSubName = strchr(kernelName, '(');
+		uint kernelSubNameLen = 0;
+		if (kernelSubName) {
+			kernelSubName++;
+			kernelSubNameLen = strlen(kernelSubName);
+			if ((!kernelSubNameLen) || (kernelSubName[kernelSubNameLen - 1] != ')'))
+				return false;
+		}
 		for (uint id = 0; id < _kernelFuncs.size(); id++) {
 			if (_kernelFuncs[id].name) {
 				if (!_kernelFuncs[id].subFunctions) {
@@ -662,7 +670,15 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 					}
 				} else {
 					// Sub-Functions available
-					// TODO: do this
+					if (kernelSubName) {
+						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
+						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
+						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
+							if (kernelSubCall->function)
+								kernelSubCall->debugLogging = logging;
+							kernelSubCall++;
+						}
+					}
 				}
 			}
 		}
