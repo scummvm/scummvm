@@ -243,8 +243,10 @@ void MadsScene::mouseMove(int x, int y) {
 	if (currentHotSpot != NULL) {
 		_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
 
+		_action._selectedRow = -1;
+		_action._actionMode = ACTMODE_NONE;
+		_action._actionMode2 = ACTMODE2_4;
 		_action._hotspotId = currentHotSpot->getIndex();
-	
 
 	} else {
 		_vm->_mouse->setCursorNum(0);

@@ -185,9 +185,9 @@ void HotSpotList::dump() {
 
 uint32 HotSpotList::readHotSpotInteger(Common::SeekableReadStream* hotspotStream) {
 	if (_vm->isM4())
-		return hotspotStream->readUint32LE();
+		return hotspotStream->readSint32LE();
 	else
-		return hotspotStream->readUint16LE();
+		return hotspotStream->readSint16LE();
 }
 
 void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int hotspotCount) {
@@ -196,7 +196,7 @@ void HotSpotList::loadHotSpots(Common::SeekableReadStream* hotspotStream, int ho
 	char buffer[256];
 	uint32 strLength = 0;
 	uint32 index = 0;
-	uint32 feetX, feetY;
+	int feetX, feetY;
 	int cursorOffset = (_vm ->isM4()) ? 0 : 1;
 
 	for (int i = 0; i < hotspotCount; i++) {

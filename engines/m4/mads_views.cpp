@@ -299,8 +299,8 @@ void MadsAction::startAction() {
 				_madsVm->scene()->_destPos.y = hs.getFeetY();
 			}
 			_madsVm->scene()->_destFacing = hs.getFacing();
+			hotspotId = -1;
 		}
-		hotspotId = -1;
 	}
 
 	if (hotspotId >= 0) {
