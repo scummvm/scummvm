@@ -45,6 +45,7 @@ SoundCommandParser::~SoundCommandParser() {
 }
 
 reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(init): %04x:%04x", PRINT_REG(argv[0]));
 	processInitSound(argv[0]);
 	return acc;
 }
@@ -102,6 +103,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(play): %04x:%04x", PRINT_REG(argv[0]));
 	processPlaySound(argv[0]);
 	return acc;
 }
@@ -151,6 +153,7 @@ reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(dispose): %04x:%04x", PRINT_REG(argv[0]));
 	processDisposeSound(argv[0]);
 	return acc;
 }
@@ -173,6 +176,7 @@ void SoundCommandParser::processDisposeSound(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundStop(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(stop): %04x:%04x", PRINT_REG(argv[0]));
 	processStopSound(argv[0], false);
 	return acc;
 }
@@ -206,6 +210,11 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 }
 
 reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
+	if (argc == 1)
+		debugC(2, kDebugLevelSound, "kDoSound(pause): %04x:%04x", PRINT_REG(argv[0]));
+	else
+		debugC(2, kDebugLevelSound, "kDoSound(pause): %04x:%04x, %04x:%04x", PRINT_REG(argv[0]), PRINT_REG(argv[1]));
+
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// SCI0 games give us 0/1 for either resuming or pausing the current music
 		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
@@ -254,8 +263,11 @@ reg_t SoundCommandParser::kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_
 }
 
 reg_t SoundCommandParser::kDoSoundMute(int argc, reg_t *argv, reg_t acc) {
-	if (argc > 0)
+	if (argc > 0) {
+		debugC(2, kDebugLevelSound, "kDoSound(mute): %d", argv[0].toUint16());
 		_music->soundSetSoundOn(argv[0].toUint16());
+	}
+
 	return make_reg(0, _music->soundGetSoundOn());
 }
 
@@ -324,6 +336,8 @@ reg_t SoundCommandParser::kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc)
 
 reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
+
+	debugC(2, kDebugLevelSound, "kDoSound(update): %04x:%04x", PRINT_REG(argv[0]));
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -441,6 +455,7 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 	uint16 controller = argv[3].toUint16();
 	uint16 param = argv[4].toUint16();
 
+	debugC(2, kDebugLevelSound, "kDoSound(sendMidi): %04x:%04x, %d, %d, %d, %d", PRINT_REG(obj), channel, midiCmd, controller, param);
 	if (channel)
 		channel--; // channel is given 1-based, we are using 0-based
 
@@ -459,12 +474,15 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundReverb(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "doSoundReverb: %d", argv[0].toUint16() & 0xF);
 	_music->setReverb(argv[0].toUint16() & 0xF);
 	return acc;
 }
 
 reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
+
+	debugC(2, kDebugLevelSound, "doSoundSetHold: %04x:%04x, %d", PRINT_REG(argv[0]), argv[1].toUint16());
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -535,6 +553,8 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	reg_t obj = argv[0];
 	int16 value = argv[1].toSint16();
 
+	debugC(2, kDebugLevelSound, "kDoSound(setPriority): %04x:%04x, %d", PRINT_REG(obj), value);
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
@@ -564,6 +584,8 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
 	int16 value = argv[1].toSint16();
+
+	debugC(2, kDebugLevelSound, "kDoSound(setLoop): %04x:%04x, %d", PRINT_REG(obj), value);
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
