@@ -12,6 +12,11 @@
 # build I:  --enable-made --disable-mad
 # build K:  --enable-cruise --disable-mad
 #
+# However, this could be automated using a simple script, which generates
+# subdirs for each build, and runs configure in those subdirs with the right
+# parameters (all builds would still share the same set of source code files,
+# thanks to our "out of tree" building support).
+#
 # This does not currently take care of some things:
 # * It does not #define DS_BUILD_A etc. -- most uses of that should be
 #   eliminated, though. Only usage should be for selecting the default config
@@ -21,6 +26,9 @@
 #   too; we need to investigate those.
 # * It does not currently adjust the logo. Ideally, if we ever get real plugin
 #   support, that should be necessary anymore anyway.
+# * No support for USE_DEBUGGER and USE_PROFILER yet. I envision that we would
+#  integrate them with the --enable-debug and --enable-profiling configure options,
+#  I simply haven't gotten around to do that yet.
 # * ...
 
 # Set location of ndsdir so that we can easily refer to files in it
@@ -57,6 +65,12 @@ LOGO = logoa.bmp
 
 # NOTE: The header and libs for the debugger is assumed to be in the libnds
 # folder.
+
+
+ifdef WRAP_MALLOC
+	LDFLAGS += -Wl,--wrap,malloc
+	DEFINES += -DWRAP_MALLOC
+endif
 
 
 
