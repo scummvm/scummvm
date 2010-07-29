@@ -29,7 +29,9 @@ MODULE_OBJS := \
 	smartLandScale.o
 
 MODULE_DIRS += \
-	backends/platform/wince/
+	backends/platform/wince/ \
+	backends/platform/wince/CEgui/ \
+	backends/platform/wince/CEkeys/
 
 # We don't use the rules.mk here on purpose
 OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
