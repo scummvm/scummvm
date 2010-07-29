@@ -8,7 +8,6 @@ PORT_OBJS := \
 	arm9/source/blitters_arm.o \
 	arm9/source/cdaudio.o \
 	arm9/source/dsmain.o \
-	../../fs/ds/ds-fs.o \
 	arm9/source/gbampsave.o \
 	arm9/source/scummhelp.o \
 	arm9/source/osystem_ds.o \

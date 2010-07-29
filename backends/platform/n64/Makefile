@@ -64,6 +64,8 @@ ENABLE_SCUMM = $(ENABLED)
 
 OBJS :=	nintendo64.o osys_n64_base.o osys_n64_events.o osys_n64_utilities.o pakfs_save_manager.o framfs_save_manager.o
 
+BACKEND := n64
+
 include $(srcdir)/Makefile.common
 
 MODULE_DIRS += ./

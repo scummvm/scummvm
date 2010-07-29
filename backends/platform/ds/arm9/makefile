@@ -251,6 +251,8 @@ ifdef WRAP_MALLOC
 	DEFINES += -DWRAP_MALLOC
 endif
 
+BACKEND := ds
+
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
 			-I$(portdir)/source -I$(portdir)/source/mad \

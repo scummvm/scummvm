@@ -69,6 +69,8 @@ OBJS :=	dcmain.o time.o display.o audio.o input.o selector.o icon.o \
 
 MODULE_DIRS += ./
 
+BACKEND := dc
+
 include $(srcdir)/Makefile.common
 
 scummvm.bin : scummvm.elf
