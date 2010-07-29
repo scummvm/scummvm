@@ -652,30 +652,37 @@ void Kernel::mapFunctions() {
 
 bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 	if (strcmp(kernelName, "*")) {
-		const char *kernelSubName = strchr(kernelName, '(');
-		uint kernelSubNameLen = 0;
-		if (kernelSubName) {
-			kernelSubName++;
-			kernelSubNameLen = strlen(kernelSubName);
-			if ((!kernelSubNameLen) || (kernelSubName[kernelSubNameLen - 1] != ')'))
-				return false;
-		}
 		for (uint id = 0; id < _kernelFuncs.size(); id++) {
 			if (_kernelFuncs[id].name) {
-				if (!_kernelFuncs[id].subFunctions) {
-					// No sub-functions, enable actual kernel function
-					if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
-						_kernelFuncs[id].debugLogging = logging;
-						return true;
-					}
-				} else {
-					// Sub-Functions available
-					if (kernelSubName) {
+				if (strcmp(kernelName, _kernelFuncs[id].name) == 0) {
+					if (_kernelFuncs[id].subFunctions) {
+						// sub-functions available and main name matched, in that case set logging of all sub-functions
 						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
 						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
 						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
 							if (kernelSubCall->function)
 								kernelSubCall->debugLogging = logging;
+							kernelSubCall++;
+						}
+						return true;
+					}
+					// function name matched, set for this one and exit
+					_kernelFuncs[id].debugLogging = logging;
+					return true;
+				} else {
+					// main name was not matched
+					if (_kernelFuncs[id].subFunctions) {
+						// Sub-Functions available
+						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
+						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
+						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
+							if (kernelSubCall->function) {
+								if (strcmp(kernelName, kernelSubCall->name) == 0) {
+									// sub-function name matched, set for this one and exit
+									kernelSubCall->debugLogging = logging;
+									return true;
+								}
+							}
 							kernelSubCall++;
 						}
 					}
