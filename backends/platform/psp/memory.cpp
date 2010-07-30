@@ -39,9 +39,17 @@
 
 extern "C" {
 
+#ifdef TEST_MEMORY_COPY		/* we won't be able to run in this case b/c of printouts */
+extern void *__real_memcpy(void *dst, void *src, size_t bytes);
+#endif
+
 void *__wrap_memcpy(void *dst, void *src, size_t bytes) {
+#ifdef TEST_MEMORY_COPY		/* we won't be able to run in this case */
+	return __real_memcpy(dst, src, bytes);
+#else
 	PspMemory::fastCopy((byte *)dst, (byte *)src, bytes);
 	return dst;
+#endif
 }
 
 }
@@ -291,43 +299,31 @@ void PspMemory::copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, u
 	PSP_DEBUG_PRINT("copy32Misaligned: dst32[%p], src[%p], bytes[%d], alignSrc[%d]\n", dst32, src, bytes, alignSrc);
 	
 	uint32 *src32 = (uint32 *)(((uint32)src) & 0xFFFFFFFC);	// remove misalignment
-	uint32 offset;
+	uint32 shiftValue, lastShiftValue;
 	
 	switch (alignSrc) {
 	case 1:
-		offset = misaligned32Detail(dst32, src32, bytes, alignSrc, 8, 24);
+		shiftValue = 8;
+		lastShiftValue = 24;
 		break;
 	case 2:
-		offset = misaligned32Detail(dst32, src32, bytes, alignSrc, 16, 16);
+		shiftValue = 16;
+		lastShiftValue = 16;
 		break;
 	default: /* 3 */
-		offset = misaligned32Detail(dst32, src32, bytes, alignSrc, 24, 8);
+		shiftValue = 24;
+		lastShiftValue = 8;
 		break;
 	}
-	
-	uint32 remainingBytes = bytes & 3;
-	
-	if (remainingBytes) {
-		byte *dst = (byte *)dst32;
-		src += offset;
-		dst += offset;
-		copy8(dst, src, remainingBytes);
-	}	
-}
 
-// returns offset in dst
-uint32 PspMemory::misaligned32Detail(uint32 *dst32, uint32 *src32, uint32 bytes, uint32 alignSrc, const uint32 shiftValue, const uint32 lastShiftValue) {
-	uint32 *origDst32 = dst32;
-	register uint32 dstWord, srcWord;
-	
-	PSP_DEBUG_PRINT("misaligned32Detail(): alignSrc[%d], dst32[%p], src32[%p], bytes[%d]\n", alignSrc, dst32, src32, bytes);
-	
+	uint32 dstWord, srcWord;
+
 	// Try to do groups of 4 words
 	uint32 words4 = bytes >> 4;
 	
-	srcWord = src32[0];
-
-	while (words4--) {
+	srcWord = *src32;		// preload 1st word so we read ahead
+	
+	for (; words4; words4--) {
 		dstWord = srcWord >> shiftValue;
 		srcWord = src32[1];
 		dstWord |= srcWord << lastShiftValue;
@@ -348,22 +344,29 @@ uint32 PspMemory::misaligned32Detail(uint32 *dst32, uint32 *src32, uint32 bytes,
 		dst32 += 4;
 	}
 	
-	uint32 words = (bytes & 0xF) >> 2;
+	uint32 words = (bytes & 0xF) >> 2;	// now get remaining words
 	
 	// we read one word ahead of what we write
 	// setup the first read
-	if (words) {
-		src32++;	// we already loaded the value, so just increment
-		
-		while (words--) {
-			dstWord = srcWord >> shiftValue;
-			srcWord = *src32++;
-			dstWord |= srcWord << lastShiftValue;
-			*dst32++ = dstWord;
-		}
+	
+	for (; words ;words--) {
+		dstWord = srcWord >> shiftValue;
+		srcWord = src32[1];				// we still go one ahead
+		src32++;
+		dstWord |= srcWord << lastShiftValue;
+		*dst32++ = dstWord;
 	}
 	
-	return (byte *)dst32 - (byte *)origDst32;
+	uint32 bytesLeft = bytes & 3;	// and remaining bytes
+		
+	if (bytesLeft) {
+		byte *dst8 = (byte *)dst32;
+		byte *src8 = ((byte *)src32) + ((uint32)src & 0x3);	// get exact location we should be at
+
+		for(; bytesLeft; bytesLeft--) {
+			*dst8++ = *src8++;
+		}
+	}
 }
 
 // More challenging -- need to shift
