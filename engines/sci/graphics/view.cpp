@@ -637,7 +637,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	uint16 scalingX[640];
 	uint16 scalingY[480];
 	int16 scaledWidth, scaledHeight;
-	int16 pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
+	int pixelNo, scaledPixel, scaledPixelNo, prevScaledPixelNo;
 
 	if (_embeddedPal) {
 		// Merge view palette in...
@@ -650,8 +650,8 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	scaledHeight = CLIP<int16>(scaledHeight, 0, _screen->getHeight());
 
 	// Do we really need to do this?!
-	memset(scalingX, 0, sizeof(scalingX));
-	memset(scalingY, 0, sizeof(scalingY));
+	//memset(scalingX, 0, sizeof(scalingX));
+	//memset(scalingY, 0, sizeof(scalingY));
 
 	// Create height scaling table
 	pixelNo = 0;
@@ -659,16 +659,15 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	while (pixelNo < celHeight) {
 		scaledPixelNo = scaledPixel >> 7;
 		assert(scaledPixelNo < ARRAYSIZE(scalingY));
-		if (prevScaledPixelNo < scaledPixelNo)
-			memset(&scalingY[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
-		scalingY[scaledPixelNo] = pixelNo;
-		prevScaledPixelNo = scaledPixelNo + 1;
+		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
+			scalingY[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
 		scaledPixel += scaleY;
 	}
+	pixelNo--;
 	scaledPixelNo++;
-	if (scaledPixelNo < scaledHeight)
-		memset(&scalingY[scaledPixelNo], pixelNo - 1, scaledHeight - scaledPixelNo);
+	for (; scaledPixelNo < scaledWidth; scaledPixelNo++)
+		scalingY[scaledPixelNo] = pixelNo - 1;
 
 	// Create width scaling table
 	pixelNo = 0;
@@ -676,16 +675,15 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	while (pixelNo < celWidth) {
 		scaledPixelNo = scaledPixel >> 7;
 		assert(scaledPixelNo < ARRAYSIZE(scalingX));
-		if (prevScaledPixelNo < scaledPixelNo)
-			memset(&scalingX[prevScaledPixelNo], pixelNo, scaledPixelNo - prevScaledPixelNo);
-		scalingX[scaledPixelNo] = pixelNo;
-		prevScaledPixelNo = scaledPixelNo + 1;
+		for (; prevScaledPixelNo <= scaledPixelNo; prevScaledPixelNo++)
+			scalingX[prevScaledPixelNo] = pixelNo;
 		pixelNo++;
 		scaledPixel += scaleX;
 	}
+	pixelNo--;
 	scaledPixelNo++;
-	if (scaledPixelNo < scaledWidth)
-		memset(&scalingX[scaledPixelNo], pixelNo - 1, scaledWidth - scaledPixelNo);
+	for (; scaledPixelNo < scaledWidth; scaledPixelNo++)
+		scalingX[scaledPixelNo] = pixelNo - 1;
 
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);
