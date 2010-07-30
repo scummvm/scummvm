@@ -197,6 +197,10 @@ T sortPartition(T first, T last, T pivot, StrictWeakOrdering &comp) {
 /**
  * Simple sort function, modeled after std::sort.
  * It compares data with the given comparator object comp.
+ *
+ * Like std::sort this is not guaranteed to be stable.
+ * Actually as the time of writing our implementation
+ * is unstable.
  */
 template<typename T, class StrictWeakOrdering>
 void sort(T first, T last, StrictWeakOrdering comp) {
