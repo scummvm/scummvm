@@ -437,7 +437,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
-		int rotation = (rand() & 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
+		int rotation = (g_sci->getRNG().getRandomBit() == 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
 		int oldx = readSelectorValue(segMan, client, SELECTOR(x));
 		int oldy = readSelectorValue(segMan, client, SELECTOR(y));
 		int xstep = readSelectorValue(segMan, client, SELECTOR(xStep));

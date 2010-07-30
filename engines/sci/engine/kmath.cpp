@@ -37,8 +37,18 @@ reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 	case 2: { // get random number
 		int fromNumber = argv[0].toUint16();
 		int toNumber = argv[1].toUint16();
-		double randomNumber = fromNumber + ((toNumber + 1.0 - fromNumber) * (rand() / (RAND_MAX + 1.0)));
-		return make_reg(0, (int)randomNumber);
+
+		// TODO/CHECKME: It is propbably not required to check whether
+		// toNumber is greater than fromNumber, at least not when one
+		// goes by their names, but let us be on the safe side and
+		// allow toNumber to be smaller than fromNumber too.
+		if (fromNumber > toNumber)
+			SWAP(fromNumber, toNumber);
+
+		const uint diff = (uint)(toNumber - fromNumber);
+
+		const int randomNumber = fromNumber + (int)g_sci->getRNG().getRandomNumber(diff);
+		return make_reg(0, randomNumber);
 	}
 
 	case 3: // get seed

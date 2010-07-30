@@ -26,6 +26,7 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
+#include "common/EventRecorder.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -169,6 +170,8 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
+	g_eventRec.registerRandomSource(_rng, "sci");
+
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("undither", "true");
 	ConfMan.registerDefault("enable_fb01", "false");
@@ -303,8 +306,6 @@ bool SciEngine::initGame() {
 	}
 
 	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
-
-	srand(g_system->getMillis()); // Initialize random number generator
 
 	// Load game language into printLang property of game object
 	setSciLanguage();

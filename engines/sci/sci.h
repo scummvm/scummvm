@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/util.h"
+#include "common/random.h"
 #include "sci/engine/vm_types.h"	// for Selector
 #include "sci/debug.h"	// for DebugState
 
@@ -233,6 +234,8 @@ public:
 	inline EventManager *getEventManager() const { return _eventMan; }
 	inline reg_t getGameObject() const { return _gameObj; }
 
+	Common::RandomSource &getRNG() { return _rng; }
+
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
 
@@ -340,6 +343,7 @@ private:
 	EventManager *_eventMan;
 	reg_t _gameObj; /**< Pointer to the game object */
 	Console *_console;
+	Common::RandomSource _rng;
 };
 
 
