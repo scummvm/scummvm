@@ -406,7 +406,7 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		charCount = GetLongest(text, rect.width(), orgFontId);
 		if (charCount == 0)
 			break;
-		Width(text, 0, charCount, orgFontId, textWidth, textHeight);
+		Width(text, 0, charCount, fontId, textWidth, textHeight);
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
 		switch (alignment) {
 		case SCI_TEXT16_ALIGNMENT_RIGHT:
