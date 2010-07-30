@@ -2076,6 +2076,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Police Quest 2 English DOS 1.001.006 (supplied by merkur-kun in bug report #3028479)
+	{"pq2", "", {
+		{"resource.map", 0, "8e1161c684b342742d30f938a4839a4b", 4518},
+		{"resource.001", 0, "77f02def3094af804fd2371db25b7100", 506563},
+		{"resource.002", 0, "77f02def3094af804fd2371db25b7100", 541261},
+		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 587511},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Police Quest 2 - Japanese PC-98
 	// SCI interpreter version unknown
 	{"pq2", "", {
