@@ -55,16 +55,28 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 
 	uint32 neededSleep = 30;
 
-	// WORKAROUND: LSL3 calculates a machinespeed variable during game startup
-	// (right after the filthy questions). This one would go through w/o
-	// throttling resulting in having to do 1000 pushups or something. Another
-	// way of handling this would be delaying incrementing of "machineSpeed"
-	// selector.
-	if (g_sci->getGameId() == GID_LSL3 && s->currentRoomNumber() == 290)
-		s->_throttleTrigger = true;
-	else if (g_sci->getGameId() == GID_ICEMAN && s->currentRoomNumber() == 27) {
-		s->_throttleTrigger = true;
-		neededSleep = 60;
+	// WORKAROUNDS:
+	switch (g_sci->getGameId()) {
+	case GID_LSL3:
+		// LSL3 calculates a machinespeed variable during game startup
+		// (right after the filthy questions). This one would go through w/o
+		// throttling resulting in having to do 1000 pushups or something. Another
+		// way of handling this would be delaying incrementing of "machineSpeed"
+		// selector.
+		if (s->currentRoomNumber() == 290)
+			s->_throttleTrigger = true;
+		break;
+	case GID_ICEMAN:
+		// In ICEMAN the submarine control room is not animating much, so it runs way too fast
+		//  we calm it down even more otherwise especially fighting against other submarines
+		//  is almost impossible
+		if (s->currentRoomNumber() == 27) {
+			s->_throttleTrigger = true;
+			neededSleep = 60;
+		}
+		break;
+	default:
+		break;
 	}
 
 	s->speedThrottler(neededSleep);
