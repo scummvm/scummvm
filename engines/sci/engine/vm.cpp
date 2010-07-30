@@ -1069,11 +1069,17 @@ void run_vm(EngineState *s) {
 
 		case op_mod: { // 0x05 (05)
 			r_temp = POP32();
-			int16 modulo, value;
-			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value))
-				s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
-			else
+			int16 modulo, value, result;
+			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
+				modulo = ABS(modulo);
+				result = (modulo != 0 ? value % modulo : 0);
+				// In SCI01, handling for negative numbers was added
+				if (getSciVersion() >= SCI_VERSION_01 && result < 0)
+					result += modulo;
+				s->r_acc = make_reg(0, result);
+			} else {
 				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+			}
 			break;
 		}
 
