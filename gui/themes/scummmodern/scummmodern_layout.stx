@@ -23,7 +23,7 @@
  - $Id$
  -
  -->
-<layout_info resolution = '-320xY, -256x240, -Xx272'>
+<layout_info resolution = '-320xY, -256x240, -Xx272, -Xx350'>
 	<globals>
 		<def var = 'Line.Height' value = '16' />
 		<def var = 'Font.Height' value = '16' />
@@ -247,22 +247,6 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'auPrefMt32PopupDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'auPrefMt32Popup'
-						type = 'PopUp'
-				/>
-			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
-				<widget name = 'auPrefGmPopupDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'auPrefGmPopup'
-						type = 'PopUp'
-				/>
-			</layout>			
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'auOPLPopupDesc'
 						type = 'OptionsLabel'
 				/>
@@ -354,6 +338,14 @@
 	<dialog name = 'GlobalOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
 		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auPrefGmPopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefGmPopup'
+						type = 'PopUp'
+				/>
+			</layout>			
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcFontButton'
 						type = 'Button'
 				/>
@@ -368,12 +360,6 @@
 			<widget name = 'mcMixedCheckbox'
 					type = 'Checkbox'
 			/>
-			<widget name = 'mcMt32Checkbox'
-					type = 'Checkbox'
-			/>
-			<widget name = 'mcGSCheckbox'
-					type = 'Checkbox'
-			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
 				<widget name = 'mcMidiGainText'
 						type = 'OptionsLabel'
@@ -386,6 +372,25 @@
 						height = 'Globals.Line.Height'
 				/>
 			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' center = 'true'>
+				<widget name = 'auPrefMt32PopupDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'auPrefMt32Popup'
+						type = 'PopUp'
+				/>
+			</layout>
+			<widget name = 'mcMt32Checkbox'
+					type = 'Checkbox'
+			/>
+			<widget name = 'mcGSCheckbox'
+					type = 'Checkbox'
+			/>
 		</layout>
 	</dialog>
 
@@ -530,6 +535,15 @@
 					type = 'Checkbox'
 			/>
 			<import layout = 'Dialog.GlobalOptions_MIDI' />
+		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions_MT32' overlays = 'Dialog.GlobalOptions.TabWidget'>
+		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+			<widget name = 'EnableTabCheckbox'
+					type = 'Checkbox'
+			/>
+			<import layout = 'Dialog.GlobalOptions_MT32' />
 		</layout>
 	</dialog>
 

@@ -44,7 +44,7 @@ Scene::Scene(MadsM4Engine *vm, SceneResources *res): View(vm, Common::Rect(0, 0,
 	_screenType = VIEWID_SCENE;
 
 	_sceneResources->hotspots = new HotSpotList();
-	_sceneResources->props = new HotSpotList();
+	_sceneResources->dynamicHotspots = new HotSpotList();
 	_backgroundSurface = new M4Surface();
 	_walkSurface = new M4Surface();
 	_palData = NULL;
@@ -61,6 +61,7 @@ Scene::~Scene() {
 void Scene::loadScene(int sceneNumber) {
 	_previousScene = _currentScene;
 	_currentScene = sceneNumber;
+	_nextScene = sceneNumber;
 }
 
 void Scene::leaveScene() {
@@ -123,14 +124,14 @@ void Scene::showHotSpots() {
 	HotSpot *currentHotSpot;
 
 	// hotspots (green)
-	for (i = 0; i < _sceneResources->hotspotCount; i++) {
+	for (i = 0; i < _sceneResources->hotspots->size(); i++) {
 		currentHotSpot = _sceneResources->hotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->GREEN);
 	}
 
-	// props (red)
-	for (i = 0; i < _sceneResources->propsCount; i++) {
-		currentHotSpot = _sceneResources->props->get(i);
+	// Dynamic hotspots (red)
+	for (i = 0; i < _sceneResources->dynamicHotspots->size(); i++) {
+		currentHotSpot = _sceneResources->dynamicHotspots->get(i);
 		_backgroundSurface->frameRect(currentHotSpot->getRect(), _vm->_palette->RED);
 	}
 }
@@ -154,8 +155,21 @@ void Scene::showCodes() {
 		colors[255 * 4 + 2] = 255;
 		_vm->_palette->setPalette(colors, 0, 256);
 	} else {
-		// For MADS, simply copy the walk data to the background, in whatever current palette is active
+		// MADS handling
+		
+		// copy the walk data to the background, in whatever current palette is active
 		_walkSurface->copyTo(_backgroundSurface);
+
+		// Show all the scene's walk nodes
+		SceneNodeList &nodeList = _madsVm->scene()->getSceneResources()._nodes;
+		_backgroundSurface->setColour(_madsVm->_palette->WHITE);
+		for (uint i = 0; i < nodeList.size() - 2; ++i) {
+			// Draw a little cross at the node's position
+			_backgroundSurface->hLine(nodeList[i].pt.x - 2, nodeList[i].pt.x + 2, nodeList[i].pt.y);
+			_backgroundSurface->vLine(nodeList[i].pt.x, nodeList[i].pt.y - 2, nodeList[i].pt.y + 2);
+		}
+
+		((MadsScene *)this)->_spriteSlots.fullRefresh();
 	}
 }
 
@@ -184,7 +198,7 @@ bool Scene::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &cap
 		rightClick(x, y);
 		break;
 	case MEVENT_MOVE:
-		checkHotspotAtMousePos(x, y);
+		mouseMove(x, y);
 		break;
 	default:
 		return false;

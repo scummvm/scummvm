@@ -566,7 +566,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kSetQuitStr(EngineState *s, int argc, reg_t *argv) {
-	Common::String quitStr = s->_segMan->getString(argv[0]);
+	//Common::String quitStr = s->_segMan->getString(argv[0]);
 	//debug("Setting quit string to '%s'", quitStr.c_str());
 	return s->r_acc;
 }
@@ -591,5 +591,194 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 	s->_segMan->strcpy(argv[0], str.c_str());
 	return argv[0];
 }
+
+#ifdef ENABLE_SCI32
+
+reg_t kText(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0:
+		return kTextSize(s, argc - 1, argv + 1);
+	default:
+		// TODO: Other subops here too, perhaps kTextColors and kTextFonts
+		warning("kText(%d)", argv[0].toUint16());
+		break;
+	}
+
+	return s->r_acc;
+}
+
+reg_t kString(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: { // New
+		reg_t stringHandle;
+		SciString *string = s->_segMan->allocateString(&stringHandle);
+		string->setSize(argv[1].toUint16());
+
+		// Make sure the first character is a null character
+		if (string->getSize() > 0)
+			string->setValue(0, 0);
+
+		return stringHandle;
+		}
+	case 1: // Size
+		return make_reg(0, s->_segMan->getString(argv[1]).size());
+	case 2: { // At (return value at an index)
+		if (argv[1].segment == s->_segMan->getStringSegmentId())
+			return make_reg(0, s->_segMan->lookupString(argv[1])->getRawData()[argv[2].toUint16()]);
+
+		return make_reg(0, s->_segMan->getString(argv[1])[argv[2].toUint16()]);
+	}
+	case 3: { // Atput (put value at an index)
+		SciString *string = s->_segMan->lookupString(argv[1]);
+
+		uint32 index = argv[2].toUint16();
+		uint32 count = argc - 3;
+
+		if (index + count > 65535)
+			break;
+
+		if (string->getSize() < index + count)
+			string->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			string->setValue(i + index, argv[i + 3].toUint16());
+
+		return argv[1]; // We also have to return the handle
+	}
+	case 4: // Free
+		// Freeing of strings is handled by the garbage collector
+		return s->r_acc;
+	case 5: { // Fill
+		SciString *string = s->_segMan->lookupString(argv[1]);
+		uint16 index = argv[2].toUint16();
+
+		// A count of -1 means fill the rest of the array
+		uint16 count = argv[3].toSint16() == -1 ? string->getSize() - index : argv[3].toUint16();
+		uint16 stringSize = string->getSize();
+
+		if (stringSize < index + count)
+			string->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			string->setValue(i + index, argv[4].toUint16());
+
+		return argv[1];
+	}
+	case 6: { // Cpy
+		const char *string2 = 0;
+		uint32 string2Size = 0;
+
+		if (argv[3].segment == s->_segMan->getStringSegmentId()) {
+			SciString *string = s->_segMan->lookupString(argv[3]);
+			string2 = string->getRawData();
+			string2Size = string->getSize();
+		} else {
+			Common::String string = s->_segMan->getString(argv[3]);
+			string2 = string.c_str();
+			string2Size = string.size() + 1;
+		}
+
+		uint32 index1 = argv[2].toUint16();
+		uint32 index2 = argv[4].toUint16();
+
+		// The original engine ignores bad copies too
+		if (index2 > string2Size)
+			break;
+
+		// A count of -1 means fill the rest of the array
+		uint32 count = argv[5].toSint16() == -1 ? string2Size - index2 + 1 : argv[5].toUint16();
+	
+		// We have a special case here for argv[1] being a system string
+		if (argv[1].segment == s->_segMan->getSysStringsSegment()) {
+			// Resize if necessary
+			const uint16 sysStringId = argv[1].toUint16();
+			SystemString *sysString = s->_segMan->getSystemString(sysStringId);
+			assert(sysString);
+			if ((uint32)sysString->_maxSize < index1 + count) {
+				free(sysString->_value);
+				sysString->_maxSize = index1 + count;
+				sysString->_value = (char *)calloc(index1 + count, sizeof(char));
+			}
+
+			strncpy(sysString->_value + index1, string2 + index2, count);
+		} else {
+			SciString *string1 = s->_segMan->lookupString(argv[1]);
+
+			if (string1->getSize() < index1 + count)
+				string1->setSize(index1 + count);
+
+			// Note: We're accessing from c_str() here because the
+			// string's size ignores the trailing 0 and therefore
+			// triggers an assert when doing string2[i + index2].
+			for (uint16 i = 0; i < count; i++)
+				string1->setValue(i + index1, string2[i + index2]);
+		}
+		
+	} return argv[1];
+	case 7: { // Cmp
+		Common::String string1 = argv[1].isNull() ? "" : s->_segMan->getString(argv[1]);
+		Common::String string2 = argv[2].isNull() ? "" : s->_segMan->getString(argv[2]);
+
+		if (argc == 4) // Strncmp
+			return make_reg(0, strncmp(string1.c_str(), string2.c_str(), argv[3].toUint16()));
+		else           // Strcmp
+			return make_reg(0, strcmp(string1.c_str(), string2.c_str()));
+	}
+	case 8: { // Dup
+		const char *rawString = 0;
+		uint32 size = 0;
+
+		if (argv[1].segment == s->_segMan->getStringSegmentId()) {
+			SciString *string = s->_segMan->lookupString(argv[1]);
+			rawString = string->getRawData();
+			size = string->getSize();
+		} else {
+			Common::String string = s->_segMan->getString(argv[1]);
+			rawString = string.c_str();
+			size = string.size() + 1;
+		}
+
+		reg_t stringHandle;
+		SciString *dupString = s->_segMan->allocateString(&stringHandle);
+		dupString->setSize(size);
+
+		for (uint32 i = 0; i < size; i++)
+			dupString->setValue(i, rawString[i]);
+
+		return stringHandle;
+	}
+	case 9: // Getdata
+		if (!s->_segMan->isHeapObject(argv[1]))
+			return argv[1];
+
+		return readSelector(s->_segMan, argv[1], SELECTOR(data));
+	case 10: // Stringlen
+		return make_reg(0, s->_segMan->strlen(argv[1]));
+	case 11: { // Printf
+		reg_t stringHandle;
+		s->_segMan->allocateString(&stringHandle);
+
+		reg_t *adjustedArgs = new reg_t[argc];
+		adjustedArgs[0] = stringHandle;
+		memcpy(&adjustedArgs[1], argv + 1, (argc - 1) * sizeof(reg_t));
+
+		kFormat(s, argc, adjustedArgs);
+		delete[] adjustedArgs;
+		return stringHandle;
+		}
+	case 12: // Printf Buf
+		return kFormat(s, argc - 1, argv + 1);
+	case 13: { // atoi
+		Common::String string = s->_segMan->getString(argv[1]);
+		return make_reg(0, (uint16)atoi(string.c_str()));
+	}
+	default:
+		error("Unknown kString subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+#endif
 
 } // End of namespace Sci

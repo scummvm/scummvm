@@ -31,6 +31,7 @@
 #include "icon.h"
 #include "DCLauncherDialog.h"
 #include <common/config-manager.h>
+#include <common/stream.h>
 
 #include "backends/plugins/dc/dc-provider.h"
 #include "sound/mixer_intern.h"
@@ -204,6 +205,16 @@ void OSystem_Dreamcast::getTimeAndDate(TimeDate &td) const {
   td.tm_mday = t.tm_mday;
   td.tm_mon = t.tm_mon;
   td.tm_year = t.tm_year;
+}
+
+Common::SeekableReadStream *OSystem_Dreamcast::createConfigReadStream() {
+  Common::FSNode file("/scummvm.ini");
+  Common::SeekableReadStream *s = file.createReadStream();
+  return s? s : new Common::MemoryReadStream((const byte *)"", 0);
+}
+
+Common::WriteStream *OSystem_Dreamcast::createConfigWriteStream() {
+  return 0;
 }
 
 void DCHardware::dc_init_hardware()

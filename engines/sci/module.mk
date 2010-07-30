@@ -25,6 +25,7 @@ MODULE_OBJS := \
 	engine/kscripts.o \
 	engine/ksound.o \
 	engine/kstring.o \
+	engine/kvideo.o \
 	engine/message.o \
 	engine/savegame.o \
 	engine/script.o \
@@ -35,6 +36,7 @@ MODULE_OBJS := \
 	engine/state.o \
 	engine/static_selectors.o \
 	engine/vm.o \
+	engine/workarounds.o \
 	graphics/animate.o \
 	graphics/cache.o \
 	graphics/compare.o \
@@ -63,7 +65,7 @@ MODULE_OBJS := \
 	sound/music.o \
 	sound/soundcmd.o \
 	sound/drivers/adlib.o \
-	sound/drivers/amiga.o \
+	sound/drivers/amigamac.o \
 	sound/drivers/fb01.o \
 	sound/drivers/midi.o \
 	sound/drivers/pcjr.o \
@@ -72,7 +74,6 @@ MODULE_OBJS := \
 	
 ifdef ENABLE_SCI32
 MODULE_OBJS += \
-	engine/kernel32.o \
 	graphics/frameout.o \
 	graphics/paint32.o \
 	graphics/robot.o \

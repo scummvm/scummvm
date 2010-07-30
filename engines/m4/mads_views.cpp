@@ -37,6 +37,307 @@
 
 namespace M4 {
 
+MadsAction::MadsAction(MadsView &owner): _owner(owner) {
+	clear();
+	_currentAction = kVerbNone;
+	_startWalkFlag = false;
+	_statusTextIndex = -1;
+	_selectedAction = 0;
+	_inProgress = false;
+}
+
+void MadsAction::clear() {
+	_v83338 = 1;
+	_actionMode = ACTMODE_NONE;
+	_actionMode2 = ACTMODE2_0;
+	_v86F42 = 0;
+	_v86F4E = 0;
+	_articleNumber = 0;
+	_lookFlag = false;
+	_v86F4A = 0;
+	_statusText[0] = '\0';
+	_selectedRow = -1;
+	_hotspotId = -1;
+	_v86F3A = -1;
+	_v86F4C = -1;
+	_action.verbId = -1;
+	_action.objectNameId = -1;
+	_action.indirectObjectId = -1;
+	_textChanged = true;
+	_walkFlag = false;
+}
+
+void MadsAction::appendVocab(int vocabId, bool capitalise) {
+	char *s = _statusText + strlen(_statusText);
+	const char *vocabStr = _madsVm->globals()->getVocab(vocabId);
+	strcpy(s, vocabStr);
+	if (capitalise)
+		*s = toupper(*s);
+
+	strcat(s, " ");
+}
+
+void MadsAction::set() {
+	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
+	bool flag = false;
+	strcpy(_statusText, "");
+
+	_currentAction = -1;
+	_action.objectNameId = -1;
+	_action.indirectObjectId = -1;
+
+	if (_actionMode == ACTMODE_TALK) {
+		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
+		if (_selectedRow >= 0) {
+			const char *desc = _madsVm->_converse[_selectedRow].desc;
+			if (desc)
+				strcpy(_statusText, desc);
+		}
+	} else if (_lookFlag && (_selectedRow == 0)) {
+		// Two 'look' actions in succession, so the action becomes 'Look around'
+		strcpy(_statusText, lookAroundStr);
+	} else {
+		if ((_actionMode == ACTMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
+			// Use/to action
+			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
+			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+			
+			_action.objectNameId = objEntry->descId;
+			_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+
+			// Set up the status text stirng
+			strcpy(_statusText, useStr);
+			appendVocab(_action.objectNameId);
+			strcpy(_statusText, toStr);
+			appendVocab(_currentAction);
+		} else {
+			// Handling for if an action has been selected
+			if (_selectedRow >= 0) {
+				if (_actionMode == ACTMODE_VERB) {
+					// Standard verb action
+					_currentAction = verbList[_selectedRow].verb;
+				} else {
+					// Selected action on an inventory object
+					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
+					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+
+					_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+				}
+
+				appendVocab(_currentAction, true);
+
+				if (_currentAction == kVerbLook) {
+					// Add in the word 'add'
+					strcat(_statusText, atStr);
+					strcat(_statusText, " ");
+				}
+			}
+
+			// Handling for if a hotspot has been selected/highlighted
+			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
+				flag = true;
+
+				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+				strcat(_statusText, " ");
+			}
+
+			if (_hotspotId >= 0) {
+				if (_selectedRow < 0) {
+					int verbId;
+
+					if (_hotspotId < hotspotCount) {
+						// Get the verb Id from the hotspot
+						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVerbID();
+					} else {
+						// Get the verb Id from the scene object
+						verbId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId - hotspotCount].getVerbID();
+					}
+
+					if (verbId > 0) {
+						// Set the specified action
+						_currentAction = verbId;
+						appendVocab(_currentAction, true);
+					} else {
+						// Default to a standard 'walk to'
+						_currentAction = kVerbWalkTo;
+						strcat(_statusText, walkToStr);
+					}
+				}
+
+				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
+					// Get name from given inventory object
+					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
+					_action.objectNameId = _madsVm->globals()->getObject(objectId)->descId;
+				} else if (_hotspotId < hotspotCount) {
+					// Get name from scene hotspot
+					_action.objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVocabID();
+				} else {
+					// Get name from temporary scene hotspot
+					_action.objectNameId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId].getVocabID();
+				}
+				appendVocab(_action.objectNameId);
+			}
+		}
+
+		if ((_hotspotId >= 0) && (_articleNumber > 0) && !flag) {
+			if (_articleNumber == -1) {
+				if (_v86F3A >= 0) {
+					int articleNum = 0;
+
+					if ((_v86F42 == 2) || (_v86F42 == 5)) {
+						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
+						articleNum = _madsVm->globals()->getObject(objectId)->article;
+					} else if (_v86F3A < hotspotCount) {
+						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getArticle();
+					} else {
+
+					}
+				}
+
+			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
+				(strcmp(_madsVm->globals()->getVocab(_action.indirectObjectId), fenceStr) != 0)) {
+				// Write out the article
+				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+			} else {
+				// Special case for a 'fence' entry in Rex Nebular
+				strcat(_statusText, overStr);
+			}
+
+			strcat(_statusText, " ");
+		}
+
+		// Append object description if necessary
+		if (_v86F3A >= 0)
+			appendVocab(_action.indirectObjectId);
+
+		// Remove any trailing space character
+		int statusLen = strlen(_statusText);
+		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
+			_statusText[statusLen - 1] = '\0';
+	}
+
+	_textChanged = true;
+}
+
+void MadsAction::refresh() {
+	// Exit immediately if nothing has changed
+	if (!_textChanged)
+		return;
+
+	// Remove any old copy of the status text
+	if (_statusTextIndex >= 0) {
+		_owner._textDisplay.expire(_statusTextIndex);
+		_statusTextIndex = -1;
+	}
+
+	if (strlen(_statusText) != 0) {
+		if ((_owner._screenObjects._v832EC == 0) || (_owner._screenObjects._v832EC == 2)) {
+			Font *font = _madsVm->_font->getFont(FONT_MAIN_MADS);
+			int textSpacing = -1;
+
+			int strWidth = font->getWidth(_statusText);
+			if (strWidth > 320) {
+				// Too large to fit, so fall back on interface font
+				font = _madsVm->_font->getFont(FONT_INTERFACE_MADS);
+				strWidth = font->getWidth(_statusText, 0);
+				textSpacing = 0;
+			}
+
+			// Add a new text display entry to display the status text at the bottom of the screen area
+			uint colours = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
+
+			_statusTextIndex = _owner._textDisplay.add(160 - (strWidth / 2), 
+				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colours, textSpacing, _statusText, font);
+		}
+	}
+
+	_textChanged = false;
+}
+
+void MadsAction::startAction() {
+	_madsVm->_player.moveComplete();
+
+	_inProgress = true;
+	_v8453A = 0;
+	_savedFields.selectedRow = _selectedRow;
+	_savedFields.articleNumber = _articleNumber;
+	_savedFields.actionMode = _actionMode;
+	_savedFields.actionMode2 = _actionMode2;
+	_savedFields.lookFlag = _lookFlag;
+	int savedHotspotId = _hotspotId;
+	int savedV86F3A = _v86F3A;
+	int savedV86F42 = _v86F42;
+
+	// Copy the action to be active
+	_activeAction = _action;
+	strcpy(_dialogTitle, _statusText);
+
+	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
+		_v8453A = true;
+
+	_startWalkFlag = false;
+	int hotspotId = -1;
+	HotSpotList &dynHotspots = *_madsVm->scene()->getSceneResources().dynamicHotspots;
+	HotSpotList &hotspots = *_madsVm->scene()->getSceneResources().hotspots;
+
+	if (!_savedFields.lookFlag && (_madsVm->scene()->_screenObjects._v832EC != 1)) {
+		if (_savedFields.actionMode2 == ACTMODE2_4)
+			hotspotId = savedHotspotId;
+		else if (savedV86F42 == 4)
+			hotspotId = savedV86F3A;
+
+		if (hotspotId >= hotspots.size()) {
+			HotSpot &hs = dynHotspots[hotspotId - hotspots.size()];
+			if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+				if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+					_startWalkFlag = true;
+					_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+				}
+			} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+				_startWalkFlag = true;
+				_madsVm->scene()->_destPos.x = hs.getFeetX();
+				_madsVm->scene()->_destPos.y = hs.getFeetY();
+			}
+			_madsVm->scene()->_destFacing = hs.getFacing();
+			hotspotId = -1;
+		}
+	}
+
+	if (hotspotId >= 0) {
+		HotSpot &hs = hotspots[hotspotId];
+		if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+			if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+				_startWalkFlag = true;
+				_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+			}
+		} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+			_startWalkFlag = true;
+			_madsVm->scene()->_destPos.x = hs.getFeetX();
+			_madsVm->scene()->_destPos.y = hs.getFeetY();
+		}
+		_madsVm->scene()->_destFacing = hs.getFacing();
+	}
+
+	_walkFlag = _startWalkFlag;
+}
+
+void MadsAction::checkAction() {
+	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
+		_startWalkFlag = 0;
+}
+
+bool MadsAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
+	if (_activeAction.verbId != verbId)
+		return false;
+	if ((objectNameId != 0) && (_activeAction.objectNameId != objectNameId))
+		return false;
+	if ((indirectObjectId != 0) && (_activeAction.indirectObjectId != indirectObjectId))
+		return false;
+	return true;
+}
+
+//--------------------------------------------------------------------------
+
 bool MadsSpriteSlot::operator==(const SpriteSlotSubset &other) const {
 	return (spriteListIndex == other.spriteListIndex) && (frameNumber == other.frameNumber) &&
 		(xp == other.xp) && (yp == other.yp) && (depth == other.depth) && (scale == other.scale);
@@ -190,8 +491,8 @@ void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 
 	// Get a list of sprite object depths for active objects
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
-			DepthEntry rec(_entries[i].depth, i);
+		if (_entries[i].spriteType >= SPRITE_ZERO) {
+			DepthEntry rec(16 - _entries[i].depth, i);
 			depthList.push_back(rec);
 		}
 	}
@@ -618,6 +919,18 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 //--------------------------------------------------------------------------
 
+ScreenObjects::ScreenObjects(MadsView &owner): _owner(owner) {
+	_v832EC = 0;
+	_v7FECA = 0;
+	_v7FED6 = 0;
+	_v8332A = 0;
+	_yp = 0;
+	_v8333C = 0;
+	_selectedObject = 0;
+	_category = 0;
+	_objectIndex = 0;
+}
+	
 /**
  * Clears the entries list
  */
@@ -670,6 +983,29 @@ void ScreenObjects::setActive(int category, int idx, bool active) {
 	}
 }
 
+void ScreenObjects::check(bool scanFlag, bool mouseClick) {
+	if (!mouseClick || _v832EC)
+		_v7FECA = 0;
+
+	if (!_v7FED6 && !_v8332A && !_yp && (_v8333C != 0)) {
+		if (scanFlag) {
+			_category = CAT_NONE;
+			_selectedObject = scanBackwards(_madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y,
+				LAYER_GUI);
+
+			if (_selectedObject > 0) {
+				ScreenObjectEntry &obj = _entries[_selectedObject];
+				_category = obj.category & 7;
+				_objectIndex = obj.index;
+			}
+
+			// TODO: Other stuff related to the user interface
+		}
+	}
+
+	_owner._action.refresh();
+}
+
 /*--------------------------------------------------------------------------*/
 
 MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
@@ -678,7 +1014,7 @@ MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
 		rec.active = false;
 		_entries.push_back(rec);
 	}
-	_flag = true;
+	_changed = true;
 	_count = 0;
 }
 
@@ -702,7 +1038,7 @@ int MadsDynamicHotspots::add(int descId, int field14, int seqIndex, const Common
 	_entries[idx].field_17 = 0;
 
 	++_count;
-	_flag = true;
+	_changed = true;
 
 	if (seqIndex >= 0)
 		_owner._sequenceList[seqIndex].dynamicHotspotIndex = idx;
@@ -734,7 +1070,7 @@ void MadsDynamicHotspots::remove(int index) {
 		_entries[index].active = false;
 
 		--_count;
-		_flag = true;
+		_changed = true;
 	}
 }
 
@@ -743,7 +1079,7 @@ void MadsDynamicHotspots::reset() {
 		_entries[i].active = false;
 
 	_count = 0;
-	_flag = false;
+	_changed = false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -929,7 +1265,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 	return false;
 }
 
-int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
+int MadsSequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
@@ -950,7 +1286,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	// Set the list entry fields
 	_entries[seqIndex].active = true;
 	_entries[seqIndex].spriteListIndex = spriteListIndex;
-	_entries[seqIndex].field_2 = v0;
+	_entries[seqIndex].flipped = flipped;
 	_entries[seqIndex].frameIndex = frameIndex;
 	_entries[seqIndex].frameStart = frameStart;
 	_entries[seqIndex].numSprites = numSprites;
@@ -996,7 +1332,7 @@ void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
 	spriteSlot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
-	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
+	spriteSlot.frameNumber = (timerEntry.flipped ? 0x8000 : 0) | timerEntry.frameIndex;
 	spriteSlot.depth = timerEntry.depth;
 	spriteSlot.scale = timerEntry.scale;
 	
@@ -1048,7 +1384,7 @@ bool MadsSequenceList::loadSprites(int seqIndex) {
 				dynHotspot.bounds.top = MAX(y2 - height, 0);
 				dynHotspot.bounds.bottom = MIN(y2, 155) - dynHotspot.bounds.top;
 
-				_owner._dynamicHotspots._flag = true;
+				_owner._dynamicHotspots._changed = true;
 			}
 		}
 
@@ -1197,6 +1533,13 @@ void MadsSequenceList::scan() {
 	}
 }
 
+/**
+ * Sets the depth of the specified entry in the sequence list
+ */
+void MadsSequenceList::setDepth(int seqIndex, int depth) {
+	_entries[seqIndex].depth = depth;
+}
+
 //--------------------------------------------------------------------------
 
 Animation::Animation(MadsM4Engine *vm): _vm(vm) {
@@ -1208,7 +1551,8 @@ Animation::~Animation() {
 //--------------------------------------------------------------------------
 
 MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
-		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
+		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this),
+		_screenObjects(*this), _action(*this) {
 		
 	_textSpacing = -1;
 	_newTimeout = 0;

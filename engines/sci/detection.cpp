@@ -56,7 +56,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"pq2",             "Police Quest II: The Vengeance"},
-	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},	// EGA is SCI0, VGA SCI1.1
+	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	// === SCI01 games ========================================================
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
@@ -89,11 +89,12 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle4",          "Hoyle Classic Card Games"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
+	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
-	{"mothergoose",     "Mixed-Up Mother Goose"},	// floppy is SCI1.1, CD SCI2.1
+	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"pepper",          "Pepper's Adventure in Time"},
 	{"slater",          "Slater & Charlie Go Camping"},
 	// === SCI2 games =========================================================
@@ -106,6 +107,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	// TODO: King's Questions
 	{"lsl6hires",       "Leisure Suit Larry 6: Shape Up or Slip Out!"},
+	{"mothergoosehires","Mixed-Up Mother Goose"},
 	{"phantasmagoria",  "Phantasmagoria"},
 	{"pqswat",          "Police Quest: SWAT"},
 	{"shivers",         "Shivers"},
@@ -168,6 +170,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "lsl6hires",       GID_LSL6HIRES },
 	{ "lsl7",            GID_LSL7 },
 	{ "mothergoose",     GID_MOTHERGOOSE },
+	{ "mothergoosehires",GID_MOTHERGOOSEHIRES },
 	{ "msastrochicken",  GID_MSASTROCHICKEN },
 	{ "pepper",          GID_PEPPER },
 	{ "phantasmagoria",  GID_PHANTASMAGORIA },
@@ -178,6 +181,7 @@ static const GameIdStrToEnum s_gameIdStrToEnum[] = {
 	{ "pq4",             GID_PQ4 },
 	{ "pqswat",          GID_PQSWAT },
 	{ "qfg1",            GID_QFG1 },
+	{ "qfg1vga",         GID_QFG1VGA },
 	{ "qfg2",            GID_QFG2 },
 	{ "qfg3",            GID_QFG3 },
 	{ "qfg4",            GID_QFG4 },
@@ -332,7 +336,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 		// or qfg4 full (SCI2)
 		// qfg1 VGA doesn't have view 1
 		if (!resMan->testResource(ResourceId(kResourceTypeView, 1)))
-			return "qfg1";
+			return "qfg1vga";
 
 		// qfg4 full is SCI2
 		if (getSciVersion() == SCI_VERSION_2)
@@ -587,7 +591,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		!strcmp(s_fallbackDesc.gameid, "sq1sci"))
 		s_fallbackDesc.extra = "VGA Remake";
 
-	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && getSciVersion() == SCI_VERSION_1_1)
+	if (!strcmp(s_fallbackDesc.gameid, "qfg1vga") && getSciVersion() == SCI_VERSION_1_1)
 		s_fallbackDesc.extra = "VGA Remake";
 
 	// Add "demo" to the description for demos
@@ -624,8 +628,15 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
 		//(f == kSupportsRTL) ||
-		(f == kSupportsLoadingDuringRuntime) ||
-		(f == kSupportsSavingDuringRuntime);
+		(f == kSupportsLoadingDuringRuntime); // ||
+		//(f == kSupportsSavingDuringRuntime);
+		// We can't allow saving through ScummVM menu, because
+		//  a) lots of games don't like saving everywhere (e.g. castle of dr. brain)
+		//  b) some games even dont allow saving in certain rooms (e.g. lsl6)
+		//  c) somehow some games even get mad when doing this (execstackbase was 1 all of a sudden in lsl3)
+		//  d) for sci0/sci01 games we should at least wait till status bar got drawn, although this may not be enough
+		// we can't make sure that the scripts are fine with us saving at a specific location, doing so may work sometimes
+		//  and some other times it won't work.
 }
 
 SaveStateList SciMetaEngine::listSaves(const char *target) const {

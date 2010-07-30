@@ -34,7 +34,7 @@ class Screen;
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
-class GfxPalette {
+class GfxPalette : public Common::Serializable {
 public:
 	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging);
 	~GfxPalette();
@@ -63,6 +63,8 @@ public:
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
+	reg_t kernelSave();
+	void kernelRestore(reg_t memoryHandle);
 	void kernelAssertPalette(GuiResourceId resourceId);
 
 	void kernelSyncScreenPalette();
@@ -79,6 +81,9 @@ public:
 	void palVaryProcess(int signal, bool setPalette);
 
 	Palette _sysPalette;
+
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
 
 private:
 	void palVaryInit();

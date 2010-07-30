@@ -271,8 +271,15 @@ GuiMenuItemEntry *GfxMenu::findItem(uint16 menuId, uint16 itemId) {
 
 void GfxMenu::kernelSetAttribute(uint16 menuId, uint16 itemId, uint16 attributeId, reg_t value) {
 	GuiMenuItemEntry *itemEntry = findItem(menuId, itemId);
-	if (!itemEntry)
-		error("Tried to setAttribute() on non-existant menu-item %d:%d", menuId, itemId);
+
+	if (!itemEntry) {
+		// PQ2 demo calls this, for example, but has no menus (bug report #3034507). Some SCI
+		// fan games (Al Pond 2, Aquarius) call this too on non-existent menu items. The
+		// original interpreter ignored these as well.
+		debugC(2, kDebugLevelGraphics, "Tried to setAttribute() on non-existent menu-item %d:%d", menuId, itemId);
+		return;
+	}
+
 	switch (attributeId) {
 	case SCI_MENU_ATTRIBUTE_ENABLED:
 		itemEntry->enabled = value.isNull() ? false : true;
@@ -391,7 +398,6 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 	GuiMenuItemEntry *itemEntry = NULL;
 	bool forceClaimed = false;
 	EngineState *s;
-	byte saidSpec[64];
 
 	switch (eventType) {
 	case SCI_EVENT_KEYBOARD:
@@ -431,8 +437,13 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 			itemEntry = *itemIterator;
 
 			if (!itemEntry->saidVmPtr.isNull()) {
-				// TODO: get a pointer to saidVmPtr or make said() work on VmPtrs
-				_segMan->memcpy(saidSpec, itemEntry->saidVmPtr, 64);
+				byte *saidSpec = _segMan->derefBulkPtr(itemEntry->saidVmPtr, 0);
+
+				if (!saidSpec) {
+					warning("Could not dereference saidSpec");
+					continue;
+				}
+
 				if (said(s, saidSpec, 0) != SAID_NO_MATCH)
 					break;
 			}
@@ -467,8 +478,10 @@ reg_t GfxMenu::kernelSelect(reg_t eventObject, bool pauseSound) {
 		_paint16->bitsShow(_ports->_menuRect);
 		_barSaveHandle = NULL_REG;
 	}
-	if (_oldPort)
+	if (_oldPort) {
 		_ports->setPort(_oldPort);
+		_oldPort = NULL;
+	}
 
 	if ((itemEntry) || (forceClaimed))
 		writeSelector(_segMan, eventObject, SELECTOR(claimed), make_reg(0, 1));

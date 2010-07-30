@@ -264,9 +264,7 @@ void QueenEngine::writeOptionSettings() {
 }
 
 void QueenEngine::update(bool checkPlayerInput) {
-	if (_debugger->isAttached()) {
-		_debugger->onFrame();
-	}
+	_debugger->onFrame();
 
 	_graphics->update(_logic->currentRoom());
 	_logic->update();

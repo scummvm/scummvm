@@ -93,6 +93,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("sentence_fragments",	WRAP_METHOD(Console, cmdSentenceFragments));
 	DCmd_Register("parse",				WRAP_METHOD(Console, cmdParse));
 	DCmd_Register("set_parse_nodes",	WRAP_METHOD(Console, cmdSetParseNodes));
+	DCmd_Register("said",				WRAP_METHOD(Console, cmdSaid));
 	// Resources
 	DCmd_Register("diskdump",			WRAP_METHOD(Console, cmdDiskDump));
 	DCmd_Register("hexdump",			WRAP_METHOD(Console, cmdHexDump));
@@ -167,6 +168,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
+	DCmd_Register("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	DCmd_Register("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -306,6 +308,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" sentence_fragments - Shows the sentence fragments (used to build Parse trees)\n");
 	DebugPrintf(" parse - Parses a sequence of words and prints the resulting parse tree\n");
 	DebugPrintf(" set_parse_nodes - Sets the contents of all parse nodes\n");
+	DebugPrintf(" said - Match a string against a said spec\n");
 	DebugPrintf("\n");
 	DebugPrintf("Resources:\n");
 	DebugPrintf(" diskdump - Dumps the specified resource to disk as a patch file\n");
@@ -372,6 +375,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" disasm_addr - Disassembles one or more commands\n");
 	DebugPrintf(" send - Sends a message to an object\n");
 	DebugPrintf(" go - Executes the script\n");
+	DebugPrintf(" logkernel - Logs kernel calls\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
 	DebugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
@@ -409,6 +413,13 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	const char *viewTypeDesc[] = { "Unknown", "EGA", "VGA", "VGA SCI1.1", "Amiga" };
 
 	bool hasVocab997 = g_sci->getResMan()->testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS)) ? true : false;
+	Common::String gameVersion = "N/A";
+
+	Common::File versionFile;
+	if (versionFile.open("VERSION")) {
+		gameVersion = versionFile.readLine();
+		versionFile.close();
+	}
 
 	DebugPrintf("Game ID: %s\n", _engine->getGameIdStr());
 	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()));
@@ -425,6 +436,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 	DebugPrintf("Resource volume version: %s\n", g_sci->getResMan()->getVolVersionDesc());
 	DebugPrintf("Resource map version: %s\n", g_sci->getResMan()->getMapVersionDesc());
 	DebugPrintf("Contains selector vocabulary (vocab.997): %s\n", hasVocab997 ? "yes" : "no");
+	DebugPrintf("Game version (VERSION file): %s\n", gameVersion.c_str());
 	DebugPrintf("\n");
 
 	return true;
@@ -1099,13 +1111,13 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		return true;
 	}
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdRestartGame(int argc, const char **argv) {
 	_engine->_gamestate->abortScriptProcessing = kAbortRestartGame;;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdClassTable(int argc, const char **argv) {
@@ -1176,8 +1188,9 @@ bool Console::cmdParse(int argc, const char **argv) {
 	char string[1000];
 
 	// Construct the string
-	strcpy(string, argv[2]);
+	strcpy(string, argv[1]);
 	for (int i = 2; i < argc; i++) {
+		strcat(string, " ");
 		strcat(string, argv[i]);
 	}
 
@@ -1208,6 +1221,122 @@ bool Console::cmdParse(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Console::cmdSaid(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Matches a string against a said spec\n");
+		DebugPrintf("Usage: %s <string> > & <said spec>\n", argv[0]);
+		DebugPrintf("<string> is a sequence of actual words.\n");
+		DebugPrintf("<said spec> is a sequence of hex tokens.\n");
+		return true;
+	}
+
+	ResultWordList words;
+	char *error;
+	char string[1000];
+	byte spec[1000];
+
+	int p;
+	// Construct the string
+	strcpy(string, argv[1]);
+	for (p = 2; p < argc && strcmp(argv[p],"&") != 0; p++) {
+		strcat(string, " ");
+		strcat(string, argv[p]);
+	}
+
+	if (p >= argc-1) {
+		DebugPrintf("Matches a string against a said spec\n");
+		DebugPrintf("Usage: %s <string> > & <said spec>\n", argv[0]);
+		DebugPrintf("<string> is a sequence of actual words.\n");
+		DebugPrintf("<said spec> is a sequence of hex tokens.\n");
+		return true;
+	}
+
+	// TODO: Maybe turn this into a proper said spec compiler
+	unsigned int len = 0;
+	for (p++; p < argc; p++) {
+		if (strcmp(argv[p], ",") == 0) {
+			spec[len++] = 0xf0;
+		} else if (strcmp(argv[p], "&") == 0) {
+			spec[len++] = 0xf1;
+		} else if (strcmp(argv[p], "/") == 0) {
+			spec[len++] = 0xf2;
+		} else if (strcmp(argv[p], "(") == 0) {
+			spec[len++] = 0xf3;
+		} else if (strcmp(argv[p], ")") == 0) {
+			spec[len++] = 0xf4;
+		} else if (strcmp(argv[p], "[") == 0) {
+			spec[len++] = 0xf5;
+		} else if (strcmp(argv[p], "]") == 0) {
+			spec[len++] = 0xf6;
+		} else if (strcmp(argv[p], "#") == 0) {
+			spec[len++] = 0xf7;
+		} else if (strcmp(argv[p], "<") == 0) {
+			spec[len++] = 0xf8;
+		} else if (strcmp(argv[p], ">") == 0) {
+			spec[len++] = 0xf9;
+		} else if (strcmp(argv[p], "[<") == 0) {
+			spec[len++] = 0xf5;
+			spec[len++] = 0xf8;
+		} else if (strcmp(argv[p], "[/") == 0) {
+			spec[len++] = 0xf5;
+			spec[len++] = 0xf2;
+		} else if (strcmp(argv[p], "!*") == 0) {
+			spec[len++] = 0x0f;
+			spec[len++] = 0xfe;
+		} else if (strcmp(argv[p], "[!*]") == 0) {
+			spec[len++] = 0xf5;
+			spec[len++] = 0x0f;
+			spec[len++] = 0xfe;
+			spec[len++] = 0xf6;
+		} else {
+			unsigned int s = strtol(argv[p], 0, 16);
+			if (s >= 0xf0 && s <= 0xff) {
+				spec[len++] = s;
+			} else {
+				spec[len++] = s >> 8;
+				spec[len++] = s & 0xFF;
+			}
+		}
+	}
+	spec[len++] = 0xFF;
+
+	printf("Matching '%s' against:", string);
+	_engine->getVocabulary()->debugDecipherSaidBlock(spec);
+	printf("\n");
+
+	bool res = _engine->getVocabulary()->tokenizeString(words, string, &error);
+	if (res && !words.empty()) {
+		int syntax_fail = 0;
+
+		_engine->getVocabulary()->synonymizeTokens(words);
+
+		DebugPrintf("Parsed to the following blocks:\n");
+
+		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
+			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
+
+		if (_engine->getVocabulary()->parseGNF(words, true))
+			syntax_fail = 1; // Building a tree failed
+
+		if (syntax_fail)
+			DebugPrintf("Building a tree failed.\n");
+		else {
+			_engine->getVocabulary()->dumpParseTree();
+			_engine->getVocabulary()->parserIsValid = true;
+
+			int ret = said(_engine->_gamestate, (byte*)spec, true);
+			DebugPrintf("kSaid: %s\n", (ret == SAID_NO_MATCH ? "No match" : "Match"));
+		}
+
+	} else {
+		DebugPrintf("Unknown word: '%s'\n", error);
+		free(error);
+	}
+
+	return true;
+}
+
 
 bool Console::cmdParserNodes(int argc, const char **argv) {
 	if (argc != 2) {
@@ -1341,7 +1470,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi") || filename.hasSuffix(".vmd")) {
 		_videoFile = filename;
 		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
-		return false;
+		return Cmd_Exit(0, 0);
 	} else {
 		DebugPrintf("Unknown video file type\n");
 		return true;
@@ -1631,7 +1760,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		DebugPrintf("Map %d is not available.\n", map);
 		return true;
 	}
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdSongLib(int argc, const char **argv) {
@@ -1676,8 +1805,7 @@ bool Console::cmdStartSound(int argc, const char **argv) {
 	}
 
 	g_sci->_soundCmd->startNewSound(number);
-
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdToggleSound(int argc, const char **argv) {
@@ -2310,7 +2438,7 @@ bool Console::cmdTrace(int argc, const char **argv) {
 		_debugState.runningStep = atoi(argv[1]) - 1;
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdStepOver(int argc, const char **argv) {
@@ -2318,14 +2446,14 @@ bool Console::cmdStepOver(int argc, const char **argv) {
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size();
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
 	_debugState.stopOnEvent = true;
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
@@ -2333,7 +2461,7 @@ bool Console::cmdStepRet(int argc, const char **argv) {
 	_debugState.seekLevel = _engine->_gamestate->_executionStack.size() - 1;
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdStepGlobal(int argc, const char **argv) {
@@ -2347,7 +2475,7 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 	_debugState.seekSpecial = atoi(argv[1]);
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
@@ -2380,7 +2508,7 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 	}
 	_debugState.debugging = true;
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdDisassemble(int argc, const char **argv) {
@@ -2545,7 +2673,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 
 		// We call run_engine explictly so we can restore the value of r_acc
 		// after execution.
-		run_vm(_engine->_gamestate, 0);
+		run_vm(_engine->_gamestate);
 
 	}
 
@@ -2563,6 +2691,31 @@ bool Console::cmdGo(int argc, const char **argv) {
 	_debugState.seeking = kDebugSeekNothing;
 
 	return Cmd_Exit(argc, argv);
+}
+
+bool Console::cmdLogKernel(int argc, const char **argv) {
+	if (argc < 3) {
+		DebugPrintf("Logs calls to specified kernel function.\n");
+		DebugPrintf("Usage: %s <kernel-function/*> <on/off>\n", argv[0]);
+		DebugPrintf("Example: %s StrCpy on\n", argv[0]);
+		return true;
+	}
+
+	bool logging;
+	if (strcmp(argv[2], "on") == 0)
+		logging = true;
+	else if (strcmp(argv[2], "off") == 0)
+		logging = false;
+	else {
+		DebugPrintf("2nd parameter must be either on or off\n");
+		return true;
+	}
+
+	if (g_sci->getKernel()->debugSetFunctionLogging(argv[1], logging))
+		DebugPrintf("Logging %s for k%s\n", logging ? "enabled" : "disabled", argv[1]);
+	else
+		DebugPrintf("Unknown kernel function %s\n", argv[1]);
+	return true;
 }
 
 bool Console::cmdBreakpointList(int argc, const char **argv) {
@@ -2884,7 +3037,7 @@ bool Console::cmdQuit(int argc, const char **argv) {
 		exit(0);
 	}
 
-	return false;
+	return Cmd_Exit(0, 0);
 }
 
 bool Console::cmdAddresses(int argc, const char **argv) {
@@ -3323,11 +3476,11 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 		}
 		printf(" |");
 		for (i = 0; i < regsPerLine; i++) {
-			c = data[i].toUint16() >> 8;
+			c = data[i].toUint16() & 0xff;
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
-			c = data[i].toUint16() & 0xff;
+			c = data[i].toUint16() >> 8;
 			if (c < 32 || c >= 127)
 				c = '.';
 			printf("%c", c);
@@ -3350,11 +3503,11 @@ void Console::hexDumpReg(const reg_t *data, int len, int regsPerLine, int startO
 	}
 	printf(" |");
 	for (i = 0; i < len; i++) {
-		c = data[i].toUint16() >> 8;
+		c = data[i].toUint16() & 0xff;
 		if (c < 32 || c >= 127)
 			c = '.';
 		printf("%c", c);
-		c = data[i].toUint16() & 0xff;
+		c = data[i].toUint16() >> 8;
 		if (c < 32 || c >= 127)
 			c = '.';
 		printf("%c", c);

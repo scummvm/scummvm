@@ -83,6 +83,7 @@ private:
 	void pixelation(bool blackoutFlag);
 	void blocks(bool blackoutFlag);
 	void straight(int16 number, bool blackoutFlag);
+	void scrollCopyOldToScreen(Common::Rect screenRect, int16 x, int16 y);
 	void scroll(int16 number);
 	void verticalRollFromCenter(bool blackoutFlag);
 	void verticalRollToCenter(bool blackoutFlag);

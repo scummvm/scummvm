@@ -23,16 +23,15 @@
  *
  */
 
+#include "common/system.h"
+
 #include "engines/util.h"
 #include "graphics/cursorman.h"
-#include "graphics/video/avi_decoder.h"
-#include "graphics/video/qt_decoder.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
-#include "sci/video/seq_decoder.h"
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -44,12 +43,14 @@
 #include "sci/graphics/cursor.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/paint16.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/robot.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/text16.h"
 #include "sci/graphics/view.h"
 #ifdef ENABLE_SCI32
-#include "sci/video/vmd_decoder.h"
+#include "sci/graphics/frameout.h"
 #endif
 
 namespace Sci {
@@ -129,9 +130,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 			break;
 		case -1:
 			// TODO: Special case at least in kq6, check disassembly
+			//  Does something with magCursor, which is set on argc = 10, which we don't support
 			break;
 		case -2:
-			// TODO: Special case at least in kq6, check disassembly
+			g_sci->_gfxCursor->kernelResetMoveZone();
 			break;
 		default:
 			g_sci->_gfxCursor->kernelShow();
@@ -145,14 +147,22 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_gfxCursor->kernelSetPos(pos);
 		break;
 	case 4: {
-		int16 top = argv[0].toSint16();
-		int16 left = argv[1].toSint16();
-		int16 bottom = argv[2].toSint16();
-		int16 right = argv[3].toSint16();
+		int16 top, left, bottom, right;
 
-		// In SCI32, the right parameter seems to be divided by 2
-		if (getSciVersion() >= SCI_VERSION_2)
-			right *= 2;
+		if (getSciVersion() >= SCI_VERSION_2) {
+			top = argv[1].toSint16();
+			left = argv[0].toSint16();
+			bottom = argv[3].toSint16();
+			right = argv[2].toSint16();
+		} else {
+			top = argv[0].toSint16();
+			left = argv[1].toSint16();
+			bottom = argv[2].toSint16();
+			right = argv[3].toSint16();
+		}
+		// bottom/right needs to be included into our movezone, because we compare it like any regular Common::Rect
+		bottom++;
+		right++;
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
@@ -250,7 +260,7 @@ reg_t kGraphDrawLine(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kGraphSaveBox(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect = getGraphRect(argv);
-	uint16 screenMask = (argc > 4) ? argv[4].toUint16() : 0;
+	uint16 screenMask = argv[4].toUint16() & GFX_SCREEN_MASK_ALL;
 	return g_sci->_gfxPaint16->kernelGraphSaveBox(rect, screenMask);
 }
 
@@ -382,17 +392,16 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return make_reg(0, canBeHere.isNull() ? 1 : 0);
 }
 
-// kCantBeHere does the same thing as kCanBeHere, except that it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 	
-	bool canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
-	return make_reg(0, !canBeHere);
+	reg_t canBeHere = g_sci->_gfxCompare->kernelCanBeHere(curObject, listReference);
+	return canBeHere;
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
@@ -518,14 +527,6 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	g_sci->_gfxCompare->kernelBaseSetter(object);
-
-	// WORKAROUND for a problem in LSL1VGA. This allows the casino door to be opened,
-	// till the actual problem is found
-	if (s->currentRoomNumber() == 300 && g_sci->getGameId() == GID_LSL1) {
-		int top = readSelectorValue(s->_segMan, object, SELECTOR(brTop));
-		writeSelectorValue(s->_segMan, object, SELECTOR(brTop), top + 2);
-	}
-
 	return s->r_acc;
 }
 
@@ -615,16 +616,16 @@ reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getResMan()->isVGA()) {
-		warning("kPalette(7), save palette to heap STUB");
+		return g_sci->_gfxPalette->kernelSave();
 	}
 	return NULL_REG;
 }
 
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv) {
 	if (g_sci->getResMan()->isVGA()) {
-		warning("kPalette(8), restore palette from heap STUB");
+		g_sci->_gfxPalette->kernelRestore(argv[0]);
 	}
-	return s->r_acc;
+	return argv[0];
 }
 
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
@@ -889,8 +890,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 		reg_t textReference = readSelector(s->_segMan, controlObject, SELECTOR(text));
 		if (!textReference.isNull()) {
 			Common::String text = s->_segMan->getString(textReference);
-			if (text == "a:hq1_hero.sav") {
-				// Remove "a:" from hero quest export default filename
+			if ((text == "a:hq1_hero.sav") || (text == "a:glory1.sav") || (text == "a:glory2.sav") || (text == "a:glory3.sav")) {
+				// Remove "a:" from hero quest / quest for glory export default filenames
 				text.deleteChar(0);
 				text.deleteChar(0);
 				s->_segMan->strcpy(textReference, text.c_str());
@@ -974,14 +975,13 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 
 	case 7:
 		initPriorityBandsFlag = true;
-	case 4:
 	case 6:
 		picRect.top = argv[0].toSint16();
 		picRect.left = argv[1].toSint16();
 		picRect.bottom = argv[2].toSint16();
 		picRect.right = argv[3].toSint16();
-		picTop = (argc >= 6) ? argv[4].toSint16() : 0;
-		picLeft = (argc >= 6) ? argv[5].toSint16() : 0;
+		picTop = argv[4].toSint16();
+		picLeft = argv[5].toSint16();
 		g_sci->_gfxPorts->kernelSetPicWindow(picRect, picTop, picLeft, initPriorityBandsFlag);
 		break;
 
@@ -1000,10 +1000,26 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	uint16 y = argv[4].toUint16();
 	int16 priority = (argc > 5) ? argv[5].toSint16() : -1;
 	uint16 paletteNo = (argc > 6) ? argv[6].toUint16() : 0;
-	bool hiresMode = (argc > 7) ? true : false;
-	reg_t upscaledHiresHandle = (argc > 7) ? argv[7] : NULL_REG;
+	bool hiresMode = false;
+	reg_t upscaledHiresHandle = NULL_REG;
+	uint16 scaleX = 128;
+	uint16 scaleY = 128;
 
-	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, hiresMode, upscaledHiresHandle);
+	if (argc > 7) {
+		// this is either kq6 hires or scaling
+		if (paletteNo > 0) {
+			// it's scaling
+			scaleX = argv[6].toUint16();
+			scaleY = argv[7].toUint16();
+			paletteNo = 0;
+		} else {
+			// KQ6 hires
+			hiresMode = true;
+			upscaledHiresHandle = argv[7];
+		}
+	}
+
+	g_sci->_gfxPaint16->kernelDrawCel(viewId, loopNo, celNo, x, y, priority, paletteNo, scaleX, scaleY, hiresMode, upscaledHiresHandle);
 
 	return s->r_acc;
 }
@@ -1075,296 +1091,6 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	return g_sci->_gfxPaint16->kernelDisplay(g_sci->strSplit(text.c_str()).c_str(), argc, argv);
 }
 
-void playVideo(Graphics::VideoDecoder *videoDecoder) {
-	if (!videoDecoder)
-		return;
-
-	byte *scaleBuffer = 0;
-	uint16 width = videoDecoder->getWidth();
-	uint16 height = videoDecoder->getHeight();
-	uint16 screenWidth = g_system->getWidth();
-	uint16 screenHeight = g_system->getHeight();
-
-	if (screenWidth == 640 && width <= 320 && height <= 240) {
-		assert(videoDecoder->getPixelFormat().bytesPerPixel == 1);
-		width *= 2;
-		height *= 2;
-		scaleBuffer = new byte[width * height];
-	}
-
-	uint16 x = (screenWidth - width) / 2;
-	uint16 y = (screenHeight - height) / 2;
-	bool skipVideo = false;
-
-	while (!g_engine->shouldQuit() && !videoDecoder->endOfVideo() && !skipVideo) {
-		if (videoDecoder->needsUpdate()) {
-			Graphics::Surface *frame = videoDecoder->decodeNextFrame();
-			if (frame) {
-				if (scaleBuffer) {
-					// TODO: Probably should do aspect ratio correction in e.g. GK1 Windows 
-					g_sci->_gfxScreen->scale2x((byte *)frame->pixels, scaleBuffer, videoDecoder->getWidth(), videoDecoder->getHeight());
-					g_system->copyRectToScreen(scaleBuffer, width, x, y, width, height);
-				} else
-					g_system->copyRectToScreen((byte *)frame->pixels, frame->pitch, x, y, width, height);
-
-				if (videoDecoder->hasDirtyPalette())
-					videoDecoder->setSystemPalette();
-
-				g_system->updateScreen();
-			}
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			if ((event.type == Common::EVENT_KEYDOWN && event.kbd.keycode == Common::KEYCODE_ESCAPE) || event.type == Common::EVENT_LBUTTONUP)
-				skipVideo = true;
-		}
-
-		g_system->delayMillis(10);
-	}
-
-	delete[] scaleBuffer;
-	delete videoDecoder;
-}
-
-reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
-	// Hide the cursor if it's showing and then show it again if it was
-	// previously visible.
-	bool reshowCursor = g_sci->_gfxCursor->isVisible();
-	if (reshowCursor)
-		g_sci->_gfxCursor->kernelHide();
-
-	uint16 screenWidth = g_system->getWidth();
-	uint16 screenHeight = g_system->getHeight();
-		
-	Graphics::VideoDecoder *videoDecoder = 0;
-
-	if (argv[0].segment != 0) {
-		Common::String filename = s->_segMan->getString(argv[0]);
-
-		if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
-			// Mac QuickTime
-			// The only argument is the string for the video
-
-			// HACK: Switch to 16bpp graphics for Cinepak.
-			initGraphics(screenWidth, screenHeight, screenWidth > 320, NULL);
-
-			if (g_system->getScreenFormat().bytesPerPixel == 1) {
-				error("This video requires >8bpp color to be displayed, but could not switch to RGB color mode.");
-				return NULL_REG;
-			}
-
-			videoDecoder = new Graphics::QuickTimeDecoder();
-			if (!videoDecoder->loadFile(filename))
-				error("Could not open '%s'", filename.c_str());
-		} else {
-			// DOS SEQ
-			// SEQ's are called with no subops, just the string and delay
-			SeqDecoder *seqDecoder = new SeqDecoder();
-			seqDecoder->setFrameDelay(argv[1].toUint16()); // Time between frames in ticks
-			videoDecoder = seqDecoder;
-
-			if (!videoDecoder->loadFile(filename)) {
-				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
-			}
-		}
-	} else {
-		// Windows AVI
-		// TODO: This appears to be some sort of subop. case 0 contains the string
-		// for the video, so we'll just play it from there for now.
-
-#ifdef ENABLE_SCI32
-		if (getSciVersion() >= SCI_VERSION_2_1) {
-			// SCI2.1 always has argv[0] as 1, the rest of the arguments seem to
-			// follow SCI1.1/2.
-			if (argv[0].toUint16() != 1)
-				error("SCI2.1 kShowMovie argv[0] not 1");
-			argv++;
-			argc--;
-		}
-#endif
-		switch (argv[0].toUint16()) {
-		case 0: {
-			Common::String filename = s->_segMan->getString(argv[1]);
-			videoDecoder = new Graphics::AviDecoder(g_system->getMixer());
-
-			if (!videoDecoder->loadFile(filename.c_str())) {
-				warning("Failed to open movie file %s", filename.c_str());
-				delete videoDecoder;
-				videoDecoder = 0;
-			}
-			break;
-		}
-		default:
-			warning("Unhandled SCI kShowMovie subop %d", argv[1].toUint16());
-		}
-	}
-
-	if (videoDecoder) {
-		playVideo(videoDecoder);
-
-		// HACK: Switch back to 8bpp if we played a QuickTime video.
-		// We also won't be copying the screen to the SCI screen...
-		if (g_system->getScreenFormat().bytesPerPixel != 1)
-			initGraphics(screenWidth, screenHeight, screenWidth > 320);
-		else {
-			g_sci->_gfxScreen->kernelSyncWithFramebuffer();
-			g_sci->_gfxPalette->kernelSyncScreenPalette();
-		}
-	}
-
-	if (reshowCursor)
-		g_sci->_gfxCursor->kernelShow();
-
-	return s->r_acc;
-}
-
-#ifdef ENABLE_SCI32
-reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
-
-	int16 subop = argv[0].toUint16();
-
-	switch (subop) {
-		case 0: { // init
-			int id = argv[1].toUint16();
-			reg_t obj = argv[2];
-			int16 flag = argv[3].toSint16();
-			int16 x = argv[4].toUint16();
-			int16 y = argv[5].toUint16();
-			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
-			}
-			break;
-		case 1:	// LSL6 hires (startup)
-			// TODO
-			return NULL_REG;	// an integer is expected
-		case 4: {	// start
-				int id = argv[1].toUint16();
-				warning("kRobot(start), id %d", id);
-			}
-			break;
-		case 8: // sync
-			//warning("kRobot(sync), obj %04x:%04x", PRINT_REG(argv[1]));
-			break;
-		default:
-			warning("kRobot(%d)", subop);
-			break;
-	}
-
-	return s->r_acc;
-}
-
-reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv) {
-	uint16 operation = argv[0].toUint16();
-	Graphics::VideoDecoder *videoDecoder = 0;
-	bool reshowCursor = g_sci->_gfxCursor->isVisible();
-	Common::String fileName, warningMsg;
-
-	switch (operation) {
-	case 0:	// init
-		// This is actually meant to init the video file, but we play it instead
-		fileName = s->_segMan->derefString(argv[1]);
-		// TODO: argv[2] (usually null). When it exists, it points to an "Event" object,
-		// that holds no data initially (e.g. in the intro of Phantasmagoria 1 demo).
-		// Perhaps it's meant for syncing
-		if (argv[2] != NULL_REG)
-			warning("kPlayVMD: third parameter isn't 0 (it's %04x:%04x - %s)", PRINT_REG(argv[2]), s->_segMan->getObjectName(argv[2]));
-
-		videoDecoder = new VMDDecoder(g_system->getMixer());
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelHide();
-
-		if (videoDecoder && videoDecoder->loadFile(fileName))
-			playVideo(videoDecoder);
-
-		if (reshowCursor)
-			g_sci->_gfxCursor->kernelShow();
-		break;
-	case 1:
-	{
-		// Set VMD parameters. Called with a maximum of 6 parameters:
-		//
-		// x, y, flags, gammaBoost, gammaFirst, gammaLast
-		//
-		// Flags are as follows:
-		// bit 0		doubled
-		// bit 1		"drop frames"?
-		// bit 2		insert black lines
-		// bit 3		unknown
-		// bit 4		gamma correction
-		// bit 5		hold black frame
-		// bit 6		hold last frame
-		// bit 7		unknown
-		// bit 8		stretch
-
-		// gammaBoost boosts palette colors in the range gammaFirst to
-		// gammaLast, but only if bit 4 in flags is set. Percent value such that
-		// 0% = no amplification These three parameters are optional if bit 4 is
-		// clear. Also note that the x, y parameters play subtle games if used
-		// with subfx 21. The subtleness has to do with creation of temporary
-		// planes and positioning relative to such planes.
-
-		int flags = argv[3].offset;
-		Common::String flagspec;
-
-		if (argc > 3) {
-			if (flags & 1)
-				flagspec += "doubled ";
-			if (flags & 2)
-				flagspec += "dropframes ";
-			if (flags & 4)
-				flagspec += "blacklines ";
-			if (flags & 8)
-				flagspec += "bit3 ";
-			if (flags & 16)
-				flagspec += "gammaboost ";
-			if (flags & 32)
-				flagspec += "holdblack ";
-			if (flags & 64)
-				flagspec += "holdlast ";
-			if (flags & 128)
-				flagspec += "bit7 ";
-			if (flags & 256)
-				flagspec += "stretch";
-
-			warning("VMDFlags: %s", flagspec.c_str());
-		}
-
-		warning("x, y: %d, %d", argv[1].offset, argv[2].offset);
-
-		if (argc > 4 && flags & 16)
-			warning("gammaBoost: %d%% between palette entries %d and %d", argv[4].offset, argv[5].offset, argv[6].offset);
-		break;
-	}
-	case 6:
-		// Play, perhaps? Or stop? This is the last call made, and takes no extra parameters
-	case 14:
-		// Takes an additional integer parameter (e.g. 3)
-	case 16:
-		// Takes an additional parameter, usually 0
-	case 21:
-		// Looks to be setting the video size and position. Called with 4 extra integer
-		// parameters (e.g. 86, 41, 235, 106)
-	default:
-		warningMsg = "PlayVMD - unsupported subop. Params: " +
-									Common::String::printf("%d", argc) + " (";
-
-		for (int i = 0; i < argc; i++) {
-			warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-			warningMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		warning("%s", warningMsg.c_str());
-		break;
-	}
-
-	return s->r_acc;
-}
-
-#endif
-
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// This call is used for KQ6's intro. It has one parameter, which is 1 when
 	// the intro begins, and 0 when it ends. It is suspected that this is
@@ -1390,5 +1116,276 @@ reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
 	g_sci->_gfxText16->kernelTextColors(argc, argv);
 	return s->r_acc;
 }
+
+#ifdef ENABLE_SCI32
+
+reg_t kIsHiRes(EngineState *s, int argc, reg_t *argv) {
+	// Returns 0 if the screen width or height is less than 640 or 400,
+	// respectively.
+	if (g_system->getWidth() < 640 || g_system->getHeight() < 400)
+		return make_reg(0, 0);
+
+	return make_reg(0, 1);
+}
+
+// SCI32 variant, can't work like sci16 variants
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv) {
+//	reg_t curObject = argv[0];
+//	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
+	
+	return NULL_REG;
+}
+
+reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddScreenItem(viewObj);
+	return NULL_REG;
+}
+
+reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv) {
+	//reg_t viewObj = argv[0];
+
+	//warning("kUpdateScreenItem, object %04x:%04x, view %d, loop %d, cel %d, pri %d", PRINT_REG(viewObj), viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kDeleteScreenItem(EngineState *s, int argc, reg_t *argv) {
+	reg_t viewObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeleteScreenItem(viewObj);
+
+	/*
+	reg_t viewObj = argv[0];
+	uint16 viewId = readSelectorValue(s->_segMan, viewObj, SELECTOR(view));
+	int16 loopNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(loop));
+	int16 celNo = readSelectorValue(s->_segMan, viewObj, SELECTOR(cel));
+	//int16 leftPos = 0;
+	//int16 topPos = 0;
+	int16 priority = readSelectorValue(s->_segMan, viewObj, SELECTOR(priority));
+	//int16 control = 0;
+	*/
+
+	// TODO
+
+	//warning("kDeleteScreenItem, view %d, loop %d, cel %d, pri %d", viewId, loopNo, celNo, priority);
+	return NULL_REG;
+}
+
+reg_t kAddPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelAddPlane(planeObj);
+	return NULL_REG;
+}
+
+reg_t kDeletePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelDeletePlane(planeObj);
+	return NULL_REG;
+}
+
+reg_t kUpdatePlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+
+	g_sci->_gfxFrameout->kernelUpdatePlane(planeObj);
+	return s->r_acc;
+}
+
+reg_t kRepaintPlane(EngineState *s, int argc, reg_t *argv) {
+	reg_t picObj = argv[0];
+
+	// TODO
+
+	warning("kRepaintPlane object %04x:%04x", PRINT_REG(picObj));
+	return NULL_REG;
+}
+
+reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv) {
+	reg_t planeObj = argv[0];
+	GuiResourceId pictureId = argv[1].toUint16();
+	int16 forWidth = argv[2].toSint16();
+	// argv[3] seems to be 0 most of the time
+
+	g_sci->_gfxFrameout->kernelAddPicAt(planeObj, forWidth, pictureId);
+	return s->r_acc;
+}
+
+reg_t kGetHighPlanePri(EngineState *s, int argc, reg_t *argv) {
+	return make_reg(0, g_sci->_gfxFrameout->kernelGetHighPlanePri());
+}
+
+reg_t kFrameOut(EngineState *s, int argc, reg_t *argv) {
+	// This kernel call likely seems to be doing the screen updates,
+	// as its called right after a view is updated
+
+	// TODO
+	g_sci->_gfxFrameout->kernelFrameout();
+
+	return NULL_REG;
+}
+
+reg_t kOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	uint16 illegalBits = argv[3].offset;
+	Common::Rect nsRect;
+
+	// we assume that x, y are local coordinates
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// nsRect top/left may be negative, adjust accordingly
+	Common::Rect checkRect = nsRect;
+	if (checkRect.top < 0)
+		checkRect.top = 0;
+	if (checkRect.left < 0)
+		checkRect.left = 0;
+
+	bool contained = checkRect.contains(x, y);
+	if (contained && illegalBits) {
+		// If illegalbits are set, we check the color of the pixel that got clicked on
+		//  for now, we return false if the pixel is transparent
+		//  although illegalBits may get differently set, don't know yet how this really works out
+		uint16 viewId = readSelectorValue(s->_segMan, targetObject, SELECTOR(view));
+		int16 loopNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(loop));
+		int16 celNo = readSelectorValue(s->_segMan, targetObject, SELECTOR(cel));
+		if (g_sci->_gfxCompare->kernelIsItSkip(viewId, loopNo, celNo, Common::Point(x - nsRect.left, y - nsRect.top)))
+			contained = false;
+	}
+// these hacks shouldn't be needed anymore
+//	uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+//	uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+
+	// If top and left are negative, we need to adjust coordinates by
+	// the item's x and y (e.g. happens in GK1, day 1, with detective
+	// Mosely's hotspot in his office)
+
+//	if (nsRect.left < 0)
+//		nsRect.translate(itemX, 0);
+//	
+//	if (nsRect.top < 0)
+//		nsRect.translate(0, itemY);
+
+//	// HACK: nsLeft and nsTop can be invalid, so try and fix them here
+//	// using x and y (e.g. with the inventory screen in GK1)
+//	if (nsRect.left == itemY && nsRect.top == itemX) {
+//		// Swap the values, as they're inversed (eh???)
+//		nsRect.left = itemX;
+//		nsRect.top = itemY;
+//	}
+
+	return make_reg(0, contained);
+}
+
+reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv) {
+	// Tests if the cursor is on the passed object, after adjusting the
+	// coordinates of the object according to the object's plane
+
+	uint16 x = argv[0].toUint16();
+	uint16 y = argv[1].toUint16();
+	reg_t targetObject = argv[2];
+	// TODO: argv[3] - it's usually 0
+	Common::Rect nsRect;
+
+	// Get the bounding rectangle of the object
+	nsRect.left = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsLeft));
+	nsRect.top = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsTop));
+	nsRect.right = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsRight));
+	nsRect.bottom = readSelectorValue(s->_segMan, targetObject, SELECTOR(nsBottom));
+
+	// Get the object's plane
+#if 0
+	reg_t planeObject = readSelector(s->_segMan, targetObject, SELECTOR(plane));
+	if (!planeObject.isNull()) {
+		//uint16 itemX = readSelectorValue(s->_segMan, targetObject, SELECTOR(x));
+		//uint16 itemY = readSelectorValue(s->_segMan, targetObject, SELECTOR(y));
+		uint16 planeResY = readSelectorValue(s->_segMan, planeObject, SELECTOR(resY));
+		uint16 planeResX = readSelectorValue(s->_segMan, planeObject, SELECTOR(resX));
+		uint16 planeTop = readSelectorValue(s->_segMan, planeObject, SELECTOR(top));
+		uint16 planeLeft = readSelectorValue(s->_segMan, planeObject, SELECTOR(left));
+		planeTop = (planeTop * g_sci->_gfxScreen->getHeight()) / planeResY;
+		planeLeft = (planeLeft * g_sci->_gfxScreen->getWidth()) / planeResX;
+
+		// Adjust the bounding rectangle of the object by the object's
+		// actual X, Y coordinates
+		nsRect.top = ((nsRect.top * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.left = ((nsRect.left * g_sci->_gfxScreen->getWidth()) / planeResX);
+		nsRect.bottom = ((nsRect.bottom * g_sci->_gfxScreen->getHeight()) / planeResY);
+		nsRect.right = ((nsRect.right * g_sci->_gfxScreen->getWidth()) / planeResX);
+
+		nsRect.translate(planeLeft, planeTop);
+	}
+#endif
+	//warning("kIsOnMe: (%d, %d) on object %04x:%04x, parameter %d", argv[0].toUint16(), argv[1].toUint16(), PRINT_REG(argv[2]), argv[3].toUint16());
+
+	return make_reg(0, nsRect.contains(x, y));
+}
+
+reg_t kCreateTextBitmap(EngineState *s, int argc, reg_t *argv) {
+	// TODO: argument 0 is usually 0, and arguments 1 and 2 are usually 1
+	switch (argv[0].toUint16()) {
+	case 0: {
+		if (argc != 4) {
+			warning("kCreateTextBitmap(0): expected 4 arguments, got %i", argc);
+			return NULL_REG;
+		}
+		reg_t object = argv[3];
+		Common::String text = s->_segMan->getString(readSelector(s->_segMan, object, SELECTOR(text)));
+		break;
+	}
+	default:
+		warning("CreateTextBitmap(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kRobot(EngineState *s, int argc, reg_t *argv) {
+
+	int16 subop = argv[0].toUint16();
+
+	switch (subop) {
+		case 0: { // init
+			int id = argv[1].toUint16();
+			reg_t obj = argv[2];
+			int16 flag = argv[3].toSint16();
+			int16 x = argv[4].toUint16();
+			int16 y = argv[5].toUint16();
+			warning("kRobot(init), id %d, obj %04x:%04x, flag %d, x=%d, y=%d", id, PRINT_REG(obj), flag, x, y);
+			GfxRobot *test = new GfxRobot(g_sci->getResMan(), g_sci->_gfxScreen, id);
+			test->draw();
+			delete test;
+
+			}
+			break;
+		case 1:	// LSL6 hires (startup)
+			// TODO
+			return NULL_REG;	// an integer is expected
+		case 4: {	// start
+				int id = argv[1].toUint16();
+				warning("kRobot(start), id %d", id);
+			}
+			break;
+		case 8: // sync
+			//warning("kRobot(sync), obj %04x:%04x", PRINT_REG(argv[1]));
+			break;
+		default:
+			warning("kRobot(%d)", subop);
+			break;
+	}
+
+	return s->r_acc;
+}
+
+#endif
 
 } // End of namespace Sci

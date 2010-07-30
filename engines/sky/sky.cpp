@@ -185,8 +185,7 @@ Common::Error SkyEngine::go() {
 
 	uint32 delayCount = _system->getMillis();
 	while (!shouldQuit()) {
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 		if (shouldPerformAutoSave(_lastSaveTime)) {
 			if (_skyControl->loadSaveAllowed()) {

@@ -1110,6 +1110,8 @@ int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize)
 				}
 				num += (_game.version == 8) ? 4 : 2;
 			}
+		} else if (_game.id == GID_DIG && (chr == 1 || chr == 2 || chr == 3 || chr == 8)) {
+			// Skip these characters
 		} else {
 			if (!(chr == '@') || (_game.id == GID_CMI && _language == Common::ZH_TWN) ||
 				(_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && _language == Common::JA_JPN))

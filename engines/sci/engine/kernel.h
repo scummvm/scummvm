@@ -40,6 +40,7 @@ namespace Sci {
 struct Node;	// from segment.h
 struct List;	// from segment.h
 struct SelectorCache;	// from selector.h
+struct SciWorkaroundEntry;	// from workarounds.h
 
 /**
  * @defgroup VocabularyResources	Vocabulary resources in SCI
@@ -100,12 +101,12 @@ struct SelectorCache;	// from selector.h
 enum {
 	SIG_TYPE_NULL          =  0x01, // may be 0:0       [0]
 	SIG_TYPE_INTEGER       =  0x02, // may be 0:*       [i], automatically also allows null
-	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparsion
+	SIG_TYPE_UNINITIALIZED =  0x04, // may be FFFF:*    -> not allowable, only used for comparison
 	SIG_TYPE_OBJECT        =  0x08, // may be object    [o]
 	SIG_TYPE_REFERENCE     =  0x10, // may be reference [r]
 	SIG_TYPE_LIST          =  0x20, // may be list      [l]
 	SIG_TYPE_NODE          =  0x40, // may be node      [n]
-	SIG_TYPE_ERROR         =  0x80, // happens, when there is a identification error - only used for comparsion
+	SIG_TYPE_ERROR         =  0x80, // happens, when there is a identification error - only used for comparison
 	SIG_IS_INVALID         = 0x100, // ptr is invalid   [!] -> invalid offset
 	SIG_IS_OPTIONAL        = 0x200, // is optional
 	SIG_NEEDS_MORE         = 0x400, // needs at least one additional parameter following
@@ -120,24 +121,12 @@ enum {
 /* Generic description: */
 typedef reg_t KernelFunctionCall(EngineState *s, int argc, reg_t *argv);
 
-struct SciWorkaroundEntry {
-	SciGameId gameId;
-	int scriptNr;
-	int16 inheritanceLevel;
-	const char *objectName;
-	const char *methodName;
-	int localCallOffset;
-	int index;
-	reg_t newValue;
-};
-
-#define SCI_WORKAROUNDENTRY_TERMINATOR { (SciGameId)0,       -1,  0,                 NULL, NULL,             -1,    0, { 0,   0 } }
-
 struct KernelSubFunction {
 	KernelFunctionCall *function;
 	const char *name;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
+	bool debugLogging;
 };
 
 struct KernelFunction {
@@ -145,9 +134,9 @@ struct KernelFunction {
 	const char *name;
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
-	const KernelSubFunction *subFunctions;
+	KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
-	bool debugCalls;
+	bool debugLogging;
 };
 
 class Kernel {
@@ -159,7 +148,7 @@ public:
 	~Kernel();
 
 	uint getSelectorNamesSize() const;
-	const Common::String &getSelectorName(uint selector) const;
+	const Common::String &getSelectorName(uint selector);
 
 	uint getKernelNamesSize() const;
 	const Common::String &getKernelName(uint number) const;
@@ -228,11 +217,16 @@ public:
 	 */
 	void loadKernelNames(GameFeatures *features);
 
+	/**
+	 * Sets debugCalls flag for a kernel function
+	 */
+	bool debugSetFunctionLogging(const char *kernelName, bool debugCalls);
+
 private:
 	/**
 	 * Sets the default kernel function names, based on the SCI version used.
 	 */
-	void setDefaultKernelNames();
+	void setDefaultKernelNames(GameFeatures *features);
 
 #ifdef ENABLE_SCI32
 	/**
@@ -423,7 +417,10 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
+reg_t kDummy(EngineState *s, int argc, reg_t *argv);
 reg_t kEmpty(EngineState *s, int argc, reg_t *argv);
+reg_t kStub(EngineState *s, int argc, reg_t *argv);
+reg_t kStubNull(EngineState *s, int argc, reg_t *argv);
 
 #ifdef ENABLE_SCI32
 // SCI2 Kernel Functions
@@ -432,6 +429,7 @@ reg_t kArray(EngineState *s, int argc, reg_t *argv);
 reg_t kListAt(EngineState *s, int argc, reg_t *argv);
 reg_t kString(EngineState *s, int argc, reg_t *argv);
 reg_t kMulDiv(EngineState *s, int argc, reg_t *argv);
+reg_t kCantBeHere32(EngineState *s, int argc, reg_t *argv);
 // "Screen items" in SCI32 are views
 reg_t kAddScreenItem(EngineState *s, int argc, reg_t *argv);
 reg_t kUpdateScreenItem(EngineState *s, int argc, reg_t *argv);
@@ -460,7 +458,11 @@ reg_t kRobot(EngineState *s, int argc, reg_t *argv);
 reg_t kPlayVMD(EngineState *s, int argc, reg_t *argv);
 reg_t kIsOnMe(EngineState *s, int argc, reg_t *argv);
 reg_t kCD(EngineState *s, int argc, reg_t *argv);
+reg_t kAddPicAt(EngineState *s, int argc, reg_t *argv);
 
+reg_t kAddBefore(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv);
+reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv);
 #endif
 
 reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
@@ -471,7 +473,7 @@ reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundStop(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundStopAll(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundPause(EngineState *s, int argc, reg_t *argv);
-reg_t kDoSoundResume(EngineState *s, int argc, reg_t *argv);
+reg_t kDoSoundResumeAfterRestore(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundMasterVolume(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundUpdate(EngineState *s, int argc, reg_t *argv);
 reg_t kDoSoundFade(EngineState *s, int argc, reg_t *argv);
@@ -515,6 +517,25 @@ reg_t kPaletteFindColor(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteAnimate(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteSave(EngineState *s, int argc, reg_t *argv);
 reg_t kPaletteRestore(EngineState *s, int argc, reg_t *argv);
+
+reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIORename(EngineState *s, int argc, reg_t *argv);
+#ifdef ENABLE_SCI32
+reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv);
+reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv);
+#endif
 
 //@}
 

@@ -73,6 +73,7 @@ private:
 	bool _configStudio;
 	bool _configSkip;
 	bool _configHelium;
+	int _configVQAQuality;
 
 	void registerDefaultSettings();
 	void writeSettings();

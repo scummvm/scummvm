@@ -78,7 +78,7 @@ static void defaultErrorHandler(const char *msg) {
 		if (isSmartphone())
 			debugger = 0;
 #endif
-		if (debugger && !debugger->isAttached()) {
+		if (debugger && !debugger->isActive()) {
 			debugger->attach(msg);
 			debugger->onFrame();
 		}

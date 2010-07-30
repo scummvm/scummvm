@@ -142,6 +142,14 @@
 		/>
 	</drawdata>
 
+	<drawdata id = 'tooltip_bg' cache = 'false'>
+		<drawstep	func = 'bevelsq'
+					bevel = '2'
+					fill = 'foreground'
+					fg_color = 'black'
+		/>
+	</drawdata>
+
 	<drawdata id = 'separator' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'

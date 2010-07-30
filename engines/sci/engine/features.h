@@ -66,6 +66,12 @@ public:
 	 * @return Graphics functions type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
 	 */
 	SciVersion detectGfxFunctionsType();
+
+	/**
+	 * Autodetects the message function used
+	 * @return Message function type, SCI_VERSION_1_LATE / SCI_VERSION_1_1
+	 */
+	SciVersion detectMessageFunctionType();
 	
 #ifdef ENABLE_SCI32
 	/**
@@ -105,7 +111,7 @@ private:
 	bool autoDetectSci21KernelType();
 #endif
 
-	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
+	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType, _messageFunctionType;
 #ifdef ENABLE_SCI32
 	SciVersion _sci21KernelType;
 #endif

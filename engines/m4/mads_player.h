@@ -27,6 +27,7 @@
 #define M4_MADS_PLAYER_H
 
 #include "common/scummsys.h"
+#include "m4/mads_scene.h"
 
 namespace M4 {
 
@@ -42,12 +43,19 @@ private:
 	void idle();
 	void move();
 	void dirChanged();
+	void reset();
+	int scanPath(M4Surface *depthSurface, const Common::Point &srcPos, const Common::Point &destPos);
+	void startMovement();
+	void setupRouteNode(int *routeIndexP, int nodeIndex, int flags, int routeLength);
 public:
 	char _spritesPrefix[16];
 	int _spriteSetCount;
 	bool _spriteSetsPresent[8];
 	Common::Point _playerPos;
 	Common::Point _destPos;
+	Common::Point _posChange;
+	Common::Point _posDiff;
+	int _hypotenuse;
 	uint32 _priorTimer;
 	uint _ticksAmount;
 	int16 _direction, _newDirection;
@@ -70,6 +78,22 @@ public:
 	int _actionList2[12];
 	int _unk2;
 	int _unk3;
+	int _xDirection, _yDirection;
+	int _destFacing;
+	int _special;
+	int _next;
+	int _routeCount;
+	int _routeOffset;
+	int _tempRoute[MAX_ROUTE_NODES];
+	int _routeIndexes[MAX_ROUTE_NODES];
+	bool _unk4;
+	bool _v844BC;
+	int _v844BE;
+	bool _v844C0;
+	int _v8452E;
+	int _v8452C;
+	int _v84530;
+	int _routeLength;
 
 	static const int _directionListIndexes[32];
 public:
@@ -81,6 +105,10 @@ public:
 	void setupFrame();
 	void step();
 	void nextFrame();
+	void setDest(int destX, int destY, int facing);
+	void turnToDestFacing();
+	void setupRoute(bool bitFlag);
+	void moveComplete();
 };
 
 } // End of namespace M4

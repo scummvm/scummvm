@@ -134,8 +134,6 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	if (g_sci->_features->usesOldGfxFunctions())
 		_picWind->top = offTop;
 
-	priorityBandsMemoryActive = false;
-
 	kernelInitPriorityBands();
 }
 
@@ -173,7 +171,7 @@ reg_t GfxPorts::kernelGetActive() {
 reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	Window *wnd = NULL;
 
-	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
+	if (restoreRect.bottom != 0 && restoreRect.right != 0)
 		wnd = newWindow(dims, &restoreRect, title, style, priority, false);
 	else
 		wnd = newWindow(dims, NULL, title, style, priority, false);
@@ -250,9 +248,10 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	r = dims;
 	if (r.width() > _screen->getWidth()) {
-		// We get invalid dimensions at least at the end of sq3 (script bug!)
-		//  same happens very often in lsl5, sierra sci didnt fix it but it looked awful
-		warning("fixing too large window, given left&right was %d, %d", dims.left, dims.right);
+		// We get invalid dimensions at least at the end of sq3 (script bug!).
+		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
+		// Also happens frequently in the demo of GK1.
+		warning("Fixing too large window, left: %d, right: %d", dims.left, dims.right);
 		r.left = 0;
 		r.right = _screen->getWidth() - 1;
 		if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME))
@@ -367,7 +366,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_paint16->bitsShow(pWnd->restoreRect);
+		_paint16->bitsShow(pWnd->dims);
 	}
 	setPort(oldport);
 }
@@ -540,22 +539,14 @@ void GfxPorts::priorityBandsInit(byte *data) {
 		_priorityBands[i++] = inx;
 }
 
-// Gets used by picture class to remember priority bands data from sci1.1 pictures that need to get applied when
-//  transitioning to that picture
-void GfxPorts::priorityBandsRemember(byte *data) {
-	int bandNo;
-	for (bandNo = 0; bandNo < 14; bandNo++) {
-		priorityBandsMemory[bandNo] = READ_LE_UINT16(data);
+// Gets used to read priority bands data from sci1.1 pictures
+void GfxPorts::priorityBandsInitSci11(byte *data) {
+	byte priorityBands[14];
+	for (int bandNo = 0; bandNo < 14; bandNo++) {
+		priorityBands[bandNo] = READ_LE_UINT16(data);
 		data += 2;
 	}
-	priorityBandsMemoryActive = true;
-}
-
-void GfxPorts::priorityBandsRecall() {
-	if (priorityBandsMemoryActive) {
-		priorityBandsInit((byte *)&priorityBandsMemory);
-		priorityBandsMemoryActive = false;
-	}
+	priorityBandsInit(priorityBands);
 }
 
 void GfxPorts::kernelInitPriorityBands() {

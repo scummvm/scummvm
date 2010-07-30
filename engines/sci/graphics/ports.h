@@ -81,8 +81,7 @@ public:
 
 	void priorityBandsInit(int16 bandCount, int16 top, int16 bottom);
 	void priorityBandsInit(byte *data);
-	void priorityBandsRemember(byte *data);
-	void priorityBandsRecall();
+	void priorityBandsInitSci11(byte *data);
 
 	void kernelInitPriorityBands();
 	void kernelGraphAdjustPriority(int top, int bottom);
@@ -121,9 +120,6 @@ private:
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
 	byte _priorityBands[200];
-
-	byte priorityBandsMemory[14];
-	bool priorityBandsMemoryActive;
 };
 
 } // End of namespace Sci

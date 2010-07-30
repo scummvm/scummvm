@@ -71,7 +71,7 @@ public:
 	byte priority;
 	uint16 loop;
 	int16 volume;
-	byte hold;
+	int16 hold;
 
 	int16 pauseCounter;
 	uint sampleLoopCounter;

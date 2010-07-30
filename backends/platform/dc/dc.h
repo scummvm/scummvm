@@ -233,6 +233,9 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
 
 
   Common::SaveFileManager *createSavefileManager();
+
+  Common::SeekableReadStream *createConfigReadStream();
+  Common::WriteStream *createConfigWriteStream();
 };
 
 

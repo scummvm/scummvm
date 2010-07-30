@@ -132,8 +132,7 @@ void FightsManager::fightLoop() {
 		}
 
 		Screen::getReference().update();
-		if (game.debugger().isAttached())
-			game.debugger().onFrame();
+		game.debugger().onFrame();
 
 		g_system->delayMillis(10);
 	}

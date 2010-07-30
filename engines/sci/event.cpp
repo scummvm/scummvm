@@ -313,6 +313,10 @@ SciEvent EventManager::getScummVMEvent() {
 			input.type = SCI_EVENT_MOUSE_PRESS;
 			input.data = 2;
 			break;
+		case Common::EVENT_MBUTTONDOWN:
+			input.type = SCI_EVENT_MOUSE_PRESS;
+			input.data = 3;
+			break;
 		case Common::EVENT_LBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 1;
@@ -320,6 +324,10 @@ SciEvent EventManager::getScummVMEvent() {
 		case Common::EVENT_RBUTTONUP:
 			input.type = SCI_EVENT_MOUSE_RELEASE;
 			input.data = 2;
+			break;
+		case Common::EVENT_MBUTTONUP:
+			input.type = SCI_EVENT_MOUSE_RELEASE;
+			input.data = 3;
 			break;
 
 			// Misc events
@@ -335,16 +343,20 @@ SciEvent EventManager::getScummVMEvent() {
 	return input;
 }
 
-SciEvent EventManager::getSciEvent(unsigned int mask) {
-	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
-	SciEvent event = { 0, 0, 0, 0 };
-
+void EventManager::updateScreen() {
 	// Update the screen here, since it's called very often.
 	// Throttle the screen update rate to 60fps.
 	if (g_system->getMillis() - g_sci->getEngineState()->_screenUpdateTime >= 1000 / 60) {
 		g_system->updateScreen();
 		g_sci->getEngineState()->_screenUpdateTime = g_system->getMillis();
 	}
+}
+
+SciEvent EventManager::getSciEvent(unsigned int mask) {
+	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
+	SciEvent event = { 0, 0, 0, 0 };
+
+	EventManager::updateScreen();
 
 	// Get all queued events from graphics driver
 	do {

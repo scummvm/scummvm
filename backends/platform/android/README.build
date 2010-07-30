@@ -67,10 +67,6 @@ toolchains around.
 Building ScummVM
 ================
 
-Apply the theme engine patch:
-
- patch -p1 < backends/platform/android/scummvm-android-themeengine.patch
-
 (Optionally) compress scummmodern.zip:
 (ScummVM usually ships it uncompressed, but Android can read it more
 efficiently if it is compressed *before* adding it to the apk)

@@ -809,7 +809,7 @@ void RexDialogView::setFrame(int frameNumber, int depth) {
 }
 
 void RexDialogView::initVars() {
-	_word_8502C = -1;
+	_v8502C = -1;
 	_selectedLine = -1;
 	_lineIndex = 0;
 	_enterFlag = false;

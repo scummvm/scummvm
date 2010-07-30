@@ -232,7 +232,7 @@ public:
 	 * @param addr The address to resolve
 	 * @return The list node referenced, or NULL on error
 	 */
-	Node *lookupNode(reg_t addr);
+	Node *lookupNode(reg_t addr, bool stopOnDiscarded = true);
 
 
 	// 8. Hunk Memory

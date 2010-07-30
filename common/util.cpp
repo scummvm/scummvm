@@ -345,7 +345,7 @@ const String getGameGUIOptionsDescriptionLanguage(Language lang) {
 
 uint32 parseGameGUIOptions(const String &str) {
 	uint32 res = 0;
-	
+
 	for (int i = 0; g_gameOptions[i].desc; i++)
 		if (str.contains(g_gameOptions[i].desc))
 			res |= g_gameOptions[i].option;

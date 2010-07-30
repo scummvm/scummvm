@@ -18,8 +18,7 @@ MODULE_OBJS := \
     ps2time.o \
 	ps2debug.o
 
-MODULE_DIRS += \
-	backends/platform/ps2/
-
-# We don't use the rules.mk here on purpose
-OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
+# We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
+MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
+OBJS := $(MODULE_OBJS) $(OBJS)
+MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))

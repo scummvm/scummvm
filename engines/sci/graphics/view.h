@@ -30,6 +30,7 @@ namespace Sci {
 
 struct CelInfo {
 	int16 width, height;
+	int16 scriptWidth, scriptHeight;
 	int16 displaceX;
 	int16 displaceY;
 	byte clearKey;
@@ -81,6 +82,7 @@ private:
 	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
+	GfxCoordAdjuster *_coordAdjuster;
 	GfxScreen *_screen;
 	GfxPalette *_palette;
 

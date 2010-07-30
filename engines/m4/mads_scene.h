@@ -36,15 +36,37 @@ namespace M4 {
 class MadsInterfaceView;
 
 #define DEPTH_BANDS_SIZE 15
+#define MAX_ROUTE_NODES 22
+
+enum ScreenCategory {CAT_NONE = 0, CAT_ACTION = 1, CAT_INV_LIST = 2, CAT_INV_VOCAB, CAT_HOTSPOT = 4,
+	CAT_INV_ANIM = 6, CAT_6, CAT_INV_SCROLLER = 7, CAT_12 = 12};
+
+class SceneNode {
+public:
+	Common::Point pt;
+	int indexes[MAX_ROUTE_NODES];
+
+	bool active;
+
+	SceneNode() {
+		active = false;
+	}
+
+	void load(Common::SeekableReadStream *stream);
+};
+
+typedef Common::Array<SceneNode> SceneNodeList;
 
 class MadsSceneResources: public SceneResources {
+private:
+	int getRouteFlags(const Common::Point &src, const Common::Point &dest, M4Surface *depthSurface);
 public:
 	int _sceneId;
 	int _artFileNum;
 	int _depthStyle;
 	int _width;
 	int _height;
-	Common::Array<MadsObject> _objects;
+	SceneNodeList _nodes;
 	Common::Array<Common::String> _setNames;
 	int _yBandsStart, _yBandsEnd;
 	int _maxScale, _minScale;
@@ -55,52 +77,19 @@ public:
 	void load(int sceneId, const char *resName, int v0, M4Surface *depthSurface, M4Surface *surface);
 	int bandsRange() const { return _yBandsEnd - _yBandsStart; }
 	int scaleRange() const { return _maxScale - _minScale; }
-};
-
-enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
-enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_5 = 5};
-
-class MadsAction {
-private:
-	char _statusText[100];
-
-	void appendVocab(int vocabId, bool capitalise = false);
-public:
-	int _currentHotspot;
-	int _objectNameId;
-	int _objectDescId;
-	int _currentAction;
-	int8 _flags1, _flags2;
-	MadsActionMode _actionMode;
-	MAdsActionMode2 _actionMode2;
-	int _articleNumber;
-	bool _lookFlag;
-	int _selectedRow;
-	// Unknown fields
-	int16 _word_86F3A;
-	int16 _word_86F42;
-	int16 _word_86F4E;
-	int16 _word_86F4A;
-	int16 _word_83334;
-	int16 _word_86F4C;
-
-public:
-	MadsAction();
-
-	void clear();
-	void set();
-	const char *statusText() const { return _statusText; }
+	void setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface);
 };
 
 class MadsScene : public Scene, public MadsView {
 private:
 	MadsEngine *_vm;
 	MadsSceneResources _sceneResources;
-	MadsAction _action;
 	Animation *_activeAnimation;
 
 	MadsSceneLogic _sceneLogic;
 	SpriteAsset *_playerSprites;
+	int _mouseMsgIndex;
+	int _highlightedHotspot;
 
 	void drawElements();
 	void loadScene2(const char *aaName, int sceneNumber);
@@ -109,8 +98,16 @@ private:
 	void clearAction();
 	void appendActionVocab(int vocabId, bool capitalise);
 	void setAction();
+	void checkStartWalk();
+	void doPreactions();
+	void doSceneStep();
+	void doAction();
 public:
 	char _aaName[100];
+	bool _showMousePos;
+	Common::Point _destPos;
+	int _destFacing;
+	Common::Point _customDest;
 public:
 	MadsScene(MadsEngine *vm);
 	virtual ~MadsScene();
@@ -120,7 +117,7 @@ public:
 	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0);
 	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y);
+	virtual void mouseMove(int x, int y);
 	virtual void leftClick(int x, int y);
 	virtual void rightClick(int x, int y);
 	virtual void setAction(int action, int objectId = -1);
@@ -136,8 +133,8 @@ public:
 
 	MadsInterfaceView *getInterface() { return (MadsInterfaceView *)_interfaceSurface; }
 	MadsSceneResources &getSceneResources() { return _sceneResources; }
-	MadsAction &getAction() { return _action; }
-	void setStatusText(const char *text) {}//***DEPRECATED***
+	bool getDepthHighBit(const Common::Point &pt);
+	bool getDepthHighBits(const Common::Point &pt);
 };
 
 #define CHEAT_SEQUENCE_MAX 8

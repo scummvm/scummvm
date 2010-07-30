@@ -105,7 +105,7 @@ bool Debugger::cmd_enterRoom(int argc, const char **argv) {
 		if (!remoteFlag)
 			res.getActiveHotspot(PLAYER_ID)->setRoomNumber(roomNumber);
 
-		_detach_now = true;
+		detach();
 		return false;
 	}
 

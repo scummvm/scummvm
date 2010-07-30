@@ -38,6 +38,7 @@ GameFeatures::GameFeatures(SegManager *segMan, Kernel *kernel) : _segMan(segMan)
 	_doSoundType = SCI_VERSION_NONE;
 	_lofsType = SCI_VERSION_NONE;
 	_gfxFunctionsType = SCI_VERSION_NONE;
+	_messageFunctionType = SCI_VERSION_NONE;
 	_moveCountType = kMoveCountUninitialized;
 
 #ifdef ENABLE_SCI32
@@ -140,6 +141,10 @@ SciVersion GameFeatures::detectDoSoundType() {
 			// This game is using early SCI0 sound code (different headers than
 			// SCI0 late)
 			_doSoundType = SCI_VERSION_0_EARLY;
+#ifdef ENABLE_SCI32
+		} else if (getSciVersion() >= SCI_VERSION_2_1) {
+			_doSoundType = SCI_VERSION_2_1;
+#endif
 		} else if (SELECTOR(nodePtr) == -1) {
 			// No nodePtr selector, so this game is definitely using newer
 			// SCI0 sound code (i.e. SCI_VERSION_0_LATE)
@@ -401,6 +406,41 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 	}
 
 	return _gfxFunctionsType;
+}
+
+SciVersion GameFeatures::detectMessageFunctionType() {
+	if (_messageFunctionType != SCI_VERSION_NONE)
+		return _messageFunctionType;
+
+	if (getSciVersion() > SCI_VERSION_1_1) {
+		_messageFunctionType = SCI_VERSION_1_1;
+		return _messageFunctionType;
+	} else if (getSciVersion() < SCI_VERSION_1_1) {
+		_messageFunctionType = SCI_VERSION_1_LATE;
+		return _messageFunctionType;
+	}
+
+	Common::List<ResourceId> *resources = g_sci->getResMan()->listResources(kResourceTypeMessage, -1);
+
+	if (resources->empty()) {
+		// No messages found, so this doesn't really matter anyway...
+		_messageFunctionType = SCI_VERSION_1_1;
+		return _messageFunctionType;
+	}
+
+	Resource *res = g_sci->getResMan()->findResource(*resources->begin(), false);
+	assert(res);
+
+	// Only v2 Message resources use the kGetMessage kernel function.
+	// v3-v5 use the kMessage kernel function.
+
+	if (READ_SCI11ENDIAN_UINT32(res->data) / 1000 == 2)
+		_messageFunctionType = SCI_VERSION_1_LATE;
+	else
+		_messageFunctionType = SCI_VERSION_1_1;
+
+	debugC(1, kDebugLevelVM, "Detected message function type: %s", getSciVersionDesc(_messageFunctionType));
+	return _messageFunctionType;
 }
 
 #ifdef ENABLE_SCI32

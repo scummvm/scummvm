@@ -48,33 +48,39 @@ void KyraEngine_LoK::setupTimers() {
 	for (int i = 10; i <= 13; ++i)
 		_timer->addTimer(i, 0, 420, 1);
 
-	_timer->addTimer(14, TimerV1(timerCheckAnimFlag2), 600, 1);
+	_timer->addTimer(14, TimerV1(timerAsWillowispTimeout), 600, 1);
 	_timer->addTimer(15, TimerV1(timerUpdateHeadAnims), 11, 1);
-	_timer->addTimer(16, TimerV1(timerSetFlags1), 7200, 1);
-	_timer->addTimer(17, 0 /*sub_15120*/, 7200, 1);
-	_timer->addTimer(18, TimerV1(timerCheckAnimFlag1), 600, 1);
+	_timer->addTimer(16, TimerV1(timerTulipCreator), 7200, 1);
+	_timer->addTimer(17, TimerV1(timerRubyCreator), 7200, 1);
+	_timer->addTimer(18, TimerV1(timerAsInvisibleTimeout), 600, 1);
 	_timer->addTimer(19, TimerV1(timerRedrawAmulet), 600, 1);
 
 	_timer->addTimer(20, 0, 7200, 1);
-	_timer->addTimer(21, 0/*sub_1517C*/, 18000, 1);
+	_timer->addTimer(21, TimerV1(timerLavenderRoseCreator), 18000, 1);
 	_timer->addTimer(22, 0, 7200, 1);
 
-	for (int i = 23; i <= 27; ++i)
-		_timer->addTimer(i, 0, 10800, 1);
+	_timer->addTimer(23, 0, 10800, 1);
+	_timer->addTimer(24, TimerV1(timerAcornCreator), 10800, 1);
+	_timer->addTimer(25, 0, 10800, 1);
+	_timer->addTimer(26, TimerV1(timerBlueberryCreator), 10800, 1);
+	_timer->addTimer(27, 0, 10800, 1);
 
 	_timer->addTimer(28, 0, 21600, 1);
 	_timer->addTimer(29, 0, 7200, 1);
 	_timer->addTimer(30, 0, 10800, 1);
 
 	_timer->addTimer(31, TimerV1(timerFadeText), -1, 1);
-	_timer->addTimer(32, TimerV1(updateAnimFlag1), 9, 1);
-	_timer->addTimer(33, TimerV1(updateAnimFlag2), 3, 1);
+	_timer->addTimer(32, TimerV1(timerWillowispFrameTimer), 9, 1);
+	_timer->addTimer(33, TimerV1(timerInvisibleFrameTimer), 3, 1);
 }
 
 void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	static int8 currentFrame = 0;
-	static const int8 frameTable[] = {4, 5, 4, 5, 4, 5, 0, 1, 4, 5,
-								4, 4, 6, 4, 8, 1, 9, 4, -1};
+	static const int8 frameTable[] = {
+		4, 5, 4, 5, 4, 5, 0, 1,
+		4, 5, 4, 4, 6, 4, 8, 1,
+		9, 4, -1
+	};
 
 	if (_talkingCharNum < 0)
 		return;
@@ -89,19 +95,51 @@ void KyraEngine_LoK::timerUpdateHeadAnims(int timerNum) {
 	_animator->animRefreshNPC(_talkingCharNum);
 }
 
-void KyraEngine_LoK::timerSetFlags1(int timerNum) {
+void KyraEngine_LoK::timerTulipCreator(int timerNum) {
 	if (_currentCharacter->sceneId == 0x1C)
 		return;
 
-	int rndNr = _rnd.getRandomNumberRng(0, 3);
+	setItemCreationFlags(17, 3);
+}
 
-	for (int i = 0; i < 4; i++) {
-		if (!queryGameFlag(rndNr + 17)) {
-			setGameFlag(rndNr + 17);
+void KyraEngine_LoK::timerRubyCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x23)
+		return;
+
+	setItemCreationFlags(22, 4);
+}
+
+void KyraEngine_LoK::timerLavenderRoseCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x06)
+		return;
+
+	setItemCreationFlags(0, 4);
+}
+
+void KyraEngine_LoK::timerAcornCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x1F)
+		return;
+
+	setItemCreationFlags(72, 5);
+}
+
+void KyraEngine_LoK::timerBlueberryCreator(int timerNum) {
+	if (_currentCharacter->sceneId == 0x28)
+		return;
+
+	setItemCreationFlags(26, 7);
+}
+
+void KyraEngine_LoK::setItemCreationFlags(int offset, int count) {
+	int rndNr = _rnd.getRandomNumberRng(0, count);
+
+	for (int i = 0; i <= count; i++) {
+		if (!queryGameFlag(rndNr + offset)) {
+			setGameFlag(rndNr + offset);
 			break;
 		} else {
 			rndNr++;
-			if (rndNr > 3)
+			if (rndNr > count)
 				rndNr = 0;
 		}
 	}
@@ -111,16 +149,14 @@ void KyraEngine_LoK::timerFadeText(int timerNum) {
 	_fadeText = true;
 }
 
-void KyraEngine_LoK::updateAnimFlag1(int timerNum) {
-	if (_brandonStatusBit & 2) {
+void KyraEngine_LoK::timerWillowispFrameTimer(int timerNum) {
+	if (_brandonStatusBit & 2)
 		_brandonStatusBit0x02Flag = 1;
-	}
 }
 
-void KyraEngine_LoK::updateAnimFlag2(int timerNum) {
-	if (_brandonStatusBit & 0x20) {
+void KyraEngine_LoK::timerInvisibleFrameTimer(int timerNum) {
+	if (_brandonStatusBit & 0x20)
 		_brandonStatusBit0x20Flag = 1;
-	}
 }
 
 void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
@@ -130,19 +166,14 @@ void KyraEngine_LoK::setTextFadeTimerCountdown(int16 countdown) {
 	_timer->setCountdown(31, countdown*60);
 }
 
-void KyraEngine_LoK::timerSetFlags2(int timerNum) {
-	if (!((uint32 *)(_flagsTable+0x2D))[timerNum])
-		((uint32 *)(_flagsTable+0x2D))[timerNum] = 1;
-}
-
-void KyraEngine_LoK::timerCheckAnimFlag1(int timerNum) {
+void KyraEngine_LoK::timerAsInvisibleTimeout(int timerNum) {
 	if (_brandonStatusBit & 0x20) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(18, -1);
 	}
 }
 
-void KyraEngine_LoK::timerCheckAnimFlag2(int timerNum) {
+void KyraEngine_LoK::timerAsWillowispTimeout(int timerNum) {
 	if (_brandonStatusBit & 0x2) {
 		checkAmuletAnimFlags();
 		_timer->setCountdown(14, -1);

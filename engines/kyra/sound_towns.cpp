@@ -596,21 +596,15 @@ Towns_EuphonyDriver::~Towns_EuphonyDriver() {
 
 	MidiDriver_YM2612::removeLookupTables();
 
-	if (_fmInstruments) {
-		delete[] _fmInstruments;
-		_fmInstruments = 0;
-	}
+	delete[] _fmInstruments;
+	_fmInstruments = 0;
 
-	if (_waveInstruments) {
-		delete[] _waveInstruments;
-		_waveInstruments = 0;
-	}
+	delete[] _waveInstruments;
+	_waveInstruments = 0;
 
 	for (int i = 0; i < 10; i++) {
-		if (_waveSounds[i]) {
-			delete[] _waveSounds[i];
-			_waveSounds[i] = 0;
-		}
+		delete[] _waveSounds[i];
+		_waveSounds[i] = 0;
 	}
 
 	if (_queue) {
@@ -1859,7 +1853,7 @@ void TownsPC98_OpnChannel::loadData(uint8 *data) {
 	_dataPtr = data;
 	_totalLevel = 0x7F;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -2507,7 +2501,7 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 	_ssgTl = 0xff;
 	_algorithm = 0x80;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -2798,7 +2792,7 @@ void TownsPC98_OpnSquareSineSource::nextTick(int32 *buffer, uint32 bufferSize) {
 			finOut += finOutTemp;
 		}
 
-		finOut /= 3;		
+		finOut /= 3;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -3335,7 +3329,7 @@ void TownsPC98_OpnCore::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 	if (_ssg)
 		_ssg->setVolumeChannelMasks(_volMaskA >> _numChan, _volMaskB >> _numChan);
 	if (_prc)
-		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));	
+		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));
 }
 
 void TownsPC98_OpnCore::generateTables() {
@@ -3805,7 +3799,7 @@ void TownsPC98_OpnDriver::setSfxTempo(uint16 tempo) {
 
 void TownsPC98_OpnDriver::startSoundEffect() {
 	int volFlags = 0;
-	
+
 	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
@@ -3818,7 +3812,7 @@ void TownsPC98_OpnDriver::startSoundEffect() {
 			_updateSfxFlag &= ~_sfxChannels[i]->_idFlag;
 		}
 	}
-	
+
 	setVolumeChannelMasks(~volFlags, volFlags);
 	_sfxData = 0;
 }
@@ -4259,8 +4253,12 @@ void SoundPC98::updateVolumeSettings() {
 	if (!_driver)
 		return;
 
-	_driver->setMusicVolume(ConfMan.getInt("music_volume"));
-	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
+	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
 }
 
 //	KYRA 2
@@ -4461,14 +4459,18 @@ void SoundTownsPC98_v2::updateVolumeSettings() {
 	if (!_driver)
 		return;
 
-	_driver->setMusicVolume(ConfMan.getInt("music_volume"));
-	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
+	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
 }
 
 // static resources
 
 const uint32 TownsPC98_OpnCore::_adtStat[] = {
-	0x00010001, 0x00010001,	0x00010001, 0x01010001,
+	0x00010001, 0x00010001, 0x00010001, 0x01010001,
 	0x00010101, 0x00010101, 0x00010101, 0x01010101,
 	0x01010101, 0x01010101, 0x01010102, 0x01010102,
 	0x01020102, 0x01020102, 0x01020202, 0x01020202,
@@ -4482,14 +4484,14 @@ const uint32 TownsPC98_OpnCore::_adtStat[] = {
 const uint8 TownsPC98_OpnCore::_detSrc[] = {
 	0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03,
 	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
-	0x08, 0x08, 0x08, 0x08, 0x01, 0x01,	0x01, 0x01,
-	0x02, 0x02, 0x02, 0x02, 0x02, 0x03,	0x03, 0x03,
+	0x08, 0x08, 0x08, 0x08, 0x01, 0x01, 0x01, 0x01,
+	0x02, 0x02, 0x02, 0x02, 0x02, 0x03, 0x03, 0x03,
 	0x04, 0x04, 0x04, 0x05, 0x05, 0x06, 0x06, 0x07,
-	0x08, 0x08, 0x09, 0x0a,	0x0b, 0x0c, 0x0d, 0x0e,
-	0x10, 0x10, 0x10, 0x10,	0x02, 0x02, 0x02, 0x02,
+	0x08, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e,
+	0x10, 0x10, 0x10, 0x10, 0x02, 0x02, 0x02, 0x02,
 	0x02, 0x03, 0x03, 0x03, 0x04, 0x04, 0x04, 0x05,
-	0x05, 0x06,	0x06, 0x07, 0x08, 0x08, 0x09, 0x0a,
-	0x0b, 0x0c,	0x0d, 0x0e, 0x10, 0x11, 0x13, 0x14,
+	0x05, 0x06, 0x06, 0x07, 0x08, 0x08, 0x09, 0x0a,
+	0x0b, 0x0c, 0x0d, 0x0e, 0x10, 0x11, 0x13, 0x14,
 	0x16, 0x16, 0x16, 0x16
 };
 

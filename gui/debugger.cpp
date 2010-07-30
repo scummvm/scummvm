@@ -39,9 +39,8 @@
 namespace GUI {
 
 Debugger::Debugger() {
-	_frame_countdown = 0;
-	_detach_now = false;
-	_isAttached = false;
+	_frameCountdown = 0;
+	_isActive = false;
 	_errStr = NULL;
 	_firstTime = true;
 #ifndef USE_TEXT_CONSOLE
@@ -50,6 +49,10 @@ Debugger::Debugger() {
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
 #endif
 
+	// Register variables
+	DVar_Register("debug_countdown", &_frameCountdown, DVAR_INT, 0);
+
+	// Register commands
 	//DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("quit",				WRAP_METHOD(Debugger, Cmd_Exit));
@@ -84,40 +87,32 @@ int Debugger::DebugPrintf(const char *format, ...) {
 }
 
 void Debugger::attach(const char *entry) {
-
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 
-	if (entry) {
-		_errStr = strdup(entry);
-	}
+	// Set error string (if any)
+	free(_errStr);
+	_errStr = entry ? strdup(entry) : 0;
 
-	_frame_countdown = 1;
-	_detach_now = false;
-	_isAttached = true;
+	// Reset frame countdown (i.e. attach immediately)
+	_frameCountdown = 1;
 }
 
 void Debugger::detach() {
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
-
-	_detach_now = false;
-	_isAttached = false;
 }
 
 // Temporary execution handler
 void Debugger::onFrame() {
-	if (_frame_countdown == 0)
-		return;
-	--_frame_countdown;
-
-	if (!_frame_countdown) {
-
-		preEnter();
-		enter();
-		postEnter();
-
-		// Detach if we're finished with the debugger
-		if (_detach_now)
-			detach();
+	// Count down until 0 is reached
+	if (_frameCountdown > 0) {
+		--_frameCountdown;
+		if (_frameCountdown == 0) {
+			_isActive = true;
+			preEnter();
+			enter();
+			postEnter();
+			_isActive = false;
+		}
 	}
 }
 
@@ -250,8 +245,8 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					} else {
 						int element = atoi(chr+1);
 						int32 *var = *(int32 **)_dvars[i].variable;
-						if (element >= _dvars[i].optional) {
-							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
+						if (element >= _dvars[i].arraySize) {
+							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
 						} else {
 							var[element] = atoi(param[1]);
 							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
@@ -281,8 +276,8 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					} else {
 						int element = atoi(chr+1);
 						const int32 *var = *(const int32 **)_dvars[i].variable;
-						if (element >= _dvars[i].optional) {
-							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].optional);
+						if (element >= _dvars[i].arraySize) {
+							DebugPrintf("%s is out of range (array is %d elements big)\n", param[0], _dvars[i].arraySize);
 						} else {
 							DebugPrintf("(int)%s = %d\n", param[0], var[element]);
 						}
@@ -383,7 +378,7 @@ char *Debugger::readlineComplete(const char *input, int state) {
 #endif
 
 // Variable registration function
-void Debugger::DVar_Register(const Common::String &varname, void *pointer, int type, int optional) {
+void Debugger::DVar_Register(const Common::String &varname, void *pointer, VarType type, int arraySize) {
 	// TODO: Filter out duplicates
 	// TODO: Sort this list? Then we can do binary search later on when doing lookups.
 	assert(pointer);
@@ -392,7 +387,7 @@ void Debugger::DVar_Register(const Common::String &varname, void *pointer, int t
 	tmp.name = varname;
 	tmp.type = type;
 	tmp.variable = pointer;
-	tmp.optional = optional;
+	tmp.arraySize = arraySize;
 
 	_dvars.push_back(tmp);
 }
@@ -406,7 +401,7 @@ void Debugger::DCmd_Register(const Common::String &cmdname, Debuglet *debuglet) 
 
 // Detach ("exit") the debugger
 bool Debugger::Cmd_Exit(int argc, const char **argv) {
-	_detach_now = true;
+	detach();
 	return false;
 }
 

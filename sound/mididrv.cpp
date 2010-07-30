@@ -94,7 +94,7 @@ MusicType MidiDriver::getMusicType(MidiDriver::DeviceHandle handle) {
 			}
 		}
 	}
-	
+
 	return MT_INVALID;
 }
 
@@ -139,7 +139,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_PCJR)
 			return hdl;
 		break;
-	
+
 	case MT_CMS:
 		if (flags & MDT_CMS)
 			return hdl;
@@ -149,7 +149,7 @@ MidiDriver::DeviceHandle MidiDriver::detectDevice(int flags) {
 		if (flags & MDT_ADLIB)
 			return hdl;
 		break;
-		
+
 	case MT_TOWNS:
 		if (flags & MDT_TOWNS)
 			return hdl;
@@ -261,12 +261,15 @@ MidiDriver::DeviceHandle MidiDriver::getDeviceHandle(const Common::String &ident
 	const MusicPlugin::List p = MusicMan.getPlugins();
 
 	if (p.begin() == p.end())
-		error("Music plugins must be loaded prior to calling this method.");
+		error("Music plugins must be loaded prior to calling this method");
 
 	for (MusicPlugin::List::const_iterator m = p.begin(); m != p.end(); m++) {
 		MusicDevices i = (**m)->getDevices();
 		for (MusicDevices::iterator d = i.begin(); d != i.end(); d++) {
-			if (identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
+			// The music driver id isn't unique, but it will match
+			// driver's first device. This is useful when selecting
+			// the driver from the command line.
+			if (identifier.equals(d->getMusicDriverId()) || identifier.equals(d->getCompleteId()) || identifier.equals(d->getCompleteName())) {
 				return d->getHandle();
 			}
 		}

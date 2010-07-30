@@ -137,8 +137,11 @@ void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {
 	_charSayUnk3 = -1;
 
 	if (charNum > 4 && charNum < 11) {
-		//TODO: weird _game_inventory stuff here
-		//warning("STUB: endCharacterChat() for high charnums");
+		_animator->sprites()[_disabledTalkAnimObject].active = 1;
+		_sprites->_anims[_disabledTalkAnimObject].play = true;
+
+		_animator->sprites()[_enabledTalkAnimObject].active = 0;
+		_sprites->_anims[_enabledTalkAnimObject].play = false;
 	}
 
 	if (convoInitialized != 0) {
@@ -225,8 +228,19 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	_animator->restoreAllObjectBackgrounds();
 
 	if (charNum > 4 && charNum < 11) {
-		// TODO: Fill in weird _game_inventory stuff here
-		//warning("STUB: initCharacterChat() for high charnums");
+		const uint8 animDisableTable[] = { 3, 1, 1, 5, 0, 6 };
+		const uint8 animEnableTable[] = { 4, 2, 5, 6, 1, 7 };
+
+		_disabledTalkAnimObject = animDisableTable[charNum - 5];
+		_enabledTalkAnimObject = animEnableTable[charNum - 5];
+
+		_animator->sprites()[_disabledTalkAnimObject].active = 0;
+		_sprites->_anims[_disabledTalkAnimObject].play = false;
+
+		_animator->sprites()[_enabledTalkAnimObject].active = 1;
+		_sprites->_anims[_enabledTalkAnimObject].play = true;
+
+		_charSayUnk2 = _enabledTalkAnimObject;
 	}
 
 	_animator->flagAllObjectsForRefresh();

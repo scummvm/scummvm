@@ -312,9 +312,9 @@ void DrasculaEngine::quadrant_2() {
 	float distanceX, distanceY;
 
 	if (currentChapter == 2)
-		distanceX = abs(curX + curWidth - roomX);
+		distanceX = ABS(curX + curWidth - roomX);
 	else
-		distanceX = abs(curX + curWidth / 2 - roomX);
+		distanceX = ABS(curX + curWidth / 2 - roomX);
 
 	distanceY = (curY + curHeight) - roomY;
 
@@ -354,9 +354,9 @@ void DrasculaEngine::quadrant_4() {
 	float distanceX, distanceY;
 
 	if (currentChapter == 2)
-		distanceX = abs(curX + curWidth - roomX);
+		distanceX = ABS(curX + curWidth - roomX);
 	else
-		distanceX = abs(curX + curWidth / 2 - roomX);
+		distanceX = ABS(curX + curWidth / 2 - roomX);
 
 	distanceY = roomY - (curY + curHeight);
 

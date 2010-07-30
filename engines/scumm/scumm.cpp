@@ -1840,8 +1840,7 @@ Common::Error ScummEngine::go() {
 
 	while (!shouldQuit()) {
 
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.

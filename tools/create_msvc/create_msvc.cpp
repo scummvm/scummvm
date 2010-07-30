@@ -210,8 +210,9 @@ public:
 	 * @param bits Number of bits the platform supports.
 	 * @param defines Defines the platform needs to have set.
 	 * @param prefix File prefix, used to add additional include paths.
+	 * @param isWin32 Bitness of property file
 	 */
-	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) = 0;
+	virtual void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) = 0;
 
 	/**
 	 * Generates the project properties for debug and release settings.
@@ -282,7 +283,7 @@ public:
 
 	void writeReferences(std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix);
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32);
 
@@ -305,7 +306,7 @@ public:
 
 	void writeReferences(std::ofstream &output);
 
-	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix);
+	void outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32);
 
 	void createBuildProp(const BuildSetup &setup, bool isRelease, bool isWin32);
 
@@ -1330,7 +1331,7 @@ void ProjectProvider::createGlobalProp(const BuildSetup &setup) {
 		defines += *i;
 	}
 
-	outputGlobalPropFile(properties, 32, defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 32, defines, convertPathToWin(setup.filePrefix), true);
 	properties.close();
 
 	properties.open((setup.outputDir + '/' + "ScummVM_Global64" + getPropertiesExtension()).c_str());
@@ -1352,7 +1353,7 @@ void ProjectProvider::createGlobalProp(const BuildSetup &setup) {
 		defines += *i;
 	}
 
-	outputGlobalPropFile(properties, 64, defines, convertPathToWin(setup.filePrefix));
+	outputGlobalPropFile(properties, 64, defines, convertPathToWin(setup.filePrefix), false);
 }
 
 void ProjectProvider::addFilesToProject(const std::string &dir, std::ofstream &projectFile,
@@ -1655,7 +1656,7 @@ void VisualStudioProvider::writeReferences(std::ofstream &output) {
 	output << "\tEndProjectSection\n";
 }
 
-void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {
+void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {
 	properties << "<?xml version=\"1.0\" encoding=\"Windows-1252\"?>\n"
 	              "<VisualStudioPropertySheet\n"
 	              "\tProjectType=\"Visual C++\"\n"
@@ -1668,7 +1669,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tName=\"VCCLCompilerTool\"\n"
 	              "\t\tDisableLanguageExtensions=\"true\"\n"
 	              "\t\tDisableSpecificWarnings=\"" << _globalWarnings << "\"\n"
-	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines\"\n"
+	              "\t\tAdditionalIncludeDirectories=\"" << prefix << ";" << prefix << "\\engines;%(SCUMMVM_LIBS)\\include\"\n"
 	              "\t\tPreprocessorDefinitions=\"" << defines << "\"\n"
 	              "\t\tExceptionHandling=\"0\"\n"
 	              "\t\tRuntimeTypeInfo=\"false\"\n"
@@ -1685,6 +1686,7 @@ void VisualStudioProvider::outputGlobalPropFile(std::ofstream &properties, int b
 	              "\t\tIgnoreDefaultLibraryNames=\"\"\n"
 	              "\t\tSubSystem=\"1\"\n"
 	              "\t\tEntryPointSymbol=\"WinMainCRTStartup\"\n"
+	              "\t\tAdditionalLibraryDirectories=\"%(SCUMMVM_LIBS)\\libs\\" << (isWin32 ? "x86" : "x64") << "\"\n"
 	              "\t/>\n"
 	              "\t<Tool\n"
 	              "\t\tName=\"VCResourceCompilerTool\"\n"
@@ -1903,12 +1905,6 @@ void MSBuildProvider::createProjectFile(const std::string &name, const std::stri
 	// Project version number
 	project << "\t<PropertyGroup>\n"
 	           "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n";
-
-	if (name == "scummvm")
-		project << "<ExecutablePath>$(SCUMMVM_LIBS)\\bin;$(VCInstallDir)bin;$(WindowsSdkDir)bin\\NETFX 4.0 Tools;$(WindowsSdkDir)bin;$(VSInstallDir)Common7\\Tools\\bin;$(VSInstallDir)Common7\\tools;$(VSInstallDir)Common7\\ide;$(ProgramFiles)\\HTML Help Workshop;$(FrameworkSDKDir)\\bin;$(MSBuildToolsPath32);$(VSInstallDir);$(SystemRoot)\\SysWow64;$(FxCopDir);$(PATH)</ExecutablePath>\n"
-		           "<IncludePath>$(SCUMMVM_LIBS)\\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\\include;</IncludePath>\n"
-		           "<LibraryPath>$(SCUMMVM_LIBS)\\lib;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\\lib</LibraryPath>\n";
-
 	project << "\t</PropertyGroup>\n";
 
 	// Project-specific settings
@@ -2053,38 +2049,41 @@ void MSBuildProvider::outputProjectSettings(std::ofstream &project, const std::s
 	project << "\t</ItemDefinitionGroup>\n";
 }
 
-void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix) {	
+void MSBuildProvider::outputGlobalPropFile(std::ofstream &properties, int bits, const std::string &defines, const std::string &prefix, bool isWin32) {	
 	properties << "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
 	              "<Project DefaultTargets=\"Build\" ToolsVersion=\"4.0\" xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n"
-	              "<PropertyGroup>\n"
-	              "<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
-	              "<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
-	              "<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
-	              "<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
-	              "</PropertyGroup>\n"
-	              "<ItemDefinitionGroup>\n"
-	              "<ClCompile>\n"
-	              "<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
-	              "<DisableSpecificWarnings>" << _globalWarnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
-	              "<AdditionalIncludeDirectories>" << prefix << ";" << prefix << "\\engines;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
-	              "<PreprocessorDefinitions>" << defines << ";%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "<ExceptionHandling>\n"
-	              "</ExceptionHandling>\n"
-	              "<RuntimeTypeInfo>false</RuntimeTypeInfo>\n"
-	              "<WarningLevel>Level4</WarningLevel>\n"
-	              "<TreatWarningAsError>false</TreatWarningAsError>\n"
-	              "<CompileAs>Default</CompileAs>\n"
-	              "</ClCompile>\n"
-	              "<Link>\n"
-	              "<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
-	              "<SubSystem>Console</SubSystem>\n"
-	              "<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
-	              "</Link>\n"
-	              "<ResourceCompile>\n"
-	              "<PreprocessorDefinitions>HAS_INCLUDE_SET;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
-	              "<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
-	              "</ResourceCompile>\n"
-	              "</ItemDefinitionGroup>\n"
+	              "\t<PropertyGroup>\n"
+	              "\t\t<_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>\n"
+	              "\t\t<_PropertySheetDisplayName>ScummVM_Global</_PropertySheetDisplayName>\n"
+	              "\t\t<ExecutablePath>$(SCUMMVM_LIBS)\\bin;$(ExecutablePath)</ExecutablePath>\n"
+	              "\t\t<LibraryPath>$(SCUMMVM_LIBS)\\libs\\" << (isWin32 ? "x86" : "x64") << ";$(LibraryPath)</LibraryPath>\n"
+	              "\t\t<IncludePath>$(SCUMMVM_LIBS)\\include;$(IncludePath)</IncludePath>\n"
+	              "\t\t<OutDir>$(Configuration)" << bits << "\\</OutDir>\n"
+	              "\t\t<IntDir>$(Configuration)" << bits << "/$(ProjectName)\\</IntDir>\n"
+	              "\t</PropertyGroup>\n"
+	              "\t<ItemDefinitionGroup>\n"
+	              "\t\t<ClCompile>\n"
+	              "\t\t\t<DisableLanguageExtensions>true</DisableLanguageExtensions>\n"
+	              "\t\t\t<DisableSpecificWarnings>" << _globalWarnings << ";%(DisableSpecificWarnings)</DisableSpecificWarnings>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";" << prefix << "\\engines;$(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t\t<PreprocessorDefinitions>" << defines << ";%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+	              "\t\t\t<ExceptionHandling>\n"
+	              "\t\t\t</ExceptionHandling>\n"
+	              "\t\t\t<RuntimeTypeInfo>false</RuntimeTypeInfo>\n"
+	              "\t\t\t<WarningLevel>Level4</WarningLevel>\n"
+	              "\t\t\t<TreatWarningAsError>false</TreatWarningAsError>\n"
+	              "\t\t\t<CompileAs>Default</CompileAs>\n"
+	              "\t\t</ClCompile>\n"
+	              "\t\t<Link>\n"
+	              "\t\t\t<IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>\n"
+	              "\t\t\t<SubSystem>Console</SubSystem>\n"
+	              "\t\t\t<EntryPointSymbol>WinMainCRTStartup</EntryPointSymbol>\n"
+	              "\t\t</Link>\n"
+	              "\t\t<ResourceCompile>\n"
+	              "\t\t\t<PreprocessorDefinitions>HAS_INCLUDE_SET;%(PreprocessorDefinitions)</PreprocessorDefinitions>\n"
+	              "\t\t\t<AdditionalIncludeDirectories>" << prefix << ";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>\n"
+	              "\t\t</ResourceCompile>\n"
+	              "\t</ItemDefinitionGroup>\n"
 	              "</Project>\n";
 
 	properties.flush();
@@ -2110,6 +2109,8 @@ void MSBuildProvider::createBuildProp(const BuildSetup &setup, bool isRelease, b
 	              "\t</PropertyGroup>\n"
 	              "\t<ItemDefinitionGroup>\n"
 	              "\t\t<ClCompile>\n";
+
+
 
 	if (isRelease) {
 		properties << "\t\t\t<IntrinsicFunctions>true</IntrinsicFunctions>\n"

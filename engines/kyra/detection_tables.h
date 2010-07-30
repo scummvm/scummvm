@@ -228,7 +228,7 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_NO_FLAGS,
-			Common::GUIO_NOSPEECH
+			Common::GUIO_NOSPEECH | Common::GUIO_MIDIGM
 		},
 		KYRA1_FLOPPY_FLAGS
 	},

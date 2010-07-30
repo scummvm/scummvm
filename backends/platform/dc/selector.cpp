@@ -30,6 +30,7 @@
 #include <base/plugins.h>
 #include <common/fs.h>
 #include <common/events.h>
+#include <common/config-manager.h>
 #include "dc.h"
 #include "icon.h"
 #include "label.h"
@@ -200,12 +201,43 @@ static bool uniqueGame(const char *base, const char *dir,
   return true;
 }
 
-static int findGames(Game *games, int max)
+static int findGames(Game *games, int max, bool use_ini)
 {
   Dir *dirs = new Dir[MAX_DIR];
-  int curr_game = 0, curr_dir = 0, num_dirs = 1;
-  dirs[0].node = Common::FSNode("");
-  while (curr_game < max && curr_dir < num_dirs) {
+  int curr_game = 0, curr_dir = 0, num_dirs = 0;
+
+  if (use_ini) {
+    ConfMan.loadDefaultConfigFile();
+    Common::ConfigManager::DomainMap &game_domains = ConfMan.getGameDomains();
+    for(Common::ConfigManager::DomainMap::const_iterator i =
+	  game_domains.begin(); curr_game < max && i != game_domains.end(); i++) {
+      Common::String path = (*i)._value["path"];
+      if (path.size() && path.lastChar() != '/')
+	path += "/";
+      int j;
+      for (j=0; j<num_dirs; j++)
+	if (path.equals(dirs[j].node.getPath()))
+	  break;
+      if (j >= num_dirs) {
+	if (num_dirs >= MAX_DIR)
+	  continue;
+	dirs[j = num_dirs++].node = Common::FSNode(path);
+      }
+      if (curr_game < max) {
+	strcpy(games[curr_game].filename_base, (*i)._key.c_str());
+	strncpy(games[curr_game].dir, dirs[j].node.getPath().c_str(), 256);
+	games[curr_game].dir[255] = '\0';
+	games[curr_game].language = Common::UNK_LANG;
+	games[curr_game].platform = Common::kPlatformUnknown;
+	strcpy(games[curr_game].text, (*i)._value["description"].c_str());
+	curr_game++;
+      }
+    }
+  } else {
+    dirs[num_dirs++].node = Common::FSNode("");
+  }
+
+  while ((curr_game < max || use_ini) && curr_dir < num_dirs) {
     strncpy(dirs[curr_dir].name, dirs[curr_dir].node.getPath().c_str(), 252);
     dirs[curr_dir].name[251] = '\0';
     dirs[curr_dir].deficon[0] = '\0';
@@ -214,44 +246,46 @@ static int findGames(Game *games, int max)
     for (Common::FSList::const_iterator entry = fslist.begin(); entry != fslist.end();
 	 ++entry) {
       if (entry->isDirectory()) {
-	if (num_dirs < MAX_DIR && strcasecmp(entry->getDisplayName().c_str(),
-					    "install")) {
+	if (!use_ini && num_dirs < MAX_DIR &&
+	    strcasecmp(entry->getDisplayName().c_str(), "install")) {
 	  dirs[num_dirs].node = *entry;
 	  num_dirs++;
 	}
       } else
 	if (isIcon(*entry))
 	  strcpy(dirs[curr_dir-1].deficon, entry->getDisplayName().c_str());
-	else
+	else if(!use_ini)
 	  files.push_back(*entry);
     }
 
-    GameList candidates = EngineMan.detectGames(files);
+    if (!use_ini) {
+      GameList candidates = EngineMan.detectGames(files);
 
-    for (GameList::const_iterator ge = candidates.begin();
-	ge != candidates.end(); ++ge)
-      if (curr_game < max) {
-	strcpy(games[curr_game].filename_base, ge->gameid().c_str());
-	strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
-	games[curr_game].language = ge->language();
-	games[curr_game].platform = ge->platform();
-	if (uniqueGame(games[curr_game].filename_base,
-		       games[curr_game].dir,
-		       games[curr_game].language,
-		       games[curr_game].platform, games, curr_game)) {
-
-	  strcpy(games[curr_game].text, ge->description().c_str());
+      for (GameList::const_iterator ge = candidates.begin();
+	   ge != candidates.end(); ++ge)
+	if (curr_game < max) {
+	  strcpy(games[curr_game].filename_base, ge->gameid().c_str());
+	  strcpy(games[curr_game].dir, dirs[curr_dir-1].name);
+	  games[curr_game].language = ge->language();
+	  games[curr_game].platform = ge->platform();
+	  if (uniqueGame(games[curr_game].filename_base,
+			 games[curr_game].dir,
+			 games[curr_game].language,
+			 games[curr_game].platform, games, curr_game)) {
+	    
+	    strcpy(games[curr_game].text, ge->description().c_str());
 #if 0
-	  printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",
-		 games[curr_game].text,
-		 (int)games[curr_game].language,
-		 (int)games[curr_game].platform,
-		 games[curr_game].dir, games[curr_game].filename_base,
-		 dirs[curr_dir-1].name);
+	    printf("Registered game <%s> (l:%d p:%d) in <%s> <%s> because of <%s> <*>\n",
+		   games[curr_game].text,
+		   (int)games[curr_game].language,
+		   (int)games[curr_game].platform,
+		   games[curr_game].dir, games[curr_game].filename_base,
+		   dirs[curr_dir-1].name);
 #endif
-	  curr_game++;
+	    curr_game++;
+	  }
 	}
-      }
+    }
   }
 
   for (int i=0; i<curr_game; i++)
@@ -426,7 +460,9 @@ bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::
   void *mark = ta_txmark();
 
   for (;;) {
-    num_games = findGames(games, MAX_GAMES);
+    num_games = findGames(games, MAX_GAMES, true);
+    if (!num_games)
+      num_games = findGames(games, MAX_GAMES, false);
 
     for (int i=0; i<num_games; i++) {
       games[i].icon.create_texture();

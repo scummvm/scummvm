@@ -83,6 +83,19 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Castle of Dr. Brain - English DOS Floppy EGA (from omer_mor, bug report #3035349)
+	{"castlebrain", "EGA", {
+		{"resource.map", 0, "88d106f945f7fd9d1aeda961cfec38a9", 2646},
+		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 25325},
+		{"resource.001", 0, "1d806162f6d3cfbe3c0135414efe6f88", 99931},
+		{"resource.002", 0, "6a41a0eb5237778427dddf92ae07cf9b", 294772},
+		{"resource.003", 0, "0c6ab4efb3be4d991ae9762e19f17c92", 306378},
+		{"resource.004", 0, "5e7b90949422de005f80285979972e43", 292423},
+		{"resource.005", 0, "8a5ed3ba96e2eaf18e36fedfaab89419", 297838},
+		{"resource.006", 0, "dceed92e709cad1bd9582809a235b0a0", 266682},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Castle of Dr. Brain - English DOS Floppy (from jvprat)
 	// Executable scanning reports "1.000.044", Floppy label reports "1.0, 10.30.91", VERSION file reports "1.000"
 	// SCI interpreter version 1.000.510
@@ -960,6 +973,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// King's Quest 5 EGA (supplied by markcoolio in bug report #2829470)
 	// SCI interpreter version 1.000.060
+	// VERSION file reports "0.000.055"
 	{"kq5", "EGA", {
 		{"resource.map", 0, "baf888a4e4797ce0de0b19d4e183583c", 7662},
 		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394242},
@@ -970,6 +984,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669919},
 		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666527},
 		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541743},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// King's Quest 5 EGA (supplied by omer_mor in bug report #3035421)
+	// VERSION file reports "0.000.062"
+	{"kq5", "EGA", {
+		{"resource.map", 0, "e17cfb38175382b9188da75c53bbab64", 7656},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394072},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 561444},
+		{"resource.002", 0, "076aa0bf1d8d2c147d64aeffbe2928e5", 597580},
+		{"resource.003", 0, "ecb47cd04d06b2ab2f9f883667db6e81", 487633},
+		{"resource.004", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 620749},
+		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669961},
+		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666541},
+		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541762},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
@@ -1551,7 +1580,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
 	// Larry 5 - German DOS (from Tobis87)
-	// SCI interpreter version 1.000.510 (just a guess)
+	// SCI interpreter version T.A00.196
 	{"lsl5", "", {
 		{"resource.map", 0, "c97297aa76d4dd2ed144c7b7769e2caf", 6867},
 		{"resource.000", 0, "4c00c14b8181ad47076a51d86097d97e", 759095},
@@ -1706,6 +1735,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE	},
 
+	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
+	// SCI interpreter version 2.100.002
+	{"lsl7", "Demo", {
+		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
+		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
+
 #ifdef ENABLE_SCI3_GAMES
 	// Larry 7 - English DOS CD (from spookypeanut)
 	// SCI interpreter version 3.000.000
@@ -1746,14 +1783,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		{NULL, 0, NULL, 0}},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
-
-	// Larry 7 - English DOS Demo (provided by richiefs in bug report #2670691)
-	// SCI interpreter version 2.100.002
-	{"lsl7", "Demo", {
-		{"ressci.000", 0, "5cc6159688b2dc03790a67c90ccc67f9", 10195878},
-		{"resmap.000", 0, "6a2b2811eef82e87cde91cf1de845af8", 2695},
-		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
@@ -1802,6 +1831,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+	// Mixed-Up Fairy Tales - English DOS Floppy EGA (from omer_mor, bug report #3035350)
+	{"fairytales", "EGA", {
+		{"resource.map", 0, "daa94e9f327be6657eb97a51b490dbb1", 3219},
+		{"resource.000", 0, "6dc287611e510793b72e73110bbdd45d", 17819},
+		{"resource.001", 0, "5ad26e7af4d4c3a3185c66a44abd5220", 478401},
+		{"resource.002", 0, "4db83250f821607b634c99d663cae74a", 663713},
+		{"resource.003", 0, "509b2467ba779100d5933ed51a9ae32f", 560255},
+		{"resource.004", 0, "93afc85d5ffa60ea555d6cc336d22c03", 651109},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Mixed-Up Fairy Tales v1.000 - English DOS (supplied by markcoolio in bug report #2723791)
 	// Executable scanning reports "1.000.145"
 	{"fairytales", "", {
@@ -1835,6 +1875,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
 
+	// Mixed-Up Mother Goose - English DOS Floppy EGA (from omer_mor, bug report #3035354)
+	{"mothergoose", "EGA", {
+		{"resource.map", 0, "3490f85dab47e504c41b7eb3312e285e", 2598},
+		{"resource.001", 0, "d893892d62b3f061357291d66775e360", 239906},
+		{"resource.002", 0, "d893892d62b3f061357291d66775e360", 719398},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Mixed-Up Mother Goose v2.000 - English DOS Floppy (supplied by markcoolio in bug report #2723795)
 	// Executable scanning reports "1.001.031"
 	{"mothergoose", "", {
@@ -1858,15 +1906,23 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "87f9dc1cafc4d4fa835fb2f00cf3a6ef", 4560},
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 2070072},
 		{NULL, 0, NULL, 0}},
-		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH
+		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH
 	},
 
 #ifdef ENABLE_SCI32
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
 	// Executable scanning reports "2.100.002"
-	{"mothergoose", "", {
+	{"mothergoosehires", "", {
 		{"resource.map", 0, "5159a1578c4306bfe070a3e4d8c2e1d3", 4741},
 		{"resource.000", 0, "1926925c95d82f0999590e93b02887c5", 15150768},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
+
+	// Mixed-Up Mother Goose Deluxe - Multilingual Windows CD (English/French/German/Spanish)
+	// Executable scanning reports "2.100.002"
+	{"mothergoosehires", "", {
+		{"resmap.000", 0, "ef611af561898dcfea87846919ebf3eb", 4969},
+		{"ressci.000", 0, "227685bc59d90821978d330713e44a7a", 17205800},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE	},
 #endif // ENABLE_SCI32
@@ -2019,6 +2075,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "77f02def3094af804fd2371db25b7100", 586857},
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Police Quest 2 - Japanese PC-98
+	// SCI interpreter version unknown
+	{"pq2", "", {
+		{"resource.map", 0, "883804c616dca1d82373bf9fda3a71d2", 4656},
+		{"resource.001", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 669319},
+		{"resource.002", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 637662},
+		{"resource.003", 0, "05fdee43a228dd6ea4d1a92ccae3f788", 684395},
+		{NULL, 0, NULL, 0}},
+		Common::JA_JPN, Common::kPlatformPC98, 0, GUIO_NOSPEECH
+	}, // also includes english language
 
 	// Police Quest 3 - English Amiga
 	// Executable scanning reports "1.004.024"
@@ -2252,7 +2319,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS
 	// Executable scanning reports "2.000.411"
-	{"qfg1", "VGA Remake", {
+	{"qfg1vga", "VGA Remake", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
 		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
 		{NULL, 0, NULL, 0}},
@@ -2261,7 +2328,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.029
-	{"qfg1", "VGA Remake, Demo", {
+	{"qfg1vga", "VGA Remake, Demo", {
 		{"resource.map", 0, "ac0257051c95a59c0cdc0be24d9b11fa", 729},
 		{"resource.000", 0, "ec6f5cf369054dd3e5392995e9975b9e", 768218},
 		{NULL, 0, NULL, 0}},
@@ -2270,7 +2337,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English Macintosh Floppy
 	// VERSION file reports "2.0"
-	{"qfg1", "VGA Remake", {
+	{"qfg1vga", "VGA Remake", {
 		{"Data1", 0, "14f26bc75f24bb1ecc94532df17b5371", 1768155},
 		{"Data2", 0, "a7aee8bd46fc9cef7fd3bea93ef173e0", 6586422},
 		{NULL, 0, NULL, 0}},
@@ -3078,26 +3145,37 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 #endif // ENABLE_SCI32
 
 	// SCI Fanmade Games
-	FANMADE("Al Pond 2: Island Quest", "9625372e710d1a95d2027b48f9e325af", 1506, "a0f9aa65b9bf3d8703adff5a621f243c", 889843),
 	FANMADE("Al Pond: Island Quest 2", "4cba6a5a4c8f66f21935ed78b0511a92", 870, "876587dc9a5ec569287a3dc4b29139d8", 613769),
+	FANMADE("Al Pond 2: Island Quest", "9625372e710d1a95d2027b48f9e325af", 1506, "a0f9aa65b9bf3d8703adff5a621f243c", 889843),
+	FANMADE("Al Pond 2: Island Quest (Updated)", "64be277cdcc6aafce7d9f26e88ad31a8", 1500, "571547228a212d63315f0c114cf48d54", 885241),
 	FANMADE("Another DG Game: I Want My C64 Back", "4a8ca7ca2abd18899ef856f47665e2e9", 588, "12ff558d20c72e42cc6adb408f34d6d8", 150513),
 	FANMADE_L("Another DG Game: I Want My C64 Back", "13dc1d9ebc57daf8895412eee5e39fea", 576, "e2ad60b3a280171429db5c85f158f84a", 141697, Common::FR_FRA),
+	FANMADE("Aquarius: An Aquatic Experience", "2e23bc3b82f22a454be202ea593fb478", 480, "01555c8de683d25405bda270aa1ff014", 272372),
 	FANMADE("Bluntman and Chronic (Politically Correct Version)", "c3ef9fa6c7c5fb840078bf28d87c7f8b", 1362, "441636a9f6f86710844868fded868ee7", 596688),
 	FANMADE("Cascade Quest", "c94efc10d18c040b6e22a1dc6d3adfe1", 3468, "8ada33dfa945f81531e5508240b573de", 1432195),
-	FANMADE("Curt Quest 1.0", "b0e555370380d218968a40a68eaaaffc", 1146, "c851182cdf6fc6a81b840f4d4875f1a0", 307165),
-	FANMADE("Curt Quest 1.1", "54084c29346683296e45ef32d7ae74f3", 1128, "c851182cdf6fc6a81b840f4d4875f1a0", 302000),
+	FANMADE("Circus Quest", "35871f6b4e1df56af4113c0203a0b223", 630, "7d6f97d7935d8733f488d4cb74315e5b", 279627),
+	FANMADE("Curt's Quest 1.0", "b0e555370380d218968a40a68eaaaffc", 1146, "c851182cdf6fc6a81b840f4d4875f1a0", 307165),
+	FANMADE("Curt's Quest 1.1", "54084c29346683296e45ef32d7ae74f3", 1128, "c851182cdf6fc6a81b840f4d4875f1a0", 302000),
 	FANMADE("Demo Quest", "c89a0c9e0a4e4af0ecedb300a3b31dbf", 384, "a32f3495ba24764cba091119cc3f1e13", 160098),
 	FANMADE("Dr. Jummybummy's Space Adventure 2", "6ae6cb7de423f51736d9487b4ca0c6da", 810, "26e5b563f578e104d79689f36568b7cf", 394670),
 	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, Common::FR_FRA), // FIXME: Accent
-	FANMADE("Jim Quest", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
+	FANMADE("Humanoid Demo", "97d8331293a6d57e8bad58c1efc89a63", 624, "fb354b9abe64011b12159e45d724633f", 452320),
+	FANMADE("Jim’s Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
 	FANMADE("Knight's Quest Demo 1.0", "5e816edf993956752ed06fccfeeae6d9", 1260, "959321f88a22905fa1f8c6d897874744", 703836),
 	FANMADE("LockerGnome Quest", "3eeff9130206cad0c4e1551e2b9dd2c5", 420, "ae05ca90806fd90cc43f147c82d3547c", 158906),
-	FANMADE("New Year's Mystery", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
+	FANMADE("New Year's Mystery", "e4dcab1b1d3cb4a2c070a07a9c9589e0", 708, "e00ca5e44fd4e98d8174b467b31b0f21", 295425),
+	FANMADE("New Year's Mystery (Updated)", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
+	FANMADE("Ocean Battle", "c2304a0568e0eb84f8e9a0915f01170a", 408, "46c520c1ac9b63528854d0f58c7e1b74", 142234),
 	FANMADE("Osama", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827),
 	FANMADE("Quest for the Cheat", "a359d4cf27f98264b42b55c017671214", 882, "8a943029f73c4bc85d454b7f473455ba", 455209),
+	FANMADE("SCI Capture the Flag", "4cd679a51d93b8b27c6b38d81be24b8b", 432, "98ae1f6ed7b4c21f88addbf643dd1d2f", 147878),
 	FANMADE("SCI Companion Template", "ad54d4f504086cd597aa2348d0aa3b09", 354, "6798b7b601ce8154c1d1bc0f0edcdd18", 113061),
+	FANMADE("SCI Programming April 2010 Competition Template", "36e5c4011dd7c92e1ae4c6fede7d698d", 456, "20c87fbb7f73e2a3eb2c5dfab4d76b5a", 142221),
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
+	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
+	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
+	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
 
 	// FIXME: The vga demo does not have a resource.000/001 file.

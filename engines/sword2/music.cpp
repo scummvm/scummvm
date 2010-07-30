@@ -136,10 +136,8 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			return NULL;
 		}
 		if (fh->fileSize != fh->file.size()) {
-			if (fh->idxTab) {
-				free(fh->idxTab);
-				fh->idxTab = NULL;
-			}
+			free(fh->idxTab);
+			fh->idxTab = NULL;
 		}
 	} else
 		alreadyOpen = true;

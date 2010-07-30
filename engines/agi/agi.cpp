@@ -279,8 +279,7 @@ void AgiEngine::pollTimer() {
 
 	while ((dm = _tickTimer - _lastTickTimer) < 5) {
 		processEvents();
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
@@ -344,7 +343,7 @@ int AgiEngine::agiInit() {
 
 	// clear view table
 	for (i = 0; i < MAX_VIEWTABLE; i++)
-		memset(&_game.viewTable[i], 0, sizeof(VtEntry));
+		memset(&_game.viewTable[i], 0, sizeof(struct VtEntry));
 
 	initWords();
 
@@ -580,7 +579,7 @@ void AgiEngine::initialize() {
 	} else if (getPlatform() == Common::kPlatformCoCo3) {
 		_soundemu = SOUND_EMU_COCO3;
 	} else {
-		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK))) {
+		switch (MidiDriver::getMusicType(MidiDriver::detectDevice(MDT_PCSPK|MDT_ADLIB|MDT_PCJR|MDT_MIDI))) {
 		case MT_PCSPK:
 			_soundemu = SOUND_EMU_PC;
 			break;
@@ -610,6 +609,8 @@ void AgiEngine::initialize() {
 			_renderMode = Common::kRenderEGA;
 			break;
 		}
+	} else {
+		_renderMode = Common::kRenderDefault;
 	}
 
 	_buttonStyle = AgiButtonStyle(_renderMode);

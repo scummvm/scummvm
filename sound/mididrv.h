@@ -124,7 +124,7 @@ public:
 
 	/** Returns device handle based on the present devices and the flags parameter. */
 	static DeviceHandle detectDevice(int flags);
-		
+
 	/** Find the music driver matching the given driver name/description. */
 	static DeviceHandle getDeviceHandle(const Common::String &identifier);
 

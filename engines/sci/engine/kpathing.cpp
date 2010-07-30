@@ -933,9 +933,11 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 		case POLY_NEAREST_ACCESS:
 			if (cont == CONT_INSIDE) {
 				if (s->_prependPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: start point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				if (s->findNearPoint(start, (*it), new_start) != PF_OK) {
@@ -944,7 +946,7 @@ static Common::Point *fixup_start_point(PathfindingState *s, const Common::Point
 				}
 
 				if ((type == POLY_BARRED_ACCESS) || (type == POLY_CONTAINED_ACCESS))
-					warning("AvoidPath: start position at unreachable location");
+					debugC(2, kDebugLevelAvoidPath, "AvoidPath: start position at unreachable location");
 
 				// The original start position is in an invalid location, so we
 				// use the moved point and add the original one to the final path
@@ -987,9 +989,14 @@ static Common::Point *fixup_end_point(PathfindingState *s, const Common::Point &
 		case POLY_NEAREST_ACCESS:
 			if (cont != CONT_OUTSIDE) {
 				if (s->_appendPoint != NULL) {
-					// We shouldn't get here twice
+					// We shouldn't get here twice.
+					// Happens in LB2CD, inside the speakeasy when walking from the
+					// speakeasy (room 310) into the bathroom (room 320), after having
+					// consulted the notebook (bug #3036299).
+					// We need to break in this case, otherwise we'll end in an infinite
+					// loop.
 					warning("AvoidPath: end point is contained in multiple polygons");
-					continue;
+					break;
 				}
 
 				// The original end position is in an invalid location, so we move the point
@@ -1315,7 +1322,7 @@ static void AStar(PathfindingState *s) {
 	}
 
 	if (openSet.empty())
-		warning("[avoidpath] End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
+		debugC(2, kDebugLevelAvoidPath, "AvoidPath: End point (%i, %i) is unreachable", s->vertex_end->v.x, s->vertex_end->v.y);
 }
 
 static reg_t allocateOutputArray(SegManager *segMan, int size) {
@@ -1769,5 +1776,14 @@ reg_t kMergePoly(EngineState *s, int argc, reg_t *argv) {
 	warning("Stub: kMergePoly");
 	return output;
 }
+
+#ifdef ENABLE_SCI32
+
+reg_t kInPolygon(EngineState *s, int argc, reg_t *argv) {
+	// kAvoidPath already implements this
+	return kAvoidPath(s, argc, argv);
+}
+
+#endif
 
 } // End of namespace Sci

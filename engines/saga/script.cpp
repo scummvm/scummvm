@@ -571,9 +571,7 @@ void Script::opCall(SCRIPTOP_PARAMS) {
 	if (iparam1 != kAddressModule) {
 		error("Script::runThread iparam1 != kAddressModule");
 	}
-	byte *addr = thread->baseAddress(iparam1);
 	iparam1 = scriptS->readSint16LE();
-	addr += iparam1;
 	thread->push(argumentsCount);
 
 	// NOTE: The original pushes the program

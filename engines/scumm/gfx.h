@@ -322,6 +322,7 @@ protected:
 protected:
 	void decodePCEngineGfx(const byte *room);
 	void decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint16 *masks, int numRows, bool isObject);
+	void setTileData(byte *tile, int index, byte byte0, byte byte1);
 	void decodePCEngineTileData(const byte *ptr);
 	void decodePCEngineMaskData(const byte *ptr);
 	void decodePCEngineObject(const byte *ptr, int xpos, int ypos, int width, int height);

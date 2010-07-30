@@ -6,6 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added Android port.
 
  General:
+   - Removed the outdated PalmOS port.
    - Switched to the "fast" DOSBox OPL emulator.
    - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
    - Added support for more original media layouts.
@@ -28,6 +29,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  Groovie:
    - Added support for the Macintosh version of The 7th Guest.
    - Added support for custom MT-32 instruments.
+
+ KYRA:
+   - Fixed some minor graphical glitches.
+   - Implemented formerly missing recreation of some in game items.
 
  Parallaction:
    - Made part one of The Big Red Adventure completable.

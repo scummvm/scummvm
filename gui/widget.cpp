@@ -218,85 +218,8 @@ Common::String Widget::cleanupHotkey(const Common::String &label) {
 	for (uint i = 0; i < label.size() ; i++)
 		if (label[i] != '~')
 			res = res + label[i];
-	
+
 	return res;
-}	
-
-#pragma mark -
-
-Tooltip::Tooltip(GuiManager *guiManager) : GuiObject(0, 0, 0, 0) {
-	_guiManager = guiManager;
-
-	_visible = false;
-	_maxWidth = -1;
-	_storedState = 0;
-}
-
-void Tooltip::draw() {
-	int num = 0;
-	int h = g_gui.theme()->getFontHeight(ThemeEngine::kFontStyleTooltip) + 2;
-
-	// Make Rect bigger for compensating the shadow
-	_storedState = g_gui.theme()->storeState(Common::Rect(_x - 5, _y - 5, _x + _w + 5, _y + _h + 5));
-
-	g_gui.theme()->startBuffering();
-	g_gui.theme()->drawWidgetBackground(Common::Rect(_x, _y, _x + _w, _y + _h), 0, ThemeEngine::kWidgetBackgroundBorderSmall);
-
-	for (Common::StringArray::const_iterator i = _wrappedLines.begin(); i != _wrappedLines.end(); ++i, ++num) {
-		g_gui.theme()->drawText(Common::Rect(_x + 1, _y + 1 + num * h, _x + 1 +_w, _y + 1+ (num + 1) * h), *i, ThemeEngine::kStateEnabled, Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, 0, false, ThemeEngine::kFontStyleTooltip, ThemeEngine::kFontColorNormal, false);
-	}
-	g_gui.theme()->finishBuffering();
-}
-
-void Tooltip::reflowLayout() {
-}
-
-void Tooltip::setMouseXY(int x, int y) {
-	_mouseX = x;
-	_mouseY = y;
-}
-
-void Tooltip::setVisible(bool state) {
-	if (state == _visible)
-		return;
-
-	if (state) {
-		if (!_guiManager->getTopDialog())
-			return;
-
-		Widget *wdg = _guiManager->getTopDialog()->findWidget(_mouseX, _mouseY);
-
-		if (!wdg)
-			return;
-
-		if (wdg->getTooltip()) {
-			_visible = state;
-
-			// Cache config values.
-			// NOTE: we cannot do it in the consturctor
-			if (_maxWidth == -1) {
-				 _maxWidth = g_gui.xmlEval()->getVar("Globals.Tooltip.MaxWidth", 100);
-				 _xdelta = g_gui.xmlEval()->getVar("Globals.Tooltip.XDelta", 0);
-				 _ydelta = g_gui.xmlEval()->getVar("Globals.Tooltip.YDelta", 0);
-			}
-
-			const Graphics::Font *tooltipFont = g_gui.theme()->getFont(ThemeEngine::kFontStyleTooltip);
-
-			_wrappedLines.clear();
-			_w = tooltipFont->wordWrapText(wdg->getTooltip(), _maxWidth - 4, _wrappedLines);
-			_h = (tooltipFont->getFontHeight() + 2) * _wrappedLines.size();
-
-			_x = MIN<int16>(_guiManager->getTopDialog()->_x + _mouseX + _xdelta, g_gui.getWidth() - _w - 3);
-			_y = MIN<int16>(_guiManager->getTopDialog()->_y + _mouseY + _ydelta, g_gui.getHeight() - _h - 3);
-
-			draw();
-		}
-	} else {
-		_visible = state;
-
-		g_gui.theme()->restoreState(_storedState);
-		delete _storedState;
-	}
 }
 
 #pragma mark -
@@ -361,7 +284,7 @@ ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Co
 }
 
 ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip, uint32 cmd, uint8 hotkey)
-	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss), 
+	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
 	  _cmd(cmd) {
 	if (hotkey == 0)
 		_hotkey = parseHotkey(label);

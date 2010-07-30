@@ -543,6 +543,7 @@ SoundResource::SoundResource(uint32 resourceNr, ResourceManager *resMan, SciVers
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_2_1:
 		data = resource->data;
 		// Count # of tracks
 		_trackCount = 0;

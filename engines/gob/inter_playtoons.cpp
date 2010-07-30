@@ -362,7 +362,6 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 	int16 objIndex;
 	uint16 readVar[4];
 	uint8 i;
-	bool break_fl;
 	Mult::Mult_AnimData animData;
 
 	_vm->_game->_script->evalExpr(&objIndex);
@@ -375,7 +374,6 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 		return;
 	}
 	if (objIndex == -2) {
-		break_fl = false;
 		warning("oPlaytoons_getObjAnimSize case -2 not implemented");
 		return;
 	}

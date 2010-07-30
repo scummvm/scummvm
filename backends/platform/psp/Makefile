@@ -64,7 +64,6 @@ ifeq ($(PSPSDK),)
 $(error $$(PSPSDK) cannot be obtained.)
 endif
 
-
 # Variables for common Scummvm makefile
 CXX      = psp-g++
 CXXFLAGS = -O3 -Wall -Wno-multichar -fno-exceptions -fno-rtti
@@ -148,7 +147,10 @@ OBJS := powerman.o \
 	audio.o \
 	thread.o \
 	rtc.o \
-	mp3.o
+	mp3.o \
+	tests.o
+
+BACKEND := psp
 
 # Include common Scummvm makefile
 include $(srcdir)/Makefile.common

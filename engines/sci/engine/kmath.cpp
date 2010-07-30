@@ -29,10 +29,27 @@
 namespace Sci {
 
 reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
-	int fromNumber = argv[0].toUint16();
-	int toNumber = argv[1].toUint16();
-	double randomNumber = fromNumber + ((toNumber + 1.0 - fromNumber) * (rand() / (RAND_MAX + 1.0)));
-	return make_reg(0, (int)randomNumber);
+	switch (argc) {
+	case 1: // set seed to argv[0]
+		// SCI0/SCI01 just reset the seed to 0 instead of using argv[0] at all
+		return NULL_REG;
+
+	case 2: { // get random number
+		int fromNumber = argv[0].toUint16();
+		int toNumber = argv[1].toUint16();
+		double randomNumber = fromNumber + ((toNumber + 1.0 - fromNumber) * (rand() / (RAND_MAX + 1.0)));
+		return make_reg(0, (int)randomNumber);
+	}
+
+	case 3: // get seed
+		// SCI0/01 did not support this at all
+		// Actually we would have to return the previous seed
+		error("kRandom: scripts asked for previous seed");
+		break;
+
+	default:
+		error("kRandom: unsupported argc");
+	}
 }
 
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {

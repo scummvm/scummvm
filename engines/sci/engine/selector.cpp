@@ -104,6 +104,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR2(b_incr, "b-incr");
 	FIND_SELECTOR(xStep);
 	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(xLast);
+	FIND_SELECTOR(yLast);
 	FIND_SELECTOR(moveSpeed);
 	FIND_SELECTOR(canBeHere);	// cantBeHere
 	FIND_SELECTOR(heading);
@@ -176,6 +178,13 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
+	FIND_SELECTOR(fixPriority);
+	FIND_SELECTOR(mirrored);
+	FIND_SELECTOR(useInsetRect);
+	FIND_SELECTOR(inTop);
+	FIND_SELECTOR(inLeft);
+	FIND_SELECTOR(inBottom);
+	FIND_SELECTOR(inRight);
 #endif
 }
 
@@ -236,7 +245,7 @@ void invokeSelector(EngineState *s, reg_t object, int selectorId,
 	xstack->sp += argc + 2;
 	xstack->fp += argc + 2;
 
-	run_vm(s, false); // Start a new vm
+	run_vm(s); // Start a new vm
 }
 
 SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {

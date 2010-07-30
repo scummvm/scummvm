@@ -516,6 +516,15 @@
 		/>
 	</drawdata>
 
+	<!-- Tooltip -->
+	<drawdata id = 'tooltip_bg' cache = 'false'>
+		<drawstep	func = 'square'
+					fill = 'foreground'
+					fg_color = 'blandyellow'
+					shadow = '3'
+		/>
+	</drawdata>
+
 	<!-- Idle button -->
 	<drawdata id = 'button_idle' cache = 'false'>
 		<text	font = 'text_button'

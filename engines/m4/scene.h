@@ -53,17 +53,16 @@ enum MADSVerbs {
 	kVerbPull	= 10,
 	kVerbClose	= 11,
 	kVerbThrow	= 12,
-	kVerbWalkTo	= 13
+	kVerbWalkTo	= 13,
+	kVerbLookAt = 209
 };
 
 class SceneResources {
 public:
 	char artBase[MAX_CHK_FILENAME_SIZE];
 	char pictureBase[MAX_CHK_FILENAME_SIZE];
-	int32 hotspotCount;
 	HotSpotList *hotspots;
-	int32 propsCount;
-	HotSpotList *props;
+	HotSpotList *dynamicHotspots;
 	int32 frontY, backY;
 	int32 frontScale, backScale;
 	int16 depthTable[16];
@@ -80,6 +79,7 @@ private:
 protected:
 	int _currentScene;
 	int _previousScene;
+	int _nextScene;
 	GameInterfaceView *_interfaceSurface;
 	M4Surface *_backgroundSurface;
 	M4Surface *_walkSurface;
@@ -95,7 +95,7 @@ public:
 	virtual void leaveScene();
 	virtual void loadSceneCodes(int sceneNumber, int index = 0) = 0;
 	virtual void show();
-	virtual void checkHotspotAtMousePos(int x, int y) = 0;
+	virtual void mouseMove(int x, int y) = 0;
 	virtual void leftClick(int x, int y) = 0;
 	virtual void rightClick(int x, int y) = 0;
 	virtual void update() = 0;

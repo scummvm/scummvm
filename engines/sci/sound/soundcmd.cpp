@@ -33,9 +33,6 @@
 
 namespace Sci {
 
-#define SCI1_SOUND_FLAG_MAY_PAUSE        1 /* Only here for completeness; The interpreter doesn't touch this bit */
-#define SCI1_SOUND_FLAG_SCRIPTED_PRI     2 /* but does touch this */
-
 SoundCommandParser::SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion) :
 	_resMan(resMan), _segMan(segMan), _kernel(kernel), _audio(audio), _soundVersion(soundVersion) {
 
@@ -48,6 +45,7 @@ SoundCommandParser::~SoundCommandParser() {
 }
 
 reg_t SoundCommandParser::kDoSoundInit(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(init): %04x:%04x", PRINT_REG(argv[0]));
 	processInitSound(argv[0]);
 	return acc;
 }
@@ -73,8 +71,8 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		newSound->volume = CLIP<int>(readSelectorValue(_segMan, obj, SELECTOR(vol)), 0, MUSIC_VOLUME_MAX);
 
-	debugC(2, kDebugLevelSound, "kDoSound(init): number %d, loop %d, prio %d, vol %d", resourceId, 
-			newSound->loop, newSound->priority, newSound->volume);
+	debugC(2, kDebugLevelSound, "kDoSound(init): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
+			resourceId,	newSound->loop, newSound->priority, newSound->volume);
 
 	// In SCI1.1 games, sound effects are started from here. If we can find
 	// a relevant audio resource, play it, otherwise switch to synthesized
@@ -105,6 +103,7 @@ void SoundCommandParser::processInitSound(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundPlay(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(play): %04x:%04x", PRINT_REG(argv[0]));
 	processPlaySound(argv[0]);
 	return acc;
 }
@@ -142,8 +141,8 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	if (_soundVersion >= SCI_VERSION_1_EARLY)
 		musicSlot->volume = readSelectorValue(_segMan, obj, SELECTOR(vol));
 
-	debugC(2, kDebugLevelSound, "kDoSound(play): number %d, loop %d, prio %d, vol %d", resourceId, 
-			musicSlot->loop, musicSlot->priority, musicSlot->volume);
+	debugC(2, kDebugLevelSound, "kDoSound(play): %04x:%04x number %d, loop %d, prio %d, vol %d", PRINT_REG(obj),
+			resourceId, musicSlot->loop, musicSlot->priority, musicSlot->volume);
 
 	_music->soundPlay(musicSlot);
 }
@@ -154,6 +153,7 @@ reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundDispose(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(dispose): %04x:%04x", PRINT_REG(argv[0]));
 	processDisposeSound(argv[0]);
 	return acc;
 }
@@ -176,6 +176,7 @@ void SoundCommandParser::processDisposeSound(reg_t obj) {
 }
 
 reg_t SoundCommandParser::kDoSoundStop(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "kDoSound(stop): %04x:%04x", PRINT_REG(argv[0]));
 	processStopSound(argv[0], false);
 	return acc;
 }
@@ -209,6 +210,11 @@ void SoundCommandParser::processStopSound(reg_t obj, bool sampleFinishedPlaying)
 }
 
 reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
+	if (argc == 1)
+		debugC(2, kDebugLevelSound, "kDoSound(pause): %04x:%04x", PRINT_REG(argv[0]));
+	else
+		debugC(2, kDebugLevelSound, "kDoSound(pause): %04x:%04x, %04x:%04x", PRINT_REG(argv[0]), PRINT_REG(argv[1]));
+
 	if (_soundVersion <= SCI_VERSION_0_LATE) {
 		// SCI0 games give us 0/1 for either resuming or pausing the current music
 		//  this one doesn't count, so pausing 2 times and resuming once means here that we are supposed to resume
@@ -250,26 +256,18 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 }
 
 // SCI0 only command
-reg_t SoundCommandParser::kDoSoundResume(int argc, reg_t *argv, reg_t acc) {
-	// this doesn't seem to do what we think it's doing
-	//  it's called with no arguments at all (just restore a game in qfg1)
-	return acc;
-	reg_t obj = argv[0];
-
-	MusicEntry *musicSlot = _music->getSlot(obj);
-	if (!musicSlot) {
-		warning("kDoSound(resume):: Slot not found (%04x:%04x)", PRINT_REG(obj));
-		return acc;
-	}
-
-	writeSelectorValue(_segMan, musicSlot->soundObj, SELECTOR(state), kSoundPlaying);
-	_music->soundResume(musicSlot);
+//  It's called right after restoring a game - it's responsible to kick off playing music again
+//  we don't need this at all, so we don't do anything here
+reg_t SoundCommandParser::kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_t acc) {
 	return acc;
 }
 
 reg_t SoundCommandParser::kDoSoundMute(int argc, reg_t *argv, reg_t acc) {
-	if (argc > 0)
+	if (argc > 0) {
+		debugC(2, kDebugLevelSound, "kDoSound(mute): %d", argv[0].toUint16());
 		_music->soundSetSoundOn(argv[0].toUint16());
+	}
+
 	return make_reg(0, _music->soundGetSoundOn());
 }
 
@@ -300,7 +298,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 
 	// If sound is not playing currently, set signal directly
 	if (musicSlot->status != kSoundPlaying) {
-		debugC(2, kDebugLevelSound, "kDoSound(fade): fading requested, but sound is currently not playing");
+		debugC(2, kDebugLevelSound, "kDoSound(fade): %04x:%04x fading requested, but sound is currently not playing", PRINT_REG(obj));
 		writeSelectorValue(_segMan, obj, SELECTOR(signal), SIGNAL_OFFSET);
 		return acc;
 	}
@@ -328,7 +326,7 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 		error("kDoSound(fade): unsupported argc %d", argc);
 	}
 
-	debugC(2, kDebugLevelSound, "kDoSound(fade): to %d, step %d, ticker %d", musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
+	debugC(2, kDebugLevelSound, "kDoSound(fade): %04x:%04x to %d, step %d, ticker %d", PRINT_REG(obj), musicSlot->fadeTo, musicSlot->fadeStep, musicSlot->fadeTickerStep);
 	return acc;
 }
 
@@ -338,6 +336,8 @@ reg_t SoundCommandParser::kDoSoundGetPolyphony(int argc, reg_t *argv, reg_t acc)
 
 reg_t SoundCommandParser::kDoSoundUpdate(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
+
+	debugC(2, kDebugLevelSound, "kDoSound(update): %04x:%04x", PRINT_REG(argv[0]));
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -379,9 +379,13 @@ void SoundCommandParser::processUpdateCues(reg_t obj) {
 			musicSlot->loop -= currentLoopCounter - musicSlot->sampleLoopCounter;
 			musicSlot->sampleLoopCounter = currentLoopCounter;
 		}
-		if ((!_music->soundIsActive(musicSlot)) && (musicSlot->status != kSoundPaused)) {
-			processStopSound(obj, true);
-		} else {
+		if (musicSlot->status == kSoundPlaying) {
+			if (!_music->soundIsActive(musicSlot)) {
+				processStopSound(obj, true);
+			} else {
+				_music->updateAudioStreamTicker(musicSlot);
+			}
+		} else if (musicSlot->status == kSoundPaused) {
 			_music->updateAudioStreamTicker(musicSlot);
 		}
 		// We get a flag from MusicEntry::doFade() here to set volume for the stream
@@ -443,9 +447,15 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 	byte channel = argv[1].toUint16() & 0xf;
 	byte midiCmd = argv[2].toUint16() & 0xff;
 
+	// TODO: first there is a 4-parameter variant of this call which needs to get reversed
+	//        second the current code isn't 100% accurate, sierra sci does checks on the 4th parameter
+	if (argc == 4)
+		return acc;
+
 	uint16 controller = argv[3].toUint16();
 	uint16 param = argv[4].toUint16();
 
+	debugC(2, kDebugLevelSound, "kDoSound(sendMidi): %04x:%04x, %d, %d, %d, %d", PRINT_REG(obj), channel, midiCmd, controller, param);
 	if (channel)
 		channel--; // channel is given 1-based, we are using 0-based
 
@@ -464,12 +474,15 @@ reg_t SoundCommandParser::kDoSoundSendMidi(int argc, reg_t *argv, reg_t acc) {
 }
 
 reg_t SoundCommandParser::kDoSoundReverb(int argc, reg_t *argv, reg_t acc) {
+	debugC(2, kDebugLevelSound, "doSoundReverb: %d", argv[0].toUint16() & 0xF);
 	_music->setReverb(argv[0].toUint16() & 0xF);
 	return acc;
 }
 
 reg_t SoundCommandParser::kDoSoundSetHold(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
+
+	debugC(2, kDebugLevelSound, "doSoundSetHold: %04x:%04x, %d", PRINT_REG(argv[0]), argv[1].toUint16());
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
@@ -488,6 +501,11 @@ reg_t SoundCommandParser::kDoSoundGetAudioCapability(int argc, reg_t *argv, reg_
 }
 
 reg_t SoundCommandParser::kDoSoundStopAll(int argc, reg_t *argv, reg_t acc) {
+	// TODO: this can't be right, this gets called in kq1 - e.g. being in witch house, getting the note
+	//  now the point jingle plays and after a messagebox they call this - and would stop the background effects with it
+	//  this doesn't make sense, so i disable it for now
+	return acc;
+
 	Common::StackLock(_music->_mutex);
 
 	const MusicList::iterator end = _music->getPlayListEnd();
@@ -535,6 +553,8 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 	reg_t obj = argv[0];
 	int16 value = argv[1].toSint16();
 
+	debugC(2, kDebugLevelSound, "kDoSound(setPriority): %04x:%04x, %d", PRINT_REG(obj), value);
+
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {
 		warning("kDoSound(setPriority): Slot not found (%04x:%04x)", PRINT_REG(obj));
@@ -564,6 +584,8 @@ reg_t SoundCommandParser::kDoSoundSetPriority(int argc, reg_t *argv, reg_t acc) 
 reg_t SoundCommandParser::kDoSoundSetLoop(int argc, reg_t *argv, reg_t acc) {
 	reg_t obj = argv[0];
 	int16 value = argv[1].toSint16();
+
+	debugC(2, kDebugLevelSound, "kDoSound(setLoop): %04x:%04x, %d", PRINT_REG(obj), value);
 
 	MusicEntry *musicSlot = _music->getSlot(obj);
 	if (!musicSlot) {

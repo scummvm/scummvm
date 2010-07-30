@@ -1228,8 +1228,7 @@ void AgiEngine::cmd_quit(uint8 *p) {
 	if (p0) {
 		quitGame();
 	} else {
-		if (selectionBox
-				(" Quit the _game, or continue? \n\n\n", buttons) == 0) {
+		if (selectionBox(" Quit the game, or continue? \n\n\n", buttons) == 0) {
 			quitGame();
 		}
 	}
@@ -1504,7 +1503,7 @@ void AgiEngine::cmd_print_at_v(uint8 *p) {
 
 void AgiEngine::cmd_push_script(uint8 *p) {
 	// We run AGIMOUSE always as a side effect
-	if (getFeatures() & GF_AGIMOUSE || 1) {
+	if (getFeatures() & GF_AGIMOUSE || true) {
 		_game.vars[27] = _mouse.button;
 		_game.vars[28] = _mouse.x / 2;
 		_game.vars[29] = _mouse.y;

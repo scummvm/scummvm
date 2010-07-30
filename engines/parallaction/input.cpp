@@ -148,8 +148,7 @@ void Input::readInput() {
 		setCursorPos(e.mouse);
 	}
 
-	if (_vm->_debugger->isAttached())
-		_vm->_debugger->onFrame();
+	_vm->_debugger->onFrame();
 
 	return;
 

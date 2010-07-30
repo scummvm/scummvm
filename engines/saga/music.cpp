@@ -158,6 +158,8 @@ Music::Music(SagaEngine *vm, Audio::Mixer *mixer) : _vm(vm), _mixer(mixer) {
 			_driver->setGM(_vm->getGameId() != GID_ITE);
 		} else {
 			_parser = MidiParser::createParser_SMF();
+			// ITE with standalone MIDI files is General MIDI
+			_driver->setGM(_vm->getGameId() == GID_ITE);
 		}
 		free(resourceData);
 	}
@@ -177,7 +179,6 @@ Music::~Music() {
 	_vm->getTimerManager()->removeTimerProc(&musicVolumeGaugeCallback);
 	_mixer->stopHandle(_musicHandle);
 	_driver->setTimerCallback(NULL, NULL);
-	_driver->close();
 	delete _driver;
 	_parser->setMidiDriver(NULL);
 	delete _parser;

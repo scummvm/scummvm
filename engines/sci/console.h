@@ -65,6 +65,7 @@ private:
 	bool cmdSentenceFragments(int argc, const char **argv);
 	bool cmdParse(int argc, const char **argv);
 	bool cmdSetParseNodes(int argc, const char **argv);
+	bool cmdSaid(int argc, const char **argv);
 	// Resources
 	bool cmdDiskDump(int argc, const char **argv);
 	bool cmdHexDump(int argc, const char **argv);
@@ -129,6 +130,7 @@ private:
 	bool cmdDisassembleAddress(int argc, const char **argv);
 	bool cmdSend(int argc, const char **argv);
 	bool cmdGo(int argc, const char **argv);
+	bool cmdLogKernel(int argc, const char **argv);
 	// Breakpoints
 	bool cmdBreakpointList(int argc, const char **argv);
 	bool cmdBreakpointDelete(int argc, const char **argv);

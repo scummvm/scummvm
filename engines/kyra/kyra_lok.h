@@ -132,7 +132,7 @@ public:
 	int _paletteChanged;
 	int16 _northExitHeight;
 
-	typedef void (KyraEngine_LoK::*IntroProc)();
+	typedef bool (KyraEngine_LoK::*IntroProc)();
 
 	// static data access
 	const char * const *seqWSATable() { return _seq_WSATable; }
@@ -157,11 +157,12 @@ protected:
 
 	// -> intro
 	void seq_intro();
-	void seq_introLogos();
-	void seq_introStory();
-	void seq_introMalcolmTree();
-	void seq_introKallakWriting();
-	void seq_introKallakMalcolm();
+	bool seq_introPublisherLogos();
+	bool seq_introLogos();
+	bool seq_introStory();
+	bool seq_introMalcolmTree();
+	bool seq_introKallakWriting();
+	bool seq_introKallakMalcolm();
 
 	// -> ingame animations
 	void seq_createAmuletJewel(int jewel, int page, int noSound, int drawOnly);
@@ -373,19 +374,23 @@ protected:
 	//void setTimer19();
 	void setupTimers();
 	void timerUpdateHeadAnims(int timerNum);
-	void timerSetFlags1(int timerNum);
-	void timerSetFlags2(int timerNum);
-	void timerSetFlags3(int timerNum);
-	void timerCheckAnimFlag1(int timerNum);
-	void timerCheckAnimFlag2(int timerNum);
+	void timerTulipCreator(int timerNum);
+	void timerRubyCreator(int timerNum);
+	void timerAsInvisibleTimeout(int timerNum);
+	void timerAsWillowispTimeout(int timerNum);
 	void checkAmuletAnimFlags();
 	void timerRedrawAmulet(int timerNum);
+	void timerLavenderRoseCreator(int timerNum);
+	void timerAcornCreator(int timerNum);
+	void timerBlueberryCreator(int timerNum);
 	void timerFadeText(int timerNum);
-	void updateAnimFlag1(int timerNum);
-	void updateAnimFlag2(int timerNum);
+	void timerWillowispFrameTimer(int timerNum);
+	void timerInvisibleFrameTimer(int timerNum);
 	void drawAmulet();
 	void setTextFadeTimerCountdown(int16 countdown);
 	void setWalkspeed(uint8 newSpeed);
+
+	void setItemCreationFlags(int offset, int count);
 
 	int buttonInventoryCallback(Button *caller);
 	int buttonAmuletCallback(Button *caller);
@@ -472,6 +477,8 @@ protected:
 	int8 _charSayUnk2;
 	int8 _charSayUnk3;
 	int8 _currHeadShape;
+	int8 _disabledTalkAnimObject;
+	int8 _enabledTalkAnimObject;
 	uint8 _currSentenceColor[3];
 	int8 _startSentencePalIndex;
 	bool _fadeText;

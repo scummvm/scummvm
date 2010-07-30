@@ -35,6 +35,7 @@
 #include "sound/audiostream.h"
 #include "sound/decoders/aiff.h"
 #include "sound/decoders/flac.h"
+#include "sound/decoders/mac_snd.h"
 #include "sound/decoders/mp3.h"
 #include "sound/decoders/raw.h"
 #include "sound/decoders/vorbis.h"
@@ -337,19 +338,9 @@ Audio::RewindableAudioStream *AudioPlayer::getAudioStream(uint32 number, uint32 
 		} else if (audioRes->size > 14 && READ_BE_UINT16(audioRes->data) == 1 && READ_BE_UINT16(audioRes->data + 2) == 1
 				&& READ_BE_UINT16(audioRes->data + 4) == 5 && READ_BE_UINT32(audioRes->data + 10) == 0x00018051) {
 			// Mac snd detected
-			// See http://developer.apple.com/legacy/mac/library/documentation/mac/Sound/Sound-60.html#HEADING60-15 for more details
+			Common::MemoryReadStream *sndStream = new Common::MemoryReadStream(audioRes->data, audioRes->size, DisposeAfterUse::NO);
 
-			uint32 soundHeaderOffset = READ_BE_UINT32(audioRes->data + 16);
-			assert(READ_BE_UINT32(audioRes->data + soundHeaderOffset) == 0);
-			size = READ_BE_UINT32(audioRes->data + soundHeaderOffset + 4);
-			_audioRate = READ_BE_UINT16(audioRes->data + soundHeaderOffset + 8); // Really floating point, but we're just truncating
-
-			if (*(audioRes->data + soundHeaderOffset + 20) != 0)
-				error("Unhandled Mac snd extended/compressed header");
-
-			data = (byte *)malloc(size);
-			memcpy(data, audioRes->data + soundHeaderOffset + 22, size);
-			flags = Audio::FLAG_UNSIGNED;
+			audioSeekStream = Audio::makeMacSndStream(sndStream, DisposeAfterUse::YES);
 		} else {
 			// SCI1 raw audio
 			size = audioRes->size;

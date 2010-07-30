@@ -346,15 +346,11 @@ void MidiPlayer::clearConstructs(MusicInfo &info) {
 		info.num_songs = 0;
 	}
 
-	if (info.data) {
-		free(info.data);
-		info.data = 0;
-	} // end if
+	free(info.data);
+	info.data = 0;
 
-	if (info.parser) {
-		delete info.parser;
-		info.parser = 0;
-	}
+	delete info.parser;
+	info.parser = 0;
 
 	if (_driver) {
 		for (i = 0; i < 16; ++i) {

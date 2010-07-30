@@ -72,6 +72,7 @@ enum {
 	kCmdGlobalGraphicsOverride = 'OGFX',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
+	kCmdGlobalMT32Override = 'OM32',
 	kCmdGlobalVolumeOverride = 'OVOL',
 
 	kCmdChooseSoundFontCmd = 'chsf',
@@ -144,6 +145,7 @@ protected:
 	CheckboxWidget *_globalGraphicsOverride;
 	CheckboxWidget *_globalAudioOverride;
 	CheckboxWidget *_globalMIDIOverride;
+	CheckboxWidget *_globalMT32Override;
 	CheckboxWidget *_globalVolumeOverride;
 };
 
@@ -199,7 +201,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	}
 
 	//
-	// 3) The graphics tab
+	// 2) The graphics tab
 	//
 	_graphicsTabId = tab->addTab(g_system->getOverlayWidth() > 320 ? _("Graphics") : _("GFX"));
 
@@ -208,7 +210,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addGraphicControls(tab, "GameOptions_Graphics.");
 
 	//
-	// 4) The audio tab
+	// 3) The audio tab
 	//
 	tab->addTab(_("Audio"));
 
@@ -218,7 +220,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
-	// 5) The volume tab
+	// 4) The volume tab
 	//
 	tab->addTab(_("Volume"));
 
@@ -227,7 +229,7 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
-	// 6) The MIDI tab
+	// 5) The MIDI tab
 	//
 	tab->addTab(_("MIDI"));
 
@@ -239,7 +241,19 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addMIDIControls(tab, "GameOptions_MIDI.");
 
 	//
-	// 2) The 'Path' tab
+	// 6) The MT-32 tab
+	//
+	tab->addTab(_("MT-32"));
+
+	_globalMT32Override = new CheckboxWidget(tab, "GameOptions_MT32.EnableTabCheckbox", _("Override global MT-32 settings"), 0, kCmdGlobalMT32Override);
+
+	//if (_guioptions & Common::GUIO_NOMIDI)
+	//	_globalMT32Override->setEnabled(false);
+
+	addMT32Controls(tab, "GameOptions_MT32.");
+
+	//
+	// 7) The Paths tab
 	//
 	tab->addTab(_("Paths"));
 
@@ -305,10 +319,12 @@ void EditGameDialog::open() {
 
 	e = ConfMan.hasKey("soundfont", _domain) ||
 		ConfMan.hasKey("multi_midi", _domain) ||
-		ConfMan.hasKey("native_mt32", _domain) ||
-		ConfMan.hasKey("enable_gs", _domain) ||
 		ConfMan.hasKey("midi_gain", _domain);
 	_globalMIDIOverride->setState(e);
+
+	e = ConfMan.hasKey("native_mt32", _domain) ||
+		ConfMan.hasKey("enable_gs", _domain);
+	_globalMT32Override->setState(e);
 
 	// TODO: game path
 
@@ -381,6 +397,10 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdGlobalMIDIOverride:
 		setMIDISettingsState(data != 0);
+		draw();
+		break;
+	case kCmdGlobalMT32Override:
+		setMT32SettingsState(data != 0);
 		draw();
 		break;
 	case kCmdGlobalVolumeOverride:

@@ -28,7 +28,17 @@
 
 namespace Sci {
 
+struct PlaneEntry {
+	reg_t object;
+	uint16 priority;
+	uint16 lastPriority;
+	GuiResourceId pictureId;
+};
+
+typedef Common::List<PlaneEntry> PlaneList;
+
 struct FrameoutEntry {
+	uint16 givenOrderNr;
 	reg_t object;
 	GuiResourceId viewId;
 	int16 loopNo;
@@ -40,9 +50,21 @@ struct FrameoutEntry {
 	int16 scaleX;
 	int16 scaleY;
 	Common::Rect celRect;
+	GfxPicture *picture;
+	int16 picStartX;
 };
 
 typedef Common::List<FrameoutEntry *> FrameoutList;
+
+struct PlanePictureEntry {
+	reg_t object;
+	int16 startX;
+	GuiResourceId pictureId;
+	GfxPicture *picture;
+	FrameoutEntry *pictureCels; // temporary
+};
+
+typedef Common::List<PlanePictureEntry> PlanePictureList;
 
 class GfxCache;
 class GfxCoordAdjuster32;
@@ -63,7 +85,11 @@ public:
 	void kernelAddScreenItem(reg_t object);
 	void kernelDeleteScreenItem(reg_t object);
 	int16 kernelGetHighPlanePri();
+	void kernelAddPicAt(reg_t planeObj, int16 forWidth, GuiResourceId pictureId);
 	void kernelFrameout();
+
+	void addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 startX);
+	void deletePlanePictures(reg_t object);
 
 private:
 	SegManager *_segMan;
@@ -75,9 +101,13 @@ private:
 	GfxPaint32 *_paint32;
 
 	Common::Array<reg_t> _screenItems;
-	Common::List<reg_t> _planes;
+	PlaneList _planes;
+	PlanePictureList _planePictures;
 
 	void sortPlanes();
+
+	uint16 scriptsRunningWidth;
+	uint16 scriptsRunningHeight;
 };
 
 } // End of namespace Sci

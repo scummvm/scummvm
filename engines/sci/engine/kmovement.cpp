@@ -267,6 +267,15 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
+	if ((getSciVersion() >= SCI_VERSION_1_LATE)) {
+		// Mixed-Up Fairy Tales has no xLast/yLast selectors
+		if (SELECTOR(xLast) != -1) {
+			// save last position into mover
+			writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
+			writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
+		}
+	}
+
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (g_sci->_features->handleMoveCount()) {
@@ -316,14 +325,24 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
+	bool collision = false;
+	reg_t cantBeHere = NULL_REG;
+
 	if (SELECTOR(cantBeHere) != -1) {
+		// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
+		//  get a collision otherwise
+		s->r_acc = NULL_REG;
 		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
-		s->r_acc = make_reg(0, !s->r_acc.offset);
+		if (!s->r_acc.isNull())
+			collision = true;
+		cantBeHere = s->r_acc;
 	} else {
 		invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
+		if (s->r_acc.isNull())
+			collision = true;
 	}
 
-	if (!s->r_acc.offset) { // Contains the return value
+	if (collision) {
 		signal = readSelectorValue(segMan, client, SELECTOR(signal));
 
 		writeSelectorValue(segMan, client, SELECTOR(x), oldx);
@@ -331,13 +350,16 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, client, SELECTOR(signal), (signal | kSignalHitObstacle));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
-		completed = 1;
+		// We shall not set completed in this case, sierra sci also doesn't do it
+		//  if we set call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
 			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
+	if (SELECTOR(cantBeHere) != -1)
+		return cantBeHere;
 	return make_reg(0, completed);
 }
 

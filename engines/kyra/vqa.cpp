@@ -260,8 +260,8 @@ bool VQAMovie::open(const char *filename) {
 					_header.bits = 8;
 			}
 
-			setX((Screen::SCREEN_W - _header.width) / 2);
-			setY((Screen::SCREEN_H - _header.height) / 2);
+			_x = (Screen::SCREEN_W - _header.width) / 2;
+			_y = (Screen::SCREEN_H - _header.height) / 2;
 
 			_frameInfo = new uint32[_header.numFrames];
 			_frame = new byte[_header.width * _header.height];

@@ -42,11 +42,7 @@ struct MemHandle {
 #define MEM_CAN_FREE	1
 #define MEM_DONT_FREE	2
 
-#ifdef PALMOS_MODE
-#define MAX_ALLOC (3*1024*1024) // max amount of mem we want to alloc().
-#else
 #define MAX_ALLOC (6*1024*1024) // max amount of mem we want to alloc().
-#endif
 
 class MemMan {
 public:

@@ -475,7 +475,7 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 				//  on tick 0. Signal isn't set at that point by sierra sci and it would cause the castle daventry text to
 				//  get immediately removed, so we currently filter it.
 				// Sierra SCI ignores them as well at that time
-				if (_position._play_tick) {
+				if ((_position._play_tick) || (info.delta)) {
 					_signalSet = true;
 					_signalToSet = info.basic.param1;
 				}
@@ -516,10 +516,11 @@ void MidiParser_SCI::parseNextEvent(EventInfo &info) {
 					break;
 				case SCI_VERSION_1_EARLY:
 				case SCI_VERSION_1_LATE:
+				case SCI_VERSION_2_1:
 					_dataincToAdd = 1;
 					break;
 				default:
-					break;
+					error("unsupported _soundVersion");
 				}
 				break;
 			case kResetOnPause:
@@ -672,6 +673,7 @@ void MidiParser_SCI::setVolume(byte volume) {
 
 	case SCI_VERSION_1_EARLY:
 	case SCI_VERSION_1_LATE:
+	case SCI_VERSION_2_1:
 		// Send previous channel volumes again to actually update the volume
 		for (int i = 0; i < 15; i++)
 			if (_channelRemap[i] != -1)

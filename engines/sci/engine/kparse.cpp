@@ -31,6 +31,8 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 
+//#define DEBUG_PARSER
+
 namespace Sci {
 
 /*************************************************************/
@@ -60,8 +62,8 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	}
 
 #ifdef DEBUG_PARSER
-		debugC(2, kDebugLevelParser, "Said block:", 0);
-		s->_voc->decipherSaidBlock(said_block);
+		printf("Said block: ");
+		g_sci->getVocabulary()->debugDecipherSaidBlock(said_block);
 #endif
 
 	if (voc->parser_event.isNull() || (readSelectorValue(s->_segMan, voc->parser_event, SELECTOR(claimed)))) {
@@ -93,6 +95,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
+	g_sci->checkVocabularySwitch();
 	Vocabulary *voc = g_sci->getVocabulary();
 	voc->parser_event = event;
 	reg_t params[2] = { voc->parser_base, stringpos };
@@ -106,7 +109,7 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 1);
 
 #ifdef DEBUG_PARSER
-			debugC(2, kDebugLevelParser, "Parsed to the following blocks:", 0);
+			debugC(2, kDebugLevelParser, "Parsed to the following blocks:");
 
 			for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]", i->_class, i->_group);

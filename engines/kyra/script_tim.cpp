@@ -159,7 +159,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 	_tim->opcodes = opcodes;
 
 	IFFParser iff(*stream);
-	Common::Functor1Mem< Common::IFFChunk &, bool, TIMInterpreter > c(this, &TIMInterpreter::callback);
+	Common::Functor1Mem<Common::IFFChunk &, bool, TIMInterpreter> c(this, &TIMInterpreter::callback);
 	iff.parse(c);
 
 	if (!_tim->avtl)
@@ -170,7 +170,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 
 	delete stream;
 
-	int num = (_avtlChunkSize < TIM::kCountFuncs) ? _avtlChunkSize : (int)TIM::kCountFuncs;
+	const int num = (_avtlChunkSize < TIM::kCountFuncs) ? _avtlChunkSize : (int)TIM::kCountFuncs;
 	for (int i = 0; i < num; ++i)
 		_tim->func[i].avtl = _tim->avtl + _tim->avtl[i];
 

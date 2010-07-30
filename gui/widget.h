@@ -159,31 +159,6 @@ protected:
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) { assert(_boss); _boss->handleCommand(sender, cmd, data); }
 };
 
-class GuiManager;
-
-class Tooltip : public GuiObject {
-public:
-	Tooltip(GuiManager *guiManager);
-	
-	bool isVisible() const { return _visible; }
-	void draw();
-	void reflowLayout();
-	void releaseFocus() {}
-	void setVisible(bool state);
-	void setMouseXY(int x, int y);
-
-protected:
-	Common::String			_text;
-	GuiManager *_guiManager;
-	bool _visible;
-	int _mouseX, _mouseY;
-	int _maxWidth;
-	int _xdelta, _ydelta;
-
-	Common::StringArray _wrappedLines;
-	ThemeEngine::StoredState *_storedState;
-};
-
 /* StaticTextWidget */
 class StaticTextWidget : public Widget {
 protected:
@@ -272,7 +247,7 @@ class RadiobuttonWidget : public ButtonWidget {
 protected:
 	bool	_state;
 	int _value;
-	
+
 public:
 	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
 	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);

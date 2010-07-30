@@ -73,13 +73,16 @@ enum {
 	kParseNumber = 4
 };
 
+#define VOCAB_MAX_WORDLENGTH 256
+
 /* Anywords are ignored by the parser */
 #define VOCAB_CLASS_ANYWORD 0xff
 
 /* This word class is used for numbers */
 #define VOCAB_MAGIC_NUMBER_GROUP 0xffd /* 0xffe ? */
+#define VOCAB_MAGIC_NOTHING_GROUP 0xffe
 
-/* Number of nodes for each parse_tree_node structure */
+/* Number of nodes for each ParseTreeNode structure */
 #define VOCAB_TREE_NODES 500
 
 #define VOCAB_TREE_NODE_LAST_WORD_STORAGE 0x140
@@ -115,7 +118,7 @@ struct ResultWord {
 
 typedef Common::List<ResultWord> ResultWordList;
 
-typedef Common::HashMap<Common::String, ResultWord, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> WordMap;
+typedef Common::HashMap<Common::String, ResultWord, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> WordMap;
 
 
 struct ParseRuleList;
@@ -149,16 +152,16 @@ struct parse_tree_branch_t {
 };
 
 enum ParseTypes {
-	kParseTreeLeafNode = 0,
-	kParseTreeBranchNode = 1
+	kParseTreeWordNode = 4,
+	kParseTreeLeafNode = 5,
+	kParseTreeBranchNode = 6
 };
 
-struct parse_tree_node_t {
+struct ParseTreeNode {
 	ParseTypes type;  /**< leaf or branch */
-	union {
-		int value;  /**< For leaves */
-		short branches[2]; /**< For branches */
-	} content;
+	int value; /**< For leaves */
+	ParseTreeNode* left; /**< Left child, for branches */
+	ParseTreeNode* right; /**< Right child, for branches */
 };
 
 enum VocabularyVersions {
@@ -168,8 +171,11 @@ enum VocabularyVersions {
 
 class Vocabulary {
 public:
-	Vocabulary(ResourceManager *resMan);
+	Vocabulary(ResourceManager *resMan, bool foreign);
 	~Vocabulary();
+
+	// reset parser status
+	void reset();
 
 	/**
 	 * Gets any word from the specified group. For debugging only.
@@ -229,7 +235,7 @@ public:
 	 * For debugging only.
 	 * @param pos	pointer to the data to dump
 	 */
-	void decipherSaidBlock(byte *pos);
+	void debugDecipherSaidBlock(const byte *pos);
 
 	/**
 	 * Prints the parser suffixes to the debug console.
@@ -301,6 +307,11 @@ private:
 	ResourceManager *_resMan;
 	VocabularyVersions _vocabVersion;
 
+	bool _foreign;
+	uint16 _resourceIdWords;
+	uint16 _resourceIdSuffixes;
+	uint16 _resourceIdBranches;
+
 	// Parser-related lists
 	SuffixList _parserSuffixes;
 	ParseRuleList *_parserRules; /**< GNF rules used in the parser algorithm */
@@ -310,7 +321,7 @@ private:
 
 public:
 	// Accessed by said()
-	parse_tree_node_t _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
+	ParseTreeNode _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
 
 	// Parser data:
 	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
@@ -323,7 +334,7 @@ public:
  * @param tree_name		Name of the tree to dump (free-form)
  * @param nodes			The nodes containing the parse tree
  */
-void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
+void vocab_dump_parse_tree(const char *tree_name, ParseTreeNode *nodes);
 
 
 
@@ -334,7 +345,7 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
  * @param verbose	Whether to display the parse tree after building it
  * @return 1 on a match, 0 otherwise
  */
-int said(EngineState *s, byte *spec, bool verbose);
+int said(EngineState *s, const byte *spec, bool verbose);
 
 } // End of namespace Sci
 

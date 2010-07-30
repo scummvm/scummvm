@@ -488,48 +488,7 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
 			printf("%04x: ", seeker);
-			while (seeker < _seeker) {
-				unsigned char nextitem = script->data [seeker++];
-				if (nextitem == 0xFF)
-					printf("\n%04x: ", seeker);
-				else if (nextitem >= 0xF0) {
-					switch (nextitem) {
-					case 0xf0:
-						printf(", ");
-						break;
-					case 0xf1:
-						printf("& ");
-						break;
-					case 0xf2:
-						printf("/ ");
-						break;
-					case 0xf3:
-						printf("( ");
-						break;
-					case 0xf4:
-						printf(") ");
-						break;
-					case 0xf5:
-						printf("[ ");
-						break;
-					case 0xf6:
-						printf("] ");
-						break;
-					case 0xf7:
-						printf("# ");
-						break;
-					case 0xf8:
-						printf("< ");
-						break;
-					case 0xf9:
-						printf("> ");
-						break;
-					}
-				} else {
-					nextitem = nextitem << 8 | script->data [seeker++];
-					printf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
-				}
-			}
+			vocab->debugDecipherSaidBlock(script->data + seeker);
 			printf("\n");
 			break;
 

@@ -100,9 +100,7 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 
 Common::Error KyraEngine_v1::init() {
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
 		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
@@ -259,7 +257,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	int keys = 0;
 	int8 mouseWheel = 0;
 
-	while (_eventList.size()) {
+	while (!_eventList.empty()) {
 		Common::Event event = *_eventList.begin();
 		bool breakLoop = false;
 
@@ -283,6 +281,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					if (_debugger)
 						_debugger->attach();
+					breakLoop = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_q) {
 					quitGame();
 				}
@@ -336,7 +335,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			break;
 		}
 
-		if (_debugger && _debugger->isAttached())
+		if (_debugger)
 			_debugger->onFrame();
 
 		if (breakLoop)

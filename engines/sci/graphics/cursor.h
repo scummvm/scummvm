@@ -58,6 +58,11 @@ public:
 	void refreshPosition();
 
 	/**
+	 * Removes limit for mouse movement
+	 */
+	void kernelResetMoveZone();
+
+	/**
 	 * Limits the mouse movement to a given rectangle.
 	 *
 	 * @param[in] rect	The rectangle
@@ -78,6 +83,7 @@ private:
 
 	int _upscaledHires;
 
+	bool _moveZoneActive;
 	Common::Rect _moveZone; // Rectangle in which the pointer can move
 
 	CursorCache _cachedCursors;

@@ -44,6 +44,7 @@
 #include "backends/plugins/psp/psp-provider.h"
 #include "backends/platform/psp/psppixelformat.h"
 #include "backends/platform/psp/osys_psp.h"
+#include "backends/platform/psp/tests.h"	/* for unit/speed tests */
 #include "backends/platform/psp/trace.h"
 
 #ifdef ENABLE_PROFILING
@@ -169,6 +170,13 @@ int main(void) {
 	PluginManager::instance().addPluginProvider(new PSPPluginProvider());
 #endif
 
+/* unit/speed tests */
+#if defined (PSP_ENABLE_UNIT_TESTS) || defined (PSP_ENABLE_SPEED_TESTS)	
+	PSP_INFO_PRINT("running tests\n");
+	psp_tests();
+	sceKernelSleepThread();	// that's it. That's all we're doing
+#endif
+	
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!

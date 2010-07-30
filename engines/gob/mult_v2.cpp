@@ -1149,7 +1149,6 @@ void Mult_v2::playImd(const char *imdFile, Mult::Mult_ImdKey &key, int16 dir,
 void Mult_v2::advanceObjects(int16 index) {
 	int16 frame;
 	bool stop = false;
-	bool hasImds = false;
 
 	frame = _multData->animKeysFrames[index];
 	if (frame == -1)
@@ -1254,7 +1253,6 @@ void Mult_v2::advanceObjects(int16 index) {
 			if ((dir != 1) && (--startFrame < 0))
 				startFrame = 0;
 
-			hasImds = true;
 			playImd(imdFile, key, dir, startFrame);
 		}
 	}

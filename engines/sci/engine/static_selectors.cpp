@@ -168,6 +168,20 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[274] = "syncTime";
 			names[275] = "syncCue";
+		} else if (g_sci->getGameId() == GID_ISLANDBRAIN) {
+			// The demo of Island of Dr. Brain needs the init selector set to match up with the full
+			// game's workaround - bug #3035033
+			if (names.size() < 111)
+				names.resize(111);
+
+			names[110] = "init";
+		} else if (g_sci->getGameId() == GID_LAURABOW2) {
+			// The floppy of version needs the open selector set to match up with the CD version's
+			// workaround - bug #3035694
+			if (names.size() < 190)
+				names.resize(190);
+
+			names[189] = "open";
 		}
 
 #ifdef ENABLE_SCI32

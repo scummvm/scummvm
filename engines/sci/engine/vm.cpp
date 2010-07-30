@@ -38,6 +38,7 @@
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/selector.h"	// for SELECTOR
 #include "sci/engine/gc.h"
+#include "sci/engine/workarounds.h"
 
 namespace Sci {
 
@@ -47,86 +48,6 @@ const reg_t TRUE_REG = {0, 1};
 //#define VM_DEBUG_SEND
 
 #define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
-
-#define END Script_None
-
-opcode_format g_opcode_formats[128][4] = {
-	/*00*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*04*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*08*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*0C*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*10*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_None},
-	/*14*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_SRelative, END},
-	/*18*/
-	{Script_SRelative, END}, {Script_SRelative, END}, {Script_SVariable, END}, {Script_None},
-	/*1C*/
-	{Script_SVariable, END}, {Script_None}, {Script_None}, {Script_Variable, END},
-	/*20*/
-	{Script_SRelative, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_Byte, END}, {Script_Variable, Script_SVariable, Script_Byte, END},
-	/*24 (24=ret)*/
-	{Script_End}, {Script_Byte, END}, {Script_Invalid}, {Script_Invalid},
-	/*28*/
-	{Script_Variable, END}, {Script_Invalid}, {Script_Byte, END}, {Script_Variable, Script_Byte, END},
-	/*2C*/
-	{Script_SVariable, END}, {Script_SVariable, Script_Variable, END}, {Script_None}, {Script_Invalid},
-	/*30*/
-	{Script_None}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
-	/*34*/
-	{Script_Property, END}, {Script_Property, END}, {Script_Property, END}, {Script_Property, END},
-	/*38*/
-	{Script_Property, END}, {Script_SRelative, END}, {Script_SRelative, END}, {Script_None},
-	/*3C*/
-	{Script_None}, {Script_None}, {Script_None}, {Script_Word},
-	/*40-4F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	/*50-5F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	/*60-6F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	/*70-7F*/
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END},
-	{Script_Global, END}, {Script_Local, END}, {Script_Temp, END}, {Script_Param, END}
-};
-#undef END
-
-// TODO: script_adjust_opcode_formats should probably be part of the
-// constructor (?) of a VirtualMachine or a ScriptManager class.
-void script_adjust_opcode_formats() {
-	if (g_sci->_features->detectLofsType() != SCI_VERSION_0_EARLY) {
-		g_opcode_formats[op_lofsa][0] = Script_Offset;
-		g_opcode_formats[op_lofss][0] = Script_Offset;
-	}
-
-#ifdef ENABLE_SCI32
-	// In SCI32, some arguments are now words instead of bytes
-	if (getSciVersion() >= SCI_VERSION_2) {
-		g_opcode_formats[op_calle][2] = Script_Word;
-		g_opcode_formats[op_callk][1] = Script_Word;
-		g_opcode_formats[op_super][1] = Script_Word;
-		g_opcode_formats[op_send][0] = Script_Word;
-		g_opcode_formats[op_self][0] = Script_Word;
-		g_opcode_formats[op_call][1] = Script_Word;
-		g_opcode_formats[op_callb][1] = Script_Word;
-	}
-#endif
-}
 
 /**
  * Adds an entry to the top of the execution stack.
@@ -248,7 +169,7 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 			} else {
 				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
 				// Just skip around it here so we don't error out in validate_arithmetic.
-				if (g_sci->getGameId() == GID_MOTHERGOOSE && getSciVersion() <= SCI_VERSION_1_1 && type == VAR_PARAM && index == 1)
+				if (g_sci->getGameId() == GID_MOTHERGOOSE && type == VAR_PARAM && index == 1)
 					return false;
 
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
@@ -262,109 +183,33 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 	return true;
 }
 
-struct SciTrackOriginReply {
-	int scriptNr;
-	Common::String objectName;
-	Common::String methodName;
-	int localCallOffset;
-};
-
-static reg_t trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin) {
-	EngineState *state = g_sci->getEngineState();
-	ExecStack *lastCall = state->xs;
-	Script *local_script = state->_segMan->getScriptIfLoaded(lastCall->local_segment);
-	int curScriptNr = local_script->getScriptNumber();
-
-	if (lastCall->debugLocalCallOffset != -1) {
-		// if lastcall was actually a local call search back for a real call
-		Common::List<ExecStack>::iterator callIterator = state->_executionStack.end();
-		while (callIterator != state->_executionStack.begin()) {
-			callIterator--;
-			ExecStack loopCall = *callIterator;
-			if ((loopCall.debugSelector != -1) || (loopCall.debugExportId != -1)) {
-				lastCall->debugSelector = loopCall.debugSelector;
-				lastCall->debugExportId = loopCall.debugExportId;
-				break;
-			}
-		}
-	}
-
-	Common::String curObjectName = state->_segMan->getObjectName(lastCall->sendp);
-	Common::String curMethodName;
-	const SciGameId gameId = g_sci->getGameId();
-
-	if (lastCall->type == EXEC_STACK_TYPE_CALL) {
-		if (lastCall->debugSelector != -1) {
-			curMethodName = g_sci->getKernel()->getSelectorName(lastCall->debugSelector);
-		} else if (lastCall->debugExportId != -1) {
-			curObjectName = "";
-			curMethodName = curMethodName.printf("export %d", lastCall->debugExportId);
-		}
-	}
-
-	if (workaroundList) {
-		// Search if there is a workaround for this one
-		const SciWorkaroundEntry *workaround;
-		int16 inheritanceLevel = 0;
-		Common::String searchObjectName = curObjectName;
-		reg_t searchObject = lastCall->sendp;
-		do {
-			workaround = workaroundList;
-			while (workaround->objectName) {
-				if (workaround->gameId == gameId && workaround->scriptNr == curScriptNr
-						&& ((workaround->inheritanceLevel == -1) || (workaround->inheritanceLevel == inheritanceLevel))
-						&& (workaround->objectName == searchObjectName)
-						&& workaround->methodName == curMethodName && workaround->localCallOffset == lastCall->debugLocalCallOffset && workaround->index == index) {
-					// Workaround found
-					return workaround->newValue;
-				}
-				workaround++;
-			}
-
-			// Go back to the parent
-			inheritanceLevel++;
-			searchObject = state->_segMan->getObject(searchObject)->getSuperClassSelector();
-			if (!searchObject.isNull())
-				searchObjectName = state->_segMan->getObjectName(searchObject);
-		} while (!searchObject.isNull()); // no parent left?
-	}
-
-	// give caller origin data
-	trackOrigin->objectName = curObjectName;
-	trackOrigin->methodName = curMethodName;
-	trackOrigin->scriptNr = curScriptNr;
-	trackOrigin->localCallOffset = lastCall->debugLocalCallOffset;
-	return make_reg(0xFFFF, 0xFFFF);
+static bool validate_unsignedInteger(reg_t reg, uint16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = reg.offset;
+	return true;
 }
 
-//    gameID,       scriptNr,lvl,         object-name, method-name,    call, index,   replace
-static const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
-    { GID_LAURABOW2,      24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_FREDDYPHARKAS,  24,  0,              "gcWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_FREDDYPHARKAS,  31,  0,            "quitWin", "open",           -1,    5, { 0, 0xf } }, // is used as priority for game menu
-    { GID_GK2,            11,  0,                   "", "export 10",      -1,    3, { 0,   0 } }, // called when the game starts
-    { GID_JONES,         232,  0,        "weekendText", "draw",        0x3d3,    0, { 0,   0 } }, // jones/cd only - gets called during the game
-    { GID_JONES,         255,  0,                   "", "export 0",       -1,   13, { 0,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_JONES,         255,  0,                   "", "export 0",       -1,   14, { 0,   0 } }, // jones/ega&vga only - called when the game starts
-    { GID_LSL1,          720,  0,              "rm720", "init",           -1,    0, { 0,   0 } }, // age check room
-    { GID_LSL3,          997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { 0, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
-    { GID_LSL6,          928, -1,           "Narrator", "startText",      -1,    0, { 0,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
-    { GID_ISLANDBRAIN,   140,  0,              "piece", "init",           -1,    3, { 0,   1 } }, // first puzzle right at the start, some initialization variable. bnt is done on it, and it should be non-0
-    { GID_ISLANDBRAIN,   268,  0,          "anElement", "select",         -1,    0, { 0,   0 } }, // elements puzzle, gets used before super TextIcon
-    { GID_KQ5,             0,  0,                   "", "export 29",      -1,    3, { 0,   0 } }, // called when playing harp for the harpies, is used for kDoAudio
-    { GID_KQ5,            25,  0,              "rm025", "doit",           -1,    0, { 0,   0 } }, // inside witch forest, where the walking rock is
-    { GID_KQ6,           903,  0,         "controlWin", "open",           -1,    4, { 0,   0 } }, // when opening the controls window (save, load etc)
-    { GID_KQ6,           500,  0,              "rm500", "init",           -1,    0, { 0,   0 } }, // going to island of the beast
-    { GID_KQ6,           520,  0,              "rm520", "init",           -1,    0, { 0,   0 } }, // going to boiling water trap on beast isle
-    { GID_KQ6,            30,  0,               "rats", "changeState",    -1,    0, { 0,   0 } }, // rats in the catacombs
-    { GID_LSL6,           85,  0,          "washcloth", "doVerb",         -1,    0, { 0,   0 } }, // washcloth in inventory
-    { GID_SQ1,           703,  0,                   "", "export 1",       -1,    0, { 0,   0 } }, // sub that's called from several objects while on sarien battle cruiser
-    { GID_SQ1,           703,  0,         "firePulsar", "changeState", 0x18a,    0, { 0,   0 } }, // export 1, but called locally (when shooting at aliens)
-    { GID_SQ4,           928,  0,           "Narrator", "startText",      -1, 1000, { 0,   1 } }, // sq4cd: method returns this to the caller
-    { GID_SQ6,             0,  0,                "SQ6", "init",           -1,    2, { 0,   0 } }, // called when the game starts
-    { GID_SQ6,         64950,  0,               "View", "handleEvent",    -1,    0, { 0,   0 } }, // called when pressing "Start game" in the main menu
-    SCI_WORKAROUNDENTRY_TERMINATOR
-};
+static bool validate_signedInteger(reg_t reg, int16 &integer) {
+	if (reg.segment)
+		return false;
+	integer = (int16)reg.offset;
+	return true;
+}
+
+extern const char *opcodeNames[]; // from scriptdebug.cpp
+
+static reg_t arithmetic_lookForWorkaround(const byte opcode, const SciWorkaroundEntry *workaroundList, reg_t value1, reg_t value2) {
+	SciTrackOriginReply originReply;
+	SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, workaroundList, &originReply);
+	if (solution.type == WORKAROUND_NONE)
+		error("%s on non-integer (%04x:%04x, %04x:%04x) from method %s::%s (script %d, room %d, localCall %x)", 
+		opcodeNames[opcode], PRINT_REG(value1), PRINT_REG(value2), originReply.objectName.c_str(), 
+		originReply.methodName.c_str(), originReply.scriptNr, g_sci->getEngineState()->currentRoomNumber(),
+		originReply.localCallOffset);
+	assert(solution.type == WORKAROUND_FAKE);
+	return make_reg(0, solution.value);
+}
 
 static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, int index, reg_t default_value) {
 	if (validate_variable(r, stack_base, type, max, index)) {
@@ -374,9 +219,13 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 				// Uninitialized read on a temp
 				//  We need to find correct replacements for each situation manually
 				SciTrackOriginReply originReply;
-				r[index] = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
-				if ((r[index].segment == 0xFFFF) && (r[index].offset == 0xFFFF))
-					error("Uninitialized read for temp %d from method %s::%s (script %d, localCall %x)", index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				SciWorkaroundSolution solution = trackOriginAndFindWorkaround(index, uninitializedReadWorkarounds, &originReply);
+				if (solution.type == WORKAROUND_NONE)
+					error("Uninitialized read for temp %d from method %s::%s (script %d, room %d, localCall %x)", 
+					index, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, 
+					g_sci->getEngineState()->currentRoomNumber(), originReply.localCallOffset);
+				assert(solution.type == WORKAROUND_FAKE);
+				r[index] = make_reg(0, solution.value);
 				break;
 			}
 			case VAR_PARAM:
@@ -440,12 +289,9 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define WRITE_VAR(type, index, value) validate_write_var(s->variables[type], s->stack_base, type, s->variablesMax[type], index, value, s->_segMan, g_sci->getKernel())
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
-#define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
-
 // Operating on the stack
 // 16 bit:
 #define PUSH(v) PUSH32(make_reg(0, v))
-#define POP() (validate_arithmetic(POP32()))
 // 32 bit:
 #define PUSH32(a) (*(validate_stack_addr(s, (s->xs->sp)++)) = (a))
 #define POP32() (*(validate_stack_addr(s, --(s->xs->sp))))
@@ -618,29 +464,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 
 			if (argc > 1) {
 				// argc can indeed be bigger than 1 in some cases, and it's usually the
-				// result of a script bug
+				// result of a script bug. Usually these aren't fatal.
 
 				const char *objectName = s->_segMan->getObjectName(send_obj);
 
-				if (!strcmp(objectName, "Sq4GlobalNarrator") && selector == 606) {
-					// SQ4 has a script bug in the Sq4GlobalNarrator object when invoking the
-					// returnVal selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "longSong") && selector == 3 && g_sci->getGameId() == GID_QFG1) {
-					// QFG1VGA has a script bug in the longSong object when invoking the
-					// loop selector, which doesn't affect gameplay, thus don't diplay it
-				} else if (!strcmp(objectName, "PuzPiece") && selector == 77 && g_sci->getGameId() == GID_CASTLEBRAIN) {
-					// Castle of Dr. Brain has a script bug in the PuzPiece object when invoking
-					// the value selector, which doesn't affect gameplay, thus don't display it
-				} else {
-					// Unknown script bug, show it. Usually these aren't fatal.
-					reg_t oldReg = *varp.getPointer(s->_segMan);
-					reg_t newReg = argp[1];
-					const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
-					warning("send_selector(): argc = %d while modifying variable selector "
-							"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
-							argc, selector, selectorName, PRINT_REG(send_obj),
-							objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
-				}
+				reg_t oldReg = *varp.getPointer(s->_segMan);
+				reg_t newReg = argp[1];
+				const char *selectorName = g_sci->getKernel()->getSelectorName(selector).c_str();
+				debug(2, "send_selector(): argc = %d while modifying variable selector "
+						"%x (%s) of object %04x:%04x (%s) from %04x:%04x to %04x:%04x",
+						argc, selector, selectorName, PRINT_REG(send_obj),
+						objectName, PRINT_REG(oldReg), PRINT_REG(newReg));
 			}
 
 			{
@@ -813,6 +647,61 @@ static void addKernelCallToExecStack(EngineState *s, int kernelCallNr, int argc,
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 }
 
+static void	logKernelCall(const KernelFunction *kernelCall, const KernelSubFunction *kernelSubCall, EngineState *s, int argc, reg_t *argv, reg_t result) {
+	Kernel *kernel = g_sci->getKernel();
+	if (!kernelSubCall) {
+		printf("k%s: ", kernelCall->name);
+	} else {
+		int callNameLen = strlen(kernelCall->name);
+		if (strncmp(kernelCall->name, kernelSubCall->name, callNameLen) == 0) {
+			const char *subCallName = kernelSubCall->name + callNameLen;
+			printf("k%s(%s): ", kernelCall->name, subCallName);
+		} else {
+			printf("k%s(%s): ", kernelCall->name, kernelSubCall->name);
+		}
+	}
+	for (int parmNr = 0; parmNr < argc; parmNr++) {
+		if (parmNr)
+			printf(", ");
+		uint16 regType = kernel->findRegType(argv[parmNr]);
+		if (regType & SIG_TYPE_NULL)
+			printf("0");
+		else if (regType & SIG_TYPE_UNINITIALIZED)
+			printf("UNINIT");
+		else if (regType & SIG_IS_INVALID)
+			printf("INVALID");
+		else if (regType & SIG_TYPE_INTEGER)
+			printf("%d", argv[parmNr].offset);
+		else {
+			printf("%04x:%04x", PRINT_REG(argv[parmNr]));
+			switch (regType) {
+			case SIG_TYPE_OBJECT:
+				printf(" (%s)", s->_segMan->getObjectName(argv[parmNr]));
+				break;
+			case SIG_TYPE_REFERENCE:
+				if (kernelCall->function == kSaid) {
+					SegmentRef saidSpec = s->_segMan->dereference(argv[parmNr]);
+					if (saidSpec.isRaw) {
+						printf(" ('");
+						g_sci->getVocabulary()->debugDecipherSaidBlock(saidSpec.raw);
+						printf("')");
+					} else {
+						printf(" (non-raw said-spec)");
+					}
+				} else {
+					printf(" ('%s')", s->_segMan->getString(argv[parmNr]).c_str());
+				}
+			default:
+				break;
+			}
+		}
+	}
+	if (result.segment)
+		printf(" = %04x:%04x\n", PRINT_REG(result));
+	else
+		printf(" = %d\n", result.offset);
+}
+
 static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	Kernel *kernel = g_sci->getKernel();
 
@@ -826,17 +715,24 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 			&& !kernel->signatureMatch(kernelCall.signature, argc, argv)) {
 		// signature mismatch, check if a workaround is available
 		SciTrackOriginReply originReply;
-		reg_t workaround;
-		workaround = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
-		if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+		SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelCall.workarounds, &originReply);
+		switch (solution.type) {
+		case WORKAROUND_NONE:
 			kernel->signatureDebug(kernelCall.signature, argc, argv);
-			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
-		}
-		// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-		if (workaround.segment == 2)
-			s->r_acc = make_reg(0, workaround.offset);
-		if (workaround.segment)
+			error("[VM] k%s[%x]: signature mismatch via method %s::%s (script %d, room %d, localCall 0x%x)", 
+				kernelCall.name, kernelCallNr, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+				originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+			break;
+		case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
 			return;
+		case WORKAROUND_STILLCALL: // call kernel anyway
+			break;
+		case WORKAROUND_FAKE: // don't do kernel call, fake acc
+			s->r_acc = make_reg(0, solution.value);
+			return;
+		default:
+			error("unknown workaround type");
+		}
 	}
 
 
@@ -844,6 +740,9 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 	if (!kernelCall.subFunctionCount) {
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelCall.function(s, argc, argv);
+
+		if (kernelCall.debugLogging)
+			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -860,43 +759,41 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 		if (kernelSubCall.signature && !kernel->signatureMatch(kernelSubCall.signature, argc, argv)) {
 			// Signature mismatch
 			SciTrackOriginReply originReply;
-			reg_t workaround;
-			workaround = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
-			if ((workaround.segment == 0xFFFF) && (workaround.offset == 0xFFFF)) {
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kernelSubCall.workarounds, &originReply);
+			switch (solution.type) {
+			case WORKAROUND_NONE: {
 				kernel->signatureDebug(kernelSubCall.signature, argc, argv);
 				int callNameLen = strlen(kernelCall.name);
 				if (strncmp(kernelCall.name, kernelSubCall.name, callNameLen) == 0) {
 					const char *subCallName = kernelSubCall.name + callNameLen;
-					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, localCall %x)", kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+					error("[VM] k%s(%s): signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+						kernelCall.name, subCallName, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+						originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
 				}
-				error("[VM] k%s: signature mismatch via method %s::%s (script %d, localCall %x)", kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+				error("[VM] k%s: signature mismatch via method %s::%s (script %d, room %d, localCall %x)", 
+					kernelSubCall.name, originReply.objectName.c_str(), originReply.methodName.c_str(), 
+					originReply.scriptNr, s->currentRoomNumber(), originReply.localCallOffset);
+				break;
 			}
-			// FIXME: implement some real workaround type logic - ignore call, still do call etc.
-			if (workaround.segment == 2)
-				s->r_acc = make_reg(0, workaround.offset);
-			if (workaround.segment)
+			case WORKAROUND_IGNORE: // don't do kernel call, leave acc alone
 				return;
+			case WORKAROUND_STILLCALL: // call kernel anyway
+				break;
+			case WORKAROUND_FAKE: // don't do kernel call, fake acc
+				s->r_acc = make_reg(0, solution.value);
+				return;
+			default:
+				error("unknown workaround type");
+			}
 		}
 		if (!kernelSubCall.function)
 			error("[VM] k%s: subfunction-id %d requested, but not available", kernelCall.name, subId);
 		addKernelCallToExecStack(s, kernelCallNr, argc, argv);
 		s->r_acc = kernelSubCall.function(s, argc, argv);
+
+		if (kernelSubCall.debugLogging)
+			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
 	}
-
-#if 0
-		// Used for debugging
-		Common::String debugMsg = Common::String::printf("%s [0x%x]", kernelCall.name, kernelCallNr) +
-									Common::String::printf(", %d params: ", argc) +
-									" (";
-
-		for (int i = 0; i < argc; i++) {
-			debugMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
-			debugMsg += (i == argc - 1 ? ")" : ", ");
-		}
-
-		debugMsg += ", result: " + Common::String::printf("%04x:%04x", PRINT_REG(s->r_acc));
-		debug("%s", debugMsg.c_str());
-#endif
 
 	// Remove callk stack frame again, if there's still an execution stack
 	if (s->_executionStack.begin() != s->_executionStack.end())
@@ -978,7 +875,7 @@ int readPMachineInstruction(const byte *src, byte &extOpcode, int16 opparams[4])
 	return offset;
 }
 
-void run_vm(EngineState *s, bool restoring) {
+void run_vm(EngineState *s) {
 	assert(s);
 
 	int temp;
@@ -999,8 +896,7 @@ void run_vm(EngineState *s, bool restoring) {
 	if (!local_script)
 		error("run_vm(): program counter gone astray (local_script pointer is null)");
 
-	if (!restoring)
-		s->executionStackBase = s->_executionStack.size() - 1;
+	s->executionStackBase = s->_executionStack.size() - 1;
 
 	s->variablesSegment[VAR_TEMP] = s->variablesSegment[VAR_PARAM] = s->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	s->variablesBase[VAR_TEMP] = s->variablesBase[VAR_PARAM] = s->stack_base;
@@ -1059,9 +955,7 @@ void run_vm(EngineState *s, bool restoring) {
 			g_sci->_debugState.breakpointWasHit = false;
 		}
 		Console *con = g_sci->getSciDebugger();
-		if (con->isAttached()) {
-			con->onFrame();
-		}
+		con->onFrame();
 
 		if (s->xs->sp < s->xs->fp)
 			error("run_vm(): stack underflow, sp: %04x:%04x, fp: %04x:%04x",
@@ -1080,10 +974,15 @@ void run_vm(EngineState *s, bool restoring) {
 
 		switch (opcode) {
 
-		case op_bnot: // 0x00 (00)
+		case op_bnot: { // 0x00 (00)
 			// Binary not
-			s->r_acc = ACC_ARITHMETIC_L(0xffff ^ /*acc*/);
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, 0xffff ^ value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
+		}
 
 		case op_add: // 0x01 (01)
 			r_temp = POP32();
@@ -1148,45 +1047,96 @@ void run_vm(EngineState *s, bool restoring) {
 			}
 			break;
 
-		case op_mul: // 0x03 (03)
-			s->r_acc = ACC_ARITHMETIC_L(((int16)POP()) * (int16)/*acc*/);
+		case op_mul: { // 0x03 (03)
+			r_temp = POP32();
+			int16 value1, value2;
+			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
+				s->r_acc = make_reg(0, value1 * value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
+		}
 
 		case op_div: { // 0x04 (04)
-			int16 divisor = signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, (divisor != 0 ? ((int16)POP()) / divisor : 0));
+			r_temp = POP32();
+			int16 divisor, dividend;
+			if (validate_signedInteger(s->r_acc, divisor) && validate_signedInteger(r_temp, dividend))
+				s->r_acc = make_reg(0, (divisor != 0 ? dividend / divisor : 0));
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDivWorkarounds, s->r_acc, r_temp);
 			break;
 		}
+
 		case op_mod: { // 0x05 (05)
-			int16 modulo = signed_validate_arithmetic(s->r_acc);
-			s->r_acc = make_reg(0, (modulo != 0 ? ((int16)POP()) % modulo : 0));
+			r_temp = POP32();
+			int16 modulo, value;
+			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value))
+				s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			break;
 		}
-		case op_shr: // 0x06 (06)
+
+		case op_shr: { // 0x06 (06)
 			// Shift right logical
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) >> /*acc*/);
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value >> shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_shl: // 0x07 (07)
+		case op_shl: { // 0x07 (07)
 			// Shift left logical
-			s->r_acc = ACC_ARITHMETIC_L(((uint16)POP()) << /*acc*/);
+			r_temp = POP32();
+			uint16 value, shiftCount;
+			if (validate_unsignedInteger(r_temp, value) && validate_unsignedInteger(s->r_acc, shiftCount))
+				s->r_acc = make_reg(0, value << shiftCount);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_xor: // 0x08 (08)
-			s->r_acc = ACC_ARITHMETIC_L(POP() ^ /*acc*/);
+		case op_xor: { // 0x08 (08)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 ^ value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_and: // 0x09 (09)
-			s->r_acc = ACC_ARITHMETIC_L(POP() & /*acc*/);
+		case op_and: { // 0x09 (09)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 & value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_or: // 0x0a (10)
-			s->r_acc = ACC_ARITHMETIC_L(POP() | /*acc*/);
+		case op_or: { // 0x0a (10)
+			r_temp = POP32();
+			uint16 value1, value2;
+			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
+				s->r_acc = make_reg(0, value1 | value2);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeOrWorkarounds, r_temp, s->r_acc);
 			break;
+		}
 
-		case op_neg: // 0x0b (11)
-			s->r_acc = ACC_ARITHMETIC_L(-/*acc*/);
+		case op_neg: { // 0x0b (11)
+			int16 value;
+			if (validate_signedInteger(s->r_acc, value))
+				s->r_acc = make_reg(0, -value);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, NULL_REG);
 			break;
+		}
 
 		case op_not: // 0x0c (12)
 			s->r_acc = make_reg(0, !(s->r_acc.offset || s->r_acc.segment));
@@ -1220,12 +1170,17 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
 			} else if (r_temp.segment && !s->r_acc.segment) {
 				if (s->r_acc.offset >= 1000)
-					error("[VM] op_gt: comparsion between a pointer and number");
-				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
+					error("[VM] op_gt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 28, when throwing the water at Orat
 				s->r_acc = make_reg(0, 1);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) > (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ge_: // 0x10 (16)
@@ -1236,8 +1191,13 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) >= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_lt_: // 0x11 (17)
@@ -1250,12 +1210,17 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
 			} else if (r_temp.segment && !s->r_acc.segment) {
 				if (s->r_acc.offset >= 1000)
-					error("[VM] op_lt: comparsion between a pointer and number");
-				// Pseudo-WORKAROUND: sierra allows any pointer <-> value comparsion
+					error("[VM] op_lt: comparison between a pointer and number");
+				// Pseudo-WORKAROUND: Sierra allows any pointer <-> value comparison
 				// Happens in SQ1, room 58, when giving id-card to robot
 				s->r_acc = make_reg(0, 1);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) < (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_le_: // 0x12 (18)
@@ -1266,8 +1231,13 @@ void run_vm(EngineState *s, bool restoring) {
 				if (r_temp.segment != s->r_acc.segment)
 					warning("[VM] Comparing pointers in different segments (%04x:%04x vs. %04x:%04x)", PRINT_REG(r_temp), PRINT_REG(s->r_acc));
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			} else
-				s->r_acc = ACC_ARITHMETIC_L(signed_validate_arithmetic(r_temp) <= (int16)/*acc*/);
+			} else {
+				int16 compare1, compare2;
+				if (validate_signedInteger(r_temp, compare1) && validate_signedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ugt_: // 0x13 (19)
@@ -1289,8 +1259,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset > s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) > /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 > compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_uge_: // 0x14 (20)
@@ -1303,8 +1278,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = make_reg(0, 1);
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset >= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) >= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 >= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ult_: // 0x15 (21)
@@ -1313,12 +1293,18 @@ void run_vm(EngineState *s, bool restoring) {
 			r_temp = POP32();
 
 			// See above
-			if (r_temp.segment && (s->r_acc == make_reg(0, 1000)))
+			// PQ2 japanese compares pointers to 2000 to find out if its a pointer or a resourceid
+			if (r_temp.segment && (s->r_acc == make_reg(0, 1000) || (s->r_acc == make_reg(0, 2000))))
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset < s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) < /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 < compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_ule_: // 0x16 (22)
@@ -1331,8 +1317,13 @@ void run_vm(EngineState *s, bool restoring) {
 				s->r_acc = NULL_REG;
 			else if (r_temp.segment && s->r_acc.segment)
 				s->r_acc = make_reg(0, (r_temp.segment == s->r_acc.segment) && r_temp.offset <= s->r_acc.offset);
-			else
-				s->r_acc = ACC_ARITHMETIC_L(validate_arithmetic(r_temp) <= /*acc*/);
+			else {
+				uint16 compare1, compare2;
+				if (validate_unsignedInteger(r_temp, compare1) && validate_unsignedInteger(s->r_acc, compare2))
+					s->r_acc = make_reg(0, compare1 <= compare2);
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+			}
 			break;
 
 		case op_bt: // 0x17 (23)
@@ -1647,32 +1638,55 @@ void run_vm(EngineState *s, bool restoring) {
 			validate_property(obj, (opparams[0] >> 1)) = POP32();
 			break;
 
-		case op_ipToa: // 0x35 (53)
-			// Incement Property and copy To Accumulator
-			s->r_acc = validate_property(obj, (opparams[0] >> 1));
-			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(1 + /*acc*/);
-			break;
-
-		case op_dpToa: { // 0x36 (54)
-			// Decrement Property and copy To Accumulator
-			s->r_acc = validate_property(obj, (opparams[0] >> 1));
-			s->r_acc = validate_property(obj, (opparams[0] >> 1)) = ACC_ARITHMETIC_L(-1 + /*acc*/);
+		case op_ipToa: { // 0x35 (53)
+			// Increment Property and copy To Accumulator
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty + 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
 		}
 
-		case op_ipTos: // 0x37 (55)
-			// Increment Property and push to Stack
-			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
-			temp = ++validate_property(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+		case op_dpToa: { // 0x36 (54)
+			// Decrement Property and copy To Accumulator
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				s->r_acc = make_reg(0, valueProperty - 1);
+			else
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeDptoaWorkarounds, opProperty, NULL_REG);
+			opProperty = s->r_acc;
 			break;
+		}
 
-		case op_dpTos: // 0x38 (56)
-			// Decrement Property and push to Stack
-			validate_arithmetic(validate_property(obj, (opparams[0] >> 1)));
-			temp = --validate_property(obj, (opparams[0] >> 1)).offset;
-			PUSH(temp);
+		case op_ipTos: { // 0x37 (55)
+			// Increment Property and push to Stack
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty++;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
 			break;
+		}
+
+		case op_dpTos: { // 0x38 (56)
+			// Decrement Property and push to Stack
+			reg_t &opProperty = validate_property(obj, opparams[0] >> 1);
+			uint16 valueProperty;
+			if (validate_unsignedInteger(opProperty, valueProperty))
+				valueProperty--;
+			else
+				valueProperty = arithmetic_lookForWorkaround(opcode, NULL, opProperty, NULL_REG).offset;
+			opProperty = make_reg(0, valueProperty);
+			PUSH(valueProperty);
+			break;
+		}
 
 		case op_lofsa: // 0x39 (57)
 			// Load Offset to Accumulator

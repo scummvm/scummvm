@@ -50,6 +50,10 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// Limit the mouse cursor position, if necessary
 	g_sci->_gfxCursor->refreshPosition();
 	mousePos = g_sci->_gfxCursor->getPosition();
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2_1)
+		g_sci->_gfxCoordAdjuster->fromDisplayToScript(mousePos.y, mousePos.x);
+#endif
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -150,11 +154,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (g_sci->_features->detectDoSoundType() <= SCI_VERSION_0_LATE) {
-		// If we're running a SCI0 game, update the sound cues, to compensate
-		// for the fact that SCI0 does not poll to update the sound cues itself,
-		// like SCI01 and later do with cmdUpdateSoundCues. kGetEvent is called
-		// quite often, so emulate the SCI01 behavior of cmdUpdateSoundCues with
-		// this call
+		// If we're running a sound-SCI0 game, update the sound cues, to
+		// compensate for the fact that sound-SCI0 does not poll to update
+		// the sound cues itself, like sound-SCI1 and later do with
+		// cmdUpdateSoundCues. kGetEvent is called quite often, so emulate
+		// the sound-SCI1 behavior of cmdUpdateSoundCues with this call
 		g_sci->_soundCmd->updateSci0Cues();
 	}
 
@@ -215,7 +219,7 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t obj = argv[0];
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 
@@ -234,7 +238,7 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
+	reg_t obj = argv[0];
 	reg_t planeObject = argc > 1 ? argv[1] : NULL_REG; // SCI32
 	SegManager *segMan = s->_segMan;
 

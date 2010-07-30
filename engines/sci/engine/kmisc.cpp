@@ -368,4 +368,39 @@ reg_t kEmpty(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kStub(EngineState *s, int argc, reg_t *argv) {
+	Kernel *kernel = g_sci->getKernel();
+	int kernelCallNr = -1;
+
+	Common::List<ExecStack>::iterator callIterator = s->_executionStack.end();
+	if (callIterator != s->_executionStack.begin()) {
+		callIterator--;
+		ExecStack lastCall = *callIterator;
+		kernelCallNr = lastCall.debugSelector;
+	}
+
+	Common::String warningMsg = "Dummy function k" + kernel->getKernelName(kernelCallNr) +
+								Common::String::printf("[%x]", kernelCallNr) +
+								" invoked. Params: " +
+								Common::String::printf("%d", argc) + " (";
+
+	for (int i = 0; i < argc; i++) {
+		warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
+		warningMsg += (i == argc - 1 ? ")" : ", ");
+	}
+
+	warning("%s", warningMsg.c_str());
+	return s->r_acc;
+}
+
+reg_t kStubNull(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	return NULL_REG;
+}
+
+reg_t kDummy(EngineState *s, int argc, reg_t *argv) {
+	kStub(s, argc, argv);
+	error("Kernel function was called, which was considered to be unused - see log for details");
+}
+
 } // End of namespace Sci

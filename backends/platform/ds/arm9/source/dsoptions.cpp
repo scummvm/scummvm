@@ -128,12 +128,6 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_radioButtonMode = false;
 
-#ifdef DS_SCUMM_BUILD
-	if (!DS::isGBAMPAvailable()) {
-//		addButton(this, 100, 140, "Delete Save", 0, 'dels', 'D');
-	}
-#endif
-
 //	new GUI::StaticTextWidget(this, 90, 10, 130, 15, "ScummVM DS Options", Graphics::kTextAlignCenter);
 
 

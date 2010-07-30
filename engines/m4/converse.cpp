@@ -858,8 +858,8 @@ void Converse::loadConversationMads(const char *convName) {
 		if (buffer[curPos - 1] == '\0') {
 			// end of string
 			//printf("%s\n", buffer);
-			buf = new char[strlen(buffer)];
-			sprintf(buf, "%s", buffer);
+			buf = new char[strlen(buffer) + 1];
+			strcpy(buf, buffer);
 			_convStrings.push_back(buf);
 			curPos = 0;
 			*buffer = 0;

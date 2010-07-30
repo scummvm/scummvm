@@ -38,7 +38,7 @@ namespace Sci {
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
-	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
 	int resnr = argv[1].toUint16();
 
 	// Request to dynamically allocate hunk memory for later use
@@ -53,7 +53,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 //  1 or 3+ parameters is not right according to sierra sci
 reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 2) {
-		ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+		ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
 		reg_t resnr = argv[1];
 
 		// WORKAROUND for a broken script in room 320 in Castle of Dr. Brain.
@@ -73,7 +73,7 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	int state = argc > 2 ? argv[2].toUint16() : 1;
-	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceType type = g_sci->getResMan()->convertResType(argv[0].toUint16());
 	ResourceId id = ResourceId(type, argv[1].toUint16());
 
 	Resource *which;
@@ -104,8 +104,10 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 				if (id.getType() == kResourceTypeInvalid)
 					warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
 				else
-					// Happens in CD games (e.g. LSL6CD) with the message resource
-					warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+					// Happens in CD games (e.g. LSL6CD) with the message
+					// resource. It isn't fatal, and it's usually caused
+					// by leftover scripts.
+					debugC(2, kDebugLevelResMan, "[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
 			}
 		}
 		break;
@@ -115,7 +117,7 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	Resource *res = NULL;
-	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
 
 	if (restype == kResourceTypeVMD) {
 		char fileName[10];

@@ -443,7 +443,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth,
 		for (int rowCtr = 0; rowCtr < copyRect.height(); ++rowCtr) {
 			// Copy each byte one at a time checking against the depth
 			for (int xCtr = 0; xCtr < copyRect.width(); ++xCtr) {
-				if ((depthsPtr[xCtr] > depth) && (srcPtr[xCtr] != transparentColour))
+				if ((depth <= (depthsPtr[xCtr] & 0x7f)) && (srcPtr[xCtr] != transparentColour))
 					destPtr[xCtr] = srcPtr[xCtr];
 			}
 
@@ -557,7 +557,7 @@ void M4Surface::copyFrom(M4Surface *src, int destX, int destY, int depth,
 				// Not a display pixel
 				continue;
 
-			if ((*srcP != transparentColour) && (depth <= *depthP))
+			if ((*srcP != transparentColour) && (depth <= (*depthP & 0x7f)))
 				*destP = *srcP;
 
 			++destP;

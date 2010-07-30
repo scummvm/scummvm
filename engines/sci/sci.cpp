@@ -54,6 +54,7 @@
 #include "sci/graphics/menu.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/paint32.h"
+#include "sci/graphics/picture.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
@@ -85,6 +86,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	_gamestate = 0;
 	_kernel = 0;
 	_vocabulary = 0;
+	_vocabularyLanguage = 1; // we load english vocabulary on startup
 	_eventMan = 0;
 	_console = 0;
 
@@ -120,6 +122,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "seq");	// SEQ movie files for DOS versions
 	SearchMan.addSubDirectoryMatching(gameDataDir, "robot");	// robot movie files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "robots");	// robot movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "movies");	// vmd movie files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "vmd");	// vmd movie files
 
@@ -202,7 +205,7 @@ Common::Error SciEngine::run() {
 	_kernel = new Kernel(_resMan, segMan);
 	_features = new GameFeatures(segMan, _kernel);
 	// Only SCI0 and SCI01 games used a parser
-	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan) : NULL;
+	_vocabulary = (getSciVersion() <= SCI_VERSION_1_EGA) ? new Vocabulary(_resMan, false) : NULL;
 	_audio = new AudioPlayer(_resMan);
 	_gamestate = new EngineState(segMan);
 	_eventMan = new EventManager(_resMan->detectFontExtended());
@@ -275,10 +278,6 @@ bool SciEngine::initGame() {
 	}
 
 	_gamestate->initGlobals();
-
-	if (_gamestate->abortScriptProcessing == kAbortRestartGame && _gfxMenu)
-		_gfxMenu->reset();
-
 	_gamestate->_segMan->initSysStrings();
 
 	_gamestate->r_acc = _gamestate->r_prev = NULL_REG;
@@ -300,9 +299,7 @@ bool SciEngine::initGame() {
 
 	// Reset parser
 	if (_vocabulary) {
-		_vocabulary->parserIsValid = false; // Invalidate parser
-		_vocabulary->parser_event = NULL_REG; // Invalidate parser event
-		_vocabulary->parser_base = make_reg(_gamestate->_segMan->getSysStringsSegment(), SYS_STRING_PARSER_BASE);
+		_vocabulary->reset();
 	}
 
 	_gamestate->gameStartTime = _gamestate->lastWaitTime = _gamestate->_screenUpdateTime = g_system->getMillis();
@@ -411,7 +408,7 @@ void SciEngine::runGame() {
 
 	do {
 		_gamestate->_executionStackPosChanged = false;
-		run_vm(_gamestate, (_gamestate->abortScriptProcessing == kAbortLoadGame));
+		run_vm(_gamestate);
 		exitGame();
 
 		if (_gamestate->abortScriptProcessing == kAbortRestartGame) {
@@ -419,9 +416,15 @@ void SciEngine::runGame() {
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
 			_gamestate->gameWasRestarted = true;
+			if (_gfxMenu)
+				_gfxMenu->reset();
+			_gamestate->abortScriptProcessing = kAbortNone;
 		} else if (_gamestate->abortScriptProcessing == kAbortLoadGame) {
 			_gamestate->abortScriptProcessing = kAbortNone;
+			_gamestate->_executionStack.clear();
 			initStackBaseWithSelector(SELECTOR(replay));
+			_gamestate->shrinkStackToBase();
+			_gamestate->abortScriptProcessing = kAbortNone;
 		} else {
 			break;	// exit loop
 		}
@@ -497,8 +500,11 @@ Common::String SciEngine::getFilePrefix() const {
 		// Quest for Glory 3 wants to read files from Quest for Glory 2 to import character data
 		if (_gamestate->currentRoomNumber() == 54)
 			return "qfg2";
+	} else if (_gameId == GID_QFG4) {
+		// Quest for Glory 4 wants to read files from Quest for Glory 3 to import character data
+		if (_gamestate->currentRoomNumber() == 54)
+			return "qfg3";
 	}
-	// TODO: Implement the same for qfg4, when sci32 is good enough
 	return _targetName;
 }
 

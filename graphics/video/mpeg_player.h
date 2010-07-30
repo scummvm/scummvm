@@ -52,10 +52,8 @@
 	typedef signed long int32_t;
 	typedef unsigned long uint32_t;
 	#endif
-#elif !defined(PALMOS_MODE)
-#	include <inttypes.h>
 #else
-#	include <stdint.h>
+#	include <inttypes.h>
 #endif
 
 extern "C" {

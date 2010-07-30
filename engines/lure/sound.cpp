@@ -72,6 +72,8 @@ SoundManager::SoundManager() {
 			_channelsInner[index].volume = 90;
 		}
 	}
+
+	syncSounds();
 }
 
 SoundManager::~SoundManager() {
@@ -288,16 +290,21 @@ uint8 SoundManager::descIndexOf(uint8 soundNumber) {
 // Used to sync the volume for all channels with the Config Manager
 //
 void SoundManager::syncSounds() {
-	Game &game = Game::getReference();
 	musicInterface_TidySounds();
+
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+	_musicVolume = mute ? 0 : MIN(255, ConfMan.getInt("music_volume"));
+	_sfxVolume = mute ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 
 	g_system->lockMutex(_soundMutex);
 	MusicListIterator i;
 	for (i = _playingSounds.begin(); i != _playingSounds.end(); ++i) {
 		if ((*i)->isMusic())
-			(*i)->setVolume(game.musicVolume());
+			(*i)->setVolume(_musicVolume);
 		else
-			(*i)->setVolume(game.sfxVolume());
+			(*i)->setVolume(_sfxVolume);
 	}
 	g_system->unlockMutex(_soundMutex);
 }
@@ -599,9 +606,9 @@ MidiMusic::MidiMusic(MidiDriver *driver, ChannelEntry channels[NUM_CHANNELS],
 	}
 
 	if (_isMusic)
-		setVolume(ConfMan.getInt("music_volume"));
+		setVolume(Sound.musicVolume());
 	else
-		setVolume(ConfMan.getInt("sfx_volume"));
+		setVolume(Sound.sfxVolume());
 
 	_passThrough = false;
 
@@ -658,8 +665,7 @@ void MidiMusic::setVolume(int volume) {
 
 	_volume = volume;
 
-	Game &game = Game::getReference();
-	volume *= _isMusic ? game.musicVolume() : game.sfxVolume();
+	volume *= _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
 
 	for (int i = 0; i < _numChannels; ++i) {
 		if (_channels[_channelNumber + i].midiChannel != NULL)
@@ -707,8 +713,7 @@ void MidiMusic::send(uint32 b) {
 		// Adjust volume changes by song and master volume
 		byte volume = (byte)((b >> 16) & 0x7F);
 		_channels[channel].volume = volume;
-		Game &game = Game::getReference();
-		int master_volume = _isMusic ? game.musicVolume() : game.sfxVolume();
+		int master_volume = _isMusic ? Sound.musicVolume() : Sound.sfxVolume();
 		volume = volume * _volume * master_volume / 65025;
 		b = (b & 0xFF00FFFF) | (volume << 16);
 	} else if ((b & 0xF0) == 0xC0) {

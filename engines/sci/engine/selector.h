@@ -69,6 +69,7 @@ struct SelectorCache {
 	Selector dx, dy; ///< Deltas
 	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
 	Selector xStep, yStep; ///< BR adjustments
+	Selector xLast, yLast; ///< BR last position of client
 	Selector moveSpeed; ///< Used for DoBresen
 	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
 	Selector heading, mover; ///< Used in DoAvoider
@@ -141,6 +142,12 @@ struct SelectorCache {
 	Selector fore;
 	Selector back;
 	Selector dimmed;
+
+	Selector fixPriority;
+	Selector mirrored;
+
+	Selector useInsetRect;
+	Selector inTop, inLeft, inBottom, inRight;
 #endif
 };
 

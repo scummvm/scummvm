@@ -75,7 +75,9 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	// draw UP/DOWN arrows
 	//  we draw UP arrow one pixel lower than sierra did, because it looks nicer. Also the DOWN arrow has one pixel
 	//  line inbetween as well
-	workerRect.top++;
+	// They "fixed" this in SQ4 by having the arrow character start one pixel line later, we don't adjust there
+	if (g_sci->getGameId() != GID_SQ4)
+		workerRect.top++;
 	_text16->Box(controlListUpArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
 	workerRect.top = workerRect.bottom - 10;
 	_text16->Box(controlListDownArrow, 0, workerRect, SCI_TEXT16_ALIGNMENT_CENTER, 0);
@@ -89,7 +91,7 @@ void GfxControls::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, 
 	_text16->SetFont(fontId);
 	fontSize = _ports->_curPort->fontHeight;
 	_ports->penColor(_ports->_curPort->penClr); _ports->backColor(_ports->_curPort->backClr);
-	workerRect.bottom = workerRect.top + 9;
+	workerRect.bottom = workerRect.top + fontSize;
 	lastYpos = rect.bottom - fontSize;
 
 	// Write actual text

@@ -243,27 +243,6 @@
 	#define SCUMM_NEED_ALIGNMENT
 	#endif
 
-#elif defined(__PALMOS_TRAPS__)	|| defined (__PALMOS_ARMLET__)
-
-#ifdef __PALMOS_ARMLET__
-	#include <extras_string.h>
-#endif
-	#define SCUMM_LITTLE_ENDIAN
-
-	#define scumm_stricmp stricmp
-	#define scumm_strnicmp strnicmp
-
-	#define SCUMM_NEED_ALIGNMENT
-	#define STRINGBUFLEN 256
-
-	extern const char *SCUMMVM_SAVEPATH;
-
-	#if !defined(COMPILE_ZODIAC) && !defined(COMPILE_OS5)
-	#	define NEWGUI_256
-	#else
-	#	undef UNUSED
-	#endif
-
 #elif defined(__DC__)
 
 	#define scumm_stricmp strcasecmp

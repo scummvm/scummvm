@@ -31,6 +31,7 @@
 #include "sci/engine/selector.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
@@ -88,32 +89,41 @@ Common::Rect GfxCoordAdjuster16::pictureGetDisplayArea() {
 #ifdef ENABLE_SCI32
 GfxCoordAdjuster32::GfxCoordAdjuster32(SegManager *segMan)
 	: _segMan(segMan) {
+	scriptsRunningWidth = 0;
+	scriptsRunningHeight = 0;
 }
 
 GfxCoordAdjuster32::~GfxCoordAdjuster32() {
 }
 
 void GfxCoordAdjuster32::kernelGlobalToLocal(int16 &x, int16 &y, reg_t planeObject) {
-	//int16 resY = readSelectorValue(_s->_segMan, planeObj, SELECTOR(resY));
-	//int16 resX = readSelectorValue(_s->_segMan, planeObj, SELECTOR(resX));
-	//*x = ( *x * _screen->getWidth()) / resX;
-	//*y = ( *y * _screen->getHeight()) / resY;
-	x -= readSelectorValue(_segMan, planeObject, SELECTOR(left));
-	y -= readSelectorValue(_segMan, planeObject, SELECTOR(top));
+	uint16 planeTop = readSelectorValue(_segMan, planeObject, SELECTOR(top));
+	uint16 planeLeft = readSelectorValue(_segMan, planeObject, SELECTOR(left));
+
+	y -= planeTop;
+	x -= planeLeft;
 }
 void GfxCoordAdjuster32::kernelLocalToGlobal(int16 &x, int16 &y, reg_t planeObject) {
-	//int16 resY = readSelectorValue(_s->_segMan, planeObj, SELECTOR(resY));
-	//int16 resX = readSelectorValue(_s->_segMan, planeObj, SELECTOR(resX));
-	x += readSelectorValue(_segMan, planeObject, SELECTOR(left));
-	y += readSelectorValue(_segMan, planeObject, SELECTOR(top));
-	//*x = ( *x * resX) / _screen->getWidth();
-	//*y = ( *y * resY) / _screen->getHeight();
+	uint16 planeTop = readSelectorValue(_segMan, planeObject, SELECTOR(top));
+	uint16 planeLeft = readSelectorValue(_segMan, planeObject, SELECTOR(left));
+
+	x += planeLeft;
+	y += planeTop;
 }
 
-Common::Rect GfxCoordAdjuster32::onControl(Common::Rect rect) {
-	Common::Rect adjustedRect = rect;
-	adjustedRect.translate(0, 10);
-	return adjustedRect;
+void GfxCoordAdjuster32::setScriptsResolution(uint16 width, uint16 height) {
+	scriptsRunningWidth = width;
+	scriptsRunningHeight = height;
+}
+
+void GfxCoordAdjuster32::fromDisplayToScript(int16 &y, int16 &x) {
+	y = ((y * scriptsRunningHeight) / g_sci->_gfxScreen->getHeight());
+	x = ((x * scriptsRunningWidth) / g_sci->_gfxScreen->getWidth());
+}
+
+void GfxCoordAdjuster32::fromScriptToDisplay(int16 &y, int16 &x) {
+	y = ((y * g_sci->_gfxScreen->getHeight()) / scriptsRunningHeight);
+	x = ((x * g_sci->_gfxScreen->getWidth()) / scriptsRunningWidth);
 }
 
 void GfxCoordAdjuster32::pictureSetDisplayArea(Common::Rect displayArea) {

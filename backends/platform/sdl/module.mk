@@ -19,11 +19,7 @@ MODULE_OBJS += \
 	win32/win32.o
 endif
 
-MODULE_DIRS += \
-	backends/platform/sdl/ \
-	backends/platform/sdl/macosx/ \
-	backends/platform/sdl/posix/ \
-	backends/platform/sdl/win32/
-
 # We don't use the rules.mk here on purpose
-OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
+MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
+OBJS := $(MODULE_OBJS) $(OBJS)
+MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))

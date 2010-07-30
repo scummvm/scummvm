@@ -28,6 +28,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/palette.h"
+#include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/view.h"
 
 namespace Sci {
@@ -35,6 +36,7 @@ namespace Sci {
 GfxView::GfxView(ResourceManager *resMan, GfxScreen *screen, GfxPalette *palette, GuiResourceId resourceId)
 	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
+	_coordAdjuster = g_sci->_gfxCoordAdjuster;
 	initData(resourceId);
 }
 
@@ -160,8 +162,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 				// For EGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
 				cel = &_loop[loopNo].cel[celNo];
-				cel->width = READ_LE_UINT16(celData);
-				cel->height = READ_LE_UINT16(celData + 2);
+				cel->scriptWidth = cel->width = READ_LE_UINT16(celData);
+				cel->scriptHeight = cel->height = READ_LE_UINT16(celData + 2);
 				cel->displaceX = (signed char)celData[4];
 				cel->displaceY = celData[5];
 				cel->clearKey = celData[6];
@@ -231,8 +233,8 @@ void GfxView::initData(GuiResourceId resourceId) {
 			_loop[loopNo].cel = new CelInfo[celCount];
 			for (celNo = 0; celNo < celCount; celNo++) {
 				cel = &_loop[loopNo].cel[celNo];
-				cel->width = READ_SCI11ENDIAN_UINT16(celData);
-				cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
+				cel->scriptWidth = cel->width = READ_SCI11ENDIAN_UINT16(celData);
+				cel->scriptHeight = cel->height = READ_SCI11ENDIAN_UINT16(celData + 2);
 				cel->displaceX = READ_SCI11ENDIAN_UINT16(celData + 4);
 				cel->displaceY = READ_SCI11ENDIAN_UINT16(celData + 6);
 
@@ -253,6 +255,29 @@ void GfxView::initData(GuiResourceId resourceId) {
 				celData += celSize;
 			}
 		}
+#ifdef ENABLE_SCI32
+		// adjust width/height returned to scripts
+		switch (getSciVersion()) {
+		case SCI_VERSION_2:
+			if (_isSci2Hires) {
+				for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+					for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+						_screen->adjustBackUpscaledCoordinates(_loop[loopNo].cel[celNo].scriptWidth, _loop[loopNo].cel[celNo].scriptHeight);
+					}
+				}
+			}
+			break;
+
+		case SCI_VERSION_2_1:
+			for (loopNo = 0; loopNo < _loopCount; loopNo++) {
+				for (celNo = 0; celNo < _loop[loopNo].celCount; celNo++) {
+					_coordAdjuster->fromDisplayToScript(_loop[loopNo].cel[celNo].scriptHeight, _loop[loopNo].cel[celNo].scriptWidth);
+				}
+			}
+		default:
+			break;
+		}
+#endif
 		break;
 
 	default:

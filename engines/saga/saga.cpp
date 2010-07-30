@@ -352,8 +352,7 @@ Common::Error SagaEngine::run() {
 	uint32 currentTicks;
 
 	while (!shouldQuit()) {
-		if (_console->isAttached())
-			_console->onFrame();
+		_console->onFrame();
 
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused

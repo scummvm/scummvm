@@ -36,6 +36,69 @@ namespace M4 {
 
 class MadsView;
 
+enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
+
+struct ActionDetails {
+	int verbId;
+	int objectNameId;
+	int indirectObjectId;
+};
+
+struct MadsActionSavedFields {
+	int articleNumber;
+	int actionMode;
+	int actionMode2;
+	bool lookFlag;
+	int selectedRow;
+};
+
+class MadsAction {
+private:
+	MadsView &_owner;
+	char _statusText[100];
+	char _dialogTitle[100];
+
+	void appendVocab(int vocabId, bool capitalise = false);
+public:
+	ActionDetails _action, _activeAction;
+	int _currentAction;
+	int8 _flags1, _flags2;
+	MadsActionMode _actionMode;
+	MAdsActionMode2 _actionMode2;
+	int _articleNumber;
+	bool _lookFlag;
+	int _selectedRow;
+	bool _textChanged;
+	int _selectedAction;
+	bool _startWalkFlag;
+	int _statusTextIndex;
+	int _hotspotId;
+	MadsActionSavedFields _savedFields;
+	bool _walkFlag;
+
+	// Unknown fields
+	int16 _v86F3A;
+	int16 _v86F42;
+	int16 _v86F4E;
+	bool _v86F4A;
+	int16 _v86F4C;
+	int _v83338;
+	bool _inProgress;
+	bool _v8453A;
+
+public:
+	MadsAction(MadsView &owner);
+
+	void clear();
+	void set();
+	const char *statusText() const { return _statusText; }
+	void refresh();
+	void startAction();
+	void checkAction();
+	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
+};
+
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 class SpriteSlotSubset {
@@ -211,10 +274,20 @@ public:
 
 class ScreenObjects {
 private:
+	MadsView &_owner;
 	Common::Array<ScreenObjectEntry> _entries;
 public:
-	ScreenObjects() {}
+	int _v832EC;
+	int _v7FECA;
+	int _v7FED6;
+	int _v8332A;
+	int _yp;
+	int _v8333C;
+	int _selectedObject;
+	int _category;
+	int _objectIndex;
 
+	ScreenObjects(MadsView &owner);
 	ScreenObjectEntry &operator[](uint idx) {
 		assert(idx <= _entries.size());
 		return _entries[idx - 1];
@@ -226,6 +299,7 @@ public:
 	int scan(int xp, int yp, int layer);
 	int scanBackwards(int xp, int yp, int layer);
 	void setActive(int category, int idx, bool active);
+	void check(bool scanFlag, bool mouseClick);
 };
 
 class DynamicHotspot {
@@ -251,7 +325,7 @@ private:
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
 public:
-	bool _flag;
+	bool _changed;
 public:
 	MadsDynamicHotspots(MadsView &owner);
 
@@ -261,6 +335,9 @@ public:
 	int set17(int index, int v);
 	void remove(int index);
 	void reset();
+	void refresh() {
+		// TODO
+	}
 };
 
 class MadsDirtyArea {
@@ -314,8 +391,7 @@ struct MadsSequenceSubEntries {
 struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
-	
-	int field_2;
+	bool flipped;
 	
 	int frameIndex;
 	int frameStart;
@@ -355,9 +431,9 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
-		int numSprites, int frameStart);
+	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, 
+		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
+		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
@@ -365,6 +441,7 @@ public:
 	void delay(uint32 v1, uint32 v2);
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
+	void setDepth(int seqIndex, int depth);
 };
 
 class Animation {
@@ -393,6 +470,7 @@ public:
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
 	MadsDirtyAreas _dirtyAreas;
+	MadsAction _action;
 
 	int _textSpacing;
 	uint32 _newTimeout;

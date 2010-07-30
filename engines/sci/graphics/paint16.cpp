@@ -32,6 +32,7 @@
 #include "sci/engine/features.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
+#include "sci/engine/workarounds.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
 #include "sci/graphics/ports.h"
@@ -382,11 +383,11 @@ void GfxPaint16::kernelDrawPicture(GuiResourceId pictureId, int16 animationNr, b
 	_ports->setPort(oldPort);
 }
 
-void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, bool hiresMode, reg_t upscaledHiresHandle) {
+void GfxPaint16::kernelDrawCel(GuiResourceId viewId, int16 loopNo, int16 celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo, uint16 scaleX, uint16 scaleY, bool hiresMode, reg_t upscaledHiresHandle) {
 	// some calls are hiresMode even under kq6 DOS, that's why we check for
 	// upscaled hires here
 	if ((!hiresMode) || (!_screen->getUpscaledHires())) {
-		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
+		drawCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, scaleX, scaleY);
 	} else {
 		drawHiresCelAndShow(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo, upscaledHiresHandle);
 	}
@@ -463,7 +464,7 @@ void GfxPaint16::kernelGraphRedrawBox(Common::Rect rect) {
 #define SCI_DISPLAY_DONTSHOWBITS		121
 
 reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
-	int displayArg;
+	reg_t displayArg;
 	TextAlignment alignment = SCI_TEXT16_ALIGNMENT_LEFT;
 	int16 colorPen = -1, colorBack = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
@@ -480,9 +481,11 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	_ports->textGreyedOutput(false);
 	// processing codes in argv
 	while (argc > 0) {
-		displayArg = argv[0].toUint16();
+		displayArg = argv[0];
+		if (displayArg.segment)
+			displayArg.offset = 0xFFFF;
 		argc--; argv++;
-		switch (displayArg) {
+		switch (displayArg.offset) {
 		case SCI_DISPLAY_MOVEPEN:
 			_ports->moveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
@@ -531,8 +534,8 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 		case SCI_DISPLAY_DUMMY1:
 		case SCI_DISPLAY_DUMMY2:
 			if (!((g_sci->getGameId() == GID_LONGBOW) && (g_sci->isDemo())))
-				error("Unknown kDisplay argument %X", displayArg);
-			if (displayArg == SCI_DISPLAY_DUMMY2) {
+				error("Unknown kDisplay argument %X", displayArg.offset);
+			if (displayArg.offset == SCI_DISPLAY_DUMMY2) {
 				if (argc) {
 					argc--; argv++;
 				} else {
@@ -541,9 +544,11 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 			}
 			break;
 		default:
-			if ((g_sci->getGameId() == GID_ISLANDBRAIN) && (g_sci->getEngineState()->currentRoomNumber() == 300))
-				break; // WORKAROUND: we are called there with an forwarded 0 as additional parameter (script bug)
-			error("Unknown kDisplay argument %X", displayArg);
+			SciTrackOriginReply originReply;
+			SciWorkaroundSolution solution = trackOriginAndFindWorkaround(0, kDisplay_workarounds, &originReply);
+			if (solution.type == WORKAROUND_NONE)
+				error("Unknown kDisplay argument (%04x:%04x) from method %s::%s (script %d, localCall %x)", PRINT_REG(displayArg), originReply.objectName.c_str(), originReply.methodName.c_str(), originReply.scriptNr, originReply.localCallOffset);
+			assert(solution.type == WORKAROUND_IGNORE);
 			break;
 		}
 	}

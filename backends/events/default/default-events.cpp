@@ -95,13 +95,11 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 		case Common::EVENT_KEYDOWN:
 			_modifierState = event.kbd.flags;
 			// init continuous event stream
-			// not done on PalmOS because keyboard is emulated and keyup is not generated
-#if !defined(PALMOS_MODE)
 			_currentKeyDown.ascii = event.kbd.ascii;
 			_currentKeyDown.keycode = event.kbd.keycode;
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
-#endif
+
 			// Global Main Menu
 			if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_F5) {
 				if (g_engine && !g_engine->isPaused()) {

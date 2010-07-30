@@ -28,6 +28,7 @@
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
+#include "sci/event.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
@@ -98,8 +99,12 @@ bool GfxAnimate::invoke(List *list, int argc, reg_t *argv) {
 			if (_s->abortScriptProcessing != kAbortNone || g_engine->shouldQuit())
 				return true; // Stop processing
 
-			// Lookup node again, since the nodetable it was in may have been reallocated
-			curNode = _s->_segMan->lookupNode(curAddress);
+			// Lookup node again, since the nodetable it was in may have been reallocated.
+			// The node might have been deallocated at this point (e.g. LSL2, room 42),
+			// in which case the node reference will be null and the loop will stop below.
+			// If the node is deleted from kDeleteKey, it won't have a successor node, thus
+			// list processing will stop here (which is what SSCI does).
+			curNode = _s->_segMan->lookupNode(curAddress, false);
 		}
 
 		if (curNode) {
@@ -538,9 +543,6 @@ void GfxAnimate::animateShowPic() {
 	_transitions->doit(picRect);
 	if (previousCursorState)
 		_cursor->kernelShow();
-
-	// We set SCI1.1 priority band information here
-	_ports->priorityBandsRecall();
 }
 
 void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
@@ -595,6 +597,10 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 
 	if (_lastCastData.size() > 1)
 		_s->_throttleTrigger = true;
+
+	// We update the screen here as well, some scenes like EQ1 credits run w/o calling kGetEvent thus we wouldn't update
+	//  screen at all
+	g_sci->getEventManager()->updateScreen();
 
 	_ports->setPort(oldPort);
 }

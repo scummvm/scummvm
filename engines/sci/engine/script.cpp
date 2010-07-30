@@ -434,13 +434,19 @@ void Script::initialiseClasses(SegManager *segMan) {
 		}
 
 		if (isClass) {
-			// WORKAROUND for an invalid species access in the demo of LSL2
+			// WORKAROUNDs for off-by-one script errors
 			if (g_sci->getGameId() == GID_LSL2 && g_sci->isDemo() && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (g_sci->getGameId() == GID_LSL3 && !g_sci->isDemo() && _nr == 500 && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 93 && species == (int)segMan->classTableSize())
+				segMan->resizeClassTable(segMan->classTableSize() + 1);
+			if (g_sci->getGameId() == GID_SQ3 && !g_sci->isDemo() && _nr == 99 && species == (int)segMan->classTableSize())
 				segMan->resizeClassTable(segMan->classTableSize() + 1);
 
 			if (species < 0 || species >= (int)segMan->classTableSize())
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
-						  species, species, segMan->classTableSize(), _nr);
+				error("Invalid species %d(0x%x) unknown max %d(0x%x) while instantiating script %d\n",
+						  species, species, segMan->classTableSize(), segMan->classTableSize(), _nr);
 
 			SegmentId segmentId = segMan->getScriptSegment(_nr);
 			segMan->setClassOffset(species, make_reg(segmentId, classpos));
@@ -468,8 +474,10 @@ void Script::initialiseObjectsSci0(SegManager *segMan, SegmentId segmentId) {
 				obj->initSpecies(segMan, addr);
 
 				if (!obj->initBaseObject(segMan, addr)) {
-					if (_nr == 202 && g_sci->getGameId() == GID_KQ5 && g_sci->getSciLanguage() == K_LANG_FRENCH) {
-						// Script 202 of KQ5 French has an invalid object. This is non-fatal.
+					if (_nr == 202 && g_sci->getGameId() == GID_KQ5) {
+						// WORKAROUND: Script 202 of KQ5 French and German 
+						// (perhaps Spanish too?) has an invalid object.
+						// This is non-fatal. Refer to bug #3035396.
 					} else {
 						error("Failed to locate base object for object at %04X:%04X; skipping", PRINT_REG(addr));
 					}

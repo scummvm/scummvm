@@ -85,7 +85,7 @@ public:
 	reg_t kDoSoundDummy(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundMute(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundPause(int argc, reg_t *argv, reg_t acc);
-	reg_t kDoSoundResume(int argc, reg_t *argv, reg_t acc);
+	reg_t kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundStop(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundStopAll(int argc, reg_t *argv, reg_t acc);
 	reg_t kDoSoundDispose(int argc, reg_t *argv, reg_t acc);

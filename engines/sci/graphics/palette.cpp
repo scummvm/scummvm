@@ -60,18 +60,20 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMergi
 
 	_sysPaletteChanged = false;
 
-	// Pseudo-WORKAROUND
-	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest 1 vga and all Nick's Picks
-	// all use an inbetween interpreter, some parts are SCI1.1, some parts are SCI1
-	//  It's not using the SCI1.1 palette merging (copying over all the colors) but the real merging
-	//  If we use the copying over, we will get issues because some views have marked all colors as being used
-	//  and those will overwrite the current palette in that case
+	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest
+	// 1 vga and all Nick's Picks all use the older palette format and thus are
+	// not using the SCI1.1 palette merging (copying over all the colors) but
+	// the real merging done in earlier games. If we use the copying over, we
+	// will get issues because some views have marked all colors as being used
+	// and those will overwrite the current palette in that case
 	_useMerging = useMerging;
 
 	palVaryInit();
 }
 
 GfxPalette::~GfxPalette() {
+	if (_palVaryResourceId != -1)
+		palVaryRemoveTimer();
 }
 
 bool GfxPalette::isMerging() {
@@ -106,9 +108,11 @@ void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) 
 	if (bytesLeft < 37) {
 		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
 		//  palette
-		warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette header");
+		debugC(2, "GfxPalette::createFromData() - not enough bytes in resource (%d), expected palette header", bytesLeft);
 		return;
 	}
+	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
+	//  they were just called that way, because they started appearing in sci1.1 for example
 	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0)) {
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
@@ -482,6 +486,42 @@ bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 
 void GfxPalette::kernelAnimateSet() {
 	setOnScreen();
+}
+
+reg_t GfxPalette::kernelSave() {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	reg_t memoryId = segMan->allocateHunkEntry("kPalette(save)", 1024);
+	byte *memoryPtr = segMan->getHunkPointer(memoryId);
+	if (memoryPtr) {
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			*memoryPtr++ = _sysPalette.colors[colorNr].used;
+			*memoryPtr++ = _sysPalette.colors[colorNr].r;
+			*memoryPtr++ = _sysPalette.colors[colorNr].g;
+			*memoryPtr++ = _sysPalette.colors[colorNr].b;
+		}
+	}
+	return memoryId;
+}
+
+void GfxPalette::kernelRestore(reg_t memoryHandle) {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	if (!memoryHandle.isNull()) {
+		byte *memoryPtr = segMan->getHunkPointer(memoryHandle);
+		if (!memoryPtr)
+			error("Bad handle used for kPalette(restore)");
+
+		Palette restoredPalette;
+
+		restoredPalette.timestamp = 0;
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			restoredPalette.colors[colorNr].used = *memoryPtr++;
+			restoredPalette.colors[colorNr].r = *memoryPtr++;
+			restoredPalette.colors[colorNr].g = *memoryPtr++;
+			restoredPalette.colors[colorNr].b = *memoryPtr++;
+		}
+
+		set(&restoredPalette, true);
+	}
 }
 
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {

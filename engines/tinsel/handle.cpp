@@ -175,22 +175,18 @@ void SetupHandleTable() {
 }
 
 void FreeHandleTable() {
-	if (handleTable) {
-		free(handleTable);
-		handleTable = NULL;
-	}
-	if (cdGraphStream) {
-		delete cdGraphStream;
-		cdGraphStream = 0;
-	}
+	free(handleTable);
+	handleTable = NULL;
+
+	delete cdGraphStream;
+	cdGraphStream = NULL;
 }
 
 /**
  * Loads a memory block as a file.
  */
 void OpenCDGraphFile() {
-	if (cdGraphStream)
-		delete cdGraphStream;
+	delete cdGraphStream;
 
 	// As the theory goes, the right CD will be in there!
 

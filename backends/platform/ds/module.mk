@@ -8,7 +8,6 @@ PORT_OBJS := \
 	arm9/source/blitters_arm.o \
 	arm9/source/cdaudio.o \
 	arm9/source/dsmain.o \
-	../../fs/ds/ds-fs.o \
 	arm9/source/gbampsave.o \
 	arm9/source/scummhelp.o \
 	arm9/source/osystem_ds.o \
@@ -99,11 +98,10 @@ $(MODULE)/arm9/source/touchkeyboard.o: \
 
 
 MODULE_DIRS += \
-	backends/platform/ds/ \
 	backends/platform/ds/arm7/source/ \
 	backends/platform/ds/arm7/source/libcartreset/ \
-	backends/platform/ds/arm9/source/ \
-	backends/platform/ds/arm9/source/fat/
 
-# We don't use the rules.mk here on purpose
-OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS)) $(OBJS)
+# We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
+MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
+OBJS := $(MODULE_OBJS) $(OBJS)
+MODULE_DIRS += $(sort $(dir $(MODULE_OBJS)))
