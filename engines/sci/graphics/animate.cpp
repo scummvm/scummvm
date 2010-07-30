@@ -177,6 +177,12 @@ void GfxAnimate::makeSortedList(List *list) {
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 
+	// Possible TODO: As noted in the comment in sortHelper we actually
+	// require a stable sorting algorithm here. Since Common::sort is not stable
+	// at the time of writing this comment, we work around that in our ordering
+	// comparator. If that changes in the future or we want to use some
+	// stable sorting algorithm here, we should change that.
+
 	// Now sort the list according y and z (descending)
 	Common::sort(_list.begin(), _list.end(), sortHelper);
 }
