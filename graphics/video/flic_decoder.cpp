@@ -71,9 +71,8 @@ bool FlicDecoder::load(Common::SeekableReadStream &stream) {
 
 	_fileStream->readUint16LE();	// flags
 	// Note: The normal delay is a 32-bit integer (dword), whereas the overriden delay is a 16-bit integer (word)
-	// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
-	uint32 frameDelay = 100 * _fileStream->readUint32LE();
-	_frameRate = 100 * 1000 / frameDelay;
+	// the frame delay is the FLIC "speed", in milliseconds.
+	_frameRate = Common::Rational(1000, _fileStream->readUint32LE());
 
 	_fileStream->seek(80);
 	_offsetFrame1 = _fileStream->readUint32LE();
@@ -209,10 +208,10 @@ Surface *FlicDecoder::decodeNextFrame() {
 
 			chunkCount = _fileStream->readUint16LE();
 			// Note: The overriden delay is a 16-bit integer (word), whereas the normal delay is a 32-bit integer (dword)
-			// frameDelay is the FLIC "speed", in milliseconds. Our frameDelay is calculated in 1/100 ms, so we convert it here
+			// the frame delay is the FLIC "speed", in milliseconds.
 			uint16 newFrameDelay = _fileStream->readUint16LE();	// "speed", in milliseconds
 			if (newFrameDelay > 0)
-				_frameRate = 1000 / newFrameDelay;
+				_frameRate = Common::Rational(1000, newFrameDelay);
 
 			_fileStream->readUint16LE();	// reserved, always 0
 			uint16 newWidth = _fileStream->readUint16LE();
@@ -268,14 +267,14 @@ Surface *FlicDecoder::decodeNextFrame() {
 
 	_curFrame++;
 
-	if (_curFrame == 0)
-		_startTime = g_system->getMillis();
-
 	// If we just processed the ring frame, set the next frame
 	if (_curFrame == (int32)_frameCount) {
 		_curFrame = 0;
 		_fileStream->seek(_offsetFrame2);
 	}
+
+	if (_curFrame == 0)
+		_startTime = g_system->getMillis();
 
 	return _surface;
 }

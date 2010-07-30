@@ -91,7 +91,7 @@ private:
 	Common::SeekableReadStream *_fileStream;
 	Surface *_surface;
 	uint32 _frameCount;
-	uint32 _frameRate;
+	Common::Rational _frameRate;
 
 	Common::List<Common::Rect> _dirtyRects;
 };
