@@ -43,6 +43,12 @@
 
 OSystem_SDL::OSystem_SDL()
 	:
+#ifdef USE_OPENGL
+	_graphicsModes(0),
+	_graphicsMode(0),
+	_sdlModesCount(0),
+	_glModesCount(0),
+#endif
 	_inited(false),
 	_initedSDL(false),
 	_mixerManager(0) {
@@ -87,26 +93,24 @@ void OSystem_SDL::initBackend() {
 
 	if (_graphicsManager == 0) {
 #ifdef USE_OPENGL
-		/*if (ConfMan.hasKey("gfx_mode")) {
+		// Setup a list with both SDL and OpenGL graphics modes
+		setupGraphicsModes();
+
+		if (ConfMan.hasKey("gfx_mode")) {
 			Common::String gfxMode(ConfMan.get("gfx_mode"));
-
-			_openglGraphicsMode = OpenGLSdlGraphicsManager::getSupportedGraphicsModes();
-
 			bool use_opengl = false;
-
-			while (_openglGraphicsMode->name) {
-				if (scumm_stricmp(_openglGraphicsMode->name, gfxMode.c_str()) == 0)
+			const OSystem::GraphicsMode *mode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+			while (mode->name) {
+				if (scumm_stricmp(mode->name, gfxMode.c_str()) == 0)
 					use_opengl = true;
 
-				_openglGraphicsMode++;
+				mode++;
 			}
 
-			if (use_opengl) {
+			// If the gfx_mode is from OpenGL, create the OpenGL graphics manager
+			if (use_opengl)
 				_graphicsManager = new OpenGLSdlGraphicsManager();
-				((OpenGLSdlGraphicsManager *)_graphicsManager)->init();
-			}
-		}*/
-		_graphicsManager = new OpenGLSdlGraphicsManager();
+		}
 #endif
 		if (_graphicsManager == 0)
 			_graphicsManager = new SdlGraphicsManager();
@@ -201,6 +205,10 @@ void OSystem_SDL::deinit() {
 	_timerManager = 0;
 	delete _mutexManager;
 	_mutexManager = 0;
+
+#ifdef USE_OPENGL
+	free((void *)_graphicsModes),
+#endif
 
 	SDL_Quit();
 }
@@ -297,3 +305,91 @@ SdlMixerManager *OSystem_SDL::getMixerManager() {
 	assert(_mixerManager);
 	return _mixerManager;
 }
+
+#ifdef USE_OPENGL
+
+const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
+	return _graphicsModes;
+}
+
+int OSystem_SDL::getDefaultGraphicsMode() const {
+	if (_graphicsMode < _sdlModesCount)
+		return _graphicsManager->getDefaultGraphicsMode();
+	else
+		return _graphicsManager->getDefaultGraphicsMode() + _sdlModesCount;
+}
+
+bool OSystem_SDL::setGraphicsMode(int mode) {
+	const OSystem::GraphicsMode *srcMode;
+	int i;
+	if (mode < _sdlModesCount) {
+		srcMode = SdlGraphicsManager::supportedGraphicsModes();
+		i = 0;
+	} else {
+		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+		i = _sdlModesCount;
+	}
+	while (srcMode->name) {
+		if (i == mode) {
+			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
+				delete _graphicsManager;
+				_graphicsManager = new SdlGraphicsManager();
+				_graphicsManager->beginGFXTransaction();
+			} else if (_graphicsMode < _sdlModesCount && mode >= _sdlModesCount) {
+				delete _graphicsManager;
+				_graphicsManager = new OpenGLSdlGraphicsManager();
+				_graphicsManager->beginGFXTransaction();
+			}
+			_graphicsMode = mode;
+			return _graphicsManager->setGraphicsMode(srcMode->id);
+		}
+		i++;
+		srcMode++;
+	}
+	return false;
+}
+
+int OSystem_SDL::getGraphicsMode() const {
+	return _graphicsMode;
+}
+
+void OSystem_SDL::setupGraphicsModes() {
+	const OSystem::GraphicsMode *sdlGraphicsModes = SdlGraphicsManager::supportedGraphicsModes();
+	const OSystem::GraphicsMode *openglGraphicsModes = OpenGLSdlGraphicsManager::supportedGraphicsModes();
+	_sdlModesCount = 0;
+	_glModesCount = 0;
+
+	// Count the number of graphics modes
+	const OSystem::GraphicsMode *srcMode = sdlGraphicsModes;
+	while (srcMode->name) {
+		_sdlModesCount++;
+		srcMode++;
+	}
+	srcMode = openglGraphicsModes;
+	while (srcMode->name) {
+		_glModesCount ++;
+		srcMode++;
+	}
+
+	// Allocate enough space for merged array of modes
+	_graphicsModes = (OSystem::GraphicsMode *)malloc(sizeof(OSystem::GraphicsMode) * (_glModesCount  + _sdlModesCount + 1));
+
+	// Copy SDL graphics modes
+	memcpy((void *)_graphicsModes, sdlGraphicsModes, _sdlModesCount * sizeof(OSystem::GraphicsMode));
+
+	// Copy OpenGL graphics modes
+	memcpy((void *)(_graphicsModes + _sdlModesCount), openglGraphicsModes, _glModesCount  * sizeof(OSystem::GraphicsMode));
+
+	// Set a null mode at the end
+	memset((void *)(_graphicsModes + _sdlModesCount + _glModesCount), 0, sizeof(OSystem::GraphicsMode));
+
+	// Set new internal ids for all modes
+	int i = 0;
+	OSystem::GraphicsMode * mode = _graphicsModes;
+	while (mode->name) {
+		mode->id = i++;
+		mode++;
+	}
+}
+
+#endif

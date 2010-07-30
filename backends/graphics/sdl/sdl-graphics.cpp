@@ -240,6 +240,10 @@ bool SdlGraphicsManager::getFeatureState(OSystem::Feature f) {
 	}
 }
 
+const OSystem::GraphicsMode *SdlGraphicsManager::supportedGraphicsModes() {
+	return s_supportedGraphicsModes;
+}
+
 const OSystem::GraphicsMode *SdlGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }

@@ -103,6 +103,23 @@ protected:
 	 * of ScummVM will be saved.
 	 */
 	virtual Common::String getDefaultConfigFileName();
+
+#ifdef USE_OPENGL
+	OSystem::GraphicsMode *_graphicsModes;
+	int _graphicsMode;
+	int _sdlModesCount;
+	int _glModesCount;
+
+	/**
+	 * Creates the merged graphics modes list
+	 */
+	virtual void setupGraphicsModes();
+
+	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	virtual int getDefaultGraphicsMode() const;
+	virtual bool setGraphicsMode(int mode);
+	virtual int getGraphicsMode() const;
+#endif
 };
 
 #endif

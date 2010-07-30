@@ -119,6 +119,10 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{0, 0, 0}
 };
 
+const OSystem::GraphicsMode *OpenGLGraphicsManager::supportedGraphicsModes() {
+	return s_supportedGraphicsModes;
+}
+
 const OSystem::GraphicsMode *OpenGLGraphicsManager::getSupportedGraphicsModes() const {
 	return s_supportedGraphicsModes;
 }
