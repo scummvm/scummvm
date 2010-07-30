@@ -103,8 +103,9 @@ static const EnginePlugin *detectPlugin() {
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("  Looking for a plugin supporting this gameid... ");
+	
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
-
+	
 	if (plugin == 0) {
 		printf("failed\n");
 		warning("%s is an invalid gameid. Use the --list-games option to list supported gameid", gameid.c_str());
@@ -335,8 +336,12 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
+#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT //note: I'm going to refactor this name later :P
+	// Don't load the plugins initially in this case.
+#else
 	// Load the plugins.
 	PluginManager::instance().loadPlugins();
+#endif
 
 	// Process the remaining command line settings. Must be done after the
 	// config file and the plugins have been loaded.
@@ -367,7 +372,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Unless a game was specified, show the launcher dialog
 	if (0 == ConfMan.getActiveDomain())
 		launcherDialog();
-
+		
 	// FIXME: We're now looping the launcher. This, of course, doesn't
 	// work as well as it should. In theory everything should be destroyed
 	// cleanly, so this is now enabled to encourage people to fix bits :)

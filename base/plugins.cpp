@@ -306,6 +306,26 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
+bool PluginManager::loadFirstPlugin() {
+	PluginList plugs;
+	for (ProviderList::iterator pp = _providers.begin();
+	                            pp != _providers.end();
+	                            ++pp) {
+		PluginList pl((*pp)->getPlugins());
+		for (PluginList::iterator p = pl.begin(); p != pl.end(); ++p) {
+			plugs.push_back(*p);
+		}
+	}
+	_allPlugs = plugs.begin();
+	return tryLoadPlugin(*_allPlugs); //TODO: return false if no plugins!
+}
+
+bool PluginManager::loadNextPlugin() {
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
+	++_allPlugs;
+	return tryLoadPlugin(*_allPlugs); //TODO: return false if got to the end of list of plugins.
+}
+
 void PluginManager::loadPlugins() {
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -313,7 +333,6 @@ void PluginManager::loadPlugins() {
 		PluginList pl((*pp)->getPlugins());
 		Common::for_each(pl.begin(), pl.end(), Common::bind1st(Common::mem_fun(&PluginManager::tryLoadPlugin), this));
 	}
-
 }
 
 void PluginManager::unloadPlugins() {
@@ -344,7 +363,6 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 		// The plugin is valid, see if it provides the same module as an
 		// already loaded one and should replace it.
 		bool found = false;
-
 		PluginList::iterator pl = _plugins[plugin->getType()].begin();
 		while (!found && pl != _plugins[plugin->getType()].end()) {
 			if (!strcmp(plugin->getName(), (*pl)->getName())) {
@@ -370,7 +388,6 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 	}
 }
 
-
 // Engine plugins
 
 #include "engines/metaengine.h"
@@ -385,15 +402,23 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 	if (plugin)
 		*plugin = 0;
 
-	EnginePlugin::List::const_iterator iter = plugins.begin();
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		result = (**iter)->findGame(gameName.c_str());
-		if (!result.gameid().empty()) {
-			if (plugin)
-				*plugin = *iter;
-			break;
+	EnginePlugin::List::const_iterator iter;
+	
+#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+	PluginManager::instance().loadFirstPlugin();
+	do {
+#endif
+		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			result = (**iter)->findGame(gameName.c_str());
+			if (!result.gameid().empty()) {
+				if (plugin)
+					*plugin = *iter;
+				return result;
+			}
 		}
-	}
+#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+	} while(PluginManager::instance().loadNextPlugin());
+#endif
 	return result;
 }
 
