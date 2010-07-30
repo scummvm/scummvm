@@ -26,6 +26,7 @@
 #define TESTBED_SOUND_H
 
 #include "gui/dialog.h"
+#include "sound/mixer.h"
 #include "testbed/config.h"
 #include "testbed/testsuite.h"
 
@@ -36,6 +37,8 @@ public:
 	SoundSubsystemDialog();
 	~SoundSubsystemDialog() {}
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	Audio::Mixer *_mixer;
+	Audio::SoundHandle _h1, _h2, _h3;
 };
 
 namespace SoundSubsystem {
@@ -43,7 +46,7 @@ namespace SoundSubsystem {
 // Helper functions for SoundSubsystem tests
 
 // will contain function declarations for SoundSubsystem tests
-bool playPCSpkSound();
+bool playBeeps();
 bool mixSounds(); 
 }
 

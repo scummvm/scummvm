@@ -88,6 +88,7 @@ bool FStests::testReadFile() {
 
 		dirName.toLowercase();
 		fileName.toLowercase();
+		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
@@ -97,12 +98,14 @@ bool FStests::testReadFile() {
 
 		dirName.toUppercase();
 		fileName.toUppercase();
+		delete directory;
 		directory = gameRoot.getSubDirectory(dirName);
 
 		if (!readDataFromFile(directory, fileName.c_str())) {
 			Testsuite::logDetailedPrintf("Reading from %s/%s failed\n", dirName.c_str(), fileName.c_str());
 			numFailed++;
 		}
+		delete directory;
 	}
 
 	Testsuite::logDetailedPrintf("Failed %d out of 15\n", numFailed);

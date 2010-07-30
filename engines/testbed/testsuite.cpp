@@ -296,6 +296,7 @@ void Testsuite::updateStats(const char *prefix, const char *info, uint testNum, 
 	}
 	g_system->copyRectToScreen(buffer, wRect, pt.x, pt.y, wRect, lRect);
 	g_system->updateScreen();
+	delete[] buffer;
 }
 
 bool Testsuite::enableTest(const Common::String &testName, bool toEnable) {
