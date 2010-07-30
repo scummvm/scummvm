@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_BITMAP_H
-#define BS_BITMAP_H
+#ifndef SWORD25_BITMAP_H
+#define SWORD25_BITMAP_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "renderobject.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/renderobject.h"
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration

@@ -23,8 +23,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "screenshot.h"
-#include "util/libpng/png.h"
+#include "sword25/gfx/screenshot.h"
+#include <png.h>
 
 using namespace std;
 

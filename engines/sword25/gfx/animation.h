@@ -17,16 +17,16 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_ANIMATION_H
-#define BS_ANIMATION_H
+#ifndef SWORD25_ANIMATION_H
+#define SWORD25_ANIMATION_H
 
 // Includes
-#include "kernel/common.h"
-#include "timedrenderobject.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/timedrenderobject.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // Forward declarations
 class BS_Kernel;

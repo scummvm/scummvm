@@ -17,21 +17,21 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_ANIMATIONRESOURCE_H
-#define BS_ANIMATIONRESOURCE_H
+#ifndef SWORD25_ANIMATIONRESOURCE_H
+#define SWORD25_ANIMATIONRESOURCE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/resource.h"
-#include "animationdescription.h"
-#include "animation.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/gfx/animationdescription.h"
+#include "sword25/gfx/animation.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

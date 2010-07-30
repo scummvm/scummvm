@@ -23,7 +23,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "outputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 // -----------------------------------------------------------------------------
 // Constants

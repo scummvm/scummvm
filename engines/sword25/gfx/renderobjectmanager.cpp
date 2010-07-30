@@ -21,17 +21,17 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "renderobjectmanager.h"
+#include "sword25/gfx/renderobjectmanager.h"
 
-#include "kernel/kernel.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "gfx/graphicengine.h"
-#include "gfx/animationtemplateregistry.h"
-#include "math/rect.h"
-#include "renderobject.h"
-#include "timedrenderobject.h"
-#include "rootrenderobject.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/animationtemplateregistry.h"
+#include "sword25/math/rect.h"
+#include "sword25/gfx/renderobject.h"
+#include "sword25/gfx/timedrenderobject.h"
+#include "sword25/gfx/rootrenderobject.h"
 
 #define BS_LOG_PREFIX "RENDEROBJECTMANAGER"
 

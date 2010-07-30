@@ -21,10 +21,10 @@
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "package/packagemanager.h"
-#include "gfx/image/imageloader.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/gfx/image/imageloader.h"
 
-#include "swimage.h"
+#include "sword25/gfx/opengl/swimage.h"
 
 #define BS_LOG_PREFIX "SWIMAGE"
 

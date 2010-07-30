@@ -24,22 +24,22 @@
 #include <algorithm>
 #include <string>
 
-#include "kernel/common.h"
-#include "kernel/kernel.h"
-#include "kernel/callbackregistry.h"
-#include "script/script.h"
-#include "script/luabindhelper.h"
-#include "script/luacallback.h"
-#include "math/vertex.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/callbackregistry.h"
+#include "sword25/script/script.h"
+#include "sword25/script/luabindhelper.h"
+#include "sword25/script/luacallback.h"
+#include "sword25/math/vertex.h"
 
-#include "graphicengine.h"
-#include "renderobject.h"
-#include "bitmap.h"
-#include "animation.h"
-#include "panel.h"
-#include "text.h"
-#include "animationtemplate.h"
-#include "animationtemplateregistry.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/renderobject.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/animation.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/text.h"
+#include "sword25/gfx/animationtemplate.h"
+#include "sword25/gfx/animationtemplateregistry.h"
 
 #define BS_LOG_PREFIX "GRAPHICENGINE"
 

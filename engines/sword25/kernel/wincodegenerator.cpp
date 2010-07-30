@@ -21,8 +21,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "md5.h"
-#include "wincodegenerator.h"
+#include "sword25/kernel/md5.h"
+#include "sword25/kernel/wincodegenerator.h"
 using namespace std;
 
 // -----------------------------------------------------------------------------

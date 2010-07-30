@@ -21,9 +21,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "image.h"
-#include "pngloader.h"
-#include "util/libpng/png.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/gfx/image/pngloader.h"
+#include <png.h>
 
 #define BS_LOG_PREFIX "PNGLOADER"
 

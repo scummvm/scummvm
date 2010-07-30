@@ -21,9 +21,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "gfx/image/vectorimage.h"
-#include "gfx/image/vectorimagerenderer.h"
-#include "util/glsprites/glsprites.h"
+#include "sword25/gfx/image/vectorimage.h"
+#include "sword25/gfx/image/vectorimagerenderer.h"
+#include "sword25/util/glsprites/glsprites.h"
 
 #include <vector>
 using namespace std;

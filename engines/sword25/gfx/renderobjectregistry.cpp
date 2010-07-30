@@ -27,7 +27,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "renderobjectregistry.h"
+#include "sword25/gfx/renderobjectregistry.h"
 
 // -----------------------------------------------------------------------------
 // Implementation

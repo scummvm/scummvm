@@ -21,10 +21,10 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "dynamicbitmap.h"
-#include "bitmapresource.h"
-#include "package/packagemanager.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/gfx/dynamicbitmap.h"
+#include "sword25/gfx/bitmapresource.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
 #include <vector>
 

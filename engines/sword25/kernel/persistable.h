@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_PERSISTABLE_H
-#define BS_PERSISTABLE_H
+#ifndef SWORD25_PERSISTABLE_H
+#define SWORD25_PERSISTABLE_H
 
 class BS_OutputPersistenceBlock;
 class BS_InputPersistenceBlock;

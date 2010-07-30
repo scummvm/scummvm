@@ -1,5 +1,5 @@
-#ifndef BS_STDINT_H
-#define BS_STDINT_H
+#ifndef SWORD25_STDINT_H
+#define SWORD25_STDINT_H
 
 #ifdef _MSC_VER
 	typedef unsigned __int8	 uint8_t;

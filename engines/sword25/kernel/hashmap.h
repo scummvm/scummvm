@@ -17,11 +17,11 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_HASHMAP_H
-#define BS_HASHMAP_H
+#ifndef SWORD25_HASHMAP_H
+#define SWORD25_HASHMAP_H
 
 // stdext::hash_map wird erst seit VC7 untersützt, bei älteren Microsoft-Compilern wird auf std::map zurückgegriffen
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #if _MSC_VER >= 1300
 #include <hash_map>
 #define BS_Hashmap stdext::hash_map
@@ -29,6 +29,6 @@
 #include <map>
 #define BS_Hashmap std::map
 #endif
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 #endif

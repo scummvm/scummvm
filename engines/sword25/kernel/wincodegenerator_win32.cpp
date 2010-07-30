@@ -28,8 +28,8 @@
 #include <vector>
 using namespace std;
 
-#include "md5.h"
-#include "wincodegenerator.h"
+#include "sword25/kernel/md5.h"
+#include "sword25/kernel/wincodegenerator.h"
 
 // -----------------------------------------------------------------------------
 // Hilfsfunktionen

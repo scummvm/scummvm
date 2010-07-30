@@ -25,8 +25,8 @@
 // Engine Includes
 // -----------------------------------------------------------------------------
 
-#include "../kernel/common.h"
-#include "renderobject.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/renderobject.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

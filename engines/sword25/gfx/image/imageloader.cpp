@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "imageloader.h"
-#include "imageloader_ids.h"
+#include "sword25/gfx/image/imageloader.h"
+#include "sword25/gfx/image/imageloader_ids.h"
 
 #define BS_LOG_PREFIX "IMAGELOADER"
 

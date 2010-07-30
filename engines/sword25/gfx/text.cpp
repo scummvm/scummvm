@@ -27,13 +27,13 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/kernel.h"
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
-#include "fontresource.h"
-#include "bitmapresource.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/gfx/fontresource.h"
+#include "sword25/gfx/bitmapresource.h"
 
-#include "text.h"
+#include "sword25/gfx/text.h"
 
 
 // -----------------------------------------------------------------------------

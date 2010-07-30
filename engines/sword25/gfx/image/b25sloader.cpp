@@ -26,8 +26,8 @@
 #include <algorithm>
 using namespace std;
 
-#include "b25sloader.h"
-#include "pngloader.h"
+#include "sword25/gfx/image/b25sloader.h"
+#include "sword25/gfx/image/pngloader.h"
 
 #define BS_LOG_PREFIX "B25SLOADER"
 

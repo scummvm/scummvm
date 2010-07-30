@@ -17,12 +17,12 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "resmanager.h"
+#include "sword25/kernel/resmanager.h"
 
-#include "resource.h"
-#include "resservice.h"
-#include "string.h"
-#include "../package/packagemanager.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/kernel/resservice.h"
+#include "sword25/kernel/string.h"
+#include "sword25/package/packagemanager.h"
 
 #define BS_LOG_PREFIX "RESOURCEMANAGER"
 

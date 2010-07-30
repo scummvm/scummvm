@@ -27,7 +27,7 @@
 	Autor: Malte Thiesen
 */
 
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 BS_Service * BS_OpenGLGfx_CreateObject(BS_Kernel* pKernel);
 BS_Service * BS_PhysfsPackageManager_CreateObject(BS_Kernel* pKernel);

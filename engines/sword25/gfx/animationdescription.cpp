@@ -21,9 +21,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
-#include "animationdescription.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/gfx/animationdescription.h"
 
 // -----------------------------------------------------------------------------
 // Persistenz

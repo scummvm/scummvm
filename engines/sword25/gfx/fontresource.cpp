@@ -25,12 +25,12 @@
 
 #include <memory>
 
-#include "kernel/kernel.h"
-#include "kernel/string.h"
-#include "package/packagemanager.h"
-#include "util/tinyxml/tinyxml.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/string.h"
+#include "sword25/package/packagemanager.h"
+#include <tinyxml.h>
 
-#include "fontresource.h"
+#include "sword25/gfx/fontresource.h"
 
 // -----------------------------------------------------------------------------
 // Konstanten

@@ -21,9 +21,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "bitmap.h"
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
 // -----------------------------------------------------------------------------
 // Logging

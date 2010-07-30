@@ -17,16 +17,16 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_GL_IMAGE_H
-#define BS_GL_IMAGE_H
+#ifndef SWORD25_GL_IMAGE_H
+#define SWORD25_GL_IMAGE_H
 
 // -----------------------------------------------------------------------------
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "gfx/image/image.h"
-#include "gfx/graphicengine.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/gfx/graphicengine.h"
 
 #include <vector>
 

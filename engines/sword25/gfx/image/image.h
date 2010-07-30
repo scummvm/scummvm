@@ -24,16 +24,16 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_IMAGE_H
-#define BS_IMAGE_H
+#ifndef SWORD25_IMAGE_H
+#define SWORD25_IMAGE_H
 
 // Includes
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
-#include "kernel/common.h"
-#include "math/rect.h"
-#include "gfx/graphicengine.h"
+#include "sword25/kernel/memlog_on.h"
+#include "sword25/kernel/common.h"
+#include "sword25/math/rect.h"
+#include "sword25/gfx/graphicengine.h"
 
 class BS_Image
 {

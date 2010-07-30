@@ -26,17 +26,17 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_WIN32WINDOW_H
-#define _BS_WIN32WINDOW_H
+#ifndef SWORD25_WIN32WINDOW_H
+#define SWORD25_WIN32WINDOW_H
 
 // Includes
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "common.h"
-#include "window.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/window.h"
 
 // Klassendefinition
 class BS_Win32Window : public BS_Window

@@ -17,12 +17,12 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_ROOTRENDEROBJECT_H
-#define BS_ROOTRENDEROBJECT_H
+#ifndef SWORD25_ROOTRENDEROBJECT_H
+#define SWORD25_ROOTRENDEROBJECT_H
 
 // Includes
-#include "kernel/common.h"
-#include "renderobject.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/renderobject.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

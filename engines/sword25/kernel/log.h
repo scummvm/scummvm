@@ -17,18 +17,18 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_LOG_H
-#define BS_LOG_H
+#ifndef SWORD25_LOG_H
+#define SWORD25_LOG_H
 
 // Includes
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <stdio.h>
 #include <vector>
 #include <string>
 #include <algorithm>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 // Logging soll nur stattfinden wenn es aktiviert ist
 #ifdef BS_ACTIVATE_LOGGING

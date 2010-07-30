@@ -17,11 +17,11 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "win32window.h"
+#include "sword25/kernel/win32window.h"
 #include "../../projects/resource.h"
 
-#include "kernel/kernel.h"
-#include "input/inputengine.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/input/inputengine.h"
 
 bool BS_Win32Window::_ClassRegistered = false;
 

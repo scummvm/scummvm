@@ -19,19 +19,19 @@
 
 #define BS_LOG_PREFIX "GRAPHICENGINE"
 
-#include "image/image.h"
-#include "screenshot.h"
-#include "kernel/memlog_off.h"
+#include "sword25/image/image.h"
+#include "sword25/gfx/screenshot.h"
+#include "sword25/kernel/memlog_off.h"
 #include <memory>
 #include <vector>
-#include "kernel/memlog_on.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
+#include "sword25/kernel/memlog_on.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
 extern "C"
 {
-#include <lua.h>
-#include <lauxlib.h>
+#include "sword25/util/lua/lua.h"
+#include "sword25/util/lua/lauxlib.h"
 }
 
 using namespace std;
@@ -45,7 +45,7 @@ static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;		// Anzahl der Framezeiten
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "graphicengine.h"
+#include "sword25/gfx/graphicengine.h"
 
 // -----------------------------------------------------------------------------
 

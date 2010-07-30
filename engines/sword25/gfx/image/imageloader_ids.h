@@ -26,11 +26,11 @@
 	Autor: Malte Thiesen
 */
 
-#include "imageloader.h"
+#include "sword25/gfx/image/imageloader.h"
 
 // Die Headerdateien der ImageLoader müssen hier eingebunden werden
-#include "pngloader.h"
-#include "b25sloader.h"
+#include "sword25/gfx/image/pngloader.h"
+#include "sword25/gfx/image/b25sloader.h"
 
 // Die Tabelle enthält Pointer auf statische Member-Funktionen innerhalb der Klassen, die eine Instanz der Klasse
 // erzeugen

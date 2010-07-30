@@ -27,8 +27,8 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_COMMON_H
-#define BS_COMMON_H
+#ifndef SWORD25_COMMON_H
+#define SWORD25_COMMON_H
 
 // Globale Konstanten
 #if _DEBUG && !DEBUG

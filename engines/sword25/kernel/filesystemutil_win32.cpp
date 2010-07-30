@@ -21,7 +21,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "filesystemutil.h"
+#include "sword25/kernel/filesystemutil.h"
 #define WIN32_LEAN_AND_MEAN
 #include <Windows.h>
 #include <ShlObj.h>

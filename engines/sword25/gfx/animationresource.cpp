@@ -21,13 +21,13 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "animationresource.h"
+#include "sword25/gfx/animationresource.h"
 
-#include "kernel/kernel.h"
-#include "kernel/string.h"
-#include "package/packagemanager.h"
-#include "util/tinyxml/tinyxml.h"
-#include "bitmapresource.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/string.h"
+#include "sword25/package/packagemanager.h"
+#include <tinyxml.h>
+#include "sword25/gfx/bitmapresource.h"
 
 // -----------------------------------------------------------------------------
 

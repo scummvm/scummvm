@@ -17,10 +17,10 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "resource.h"
-#include "string.h"
-#include "kernel.h"
-#include "package/packagemanager.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/kernel/string.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/package/packagemanager.h"
 
 #define BS_LOG_PREFIX "RESOURCE"
 

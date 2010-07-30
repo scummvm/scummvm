@@ -25,12 +25,12 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_PNGLOADER2_H
-#define BS_PNGLOADER2_H
+#ifndef SWORD25_PNGLOADER2_H
+#define SWORD25_PNGLOADER2_H
 
 // Includes
-#include "kernel/common.h"
-#include "imageloader.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/image/imageloader.h"
 
 // Klassendefinition
 class BS_PNGLoader : public BS_ImageLoader
@@ -38,9 +38,9 @@ class BS_PNGLoader : public BS_ImageLoader
 public:
 	static BS_ImageLoader* CreateInstance() 
 	{ 
-		#include "kernel/memlog_off.h"
+		#include "sword25/kernel/memlog_off.h"
 		return (BS_ImageLoader*) new BS_PNGLoader();
-		#include "kernel/memlog_on.h"
+		#include "sword25/kernel/memlog_on.h"
 	}
 
 	// Alle virtuellen Methoden von BS_ImageLoader sind hier als static-Methode implementiert, damit sie von BS_B25SLoader aufgerufen werden können.

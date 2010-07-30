@@ -17,12 +17,12 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_STRING
-#define BS_STRING
+#ifndef SWORD25_STRING
+#define SWORD25_STRING
 
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <string>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 namespace BS_String
 {

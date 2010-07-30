@@ -17,14 +17,14 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_RESOURCESERVICE_H
-#define BS_RESOURCESERVICE_H
+#ifndef SWORD25_RESOURCESERVICE_H
+#define SWORD25_RESOURCESERVICE_H
 
 // Includes
-#include "common.h"
-#include "service.h"
-#include "kernel.h"
-#include "resmanager.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/service.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/resmanager.h"
 
 class BS_Resource;
 

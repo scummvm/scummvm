@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_RENDER_OBJECT_PTR_H
-#define BS_RENDER_OBJECT_PTR_H
+#ifndef SWORD25_RENDER_OBJECT_PTR_H
+#define SWORD25_RENDER_OBJECT_PTR_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "renderobjectregistry.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/renderobjectregistry.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

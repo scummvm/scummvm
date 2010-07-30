@@ -21,12 +21,12 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "panel.h"
+#include "sword25/gfx/panel.h"
 
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "graphicengine.h"
-#include "image/image.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/image/image.h"
 
 // -----------------------------------------------------------------------------
 

@@ -21,25 +21,25 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel.h"
-#include "persistenceservice.h"
-#include "inputpersistenceblock.h"
-#include "outputpersistenceblock.h"
-#include "filesystemutil.h"
-#include "gfx/graphicengine.h"
-#include "sfx/soundengine.h"
-#include "input/inputengine.h"
-#include "math/regionregistry.h"
-#include "script/script.h"
-#include "debug/debugtools.h"
-#include "util/zlib/zlib.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/persistenceservice.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/filesystemutil.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/sfx/soundengine.h"
+#include "sword25/input/inputengine.h"
+#include "sword25/math/regionregistry.h"
+#include "sword25/script/script.h"
+#include "sword25/debug/debugtools.h"
+#include "sword25/util/zlib/zlib.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <sstream>
 #include <fstream>
 #include <algorithm>
 #include <locale>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 using namespace std;
 

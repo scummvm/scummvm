@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "framecounter.h"
-#include "kernel/timer.h"
+#include "sword25/gfx/framecounter.h"
+#include "sword25/kernel/timer.h"
 
 BS_Framecounter::BS_Framecounter(int UpdateFrequency) :
 	m_FPS(0),

@@ -17,22 +17,22 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_OPENGLGFX_H
-#define BS_OPENGLGFX_H
+#ifndef SWORD25_OPENGLGFX_H
+#define SWORD25_OPENGLGFX_H
 
 // -----------------------------------------------------------------------------
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <memory>
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "../graphicengine.h"
-#include "../renderobjectptr.h"
-#include "util/glsprites/glsprites.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/gfx/renderobjectptr.h"
+#include "sword25/util/glsprites/glsprites.h"
 
 // -----------------------------------------------------------------------------
 // FORWARD DECLARATIONS

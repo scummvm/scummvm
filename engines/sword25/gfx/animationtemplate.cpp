@@ -23,14 +23,14 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/kernel.h"
-#include "kernel/resource.h"
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
-#include "animationresource.h"
-#include "animationtemplate.h"
-#include "animationtemplateregistry.h"
+#include "sword25/gfx/animationresource.h"
+#include "sword25/gfx/animationtemplate.h"
+#include "sword25/gfx/animationtemplateregistry.h"
 
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion

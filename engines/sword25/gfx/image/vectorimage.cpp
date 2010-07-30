@@ -21,8 +21,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/bs_stdint.h"
-#include "vectorimage.h"
+#include "sword25/kernel/bs_stdint.h"
+#include "sword25/gfx/image/vectorimage.h"
 #include <vector>
 #include <stdexcept>
 

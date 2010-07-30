@@ -17,20 +17,20 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_TEXT_H
-#define BS_TEXT_H
+#ifndef SWORD25_TEXT_H
+#define SWORD25_TEXT_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "math/rect.h"
-#include "renderobject.h"
+#include "sword25/kernel/common.h"
+#include "sword25/math/rect.h"
+#include "sword25/gfx/renderobject.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

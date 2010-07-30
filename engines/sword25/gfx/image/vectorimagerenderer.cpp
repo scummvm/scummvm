@@ -21,8 +21,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "vectorimagerenderer.h"
-#include "vectorimage.h"
+#include "sword25/gfx/image/vectorimagerenderer.h"
+#include "sword25/gfx/image/vectorimage.h"
 #include "agg_conv_curve.h"
 #include "agg_path_storage.h"
 #include "agg_conv_stroke.h"

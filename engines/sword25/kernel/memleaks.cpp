@@ -28,9 +28,9 @@
 // #pragma warning (disable : 4074)
 // #pragma init_seg(compiler)
 
-#include "filesystemutil.h"
+#include "sword25/kernel/filesystemutil.h"
 
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
 #include <algorithm>
 #include <string>

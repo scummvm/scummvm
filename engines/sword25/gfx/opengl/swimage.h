@@ -17,16 +17,16 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_SWIMAGE_H
-#define BS_SWIMAGE_H
+#ifndef SWORD25_SWIMAGE_H
+#define SWORD25_SWIMAGE_H
 
 // -----------------------------------------------------------------------------
 // INCLUDES
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "gfx/image/image.h"
-#include "gfx/graphicengine.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/image/image.h"
+#include "sword25/gfx/graphicengine.h"
 
 
 // -----------------------------------------------------------------------------

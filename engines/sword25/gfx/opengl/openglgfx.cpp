@@ -25,20 +25,20 @@
 #include <windows.h>
 #include <GL/GL.h>
 
-#include "util/glsprites/glsprites.h"
-#include "../bitmapresource.h"
-#include "../animationresource.h"
-#include "../fontresource.h"
-#include "../panel.h"
-#include "../renderobjectmanager.h"
-#include "../image/vectorimage.h"
-#include "package/packagemanager.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
+#include "sword25/util/glsprites/glsprites.h"
+#include "sword25/gfx/bitmapresource.h"
+#include "sword25/gfx/animationresource.h"
+#include "sword25/gfx/fontresource.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/renderobjectmanager.h"
+#include "sword25/gfx/image/vectorimage.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
 
-#include "openglgfx.h"
-#include "glimage.h"
-#include "swimage.h"
+#include "sword25/gfx/opengl/openglgfx.h"
+#include "sword25/gfx/opengl/glimage.h"
+#include "sword25/gfx/opengl/swimage.h"
 
 #include <algorithm>
 

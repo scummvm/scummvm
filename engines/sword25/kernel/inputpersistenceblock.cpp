@@ -23,7 +23,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "inputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
 using namespace std;
 

@@ -17,16 +17,16 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_FONTRESOURCE_H
-#define BS_FONTRESOURCE_H
+#ifndef SWORD25_FONTRESOURCE_H
+#define SWORD25_FONTRESOURCE_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/resource.h"
-#include "math/rect.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/resource.h"
+#include "sword25/math/rect.h"
 
 // -----------------------------------------------------------------------------
 // Forward declarations

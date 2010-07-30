@@ -21,16 +21,16 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "common.h"
-#include "kernel.h"
-#include "filesystemutil.h"
-#include "window.h"
-#include "resmanager.h"
-#include "persistenceservice.h"
-#include "wincodegenerator.h"
-#include "debug/debugtools.h"
-#include "script/script.h"
-#include "script/luabindhelper.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/filesystemutil.h"
+#include "sword25/kernel/window.h"
+#include "sword25/kernel/resmanager.h"
+#include "sword25/kernel/persistenceservice.h"
+#include "sword25/kernel/wincodegenerator.h"
+#include "sword25/debug/debugtools.h"
+#include "sword25/script/script.h"
+#include "sword25/script/luabindhelper.h"
 
 // -----------------------------------------------------------------------------
 

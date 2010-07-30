@@ -27,17 +27,17 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_RENDEROBJECTMANAGER_H
-#define _BS_RENDEROBJECTMANAGER_H
+#ifndef SWORD25_RENDEROBJECTMANAGER_H
+#define SWORD25_RENDEROBJECTMANAGER_H
 
 // Includes
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "renderobjectptr.h"
-#include "kernel/persistable.h"
+#include "sword25/kernel/common.h"
+#include "sword25/renderobjectptr.h"
+#include "sword25/kernel/persistable.h"
 
 // Klassendefinition
 class BS_Kernel;

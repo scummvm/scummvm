@@ -17,8 +17,8 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BF_MEMLEAKS_H
-#define BF_MEMLEAKS_H
+#ifndef SWORD25_MEMLEAKS_H
+#define SWORD25_MEMLEAKS_H
 
 #ifdef BS_MEMLOG
 
@@ -26,7 +26,7 @@
 #pragma warning(disable : 4291)
 #endif
 
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 
 #include <malloc.h>
 

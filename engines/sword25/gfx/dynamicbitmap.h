@@ -17,21 +17,21 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_DYNAMIC_BITMAP_H
-#define BS_DYNAMIC_BITMAP_H
+#ifndef SWORD25_DYNAMIC_BITMAP_H
+#define SWORD25_DYNAMIC_BITMAP_H
 
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <memory>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "bitmap.h"
-#include "opengl/glimage.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/opengl/glimage.h"
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration

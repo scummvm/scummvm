@@ -17,14 +17,14 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_VECTORIMAGERENDERER_H
-#define BS_VECTORIMAGERENDERER_H
+#ifndef SWORD25_VECTORIMAGERENDERER_H
+#define SWORD25_VECTORIMAGERENDERER_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
+#include "sword25/kernel/common.h"
 #include <vector>
 
 #include "agg_rendering_buffer.h"

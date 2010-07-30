@@ -26,17 +26,17 @@
 #include <math.h>
 #include <algorithm>
 
-#include "kernel.h"
-#include "timer.h"
-#include "service_ids.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/timer.h"
+#include "sword25/kernel/service_ids.h"
 
-#include "gfx/graphicengine.h"
-#include "sfx/soundengine.h"
-#include "input/inputengine.h"
-#include "package/packagemanager.h"
-#include "script/script.h"
-#include "fmv/movieplayer.h"
-#include "persistenceservice.h"
+#include "sword25/gfx/graphicengine.h"
+#include "sword25/sfx/soundengine.h"
+#include "sword25/input/inputengine.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/script/script.h"
+#include "sword25/fmv/movieplayer.h"
+#include "sword25/kernel/persistenceservice.h"
 
 #define BS_LOG_PREFIX "KERNEL"
 

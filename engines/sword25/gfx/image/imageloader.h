@@ -24,18 +24,18 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_IMAGELOADER_H
-#define BS_IMAGELOADER_H
+#ifndef SWORD25_IMAGELOADER_H
+#define SWORD25_IMAGELOADER_H
 
 // Includes
-#include "kernel/bs_stdint.h"
-#include "kernel/common.h"
-#include "../graphicengine.h"
+#include "sword25/kernel/bs_stdint.h"
+#include "sword25/kernel/common.h"
+#include "sword25/gfx/graphicengine.h"
 
 // Die folgenden Header vertragen sich nicht mit der Memoryleak-Detection, daher wird sie kurzzeitig deaktiviert
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <list>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 /**
 	@brief Über die statischen Methoden dieser Klasse werden alle unterstützten Bildformate geladen.

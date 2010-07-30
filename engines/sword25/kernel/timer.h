@@ -25,12 +25,12 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef BS_TIMER_H
-#define BS_TIMER_H
+#ifndef SWORD25_TIMER_H
+#define SWORD25_TIMER_H
 
 // Includes
-#include "common.h"
-#include "bs_stdint.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/bs_stdint.h"
 
 /**
 	@brief Eine Klasse zum Auslesen des Systemtimers.

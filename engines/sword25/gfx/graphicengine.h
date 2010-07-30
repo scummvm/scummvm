@@ -26,21 +26,21 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_GRAPHICENGINE_H
-#define _BS_GRAPHICENGINE_H
+#ifndef SWORD25_GRAPHICENGINE_H
+#define SWORD25_GRAPHICENGINE_H
 
 // Includes
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "kernel/bs_stdint.h"
-#include "kernel/resservice.h"
-#include "kernel/persistable.h"
-#include "math/rect.h"
-#include "framecounter.h"
-#include "renderobjectptr.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/bs_stdint.h"
+#include "sword25/kernel/resservice.h"
+#include "sword25/kernel/persistable.h"
+#include "sword25/math/rect.h"
+#include "sword25/gfx/framecounter.h"
+#include "sword25/gfx/renderobjectptr.h"
 
 class BS_Kernel;
 class BS_Image;

@@ -17,14 +17,14 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_RESOURCE_H
-#define BS_RESOURCE_H
+#ifndef SWORD25_RESOURCE_H
+#define SWORD25_RESOURCE_H
 
-#include "memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <list>
-#include "memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 class BS_Kernel;
 class BS_ResourceManager;

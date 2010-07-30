@@ -41,7 +41,7 @@
 // L. Peter Deutsch
 // ghost@aladdin.com
 
-#include "md5.h"
+#include "sword25/kernel/md5.h"
 
 #undef BYTE_ORDER	/* 1 = big-endian, -1 = little-endian, 0 = unknown */
 #ifdef ARCH_IS_BIG_ENDIAN

@@ -20,7 +20,7 @@
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 
-#include "timer.h"
+#include "sword25/kernel/timer.h"
 
 #define BS_LOG_PREFIX "BS_TIMER"
 

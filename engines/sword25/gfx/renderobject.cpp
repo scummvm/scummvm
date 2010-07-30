@@ -17,24 +17,24 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "renderobject.h"
+#include "sword25/gfx/renderobject.h"
 
 #include <algorithm>
 
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
-#include "renderobjectregistry.h"
-#include "renderobjectmanager.h"
-#include "graphicengine.h"
+#include "sword25/gfx/renderobjectregistry.h"
+#include "sword25/gfx/renderobjectmanager.h"
+#include "sword25/gfx/graphicengine.h"
 
-#include "bitmap.h"
-#include "staticbitmap.h"
-#include "dynamicbitmap.h"
-#include "animation.h"
-#include "panel.h"
-#include "text.h"
-#include "animationtemplate.h"
+#include "sword25/gfx/bitmap.h"
+#include "sword25/gfx/staticbitmap.h"
+#include "sword25/gfx/dynamicbitmap.h"
+#include "sword25/gfx/animation.h"
+#include "sword25/gfx/panel.h"
+#include "sword25/gfx/text.h"
+#include "sword25/gfx/animationtemplate.h"
 
 #define BS_LOG_PREFIX "RENDEROBJECT"
 

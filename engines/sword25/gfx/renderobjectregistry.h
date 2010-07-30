@@ -17,19 +17,19 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_RENDEROBJECTREGISTRY_H
-#define BS_RENDEROBJECTREGISTRY_H
+#ifndef SWORD25_RENDEROBJECTREGISTRY_H
+#define SWORD25_RENDEROBJECTREGISTRY_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "kernel/common.h"
-#include "kernel/objectregistry.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/objectregistry.h"
 
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <memory>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
 // -----------------------------------------------------------------------------
 // Forward Deklarationen

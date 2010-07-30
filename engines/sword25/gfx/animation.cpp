@@ -19,21 +19,21 @@
 
 #include <memory>
 
-#include "animation.h"
+#include "sword25/gfx/animation.h"
 
-#include "kernel/kernel.h"
-#include "kernel/resmanager.h"
-#include "kernel/inputpersistenceblock.h"
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/callbackregistry.h"
-#include "package/packagemanager.h"
-#include "util/tinyxml/tinyxml.h"
-#include "image/image.h"
-#include "animationtemplate.h"
-#include "animationtemplateregistry.h"
-#include "animationresource.h"
-#include "bitmapresource.h"
-#include "graphicengine.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/resmanager.h"
+#include "sword25/kernel/inputpersistenceblock.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/callbackregistry.h"
+#include "sword25/package/packagemanager.h"
+#include <tinyxml.h>
+#include "sword25/image/image.h"
+#include "sword25/gfx/animationtemplate.h"
+#include "sword25/gfx/animationtemplateregistry.h"
+#include "sword25/gfx/animationresource.h"
+#include "sword25/gfx/bitmapresource.h"
+#include "sword25/gfx/graphicengine.h"
 
 #define BS_LOG_PREFIX "ANIMATION"
 

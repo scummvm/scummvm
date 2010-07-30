@@ -17,10 +17,10 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#include "window.h"
+#include "sword25/kernel/window.h"
 
 // Alle Implementationen von BS_Window müssen hier eingetragen werden
-#include "win32window.h"
+#include "sword25/kernel/win32window.h"
 
 // Erstellt ein Fenster des GUI des aktuellen Betriebssystems
 BS_Window* BS_Window::CreateBSWindow(int X, int Y, int Width, int Height, bool Visible)

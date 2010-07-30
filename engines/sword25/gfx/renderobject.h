@@ -27,18 +27,18 @@
 	Autor: Malte Thiesen
 */
 
-#ifndef _BS_RENDEROBJECT_H
-#define _BS_RENDEROBJECT_H
+#ifndef SWORD25_RENDEROBJECT_H
+#define SWORD25_RENDEROBJECT_H
 
 // Includes
-#include "kernel/memlog_off.h"
+#include "sword25/kernel/memlog_off.h"
 #include <vector>
-#include "kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 
-#include "kernel/common.h"
-#include "kernel/persistable.h"
-#include "math/rect.h"
-#include "renderobjectptr.h"
+#include "sword25/kernel/common.h"
+#include "sword25/kernel/persistable.h"
+#include "sword25/math/rect.h"
+#include "sword25/gfx/renderobjectptr.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

@@ -17,15 +17,15 @@
 // Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 // -----------------------------------------------------------------------------
 
-#ifndef BS_WIN_CODE_GENERATOR_H
-#define BS_WIN_CODE_GENERATOR_H
+#ifndef SWORD25_WIN_CODE_GENERATOR_H
+#define SWORD25_WIN_CODE_GENERATOR_H
 
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
 
 #include <string>
-#include "common.h"
+#include "sword25/kernel/common.h"
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

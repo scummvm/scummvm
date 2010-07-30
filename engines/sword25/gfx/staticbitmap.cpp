@@ -21,11 +21,11 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-#include "staticbitmap.h"
-#include "bitmapresource.h"
-#include "package/packagemanager.h"
-#include "kernel/outputpersistenceblock.h"
-#include "kernel/inputpersistenceblock.h"
+#include "sword25/gfx/staticbitmap.h"
+#include "sword25/gfx/bitmapresource.h"
+#include "sword25/package/packagemanager.h"
+#include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/kernel/inputpersistenceblock.h"
 
 // -----------------------------------------------------------------------------
 // Logging
