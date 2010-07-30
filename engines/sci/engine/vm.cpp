@@ -1069,16 +1069,29 @@ void run_vm(EngineState *s) {
 
 		case op_mod: { // 0x05 (05)
 			r_temp = POP32();
-			int16 modulo, value, result;
-			if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
-				modulo = ABS(modulo);
-				result = (modulo != 0 ? value % modulo : 0);
-				// In SCI01, handling for negative numbers was added
-				if (getSciVersion() >= SCI_VERSION_01 && result < 0)
-					result += modulo;
-				s->r_acc = make_reg(0, result);
+
+			if (getSciVersion() <= SCI_VERSION_0_LATE) {
+				uint16 modulo, value;
+				if (validate_unsignedInteger(s->r_acc, modulo) && validate_unsignedInteger(r_temp, value))
+					s->r_acc = make_reg(0, (modulo != 0 ? value % modulo : 0));
+				else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			} else {
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+				// In Iceman (and perhaps from SCI0 0.000.685 onwards in general),
+				// handling for negative numbers was added. Since Iceman doesn't
+				// seem to have issues with the older code, we exclude it for now
+				// for simplicity's sake and use the new code for SCI01 and newer
+				// games. Fixes the battlecruiser mini game in SQ5 (room 850),
+				// bug #3035755
+				int16 modulo, value, result;
+				if (validate_signedInteger(s->r_acc, modulo) && validate_signedInteger(r_temp, value)) {
+					modulo = ABS(modulo);
+					result = (modulo != 0 ? value % modulo : 0);
+					if (result < 0)
+						result += modulo;
+					s->r_acc = make_reg(0, result);
+				} else
+					s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
 			}
 			break;
 		}
