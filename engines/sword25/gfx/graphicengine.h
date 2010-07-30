@@ -111,7 +111,7 @@ public:
 		/**
 			32 Bit Farbformat (8 Bit Alpha, 8 Bit Blau, 8 Bit Grün, 8 Bit Rot) (little endian)
 		*/
-		CF_ABGR32,
+		CF_ABGR32
 	};
 	
 	// Interface

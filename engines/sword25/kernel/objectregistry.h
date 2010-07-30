@@ -35,7 +35,8 @@ template<typename T>
 class BS_ObjectRegistry
 {
 public:
-	BS_ObjectRegistry() : m_NextHandle(1) {};
+	BS_ObjectRegistry() : m_NextHandle(1) {}
+	virtual ~BS_ObjectRegistry() {}
 
 	// -------------------------------------------------------------------------
 

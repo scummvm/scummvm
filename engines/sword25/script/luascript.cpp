@@ -328,7 +328,7 @@ namespace
 	enum PERMANENT_TABLE_TYPE
 	{
 		PTT_PERSIST,
-		PTT_UNPERSIST,
+		PTT_UNPERSIST
 	};
 
 	// -------------------------------------------------------------------------

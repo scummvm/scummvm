@@ -41,7 +41,7 @@ class BS_Vertex
 {
 public:
 	BS_Vertex() : X(0), Y(0) {};
-	BS_Vertex(int X, int Y) { this->X = X; this->Y = Y; }
+	BS_Vertex(int X_, int Y_) { this->X = X_; this->Y = Y_; }
 
 	int X;
 	int Y;

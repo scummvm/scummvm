@@ -48,7 +48,7 @@ protected:
 		FLOAT_MARKER,
 		STRING_MARKER,
 		BOOL_MARKER,
-		BLOCK_MARKER,
+		BLOCK_MARKER
 	};
 
 	// -----------------------------------------------------------------------------
@@ -102,7 +102,7 @@ private:
 // Compile time asserts
 // -----------------------------------------------------------------------------
 
-#define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1];
+#define CTASSERT(ex) typedef char ctassert_type[(ex) ? 1 : -1]
 CTASSERT(sizeof(unsigned char) == 1);
 CTASSERT(sizeof(signed int) == 4);
 CTASSERT(sizeof(unsigned int) == 4);

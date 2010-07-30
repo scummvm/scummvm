@@ -38,7 +38,7 @@ class BS_InputPersistenceBlock;
 
 class BS_Animation : public BS_TimedRenderObject
 {
-friend BS_RenderObject;
+friend class BS_RenderObject;
 
 private:
 	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const std::string & FileName);
@@ -50,7 +50,7 @@ public:
 	{
 		AT_ONESHOT,
 		AT_LOOP,
-		AT_JOJO,
+		AT_JOJO
 	};
 	
 	virtual ~BS_Animation();

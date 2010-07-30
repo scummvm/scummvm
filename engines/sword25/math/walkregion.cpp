@@ -30,7 +30,7 @@
 // Konstanten
 // -----------------------------------------------------------------------------
 
-static const int INFINITY = INT_MAX;
+static const int infinity = INT_MAX;
 
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion
@@ -103,7 +103,7 @@ struct DijkstraNode
 	typedef Container::iterator Iter;
 	typedef Container::const_iterator ConstIter;
 
-	DijkstraNode() : Cost(INFINITY), Chosen(false) {};
+	DijkstraNode() : Cost(infinity), Chosen(false) {};
 	ConstIter	ParentIter;
 	int			Cost;
 	bool		Chosen;
@@ -127,7 +127,7 @@ static void InitDijkstraNodes(DijkstraNode::Container & DijkstraNodes, const BS_
 static DijkstraNode::Iter ChooseClosestNode(DijkstraNode::Container & Nodes)
 {
 	DijkstraNode::Iter ClosestNodeInter = Nodes.end();
-	int MinCost = INFINITY;
+	int MinCost = infinity;
 
 	for (DijkstraNode::Iter iter = Nodes.begin(); iter != Nodes.end(); iter++)
 	{
@@ -152,7 +152,7 @@ static void RelaxNodes(DijkstraNode::Container & Nodes,
 	for (unsigned int i = 0; i < Nodes.size(); i++)
 	{
 		int Cost = VisibilityMatrix[CurNodeIndex][i];
-		if (!Nodes[i].Chosen && Cost != INFINITY)
+		if (!Nodes[i].Chosen && Cost != infinity)
 		{
 			int TotalCost = (*CurNodeIter).Cost + Cost;
 			if (TotalCost < Nodes[i].Cost)
@@ -268,7 +268,7 @@ void BS_WalkRegion::InitNodeVector()
 void BS_WalkRegion::ComputeVisibilityMatrix()
 {
 	// Sichtbarkeitsmatrix initialisieren
-	m_VisibilityMatrix = std::vector< std::vector <int> >(m_Nodes.size(), std::vector<int>(m_Nodes.size(), INFINITY));
+	m_VisibilityMatrix = std::vector< std::vector <int> >(m_Nodes.size(), std::vector<int>(m_Nodes.size(), infinity));
 
 	// Sichtbarkeiten zwischen Vertecies berechnen und in die Sichbarkeitsmatrix eintragen.
 	for (unsigned int j = 0; j < m_Nodes.size(); ++j)
@@ -285,8 +285,8 @@ void BS_WalkRegion::ComputeVisibilityMatrix()
 			else
 			{
 				// Wenn keine Sichtlinie besteht wird die Entfernung "unendlich" eingetragen
-				m_VisibilityMatrix[i][j] = INFINITY;
-				m_VisibilityMatrix[j][i] = INFINITY;
+				m_VisibilityMatrix[i][j] = infinity;
+				m_VisibilityMatrix[j][i] = infinity;
 			}
 		}
 	}

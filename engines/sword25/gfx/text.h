@@ -46,7 +46,7 @@ class BS_ResourceManager;
 
 class BS_Text : public BS_RenderObject
 {
-friend BS_RenderObject;
+friend class BS_RenderObject;
 
 public:
 	/**

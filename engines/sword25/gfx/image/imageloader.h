@@ -349,7 +349,7 @@ private:
 		@brief Sucht zu Bilddaten ein BS_ImageLoader Objekt, dass die Bilddaten dekodieren kann.
 		@return Gibt einen Pointer auf ein passendes BS_ImageLoader Objekt zurück, oder NULL, wenn kein passendes Objekt gefunden wurde.
 	*/
-	static BS_ImageLoader* BS_ImageLoader::_FindSuitableImageLoader(const char* pFileData, unsigned int FileSize);
+	static BS_ImageLoader* _FindSuitableImageLoader(const char* pFileData, unsigned int FileSize);
 
 	static std::list<BS_ImageLoader*>	_ImageLoaderList;				// Die Liste aller BS_ImageLoader-Objekte
 	static bool							_ImageLoaderListInitialized;	// Gibt an, ob die Liste schon intialisiert wurde

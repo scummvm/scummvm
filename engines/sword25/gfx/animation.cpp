@@ -28,7 +28,7 @@
 #include "sword25/kernel/callbackregistry.h"
 #include "sword25/package/packagemanager.h"
 #include <tinyxml.h>
-#include "sword25/image/image.h"
+#include "sword25/gfx/image/image.h"
 #include "sword25/gfx/animationtemplate.h"
 #include "sword25/gfx/animationtemplateregistry.h"
 #include "sword25/gfx/animationresource.h"

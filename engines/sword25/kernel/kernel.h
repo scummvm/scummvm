@@ -328,11 +328,11 @@ private:
 class BS_ServiceInfo
 {
 public:
-	BS_ServiceInfo(const std::string& SuperclassIdentifier, const std::string& ServiceIdentifier, BS_Service* (*CreateMethod)(BS_Kernel*))
+	BS_ServiceInfo(const std::string& SuperclassIdentifier_, const std::string& ServiceIdentifier_, BS_Service* (*CreateMethod_)(BS_Kernel*))
 	{
-		this->SuperclassIdentifier = SuperclassIdentifier;
-		this->ServiceIdentifier = ServiceIdentifier;
-		this->CreateMethod = CreateMethod;
+		this->SuperclassIdentifier = SuperclassIdentifier_;
+		this->ServiceIdentifier = ServiceIdentifier_;
+		this->CreateMethod = CreateMethod_;
 	};
 	
 	std::string	SuperclassIdentifier;

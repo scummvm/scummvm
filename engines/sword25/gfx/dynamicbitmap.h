@@ -39,7 +39,7 @@
 
 class BS_DynamicBitmap : public BS_Bitmap
 {
-friend BS_RenderObject;
+friend class BS_RenderObject;
 
 public:
 	virtual ~BS_DynamicBitmap();

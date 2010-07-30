@@ -92,7 +92,7 @@ namespace
 	{
 		return ((x > high) ? high : (( x < low) ? low : x));
 	}
-};
+}
 
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion
@@ -313,7 +313,7 @@ bool BS_OggTheora::LoadMovie(const std::string & Filename, unsigned int Z)
 		float ScreenToVideoWidth = (float) pGfx->GetDisplayWidth() / (float) m_OutputBitmap->GetWidth();
 		float ScreenToVideoHeight = (float) pGfx->GetDisplayHeight() / (float) m_OutputBitmap->GetHeight();
 		float ScaleFactor = std::min(ScreenToVideoWidth, ScreenToVideoHeight);
-		if (abs(ScaleFactor - 1.0f) < FLT_EPSILON) ScaleFactor = 1.0f;
+		if (ABS(ScaleFactor - 1.0f) < FLT_EPSILON) ScaleFactor = 1.0f;
 		m_OutputBitmap->SetScaleFactor(ScaleFactor);
 
 		// Z-Wert setzen

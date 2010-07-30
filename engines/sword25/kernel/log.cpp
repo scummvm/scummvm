@@ -23,7 +23,7 @@
 
 #include "sword25/kernel/filesystemutil.h"
 #include "sword25/kernel/log.h"
-#include "sword25/debug/debugtools.h"
+#include "sword25/kernel/debug/debugtools.h"
 
 // Konstanten
 static const char*	BF_LOG_FILENAME = "log.txt";

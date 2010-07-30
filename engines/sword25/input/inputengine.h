@@ -133,7 +133,7 @@ public:
 		KEY_LSHIFT      = 0xA0,
 		KEY_RSHIFT      = 0xA1,
 		KEY_LCONTROL    = 0xA2,
-		KEY_RCONTROL    = 0xA3,
+		KEY_RCONTROL    = 0xA3
 	};
 
 	// ACHTUNG: Diese Codes werden in inputengine_script.cpp beim Skript-Service registriert. Bei Änderungen an diesem Enum muss auch diese
@@ -148,7 +148,7 @@ public:
 		KEY_COMMAND_BACKSPACE = 6,
 		KEY_COMMAND_TAB = 7,
 		KEY_COMMAND_INSERT = 8,
-		KEY_COMMAND_DELETE = 9,
+		KEY_COMMAND_DELETE = 9
 	};
 
 	/// --------------------------------------------------------------

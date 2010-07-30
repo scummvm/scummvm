@@ -28,7 +28,7 @@
 #include "sword25/kernel/resmanager.h"
 #include "sword25/kernel/persistenceservice.h"
 #include "sword25/kernel/wincodegenerator.h"
-#include "sword25/debug/debugtools.h"
+#include "sword25/kernel/debug/debugtools.h"
 #include "sword25/script/script.h"
 #include "sword25/script/luabindhelper.h"
 

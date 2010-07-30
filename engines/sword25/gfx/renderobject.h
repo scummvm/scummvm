@@ -79,7 +79,7 @@ public:
 		/// Ein Text. Siehe BS_Text.
 		TYPE_TEXT,
 		/// Ein unbekannter Objekttyp. Diesen Typ sollte kein Renderobjekt annehmen.
-		TYPE_UNKNOWN,
+		TYPE_UNKNOWN
 	};
 
 	// Add-Methoden
@@ -373,13 +373,13 @@ protected:
 	// Das primäre Sortierkriterium ist hierbei der Z-Wert und das sekundäre der Y-Wert (von oben nach unten).
 	// Beispiel:
 	//                  Screen
-	//                 /  |   \
-	//               /    |     \
-	//             /      |       \
-	//           /        |         \
+	//                 /  |   \.
+	//               /    |     \.
+	//             /      |       \.
+	//           /        |         \.
 	//     Background Interface   Maus
-	//		/	\	   /  |   \
-	//    /      \    /   |    \
+	//		/	\	   /  |   \.
+	//    /      \    /   |    \.
 	// George   Tür Icn1 Icn2 Icn3
 	// 
 	// Wenn jetzt das Interface mit SetVisible() ausgeblendet würde, verschwinden auch die Icons, die sich im Interface

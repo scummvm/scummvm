@@ -32,7 +32,7 @@ BS_Resource::BS_Resource(const std::string& FileName, RESOURCE_TYPES Type) :
 
 	_FileName = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);
 	_FileNameHash = BS_String::GetHash(FileName);
-};
+}
 
 void BS_Resource::Release()
 {

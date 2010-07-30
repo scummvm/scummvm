@@ -42,7 +42,7 @@ public:
 	{
 		NONE,
 		END_OF_DATA,
-		OUT_OF_SYNC,
+		OUT_OF_SYNC
 	};
 
 	BS_InputPersistenceBlock(const void * Data, unsigned int DataLength);

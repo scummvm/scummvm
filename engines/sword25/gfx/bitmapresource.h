@@ -23,7 +23,7 @@
 // Includes
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/resource.h"
-#include "sword25/image/image.h"
+#include "sword25/gfx/image/image.h"
 
 // -----------------------------------------------------------------------------
 // Forward Declarations

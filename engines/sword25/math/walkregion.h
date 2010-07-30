@@ -42,7 +42,7 @@ typedef std::vector<BS_Vertex> BS_Path;
 */
 class BS_WalkRegion : public BS_Region
 {
-	friend BS_Region;
+	friend class BS_Region;
 
 protected:
 	BS_WalkRegion();

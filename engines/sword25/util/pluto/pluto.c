@@ -16,7 +16,7 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#include "lua.h"
+#include "sword25/util/lua/lua.h"
 #include "pluto.h"
 
 #define USE_PDEP

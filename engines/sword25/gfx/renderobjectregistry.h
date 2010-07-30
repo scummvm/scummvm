@@ -50,6 +50,8 @@ public:
 		return *m_InstancePtr.get();
 	}
 
+	virtual ~BS_RenderObjectRegistry() {}
+
 private:
 	virtual void LogErrorLn(const char * Message) const;
 	virtual void LogWarningLn(const char * Message) const;

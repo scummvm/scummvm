@@ -55,7 +55,7 @@ public:
 	enum REGION_TYPE
 	{
 		RT_REGION,
-		RT_WALKREGION,
+		RT_WALKREGION
 	};
 
 	static unsigned int Create(REGION_TYPE Type);

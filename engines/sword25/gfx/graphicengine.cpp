@@ -19,7 +19,7 @@
 
 #define BS_LOG_PREFIX "GRAPHICENGINE"
 
-#include "sword25/image/image.h"
+#include "sword25/gfx/image/image.h"
 #include "sword25/gfx/screenshot.h"
 #include "sword25/kernel/memlog_off.h"
 #include <memory>

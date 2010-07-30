@@ -13,7 +13,7 @@
 #include <stddef.h>
 
 
-#include "luaconf.h"
+#include "sword25/util/lua/luaconf.h"
 
 
 #define LUA_VERSION	"Lua 5.1"

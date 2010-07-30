@@ -33,7 +33,7 @@
 
 class BS_StaticBitmap : public BS_Bitmap
 {
-friend BS_RenderObject;
+friend class BS_RenderObject;
 
 private:
 	/**

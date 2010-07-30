@@ -122,9 +122,7 @@ MODULE_OBJS := \
 	util/lua/src/print.o \
 	util/pluto/pdep.o \
 	util/pluto/pluto.o \
-	util/pluto/plzio.o \
-	util/pluto/pptest.o \
-	util/pluto/puptest.o
+	util/pluto/plzio.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SWORD25), DYNAMIC_PLUGIN)

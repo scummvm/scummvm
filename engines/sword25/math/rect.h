@@ -57,12 +57,12 @@ public:
 		@param right das rechte Extrem des Rechteckes + 1
 		@param bottom des untere Extrem des Rechteckes + 1
 	*/
-	BS_Rect(int left, int top, int right, int bottom)
+	BS_Rect(int left_, int top_, int right_, int bottom_)
 	{
-		this->left = left;
-		this->top = top;
-		this->right = right;
-		this->bottom = bottom;
+		this->left = left_;
+		this->top = top_;
+		this->right = right_;
+		this->bottom = bottom_;
 	}
 	/**
 		@brief Verschiebt das Rechteck.

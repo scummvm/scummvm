@@ -44,7 +44,7 @@ class BS_TimedRenderObject : public BS_RenderObject
 {
 public:
 	BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
-	BS_TimedRenderObject::~BS_TimedRenderObject();
+	~BS_TimedRenderObject();
 
 	/**
 		@brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.

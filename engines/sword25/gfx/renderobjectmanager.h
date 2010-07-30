@@ -36,7 +36,7 @@
 #include "sword25/kernel/memlog_on.h"
 
 #include "sword25/kernel/common.h"
-#include "sword25/renderobjectptr.h"
+#include "sword25/gfx/renderobjectptr.h"
 #include "sword25/kernel/persistable.h"
 
 // Klassendefinition

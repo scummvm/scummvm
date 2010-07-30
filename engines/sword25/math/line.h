@@ -97,7 +97,7 @@ public:
 	{
 		LEFT,
 		RIGHT,
-		ON,
+		ON
 	};
 
 	/**

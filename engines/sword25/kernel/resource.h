@@ -31,7 +31,7 @@ class BS_ResourceManager;
 
 class BS_Resource
 {
-friend BS_ResourceManager;
+friend class BS_ResourceManager;
 
 public:
 	enum RESOURCE_TYPES
