@@ -177,7 +177,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	case 10:	// Freddy Pharkas, when using the whiskey glass to read
 				// the prescription (bug #3034973) - looks like an erroneous
 				// extra param
-		// TODO: We don't really use parameter indices 6-10 (with no side
+		// TODO: We don't really use parameter indices 5-9 (with no side
 		// effects), are they used for something, or are these a result of
 		// script bugs?
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
