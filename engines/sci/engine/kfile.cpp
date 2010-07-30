@@ -282,6 +282,14 @@ enum {
 };
 
 reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getGameId() == GID_FANMADE && argc == 1) {
+		// WORKAROUND: The fan game script library calls kDeviceInfo with one parameter.
+		// According to the scripts, it wants to call CurDevice. However, it fails to
+		// provide the subop to the function.
+		s->_segMan->strcpy(argv[0], "/");
+		return s->r_acc;
+	}
+
 	int mode = argv[0].toUint16();
 
 	switch (mode) {

@@ -319,7 +319,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(CoordPri),          SIG_EVERYWHERE,           "i(i)",                  NULL,            NULL },
     { MAP_CALL(CosDiv),            SIG_EVERYWHERE,           "ii",                    NULL,            NULL },
     { MAP_CALL(DeleteKey),         SIG_EVERYWHERE,           "l.",                    NULL,            NULL },
-    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            NULL }, // subop
+    { MAP_CALL(DeviceInfo),        SIG_EVERYWHERE,           "i(r)(r)(i)",            NULL,            kDeviceInfo_workarounds }, // subop
     { MAP_CALL(Display),           SIG_EVERYWHERE,           "[ir]([ir!]*)",          NULL,            NULL },
     // ^ we allow invalid references here, because kDisplay gets called with those in e.g. pq3 during intro
     //    restoreBits() checks and skips invalid handles, so that's fine. Sierra SCI behaved the same

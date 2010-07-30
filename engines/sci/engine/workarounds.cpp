@@ -139,6 +139,19 @@ const SciWorkaroundEntry kCelWide_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kDeviceInfo_workarounds[] = {
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe57,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "save",        0xe5c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xd1c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Cascade Quest)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe55,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Demo Quest)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe57,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (I Want My C64 Back)
+	{ GID_FANMADE,        -1,   994,  1,               "Game", "restore",     0xe5c,    0, { WORKAROUND_STILLCALL, 0 } }, // In fanmade games, this is called with one parameter for CurDevice (Most of them)
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kDisplay_workarounds[] = {
 	{ GID_ISLANDBRAIN,   300,   300,  0,           "geneDude", "show",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // when looking at the gene explanation chart - a parameter is an object
 	{ GID_SQ4,           391,   391,  0,          "doCatalog", "mode",         0x84,    0, { WORKAROUND_IGNORE,    0 } }, // clicking on catalog in roboter sale - a parameter is an object
