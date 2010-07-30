@@ -233,9 +233,6 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 
 void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	uint16 curChar;
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _ports->_curPort->penClr;
-
 	textWidth = 0; textHeight = 0;
 
 	GetFont();
@@ -264,13 +261,17 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 			}
 		}
 	}
-	SetFont(oldFontId);
-	_ports->penColor(oldPenColor);
 	return;
 }
 
 void GfxText16::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+	GuiResourceId oldFontId = GetFontId();
+	int16 oldPenColor = _ports->_curPort->penClr;
+
 	Width(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
+
+	SetFont(oldFontId);
+	_ports->penColor(oldPenColor);
 }
 
 void GfxText16::ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
