@@ -127,6 +127,31 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	}
 }
 
+void TestbedInteractionDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
+	if (!xOffset) {
+		xOffset = _xOffset;
+	}
+	_yOffset += yPadding;
+	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text, textAlign);
+	_yOffset += h;
+}
+
+void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset, uint yPadding) {
+	if (!xOffset) {
+		xOffset = _xOffset;
+	}
+	_yOffset += yPadding;
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, cmd));
+	_yOffset += h;
+}
+
+void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
+
 void TestbedConfigManager::initDefaultConfiguration() {
 	// Default Configuration
 	// Add Global configuration Parameters here.
@@ -143,6 +168,7 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 		}
 	}
 	_configFileInterface.saveToStream(*ws);
+	ws->flush();
 }
 
 Common::SeekableReadStream *TestbedConfigManager::getConfigReadStream() {
@@ -243,13 +269,9 @@ void TestbedConfigManager::selectTestsuites() {
 	Testsuite::logPrintf("Info! : Interactive tests are also being executed.\n");
 	
 	if (Testsuite::handleInteractiveInput(prompt, "Proceed?", "Customize", kOptionRight)) {
-
 		// Select testsuites using checkboxes
 		TestbedOptionsDialog tbd(_testsuiteList, this);
 		tbd.runModal();
-
-		
-
 	}
 }
 

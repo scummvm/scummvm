@@ -28,7 +28,6 @@
 
 #include "engines/util.h"
 
-#include "testbed/config.h"
 #include "testbed/events.h"
 #include "testbed/fs.h"
 #include "testbed/graphics.h"
@@ -38,6 +37,26 @@
 #include "testbed/testbed.h"
 
 namespace Testbed {
+
+TestbedExitDialog::TestbedExitDialog() : TestbedInteractionDialog(80, 60, 400, 170), _rerun(false) {
+	_xOffset = 25;
+	_yOffset = 0;
+	Common::String text = "Here we will have the results of all the tests!";
+	addText(350, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
+	addButton(200, 20, "Rerun Tests", kCmdRerunTestbed);
+	addButton(50, 20, "Close", GUI::kCloseCmd, 160, 15);
+
+}
+
+void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kCmdRerunTestbed :
+		_rerun = true;
+		GUI::Dialog::close();
+	default:
+		GUI::Dialog::handleCommand(sender, cmd, data);
+	}
+}
 
 bool TestbedEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsRTL) ? true : false;
@@ -95,6 +114,7 @@ void TestbedEngine::invokeTestsuites(TestbedConfigManager &cfMan) {
 	int numSuitesEnabled = cfMan.getNumSuitesEnabled();
 
 	for (iter = _testsuiteList.begin(); iter != _testsuiteList.end(); iter++) {
+		(*iter)->reset();
 		if ((*iter)->isEnabled()) {
 			Testsuite::updateStats("Testsuite", (*iter)->getName(), count++, numSuitesEnabled, pt);
 			(*iter)->execute();
@@ -111,17 +131,26 @@ Common::Error TestbedEngine::run() {
 	// TODO: Implement that
 
 	TestbedConfigManager cfMan(_testsuiteList, "testbed.config");
-	cfMan.selectTestsuites();
+	
+	// Keep running if rerun requested 
+	TestbedExitDialog tbDialog;
 
-	// Init logging
-	Testsuite::initLogging(true);
+	do {
+		Testsuite::clearEntireScreen();
+		cfMan.selectTestsuites();
+		// Init logging
+		Testsuite::initLogging(true);
+		// Check if user wanted to exit.
+		if (Engine::shouldQuit()) {
+			return Common::kNoError;
+		}
+		
+		invokeTestsuites(cfMan);
+		
+		tbDialog.run();
+
+	} while (tbDialog.rerunRequired());
 	
-	// check if user wanted to exit.
-	if (Engine::shouldQuit()) {
-		return Common::kNoError;
-	}
-	
-	invokeTestsuites(cfMan);
 	return Common::kNoError;
 }
 

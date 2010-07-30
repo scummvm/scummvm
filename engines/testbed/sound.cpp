@@ -37,7 +37,7 @@ enum {
 	kPauseChannel3 = 'pac3'
 };
 
-SoundSubsystemDialog::SoundSubsystemDialog() : GUI::Dialog(80, 60, 400, 170) {	
+SoundSubsystemDialog::SoundSubsystemDialog() : TestbedInteractionDialog(80, 60, 400, 170) {
 	_xOffset = 25;
 	_yOffset = 0;
 	Common::String text = "Sound Subsystem Tests: Test Mixing of Audio Streams.";
@@ -48,23 +48,6 @@ SoundSubsystemDialog::SoundSubsystemDialog() : GUI::Dialog(80, 60, 400, 170) {
 	addButton(50, 20, "Close", GUI::kCloseCmd, 160, 15);
 }
 
-void SoundSubsystemDialog::addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding) {
-	if (!xOffset) {
-		xOffset = _xOffset;
-	}
-	_yOffset += yPadding;
-	new GUI::StaticTextWidget(this, xOffset, _yOffset, w, h, text, textAlign);
-	_yOffset += h;
-}
-
-void SoundSubsystemDialog::addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset, uint yPadding) {
-	if (!xOffset) {
-		xOffset = _xOffset;
-	}
-	_yOffset += yPadding;
-	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, cmd));
-	_yOffset += h;
-}
 
 void SoundSubsystemDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {

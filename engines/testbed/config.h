@@ -114,6 +114,20 @@ private:
 	TestbedConfigManager *_testbedConfMan;
 };
 
+class TestbedInteractionDialog : public GUI::Dialog {
+public:
+	TestbedInteractionDialog(uint x, uint y, uint w, uint h) : GUI::Dialog(x, y, w, h) {}
+	~TestbedInteractionDialog() {}
+protected:
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void addButton(uint w, uint h, const Common::String name, uint32 cmd, uint xOffset = 0, uint yPadding = 8);
+	void addText(uint w, uint h, const Common::String text, Graphics::TextAlign textAlign, uint xOffset, uint yPadding);
+	Common::Array<GUI::ButtonWidget *> _buttonArray;
+	uint _xOffset;
+	uint _yOffset;
+
+};
+
 } // End of namespace Testbed
 
 #endif // TESTBED_CONFIG_H

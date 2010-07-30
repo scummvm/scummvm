@@ -92,7 +92,8 @@ public:
 		_isTsEnabled = flag;
 	}
 	bool enableTest(const Common::String &testName, bool enable);
-
+	void reset();
+	
 	/**
 	 * Prompts for User Input in form of "Yes" or "No" for interactive tests
 	 * e.g: "Is this like you expect?" "Yes" or "No"

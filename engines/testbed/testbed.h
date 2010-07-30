@@ -29,6 +29,7 @@
 
 #include "gui/options.h"
 
+#include "testbed/config.h"
 #include "testbed/testsuite.h"
 
 namespace Testbed {
@@ -37,7 +38,8 @@ class TestbedConfigManager;
 
 enum {
 	kTestbedLogOutput = 1 << 0,
-	kTestbedEngineDebug = 1 << 2
+	kTestbedEngineDebug = 1 << 2, 
+	kCmdRerunTestbed = 'crtb'
 };
 
 class TestbedEngine : public Engine {
@@ -53,9 +55,26 @@ public:
 	void invokeTestsuites(TestbedConfigManager &cfMan);
 
 	bool hasFeature(EngineFeature f) const;
-
+	
 private:
 	Common::Array<Testsuite *> _testsuiteList;
+};
+
+class TestbedExitDialog : public TestbedInteractionDialog {
+public:
+	TestbedExitDialog();
+	~TestbedExitDialog() {}
+	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	void run() { runModal(); }
+	bool rerunRequired() {
+		if (_rerun) {
+			_rerun = false;
+			return true;
+		}
+		return false;
+	}
+private:
+	bool _rerun;
 };
 
 } // End of namespace Testbed

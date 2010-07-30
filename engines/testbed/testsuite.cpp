@@ -131,6 +131,15 @@ Testsuite::~Testsuite() {
 	}
 }
 
+void Testsuite::reset() {
+	_numTestsPassed = 0;
+	_numTestsExecuted = 0;
+	toQuit = kLoopNormal;
+	for (Common::Array<Test *>::iterator i = _testsToExecute.begin(); i != _testsToExecute.end(); ++i) {
+		(*i)->passed = false;
+	}
+}
+
 void Testsuite::genReport() const {
 	logPrintf("\n");
 	logPrintf("Consolidating results...\n");
