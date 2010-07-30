@@ -45,6 +45,7 @@ public:
 	virtual const OSystem::GraphicsMode *getSupportedGraphicsModes() const = 0;
 	virtual int getDefaultGraphicsMode() const = 0;
 	virtual bool setGraphicsMode(int mode) = 0;
+	virtual void resetGraphicsScale() = 0;
 	virtual int getGraphicsMode() const = 0;
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const = 0;

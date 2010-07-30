@@ -154,10 +154,7 @@ void initCommonGFX(bool defaultTo1XScaler) {
 
 	// See if the game should default to 1x scaler
 	if (useDefaultGraphicsMode && defaultTo1XScaler) {
-		// FIXME: As a hack, we use "1x" here. Would be nicer to use
-		// getDefaultGraphicsMode() instead, but right now, we do not specify
-		// whether that is a 1x scaler or not...
-		g_system->setGraphicsMode("1x");
+		g_system->resetGraphicsScale();
 	} else {
 		// Override global scaler with any game-specific define
 		if (ConfMan.hasKey("gfx_mode")) {

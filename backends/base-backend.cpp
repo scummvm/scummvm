@@ -92,3 +92,9 @@ AudioCDManager *BaseBackend::getAudioCDManager() {
 		s_audiocdManager = new DefaultAudioCDManager();
 	return (AudioCDManager *)s_audiocdManager;
 }
+
+void BaseBackend::resetGraphicsScale() {
+	// As a hack, we use 0 here. Backends should override this method
+	// and provide their own.
+	setGraphicsMode(0);
+}

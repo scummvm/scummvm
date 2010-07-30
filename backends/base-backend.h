@@ -40,6 +40,8 @@ public:
 	virtual Common::WriteStream *createConfigWriteStream();
 
 	virtual AudioCDManager *getAudioCDManager();
+
+	virtual void resetGraphicsScale();
 };
 
 

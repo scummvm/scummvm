@@ -356,6 +356,13 @@ public:
 	 */
 	virtual int getGraphicsMode() const = 0;
 
+	/**
+	 * Sets the graphics scale factor to x1. Games with large screen sizes
+	 * reset the scale to x1 so the screen will not be too big when starting
+	 * the game.
+	 */
+	virtual void resetGraphicsScale() = 0;
+
 #ifdef USE_RGB_COLOR
 	/**
 	 * Determine the pixel format currently in use for screen rendering.

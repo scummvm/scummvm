@@ -248,6 +248,10 @@ int SdlGraphicsManager::getDefaultGraphicsMode() const {
 	return GFX_DOUBLESIZE;
 }
 
+void SdlGraphicsManager::resetGraphicsScale() {
+	setGraphicsMode(s_gfxModeSwitchTable[_scalerType][0]);
+}
+
 void SdlGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 

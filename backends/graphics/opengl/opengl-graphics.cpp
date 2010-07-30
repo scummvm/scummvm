@@ -168,6 +168,10 @@ int OpenGLGraphicsManager::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
+void OpenGLGraphicsManager::resetGraphicsScale() {
+	setScale(1);
+}
+
 #ifdef USE_RGB_COLOR
 
 Graphics::PixelFormat OpenGLGraphicsManager::getScreenFormat() const {

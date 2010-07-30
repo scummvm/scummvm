@@ -91,6 +91,10 @@ int ModularBackend::getGraphicsMode() const {
 	return _graphicsManager->getGraphicsMode();
 }
 
+void ModularBackend::resetGraphicsScale() {
+	_graphicsManager->resetGraphicsScale();
+}
+
 #ifdef USE_RGB_COLOR
 
 Graphics::PixelFormat ModularBackend::getScreenFormat() const {
