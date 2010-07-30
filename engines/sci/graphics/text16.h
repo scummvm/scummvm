@@ -53,7 +53,7 @@ public:
 	void ClearChar(int16 chr);
 
 	int16 GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId);
-	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont);
 	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
 	void ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);
 	void DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor);

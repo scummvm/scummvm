@@ -142,8 +142,8 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 	uint16 curChar = 0;
 	int16 maxChars = 0, curCharCount = 0;
 	uint16 width = 0;
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _ports->_curPort->penClr;
+	GuiResourceId previousFontId = GetFontId();
+	int16 previousPenColor = _ports->_curPort->penClr;
 
 	GetFont();
 	if (!_font)
@@ -159,7 +159,7 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		case 0x7C:
 			if (getSciVersion() >= SCI_VERSION_1_1) {
 				curCharCount++;
-				curCharCount += CodeProcessing(text, orgFontId, oldPenColor);
+				curCharCount += CodeProcessing(text, orgFontId, previousPenColor);
 				continue;
 			}
 			break;
@@ -180,8 +180,8 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			curCharCount++;
 			// and it's also meant to pass through here
 		case 0:
-			SetFont(oldFontId);
-			_ports->penColor(oldPenColor);
+			SetFont(previousFontId);
+			_ports->penColor(previousPenColor);
 			return curCharCount;
 
 		case ' ':
@@ -226,13 +226,16 @@ int16 GfxText16::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 			}
 		}
 	}
-	SetFont(oldFontId);
-	_ports->penColor(oldPenColor);
+	SetFont(previousFontId);
+	_ports->penColor(previousPenColor);
 	return maxChars;
 }
 
-void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight, bool restoreFont) {
 	uint16 curChar;
+	GuiResourceId previousFontId = GetFontId();
+	int16 previousPenColor = _ports->_curPort->penClr;
+
 	textWidth = 0; textHeight = 0;
 
 	GetFont();
@@ -261,17 +264,18 @@ void GfxText16::Width(const char *text, int16 from, int16 len, GuiResourceId org
 			}
 		}
 	}
+	// When calculating size, we do not restore font because we need the current (code modified) font active
+	//  If we are drawing this is called inbetween, so font needs to get restored
+	//  If we are calculating size of just one fixed string (::StringWidth), then we need to restore
+	if (restoreFont) {
+		SetFont(previousFontId);
+		_ports->penColor(previousPenColor);
+	}
 	return;
 }
 
 void GfxText16::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _ports->_curPort->penClr;
-
-	Width(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
-
-	SetFont(oldFontId);
-	_ports->penColor(oldPenColor);
+	Width(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight, true);
 }
 
 void GfxText16::ShowString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
@@ -282,8 +286,8 @@ void GfxText16::DrawString(const char *str, GuiResourceId orgFontId, int16 orgPe
 }
 
 int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId, int16 maxWidth) {
-	GuiResourceId oldFontId = GetFontId();
-	int16 oldPenColor = _ports->_curPort->penClr;
+	GuiResourceId previousFontId = GetFontId();
+	int16 previousPenColor = _ports->_curPort->penClr;
 	int16 charCount;
 	int16 maxTextWidth = 0, textWidth;
 	int16 totalHeight = 0, textHeight;
@@ -291,7 +295,7 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 	if (fontId != -1)
 		SetFont(fontId);
 	else
-		fontId = oldFontId;
+		fontId = previousFontId;
 
 	if (g_sci->getLanguage() == Common::JA_JPN)
 		SwitchToFont900OnSjis(text);
@@ -308,10 +312,10 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.right = (maxWidth ? maxWidth : 192);
 		const char *curPos = text;
 		while (*curPos) {
-			charCount = GetLongest(curPos, rect.right, oldFontId);
+			charCount = GetLongest(curPos, rect.right, fontId);
 			if (charCount == 0)
 				break;
-			Width(curPos, 0, charCount, fontId, textWidth, textHeight);
+			Width(curPos, 0, charCount, fontId, textWidth, textHeight, false);
 			maxTextWidth = MAX(textWidth, maxTextWidth);
 			totalHeight += textHeight;
 			curPos += charCount;
@@ -321,8 +325,8 @@ int16 GfxText16::Size(Common::Rect &rect, const char *text, GuiResourceId fontId
 		rect.bottom = totalHeight;
 		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
-	SetFont(oldFontId);
-	_ports->penColor(oldPenColor);
+	SetFont(previousFontId);
+	_ports->penColor(previousPenColor);
 	return rect.right;
 }
 
@@ -387,14 +391,14 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 	int16 textWidth, maxTextWidth, textHeight, charCount;
 	int16 offset = 0;
 	int16 hline = 0;
-	GuiResourceId orgFontId = GetFontId();
-	int16 orgPenColor = _ports->_curPort->penClr;
+	GuiResourceId previousFontId = GetFontId();
+	int16 previousPenColor = _ports->_curPort->penClr;
 	bool doubleByteMode = false;
 
 	if (fontId != -1)
 		SetFont(fontId);
 	else
-		fontId = orgFontId;
+		fontId = previousFontId;
 
 	if (g_sci->getLanguage() == Common::JA_JPN) {
 		if (SwitchToFont900OnSjis(text))
@@ -403,10 +407,10 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 
 	maxTextWidth = 0;
 	while (*text) {
-		charCount = GetLongest(text, rect.width(), orgFontId);
+		charCount = GetLongest(text, rect.width(), fontId);
 		if (charCount == 0)
 			break;
-		Width(text, 0, charCount, fontId, textWidth, textHeight);
+		Width(text, 0, charCount, fontId, textWidth, textHeight, true);
 		maxTextWidth = MAX<int16>(maxTextWidth, textWidth);
 		switch (alignment) {
 		case SCI_TEXT16_ALIGNMENT_RIGHT:
@@ -425,9 +429,9 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		_ports->moveTo(rect.left + offset, rect.top + hline);
 
 		if (bshow) {
-			Show(text, 0, charCount, fontId, orgPenColor);
+			Show(text, 0, charCount, fontId, previousPenColor);
 		} else {
-			Draw(text, 0, charCount, fontId, orgPenColor);
+			Draw(text, 0, charCount, fontId, previousPenColor);
 		}
 
 		hline += textHeight;
@@ -435,8 +439,8 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 		if (*text == ' ')
 			text++; // skip over breaking space
 	}
-	SetFont(orgFontId);
-	_ports->penColor(orgPenColor);
+	SetFont(previousFontId);
+	_ports->penColor(previousPenColor);
 
 	if (doubleByteMode) {
 		// Kanji is written by pc98 rom to screen directly. Because of
@@ -459,12 +463,12 @@ void GfxText16::Box(const char *text, int16 bshow, const Common::Rect &rect, Tex
 }
 
 void GfxText16::Draw_String(const char *text) {
-	GuiResourceId orgFontId = GetFontId();
-	int16 orgPenColor = _ports->_curPort->penClr;
+	GuiResourceId previousFontId = GetFontId();
+	int16 previousPenColor = _ports->_curPort->penClr;
 
-	Draw(text, 0, strlen(text), orgFontId, orgPenColor);
-	SetFont(orgFontId);
-	_ports->penColor(orgPenColor);
+	Draw(text, 0, strlen(text), previousFontId, previousPenColor);
+	SetFont(previousFontId);
+	_ports->penColor(previousPenColor);
 }
 
 // Sierra did this in their PC98 interpreter only, they identify a text as being
