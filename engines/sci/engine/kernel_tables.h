@@ -419,7 +419,7 @@ static SciKernelMapEntry s_kernelMap[] = {
     { MAP_CALL(SetCursor),         SIG_SCI21, SIGFOR_ALL,    "i(i)([io])(i*)",        NULL,            NULL },
     // TODO: SCI2.1 may supply an object optionally (mother goose sci21 right on startup) - find out why
     { MAP_CALL(SetCursor),         SIG_SCI11, SIGFOR_ALL,    "i(i)(i)(i)(iiiiii)",    NULL,            NULL },
-    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i)(i)(i)(i)",         NULL,            NULL },
+    { MAP_CALL(SetCursor),         SIG_EVERYWHERE,           "i(i)(i)(i)(i)",         NULL,            kSetCursor_workarounds },
     { MAP_CALL(SetDebug),          SIG_EVERYWHERE,           "(i*)",                  NULL,            NULL },
     { MAP_CALL(SetJump),           SIG_EVERYWHERE,           "oiii",                  NULL,            NULL },
     { MAP_CALL(SetMenu),           SIG_EVERYWHERE,           "i(.*)",                 NULL,            NULL },

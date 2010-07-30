@@ -254,6 +254,12 @@ const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kSetCursor_workarounds[] = {
+	{ GID_KQ5,            -1,   768,  0,           "KQCursor", "init",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // CD: gets called with 4 additional "900d" parameters
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kSetPort_workarounds[] = {
 	{ GID_LSL6,          740,   740,  0,              "rm740", "drawPic",        -1,    0, { WORKAROUND_IGNORE,    0 } }, // ending scene, is called with additional 3 (!) parameters
 	SCI_WORKAROUNDENTRY_TERMINATOR

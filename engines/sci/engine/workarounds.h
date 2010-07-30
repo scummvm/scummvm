@@ -90,6 +90,7 @@ extern const SciWorkaroundEntry kIsObject_workarounds[];
 extern const SciWorkaroundEntry kMemory_workarounds[];
 extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
+extern const SciWorkaroundEntry kSetCursor_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 

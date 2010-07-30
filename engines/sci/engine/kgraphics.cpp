@@ -172,6 +172,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	case 9: // case for kq5cd, we are getting calling with 4 additional 900d parameters
 	case 5:
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
