@@ -987,7 +987,11 @@ void OpenGLGraphicsManager::initGL() {
 	// Setup coordinates system
 	glMatrixMode(GL_PROJECTION); CHECK_GL_ERROR();
 	glLoadIdentity(); CHECK_GL_ERROR();
+#ifdef USE_GLES
+	glOrthox(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
+#else
 	glOrtho(0, _videoMode.hardwareWidth, _videoMode.hardwareHeight, 0, -1, 1); CHECK_GL_ERROR();
+#endif
 	glMatrixMode(GL_MODELVIEW); CHECK_GL_ERROR();
 	glLoadIdentity(); CHECK_GL_ERROR();
 }
@@ -1217,11 +1221,15 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	uint8 *pixels = new uint8[width * height * 3];
 
 	// Get pixel data from opengl buffer
+#ifdef USE_GLES
+	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
+#else
 	if (_formatBGR) {
 		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
 	} else {
 		glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
 	}
+#endif
 
 	// Open file
 	Common::DumpFile out;
