@@ -34,7 +34,8 @@
 #define USE_OSD	1
 
 namespace OpenGL {
-
+// The OpenGL GFX modes. They have to be inside the OpenGL namespace so they
+// do not clash with the SDL GFX modes.
 enum {
 	GFX_NORMAL = 0,
 	GFX_DOUBLESIZE = 1,
@@ -44,7 +45,11 @@ enum {
 }
 
 /**
- * Open GL graphics manager
+ * Open GL graphics manager. This is an abstract class, it does not do the
+ * window and OpenGL context initialization.
+ * Derived classes should at least override internUpdateScreen for doing
+ * the buffers swap, and implement loadGFXMode for handling the window/context if
+ * needed. If USE_RGB_COLOR is enabled, getSupportedFormats must be implemented.
  */
 class OpenGLGraphicsManager : public GraphicsManager, public Common::EventObserver {
 public:
@@ -105,8 +110,14 @@ public:
 	bool notifyEvent(const Common::Event &event);
 
 protected:
-
+	/**
+	 * Setup OpenGL settings
+	 */
 	virtual void initGL();
+
+	/**
+	 * Creates and refreshs OpenGL textures.
+	 */
 	virtual void loadTextures();
 
 	//
@@ -159,7 +170,10 @@ protected:
 	};
 	VideoState _videoMode, _oldVideoMode;
 
-	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &type);
+	/**
+	 * Sets the OpenGL texture format for the given pixel format. If format is not support will raise an error.
+	 */
+	virtual void getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &intFormat, GLenum &glFormat, GLenum &type);
 
 	virtual void internUpdateScreen();
 	virtual bool loadGFXMode();
@@ -167,12 +181,18 @@ protected:
 
 	virtual void setScale(int newScale);
 
+	// Drawing coordinates for the current aspect ratio
 	int _aspectX;
 	int _aspectY;
 	int _aspectWidth;
 	int _aspectHeight;
 
+	/**
+	 * Sets the aspect ratio mode.
+	 * @mode the aspect ratio mode, if -1 it will switch to next mode.
+	 */
 	virtual void setAspectRatioCorrection(int mode);
+
 	virtual void refreshAspectRatio();
 	virtual Common::String getAspectRatioName();
 	virtual float getAspectRatio();
@@ -222,13 +242,11 @@ protected:
 		int16 w, h;
 		int16 hotX, hotY;
 
-		// The size and hotspot of the scaled cursor, in real
-		// coordinates.
+		// The size and hotspot of the scaled cursor, in real coordinates.
 		int16 rW, rH;
 		int16 rHotX, rHotY;
 
-		// The size and hotspot of the scaled cursor, in game
-		// coordinates.
+		// The size and hotspot of the scaled cursor, in game coordinates.
 		int16 vW, vH;
 		int16 vHotX, vHotY;
 
@@ -239,9 +257,7 @@ protected:
 
 	GLTexture* _cursorTexture;
 	Graphics::Surface _cursorData;
-#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _cursorFormat;
-#endif
 	byte *_cursorPalette;
 	bool _cursorPaletteDisabled;
 	MousePos _cursorState;

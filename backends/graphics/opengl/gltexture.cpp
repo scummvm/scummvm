@@ -56,7 +56,7 @@ static GLuint nextHigher2(GLuint v) {
 void GLTexture::initGLExtensions() {
 	static bool inited = false;
 
-	// Return if extensions already checked
+	// Return if extensions were already checked
 	if (inited)
 		return;
 
@@ -75,9 +75,10 @@ void GLTexture::initGLExtensions() {
 	inited = true;
 }
 
-GLTexture::GLTexture(byte bpp, GLenum format, GLenum type)
+GLTexture::GLTexture(byte bpp, GLenum internalFormat, GLenum format, GLenum type)
 	:
 	_bytesPerPixel(bpp),
+	_internalFormat(internalFormat),
 	_glFormat(format),
 	_glType(type),
 	_textureWidth(0),
@@ -131,7 +132,7 @@ void GLTexture::allocBuffer(GLuint w, GLuint h) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE); CHECK_GL_ERROR();
 
 	// Allocate room for the texture
-	glTexImage2D(GL_TEXTURE_2D, 0, _glFormat,
+	glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat,
 		_textureWidth, _textureHeight, 0, _glFormat, _glType, NULL); CHECK_GL_ERROR();
 
 	_refresh = false;

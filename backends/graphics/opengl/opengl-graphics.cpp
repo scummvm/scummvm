@@ -188,7 +188,6 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 	assert(_transactionMode == kTransactionActive);
 
 #ifdef USE_RGB_COLOR
-	// Avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
 		newFormat = Graphics::PixelFormat::createFormatCLUT8();
@@ -197,6 +196,7 @@ void OpenGLGraphicsManager::initSize(uint width, uint height, const Graphics::Pi
 
 	assert(newFormat.bytesPerPixel > 0);
 
+	// Avoid redundant format changes
 	if (newFormat != _videoMode.format) {
 		_videoMode.format = newFormat;
 		_transactionDetails.formatChanged = true;
@@ -283,11 +283,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 	}
 
-#ifdef USE_RGB_COLOR
-	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged || _transactionDetails.needHotswap) {
-#else
 	if (_transactionDetails.sizeChanged || _transactionDetails.needHotswap) {
-#endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {
 			if (_oldVideoMode.setup) {
@@ -300,7 +296,11 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 			_videoMode.setup = true;
 			_screenChangeCount++;
 		}
+#ifdef USE_RGB_COLOR
+	} else if (_transactionDetails.filterChanged || _transactionDetails.formatChanged) {
+#else
 	} else if (_transactionDetails.filterChanged) {
+#endif
 		loadTextures();
 		internUpdateScreen();
 	} else if (_transactionDetails.needUpdatescreen) {
@@ -462,6 +462,7 @@ Graphics::PixelFormat OpenGLGraphicsManager::getOverlayFormat() const {
 }
 
 void OpenGLGraphicsManager::clearOverlay() {
+	// Set all pixels to 0
 	memset(_overlayData.pixels, 0, _overlayData.h * _overlayData.pitch);
 	_overlayNeedsRedraw = true;
 }
@@ -470,6 +471,7 @@ void OpenGLGraphicsManager::grabOverlay(OverlayColor *buf, int pitch) {
 	assert(_overlayData.bytesPerPixel == sizeof(buf[0]));
 	const byte *src = (byte *)_overlayData.pixels;
 	for (int i = 0; i < _overlayData.h; i++) {
+		// Copy overlay data to buffer
 		memcpy(buf, src, _overlayData.pitch);
 		buf += pitch;
 		src += _overlayData.pitch;
@@ -565,12 +567,13 @@ void OpenGLGraphicsManager::warpMouse(int x, int y) {
 
 void OpenGLGraphicsManager::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 #ifdef USE_RGB_COLOR
-	if (!format)
-		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
-	else
+	if (format)
 		_cursorFormat = *format;
+	else
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 #else
 	assert(keycolor <= 255);
+	_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 #endif
 
 	// Allocate space for cursor data
@@ -845,42 +848,97 @@ void OpenGLGraphicsManager::refreshAspectRatio() {
 	float aspectRatio = (float)_videoMode.hardwareWidth / _videoMode.hardwareHeight;
 	float desiredAspectRatio = getAspectRatio();
 
+	// Adjust one screen dimension for mantaining the aspect ratio
 	if (aspectRatio < desiredAspectRatio)
 		_aspectHeight = (int)(_aspectWidth / desiredAspectRatio + 0.5f);
 	else if (aspectRatio > desiredAspectRatio)
 		_aspectWidth = (int)(_aspectHeight * desiredAspectRatio + 0.5f);
 
+	// Adjust x and y for centering the screen
 	_aspectX = (_videoMode.hardwareWidth - _aspectWidth) / 2;
 	_aspectY = (_videoMode.hardwareHeight - _aspectHeight) / 2;
 }
 
-void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &glFormat, GLenum &gltype) {
+void OpenGLGraphicsManager::getGLPixelFormat(Graphics::PixelFormat pixelFormat, byte &bpp, GLenum &intFormat, GLenum &glFormat, GLenum &gltype) {
 	if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)) { // RGBA8888
 		bpp = 4;
+		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_BYTE;
 	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0)) { // RGB888
 		bpp = 3;
+		intFormat = GL_RGB;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)) { // RGB565
 		bpp = 2;
+		intFormat = GL_RGB;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_SHORT_5_6_5;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0)) { // RGB5551
 		bpp = 2;
+		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
 	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0)) { // RGBA4444
 		bpp = 2;
+		intFormat = GL_RGBA;
 		glFormat = GL_RGBA;
 		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
 	} else if (pixelFormat.bytesPerPixel == 1) { // CLUT8
 		// If uses a palette, create texture as RGB888. The pixel data will be converted
 		// later.
 		bpp = 3;
+		intFormat = GL_RGB;
 		glFormat = GL_RGB;
 		gltype = GL_UNSIGNED_BYTE;
+#ifndef USE_GLES
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24)) { // ARGB8888
+		bpp = 4;
+		intFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_INT_8_8_8_8_REV;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)) { // ARGB4444
+		bpp = 2;
+		intFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)) { // ABGR8888
+		bpp = 4;
+		intFormat = GL_RGBA;
+		glFormat = GL_RGBA;
+		gltype = GL_UNSIGNED_INT_8_8_8_8_REV;
+	} else if (pixelFormat == Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0)) { // BGRA8888
+		bpp = 4;
+		intFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_BYTE;
+	} else if (pixelFormat == Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0)) { // BGR888
+		bpp = 3;
+		intFormat = GL_RGB;
+		glFormat = GL_BGR;
+		gltype = GL_UNSIGNED_BYTE;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0)) { // BGR565
+		bpp = 2;
+		intFormat = GL_RGB;
+		glFormat = GL_BGR;
+		gltype = GL_UNSIGNED_SHORT_5_6_5;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0)) { // BGRA5551
+		bpp = 2;
+		intFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_SHORT_5_5_5_1;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12)) { // ABGR4444
+		bpp = 2;
+		intFormat = GL_RGBA;
+		glFormat = GL_RGBA;
+		gltype = GL_UNSIGNED_SHORT_4_4_4_4_REV;
+	} else if (pixelFormat == Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)) { // BGRA4444
+		bpp = 2;
+		intFormat = GL_RGBA;
+		glFormat = GL_BGRA;
+		gltype = GL_UNSIGNED_SHORT_4_4_4_4;
+#endif
 	} else {
 		error("OpenGLGraphicsManager: Pixel format not supported");
 	}
@@ -898,6 +956,7 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 
 	glPushMatrix();
 
+	// Adjust game screen shake position
 	glTranslatef(0, _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
 
 	// Draw the game screen
@@ -920,6 +979,8 @@ void OpenGLGraphicsManager::internUpdateScreen() {
 			refreshCursor();
 
 		glPushMatrix();
+
+		// Adjust mouse shake position, unless the overlay is visible
 		glTranslatef(0, _overlayVisible ? 0 : _shakePos * scaleFactor, 0); CHECK_GL_ERROR();
 
 		// Draw the cursor
@@ -1004,28 +1065,30 @@ void OpenGLGraphicsManager::loadTextures() {
 
 	if (!_gameTexture) {
 		byte bpp;
+		GLenum intformat;
 		GLenum format;
 		GLenum type;
 #ifdef USE_RGB_COLOR
-		getGLPixelFormat(_screenFormat, bpp, format, type);
+		getGLPixelFormat(_screenFormat, bpp, intformat, format, type);
 #else
-		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, format, type);
+		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, intformat, format, type);
 #endif
-		_gameTexture = new GLTexture(bpp, format, type);
+		_gameTexture = new GLTexture(bpp, intformat, format, type);
 	} 
 
 	_overlayFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 
 	if (!_overlayTexture) {
 		byte bpp;
+		GLenum intformat;
 		GLenum format;
 		GLenum type;
-		getGLPixelFormat(_overlayFormat, bpp, format, type);
-		_overlayTexture = new GLTexture(bpp, format, type);
+		getGLPixelFormat(_overlayFormat, bpp, intformat, format, type);
+		_overlayTexture = new GLTexture(bpp, intformat, format, type);
 	}
 
 	if (!_cursorTexture)
-		_cursorTexture = new GLTexture(4, GL_RGBA, GL_UNSIGNED_BYTE);
+		_cursorTexture = new GLTexture(4, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
 		
 	GLint filter = _videoMode.antialiasing ? GL_LINEAR : GL_NEAREST;
 	_gameTexture->setFilter(filter);
@@ -1062,7 +1125,7 @@ void OpenGLGraphicsManager::loadTextures() {
 
 #ifdef USE_OSD
 	if (!_osdTexture)
-		_osdTexture = new GLTexture(2, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
+		_osdTexture = new GLTexture(2, GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
 
 	if (_transactionDetails.newContext || _transactionDetails.filterChanged)
 		_osdTexture->refresh();
@@ -1115,6 +1178,7 @@ void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
 
 	if (_transactionMode == kTransactionActive) {
 		if (ratio == -1)
+			// If -1, switch to next mode
 			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 5;
 		else
 			_videoMode.aspectRatioCorrection = ratio;
@@ -1220,7 +1284,7 @@ bool OpenGLGraphicsManager::saveScreenshot(const char *filename) {
 	// Allocate space for screenshot
 	uint8 *pixels = new uint8[width * height * 3];
 
-	// Get pixel data from opengl buffer
+	// Get pixel data from OpenGL buffer
 #ifdef USE_GLES
 	glReadPixels(0, 0, width, height, GL_RGB, GL_UNSIGNED_BYTE, pixels); CHECK_GL_ERROR();
 #else

@@ -58,7 +58,7 @@ public:
 	 */
 	static void initGLExtensions();
 
-	GLTexture(byte bpp, GLenum format, GLenum type);
+	GLTexture(byte bpp, GLenum internalFormat, GLenum format, GLenum type);
 	virtual ~GLTexture();
 
 	/**
@@ -95,12 +95,13 @@ public:
 
 	/**
 	 * Set the texture filter.
-	 * GL_NEAREST or GL_LINEAR should be passed.
+	 * @filter the filter type, GL_NEAREST or GL_LINEAR
 	 */
 	void setFilter(GLint filter) { _filter = filter; }
 
 protected:
 	const byte _bytesPerPixel;
+	const GLenum _internalFormat;
 	const GLenum _glFormat;
 	const GLenum _glType;
 

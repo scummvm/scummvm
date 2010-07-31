@@ -63,6 +63,21 @@ protected:
 
 	virtual bool handleScalerHotkeys(Common::KeyCode key);
 	virtual bool isScalerHotkey(const Common::Event &event);
+
+#ifdef USE_RGB_COLOR
+	Common::List<Graphics::PixelFormat> _supportedFormats;
+
+	/**
+	 * Update the list of supported pixel formats.
+	 * This method is invoked by loadGFXMode().
+	 */
+	void detectSupportedFormats();
+#endif
+
+	/**
+	 * Toggles fullscreen.
+	 * @loop if true loop to next supported fullscreen mode
+	 */
 	virtual void toggleFullScreen(bool loop);
 
 	// Hardware screen

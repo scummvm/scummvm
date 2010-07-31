@@ -313,6 +313,7 @@ const OSystem::GraphicsMode *OSystem_SDL::getSupportedGraphicsModes() const {
 }
 
 int OSystem_SDL::getDefaultGraphicsMode() const {
+	// Return the default graphics mode from the current graphics manager
 	if (_graphicsMode < _sdlModesCount)
 		return _graphicsManager->getDefaultGraphicsMode();
 	else
@@ -322,6 +323,7 @@ int OSystem_SDL::getDefaultGraphicsMode() const {
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	const OSystem::GraphicsMode *srcMode;
 	int i;
+	// Check if mode is from SDL or OpenGL
 	if (mode < _sdlModesCount) {
 		srcMode = SdlGraphicsManager::supportedGraphicsModes();
 		i = 0;
@@ -329,8 +331,11 @@ bool OSystem_SDL::setGraphicsMode(int mode) {
 		srcMode = OpenGLSdlGraphicsManager::supportedGraphicsModes();
 		i = _sdlModesCount;
 	}
+	// Loop through modes
 	while (srcMode->name) {
 		if (i == mode) {
+			// If the new mode and the current mode are not from the same graphics
+			// manager, delete and create the new mode graphics manager
 			if (_graphicsMode >= _sdlModesCount && mode < _sdlModesCount) {
 				delete _graphicsManager;
 				_graphicsManager = new SdlGraphicsManager();

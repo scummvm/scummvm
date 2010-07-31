@@ -33,10 +33,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	_hwscreen(0),
 	_screenResized(false) {
 
+	// Initialize SDL video subsystem
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
+	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
 }
 
@@ -68,24 +70,53 @@ void OpenGLSdlGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) 
 
 #ifdef USE_RGB_COLOR
 
-const Graphics::PixelFormat RGBList[] = {
-#if defined(ENABLE_32BIT)
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),	// RGBA8888
-	Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),	// RGB888
-#endif
-	Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
-	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),	// RGB555
-	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
-};
-
 Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormats() const {
-	static Common::List<Graphics::PixelFormat> list;
-	static bool inited = false;
+	assert(!_supportedFormats.empty());
+	return _supportedFormats;
+}
 
-	if (inited)
-		return list;
+void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 
-	int listLength = ARRAYSIZE(RGBList);
+	// Clear old list
+	_supportedFormats.clear();
+
+	// Some tables with standard formats that we always list
+	// as "supported". If frontend code tries to use one of
+	// these, we will perform the necessary format
+	// conversion in the background. Of course this incurs a
+	// performance hit, but on desktop ports this should not
+	// matter. We still push the currently active format to
+	// the front, so if frontend code just uses the first
+	// available format, it will get one that is "cheap" to
+	// use.
+	const Graphics::PixelFormat RGBList[] = {
+#if defined(ENABLE_32BIT)
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),	// RGBA8888
+#ifndef USE_GLES
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24), // ARGB8888
+#endif
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),	// RGB888
+#endif
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),	// RGB565
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0),	// RGB5551
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),	// RGBA4444
+#ifndef USE_GLES
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)   // ARGB4444
+#endif
+	};
+#ifndef USE_GLES
+	const Graphics::PixelFormat BGRList[] = {
+#ifdef ENABLE_32BIT
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), // ABGR8888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0), // BGRA8888
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),  // BGR888
+#endif
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),  // BGR565
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 1, 6, 11, 0),  // BGRA5551
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),  // ABGR4444
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)   // BGRA4444
+	};
+#endif
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
@@ -100,26 +131,40 @@ Common::List<Graphics::PixelFormat> OpenGLSdlGraphicsManager::getSupportedFormat
 		if (_hwscreen->format->Amask == 0)
 			format.aLoss = 8;
 
-		// Push it first, as the prefered format.
-		for (int i = 0; i < listLength; i++) {
+		// Push it first, as the prefered format if available
+		for (int i = 0; i < ARRAYSIZE(RGBList); i++) {
 			if (RGBList[i] == format) {
-				list.push_back(format);
+				_supportedFormats.push_back(format);
 				break;
 			}
 		}
-
-		// Mark that we don't need to do this any more.
-		inited = true;
+#ifndef USE_GLES
+		for (int i = 0; i < ARRAYSIZE(BGRList); i++) {
+			if (BGRList[i] == format) {
+				_supportedFormats.push_back(format);
+				break;
+			}
+		}
+#endif
 	}
 
-	for (int i = 0; i < listLength; i++) {
-		if (inited && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
+	// Push some RGB formats
+	for (int i = 0; i < ARRAYSIZE(RGBList); i++) {
+		if (_hwscreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
 		if (RGBList[i] != format)
-			list.push_back(RGBList[i]);
+			_supportedFormats.push_back(RGBList[i]);
 	}
-	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
-	return list;
+
+	// Push some BGR formats
+	for (int i = 0; i < ARRAYSIZE(BGRList); i++) {
+		if (_hwscreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (BGRList[i] != format)
+			_supportedFormats.push_back(BGRList[i]);
+	}
+
+	_supportedFormats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 }
 
 #endif
@@ -227,6 +272,10 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
 	);
+#ifdef USE_RGB_COLOR
+	detectSupportedFormats();
+#endif
+
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwscreen is hosed.
