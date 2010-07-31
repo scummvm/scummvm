@@ -46,11 +46,11 @@ reg_t kRestartGame(EngineState *s, int argc, reg_t *argv) {
 ** Returns the restarting_flag in acc
 */
 reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, s->gameWasRestarted);
+	s->r_acc = make_reg(0, s->gameIsRestarting);
 
 	if (argc) { // Only happens during replay
 		if (!argv[0].toUint16()) // Set restarting flag
-			s->gameWasRestarted = false;
+			s->gameIsRestarting = GAMEISRESTARTING_NONE;
 	}
 
 	uint32 neededSleep = 30;

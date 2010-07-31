@@ -87,6 +87,12 @@ enum {
 	SAVEGAMEID_OFFICIALRANGE_END = 1999
 };
 
+enum {
+	GAMEISRESTARTING_NONE = 0,
+	GAMEISRESTARTING_RESTART = 1,
+	GAMEISRESTARTING_RESTORE = 2
+};
+
 class FileHandle {
 public:
 	Common::String _name;
@@ -159,7 +165,7 @@ public:
 	int variablesMax[4];		///< Max. values for all variables
 
 	AbortGameState abortScriptProcessing;
-	bool gameWasRestarted;
+	int16 gameIsRestarting; // is set when restarting (=1) or restoring the game (=2)
 
 	int scriptStepCounter; // Counts the number of steps executed
 	int scriptGCInterval; // Number of steps in between gcs

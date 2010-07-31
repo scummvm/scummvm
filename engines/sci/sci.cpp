@@ -290,7 +290,7 @@ bool SciEngine::initGame() {
 	_gamestate->_executionStackPosChanged = false;
 
 	_gamestate->abortScriptProcessing = kAbortNone;
-	_gamestate->gameWasRestarted = false;
+	_gamestate->gameIsRestarting = GAMEISRESTARTING_NONE;
 
 	_gamestate->stack_base = stack->_entries;
 	_gamestate->stack_top = stack->_entries + stack->_capacity;
@@ -416,7 +416,7 @@ void SciEngine::runGame() {
 			_gamestate->_segMan->resetSegMan();
 			initGame();
 			initStackBaseWithSelector(SELECTOR(play));
-			_gamestate->gameWasRestarted = true;
+			_gamestate->gameIsRestarting = GAMEISRESTARTING_RESTART;
 			if (_gfxMenu)
 				_gfxMenu->reset();
 			_gamestate->abortScriptProcessing = kAbortNone;
