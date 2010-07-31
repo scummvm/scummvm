@@ -58,17 +58,15 @@ static const Sword25GameDescription gameDescriptions[] = {
 		{
 			"sword25",
 			"",
-			{
-				{ "data.b25c", kFileTypeHash, "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588},
-				{ NULL, 0, NULL, 0}
-			},
-				Common::EN_ANY,
+			AD_ENTRY1s("data.b25c", "f8b6e03ada2d2f6cf27fbc11ad1572e9", 654310588),
+			Common::EN_ANY,
 			Common::kPlatformWindows,
-			ADGF_NO_FLAGS
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
 		},
 		0
 	},
-	{ { NULL, NULL, { { NULL, 0, NULL, 0 } }, Common::UNK_LANG, Common::kPlatformUnknown, ADGF_NO_FLAGS }, 0 }
+	{ AD_TABLE_END_MARKER, 0 }
 };
 
 } // end of namespace Sword25
@@ -89,6 +87,12 @@ static const ADParams detectionParams = {
 	// List of files for file-based fallback detection (optional)
 	0,
 	// Flags
+	0,
+	// Additional GUI options (for every game}
+	Common::GUIO_NOSPEECH,
+	// Maximum directory depth
+	1,
+	// List of directory globs
 	0
 };
 
