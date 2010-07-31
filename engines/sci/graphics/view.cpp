@@ -85,6 +85,9 @@ void GfxView::initData(GuiResourceId resourceId) {
 	_EGAmapping = NULL;
 	_isSci2Hires = false;
 
+	// we adjust inside getCelRect for SCI0EARLY (that version didn't have the +1 when calculating bottom)
+	adjustForSci0Early = getSciVersion() == SCI_VERSION_0_EARLY ? -1 : 0;
+
 	// If we find an SCI1/SCI1.1 view (not amiga), we switch to that type for
 	// EGA. This could get used to make view patches for EGA games, where the
 	// new views include more colors. Users could manually adjust old views to
@@ -322,7 +325,7 @@ void GfxView::getCelRect(int16 loopNo, int16 celNo, int16 x, int16 y, int16 z, C
 	const CelInfo *celInfo = getCelInfo(loopNo, celNo);
 	outRect.left = x + celInfo->displaceX - (celInfo->width >> 1);
 	outRect.right = outRect.left + celInfo->width;
-	outRect.bottom = y + celInfo->displaceY - z + 1;
+	outRect.bottom = y + celInfo->displaceY - z + 1 + adjustForSci0Early;
 	outRect.top = outRect.bottom - celInfo->height;
 }
 

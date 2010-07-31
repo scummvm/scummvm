@@ -100,6 +100,9 @@ private:
 	bool _isSci2Hires;
 
 	byte *_EGAmapping;
+
+	// this is set for sci0early to adjust for the getCelRect() change
+	int16 adjustForSci0Early;
 };
 
 } // End of namespace Sci
