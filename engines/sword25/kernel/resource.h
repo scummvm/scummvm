@@ -1,41 +1,45 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
 
 #ifndef SWORD25_RESOURCE_H
 #define SWORD25_RESOURCE_H
 
-#include "sword25/kernel/memlog_off.h"
-#include <list>
-#include "sword25/kernel/memlog_on.h"
-
+#include "common/list.h"
+#include "common/str.h"
 #include "sword25/kernel/common.h"
+
+namespace Sword25 {
 
 class BS_Kernel;
 class BS_ResourceManager;
 
-class BS_Resource
-{
+class BS_Resource {
 friend class BS_ResourceManager;
 
 public:
-	enum RESOURCE_TYPES
-	{
+	enum RESOURCE_TYPES {
 		TYPE_UNKNOWN,
 		TYPE_BITMAP,
 		TYPE_ANIMATION,
@@ -43,55 +47,53 @@ public:
 		TYPE_FONT
 	};
 
-	BS_Resource(const std::string& UniqueFileName, RESOURCE_TYPES Type);
+	BS_Resource(const Common::String &UniqueFileName, RESOURCE_TYPES Type);
 
 	/**
-	 * @brief `Lockt' die Resource, verhindert, dass sie freigegeben wird.
-	 * @remarks Die Resource wird bereits `gelockt' initialisiert, sie muss also nach dem Anfordern nur 
-	 *	gelockt werden, wenn sie mehrfach verwendet wird.
+	 * Prevents the resource from being released.
+	 * @remarks				This method allows a resource to be locked multiple times.
 	 **/
-
 	void AddReference() { ++_RefCount; }	
 
 	/**
-	 * @brief Hebt ein vorhergehendes `lock' auf.
-	 * @remarks Die Resource kann ruhig öfter freigegeben als `gelockt' werden, auch wenn das nicht gerade empfehlenswert ist.
+	 * Cancels a previous lock
+	 * @remarks				The resource can still be released more times than it was 'locked', although it is
+	 * not recommended.
 	 **/
-
 	void Release();
 
 	/**
-	 * @brief Gibt die Anzahl der aktuellen `locks' zurück.
-	 * @return Die Zahl der `locks'.
+	 * Returns the current lock count for the resource
+	 * @return				The current lock count
 	 **/
-
 	int GetLockCount() const { return _RefCount; }
 
 	/**
-		@brief Gibt den absoluten, eindeutigen Dateinamen der Resource zurück.
-	*/
-
-	const std::string & GetFileName() const { return _FileName; }
+	 * Returns the absolute path of the given resource
+	 */
+	const Common::String &GetFileName() const { return _FileName; }
 
 	/**
-		@brief Gibt den Hash des Dateinames der Resource zurück.
+	 * Returns the hash of the filename of a resource
 	*/
 	unsigned int GetFileNameHash() const { return _FileNameHash; }
 
 	/**
-		@brief Gibt den Typ der Ressource zurück.
-	*/
+	 * Returns a resource's type
+	 */
 	unsigned int GetType() const { return _Type; }
 
 protected:
 	virtual ~BS_Resource() {};
 
 private:
-	std::string							_FileName;			//!< Der absolute Dateiname
-	unsigned int						_FileNameHash;		//!< Der Hashwert des Dateinames
-	unsigned int						_RefCount;			//!< Anzahl an Locks
-	unsigned int						_Type;				//!< Der Typ der Resource
-	std::list<BS_Resource*>::iterator	_Iterator;			//!< Der Iterator zeigt auf Position der Resource in der LRU-Liste
+	Common::String						_FileName;			///< The absolute filename
+	unsigned int						_FileNameHash;		///< The hash value of the filename
+	unsigned int						_RefCount;			///< The number of locks
+	unsigned int						_Type;				///< The type of the resource
+	Common::List<BS_Resource *>::iterator _Iterator;		///< Points to the resource position in the LRU list
 };
+
+} // End of namespace Sword25
 
 #endif

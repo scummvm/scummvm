@@ -136,9 +136,7 @@ private:
 	 * Loads a resource and updates the m_UsedMemory total
 	 *
 	 * The resource must not already be loaded
-	 *
 	 * @param FileName		The unique filename of the resource to be loaded
-	 *
 	 */
 	BS_Resource *LoadResource(const Common::String &FileName);
 
