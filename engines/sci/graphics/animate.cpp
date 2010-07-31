@@ -618,14 +618,42 @@ void GfxAnimate::kernelAnimate(reg_t listReference, bool cycle, int argc, reg_t 
 	updateScreen(old_picNotValid);
 	restoreAndDelete(argc, argv);
 
-	if (_lastCastData.size() > 1)
-		_s->_throttleTrigger = true;
-
 	// We update the screen here as well, some scenes like EQ1 credits run w/o calling kGetEvent thus we wouldn't update
 	//  screen at all
 	g_sci->getEventManager()->updateScreen();
 
 	_ports->setPort(oldPort);
+
+	// Now trigger speed throttler
+	switch (_lastCastData.size()) {
+	case 0:
+		// No entries drawn -> no speed throttler triggering
+		break;
+	case 1: {
+		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
+		AnimateEntry *onlyCast = &_lastCastData[0];
+		// first loop and first cel used?
+		if ((onlyCast->loopNo == 0) && (onlyCast->celNo == 0)) {
+			// and that cel has a known speed benchmark resolution
+			int16 onlyHeight = onlyCast->celRect.height();
+			int16 onlyWidth = onlyCast->celRect.width();
+			if (((onlyWidth == 12) && (onlyHeight == 35)) || // regular benchmark view ("fred", "Speedy", "ego")
+				((onlyWidth == 29) && (onlyHeight == 45)) || // King's Quest 5 french "fred"
+				((onlyWidth == 1) && (onlyHeight == 1))) { // Laura Bow 2 Talkie
+				// check further that there is only one cel in that view
+				GfxView *onlyView = _cache->getView(onlyCast->viewId);
+				if ((onlyView->getLoopCount() == 1) && (onlyView->getCelCount(0)))
+					return;
+			}
+		}
+		_s->_throttleTrigger = true;
+		break;
+	}
+	default:
+		// More than 1 entry drawn -> time for speed throttling
+		_s->_throttleTrigger = true;
+		break;
+	}
 }
 
 void GfxAnimate::addToPicSetPicNotValid() {
