@@ -216,9 +216,9 @@ SciVersion GameFeatures::detectSetCursorType() {
 	return _setCursorType;
 }
 
-bool GameFeatures::autoDetectLofsType(int methodNum) {
+bool GameFeatures::autoDetectLofsType(Common::String gameSuperClassName, int methodNum) {
 	// Look up the script address
-	reg_t addr = getDetectionAddr("Game", -1, methodNum);
+	reg_t addr = getDetectionAddr(gameSuperClassName.c_str(), -1, methodNum);
 
 	if (!addr.segment)
 		return false;
@@ -275,20 +275,35 @@ SciVersion GameFeatures::detectLofsType() {
 			return _lofsType;
 		}
 
+		// Find the "Game" object, super class of the actual game-object
+		const reg_t game = g_sci->getGameObject();
+		const Object *gameObject = _segMan->getObject(game);
+		reg_t gameSuperClass = NULL_REG;
+		if (gameObject) {
+			gameSuperClass = gameObject->getSuperClassSelector();
+		}
+
 		// Find a function of the game object which invokes lofsa/lofss
-		reg_t gameClass = _segMan->findObjectByName("Game");
-		const Object *obj = _segMan->getObject(gameClass);
 		bool found = false;
+		if (!gameSuperClass.isNull()) {
+			Common::String gameSuperClassName = _segMan->getObjectName(gameSuperClass);
+			const Object *gameSuperObject = _segMan->getObject(gameSuperClass);
 
-		for (uint m = 0; m < obj->getMethodCount(); m++) {
-			found = autoDetectLofsType(m);
-
-			if (found)
-				break;
+			if (gameSuperObject) {
+				for (uint m = 0; m < gameSuperObject->getMethodCount(); m++) {
+					found = autoDetectLofsType(gameSuperClassName, m);
+					if (found)
+						break;
+				}
+			} else {
+				warning("detectLofsType(): Could not get superclass object");
+			}
+		} else {
+			warning("detectLofsType(): Could not find superclass of game object");
 		}
 
 		if (!found) {
-			warning("Lofs detection failed, taking an educated guess");
+			warning("detectLofsType(): failed, taking an educated guess");
 
 			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
 				_lofsType = SCI_VERSION_1_MIDDLE;
