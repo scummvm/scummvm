@@ -40,6 +40,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
+
+	// Get desktop resolution
+	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
+	_desktopWidth = videoInfo->current_w; 
+	_desktopHeight = videoInfo->current_h;
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
@@ -229,6 +234,13 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 			// Iterate over all available fullscreen modes
 			for (int i = 0; const SDL_Rect *mode = availableModes[i]; i++) {
+				// Prefer the native resolution over other modes
+				if(mode->w == _desktopWidth && mode->h == _desktopHeight) {
+					bestMode = mode;
+					bestModeIndex = i;
+					break;
+				}
+
 				if (mode->w < _videoMode.hardwareWidth)
 					continue;
 				if (mode->h < _videoMode.hardwareHeight)

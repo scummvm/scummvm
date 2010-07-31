@@ -84,6 +84,9 @@ protected:
 	SDL_Surface *_hwscreen;
 
 	bool _screenResized;
+
+	int _desktopWidth;
+	int _desktopHeight;
 };
 
 #endif
