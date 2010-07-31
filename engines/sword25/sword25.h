@@ -55,6 +55,7 @@ private:
 	bool AppMain();
 	bool AppEnd();
 
+	bool LoadPackages();
 protected:
 	virtual Common::Error run();
 	void shutdown();
