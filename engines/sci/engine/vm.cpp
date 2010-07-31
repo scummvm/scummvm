@@ -231,7 +231,7 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 			case VAR_PARAM:
 				// Out-of-bounds read for a parameter that goes onto stack and hits an uninitialized temp
 				//  We return 0 currently in that case
-				warning("Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
+				debugC(2, kDebugLevelVM, "[VM] Read for a parameter goes out-of-bounds, onto the stack and gets uninitialized temp");
 				return NULL_REG;
 			default:
 				break;
