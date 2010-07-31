@@ -182,6 +182,9 @@ void GfxAnimate::makeSortedList(List *list) {
 	// at the time of writing this comment, we work around that in our ordering
 	// comparator. If that changes in the future or we want to use some
 	// stable sorting algorithm here, we should change that.
+	// In that case we should test such changes intensively. A good place to test stable sort
+	// is iceman, cupboard within the submarine. If sort isn't stable, the cupboard will be
+	// half-open, half-closed. Of course that's just one of many special cases.
 
 	// Now sort the list according y and z (descending)
 	Common::sort(_list.begin(), _list.end(), sortHelper);
@@ -196,6 +199,7 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 
 	for (it = _list.begin(); it != end; ++it) {
 		curObject = it->object;
+		signal = it->signal;
 
 		// Get the corresponding view
 		view = _cache->getView(it->viewId);
@@ -239,18 +243,23 @@ void GfxAnimate::fill(byte &old_picNotValid) {
 			}
 		}
 
+		bool setNsRect = true;
+
 		// Create rect according to coordinates and given cel
 		if (it->scaleSignal & kScaleSignalDoScaling) {
 			view->getCelScaledRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->scaleX, it->scaleY, it->celRect);
+			// when being scaled, only set nsRect, if object will get drawn
+			if ((signal & kSignalHidden) && !(signal & kSignalAlwaysUpdate))
+				setNsRect = false;
 		} else {
 			view->getCelRect(it->loopNo, it->celNo, it->x, it->y, it->z, it->celRect);
 		}
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
-		writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
-
-		signal = it->signal;
+		if (setNsRect) {
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsLeft), it->celRect.left);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsTop), it->celRect.top);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsRight), it->celRect.right);
+			writeSelectorValue(_s->_segMan, curObject, SELECTOR(nsBottom), it->celRect.bottom);
+		}
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & kSignalFixedPriority)) {
