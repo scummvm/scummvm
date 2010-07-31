@@ -281,7 +281,6 @@ PORT_OBJS := \
 	$(portdir)/source/blitters_arm.o \
 	$(portdir)/source/cdaudio.o \
 	$(portdir)/source/dsmain.o \
-	$(portdir)/../../../fs/ds/ds-fs.o \
 	$(portdir)/source/gbampsave.o \
 	$(portdir)/source/scummhelp.o \
 	$(portdir)/source/osystem_ds.o \
