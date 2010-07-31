@@ -1404,6 +1404,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::RU_RUS, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Larry 1 VGA Remake - Polish DOS (from Polish Leisure Suit Larry Collection, official release)
+	// SCI interpreter version 1.000.510
+	{"lsl1sci", "VGA Remake", {
+		{"resource.map", 0, "58330a85767e42a2487129913283ab5b", 3228},
+		{"resource.000", 0, "b6097ff35cdc8469f02150fe2f824198", 4781210},
+		{NULL, 0, NULL, 0}},
+		Common::PL_POL, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Larry 2 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "x.yyy.zzz"
 	// SCI interpreter version 0.000.572
