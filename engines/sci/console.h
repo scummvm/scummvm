@@ -163,6 +163,7 @@ private:
 	bool _mouseVisible;
 	Common::String _videoFile;
 	int _videoFrameDelay;
+	uint32 _enterTime;
 };
 
 } // End of namespace Sci
