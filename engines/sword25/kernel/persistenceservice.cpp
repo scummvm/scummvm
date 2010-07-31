@@ -46,7 +46,6 @@
 #include "sword25/input/inputengine.h"
 #include "sword25/math/regionregistry.h"
 #include "sword25/script/script.h"
-#include "sword25/kernel/debug/debugtools.h"
 #include <zlib.h>
 
 #include "sword25/kernel/memlog_off.h"
