@@ -1001,7 +1001,7 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 #endif // USE_DETECTLANG
 	_guiLanguagePopUp->appendEntry(_("English"), Common::kTranslationBuiltinId);
 	_guiLanguagePopUp->appendEntry("", 0);
-	Common::TLangArray languages = TransMan.getSupportedLanguages();
+	Common::TLangArray languages = TransMan.getSupportedLanguageNames();
 	Common::TLangArray::iterator lang = languages.begin();
 	while (lang != languages.end()) {
 		_guiLanguagePopUp->appendEntry(lang->name, lang->id);

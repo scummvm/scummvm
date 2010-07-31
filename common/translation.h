@@ -117,9 +117,9 @@ public:
 	/**
 	 * Returns a list of supported languages.
 	 *
-	 * @return The list of supported languages.
+	 * @return The list of supported languages in a user readable form.
 	 */
-	const TLangArray getSupportedLanguages() const;
+	const TLangArray getSupportedLanguageNames() const;
 
 	/**
 	 * Returns charset specified by selected translation language
