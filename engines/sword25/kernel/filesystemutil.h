@@ -37,15 +37,17 @@
 // -----------------------------------------------------------------------------
 
 #include "common/str.h"
+#include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/bs_stdint.h"
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_FileSystemUtil
-{
+class BS_FileSystemUtil {
 public:
 	static BS_FileSystemUtil &GetInstance();
 	virtual ~BS_FileSystemUtil() {};
@@ -66,7 +68,7 @@ public:
 	 * @return				Returns the size of the specified file. If the size could not be
 	 * determined, or the file does not exist, returns -1
 	 */
-	virtual uint64_t GetFileSize(const Common::String &Filename) = 0;
+	virtual int64 GetFileSize(const Common::String &Filename) = 0;
 	/**
 	 * @param Filename		The path to a file.
 	 * @return				Returns the timestamp of the specified file. On error it returns 0
@@ -93,5 +95,7 @@ public:
 	 */
 	virtual Common::StringArray GetFilesInDirectory(const Common::String &Path) = 0;
 };
+
+} // End of namespace Sword25
 
 #endif
