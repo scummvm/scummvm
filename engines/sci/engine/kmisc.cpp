@@ -172,10 +172,10 @@ reg_t kSetDebug(EngineState *s, int argc, reg_t *argv) {
 }
 
 enum {
-	K_NEW_GETTIME_TICKS = 0,
-	K_NEW_GETTIME_TIME_12HOUR = 1,
-	K_NEW_GETTIME_TIME_24HOUR = 2,
-	K_NEW_GETTIME_DATE = 3
+	KGETTIME_TICKS = 0,
+	KGETTIME_TIME_12HOUR = 1,
+	KGETTIME_TIME_24HOUR = 2,
+	KGETTIME_DATE = 3
 };
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
@@ -192,19 +192,19 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 		error("kGetTime called in SCI0 with mode %d (expected 0 or 1)", mode);
 
 	switch (mode) {
-	case K_NEW_GETTIME_TICKS :
+	case KGETTIME_TICKS :
 		retval = elapsedTime * 60 / 1000;
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_TIME_12HOUR :
+	case KGETTIME_TIME_12HOUR :
 		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_TIME_24HOUR :
+	case KGETTIME_TIME_24HOUR :
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
-	case K_NEW_GETTIME_DATE :
+	case KGETTIME_DATE :
 		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
