@@ -142,10 +142,10 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 	glBindTexture(GL_TEXTURE_2D, _textureName); CHECK_GL_ERROR();
 
 	// Check if the buffer has its data contiguously
-	/*if (static_cast<int>(w) * _bytesPerPixel == pitch) {
+	if (static_cast<int>(w) * _bytesPerPixel == pitch && w == _textureWidth) {
 		glTexSubImage2D(GL_TEXTURE_2D, 0, x, y, w, h,
 						_glFormat, _glType, buf); CHECK_GL_ERROR();
-	} else {*/
+	} else {
 		// Update the texture row by row
 		const byte *src = static_cast<const byte *>(buf);
 		do {
@@ -154,7 +154,7 @@ void GLTexture::updateBuffer(const void *buf, int pitch, GLuint x, GLuint y, GLu
 			++y;
 			src += pitch;
 		} while (--h);
-	//}
+	}
 }
 
 void GLTexture::drawTexture(GLshort x, GLshort y, GLshort w, GLshort h) {
