@@ -32,20 +32,17 @@
  *
  */
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/fmv/movieplayer.h"
+
+namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
-// -----------------------------------------------------------------------------
-
-BS_MoviePlayer::BS_MoviePlayer(BS_Kernel * pKernel) : BS_Service(pKernel)
-{
+BS_MoviePlayer::BS_MoviePlayer(BS_Kernel * pKernel) : BS_Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
 }
+
+} // End of namespace Sword25

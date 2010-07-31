@@ -71,7 +71,7 @@ public:
 	 * @param Z				Z indicates the position of the film on the main graphics layer
 	 * @return				Returns false if an error occured while loading, otherwise true.
 	*/
-	virtual bool LoadMovie(const std::string & Filename, unsigned int Z) = 0;
+	virtual bool LoadMovie(const Common::String &Filename, unsigned int Z) = 0;
 
 	/**
 	 * Unloads the currently loaded movie file.

@@ -35,27 +35,22 @@
 #ifndef SWORD25_GEOMETRY_H
 #define SWORD25_GEOMETRY_H
 
-// -----------------------------------------------------------------------------
-// Includes
-// -----------------------------------------------------------------------------
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 
-// -----------------------------------------------------------------------------
+namespace Sword25 {
 
 class BS_Kernel;
 
-// -----------------------------------------------------------------------------
-
-class BS_Geometry : public BS_Service
-{
+class BS_Geometry : public BS_Service {
 public:
-	BS_Geometry(BS_Kernel * pKernel);
+	BS_Geometry(BS_Kernel *pKernel);
 	virtual ~BS_Geometry();
 
 private:
 	bool _RegisterScriptBindings();
 };
+
+} // End of namespace Sword25
 
 #endif

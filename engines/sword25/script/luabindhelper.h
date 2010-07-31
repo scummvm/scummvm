@@ -64,7 +64,7 @@ public:
 						 Das Array muss mit dem Eintrag {0, 0} terminiert sein.
 		@return Gibt true bei Erfolg zurück, ansonsten false.
 	*/
-	static bool AddFunctionsToLib(lua_State * L, const std::string & LibName, const luaL_reg * Functions);
+	static bool AddFunctionsToLib(lua_State * L, const Common::String & LibName, const luaL_reg * Functions);
 
 	/**
 		@brief Fügt eine Menge von Konstanten einer Lua-Library hinzu.
@@ -75,7 +75,7 @@ public:
 						 Das Array muss mit dem Eintrag {0, 0} terminiert sein.
 		@return Gibt true bei Erfolg zurück, ansonsten false.
 	*/
-	static bool AddConstantsToLib(lua_State * L, const std::string & LibName, const lua_constant_reg * Constants);
+	static bool AddConstantsToLib(lua_State * L, const Common::String & LibName, const lua_constant_reg * Constants);
 
 	/**
 	    @brief Fügt eine Menge von Methoden zu einer Lua-Klasse hinzu.
@@ -86,7 +86,7 @@ public:
 					   Das Array muss mit dem Eintrag {0, 0} terminiert sein.
 		@return Gibt true bei Erfolg zurück, ansonsten false.
 	*/
-	static bool AddMethodsToClass(lua_State * L, const std::string & ClassName, const luaL_reg * Methods);
+	static bool AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods);
 
 	/**
 	    @brief Legt eine Funktion fest, die aufgerufen wird, wenn Exemplare einer bestimmten Lua-Klasse vom Garbage-Collecter gelöscht werden.
@@ -96,14 +96,14 @@ public:
 		@param GCHandler ein Funktionspointer auf die Funktion.
 		@return Gibt true bei Erfolg zurück, ansonsten false.
 	*/
-	static bool SetClassGCHandler(lua_State * L, const std::string & ClassName, lua_CFunction GCHandler);
+	static bool SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler);
 
 	/**
 		@brief Gibt einen String zurück, der einen Stackdump des Lua-Stacks enthält.
 
 		@param L ein Pointer auf die Lua-VM.
 	*/
-	static std::string StackDump(lua_State * L);
+	static Common::String StackDump(lua_State *L);
 
 	/**
 		@brief Gibt einen String zurück, den den Inhalt einer Tabelle beschreibt.
@@ -111,12 +111,12 @@ public:
         @param L ein Pointer auf die Lua-VM.
 		@remark Auf dem Lua-Stack muss die Tabelle liegen, die ausgelesen werden soll.
 	*/
-	static std::string TableDump(lua_State * L);
+	static Common::String TableDump(lua_State *L);
 
-	static bool GetMetatable(lua_State * L, const std::string & TableName);
+	static bool GetMetatable(lua_State *L, const Common::String &TableName);
 
 private:
-	static bool _CreateTable(lua_State * L, const std::string & TableName);
+	static bool _CreateTable(lua_State *L, const Common::String &TableName);
 };
 
 #endif

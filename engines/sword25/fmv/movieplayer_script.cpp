@@ -43,9 +43,7 @@
 
 #include "sword25/fmv/movieplayer.h"
 
-namespace
-{
-	// -------------------------------------------------------------------------
+namespace Sword25 {
 
 	int LoadMovie(lua_State * L)
 	{
@@ -171,21 +169,18 @@ namespace
 
 	const luaL_reg LIBRARY_FUNCTIONS[] =
 	{
-		"LoadMovie", LoadMovie,
-		"UnloadMovie", UnloadMovie,
-		"Play", Play,
-		"Pause", Pause,
-		"Update", Update,
-		"IsMovieLoaded", IsMovieLoaded,
-		"IsPaused", IsPaused,
-		"GetScaleFactor", GetScaleFactor,
-		"SetScaleFactor", SetScaleFactor,
-		"GetTime", GetTime,
-		0, 0,
+		{ "LoadMovie", LoadMovie },
+		{ "UnloadMovie", UnloadMovie },
+		{ "Play", Play },
+		{ "Pause", Pause },
+		{ "Update", Update },
+		{ "IsMovieLoaded", IsMovieLoaded },
+		{ "IsPaused", IsPaused },
+		{ "GetScaleFactor", GetScaleFactor },
+		{ "SetScaleFactor", SetScaleFactor },
+		{ "GetTime", GetTime },
+		{ 0, 0 }
 	};
-}
-
-// -----------------------------------------------------------------------------
 
 bool BS_MoviePlayer::_RegisterScriptBindings()
 {
@@ -200,3 +195,5 @@ bool BS_MoviePlayer::_RegisterScriptBindings()
 
 	return true;
 }
+
+} // End of namespace Sword25
