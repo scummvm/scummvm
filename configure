@@ -1428,6 +1428,9 @@ case $_host_os in
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
+		OPENGL_CFLAGS=""
+		OPENGL_LIBS="-lopengl32"
+		add_line_to_config_mk 'WIN32 = 1'
 		;;
 	mint*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
@@ -1484,13 +1487,17 @@ case $_host_os in
 		;;
 esac
 
-# HACK: On non-OSX systems, add the GL library
-case $_host_os in
-	*darwin*)
-		;;
-	*)
-		OPENGL_LIBS="$OPENGL_LIBS -lGL"
-esac
+# HACK: On non-OSX systems and no mingw compiler, add the GL library if using sdl backend
+if test "$_backend" = "sdl" ; then
+	case $_host_os in
+		*darwin*)
+			;;
+		*mingw*)
+			;;
+		*)
+			OPENGL_LIBS="$OPENGL_LIBS -lGL"
+	esac
+fi
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed

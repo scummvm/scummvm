@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef USE_OPENGL
+#if defined(USE_OPENGL)
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/platform/sdl/sdl.h"

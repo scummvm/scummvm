@@ -23,7 +23,7 @@
  *
  */
 
-#ifdef USE_OPENGL
+#if defined(USE_OPENGL)
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/glerrorcheck.h"
