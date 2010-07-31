@@ -527,13 +527,21 @@ void GfxAnimate::addToPicDrawCels() {
 	}
 }
 
-void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void GfxAnimate::addToPicDrawView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y, int16 priority, int16 control) {
 	GfxView *view = _cache->getView(viewId);
 	Common::Rect celRect;
 
+	if (priority == -1)
+		priority = _ports->kernelCoordinateToPriority(y);
+
 	// Create rect according to coordinates and given cel
-	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, celRect);
+	view->getCelRect(loopNo, celNo, x, y, 0, celRect);
 	_paint16->drawCel(view, loopNo, celNo, celRect, priority, 0);
+
+	if (control != -1) {
+		celRect.top = CLIP<int16>(_ports->kernelPriorityToCoordinate(priority) - 1, celRect.top, celRect.bottom - 1);
+		_paint16->fillRect(celRect, GFX_SCREEN_MASK_CONTROL, 0, 0, control);
+	}
 }
 
 
@@ -633,9 +641,9 @@ void GfxAnimate::kernelAddToPicList(reg_t listReference, int argc, reg_t *argv) 
 	addToPicSetPicNotValid();
 }
 
-void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void GfxAnimate::kernelAddToPicView(GuiResourceId viewId, int16 loopNo, int16 celNo, int16 x, int16 y, int16 priority, int16 control) {
 	_ports->setPort((Port *)_ports->_picWind);
-	addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	addToPicDrawView(viewId, loopNo, celNo, x, y, priority, control);
 	addToPicSetPicNotValid();
 }
 
