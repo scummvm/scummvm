@@ -118,14 +118,14 @@ public:
 	 * @param FileName		The filename of the package to mount
 	 * @param MountPosition	The directory name under which the package should be mounted
 	 * @return				Returns true if the mount was successful, otherwise false.
-	*/
+	 */
 	virtual bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition) = 0;
 	/**
 	 * Mounts the contents of a directory in the specified directory in the virtual directory tree.
 	 * @param				The name of the directory to mount
 	 * @param MountPosition	The directory name under which the package should be mounted
 	 * @return				Returns true if the mount was successful, otherwise false.
-	*/
+	 */
 	virtual bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition) = 0;
 	/**
 	 * Downloads a file from the virtual directory tree
@@ -190,7 +190,7 @@ public:
 	 * Determines whether a file exists
 	 * @param FileName		The filename
 	 * @return				Returns true if the file exists, otherwise false.
-	*/
+	 */
 	virtual bool FileExists(const Common::String & FileName) = 0;
 
 private:

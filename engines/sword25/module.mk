@@ -68,7 +68,7 @@ MODULE_OBJS := \
 	math/walkregion.o \
 	package/packagemanager.o \
 	package/packagemanager_script.o \
-	package/physfspackagemanager.o \
+	package/scummvmpackagemanager.o \
 	script/luabindhelper.o \
 	script/luacallback.o \
 	script/luascript.o \
