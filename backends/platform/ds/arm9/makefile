@@ -297,14 +297,14 @@ ifdef USE_PROFILER
 endif
 
 
-DATA_OBJS :=
+DATA_OBJS := \
 	$(portdir)/data/icons.o \
 	$(portdir)/data/keyboard.o \
 	$(portdir)/data/keyboard_pal.o \
 	$(portdir)/data/default_font.o \
 	$(portdir)/data/8x8font_tga.o
 
-FAT_OBJS :=
+FAT_OBJS := \
 	$(portdir)/source/fat/disc_io.o \
 	$(portdir)/source/fat/gba_nds_fat.o \
 	$(portdir)/source/fat/io_fcsr.o \

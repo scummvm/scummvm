@@ -26,6 +26,9 @@
 #ifndef _PORTDEFS_H_
 #define _PORTDEFS_H_
 
+// Include ndstypes.h for uint16 etc. typedefs
+#include "nds/ndstypes.h"
+
 // Somebody removed these from scummsys.h, but they're still required, so I'm
 // adding them here in the hope that they'll stay.
 #include <stdio.h>
