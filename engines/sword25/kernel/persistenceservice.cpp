@@ -71,6 +71,7 @@ namespace
 	const char *		FILE_MARKER = "BS25SAVEGAME";
 	const unsigned int	SLOT_COUNT = 18;
 	const unsigned int	FILE_COPY_BUFFER_SIZE = 1024 * 10;
+	const char *VERSIONID = "1";
 
 	// -------------------------------------------------------------------------
 
@@ -186,7 +187,7 @@ struct BS_PersistenceService::Impl
 					// Der Slot wird als belegt markiert.
 					CurSavegameInfo.IsOccupied = true;
 					// Speichern, ob der Spielstand kompatibel mit der aktuellen Engine-Version ist.
-					CurSavegameInfo.IsCompatible = (StoredVersionID == BS_Debugtools::GetVersionID());
+					CurSavegameInfo.IsCompatible = (StoredVersionID == string(VERSIONID));
 					// Dateinamen des Spielstandes speichern.
 					CurSavegameInfo.Filename = GenerateSavegameFilename(SlotID);
 					// Die Beschreibung des Spielstandes besteht aus einer textuellen Darstellung des Änderungsdatums der Spielstanddatei.
@@ -321,7 +322,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const std::string & Sc
 
 		// Spielstanddatei öffnen und die Headerdaten schreiben.
 		ofstream File(Filename.c_str(), ofstream::binary);
-		File << string(FILE_MARKER) << " " << string(BS_Debugtools::GetVersionID()) << " ";
+		File << string(FILE_MARKER) << " " << string(VERSIONID) << " ";
 		if (!File.good())
 		{
 			BS_LOG_ERRORLN("Unable to write header data to savegame file \"%s\".", Filename.c_str());

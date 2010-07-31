@@ -225,7 +225,7 @@ static int CreateDirectory(lua_State * L)
 
 static int GetWinCode(lua_State * L)
 {
-	lua_pushstring(L, BS_WinCodeGenerator::GetWinCode().c_str());
+	lua_pushstring(L, "ScummVM");
 	return 1;
 }
 
@@ -233,7 +233,8 @@ static int GetWinCode(lua_State * L)
 
 static int GetSubversionRevision(lua_State * L)
 {
-	lua_pushnumber(L, BS_Debugtools::GetSubversionRevision());
+	// ScummVM is 1337
+	lua_pushnumber(L, 1337);
 	return 1;
 }
 

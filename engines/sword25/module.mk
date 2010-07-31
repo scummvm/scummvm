@@ -46,13 +46,11 @@ MODULE_OBJS := \
 	input/inputengine_script.o \
 	input/stdwininput.o \
 	kernel/callbackregistry.o \
-	kernel/debug/debugtools.o \
 	kernel/filesystemutil.o \
 	kernel/inputpersistenceblock.o \
 	kernel/kernel.o \
 	kernel/kernel_script.o \
 	kernel/log.o \
-	kernel/md5.o \
 	kernel/memleaks.o \
 	kernel/outputpersistenceblock.o \
 	kernel/persistenceservice.o \
@@ -60,8 +58,6 @@ MODULE_OBJS := \
 	kernel/resource.o \
 	kernel/timer.o \
 	kernel/win32window.o \
-	kernel/wincodegenerator.o \
-	kernel/wincodegenerator_win32.o \
 	kernel/window.o \
 	math/geometry.o \
 	math/geometry_script.o \
