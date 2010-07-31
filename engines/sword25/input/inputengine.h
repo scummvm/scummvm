@@ -1,30 +1,34 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-/**
-	BS_InputEngine
-	-------------
-	Dies ist das Inputengine Interface, dass alle Methoden enthält, die eine Inputengine implementieren muss.
-	Implementationen der Inputengine müssen von dieser Klasse abgeleitet werden.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
-	Autor: Alex Arnst
-**/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ * BS_InputEngine
+ * -------------
+ * This is the input interface engine that contains all the methods that an
+ * input source must implement.
+ * All input engines must be derived from this class.
+ *
+ * Autor: Alex Arnst
+ */
 
 #ifndef SWORD25_INPUTENGINE_H
 #define SWORD25_INPUTENGINE_H
@@ -34,17 +38,18 @@
 #include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
 
-/// Klassendefinition
-class BS_InputEngine : public BS_Service, public BS_Persistable
-{
+namespace Sword25 {
+
+/// Class definitions
+
+class BS_InputEngine : public BS_Service, public BS_Persistable {
 public:
 	BS_InputEngine(BS_Kernel* pKernel);
 	virtual ~BS_InputEngine(){};
 
-	// ACHTUNG: Diese Codes werden in inputengine_script.cpp beim Skript-Service registriert. Bei Änderungen an diesem Enum muss auch diese
-	// Datei angepasst werden.
-	enum KEY_CODES
-	{
+	// NOTE: These codes are registered in inputengine_script.cpp
+	// Any changes to these enums must also adjust the above file.
+	enum KEY_CODES 	{
 		KEY_BACKSPACE	= 0x08,
 		KEY_TAB			= 0x09,
 		KEY_CLEAR		= 0x0C,
@@ -136,10 +141,9 @@ public:
 		KEY_RCONTROL    = 0xA3
 	};
 
-	// ACHTUNG: Diese Codes werden in inputengine_script.cpp beim Skript-Service registriert. Bei Änderungen an diesem Enum muss auch diese
-	// Datei angepasst werden.
-	enum KEY_COMMANDS
-	{
+	// NOTE: These codes are registered in inputengine_script.cpp. 
+	// Any changes to these enums must also adjust the above file.
+	enum KEY_COMMANDS {
 		KEY_COMMAND_ENTER = 1,
 		KEY_COMMAND_LEFT = 2,
 		KEY_COMMAND_RIGHT = 3,
@@ -152,133 +156,131 @@ public:
 	};
 
 	/// --------------------------------------------------------------
-	/// DIESE METHODEN MÜSSEN VON DER INPUTENGINE IMPLEMENTIERT WERDEN
+	/// THESE METHODS MUST BE IMPLEMENTED BY THE INPUT ENGINE
 	/// --------------------------------------------------------------
 	
 	/**
-	    @brief Initialisiert die Inputengine
-		@return Gibt bei Erfolg true zurück, ansonsten false.
-	*/
+	 * Initialises the input engine
+	 * @return			Returns a true on success, otherwise false.
+	 */
 	virtual bool Init() = 0;
 
 	/**
-		@brief Führt einen "Tick" der Input-Engine aus
-
-		Diese Methode sollte mindestens ein mal pro Frame aufgerufen werden. Sie dient dazu Implementationen der
-		Input-Engine zu ermöglichen, die nicht in einem eigenen Thread laufen oder zusätzliche Verwaltungsaufgaben
-		durchführen müssen.
-	*/
+	 * Performs a "tick" of the input engine.
+	 * 
+	 * This method should be called once per frame. It can be used by implementations
+	 * of the input engine that are not running in their own thread, or to perform
+	 * additional administrative tasks that are needed.
+	 */
 	virtual void Update() = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn die linke Maustaste gedrückt ist.
-	*/
+	 * Returns true if the left mouse button is pressed
+	 */
 	virtual bool IsLeftMouseDown() = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn die rechte Maustaste gedrückt ist.
+	 * Returns true if the right mouse button is pressed.
 	*/
 	virtual bool IsRightMouseDown() = 0;
 
 	/**
-	    @brief Gibt true zurück, wenn die linke Maustaste gedrückt und losgelassen wurde.
-
-		Der Unterschied zu IsLeftMouseDown() besteht darin, dass erst true zurückgegegen wird, wenn der Tastendruck beendet ist, die Taste also
-		wieder losgelassen wurde.
+	 * Returns true if the left mouse button was pressed and released.
+	 *
+	 * The difference between this and IsLeftMouseDown() is that this only returns
+	 * true when the left mouse button is released.
 	*/
 	virtual bool WasLeftMouseDown() = 0;
 
 	/**
-		@brief Gibt true zurück, wenn die linke Maustaste gedrückt und losgelassen wurde.
-
-		Der Unterschied zu IsRightMouseDown() besteht darin, dass erst true zurückgegegen wird, wenn der Tastendruck beendet ist, die Taste also
-		wieder losgelassen wurde.
+	 * Returns true if the right mouse button was pressed and released.
+	 *
+	 * The difference between this and IsRightMouseDown() is that this only returns
+	 * true when the right mouse button is released.
 	*/
 	virtual bool WasRightMouseDown() = 0;
 
 	/**
-		@brief Gibt true zurück wenn mit der linken Maustaste ein Doppelklick ausgelöst wurde.
-	*/
+	 * Returns true if the left mouse button double click was done
+	 */
 	virtual bool IsLeftDoubleClick() = 0;
 
 	/**
-	    @brief Gibt die Position des Mauszeigers auf der X-Achse in Pixeln zurück.
+	 * Returns the X position of the cursor in pixels
 	*/
 	virtual int GetMouseX() = 0;
 
 	/**
-		@brief Gibt die Position des Mauszeigers auf der Y-Achse in Pixeln zurück.
-	*/
+	 * Returns the Y position of the cursor in pixels
+	 */
 	virtual int GetMouseY() = 0;
 
 	/**
-		@brief Setzt die Position des Mauszeigers auf der X-Achse in Pixeln.
-	*/
+	 * Sets the X position of the cursor in pixels
+	 */
 	virtual void SetMouseX(int PosX) = 0;
 
 	/**
-		@brief Setzt die Position des Mauszeigers auf der Y-Achse in Pixeln.
-	*/
+	 * Sets the Y position of the cursor in pixels
+	 */
 	virtual void SetMouseY(int PosY) = 0;
 
 	/**
-	    @brief Gibt true zurück wenn eine bestimmte Taste gedrückt ist.
-		@param KeyCode der Key-Code der zu testenden Taste
-		@return Gibt true zurück, wenn die Taste mit dem übergebenen Key-Code gedrückt ist, ansonsten false.
-	*/
+	 * Returns true if a given key was pressed
+	 * @param KeyCode		The key code to be checked
+	 * @return				Returns true if the given key is done, otherwise false.
+	 */
 	virtual bool IsKeyDown(unsigned int KeyCode) = 0;
 
 	/**
-	    @brief Gibt true zurück wenn eine bestimmte Taste gerückt und losgelassen wurde.
-
-		Der Unterschied zu IsKeyDown() besteht darin, dass erst true zurückgegegen wird, wenn der Tastendruck beendet ist, die Taste also
-		wieder losgelassen wurde. Diese Methode erleichtert das Abfragen von Funktionstasten und das Einlesen von Zeichenketten, die vom
-		Benutzer getippt werden.
-
-		@param KeyCode der Key-Code der zu testenden Taste
-	*/
+	 * Returns true if a certain key was pushed and released.
+	 *
+	 * The difference between IsKeyDown() is that this only returns true after the key
+	 * has been released. This method facilitates the retrieval of keys, and reading
+	 * strings that users type.
+	 * @param KeyCode		The key code to be checked
+	 */
 	virtual bool WasKeyDown(unsigned int KeyCode) = 0;
 
 	typedef void (*CharacterCallback)(unsigned char Character);
 
 	/**
-		@brief Registriert eine Callbackfunktion für die Eingabe von Buchstaben.
-
-		Die Callbacks, die mit dieser Funktion registriert werden, werden immer dann aufgerufen, wenn der Input-Service eine Buchstabeneingabe
-		feststellt. Eine Buchstabeneingabe unterscheidet sich von der Abfrage mittels der Methoden IsKeyDown() und WasKeyDown() in der Hinsicht,
-		dass statt Scan-Coded tatsächliche Buchstaben behandelt werden. Dabei wurden unter anderem Berücksichtigt:des Tastaturlayout, der Zustand
-		der Shift und Caps Lock Tasten und die Wiederholung durch längeres Halten der Taste.<br>
-		Die Eingabe von Zeichenketten durch den Benutzer sollte durch Benutzung dieses Callbacks realisiert werden.
-
-		@return Gibt true zurück, wenn die Funktion registriert werden konnte, ansonsten false.
+	 * Registers a callback function for keyboard input.
+	 *
+	 * The callbacks that are registered with this function will be called whenever an
+	 * input key is pressed. A letter entry is different from the query using the 
+	 * methods IsKeyDown () and WasKeyDown () in the sense that are treated instead 
+	 * of actual scan-coded letters. These were taken into account, among other things: 
+	 * the keyboard layout, the condition the Shift and Caps Lock keys and the repetition
+	 * of longer holding the key.
+	 * The input of strings by the user through use of callbacks should be implemented.
+	 * @return				Returns true if the function was registered, otherwise false.
 	*/
 	virtual bool RegisterCharacterCallback(CharacterCallback Callback) = 0;
 
 	/**
-		@brief Deregistriert eine Callbackfunktion für die Eingabe von Buchstaben.
-
-		@return Gibt true zurück, wenn die Funktion deregistriert werden konnte, ansonsten false.
-	*/
+	 * De-registeres a previously registered callback function.
+	 * @return				Returns true if the function could be de-registered, otherwise false.
+	 */
 	virtual bool UnregisterCharacterCallback(CharacterCallback Callback) = 0;
 
 	typedef void (*CommandCallback)(KEY_COMMANDS Command);
 
 	/**
-		@brief Registriert eine Callbackfunktion für die Eingabe von Kommandos, die auf die Zeichenketteneingabe Einfluss haben können.
-
-		Die Callbacks, die mit dieser Funktion registriert werden , werden immer dann aufgerufen, wenn der Input-Service einen Tastendruck
-		feststellt, der die Zeichenketteneingabe beeinflussen kann. Dies könnten folgende Tasten sein: Enter, Pos 1, Ende, Links, Rechts, ...<br>
-		Die Eingabe von Zeichenketten durch den Benutzer sollte durch Benutzung dieses Callbacks realisiert werden.
-
-		@return Gibt true zurück, wenn die Funktion registriert werden konnte, ansonsten false.
-	*/
+	 * Registers a callback function for the input of commands that can have influence on the string input
+	 *
+	 * The callbacks that are registered with this function will be called whenever the input service 
+	 * has a key that affects the character string input. This could be the following keys: 
+	 * Enter, End, Left, Right, ...
+	 * The input of strings by the user through the use of callbacks should be implemented.
+	 * @return				Returns true if the function was registered, otherwise false.
+	 */
 	virtual bool RegisterCommandCallback(CommandCallback Callback) = 0;
 
 	/**
-		@brief Deregistriert eine Callbackfunktion für die Eingabe von Kommandos, die auf die Zeichenketteneingabe Einfluss haben können.
-
-		@return Gibt true zurück, wenn die Funktion deregistriert werden konnte, ansonsten false.		
-	*/
+	 * Un-register a callback function for the input of commands that can have an influence on the string input.
+	 * @return				Returns true if the function could be de-registered, otherwise false.
+	 */
 	virtual bool UnregisterCommandCallback(CommandCallback Callback) = 0;
 
 	virtual void ReportCharacter(unsigned char Character) = 0;
@@ -287,5 +289,7 @@ public:
 private:
 	bool _RegisterScriptBindings();
 };
+
+} // End of namespace Sword25
 
 #endif

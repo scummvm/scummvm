@@ -1,34 +1,37 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
 
 #ifndef SWORD25_LOG_H
 #define SWORD25_LOG_H
 
 // Includes
-#include "sword25/kernel/memlog_off.h"
-#include <stdio.h>
-#include <vector>
-#include <string>
-#include <algorithm>
-#include "sword25/kernel/memlog_on.h"
-
+#include "common/array.h"
+#include "common/file.h"
 #include "sword25/kernel/common.h"
+
+namespace Sword25 {
 
 // Logging soll nur stattfinden wenn es aktiviert ist
 #ifdef BS_ACTIVATE_LOGGING
@@ -59,33 +62,38 @@ public:
 
 	typedef void (*LOG_LISTENER_CALLBACK)(const char *);
 	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) { _LogListener.push_back(Callback); }
-	static bool IsListenerRegistered(LOG_LISTENER_CALLBACK Callback) { return std::find(_LogListener.begin(), _LogListener.end(), Callback) != _LogListener.end(); }
+	static bool IsListenerRegistered(LOG_LISTENER_CALLBACK Callback) { 
+		Common::Array<LOG_LISTENER_CALLBACK>::iterator i;
+		for (i = _LogListener.begin(); i != _LogListener.end(); ++i) {
+			if (**i == Callback)
+				return true;
+		}
+		return false;
+	}
+	static void _CloseLog();
 
 private:
-	static FILE*								_LogFile;
+	static Common::WriteStream *				_LogFile;
 	static bool									_LineBegin;
-	static const char*							_Prefix;
-	static const char*							_File;
+	static const char *							_Prefix;
+	static const char *							_File;
 	static int									_Line;
 	static bool									_AutoNewline;
-	static std::vector<LOG_LISTENER_CALLBACK>	_LogListener;
+	static Common::Array<LOG_LISTENER_CALLBACK>	_LogListener;
 	
 	static bool _CreateLog();
-	static void _CloseLog();
 
 	static int _WriteLog(const char* Message);
 	static void _FlushLog();
 };
 
-// Hilfsfunktion, die es C-Funktionen ermöglicht zu loggen (wird für Lua gebraucht).
-extern "C"
-{
-	void BS_Log_C(const char* Message);
-}
+// Auxiliary function that allows to log C functions (needed for Lua).
+#define BS_Log_C error
+
 
 #else
 
-// Logging-Makros
+// Logging-Macros
 #define BS_LOG
 #define BS_LOGLN
 #define BS_LOG_WARNING
@@ -95,11 +103,10 @@ extern "C"
 #define BS_LOG_EXTERROR
 #define BS_LOG_EXTERRORLN
 
-// Die Version der Logging-Klasse mit deaktiviertem Logging
-class BS_Log
-{
+// The version of the logging class with logging disabled 
+class BS_Log {
 public:
-	// Die Log Funktionen werden zu do-nothing Funktionen und wird daher vom Compiler (hoffentlich) rausoptimiert
+	// This version implements all the various methods as empty stubs
 	static void Log(const char* Text, ...) {};
 	static void LogPrefix(const char* Prefix, const char* Format, ...) {};
 	static void LogDecorated(const char* Format, ...) {};
@@ -113,11 +120,10 @@ public:
 	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) {};
 };
 
-extern "C"
-{
-	void BS_Log_C(const char* Message);
-}
+#define BS_Log_C error
 
 #endif
+
+} // End of namespace Sword25
 
 #endif

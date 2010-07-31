@@ -21,39 +21,54 @@
  * $URL$
  * $Id$
  *
- * BS_Service
- * -------------
- * This is the base class for all engine services.
- * A serivce is an essential part of the engine, ex. the graphics system.
- * This was intended to allow, for example, different plug in modules for
- * different kinds of hardware and/or systems. 
- * The services are created at runtime via the kernel method NewService and NEVER with new.
- *
- * Autor: Malte Thiesen
-*/
+ */
 
-#ifndef SWORD25_SERVICE_H
-#define SWORD25_SERVICE_H
+#ifndef SWORD25_H
+#define SWORD25_H
 
-// Includes
-#include "sword25/kernel/common.h"
+#include "common/scummsys.h"
+#include "common/str-array.h"
+#include "common/util.h"
+#include "engines/engine.h"
+
+#include "sword25/kernel/log.h"
 
 namespace Sword25 {
 
-// Klassendefinition
-class BS_Kernel;
+enum {
+	kFileTypeHash = 0
+};
 
-class BS_Service {
+enum {
+	kDebugScript = 1 << 0
+};
+
+#define MESSAGE_BASIC 1
+#define MESSAGE_INTERMEDIATE 2
+#define MESSAGE_DETAILED 3
+
+struct Sword25GameDescription;
+
+class Sword25Engine : public Engine {
 private:
-	BS_Kernel *	_pKernel;
-		
+	bool AppStart(const Common::StringArray &CommandParameters);
+	bool AppMain();
+	bool AppEnd();
+
 protected:
-	BS_Service(BS_Kernel *pKernel) : _pKernel(pKernel) {};
-	
-	BS_Kernel* GetKernel() const { return _pKernel; }
+	virtual Common::Error run();
+	void shutdown();
 	
 public:
-	virtual ~BS_Service() {};
+	Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc);
+	virtual ~Sword25Engine();
+
+	int getGameType() const;
+	uint32 getFeatures() const;
+	Common::Language getLanguage() const;
+	Common::Platform getPlatform() const;
+
+	const Sword25GameDescription *_gameDescription;
 };
 
 } // End of namespace Sword25

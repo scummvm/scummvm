@@ -1,123 +1,119 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ */
 
 #ifndef SWORD25_RESOURCEMANAGER_H
 #define SWORD25_RESOURCEMANAGER_H
 
 // Includes
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include <list>
-#include "sword25/kernel/memlog_on.h"
+#include "common/list.h"
 
 #include "sword25/kernel/common.h"
 
-// Klassendefinition
+namespace Sword25 {
+
+// Class definitions
 class BS_ResourceService;
 class BS_Resource;
 class BS_Kernel;
 
-class BS_ResourceManager
-{
+class BS_ResourceManager {
 friend class BS_Kernel;
 
 public:
 	/**
-		@brief Fordert eine Resource an.
-		@param FileName Dateiname
-		@return Gibt die Resource zurück, falls erfolgreich, sonst NULL
-	*/
-	BS_Resource* RequestResource(const std::string& FileName);
+	 * Returns a requested resource. If any error occurs, returns NULL
+	 * @param FileName		Filename of resource
+	 */
+	BS_Resource *RequestResource(const Common::String &FileName);
 
 	/**
-		@brief Lädt eine Resource in den Cache.
-		@param FileName der Dateiname der zu cachenden Resource
-		@param ForceReload gibt an, ob die Datei auch neu geladen werden soll, wenn sie bereits geladen wurde.
-						   Dies ist nützlich bei Dateien, die sich in der Zwischenzeit verändert haben.
-		@return Gibt true zurück, wenn das Caching durchgeführt werden konnte, ansonsten false.
-	*/
-	bool PrecacheResource(const std::string& FileName, bool ForceReload = false);
+	 * Loads a resource into the cache
+	 * @param FileName		The filename of the resource to be cached
+	 * @param ForceReload	Indicates whether the file should be reloaded if it's already in the cache.
+	 * This is useful for files that may have changed in the interim
+	 */
+	bool PrecacheResource(const Common::String& FileName, bool ForceReload = false);
 
 	/**
-		@brief Gibt die Anzahl der geladenen Resourcen zurück.
-	*/
+	 * Returns the number of loaded resources
+	 */
 	int GetResourceCount() const { return static_cast<int>(m_Resources.size()); }
 
 	/**
-		@brief Gibt einen Pointer auf eine Resource anhand deren laufender Nummer zurück.
-		@param Ord laufende Nummer der Resource. Dieser Wert muss zwischen 0 und GetResourceCount() - 1 liegen.
-		@return Gibt einen Pointer auf die Resource zurück wenn erfolgreich, ansonsten NULL.
-		@remark Diese Methode ist nicht auf Geschwindigkeit optimiert und sollte nur für Debugzwecke eingesetzt werden.
+	 * Returns a resource by it's ordinal index. Returns NULL if any error occurs
+	 * Note: This method is not optimised for speed and should be used only for debugging purposes
+	 * @param Ord		Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
 	*/
-	BS_Resource* GetResourceByOrdinal(int Ord) const;
+	BS_Resource *GetResourceByOrdinal(int Ord) const;
 
 	/**
-		@brief RegisterResourceService Diese Methode wird vom Konstruktor von 
-										BS_ResourceService aufgerufen und trägt somit alle 
-										Resource-Services in einen Liste des 
-										Resource-Managers ein.
-		@param pService welches Service
-		@return gibt true zurück, falls erfolgreich
-	*/
+	 * Registers a RegisterResourceService. This method is the constructor of
+	 * BS_ResourceService, and thus helps all resource services in the ResourceManager list
+	 * @param pService		Which service
+	 */
 	bool RegisterResourceService(BS_ResourceService* pService);
 
 	/**
-	 * @brief gibt alle Resourcen frei, die nicht gelocked sind.
+	 * Releases all resources that are not locked.
 	 **/
 	void EmptyCache();
 
 	/**
-		@brief Gibt zurück wie viel Speicher die Engine maximal belegen soll.
-	*/
+	 * Returns the maximum memory the kernel has used
+	 */
 	int GetMaxMemoryUsage() const { return m_MaxMemoryUsage; }
 
 	/**
-		@brief Legt fest wie viel Speicher die Engine maximal belegen soll.
-
-		Wenn dieser Wert überschritten wird, werden Resourcen entladen um Platz zu schaffen. Dieser Wert ist als Richtgröße zu verstehen und nicht als feste Grenze.
-		Es ist unter KEINEN Umständen garantiert, dass die Engine tatsächlich nur so viel Speicher benutzt.
-	*/
+	 * Specifies the maximum amount of memory the engine is allowed to use.
+	 * If this value is exceeded, resources will be unloaded to make room. This value is meant
+	 * as a guideline, and not as a fixed boundary. It is not guaranteed not to be exceeded;
+	 * the whole game engine may still use more memory than any amount specified.
+	 */
 	void SetMaxMemoryUsage(unsigned int MaxMemoryUsage);
 
 	/**
-		@brief Gibt an, ob eine Warnung ins Log geschrieben wird, wenn ein Cache-Miss auftritt.
-		Der Standardwert ist "false".
-	*/
+	 * Specifies whether a warning is written to the log when a cache miss occurs.
+	 * THe default value is "false".
+	 */
 	bool IsLogCacheMiss() const { return m_LogCacheMiss; }
 
 	/**
-		@brief Legt fest, ob eine Warnung ins Log geschrieben wird, wenn in Cache-Miss auftritt.
-		@param Flag wenn "true" wird die Warnung in Zukunft ausgegeben, ansonsten nicht.
-	*/
+	 * Sets whether warnings are written to the log if a cache miss occurs.
+	 * @param Flag		If "true", then future warnings will be logged
+	 */
 	void SetLogCacheMiss(bool Flag) { m_LogCacheMiss = Flag; }
 
 	/**
-		@brief Schreibt die Namen aller gelockten Resourcen in die Log-Datei.
-	*/
+	 * Writes the names of all currently locked resources to the log file
+	 */
 	void DumpLockedResources();
 
 private:
 	/**
-		@brief Erzeugt einen neuen Resource-Manager.
-		@param pKernel ein Pointer auf den Kernel.
-		@remark Nur der BS_Kernel darf Exemplare dieser Klasse erzeugen. Daher ist der Konstruktor private.
-	*/
+	 * Creates a new resource manager
+	 * Only the BS_Kernel class can generate copies this class. Thus, the constructor is private
+	 */
 	BS_ResourceManager(BS_Kernel* pKernel) :
 		m_KernelPtr(pKernel),
 		m_MaxMemoryUsage(100000000),
@@ -131,55 +127,52 @@ private:
 	};
 
 	/**
-		@brief Verschiebt eine Resource an die Spitze der Resourcenliste.
-		@param pResource die Resource
-	*/
-	void MoveToFront(BS_Resource* pResource);
+	 * Moves a resource to the top of the resource list
+	 * @param pResource		The resource
+	 */
+	void MoveToFront(BS_Resource *pResource);
 
 	/**
-		@brief Lädt eine Resource und aktualisiert m_UsedMemory.
-
-		Die Resource darf nicht bereits geladen sein.
-		
-		@param FileName der absolute und eindeutige Dateiname der zu ladenen Resource
-		@return Gibt einen Pointer auf die geladene Resource zurück wenn das Laden erfolgreich war, ansonsten NULL.
-	*/
-	BS_Resource* LoadResource(const std::string& FileName);
-
-	/**
-		@brief Gibt zu einer Datei ihren absoluten, eindeutigen Pfad zurück.
-		@param FileName der Dateiname
-		@return Der absolute, eindeutige Pfad zur Datei inklusive des Dateinamens.<br>
-				Gibt einen leeren std::string zurück, wenn der Pfad nicht erzeugt werden konnte.
-	*/
-	std::string GetUniqueFileName(const std::string& FileName) const;
+	 * Loads a resource and updates the m_UsedMemory total
+	 *
+	 * The resource must not already be loaded
+	 *
+	 * @param FileName		The unique filename of the resource to be loaded
+	 *
+	 */
+	BS_Resource *LoadResource(const Common::String &FileName);
 
 	/**
-		@brief Löscht eine Resource entfernt sie aus den Listen und aktualisiert m_UsedMemory.
-		@param pResource die zu löschende Resource
-		@return Gibt einen Iterator zurück, der auf die nächste Resource in der Resourcenliste zeigt.
+	 * Returns the full path of a given resource filename.
+	 * It will return an empty string if a path could not be created.
 	*/
-	std::list<BS_Resource*>::iterator DeleteResource(BS_Resource* pResource);
+	Common::String GetUniqueFileName(const Common::String &FileName) const;
 
 	/**
-		@brief Holt einen Pointer zu einer geladenen Resource.
-		@param UniqueFileName der absolute, eindeutige Pfad zur Datei inklusive des Dateinamens.
-		@return Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
-	*/
-	BS_Resource* GetResource(const std::string& UniqueFileName) const;
+	 * Deletes a resource, removes it from the lists, and updates m_UsedMemory
+	 */
+	Common::List<BS_Resource*>::iterator DeleteResource(BS_Resource *pResource);
 
 	/**
-		@brief Löscht solange Resourcen, bis der Prozess unter das angegebene Maximun an Speicherbelegung kommt.
-	*/
+	 * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
+	 * @param UniqueFileName		The absolute path and filename
+	 * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
+	 */
+	BS_Resource *GetResource(const Common::String &UniqueFileName) const;
+
+	/**
+	 * Deletes resources as necessary until the specified memory limit is not being exceeded.
+	 */
 	void DeleteResourcesIfNecessary();
 
-	BS_Kernel*							m_KernelPtr;
+	BS_Kernel *							m_KernelPtr;
 	unsigned int						m_MaxMemoryUsage;
-	std::vector<BS_ResourceService*>	m_ResourceServices;
-	std::list<BS_Resource*>				m_Resources;
-	std::list<BS_Resource*>				m_ResourceHashTable[HASH_TABLE_BUCKETS];
+	Common::Array<BS_ResourceService *>	m_ResourceServices;
+	Common::List<BS_Resource *>			m_Resources;
+	Common::List<BS_Resource *>			m_ResourceHashTable[HASH_TABLE_BUCKETS];
 	bool								m_LogCacheMiss;
 };
 
-#endif
+} // End of namespace Sword25
 
+#endif

@@ -1,31 +1,33 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-/*
-	BS_Window
-	---------
-	Simples Fensterklasseninterface.
-	Ist nur aus Gründen der Portabilität in einer Klasse gekapselt.
-	TODO: Für andere Betriebssysteme implementieren
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
-	Autor: Malte Thiesen
-*/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ * BS_Window
+ * ---------
+ * Simple window class interface. This is being encapsulated in a class for
+ * reasons of portability.
+ *
+ * Autor: Malte Thiesen
+ */
 
 #ifndef SWORD25_WINDOW_H
 #define SWORD25_WINDOW_H
@@ -33,15 +35,17 @@
 // Includes
 #include "sword25/kernel/common.h"
 
-// Klassendefinition
+namespace Sword25 {
+
+// Class definitions
+
 /**
-	@brief Ein Simples Fensterklasseninterface.
-	
-	Fenster werden ausschließlich mit BS_Window::CreateBSWindow() erstellt. BS_Window wählt
-	dann selbständig die richtige Klasse für das Betriebssystem aus.
-*/
-class BS_Window
-{
+ * A simple window class interface
+ *
+ * Windows are exclusively created by BS_Window::CreateBSWindow().
+ * BS_Windows selects the correct class for the environment.
+ */
+class BS_Window {
 protected:
 	bool _InitSuccess;
 	bool _CloseWanted;
@@ -50,127 +54,111 @@ public:
 	virtual ~BS_Window(){};
 
 	/**
-		@brief Gibt den Sichtbarkeitsstatus des Fensters zurück
-		@return Gibt true zurück wenn das Fenster sichtbar ist, andernfalls false
-	*/
+	 * Returns the visibility of the window.
+	 */
 	virtual bool IsVisible() = 0;
+
 	/**
-		@brief Setzt den Sichtbarkeitsstatus des Fensters
-		@param Visible gibt an, ob das Fenster sichtbar oder versteckt sein soll
-	*/
+	 * Sets the visibility of the window
+	 * @param Visible		Specifies whether the window should be visible or hidden
+	 */
 	virtual void SetVisible(bool Visible) = 0;
 	/**
-		@brief Gibt die Position des Fensters auf der X-Achse zurück
-		@return Gibt die Position des Fensters auf der X-Achse zurück
-	*/
+	 * Returns the X position of the window
+	 */
 	virtual int GetX() = 0;
 	/**
-		@brief Setzt die Position des Fensters auf der X-Achse
-		@param X die X-Position des Fensters oder -1 für zentrierte Ausrichtung auf der X-Achse
-	*/
+	 * Sets the X position of the window
+	 * @paramX		The new X position for the window, or -1 for centre aligned
+	 */
 	virtual void SetX(int X) = 0;
 	/**
-		@brief Gibt die Position des Fensters auf der Y-Achse zurück
-		@return Gibt die Position des Fensters auf der Y-Achse zurück
-	*/
+	 * Gets the Y position of the window
+	 */
 	virtual int GetY() = 0;
 	/**
-		@brief Setzt die Position des Fensters auf der Y-Achse
-		@param Y die Y-Position des Fensters oder -1 für zentrierte Ausrichtung auf der Y-Achse
-	*/
+	 * Sets the Y position of the window
+	 * @param Y		The new Y position for the window, or -1 for centre aligned
+	 */
 	virtual void SetY(int X) = 0;
 	/**
-		@brief Gibt die Position des Fensterinhaltes auf der X-Achse zurück
-		@return Gibt die Position des Fensterinhaltes auf der X-Achse zurück
-	*/
+	 * Returns the X position of the window's client area
+	 */
 	virtual int GetClientX() = 0;
-		/**
-		@brief Gibt die Position des Fensterinhaltes auf der Y-Achse zurück
-		@return Gibt die Position des Fensterinhaltes auf der Y-Achse zurück
-	*/
+	/**
+	 * Returns the Y position of the window's client area
+	 */
 	virtual int GetClientY() = 0;
 	/**
-		@brief Gibt die Breite des Fensters ohne Rahmen zurück
-		@return Gibt die Breite des Fensters ohne Rahmen zurück
-	*/
+	 * Returns the width of the window without the frame
+	 */
 	virtual int GetWidth() = 0;
 	/**
-		@brief Setzt die Breite des Fensters ohne Rahmen
-		@param Width die Breite des Fensters ohne Rahmen
-	*/
+	 * Sets the width of the window without the frame
+	 */
 	virtual void SetWidth(int Width) = 0;
 	/**
-		@brief Gibt die Höhe des Fensters ohne Rahmen und Kopfzeile zurück
-		@return Gibt die Höhe des Fensters ohne Rahmen und Kopfzeile zurück
-	*/
+	 * Gets the height of the window without the frame
+	 */
 	virtual int GetHeight() = 0;
 	/**
-		@brief Setzt die Höhe des Fensters ohne Rahmen und Kopfzeile
-		@param Height die Höhe des Fensters ohne Rahmen und Kopfzeile
-	*/
+	 * Sets the height of the window without the frame
+	 */
 	virtual void SetHeight(int Height) = 0;
 	/**
-		@brief Gibt den Titel der Fensters zurück
-		@return Gibt den Titel des Fenster zurück
-	*/
-	virtual std::string GetTitle() = 0;
+	 * Returns the title of the window
+	 */
+	virtual Common::String GetTitle() = 0;
 	/**
-		@brief Setzt den Titel des Fensters
-		@param Title der neue Titel des Fensters
+	 * Sets the title of the window
+	 * @param Title		The new window title
 	*/
-	virtual void SetTitle(std::string Title) = 0;
+	virtual void SetTitle(const Common::String &Title) = 0;
 	/**
-		@brief Arbeitet die Windowmessages des Fensters ab.
-			   Diese Methode sollte während des Main-Loops aufgerufen werden.
-		@return Gibt false zurück, falls das Fenster geschlossen wurde.
-	*/
+	 * Handle the processing of any pending window messages. This method should be called
+	 * during the main loop.
+	 */
 	virtual bool ProcessMessages() = 0;
 	/**
-		@brief Pausiert die Applikation bis das Fenster wieder den Focus hat oder geschlossen wurde.
-		@return Gibt false zurück, falls das Fenster geschlossen wurde.
-	*/
+	 * Pauses the applicaiton until the window has focus, or has been closed.
+	 * Returns false if the window was closed.
+	 */
 	virtual bool WaitForFocus() = 0;	
 	/**
-		@brief Gibt zurück, ob das Fenster den Focus hat.
-		@return Gibt true zurück, wenn das Fenster den Focus hat, ansonsten false
-	*/
+	 * Returns true if the window has focus, false otherwise.
+	 */
 	virtual bool HasFocus() = 0;
 	/**
-		@brief Gibt das Windowhandle, des Systems zurück.
-		@return Das Windowhandle des Fensters
-		@remark Wenn das Windowshandle benutzt wird, sind die entsprechenden Codeteile 
-				natürlich nicht mehr portable.
-	*/
+	 * Returns the system handle that represents the window. Note that any use of the handle
+	 * will not be portable code.
+	 */
 	virtual unsigned int GetWindowHandle() = 0;
 
 
 	/**
-		@brief Setzt den Rückgabewert für den nächsten Aufruf von CloseWanted. Sollte vom
-		       Fenster selbst verwendet werden, wenn es geschlossen werden möchte. Dieser 
-		       Mechanismus erlaubt den Scripten abzufragen, wann das Hauptfenster geschlossen
-			   werden soll, und sich entsprechend zu beenden, bzw. beim Nutzer nachzufragen.
-	**/
+	 * Specifies whether the window is wanted to be closed. This is used together with CloseWanted()
+	 * to allow scripts to query when the main window should be closed, or the user is asking it to close
+	 **/
 	void SetCloseWanted(bool Wanted);	
 	/**
-		@brief Gibt einmal den Wert des letztes Aufrufs von SetCloseWanted zurück, 
-			   und danach sofort wieder false, solange bis mit SetCloseWanted wieder
-			   ein neuer Wert gesetzt wird.
+	 * Returns the previous value set in a call to SetCloseWanted. 
+	 * Note that calling this also resets the value back to false, until such time as the SetCloseWanted()
+	 * method is called again.
 	**/
 	bool CloseWanted();
 
-
 	/**
-		@brief Erstellt eine neue Fensterinstanz.
-		@param X die X-Position des Fensters oder -1 für zentrierte Ausrichtung auf der X-Achse
-		@param Y des Y-Position des Fensters oder -1 für zentrierte Ausrichtung auf der Y-Achsen
-		@param Width die Breite des Fensters ohne Rahmen
-		@param Height die Höhe des Fensters ohne Rahmen und Kopfzeile
-		@param Visible gibt an, ob das Fenster dargestellt werden soll
-		@return Gibt einen Pointer auf ein Fensterobjekt zurück, oder NULL wenn das Erstellen
-				fehlgeschlagen ist.
-		@remark Das Fenster muss nach Benutzung mit delete freigegeben werden!
-	*/
-	static BS_Window* CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
+	 * Creates a new window instance. Returns a pointer to the window, or NULL if the creation failed.
+	 * Note: It is the responsibility of the client to free the pointer when done with it.
+	 * @param X			The X position of the window, or -1 for centre horizontal alignment
+	 * @param Y			The Y position of the window, or -1 for centre vertical alignment
+	 * @param Width		The width of the window without the frame
+	 * @param Height	The height of the window without the frame
+	 * @param Visible	Specifies whether window should be visible
+	 */
+	static BS_Window *CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -1,112 +1,89 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-#define WIN32_LEAN_AND_MEAN
-#define NOMINMAX
-#include <windows.h>
-#include <psapi.h>
-#pragma comment(lib, "psapi.lib")
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
-#include <math.h>
-#include <algorithm>
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
 
-#include "sword25/kernel/kernel.h"
-#include "sword25/kernel/timer.h"
-#include "sword25/kernel/service_ids.h"
-
+#include "common/system.h"
 #include "sword25/gfx/graphicengine.h"
-#include "sword25/sfx/soundengine.h"
+#include "sword25/fmv/movieplayer.h"
 #include "sword25/input/inputengine.h"
+#include "sword25/kernel/kernel.h"
+#include "sword25/kernel/persistenceservice.h"
+#include "sword25/kernel/service_ids.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/script.h"
-#include "sword25/fmv/movieplayer.h"
-#include "sword25/kernel/persistenceservice.h"
+#include "sword25/sfx/soundengine.h"
+
+namespace Sword25 {
 
 #define BS_LOG_PREFIX "KERNEL"
 
-BS_Kernel * BS_Kernel::_Instance = 0;
+BS_Kernel *BS_Kernel::_Instance = 0;
 
-// Konstruktion / Destruktion
-// --------------------------
 BS_Kernel::BS_Kernel() :
 	_pWindow(NULL),
 	_Running(false),
 	_pResourceManager(NULL),
-	_InitSuccess(false)
-{
-	// TODO:
-	// Messagebox ausgeben wenn nicht gelogged werden kann -> log.txt schreibgeschützt
+	_InitSuccess(false) {
+	
+	// Log that the kernel is beign created
 	BS_LOGLN("created.");
 
-	// Feststellen, ob der Timer unterstützt wird.
-	if (!BS_Timer::IsTimerAvaliable())
-	{
-		BS_LOG_ERRORLN("This machine doesn't support a performance counter.");
-		return;
-	}
-
-	// Die BS_SERVICE_TABLE auslesen und kernelinterne Strukturen vorbereiten
-	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
-	{
-		// Ist die Superclass schon registriert?
-		Superclass* pCurSuperclass = NULL;
-		std::vector<Superclass*>::iterator Iter;
+	// Read the BS_SERVICE_TABLE and prepare kernel structures
+	for (uint i = 0; i < BS_SERVICE_COUNT; i++) {
+		// Is the superclass already registered?
+		Superclass *pCurSuperclass = NULL;
+		Common::Array<Superclass *>::iterator Iter;
 		for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter)
-			if ((*Iter)->GetIdentifier() == BS_SERVICE_TABLE[i].SuperclassIdentifier)
-			{
+			if ((*Iter)->GetIdentifier() == BS_SERVICE_TABLE[i].SuperclassIdentifier) {
 				pCurSuperclass = *Iter;
 				break;
 			}
 
-		// Falls die Superclass noch nicht registriert war, wird dies jetzt gemacht
+		// If the superclass isn't already registered, then add it in
 		if (!pCurSuperclass)
 			_SuperclassList.push_back(new Superclass(this, BS_SERVICE_TABLE[i].SuperclassIdentifier));
 	}
 
-	// Fensterobjekt erstellen
-	_pWindow = BS_Window::CreateBSWindow(0,0,0,0,false);
-	if (!_pWindow)
-	{
+	// Create window object
+	_pWindow = BS_Window::CreateBSWindow(0, 0, 0, 0, false);
+	if (!_pWindow) {
 		BS_LOG_ERRORLN("Failed to create the window.");
-	}
-	else
+	} else
 		BS_LOGLN("Window created.");
 
-	// Resource-Manager erstellen
+	// Create the resource manager
 	_pResourceManager = new BS_ResourceManager(this);
 
-	// Random-Number-Generator initialisieren
-	srand(GetMilliTicks());
-
-	// Die Skriptengine initialisieren
-	// Die Skriptengine muss bereits von Kernel und nicht vom Benutzer gestartet werden, damit der Kernel seine Funktionen bei seiner Erzeugung
-	// registrieren kann.
-	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(NewService("script", "lua"));
-	if (!pScript || !pScript->Init())
-	{
+	// Initialise the script engine
+	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(NewService("script", "lua"));
+	if (!pScript || !pScript->Init()) {
 		_InitSuccess = false;
 		return;
 	}
 
-	// Scriptbindings des Kernels registrieren
-	if (!_RegisterScriptBindings())
-	{
+	// Register kernel script bindings
+	if (!_RegisterScriptBindings()) {
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 		_InitSuccess = false;
 		return;
@@ -116,24 +93,21 @@ BS_Kernel::BS_Kernel() :
 	_InitSuccess = true;
 }
 
-BS_Kernel::~BS_Kernel()
-{
-	// Services in umgekehrter Reihenfolge der Erstellung endladen.
-	while (!_ServiceCreationOrder.empty())
-	{
-		Superclass * superclass = GetSuperclassByIdentifier(_ServiceCreationOrder.top());
+BS_Kernel::~BS_Kernel() {
+	// Services are de-registered in reverse order of creation
+	while (!_ServiceCreationOrder.empty()) {
+		Superclass *superclass = GetSuperclassByIdentifier(_ServiceCreationOrder.top());
 		if (superclass) superclass->DisconnectService();
 		_ServiceCreationOrder.pop();
 	}
 
-	// Superclasslist leeren
-	while (_SuperclassList.size())
-	{
+	// Empty the Superclass list
+	while (_SuperclassList.size()) {
 		delete _SuperclassList.back();
 		_SuperclassList.pop_back();
 	}
 	
-	// Fensterobjekt freigeben
+	// Release the window object
 	delete _pWindow;
 	BS_LOGLN("Window destroyed.");
 
@@ -145,7 +119,8 @@ BS_Kernel::~BS_Kernel()
 
 // Service Methoden
 // ----------------
-BS_Kernel::Superclass::Superclass (BS_Kernel* pKernel, const std::string& Identifier) :
+
+BS_Kernel::Superclass::Superclass (BS_Kernel* pKernel, const Common::String& Identifier) :
 	_pKernel(pKernel),
 	_Identifier(Identifier), 
 	_ServiceCount(0), 
@@ -156,18 +131,24 @@ BS_Kernel::Superclass::Superclass (BS_Kernel* pKernel, const std::string& Identi
 			_ServiceCount++;
 }
 
-BS_Kernel::Superclass::~Superclass()
-{
+BS_Kernel::Superclass::~Superclass() {
 	DisconnectService();
 }
 
-std::string BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number)
-{
+/**
+ * Gets the identifier of a service with a given superclass.
+ * The number of services in a superclass can be learned with GetServiceCount().
+ * @param SuperclassIdentifier		The name of the superclass
+ *		   z.B: "sfx", "gfx", "package" ...
+ * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
+ *		   Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
+ *	       0 und GetServiceCount() - 1 sein.
+ */
+Common::String BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number) {
 	if (Number > _ServiceCount) return NULL;
 		
 	unsigned int CurServiceOrd = 0;
-	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
-	{
+	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++) {
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier)
 			if (Number == CurServiceOrd)
 				return BS_SERVICE_TABLE[i].ServiceIdentifier;
@@ -175,11 +156,19 @@ std::string BS_Kernel::Superclass::GetServiceIdentifier(unsigned int Number)
 				CurServiceOrd++;
 	}
 
-	return std::string("");
+	return Common::String("");
 }
 
-BS_Service* BS_Kernel::Superclass::NewService(const std::string& ServiceIdentifier)
-{
+/**
+ * Creates a new service with the given identifier. Returns a pointer to the service, or null if the 
+ * service could not be created
+ * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
+ * @param SuperclassIdentifier		The name of the superclass of the service
+ *		   z.B: "sfx", "gfx", "package" ...
+ * @param ServiceIdentifier			The name of the service
+ *		   For the superclass "sfx" an example could be "Fmod" or "directsound"
+ */
+BS_Service *BS_Kernel::Superclass::NewService(const Common::String &ServiceIdentifier) {
 	for (unsigned int i = 0; i < BS_SERVICE_COUNT; i++)
 		if (BS_SERVICE_TABLE[i].SuperclassIdentifier == _Identifier &&
 			BS_SERVICE_TABLE[i].ServiceIdentifier == ServiceIdentifier)
@@ -205,10 +194,14 @@ BS_Service* BS_Kernel::Superclass::NewService(const std::string& ServiceIdentifi
 	return NULL;
 }
 
-bool BS_Kernel::Superclass::DisconnectService()
-{
-	if (_ActiveService)
-	{
+/**
+ * Ends the current service of a superclass. Returns true on success, and false if the superclass 
+ * does not exist or if not service was active
+ * @param SuperclassIdentfier		The name of the superclass which is to be disconnected
+ *		   z.B: "sfx", "gfx", "package" ...
+ */
+bool BS_Kernel::Superclass::DisconnectService() {
+	if (_ActiveService) {
 		delete _ActiveService;
 		_ActiveService = 0;
 		BS_LOGLN("Active service '%s' disconnected from superclass '%s'.", _ActiveServiceName.c_str(), _Identifier.c_str());
@@ -218,11 +211,9 @@ bool BS_Kernel::Superclass::DisconnectService()
 	return false;
 }
 
-BS_Kernel::Superclass* BS_Kernel::GetSuperclassByIdentifier(const std::string & Identifier)
-{
-	std::vector<Superclass*>::iterator Iter;
-	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter)
-	{
+BS_Kernel::Superclass *BS_Kernel::GetSuperclassByIdentifier(const Common::String &Identifier) {
+	Common::Array<Superclass*>::iterator Iter;
+	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
 		if ((*Iter)->GetIdentifier() == Identifier)
 			return *Iter;
 	}
@@ -231,48 +222,75 @@ BS_Kernel::Superclass* BS_Kernel::GetSuperclassByIdentifier(const std::string & 
 	return NULL;
 }
 
-unsigned int BS_Kernel::GetSuperclassCount()
-{
+/**
+ * Returns the number of register superclasses
+ */
+unsigned int BS_Kernel::GetSuperclassCount() {
 	return _SuperclassList.size();
 }
 
-std::string BS_Kernel::GetSuperclassIdentifier(unsigned int Number)
-{
+/**
+ * Returns the name of a superclass with the specified index.
+ * Note: The number of superclasses can be retrieved using GetSuperclassCount
+ * @param Number		The number of the superclass to return the identifier for.
+ * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
+ */
+Common::String BS_Kernel::GetSuperclassIdentifier(unsigned int Number) {
 	if (Number > _SuperclassList.size()) return NULL;
 	
 	unsigned int CurSuperclassOrd = 0;
-	std::vector<Superclass*>::iterator Iter;
-	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter)
-	{
+	Common::Array<Superclass*>::iterator Iter;
+	for (Iter = _SuperclassList.begin(); Iter != _SuperclassList.end(); ++Iter) {
 		if (CurSuperclassOrd == Number)
 			return ((*Iter)->GetIdentifier());
 		
 		CurSuperclassOrd++;
 	}
 	
-	return std::string("");
+	return Common::String("");
 }
 
-unsigned int BS_Kernel::GetServiceCount(const std::string & SuperclassIdentifier)
-{
-	Superclass* pSuperclass;
-	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return 0;
+/**
+ * Returns the number of services registered with a given superclass
+ * @param SuperclassIdentifier		The name of the superclass
+ *		   z.B: "sfx", "gfx", "package" ...
+ */
+unsigned int BS_Kernel::GetServiceCount(const Common::String & SuperclassIdentifier) {
+	Superclass *pSuperclass;
+	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) 
+		return 0;
 
 	return pSuperclass->GetServiceCount();
 
 }
 
-std::string BS_Kernel::GetServiceIdentifier(const std::string & SuperclassIdentifier, unsigned int Number)
-{
+/**
+ * Gets the identifier of a service with a given superclass.
+ * The number of services in a superclass can be learned with GetServiceCount().
+ * @param SuperclassIdentifier		The name of the superclass
+ *		   z.B: "sfx", "gfx", "package" ...
+ * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
+ *		   Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
+ *	       0 und GetServiceCount() - 1 sein.
+ */
+Common::String BS_Kernel::GetServiceIdentifier(const Common::String & SuperclassIdentifier, unsigned int Number) {
 	Superclass* pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
 	return (pSuperclass->GetServiceIdentifier(Number));	
 }
 
-BS_Service* BS_Kernel::NewService(const std::string& SuperclassIdentifier, const std::string& ServiceIdentifier)
-{
-	Superclass* pSuperclass;
+/**
+ * Creates a new service with the given identifier. Returns a pointer to the service, or null if the 
+ * service could not be created
+ * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
+ * @param SuperclassIdentifier		The name of the superclass of the service
+ *		   z.B: "sfx", "gfx", "package" ...
+ * @param ServiceIdentifier			The name of the service
+ *		   For the superclass "sfx" an example could be "Fmod" or "directsound"
+ */
+BS_Service *BS_Kernel::NewService(const Common::String& SuperclassIdentifier, const Common::String& ServiceIdentifier) {
+	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
 	// Die Reihenfolge merken, in der Services erstellt werden, damit sie später in umgekehrter Reihenfolge entladen werden können.
@@ -281,56 +299,82 @@ BS_Service* BS_Kernel::NewService(const std::string& SuperclassIdentifier, const
 	return pSuperclass->NewService(ServiceIdentifier);
 }
 
-bool BS_Kernel::DisconnectService(const std::string& SuperclassIdentifier)
-{
-	Superclass* pSuperclass;
+/**
+ * Ends the current service of a superclass. Returns true on success, and false if the superclass 
+ * does not exist or if not service was active
+ * @param SuperclassIdentfier		The name of the superclass which is to be disconnected
+ *		   z.B: "sfx", "gfx", "package" ...
+ */
+bool BS_Kernel::DisconnectService(const Common::String& SuperclassIdentifier) {
+	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return false;
 
 	return pSuperclass->DisconnectService();
 }
 
-BS_Service* BS_Kernel::GetService(const std::string& SuperclassIdentifier)
-{
-	Superclass* pSuperclass;
+/**
+ * Returns a pointer to the currently active service object of a superclass
+ * @param SuperclassIdentfier		The name of the superclass
+ *		   z.B: "sfx", "gfx", "package" ...
+ */
+BS_Service *BS_Kernel::GetService(const Common::String& SuperclassIdentifier) {
+	Superclass *pSuperclass;
 	if (!(pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier))) return NULL;
 
 	return (pSuperclass->GetActiveService());
 }
 
-std::string BS_Kernel::GetActiveServiceIdentifier(const std::string& SuperclassIdentifier)
-{
+/**
+ * Returns the name of the currentl active service object of a superclass.
+ * If an error occurs, then an empty string is returned
+ * @param SuperclassIdentfier		The name of the superclass
+ *		   z.B: "sfx", "gfx", "package" ...
+ */
+Common::String BS_Kernel::GetActiveServiceIdentifier(const Common::String& SuperclassIdentifier) {
 	Superclass * pSuperclass = GetSuperclassByIdentifier(SuperclassIdentifier);
-	if (!pSuperclass) return std::string("");
+	if (!pSuperclass) return Common::String("");
 
 	return (pSuperclass->GetActiveServiceName());
 }
 
 // -----------------------------------------------------------------------------
 
-int BS_Kernel::GetRandomNumber(int Min, int Max)
-{
+/**
+ * Returns a random number
+ * @param Min		The minimum allowed value
+ * @param Max		The maximum allowed value
+ */
+int BS_Kernel::GetRandomNumber(int Min, int Max) {
 	BS_ASSERT(Min <= Max);
-	unsigned int MaxInternal = (Min - Max + 1) < 0 ? - (Min - Max + 1) : (Min - Max + 1);
-	return (rand() % MaxInternal) + Min;
+
+	return Min + _rnd.getRandomNumber(Max - Min + 1);
 }
 
-// Timer Methoden
-// --------------
-unsigned int BS_Kernel::GetMilliTicks()
-{
-	return BS_Timer::GetMilliTicks();
+/**
+ * Returns the elapsed time since startup in milliseconds
+ */
+unsigned int BS_Kernel::GetMilliTicks() {
+	return g_system->getMillis();
 }
 
-uint64_t BS_Kernel::GetMicroTicks()
-{
-	return BS_Timer::GetMicroTicks();
+/**
+ * Returns the elapsed time since the system start in microseconds.
+ * This method should be used only if GetMilliTick() for the desired application is inaccurate.
+ */
+uint64 BS_Kernel::GetMicroTicks() {
+	return g_system->getMillis() * 1000;
 }
 
-// Sonstige Methoden
+// Other methods
 // -----------------
 
-size_t BS_Kernel::GetUsedMemory()
-{
+/**
+ * Returns how much memory is being used
+ */
+size_t BS_Kernel::GetUsedMemory() {
+	return 0;
+
+#ifdef SCUMMVM_DISABLED_CODE
 	PROCESS_MEMORY_COUNTERS pmc;
 	pmc.cb = sizeof(pmc);
 	if (GetProcessMemoryInfo(GetCurrentProcess(), &pmc, sizeof(pmc)))
@@ -342,53 +386,67 @@ size_t BS_Kernel::GetUsedMemory()
 		BS_LOG_ERRORLN("Call to GetProcessMemoryInfo() failed. Error code: %d", GetLastError());
 		return 0;
 	}
+#endif
 }
 
 // -----------------------------------------------------------------------------
 
-BS_GraphicEngine * BS_Kernel::GetGfx()
-{
+/**
+ * Returns a pointer to the active Gfx Service, or NULL if no Gfx service is active
+ */
+BS_GraphicEngine * BS_Kernel::GetGfx() {
 	return static_cast<BS_GraphicEngine *>(GetService("gfx"));
 }
 
 // -----------------------------------------------------------------------------
 
-BS_SoundEngine * BS_Kernel::GetSfx()
-{
+/**
+ * Returns a pointer to the active Sfx Service, or NULL if no Sfx service is active
+ */
+BS_SoundEngine * BS_Kernel::GetSfx() {
 	return static_cast<BS_SoundEngine *>(GetService("sfx"));
 }
 
 // -----------------------------------------------------------------------------
 
-BS_InputEngine * BS_Kernel::GetInput()
-{
+/**
+ * Returns a pointer to the active input service, or NULL if no input service is active
+ */
+BS_InputEngine * BS_Kernel::GetInput() {
 	return static_cast<BS_InputEngine *>(GetService("input"));
 }
 
 // -----------------------------------------------------------------------------
 
-BS_PackageManager * BS_Kernel::GetPackage()
-{
+/**
+ * Returns a pointer to the active package manager, or NULL if no manager is active
+ */
+BS_PackageManager * BS_Kernel::GetPackage() {
 	return static_cast<BS_PackageManager *>(GetService("package"));
 }
 
 // -----------------------------------------------------------------------------
 
-BS_ScriptEngine * BS_Kernel::GetScript()
-{
+/**
+ * Returns a pointer to the script engine, or NULL if it is not active
+ */
+BS_ScriptEngine * BS_Kernel::GetScript() {
 	return static_cast<BS_ScriptEngine *>(GetService("script"));
 }
 
 // -----------------------------------------------------------------------------
 
-BS_MoviePlayer * BS_Kernel::GetFMV()
-{
+/**
+ * Returns a pointer to the movie player, or NULL if it is not active
+ */
+BS_MoviePlayer * BS_Kernel::GetFMV() {
 	return static_cast<BS_MoviePlayer *>(GetService("fmv"));
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_Kernel::Sleep(unsigned int Msecs) const
-{
-	::Sleep(Msecs);
+void BS_Kernel::Sleep(unsigned int Msecs) const {
+	g_system->delayMillis(Msecs);
 }
+
+} // End of namespace Sword25

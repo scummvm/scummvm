@@ -1,33 +1,37 @@
-// -----------------------------------------------------------------------------
-// This file is part of Broken Sword 2.5
-// Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdörfer
-//
-// Broken Sword 2.5 is free software; you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation; either version 2 of the License, or
-// (at your option) any later version.
-//
-// Broken Sword 2.5 is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with Broken Sword 2.5; if not, write to the Free Software
-// Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
-// -----------------------------------------------------------------------------
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
 
-/*
-	BS_SoundEngine
-	-------------
-	Dies ist das Soundengine Interface, dass alle Methoden enthält, die eine Soundengine
-	implementieren muss.
-	Implementationen der Soundengine müssen von dieser Klasse abgeleitet werden.
-	Es gilt zu beachten, dass eine Soundengine eine Liste mit ALLEN geladenen Samplen enthalten
-	muss, und dass diese Samples beim Aufruf des Destruktors freigegeben werden.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
-	Autor: Malte Thiesen
-*/
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ * BS_SoundEngine
+ * -------------
+ * This is the sound engine interface that contains all the methods a sound
+ * engine must implement.
+ * Implementations of the sound engine have to be derived from this class.
+ * It should be noted that a sound engine must maintain a list of all the
+ * samples it uses, and that these samples should be released when the
+ * destructor is called.
+ *
+ * Autor: Malte Thiesen
+ */
 
 #ifndef SWORD25_SOUNDENGINE_H
 #define SWORD25_SOUNDENGINE_H
@@ -40,214 +44,220 @@
 #include "sword25/kernel/resservice.h"
 #include "sword25/kernel/persistable.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_SoundEngine : public BS_ResourceService, public BS_Persistable
-{
+class BS_SoundEngine : public BS_ResourceService, public BS_Persistable {
 public:
 	// -----------------------------------------------------------------------------
-	// Enums und Typen
+	// Enums and Types
 	// -----------------------------------------------------------------------------
 	
-	enum SOUND_TYPES
-	{
+	enum SOUND_TYPES {
 		MUSIC = 0,
 		SPEECH = 1,
 		SFX = 2
 	};
 
 	/**
-		@brief Die Callbackfunktion von PlayDynamicSoundEx
-		@param UserData Benutzerspezifizierter Pointer
-		@param Data Pointer auf den zu beschreibenden Puffer
-		@param DataLength Länge der zu schreibenden Daten in Byte
+	 * The callback function of PlayDynamicSoundEx
+	 * @param UserData		User-specified pointer
+	 * @param Data			Pointer to the data buffer
+	 * @param DataLength	Length of the data to be written in bytes
 	*/
-	typedef void (*DynamicSoundReadCallback)(void * UserData, void * Data, unsigned int DataLength);
+	typedef void (*DynamicSoundReadCallback)(void *UserData, void *Data, unsigned int DataLength);
 
 	// -----------------------------------------------------------------------------
-	// Konstruktion / Destruktion
+	// Constructor / destructor
 	// -----------------------------------------------------------------------------
 	
 	BS_SoundEngine(BS_Kernel* pKernel);
 	virtual ~BS_SoundEngine() {};
 
 	// --------------------------------------------------------------
-	// DIESE METHODEN MÜSSEN VON DER SOUNDENGINE IMPLEMENTIERT WERDEN
+	// THIS METHOD MUST BE IMPLEMENTED BY THE SOUND ENGINE
 	// --------------------------------------------------------------
 
 	/** 
-		@brief Initialisiert die Sound-Engine
-		@param SampleRate Gibt die zu nutzende SampleRate an
-		@param Channels die maximale Anzahl der Kanäle.<br>
-						Der Standardwert ist 32.
-		@return Gibt bei Erfolg TRUE, ansonsten FALSE zurück
-		@remark Aufrufe an allen anderen Methoden dürfen erst erfolgen, wenn diese Methode erfolgreich aufgerufen wurde.
-	*/
+	 * Initialises the sound engine
+	 * @param SampleRate	Specifies the sample rate to use.
+	 * @param Channels		The maximum number of channels. The default is 32.
+	 * @return				Returns true on success, otherwise false.
+	 * @remark				Calls to other methods may take place only if this
+	 * method was called successfully.
+	 */
 	virtual bool Init(unsigned int SampleRate, unsigned int Channels = 32) = 0;
 
 	/**
-		@brief Führt einen "Tick" der Sound-Engine aus
-
-		Diese Methode sollte ein mal pro Frame aufgerufen werden. Sie dient dazu Implementationen der Sound-Engine zu ermöglichen,
-		die nicht in einem eigenen Thread laufen oder zusätzliche Verwaltungsaufgaben durchführen müssen.
-	*/
+	 * Performs a "tick" of the sound engine
+	 *
+	 * This method should be called once per frame. It can be used by implementations
+	 * of the sound engine that are not running in their own thread, or to perform
+	 * additional administrative tasks that are needed.
+	 */
 	virtual void Update() = 0;
 
 	/** 
-		@brief Setzt die Standardlautstärke für die verschiedenen Soundtypen
-		@param Volume die Standardlautstärke (0 = aus, 1 = volle Lautstärke)
-		@param Type der Soundtyp dessen Lautstärke geändert werden soll
-	*/
+	 * Sets the default volume for the different sound types
+	 * @param Volume		The default volume level (0 = off, 1 = full volume)
+	 * @param Type			The SoundType whose volume is to be changed
+	 */
 	virtual void SetVolume(float Volume, SOUND_TYPES Type) = 0;
 
 	/**
-		@brief Gibt die Standardlautstärke der verschiedenen Soundtypen
-		@param Type der Soundtyp
-		@return Gibt die Standardlautstärke des übergebenen Soundtyps zurück (0 = aus, 1 = volle Laustärke)
+	 * Specifies the default volume of different sound types
+	 * @param Type			The SoundType
+	 * @return				Returns the standard sound volume for the given type
+	 * (0 = off, 1 = full volume).
 	*/
 	virtual float GetVolume(SOUND_TYPES Type) = 0;
 
 	/**
-		@brief Pausiert alle Sounds die gerade spielen
-	*/
+	 * Pauses all the sounds that are playing.
+	 */
 	virtual void PauseAll() = 0;
 
 	/**
-		@brief Setzt alle gestoppten Sounds fort
-	*/
+	 * Resumes all currently stopped sounds
+	 */
 	virtual void ResumeAll() = 0;
 
 	/**
-	    @brief Pausiert alle Sounds eines bestimmten Sound-Layers
-		@param Layer ein Soundlayer
+	 * Pauses all sounds of a given layer.
+	 * @param Layer			The Sound Layer
 	*/
 	virtual void PauseLayer(unsigned int Layer) = 0;
 
 	/**
-	    @brief Setzt alle Sounds eines Layers fort, die mit PauseLayer() zuvor gestoppt wurden
-		@param Layer ein Soundlayer
+	 * Resumes all the sounds in a layer that was previously stopped with PauseLayer()
+	 * @param Layer			The Sound Layer
 	*/
 	virtual void ResumeLayer(unsigned int Layer) = 0;
 	
 
 	/**
-		@brief Spielt einen Sound ab
-		@param FileName der Dateiname des abzuspielenden Sounds
-		@param Type der Typ des Sounds
-		@param Volume die Lautstärke mit der der Soundabgespielt werden soll (0 = aus, 1 = volle Lautstärke)
-		@param Pan das Panning (-1 = ganz links, 1 = ganz rechts)
-		@param Loop gibt an ob der Sound geloopt werden soll
-		@param LoopStart gibt den Start-Looppoint an. Wenn ein Wert kleiner als 0 übergeben wird, wird der Start des Sounds benutzt.
-		@param LoopEnd gibt den End-Looppoint an. Wenn ein Wert kleiner als 0 übergeben wird, wird das Ende des Sounds benutzt.
-		@param Layer der Soundlayer
-		@return Gibt true zurück, wenn das Abspielen des Sounds eingeleitet werden konnte.
-		@remark Falls eine erweiterte Kontrolle über das Abspielen benötigt wird, z.B. das Ändern der Soundparameter
-				Volume und Panning während des Abspielvorgangens, sollte PlaySoundEx benutzt werden.
+	 * Plays a sound
+	 * @param FileName		The filename of the sound to be played
+	 * @param Type			The type of sound
+	 * @param Volume		The volume of the sound (0 = off, 1 = full volume)
+	 * @param Pan			Panning (-1 = full left, 1 = right)
+	 * @param Loop			Indicates whether the sound should be looped
+	 * @param LoopStart		Indicates the starting loop point. If a value less than 0 is passed, the start
+	 * of the sound is used.
+	 * @param LoopEnd		Indicates the ending loop point. If a avlue is passed less than 0, the end of 
+	 * the sound is used.
+	 * @param Layer			The sound layer
+	 * @return				Returns true if the playback of the sound was started successfully.
+	 * @remark				If more control is needed over the playing, eg. changing the sound parameters
+	 * for Volume and Panning, then PlaySoundEx should be used.
 	*/
 	virtual bool PlaySound(const std::string& FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
 
 	/**
-		@brief Spielt einen Sound ab
-		@param FileName der Dateiname des abzuspielenden Sounds
-		@param Type der Typ des Sounds
-		@param Volume die Lautstärke mit der der Soundabgespielt werden soll (0 = aus, 1 = volle Lautstärke)
-		@param Pan das Panning (-1 = ganz links, 1 = ganz rechts)
-		@param Loop gibt an ob der Sound geloopt werden soll
-		@param LoopStart gibt den Start-Looppoint an. Wenn ein Wert kleiner als 0 übergeben wird, wird der Start des Sounds benutzt.
-		@param LoopEnd gibt den End-Looppoint an. Wenn ein Wert kleiner als 0 übergeben wird, wird das Ende des Sounds benutzt.
-		@param Layer der Soundlayer
-		@return Gibt ein Handle auf den Sounds zurück. Mit diesem Handle kann der Sound während des Abspielens manipuliert werden.
-		@remark Falls eine erweiterte Kontrolle über das Abspielen benötigt wird, z.B. das Ändern der Soundparameter
-				Volume und Panning während des Abspielvorgangens, sollte PlaySoundEx benutzt werden.
-	*/
+	 * Plays a sound
+	 * @param Type			The type of sound
+	 * @param Volume		The volume of the sound (0 = off, 1 = full volume)
+	 * @param Pan			Panning (-1 = full left, 1 = right)
+	 * @param Loop			Indicates whether the sound should be looped
+	 * @param LoopStart		Indicates the starting loop point. If a value less than 0 is passed, the start
+	 * of the sound is used.
+	 * @param LoopEnd		Indicates the ending loop point. If a avlue is passed less than 0, the end of 
+	 * the sound is used.
+	 * @param Layer			The sound layer
+	 * @return				Returns a handle to the sound. With this handle, the sound can be manipulated during playback.
+	 * @remark				If more control is needed over the playing, eg. changing the sound parameters
+	 * for Volume and Panning, then PlaySoundEx should be used.
+	 */
 	virtual unsigned int PlaySoundEx(const std::string& FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
 
 	/**
-		@brief Spielt einen zur Laufzeit generierten Sound ab
-		@param ReadCallback ein Pointer auf eine Callbackfunktion, die aufgerufen wird, wenn Sounddaten benötigt werden.<br>
-							Nähere Details zu dieser Funktion gibt es bei der Dokumentation von DynamicSoundReadCallback.
-		@param UserData ein Pointer auf benutzerdefinierte Daten. Diese werden der Callback-Funktion bei jedem Aufruf übergeben.<br>
-						Falls keine solche Daten benötigt werden, kann dieser Parameter auf 0 gesetzt werden.
-		@param Type der Typ des Sounds
-		@param SampleRate die Sample-Rate des Sounds
-		@param BitsPerSample die Größe eines Samples in Bits. Hiermit sind tatsächlich nur einzelne Sample gemeint, diese Angabe ist unabhängig von der Anzahl der Kanäle.<br>
-							 Erlaubte Werte sind 8, 16, 24 und 32.
-		@param Channels die Anzahl der Kanäle.<br>
-						Erlaubte Werte sind 1 und 2.
-		@param Volume die Lautstärke mit der der Soundabgespielt werden soll (0 = aus, 1 = volle Lautstärke)
-		@param Pan das Panning (-1 = ganz links, 1 = ganz rechts)
-		@param Layer der Soundlayer
-		@return Gibt ein Handle auf den Sounds zurück. Mit diesem Handle kann der Sound während des Abspielens manipuliert werden.
-		@remark Dynamische Sounds können nicht persistiert werden.
-	*/
-	virtual unsigned int PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void * UserData, SOUND_TYPES Type, unsigned int SampleRate, unsigned int BitsPerSample, unsigned int Channels, float Volume = 1.0f, float Pan = 0.0f, unsigned int Layer = 0) = 0;
+	 * Plays a sound generated at runtime
+	 * @param ReadCallback	A pointer to a callback function that is called when sound data is needed.
+	 * See the documentation for DynamicSoundReadCallback for more information.
+	 * @param UserData		A pointer to the data. These are passed to the callback function each time.
+	 * If no such data is needed, this parameter can be set to NULL.
+	 * @param Type			The type of sound
+	 * @param SampleRate	The sample rate for the sound
+	 * @param BitsPerSample	The size of the sample in bits. This statement is independant of the number of 
+	 * channels. Allowed values are 8, 16, 24, and 32.
+	 * @param Channels		The number of channels. Allowed values are 1 and 2.
+	 * @param Volume		The volume of the sound (0 = off, 1 = full volume)
+	 * @param Pan			Panning (-1 = full left, 1 = right)
+	 * @param Layer			The sound layer
+	 * @return				Returns a handle to the sound. With this handle, the sound can be manipulated during playback.
+	 * @remark				Dynamic sounds cannot be persisted.
+	 */
+	virtual unsigned int PlayDynamicSoundEx(DynamicSoundReadCallback ReadCallback, void *UserData, SOUND_TYPES Type, unsigned int SampleRate, unsigned int BitsPerSample, unsigned int Channels, float Volume = 1.0f, float Pan = 0.0f, unsigned int Layer = 0) = 0;
 
 	/**
-		@brief Setzt die Lautstärke eines spielenden Sounds
-		@param Handle das Handle des Sounds
-		@param Volume die Lautstärke mit der der Soundabgespielt werden soll (0 = aus, 1 = volle Lautstärke)
-	*/
+	 * Sets the volume of a playing sound
+	 * @param Handle		The sound handle
+	 * @param Volume		The volume of the sound (0 = off, 1 = full volume)
+	 */
 	virtual void SetSoundVolume(unsigned int Handle, float Volume) = 0;
 
 	/**
-		@brief Setzt das Panning eines spielenden Sounds
-		@param Handle das Handle des Sounds
-		@param Pan das Panning (-1 = ganz links, 1 = ganz rechts)
-	*/
+	 * Sets the panning of a playing sound
+	 * @param Handle		The sound handle
+	 * @param Pan			Panning (-1 = full left, 1 = right)
+	 */
 	virtual void SetSoundPanning(unsigned int Handle, float Pan) = 0;
 
 	/**
-		@brief Pausiert einen Sound
-		@param Handle das Handle des Sounds
-	*/
+	 * Pauses a playing sound
+	 * @param Handle		The sound handle
+	 */
 	virtual void PauseSound(unsigned int Handle) = 0;
 
 	/**
-		@brief Setzt einen Sound fort
-		@param Handle das Handle des Sounds
-	*/
+	 * Resumes a paused sound
+	 * @param Handle		The sound handle
+	 */
 	virtual void ResumeSound(unsigned int Handle) = 0;
 
 	/**
-		@brief Stoppt einen Sound
-		@param Handle das Handle des Sounds
-		@remark Nach einem Aufruf dieser Methode ist das Handle ungültig und darf nicht mehr benutzt werden.
-	*/
+	 * Stops a playing sound
+	 * @param Handle		The sound handle
+	 * @remark				Calling this method invalidates the passed handle; it can no longer be used.
+	 */
 	virtual void StopSound(unsigned int Handle) = 0;
 
 	/**
-	    @brief Gibt zurück, ob ein Sound pausiert ist
-		@param Handle das Handle des Sounds
-		@return Gibt true zurück, wenn der Sound pausiert ist, ansonsten false.
-	*/
+	 * Returns whether a sound is paused
+	 * @param Handle		The sound handle
+	 * @return				Returns true if the sound is paused, false otherwise.
+	 */
 	virtual bool IsSoundPaused(unsigned int Handle) = 0;
 	
 	/**
-		@brief Gibt zurück, ob ein Sound noch spielt
-		@param Handle das Handle des Sounds
-		@return Gibt true zurück, wenn der Sound noch spielt, ansonsten false.
+	 * Returns whether a sound is still playing.
+	 * @param Handle		The sound handle
+	 * @return				Returns true if the sound is playing, false otherwise.
 	*/
 	virtual bool IsSoundPlaying(unsigned int Handle) = 0;
 
 	/**
-		@brief Gibt die Lautstärke eines spielenden Sounds zurück (0 = aus, 1 = volle Lautstärke)
-	*/
+	 * Returns the volume of a playing sound (0 = off, 1 = full volume)
+	 */
 	virtual float GetSoundVolume(unsigned int Handle) = 0;
 
 	/**
-		@brief Gibt das Panning eines spielenden Sounds zurück (-1 = ganz links, 1 = ganz rechts)
-	*/
+	 * Returns the panning of a playing sound (-1 = full left, 1 = right)
+	 */
 	virtual float GetSoundPanning(unsigned int Handle) = 0;
 
 	/**
-		@brief Gibt die Position innerhalb des abgespielten Sounds in Sekunden zurück
-	*/
+	 * Returns the position within a playing sound in seconds
+	 */
 	virtual float GetSoundTime(unsigned int Handle) = 0;
 
 private:
 	bool _RegisterScriptBindings();
 };
+
+} // End of namespace Sword25
 
 #endif
