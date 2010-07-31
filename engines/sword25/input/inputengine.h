@@ -21,6 +21,18 @@
  * $URL$
  * $Id$
  *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
+ */
+
+/*
  * BS_InputEngine
  * -------------
  * This is the input interface engine that contains all the methods that an

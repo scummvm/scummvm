@@ -21,6 +21,18 @@
  * $URL$
  * $Id$
  *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
+ */
+
+/*
  * 
  * The class BS_FileSystemUtil represents a wrapper for file system specific 
  * operations that do not have equivalents in the C/C++ libraries.

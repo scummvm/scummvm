@@ -20,6 +20,16 @@
  *
  * $URL$
  * $Id$
+ *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
  */
 
 #ifndef SWORD25_RESOURCEMANAGER_H

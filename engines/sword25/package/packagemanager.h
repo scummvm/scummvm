@@ -21,6 +21,18 @@
  * $URL$
  * $Id$
  *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
+ */
+
+/*
  * BS_PackageManager
  * -----------------
  * This is the package manager interface, that contains all the methods that a package manager

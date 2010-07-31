@@ -21,6 +21,18 @@
  * $URL$
  * $Id$
  *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
+ */
+
+/*
  * BS_Window
  * ---------
  * Simple window class interface. This is being encapsulated in a class for

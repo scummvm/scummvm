@@ -21,6 +21,18 @@
  * $URL$
  * $Id$
  *
+ */
+
+/* 
+ * This code is based on Broken Sword 2.5 engine
+ *
+ * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
+ *
+ * Licensed under GNU GPL v2
+ *
+ */
+
+/*
  * common.h
  * -----------
  * This file contains functions or macros that are used across the entire project.
