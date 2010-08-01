@@ -209,6 +209,9 @@ static void updateGameDescriptor(GameDescriptor &desc, const ADGameDescription *
 
 	desc.setGUIOptions(realDesc->guioptions | params.guioptions);
 	desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(realDesc->language));
+
+	if (realDesc->flags & ADGF_ADDENGLISH)
+		desc.appendGUIOptions(getGameGUIOptionsDescriptionLanguage(Common::EN_ANY));
 }
 
 GameList AdvancedMetaEngine::detectGames(const Common::FSList &fslist) const {
