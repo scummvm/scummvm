@@ -851,13 +851,14 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	return (byte *)(d._buf);
 }
 
-int SegManager::freeDynmem(reg_t addr) {
+bool SegManager::freeDynmem(reg_t addr) {
+	SegmentType foo = _heap[addr.segment]->getType();
 	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != SEG_TYPE_DYNMEM)
-		return 1; // error
+		return false; // error
 
 	deallocate(addr.segment, true);
 
-	return 0; // OK
+	return true; // OK
 }
 
 #ifdef ENABLE_SCI32

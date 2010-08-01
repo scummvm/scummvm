@@ -236,8 +236,13 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (s->_segMan->freeDynmem(argv[1])) {
-			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
+		if (!s->_segMan->freeDynmem(argv[1])) {
+			if (g_sci->getGameId() == GID_QFG1VGA) {
+				// Ignore script bug in QFG1VGA, when closing any conversation dialog with esc
+			} else {
+				// Usually, the result of a script bug. Non-critical
+				warning("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
+			}
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
