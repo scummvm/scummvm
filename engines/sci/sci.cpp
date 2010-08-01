@@ -118,6 +118,7 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc, SciGameId gam
 
 	SearchMan.addSubDirectoryMatching(gameDataDir, "actors");	// KQ6 hi-res portraits
 	SearchMan.addSubDirectoryMatching(gameDataDir, "aud");	// resource.aud and audio files
+	SearchMan.addSubDirectoryMatching(gameDataDir, "audio");// resource.aud and audio files
 	SearchMan.addSubDirectoryMatching(gameDataDir, "wav");	// speech files in WAV format
 	SearchMan.addSubDirectoryMatching(gameDataDir, "sfx");	// music/sound files in WAV format
 	SearchMan.addSubDirectoryMatching(gameDataDir, "avi");	// AVI movie files for Windows versions
