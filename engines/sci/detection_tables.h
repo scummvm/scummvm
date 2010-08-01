@@ -1611,7 +1611,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "dda27ce00682aa76198dac124bbbe334", 1021774},
 		{"resource.007", 0, "ac443fae1285fb359bf2b2bc6a7301ae", 993408},
 		AD_LISTEND},
-		Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+		Common::DE_DEU, Common::kPlatformPC, ADGF_ADDENGLISH, GUIO_NOSPEECH	},
 
 	// Larry 5 - French DOS (provided by richiefs in bug report #2670691)
 	// Executable scanning reports "1.lsl5.019"
