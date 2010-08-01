@@ -68,6 +68,9 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.pictureId = 0xFFFF;
+	// TODO/FIXME: Check whether we should really default initialize the
+	// priority to 0xFFFF here.
+	newPlane.priority = 0xFFFF;
 	newPlane.lastPriority = 0xFFFF; // hidden
 	_planes.push_back(newPlane);
 
@@ -125,6 +128,7 @@ void GfxFrameout::addPlanePicture(reg_t object, GuiResourceId pictureId, uint16 
 	newPicture.pictureId = pictureId;
 	newPicture.picture = new GfxPicture(_resMan, _coordAdjuster, 0, _screen, _palette, pictureId, false);
 	newPicture.startX = startX;
+	newPicture.pictureCels = 0;
 	_planePictures.push_back(newPicture);
 }
 
