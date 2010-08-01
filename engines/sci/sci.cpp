@@ -237,6 +237,17 @@ Common::Error SciEngine::run() {
 
 	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()));
 
+	if (_gameDescription->flags & ADGF_ADDENGLISH) {
+		// if game is multilingual
+		if (getLanguage() == Common::EN_ANY) {
+			// and english was selected as language
+			if (SELECTOR(printLang) != -1) // set text language to english
+				writeSelectorValue(segMan, _gameObj, SELECTOR(printLang), 1);
+			if (SELECTOR(parseLang) != -1) // and set parser language to english as well
+				writeSelectorValue(segMan, _gameObj, SELECTOR(parseLang), 1);
+		}
+	}
+
 	// Check whether loading a savestate was requested
 	int saveSlot = ConfMan.getInt("save_slot");
 	if (saveSlot >= 0) {
