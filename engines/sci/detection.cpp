@@ -627,7 +627,7 @@ bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
 
 bool SciEngine::hasFeature(EngineFeature f) const {
 	return
-		//(f == kSupportsRTL) ||
+		(f == kSupportsRTL) ||
 		(f == kSupportsLoadingDuringRuntime); // ||
 		//(f == kSupportsSavingDuringRuntime);
 		// We can't allow saving through ScummVM menu, because
