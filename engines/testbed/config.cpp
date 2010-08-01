@@ -168,6 +168,7 @@ void TestbedConfigManager::writeTestbedConfigToStream(Common::WriteStream *ws) {
 		}
 	}
 	_configFileInterface.saveToStream(*ws);
+	_configFileInterface.clear();
 	ws->flush();
 }
 
