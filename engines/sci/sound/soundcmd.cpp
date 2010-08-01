@@ -263,12 +263,13 @@ reg_t SoundCommandParser::kDoSoundResumeAfterRestore(int argc, reg_t *argv, reg_
 }
 
 reg_t SoundCommandParser::kDoSoundMute(int argc, reg_t *argv, reg_t acc) {
+	uint16 previousState = _music->soundGetSoundOn();
 	if (argc > 0) {
 		debugC(2, kDebugLevelSound, "kDoSound(mute): %d", argv[0].toUint16());
 		_music->soundSetSoundOn(argv[0].toUint16());
 	}
 
-	return make_reg(0, _music->soundGetSoundOn());
+	return make_reg(0, previousState);
 }
 
 reg_t SoundCommandParser::kDoSoundMasterVolume(int argc, reg_t *argv, reg_t acc) {
