@@ -670,7 +670,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	pixelNo--;
 	scaledPixelNo++;
 	for (; scaledPixelNo < scaledHeight; scaledPixelNo++)
-		scalingY[scaledPixelNo] = pixelNo - 1;
+		scalingY[scaledPixelNo] = pixelNo;
 
 	// Create width scaling table
 	pixelNo = 0;
@@ -686,7 +686,7 @@ void GfxView::drawScaled(const Common::Rect &rect, const Common::Rect &clipRect,
 	pixelNo--;
 	scaledPixelNo++;
 	for (; scaledPixelNo < scaledWidth; scaledPixelNo++)
-		scalingX[scaledPixelNo] = pixelNo - 1;
+		scalingX[scaledPixelNo] = pixelNo;
 
 	scaledWidth = MIN(clipRect.width(), scaledWidth);
 	scaledHeight = MIN(clipRect.height(), scaledHeight);
