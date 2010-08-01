@@ -2831,7 +2831,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::DE_DEU, Common::kPlatformAmiga, 0, GUIO_NOSPEECH
 	},
 
-	// Space Quest 4 - English DOS
+#if 0
+	// Space Quest 4 - English DOS - THIS VERSION IS PIRATED/CRACKED AND REPACKAGED =DO NOT RE-ADD=
 	// Executable scanning reports "1.000.753"
 	// SCI interpreter version 1.000.200 (just a guess)
 	{"sq4", "", {
@@ -2840,6 +2841,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
 	},
+#endif
 
 	// Space Quest 4 - English DOS
 	// Executable scanning reports "1.000.753"

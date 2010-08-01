@@ -852,7 +852,6 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 }
 
 bool SegManager::freeDynmem(reg_t addr) {
-	SegmentType foo = _heap[addr.segment]->getType();
 	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != SEG_TYPE_DYNMEM)
 		return false; // error
 
