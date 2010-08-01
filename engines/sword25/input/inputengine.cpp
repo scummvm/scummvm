@@ -42,10 +42,13 @@
 
 // -----------------------------------------------------------------------------
 
-BS_InputEngine::BS_InputEngine(BS_Kernel * pKernel) : BS_Service(pKernel)
-{
+namespace Sword25 {
+
+BS_InputEngine::BS_InputEngine(BS_Kernel *pKernel) : BS_Service(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
 		BS_LOGLN("Script bindings registered.");
 }
+
+} // End of namespace Sword25
