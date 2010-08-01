@@ -143,6 +143,8 @@ public:
 	static void initLogging(bool enable = true);
 	static void setLogDir(const char *dirname);
 	static void setLogFile(const char *filename);
+	static Common::String getLogDir() { return _logDirectory; }
+	static Common::String getLogFile() { return _logFilename; }
 
 	static void deleteWriteStream();
 

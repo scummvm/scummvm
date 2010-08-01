@@ -231,6 +231,11 @@ void Testsuite::addTest(const Common::String &name, InvokingFunction f, bool isI
 int Testsuite::getNumTestsEnabled() {
 	int count = 0;
 	Common::Array<Test *>::const_iterator iter;
+
+	if (!isEnabled()) {
+		return 0;
+	}
+
 	for (iter = _testsToExecute.begin(); iter != _testsToExecute.end(); iter++) {
 		if ((*iter)->enabled) {
 			count++;

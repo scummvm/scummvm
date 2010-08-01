@@ -145,6 +145,19 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::Array<Common::String> &strArray, uint yPadding) {
+	_yOffset += yPadding;
+	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
+	list->setEditable(false);
+	list->setNumberingMode(GUI::kListNumberingOff);
+	list->setList(strArray);
+	_yOffset += h;
+}
+
+void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {	
+	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, cmd));
+}
+
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
 	switch (cmd) {
 	default:

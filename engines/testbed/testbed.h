@@ -62,8 +62,10 @@ private:
 
 class TestbedExitDialog : public TestbedInteractionDialog {
 public:
-	TestbedExitDialog();
+	TestbedExitDialog(Common::Array<Testsuite *> &testsuiteList) : TestbedInteractionDialog(80, 60, 500, 320), _rerun(false), 
+	_testsuiteList(testsuiteList) {}
 	~TestbedExitDialog() {}
+	void init();
 	void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 	void run() { runModal(); }
 	bool rerunRequired() {
@@ -75,6 +77,7 @@ public:
 	}
 private:
 	bool _rerun;
+	Common::Array<Testsuite *> &_testsuiteList;
 };
 
 } // End of namespace Testbed

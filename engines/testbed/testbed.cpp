@@ -38,14 +38,26 @@
 
 namespace Testbed {
 
-TestbedExitDialog::TestbedExitDialog() : TestbedInteractionDialog(80, 60, 400, 170), _rerun(false) {
+void TestbedExitDialog::init() {
 	_xOffset = 25;
 	_yOffset = 0;
-	Common::String text = "Here we will have the results of all the tests!";
-	addText(350, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
-	addButton(200, 20, "Rerun Tests", kCmdRerunTestbed);
-	addButton(50, 20, "Close", GUI::kCloseCmd, 160, 15);
-
+	Common::String text = "Thank you for using ScummVM testbed! Here are yor summarized results:";
+	addText(450, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
+	Common::Array<Common::String> strArray;
+	
+	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
+		strArray.push_back(Common::String::printf("%s    (%d/%d tests failed)", (*i)->getName(), (*i)->getNumTestsFailed(), 
+		(*i)->getNumTestsEnabled()));
+	}
+	
+	addList(0, _yOffset, 500, 200, strArray);
+	text = "More Details can be viewed in the Log file : " + Testsuite::getLogFile();
+	addText(450, 20, text, Graphics::kTextAlignLeft, 0, 0);
+	text = "Directory : " + Testsuite::getLogDir();
+	addText(500, 20, text, Graphics::kTextAlignLeft, 0, 0);
+	_yOffset += 5;
+	addButtonXY(_xOffset + 80, _yOffset, 120, 20, "Rerun Tests", kCmdRerunTestbed);
+	addButtonXY(_xOffset + 240, _yOffset, 60, 20, "Close", GUI::kCloseCmd);
 }
 
 void TestbedExitDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
@@ -133,7 +145,7 @@ Common::Error TestbedEngine::run() {
 	TestbedConfigManager cfMan(_testsuiteList, "testbed.config");
 	
 	// Keep running if rerun requested 
-	TestbedExitDialog tbDialog;
+	TestbedExitDialog tbDialog(_testsuiteList);
 
 	do {
 		Testsuite::clearEntireScreen();
@@ -146,7 +158,7 @@ Common::Error TestbedEngine::run() {
 		}
 		
 		invokeTestsuites(cfMan);
-		
+		tbDialog.init();
 		tbDialog.run();
 
 	} while (tbDialog.rerunRequired());
