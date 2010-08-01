@@ -362,7 +362,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | gamecube | ds | ps2 | psp | wii)
+	dreamcast | gamecube | ds | ps2 | psp | wii | n64)
 		_exeext=".elf"
 		;;
 	gp2x-linux)
@@ -975,6 +975,11 @@ ds)
 	_host_cpu=arm
 	_host_alias=arm-eabi
 	;;
+n64)	
+	_host_os=n64
+	_host_cpu=mips
+	_host_alias=mips64
+	;;
 neuros)
 	_host_os=linux
 	_host_cpu=arm
@@ -1418,6 +1423,11 @@ case $_host_os in
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		_unix=yes
 		;;
+	n64)
+		DEFINES="$DEFINES -D__N64__ -DLIMIT_FPS -DNONSTANDARD_PORT" 
+		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL"
+		;;
 	ds)
 		# TODO Nintendo DS
 		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
@@ -1635,6 +1645,33 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/ds/ds.mk"
+			;;
+		n64)
+			CXXFLAGS="$CXXFLAGS -mno-extern-sdata -O2 --param max-inline-insns-auto=20 -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -march=vr4300 -mtune=vr4300 -mhard-float -fno-rtti -fno-exceptions -Wno-multichar -Wshadow"
+			LDFLAGS="-march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
+			LDFLAGS="$LDFLAGS -L/opt/mips64-toolchain/hkz-libn64 -L/opt/mips64-toolchain/lib"
+			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
+			_ar="$_host_alias-ar cru"
+			_ranlib="$_host_alias-ranlib"
+			_backend="n64"
+			_endian=big
+			_need_memalign=yes
+			_mt32emu=no
+			_vkeybd=yes
+			_build_hq_scalers=no
+			_build_scalers=no
+			_indeo3=no
+			_translation=no
+			_keymapper=no
+			_text_console=no
+			_vkeybd=yes
+			_dynamic_modules=no
+			_plugins_default=static
+			# Force use of libmad, libtremor and zlib
+			_mad=yes
+			_tremor=yes
+			_zlib=yes
 			;;
 		neuros)
 			DEFINES="$DEFINES -DNEUROS"
@@ -2469,6 +2506,13 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
 		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
+	n64)
+		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/include'
+		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/mips64/include'
+		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/hkz-libn64'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
+		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
+		;;
 	null)
 		DEFINES="$DEFINES -DUSE_NULL_DRIVER"
 		;;
@@ -2561,7 +2605,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android)
+		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android | n64)
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
