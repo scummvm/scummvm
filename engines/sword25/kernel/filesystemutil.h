@@ -48,6 +48,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/system.h"
 #include "common/str.h"
 #include "common/str-array.h"
 #include "sword25/kernel/common.h"
@@ -83,9 +84,9 @@ public:
 	virtual int64 GetFileSize(const Common::String &Filename) = 0;
 	/**
 	 * @param Filename		The path to a file.
-	 * @return				Returns the timestamp of the specified file. On error it returns 0
+	 * @return				Returns the timestamp of the specified file.
 	 */
-	virtual time_t GetFileTime(const Common::String &Filename) = 0;
+	virtual TimeDate GetFileTime(const Common::String &Filename) = 0;
 	/**
 	 * @param Filename		The path to a file.
 	 * @return				Returns true if the file exists.

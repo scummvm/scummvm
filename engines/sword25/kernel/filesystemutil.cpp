@@ -102,11 +102,13 @@ public:
 		return size;
 	}
 
-	virtual time_t GetFileTime(const Common::String &Filename) {
+	virtual TimeDate GetFileTime(const Common::String &Filename) {
 		// TODO: There isn't any way in ScummVM to get a file's modified date/time. We will need to check
 		// what code makes use of it. If it's only the save game code, for example, we may be able to
 		// encode the date/time inside the savegame files themselves.
-		return 0;
+		TimeDate result;
+		g_system->getTimeAndDate(result);
+		return result;
 	}
 
 	virtual bool FileExists(const Common::String &Filename) {
