@@ -814,10 +814,10 @@ void OpenGLGraphicsManager::refreshCursor() {
 void OpenGLGraphicsManager::refreshCursorScale() {
 	// Get the window minimum scale factor. The cursor will mantain its original aspect
 	// ratio, and we do not want it to get too big if only one dimension is resized
-	float screenScaleFactor = MIN((float)_videoMode.hardwareWidth / _videoMode.screenWidth,
-		(float)_videoMode.hardwareHeight / _videoMode.screenHeight);
+	uint screenScaleFactor = MIN(_videoMode.hardwareWidth * 10000 / _videoMode.screenWidth,
+		_videoMode.hardwareHeight * 10000 / _videoMode.screenHeight);
 
-	if (_cursorTargetScale >= screenScaleFactor && _videoMode.scaleFactor >= screenScaleFactor) {
+	if (_cursorTargetScale * 10000 >= screenScaleFactor && _videoMode.scaleFactor * 10000 >= screenScaleFactor) {
 		// If the cursor target scale and the video mode scale factor are bigger than
 		// the current window scale, do not scale the cursor for the overlay
 		_cursorState.rW = _cursorState.w;
@@ -826,33 +826,33 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 		_cursorState.rHotY = _cursorState.hotY;
 	} else {
 		// Otherwise, scale the cursor for the overlay
-		float targetScaleFactor = MIN(_cursorTargetScale, _videoMode.scaleFactor);
-		float actualFactor = (screenScaleFactor - targetScaleFactor + 1);
-		_cursorState.rW = (int16)(_cursorState.w * actualFactor);
-		_cursorState.rH = (int16)(_cursorState.h * actualFactor);
-		_cursorState.rHotX = (int16)(_cursorState.hotX * actualFactor);
-		_cursorState.rHotY = (int16)(_cursorState.hotY * actualFactor);
+		int targetScaleFactor = MIN(_cursorTargetScale, _videoMode.scaleFactor);
+		int actualFactor = screenScaleFactor - (targetScaleFactor - 1) * 10000;
+		_cursorState.rW = (int16)(_cursorState.w * actualFactor / 10000);
+		_cursorState.rH = (int16)(_cursorState.h * actualFactor / 10000);
+		_cursorState.rHotX = (int16)(_cursorState.hotX * actualFactor / 10000);
+		_cursorState.rHotY = (int16)(_cursorState.hotY * actualFactor / 10000);
 	}
 
 	// Always scale the cursor for the game
-	_cursorState.vW = (int16)(_cursorState.w * screenScaleFactor);
-	_cursorState.vH = (int16)(_cursorState.h * screenScaleFactor);
-	_cursorState.vHotX = (int16)(_cursorState.hotX * screenScaleFactor);
-	_cursorState.vHotY = (int16)(_cursorState.hotY * screenScaleFactor);
+	_cursorState.vW = (int16)(_cursorState.w * screenScaleFactor / 10000);
+	_cursorState.vH = (int16)(_cursorState.h * screenScaleFactor / 10000);
+	_cursorState.vHotX = (int16)(_cursorState.hotX * screenScaleFactor / 10000);
+	_cursorState.vHotY = (int16)(_cursorState.hotY * screenScaleFactor / 10000);
 }
 
 void OpenGLGraphicsManager::refreshAspectRatio() {
 	_aspectWidth = _videoMode.hardwareWidth;
 	_aspectHeight = _videoMode.hardwareHeight;
 
-	float aspectRatio = (float)_videoMode.hardwareWidth / _videoMode.hardwareHeight;
-	float desiredAspectRatio = getAspectRatio();
+	uint aspectRatio = _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
+	uint desiredAspectRatio = getAspectRatio();
 
 	// Adjust one screen dimension for mantaining the aspect ratio
 	if (aspectRatio < desiredAspectRatio)
-		_aspectHeight = (int)(_aspectWidth / desiredAspectRatio + 0.5f);
+		_aspectHeight = _aspectWidth * 10000 / desiredAspectRatio;
 	else if (aspectRatio > desiredAspectRatio)
-		_aspectWidth = (int)(_aspectHeight * desiredAspectRatio + 0.5f);
+		_aspectWidth = _aspectHeight * desiredAspectRatio / 10000;
 
 	// Adjust x and y for centering the screen
 	_aspectX = (_videoMode.hardwareWidth - _aspectWidth) / 2;
@@ -1202,18 +1202,18 @@ Common::String OpenGLGraphicsManager::getAspectRatioName() {
 	return "";
 }
 
-float OpenGLGraphicsManager::getAspectRatio() {
+uint OpenGLGraphicsManager::getAspectRatio() {
 	switch (_videoMode.aspectRatioCorrection) {
 	case kAspectRatioConserve:
-		return (float)_videoMode.screenWidth / _videoMode.screenHeight;
+		return _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
 	case kAspectRatio4_3:
-		return 4.0f / 3.0f;
+		return 13333;
 	case kAspectRatio16_9:
-		return 16.0f / 9.0f;
+		return 17777;
 	case kAspectRatio16_10:
-		return 16.0f / 10.0f;
+		return 16000;
 	default:
-		return (float)_videoMode.hardwareWidth / _videoMode.hardwareHeight;
+		return _videoMode.hardwareWidth * 10000 / _videoMode.hardwareHeight;
 	}
 }
 

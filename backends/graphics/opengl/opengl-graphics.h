@@ -195,7 +195,11 @@ protected:
 
 	virtual void refreshAspectRatio();
 	virtual Common::String getAspectRatioName();
-	virtual float getAspectRatio();
+
+	/**
+	 * Returns the current target aspect ratio x 10000
+	 */
+	virtual uint getAspectRatio();
 
 	bool _formatBGR;
 

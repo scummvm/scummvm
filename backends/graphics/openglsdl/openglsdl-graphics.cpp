@@ -199,20 +199,21 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		_videoMode.hardwareWidth = _videoMode.overlayWidth;
 		_videoMode.hardwareHeight = _videoMode.overlayHeight;
 
-		float screenAspectRatio = (float)_videoMode.screenWidth / _videoMode.screenHeight;
-		float desiredAspectRatio = getAspectRatio();
+		int screenAspectRatio = _videoMode.screenWidth * 10000 / _videoMode.screenHeight;
+		int desiredAspectRatio = getAspectRatio();
 	
 		// Do not downscale dimensions, only enlarge them if needed
 		if (screenAspectRatio > desiredAspectRatio)
-			_videoMode.hardwareHeight = (int)(_videoMode.overlayWidth / desiredAspectRatio + 0.5f);
+			_videoMode.hardwareHeight = _videoMode.overlayWidth * 10000 / desiredAspectRatio;
 		else if (screenAspectRatio < desiredAspectRatio)
-			_videoMode.hardwareWidth = (int)(_videoMode.overlayHeight * desiredAspectRatio + 0.5f);
+			_videoMode.hardwareWidth = _videoMode.overlayHeight * desiredAspectRatio / 10000;
 
 		// Only adjust the overlay height if it is bigger than original one. If
 		// the width is modified it can break the overlay.
 		if (_videoMode.hardwareHeight > _videoMode.overlayHeight)
 			_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
+	
 
 	_screenResized = false;
 
@@ -232,30 +233,40 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			int bestModeIndex = 0;
 			uint bestMetric = (uint)-1;
 
+			// Best Aspect Ratio mode
+			const SDL_Rect *bestARMode = NULL;
+			int bestARModeIndex = 0;
+			uint bestARMetric = (uint)-1;
+
+			int targetAspectRatio = _videoMode.overlayWidth * 10000 / _videoMode.overlayHeight;
+
 			// Iterate over all available fullscreen modes
 			for (int i = 0; const SDL_Rect *mode = availableModes[i]; i++) {
-				// Prefer the native resolution over other modes
-				if(mode->w == _desktopWidth && mode->h == _desktopHeight) {
+				if (mode->w < _videoMode.overlayWidth)
+					continue;
+				if (mode->h < _videoMode.overlayHeight)
+					continue;
+
+				uint metric = mode->w * mode->h - _videoMode.overlayWidth * _videoMode.overlayHeight;
+				if (metric < bestMetric) {
 					bestMode = mode;
+					bestMetric = metric;
 					bestModeIndex = i;
-					break;
 				}
-
-				if (mode->w < _videoMode.hardwareWidth)
-					continue;
-				if (mode->h < _videoMode.hardwareHeight)
-					continue;
-
-				uint metric = mode->w * mode->h - _videoMode.hardwareWidth * _videoMode.hardwareHeight;
-				if (metric > bestMetric)
-					continue;
-
-				bestMode = mode;
-				bestMetric = metric;
-				bestModeIndex = i;
+				if (mode->w * 10000 / mode->h == targetAspectRatio) {
+					bestARMode = mode;
+					bestARModeIndex = i;
+					bestARMetric = metric;
+				}
 			}
 
-			if (bestMode) {
+			if (bestARMode) {
+				// Prefer modes that conserves the aspect ratio
+				_videoMode.hardwareWidth = bestARMode->w;
+				_videoMode.hardwareHeight = bestARMode->h;
+
+				_videoMode.activeFullscreenMode = bestARModeIndex;
+			} else if (bestMode) {
 				// If there is a suiting mode, use it
 				_videoMode.hardwareWidth = bestMode->w;
 				_videoMode.hardwareHeight = bestMode->h;
@@ -333,7 +344,8 @@ bool OpenGLSdlGraphicsManager::handleScalerHotkeys(Common::KeyCode key) {
 		char buffer[128];
 		sprintf(buffer, "Current aspect ratio mode: %s\n%d x %d -> %d x %d",
 			getAspectRatioName().c_str(),
-			_videoMode.screenWidth, _videoMode.screenHeight,
+			_videoMode.screenWidth * _videoMode.scaleFactor,
+			_videoMode.screenHeight * _videoMode.scaleFactor,
 			_hwscreen->w, _hwscreen->h
 			);
 		displayMessageOnOSD(buffer);
