@@ -875,6 +875,12 @@ begin_credits("Credits");
 		begin_section("Russian");
 			add_person("Eugene Sandulenko", "sev", "");
 		end_section();
+		begin_section("Spanish");
+			add_person("Tom&aacute;s Maidagan", "Truido", "");
+		end_section();
+		begin_section("Ukrainian");
+			add_person("Lubomyr Lisen", "", "");
+		end_section();
 	end_section();
 
 	begin_section("Websites (design)");
