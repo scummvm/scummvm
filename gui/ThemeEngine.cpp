@@ -1451,6 +1451,20 @@ const Graphics::Font *ThemeEngine::loadFontFromArchive(const Common::String &fil
 	if (_themeArchive)
 		stream = _themeArchive->createReadStreamForMember(filename);
 	if (stream) {
+		font = Graphics::NewFont::loadFont(*stream);
+		delete stream;
+	}
+
+	return font;
+}
+
+const Graphics::Font *ThemeEngine::loadCachedFontFromArchive(const Common::String &filename) {
+	Common::SeekableReadStream *stream = 0;
+	const Graphics::Font *font = 0;
+
+	if (_themeArchive)
+		stream = _themeArchive->createReadStreamForMember(filename);
+	if (stream) {
 		font = Graphics::NewFont::loadFromCache(*stream);
 		delete stream;
 	}
@@ -1464,13 +1478,14 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 	Common::File fontFile;
 
 	if (!cacheFilename.empty()) {
-		if (fontFile.open(cacheFilename))
+		if (fontFile.open(cacheFilename)) {
 			font = Graphics::NewFont::loadFromCache(fontFile);
+		}
 
 		if (font)
 			return font;
 
-		if ((font = loadFontFromArchive(cacheFilename)))
+		if ((font = loadCachedFontFromArchive(cacheFilename)))
 			return font;
 	}
 
@@ -1485,7 +1500,7 @@ const Graphics::Font *ThemeEngine::loadFont(const Common::String &filename) {
 
 	if (font) {
 		if (!cacheFilename.empty()) {
-			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont*)font, cacheFilename)) {
+			if (!Graphics::NewFont::cacheFontData(*(const Graphics::NewFont *)font, cacheFilename)) {
 				warning("Couldn't create cache file for font '%s'", filename.c_str());
 			}
 		}
