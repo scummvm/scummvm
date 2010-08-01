@@ -971,6 +971,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// King's Quest 5 - English DOS Floppy (supplied by omer_mor in bug report #3036996)
+	// VERSION file reports "0.000.051"
+	{"kq5", "", {
+		{"resource.map", 0, "8b2158083302568b73b16fa3655360fe", 8184},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 276398},
+		{"resource.001", 0, "c0f48d4a7ebeaa6aa074fc98d77423e9", 1099506},
+		{"resource.002", 0, "e0c40d0e85340357d2404f9b5ae1921c", 1061243},
+		{"resource.003", 0, "89c00d788d022c13a9b250fa96290ab0", 1110169},
+		{"resource.004", 0, "d68f0d8a52ac990aa5641b7087476253", 1153751},
+		{"resource.005", 0, "ef4f1166bc37b6cfab70234ea60ddc3d", 1032675},
+		{"resource.006", 0, "06cb3f689836086ebe08b1efc0126592", 921113},
+		{"resource.007", 0, "252249753c6e850eacceb8af634986d3", 1133608},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// King's Quest 5 EGA (supplied by markcoolio in bug report #2829470)
 	// SCI interpreter version 1.000.060
 	// VERSION file reports "0.000.055"
