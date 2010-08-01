@@ -58,7 +58,7 @@ const Common::String &Kernel::getSelectorName(uint selector) {
 		// TODO: maybe check, if there is a fixed selector-table and error() out in that case
 		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; loopSelector++) {
 			Common::String newSelectorName;
-			newSelectorName = newSelectorName.printf("<noname %d>", loopSelector);
+			newSelectorName = newSelectorName.printf("<noname%d>", loopSelector);
 			_selectorNames.push_back(newSelectorName);
 		}
 	}

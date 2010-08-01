@@ -54,10 +54,10 @@ const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  504, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
-	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname 446>",   -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
-	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname 183>",   -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
-	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname 110>",   -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
+	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  504, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
+	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
+	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname183>",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
+	{ GID_CNICK_LONGBOW,   0,     0,  0,          "RH Budget", "<noname110>",    -1,    1, { WORKAROUND_FAKE,   0 } }, // when starting the game
     { GID_ECOQUEST,       -1,    -1,  0,                 NULL, "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // almost clicking anywhere triggers this in almost all rooms
 	{ GID_FANMADE,       516,   979,  0,                   "", "export 0",       -1,   20, { WORKAROUND_FAKE,   0 } }, // Happens in Grotesteing after the logos
 	{ GID_FREDDYPHARKAS,  -1,    24,  0,              "gcWin", "open",           -1,    5, { WORKAROUND_FAKE, 0xf } }, // is used as priority for game menu
@@ -263,13 +263,13 @@ const SciWorkaroundEntry kMemory_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kNewWindow_workarounds[] = {
-	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "<noname 178>",   -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
+	{ GID_ECOQUEST,       -1,   981,  0,          "SysWindow", "<noname178>",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // EcoQuest 1 demo uses an in-between interpreter from SCI1 to SCI1.1. It's SCI1.1, but uses the SCI1 semantics for this call - bug #3035057
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[] = {
-	{ GID_QFG4,          100,   100,  0,            "doMovie", "<noname 144>",   -1,    0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #3034506
+	{ GID_QFG4,          100,   100,  0,            "doMovie", "<noname144>",    -1,    0, { WORKAROUND_IGNORE,    0 } }, // after the Sierra logo, no flags are passed, thus the call is meaningless - bug #3034506
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
