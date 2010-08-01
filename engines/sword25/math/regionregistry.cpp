@@ -47,46 +47,44 @@
 #include "sword25/math/regionregistry.h"
 #include "sword25/math/region.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Implementation
 // -----------------------------------------------------------------------------
 
-std::auto_ptr<BS_RegionRegistry> BS_RegionRegistry::m_InstancePtr;
+Common::SharedPtr<BS_RegionRegistry> BS_RegionRegistry::m_InstancePtr;
 
 // -----------------------------------------------------------------------------
 
-void BS_RegionRegistry::LogErrorLn(const char * Message) const
-{
+void BS_RegionRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RegionRegistry::LogWarningLn(const char * Message) const
-{
+void BS_RegionRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
-	// Das nächste zu vergebene Handle schreiben.
+	// Write out the next handle
 	Writer.Write(m_NextHandle);
 
-	// Anzahl an BS_Regions schreiben.
+	// Number of regions to write
 	Writer.Write(m_Handle2PtrMap.size());
 
-	// Alle BS_Regions persistieren.
+	// Persist all the BS_Regions
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
-	while (Iter != m_Handle2PtrMap.end())
-	{
-		// Handle persistieren.
+	while (Iter != m_Handle2PtrMap.end()) {
+		// Handle persistence
 		Writer.Write(Iter->first);
 
-		// Objekt persistieren.
+		// Persist object
 		Result &= Iter->second->Persist(Writer);
 
 		++Iter;
@@ -97,30 +95,30 @@ bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
-	// Das nächste zu vergebene Handle wieder herstellen.
+	// Read in the next handle
 	Reader.Read(m_NextHandle);
 
-	// Alle vorhandenen BS_Regions zerstören.
+	// Destroy all existing BS_Regions
 	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->second;
 
-	// Anzahl an BS_Regions einlesen.
+	// Read in the number of BS_Regions
 	unsigned int RegionCount;
 	Reader.Read(RegionCount);
 
-	// Alle gespeicherten BS_Regions wieder herstellen.
-	for (unsigned int i = 0; i < RegionCount; ++i)
-	{
-		// Handle lesen.
+	// Restore all the BS_Regions objects
+	for (unsigned int i = 0; i < RegionCount; ++i) 	{
+		// Handle read
 		unsigned int Handle;
 		Reader.Read(Handle);
 
-		// BS_Region wieder herstellen.
+		// BS_Region restore
 		Result &= BS_Region::Create(Reader, Handle) != 0;
 	}
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

@@ -35,83 +35,83 @@
 #ifndef SWORD25_WALKREGION_H
 #define SWORD25_WALKREGION_H
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
+#include "common/array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/math/region.h"
 
-// -----------------------------------------------------------------------------
-// Typdefinitionen
-// -----------------------------------------------------------------------------
-
-typedef std::vector<BS_Vertex> BS_Path;
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Klassendefinition
+// Type definitions
+// -----------------------------------------------------------------------------
+
+typedef Common::Array<BS_Vertex> BS_Path;
+
+// -----------------------------------------------------------------------------
+// Class definitions
 // -----------------------------------------------------------------------------
 
 /**
-	@brief Diese Klasse stellt die Region dar, in der sich der Hauptcharakter bewegen kann.
-*/
-class BS_WalkRegion : public BS_Region
-{
+ * This class represents the region in which the main character can move
+ */
+class BS_WalkRegion : public BS_Region {
 	friend class BS_Region;
 
 protected:
 	BS_WalkRegion();
-	BS_WalkRegion(BS_InputPersistenceBlock & Reader, unsigned int Handle);
+	BS_WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
 	virtual ~BS_WalkRegion();
 
-	virtual bool Init(const BS_Polygon & Contour, const std::vector<BS_Polygon> * pHoles = 0);
+	virtual bool Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles = 0);
 
 	/**
-		@brief Ermittelt den kürzesten Weg zwischen zwei Punkten in der Region.
-
-		Diese Methode verlangt, dass der Startpunkt innerhalb der Region liegt. Der Endpunkt darf außerhalb der Region liegen. In diesem
-		Fall wählt die Methode als Endpunkt den Punkt innerhalb der Region, der am dichtesten am Endpunkt liegt.
-
-		@param X1 X-Koordinate des Startpunktes
-		@param Y1 Y-Koordinate des Startpunktes
-		@param X2 X-Koordinate des Zielpunktes
-		@param Y2 Y-Koordinate des Zielpunktes
-		@param Path ein leerer BS_Path, der den Ergebnispfad aufnehmen soll
-		@return Gibt false zurück, fall die Eingaben ungültig waren, ansonsten wird true zurückgegeben.
+	 * Get the shortest path between two points in the region
+	 *
+	 * This method requires that the starting point lies within the region. The end point
+	 * may lie outside the region. Int his case, the end is chosen as the cloest point to it
+	 * that lies within the region.
+	 *
+	 * @param X1			X Co-ordinate of the start point
+	 * @param Y1			Y Co-ordinate of the start point
+	 * @param X2			X Co-ordinate of the end point
+	 * @param Y2			Y Co-ordinate of the end point
+	 * @param Path			An empty BS_Path that will be set to the resulting path
+	 * @return				Returns false if the result is invalid, otherwise returns true.
 	 */
-	bool QueryPath(int X1, int Y1, int X2, int Y2, BS_Path & Path) { return QueryPath(BS_Vertex(X1, Y1), BS_Vertex(X2, Y2), Path); }
+	bool QueryPath(int X1, int Y1, int X2, int Y2, BS_Path &Path) { 
+		return QueryPath(BS_Vertex(X1, Y1), BS_Vertex(X2, Y2), Path);
+	}
 
 	/**
-		@brief Ermittelt den kürzesten Weg zwischen zwei Punkten in der Region.
-
-		Diese Methode verlangt, dass der Startpunkt innerhalb der Region liegt. Der Endpunkt darf außerhalb der Region liegen. In diesem
-		Fall wählt die Methode als Endpunkt den Punkt innerhalb der Region, der am dichtesten am Endpunkt liegt.
-		
-		@param StartPoint der Startpunkt
-		@param EndPoint der Endpunkt
-		@param Path ein leerer BS_Path, der den Ergebnispfad aufnehmen soll
-		@return Gibt false zurück, fall die Eingaben ungültig waren, ansonsten wird true zurückgegeben.
+	 * Get the shortest path between two points in the region.
+	 *
+	 * @param StartPoint	The start point
+	 * @param EndPoint		The end point
+	 * @param Path			An empty BS_Path that will be set to the resulting path
+	 * @return				Returns false if the result is invalid, otherwise returns true.
 	*/
 	bool QueryPath(BS_Vertex StartPoint, BS_Vertex EndPoint, BS_Path & Path);
 
 	virtual void SetPos(int X, int Y);
 
-	const std::vector<BS_Vertex> & GetNodes() const { return m_Nodes; }
-	const std::vector< std::vector<int> > & GetVisibilityMatrix() const { return m_VisibilityMatrix; }
+	const Common::Array<BS_Vertex> &GetNodes() const { return m_Nodes; }
+	const Common::Array< Common::Array<int> > &GetVisibilityMatrix() const { return m_VisibilityMatrix; }
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	std::vector<BS_Vertex> m_Nodes;
-	std::vector< std::vector<int> > m_VisibilityMatrix;
+	Common::Array<BS_Vertex> m_Nodes;
+	Common::Array< Common::Array<int> > m_VisibilityMatrix;
 
 	void InitNodeVector();
 	void ComputeVisibilityMatrix();
-	bool CheckAndPrepareStartAndEnd(BS_Vertex & Start, BS_Vertex & End) const;
-	bool FindPath(const BS_Vertex & Start, const BS_Vertex & End, BS_Path & Path) const;
+	bool CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End) const;
+	bool FindPath(const BS_Vertex &Start, const BS_Vertex &End, BS_Path &Path) const;
 };
+
+} // End of namespace Sword25
 
 #endif

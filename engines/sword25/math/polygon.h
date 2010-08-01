@@ -40,6 +40,8 @@
 #include "sword25/kernel/persistable.h"
 #include "sword25/math/vertex.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -49,158 +51,151 @@ class BS_Vertex;
 /**
 	@brief Eine Polygonklasse.
 */
-class BS_Polygon : public BS_Persistable
-{
+class BS_Polygon : public BS_Persistable {
 public:
 	/**
-		@brief Erzeugt ein Objekt vom Typ #BS_Polygon, das 0 Vertecies enthält.
-
-		Mit der Methode Init() können dem Polygon später Vertecies hinzugefügt werden.
-	*/
+	 * Creates an object of type #BS_Polygon, containing 0 Vertecies.
+	 *
+	 * With the method Init(), Vertices can be added in later
+	 */
 	BS_Polygon();
 
 	/**
-		@brief Copy-Constructor
-	*/
-	BS_Polygon(const BS_Polygon& Other);
+	 * Copy constructor
+	 */
+	BS_Polygon(const BS_Polygon &Other);
 
 	/**
-		@brief Erstellt ein Polygon anhand persistierter Daten.
-	*/
-	BS_Polygon(BS_InputPersistenceBlock & Reader);
+	 * Creates a polygon using persisted data
+	 */
+	BS_Polygon(BS_InputPersistenceBlock &Reader);
 
 	/**
-		@brief Erzeugt ein Objekt vom Typ #BS_Polygon und ordnet ihm Vertecies zu.
-		@param VertexCount die Anzahl der Vertecies im Vertex Array.
-		@param Vertecies ein Array, das Objekte vom Typ BS_Vertex enthält, die die Vertecies des Polygons darstellen.
-		@remark Die Vertecies müssen ein nicht selbstüberschneidendes Polygon definieren.
-				Falls das Polygon selbstüberschneidend sein sollte wird ein leeres BS_Polygon Objekt erzeugt.
-	*/
-	BS_Polygon(int VertexCount, const BS_Vertex* Vertecies);
+	 * Creaes an object of type #BS_Polygon, and assigns Vertices to it
+	 * @param VertexCount		The number of vertices being passed
+	 * @param Vertecies			An array of BS_Vertex objects representing the vertices in the polygon.
+	 * @remark					The Vertecies that define a polygon must not have any self-intersections.
+	 * If the polygon does have self-intersections, then an empty polygon object is created.
+	 */
+	BS_Polygon(int VertexCount, const BS_Vertex *Vertecies);
 
 	/**
-		@brief Löscht das BS_Polygon Objekt.
-	*/
+	 * Deletes the BS_Polygon object
+	 */
 	virtual ~BS_Polygon();
 
 	/**
-		@brief Initialisiert das BS_Polygon mit einer Liste von Vertecies.
+	 * Initialises the BS_Polygon with a list of Vertecies.
+	 *
+	 * The Vertices need to define a polygon must not have self-intersections.
+	 * If a polygon already has verticies, this will re-initialise it with the new list.
+	 *
+	 * @param VertexCount		The number of vertices being passed
+	 * @param Vertecies			An array of BS_Vertex objects representing the vertices in the polygon.
+	 * @return					Returns false if the Vertecies have self-intersections. In this case,
+	 * the object is not initialised.
+	 */
+	bool Init(int VertexCount, const BS_Vertex *Vertecies);
 
-		Die Vertecies müssen ein nicht selbstüberschneidendes Polygon definieren.
-		Es kann auch einem Polygon, welches bereits Vertecies enthält, mit einer neue Vertexliste initialisiert werden, dabei gehen die
-		alten Vertecies verloren.
-
-		@param VertexCount die Anzahl der Vertecies im Vertecies Array.
-		@param Vertecies ein Array, das Objekte vom Typ BS_Vertex enthält, die die Vertecies des Polygons darstellen.
-		@return Gibt false zurück, falls die Vertecies ein selbstüberschneidendes Polygon definiert haben.
-				In diesem Fall wird das Objekt nicht initialisiert.
-	*/
-	bool Init(int VertexCount, const BS_Vertex* Vertecies);
-
-	//@{
-	/** @name Sondierende Methoden */
+	//
+	// ** Exploratory methods **
+	//
 	
 	/**
-		@brief Überprüft, ob die Vertecies des Polygons im Uhrzeigersinn angeordnet sind.
-		@return Gibt true zurück, wenn die Vertecies des Polygons im Uhrzeigersinn angeordnet sind oder Koplanar sind.<br>
-				Gibt false zurück, wenn die Vertecies des Polygons entgegen dem Uhrzeigersinn angeordnet sind.
-		@remark Diese Methode gibt nur ein sinnvolles Ergebnis zurück, wenn das Polygon mindestens 3 Vertecies hat.
-	*/
+	 * Checks whether the Vertecies of the polygon are arranged in a clockwise direction.
+	 * @return					Returns true if the Vertecies of the polygon are arranged clockwise or co-planar.
+	 * Returns false if the Vertecies of the polygon are arrange counter-clockwise.
+	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 */
 	bool IsCW() const;
 
 	/**
-		@brief Überprüft, ob die Vertecies des Polygons entgegen dem Uhrzeigersinn angeordnet sind.
-		@return Gibt true zurück, wenn die Vertecies des Polygons entgegen dem Uhrzeigersinn angeordnet sind.<br>
-				Gibt false zurück, wenn die Vertecies des Polygons im Uhrzeigersinn angeordnet sind oder Koplanar sind.
-		@remark Diese Methode gibt nur ein sinnvolles Ergebnis zurück, wenn das Polygon mindestens 3 Vertecies hat.
-				
-	*/
+	 * Checks whether the Vertices of the polygon are arranged in a counter-clockwise direction.
+	 * @return					Returns true if the Vertecies of the polygon are arranged counter-clockwise.
+	 * Returns false if the Vertecies of the polygon are arranged clockwise or co-planar.
+	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 */
 	bool IsCCW() const;
 
 	/**
-		@brief Überprüft, ob das Polygon konvex ist.
-		@return Gibt true zurück, wenn das Polygon konvex ist.<br>
-				Gibt false zurück, wenn das Polygon konkav ist.
-		@remark Diese Methode gibt nur ein sinnvolles Ergebnis zurück, wenn das Polygon mindestens 3 Vertecies hat.
-	*/
+	 * Checks whether the polygon is convex.
+	 * @return					Returns true if the polygon is convex. Returns false if the polygon is concave.
+	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 */
 	bool IsConvex() const;
 
 	/** 
-		@brief Überprüft, ob das Polygon konkav ist.
-		@return Gibt true zurück, wenn das Polygon konkav ist.<br>
-				Gibt false zurück, wenn das Polygon konvex ist.
-		@remark Diese Methode gibt nur ein sinnvolles Ergebnis zurück, wenn das Polygon mindestens 3 Vertecies hat.
-	*/
+	 * Checks whether the polygon is concave.
+ 	 * @return					Returns true if the polygon is concave. Returns false if the polygon is convex.
+	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 */
 	bool IsConcave() const;
 
 	/**
-		@brief Überprüft, ob sich ein Punkt innerhalb des Polygons befindet.
-		@param Vertex ein Vertex, mit den Koordinaten des zu testenden Punktes.
-		@param BorderBelongsToPolygon gibt an, ob der Rand des Polygons als Teil des Polygons betrachtet werden soll.<br>
-									  Der Standardwert ist true.
-		@return Gibt true zurück, wenn sich der Punkt innerhalb des Polygons befindet.<br>
-				Gibt false zurück, wenn sich der Punkt außerhalb des Polygons befindet.
-	*/
-	bool IsPointInPolygon(const BS_Vertex& Vertex, bool BorderBelongsToPolygon = true) const;
+	 * Checks whether a point is inside the polygon
+	 * @param Vertex			A Vertex with the co-ordinates of the point to be tested.
+	 * @param BorderBelongsToPolygon	Specifies whether the edge of the polygon should be considered
+	 * @return					Returns true if the point is inside the polygon, false if it is outside.
+	 */
+	bool IsPointInPolygon(const BS_Vertex &Vertex, bool BorderBelongsToPolygon = true) const;
 
 	/**
-		@brief Überprüft, ob sich ein Punkt innerhalb des Polygons befindet.
-		@param X die Position des Punktes auf der X-Achse.
-		@param Y die Position des Punktes auf der Y-Achse.
-		@param BorderBelongsToPolygon gibt an, ob der Rand des Polygons als Teil des Polygons betrachtet werden soll.<br>
-									  Der Standardwert ist true.
-		@return Gibt true zurück, wenn sich der Punkt innerhalb des Polygons befindet.<br>
-				Gibt false zurück, wenn sich der Punkt außerhalb des Polygons befindet.
-	*/
+	 * Checks whether a point is inside the polygon
+	 * @param X					The X position of the point
+	 * @param Y					The Y position of the point
+	 * @param BorderBelongsToPolygon	Specifies whether the edge of the polygon should be considered
+	 * @return					Returns true if the point is inside the polygon, false if it is outside.
+	 */
 	bool IsPointInPolygon(int X, int Y, bool BorderBelongsToPolygon = true) const;
 
 	/**
-		@brief Gibt den Schwerpunkt des Polygons zurück.
-	*/
+	 * Returns the focus/centroid of the polygon
+	 */
 	BS_Vertex GetCentroid() const;
 
-	// Rand gehört zum Polygon
-	// Polygon muss CW sein
-	bool IsLineInterior(const BS_Vertex & a, const BS_Vertex & b) const;
-	// Rand gehört nicht zum Polygon
-	// Polygon muss CW sein
-	bool IsLineExterior(const BS_Vertex & a, const BS_Vertex & b) const;
+	// Edge belongs to the polygon
+	// Polygon must be CW
+	bool IsLineInterior(const BS_Vertex &a, const BS_Vertex &b) const;
+	// Edge does not belong to the polygon
+	// Polygon must be CW
+	bool IsLineExterior(const BS_Vertex &a, const BS_Vertex &b) const;
 
-	//@}
-
-	//@{
-	/** @name Manipulierende Methoden */
+	//
+	// Manipulation methods
+	//
 
 	/**
-		@brief Stellt sicher, dass die Vertecies des Polygons im Uhrzeigersinn angeordnet sind.
-	*/
+	 * Ensures that the Vertecies of the polygon are arranged in a clockwise direction
+	 */
 	void EnsureCWOrder();
 
 	/**
-		@brief Stellt sicher, dass die Vertecies des Polygons entgegen dem Uhrzeigersinn angeordnet sind.
-	*/
+	 * Ensures that the Vertecies of the polygon are arranged in a counter-clockwise direction
+	 */
 	void EnsureCCWOrder();
 
 	/**
-		@brief Kehrt die Reihenfolge der Vertecies um.
-	*/
+	 * Reverses the Vertecies order.
+	 */
 	void ReverseVertexOrder();
 
 	/**
-		@brief Verschiebt das Polygon.
-		@param Delta das Vertex um das das Polygon verschoben werden soll.
-	*/
-	void operator+=(const BS_Vertex& Delta);
+	 * Moves the polygon.
+	 * @param Delta				The vertex around the polygon to be moved.
+	 */
+	void operator+=(const BS_Vertex &Delta);
 
-	//@}
+	//
+	//------------------
+	//
 
-	/// Gibt die Anzahl an Vertecies im Vertecies-Array an.
+	/// Specifies the number of Vertecies in the Vertecies array.
 	int VertexCount;
-	/// Enthält die Vertecies des Polygons.
-	BS_Vertex* Vertecies;
+	/// COntains the Vertecies of the polygon
+	BS_Vertex *Vertecies;
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
 	bool m_IsCW;
@@ -208,60 +203,64 @@ private:
 	BS_Vertex m_Centroid;
 	
 	/**
-		@brief Berechnet den Schwerpunkt des Polygons.
-	*/
+	 * Computes the centroid of the polygon.
+	 */
 	BS_Vertex ComputeCentroid() const;
 
 	/**
-		@brief Bestimmt wie die Vertecies des Polygon angeordnet sind.
-		@return Gibt true zurück, wenn die Vertecies im Uhrzeigersinn angeordnet sind, ansonsten false.
-	*/
+	 * Determines how the Vertecies of the polygon are arranged.
+	 * @return					Returns true if the Vertecies are arranged in a clockwise
+	 * direction, otherwise false.
+	 */
 	bool ComputeIsCW() const;
 
 	/**
-		@brief Bestimmt ob das Polygon Konvex oder Konkav ist.
-		@return Gibt true zurück, wenn das Polygon Konvex ist, ansonsten false.
-	*/
+	 * Determines whether the polygon is convex or concave.
+	 * @return					Returns true if the polygon is convex, otherwise false.
+	 */
 	bool ComputeIsConvex() const;
 
 	/**
-		@brief Berechnet das Kreuzprodukt dreier Vertecies.
-		@param V1 das erste Vertex
-		@param V2 des zweite Vertex
-		@param V3 das dritte Vertex
-		@return Gibt das Kreuzprodukt der drei Vertecies zurück.
-		@todo Diese Methode sollte an geeigneter Stelle in die BS_Vertex Klasse integriert werden.
-	*/
-	int CrossProduct(const BS_Vertex& V1, const BS_Vertex& V2, const BS_Vertex& V3) const;
+	 * Calculates the cross product of three Vertecies
+	 * @param V1				The first Vertex
+	 * @param V2				The second Vertex
+	 * @param V3				The third Vertex
+	 * @return					Returns the cross-product of the three vertecies
+	 * @todo					This method would be better as a method of the BS_Vertex class
+	 */
+	int CrossProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
 
 	/**
-		@brief Berechnet des Skalarprodukt der beiden von drei Vertecies aufgespannten Vektoren.
-
-		Die Vektoren werden von V2 -> V1 und V2 -> V3 aufgespannt.
-		
-		@param V1 das erste Vertex
-		@param V2 des zweite Vertex
-		@param V3 das dritte Vertex
-		@return Gibt das Skalarprodukt der drei Vertecies zurück.
-		@todo Diese Methode sollte an geeigneter Stelle in die BS_Vertex Klasse integriert werden.
-	*/
-	int DotProduct(const BS_Vertex& V1, const BS_Vertex& V2, const BS_Vertex& V3) const;
+	 * Computes the scalar product of two vectors spanning three vertecies
+	 *
+	 * The vectors are spanned by V2->V1 and V2->V3
+	 *
+	 * @param V1				The first Vertex
+	 * @param V2				The second Vertex
+	 * @param V3				The third Vertex
+	 * @return					Returns the dot product of the three Vertecies.
+	 * @todo					This method would be better as a method of the BS_Vertex class
+	 */
+	int DotProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
 
 	/**
-		@brief Überprüft ob das Polygon selbstüberschneidend ist.
-		@return Gibt true zurück, wenn das Polygon selbstüberschneidend ist.<br>
-				Gibt false zurück, wenn das Polygon nicht selbstüberschneidend ist.
-	*/
+	 * Checks whether the polygon is self-intersecting
+	 * @return					Returns true if the polygon is self-intersecting.
+	 * Returns false if the polygon is not self-intersecting.
+	 */
 	bool CheckForSelfIntersection() const;
 
 	/**
-		@brief Findet das Vertex des Polygons das am weitesten rechts unten liegt und gibt dessen Index im Vertex-Array zurück.
-		@return Gibt den Index des Vertex zurück das am weiteesten rechts unten liegt.<br>
-				Gibt -1 zurück, wenn die Vertexliste leer ist.
-	*/
+	 * Find the vertex of the polygon that is located below the right-most point,
+	 * and returns it's index in the vertex array.
+	 * @return					Returns the index of the vertex at the bottom-right of the polygon.
+	 * Returns -1 if the vertex list is empty.
+	 */
 	int FindLRVertexIndex() const;
 
-	bool IsLineInCone(int StartVertexIndex, const BS_Vertex & EndVertex, bool IncludeEdges) const;
+	bool IsLineInCone(int StartVertexIndex, const BS_Vertex &EndVertex, bool IncludeEdges) const;
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -62,12 +62,13 @@ public:
 	BS_InputPersistenceBlock(const void *Data, unsigned int DataLength);
 	virtual ~BS_InputPersistenceBlock();
 
+	void Read(int16 &Value);
 	void Read(signed int &Value);
 	void Read(unsigned int &Value);
 	void Read(float &Value);
 	void Read(bool &Value);
-	void Read(std::string &Value);
-	void Read(std::vector<unsigned char> &Value);
+	void Read(Common::String &Value);
+	void Read(Common::Array<unsigned char> &Value);
 
 	bool IsGood() const { return m_ErrorState == NONE; }
 	ErrorState GetErrorState() const { return m_ErrorState; }

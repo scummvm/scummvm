@@ -46,14 +46,19 @@
 #include <math.h>
 #include "sword25/kernel/common.h"
 
-// Forward-Declarations
+namespace {
+
+// Forward declarations
 struct lua_State;
 
+}
+
+namespace Sword25 {
+
 /**
-	@brief Ein 2D-Vertex.
-*/
-class BS_Vertex
-{
+ * Defines a 2-D Vertex
+ */
+class BS_Vertex {
 public:
 	BS_Vertex() : X(0), Y(0) {};
 	BS_Vertex(int X_, int Y_) { this->X = X_; this->Y = Y_; }
@@ -62,96 +67,94 @@ public:
 	int Y;
 
 	/**
-		@brief Vergleicht zwei Vertecies.
-	*/
+	 * Compares two Vertecies.
+	 */
 	inline bool operator==(const BS_Vertex& rhs) const { if (X == rhs.X && Y == rhs.Y) return true; return false; }
 	/**
-	@brief Vergleicht zwei Vertecies.
-	*/
+	 * Compares two Vertecies.
+	 */
 	inline bool operator!=(const BS_Vertex& rhs) const { if (X != rhs.X || Y != rhs.Y) return true; return false; }
 	/**
-		@brief Addiert ein Vertex zum Vertex.
-	*/
+	 * Adds a vertex to vertex
+	 */
 	inline void operator+=(const BS_Vertex& Delta) { X += Delta.X; Y += Delta.Y; }
 
 	/**
-		@brief Subtrahiert ein Vertex vom Vertex.
-	*/
+	 * Subtracts a vertex from a vertex
+	 */
 	inline void operator-=(const BS_Vertex& Delta) { X -= Delta.X; Y -= Delta.Y; }
 
 	/**
-		@brief Addiert zwei Vertecies
-	*/
+	 * Adds two vertecies
+	 */
 	inline BS_Vertex operator+(const BS_Vertex& Delta) const { return BS_Vertex(X + Delta.X, Y + Delta.Y); }
 
 	/**
-		@brief Subtrahiert zwei Vertecies
-	*/
+	 * Subtracts two vertecies
+	 */
 	inline BS_Vertex operator-(const BS_Vertex& Delta) const { return BS_Vertex(X - Delta.X, Y - Delta.Y); }
 
 	/**
-		@brief Berechnet das Quadrat des Abstandes zweier Vertecies.
-		@param Vertex das Vertex zu dem der Abstand berechnet werden soll.
-		@return Gibt das Quadrat des Abstandes zwischen diesem Objekt und Vertex zurück.
-		@remark Falls nur Abstände verglichen werden sollen, sollte diese Methode benutzt werden, da sie schneller ist, als Distance().
-	*/
-	inline int Distance2(const BS_Vertex& Vertex) const
-	{
+	 * Calculates the square of the distance between two Vertecies.
+	 * @param Vertex		The vertex for which the distance is to be calculated
+	 * @return				Returns the square of the distance between itself and the passed vertex
+	 * @remark				If only distances should be compared, this method should be used because
+	 * it is faster than Distance()
+	 */
+	inline int Distance2(const BS_Vertex& Vertex) const	{
 		return (X - Vertex.X) * (X - Vertex.X) + (Y - Vertex.Y) * (Y - Vertex.Y);
 	}
 
 	/**
-		@brief Berechnet den Abstand zweier Vertecies.
-		@param Vertex das Vertex zu dem der Abstand berechnet werden soll.
-		@return Gibt den Abstand zwischen diesem Objekt und Vertex zurück.
-		@remark Falls nur Abstände verglichen werden sollen, sollte diese Methode Distance2(), die das Quadrat des Abstandes berechnet.
-				Sie ist schneller.
-	*/
-	inline int Distance(const BS_Vertex& Vertex) const
-	{
+	 * Calculates the square of the distance between two Vertecies.
+	 * @param Vertex		The vertex for which the distance is to be calculated
+	 * @return				Returns the square of the distance between itself and the passed vertex
+	 * @remark				If only distances should be compared, Distance2() should be used, since it is faster.
+	 */
+	inline int Distance(const BS_Vertex& Vertex) const {
 		return (int)(sqrtf(static_cast<float>(Distance2(Vertex))) + 0.5);
 	}
 
 	/**
-		@brief Berechnet das Kreuzprodukt dieses Vertex mit einem weiteren Vertex. Hierbei werden die Vertecies als Vektoren aufgefasst.
-		@param Vertex das zweite Vertex
-		@return Gibt das Kreuzprodukt von diesem Vertex und dem Parameter Vertex zurück.
-	*/
-	inline int ComputeCrossProduct(const BS_Vertex& Vertex) const
-	{
+	 * Calculates the cross product of the vertex with another vertex. Here the Vertecies will be
+	 * interpreted as vectors.
+	 * @param Vertex		The second vertex
+	 * @return				Returns the cross product of this vertex and the passed vertex.
+	 */
+	inline int ComputeCrossProduct(const BS_Vertex& Vertex) const {
 		return X * Vertex.Y - Vertex.X * Y;
 	}
 
 	/**
-		@brief Berechnet das Skalarprodukt dieses Vertex mit einem weiteren Vertex. Hierbei werden die Vertecies als Vektoren aufgefasst.
-		@param Vertex das zweite Vertex
-		@return Gibt das Skalarprodukt von diesem Vertex und dem Parameter Vertex zurück.
-	*/
+	 * Returns the dot product of this vertex with another vertex. Here the Vertecies are interpreted as vectors.
+	 * @param Vertex		The second vertex
+	 * @return				Returns the dot product of this vertex and the passed vertex.
+	 */
 	inline int ComputeDotProduct(const BS_Vertex& Vertex) const
 	{
 		return X * Vertex.X + Y * Vertex.Y;
 	}
 
 	/**
-		@brief Berechnet den Winkel zwischen diesem Vertex und einem weiteren Vertex.  Hierbei werden die Vertecies als Vektoren aufgefasst.
-		@param Vertex das zweite Vertex
-		@return Gibt den Winkel zwischen diesem Vertex und dem Parameter Vertex im Bogenmaß zurück.
-	*/
-	inline float ComputeAngle(const BS_Vertex& Vertex) const
-	{
+	 * Calculates the angle between this vertex and another vertex. Here the Vertecies are interpreted as vectors.
+	 * @param Vertex		The second vertex
+	 * @return				Returns the angle between this vertex and the passed vertex in radians.
+	 */
+	inline float ComputeAngle(const BS_Vertex& Vertex) const {
 		return atan2f(static_cast<float>(ComputeCrossProduct(Vertex)), static_cast<float>(ComputeDotProduct(Vertex)));
 	}
 
 	/**
-		@brief Berechnet die Länge des Vektors
-	*/
-	inline float ComputeLength() const
-	{
+	 * Calculates the length of the vector
+	 */
+	inline float ComputeLength() const {
 		return sqrtf(static_cast<float>(X * X + Y * Y));
 	}
 
 	static BS_Vertex & LuaVertexToVertex(lua_State * L, int StackIndex, BS_Vertex & Vertex);
 	static void VertexToLuaVertex(lua_State * L, const BS_Vertex & Vertex);
 };
+
+} // End of namespace Sword25
 
 #endif

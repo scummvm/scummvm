@@ -39,41 +39,40 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/ptr.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/kernel/objectregistry.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <memory>
-#include "sword25/kernel/memlog_on.h"
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Forward Deklarationen
+// Forward Declarations
 // -----------------------------------------------------------------------------
 
 class BS_Region;
 
 // -----------------------------------------------------------------------------
-// Klassendeklaration
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_RegionRegistry : public BS_ObjectRegistry<BS_Region>, public BS_Persistable
-{
+class BS_RegionRegistry : public BS_ObjectRegistry<BS_Region>, public BS_Persistable {
 public:
-	static BS_RegionRegistry & GetInstance()
-	{
-		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_RegionRegistry);
+	static BS_RegionRegistry & GetInstance() {
+		if (!m_InstancePtr.get()) m_InstancePtr = Common::SharedPtr<BS_RegionRegistry>(new BS_RegionRegistry());
 		return *m_InstancePtr.get();
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	virtual void LogErrorLn(const char * Message) const;
-	virtual void LogWarningLn(const char * Message) const;
+	virtual void LogErrorLn(const char *Message) const;
+	virtual void LogWarningLn(const char *Message) const;
 
-	static std::auto_ptr<BS_RegionRegistry> m_InstancePtr;
+	static Common::SharedPtr<BS_RegionRegistry> m_InstancePtr;
 };
+
+} // End of namespace Sword25
 
 #endif

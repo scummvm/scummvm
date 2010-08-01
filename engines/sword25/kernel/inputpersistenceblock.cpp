@@ -40,23 +40,21 @@
 
 #include "sword25/kernel/inputpersistenceblock.h"
 
-using namespace std;
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
-// Construction / Destruction
+// Constructor / Destructor
 // -----------------------------------------------------------------------------
 
 BS_InputPersistenceBlock::BS_InputPersistenceBlock(const void * Data, unsigned int DataLength) :
-	m_Data(static_cast<const unsigned char *>(Data), static_cast<const unsigned char *>(Data) + DataLength),
-	m_ErrorState(NONE)
-{
+		m_Data(static_cast<const unsigned char *>(Data), DataLength),
+		m_ErrorState(NONE) {
 	m_Iter = m_Data.begin();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_InputPersistenceBlock::~BS_InputPersistenceBlock()
-{
+BS_InputPersistenceBlock::~BS_InputPersistenceBlock() {
 	if (m_Iter != m_Data.end()) BS_LOG_WARNINGLN("Persistence block was not read to the end.");
 }
 
@@ -64,80 +62,69 @@ BS_InputPersistenceBlock::~BS_InputPersistenceBlock()
 // Reading
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(signed int & Value)
-{
-	if (CheckMarker(SINT_MARKER))
-	{
+void BS_InputPersistenceBlock::Read(int16 &Value) {
+	signed int v;
+	Read(v);
+	Value = static_cast<int16>(v);
+}
+
+// -----------------------------------------------------------------------------
+
+void BS_InputPersistenceBlock::Read(signed int &Value) {
+	if (CheckMarker(SINT_MARKER)) {
 		RawRead(&Value, sizeof(signed int));
 		Value = ConvertEndianessFromStorageToSystem(Value);
-	}
-	else
-	{
+	} else {
 		Value = 0;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(unsigned int & Value)
-{
-	if (CheckMarker(UINT_MARKER))
-	{
+void BS_InputPersistenceBlock::Read(unsigned int &Value) {
+	if (CheckMarker(UINT_MARKER)) {
 		RawRead(&Value, sizeof(unsigned int));
 		Value = ConvertEndianessFromStorageToSystem(Value);
-	}
-	else
-	{
+	} else {
 		Value = 0;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(float & Value)
-{
-	if (CheckMarker(FLOAT_MARKER))
-	{
+void BS_InputPersistenceBlock::Read(float &Value) {
+	if (CheckMarker(FLOAT_MARKER)) {
 		RawRead(&Value, sizeof(float));
 		Value = ConvertEndianessFromStorageToSystem(Value);
-	}
-	else
-	{
+	} else {
 		Value = 0.0f;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(bool & Value)
-{
-	if (CheckMarker(BOOL_MARKER))
-	{
+void BS_InputPersistenceBlock::Read(bool &Value) {
+	if (CheckMarker(BOOL_MARKER)) {
 		unsigned int UIntBool;
 		RawRead(&UIntBool, sizeof(float));
 		UIntBool = ConvertEndianessFromStorageToSystem(UIntBool);
 		Value = UIntBool == 0 ? false : true;
-	}
-	else
-	{
+	} else {
 		Value = 0.0f;
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(std::string & Value)
-{
+void BS_InputPersistenceBlock::Read(Common::String &Value) {
 	Value = "";
 	
-	if (CheckMarker(STRING_MARKER))
-	{
+	if (CheckMarker(STRING_MARKER)) {
 		unsigned int Size;
 		Read(Size);
 
-		if (CheckBlockSize(Size))
-		{
-			Value = std::string(reinterpret_cast<const char *>(&*m_Iter), Size);
+		if (CheckBlockSize(Size)) {
+			Value = Common::String(reinterpret_cast<const char *>(&*m_Iter), Size);
 			m_Iter += Size;
 		}
 	}
@@ -145,16 +132,13 @@ void BS_InputPersistenceBlock::Read(std::string & Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::Read(vector<unsigned char> & Value)
-{
-	if (CheckMarker(BLOCK_MARKER))
-	{
+void BS_InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
+	if (CheckMarker(BLOCK_MARKER)) {
 		unsigned int Size;
 		Read(Size);
 
-		if (CheckBlockSize(Size))
-		{
-			Value = vector<unsigned char>(m_Iter, m_Iter + Size);
+		if (CheckBlockSize(Size)) {
+			Value = Common::Array<unsigned char>(m_Iter, Size);
 			m_Iter += Size;
 		}
 	}
@@ -162,10 +146,8 @@ void BS_InputPersistenceBlock::Read(vector<unsigned char> & Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::RawRead(void * DestPtr, size_t Size)
-{
-	if (CheckBlockSize(Size))
-	{
+void BS_InputPersistenceBlock::RawRead(void * DestPtr, size_t Size) {
+	if (CheckBlockSize(Size)) {
 		memcpy(DestPtr, &*m_Iter, Size);
 		m_Iter += Size;
 	}
@@ -173,14 +155,10 @@ void BS_InputPersistenceBlock::RawRead(void * DestPtr, size_t Size)
 
 // -----------------------------------------------------------------------------
 
-bool BS_InputPersistenceBlock::CheckBlockSize(int Size)
-{
-	if (m_Data.end() - m_Iter >= Size)
-	{
+bool BS_InputPersistenceBlock::CheckBlockSize(int Size) {
+	if (m_Data.end() - m_Iter >= Size) {
 		return true;
-	}
-	else
-	{
+	} else {
 		m_ErrorState = END_OF_DATA;
 		BS_LOG_ERRORLN("Unexpected end of persistence block.");
 		return false;
@@ -189,18 +167,16 @@ bool BS_InputPersistenceBlock::CheckBlockSize(int Size)
 
 // -----------------------------------------------------------------------------
 
-bool BS_InputPersistenceBlock::CheckMarker(unsigned char Marker)
-{
+bool BS_InputPersistenceBlock::CheckMarker(unsigned char Marker) {
 	if (!IsGood() || !CheckBlockSize(1)) return false;
 
-	if (*m_Iter++ == Marker)
-	{
+	if (*m_Iter++ == Marker) {
 		return true;
-	}
-	else
-	{
+	} else {
 		m_ErrorState = OUT_OF_SYNC;
 		BS_LOG_ERRORLN("Wrong type marker found in persistence block.");
 		return false;
 	}
 }
+
+} // End of namespace Sword25

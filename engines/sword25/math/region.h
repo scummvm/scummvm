@@ -35,192 +35,188 @@
 #ifndef SWORD25_REGION_H
 #define SWORD25_REGION_H
 
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/math/vertex.h"
 #include "sword25/math/polygon.h"
 #include "sword25/math/rect.h"
 
-/**
-	@brief Diese Klasse ist die Basisklasse aller Regionen.
+namespace Sword25 {
 
-	Mit der Methode IsValid() lässt sich abfragen, ob sich das Objekt in einem gültigen Zustand befindet.<br>
-	Sollte dies nicht der Fall sein, ist die Methode Init() die einzige Methode die aufgerufen werden darf.
-	Diese Klasse garantiert, dass die Vertecies der die Umriss- und die Lochpolygone im Uhrzeigersinn angeordnet sind, so dass auf den Polygonen
-	arbeitende Algorithmen nur für diese Anordnung implementiert werden müssen.
-*/
-class BS_Region : public BS_Persistable
-{
+/**
+ * This class is the base class of all regions.
+ *
+ * The IsValid() method can be queried to see whether the object is in a valid state.
+ * If this is not the case, the method Init() is the only method that may be invoked.
+ * This class guarantees that the Vertecies outline of the hole, and the polygons are
+ * arranged in a clockwise direction, so that the polygon working algorithms will
+ * work properly.
+ */
+class BS_Region : public BS_Persistable {
 protected:
 	/**
-		@brief Erzeugt ein uninitialisiertes #BS_Region Objekt.
-
-		Nach dem Erzeugen ist das Objekt noch ungültig (IsValid() gibt false zurück), allerdings kann das Objekt nachträglich über
-		einen Aufruf von Init() in einen gültigen Zustand versetzt werden.
-	*/
+	 * Creates a new BS_Region object
+	 *
+	 * After creation the object is invaild (IsValid() return false), but a call can
+	 * be made later on to Init() to set up the region into a valid state.
+	 */
 	BS_Region();
 
-	BS_Region(BS_InputPersistenceBlock & Reader, unsigned int Handle);
+	BS_Region(BS_InputPersistenceBlock &Reader, unsigned int Handle);
 
 public:
-	enum REGION_TYPE
-	{
+	enum REGION_TYPE {
 		RT_REGION,
 		RT_WALKREGION
 	};
 
 	static unsigned int Create(REGION_TYPE Type);
-	static unsigned int Create(BS_InputPersistenceBlock & Reader, unsigned int Handle = 0);
+	static unsigned int Create(BS_InputPersistenceBlock &Reader, unsigned int Handle = 0);
 
 	virtual ~BS_Region();
 
 	/**
-		@brief Initialisiert ein BS_Region Objekt.
-		@param Contour ein Polygon das den Umriss der Region angibt.
-		@param pHoles ein Pointer auf einen Vector von Polygonen, die Löcher in der Region angeben.<br>
-					  Falls die Region keine Löcher hat, muss NULL übergeben werden.<br>
-					  Der Standardwert ist NULL.
-		@return Gibt true zurück, wenn die Initialisierung erfolgreich war.<br>
-				Gibt false zurück, wenn die Intialisierung fehlgeschlagen ist.
-		@remark Falls die Region bereits initialisiert war, wird der alte Zustand gelöscht.
-	*/
-	virtual bool Init(const BS_Polygon& Contour, const std::vector<BS_Polygon>* pHoles = NULL);
-	
-	//@{
-	/** @name Sondierende Methoden */
+	 * Initialises a BS_Region object
+	 * @param Contour		A polygon indicating the outline of the region
+	 * @param pHoles		A pointer to an array of polygons representing the hole state in the region.
+	 * If the region has no holes, it must be passed as NULL. The default value is NULL.
+	 * @return				Returns true if the initialisation was successful, otherwise false.
+	 * @remark				If the region was already initialised, the old state will be deleted.
+	 */
+	virtual bool Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles = NULL);
+
+	//
+	// Exploratory Methods
+	//
 
 	/**
-		@brief Gibt an, ob das Objekt in einem gültigen Zustand ist.
-		@return Gibt true zurück, wenn sich das Objekt in einem gültigen Zustand befindet.
-				Gibt false zurück, wenn sich das Objekt in einem ungültigen Zustand befindet.
-		@remark Ungültige Objekte können durch einen Aufruf von Init() in einen gültigen Zustand versetzt werden.
-	*/
+	 * Specifies whether the object is in a valid state
+	 * @return				Returns true if the object is in a valid state, otherwise false.
+	 * @remark				Invalid objects can be made valid by calling Init with a valid state.
+	 */
 	bool IsValid() const { return m_Valid; }
 
 	/**
-		@brief Gibt die Position der Region zurück.
-	*/
-	const BS_Vertex& GetPosition() const { return m_Position; }
+	 * Returns the position of the region
+	 */
+	const BS_Vertex &GetPosition() const { return m_Position; }
 
 	/**
-		@brief Gibt die Position des Region auf der X-Achse zurück.
-	*/
+	 * Returns the X position of the region
+	 */
 	int GetPosX() const { return m_Position.X; }
 
 	/**
-		@brief Gibt die Position des Region auf der Y-Achse zurück.
-	*/
+	 * Returns the Y position of the region
+	 */
 	int GetPosY() const { return m_Position.Y; }
 
 	/**
-		@brief Gibt an, ob sich ein Punkt innerhalb der Region befindet.
-		@param Vertex ein Vertex, mit den Koordinaten des zu testenden Punktes.
-		@return Gibt true zurück, wenn sich der Punkt innerhalb der Region befindet.<br>
-				Gibt false zurück, wenn sich der Punkt außerhalb der Region befindet.
-	*/
-	bool IsPointInRegion(const BS_Vertex& Vertex) const;
+	 * Indicates whether a point is inside the region
+	 * @param Vertex		A verex with the co-ordinates of the test point
+	 * @return				Returns true if the point is within the region, otherwise false.
+	 */
+	bool IsPointInRegion(const BS_Vertex &Vertex) const;
 
 	/**
-		@brief Gibt an, ob sich ein Punkt innerhalb der Region befindet.
-		@param X die Position des Punktes auf der X-Achse.
-		@param Y die Position des Punktes auf der Y-Achse.
-		@return Gibt true zurück, wenn sich der Punkt innerhalb der Region befindet.<br>
-				Gibt false zurück, wenn sich der Punkt außerhalb der Region befindet.
-	*/
+	 * Indicates whether a point is inside the region
+	 * @param X				The X position
+	 * @param Y				The Y position
+	 * @return				Returns true if the point is within the region, otherwise false.
+	 */
 	bool IsPointInRegion(int X, int Y) const;
 
 	/**
-		@brief Gibt das Umrisspolygon der Region zurück.
-	*/
-	const BS_Polygon& GetContour() const { return m_Polygons[0]; }
+	 * Returns the countour of the region
+	 */
+	const BS_Polygon &GetContour() const { return m_Polygons[0]; }
 
 	/**
-		@brief Gibt die Anzahl der Lochpolygone in der Region zurück.
-	*/
+	 * Returns the number of polygons in the hole region
+	 */
 	int GetHoleCount() const { return static_cast<int>(m_Polygons.size() - 1); }
 
 	/**
-		@brief Gibt ein bestimmtes Lochpolygon in der Region zurück.
-		@param i die Nummer des zurückzugebenen Loches.<br>
-				 Dieser Wert muss zwischen 0 und GetHoleCount() - 1 liegen.
-		@return Gibt das gewünschte Lochpolygon zurück.
-	*/
-	inline const BS_Polygon& GetHole(unsigned int i) const;
+	 * Returns a specific hole polygon in the region
+	 * @param i				The number of the hole to return.
+	 * The index must be between 0 and GetHoleCount() - 1.
+	 * @return				Returns the desired hole polygon
+	 */
+	inline const BS_Polygon &GetHole(unsigned int i) const;
 
 	/**
-		@brief Findet für einen Punkt ausserhalb der Region den nächsten Punkt, der sich innerhalb der Region befindet.
-		@param Point der Punkt, der sich ausserhalb der Region befindet
-		@return Gibt den Punkt innerhalb der Region zurück, der den geringsten Abstand zum übergebenen Punkt hat.
-		@remark Diese Methode arbeitet nicht immer Pixelgenau. Man sollte sich also nicht darauf verlassen, dass es wirklich keine Punkt innerhalb der
-				Region gibt, der dichter am übergebenen Punkt liegt.
-	*/
-	BS_Vertex FindClosestRegionPoint(const BS_Vertex& Point) const;
+	 * For a point outside the region, finds the closest point inside the region
+	 * @param Point			The point that is outside the region
+	 * @return				Returns the point within the region which is closest
+	 * @remark				This method does not always work with pixel accuracy.
+	 * One should not therefore rely on the fact that there is really no point in 
+	 * the region which is closer to the given point.
+	 */
+	BS_Vertex FindClosestRegionPoint(const BS_Vertex &Point) const;
 
 	/**
-		@brief Gibt den Schwerpunkt des Umrisspolygons zurück.
-	*/
+	 * Returns the centroid for the region
+	 */
 	BS_Vertex GetCentroid() const;
 
-	bool IsLineOfSight(const BS_Vertex & a, const BS_Vertex & b) const;
+	bool IsLineOfSight(const BS_Vertex &a, const BS_Vertex &b) const;
 
-	//@}
-
-	//@{
-	/** @name Manipulierende Methoden */
+	//
+	// Manipulation Methods
+	//
 
 	/**
-		@brief Setzt die Position der Region.
-		@param X die neue Position der Region auf der X-Achse.
-		@param Y die neue Position der Region auf der Y-Achse.
-	*/
+	 * Sets the position of the region
+	 * @param X				The new X psoition of the region
+	 * @param Y				The new Y psoition of the region
+	 */
 	virtual void SetPos(int X, int Y);
 
 	/**
-		@brief Setzt die Position der Region auf der X-Achse.
-		@param X die neue Position der Region auf der X-Achse.
-	*/
+	 * Sets the X position of the region
+	 * @param X				The new X position of the region
+	 */
 	void SetPosX(int X);
 
 	/**
-		@brief Setzt die Position der Region auf der Y-Achse.
-		@param Y die neue Position der Region auf der Y-Achse.
-	*/
+	 * Sets the Y position of the region
+	 * @param Y				The new Y position of the region
+	 */
 	void SetPosY(int Y);
 
-	//@}
+	//
+	// Manipulation Methods
+	//
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
-	/// Diese Variable gibt den Typ des Objektes an.
+	/// This specifies the type of object
 	REGION_TYPE m_Type;
-	/// Diese Variable gibt an, ob der aktuelle Objektzustand gültig ist.
+	/// This variable indicates whether the current object state is valid
 	bool m_Valid;
-	/// Dieses Vertex gibt die Position der Region an.
+	/// This vertex is the position of the region
 	BS_Vertex m_Position;
-	/// Dieser Vector enthält alle Polygone die die Region definieren. Das erste Element des Vectors ist die Kontur, alle weiteren sind die Löcher.
-	std::vector<BS_Polygon> m_Polygons;
-	/// Die Bounding-Box der Region.
+	/// This array contains all the polygons that define the region. The first element of
+	// the array is the contour, all others are the holes
+	Common::Array<BS_Polygon> m_Polygons;
+	/// The bounding box for the region
 	BS_Rect m_BoundingBox;
 
 	/**
-		@brief Aktualisiert die Bounding-Box der Region.
-	*/
+	 * Updates the bounding box of the region.
+	 */
 	void UpdateBoundingBox();
 
 	/**
-		@brief Findet den Punkt auf einer Linie, der einem anderen Punkt am nächsten ist.
-		@param LineStart der Startpunkt der Linie
-		@param LineEnd der Endpunkt der Linie
-		@param Point der Punkt, zu dem der nächste Punkt auf der Linie konstruiert werden soll.
-		@return Gibt den Punkt auf der Linie zurück, der dem übergebenen Punkt am nächsten ist.
-	*/
-	BS_Vertex FindClosestPointOnLine(const BS_Vertex & LineStart, const BS_Vertex & LineEnd, const BS_Vertex Point) const;
+	 * Find the point on a line which is closest to another point
+	 * @param LineStart		The start of the line
+	 * @param LineEnd		The end of the line
+	 * @param Point			The point to be compared against
+	 * @return				Returns the point on the line which is cloest to the passed point.
+	 */
+	BS_Vertex FindClosestPointOnLine(const BS_Vertex &LineStart, const BS_Vertex &LineEnd, const BS_Vertex Point) const;
 };
 
 
@@ -228,10 +224,11 @@ protected:
 // Inlines
 // -----------------------------------------------------------------------------
 
-inline const BS_Polygon& BS_Region::GetHole(unsigned int i) const
-{
+inline const BS_Polygon &BS_Region::GetHole(unsigned int i) const {
 	BS_ASSERT(i < m_Polygons.size() - 1);
 	return m_Polygons[i + 1];
 }
+
+} // End of namespace Sword25
 
 #endif

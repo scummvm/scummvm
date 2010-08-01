@@ -34,31 +34,36 @@
 
 #include "sword25/math/vertex.h"
 
+namespace {
+
 extern "C"
 {
 	#include "sword25/util/lua/lua.h"
 	#include "sword25/util/lua/lauxlib.h"
 }
 
+}
+
 // -----------------------------------------------------------------------------
 
-BS_Vertex & BS_Vertex::LuaVertexToVertex(lua_State * L, int StackIndex, BS_Vertex & Vertex)
-{
+namespace Sword25 {
+
+BS_Vertex &BS_Vertex::LuaVertexToVertex(lua_State *L, int StackIndex, BS_Vertex &Vertex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
 
-	// Sicherstellen, dass wir wirklich eine Tabelle betrachten
+	// Ensure that we actually consider a table
 	luaL_checktype(L, StackIndex, LUA_TTABLE);
 
-	// X Komponente auslesen
+	// Read X Component
 	lua_pushstring(L, "X");
 	lua_gettable(L, StackIndex);
 	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, StackIndex, "the X component has to be a number");
 	Vertex.X = static_cast<int>(lua_tonumber(L, -1));
 	lua_pop(L, 1);
 
-	// Y Komponente auslesen
+	// Read Y Component
 	lua_pushstring(L, "Y");
 	lua_gettable(L, StackIndex);
 	if (!lua_isnumber(L, -1)) luaL_argcheck(L, 0, StackIndex, "the Y component has to be a number");
@@ -74,18 +79,19 @@ BS_Vertex & BS_Vertex::LuaVertexToVertex(lua_State * L, int StackIndex, BS_Verte
 
 // -----------------------------------------------------------------------------
 
-void BS_Vertex::VertexToLuaVertex(lua_State * L, const BS_Vertex & Vertex)
-{
-	// Neue Tabelle erstellen
+void BS_Vertex::VertexToLuaVertex(lua_State * L, const BS_Vertex &Vertex) {
+	// Create New Table
 	lua_newtable(L);
 
-	// X-Wert in die Tabelle schreiben
+	// X value is written to table
 	lua_pushstring(L, "X");
 	lua_pushnumber(L, Vertex.X);
 	lua_settable(L, -3);
 
-	// Y-Wert in die Tabelle schreiben
+	// Y value is written to table
 	lua_pushstring(L, "Y");
 	lua_pushnumber(L, Vertex.Y);
 	lua_settable(L, -3);
 }
+
+} // End of namespace Sword25

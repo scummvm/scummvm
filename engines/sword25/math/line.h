@@ -35,11 +35,11 @@
 /*
 	BS_Line
 	-------
-	Diese Klasse enthält nur statische Methoden, die mit Geradensegmenten zu tun haben.
-    Es gibt keine wirkliche Geradensegment-Klasse, da diese Klasse vor allem zu
-	Berechnungen mit Polygonen herangezogen wird und es dabei wichtig ist, Start- und
-	Endpunkte der Linien dynamisch wählen zu können. Dieses würde sich verbieten, wenn
-	ein Polygon aus einer Menge von festen Geradensegmenten gebildet wäre.
+	This class contains only static methods, which have to do with straight line
+	segments. There is no real straight line segment class. Calculations will be
+	used with polygons, and it is important the process of starting and selecting
+	endpoints of lines is dynamic. This would prhobit a polygon from a set
+	being formed by fixed line segments
 
 	Autor: Malte Thiesen
 */
@@ -55,77 +55,69 @@
 
 // -----------------------------------------------------------------------------
 
-class BS_Line
-{
+namespace Sword25 {
+
+class BS_Line {
 public:
 	/**
-	    @brief Bestimmt ob sich ein Punkt links von einer Linie befindet.
-		@param a der Startpunkt der	Linie
-		@param b der Endpunkt der Linie
-		@param c der Testpunkt
-		@return Gibt true zurück, wenn sich der Punkt links von der Linie befindet.<br>
-				Falls sich der Punkt rechts von der Linie oder auf der Linie befindet wird false zurückgegeben.<br>
-		@remark Ein Punkt liegt links von einer Linie, wenn er vom Startpunkt aus betrachtet links neben der Linie liegt.
-	*/
-	static bool IsVertexLeft(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	 * Determines whether a piont is left of a line
+	 * @param a			The start point of a line
+	 * @param b			The end point of a line
+	 * @param c			The test point
+	 * @return			Returns true if the point is to the left of the line.
+	 * If the point is to the right of the line or on the line, false is returned.
+	 */
+	static bool IsVertexLeft(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return _TriangleArea2(a, b, c) > 0;
 	}
 
-	static bool IsVertexLeftOn(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	static bool IsVertexLeftOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return _TriangleArea2(a, b, c) >= 0;
 	}
 
 	/**
-		@brief Bestimmt ob sich ein Punkt rechts von einer Linie befindet.
-		@param a der Startpunkt der	Linie
-		@param b der Endpunkt der Linie
-		@param c der Testpunkt
-		@return Gibt true zurück, wenn sich der Punkt recht von der Linie befindet.<br>
-		Falls sich der Punkt links von der Linie oder auf der Linie befindet wird false zurückgegeben.<br>
-		@remark Ein Punkt liegt rechts von einer Linie, wenn er vom Startpunkt aus betrachtet rechts neben der Linie liegt.
-	*/
-	static bool IsVertexRight(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	 * Determines whether a piont is right of a line
+	 * @param a			The start point of a line
+	 * @param b			The end point of a line
+	 * @param c			The test point
+	 * @return			Returns true if the point is to the right of the line.
+	 * If the point is to the right of the line or on the line, false is returned.
+	 */
+	static bool IsVertexRight(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return _TriangleArea2(a, b, c) < 0;
 	}
 
-	static bool IsVertexRightOn(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	static bool IsVertexRightOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return _TriangleArea2(a, b, c) <= 0;
 	}
 
 	/**
-		@brief Bestimmt ob sich ein Punkt auf einer Linie befindet.
-		@param a der Startpunkt der	Linie
-		@param b der Endpunkt der Linie
-		@param c der Testpunkt
-		@return Gibt true zurück, wenn sich der Punkt auf der Linie befindet.
-	*/
-	static bool IsVertexOn(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	 * Determines whether a piont is on a line
+	 * @param a			The start point of a line
+	 * @param b			The end point of a line
+	 * @param c			The test point
+	 * @return			Returns true if the point is on the line, false otherwise.
+	 */
+	static bool IsVertexOn(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return _TriangleArea2(a, b, c) == 0;
 	}
 
-	enum VERTEX_CLASSIFICATION
-	{
+	enum VERTEX_CLASSIFICATION {
 		LEFT,
 		RIGHT,
 		ON
 	};
 
 	/**
-	    @brief Bestimmt wo sich ein Punkt relativ zu einer Linie befindet.
-		@param a der Startpunkt der	Linie
-		@param b der Endpunkt der Linie
-		@param c der Testpunkt
-		@return Gibt LEFT zurück, wenn sich der Punkt links von der Line befindet.<br>
-				Gibt RIGHT zurück, wenn sich der Punkt links von der Line befindet.<br>
-				Gibt ON zurück, wenn sich der Punkt auf der Linie befindet.
-	*/
-	static VERTEX_CLASSIFICATION ClassifyVertexToLine(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	 * Determines where a point is relative to a line.
+	 * @param a			The start point of a line
+	 * @param b			The end point of a line
+	 * @param c			The test point
+	 * @return			LEFT is returned if the point is to the left of the line.
+	 * RIGHT is returned if the point is to the right of the line.
+	 * ON is returned if the point is on the line.
+	 */
+	static VERTEX_CLASSIFICATION ClassifyVertexToLine(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		int Area = _TriangleArea2(a, b, c);
 		if (Area > 0) return LEFT;
 		if (Area < 0) return RIGHT;
@@ -133,15 +125,14 @@ public:
 	}
 
 	/**
-	    @brief Bestimmt ob sich zwei Linien schneiden.
-		@param a der Startpunkt der ersten Linie
-		@param b der Endpunkt der ersten Linie
-		@param c der Startpunkt der zweiten Linie
-		@param d der Endpunkt der zweiten Linie
-		@remark In den Fällen in denen eine Linie die andere nur berührt, wird false zurückgegeben (improper intersection).
-	*/
-	static bool DoesIntersectProperly(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c, const BS_Vertex & d)
-	{
+	 * Determines whether two lines intersect
+	 * @param a			The start point of the first line
+	 * @param b			The end point of the first line
+	 * @param c			The start point of the second line
+	 * @param d			The end point of the second line
+	 * @remark			In cases where a line only touches the other, false is returned (improper intersection)
+	 */
+	static bool DoesIntersectProperly(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c, const BS_Vertex &d) {
 		VERTEX_CLASSIFICATION Class1 = ClassifyVertexToLine(a, b, c);
 		VERTEX_CLASSIFICATION Class2 = ClassifyVertexToLine(a, b, d);
 		VERTEX_CLASSIFICATION Class3 = ClassifyVertexToLine(c, d, a);
@@ -153,26 +144,22 @@ public:
 	}
 
 	/**
-	    @brief Bestimmt ob sich ein Punkt auf einem Liniensegment befindet
-		@param a der Startpunkt der	Liniensegmentes
-		@param b der Endpunkt der Liniensegmentes
-		@param c der Testpunkt
-	*/
-	static bool IsOnLine(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
-		// Die Punkte müssen alle Kollinear sein, sonst liegt der Testpunkt nicht auf dem Liniensegment
+	 * Determines whether a point is on a line segment
+	 * @param a			The start point of a line
+	 * @param b			The end point of a line
+	 * @param c			The test point
+	 */
+	static bool IsOnLine(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+		// The items must all be Collinear, otherwise don't bothering testing the point
 		if (_TriangleArea2(a, b, c) != 0) return false;
 
-		// Falls das Liniensegment nicht vertikal ist prüfe auf der X-Achse, ansonsten auf der Y-Achse
-		if (a.X != b.X)
-		{
+		// If the line segment is not vertical, check on the x-axis, otherwise the y-axis
+		if (a.X != b.X) {
 			return ((a.X <= c.X) &&
 					(c.X <= b.X)) ||
 				   ((a.X >= c.X) &&
 					(c.X >= b.X));
-		}
-		else
-		{
+		} else {
 			return ((a.Y <= c.Y) &&
 					(c.Y <= b.Y)) ||
 				   ((a.Y >= c.Y) &&
@@ -180,21 +167,17 @@ public:
 		}
 	}
 
-	static bool IsOnLineStrict(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
-		// Die Punkte müssen alle Kollinear sein, sonst liegt der Testpunkt nicht auf dem Liniensegment
+	static bool IsOnLineStrict(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
+		// The items must all be Collinear, otherwise don't bothering testing the point
 		if (_TriangleArea2(a, b, c) != 0) return false;
 
-		// Falls das Liniensegment nicht vertikal ist prüfe auf der X-Achse, ansonsten auf der Y-Achse
-		if (a.X != b.X)
-		{
+		// If the line segment is not vertical, check on the x-axis, otherwise the y-axis
+		if (a.X != b.X) {
 			return ((a.X < c.X) &&
 				(c.X < b.X)) ||
 				((a.X > c.X) &&
 				(c.X > b.X));
-		}
-		else
-		{
+		} else {
 			return ((a.Y < c.Y) &&
 				(c.Y < b.Y)) ||
 				((a.Y > c.Y) &&
@@ -203,19 +186,19 @@ public:
 	}
 
 private:
-
 	/**
-	    @brief Gibt die doppelte Größe des durch a, b und c definierten Dreiecks zurück.
-
-		Das Ergebnis ist positiv wenn die Punkte entgegen dem Uhrzeigersinn angeordnet sind und negativ wenn sie mit dem
-		Uhrzeigersinn angeordnet sind.
-	*/
-	static int _TriangleArea2(const BS_Vertex & a, const BS_Vertex & b, const BS_Vertex & c)
-	{
+	 * Return double the size of the triangle defined by the three passed points.
+	 *
+	 * The result is positive if the points are arrange counterclockwise, 
+	 * and negative if they are arranged counter-clockwise.
+	 */
+	static int _TriangleArea2(const BS_Vertex &a, const BS_Vertex &b, const BS_Vertex &c) {
 		return a.X * b.Y - a.Y * b.X +
 			   a.Y * c.X - a.X * c.Y +
 			   b.X * c.Y - c.X * b.Y;
 	}
 };
+
+} // End of namespace Sword25
 
 #endif

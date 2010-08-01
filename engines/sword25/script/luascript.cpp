@@ -540,7 +540,7 @@ bool BS_LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 	ClearGlobalTable(m_State, ClearExceptionsSecondPass);
 
 	// Persisted Lua data
-	vector<unsigned char> chunkData;
+	Common::Array<unsigned char> chunkData;
 	Reader.Read(chunkData);
 
 	// Chunk-Reader initialisation. It is used with pluto_unpersist to restore read data
