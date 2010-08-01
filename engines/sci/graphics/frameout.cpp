@@ -68,9 +68,7 @@ void GfxFrameout::kernelAddPlane(reg_t object) {
 
 	newPlane.object = object;
 	newPlane.pictureId = 0xFFFF;
-	// TODO/FIXME: Check whether we should really default initialize the
-	// priority to 0xFFFF here.
-	newPlane.priority = 0xFFFF;
+	newPlane.priority = readSelectorValue(_segMan, object, SELECTOR(priority));
 	newPlane.lastPriority = 0xFFFF; // hidden
 	_planes.push_back(newPlane);
 
