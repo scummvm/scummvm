@@ -45,30 +45,29 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_InputPersistenceBlock : public BS_PersistenceBlock
-{
+class BS_InputPersistenceBlock : public BS_PersistenceBlock {
 public:
-	enum ErrorState
-	{
+	enum ErrorState {
 		NONE,
 		END_OF_DATA,
 		OUT_OF_SYNC
 	};
 
-	BS_InputPersistenceBlock(const void * Data, unsigned int DataLength);
+	BS_InputPersistenceBlock(const void *Data, unsigned int DataLength);
 	virtual ~BS_InputPersistenceBlock();
 
-	void Read(signed int & Value);
-	void Read(unsigned int & Value);
-	void Read(float & Value);
-	void Read(bool & Value);
-	void Read(std::string & Value);
-	void Read(std::vector<unsigned char> & Value);
+	void Read(signed int &Value);
+	void Read(unsigned int &Value);
+	void Read(float &Value);
+	void Read(bool &Value);
+	void Read(std::string &Value);
+	void Read(std::vector<unsigned char> &Value);
 
 	bool IsGood() const { return m_ErrorState == NONE; }
 	ErrorState GetErrorState() const { return m_ErrorState; }
@@ -76,11 +75,13 @@ public:
 private:
 	bool CheckMarker(unsigned char Marker);
 	bool CheckBlockSize(int Size);
-	void RawRead(void * DestPtr, size_t Size);
+	void RawRead(void *DestPtr, size_t Size);
 
-	std::vector<unsigned char> m_Data;
-	std::vector<unsigned char>::const_iterator m_Iter;
+	Common::Array<unsigned char> m_Data;
+	Common::Array<unsigned char>::const_iterator m_Iter;
 	ErrorState m_ErrorState;
 };
+
+} // End of namespace Sword25
 
 #endif

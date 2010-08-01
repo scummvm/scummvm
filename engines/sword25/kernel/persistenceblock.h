@@ -41,23 +41,24 @@
 
 #include "sword25/kernel/common.h"
 
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Class definition
 // -----------------------------------------------------------------------------
 
-class BS_PersistenceBlock
-{
+class BS_PersistenceBlock {
 public:
 	static unsigned int GetSInt32Size() { return sizeof(signed int) + sizeof(unsigned char); }
 	static unsigned int GetUInt32Size() { return sizeof(unsigned int) + sizeof(unsigned char); }
 	static unsigned int GetFloat32Size() { return sizeof(float) + sizeof(unsigned char); }
 	static unsigned int GetBoolSize() { return sizeof(unsigned char) + sizeof(unsigned char); }
-	static unsigned int GetStringSize(const std::string & String) { return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(unsigned char)); }
+	static unsigned int GetStringSize(const Common::String &String) { 
+		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(unsigned char)); 
+	}
 
 protected:
-	enum
-	{
+	enum {
 		SINT_MARKER,
 		UINT_MARKER,
 		FLOAT_MARKER,
@@ -70,43 +71,38 @@ protected:
 	// Endianess Conversions
 	// -----------------------------------------------------------------------------
 	//
-	// Alles wird in Little Endian gespeichert.
-	// Auf Big Endian-Systemen muss die Bytereihenfolge daher vor dem Speichern und nach dem Einlesen gespeicherter Werte vertauscht werden.
+	// Everything is stored in Little Endian
+	// Big Endian Systems will need to be byte swapped during both saving and reading of saved values
 	//
 
 	template<typename T>
-	static T ConvertEndianessFromSystemToStorage(T Value)
-	{
+	static T ConvertEndianessFromSystemToStorage(T Value) {
 		if (IsBigEndian()) ReverseByteOrder(&Value);
 		return Value;
 	}
 
 	template<typename T>
-	static T ConvertEndianessFromStorageToSystem(T Value)
-	{
+	static T ConvertEndianessFromStorageToSystem(T Value) {
 		if (IsBigEndian()) ReverseByteOrder(&Value);
 		return Value;
 	}
 
 private:
-	static bool IsBigEndian()
-	{
+	static bool IsBigEndian() {
 		unsigned int Dummy = 1;
 		unsigned char * DummyPtr = reinterpret_cast<unsigned char *>(&Dummy);
 		return DummyPtr[0] == 0;
 	}
 
 	template<typename T>
-	static void Swap(T & One, T & Two)
-	{
+	static void Swap(T &One, T &Two) {
 		T Temp = One;
 		One = Two;
 		Two = Temp;
 	}
 
-	static void ReverseByteOrder(void * Ptr)
-	{
-		// Kehrt die Bytereihenfolge des 32-Bit Wortes um auf das Ptr zeigt.
+	static void ReverseByteOrder(void *Ptr) {
+		// Reverses the byte order of the 32-bit word pointed to by Ptr
 		unsigned char * CharPtr = static_cast<unsigned char *>(Ptr);
 		Swap(CharPtr[0], CharPtr[3]);
 		Swap(CharPtr[1], CharPtr[2]);
@@ -123,5 +119,7 @@ CTASSERT(sizeof(signed int) == 4);
 CTASSERT(sizeof(unsigned int) == 4);
 CTASSERT(sizeof(float) == 4);
 #undef CTASSERT
+
+} // End of namespace Sword25
 
 #endif

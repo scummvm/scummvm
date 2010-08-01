@@ -41,17 +41,14 @@
 
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistenceblock.h"
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_OutputPersistenceBlock : public BS_PersistenceBlock
-{
+class BS_OutputPersistenceBlock : public BS_PersistenceBlock {
 public:
 	BS_OutputPersistenceBlock();
 
@@ -59,17 +56,19 @@ public:
 	void Write(unsigned int Value);
 	void Write(float Value);
 	void Write(bool Value);
-	void Write(const std::string & String);
-	void Write(const void * BufferPtr, size_t Size);
+	void Write(const Common::String &String);
+	void Write(const void *BufferPtr, size_t Size);
 
-	const void * GetData() const { return &m_Data[0]; }
+	const void *GetData() const { return &m_Data[0]; }
 	unsigned int GetDataSize() const { return m_Data.size(); }
 
 private:
 	void WriteMarker(unsigned char Marker);
-	void RawWrite(const void * DataPtr, size_t Size);
+	void RawWrite(const void *DataPtr, size_t Size);
 
-	std::vector<unsigned char> m_Data;
+	Common::Array<unsigned char> m_Data;
 };
+
+} // End of namespace Sword25
 
 #endif

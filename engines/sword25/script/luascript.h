@@ -39,6 +39,8 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/str.h"
+#include "common/str-array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/script/script.h"
 
@@ -46,72 +48,81 @@
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-class BS_Kernel;
+namespace {
+
 struct lua_State;
+
+}
+
+namespace Sword25 {
+
+class BS_Kernel;
 
 // -----------------------------------------------------------------------------
 // Class declaration
 // -----------------------------------------------------------------------------
 
-class BS_LuaScriptEngine : public BS_ScriptEngine
-{
+class BS_LuaScriptEngine : public BS_ScriptEngine {
 public:
 	// -----------------------------------------------------------------------------
-	// Konstruktion / Destruktion
+	// Constructor / Destructor
 	// -----------------------------------------------------------------------------
 
-	BS_LuaScriptEngine(BS_Kernel * KernelPtr);
+	BS_LuaScriptEngine(BS_Kernel *KernelPtr);
 	virtual ~BS_LuaScriptEngine();
 
 	/**
-		@brief Initialisiert die Scriptengine.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
+	 * Initialises the scripting engine
+	 * @return				Returns true if successful, otherwise false.
 	*/
 	virtual bool Init();
 
 	/**
-		@brief Lädt eine Skriptdatei und führt diese aus.
-		@param FileName der Dateiname der Skriptdatei
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	virtual bool ExecuteFile(const std::string & FileName);
+	 * Loads a script file and executes it
+	 * @param FileName		The filename of the script
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	virtual bool ExecuteFile(const Common::String &FileName);
 
 	/**
-		@brief Führt einen String mit Skriptcode aus.
-		@param Code ein String der Skriptcode enthält.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	virtual bool ExecuteString(const std::string & Code);
+	 * Execute a string of script code
+	 * @param Code			A string of script code
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	virtual bool ExecuteString(const Common::String &Code);
 
 	/**
-		@brief Gibt einen Pointer auf das Hauptobjekt der Skriptsprache zurück.
-		@remark Durch die Benutzung dieser Methode wird die Kapselung der Sprache aufgehoben.
-	*/
-	virtual void * GetScriptObject() { return m_State; }
+	 * Returns a pointer to the main object of the scripting language
+	 * @remark				Using this method breaks the encapsulation of the language 
+	 */
+	virtual void *GetScriptObject() { return m_State; }
 
 	/**
-		@brief Macht die Kommandozeilen-Parameter für die Skriptumgebung zugänglich.
-		@param CommandLineParameters ein string vector der alle Kommandozeilenparameter enthält.
-		@remark Auf welche Weise die Kommandozeilen-Parameter durch Skripte zugegriffen werden können hängt von der jeweiligen Implementierung ab.
-	*/
-	virtual void SetCommandLine(const std::vector<std::string> & CommandLineParameters);
+	 * Makes the command line parameters for the scripting environment available
+	 * @param CommandLineParameters	An array containing all the command line parameters
+	 * @remark				How the command line parameters will be used by scripts is 
+	 * dependant on the particular implementation.
+	 */
+	virtual void SetCommandLine(const Common::StringArray &CommandLineParameters);
 
 	/**
-		@remark Der Lua-Stack wird durch diese Methode geleert.
-	*/
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
+	 * @remark				The Lua stack is cleared by this method
+	 */
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
 	/**
-		@remark Der Lua-Stack wird durch diese Methode geleert.
-	*/
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	 * @remark				The Lua stack is cleared by this method
+	 */
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	lua_State * m_State;
+	::lua_State *m_State;
 	int m_PcallErrorhandlerRegistryIndex;
 
 	bool RegisterStandardLibs();
 	bool RegisterStandardLibExtensions();
-	bool ExecuteBuffer(const char * Data, unsigned int Size, const std::string & Name) const;
+	bool ExecuteBuffer(const char *Data, unsigned int Size, const Common::String &Name) const;
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -41,8 +41,9 @@
 
 // -----------------------------------------------------------------------------
 
-static int Warning(lua_State * L)
-{
+namespace Sword25 {
+
+static int Warning(::lua_State *L) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -64,20 +65,20 @@ static int Warning(lua_State * L)
 
 // -----------------------------------------------------------------------------
 
-static const luaL_reg GLOBAL_FUNCTIONS[] =
-{
+static const luaL_reg GLOBAL_FUNCTIONS[] = {
 	"warning", Warning,
 	0, 0,
 };
 
 // -----------------------------------------------------------------------------
 
-bool BS_LuaScriptEngine::RegisterStandardLibExtensions()
-{
-	lua_State * L = m_State;
+bool BS_LuaScriptEngine::RegisterStandardLibExtensions() {
+	::lua_State *L = m_State;
 	BS_ASSERT(m_State);
 
 	if (!BS_LuaBindhelper::AddFunctionsToLib(L, "", GLOBAL_FUNCTIONS)) return false;
 
 	return true;
 }
+
+} // End of namespace Sword25

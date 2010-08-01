@@ -39,93 +39,87 @@
 #include "sword25/script/luacallback.h"
 #include "sword25/script/luabindhelper.h"
 
+namespace {
+
 extern "C"
 {
 	#include "sword25/util/lua/lua.h"
 	#include "sword25/util/lua/lauxlib.h"
 }
 
-#define BS_LOG_PREFIX "LUA"
+const char * CALLBACKTABLE_NAME = "__CALLBACKS";
 
-// -----------------------------------------------------------------------------
-
-namespace
-{
-	const char * CALLBACKTABLE_NAME = "__CALLBACKS";
 }
 
 // -----------------------------------------------------------------------------
 
-BS_LuaCallback::BS_LuaCallback(lua_State * L)
-{
-	// Callbacktabelle erstellen.
+namespace Sword25 {
+
+#define BS_LOG_PREFIX "LUA"
+
+// -----------------------------------------------------------------------------
+
+BS_LuaCallback::BS_LuaCallback(::lua_State *L) {
+	// Create callback table
 	lua_newtable(L);
 	lua_setglobal(L, CALLBACKTABLE_NAME);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_LuaCallback::~BS_LuaCallback()
-{
+BS_LuaCallback::~BS_LuaCallback() {
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::RegisterCallbackFunction(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::RegisterCallbackFunction(::lua_State *L, unsigned int ObjectHandle) {
 	BS_ASSERT(lua_isfunction(L, -1));
 	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
-	// Funktion in der Objekt-Callbacktabelle speichern.
+	// Store function in the callback object table store
 	lua_pushvalue(L, -2);
 	luaL_ref(L, -2);
 
-	// Funktion und Objekt-Callbacktabelle vom Stack poppen.
+	// Pop the function and object callback table from the stack
 	lua_pop(L, 2);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::UnregisterCallbackFunction(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::UnregisterCallbackFunction(::lua_State *L, unsigned int ObjectHandle) {
 	BS_ASSERT(lua_isfunction(L, -1));
 	EnsureObjectCallbackTableExists(L,ObjectHandle);
 
-	// Über alle Elemente der Objekt-Callbacktabelle iterieren und die Funktion daraus entfernen.
+	// Iterate over all elements of the object callback table and remove the function from it
 	lua_pushnil(L);
-	while (lua_next(L, -2) != 0)
-	{
-		// Der Wert des aktuellen Elementes liegt oben auf dem Stack, darunter der Index.
+	while (lua_next(L, -2) != 0) {
+		// The value of the current element is the top of the stack, including the index
 
-		// Falls der Wert identisch mit dem Funktionsparameter ist, wird sie aus der Tabelle entfernt.
-		if (lua_equal(L, -1, -4))
-		{
+		// If the value is identical to the function parameters, it is removed from the table
+		if (lua_equal(L, -1, -4)) {
 			lua_pushvalue(L, -2);
 			lua_pushnil(L);
 			lua_settable(L, -5);
 
-			// Die Funktion wurde gefunden, die Iteration kann abgebrochen werden.
+			// The function was found, iteration can be stopped
 			lua_pop(L, 2);
 			break;
-		}
-		else
-		{
-			// Wert vom Stack poppen. Der Index liegt dann oben für den nächsten Aufruf von lua_next().
+		} else {
+			// Pop value from the stack. The index is then ready for the next call to lua_next()
 			lua_pop(L, 1);
 		}
 	}
 
-	// Funktion und Objekt-Callbacktabelle vom Stack poppen.
+	// Function and object table are popped from the stack
 	lua_pop(L, 2);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::RemoveAllObjectCallbacks(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::RemoveAllObjectCallbacks(::lua_State *L, unsigned int ObjectHandle) {
 	PushCallbackTable(L);
 
-	// Objekt-Callbacktabelle aus der Callbacktabelle entfernen.
+	// Remove the object callback from the callback table
 	lua_pushnumber(L, ObjectHandle);
 	lua_pushnil(L);
 	lua_settable(L, -3);
@@ -135,37 +129,34 @@ void BS_LuaCallback::RemoveAllObjectCallbacks(lua_State * L, unsigned int Object
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::InvokeCallbackFunctions(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::InvokeCallbackFunctions(::lua_State *L, unsigned int ObjectHandle) {
 	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
-	// Über die Tabelle iterieren und alle Callbacks ausführen.
+	// Iterate through the table and perform all the callbacks
 	lua_pushnil(L);
-	while (lua_next(L, -2) != 0)
-	{
-		// Der Wert des aktuellen Elementes liegt oben auf dem Stack, darunter der Index.
+	while (lua_next(L, -2) != 0) {
+		// The value of the current element is at the top of the stack, including the index
 
-		// Falls der Wert eine Funktion ist, wird sie ausgeführt.
+		// If the value is a function, execute it
 		if (lua_type(L, -1) == LUA_TFUNCTION)
 		{
-			// Pre-Funktion aufrufen.
-			// Abgeleitete Klassen könnten in dieser Funktion Parameter auf den Stack schieben.
-			// Der Rückgabewert gibt die Anzahl der Parameter zurück.
+			// Pre-Function Call
+			// Derived classes can function in this parameter onto the stack.
+			// The return value indicates the number of parameters
 			int ArgumentCount = PreFunctionInvokation(L);
 
-			// lua_pcall poppt die Funktion und die Parameter selber vom Stack.
-			if (lua_pcall(L, ArgumentCount, 0, 0) != 0)
-			{
-				// Ein Fehler ist aufgetreten.
+			// Lua_pcall the function and the parameters pop themselves from the stack
+			if (lua_pcall(L, ArgumentCount, 0, 0) != 0) {
+				// An error has occurred
 				BS_LOG_ERRORLN("An error occured executing a callback function: %s", lua_tostring(L, -1));
 
-				// Fehlernachricht vom Stack poppen.
+				// Pop error message from the stack
 				lua_pop(L, 1);
 			}
 		}
 		else
 		{
-			// Wert vom Stack poppen. Der Index liegt dann oben für den nächsten Aufruf von lua_next().
+			// Pop value from the stack. The index is then ready for the next call to lua_next()
 			lua_pop(L, 1);
 		}
 	}
@@ -173,46 +164,44 @@ void BS_LuaCallback::InvokeCallbackFunctions(lua_State * L, unsigned int ObjectH
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::EnsureObjectCallbackTableExists(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::EnsureObjectCallbackTableExists(::lua_State *L, unsigned int ObjectHandle) {
 	PushObjectCallbackTable(L, ObjectHandle);
 
-	// Falls die Tabelle nil ist, muss sie zunächst erstellt werden.
-	if (lua_isnil(L, -1))
-	{
-		// Nil vom Stack poppen.
+	// If the table is nil, it must first be created
+	if (lua_isnil(L, -1)) {
+		// Pop nil from stack
 		lua_pop(L, 1);
 
 		PushCallbackTable(L);
 
-		// Neue Tabelle unter dem Index ObjectHandle in der Callbacktabelle ablegen.
+		// Create the table, and put the ObjectHandle into it
 		lua_newtable(L);
 		lua_pushnumber(L, ObjectHandle);
 		lua_pushvalue(L, -2);
 		lua_settable(L, -4);
 
-		// Callbacktabelle vom Stack entfernen, Objekt-Callbacktabelle aber dort lassen.
+		// Pop the callback table from the stack
 		lua_remove(L, -2);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::PushCallbackTable(lua_State * L)
-{
+void BS_LuaCallback::PushCallbackTable(::lua_State *L) {
 	lua_getglobal(L, CALLBACKTABLE_NAME);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_LuaCallback::PushObjectCallbackTable(lua_State * L, unsigned int ObjectHandle)
-{
+void BS_LuaCallback::PushObjectCallbackTable(::lua_State *L, unsigned int ObjectHandle) {
 	PushCallbackTable(L);
 
-	// Objekt-Callbacktabelle auf den Stack legen.
+	// Push Object Callback table onto the stack
 	lua_pushnumber(L, ObjectHandle);
 	lua_gettable(L, -2);
 
-	// Callbacktabelle vom Stack entfernen, Objekt-Callbacktabelle aber dort lassen.
+	// Pop the callback table from the stack
 	lua_remove(L, -2);
 }
+
+} // End of namespace Sword25

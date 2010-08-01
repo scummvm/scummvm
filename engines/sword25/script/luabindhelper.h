@@ -37,86 +37,90 @@
 
 #include "sword25/kernel/common.h"
 
+namespace {
+
 extern "C"
 {
 	#include "sword25/util/lua/lua.h"
 	#include "sword25/util/lua/lauxlib.h"
 }
 
+}
+
+namespace Sword25 {
+
 #define lua_pushbooleancpp(L, b) (lua_pushboolean(L, b ? 1 : 0))
 #define lua_tobooleancpp(L, i) (lua_toboolean(L, i) == 0 ? false : true)
 
-struct lua_constant_reg
-{
+struct lua_constant_reg {
 	const char *	Name;
 	lua_Number		Value;
 };
 
-class BS_LuaBindhelper
-{
+class BS_LuaBindhelper {
 public:
 	/**
-		@brief Registriert eine Menge von Funktionen und fügt dieser einer Lua-Library hinzu.
-		@param L ein Pointer auf die Lua-VM in der die Funktionen registriert werden sollen
-		@param LibName der Name der Library.<br>
-					   Wenn dies ein Leerer String ist, werden die Funktionen zum globalen Namensraum hinzugefügt.
-		@param Functions ein Array das die Funktionspointer mit ihren Namen enthält.<br>
-						 Das Array muss mit dem Eintrag {0, 0} terminiert sein.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	static bool AddFunctionsToLib(lua_State * L, const Common::String & LibName, const luaL_reg * Functions);
+	 * Registers a set of functions into a Lua library.
+	 * @param L				A pointer to the Lua VM 
+	 * @param LibName		The name of the library.
+	 * If this is an empty string, the functions will be added to the global namespace.
+	 * @param Functions		An array of function pointers along with their names.
+	 * The array must be terminated with the enry (0, 0)
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	static bool AddFunctionsToLib(::lua_State *L, const Common::String &LibName, const luaL_reg *Functions);
 
 	/**
-		@brief Fügt eine Menge von Konstanten einer Lua-Library hinzu.
-		@param L ein Pointer auf die Lua-VM in der die Konstanten registriert werden sollen
-		@param LibName der Name der Library.<br>
-					   Wenn dies ein Leerer String ist, werden die Konstanten zum globalen Namensraum hinzugefügt.
-		@param Constants ein Array das die Werte der Konstanten mit ihren Namen enthält.<br
-						 Das Array muss mit dem Eintrag {0, 0} terminiert sein.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	static bool AddConstantsToLib(lua_State * L, const Common::String & LibName, const lua_constant_reg * Constants);
+	 * Adds a set of constants to the Lua library
+	 * @param L				A pointer to the Lua VM
+	 * @param LibName		The name of the library.
+	 * If this is an empty string, the functions will be added to the global namespace.
+	 * @param Constants		An array of the constant values along with their names.
+	 * The array must be terminated with the enry (0, 0)
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	static bool AddConstantsToLib(::lua_State * L, const Common::String & LibName, const lua_constant_reg * Constants);
 
 	/**
-	    @brief Fügt eine Menge von Methoden zu einer Lua-Klasse hinzu.
-		@param L ein Pointer auf die Lua-VM in der die Methoden registriert werden sollen
-		@param ClassName der Name der Metatable der Klasse.<br>
-						 Wenn die Metatable noch nicht existiert, wird sie erstellt.
-		@param Methods ein Array das die Funktionspointer der Methoden mit ihren Namen enthält.<br>
-					   Das Array muss mit dem Eintrag {0, 0} terminiert sein.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	static bool AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods);
+	 * Adds a set of methods to a Lua class
+	 * @param L				A pointer to the Lua VM 
+	 * @param ClassName		The name of the class
+	 * When the class name specified does not exist, it is created.
+	 * @param Methods		An array of function pointers along with their method names.
+	 * The array must be terminated with the enry (0, 0)
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	static bool AddMethodsToClass(::lua_State *L, const Common::String &ClassName, const luaL_reg *Methods);
 
 	/**
-	    @brief Legt eine Funktion fest, die aufgerufen wird, wenn Exemplare einer bestimmten Lua-Klasse vom Garbage-Collecter gelöscht werden.
-		@param L ein Pointer auf die Lua-VM
-		@param ClassName der Name der Metatable der Klasse.<br>
-						 Wenn die Metatable noch nicht existiert, wird sie erstellt.
-		@param GCHandler ein Funktionspointer auf die Funktion.
-		@return Gibt true bei Erfolg zurück, ansonsten false.
-	*/
-	static bool SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler);
+	 * Sets the garbage collector callback method when items of a particular class are deleted
+	 * @param L				A pointer to the Lua VM 
+	 * @param ClassName		The name of the class
+	 * When the class name specified does not exist, it is created.
+	 * @param GCHandler		A function pointer
+	 * @return				Returns true if successful, otherwise false.
+	 */
+	static bool SetClassGCHandler(::lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler);
 
 	/**
-		@brief Gibt einen String zurück, der einen Stackdump des Lua-Stacks enthält.
-
-		@param L ein Pointer auf die Lua-VM.
-	*/
-	static Common::String StackDump(lua_State *L);
+	 * Returns a string containing a stack dump of the Lua stack
+	 * @param L				A pointer to the Lua VM 
+	 */
+	static Common::String StackDump(::lua_State *L);
 
 	/**
-		@brief Gibt einen String zurück, den den Inhalt einer Tabelle beschreibt.
+	 * Returns a string that describes the contents of a table
+ 	 * @param L				A pointer to the Lua VM 
+	 * @remark				The table must be on the Lua stack to be read out.
+	 */
+	static Common::String TableDump(::lua_State *L);
 
-        @param L ein Pointer auf die Lua-VM.
-		@remark Auf dem Lua-Stack muss die Tabelle liegen, die ausgelesen werden soll.
-	*/
-	static Common::String TableDump(lua_State *L);
-
-	static bool GetMetatable(lua_State *L, const Common::String &TableName);
+	static bool GetMetatable(::lua_State *L, const Common::String &TableName);
 
 private:
-	static bool _CreateTable(lua_State *L, const Common::String &TableName);
+	static bool _CreateTable(::lua_State *L, const Common::String &TableName);
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -42,38 +42,45 @@
 #include "sword25/kernel/common.h"
 
 // -----------------------------------------------------------------------------
-// Forward Deklarationen
+// Forward Declarations
 // -----------------------------------------------------------------------------
+
+namespace {
 
 struct lua_State;
 
+}
+
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
-// Klassendeklaration
+// Class definitions
 // -----------------------------------------------------------------------------
 
-class BS_LuaCallback
-{
+class BS_LuaCallback {
 public:
-	BS_LuaCallback(lua_State * L);
+	BS_LuaCallback(::lua_State * L);
 	virtual ~BS_LuaCallback();
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void RegisterCallbackFunction(lua_State * L, unsigned int ObjectHandle);
+	void RegisterCallbackFunction(::lua_State *L, unsigned int ObjectHandle);
 
 	// Funktion muss auf dem Lua-Stack liegen.
-	void UnregisterCallbackFunction(lua_State * L, unsigned int ObjectHandle);
+	void UnregisterCallbackFunction(::lua_State *L, unsigned int ObjectHandle);
 
-	void RemoveAllObjectCallbacks(lua_State * L, unsigned int ObjectHandle);
+	void RemoveAllObjectCallbacks(::lua_State *L, unsigned int ObjectHandle);
 
-	void InvokeCallbackFunctions(lua_State * L, unsigned int ObjectHandle);
+	void InvokeCallbackFunctions(::lua_State *L, unsigned int ObjectHandle);
 
 protected:
-	virtual int PreFunctionInvokation(lua_State * L) { return 0; }
+	virtual int PreFunctionInvokation(::lua_State *L) { return 0; }
 
 private:
-	void EnsureObjectCallbackTableExists(lua_State * L,unsigned int ObjectHandle);
-	void PushCallbackTable(lua_State * L);
-	void PushObjectCallbackTable(lua_State * L, unsigned int ObjectHandle);
+	void EnsureObjectCallbackTableExists(::lua_State *L,unsigned int ObjectHandle);
+	void PushCallbackTable(::lua_State *L);
+	void PushObjectCallbackTable(::lua_State *L, unsigned int ObjectHandle);
 };
+
+} // End of namespace Sword25
 
 #endif
