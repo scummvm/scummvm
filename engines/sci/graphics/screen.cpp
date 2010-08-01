@@ -62,7 +62,7 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	}
 
 	// Japanese versions of games use hi-res font on upscaled version of the game.
-	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
+	if ((g_sci->getPlatform() == Common::kPlatformPC98) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
 	_pixels = _width * _height;
