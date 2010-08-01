@@ -817,7 +817,7 @@ void OpenGLGraphicsManager::refreshCursorScale() {
 	uint screenScaleFactor = MIN(_videoMode.hardwareWidth * 10000 / _videoMode.screenWidth,
 		_videoMode.hardwareHeight * 10000 / _videoMode.screenHeight);
 
-	if (_cursorTargetScale * 10000 >= screenScaleFactor && _videoMode.scaleFactor * 10000 >= screenScaleFactor) {
+	if ((uint)_cursorTargetScale * 10000 >= screenScaleFactor && (uint)_videoMode.scaleFactor * 10000 >= screenScaleFactor) {
 		// If the cursor target scale and the video mode scale factor are bigger than
 		// the current window scale, do not scale the cursor for the overlay
 		_cursorState.rW = _cursorState.w;
