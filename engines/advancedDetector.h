@@ -38,8 +38,10 @@ struct ADGameFileDescription {
 	int32 fileSize;  // Optional. Set to -1 to ignore.
 };
 
-#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
-#define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, {NULL, 0, NULL, 0}}
+#define AD_LISTEND {NULL, 0, NULL, 0}
+
+#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, AD_LISTEND}
+#define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, AD_LISTEND}
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
