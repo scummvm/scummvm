@@ -64,7 +64,7 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 // How luaL_checkudata, only without that no error is generated.
-static void *my_checkudata(::lua_State *L, int ud, const char *tname) {
+static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 	int top = lua_gettop(L);
 
 	void * p = lua_touserdata(L, ud);
@@ -88,14 +88,14 @@ static void *my_checkudata(::lua_State *L, int ud, const char *tname) {
 
 // -----------------------------------------------------------------------------
 
-static void NewUintUserData(::lua_State *L, unsigned int Value) {
+static void NewUintUserData(lua_State *L, unsigned int Value) {
 	void * UserData = lua_newuserdata(L, sizeof(Value));
 	memcpy(UserData, &Value, sizeof(Value));
 }
 
 // -----------------------------------------------------------------------------
 
-static bool IsValidPolygonDefinition(::lua_State *L) {
+static bool IsValidPolygonDefinition(lua_State *L) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -140,7 +140,7 @@ static bool IsValidPolygonDefinition(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void TablePolygonToPolygon(::lua_State *L, BS_Polygon &Polygon) {
+static void TablePolygonToPolygon(lua_State *L, BS_Polygon &Polygon) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -184,7 +184,7 @@ static void TablePolygonToPolygon(::lua_State *L, BS_Polygon &Polygon) {
 
 // -----------------------------------------------------------------------------
 
-static unsigned int TableRegionToRegion(::lua_State *L, const char *ClassName) {
+static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -268,7 +268,7 @@ static unsigned int TableRegionToRegion(::lua_State *L, const char *ClassName) {
 
 // -----------------------------------------------------------------------------
 
-static void NewUserdataRegion(::lua_State *L, const char *ClassName)
+static void NewUserdataRegion(lua_State *L, const char *ClassName)
 {
 	// Region due to the Lua code to create
 	// Any errors that occur will be intercepted to the luaL_error
@@ -284,14 +284,14 @@ static void NewUserdataRegion(::lua_State *L, const char *ClassName)
 
 // -----------------------------------------------------------------------------
 
-static int NewRegion(::lua_State *L) {
+static int NewRegion(lua_State *L) {
 	NewUserdataRegion(L, REGION_CLASS_NAME);
 	return 1;
 }
 
 // -----------------------------------------------------------------------------
 
-static int NewWalkRegion(::lua_State *L) {
+static int NewWalkRegion(lua_State *L) {
 	NewUserdataRegion(L, WALKREGION_CLASS_NAME);
 	return 1;
 }
@@ -308,7 +308,7 @@ static const luaL_reg GEO_FUNCTIONS[] = {
 
 // -----------------------------------------------------------------------------
 
-static BS_Region * CheckRegion(::lua_State *L) {
+static BS_Region * CheckRegion(lua_State *L) {
 	// The first parameter must be of type 'userdata', and the Metatable class Geo.Region or Geo.WalkRegion
 	unsigned int *RegionHandlePtr;
 	if ((RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
@@ -324,7 +324,7 @@ static BS_Region * CheckRegion(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_IsValid(::lua_State *L) {
+static int R_IsValid(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -334,7 +334,7 @@ static int R_IsValid(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_GetX(::lua_State *L) {
+static int R_GetX(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -344,7 +344,7 @@ static int R_GetX(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_GetY(::lua_State *L) {
+static int R_GetY(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -354,7 +354,7 @@ static int R_GetY(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_GetPos(::lua_State *L) {
+static int R_GetPos(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -364,7 +364,7 @@ static int R_GetPos(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_IsPointInRegion(::lua_State *L) {
+static int R_IsPointInRegion(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -376,7 +376,7 @@ static int R_IsPointInRegion(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_SetPos(::lua_State *L) {
+static int R_SetPos(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -389,7 +389,7 @@ static int R_SetPos(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_SetX(::lua_State *L) {
+static int R_SetX(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -400,7 +400,7 @@ static int R_SetX(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_SetY(::lua_State *L) {
+static int R_SetY(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -431,7 +431,7 @@ static void DrawRegion(const BS_Region &Region, unsigned int Color, const BS_Ver
 
 // -----------------------------------------------------------------------------
 
-static int R_Draw(::lua_State *L) {
+static int R_Draw(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
@@ -456,7 +456,7 @@ static int R_Draw(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_GetCentroid(::lua_State *L) {
+static int R_GetCentroid(lua_State *L) {
 	BS_Region * RPtr = CheckRegion(L);
 	BS_ASSERT(RPtr);
 
@@ -467,7 +467,7 @@ static int R_GetCentroid(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int R_Delete(::lua_State *L) {
+static int R_Delete(lua_State *L) {
 	BS_Region * pR = CheckRegion(L);
 	BS_ASSERT(pR);
 	delete pR;
@@ -492,7 +492,7 @@ static const luaL_reg REGION_METHODS[] = {
 
 // -----------------------------------------------------------------------------
 
-static BS_WalkRegion *CheckWalkRegion(::lua_State *L) {
+static BS_WalkRegion *CheckWalkRegion(lua_State *L) {
 	// The first parameter must be of type 'userdate', and the Metatable class Geo.WalkRegion
 	unsigned int RegionHandle;
 	if ((RegionHandle = *reinterpret_cast<unsigned int *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
@@ -507,7 +507,7 @@ static BS_WalkRegion *CheckWalkRegion(::lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static int WR_GetPath(::lua_State *L) {
+static int WR_GetPath(lua_State *L) {
 	BS_WalkRegion *pWR = CheckWalkRegion(L);
 	BS_ASSERT(pWR);
 
@@ -544,7 +544,7 @@ bool BS_Geometry::_RegisterScriptBindings() {
 	BS_ASSERT(pKernel);
 	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
-	::lua_State *L = static_cast< ::lua_State *>(pScript->GetScriptObject());
+	lua_State *L = static_cast< lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);
 
 	if (!BS_LuaBindhelper::AddMethodsToClass(L, REGION_CLASS_NAME, REGION_METHODS)) return false;

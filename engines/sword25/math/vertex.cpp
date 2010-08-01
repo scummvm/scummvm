@@ -34,7 +34,7 @@
 
 #include "sword25/math/vertex.h"
 
-namespace {
+namespace Lua {
 
 extern "C"
 {

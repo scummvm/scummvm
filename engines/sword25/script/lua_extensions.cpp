@@ -43,7 +43,7 @@
 
 namespace Sword25 {
 
-static int Warning(::lua_State *L) {
+static int Warning(lua_State *L) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -73,7 +73,7 @@ static const luaL_reg GLOBAL_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool BS_LuaScriptEngine::RegisterStandardLibExtensions() {
-	::lua_State *L = m_State;
+	lua_State *L = m_State;
 	BS_ASSERT(m_State);
 
 	if (!BS_LuaBindhelper::AddFunctionsToLib(L, "", GLOBAL_FUNCTIONS)) return false;

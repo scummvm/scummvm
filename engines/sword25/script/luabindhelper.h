@@ -37,7 +37,7 @@
 
 #include "sword25/kernel/common.h"
 
-namespace {
+namespace Lua {
 
 extern "C"
 {
@@ -46,6 +46,8 @@ extern "C"
 }
 
 }
+
+using namespace Lua;
 
 namespace Sword25 {
 
@@ -68,7 +70,7 @@ public:
 	 * The array must be terminated with the enry (0, 0)
 	 * @return				Returns true if successful, otherwise false.
 	 */
-	static bool AddFunctionsToLib(::lua_State *L, const Common::String &LibName, const luaL_reg *Functions);
+	static bool AddFunctionsToLib(lua_State *L, const Common::String &LibName, const luaL_reg *Functions);
 
 	/**
 	 * Adds a set of constants to the Lua library
@@ -79,7 +81,7 @@ public:
 	 * The array must be terminated with the enry (0, 0)
 	 * @return				Returns true if successful, otherwise false.
 	 */
-	static bool AddConstantsToLib(::lua_State * L, const Common::String & LibName, const lua_constant_reg * Constants);
+	static bool AddConstantsToLib(lua_State * L, const Common::String & LibName, const lua_constant_reg * Constants);
 
 	/**
 	 * Adds a set of methods to a Lua class
@@ -90,7 +92,7 @@ public:
 	 * The array must be terminated with the enry (0, 0)
 	 * @return				Returns true if successful, otherwise false.
 	 */
-	static bool AddMethodsToClass(::lua_State *L, const Common::String &ClassName, const luaL_reg *Methods);
+	static bool AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods);
 
 	/**
 	 * Sets the garbage collector callback method when items of a particular class are deleted
@@ -100,25 +102,25 @@ public:
 	 * @param GCHandler		A function pointer
 	 * @return				Returns true if successful, otherwise false.
 	 */
-	static bool SetClassGCHandler(::lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler);
+	static bool SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler);
 
 	/**
 	 * Returns a string containing a stack dump of the Lua stack
 	 * @param L				A pointer to the Lua VM 
 	 */
-	static Common::String StackDump(::lua_State *L);
+	static Common::String StackDump(lua_State *L);
 
 	/**
 	 * Returns a string that describes the contents of a table
  	 * @param L				A pointer to the Lua VM 
 	 * @remark				The table must be on the Lua stack to be read out.
 	 */
-	static Common::String TableDump(::lua_State *L);
+	static Common::String TableDump(lua_State *L);
 
-	static bool GetMetatable(::lua_State *L, const Common::String &TableName);
+	static bool GetMetatable(lua_State *L, const Common::String &TableName);
 
 private:
-	static bool _CreateTable(::lua_State *L, const Common::String &TableName);
+	static bool _CreateTable(lua_State *L, const Common::String &TableName);
 };
 
 } // End of namespace Sword25

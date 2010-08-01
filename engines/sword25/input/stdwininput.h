@@ -36,23 +36,20 @@
 #define SWORD25_STDWININPUT_H
 
 /// Includes
-#include "sword25/kernel/memlog_off.h"
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <list>
-#include "sword25/kernel/memlog_on.h"
-
+#include "common/scummsys.h"
+#include "common/list.h"
 #include "sword25/kernel/common.h"
 #include "sword25/input/inputengine.h"
 
-/// Klassendefinitionen
+namespace Sword25 {
+
+/// Forward class definitions
 class BS_Kernel;
 
-/// Klassendefinition
-class BS_StdWinInput : public BS_InputEngine
-{
+/// Class definitions
+class BS_StdWinInput : public BS_InputEngine {
 public:
-	BS_StdWinInput(BS_Kernel* pKernel);
+	BS_StdWinInput(BS_Kernel *pKernel);
 	virtual ~BS_StdWinInput();
 	
 	virtual bool Init();
@@ -75,13 +72,13 @@ public:
 	virtual void ReportCharacter(unsigned char Character);
 	virtual void ReportCommand(KEY_COMMANDS Command);
 
-	bool Persist(BS_OutputPersistenceBlock & Writer);
-	bool Unpersist(BS_InputPersistenceBlock & Reader);
+	bool Persist(BS_OutputPersistenceBlock &Writer);
+	bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
 	void TestForLeftDoubleClick();
 
-	BYTE							m_KeyboardState[2][256];
+	byte							m_KeyboardState[2][256];
 	bool							m_LeftMouseState[2];
 	bool							m_RightMouseState[2];
 	unsigned int					m_CurrentState;
@@ -96,8 +93,10 @@ private:
 	unsigned int					m_LastLeftClickTime;
 	int								m_LastLeftClickMouseX;
 	int								m_LastLeftClickMouseY;
-	std::list<CommandCallback>		m_CommandCallbacks;
-	std::list<CharacterCallback>	m_CharacterCallbacks;
+	Common::List<CommandCallback>		m_CommandCallbacks;
+	Common::List<CharacterCallback>	m_CharacterCallbacks;
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -38,18 +38,6 @@
 // Includes
 // -----------------------------------------------------------------------------
 
-//namespace {
-
-extern "C"
-{
-	#include "sword25/util/lua/lua.h"
-	#include "sword25/util/lua/lualib.h"
-	#include "sword25/util/lua/lauxlib.h"
-	#include "sword25/util/pluto/pluto.h"
-}
-
-//}
-
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
@@ -57,9 +45,21 @@ extern "C"
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
+namespace Lua {
+
+extern "C" {
+	#include "sword25/util/lua/lua.h"
+	#include "sword25/util/lua/lualib.h"
+	#include "sword25/util/lua/lauxlib.h"
+	#include "sword25/util/pluto/pluto.h"
+}
+
+}
+
 namespace Sword25 {
 
 using namespace std;
+using namespace Lua;
 
 // -----------------------------------------------------------------------------
 // Constructor / Destructor
@@ -85,7 +85,7 @@ BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel * KernelPtr) { return new 
 // -----------------------------------------------------------------------------
 
 namespace {
-	int PanicCB(::lua_State *L) {
+	int PanicCB(lua_State *L) {
 		BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
 		return 0;
 	}
@@ -193,7 +193,7 @@ bool BS_LuaScriptEngine::ExecuteString(const Common::String &Code) {
 
 namespace {
 
-	void RemoveForbiddenFunctions(::lua_State *L) {
+	void RemoveForbiddenFunctions(lua_State *L) {
 		static const char *FORBIDDEN_FUNCTIONS[] = {
 			"dofile",
 			0
@@ -326,7 +326,7 @@ namespace {
 
 	// -------------------------------------------------------------------------
 
-	bool PushPermanentsTable(::lua_State *L, PERMANENT_TABLE_TYPE TableType) {
+	bool PushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE TableType) {
 		// Permanents-Table
 		lua_newtable(L);
 
@@ -409,7 +409,7 @@ namespace {
 // -----------------------------------------------------------------------------
 
 namespace {
-	int Chunkwriter(::lua_State *L, const void *p, size_t sz, void *ud) {
+	int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
 		vector<unsigned char> & chunkData = *reinterpret_cast<vector<unsigned char> * >(ud);
 		const unsigned char *buffer = reinterpret_cast<const unsigned char *>(p);
 
@@ -457,7 +457,7 @@ namespace {
 
 	// ------------------------------------------------------------------------
 
-	const char *Chunkreader(::lua_State *L, void *ud, size_t *sz) {
+	const char *Chunkreader(lua_State *L, void *ud, size_t *sz) {
 		ChunkreaderData & cd = *reinterpret_cast<ChunkreaderData *>(ud);
 
 		if (!cd.BufferReturned) {
@@ -471,7 +471,7 @@ namespace {
 
 	// -------------------------------------------------------------------------
 
-	void ClearGlobalTable(::lua_State *L, const char **Exceptions) {
+	void ClearGlobalTable(lua_State *L, const char **Exceptions) {
 		// Iterate over all elements of the global table
 		lua_pushvalue(L, LUA_GLOBALSINDEX);
 		lua_pushnil(L);

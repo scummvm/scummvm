@@ -46,12 +46,14 @@
 #include <math.h>
 #include "sword25/kernel/common.h"
 
-namespace {
+namespace Lua {
 
 // Forward declarations
 struct lua_State;
 
 }
+
+using namespace Lua;
 
 namespace Sword25 {
 
@@ -151,8 +153,8 @@ public:
 		return sqrtf(static_cast<float>(X * X + Y * Y));
 	}
 
-	static BS_Vertex & LuaVertexToVertex(lua_State * L, int StackIndex, BS_Vertex & Vertex);
-	static void VertexToLuaVertex(lua_State * L, const BS_Vertex & Vertex);
+	static BS_Vertex &LuaVertexToVertex(lua_State *L, int StackIndex, BS_Vertex &Vertex);
+	static void VertexToLuaVertex(lua_State *L, const BS_Vertex &Vertex);
 };
 
 } // End of namespace Sword25

@@ -48,11 +48,13 @@
 // Forward declarations
 // -----------------------------------------------------------------------------
 
-namespace {
+namespace Lua {
 
 struct lua_State;
 
 }
+
+using namespace Lua;
 
 namespace Sword25 {
 
@@ -115,7 +117,7 @@ public:
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	::lua_State *m_State;
+	lua_State *m_State;
 	int m_PcallErrorhandlerRegistryIndex;
 
 	bool RegisterStandardLibs();
