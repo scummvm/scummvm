@@ -45,7 +45,7 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "MAIN"
 
-const char * const PACKAGE_MANAGER = "physfs";
+const char * const PACKAGE_MANAGER = "archiveFS";
 const char * const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
 const char * const MOUNT_DIR_PARAMETER = "-mount-dir";
 

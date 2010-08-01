@@ -50,7 +50,7 @@
 namespace Sword25 {
 
 BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_PhysfsPackageManager_CreateObject(BS_Kernel* pKernel);
+BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel* pKernel);
 BS_Service *BS_StdWinInput_CreateObject(BS_Kernel* pKernel);
 BS_Service *BS_FMODExSound_CreateObject(BS_Kernel* pKernel);
 BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel* pKernel);
@@ -65,7 +65,7 @@ const BS_ServiceInfo BS_SERVICE_TABLE[] =
 	// Beispiel:
 	// BS_ServiceInfo("Superclass", "Service", CreateMethod)
 	BS_ServiceInfo("gfx", "opengl", BS_OpenGLGfx_CreateObject),
-	BS_ServiceInfo("package", "physfs", BS_PhysfsPackageManager_CreateObject),
+	BS_ServiceInfo("package", "archiveFS", BS_ScummVMPackageManager_CreateObject),
 	BS_ServiceInfo("input", "winapi", BS_StdWinInput_CreateObject),
 	BS_ServiceInfo("sfx", "fmodex", BS_FMODExSound_CreateObject),
 	BS_ServiceInfo("script", "lua", BS_LuaScriptEngine_CreateObject),
