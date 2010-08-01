@@ -176,11 +176,12 @@ Common::StringArray Kernel::checkStaticSelectorNames() {
 
 			names[110] = "init";
 		} else if (g_sci->getGameId() == GID_LAURABOW2) {
-			// The floppy of version needs the open selector set to match up with the CD version's
-			// workaround - bug #3035694
+			// The floppy of version needs the open and changeState selectors set to match up with the
+			// CD version's workarounds - bugs #3035694 and #3036291
 			if (names.size() < 190)
 				names.resize(190);
 
+			names[144] = "changeState";
 			names[189] = "open";
 		}
 
