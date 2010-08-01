@@ -108,6 +108,7 @@ SOURCE rate_arm_asm.s	// ARM version: add ASM routines
 
 // add a few files manually, since they are not parsed from modules.mk files
 SOURCEPATH ..\..\..\..
+SOURCE	   base\main.cpp
 SOURCE	   backends\events\default\default-events.cpp
 SOURCE	   backends\timer\default\default-timer.cpp
 SOURCE	   backends\saves\savefile.cpp
@@ -120,12 +121,24 @@ SOURCE	   engines\game.cpp
 SOURCE 	   engines\advanceddetector.cpp
 SOURCE 	   engines\savestate.cpp
 // backend specific includes
+SOURCE	   backends\modular-backend.cpp
+SOURCE     backends\audiocd\default\default-audiocd.cpp
+SOURCE     backends\audiocd\sdl\sdl-audiocd.cpp
+SOURCE     backends\events\sdl\sdl-events.cpp
+SOURCE     backends\events\symbiansdl\symbiansdl-events.cpp
 SOURCE	   backends\fs\abstract-fs.cpp
 SOURCE	   backends\fs\symbian\symbianstream.cpp
+SOURCE     backends\graphics\sdl\sdl-graphics.cpp
+SOURCE     backends\graphics\symbiansdl\symbiansdl-graphics.cpp
 SOURCE     backends\keymapper\action.cpp
 SOURCE     backends\keymapper\keymap.cpp
 SOURCE     backends\keymapper\keymapper.cpp
 SOURCE     backends\keymapper\remap-dialog.cpp
+SOURCE     backends\mixer\sdl\sdl-mixer.cpp
+SOURCE     backends\mixer\symbiansdl\symbiansdl-mixer.cpp
+SOURCE     backends\mutex\sdl\sdl-mutex.cpp
+SOURCE     backends\timer\sdl\sdl-timer.cpp
+
 // Source files for virtual keyboard
 SOURCE     backends\vkeybd\image-map.cpp
 SOURCE     backends\vkeybd\polygon.cpp

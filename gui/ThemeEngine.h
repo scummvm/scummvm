@@ -37,6 +37,7 @@
 namespace Graphics {
 	struct DrawStep;
 	class VectorRenderer;
+	class Font;
 }
 
 namespace GUI {
@@ -51,6 +52,7 @@ class GuiObject;
 class ThemeEval;
 class ThemeItem;
 class ThemeParser;
+
 
 /**
  *	DrawData sets enumeration.

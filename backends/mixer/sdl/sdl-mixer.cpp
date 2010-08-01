@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(WIN32) || defined(UNIX) || defined(MACOSX)
+#if defined(WIN32) || defined(UNIX) || defined(MACOSX) || defined (__SYMBIAN32__)
 
 #include "backends/mixer/sdl/sdl-mixer.h"
 #include "common/system.h"
