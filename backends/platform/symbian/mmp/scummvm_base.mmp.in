@@ -108,7 +108,6 @@ SOURCE rate_arm_asm.s	// ARM version: add ASM routines
 
 // add a few files manually, since they are not parsed from modules.mk files
 SOURCEPATH ..\..\..\..
-SOURCE	   base\main.cpp
 SOURCE	   backends\events\default\default-events.cpp
 SOURCE	   backends\timer\default\default-timer.cpp
 SOURCE	   backends\saves\savefile.cpp
