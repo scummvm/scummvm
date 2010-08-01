@@ -56,11 +56,8 @@ const Common::String &Kernel::getSelectorName(uint selector) {
 		// This should only occur in games w/o a selector-table
 		//  We need this for proper workaround tables
 		// TODO: maybe check, if there is a fixed selector-table and error() out in that case
-		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; loopSelector++) {
-			Common::String newSelectorName;
-			newSelectorName = newSelectorName.printf("<noname%d>", loopSelector);
-			_selectorNames.push_back(newSelectorName);
-		}
+		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; ++loopSelector)
+			_selectorNames.push_back(Common::String::printf("<noname%d>", loopSelector));
 	}
 	return _selectorNames[selector];
 }
