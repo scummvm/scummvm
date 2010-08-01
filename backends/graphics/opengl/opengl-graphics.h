@@ -33,6 +33,9 @@
 // Uncomment this to enable the 'on screen display' code.
 #define USE_OSD	1
 
+// Uncomment this to enable all aspect ratio corrections (Will include 16/9 and 16/10)
+//#define USE_ALL_ASR 1
+
 namespace OpenGL {
 // The OpenGL GFX modes. They have to be inside the OpenGL namespace so they
 // do not clash with the SDL GFX modes.

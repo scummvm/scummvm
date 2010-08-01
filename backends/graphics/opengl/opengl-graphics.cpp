@@ -1179,7 +1179,11 @@ void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
 	if (_transactionMode == kTransactionActive) {
 		if (ratio == -1)
 			// If -1, switch to next mode
+#ifdef USE_ALL_ASR
 			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 5;
+#else
+			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 3;
+#endif
 		else
 			_videoMode.aspectRatioCorrection = ratio;
 		_transactionDetails.needHotswap = true;
