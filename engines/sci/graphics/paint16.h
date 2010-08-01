@@ -88,8 +88,6 @@ public:
 
 	reg_t kernelDisplay(const char *text, int argc, reg_t *argv);
 
-	void kernelShakeScreen(uint16 shakeCount, uint16 directions);
-
 	reg_t kernelPortraitLoad(const Common::String &resourceName);
 	void kernelPortraitShow(const Common::String &resourceName, Common::Point position, uint16 resourceNum, uint16 noun, uint16 verb, uint16 cond, uint16 seq);
 	void kernelPortraitUnload(uint16 portraitId);

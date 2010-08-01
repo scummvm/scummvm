@@ -596,23 +596,6 @@ reg_t GfxPaint16::kernelDisplay(const char *text, int argc, reg_t *argv) {
 	return result;
 }
 
-// TODO: If this matches the sci32 implementation, we may put it into GfxScreen
-void GfxPaint16::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
-	while (shakeCount--) {
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(10);
-		// TODO: horizontal shakes
-		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
-
-		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
-			_screen->setVerticalShakePos(0);
-
-		g_system->updateScreen();
-		g_sci->getEngineState()->wait(3);
-	}
-}
-
 reg_t GfxPaint16::kernelPortraitLoad(const Common::String &resourceName) {
 	//Portrait *myPortrait = new Portrait(g_sci->getResMan(), _screen, _palette, resourceName);
 	return NULL_REG;

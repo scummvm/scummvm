@@ -534,6 +534,22 @@ void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 		g_system->setShakePos(shakePos * 2);
 }
 
+void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
+	while (shakeCount--) {
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			setVerticalShakePos(10);
+		// TODO: horizontal shakes
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			setVerticalShakePos(0);
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+	}
+}
+
 void GfxScreen::dither(bool addToFlag) {
 	int y, x;
 	byte color, ditheredColor;

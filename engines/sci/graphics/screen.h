@@ -109,8 +109,6 @@ public:
 	void getPalette(Palette *pal);
 	void setPalette(Palette *pal);
 
-	void setVerticalShakePos(uint16 shakePos);
-
 	void scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight);
 
 	void adjustToUpscaledCoordinates(int16 &y, int16 &x);
@@ -126,6 +124,7 @@ public:
 	int _picNotValidSci11; // another variable that is used by kPicNotValid in sci1.1
 
 	int16 kernelPicNotValid(int16 newPicNotValid);
+	void kernelShakeScreen(uint16 shakeCount, uint16 direction);
 
 private:
 	uint16 _width;
@@ -142,6 +141,8 @@ private:
 	void bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr);
 	void bitsSaveScreen(Common::Rect rect, byte *screen, uint16 screenWidth, byte *&memoryPtr);
 	void bitsSaveDisplayScreen(Common::Rect rect, byte *&memoryPtr);
+
+	void setVerticalShakePos(uint16 shakePos);
 
 	bool _unditherState;
 	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];

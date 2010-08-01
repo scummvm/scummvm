@@ -1082,7 +1082,7 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int16 shakeCount = (argc > 0) ? argv[0].toUint16() : 1;
 	int16 directions = (argc > 1) ? argv[1].toUint16() : 1;
 
-	g_sci->_gfxPaint->kernelShakeScreen(shakeCount, directions);
+	g_sci->_gfxScreen->kernelShakeScreen(shakeCount, directions);
 	return s->r_acc;
 }
 
