@@ -210,6 +210,7 @@ const SciWorkaroundEntry kGraphSaveBox_workarounds[] = {
 	{ GID_ISLANDBRAIN,   290,   291,  0,         "upElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // when testing in the elevator puzzle, gets called with 1 argument less - 15 is on stack - bug #3034485
 	{ GID_ISLANDBRAIN,   290,   291,  0,       "downElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // see above
 	{ GID_ISLANDBRAIN,   290,   291,  0,    "correctElevator", "changeState",0x201f,    0, { WORKAROUND_STILLCALL, 0 } }, // see above (when testing the correct solution)
+	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
@@ -244,6 +245,13 @@ const SciWorkaroundEntry kGraphRedrawBox_workarounds[] = {
 	{ GID_SQ4,            -1,   704,  0,           "shootEgo", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // When shot by Droid in Super Computer Maze (Rooms 500, 505, 510...) - accidental additional parameter specified
 	{ GID_KQ5,            -1,   981,  0,           "myWindow",     "dispose",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing any dialog box, accidental additional parameter specified - bug #3036331
 	{ GID_KQ5,            -1,   995,  0,               "invW",        "doit",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // Happens in the floppy version, when closing the inventory window, accidental additional parameter specified
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kGraphUpdateBox_workarounds[] = {
+	{ GID_PQ3,           202,   202,  0,            "MapEdit", "movePt",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
+	{ GID_PQ3,           202,   202,  0,            "MapEdit",  "addPt",         -1,    0, { WORKAROUND_STILLCALL, 0 } }, // when plotting crimes, gets called with 2 extra parameters - bug #3038077
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
