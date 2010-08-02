@@ -748,11 +748,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// We don't need the thumbnail here, so just read it and discard it
-	Graphics::Surface *thumbnail = new Graphics::Surface();
-	assert(thumbnail);
-	Graphics::loadThumbnail(*fh, *thumbnail);
-	delete thumbnail;
-	thumbnail = 0;
+	Graphics::skipThumbnailHeader(*fh);
 
 	s->reset(true);
 	s->saveLoadWithSerializer(ser);	// FIXME: Error handling?
