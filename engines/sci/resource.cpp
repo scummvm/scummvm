@@ -1907,18 +1907,18 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
+		if (hasSci0Voc999()) {
+			s_sciVersion = SCI_VERSION_0_LATE;
+			return;
+		}
+
 		if (oldDecompressors) {
 			// It's either SCI_VERSION_0_LATE or SCI_VERSION_01
 
 			// We first check for SCI1 vocab.999
 			if (testResource(ResourceId(kResourceTypeVocab, 999))) {
-				if (hasSci0Voc999()) {
-					s_sciVersion = SCI_VERSION_0_LATE;
-					return;
-				} else {
-					s_sciVersion = SCI_VERSION_01;
-					return;
-				}
+				s_sciVersion = SCI_VERSION_01;
+				return;
 			}
 
 			// If vocab.999 is missing, we try vocab.900
@@ -1938,12 +1938,7 @@ void ResourceManager::detectSciVersion() {
 			return;
 		}
 
-		// New decompressors. It's either SCI_VERSION_0_LATE, SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
-		if (testResource(ResourceId(kResourceTypeVocab, 0))) {
-			s_sciVersion = SCI_VERSION_0_LATE;
-			return;
-		}
-
+		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
 		if (hasSci1Voc900()) {
 			s_sciVersion = SCI_VERSION_1_EGA;
 			return;
