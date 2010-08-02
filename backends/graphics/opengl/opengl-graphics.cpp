@@ -27,6 +27,7 @@
 
 #include "backends/graphics/opengl/opengl-graphics.h"
 #include "backends/graphics/opengl/glerrorcheck.h"
+#include "common/config-manager.h"
 #include "common/file.h"
 #include "common/mutex.h"
 #include "common/translation.h"
@@ -55,7 +56,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 
 	_videoMode.mode = OpenGL::GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
-	_videoMode.fullscreen = false;
+	_videoMode.fullscreen = ConfMan.getBool("fullscreen");
 	_videoMode.antialiasing = false;
 	_videoMode.aspectRatioCorrection = 0;
 

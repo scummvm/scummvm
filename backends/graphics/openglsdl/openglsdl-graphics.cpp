@@ -47,7 +47,12 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	// Get desktop resolution
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
 	if (videoInfo->current_w > 0 && videoInfo->current_h > 0)
-		_desktopAspectRatio = videoInfo->current_w * 10000 / videoInfo->current_h; 
+		_desktopAspectRatio = videoInfo->current_w * 10000 / videoInfo->current_h;
+
+	if (ConfMan.hasKey("last_fullscreen_mode_width") && ConfMan.hasKey("last_fullscreen_mode_height")) {
+		_lastFullscreenModeWidth = ConfMan.getInt("last_fullscreen_mode_width");
+		_lastFullscreenModeHeight = ConfMan.getInt("last_fullscreen_mode_height");
+	}
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
@@ -360,6 +365,8 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	if (_videoMode.fullscreen) {
 		_lastFullscreenModeWidth = _videoMode.hardwareWidth;
 		_lastFullscreenModeHeight = _videoMode.hardwareHeight;
+		ConfMan.setInt("last_fullscreen_mode_width", _lastFullscreenModeWidth);
+		ConfMan.setInt("last_fullscreen_mode_height", _lastFullscreenModeHeight);
 	}
 
 	// Call and return parent implementation of this method
