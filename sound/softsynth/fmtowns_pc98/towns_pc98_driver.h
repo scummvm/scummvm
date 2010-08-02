@@ -28,6 +28,11 @@
 
 #include "sound/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 
+class TownsPC98_MusicChannel;
+class TownsPC98_MusicChannelSSG;
+class TownsPC98_SfxChannel;
+class TownsPC98_MusicChannelPCM;
+
 class TownsPC98_AudioDriver : public TownsPC98_FmSynth {
 friend class TownsPC98_MusicChannel;
 friend class TownsPC98_MusicChannelSSG;
