@@ -29,6 +29,8 @@
 #include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
+#include "gui/message.h"
+
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
@@ -894,7 +896,8 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
-	if (objName == "changeDirI") {
+	// "changeDirItem" is used in the import windows of QFG2&3
+	if ((objName == "changeDirI") || (objName == "changeDirItem")) {
 		int state = readSelectorValue(s->_segMan, controlObject, SELECTOR(state));
 		writeSelectorValue(s->_segMan, controlObject, SELECTOR(state), (state | SCI_CONTROLS_STYLE_DISABLED) & ~SCI_CONTROLS_STYLE_ENABLED);
 	}
@@ -909,6 +912,12 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 				s->_segMan->strcpy(textReference, text.c_str());
 			}
 		}
+	}
+	if (objName == "savedHeros") {
+		// Import of QfG character files dialog is shown
+		// display additional popup information before letting user use it
+		GUI::MessageDialog dialog("characters saved inside ScummVM will get shown automatically. Character files saved in the original interpreter need to get put inside ScummVM saved games directory and a prefix need to get added depending on which game it was saved in 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2 e.g. 'qfg2-thief.sav'", "OK");
+		dialog.runModal();
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
