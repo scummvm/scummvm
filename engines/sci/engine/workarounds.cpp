@@ -294,6 +294,12 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
+const SciWorkaroundEntry kStrAt_workarounds[] = {
+	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",0x1c7c,    0, { WORKAROUND_IGNORE,    0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #3037835
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kUnLoad_workarounds[] = {
 	{ GID_CAMELOT,       921,   921,  1,             "Script", "changeState",  0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: While showing Camelot (and other places), the reference is invalid - bug #3035000
 	{ GID_CAMELOT,       921,   921,  1,             "Script", "init",         0x36,    0, { WORKAROUND_IGNORE, 0 } }, // DEMO: When being attacked by the boar (and other places), the reference is invalid - bug #3035000

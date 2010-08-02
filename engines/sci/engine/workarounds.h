@@ -94,6 +94,7 @@ extern const SciWorkaroundEntry kNewWindow_workarounds[];
 extern const SciWorkaroundEntry kPaletteUnsetFlag_workarounds[];
 extern const SciWorkaroundEntry kSetCursor_workarounds[];
 extern const SciWorkaroundEntry kSetPort_workarounds[];
+extern const SciWorkaroundEntry kStrAt_workarounds[];
 extern const SciWorkaroundEntry kUnLoad_workarounds[];
 
 extern SciWorkaroundSolution trackOriginAndFindWorkaround(int index, const SciWorkaroundEntry *workaroundList, SciTrackOriginReply *trackOrigin);
