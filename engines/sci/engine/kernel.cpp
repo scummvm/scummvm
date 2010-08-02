@@ -43,8 +43,17 @@ Kernel::Kernel(ResourceManager *resMan, SegManager *segMan)
 }
 
 Kernel::~Kernel() {
-	for (KernelFunctionArray::iterator i = _kernelFuncs.begin(); i != _kernelFuncs.end(); ++i)
-		delete[] i->signature;
+	for (KernelFunctionArray::iterator it = _kernelFuncs.begin(); it != _kernelFuncs.end(); ++it) {
+		if (it->subFunctionCount) {
+			uint16 subFunctionNr = 0;
+			while (subFunctionNr < it->subFunctionCount) {
+				delete[] it->subFunctions[subFunctionNr].signature;
+				subFunctionNr++;
+			}
+			delete[] it->subFunctions;
+		}
+		delete[] it->signature;
+	}
 }
 
 uint Kernel::getSelectorNamesSize() const {
