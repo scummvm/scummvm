@@ -295,7 +295,7 @@ const SciWorkaroundEntry kSetPort_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kStrAt_workarounds[] = {
-	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",0x1c7c,    0, { WORKAROUND_IGNORE,    0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #3037835
+	{ GID_ISLANDBRAIN,   300,   310,  0,         "childBreed", "changeState",0x1c7c,    0, { WORKAROUND_FAKE,      0 } }, // when clicking Breed to get the second-generation cyborg hybrid (Standard difficulty), the two parameters are swapped - bug #3037835
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
