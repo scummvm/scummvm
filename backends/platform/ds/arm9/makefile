@@ -205,7 +205,6 @@ CXX     = arm-eabi-g++
 LD	= arm-eabi-g++
 
 CFLAGS	=	-Wno-multichar -Wall\
-		-Wno-multichar -mcpu=arm9tdmi -mtune=arm9tdmi \
 		-mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer\
 		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1 -DDISABLE_SID
 

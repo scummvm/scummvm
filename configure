@@ -1390,7 +1390,8 @@ case $_host_os in
 		# TODO Nintendo DS
 		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
-		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		CXXFLAGS="$CXXFLAGS -mcpu=arm9tdmi -mtune=arm9tdmi -fomit-frame-pointer -mthumb-interwork"
+		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fno-strict-aliasing"
 		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
 		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
 		LIBS="$LIBS -lnds9"
