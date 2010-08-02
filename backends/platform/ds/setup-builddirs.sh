@@ -6,7 +6,7 @@
 # TODO: Computer srcdir in a better way
 srcdir=../../../`dirname $0`/..
 
-BASE_PARAM="--host=ds --disable-translation --disable-all-engines"
+BASE_PARAM="--host=ds --disable-translation --disable-debug --disable-all-engines"
 
 for build in a b c d e f g h i k; do
 	echo "--- Setting up build $build ---"
