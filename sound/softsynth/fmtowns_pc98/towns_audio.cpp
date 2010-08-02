@@ -572,7 +572,7 @@ int TownsAudioInterface::intf_pcmPlayEffect(va_list &args) {
 	TownsAudio_WaveTable w;
 	w.readHeader(data);
 
-	if (!w.size < (w.loopStart + w.loopLen))
+	if (w.size < (w.loopStart + w.loopLen))
 		return 13;
 
 	if (!w.size)
