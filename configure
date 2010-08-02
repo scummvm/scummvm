@@ -1669,11 +1669,9 @@ if test -n "$_host"; then
 			_ar="$_host_alias-ar cru"
 			_ranlib="$_host_alias-ranlib"
 			_backend="n64"
-			_endian=big
 			_need_memalign=yes
 			_mt32emu=no
 			_vkeybd=yes
-			_build_hq_scalers=no
 			_build_scalers=no
 			_indeo3=no
 			_translation=no
