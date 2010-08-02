@@ -27,6 +27,7 @@
 
 #include "backends/graphics/openglsdl/openglsdl-graphics.h"
 #include "backends/platform/sdl/sdl.h"
+#include "common/config-manager.h"
 
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
