@@ -1825,6 +1825,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"ressci.000", 0, "32792f9bc1bf3633a88b382bb3f6e40d", 67071418},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+#endif
 
 	// Lighthouse - English Windows Demo (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.00"
@@ -1834,6 +1835,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH	},
 
+#ifdef ENABLE_SCI3_GAMES
 	// Lighthouse - English Windows Demo
 	// Executable scanning reports "3.000.000", VERSION file reports "1.00"
 	{"lighthouse", "Demo", {
