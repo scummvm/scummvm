@@ -249,6 +249,9 @@ void GuiManager::runLoop() {
 		redraw();
 	}
 
+	_lastMousePosition.x = _lastMousePosition.y = -1;
+	_lastMousePosition.time = 0;
+
 	Common::EventManager *eventMan = _system->getEventManager();
 	uint32 lastRedraw = 0;
 	const uint32 waitTime = 1000 / 45;
