@@ -80,13 +80,21 @@ protected:
 	 */
 	virtual void toggleFullScreen(bool loop);
 
+	/**
+	 * Setup the fullscreen mode.
+	 * @return false if failed finding a mode, true otherwise.
+	 */
+	virtual bool setupFullscreenMode();
+
+	int _lastFullscreenModeWidth;
+	int _lastFullscreenModeHeight;
+	uint _desktopAspectRatio;
+
 	// Hardware screen
 	SDL_Surface *_hwscreen;
 
+	// If screen was resized by the user
 	bool _screenResized;
-
-	int _desktopWidth;
-	int _desktopHeight;
 };
 
 #endif

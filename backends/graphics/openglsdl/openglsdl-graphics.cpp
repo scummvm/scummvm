@@ -31,7 +31,10 @@
 OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	:
 	_hwscreen(0),
-	_screenResized(false) {
+	_screenResized(false),
+	_lastFullscreenModeWidth(0),
+	_lastFullscreenModeHeight(0),
+	_desktopAspectRatio(0) {
 
 	// Initialize SDL video subsystem
 	if (SDL_InitSubSystem(SDL_INIT_VIDEO) == -1) {
@@ -43,8 +46,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 
 	// Get desktop resolution
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-	_desktopWidth = videoInfo->current_w; 
-	_desktopHeight = videoInfo->current_h;
+	if (videoInfo->current_w > 0 && videoInfo->current_h > 0)
+		_desktopAspectRatio = videoInfo->current_w * 10000 / videoInfo->current_h; 
 }
 
 OpenGLSdlGraphicsManager::~OpenGLSdlGraphicsManager() {
@@ -175,20 +178,118 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 #endif
 
 void OpenGLSdlGraphicsManager::warpMouse(int x, int y) {
-	if (_cursorState.x != x || _cursorState.y != y) {
-		if (!_overlayVisible)
-			SDL_WarpMouse(x * _videoMode.scaleFactor, y * _videoMode.scaleFactor);
-		else
-			SDL_WarpMouse(x, y);
+	int scaledX = x;
+	int scaledY = y;
 
-		setMousePos(x, y);
+	if (!_videoMode.aspectRatioCorrection) {
+		if (_videoMode.hardwareWidth != _videoMode.overlayWidth)
+			scaledX = scaledX * _videoMode.hardwareWidth / _videoMode.overlayWidth;
+		if (_videoMode.hardwareHeight != _videoMode.overlayHeight)
+			scaledY = scaledY * _videoMode.hardwareHeight / _videoMode.overlayHeight;
+
+		if (!_overlayVisible) {
+			scaledX *= _videoMode.scaleFactor;
+			scaledY *= _videoMode.scaleFactor;
+		}
+
+	} else {
+		if (_overlayVisible) {
+			if (_aspectWidth != _videoMode.overlayWidth)
+				scaledX = scaledX * _aspectWidth / _videoMode.overlayWidth;
+			if (_aspectHeight != _videoMode.overlayHeight)
+				scaledY = scaledY * _aspectHeight / _videoMode.overlayHeight;
+		} else {
+			if (_aspectWidth != _videoMode.screenWidth)
+				scaledX = scaledX * _aspectWidth / _videoMode.screenWidth;
+			if (_aspectHeight != _videoMode.screenHeight)
+				scaledY = scaledY * _aspectHeight / _videoMode.screenHeight;
+		}
+
+		scaledX += _aspectX;
+		scaledY += _aspectY;
 	}
+
+	SDL_WarpMouse(scaledX, scaledY);
+
+	setMousePos(scaledX, scaledY);
 }
 
 
 //
 // Intern
 //
+
+bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
+	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
+
+	// If -1, autodetect the fullscreen mode
+	if (_videoMode.activeFullscreenMode == -1) {
+		// Best metric mode
+		const SDL_Rect *bestMode = availableModes[0];
+		int bestModeIndex = 0;
+		uint bestMetric = (uint)-1;
+
+		// Best Aspect Ratio mode (Same ASR as desktop and less metric)
+		const SDL_Rect *bestASRMode = NULL;
+		int bestASRModeIndex = 0;
+		uint bestASRMetric = (uint)-1;
+
+		// Iterate over all available fullscreen modes
+		for (int i = 0; const SDL_Rect *mode = availableModes[i]; i++) {
+			// Try to setup the last used fullscreen mode
+			if (mode->w == _lastFullscreenModeWidth && mode->h == _lastFullscreenModeHeight) {
+				_videoMode.hardwareWidth = _lastFullscreenModeWidth;
+				_videoMode.hardwareHeight = _lastFullscreenModeHeight;
+				_videoMode.activeFullscreenMode = i;
+				return true;
+			}
+
+			if (mode->w < _videoMode.overlayWidth)
+				continue;
+			if (mode->h < _videoMode.overlayHeight)
+				continue;
+
+			uint metric = mode->w * mode->h - _videoMode.overlayWidth * _videoMode.overlayHeight;
+			if (metric < bestMetric) {
+				bestMode = mode;
+				bestMetric = metric;
+				bestModeIndex = i;
+			}
+			if ((uint)(mode->w * 10000 / mode->h) == _desktopAspectRatio) {
+				bestASRMode = mode;
+				bestASRModeIndex = i;
+				bestASRMetric = metric;
+			}
+		}
+
+		if (bestASRMode) {
+			// Prefer modes that have the same aspect ratio as the native resolution
+			_videoMode.hardwareWidth = bestASRMode->w;
+			_videoMode.hardwareHeight = bestASRMode->h;
+
+			_videoMode.activeFullscreenMode = bestASRModeIndex;
+			return true;
+		} else if (bestMode) {
+			// If there is a suiting mode, use it
+			_videoMode.hardwareWidth = bestMode->w;
+			_videoMode.hardwareHeight = bestMode->h;
+
+			_videoMode.activeFullscreenMode = bestModeIndex;
+			return true;
+		}
+	} else {
+		if (!availableModes[_videoMode.activeFullscreenMode])
+			_videoMode.activeFullscreenMode = 0;
+
+		if (availableModes[_videoMode.activeFullscreenMode]) {
+			_videoMode.hardwareWidth = availableModes[_videoMode.activeFullscreenMode]->w;
+			_videoMode.hardwareHeight = availableModes[_videoMode.activeFullscreenMode]->h;
+			return true;
+		}
+	}
+
+	return false;
+}
 
 bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
@@ -213,7 +314,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 		if (_videoMode.hardwareHeight > _videoMode.overlayHeight)
 			_videoMode.overlayHeight = _videoMode.hardwareHeight;
 	}
-	
 
 	_screenResized = false;
 
@@ -224,67 +324,10 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
 
-	// Find the best mode for fullscreen
-	if (_videoMode.fullscreen) {
-		SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
-
-		if (_videoMode.activeFullscreenMode == -1) {
-			const SDL_Rect *bestMode = availableModes[0];
-			int bestModeIndex = 0;
-			uint bestMetric = (uint)-1;
-
-			// Best Aspect Ratio mode
-			const SDL_Rect *bestARMode = NULL;
-			int bestARModeIndex = 0;
-			uint bestARMetric = (uint)-1;
-
-			int targetAspectRatio = _videoMode.overlayWidth * 10000 / _videoMode.overlayHeight;
-
-			// Iterate over all available fullscreen modes
-			for (int i = 0; const SDL_Rect *mode = availableModes[i]; i++) {
-				if (mode->w < _videoMode.overlayWidth)
-					continue;
-				if (mode->h < _videoMode.overlayHeight)
-					continue;
-
-				uint metric = mode->w * mode->h - _videoMode.overlayWidth * _videoMode.overlayHeight;
-				if (metric < bestMetric) {
-					bestMode = mode;
-					bestMetric = metric;
-					bestModeIndex = i;
-				}
-				if (mode->w * 10000 / mode->h == targetAspectRatio) {
-					bestARMode = mode;
-					bestARModeIndex = i;
-					bestARMetric = metric;
-				}
-			}
-
-			if (bestARMode) {
-				// Prefer modes that conserves the aspect ratio
-				_videoMode.hardwareWidth = bestARMode->w;
-				_videoMode.hardwareHeight = bestARMode->h;
-
-				_videoMode.activeFullscreenMode = bestARModeIndex;
-			} else if (bestMode) {
-				// If there is a suiting mode, use it
-				_videoMode.hardwareWidth = bestMode->w;
-				_videoMode.hardwareHeight = bestMode->h;
-
-				_videoMode.activeFullscreenMode = bestModeIndex;
-			}
-		} else {
-			if (!availableModes[_videoMode.activeFullscreenMode])
-				_videoMode.activeFullscreenMode = 0;
-
-			if (availableModes[_videoMode.activeFullscreenMode]) {
-				_videoMode.hardwareWidth = availableModes[_videoMode.activeFullscreenMode]->w;
-				_videoMode.hardwareHeight = availableModes[_videoMode.activeFullscreenMode]->h;
-			} else {
-				return false;
-			}
-		}
-	}
+	if (_videoMode.fullscreen)
+		if (!setupFullscreenMode())
+			// Failed setuping a fullscreen mode
+			return false;
 
 	// If changing to any fullscreen mode or from fullscreen,
 	// the OpenGL context is destroyed
@@ -313,6 +356,11 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 
 	// Check if the screen is BGR format
 	_formatBGR = _hwscreen->format->Rshift != 0;
+
+	if (_videoMode.fullscreen) {
+		_lastFullscreenModeWidth = _videoMode.hardwareWidth;
+		_lastFullscreenModeHeight = _videoMode.hardwareHeight;
+	}
 
 	// Call and return parent implementation of this method
 	return OpenGLGraphicsManager::loadGFXMode();
