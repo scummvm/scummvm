@@ -109,10 +109,12 @@ void GfxFrameout::kernelDeletePlane(reg_t object) {
 			planeRect.bottom = readSelectorValue(_segMan, object, SELECTOR(bottom)) + 1;
 			planeRect.right = readSelectorValue(_segMan, object, SELECTOR(right)) + 1;
 
-			planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
-			planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
-			planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
-			planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
+			Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
+			planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
+			planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
+			planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
+			planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
+			planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
 			// Blackout removed plane rect
 			_paint32->fillRect(planeRect, 0);
 			return;
@@ -220,10 +222,12 @@ void GfxFrameout::kernelFrameout() {
 		// Update priority here, sq6 sets it w/o UpdatePlane
 		uint16 planePriority = it->priority = readSelectorValue(_segMan, planeObject, SELECTOR(priority));
 
-		planeRect.top = (planeRect.top * _screen->getHeight()) / scriptsRunningHeight;
-		planeRect.left = (planeRect.left * _screen->getWidth()) / scriptsRunningWidth;
-		planeRect.bottom = (planeRect.bottom * _screen->getHeight()) / scriptsRunningHeight;
-		planeRect.right = (planeRect.right * _screen->getWidth()) / scriptsRunningWidth;
+		Common::Rect screenRect(_screen->getWidth(), _screen->getHeight());
+		planeRect.top = (planeRect.top * screenRect.height()) / scriptsRunningHeight;
+		planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
+		planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
+		planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
+		planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
 
 		int16 planeOffsetX = 0;
 
