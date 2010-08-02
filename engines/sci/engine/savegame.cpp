@@ -769,6 +769,7 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
 
 	// Message state:
+	delete s->_msgState;
 	s->_msgState = new MessageState(s->_segMan);
 
 	s->abortScriptProcessing = kAbortLoadGame;
