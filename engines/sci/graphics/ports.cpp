@@ -99,8 +99,15 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 		offTop = 0;
 		break;
 	case GID_MOTHERGOOSE:
-		if (getSciVersion() == SCI_VERSION_1_EARLY)
+		// TODO: if mother goose EGA also uses offTop we can simply remove this check altogether
+		switch (getSciVersion()) {
+		case SCI_VERSION_1_EARLY:
+		case SCI_VERSION_1_1:
 			offTop = 0;
+			break;
+		default:
+			break;
+		}
 		break;
 	case GID_FAIRYTALES:
 		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
