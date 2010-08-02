@@ -1661,10 +1661,10 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		n64)
-			CXXFLAGS="$CXXFLAGS -mno-extern-sdata -O2 --param max-inline-insns-auto=20 -fomit-frame-pointer"
-			CXXFLAGS="$CXXFLAGS -march=vr4300 -mtune=vr4300 -mhard-float -fno-rtti -fno-exceptions -Wno-multichar -Wshadow"
-			LDFLAGS="-march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
-			LDFLAGS="$LDFLAGS -L/opt/mips64-toolchain/hkz-libn64 -L/opt/mips64-toolchain/lib"
+			CXXFLAGS="$CXXFLAGS -mno-extern-sdata --param max-inline-insns-auto=20 -fomit-frame-pointer"
+			CXXFLAGS="$CXXFLAGS -march=vr4300 -mtune=vr4300 -mhard-float"
+			LDFLAGS="$LDFLAGS -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
+			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64 -L$N64SDK/lib"
 			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
 			_ar="$_host_alias-ar cru"
 			_ranlib="$_host_alias-ranlib"
@@ -2540,9 +2540,9 @@ case $_backend in
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
 	n64)
-		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/include'
-		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/mips64/include'
-		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/hkz-libn64'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/mips64/include'
+		INCLUDES="$INCLUDES "'-I$(N64SDK)/hkz-libn64'
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/n64'
 		LIBS="$LIBS -lpakfs -lframfs -ln64 -ln64utils -lromfs -lm -lstdc++ -lc -lgcc -lz -lnosys"
 		;;
