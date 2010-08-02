@@ -309,7 +309,12 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions, getGameGUIOptionsDescriptionLanguage(agdDesc->language));
+	Common::String lang = getGameGUIOptionsDescriptionLanguage(agdDesc->language);
+	if (agdDesc->flags & ADGF_ADDENGLISH)
+		lang += " " + getGameGUIOptionsDescriptionLanguage(Common::EN_ANY);
+
+	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions, lang);
+
 
 	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
 	if (!createInstance(syst, engine, agdDesc))
@@ -458,7 +463,8 @@ static ADGameDescList detectGame(const Common::FSList &fslist, const ADParams &p
 
 		// Do not even bother to look at entries which do not have matching
 		// language and platform (if specified).
-		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language) ||
+		if ((language != Common::UNK_LANG && g->language != Common::UNK_LANG && g->language != language
+			 && !(language == Common::EN_ANY && (g->flags & ADGF_ADDENGLISH))) ||
 			(platform != Common::kPlatformUnknown && g->platform != Common::kPlatformUnknown && g->platform != platform)) {
 			continue;
 		}
