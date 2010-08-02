@@ -299,7 +299,7 @@ Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags, R
 	if (sierraId == "fp" || sierraId == "gk" || sierraId == "pq4")
 		demoThreshold = 150;
 
-	Common::List<ResourceId> *resources = resMan->listResources(kResourceTypeScript, -1);
+	Common::ScopedPtr<Common::List<ResourceId> > resources(resMan->listResources(kResourceTypeScript, -1));
 	if (resources->size() < demoThreshold) {
 		*gameFlags |= ADGF_DEMO;
 

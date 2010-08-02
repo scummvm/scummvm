@@ -844,6 +844,7 @@ bool Console::cmdVerifyScripts(int argc, const char **argv) {
 	}
 
 	DebugPrintf("SCI1.1-SCI2.1 script check finished\n");
+	delete resources;
 
 	return true;
 }
@@ -1006,6 +1007,7 @@ bool Console::cmdShowInstruments(int argc, const char **argv) {
 		DebugPrintf("\n\n");
 	}
 
+	delete resources;
 	return true;
 }
 
@@ -1051,7 +1053,6 @@ bool Console::cmdList(int argc, const char **argv) {
 			++itr;
 		}
 		DebugPrintf("\n");
-
 		delete resources;
 	}
 

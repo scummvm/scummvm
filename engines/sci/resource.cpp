@@ -665,6 +665,7 @@ int ResourceManager::addInternalSources() {
 		++itr;
 	}
 
+	delete resources;
 	return 1;
 }
 
