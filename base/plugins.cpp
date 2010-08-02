@@ -306,7 +306,8 @@ void PluginManager::addPluginProvider(PluginProvider *pp) {
 	_providers.push_back(pp);
 }
 
-bool PluginManager::loadFirstPlugin() {
+bool PluginManager::loadFirstPlugin() { //TODO: only deal with engine plugins here, and have a separate "loadNonEnginePlugins" function.
+	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	PluginList plugs;
 	for (ProviderList::iterator pp = _providers.begin();
 	                            pp != _providers.end();
@@ -316,14 +317,17 @@ bool PluginManager::loadFirstPlugin() {
 			plugs.push_back(*p);
 		}
 	}
+	_allPlugsEnd = plugs.end();
 	_allPlugs = plugs.begin();
-	return tryLoadPlugin(*_allPlugs); //TODO: return false if no plugins!
+	if (plugs.empty()) return false; //return false if there are no plugins to load.
+	return tryLoadPlugin(*_allPlugs);
 }
 
 bool PluginManager::loadNextPlugin() {
 	unloadPluginsExcept(PLUGIN_TYPE_ENGINE, NULL);
 	++_allPlugs;
-	return tryLoadPlugin(*_allPlugs); //TODO: return false if got to the end of list of plugins.
+	if (_allPlugs == _allPlugsEnd) return false; //return false if already reached the end of list of plugins.
+	return tryLoadPlugin(*_allPlugs); 
 }
 
 void PluginManager::loadPlugins() {
@@ -424,15 +428,22 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 
 GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
-
-	const EnginePlugin::List &plugins = getPlugins();
-
-	// Iterate over all known games and for each check if it might be
-	// the game in the presented directory.
-	EnginePlugin::List::const_iterator iter;
-	for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
-		candidates.push_back((**iter)->detectGames(fslist));
-	}
+	EnginePlugin::List plugins;
+#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+	PluginManager::instance().loadFirstPlugin();
+	do {
+#endif
+		printf("SUCCESS!!!\n");
+		plugins = getPlugins();
+		// Iterate over all known games and for each check if it might be
+		// the game in the presented directory.
+		EnginePlugin::List::const_iterator iter;
+		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
+			candidates.push_back((**iter)->detectGames(fslist));
+		}
+#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+	} while (PluginManager::instance().loadNextPlugin());
+#endif
 
 	return candidates;
 }

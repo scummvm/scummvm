@@ -276,6 +276,8 @@ private:
 	PluginList _plugins[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
 	PluginList::iterator _allPlugs;
+	PluginList::iterator _allPlugsEnd;
+	
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
