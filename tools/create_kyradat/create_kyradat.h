@@ -138,6 +138,8 @@ enum kExtractID {
 
 	k1CreditsStrings,
 
+	k1TownsMusicFadeTable,
+	k1TownsMusicFadeTable,
 	k1TownsSFXwdTable,
 	k1TownsSFXbtTable,
 	k1TownsCDATable,
