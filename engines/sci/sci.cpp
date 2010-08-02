@@ -239,7 +239,8 @@ Common::Error SciEngine::run() {
 
 	if (_gameDescription->flags & ADGF_ADDENGLISH) {
 		// if game is multilingual
-		if (getLanguage() == Common::EN_ANY) {
+		Common::Language selectedLanguage = Common::parseLanguage(ConfMan.get("language"));
+		if (selectedLanguage == Common::EN_ANY) {
 			// and english was selected as language
 			if (SELECTOR(printLang) != -1) // set text language to english
 				writeSelectorValue(segMan, _gameObj, SELECTOR(printLang), 1);
