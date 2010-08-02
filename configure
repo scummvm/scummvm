@@ -362,7 +362,7 @@ get_system_exe_extension() {
 	arm-riscos)
 		_exeext=",ff8"
 		;;
-	dreamcast | gamecube | ds | ps2 | psp | wii | n64)
+	dreamcast | ds | gamecube | n64 | ps2 | psp | wii)
 		_exeext=".elf"
 		;;
 	gp2x-linux)
@@ -921,6 +921,11 @@ get_system_exe_extension $guessed_host
 NATIVEEXEEXT=$_exeext
 
 case $_host in
+android)
+	_host_os=android
+	_host_cpu=arm
+	_host_alias=arm-oe-linux-androideabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -931,6 +936,11 @@ dreamcast)
 	_host_alias=sh-elf
 	CXXFLAGS="$CXXFLAGS -ml -m4-single-only"
 	LDFLAGS="$LDFLAGS -ml -m4-single-only"
+	;;
+ds)
+	_host_os=ds
+	_host_cpu=arm
+	_host_alias=arm-eabi
 	;;
 gamecube)
 	_host_os=gamecube
@@ -969,11 +979,6 @@ motomagx)
 	_host_os=linux
 	_host_cpu=arm
 	_host_alias=arm-linux-gnueabi
-	;;
-ds)
-	_host_os=ds
-	_host_cpu=arm
-	_host_alias=arm-eabi
 	;;
 n64)	
 	_host_os=n64
@@ -1029,11 +1034,6 @@ wince)
 	_host_os=wince
 	_host_cpu=arm
 	_host_alias=arm-wince-mingw32ce
-	;;
-android)
-	_host_os=android
-	_host_cpu=arm
-	_host_alias=arm-oe-linux-androideabi
 	;;
 *)
 	if test -n "$_host"; then
@@ -1096,7 +1096,13 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-gamecube | ds | wii)
+android)
+	if test -z "$ANDROID_SDK"; then
+		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
+		exit 1
+	fi
+	;;
+ds | gamecube | wii)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1112,12 +1118,6 @@ psp)
 	PSPSDK=`psp-config --pspsdk-path`
 	if test -z "$PSPSDK"; then
 		echo "Please set the path to PSPSDK in your environment."
-		exit 1
-	fi
-	;;
-android)
-	if test -z "$ANDROID_SDK"; then
-		echo "Please set ANDROID_SDK in your environment. export ANDROID_SDK=<path to Android SDK>"
 		exit 1
 	fi
 	;;
@@ -1354,6 +1354,12 @@ case $_host_os in
 		# as (unsigned) long, and consequently we'd get a compiler error otherwise.
 		type_4_byte='long'
 		;;
+	android)
+		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
+		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
+		_unix=yes
+		_seq_midi=no
+		;;
 	beos*)
 		DEFINES="$DEFINES -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 		# Needs -lbind -lsocket for the timidity MIDI driver
@@ -1379,6 +1385,15 @@ case $_host_os in
 		;;
 	dreamcast)
 		DEFINES="$DEFINES -D__DC__ -DNONSTANDARD_PORT"
+		;;
+	ds)
+		# TODO Nintendo DS
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
+		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
+		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
+		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
+		LIBS="$LIBS -lnds9"
 		;;
 	freebsd*)
 		LDFLAGS="$LDFLAGS -L/usr/local/lib"
@@ -1428,15 +1443,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_COMMAND_LINE"
 		DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DDISABLE_DOSBOX_OPL"
 		;;
-	ds)
-		# TODO Nintendo DS
-		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -isystem $DEVKITPRO/libnds/include -isystem $DEVKITPRO/devkitARM/arm-eabi/include"
-		CXXFLAGS="$CXXFLAGS -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing"
-		LDFLAGS="$LDFLAGS -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections"
-		LDFLAGS="$LDFLAGS -L$DEVKITPRO/libnds/lib"
-		LIBS="$LIBS -lnds9"
-		;;
 	os2-emx*)
 		_unix=yes	# FIXME??? Why??
 		;;
@@ -1466,12 +1472,6 @@ case $_host_os in
 		DEFINES="$DEFINES -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		DEFINES="$DEFINES -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
-	android)
-		CXXFLAGS="$CXXFLAGS -Os -msoft-float -mtune=xscale -march=armv5te -D__ARM_ARCH_5__ -D__ARM_ARCH_5T__ -D__ARM_ARCH_5TE__"
-		add_line_to_config_mk "ANDROID_SDK = $ANDROID_SDK"
-		_unix=yes
-		_seq_midi=no
-		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
@@ -1483,6 +1483,19 @@ if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
 	echo "Cross-compiling to $_host"
 	case "$_host" in
+		android)
+			DEFINES="$DEFINES -DANDROID -DUSE_ARM_SMUSH_ASM"
+			_unix=yes
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			_backend="android"
+			_port_mk="backends/platform/android/android.mk"
+			_seq_midi=no
+			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			_unix=yes
 			_need_memalign=yes
@@ -1514,6 +1527,24 @@ if test -n "$_host"; then
 			_zlib="yes"
 			add_line_to_config_mk 'ronindir = /usr/local/ronin'
 			_port_mk="backends/platform/dc/dreamcast.mk"
+			;;
+		ds)
+			# TODO: complete this
+			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
+			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID"
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			_need_memalign=yes
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="ds"
+			_build_scalers="no"
+			_mt32emu="no"
+			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
 			_endian=big
@@ -1627,24 +1658,6 @@ if test -n "$_host"; then
 			_vkeybd="yes"
 			_seq_midi=no
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
-			;;
-		ds)
-			# TODO: complete this
-			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
-			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE -DSTREAM_AUDIO_FROM_DISK"
-			DEFINES="$DEFINES -DDISABLE_DOSBOX_OPL -DDISABLE_SID"
-			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			_backend="ds"
-			_build_scalers="no"
-			_mt32emu="no"
-			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		n64)
 			CXXFLAGS="$CXXFLAGS -mno-extern-sdata -O2 --param max-inline-insns-auto=20 -fomit-frame-pointer"
@@ -1762,19 +1775,6 @@ if test -n "$_host"; then
 			_backend="wince"
 			_mt32emu="no"
 			_port_mk="backends/platform/wince/wince.mk"
-			;;
-		android)
-			DEFINES="$DEFINES -DANDROID -DUSE_ARM_SMUSH_ASM"
-			_unix=yes
-			_need_memalign=yes
-			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
-			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
-			_backend="android"
-			_port_mk="backends/platform/android/android.mk"
-			_seq_midi=no
 			;;
 		*)
 			echo "WARNING: Unknown target, continuing with auto-detected values"
@@ -2471,10 +2471,48 @@ fi
 # Backend related stuff
 #
 case $_backend in
+	android)
+		static_libs=''
+		system_libs=''
+		for lib in $LIBS; do
+			case $lib in
+			-lz|-lm)
+				system_libs="$system_libs $lib"
+				;;
+			*)
+				static_libs="$static_libs $lib"
+				;;
+			esac
+		done
+
+		# -lgcc is carefully placed here - we want to catch
+		# all toolchain symbols in *our* libraries rather
+		# than pick up anything unhygenic from the Android libs.
+		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -lstdc++ -llog -lGLESv1_CM"
+		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
+		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
+
+		# Work around an Android 2.0+ run-time linker bug:
+		# The linker doesn't actually look in previously
+		# loaded libraries when trying to resolve symbols -
+		# effectively turning all dlopen(RTLD_GLOBAL) calls
+		# into dlopen(RTLD_LOCAL).  It *does* look in
+		# DT_NEEDED libraries, so the workaround is to add an
+		# (otherwise unnecessary) dependency from plugins back
+		# to the main libscummvm.so.
+		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
+		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
+		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
 		LIBS="$LIBS -lronin -lm"
+		;;
+	ds)
+		# TODO ds
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
+		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
+		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
 	gp2x)
 		find_sdlconfig
@@ -2499,12 +2537,6 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
-		;;
-	ds)
-		# TODO ds
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/arm9/source'
-		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/ds/commoninclude'
-		INCLUDES="$INCLUDES "'-Ibackends/platform/ds/arm9/data'
 		;;
 	n64)
 		INCLUDES="$INCLUDES "'-I/opt/mips64-toolchain/include'
@@ -2558,38 +2590,6 @@ case $_backend in
 		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
 		;;
-	android)
-		static_libs=''
-		system_libs=''
-		for lib in $LIBS; do
-			case $lib in
-			-lz|-lm)
-				system_libs="$system_libs $lib"
-				;;
-			*)
-				static_libs="$static_libs $lib"
-				;;
-			esac
-		done
-
-		# -lgcc is carefully placed here - we want to catch
-		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygenic from the Android libs.
-		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -lstdc++ -llog -lGLESv1_CM"
-		DEFINES="$DEFINES -D__ANDROID__ -DANDROID_BACKEND -DREDUCE_MEMORY_USAGE"
-		add_line_to_config_mk 'PLUGIN_LDFLAGS += $(LDFLAGS) -Wl,-shared,-Bsymbolic'
-
-		# Work around an Android 2.0+ run-time linker bug:
-		# The linker doesn't actually look in previously
-		# loaded libraries when trying to resolve symbols -
-		# effectively turning all dlopen(RTLD_GLOBAL) calls
-		# into dlopen(RTLD_LOCAL).  It *does* look in
-		# DT_NEEDED libraries, so the workaround is to add an
-		# (otherwise unnecessary) dependency from plugins back
-		# to the main libscummvm.so.
-		add_line_to_config_mk 'PLUGIN_LDFLAGS += -Lbuild.tmp -lscummvm'
-		add_line_to_config_mk 'PLUGIN_EXTRA_DEPS += build.tmp/libscummvm.so'
-		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
 		exit 1
@@ -2605,7 +2605,7 @@ if test "$have_gcc" = yes ; then
 		case $_host_os in
 		# newlib-based system include files suppress non-C89 function
 		# declarations under __STRICT_ANSI__
-		mingw* | dreamcast | wii | gamecube | ds | psp | wince | amigaos* | android | n64)
+		amigaos* | android | ds | dreamcast | gamecube | mingw* | n64 | psp | wii | wince )
 			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 			;;
 		*)
@@ -2626,7 +2626,7 @@ fi;
 
 # Some platforms use certain GNU extensions in header files
 case $_host_os in
-gamecube | psp | wii | android)
+android | gamecube | psp | wii)
 	;;
 *)
 	CXXFLAGS="$CXXFLAGS -pedantic"
