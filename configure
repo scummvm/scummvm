@@ -1523,9 +1523,9 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_need_memalign=yes
 			_backend="dc"
-			_build_scalers="no"
-			_mad="yes"
-			_zlib="yes"
+			_build_scalers=no
+			_mad=yes
+			_zlib=yes
 			add_line_to_config_mk 'ronindir = /usr/local/ronin'
 			_port_mk="backends/platform/dc/dreamcast.mk"
 			;;
@@ -1543,16 +1543,16 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="ds"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			_port_mk="backends/platform/ds/ds.mk"
 			;;
 		gamecube)
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
 			add_line_to_config_h '#define GAMECUBE'
@@ -1573,9 +1573,9 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gp2x"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
 			_seq_midi=no
 			_port_mk="backends/platform/gp2x/gp2x-bundle.mk"
 			;;
@@ -1591,9 +1591,9 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="gp2xwiz"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
 			_seq_midi=no
 			_port_mk="backends/platform/gp2xwiz/gp2xwiz-bundle.mk"
 			;;
@@ -1604,7 +1604,7 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
-			_build_hq_scalers="no"
+			_build_hq_scalers=no
 			_seq_midi=no
 			;;
 		m68k-atari-mint)
@@ -1637,9 +1637,9 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="linuxmoto"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
 			_seq_midi=no
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
@@ -1654,9 +1654,9 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="linuxmoto"
-			_build_hq_scalers="no"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_build_hq_scalers=no
+			_mt32emu=no
+			_vkeybd=yes
 			_seq_midi=no
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
@@ -1692,8 +1692,8 @@ if test -n "$_host"; then
 			_unix=yes
 			_need_memalign=yes
 			_backend='null'
-			_build_hq_scalers="no"
-			_mt32emu="no"
+			_build_hq_scalers=no
+			_mt32emu=no
 			;;
 		ppc-amigaos)
 			_endian=big
@@ -1704,14 +1704,14 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 			_need_memalign=yes
 			_backend="ps2"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
 			# This trick doesn't work for tremor right now, as the PS2 port the resulting library
 			# libtremor, while our code later on expects it to be called libvorbisidec.
 			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
-			_mad="yes"
-			_zlib="yes"
+			_mad=yes
+			_zlib=yes
 			# HACK to fix compilation of C source files for now.
 			add_line_to_config_mk 'CC = ee-gcc'
 			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
@@ -1731,8 +1731,8 @@ if test -n "$_host"; then
 		psp)
 			_need_memalign=yes
 			_backend="psp"
-			_build_scalers="no"
-			_mt32emu="no"
+			_build_scalers=no
+			_mt32emu=no
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		samsungtv)
@@ -1747,14 +1747,14 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="samsungtv"
-			_mt32emu="no"
-			_vkeybd="yes"
+			_mt32emu=no
+			_vkeybd=yes
 			;;
 		wii)
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
-			_build_scalers="no"
+			_build_scalers=no
 			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
@@ -1774,7 +1774,7 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="wince"
-			_mt32emu="no"
+			_mt32emu=no
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
 		*)
@@ -2046,9 +2046,9 @@ define_in_config_if_yes "$_build_hq_scalers" 'USE_HQ_SCALERS'
 if test "$_indeo3" = auto ; then
 	# Autodetect. Build if either the gob engine or plugins are enabled
 	if test `get_engine_build gob` = yes || test "$_dynamic_modules" = yes ; then
-		_indeo3="yes"
+		_indeo3=yes
 	else
-		_indeo3="no"
+		_indeo3=no
 	fi
 fi
 define_in_config_if_yes "$_indeo3" 'USE_INDEO3'
