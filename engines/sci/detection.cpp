@@ -496,8 +496,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			filename.contains("patch.005") || filename.contains("bank.001"))
 				s_fallbackDesc.platform = Common::kPlatformAmiga;
 
-		// The existence of 7.pat indicates a Mac game
-		if (filename.contains("7.pat"))
+		// The existence of 7.pat or patch.200 indicates a Mac game
+		if (filename.contains("7.pat") || filename.contains("patch.200"))
 			s_fallbackDesc.platform = Common::kPlatformMacintosh;
 
 		// The data files for Atari ST versions are the same as their DOS counterparts
