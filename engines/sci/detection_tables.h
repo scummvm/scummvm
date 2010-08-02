@@ -116,6 +116,21 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
+	// Castle of Dr. Brain - English DOS Floppy 1.000
+	// Reported by graxer in bug report #3037942
+	{"castlebrain", "", {
+		{"resource.map", 0, "453daa935535cef68d19704c2b1b78a2", 2649},
+		{"resource.000", 0, "6e125f4ce3f4f5c35f2617c7b66c6e21", 25929},
+		{"resource.001", 0, "4891faa2f6594c622e482f0ddce24fb4", 99404},
+		{"resource.002", 0, "aebb56d5d005557ca0d122a03aa85386", 322459},
+		{"resource.003", 0, "278ec1e6132c7be844d433dd23beb318", 335156},
+		{"resource.004", 0, "fca1c3f2be660185206f004bda09f4fb", 333549},
+		{"resource.005", 0, "9294e55da1e83708ad3104b2a3963e18", 327537},
+		{"resource.006", 0, "1d778a0c65cac9ddbab65495e50a94ee", 335281},
+		{"resource.007", 0, "063bb8ce4157c778cf30d1c912c006f1", 335631},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
 	// Castle of Dr. Brain - Spanish DOS (also includes english language)
 	// SCI interpreter version 1.000.510
 	{"castlebrain", "", {
