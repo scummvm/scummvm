@@ -183,6 +183,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 	{ GID_CAMELOT,        -1,   989,  0,            "rmMusic", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called frequently with a NULL reference (i.e. 0:0) - bug #3035149
 	{ GID_KQ1,            -1,   989,  0,          "gameSound", "fade",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in several scenes (e.g. graham cracker) with 0:0
 	{ GID_KQ4,            -1,   989,  0,            "mySound", "",               -1,    0, { WORKAROUND_IGNORE,    0 } }, // gets called in the demo when trying to open the non-existent menu with 0:0 - bug #3036942
+	{ GID_KQ5,           213,   989,  0,       "globalSound3", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // english floppy: when bandits leave the secret temple, parameter 4 is an object - bug #3037594
 	{ GID_KQ6,           105,   989,  0,        "globalSound", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // floppy: during intro, parameter 4 is an object
 	{ GID_KQ6,           460,   989,  0,       "globalSound2", "fade",           -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after pulling the black widow's web on the isle of wonder, parameter 4 is an object - bug #3034567
 	SCI_WORKAROUNDENTRY_TERMINATOR
