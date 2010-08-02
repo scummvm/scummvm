@@ -488,6 +488,10 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
+	// we allow 0 (happens in QfG2 when trying to restore from an empty saved game list) and return false in that case
+	if (virtualId == 0)
+		return NULL_REG;
+
 	// Find saved-game
 	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
 		error("kCheckSaveGame: called with invalid savegameId!");
@@ -502,7 +506,7 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 
 	// Otherwise we assume the savegame is OK
-	return make_reg(0, 1);
+	return TRUE_REG;
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
