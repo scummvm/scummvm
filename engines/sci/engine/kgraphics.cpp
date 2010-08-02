@@ -753,8 +753,10 @@ reg_t kPortrait(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Original top-left must stay on kControl rects, we adjust accordingly because sierra sci actually wont draw rects that
-//  are upside down (example: jones, when challenging jones - one button is a duplicate and also has lower-right which is 0, 0)
+// Original top-left must stay on kControl rects, we adjust accordingly because
+// sierra sci actually wont draw rects that are upside down (example: jones,
+// when challenging jones - one button is a duplicate and also has lower-right
+// which is 0, 0)
 Common::Rect kControlCreateRect(int16 x, int16 y, int16 x1, int16 y1) {
 	if (x > x1) x1 = x;
 	if (y > y1) y1 = y;
@@ -916,7 +918,13 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	if (objName == "savedHeros") {
 		// Import of QfG character files dialog is shown
 		// display additional popup information before letting user use it
-		GUI::MessageDialog dialog("characters saved inside ScummVM will get shown automatically. Character files saved in the original interpreter need to get put inside ScummVM saved games directory and a prefix needs to get added depending on which game it was saved in 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2 e.g. 'qfg2-thief.sav'", "OK");
+		GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+				"automatically. Character files saved in the original "
+				"interpreter need to be put inside ScummVM's saved games "
+				"directory and a prefix needs to be added depending on which "
+				"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+				"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
+				"OK");
 		dialog.runModal();
 	}
 
