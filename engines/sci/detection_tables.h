@@ -737,6 +737,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH	},
 
+	// Hoyle 2 - English Macintosh
+	// Executable scanning reports "x.yyy.zzz"
+	{"hoyle2", "", {
+		{"resource.map", 0, "1af1d3aa3cf564f93477c9f87e53f495", 1728},
+		{"resource.001", 0, "b73b8131669d69d41a326415e4519138", 482882},
+		{NULL, 0, NULL, 0}},
+		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
+
 #if 0 // TODO: unknown if these files are corrupt
 	// Hoyle 3 - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.005.000"
