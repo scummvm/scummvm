@@ -44,7 +44,7 @@ public:
 
 	bool init();
 
-	int callback(int command, ...);	
+	int callback(int command, ...);
 
 private:
 	void nextTickEx(int32 *buffer, uint32 bufferSize);
@@ -70,7 +70,7 @@ private:
 	int intf_setTimerA(va_list &args);
 	int intf_setTimerB(va_list &args);
 	int intf_enableTimerA(va_list &args);
-	int intf_enableTimerB(va_list &args);	
+	int intf_enableTimerB(va_list &args);
 	int intf_reserveEffectChannels(va_list &args);
 	int intf_loadWaveTable(va_list &args);
 	int intf_unloadWaveTable(va_list &args);
@@ -90,26 +90,26 @@ private:
 	int intf_pcmUpdateEnvelopeGenerator(va_list &args);
 
 	int intf_notImpl(va_list &args);
-	
+
 	void fmReset();
 	int fmKeyOn(int chan, int note, int velo);
 	int fmKeyOff(int chan);
 	int fmChanOff(int chan);
-	int fmSetPanPos(int chan, int mode);	
+	int fmSetPanPos(int chan, int mode);
 	int fmSetInstrument(int chan, int instrId);
 	int fmLoadInstrument(int instrId, const uint8 *data);
 	int fmSetPitch(int chan, int pitch);
 	int fmSetLevel(int chan, int lvl);
 
 	void bufferedWriteReg(uint8 part, uint8 regAddress, uint8 value);
-	
+
 	uint8 _fmChanPlaying;
 	uint8 _fmChanNote[6];
 	int16 _fmChanPitch[6];
 
 	uint8 *_fmSaveReg[2];
 	uint8 *_fmInstruments;
-	
+
 	void pcmReset();
 	int pcmKeyOn(int chan, int note, int velo);
 	int pcmKeyOff(int chan);
@@ -127,14 +127,14 @@ private:
 	uint8 _pcmChanKeyPressed;
 	uint8 _pcmChanEffectPlaying;
 	uint8 _pcmChanKeyPlaying;
-	
+
 	uint8 _pcmChanNote[8];
 	uint8 _pcmChanVelo[8];
 	uint8 _pcmChanLevel[8];
 
 	uint8 _numReservedChannels;
 	uint8 *_pcmInstruments;
-	
+
 	TownsAudio_WaveTable *_waveTables;
 	uint8 _numWaveTables;
 	uint32 _waveTablesTotalDataSize;
@@ -156,7 +156,7 @@ private:
 	static const uint8 _carrier[];
 	static const uint8 _fmDefaultInstrument[];
 	static const uint16 _pcmPhase1[];
-	static const uint16 _pcmPhase2[];	
+	static const uint16 _pcmPhase2[];
 };
 
 #endif

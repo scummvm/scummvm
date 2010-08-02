@@ -246,7 +246,7 @@ void TownsPC98_MusicChannel::loadData(uint8 *data) {
 	_dataPtr = data;
 	_totalLevel = 0x7F;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -894,7 +894,7 @@ void TownsPC98_SfxChannel::loadData(uint8 *data) {
 	_ssgTl = 0xff;
 	_algorithm = 0x80;
 
-	uint8 *tmp = _dataPtr;	
+	uint8 *tmp = _dataPtr;
 	for (bool loop = true; loop; ) {
 		uint8 cmd = *tmp++;
 		if (cmd < 0xf0) {
@@ -1309,7 +1309,7 @@ void TownsPC98_AudioDriver::setSfxTempo(uint16 tempo) {
 
 void TownsPC98_AudioDriver::startSoundEffect() {
 	int volFlags = 0;
-	
+
 	for (int i = 0; i < 2; i++) {
 		if (_sfxOffsets[i]) {
 			_ssgChannels[i + 1]->protect();
@@ -1322,7 +1322,7 @@ void TownsPC98_AudioDriver::startSoundEffect() {
 			_updateSfxFlag &= ~_sfxChannels[i]->_idFlag;
 		}
 	}
-	
+
 	setVolumeChannelMasks(~volFlags, volFlags);
 	_sfxData = 0;
 }

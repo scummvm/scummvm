@@ -68,9 +68,9 @@ public:
 
 	TownsAudioInterface *intf() { return _intf; }
 
-private:	
+private:
 	void resetTables();
-		
+
 	void resetTempo();
 	void setTempoIntern(int tempo);
 	void setTimerA(bool enable, int tempo);
@@ -93,7 +93,7 @@ private:
 	uint8 appendEvent(uint8 evt, uint8 chan);
 
 	void sendEvent(uint8 mode, uint8 command);
-	
+
 	typedef bool(TownsEuphonyDriver::*EuphonyOpcode)();
 	bool evtSetupNote();
 	bool evtPolyphonicAftertouch();
@@ -118,7 +118,7 @@ private:
 
 	int8 *_activeChannels;
 	int8 *_sustainChannels;
-	
+
 	struct ActiveChannel {
 		int8 chan;
 		int8 next;

@@ -63,7 +63,7 @@ bool TownsEuphonyDriver::init() {
 	_tOrdr = new uint8[32];
 	_tLevel = new int8[32];
 	_tTranspose = new int8[32];
-	
+
 	reset();
 
 	cdaSetVolume(1, 118, 118);
@@ -97,7 +97,7 @@ void TownsEuphonyDriver::reset() {
 		assignChannel(i, e++);
 
 	resetTables();
-	
+
 	memset(_eventBuffer, 0, 64 * sizeof(DlEvent));
 	_bufferedEventsCount = 0;
 
@@ -114,7 +114,7 @@ void TownsEuphonyDriver::reset() {
 	} else {
 		setTempoIntern(_defaultTempo);
 	}
-	
+
 	resetControl();
 }
 
@@ -152,8 +152,8 @@ int TownsEuphonyDriver::startMusicTrack(const uint8 *data, int trackSize, int st
 	_musicTrackSize = trackSize;
 	_timeStampBase = _timeStampDest = 0;
 	_tickCounter = 0;
-	_playing = true;	
-	
+	_playing = true;
+
 	return 0;
 }
 
@@ -240,7 +240,7 @@ int TownsEuphonyDriver::chanTranspose(int tableEntry, int val) {
 int TownsEuphonyDriver::assignChannel(int chan, int tableEntry) {
 	if (tableEntry > 15 || chan > 127 || chan < 0)
 		return 3;
-	
+
 	ActiveChannel *a = &_assignedChannels[chan];
 	if (a->chan == tableEntry)
 		return 0;
@@ -461,7 +461,7 @@ bool TownsEuphonyDriver::parseNext() {
 	_endOfTrack = false;
 	_musicPos = _musicStart;
 	_timeStampBase = _timeStampDest = _tickCounter = 0;
-	_baseTickLen = _defaultBaseTickLen;	
+	_baseTickLen = _defaultBaseTickLen;
 
 	return false;
 }
@@ -543,7 +543,7 @@ void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 
 	} else if (mode == 0x10) {
 		warning("TownsEuphonyDriver: Mode 0x10 not implemented.");
-		
+
 	} else if (mode == 0xff) {
 		if (command >= 0xf0) {
 			_paraCount = 1;
@@ -574,8 +574,8 @@ void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 						if (command)
 							sendNoteOn();
 						else
-							sendNoteOff();						
-					}	
+							sendNoteOff();
+					}
 					break;
 
 				case 2:
@@ -584,7 +584,7 @@ void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 						_para[0] = command;
 					} else {
 						_paraCount = 1;
-					}						
+					}
 					break;
 
 				case 3:
@@ -658,7 +658,7 @@ bool TownsEuphonyDriver::evtSetupNote() {
 		if (_eventBuffer[i].evt == 0)
 			break;
 	}
-	
+
 	if (i == 64) {
 		processBufferNote(mode, evt, note, velo);
 	} else {
@@ -678,7 +678,7 @@ bool TownsEuphonyDriver::evtPolyphonicAftertouch() {
 		return false;
 	if (!_tEnable[_musicPos[1]])
 		return false;
-	
+
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 mode = _tMode[_musicPos[1]];
 
@@ -694,7 +694,7 @@ bool TownsEuphonyDriver::evtControlPitch() {
 		return false;
 	if (!_tEnable[_musicPos[1]])
 		return false;
-	
+
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 mode = _tMode[_musicPos[1]];
 
@@ -710,7 +710,7 @@ bool TownsEuphonyDriver::evtInstrumentChanAftertouch() {
 		return false;
 	if (!_tEnable[_musicPos[1]])
 		return false;
-	
+
 	uint8 evt = appendEvent(_musicPos[0], _musicPos[1]);
 	uint8 mode = _tMode[_musicPos[1]];
 
@@ -826,8 +826,8 @@ void TownsEuphonyDriver::sendNoteOn() {
 	if (found)
 		c = *chan;
 	else
-		_intf->callback(2, c);		
-	
+		_intf->callback(2, c);
+
 	_assignedChannels[c].note = _para[0];
 	_assignedChannels[c].sub = 0;
 	_intf->callback(1, c, _para[0], _para[1]);
@@ -836,7 +836,7 @@ void TownsEuphonyDriver::sendNoteOn() {
 void TownsEuphonyDriver::sendChanVolume() {
 	int8 *chan = &_activeChannels[_command & 0x0f];
 	while (*chan != -1) {
-		_intf->callback(8, *chan, _para[1] & 0x7f);		
+		_intf->callback(8, *chan, _para[1] & 0x7f);
 		chan = &_assignedChannels[*chan].next;
 	};
 }
@@ -844,7 +844,7 @@ void TownsEuphonyDriver::sendChanVolume() {
 void TownsEuphonyDriver::sendPanPosition() {
 	int8 *chan = &_activeChannels[_command & 0x0f];
 	while (*chan != -1) {
-		_intf->callback(3, *chan, _para[1] & 0x7f);		
+		_intf->callback(3, *chan, _para[1] & 0x7f);
 		chan = &_assignedChannels[*chan].next;
 	};
 }

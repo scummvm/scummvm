@@ -82,7 +82,7 @@ protected:
 	uint32 _specifiedReleaseRate;
 	uint32 _tickCount;
 	uint32 _sustainLevel;
-	
+
 	bool _ampMod;
 	uint32 _frequency;
 	uint8 _kcode;

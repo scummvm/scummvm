@@ -502,7 +502,7 @@ void TownsPC98_FmSynthSquareSineSource::nextTick(int32 *buffer, uint32 bufferSiz
 			finOut += finOutTemp;
 		}
 
-		finOut /= 3;		
+		finOut /= 3;
 
 		buffer[i << 1] += finOut;
 		buffer[(i << 1) + 1] += finOut;
@@ -862,14 +862,14 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 
 				_timers[0].smpPerCb = (int32) spc;
 				_timers[0].smpPerCbRem = (uint32) ((spc - (float)_timers[0].smpPerCb) * 1000000.0f);
-				_timers[0].smpTillCb = _timers[0].smpPerCb;				
+				_timers[0].smpTillCb = _timers[0].smpPerCb;
 				_timers[0].smpTillCbRem = _timers[0].smpPerCbRem;
 				_timers[0].enabled = true;
 			} else {
 				_timers[0].enabled = false;
-			}			
+			}
 
-			if (value & 2) {				
+			if (value & 2) {
 				float spc = (float)(0x100 - _timers[1].value) * 16.0f / _baserate;
 				if (spc < 1) {
 					warning("TownsPC98_FmSynth: Invalid Timer B setting: %d", _timers[1].value);
@@ -884,7 +884,7 @@ void TownsPC98_FmSynth::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 			} else {
 				_timers[1].enabled = false;
 			}
-			
+
 			if (value & 0x10) {
 				_timers[0].smpTillCb = _timers[0].smpPerCb;
 				_timers[0].smpTillCbRem = _timers[0].smpTillCbRem;
@@ -1065,7 +1065,7 @@ void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB
 	if (_ssg)
 		_ssg->setVolumeChannelMasks(_volMaskA >> _numChan, _volMaskB >> _numChan);
 	if (_prc)
-		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));	
+		_prc->setVolumeChannelMasks(_volMaskA >> (_numChan + _numSSG), _volMaskB >> (_numChan + _numSSG));
 }
 
 void TownsPC98_FmSynth::generateTables() {
