@@ -1939,14 +1939,14 @@ void ResourceManager::detectSciVersion() {
 		}
 
 		// New decompressors. It's either SCI_VERSION_0_LATE, SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
-		if (testResource(ResourceId(kResourceTypeVocab, 900))) {
-			if (hasSci1Voc900()) {
-				s_sciVersion = SCI_VERSION_1_EGA;
-				return;
-			} else {
-				s_sciVersion = SCI_VERSION_0_LATE;
-				return;
-			}
+		if (testResource(ResourceId(kResourceTypeVocab, 0))) {
+			s_sciVersion = SCI_VERSION_0_LATE;
+			return;
+		}
+
+		if (hasSci1Voc900()) {
+			s_sciVersion = SCI_VERSION_1_EGA;
+			return;
 		}
 
 		// SCI_VERSION_1_EARLY EGA versions lack the parser vocab
