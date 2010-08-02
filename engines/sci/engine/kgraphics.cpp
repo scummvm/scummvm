@@ -918,14 +918,20 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	if (objName == "savedHeros") {
 		// Import of QfG character files dialog is shown
 		// display additional popup information before letting user use it
-		GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
-				"automatically. Character files saved in the original "
-				"interpreter need to be put inside ScummVM's saved games "
-				"directory and a prefix needs to be added depending on which "
-				"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
-				"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
-				"OK");
-		dialog.runModal();
+		reg_t changeDirButton = s->_segMan->findObjectByName("changeDirItem");
+		if (!changeDirButton.isNull()) {
+			// check if checkDirButton is still enabled, in that case we are called the first time during that room
+			if (!(readSelectorValue(s->_segMan, changeDirButton, SELECTOR(state)) & SCI_CONTROLS_STYLE_DISABLED)) {
+				GUI::MessageDialog dialog("Characters saved inside ScummVM are shown "
+						"automatically. Character files saved in the original "
+						"interpreter need to be put inside ScummVM's saved games "
+						"directory and a prefix needs to be added depending on which "
+						"game it was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' "
+						"for Quest for Glory 2. Example: 'qfg2-thief.sav'.",
+						"OK");
+				dialog.runModal();
+			}
+		}
 	}
 
 	_k_GenericDrawControl(s, controlObject, false);
