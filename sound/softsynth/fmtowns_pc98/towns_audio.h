@@ -30,6 +30,7 @@
 
 class TownsAudioInterfacePluginDriver {
 public:
+	virtual ~TownsAudioInterfacePluginDriver() {}
 	virtual void timerCallback(int timerId) = 0;
 };
 
