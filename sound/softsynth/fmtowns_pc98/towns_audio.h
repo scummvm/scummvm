@@ -52,7 +52,7 @@ private:
 	void timerCallbackA();
 	void timerCallbackB();
 
-	typedef int (TownsAudioInterface::*TownsAudioIntfCallback)(va_list&);
+	typedef int (TownsAudioInterface::*TownsAudioIntfCallback)(va_list &);
 	const TownsAudioIntfCallback *_intfOpcodes;
 
 	int intf_reset(va_list &args);

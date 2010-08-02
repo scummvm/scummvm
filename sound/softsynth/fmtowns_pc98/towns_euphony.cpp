@@ -225,7 +225,7 @@ int TownsEuphonyDriver::chanLevel(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
-		_tLevel[tableEntry] = (int8) (val & 0xff);
+		_tLevel[tableEntry] = (int8)(val & 0xff);
 	return 0;
 }
 
@@ -233,7 +233,7 @@ int TownsEuphonyDriver::chanTranspose(int tableEntry, int val) {
 	if (tableEntry > 31)
 		return 3;
 	if (val <= 40)
-		_tTranspose[tableEntry] = (int8) (val & 0xff);
+		_tTranspose[tableEntry] = (int8)(val & 0xff);
 	return 0;
 }
 
@@ -247,7 +247,7 @@ int TownsEuphonyDriver::assignChannel(int chan, int tableEntry) {
 
 	if (a->chan != -1) {
 		int8 *b = &_activeChannels[a->chan];
-		while(*b != chan) {
+		while (*b != chan) {
 			b = &_assignedChannels[*b].next;
 			if (*b == -1 && *b != chan)
 				return 3;
@@ -272,20 +272,20 @@ int TownsEuphonyDriver::assignChannel(int chan, int tableEntry) {
 
 void TownsEuphonyDriver::timerCallback(int timerId) {
 	switch (timerId) {
-		case 0:
-			updatePulseCount();
-			while (_pulseCount > 0) {
-				--_pulseCount;
-				updateTimeStampBase();
-				if (!_playing)
-					continue;
-				updateEventBuffer();
-				updateParser();
-				updateCheckEot();
-			}
-			break;
-		default:
-			break;
+	case 0:
+		updatePulseCount();
+		while (_pulseCount > 0) {
+			--_pulseCount;
+			updateTimeStampBase();
+			if (!_playing)
+				continue;
+			updateEventBuffer();
+			updateParser();
+			updateCheckEot();
+		}
+		break;
+	default:
+		break;
 	}
 }
 
@@ -377,7 +377,7 @@ void TownsEuphonyDriver::updateTimeStampBase() {
 }
 
 void TownsEuphonyDriver::updateParser() {
-	for (bool loop = true; loop; ) {
+	for (bool loop = true; loop;) {
 		uint8 cmd = _musicPos[0];
 
 		if (cmd == 0xff || cmd == 0xf7) {
@@ -429,7 +429,7 @@ bool TownsEuphonyDriver::parseNext() {
 
 	uint cmd = _musicPos[0];
 	if (cmd != 0xfe && cmd != 0xfd) {
-		if (cmd >= 0xf0 ) {
+		if (cmd >= 0xf0) {
 			cmd &= 0x0f;
 			if (cmd == 0)
 				evtLoadInstrument();
@@ -553,78 +553,78 @@ void TownsEuphonyDriver::sendEvent(uint8 mode, uint8 command) {
 			_command = command;
 		} else if (_command >= 0x80) {
 			switch ((_command - 0x80) >> 4) {
-				case 0:
-					if (_paraCount < 2) {
-						_paraCount++;
-						_para[0] = command;
-					} else {
-						_paraCount = 1;
-						_para[1] = command;
+			case 0:
+				if (_paraCount < 2) {
+					_paraCount++;
+					_para[0] = command;
+				} else {
+					_paraCount = 1;
+					_para[1] = command;
+					sendNoteOff();
+				}
+				break;
+
+			case 1:
+				if (_paraCount < 2) {
+					_paraCount++;
+					_para[0] = command;
+				} else {
+					_paraCount = 1;
+					_para[1] = command;
+					if (command)
+						sendNoteOn();
+					else
 						sendNoteOff();
-					}
-					break;
+				}
+				break;
 
-				case 1:
-					if (_paraCount < 2) {
-						_paraCount++;
-						_para[0] = command;
-					} else {
-						_paraCount = 1;
-						_para[1] = command;
-						if (command)
-							sendNoteOn();
-						else
-							sendNoteOff();
-					}
-					break;
-
-				case 2:
-					if (_paraCount < 2) {
-						_paraCount++;
-						_para[0] = command;
-					} else {
-						_paraCount = 1;
-					}
-					break;
-
-				case 3:
-					if (_paraCount < 2) {
-						_paraCount++;
-						_para[0] = command;
-					} else {
-						_paraCount = 1;
-						_para[1] = command;
-
-						if (_para[0] == 7)
-							sendChanVolume();
-						else if (_para[0] == 10)
-							sendPanPosition();
-						else if (_para[0] == 64)
-							sendAllNotesOff();
-					}
-					break;
-
-				case 4:
-					_paraCount = 1;
+			case 2:
+				if (_paraCount < 2) {
+					_paraCount++;
 					_para[0] = command;
-					sendSetInstrument();
-					break;
-
-				case 5:
+				} else {
 					_paraCount = 1;
-					_para[0] = command;
-					break;
+				}
+				break;
 
-				case 6:
-					if (_paraCount < 2) {
-						_paraCount++;
-						_para[0] = command;
-					} else {
-						_paraCount = 1;
-						_para[1] = command;
-						sendPitch();
-					}
-					break;
+			case 3:
+				if (_paraCount < 2) {
+					_paraCount++;
+					_para[0] = command;
+				} else {
+					_paraCount = 1;
+					_para[1] = command;
+
+					if (_para[0] == 7)
+						sendChanVolume();
+					else if (_para[0] == 10)
+						sendPanPosition();
+					else if (_para[0] == 64)
+						sendAllNotesOff();
+				}
+				break;
+
+			case 4:
+				_paraCount = 1;
+				_para[0] = command;
+				sendSetInstrument();
+				break;
+
+			case 5:
+				_paraCount = 1;
+				_para[0] = command;
+				break;
+
+			case 6:
+				if (_paraCount < 2) {
+					_paraCount++;
+					_para[0] = command;
+				} else {
+					_paraCount = 1;
+					_para[1] = command;
+					sendPitch();
+				}
+				break;
 			}
 		}
 	}

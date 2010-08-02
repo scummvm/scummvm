@@ -283,7 +283,7 @@ void TownsAudioInterface::nextTickEx(int32 *buffer, uint32 bufferSize) {
 					TownsAudio_PcmChannel *s = &_pcmChan[ii];
 					s->pos += s->step;
 
-					if  (&s->data[s->pos >> 11] >= s->loopEnd) {
+					if (&s->data[s->pos >> 11] >= s->loopEnd) {
 						if (s->loopLen) {
 							s->pos -= s->loopLen;
 						} else {
@@ -305,7 +305,7 @@ void TownsAudioInterface::nextTickEx(int32 *buffer, uint32 bufferSize) {
 				if (_pcmChan[ii].panLeft)
 					finOutL += ((o * _pcmChan[ii].panLeft) >> 3);
 				if (_pcmChan[ii].panRight)
-					finOutR += ((o *_pcmChan[ii].panRight) >> 3);
+					finOutR += ((o * _pcmChan[ii].panRight) >> 3);
 				if (!((_pcmChanKeyPlaying & _chanFlags[ii]) || (_pcmChanEffectPlaying & _chanFlags[ii])))
 					_pcmChanOut &= ~_chanFlags[ii];
 			}
@@ -326,7 +326,7 @@ void TownsAudioInterface::timerCallbackB() {
 	Common::StackLock lock(_mutex);
 	if (_ready) {
 		if (_drv)
-		_drv->timerCallback(1);
+			_drv->timerCallback(1);
 		for (int i = 0; i < 8; i++)
 			pcmUpdateEnvelopeGenerator(i);
 	}
@@ -367,7 +367,7 @@ int TownsAudioInterface::intf_setInstrument(va_list &args) {
 int TownsAudioInterface::intf_loadInstrument(va_list &args) {
 	int chanType = va_arg(args, int);
 	int instrId = va_arg(args, int);
-	uint8 *instrData = va_arg(args, uint8*);
+	uint8 *instrData = va_arg(args, uint8 *);
 	return (chanType & 0x40) ? pcmLoadInstrument(instrId, instrData) : fmLoadInstrument(instrId, instrData);
 }
 
@@ -414,7 +414,7 @@ int TownsAudioInterface::intf_bufferedWriteReg(va_list &args) {
 int TownsAudioInterface::intf_readRegBuffer(va_list &args) {
 	int part = va_arg(args, int) ? 1 : 0;
 	int reg = va_arg(args, int);
-	uint8 *dst = va_arg(args, uint8*);
+	uint8 *dst = va_arg(args, uint8 *);
 	*dst = 0;
 
 	if ((!part && reg < 0x20) || (part && reg < 0x30) || (reg > 0xef))
@@ -496,7 +496,7 @@ int TownsAudioInterface::intf_reserveEffectChannels(va_list &args) {
 }
 
 int TownsAudioInterface::intf_loadWaveTable(va_list &args) {
-	uint8 *data = va_arg(args, uint8*);
+	uint8 *data = va_arg(args, uint8 *);
 	if (_numWaveTables > 127)
 		return 3;
 
@@ -553,7 +553,7 @@ int TownsAudioInterface::intf_pcmPlayEffect(va_list &args) {
 	int chan = va_arg(args, int);
 	int note = va_arg(args, int);
 	int velo = va_arg(args, int);
-	uint8 *data = va_arg(args, uint8*);
+	uint8 *data = va_arg(args, uint8 *);
 
 	if (chan < 0x40 || chan > 0x47)
 		return 1;
@@ -639,7 +639,7 @@ int TownsAudioInterface::intf_fmSetInstrument(va_list &args) {
 
 int TownsAudioInterface::intf_fmLoadInstrument(va_list &args) {
 	int instrId = va_arg(args, int);
-	uint8 *instrData = va_arg(args, uint8*);
+	uint8 *instrData = va_arg(args, uint8 *);
 	return fmLoadInstrument(instrId, instrData);
 }
 
@@ -694,7 +694,7 @@ void TownsAudioInterface::fmReset() {
 	memset(_fmSaveReg[1], 0, 256);
 	memset(&_fmSaveReg[1][240], 0x7f, 16);
 	_fmSaveReg[0][243] = _fmSaveReg[0][247] = _fmSaveReg[0][251] = _fmSaveReg[0][255] =
-	_fmSaveReg[1][243] = _fmSaveReg[1][247] = _fmSaveReg[1][251] = _fmSaveReg[1][255] = 0xff;
+	                         _fmSaveReg[1][243] = _fmSaveReg[1][247] = _fmSaveReg[1][251] = _fmSaveReg[1][255] = 0xff;
 
 	for (int i = 0; i < 128; i++)
 		fmLoadInstrument(i, _fmDefaultInstrument);
@@ -1192,7 +1192,8 @@ int TownsAudioInterface::pcmSetPitch(int chan, int pitch) {
 //	if (_pcmChanUnkFlag & _chanFlags[chan])
 //		 unk[chan] = (((p->step * 1000) << 11) / 98) / 20833;
 
-	/*else*/ if ((_pcmChanEffectPlaying & _chanFlags[chan]) && (p->step > 2048))
+	/*else*/
+	if ((_pcmChanEffectPlaying & _chanFlags[chan]) && (p->step > 2048))
 		p->step = 2048;
 
 	return 0;
@@ -1238,33 +1239,33 @@ void TownsAudioInterface::pcmUpdateEnvelopeGenerator(int chan) {
 		return;
 
 	switch (p->envState) {
-		case kEnvAttacking:
-			if (((p->envCurrentLevel + p->envStep) >> 8) > p->envTotalLevel) {
-				p->envDecay();
-				return;
-			} else {
-				p->envCurrentLevel += p->envStep;
-			}
-			break;
+	case kEnvAttacking:
+		if (((p->envCurrentLevel + p->envStep) >> 8) > p->envTotalLevel) {
+			p->envDecay();
+			return;
+		} else {
+			p->envCurrentLevel += p->envStep;
+		}
+		break;
 
-		case kEnvDecaying:
-			if (((p->envCurrentLevel - p->envStep) >> 8) < p->envSustainLevel) {
-				p->envSustain();
-				return;
-			} else {
-				p->envCurrentLevel -= p->envStep;
-			}
-			break;
-
-		case kEnvSustaining:
-		case kEnvReleasing:
+	case kEnvDecaying:
+		if (((p->envCurrentLevel - p->envStep) >> 8) < p->envSustainLevel) {
+			p->envSustain();
+			return;
+		} else {
 			p->envCurrentLevel -= p->envStep;
-			if (p->envCurrentLevel <= 0)
-				p->envCurrentLevel = 0;
-			break;
+		}
+		break;
 
-		default:
-			break;
+	case kEnvSustaining:
+	case kEnvReleasing:
+		p->envCurrentLevel -= p->envStep;
+		if (p->envCurrentLevel <= 0)
+			p->envCurrentLevel = 0;
+		break;
+
+	default:
+		break;
 	}
 	p->velo = (p->envCurrentLevel >> 8) << 1;
 }
@@ -1341,7 +1342,7 @@ TownsAudio_PcmChannel::~TownsAudio_PcmChannel() {
 void TownsAudio_PcmChannel::loadExtData(uint8 *buffer, uint32 size) {
 	delete[] extData;
 	extData = new int8[size];
-	int8 *src = (int8*)buffer;
+	int8 *src = (int8 *)buffer;
 	int8 *dst = extData;
 	for (uint32 i = 0; i < size; i++)
 		*dst++ = *src & 0x80 ? (*src++ & 0x7f) : -*src++;
@@ -1358,31 +1359,31 @@ void TownsAudio_PcmChannel::setupLoop(uint32 start, uint32 len) {
 }
 
 void TownsAudio_PcmChannel::clear() {
-		curInstrument = 0;
-		note = 0;
-		velo = 0;
+	curInstrument = 0;
+	note = 0;
+	velo = 0;
 
-		data = 0;
-		dataEnd = 0;
-		loopLen = 0;
+	data = 0;
+	dataEnd = 0;
+	loopLen = 0;
 
-		pos = 0;
-		loopEnd = 0;
+	pos = 0;
+	loopEnd = 0;
 
-		step = 0;
-		stepNote = 0x4000;
-		stepPitch = 0x4000;
+	step = 0;
+	stepNote = 0x4000;
+	stepPitch = 0x4000;
 
-		panLeft = panRight = 0;
+	panLeft = panRight = 0;
 
-		envTotalLevel = envAttackRate = envDecayRate = envSustainLevel =
-		envSustainRate = envReleaseRate = 0;
-		envStep = envCurrentLevel = 0;
+	envTotalLevel = envAttackRate = envDecayRate = envSustainLevel =
+	                                    envSustainRate = envReleaseRate = 0;
+	envStep = envCurrentLevel = 0;
 
-		envState = kEnvReady;
+	envState = kEnvReady;
 
-		delete[] extData;
-		extData = 0;
+	delete[] extData;
+	extData = 0;
 }
 
 void TownsAudio_PcmChannel::envAttack() {
@@ -1458,7 +1459,7 @@ void TownsAudio_WaveTable::readData(const uint8 *buffer) {
 	delete[] data;
 	data = new int8[size];
 
-	const int8 *src = (const int8*)buffer;
+	const int8 *src = (const int8 *)buffer;
 	int8 *dst = data;
 	for (uint32 i = 0; i < size; i++)
 		*dst++ = *src & 0x80 ? (*src++ & 0x7f) : -*src++;

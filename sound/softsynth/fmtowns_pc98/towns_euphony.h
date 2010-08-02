@@ -66,7 +66,9 @@ public:
 
 	void timerCallback(int timerId);
 
-	TownsAudioInterface *intf() { return _intf; }
+	TownsAudioInterface *intf() {
+		return _intf;
+	}
 
 private:
 	void resetTables();
@@ -103,7 +105,9 @@ private:
 	bool evtAdvanceTimestampOffset();
 	bool evtTempo();
 	bool evtModeOrdrChange();
-	bool evtNotImpl() { return false; }
+	bool evtNotImpl() {
+		return false;
+	}
 
 	uint8 prepTranspose(uint8 in);
 	uint8 prepVelo(uint8 in);

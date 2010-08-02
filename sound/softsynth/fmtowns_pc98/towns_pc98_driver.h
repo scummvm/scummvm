@@ -49,17 +49,31 @@ public:
 
 	void fadeStep();
 
-	void pause() { _musicPlaying = false; }
-	void cont() { _musicPlaying = true; }
+	void pause() {
+		_musicPlaying = false;
+	}
+	void cont() {
+		_musicPlaying = true;
+	}
 
 	void timerCallbackB();
 	void timerCallbackA();
 
-	bool looping() { return _looping == _updateChannelsFlag ? true : false; }
-	bool musicPlaying() { return _musicPlaying; }
+	bool looping() {
+		return _looping == _updateChannelsFlag ? true : false;
+	}
+	bool musicPlaying() {
+		return _musicPlaying;
+	}
 
-	void setMusicVolume(int volume) { _musicVolume = volume; setVolumeIntern(_musicVolume, _sfxVolume); }
-	void setSoundEffectVolume(int volume) { _sfxVolume = volume; setVolumeIntern(_musicVolume, _sfxVolume); }
+	void setMusicVolume(int volume) {
+		_musicVolume = volume;
+		setVolumeIntern(_musicVolume, _sfxVolume);
+	}
+	void setSoundEffectVolume(int volume) {
+		_sfxVolume = volume;
+		setVolumeIntern(_musicVolume, _sfxVolume);
+	}
 
 protected:
 	void startSoundEffect();

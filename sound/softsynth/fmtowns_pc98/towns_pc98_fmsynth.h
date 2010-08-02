@@ -44,8 +44,8 @@ enum EnvelopeState {
 class TownsPC98_FmSynthOperator {
 public:
 	TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
-		const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
-		const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
+	                          const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
+	                          const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
 	~TownsPC98_FmSynthOperator() {}
 
 	void keyOn();
@@ -55,17 +55,40 @@ public:
 	void recalculateRates();
 	void generateOutput(int32 phasebuf, int32 *feedbuf, int32 &out);
 
-	void feedbackLevel(int32 level) {_feedbackLevel = level ? level + 6 : 0; }
-	void detune(int value) { _detn = &_detnTbl[value << 5]; }
-	void multiple(uint32 value) { _multiple = value ? (value << 1) : 1;	}
-	void attackRate(uint32 value) { _specifiedAttackRate = value; }
+	void feedbackLevel(int32 level) {
+		_feedbackLevel = level ? level + 6 : 0;
+	}
+	void detune(int value) {
+		_detn = &_detnTbl[value << 5];
+	}
+	void multiple(uint32 value) {
+		_multiple = value ? (value << 1) : 1;
+	}
+	void attackRate(uint32 value) {
+		_specifiedAttackRate = value;
+	}
 	bool scaleRate(uint8 value);
-	void decayRate(uint32 value) { _specifiedDecayRate = value;	recalculateRates();	}
-	void sustainRate(uint32 value) { _specifiedSustainRate = value;	recalculateRates();	}
-	void sustainLevel(uint32 value) { _sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5; }
-	void releaseRate(uint32 value) { _specifiedReleaseRate = value;	recalculateRates();	}
-	void totalLevel(uint32 value) { _totalLevel = value << 3; }
-	void ampModulation(bool enable) { _ampMod = enable; }
+	void decayRate(uint32 value) {
+		_specifiedDecayRate = value;
+		recalculateRates();
+	}
+	void sustainRate(uint32 value) {
+		_specifiedSustainRate = value;
+		recalculateRates();
+	}
+	void sustainLevel(uint32 value) {
+		_sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5;
+	}
+	void releaseRate(uint32 value) {
+		_specifiedReleaseRate = value;
+		recalculateRates();
+	}
+	void totalLevel(uint32 value) {
+		_totalLevel = value << 3;
+	}
+	void ampModulation(bool enable) {
+		_ampMod = enable;
+	}
 	void reset();
 
 protected:
@@ -126,16 +149,24 @@ public:
 
 	// AudioStream interface
 	int readBuffer(int16 *buffer, const int numSamples);
-	bool isStereo() const { return true; }
-	bool endOfData() const { return false; }
-	int getRate() const { return _mixer->getOutputRate(); }
+	bool isStereo() const {
+		return true;
+	}
+	bool endOfData() const {
+		return false;
+	}
+	int getRate() const {
+		return _mixer->getOutputRate();
+	}
 
 protected:
 	// Implement this in your inherited class if your driver generates
 	// additional output that has to be inserted into the buffer.
 	virtual void nextTickEx(int32 *buffer, uint32 bufferSize) {}
 
-	void toggleRegProtection(bool prot) { _regProtectionFlag = prot; }
+	void toggleRegProtection(bool prot) {
+		_regProtectionFlag = prot;
+	}
 	uint8 readSSGStatus();
 
 	virtual void timerCallbackA() = 0;
@@ -169,8 +200,12 @@ private:
 				delete opr[i];
 		}
 
-		void ampModSensitivity(uint32 value) { ampModSvty = (1 << (3 - value)) - (((value >> 1) & 1) | (value & 1)); }
-		void frqModSensitivity(uint32 value) { frqModSvty = value << 5; }
+		void ampModSensitivity(uint32 value) {
+			ampModSvty = (1 << (3 - value)) - (((value >> 1) & 1) | (value & 1));
+		}
+		void frqModSensitivity(uint32 value) {
+			frqModSvty = value << 5;
+		}
 
 		uint16 frqTemp;
 		bool enableLeft;
