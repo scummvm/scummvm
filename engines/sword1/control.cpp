@@ -1175,8 +1175,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	if (saveVersion < 2) // These older version of the savegames used a flag to signal presence of thumbnail
 		inf->skip(1);
 
-	if (Graphics::checkThumbnailHeader(*inf))
-		Graphics::skipThumbnailHeader(*inf);
+	Graphics::skipThumbnail(*inf);
 
 	inf->readUint32BE();	// save date
 	inf->readUint16BE();	// save time
