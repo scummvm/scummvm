@@ -98,6 +98,7 @@ const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
 	{ GID_LSL2,           38,    38,  0,        "cloudScript", "changeState",    -1,    1, { WORKAROUND_FAKE,   0 } }, // entering the room in the middle deck of the ship - bug #3036483
 	{ GID_LSL3,          340,   340,  0,        "ComicScript", "changeState",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // right after entering the 3 ethnic groups inside comedy club (temps 200, 201, 202, 203)
 	{ GID_LSL3,           -1,   997,  0,         "TheMenuBar", "handleEvent",    -1,    1, { WORKAROUND_FAKE, 0xf } }, // when setting volume the first time, this temp is used to set volume on entry (normally it would have been initialized to 's')
+	{ GID_LSL6,          820,    82,  0,                   "", "export 0",       -1,   -1, { WORKAROUND_FAKE,   0 } }, // when touching the electric fence
 	{ GID_LSL6,           -1,    85,  0,          "washcloth", "doVerb",         -1,    0, { WORKAROUND_FAKE,   0 } }, // washcloth in inventory
 	{ GID_LSL6,           -1,   928, -1,           "Narrator", "startText",      -1,    0, { WORKAROUND_FAKE,   0 } }, // used by various objects that are even translated in foreign versions, that's why we use the base-class
 	{ GID_LSL6HIRES,       0,    85,  0,             "LL6Inv", "init",           -1,    0, { WORKAROUND_FAKE,   0 } }, // on startup
