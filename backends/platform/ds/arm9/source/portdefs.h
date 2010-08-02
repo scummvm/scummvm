@@ -52,6 +52,7 @@
 #define STREAM_AUDIO_FROM_DISK
 #endif
 
+// FIXME: What is "NO_DEBUG_MSGS" good for?
 #define NO_DEBUG_MSGS
 
 // This is defined in dsmain.cpp
@@ -68,16 +69,22 @@ void consolePrintf(const char *format, ...);
 #undef assert
 #endif
 
+#ifdef NDEBUG
+
+#define	assert(e)	((void)0)
+
+#else
+
+// FIXME: Shouldn't assert() also bail out / exit / halt the program? Right now we just
+// print an error message...
 #define assert(s) \
 	do { \
-		if (!(s)) \
+		if (!(s)) { \
 			consolePrintf("Assertion failed: '##s##' at file %s, line %d\n", __FILE__, __LINE__); \
+		} \
 	} while (0)
 
-//#include "ds-fs.h"
-
-//#define debug(fmt, ...) consolePrintf(fmt, ##__VA_ARGS__)
-//#define debug(fmt, ...) debug(0, fmt, ##__VA_ARGS__)
+#endif
 
 // FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
 // This define changes the mouse-relative motion which doesn't make sense on a touch screen to
