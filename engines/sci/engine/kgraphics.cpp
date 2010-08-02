@@ -916,7 +916,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	if (objName == "savedHeros") {
 		// Import of QfG character files dialog is shown
 		// display additional popup information before letting user use it
-		GUI::MessageDialog dialog("characters saved inside ScummVM will get shown automatically. Character files saved in the original interpreter need to get put inside ScummVM saved games directory and a prefix need to get added depending on which game it was saved in 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2 e.g. 'qfg2-thief.sav'", "OK");
+		GUI::MessageDialog dialog("characters saved inside ScummVM will get shown automatically. Character files saved in the original interpreter need to get put inside ScummVM saved games directory and a prefix needs to get added depending on which game it was saved in 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2 e.g. 'qfg2-thief.sav'", "OK");
 		dialog.runModal();
 	}
 
