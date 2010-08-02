@@ -147,6 +147,12 @@ void SoundCommandParser::processPlaySound(reg_t obj) {
 	_music->soundPlay(musicSlot);
 }
 
+reg_t SoundCommandParser::kDoSoundRestore(int argc, reg_t *argv, reg_t acc) {
+	// Called after loading, to restore the playlist
+	// We don't really use or need this
+	return acc;
+}
+
 reg_t SoundCommandParser::kDoSoundDummy(int argc, reg_t *argv, reg_t acc) {
 	warning("cmdDummy invoked");	// not supposed to occur
 	return acc;
@@ -246,7 +252,8 @@ reg_t SoundCommandParser::kDoSoundPause(int argc, reg_t *argv, reg_t acc) {
 	} else {	// pause a playlist slot
 		MusicEntry *musicSlot = _music->getSlot(obj);
 		if (!musicSlot) {
-			warning("kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
+			// This happens quite frequently
+			debugC(2, kDebugLevelSound, "kDoSound(pause): Slot not found (%04x:%04x)", PRINT_REG(obj));
 			return acc;
 		}
 

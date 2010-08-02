@@ -86,7 +86,7 @@ struct SciKernelMapSubEntry {
 static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI0,       0, MAP_CALL(DoSoundInit),               "o",                    NULL },
     { SIG_SOUNDSCI0,       1, MAP_CALL(DoSoundPlay),               "o",                    NULL },
-    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundDummy),              "(o)",                  NULL },
+    { SIG_SOUNDSCI0,       2, MAP_CALL(DoSoundRestore),            "(o)",                  NULL },
     { SIG_SOUNDSCI0,       3, MAP_CALL(DoSoundDispose),            "o",                    NULL },
     { SIG_SOUNDSCI0,       4, MAP_CALL(DoSoundMute),               "(i)",                  NULL },
     { SIG_SOUNDSCI0,       5, MAP_CALL(DoSoundStop),               "o",                    NULL },
@@ -99,7 +99,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     { SIG_SOUNDSCI0,      12, MAP_CALL(DoSoundStopAll),            "",                     NULL },
     { SIG_SOUNDSCI1EARLY,  0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-    { SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI1EARLY,  2, MAP_CALL(DoSoundRestore),            NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  4, MAP_CALL(DoSoundUpdate),             NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  5, MAP_CALL(DoSoundInit),               NULL,                   NULL },
@@ -120,7 +120,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     //  ^^ Longbow demo
     { SIG_SOUNDSCI1LATE,   0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-    { SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundDummy),              "",                     NULL },
+    { SIG_SOUNDSCI1LATE,   2, MAP_CALL(DoSoundRestore),            "",                     NULL },
     { SIG_SOUNDSCI1LATE,   3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
     { SIG_SOUNDSCI1LATE,   4, MAP_CALL(DoSoundGetAudioCapability), "",                     NULL },
     { SIG_SOUNDSCI1LATE,   5, MAP_CALL(DoSoundSuspend),            "i",                    NULL },
@@ -142,7 +142,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
 #ifdef ENABLE_SCI32
     { SIG_SOUNDSCI21,      0, MAP_CALL(DoSoundMasterVolume),       NULL,                   NULL },
     { SIG_SOUNDSCI21,      1, MAP_CALL(DoSoundMute),               NULL,                   NULL },
-    { SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundDummy),              NULL,                   NULL },
+    { SIG_SOUNDSCI21,      2, MAP_CALL(DoSoundRestore),           NULL,                   NULL },
     { SIG_SOUNDSCI21,      3, MAP_CALL(DoSoundGetPolyphony),       NULL,                   NULL },
     { SIG_SOUNDSCI21,      4, MAP_CALL(DoSoundGetAudioCapability), NULL,                   NULL },
     { SIG_SOUNDSCI21,      5, MAP_CALL(DoSoundSuspend),            NULL,                   NULL },
