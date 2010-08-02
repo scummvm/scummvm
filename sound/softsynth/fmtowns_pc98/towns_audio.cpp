@@ -779,12 +779,12 @@ int TownsAudioInterface::fmKeyOn(int chan, int note, int velo) {
 		v |= 4;
 
 	for (uint8 reg = 0x80 + chan; reg < 0x90; reg += 4)
-		writeReg(part, reg,	_fmSaveReg[part][reg] | 0x0f);
+		writeReg(part, reg, _fmSaveReg[part][reg] | 0x0f);
 
 	writeReg(0, 0x28, v);
 
 	for (uint8 reg = 0x80 + chan; reg < 0x90; reg += 4)
-		writeReg(part, reg,	_fmSaveReg[part][reg]);
+		writeReg(part, reg, _fmSaveReg[part][reg]);
 
 	bufferedWriteReg(0, 0x28, v | 0xf0);
 

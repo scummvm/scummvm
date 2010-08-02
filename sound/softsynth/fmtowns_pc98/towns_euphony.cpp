@@ -109,7 +109,7 @@ void TownsEuphonyDriver::reset() {
 
 	if (_tempoControlMode == 1) {
 		//if (///)
-		//	return;
+		//  return;
 		setTempoIntern(_defaultTempo);
 	} else {
 		setTempoIntern(_defaultTempo);
@@ -415,7 +415,7 @@ void TownsEuphonyDriver::updateCheckEot() {
 }
 
 bool TownsEuphonyDriver::parseNext() {
-#define OPC(x)	&TownsEuphonyDriver::evt##x
+#define OPC(x) &TownsEuphonyDriver::evt##x
 	static const EuphonyOpcode opcodes[] = {
 		OPC(NotImpl),
 		OPC(SetupNote),
