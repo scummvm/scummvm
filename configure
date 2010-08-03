@@ -1706,6 +1706,7 @@ if test -n "$_host"; then
 		ps2)
 			# TODO: complete this
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+			DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
 			_need_memalign=yes
 			_backend="ps2"
 			_build_scalers=no
