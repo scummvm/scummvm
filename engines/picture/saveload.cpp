@@ -74,7 +74,7 @@ PictureEngine::kReadSaveHeaderError PictureEngine::readSaveHeader(Common::Seekab
 			header.thumbnail = 0;
 		}
 	} else {
-		Graphics::skipThumbnailHeader(*in);
+		Graphics::skipThumbnail(*in);
 	}
 
 	// Not used yet, reserved for future usage
