@@ -2564,6 +2564,7 @@ case $_backend in
 		;;
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
+		DEFINES="$DEFINES -DDISABLE_SID -DDISABLE_NES_APU"
 		LIBS="$LIBS -lpng -Wl,-Map,mapfile.txt"
 		LDFLAGS="$LDFLAGS -Wl,--wrap,memcpy"
 		;;
