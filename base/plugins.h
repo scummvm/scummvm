@@ -275,9 +275,8 @@ class PluginManager : public Common::Singleton<PluginManager> {
 private:
 	PluginList _plugins[PLUGIN_TYPE_MAX];
 	ProviderList _providers;
-	PluginList::iterator _allPlugs;
-	PluginList::iterator _allPlugsEnd;
-	
+	PluginList::iterator _currentPlugin;
+	PluginList::iterator _pluginsEnd;
 	
 	bool tryLoadPlugin(Plugin *plugin);
 	
@@ -291,6 +290,7 @@ public:
 
 	bool loadFirstPlugin();
 	bool loadNextPlugin();
+	
 	void loadPlugins();
 	void unloadPlugins();
 	void unloadPluginsExcept(PluginType type, const Plugin *plugin);
