@@ -1303,7 +1303,7 @@ void TownsAudioInterface::pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_
 	uint32 s = 0;
 
 	if (diff < 0) {
-		diff -= 1;
+		diff *= -1;
 		bl = diff % 12;
 		diff /= 12;
 		s = (r >> diff);
