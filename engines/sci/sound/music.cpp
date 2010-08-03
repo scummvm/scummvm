@@ -293,7 +293,10 @@ int16 SciMusic::tryToOwnChannel(MusicEntry *caller, int16 bestChannel) {
 			return channelNr;
 		}
 	}
-	error("no free channels");
+	// nothing found, don't map channel at all
+	//  sierra did this as well, although i'm not sure if we act exactly the same way
+	//  maybe they removed channels from previous playing music
+	return -1;
 }
 
 void SciMusic::freeChannels(MusicEntry *caller) {

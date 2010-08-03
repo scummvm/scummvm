@@ -425,7 +425,8 @@ void MidiParser_SCI::sendToDriver(uint32 midi) {
 
 	// Channel remapping
 	int16 realChannel = _channelRemap[midiChannel];
-	assert(realChannel != -1);
+	if (realChannel == -1)
+		return;
 
 	midi = (midi & 0xFFFFFFF0) | realChannel;
 	if (_mainThreadCalled)
