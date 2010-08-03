@@ -71,6 +71,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	{
+		"draci",
+		0,
+		AD_ENTRY1s("INIT.DFW", "9a7115b91cdea361bcaff3e046ac7ded", 906),
+		Common::DE_DEU,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
