@@ -1108,6 +1108,12 @@ ds | gamecube | wii)
 		exit 1
 	fi
 	;;
+n64)
+	if test -z "$N64SDK"; then
+		echo "Please set N64SDK in your environment. export N64SDK=<path to n64 sdk>"
+		exit 1
+	fi
+	;;
 ps2)
 	if test -z "$PS2SDK"; then
 		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
