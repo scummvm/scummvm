@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) // TODO: && defined ELF loader target
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 #include <string.h>
 #include <stdarg.h>
@@ -448,5 +448,5 @@ void *DLObject::symbol(const char *name) {
 	return NULL;
 }
 
-#endif /* DYNAMIC_MODULES */
+#endif /* defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET) */
 

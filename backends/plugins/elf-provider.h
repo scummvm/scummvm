@@ -28,7 +28,7 @@
 
 #include "base/plugins.h"
 
-#if defined(DYNAMIC_MODULES) // TODO: && defined(ELF-loader target)
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 class ELFPluginProvider : public FilePluginProvider {
 protected:
@@ -38,6 +38,6 @@ protected:
 
 };
 
-#endif // defined(DYNAMIC_MODULES)
+#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 #endif /* BACKENDS_PLUGINS_ELF_PROVIDER_H */

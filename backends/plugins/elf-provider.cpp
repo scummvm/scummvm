@@ -23,7 +23,7 @@
  *
  */
 
-#if defined(DYNAMIC_MODULES) //TODO: && defined(ELF loader target)
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 #include "backends/plugins/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
@@ -133,4 +133,4 @@ bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	return true;
 }
 
-#endif // defined(DYNAMIC_MODULES)
+#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
