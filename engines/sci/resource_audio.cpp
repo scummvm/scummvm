@@ -99,7 +99,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	}
 	file->seek(-4, SEEK_CUR);
 
-	ResourceType type = (ResourceType)(file->readByte() & 0x7f);
+	ResourceType type = _resMan->convertResType(file->readByte());
 	if (((getType() == kResourceTypeAudio || getType() == kResourceTypeAudio36) && (type != kResourceTypeAudio))
 		|| ((getType() == kResourceTypeSync || getType() == kResourceTypeSync36) && (type != kResourceTypeSync))) {
 		warning("Resource type mismatch loading %s", _id.toString().c_str());

@@ -193,6 +193,9 @@ class Resource {
 	friend class WaveResourceSource;
 	friend class AudioVolumeResourceSource;
 	friend class MacResourceForkResourceSource;
+#ifdef ENABLE_SCI32
+	friend class ChunkResourceSource;
+#endif
 
 // NOTE : Currently most member variables lack the underscore prefix and have
 // public visibility to let the rest of the engine compile without changes.
@@ -203,7 +206,7 @@ public:
 	uint32 _headerSize;
 
 public:
-	Resource(ResourceId id);
+	Resource(ResourceManager *resMan, ResourceId id);
 	~Resource();
 	void unalloc();
 
@@ -227,6 +230,7 @@ protected:
 	ResourceStatus _status;
 	uint16 _lockers; /**< Number of places where this resource was locked */
 	ResourceSource *_source;
+	ResourceManager *_resMan;
 
 	bool loadPatch(Common::SeekableReadStream *file);
 	bool loadFromPatchFile();
@@ -251,6 +255,9 @@ class ResourceManager {
 	friend class ExtAudioMapResourceSource;
 	friend class WaveResourceSource;
 	friend class MacResourceForkResourceSource;
+#ifdef ENABLE_SCI32
+	friend class ChunkResourceSource;
+#endif
 
 public:
 	/**
@@ -323,6 +330,14 @@ public:
 	 * applied per game, if applicable.
 	 */
 	void addNewGMPatch(SciGameId gameId);
+
+#ifdef ENABLE_SCI32
+	/**
+	 * Parses all resources from a SCI2.1 chunk resource and adds them to the
+	 * resource manager.
+	 */
+	void addResourcesFromChunk(uint16 id);
+#endif
 
 	bool detectHires();
 	// Detects, if standard font of current game includes extended characters (>0x80)

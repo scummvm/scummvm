@@ -43,7 +43,8 @@ enum ResSourceType {
 	kSourceAudioVolume,
 	kSourceExtAudioMap,
 	kSourceWave,
-	kSourceMacResourceFork
+	kSourceMacResourceFork,
+	kSourceChunk
 };
 
 
@@ -187,6 +188,31 @@ public:
 
 	virtual void loadResource(ResourceManager *resMan, Resource *res);
 };
+
+#ifdef ENABLE_SCI32
+
+/**
+ * Reads resources from SCI2.1+ chunk resources
+ */
+class ChunkResourceSource : public ResourceSource {
+public:
+	ChunkResourceSource(const Common::String &name, uint16 number);
+
+	virtual void scanSource(ResourceManager *resMan);
+	virtual void loadResource(ResourceManager *resMan, Resource *res);
+
+protected:
+	uint16 _number;
+
+	struct ResourceEntry {
+		uint32 offset;
+		uint32 length;
+	};
+
+	Common::HashMap<ResourceId, ResourceEntry, ResourceIdHash> _resMap;
+};
+
+#endif
 
 } // End of namespace Sci
 
