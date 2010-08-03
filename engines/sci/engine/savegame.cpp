@@ -760,6 +760,8 @@ void gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	s->gameStartTime = g_system->getMillis();
 	s->_screenUpdateTime = g_system->getMillis();
 
+	g_sci->_gfxPorts->reset();
+
 	g_sci->_soundCmd->reconstructPlayList(meta.savegame_version);
 
 	// Message state:

@@ -46,6 +46,7 @@ public:
 	~GfxPorts();
 
 	void init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16);
+	void reset();
 
 	void kernelSetActive(uint16 portId);
 	Common::Rect kernelGetPicWindow(int16 &picTop, int16 &picLeft);
@@ -57,9 +58,10 @@ public:
 	int16 isFrontWindow(Window *wnd);
 	void beginUpdate(Window *wnd);
 	void endUpdate(Window *wnd);
-	Window *newWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
+	Window *addWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
 	void drawWindow(Window *wnd);
-	void disposeWindow(Window *pWnd, bool reanimate);
+	void removeWindow(Window *pWnd, bool reanimate);
+	void freeWindow(Window *pWnd);
 	void updateWindow(Window *wnd);
 
 	Port *getPortById(uint16 id);

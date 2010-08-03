@@ -50,7 +50,10 @@ GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
 }
 
 GfxPorts::~GfxPorts() {
-	// TODO: Clear _windowList and delete all stuff in it?
+	// reset frees all windows but _picWind
+	reset();
+	freeWindow(_picWind);
+	delete _wmgrPort;
 	delete _menuPort;
 }
 
@@ -135,13 +138,37 @@ void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *te
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = newWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = addWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
 	if (g_sci->_features->usesOldGfxFunctions())
 		_picWind->top = offTop;
 
 	kernelInitPriorityBands();
+}
+
+// Removes any windows from windowList
+//  is used when restoring/restarting the game
+//  Sierra SCI actually saved the whole windowList, it seems we don't need to do this at all
+//  but in some games there are still windows active when restoring. Leaving those windows open
+//  would create all sorts of issues, that's why we remove them
+void GfxPorts::reset() {
+	PortList::iterator it = _windowList.begin();
+	const PortList::iterator end = _windowList.end();
+
+	setPort(_picWind);
+
+	while (it != end) {
+		Port *pPort = *it;
+		if (pPort->id > 2) {
+			// found a window beyond _picWind
+			freeWindow((Window *)pPort);
+		}
+		it++;
+	}
+	_windowList.clear();
+	_windowList.push_front(_wmgrPort);
+	_windowList.push_back(_picWind);
 }
 
 void GfxPorts::kernelSetActive(uint16 portId) {
@@ -179,9 +206,9 @@ reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uin
 	Window *wnd = NULL;
 
 	if (restoreRect.bottom != 0 && restoreRect.right != 0)
-		wnd = newWindow(dims, &restoreRect, title, style, priority, false);
+		wnd = addWindow(dims, &restoreRect, title, style, priority, false);
 	else
-		wnd = newWindow(dims, NULL, title, style, priority, false);
+		wnd = addWindow(dims, NULL, title, style, priority, false);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	drawWindow(wnd);
@@ -191,7 +218,7 @@ reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uin
 
 void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 	Window *wnd = (Window *)getPortById(windowId);
-	disposeWindow(wnd, reanimate);
+	removeWindow(wnd, reanimate);
 }
 
 int16 GfxPorts::isFrontWindow(Window *pWnd) {
@@ -228,7 +255,7 @@ void GfxPorts::endUpdate(Window *wnd) {
 	setPort(oldPort);
 }
 
-Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
+Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
 	// Find an unused window/port id
 	uint id = 1;
 	while (id < _windowsById.size() && _windowsById[id]) {
@@ -378,7 +405,7 @@ void GfxPorts::drawWindow(Window *pWnd) {
 	setPort(oldport);
 }
 
-void GfxPorts::disposeWindow(Window *pWnd, bool reanimate) {
+void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 	setPort(_wmgrPort);
 	_paint16->bitsRestore(pWnd->hSaved1);
 	_paint16->bitsRestore(pWnd->hSaved2);
@@ -388,6 +415,15 @@ void GfxPorts::disposeWindow(Window *pWnd, bool reanimate) {
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
+	_windowsById[pWnd->id] = 0;
+	delete pWnd;
+}
+
+void GfxPorts::freeWindow(Window *pWnd) {
+	if (!pWnd->hSaved1.isNull())
+		_segMan->freeHunkEntry(pWnd->hSaved1);
+	if (!pWnd->hSaved2.isNull())
+		_segMan->freeHunkEntry(pWnd->hSaved1);
 	_windowsById[pWnd->id] = 0;
 	delete pWnd;
 }
@@ -412,8 +448,6 @@ Port *GfxPorts::getPortById(uint16 id) {
 		error("getPortById() received invalid id");
 	return _windowsById[id];
 }
-
-
 
 Port *GfxPorts::setPort(Port *newPort) {
 	Port *oldPort = _curPort;
