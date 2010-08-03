@@ -607,7 +607,7 @@ PrisonerEngine::kReadSaveHeaderError PrisonerEngine::readSaveHeader(Common::Seek
 			header.thumbnail = 0;
 		}
 	} else {
-		Graphics::skipThumbnailHeader(*in);
+		Graphics::skipThumbnail(*in);
 	}
 
 	// Not used yet, reserved for future usage
