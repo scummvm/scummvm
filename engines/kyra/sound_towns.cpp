@@ -203,6 +203,19 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	_driver->playSoundEffect(_sfxChannel, note, 127, sfxPlaybackBuffer);
 }
 
+void SoundTowns::updateVolumeSettings() {
+	if (!_driver)
+		return;
+
+	bool mute = false;
+	_driver->setSoundEffectVolume(ConfMan.getInt("sfx_volume"));
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	_driver->setMusicVolume((mute ? 0 : ConfMan.getInt("music_volume")));
+	_driver->setSoundEffectVolume((mute ? 0 : ConfMan.getInt("sfx_volume")));
+}
+
 void SoundTowns::stopAllSoundEffects() {
 	_driver->chanVolume(0x46, 0);
 	_driver->chanVolume(0x47, 0);
@@ -298,7 +311,7 @@ bool SoundTowns::loadInstruments() {
 		src = src + READ_LE_UINT16(&src[12]) + 32;
 	}
 
-	_driver->reserveSfxChannels(2);
+	_driver->reserveSoundEffectChannels(2);
 
 	delete[] twm;
 

@@ -39,7 +39,7 @@ public:
 	void loadInstrument(int chanType, int id, const uint8 *data);
 	void loadWaveTable(const uint8 *data);
 	void unloadWaveTable(int id);
-	void reserveSfxChannels(int num);
+	void reserveSoundEffectChannels(int num);
 
 	int setMusicTempo(int tempo);
 	int startMusicTrack(const uint8 *data, int trackSize, int startTick);
@@ -65,6 +65,9 @@ public:
 	int assignChannel(int chan, int tableEntry);
 
 	void timerCallback(int timerId);
+
+	void setMusicVolume(int volume);
+	void setSoundEffectVolume(int volume);
 
 	TownsAudioInterface *intf() {
 		return _intf;

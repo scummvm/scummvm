@@ -130,8 +130,19 @@ void TownsEuphonyDriver::unloadWaveTable(int id) {
 	_intf->callback(35, id);
 }
 
-void TownsEuphonyDriver::reserveSfxChannels(int num) {
+void TownsEuphonyDriver::reserveSoundEffectChannels(int num) {
 	_intf->callback(33, num);
+	uint32 volMask = 0;
+	
+	if (num > 8)
+		return;
+
+	for (uint32 v = 1 << 13; num; num--) {
+		volMask |= v;
+		v >>= 1;
+	}
+	
+	_intf->setSoundEffectChanMask(volMask);
 }
 
 int TownsEuphonyDriver::setMusicTempo(int tempo) {
@@ -287,6 +298,14 @@ void TownsEuphonyDriver::timerCallback(int timerId) {
 	default:
 		break;
 	}
+}
+
+void TownsEuphonyDriver::setMusicVolume(int volume) {
+	_intf->setMusicVolume(volume);
+}
+
+void TownsEuphonyDriver::setSoundEffectVolume(int volume) {
+	_intf->setSoundEffectVolume(volume);
 }
 
 void TownsEuphonyDriver::resetTables() {

@@ -122,6 +122,8 @@ public:
 
 	void beginFadeOut();
 
+	void updateVolumeSettings();
+
 private:
 	bool loadInstruments();
 	void playEuphonyTrack(uint32 offset, int loop);

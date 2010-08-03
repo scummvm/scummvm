@@ -101,7 +101,8 @@ private:
 
 TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _ready(false) {
+	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
+	_musicVolume(256), _sfxVolume(256), _pcmSfxChanMask(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -247,6 +248,8 @@ bool TownsAudioInterface::init() {
 
 	_timer = 0;
 
+	setVolumeChannelMasks(-1, 0);
+
 	callback(0);
 
 	_ready = true;
@@ -267,6 +270,22 @@ int TownsAudioInterface::callback(int command, ...) {
 
 	va_end(args);
 	return res;
+}
+
+void TownsAudioInterface::setMusicVolume(int volume) {
+	_musicVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
+	setVolumeIntern(_musicVolume, _sfxVolume);
+}
+
+void TownsAudioInterface::setSoundEffectVolume(int volume) {
+	_sfxVolume = CLIP<uint16>(volume, 0, Audio::Mixer::kMaxMixerVolume);
+	setVolumeIntern(_musicVolume, _sfxVolume);
+}
+
+void TownsAudioInterface::setSoundEffectChanMask(uint32 mask) {
+	_pcmSfxChanMask = mask >> 6;
+	mask &= 0x3f;
+	setVolumeChannelMasks(~mask, mask);
 }
 
 void TownsAudioInterface::nextTickEx(int32 *buffer, uint32 bufferSize) {
@@ -302,6 +321,10 @@ void TownsAudioInterface::nextTickEx(int32 *buffer, uint32 bufferSize) {
 		for (int ii = 0; ii < 8; ii++) {
 			if (_pcmChanOut & _chanFlags[ii]) {
 				int32 o = _pcmChan[ii].data[_pcmChan[ii].pos >> 11] * _pcmChan[ii].velo;
+				if ((1 << ii) & (~_pcmSfxChanMask))
+					o = (o * _musicVolume) / Audio::Mixer::kMaxMixerVolume;
+				if ((1 << ii) & _pcmSfxChanMask)
+					o = (o * _sfxVolume) / Audio::Mixer::kMaxMixerVolume;
 				if (_pcmChan[ii].panLeft)
 					finOutL += ((o * _pcmChan[ii].panLeft) >> 3);
 				if (_pcmChan[ii].panRight)

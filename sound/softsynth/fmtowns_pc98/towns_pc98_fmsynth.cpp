@@ -1157,12 +1157,12 @@ uint8 TownsPC98_FmSynth::readSSGStatus() {
 
 void TownsPC98_FmSynth::setVolumeIntern(int volA, int volB) {
 	Common::StackLock lock(_mutex);
-	_volumeA = volA;
-	_volumeB = volB;
+	_volumeA = CLIP<uint16>(volA, 0, Audio::Mixer::kMaxMixerVolume);
+	_volumeB = CLIP<uint16>(volB, 0, Audio::Mixer::kMaxMixerVolume);
 	if (_ssg)
-		_ssg->setVolumeIntern(volA, volB);
+		_ssg->setVolumeIntern(_volumeA, _volumeB);
 	if (_prc)
-		_prc->setVolumeIntern(volA, volB);
+		_prc->setVolumeIntern(_volumeA, _volumeB);
 }
 
 void TownsPC98_FmSynth::setVolumeChannelMasks(int channelMaskA, int channelMaskB) {
