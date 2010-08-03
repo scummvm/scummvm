@@ -2310,13 +2310,23 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 #
 # Check for OpenGL (ES)
 #
+
 echocheck "OpenGL (ES)"
 if test "$_opengl" = auto ; then
-# TODO: This is just a quick hack until actual detection is added, which
-# will be a pain because of the various directories that OpenGL can have
-# its headers in. Maybe we should force the platforms to automatically
-# include the directory that includes gl.h?
-	_opengl=yes
+	_opengl=no
+	cat > $TMPC << EOF
+#if defined(__MACOSX__)
+#include <gl.h>
+#else
+#if defined(__WIN32__)
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#endif
+#include <GL/gl.h>
+#endif
+int main(void) { return GL_VERSION_1_1; }
+EOF
+	cc_check $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes
 fi
 if test "$_opengl" = yes ; then
 	_def_opengl='#define USE_OPENGL'
