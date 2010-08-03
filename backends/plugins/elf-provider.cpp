@@ -31,6 +31,7 @@
 
 #include "backends/plugins/elf-loader.h"
 
+static char dlerr[MAXDLERRLEN];
 
 class ELFPlugin : public DynamicPlugin {
 protected:
@@ -38,9 +39,15 @@ protected:
 	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
-		void *func = dlsym(_dlHandle, symbol);
+		void *func;
+		if (_dlHandle == NULL) {
+			strcpy(dlerr, "Handle is NULL.");
+			func = NULL;
+		} else {
+			func = ((DLObject *)_dlHandle)->symbol(symbol);
+		}
 		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerror());
+			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerr);
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -62,17 +69,25 @@ public:
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		_dlHandle = dlopen(_filename.c_str(), RTLD_LAZY);
+		DLObject *obj = new DLObject(dlerr);
+		if (obj->open(_filename.c_str())) {
+			_dlHandle = (void *)obj;
+		} else {
+			delete obj;
+			_dlHandle = NULL;
+		}
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerr);
 			return false;
 		}
 
 		bool ret = DynamicPlugin::loadPlugin();
 
-		if (ret)
-			dlforgetsyms(_dlHandle);
+		if (ret) {
+			if (_dlHandle != NULL)
+				((DLObject *)_dlHandle)->discard_symtab();
+		}
 
 		return ret;
 	}
@@ -80,8 +95,15 @@ public:
 	void unloadPlugin() {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
-			if (dlclose(_dlHandle) != 0)
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerror());
+			DLObject *obj = (DLObject *)_dlHandle;
+			if (obj == NULL) {
+				strcpy(dlerr, "Handle is NULL.");
+				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerr);
+			} else if (obj->close()) {
+				delete obj;
+			} else {
+				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerr);
+			}
 			_dlHandle = 0;
 		}
 	}

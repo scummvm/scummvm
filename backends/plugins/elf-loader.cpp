@@ -448,46 +448,5 @@ void *DLObject::symbol(const char *name) {
 	return NULL;
 }
 
-
-static char dlerr[MAXDLERRLEN];
-
-void *dlopen(const char *filename, int flags) {
-	DLObject *obj = new DLObject(dlerr);
-	if (obj->open(filename))
-		return (void *)obj;
-	delete obj;
-	return NULL;
-}
-
-int dlclose(void *handle) {
-	DLObject *obj = (DLObject *)handle;
-	if (obj == NULL) {
-		strcpy(dlerr, "Handle is NULL.");
-		return -1;
-	}
-	if (obj->close()) {
-		delete obj;
-		return 0;
-	}
-	return -1;
-}
-
-void *dlsym(void *handle, const char *symbol) {
-	if (handle == NULL) {
-		strcpy(dlerr, "Handle is NULL.");
-		return NULL;
-	}
-	return ((DLObject *)handle)->symbol(symbol);
-}
-
-const char *dlerror() {
-	return dlerr;
-}
-
-void dlforgetsyms(void *handle) {
-	if (handle != NULL)
-		((DLObject *)handle)->discard_symtab();
-}
-
 #endif /* DYNAMIC_MODULES */
 
