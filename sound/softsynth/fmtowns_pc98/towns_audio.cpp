@@ -101,8 +101,8 @@ private:
 
 TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
-	_musicVolume(256), _sfxVolume(256), _pcmSfxChanMask(0), _ready(false) {
+	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _pcmSfxChanMask(0),
+	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -257,6 +257,9 @@ bool TownsAudioInterface::init() {
 }
 
 int TownsAudioInterface::callback(int command, ...) {
+	if (!_ready)
+		return 1;
+
 	va_list args;
 	va_start(args, command);
 
