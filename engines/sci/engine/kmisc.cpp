@@ -227,12 +227,22 @@ enum {
 
 reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
+	case K_MEMORY_ALLOCATE_CRITICAL: {
+		int byteCount = argv[1].toUint16();
+		// WORKAROUND: pq3 when plotting crimes - allocates the returned bytes
+		//  from kStrLen on "W" and "E" and wants to put a string in there,
+		//  which doesn't fit of course. That's why we allocate one byte more
+		//  all the time inside that room - maybe only multilingual pq3
+		if (g_sci->getGameId() == GID_PQ3) {
+			if (s->currentRoomNumber() == 202)
+				byteCount++;
+		}
+		if (!s->_segMan->allocDynmem(byteCount, "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		break;
-	case K_MEMORY_ALLOCATE_NONCRITICAL :
+	}
+	case K_MEMORY_ALLOCATE_NONCRITICAL:
 		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
