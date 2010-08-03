@@ -127,6 +127,7 @@ struct KernelSubFunction {
 	uint16 *signature;
 	const SciWorkaroundEntry *workarounds;
 	bool debugLogging;
+	bool debugBreakpoint;
 };
 
 struct KernelFunction {
@@ -137,6 +138,7 @@ struct KernelFunction {
 	KernelSubFunction *subFunctions;
 	uint16 subFunctionCount;
 	bool debugLogging;
+	bool debugBreakpoint;
 };
 
 class Kernel {
@@ -218,9 +220,9 @@ public:
 	void loadKernelNames(GameFeatures *features);
 
 	/**
-	 * Sets debugCalls flag for a kernel function
+	 * Sets debug flags for a kernel function
 	 */
-	bool debugSetFunctionLogging(const char *kernelName, bool debugCalls);
+	bool debugSetFunction(const char *kernelName, int logging, int breakpoint);
 
 private:
 	/**

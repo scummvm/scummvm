@@ -743,6 +743,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 		if (kernelCall.debugLogging)
 			logKernelCall(&kernelCall, NULL, s, argc, argv, s->r_acc);
+		if (kernelCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
 	} else {
 		// Sub-functions available, check signature and call that one directly
 		if (argc < 1)
@@ -793,6 +798,11 @@ static void callKernelFunc(EngineState *s, int kernelCallNr, int argc) {
 
 		if (kernelSubCall.debugLogging)
 			logKernelCall(&kernelCall, &kernelSubCall, s, argc, argv, s->r_acc);
+		if (kernelSubCall.debugBreakpoint) {
+			printf("Break on k%s\n", kernelSubCall.name);
+			g_sci->_debugState.debugging = true;
+			g_sci->_debugState.breakpointWasHit = true;
+		}
 	}
 
 	// Remove callk stack frame again, if there's still an execution stack

@@ -656,7 +656,7 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
+bool Kernel::debugSetFunction(const char *kernelName, int logging, int breakpoint) {
 	if (strcmp(kernelName, "*")) {
 		for (uint id = 0; id < _kernelFuncs.size(); id++) {
 			if (_kernelFuncs[id].name) {
@@ -666,14 +666,21 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 						KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
 						uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
 						for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-							if (kernelSubCall->function)
-								kernelSubCall->debugLogging = logging;
+							if (kernelSubCall->function) {
+								if (logging != -1)
+									kernelSubCall->debugLogging = logging == 1 ? true : false;
+								if (breakpoint != -1)
+									kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
+							}
 							kernelSubCall++;
 						}
 						return true;
 					}
 					// function name matched, set for this one and exit
-					_kernelFuncs[id].debugLogging = logging;
+					if (logging != -1)
+						_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
+					if (breakpoint != -1)
+						_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
 					return true;
 				} else {
 					// main name was not matched
@@ -685,7 +692,10 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 							if (kernelSubCall->function) {
 								if (strcmp(kernelName, kernelSubCall->name) == 0) {
 									// sub-function name matched, set for this one and exit
-									kernelSubCall->debugLogging = logging;
+									if (logging != -1)
+										kernelSubCall->debugLogging = logging == 1 ? true : false;
+									if (breakpoint != -1)
+										kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
 									return true;
 								}
 							}
@@ -702,14 +712,21 @@ bool Kernel::debugSetFunctionLogging(const char *kernelName, bool logging) {
 		if (_kernelFuncs[id].name) {
 			if (!_kernelFuncs[id].subFunctions) {
 				// No sub-functions, enable actual kernel function
-				_kernelFuncs[id].debugLogging = logging;
+				if (logging != -1)
+					_kernelFuncs[id].debugLogging = logging == 1 ? true : false;
+				if (breakpoint != -1)
+					_kernelFuncs[id].debugBreakpoint = breakpoint == 1 ? true : false;
 			} else {
 				// Sub-Functions available, enable those too
 				KernelSubFunction *kernelSubCall = _kernelFuncs[id].subFunctions;
 				uint kernelSubCallCount = _kernelFuncs[id].subFunctionCount;
 				for (uint subId = 0; subId < kernelSubCallCount; subId++) {
-					if (kernelSubCall->function)
-						kernelSubCall->debugLogging = logging;
+					if (kernelSubCall->function) {
+						if (logging != -1)
+							kernelSubCall->debugLogging = logging == 1 ? true : false;
+						if (breakpoint != -1)
+							kernelSubCall->debugBreakpoint = breakpoint == 1 ? true : false;
+					}
 					kernelSubCall++;
 				}
 			}
