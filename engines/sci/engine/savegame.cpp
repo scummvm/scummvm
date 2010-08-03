@@ -53,16 +53,10 @@ namespace Sci {
 #define VER(x) Common::Serializer::Version(x)
 
 
-// OBSOLETE: This const is used for backward compatibility only.
-const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
-
-
 #pragma mark -
 
 // TODO: Many of the following sync_*() methods should be turned into member funcs
 // of the classes they are syncing.
-
-#define DEFROBNICATE_HANDLE(handle) (make_reg((handle >> 16) & 0xffff, handle & 0xffff))
 
 void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	soundObj.saveLoadWithSerializer(s);
