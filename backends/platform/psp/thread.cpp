@@ -28,7 +28,50 @@
 #include "backends/platform/psp/thread.h"
 #include "backends/platform/psp/trace.h"
  
-// Class PspThread -------------------------------------------------- 
+// Class PspThreadable -------------------------------------------------- 
+// Inherit this to create C++ threads easily
+
+bool PspThreadable::threadCreateAndStart(const char *threadName, int priority, int stackSize, bool useVfpu /*= false*/) {
+	DEBUG_ENTER_FUNC();
+
+	if (_threadId != -1) {
+		PSP_ERROR("thread already created!\n");
+		return false;
+	}
+		
+	_threadId = sceKernelCreateThread(threadName, __threadCallback, priority, stackSize, THREAD_ATTR_USER, 0);	// add VFPU support
+
+	if (_threadId < 0) {
+		PSP_ERROR("failed to create %s thread. Error code %d\n", threadName, _threadId);
+		return false;
+	}
+	
+	// We want to pass the pointer to this, but we'll have to take address of this so use a little trick
+	PspThreadable *_this = this;
+	
+	if (sceKernelStartThread(_threadId, sizeof(uint32 *), &_this) < 0) {
+		PSP_ERROR("failed to start %s thread id[%d]\n", threadName, _threadId);
+		return false;
+	}
+	
+	PSP_DEBUG_PRINT("Started %s thread with id[%x]\n", threadName, _threadId);	
+	
+	return true;
+}
+
+// Callback function to be called by PSP kernel
+int PspThreadable::__threadCallback(SceSize, void *__this) {
+	DEBUG_ENTER_FUNC();
+	
+	PspThreadable *_this = *(PspThreadable **)__this;	// Dereference the copied value which was 'this'
+	
+	_this->threadFunction();	// call the virtual function
+	
+	return 0;
+}
+
+// PspThread class
+// Utilities to access general thread functions
  
 void PspThread::delayMillis(uint32 ms) {
 	sceKernelDelayThread(ms * 1000);

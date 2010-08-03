@@ -26,10 +26,12 @@
 #ifndef PSP_DISPLAY_MAN_H
 #define PSP_DISPLAY_MAN_H
 
+#include "backends/platform/psp/thread.h"
+
 /**
  *	Class used only by DisplayManager to start/stop GU rendering
  */
-class MasterGuRenderer {
+class MasterGuRenderer : public PspThreadable {
 public:
 	MasterGuRenderer() : _lastRenderTime(0), _renderFinished(true), _callbackId(-1) {}
 	void guInit();
@@ -37,15 +39,15 @@ public:
 	void guPostRender();
 	void guShutDown();
 	bool isRenderFinished() { return _renderFinished; }
-	void setupCallbackThread();
+	void setupCallbackThread();	
 private:
+	virtual void threadFunction();			// for the display callback thread
 	static uint32 _displayList[];
 	uint32 _lastRenderTime;					// For measuring rendering time
 	void guProgramDisplayBufferSizes();
-	static int guCallbackThread(SceSize, void *);	// for the graphics callbacks
-	static int guCallback(int, int, void *__this);
+	static int guCallback(int, int, void *__this);	// for the display callback
 	bool _renderFinished;					// for sync with render callback
-	int _callbackId;						// to keep track of render callback
+	int _callbackId;						// to keep track of render callback	
 };
 
 class Screen;

@@ -26,13 +26,15 @@
 #ifndef PSP_AUDIO_H
 #define PSP_AUDIO_H
 
-class PspAudio {
+#include "backends/platform/psp/thread.h"
+
+class PspAudio : public PspThreadable {
 public:
 	enum {
 		NUM_BUFFERS = 2,
 		FREQUENCY = 44100	/* only frequency we allow */
 	};
-	typedef void (* callbackFunc)(void *userData, byte *samples, int len);
+	typedef void (* callbackFunc)(void *userData, byte *samples, int len);	// audio callback to call
 	PspAudio() : _pspChannel(0), 
 			_numOfChannels(0), _numOfSamples(0), _callback(0), 
 			_bufferToPlay(0), _bufferToFill(0), 
@@ -43,14 +45,12 @@ public:
 	~PspAudio() { close(); }
 	bool playBuffer();
 	void nextBuffer(int &bufferIdx);
-	static int thread(SceSize, void *);
-	void audioThread();
 	bool open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, callbackFunc callback, void *userData);
-	bool createThread();
 	void close();
 	uint32 getFrequency() { return FREQUENCY; }
 	void pause() { _paused = true; }
 	void unpause() { _paused = false; }
+	virtual void threadFunction();	// actual audio thread
 	
 private:
 	int _pspChannel;				// chosen hardware output channel
