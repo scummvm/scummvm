@@ -757,7 +757,7 @@ void ChunkResourceSource::scanSource(ResourceManager *resMan) {
 		if (!firstOffset)
 			firstOffset = entry.offset;
 
-		if ((ptr - chunk->data) >= firstOffset)
+		if ((size_t)(ptr - chunk->data) >= firstOffset)
 			break;
 	}
 }
