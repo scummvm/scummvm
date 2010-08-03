@@ -38,17 +38,23 @@ const SciWorkaroundEntry opcodeDivWorkarounds[] = {
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
-//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
-const SciWorkaroundEntry opcodeOrWorkarounds[] = {
-	{ GID_ECOQUEST2,       100,   0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
-	SCI_WORKAROUNDENTRY_TERMINATOR
-};
-
 //    gameID,           room,script,lvl,          object-name, method-name,    call, index,            workaround
 const SciWorkaroundEntry opcodeDptoaWorkarounds[] = {
 	{ GID_LSL6,           360,  938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
 	{ GID_LSL6HIRES,      360,64938,  0,               "ROsc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when looking through tile in the shower room initial cycles get set to an object instead of 2, we fix this by setting 1 after decrease
 	{ GID_SQ5,            200,  939,  0,                "Osc", "cycleDone",      -1,    0, { WORKAROUND_FAKE,   1 } }, // when going back to bridge the crew is goofing off, we get an object as cycle count
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeGeWorkarounds[] = {
+	{ GID_PQ3,             31,   31,  0,              "rm031", "init",           -1,    0, { WORKAROUND_FAKE,   1 } }, // pq3 english: when exiting the car, while morales is making phonecalls - bug #3037565
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeOrWorkarounds[] = {
+	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 

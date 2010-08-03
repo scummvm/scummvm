@@ -69,8 +69,9 @@ struct SciWorkaroundEntry {
 };
 
 extern const SciWorkaroundEntry opcodeDivWorkarounds[];
-extern const SciWorkaroundEntry opcodeOrWorkarounds[];
 extern const SciWorkaroundEntry opcodeDptoaWorkarounds[];
+extern const SciWorkaroundEntry opcodeGeWorkarounds[];
+extern const SciWorkaroundEntry opcodeOrWorkarounds[];
 extern const SciWorkaroundEntry uninitializedReadWorkarounds[];
 extern const SciWorkaroundEntry kAbs_workarounds[];
 extern const SciWorkaroundEntry kCelHigh_workarounds[];
