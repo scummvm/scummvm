@@ -26,6 +26,96 @@
 #include "sound/softsynth/fmtowns_pc98/towns_pc98_fmsynth.h"
 #include "common/endian.h"
 
+class TownsPC98_FmSynthOperator {
+public:
+	TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
+	                          const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
+	                          const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
+	~TownsPC98_FmSynthOperator() {}
+
+	void keyOn();
+	void keyOff();
+	void frequency(int freq);
+	void updatePhaseIncrement();
+	void recalculateRates();
+	void generateOutput(int32 phasebuf, int32 *feedbuf, int32 &out);
+
+	void feedbackLevel(int32 level) {
+		_feedbackLevel = level ? level + 6 : 0;
+	}
+	void detune(int value) {
+		_detn = &_detnTbl[value << 5];
+	}
+	void multiple(uint32 value) {
+		_multiple = value ? (value << 1) : 1;
+	}
+	void attackRate(uint32 value) {
+		_specifiedAttackRate = value;
+	}
+	bool scaleRate(uint8 value);
+	void decayRate(uint32 value) {
+		_specifiedDecayRate = value;
+		recalculateRates();
+	}
+	void sustainRate(uint32 value) {
+		_specifiedSustainRate = value;
+		recalculateRates();
+	}
+	void sustainLevel(uint32 value) {
+		_sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5;
+	}
+	void releaseRate(uint32 value) {
+		_specifiedReleaseRate = value;
+		recalculateRates();
+	}
+	void totalLevel(uint32 value) {
+		_totalLevel = value << 3;
+	}
+	void ampModulation(bool enable) {
+		_ampMod = enable;
+	}
+	void reset();
+
+protected:
+	EnvelopeState _state;
+	bool _playing;
+	uint32 _feedbackLevel;
+	uint32 _multiple;
+	uint32 _totalLevel;
+	uint8 _keyScale1;
+	uint8 _keyScale2;
+	uint32 _specifiedAttackRate;
+	uint32 _specifiedDecayRate;
+	uint32 _specifiedSustainRate;
+	uint32 _specifiedReleaseRate;
+	uint32 _tickCount;
+	uint32 _sustainLevel;
+
+	bool _ampMod;
+	uint32 _frequency;
+	uint8 _kcode;
+	uint32 _phase;
+	uint32 _phaseIncrement;
+	const int32 *_detn;
+
+	const uint8 *_rateTbl;
+	const uint8 *_rshiftTbl;
+	const uint8 *_adTbl;
+	const uint32 *_fTbl;
+	const uint32 *_sinTbl;
+	const int32 *_tLvlTbl;
+	const int32 *_detnTbl;
+
+	const uint32 _tickLength;
+	uint32 _timer;
+	int32 _currentLevel;
+
+	struct EvpState {
+		uint8 rate;
+		uint8 shift;
+	} fs_a, fs_d, fs_s, fs_r;
+};
+
 TownsPC98_FmSynthOperator::TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
         const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
         const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable) :
@@ -1409,3 +1499,12 @@ const uint8 TownsPC98_FmSynth::_percussionData[] = {
 	45, 136, 18, 144, 105, 138, 1, 160, 14, 128, 132, 145, 186, 37, 138, 41, 192, 48, 145, 46, 160, 33, 44, 24, 225, 16, 13, 132, 136, 137, 16, 148, 25, 170, 194, 82, 152, 136, 91, 24, 42, 169, 33, 233, 131, 179, 24, 185, 149, 16, 57, 172, 164, 18, 10, 211, 160, 147, 211, 33, 138, 243, 129, 16, 41, 193, 0, 43, 132, 155, 73,
 	58, 145, 244, 145, 43, 35, 9, 171, 16, 110, 25, 8, 28, 74, 162, 128, 26, 27, 82, 45, 136, 153, 18, 8, 136, 8
 };
+
+TownsPC98_FmSynth::ChanInternal::ChanInternal() {
+	memset(this, 0, sizeof(ChanInternal));
+}
+
+TownsPC98_FmSynth::ChanInternal::~ChanInternal() {
+	for (uint i = 0; i < ARRAYSIZE(opr); ++i)
+		delete opr[i];
+}

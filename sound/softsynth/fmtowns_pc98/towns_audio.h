@@ -65,7 +65,7 @@ private:
 	int intf_setLevel(va_list &args);
 	int intf_chanOff(va_list &args);
 	int intf_writeReg(va_list &args);
-	int intf_bufferedWriteReg(va_list &args);
+	int intf_writeRegBuffer(va_list &args);
 	int intf_readRegBuffer(va_list &args);
 	int intf_setTimerA(va_list &args);
 	int intf_setTimerB(va_list &args);

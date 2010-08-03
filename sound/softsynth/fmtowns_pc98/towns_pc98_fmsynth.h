@@ -30,6 +30,7 @@
 #include "sound/mixer.h"
 #include "common/list.h"
 
+class TownsPC98_FmSynthOperator;
 class TownsPC98_FmSynthSquareSineSource;
 class TownsPC98_FmSynthPercussionSource;
 
@@ -39,96 +40,6 @@ enum EnvelopeState {
 	kEnvDecaying,
 	kEnvSustaining,
 	kEnvReleasing
-};
-
-class TownsPC98_FmSynthOperator {
-public:
-	TownsPC98_FmSynthOperator(const uint32 timerbase, const uint8 *rateTable,
-	                          const uint8 *shiftTable, const uint8 *attackDecayTable, const uint32 *frqTable,
-	                          const uint32 *sineTable, const int32 *tlevelOut, const int32 *detuneTable);
-	~TownsPC98_FmSynthOperator() {}
-
-	void keyOn();
-	void keyOff();
-	void frequency(int freq);
-	void updatePhaseIncrement();
-	void recalculateRates();
-	void generateOutput(int32 phasebuf, int32 *feedbuf, int32 &out);
-
-	void feedbackLevel(int32 level) {
-		_feedbackLevel = level ? level + 6 : 0;
-	}
-	void detune(int value) {
-		_detn = &_detnTbl[value << 5];
-	}
-	void multiple(uint32 value) {
-		_multiple = value ? (value << 1) : 1;
-	}
-	void attackRate(uint32 value) {
-		_specifiedAttackRate = value;
-	}
-	bool scaleRate(uint8 value);
-	void decayRate(uint32 value) {
-		_specifiedDecayRate = value;
-		recalculateRates();
-	}
-	void sustainRate(uint32 value) {
-		_specifiedSustainRate = value;
-		recalculateRates();
-	}
-	void sustainLevel(uint32 value) {
-		_sustainLevel = (value == 0x0f) ? 0x3e0 : value << 5;
-	}
-	void releaseRate(uint32 value) {
-		_specifiedReleaseRate = value;
-		recalculateRates();
-	}
-	void totalLevel(uint32 value) {
-		_totalLevel = value << 3;
-	}
-	void ampModulation(bool enable) {
-		_ampMod = enable;
-	}
-	void reset();
-
-protected:
-	EnvelopeState _state;
-	bool _playing;
-	uint32 _feedbackLevel;
-	uint32 _multiple;
-	uint32 _totalLevel;
-	uint8 _keyScale1;
-	uint8 _keyScale2;
-	uint32 _specifiedAttackRate;
-	uint32 _specifiedDecayRate;
-	uint32 _specifiedSustainRate;
-	uint32 _specifiedReleaseRate;
-	uint32 _tickCount;
-	uint32 _sustainLevel;
-
-	bool _ampMod;
-	uint32 _frequency;
-	uint8 _kcode;
-	uint32 _phase;
-	uint32 _phaseIncrement;
-	const int32 *_detn;
-
-	const uint8 *_rateTbl;
-	const uint8 *_rshiftTbl;
-	const uint8 *_adTbl;
-	const uint32 *_fTbl;
-	const uint32 *_sinTbl;
-	const int32 *_tLvlTbl;
-	const int32 *_detnTbl;
-
-	const uint32 _tickLength;
-	uint32 _timer;
-	int32 _currentLevel;
-
-	struct EvpState {
-		uint8 rate;
-		uint8 shift;
-	} fs_a, fs_d, fs_s, fs_r;
 };
 
 class TownsPC98_FmSynth : public Audio::AudioStream {
@@ -191,14 +102,8 @@ private:
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
 
 	struct ChanInternal {
-		ChanInternal() {
-			memset(this, 0, sizeof(ChanInternal));
-		}
-
-		~ChanInternal() {
-			for (uint i = 0; i < ARRAYSIZE(opr); ++i)
-				delete opr[i];
-		}
+		ChanInternal();
+		~ChanInternal();
 
 		void ampModSensitivity(uint32 value) {
 			ampModSvty = (1 << (3 - value)) - (((value >> 1) & 1) | (value & 1));
@@ -216,7 +121,6 @@ private:
 
 		uint32 ampModSvty;
 		uint32 frqModSvty;
-
 
 		TownsPC98_FmSynthOperator *opr[4];
 	};

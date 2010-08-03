@@ -129,7 +129,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		INTCB(writeReg),
 		INTCB(notImpl),
-		INTCB(bufferedWriteReg),
+		INTCB(writeRegBuffer),
 		// 20
 		INTCB(readRegBuffer),
 		INTCB(setTimerA),
@@ -399,7 +399,7 @@ int TownsAudioInterface::intf_writeReg(va_list &args) {
 	return 0;
 }
 
-int TownsAudioInterface::intf_bufferedWriteReg(va_list &args) {
+int TownsAudioInterface::intf_writeRegBuffer(va_list &args) {
 	int part = va_arg(args, int) ? 1 : 0;
 	int reg = va_arg(args, int);
 	int val = va_arg(args, int);
