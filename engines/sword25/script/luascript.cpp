@@ -38,6 +38,7 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/array.h"
 #include "sword25/package/packagemanager.h"
 #include "sword25/script/luascript.h"
 #include "sword25/script/luabindhelper.h"
@@ -58,7 +59,6 @@ extern "C" {
 
 namespace Sword25 {
 
-using namespace std;
 using namespace Lua;
 
 // -----------------------------------------------------------------------------
@@ -410,7 +410,7 @@ namespace {
 
 namespace {
 	int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
-		vector<unsigned char> & chunkData = *reinterpret_cast<vector<unsigned char> * >(ud);
+		Common::Array<unsigned char> & chunkData = *reinterpret_cast<Common::Array<unsigned char> * >(ud);
 		const unsigned char *buffer = reinterpret_cast<const unsigned char *>(p);
 
 		while (sz--) chunkData.push_back(*buffer++) ;
@@ -431,8 +431,8 @@ bool BS_LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
 	PushPermanentsTable(m_State, PTT_PERSIST);
 	lua_getglobal(m_State, "_G");
 
-	// Lua persists and stores the data in a vector
-	vector<unsigned char> chunkData;
+	// Lua persists and stores the data in a Common::Array
+	Common::Array<unsigned char> chunkData;
 	pluto_persist(m_State, Chunkwriter, &chunkData);
 
 	// Persistenzdaten in den Writer schreiben.

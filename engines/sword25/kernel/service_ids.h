@@ -49,24 +49,24 @@
 
 namespace Sword25 {
 
-BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_StdWinInput_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_FMODExSound_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_Geometry_CreateObject(BS_Kernel* pKernel);
-BS_Service *BS_OggTheora_CreateObject(BS_Kernel* pKernel);
+BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_ScummVMInput_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_FMODExSound_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_Geometry_CreateObject(BS_Kernel *pKernel);
+BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel);
 
 // Services are recorded in this table
-const BS_ServiceInfo BS_SERVICE_TABLE[] =
-{
-	// Die ersten beiden Parameter sind die Namen der Superclass und des Services.
-	// Der dritte Parameter ist die statische Methode der Klasse, die ein Objekt der Klasse erzeugt und zurückgibt.
-	// Beispiel:
+const BS_ServiceInfo BS_SERVICE_TABLE[] = {
+	// The first two parameters are the name of the superclass and service
+	// The third parameter is the static method of the class that creates an object 
+	// of the class and returns it
+	// Example:
 	// BS_ServiceInfo("Superclass", "Service", CreateMethod)
 	BS_ServiceInfo("gfx", "opengl", BS_OpenGLGfx_CreateObject),
 	BS_ServiceInfo("package", "archiveFS", BS_ScummVMPackageManager_CreateObject),
-	BS_ServiceInfo("input", "winapi", BS_StdWinInput_CreateObject),
+	BS_ServiceInfo("input", "winapi", BS_ScummVMInput_CreateObject),
 	BS_ServiceInfo("sfx", "fmodex", BS_FMODExSound_CreateObject),
 	BS_ServiceInfo("script", "lua", BS_LuaScriptEngine_CreateObject),
 	BS_ServiceInfo("geometry", "std", BS_Geometry_CreateObject),

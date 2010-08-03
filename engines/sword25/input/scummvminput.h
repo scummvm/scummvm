@@ -47,10 +47,10 @@ namespace Sword25 {
 class BS_Kernel;
 
 /// Class definitions
-class BS_StdWinInput : public BS_InputEngine {
+class ScummVMInput : public BS_InputEngine {
 public:
-	BS_StdWinInput(BS_Kernel *pKernel);
-	virtual ~BS_StdWinInput();
+	ScummVMInput(BS_Kernel *pKernel);
+	virtual ~ScummVMInput();
 	
 	virtual bool Init();
 	virtual void Update();
@@ -77,6 +77,7 @@ public:
 
 private:
 	void TestForLeftDoubleClick();
+	void AlterKeyboardState(int keycode, byte newState);
 
 	byte							m_KeyboardState[2][256];
 	bool							m_LeftMouseState[2];

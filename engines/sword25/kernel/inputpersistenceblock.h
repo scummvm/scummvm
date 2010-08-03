@@ -39,11 +39,9 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/array.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistenceblock.h"
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
 
 namespace Sword25 {
 

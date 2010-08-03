@@ -39,39 +39,40 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/scummsys.h"
+#include "common/str.h"
+#include "common/hash-str.h"
+#include "common/hashmap.h"
 #include "sword25/kernel/common.h"
 
-#include "sword25/kernel/memlog_off.h"
-#include <map>
-#include "sword25/kernel/memlog_on.h"
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_CallbackRegistry
-{
+class BS_CallbackRegistry {
 public:
-	static BS_CallbackRegistry & GetInstance()
-	{
+	static BS_CallbackRegistry & GetInstance() {
 		static BS_CallbackRegistry Instance;
 		return Instance;
 	}
 
-	bool		RegisterCallbackFunction(const std::string & Name, void * Ptr);
-	void *		ResolveCallbackFunction(const std::string & Name) const;
-	std::string	ResolveCallbackPointer(void * Ptr) const;
+	bool		RegisterCallbackFunction(const Common::String &Name, void * Ptr);
+	void *		ResolveCallbackFunction(const Common::String &Name) const;
+	Common::String	ResolveCallbackPointer(void *Ptr) const;
 
 private:
-	typedef std::map<std::string, void *> NameToPtrMap;
+	typedef Common::HashMap<Common::String, void *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
 	NameToPtrMap m_NameToPtrMap;
-	typedef std::map<void *, std::string> PtrToNameMap;
+	typedef Common::HashMap<void *, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> PtrToNameMap;
 	PtrToNameMap m_PtrToNameMap;
 
-	void *		FindPtrByName(const std::string & Name) const;
-	std::string	FindNameByPtr(void * Ptr) const;
-	void		StoreCallbackFunction(const std::string & Name, void * Ptr);
+	void *		FindPtrByName(const Common::String &Name) const;
+	Common::String	FindNameByPtr(void * Ptr) const;
+	void		StoreCallbackFunction(const Common::String & Name, void * Ptr);
 };
 
+} // End of namespace Sword25
 
 #endif
