@@ -38,38 +38,57 @@ Screen_v2::~Screen_v2() {
 	delete[] _wsaFrameAnimBuffer;
 }
 
-uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int startColor, uint16 factor) {
+uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor, uint weight) {
 	if (!buffer)
 		return buffer;
 
-	factor = MIN<uint16>(255, factor);
-	factor >>= 1;
-	factor &= 0xFF;
+	weight = MIN<uint>(weight, 255) >> 1;
 
-	const byte col1 = pal[startColor * 3 + 0];
-	const byte col2 = pal[startColor * 3 + 1];
-	const byte col3 = pal[startColor * 3 + 2];
+	const byte opR = pal[opColor * 3 + 0];
+	const byte opG = pal[opColor * 3 + 1];
+	const byte opB = pal[opColor * 3 + 2];
 
 	uint8 *dst = buffer;
 	*dst++ = 0;
 
+	const int maxIndex = (_vm->gameFlags().gameID == GI_LOL) ? (_use16ColorMode ? 255 : 127) : 255;
+
 	for (int i = 1; i != 256; ++i) {
-		uint8 processedPalette[3];
-		byte col;
+		const byte curR = pal[i * 3 + 0] - ((((pal[i * 3 + 0] - opR) * weight) >> 7) & 0x7F);
+		const byte curG = pal[i * 3 + 1] - ((((pal[i * 3 + 1] - opG) * weight) >> 7) & 0x7F);
+		const byte curB = pal[i * 3 + 2] - ((((pal[i * 3 + 2] - opB) * weight) >> 7) & 0x7F);
 
-		col = pal[i * 3 + 0];
-		col -= ((((col - col1) * factor) << 1) >> 8) & 0xFF;
-		processedPalette[0] = col;
+		uint16 idxSum = _use16ColorMode ? 0xFFFF : 0x7FFF;
+		byte index = opColor;
 
-		col = pal[i * 3 + 1];
-		col -= ((((col - col2) * factor) << 1) >> 8) & 0xFF;
-		processedPalette[1] = col;
+		for (int curIdx = 1; curIdx <= maxIndex; ++curIdx) {
+			if (!_use16ColorMode && i == curIdx)
+				continue;
 
-		col = pal[i * 3 + 2];
-		col -= ((((col - col3) * factor) << 1) >> 8) & 0xFF;
-		processedPalette[2] = col;
+			int diff = 0;
+			uint16 sum = 0;
 
-		*dst++ = findLeastDifferentColor(processedPalette, pal, 1, 255) + 1;
+			diff = pal[curIdx * 3 + 0] - curR;
+			sum += diff * diff;
+			diff = pal[curIdx * 3 + 1] - curG;
+			sum += diff * diff;
+			diff = pal[curIdx * 3 + 2] - curB;
+			sum += diff * diff;
+
+			if (!sum) {
+				index = curIdx;
+				break;
+			}
+
+			if (sum <= idxSum) {
+				if (!_use16ColorMode || (curIdx == opColor || curIdx != i)) {
+					idxSum = sum;
+					index = curIdx;
+				}
+			}
+		}
+
+		*dst++ = index;
 	}
 
 	return buffer;
