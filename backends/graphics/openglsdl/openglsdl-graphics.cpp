@@ -35,6 +35,8 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 	_screenResized(false),
 	_lastFullscreenModeWidth(0),
 	_lastFullscreenModeHeight(0),
+	_desktopWidth(0),
+	_desktopHeight(0),
 	_desktopAspectRatio(0) {
 
 	// Initialize SDL video subsystem
@@ -47,8 +49,11 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager()
 
 	// Get desktop resolution
 	const SDL_VideoInfo *videoInfo = SDL_GetVideoInfo();
-	if (videoInfo->current_w > 0 && videoInfo->current_h > 0)
+	if (videoInfo->current_w > 0 && videoInfo->current_h > 0) {
+		_desktopWidth = videoInfo->current_w;
+		_desktopHeight = videoInfo->current_h;
 		_desktopAspectRatio = videoInfo->current_w * 10000 / videoInfo->current_h;
+	}
 
 	if (ConfMan.hasKey("last_fullscreen_mode_width") && ConfMan.hasKey("last_fullscreen_mode_height")) {
 		_lastFullscreenModeWidth = ConfMan.getInt("last_fullscreen_mode_width");
@@ -229,7 +234,16 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN | SDL_OPENGL);
 
 	// If -1, autodetect the fullscreen mode
+	// The first one to select will be the last used fullscreen mode
+	// The second one the desktop resolution.
+	// In the rare case that there is no fullscreen mode with same desktop resolution,
+	// or when the desktop data could not be obtained, the smallest one with the same
+	// aspect ratio as desktop will be selected.
+	// Finaly, if all other fail, the one with smallest metric will be selected.
 	if (_videoMode.activeFullscreenMode == -1) {
+		// Desktop resolution
+		int desktopModeIndex = -1;
+
 		// Best metric mode
 		const SDL_Rect *bestMode = availableModes[0];
 		int bestModeIndex = 0;
@@ -250,6 +264,9 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 				return true;
 			}
 
+			if (mode->w == _desktopWidth && mode->h == _desktopHeight)
+				desktopModeIndex = i;
+
 			if (mode->w < _videoMode.overlayWidth)
 				continue;
 			if (mode->h < _videoMode.overlayHeight)
@@ -268,15 +285,19 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 			}
 		}
 
-		if (bestASRMode) {
-			// Prefer modes that have the same aspect ratio as the native resolution
+		if (desktopModeIndex >= 0) {
+			_videoMode.hardwareWidth = _desktopWidth;
+			_videoMode.hardwareHeight = _desktopHeight;
+
+			_videoMode.activeFullscreenMode = desktopModeIndex;
+			return true;
+		} else if (bestASRMode) {
 			_videoMode.hardwareWidth = bestASRMode->w;
 			_videoMode.hardwareHeight = bestASRMode->h;
 
 			_videoMode.activeFullscreenMode = bestASRModeIndex;
 			return true;
 		} else if (bestMode) {
-			// If there is a suiting mode, use it
 			_videoMode.hardwareWidth = bestMode->w;
 			_videoMode.hardwareHeight = bestMode->h;
 
@@ -294,6 +315,7 @@ bool OpenGLSdlGraphicsManager::setupFullscreenMode() {
 		}
 	}
 
+	// Could not find any suiting fullscreen mode, return false.
 	return false;
 }
 
