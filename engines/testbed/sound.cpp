@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "sound/audiocd.h"
 #include "sound/softsynth/pcspk.h"
 
 #include "testbed/sound.h"
@@ -55,8 +56,8 @@ SoundSubsystemDialog::SoundSubsystemDialog() : TestbedInteractionDialog(80, 60, 
 	Audio::PCSpeaker *s3 = new Audio::PCSpeaker();
 	
 	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
-	s2->play(Audio::PCSpeaker::kWaveFormSquare, 500, -1);
-	s3->play(Audio::PCSpeaker::kWaveFormSaw, 200, -1);
+	s2->play(Audio::PCSpeaker::kWaveFormSine, 1200, -1);
+	s3->play(Audio::PCSpeaker::kWaveFormSine, 1400, -1);
 	
 	_mixer->playStream(Audio::Mixer::kPlainSoundType, &_h1, s1);
 	_mixer->pauseHandle(_h1, true);
@@ -152,14 +153,63 @@ bool SoundSubsystem::playBeeps() {
 }
 
 bool SoundSubsystem::mixSounds() {
+	Testsuite::clearScreen();
+	bool passed = true; 
+	Common::String info = "Testing Mixer Output by generating multichannel sound output using PC speaker emulator.\n"
+	"The mixer should be able to play them simultaneously\n";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : Mix Sounds\n");
+		return true;
+	}
+
 	SoundSubsystemDialog sDialog;
 	sDialog.runModal();
-	return true;
+	if (Testsuite::handleInteractiveInput("Was the mixer able to simultaneously play multiple channels?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! Multiple channels couldn't be played : Error with Mixer Class\n");
+		passed = false;
+	}
+	return passed;
+}
+
+bool SoundSubsystem::audiocdOutput() {
+	Testsuite::clearScreen();
+	bool passed = true; 
+	Common::String info = "Testing AudioCD API implementation.\n"
+	"Here we have four tracks, we play them in order i.e 1-2-3-last.\n"
+	"The user should verify if the tracks were run in correct order or not.";
+
+	if (Testsuite::handleInteractiveInput(info, "OK", "Skip", kOptionRight)) {
+		Testsuite::logPrintf("Info! Skipping test : AudioCD API\n");
+		return true;
+	}
+	
+	Common::Point pt(0, 100);
+	Testsuite::writeOnScreen("Playing the tracks of testCD in order i.e 1-2-3-last", pt);
+
+	// Play all tracks
+	for (int i = 1; i < 5; i++) { 
+		AudioCD.play(i, 1, 0, 0);
+		while (AudioCD.isPlaying()) {
+			g_system->delayMillis(500);
+			Testsuite::writeOnScreen(Common::String::printf("Playing Now: track%02d", i), pt);
+		}
+		g_system->delayMillis(500);
+	}
+
+	Testsuite::clearScreen();
+	if (Testsuite::handleInteractiveInput("Were all the tracks played in order i.e 1-2-3-last ?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! Error in AudioCD.play()\n");
+		passed = false;
+	}
+	
+	return passed;
 }
 
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SimpleBeeps", &SoundSubsystem::playBeeps, true);
 	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
+	addTest("AudioCD outputs", &SoundSubsystem::audiocdOutput, true);
 }
 
 }	// End of namespace Testbed

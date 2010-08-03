@@ -47,7 +47,8 @@ namespace SoundSubsystem {
 
 // will contain function declarations for SoundSubsystem tests
 bool playBeeps();
-bool mixSounds(); 
+bool mixSounds();
+bool audiocdOutput();
 }
 
 class SoundSubsystemTestSuite : public Testsuite {
