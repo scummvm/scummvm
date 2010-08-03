@@ -53,7 +53,7 @@ uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int startCo
 	uint8 *dst = buffer;
 	*dst++ = 0;
 
-	for (int i = 1; i != 255; ++i) {
+	for (int i = 1; i != 256; ++i) {
 		uint8 processedPalette[3];
 		byte col;
 
