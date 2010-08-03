@@ -31,8 +31,6 @@
 
 #include "backends/plugins/elf-loader.h"
 
-static char dlerr[MAXDLERRLEN];
-
 class ELFPlugin : public DynamicPlugin {
 protected:
 	void *_dlHandle;
@@ -40,14 +38,20 @@ protected:
 
 	virtual VoidFunc findSymbol(const char *symbol) {
 		void *func;
+		bool handleNull;
 		if (_dlHandle == NULL) {
-			strcpy(dlerr, "Handle is NULL.");
 			func = NULL;
+			handleNull = true;
 		} else {
 			func = ((DLObject *)_dlHandle)->symbol(symbol);
 		}
-		if (!func)
-			warning("Failed loading symbol '%s' from plugin '%s' (%s)", symbol, _filename.c_str(), dlerr);
+		if (!func) {
+			if (handleNull) {
+				warning("Failed loading symbol '%s' from plugin '%s' (Handle is NULL)", symbol, _filename.c_str());
+			} else {
+				warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+			}
+		}
 
 		// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
 		// standard and POSIX: ISO C++ disallows casting between function pointers
@@ -69,7 +73,7 @@ public:
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
-		DLObject *obj = new DLObject(dlerr);
+		DLObject *obj = new DLObject(NULL);
 		if (obj->open(_filename.c_str())) {
 			_dlHandle = (void *)obj;
 		} else {
@@ -78,7 +82,7 @@ public:
 		}
 
 		if (!_dlHandle) {
-			warning("Failed loading plugin '%s' (%s)", _filename.c_str(), dlerr);
+			warning("Failed loading plugin '%s'", _filename.c_str());
 			return false;
 		}
 
@@ -97,12 +101,11 @@ public:
 		if (_dlHandle) {
 			DLObject *obj = (DLObject *)_dlHandle;
 			if (obj == NULL) {
-				strcpy(dlerr, "Handle is NULL.");
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerr);
+				warning("Failed unloading plugin '%s' (Handle is NULL)", _filename.c_str());
 			} else if (obj->close()) {
 				delete obj;
 			} else {
-				warning("Failed unloading plugin '%s' (%s)", _filename.c_str(), dlerr);
+				warning("Failed unloading plugin '%s'", _filename.c_str());
 			}
 			_dlHandle = 0;
 		}
