@@ -2315,8 +2315,8 @@ echocheck "OpenGL (ES)"
 if test "$_opengl" = auto ; then
 	_opengl=no
 	cat > $TMPC << EOF
-#if defined(__MACOSX__)
-#include <gl.h>
+#if defined(MACOSX)
+#include <OpenGL/gl.h>
 #else
 #if defined(__WIN32__)
 #define WIN32_LEAN_AND_MEAN
@@ -2326,7 +2326,7 @@ if test "$_opengl" = auto ; then
 #endif
 int main(void) { return GL_VERSION_1_1; }
 EOF
-	cc_check $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes
+	cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes
 fi
 if test "$_opengl" = yes ; then
 	_def_opengl='#define USE_OPENGL'
