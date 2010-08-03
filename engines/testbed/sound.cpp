@@ -187,6 +187,10 @@ bool SoundSubsystem::audiocdOutput() {
 	Common::Point pt(0, 100);
 	Testsuite::writeOnScreen("Playing the tracks of testCD in order i.e 1-2-3-last", pt);
 
+	// Make audio-files discoverable
+	Common::FSNode gameRoot(ConfMan.get("path"));
+	SearchMan.addSubDirectoryMatching(gameRoot, "audiocd-files");
+
 	// Play all tracks
 	for (int i = 1; i < 5; i++) { 
 		AudioCD.play(i, 1, 0, 0);
@@ -199,7 +203,7 @@ bool SoundSubsystem::audiocdOutput() {
 
 	Testsuite::clearScreen();
 	if (Testsuite::handleInteractiveInput("Were all the tracks played in order i.e 1-2-3-last ?", "Yes", "No", kOptionRight)) {
-		Testsuite::logDetailedPrintf("Error! Error in AudioCD.play()\n");
+		Testsuite::logPrintf("Error! Error in AudioCD.play() or probably sound files were not detected, try -d1 (debuglevel 1)\n");
 		passed = false;
 	}
 	
@@ -209,7 +213,7 @@ bool SoundSubsystem::audiocdOutput() {
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SimpleBeeps", &SoundSubsystem::playBeeps, true);
 	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
-	addTest("AudioCD outputs", &SoundSubsystem::audiocdOutput, true);
+	addTest("AudiocdOutput", &SoundSubsystem::audiocdOutput, true);
 }
 
 }	// End of namespace Testbed

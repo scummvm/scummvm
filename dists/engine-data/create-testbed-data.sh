@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Create the directory structure
-# Avoided bash shortcuts/ file-seperators in interest of portability
+# Avoided bash shortcuts / file-seperators in interest of portability
 
 if [ -e testbed ]; then
 	echo "Game-data already present as testbed/"
@@ -45,4 +45,8 @@ cd ..
 
 # back to the top
 cd ..
+
+# move the audiocd data to newly created directory
+cp -r testbed-audiocd-files testbed/audiocd-files
+
 echo "Game data created"
