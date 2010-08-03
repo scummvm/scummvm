@@ -38,7 +38,7 @@ Screen_v2::~Screen_v2() {
 	delete[] _wsaFrameAnimBuffer;
 }
 
-uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor, uint weight) {
+uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor, uint weight, int maxColor) {
 	if (!buffer)
 		return buffer;
 
@@ -51,7 +51,17 @@ uint8 *Screen_v2::generateOverlay(const Palette &pal, uint8 *buffer, int opColor
 	uint8 *dst = buffer;
 	*dst++ = 0;
 
-	const int maxIndex = (_vm->gameFlags().gameID == GI_LOL) ? (_use16ColorMode ? 255 : 127) : 255;
+	int maxIndex = maxColor;
+	if (maxIndex == -1) {
+		if (_vm->gameFlags().gameID == GI_LOL) {
+			if (_use16ColorMode)
+				maxIndex = 255;
+			else
+				maxIndex = 127;
+		} else {
+			maxIndex = 255;
+		}
+	}
 
 	for (int i = 1; i != 256; ++i) {
 		const byte curR = pal[i * 3 + 0] - ((((pal[i * 3 + 0] - opR) * weight) >> 7) & 0x7F);
