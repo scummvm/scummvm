@@ -33,7 +33,7 @@
 
 class ELFPlugin : public DynamicPlugin {
 protected:
-	void *_dlHandle;
+	DLObject *_dlHandle;
 	Common::String _filename;
 
 	virtual VoidFunc findSymbol(const char *symbol) {
@@ -43,7 +43,7 @@ protected:
 			func = NULL;
 			handleNull = true;
 		} else {
-			func = ((DLObject *)_dlHandle)->symbol(symbol);
+			func = _dlHandle->symbol(symbol);
 		}
 		if (!func) {
 			if (handleNull) {
@@ -68,14 +68,15 @@ public:
 		: _dlHandle(0), _filename(filename) {}
 
 	~ELFPlugin() {
-		if (_dlHandle) unloadPlugin();
+		if (_dlHandle)
+			unloadPlugin();
 	}
 
 	bool loadPlugin() {
 		assert(!_dlHandle);
 		DLObject *obj = new DLObject(NULL);
 		if (obj->open(_filename.c_str())) {
-			_dlHandle = (void *)obj;
+			_dlHandle = obj;
 		} else {
 			delete obj;
 			_dlHandle = NULL;
@@ -88,9 +89,8 @@ public:
 
 		bool ret = DynamicPlugin::loadPlugin();
 
-		if (ret) {
-			if (_dlHandle != NULL)
-				((DLObject *)_dlHandle)->discard_symtab();
+		if (ret && _dlHandle) {
+			_dlHandle->discard_symtab();
 		}
 
 		return ret;
@@ -99,13 +99,15 @@ public:
 	void unloadPlugin() {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
-			DLObject *obj = (DLObject *)_dlHandle;
-			if (obj == NULL) {
+			if (_dlHandle == NULL) {
+				// FIXME: This check makes no sense, _dlHandle cannot be NULL at this point
 				warning("Failed unloading plugin '%s' (Handle is NULL)", _filename.c_str());
-			} else if (obj->close()) {
-				delete obj;
+			} else if (_dlHandle->close()) {
+				delete _dlHandle;
 			} else {
 				warning("Failed unloading plugin '%s'", _filename.c_str());
+				// FIXME: We are leaking _dlHandle here!
+				// Any particular reasons why we would want to do that???
 			}
 			_dlHandle = 0;
 		}
@@ -119,6 +121,7 @@ Plugin* ELFPluginProvider::createPlugin(const Common::FSNode &node) const {
 
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
+	// FIXME: Do we need these printfs? Should get rid of them eventually.
 	Common::String filename = node.getName();
 	printf("Testing name %s", filename.c_str());
 	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin")) {

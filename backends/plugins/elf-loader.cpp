@@ -28,10 +28,10 @@
 #include <string.h>
 #include <stdarg.h>
 #include <stdio.h>
-#include <malloc.h>
+#include <malloc.h>	// for memalign() (Linux specific)
 #include <unistd.h>
 #include <sys/fcntl.h>
-#include <sys/_default_fcntl.h>
+#include <sys/_default_fcntl.h>	// FIXME: Why do we need this DevKitPro specific header?
 
 #include "common/file.h"
 #include "common/fs.h"
