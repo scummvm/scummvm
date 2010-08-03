@@ -802,10 +802,17 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 
 	// Jones in the Fast Lane EGA - English DOS
 	// SCI interpreter version 1.000.172 (not 100% sure FIXME)
-	{"jones", "", {
+	{"jones", "EGA", {
 		{"resource.map", 0, "be4cf9e8c1e253623ef35ae3b8a1d998", 1800},
 		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 202105},
 		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 341771},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Jones in the Fast Lane EGA - English DOS (supplied by EddyDrama in bug report #3038761)
+	{"jones", "EGA", {
+		{"resource.map", 0, "8e92cf319180cc8b5b87b2ce93a4fe22", 1602},
+		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 511528},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
@@ -815,6 +822,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "65cbe19b36fffc71c8e7b2686bd49ad7", 1800},
 		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 313476},
 		{"resource.002", 0, "b86daa3ba2784d1502da881eedb80d9b", 719747},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
+
+	// Jones in the Fast Lane VGA - English DOS (supplied by omer_mor in bug report #3037054)
+	// VERSION file reports "1.000.060"
+	{"jones", "", {
+		{"resource.map", 0, "db175ab494ab0666f19ab8f2597a8e49", 1602},
+		{"resource.001", 0, "bac3ec6cb3e3920984ab0f32becf5163", 994487},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH	},
 
@@ -1111,6 +1126,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.007", 0, "ffe17e23d5833a79f3695addfc149a56", 1361965},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformMacintosh, 0, GUIO_NOSPEECH	},
+
+	// King's Quest 5 - FM-Towns (supplied by abevi in bug report #3038720)
+	{"kq5", "", {
+		{"resource.map", 0, "20c7cd248ff1a349ed354568eebd972b", 12733},
+		{"resource.000", 0, "71afd220d46bde1109c58e6acc0f3a01", 469094},
+		{"resource.001", 0, "72a569f46f1abf2d9d2b1526ad3799c3", 12808839},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO_NONE	},
 
 	// King's Quest 6 - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.055", VERSION file reports "1.000.000"
@@ -1951,6 +1974,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.001", 0, "5a0ed1d745855148364de1b3be099bac", 2070072},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH	},
+
+	// Mixed-Up Mother Goose - FM-Towns (supplied by abevi in bug report #3038720)
+	{"mothergoose", "", {
+		{"resource.map", 0, "b11e971ccd2040bebba59dfb409a08ef", 5772},
+		{"resource.001", 0, "d49625d9b8005ec01c852f8322a82867", 4330713},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformFMTowns, 0, GUIO_NONE	},
 
 #ifdef ENABLE_SCI32
 	// Mixed-Up Mother Goose Deluxe - English Windows/DOS CD (supplied by markcoolio in bug report #2723810)
