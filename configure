@@ -1672,8 +1672,6 @@ if test -n "$_host"; then
 			LDFLAGS="$LDFLAGS -march=vr4300 -mtune=vr4300 -nodefaultlibs -nostartfiles -mno-crt0"
 			LDFLAGS="$LDFLAGS -L$N64SDK/hkz-libn64 -L$N64SDK/lib"
 			LDFLAGS="$LDFLAGS -T n64ld_cpp.x -Xlinker -Map -Xlinker scummvm.map"
-			_ar="$_host_alias-ar cru"
-			_ranlib="$_host_alias-ranlib"
 			_backend="n64"
 			_need_memalign=yes
 			_mt32emu=no
