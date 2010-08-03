@@ -229,10 +229,10 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL: {
 		int byteCount = argv[1].toUint16();
-		// WORKAROUND: pq3 when plotting crimes - allocates the returned bytes
-		//  from kStrLen on "W" and "E" and wants to put a string in there,
-		//  which doesn't fit of course. That's why we allocate one byte more
-		//  all the time inside that room - maybe only multilingual pq3
+		// WORKAROUND: pq3 (multilingual) when plotting crimes - allocates the
+		//  returned bytes from kStrLen on "W" and "E" and wants to put a
+		//  string in there, which doesn't fit of course. That's why we allocate
+		//  one byte more all the time inside that room
 		if (g_sci->getGameId() == GID_PQ3) {
 			if (s->currentRoomNumber() == 202)
 				byteCount++;
