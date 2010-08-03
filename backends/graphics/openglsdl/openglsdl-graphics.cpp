@@ -357,11 +357,6 @@ bool OpenGLSdlGraphicsManager::loadGFXMode() {
 			// Failed setuping a fullscreen mode
 			return false;
 
-	// If changing to any fullscreen mode or from fullscreen,
-	// the OpenGL context is destroyed
-	if (_oldVideoMode.fullscreen || _videoMode.fullscreen)
-		_transactionDetails.newContext = true;
-
 	// Create our window
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 32,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN | SDL_OPENGL) : (SDL_OPENGL | SDL_RESIZABLE)
@@ -586,10 +581,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 			_videoMode.hardwareHeight = event.mouse.y;
 			_screenResized = true;
 			_transactionDetails.sizeChanged = true;
-			// The OpenGL context is not always destroyed during resizing,
-			// however it is better to waste some time recreating it than
-			// getting a blank screen
-			_transactionDetails.newContext = true;
 		endGFXTransaction();
 		return true;
 

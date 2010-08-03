@@ -230,7 +230,6 @@ void OpenGLGraphicsManager::beginGFXTransaction() {
 	_transactionDetails.sizeChanged = false;
 	_transactionDetails.needHotswap = false;
 	_transactionDetails.needUpdatescreen = false;
-	_transactionDetails.newContext = false;
 	_transactionDetails.filterChanged = false;
 #ifdef USE_RGB_COLOR
 	_transactionDetails.formatChanged = false;
@@ -1075,7 +1074,8 @@ void OpenGLGraphicsManager::loadTextures() {
 		getGLPixelFormat(Graphics::PixelFormat::createFormatCLUT8(), bpp, intformat, format, type);
 #endif
 		_gameTexture = new GLTexture(bpp, intformat, format, type);
-	} 
+	} else
+		_gameTexture->refresh();
 
 	_overlayFormat = Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0);
 
@@ -1086,23 +1086,18 @@ void OpenGLGraphicsManager::loadTextures() {
 		GLenum type;
 		getGLPixelFormat(_overlayFormat, bpp, intformat, format, type);
 		_overlayTexture = new GLTexture(bpp, intformat, format, type);
-	}
+	} else
+		_overlayTexture->refresh();
 
 	if (!_cursorTexture)
 		_cursorTexture = new GLTexture(4, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE);
+	else
+		_cursorTexture->refresh();
 		
 	GLint filter = _videoMode.antialiasing ? GL_LINEAR : GL_NEAREST;
 	_gameTexture->setFilter(filter);
 	_overlayTexture->setFilter(filter);
 	_cursorTexture->setFilter(filter);
-
-	if (_transactionDetails.newContext || _transactionDetails.filterChanged) {
-		// If the context was destroyed or it is needed to change the texture filter
-		// we need to recreate the textures
-		_gameTexture->refresh();
-		_overlayTexture->refresh();
-		_cursorTexture->refresh();
-	}
 
 	// Allocate texture memory and finish refreshing
 	_gameTexture->allocBuffer(_videoMode.screenWidth, _videoMode.screenHeight);
@@ -1127,9 +1122,9 @@ void OpenGLGraphicsManager::loadTextures() {
 #ifdef USE_OSD
 	if (!_osdTexture)
 		_osdTexture = new GLTexture(2, GL_RGBA, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1);
-
-	if (_transactionDetails.newContext || _transactionDetails.filterChanged)
+	else
 		_osdTexture->refresh();
+
 	_osdTexture->allocBuffer(_videoMode.overlayWidth, _videoMode.overlayHeight);
 #endif
 }

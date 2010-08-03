@@ -136,7 +136,6 @@ protected:
 		bool sizeChanged;
 		bool needHotswap;
 		bool needUpdatescreen;
-		bool newContext;
 		bool filterChanged;
 #ifdef USE_RGB_COLOR
 		bool formatChanged;
