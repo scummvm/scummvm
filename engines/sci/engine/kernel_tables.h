@@ -111,7 +111,7 @@ static const SciKernelMapSubEntry kDoSound_subops[] = {
     //  it actually does internally
     { SIG_SOUNDSCI1EARLY,  8, MAP_CALL(DoSoundStop),               NULL,                   NULL },
     { SIG_SOUNDSCI1EARLY,  9, MAP_CALL(DoSoundPause),              "[o0]i",                NULL },
-    { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                NULL },
+    { SIG_SOUNDSCI1EARLY, 10, MAP_CALL(DoSoundFade),               "oiiii",                kDoSoundFade_workarounds },
     { SIG_SOUNDSCI1EARLY, 11, MAP_CALL(DoSoundUpdateCues),         "o",                    NULL },
     { SIG_SOUNDSCI1EARLY, 12, MAP_CALL(DoSoundSendMidi),           "oiii",                 NULL },
     { SIG_SOUNDSCI1EARLY, 13, MAP_CALL(DoSoundReverb),             "i",                    NULL },
