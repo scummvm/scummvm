@@ -227,7 +227,6 @@ void GfxFrameout::kernelFrameout() {
 		planeRect.left = (planeRect.left * screenRect.width()) / scriptsRunningWidth;
 		planeRect.bottom = (planeRect.bottom * screenRect.height()) / scriptsRunningHeight;
 		planeRect.right = (planeRect.right * screenRect.width()) / scriptsRunningWidth;
-		planeRect.clip(screenRect); // we need to do this, at least in gk1 on cemetary we get bottom right -> 201, 321
 
 		int16 planeOffsetX = 0;
 
