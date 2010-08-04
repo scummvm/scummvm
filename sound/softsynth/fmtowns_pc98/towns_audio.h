@@ -77,6 +77,7 @@ private:
 	int intf_setTimerB(va_list &args);
 	int intf_enableTimerA(va_list &args);
 	int intf_enableTimerB(va_list &args);
+	int intf_loadSamples(va_list &args);
 	int intf_reserveEffectChannels(va_list &args);
 	int intf_loadWaveTable(va_list &args);
 	int intf_unloadWaveTable(va_list &args);
@@ -148,6 +149,8 @@ private:
 	void pcmCalcPhaseStep(TownsAudio_PcmChannel *p, TownsAudio_WaveTable *w);
 
 	void cdaReset();
+	
+	uint8 _cdaVolFlags;
 
 	const float _baserate;
 	uint32 _timerBase;

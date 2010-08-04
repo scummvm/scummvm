@@ -50,11 +50,11 @@ public:
 	void stopSoundEffect(int chan);
 	bool soundEffectIsPlaying(int chan);
 
-	void chanStereo(int chan, int mode);
+	void chanPanPos(int chan, int mode);
 	void chanPitch(int chan, int pitch);
 	void chanVolume(int chan, int vol);
 
-	void cdaSetVolume(int a, int vol1, int vol2);
+	void cdaSetVolume(int mode, int volLeft, int volRight);
 
 	int chanEnable(int tableEntry, int val);
 	int chanMode(int tableEntry, int val);

@@ -24,6 +24,7 @@
  */
 
 #include "sound/softsynth/fmtowns_pc98/towns_audio.h"
+#include "sound/audiocd.h"
 #include "common/endian.h"
 
 
@@ -101,8 +102,9 @@ private:
 
 TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfacePluginDriver *driver) : TownsPC98_FmSynth(mixer, kTypeTowns),
 	_fmInstruments(0), _pcmInstruments(0), _pcmChan(0), _waveTables(0), _waveTablesTotalDataSize(0),
-	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver), _pcmSfxChanMask(0),
-	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume), _ready(false) {
+	_baserate(55125.0f / (float)mixer->getOutputRate()), _tickLength(0), _timer(0), _drv(driver),
+	_pcmSfxChanMask(0),	_musicVolume(Audio::Mixer::kMaxMixerVolume), _sfxVolume(Audio::Mixer::kMaxMixerVolume),
+	_cdaVolFlags(0), _ready(false) {
 
 #define INTCB(x) &TownsAudioInterface::intf_##x
 	static const TownsAudioIntfCallback intfCb[] = {
@@ -147,7 +149,7 @@ TownsAudioInterface::TownsAudioInterface(Audio::Mixer *mixer, TownsAudioInterfac
 		INTCB(notImpl),
 		INTCB(notImpl),
 		// 32
-		INTCB(notImpl),
+		INTCB(loadSamples),
 		INTCB(reserveEffectChannels),
 		INTCB(loadWaveTable),
 		INTCB(unloadWaveTable),
@@ -268,7 +270,6 @@ int TownsAudioInterface::callback(int command, ...) {
 		return 4;
 	}
 
-	Common::StackLock lock(_mutex);
 	int res = (this->*_intfOpcodes[command])(args);
 
 	va_end(args);
@@ -350,11 +351,9 @@ void TownsAudioInterface::timerCallbackA() {
 
 void TownsAudioInterface::timerCallbackB() {
 	Common::StackLock lock(_mutex);
-	if (_ready) {
-		if (_drv)
-			_drv->timerCallback(1);
-		for (int i = 0; i < 8; i++)
-			pcmUpdateEnvelopeGenerator(i);
+	if (_drv && _ready) {
+		_drv->timerCallback(1);
+		callback(80);
 	}
 }
 
@@ -489,6 +488,29 @@ int TownsAudioInterface::intf_enableTimerB(va_list &args) {
 	return 0;
 }
 
+int TownsAudioInterface::intf_loadSamples(va_list &args) {
+	uint32 dest = va_arg(args, uint32);
+	int size = va_arg(args, int);
+	uint8 *src = va_arg(args, uint8*);	
+
+	if (dest >= 65536 || size == 0 || size > 65536)
+		return 3;
+	if (size + dest > 65536)
+		return 5;
+
+	int dwIndex = _numWaveTables - 1;
+	for (uint32 t = _waveTablesTotalDataSize; dwIndex && (dest < t); dwIndex--)
+		t -= _waveTables[dwIndex].size;
+
+	TownsAudio_WaveTable *s = &_waveTables[dwIndex];
+	_waveTablesTotalDataSize -= s->size;
+	s->size = size;
+	s->readData(src);
+	_waveTablesTotalDataSize += s->size;
+
+	return 0;
+}
+
 int TownsAudioInterface::intf_reserveEffectChannels(va_list &args) {
 	int numChan = va_arg(args, int);
 	if (numChan > 8)
@@ -541,9 +563,9 @@ int TownsAudioInterface::intf_loadWaveTable(va_list &args) {
 
 	TownsAudio_WaveTable *s = &_waveTables[_numWaveTables++];
 	s->readHeader(data);
-	s->readData(data + 32);
-
-	_waveTablesTotalDataSize += w.size;
+	
+	_waveTablesTotalDataSize += s->size;
+	callback(32, _waveTablesTotalDataSize, s->size, data + 32);
 
 	return 0;
 }
@@ -698,9 +720,44 @@ int TownsAudioInterface::intf_pcmUpdateEnvelopeGenerator(va_list &args) {
 }
 
 int TownsAudioInterface::intf_cdaSetVolume(va_list &args) {
-	/*int unk = va_arg(args, int);
-	int volume1 = va_arg(args, int);
-	int volume2 = va_arg(args, int);*/
+	int mode = va_arg(args, int);
+	int left = va_arg(args, int);
+	int right = va_arg(args, int);
+
+	// calculate mixer balance value
+	int8 balance = right - left;
+
+	if (left & 0xff80 || right & 0xff80)
+		return 3;
+
+	static const uint8 flags[] = { 0x0C, 0x30, 0x40, 0x80 };
+
+	//int a = (mode & 0x40) ? 4 : 0;
+	int b = mode & 3;
+	left = (left & 0x7e) >> 1;
+	right = (right & 0x7e) >> 1;
+	
+	if (mode & 0x40)
+		_cdaVolFlags |= flags[b];
+	else
+		_cdaVolFlags &= ~flags[b];
+
+	if (mode > 1) {
+		// Unknown purpose / TODO
+
+	} else if (mode == 1) {
+		// FM Towns seems to support volumes of 0 - 63 for each channel.
+		// We recalculate sane values for out 0 to 255 volume range.
+
+		int vl = (int)(((float)left * 255.0f) / 63.0f);
+		int vr = (int)(((float)right * 255.0f) / 63.0f);
+		AudioCD.setVolume((vl + vr) >> 1);
+		AudioCD.setBalance(balance);
+
+	} else {
+		// Unknown purpose / TODO
+	}
+
 	return 0;
 }
 
@@ -1402,8 +1459,7 @@ void TownsAudio_PcmChannel::clear() {
 
 	panLeft = panRight = 0;
 
-	envTotalLevel = envAttackRate = envDecayRate = envSustainLevel =
-	                                    envSustainRate = envReleaseRate = 0;
+	envTotalLevel = envAttackRate = envDecayRate = envSustainLevel = envSustainRate = envReleaseRate = 0;
 	envStep = envCurrentLevel = 0;
 
 	envState = kEnvReady;

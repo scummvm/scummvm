@@ -66,8 +66,6 @@ bool TownsEuphonyDriver::init() {
 
 	reset();
 
-	cdaSetVolume(1, 118, 118);
-
 	return true;
 }
 
@@ -194,7 +192,7 @@ bool TownsEuphonyDriver::soundEffectIsPlaying(int chan) {
 	return _intf->callback(40, chan) ? true : false;
 }
 
-void TownsEuphonyDriver::chanStereo(int chan, int mode) {
+void TownsEuphonyDriver::chanPanPos(int chan, int mode) {
 	_intf->callback(3, chan, mode);
 }
 
@@ -206,8 +204,8 @@ void TownsEuphonyDriver::chanVolume(int chan, int vol) {
 	_intf->callback(8, chan, vol);
 }
 
-void TownsEuphonyDriver::cdaSetVolume(int a, int vol1, int vol2) {
-	_intf->callback(67, a, vol1, vol2);
+void TownsEuphonyDriver::cdaSetVolume(int mode, int volLeft, int volRight) {
+	_intf->callback(67, mode, volLeft, volRight);
 }
 
 int TownsEuphonyDriver::chanEnable(int tableEntry, int val) {

@@ -66,6 +66,8 @@ bool SoundTowns::init() {
 	if (!loadInstruments())
 		return false;
 
+	_driver->cdaSetVolume(1, 118, 118);
+
 	return true;
 }
 
@@ -90,6 +92,7 @@ void SoundTowns::playTrack(uint8 track) {
 	beginFadeOut();
 
 	if (_musicEnabled == 2 && trackNum != -1) {
+		_driver->cdaSetVolume(1, 118, 118);
 		AudioCD.play(trackNum+1, loop ? -1 : 1, 0, 0);
 		AudioCD.updateCD();
 		_cdaPlaying = true;
@@ -198,7 +201,7 @@ void SoundTowns::playSoundEffect(uint8 track) {
 	}
 
 	_driver->chanVolume(_sfxChannel, 127);
-	_driver->chanStereo(_sfxChannel, 0x40);
+	_driver->chanPanPos(_sfxChannel, 0x40);
 	_driver->chanPitch(_sfxChannel, 0);
 	_driver->playSoundEffect(_sfxChannel, note, 127, sfxPlaybackBuffer);
 }
