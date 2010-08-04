@@ -173,7 +173,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
-	syncWithSerializer<reg_t>(s, obj.reg);
+	syncWithSerializer(s, obj.reg);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -233,7 +233,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
-	syncWithSerializer<reg_t>(s, _pos);
+	syncWithSerializer(s, _pos);
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -243,25 +243,25 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<Clone>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	syncWithSerializer<Object>(s, obj);
+	syncWithSerializer(s, obj);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	syncWithSerializer<reg_t>(s, obj.first);
-	syncWithSerializer<reg_t>(s, obj.last);
+	syncWithSerializer(s, obj.first);
+	syncWithSerializer(s, obj.last);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	syncWithSerializer<reg_t>(s, obj.pred);
-	syncWithSerializer<reg_t>(s, obj.succ);
-	syncWithSerializer<reg_t>(s, obj.key);
-	syncWithSerializer<reg_t>(s, obj.value);
+	syncWithSerializer(s, obj.pred);
+	syncWithSerializer(s, obj.succ);
+	syncWithSerializer(s, obj.key);
+	syncWithSerializer(s, obj.value);
 }
 
 #ifdef ENABLE_SCI32
@@ -295,7 +295,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 		if (s.isSaving())
 			value = obj.getValue(i);
 
-		syncWithSerializer<reg_t>(s, value);
+		syncWithSerializer(s, value);
 
 		if (s.isLoading())
 			obj.setValue(i, value);
@@ -381,14 +381,14 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		_objects.clear();
 		Object tmp;
 		for (uint i = 0; i < numObjs; ++i) {
-			syncWithSerializer<Object>(s, tmp);
+			syncWithSerializer(s, tmp);
 			_objects[tmp.getPos().offset] = tmp;
 		}
 	} else {
 		ObjMap::iterator it;
 		const ObjMap::iterator end = _objects.end();
 		for (it = _objects.begin(); it != end; ++it) {
-			syncWithSerializer<Object>(s, it->_value);
+			syncWithSerializer(s, it->_value);
 		}
 	}
 
@@ -494,7 +494,7 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
-	syncWithSerializer<reg_t>(s, soundObj);
+	syncWithSerializer(s, soundObj);
 	s.syncAsSint16LE(resourceId);
 	s.syncAsSint16LE(dataInc);
 	s.syncAsSint16LE(ticker);
