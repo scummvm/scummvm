@@ -27,6 +27,8 @@
 #define SWORD25_THEORADECODER_H
 
 #include "graphics/video/video_decoder.h"
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 
 #include <theora/theoradec.h>
 #include <vorbis/codec.h>
@@ -45,7 +47,7 @@ namespace Sword25 {
  */
 class TheoraDecoder : public Graphics::FixedRateVideoDecoder {
 public:
-	TheoraDecoder();
+	TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType);
 	virtual ~TheoraDecoder();
 
 	/**
@@ -68,6 +70,8 @@ public:
 	uint32 getFrameCount() const { return _frameCount; }
 	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 0, 0, 0); }
 
+	uint32 getElapsedTime() const;
+
 protected:
 	Common::Rational getFrameRate() const { return _frameRate; }
 
@@ -80,6 +84,12 @@ private:
 	Graphics::Surface *_surface;
 	Common::Rational _frameRate;
 	uint32 _frameCount;
+
+	Audio::Mixer *_mixer;
+	Audio::Mixer::SoundType _soundType;
+	Audio::SoundHandle *_audHandle;
+	Audio::QueuingAudioStream *_audStream;
+	Audio::QueuingAudioStream *createAudioStream();
 
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;
@@ -97,20 +107,20 @@ private:
 
 	int _theoraPacket;
 	int _vorbisPacket;
-	int _stateFlag;
+	bool _stateFlag;
 
 	int _ppLevelMax;
 	int _ppLevel;
 	int _ppInc;
 
 	// single frame video buffering
-	int _videobufReady;
+	bool _videobufReady;
 	ogg_int64_t  _videobufGranulePos;
 	double _videobufTime;
 
 	// single audio fragment audio buffering
 	int _audiobufFill;
-	int _audiobufReady;
+	bool _audiobufReady;
 	ogg_int16_t *_audiobuf;
 	ogg_int64_t  _audiobufGranulePos; // time position of last sample
 };

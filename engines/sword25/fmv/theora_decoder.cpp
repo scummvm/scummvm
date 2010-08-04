@@ -41,17 +41,22 @@
 
 namespace Sword25 {
 
-TheoraDecoder::TheoraDecoder() {
+TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : _mixer(mixer) {
 	_fileStream = 0;
 	_surface = 0;
 
 	_theoraPacket = 0;
 	_vorbisPacket = 0;
-	_stateFlag = 0;
+	_stateFlag = false;
+
+	_soundType = soundType;
+	_audStream = 0;
+	_audHandle = new Audio::SoundHandle();
 }
 
 TheoraDecoder::~TheoraDecoder() {
 	close();
+	delete _audHandle;
 }
 
 void TheoraDecoder::queuePage(ogg_page *page) {
@@ -102,7 +107,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 			if (!ogg_page_bos(&_oggPage)) {
 				// don't leak the page; get it into the appropriate stream
 				queuePage(&_oggPage);
-				_stateFlag = 1;
+				_stateFlag = true;
 				break;
 			}
 
@@ -220,8 +225,11 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 	}
 
 	// open audio
-	if (_vorbisPacket)
-		open_audio();
+	if (_vorbisPacket) {
+		_audStream = createAudioStream();
+		if (_audStream)
+			_mixer->playStream(_soundType, _audHandle, _audStream);
+	}
 
 	return true;
 }
@@ -233,6 +241,9 @@ void TheoraDecoder::close() {
 		vorbis_dsp_clear(&_vorbisDSP);
 		vorbis_comment_clear(&_vorbisComment);
 		vorbis_info_clear(&_vorbisInfo);
+
+		_mixer->stopHandle(*_audHandle);
+		_audStream = 0;
 	}
 	if (_theoraPacket) {
 		ogg_stream_clear(&_theoraOut);
@@ -258,7 +269,7 @@ void TheoraDecoder::close() {
 Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	int i, j;
 
-	_stateFlag = 0; // playback has not begun
+	_stateFlag = false; // playback has not begun
 
 	// we want a video and audio frame ready to go at all times.  If
 	// we have to buffer incoming, buffer the compressed data (ie, let
@@ -281,7 +292,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 			_audiobufFill += i * _vorbisInfo.channels * 2;
 
 			if (_audiobufFill == audiofd_fragsize)
-				_audiobufReady = 1;
+				_audiobufReady = true;
 
 			if (_vorbisDSP.granulepos >= 0)
 				_audiobufGranulePos = _vorbisDSP.granulepos - ret + i;
@@ -327,7 +338,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				// with non-keyframe seeks. 
 
 				if (_videobufTime >= get_time())
-					_videobufReady = 1;
+					_videobufReady = true;
 				else {
 					// If we are too slow, reduce the pp level.
 					_ppInc = _ppLevel > 0 ? -1 : 0;
@@ -350,12 +361,13 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	}
 
 	// If playback has begun, top audio buffer off immediately.
-	if (_stateFlag) audio_write_nonblocking();
+	if (_stateFlag)
+		audio_write_nonblocking();
 
 	// are we at or past time for this video frame?
 	if (_stateFlag && _videobufReady && _videobufTime <= get_time()) {
 		video_write();
-		_videobufReady = 0;
+		_videobufReady = false;
 	}
 
 	if (_stateFlag &&
@@ -410,11 +422,11 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	// we can begin playback
 	if ((!_theoraPacket || _videobufReady) &&
 		(!_vorbisPacket || _audiobufReady))
-		_stateFlag = 1;
+		_stateFlag = true;
 
 	// same if we've run out of input
 	if (_fileStream->eos())
-		_stateFlag = 1;
+		_stateFlag = true;
 }
 
 void TheoraDecoder::reset() {
@@ -422,13 +434,24 @@ void TheoraDecoder::reset() {
 	if (_fileStream)
 		_fileStream->seek(0);
 
-	_videobufReady = 0;
+	_videobufReady = false;
 	_videobufGranulePos = -1;
 	_videobufTime = 0;
 
 	_audiobufFill = 0;
-	_audiobufReady = 0;
+	_audiobufReady = false;
 	_audiobufGranulePos = 0;
+}
+
+uint32 TheoraDecoder::getElapsedTime() const {
+	if (_audStream)
+		return _mixer->getSoundElapsedTime(*_audHandle);
+
+	return VideoDecoder::getElapsedTime();
+}
+
+Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
+	return Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
 }
 
 } // End of namespace Sword25
