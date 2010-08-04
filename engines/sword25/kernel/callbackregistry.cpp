@@ -56,23 +56,21 @@
 
 #include "sword25/kernel/callbackregistry.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
-bool BS_CallbackRegistry::RegisterCallbackFunction(const std::string & Name, void * Ptr)
-{
-	if (Name == "")
-	{
+bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, void *Ptr) {
+	if (Name == "") {
 		BS_LOG_ERRORLN("The empty string is not allowed as a callback function name.");
 		return false;
 	}
 
-	if (FindPtrByName(Name) != 0)
-	{
+	if (FindPtrByName(Name) != 0) {
 		BS_LOG_ERRORLN("There is already a callback function with the name \"%s\".", Name.c_str());
 		return false;
 	}
-	if (FindNameByPtr(Ptr) != "")
-	{
+	if (FindNameByPtr(Ptr) != "") {
 		BS_LOG_ERRORLN("There is already a callback function with the pointer 0x%x.", Ptr);
 		return false;
 	}
@@ -84,12 +82,10 @@ bool BS_CallbackRegistry::RegisterCallbackFunction(const std::string & Name, voi
 
 // -----------------------------------------------------------------------------
 
-void * BS_CallbackRegistry::ResolveCallbackFunction(const std::string & Name) const
-{
+void * BS_CallbackRegistry::ResolveCallbackFunction(const Common::String & Name) const {
 	void * Result = FindPtrByName(Name);
 
-	if (!Result)
-	{
+	if (!Result) {
 		BS_LOG_ERRORLN("There is no callback function with the name \"%s\".", Name.c_str());
 	}
 
@@ -98,12 +94,10 @@ void * BS_CallbackRegistry::ResolveCallbackFunction(const std::string & Name) co
 
 // -----------------------------------------------------------------------------
 
-std::string BS_CallbackRegistry::ResolveCallbackPointer(void * Ptr) const
-{
-	const std::string & Result = FindNameByPtr(Ptr);
+Common::String BS_CallbackRegistry::ResolveCallbackPointer(void *Ptr) const {
+	const Common::String &Result = FindNameByPtr(Ptr);
 
-	if (Result == "")
-	{
+	if (Result == "") {
 		BS_LOG_ERRORLN("There is no callback function with the pointer 0x%x.", Ptr);
 	}
 
@@ -112,17 +106,15 @@ std::string BS_CallbackRegistry::ResolveCallbackPointer(void * Ptr) const
 
 // -----------------------------------------------------------------------------
 
-void * BS_CallbackRegistry::FindPtrByName(const std::string & Name) const
-{
+void * BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const {
 	// Eintrag in der Map finden und den Pointer zurückgeben.
 	NameToPtrMap::const_iterator It = m_NameToPtrMap.find(Name);
-	return It == m_NameToPtrMap.end() ? 0 : It->second;
+	return It == m_NameToPtrMap.end() ? 0 : It->_value;
 }
 
 // -----------------------------------------------------------------------------
 
-std::string BS_CallbackRegistry::FindNameByPtr(void * Ptr) const
-{
+Common::String BS_CallbackRegistry::FindNameByPtr(void *Ptr) const {
 	// Eintrag in der Map finden und den Namen zurückgeben.
 	PtrToNameMap::const_iterator It = m_PtrToNameMap.find(Ptr);
 	return It == m_PtrToNameMap.end() ? "" : It->second;
@@ -130,9 +122,10 @@ std::string BS_CallbackRegistry::FindNameByPtr(void * Ptr) const
 
 // -----------------------------------------------------------------------------
 
-void BS_CallbackRegistry::StoreCallbackFunction(const std::string & Name, void * Ptr)
-{
+void BS_CallbackRegistry::StoreCallbackFunction(const Common::String &Name, void *Ptr) {
 	// Callback-Funktion in beide Maps eintragen.
 	m_NameToPtrMap[Name] = Ptr;
 	m_PtrToNameMap[Ptr] = Name;
 }
+
+} // End of namespace Sword25
