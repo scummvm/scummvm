@@ -5,14 +5,7 @@ MODULE_OBJS := \
 	sword25.o \
 	fmv/movieplayer.o \
 	fmv/movieplayer_script.o \
-	fmv/oggtheora/audiobuffer.o \
-	fmv/oggtheora/moviefile.o \
-	fmv/oggtheora/oggstate.o \
-	fmv/oggtheora/oggstreamstate.o \
-	fmv/oggtheora/oggtheora.o \
-	fmv/oggtheora/theorastate.o \
-	fmv/oggtheora/vorbisstate.o \
-	fmv/oggtheora/yuvtorgba.o \
+	fmv/theora_decoder.o \
 	gfx/animation.o \
 	gfx/animationdescription.o \
 	gfx/animationresource.o \

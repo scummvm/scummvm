@@ -55,7 +55,7 @@ public:
 	// -----------------------------------------------------------------------------
 
 	BS_MoviePlayer(BS_Kernel *pKernel);
-	virtual ~BS_MoviePlayer() {};
+	~BS_MoviePlayer() {};
 
 	// -----------------------------------------------------------------------------
 	// Abstract interface must be implemented by each Movie Player
@@ -71,14 +71,14 @@ public:
 	 * @param Z				Z indicates the position of the film on the main graphics layer
 	 * @return				Returns false if an error occured while loading, otherwise true.
 	*/
-	virtual bool LoadMovie(const Common::String &Filename, unsigned int Z) = 0;
+	bool LoadMovie(const Common::String &Filename, unsigned int Z);
 
 	/**
 	 * Unloads the currently loaded movie file.
 	 * @return				Returns false if an error occurred while unloading, otherwise true.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual bool UnloadMovie() = 0;
+	bool UnloadMovie();
 
 	/**
 	 * Plays the loaded movie.
@@ -88,7 +88,7 @@ public:
 	 * @return				Returns false if an error occurred while starting, otherwise true.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual bool Play() = 0;
+	bool Play();
 
 	/**
 	 * Pauses movie playback.
@@ -97,23 +97,23 @@ public:
 	 * @return				Returns false if an error occurred while pausing, otherwise true.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual bool Pause() = 0;
+	bool Pause();
 
 	/**
 	 * This function must be called once per frame.
 	 */
-	virtual void Update() = 0;
+	void Update();
 
 	/**
 	 * Returns whether a film is loaded for playback.
 	 */
-	virtual bool IsMovieLoaded() = 0;
+	bool IsMovieLoaded();
 
 	/**
 	 * Returns whether the movie playback is paused.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	*/
-	virtual bool IsPaused() = 0;
+	bool IsPaused();
 
 	/**
 	 * Returns the scaling factor for the loaded film.
@@ -123,20 +123,20 @@ public:
 	 * @return				Returns the scaling factor of the film.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual float GetScaleFactor() = 0;
+	float GetScaleFactor();
 
 	/**
 	 * Sets the factor by which the loaded film is to be scaled.
 	 * @param ScaleFactor	The desired scale factor.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual void SetScaleFactor(float ScaleFactor) = 0;
+	void SetScaleFactor(float ScaleFactor);
 
 	/**
 	 * Returns the current playing position in seconds.
 	 * @remark				This method can only be called when IsMovieLoaded() returns true.
 	 */
-	virtual double GetTime() = 0;
+	double GetTime();
 
 private:
 	bool _RegisterScriptBindings();
