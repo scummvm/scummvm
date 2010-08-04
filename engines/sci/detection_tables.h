@@ -2315,8 +2315,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 642203},
 		{"resource.004", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 641688},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
-			},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
 
 	// Quest for Glory 1 / Hero's Quest - English DOS 5.25" Floppy (supplied by markcoolio in bug report #2723843)
 	// Executable scanning reports "0.000.566"
@@ -2331,8 +2330,15 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.006", 0, "69366c2a2f99917199fe1b60a4fee19d", 267852},
 		{"resource.007", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 272747},
 		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH
-			},
+		Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH },
+
+	// Quest for Glory 1 / Hero's Quest - English DOS Demo
+	// Executable scanning reports "0.000.685"
+	{"qfg1", "Demo", {
+		{"resource.map", 0, "df34c758cbb9026da175793ff686b0e6", 882},
+		{"resource.001", 0, "73fbaafdd313b39aeedb80fbf85ecef1", 389884},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH },
 
 	// Quest for Glory 1 - Japanese PC-98 5.25" Floppy (also includes english language)
 	// Executable scanning reports "S.old.201"
