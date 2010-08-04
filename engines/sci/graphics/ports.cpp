@@ -179,8 +179,18 @@ void GfxPorts::kernelSetActive(uint16 portId) {
 	case 0xFFFF:
 		setPort(_menuPort);
 		break;
-	default:
-		setPort(getPortById(portId));
+	default: {
+		Port *newPort = getPortById(portId);
+		if (newPort)
+			setPort(newPort);
+		else {
+			if (g_sci->getGameId() == GID_HOYLE4 && portId == 3) {
+				// Hoyle 4 attempts to set invalid port ID 3 when closing the options dialog (bug #3039305)
+			} else {
+				error("GfxPorts::kernelSetActive was requested to set invalid port id %d", portId);
+			}
+		}
+	}
 	};
 }
 
@@ -218,7 +228,10 @@ reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uin
 
 void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 	Window *wnd = (Window *)getPortById(windowId);
-	removeWindow(wnd, reanimate);
+	if (wnd)
+		removeWindow(wnd, reanimate);
+	else
+		error("GfxPorts::kernelDisposeWindow: Request to dispose invalid port id %d", windowId);
 }
 
 int16 GfxPorts::isFrontWindow(Window *pWnd) {
@@ -415,7 +428,7 @@ void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
-	_windowsById[pWnd->id] = 0;
+	_windowsById[pWnd->id] = NULL;
 	delete pWnd;
 }
 
@@ -444,9 +457,7 @@ void GfxPorts::updateWindow(Window *wnd) {
 }
 
 Port *GfxPorts::getPortById(uint16 id) {
-	if (id > _windowsById.size())
-		error("getPortById() received invalid id");
-	return _windowsById[id];
+	return (id < _windowsById.size()) ? _windowsById[id] : NULL;
 }
 
 Port *GfxPorts::setPort(Port *newPort) {
