@@ -68,6 +68,11 @@ const Common::String &Kernel::getSelectorName(uint selector) {
 		for (uint loopSelector = _selectorNames.size(); loopSelector <= selector; ++loopSelector)
 			_selectorNames.push_back(Common::String::printf("<noname%d>", loopSelector));
 	}
+
+	// Ensure that the selector has a name
+	if (_selectorNames[selector].empty())
+		_selectorNames[selector] = Common::String::printf("<noname%d>", selector);
+
 	return _selectorNames[selector];
 }
 
