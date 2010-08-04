@@ -174,7 +174,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 		if (RGBList[i] != format)
 			_supportedFormats.push_back(RGBList[i]);
 	}
-
+#ifndef USE_GLES
 	// Push some BGR formats
 	for (int i = 0; i < ARRAYSIZE(BGRList); i++) {
 		if (_hwscreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
@@ -182,7 +182,7 @@ void OpenGLSdlGraphicsManager::detectSupportedFormats() {
 		if (BGRList[i] != format)
 			_supportedFormats.push_back(BGRList[i]);
 	}
-
+#endif
 	_supportedFormats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 }
 
