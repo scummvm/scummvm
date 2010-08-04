@@ -1382,8 +1382,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DMACOSX"
 		CXXFLAGS="$CXXFLAGS"
 		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
-		OPENGL_CFLAGS="-I/System/Library/Frameworks/OpenGL.framework/Headers"
-		OPENGL_LIBS="-framework OpenGL"
 		add_line_to_config_mk 'MACOSX = 1'
 		_unix=yes
 		;;
@@ -1428,8 +1426,6 @@ case $_host_os in
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"
 		LIBS="$LIBS -lmingw32 -lwinmm"
 		OBJS="$OBJS scummvmico.o"
-		OPENGL_CFLAGS=""
-		OPENGL_LIBS="-lopengl32"
 		add_line_to_config_mk 'WIN32 = 1'
 		;;
 	mint*)
@@ -1486,18 +1482,6 @@ case $_host_os in
 		_unix=yes
 		;;
 esac
-
-# HACK: On non-OSX systems and no mingw compiler, add the GL library if using sdl backend
-if test "$_backend" = "sdl" ; then
-	case $_host_os in
-		*darwin*)
-			;;
-		*mingw*)
-			;;
-		*)
-			OPENGL_LIBS="$OPENGL_LIBS -lGL"
-	esac
-fi
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
@@ -2314,30 +2298,43 @@ define_in_config_h_if_yes "$_text_console" 'USE_TEXT_CONSOLE'
 echocheck "OpenGL (ES)"
 if test "$_opengl" = auto ; then
 	_opengl=no
-	cat > $TMPC << EOF
-#if defined(MACOSX)
-#include <OpenGL/gl.h>
-#else
-#if defined(__WIN32__)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#endif
+	if test "$_backend" = "sdl" ; then
+		case $_host_os in
+			*darwin*)
+				_opengl=yes
+				;;
+			*mingw*)
+				_opengl=yes
+				;;
+			*)
+				cat > $TMPC << EOF
 #include <GL/gl.h>
-#endif
 int main(void) { return GL_VERSION_1_1; }
 EOF
-	cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS && _opengl=yes
+				cc_check $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS -lGL && _opengl=yes
+		esac
+	fi
 fi
 if test "$_opengl" = yes ; then
-	_def_opengl='#define USE_OPENGL'
 	LIBS="$LIBS $OPENGL_LIBS"
 	INCLUDES="$INCLUDES $OPENGL_CFLAGS"
 	DEFINES="$DEFINES -DUSE_OPENGL"
-else
-	_def_opengl='#undef USE_OPENGL'
+	case $_host_os in
+		*darwin*)
+			INCLUDES="$INCLUDES -I/System/Library/Frameworks/OpenGL.framework/Headers"
+			LIBS="$LIBS -framework OpenGL"
+			;;
+		*mingw*)
+			LIBS="$LIBS -lopengl32"
+			;;
+		*)
+			LIBS="$LIBS -lGL"
+	esac
 fi
 
 echo "$_opengl"
+
+define_in_config_if_yes "$_opengl" 'USE_OPENGL'
 
 #
 # Check for nasm
