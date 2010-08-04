@@ -76,6 +76,7 @@ bool SeqDecoder::load(Common::SeekableReadStream &stream) {
 	uint16 palColorCount = READ_LE_UINT16(paletteData + 29);
 
 	int palOffset = 37;
+	memset(_palette, 0, 256 * 3);
 
 	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 		if (palFormat == kSeqPalVariable)
