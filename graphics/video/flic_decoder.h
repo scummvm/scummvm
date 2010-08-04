@@ -72,7 +72,7 @@ public:
 	void copyDirtyRectsToBuffer(uint8 *dst, uint pitch);
 
 	byte *getPalette() { _paletteChanged = false; return _palette; }
-	bool hasDirtyPalette() { return _paletteChanged; }
+	bool hasDirtyPalette() const { return _paletteChanged; }
 	void reset();
 
 protected:
