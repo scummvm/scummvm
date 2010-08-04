@@ -324,7 +324,11 @@ reg_t SoundCommandParser::kDoSoundFade(int argc, reg_t *argv, reg_t acc) {
 	case 4: // SCI01+
 	case 5: // SCI1+ (SCI1 late sound scheme), with fade and continue
 		musicSlot->fadeTo = CLIP<uint16>(argv[1].toUint16(), 0, MUSIC_VOLUME_MAX);
-		musicSlot->fadeStep = volume > argv[1].toUint16() ? -argv[3].toUint16() : argv[3].toUint16();
+		// sometimes we get objects in that position, fix it up (ffs. workarounds)
+		if (!argv[1].segment)
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -argv[3].toUint16() : argv[3].toUint16();
+		else
+			musicSlot->fadeStep = volume > musicSlot->fadeTo ? -5 : 5;
 		musicSlot->fadeTickerStep = argv[2].toUint16() * 16667 / _music->soundGetTempo();
 		musicSlot->fadeTicker = 0;
 		musicSlot->stopAfterFading = (argc == 5) ? (argv[4].toUint16() != 0) : false;
