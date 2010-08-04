@@ -55,34 +55,6 @@ namespace Sci {
 
 #pragma mark -
 
-// TODO: Many of the following sync_*() methods should be turned into member funcs
-// of the classes they are syncing.
-
-void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
-	soundObj.saveLoadWithSerializer(s);
-	s.syncAsSint16LE(resourceId);
-	s.syncAsSint16LE(dataInc);
-	s.syncAsSint16LE(ticker);
-	s.syncAsSint16LE(signal, VER(17));
-	s.syncAsByte(priority);
-	s.syncAsSint16LE(loop, VER(17));
-	s.syncAsByte(volume);
-	s.syncAsByte(hold, VER(17));
-	s.syncAsByte(fadeTo);
-	s.syncAsSint16LE(fadeStep);
-	s.syncAsSint32LE(fadeTicker);
-	s.syncAsSint32LE(fadeTickerStep);
-	s.syncAsByte(status);
-
-	// pMidiParser and pStreamAud will be initialized when the
-	// sound list is reconstructed in gamestate_restore()
-	if (s.isLoading()) {
-		soundRes = 0;
-		pMidiParser = 0;
-		pStreamAud = 0;
-	}
-}
-
 // Experimental hack: Use syncWithSerializer to sync. By default, this assume
 // the object to be synced is a subclass of Serializable and thus tries to invoke
 // the saveLoadWithSerializer() method. But it is possible to specialize this
@@ -142,7 +114,8 @@ void syncArray(Common::Serializer &s, Common::Array<T> &arr) {
 
 template <>
 void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
-	obj.saveLoadWithSerializer(s);
+	s.syncAsUint16LE(obj.segment);
+	s.syncAsUint16LE(obj.offset);
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
@@ -200,7 +173,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 template <>
 void syncWithSerializer(Common::Serializer &s, Class &obj) {
 	s.syncAsSint32LE(obj.script);
-	obj.reg.saveLoadWithSerializer(s);
+	syncWithSerializer<reg_t>(s, obj.reg);
 }
 
 static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) {
@@ -260,7 +233,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
-	_pos.saveLoadWithSerializer(s);
+	syncWithSerializer<reg_t>(s, _pos);
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
@@ -277,18 +250,18 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<List>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	obj.first.saveLoadWithSerializer(s);
-	obj.last.saveLoadWithSerializer(s);
+	syncWithSerializer<reg_t>(s, obj.first);
+	syncWithSerializer<reg_t>(s, obj.last);
 }
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Table<Node>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	obj.pred.saveLoadWithSerializer(s);
-	obj.succ.saveLoadWithSerializer(s);
-	obj.key.saveLoadWithSerializer(s);
-	obj.value.saveLoadWithSerializer(s);
+	syncWithSerializer<reg_t>(s, obj.pred);
+	syncWithSerializer<reg_t>(s, obj.succ);
+	syncWithSerializer<reg_t>(s, obj.key);
+	syncWithSerializer<reg_t>(s, obj.value);
 }
 
 #ifdef ENABLE_SCI32
@@ -322,7 +295,7 @@ void syncWithSerializer(Common::Serializer &s, Table<SciArray<reg_t> >::Entry &o
 		if (s.isSaving())
 			value = obj.getValue(i);
 
-		value.saveLoadWithSerializer(s);
+		syncWithSerializer<reg_t>(s, value);
 
 		if (s.isLoading())
 			obj.setValue(i, value);
@@ -517,6 +490,31 @@ void SciMusic::saveLoadWithSerializer(Common::Serializer &s) {
 		for (int i = 0; i < songcount; i++) {
 			_playList[i]->saveLoadWithSerializer(s);
 		}
+	}
+}
+
+void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
+	syncWithSerializer<reg_t>(s, soundObj);
+	s.syncAsSint16LE(resourceId);
+	s.syncAsSint16LE(dataInc);
+	s.syncAsSint16LE(ticker);
+	s.syncAsSint16LE(signal, VER(17));
+	s.syncAsByte(priority);
+	s.syncAsSint16LE(loop, VER(17));
+	s.syncAsByte(volume);
+	s.syncAsByte(hold, VER(17));
+	s.syncAsByte(fadeTo);
+	s.syncAsSint16LE(fadeStep);
+	s.syncAsSint32LE(fadeTicker);
+	s.syncAsSint32LE(fadeTickerStep);
+	s.syncAsByte(status);
+
+	// pMidiParser and pStreamAud will be initialized when the
+	// sound list is reconstructed in gamestate_restore()
+	if (s.isLoading()) {
+		soundRes = 0;
+		pMidiParser = 0;
+		pStreamAud = 0;
 	}
 }
 
