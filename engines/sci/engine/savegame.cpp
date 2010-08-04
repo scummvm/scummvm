@@ -243,7 +243,7 @@ template <>
 void syncWithSerializer(Common::Serializer &s, Table<Clone>::Entry &obj) {
 	s.syncAsSint32LE(obj.next_free);
 
-	syncWithSerializer(s, obj);
+	syncWithSerializer<Object>(s, obj);
 }
 
 template <>
