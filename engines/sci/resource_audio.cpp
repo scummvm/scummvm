@@ -93,7 +93,7 @@ bool Resource::loadFromAudioVolumeSCI11(Common::SeekableReadStream *file) {
 	uint32 riffTag = file->readUint32BE();
 	if (riffTag == MKID_BE('RIFF')) {
 		_headerSize = 0;
-		size = file->readUint32LE();
+		size = file->readUint32LE() + 8;
 		file->seek(-8, SEEK_CUR);
 		return loadFromWaveFile(file);
 	}
