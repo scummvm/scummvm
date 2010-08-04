@@ -369,7 +369,7 @@ void GfxFrameout::kernelFrameout() {
 
 				int16 pictureOffsetX = planeOffsetX;
 				int16 pictureX = itemEntry->x;
-				if (planeOffsetX) {
+				if ((planeOffsetX) || (itemEntry->picStartX)) {
 					if (planeOffsetX <= itemEntry->picStartX) {
 						pictureX += itemEntry->picStartX - planeOffsetX;
 						pictureOffsetX = 0;
