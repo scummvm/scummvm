@@ -485,7 +485,15 @@ void GfxFrameout::kernelFrameout() {
 				// This draws text the "SCI0-SCI11" way. In SCI2, text is prerendered in kCreateTextBitmap
 				// TODO: rewrite this the "SCI2" way (i.e. implement the text buffer to draw inside kCreateTextBitmap)
 				if (lookupSelector(_segMan, itemEntry->object, SELECTOR(text), NULL, NULL) == kSelectorVariable) {
-					Common::String text = _segMan->getString(readSelector(_segMan, itemEntry->object, SELECTOR(text)));
+					reg_t stringObject = readSelector(_segMan, itemEntry->object, SELECTOR(text));
+
+					// The object in the text selector of the item can be either a raw string
+					// or a Str object. In the latter case, we need to access the object's data
+					// selector to get the raw string.
+					if (_segMan->isHeapObject(stringObject))
+						stringObject = readSelector(_segMan, stringObject, SELECTOR(data));
+
+					Common::String text = _segMan->getString(stringObject);
 					GfxFont *font = _cache->getFont(readSelectorValue(_segMan, itemEntry->object, SELECTOR(font)));
 					bool dimmed = readSelectorValue(_segMan, itemEntry->object, SELECTOR(dimmed));
 					uint16 foreColor = readSelectorValue(_segMan, itemEntry->object, SELECTOR(fore));
