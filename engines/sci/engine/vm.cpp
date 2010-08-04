@@ -1063,7 +1063,7 @@ void run_vm(EngineState *s) {
 			if (validate_signedInteger(s->r_acc, value1) && validate_signedInteger(r_temp, value2))
 				s->r_acc = make_reg(0, value1 * value2);
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, s->r_acc, r_temp);
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeMulWorkarounds, s->r_acc, r_temp);
 			break;
 		}
 

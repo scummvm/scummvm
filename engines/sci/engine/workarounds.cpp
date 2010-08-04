@@ -53,6 +53,12 @@ const SciWorkaroundEntry opcodeGeWorkarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeMulWorkarounds[] = {
+	{ GID_FANMADE,        516,  983,  0,             "Wander", "setTarget",      -1,    0, { WORKAROUND_FAKE,   0 } }, // The Legend of the Lost Jewel Demo (fan made): called with object as second parameter when attacked by insects - bug #3038913
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
 	SCI_WORKAROUNDENTRY_TERMINATOR
@@ -202,6 +208,7 @@ const SciWorkaroundEntry kDoSoundFade_workarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,                workaround
 const SciWorkaroundEntry kGetAngle_workarounds[] = {
+	{ GID_FANMADE,       516,   992,  0,             "Motion", "init",           -1,    0, { WORKAROUND_IGNORE,    0 } }, // The Legend of the Lost Jewel Demo (fan made): called with third/fourth parameters as objects
 	{ GID_KQ6,           740,   752,  0,        "throwDazzle", "changeState",    -1,    0, { WORKAROUND_STILLCALL, 0 } }, // after the Genie is exposed in the Palace (short and long ending), it starts shooting lightning bolts around. An extra 5th parameter is passed - bug #3034610
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
