@@ -50,13 +50,13 @@ VMDDecoder::~VMDDecoder() {
 	close();
 }
 
-bool VMDDecoder::load(Common::SeekableReadStream &stream) {
+bool VMDDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
 	if (!_vmdDecoder->load(stream))
 		return false;
 
-	_fileStream = &stream;
+	_fileStream = stream;
 
 	if (_vmdDecoder->getFeatures() & Graphics::CoktelVideo::kFeaturesPalette)
 		loadPaletteFromVMD();

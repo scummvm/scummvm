@@ -23,12 +23,8 @@
  *
  */
 
-// Currently, only GOB and SCI32 games play IMDs and VMDs, so skip compiling if GOB and SCI32 is disabled.
-#if !(defined(ENABLE_GOB) || defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES))
-
-// Do not compile the CoktelVideo code
-
-#else
+// Currently, only GOB and SCI32 games play IMDs and VMDs
+#if defined(ENABLE_GOB) || defined(ENABLE_SCI32) || defined(DYNAMIC_MODULES)
 
 #ifndef GRAPHICS_VIDEO_COKTELVIDEO_H
 #define GRAPHICS_VIDEO_COKTELVIDEO_H
@@ -153,7 +149,7 @@ public:
 	virtual Common::MemoryReadStream *getExtraData(const char *fileName) = 0;
 
 	/** Load a video out of a stream. */
-	virtual bool load(Common::SeekableReadStream &stream) = 0;
+	virtual bool load(Common::SeekableReadStream *stream) = 0;
 	/** Unload the currently loaded video. */
 	virtual void unload() = 0;
 
@@ -243,7 +239,7 @@ public:
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void unload();
 
 	void setXY(int16 x, int16 y);
@@ -322,7 +318,7 @@ public:
 
 	uint32 getSyncLag()      const;
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void unload();
 
 	void setXY(int16 x, int16 y);
@@ -451,7 +447,7 @@ public:
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void unload();
 
 	int16 getWidth() const;

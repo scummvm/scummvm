@@ -38,7 +38,7 @@ public:
 	SeqDecoder();
 	virtual ~SeqDecoder();
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void close();
 
 	void setFrameDelay(int frameDelay) { _frameDelay = frameDelay; }

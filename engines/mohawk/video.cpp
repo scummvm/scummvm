@@ -342,7 +342,7 @@ VideoHandle VideoManager::createVideoHandle(uint16 id, uint16 x, uint16 y, bool 
 	entry.loop = loop;
 	entry.enabled = true;
 	entry->setChunkBeginOffset(_vm->getResourceOffset(ID_TMOV, id));
-	entry->load(*_vm->getRawData(ID_TMOV, id));
+	entry->load(_vm->getRawData(ID_TMOV, id));
 
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)
@@ -378,7 +378,7 @@ VideoHandle VideoManager::createVideoHandle(Common::String filename, uint16 x, u
 		return NULL_VID_HANDLE;
 	}
 	
-	entry->load(*file);
+	entry->load(file);
 	
 	// Search for any deleted videos so we can take a formerly used slot
 	for (uint32 i = 0; i < _videoStreams.size(); i++)

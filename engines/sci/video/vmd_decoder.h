@@ -56,7 +56,7 @@ public:
 
 	uint32 getFrameWaitTime();
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void close();
 
 	bool isVideoLoaded() const { return _fileStream != 0; }

@@ -42,7 +42,7 @@ bool VideoDecoder::loadFile(const Common::String &filename) {
 		return false;
 	}
 
-	return load(*file);
+	return load(file);
 }
 
 uint32 VideoDecoder::getElapsedTime() const {

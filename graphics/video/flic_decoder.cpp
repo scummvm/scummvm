@@ -41,10 +41,10 @@ FlicDecoder::~FlicDecoder() {
 	close();
 }
 
-bool FlicDecoder::load(Common::SeekableReadStream &stream) {
+bool FlicDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 
 	/* uint32 frameSize = */ _fileStream->readUint32LE();
 	uint16 frameType = _fileStream->readUint16LE();

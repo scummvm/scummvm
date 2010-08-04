@@ -55,10 +55,10 @@ SeqDecoder::~SeqDecoder() {
 	close();
 }
 
-bool SeqDecoder::load(Common::SeekableReadStream &stream) {
+bool SeqDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 	_surface = new Graphics::Surface();
 	_surface->create(SEQ_SCREEN_WIDTH, SEQ_SCREEN_HEIGHT, 1);
 
