@@ -127,6 +127,8 @@ struct SelectorCache {
 	// SCI1.1 Mac icon bar selectors
 	Selector iconIndex; ///< Used to index icon bar objects
 
+	Selector port; // used by a hoyle 4 workaround
+
 #ifdef ENABLE_SCI32
 	Selector data; // Used by Array()/String()
 	Selector picture; // Used to hold the picture ID for SCI32 pictures

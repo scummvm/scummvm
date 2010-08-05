@@ -27,7 +27,9 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
@@ -183,13 +185,8 @@ void GfxPorts::kernelSetActive(uint16 portId) {
 		Port *newPort = getPortById(portId);
 		if (newPort)
 			setPort(newPort);
-		else {
-			if (g_sci->getGameId() == GID_HOYLE4 && portId == 3) {
-				// Hoyle 4 attempts to set invalid port ID 3 when closing the options dialog (bug #3039305)
-			} else {
-				error("GfxPorts::kernelSetActive was requested to set invalid port id %d", portId);
-			}
-		}
+		else
+			error("GfxPorts::kernelSetActive was requested to set invalid port id %d", portId);
 	}
 	};
 }
@@ -232,6 +229,30 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 		removeWindow(wnd, reanimate);
 	else
 		error("GfxPorts::kernelDisposeWindow: Request to dispose invalid port id %d", windowId);
+
+	if ((g_sci->getGameId() == GID_HOYLE4) && (!g_sci->isDemo())) {
+		// WORKAROUND: hoyle 4 has a broken User::handleEvent implementation
+		//  first of all iconbar is always set and always gets called with
+		//  events checking if event got claimed got removed inside that code
+		//  and it will call handleEvent on gameObj afterwards. Iconbar windows
+		//  are handled inside iconbar as well including disposing
+		//  e.g. iconOK::doit, script 14) and claimed isn't even set. gameObj
+		//  handleEvent calling will result in coordinate adjust with a now
+		//  invalid port.
+		//  We fix this by adjusting the port variable to be global
+		//  again when hoyle4 is disposing windows.
+		// TODO: maybe this could get implemented as script patch somehow
+		//  although this could get quite tricky to implement (script 996)
+		//  IconBar::handleEvent (script 937)
+		//  maybe inside export 8 of script 0, which is called by iconOK
+		//  and iconReplay
+		//  or inside GameControls::hide (script 978) which is called to
+		//  actually remove the window
+		reg_t eventObject = _segMan->findObjectByName("uEvt");
+		if (!eventObject.isNull()) {
+			//writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
+		}
+	}
 }
 
 int16 GfxPorts::isFrontWindow(Window *pWnd) {
