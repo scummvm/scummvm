@@ -41,6 +41,8 @@
 #include "sword25/gfx/screenshot.h"
 #include <png.h>
 
+namespace Sword25 {
+
 using namespace std;
 
 // -----------------------------------------------------------------------------
@@ -215,3 +217,5 @@ bool BS_Screenshot::SaveThumbnailToFile(unsigned int Width, unsigned int Height,
 	// Bild als PNG Speichern.
 	return SaveToFile(200, 125, ThumbnailData, Filename);
 }
+
+} // End of namespace Sword25

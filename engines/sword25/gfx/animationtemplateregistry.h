@@ -47,6 +47,8 @@
 #include <memory>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Deklarationen
 // -----------------------------------------------------------------------------
@@ -75,5 +77,7 @@ private:
 
 	static std::auto_ptr<BS_AnimationTemplateRegistry> m_InstancePtr;
 };
+
+} // End of namespace Sword25
 
 #endif

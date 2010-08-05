@@ -44,6 +44,8 @@ using namespace std;
 #include "sword25/gfx/image/b25sloader.h"
 #include "sword25/gfx/image/pngloader.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "B25SLOADER"
 
 // -----------------------------------------------------------------------------
@@ -114,3 +116,5 @@ bool BS_B25SLoader::ImageProperties(const char * FileDataPtr, unsigned int FileS
 
 	return false;
 }
+
+} // End of namespace Sword25

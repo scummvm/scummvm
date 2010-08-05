@@ -52,6 +52,8 @@
 #include "agg_trans_affine.h"
 #include "agg_span_allocator.h"
 
+namespace Sword25 {
+
 class BS_VectorImage;
 
 
@@ -87,5 +89,7 @@ private:
 	agg::trans_affine Scale;
 	agg::span_allocator<agg::rgba8> Alloc;
 };
+
+} // End of namespace Sword25
 
 #endif

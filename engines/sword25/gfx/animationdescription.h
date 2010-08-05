@@ -43,6 +43,8 @@
 #include "sword25/kernel/persistable.h"
 #include "sword25/gfx/animation.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendefinition
 // -----------------------------------------------------------------------------
@@ -101,5 +103,7 @@ protected:
 	bool							m_AlphaAllowed;
 	bool							m_ColorModulationAllowed;
 };
+
+} // End of namespace Sword25
 
 #endif

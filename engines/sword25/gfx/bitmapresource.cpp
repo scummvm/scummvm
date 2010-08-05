@@ -40,6 +40,8 @@
 #include "sword25/gfx/image/imageloader.h"
 #include "sword25/package/packagemanager.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "BITMAP"
 
 // Konstruktion / Destruktion
@@ -67,3 +69,5 @@ unsigned int BS_BitmapResource::GetPixel(int X, int Y) const
 
 	return m_pImage->GetPixel(X, Y);
 }
+
+} // End of namespace Sword25

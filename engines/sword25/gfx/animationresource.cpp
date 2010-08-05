@@ -44,6 +44,8 @@
 #include <tinyxml.h>
 #include "sword25/gfx/bitmapresource.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
 #define BS_LOG_PREFIX "ANIMATIONRESOURCE"
@@ -336,3 +338,5 @@ bool BS_AnimationResource::ComputeFeatures()
 
 	return true;
 }
+
+} // End of namespace Sword25

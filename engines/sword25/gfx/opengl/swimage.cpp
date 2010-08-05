@@ -41,6 +41,8 @@
 
 #include "sword25/gfx/opengl/swimage.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "SWIMAGE"
 
 
@@ -138,3 +140,5 @@ unsigned int BS_SWImage::GetPixel(int X, int Y)
 
 	return _ImageDataPtr[m_Width * Y + X];
 }
+
+} // End of namespace Sword25

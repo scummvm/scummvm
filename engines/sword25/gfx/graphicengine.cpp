@@ -49,6 +49,8 @@ extern "C"
 #include "sword25/util/lua/lauxlib.h"
 }
 
+namespace Sword25 {
+
 using namespace std;
 
 // -----------------------------------------------------------------------------
@@ -231,3 +233,5 @@ bool BS_GraphicEngine::Unpersist(BS_InputPersistenceBlock & Reader)
 	Reader.Read(m_TimerActive);
 	return Reader.IsGood();
 }
+
+} // End of namespace Sword25

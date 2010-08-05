@@ -43,6 +43,8 @@
 #include "sword25/kernel/resource.h"
 #include "sword25/math/rect.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward declarations
 // -----------------------------------------------------------------------------
@@ -115,5 +117,7 @@ private:
 	bool _ParseFontTag(TiXmlElement & Tag, std::string & BitmapFileName, int & LineHeight, int & GapWidth) const;
 	bool _ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect & Rect) const;
 };
+
+} // End of namespace Sword25
 
 #endif

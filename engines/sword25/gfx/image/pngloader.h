@@ -47,6 +47,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/imageloader.h"
 
+namespace Sword25 {
+
 // Klassendefinition
 class BS_PNGLoader : public BS_ImageLoader
 {
@@ -75,5 +77,7 @@ protected:
 	bool IsCorrectImageFormat(const char * FileDataPtr, unsigned int FileSize);
 	bool ImageProperties(const char * FileDatePtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS & ColorFormat, int & Width, int & Height);
 };
+
+} // End of namespace Sword25
 
 #endif

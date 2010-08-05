@@ -43,6 +43,8 @@
 #include "agg_conv_stroke.h"
 
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // CompoundShape
 // -----------------------------------------------------------------------------
@@ -211,3 +213,5 @@ bool BS_VectorImageRenderer::Render(const BS_VectorImage & VectorImage,
 
 	return true;
 }
+
+} // End of namespace Sword25

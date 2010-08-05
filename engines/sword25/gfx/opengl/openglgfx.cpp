@@ -57,6 +57,8 @@
 
 #include <algorithm>
 
+namespace Sword25 {
+
 using namespace std;
 
 #define BS_LOG_PREFIX "OPENGLGFX"
@@ -518,3 +520,5 @@ bool BS_OpenGLGfx::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return result && Reader.IsGood();
 }
+
+} // End of namespace Sword25

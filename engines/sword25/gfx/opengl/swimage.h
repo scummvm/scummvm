@@ -44,6 +44,8 @@
 #include "sword25/gfx/graphicengine.h"
 
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // CLASS DEFINITION
 // -----------------------------------------------------------------------------
@@ -80,5 +82,7 @@ private:
 	int	m_Width;
 	int m_Height;
 };
+
+} // End of namespace Sword25
 
 #endif

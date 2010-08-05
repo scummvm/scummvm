@@ -36,8 +36,6 @@
 // Entweder Fontfile absolut abspeichern, oder Verzeichniswechseln verbieten
 // Eine relative Fontfile-Angabe könnte verwandt werden nachdem das Verzeichnis bereits gewechselt wurde und die Datei würde nicht mehr gefunden
 
-#define BS_LOG_PREFIX "TEXT"
-
 // -----------------------------------------------------------------------------
 // Includes
 // -----------------------------------------------------------------------------
@@ -50,6 +48,9 @@
 
 #include "sword25/gfx/text.h"
 
+namespace Sword25 {
+
+#define BS_LOG_PREFIX "TEXT"
 
 // -----------------------------------------------------------------------------
 // Konstanten
@@ -417,3 +418,5 @@ bool BS_Text::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

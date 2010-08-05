@@ -47,6 +47,8 @@
 #include "sword25/gfx/animationtemplate.h"
 #include "sword25/gfx/animationtemplateregistry.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
@@ -306,3 +308,5 @@ bool BS_AnimationTemplate::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return m_SourceAnimationPtr && Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

@@ -39,6 +39,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -64,5 +66,7 @@ private:
 protected:
 	virtual bool DoRender() { return true; }
 };
+
+} // End of namespace Sword25
 
 #endif

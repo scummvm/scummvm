@@ -42,6 +42,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
@@ -178,5 +180,7 @@ protected:
 	int				m_OriginalWidth;
 	int				m_OriginalHeight;
 };
+
+} // End of namespace Sword25
 
 #endif

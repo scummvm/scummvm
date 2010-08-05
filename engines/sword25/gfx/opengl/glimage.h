@@ -45,6 +45,8 @@
 
 #include <vector>
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // FORWARD DECLARATION
 // -----------------------------------------------------------------------------
@@ -96,5 +98,7 @@ private:
 	int			m_Width;
 	int			m_Height;
 };
+
+} // End of namespace Sword25
 
 #endif

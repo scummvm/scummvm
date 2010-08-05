@@ -47,6 +47,8 @@
 #include "sword25/gfx/image/pngloader.h"
 #include "sword25/gfx/image/b25sloader.h"
 
+namespace Sword25 {
+
 // Die Tabelle enthält Pointer auf statische Member-Funktionen innerhalb der Klassen, die eine Instanz der Klasse
 // erzeugen
 typedef BS_ImageLoader* (*BS_IMAGELOADER_NEW)();
@@ -57,3 +59,5 @@ const BS_IMAGELOADER_NEW BS_IMAGELOADER_IDS[] =
 };
 const int BS_IMAGELOADER_COUNT = sizeof(BS_IMAGELOADER_IDS) / sizeof(BS_IMAGELOADER_NEW);
 
+
+} // End of namespace Sword25

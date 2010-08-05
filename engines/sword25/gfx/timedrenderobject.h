@@ -43,6 +43,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -70,3 +72,5 @@ public:
 	*/
 	virtual void FrameNotification(int TimeElapsed) = 0;
 };
+
+} // End of namespace Sword25

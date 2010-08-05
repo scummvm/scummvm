@@ -35,6 +35,8 @@
 #include "sword25/gfx/framecounter.h"
 #include "sword25/kernel/timer.h"
 
+namespace Sword25 {
+
 BS_Framecounter::BS_Framecounter(int UpdateFrequency) :
 	m_FPS(0),
 	m_FPSCount(0),
@@ -66,3 +68,5 @@ void BS_Framecounter::Update()
 		}
 	}
 }
+
+} // End of namespace Sword25

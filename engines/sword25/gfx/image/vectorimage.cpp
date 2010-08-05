@@ -45,6 +45,8 @@
 
 using namespace std;
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "VECTORIMAGE"
 
 
@@ -584,3 +586,5 @@ bool BS_VectorImage::SetContent(const std::vector<unsigned char> & Pixeldata, un
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;
 }
+
+} // End of namespace Sword25

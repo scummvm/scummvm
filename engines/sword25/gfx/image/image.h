@@ -50,6 +50,8 @@
 #include "sword25/math/rect.h"
 #include "sword25/gfx/graphicengine.h"
 
+namespace Sword25 {
+
 class BS_Image
 {
 public:
@@ -219,5 +221,7 @@ public:
 
 	//@}
 };
+
+} // End of namespace Sword25
 
 #endif

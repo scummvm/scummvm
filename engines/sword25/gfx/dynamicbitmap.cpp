@@ -43,6 +43,8 @@
 
 #include <vector>
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Logging
 // -----------------------------------------------------------------------------
@@ -204,3 +206,5 @@ bool BS_DynamicBitmap::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

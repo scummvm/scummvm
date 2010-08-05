@@ -54,6 +54,8 @@
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/kernel/persistable.h"
 
+namespace Sword25 {
+
 // Klassendefinition
 class BS_Kernel;
 class BS_Rect;
@@ -126,5 +128,7 @@ private:
 	// Zu weiteren Informationen siehe: "renderobject.h"
 	BS_RenderObjectPtr<BS_RenderObject>		m_RootPtr;		// Die Wurzel der Baumes
 };
+
+} // End of namespace Sword25
 
 #endif

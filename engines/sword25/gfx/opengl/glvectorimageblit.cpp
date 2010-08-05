@@ -41,6 +41,9 @@
 #include "sword25/util/glsprites/glsprites.h"
 
 #include <vector>
+
+namespace Sword25 {
+
 using namespace std;
 
 #define BS_LOG_PREFIX "GLVECTORIMAGEBLIT"
@@ -146,3 +149,5 @@ bool BS_VectorImage::Blit(int PosX, int PosY,
 
 	return Result == GLS_OK;
 }
+
+} // End of namespace Sword25

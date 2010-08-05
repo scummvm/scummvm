@@ -32,6 +32,8 @@
  *
  */
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Logging
 // -----------------------------------------------------------------------------
@@ -124,3 +126,5 @@ bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

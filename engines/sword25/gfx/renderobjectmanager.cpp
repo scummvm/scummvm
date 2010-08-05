@@ -48,6 +48,8 @@
 #include "sword25/gfx/timedrenderobject.h"
 #include "sword25/gfx/rootrenderobject.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "RENDEROBJECTMANAGER"
 
 // -----------------------------------------------------------------------------
@@ -176,3 +178,5 @@ bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Result;
 }
+
+} // End of namespace Sword25

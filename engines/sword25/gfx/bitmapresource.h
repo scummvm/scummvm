@@ -40,6 +40,8 @@
 #include "sword25/kernel/resource.h"
 #include "sword25/gfx/image/image.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -188,5 +190,7 @@ private:
 	BS_Image *	m_pImage;
 	bool		m_Valid;
 };
+
+} // End of namespace Sword25
 
 #endif

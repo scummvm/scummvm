@@ -43,6 +43,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // Forward declarations
 class BS_Kernel;
 class BS_PackageManager;
@@ -220,5 +222,7 @@ private:
 	BS_AnimationDescription * GetAnimationDescription() const;
 	void InitializeAnimationResource(const std::string &FileName);
 };
+
+} // End of namespace Sword25
 
 #endif

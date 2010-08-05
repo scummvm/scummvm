@@ -40,6 +40,8 @@
 #include "sword25/gfx/image/pngloader.h"
 #include <png.h>
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "PNGLOADER"
 
 // -----------------------------------------------------------------------------
@@ -402,3 +404,5 @@ bool BS_PNGLoader::IsCorrectImageFormat(const char* FileDataPtr, unsigned int Fi
 {
 	return DoIsCorrectImageFormat(FileDataPtr, FileSize);
 }
+
+} // End of namespace Sword25

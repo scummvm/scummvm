@@ -48,6 +48,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -94,5 +96,7 @@ private:
 	bool ComputeFeatures();
 	bool PrecacheAllFrames() const;
 };
+
+} // End of namespace Sword25
 
 #endif

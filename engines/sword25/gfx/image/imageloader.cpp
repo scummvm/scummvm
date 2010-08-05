@@ -35,6 +35,8 @@
 #include "sword25/gfx/image/imageloader.h"
 #include "sword25/gfx/image/imageloader_ids.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "IMAGELOADER"
 
 // Statische Elemente der Klasse BS_ImageLoader intialisieren.
@@ -133,3 +135,5 @@ BS_ImageLoader* BS_ImageLoader::_FindSuitableImageLoader(const char* pFileData, 
 	BS_LOG_ERRORLN("Could not find suitable image loader for image data.");
 	return NULL;
 }
+
+} // End of namespace Sword25

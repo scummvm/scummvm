@@ -49,6 +49,8 @@
 #include "sword25/gfx/renderobjectptr.h"
 #include "sword25/util/glsprites/glsprites.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // FORWARD DECLARATIONS
 // -----------------------------------------------------------------------------
@@ -125,5 +127,7 @@ private:
 	static void ReverseRGBAComponentOrder(std::vector<unsigned int> & Data);
 	static void FlipImagedataVertical(unsigned int Width, unsigned int Height, std::vector<unsigned int> & Data);
 };
+
+} // End of namespace Sword25
 
 #endif

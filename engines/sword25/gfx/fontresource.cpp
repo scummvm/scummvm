@@ -47,6 +47,8 @@
 
 #include "sword25/gfx/fontresource.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Konstanten
 // -----------------------------------------------------------------------------
@@ -256,3 +258,5 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 
 	return true;
 }
+
+} // End of namespace Sword25

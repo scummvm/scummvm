@@ -42,6 +42,8 @@
 #include "sword25/gfx/opengl/openglgfx.h"
 #include "sword25/gfx/opengl/glimage.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "GLIMAGE"
 
 // -----------------------------------------------------------------------------
@@ -221,3 +223,5 @@ bool BS_GLImage::Blit(int PosX, int PosY,
 
 	return Result == GLS_OK;
 }
+
+} // End of namespace Sword25

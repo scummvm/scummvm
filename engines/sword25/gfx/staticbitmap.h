@@ -42,6 +42,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/bitmap.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
@@ -80,5 +82,7 @@ private:
 
 	bool InitBitmapResource(const std::string & Filename);
 };
+
+} // End of namespace Sword25
 
 #endif

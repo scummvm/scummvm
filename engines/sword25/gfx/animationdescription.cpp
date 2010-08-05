@@ -40,6 +40,8 @@
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationdescription.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Persistenz
 // -----------------------------------------------------------------------------
@@ -71,3 +73,5 @@ bool BS_AnimationDescription::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood();
 }
+
+} // End of namespace Sword25

@@ -47,6 +47,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -167,5 +169,7 @@ private:
 	BS_ResourceManager * GetResourceManager();
 	BS_FontResource * LockFontResource();
 };
+
+} // End of namespace Sword25
 
 #endif

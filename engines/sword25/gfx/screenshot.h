@@ -45,6 +45,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Class declaration
 // -----------------------------------------------------------------------------
@@ -55,5 +57,7 @@ public:
 	static bool SaveToFile(unsigned int Width, unsigned int Height, const std::vector<unsigned int> & Data, const std::string & Filename);
 	static bool SaveThumbnailToFile(unsigned int Width, unsigned int Height, const std::vector<unsigned int> & Data, const std::string & Filename);
 };
+
+} // End of namespace Sword25
 
 #endif

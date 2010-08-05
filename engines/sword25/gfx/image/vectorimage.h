@@ -48,6 +48,8 @@
 #include "agg_color_rgba.h"
 
 
+namespace Sword25 {
+
 class BS_VectorImage;
 
 /**
@@ -178,5 +180,7 @@ private:
 	std::vector<BS_VectorImageElement>	m_Elements;
 	BS_Rect								m_BoundingBox;
 };
+
+} // End of namespace Sword25
 
 #endif

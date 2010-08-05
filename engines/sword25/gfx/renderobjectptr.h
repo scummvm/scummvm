@@ -42,6 +42,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobjectregistry.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward Declarations
 // -----------------------------------------------------------------------------
@@ -91,5 +93,7 @@ public:
 private:
 	unsigned int m_Handle;
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -42,6 +42,8 @@
 #include "sword25/kernel/outputpersistenceblock.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Logging
 // -----------------------------------------------------------------------------
@@ -231,3 +233,5 @@ bool BS_StaticBitmap::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25

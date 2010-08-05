@@ -51,6 +51,8 @@
 #include "sword25/gfx/text.h"
 #include "sword25/gfx/animationtemplate.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "RENDEROBJECT"
 
 // Konstruktion / Destruktion
@@ -584,3 +586,5 @@ bool BS_RenderObject::Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, con
 	// Falls der Z-Wert gleich ist, wird das weiter oben gelegenen Objekte zuerst gezeichnet.
 	return lhs->m_Y < rhs->m_Y;
 }
+
+} // End of namespace Sword25

@@ -56,6 +56,8 @@
 #include "sword25/gfx/animationtemplate.h"
 #include "sword25/gfx/animationtemplateregistry.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "GRAPHICENGINE"
 
 // -----------------------------------------------------------------------------
@@ -1735,3 +1737,5 @@ bool BS_GraphicEngine::RegisterScriptBindings()
 
 	return true;
 }
+
+} // End of namespace Sword25

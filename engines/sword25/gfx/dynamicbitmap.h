@@ -48,6 +48,8 @@
 #include "sword25/gfx/bitmap.h"
 #include "sword25/gfx/opengl/glimage.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
@@ -82,5 +84,7 @@ private:
 
 	std::auto_ptr<BS_GLImage> m_Image;
 };
+
+} // End of namespace Sword25
 
 #endif

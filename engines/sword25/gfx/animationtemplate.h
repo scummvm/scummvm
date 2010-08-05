@@ -47,6 +47,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Forward declarations
 // -----------------------------------------------------------------------------
@@ -119,5 +121,7 @@ private:
 	bool ValidateSourceIndex(unsigned int Index) const;
 	bool ValidateDestIndex(unsigned int Index) const;
 };
+
+} // End of namespace Sword25
 
 #endif

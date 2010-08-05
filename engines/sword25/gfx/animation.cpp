@@ -50,6 +50,8 @@
 #include "sword25/gfx/bitmapresource.h"
 #include "sword25/gfx/graphicengine.h"
 
+namespace Sword25 {
+
 #define BS_LOG_PREFIX "ANIMATION"
 
 // Konstruktion / Destruktion
@@ -891,3 +893,5 @@ BS_AnimationDescription * BS_Animation::GetAnimationDescription() const
 	if (m_AnimationResourcePtr) return m_AnimationResourcePtr;
 	else return BS_AnimationTemplateRegistry::GetInstance().ResolveHandle(m_AnimationTemplateHandle);
 }
+
+} // End of namespace Sword25

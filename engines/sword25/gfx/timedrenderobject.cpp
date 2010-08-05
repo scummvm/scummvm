@@ -36,6 +36,8 @@
 
 #include "sword25/gfx/renderobjectmanager.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
@@ -52,3 +54,5 @@ BS_TimedRenderObject::~BS_TimedRenderObject()
 	BS_ASSERT(GetManager());
 	GetManager()->DetatchTimedRenderObject(this);
 }
+
+} // End of namespace Sword25

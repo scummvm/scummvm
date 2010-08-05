@@ -42,6 +42,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/renderobject.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Class Definition
 // -----------------------------------------------------------------------------
@@ -69,5 +71,7 @@ protected:
 private:
 	unsigned int m_Color;
 };
+
+} // End of namespace Sword25
 
 #endif

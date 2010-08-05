@@ -52,6 +52,8 @@
 #include <list>
 #include "sword25/kernel/memlog_on.h"
 
+namespace Sword25 {
+
 /**
 	@brief Über die statischen Methoden dieser Klasse werden alle unterstützten Bildformate geladen.
 
@@ -369,5 +371,7 @@ private:
 	static std::list<BS_ImageLoader*>	_ImageLoaderList;				// Die Liste aller BS_ImageLoader-Objekte
 	static bool							_ImageLoaderListInitialized;	// Gibt an, ob die Liste schon intialisiert wurde
 };
+
+} // End of namespace Sword25
 
 #endif

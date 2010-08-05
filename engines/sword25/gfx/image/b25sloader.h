@@ -42,6 +42,8 @@
 #include "sword25/kernel/common.h"
 #include "sword25/gfx/image/imageloader.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
@@ -63,5 +65,7 @@ protected:
 	virtual bool ImageProperties(const char * FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS & ColorFormat, int & Width, int & Height);
 
 };
+
+} // End of namespace Sword25
 
 #endif

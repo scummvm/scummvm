@@ -43,6 +43,8 @@
 #include "sword25/gfx/graphicengine.h"
 #include "sword25/gfx/image/image.h"
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 
 #define BS_LOG_PREFIX "PANEL"
@@ -136,3 +138,5 @@ bool BS_Panel::Unpersist(BS_InputPersistenceBlock & Reader)
 
 	return Reader.IsGood() && Result;
 }
+
+} // End of namespace Sword25
