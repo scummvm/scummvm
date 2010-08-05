@@ -316,7 +316,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		// Whew... in short: If we have reached or passed our target position
 
 		// Sanity check: make sure that destx, desty are inside the screen coordinates.
-		// They can go off screen in some cases, e.g. in SQ5 while scrubbing the floor
+		// They can go off screen in some cases, e.g. in SQ5 while scrubbing the floor (bug #3037351)
 		if (destx < g_sci->_gfxScreen->getWidth() && desty < g_sci->_gfxScreen->getHeight()) {
 			x = destx;
 			y = desty;
