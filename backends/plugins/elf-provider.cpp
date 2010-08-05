@@ -99,15 +99,9 @@ public:
 	void unloadPlugin() {
 		DynamicPlugin::unloadPlugin();
 		if (_dlHandle) {
-			if (_dlHandle == NULL) {
-				// FIXME: This check makes no sense, _dlHandle cannot be NULL at this point
-				warning("Failed unloading plugin '%s' (Handle is NULL)", _filename.c_str());
-			} else if (_dlHandle->close()) {
-				delete _dlHandle;
-			} else {
+			delete _dlHandle;
+			if (!_dlHandle->close()) {
 				warning("Failed unloading plugin '%s'", _filename.c_str());
-				// FIXME: We are leaking _dlHandle here!
-				// Any particular reasons why we would want to do that???
 			}
 			_dlHandle = 0;
 		}
@@ -121,15 +115,10 @@ Plugin* ELFPluginProvider::createPlugin(const Common::FSNode &node) const {
 
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
 	// Check the plugin suffix
-	// FIXME: Do we need these printfs? Should get rid of them eventually.
 	Common::String filename = node.getName();
-	printf("Testing name %s", filename.c_str());
 	if (!filename.hasSuffix(".PLG") && !filename.hasSuffix(".plg") && !filename.hasSuffix(".PLUGIN") && !filename.hasSuffix(".plugin")) {
-		printf(" fail.\n");
 		return false;
 	}
-
-	printf(" success!\n");
 	return true;
 }
 
