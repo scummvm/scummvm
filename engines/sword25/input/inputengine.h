@@ -49,6 +49,7 @@
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/service.h"
 #include "sword25/kernel/persistable.h"
+#include "sword25/kernel/callbackregistry.h"
 
 namespace Sword25 {
 
@@ -254,7 +255,7 @@ public:
 	 */
 	virtual bool WasKeyDown(unsigned int KeyCode) = 0;
 
-	typedef void (*CharacterCallback)(unsigned char Character);
+	typedef CallbackPtr CharacterCallback;
 
 	/**
 	 * Registers a callback function for keyboard input.
@@ -268,15 +269,15 @@ public:
 	 * The input of strings by the user through use of callbacks should be implemented.
 	 * @return				Returns true if the function was registered, otherwise false.
 	*/
-	virtual bool RegisterCharacterCallback(CharacterCallback Callback) = 0;
+	virtual bool RegisterCharacterCallback(CallbackPtr Callback) = 0;
 
 	/**
 	 * De-registeres a previously registered callback function.
 	 * @return				Returns true if the function could be de-registered, otherwise false.
 	 */
-	virtual bool UnregisterCharacterCallback(CharacterCallback Callback) = 0;
+	virtual bool UnregisterCharacterCallback(CallbackPtr Callback) = 0;
 
-	typedef void (*CommandCallback)(KEY_COMMANDS Command);
+	typedef CallbackPtr CommandCallback;
 
 	/**
 	 * Registers a callback function for the input of commands that can have influence on the string input
@@ -287,7 +288,7 @@ public:
 	 * The input of strings by the user through the use of callbacks should be implemented.
 	 * @return				Returns true if the function was registered, otherwise false.
 	 */
-	virtual bool RegisterCommandCallback(CommandCallback Callback) = 0;
+	virtual bool RegisterCommandCallback(CallbackPtr Callback) = 0;
 
 	/**
 	 * Un-register a callback function for the input of commands that can have an influence on the string input.

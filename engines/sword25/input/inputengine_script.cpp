@@ -57,8 +57,8 @@ using namespace Lua;
 // Callback-Objekte
 // -----------------------------------------------------------------------------
 
-static void TheCharacterCallback(unsigned char Character);
-static void TheCommandCallback(BS_InputEngine::KEY_COMMANDS Command);
+static void TheCharacterCallback(int Character);
+static void TheCommandCallback(int Command);
 
 namespace {
 	class CharacterCallbackClass : public BS_LuaCallback {
@@ -68,8 +68,7 @@ namespace {
 		Common::String Character;
 
 	protected:
-		int PreFunctionInvokation(lua_State *L)
-		{
+		int PreFunctionInvokation(lua_State *L) {
 			lua_pushstring(L, Character.c_str());
 			return 1;
 		}
@@ -242,8 +241,8 @@ static int SetMouseY(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void TheCharacterCallback(unsigned char Character) {
-	CharacterCallbackPtr->Character = Character;
+static void TheCharacterCallback(int Character) {
+	CharacterCallbackPtr->Character = static_cast<unsigned char>(Character);
 	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
 	CharacterCallbackPtr->InvokeCallbackFunctions(L, 1);
 }
@@ -268,8 +267,8 @@ static int UnregisterCharacterCallback(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static void TheCommandCallback(BS_InputEngine::KEY_COMMANDS Command) {
-	CommandCallbackPtr->Command = Command;
+static void TheCommandCallback(int Command) {
+	CommandCallbackPtr->Command = static_cast<BS_InputEngine::KEY_COMMANDS>(Command);
 	lua_State *L = static_cast<lua_State *>(BS_Kernel::GetInstance()->GetScript()->GetScriptObject());
 	CommandCallbackPtr->InvokeCallbackFunctions(L, 1);
 }
@@ -345,10 +344,8 @@ bool BS_InputEngine::_RegisterScriptBindings() {
 	if (!BS_LuaBindhelper::AddFunctionsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_FUNCTIONS)) return false;
 	if (!BS_LuaBindhelper::AddConstantsToLib(L, PACKAGE_LIBRARY_NAME, PACKAGE_CONSTANTS)) return false;
 
-	Common::SharedPtr<CharacterCallbackClass> p1(new CharacterCallbackClass(L));
-	CharacterCallbackPtr = p1;
-	Common::SharedPtr<CharacterCallbackClass> p2(new CommandCallbackClass(L));
-	CommandCallbackPtr = p2;
+	CharacterCallbackPtr = Common::SharedPtr<CharacterCallbackClass>(new CharacterCallbackClass(L));
+	CommandCallbackPtr = Common::SharedPtr<CommandCallbackClass>(new CommandCallbackClass(L));
 
 	return true;
 }

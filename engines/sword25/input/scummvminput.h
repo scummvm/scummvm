@@ -65,10 +65,10 @@ public:
 	virtual bool WasKeyDown(unsigned int KeyCode);
 	virtual void SetMouseX(int PosX);
 	virtual void SetMouseY(int PosY);
-	virtual bool RegisterCharacterCallback(CharacterCallback Callback);
-	virtual bool UnregisterCharacterCallback(CharacterCallback Callback);
-	virtual bool RegisterCommandCallback(CommandCallback Callback);
-	virtual bool UnregisterCommandCallback(CommandCallback Callback);
+	virtual bool RegisterCharacterCallback(CallbackPtr Callback);
+	virtual bool UnregisterCharacterCallback(CallbackPtr Callback);
+	virtual bool RegisterCommandCallback(CallbackPtr Callback);
+	virtual bool UnregisterCommandCallback(CallbackPtr Callback);
 	virtual void ReportCharacter(unsigned char Character);
 	virtual void ReportCommand(KEY_COMMANDS Command);
 

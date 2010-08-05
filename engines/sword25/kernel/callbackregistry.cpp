@@ -60,7 +60,7 @@ namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
-bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, void *Ptr) {
+bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, CallbackPtr Ptr) {
 	if (Name == "") {
 		BS_LOG_ERRORLN("The empty string is not allowed as a callback function name.");
 		return false;
@@ -82,8 +82,8 @@ bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, v
 
 // -----------------------------------------------------------------------------
 
-void * BS_CallbackRegistry::ResolveCallbackFunction(const Common::String & Name) const {
-	void * Result = FindPtrByName(Name);
+CallbackPtr BS_CallbackRegistry::ResolveCallbackFunction(const Common::String &Name) const {
+	CallbackPtr Result = FindPtrByName(Name);
 
 	if (!Result) {
 		BS_LOG_ERRORLN("There is no callback function with the name \"%s\".", Name.c_str());
@@ -94,7 +94,7 @@ void * BS_CallbackRegistry::ResolveCallbackFunction(const Common::String & Name)
 
 // -----------------------------------------------------------------------------
 
-Common::String BS_CallbackRegistry::ResolveCallbackPointer(void *Ptr) const {
+Common::String BS_CallbackRegistry::ResolveCallbackPointer(CallbackPtr Ptr) const {
 	const Common::String &Result = FindNameByPtr(Ptr);
 
 	if (Result == "") {
@@ -106,7 +106,7 @@ Common::String BS_CallbackRegistry::ResolveCallbackPointer(void *Ptr) const {
 
 // -----------------------------------------------------------------------------
 
-void * BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const {
+CallbackPtr BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const {
 	// Eintrag in der Map finden und den Pointer zurückgeben.
 	NameToPtrMap::const_iterator It = m_NameToPtrMap.find(Name);
 	return It == m_NameToPtrMap.end() ? 0 : It->_value;
@@ -114,7 +114,7 @@ void * BS_CallbackRegistry::FindPtrByName(const Common::String &Name) const {
 
 // -----------------------------------------------------------------------------
 
-Common::String BS_CallbackRegistry::FindNameByPtr(void *Ptr) const {
+Common::String BS_CallbackRegistry::FindNameByPtr(CallbackPtr Ptr) const {
 	// Eintrag in der Map finden und den Namen zurückgeben.
 	PtrToNameMap::const_iterator It = m_PtrToNameMap.find(Ptr);
 	return It == m_PtrToNameMap.end() ? "" : It->second;
@@ -122,7 +122,7 @@ Common::String BS_CallbackRegistry::FindNameByPtr(void *Ptr) const {
 
 // -----------------------------------------------------------------------------
 
-void BS_CallbackRegistry::StoreCallbackFunction(const Common::String &Name, void *Ptr) {
+void BS_CallbackRegistry::StoreCallbackFunction(const Common::String &Name, CallbackPtr Ptr) {
 	// Callback-Funktion in beide Maps eintragen.
 	m_NameToPtrMap[Name] = Ptr;
 	m_PtrToNameMap[Ptr] = Name;

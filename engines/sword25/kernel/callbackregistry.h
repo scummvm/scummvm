@@ -51,6 +51,8 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
+typedef void (*CallbackPtr)(int Command); 
+
 class BS_CallbackRegistry {
 public:
 	static BS_CallbackRegistry & GetInstance() {
@@ -58,19 +60,19 @@ public:
 		return Instance;
 	}
 
-	bool		RegisterCallbackFunction(const Common::String &Name, void * Ptr);
-	void *		ResolveCallbackFunction(const Common::String &Name) const;
-	Common::String	ResolveCallbackPointer(void *Ptr) const;
+	bool		RegisterCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
+	CallbackPtr		ResolveCallbackFunction(const Common::String &Name) const;
+	Common::String	ResolveCallbackPointer(CallbackPtr Ptr) const;
 
 private:
-	typedef Common::HashMap<Common::String, void *, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
+	typedef Common::HashMap<Common::String, CallbackPtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
 	NameToPtrMap m_NameToPtrMap;
-	typedef Common::HashMap<void *, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> PtrToNameMap;
+	typedef Common::HashMap<CallbackPtr, Common::String, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> PtrToNameMap;
 	PtrToNameMap m_PtrToNameMap;
 
-	void *		FindPtrByName(const Common::String &Name) const;
-	Common::String	FindNameByPtr(void * Ptr) const;
-	void		StoreCallbackFunction(const Common::String & Name, void * Ptr);
+	CallbackPtr		FindPtrByName(const Common::String &Name) const;
+	Common::String	FindNameByPtr(CallbackPtr Ptr) const;
+	void		StoreCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
 };
 
 } // End of namespace Sword25
