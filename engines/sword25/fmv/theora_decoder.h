@@ -56,6 +56,7 @@ public:
 	 */
 	bool load(Common::SeekableReadStream &stream);
 	void close();
+	void reset();
 
 	/**
 	 * Decode the next frame and return the frame's surface
@@ -78,6 +79,7 @@ protected:
 private:
 	void queuePage(ogg_page *page);
 	int bufferData();
+	Audio::QueuingAudioStream *createAudioStream();
 
 private:
 	Common::SeekableReadStream *_fileStream;
@@ -89,7 +91,6 @@ private:
 	Audio::Mixer::SoundType _soundType;
 	Audio::SoundHandle *_audHandle;
 	Audio::QueuingAudioStream *_audStream;
-	Audio::QueuingAudioStream *createAudioStream();
 
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;

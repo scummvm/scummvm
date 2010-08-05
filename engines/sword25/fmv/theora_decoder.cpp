@@ -37,9 +37,13 @@
  */
 
 #include "sword25/fmv/theora_decoder.h"
+
 #include "common/system.h"
+#include "sound/decoders/raw.h"
 
 namespace Sword25 {
+
+#define AUDIOFD_FRAGSIZE 10240
 
 TheoraDecoder::TheoraDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType) : _mixer(mixer) {
 	_fileStream = 0;
@@ -180,6 +184,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 		debugN(1, "Ogg logical stream %lx is Theora %dx%d %.02f fps",
 		       _theoraOut.serialno, _theoraInfo.pic_width, _theoraInfo.pic_height,
 		       (double)_theoraInfo.fps_numerator / _theoraInfo.fps_denominator);
+
 		switch (_theoraInfo.pixel_fmt) {
 		case TH_PF_420:
 			debug(1, " 4:2:0 video");
@@ -231,6 +236,10 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 			_mixer->playStream(_soundType, _audHandle, _audStream);
 	}
 
+	_surface = new Graphics::Surface();
+
+	_surface->create(_theoraInfo.frame_width, _theoraInfo.frame_height, 3);
+
 	return true;
 }
 
@@ -281,17 +290,17 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 		// if there's pending, decoded audio, grab it
 		if ((ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm)) > 0) {
 			int count = _audiobufFill / 2;
-			int maxsamples = (audiofd_fragsize - _audiobufFill) / 2 / _vorbisInfo.channels;
+			int maxsamples = (AUDIOFD_FRAGSIZE - _audiobufFill) / 2 / _vorbisInfo.channels;
 			for (i = 0; i < ret && i < maxsamples; i++)
 				for (j = 0; j < _vorbisInfo.channels; j++) {
-					int val = CLIP(rint(pcm[j][i] * 32767.f), -32768, 32768);
+					int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32768);
 					_audiobuf[count++] = val;
 				}
 
 			vorbis_synthesis_read(&_vorbisDSP, i);
 			_audiobufFill += i * _vorbisInfo.channels * 2;
 
-			if (_audiobufFill == audiofd_fragsize)
+			if (_audiobufFill == AUDIOFD_FRAGSIZE)
 				_audiobufReady = true;
 
 			if (_vorbisDSP.granulepos >= 0)
@@ -331,26 +340,16 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				_videobufTime = th_granule_time(_theoraDecode, _videobufGranulePos);
 				_curFrame++;
 
-				// is it already too old to be useful?  This is only actually
-				// useful cosmetically after a SIGSTOP.  Note that we have to
-				// decode the frame even if we don't show it (for now) due to
-				// keyframing.  Soon enough libtheora will be able to deal
-				// with non-keyframe seeks. 
-
-				if (_videobufTime >= get_time())
-					_videobufReady = true;
-				else {
-					// If we are too slow, reduce the pp level.
-					_ppInc = _ppLevel > 0 ? -1 : 0;
-					dropped++;
-				}
+				_videobufReady = true;
 			}
 		} else
 			break;
 	}
 
-	if (!_videobufReady && !_audiobufReady && _fileStream->eos())
-		break;
+	if (!_videobufReady && !_audiobufReady && _fileStream->eos()) {
+		close();
+		return _surface;
+	}
 
 	if (!_videobufReady || !_audiobufReady) {
 		// no data yet for somebody.  Grab another page
@@ -361,61 +360,29 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	}
 
 	// If playback has begun, top audio buffer off immediately.
-	if (_stateFlag)
-		audio_write_nonblocking();
-
-	// are we at or past time for this video frame?
-	if (_stateFlag && _videobufReady && _videobufTime <= get_time()) {
-		video_write();
-		_videobufReady = false;
+	if (_stateFlag) {
+		_audStream->queueBuffer((byte *)_audiobuf, AUDIOFD_FRAGSIZE, DisposeAfterUse::NO, Audio::FLAG_16BITS | Audio::FLAG_LITTLE_ENDIAN | Audio::FLAG_STEREO);
 	}
 
-	if (_stateFlag &&
-		(_audiobufReady || !_vorbisPacket) &&
-		(_videobufReady || !_theoraPacket) &&
-		!got_sigint) {
-		// we have an audio frame ready (which means the audio buffer is
-		// full), it's not time to play video, so wait until one of the
-		// audio buffer is ready or it's near time to play video
+	// are we at or past time for this video frame?
+	if (_stateFlag && _videobufReady) {
+		th_ycbcr_buffer yuv;
+	
+		th_decode_ycbcr_out(_theoraDecode, yuv);
 
-		// set up select wait on the audiobuffer and a timeout for video
-		struct timeval timeout;
-		fd_set writefs;
-		fd_set empty;
-		int n = 0;
-
-		FD_ZERO(&writefs);
-		FD_ZERO(&empty);
-		if (audiofd >= 0) {
-			FD_SET(audiofd, &writefs);
-			n = audiofd + 1;
+		// TODO: YUV->RGB
+		switch (_theoraInfo.pixel_fmt) {
+		case TH_PF_420:
+			break;
+		case TH_PF_422:
+			break;
+		case TH_PF_444:
+			break;
+		default:
+			break;
 		}
 
-		if (_theoraPacket) {
-			double tdiff;
-			long milliseconds;
-			tdiff = _videobufTime - get_time();
-
-			// If we have lots of extra time, increase the post-processing level.
-			if (tdiff > _theoraInfo.fps_denominator * 0.25 / _theoraInfo.fps_numerator) {
-				_ppInc = _ppLevel < _ppLevelMax ? 1 : 0;
-			} else if (tdiff < _theoraInfo.fps_denominator * 0.05 / _theoraInfo.fps_numerator) {
-				_ppInc = _ppLevel > 0 ? -1 : 0;
-			}
-			milliseconds = tdiff * 1000 - 5;
-			if (milliseconds > 500)
-				milliseconds = 500;
-			if (milliseconds > 0) {
-				timeout.tv_sec = milliseconds / 1000;
-				timeout.tv_usec = (milliseconds % 1000) * 1000;
-
-				n = select(n, &empty, &writefs, &empty, &timeout);
-				if (n)
-					audio_calibrate_timer(0);
-			}
-		} else {
-			select(n, &empty, &writefs, &empty, NULL);
-		}
+		_videobufReady = false;
 	}
 
 	// if our buffers either don't exist or are ready to go,
@@ -427,6 +394,8 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	// same if we've run out of input
 	if (_fileStream->eos())
 		_stateFlag = true;
+
+	return _surface;
 }
 
 void TheoraDecoder::reset() {
@@ -450,7 +419,7 @@ uint32 TheoraDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-Audio::QueuingAudioStream *AviDecoder::createAudioStream() {
+Audio::QueuingAudioStream *TheoraDecoder::createAudioStream() {
 	return Audio::makeQueuingAudioStream(_vorbisInfo.rate, _vorbisInfo.channels);
 }
 
