@@ -933,11 +933,7 @@ void run_vm(EngineState *s) {
 			obj = s->_segMan->getObject(s->xs->objp);
 			local_script = s->_segMan->getScriptIfLoaded(s->xs->local_segment);
 			if (!local_script) {
-				// FIXME: Why does this happen? Is the script not loaded yet at this point?
-				warning("Could not find local script from segment %x", s->xs->local_segment);
-				local_script = NULL;
-				s->variablesBase[VAR_LOCAL] = s->variables[VAR_LOCAL] = NULL;
-				s->variablesMax[VAR_LOCAL] = 0;
+				error("Could not find local script from segment %x", s->xs->local_segment);
 			} else {
 				s->variablesSegment[VAR_LOCAL] = local_script->_localsSegment;
 				if (local_script->_localsBlock)
