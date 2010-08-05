@@ -241,6 +241,8 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 		//  invalid port.
 		//  We fix this by adjusting the port variable to be global
 		//  again when hoyle4 is disposing windows.
+		//  This worked because sierra sci leaves old port data, so the pointer
+		//  was still valid for a short period of time
 		// TODO: maybe this could get implemented as script patch somehow
 		//  although this could get quite tricky to implement (script 996)
 		//  IconBar::handleEvent (script 937)
@@ -250,7 +252,7 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 		//  actually remove the window
 		reg_t eventObject = _segMan->findObjectByName("uEvt");
 		if (!eventObject.isNull()) {
-			//writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
+			writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
 		}
 	}
 }
