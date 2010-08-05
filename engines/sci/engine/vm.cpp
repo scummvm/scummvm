@@ -135,9 +135,13 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		// The results of this are likely unpredictable... It most likely means that a kernel function is returning something wrong.
-		// If such an error occurs, we usually need to find the last kernel function called and check its return value. Check
-		// callKernelFunc() below
-		error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
+		// If such an error occurs, we usually need to find the last kernel function called and check its return value.
+		if (g_sci->getGameId() == GID_QFG2 && g_sci->getEngineState()->currentRoomNumber() == 200) {
+			// WORKAROUND: This happens in QFG2, room 200, when talking to the astrologer (bug #3039879) - script bug.
+			// Returning 0 in this case.
+		} else {
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]. Address: %04x:%04x", reg.segment, PRINT_REG(reg));
+		}
 		return 0;
 	}
 
