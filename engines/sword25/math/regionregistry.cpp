@@ -82,10 +82,10 @@ bool BS_RegionRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
 	while (Iter != m_Handle2PtrMap.end()) {
 		// Handle persistence
-		Writer.Write(Iter->first);
+		Writer.Write(Iter->_key);
 
 		// Persist object
-		Result &= Iter->second->Persist(Writer);
+		Result &= Iter->_value->Persist(Writer);
 
 		++Iter;
 	}
@@ -102,7 +102,8 @@ bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_NextHandle);
 
 	// Destroy all existing BS_Regions
-	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->second;
+//FIXME: This doesn't seem right - the value is being deleted but not the actual hash node itself?
+	while (!m_Handle2PtrMap.empty()) delete m_Handle2PtrMap.begin()->_value;
 
 	// Read in the number of BS_Regions
 	unsigned int RegionCount;

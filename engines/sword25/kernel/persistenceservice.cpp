@@ -405,30 +405,29 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	}
 #endif
 
-	Bytef *UncompressedDataBuffer = new Bytef[CurSavegameInfo.GamedataUncompressedLength];
-	{
-		// Komprimierte gespeicherte Spieldaten laden.
-		vector<unsigned char> CompressedDataBuffer(CurSavegameInfo.GamedataLength);
-		{
-			File = sfm->openForLoading(GenerateSavegamePath(SlotID));			
+	byte *CompressedDataBuffer = new byte[CurSavegameInfo.GamedataLength];
+	byte *UncompressedDataBuffer = new Bytef[CurSavegameInfo.GamedataUncompressedLength];
 
-			File->seek(CurSavegameInfo.GamedataOffset);
-			File->read(reinterpret_cast<char *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength);
-			if (File->err()) {
-				BS_LOG_ERRORLN("Unable to load the gamedata from the savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
-				return false;
-			}
-		}
+	File = sfm->openForLoading(GenerateSavegamePath(SlotID));			
 
-		// Spieldaten dekomprimieren.
-		uLongf UncompressedBufferSize = CurSavegameInfo.GamedataUncompressedLength;
-		if (uncompress(reinterpret_cast<Bytef *>(&UncompressedDataBuffer[0]), &UncompressedBufferSize,
-			reinterpret_cast<Bytef *>(&CompressedDataBuffer[0]), CompressedDataBuffer.size()) != Z_OK) {
-			BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
-			delete[] UncompressedDataBuffer;
-			delete File;
-			return false;
-		}
+	File->seek(CurSavegameInfo.GamedataOffset);
+	File->read(reinterpret_cast<char *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength);
+	if (File->err()) {
+		BS_LOG_ERRORLN("Unable to load the gamedata from the savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
+		delete[] CompressedDataBuffer;
+		delete[] UncompressedDataBuffer;
+		return false;
+	}
+
+	// Spieldaten dekomprimieren.
+	uLongf UncompressedBufferSize = CurSavegameInfo.GamedataUncompressedLength;
+	if (uncompress(reinterpret_cast<Bytef *>(&UncompressedDataBuffer[0]), &UncompressedBufferSize,
+		reinterpret_cast<Bytef *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength) != Z_OK) {
+		BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
+		delete[] UncompressedDataBuffer;
+		delete[] CompressedDataBuffer;
+		delete File;
+		return false;
 	}
 
 	BS_InputPersistenceBlock Reader(&UncompressedDataBuffer[0], CurSavegameInfo.GamedataUncompressedLength);
@@ -442,6 +441,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	Success &= BS_Kernel::GetInstance()->GetSfx()->Unpersist(Reader);
 	Success &= BS_Kernel::GetInstance()->GetInput()->Unpersist(Reader);
 
+	delete[] CompressedDataBuffer;
 	delete[] UncompressedDataBuffer;
 	delete File;
 

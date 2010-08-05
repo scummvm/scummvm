@@ -52,15 +52,15 @@
 
 class BS_RenderObject;
 
+namespace Sword25 {
+
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_RenderObjectRegistry : public BS_ObjectRegistry<BS_RenderObject>
-{
+class BS_RenderObjectRegistry : public BS_ObjectRegistry<BS_RenderObject> {
 public:
-	static BS_RenderObjectRegistry & GetInstance()
-	{
+	static BS_RenderObjectRegistry & GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_RenderObjectRegistry);
 		return *m_InstancePtr.get();
 	}
@@ -73,5 +73,7 @@ private:
 
 	static std::auto_ptr<BS_RenderObjectRegistry> m_InstancePtr;
 };
+
+} // End of namespace Sword25
 
 #endif

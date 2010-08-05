@@ -166,7 +166,7 @@ public:
 	 * @remark				If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	*/
-	virtual bool PlaySound(const std::string& FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
+	virtual bool PlaySound(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
 
 	/**
 	 * Plays a sound
@@ -183,7 +183,7 @@ public:
 	 * @remark				If more control is needed over the playing, eg. changing the sound parameters
 	 * for Volume and Panning, then PlaySoundEx should be used.
 	 */
-	virtual unsigned int PlaySoundEx(const std::string& FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
+	virtual unsigned int PlaySoundEx(const Common::String &FileName, SOUND_TYPES Type, float Volume = 1.0f, float Pan = 0.0f, bool Loop = false, int LoopStart = -1, int LoopEnd = -1, unsigned int Layer = 0) = 0;
 
 	/**
 	 * Plays a sound generated at runtime

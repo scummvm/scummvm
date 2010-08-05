@@ -39,41 +39,40 @@
 // Includes
 // -----------------------------------------------------------------------------
 
+#include "common/func.h"
+#include "common/hashmap.h"
+#include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/hashmap.h"
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
 template<typename T>
-class BS_ObjectRegistry
-{
+class BS_ObjectRegistry {
 public:
 	BS_ObjectRegistry() : m_NextHandle(1) {}
 	virtual ~BS_ObjectRegistry() {}
 
 	// -------------------------------------------------------------------------
 
-	unsigned int RegisterObject(T * ObjectPtr)
-	{
+	unsigned int RegisterObject(T *ObjectPtr) {
 		// Null-Pointer können nicht registriert werden.
-		if (ObjectPtr == 0)
-		{
+		if (ObjectPtr == 0) {
 			LogErrorLn("Cannot register a null pointer.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird eine Warnung ausgeben und das Handle zurückgeben.
 		unsigned int Handle = FindHandleByPtr(ObjectPtr);
-		if (Handle != 0)
-		{
+		if (Handle != 0) {
 			LogWarningLn("Tried to register a object that was already registered.");
 			return Handle;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das neue Handle zurückgeben.
-		else
-		{
+		else {
 			m_Handle2PtrMap[m_NextHandle] = ObjectPtr;
 			m_Ptr2HandleMap[ObjectPtr] = m_NextHandle;
 
@@ -83,31 +82,26 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int RegisterObject(T * ObjectPtr, unsigned int Handle)
-	{
+	unsigned int RegisterObject(T *ObjectPtr, unsigned int Handle) {
 		// Null-Pointer und Null-Handle können nicht registriert werden.
-		if (ObjectPtr == 0 || Handle == 0)
-		{
+		if (ObjectPtr == 0 || Handle == 0) {
 			LogErrorLn("Cannot register a null pointer or a null handle.");
 			return 0;
 		}
 
 		// Falls das Objekt bereits registriert wurde, wird ein Fehler ausgegeben und 0 zurückgeben.
 		unsigned int HandleTest = FindHandleByPtr(ObjectPtr);
-		if (HandleTest != 0)
-		{
+		if (HandleTest != 0) {
 			LogErrorLn("Tried to register a object that was already registered.");
 			return 0;
 		}
 		// Falls das Handle bereits vergeben ist, wird ein Fehler ausgegeben und 0 zurückgegeben.
-		else if (FindPtrByHandle(Handle) != 0)
-		{
+		else if (FindPtrByHandle(Handle) != 0) {
 			LogErrorLn("Tried to register a handle that is already taken.");
 			return 0;
 		}
 		// Ansonsten wird das Objekt in beide Maps eingetragen und das gewünschte Handle zurückgeben.
-		else
-		{
+		else {
 			m_Handle2PtrMap[Handle] = ObjectPtr;
 			m_Ptr2HandleMap[ObjectPtr] = Handle;
 
@@ -121,28 +115,23 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	void DeregisterObject(T * ObjectPtr)
-	{
+	void DeregisterObject(T *ObjectPtr) {
 		unsigned int Handle = FindHandleByPtr(ObjectPtr);
 
-		if (Handle != 0)
-		{
+		if (Handle != 0) {
 			// Registriertes Objekt aus beiden Maps entfernen.
 			m_Handle2PtrMap.erase(FindHandleByPtr(ObjectPtr));
 			m_Ptr2HandleMap.erase(ObjectPtr);
-		}
-		else
-		{
+		} else {
 			LogWarningLn("Tried to remove a object that was not registered.");
 		}
 	}
 
 	// -----------------------------------------------------------------------------
 
-	T * ResolveHandle(unsigned int Handle)
-	{
+	T *ResolveHandle(unsigned int Handle) {
 		// Zum Handle gehöriges Objekt in der Hash-Map finden.
-		T * ObjectPtr = FindPtrByHandle(Handle);
+		T *ObjectPtr = FindPtrByHandle(Handle);
 
 		// Pointer zurückgeben. Im Fehlerfall ist dieser 0.
 		return ObjectPtr;
@@ -150,8 +139,7 @@ public:
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int ResolvePtr(T * ObjectPtr)
-	{
+	unsigned int ResolvePtr(T *ObjectPtr) {
 		// Zum Pointer gehöriges Handle in der Hash-Map finden.
 		unsigned int Handle = FindHandleByPtr(ObjectPtr);
 
@@ -160,8 +148,18 @@ public:
 	}
 
 protected:
-	typedef BS_Hashmap<unsigned int, T *>	HANDLE2PTR_MAP;
-	typedef BS_Hashmap<T *, unsigned int> PTR2HANDLE_MAP;
+	// FIXME: I'm not entirely sure my current hash function is legitimate
+	struct ClassPointer_EqualTo {
+		bool operator()(const T *x, const T *y) const { return x == y; }
+	};
+	struct ClassPointer_Hash {
+		uint operator()(const T *x) const { 
+			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
+		}
+	};
+
+	typedef Common::HashMap<unsigned int, T *>	HANDLE2PTR_MAP;
+	typedef Common::HashMap<T *, unsigned int, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
 	HANDLE2PTR_MAP	m_Handle2PtrMap;
 	PTR2HANDLE_MAP	m_Ptr2HandleMap;
@@ -169,30 +167,30 @@ protected:
 
 	// -----------------------------------------------------------------------------
 
-	T * FindPtrByHandle(unsigned int Handle)
-	{
+	T *FindPtrByHandle(unsigned int Handle) {
 		// Zum Handle gehörigen Pointer finden.
 		HANDLE2PTR_MAP::const_iterator it = m_Handle2PtrMap.find(Handle);
 
 		// Pointer zurückgeben, oder, falls keiner gefunden wurde, 0 zurückgeben.
-		return (it != m_Handle2PtrMap.end()) ? it->second : 0;
+		return (it != m_Handle2PtrMap.end()) ? it->_value : 0;
 	}
 
 	// -----------------------------------------------------------------------------
 
-	unsigned int FindHandleByPtr(T * ObjectPtr)
-	{
+	unsigned int FindHandleByPtr(T *ObjectPtr) {
 		// Zum Pointer gehöriges Handle finden.
 		PTR2HANDLE_MAP::const_iterator it = m_Ptr2HandleMap.find(ObjectPtr);
 
 		// Handle zurückgeben, oder, falls keines gefunden wurde, 0 zurückgeben.
-		return (it != m_Ptr2HandleMap.end()) ? it->second : 0;
+		return (it != m_Ptr2HandleMap.end()) ? it->_value : 0;
 	}
 
 	// -----------------------------------------------------------------------------
 
-	virtual void LogErrorLn(const char * Message) const = 0;
-	virtual void LogWarningLn(const char * Message) const = 0;
+	virtual void LogErrorLn(const char *Message) const = 0;
+	virtual void LogWarningLn(const char *Message) const = 0;
 };
+
+} // End of namespace Sword25
 
 #endif

@@ -46,14 +46,12 @@
 #define SWORD25_RENDEROBJECT_H
 
 // Includes
-#include "sword25/kernel/memlog_off.h"
-#include <vector>
-#include "sword25/kernel/memlog_on.h"
-
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/persistable.h"
 #include "sword25/math/rect.h"
 #include "sword25/gfx/renderobjectptr.h"
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Forward Declarations
@@ -106,7 +104,7 @@ public:
 		@return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 				Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Bitmap> AddBitmap(const std::string& FileName);
+	BS_RenderObjectPtr<BS_Bitmap> AddBitmap(const Common::String &FileName);
 	/**
 		@brief Erzeugt ein veränderbares Bitmap als Kinderobjekt des Renderobjektes.
 		@param Width die Breite des Bitmaps
@@ -121,7 +119,7 @@ public:
 		@return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 				Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Animation> AddAnimation(const std::string& FileName);
+	BS_RenderObjectPtr<BS_Animation> AddAnimation(const Common::String &FileName);
 	/**
 		@brief Erzeugt eine Animation auf Basis eines Animationstemplate als Kinderobjekt des Renderobjektes.
 		@param pAnimationTemplate ein Pointer auf das Animationstemplate
@@ -129,7 +127,7 @@ public:
 				Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 		@remark Das Renderobjekt übernimmt die Verwaltung des Animationstemplate.
 	*/
-	BS_RenderObjectPtr<BS_Animation> AddAnimation(const BS_AnimationTemplate & AnimationTemplate);
+	BS_RenderObjectPtr<BS_Animation> AddAnimation(const BS_AnimationTemplate &AnimationTemplate);
 	/**
 	    @brief Erzeugt ein neues Farbpanel als Kinderobjekt des Renderobjektes.
 		@param Width die Breite des Panels
@@ -149,7 +147,7 @@ public:
 		@return Gibt einen BS_RenderObjectPtr auf das erzeugte Objekt zurück.<br>
 				Falls ein Fehler aufgetreten ist wird ein ungültiger BS_RenderObjectPtr zurückgegeben.
 	*/
-	BS_RenderObjectPtr<BS_Text> AddText(const std::string & Font, const std::string & Text = "");
+	BS_RenderObjectPtr<BS_Text> AddText(const Common::String &Font, const Common::String &Text = "");
 
 	// Cast-Methoden
 	// -------------
@@ -330,13 +328,13 @@ public:
 
 	// Persistenz-Methoden
 	// -------------------
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 	// TODO: Evtl. protected
-	bool PersistChildren(BS_OutputPersistenceBlock & Writer);
-	bool UnpersistChildren(BS_InputPersistenceBlock & Reader);
+	bool PersistChildren(BS_OutputPersistenceBlock &Writer);
+	bool UnpersistChildren(BS_InputPersistenceBlock &Reader);
 	// TODO: Evtl. private
-	BS_RenderObjectPtr<BS_RenderObject> RecreatePersistedRenderObject(BS_InputPersistenceBlock & Reader);
+	BS_RenderObjectPtr<BS_RenderObject> RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader);
 
 protected:
 	// Typen
@@ -365,7 +363,7 @@ protected:
 	bool		m_OldVisible;
 
 	/// Ein Pointer auf den BS_RenderObjektManager, der das Objekt verwaltet.
-	BS_RenderObjectManager* m_ManagerPtr;
+	BS_RenderObjectManager *m_ManagerPtr;
 
 	// Render-Methode
 	// --------------
@@ -446,7 +444,7 @@ private:
 	/**
 		@brief Berechnet die absolute Position des Objektes.
 	*/
-	void CalcAbsolutePos(int& X, int& Y) const;
+	void CalcAbsolutePos(int &X, int &Y) const;
 	/**
 		@brief Berechnet die absolute Position des Objektes auf der X-Achse.
 	*/
@@ -488,5 +486,7 @@ private:
 	*/
 	static bool Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, const BS_RenderObjectPtr<BS_RenderObject> rhs);
 };
+
+} // End of namespace Sword25
 
 #endif

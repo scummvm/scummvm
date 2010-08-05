@@ -44,6 +44,8 @@
 #define SWORD25_GRAPHICENGINE_H
 
 // Includes
+#include "common/array.h"
+#include "common/str.h"
 #include "sword25/kernel/common.h"
 #include "sword25/kernel/bs_stdint.h"
 #include "sword25/kernel/resservice.h"
@@ -178,7 +180,7 @@ public:
 	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().
 	 * @param Filename	The filename for the screenshot
 	 */
-	bool SaveScreenshot(const std::string & Filename);
+	bool SaveScreenshot(const Common::String &Filename);
 
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
@@ -187,7 +189,7 @@ public:
 	 * The frame buffer must have a resolution of 800x600.
 	 * @param Filename	The filename for the screenshot
 	 */
-	bool SaveThumbnailScreenshot(const std::string & Filename);
+	bool SaveThumbnailScreenshot(const Common::String &Filename);
 
 	/**
 	 * Reads the current contents of the frame buffer
@@ -197,7 +199,7 @@ public:
 	 * @param Height	Returns the height of the frame buffer
 	 * @param Data		Returns the raw data of the frame buffer as an array of 32-bit colour values.
 	*/
-	virtual bool GetScreenshot(unsigned int & Width, unsigned int & Height, std::vector<unsigned int> & Data) = 0;
+	virtual bool GetScreenshot(unsigned int &Width, unsigned int &Height, Common::Array<unsigned int> &Data) = 0;
 	
 
 	virtual BS_RenderObjectPtr<BS_Panel> GetMainPanel() = 0;
