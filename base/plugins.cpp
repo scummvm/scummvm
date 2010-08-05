@@ -438,7 +438,6 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
 #if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
-	PluginManager::instance().unloadPlugins();
 	PluginManager::instance().loadFirstPlugin();
 	do {
 #endif
