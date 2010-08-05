@@ -203,9 +203,9 @@ static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 	}
 
 	unsigned int RegionHandle;
-	if (ClassName == REGION_CLASS_NAME) {
+	if (!strcmp(ClassName, REGION_CLASS_NAME)) {
 		RegionHandle = BS_Region::Create(BS_Region::RT_REGION);
-	} else if (ClassName == WALKREGION_CLASS_NAME) {
+	} else if (!strcmp(ClassName, WALKREGION_CLASS_NAME)) {
 		RegionHandle = BS_WalkRegion::Create(BS_Region::RT_WALKREGION);
 	} else {
 		BS_ASSERT(false);
