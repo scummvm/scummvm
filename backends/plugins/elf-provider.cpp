@@ -58,10 +58,10 @@ bool ELFPlugin::loadPlugin() {
 void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 	if (_dlHandle) {
-		delete _dlHandle;
 		if (!_dlHandle->close()) {
 			warning("Failed unloading plugin '%s'", _filename.c_str());
 		}
+		delete _dlHandle;
 		_dlHandle = 0;
 	}
 }
