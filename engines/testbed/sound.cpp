@@ -210,10 +210,55 @@ bool SoundSubsystem::audiocdOutput() {
 	return passed;
 }
 
+bool SoundSubsystem::sampleRates() {
+	bool passed = true;
+	Audio::Mixer *mixer = g_system->getMixer();
+
+	Audio::PCSpeaker *s1 = new Audio::PCSpeaker();
+	// Stream at half sampling rate
+	Audio::PCSpeaker *s2 = new Audio::PCSpeaker(s1->getRate() - 10000);
+	// Stream at twice sampling rate
+	Audio::PCSpeaker *s3 = new Audio::PCSpeaker(s1->getRate() + 10000);
+	
+	s1->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
+	s2->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
+	s3->play(Audio::PCSpeaker::kWaveFormSine, 1000, -1);
+	
+	Audio::SoundHandle handle;
+	Common::Point pt(0, 100);
+	
+	mixer->playStream(Audio::Mixer::kPlainSoundType, &handle, s1);
+	Testsuite::writeOnScreen(Common::String::printf("Playing at smaple rate: %d", s1->getRate()), pt);
+	g_system->delayMillis(1000);
+	mixer->stopHandle(handle);
+	g_system->delayMillis(1000);
+
+	mixer->playStream(Audio::Mixer::kSpeechSoundType, &handle, s2);
+	Testsuite::writeOnScreen(Common::String::printf("Playing at sample rate : %d", s2->getRate()), pt);
+	g_system->delayMillis(1000);
+	mixer->stopHandle(handle);
+	g_system->delayMillis(1000);
+
+	mixer->playStream(Audio::Mixer::kSFXSoundType, &handle, s3);
+	Testsuite::writeOnScreen(Common::String::printf("Playing at sample rate : %d", s3->getRate()), pt);
+	g_system->delayMillis(1000);
+	mixer->stopHandle(handle);
+	g_system->delayMillis(1000);
+	
+	Testsuite::clearScreen();
+	if (Testsuite::handleInteractiveInput("Was the mixer able to play beeps with variable sample rates?", "Yes", "No", kOptionRight)) {
+		Testsuite::logDetailedPrintf("Error! Error with variable sample rates\n");
+		passed = false;
+	}
+
+	return passed;
+}
+
 SoundSubsystemTestSuite::SoundSubsystemTestSuite() {
 	addTest("SimpleBeeps", &SoundSubsystem::playBeeps, true);
 	addTest("MixSounds", &SoundSubsystem::mixSounds, true);
 	addTest("AudiocdOutput", &SoundSubsystem::audiocdOutput, true);
+	addTest("SampleRates", &SoundSubsystem::sampleRates, true);
 }
 
 }	// End of namespace Testbed

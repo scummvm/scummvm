@@ -43,7 +43,7 @@ static const ADGameDescription testbedDescriptions[] = {
 		"",
 		AD_ENTRY1(NULL, 0),	// No data files required
 		Common::EN_ANY,
-		Common::kPlatformLinux,
+		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
 	},

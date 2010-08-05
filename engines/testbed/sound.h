@@ -49,6 +49,7 @@ namespace SoundSubsystem {
 bool playBeeps();
 bool mixSounds();
 bool audiocdOutput();
+bool sampleRates();
 }
 
 class SoundSubsystemTestSuite : public Testsuite {
