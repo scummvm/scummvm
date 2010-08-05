@@ -501,7 +501,7 @@ bool checkIndex(PAKFile &file) {
 
 void printHelp(const char *f) {
 	printf("Usage:\n");
-	printf("%s output inputfiles ...", f);
+	printf("%s output inputfiles ...\n", f);
 }
 
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size);
