@@ -2334,7 +2334,7 @@ fi
 
 echo "$_opengl"
 
-define_in_config_if_yes "$_opengl" 'USE_OPENGL'
+add_to_config_mk_if_yes "$_opengl" 'USE_OPENGL=1'
 
 #
 # Check for nasm
