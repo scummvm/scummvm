@@ -319,7 +319,7 @@ protected:
 	// chat
 	// -> process
 	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
-	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum);
+	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum, const bool printText);
 
 	// -> initialization
 	int initCharacterChat(int8 charNum);

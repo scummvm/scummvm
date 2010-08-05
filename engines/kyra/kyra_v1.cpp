@@ -625,6 +625,10 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 void KyraEngine_v1::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
+	// We need to use this here to allow the subtitle options to be changed
+	// through the GMM's options dialog.
+	readSettings();
+
 	if (_sound)
 		_sound->updateVolumeSettings();
 }
