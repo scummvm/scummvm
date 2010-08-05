@@ -400,6 +400,18 @@ bool PluginManager::tryLoadPlugin(Plugin *plugin) {
 
 DECLARE_SINGLETON(EngineManager)
 
+GameDescriptor EngineManager::findGameOnePlugAtATime(const Common::String &gameName, const EnginePlugin **plugin) const {
+	GameDescriptor result;
+	PluginManager::instance().loadFirstPlugin();
+	do {
+		result = findGame(gameName, plugin); 
+		if (!result.gameid().empty()) {
+			break;
+		}
+	} while (PluginManager::instance().loadNextPlugin());
+	return result;
+}
+
 GameDescriptor EngineManager::findGame(const Common::String &gameName, const EnginePlugin **plugin) const {
 	// Find the GameDescriptor for this target
 	const EnginePlugin::List &plugins = getPlugins();
@@ -410,10 +422,6 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 
 	EnginePlugin::List::const_iterator iter;
 	
-#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
-	PluginManager::instance().loadFirstPlugin();
-	do {
-#endif
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			result = (**iter)->findGame(gameName.c_str());
 			if (!result.gameid().empty()) {
@@ -422,9 +430,6 @@ GameDescriptor EngineManager::findGame(const Common::String &gameName, const Eng
 				return result;
 			}
 		}
-#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
-	} while(PluginManager::instance().loadNextPlugin());
-#endif
 	return result;
 }
 
@@ -432,7 +437,8 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 	GameList candidates;
 	EnginePlugin::List plugins;
 	EnginePlugin::List::const_iterator iter;
-#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+	PluginManager::instance().unloadPlugins();
 	PluginManager::instance().loadFirstPlugin();
 	do {
 #endif
@@ -442,7 +448,7 @@ GameList EngineManager::detectGames(const Common::FSList &fslist) const {
 		for (iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			candidates.push_back((**iter)->detectGames(fslist));
 		}
-#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT
+#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
 	} while (PluginManager::instance().loadNextPlugin());
 #endif
 	return candidates;

@@ -103,8 +103,12 @@ static const EnginePlugin *detectPlugin() {
 	// Query the plugins and find one that will handle the specified gameid
 	printf("User picked target '%s' (gameid '%s')...\n", ConfMan.getActiveDomainName().c_str(), gameid.c_str());
 	printf("  Looking for a plugin supporting this gameid... ");
-	
+
+#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+	GameDescriptor game = EngineMan.findGameOnePlugAtATime(gameid, &plugin);
+#else
 	GameDescriptor game = EngineMan.findGame(gameid, &plugin);
+#endif
 	
 	if (plugin == 0) {
 		printf("failed\n");
@@ -336,7 +340,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 		settings.erase("debugflags");
 	}
 
-#ifdef NEW_PLUGIN_DESIGN_FIRST_REFINEMENT //note: I'm going to refactor this name later :P
+#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES) //note: I'm going to refactor this name later :P
 	// Don't load the plugins initially in this case.
 #else
 	// Load the plugins.

@@ -708,7 +708,7 @@ void LauncherDialog::addGame() {
 			// ...so let's determine a list of candidates, games that
 			// could be contained in the specified directory.
 			GameList candidates(EngineMan.detectGames(files));
-
+			
 			int idx;
 			if (candidates.empty()) {
 				// No game was found in the specified directory
@@ -849,7 +849,12 @@ void LauncherDialog::loadGame(int item) {
 		gameId = _domains[item];
 
 	const EnginePlugin *plugin = 0;
+	
+#if defined(NEW_PLUGIN_DESIGN_FIRST_REFINEMENT) && defined(DYNAMIC_MODULES)
+	EngineMan.findGameOnePlugAtATime(gameId, &plugin);
+#else
 	EngineMan.findGame(gameId, &plugin);
+#endif
 
 	String target = _domains[item];
 	target.toLowercase();
