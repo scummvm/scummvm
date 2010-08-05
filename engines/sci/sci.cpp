@@ -27,6 +27,7 @@
 #include "common/config-manager.h"
 #include "common/debug-channels.h"
 #include "common/EventRecorder.h"
+#include "common/file.h"	// for Common::File::exists()
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -255,6 +256,16 @@ Common::Error SciEngine::run() {
 	if (saveSlot >= 0) {
 		reg_t restoreArgv[2] = { NULL_REG, make_reg(0, saveSlot) };	// special call (argv[0] is NULL)
 		kRestoreGame(_gamestate, 2, restoreArgv);
+
+		// TODO: The best way to do the following would be to invoke Game::init
+		// here and stop when the room is about to be changed, otherwise some
+		// game initialization won't take place
+
+		// Set audio language for KQ5CD (bug #3039477)
+		if (g_sci->getGameId() == GID_KQ5 && Common::File::exists("AUDIO001.002")) {
+			reg_t doAudioArgv[2] = { make_reg(0, 9), make_reg(0, 1) };
+			kDoAudio(_gamestate, 2, doAudioArgv);
+		}
 
 		// Initialize the game menu, if there is one.
 		// This is not done when loading, so we must do it manually.
