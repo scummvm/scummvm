@@ -77,7 +77,7 @@ DEPDIR = .deps
 
 TARGET = elf/scummvm.elf
 
-DEFINES  += -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -DDISABLE_SAVEGAME_SORTING -D_EE -D__PLAYSTATION2__ -DELF_LOADER_TARGET -G2 -O2 -Wall -Wno-multichar -fno-rtti -fno-exceptions -DNO_ADAPTOR
+DEFINES  += -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -DDISABLE_SAVEGAME_SORTING -D_EE -D__PLAYSTATION2__ -DELF_LOADER_TARGET -G2 -O2 -Wall -Wno-multichar -fno-rtti -fno-exceptions -DNO_ADAPTOR -DNEW_PLUGIN_DESIGN_FIRST_REFINEMENT
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
 INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
