@@ -301,9 +301,9 @@ static int NewWalkRegion(lua_State *L) {
 static const char *GEO_LIBRARY_NAME = "Geo";
 
 static const luaL_reg GEO_FUNCTIONS[] = {
-	"NewRegion", NewRegion,
-	"NewWalkRegion", NewWalkRegion,
-	0, 0,
+	{"NewRegion", NewRegion},
+	{"NewWalkRegion", NewWalkRegion},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -477,17 +477,17 @@ static int R_Delete(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static const luaL_reg REGION_METHODS[] = {
-	"SetPos", R_SetPos,
-	"SetX", R_SetX,
-	"SetY", R_SetY,
-	"GetPos", R_GetPos,
-	"IsPointInRegion", R_IsPointInRegion,
-	"GetX", R_GetX,
-	"GetY", R_GetY,
-	"IsValid", R_IsValid,
-	"Draw", R_Draw,
-	"GetCentroid", R_GetCentroid,
-	0, 0,
+	{"SetPos", R_SetPos},
+	{"SetX", R_SetX},
+	{"SetY", R_SetY},
+	{"GetPos", R_GetPos},
+	{"IsPointInRegion", R_IsPointInRegion},
+	{"GetX", R_GetX},
+	{"GetY", R_GetY},
+	{"IsValid", R_IsValid},
+	{"Draw", R_Draw},
+	{"GetCentroid", R_GetCentroid},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -533,8 +533,8 @@ static int WR_GetPath(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static const luaL_reg WALKREGION_METHODS[] = {
-	"GetPath", WR_GetPath,
-	0, 0,
+	{"GetPath", WR_GetPath},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------

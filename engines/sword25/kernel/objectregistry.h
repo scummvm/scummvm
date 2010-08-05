@@ -169,7 +169,7 @@ protected:
 
 	T *FindPtrByHandle(unsigned int Handle) {
 		// Zum Handle gehörigen Pointer finden.
-		HANDLE2PTR_MAP::const_iterator it = m_Handle2PtrMap.find(Handle);
+		typename HANDLE2PTR_MAP::const_iterator it = m_Handle2PtrMap.find(Handle);
 
 		// Pointer zurückgeben, oder, falls keiner gefunden wurde, 0 zurückgeben.
 		return (it != m_Handle2PtrMap.end()) ? it->_value : 0;
@@ -179,7 +179,7 @@ protected:
 
 	unsigned int FindHandleByPtr(T *ObjectPtr) {
 		// Zum Pointer gehöriges Handle finden.
-		PTR2HANDLE_MAP::const_iterator it = m_Ptr2HandleMap.find(ObjectPtr);
+		typename PTR2HANDLE_MAP::const_iterator it = m_Ptr2HandleMap.find(ObjectPtr);
 
 		// Handle zurückgeben, oder, falls keines gefunden wurde, 0 zurückgeben.
 		return (it != m_Ptr2HandleMap.end()) ? it->_value : 0;

@@ -56,15 +56,17 @@ public:
 
 	void Move(int DeltaX, int DeltaY) { translate(DeltaX, DeltaY); }
 
-	bool DoesIntersect(const BS_Rect &Rect) const { return intersects(Rect); }
+	bool DoesIntersect(const BS_Rect &Rect_) const { return intersects(Rect_); }
 
-	bool Intersect(const BS_Rect &Rect, BS_Rect &Result) const {
-		Result = Rect;
+	bool Intersect(const BS_Rect &Rect_, BS_Rect &Result) const {
+		Result = Rect_;
 		Result.clip(*this);
+
+		return Result.isEmpty();
 	}
 
-	void Join(const BS_Rect &Rect, BS_Rect &Result) const {
-		Result = Rect;
+	void Join(const BS_Rect &Rect_, BS_Rect &Result) const {
+		Result = Rect_;
 		Result.extend(*this);
 	}
 
