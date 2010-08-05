@@ -66,6 +66,7 @@ const SciWorkaroundEntry opcodeOrWorkarounds[] = {
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,  workaround
 const SciWorkaroundEntry uninitializedReadWorkarounds[] = {
+	{ GID_CASTLEBRAIN,   280,   280,  0,         "programmer", "dispatchEvent",  -1,    0, { WORKAROUND_FAKE, 0xf } }, // pressing 'q' on the computer screen in the robot room, and closing the help dialog that pops up (bug #3039656). Moves the cursor to the view with the ID returned (in this case, the robot hand)
 	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  504, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
 	{ GID_CNICK_KQ,      200,     0,  1,          "Character", "<noname446>",    -1,  505, { WORKAROUND_FAKE,   0 } }, // checkers, like in hoyle 3
 	{ GID_CNICK_KQ,       -1,   700,  0,           "gcWindow", "<noname183>",    -1,   -1, { WORKAROUND_FAKE,   0 } }, // when entering control menu, like in hoyle 3
