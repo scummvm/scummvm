@@ -60,7 +60,7 @@ BS_Region::BS_Region(BS_InputPersistenceBlock &Reader, unsigned int Handle) : m_
 // -----------------------------------------------------------------------------
 
 unsigned int BS_Region::Create(REGION_TYPE Type) {
-	BS_Region * RegionPtr;
+	BS_Region * RegionPtr = NULL;
 	switch (Type) {
 		case RT_REGION:
 			RegionPtr = new BS_Region();
@@ -85,7 +85,7 @@ unsigned int BS_Region::Create(BS_InputPersistenceBlock & Reader, unsigned int H
 	Reader.Read(Type);
 
 	// Depending on the type, create a new BS_Region or BS_WalkRegion object
-	BS_Region * RegionPtr;
+	BS_Region *RegionPtr = NULL;
 	if (Type == RT_REGION) {
 		RegionPtr = new BS_Region(Reader, Handle);
 	} else if (Type == RT_WALKREGION) {
