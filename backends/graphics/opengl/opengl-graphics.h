@@ -189,6 +189,10 @@ protected:
 	int _aspectWidth;
 	int _aspectHeight;
 
+#ifndef USE_ALL_ASR
+	int _desiredAspectRatio;
+#endif
+
 	/**
 	 * Sets the aspect ratio mode.
 	 * @mode the aspect ratio mode, if -1 it will switch to next mode.

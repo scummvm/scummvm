@@ -39,6 +39,9 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 #ifdef USE_OSD
 	_osdTexture(0), _osdAlpha(0), _osdFadeStartTime(0),
 #endif
+#ifndef USE_ALL_ASR
+	_desiredAspectRatio(kAspectRatio4_3),
+#endif
 	_gameTexture(0), _overlayTexture(0), _cursorTexture(0),
 	_screenChangeCount(0), _screenNeedsRedraw(false),
 	_shakePos(0),
@@ -65,6 +68,14 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	
 	// Register the graphics manager as a event observer
 	g_system->getEventManager()->getEventDispatcher()->registerObserver(this, 2, false);
+
+#ifndef USE_ALL_ASR
+	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
+	if (!scumm_stricmp(desiredAspectRatio.c_str(), "16/9"))
+		_desiredAspectRatio = kAspectRatio16_9;
+	else if (!scumm_stricmp(desiredAspectRatio.c_str(), "16/10"))
+		_desiredAspectRatio = kAspectRatio16_10;
+#endif
 }
 
 OpenGLGraphicsManager::~OpenGLGraphicsManager() {
@@ -1178,7 +1189,12 @@ void OpenGLGraphicsManager::setAspectRatioCorrection(int ratio) {
 #ifdef USE_ALL_ASR
 			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 5;
 #else
-			_videoMode.aspectRatioCorrection = (_videoMode.aspectRatioCorrection + 1) % 3;
+			if (_videoMode.aspectRatioCorrection == kAspectRatioNone)
+				_videoMode.aspectRatioCorrection = kAspectRatioConserve;
+			else if (_videoMode.aspectRatioCorrection == kAspectRatioConserve)
+				_videoMode.aspectRatioCorrection = _desiredAspectRatio;
+			else
+				_videoMode.aspectRatioCorrection = kAspectRatioNone;
 #endif
 		else
 			_videoMode.aspectRatioCorrection = ratio;

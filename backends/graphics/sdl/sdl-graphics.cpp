@@ -673,7 +673,6 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 			continue;
 		if (mode->h * kw != mode->w * kh)
 			continue;
-		//printf("%d %d\n", mode->w, mode->h);
 
 		uint metric = mode->w * mode->h - w * h;
 		if (metric > bestMetric)
@@ -687,7 +686,6 @@ static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &w
 		warning("Unable to enforce the desired aspect ratio!");
 		return;
 	}
-	//printf("%d %d\n", bestMode->w, bestMode->h);
 	width = bestMode->w;
 	height = bestMode->h;
 }
