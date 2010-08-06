@@ -166,13 +166,16 @@ bool BS_FontResource::_ParseXMLDocument(const Common::String & FileName, TiXmlDo
 	}
 
 	// Daten kopieren und NULL-terminieren
-	std::vector<char> WorkBuffer(FileSize + 1);
+	char *WorkBuffer;
+	WorkBuffer = (char *)malloc(FileSize + 1);
 	memcpy(&WorkBuffer[0], LoadBuffer, FileSize);
 	delete LoadBuffer;
 	WorkBuffer[FileSize] = '\0';
 
 	// Daten parsen
 	Doc.Parse(&WorkBuffer[0]);
+
+	free(WorkBuffer);
 
 	return !Doc.Error();
 }
@@ -224,37 +227,40 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 		return false;
 	}
 
+	int tmp;
+
 	// Left Attribut auslesen
-	const char * LeftString = Tag.Attribute("left");
-	if (!LeftString || !BS_String::ToInt(Common::String(LeftString), Rect.left) || Rect.left < 0)
-	{
+	const char *LeftString = Tag.Attribute("left");
+	if (!LeftString || !BS_String::ToInt(Common::String(LeftString), tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing left attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}
+	Rect.left = tmp;
 
 	// Right Attribut auslesen
 	const char * RightString = Tag.Attribute("right");
-	if (!RightString || !BS_String::ToInt(RightString, Rect.right) || Rect.right < 0)
-	{
+	if (!RightString || !BS_String::ToInt(RightString, tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing right attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}
+	Rect.right = tmp;
 
 	// Top Attribut auslesen
 	const char * TopString = Tag.Attribute("top");
-	if (!TopString || !BS_String::ToInt(TopString, Rect.top) || Rect.top < 0)
-	{
+	if (!TopString || !BS_String::ToInt(TopString, tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing top attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}
+	Rect.top = tmp;
 
 	// Bottom Attribut auslesen
 	const char * BottomString = Tag.Attribute("bottom");
-	if (!BottomString || !BS_String::ToInt(BottomString, Rect.bottom) || Rect.bottom < 0)
+	if (!BottomString || !BS_String::ToInt(BottomString, tmp) || tmp < 0)
 	{
 		BS_LOG_ERRORLN("Illegal or missing bottom attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}
+	Rect.bottom = tmp;
 
 	return true;
 }

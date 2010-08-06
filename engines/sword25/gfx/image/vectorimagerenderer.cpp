@@ -132,7 +132,7 @@ BS_VectorImageRenderer::BS_VectorImageRenderer() :
 bool BS_VectorImageRenderer::Render(const BS_VectorImage & VectorImage,
 									float ScaleFactorX, float ScaleFactorY,
 									unsigned int & Width, unsigned int & Height,
-									std::vector<char> & ImageData,
+									Common::Array<char> & ImageData,
 									float LineScaleFactor,
 									bool NoAlphaShapes)
 {

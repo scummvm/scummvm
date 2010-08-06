@@ -85,12 +85,12 @@ public:
 	virtual bool		GetVsync() const;
 
 	virtual bool		Fill(const BS_Rect* FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
-	virtual bool		GetScreenshot(unsigned int & Width, unsigned int & Height, std::vector<unsigned int> & Data);
+	virtual bool		GetScreenshot(unsigned int & Width, unsigned int & Height, Common::Array<unsigned int> & Data);
 
 	// Resource-Managing Methoden
 	// --------------------------
-	virtual BS_Resource*	LoadResource(const std::string& FileName);
-	virtual bool			CanLoadResource(const std::string& FileName);
+	virtual BS_Resource*	LoadResource(const Common::String& FileName);
+	virtual bool			CanLoadResource(const Common::String& FileName);
 
 	// Debugging Methoden
 	// ------------------
@@ -121,11 +121,11 @@ private:
 		unsigned int	Color;
 	};
 
-	std::vector<DebugLine> m_DebugLines;
+	Common::Array<DebugLine> m_DebugLines;
 
-	static bool ReadFramebufferContents(unsigned int Width, unsigned int Height, std::vector<unsigned int> & Data);
-	static void ReverseRGBAComponentOrder(std::vector<unsigned int> & Data);
-	static void FlipImagedataVertical(unsigned int Width, unsigned int Height, std::vector<unsigned int> & Data);
+	static bool ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data);
+	static void ReverseRGBAComponentOrder(Common::Array<unsigned int> & Data);
+	static void FlipImagedataVertical(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data);
 };
 
 } // End of namespace Sword25

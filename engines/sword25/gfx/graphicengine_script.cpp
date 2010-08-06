@@ -96,9 +96,9 @@ namespace
 	{
 		CallbackfunctionRegisterer()
 		{
-			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaLoopPointCB", AnimationLoopPointCallback);
-			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaActionCB", AnimationActionCallback);
-			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaDeleteCB", AnimationDeleteCallback);
+			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaLoopPointCB", (void (*)(int))AnimationLoopPointCallback);
+			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaActionCB", (void (*)(int))AnimationActionCallback);
+			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaDeleteCB", (void (*)(int))AnimationDeleteCallback);
 		}
 	};
 	static CallbackfunctionRegisterer Instance;
@@ -275,12 +275,12 @@ static int AT_Finalize(lua_State * L)
 
 static const luaL_reg ANIMATION_TEMPLATE_METHODS[] =
 {
-	"AddFrame", AT_AddFrame,
-	"SetFrame", AT_SetFrame,
-	"SetAnimationType", AT_SetAnimationType,
-	"SetFPS", AT_SetFPS,
-	"__gc", AT_Finalize,
-	0, 0,
+	{"AddFrame", AT_AddFrame},
+	{"SetFrame", AT_SetFrame},
+	{"SetAnimationType", AT_SetAnimationType},
+	{"SetFPS", AT_SetFPS},
+	{"__gc", AT_Finalize},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -546,26 +546,26 @@ static int GetRepaintedPixels(lua_State * L)
 
 static const luaL_reg GFX_FUNCTIONS[] =
 {
-	"Init", Init,
-	"StartFrame", StartFrame,
-	"EndFrame", EndFrame,
-	"DrawDebugLine", DrawDebugLine,
-	"SetVsync", SetVsync,
-	"GetDisplayWidth", GetDisplayWidth,
-	"GetDisplayHeight", GetDisplayHeight,
-	"GetBitDepth", GetBitDepth,
-	"IsVsync", IsVsync,
-	"IsWindowed", IsWindowed,
-	"GetFPSCount", GetFPSCount,
-	"GetLastFrameDuration", GetLastFrameDuration,
-	"StopMainTimer", StopMainTimer,
-	"ResumeMainTimer", ResumeMainTimer,
-	"GetSecondaryFrameDuration", GetSecondaryFrameDuration,
-	"SaveScreenshot", SaveScreenshot,
-	"NewAnimationTemplate", NewAnimationTemplate,
-	"GetRepaintedPixels", GetRepaintedPixels,
-	"SaveThumbnailScreenshot", SaveThumbnailScreenshot,
-	0, 0,	
+	{"Init", Init},
+	{"StartFrame", StartFrame},
+	{"EndFrame", EndFrame},
+	{"DrawDebugLine", DrawDebugLine},
+	{"SetVsync", SetVsync},
+	{"GetDisplayWidth", GetDisplayWidth},
+	{"GetDisplayHeight", GetDisplayHeight},
+	{"GetBitDepth", GetBitDepth},
+	{"IsVsync", IsVsync},
+	{"IsWindowed", IsWindowed},
+	{"GetFPSCount", GetFPSCount},
+	{"GetLastFrameDuration", GetLastFrameDuration},
+	{"StopMainTimer", StopMainTimer},
+	{"ResumeMainTimer", ResumeMainTimer},
+	{"GetSecondaryFrameDuration", GetSecondaryFrameDuration},
+	{"SaveScreenshot", SaveScreenshot},
+	{"NewAnimationTemplate", NewAnimationTemplate},
+	{"GetRepaintedPixels", GetRepaintedPixels},
+	{"SaveThumbnailScreenshot", SaveThumbnailScreenshot},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -850,24 +850,24 @@ static int RO_Remove(lua_State * L)
 
 static const luaL_reg RENDEROBJECT_METHODS[] =
 {
-	"AddAnimation", RO_AddAnimation,
-	"AddText", RO_AddText,
-	"AddBitmap", RO_AddBitmap,
-	"AddPanel", RO_AddPanel,
-	"SetPos", RO_SetPos,
-	"SetX", RO_SetX,
-	"SetY", RO_SetY,
-	"SetZ", RO_SetZ,
-	"SetVisible", RO_SetVisible,
-	"GetX", RO_GetX,
-	"GetY", RO_GetY,
-	"GetZ", RO_GetZ,
-	"GetAbsoluteX", RO_GetAbsoluteX,
-	"GetAbsoluteY", RO_GetAbsoluteY,
-	"GetWidth", RO_GetWidth,
-	"GetHeight", RO_GetHeight,
-	"IsVisible", RO_IsVisible,
-	0, 0,
+	{"AddAnimation", RO_AddAnimation},
+	{"AddText", RO_AddText},
+	{"AddBitmap", RO_AddBitmap},
+	{"AddPanel", RO_AddPanel},
+	{"SetPos", RO_SetPos},
+	{"SetX", RO_SetX},
+	{"SetY", RO_SetY},
+	{"SetZ", RO_SetZ},
+	{"SetVisible", RO_SetVisible},
+	{"GetX", RO_GetX},
+	{"GetY", RO_GetY},
+	{"GetZ", RO_GetZ},
+	{"GetAbsoluteX", RO_GetAbsoluteX},
+	{"GetAbsoluteY", RO_GetAbsoluteY},
+	{"GetWidth", RO_GetWidth},
+	{"GetHeight", RO_GetHeight},
+	{"IsVisible", RO_IsVisible},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -929,10 +929,10 @@ static int P_Remove(lua_State * L)
 
 static const luaL_reg PANEL_METHODS[] =
 {
-	"GetColor", P_GetColor,
-	"SetColor", P_SetColor,
-	"Remove", P_Remove,
-	0, 0,
+	{"GetColor", P_GetColor},
+	{"SetColor", P_SetColor},
+	{"Remove", P_Remove},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -1144,25 +1144,25 @@ static int B_Remove(lua_State * L)
 
 static const luaL_reg BITMAP_METHODS[] =
 {
-	"SetAlpha", B_SetAlpha,
-	"SetTintColor", B_SetTintColor,
-	"SetScaleFactor", B_SetScaleFactor,
-	"SetScaleFactorX", B_SetScaleFactorX,
-	"SetScaleFactorY", B_SetScaleFactorY,
-	"SetFlipH", B_SetFlipH,
-	"SetFlipV", B_SetFlipV,
-	"GetAlpha", B_GetAlpha,
-	"GetTintColor", B_GetTintColor,
-	"GetScaleFactorX", B_GetScaleFactorX,
-	"GetScaleFactorY", B_GetScaleFactorY,
-	"IsFlipH", B_IsFlipH,
-	"IsFlipV", B_IsFlipV,
-	"GetPixel", B_GetPixel,
-	"IsScalingAllowed", B_IsScalingAllowed,
-	"IsAlphaAllowed", B_IsAlphaAllowed,
-	"IsTintingAllowed", B_IsTintingAllowed,
-	"Remove", B_Remove,
-	0, 0,
+	{"SetAlpha", B_SetAlpha},
+	{"SetTintColor", B_SetTintColor},
+	{"SetScaleFactor", B_SetScaleFactor},
+	{"SetScaleFactorX", B_SetScaleFactorX},
+	{"SetScaleFactorY", B_SetScaleFactorY},
+	{"SetFlipH", B_SetFlipH},
+	{"SetFlipV", B_SetFlipV},
+	{"GetAlpha", B_GetAlpha},
+	{"GetTintColor", B_GetTintColor},
+	{"GetScaleFactorX", B_GetScaleFactorX},
+	{"GetScaleFactorY", B_GetScaleFactorY},
+	{"IsFlipH", B_IsFlipH},
+	{"IsFlipV", B_IsFlipV},
+	{"GetPixel", B_GetPixel},
+	{"IsScalingAllowed", B_IsScalingAllowed},
+	{"IsAlphaAllowed", B_IsAlphaAllowed},
+	{"IsTintingAllowed", B_IsTintingAllowed},
+	{"Remove", B_Remove},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -1507,32 +1507,32 @@ static int A_Remove(lua_State * L)
 
 static const luaL_reg ANIMATION_METHODS[] =
 {
-	"Play", A_Play,
-	"Pause", A_Pause,
-	"Stop", A_Stop,
-	"SetFrame", A_SetFrame,
-	"SetAlpha", A_SetAlpha,
-	"SetTintColor", A_SetTintColor,
-	"SetScaleFactor", A_SetScaleFactor,
-	"SetScaleFactorX", A_SetScaleFactorX,
-	"SetScaleFactorY", A_SetScaleFactorY,
-	"GetScaleFactorX", A_GetScaleFactorX,
-	"GetScaleFactorY", A_GetScaleFactorY,
-	"GetAnimationType", A_GetAnimationType,
-	"GetFPS", A_GetFPS,
-	"GetFrameCount", A_GetFrameCount,
-	"IsScalingAllowed", A_IsScalingAllowed,
-	"IsAlphaAllowed", A_IsAlphaAllowed,
-	"IsTintingAllowed", A_IsTintingAllowed,
-	"GetCurrentFrame", A_GetCurrentFrame,
-	"GetCurrentAction", A_GetCurrentAction,
-	"IsPlaying", A_IsPlaying,
-	"RegisterLoopPointCallback", A_RegisterLoopPointCallback,
-	"UnregisterLoopPointCallback", A_UnregisterLoopPointCallback,
-	"RegisterActionCallback", A_RegisterActionCallback,
-	"UnregisterActionCallback", A_UnregisterActionCallback,
-	"Remove", A_Remove,
-	0, 0,
+	{"Play", A_Play},
+	{"Pause", A_Pause},
+	{"Stop", A_Stop},
+	{"SetFrame", A_SetFrame},
+	{"SetAlpha", A_SetAlpha},
+	{"SetTintColor", A_SetTintColor},
+	{"SetScaleFactor", A_SetScaleFactor},
+	{"SetScaleFactorX", A_SetScaleFactorX},
+	{"SetScaleFactorY", A_SetScaleFactorY},
+	{"GetScaleFactorX", A_GetScaleFactorX},
+	{"GetScaleFactorY", A_GetScaleFactorY},
+	{"GetAnimationType", A_GetAnimationType},
+	{"GetFPS", A_GetFPS},
+	{"GetFrameCount", A_GetFrameCount},
+	{"IsScalingAllowed", A_IsScalingAllowed},
+	{"IsAlphaAllowed", A_IsAlphaAllowed},
+	{"IsTintingAllowed", A_IsTintingAllowed},
+	{"GetCurrentFrame", A_GetCurrentFrame},
+	{"GetCurrentAction", A_GetCurrentAction},
+	{"IsPlaying", A_IsPlaying},
+	{"RegisterLoopPointCallback", A_RegisterLoopPointCallback},
+	{"UnregisterLoopPointCallback", A_UnregisterLoopPointCallback},
+	{"RegisterActionCallback", A_RegisterActionCallback},
+	{"UnregisterActionCallback", A_UnregisterActionCallback},
+	{"Remove", A_Remove},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------
@@ -1691,20 +1691,20 @@ static int T_Remove(lua_State * L)
 
 static const luaL_reg TEXT_METHODS[] =
 {
-	"SetFont", T_SetFont,
-	"SetText", T_SetText,
-	"SetAlpha", T_SetAlpha,
-	"SetColor", T_SetColor,
-	"SetAutoWrap", T_SetAutoWrap,
-	"SetAutoWrapThreshold", T_SetAutoWrapThreshold,
-	"GetText", T_GetText,
-	"GetFont", T_GetFont,
-	"GetAlpha", T_GetAlpha,
-	"GetColor", T_GetColor,
-	"IsAutoWrap", T_IsAutoWrap,
-	"GetAutoWrapThreshold", T_GetAutoWrapThreshold,
-	"Remove", T_Remove,
-	0, 0,
+	{"SetFont", T_SetFont},
+	{"SetText", T_SetText},
+	{"SetAlpha", T_SetAlpha},
+	{"SetColor", T_SetColor},
+	{"SetAutoWrap", T_SetAutoWrap},
+	{"SetAutoWrapThreshold", T_SetAutoWrapThreshold},
+	{"GetText", T_GetText},
+	{"GetFont", T_GetFont},
+	{"GetAlpha", T_GetAlpha},
+	{"GetColor", T_GetColor},
+	{"IsAutoWrap", T_IsAutoWrap},
+	{"GetAutoWrapThreshold", T_GetAutoWrapThreshold},
+	{"Remove", T_Remove},
+	{0, 0}
 };
 
 // -----------------------------------------------------------------------------

@@ -161,7 +161,7 @@ public:
 		@return Gibt false zurück, falls der Aufruf fehlgeschlagen ist.
 		@remark Ein Aufruf dieser Methode ist nur erlaubt, wenn IsSetContentAllowed() true zurückgibt.
 	*/
-	virtual bool	SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0) = 0;
+	virtual bool	SetContent(const byte *Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0) = 0;
 
 	virtual bool	IsScalingAllowed() const = 0;
 	virtual bool	IsAlphaAllowed() const = 0;

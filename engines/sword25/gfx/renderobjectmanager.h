@@ -119,7 +119,7 @@ public:
 
 private:
 	bool m_FrameStarted;
-	typedef std::vector<BS_RenderObjectPtr<BS_TimedRenderObject> > RenderObjectList;
+	typedef Common::Array<BS_RenderObjectPtr<BS_TimedRenderObject> > RenderObjectList;
 	RenderObjectList m_TimedRenderObjects;
 
 	// RenderObject-Tree Variablen

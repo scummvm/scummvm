@@ -123,9 +123,9 @@ private:
 	};
 
 	agg::path_storage				m_Paths;
-	std::vector<BS_VectorPathInfo>	m_PathInfos;
-	std::vector<LineStyleType>		m_LineStyles;
-	std::vector<agg::rgba8>			m_FillStyles;
+	Common::Array<BS_VectorPathInfo>	m_PathInfos;
+	Common::Array<LineStyleType>		m_LineStyles;
+	Common::Array<agg::rgba8>			m_FillStyles;
 	BS_Rect							m_BoundingBox;
 };
 
@@ -164,7 +164,7 @@ public:
 	virtual bool IsAlphaAllowed() const { return true; }
 	virtual bool IsColorModulationAllowed() const { return true; }
 	virtual bool IsSetContentAllowed() const { return false; }
-	virtual bool SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 	virtual bool Blit(int PosX = 0, int PosY = 0,
 					  int Flipping = FLIP_NONE,
 					  BS_Rect* pPartRect = NULL,
@@ -177,7 +177,7 @@ private:
 	bool ParseDefineShape(unsigned int ShapeType, SWFBitStream & bs);
 	bool ParseStyles(unsigned int ShapeType, SWFBitStream & bs, unsigned int & NumFillBits, unsigned int & NumLineBits);
 
-	std::vector<BS_VectorImageElement>	m_Elements;
+	Common::Array<BS_VectorImageElement>	m_Elements;
 	BS_Rect								m_BoundingBox;
 };
 

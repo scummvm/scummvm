@@ -132,7 +132,7 @@ bool BS_DynamicBitmap::DoRender()
 
 // -----------------------------------------------------------------------------
 
-bool BS_DynamicBitmap::SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride)
+bool BS_DynamicBitmap::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride)
 {
 	return m_Image->SetContent(Pixeldata, Offset, Stride);
 }
@@ -199,8 +199,9 @@ bool BS_DynamicBitmap::Unpersist(BS_InputPersistenceBlock & Reader)
 	BS_LOG_WARNINGLN("Unpersisting a BS_DynamicBitmap. Bitmap contents are missing.");
 
 	// Bild mit durchsichtigen Bilddaten initialisieren.
-	std::vector<unsigned char> TransparentImageData(m_Width * m_Height * 4);
+	byte *TransparentImageData = (byte *)calloc(m_Width * m_Height * 4, 1);
 	m_Image->SetContent(TransparentImageData);
+	free(TransparentImageData);
 
 	Result &= BS_RenderObject::UnpersistChildren(Reader);
 

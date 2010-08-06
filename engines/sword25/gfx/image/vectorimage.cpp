@@ -581,7 +581,7 @@ unsigned int BS_VectorImage::GetPixel(int X, int Y)
 
 // -----------------------------------------------------------------------------
 
-bool BS_VectorImage::SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride)
+bool BS_VectorImage::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride)
 {
 	BS_LOG_ERRORLN("SetContent() is not supported.");
 	return 0;

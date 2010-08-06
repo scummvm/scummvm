@@ -18,15 +18,6 @@ MODULE_OBJS := \
 	gfx/framecounter.o \
 	gfx/graphicengine.o \
 	gfx/graphicengine_script.o \
-	gfx/image/b25sloader.o \
-	gfx/image/imageloader.o \
-	gfx/image/pngloader.o \
-	gfx/image/vectorimage.o \
-	gfx/image/vectorimagerenderer.o \
-	gfx/opengl/glimage.o \
-	gfx/opengl/glvectorimageblit.o \
-	gfx/opengl/openglgfx.o \
-	gfx/opengl/swimage.o \
 	gfx/panel.o \
 	gfx/renderobject.o \
 	gfx/renderobjectmanager.o \
@@ -36,6 +27,15 @@ MODULE_OBJS := \
 	gfx/staticbitmap.o \
 	gfx/text.o \
 	gfx/timedrenderobject.o \
+	gfx/image/b25sloader.o \
+	gfx/image/imageloader.o \
+	gfx/image/pngloader.o \
+	gfx/image/vectorimage.o \
+	gfx/image/vectorimagerenderer.o \
+	gfx/opengl/glimage.o \
+	gfx/opengl/glvectorimageblit.o \
+	gfx/opengl/openglgfx.o \
+	gfx/opengl/swimage.o \
 	input/inputengine.o \
 	input/inputengine_script.o \
 	input/stdwininput.o \

@@ -162,7 +162,7 @@ private:
 		Common::String	Text;
 	};
 
-	std::vector<LINE>	m_Lines;
+	Common::Array<LINE>	m_Lines;
 
 	void UpdateFormat();
 	void UpdateMetrics(BS_FontResource & FontResource);

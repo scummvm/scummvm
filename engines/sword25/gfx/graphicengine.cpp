@@ -42,43 +42,39 @@
 #include "sword25/kernel/memlog_on.h"
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/kernel/outputpersistenceblock.h"
+#include "sword25/gfx/graphicengine.h"
 
+namespace Lua {
 extern "C"
 {
 #include "sword25/util/lua/lua.h"
 #include "sword25/util/lua/lauxlib.h"
 }
 
+}
+
 namespace Sword25 {
 
 using namespace std;
-
-// -----------------------------------------------------------------------------
-// Constants
-// -----------------------------------------------------------------------------
+using namespace Lua;
 
 static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;		// Anzahl der Framezeiten über die, die Framezeit gemittelt wird
-
-// Includes
-// -----------------------------------------------------------------------------
-
-#include "sword25/gfx/graphicengine.h"
-
-// -----------------------------------------------------------------------------
 
 BS_GraphicEngine::BS_GraphicEngine(BS_Kernel * pKernel) : 
 	m_Width(0),
 	m_Height(0),
 	m_BitDepth(0),
 	m_Windowed(0),
-	m_LastTimeStamp(9223372036854775807), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
+	m_LastTimeStamp((uint64)-1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
 	m_LastFrameDuration(0),
 	m_TimerActive(true),
-	m_FrameTimeSamples(FRAMETIME_SAMPLE_COUNT, 0),
 	m_FrameTimeSampleSlot(0),
 	m_RepaintedPixels(0),
 	BS_ResourceService(pKernel)
 {
+	for (int i = 0; i < FRAMETIME_SAMPLE_COUNT; i++)
+		m_FrameTimeSamples[i] = 0;
+
 	if (!RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else
@@ -99,7 +95,7 @@ void  BS_GraphicEngine::UpdateLastFrameDuration()
 	m_FrameTimeSampleSlot = (m_FrameTimeSampleSlot + 1) % FRAMETIME_SAMPLE_COUNT;
 
 	// Die Framezeit wird über mehrere Frames gemittelt um Ausreisser zu eliminieren
-	std::vector<unsigned int>::const_iterator it = m_FrameTimeSamples.begin();
+	Common::Array<unsigned int>::const_iterator it = m_FrameTimeSamples.begin();
 	unsigned int Sum = *it;
 	for (it++; it != m_FrameTimeSamples.end(); it++) Sum += *it;
 	m_LastFrameDuration = Sum / FRAMETIME_SAMPLE_COUNT;
@@ -116,7 +112,7 @@ namespace
 	{
 		unsigned int Width;
 		unsigned int Height;
-		vector<unsigned int> Data;
+		Common::Array<unsigned int> Data;
 		if (!GraphicEngine.GetScreenshot(Width, Height, Data))
 		{
 			BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");

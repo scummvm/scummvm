@@ -183,9 +183,9 @@ private:
 		ANIMATION_CALLBACK	Callback;
 		unsigned int		Data;
 	};
-	std::vector<ANIMATION_CALLBACK_DATA> m_LoopPointCallbacks;
-	std::vector<ANIMATION_CALLBACK_DATA> m_ActionCallbacks;
-	std::vector<ANIMATION_CALLBACK_DATA> m_DeleteCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> m_LoopPointCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> m_ActionCallbacks;
+	Common::Array<ANIMATION_CALLBACK_DATA> m_DeleteCallbacks;
 
 	/**
 		@brief Lockt alle Frames.
@@ -217,8 +217,8 @@ private:
 	int ComputeYModifier() const;
 
 	void InitMembers();
-	void PersistCallbackVector(BS_OutputPersistenceBlock & Writer, const std::vector<ANIMATION_CALLBACK_DATA> & Vector);
-	void UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, std::vector<ANIMATION_CALLBACK_DATA> & Vector);
+	void PersistCallbackVector(BS_OutputPersistenceBlock & Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
+	void UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector);
 	BS_AnimationDescription * GetAnimationDescription() const;
 	void InitializeAnimationResource(const Common::String &FileName);
 };

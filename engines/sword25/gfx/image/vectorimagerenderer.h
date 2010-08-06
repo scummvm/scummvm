@@ -69,7 +69,7 @@ public:
 	bool Render(const BS_VectorImage & VectorImage,
 				float ScaleFactorX, float ScaleFactorY, 
 				unsigned int & Width, unsigned int & Height,
-				std::vector<char> & ImageData,
+				Common::Array<char> & ImageData,
 				float LineScaleFactor = 1.0f,
 				bool NoAlphaShapes = false);
 

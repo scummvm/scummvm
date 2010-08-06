@@ -53,7 +53,7 @@ namespace Sword25 {
 class BS_SWImage : public BS_Image
 {
 public:
-	BS_SWImage(const std::string & Filename, bool & Result);
+	BS_SWImage(const Common::String & Filename, bool & Result);
 	virtual ~BS_SWImage();
 
 	virtual int GetWidth() const { return m_Width; }
@@ -66,7 +66,7 @@ public:
 					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
 					  int Width = -1, int Height = -1);
 	virtual bool Fill(const BS_Rect* FillRectPtr, unsigned int Color);
-	virtual bool SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 	virtual unsigned int GetPixel(int X, int Y);
 
 	virtual bool IsBlitSource() const				{ return false; }

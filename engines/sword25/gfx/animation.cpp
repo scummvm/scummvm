@@ -155,7 +155,7 @@ BS_Animation::~BS_Animation()
 	}
 
 	// Delete Callbacks
-	std::vector<ANIMATION_CALLBACK_DATA>::iterator it = m_DeleteCallbacks.begin();
+	Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_DeleteCallbacks.begin();
 	for (; it != m_DeleteCallbacks.end(); it++) ((*it).Callback)((*it).Data);
 
 }
@@ -298,7 +298,7 @@ void BS_Animation::FrameNotification(int TimeElapsed)
 		if (TmpCurFrame < 0)
 		{
 			// Loop-Point Callbacks
-			std::vector<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
+			Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
 			while (it != m_LoopPointCallbacks.end())
 			{
 				if (((*it).Callback)((*it).Data) == false)
@@ -317,7 +317,7 @@ void BS_Animation::FrameNotification(int TimeElapsed)
 		else if (static_cast<unsigned int>(TmpCurFrame) >= animationDescriptionPtr->GetFrameCount())
 		{
 			// Loop-Point Callbacks
-			std::vector<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
+			Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_LoopPointCallbacks.begin();
 			while (it != m_LoopPointCallbacks.end())
 			{
 				if (((*it).Callback)((*it).Data) == false)
@@ -355,7 +355,7 @@ void BS_Animation::FrameNotification(int TimeElapsed)
 			if (animationDescriptionPtr->GetFrame(m_CurrentFrame).Action != "")
 			{
 				// Action Callbacks
-				std::vector<ANIMATION_CALLBACK_DATA>::iterator it = m_ActionCallbacks.begin();
+				Common::Array<ANIMATION_CALLBACK_DATA>::iterator it = m_ActionCallbacks.begin();
 				while (it != m_ActionCallbacks.end())
 				{
 					if (((*it).Callback)((*it).Data) == false)
@@ -744,13 +744,13 @@ void BS_Animation::RegisterDeleteCallback(ANIMATION_CALLBACK Callback, unsigned 
 // Persistenz
 // -----------------------------------------------------------------------------
 
-void BS_Animation::PersistCallbackVector(BS_OutputPersistenceBlock & Writer, const std::vector<ANIMATION_CALLBACK_DATA> & Vector)
+void BS_Animation::PersistCallbackVector(BS_OutputPersistenceBlock & Writer, const Common::Array<ANIMATION_CALLBACK_DATA> & Vector)
 {
 	// Anzahl an Callbacks persistieren.
 	Writer.Write(Vector.size());
 	
 	// Alle Callbacks einzeln persistieren.
-	std::vector<ANIMATION_CALLBACK_DATA>::const_iterator It = Vector.begin();
+	Common::Array<ANIMATION_CALLBACK_DATA>::const_iterator It = Vector.begin();
 	while (It != Vector.end())
 	{
 		Writer.Write(BS_CallbackRegistry::GetInstance().ResolveCallbackPointer(It->Callback));
@@ -762,7 +762,7 @@ void BS_Animation::PersistCallbackVector(BS_OutputPersistenceBlock & Writer, con
 
 // -----------------------------------------------------------------------------
 
-void BS_Animation::UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, std::vector<ANIMATION_CALLBACK_DATA> & Vector)
+void BS_Animation::UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, Common::Array<ANIMATION_CALLBACK_DATA> & Vector)
 {
 	// Callbackvector leeren.
 	Vector.resize(0);

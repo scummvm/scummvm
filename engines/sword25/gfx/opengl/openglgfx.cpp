@@ -72,12 +72,12 @@ namespace
 {
 	const unsigned int BIT_DEPTH = 32;
 	const unsigned int BACKBUFFER_COUNT = 1;
-	const std::string PNG_EXTENSION(".png");
-	const std::string PNG_S_EXTENSION("_s.png");
-	const std::string ANI_EXTENSION("_ani.xml");
-	const std::string FNT_EXTENSION("_fnt.xml");
-	const std::string SWF_EXTENSION(".swf");
-	const std::string B25S_EXTENSION(".b25s");
+	const Common::String PNG_EXTENSION(".png");
+	const Common::String PNG_S_EXTENSION("_s.png");
+	const Common::String ANI_EXTENSION("_ani.xml");
+	const Common::String FNT_EXTENSION("_fnt.xml");
+	const Common::String SWF_EXTENSION(".swf");
+	const Common::String B25S_EXTENSION(".b25s");
 }
 
 
@@ -195,7 +195,7 @@ bool BS_OpenGLGfx::EndFrame()
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 
-		std::vector<DebugLine>::const_iterator iter = m_DebugLines.begin();
+		Common::Array<DebugLine>::const_iterator iter = m_DebugLines.begin();
 		for (; iter != m_DebugLines.end(); ++iter)
 		{
 			const unsigned int & Color = (*iter).Color;
@@ -303,7 +303,7 @@ bool BS_OpenGLGfx::GetScreenshot(unsigned int & Width, unsigned int & Height, ve
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, std::vector<unsigned int> & Data)
+bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data)
 {
 	Data.resize(Width * Height);
 	glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, &Data[0]);
@@ -350,17 +350,17 @@ void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-static bool DoesStringEndWith(const std::string & String, const std::string & OtherString)
+static bool DoesStringEndWith(const Common::String & String, const std::string & OtherString)
 {
-	std::string::size_type StringPos = String.rfind(OtherString);
-	if (StringPos == std::string::npos) return false;
+	Common::String::size_type StringPos = String.rfind(OtherString);
+	if (StringPos == Common::String::npos) return false;
 
 	return StringPos + OtherString.size() == String.size();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Resource * BS_OpenGLGfx::LoadResource(const std::string& FileName)
+BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
 {
 	BS_ASSERT(CanLoadResource(FileName));
 
@@ -476,7 +476,7 @@ BS_Resource * BS_OpenGLGfx::LoadResource(const std::string& FileName)
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::CanLoadResource(const std::string& FileName)
+bool BS_OpenGLGfx::CanLoadResource(const Common::String& FileName)
 {
 	return DoesStringEndWith(FileName, PNG_EXTENSION) ||
 		   DoesStringEndWith(FileName, ANI_EXTENSION) ||

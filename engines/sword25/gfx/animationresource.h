@@ -48,6 +48,8 @@
 #include <vector>
 #include "sword25/kernel/memlog_on.h"
 
+class TiXmlElement;
+
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -56,7 +58,6 @@ namespace Sword25 {
 
 class BS_Kernel;
 class BS_PackageManager;
-class TiXmlElement;
 
 // -----------------------------------------------------------------------------
 // Class Definition
@@ -83,7 +84,7 @@ public:
 private:
 	bool							m_Valid;
 
-	std::vector<Frame>				m_Frames;
+	Common::Array<Frame>				m_Frames;
 
 	//@{
 	/** @name Dokument-Parser Methoden */

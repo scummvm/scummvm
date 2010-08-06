@@ -163,7 +163,7 @@ unsigned int BS_StaticBitmap::GetPixel(int X, int Y) const
 
 // -----------------------------------------------------------------------------
 
-bool BS_StaticBitmap::SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride)
+bool BS_StaticBitmap::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride)
 {
 	BS_LOG_ERRORLN("SetContent() ist not supported with this object.");
 	return false;

@@ -43,6 +43,9 @@
 #include "sword25/kernel/resource.h"
 #include "sword25/math/rect.h"
 
+class TiXmlDocument;
+class TiXmlElement;
+
 namespace Sword25 {
 
 // -----------------------------------------------------------------------------
@@ -50,8 +53,6 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 class BS_Kernel;
-class TiXmlDocument;
-class TiXmlElement;
 
 // -----------------------------------------------------------------------------
 // Klassendefinition

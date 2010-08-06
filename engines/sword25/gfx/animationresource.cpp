@@ -85,13 +85,15 @@ BS_AnimationResource::BS_AnimationResource(const Common::String& FileName) :
 			BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
 			return;
 		}
-		std::vector<char> WorkBuffer(FileSize + 1);
+		char *WorkBuffer;
+		WorkBuffer = (char *)malloc(FileSize + 1);
 		memcpy(&WorkBuffer[0], LoadBuffer, FileSize);
 		delete LoadBuffer;
 		WorkBuffer[FileSize] = '\0';
 
 		// Datei parsen
 		Doc.Parse(&WorkBuffer[0]);
+		free(WorkBuffer);
 		if (Doc.Error())
 		{
 			BS_LOG_ERRORLN("The following TinyXML-Error occured while parsing \"%s\": %s", GetFileName().c_str(), Doc.ErrorDesc());
@@ -123,10 +125,8 @@ BS_AnimationResource::BS_AnimationResource(const Common::String& FileName) :
 
 	// In das Verzeichnis der Eingabedatei wechseln, da die Dateiverweise innerhalb der XML-Datei relativ zu diesem Verzeichnis sind.
 	Common::String OldDirectory = PackagePtr->GetCurrentDirectory();
-	int LastSlash = GetFileName().rfind('/');
-	if (LastSlash != Common::String::npos)
-	{
-		Common::String Dir = GetFileName().substr(0, LastSlash);
+	if (GetFileName().contains('/')) {
+		Common::String Dir = Common::String(GetFileName().c_str(), strrchr(GetFileName().c_str(), '/'));
 		PackagePtr->ChangeDirectory(Dir);
 	}
 
@@ -214,7 +214,7 @@ bool BS_AnimationResource::ParseAnimationTag(TiXmlElement& AnimationTag, int& FP
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, BS_PackageManager& PackageManager)
+bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame_, BS_PackageManager& PackageManager)
 {
 	const char* FileString = FrameTag.Attribute("file");
 	if (!FileString)
@@ -222,8 +222,8 @@ bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, B
 		BS_LOG_ERRORLN("<frame> tag without file attribute occurred in \"%s\".", GetFileName().c_str());
 		return false;
 	}
-	Frame.FileName = PackageManager.GetAbsolutePath(FileString);
-	if (Frame.FileName == "")
+	Frame_.FileName = PackageManager.GetAbsolutePath(FileString);
+	if (Frame_.FileName == "")
 	{
 		BS_LOG_ERRORLN("Could not create absolute path for file specified in <frame> tag in \"%s\": \"%s\".", GetFileName().c_str(), FileString);
 		return false;
@@ -231,7 +231,7 @@ bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, B
 
 	const char* ActionString = FrameTag.Attribute("action");
 	if (ActionString)
-		Frame.Action = ActionString;
+		Frame_.Action = ActionString;
 
 	const char* HotspotxString = FrameTag.Attribute("hotspotx");
 	const char* HotspotyString = FrameTag.Attribute("hotspoty");
@@ -242,41 +242,41 @@ bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, B
 						 !HotspotyString ? "hotspoty" : "hotspotx",
 						 GetFileName().c_str());
 
-	Frame.HotspotX = 0;
-	if (HotspotxString && !BS_String::ToInt(Common::String(HotspotxString), Frame.HotspotX))
+	Frame_.HotspotX = 0;
+	if (HotspotxString && !BS_String::ToInt(Common::String(HotspotxString), Frame_.HotspotX))
 		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-						 HotspotxString,GetFileName().c_str(), Frame.HotspotX);
+						 HotspotxString,GetFileName().c_str(), Frame_.HotspotX);
 
-	Frame.HotspotY = 0;
-	if (HotspotyString && !BS_String::ToInt(Common::String(HotspotyString), Frame.HotspotY))
+	Frame_.HotspotY = 0;
+	if (HotspotyString && !BS_String::ToInt(Common::String(HotspotyString), Frame_.HotspotY))
 		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
-						 HotspotyString, GetFileName().c_str(), Frame.HotspotY);
+						 HotspotyString, GetFileName().c_str(), Frame_.HotspotY);
 
 	const char* FlipVString = FrameTag.Attribute("flipv");
 	if (FlipVString)
 	{
-	if (!BS_String::ToBool(Common::String(FlipVString), Frame.FlipV))
+	if (!BS_String::ToBool(Common::String(FlipVString), Frame_.FlipV))
 		{
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 							 FlipVString, GetFileName().c_str());
-			Frame.FlipV = false;
+			Frame_.FlipV = false;
 		}
 	}
 	else
-		Frame.FlipV = false;
+		Frame_.FlipV = false;
 
 	const char* FlipHString = FrameTag.Attribute("fliph");
 	if (FlipHString)
 	{
-	if (!BS_String::ToBool(FlipHString, Frame.FlipH))
+	if (!BS_String::ToBool(FlipHString, Frame_.FlipH))
 		{
 			BS_LOG_WARNINGLN("Illegal fliph value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 							 FlipHString, GetFileName().c_str());
-			Frame.FlipH = false;
+			Frame_.FlipH = false;
 		}
 	}
 	else
-		Frame.FlipH = false;
+		Frame_.FlipH = false;
 
 	return true;
 }
@@ -291,7 +291,7 @@ BS_AnimationResource::~BS_AnimationResource()
 
 bool BS_AnimationResource::PrecacheAllFrames() const
 {
-	std::vector<Frame>::const_iterator Iter = m_Frames.begin();
+	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter)
 	{
 		if (!BS_Kernel::GetInstance()->GetResourceManager()->PrecacheResource((*Iter).FileName))
@@ -316,7 +316,7 @@ bool BS_AnimationResource::ComputeFeatures()
 	m_ColorModulationAllowed = true;
 
 	// Alle Frame durchgehen und alle Features deaktivieren, die auch nur von einem Frame nicht unterstützt werden.
-	std::vector<Frame>::const_iterator Iter = m_Frames.begin();
+	Common::Array<Frame>::const_iterator Iter = m_Frames.begin();
 	for (; Iter != m_Frames.end(); ++Iter)
 	{
 		BS_BitmapResource* pBitmap;

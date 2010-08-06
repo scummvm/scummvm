@@ -50,7 +50,7 @@ namespace Sword25 {
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-BS_GLImage::BS_GLImage(const std::string & Filename, bool & Result) :
+BS_GLImage::BS_GLImage(const Common::String & Filename, bool & Result) :
 	m_Sprite(0),
 	m_Width(0),
 	m_Height(0)
@@ -148,7 +148,7 @@ bool BS_GLImage::Fill(const BS_Rect* pFillRect, unsigned int Color)
 
 // -----------------------------------------------------------------------------
 
-bool BS_GLImage::SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset, unsigned int Stride)
+bool BS_GLImage::SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride)
 {
 	// Überprüfen, ob PixelData ausreichend viele Pixel enthält um ein Bild der Größe Width * Height zu erzeugen
 	if (Pixeldata.size() < static_cast<unsigned int>(m_Width * m_Height * 4))

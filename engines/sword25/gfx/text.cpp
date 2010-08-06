@@ -192,7 +192,7 @@ bool BS_Text::DoRender()
 	BS_ASSERT(GfxPtr);
 
 	bool Result = true;
-	std::vector<LINE>::iterator Iter = m_Lines.begin();
+	Common::Array<LINE>::iterator Iter = m_Lines.begin();
 	for (; Iter != m_Lines.end(); ++Iter)
 	{
 		// Feststellen, ob überhaupt Buchstaben der aktuellen Zeile vom Update betroffen sind.
@@ -328,7 +328,7 @@ void BS_Text::UpdateFormat()
 
 		// Bounding-Box der einzelnen Zeilen relativ zur ersten festlegen (vor allem zentrieren).
 		m_Height = 0;
-		std::vector<LINE>::iterator Iter = m_Lines.begin();
+		Common::Array<LINE>::iterator Iter = m_Lines.begin();
 		for (; Iter != m_Lines.end(); ++Iter)
 		{
 			BS_Rect & BBox = (*Iter).BBox;

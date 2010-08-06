@@ -60,7 +60,7 @@ typedef void * GLS_Sprite;
 class BS_GLImage : public BS_Image
 {
 public:
-	BS_GLImage(const std::string & Filename, bool & Result);
+	BS_GLImage(const Common::String & Filename, bool & Result);
 
 	/**
 		@brief Erzeugt ein leeres BS_GLImage
@@ -83,7 +83,7 @@ public:
 					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
 					  int Width = -1, int Height = -1);
 	virtual bool Fill(const BS_Rect* pFillRect, unsigned int Color);
-	virtual bool SetContent(const std::vector<unsigned char> & Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0);
+	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0);
 	virtual unsigned int GetPixel(int X, int Y);
 
 	virtual bool IsBlitSource() const				{ return true; }

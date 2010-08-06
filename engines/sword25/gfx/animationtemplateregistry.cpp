@@ -32,8 +32,6 @@
  *
  */
 
-namespace Sword25 {
-
 // -----------------------------------------------------------------------------
 // Logging
 // -----------------------------------------------------------------------------
@@ -48,6 +46,8 @@ namespace Sword25 {
 #include "sword25/kernel/inputpersistenceblock.h"
 #include "sword25/gfx/animationtemplateregistry.h"
 #include "sword25/gfx/animationtemplate.h"
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Implementation

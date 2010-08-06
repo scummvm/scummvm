@@ -253,7 +253,7 @@ bool BS_AnimationTemplate::Persist(BS_OutputPersistenceBlock & Writer)
 	Writer.Write(m_Frames.size());
 
 	// Frames einzeln persistieren.
-	std::vector<const Frame>::const_iterator Iter = m_Frames.begin();
+	Common::Array<const Frame>::const_iterator Iter = m_Frames.begin();
 	while (Iter != m_Frames.end())
 	{
 		Writer.Write(Iter->HotspotX);
