@@ -44,17 +44,17 @@
 // Constants
 // -----------------------------------------------------------------------------
 
-namespace
-{
+namespace {
 	const unsigned int INITIAL_BUFFER_SIZE = 1024 * 64;
 }
+
+namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-BS_OutputPersistenceBlock::BS_OutputPersistenceBlock()
-{
+BS_OutputPersistenceBlock::BS_OutputPersistenceBlock() {
 	m_Data.reserve(INITIAL_BUFFER_SIZE);
 }
 
@@ -62,8 +62,7 @@ BS_OutputPersistenceBlock::BS_OutputPersistenceBlock()
 // Writing
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(signed int Value)
-{
+void BS_OutputPersistenceBlock::Write(signed int Value) {
 	WriteMarker(SINT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -71,8 +70,7 @@ void BS_OutputPersistenceBlock::Write(signed int Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(unsigned int Value)
-{
+void BS_OutputPersistenceBlock::Write(unsigned int Value) {
 	WriteMarker(UINT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -80,8 +78,7 @@ void BS_OutputPersistenceBlock::Write(unsigned int Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(float Value)
-{
+void BS_OutputPersistenceBlock::Write(float Value) {
 	WriteMarker(FLOAT_MARKER);
 	Value = ConvertEndianessFromSystemToStorage(Value);
 	RawWrite(&Value, sizeof(Value));
@@ -89,8 +86,7 @@ void BS_OutputPersistenceBlock::Write(float Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(bool Value)
-{
+void BS_OutputPersistenceBlock::Write(bool Value) {
 	WriteMarker(BOOL_MARKER);
 
 	unsigned int UIntBool = Value ? 1 : 0;
@@ -100,8 +96,7 @@ void BS_OutputPersistenceBlock::Write(bool Value)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(const std::string & String)
-{
+void BS_OutputPersistenceBlock::Write(const Common::String &String) {
 	WriteMarker(STRING_MARKER);
 
 	Write(String.size());
@@ -110,8 +105,7 @@ void BS_OutputPersistenceBlock::Write(const std::string & String)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::Write(const void * BufferPtr, size_t Size)
-{
+void BS_OutputPersistenceBlock::Write(const void *BufferPtr, size_t Size) {
 	WriteMarker(BLOCK_MARKER);
 
 	Write(Size);
@@ -120,19 +114,18 @@ void BS_OutputPersistenceBlock::Write(const void * BufferPtr, size_t Size)
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::WriteMarker(unsigned char Marker)
-{
+void BS_OutputPersistenceBlock::WriteMarker(unsigned char Marker) {
 	m_Data.push_back(Marker);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_OutputPersistenceBlock::RawWrite(const void * DataPtr, size_t Size)
-{
-	if (Size > 0)
-	{
+void BS_OutputPersistenceBlock::RawWrite(const void *DataPtr, size_t Size) {
+	if (Size > 0) {
 		unsigned int OldSize = m_Data.size();
 		m_Data.resize(OldSize + Size);
 		memcpy(&m_Data[OldSize], DataPtr, Size);
 	}
 }
+
+} // End of namespace Sword25

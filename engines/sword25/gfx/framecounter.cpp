@@ -32,36 +32,33 @@
  *
  */
 
+#include "common/system.h"
 #include "sword25/gfx/framecounter.h"
-#include "sword25/kernel/timer.h"
 
 namespace Sword25 {
 
 BS_Framecounter::BS_Framecounter(int UpdateFrequency) :
-	m_FPS(0),
-	m_FPSCount(0),
-	m_LastUpdateTime(-1)
-{
+		m_FPS(0),
+		m_FPSCount(0),
+		m_LastUpdateTime(-1) {
 	SetUpdateFrequency(UpdateFrequency);
 }
 
 void BS_Framecounter::Update()
 {
 	// Aktuellen Systemtimerstand auslesen
-	uint64_t Timer = BS_Timer::GetMicroTicks();
+	uint64_t Timer = g_system->getMillis() * 1000;
 
 	// Falls m_LastUpdateTime == -1 ist, wird der Frame-Counter zum ersten Mal aufgerufen und der aktuelle Systemtimer als erster
 	// Messzeitpunkt genommen.
 	if (m_LastUpdateTime == -1)
 		m_LastUpdateTime = Timer;
-	else
-	{
+	else {
 		// Die Anzahl der Frames im aktuellen Messzeitraum wird erhöht.
 		m_FPSCount++;
 
 		// Falls der Messzeitraum verstrichen ist, wird die durchschnittliche Framerate berechnet und ein neuer Messzeitraum begonnen.
-		if (Timer - m_LastUpdateTime >= m_UpdateDelay)
-		{
+		if (Timer - m_LastUpdateTime >= m_UpdateDelay) {
 			m_FPS = static_cast<int>((1000000 * (uint64_t)m_FPSCount) / (Timer - m_LastUpdateTime));
 			m_LastUpdateTime = Timer;
 			m_FPSCount = 0;

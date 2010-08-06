@@ -35,13 +35,14 @@
 #include "sword25/kernel/window.h"
 
 // Alle Implementationen von BS_Window müssen hier eingetragen werden
-#include "sword25/kernel/win32window.h"
+#include "sword25/kernel/scummvmwindow.h"
+
+namespace Sword25 {
 
 // Erstellt ein Fenster des GUI des aktuellen Betriebssystems
-BS_Window* BS_Window::CreateBSWindow(int X, int Y, int Width, int Height, bool Visible)
-{
+BS_Window *BS_Window::CreateBSWindow(int X, int Y, int Width, int Height, bool Visible) {
 	// Fenster erstellen
-	BS_Window* pWindow = (BS_Window*) new BS_Win32Window(X, Y, Width, Height, Visible);
+	BS_Window *pWindow = (BS_Window*) new BS_ScummVMWindow(X, Y, Width, Height, Visible);
 
 	// Falls das Fenster erfolgreich initialisiert wurde, wird ein Pointer auf das Fensterobjekt
 	// zurückgegeben
@@ -55,14 +56,14 @@ BS_Window* BS_Window::CreateBSWindow(int X, int Y, int Width, int Height, bool V
 
 // Gibt True zurück wenn das Fenster WM_CLOSE empfangen hat - 
 // solange, bis RejectClose() aufgerufen wurde.
-bool BS_Window::CloseWanted()
-{
+bool BS_Window::CloseWanted() {
 	bool result = _CloseWanted;
 	_CloseWanted = false;
 	return result;
 }
 
-void BS_Window::SetCloseWanted(bool Wanted)
-{
+void BS_Window::SetCloseWanted(bool Wanted) {
 	_CloseWanted = Wanted;
 }
+
+} // End of namespace Sword25

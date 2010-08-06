@@ -77,7 +77,7 @@ public:
 private:
 	int	m_FPS;
 	int m_FPSCount;
-	uint64_t m_LastUpdateTime;
+	int64_t m_LastUpdateTime;
 	uint64_t m_UpdateDelay;
 };
 

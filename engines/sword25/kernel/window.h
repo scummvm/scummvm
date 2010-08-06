@@ -144,8 +144,9 @@ public:
 	 * Returns the system handle that represents the window. Note that any use of the handle
 	 * will not be portable code.
 	 */
-	virtual unsigned int GetWindowHandle() = 0;
+	virtual uint GetWindowHandle() = 0;
 
+	virtual void SetWindowAlive(bool v) = 0;
 
 	/**
 	 * Specifies whether the window is wanted to be closed. This is used together with CloseWanted()

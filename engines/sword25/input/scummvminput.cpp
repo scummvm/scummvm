@@ -121,6 +121,10 @@ void ScummVMInput::Update() {
 			AlterKeyboardState(event.kbd.keycode, (event.type == Common::EVENT_KEYDOWN) ? 0x80 : 0);
 			break;
 
+		case Common::EVENT_QUIT:
+			BS_Kernel::GetInstance()->GetWindow()->SetWindowAlive(false);
+			break;
+
 		default:
 			break;
 		}

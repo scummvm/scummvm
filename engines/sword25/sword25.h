@@ -51,7 +51,7 @@ struct Sword25GameDescription;
 
 class Sword25Engine : public Engine {
 private:
-	bool AppStart(const Common::StringArray &CommandParameters);
+	Common::Error AppStart(const Common::StringArray &CommandParameters);
 	bool AppMain();
 	bool AppEnd();
 

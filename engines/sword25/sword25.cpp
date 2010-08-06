@@ -65,9 +65,10 @@ Sword25Engine::~Sword25Engine() {
 Common::Error Sword25Engine::run() {
 	// Engine initialisation
 	Common::StringArray commandParameters;
-	if (!AppStart(commandParameters)) {
+	Common::Error errorCode = AppStart(commandParameters);
+	if (errorCode != Common::kNoError) {
 		AppEnd();
-		error("A fatal error occured during engine startup");
+		return errorCode;
 	}
 
 	// Run the game
@@ -79,41 +80,47 @@ Common::Error Sword25Engine::run() {
 	return (RunSuccess && DeinitSuccess) ? Common::kNoError : Common::kUnknownError;
 }
 
-bool Sword25Engine::AppStart(const Common::StringArray &CommandParameters) {
+Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParameters) {
 	// All log messages will be sent to StdOut
 	BS_Log::RegisterLogListener(LogToStdout);
+
+	// Initialise the graphics mode to RGBA8888
+	Graphics::PixelFormat format = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	initGraphics(800, 600, true, &format);
+	if (format != g_system->getScreenFormat())
+		return Common::kUnsupportedColorMode;
 
 	// Kernel initialisation
 	if (!BS_Kernel::GetInstance()->GetInitSuccess()) {
 		BS_LOG_ERRORLN("Kernel initialization failed.");
-		return false;
+		return Common::kUnknownError;
 	}
 
 	// Package-Manager starten, damit die Packfiles geladen werden können.
 	BS_PackageManager *PackageManagerPtr = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->NewService("package", PACKAGE_MANAGER));
 	if (!PackageManagerPtr) {
 		BS_LOG_ERRORLN("Packagemanager initialization failed.");
-		return false;
+		return Common::kUnknownError;
 	}
 
 	// Packages laden oder das aktuelle Verzeichnis mounten, wenn das über Kommandozeile angefordert wurde.
 	if (find(CommandParameters.begin(), CommandParameters.end(), MOUNT_DIR_PARAMETER) != CommandParameters.end()) {
-		if (!PackageManagerPtr->LoadDirectoryAsPackage(".", "/")) return false;
+		if (!PackageManagerPtr->LoadDirectoryAsPackage(".", "/")) return Common::kUnknownError;
 	} else {
-		if (!LoadPackages()) return false;
+		if (!LoadPackages()) return Common::kUnknownError;
 	}
 
 	// Einen Pointer auf den Skript-Engine holen.
 	BS_ScriptEngine *ScriptPtr = static_cast<BS_ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
 	if (!ScriptPtr) {
 		BS_LOG_ERRORLN("Skript intialization failed.");
-		return false;
+		return Common::kUnknownError;
 	}
 
 	// Die Kommandozeilen-Parameter der Skriptumgebung zugänglich machen.
 	ScriptPtr->SetCommandLine(CommandParameters);
 
-	return true;
+	return Common::kNoError;
 }
 
 bool Sword25Engine::AppMain() {

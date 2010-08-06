@@ -33,52 +33,53 @@
  */
 
 /*
-	BS_Timer
-	--------
-	Eine Klasse zum Auslesen des Systemtimers.
-
-	Autor: Malte Thiesen
+	BS_ScummVMWindow
+	----------------
+	Implementation of the BS_Window Interfaces for ScummVM
 */
 
-#ifndef SWORD25_TIMER_H
-#define SWORD25_TIMER_H
+#ifndef SWORD25_SCUMMVMWINDOW_H
+#define SWORD25_SCUMMVMWINDOW_H
 
 // Includes
 #include "sword25/kernel/common.h"
-#include "sword25/kernel/bs_stdint.h"
+#include "sword25/kernel/window.h"
 
-/**
-	@brief Eine Klasse zum Auslesen des Systemtimers.
+namespace Sword25 {
 
-	Vor der Benutzung sollte immer mit IsTimerAvaliable() getestet werden, ob der Timer von der benutzten
-	Hardware unterstützt wird.
-*/
-class BS_Timer
-{
+// Class definition
+class BS_ScummVMWindow : public BS_Window {
 public:
-	/**
-		@brief List den Systemtimer in Microsekunden aus.
-		@return Die Zahl vergangener Microsekunden seit dem Systemstart.<br>
-	*/
-	static uint64_t GetMicroTicks();
+	BS_ScummVMWindow(int X, int Y, int Width, int Height, bool Visible);
+	virtual ~BS_ScummVMWindow();
 
-	/**
-		@brief List den Systemtimer in Millisekunden aus.
-		@return Die Zahl vergangener Millisekunden seit dem Systemstart.<br>
-	*/
-	static unsigned int GetMilliTicks();
-
-	/**
-		@brief Prüft, ob der Timer auf der vorhandenen Hardware existiert.
-		@return Gibt false zurück, fals der Timer auf der vorhandenen Hardware nicht existiert.
-	*/
-	static bool IsTimerAvaliable();
+	bool IsVisible();
+	void SetVisible(bool Visible);
+	int GetX();
+	void SetX(int X);
+	int GetY();
+	void SetY(int X);
+	int GetClientX();
+	int GetClientY();
+	int GetWidth();
+	void SetWidth(int Width);
+	int GetHeight();
+	void SetHeight(int Height);
+	Common::String GetTitle();
+	void SetWindowAlive(bool v);
+	void SetTitle(const Common::String &Title);
+	bool HasFocus();
+	uint GetWindowHandle();
+	bool WaitForFocus();
+	bool ProcessMessages();
 
 private:
-	/**
-		@brief Initialisiert den Timer.
-	*/
-	static void Init();
+	static bool _ClassRegistered;
+	bool _WindowAlive;	
+	int	 _ClientXDelta;
+	int	 _ClientYDelta;
 };
+
+} // End of namespace Sword25
 
 #endif

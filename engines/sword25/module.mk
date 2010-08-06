@@ -49,8 +49,7 @@ MODULE_OBJS := \
 	kernel/persistenceservice.o \
 	kernel/resmanager.o \
 	kernel/resource.o \
-	kernel/timer.o \
-	kernel/win32window.o \
+	kernel/scummvmwindow.o \
 	kernel/window.o \
 	math/geometry.o \
 	math/geometry_script.o \
