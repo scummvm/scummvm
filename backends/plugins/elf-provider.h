@@ -53,14 +53,14 @@ public:
 			unloadPlugin();
 	}
 
-	virtual bool loadPlugin();
-	virtual void unloadPlugin();
+	virtual bool loadPlugin() = 0;
+	void unloadPlugin();
 
 };
 
 class ELFPluginProvider : public FilePluginProvider {
 protected:
-	virtual Plugin* createPlugin(const Common::FSNode &node) const;
+	virtual Plugin* createPlugin(const Common::FSNode &node) const = 0;
 
 	bool isPluginFilename(const Common::FSNode &node) const;
 

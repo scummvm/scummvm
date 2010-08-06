@@ -28,6 +28,7 @@
 
 #include "elf32.h"
 #include "common/stream.h"
+#include "backends/plugins/dynamic-plugin.h"
 
 #if defined(__PLAYSTATION2__) || defined(__PSP__)
 #define MIPS_TARGET
@@ -38,12 +39,8 @@
 #define ARM_TARGET
 #endif
 
-#define MAXDLERRLEN 80
-
 class DLObject {
 protected:
-    char *_errbuf; /* For error messages, at least MAXDLERRLEN in size */
-
     void *_segment, *_symtab;
     char *_strtab;
     int _symbol_cnt;
@@ -57,9 +54,9 @@ protected:
 	unsigned int _gpVal;									// Value of Global Pointer
 #endif
 
-    void seterror(const char *fmt, ...);
+    //void seterror(const char *fmt, ...);
     void unload();
-    virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment);
+    virtual bool relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) = 0;
     bool load(Common::SeekableReadStream* DLFile);
 
     bool readElfHeader(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr);
@@ -69,7 +66,7 @@ protected:
     int loadSymbolTable(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
     bool loadStringTable(Common::SeekableReadStream* DLFile, Elf32_Shdr *shdr);
     void relocateSymbols(Elf32_Addr offset);
-    virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr);
+    virtual bool relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) = 0;
 
 public:
     bool open(const char *path);
@@ -77,15 +74,6 @@ public:
     void *symbol(const char *name);
     void discard_symtab();
 
-    DLObject(char *errbuf = NULL) : _errbuf(errbuf), _segment(NULL), _symtab(NULL),
-            _strtab(NULL), _symbol_cnt(0), _symtab_sect(-1), _dtors_start(NULL), _dtors_end(NULL),
-            _segmentSize(0) {
-#ifdef MIPS_TARGET
-		_shortsSegment = NULL;
-		_gpVal = 0;
-#endif
-    }
-
 };
 
-#endif /* LOADER_H */
+#endif /* ELF_LOADER_H */

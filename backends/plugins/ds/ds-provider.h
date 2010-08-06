@@ -25,11 +25,8 @@
 
 #include "backends/plugins/elf-provider.h"
 
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
-
 class DSPluginProvider : public ELFPluginProvider {
 	Plugin* createPlugin(const Common::FSNode &node) const;
 };
 
-#endif // defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 

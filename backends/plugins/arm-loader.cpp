@@ -23,9 +23,12 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(ARM)
+
 #include "backends/fs/ds/ds-fs.h"
 #include "elf-loader.h"
 #include "dsmain.h"
+#include "arm-loader.h"
 
 #define __DEBUG_PLUGINS__
 
@@ -45,7 +48,7 @@
  * @param size   	 Size of relocation section
  *
  */
-bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
+bool ARMDLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset, unsigned long size, void *relSegment) {
 	Elf32_Rel *rel = NULL; //relocation entry
 
 	// Allocate memory for relocation table
@@ -135,7 +138,7 @@ bool DLObject::relocate(Common::SeekableReadStream* DLFile, unsigned long offset
 	return true;
 }
 
-bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
+bool ARMDLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr, Elf32_Shdr *shdr) {
 
 	// Loop over sections, finding relocation sections
 	for (int i = 0; i < ehdr->e_shnum; i++) {
@@ -162,3 +165,5 @@ bool DLObject::relocateRels(Common::SeekableReadStream* DLFile, Elf32_Ehdr *ehdr
 
 	return true;
 }
+
+#endif /* defined(DYNAMIC_MODULES) && defined(ARM) */

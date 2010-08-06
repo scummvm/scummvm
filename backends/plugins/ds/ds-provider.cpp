@@ -23,15 +23,18 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(__DS__)
+
 /*#include "base/plugins.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
 #include "backends/plugins/elf-loader.h"*/
+#include "backends/plugins/arm-loader.h"
 #include "backends/plugins/elf-provider.h"
 #include "backends/plugins/ds/ds-provider.h"
 
-#if defined(DYNAMIC_MODULES) && defined(__DS__)
+
 
 class DSPlugin : public ELFPlugin {
 public:
@@ -50,7 +53,7 @@ public:
 
 bool DSPlugin::loadPlugin() {
 		assert(!_dlHandle);
-		DLObject *obj = new DLObject(NULL);
+		DLObject *obj = new ARMDLObject();
 		if (obj->open(_filename.c_str())) {
 			_dlHandle = obj;
 		} else {

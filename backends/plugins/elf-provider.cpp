@@ -23,13 +23,13 @@
  *
  */
 
+#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
+
 #include "backends/plugins/elf-provider.h"
 #include "backends/plugins/dynamic-plugin.h"
 #include "common/fs.h"
 
 #include "backends/plugins/elf-loader.h"
-
-#if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
 DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	void *func;
@@ -58,30 +58,6 @@ DynamicPlugin::VoidFunc ELFPlugin::findSymbol(const char *symbol) {
 	return tmp;
 }
 
-bool ELFPlugin::loadPlugin() {
-	assert(!_dlHandle);
-	DLObject *obj = new DLObject(NULL);
-	if (obj->open(_filename.c_str())) {
-		_dlHandle = obj;
-	} else {
-		delete obj;
-		_dlHandle = NULL;
-	}
-
-	if (!_dlHandle) {
-		warning("Failed loading plugin '%s'", _filename.c_str());
-		return false;
-	}
-
-	bool ret = DynamicPlugin::loadPlugin();
-
-	if (ret && _dlHandle) {
-		_dlHandle->discard_symtab();
-	}
-
-	return ret;
-}
-
 void ELFPlugin::unloadPlugin() {
 	DynamicPlugin::unloadPlugin();
 	if (_dlHandle) {
@@ -91,11 +67,6 @@ void ELFPlugin::unloadPlugin() {
 		delete _dlHandle;
 		_dlHandle = 0;
 	}
-}
-
-
-Plugin* ELFPluginProvider::createPlugin(const Common::FSNode &node) const {
-	return new ELFPlugin(node.getPath());
 }
 
 bool ELFPluginProvider::isPluginFilename(const Common::FSNode &node) const {
