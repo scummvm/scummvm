@@ -176,7 +176,7 @@ const uint16 hoyle4PatchPortFix[] = {
 
 	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
 	0x78,              // push1
-	0x78,              // push1
+	0x76,              // push0
 	0x4a, 0x06,        // send 06 (write 0 to that object::port)
 	0x48,              // ret
 	PATCH_END
