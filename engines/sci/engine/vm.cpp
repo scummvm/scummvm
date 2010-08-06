@@ -75,7 +75,6 @@ static ExecStack *add_exec_stack_entry(Common::List<ExecStack> &execStack, reg_t
 		reg_t objp, int argc, StackPtr argp, Selector selector, int exportId, int localCallOffset,
 		reg_t sendp, int origin, SegmentId local_segment);
 
-
 /**
  * Adds one varselector access to the execution stack.
  * This function is called from send_selector only.
@@ -93,8 +92,6 @@ static ExecStack *add_exec_stack_varselector(Common::List<ExecStack> &execStack,
 		int origin);
 
 
-
-
 // validation functionality
 
 static reg_t &validate_property(Object *obj, int index) {
@@ -103,14 +100,10 @@ static reg_t &validate_property(Object *obj, int index) {
 	// may modify the value of the returned reg_t.
 	static reg_t dummyReg = NULL_REG;
 
-	// FIXME/TODO: Where does this occur? Returning a dummy reg here could lead
-	// to all sorts of issues! Turned it into an error for now...
 	// If this occurs, it means there's probably something wrong with the garbage
 	// collector, so don't hide it with fake return values
-	if (!obj) {
+	if (!obj)
 		error("validate_property: Sending to disposed object");
-		//return dummyReg;
-	}
 
 	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		// This is same way sierra does it and there are some games, that contain such scripts like
@@ -166,11 +159,6 @@ static bool validate_variable(reg_t *r, reg_t *stack_base, int type, int max, in
 				error("%s. [VM] Access would be outside even of the stack (%d); access denied", txt.c_str(), total_offset);
 				return false;
 			} else {
-				// WORKAROUND: Mixed-Up Mother Goose tries to use an invalid parameter in Event::new().
-				// Just skip around it here so we don't error out in validate_arithmetic.
-				if (g_sci->getGameId() == GID_MOTHERGOOSE && type == VAR_PARAM && index == 1)
-					return false;
-
 				debugC(2, kDebugLevelVM, "%s", txt.c_str());
 				debugC(2, kDebugLevelVM, "[VM] Access within stack boundaries; access granted.");
 				return true;
@@ -1139,7 +1127,7 @@ void run_vm(EngineState *s) {
 			if (validate_unsignedInteger(r_temp, value1) && validate_unsignedInteger(s->r_acc, value2))
 				s->r_acc = make_reg(0, value1 & value2);
 			else
-				s->r_acc = arithmetic_lookForWorkaround(opcode, NULL, r_temp, s->r_acc);
+				s->r_acc = arithmetic_lookForWorkaround(opcode, opcodeAndWorkarounds, r_temp, s->r_acc);
 			break;
 		}
 

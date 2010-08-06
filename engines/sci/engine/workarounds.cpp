@@ -65,8 +65,14 @@ const SciWorkaroundEntry opcodeMulWorkarounds[] = {
 };
 
 //    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
+const SciWorkaroundEntry opcodeAndWorkarounds[] = {
+	{ GID_MOTHERGOOSE,     -1,  999,  0,               "Event", "new",           -1,     0, { WORKAROUND_FAKE,   0 } }, // constantly during the game
+	SCI_WORKAROUNDENTRY_TERMINATOR
+};
+
+//    gameID,           room,script,lvl,          object-name, method-name,    call,index,             workaround
 const SciWorkaroundEntry opcodeOrWorkarounds[] = {
-	{ GID_ECOQUEST2,      100,    0,  0,               "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
+	{ GID_ECOQUEST2,        100,    0,  0,              "Rain", "points",      0xcc6,    0, { WORKAROUND_FAKE,   0 } }, // when giving the papers to the customs officer, gets called against a pointer instead of a number - bug #3034464
 	SCI_WORKAROUNDENTRY_TERMINATOR
 };
 
