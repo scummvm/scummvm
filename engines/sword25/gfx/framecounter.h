@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -53,14 +53,14 @@ private:
 public:
 	/**
 	 * Creates a new BS_Framecounter object
-	 * @param UpdateFrequency	Specifies how often the frame counter should be updated in a sceond.
+	 * @param UpdateFrequency   Specifies how often the frame counter should be updated in a sceond.
 	 * The default value is 10.
 	 */
 	BS_Framecounter(int UpdateFrequency = DEFAULT_UPDATE_FREQUENCY);
 
 	/**
 	 * Determines how often the frame counter should be updated in a second.
-	 * @param UpdateFrequency	Specifies how often the frame counter should be updated in a second.
+	 * @param UpdateFrequency   Specifies how often the frame counter should be updated in a second.
 	 */
 	inline void SetUpdateFrequency(int UpdateFrequency);
 
@@ -72,10 +72,12 @@ public:
 	/**
 	 * Returns the current FPS value.
 	 */
-	int GetFPS() const { return m_FPS; }
+	int GetFPS() const {
+		return m_FPS;
+	}
 
 private:
-	int	m_FPS;
+	int m_FPS;
 	int m_FPSCount;
 	int64_t m_LastUpdateTime;
 	uint64_t m_UpdateDelay;

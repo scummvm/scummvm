@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -68,16 +68,15 @@ using namespace std;
 // CONSTANTS
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	const unsigned int BIT_DEPTH = 32;
-	const unsigned int BACKBUFFER_COUNT = 1;
-	const Common::String PNG_EXTENSION(".png");
-	const Common::String PNG_S_EXTENSION("_s.png");
-	const Common::String ANI_EXTENSION("_ani.xml");
-	const Common::String FNT_EXTENSION("_fnt.xml");
-	const Common::String SWF_EXTENSION(".swf");
-	const Common::String B25S_EXTENSION(".b25s");
+namespace {
+const unsigned int BIT_DEPTH = 32;
+const unsigned int BACKBUFFER_COUNT = 1;
+const Common::String PNG_EXTENSION(".png");
+const Common::String PNG_S_EXTENSION("_s.png");
+const Common::String ANI_EXTENSION("_ani.xml");
+const Common::String FNT_EXTENSION("_fnt.xml");
+const Common::String SWF_EXTENSION(".swf");
+const Common::String B25S_EXTENSION(".b25s");
 }
 
 
@@ -85,23 +84,20 @@ namespace
 // CONSTRUCTION / DESTRUCTION
 // -----------------------------------------------------------------------------
 
-BS_OpenGLGfx::BS_OpenGLGfx(BS_Kernel * pKernel) :
+BS_OpenGLGfx::BS_OpenGLGfx(BS_Kernel *pKernel) :
 	BS_GraphicEngine(pKernel),
-	m_GLspritesInitialized(false)
-{
+	m_GLspritesInitialized(false) {
 }
 
 // -----------------------------------------------------------------------------
 
-BS_OpenGLGfx::~BS_OpenGLGfx()
-{
+BS_OpenGLGfx::~BS_OpenGLGfx() {
 	if (m_GLspritesInitialized) GLS_Quit();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Service * BS_OpenGLGfx_CreateObject(BS_Kernel* pKernel)
-{
+BS_Service *BS_OpenGLGfx_CreateObject(BS_Kernel *pKernel) {
 	return new BS_OpenGLGfx(pKernel);
 }
 
@@ -110,18 +106,15 @@ BS_Service * BS_OpenGLGfx_CreateObject(BS_Kernel* pKernel)
 // INTERFACE
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount, bool Windowed)
-{
+bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount, bool Windowed) {
 	// Warnung ausgeben, wenn eine nicht unterstützte Bittiefe gewählt wurde.
-	if (BitDepth != BIT_DEPTH)
-	{
+	if (BitDepth != BIT_DEPTH) {
 		BS_LOG_WARNINGLN("Can't use a bit depth of %d (not supported). Falling back to %d.", BitDepth, BIT_DEPTH);
 		m_BitDepth = BIT_DEPTH;
 	}
 
 	// Warnung ausgeben, wenn nicht genau ein Backbuffer gewählt wurde.
-	if (BackbufferCount != BACKBUFFER_COUNT)
-	{
+	if (BackbufferCount != BACKBUFFER_COUNT) {
 		BS_LOG_WARNINGLN("Can't use %d backbuffers (not supported). Falling back to %d.", BackbufferCount, BACKBUFFER_COUNT);
 		BackbufferCount = BACKBUFFER_COUNT;
 	}
@@ -139,8 +132,7 @@ bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount
 	// GLsprites initialisieren
 	HWND hwnd = reinterpret_cast<HWND>(BS_Kernel::GetInstance()->GetWindow()->GetWindowHandle());
 	GLS_Result Result = GLS_InitExternalWindow(Width, Height, Windowed ? GLS_False : GLS_True, hwnd);
-	if (Result != GLS_OK)
-	{
+	if (Result != GLS_OK) {
 		BS_LOG_ERRORLN("Could not initialize GLsprites. Reason: %s", GLS_ResultString(Result));
 		return false;
 	}
@@ -153,7 +145,7 @@ bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount
 	m_RenderObjectManagerPtr.reset(new BS_RenderObjectManager(Width, Height, BackbufferCount + 1));
 
 	// Hauptpanel erstellen
-	m_MainPanelPtr = m_RenderObjectManagerPtr->GetTreeRoot()->AddPanel(Width, Height, BS_ARGB(0,0,0,0));
+	m_MainPanelPtr = m_RenderObjectManagerPtr->GetTreeRoot()->AddPanel(Width, Height, BS_ARGB(0, 0, 0, 0));
 	if (!m_MainPanelPtr.IsValid()) return false;
 	m_MainPanelPtr->SetVisible(true);
 
@@ -162,8 +154,7 @@ bool BS_OpenGLGfx::Init(int Width, int Height, int BitDepth, int BackbufferCount
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::StartFrame(bool UpdateAll)
-{
+bool BS_OpenGLGfx::StartFrame(bool UpdateAll) {
 	// Berechnen, wie viel Zeit seit dem letzten Frame vergangen ist.
 	// Dieser Wert kann über GetLastFrameDuration() von Modulen abgefragt werden, die zeitabhängig arbeiten.
 	UpdateLastFrameDuration();
@@ -173,8 +164,7 @@ bool BS_OpenGLGfx::StartFrame(bool UpdateAll)
 
 	// GLsprites bescheidgeben
 	GLS_Result Result = GLS_StartFrame();
-	if (Result != GLS_OK)
-	{
+	if (Result != GLS_OK) {
 		BS_LOG_ERRORLN("Call to GLS_StartFrame() failed. Reason: %s", GLS_ResultString(Result));
 		return false;
 	}
@@ -184,23 +174,20 @@ bool BS_OpenGLGfx::StartFrame(bool UpdateAll)
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::EndFrame()
-{
+bool BS_OpenGLGfx::EndFrame() {
 	// Scene zeichnen
 	m_RenderObjectManagerPtr->Render();
 
 	// Debug-Lines zeichnen
-	if (!m_DebugLines.empty())
-	{
+	if (!m_DebugLines.empty()) {
 		glEnable(GL_LINE_SMOOTH);
 		glBegin(GL_LINES);
 
 		Common::Array<DebugLine>::const_iterator iter = m_DebugLines.begin();
-		for (; iter != m_DebugLines.end(); ++iter)
-		{
-			const unsigned int & Color = (*iter).Color;
-			const BS_Vertex & Start = (*iter).Start;
-			const BS_Vertex & End = (*iter).End;
+		for (; iter != m_DebugLines.end(); ++iter) {
+			const unsigned int &Color = (*iter).Color;
+			const BS_Vertex &Start = (*iter).Start;
+			const BS_Vertex &End = (*iter).End;
 
 			glColor4ub((Color >> 16) & 0xff, (Color >> 8) & 0xff, Color & 0xff, Color >> 24);
 			glVertex2d(Start.X, Start.Y);
@@ -215,8 +202,7 @@ bool BS_OpenGLGfx::EndFrame()
 
 	// Flippen
 	GLS_Result Result = GLS_EndFrame();
-	if (Result != GLS_OK)
-	{
+	if (Result != GLS_OK) {
 		BS_LOG_ERRORLN("Call to GLS_EndFrame() failed. Reason: %s", GLS_ResultString(Result));
 		return false;
 	}
@@ -229,27 +215,23 @@ bool BS_OpenGLGfx::EndFrame()
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Panel> BS_OpenGLGfx::GetMainPanel()
-{
+BS_RenderObjectPtr<BS_Panel> BS_OpenGLGfx::GetMainPanel() {
 	return m_MainPanelPtr;
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::SetVsync(bool Vsync)
-{
+void BS_OpenGLGfx::SetVsync(bool Vsync) {
 	GLS_Result Result = GLS_SetVSync(Vsync ? GLS_True : GLS_False);
 	if (Result != GLS_OK) BS_LOG_WARNINGLN("Could not set vsync status. Reason: %s", GLS_ResultString(Result));
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::GetVsync() const
-{
+bool BS_OpenGLGfx::GetVsync() const {
 	GLS_Bool Status;
 	GLS_Result Result = GLS_IsVsync(&Status);
-	if (Result != GLS_OK)
-	{
+	if (Result != GLS_OK) {
 		BS_LOG_WARNINGLN("Could not get vsync status. Returning false. Reason: %s", GLS_ResultString(Result));
 		return false;
 	}
@@ -259,12 +241,10 @@ bool BS_OpenGLGfx::GetVsync() const
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::Fill(const BS_Rect* FillRectPtr, unsigned int Color)
-{
+bool BS_OpenGLGfx::Fill(const BS_Rect *FillRectPtr, unsigned int Color) {
 	BS_Rect Rect;
 
-	if (!FillRectPtr)
-	{
+	if (!FillRectPtr) {
 		Rect.left = 0;
 		Rect.top = 0;
 		Rect.right = m_Width;
@@ -273,12 +253,12 @@ bool BS_OpenGLGfx::Fill(const BS_Rect* FillRectPtr, unsigned int Color)
 	}
 
 	glBegin(GL_QUADS);
-		glColor4ub((Color >> 16) & 0xff, (Color >> 8) & 0xff, Color & 0xff, Color >> 24);
+	glColor4ub((Color >> 16) & 0xff, (Color >> 8) & 0xff, Color & 0xff, Color >> 24);
 
-		glVertex2i(FillRectPtr->left, FillRectPtr->top);
-		glVertex2i(FillRectPtr->right, FillRectPtr->top);
-		glVertex2i(FillRectPtr->right, FillRectPtr->bottom);
-		glVertex2i(FillRectPtr->left, FillRectPtr->bottom);
+	glVertex2i(FillRectPtr->left, FillRectPtr->top);
+	glVertex2i(FillRectPtr->right, FillRectPtr->top);
+	glVertex2i(FillRectPtr->right, FillRectPtr->bottom);
+	glVertex2i(FillRectPtr->left, FillRectPtr->bottom);
 	glEnd();
 
 	return glGetError() == 0;
@@ -286,8 +266,7 @@ bool BS_OpenGLGfx::Fill(const BS_Rect* FillRectPtr, unsigned int Color)
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::GetScreenshot(unsigned int & Width, unsigned int & Height, vector<unsigned int> & Data)
-{
+bool BS_OpenGLGfx::GetScreenshot(unsigned int &Width, unsigned int &Height, vector<unsigned int> & Data) {
 	if (!ReadFramebufferContents(m_Width, m_Height, Data)) return false;
 
 	// Die Größe des Framebuffers zurückgeben.
@@ -303,15 +282,13 @@ bool BS_OpenGLGfx::GetScreenshot(unsigned int & Width, unsigned int & Height, ve
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data)
-{
+bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Height, Common::Array<unsigned int> & Data) {
 	Data.resize(Width * Height);
 	glReadPixels(0, 0, Width, Height, GL_RGBA, GL_UNSIGNED_BYTE, &Data[0]);
 
 	if (glGetError() == 0)
 		return true;
-	else
-	{
+	else {
 		Data.clear();
 		return false;
 	}
@@ -319,11 +296,9 @@ bool BS_OpenGLGfx::ReadFramebufferContents(unsigned int Width, unsigned int Heig
 
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::ReverseRGBAComponentOrder(vector<unsigned int> & Data)
-{
+void BS_OpenGLGfx::ReverseRGBAComponentOrder(vector<unsigned int> & Data) {
 	vector<unsigned int>::iterator It = Data.begin();
-	while (It != Data.end())
-	{
+	while (It != Data.end()) {
 		unsigned int Pixel = *It;
 		*It = (Pixel & 0xff00ff00) | ((Pixel >> 16) & 0xff) | ((Pixel & 0xff) << 16);
 		++It;
@@ -332,12 +307,10 @@ void BS_OpenGLGfx::ReverseRGBAComponentOrder(vector<unsigned int> & Data)
 
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, vector<unsigned int> & Data)
-{
+void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height, vector<unsigned int> & Data) {
 	vector<unsigned int> LineBuffer(Width);
 
-	for (unsigned int Y = 0; Y < Height / 2; ++Y)
-	{
+	for (unsigned int Y = 0; Y < Height / 2; ++Y) {
 		vector<unsigned int>::iterator Line1It = Data.begin() + Y * Width;
 		vector<unsigned int>::iterator Line2It = Data.begin() + (Height - 1 - Y) * Width;
 		copy(Line1It, Line1It + Width, LineBuffer.begin());
@@ -350,8 +323,7 @@ void BS_OpenGLGfx::FlipImagedataVertical(unsigned int Width, unsigned int Height
 // RESOURCE MANAGING
 // -----------------------------------------------------------------------------
 
-static bool DoesStringEndWith(const Common::String & String, const std::string & OtherString)
-{
+static bool DoesStringEndWith(const Common::String &String, const std::string &OtherString) {
 	Common::String::size_type StringPos = String.rfind(OtherString);
 	if (StringPos == Common::String::npos) return false;
 
@@ -360,24 +332,20 @@ static bool DoesStringEndWith(const Common::String & String, const std::string &
 
 // -----------------------------------------------------------------------------
 
-BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
-{
+BS_Resource *BS_OpenGLGfx::LoadResource(const Common::String &FileName) {
 	BS_ASSERT(CanLoadResource(FileName));
 
 	// Bild für den Softwarebuffer laden
-	if (DoesStringEndWith(FileName, PNG_S_EXTENSION))
-	{
+	if (DoesStringEndWith(FileName, PNG_S_EXTENSION)) {
 		bool Result;
-		BS_SWImage * pImage = new BS_SWImage(FileName, Result);
-		if (!Result)
-		{
+		BS_SWImage *pImage = new BS_SWImage(FileName, Result);
+		if (!Result) {
 			delete pImage;
 			return 0;
 		}
 
-		BS_BitmapResource * pResource = new BS_BitmapResource(FileName, pImage);
-		if (!pResource->IsValid())
-		{
+		BS_BitmapResource *pResource = new BS_BitmapResource(FileName, pImage);
+		if (!pResource->IsValid()) {
 			delete pResource;
 			return 0;
 		}
@@ -386,19 +354,16 @@ BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
 	}
 
 	// Sprite-Bild laden
-	if (DoesStringEndWith(FileName, PNG_EXTENSION) || DoesStringEndWith(FileName, B25S_EXTENSION))
-	{
+	if (DoesStringEndWith(FileName, PNG_EXTENSION) || DoesStringEndWith(FileName, B25S_EXTENSION)) {
 		bool Result;
-		BS_GLImage * pImage = new BS_GLImage(FileName, Result);
-		if (!Result)
-		{
+		BS_GLImage *pImage = new BS_GLImage(FileName, Result);
+		if (!Result) {
 			delete pImage;
 			return 0;
 		}
 
-		BS_BitmapResource * pResource = new BS_BitmapResource(FileName, pImage);
-		if (!pResource->IsValid())
-		{
+		BS_BitmapResource *pResource = new BS_BitmapResource(FileName, pImage);
+		if (!pResource->IsValid()) {
 			delete pResource;
 			return 0;
 		}
@@ -408,33 +373,29 @@ BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
 
 
 	// Vectorgraphik laden
-	if (DoesStringEndWith(FileName, SWF_EXTENSION))
-	{
+	if (DoesStringEndWith(FileName, SWF_EXTENSION)) {
 		// Pointer auf Package-Manager holen
-		BS_PackageManager * pPackage = BS_Kernel::GetInstance()->GetPackage();
+		BS_PackageManager *pPackage = BS_Kernel::GetInstance()->GetPackage();
 		BS_ASSERT(pPackage);
 
 		// Datei laden
-		unsigned char* pFileData;
+		unsigned char *pFileData;
 		unsigned int FileSize;
-		if (!(pFileData = static_cast<unsigned char*>(pPackage->GetFile(FileName, &FileSize))))
-		{
+		if (!(pFileData = static_cast<unsigned char *>(pPackage->GetFile(FileName, &FileSize)))) {
 			BS_LOG_ERRORLN("File \"%s\" could not be loaded.", FileName.c_str());
 			return 0;
 		}
 
 		bool Result;
-		BS_VectorImage * pImage = new BS_VectorImage(pFileData, FileSize, Result);
-		if (!Result)
-		{
+		BS_VectorImage *pImage = new BS_VectorImage(pFileData, FileSize, Result);
+		if (!Result) {
 			delete pImage;
 			delete [] pFileData;
 			return 0;
 		}
 
-		BS_BitmapResource * pResource = new BS_BitmapResource(FileName, pImage);
-		if (!pResource->IsValid())
-		{
+		BS_BitmapResource *pResource = new BS_BitmapResource(FileName, pImage);
+		if (!pResource->IsValid()) {
 			delete pResource;
 			delete [] pFileData;
 			return 0;
@@ -445,26 +406,22 @@ BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
 	}
 
 	// Animation laden
-	if (DoesStringEndWith(FileName, ANI_EXTENSION))
-	{
-		BS_AnimationResource * pResource = new BS_AnimationResource(FileName);
+	if (DoesStringEndWith(FileName, ANI_EXTENSION)) {
+		BS_AnimationResource *pResource = new BS_AnimationResource(FileName);
 		if (pResource->IsValid())
 			return pResource;
-		else
-		{
+		else {
 			delete pResource;
 			return 0;
 		}
 	}
 
 	// Font laden
-	if (DoesStringEndWith(FileName, FNT_EXTENSION))
-	{
-		BS_FontResource * pResource = new BS_FontResource(BS_Kernel::GetInstance(), FileName);
+	if (DoesStringEndWith(FileName, FNT_EXTENSION)) {
+		BS_FontResource *pResource = new BS_FontResource(BS_Kernel::GetInstance(), FileName);
 		if (pResource->IsValid())
 			return pResource;
-		else
-		{
+		else {
 			delete pResource;
 			return 0;
 		}
@@ -476,13 +433,12 @@ BS_Resource * BS_OpenGLGfx::LoadResource(const Common::String& FileName)
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::CanLoadResource(const Common::String& FileName)
-{
+bool BS_OpenGLGfx::CanLoadResource(const Common::String &FileName) {
 	return DoesStringEndWith(FileName, PNG_EXTENSION) ||
-		   DoesStringEndWith(FileName, ANI_EXTENSION) ||
-		   DoesStringEndWith(FileName, FNT_EXTENSION) ||
-		   DoesStringEndWith(FileName, SWF_EXTENSION) ||
-		   DoesStringEndWith(FileName, B25S_EXTENSION);
+	       DoesStringEndWith(FileName, ANI_EXTENSION) ||
+	       DoesStringEndWith(FileName, FNT_EXTENSION) ||
+	       DoesStringEndWith(FileName, SWF_EXTENSION) ||
+	       DoesStringEndWith(FileName, B25S_EXTENSION);
 }
 
 
@@ -490,8 +446,7 @@ bool BS_OpenGLGfx::CanLoadResource(const Common::String& FileName)
 // DEBUGGING
 // -----------------------------------------------------------------------------
 
-void BS_OpenGLGfx::DrawDebugLine(const BS_Vertex & Start, const BS_Vertex & End, unsigned int Color)
-{
+void BS_OpenGLGfx::DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color) {
 	m_DebugLines.push_back(DebugLine(Start, End, Color));
 }
 
@@ -499,8 +454,7 @@ void BS_OpenGLGfx::DrawDebugLine(const BS_Vertex & Start, const BS_Vertex & End,
 // PERSISTENZ
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_OpenGLGfx::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool result = true;
 
 	result &= BS_GraphicEngine::Persist(Writer);
@@ -511,8 +465,7 @@ bool BS_OpenGLGfx::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_OpenGLGfx::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_OpenGLGfx::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool result = true;
 
 	result &= BS_GraphicEngine::Unpersist(Reader);

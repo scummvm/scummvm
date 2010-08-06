@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,19 +54,19 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 ScummVMInput::ScummVMInput(BS_Kernel *pKernel) :
-		m_CurrentState(0),
-		m_LeftMouseDown(false),
-		m_RightMouseDown(false),
-		m_MouseX(0),
-		m_MouseY(0),
-		m_LeftDoubleClick(false),
-		m_DoubleClickTime(DOUBLE_CLICK_TIME),
-		m_DoubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE),
-		m_DoubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE),
-		m_LastLeftClickTime(0),
-		m_LastLeftClickMouseX(0),
-		m_LastLeftClickMouseY(0),
-		BS_InputEngine(pKernel) {
+	m_CurrentState(0),
+	m_LeftMouseDown(false),
+	m_RightMouseDown(false),
+	m_MouseX(0),
+	m_MouseY(0),
+	m_LeftDoubleClick(false),
+	m_DoubleClickTime(DOUBLE_CLICK_TIME),
+	m_DoubleClickRectWidth(DOUBLE_CLICK_RECT_SIZE),
+	m_DoubleClickRectHeight(DOUBLE_CLICK_RECT_SIZE),
+	m_LastLeftClickTime(0),
+	m_LastLeftClickMouseX(0),
+	m_LastLeftClickMouseY(0),
+	BS_InputEngine(pKernel) {
 	memset(m_KeyboardState[0], 0, sizeof(m_KeyboardState[0]));
 	memset(m_KeyboardState[1], 0, sizeof(m_KeyboardState[1]));
 	m_LeftMouseState[0] = false;
@@ -80,7 +80,9 @@ ScummVMInput::~ScummVMInput() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *ScummVMInput_CreateObject(BS_Kernel *pKernel) { return new ScummVMInput(pKernel); }
+BS_Service *ScummVMInput_CreateObject(BS_Kernel *pKernel) {
+	return new ScummVMInput(pKernel);
+}
 
 // -----------------------------------------------------------------------------
 
@@ -102,18 +104,21 @@ void ScummVMInput::Update() {
 		case Common::EVENT_LBUTTONDOWN:
 		case Common::EVENT_LBUTTONUP:
 			m_LeftMouseDown = event.type == Common::EVENT_LBUTTONDOWN;
-			m_MouseX = event.mouse.x; m_MouseY = event.mouse.y;
+			m_MouseX = event.mouse.x;
+			m_MouseY = event.mouse.y;
 			handleEvents = false;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 		case Common::EVENT_RBUTTONUP:
 			m_RightMouseDown = event.type == Common::EVENT_RBUTTONDOWN;
-			m_MouseX = event.mouse.x; m_MouseY = event.mouse.y;
+			m_MouseX = event.mouse.x;
+			m_MouseY = event.mouse.y;
 			handleEvents = false;
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
-			m_MouseX = event.mouse.x; m_MouseY = event.mouse.y;
+			m_MouseX = event.mouse.x;
+			m_MouseY = event.mouse.y;
 			break;
 
 		case Common::EVENT_KEYDOWN:
@@ -162,8 +167,8 @@ void ScummVMInput::TestForLeftDoubleClick() {
 		// 1. The two clicks are close enough together
 		// 2. The mouse cursor hasn't moved much
 		if (Now - m_LastLeftClickTime <= m_DoubleClickTime &&
-			ABS(m_MouseX - m_LastLeftClickMouseX) <= m_DoubleClickRectWidth / 2 &&
-			ABS(m_MouseY - m_LastLeftClickMouseY) <= m_DoubleClickRectHeight / 2) {
+		        ABS(m_MouseX - m_LastLeftClickMouseX) <= m_DoubleClickRectWidth / 2 &&
+		        ABS(m_MouseY - m_LastLeftClickMouseY) <= m_DoubleClickRectHeight / 2) {
 			m_LeftDoubleClick = true;
 
 			// Reset the time and position of the last click, so that clicking is not
@@ -184,7 +189,7 @@ void ScummVMInput::TestForLeftDoubleClick() {
 // -----------------------------------------------------------------------------
 
 void AlterKeyboardState(int keycode, byte newState) {
-	
+
 }
 
 // -----------------------------------------------------------------------------
@@ -208,7 +213,7 @@ bool ScummVMInput::WasRightMouseDown() {
 // -----------------------------------------------------------------------------
 
 int ScummVMInput::GetMouseX() {
-	return m_MouseX;	
+	return m_MouseX;
 }
 
 // -----------------------------------------------------------------------------
@@ -226,8 +231,8 @@ bool ScummVMInput::IsKeyDown(unsigned int KeyCode) {
 // -----------------------------------------------------------------------------
 
 bool ScummVMInput::WasKeyDown(unsigned int KeyCode) {
-	return ((m_KeyboardState[m_CurrentState][KeyCode] & 0x80) == 0) && 
-		((m_KeyboardState[m_CurrentState ^ 1][KeyCode] & 0x80) != 0);
+	return ((m_KeyboardState[m_CurrentState][KeyCode] & 0x80) == 0) &&
+	       ((m_KeyboardState[m_CurrentState ^ 1][KeyCode] & 0x80) != 0);
 }
 
 // -----------------------------------------------------------------------------
@@ -259,8 +264,8 @@ bool ScummVMInput::RegisterCharacterCallback(CharacterCallback Callback) {
 // -----------------------------------------------------------------------------
 
 bool ScummVMInput::UnregisterCharacterCallback(CharacterCallback Callback) {
-	Common::List<CharacterCallback>::iterator CallbackIter = Common::find(m_CharacterCallbacks.begin(), 
-		m_CharacterCallbacks.end(), Callback);
+	Common::List<CharacterCallback>::iterator CallbackIter = Common::find(m_CharacterCallbacks.begin(),
+	        m_CharacterCallbacks.end(), Callback);
 	if (CallbackIter != m_CharacterCallbacks.end()) {
 		m_CharacterCallbacks.erase(CallbackIter);
 		return true;
@@ -285,8 +290,8 @@ bool ScummVMInput::RegisterCommandCallback(CommandCallback Callback) {
 // -----------------------------------------------------------------------------
 
 bool ScummVMInput::UnregisterCommandCallback(CommandCallback Callback) {
-	Common::List<CommandCallback>::iterator CallbackIter = 
-		Common::find(m_CommandCallbacks.begin(), m_CommandCallbacks.end(), Callback);
+	Common::List<CommandCallback>::iterator CallbackIter =
+	    Common::find(m_CommandCallbacks.begin(), m_CommandCallbacks.end(), Callback);
 	if (CallbackIter != m_CommandCallbacks.end()) {
 		m_CommandCallbacks.erase(CallbackIter);
 		return true;
@@ -302,7 +307,7 @@ void ScummVMInput::ReportCharacter(unsigned char Character) {
 	Common::List<CharacterCallback>::const_iterator CallbackIter = m_CharacterCallbacks.begin();
 	while (CallbackIter != m_CharacterCallbacks.end()) {
 		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
-		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks 
+		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
 		// invalidiert wird.
 		Common::List<CharacterCallback>::const_iterator CurCallbackIter = CallbackIter;
 		++CallbackIter;
@@ -317,7 +322,7 @@ void ScummVMInput::ReportCommand(KEY_COMMANDS Command) {
 	Common::List<CommandCallback>::const_iterator CallbackIter = m_CommandCallbacks.begin();
 	while (CallbackIter != m_CommandCallbacks.end()) {
 		// Iterator vor dem Aufruf erhöhen und im Folgendem auf einer Kopie arbeiten.
-		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks 
+		// Dieses Vorgehen ist notwendig da der Iterator möglicherweise von der Callbackfunktion durch das Deregistrieren des Callbacks
 		// invalidiert wird.
 		Common::List<CommandCallback>::const_iterator CurCallbackIter = CallbackIter;
 		++CallbackIter;
@@ -374,7 +379,7 @@ bool ScummVMInput::Unpersist(BS_InputPersistenceBlock &Reader) {
 		Reader.Read(CallbackFunctionName);
 
 		m_CommandCallbacks.push_back(reinterpret_cast<CommandCallback>(
-			BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName)));
+		                                 BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName)));
 	}
 
 	// Character-Callbackliste leeren.

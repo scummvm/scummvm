@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -46,32 +46,41 @@ namespace Sword25 {
 #ifdef BS_ACTIVATE_LOGGING
 
 // Logging-Makros
-#define BS_LOG				BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::LogDecorated
-#define BS_LOGLN			BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_WARNING		BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::LogDecorated
-#define BS_LOG_WARNINGLN	BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_ERROR		BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::LogDecorated
-#define BS_LOG_ERRORLN		BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
-#define BS_LOG_EXTERROR		BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__), BS_Log::LogDecorated
-#define BS_LOG_EXTERRORLN	BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__),  BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
+#define BS_LOG              BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::LogDecorated
+#define BS_LOGLN            BS_Log::SetPrefix(BS_LOG_PREFIX ": "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
+#define BS_LOG_WARNING      BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::LogDecorated
+#define BS_LOG_WARNINGLN    BS_Log::SetPrefix(BS_LOG_PREFIX ": WARNING - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
+#define BS_LOG_ERROR        BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::LogDecorated
+#define BS_LOG_ERRORLN      BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR - "), BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
+#define BS_LOG_EXTERROR     BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__), BS_Log::LogDecorated
+#define BS_LOG_EXTERRORLN   BS_Log::SetPrefix(BS_LOG_PREFIX ": ERROR "), BS_Log::SetFile(__FILE__), BS_Log::SetLine(__LINE__),  BS_Log::SetAutoNewline(true), BS_Log::LogDecorated
 
 // Die Version der Logging-Klasse mit aktiviertem Logging
-class BS_Log
-{
+class BS_Log {
 public:
 	static void Clear();
-	static void Log(const char* Format, ...);
-	static void LogPrefix(const char* Prefix, const char* Format, ...);
-	static void LogDecorated(const char* Format, ...);
+	static void Log(const char *Format, ...);
+	static void LogPrefix(const char *Prefix, const char *Format, ...);
+	static void LogDecorated(const char *Format, ...);
 
-	static void SetPrefix(const char* Prefix) { _Prefix = Prefix; }
-	static void SetFile(const char* File) { _File = File; }
-	static void SetLine(int Line) { _Line = Line; }
-	static void SetAutoNewline(bool AutoNewline) { _AutoNewline = AutoNewline; }
+	static void SetPrefix(const char *Prefix) {
+		_Prefix = Prefix;
+	}
+	static void SetFile(const char *File) {
+		_File = File;
+	}
+	static void SetLine(int Line) {
+		_Line = Line;
+	}
+	static void SetAutoNewline(bool AutoNewline) {
+		_AutoNewline = AutoNewline;
+	}
 
 	typedef void (*LOG_LISTENER_CALLBACK)(const char *);
-	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) { _LogListener.push_back(Callback); }
-	static bool IsListenerRegistered(LOG_LISTENER_CALLBACK Callback) { 
+	static void RegisterLogListener(LOG_LISTENER_CALLBACK Callback) {
+		_LogListener.push_back(Callback);
+	}
+	static bool IsListenerRegistered(LOG_LISTENER_CALLBACK Callback) {
 		Common::Array<LOG_LISTENER_CALLBACK>::iterator i;
 		for (i = _LogListener.begin(); i != _LogListener.end(); ++i) {
 			if (**i == Callback)
@@ -82,17 +91,17 @@ public:
 	static void _CloseLog();
 
 private:
-	static Common::WriteStream *				_LogFile;
-	static bool									_LineBegin;
-	static const char *							_Prefix;
-	static const char *							_File;
-	static int									_Line;
-	static bool									_AutoNewline;
-	static Common::Array<LOG_LISTENER_CALLBACK>	_LogListener;
-	
+	static Common::WriteStream                 *_LogFile;
+	static bool                                 _LineBegin;
+	static const char                          *_Prefix;
+	static const char                          *_File;
+	static int                                  _Line;
+	static bool                                 _AutoNewline;
+	static Common::Array<LOG_LISTENER_CALLBACK> _LogListener;
+
 	static bool _CreateLog();
 
-	static int _WriteLog(const char* Message);
+	static int _WriteLog(const char *Message);
 	static void _FlushLog();
 };
 
@@ -112,16 +121,16 @@ private:
 #define BS_LOG_EXTERROR
 #define BS_LOG_EXTERRORLN
 
-// The version of the logging class with logging disabled 
+// The version of the logging class with logging disabled
 class BS_Log {
 public:
 	// This version implements all the various methods as empty stubs
-	static void Log(const char* Text, ...) {};
-	static void LogPrefix(const char* Prefix, const char* Format, ...) {};
-	static void LogDecorated(const char* Format, ...) {};
+	static void Log(const char *Text, ...) {};
+	static void LogPrefix(const char *Prefix, const char *Format, ...) {};
+	static void LogDecorated(const char *Format, ...) {};
 
-	static void SetPrefix(const char* Prefix) {};
-	static void SetFile(const char* File) {};
+	static void SetPrefix(const char *Prefix) {};
+	static void SetFile(const char *File) {};
 	static void SetLine(int Line) {};
 	static void SetAutoNewline(bool AutoNewline) {};
 

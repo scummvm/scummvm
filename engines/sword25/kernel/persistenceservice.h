@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -32,7 +32,7 @@
  *
  */
 
-#ifndef	SWORD25_PERSISTENCESERVICE_H
+#ifndef SWORD25_PERSISTENCESERVICE_H
 #define SWORD25_PERSISTENCESERVICE_H
 
 // -----------------------------------------------------------------------------
@@ -62,21 +62,21 @@ public:
 	// Interface
 	// -----------------------------------------------------------------------------
 
-	static unsigned int	GetSlotCount();
+	static unsigned int GetSlotCount();
 	static Common::String GetSavegameDirectory();
 
-	void			ReloadSlots();
-	bool			IsSlotOccupied(unsigned int SlotID);
-	bool			IsSavegameCompatible(unsigned int SlotID);
+	void            ReloadSlots();
+	bool            IsSlotOccupied(unsigned int SlotID);
+	bool            IsSavegameCompatible(unsigned int SlotID);
 	Common::String &GetSavegameDescription(unsigned int SlotID);
 	Common::String &GetSavegameFilename(unsigned int SlotID);
-	
-	bool			SaveGame(unsigned int SlotID, const Common::String & ScreenshotFilename);
-	bool			LoadGame(unsigned int SlotID);
+
+	bool            SaveGame(unsigned int SlotID, const Common::String &ScreenshotFilename);
+	bool            LoadGame(unsigned int SlotID);
 
 private:
 	struct Impl;
-	Impl * m_impl;
+	Impl *m_impl;
 };
 
 } // End of namespace Sword25

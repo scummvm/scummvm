@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -33,12 +33,12 @@
  */
 
 /*
-	imageloader_ids.h
-	-----------------
-	In dieser Datei sind alle ImageLoader verzeichnet.
-	JEDER neuer ImageLoader muss hier eingetragen werden, ansonsten wird er beim Laden eines Bildes nicht berücksichtigt.
+    imageloader_ids.h
+    -----------------
+    In dieser Datei sind alle ImageLoader verzeichnet.
+    JEDER neuer ImageLoader muss hier eingetragen werden, ansonsten wird er beim Laden eines Bildes nicht berücksichtigt.
 
-	Autor: Malte Thiesen
+    Autor: Malte Thiesen
 */
 
 #include "sword25/gfx/image/imageloader.h"
@@ -51,9 +51,8 @@ namespace Sword25 {
 
 // Die Tabelle enthält Pointer auf statische Member-Funktionen innerhalb der Klassen, die eine Instanz der Klasse
 // erzeugen
-typedef BS_ImageLoader* (*BS_IMAGELOADER_NEW)();
-const BS_IMAGELOADER_NEW BS_IMAGELOADER_IDS[] =
-{
+typedef BS_ImageLoader*(*BS_IMAGELOADER_NEW)();
+const BS_IMAGELOADER_NEW BS_IMAGELOADER_IDS[] = {
 	BS_PNGLoader::CreateInstance,
 	BS_B25SLoader::CreateInstance,
 };

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -52,7 +52,9 @@ inline bool ToInt(const Common::String &Str, int &Result) {
 	Common::String::const_iterator Iter = Str.begin();
 
 	// Skip whitespaces
-	while (*Iter && (*Iter == ' ' || *Iter == '\t')) { ++Iter; }
+	while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
+		++Iter;
+	}
 	if (Iter == Str.end()) return false;
 
 	// Read sign, if available
@@ -60,19 +62,22 @@ inline bool ToInt(const Common::String &Str, int &Result) {
 	if (*Iter == '-') {
 		IsNegative = true;
 		++Iter;
-	}
-	else if (*Iter == '+')
+	} else if (*Iter == '+')
 		++Iter;
 
 	// Skip whitespaces
-	while (*Iter && (*Iter == ' ' || *Iter == '\t')) { ++Iter; }
-	if (Iter ==Str.end()) return false;
+	while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
+		++Iter;
+	}
+	if (Iter == Str.end()) return false;
 
 	// Convert string to integer
 	Result = 0;
 	while (Iter != Str.end()) {
 		if (*Iter < '0' || *Iter > '9') {
-			while (*Iter && (*Iter == ' ' || *Iter == '\t')) { ++Iter; }
+			while (*Iter && (*Iter == ' ' || *Iter == '\t')) {
+				++Iter;
+			}
 			if (Iter != Str.end()) return false;
 			break;
 		}

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -50,7 +50,7 @@ namespace Sword25 {
 BS_Polygon::BS_Polygon() : VertexCount(0), Vertecies(NULL) {
 }
 
-BS_Polygon::BS_Polygon(int VertexCount, const BS_Vertex *Vertecies) : VertexCount(0), Vertecies(NULL) { 
+BS_Polygon::BS_Polygon(int VertexCount, const BS_Vertex *Vertecies) : VertexCount(0), Vertecies(NULL) {
 	Init(VertexCount, Vertecies);
 }
 
@@ -142,7 +142,7 @@ int BS_Polygon::FindLRVertexIndex() const {
 
 		for (int i = 1; i < VertexCount; i++) {
 			if (Vertecies[i].Y > MaxY ||
-			   (Vertecies[i].Y == MaxY && Vertecies[i].X > MaxX)) {
+			        (Vertecies[i].Y == MaxY && Vertecies[i].X > MaxX)) {
 				MaxX = Vertecies[i].X;
 				MaxY = Vertecies[i].Y;
 				CurIndex = i;
@@ -151,7 +151,7 @@ int BS_Polygon::FindLRVertexIndex() const {
 
 		return CurIndex;
 	}
-	
+
 	return -1;
 }
 
@@ -231,7 +231,7 @@ void BS_Polygon::ReverseVertexOrder() {
 
 int BS_Polygon::CrossProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const {
 	return (V2.X - V1.X) * (V3.Y - V2.Y) -
-		   (V2.Y - V1.Y) * (V3.X - V2.X);
+	       (V2.Y - V1.Y) * (V3.X - V2.X);
 }
 
 // Scalar Product
@@ -239,7 +239,7 @@ int BS_Polygon::CrossProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_
 
 int BS_Polygon::DotProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const {
 	return (V1.X - V2.X) * (V3.X - V2.X) +
-		   (V1.Y - V2.Y) * (V3.X - V2.Y);
+	       (V1.Y - V2.Y) * (V3.X - V2.Y);
 }
 
 // Check for self-intersections
@@ -250,22 +250,22 @@ bool BS_Polygon::CheckForSelfIntersection() const {
 	/*
 	float AngleSum = 0.0f;
 	for (int i = 0; i < VertexCount; i++) {
-		int j = (i + 1) % VertexCount;
-		int k = (i + 2) % VertexCount;
+	    int j = (i + 1) % VertexCount;
+	    int k = (i + 2) % VertexCount;
 
-		float Dot = DotProduct(Vertecies[i], Vertecies[j], Vertecies[k]);
+	    float Dot = DotProduct(Vertecies[i], Vertecies[j], Vertecies[k]);
 
-		// Skalarproduct normalisieren
-		float Length1 = sqrt((Vertecies[i].X - Vertecies[j].X) * (Vertecies[i].X - Vertecies[j].X) + 
-							 (Vertecies[i].Y - Vertecies[j].Y) * (Vertecies[i].Y - Vertecies[j].Y));
-		float Length2 =	sqrt((Vertecies[k].X - Vertecies[j].X) * (Vertecies[k].X - Vertecies[j].X) +
-							 (Vertecies[k].Y - Vertecies[j].Y) * (Vertecies[k].Y - Vertecies[j].Y));
-		float Norm = Length1 * Length2;
+	    // Skalarproduct normalisieren
+	    float Length1 = sqrt((Vertecies[i].X - Vertecies[j].X) * (Vertecies[i].X - Vertecies[j].X) +
+	                         (Vertecies[i].Y - Vertecies[j].Y) * (Vertecies[i].Y - Vertecies[j].Y));
+	    float Length2 = sqrt((Vertecies[k].X - Vertecies[j].X) * (Vertecies[k].X - Vertecies[j].X) +
+	                         (Vertecies[k].Y - Vertecies[j].Y) * (Vertecies[k].Y - Vertecies[j].Y));
+	    float Norm = Length1 * Length2;
 
-		if (Norm > 0.0f) {
-			Dot /= Norm;
-			AngleSum += acos(Dot);
-		}
+	    if (Norm > 0.0f) {
+	        Dot /= Norm;
+	        AngleSum += acos(Dot);
+	    }
 	}
 	*/
 
@@ -299,7 +299,7 @@ bool BS_Polygon::IsLineInterior(const BS_Vertex &a, const BS_Vertex &b) const {
 		int j = (i + 1) % VertexCount;
 		const BS_Vertex &VS = Vertecies[i];
 		const BS_Vertex &VE = Vertecies[j];
-	
+
 		// If the line intersects a line segment strictly (proper cross section) the line is not in the polygon
 		if (BS_Line::DoesIntersectProperly(a, b, VS, VE)) return false;
 
@@ -360,17 +360,17 @@ bool BS_Polygon::IsLineInCone(int StartVertexIndex, const BS_Vertex &EndVertex, 
 	if (BS_Line::IsVertexLeftOn(PrevVertex, StartVertex, NextVertex)) {
 		if (IncludeEdges)
 			return BS_Line::IsVertexLeftOn(EndVertex, StartVertex, NextVertex) &&
-			BS_Line::IsVertexLeftOn(StartVertex, EndVertex, PrevVertex);
+			       BS_Line::IsVertexLeftOn(StartVertex, EndVertex, PrevVertex);
 		else
 			return BS_Line::IsVertexLeft(EndVertex, StartVertex, NextVertex) &&
-			BS_Line::IsVertexLeft(StartVertex, EndVertex, PrevVertex);
+			       BS_Line::IsVertexLeft(StartVertex, EndVertex, PrevVertex);
 	} else {
 		if (IncludeEdges)
 			return !(BS_Line::IsVertexLeft(EndVertex, StartVertex, PrevVertex) &&
-			BS_Line::IsVertexLeft(StartVertex, EndVertex, NextVertex));
+			         BS_Line::IsVertexLeft(StartVertex, EndVertex, NextVertex));
 		else
 			return !(BS_Line::IsVertexLeftOn(EndVertex, StartVertex, PrevVertex) &&
-			BS_Line::IsVertexLeftOn(StartVertex, EndVertex, NextVertex));
+			         BS_Line::IsVertexLeftOn(StartVertex, EndVertex, NextVertex));
 	}
 }
 
@@ -399,15 +399,15 @@ bool BS_Polygon::IsPointInPolygon(const BS_Vertex &Point, bool EdgesBelongToPoly
 			if ((Term1 > 0) == (Term2 >= 0)) Rcross++;
 		}
 
-		if ((EdgeStart.Y < Point.Y) != (EdgeEnd.Y < Point.Y)) { 
+		if ((EdgeStart.Y < Point.Y) != (EdgeEnd.Y < Point.Y)) {
 			int Term1 = (EdgeStart.X - Point.X) * (EdgeEnd.Y - Point.Y) - (EdgeEnd.X - Point.X) * (EdgeStart.Y - Point.Y);
 			int Term2 = (EdgeEnd.Y - Point.Y) - (EdgeStart.Y - EdgeEnd.Y);
 			if ((Term1 < 0) == (Term2 <= 0)) Lcross++;
 		}
-	}	
+	}
 
 	// The point is on an adge, if the number of left and right intersections have the same even numbers
-	if ((Rcross % 2 ) != (Lcross % 2 )) return EdgesBelongToPolygon;
+	if ((Rcross % 2) != (Lcross % 2)) return EdgesBelongToPolygon;
 
 	// The point is strictly inside the polygon if and only if the number of overlaps is odd
 	if ((Rcross % 2) == 1) return true;

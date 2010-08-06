@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -47,9 +47,8 @@ class BS_Resource;
 
 class BS_ResourceService : public BS_Service {
 public:
-	BS_ResourceService(BS_Kernel* pKernel) : BS_Service(pKernel) 
-	{
-		BS_ResourceManager* pResource = pKernel->GetResourceManager();
+	BS_ResourceService(BS_Kernel *pKernel) : BS_Service(pKernel) {
+		BS_ResourceManager *pResource = pKernel->GetResourceManager();
 		pResource->RegisterResourceService(this);
 	}
 
@@ -58,25 +57,25 @@ public:
 
 	/**
 	 * Loads a resource
-	 * @return		Returns the resource if successful, otherwise NULL
+	 * @return      Returns the resource if successful, otherwise NULL
 	 */
 	virtual BS_Resource *LoadResource(const Common::String &FileName) = 0;
 
 	/**
 	 * Checks whether the given name can be loaded by the resource service
-	 * @param FileName	Dateiname
-	 * @return			Returns true if the resource can be loaded.
+	 * @param FileName  Dateiname
+	 * @return          Returns true if the resource can be loaded.
 	 */
-	virtual bool CanLoadResource(const Common::String& FileName) = 0;
+	virtual bool CanLoadResource(const Common::String &FileName) = 0;
 
 protected:
 	// Alternative methods for classes BS_ResourceService
 
 	/**
 	 * Compares two strings, with the second string allowed to contain '*' and '?' wildcards
-	 * @param String	The first comparison string. This must not contain wildcards
-	 * @param Pattern	The sceond comaprison string. Wildcards of '*' and '?' are allowed.
-	 * @return			Returns true if the string matches the pattern, otherwise false.
+	 * @param String    The first comparison string. This must not contain wildcards
+	 * @param Pattern   The sceond comaprison string. Wildcards of '*' and '?' are allowed.
+	 * @return          Returns true if the string matches the pattern, otherwise false.
 	 */
 	bool _WildCardStringMatch(const Common::String &String, const Common::String &Pattern) {
 		return _WildCardStringMatchRecursion(String.c_str(), Pattern.c_str());
@@ -89,18 +88,20 @@ private:
 		if (*Pattern == '*') {
 			// Use a copy of the pattern pointer so as not to destroy the current state
 			const char *PatternCopy = Pattern;
-			while (*PatternCopy == '*') { PatternCopy++; }
+			while (*PatternCopy == '*') {
+				PatternCopy++;
+			}
 			if (!*PatternCopy) return true;
 		}
 		// 2. The string is over, but the patern is not -> FALSE
 		if (!*String && *Pattern) return false;
 		// 3. The string is over, and the pattern is finished -> TRUE
 		if (!*String) return true;
-		
+
 		// Recursive check 1:
 		// If the two current characters are the same, or pattern '?', then keep scanning
 		if (*String == *Pattern || *Pattern == '?') return _WildCardStringMatchRecursion(String + 1, Pattern + 1);
-		
+
 		// Falls nicht, wird untersucht ob ein '*' vorliegt
 		if (*Pattern == '*') {
 			// Recursive check 2:
@@ -111,7 +112,7 @@ private:
 			// The recursion ends, therefore, keep returning to this place until a character
 			// in the string which corresponds to the '*' in pattern
 		}
-		
+
 		// The match has failed
 		return false;
 	}

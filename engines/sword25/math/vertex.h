@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -33,10 +33,10 @@
  */
 
 /*
-	BS_Vertex
-	---------
+    BS_Vertex
+    ---------
 
-	Autor: Malte Thiesen
+    Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_VERTEX_H
@@ -63,7 +63,10 @@ namespace Sword25 {
 class BS_Vertex {
 public:
 	BS_Vertex() : X(0), Y(0) {};
-	BS_Vertex(int X_, int Y_) { this->X = X_; this->Y = Y_; }
+	BS_Vertex(int X_, int Y_) {
+		this->X = X_;
+		this->Y = Y_;
+	}
 
 	int X;
 	int Y;
@@ -71,78 +74,93 @@ public:
 	/**
 	 * Compares two Vertecies.
 	 */
-	inline bool operator==(const BS_Vertex& rhs) const { if (X == rhs.X && Y == rhs.Y) return true; return false; }
+	inline bool operator==(const BS_Vertex &rhs) const {
+		if (X == rhs.X && Y == rhs.Y) return true;
+		return false;
+	}
 	/**
 	 * Compares two Vertecies.
 	 */
-	inline bool operator!=(const BS_Vertex& rhs) const { if (X != rhs.X || Y != rhs.Y) return true; return false; }
+	inline bool operator!=(const BS_Vertex &rhs) const {
+		if (X != rhs.X || Y != rhs.Y) return true;
+		return false;
+	}
 	/**
 	 * Adds a vertex to vertex
 	 */
-	inline void operator+=(const BS_Vertex& Delta) { X += Delta.X; Y += Delta.Y; }
+	inline void operator+=(const BS_Vertex &Delta) {
+		X += Delta.X;
+		Y += Delta.Y;
+	}
 
 	/**
 	 * Subtracts a vertex from a vertex
 	 */
-	inline void operator-=(const BS_Vertex& Delta) { X -= Delta.X; Y -= Delta.Y; }
+	inline void operator-=(const BS_Vertex &Delta) {
+		X -= Delta.X;
+		Y -= Delta.Y;
+	}
 
 	/**
 	 * Adds two vertecies
 	 */
-	inline BS_Vertex operator+(const BS_Vertex& Delta) const { return BS_Vertex(X + Delta.X, Y + Delta.Y); }
+	inline BS_Vertex operator+(const BS_Vertex &Delta) const {
+		return BS_Vertex(X + Delta.X, Y + Delta.Y);
+	}
 
 	/**
 	 * Subtracts two vertecies
 	 */
-	inline BS_Vertex operator-(const BS_Vertex& Delta) const { return BS_Vertex(X - Delta.X, Y - Delta.Y); }
+	inline BS_Vertex operator-(const BS_Vertex &Delta) const {
+		return BS_Vertex(X - Delta.X, Y - Delta.Y);
+	}
 
 	/**
 	 * Calculates the square of the distance between two Vertecies.
-	 * @param Vertex		The vertex for which the distance is to be calculated
-	 * @return				Returns the square of the distance between itself and the passed vertex
-	 * @remark				If only distances should be compared, this method should be used because
+	 * @param Vertex        The vertex for which the distance is to be calculated
+	 * @return              Returns the square of the distance between itself and the passed vertex
+	 * @remark              If only distances should be compared, this method should be used because
 	 * it is faster than Distance()
 	 */
-	inline int Distance2(const BS_Vertex& Vertex) const	{
+	inline int Distance2(const BS_Vertex &Vertex) const {
 		return (X - Vertex.X) * (X - Vertex.X) + (Y - Vertex.Y) * (Y - Vertex.Y);
 	}
 
 	/**
 	 * Calculates the square of the distance between two Vertecies.
-	 * @param Vertex		The vertex for which the distance is to be calculated
-	 * @return				Returns the square of the distance between itself and the passed vertex
-	 * @remark				If only distances should be compared, Distance2() should be used, since it is faster.
+	 * @param Vertex        The vertex for which the distance is to be calculated
+	 * @return              Returns the square of the distance between itself and the passed vertex
+	 * @remark              If only distances should be compared, Distance2() should be used, since it is faster.
 	 */
-	inline int Distance(const BS_Vertex& Vertex) const {
+	inline int Distance(const BS_Vertex &Vertex) const {
 		return (int)(sqrtf(static_cast<float>(Distance2(Vertex))) + 0.5);
 	}
 
 	/**
 	 * Calculates the cross product of the vertex with another vertex. Here the Vertecies will be
 	 * interpreted as vectors.
-	 * @param Vertex		The second vertex
-	 * @return				Returns the cross product of this vertex and the passed vertex.
+	 * @param Vertex        The second vertex
+	 * @return              Returns the cross product of this vertex and the passed vertex.
 	 */
-	inline int ComputeCrossProduct(const BS_Vertex& Vertex) const {
+	inline int ComputeCrossProduct(const BS_Vertex &Vertex) const {
 		return X * Vertex.Y - Vertex.X * Y;
 	}
 
 	/**
 	 * Returns the dot product of this vertex with another vertex. Here the Vertecies are interpreted as vectors.
-	 * @param Vertex		The second vertex
-	 * @return				Returns the dot product of this vertex and the passed vertex.
+	 * @param Vertex        The second vertex
+	 * @return              Returns the dot product of this vertex and the passed vertex.
 	 */
-	inline int ComputeDotProduct(const BS_Vertex& Vertex) const
-	{
+	inline int ComputeDotProduct(const BS_Vertex &Vertex) const {
 		return X * Vertex.X + Y * Vertex.Y;
 	}
 
 	/**
 	 * Calculates the angle between this vertex and another vertex. Here the Vertecies are interpreted as vectors.
-	 * @param Vertex		The second vertex
-	 * @return				Returns the angle between this vertex and the passed vertex in radians.
+	 * @param Vertex        The second vertex
+	 * @return              Returns the angle between this vertex and the passed vertex in radians.
 	 */
-	inline float ComputeAngle(const BS_Vertex& Vertex) const {
+	inline float ComputeAngle(const BS_Vertex &Vertex) const {
 		return atan2f(static_cast<float>(ComputeCrossProduct(Vertex)), static_cast<float>(ComputeDotProduct(Vertex)));
 	}
 

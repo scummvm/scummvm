@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -53,7 +53,9 @@ BS_ResourceManager::~BS_ResourceManager() {
 		BS_LOG_WARNINGLN("Resource \"%s\" was not released.", (*Iter)->GetFileName().c_str());
 
 		// Set the lock count to zero
-		while ((*Iter)->GetLockCount() > 0) { (*Iter)->Release(); };
+		while ((*Iter)->GetLockCount() > 0) {
+			(*Iter)->Release();
+		};
 
 		// Delete the resource
 		delete(*Iter);
@@ -63,7 +65,7 @@ BS_ResourceManager::~BS_ResourceManager() {
 /**
  * Returns a resource by it's ordinal index. Returns NULL if any error occurs
  * Note: This method is not optimised for speed and should be used only for debugging purposes
- * @param Ord		Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
+ * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
  */
 BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
 	// Überprüfen ob der Index Ord innerhald der Listengrenzen liegt.
@@ -74,7 +76,7 @@ BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
 
 	// Liste durchlaufen und die Resource mit dem gewünschten Index zurückgeben.
 	int CurOrd = 0;
-	Common::List<BS_Resource*>::const_iterator Iter = m_Resources.begin();
+	Common::List<BS_Resource *>::const_iterator Iter = m_Resources.begin();
 	for (; Iter != m_Resources.end(); ++Iter, ++CurOrd) {
 		if (CurOrd == Ord)
 			return (*Iter);
@@ -88,7 +90,7 @@ BS_Resource *BS_ResourceManager::GetResourceByOrdinal(int Ord) const {
 /**
  * Registers a RegisterResourceService. This method is the constructor of
  * BS_ResourceService, and thus helps all resource services in the ResourceManager list
- * @param pService		Which service
+ * @param pService      Which service
  */
 bool BS_ResourceManager::RegisterResourceService(BS_ResourceService *pService) {
 	if (!pService) {
@@ -109,7 +111,7 @@ void BS_ResourceManager::DeleteResourcesIfNecessary() {
 	if (m_KernelPtr->GetUsedMemory() < m_MaxMemoryUsage || m_Resources.empty()) return;
 
 	// Keep deleting resources until the memory usage of the process falls below the set maximum limit.
-	// The list is processed backwards in order to first release those resources who have been 
+	// The list is processed backwards in order to first release those resources who have been
 	// not been accessed for the longest
 	Common::List<BS_Resource *>::iterator Iter = m_Resources.end();
 	do {
@@ -137,7 +139,7 @@ void BS_ResourceManager::EmptyCache() {
 
 /**
  * Returns a requested resource. If any error occurs, returns NULL
- * @param FileName		Filename of resource
+ * @param FileName      Filename of resource
  */
 BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName) {
 	// Get the absolute path to the file
@@ -170,11 +172,11 @@ BS_Resource *BS_ResourceManager::RequestResource(const Common::String &FileName)
 
 /**
  * Loads a resource into the cache
- * @param FileName		The filename of the resource to be cached
- * @param ForceReload	Indicates whether the file should be reloaded if it's already in the cache.
+ * @param FileName      The filename of the resource to be cached
+ * @param ForceReload   Indicates whether the file should be reloaded if it's already in the cache.
  * This is useful for files that may have changed in the interim
  */
-bool BS_ResourceManager::PrecacheResource(const Common::String& FileName, bool ForceReload) {
+bool BS_ResourceManager::PrecacheResource(const Common::String &FileName, bool ForceReload) {
 	// Get the absolute path to the file
 	Common::String UniqueFileName = GetUniqueFileName(FileName);
 	if (UniqueFileName == "")
@@ -202,7 +204,7 @@ bool BS_ResourceManager::PrecacheResource(const Common::String& FileName, bool F
 
 /**
  * Moves a resource to the top of the resource list
- * @param pResource		The resource
+ * @param pResource     The resource
  */
 void BS_ResourceManager::MoveToFront(BS_Resource *pResource) {
 	// Erase the resource from it's current position
@@ -217,7 +219,7 @@ void BS_ResourceManager::MoveToFront(BS_Resource *pResource) {
  * Loads a resource and updates the m_UsedMemory total
  *
  * The resource must not already be loaded
- * @param FileName		The unique filename of the resource to be loaded
+ * @param FileName      The unique filename of the resource to be loaded
  */
 BS_Resource *BS_ResourceManager::LoadResource(const Common::String &FileName) {
 	// ResourceService finden, der die Resource laden kann.
@@ -252,7 +254,7 @@ BS_Resource *BS_ResourceManager::LoadResource(const Common::String &FileName) {
  * Returns the full path of a given resource filename.
  * It will return an empty string if a path could not be created.
 */
-Common::String BS_ResourceManager::GetUniqueFileName(const Common::String& FileName) const {
+Common::String BS_ResourceManager::GetUniqueFileName(const Common::String &FileName) const {
 	// Get a pointer to the package manager
 	BS_PackageManager *pPackage = (BS_PackageManager *)m_KernelPtr->GetService("package");
 	if (!pPackage) {
@@ -281,7 +283,7 @@ Common::List<BS_Resource *>::iterator BS_ResourceManager::DeleteResource(BS_Reso
 	Common::List<BS_Resource *>::iterator Result = m_Resources.erase(pResource->_Iterator);
 
 	// Delete the resource
-	delete (pDummy);
+	delete(pDummy);
 
 	// Return the iterator
 	return Result;
@@ -289,17 +291,16 @@ Common::List<BS_Resource *>::iterator BS_ResourceManager::DeleteResource(BS_Reso
 
 /**
  * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
- * @param UniqueFileName		The absolute path and filename
+ * @param UniqueFileName        The absolute path and filename
  * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
  */
-BS_Resource * BS_ResourceManager::GetResource(const Common::String &UniqueFileName) const {
+BS_Resource *BS_ResourceManager::GetResource(const Common::String &UniqueFileName) const {
 	// Determine whether the resource is already loaded
 	const Common::List<BS_Resource *>& HashBucket = m_ResourceHashTable[
-		BS_String::GetHash(UniqueFileName) % HASH_TABLE_BUCKETS];
+	            BS_String::GetHash(UniqueFileName) % HASH_TABLE_BUCKETS];
 	{
-		Common::List<BS_Resource*>::const_iterator Iter = HashBucket.begin();
-		for (; Iter != HashBucket.end(); ++Iter)
-		{
+		Common::List<BS_Resource *>::const_iterator Iter = HashBucket.begin();
+		for (; Iter != HashBucket.end(); ++Iter) {
 			// Wenn die Resource gefunden wurde wird sie zurückgegeben.
 			if ((*Iter)->GetFileName() == UniqueFileName)
 				return *Iter;

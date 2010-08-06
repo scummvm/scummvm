@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -32,7 +32,7 @@
  *
  */
 
-#ifndef	SWORD25_INPUTPERSISTENCEBLOCK_H
+#ifndef SWORD25_INPUTPERSISTENCEBLOCK_H
 #define SWORD25_INPUTPERSISTENCEBLOCK_H
 
 // -----------------------------------------------------------------------------
@@ -68,8 +68,12 @@ public:
 	void Read(Common::String &Value);
 	void Read(Common::Array<unsigned char> &Value);
 
-	bool IsGood() const { return m_ErrorState == NONE; }
-	ErrorState GetErrorState() const { return m_ErrorState; }
+	bool IsGood() const {
+		return m_ErrorState == NONE;
+	}
+	ErrorState GetErrorState() const {
+		return m_ErrorState;
+	}
 
 private:
 	bool CheckMarker(unsigned char Marker);

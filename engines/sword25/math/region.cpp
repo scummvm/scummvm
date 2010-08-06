@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -60,18 +60,18 @@ BS_Region::BS_Region(BS_InputPersistenceBlock &Reader, unsigned int Handle) : m_
 // -----------------------------------------------------------------------------
 
 unsigned int BS_Region::Create(REGION_TYPE Type) {
-	BS_Region * RegionPtr = NULL;
+	BS_Region *RegionPtr = NULL;
 	switch (Type) {
-		case RT_REGION:
-			RegionPtr = new BS_Region();
-			break;
+	case RT_REGION:
+		RegionPtr = new BS_Region();
+		break;
 
-		case RT_WALKREGION:
-			RegionPtr = new BS_WalkRegion();
-			break;
+	case RT_WALKREGION:
+		RegionPtr = new BS_WalkRegion();
+		break;
 
-		default:
-			BS_ASSERT(true);
+	default:
+		BS_ASSERT(true);
 	}
 
 	return BS_RegionRegistry::GetInstance().ResolvePtr(RegionPtr);
@@ -79,7 +79,7 @@ unsigned int BS_Region::Create(REGION_TYPE Type) {
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_Region::Create(BS_InputPersistenceBlock & Reader, unsigned int Handle) {
+unsigned int BS_Region::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
 	// Read type
 	unsigned int Type;
 	Reader.Read(Type);
@@ -105,7 +105,7 @@ BS_Region::~BS_Region() {
 
 // -----------------------------------------------------------------------------
 
-bool BS_Region::Init(const BS_Polygon& Contour, const Common::Array<BS_Polygon> *pHoles) {
+bool BS_Region::Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles) {
 	// Reset object state
 	m_Valid = false;
 	m_Position = BS_Vertex(0, 0);
@@ -125,7 +125,7 @@ bool BS_Region::Init(const BS_Polygon& Contour, const Common::Array<BS_Polygon> 
 
 	// Place the hole polygons in the following positions
 	if (pHoles) {
-		for (unsigned int i = 0; i< pHoles->size(); ++i) {
+		for (unsigned int i = 0; i < pHoles->size(); ++i) {
 			m_Polygons.push_back(BS_Polygon());
 			m_Polygons[i + 1].Init((*pHoles)[i].VertexCount, (*pHoles)[i].Vertecies);
 			m_Polygons[i + 1].EnsureCWOrder();
@@ -201,7 +201,7 @@ bool BS_Region::IsPointInRegion(int X, int Y) const {
 		if (m_Polygons[0].IsPointInPolygon(X, Y, true)) {
 			// Test whether the point is in a hole
 			for (unsigned int i = 1; i < m_Polygons.size(); i++) {
-				if (m_Polygons[i].IsPointInPolygon(X,Y, false))
+				if (m_Polygons[i].IsPointInPolygon(X, Y, false))
 					return false;
 			}
 
@@ -233,7 +233,7 @@ BS_Vertex BS_Region::FindClosestRegionPoint(const BS_Vertex &Point) const {
 		}
 	}
 
-	const BS_Polygon & Polygon = m_Polygons[PolygonIdx];
+	const BS_Polygon &Polygon = m_Polygons[PolygonIdx];
 
 	BS_ASSERT(Polygon.VertexCount > 1);
 
@@ -303,8 +303,8 @@ BS_Vertex BS_Region::FindClosestPointOnLine(const BS_Vertex &LineStart, const BS
 	float Vector2Length = sqrtf(Vector2X * Vector2X + Vector2Y * Vector2Y);
 	Vector2X /= Vector2Length;
 	Vector2Y /= Vector2Length;
-	float Distance = sqrtf(static_cast<float>((LineStart.X - LineEnd.X) * (LineStart.X - LineEnd.X) + 
-		(LineStart.Y - LineEnd.Y) * (LineStart.Y - LineEnd.Y)));
+	float Distance = sqrtf(static_cast<float>((LineStart.X - LineEnd.X) * (LineStart.X - LineEnd.X) +
+	                       (LineStart.Y - LineEnd.Y) * (LineStart.Y - LineEnd.Y)));
 	float Dot = Vector1X * Vector2X + Vector1Y * Vector2Y;
 
 	if (Dot <= 0) return LineStart;
@@ -341,7 +341,7 @@ bool BS_Region::Persist(BS_OutputPersistenceBlock &Writer) {
 	Writer.Write(m_Valid);
 	Writer.Write(m_Position.X);
 	Writer.Write(m_Position.Y);
-	
+
 	Writer.Write(m_Polygons.size());
 	Common::Array<BS_Polygon>::iterator It = m_Polygons.begin();
 	while (It != m_Polygons.end()) {
@@ -385,7 +385,7 @@ BS_Vertex BS_Region::GetCentroid() const {
 	if (m_Polygons.size() > 0)
 		return m_Polygons[0].GetCentroid();
 	return
-		BS_Vertex();
+	    BS_Vertex();
 }
 
 } // End of namespace Sword25

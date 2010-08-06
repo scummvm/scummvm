@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -53,16 +53,12 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AnimationTemplate::Create(const Common::String & SourceAnimation)
-{
-	BS_AnimationTemplate * AnimationTemplatePtr = new BS_AnimationTemplate(SourceAnimation);
+unsigned int BS_AnimationTemplate::Create(const Common::String &SourceAnimation) {
+	BS_AnimationTemplate *AnimationTemplatePtr = new BS_AnimationTemplate(SourceAnimation);
 
-	if (AnimationTemplatePtr->IsValid())
-	{
+	if (AnimationTemplatePtr->IsValid()) {
 		return BS_AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
-	}
-	else
-	{
+	} else {
 		delete AnimationTemplatePtr;
 		return 0;
 	}
@@ -70,16 +66,12 @@ unsigned int BS_AnimationTemplate::Create(const Common::String & SourceAnimation
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AnimationTemplate::Create(const BS_AnimationTemplate & Other)
-{
-	BS_AnimationTemplate * AnimationTemplatePtr = new BS_AnimationTemplate(Other);
+unsigned int BS_AnimationTemplate::Create(const BS_AnimationTemplate &Other) {
+	BS_AnimationTemplate *AnimationTemplatePtr = new BS_AnimationTemplate(Other);
 
-	if (AnimationTemplatePtr->IsValid())
-	{
+	if (AnimationTemplatePtr->IsValid()) {
 		return BS_AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
-	}
-	else
-	{
+	} else {
 		delete AnimationTemplatePtr;
 		return 0;
 	}
@@ -87,16 +79,12 @@ unsigned int BS_AnimationTemplate::Create(const BS_AnimationTemplate & Other)
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AnimationTemplate::Create(BS_InputPersistenceBlock & Reader, unsigned int Handle)
-{
-	BS_AnimationTemplate * AnimationTemplatePtr = new BS_AnimationTemplate(Reader, Handle);
+unsigned int BS_AnimationTemplate::Create(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
+	BS_AnimationTemplate *AnimationTemplatePtr = new BS_AnimationTemplate(Reader, Handle);
 
-	if (AnimationTemplatePtr->IsValid())
-	{
+	if (AnimationTemplatePtr->IsValid()) {
 		return BS_AnimationTemplateRegistry::GetInstance().ResolvePtr(AnimationTemplatePtr);
-	}
-	else
-	{
+	} else {
 		delete AnimationTemplatePtr;
 		return 0;
 	}
@@ -104,8 +92,7 @@ unsigned int BS_AnimationTemplate::Create(BS_InputPersistenceBlock & Reader, uns
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationTemplate::BS_AnimationTemplate(const Common::String & SourceAnimation)
-{
+BS_AnimationTemplate::BS_AnimationTemplate(const Common::String &SourceAnimation) {
 	// Objekt registrieren.
 	BS_AnimationTemplateRegistry::GetInstance().RegisterObject(this);
 
@@ -120,8 +107,7 @@ BS_AnimationTemplate::BS_AnimationTemplate(const Common::String & SourceAnimatio
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationTemplate::BS_AnimationTemplate(const BS_AnimationTemplate & Other)
-{
+BS_AnimationTemplate::BS_AnimationTemplate(const BS_AnimationTemplate &Other) {
 	// Objekt registrieren.
 	BS_AnimationTemplateRegistry::GetInstance().RegisterObject(this);
 
@@ -147,23 +133,20 @@ BS_AnimationTemplate::BS_AnimationTemplate(const BS_AnimationTemplate & Other)
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationTemplate::BS_AnimationTemplate(BS_InputPersistenceBlock & Reader, unsigned int Handle)
-{
+BS_AnimationTemplate::BS_AnimationTemplate(BS_InputPersistenceBlock &Reader, unsigned int Handle) {
 	// Objekt registrieren.
-	BS_AnimationTemplateRegistry::GetInstance().RegisterObject(this, Handle);	
+	BS_AnimationTemplateRegistry::GetInstance().RegisterObject(this, Handle);
 
 	// Objekt laden.
-	m_Valid	= Unpersist(Reader);
+	m_Valid = Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationResource * BS_AnimationTemplate::RequestSourceAnimation(const Common::String & SourceAnimation) const
-{
-	BS_ResourceManager * RMPtr = BS_Kernel::GetInstance()->GetResourceManager();
-	BS_Resource * ResourcePtr;
-	if (NULL == (ResourcePtr = RMPtr->RequestResource(SourceAnimation)) || ResourcePtr->GetType() != BS_Resource::TYPE_ANIMATION)
-	{
+BS_AnimationResource *BS_AnimationTemplate::RequestSourceAnimation(const Common::String &SourceAnimation) const {
+	BS_ResourceManager *RMPtr = BS_Kernel::GetInstance()->GetResourceManager();
+	BS_Resource *ResourcePtr;
+	if (NULL == (ResourcePtr = RMPtr->RequestResource(SourceAnimation)) || ResourcePtr->GetType() != BS_Resource::TYPE_ANIMATION) {
 		BS_LOG_ERRORLN("The resource \"%s\" could not be requested or is has an invalid type. The animation template can't be created.", SourceAnimation.c_str());
 		return 0;
 	}
@@ -172,11 +155,9 @@ BS_AnimationResource * BS_AnimationTemplate::RequestSourceAnimation(const Common
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationTemplate::~BS_AnimationTemplate()
-{
+BS_AnimationTemplate::~BS_AnimationTemplate() {
 	// Animations-Resource freigeben
-	if (m_SourceAnimationPtr)
-	{
+	if (m_SourceAnimationPtr) {
 		m_SourceAnimationPtr->Release();
 	}
 
@@ -186,64 +167,52 @@ BS_AnimationTemplate::~BS_AnimationTemplate()
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplate::AddFrame(int Index)
-{
-	if (ValidateSourceIndex(Index))
-	{
+void BS_AnimationTemplate::AddFrame(int Index) {
+	if (ValidateSourceIndex(Index)) {
 		m_Frames.push_back(m_SourceAnimationPtr->GetFrame(Index));
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplate::SetFrame(int DestIndex, int SrcIndex)
-{
-	if (ValidateDestIndex(DestIndex) && ValidateSourceIndex(SrcIndex))
-	{
+void BS_AnimationTemplate::SetFrame(int DestIndex, int SrcIndex) {
+	if (ValidateDestIndex(DestIndex) && ValidateSourceIndex(SrcIndex)) {
 		m_Frames[DestIndex] = m_SourceAnimationPtr->GetFrame(SrcIndex);
 	}
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplate::ValidateSourceIndex(unsigned int Index) const
-{
-	if (Index > m_SourceAnimationPtr->GetFrameCount())
-	{
+bool BS_AnimationTemplate::ValidateSourceIndex(unsigned int Index) const {
+	if (Index > m_SourceAnimationPtr->GetFrameCount()) {
 		BS_LOG_WARNINGLN("Tried to insert a frame (\"%d\") that does not exist in the source animation (\"%s\"). Ignoring call.",
-						 Index, m_SourceAnimationPtr->GetFileName().c_str());
+		                 Index, m_SourceAnimationPtr->GetFileName().c_str());
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplate::ValidateDestIndex(unsigned int Index) const
-{
-	if (Index > m_Frames.size())
-	{
+bool BS_AnimationTemplate::ValidateDestIndex(unsigned int Index) const {
+	if (Index > m_Frames.size()) {
 		BS_LOG_WARNINGLN("Tried to change a nonexistent frame (\"%d\") in a template animation. Ignoring call.",
-						 Index);
+		                 Index);
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplate::SetFPS(int FPS)
-{
+void BS_AnimationTemplate::SetFPS(int FPS) {
 	m_FPS = FPS;
 	m_MillisPerFrame = 1000000 / m_FPS;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplate::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_AnimationTemplate::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Parent persistieren.
@@ -254,8 +223,7 @@ bool BS_AnimationTemplate::Persist(BS_OutputPersistenceBlock & Writer)
 
 	// Frames einzeln persistieren.
 	Common::Array<const Frame>::const_iterator Iter = m_Frames.begin();
-	while (Iter != m_Frames.end())
-	{
+	while (Iter != m_Frames.end()) {
 		Writer.Write(Iter->HotspotX);
 		Writer.Write(Iter->HotspotY);
 		Writer.Write(Iter->FlipV);
@@ -274,8 +242,7 @@ bool BS_AnimationTemplate::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplate::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_AnimationTemplate::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Parent wieder herstellen.
@@ -286,8 +253,7 @@ bool BS_AnimationTemplate::Unpersist(BS_InputPersistenceBlock & Reader)
 	Reader.Read(FrameCount);
 
 	// Frames einzeln wieder herstellen.
-	for (unsigned int i = 0; i < FrameCount; ++i)
-	{
+	for (unsigned int i = 0; i < FrameCount; ++i) {
 		Frame frame;
 		Reader.Read(frame.HotspotX);
 		Reader.Read(frame.HotspotY);

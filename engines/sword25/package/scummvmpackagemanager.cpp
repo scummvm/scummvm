@@ -94,12 +94,12 @@ static PathElementArray SeparatePath(const Common::String &Path, const Common::S
 		Common::String::const_iterator elementEnd = wholePath.begin() + nextseparatorPos;
 
 		if (elementEnd - elementBegin == 2 &&
-			elementBegin[0] == NAVIGATION_CHARACTER &&
-			elementBegin[1] == NAVIGATION_CHARACTER) {
+		        elementBegin[0] == NAVIGATION_CHARACTER &&
+		        elementBegin[1] == NAVIGATION_CHARACTER) {
 			// element is "..", therefore the previous path element should be removed
 			if (pathElements.size()) pathElements.pop_back();
 		} else if (elementEnd - elementBegin == 1 &&
-			elementBegin[0] == NAVIGATION_CHARACTER) {
+		           elementBegin[0] == NAVIGATION_CHARACTER) {
 			// element is ".", so we do nothing
 		} else {
 			// Normal elements get added to the list
@@ -114,7 +114,7 @@ static PathElementArray SeparatePath(const Common::String &Path, const Common::S
 
 static Common::String NormalizePath(const Common::String &Path, const Common::String &CurrentDirectory) {
 	// Get the path elements for the file
-	 PathElementArray pathElements = SeparatePath(Path, CurrentDirectory);
+	PathElementArray pathElements = SeparatePath(Path, CurrentDirectory);
 
 	if (pathElements.size()) {
 		// The individual path elements are fitted together, separated by a directory
@@ -140,9 +140,9 @@ static Common::String NormalizePath(const Common::String &Path, const Common::St
 // -----------------------------------------------------------------------------
 
 BS_ScummVMPackageManager::BS_ScummVMPackageManager(BS_Kernel *KernelPtr) :
-		BS_PackageManager(KernelPtr),
-		_currentDirectory(PATH_SEPARATOR),
-		_rootFolder(ConfMan.get("path")) {
+	BS_PackageManager(KernelPtr),
+	_currentDirectory(PATH_SEPARATOR),
+	_rootFolder(ConfMan.get("path")) {
 }
 
 // -----------------------------------------------------------------------------
@@ -152,8 +152,8 @@ BS_ScummVMPackageManager::~BS_ScummVMPackageManager() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *KernelPtr) { 
-	return new BS_ScummVMPackageManager(KernelPtr); 
+BS_Service *BS_ScummVMPackageManager_CreateObject(BS_Kernel *KernelPtr) {
+	return new BS_ScummVMPackageManager(KernelPtr);
 }
 
 // -----------------------------------------------------------------------------
@@ -177,11 +177,11 @@ Common::FSNode BS_ScummVMPackageManager::GetFSNode(const Common::String &FileNam
 		PathElementArray::iterator iEntry = i->MountPath.begin();
 
 		for (; iEntry != i->MountPath.end(); ++iEntry, ++iPath) {
-			if (Common::String(iPath->GetBegin(), iPath->GetEnd()) == 
-				Common::String(iEntry->GetBegin(), iEntry->GetEnd())) 
+			if (Common::String(iPath->GetBegin(), iPath->GetEnd()) ==
+			        Common::String(iEntry->GetBegin(), iEntry->GetEnd()))
 				break;
 		}
-		
+
 		if (iEntry == i->MountPath.end()) {
 			// Look into the archive for the desired file
 //			Common::Archive *archiveFolder = i->Archive;
@@ -189,21 +189,21 @@ Common::FSNode BS_ScummVMPackageManager::GetFSNode(const Common::String &FileNam
 			// TODO: Loop through any folders in the archive
 			for (; iPath != pathElements.end(); ++iPath) {
 
-			}			
+			}
 
 			// Return the found node
 			return Common::FSNode();
 		}
 	}
 
-	 return Common::FSNode();
+	return Common::FSNode();
 }
 
 // -----------------------------------------------------------------------------
 
 bool BS_ScummVMPackageManager::LoadPackage(const Common::String &FileName, const Common::String &MountPosition) {
 	// Get the path elements for the file
-	 PathElementArray pathElements = SeparatePath(MountPosition, _currentDirectory);
+	PathElementArray pathElements = SeparatePath(MountPosition, _currentDirectory);
 
 	Common::Archive *zipFile = Common::makeZipArchive(FileName);
 	if (zipFile == NULL) {
@@ -220,14 +220,14 @@ bool BS_ScummVMPackageManager::LoadPackage(const Common::String &FileName, const
 
 bool BS_ScummVMPackageManager::LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition) {
 	// Get the path elements for the file
-	 PathElementArray pathElements = SeparatePath(MountPosition, _currentDirectory);
+	PathElementArray pathElements = SeparatePath(MountPosition, _currentDirectory);
 
 	Common::FSNode directory(DirectoryName);
 	Common::Archive *folderArchive = new Common::FSDirectory(directory);
 	if (!directory.exists() || (folderArchive == NULL)) {
 		BS_LOG_ERRORLN("Unable to mount directory \"%s\" to \"%s\".", DirectoryName.c_str(), MountPosition.c_str());
 		return false;
-	} else {	
+	} else {
 		BS_LOGLN("Directory '%s' mounted as '%s'.", DirectoryName.c_str(), MountPosition.c_str());
 		_archiveList.push_front(ArchiveEntry(folderArchive, pathElements));
 		return true;
@@ -241,14 +241,14 @@ void *BS_ScummVMPackageManager::GetFile(const Common::String &FileName, unsigned
 	Common::FSNode fileNode = GetFSNode(FileName);
 	if (!fileNode.exists()) return 0;
 	if (!f.open(fileNode)) return 0;
-	
+
 	// If the filesize is desired, then output the size
 	if (FileSizePtr) *FileSizePtr = f.size();
 
 	// Read the file
 	byte *buffer = new byte[f.size()];
 	if (!f.read(buffer, f.size())) return 0;
-		
+
 	f.close();
 	return buffer;
 }
@@ -316,7 +316,7 @@ public:
 		_foundFilesIt(_foundFiles.begin()) {
 	}
 
-	virtual Common::String GetCurFileName()	{
+	virtual Common::String GetCurFileName() {
 		return *_foundFilesIt;
 	}
 
@@ -333,15 +333,15 @@ public:
 		return _foundFilesIt != _foundFiles.end();
 	}
 
-	BS_PackageManager &					_packageManager;
-	Common::StringArray					_foundFiles;
-	Common::StringArray::const_iterator	_foundFilesIt;
+	BS_PackageManager                  &_packageManager;
+	Common::StringArray                 _foundFiles;
+	Common::StringArray::const_iterator _foundFilesIt;
 };
 
 // -----------------------------------------------------------------------------
 
 BS_PackageManager::FileSearch *BS_ScummVMPackageManager::CreateSearch(
-		const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter) {
+    const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter) {
 	Common::String NormalizedPath = NormalizePath(Path, _currentDirectory);
 
 	Common::FSNode folderNode = GetFSNode(Path);

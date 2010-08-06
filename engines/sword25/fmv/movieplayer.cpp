@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -38,7 +38,9 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "MOVIEPLAYER"
 
-BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel) { return new BS_MoviePlayer(pKernel); }
+BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel) {
+	return new BS_MoviePlayer(pKernel);
+}
 
 BS_MoviePlayer::BS_MoviePlayer(BS_Kernel *pKernel) : BS_Service(pKernel) {
 	if (!_RegisterScriptBindings())

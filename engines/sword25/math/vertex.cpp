@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -38,8 +38,8 @@ namespace Lua {
 
 extern "C"
 {
-	#include "sword25/util/lua/lua.h"
-	#include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/lua/lua.h"
+#include "sword25/util/lua/lauxlib.h"
 }
 
 }
@@ -79,7 +79,7 @@ BS_Vertex &BS_Vertex::LuaVertexToVertex(lua_State *L, int StackIndex, BS_Vertex 
 
 // -----------------------------------------------------------------------------
 
-void BS_Vertex::VertexToLuaVertex(lua_State * L, const BS_Vertex &Vertex) {
+void BS_Vertex::VertexToLuaVertex(lua_State *L, const BS_Vertex &Vertex) {
 	// Create New Table
 	lua_newtable(L);
 

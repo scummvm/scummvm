@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -33,9 +33,9 @@
  */
 
 /*
-	BS_ScummVMWindow
-	----------------
-	Implementation of the BS_Window Interfaces for ScummVM
+    BS_ScummVMWindow
+    ----------------
+    Implementation of the BS_Window Interfaces for ScummVM
 */
 
 #ifndef SWORD25_SCUMMVMWINDOW_H
@@ -75,9 +75,9 @@ public:
 
 private:
 	static bool _ClassRegistered;
-	bool _WindowAlive;	
-	int	 _ClientXDelta;
-	int	 _ClientYDelta;
+	bool _WindowAlive;
+	int  _ClientXDelta;
+	int  _ClientYDelta;
 };
 
 } // End of namespace Sword25

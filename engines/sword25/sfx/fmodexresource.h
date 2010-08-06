@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,18 +54,17 @@ struct FMOD_SYSTEM;
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_FMODExResource : public BS_Resource
-{
+class BS_FMODExResource : public BS_Resource {
 public:
-	BS_FMODExResource(const std::string& FileName, FMOD_SYSTEM * FMOD, bool & Success);
+	BS_FMODExResource(const std::string &FileName, FMOD_SYSTEM *FMOD, bool &Success);
 	virtual ~BS_FMODExResource();
 
-	BS_FMODExChannel *	StartSound(FMOD_SYSTEM * FMOD);
+	BS_FMODExChannel   *StartSound(FMOD_SYSTEM *FMOD);
 
 private:
-	FMOD_SOUND *	m_SoundPtr;
-	char *			m_SoundDataPtr;
-	unsigned int	m_SoundDataSize;
+	FMOD_SOUND     *m_SoundPtr;
+	char           *m_SoundDataPtr;
+	unsigned int    m_SoundDataSize;
 };
 
 #endif

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -58,65 +58,75 @@ class BS_Kernel;
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_FontResource : public BS_Resource
-{
+class BS_FontResource : public BS_Resource {
 public:
 	/**
-		@brief Erzeugt eine neues Exemplar von BS_FontResource
-		@param pKernel ein Pointer auf den Kernel
-		@param FileName der Dateiname der zu ladenen Resource
-		@remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
+	    @brief Erzeugt eine neues Exemplar von BS_FontResource
+	    @param pKernel ein Pointer auf den Kernel
+	    @param FileName der Dateiname der zu ladenen Resource
+	    @remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
 	*/
-	BS_FontResource(BS_Kernel * pKernel, const Common::String & FileName);
+	BS_FontResource(BS_Kernel *pKernel, const Common::String &FileName);
 
 	/**
-		@brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
+	    @brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
 
-		Diese Methode kann dazu benutzt werden um festzustellen, ob der Konstruktor erfolgreich ausgeführt wurde.
+	    Diese Methode kann dazu benutzt werden um festzustellen, ob der Konstruktor erfolgreich ausgeführt wurde.
 	*/
-	bool	IsValid() const { return _Valid; }
+	bool    IsValid() const {
+		return _Valid;
+	}
 
 	/**
-		@brief Gibt die Zeilenhöhe des Fonts in Pixeln zurück.
+	    @brief Gibt die Zeilenhöhe des Fonts in Pixeln zurück.
 
-		Die Zeilenhöhe ist der Wert, der zur Y-Koordinate addiert wird, wenn ein Zeilenumbruch auftritt.
+	    Die Zeilenhöhe ist der Wert, der zur Y-Koordinate addiert wird, wenn ein Zeilenumbruch auftritt.
 	*/
-	int		GetLineHeight() const { return _LineHeight; }
+	int     GetLineHeight() const {
+		return _LineHeight;
+	}
 
 	/**
-		@brief Gibt den Buchstabenabstand der Fonts in Pixeln zurück.
+	    @brief Gibt den Buchstabenabstand der Fonts in Pixeln zurück.
 
-		Der Buchstabenabstand ist der Wert, der zwischen zwei Buchstaben freigelassen wird.
+	    Der Buchstabenabstand ist der Wert, der zwischen zwei Buchstaben freigelassen wird.
 	*/
-	int		GetGapWidth() const { return _GapWidth; }
-
-	/**
-		@brief Gibt das Bounding-Rect eines Zeichens auf der Charactermap zurück.
-		@param Character der ASCII-Code des Zeichens
-		@return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
-	*/
-	const BS_Rect & GetCharacterRect(int Character) const { BS_ASSERT(Character >= 0 && Character < 256); return _CharacterRects[Character]; }
+	int     GetGapWidth() const {
+		return _GapWidth;
+	}
 
 	/**
-		@brief Gibt den Dateinamen der Charactermap zurück.
+	    @brief Gibt das Bounding-Rect eines Zeichens auf der Charactermap zurück.
+	    @param Character der ASCII-Code des Zeichens
+	    @return Das Bounding-Rect des übergebenen Zeichens auf der Charactermap.
 	*/
-	const Common::String & GetCharactermapFileName() const { return _BitmapFileName; }
+	const BS_Rect &GetCharacterRect(int Character) const {
+		BS_ASSERT(Character >= 0 && Character < 256);
+		return _CharacterRects[Character];
+	}
+
+	/**
+	    @brief Gibt den Dateinamen der Charactermap zurück.
+	*/
+	const Common::String &GetCharactermapFileName() const {
+		return _BitmapFileName;
+	}
 
 private:
-	BS_Kernel * _pKernel;
-	bool		_Valid;
-	Common::String	_BitmapFileName;
-	int			_LineHeight;
-	int			_GapWidth;
-	BS_Rect		_CharacterRects[256];
+	BS_Kernel *_pKernel;
+	bool        _Valid;
+	Common::String  _BitmapFileName;
+	int         _LineHeight;
+	int         _GapWidth;
+	BS_Rect     _CharacterRects[256];
 
 	// -----------------------------------------------------------------------------
 	// Hilfsmethoden
 	// -----------------------------------------------------------------------------
-	
-	bool _ParseXMLDocument(const Common::String & FileName, TiXmlDocument & Doc) const;
-	bool _ParseFontTag(TiXmlElement & Tag, Common::String & BitmapFileName, int & LineHeight, int & GapWidth) const;
-	bool _ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect & Rect) const;
+
+	bool _ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const;
+	bool _ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &LineHeight, int &GapWidth) const;
+	bool _ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const;
 };
 
 } // End of namespace Sword25

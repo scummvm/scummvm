@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -35,8 +35,8 @@
 // Deaktivieren der Memory-Leak Detektion
 
 #ifdef BS_MEMLOG
-	#ifdef new
-		#undef new
-		#undef DEBUG_NEW
-	#endif
+#ifdef new
+#undef new
+#undef DEBUG_NEW
+#endif
 #endif

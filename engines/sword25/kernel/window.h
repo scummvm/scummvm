@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -63,7 +63,7 @@ protected:
 	bool _CloseWanted;
 
 public:
-	virtual ~BS_Window(){};
+	virtual ~BS_Window() {};
 
 	/**
 	 * Returns the visibility of the window.
@@ -72,7 +72,7 @@ public:
 
 	/**
 	 * Sets the visibility of the window
-	 * @param Visible		Specifies whether the window should be visible or hidden
+	 * @param Visible       Specifies whether the window should be visible or hidden
 	 */
 	virtual void SetVisible(bool Visible) = 0;
 	/**
@@ -81,7 +81,7 @@ public:
 	virtual int GetX() = 0;
 	/**
 	 * Sets the X position of the window
-	 * @paramX		The new X position for the window, or -1 for centre aligned
+	 * @paramX      The new X position for the window, or -1 for centre aligned
 	 */
 	virtual void SetX(int X) = 0;
 	/**
@@ -90,7 +90,7 @@ public:
 	virtual int GetY() = 0;
 	/**
 	 * Sets the Y position of the window
-	 * @param Y		The new Y position for the window, or -1 for centre aligned
+	 * @param Y     The new Y position for the window, or -1 for centre aligned
 	 */
 	virtual void SetY(int X) = 0;
 	/**
@@ -123,7 +123,7 @@ public:
 	virtual Common::String GetTitle() = 0;
 	/**
 	 * Sets the title of the window
-	 * @param Title		The new window title
+	 * @param Title     The new window title
 	*/
 	virtual void SetTitle(const Common::String &Title) = 0;
 	/**
@@ -135,7 +135,7 @@ public:
 	 * Pauses the applicaiton until the window has focus, or has been closed.
 	 * Returns false if the window was closed.
 	 */
-	virtual bool WaitForFocus() = 0;	
+	virtual bool WaitForFocus() = 0;
 	/**
 	 * Returns true if the window has focus, false otherwise.
 	 */
@@ -152,9 +152,9 @@ public:
 	 * Specifies whether the window is wanted to be closed. This is used together with CloseWanted()
 	 * to allow scripts to query when the main window should be closed, or the user is asking it to close
 	 **/
-	void SetCloseWanted(bool Wanted);	
+	void SetCloseWanted(bool Wanted);
 	/**
-	 * Returns the previous value set in a call to SetCloseWanted. 
+	 * Returns the previous value set in a call to SetCloseWanted.
 	 * Note that calling this also resets the value back to false, until such time as the SetCloseWanted()
 	 * method is called again.
 	**/
@@ -163,11 +163,11 @@ public:
 	/**
 	 * Creates a new window instance. Returns a pointer to the window, or NULL if the creation failed.
 	 * Note: It is the responsibility of the client to free the pointer when done with it.
-	 * @param X			The X position of the window, or -1 for centre horizontal alignment
-	 * @param Y			The Y position of the window, or -1 for centre vertical alignment
-	 * @param Width		The width of the window without the frame
-	 * @param Height	The height of the window without the frame
-	 * @param Visible	Specifies whether window should be visible
+	 * @param X         The X position of the window, or -1 for centre horizontal alignment
+	 * @param Y         The Y position of the window, or -1 for centre vertical alignment
+	 * @param Width     The width of the window without the frame
+	 * @param Height    The height of the window without the frame
+	 * @param Visible   Specifies whether window should be visible
 	 */
 	static BS_Window *CreateBSWindow(int X, int Y, int Width, int Height, bool Visible);
 };

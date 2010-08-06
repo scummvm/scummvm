@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -48,21 +48,19 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_B25SLoader : public BS_ImageLoader
-{
+class BS_B25SLoader : public BS_ImageLoader {
 public:
-	static BS_ImageLoader * CreateInstance() 
-	{ 
-		#include "sword25/kernel/memlog_off.h"
+	static BS_ImageLoader *CreateInstance() {
+#include "sword25/kernel/memlog_off.h"
 		return static_cast<BS_ImageLoader *>(new BS_B25SLoader());
-		#include "sword25/kernel/memlog_on.h"
+#include "sword25/kernel/memlog_on.h"
 	}
 
 protected:
-	virtual bool IsCorrectImageFormat(const char * FileDataPtr, unsigned int FileSize);
-	virtual bool DecodeImage(const char * FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
-							 int & Width, int & Height, int & Pitch);
-	virtual bool ImageProperties(const char * FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS & ColorFormat, int & Width, int & Height);
+	virtual bool IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize);
+	virtual bool DecodeImage(const char *FileDataPtr, unsigned int FileSize,  BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
+	                         int &Width, int &Height, int &Pitch);
+	virtual bool ImageProperties(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height);
 
 };
 

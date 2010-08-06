@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -53,22 +53,29 @@ namespace Sword25 {
 class BS_VectorImage;
 
 /**
-	@brief Pfadinformationen zu BS_VectorImageElement Objekten
+    @brief Pfadinformationen zu BS_VectorImageElement Objekten
 
-	Jedes BS_VectorImageElement besteht aus Kantenzügen, oder auch Pfaden. Jeder dieser Pfad hat Eigenschaften, die in Objekten diesen Typs
-	gespeichert werden.
+    Jedes BS_VectorImageElement besteht aus Kantenzügen, oder auch Pfaden. Jeder dieser Pfad hat Eigenschaften, die in Objekten diesen Typs
+    gespeichert werden.
 */
 
-class BS_VectorPathInfo
-{
+class BS_VectorPathInfo {
 public:
 	BS_VectorPathInfo(unsigned int ID, unsigned int LineStyle, unsigned int FillStyle0, unsigned int FillStyle1) :
-	  m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {};
+		m_ID(ID), m_LineStyle(LineStyle), m_FillStyle0(FillStyle0), m_FillStyle1(FillStyle1) {};
 
-	unsigned int GetID() const { return m_ID; }
-	unsigned int GetLineStyle() const { return m_LineStyle; }
-	unsigned int GetFillStyle0() const { return m_FillStyle0; }
-	unsigned int GetFillStyle1() const { return m_FillStyle1; }
+	unsigned int GetID() const {
+		return m_ID;
+	}
+	unsigned int GetLineStyle() const {
+		return m_LineStyle;
+	}
+	unsigned int GetFillStyle0() const {
+		return m_FillStyle0;
+	}
+	unsigned int GetFillStyle1() const {
+		return m_FillStyle1;
+	}
 
 private:
 	unsigned int m_ID;
@@ -79,106 +86,136 @@ private:
 
 
 /**
-	@brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.
-		   Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
+    @brief Ein Element eines Vektorbild. Ein BS_VectorImage besteht aus diesen Elementen, die jeweils einen Teil der Graphik definieren.
+           Werden alle Elemente eines Vektorbildes übereinandergelegt, ergibt sich das komplette Bild.
 */
-class BS_VectorImageElement
-{
-friend BS_VectorImage;
+class BS_VectorImageElement {
+	friend BS_VectorImage;
 public:
-	const agg::path_storage &	GetPaths() const { return m_Paths; }
-	unsigned int				GetPathCount() const { return m_PathInfos.size(); }
-	const BS_VectorPathInfo &	GetPathInfo(unsigned int PathNr) const { BS_ASSERT(PathNr < GetPathCount()); return m_PathInfos[PathNr]; }
+	const agg::path_storage    &GetPaths() const {
+		return m_Paths;
+	}
+	unsigned int                GetPathCount() const {
+		return m_PathInfos.size();
+	}
+	const BS_VectorPathInfo    &GetPathInfo(unsigned int PathNr) const {
+		BS_ASSERT(PathNr < GetPathCount());
+		return m_PathInfos[PathNr];
+	}
 
-	double GetLineStyleWidth(unsigned int LineStyle) const
-	{
+	double GetLineStyleWidth(unsigned int LineStyle) const {
 		BS_ASSERT(LineStyle < m_LineStyles.size());
 		return m_LineStyles[LineStyle].Width;
 	}
 
-	unsigned int GetLineStyleCount() const { return m_LineStyles.size(); }
+	unsigned int GetLineStyleCount() const {
+		return m_LineStyles.size();
+	}
 
-	const agg::rgba8 & GetLineStyleColor(unsigned int LineStyle) const
-	{
+	const agg::rgba8 &GetLineStyleColor(unsigned int LineStyle) const {
 		BS_ASSERT(LineStyle < m_LineStyles.size());
 		return m_LineStyles[LineStyle].Color;
 	}
 
-	unsigned int GetFillStyleCount() const { return m_FillStyles.size(); }
+	unsigned int GetFillStyleCount() const {
+		return m_FillStyles.size();
+	}
 
-	const agg::rgba8 & GetFillStyleColor(unsigned int FillStyle) const
-	{
+	const agg::rgba8 &GetFillStyleColor(unsigned int FillStyle) const {
 		BS_ASSERT(FillStyle < m_FillStyles.size());
 		return m_FillStyles[FillStyle];
 	}
 
-	const BS_Rect & GetBoundingBox() const { return m_BoundingBox; }	
+	const BS_Rect &GetBoundingBox() const {
+		return m_BoundingBox;
+	}
 
 private:
-	struct LineStyleType
-	{
-		LineStyleType(double Width_, const agg::rgba8 & Color_) : Width(Width_), Color(Color_) {};
-		double		Width;
-		agg::rgba8	Color;
+	struct LineStyleType {
+		LineStyleType(double Width_, const agg::rgba8 &Color_) : Width(Width_), Color(Color_) {};
+		double      Width;
+		agg::rgba8  Color;
 	};
 
-	agg::path_storage				m_Paths;
-	Common::Array<BS_VectorPathInfo>	m_PathInfos;
-	Common::Array<LineStyleType>		m_LineStyles;
-	Common::Array<agg::rgba8>			m_FillStyles;
-	BS_Rect							m_BoundingBox;
+	agg::path_storage               m_Paths;
+	Common::Array<BS_VectorPathInfo>    m_PathInfos;
+	Common::Array<LineStyleType>        m_LineStyles;
+	Common::Array<agg::rgba8>           m_FillStyles;
+	BS_Rect                         m_BoundingBox;
 };
 
 
 /**
-	@brief Eine Vektorgraphik
+    @brief Eine Vektorgraphik
 
-	Objekte dieser Klasse enthalten die Informationen eines SWF-Shapes.
+    Objekte dieser Klasse enthalten die Informationen eines SWF-Shapes.
 */
 
-class BS_VectorImage : public BS_Image
-{
+class BS_VectorImage : public BS_Image {
 public:
-	BS_VectorImage(const unsigned char * pFileData, unsigned int FileSize, bool & Success);
+	BS_VectorImage(const unsigned char *pFileData, unsigned int FileSize, bool &Success);
 
-	unsigned int GetElementCount() const { return m_Elements.size(); }
-	const BS_VectorImageElement & GetElement(unsigned int ElementNr) const
-	{
+	unsigned int GetElementCount() const {
+		return m_Elements.size();
+	}
+	const BS_VectorImageElement &GetElement(unsigned int ElementNr) const {
 		BS_ASSERT(ElementNr < m_Elements.size());
 		return m_Elements[ElementNr];
 	}
-	const BS_Rect & GetBoundingBox() const { return m_BoundingBox; }
+	const BS_Rect &GetBoundingBox() const {
+		return m_BoundingBox;
+	}
 
 	//
 	// Die abstrakten Methoden von BS_Image
 	//
-	virtual int GetWidth() const { return m_BoundingBox.GetWidth(); }
-	virtual int GetHeight() const { return m_BoundingBox.GetHeight(); }
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const { return BS_GraphicEngine::CF_ARGB32; }
-	virtual bool Fill(const BS_Rect* pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
+	virtual int GetWidth() const {
+		return m_BoundingBox.GetWidth();
+	}
+	virtual int GetHeight() const {
+		return m_BoundingBox.GetHeight();
+	}
+	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+		return BS_GraphicEngine::CF_ARGB32;
+	}
+	virtual bool Fill(const BS_Rect *pFillRect = 0, unsigned int Color = BS_RGB(0, 0, 0));
 	virtual unsigned int GetPixel(int X, int Y);
-	virtual bool IsBlitSource() const { return true; }
-	virtual bool IsBlitTarget() const { return false; }
-	virtual bool IsScalingAllowed() const { return true; }
-	virtual bool IsFillingAllowed() const { return false; }
-	virtual bool IsAlphaAllowed() const { return true; }
-	virtual bool IsColorModulationAllowed() const { return true; }
-	virtual bool IsSetContentAllowed() const { return false; }
+	virtual bool IsBlitSource() const {
+		return true;
+	}
+	virtual bool IsBlitTarget() const {
+		return false;
+	}
+	virtual bool IsScalingAllowed() const {
+		return true;
+	}
+	virtual bool IsFillingAllowed() const {
+		return false;
+	}
+	virtual bool IsAlphaAllowed() const {
+		return true;
+	}
+	virtual bool IsColorModulationAllowed() const {
+		return true;
+	}
+	virtual bool IsSetContentAllowed() const {
+		return false;
+	}
 	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 	virtual bool Blit(int PosX = 0, int PosY = 0,
-					  int Flipping = FLIP_NONE,
-					  BS_Rect* pPartRect = NULL,
-					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
-					  int Width = -1, int Height = -1);
+	                  int Flipping = FLIP_NONE,
+	                  BS_Rect *pPartRect = NULL,
+	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  int Width = -1, int Height = -1);
 
 	class SWFBitStream;
 
 private:
-	bool ParseDefineShape(unsigned int ShapeType, SWFBitStream & bs);
-	bool ParseStyles(unsigned int ShapeType, SWFBitStream & bs, unsigned int & NumFillBits, unsigned int & NumLineBits);
+	bool ParseDefineShape(unsigned int ShapeType, SWFBitStream &bs);
+	bool ParseStyles(unsigned int ShapeType, SWFBitStream &bs, unsigned int &NumFillBits, unsigned int &NumLineBits);
 
-	Common::Array<BS_VectorImageElement>	m_Elements;
-	BS_Rect								m_BoundingBox;
+	Common::Array<BS_VectorImageElement>    m_Elements;
+	BS_Rect                             m_BoundingBox;
 };
 
 } // End of namespace Sword25

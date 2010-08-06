@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -50,21 +50,21 @@ class BS_Kernel;
 // Klassendefinition
 class BS_RenderObjectManager;
 
-class BS_RootRenderObject : public BS_RenderObject
-{
-friend BS_RenderObjectManager;
+class BS_RootRenderObject : public BS_RenderObject {
+	friend BS_RenderObjectManager;
 
 private:
-	BS_RootRenderObject(BS_RenderObjectManager * ManagerPtr, int Width, int Height) :
-	   BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject>(), TYPE_ROOT)
-	{
+	BS_RootRenderObject(BS_RenderObjectManager *ManagerPtr, int Width, int Height) :
+		BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject>(), TYPE_ROOT) {
 		m_ManagerPtr = ManagerPtr;
 		m_Width = Width;
 		m_Height = Height;
 	}
 
 protected:
-	virtual bool DoRender() { return true; }
+	virtual bool DoRender() {
+		return true;
+	}
 };
 
 } // End of namespace Sword25

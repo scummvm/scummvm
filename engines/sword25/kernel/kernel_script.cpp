@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -64,7 +64,7 @@ static int GetActiveServiceIdentifier(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 
-	lua_pushstring(L, pKernel->GetActiveServiceIdentifier(luaL_checkstring(L,1)).c_str());
+	lua_pushstring(L, pKernel->GetActiveServiceIdentifier(luaL_checkstring(L, 1)).c_str());
 
 	return 1;
 }
@@ -87,7 +87,7 @@ static int GetSuperclassIdentifier(lua_State *L) {
 	BS_ASSERT(pKernel);
 
 	lua_pushstring(L, pKernel->GetSuperclassIdentifier(
-		static_cast<unsigned int>(luaL_checknumber(L,1))).c_str());
+	                   static_cast<unsigned int>(luaL_checknumber(L, 1))).c_str());
 
 	return 1;
 }
@@ -109,8 +109,8 @@ static int GetServiceIdentifier(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 
-	lua_pushstring(L, pKernel->GetServiceIdentifier(luaL_checkstring(L, 1), 
-		static_cast<unsigned int>(luaL_checknumber(L, 2))).c_str());
+	lua_pushstring(L, pKernel->GetServiceIdentifier(luaL_checkstring(L, 1),
+	               static_cast<unsigned int>(luaL_checknumber(L, 2))).c_str());
 
 	return 1;
 }
@@ -171,7 +171,7 @@ static int Crash(lua_State *L) {
 static int ExecuteFile(lua_State *L) {
 	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine * pSE = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	BS_ScriptEngine *pSE = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pSE);
 
 	lua_pushbooleancpp(L, pSE->ExecuteFile(luaL_checkstring(L, 1)));
@@ -231,7 +231,7 @@ static int GetUsedMemory(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static const char * KERNEL_LIBRARY_NAME = "Kernel";
+static const char *KERNEL_LIBRARY_NAME = "Kernel";
 
 static const luaL_reg KERNEL_FUNCTIONS[] = {
 	"DisconnectService", DisconnectService,
@@ -492,7 +492,7 @@ static int HasFocus(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static const char * WINDOW_LIBRARY_NAME = "Window";
+static const char *WINDOW_LIBRARY_NAME = "Window";
 
 static const luaL_reg WINDOW_FUNCTIONS[] = {
 	"IsVisible", IsVisible,
@@ -622,7 +622,7 @@ static int DumpLockedResources(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static const char * RESOURCE_LIBRARY_NAME = "Resource";
+static const char *RESOURCE_LIBRARY_NAME = "Resource";
 
 static const luaL_reg RESOURCE_FUNCTIONS[] = {
 	"PrecacheResource", PrecacheResource,
@@ -655,7 +655,7 @@ static int GetSlotCount(lua_State *L) {
 
 static int IsSlotOccupied(lua_State *L) {
 	lua_pushbooleancpp(L, BS_PersistenceService::GetInstance().IsSlotOccupied(
-		static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
+	                       static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
@@ -670,7 +670,7 @@ static int GetSavegameDirectory(lua_State *L) {
 
 static int IsSavegameCompatible(lua_State *L) {
 	lua_pushbooleancpp(L, BS_PersistenceService::GetInstance().IsSavegameCompatible(
-		static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
+	                       static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1));
 	return 1;
 }
 
@@ -678,7 +678,7 @@ static int IsSavegameCompatible(lua_State *L) {
 
 static int GetSavegameDescription(lua_State *L) {
 	lua_pushstring(L, BS_PersistenceService::GetInstance().GetSavegameDescription(
-		static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1).c_str());
+	                   static_cast<unsigned int>(luaL_checknumber(L, 1)) - 1).c_str());
 	return 1;
 }
 
@@ -705,7 +705,7 @@ static int SaveGame(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static const char * PERSISTENCE_LIBRARY_NAME = "Persistence";
+static const char *PERSISTENCE_LIBRARY_NAME = "Persistence";
 
 static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
 	"ReloadSlots", ReloadSlots,
@@ -723,7 +723,7 @@ static const luaL_reg PERSISTENCE_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool BS_Kernel::_RegisterScriptBindings() {
-	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(GetService("script"));
+	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);

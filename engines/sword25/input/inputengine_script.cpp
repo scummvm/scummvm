@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -61,45 +61,47 @@ static void TheCharacterCallback(int Character);
 static void TheCommandCallback(int Command);
 
 namespace {
-	class CharacterCallbackClass : public BS_LuaCallback {
-	public:
-		CharacterCallbackClass(lua_State *L) : BS_LuaCallback(L) {};
+class CharacterCallbackClass : public BS_LuaCallback {
+public:
+	CharacterCallbackClass(lua_State *L) : BS_LuaCallback(L) {};
 
-		Common::String Character;
+	Common::String Character;
 
-	protected:
-		int PreFunctionInvokation(lua_State *L) {
-			lua_pushstring(L, Character.c_str());
-			return 1;
-		}
-	};
-	Common::SharedPtr<CharacterCallbackClass> CharacterCallbackPtr;
+protected:
+	int PreFunctionInvokation(lua_State *L) {
+		lua_pushstring(L, Character.c_str());
+		return 1;
+	}
+};
+Common::SharedPtr<CharacterCallbackClass> CharacterCallbackPtr;
 
-	// -----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-	class CommandCallbackClass : public BS_LuaCallback {
-	public:
-		CommandCallbackClass(lua_State *L) : BS_LuaCallback(L) { Command = BS_InputEngine::KEY_COMMAND_BACKSPACE; }
+class CommandCallbackClass : public BS_LuaCallback {
+public:
+	CommandCallbackClass(lua_State *L) : BS_LuaCallback(L) {
+		Command = BS_InputEngine::KEY_COMMAND_BACKSPACE;
+	}
 
-		BS_InputEngine::KEY_COMMANDS Command;
+	BS_InputEngine::KEY_COMMANDS Command;
 
-	protected:
-		int PreFunctionInvokation(lua_State *L) {
-			lua_pushnumber(L, Command);
-			return 1;
-		}
-	};
-	Common::SharedPtr<CommandCallbackClass> CommandCallbackPtr;
+protected:
+	int PreFunctionInvokation(lua_State *L) {
+		lua_pushnumber(L, Command);
+		return 1;
+	}
+};
+Common::SharedPtr<CommandCallbackClass> CommandCallbackPtr;
 
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	struct CallbackfunctionRegisterer {
-		CallbackfunctionRegisterer() {
-			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaCommandCB", TheCommandCallback);
-			BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaCharacterCB", TheCharacterCallback);
-		}
-	};
-	static CallbackfunctionRegisterer Instance;
+struct CallbackfunctionRegisterer {
+	CallbackfunctionRegisterer() {
+		BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaCommandCB", TheCommandCallback);
+		BS_CallbackRegistry::GetInstance().RegisterCallbackFunction("LuaCharacterCB", TheCharacterCallback);
+	}
+};
+static CallbackfunctionRegisterer Instance;
 }
 
 // -----------------------------------------------------------------------------
@@ -313,7 +315,7 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 	"UnregisterCharacterCallback", UnregisterCharacterCallback,
 	"RegisterCommandCallback", RegisterCommandCallback,
 	"UnregisterCommandCallback", UnregisterCommandCallback,
-	0, 0,	
+	0, 0,
 };
 
 #define X(k) "KEY_" #k, BS_InputEngine::KEY_##k

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -67,58 +67,56 @@ class BS_RenderObjectManager;
 // CLASS DECLARATION
 // -----------------------------------------------------------------------------
 
-class BS_OpenGLGfx : public BS_GraphicEngine
-{
+class BS_OpenGLGfx : public BS_GraphicEngine {
 public:
-	BS_OpenGLGfx(BS_Kernel* pKernel);
+	BS_OpenGLGfx(BS_Kernel *pKernel);
 	virtual ~BS_OpenGLGfx();
 
 	// Interface
 	// ---------
-	virtual bool		Init(int Width, int Height, int BitDepth, int BackbufferCount, bool Windowed);
-	virtual bool		StartFrame(bool UpdateAll);
-	virtual bool		EndFrame();
+	virtual bool        Init(int Width, int Height, int BitDepth, int BackbufferCount, bool Windowed);
+	virtual bool        StartFrame(bool UpdateAll);
+	virtual bool        EndFrame();
 
 	virtual BS_RenderObjectPtr<BS_Panel> GetMainPanel();
 
-	virtual void		SetVsync(bool Vsync);
-	virtual bool		GetVsync() const;
+	virtual void        SetVsync(bool Vsync);
+	virtual bool        GetVsync() const;
 
-	virtual bool		Fill(const BS_Rect* FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
-	virtual bool		GetScreenshot(unsigned int & Width, unsigned int & Height, Common::Array<unsigned int> & Data);
+	virtual bool        Fill(const BS_Rect *FillRectPtr = 0, unsigned int Color = BS_RGB(0, 0, 0));
+	virtual bool        GetScreenshot(unsigned int &Width, unsigned int &Height, Common::Array<unsigned int> & Data);
 
 	// Resource-Managing Methoden
 	// --------------------------
-	virtual BS_Resource*	LoadResource(const Common::String& FileName);
-	virtual bool			CanLoadResource(const Common::String& FileName);
+	virtual BS_Resource    *LoadResource(const Common::String &FileName);
+	virtual bool            CanLoadResource(const Common::String &FileName);
 
 	// Debugging Methoden
 	// ------------------
-	virtual void DrawDebugLine(const BS_Vertex & Start, const BS_Vertex & End, unsigned int Color);
-	static const char * GetGLSResultString(GLS_Result Result);
+	virtual void DrawDebugLine(const BS_Vertex &Start, const BS_Vertex &End, unsigned int Color);
+	static const char *GetGLSResultString(GLS_Result Result);
 
 	// Persistenz Methoden
 	// -------------------
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	bool				m_GLspritesInitialized;
+	bool                m_GLspritesInitialized;
 
 	BS_RenderObjectPtr<BS_Panel> m_MainPanelPtr;
 
-	std::auto_ptr<BS_RenderObjectManager>	m_RenderObjectManagerPtr;
+	std::auto_ptr<BS_RenderObjectManager>   m_RenderObjectManagerPtr;
 
-	struct DebugLine
-	{
-		DebugLine(const BS_Vertex & _Start, const BS_Vertex & _End, unsigned int _Color) :
+	struct DebugLine {
+		DebugLine(const BS_Vertex &_Start, const BS_Vertex &_End, unsigned int _Color) :
 			Start(_Start),
 			End(_End),
 			Color(_Color) {};
-			
-		BS_Vertex		Start;
-		BS_Vertex		End;
-		unsigned int	Color;
+
+		BS_Vertex       Start;
+		BS_Vertex       End;
+		unsigned int    Color;
 	};
 
 	Common::Array<DebugLine> m_DebugLines;

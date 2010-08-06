@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -58,61 +58,61 @@ using namespace std;
 // -----------------------------------------------------------------------------
 
 namespace Sword25 {
-	const char *		SAVEGAME_EXTENSION = ".b25s";
-	const char *		SAVEGAME_DIRECTORY = "saves";
-	const char *		FILE_MARKER = "BS25SAVEGAME";
-	const unsigned int	SLOT_COUNT = 18;
-	const unsigned int	FILE_COPY_BUFFER_SIZE = 1024 * 10;
-	const char *VERSIONID = "1";
+const char         *SAVEGAME_EXTENSION = ".b25s";
+const char         *SAVEGAME_DIRECTORY = "saves";
+const char         *FILE_MARKER = "BS25SAVEGAME";
+const unsigned int  SLOT_COUNT = 18;
+const unsigned int  FILE_COPY_BUFFER_SIZE = 1024 * 10;
+const char *VERSIONID = "1";
 
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	Common::String GenerateSavegameFilename(unsigned int SlotID) {
-		Common::String oss;
-		oss += SlotID;
-		oss += SAVEGAME_EXTENSION;
-		return oss;
+Common::String GenerateSavegameFilename(unsigned int SlotID) {
+	Common::String oss;
+	oss += SlotID;
+	oss += SAVEGAME_EXTENSION;
+	return oss;
+}
+
+// -------------------------------------------------------------------------
+
+Common::String GenerateSavegamePath(unsigned int SlotID) {
+	Common::String oss;
+	oss = BS_PersistenceService::GetSavegameDirectory();
+	oss += BS_FileSystemUtil::GetInstance().GetPathSeparator();
+	oss += GenerateSavegameFilename(SlotID);
+	return oss;
+}
+
+// -------------------------------------------------------------------------
+
+Common::String FormatTimestamp(TimeDate Time) {
+	// In the original BS2.5 engine, this used a local object to show the date/time as as a string.
+	// For now in ScummVM it's being hardcoded to 'dd-MON-yyyy hh:mm:ss'
+	Common::String monthList[12] = {
+		"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+	};
+	char buffer[100];
+	snprintf(buffer, 100, "%.2d-%s-%.4d %.2d:%.2d:%.2d",
+	         Time.tm_mday, monthList[Time.tm_mon].c_str(), Time.tm_year,
+	         Time.tm_hour, Time.tm_min, Time.tm_sec
+	        );
+
+	return Common::String(buffer);
+}
+
+// -------------------------------------------------------------------------
+
+Common::String LoadString(Common::InSaveFile *In, uint MaxSize = 999) {
+	Common::String Result;
+	char ch;
+	while ((ch = (char)In->readByte()) != '\0') {
+		Result += ch;
+		if (Result.size() >= MaxSize) break;
 	}
 
-	// -------------------------------------------------------------------------
-
-	Common::String GenerateSavegamePath(unsigned int SlotID) {
-		Common::String oss;
-		oss = BS_PersistenceService::GetSavegameDirectory();
-		oss += BS_FileSystemUtil::GetInstance().GetPathSeparator();
-		oss += GenerateSavegameFilename(SlotID);
-		return oss;
-	}
-
-	// -------------------------------------------------------------------------
-
-	Common::String FormatTimestamp(TimeDate Time) {
-		// In the original BS2.5 engine, this used a local object to show the date/time as as a string.
-		// For now in ScummVM it's being hardcoded to 'dd-MON-yyyy hh:mm:ss'
-		Common::String monthList[12] = { 
-			"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-		};
-		char buffer[100];
-		snprintf(buffer, 100, "%.2d-%s-%.4d %.2d:%.2d:%.2d", 
-			Time.tm_mday, monthList[Time.tm_mon].c_str(), Time.tm_year,
-			Time.tm_hour, Time.tm_min, Time.tm_sec
-		);
-
-		return Common::String(buffer);
-	}
-
-	// -------------------------------------------------------------------------
-
-	Common::String LoadString(Common::InSaveFile *In, uint MaxSize = 999) {
-		Common::String Result;
-		char ch;
-		while ((ch = (char)In->readByte()) != '\0') {
-			Result += ch;
-			if (Result.size() >= MaxSize) break;
-		}
-
-		return Result;
-	}
+	return Result;
+}
 }
 
 namespace Sword25 {
@@ -122,15 +122,17 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 struct SavegameInformation {
-	bool			IsOccupied;
-	bool			IsCompatible;
-	Common::String	Description;
-	Common::String	Filename;
-	unsigned int	GamedataLength;
-	unsigned int	GamedataOffset;
-	unsigned int	GamedataUncompressedLength;
+	bool            IsOccupied;
+	bool            IsCompatible;
+	Common::String  Description;
+	Common::String  Filename;
+	unsigned int    GamedataLength;
+	unsigned int    GamedataOffset;
+	unsigned int    GamedataUncompressedLength;
 
-	SavegameInformation() { Clear(); }
+	SavegameInformation() {
+		Clear();
+	}
 
 	void Clear() {
 		IsOccupied = false;
@@ -163,7 +165,7 @@ struct BS_PersistenceService::Impl {
 
 	void ReadSlotSavegameInformation(unsigned int SlotID) {
 		// Aktuelle Slotinformationen in den Ausgangszustand versetzen, er wird im Folgenden neu gefüllt.
-		SavegameInformation & CurSavegameInfo = m_SavegameInformations[SlotID];
+		SavegameInformation &CurSavegameInfo = m_SavegameInformations[SlotID];
 		CurSavegameInfo.Clear();
 
 		// Den Dateinamen für den Spielstand des Slots generieren.
@@ -207,7 +209,7 @@ struct BS_PersistenceService::Impl {
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-BS_PersistenceService & BS_PersistenceService::GetInstance() {
+BS_PersistenceService &BS_PersistenceService::GetInstance() {
 	static BS_PersistenceService Instance;
 	return Instance;
 }
@@ -246,15 +248,15 @@ Common::String BS_PersistenceService::GetSavegameDirectory() {
 // -----------------------------------------------------------------------------
 
 namespace {
-	bool CheckSlotID(unsigned int SlotID) {
-		// Überprüfen, ob die Slot-ID zulässig ist.
-		if (SlotID >= SLOT_COUNT) {
-			BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
-			return false;
-		} else {
-			return true;
-		}
+bool CheckSlotID(unsigned int SlotID) {
+	// Überprüfen, ob die Slot-ID zulässig ist.
+	if (SlotID >= SLOT_COUNT) {
+		BS_LOG_ERRORLN("Tried to access an invalid slot (%d). Only slot ids from 0 to %d are allowed.", SlotID, SLOT_COUNT - 1);
+		return false;
+	} else {
+		return true;
 	}
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -304,7 +306,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 
 	// Spielstanddatei öffnen und die Headerdaten schreiben.
 	Common::SaveFileManager *sfm = g_system->getSavefileManager();
-	Common::OutSaveFile *File = sfm->openForSaving(Filename);			
+	Common::OutSaveFile *File = sfm->openForSaving(Filename);
 
 	File->writeString(FILE_MARKER);
 	File->writeByte(' ');
@@ -330,7 +332,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	// Daten komprimieren.
 	uLongf CompressedLength = Writer.GetDataSize() + (Writer.GetDataSize() + 500) / 1000 + 12;
 	Bytef *CompressionBuffer = new Bytef[CompressedLength];
-	
+
 	if (compress2(&CompressionBuffer[0], &CompressedLength, reinterpret_cast<const Bytef *>(Writer.GetData()), Writer.GetDataSize(), 6) != Z_OK) {
 		error("Unable to compress savegame data in savegame file \"%s\".", Filename.c_str());
 	}
@@ -353,7 +355,7 @@ bool BS_PersistenceService::SaveGame(unsigned int SlotID, const Common::String &
 	// Screenshotdatei an die Datei anfügen.
 	if (BS_FileSystemUtil::GetInstance().FileExists(ScreenshotFilename)) {
 		Common::File ScreenshotFile;
-		if (!ScreenshotFile.open(ScreenshotFilename.c_str())) 
+		if (!ScreenshotFile.open(ScreenshotFilename.c_str()))
 			error("Unable to load screenshot file");
 
 		byte *Buffer = new Byte[FILE_COPY_BUFFER_SIZE];
@@ -386,7 +388,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 		return false;
 	}
 
-	SavegameInformation & CurSavegameInfo = m_impl->m_SavegameInformations[SlotID];
+	SavegameInformation &CurSavegameInfo = m_impl->m_SavegameInformations[SlotID];
 
 	// Überprüfen, ob der Slot belegt ist.
 	if (!CurSavegameInfo.IsOccupied) {
@@ -398,8 +400,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	// Im Debug-Modus wird dieser Test übersprungen. Für das Testen ist es hinderlich auf die Einhaltung dieser strengen Bedingung zu bestehen,
 	// da sich die Versions-ID bei jeder Codeänderung mitändert.
 #ifndef DEBUG
-	if (!CurSavegameInfo.IsCompatible)
-	{
+	if (!CurSavegameInfo.IsCompatible) {
 		BS_LOG_ERRORLN("Tried to load a savegame (%d) that is not compatible with this engine version.", SlotID);
 		return false;
 	}
@@ -408,7 +409,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	byte *CompressedDataBuffer = new byte[CurSavegameInfo.GamedataLength];
 	byte *UncompressedDataBuffer = new Bytef[CurSavegameInfo.GamedataUncompressedLength];
 
-	File = sfm->openForLoading(GenerateSavegamePath(SlotID));			
+	File = sfm->openForLoading(GenerateSavegamePath(SlotID));
 
 	File->seek(CurSavegameInfo.GamedataOffset);
 	File->read(reinterpret_cast<char *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength);
@@ -422,7 +423,7 @@ bool BS_PersistenceService::LoadGame(unsigned int SlotID) {
 	// Spieldaten dekomprimieren.
 	uLongf UncompressedBufferSize = CurSavegameInfo.GamedataUncompressedLength;
 	if (uncompress(reinterpret_cast<Bytef *>(&UncompressedDataBuffer[0]), &UncompressedBufferSize,
-		reinterpret_cast<Bytef *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength) != Z_OK) {
+	               reinterpret_cast<Bytef *>(&CompressedDataBuffer[0]), CurSavegameInfo.GamedataLength) != Z_OK) {
 		BS_LOG_ERRORLN("Unable to decompress the gamedata from savegame file \"%s\".", CurSavegameInfo.Filename.c_str());
 		delete[] UncompressedDataBuffer;
 		delete[] CompressedDataBuffer;

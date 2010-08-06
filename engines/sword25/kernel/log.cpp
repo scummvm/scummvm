@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -41,18 +41,18 @@ namespace Sword25 {
 
 // Constants
 static const char *BF_LOG_FILENAME = "log.txt";
-static const size_t	LOG_BUFFERSIZE = 1024 * 16;
+static const size_t LOG_BUFFERSIZE = 1024 * 16;
 
 // Logging will take place only when it's activated
 #ifdef BS_ACTIVATE_LOGGING
 
-Common::WriteStream*							BS_Log::_LogFile = NULL;
-bool											BS_Log::_LineBegin = true;
-const char *									BS_Log::_Prefix = NULL;
-const char *									BS_Log::_File = NULL;
-int												BS_Log::_Line = 0;
-bool											BS_Log::_AutoNewline = false;
-Common::Array<BS_Log::LOG_LISTENER_CALLBACK>	BS_Log::_LogListener;
+Common::WriteStream                            *BS_Log::_LogFile = NULL;
+bool                                            BS_Log::_LineBegin = true;
+const char                                     *BS_Log::_Prefix = NULL;
+const char                                     *BS_Log::_File = NULL;
+int                                             BS_Log::_Line = 0;
+bool                                            BS_Log::_AutoNewline = false;
+Common::Array<BS_Log::LOG_LISTENER_CALLBACK>    BS_Log::_LogListener;
 
 bool BS_Log::_CreateLog() {
 	// Open the log file
@@ -109,7 +109,7 @@ void BS_Log::LogPrefix(const char *Prefix, const char *Format, ...) {
 		if (!NextLine || *(NextLine + strlen("\n")) == 0) {
 			_snprintf(ExtFormat, sizeof(ExtFormat), "%s%s", ExtFormat, Format);
 			if (NextLine) _LineBegin = true;
-			break;	
+			break;
 		} else {
 			strncat(ExtFormat, Format, (NextLine - Format) + strlen("\n"));
 			_snprintf(ExtFormat, sizeof(ExtFormat), "%s%s: ", ExtFormat, Prefix);
@@ -117,7 +117,7 @@ void BS_Log::LogPrefix(const char *Prefix, const char *Format, ...) {
 
 		Format = NextLine + strlen("\n");
 	}
-	
+
 	// Create message
 	va_list ArgList;
 	va_start(ArgList, Format);
@@ -140,7 +140,7 @@ void BS_Log::LogDecorated(const char *Format, ...) {
 	char SecondaryPrefix[1024];
 	if (_File && _Line)
 		_snprintf(SecondaryPrefix, sizeof(SecondaryPrefix), "(file: %s, line: %d) - ", _File, _Line);
-	
+
 	// Nachricht zeilenweise ausgeben und an jeden Zeilenanfang das Präfix setzen
 	char *MessageWalker = Message;
 	for (;;) {
@@ -183,7 +183,7 @@ void BS_Log::LogDecorated(const char *Format, ...) {
 	_FlushLog();
 }
 
-int BS_Log::_WriteLog(const char * Message) {
+int BS_Log::_WriteLog(const char *Message) {
 	if (!_LogFile) if (!_CreateLog()) return false;
 
 	Common::Array<LOG_LISTENER_CALLBACK>::iterator Iter = _LogListener.begin();
@@ -207,7 +207,7 @@ void BS_Log_C(const char *Message) {
 
 #else
 
-void BS_Log_C(const char* Message) {};
+void BS_Log_C(const char *Message) {};
 
 #endif
 

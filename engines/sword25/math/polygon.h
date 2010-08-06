@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -49,7 +49,7 @@ namespace Sword25 {
 class BS_Vertex;
 
 /**
-	@brief Eine Polygonklasse.
+    @brief Eine Polygonklasse.
 */
 class BS_Polygon : public BS_Persistable {
 public:
@@ -72,9 +72,9 @@ public:
 
 	/**
 	 * Creaes an object of type #BS_Polygon, and assigns Vertices to it
-	 * @param VertexCount		The number of vertices being passed
-	 * @param Vertecies			An array of BS_Vertex objects representing the vertices in the polygon.
-	 * @remark					The Vertecies that define a polygon must not have any self-intersections.
+	 * @param VertexCount       The number of vertices being passed
+	 * @param Vertecies         An array of BS_Vertex objects representing the vertices in the polygon.
+	 * @remark                  The Vertecies that define a polygon must not have any self-intersections.
 	 * If the polygon does have self-intersections, then an empty polygon object is created.
 	 */
 	BS_Polygon(int VertexCount, const BS_Vertex *Vertecies);
@@ -90,9 +90,9 @@ public:
 	 * The Vertices need to define a polygon must not have self-intersections.
 	 * If a polygon already has verticies, this will re-initialise it with the new list.
 	 *
-	 * @param VertexCount		The number of vertices being passed
-	 * @param Vertecies			An array of BS_Vertex objects representing the vertices in the polygon.
-	 * @return					Returns false if the Vertecies have self-intersections. In this case,
+	 * @param VertexCount       The number of vertices being passed
+	 * @param Vertecies         An array of BS_Vertex objects representing the vertices in the polygon.
+	 * @return                  Returns false if the Vertecies have self-intersections. In this case,
 	 * the object is not initialised.
 	 */
 	bool Init(int VertexCount, const BS_Vertex *Vertecies);
@@ -100,51 +100,51 @@ public:
 	//
 	// ** Exploratory methods **
 	//
-	
+
 	/**
 	 * Checks whether the Vertecies of the polygon are arranged in a clockwise direction.
-	 * @return					Returns true if the Vertecies of the polygon are arranged clockwise or co-planar.
+	 * @return                  Returns true if the Vertecies of the polygon are arranged clockwise or co-planar.
 	 * Returns false if the Vertecies of the polygon are arrange counter-clockwise.
-	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
 	bool IsCW() const;
 
 	/**
 	 * Checks whether the Vertices of the polygon are arranged in a counter-clockwise direction.
-	 * @return					Returns true if the Vertecies of the polygon are arranged counter-clockwise.
+	 * @return                  Returns true if the Vertecies of the polygon are arranged counter-clockwise.
 	 * Returns false if the Vertecies of the polygon are arranged clockwise or co-planar.
-	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
 	bool IsCCW() const;
 
 	/**
 	 * Checks whether the polygon is convex.
-	 * @return					Returns true if the polygon is convex. Returns false if the polygon is concave.
-	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 * @return                  Returns true if the polygon is convex. Returns false if the polygon is concave.
+	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
 	bool IsConvex() const;
 
-	/** 
+	/**
 	 * Checks whether the polygon is concave.
- 	 * @return					Returns true if the polygon is concave. Returns false if the polygon is convex.
-	 * @remark					This method only returns a meaningful result if the polygon has at least three Vertecies.
+	 * @return                  Returns true if the polygon is concave. Returns false if the polygon is convex.
+	 * @remark                  This method only returns a meaningful result if the polygon has at least three Vertecies.
 	 */
 	bool IsConcave() const;
 
 	/**
 	 * Checks whether a point is inside the polygon
-	 * @param Vertex			A Vertex with the co-ordinates of the point to be tested.
-	 * @param BorderBelongsToPolygon	Specifies whether the edge of the polygon should be considered
-	 * @return					Returns true if the point is inside the polygon, false if it is outside.
+	 * @param Vertex            A Vertex with the co-ordinates of the point to be tested.
+	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
+	 * @return                  Returns true if the point is inside the polygon, false if it is outside.
 	 */
 	bool IsPointInPolygon(const BS_Vertex &Vertex, bool BorderBelongsToPolygon = true) const;
 
 	/**
 	 * Checks whether a point is inside the polygon
-	 * @param X					The X position of the point
-	 * @param Y					The Y position of the point
-	 * @param BorderBelongsToPolygon	Specifies whether the edge of the polygon should be considered
-	 * @return					Returns true if the point is inside the polygon, false if it is outside.
+	 * @param X                 The X position of the point
+	 * @param Y                 The Y position of the point
+	 * @param BorderBelongsToPolygon    Specifies whether the edge of the polygon should be considered
+	 * @return                  Returns true if the point is inside the polygon, false if it is outside.
 	 */
 	bool IsPointInPolygon(int X, int Y, bool BorderBelongsToPolygon = true) const;
 
@@ -181,7 +181,7 @@ public:
 
 	/**
 	 * Moves the polygon.
-	 * @param Delta				The vertex around the polygon to be moved.
+	 * @param Delta             The vertex around the polygon to be moved.
 	 */
 	void operator+=(const BS_Vertex &Delta);
 
@@ -201,7 +201,7 @@ private:
 	bool m_IsCW;
 	bool m_IsConvex;
 	BS_Vertex m_Centroid;
-	
+
 	/**
 	 * Computes the centroid of the polygon.
 	 */
@@ -209,24 +209,24 @@ private:
 
 	/**
 	 * Determines how the Vertecies of the polygon are arranged.
-	 * @return					Returns true if the Vertecies are arranged in a clockwise
+	 * @return                  Returns true if the Vertecies are arranged in a clockwise
 	 * direction, otherwise false.
 	 */
 	bool ComputeIsCW() const;
 
 	/**
 	 * Determines whether the polygon is convex or concave.
-	 * @return					Returns true if the polygon is convex, otherwise false.
+	 * @return                  Returns true if the polygon is convex, otherwise false.
 	 */
 	bool ComputeIsConvex() const;
 
 	/**
 	 * Calculates the cross product of three Vertecies
-	 * @param V1				The first Vertex
-	 * @param V2				The second Vertex
-	 * @param V3				The third Vertex
-	 * @return					Returns the cross-product of the three vertecies
-	 * @todo					This method would be better as a method of the BS_Vertex class
+	 * @param V1                The first Vertex
+	 * @param V2                The second Vertex
+	 * @param V3                The third Vertex
+	 * @return                  Returns the cross-product of the three vertecies
+	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
 	int CrossProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
 
@@ -235,17 +235,17 @@ private:
 	 *
 	 * The vectors are spanned by V2->V1 and V2->V3
 	 *
-	 * @param V1				The first Vertex
-	 * @param V2				The second Vertex
-	 * @param V3				The third Vertex
-	 * @return					Returns the dot product of the three Vertecies.
-	 * @todo					This method would be better as a method of the BS_Vertex class
+	 * @param V1                The first Vertex
+	 * @param V2                The second Vertex
+	 * @param V3                The third Vertex
+	 * @return                  Returns the dot product of the three Vertecies.
+	 * @todo                    This method would be better as a method of the BS_Vertex class
 	 */
 	int DotProduct(const BS_Vertex &V1, const BS_Vertex &V2, const BS_Vertex &V3) const;
 
 	/**
 	 * Checks whether the polygon is self-intersecting
-	 * @return					Returns true if the polygon is self-intersecting.
+	 * @return                  Returns true if the polygon is self-intersecting.
 	 * Returns false if the polygon is not self-intersecting.
 	 */
 	bool CheckForSelfIntersection() const;
@@ -253,7 +253,7 @@ private:
 	/**
 	 * Find the vertex of the polygon that is located below the right-most point,
 	 * and returns it's index in the vertex array.
-	 * @return					Returns the index of the vertex at the bottom-right of the polygon.
+	 * @return                  Returns the index of the vertex at the bottom-right of the polygon.
 	 * Returns -1 if the vertex list is empty.
 	 */
 	int FindLRVertexIndex() const;

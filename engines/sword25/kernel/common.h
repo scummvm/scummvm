@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -47,10 +47,10 @@
 
 // Global constants
 #if _DEBUG && !DEBUG
-	#define DEBUG
+#define DEBUG
 #endif
 
-#define BS_ACTIVATE_LOGGING	// When defined, logging is activated
+#define BS_ACTIVATE_LOGGING // When defined, logging is activated
 
 // Engine Includes
 #include "sword25/kernel/memleaks.h"

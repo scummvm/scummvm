@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,7 +45,7 @@ namespace Sword25 {
 
 bool BS_ScummVMWindow::_ClassRegistered = false;
 
-// Constructor / Destructor 
+// Constructor / Destructor
 // ------------------------
 BS_ScummVMWindow::BS_ScummVMWindow(int X, int Y, int Width, int Height, bool Visible) {
 	// Presume that init will fail
@@ -163,133 +163,133 @@ bool BS_ScummVMWindow::WaitForFocus() {
 // Die WindowProc aller Fenster der Klasse
 LRESULT CALLBACK BS_ScummVMWindow::WindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	switch(uMsg)
-	{
-	case WM_PAINT:
-		ValidateRect(hwnd, NULL);
-		break;
-		
-	case WM_DESTROY:
-		// Das Fenster wird zerstört
-		PostQuitMessage(0);
-		break;
+    switch(uMsg)
+    {
+    case WM_PAINT:
+        ValidateRect(hwnd, NULL);
+        break;
 
-	case WM_CLOSE:
-		{
-			BS_Window * WindowPtr = BS_Kernel::GetInstance()->GetWindow();
-			if (WindowPtr) {
-				WindowPtr->SetCloseWanted(true);
-			}
-			break;
-		}
+    case WM_DESTROY:
+        // Das Fenster wird zerstört
+        PostQuitMessage(0);
+        break;
 
-	case WM_KEYDOWN:
-		{
-			// Tastendrücke, die für das Inputmodul interessant sind, werden diesem gemeldet.
-			BS_InputEngine * InputPtr = BS_Kernel::GetInstance()->GetInput();
+    case WM_CLOSE:
+        {
+            BS_Window * WindowPtr = BS_Kernel::GetInstance()->GetWindow();
+            if (WindowPtr) {
+                WindowPtr->SetCloseWanted(true);
+            }
+            break;
+        }
 
-			if (InputPtr)
-			{
-				switch (wParam)
-				{
-				case VK_RETURN:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_ENTER);
-					break;
+    case WM_KEYDOWN:
+        {
+            // Tastendrücke, die für das Inputmodul interessant sind, werden diesem gemeldet.
+            BS_InputEngine * InputPtr = BS_Kernel::GetInstance()->GetInput();
 
-				case VK_LEFT:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_LEFT);
-					break;
+            if (InputPtr)
+            {
+                switch (wParam)
+                {
+                case VK_RETURN:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_ENTER);
+                    break;
 
-				case VK_RIGHT:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_RIGHT);
-					break;
+                case VK_LEFT:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_LEFT);
+                    break;
 
-				case VK_HOME:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_HOME);
-					break;
+                case VK_RIGHT:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_RIGHT);
+                    break;
 
-				case VK_END:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_END);
-					break;
+                case VK_HOME:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_HOME);
+                    break;
 
-				case VK_BACK:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_BACKSPACE);
-					break;
+                case VK_END:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_END);
+                    break;
 
-				case VK_TAB:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_TAB);
-					break;
+                case VK_BACK:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_BACKSPACE);
+                    break;
 
-				case VK_INSERT:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_INSERT);
-					break;
+                case VK_TAB:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_TAB);
+                    break;
 
-				case VK_DELETE:
-					InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_DELETE);
-					break;
-				}
-			}
-			break;
-		}
+                case VK_INSERT:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_INSERT);
+                    break;
 
-	case WM_KEYUP:
-	case WM_SYSKEYUP:
-		// Alle Tastendrücke werden ignoriert, damit Windows per DefWindowProc() nicht darauf
-		// reagieren kann und damit unerwartete Seiteneffekte auslöst.
-		// Zum Beispiel würden ALT und F10 Tastendrücke das "Menü" aktivieren und somit den Message-Loop zum Stillstand bringen.
-		break;
+                case VK_DELETE:
+                    InputPtr->ReportCommand(BS_InputEngine::KEY_COMMAND_DELETE);
+                    break;
+                }
+            }
+            break;
+        }
 
-	case WM_SYSCOMMAND:
-		// Verhindern, dass der Bildschirmschoner aktiviert wird, während das Spiel läuft
-		if (wParam != SC_SCREENSAVE) return DefWindowProc(hwnd,uMsg,wParam,lParam);
-		break;
+    case WM_KEYUP:
+    case WM_SYSKEYUP:
+        // Alle Tastendrücke werden ignoriert, damit Windows per DefWindowProc() nicht darauf
+        // reagieren kann und damit unerwartete Seiteneffekte auslöst.
+        // Zum Beispiel würden ALT und F10 Tastendrücke das "Menü" aktivieren und somit den Message-Loop zum Stillstand bringen.
+        break;
 
-	case WM_CHAR:
-		{
-			unsigned char theChar = static_cast<unsigned char>(wParam & 0xff);
+    case WM_SYSCOMMAND:
+        // Verhindern, dass der Bildschirmschoner aktiviert wird, während das Spiel läuft
+        if (wParam != SC_SCREENSAVE) return DefWindowProc(hwnd,uMsg,wParam,lParam);
+        break;
 
-			// Alle Zeichen, die keine Steuerzeichen sind, werden als Buchstaben dem Input-Service mitgeteilt.
-			if (theChar >= 32)
-			{
-				BS_InputEngine * InputPtr = BS_Kernel::GetInstance()->GetInput();
-				if (InputPtr) InputPtr->ReportCharacter(theChar);
-			}
-		}
-		break;
+    case WM_CHAR:
+        {
+            unsigned char theChar = static_cast<unsigned char>(wParam & 0xff);
 
-	case WM_SETCURSOR:
-		{
-			// Der Systemcursor wird in der Client-Area des Fensters nicht angezeigt, jedoch in der nicht Client-Area, damit der Benutzer das Fenster wie gewohnt
-			// schließen und verschieben kann.
+            // Alle Zeichen, die keine Steuerzeichen sind, werden als Buchstaben dem Input-Service mitgeteilt.
+            if (theChar >= 32)
+            {
+                BS_InputEngine * InputPtr = BS_Kernel::GetInstance()->GetInput();
+                if (InputPtr) InputPtr->ReportCharacter(theChar);
+            }
+        }
+        break;
 
-			// Koordinaten des Cursors in der Client-Area berechnen.
-			POINT pt;
-			GetCursorPos(&pt);
-			ScreenToClient(hwnd, &pt);
+    case WM_SETCURSOR:
+        {
+            // Der Systemcursor wird in der Client-Area des Fensters nicht angezeigt, jedoch in der nicht Client-Area, damit der Benutzer das Fenster wie gewohnt
+            // schließen und verschieben kann.
 
-			// Feststellen, ob sich der Cursor in der Client-Area befindet.
-			// Get client rect
-			RECT rc;
-			GetClientRect(hwnd, &rc);
+            // Koordinaten des Cursors in der Client-Area berechnen.
+            POINT pt;
+            GetCursorPos(&pt);
+            ScreenToClient(hwnd, &pt);
 
-			// See if cursor is in client area
-			if(PtInRect(&rc, pt))
-				// In der Client-Area keinen Cursor anzeigen.
-				SetCursor(NULL);
-			else
-				// Ausserhalb der Client-Area den Cursor anzeigen.
-				SetCursor(LoadCursor(NULL, IDC_ARROW));
+            // Feststellen, ob sich der Cursor in der Client-Area befindet.
+            // Get client rect
+            RECT rc;
+            GetClientRect(hwnd, &rc);
 
-			return TRUE;
-		}
-		break;
+            // See if cursor is in client area
+            if(PtInRect(&rc, pt))
+                // In der Client-Area keinen Cursor anzeigen.
+                SetCursor(NULL);
+            else
+                // Ausserhalb der Client-Area den Cursor anzeigen.
+                SetCursor(LoadCursor(NULL, IDC_ARROW));
 
-	default:
-		// Um alle anderen Vorkommnisse kümmert sich Windows
-		return DefWindowProc(hwnd,uMsg,wParam,lParam);
-	}
+            return TRUE;
+        }
+        break;
 
-	return 0;
+    default:
+        // Um alle anderen Vorkommnisse kümmert sich Windows
+        return DefWindowProc(hwnd,uMsg,wParam,lParam);
+    }
+
+    return 0;
 }
 */
 

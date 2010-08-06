@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -49,10 +49,10 @@
 namespace Lua {
 
 extern "C" {
-	#include "sword25/util/lua/lua.h"
-	#include "sword25/util/lua/lualib.h"
-	#include "sword25/util/lua/lauxlib.h"
-	#include "sword25/util/pluto/pluto.h"
+#include "sword25/util/lua/lua.h"
+#include "sword25/util/lua/lualib.h"
+#include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/pluto/pluto.h"
 }
 
 }
@@ -80,15 +80,17 @@ BS_LuaScriptEngine::~BS_LuaScriptEngine() {
 
 // -----------------------------------------------------------------------------
 
-BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel * KernelPtr) { return new BS_LuaScriptEngine(KernelPtr); }
+BS_Service *BS_LuaScriptEngine_CreateObject(BS_Kernel *KernelPtr) {
+	return new BS_LuaScriptEngine(KernelPtr);
+}
 
 // -----------------------------------------------------------------------------
 
 namespace {
-	int PanicCB(lua_State *L) {
-		BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
-		return 0;
-	}
+int PanicCB(lua_State *L) {
+	BS_LOG_ERRORLN("Lua panic. Error message: %s", lua_isnil(L, -1) ? "" : lua_tostring(L, -1));
+	return 0;
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -103,14 +105,14 @@ bool BS_LuaScriptEngine::Init() {
 
 	// Register panic callback function
 	lua_atpanic(m_State, PanicCB);
-	
+
 	// Error handler for lua_pcall calls
-	// The code below contains a local error handler function 
+	// The code below contains a local error handler function
 	const char ErrorHandlerCode[] =
-		"local function ErrorHandler(message) "
-		"	return message .. '\\n' .. debug.traceback('', 2) "
-		"end "
-		"return ErrorHandler";
+	    "local function ErrorHandler(message) "
+	    "	return message .. '\\n' .. debug.traceback('', 2) "
+	    "end "
+	    "return ErrorHandler";
 
 	// Compile the code
 	if (luaL_loadbuffer(m_State, ErrorHandlerCode, strlen(ErrorHandlerCode), "PCALL ERRORHANDLER") != 0) {
@@ -128,7 +130,7 @@ bool BS_LuaScriptEngine::Init() {
 
 		return false;
 	}
-	
+
 	// Place the error handler function in the Lua registry, and remember the index
 	m_PcallErrorhandlerRegistryIndex = luaL_ref(m_State, LUA_REGISTRYINDEX);
 
@@ -193,19 +195,19 @@ bool BS_LuaScriptEngine::ExecuteString(const Common::String &Code) {
 
 namespace {
 
-	void RemoveForbiddenFunctions(lua_State *L) {
-		static const char *FORBIDDEN_FUNCTIONS[] = {
-			"dofile",
-			0
-		};
+void RemoveForbiddenFunctions(lua_State *L) {
+	static const char *FORBIDDEN_FUNCTIONS[] = {
+		"dofile",
+		0
+	};
 
-		const char ** Iterator = FORBIDDEN_FUNCTIONS;
-		while (*Iterator) {
-			lua_pushnil(L);
-			lua_setfield(L, LUA_GLOBALSINDEX, *Iterator);
-			++Iterator;
-		}
+	const char **Iterator = FORBIDDEN_FUNCTIONS;
+	while (*Iterator) {
+		lua_pushnil(L);
+		lua_setfield(L, LUA_GLOBALSINDEX, *Iterator);
+		++Iterator;
 	}
+}
 }
 
 bool BS_LuaScriptEngine::RegisterStandardLibs() {
@@ -232,8 +234,8 @@ bool BS_LuaScriptEngine::ExecuteBuffer(const char *Data, unsigned int Size, cons
 	// Run buffer contents
 	if (lua_pcall(m_State, 0, 0, -2) != 0) {
 		BS_LOG_ERRORLN("An error occured while executing \"%s\":\n%s.",
-						Name.c_str(),
-						lua_tostring(m_State, -1));
+		               Name.c_str(),
+		               lua_tostring(m_State, -1));
 		lua_pop(m_State, 2);
 
 		return false;
@@ -262,161 +264,160 @@ void BS_LuaScriptEngine::SetCommandLine(const Common::StringArray &CommandLinePa
 // -----------------------------------------------------------------------------
 
 namespace {
-	const char *PERMANENTS_TABLE_NAME = "Permanents";
+const char *PERMANENTS_TABLE_NAME = "Permanents";
 
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	// This array contains the name of global Lua objects that should not be persisted
-	const char *STANDARD_PERMANENTS[] = {
-		"string",
-		"xpcall",
-		"package",
-		"tostring",
-		"print",
-		"os",
-		"unpack",
-		"require",
-		"getfenv",
-		"setmetatable",
-		"next",
-		"assert",
-		"tonumber",
-		"io",
-		"rawequal",
-		"collectgarbage",
-		"getmetatable",
-		"module",
-		"rawset",
-		"warning",
-		"math",
-		"debug",
-		"pcall",
-		"table",
-		"newproxy",
-		"type",
-		"coroutine",
-		"select",
-		"gcinfo",
-		"pairs",
-		"rawget",
-		"loadstring",
-		"ipairs",
-		"_VERSION",
-		"setfenv",
-		"load",
-		"error",
-		"loadfile",
+// This array contains the name of global Lua objects that should not be persisted
+const char *STANDARD_PERMANENTS[] = {
+	"string",
+	"xpcall",
+	"package",
+	"tostring",
+	"print",
+	"os",
+	"unpack",
+	"require",
+	"getfenv",
+	"setmetatable",
+	"next",
+	"assert",
+	"tonumber",
+	"io",
+	"rawequal",
+	"collectgarbage",
+	"getmetatable",
+	"module",
+	"rawset",
+	"warning",
+	"math",
+	"debug",
+	"pcall",
+	"table",
+	"newproxy",
+	"type",
+	"coroutine",
+	"select",
+	"gcinfo",
+	"pairs",
+	"rawget",
+	"loadstring",
+	"ipairs",
+	"_VERSION",
+	"setfenv",
+	"load",
+	"error",
+	"loadfile",
 
-		"pairs_next",
-		"ipairs_next",
-		"pluto",
-		"Cfg",
-		"Translator",
-		"Persistence",
-		"CommandLine",
-		0
-	};
+	"pairs_next",
+	"ipairs_next",
+	"pluto",
+	"Cfg",
+	"Translator",
+	"Persistence",
+	"CommandLine",
+	0
+};
 
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	enum PERMANENT_TABLE_TYPE {
-		PTT_PERSIST,
-		PTT_UNPERSIST
-	};
+enum PERMANENT_TABLE_TYPE {
+	PTT_PERSIST,
+	PTT_UNPERSIST
+};
 
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	bool PushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE TableType) {
-		// Permanents-Table
-		lua_newtable(L);
+bool PushPermanentsTable(lua_State *L, PERMANENT_TABLE_TYPE TableType) {
+	// Permanents-Table
+	lua_newtable(L);
 
-		// All standard permanents are inserted into this table
-		unsigned int Index = 0;
-		while (STANDARD_PERMANENTS[Index]) {
-			// Permanents are placed onto the stack; if it does not exist, it is simply ignored
-			lua_getglobal(L, STANDARD_PERMANENTS[Index]);
-			if (!lua_isnil(L, -1)) {
-				// Name of the element as a unique value on the stack
-				lua_pushstring(L, STANDARD_PERMANENTS[Index]);
-
-				// If it is loaded, then it can be used
-				// In this case, the position of name and object are reversed on the stack
-				if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
-
-				// Make an entry in the table
-				lua_settable(L, -3);
-			}
-			else {
-				// Pop nil value from stack
-				lua_pop(L, 1);
-			}
-
-			++Index;
-		}
-		
-		// All registered C functions to be inserted into the table
-		// BS_LuaBindhelper places in the register a table in which all registered C functions
-		// are stored
-
-		// Table is put on the stack
-		lua_getfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
-
+	// All standard permanents are inserted into this table
+	unsigned int Index = 0;
+	while (STANDARD_PERMANENTS[Index]) {
+		// Permanents are placed onto the stack; if it does not exist, it is simply ignored
+		lua_getglobal(L, STANDARD_PERMANENTS[Index]);
 		if (!lua_isnil(L, -1)) {
-			// Iterate over all elements of the table
-			lua_pushnil(L);
-			while (lua_next(L, -2) != 0) {
-				// Value and index duplicated on the stack and changed in the sequence
-				lua_pushvalue(L, -1);
-				lua_pushvalue(L, -3);
+			// Name of the element as a unique value on the stack
+			lua_pushstring(L, STANDARD_PERMANENTS[Index]);
 
-				// If it is loaded, then it can be used
-				// In this case, the position of name and object are reversed on the stack
-				if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
+			// If it is loaded, then it can be used
+			// In this case, the position of name and object are reversed on the stack
+			if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
 
-				// Make an entry in the results table
-				lua_settable(L, -6);
-
-				// Pop value from the stack. The index is then ready for the next call to lua_next()
-				lua_pop(L, 1);
-			}
+			// Make an entry in the table
+			lua_settable(L, -3);
+		} else {
+			// Pop nil value from stack
+			lua_pop(L, 1);
 		}
 
-		// Pop the C-Permanents table from the stack
-		lua_pop(L, 1);
-
-		// coroutine.yield must be registered in the extra-Permanents table because they
-		// are inactive coroutine C functions on the stack
-
-		// Function coroutine.yield placed on the stack
-		lua_getglobal(L, "coroutine");
-		lua_pushstring(L, "yield");
-		lua_gettable(L, -2);
-
-		// Store coroutine.yield with it's own unique value in the Permanents table
-		lua_pushstring(L, "coroutine.yield");
-
-		if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
-
-		lua_settable(L, -4);
-
-		// Coroutine table is popped from the stack
-		lua_pop(L, 1);
-
-		return true;
+		++Index;
 	}
+
+	// All registered C functions to be inserted into the table
+	// BS_LuaBindhelper places in the register a table in which all registered C functions
+	// are stored
+
+	// Table is put on the stack
+	lua_getfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
+
+	if (!lua_isnil(L, -1)) {
+		// Iterate over all elements of the table
+		lua_pushnil(L);
+		while (lua_next(L, -2) != 0) {
+			// Value and index duplicated on the stack and changed in the sequence
+			lua_pushvalue(L, -1);
+			lua_pushvalue(L, -3);
+
+			// If it is loaded, then it can be used
+			// In this case, the position of name and object are reversed on the stack
+			if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
+
+			// Make an entry in the results table
+			lua_settable(L, -6);
+
+			// Pop value from the stack. The index is then ready for the next call to lua_next()
+			lua_pop(L, 1);
+		}
+	}
+
+	// Pop the C-Permanents table from the stack
+	lua_pop(L, 1);
+
+	// coroutine.yield must be registered in the extra-Permanents table because they
+	// are inactive coroutine C functions on the stack
+
+	// Function coroutine.yield placed on the stack
+	lua_getglobal(L, "coroutine");
+	lua_pushstring(L, "yield");
+	lua_gettable(L, -2);
+
+	// Store coroutine.yield with it's own unique value in the Permanents table
+	lua_pushstring(L, "coroutine.yield");
+
+	if (TableType == PTT_UNPERSIST) lua_insert(L, -2);
+
+	lua_settable(L, -4);
+
+	// Coroutine table is popped from the stack
+	lua_pop(L, 1);
+
+	return true;
+}
 }
 
 // -----------------------------------------------------------------------------
 
 namespace {
-	int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
-		Common::Array<unsigned char> & chunkData = *reinterpret_cast<Common::Array<unsigned char> * >(ud);
-		const unsigned char *buffer = reinterpret_cast<const unsigned char *>(p);
+int Chunkwriter(lua_State *L, const void *p, size_t sz, void *ud) {
+	Common::Array<unsigned char> & chunkData = *reinterpret_cast<Common::Array<unsigned char> * >(ud);
+	const unsigned char *buffer = reinterpret_cast<const unsigned char *>(p);
 
-		while (sz--) chunkData.push_back(*buffer++) ;
+	while (sz--) chunkData.push_back(*buffer++) ;
 
-		return 1;
-	}
+	return 1;
+}
 }
 
 bool BS_LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
@@ -447,66 +448,66 @@ bool BS_LuaScriptEngine::Persist(BS_OutputPersistenceBlock &Writer) {
 // -----------------------------------------------------------------------------
 
 namespace {
-	// -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
 
-	struct ChunkreaderData {
-		void *	BufferPtr;
-		size_t	Size;
-		bool	BufferReturned;
-	};
+struct ChunkreaderData {
+	void   *BufferPtr;
+	size_t  Size;
+	bool    BufferReturned;
+};
 
-	// ------------------------------------------------------------------------
+// ------------------------------------------------------------------------
 
-	const char *Chunkreader(lua_State *L, void *ud, size_t *sz) {
-		ChunkreaderData & cd = *reinterpret_cast<ChunkreaderData *>(ud);
+const char *Chunkreader(lua_State *L, void *ud, size_t *sz) {
+	ChunkreaderData &cd = *reinterpret_cast<ChunkreaderData *>(ud);
 
-		if (!cd.BufferReturned) {
-			cd.BufferReturned = true;
-			*sz = cd.Size;
-			return reinterpret_cast<const char *>(cd.BufferPtr);
-		} else {
-			return 0;
+	if (!cd.BufferReturned) {
+		cd.BufferReturned = true;
+		*sz = cd.Size;
+		return reinterpret_cast<const char *>(cd.BufferPtr);
+	} else {
+		return 0;
+	}
+}
+
+// -------------------------------------------------------------------------
+
+void ClearGlobalTable(lua_State *L, const char **Exceptions) {
+	// Iterate over all elements of the global table
+	lua_pushvalue(L, LUA_GLOBALSINDEX);
+	lua_pushnil(L);
+	while (lua_next(L, -2) != 0) {
+		// Now the value and the index of the current element is on the stack
+		// This value does not interest us, so it is popped from the stack
+		lua_pop(L, 1);
+
+		// Determine whether the item is set to nil, so you want to remove from the global table.
+		// For this will determine whether the element name is a string and is present in
+		// the list of exceptions
+		bool SetElementToNil = true;
+		if (lua_isstring(L, -1)) {
+			const char *IndexString = lua_tostring(L, -1);
+			const char **ExceptionsWalker = Exceptions;
+			while (*ExceptionsWalker) {
+				if (strcmp(IndexString, *ExceptionsWalker) == 0) SetElementToNil = false;
+				++ExceptionsWalker;
+			}
+		}
+
+		// If the above test showed that the item should be removed, it is removed by setting the value to nil.
+		if (SetElementToNil) {
+			lua_pushvalue(L, -1);
+			lua_pushnil(L);
+			lua_settable(L, LUA_GLOBALSINDEX);
 		}
 	}
 
-	// -------------------------------------------------------------------------
+	// Pop the Global table from the stack
+	lua_pop(L, 1);
 
-	void ClearGlobalTable(lua_State *L, const char **Exceptions) {
-		// Iterate over all elements of the global table
-		lua_pushvalue(L, LUA_GLOBALSINDEX);
-		lua_pushnil(L);
-		while (lua_next(L, -2) != 0) {
-			// Now the value and the index of the current element is on the stack
-			// This value does not interest us, so it is popped from the stack
-			lua_pop(L, 1);
-
-			// Determine whether the item is set to nil, so you want to remove from the global table.
-			// For this will determine whether the element name is a string and is present in 
-			// the list of exceptions
-			bool SetElementToNil = true;
-			if (lua_isstring(L, -1)) {
-				const char *IndexString = lua_tostring(L, -1);
-				const char ** ExceptionsWalker = Exceptions;
-				while (*ExceptionsWalker) {
-					if (strcmp(IndexString, *ExceptionsWalker) == 0) SetElementToNil = false;
-					++ExceptionsWalker;
-				}
-			}
-
-			// If the above test showed that the item should be removed, it is removed by setting the value to nil.
-			if (SetElementToNil) {
-				lua_pushvalue(L, -1);
-				lua_pushnil(L);
-				lua_settable(L, LUA_GLOBALSINDEX);
-			}
-		}	
-
-		// Pop the Global table from the stack
-		lua_pop(L, 1);
-
-		// Perform garbage collection, so that all removed elements are deleted
-		lua_gc(L, LUA_GCCOLLECT, 0);
-	}
+	// Perform garbage collection, so that all removed elements are deleted
+	lua_gc(L, LUA_GCCOLLECT, 0);
+}
 }
 
 // -----------------------------------------------------------------------------
@@ -516,7 +517,7 @@ bool BS_LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 	lua_settop(m_State, 0);
 
 	// Permanents table is placed on the stack. This has already happened at this point, because
-	// to create the table all permanents must be accessible. This is the case only for the 
+	// to create the table all permanents must be accessible. This is the case only for the
 	// beginning of the function, because the global table is emptied below
 	PushPermanentsTable(m_State, PTT_UNPERSIST);
 
@@ -572,7 +573,7 @@ bool BS_LuaScriptEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 
 	// The table with the loaded data is popped from the stack
 	lua_pop(m_State, 1);
-	
+
 	// Force garbage collection
 	lua_gc(m_State, LUA_GCCOLLECT, 0);
 

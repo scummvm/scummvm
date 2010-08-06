@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,7 +45,7 @@ class BS_Kernel;
 class BS_ResourceManager;
 
 class BS_Resource {
-friend class BS_ResourceManager;
+	friend class BS_ResourceManager;
 
 public:
 	enum RESOURCE_TYPES {
@@ -60,47 +60,57 @@ public:
 
 	/**
 	 * Prevents the resource from being released.
-	 * @remarks				This method allows a resource to be locked multiple times.
+	 * @remarks             This method allows a resource to be locked multiple times.
 	 **/
-	void AddReference() { ++_RefCount; }	
+	void AddReference() {
+		++_RefCount;
+	}
 
 	/**
 	 * Cancels a previous lock
-	 * @remarks				The resource can still be released more times than it was 'locked', although it is
+	 * @remarks             The resource can still be released more times than it was 'locked', although it is
 	 * not recommended.
 	 **/
 	void Release();
 
 	/**
 	 * Returns the current lock count for the resource
-	 * @return				The current lock count
+	 * @return              The current lock count
 	 **/
-	int GetLockCount() const { return _RefCount; }
+	int GetLockCount() const {
+		return _RefCount;
+	}
 
 	/**
 	 * Returns the absolute path of the given resource
 	 */
-	const Common::String &GetFileName() const { return _FileName; }
+	const Common::String &GetFileName() const {
+		return _FileName;
+	}
 
 	/**
 	 * Returns the hash of the filename of a resource
 	*/
-	unsigned int GetFileNameHash() const { return _FileNameHash; }
+	unsigned int GetFileNameHash() const {
+		return _FileNameHash;
+	}
 
 	/**
 	 * Returns a resource's type
 	 */
-	unsigned int GetType() const { return _Type; }
+	unsigned int GetType() const {
+		return _Type;
+	}
 
 protected:
 	virtual ~BS_Resource() {};
 
 private:
-	Common::String						_FileName;			///< The absolute filename
-	unsigned int						_FileNameHash;		///< The hash value of the filename
-	unsigned int						_RefCount;			///< The number of locks
-	unsigned int						_Type;				///< The type of the resource
-	Common::List<BS_Resource *>::iterator _Iterator;		///< Points to the resource position in the LRU list
+	Common::String                      _FileName;          ///< The absolute filename
+	unsigned int                        _FileNameHash;      ///< The hash value of the filename
+	unsigned int                        _RefCount;          ///< The number of locks
+	unsigned int                        _Type;              ///< The type of the resource
+	Common::List<BS_Resource *>::iterator _Iterator;        ///< Points to the resource position in the LRU list
 };
 
 } // End of namespace Sword25

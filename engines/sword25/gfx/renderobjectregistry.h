@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -60,7 +60,7 @@ class BS_RenderObject;
 
 class BS_RenderObjectRegistry : public BS_ObjectRegistry<BS_RenderObject> {
 public:
-	static BS_RenderObjectRegistry & GetInstance() {
+	static BS_RenderObjectRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_RenderObjectRegistry);
 		return *m_InstancePtr.get();
 	}
@@ -68,8 +68,8 @@ public:
 	virtual ~BS_RenderObjectRegistry() {}
 
 private:
-	virtual void LogErrorLn(const char * Message) const;
-	virtual void LogWarningLn(const char * Message) const;
+	virtual void LogErrorLn(const char *Message) const;
+	virtual void LogWarningLn(const char *Message) const;
 
 	static std::auto_ptr<BS_RenderObjectRegistry> m_InstancePtr;
 };

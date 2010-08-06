@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -110,7 +110,7 @@ bool BS_RegionRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(RegionCount);
 
 	// Restore all the BS_Regions objects
-	for (unsigned int i = 0; i < RegionCount; ++i) 	{
+	for (unsigned int i = 0; i < RegionCount; ++i)  {
 		// Handle read
 		unsigned int Handle;
 		Reader.Read(Handle);

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -32,7 +32,7 @@
  *
  */
 
-#ifndef	SWORD25_PERSISTENCEBLOCK_H
+#ifndef SWORD25_PERSISTENCEBLOCK_H
 #define SWORD25_PERSISTENCEBLOCK_H
 
 // -----------------------------------------------------------------------------
@@ -49,12 +49,20 @@ namespace Sword25 {
 
 class BS_PersistenceBlock {
 public:
-	static unsigned int GetSInt32Size() { return sizeof(signed int) + sizeof(unsigned char); }
-	static unsigned int GetUInt32Size() { return sizeof(unsigned int) + sizeof(unsigned char); }
-	static unsigned int GetFloat32Size() { return sizeof(float) + sizeof(unsigned char); }
-	static unsigned int GetBoolSize() { return sizeof(unsigned char) + sizeof(unsigned char); }
-	static unsigned int GetStringSize(const Common::String &String) { 
-		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(unsigned char)); 
+	static unsigned int GetSInt32Size() {
+		return sizeof(signed int) + sizeof(unsigned char);
+	}
+	static unsigned int GetUInt32Size() {
+		return sizeof(unsigned int) + sizeof(unsigned char);
+	}
+	static unsigned int GetFloat32Size() {
+		return sizeof(float) + sizeof(unsigned char);
+	}
+	static unsigned int GetBoolSize() {
+		return sizeof(unsigned char) + sizeof(unsigned char);
+	}
+	static unsigned int GetStringSize(const Common::String &String) {
+		return static_cast<unsigned int>(sizeof(unsigned int) + String.size() + sizeof(unsigned char));
 	}
 
 protected:
@@ -90,7 +98,7 @@ protected:
 private:
 	static bool IsBigEndian() {
 		unsigned int Dummy = 1;
-		unsigned char * DummyPtr = reinterpret_cast<unsigned char *>(&Dummy);
+		unsigned char *DummyPtr = reinterpret_cast<unsigned char *>(&Dummy);
 		return DummyPtr[0] == 0;
 	}
 
@@ -103,7 +111,7 @@ private:
 
 	static void ReverseByteOrder(void *Ptr) {
 		// Reverses the byte order of the 32-bit word pointed to by Ptr
-		unsigned char * CharPtr = static_cast<unsigned char *>(Ptr);
+		unsigned char *CharPtr = static_cast<unsigned char *>(Ptr);
 		Swap(CharPtr[0], CharPtr[3]);
 		Swap(CharPtr[1], CharPtr[2]);
 	}

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -43,11 +43,11 @@ namespace Lua {
 
 extern "C"
 {
-	#include "sword25/util/lua/lua.h"
-	#include "sword25/util/lua/lauxlib.h"
+#include "sword25/util/lua/lua.h"
+#include "sword25/util/lua/lauxlib.h"
 }
 
-const char * CALLBACKTABLE_NAME = "__CALLBACKS";
+const char *CALLBACKTABLE_NAME = "__CALLBACKS";
 
 }
 
@@ -88,7 +88,7 @@ void BS_LuaCallback::RegisterCallbackFunction(lua_State *L, unsigned int ObjectH
 
 void BS_LuaCallback::UnregisterCallbackFunction(lua_State *L, unsigned int ObjectHandle) {
 	BS_ASSERT(lua_isfunction(L, -1));
-	EnsureObjectCallbackTableExists(L,ObjectHandle);
+	EnsureObjectCallbackTableExists(L, ObjectHandle);
 
 	// Iterate over all elements of the object callback table and remove the function from it
 	lua_pushnil(L);
@@ -138,8 +138,7 @@ void BS_LuaCallback::InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHa
 		// The value of the current element is at the top of the stack, including the index
 
 		// If the value is a function, execute it
-		if (lua_type(L, -1) == LUA_TFUNCTION)
-		{
+		if (lua_type(L, -1) == LUA_TFUNCTION) {
 			// Pre-Function Call
 			// Derived classes can function in this parameter onto the stack.
 			// The return value indicates the number of parameters
@@ -153,9 +152,7 @@ void BS_LuaCallback::InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHa
 				// Pop error message from the stack
 				lua_pop(L, 1);
 			}
-		}
-		else
-		{
+		} else {
 			// Pop value from the stack. The index is then ready for the next call to lua_next()
 			lua_pop(L, 1);
 		}

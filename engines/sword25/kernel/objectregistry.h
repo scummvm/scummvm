@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -150,20 +150,22 @@ public:
 protected:
 	// FIXME: I'm not entirely sure my current hash function is legitimate
 	struct ClassPointer_EqualTo {
-		bool operator()(const T *x, const T *y) const { return x == y; }
+		bool operator()(const T *x, const T *y) const {
+			return x == y;
+		}
 	};
 	struct ClassPointer_Hash {
-		uint operator()(const T *x) const { 
+		uint operator()(const T *x) const {
 			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
 		}
 	};
 
-	typedef Common::HashMap<unsigned int, T *>	HANDLE2PTR_MAP;
+	typedef Common::HashMap<unsigned int, T *>  HANDLE2PTR_MAP;
 	typedef Common::HashMap<T *, unsigned int, ClassPointer_Hash, ClassPointer_EqualTo> PTR2HANDLE_MAP;
 
-	HANDLE2PTR_MAP	m_Handle2PtrMap;
-	PTR2HANDLE_MAP	m_Ptr2HandleMap;
-	unsigned int	m_NextHandle;
+	HANDLE2PTR_MAP  m_Handle2PtrMap;
+	PTR2HANDLE_MAP  m_Ptr2HandleMap;
+	unsigned int    m_NextHandle;
 
 	// -----------------------------------------------------------------------------
 

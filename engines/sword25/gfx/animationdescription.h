@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -49,8 +49,7 @@ namespace Sword25 {
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_AnimationDescription : public BS_Persistable
-{
+class BS_AnimationDescription : public BS_Persistable {
 protected:
 	BS_AnimationDescription() :
 		m_AnimationType(BS_Animation::AT_LOOP),
@@ -62,46 +61,57 @@ protected:
 	{};
 
 public:
-	struct Frame
-	{
+	struct Frame {
 		// Die Hotspot-Angabe bezieht sich auf das ungeflippte Bild!!
-		int			HotspotX;
-		int			HotspotY;
-		bool		FlipV;
-		bool		FlipH;
-		Common::String	FileName;
-		Common::String	Action;
+		int         HotspotX;
+		int         HotspotY;
+		bool        FlipV;
+		bool        FlipH;
+		Common::String  FileName;
+		Common::String  Action;
 	};
 
 	// -----------------------------------------------------------------------------
 	// Abstrakte Methoden
 	// -----------------------------------------------------------------------------
-	
-	virtual const Frame &	GetFrame(unsigned int Index) const = 0;
-	virtual unsigned int	GetFrameCount() const = 0;
-	virtual void			Unlock() = 0;
+
+	virtual const Frame    &GetFrame(unsigned int Index) const = 0;
+	virtual unsigned int    GetFrameCount() const = 0;
+	virtual void            Unlock() = 0;
 
 	// -----------------------------------------------------------------------------
 	// Getter Methoden
 	// -----------------------------------------------------------------------------
-	
-	BS_Animation::ANIMATION_TYPES	GetAnimationType() const { return m_AnimationType; }
-	int								GetFPS() const { return m_FPS; }
-	int								GetMillisPerFrame() const { return m_MillisPerFrame; }
-	bool							IsScalingAllowed() const { return m_ScalingAllowed; }
-	bool							IsAlphaAllowed() const { return m_AlphaAllowed; }
-	bool							IsColorModulationAllowed() const { return m_ColorModulationAllowed; }
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	BS_Animation::ANIMATION_TYPES   GetAnimationType() const {
+		return m_AnimationType;
+	}
+	int                             GetFPS() const {
+		return m_FPS;
+	}
+	int                             GetMillisPerFrame() const {
+		return m_MillisPerFrame;
+	}
+	bool                            IsScalingAllowed() const {
+		return m_ScalingAllowed;
+	}
+	bool                            IsAlphaAllowed() const {
+		return m_AlphaAllowed;
+	}
+	bool                            IsColorModulationAllowed() const {
+		return m_ColorModulationAllowed;
+	}
+
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
-	BS_Animation::ANIMATION_TYPES	m_AnimationType;
-	int								m_FPS;
-	int								m_MillisPerFrame;
-	bool							m_ScalingAllowed;
-	bool							m_AlphaAllowed;
-	bool							m_ColorModulationAllowed;
+	BS_Animation::ANIMATION_TYPES   m_AnimationType;
+	int                             m_FPS;
+	int                             m_MillisPerFrame;
+	bool                            m_ScalingAllowed;
+	bool                            m_AlphaAllowed;
+	bool                            m_ColorModulationAllowed;
 };
 
 } // End of namespace Sword25

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -44,8 +44,8 @@ class BS_Persistable {
 public:
 	virtual ~BS_Persistable() {};
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer) = 0;
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader) = 0;
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer) = 0;
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader) = 0;
 };
 
 } // End of namespace Sword25

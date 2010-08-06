@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -48,22 +48,26 @@ namespace Sword25 {
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class BS_Panel : public BS_RenderObject
-{
-friend class BS_RenderObject;
+class BS_Panel : public BS_RenderObject {
+	friend class BS_RenderObject;
 
 private:
 	BS_Panel(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, int Width, int Height, unsigned int Color);
-	BS_Panel(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	BS_Panel(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	virtual ~BS_Panel();
 
-	unsigned int	GetColor() const { return m_Color; }
-	void			SetColor(unsigned int Color) { m_Color = Color; ForceRefresh(); }
+	unsigned int    GetColor() const {
+		return m_Color;
+	}
+	void            SetColor(unsigned int Color) {
+		m_Color = Color;
+		ForceRefresh();
+	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
 	virtual bool DoRender();

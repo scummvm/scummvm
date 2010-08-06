@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -42,8 +42,7 @@
 
 // -----------------------------------------------------------------------------
 
-BS_SoundEngine::BS_SoundEngine(BS_Kernel * pKernel) : BS_ResourceService(pKernel)
-{
+BS_SoundEngine::BS_SoundEngine(BS_Kernel *pKernel) : BS_ResourceService(pKernel) {
 	if (!_RegisterScriptBindings())
 		BS_LOG_ERRORLN("Script bindings could not be registered.");
 	else

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,31 +54,30 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_DynamicBitmap : public BS_Bitmap
-{
-friend class BS_RenderObject;
+class BS_DynamicBitmap : public BS_Bitmap {
+	friend class BS_RenderObject;
 
 public:
 	virtual ~BS_DynamicBitmap();
 
 	virtual unsigned int GetPixel(int X, int Y) const;
 
-	virtual bool	SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool    SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 
-	virtual bool	IsScalingAllowed() const;
-	virtual bool	IsAlphaAllowed() const;
-	virtual	bool	IsColorModulationAllowed() const;
-	virtual bool	IsSetContentAllowed() const;
+	virtual bool    IsScalingAllowed() const;
+	virtual bool    IsAlphaAllowed() const;
+	virtual bool    IsColorModulationAllowed() const;
+	virtual bool    IsSetContentAllowed() const;
 
-	virtual bool	Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool	Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
-	virtual bool	DoRender();
+	virtual bool    DoRender();
 
 private:
 	BS_DynamicBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Width, unsigned int Height);
-	BS_DynamicBitmap(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	BS_DynamicBitmap(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
 	bool CreateGLImage(unsigned int Width, unsigned int Height);
 

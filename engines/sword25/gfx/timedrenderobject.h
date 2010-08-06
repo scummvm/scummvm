@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,21 +54,20 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 /**
-	@brief 
+    @brief
 */
 
-class BS_TimedRenderObject : public BS_RenderObject
-{
+class BS_TimedRenderObject : public BS_RenderObject {
 public:
 	BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle = 0);
 	~BS_TimedRenderObject();
 
 	/**
-		@brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.
+	    @brief Teilt dem Objekt mit, dass ein neuer Frame begonnen wird.
 
-		Diese Methode wird jeden Frame an jedem BS_TimedRenderObject aufgerufen um diesen zu ermöglichen
-		ihren Zustand Zeitabhängig zu verändern (z.B. Animationen).<br>
-		@param int TimeElapsed gibt an wie viel Zeit (in Microsekunden) seit dem letzten Frame vergangen ist.
+	    Diese Methode wird jeden Frame an jedem BS_TimedRenderObject aufgerufen um diesen zu ermöglichen
+	    ihren Zustand Zeitabhängig zu verändern (z.B. Animationen).<br>
+	    @param int TimeElapsed gibt an wie viel Zeit (in Microsekunden) seit dem letzten Frame vergangen ist.
 	*/
 	virtual void FrameNotification(int TimeElapsed) = 0;
 };

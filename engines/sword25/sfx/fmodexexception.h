@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,21 +45,19 @@
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_FMODExException
-{
+class BS_FMODExException {
 public:
-	BS_FMODExException(const char * Function_, FMOD_RESULT Result_) :
+	BS_FMODExException(const char *Function_, FMOD_RESULT Result_) :
 		Function(Function_),
 		Result(Result_) {}
 
-	  const char *	Function;
-	  FMOD_RESULT	Result;
+	const char   *Function;
+	FMOD_RESULT   Result;
 
-	  void Log()
-	  {
-		  BS_LOG_ERROR("Call to %s failed.", Function);
-		  BS_LOGLN(" FMOD error: %s(%d)", FMOD_ErrorString(Result), Result);
-	  }
+	void Log() {
+		BS_LOG_ERROR("Call to %s failed.", Function);
+		BS_LOGLN(" FMOD error: %s(%d)", FMOD_ErrorString(Result), Result);
+	}
 };
 
 #endif

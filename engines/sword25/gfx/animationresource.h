@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -63,34 +63,54 @@ class BS_PackageManager;
 // Class Definition
 // -----------------------------------------------------------------------------
 
-class BS_AnimationResource : public BS_Resource, public BS_AnimationDescription
-{
+class BS_AnimationResource : public BS_Resource, public BS_AnimationDescription {
 public:
-	BS_AnimationResource(const Common::String & FileName);
+	BS_AnimationResource(const Common::String &FileName);
 	virtual ~BS_AnimationResource();
 
-	virtual const Frame &	GetFrame(unsigned int Index) const { BS_ASSERT(Index < m_Frames.size()); return m_Frames[Index]; }
-	virtual unsigned int	GetFrameCount() const { return m_Frames.size(); }
-	virtual void			Unlock() { Release(); }
+	virtual const Frame    &GetFrame(unsigned int Index) const {
+		BS_ASSERT(Index < m_Frames.size());
+		return m_Frames[Index];
+	}
+	virtual unsigned int    GetFrameCount() const {
+		return m_Frames.size();
+	}
+	virtual void            Unlock() {
+		Release();
+	}
 
-	BS_Animation::ANIMATION_TYPES	GetAnimationType() const { return m_AnimationType; }
-	int								GetFPS() const { return m_FPS; }
-	int								GetMillisPerFrame() const { return m_MillisPerFrame; }
-	bool							IsScalingAllowed() const { return m_ScalingAllowed; }
-	bool							IsAlphaAllowed() const { return m_AlphaAllowed; }
-	bool							IsColorModulationAllowed() const { return m_ColorModulationAllowed; }
-	bool							IsValid() const { return m_Valid; }
+	BS_Animation::ANIMATION_TYPES   GetAnimationType() const {
+		return m_AnimationType;
+	}
+	int                             GetFPS() const {
+		return m_FPS;
+	}
+	int                             GetMillisPerFrame() const {
+		return m_MillisPerFrame;
+	}
+	bool                            IsScalingAllowed() const {
+		return m_ScalingAllowed;
+	}
+	bool                            IsAlphaAllowed() const {
+		return m_AlphaAllowed;
+	}
+	bool                            IsColorModulationAllowed() const {
+		return m_ColorModulationAllowed;
+	}
+	bool                            IsValid() const {
+		return m_Valid;
+	}
 
 private:
-	bool							m_Valid;
+	bool                            m_Valid;
 
-	Common::Array<Frame>				m_Frames;
+	Common::Array<Frame>                m_Frames;
 
 	//@{
 	/** @name Dokument-Parser Methoden */
 
-	bool ParseAnimationTag(TiXmlElement& AnimationTag, int& FPS, BS_Animation::ANIMATION_TYPES & AnimationType);
-	bool ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, BS_PackageManager& PackageManager);
+	bool ParseAnimationTag(TiXmlElement &AnimationTag, int &FPS, BS_Animation::ANIMATION_TYPES &AnimationType);
+	bool ParseFrameTag(TiXmlElement &FrameTag, Frame &Frame, BS_PackageManager &PackageManager);
 
 	//@}
 

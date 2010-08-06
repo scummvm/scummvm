@@ -54,8 +54,12 @@ public:
 	PathElement() { }
 	PathElement(Common::String::const_iterator Begin, Common::String::const_iterator End) : m_Begin(Begin), m_End(End) {}
 
-	Common::String::const_iterator GetBegin() const { return m_Begin; }
-	Common::String::const_iterator GetEnd() const { return m_End; }
+	Common::String::const_iterator GetBegin() const {
+		return m_Begin;
+	}
+	Common::String::const_iterator GetEnd() const {
+		return m_End;
+	}
 
 private:
 	Common::String::const_iterator m_Begin;
@@ -72,7 +76,7 @@ private:
 		PathElementArray MountPath;
 
 		ArchiveEntry(Common::Archive *Archive_, const PathElementArray &MountPath_):
-				Archive(Archive_), MountPath(MountPath_) {
+			Archive(Archive_), MountPath(MountPath_) {
 		}
 		~ArchiveEntry() {
 			delete Archive;
@@ -85,13 +89,13 @@ private:
 
 	Common::FSNode GetFSNode(const Common::String &FileName);
 public:
-	BS_ScummVMPackageManager(BS_Kernel * KernelPtr);
+	BS_ScummVMPackageManager(BS_Kernel *KernelPtr);
 	virtual ~BS_ScummVMPackageManager();
 
 	virtual bool LoadPackage(const Common::String &FileName, const Common::String &MountPosition);
 	virtual bool LoadDirectoryAsPackage(const Common::String &DirectoryName, const Common::String &MountPosition);
 	virtual void *GetFile(const Common::String &FileName, unsigned int *FileSizePtr = 0);
-	virtual	Common::String GetCurrentDirectory();
+	virtual Common::String GetCurrentDirectory();
 	virtual bool ChangeDirectory(const Common::String &Directory);
 	virtual Common::String GetAbsolutePath(const Common::String &FileName);
 	virtual FileSearch *CreateSearch(const Common::String &Filter, const Common::String &Path, unsigned int TypeFilter = FT_DIRECTORY | FT_FILE);

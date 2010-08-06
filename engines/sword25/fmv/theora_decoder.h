@@ -34,7 +34,7 @@
 #include <vorbis/codec.h>
 
 namespace Common {
-	class SeekableReadStream;
+class SeekableReadStream;
 }
 
 namespace Sword25 {
@@ -65,16 +65,28 @@ public:
 	 */
 	Graphics::Surface *decodeNextFrame();
 
-	bool isVideoLoaded() const { return _fileStream != 0; }
-	uint16 getWidth() const { return _surface->w; }
-	uint16 getHeight() const { return _surface->h; }
-	uint32 getFrameCount() const { return _frameCount; }
-	Graphics::PixelFormat getPixelFormat() const { return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 0, 0, 0); }
+	bool isVideoLoaded() const {
+		return _fileStream != 0;
+	}
+	uint16 getWidth() const {
+		return _surface->w;
+	}
+	uint16 getHeight() const {
+		return _surface->h;
+	}
+	uint32 getFrameCount() const {
+		return _frameCount;
+	}
+	Graphics::PixelFormat getPixelFormat() const {
+		return Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 0, 0, 0);
+	}
 
 	uint32 getElapsedTime() const;
 
 protected:
-	Common::Rational getFrameRate() const { return _frameRate; }
+	Common::Rational getFrameRate() const {
+		return _frameRate;
+	}
 
 private:
 	void queuePage(ogg_page *page);

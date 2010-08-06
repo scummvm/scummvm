@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -46,9 +46,9 @@ namespace Sword25 {
 // Constructor / Destructor
 // -----------------------------------------------------------------------------
 
-BS_InputPersistenceBlock::BS_InputPersistenceBlock(const void * Data, unsigned int DataLength) :
-		m_Data(static_cast<const unsigned char *>(Data), DataLength),
-		m_ErrorState(NONE) {
+BS_InputPersistenceBlock::BS_InputPersistenceBlock(const void *Data, unsigned int DataLength) :
+	m_Data(static_cast<const unsigned char *>(Data), DataLength),
+	m_ErrorState(NONE) {
 	m_Iter = m_Data.begin();
 }
 
@@ -118,7 +118,7 @@ void BS_InputPersistenceBlock::Read(bool &Value) {
 
 void BS_InputPersistenceBlock::Read(Common::String &Value) {
 	Value = "";
-	
+
 	if (CheckMarker(STRING_MARKER)) {
 		unsigned int Size;
 		Read(Size);
@@ -146,7 +146,7 @@ void BS_InputPersistenceBlock::Read(Common::Array<unsigned char> &Value) {
 
 // -----------------------------------------------------------------------------
 
-void BS_InputPersistenceBlock::RawRead(void * DestPtr, size_t Size) {
+void BS_InputPersistenceBlock::RawRead(void *DestPtr, size_t Size) {
 	if (CheckBlockSize(Size)) {
 		memcpy(DestPtr, &*m_Iter, Size);
 		m_Iter += Size;

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -32,7 +32,7 @@
  *
  */
 
-#ifndef	SWORD25_OUTPUTPERSISTENCEBLOCK_H
+#ifndef SWORD25_OUTPUTPERSISTENCEBLOCK_H
 #define SWORD25_OUTPUTPERSISTENCEBLOCK_H
 
 // -----------------------------------------------------------------------------
@@ -59,8 +59,12 @@ public:
 	void Write(const Common::String &String);
 	void Write(const void *BufferPtr, size_t Size);
 
-	const void *GetData() const { return &m_Data[0]; }
-	unsigned int GetDataSize() const { return m_Data.size(); }
+	const void *GetData() const {
+		return &m_Data[0];
+	}
+	unsigned int GetDataSize() const {
+		return m_Data.size();
+	}
 
 private:
 	void WriteMarker(unsigned char Marker);

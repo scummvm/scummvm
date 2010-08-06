@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -53,54 +53,47 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct
-{
-	unsigned int		address;
-	unsigned int		size;
-	std::string			file;
-	unsigned int		line;
+typedef struct {
+	unsigned int        address;
+	unsigned int        size;
+	std::string         file;
+	unsigned int        line;
 } ALLOC_INFO;
 
-static const char * MEMLEAK_LOG_FILE = "memory_leaks.txt";
+static const char *MEMLEAK_LOG_FILE = "memory_leaks.txt";
 static const unsigned int BUCKET_COUNT = 1021;
 std::vector< std::vector<ALLOC_INFO> > TrackData(BUCKET_COUNT);
 
 static unsigned int TotalSize = 0;
 
 // Diese Klasse stellt sicher, dass beim Programmende, das Memory-Leak Log geschrieben wird.
-static class LeakDumper
-{
+static class LeakDumper {
 public:
-	LeakDumper() : OutputFilename(BS_FileSystemUtil::GetInstance().GetUserdataDirectory() + "\\" + MEMLEAK_LOG_FILE)
-	{
+	LeakDumper() : OutputFilename(BS_FileSystemUtil::GetInstance().GetUserdataDirectory() + "\\" + MEMLEAK_LOG_FILE) {
 		// Sicherstellen, dass das Ausgabeverzeichnis für die Datei existiert.
 		BS_FileSystemUtil::GetInstance().CreateDirectory(BS_FileSystemUtil::GetInstance().GetUserdataDirectory());
 	}
 
-	~LeakDumper()
-	{
+	~LeakDumper() {
 		DumpUnfreed(OutputFilename.c_str());
 	}
 
 	std::string OutputFilename;
 } LeakDumperInstance;
 
-void DumpUnfreed(const char * OutputFilename)
-{
-	FILE * Log = fopen(OutputFilename, "w");
+void DumpUnfreed(const char *OutputFilename) {
+	FILE *Log = fopen(OutputFilename, "w");
 	fputs("MEMORY LEAK REPORT:\n----------------------\n", Log);
 	std::vector< std::vector<ALLOC_INFO> >::iterator BucketIter = TrackData.begin();
-	for (; BucketIter != TrackData.end(); ++BucketIter)
-	{
+	for (; BucketIter != TrackData.end(); ++BucketIter) {
 		std::vector<ALLOC_INFO>::iterator Iter = (*BucketIter).begin();
-		for (; Iter != (*BucketIter).end(); ++Iter)
-		{
-			ALLOC_INFO & CurItem = (*Iter);
+		for (; Iter != (*BucketIter).end(); ++Iter) {
+			ALLOC_INFO &CurItem = (*Iter);
 			fprintf(Log, "%-50s LINE:%d ADDRESS:0x%x SIZE:%d\n",
-					CurItem.file.c_str(),
-					CurItem.line,
-					CurItem.address,
-					CurItem.size);
+			        CurItem.file.c_str(),
+			        CurItem.line,
+			        CurItem.address,
+			        CurItem.size);
 		}
 	}
 
@@ -109,8 +102,7 @@ void DumpUnfreed(const char * OutputFilename)
 	fclose(Log);
 }
 
-void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsigned int lnum)
-{
+void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsigned int lnum) {
 	std::vector<ALLOC_INFO> & CurBucket = TrackData[(addr >> 3) % BUCKET_COUNT];
 	ALLOC_INFO Info;
 	Info.address = addr;
@@ -122,18 +114,14 @@ void AddTrack(unsigned int addr,  unsigned int asize,  const char *fname, unsign
 	TotalSize += asize;
 }
 
-void RemoveTrack(unsigned int addr)
-{
-	if (addr != 0 && TrackData.size() == BUCKET_COUNT)
-	{
+void RemoveTrack(unsigned int addr) {
+	if (addr != 0 && TrackData.size() == BUCKET_COUNT) {
 		std::vector<ALLOC_INFO> & CurBucket = TrackData[(addr >> 3) % BUCKET_COUNT];
 		std::vector<ALLOC_INFO>::iterator Iter = CurBucket.begin();
-		for (; Iter != CurBucket.end(); ++Iter)
-		{
-			if ((*Iter).address == addr)
-			{
+		for (; Iter != CurBucket.end(); ++Iter) {
+			if ((*Iter).address == addr) {
 				TotalSize -= (*Iter).size;
-				
+
 				std::swap(*Iter, CurBucket.back());
 				CurBucket.pop_back();
 				return;

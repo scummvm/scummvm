@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -50,38 +50,33 @@ namespace Sword25 {
 
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	unsigned int FindEmbeddedPNG(const char * FileDataPtr, unsigned int FileSize)
-	{
-		// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
-		istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<unsigned int>(512), FileSize)));
+namespace {
+unsigned int FindEmbeddedPNG(const char *FileDataPtr, unsigned int FileSize) {
+	// Einen Stringstream mit dem Anfang der Datei intialisieren. 512 Byte sollten hierfür genügen.
+	istringstream StringStream(string(FileDataPtr, FileDataPtr + min(static_cast<unsigned int>(512), FileSize)));
 
-		// Headerinformationen der Spielstandes einlesen.
-		string Marker, VersionID;
-		unsigned int CompressedGamedataSize, UncompressedGamedataSize;
-		StringStream >> Marker >> VersionID >> CompressedGamedataSize >> UncompressedGamedataSize;
-		if (!StringStream.good()) return 0;
+	// Headerinformationen der Spielstandes einlesen.
+	string Marker, VersionID;
+	unsigned int CompressedGamedataSize, UncompressedGamedataSize;
+	StringStream >> Marker >> VersionID >> CompressedGamedataSize >> UncompressedGamedataSize;
+	if (!StringStream.good()) return 0;
 
-		// Testen, ob wir tatsächlich einen Spielstand haben.
-		if (Marker == "BS25SAVEGAME")
-		{
-			// Offset zum PNG innerhalb des Spielstandes berechnen und zurückgeben.
-			return static_cast<unsigned int>(StringStream.tellg()) + CompressedGamedataSize + 1;
-		}
-
-		return 0;
+	// Testen, ob wir tatsächlich einen Spielstand haben.
+	if (Marker == "BS25SAVEGAME") {
+		// Offset zum PNG innerhalb des Spielstandes berechnen und zurückgeben.
+		return static_cast<unsigned int>(StringStream.tellg()) + CompressedGamedataSize + 1;
 	}
+
+	return 0;
+}
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_B25SLoader::IsCorrectImageFormat(const char * FileDataPtr, unsigned int FileSize)
-{
+bool BS_B25SLoader::IsCorrectImageFormat(const char *FileDataPtr, unsigned int FileSize) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
-	if (PNGOffset > 0)
-	{
+	if (PNGOffset > 0) {
 		return BS_PNGLoader::DoIsCorrectImageFormat(FileDataPtr + PNGOffset, FileSize - PNGOffset);
 	}
 
@@ -90,13 +85,11 @@ bool BS_B25SLoader::IsCorrectImageFormat(const char * FileDataPtr, unsigned int 
 
 // -----------------------------------------------------------------------------
 
-bool BS_B25SLoader::DecodeImage(const char * FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
-								int & Width, int & Height, int & Pitch)
-{
+bool BS_B25SLoader::DecodeImage(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS ColorFormat, char * & UncompressedDataPtr,
+                                int &Width, int &Height, int &Pitch) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
-	if (PNGOffset > 0)
-	{
+	if (PNGOffset > 0) {
 		return BS_PNGLoader::DoDecodeImage(FileDataPtr + PNGOffset, FileSize - PNGOffset, ColorFormat, UncompressedDataPtr, Width, Height, Pitch);
 	}
 
@@ -105,12 +98,10 @@ bool BS_B25SLoader::DecodeImage(const char * FileDataPtr, unsigned int FileSize,
 
 // -----------------------------------------------------------------------------
 
-bool BS_B25SLoader::ImageProperties(const char * FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS & ColorFormat, int & Width, int & Height)
-{
+bool BS_B25SLoader::ImageProperties(const char *FileDataPtr, unsigned int FileSize, BS_GraphicEngine::COLOR_FORMATS &ColorFormat, int &Width, int &Height) {
 	// PNG innerhalb des Spielstandes finden und den Methodenaufruf zu BS_PNGLoader weiterreichen.
 	unsigned int PNGOffset = FindEmbeddedPNG(FileDataPtr, FileSize);
-	if (PNGOffset > 0)
-	{
+	if (PNGOffset > 0) {
 		return BS_PNGLoader::DoImageProperties(FileDataPtr + PNGOffset, FileSize - PNGOffset, ColorFormat, Width, Height);
 	}
 

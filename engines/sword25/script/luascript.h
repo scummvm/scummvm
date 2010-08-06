@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -75,44 +75,46 @@ public:
 
 	/**
 	 * Initialises the scripting engine
-	 * @return				Returns true if successful, otherwise false.
+	 * @return              Returns true if successful, otherwise false.
 	*/
 	virtual bool Init();
 
 	/**
 	 * Loads a script file and executes it
-	 * @param FileName		The filename of the script
-	 * @return				Returns true if successful, otherwise false.
+	 * @param FileName      The filename of the script
+	 * @return              Returns true if successful, otherwise false.
 	 */
 	virtual bool ExecuteFile(const Common::String &FileName);
 
 	/**
 	 * Execute a string of script code
-	 * @param Code			A string of script code
-	 * @return				Returns true if successful, otherwise false.
+	 * @param Code          A string of script code
+	 * @return              Returns true if successful, otherwise false.
 	 */
 	virtual bool ExecuteString(const Common::String &Code);
 
 	/**
 	 * Returns a pointer to the main object of the scripting language
-	 * @remark				Using this method breaks the encapsulation of the language 
+	 * @remark              Using this method breaks the encapsulation of the language
 	 */
-	virtual void *GetScriptObject() { return m_State; }
+	virtual void *GetScriptObject() {
+		return m_State;
+	}
 
 	/**
 	 * Makes the command line parameters for the scripting environment available
-	 * @param CommandLineParameters	An array containing all the command line parameters
-	 * @remark				How the command line parameters will be used by scripts is 
+	 * @param CommandLineParameters An array containing all the command line parameters
+	 * @remark              How the command line parameters will be used by scripts is
 	 * dependant on the particular implementation.
 	 */
 	virtual void SetCommandLine(const Common::StringArray &CommandLineParameters);
 
 	/**
-	 * @remark				The Lua stack is cleared by this method
+	 * @remark              The Lua stack is cleared by this method
 	 */
 	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
 	/**
-	 * @remark				The Lua stack is cleared by this method
+	 * @remark              The Lua stack is cleared by this method
 	 */
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 

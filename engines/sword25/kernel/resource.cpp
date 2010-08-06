@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -42,8 +42,8 @@ namespace Sword25 {
 #define BS_LOG_PREFIX "RESOURCE"
 
 BS_Resource::BS_Resource(const Common::String &FileName, RESOURCE_TYPES Type) :
-		_Type(Type),
-		_RefCount(0) {
+	_Type(Type),
+	_RefCount(0) {
 	BS_ASSERT(BS_Kernel::GetInstance()->GetService("package"));
 
 	_FileName = static_cast<BS_PackageManager *>(BS_Kernel::GetInstance()->GetService("package"))->GetAbsolutePath(FileName);

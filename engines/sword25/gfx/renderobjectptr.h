@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -55,8 +55,7 @@ class BS_RenderObject;
 // -----------------------------------------------------------------------------
 
 template<class T>
-class BS_RenderObjectPtr
-{
+class BS_RenderObjectPtr {
 public:
 	BS_RenderObjectPtr() : m_Handle(0)
 	{}
@@ -64,25 +63,21 @@ public:
 	BS_RenderObjectPtr(unsigned int Handle) : m_Handle(Handle)
 	{}
 
-	BS_RenderObjectPtr(BS_RenderObject * RenderObjectPtr);
+	BS_RenderObjectPtr(BS_RenderObject *RenderObjectPtr);
 
-	T * operator->() const 
-	{
+	T *operator->() const {
 		return static_cast<T *>(BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
 	}
 
-	bool operator==(const BS_RenderObjectPtr<T> & other)
-	{
+	bool operator==(const BS_RenderObjectPtr<T> & other) {
 		return m_Handle == other.m_Handle;
 	}
 
-	bool IsValid() const
-	{
+	bool IsValid() const {
 		return BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle) != 0;
 	}
 
-	void Erase()
-	{
+	void Erase() {
 		delete static_cast<T *>(BS_RenderObjectRegistry::GetInstance().ResolveHandle(m_Handle));
 		m_Handle = 0;
 	}

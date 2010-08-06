@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -49,16 +49,14 @@
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_FMODExChannel::BS_FMODExChannel(FMOD_CHANNEL * ChannelPtr, FMOD_SOUND * SoundPtr) :
+BS_FMODExChannel::BS_FMODExChannel(FMOD_CHANNEL *ChannelPtr, FMOD_SOUND *SoundPtr) :
 	m_ChannelPtr(ChannelPtr),
-	m_SoundPtr(SoundPtr)
-{
+	m_SoundPtr(SoundPtr) {
 }
 
 // -----------------------------------------------------------------------------
 
-BS_FMODExChannel::~BS_FMODExChannel()
-{
+BS_FMODExChannel::~BS_FMODExChannel() {
 	if (m_ChannelPtr) FMOD_Channel_Stop(m_ChannelPtr);
 	if (m_SoundPtr) FMOD_Sound_Release(m_SoundPtr);
 }
@@ -73,125 +71,102 @@ BS_FMODExChannel::~BS_FMODExChannel()
 // Diese Fehler werden daher von den folgenden Methoden ignoriert.
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	bool IsImportantError(FMOD_RESULT Result)
-	{
-		return Result != FMOD_OK && Result != FMOD_ERR_INVALID_HANDLE && Result != FMOD_ERR_CHANNEL_STOLEN;
-	}
+namespace {
+bool IsImportantError(FMOD_RESULT Result) {
+	return Result != FMOD_OK && Result != FMOD_ERR_INVALID_HANDLE && Result != FMOD_ERR_CHANNEL_STOLEN;
+}
 }
 
 // -----------------------------------------------------------------------------
 // Setter
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetPaused(bool Paused)
-{
+bool BS_FMODExChannel::SetPaused(bool Paused) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetPaused(m_ChannelPtr, Paused ? 1 : 0);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetPaused()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetVolume(float Volume)
-{
+bool BS_FMODExChannel::SetVolume(float Volume) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetVolume(m_ChannelPtr, Volume);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetVolume()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetPanning(float Panning)
-{
+bool BS_FMODExChannel::SetPanning(float Panning) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetPan(m_ChannelPtr, Panning);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetPan()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetLoop(bool Loop)
-{
+bool BS_FMODExChannel::SetLoop(bool Loop) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetLoopCount(m_ChannelPtr, Loop ? -1 : 0);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetLoopCount()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetLoopPoints(unsigned int LoopStart, unsigned int LoopEnd)
-{
+bool BS_FMODExChannel::SetLoopPoints(unsigned int LoopStart, unsigned int LoopEnd) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetLoopPoints(m_ChannelPtr, LoopStart, FMOD_TIMEUNIT_PCM, LoopEnd, FMOD_TIMEUNIT_PCM);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetLoopPoints()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::SetPosition(unsigned int Position)
-{
+bool BS_FMODExChannel::SetPosition(unsigned int Position) {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_SetPosition(m_ChannelPtr, Position, FMOD_TIMEUNIT_PCM);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_SetPosition()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::Stop()
-{
+bool BS_FMODExChannel::Stop() {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_RESULT Result = FMOD_Channel_Stop(m_ChannelPtr);
-	if (IsImportantError(Result))
-	{
+	if (IsImportantError(Result)) {
 		BS_FMODExException("FMOD_Channel_Stop()", Result).Log();
 		return false;
-	}
-	else
+	} else
 		return true;
 }
 
@@ -199,34 +174,31 @@ bool BS_FMODExChannel::Stop()
 // Getter
 // -----------------------------------------------------------------------------
 
-float BS_FMODExChannel::GetVolume()
-{
+float BS_FMODExChannel::GetVolume() {
 	BS_ASSERT(m_ChannelPtr);
 
 	float Volume = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetVolume(m_ChannelPtr, &Volume);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetVolume()", Result).Log();
-	
+
 	return Volume;
 }
 
 // -----------------------------------------------------------------------------
 
-float BS_FMODExChannel::GetPanning()
-{
+float BS_FMODExChannel::GetPanning() {
 	BS_ASSERT(m_ChannelPtr);
 
 	float Panning = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetPan(m_ChannelPtr, &Panning);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetPan()", Result).Log();
-	
+
 	return Panning;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetPosition()
-{
+unsigned int BS_FMODExChannel::GetPosition() {
 	BS_ASSERT(m_ChannelPtr);
 
 	unsigned int Position = 0;
@@ -238,8 +210,7 @@ unsigned int BS_FMODExChannel::GetPosition()
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetTime()
-{
+unsigned int BS_FMODExChannel::GetTime() {
 	BS_ASSERT(m_ChannelPtr);
 
 	unsigned int Time = 0;
@@ -251,8 +222,7 @@ unsigned int BS_FMODExChannel::GetTime()
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetLoopStart()
-{
+unsigned int BS_FMODExChannel::GetLoopStart() {
 	BS_ASSERT(m_ChannelPtr);
 	unsigned int LoopStart = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetLoopPoints(m_ChannelPtr, &LoopStart, FMOD_TIMEUNIT_PCM, 0, FMOD_TIMEUNIT_PCM);
@@ -263,8 +233,7 @@ unsigned int BS_FMODExChannel::GetLoopStart()
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_FMODExChannel::GetLoopEnd()
-{
+unsigned int BS_FMODExChannel::GetLoopEnd() {
 	BS_ASSERT(m_ChannelPtr);
 	unsigned int LoopEnd = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetLoopPoints(m_ChannelPtr, 0, FMOD_TIMEUNIT_PCM, &LoopEnd, FMOD_TIMEUNIT_PCM);
@@ -275,39 +244,36 @@ unsigned int BS_FMODExChannel::GetLoopEnd()
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::IsLooping()
-{
+bool BS_FMODExChannel::IsLooping() {
 	BS_ASSERT(m_ChannelPtr);
 
 	int LoopCount = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetLoopCount(m_ChannelPtr, &LoopCount);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetLoopCount()", Result).Log();
-	
+
 	return LoopCount == -1;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::IsPaused()
-{
+bool BS_FMODExChannel::IsPaused() {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_BOOL Paused = 0;
 	FMOD_RESULT Result = FMOD_Channel_GetPaused(m_ChannelPtr, &Paused);
 	if (IsImportantError(Result)) BS_FMODExException("FMOD_Channel_GetPaused()", Result).Log();
-	
+
 	return Paused != 0;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_FMODExChannel::IsPlaying()
-{
+bool BS_FMODExChannel::IsPlaying() {
 	BS_ASSERT(m_ChannelPtr);
 
 	FMOD_BOOL Playing = 0;
 	FMOD_RESULT Result = FMOD_Channel_IsPlaying(m_ChannelPtr, &Playing);
-	if (IsImportantError(Result))	BS_FMODExException("FMOD_Channel_IsPlaying()", Result).Log();
+	if (IsImportantError(Result))   BS_FMODExException("FMOD_Channel_IsPlaying()", Result).Log();
 
 	return Playing != 0;
 }

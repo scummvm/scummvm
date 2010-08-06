@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -57,22 +57,19 @@ std::auto_ptr<BS_AnimationTemplateRegistry> BS_AnimationTemplateRegistry::m_Inst
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplateRegistry::LogErrorLn(const char * Message) const
-{
+void BS_AnimationTemplateRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_AnimationTemplateRegistry::LogWarningLn(const char * Message) const
-{
+void BS_AnimationTemplateRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle schreiben.
@@ -83,8 +80,7 @@ bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock & Writer)
 
 	// Alle BS_AnimationTemplates persistieren.
 	HANDLE2PTR_MAP::const_iterator Iter = m_Handle2PtrMap.begin();
-	while (Iter != m_Handle2PtrMap.end())
-	{
+	while (Iter != m_Handle2PtrMap.end()) {
 		// Handle persistieren.
 		Writer.Write(Iter->first);
 
@@ -99,8 +95,7 @@ bool BS_AnimationTemplateRegistry::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Das nächste zu vergebene Handle wieder herstellen.
@@ -114,8 +109,7 @@ bool BS_AnimationTemplateRegistry::Unpersist(BS_InputPersistenceBlock & Reader)
 	Reader.Read(AnimationTemplateCount);
 
 	// Alle gespeicherten BS_AnimationTemplates wieder herstellen.
-	for (unsigned int i = 0; i < AnimationTemplateCount; ++i)
-	{
+	for (unsigned int i = 0; i < AnimationTemplateCount; ++i) {
 		// Handle lesen.
 		unsigned int Handle;
 		Reader.Read(Handle);

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,9 +45,9 @@ namespace Sword25 {
 
 #define BS_LOG_PREFIX "MAIN"
 
-const char * const PACKAGE_MANAGER = "archiveFS";
-const char * const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
-const char * const MOUNT_DIR_PARAMETER = "-mount-dir";
+const char *const PACKAGE_MANAGER = "archiveFS";
+const char *const DEFAULT_SCRIPT_FILE = "/system/boot.lua";
+const char *const MOUNT_DIR_PARAMETER = "-mount-dir";
 
 
 void LogToStdout(const char *Message) {
@@ -55,8 +55,8 @@ void LogToStdout(const char *Message) {
 }
 
 Sword25Engine::Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc):
-		Engine(syst),
-		_gameDescription(gameDesc) {
+	Engine(syst),
+	_gameDescription(gameDesc) {
 }
 
 Sword25Engine::~Sword25Engine() {
@@ -125,7 +125,7 @@ Common::Error Sword25Engine::AppStart(const Common::StringArray &CommandParamete
 
 bool Sword25Engine::AppMain() {
 	// The main script start. This script loads all the other scripts and starts the actual game.
-	BS_ScriptEngine * ScriptPtr = static_cast<BS_ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
+	BS_ScriptEngine *ScriptPtr = static_cast<BS_ScriptEngine *>(BS_Kernel::GetInstance()->GetService("script"));
 	BS_ASSERT(ScriptPtr);
 	ScriptPtr->ExecuteFile(DEFAULT_SCRIPT_FILE);
 
@@ -192,10 +192,9 @@ bool Sword25Engine::LoadPackages() {
 		static const Common::String Suffix = ".b25c";
 
 		// Make sure the filename prefix and suffix has characters between them
-		if ((CurFilename.size() >= Prefix.size() && Common::String(CurFilename.begin(), CurFilename.begin() + Prefix.size()) == Prefix) &&	// Prefix test
-			(CurFilename.size() >= Suffix.size() && Common::String(CurFilename.end() - Suffix.size(), CurFilename.end()) == Suffix) &&		// Suffix test
-			(CurFilename.size() > Prefix.size() + Suffix.size())) 
-		{
+		if ((CurFilename.size() >= Prefix.size() && Common::String(CurFilename.begin(), CurFilename.begin() + Prefix.size()) == Prefix) &&  // Prefix test
+		        (CurFilename.size() >= Suffix.size() && Common::String(CurFilename.end() - Suffix.size(), CurFilename.end()) == Suffix) &&      // Suffix test
+		        (CurFilename.size() > Prefix.size() + Suffix.size())) {
 			// Pattern matches - the file should be mounted
 			if (!PackageManagerPtr->LoadPackage(CurFilename, "/")) return false;
 		}

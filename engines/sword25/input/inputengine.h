@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -57,15 +57,15 @@ namespace Sword25 {
 
 class BS_InputEngine : public BS_Service, public BS_Persistable {
 public:
-	BS_InputEngine(BS_Kernel* pKernel);
-	virtual ~BS_InputEngine(){};
+	BS_InputEngine(BS_Kernel *pKernel);
+	virtual ~BS_InputEngine() {};
 
 	// NOTE: These codes are registered in inputengine_script.cpp
 	// Any changes to these enums must also adjust the above file.
-	enum KEY_CODES 	{
-		KEY_BACKSPACE	= 0x08,
-		KEY_TAB			= 0x09,
-		KEY_CLEAR		= 0x0C,
+	enum KEY_CODES  {
+		KEY_BACKSPACE   = 0x08,
+		KEY_TAB         = 0x09,
+		KEY_CLEAR       = 0x0C,
 		KEY_RETURN      = 0x0D,
 		KEY_PAUSE       = 0x13,
 		KEY_CAPSLOCK    = 0x14,
@@ -79,45 +79,45 @@ public:
 		KEY_UP          = 0x26,
 		KEY_RIGHT       = 0x27,
 		KEY_DOWN        = 0x28,
-		KEY_PRINTSCREEN = 0x2C,   
+		KEY_PRINTSCREEN = 0x2C,
 		KEY_INSERT      = 0x2D,
 		KEY_DELETE      = 0x2E,
-		KEY_0			= 0x30,
-		KEY_1			= 0x31,
-		KEY_2			= 0x32,
-		KEY_3			= 0x33,
-		KEY_4			= 0x34,
-		KEY_5			= 0x35,
-		KEY_6			= 0x36,
-		KEY_7			= 0x37,
-		KEY_8			= 0x38,
-		KEY_9			= 0x39,
-		KEY_A			= 0x41,
-		KEY_B			= 0x42,
-		KEY_C			= 0x43,
-		KEY_D			= 0x44,
-		KEY_E			= 0x45,
-		KEY_F			= 0x46,
-		KEY_G			= 0x47,
-		KEY_H			= 0x48,
-		KEY_I			= 0x49,
-		KEY_J			= 0x4A,
-		KEY_K			= 0x4B,
-		KEY_L			= 0x4C,
-		KEY_M			= 0x4D,
-		KEY_N			= 0x4E,
-		KEY_O			= 0x4F,
-		KEY_P			= 0x50,
-		KEY_Q			= 0x51,
-		KEY_R			= 0x52,
-		KEY_S			= 0x53,
-		KEY_T			= 0x54,
-		KEY_U			= 0x55,
-		KEY_V			= 0x56,
-		KEY_W			= 0x57,
-		KEY_X			= 0x58,
-		KEY_Y			= 0x59,
-		KEY_Z			= 0x5A,
+		KEY_0           = 0x30,
+		KEY_1           = 0x31,
+		KEY_2           = 0x32,
+		KEY_3           = 0x33,
+		KEY_4           = 0x34,
+		KEY_5           = 0x35,
+		KEY_6           = 0x36,
+		KEY_7           = 0x37,
+		KEY_8           = 0x38,
+		KEY_9           = 0x39,
+		KEY_A           = 0x41,
+		KEY_B           = 0x42,
+		KEY_C           = 0x43,
+		KEY_D           = 0x44,
+		KEY_E           = 0x45,
+		KEY_F           = 0x46,
+		KEY_G           = 0x47,
+		KEY_H           = 0x48,
+		KEY_I           = 0x49,
+		KEY_J           = 0x4A,
+		KEY_K           = 0x4B,
+		KEY_L           = 0x4C,
+		KEY_M           = 0x4D,
+		KEY_N           = 0x4E,
+		KEY_O           = 0x4F,
+		KEY_P           = 0x50,
+		KEY_Q           = 0x51,
+		KEY_R           = 0x52,
+		KEY_S           = 0x53,
+		KEY_T           = 0x54,
+		KEY_U           = 0x55,
+		KEY_V           = 0x56,
+		KEY_W           = 0x57,
+		KEY_X           = 0x58,
+		KEY_Y           = 0x59,
+		KEY_Z           = 0x5A,
 		KEY_NUMPAD0     = 0x60,
 		KEY_NUMPAD1     = 0x61,
 		KEY_NUMPAD2     = 0x62,
@@ -154,7 +154,7 @@ public:
 		KEY_RCONTROL    = 0xA3
 	};
 
-	// NOTE: These codes are registered in inputengine_script.cpp. 
+	// NOTE: These codes are registered in inputengine_script.cpp.
 	// Any changes to these enums must also adjust the above file.
 	enum KEY_COMMANDS {
 		KEY_COMMAND_ENTER = 1,
@@ -171,16 +171,16 @@ public:
 	/// --------------------------------------------------------------
 	/// THESE METHODS MUST BE IMPLEMENTED BY THE INPUT ENGINE
 	/// --------------------------------------------------------------
-	
+
 	/**
 	 * Initialises the input engine
-	 * @return			Returns a true on success, otherwise false.
+	 * @return          Returns a true on success, otherwise false.
 	 */
 	virtual bool Init() = 0;
 
 	/**
 	 * Performs a "tick" of the input engine.
-	 * 
+	 *
 	 * This method should be called once per frame. It can be used by implementations
 	 * of the input engine that are not running in their own thread, or to perform
 	 * additional administrative tasks that are needed.
@@ -240,8 +240,8 @@ public:
 
 	/**
 	 * Returns true if a given key was pressed
-	 * @param KeyCode		The key code to be checked
-	 * @return				Returns true if the given key is done, otherwise false.
+	 * @param KeyCode       The key code to be checked
+	 * @return              Returns true if the given key is done, otherwise false.
 	 */
 	virtual bool IsKeyDown(unsigned int KeyCode) = 0;
 
@@ -251,7 +251,7 @@ public:
 	 * The difference between IsKeyDown() is that this only returns true after the key
 	 * has been released. This method facilitates the retrieval of keys, and reading
 	 * strings that users type.
-	 * @param KeyCode		The key code to be checked
+	 * @param KeyCode       The key code to be checked
 	 */
 	virtual bool WasKeyDown(unsigned int KeyCode) = 0;
 
@@ -261,19 +261,19 @@ public:
 	 * Registers a callback function for keyboard input.
 	 *
 	 * The callbacks that are registered with this function will be called whenever an
-	 * input key is pressed. A letter entry is different from the query using the 
-	 * methods IsKeyDown () and WasKeyDown () in the sense that are treated instead 
-	 * of actual scan-coded letters. These were taken into account, among other things: 
+	 * input key is pressed. A letter entry is different from the query using the
+	 * methods IsKeyDown () and WasKeyDown () in the sense that are treated instead
+	 * of actual scan-coded letters. These were taken into account, among other things:
 	 * the keyboard layout, the condition the Shift and Caps Lock keys and the repetition
 	 * of longer holding the key.
 	 * The input of strings by the user through use of callbacks should be implemented.
-	 * @return				Returns true if the function was registered, otherwise false.
+	 * @return              Returns true if the function was registered, otherwise false.
 	*/
 	virtual bool RegisterCharacterCallback(CallbackPtr Callback) = 0;
 
 	/**
 	 * De-registeres a previously registered callback function.
-	 * @return				Returns true if the function could be de-registered, otherwise false.
+	 * @return              Returns true if the function could be de-registered, otherwise false.
 	 */
 	virtual bool UnregisterCharacterCallback(CallbackPtr Callback) = 0;
 
@@ -282,17 +282,17 @@ public:
 	/**
 	 * Registers a callback function for the input of commands that can have influence on the string input
 	 *
-	 * The callbacks that are registered with this function will be called whenever the input service 
-	 * has a key that affects the character string input. This could be the following keys: 
+	 * The callbacks that are registered with this function will be called whenever the input service
+	 * has a key that affects the character string input. This could be the following keys:
 	 * Enter, End, Left, Right, ...
 	 * The input of strings by the user through the use of callbacks should be implemented.
-	 * @return				Returns true if the function was registered, otherwise false.
+	 * @return              Returns true if the function was registered, otherwise false.
 	 */
 	virtual bool RegisterCommandCallback(CallbackPtr Callback) = 0;
 
 	/**
 	 * Un-register a callback function for the input of commands that can have an influence on the string input.
-	 * @return				Returns true if the function could be de-registered, otherwise false.
+	 * @return              Returns true if the function could be de-registered, otherwise false.
 	 */
 	virtual bool UnregisterCommandCallback(CommandCallback Callback) = 0;
 

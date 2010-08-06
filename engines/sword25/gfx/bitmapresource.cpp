@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -47,23 +47,20 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // --------------------------
 
-BS_BitmapResource::BS_BitmapResource(const Common::String & Filename, BS_Image * pImage) :
+BS_BitmapResource::BS_BitmapResource(const Common::String &Filename, BS_Image *pImage) :
 	m_Valid(false),
 	m_pImage(pImage),
-	BS_Resource(Filename, BS_Resource::TYPE_BITMAP)
-{
+	BS_Resource(Filename, BS_Resource::TYPE_BITMAP) {
 	m_Valid = m_pImage != 0;
 }
 
-BS_BitmapResource::~BS_BitmapResource()
-{
+BS_BitmapResource::~BS_BitmapResource() {
 	delete m_pImage;
 }
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_BitmapResource::GetPixel(int X, int Y) const
-{
+unsigned int BS_BitmapResource::GetPixel(int X, int Y) const {
 	BS_ASSERT(X >= 0 && X < m_pImage->GetWidth());
 	BS_ASSERT(Y >= 0 && Y < m_pImage->GetHeight());
 

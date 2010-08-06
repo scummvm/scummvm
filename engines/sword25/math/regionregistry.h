@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -58,7 +58,7 @@ class BS_Region;
 
 class BS_RegionRegistry : public BS_ObjectRegistry<BS_Region>, public BS_Persistable {
 public:
-	static BS_RegionRegistry & GetInstance() {
+	static BS_RegionRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr = Common::SharedPtr<BS_RegionRegistry>(new BS_RegionRegistry());
 		return *m_InstancePtr.get();
 	}

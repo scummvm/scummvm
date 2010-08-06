@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -58,20 +58,19 @@ class BS_VectorImage;
 
 
 /**
-	@brief Rendert BS_VectorImage Objekte
+    @brief Rendert BS_VectorImage Objekte
 */
 
-class BS_VectorImageRenderer
-{
+class BS_VectorImageRenderer {
 public:
 	BS_VectorImageRenderer();
 
-	bool Render(const BS_VectorImage & VectorImage,
-				float ScaleFactorX, float ScaleFactorY, 
-				unsigned int & Width, unsigned int & Height,
-				Common::Array<char> & ImageData,
-				float LineScaleFactor = 1.0f,
-				bool NoAlphaShapes = false);
+	bool Render(const BS_VectorImage &VectorImage,
+	            float ScaleFactorX, float ScaleFactorY,
+	            unsigned int &Width, unsigned int &Height,
+	            Common::Array<char> & ImageData,
+	            float LineScaleFactor = 1.0f,
+	            bool NoAlphaShapes = false);
 
 private:
 	typedef agg::pixfmt_rgba32_pre PixelFormatType;

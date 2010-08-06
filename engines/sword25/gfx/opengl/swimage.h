@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -50,36 +50,55 @@ namespace Sword25 {
 // CLASS DEFINITION
 // -----------------------------------------------------------------------------
 
-class BS_SWImage : public BS_Image
-{
+class BS_SWImage : public BS_Image {
 public:
-	BS_SWImage(const Common::String & Filename, bool & Result);
+	BS_SWImage(const Common::String &Filename, bool &Result);
 	virtual ~BS_SWImage();
 
-	virtual int GetWidth() const { return m_Width; }
-	virtual int GetHeight() const { return m_Height; }
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const { return BS_GraphicEngine::CF_ARGB32; }
+	virtual int GetWidth() const {
+		return m_Width;
+	}
+	virtual int GetHeight() const {
+		return m_Height;
+	}
+	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+		return BS_GraphicEngine::CF_ARGB32;
+	}
 
-	virtual bool Blit(int PosX = 0, int PosY = 0, 
-					  int Flipping = BS_Image::FLIP_NONE, 
-					  BS_Rect* pPartRect = NULL,
-					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
-					  int Width = -1, int Height = -1);
-	virtual bool Fill(const BS_Rect* FillRectPtr, unsigned int Color);
+	virtual bool Blit(int PosX = 0, int PosY = 0,
+	                  int Flipping = BS_Image::FLIP_NONE,
+	                  BS_Rect *pPartRect = NULL,
+	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  int Width = -1, int Height = -1);
+	virtual bool Fill(const BS_Rect *FillRectPtr, unsigned int Color);
 	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 	virtual unsigned int GetPixel(int X, int Y);
 
-	virtual bool IsBlitSource() const				{ return false; }
-	virtual bool IsBlitTarget() const				{ return false; }
-	virtual bool IsScalingAllowed() const			{ return false; }
-	virtual bool IsFillingAllowed() const			{ return false; }
-	virtual bool IsAlphaAllowed() const				{ return false; }
-	virtual bool IsColorModulationAllowed() const	{ return false; }
-	virtual bool IsSetContentAllowed() const		{ return false; }
+	virtual bool IsBlitSource() const               {
+		return false;
+	}
+	virtual bool IsBlitTarget() const               {
+		return false;
+	}
+	virtual bool IsScalingAllowed() const           {
+		return false;
+	}
+	virtual bool IsFillingAllowed() const           {
+		return false;
+	}
+	virtual bool IsAlphaAllowed() const             {
+		return false;
+	}
+	virtual bool IsColorModulationAllowed() const   {
+		return false;
+	}
+	virtual bool IsSetContentAllowed() const        {
+		return false;
+	}
 private:
-	unsigned int * _ImageDataPtr;
+	unsigned int *_ImageDataPtr;
 
-	int	m_Width;
+	int m_Width;
 	int m_Height;
 };
 

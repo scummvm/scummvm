@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -52,10 +52,9 @@ struct FMOD_SOUND;
 // Klassendefinition
 // -----------------------------------------------------------------------------
 
-class BS_FMODExChannel
-{
+class BS_FMODExChannel {
 public:
-	BS_FMODExChannel(FMOD_CHANNEL * ChannelPtr, FMOD_SOUND * SoundPtr);
+	BS_FMODExChannel(FMOD_CHANNEL *ChannelPtr, FMOD_SOUND *SoundPtr);
 	virtual ~BS_FMODExChannel();
 
 	bool SetPaused(bool Paused);
@@ -66,19 +65,19 @@ public:
 	bool SetPosition(unsigned int Position);
 	bool Stop();
 
-	float			GetVolume();
-	float			GetPanning();
-	unsigned int	GetPosition();
-	unsigned int	GetTime();
-	unsigned int	GetLoopStart();
-	unsigned int	GetLoopEnd();
-	bool			IsLooping();
-	bool			IsPaused();
-	bool			IsPlaying();
+	float           GetVolume();
+	float           GetPanning();
+	unsigned int    GetPosition();
+	unsigned int    GetTime();
+	unsigned int    GetLoopStart();
+	unsigned int    GetLoopEnd();
+	bool            IsLooping();
+	bool            IsPaused();
+	bool            IsPlaying();
 
 private:
-	FMOD_CHANNEL *	m_ChannelPtr;
-	FMOD_SOUND *	m_SoundPtr;
+	FMOD_CHANNEL   *m_ChannelPtr;
+	FMOD_SOUND     *m_SoundPtr;
 };
 
 #endif

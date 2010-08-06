@@ -59,7 +59,7 @@ private:
 protected:
 	virtual Common::Error run();
 	void shutdown();
-	
+
 public:
 	Sword25Engine(OSystem *syst, const Sword25GameDescription *gameDesc);
 	virtual ~Sword25Engine();

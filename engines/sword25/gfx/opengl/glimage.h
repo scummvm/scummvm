@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -51,52 +51,71 @@ namespace Sword25 {
 // FORWARD DECLARATION
 // -----------------------------------------------------------------------------
 
-typedef void * GLS_Sprite;
+typedef void *GLS_Sprite;
 
 // -----------------------------------------------------------------------------
 // CLASS DEFINITION
 // -----------------------------------------------------------------------------
 
-class BS_GLImage : public BS_Image
-{
+class BS_GLImage : public BS_Image {
 public:
-	BS_GLImage(const Common::String & Filename, bool & Result);
+	BS_GLImage(const Common::String &Filename, bool &Result);
 
 	/**
-		@brief Erzeugt ein leeres BS_GLImage
+	    @brief Erzeugt ein leeres BS_GLImage
 
-		@param Width die Breite des zu erzeugenden Bildes.
-		@param Height die Höhe des zu erzeugenden Bildes
-		@param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
-					  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
+	    @param Width die Breite des zu erzeugenden Bildes.
+	    @param Height die Höhe des zu erzeugenden Bildes
+	    @param Result gibt dem Aufrufer bekannt, ob der Konstruktor erfolgreich ausgeführt wurde. Wenn es nach dem Aufruf false enthalten sollte,
+	                  dürfen keine Methoden am Objekt aufgerufen werden und das Objekt ist sofort zu zerstören.
 	*/
-	BS_GLImage(unsigned int Width, unsigned int Height, bool & Result);
+	BS_GLImage(unsigned int Width, unsigned int Height, bool &Result);
 	virtual ~BS_GLImage();
 
-	virtual int GetWidth() const { return m_Width; }
-	virtual int GetHeight() const { return m_Height; }
-	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const { return BS_GraphicEngine::CF_ARGB32; }
+	virtual int GetWidth() const {
+		return m_Width;
+	}
+	virtual int GetHeight() const {
+		return m_Height;
+	}
+	virtual BS_GraphicEngine::COLOR_FORMATS GetColorFormat() const {
+		return BS_GraphicEngine::CF_ARGB32;
+	}
 
-	virtual bool Blit(int PosX = 0, int PosY = 0, 
-					  int Flipping = BS_Image::FLIP_NONE, 
-					  BS_Rect* pPartRect = NULL,
-					  unsigned int Color = BS_ARGB(255, 255, 255, 255),
-					  int Width = -1, int Height = -1);
-	virtual bool Fill(const BS_Rect* pFillRect, unsigned int Color);
+	virtual bool Blit(int PosX = 0, int PosY = 0,
+	                  int Flipping = BS_Image::FLIP_NONE,
+	                  BS_Rect *pPartRect = NULL,
+	                  unsigned int Color = BS_ARGB(255, 255, 255, 255),
+	                  int Width = -1, int Height = -1);
+	virtual bool Fill(const BS_Rect *pFillRect, unsigned int Color);
 	virtual bool SetContent(const byte *Pixeldata, unsigned int Offset = 0, unsigned int Stride = 0);
 	virtual unsigned int GetPixel(int X, int Y);
 
-	virtual bool IsBlitSource() const				{ return true; }
-	virtual bool IsBlitTarget() const				{ return false; }
-	virtual bool IsScalingAllowed() const			{ return true; }
-	virtual bool IsFillingAllowed() const			{ return false; }
-	virtual bool IsAlphaAllowed() const				{ return true; }
-	virtual bool IsColorModulationAllowed() const	{ return true; }
-	virtual bool IsSetContentAllowed() const		{ return true; }
+	virtual bool IsBlitSource() const               {
+		return true;
+	}
+	virtual bool IsBlitTarget() const               {
+		return false;
+	}
+	virtual bool IsScalingAllowed() const           {
+		return true;
+	}
+	virtual bool IsFillingAllowed() const           {
+		return false;
+	}
+	virtual bool IsAlphaAllowed() const             {
+		return true;
+	}
+	virtual bool IsColorModulationAllowed() const   {
+		return true;
+	}
+	virtual bool IsSetContentAllowed() const        {
+		return true;
+	}
 private:
-	GLS_Sprite	m_Sprite;
-	int			m_Width;
-	int			m_Height;
+	GLS_Sprite  m_Sprite;
+	int         m_Width;
+	int         m_Height;
 };
 
 } // End of namespace Sword25

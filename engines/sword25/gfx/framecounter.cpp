@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -38,14 +38,13 @@
 namespace Sword25 {
 
 BS_Framecounter::BS_Framecounter(int UpdateFrequency) :
-		m_FPS(0),
-		m_FPSCount(0),
-		m_LastUpdateTime(-1) {
+	m_FPS(0),
+	m_FPSCount(0),
+	m_LastUpdateTime(-1) {
 	SetUpdateFrequency(UpdateFrequency);
 }
 
-void BS_Framecounter::Update()
-{
+void BS_Framecounter::Update() {
 	// Aktuellen Systemtimerstand auslesen
 	uint64_t Timer = g_system->getMillis() * 1000;
 

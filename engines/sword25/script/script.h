@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -64,28 +64,28 @@ public:
 	// -----------------------------------------------------------------------------
 	// Constructor / destructor
 	// -----------------------------------------------------------------------------
-	
-	BS_ScriptEngine(BS_Kernel * KernelPtr) : BS_Service(KernelPtr) {};
+
+	BS_ScriptEngine(BS_Kernel *KernelPtr) : BS_Service(KernelPtr) {};
 	virtual ~BS_ScriptEngine() {};
 
 	// -----------------------------------------------------------------------------
 	// This method must be implemented by the script engine
 	// -----------------------------------------------------------------------------
-	
+
 	/**
 	 * Initialises the scrip tengine. Returns true if successful, false otherwise.
 	 */
 	virtual bool Init() = 0;
 
 	/**
-	 * Loads a script file and executes it. 
-	 * @param FileName		The script filename
+	 * Loads a script file and executes it.
+	 * @param FileName      The script filename
 	*/
 	virtual bool ExecuteFile(const Common::String &FileName) = 0;
 
 	/**
 	 * Executes a specified script fragment
-	 * @param Code		String of script code
+	 * @param Code      String of script code
 	 */
 	virtual bool ExecuteString(const Common::String &Code) = 0;
 
@@ -93,13 +93,13 @@ public:
 	 * Returns a pointer to the main object of the script engine
 	 * Note: Using this method breaks the encapsulation of the language from the rest of the engine.
 	 */
-	virtual void * GetScriptObject() = 0;
+	virtual void *GetScriptObject() = 0;
 
 	/**
 	 * Makes the command line parameters for the script environment available
 	 * Note: How the command line parameters will be used by scripts is dependant on the
 	 * particular implementation.
-	 * @param CommandLineParameters		List containing the command line parameters
+	 * @param CommandLineParameters     List containing the command line parameters
 	*/
 	virtual void SetCommandLine(const Common::Array<Common::String> &CommandLineParameters) = 0;
 

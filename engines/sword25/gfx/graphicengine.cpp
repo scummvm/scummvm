@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -58,20 +58,19 @@ namespace Sword25 {
 using namespace std;
 using namespace Lua;
 
-static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;		// Anzahl der Framezeiten über die, die Framezeit gemittelt wird
+static const unsigned int FRAMETIME_SAMPLE_COUNT = 5;       // Anzahl der Framezeiten über die, die Framezeit gemittelt wird
 
-BS_GraphicEngine::BS_GraphicEngine(BS_Kernel * pKernel) : 
+BS_GraphicEngine::BS_GraphicEngine(BS_Kernel *pKernel) :
 	m_Width(0),
 	m_Height(0),
 	m_BitDepth(0),
 	m_Windowed(0),
-	m_LastTimeStamp((uint64)-1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
+	m_LastTimeStamp((uint64) - 1), // max. BS_INT64 um beim ersten Aufruf von _UpdateLastFrameDuration() einen Reset zu erzwingen
 	m_LastFrameDuration(0),
 	m_TimerActive(true),
 	m_FrameTimeSampleSlot(0),
 	m_RepaintedPixels(0),
-	BS_ResourceService(pKernel)
-{
+	BS_ResourceService(pKernel) {
 	for (int i = 0; i < FRAMETIME_SAMPLE_COUNT; i++)
 		m_FrameTimeSamples[i] = 0;
 
@@ -83,8 +82,7 @@ BS_GraphicEngine::BS_GraphicEngine(BS_Kernel * pKernel) :
 
 // -----------------------------------------------------------------------------
 
-void  BS_GraphicEngine::UpdateLastFrameDuration()
-{
+void  BS_GraphicEngine::UpdateLastFrameDuration() {
 	// Aktuelle Zeit holen
 	uint64_t CurrentTime = BS_Kernel::GetInstance()->GetMicroTicks();
 
@@ -106,58 +104,50 @@ void  BS_GraphicEngine::UpdateLastFrameDuration()
 
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	bool DoSaveScreenshot(BS_GraphicEngine & GraphicEngine, const Common::String & Filename, bool Thumbnail)
-	{
-		unsigned int Width;
-		unsigned int Height;
-		Common::Array<unsigned int> Data;
-		if (!GraphicEngine.GetScreenshot(Width, Height, Data))
-		{
-			BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
-			return false;
-		}
-
-		unsigned int test = Data.size();
-
-		if (Thumbnail)
-			return BS_Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
-		else
-			return BS_Screenshot::SaveToFile(Width, Height, Data, Filename);
+namespace {
+bool DoSaveScreenshot(BS_GraphicEngine &GraphicEngine, const Common::String &Filename, bool Thumbnail) {
+	unsigned int Width;
+	unsigned int Height;
+	Common::Array<unsigned int> Data;
+	if (!GraphicEngine.GetScreenshot(Width, Height, Data)) {
+		BS_LOG_ERRORLN("Call to GetScreenshot() failed. Cannot save screenshot.");
+		return false;
 	}
+
+	unsigned int test = Data.size();
+
+	if (Thumbnail)
+		return BS_Screenshot::SaveThumbnailToFile(Width, Height, Data, Filename);
+	else
+		return BS_Screenshot::SaveToFile(Width, Height, Data, Filename);
+}
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveScreenshot(const Common::String & Filename)
-{
+bool BS_GraphicEngine::SaveScreenshot(const Common::String &Filename) {
 	return DoSaveScreenshot(*this, Filename, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveThumbnailScreenshot( const Common::String & Filename )
-{
+bool BS_GraphicEngine::SaveThumbnailScreenshot(const Common::String &Filename) {
 	return DoSaveScreenshot(*this, Filename, true);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_GraphicEngine::ARGBColorToLuaColor(lua_State * L, unsigned int Color)
-{
-	lua_Number Components[4] =
-	{
-		(Color >> 16) & 0xff,	// Rot
-		(Color >> 8) & 0xff,	// Grün
-		 Color & 0xff,			// Blau
-		 Color >> 24,			// Alpha
+void BS_GraphicEngine::ARGBColorToLuaColor(lua_State *L, unsigned int Color) {
+	lua_Number Components[4] = {
+		(Color >> 16) & 0xff,   // Rot
+		(Color >> 8) & 0xff,    // Grün
+		Color & 0xff,          // Blau
+		Color >> 24,           // Alpha
 	};
 
 	lua_newtable(L);
 
-	for (unsigned int i = 1; i <= 4; i++)
-	{
+	for (unsigned int i = 1; i <= 4; i++) {
 		lua_pushnumber(L, i);
 		lua_pushnumber(L, Components[i - 1]);
 		lua_settable(L, -3);
@@ -166,8 +156,7 @@ void BS_GraphicEngine::ARGBColorToLuaColor(lua_State * L, unsigned int Color)
 
 // -----------------------------------------------------------------------------
 
-unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State * L, int StackIndex)
-{
+unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State *L, int StackIndex) {
 #ifdef DEBUG
 	int __startStackDepth = lua_gettop(L);
 #endif
@@ -199,8 +188,7 @@ unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State * L, int StackIndex
 
 	// Alpha Farbkomponente auslesen
 	unsigned int Alpha = 0xff;
-	if (n == 4)
-	{
+	if (n == 4) {
 		lua_rawgeti(L, StackIndex, 4);
 		Alpha = static_cast<unsigned int>(lua_tonumber(L, -1));
 		if (!lua_isnumber(L, -1) || Alpha >= 256) luaL_argcheck(L, 0, StackIndex, "alpha color component must be an integer between 0 and 255");
@@ -216,16 +204,14 @@ unsigned int BS_GraphicEngine::LuaColorToARGBColor(lua_State * L, int StackIndex
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_GraphicEngine::Persist(BS_OutputPersistenceBlock &Writer) {
 	Writer.Write(m_TimerActive);
 	return true;
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_GraphicEngine::Unpersist(BS_InputPersistenceBlock &Reader) {
 	Reader.Read(m_TimerActive);
 	return Reader.IsGood();
 }

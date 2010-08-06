@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,9 +54,13 @@ public:
 	BS_Rect(int16 w, int16 h) : Common::Rect(w, h) {}
 	BS_Rect(int16 x1, int16 y1, int16 x2, int16 y2) : Common::Rect(x1, y1, x2, y2) {}
 
-	void Move(int DeltaX, int DeltaY) { translate(DeltaX, DeltaY); }
+	void Move(int DeltaX, int DeltaY) {
+		translate(DeltaX, DeltaY);
+	}
 
-	bool DoesIntersect(const BS_Rect &Rect_) const { return intersects(Rect_); }
+	bool DoesIntersect(const BS_Rect &Rect_) const {
+		return intersects(Rect_);
+	}
 
 	bool Intersect(const BS_Rect &Rect_, BS_Rect &Result) const {
 		Result = Rect_;
@@ -70,23 +74,41 @@ public:
 		Result.extend(*this);
 	}
 
-	int GetWidth() const { return width(); }
+	int GetWidth() const {
+		return width();
+	}
 
-	int GetHeight() const { return height(); }
+	int GetHeight() const {
+		return height();
+	}
 
-	int GetArea() const { return width() * height(); }
+	int GetArea() const {
+		return width() * height();
+	}
 
-	bool operator==(const BS_Rect &rhs) const { return equals(rhs); }
+	bool operator==(const BS_Rect &rhs) const {
+		return equals(rhs);
+	}
 
-	bool operator!= (const BS_Rect &rhs) const { return !equals(rhs); }
+	bool operator!= (const BS_Rect &rhs) const {
+		return !equals(rhs);
+	}
 
-	bool IsValid() const { return isValidRect(); }
+	bool IsValid() const {
+		return isValidRect();
+	}
 
-	bool IsPointInRect(const BS_Vertex &Vertex) const { return contains(Vertex.X, Vertex.Y); }
+	bool IsPointInRect(const BS_Vertex &Vertex) const {
+		return contains(Vertex.X, Vertex.Y);
+	}
 
-	bool IsPointInRect(int X, int Y) const { return contains(X, Y); }
+	bool IsPointInRect(int X, int Y) const {
+		return contains(X, Y);
+	}
 
-	bool ContainsRect(const BS_Rect &OtherRect) const { return contains(OtherRect); }
+	bool ContainsRect(const BS_Rect &OtherRect) const {
+		return contains(OtherRect);
+	}
 };
 
 } // End of namespace Sword25

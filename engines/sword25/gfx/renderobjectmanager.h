@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -33,13 +33,13 @@
  */
 
 /*
-	BS_RenderObjectManager
-	----------------------
-	Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
-	
-	Sie sorgt z.B. dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden.
+    BS_RenderObjectManager
+    ----------------------
+    Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
 
-	Autor: Malte Thiesen
+    Sie sorgt z.B. dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden.
+
+    Autor: Malte Thiesen
 */
 
 #ifndef SWORD25_RENDEROBJECTMANAGER_H
@@ -63,59 +63,60 @@ class BS_RenderObject;
 class BS_TimedRenderObject;
 
 /**
-	@brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
-	
-	Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die 
-	BS_RenderObjects über einen String.
+    @brief Diese Klasse ist für die Verwaltung von BS_RenderObjects zuständig.
+
+    Sie sorgt dafür, dass die BS_RenderObjects in der richtigen Reihenfolge gerendert werden und ermöglicht den Zugriff auf die
+    BS_RenderObjects über einen String.
 */
-class BS_RenderObjectManager : public BS_Persistable
-{
+class BS_RenderObjectManager : public BS_Persistable {
 public:
 	/**
-		@brief Erzeugt ein neues BS_RenderObjectManager-Objekt.
-		@param Width die horizontale Bildschirmauflösung in Pixeln
-		@param Height die vertikale Bildschirmauflösung in Pixeln
-		@param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
+	    @brief Erzeugt ein neues BS_RenderObjectManager-Objekt.
+	    @param Width die horizontale Bildschirmauflösung in Pixeln
+	    @param Height die vertikale Bildschirmauflösung in Pixeln
+	    @param Die Anzahl an Framebuffern, die eingesetzt wird (Backbuffer + Primary).
 	*/
 	BS_RenderObjectManager(int Width, int Height, int FramebufferCount);
 	virtual ~BS_RenderObjectManager();
-	
+
 	// Interface
 	// ---------
 	/**
-	 	@brief Initialisiert den Manager für einen neuen Frame.
-		@remark Alle Veränderungen an Objekten müssen nach einem Aufruf dieser Methode geschehen, damit sichergestellt ist, dass diese
-				visuell umgesetzt werden.<br>
-				Mit dem Aufruf dieser Methode werden die Rückgabewerte von GetUpdateRects() und GetUpdateRectCount() auf ihre Startwerte
-				zurückgesetzt. Wenn man also mit diesen Werten arbeiten möchten, muss man dies nach einem Aufruf von Render() und vor
-				einem Aufruf von StartFrame() tun.
+	    @brief Initialisiert den Manager für einen neuen Frame.
+	    @remark Alle Veränderungen an Objekten müssen nach einem Aufruf dieser Methode geschehen, damit sichergestellt ist, dass diese
+	            visuell umgesetzt werden.<br>
+	            Mit dem Aufruf dieser Methode werden die Rückgabewerte von GetUpdateRects() und GetUpdateRectCount() auf ihre Startwerte
+	            zurückgesetzt. Wenn man also mit diesen Werten arbeiten möchten, muss man dies nach einem Aufruf von Render() und vor
+	            einem Aufruf von StartFrame() tun.
 	 */
 	void StartFrame();
 	/**
-	 	@brief Rendert alle Objekte die sich während des letzten Aufrufes von Render() verändert haben.
-		@return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
+	    @brief Rendert alle Objekte die sich während des letzten Aufrufes von Render() verändert haben.
+	    @return Gibt false zurück, falls das Rendern fehlgeschlagen ist.
 	 */
 	bool Render();
 	/**
-	 	@brief Gibt einen Pointer auf die Wurzel des Objektbaumes zurück.
+	    @brief Gibt einen Pointer auf die Wurzel des Objektbaumes zurück.
 	 */
-	BS_RenderObjectPtr<BS_RenderObject> GetTreeRoot() { return m_RootPtr; }
+	BS_RenderObjectPtr<BS_RenderObject> GetTreeRoot() {
+		return m_RootPtr;
+	}
 	/**
-		@brief Fügt ein BS_TimedRenderObject in die Liste der zeitabhängigen Render-Objekte.
+	    @brief Fügt ein BS_TimedRenderObject in die Liste der zeitabhängigen Render-Objekte.
 
-		Alle Objekte die sich in dieser Liste befinden werden vor jedem Frame über die seit dem letzten Frame
-		vergangene Zeit informiert, so dass sich ihren Zustand zeitabhängig verändern können.
+	    Alle Objekte die sich in dieser Liste befinden werden vor jedem Frame über die seit dem letzten Frame
+	    vergangene Zeit informiert, so dass sich ihren Zustand zeitabhängig verändern können.
 
-		@param RenderObject das einzufügende BS_TimedRenderObject
+	    @param RenderObject das einzufügende BS_TimedRenderObject
 	*/
 	void AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
 	/**
-		@brief Entfernt ein BS_TimedRenderObject aus der Liste für zeitabhängige Render-Objekte.
+	    @brief Entfernt ein BS_TimedRenderObject aus der Liste für zeitabhängige Render-Objekte.
 	*/
 	void DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> pRenderObject);
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
 	bool m_FrameStarted;
@@ -126,7 +127,7 @@ private:
 	// ---------------------------
 	// Der Baum legt die hierachische Ordnung der BS_RenderObjects fest.
 	// Zu weiteren Informationen siehe: "renderobject.h"
-	BS_RenderObjectPtr<BS_RenderObject>		m_RootPtr;		// Die Wurzel der Baumes
+	BS_RenderObjectPtr<BS_RenderObject>     m_RootPtr;      // Die Wurzel der Baumes
 };
 
 } // End of namespace Sword25

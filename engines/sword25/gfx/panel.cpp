@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -55,21 +55,18 @@ namespace Sword25 {
 
 BS_Panel::BS_Panel(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, int Width, int Height, unsigned int Color) :
 	BS_RenderObject(ParentPtr, BS_RenderObject::TYPE_PANEL),
-	m_Color(Color)
-{
+	m_Color(Color) {
 	m_InitSuccess = false;
 
 	m_Width = Width;
 	m_Height = Height;
 
-	if (m_Width < 0)
-	{
+	if (m_Width < 0) {
 		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid width (%d).", m_Width);
 		return;
 	}
 
-	if (m_Height < 0)
-	{
+	if (m_Height < 0) {
 		BS_LOG_ERRORLN("Tried to initialise a panel with an invalid height (%d).", m_Height);
 		return;
 	}
@@ -79,28 +76,25 @@ BS_Panel::BS_Panel(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, int Width, int
 
 // -----------------------------------------------------------------------------
 
-BS_Panel::BS_Panel(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle) :
-	BS_RenderObject(ParentPtr, BS_RenderObject::TYPE_PANEL, Handle)
-{
+BS_Panel::BS_Panel(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle) :
+	BS_RenderObject(ParentPtr, BS_RenderObject::TYPE_PANEL, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
-	
-BS_Panel::~BS_Panel()
-{
+
+BS_Panel::~BS_Panel() {
 }
 
 // -----------------------------------------------------------------------------
 // Rendern
 // -----------------------------------------------------------------------------
 
-bool BS_Panel::DoRender()
-{
+bool BS_Panel::DoRender() {
 	// Falls der Alphawert 0 ist, ist das Panel komplett durchsichtig und es muss nichts gezeichnet werden.
 	if (m_Color >> 24 == 0) return true;
 
-	BS_GraphicEngine * GfxPtr = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	BS_GraphicEngine *GfxPtr = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(GfxPtr);
 
 	return GfxPtr->Fill(&m_BBox, m_Color);
@@ -110,8 +104,7 @@ bool BS_Panel::DoRender()
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_Panel::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_Panel::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= BS_RenderObject::Persist(Writer);
@@ -124,8 +117,7 @@ bool BS_Panel::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_Panel::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_Panel::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= BS_RenderObject::Unpersist(Reader);

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,7 +45,7 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-	const unsigned int INITIAL_BUFFER_SIZE = 1024 * 64;
+const unsigned int INITIAL_BUFFER_SIZE = 1024 * 64;
 }
 
 namespace Sword25 {

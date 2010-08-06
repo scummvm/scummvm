@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -76,7 +76,7 @@ bool BS_CallbackRegistry::RegisterCallbackFunction(const Common::String &Name, C
 	}
 
 	StoreCallbackFunction(Name, Ptr);
-	
+
 	return true;
 }
 

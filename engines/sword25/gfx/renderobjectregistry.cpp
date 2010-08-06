@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -54,15 +54,13 @@ std::auto_ptr<BS_RenderObjectRegistry> BS_RenderObjectRegistry::m_InstancePtr;
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectRegistry::LogErrorLn(const char * Message) const
-{
+void BS_RenderObjectRegistry::LogErrorLn(const char *Message) const {
 	BS_LOG_ERRORLN(Message);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectRegistry::LogWarningLn(const char * Message) const
-{
+void BS_RenderObjectRegistry::LogWarningLn(const char *Message) const {
 	BS_LOG_WARNINGLN(Message);
 }
 

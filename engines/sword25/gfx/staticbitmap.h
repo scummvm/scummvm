@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -48,39 +48,40 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_StaticBitmap : public BS_Bitmap
-{
-friend class BS_RenderObject;
+class BS_StaticBitmap : public BS_Bitmap {
+	friend class BS_RenderObject;
 
 private:
 	/**
-		@remark Filename muss absoluter Pfad sein
+	    @remark Filename muss absoluter Pfad sein
 	*/
-	BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String& Filename);
-	BS_StaticBitmap(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
+	BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String &Filename);
+	BS_StaticBitmap(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
 public:
 	virtual ~BS_StaticBitmap();
 
 	virtual unsigned int GetPixel(int X, int Y) const;
 
-	virtual bool	SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
+	virtual bool    SetContent(const byte *Pixeldata, unsigned int Offset, unsigned int Stride);
 
-	virtual bool	IsScalingAllowed() const;
-	virtual bool	IsAlphaAllowed() const;
-	virtual	bool	IsColorModulationAllowed() const;
-	virtual bool	IsSetContentAllowed() const { return false; }
+	virtual bool    IsScalingAllowed() const;
+	virtual bool    IsAlphaAllowed() const;
+	virtual bool    IsColorModulationAllowed() const;
+	virtual bool    IsSetContentAllowed() const {
+		return false;
+	}
 
-	virtual bool	Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool	Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool    Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool    Unpersist(BS_InputPersistenceBlock &Reader);
 
 protected:
-	virtual bool	DoRender();
+	virtual bool    DoRender();
 
 private:
 	Common::String m_ResourceFilename;
 
-	bool InitBitmapResource(const Common::String & Filename);
+	bool InitBitmapResource(const Common::String &Filename);
 };
 
 } // End of namespace Sword25

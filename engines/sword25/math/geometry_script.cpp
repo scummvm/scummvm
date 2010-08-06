@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -67,11 +67,9 @@ namespace Sword25 {
 static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 	int top = lua_gettop(L);
 
-	void * p = lua_touserdata(L, ud);
-	if (p != NULL) /* value is a userdata? */
-	{
-		if (lua_getmetatable(L, ud)) /* does it have a metatable? */
-		{  
+	void *p = lua_touserdata(L, ud);
+	if (p != NULL) { /* value is a userdata? */
+		if (lua_getmetatable(L, ud)) { /* does it have a metatable? */
 			// lua_getfield(L, LUA_REGISTRYINDEX, tname);  /* get correct metatable */
 			BS_LuaBindhelper::GetMetatable(L, tname);
 			/* does it have the correct mt? */
@@ -89,7 +87,7 @@ static void *my_checkudata(lua_State *L, int ud, const char *tname) {
 // -----------------------------------------------------------------------------
 
 static void NewUintUserData(lua_State *L, unsigned int Value) {
-	void * UserData = lua_newuserdata(L, sizeof(Value));
+	void *UserData = lua_newuserdata(L, sizeof(Value));
 	memcpy(UserData, &Value, sizeof(Value));
 }
 
@@ -157,8 +155,7 @@ static void TablePolygonToPolygon(lua_State *L, BS_Polygon &Polygon) {
 	Vertecies.reserve(VertexCount);
 
 	// Create Vertecies
-	for (int i = 0; i < VertexCount; i++)
-	{
+	for (int i = 0; i < VertexCount; i++) {
 		// X Value
 		lua_rawgeti(L, -1, (i * 2) + 1);
 		int X = static_cast<int>(lua_tonumber(L, -1));
@@ -220,43 +217,43 @@ static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 	int FirstElementType = lua_type(L, -1);
 	lua_pop(L, 1);
 
-	switch(FirstElementType) {
-		case LUA_TNUMBER: {
-				BS_Polygon Polygon;
-				TablePolygonToPolygon(L, Polygon);
-				BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon);
-			}
-			break;
-		
-		case LUA_TTABLE: {
-				lua_rawgeti(L, -1, 1);
-				BS_Polygon Polygon;
-				TablePolygonToPolygon(L, Polygon);
+	switch (FirstElementType) {
+	case LUA_TNUMBER: {
+		BS_Polygon Polygon;
+		TablePolygonToPolygon(L, Polygon);
+		BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon);
+	}
+	break;
+
+	case LUA_TTABLE: {
+		lua_rawgeti(L, -1, 1);
+		BS_Polygon Polygon;
+		TablePolygonToPolygon(L, Polygon);
+		lua_pop(L, 1);
+
+		int PolygonCount = luaL_getn(L, -1);
+		if (PolygonCount == 1)
+			BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon);
+		else {
+			Common::Array<BS_Polygon> Holes;
+			Holes.reserve(PolygonCount - 1);
+
+			for (int i = 2; i <= PolygonCount; i++) {
+				lua_rawgeti(L, -1, i);
+				Holes.resize(Holes.size() + 1);
+				TablePolygonToPolygon(L, Holes.back());
 				lua_pop(L, 1);
-
-				int PolygonCount = luaL_getn(L, -1);
-				if (PolygonCount == 1)
-					BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon);
-				else {
-					Common::Array<BS_Polygon> Holes;
-					Holes.reserve(PolygonCount - 1);
-
-					for (int i = 2; i <= PolygonCount; i++) {
-						lua_rawgeti(L, -1, i);
-						Holes.resize(Holes.size() + 1);
-						TablePolygonToPolygon(L, Holes.back());
-						lua_pop(L, 1);
-					}
-					BS_ASSERT((int)Holes.size() == PolygonCount - 1);
-
-					BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon, &Holes);
-				}
 			}
-			break;
+			BS_ASSERT((int)Holes.size() == PolygonCount - 1);
 
-		default:
-			luaL_error(L, "Illegal region definition.");
-			return 0;
+			BS_RegionRegistry::GetInstance().ResolveHandle(RegionHandle)->Init(Polygon, &Holes);
+		}
+	}
+	break;
+
+	default:
+		luaL_error(L, "Illegal region definition.");
+		return 0;
 	}
 
 #ifdef DEBUG
@@ -268,8 +265,7 @@ static unsigned int TableRegionToRegion(lua_State *L, const char *ClassName) {
 
 // -----------------------------------------------------------------------------
 
-static void NewUserdataRegion(lua_State *L, const char *ClassName)
-{
+static void NewUserdataRegion(lua_State *L, const char *ClassName) {
 	// Region due to the Lua code to create
 	// Any errors that occur will be intercepted to the luaL_error
 	unsigned int RegionHandle = TableRegionToRegion(L, ClassName);
@@ -308,11 +304,11 @@ static const luaL_reg GEO_FUNCTIONS[] = {
 
 // -----------------------------------------------------------------------------
 
-static BS_Region * CheckRegion(lua_State *L) {
+static BS_Region *CheckRegion(lua_State *L) {
 	// The first parameter must be of type 'userdata', and the Metatable class Geo.Region or Geo.WalkRegion
 	unsigned int *RegionHandlePtr;
 	if ((RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, REGION_CLASS_NAME))) != 0 ||
-		(RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
+	        (RegionHandlePtr = reinterpret_cast<unsigned int *>(my_checkudata(L, 1, WALKREGION_CLASS_NAME))) != 0) {
 		return BS_RegionRegistry::GetInstance().ResolveHandle(*RegionHandlePtr);
 	} else {
 		luaL_argcheck(L, 0, 1, "'" REGION_CLASS_NAME "' expected");
@@ -325,7 +321,7 @@ static BS_Region * CheckRegion(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_IsValid(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	lua_pushbooleancpp(L, pR->IsValid());
@@ -335,7 +331,7 @@ static int R_IsValid(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_GetX(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	lua_pushnumber(L, pR->GetPosX());
@@ -345,7 +341,7 @@ static int R_GetX(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_GetY(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	lua_pushnumber(L, pR->GetPosY());
@@ -355,7 +351,7 @@ static int R_GetY(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_GetPos(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	BS_Vertex::VertexToLuaVertex(L, pR->GetPosition());
@@ -365,7 +361,7 @@ static int R_GetPos(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_IsPointInRegion(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	BS_Vertex Vertex;
@@ -377,7 +373,7 @@ static int R_IsPointInRegion(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_SetPos(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	BS_Vertex Vertex;
@@ -390,7 +386,7 @@ static int R_SetPos(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_SetX(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	pR->SetPosX(static_cast<int>(luaL_checknumber(L, 2)));
@@ -401,7 +397,7 @@ static int R_SetX(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_SetY(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	pR->SetPosY(static_cast<int>(luaL_checknumber(L, 2)));
@@ -432,24 +428,24 @@ static void DrawRegion(const BS_Region &Region, unsigned int Color, const BS_Ver
 // -----------------------------------------------------------------------------
 
 static int R_Draw(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 
 	switch (lua_gettop(L)) {
-		case 3: {
-				BS_Vertex Offset;
-				BS_Vertex::LuaVertexToVertex(L, 3, Offset);
-				DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), Offset);
-			}
-			break;
+	case 3: {
+		BS_Vertex Offset;
+		BS_Vertex::LuaVertexToVertex(L, 3, Offset);
+		DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), Offset);
+	}
+	break;
 
-		case 2:
-			DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), BS_Vertex(0, 0));
-			break;
+	case 2:
+		DrawRegion(*pR, BS_GraphicEngine::LuaColorToARGBColor(L, 2), BS_Vertex(0, 0));
+		break;
 
-		default:
-			DrawRegion(*pR, BS_RGB(255, 255, 255), BS_Vertex(0, 0));
-	}	
+	default:
+		DrawRegion(*pR, BS_RGB(255, 255, 255), BS_Vertex(0, 0));
+	}
 
 	return 0;
 }
@@ -457,7 +453,7 @@ static int R_Draw(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_GetCentroid(lua_State *L) {
-	BS_Region * RPtr = CheckRegion(L);
+	BS_Region *RPtr = CheckRegion(L);
 	BS_ASSERT(RPtr);
 
 	BS_Vertex::VertexToLuaVertex(L, RPtr->GetCentroid());
@@ -468,7 +464,7 @@ static int R_GetCentroid(lua_State *L) {
 // -----------------------------------------------------------------------------
 
 static int R_Delete(lua_State *L) {
-	BS_Region * pR = CheckRegion(L);
+	BS_Region *pR = CheckRegion(L);
 	BS_ASSERT(pR);
 	delete pR;
 	return 0;
@@ -540,9 +536,9 @@ static const luaL_reg WALKREGION_METHODS[] = {
 // -----------------------------------------------------------------------------
 
 bool BS_Geometry::_RegisterScriptBindings() {
-	BS_Kernel * pKernel = BS_Kernel::GetInstance();
+	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast< lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);

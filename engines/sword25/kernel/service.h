@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -38,7 +38,7 @@
  * This is the base class for all engine services.
  * A serivce is an essential part of the engine, ex. the graphics system.
  * This was intended to allow, for example, different plug in modules for
- * different kinds of hardware and/or systems. 
+ * different kinds of hardware and/or systems.
  * The services are created at runtime via the kernel method NewService and NEVER with new.
  *
  * Autor: Malte Thiesen
@@ -57,13 +57,15 @@ class BS_Kernel;
 
 class BS_Service {
 private:
-	BS_Kernel *	_pKernel;
-		
+	BS_Kernel  *_pKernel;
+
 protected:
 	BS_Service(BS_Kernel *pKernel) : _pKernel(pKernel) {};
-	
-	BS_Kernel* GetKernel() const { return _pKernel; }
-	
+
+	BS_Kernel *GetKernel() const {
+		return _pKernel;
+	}
+
 public:
 	virtual ~BS_Service() {};
 };

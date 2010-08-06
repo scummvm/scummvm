@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -71,7 +71,7 @@ class BS_MoviePlayer;
 /**
  * This is the main engine class
  *
- * This class creates and manages all other engine components such as sound engine, graphics engine ... 
+ * This class creates and manages all other engine components such as sound engine, graphics engine ...
  * It is not necessary to release all the items individually, this is performed by the Kernel class.
 */
 class BS_Kernel {
@@ -82,42 +82,44 @@ public:
 	/**
 	 * Returns a pointer to the window object
 	 */
-	BS_Window *GetWindow() { return _pWindow; }
+	BS_Window *GetWindow() {
+		return _pWindow;
+	}
 
 	// Service Methods
 	// ---------------
 
 	/**
-	 * Creates a new service with the given identifier. Returns a pointer to the service, or null if the 
+	 * Creates a new service with the given identifier. Returns a pointer to the service, or null if the
 	 * service could not be created
- 	 * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
-	 * @param SuperclassIdentifier		The name of the superclass of the service
-	 *		   z.B: "sfx", "gfx", "package" ...
-	 * @param ServiceIdentifier			The name of the service
-	 *		   For the superclass "sfx" an example could be "Fmod" or "directsound"
+	 * Note: All services must be registered in service_ids.h, otherwise they cannot be created here
+	 * @param SuperclassIdentifier      The name of the superclass of the service
+	 *         z.B: "sfx", "gfx", "package" ...
+	 * @param ServiceIdentifier         The name of the service
+	 *         For the superclass "sfx" an example could be "Fmod" or "directsound"
 	 */
 	BS_Service *NewService(const Common::String &SuperclassIdentifier, const Common::String &ServiceIdentifier);
 
 	/**
-	 * Ends the current service of a superclass. Returns true on success, and false if the superclass 
+	 * Ends the current service of a superclass. Returns true on success, and false if the superclass
 	 * does not exist or if not service was active
-	 * @param SuperclassIdentfier		The name of the superclass which is to be disconnected
-	 *		   z.B: "sfx", "gfx", "package" ...
+	 * @param SuperclassIdentfier       The name of the superclass which is to be disconnected
+	 *         z.B: "sfx", "gfx", "package" ...
 	 */
 	bool DisconnectService(const Common::String &SuperclassIdentifier);
 
 	/**
 	 * Returns a pointer to the currently active service object of a superclass
-	 * @param SuperclassIdentfier		The name of the superclass
-	 *		   z.B: "sfx", "gfx", "package" ...
+	 * @param SuperclassIdentfier       The name of the superclass
+	 *         z.B: "sfx", "gfx", "package" ...
 	 */
 	BS_Service *GetService(const Common::String &SuperclassIdentifier);
 
 	/**
 	 * Returns the name of the currentl active service object of a superclass.
 	 * If an error occurs, then an empty string is returned
-	 * @param SuperclassIdentfier		The name of the superclass
-	 *		   z.B: "sfx", "gfx", "package" ...
+	 * @param SuperclassIdentfier       The name of the superclass
+	 *         z.B: "sfx", "gfx", "package" ...
 	 */
 	Common::String GetActiveServiceIdentifier(const Common::String &SuperclassIdentifier);
 
@@ -129,26 +131,26 @@ public:
 	/**
 	 * Returns the name of a superclass with the specified index.
 	 * Note: The number of superclasses can be retrieved using GetSuperclassCount
-	 * @param Number		The number of the superclass to return the identifier for.
+	 * @param Number        The number of the superclass to return the identifier for.
 	 * It should be noted that the number should be between 0 und GetSuperclassCount() - 1.
 	 */
 	Common::String GetSuperclassIdentifier(unsigned int Number);
 
 	/**
 	 * Returns the number of services registered with a given superclass
-	 * @param SuperclassIdentifier		The name of the superclass
-	 *		   z.B: "sfx", "gfx", "package" ...
+	 * @param SuperclassIdentifier      The name of the superclass
+	 *         z.B: "sfx", "gfx", "package" ...
 	 */
-	unsigned int GetServiceCount(const Common::String & SuperclassIdentifier);
+	unsigned int GetServiceCount(const Common::String &SuperclassIdentifier);
 
 	/**
 	 * Gets the identifier of a service with a given superclass.
 	 * The number of services in a superclass can be learned with GetServiceCount().
-	 * @param SuperclassIdentifier		The name of the superclass
-	 *		   z.B: "sfx", "gfx", "package" ...
+	 * @param SuperclassIdentifier      The name of the superclass
+	 *         z.B: "sfx", "gfx", "package" ...
 	 * @param Number die Nummer des Services, dessen Bezeichner man erfahren will.<br>
-	 *		   Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
-	 *	       0 und GetServiceCount() - 1 sein.
+	 *         Hierbei ist zu beachten, dass der erste Service die Nummer 0 erhält. Number muss also eine Zahl zwischen
+	 *         0 und GetServiceCount() - 1 sein.
 	 */
 	Common::String GetServiceIdentifier(const Common::String &SuperclassIdentifier, unsigned int Number);
 
@@ -166,19 +168,23 @@ public:
 	/**
 	 * Specifies whether the kernel was successfully initialised
 	 */
-	bool GetInitSuccess() { return _InitSuccess; }
+	bool GetInitSuccess() {
+		return _InitSuccess;
+	}
 	/**
 	 * Returns a pointer to the BS_ResourceManager
 	 */
-	BS_ResourceManager *GetResourceManager() { return _pResourceManager; }
+	BS_ResourceManager *GetResourceManager() {
+		return _pResourceManager;
+	}
 	/**
 	 * Returns how much memory is being used
 	 */
 	size_t GetUsedMemory();
 	/**
 	 * Returns a random number
-	 * @param Min		The minimum allowed value
-	 * @param Max		The maximum allowed value
+	 * @param Min       The minimum allowed value
+	 * @param Max       The maximum allowed value
 	 */
 	int GetRandomNumber(int Min, int Max);
 	/**
@@ -208,14 +214,14 @@ public:
 
 	/**
 	 * Pauses for the specified amount of time
-	 * @param Msecs		The amount of time in milliseconds
+	 * @param Msecs     The amount of time in milliseconds
 	 */
 	void Sleep(unsigned int Msecs) const;
 
 	/**
 	 * Returns the singleton instance for the kernel
 	 */
-	static BS_Kernel *GetInstance()	{
+	static BS_Kernel *GetInstance() {
 		if (!_Instance) _Instance = new BS_Kernel();
 		return _Instance;
 	}
@@ -238,13 +244,13 @@ public:
 	void Crash() const {
 		error("BS_Kernel::Crash");
 	}
-	
+
 private:
 	// -----------------------------------------------------------------------------
 	// Constructor / destructor
 	// Private singleton methods
 	// -----------------------------------------------------------------------------
-	
+
 	BS_Kernel();
 	virtual ~BS_Kernel();
 
@@ -262,27 +268,35 @@ private:
 		Common::String _Identifier;
 		BS_Service *_ActiveService;
 		Common::String _ActiveServiceName;
-		
+
 	public:
-		Superclass (BS_Kernel *pKernel, const Common::String &Identifier);
+		Superclass(BS_Kernel *pKernel, const Common::String &Identifier);
 		~Superclass();
-		
-		unsigned int GetServiceCount() const { return _ServiceCount; }
-		Common::String GetIdentifier() const { return _Identifier; }
-		BS_Service *GetActiveService() const { return _ActiveService; }
-		Common::String GetActiveServiceName() const { return _ActiveServiceName; }
+
+		unsigned int GetServiceCount() const {
+			return _ServiceCount;
+		}
+		Common::String GetIdentifier() const {
+			return _Identifier;
+		}
+		BS_Service *GetActiveService() const {
+			return _ActiveService;
+		}
+		Common::String GetActiveServiceName() const {
+			return _ActiveServiceName;
+		}
 		Common::String GetServiceIdentifier(unsigned int Number);
 		BS_Service *NewService(const Common::String &ServiceIdentifier);
 		bool DisconnectService();
 	};
-	
-	Common::Array<Superclass*>	_SuperclassList;
-	Common::Stack<Common::String>		_ServiceCreationOrder;
+
+	Common::Array<Superclass *>  _SuperclassList;
+	Common::Stack<Common::String>       _ServiceCreationOrder;
 	Superclass *GetSuperclassByIdentifier(const Common::String &Identifier);
-	
+
 	bool _InitSuccess; // Specifies whether the engine was set up correctly
-	bool _Running;	// Specifies whether the application should keep running on the next main loop iteration
-	
+	bool _Running;  // Specifies whether the application should keep running on the next main loop iteration
+
 	// Active window
 	// -------------
 	BS_Window *_pWindow;
@@ -296,22 +310,22 @@ private:
 	// ----------------------------------
 	enum _CPU_FEATURES_BITMASKS
 	{
-		_MMX_BITMASK		= (1 << 23),
-		_SSE_BITMASK		= (1 << 25),
-		_SSE2_BITMASK		= (1 << 26),
-		_3DNOW_BITMASK		= (1 << 30),
-		_3DNOWEXT_BITMASK	= (1 << 31)
+	    _MMX_BITMASK        = (1 << 23),
+	    _SSE_BITMASK        = (1 << 25),
+	    _SSE2_BITMASK       = (1 << 26),
+	    _3DNOW_BITMASK      = (1 << 30),
+	    _3DNOWEXT_BITMASK   = (1 << 31)
 	};
 
-	bool		_DetectCPU();
+	bool        _DetectCPU();
 
-	bool		_MMXPresent;
-	bool		_SSEPresent;
-	bool		_SSE2Present;
-	bool		_3DNowPresent;
-	bool		_3DNowExtPresent;
-	CPU_TYPES	_CPUType;
-	Common::String	_CPUVendorID;
+	bool        _MMXPresent;
+	bool        _SSEPresent;
+	bool        _SSE2Present;
+	bool        _3DNowPresent;
+	bool        _3DNowExtPresent;
+	CPU_TYPES   _CPUType;
+	Common::String  _CPUVendorID;
 	*/
 
 	// Resourcemanager
@@ -322,21 +336,21 @@ private:
 };
 
 /**
- * This is only a small class that manages the data of a service. It is a little ugly, I know, 
+ * This is only a small class that manages the data of a service. It is a little ugly, I know,
  * but with Common::String a simple struct could not be used.
  */
 class BS_ServiceInfo {
 public:
-	BS_ServiceInfo(const Common::String &SuperclassIdentifier_, const Common::String& ServiceIdentifier_, 
-			BS_Service* (*CreateMethod_)(BS_Kernel*)) {
+	BS_ServiceInfo(const Common::String &SuperclassIdentifier_, const Common::String &ServiceIdentifier_,
+	               BS_Service*(*CreateMethod_)(BS_Kernel *)) {
 		this->SuperclassIdentifier = SuperclassIdentifier_;
 		this->ServiceIdentifier = ServiceIdentifier_;
 		this->CreateMethod = CreateMethod_;
 	};
-	
-	Common::String	SuperclassIdentifier;
-	Common::String	ServiceIdentifier;
-	BS_Service* (*CreateMethod)(BS_Kernel *);
+
+	Common::String  SuperclassIdentifier;
+	Common::String  ServiceIdentifier;
+	BS_Service*(*CreateMethod)(BS_Kernel *);
 };
 
 template<class T>

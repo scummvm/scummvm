@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -51,7 +51,7 @@ class ScummVMInput : public BS_InputEngine {
 public:
 	ScummVMInput(BS_Kernel *pKernel);
 	virtual ~ScummVMInput();
-	
+
 	virtual bool Init();
 	virtual void Update();
 	virtual bool IsLeftMouseDown();
@@ -79,23 +79,23 @@ private:
 	void TestForLeftDoubleClick();
 	void AlterKeyboardState(int keycode, byte newState);
 
-	byte							m_KeyboardState[2][256];
-	bool							m_LeftMouseState[2];
-	bool							m_RightMouseState[2];
-	unsigned int					m_CurrentState;
-	int								m_MouseX;
-	int								m_MouseY;
-	bool							m_LeftMouseDown;
-	bool							m_RightMouseDown;
-	bool							m_LeftDoubleClick;
-	unsigned int					m_DoubleClickTime;
-	int								m_DoubleClickRectWidth;
-	int								m_DoubleClickRectHeight;
-	unsigned int					m_LastLeftClickTime;
-	int								m_LastLeftClickMouseX;
-	int								m_LastLeftClickMouseY;
-	Common::List<CommandCallback>		m_CommandCallbacks;
-	Common::List<CharacterCallback>	m_CharacterCallbacks;
+	byte                            m_KeyboardState[2][256];
+	bool                            m_LeftMouseState[2];
+	bool                            m_RightMouseState[2];
+	unsigned int                    m_CurrentState;
+	int                             m_MouseX;
+	int                             m_MouseY;
+	bool                            m_LeftMouseDown;
+	bool                            m_RightMouseDown;
+	bool                            m_LeftDoubleClick;
+	unsigned int                    m_DoubleClickTime;
+	int                             m_DoubleClickRectWidth;
+	int                             m_DoubleClickRectHeight;
+	unsigned int                    m_LastLeftClickTime;
+	int                             m_LastLeftClickMouseX;
+	int                             m_LastLeftClickMouseY;
+	Common::List<CommandCallback>       m_CommandCallbacks;
+	Common::List<CharacterCallback> m_CharacterCallbacks;
 };
 
 } // End of namespace Sword25

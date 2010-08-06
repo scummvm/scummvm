@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -56,9 +56,8 @@ namespace Sword25 {
 // Konstanten
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	const unsigned int AUTO_WRAP_THRESHOLD_DEFAULT = 300;
+namespace {
+const unsigned int AUTO_WRAP_THRESHOLD_DEFAULT = 300;
 }
 
 // -----------------------------------------------------------------------------
@@ -69,33 +68,27 @@ BS_Text::BS_Text(BS_RenderObjectPtr<BS_RenderObject> ParentPtr) :
 	BS_RenderObject(ParentPtr, BS_RenderObject::TYPE_TEXT),
 	m_ModulationColor(0xffffffff),
 	m_AutoWrap(false),
-	m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT)
-{
-	
+	m_AutoWrapThreshold(AUTO_WRAP_THRESHOLD_DEFAULT) {
+
 }
 
 // -----------------------------------------------------------------------------
 
-BS_Text::BS_Text(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle) :
-	BS_RenderObject(ParentPtr, TYPE_TEXT, Handle)
-{
+BS_Text::BS_Text(BS_InputPersistenceBlock &Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle) :
+	BS_RenderObject(ParentPtr, TYPE_TEXT, Handle) {
 	m_InitSuccess = Unpersist(Reader);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_Text::SetFont(const Common::String & Font)
-{
+bool BS_Text::SetFont(const Common::String &Font) {
 	// Font precachen.
-	if (GetResourceManager()->PrecacheResource(Font))
-	{
+	if (GetResourceManager()->PrecacheResource(Font)) {
 		m_Font = Font;
 		UpdateFormat();
 		ForceRefresh();
 		return true;
-	}
-	else
-	{
+	} else {
 		BS_LOG_ERRORLN("Could not precache font \"%s\". Font probably does not exist.", Font.c_str());
 		return false;
 	}
@@ -104,8 +97,7 @@ bool BS_Text::SetFont(const Common::String & Font)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetText(const Common::String & Text)
-{
+void BS_Text::SetText(const Common::String &Text) {
 	m_Text = Text;
 	UpdateFormat();
 	ForceRefresh();
@@ -113,11 +105,9 @@ void BS_Text::SetText(const Common::String & Text)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetColor(unsigned int ModulationColor)
-{
+void BS_Text::SetColor(unsigned int ModulationColor) {
 	unsigned int NewModulationColor = (ModulationColor & 0x00ffffff) | (m_ModulationColor & 0xff000000);
-	if (NewModulationColor != m_ModulationColor)
-	{
+	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
 	}
@@ -125,12 +115,10 @@ void BS_Text::SetColor(unsigned int ModulationColor)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAlpha(int Alpha)
-{
+void BS_Text::SetAlpha(int Alpha) {
 	BS_ASSERT(Alpha >= 0 && Alpha < 256);
 	unsigned int NewModulationColor = (m_ModulationColor & 0x00ffffff) | Alpha << 24;
-	if (NewModulationColor != m_ModulationColor)
-	{
+	if (NewModulationColor != m_ModulationColor) {
 		m_ModulationColor = NewModulationColor;
 		ForceRefresh();
 	}
@@ -138,10 +126,8 @@ void BS_Text::SetAlpha(int Alpha)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAutoWrap(bool AutoWrap)
-{
-	if (AutoWrap != m_AutoWrap)
-	{
+void BS_Text::SetAutoWrap(bool AutoWrap) {
+	if (AutoWrap != m_AutoWrap) {
 		m_AutoWrap = AutoWrap;
 		UpdateFormat();
 		ForceRefresh();
@@ -150,10 +136,8 @@ void BS_Text::SetAutoWrap(bool AutoWrap)
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold)
-{
-	if (AutoWrapThreshold != m_AutoWrapThreshold)
-	{
+void BS_Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold) {
+	if (AutoWrapThreshold != m_AutoWrapThreshold) {
 		m_AutoWrapThreshold = AutoWrapThreshold;
 		UpdateFormat();
 		ForceRefresh();
@@ -162,39 +146,35 @@ void BS_Text::SetAutoWrapThreshold(unsigned int AutoWrapThreshold)
 
 // -----------------------------------------------------------------------------
 
-bool BS_Text::DoRender()
-{
+bool BS_Text::DoRender() {
 	// Font-Resource locken.
-	BS_FontResource * FontPtr = LockFontResource();
+	BS_FontResource *FontPtr = LockFontResource();
 	if (!FontPtr) return false;
 
 	// Charactermap-Resource locken.
-	BS_ResourceManager * RMPtr = GetResourceManager();
-	BS_BitmapResource * CharMapPtr;
+	BS_ResourceManager *RMPtr = GetResourceManager();
+	BS_BitmapResource *CharMapPtr;
 	{
-		BS_Resource * pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
-		if (!pResource)
-		{
+		BS_Resource *pResource = RMPtr->RequestResource(FontPtr->GetCharactermapFileName());
+		if (!pResource) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", FontPtr->GetCharactermapFileName().c_str());
 			return false;
 		}
-		if (pResource->GetType() != BS_Resource::TYPE_BITMAP)
-		{
+		if (pResource->GetType() != BS_Resource::TYPE_BITMAP) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a bitmap.", FontPtr->GetCharactermapFileName().c_str());
 			return false;
 		}
 
-		CharMapPtr = static_cast<BS_BitmapResource*>(pResource);
+		CharMapPtr = static_cast<BS_BitmapResource *>(pResource);
 	}
 
 	// Framebufferobjekt holen.
-	BS_GraphicEngine * GfxPtr = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
+	BS_GraphicEngine *GfxPtr = static_cast<BS_GraphicEngine *>(BS_Kernel::GetInstance()->GetService("gfx"));
 	BS_ASSERT(GfxPtr);
 
 	bool Result = true;
 	Common::Array<LINE>::iterator Iter = m_Lines.begin();
-	for (; Iter != m_Lines.end(); ++Iter)
-	{
+	for (; Iter != m_Lines.end(); ++Iter) {
 		// Feststellen, ob überhaupt Buchstaben der aktuellen Zeile vom Update betroffen sind.
 		BS_Rect CheckRect = (*Iter).BBox;
 		CheckRect.Move(m_AbsoluteX, m_AbsoluteY);
@@ -202,8 +182,7 @@ bool BS_Text::DoRender()
 		// Jeden Buchstaben einzeln Rendern.
 		int CurX = m_AbsoluteX + (*Iter).BBox.left;
 		int CurY = m_AbsoluteY + (*Iter).BBox.top;
-		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i)
-		{
+		for (unsigned int i = 0; i < (*Iter).Text.size(); ++i) {
 			BS_Rect CurRect = FontPtr->GetCharacterRect((unsigned char)(*Iter).Text.at(i));
 
 			BS_Rect RenderRect(CurX, CurY, CurX + CurRect.GetWidth(), CurY + CurRect.GetHeight());
@@ -213,7 +192,7 @@ bool BS_Text::DoRender()
 			Result = CharMapPtr->Blit(RenderX, RenderY, BS_Image::FLIP_NONE, &RenderRect, m_ModulationColor);
 			if (!Result) break;
 
-			CurX += CurRect.GetWidth() + FontPtr->GetGapWidth();		
+			CurX += CurRect.GetWidth() + FontPtr->GetGapWidth();
 		}
 	}
 
@@ -228,34 +207,30 @@ bool BS_Text::DoRender()
 
 // -----------------------------------------------------------------------------
 
-BS_ResourceManager * BS_Text::GetResourceManager()
-{
+BS_ResourceManager *BS_Text::GetResourceManager() {
 	// Pointer auf den Resource-Manager holen.
 	return BS_Kernel::GetInstance()->GetResourceManager();
 }
 
 // -----------------------------------------------------------------------------
 
-BS_FontResource * BS_Text::LockFontResource()
-{
-	BS_ResourceManager * RMPtr = GetResourceManager();
+BS_FontResource *BS_Text::LockFontResource() {
+	BS_ResourceManager *RMPtr = GetResourceManager();
 
 	// Font-Resource locken.
-	BS_FontResource * FontPtr;
+	BS_FontResource *FontPtr;
 	{
-		BS_Resource * ResourcePtr = RMPtr->RequestResource(m_Font);
-		if (!ResourcePtr)
-		{
+		BS_Resource *ResourcePtr = RMPtr->RequestResource(m_Font);
+		if (!ResourcePtr) {
 			BS_LOG_ERRORLN("Could not request resource \"%s\".", m_Font.c_str());
 			return NULL;
 		}
-		if (ResourcePtr->GetType() != BS_Resource::TYPE_FONT)
-		{
+		if (ResourcePtr->GetType() != BS_Resource::TYPE_FONT) {
 			BS_LOG_ERRORLN("Requested resource \"%s\" is not a font.", m_Font.c_str());
 			return NULL;
 		}
 
-		FontPtr = static_cast<BS_FontResource*>(ResourcePtr);
+		FontPtr = static_cast<BS_FontResource *>(ResourcePtr);
 	}
 
 	return FontPtr;
@@ -263,16 +238,14 @@ BS_FontResource * BS_Text::LockFontResource()
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::UpdateFormat()
-{
-	BS_FontResource * FontPtr = LockFontResource();
+void BS_Text::UpdateFormat() {
+	BS_FontResource *FontPtr = LockFontResource();
 	BS_ASSERT(FontPtr);
 
 	UpdateMetrics(*FontPtr);
 
 	m_Lines.resize(1);
-	if (m_AutoWrap && (unsigned int) m_Width >= m_AutoWrapThreshold && m_Text.size() >= 2)
-	{
+	if (m_AutoWrap && (unsigned int) m_Width >= m_AutoWrapThreshold && m_Text.size() >= 2) {
 		m_Width = 0;
 		unsigned int CurLineWidth = 0;
 		unsigned int CurLineHeight = 0;
@@ -280,19 +253,17 @@ void BS_Text::UpdateFormat()
 		unsigned int TempLineWidth = 0;
 		unsigned int LastSpace = 0; // we need at least 1 space character to start a new line...
 		m_Lines[0].Text = "";
-		for (unsigned int i = 0; i < m_Text.size(); ++i)
-		{
+		for (unsigned int i = 0; i < m_Text.size(); ++i) {
 			unsigned int j;
 			TempLineWidth = 0;
 			LastSpace = 0;
-			for (j = i; j < m_Text.size(); ++j)
-			{
+			for (j = i; j < m_Text.size(); ++j) {
 				if ((unsigned char)m_Text[j] == ' ') LastSpace = j;
 
-				const BS_Rect & CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				const BS_Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
 				TempLineWidth += CurCharRect.GetWidth();
 				TempLineWidth += FontPtr->GetGapWidth();
-				
+
 				if ((TempLineWidth >= m_AutoWrapThreshold) && (LastSpace > 0))
 					break;
 			}
@@ -301,46 +272,41 @@ void BS_Text::UpdateFormat()
 
 			CurLineWidth = 0;
 			CurLineHeight = 0;
-			for (j = i; j < LastSpace; ++j)
-			{
+			for (j = i; j < LastSpace; ++j) {
 				m_Lines[CurLine].Text += m_Text[j];
 
-				const BS_Rect & CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
+				const BS_Rect &CurCharRect = FontPtr->GetCharacterRect((unsigned char)m_Text[j]);
 				CurLineWidth += CurCharRect.GetWidth();
 				CurLineWidth += FontPtr->GetGapWidth();
 				if ((unsigned int) CurCharRect.GetHeight() > CurLineHeight) CurLineHeight = CurCharRect.GetHeight();
-			}			
+			}
 
 			m_Lines[CurLine].BBox.right = CurLineWidth;
 			m_Lines[CurLine].BBox.bottom = CurLineHeight;
 			if ((unsigned int) m_Width < CurLineWidth) m_Width = CurLineWidth;
-					
-			if(LastSpace < m_Text.size())
-			{
+
+			if (LastSpace < m_Text.size()) {
 				++CurLine;
 				BS_ASSERT(CurLine == m_Lines.size());
 				m_Lines.resize(CurLine + 1);
-				m_Lines[CurLine].Text = "";				
-			}			
-			
+				m_Lines[CurLine].Text = "";
+			}
+
 			i = LastSpace;
 		}
 
 		// Bounding-Box der einzelnen Zeilen relativ zur ersten festlegen (vor allem zentrieren).
 		m_Height = 0;
 		Common::Array<LINE>::iterator Iter = m_Lines.begin();
-		for (; Iter != m_Lines.end(); ++Iter)
-		{
-			BS_Rect & BBox = (*Iter).BBox;
+		for (; Iter != m_Lines.end(); ++Iter) {
+			BS_Rect &BBox = (*Iter).BBox;
 			BBox.left = (m_Width - BBox.right) / 2;
 			BBox.right = BBox.left + BBox.right;
-			BBox.top =  (Iter - m_Lines.begin()) * FontPtr->GetLineHeight();
+			BBox.top = (Iter - m_Lines.begin()) * FontPtr->GetLineHeight();
 			BBox.bottom = BBox.top + BBox.bottom;
 			m_Height += BBox.GetHeight();
 		}
-	}
-	else
-	{
+	} else {
 		// Keine automatische Formatierung, also wird der gesamte Text in nur eine Zeile kopiert.
 		m_Lines[0].Text = m_Text;
 		m_Lines[0].BBox = BS_Rect(0, 0, m_Width, m_Height);
@@ -351,14 +317,12 @@ void BS_Text::UpdateFormat()
 
 // -----------------------------------------------------------------------------
 
-void BS_Text::UpdateMetrics(BS_FontResource & FontResource)
-{
+void BS_Text::UpdateMetrics(BS_FontResource &FontResource) {
 	m_Width = 0;
 	m_Height = 0;
 
-	for (unsigned int i = 0; i < m_Text.size(); ++i)
-	{
-		const BS_Rect & CurRect = FontResource.GetCharacterRect((unsigned char)m_Text.at(i));
+	for (unsigned int i = 0; i < m_Text.size(); ++i) {
+		const BS_Rect &CurRect = FontResource.GetCharacterRect((unsigned char)m_Text.at(i));
 		m_Width += CurRect.GetWidth();
 		if (i != m_Text.size() - 1) m_Width += FontResource.GetGapWidth();
 		if (m_Height < CurRect.GetHeight()) m_Height = CurRect.GetHeight();
@@ -369,8 +333,7 @@ void BS_Text::UpdateMetrics(BS_FontResource & FontResource)
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_Text::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_Text::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	Result &= BS_RenderObject::Persist(Writer);
@@ -386,8 +349,7 @@ bool BS_Text::Persist(BS_OutputPersistenceBlock & Writer)
 	return Result;
 }
 
-bool BS_Text::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_Text::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	Result &= BS_RenderObject::Unpersist(Reader);

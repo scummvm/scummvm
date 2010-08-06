@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -48,41 +48,43 @@ class BS_Resource;
 class BS_Kernel;
 
 class BS_ResourceManager {
-friend class BS_Kernel;
+	friend class BS_Kernel;
 
 public:
 	/**
 	 * Returns a requested resource. If any error occurs, returns NULL
-	 * @param FileName		Filename of resource
+	 * @param FileName      Filename of resource
 	 */
 	BS_Resource *RequestResource(const Common::String &FileName);
 
 	/**
 	 * Loads a resource into the cache
-	 * @param FileName		The filename of the resource to be cached
-	 * @param ForceReload	Indicates whether the file should be reloaded if it's already in the cache.
+	 * @param FileName      The filename of the resource to be cached
+	 * @param ForceReload   Indicates whether the file should be reloaded if it's already in the cache.
 	 * This is useful for files that may have changed in the interim
 	 */
-	bool PrecacheResource(const Common::String& FileName, bool ForceReload = false);
+	bool PrecacheResource(const Common::String &FileName, bool ForceReload = false);
 
 	/**
 	 * Returns the number of loaded resources
 	 */
-	int GetResourceCount() const { return static_cast<int>(m_Resources.size()); }
+	int GetResourceCount() const {
+		return static_cast<int>(m_Resources.size());
+	}
 
 	/**
 	 * Returns a resource by it's ordinal index. Returns NULL if any error occurs
 	 * Note: This method is not optimised for speed and should be used only for debugging purposes
-	 * @param Ord		Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
+	 * @param Ord       Ordinal number of the resource. Must be between 0 and GetResourceCount() - 1.
 	*/
 	BS_Resource *GetResourceByOrdinal(int Ord) const;
 
 	/**
 	 * Registers a RegisterResourceService. This method is the constructor of
 	 * BS_ResourceService, and thus helps all resource services in the ResourceManager list
-	 * @param pService		Which service
+	 * @param pService      Which service
 	 */
-	bool RegisterResourceService(BS_ResourceService* pService);
+	bool RegisterResourceService(BS_ResourceService *pService);
 
 	/**
 	 * Releases all resources that are not locked.
@@ -92,7 +94,9 @@ public:
 	/**
 	 * Returns the maximum memory the kernel has used
 	 */
-	int GetMaxMemoryUsage() const { return m_MaxMemoryUsage; }
+	int GetMaxMemoryUsage() const {
+		return m_MaxMemoryUsage;
+	}
 
 	/**
 	 * Specifies the maximum amount of memory the engine is allowed to use.
@@ -106,13 +110,17 @@ public:
 	 * Specifies whether a warning is written to the log when a cache miss occurs.
 	 * THe default value is "false".
 	 */
-	bool IsLogCacheMiss() const { return m_LogCacheMiss; }
+	bool IsLogCacheMiss() const {
+		return m_LogCacheMiss;
+	}
 
 	/**
 	 * Sets whether warnings are written to the log if a cache miss occurs.
-	 * @param Flag		If "true", then future warnings will be logged
+	 * @param Flag      If "true", then future warnings will be logged
 	 */
-	void SetLogCacheMiss(bool Flag) { m_LogCacheMiss = Flag; }
+	void SetLogCacheMiss(bool Flag) {
+		m_LogCacheMiss = Flag;
+	}
 
 	/**
 	 * Writes the names of all currently locked resources to the log file
@@ -124,21 +132,20 @@ private:
 	 * Creates a new resource manager
 	 * Only the BS_Kernel class can generate copies this class. Thus, the constructor is private
 	 */
-	BS_ResourceManager(BS_Kernel* pKernel) :
+	BS_ResourceManager(BS_Kernel *pKernel) :
 		m_KernelPtr(pKernel),
 		m_MaxMemoryUsage(100000000),
 		m_LogCacheMiss(false)
 	{};
 	virtual ~BS_ResourceManager();
-	
-	enum
-	{
+
+	enum {
 		HASH_TABLE_BUCKETS = 256
 	};
 
 	/**
 	 * Moves a resource to the top of the resource list
-	 * @param pResource		The resource
+	 * @param pResource     The resource
 	 */
 	void MoveToFront(BS_Resource *pResource);
 
@@ -146,7 +153,7 @@ private:
 	 * Loads a resource and updates the m_UsedMemory total
 	 *
 	 * The resource must not already be loaded
-	 * @param FileName		The unique filename of the resource to be loaded
+	 * @param FileName      The unique filename of the resource to be loaded
 	 */
 	BS_Resource *LoadResource(const Common::String &FileName);
 
@@ -159,11 +166,11 @@ private:
 	/**
 	 * Deletes a resource, removes it from the lists, and updates m_UsedMemory
 	 */
-	Common::List<BS_Resource*>::iterator DeleteResource(BS_Resource *pResource);
+	Common::List<BS_Resource *>::iterator DeleteResource(BS_Resource *pResource);
 
 	/**
 	 * Returns a pointer to a loaded resource. If any error occurs, NULL will be returned.
-	 * @param UniqueFileName		The absolute path and filename
+	 * @param UniqueFileName        The absolute path and filename
 	 * Gibt einen Pointer auf die angeforderte Resource zurück, oder NULL, wenn die Resourcen nicht geladen ist.
 	 */
 	BS_Resource *GetResource(const Common::String &UniqueFileName) const;
@@ -173,12 +180,12 @@ private:
 	 */
 	void DeleteResourcesIfNecessary();
 
-	BS_Kernel *							m_KernelPtr;
-	unsigned int						m_MaxMemoryUsage;
-	Common::Array<BS_ResourceService *>	m_ResourceServices;
-	Common::List<BS_Resource *>			m_Resources;
-	Common::List<BS_Resource *>			m_ResourceHashTable[HASH_TABLE_BUCKETS];
-	bool								m_LogCacheMiss;
+	BS_Kernel                          *m_KernelPtr;
+	unsigned int                        m_MaxMemoryUsage;
+	Common::Array<BS_ResourceService *> m_ResourceServices;
+	Common::List<BS_Resource *>         m_Resources;
+	Common::List<BS_Resource *>         m_ResourceHashTable[HASH_TABLE_BUCKETS];
+	bool                                m_LogCacheMiss;
 };
 
 } // End of namespace Sword25

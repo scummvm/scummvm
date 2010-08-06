@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -59,7 +59,7 @@ BS_WalkRegion::BS_WalkRegion() {
 // -----------------------------------------------------------------------------
 
 BS_WalkRegion::BS_WalkRegion(BS_InputPersistenceBlock &Reader, unsigned int Handle) :
-		BS_Region(Reader, Handle) {
+	BS_Region(Reader, Handle) {
 	m_Type = RT_WALKREGION;
 	Unpersist(Reader);
 }
@@ -91,13 +91,12 @@ bool BS_WalkRegion::QueryPath(BS_Vertex StartPoint, BS_Vertex EndPoint, BS_Path 
 	// If the start and finish are identical, no path can be found trivially
 	if (StartPoint == EndPoint) return true;
 
-	// Ensure that the start and finish are valid and find new start points if either 
+	// Ensure that the start and finish are valid and find new start points if either
 	// are outside the polygon
 	if (!CheckAndPrepareStartAndEnd(StartPoint, EndPoint)) return false;
 
 	// If between the start and point a line of sight exists, then it can be returned.
-	if (IsLineOfSight(StartPoint, EndPoint))
-	{
+	if (IsLineOfSight(StartPoint, EndPoint)) {
 		Path.push_back(StartPoint);
 		Path.push_back(EndPoint);
 		return true;
@@ -114,27 +113,27 @@ struct DijkstraNode {
 	typedef Container::const_iterator ConstIter;
 
 	DijkstraNode() : Cost(infinity), Chosen(false) {};
-	ConstIter	ParentIter;
-	int			Cost;
-	bool		Chosen;
+	ConstIter   ParentIter;
+	int         Cost;
+	bool        Chosen;
 };
 
-static void InitDijkstraNodes(DijkstraNode::Container &DijkstraNodes, const BS_Region &Region, 
-							  const BS_Vertex &Start, const Common::Array<BS_Vertex> &Nodes) {
+static void InitDijkstraNodes(DijkstraNode::Container &DijkstraNodes, const BS_Region &Region,
+                              const BS_Vertex &Start, const Common::Array<BS_Vertex> &Nodes) {
 	// Allocate sufficient space in the array
 	DijkstraNodes.resize(Nodes.size());
 
 	// Initialise all the nodes which are visible from the starting node
 	DijkstraNode::Iter DijkstraIter = DijkstraNodes.begin();
-	for (Common::Array<BS_Vertex>::const_iterator NodesIter = Nodes.begin(); 
-			NodesIter != Nodes.end(); NodesIter++, DijkstraIter++) {
+	for (Common::Array<BS_Vertex>::const_iterator NodesIter = Nodes.begin();
+	        NodesIter != Nodes.end(); NodesIter++, DijkstraIter++) {
 		(*DijkstraIter).ParentIter = DijkstraNodes.end();
-		if (Region.IsLineOfSight(*NodesIter, Start)) (*DijkstraIter).Cost = (*NodesIter).Distance(Start);
+		if (Region.IsLineOfSight(*NodesIter, Start))(*DijkstraIter).Cost = (*NodesIter).Distance(Start);
 	}
 	BS_ASSERT(DijkstraIter == DijkstraNodes.end());
 }
 
-static DijkstraNode::Iter ChooseClosestNode(DijkstraNode::Container & Nodes) {
+static DijkstraNode::Iter ChooseClosestNode(DijkstraNode::Container &Nodes) {
 	DijkstraNode::Iter ClosestNodeInter = Nodes.end();
 	int MinCost = infinity;
 
@@ -149,8 +148,8 @@ static DijkstraNode::Iter ChooseClosestNode(DijkstraNode::Container & Nodes) {
 }
 
 static void RelaxNodes(DijkstraNode::Container &Nodes,
-					   const Common::Array< Common::Array<int> > &VisibilityMatrix, 
-					   const DijkstraNode::ConstIter &CurNodeIter) {
+                       const Common::Array< Common::Array<int> > &VisibilityMatrix,
+                       const DijkstraNode::ConstIter &CurNodeIter) {
 	// All the successors of the current node that have not been chosen will be
 	// inserted into the boundary node list, and the cost will be updated if
 	// a shorter path has been found to them.
@@ -169,10 +168,10 @@ static void RelaxNodes(DijkstraNode::Container &Nodes,
 }
 
 static void RelaxEndPoint(const BS_Vertex &CurNodePos,
-						  const DijkstraNode::ConstIter &CurNodeIter,
-						  const BS_Vertex &EndPointPos,
-						  DijkstraNode &EndPoint,
-						  const BS_Region &Region) {
+                          const DijkstraNode::ConstIter &CurNodeIter,
+                          const BS_Vertex &EndPointPos,
+                          DijkstraNode &EndPoint,
+                          const BS_Region &Region) {
 	if (Region.IsLineOfSight(CurNodePos, EndPointPos)) {
 		int TotalCost = (*CurNodeIter).Cost + CurNodePos.Distance(EndPointPos);
 		if (TotalCost < EndPoint.Cost) {
@@ -262,7 +261,7 @@ void BS_WalkRegion::InitNodeVector() {
 // -----------------------------------------------------------------------------
 
 void BS_WalkRegion::ComputeVisibilityMatrix() {
-	// Initialise visibility matrix 
+	// Initialise visibility matrix
 	m_VisibilityMatrix = Common::Array< Common::Array <int> >();
 	for (uint idx = 0; idx < m_Nodes.size(); ++idx) {
 		Common::Array<int> arr;
@@ -271,10 +270,10 @@ void BS_WalkRegion::ComputeVisibilityMatrix() {
 
 		m_VisibilityMatrix.push_back(arr);
 	}
-		
+
 	// Calculate visibility been vertecies
 	for (unsigned int j = 0; j < m_Nodes.size(); ++j) {
-		for (unsigned int i = j; i < m_Nodes.size(); ++i) 	{
+		for (unsigned int i = j; i < m_Nodes.size(); ++i)   {
 			if (IsLineOfSight(m_Nodes[i], m_Nodes[j])) {
 				// There is a line of sight, so save the distance between the two
 				int Distance = m_Nodes[i].Distance(m_Nodes[j]);
@@ -298,8 +297,8 @@ bool BS_WalkRegion::CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End)
 		// Check to make sure the point is really in the region. If not, stop with an error
 		if (!IsPointInRegion(NewStart)) {
 			BS_LOG_ERRORLN("Constructed startpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-				NewStart.X, NewStart.Y,
-				Start.X, Start.Y);
+			               NewStart.X, NewStart.Y,
+			               Start.X, Start.Y);
 			return false;
 		}
 
@@ -314,8 +313,8 @@ bool BS_WalkRegion::CheckAndPrepareStartAndEnd(BS_Vertex &Start, BS_Vertex &End)
 		// Make sure that the determined point is really within the region
 		if (!IsPointInRegion(NewEnd)) {
 			BS_LOG_ERRORLN("Constructed endpoint ((%d,%d) from (%d,%d)) is not inside the region.",
-				NewEnd.X, NewEnd.Y,
-				End.X, End.Y);
+			               NewEnd.X, NewEnd.Y,
+			               End.X, End.Y);
 			return false;
 		}
 

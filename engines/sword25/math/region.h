@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -77,11 +77,11 @@ public:
 
 	/**
 	 * Initialises a BS_Region object
-	 * @param Contour		A polygon indicating the outline of the region
-	 * @param pHoles		A pointer to an array of polygons representing the hole state in the region.
+	 * @param Contour       A polygon indicating the outline of the region
+	 * @param pHoles        A pointer to an array of polygons representing the hole state in the region.
 	 * If the region has no holes, it must be passed as NULL. The default value is NULL.
-	 * @return				Returns true if the initialisation was successful, otherwise false.
-	 * @remark				If the region was already initialised, the old state will be deleted.
+	 * @return              Returns true if the initialisation was successful, otherwise false.
+	 * @remark              If the region was already initialised, the old state will be deleted.
 	 */
 	virtual bool Init(const BS_Polygon &Contour, const Common::Array<BS_Polygon> *pHoles = NULL);
 
@@ -91,65 +91,77 @@ public:
 
 	/**
 	 * Specifies whether the object is in a valid state
-	 * @return				Returns true if the object is in a valid state, otherwise false.
-	 * @remark				Invalid objects can be made valid by calling Init with a valid state.
+	 * @return              Returns true if the object is in a valid state, otherwise false.
+	 * @remark              Invalid objects can be made valid by calling Init with a valid state.
 	 */
-	bool IsValid() const { return m_Valid; }
+	bool IsValid() const {
+		return m_Valid;
+	}
 
 	/**
 	 * Returns the position of the region
 	 */
-	const BS_Vertex &GetPosition() const { return m_Position; }
+	const BS_Vertex &GetPosition() const {
+		return m_Position;
+	}
 
 	/**
 	 * Returns the X position of the region
 	 */
-	int GetPosX() const { return m_Position.X; }
+	int GetPosX() const {
+		return m_Position.X;
+	}
 
 	/**
 	 * Returns the Y position of the region
 	 */
-	int GetPosY() const { return m_Position.Y; }
+	int GetPosY() const {
+		return m_Position.Y;
+	}
 
 	/**
 	 * Indicates whether a point is inside the region
-	 * @param Vertex		A verex with the co-ordinates of the test point
-	 * @return				Returns true if the point is within the region, otherwise false.
+	 * @param Vertex        A verex with the co-ordinates of the test point
+	 * @return              Returns true if the point is within the region, otherwise false.
 	 */
 	bool IsPointInRegion(const BS_Vertex &Vertex) const;
 
 	/**
 	 * Indicates whether a point is inside the region
-	 * @param X				The X position
-	 * @param Y				The Y position
-	 * @return				Returns true if the point is within the region, otherwise false.
+	 * @param X             The X position
+	 * @param Y             The Y position
+	 * @return              Returns true if the point is within the region, otherwise false.
 	 */
 	bool IsPointInRegion(int X, int Y) const;
 
 	/**
 	 * Returns the countour of the region
 	 */
-	const BS_Polygon &GetContour() const { return m_Polygons[0]; }
+	const BS_Polygon &GetContour() const {
+		return m_Polygons[0];
+	}
 
 	/**
 	 * Returns the number of polygons in the hole region
 	 */
-	int GetHoleCount() const { return static_cast<int>(m_Polygons.size() - 1); }
+	int GetHoleCount() const {
+		return static_cast<int>(m_Polygons.size() - 1);
+	}
 
 	/**
 	 * Returns a specific hole polygon in the region
-	 * @param i				The number of the hole to return.
+	 * @param i             The number of the hole to return.
 	 * The index must be between 0 and GetHoleCount() - 1.
-	 * @return				Returns the desired hole polygon
+	 * @return              Returns the desired hole polygon
 	 */
 	inline const BS_Polygon &GetHole(unsigned int i) const;
 
 	/**
 	 * For a point outside the region, finds the closest point inside the region
-	 * @param Point			The point that is outside the region
-	 * @return				Returns the point within the region which is closest
-	 * @remark				This method does not always work with pixel accuracy.
-	 * One should not therefore rely on the fact that there is really no point in 
+	 * @param Point         The point that is outside the region
+	 * @return              Returns the point within the region which is closest
+	 * @remark              This method does not always work with pixel accuracy.
+	 * One should not therefore rely on the fact that there is really no point in
 	 * the region which is closer to the given point.
 	 */
 	BS_Vertex FindClosestRegionPoint(const BS_Vertex &Point) const;
@@ -167,20 +179,20 @@ public:
 
 	/**
 	 * Sets the position of the region
-	 * @param X				The new X psoition of the region
-	 * @param Y				The new Y psoition of the region
+	 * @param X             The new X psoition of the region
+	 * @param Y             The new Y psoition of the region
 	 */
 	virtual void SetPos(int X, int Y);
 
 	/**
 	 * Sets the X position of the region
-	 * @param X				The new X position of the region
+	 * @param X             The new X position of the region
 	 */
 	void SetPosX(int X);
 
 	/**
 	 * Sets the Y position of the region
-	 * @param Y				The new Y position of the region
+	 * @param Y             The new Y position of the region
 	 */
 	void SetPosY(int Y);
 
@@ -211,10 +223,10 @@ protected:
 
 	/**
 	 * Find the point on a line which is closest to another point
-	 * @param LineStart		The start of the line
-	 * @param LineEnd		The end of the line
-	 * @param Point			The point to be compared against
-	 * @return				Returns the point on the line which is cloest to the passed point.
+	 * @param LineStart     The start of the line
+	 * @param LineEnd       The end of the line
+	 * @param Point         The point to be compared against
+	 * @return              Returns the point on the line which is cloest to the passed point.
 	 */
 	BS_Vertex FindClosestPointOnLine(const BS_Vertex &LineStart, const BS_Vertex &LineEnd, const BS_Vertex Point) const;
 };

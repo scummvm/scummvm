@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -37,7 +37,7 @@
  * -------------
  * This file lists all the services.
  * EVERY new service needs to be entered here, otherwise it cannot be instantiated
- * by pKernel->NewService(..) 
+ * by pKernel->NewService(..)
  *
  * Autor: Malte Thiesen
  */
@@ -60,7 +60,7 @@ BS_Service *BS_OggTheora_CreateObject(BS_Kernel *pKernel);
 // Services are recorded in this table
 const BS_ServiceInfo BS_SERVICE_TABLE[] = {
 	// The first two parameters are the name of the superclass and service
-	// The third parameter is the static method of the class that creates an object 
+	// The third parameter is the static method of the class that creates an object
 	// of the class and returns it
 	// Example:
 	// BS_ServiceInfo("Superclass", "Service", CreateMethod)

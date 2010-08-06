@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -43,14 +43,12 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 BS_TimedRenderObject::BS_TimedRenderObject(BS_RenderObjectPtr<BS_RenderObject> pParent, TYPES Type, unsigned int Handle) :
-	BS_RenderObject(pParent, Type, Handle)
-{
+	BS_RenderObject(pParent, Type, Handle) {
 	BS_ASSERT(GetManager());
 	GetManager()->AttatchTimedRenderObject(this);
 }
 
-BS_TimedRenderObject::~BS_TimedRenderObject()
-{
+BS_TimedRenderObject::~BS_TimedRenderObject() {
 	BS_ASSERT(GetManager());
 	GetManager()->DetatchTimedRenderObject(this);
 }

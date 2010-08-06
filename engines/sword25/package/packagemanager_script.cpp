@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -50,7 +50,7 @@ using namespace Lua;
 // -----------------------------------------------------------------------------
 
 static BS_PackageManager *GetPM() {
-	BS_Kernel * pKernel = BS_Kernel::GetInstance();
+	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
 	BS_PackageManager *pPM = static_cast<BS_PackageManager *>(pKernel->GetService("package"));
 	BS_ASSERT(pPM);
@@ -135,7 +135,7 @@ static void SplitSearchPath(const Common::String &Path, Common::String &Director
 	const char *lastSlash = sPath + strlen(sPath) - 1;
 	while ((lastSlash >= sPath) && (*lastSlash != '/')) --lastSlash;
 
-	if (lastSlash >= sPath)	{
+	if (lastSlash >= sPath) {
 		Directory = "";
 		Filter = Path;
 	} else {
@@ -162,7 +162,7 @@ static void DoSearch(lua_State *L, const Common::String &Path, unsigned int Type
 	// Suche durchführen und die Namen aller gefundenen Dateien in die Ergebnistabelle einfügen.
 	// Als Indizes werden fortlaufende Nummern verwandt.
 	unsigned int ResultNr = 1;
-	BS_PackageManager::FileSearch * pFS = pPM->CreateSearch(Filter, Directory, Type);
+	BS_PackageManager::FileSearch *pFS = pPM->CreateSearch(Filter, Directory, Type);
 	if (pFS) {
 		do {
 			lua_pushnumber(L, ResultNr);
@@ -195,7 +195,7 @@ static int GetFileAsString(lua_State *L) {
 	BS_PackageManager *pPM = GetPM();
 
 	unsigned int FileSize;
-	void * FileData = pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
+	void *FileData = pPM->GetFile(luaL_checkstring(L, 1), &FileSize);
 	if (FileData) {
 		lua_pushlstring(L, static_cast<char *>(FileData), FileSize);
 		delete FileData;
@@ -214,7 +214,7 @@ static int FileExists(lua_State *L) {
 
 // -----------------------------------------------------------------------------
 
-static const char * PACKAGE_LIBRARY_NAME = "Package";
+static const char *PACKAGE_LIBRARY_NAME = "Package";
 
 static const luaL_reg PACKAGE_FUNCTIONS[] = {
 	"LoadPackage", LoadPackage,
@@ -234,9 +234,9 @@ static const luaL_reg PACKAGE_FUNCTIONS[] = {
 // -----------------------------------------------------------------------------
 
 bool BS_PackageManager::_RegisterScriptBindings() {
-	BS_Kernel * pKernel = BS_Kernel::GetInstance();
+	BS_Kernel *pKernel = BS_Kernel::GetInstance();
 	BS_ASSERT(pKernel);
-	BS_ScriptEngine * pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
+	BS_ScriptEngine *pScript = static_cast<BS_ScriptEngine *>(pKernel->GetService("script"));
 	BS_ASSERT(pScript);
 	lua_State *L = static_cast<lua_State *>(pScript->GetScriptObject());
 	BS_ASSERT(L);

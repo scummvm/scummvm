@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -60,31 +60,27 @@ static const unsigned int DEFAULT_GAPWIDTH = 1;
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const Common::String& FileName) :
+BS_FontResource::BS_FontResource(BS_Kernel *pKernel, const Common::String &FileName) :
 	_pKernel(pKernel),
 	_Valid(false),
-	BS_Resource(FileName, BS_Resource::TYPE_FONT)
-{
+	BS_Resource(FileName, BS_Resource::TYPE_FONT) {
 	// XML Fontdatei parsen
 	TiXmlDocument Doc;
-	if (!_ParseXMLDocument(FileName, Doc))
-	{
+	if (!_ParseXMLDocument(FileName, Doc)) {
 		BS_LOG_ERRORLN("The following TinyXML-Error occured while parsing \"%s\": %s", GetFileName().c_str(), Doc.ErrorDesc());
 		return;
 	}
 
 	// Font-Tag finden
-	TiXmlElement* pElement = Doc.FirstChildElement("font");
-	if (!pElement)
-	{
+	TiXmlElement *pElement = Doc.FirstChildElement("font");
+	if (!pElement) {
 		BS_LOG_ERRORLN("No <font> tag found in \"%s\".", GetFileName().c_str());
 		return;
 	}
 
 	// Font-Tag parsen
 	Common::String BitmapFileName;
-	if (!_ParseFontTag(*pElement, BitmapFileName, _LineHeight, _GapWidth))
-	{
+	if (!_ParseFontTag(*pElement, BitmapFileName, _LineHeight, _GapWidth)) {
 		BS_LOG_ERRORLN("An error occurred while parsing <font> tag in \"%s\".", GetFileName().c_str());
 		return;
 	}
@@ -93,43 +89,38 @@ BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const Common::String& FileN
 	{
 		// Pointer auf den Package-Manager bekommen
 		BS_ASSERT(_pKernel);
-		BS_PackageManager* pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
+		BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
 		BS_ASSERT(pPackage);
 
 		// Absoluten, eindeutigen Pfad bestimmen
 		_BitmapFileName = pPackage->GetAbsolutePath(BitmapFileName);
-		if (_BitmapFileName == "")
-		{
+		if (_BitmapFileName == "") {
 			BS_LOG_ERRORLN("Image file \"%s\" was specified in <font> tag of \"%s\" but could not be found.",
-						   _BitmapFileName.c_str(), GetFileName().c_str());
+			               _BitmapFileName.c_str(), GetFileName().c_str());
 			return;
 		}
 
 		// Bitmapdatei cachen
-		if (!_pKernel->GetResourceManager()->PrecacheResource(_BitmapFileName))
-		{
+		if (!_pKernel->GetResourceManager()->PrecacheResource(_BitmapFileName)) {
 			BS_LOG_ERRORLN("Could not precache \"%s\".", _BitmapFileName.c_str());
 			return;
 		}
 	}
-	
+
 	// Das Erste Character-Tag finden
 	pElement = pElement->FirstChildElement("character");
-	if (!pElement)
-	{
+	if (!pElement) {
 		BS_LOG_ERRORLN("No <character> tag found in \"%s\".", GetFileName().c_str());
 		return;
 	}
 
 	// Alle Character-Tags parsen
-	while (pElement)
-	{
-		int		CharCode;
+	while (pElement) {
+		int     CharCode;
 		BS_Rect CharRect;
 
 		// Aktuelles Character-Tag parsen
-		if (!_ParseCharacterTag(*pElement, CharCode, CharRect))
-		{
+		if (!_ParseCharacterTag(*pElement, CharCode, CharRect)) {
 			BS_LOG_ERRORLN("An error occured while parsing a <character> tag in \"%s\".", GetFileName().c_str());
 			return;
 		}
@@ -148,19 +139,17 @@ BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const Common::String& FileN
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseXMLDocument(const Common::String & FileName, TiXmlDocument & Doc) const
-{
+bool BS_FontResource::_ParseXMLDocument(const Common::String &FileName, TiXmlDocument &Doc) const {
 	// Pointer auf den Package-Manager bekommen
 	BS_ASSERT(_pKernel);
-	BS_PackageManager* pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
+	BS_PackageManager *pPackage = static_cast<BS_PackageManager *>(_pKernel->GetService("package"));
 	BS_ASSERT(pPackage);
 
 	// Die Daten werden zunächst über den Package-Manager gelesen und dann in einen um ein Byte größeren Buffer kopiert
 	// und NULL-Terminiert, da TinyXML NULL-Terminierte Daten benötigt.
 	unsigned int FileSize;
-	char * LoadBuffer = (char*) pPackage->GetFile(GetFileName(), &FileSize);
-	if (!LoadBuffer)
-	{
+	char *LoadBuffer = (char *) pPackage->GetFile(GetFileName(), &FileSize);
+	if (!LoadBuffer) {
 		BS_LOG_ERRORLN("Could not read \"%s\".", GetFileName().c_str());
 		return false;
 	}
@@ -182,33 +171,29 @@ bool BS_FontResource::_ParseXMLDocument(const Common::String & FileName, TiXmlDo
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, Common::String & BitmapFileName, int & Lineheight, int & GapWidth) const
-{
+bool BS_FontResource::_ParseFontTag(TiXmlElement &Tag, Common::String &BitmapFileName, int &Lineheight, int &GapWidth) const {
 	// Bitmap Attribut auslesen
-	const char * BitmapString = Tag.Attribute("bitmap");
-	if (!BitmapString)
-	{
+	const char *BitmapString = Tag.Attribute("bitmap");
+	if (!BitmapString) {
 		BS_LOG_ERRORLN("<font> tag without bitmap attribute occurred in \"%s\".", GetFileName().c_str());
 		return false;
 	}
 	BitmapFileName = BitmapString;
 
 	// Lineheight Attribut auslesen
-	const char * LineheightString = Tag.Attribute("lineheight");
-	if (!LineheightString || !BS_String::ToInt(Common::String(LineheightString), Lineheight) || Lineheight < 0)
-	{
+	const char *LineheightString = Tag.Attribute("lineheight");
+	if (!LineheightString || !BS_String::ToInt(Common::String(LineheightString), Lineheight) || Lineheight < 0) {
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-						 GetFileName().c_str(), DEFAULT_LINEHEIGHT);
+		                 GetFileName().c_str(), DEFAULT_LINEHEIGHT);
 		Lineheight = DEFAULT_LINEHEIGHT;
 	}
 
 
 	// Gap Attribut auslesen
-	const char * GapString = Tag.Attribute("gap");
-	if (!GapString || !BS_String::ToInt(Common::String(GapString), GapWidth) || GapWidth < 0)
-	{
+	const char *GapString = Tag.Attribute("gap");
+	if (!GapString || !BS_String::ToInt(Common::String(GapString), GapWidth) || GapWidth < 0) {
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
-						 GetFileName().c_str(), DEFAULT_GAPWIDTH);
+		                 GetFileName().c_str(), DEFAULT_GAPWIDTH);
 		GapWidth = DEFAULT_GAPWIDTH;
 	}
 
@@ -217,12 +202,10 @@ bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, Common::String & BitmapF
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect & Rect) const
-{
+bool BS_FontResource::_ParseCharacterTag(TiXmlElement &Tag, int &Code, BS_Rect &Rect) const {
 	// Code Attribut auslesen
-	const char * CodeString = Tag.Attribute("code");
-	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256)
-	{
+	const char *CodeString = Tag.Attribute("code");
+	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256) {
 		BS_LOG_ERRORLN("Illegal or missing code attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}
@@ -238,7 +221,7 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 	Rect.left = tmp;
 
 	// Right Attribut auslesen
-	const char * RightString = Tag.Attribute("right");
+	const char *RightString = Tag.Attribute("right");
 	if (!RightString || !BS_String::ToInt(RightString, tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing right attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
@@ -246,7 +229,7 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 	Rect.right = tmp;
 
 	// Top Attribut auslesen
-	const char * TopString = Tag.Attribute("top");
+	const char *TopString = Tag.Attribute("top");
 	if (!TopString || !BS_String::ToInt(TopString, tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing top attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
@@ -254,9 +237,8 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 	Rect.top = tmp;
 
 	// Bottom Attribut auslesen
-	const char * BottomString = Tag.Attribute("bottom");
-	if (!BottomString || !BS_String::ToInt(BottomString, tmp) || tmp < 0)
-	{
+	const char *BottomString = Tag.Attribute("bottom");
+	if (!BottomString || !BS_String::ToInt(BottomString, tmp) || tmp < 0) {
 		BS_LOG_ERRORLN("Illegal or missing bottom attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
 	}

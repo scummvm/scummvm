@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -70,8 +70,7 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 	m_Type(Type),
 	m_InitSuccess(false),
 	m_RefreshForced(true),
-	m_Handle(0)
-{
+	m_Handle(0) {
 	// Renderobject registrieren, abhängig vom Handle-Parameter entweder mit beliebigem oder vorgegebenen Handle.
 	if (Handle == 0)
 		m_Handle = BS_RenderObjectRegistry::GetInstance().RegisterObject(this);
@@ -83,15 +82,11 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 
 	// Dieses Objekt zu den Kindern der Elternobjektes hinzufügen, falls nicht Wurzel (ParentPtr ungültig) und dem
 	// selben RenderObjektManager zuweisen.
-	if (m_ParentPtr.IsValid())
-	{
+	if (m_ParentPtr.IsValid()) {
 		m_ManagerPtr = m_ParentPtr->GetManager();
 		m_ParentPtr->AddObject(this);
-	}
-	else
-	{
-		if (GetType() != TYPE_ROOT)
-		{
+	} else {
+		if (GetType() != TYPE_ROOT) {
 			BS_LOG_ERRORLN("Tried to create a non-root render object and has no parent. All non-root render objects have to have a parent.");
 			return;
 		}
@@ -102,11 +97,10 @@ BS_RenderObject::BS_RenderObject(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, 
 	m_InitSuccess = true;
 }
 
-BS_RenderObject::~BS_RenderObject()
-{
+BS_RenderObject::~BS_RenderObject() {
 	// Objekt aus dem Elternobjekt entfernen.
 	if (m_ParentPtr.IsValid()) m_ParentPtr->DetatchChildren(this);
-	
+
 	DeleteAllChildren();
 
 	// Objekt deregistrieren.
@@ -115,8 +109,7 @@ BS_RenderObject::~BS_RenderObject()
 
 // Rendern
 // -------
-bool BS_RenderObject::Render()
-{
+bool BS_RenderObject::Render() {
 	// Objektänderungen validieren
 	ValidateObject();
 
@@ -124,8 +117,7 @@ bool BS_RenderObject::Render()
 	if (!m_Visible) return true;
 
 	// Falls notwendig, wird die Renderreihenfolge der Kinderobjekte aktualisiert.
-	if (m_ChildChanged)
-	{
+	if (m_ChildChanged) {
 		SortRenderObjects();
 		m_ChildChanged = false;
 	}
@@ -144,8 +136,7 @@ bool BS_RenderObject::Render()
 // Objektverwaltung
 // ----------------
 
-void BS_RenderObject::ValidateObject()
-{
+void BS_RenderObject::ValidateObject() {
 	// Die Veränderungen in den Objektvariablen aufheben
 	m_OldBBox = m_BBox;
 	m_OldVisible = m_Visible;
@@ -155,27 +146,25 @@ void BS_RenderObject::ValidateObject()
 	m_RefreshForced = false;
 }
 
-bool BS_RenderObject::UpdateObjectState()
-{			
+bool BS_RenderObject::UpdateObjectState() {
 	// Falls sich das Objekt verändert hat, muss der interne Zustand neu berechnet werden und evtl. Update-Regions für den nächsten Frame
 	// registriert werden.
 	if ((CalcBoundingBox() != m_OldBBox) ||
-		(m_Visible != m_OldVisible) ||
-		(m_X != m_OldX) ||
-		(m_Y != m_OldY) ||
-		(m_Z != m_OldZ) ||
-		m_RefreshForced)
-	{
+	        (m_Visible != m_OldVisible) ||
+	        (m_X != m_OldX) ||
+	        (m_Y != m_OldY) ||
+	        (m_Z != m_OldZ) ||
+	        m_RefreshForced) {
 		// Renderrang des Objektes neu bestimmen, da sich dieser verändert haben könnte
 		if (m_ParentPtr.IsValid()) m_ParentPtr->SignalChildChange();
-		
+
 		// Die Bounding-Box neu berechnen und Update-Regions registrieren.
 		UpdateBoxes();
-		
+
 		// Änderungen Validieren
 		ValidateObject();
 	}
-	
+
 	// Dann muss der Objektstatus der Kinder aktualisiert werden.
 	RENDEROBJECT_ITER it = m_Children.begin();
 	for (; it != m_Children.end(); ++it)
@@ -184,14 +173,12 @@ bool BS_RenderObject::UpdateObjectState()
 	return true;
 }
 
-void BS_RenderObject::UpdateBoxes()
-{
+void BS_RenderObject::UpdateBoxes() {
 	// Bounding-Box aktualisieren
 	m_BBox = CalcBoundingBox();
 }
 
-BS_Rect BS_RenderObject::CalcBoundingBox() const
-{
+BS_Rect BS_RenderObject::CalcBoundingBox() const {
 	// Die Bounding-Box mit der Objektgröße initialisieren.
 	BS_Rect BBox(0, 0, m_Width, m_Height);
 
@@ -204,22 +191,19 @@ BS_Rect BS_RenderObject::CalcBoundingBox() const
 	return BBox;
 }
 
-void BS_RenderObject::CalcAbsolutePos(int& X, int& Y) const
-{
+void BS_RenderObject::CalcAbsolutePos(int &X, int &Y) const {
 	X = CalcAbsoluteX();
 	Y = CalcAbsoluteY();
 }
 
-int BS_RenderObject::CalcAbsoluteX() const
-{
+int BS_RenderObject::CalcAbsoluteX() const {
 	if (m_ParentPtr.IsValid())
 		return m_ParentPtr->GetAbsoluteX() + m_X;
 	else
 		return m_X;
 }
 
-int BS_RenderObject::CalcAbsoluteY() const
-{
+int BS_RenderObject::CalcAbsoluteY() const {
 	if (m_ParentPtr.IsValid())
 		return m_ParentPtr->GetAbsoluteY() + m_Y;
 	else
@@ -229,41 +213,35 @@ int BS_RenderObject::CalcAbsoluteY() const
 // Baumverwaltung
 // --------------
 
-void BS_RenderObject::DeleteAllChildren()
-{
+void BS_RenderObject::DeleteAllChildren() {
 	// Es ist nicht notwendig die Liste zu iterieren, da jedes Kind für sich DetatchChildren an diesem Objekt aufruft und sich somit
 	// selber entfernt. Daher muss immer nur ein beliebiges Element (hier das letzte) gelöscht werden, bis die Liste leer ist.
-	while (!m_Children.empty())
-	{
+	while (!m_Children.empty()) {
 		BS_RenderObjectPtr<BS_RenderObject> CurPtr = m_Children.back();
 		CurPtr.Erase();
 	}
 }
 
-bool BS_RenderObject::AddObject(BS_RenderObjectPtr<BS_RenderObject> pObject)
-{
-	if (!pObject.IsValid())
-	{
+bool BS_RenderObject::AddObject(BS_RenderObjectPtr<BS_RenderObject> pObject) {
+	if (!pObject.IsValid()) {
 		BS_LOG_ERRORLN("Tried to add a null object to a renderobject.");
 		return false;
 	}
 
 	// Objekt in die Kinderliste einfügen.
 	m_Children.push_back(pObject);
-	
+
 	// Sicherstellen, dass vor dem nächsten Rendern die Renderreihenfolge aktualisiert wird.
 	if (m_ParentPtr.IsValid()) m_ParentPtr->SignalChildChange();
 
 	return true;
 }
 
-bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObject)
-{
+bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObject) {
 	// Kinderliste durchgehen und Objekt entfernen falls vorhanden
 	RENDEROBJECT_ITER it = m_Children.begin();
 	for (; it != m_Children.end(); ++it)
-		if (*it == pObject)
-		{
+		if (*it == pObject) {
 			m_Children.erase(it);
 			return true;
 		}
@@ -272,13 +250,11 @@ bool BS_RenderObject::DetatchChildren(BS_RenderObjectPtr<BS_RenderObject> pObjec
 	return false;
 }
 
-void BS_RenderObject::SortRenderObjects()
-{
+void BS_RenderObject::SortRenderObjects() {
 	std::sort(m_Children.begin(), m_Children.end(), Greater);
 }
 
-void BS_RenderObject::UpdateAbsolutePos()
-{
+void BS_RenderObject::UpdateAbsolutePos() {
 	CalcAbsolutePos(m_AbsoluteX, m_AbsoluteY);
 
 	RENDEROBJECT_ITER it = m_Children.begin();
@@ -289,42 +265,36 @@ void BS_RenderObject::UpdateAbsolutePos()
 // Get-Methoden
 // ------------
 
-bool BS_RenderObject::GetObjectIntersection(BS_RenderObjectPtr<BS_RenderObject> pObject, BS_Rect& Result)
-{
+bool BS_RenderObject::GetObjectIntersection(BS_RenderObjectPtr<BS_RenderObject> pObject, BS_Rect &Result) {
 	return m_BBox.Intersect(pObject->GetBBox(), Result);
 }
 
 // Set-Methoden
 // ------------
-void BS_RenderObject::SetPos(int X, int Y) 
-{
-	m_X = X; 
+void BS_RenderObject::SetPos(int X, int Y) {
+	m_X = X;
 	m_Y = Y;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetX(int X)
-{ 
+void BS_RenderObject::SetX(int X) {
 	m_X = X;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetY(int Y)
-{
+void BS_RenderObject::SetY(int Y) {
 	m_Y = Y;
 	UpdateAbsolutePos();
 }
 
-void BS_RenderObject::SetZ(int Z)
-{
+void BS_RenderObject::SetZ(int Z) {
 	if (Z < 0)
 		BS_LOG_ERRORLN("Tried to set a negative Z value (%d).", Z);
 	else
 		m_Z = Z;
 }
 
-void BS_RenderObject::SetVisible(bool Visible)
-{
+void BS_RenderObject::SetVisible(bool Visible) {
 	m_Visible = Visible;
 }
 
@@ -332,13 +302,11 @@ void BS_RenderObject::SetVisible(bool Visible)
 // Objekterzeuger
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::String& Filename)
-{
+BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::String &Filename) {
 	BS_RenderObjectPtr<BS_Animation> AniPtr(new BS_Animation(this, Filename));
 	if (AniPtr.IsValid() && AniPtr->GetInitSuccess())
 		return AniPtr;
-	else
-	{
+	else {
 		if (AniPtr.IsValid()) AniPtr.Erase();
 		return BS_RenderObjectPtr<BS_Animation>();
 	}
@@ -347,13 +315,11 @@ BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::Str
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_AnimationTemplate & AnimationTemplate)
-{
-	BS_Animation * AniPtr = new BS_Animation(this, AnimationTemplate);
+BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_AnimationTemplate &AnimationTemplate) {
+	BS_Animation *AniPtr = new BS_Animation(this, AnimationTemplate);
 	if (AniPtr && AniPtr->GetInitSuccess())
 		return AniPtr;
-	else
-	{
+	else {
 		delete AniPtr;
 		return BS_RenderObjectPtr<BS_Animation>();
 	}
@@ -361,13 +327,11 @@ BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_Animatio
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String& Filename)
-{
+BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String &Filename) {
 	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr(new BS_StaticBitmap(this, Filename));
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BS_RenderObjectPtr<BS_Bitmap>(BitmapPtr);
-	else
-	{
+	else {
 		if (BitmapPtr.IsValid()) BitmapPtr.Erase();
 		return BS_RenderObjectPtr<BS_Bitmap>();
 	}
@@ -375,13 +339,11 @@ BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String& F
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height)
-{
+BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Width, unsigned int Height) {
 	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr(new BS_DynamicBitmap(this, Width, Height));
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
 		return BitmapPtr;
-	else
-	{
+	else {
 		if (BitmapPtr.IsValid()) BitmapPtr.Erase();
 		return BS_RenderObjectPtr<BS_Bitmap>();
 	}
@@ -389,13 +351,11 @@ BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddDynamicBitmap(unsigned int Wid
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, unsigned int Color)
-{
+BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, unsigned int Color) {
 	BS_RenderObjectPtr<BS_Panel> PanelPtr(new BS_Panel(this, Width, Height, Color));
 	if (PanelPtr.IsValid() && PanelPtr->GetInitSuccess())
 		return PanelPtr;
-	else
-	{
+	else {
 		if (PanelPtr.IsValid()) PanelPtr.Erase();
 		return BS_RenderObjectPtr<BS_Panel>();
 	}
@@ -403,16 +363,12 @@ BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, un
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String & Font, const std::string & Text)
-{
+BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String &Font, const std::string &Text) {
 	BS_RenderObjectPtr<BS_Text> TextPtr(new BS_Text(this));
-	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font))
-	{
+	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font)) {
 		TextPtr->SetText(Text);
 		return TextPtr;
-	}
-	else
-	{
+	} else {
 		if (TextPtr.IsValid()) TextPtr.Erase();
 		return BS_RenderObjectPtr<BS_Text>();
 	}
@@ -421,8 +377,7 @@ BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String & Font
 // Persistenz-Methoden
 // -------------------
 
-bool BS_RenderObject::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_RenderObject::Persist(BS_OutputPersistenceBlock &Writer) {
 	// Typ und Handle werden als erstes gespeichert, damit beim Laden ein Objekt vom richtigen Typ mit dem richtigen Handle erzeugt werden kann.
 	Writer.Write(static_cast<unsigned int>(m_Type));
 	Writer.Write(m_Handle);
@@ -458,8 +413,7 @@ bool BS_RenderObject::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock &Reader) {
 	// Typ und Handle wurden schon von RecreatePersistedRenderObject() ausgelesen. Jetzt werden die restlichen Objekteigenschaften ausgelesen.
 	Reader.Read(m_X);
 	Reader.Read(m_Y);
@@ -496,8 +450,7 @@ bool BS_RenderObject::Unpersist(BS_InputPersistenceBlock & Reader)
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Kinderanzahl speichern.
@@ -505,8 +458,7 @@ bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock & Writer)
 
 	// Rekursiv alle Kinder speichern.
 	RENDEROBJECT_LIST::iterator It = m_Children.begin();
-	while (It != m_Children.end())
-	{
+	while (It != m_Children.end()) {
 		Result &= (*It)->Persist(Writer);
 		++It;
 	}
@@ -516,8 +468,7 @@ bool BS_RenderObject::PersistChildren(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock & Reader)
-{
+bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Kinderanzahl einlesen.
@@ -526,8 +477,7 @@ bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock & Reader)
 	if (!Reader.IsGood()) return false;
 
 	// Alle Kinder rekursiv wieder herstellen.
-	for (unsigned int i = 0; i < ChildrenCount; ++i)
-	{
+	for (unsigned int i = 0; i < ChildrenCount; ++i) {
 		if (!RecreatePersistedRenderObject(Reader).IsValid()) return false;
 	}
 
@@ -536,8 +486,7 @@ bool BS_RenderObject::UnpersistChildren(BS_InputPersistenceBlock & Reader)
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObject(BS_InputPersistenceBlock & Reader)
-{
+BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObject(BS_InputPersistenceBlock &Reader) {
 	BS_RenderObjectPtr<BS_RenderObject> Result;
 
 	// Typ und Handle auslesen.
@@ -547,8 +496,7 @@ BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObje
 	Reader.Read(Handle);
 	if (!Reader.IsGood()) return Result;
 
-	switch (Type)
-	{
+	switch (Type) {
 	case TYPE_PANEL:
 		Result = new BS_Panel(Reader, this, Handle);
 		break;
@@ -578,8 +526,7 @@ BS_RenderObjectPtr<BS_RenderObject> BS_RenderObject::RecreatePersistedRenderObje
 
 // Hilfs-Methoden
 // --------------
-bool BS_RenderObject::Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, const BS_RenderObjectPtr<BS_RenderObject> rhs)
-{
+bool BS_RenderObject::Greater(const BS_RenderObjectPtr<BS_RenderObject> lhs, const BS_RenderObjectPtr<BS_RenderObject> rhs) {
 	// Das Objekt mit dem kleinem Z-Wert müssen zuerst gerendert werden.
 	if (lhs->m_Z != rhs->m_Z)
 		return lhs->m_Z < rhs->m_Z;

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -52,28 +52,30 @@ namespace Sword25 {
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-typedef void (*CallbackPtr)(int Command); 
+typedef void (*CallbackPtr)(int Command);
 
 class BS_CallbackRegistry {
 public:
-	static BS_CallbackRegistry & GetInstance() {
+	static BS_CallbackRegistry &GetInstance() {
 		static BS_CallbackRegistry Instance;
 		return Instance;
 	}
 
-	bool		RegisterCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
-	CallbackPtr		ResolveCallbackFunction(const Common::String &Name) const;
-	Common::String	ResolveCallbackPointer(CallbackPtr Ptr) const;
+	bool        RegisterCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
+	CallbackPtr     ResolveCallbackFunction(const Common::String &Name) const;
+	Common::String  ResolveCallbackPointer(CallbackPtr Ptr) const;
 
 private:
 	typedef Common::HashMap<Common::String, CallbackPtr, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> NameToPtrMap;
 	NameToPtrMap m_NameToPtrMap;
 
 	struct CallbackPtr_EqualTo {
-		bool operator()(CallbackPtr x, CallbackPtr y) const { return x == y; }
+		bool operator()(CallbackPtr x, CallbackPtr y) const {
+			return x == y;
+		}
 	};
 	struct CallbackPtr_Hash {
-		uint operator()(CallbackPtr x) const { 
+		uint operator()(CallbackPtr x) const {
 			return static_cast<uint>((int64)x % ((int64)1 << sizeof(uint)));
 		}
 	};
@@ -81,9 +83,9 @@ private:
 	typedef Common::HashMap<CallbackPtr, Common::String, CallbackPtr_Hash, CallbackPtr_EqualTo> PtrToNameMap;
 	PtrToNameMap m_PtrToNameMap;
 
-	CallbackPtr		FindPtrByName(const Common::String &Name) const;
-	Common::String	FindNameByPtr(CallbackPtr Ptr) const;
-	void		StoreCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
+	CallbackPtr     FindPtrByName(const Common::String &Name) const;
+	Common::String  FindNameByPtr(CallbackPtr Ptr) const;
+	void        StoreCallbackFunction(const Common::String &Name, CallbackPtr Ptr);
 };
 
 } // End of namespace Sword25

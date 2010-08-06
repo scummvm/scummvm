@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -35,7 +35,7 @@
 
 namespace Sword25 {
 
-BS_RenderObjectPtr::BS_RenderObjectPtr(BS_RenderObject * RenderObjectPtr) 	{
+BS_RenderObjectPtr::BS_RenderObjectPtr(BS_RenderObject *RenderObjectPtr)   {
 	m_Handle = RenderObjectPtr->GetHandle();
 }
 

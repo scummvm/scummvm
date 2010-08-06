@@ -64,11 +64,11 @@ TheoraDecoder::~TheoraDecoder() {
 }
 
 void TheoraDecoder::queuePage(ogg_page *page) {
-  if (_theoraPacket)
-	  ogg_stream_pagein(&_theoraOut, page);
+	if (_theoraPacket)
+		ogg_stream_pagein(&_theoraOut, page);
 
-  if (_vorbisPacket)
-	  ogg_stream_pagein(&_vorbisOut, page);
+	if (_vorbisPacket)
+		ogg_stream_pagein(&_vorbisOut, page);
 }
 
 int TheoraDecoder::bufferData() {
@@ -203,7 +203,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 
 		if (_theoraInfo.pic_width != _theoraInfo.frame_width || _theoraInfo.pic_height != _theoraInfo.frame_height)
 			debug(1, "  Frame content is %dx%d with offset (%d,%d).",
-			       _theoraInfo.frame_width, _theoraInfo.frame_height, _theoraInfo.pic_x, _theoraInfo.pic_y);
+			      _theoraInfo.frame_width, _theoraInfo.frame_height, _theoraInfo.pic_x, _theoraInfo.pic_y);
 
 		th_decode_ctl(_theoraDecode, TH_DECCTL_GET_PPLEVEL_MAX, &_ppLevelMax, sizeof(_ppLevelMax));
 		_ppLevel = _ppLevelMax;
@@ -222,7 +222,7 @@ bool TheoraDecoder::load(Common::SeekableReadStream &stream) {
 		vorbis_synthesis_init(&_vorbisDSP, &_vorbisInfo);
 		vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
 		debug(3, "Ogg logical stream %lx is Vorbis %d channel %ld Hz audio.",
-		        _vorbisOut.serialno, _vorbisInfo.channels, _vorbisInfo.rate);
+		      _vorbisOut.serialno, _vorbisInfo.channels, _vorbisInfo.rate);
 	} else {
 		// tear down the partial vorbis setup
 		vorbis_info_clear(&_vorbisInfo);
@@ -307,7 +307,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 				_audiobufGranulePos = _vorbisDSP.granulepos - ret + i;
 			else
 				_audiobufGranulePos += i;
-			} else {
+		} else {
 
 			// no pending audio; is there a pending packet to decode?
 			if (ogg_stream_packetout(&_vorbisOut, &_oggPacket) > 0) {
@@ -367,7 +367,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	// are we at or past time for this video frame?
 	if (_stateFlag && _videobufReady) {
 		th_ycbcr_buffer yuv;
-	
+
 		th_decode_ycbcr_out(_theoraDecode, yuv);
 
 		// TODO: YUV->RGB
@@ -388,7 +388,7 @@ Graphics::Surface *TheoraDecoder::decodeNextFrame() {
 	// if our buffers either don't exist or are ready to go,
 	// we can begin playback
 	if ((!_theoraPacket || _videobufReady) &&
-		(!_vorbisPacket || _audiobufReady))
+	        (!_vorbisPacket || _audiobufReady))
 		_stateFlag = true;
 
 	// same if we've run out of input

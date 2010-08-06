@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -45,39 +45,39 @@
 // -----------------------------------------------------------------------------
 
 namespace {
-	const char * METATABLES_TABLE_NAME = "__METATABLES";
-	const char * PERMANENTS_TABLE_NAME = "Permanents";
+const char *METATABLES_TABLE_NAME = "__METATABLES";
+const char *PERMANENTS_TABLE_NAME = "Permanents";
 
-	bool RegisterPermanent(lua_State *L, const Common::String &Name) {
-		// A C function has to be on the stack
-		if (!lua_iscfunction(L, -1)) return false;
+bool RegisterPermanent(lua_State *L, const Common::String &Name) {
+	// A C function has to be on the stack
+	if (!lua_iscfunction(L, -1)) return false;
 
-		// Make sure that the Permanents-Table is on top of the stack
-		lua_getfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
-		if (lua_isnil(L, -1)) {
-			// Permanents-Table does not yet exist, so it has to be created
+	// Make sure that the Permanents-Table is on top of the stack
+	lua_getfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
+	if (lua_isnil(L, -1)) {
+		// Permanents-Table does not yet exist, so it has to be created
 
-			// Pop nil from the stack
-			lua_pop(L, 1);
-
-			// Create Permanents-Table and insert a second reference to it on the stack
-			lua_newtable(L);
-			lua_pushvalue(L, -1);
-
-			// Store the Permanents-Table in the registry. The second reference is left
-			// on the stack to be used in the connection
-			lua_setfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
-		}
-
-		// C function with the name of an index in the Permanents-Table 
-		lua_insert(L, -2);
-		lua_setfield(L, -2, Name.c_str());
-
-		// Remove the Permanents-Table from the stack
+		// Pop nil from the stack
 		lua_pop(L, 1);
 
-		return true;
+		// Create Permanents-Table and insert a second reference to it on the stack
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+
+		// Store the Permanents-Table in the registry. The second reference is left
+		// on the stack to be used in the connection
+		lua_setfield(L, LUA_REGISTRYINDEX, PERMANENTS_TABLE_NAME);
 	}
+
+	// C function with the name of an index in the Permanents-Table
+	lua_insert(L, -2);
+	lua_setfield(L, -2, Name.c_str());
+
+	// Remove the Permanents-Table from the stack
+	lua_pop(L, 1);
+
+	return true;
+}
 }
 
 namespace Sword25 {
@@ -86,12 +86,12 @@ namespace Sword25 {
 
 /**
  * Registers a set of functions into a Lua library.
- * @param L				A pointer to the Lua VM 
- * @param LibName		The name of the library.
+ * @param L             A pointer to the Lua VM
+ * @param LibName       The name of the library.
  * If this is an empty string, the functions will be added to the global namespace.
- * @param Functions		An array of function pointers along with their names.
+ * @param Functions     An array of function pointers along with their names.
  * The array must be terminated with the enry (0, 0)
- * @return				Returns true if successful, otherwise false.
+ * @return              Returns true if successful, otherwise false.
  */
 bool BS_LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &LibName, const luaL_reg *Functions) {
 #ifdef DEBUG
@@ -144,12 +144,12 @@ bool BS_LuaBindhelper::AddFunctionsToLib(lua_State *L, const Common::String &Lib
 
 /**
  * Adds a set of constants to the Lua library
- * @param L				A pointer to the Lua VM
- * @param LibName		The name of the library.
+ * @param L             A pointer to the Lua VM
+ * @param LibName       The name of the library.
  * If this is an empty string, the functions will be added to the global namespace.
- * @param Constants		An array of the constant values along with their names.
+ * @param Constants     An array of the constant values along with their names.
  * The array must be terminated with the enry (0, 0)
- * @return				Returns true if successful, otherwise false.
+ * @return              Returns true if successful, otherwise false.
  */
 bool BS_LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &LibName, const lua_constant_reg *Constants) {
 #ifdef DEBUG
@@ -168,7 +168,7 @@ bool BS_LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &Lib
 	else {
 		// Ensure that the library table exists
 		if (!_CreateTable(L, LibName)) return false;
-		
+
 		// Register each constant in the table
 		for (; Constants->Name; ++Constants) {
 			lua_pushstring(L, Constants->Name);
@@ -191,12 +191,12 @@ bool BS_LuaBindhelper::AddConstantsToLib(lua_State *L, const Common::String &Lib
 
 /**
  * Adds a set of methods to a Lua class
- * @param L				A pointer to the Lua VM 
- * @param ClassName		The name of the class
+ * @param L             A pointer to the Lua VM
+ * @param ClassName     The name of the class
  * When the class name specified does not exist, it is created.
- * @param Methods		An array of function pointers along with their method names.
+ * @param Methods       An array of function pointers along with their method names.
  * The array must be terminated with the enry (0, 0)
- * @return				Returns true if successful, otherwise false.
+ * @return              Returns true if successful, otherwise false.
  */
 bool BS_LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &ClassName, const luaL_reg *Methods) {
 #ifdef DEBUG
@@ -205,7 +205,7 @@ bool BS_LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &Cla
 
 	// Load the metatable onto the Lua stack
 	if (!GetMetatable(L, ClassName)) return false;
-	
+
 	// Register each method in the Metatable
 	for (; Methods->name; ++Methods) {
 		lua_pushstring(L, Methods->name);
@@ -232,11 +232,11 @@ bool BS_LuaBindhelper::AddMethodsToClass(lua_State *L, const Common::String &Cla
 
 /**
  * Sets the garbage collector callback method when items of a particular class are deleted
- * @param L				A pointer to the Lua VM 
- * @param ClassName		The name of the class
+ * @param L             A pointer to the Lua VM
+ * @param ClassName     The name of the class
  * When the class name specified does not exist, it is created.
- * @param GCHandler		A function pointer
- * @return				Returns true if successful, otherwise false.
+ * @param GCHandler     A function pointer
+ * @return              Returns true if successful, otherwise false.
  */
 bool BS_LuaBindhelper::SetClassGCHandler(lua_State *L, const Common::String &ClassName, lua_CFunction GCHandler) {
 #ifdef DEBUG
@@ -271,21 +271,21 @@ bool BS_LuaBindhelper::SetClassGCHandler(lua_State *L, const Common::String &Cla
 // -----------------------------------------------------------------------------
 
 namespace {
-	void PushMetatableTable(lua_State *L) {
-		// Push the Metatable table onto the stack
-		lua_getglobal(L, METATABLES_TABLE_NAME);
+void PushMetatableTable(lua_State *L) {
+	// Push the Metatable table onto the stack
+	lua_getglobal(L, METATABLES_TABLE_NAME);
 
-		// If the table doesn't yet exist, it must be created
-		if (lua_isnil(L, -1)) {
-			// Pop nil from stack
-			lua_pop(L, 1);
+	// If the table doesn't yet exist, it must be created
+	if (lua_isnil(L, -1)) {
+		// Pop nil from stack
+		lua_pop(L, 1);
 
-			// New table has been created, so add it to the global table and leave reference on stack
-			lua_newtable(L);
-			lua_pushvalue(L, -1);
-			lua_setglobal(L, METATABLES_TABLE_NAME);
-		}
+		// New table has been created, so add it to the global table and leave reference on stack
+		lua_newtable(L);
+		lua_pushvalue(L, -1);
+		lua_setglobal(L, METATABLES_TABLE_NAME);
 	}
+}
 }
 
 namespace Sword25 {
@@ -373,34 +373,34 @@ bool BS_LuaBindhelper::_CreateTable(lua_State *L, const Common::String &TableNam
 } // End of namespace Sword25
 
 namespace {
-	Common::String GetLuaValueInfo(lua_State *L, int StackIndex) {
-		switch (lua_type(L, StackIndex)) {
-			case LUA_TNUMBER:
-				lua_pushstring(L, lua_tostring(L, StackIndex));
-				break;
+Common::String GetLuaValueInfo(lua_State *L, int StackIndex) {
+	switch (lua_type(L, StackIndex)) {
+	case LUA_TNUMBER:
+		lua_pushstring(L, lua_tostring(L, StackIndex));
+		break;
 
-			case LUA_TSTRING:
-				lua_pushfstring(L, "\"%s\"", lua_tostring(L, StackIndex));
-				break;
+	case LUA_TSTRING:
+		lua_pushfstring(L, "\"%s\"", lua_tostring(L, StackIndex));
+		break;
 
-			case LUA_TBOOLEAN:
-				lua_pushstring(L, (lua_toboolean(L, StackIndex) ? "true" : "false"));
-				break;
+	case LUA_TBOOLEAN:
+		lua_pushstring(L, (lua_toboolean(L, StackIndex) ? "true" : "false"));
+		break;
 
-			case LUA_TNIL:
-				lua_pushliteral(L, "nil");
-				break;
+	case LUA_TNIL:
+		lua_pushliteral(L, "nil");
+		break;
 
-			default:
-				lua_pushfstring(L, "%s: %p", luaL_typename(L, StackIndex), lua_topointer(L, StackIndex));
-				break;
-		}
-
-		Common::String Result(lua_tostring(L, -1));
-		lua_pop(L, 1);
-
-		return Result;
+	default:
+		lua_pushfstring(L, "%s: %p", luaL_typename(L, StackIndex), lua_topointer(L, StackIndex));
+		break;
 	}
+
+	Common::String Result(lua_tostring(L, -1));
+	lua_pop(L, 1);
+
+	return Result;
+}
 }
 
 namespace Sword25 {
@@ -419,7 +419,7 @@ Common::String BS_LuaBindhelper::StackDump(lua_State *L) {
 	oss += "-------------- Stack Dump Finished ---------------\n";
 
 	return oss;
-} 
+}
 
 Common::String BS_LuaBindhelper::TableDump(lua_State *L) {
 	Common::String oss;

@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -52,9 +52,8 @@
 // Konstanten
 // -----------------------------------------------------------------------------
 
-namespace
-{
-	const unsigned int MAX_SAMPLE_SIZE = 100 * 1024; // Die Dateigröße in Byte ab der ein Sound als Stream abgespielt wird
+namespace {
+const unsigned int MAX_SAMPLE_SIZE = 100 * 1024; // Die Dateigröße in Byte ab der ein Sound als Stream abgespielt wird
 }
 
 // -----------------------------------------------------------------------------
@@ -62,29 +61,26 @@ namespace
 // -----------------------------------------------------------------------------
 
 
-BS_FMODExResource::BS_FMODExResource(const std::string& FileName, FMOD_SYSTEM * FMOD, bool & Success) :
+BS_FMODExResource::BS_FMODExResource(const std::string &FileName, FMOD_SYSTEM *FMOD, bool &Success) :
 	m_SoundPtr(0),
 	m_SoundDataPtr(0),
-	BS_Resource(FileName, BS_Resource::TYPE_SOUND)
-{
+	BS_Resource(FileName, BS_Resource::TYPE_SOUND) {
 	BS_ASSERT(FMOD);
 
 	// Von Misserfolg ausgehen
 	Success = false;
 
 	// Pointer auf den Package-Manager bekommen
-	BS_PackageManager * PackagePtr = BS_Kernel::GetInstance()->GetPackage();
-	if (!PackagePtr)
-	{
+	BS_PackageManager *PackagePtr = BS_Kernel::GetInstance()->GetPackage();
+	if (!PackagePtr) {
 		BS_LOG_ERRORLN("Package manager not found.");
 		return;
 	}
 
 	// Datei laden
-	 unsigned int FileSize;
-	char * FileDataPtr = (char*) PackagePtr->GetFile(GetFileName(), &FileSize);
-	if (!FileDataPtr)
-	{
+	unsigned int FileSize;
+	char *FileDataPtr = (char *) PackagePtr->GetFile(GetFileName(), &FileSize);
+	if (!FileDataPtr) {
 		BS_LOG_ERRORLN("File \"%s\" could not be loaded.", GetFileName().c_str());
 		return;
 	}
@@ -93,25 +89,22 @@ BS_FMODExResource::BS_FMODExResource(const std::string& FileName, FMOD_SYSTEM * 
 	// Samples werden sofort intialisiert.
 	// Für Streams wird hingegen bei jedem Abspielen ein neuer Sound erstellt. Dieses Vorgehen ist notwendig, da FMOD Ex Samples beliebig oft
 	// gleichzeitig abspielen kann, Streams jedoch nur ein mal.
-	if (FileSize <= MAX_SAMPLE_SIZE)
-	{
+	if (FileSize <= MAX_SAMPLE_SIZE) {
 		FMOD_CREATESOUNDEXINFO ExInfo;
 		memset(&ExInfo, 0, sizeof(ExInfo));
 		ExInfo.cbsize = sizeof(ExInfo);
 		ExInfo.length = FileSize;
 
 		FMOD_RESULT Result = FMOD_System_CreateSound(FMOD, FileDataPtr,
-													 FMOD_CREATESAMPLE | FMOD_OPENMEMORY | FMOD_SOFTWARE | FMOD_2D | FMOD_LOOP_NORMAL,
-													 &ExInfo,
-													 &m_SoundPtr);
+		                     FMOD_CREATESAMPLE | FMOD_OPENMEMORY | FMOD_SOFTWARE | FMOD_2D | FMOD_LOOP_NORMAL,
+		                     &ExInfo,
+		                     &m_SoundPtr);
 		if (Result != FMOD_OK) BS_FMODExException("FMOD_System_CreateSound()", Result).Log();
 
 		Success = Result == FMOD_OK;
 
 		delete FileDataPtr;
-	}
-	else
-	{
+	} else {
 		m_SoundDataPtr = FileDataPtr;
 		m_SoundDataSize = FileSize;
 
@@ -121,8 +114,7 @@ BS_FMODExResource::BS_FMODExResource(const std::string& FileName, FMOD_SYSTEM * 
 
 // -----------------------------------------------------------------------------
 
-BS_FMODExResource::~BS_FMODExResource()
-{
+BS_FMODExResource::~BS_FMODExResource() {
 	// Sound freigeben, solange des Soundsystem noch läuft.
 	// Sollte das Soundsystem beendet worden sein müssen und können Sounds nicht mehr freigegeben werden.
 	if (m_SoundPtr && BS_Kernel::GetInstance()->GetService("sfx")) FMOD_Sound_Release(m_SoundPtr);
@@ -133,26 +125,22 @@ BS_FMODExResource::~BS_FMODExResource()
 // Abspielen
 // -----------------------------------------------------------------------------
 
-BS_FMODExChannel * BS_FMODExResource::StartSound(FMOD_SYSTEM * FMOD)
-{
+BS_FMODExChannel *BS_FMODExResource::StartSound(FMOD_SYSTEM *FMOD) {
 	BS_ASSERT(FMOD);
 
-	FMOD_CHANNEL * NewChannelPtr;
-	FMOD_SOUND *   NewSoundPtr = 0;
+	FMOD_CHANNEL *NewChannelPtr;
+	FMOD_SOUND    *NewSoundPtr = 0;
 
 	// Sample können sofort abgespielt werden.
-	if (m_SoundPtr)
-	{
+	if (m_SoundPtr) {
 		FMOD_RESULT Result = FMOD_System_PlaySound(FMOD, FMOD_CHANNEL_FREE, m_SoundPtr, 1, &NewChannelPtr);
-		if (Result != FMOD_OK)
-		{
+		if (Result != FMOD_OK) {
 			BS_FMODExException("FMOD_System_PlaySound()", Result).Log();
 			return 0;
 		}
 	}
 	// Für Streams muss ein neuer Sound erstellt werden.
-	else
-	{
+	else {
 		FMOD_CREATESOUNDEXINFO ExInfo;
 		memset(&ExInfo, 0, sizeof(ExInfo));
 		ExInfo.cbsize = sizeof(ExInfo);
@@ -160,19 +148,17 @@ BS_FMODExChannel * BS_FMODExResource::StartSound(FMOD_SYSTEM * FMOD)
 
 		FMOD_RESULT Result;
 		Result = FMOD_System_CreateSound(FMOD,
-										 m_SoundDataPtr,
-										 FMOD_CREATESTREAM | FMOD_OPENMEMORY_POINT | FMOD_SOFTWARE | FMOD_2D | FMOD_LOOP_NORMAL,
-										 &ExInfo,
-										 &NewSoundPtr);
-		if (Result != FMOD_OK)
-		{
+		                                 m_SoundDataPtr,
+		                                 FMOD_CREATESTREAM | FMOD_OPENMEMORY_POINT | FMOD_SOFTWARE | FMOD_2D | FMOD_LOOP_NORMAL,
+		                                 &ExInfo,
+		                                 &NewSoundPtr);
+		if (Result != FMOD_OK) {
 			BS_FMODExException("FMOD_System_CreateSound()", Result).Log();
 			return 0;
 		}
 
 		Result = FMOD_System_PlaySound(FMOD, FMOD_CHANNEL_FREE, NewSoundPtr, 1, &NewChannelPtr);
-		if (Result != FMOD_OK)
-		{
+		if (Result != FMOD_OK) {
 			BS_FMODExException("FMOD_System_PlaySound()", Result).Log();
 			return 0;
 		}

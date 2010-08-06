@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -61,7 +61,7 @@ namespace Sword25 {
 
 class BS_LuaCallback {
 public:
-	BS_LuaCallback(lua_State * L);
+	BS_LuaCallback(lua_State *L);
 	virtual ~BS_LuaCallback();
 
 	// Funktion muss auf dem Lua-Stack liegen.
@@ -75,10 +75,12 @@ public:
 	void InvokeCallbackFunctions(lua_State *L, unsigned int ObjectHandle);
 
 protected:
-	virtual int PreFunctionInvokation(lua_State *L) { return 0; }
+	virtual int PreFunctionInvokation(lua_State *L) {
+		return 0;
+	}
 
 private:
-	void EnsureObjectCallbackTableExists(lua_State *L,unsigned int ObjectHandle);
+	void EnsureObjectCallbackTableExists(lua_State *L, unsigned int ObjectHandle);
 	void PushCallbackTable(lua_State *L);
 	void PushObjectCallbackTable(lua_State *L, unsigned int ObjectHandle);
 };

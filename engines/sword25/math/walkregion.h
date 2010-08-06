@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -73,31 +73,35 @@ public:
 	 * may lie outside the region. Int his case, the end is chosen as the cloest point to it
 	 * that lies within the region.
 	 *
-	 * @param X1			X Co-ordinate of the start point
-	 * @param Y1			Y Co-ordinate of the start point
-	 * @param X2			X Co-ordinate of the end point
-	 * @param Y2			Y Co-ordinate of the end point
-	 * @param Path			An empty BS_Path that will be set to the resulting path
-	 * @return				Returns false if the result is invalid, otherwise returns true.
+	 * @param X1            X Co-ordinate of the start point
+	 * @param Y1            Y Co-ordinate of the start point
+	 * @param X2            X Co-ordinate of the end point
+	 * @param Y2            Y Co-ordinate of the end point
+	 * @param Path          An empty BS_Path that will be set to the resulting path
+	 * @return              Returns false if the result is invalid, otherwise returns true.
 	 */
-	bool QueryPath(int X1, int Y1, int X2, int Y2, BS_Path &Path) { 
+	bool QueryPath(int X1, int Y1, int X2, int Y2, BS_Path &Path) {
 		return QueryPath(BS_Vertex(X1, Y1), BS_Vertex(X2, Y2), Path);
 	}
 
 	/**
 	 * Get the shortest path between two points in the region.
 	 *
-	 * @param StartPoint	The start point
-	 * @param EndPoint		The end point
-	 * @param Path			An empty BS_Path that will be set to the resulting path
-	 * @return				Returns false if the result is invalid, otherwise returns true.
+	 * @param StartPoint    The start point
+	 * @param EndPoint      The end point
+	 * @param Path          An empty BS_Path that will be set to the resulting path
+	 * @return              Returns false if the result is invalid, otherwise returns true.
 	*/
-	bool QueryPath(BS_Vertex StartPoint, BS_Vertex EndPoint, BS_Path & Path);
+	bool QueryPath(BS_Vertex StartPoint, BS_Vertex EndPoint, BS_Path &Path);
 
 	virtual void SetPos(int X, int Y);
 
-	const Common::Array<BS_Vertex> &GetNodes() const { return m_Nodes; }
-	const Common::Array< Common::Array<int> > &GetVisibilityMatrix() const { return m_VisibilityMatrix; }
+	const Common::Array<BS_Vertex> &GetNodes() const {
+		return m_Nodes;
+	}
+	const Common::Array< Common::Array<int> > &GetVisibilityMatrix() const {
+		return m_VisibilityMatrix;
+	}
 
 	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
 	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);

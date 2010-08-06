@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -59,21 +59,19 @@ class BS_AnimationTemplate;
 // Klassendeklaration
 // -----------------------------------------------------------------------------
 
-class BS_AnimationTemplateRegistry : public BS_ObjectRegistry<BS_AnimationTemplate>, public BS_Persistable
-{
+class BS_AnimationTemplateRegistry : public BS_ObjectRegistry<BS_AnimationTemplate>, public BS_Persistable {
 public:
-	static BS_AnimationTemplateRegistry & GetInstance()
-	{
+	static BS_AnimationTemplateRegistry &GetInstance() {
 		if (!m_InstancePtr.get()) m_InstancePtr.reset(new BS_AnimationTemplateRegistry);
 		return *m_InstancePtr.get();
 	}
 
-	virtual bool Persist(BS_OutputPersistenceBlock & Writer);
-	virtual bool Unpersist(BS_InputPersistenceBlock & Reader);
+	virtual bool Persist(BS_OutputPersistenceBlock &Writer);
+	virtual bool Unpersist(BS_InputPersistenceBlock &Reader);
 
 private:
-	virtual void LogErrorLn(const char * Message) const;
-	virtual void LogWarningLn(const char * Message) const;
+	virtual void LogErrorLn(const char *Message) const;
+	virtual void LogWarningLn(const char *Message) const;
 
 	static std::auto_ptr<BS_AnimationTemplateRegistry> m_InstancePtr;
 };

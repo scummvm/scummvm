@@ -23,7 +23,7 @@
  *
  */
 
-/* 
+/*
  * This code is based on Broken Sword 2.5 engine
  *
  * Copyright (c) Malte Thiesen, Daniel Queteschiner and Michael Elsdoerfer
@@ -57,16 +57,14 @@ namespace Sword25 {
 // -----------------------------------------------------------------------------
 
 BS_RenderObjectManager::BS_RenderObjectManager(int Width, int Height, int FramebufferCount) :
-	m_FrameStarted(false)
-{
+	m_FrameStarted(false) {
 	// Wurzel des BS_RenderObject-Baumes erzeugen.
 	m_RootPtr = new BS_RootRenderObject(this, Width, Height);
 }
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectManager::~BS_RenderObjectManager()
-{
+BS_RenderObjectManager::~BS_RenderObjectManager() {
 	// Die Wurzel des Baumes löschen, damit werden alle BS_RenderObjects mitgelöscht.
 	m_RootPtr.Erase();
 }
@@ -75,8 +73,7 @@ BS_RenderObjectManager::~BS_RenderObjectManager()
 // Interface
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::StartFrame()
-{
+void BS_RenderObjectManager::StartFrame() {
 	m_FrameStarted = true;
 
 	// Verstrichene Zeit bestimmen
@@ -90,8 +87,7 @@ void BS_RenderObjectManager::StartFrame()
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Render()
-{
+bool BS_RenderObjectManager::Render() {
 	// Den Objekt-Status des Wurzelobjektes aktualisieren. Dadurch werden rekursiv alle Baumelemente aktualisiert.
 	// Beim aktualisieren des Objekt-Status werden auch die Update-Rects gefunden, so dass feststeht, was neu gezeichnet
 	// werden muss.
@@ -105,25 +101,22 @@ bool BS_RenderObjectManager::Render()
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr)
-{
+void BS_RenderObjectManager::AttatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr) {
 	m_TimedRenderObjects.push_back(RenderObjectPtr);
 }
 
 // -----------------------------------------------------------------------------
 
-void BS_RenderObjectManager::DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr)
-{
+void BS_RenderObjectManager::DetatchTimedRenderObject(BS_RenderObjectPtr<BS_TimedRenderObject> RenderObjectPtr) {
 	RenderObjectList::iterator Iter = find(m_TimedRenderObjects.begin(), m_TimedRenderObjects.end(), RenderObjectPtr);
-	if (Iter != m_TimedRenderObjects.end())	m_TimedRenderObjects.erase(Iter);
+	if (Iter != m_TimedRenderObjects.end()) m_TimedRenderObjects.erase(Iter);
 }
 
 // -----------------------------------------------------------------------------
 // Persistenz
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock & Writer)
-{
+bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock &Writer) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens speichern. Dadurch werden alle BS_RenderObjects gespeichert rekursiv gespeichert.
@@ -134,8 +127,7 @@ bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock & Writer)
 	// Referenzen auf die TimedRenderObjects persistieren.
 	Writer.Write(m_TimedRenderObjects.size());
 	RenderObjectList::const_iterator Iter = m_TimedRenderObjects.begin();
-	while (Iter != m_TimedRenderObjects.end())
-	{
+	while (Iter != m_TimedRenderObjects.end()) {
 		Writer.Write((*Iter)->GetHandle());
 		++Iter;
 	}
@@ -148,8 +140,7 @@ bool BS_RenderObjectManager::Persist(BS_OutputPersistenceBlock & Writer)
 
 // -----------------------------------------------------------------------------
 
-bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock & Reader)
-{
+bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock &Reader) {
 	bool Result = true;
 
 	// Alle Kinder des Wurzelknotens löschen. Damit werden alle BS_RenderObjects gelöscht.
@@ -166,8 +157,7 @@ bool BS_RenderObjectManager::Unpersist(BS_InputPersistenceBlock & Reader)
 	// Referenzen auf die TimedRenderObjects wieder herstellen.
 	unsigned int TimedObjectCount;
 	Reader.Read(TimedObjectCount);
-	for (unsigned int i = 0; i < TimedObjectCount; ++i)
-	{
+	for (unsigned int i = 0; i < TimedObjectCount; ++i) {
 		unsigned int Handle;
 		Reader.Read(Handle);
 		m_TimedRenderObjects.push_back(Handle);
