@@ -293,7 +293,7 @@ PORT_OBJS :=	$(portdir)/source/blitters_arm.o $(portdir)/source/cdaudio.o $(port
 		$(portdir)/source/dsoptions.o $(portdir)/source/keys.o $(portdir)/source/wordcompletion.o\
 		$(portdir)/source/interrupt.o\
 		$(srcdir)/backends/plugins/elf-loader.o\
-		$(srcdir)/backends/plugins/arm-relocs.o
+		$(srcdir)/backends/plugins/arm-loader.o
 
 ifdef USE_PROFILER
 	PORT_OBJS += $(portdir)/source/profiler/cyg-profile.o

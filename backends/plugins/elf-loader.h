@@ -88,15 +88,6 @@ public:
 
 };
 
-#define RTLD_LAZY 0
-
-extern "C" {
-    void *dlopen(const char *filename, int flags);
-    int dlclose(void *handle);
-    const char *dlerror();
-    void dlforgetsyms(void *handle);
-}
-
 extern void flushDataCache();
 
 #endif /* LOADER_H */
