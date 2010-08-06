@@ -403,18 +403,15 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 
 	// Open the icons file
 	Common::File iconsFile;
-	if (!iconsFile.open("icons.ph")) {
+	if (!iconsFile.open("icons.ph"))
 		error("Groovie::Cursor: Couldn't open icons.ph");
-		return;
-	}
 
 	// Verify the signature
-	uint32 tmp32 = iconsFile.readUint32LE();
+	uint32 tmp32 = iconsFile.readUint32BE();
 	uint16 tmp16 = iconsFile.readUint16LE();
-	if (tmp32 != 0x6e6f6369 || tmp16 != 1) {
-		error("Groovie::Cursor: icons.ph signature failed: %04X %d", tmp32, tmp16);
-		return;
-	}
+	if (tmp32 != MKID_BE('icon') || tmp16 != 1)
+		error("Groovie::Cursor: icons.ph signature failed: %s %d", tag2str(tmp32), tmp16);
+
 
 	// Read the number of icons
 	uint16 nicons = iconsFile.readUint16LE();

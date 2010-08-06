@@ -37,6 +37,307 @@
 
 namespace M4 {
 
+MadsAction::MadsAction(MadsView &owner): _owner(owner) {
+	clear();
+	_currentAction = kVerbNone;
+	_startWalkFlag = false;
+	_statusTextIndex = -1;
+	_selectedAction = 0;
+	_inProgress = false;
+}
+
+void MadsAction::clear() {
+	_v83338 = 1;
+	_actionMode = ACTMODE_NONE;
+	_actionMode2 = ACTMODE2_0;
+	_v86F42 = 0;
+	_v86F4E = 0;
+	_articleNumber = 0;
+	_lookFlag = false;
+	_v86F4A = 0;
+	_statusText[0] = '\0';
+	_selectedRow = -1;
+	_hotspotId = -1;
+	_v86F3A = -1;
+	_v86F4C = -1;
+	_action.verbId = -1;
+	_action.objectNameId = -1;
+	_action.indirectObjectId = -1;
+	_textChanged = true;
+	_walkFlag = false;
+}
+
+void MadsAction::appendVocab(int vocabId, bool capitalise) {
+	char *s = _statusText + strlen(_statusText);
+	const char *vocabStr = _madsVm->globals()->getVocab(vocabId);
+	strcpy(s, vocabStr);
+	if (capitalise)
+		*s = toupper(*s);
+
+	strcat(s, " ");
+}
+
+void MadsAction::set() {
+	int hotspotCount = _madsVm->scene()->getSceneResources().hotspots->size();
+	bool flag = false;
+	strcpy(_statusText, "");
+
+	_currentAction = -1;
+	_action.objectNameId = -1;
+	_action.indirectObjectId = -1;
+
+	if (_actionMode == ACTMODE_TALK) {
+		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
+		if (_selectedRow >= 0) {
+			const char *desc = _madsVm->_converse[_selectedRow].desc;
+			if (desc)
+				strcpy(_statusText, desc);
+		}
+	} else if (_lookFlag && (_selectedRow == 0)) {
+		// Two 'look' actions in succession, so the action becomes 'Look around'
+		strcpy(_statusText, lookAroundStr);
+	} else {
+		if ((_actionMode == ACTMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
+			// Use/to action
+			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
+			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+			
+			_action.objectNameId = objEntry->descId;
+			_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+
+			// Set up the status text stirng
+			strcpy(_statusText, useStr);
+			appendVocab(_action.objectNameId);
+			strcpy(_statusText, toStr);
+			appendVocab(_currentAction);
+		} else {
+			// Handling for if an action has been selected
+			if (_selectedRow >= 0) {
+				if (_actionMode == ACTMODE_VERB) {
+					// Standard verb action
+					_currentAction = verbList[_selectedRow].verb;
+				} else {
+					// Selected action on an inventory object
+					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
+					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
+
+					_currentAction = objEntry->vocabList[_selectedRow].vocabId;
+				}
+
+				appendVocab(_currentAction, true);
+
+				if (_currentAction == kVerbLook) {
+					// Add in the word 'add'
+					strcat(_statusText, atStr);
+					strcat(_statusText, " ");
+				}
+			}
+
+			// Handling for if a hotspot has been selected/highlighted
+			if ((_hotspotId >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
+				flag = true;
+
+				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+				strcat(_statusText, " ");
+			}
+
+			if (_hotspotId >= 0) {
+				if (_selectedRow < 0) {
+					int verbId;
+
+					if (_hotspotId < hotspotCount) {
+						// Get the verb Id from the hotspot
+						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVerbID();
+					} else {
+						// Get the verb Id from the scene object
+						verbId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId - hotspotCount].getVerbID();
+					}
+
+					if (verbId > 0) {
+						// Set the specified action
+						_currentAction = verbId;
+						appendVocab(_currentAction, true);
+					} else {
+						// Default to a standard 'walk to'
+						_currentAction = kVerbWalkTo;
+						strcat(_statusText, walkToStr);
+					}
+				}
+
+				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
+					// Get name from given inventory object
+					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
+					_action.objectNameId = _madsVm->globals()->getObject(objectId)->descId;
+				} else if (_hotspotId < hotspotCount) {
+					// Get name from scene hotspot
+					_action.objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getVocabID();
+				} else {
+					// Get name from temporary scene hotspot
+					_action.objectNameId = (*_madsVm->scene()->getSceneResources().dynamicHotspots)[_hotspotId].getVocabID();
+				}
+				appendVocab(_action.objectNameId);
+			}
+		}
+
+		if ((_hotspotId >= 0) && (_articleNumber > 0) && !flag) {
+			if (_articleNumber == -1) {
+				if (_v86F3A >= 0) {
+					int articleNum = 0;
+
+					if ((_v86F42 == 2) || (_v86F42 == 5)) {
+						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_hotspotId);
+						articleNum = _madsVm->globals()->getObject(objectId)->article;
+					} else if (_v86F3A < hotspotCount) {
+						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_hotspotId].getArticle();
+					} else {
+
+					}
+				}
+
+			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
+				(strcmp(_madsVm->globals()->getVocab(_action.indirectObjectId), fenceStr) != 0)) {
+				// Write out the article
+				strcat(_statusText, englishMADSArticleList[_articleNumber]);
+			} else {
+				// Special case for a 'fence' entry in Rex Nebular
+				strcat(_statusText, overStr);
+			}
+
+			strcat(_statusText, " ");
+		}
+
+		// Append object description if necessary
+		if (_v86F3A >= 0)
+			appendVocab(_action.indirectObjectId);
+
+		// Remove any trailing space character
+		int statusLen = strlen(_statusText);
+		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
+			_statusText[statusLen - 1] = '\0';
+	}
+
+	_textChanged = true;
+}
+
+void MadsAction::refresh() {
+	// Exit immediately if nothing has changed
+	if (!_textChanged)
+		return;
+
+	// Remove any old copy of the status text
+	if (_statusTextIndex >= 0) {
+		_owner._textDisplay.expire(_statusTextIndex);
+		_statusTextIndex = -1;
+	}
+
+	if (strlen(_statusText) != 0) {
+		if ((_owner._screenObjects._v832EC == 0) || (_owner._screenObjects._v832EC == 2)) {
+			Font *font = _madsVm->_font->getFont(FONT_MAIN_MADS);
+			int textSpacing = -1;
+
+			int strWidth = font->getWidth(_statusText);
+			if (strWidth > 320) {
+				// Too large to fit, so fall back on interface font
+				font = _madsVm->_font->getFont(FONT_INTERFACE_MADS);
+				strWidth = font->getWidth(_statusText, 0);
+				textSpacing = 0;
+			}
+
+			// Add a new text display entry to display the status text at the bottom of the screen area
+			uint colours = (_vm->getGameType() == GType_DragonSphere) ? 0x0300 : 0x0003;
+
+			_statusTextIndex = _owner._textDisplay.add(160 - (strWidth / 2), 
+				MADS_SURFACE_HEIGHT + _owner._posAdjust.y - 13, colours, textSpacing, _statusText, font);
+		}
+	}
+
+	_textChanged = false;
+}
+
+void MadsAction::startAction() {
+	_madsVm->_player.moveComplete();
+
+	_inProgress = true;
+	_v8453A = 0;
+	_savedFields.selectedRow = _selectedRow;
+	_savedFields.articleNumber = _articleNumber;
+	_savedFields.actionMode = _actionMode;
+	_savedFields.actionMode2 = _actionMode2;
+	_savedFields.lookFlag = _lookFlag;
+	int savedHotspotId = _hotspotId;
+	int savedV86F3A = _v86F3A;
+	int savedV86F42 = _v86F42;
+
+	// Copy the action to be active
+	_activeAction = _action;
+	strcpy(_dialogTitle, _statusText);
+
+	if ((_savedFields.actionMode2 == ACTMODE2_4) && (savedV86F42 == 0))
+		_v8453A = true;
+
+	_startWalkFlag = false;
+	int hotspotId = -1;
+	HotSpotList &dynHotspots = *_madsVm->scene()->getSceneResources().dynamicHotspots;
+	HotSpotList &hotspots = *_madsVm->scene()->getSceneResources().hotspots;
+
+	if (!_savedFields.lookFlag && (_madsVm->scene()->_screenObjects._v832EC != 1)) {
+		if (_savedFields.actionMode2 == ACTMODE2_4)
+			hotspotId = savedHotspotId;
+		else if (savedV86F42 == 4)
+			hotspotId = savedV86F3A;
+
+		if (hotspotId >= hotspots.size()) {
+			HotSpot &hs = dynHotspots[hotspotId - hotspots.size()];
+			if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+				if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+					_startWalkFlag = true;
+					_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+				}
+			} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+				_startWalkFlag = true;
+				_madsVm->scene()->_destPos.x = hs.getFeetX();
+				_madsVm->scene()->_destPos.y = hs.getFeetY();
+			}
+			_madsVm->scene()->_destFacing = hs.getFacing();
+			hotspotId = -1;
+		}
+	}
+
+	if (hotspotId >= 0) {
+		HotSpot &hs = hotspots[hotspotId];
+		if ((hs.getFeetX() == -1) || (hs.getFeetX() == -3)) {
+			if (_v86F4A && ((hs.getFeetX() == -3) || (_savedFields.selectedRow < 0))) {
+				_startWalkFlag = true;
+				_madsVm->scene()->_destPos = _madsVm->scene()->_customDest;
+			}
+		} else if ((hs.getFeetX() >= 0) && ((_savedFields.actionMode == ACTMODE_NONE) || (hs.getCursor() < 2))) {
+			_startWalkFlag = true;
+			_madsVm->scene()->_destPos.x = hs.getFeetX();
+			_madsVm->scene()->_destPos.y = hs.getFeetY();
+		}
+		_madsVm->scene()->_destFacing = hs.getFacing();
+	}
+
+	_walkFlag = _startWalkFlag;
+}
+
+void MadsAction::checkAction() {
+	if (isAction(kVerbLookAt) || isAction(kVerbThrow))
+		_startWalkFlag = 0;
+}
+
+bool MadsAction::isAction(int verbId, int objectNameId, int indirectObjectId) {
+	if (_activeAction.verbId != verbId)
+		return false;
+	if ((objectNameId != 0) && (_activeAction.objectNameId != objectNameId))
+		return false;
+	if ((indirectObjectId != 0) && (_activeAction.indirectObjectId != indirectObjectId))
+		return false;
+	return true;
+}
+
+//--------------------------------------------------------------------------
+
 bool MadsSpriteSlot::operator==(const SpriteSlotSubset &other) const {
 	return (spriteListIndex == other.spriteListIndex) && (frameNumber == other.frameNumber) &&
 		(xp == other.xp) && (yp == other.yp) && (depth == other.depth) && (scale == other.scale);
@@ -86,15 +387,27 @@ int MadsSpriteSlots::getIndex() {
 	return startIndex++;
 }
 
-int MadsSpriteSlots::addSprites(const char *resName) {
+int MadsSpriteSlots::addSprites(const char *resName, bool suppressErrors, int flags) {
+	// If errors are suppressed, first check if the resource exists
+	if (suppressErrors) {
+		if (!_vm->res()->resourceExists(resName))
+			return -1;
+	}
+
 	// Get the sprite set
 	Common::SeekableReadStream *data = _vm->res()->get(resName);
-	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName);
+	SpriteAsset *spriteSet = new SpriteAsset(_vm, data, data->size(), resName, false, flags);
 	spriteSet->translate(_madsVm->_palette);
 	assert(spriteSet != NULL);
 
 	_sprites.push_back(spriteSet);
 	_vm->res()->toss(resName);
+
+	return _sprites.size() - 1;
+}
+
+int MadsSpriteSlots::addSprites(SpriteAsset *spriteSet) {
+	_sprites.push_back(spriteSet);
 
 	return _sprites.size() - 1;
 }
@@ -136,17 +449,19 @@ typedef Common::List<DepthEntry> DepthList;
 void MadsSpriteSlots::drawBackground() {
 	// Draw all active sprites onto the background surface
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
+		MadsSpriteSlot &slot = _entries[i];
+
+		if (slot.spriteType >= 0) {
 			_owner._dirtyAreas[i].active = false;
 		} else {
 			_owner._dirtyAreas[i].textActive = true;
-			_owner._dirtyAreas.setSpriteSlot(i, _entries[i]);
+			_owner._dirtyAreas.setSpriteSlot(i, slot);
 
-			if (_entries[i].spriteType == BACKGROUND_SPRITE) {
-				SpriteAsset &spriteSet = getSprite(_entries[i].spriteListIndex);
-				M4Sprite *frame = spriteSet.getFrame((_entries[i].frameNumber & 0x7fff) - 1);
-				int xp = _entries[i].xp;
-				int yp = _entries[i].yp;
+			if (slot.spriteType == BACKGROUND_SPRITE) {
+				SpriteAsset &spriteSet = getSprite(slot.spriteListIndex);
+				M4Sprite *frame = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
+				int xp = slot.xp;
+				int yp = slot.yp;
 
 				if (_entries[i].scale != -1) {
 					// Adjust position based on frame size
@@ -154,12 +469,13 @@ void MadsSpriteSlots::drawBackground() {
 					yp -= frame->height() / 2;
 				}
 
-				if (_entries[i].depth <= 1) {
-					// No depth, so simply copy the frame onto the background
-					frame->copyTo(_owner._bgSurface, xp, yp, 0);
+				if (slot.depth > 1) {
+					// Draw the frame with depth processing
+					_owner._bgSurface->copyFrom(frame, xp, yp, slot.depth, _owner._depthSurface, 100, 
+						frame->getTransparencyIndex());
 				} else {
-					// Depth was specified, so draw frame using scene's depth information
-					frame->copyTo(_owner._bgSurface, xp, yp, _entries[i].depth, _owner._depthSurface, 100, 0);
+					// No depth, so simply draw the image
+					frame->copyTo(_owner._bgSurface, xp, yp, frame->getTransparencyIndex());
 				}
 			}
 		}
@@ -170,13 +486,13 @@ void MadsSpriteSlots::drawBackground() {
 		_owner._dirtyAreas[i].active = false;
 }
 
-void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
+void MadsSpriteSlots::drawForeground(M4Surface *viewport) {
 	DepthList depthList;
 
 	// Get a list of sprite object depths for active objects
 	for (int i = 0; i < startIndex; ++i) {
-		if (_entries[i].spriteType >= 0) {
-			DepthEntry rec(_entries[i].depth, i);
+		if (_entries[i].spriteType >= SPRITE_ZERO) {
+			DepthEntry rec(16 - _entries[i].depth, i);
 			depthList.push_back(rec);
 		}
 	}
@@ -192,14 +508,23 @@ void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 		assert(slot.spriteListIndex < (int)_sprites.size());
 		SpriteAsset &spriteSet = *_sprites[slot.spriteListIndex];
 
-		if (slot.scale < 100) {
+		// Get the sprite frame
+		int frameNumber = slot.frameNumber & 0x7fff;
+		bool flipped = (slot.frameNumber & 0x8000) != 0;
+		M4Sprite *sprite = spriteSet.getFrame(frameNumber - 1);
+
+		M4Surface *spr = sprite;
+		if (flipped) {
+			// Create a flipped copy of the sprite temporarily
+			spr = sprite->flipHorizontal();
+		}
+
+		if ((slot.scale < 100) && (slot.scale != -1)) {
 			// Minimalised drawing
-			assert(slot.spriteListIndex < (int)_sprites.size());
-			M4Sprite *spr = spriteSet.getFrame((slot.frameNumber & 0x7fff) - 1);
-			spr->copyTo(view, slot.xp, slot.yp + yOffset, slot.depth, _owner._depthSurface, slot.scale, 0);
+			viewport->copyFrom(spr, slot.xp, slot.yp, slot.depth, _owner._depthSurface, slot.scale, 
+				sprite->getTransparencyIndex());
 		} else {
 			int xp, yp;
-			M4Sprite *spr = spriteSet.getFrame(slot.frameNumber - 1);
 
 			if (slot.scale == -1) {
 				xp = slot.xp - _owner._posAdjust.x;
@@ -211,12 +536,16 @@ void MadsSpriteSlots::drawForeground(View *view, int yOffset) {
 
 			if (slot.depth > 1) {
 				// Draw the frame with depth processing
-				spr->copyTo(view, xp, yp + yOffset, slot.depth, _owner._depthSurface, 100, 0);
+				viewport->copyFrom(spr, xp, yp, slot.depth, _owner._depthSurface, 100, sprite->getTransparencyIndex());
 			} else {
 				// No depth, so simply draw the image
-				spr->copyTo(view, xp, yp + yOffset, 0);
+				spr->copyTo(viewport, xp, yp, sprite->getTransparencyIndex());
 			}
 		}
+
+		// Free sprite if it was a flipped one
+		if (flipped)
+			delete spr;
 	}
 }
 
@@ -270,6 +599,7 @@ MadsTextDisplay::MadsTextDisplay(MadsView &owner): _owner(owner) {
 	for (int i = 0; i < TEXT_DISPLAY_SIZE; ++i) {
 		MadsTextDisplayEntry rec;
 		rec.active = false;
+		rec.expire = 0;
 		_entries.push_back(rec);
 	}
 }
@@ -307,7 +637,7 @@ int MadsTextDisplay::add(int xp, int yp, uint fontColour, int charSpacing, const
 void MadsTextDisplay::setDirtyAreas() {
 	// Determine dirty areas for active text areas
 	for (uint idx = 0, dirtyIdx = DIRTY_AREAS_TEXT_DISPLAY_IDX; dirtyIdx < DIRTY_AREAS_SIZE; ++idx, ++dirtyIdx) {
-		if ((_entries[idx].expire < 0) || !_entries[idx].active)
+		if ((_entries[idx].expire >= 0) || !_entries[idx].active)
 			_owner._dirtyAreas[dirtyIdx].active = false;
 		else {
 			_owner._dirtyAreas[dirtyIdx].textActive = true;
@@ -326,21 +656,13 @@ void MadsTextDisplay::setDirtyAreas2() {
 	}
 }
 
-void MadsTextDisplay::draw(View *view, int yOffset) {
+void MadsTextDisplay::draw(M4Surface *view) {
 	for (uint idx = 0; idx < _entries.size(); ++idx) {
 		if (_entries[idx].active && (_entries[idx].expire >= 0)) {
 			_entries[idx].font->setColours(_entries[idx].colour1, _entries[idx].colour2, 0);
 			_entries[idx].font->writeString(view, _entries[idx].msg, 
-				_entries[idx].bounds.left, _entries[idx].bounds.top + yOffset, _entries[idx].bounds.width(),
+				_entries[idx].bounds.left, _entries[idx].bounds.top, _entries[idx].bounds.width(),
 				_entries[idx].spacing);
-		}
-	}
-
-	// Clear up any now text display entries that are to be expired
-	for (uint idx = 0; idx < _entries.size(); ++idx) {
-		if (_entries[idx].expire < 0) {
-			_entries[idx].active = false;
-			_entries[idx].expire = 0;
 		}
 	}
 }
@@ -403,17 +725,17 @@ int MadsKernelMessageList::add(const Common::Point &pt, uint fontColour, uint8 f
 	rec.abortMode = _owner._abortTimersMode2;
 	
 	for (int i = 0; i < 3; ++i)
-		rec.actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		rec.actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
-	if (flags & KMSG_OWNER_TIMEOUT)
-		rec.frameTimer = _owner._ticksAmount + _owner._newTimeout;
+	if (flags & KMSG_PLAYER_TIMEOUT)
+		rec.frameTimer = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	return idx;
 }
 
 int MadsKernelMessageList::addQuote(int quoteId, int abortTimers, uint32 timeout) {
 	const char *quoteStr = _madsVm->globals()->getQuote(quoteId);
-	return add(Common::Point(0, 0), 0x1110, KMSG_OWNER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
+	return add(Common::Point(0, 0), 0x1110, KMSG_PLAYER_TIMEOUT | KMSG_CENTER_ALIGN, abortTimers, timeout, quoteStr);
 }
 
 void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quoted) {
@@ -429,8 +751,8 @@ void MadsKernelMessageList::scrollMessage(int msgIndex, int numTicks, bool quote
 	_entries[msgIndex].asciiChar = *msgP;
 	_entries[msgIndex].asciiChar2 = *(msgP + 1);
 
-	if (_entries[msgIndex].flags & KMSG_OWNER_TIMEOUT)
-		_entries[msgIndex].frameTimer2 = _owner._ticksAmount + _owner._newTimeout;
+	if (_entries[msgIndex].flags & KMSG_PLAYER_TIMEOUT)
+		_entries[msgIndex].frameTimer2 = _madsVm->_player._ticksAmount + _madsVm->_player._priorTimer;
 
 	_entries[msgIndex].frameTimer = _entries[msgIndex].frameTimer2;
 }
@@ -503,7 +825,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 			if (_owner._abortTimersMode != ABORTMODE_1) {
 				for (int i = 0; i < 3; ++i)
-					_madsVm->scene()->actionNouns[i] = msg.actionNouns[i];
+					_madsVm->globals()->actionNouns[i] = msg.actionNouns[i];
 			}
 		}
 	}
@@ -524,7 +846,7 @@ void MadsKernelMessageList::processText(int msgIndex) {
 		}
 	}
 	
-	if (msg.flags & KMSG_OWNER_TIMEOUT) {
+	if (msg.flags & KMSG_PLAYER_TIMEOUT) {
 		if (word_8469E != 0) {
 			// TODO: Figure out various flags
 		} else {
@@ -597,6 +919,18 @@ void MadsKernelMessageList::processText(int msgIndex) {
 
 //--------------------------------------------------------------------------
 
+ScreenObjects::ScreenObjects(MadsView &owner): _owner(owner) {
+	_v832EC = 0;
+	_v7FECA = 0;
+	_v7FED6 = 0;
+	_v8332A = 0;
+	_yp = 0;
+	_v8333C = 0;
+	_selectedObject = 0;
+	_category = 0;
+	_objectIndex = 0;
+}
+	
 /**
  * Clears the entries list
  */
@@ -649,6 +983,29 @@ void ScreenObjects::setActive(int category, int idx, bool active) {
 	}
 }
 
+void ScreenObjects::check(bool scanFlag, bool mouseClick) {
+	if (!mouseClick || _v832EC)
+		_v7FECA = 0;
+
+	if (!_v7FED6 && !_v8332A && !_yp && (_v8333C != 0)) {
+		if (scanFlag) {
+			_category = CAT_NONE;
+			_selectedObject = scanBackwards(_madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y,
+				LAYER_GUI);
+
+			if (_selectedObject > 0) {
+				ScreenObjectEntry &obj = _entries[_selectedObject];
+				_category = obj.category & 7;
+				_objectIndex = obj.index;
+			}
+
+			// TODO: Other stuff related to the user interface
+		}
+	}
+
+	_owner._action.refresh();
+}
+
 /*--------------------------------------------------------------------------*/
 
 MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
@@ -657,7 +1014,7 @@ MadsDynamicHotspots::MadsDynamicHotspots(MadsView &owner): _owner(owner) {
 		rec.active = false;
 		_entries.push_back(rec);
 	}
-	_flag = true;
+	_changed = true;
 	_count = 0;
 }
 
@@ -681,7 +1038,7 @@ int MadsDynamicHotspots::add(int descId, int field14, int seqIndex, const Common
 	_entries[idx].field_17 = 0;
 
 	++_count;
-	_flag = true;
+	_changed = true;
 
 	if (seqIndex >= 0)
 		_owner._sequenceList[seqIndex].dynamicHotspotIndex = idx;
@@ -713,7 +1070,7 @@ void MadsDynamicHotspots::remove(int index) {
 		_entries[index].active = false;
 
 		--_count;
-		_flag = true;
+		_changed = true;
 	}
 }
 
@@ -722,7 +1079,7 @@ void MadsDynamicHotspots::reset() {
 		_entries[i].active = false;
 
 	_count = 0;
-	_flag = false;
+	_changed = false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -732,9 +1089,12 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 		--bounds.left;
 		++width;
 	}
-	int right = bounds.left + width;
+
 	if (bounds.left < 0)
 		bounds.left = 0;
+	else if (bounds.left > maxWidth)
+		bounds.left = maxWidth;
+	int right = bounds.left + width;
 	if (right < 0)
 		right = 0;
 	if (right > maxWidth)
@@ -746,6 +1106,8 @@ void MadsDirtyArea::setArea(int width, int height, int maxWidth, int maxHeight) 
 
 	if (bounds.top < 0)
 		bounds.top = 0;
+	else if (bounds.top > maxHeight)
+		bounds.top = maxHeight;
 	int bottom = bounds.top + height;
 	if (bottom < 0)
 		bottom = 0;
@@ -816,6 +1178,7 @@ void MadsDirtyAreas::setTextDisplay(int dirtyIdx, const MadsTextDisplayEntry &te
  * @param count			Number of entries to process
  */
 void MadsDirtyAreas::merge(int startIndex, int count) {
+return;//***DEBUG***
 	if (startIndex >= count)
 		return;
 
@@ -855,11 +1218,21 @@ void MadsDirtyAreas::mergeAreas(int idx1, int idx2) {
 	da1.textActive = true;
 }
 
-void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, int yOffset) {
+void MadsDirtyAreas::copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust) {
 	for (uint i = 0; i < _entries.size(); ++i) {
+		const Common::Rect &srcBounds = _entries[i].bounds;
+
+		Common::Rect bounds(srcBounds.left + posAdjust.x, srcBounds.top + posAdjust.y,
+			srcBounds.right + posAdjust.x, srcBounds.bottom + posAdjust.y);
+
 		if (_entries[i].active && _entries[i].bounds.isValidRect())
-			src->copyTo(dest, _entries[i].bounds, _entries[i].bounds.left, _entries[i].bounds.top + yOffset);
+			src->copyTo(dest, bounds, _entries[i].bounds.left, _entries[i].bounds.top);
 	}
+}
+
+void MadsDirtyAreas::clear() {
+	for (uint i = 0; i < _entries.size(); ++i)
+		_entries[i].active = false;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -892,7 +1265,7 @@ bool MadsSequenceList::addSubEntry(int index, SequenceSubEntryMode mode, int fra
 	return false;
 }
 
-int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
+int MadsSequenceList::add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
 		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, int numSprites, 
 		int frameStart) {
 
@@ -913,7 +1286,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	// Set the list entry fields
 	_entries[seqIndex].active = true;
 	_entries[seqIndex].spriteListIndex = spriteListIndex;
-	_entries[seqIndex].field_2 = v0;
+	_entries[seqIndex].flipped = flipped;
 	_entries[seqIndex].frameIndex = frameIndex;
 	_entries[seqIndex].frameStart = frameStart;
 	_entries[seqIndex].numSprites = numSprites;
@@ -937,7 +1310,7 @@ int MadsSequenceList::add(int spriteListIndex, int v0, int frameIndex, int trigg
 	_entries[seqIndex].abortMode = _owner._abortTimersMode2;
 
 	for (int i = 0; i < 3; ++i)
-		_entries[seqIndex].actionNouns[i] = _madsVm->scene()->actionNouns[i];
+		_entries[seqIndex].actionNouns[i] = _madsVm->globals()->actionNouns[i];
 
 	return seqIndex;
 }
@@ -959,7 +1332,7 @@ void MadsSequenceList::setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot) {
 	spriteSlot.spriteType = spriteSet.isBackground() ? BACKGROUND_SPRITE : FOREGROUND_SPRITE;
 	spriteSlot.seqIndex = seqIndex;
 	spriteSlot.spriteListIndex = timerEntry.spriteListIndex;
-	spriteSlot.frameNumber = ((timerEntry.field_2 == 1) ? 0x8000 : 0) | timerEntry.frameIndex;
+	spriteSlot.frameNumber = (timerEntry.flipped ? 0x8000 : 0) | timerEntry.frameIndex;
 	spriteSlot.depth = timerEntry.depth;
 	spriteSlot.scale = timerEntry.scale;
 	
@@ -1011,7 +1384,7 @@ bool MadsSequenceList::loadSprites(int seqIndex) {
 				dynHotspot.bounds.top = MAX(y2 - height, 0);
 				dynHotspot.bounds.bottom = MIN(y2, 155) - dynHotspot.bounds.top;
 
-				_owner._dynamicHotspots._flag = true;
+				_owner._dynamicHotspots._changed = true;
 			}
 		}
 
@@ -1160,6 +1533,13 @@ void MadsSequenceList::scan() {
 	}
 }
 
+/**
+ * Sets the depth of the specified entry in the sequence list
+ */
+void MadsSequenceList::setDepth(int seqIndex, int depth) {
+	_entries[seqIndex].depth = depth;
+}
+
 //--------------------------------------------------------------------------
 
 Animation::Animation(MadsM4Engine *vm): _vm(vm) {
@@ -1171,28 +1551,33 @@ Animation::~Animation() {
 //--------------------------------------------------------------------------
 
 MadsView::MadsView(View *view): _view(view), _dynamicHotspots(*this), _sequenceList(*this),
-		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this) {
+		_kernelMessages(*this), _spriteSlots(*this), _dirtyAreas(*this), _textDisplay(*this),
+		_screenObjects(*this), _action(*this) {
 		
 	_textSpacing = -1;
-	_ticksAmount = 3;
 	_newTimeout = 0;
 	_abortTimers = 0;
 	_abortTimers2 = 0;
 	_abortTimersMode = ABORTMODE_0;
 	_abortTimersMode2 = ABORTMODE_0;
 
-	_yOffset = 0;
 	_depthSurface = NULL;
 	_bgSurface = NULL;
+	_viewport = NULL;
 	_sceneAnimation = new MadsAnimation(_vm, this);
 }
 
 MadsView::~MadsView() {
 	delete _sceneAnimation;
+	delete _viewport;
 }
 
 void MadsView::refresh() {
+	if (!_viewport)
+		setViewport(_view->bounds());
+
 	// Draw any sprites
+	_dirtyAreas.clear();
 	_spriteSlots.drawBackground();
 
 	// Process dirty areas
@@ -1202,7 +1587,7 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 	
 	// Copy dirty areas to the main display surface 
-	_dirtyAreas.copy(_view, _bgSurface, _yOffset);
+	_dirtyAreas.copy(_viewport, _bgSurface, _posAdjust);
 
 	// Handle dirty areas for foreground objects
 	_spriteSlots.setDirtyAreas();
@@ -1210,16 +1595,33 @@ void MadsView::refresh() {
 	_dirtyAreas.merge(1, DIRTY_AREAS_SIZE);
 
 	// Draw foreground sprites
-	_spriteSlots.drawForeground(_view, _yOffset);
+	_spriteSlots.drawForeground(_viewport);
 
 	// Draw text elements onto the view
-	_textDisplay.draw(_view, _yOffset);
+	_textDisplay.draw(_viewport);
 
 	// Remove any sprite slots that are no longer needed
 	_spriteSlots.cleanUp();
 
 	// Deactivate any text display entries that are no longer needed
 	_textDisplay.cleanUp();
+}
+
+void MadsView::update() {
+	_sequenceList.tick();
+	_kernelMessages.update();
+}
+
+void MadsView::clearLists() {
+	_textDisplay.clear();
+	_kernelMessages.clear();
+	_spriteSlots.clear();
+}
+
+void MadsView::setViewport(const Common::Rect &bounds) {
+	delete _viewport;
+	_viewport = new M4Surface(bounds.width(), bounds.height(), _view->getBasePtr(bounds.left, bounds.top),
+		_view->getPitch());
 }
 
 } // End of namespace M4

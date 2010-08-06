@@ -34,15 +34,20 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 	reg_t prev = addr;
 
 	do {
-		Node *node = segMan->lookupNode(addr);
+		Node *node = segMan->lookupNode(addr, false);
 
 		if (!node) {
-			warning("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			if ((g_sci->getGameId() == GID_ICEMAN) && (g_sci->getEngineState()->currentRoomNumber() == 40)) {
+				// ICEMAN: when plotting course, unDrawLast is called by startPlot::changeState
+				//  there is no previous entry so we get 0 in here
+			} else {
+				error("isSaneNodePointer: Node at %04x:%04x wasn't found", PRINT_REG(addr));
+			}
 			return false;
 		}
 
 		if (havePrev && node->pred != prev) {
-			warning("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
+			error("isSaneNodePointer: Node at %04x:%04x points to invalid predecessor %04x:%04x (should be %04x:%04x)",
 					PRINT_REG(addr), PRINT_REG(node->pred), PRINT_REG(prev));
 
 			//node->pred = prev;	// fix the problem in the node
@@ -58,33 +63,33 @@ static bool isSaneNodePointer(SegManager *segMan, reg_t addr) {
 }
 
 static void checkListPointer(SegManager *segMan, reg_t addr) {
-	List *l = segMan->lookupList(addr);
+	List *list = segMan->lookupList(addr);
 
-	if (!l) {
-		warning("isSaneListPointer (list %04x:%04x): The requested list wasn't found",
+	if (!list) {
+		error("checkListPointer (list %04x:%04x): The requested list wasn't found",
 				PRINT_REG(addr));
 		return;
 	}
 
-	if (l->first.isNull() && l->last.isNull()) {
+	if (list->first.isNull() && list->last.isNull()) {
 		// Empty list is fine
-	} else if (!l->first.isNull() && !l->last.isNull()) {
+	} else if (!list->first.isNull() && !list->last.isNull()) {
 		// Normal list
-		Node *node_a = segMan->lookupNode(l->first);
-		Node *node_z = segMan->lookupNode(l->last);
+		Node *node_a = segMan->lookupNode(list->first, false);
+		Node *node_z = segMan->lookupNode(list->last, false);
 
 		if (!node_a) {
-			warning("isSaneListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
+			error("checkListPointer (list %04x:%04x): missing first node", PRINT_REG(addr));
 			return;
 		}
 
 		if (!node_z) {
-			warning("isSaneListPointer (list %04x:%04x): missing last node", PRINT_REG(addr));
+			error("checkListPointer (list %04x:%04x): missing last node", PRINT_REG(addr));
 			return;
 		}
 
 		if (!node_a->pred.isNull()) {
-			warning("isSaneListPointer (list %04x:%04x): First node of the list points to a predecessor node",
+			error("checkListPointer (list %04x:%04x): First node of the list points to a predecessor node",
 					PRINT_REG(addr));
 
 			//node_a->pred = NULL_REG;	// fix the problem in the node
@@ -93,7 +98,7 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 		}
 
 		if (!node_z->succ.isNull()) {
-			warning("isSaneListPointer (list %04x:%04x): Last node of the list points to a successor node",
+			error("checkListPointer (list %04x:%04x): Last node of the list points to a successor node",
 					PRINT_REG(addr));
 
 			//node_z->succ = NULL_REG;	// fix the problem in the node
@@ -101,66 +106,42 @@ static void checkListPointer(SegManager *segMan, reg_t addr) {
 			return;
 		}
 
-		isSaneNodePointer(segMan, l->first);
+		isSaneNodePointer(segMan, list->first);
 	} else {
 		// Not sane list... it's missing pointers to the first or last element
-		if (l->first.isNull())
-			warning("isSaneListPointer (list %04x:%04x): missing pointer to first element",
+		if (list->first.isNull())
+			error("checkListPointer (list %04x:%04x): missing pointer to first element",
 					PRINT_REG(addr));
-		if (l->last.isNull())
-			warning("isSaneListPointer (list %04x:%04x): missing pointer to last element",
+		if (list->last.isNull())
+			error("checkListPointer (list %04x:%04x): missing pointer to last element",
 					PRINT_REG(addr));
 	}
 }
 
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
-	reg_t listbase;
-	List *l;
-	l = s->_segMan->allocateList(&listbase);
-	l->first = l->last = NULL_REG;
-	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x", PRINT_REG(listbase));
+	reg_t listRef;
+	List *list = s->_segMan->allocateList(&listRef);
+	list->first = list->last = NULL_REG;
+	debugC(2, kDebugLevelNodes, "New listRef at %04x:%04x", PRINT_REG(listRef));
 
-	return listbase; // Return list base address
+	return listRef; // Return list base address
 }
 
 reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	// This function is not needed in ScummVM. The garbage collector
 	// cleans up unused objects automatically
 
-#if 0
-	List *l = s->_segMan->lookupList(argv[0]);
-
-	if (!l) {
-		// FIXME: This should be an error, but it's turned to a warning for now
-		warning("Attempt to dispose non-list at %04x:%04x", PRINT_REG(argv[0]));
-		return NULL_REG;
-	}
-
-	checkListPointer(s->_segMan, argv[0]);
-
-	if (!l->first.isNull()) {
-		reg_t n_addr = l->first;
-
-		while (!n_addr.isNull()) { // Free all nodes
-			Node *n = s->_segMan->lookupNode(n_addr);
-			n_addr = n->succ;
-
-			//s->_segMan->free_Node(n_addr);	// TODO
-		}
-	}
-
-	//s->_segMan->free_list(argv[0]);	// TODO
-#endif
-
 	return s->r_acc;
 }
 
 reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 	reg_t nodeValue = argv[0];
-	reg_t nodeKey = (argc == 2) ? argv[1] : NULL_REG;
+	// Some SCI32 games call this with 1 parameter (e.g. the demo of Phantasmagoria).
+	// Set the key to be the same as the value in this case
+	reg_t nodeKey = (argc == 2) ? argv[1] : argv[0];
 	s->r_acc = s->_segMan->newNode(nodeValue, nodeKey);
 
-	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x", PRINT_REG(s->r_acc));
+	debugC(2, kDebugLevelNodes, "New nodeRef at %04x:%04x", PRINT_REG(s->r_acc));
 
 	return s->r_acc;
 }
@@ -169,11 +150,11 @@ reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
-	if (l) {
+	if (list) {
 		checkListPointer(s->_segMan, argv[0]);
-		return l->first;
+		return list->first;
 	} else {
 		return NULL_REG;
 	}
@@ -183,11 +164,11 @@ reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
-	if (l) {
+	if (list) {
 		checkListPointer(s->_segMan, argv[0]);
-		return l->last;
+		return list->last;
 	} else {
 		return NULL_REG;
 	}
@@ -197,56 +178,56 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 	checkListPointer(s->_segMan, argv[0]);
 
-	return make_reg(0, ((l) ? l->first.isNull() : 0));
+	return make_reg(0, ((list) ? list->first.isNull() : 0));
 }
 
-static void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = s->_segMan->lookupList(listbase);
-	Node *new_n = s->_segMan->lookupNode(nodebase);
+static void addToFront(EngineState *s, reg_t listRef, reg_t nodeRef) {
+	List *list = s->_segMan->lookupList(listRef);
+	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
 
-	// FIXME: This should be an error, but it's turned to a warning for now
-	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	checkListPointer(s->_segMan, listbase);
+	if (!newNode)
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+	checkListPointer(s->_segMan, listRef);
 
-	new_n->succ = l->first;
-	new_n->pred = NULL_REG;
+	newNode->pred = NULL_REG;
+	newNode->succ = list->first;
+
 	// Set node to be the first and last node if it's the only node of the list
-	if (l->first.isNull())
-		l->last = nodebase;
+	if (list->first.isNull())
+		list->last = nodeRef;
 	else {
-		Node *old_n = s->_segMan->lookupNode(l->first);
-		old_n->pred = nodebase;
+		Node *oldNode = s->_segMan->lookupNode(list->first);
+		oldNode->pred = nodeRef;
 	}
-	l->first = nodebase;
+	list->first = nodeRef;
 }
 
-static void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = s->_segMan->lookupList(listbase);
-	Node *new_n = s->_segMan->lookupNode(nodebase);
+static void addToEnd(EngineState *s, reg_t listRef, reg_t nodeRef) {
+	List *list = s->_segMan->lookupList(listRef);
+	Node *newNode = s->_segMan->lookupNode(nodeRef);
 
-	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
+	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
 
-	// FIXME: This should be an error, but it's turned to a warning for now
-	if (!new_n)
-		warning("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodebase), PRINT_REG(listbase));
-	checkListPointer(s->_segMan, listbase);
+	if (!newNode)
+		error("Attempt to add non-node (%04x:%04x) to list at %04x:%04x", PRINT_REG(nodeRef), PRINT_REG(listRef));
+	checkListPointer(s->_segMan, listRef);
 
-	new_n->succ = NULL_REG;
-	new_n->pred = l->last;
+	newNode->pred = list->last;
+	newNode->succ = NULL_REG;
+
 	// Set node to be the first and last node if it's the only node of the list
-	if (l->last.isNull())
-		l->first = nodebase;
+	if (list->last.isNull())
+		list->first = nodeRef;
 	else {
-		Node *old_n = s->_segMan->lookupNode(l->last);
-		old_n->succ = nodebase;
+		Node *old_n = s->_segMan->lookupNode(list->last);
+		old_n->succ = nodeRef;
 	}
-	l->last = nodebase;
+	list->last = nodeRef;
 }
 
 reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
@@ -274,27 +255,42 @@ reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
-	_k_add_to_front(s, argv[0], argv[1]);
+	addToFront(s, argv[0], argv[1]);
+
+	if (argc == 3)
+		s->_segMan->lookupNode(argv[1])->key = argv[2];
+
+	return s->r_acc;
+}
+
+reg_t kAddToEnd(EngineState *s, int argc, reg_t *argv) {
+	addToEnd(s, argv[0], argv[1]);
+
+	if (argc == 3)
+		s->_segMan->lookupNode(argv[1])->key = argv[2];
+
 	return s->r_acc;
 }
 
 reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
 	Node *newnode = s->_segMan->lookupNode(argv[2]);
 
 	checkListPointer(s->_segMan, argv[0]);
 
-	// FIXME: This should be an error, but it's turned to a warning for now
 	if (!newnode) {
-		warning("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
+		error("New 'node' %04x:%04x is not a node", PRINT_REG(argv[2]));
 		return NULL_REG;
 	}
 
-	if (argc != 3) {
-		warning("kAddAfter: Haven't got 3 arguments, aborting");
+	if (argc != 3 && argc != 4) {
+		error("kAddAfter: Haven't got 3 or 4 arguments, aborting");
 		return NULL_REG;
 	}
+
+	if (argc == 4)
+		newnode->key = argv[3];
 
 	if (firstnode) { // We're really appending after
 		reg_t oldnext = firstnode->succ;
@@ -305,19 +301,14 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 
 		if (oldnext.isNull())  // Appended after last node?
 			// Set new node as last list node
-			l->last = argv[2];
+			list->last = argv[2];
 		else
 			s->_segMan->lookupNode(oldnext)->pred = argv[2];
 
 	} else { // !firstnode
-		_k_add_to_front(s, argv[0], argv[2]); // Set as initial list node
+		addToFront(s, argv[0], argv[2]); // Set as initial list node
 	}
 
-	return s->r_acc;
-}
-
-reg_t kAddToEnd(EngineState *s, int argc, reg_t *argv) {
-	_k_add_to_end(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
@@ -352,23 +343,27 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, 2, argv);
 	Node *n;
-	List *l = s->_segMan->lookupList(argv[0]);
+	List *list = s->_segMan->lookupList(argv[0]);
 
 	if (node_pos.isNull())
 		return NULL_REG; // Signal failure
 
 	n = s->_segMan->lookupNode(node_pos);
-	if (l->first == node_pos)
-		l->first = n->succ;
-	if (l->last == node_pos)
-		l->last = n->pred;
+	if (list->first == node_pos)
+		list->first = n->succ;
+	if (list->last == node_pos)
+		list->last = n->pred;
 
 	if (!n->pred.isNull())
 		s->_segMan->lookupNode(n->pred)->succ = n->succ;
 	if (!n->succ.isNull())
 		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
-	//s->_segMan->free_Node(node_pos);	// TODO
+	// Erase references to the predecessor and successor nodes, as the game
+	// scripts could reference the node itself again.
+	// Happens in the intro of QFG1 and in Longbow, when exiting the cave.
+	n->pred = NULL_REG;
+	n->succ = NULL_REG;
 
 	return make_reg(0, 1); // Signal success
 }
@@ -398,8 +393,6 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	reg_t order_func = argv[2];
 
 	int input_size = (int16)readSelectorValue(segMan, source, SELECTOR(size));
-	int i;
-
 	reg_t input_data = readSelector(segMan, source, SELECTOR(elements));
 	reg_t output_data = readSelector(segMan, dest, SELECTOR(elements));
 
@@ -422,9 +415,10 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);
 
-	i = 0;
+	int i = 0;
 	while (node) {
-		invokeSelector(INV_SEL(s, order_func, doit, kStopOnInvalidSelector), 1, node->value);
+		reg_t params[1] = { node->value };
+		invokeSelector(s, order_func, SELECTOR(doit), argc, argv, 1, params);
 		temp_array[i].key = node->key;
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;
@@ -436,7 +430,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	for (i = 0;i < input_size;i++) {
 		reg_t lNode = s->_segMan->newNode(temp_array[i].value, temp_array[i].key);
-		_k_add_to_end(s, output_data, lNode);
+		addToEnd(s, output_data, lNode);
 	}
 
 	free(temp_array);
@@ -449,14 +443,14 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kListAt(EngineState *s, int argc, reg_t *argv) {
 	if (argc != 2) {
-		warning("kListAt called with %d parameters", argc);
+		error("kListAt called with %d parameters", argc);
 		return NULL_REG;
 	}
 
 	List *list = s->_segMan->lookupList(argv[0]);
 	reg_t curAddress = list->first;
 	if (list->first.isNull()) {
-		warning("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
+		error("kListAt tried to reference empty list (%04x:%04x)", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 	Node *curNode = s->_segMan->lookupNode(curAddress);
@@ -518,12 +512,12 @@ reg_t kListEachElementDo(EngineState *s, int argc, reg_t *argv) {
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// This can only happen with 3 params (list, target selector, variable)
 			if (argc != 3) {
-				warning("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
+				error("kListEachElementDo: Attempted to modify a variable selector with %d params", argc);
 			} else {
 				writeSelector(s->_segMan, curObject, slc, argv[2]);
 			}
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 		}
 
 		curNode = s->_segMan->lookupNode(nextNode);
@@ -550,9 +544,9 @@ reg_t kListFirstTrue(EngineState *s, int argc, reg_t *argv) {
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
-			warning("kListFirstTrue: Attempted to access a variable selector");
+			error("kListFirstTrue: Attempted to access a variable selector");
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result is true
 			if (!s->r_acc.isNull())
@@ -584,9 +578,9 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 		// First, check if the target selector is a variable
 		if (lookupSelector(s->_segMan, curObject, slc, &address, NULL) == kSelectorVariable) {
 			// Can this happen with variable selectors?
-			warning("kListAllTrue: Attempted to access a variable selector");
+			error("kListAllTrue: Attempted to access a variable selector");
 		} else {
-			invokeSelectorArgv(s, curObject, slc, kContinueOnInvalidSelector, argc, argv, argc - 2, argv + 2);
+			invokeSelector(s, curObject, slc, argc, argv, argc - 2, argv + 2);
 
 			// Check if the result isn't true
 			if (s->r_acc.isNull())
@@ -599,65 +593,134 @@ reg_t kListAllTrue(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// In SCI2.1, all the list functions were merged in one
 reg_t kList(EngineState *s, int argc, reg_t *argv) {
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
+}
+
+reg_t kAddBefore(EngineState *s, int argc, reg_t *argv) {
+	error("Unimplemented function kAddBefore called");
+	return s->r_acc;
+}
+
+reg_t kMoveToFront(EngineState *s, int argc, reg_t *argv) {
+	error("Unimplemented function kMoveToFront called");
+	return s->r_acc;
+}
+
+reg_t kMoveToEnd(EngineState *s, int argc, reg_t *argv) {
+	error("Unimplemented function kMoveToEnd called");
+	return s->r_acc;
+}
+
+reg_t kArray(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case 0:
-		return kNewList(s, argc - 1, argv + 1);
-	case 1:
-		return kDisposeList(s, argc - 1, argv + 1);
-	case 2:
-		return kNewNode(s, argc - 1, argv + 1);
-	case 3:
-		return kFirstNode(s, argc - 1, argv + 1);
-	case 4:
-		return kLastNode(s, argc - 1, argv + 1);
-	case 5:
-		return kEmptyList(s, argc - 1, argv + 1);
-	case 6:
-		return kNextNode(s, argc - 1, argv + 1);
-	case 7:
-		return kPrevNode(s, argc - 1, argv + 1);
-	case 8:
-		return kNodeValue(s, argc - 1, argv + 1);
-	case 9:
-		return kAddAfter(s, argc - 1, argv + 1);
-	case 10:
-		return kAddToFront(s, argc - 1, argv + 1);
-	case 11:
-		return kAddToEnd(s, argc - 1, argv + 1);
-	case 12:
-		warning("kList: unimplemented subfunction kAddBefore");
-		//return kAddBefore(s, argc - 1, argv + 1);
-		return NULL_REG;
-	case 13:
-		warning("kList: unimplemented subfunction kMoveToFront");
-		//return kMoveToFront(s, argc - 1, argv + 1);
-		return NULL_REG;
-	case 14:
-		warning("kList: unimplemented subfunction kMoveToEnd");
-		//return kMoveToEnd(s, argc - 1, argv + 1);
-		return NULL_REG;
-	case 15:
-		return kFindKey(s, argc - 1, argv + 1);
-	case 16:
-		return kDeleteKey(s, argc - 1, argv + 1);
-	case 17:
-		return kListAt(s, argc - 1, argv + 1);
-	case 18:
-		return kListIndexOf(s, argc - 1, argv + 1);
-	case 19:
-		return kListEachElementDo(s, argc - 1, argv + 1);
-	case 20:
-		return kListFirstTrue(s, argc - 1, argv + 1);
-	case 21:
-		return kListAllTrue(s, argc - 1, argv + 1);
-	case 22:
-		return kSort(s, argc - 1, argv + 1);
-	default:
-		warning("kList: Unhandled case %d", argv[0].toUint16());
-		return NULL_REG;
+	case 0: { // New
+		reg_t arrayHandle;
+		SciArray<reg_t> *array = s->_segMan->allocateArray(&arrayHandle);
+		array->setType(argv[2].toUint16());
+		array->setSize(argv[1].toUint16());
+		return arrayHandle;
 	}
+	case 1: { // Size
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return make_reg(0, array->getSize());
+	}
+	case 2: { // At (return value at an index)
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		return array->getValue(argv[2].toUint16());
+	}
+	case 3: { // Atput (put value at an index)
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+
+		uint32 index = argv[2].toUint16();
+		uint32 count = argc - 3;
+
+		if (index + count > 65535)
+			break;
+
+		if (array->getSize() < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[i + 3]);
+
+		return argv[1]; // We also have to return the handle
+	}
+	case 4: // Free
+		// Freeing of arrays is handled by the garbage collector
+		return s->r_acc;
+	case 5: { // Fill
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		uint16 index = argv[2].toUint16();
+
+		// A count of -1 means fill the rest of the array
+		uint16 count = argv[3].toSint16() == -1 ? array->getSize() - index : argv[3].toUint16();
+		uint16 arraySize = array->getSize();
+
+		if (arraySize < index + count)
+			array->setSize(index + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array->setValue(i + index, argv[4]);
+
+		return argv[1];
+	}
+	case 6: { // Cpy
+		if (s->_segMan->getSegmentObj(argv[1].segment)->getType() != SEG_TYPE_ARRAY ||
+			s->_segMan->getSegmentObj(argv[3].segment)->getType() != SEG_TYPE_ARRAY) {
+			// Happens in the RAMA demo
+			warning("kArray(Cpy): Request to copy a segment which isn't an array, ignoring");
+			return NULL_REG;
+		}
+
+		SciArray<reg_t> *array1 = s->_segMan->lookupArray(argv[1]);
+		SciArray<reg_t> *array2 = s->_segMan->lookupArray(argv[3]);
+		uint32 index1 = argv[2].toUint16();
+		uint32 index2 = argv[4].toUint16();
+
+		// The original engine ignores bad copies too
+		if (index2 > array2->getSize())
+			break;
+
+		// A count of -1 means fill the rest of the array
+		uint32 count = argv[5].toSint16() == -1 ? array2->getSize() - index2 : argv[5].toUint16();
+
+		if (array1->getSize() < index1 + count)
+			array1->setSize(index1 + count);
+
+		for (uint16 i = 0; i < count; i++)
+			array1->setValue(i + index1, array2->getValue(i + index2));
+
+		return argv[1];
+	}
+	case 7: // Cmp
+		// Not implemented in SSCI
+		return s->r_acc;
+	case 8: { // Dup
+		SciArray<reg_t> *array = s->_segMan->lookupArray(argv[1]);
+		reg_t arrayHandle;
+		SciArray<reg_t> *dupArray = s->_segMan->allocateArray(&arrayHandle);
+
+		dupArray->setType(array->getType());
+		dupArray->setSize(array->getSize());
+
+		for (uint32 i = 0; i < array->getSize(); i++)
+			dupArray->setValue(i, array->getValue(i));
+
+		return arrayHandle;
+	}
+	case 9: // Getdata
+		if (!s->_segMan->isHeapObject(argv[1]))
+			return argv[1];
+
+		return readSelector(s->_segMan, argv[1], SELECTOR(data));
+	default:
+		error("Unknown kArray subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
 }
 
 #endif

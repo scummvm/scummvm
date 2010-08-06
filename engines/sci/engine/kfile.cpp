@@ -36,12 +36,9 @@
 
 namespace Sci {
 
-enum {
-	MAX_SAVEGAME_NR = 20 /**< Maximum number of savegames */
-};
-
 struct SavegameDesc {
-	int id;
+	uint id;
+	int virtualId; // straight numbered, according to id but w/o gaps
 	int date;
 	int time;
 	int version;
@@ -101,7 +98,7 @@ enum {
 
 
 
-void file_open(EngineState *s, const char *filename, int mode) {
+reg_t file_open(EngineState *s, const char *filename, int mode) {
 	// QfG3 character import prepends /\ to the filenames.
 	if (filename[0] == '/' && filename[1] == '\\')
 		filename += 2;
@@ -115,15 +112,17 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	if (mode == _K_FILE_MODE_OPEN_OR_FAIL) {
 		// Try to open file, abort if not possible
 		inFile = saveFileMan->openForLoading(wrappedName);
-		// If no matching savestate exists: fall back to reading from a regular file
+		// If no matching savestate exists: fall back to reading from a regular
+		// file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
 
-		// Special case for LSL3: It tries to create a new dummy file, LARRY3.DRV
-		// Apparently, if the file doesn't exist here, it should be created. The game
-		// scripts then go ahead and fill its contents with data. It seems to be a similar
-		// case as the dummy MEMORY.DRV file in LSL5, but LSL5 creates the file if it can't
-		// find it with a separate call to file_open()
+		// Special case for LSL3: It tries to create a new dummy file,
+		// LARRY3.DRV. Apparently, if the file doesn't exist here, it should be
+		// created. The game scripts then go ahead and fill its contents with
+		// data. It seems to be a similar case as the dummy MEMORY.DRV file in
+		// LSL5, but LSL5 creates the file if it can't find it with a separate
+		// call to file_open().
 		if (!inFile && englishName == "LARRY3.DRV") {
 			outFile = saveFileMan->openForSaving(wrappedName);
 			outFile->finalize();
@@ -133,29 +132,29 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		}
 
 		if (!inFile)
-			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", englishName.c_str());
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_OPEN_OR_FAIL): failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
-		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first, closes it immediately and opens it again
-		//  with this here
-		// Perhaps other games use this for read access as well
-		// I guess changing this whole code into using virtual files and writing them after close would be more appropriate
+			debugC(2, kDebugLevelFile, "  -> file_open(_K_FILE_MODE_CREATE): failed to create file '%s'", englishName.c_str());
+		// QfG1 opens the character export file with _K_FILE_MODE_CREATE first,
+		// closes it immediately and opens it again with this here. Perhaps
+		// other games use this for read access as well. I guess changing this
+		// whole code into using virtual files and writing them after close
+		// would be more appropriate.
 	} else {
 		error("file_open: unsupported mode %d (filename '%s')", mode, englishName.c_str());
 	}
 
 	if (!inFile && !outFile) { // Failed
-		debug(3, "file_open() failed");
-		s->r_acc = SIGNAL_REG;
-		return;
+		debugC(2, kDebugLevelFile, "  -> file_open() failed");
+		return SIGNAL_REG;
 	}
 
 	// Find a free file handle
@@ -163,7 +162,8 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	while ((handle < s->_fileHandles.size()) && s->_fileHandles[handle].isOpen())
 		handle++;
 
-	if (handle == s->_fileHandles.size()) { // Hit size limit => Allocate more space
+	if (handle == s->_fileHandles.size()) {
+		// Hit size limit => Allocate more space
 		s->_fileHandles.resize(s->_fileHandles.size() + 1);
 	}
 
@@ -171,18 +171,16 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	s->_fileHandles[handle]._out = outFile;
 	s->_fileHandles[handle]._name = englishName;
 
-	s->r_acc = make_reg(0, handle);
-
-	debug(3, " -> opened file '%s' with handle %d", englishName.c_str(), handle);
+	debugC(2, kDebugLevelFile, "  -> opened file '%s' with handle %d", englishName.c_str(), handle);
+	return make_reg(0, handle);
 }
 
 reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->_segMan->getString(argv[0]);
 	int mode = argv[1].toUint16();
 
-	debug(3, "kFOpen(%s,0x%x)", name.c_str(), mode);
-	file_open(s, name.c_str(), mode);
-	return s->r_acc;
+	debugC(2, kDebugLevelFile, "kFOpen(%s,0x%x)", name.c_str(), mode);
+	return file_open(s, name.c_str(), mode);
 }
 
 static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
@@ -200,7 +198,7 @@ static FileHandle *getFileFromHandle(EngineState *s, uint handle) {
 }
 
 reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
-	debug(3, "kFClose(%d)", argv[0].toUint16());
+	debugC(2, kDebugLevelFile, "kFClose(%d)", argv[0].toUint16());
 	if (argv[0] != SIGNAL_REG) {
 		FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
 		if (f)
@@ -221,8 +219,6 @@ reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
-	debugC(2, kDebugLevelFile, "FGets'ing %d bytes from handle %d", maxsize, handle);
-
 	FileHandle *f = getFileFromHandle(s, handle);
 	if (!f)
 		return;
@@ -244,66 +240,7 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		*dest = f->_in->readByte();
 	}
 
-	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"", dest);
-}
-
-static bool _savegame_index_struct_compare(const SavegameDesc &l, const SavegameDesc &r) {
-	if (l.date != r.date)
-		return (l.date > r.date);
-	return (l.time > r.time);
-}
-
-void listSavegames(Common::Array<SavegameDesc> &saves) {
-	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-
-	// Load all saves
-	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
-
-	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
-		Common::String filename = *iter;
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			SavegameMetadata meta;
-			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
-				// invalid
-				delete in;
-				continue;
-			}
-			delete in;
-
-			SavegameDesc desc;
-			desc.id = strtol(filename.end() - 3, NULL, 10);
-			desc.date = meta.savegame_date;
-			// We need to fix date in here, because we save DDMMYYYY instead of YYYYMMDD, so sorting wouldnt work
-			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
-			desc.time = meta.savegame_time;
-			desc.version = meta.savegame_version;
-
-			if (meta.savegame_name.lastChar() == '\n')
-				meta.savegame_name.deleteLastChar();
-
-			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
-
-			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
-
-			saves.push_back(desc);
-		}
-	}
-
-	// Sort the list by creation date of the saves
-	Common::sort(saves.begin(), saves.end(), _savegame_index_struct_compare);
-}
-
-bool Console::cmdListSaves(int argc, const char **argv) {
-	Common::Array<SavegameDesc> saves;
-	listSavegames(saves);
-
-	for (uint i = 0; i < saves.size(); i++) {
-		Common::String filename = g_sci->getSavegameName(saves[i].id);
-		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
-	}
-
-	return true;
+	debugC(2, kDebugLevelFile, "  -> FGets'ed \"%s\"", dest);
 }
 
 reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
@@ -311,7 +248,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 	char *buf = new char[maxsize];
 	int handle = argv[2].toUint16();
 
-	debug(3, "kFGets(%d,%d)", handle, maxsize);
+	debugC(2, kDebugLevelFile, "kFGets(%d, %d)", handle, maxsize);
 	fgets_wrapper(s, buf, maxsize, handle);
 	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	return argv[0];
@@ -326,10 +263,13 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
 	s->_segMan->strcpy(argv[0], "/");
 
-	debug(3, "kGetCWD() -> %s", "/");
+	debugC(2, kDebugLevelFile, "kGetCWD() -> %s", "/");
 
 	return argv[0];
 }
+
+static void listSavegames(Common::Array<SavegameDesc> &saves);
+static int findSavegame(Common::Array<SavegameDesc> &saves, uint saveId);
 
 enum {
 	K_DEVICE_INFO_GET_DEVICE = 0,
@@ -342,6 +282,14 @@ enum {
 };
 
 reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
+	if (g_sci->getGameId() == GID_FANMADE && argc == 1) {
+		// WORKAROUND: The fan game script library calls kDeviceInfo with one parameter.
+		// According to the scripts, it wants to call CurDevice. However, it fails to
+		// provide the subop to the function.
+		s->_segMan->strcpy(argv[0], "/");
+		return s->r_acc;
+	}
+
 	int mode = argv[0].toUint16();
 
 	switch (mode) {
@@ -389,21 +337,25 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
 		Common::String game_prefix = s->_segMan->getString(argv[2]);
-		int savegame_id = argv[3].toUint16();
+		uint virtualId = argv[3].toUint16();
 		s->_segMan->strcpy(argv[1], "__throwaway");
-		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), savegame_id, "__throwaway");
+		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), virtualId, "__throwaway");
+		if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+			error("kDeviceInfo(deleteSave): invalid savegame-id specified");
+		uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
 		Common::Array<SavegameDesc> saves;
 		listSavegames(saves);
-		int savedir_nr = saves[savegame_id].id;
-		Common::String filename = g_sci->getSavegameName(savedir_nr);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		saveFileMan->removeSavefile(filename);
+		if (findSavegame(saves, savegameId) != -1) {
+			// Confirmed that this id still lives...
+			Common::String filename = g_sci->getSavegameName(savegameId);
+			Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+			saveFileMan->removeSavefile(filename);
 		}
 		break;
+	}
 
 	default:
-		// TODO: Not all sub-commands are handled. E.g. KQ5CD calls sub-command 5
-		warning("Unknown DeviceInfo() sub-command: %d", mode);
+		error("Unknown DeviceInfo() sub-command: %d", mode);
 		break;
 	}
 
@@ -421,41 +373,140 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
-#ifdef ENABLE_SCI32
-	// TODO: SCI32 uses a parameter here.
-	if (argc > 1)
-		warning("kCheckFreeSpace called with %d parameter(s): %04x:%04x", argc, PRINT_REG(argv[1]));
-#endif
+	if (argc > 1) {
+		// SCI1.1/SCI32
+		// TODO: don't know if those are right for SCI32 as well
+		// Please note that sierra sci supported both calls either w/ or w/o opcode in SCI1.1
+		switch (argv[1].toUint16()) {
+		case 0: // return saved game size
+			return make_reg(0, 0); // we return 0
+
+		case 1: // return free harddisc space (shifted right somehow)
+			return make_reg(0, 0x7fff); // we return maximum
+
+		case 2: // same as call w/o opcode
+			break;
+			return make_reg(0, 1);
+
+		default:
+			error("kCheckFreeSpace: called with unknown sub-op %d", argv[1].toUint16());
+		}
+	}
 
 	Common::String path = s->_segMan->getString(argv[0]);
 
 	debug(3, "kCheckFreeSpace(%s)", path.c_str());
-	// We simply always pretend that there is enough space.
-	// The alternative would be to write a big test file, which is not nice
-	// on systems where doing so is very slow.
+	// We simply always pretend that there is enough space. The alternative
+	// would be to write a big test file, which is not nice on systems where
+	// doing so is very slow.
 	return make_reg(0, 1);
+}
+
+static bool _savegame_sort_byDate(const SavegameDesc &l, const SavegameDesc &r) {
+	if (l.date != r.date)
+		return (l.date > r.date);
+	return (l.time > r.time);
+}
+
+// Create a sorted array containing all found savedgames
+static void listSavegames(Common::Array<SavegameDesc> &saves) {
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+
+	// Load all saves
+	Common::StringArray saveNames = saveFileMan->listSavefiles(g_sci->getSavegamePattern());
+
+	for (Common::StringArray::const_iterator iter = saveNames.begin(); iter != saveNames.end(); ++iter) {
+		Common::String filename = *iter;
+		Common::SeekableReadStream *in;
+		if ((in = saveFileMan->openForLoading(filename))) {
+			SavegameMetadata meta;
+			if (!get_savegame_metadata(in, &meta) || meta.savegame_name.empty()) {
+				// invalid
+				delete in;
+				continue;
+			}
+			delete in;
+
+			SavegameDesc desc;
+			desc.id = strtol(filename.end() - 3, NULL, 10);
+			desc.date = meta.savegame_date;
+			// We need to fix date in here, because we save DDMMYYYY instead of
+			// YYYYMMDD, so sorting wouldn't work
+			desc.date = ((desc.date & 0xFFFF) << 16) | ((desc.date & 0xFF0000) >> 8) | ((desc.date & 0xFF000000) >> 24);
+			desc.time = meta.savegame_time;
+			desc.version = meta.savegame_version;
+
+			if (meta.savegame_name.lastChar() == '\n')
+				meta.savegame_name.deleteLastChar();
+
+			Common::strlcpy(desc.name, meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH);
+
+			debug(3, "Savegame in file %s ok, id %d", filename.c_str(), desc.id);
+
+			saves.push_back(desc);
+		}
+	}
+
+	// Sort the list by creation date of the saves
+	Common::sort(saves.begin(), saves.end(), _savegame_sort_byDate);
+}
+
+// Find a savedgame according to virtualId and return the position within our array
+static int findSavegame(Common::Array<SavegameDesc> &saves, uint savegameId) {
+	for (uint saveNr = 0; saveNr < saves.size(); saveNr++) {
+		if (saves[saveNr].id == savegameId)
+			return saveNr;
+	}
+	return -1;
+}
+
+// The scripts get IDs ranging from 1000->1999, because the scripts require us to assign unique ids THAT EVEN STAY BETWEEN
+//  SAVES and the scripts also use "saves-count + 1" to create a new savedgame slot.
+//  SCI1.1 actually recycles ids, in that case we will currently get "0".
+// This behaviour is required especially for LSL6. In this game, it's possible to quick save. The scripts will use
+//  the last-used id for that feature. If we don't assign sticky ids, the feature will overwrite different saves all the
+//  time. And sadly we can't just use the actual filename ids directly, because of the creation method for new slots.
+
+bool Console::cmdListSaves(int argc, const char **argv) {
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+
+	for (uint i = 0; i < saves.size(); i++) {
+		Common::String filename = g_sci->getSavegameName(saves[i].id);
+		DebugPrintf("%s: '%s'\n", filename.c_str(), saves[i].name);
+	}
+
+	return true;
 }
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	uint16 savedir_nr = argv[1].toUint16();
+	uint16 virtualId = argv[1].toUint16();
 
-	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), savedir_nr);
+	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), virtualId);
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	// Check for savegame slot being out of range
-	if (savedir_nr >= saves.size())
+	// we allow 0 (happens in QfG2 when trying to restore from an empty saved game list) and return false in that case
+	if (virtualId == 0)
+		return NULL_REG;
+
+	// Find saved-game
+	if ((virtualId < SAVEGAMEID_OFFICIALRANGE_START) || (virtualId > SAVEGAMEID_OFFICIALRANGE_END))
+		error("kCheckSaveGame: called with invalid savegameId!");
+	uint savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+	int savegameNr = findSavegame(saves, savegameId);
+	if (savegameNr == -1)
 		return NULL_REG;
 
 	// Check for compatible savegame version
-	int ver = saves[savedir_nr].version;
+	int ver = saves[savegameNr].version;
 	if (ver < MINIMUM_SAVEGAME_VERSION || ver > CURRENT_SAVEGAME_VERSION)
 		return NULL_REG;
 
 	// Otherwise we assume the savegame is OK
-	return make_reg(0, 1);
+	return TRUE_REG;
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
@@ -463,9 +514,12 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
+	// Scripts ask for current save files, we can assume that if afterwards they ask us to create a new slot they really
+	//  mean new slot instead of overwriting the old one
+	s->_lastSaveVirtualId = SAVEGAMEID_OFFICIALRANGE_START;
+
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
-
 	uint totalSaves = MIN<uint>(saves.size(), MAX_SAVEGAME_NR);
 
 	reg_t *slot = s->_segMan->derefRegPtr(argv[2], totalSaves);
@@ -480,7 +534,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	char *saveNamePtr = saveNames;
 
 	for (uint i = 0; i < totalSaves; i++) {
-		*slot++ = make_reg(0, i); // Store slot
+		*slot++ = make_reg(0, saves[i].id + SAVEGAMEID_OFFICIALRANGE_START); // Store the virtual savegame-id ffs. see above
 		strcpy(saveNamePtr, saves[i].name);
 		saveNamePtr += SCI_MAX_SAVENAME_LENGTH;
 	}
@@ -495,46 +549,57 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = s->_segMan->getString(argv[0]);
-	int savedir_nr = argv[1].toUint16();
-	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
+	uint virtualId = argv[1].toUint16();
 	Common::String game_description = s->_segMan->getString(argv[2]);
 	Common::String version;
 	if (argc > 3)
 		version = s->_segMan->getString(argv[3]);
 
-	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), savedir_nr, game_description.c_str(), version.c_str());
+	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), virtualId, game_description.c_str(), version.c_str());
+
+	// We check here, we don't want to delete a users save in case we are within a kernel function
+	if (s->executionStackBase) {
+		warning("kSaveGame - won't save from within kernel function");
+		return NULL_REG;
+	}
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
 
-	if (savedir_nr >= 0 && (uint)savedir_nr < saves.size()) {
-		// Overwrite
-		savedir_id = saves[savedir_nr].id;
-	} else if (savedir_nr >= 0 && savedir_nr < MAX_SAVEGAME_NR) {
-		uint i = 0;
-
-		savedir_id = 0;
-
-		// First, look for holes
-		while (i < saves.size()) {
-			if (saves[i].id == savedir_id) {
-				++savedir_id;
-				i = 0;
-			} else
-				++i;
-		}
-		if (savedir_id >= MAX_SAVEGAME_NR) {
-			warning("Internal error: Free savegame ID is %d, shouldn't happen", savedir_id);
+	uint savegameId;
+	if ((virtualId >= SAVEGAMEID_OFFICIALRANGE_START) && (virtualId <= SAVEGAMEID_OFFICIALRANGE_END)) {
+		// savegameId is an actual Id, so search for it just to make sure
+		savegameId = virtualId - SAVEGAMEID_OFFICIALRANGE_START;
+		if (findSavegame(saves, savegameId) == -1)
 			return NULL_REG;
+	} else if (virtualId < SAVEGAMEID_OFFICIALRANGE_START) {
+		// virtualId is low, we assume that scripts expect us to create new slot
+		if (virtualId == s->_lastSaveVirtualId) {
+			// if last virtual id is the same as this one, we assume that caller wants to overwrite last save
+			savegameId = s->_lastSaveNewId;
+		} else {
+			uint savegameNr;
+			// savegameId is in lower range, scripts expect us to create a new slot
+			for (savegameId = 0; savegameId < SAVEGAMEID_OFFICIALRANGE_START; savegameId++) {
+				for (savegameNr = 0; savegameNr < saves.size(); savegameNr++) {
+					if (savegameId == saves[savegameNr].id)
+						break;
+				}
+				if (savegameNr == saves.size())
+					break;
+			}
+			if (savegameId == SAVEGAMEID_OFFICIALRANGE_START)
+				error("kSavegame: no more savegame slots available");
 		}
-
-		// This loop terminates when savedir_id is not in [x | ex. n. saves	[n].id = x]
 	} else {
-		warning("Savegame ID %d is not allowed", savedir_nr);
-		return NULL_REG;
+		error("kSaveGame: invalid savegameId used");
 	}
 
-	Common::String filename = g_sci->getSavegameName(savedir_id);
+	// Save in case caller wants to overwrite last newly created save
+	s->_lastSaveVirtualId = virtualId;
+	s->_lastSaveNewId = savegameId;
+
+	Common::String filename = g_sci->getSavegameName(savegameId);
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	Common::OutSaveFile *out;
 	if (!(out = saveFileMan->openForSaving(filename))) {
@@ -543,7 +608,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (gamestate_save(s, out, game_description.c_str(), version.c_str())) {
+	if (!gamestate_save(s, out, game_description.c_str(), version.c_str())) {
 		warning("Saving the game failed.");
 		s->r_acc = NULL_REG;
 	} else {
@@ -563,35 +628,41 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	Common::String game_id = !argv[0].isNull() ? s->_segMan->getString(argv[0]) : "";
-	int savedir_nr = argv[1].toUint16();
+	uint savegameId = argv[1].toUint16();
 
-	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savedir_nr);
+	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savegameId);
 
-	if (!argv[0].isNull()) {
-		Common::Array<SavegameDesc> saves;
-		listSavegames(saves);
-
-		savedir_nr = saves[savedir_nr].id;
+	if (argv[0].isNull()) {
+		// Loading from the launcher, don't adjust the ID of the saved game
 	} else {
-		// Loading from launcher, no change necessary
-	}
-
-	if (savedir_nr > -1) {
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		Common::String filename = g_sci->getSavegameName(savedir_nr);
-		Common::SeekableReadStream *in;
-		if ((in = saveFileMan->openForLoading(filename))) {
-			// found a savegame file
-
-			gamestate_restore(s, in);
-			delete in;
-
-			return s->r_acc;
+		if ((savegameId < 1000) || (savegameId > 1999)) {
+			warning("Savegame ID %d is not allowed", savegameId);
+			return TRUE_REG;
 		}
+		savegameId -= 1000;
 	}
 
-	s->r_acc = make_reg(0, 1);
-	warning("Savegame #%d not found", savedir_nr);
+	Common::Array<SavegameDesc> saves;
+	listSavegames(saves);
+	if (findSavegame(saves, savegameId) == -1) {
+		warning("Savegame ID %d not found", savegameId);
+		return TRUE_REG;
+	}
+
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::String filename = g_sci->getSavegameName(savegameId);
+	Common::SeekableReadStream *in;
+	if ((in = saveFileMan->openForLoading(filename))) {
+		// found a savegame file
+
+		gamestate_restore(s, in);
+		delete in;
+
+		return s->r_acc;
+	}
+
+	s->r_acc = TRUE_REG;
+	warning("Savegame #%d not found", savegameId);
 
 	return s->r_acc;
 }
@@ -604,28 +675,6 @@ reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
 	// Always return true
 	return make_reg(0, 1);
 }
-
-enum {
-	K_FILEIO_OPEN			= 0,
-	K_FILEIO_CLOSE			= 1,
-	K_FILEIO_READ_RAW		= 2,
-	K_FILEIO_WRITE_RAW		= 3,
-	K_FILEIO_UNLINK			= 4,
-	K_FILEIO_READ_STRING	= 5,
-	K_FILEIO_WRITE_STRING	= 6,
-	K_FILEIO_SEEK			= 7,
-	K_FILEIO_FIND_FIRST		= 8,
-	K_FILEIO_FIND_NEXT		= 9,
-	K_FILEIO_FILE_EXISTS	= 10,
-	// SCI1.1
-	K_FILEIO_RENAME         = 11,
-	// SCI32
-	// 12?
-	K_FILEIO_READ_BYTE      = 13,
-	K_FILEIO_WRITE_BYTE     = 14,
-	K_FILEIO_READ_WORD      = 15,
-	K_FILEIO_WRITE_WORD     = 16
-};
 
 reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager *segMan) {
 	// Verify that we are given a valid buffer
@@ -642,7 +691,8 @@ reg_t DirSeeker::firstFile(const Common::String &mask, reg_t buffer, SegManager 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	_savefiles = saveFileMan->listSavefiles(wrappedMask);
 
-	// Reset the list iterator and write the first match to the output buffer, if any.
+	// Reset the list iterator and write the first match to the output buffer,
+	// if any.
 	_iter = _savefiles.begin();
 	return nextFile(segMan);
 }
@@ -666,258 +716,298 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 }
 
 reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
-	int func_nr = argv[0].toUint16();
-
-	switch (func_nr) {
-	case K_FILEIO_OPEN : {
-		Common::String name = s->_segMan->getString(argv[1]);
-
-		// SCI32 can call K_FILEIO_OPEN with only two arguments. It seems to just be checking if it exists.
-		int mode = (argc < 3) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[2].toUint16();
-
-		// SQ4 floppy prepends /\ to the filenames
-		if (name.hasPrefix("/\\")) {
-			name.deleteChar(0);
-			name.deleteChar(0);
-		}
-
-		// SQ4 floppy attempts to update the savegame index file sq4sg.dir
-		// when deleting saved games. We don't use an index file for saving
-		// or loading, so just stop the game from modifying the file here
-		// in order to avoid having it saved in the ScummVM save directory
-		if (name == "sq4sg.dir") {
-			debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
-			return SIGNAL_REG;
-		}
-
-		if (name.empty()) {
-			warning("Attempted to open a file with an empty filename");
-			return SIGNAL_REG;
-		}
-		file_open(s, name.c_str(), mode);
-		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name.c_str(), mode);
-		break;
-	}
-	case K_FILEIO_CLOSE : {
-		debug(3, "K_FILEIO_CLOSE(%d)", argv[1].toUint16());
-
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->close();
-		break;
-	}
-	case K_FILEIO_READ_RAW : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		char *buf = new char[size];
-		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
-
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f) {
-			s->r_acc = make_reg(0, f->_in->read(buf, size));
-			s->_segMan->memcpy(argv[2], (const byte*)buf, size);
-		}
-
-		delete[] buf;
-		break;
-	}
-	case K_FILEIO_WRITE_RAW : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		char *buf = new char[size];
-		s->_segMan->memcpy((byte*)buf, argv[2], size);
-		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
-
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			f->_out->write(buf, size);
-
-		delete[] buf;
-		break;
-	}
-	case K_FILEIO_UNLINK : {
-		Common::String name = s->_segMan->getString(argv[1]);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		// SQ4 floppy prepends /\ to the filenames
-		if (name.hasPrefix("/\\")) {
-			name.deleteChar(0);
-			name.deleteChar(0);
-		}
-
-		// Special case for SQ4 floppy: This game has hardcoded names for all of its
-		// savegames, and they are all named "sq4sg.xxx", where xxx is the slot. We just
-		// take the slot number here, and delete the appropriate save game
-		if (name.hasPrefix("sq4sg.")) {
-			// Special handling for SQ4... get the slot number and construct the save game name
-			int slotNum = atoi(name.c_str() + name.size() - 3);
-			Common::Array<SavegameDesc> saves;
-			listSavegames(saves);
-			int savedir_nr = saves[slotNum].id;
-			name = g_sci->getSavegameName(savedir_nr);
-			saveFileMan->removeSavefile(name);
-		} else {
-			const Common::String wrappedName = g_sci->wrapFilename(name);
-			saveFileMan->removeSavefile(wrappedName);
-		}
-
-		debug(3, "K_FILEIO_UNLINK(%s)", name.c_str());
-
-		// TODO/FIXME: Should we return something (like, a bool indicating
-		// whether deleting the save succeeded or failed)?
-		break;
-	}
-	case K_FILEIO_READ_STRING : {
-		int size = argv[2].toUint16();
-		char *buf = new char[size];
-		int handle = argv[3].toUint16();
-		debug(3, "K_FILEIO_READ_STRING(%d,%d)", handle, size);
-
-		fgets_wrapper(s, buf, size, handle);
-		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
-		delete[] buf;
-		return argv[1];
-	}
-	case K_FILEIO_WRITE_STRING : {
-		int handle = argv[1].toUint16();
-		int size = argv[3].toUint16();
-		Common::String str = s->_segMan->getString(argv[2]);
-		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
-
-		// CHECKME: Is the size parameter used at all?
-		// In the LSL5 password protection it is zero, and we should
-		// then write a full string. (Not sure if it should write the
-		// terminating zero.)
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			f->_out->write(str.c_str(), str.size());
-		break;
-	}
-	case K_FILEIO_SEEK : {
-		int handle = argv[1].toUint16();
-		int offset = argv[2].toUint16();
-		int whence = argv[3].toUint16();
-		debug(3, "K_FILEIO_SEEK(%d,%d,%d)", handle, offset, whence);
-		
-		FileHandle *f = getFileFromHandle(s, handle);
-		if (f)
-			s->r_acc = make_reg(0, f->_in->seek(offset, whence));
-		break;
-	}
-	case K_FILEIO_FIND_FIRST : {
-		Common::String mask = s->_segMan->getString(argv[1]);
-		reg_t buf = argv[2];
-		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
-		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask.c_str(), attr);
-
-		// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
-		if (mask == "*.*")
-			mask = "*";
-
-		// QfG3 uses this mask for the character import
-		if (mask == "/\\*.*")
-			mask = "*";
-//#ifndef WIN32
-//		if (mask == "*.*")
-//			mask = "*"; // For UNIX
-//#endif
-		s->r_acc = s->_dirseeker.firstFile(mask, buf, s->_segMan);
-
-		break;
-	}
-	case K_FILEIO_FIND_NEXT : {
-		debug(3, "K_FILEIO_FIND_NEXT()");
-		s->r_acc = s->_dirseeker.nextFile(s->_segMan);
-		break;
-	}
-	case K_FILEIO_FILE_EXISTS : {
-		Common::String name = s->_segMan->getString(argv[1]);
-
-		// Check for regular file
-		bool exists = Common::File::exists(name);
-		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-		const Common::String wrappedName = g_sci->wrapFilename(name);
-
-		if (!exists)
-			exists = !saveFileMan->listSavefiles(name).empty();
-
-		if (!exists) {
-			// Try searching for the file prepending target-
-			Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
-			exists = (inFile != 0);
-			delete inFile;
-		}
-
-		// Special case for non-English versions of LSL5: The English version of LSL5 calls
-		// kFileIO(), case K_FILEIO_OPEN for reading to check if memory.drv exists (which is
-		// where the game's password is stored). If it's not found, it calls kFileIO() again,
-		// case K_FILEIO_OPEN for writing and creates a new file. Non-English versions call
-		// kFileIO(), case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be found.
-		// We create a default memory.drv file with no password, so that the game can continue
-		if (!exists && name == "memory.drv") {
-			// Create a new file, and write the bytes for the empty password string inside
-			byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
-			Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
-			for (int i = 0; i < 10; i++)
-				outFile->writeByte(defaultContent[i]);
-			outFile->finalize();
-			delete outFile;
-			exists = true;
-		}
-
-		debug(3, "K_FILEIO_FILE_EXISTS(%s) -> %d", name.c_str(), exists);
-		return make_reg(0, exists);
-	}
-	case K_FILEIO_RENAME: {
-		Common::String oldName = s->_segMan->getString(argv[1]);
-		Common::String newName = s->_segMan->getString(argv[2]);
-
-		// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32 returns -1 on fail.
-		// We just return -1 for all versions.
-		if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
-			return NULL_REG;
-		else
-			return SIGNAL_REG;
-	}
-#ifdef ENABLE_SCI32
-	case K_FILEIO_READ_BYTE: {
-		// Read the byte into the low byte of the accumulator
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (!f)
-			return NULL_REG;
-		
-		return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
-	}
-	case K_FILEIO_WRITE_BYTE: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->_out->writeByte(argv[2].toUint16() & 0xff);
-		break;
-	}
-	case K_FILEIO_READ_WORD: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (!f)
-			return NULL_REG;
-	
-		return make_reg(0, f->_in->readUint16LE());
-	}
-	case K_FILEIO_WRITE_WORD: {
-		FileHandle *f = getFileFromHandle(s, argv[1].toUint16());
-		if (f)
-			f->_out->writeUint16LE(argv[2].toUint16());
-		break;
-	}
-	case 19:
-		// TODO: Torin's Passage uses this early on in the Sierra logo
-		warning("kFileIO(19)");
-		break;
-#endif
-	default:
-		error("Unknown FileIO() sub-command: %d", func_nr);
-	}
-
-	return s->r_acc;
+	if (!s)
+		return make_reg(0, getSciVersion());
+	error("not supposed to call this");
 }
+
+reg_t kFileIOOpen(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+
+	// SCI32 can call K_FILEIO_OPEN with only one argument. It seems to
+	// just be checking if it exists.
+	int mode = (argc < 2) ? (int)_K_FILE_MODE_OPEN_OR_FAIL : argv[1].toUint16();
+
+	// SQ4 floppy prepends /\ to the filenames
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
+
+	// SQ4 floppy attempts to update the savegame index file sq4sg.dir when
+	// deleting saved games. We don't use an index file for saving or
+	// loading, so just stop the game from modifying the file here in order
+	// to avoid having it saved in the ScummVM save directory.
+	if (name == "sq4sg.dir") {
+		debugC(2, kDebugLevelFile, "Not opening unused file sq4sg.dir");
+		return SIGNAL_REG;
+	}
+
+	if (name.empty()) {
+		warning("Attempted to open a file with an empty filename");
+		return SIGNAL_REG;
+	}
+	debugC(2, kDebugLevelFile, "kFileIO(open): %s, 0x%x", name.c_str(), mode);
+	return file_open(s, name.c_str(), mode);
+}
+
+reg_t kFileIOClose(EngineState *s, int argc, reg_t *argv) {
+	debugC(2, kDebugLevelFile, "kFileIO(close): %d", argv[0].toUint16());
+
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f) {
+		f->close();
+		return SIGNAL_REG;
+	}
+	return NULL_REG;
+}
+
+reg_t kFileIOReadRaw(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int size = argv[2].toUint16();
+	int bytesRead = 0;
+	char *buf = new char[size];
+	debugC(2, kDebugLevelFile, "kFileIO(readRaw): %d, %d", handle, size);
+		
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		bytesRead = f->_in->read(buf, size);
+		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
+	}
+
+	delete[] buf;
+	return make_reg(0, bytesRead);
+}
+
+reg_t kFileIOWriteRaw(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int size = argv[2].toUint16();
+	char *buf = new char[size];
+	bool success = false;
+	s->_segMan->memcpy((byte*)buf, argv[1], size);
+	debugC(2, kDebugLevelFile, "kFileIO(writeRaw): %d, %d", handle, size);
+
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f) {
+		f->_out->write(buf, size);
+		success = true;
+	}
+
+	delete[] buf;
+	if (success)
+		return NULL_REG;
+	return make_reg(0, 6); // DOS - invalid handle
+}
+
+reg_t kFileIOUnlink(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	bool result;
+
+	// SQ4 floppy prepends /\ to the filenames
+	if (name.hasPrefix("/\\")) {
+		name.deleteChar(0);
+		name.deleteChar(0);
+	}
+
+	// Special case for SQ4 floppy: This game has hardcoded names for all of
+	// its savegames, and they are all named "sq4sg.xxx", where xxx is the
+	// slot. We just take the slot number here, and delete the appropriate
+	// save game.
+	if (name.hasPrefix("sq4sg.")) {
+		// Special handling for SQ4... get the slot number and construct the
+		// save game name.
+		int slotNum = atoi(name.c_str() + name.size() - 3);
+		Common::Array<SavegameDesc> saves;
+		listSavegames(saves);
+		int savedir_nr = saves[slotNum].id;
+		name = g_sci->getSavegameName(savedir_nr);
+		result = saveFileMan->removeSavefile(name);
+	} else {
+		const Common::String wrappedName = g_sci->wrapFilename(name);
+		result = saveFileMan->removeSavefile(wrappedName);
+	}
+
+	debugC(2, kDebugLevelFile, "kFileIO(unlink): %s", name.c_str());
+	if (result)
+		return NULL_REG;
+	return make_reg(0, 2); // DOS - file not found error code
+}
+
+reg_t kFileIOReadString(EngineState *s, int argc, reg_t *argv) {
+	int size = argv[1].toUint16();
+	char *buf = new char[size];
+	int handle = argv[2].toUint16();
+	debugC(2, kDebugLevelFile, "kFileIO(readString): %d, %d", handle, size);
+
+	fgets_wrapper(s, buf, size, handle);
+	s->_segMan->memcpy(argv[0], (const byte*)buf, size);
+	delete[] buf;
+	return argv[0];
+}
+
+reg_t kFileIOWriteString(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	Common::String str = s->_segMan->getString(argv[1]);
+	debugC(2, kDebugLevelFile, "kFileIO(writeString): %d", handle);
+
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		f->_out->write(str.c_str(), str.size());
+		return NULL_REG;
+	return make_reg(0, 6); // DOS - invalid handle
+}
+
+reg_t kFileIOSeek(EngineState *s, int argc, reg_t *argv) {
+	int handle = argv[0].toUint16();
+	int offset = argv[1].toUint16();
+	int whence = argv[2].toUint16();
+	debugC(2, kDebugLevelFile, "kFileIO(seek): %d, %d, %d", handle, offset, whence);
+		
+	FileHandle *f = getFileFromHandle(s, handle);
+	if (f)
+		s->r_acc = make_reg(0, f->_in->seek(offset, whence));
+	return SIGNAL_REG;
+}
+
+reg_t kFileIOFindFirst(EngineState *s, int argc, reg_t *argv) {
+	Common::String mask = s->_segMan->getString(argv[0]);
+	reg_t buf = argv[1];
+	int attr = argv[2].toUint16(); // We won't use this, Win32 might, though...
+	debugC(2, kDebugLevelFile, "kFileIO(findFirst): %s, 0x%x", mask.c_str(), attr);
+
+	// QfG3 uses "/\*.*" for the character import, QfG4 uses "/\*"
+	if (mask.hasPrefix("/\\")) {
+		mask.deleteChar(0);
+		mask.deleteChar(0);
+	}
+
+	// We remove ".*". mask will get prefixed, so we will return all additional files for that gameid
+	if (mask == "*.*")
+		mask = "*";
+	return s->_dirseeker.firstFile(mask, buf, s->_segMan);
+}
+
+reg_t kFileIOFindNext(EngineState *s, int argc, reg_t *argv) {
+	debugC(2, kDebugLevelFile, "kFileIO(findNext)");
+	return s->_dirseeker.nextFile(s->_segMan);
+}
+
+reg_t kFileIOExists(EngineState *s, int argc, reg_t *argv) {
+	Common::String name = s->_segMan->getString(argv[0]);
+
+	// Check for regular file
+	bool exists = Common::File::exists(name);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	const Common::String wrappedName = g_sci->wrapFilename(name);
+
+	if (!exists)
+		exists = !saveFileMan->listSavefiles(name).empty();
+
+	if (!exists) {
+		// Try searching for the file prepending target-
+		Common::SeekableReadStream *inFile = saveFileMan->openForLoading(wrappedName);
+		exists = (inFile != 0);
+		delete inFile;
+	}
+
+	// Special case for non-English versions of LSL5: The English version of
+	// LSL5 calls kFileIO(), case K_FILEIO_OPEN for reading to check if
+	// memory.drv exists (which is where the game's password is stored). If
+	// it's not found, it calls kFileIO() again, case K_FILEIO_OPEN for
+	// writing and creates a new file. Non-English versions call kFileIO(),
+	// case K_FILEIO_FILE_EXISTS instead, and fail if memory.drv can't be
+	// found. We create a default memory.drv file with no password, so that
+	// the game can continue.
+	if (!exists && name == "memory.drv") {
+		// Create a new file, and write the bytes for the empty password
+		// string inside
+		byte defaultContent[] = { 0xE9, 0xE9, 0xEB, 0xE1, 0x0D, 0x0A, 0x31, 0x30, 0x30, 0x30 };
+		Common::WriteStream *outFile = saveFileMan->openForSaving(wrappedName);
+		for (int i = 0; i < 10; i++)
+			outFile->writeByte(defaultContent[i]);
+		outFile->finalize();
+		delete outFile;
+		exists = true;
+	}
+
+	debugC(2, kDebugLevelFile, "kFileIO(fileExists) %s -> %d", name.c_str(), exists);
+	return make_reg(0, exists);
+}
+
+reg_t kFileIORename(EngineState *s, int argc, reg_t *argv) {
+	Common::String oldName = s->_segMan->getString(argv[0]);
+	Common::String newName = s->_segMan->getString(argv[1]);
+
+	// SCI1.1 returns 0 on success and a DOS error code on fail. SCI32
+	// returns -1 on fail. We just return -1 for all versions.
+	if (g_engine->getSaveFileManager()->renameSavefile(oldName, newName))
+		return NULL_REG;
+	else
+		return SIGNAL_REG;
+}
+
+#ifdef ENABLE_SCI32
+reg_t kFileIOReadByte(EngineState *s, int argc, reg_t *argv) {
+	// Read the byte into the low byte of the accumulator
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (!f)
+		return NULL_REG;
+	return make_reg(0, (s->r_acc.toUint16() & 0xff00) | f->_in->readByte());
+}
+
+reg_t kFileIOWriteByte(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f)
+		f->_out->writeByte(argv[1].toUint16() & 0xff);
+	return s->r_acc; // FIXME: does this really doesn't return anything?
+}
+
+reg_t kFileIOReadWord(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (!f)
+		return NULL_REG;
+	return make_reg(0, f->_in->readUint16LE());
+}
+
+reg_t kFileIOWriteWord(EngineState *s, int argc, reg_t *argv) {
+	FileHandle *f = getFileFromHandle(s, argv[0].toUint16());
+	if (f)
+		f->_out->writeUint16LE(argv[1].toUint16());
+	return s->r_acc; // FIXME: does this really doesn't return anything?
+}
+
+reg_t kCD(EngineState *s, int argc, reg_t *argv) {
+	// TODO: Stub
+	switch (argv[0].toUint16()) {
+	case 0:
+		// Return whether the contents of disc argv[1] is available.
+		return TRUE_REG;
+	default:
+		warning("CD(%d)", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+reg_t kSave(EngineState *s, int argc, reg_t *argv) {
+	switch (argv[0].toUint16()) {
+	case 0: // Called by kq7 when starting chapters
+		return SIGNAL_REG;
+	case 2: // GetSaveDir
+		// Yay! Reusing the old kernel function!
+		return kGetSaveDir(s, argc - 1, argv + 1);
+	case 8:
+		// TODO
+		// This function has to return something other than 0 to proceed
+		return s->r_acc;
+	default:
+		warning("Unknown/unhandled kSave subop %d", argv[0].toUint16());
+	}
+
+	return NULL_REG;
+}
+
+#endif
 
 } // End of namespace Sci

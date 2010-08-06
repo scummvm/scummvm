@@ -35,8 +35,35 @@
 
 namespace Sci {
 
-GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int upscaledHires) :
-	_resMan(resMan), _width(width), _height(height), _upscaledHires(upscaledHires) {
+GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
+
+	// Scale the screen, if needed
+	_upscaledHires = GFX_SCREEN_UPSCALED_DISABLED;
+
+	// King's Quest 6 and Gabriel Knight 1 have hires content, gk1/cd was able
+	// to provide that under DOS as well, but as gk1/floppy does support
+	// upscaled hires scriptswise, but doesn't actually have the hires content
+	// we need to limit it to platform windows.
+	if (g_sci->getPlatform() == Common::kPlatformWindows) {
+		if (g_sci->getGameId() == GID_KQ6)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x440;
+#ifdef ENABLE_SCI32
+		if (g_sci->getGameId() == GID_GK1)
+			_upscaledHires = GFX_SCREEN_UPSCALED_640x480;
+#endif
+	}
+
+	if (_resMan->detectHires()) {
+		_width = 640;
+		_height = 480;
+	} else {
+		_width = 320;
+		_height = 200;
+	}
+
+	// Japanese versions of games use hi-res font on upscaled version of the game.
+	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
+		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
 	_pixels = _width * _height;
 
@@ -80,8 +107,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int ups
 	_unditherState = true;
 
 	if (_resMan->isVGA() || (_resMan->isAmiga32color())) {
-		// It's not 100% accurate to set white to be 255 for amiga 32-color games
-		//  255 is defined as white in our sci at all times, so it doesnt matter
+		// It is not 100% accurate to set white to be 255 for Amiga 32-color
+		// games. But 255 is defined as white in our SCI at all times, so it
+		// doesn't matter.
 		_colorWhite = 255;
 		if (getSciVersion() >= SCI_VERSION_1_1)
 			_colorDefaultVectorData = 255;
@@ -97,9 +125,9 @@ GfxScreen::GfxScreen(ResourceManager *resMan, int16 width, int16 height, int ups
 	if (_resMan->isSci11Mac() && getSciVersion() == SCI_VERSION_1_1) {
 		// For SCI1.1 Mac, we need to expand the screen to accommodate for
 		// the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
-		if (!scumm_stricmp(g_sci->getGameID(), "kq6"))
+		if (g_sci->getGameId() == GID_KQ6)
 			initGraphics(_displayWidth, _displayHeight + 26, _displayWidth > 320);
-		else if (!scumm_stricmp(g_sci->getGameID(), "qfg1"))
+		else if (g_sci->getGameId() == GID_QFG1VGA)
 			initGraphics(_displayWidth, _displayHeight + 20, _displayWidth > 320);
 		else
 			error("Unknown SCI1.1 Mac game");
@@ -141,7 +169,10 @@ void GfxScreen::copyRectToScreen(const Common::Rect &rect) {
 	}
 }
 
-// This copies a rect to screen w/o scaling adjustment and is only meant to be used on hires graphics used in upscaled hires mode
+/**
+ * This copies a rect to screen w/o scaling adjustment and is only meant to be
+ * used on hires graphics used in upscaled hires mode.
+ */
 void GfxScreen::copyDisplayRectToScreen(const Common::Rect &rect) {
 	if (!_upscaledHires)
 		error("copyDisplayRectToScreen: not in upscaled hires mode");
@@ -192,15 +223,42 @@ void GfxScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority,
 		_controlScreen[offset] = control;
 }
 
-// This will just change a pixel directly on displayscreen. Its supposed to get only used on upscaled-Hires games where
-//  hires content needs to get drawn ONTO the upscaled display screen (like japanese fonts, hires portraits, etc.)
+/**
+ * This is used to put font pixels onto the screen - we adjust differently, so that we won't
+ *  do triple pixel lines in any case on upscaled hires. That way the font will not get distorted
+ *  Sierra SCI didn't do this
+ */
+void GfxScreen::putFontPixel(int startingY, int x, int y, byte color) {
+	int offset = (startingY + y) * _width + x;
+
+	_visualScreen[offset] = color;
+	if (!_upscaledHires) {
+		_displayScreen[offset] = color;
+	} else {
+		int displayOffset = (_upscaledMapping[startingY] + y * 2) * _displayWidth + x * 2;
+		_displayScreen[displayOffset] = color;
+		_displayScreen[displayOffset + 1] = color;
+		displayOffset += _displayWidth;
+		_displayScreen[displayOffset] = color;
+		_displayScreen[displayOffset + 1] = color;
+	}
+}
+
+/**
+ * This will just change a pixel directly on displayscreen. It is supposed to be
+ * only used on upscaled-Hires games where hires content needs to get drawn ONTO
+ * the upscaled display screen (like japanese fonts, hires portraits, etc.).
+ */
 void GfxScreen::putPixelOnDisplay(int x, int y, byte color) {
 	int offset = y * _displayWidth + x;
 	_displayScreen[offset] = color;
 }
 
-// Sierra's Bresenham line drawing
-// WARNING: Do not just blindly replace this with Graphics::drawLine(), as it seems to create issues with flood fill
+/**
+ * Sierra's Bresenham line drawing.
+ * WARNING: Do not replace this with Graphics::drawLine(), as this causes issues
+ * with flood fill, due to small difference in the Bresenham logic.
+ */
 void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
 	int16 left = startPoint.x;
 	int16 top = startPoint.y;
@@ -263,7 +321,8 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 	}
 }
 
-// We put hires kanji chars onto upscaled background, so we need to adjust coordinates. Caller gives use low-res ones
+// We put hires kanji chars onto upscaled background, so we need to adjust
+// coordinates. Caller gives use low-res ones.
 void GfxScreen::putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color) {
 	byte *displayPtr = _displayScreen + y * _displayWidth * 2 + x * 2;
 	// we don't use outline, so color 0 is actually not used
@@ -400,6 +459,11 @@ void GfxScreen::bitsRestore(byte *memoryPtr) {
 		if (!_upscaledHires)
 			error("bitsRestore() called w/o being in upscaled hires mode");
 		bitsRestoreScreen(rect, memoryPtr, _displayScreen, _displayWidth);
+		// WORKAROUND - we are not sure what sierra is doing. If we don't do this here, portraits won't get fully removed
+		//  from screen. Some lowres showBits() call is used for that and it's not covering the whole area
+		//  We would need to find out inside the kq6 windows interpreter, but this here works already and seems not to have
+		//  any side-effects. The whole hires is hacked into the interpreter, so maybe this is even right.
+		copyDisplayRectToScreen(rect);
 	}
 }
 
@@ -435,7 +499,19 @@ void GfxScreen::bitsRestoreDisplayScreen(Common::Rect rect, byte *&memoryPtr) {
 	}
 }
 
-void GfxScreen::setPalette(Palette*pal) {
+void GfxScreen::getPalette(Palette *pal) {
+	// just copy palette to system
+	byte bpal[4 * 256];
+	// Get current palette, update it and put back
+	g_system->grabPalette(bpal, 0, 256);
+	for (int16 i = 1; i < 255; i++) {
+		pal->colors[i].r = bpal[i * 4];
+		pal->colors[i].g = bpal[i * 4 + 1];
+		pal->colors[i].b = bpal[i * 4 + 2];
+	}
+}
+
+void GfxScreen::setPalette(Palette *pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
@@ -456,6 +532,22 @@ void GfxScreen::setVerticalShakePos(uint16 shakePos) {
 		g_system->setShakePos(shakePos);
 	else
 		g_system->setShakePos(shakePos * 2);
+}
+
+void GfxScreen::kernelShakeScreen(uint16 shakeCount, uint16 directions) {
+	while (shakeCount--) {
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			setVerticalShakePos(10);
+		// TODO: horizontal shakes
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			setVerticalShakePos(0);
+
+		g_system->updateScreen();
+		g_sci->getEngineState()->wait(3);
+	}
 }
 
 void GfxScreen::dither(bool addToFlag) {
@@ -557,25 +649,44 @@ void GfxScreen::debugShowMap(int mapNo) {
 	copyToScreen();
 }
 
-void GfxScreen::scale2x(byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
-	int newWidth = srcWidth * 2;
-	byte *srcPtr = src;
+void GfxScreen::scale2x(const byte *src, byte *dst, int16 srcWidth, int16 srcHeight) {
+	const int newWidth = srcWidth * 2;
+	const byte *srcPtr = src;
 
 	for (int y = 0; y < srcHeight; y++) {
 		for (int x = 0; x < srcWidth; x++) {
-			int destOffset = y * 2 * newWidth + x * 2;
-			dst[destOffset] = *srcPtr;
-			dst[destOffset + 1] = *srcPtr;
-			dst[destOffset + newWidth] = *srcPtr;
-			dst[destOffset + newWidth + 1] = *srcPtr;
-			srcPtr++;
+			const byte color = *srcPtr++;
+			dst[0] = color;
+			dst[1] = color;
+			dst[newWidth] = color;
+			dst[newWidth + 1] = color;
+			dst += 2;
 		}
+		dst += newWidth;
 	}
 }
 
 void GfxScreen::adjustToUpscaledCoordinates(int16 &y, int16 &x) {
 	x *= 2;
 	y = _upscaledMapping[y];
+}
+
+void GfxScreen::adjustBackUpscaledCoordinates(int16 &y, int16 &x) {
+	switch (_upscaledHires) {
+	case GFX_SCREEN_UPSCALED_640x400:
+		x /= 2;
+		y /= 2;
+		break;
+	case GFX_SCREEN_UPSCALED_640x440:
+		x /= 2;
+		y = (y * 5) / 11;
+		break;
+	case GFX_SCREEN_UPSCALED_640x480:
+		x /= 2;
+		y = (y * 5) / 12;
+	default:
+		break;
+	}
 }
 
 int16 GfxScreen::kernelPicNotValid(int16 newPicNotValid) {

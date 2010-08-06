@@ -34,21 +34,27 @@ class Screen;
 /**
  * Palette class, handles palette operations like changing intensity, setting up the palette, merging different palettes
  */
-class GfxPalette {
+class GfxPalette : public Common::Serializable {
 public:
-	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette = true);
+	GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging);
 	~GfxPalette();
 
-	void createFromData(byte *data, Palette *paletteOut);
+	bool isMerging();
+
+	void setDefault();
+	void createFromData(byte *data, int bytesLeft, Palette *paletteOut);
 	bool setAmiga();
 	void modifyAmigaPalette(byte *data);
 	void setEGA();
 	void set(Palette *sciPal, bool force, bool forceRealMerge = false);
-	bool merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge);
-	uint16 matchColor(Palette *pPal, byte r, byte g, byte b);
+	bool insert(Palette *newPalette, Palette *destPalette);
+	bool merge(Palette *pFrom, bool force, bool forceRealMerge);
+	uint16 matchColor(byte r, byte g, byte b);
 	void getSys(Palette *pal);
 
 	void setOnScreen();
+
+	void drewPicture(GuiResourceId pictureId);
 
 	bool kernelSetFromResource(GuiResourceId resourceId, bool force);
 	void kernelSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
@@ -57,27 +63,53 @@ public:
 	int16 kernelFindColor(uint16 r, uint16 g, uint16 b);
 	bool kernelAnimate(byte fromColor, byte toColor, int speed);
 	void kernelAnimateSet();
+	reg_t kernelSave();
+	void kernelRestore(reg_t memoryHandle);
 	void kernelAssertPalette(GuiResourceId resourceId);
 
-	void startPalVary(uint16 paletteId, uint16 ticks);
-	void togglePalVary(bool pause);
-	void stopPalVary();
+	void kernelSyncScreenPalette();
+
+	bool kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction);
+	int16 kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direction);
+	int16 kernelPalVaryGetCurrentStep();
+	int16 kernelPalVaryChangeTarget(GuiResourceId resourceId);
+	void kernelPalVaryChangeTicks(uint16 ticks);
+	void kernelPalVaryPause(bool pause);
+	void kernelPalVaryDeinit();
+	void palVaryUpdate();
+	void palVaryPrepareForTransition();
+	void palVaryProcess(int signal, bool setPalette);
 
 	Palette _sysPalette;
 
+	virtual void saveLoadWithSerializer(Common::Serializer &s);
+	void palVarySaveLoadPalette(Common::Serializer &s, Palette *palette);
+
 private:
+	void palVaryInit();
+	void palVaryInstallTimer();
+	void palVaryRemoveTimer();
+	bool palVaryLoadTargetPalette(GuiResourceId resourceId);
 	static void palVaryCallback(void *refCon);
-	void doPalVary();
+	void palVaryIncreaseSignal();
 
 	GfxScreen *_screen;
 	ResourceManager *_resMan;
-	int16 _palVaryId;
-	uint32 _palVaryStart;
-	uint32 _palVaryEnd;
 
 	bool _sysPaletteChanged;
+	bool _useMerging;
 
 	Common::Array<PalSchedule> _schedules;
+
+	GuiResourceId _palVaryResourceId;
+	Palette _palVaryOriginPalette;
+	Palette _palVaryTargetPalette;
+	int16 _palVaryStep;
+	int16 _palVaryStepStop;
+	int16 _palVaryDirection;
+	uint16 _palVaryTicks;
+	int _palVaryPaused;
+	int _palVarySignal;
 };
 
 } // End of namespace Sci

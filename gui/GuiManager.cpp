@@ -27,6 +27,8 @@
 #include "common/util.h"
 #include "common/config-manager.h"
 #include "common/algorithm.h"
+#include "common/timer.h"
+#include "common/translation.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -43,12 +45,13 @@ namespace GUI {
 
 enum {
 	kDoubleClickDelay = 500, // milliseconds
-	kCursorAnimateDelay = 250
+	kCursorAnimateDelay = 250,
+	kTooltipDelay = 1250
 };
 
 // Constructor
-GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
-	_stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
+GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled), _tooltipCheck(false),
+	   _stateIsSaved(false), _cursorAnimateCounter(0), _cursorAnimateTimer(0) {
 	_theme = 0;
 	_useStdCursor = false;
 
@@ -74,10 +77,13 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 			error("Failed to load any GUI theme, aborting");
 		}
 	}
+
+	_tooltip = 0;
 }
 
 GuiManager::~GuiManager() {
 	delete _theme;
+	delete _tooltip;
 }
 
 #ifdef ENABLE_KEYMAPPER
@@ -94,27 +100,28 @@ void GuiManager::initKeymap() {
 	Action *act;
 	Keymap *guiMap = new Keymap("gui");
 
-	act = new Action(guiMap, "CLOS", "Close", kGenericActionType, kStartKeyType);
+	act = new Action(guiMap, "CLOS", _("Close"), kGenericActionType, kStartKeyType);
 	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
 
-	act = new Action(guiMap, "CLIK", "Mouse click");
+	act = new Action(guiMap, "CLIK", _("Mouse click"));
 	act->addLeftClickEvent();
 
-	act = new Action(guiMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act = new Action(guiMap, "VIRT", _("Display keyboard"), kVirtualKeyboardActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
 
-	act = new Action(guiMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act = new Action(guiMap, "REMP", _("Remap keys"), kKeyRemapActionType);
 	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
 
 	mapper->addGlobalKeymap(guiMap);
 }
 #endif
 
-bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx) {
+bool GuiManager::loadNewTheme(Common::String id, ThemeEngine::GraphicsMode gfx, bool forced) {
 	// If we are asked to reload the currently active theme, just do nothing
 	// FIXME: Actually, why? It might be desirable at times to force a theme reload...
-	if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
-		return true;
+	if (!forced)
+		if (_theme && id == _theme->getThemeId() && gfx == _theme->getGraphicsMode())
+			return true;
 
 	ThemeEngine *newTheme = 0;
 
@@ -242,6 +249,9 @@ void GuiManager::runLoop() {
 		redraw();
 	}
 
+	_lastMousePosition.x = _lastMousePosition.y = -1;
+	_lastMousePosition.time = 0;
+
 	Common::EventManager *eventMan = _system->getEventManager();
 	uint32 lastRedraw = 0;
 	const uint32 waitTime = 1000 / 45;
@@ -276,6 +286,8 @@ void GuiManager::runLoop() {
 		}
 
 		Common::Event event;
+
+		bool eventTookplace = false;
 		while (eventMan->pollEvent(event)) {
 
 			// The top dialog can change during the event loop. In that case, flush all the
@@ -298,16 +310,28 @@ void GuiManager::runLoop() {
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
 				activeDialog->handleKeyDown(event.kbd);
+				eventTookplace = true;
 				break;
 			case Common::EVENT_KEYUP:
 				activeDialog->handleKeyUp(event.kbd);
+				eventTookplace = true;
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
+
+				if (mouse.x != _lastMousePosition.x || mouse.y != _lastMousePosition.y) {
+					_lastMousePosition.x = mouse.x;
+					_lastMousePosition.y = mouse.y;
+					_lastMousePosition.time = _system->getMillis();
+				}
+
+				_tooltipCheck = true;
+				eventTookplace = true;
 				break;
 			// We don't distinguish between mousebuttons (for now at least)
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
+				eventTookplace = true;
 				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 				time = _system->getMillis();
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
@@ -324,23 +348,39 @@ void GuiManager::runLoop() {
 				break;
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
+				eventTookplace = true;
 				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
 				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
 				break;
 			case Common::EVENT_WHEELUP:
+				eventTookplace = true;
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, -1);
 				break;
 			case Common::EVENT_WHEELDOWN:
+				eventTookplace = true;
 				activeDialog->handleMouseWheel(mouse.x, mouse.y, 1);
 				break;
 			case Common::EVENT_QUIT:
 				return;
 			case Common::EVENT_SCREEN_CHANGED:
+				eventTookplace = true;
 				screenChange();
 				break;
 			default:
 				break;
 			}
+		}
+
+		if (_tooltipCheck && _lastMousePosition.time + kTooltipDelay < _system->getMillis()) {
+			if (_tooltip == 0)
+				_tooltip = new Tooltip();
+
+			_tooltipCheck = false;
+			_tooltip->tooltipModal(_lastMousePosition.x, _lastMousePosition.y);
+		}
+
+		if (eventTookplace && _tooltip) {
+			_tooltip->mustClose();
 		}
 
 		// Delay for a moment

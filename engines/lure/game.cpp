@@ -56,8 +56,6 @@ Game::Game() {
 	_debugFlag = gDebugLevel >= ERROR_BASIC;
 
 	_soundFlag = true;
-	_musicVolume = ConfMan.getBool("music_mute") ? 0 : MIN(255, ConfMan.getInt("music_volume"));
-	_sfxVolume = ConfMan.getBool("sfx_mute") ? 0 : MIN(255, ConfMan.getInt("sfx_volume"));
 }
 
 Game::~Game() {
@@ -281,8 +279,7 @@ void Game::execute() {
 			system.updateScreen();
 			system.delayMillis(10);
 
-			if (_debugger->isAttached())
-				_debugger->onFrame();
+			_debugger->onFrame();
 		}
 
 		room.leaveRoom();

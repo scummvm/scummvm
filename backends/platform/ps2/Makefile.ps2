@@ -75,6 +75,8 @@ OBJS := backends/platform/ps2/DmaPipe.o \
     
 MODULE_DIRS += .
 
+BACKEND := ps2
+
 include $(srcdir)/Makefile.common
 
 LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile 

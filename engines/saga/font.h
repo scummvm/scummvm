@@ -190,7 +190,7 @@ class Font {
 		 }
 	 }
 	 bool valid(FontId fontId) {
-		 return ((fontId >= 0) && (fontId < _loadedFonts));
+		 return (fontId < _loadedFonts);
 	 }
 	 int getByteLen(int numBits) const {
 		 int byteLength = numBits / 8;

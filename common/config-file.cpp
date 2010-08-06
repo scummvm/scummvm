@@ -125,7 +125,7 @@ bool ConfigFile::loadFromStream(SeekableReadStream &stream) {
 			if (*p == '\0')
 				error("ConfigFile::loadFromStream: missing ] in line %d", lineno);
 			else if (*p != ']')
-				error("ConfigFile::loadFromStream: Invalid character '%c' occured in section name in line %d", *p, lineno);
+				error("ConfigFile::loadFromStream: Invalid character '%c' occurred in section name in line %d", *p, lineno);
 
 			// Previous section is finished now, store it.
 			if (!section.name.empty())

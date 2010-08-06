@@ -42,6 +42,8 @@ public:
 		int start;
 		int duration;
 		int numLoops;
+		int volume;
+		int balance;
 	};
 
 	/**
@@ -58,6 +60,9 @@ public:
 	void play(int track, int numLoops, int startFrame, int duration, bool only_emulate = false);
 	void stop();
 	bool isPlaying() const;
+
+	void setVolume(byte volume);
+	void setBalance(int8 balance);
 
 	void updateCD();
 

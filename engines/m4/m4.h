@@ -29,6 +29,7 @@
 #include "common/scummsys.h"
 #include "common/util.h"
 #include "common/random.h"
+#include "sound/mididrv.h"
 
 #include "engines/engine.h"
 
@@ -41,6 +42,7 @@
 #include "m4/events.h"
 #include "m4/font.h"
 #include "m4/scene.h"
+#include "m4/mads_player.h"
 #include "m4/mads_scene.h"
 #include "m4/m4_scene.h"
 #include "m4/actor.h"
@@ -123,7 +125,7 @@ enum {
 
 struct M4GameDescription;
 
-#define GAME_FRAME_DELAY 50
+#define GAME_FRAME_DELAY 20
 
 #define VALIDATE_MADS assert(!_vm->isM4())
 
@@ -144,6 +146,7 @@ protected:
 
 	void shutdown();
 
+	MidiDriver *_driver;
 	MidiPlayer *_midi;
 
 public:
@@ -211,6 +214,7 @@ private:
 public:
 	MadsConversation _converse;
 	uint32 _currentTimer;
+	MadsPlayer _player;
 public:
 	MadsEngine(OSystem *syst, const M4GameDescription *gameDesc);
 	virtual ~MadsEngine();
@@ -219,6 +223,12 @@ public:
 
 	MadsGlobals *globals() { return (MadsGlobals *)_globals; }
 	MadsScene *scene() { return (MadsScene *)_scene; }
+	void startScene(int sceneNum) {
+		if (!_scene)
+			_scene = new MadsScene(this);
+		_scene->show();
+		_scene->loadScene(101);
+	}
 };
 
 class M4Engine : public MadsM4Engine {

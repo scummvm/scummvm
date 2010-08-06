@@ -25,16 +25,20 @@
 
 #include "sci/sci.h"
 #include "sci/resource.h"
+#include "sci/engine/seg_manager.h"
+#include "sci/engine/script.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
+
+#include "common/file.h"
 
 namespace Sci {
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
-	int restype = argv[0].toUint16();
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
 	int resnr = argv[1].toUint16();
 
 	// Request to dynamically allocate hunk memory for later use
@@ -44,9 +48,32 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
+// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
+//  behaviour of this call didn't change between sci0->sci1.1 parameter wise, which means getting called with
+//  1 or 3+ parameters is not right according to sierra sci
+reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
+	if (argc >= 2) {
+		ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
+		reg_t resnr = argv[1];
+
+		// WORKAROUND for a broken script in room 320 in Castle of Dr. Brain.
+		// Script 377 tries to free the hunk memory allocated for the saved area
+		// (underbits) beneath the pop up window, which results in having the
+		// window stay on screen even when it's closed. Ignore this request here.
+		if (restype == kResourceTypeMemory && g_sci->getGameId() == GID_CASTLEBRAIN &&
+			s->currentRoomNumber() == 320)
+			return s->r_acc;
+
+		if (restype == kResourceTypeMemory)
+			s->_segMan->freeHunkEntry(resnr);
+	}
+
+	return s->r_acc;
+}
+
 reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 	int state = argc > 2 ? argv[2].toUint16() : 1;
-	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceType type = g_sci->getResMan()->convertResType(argv[0].toUint16());
 	ResourceId id = ResourceId(type, argv[1].toUint16());
 
 	Resource *which;
@@ -56,42 +83,48 @@ reg_t kLock(EngineState *s, int argc, reg_t *argv) {
 		g_sci->getResMan()->findResource(id, 1);
 		break;
 	case 0 :
-		which = g_sci->getResMan()->findResource(id, 0);
+		if (id.getNumber() == 0xFFFF) {
+			// Unlock all resources of the requested type
+			Common::List<ResourceId> *resources = g_sci->getResMan()->listResources(type);
+			Common::List<ResourceId>::iterator itr = resources->begin();
 
-		if (which)
-			g_sci->getResMan()->unlockResource(which);
-		else {
-			if (id.type == kResourceTypeInvalid)
-				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.number, type);
-			else
-				warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+			while (itr != resources->end()) {
+				Resource *res = g_sci->getResMan()->testResource(*itr);
+				if (res->isLocked())
+					g_sci->getResMan()->unlockResource(res);
+				++itr;
+			}
+
+			delete resources;
+		} else {
+			which = g_sci->getResMan()->findResource(id, 0);
+
+			if (which)
+				g_sci->getResMan()->unlockResource(which);
+			else {
+				if (id.getType() == kResourceTypeInvalid)
+					warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.getNumber(), type);
+				else
+					// Happens in CD games (e.g. LSL6CD) with the message
+					// resource. It isn't fatal, and it's usually caused
+					// by leftover scripts.
+					debugC(2, kDebugLevelResMan, "[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
+			}
 		}
 		break;
 	}
 	return s->r_acc;
 }
 
-// Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
-reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
-	if (argc >= 2) {
-		int restype = argv[0].toUint16();
-		reg_t resnr = argv[1];
-
-		if (restype == kResourceTypeMemory)
-			s->_segMan->freeHunkEntry(resnr);
-
-		if (argc > 2)
-			warning("kUnload called with more than 2 parameters (%d)", argc);
-	} else {
-		warning("kUnload called with less than 2 parameters (%d) - ignoring", argc);
-	}
-
-	return s->r_acc;
-}
-
 reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 	Resource *res = NULL;
-	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
+	ResourceType restype = g_sci->getResMan()->convertResType(argv[0].toUint16());
+
+	if (restype == kResourceTypeVMD) {
+		char fileName[10];
+		sprintf(fileName, "%d.vmd", argv[1].toUint16());
+		return make_reg(0, Common::File::exists(fileName));
+	}
 
 	if ((restype == kResourceTypeAudio36) || (restype == kResourceTypeSync36)) {
 		if (argc >= 6) {
@@ -155,23 +188,9 @@ reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (!victim_obj->isClone()) {
-		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;
 	}
-
-	// QFG3 clears clones with underbits set
-	//if (readSelectorValue(victim_addr, underBits))
-	//	warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
-
-#if 0
-	if (s->dyn_views) {  // Free any widget associated with the clone
-		GfxWidget *widget = gfxw_set_id(gfxw_remove_ID(s->dyn_views, offset), GFXW_NO_ID);
-
-		if (widget && s->bg_widgets)
-			s->bg_widgets->add(GFXWC(s->bg_widgets), widget);
-	}
-#endif
 
 	victim_obj->markAsFreed();
 
@@ -198,9 +217,10 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		// and this call is probably used to load them in memory, ignoring
 		// the return value. If only one argument is passed, this call is done
 		// only to load the script in memory. Thus, don't show any warning,
-		// as no return value is expected
+		// as no return value is expected. If an export is requested, then
+		// it will most certainly fail with OOB access.
 		if (argc == 2)
-			warning("Script 0x%x does not have a dispatch table and export %d "
+			error("Script 0x%x does not have a dispatch table and export %d "
 					"was requested from it", script, index);
 		return NULL_REG;
 	}
@@ -222,10 +242,6 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	int script = argv[0].offset;
 
-	// Work around QfG1 graveyard bug
-	if (argv[0].segment)
-		return s->r_acc;
-
 	SegmentId id = s->_segMan->getScriptSegment(script);
 	Script *scr = s->_segMan->getScriptIfLoaded(id);
 	if (scr) {
@@ -233,13 +249,13 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 			scr->setLockers(1);
 	}
 
-	script_uninstantiate(s->_segMan, script);
+	s->_segMan->uninstantiateScript(script);
 
 	if (argc != 2) {
 		return s->r_acc;
 	} else {
-		// This exists in the KQ5CD and GK1 interpreter. We know it is used when GK1 starts
-		// up, before the Sierra logo.
+		// This exists in the KQ5CD and GK1 interpreter. We know it is used
+		// when GK1 starts up, before the Sierra logo.
 		warning("kDisposeScript called with 2 parameters, still untested");
 		return argv[1];
 	}

@@ -350,6 +350,7 @@ protected:
 	int _chatObject;
 	uint32 _chatEndTime;
 	int _chatVocHigh, _chatVocLow;
+	bool _chatTextEnabled;
 
 	EMCData _chatScriptData;
 	EMCState _chatScriptState;

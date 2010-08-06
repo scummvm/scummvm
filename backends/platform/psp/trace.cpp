@@ -30,8 +30,9 @@
 #include <stdio.h>
 
 int psp_debug_indent = 0;
+bool firstWriteToFile = true;
 
-void PSPDebugTrace(bool alsoToScreen, const char *format, ...) {
+void PspDebugTrace(bool alsoToScreen, const char *format, ...) {
 	va_list	opt;
 	char		buffer[2048];
 	int			bufsz;
@@ -41,8 +42,12 @@ void PSPDebugTrace(bool alsoToScreen, const char *format, ...) {
 	bufsz = vsnprintf(buffer, (size_t) sizeof(buffer), format, opt);
 	va_end(opt);
 
-	//fd = fopen("MS0:/SCUMMTRACE.TXT", "ab");
-	fd = fopen("SCUMMTRACE.TXT", "ab");
+	if (firstWriteToFile) {
+		fd = fopen("SCUMMTRACE.TXT", "wb");		// erase the file the first time we write
+		firstWriteToFile = false;
+	} else {
+		fd = fopen("SCUMMTRACE.TXT", "ab");
+	}
 
 	if (fd == 0)
 		return;

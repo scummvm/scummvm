@@ -58,6 +58,8 @@ ScriptThread &Script::createThread(uint16 scriptModuleNumber, uint16 scriptEntry
 
 	_threadList.push_front(newThread);
 
+	debug(3, "createThread(). Total threads: %d", _threadList.size());
+
 	ScriptThread &tmp = *_threadList.begin();
 	tmp._stackBuf = (int16 *)malloc(ScriptThread::THREAD_STACK_SIZE * sizeof(int16));
 	tmp._stackTopIndex = ScriptThread::THREAD_STACK_SIZE - 2;
@@ -78,6 +80,8 @@ void Script::wakeUpActorThread(int waitType, void *threadObj) {
 void Script::wakeUpThreads(int waitType) {
 	ScriptThreadList::iterator threadIterator;
 
+	debug(3, "wakeUpThreads(%d)", waitType);
+
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
 		ScriptThread &thread = *threadIterator;
 		if ((thread._flags & kTFlagWaiting) && (thread._waitType == waitType)) {
@@ -88,6 +92,8 @@ void Script::wakeUpThreads(int waitType) {
 
 void Script::wakeUpThreadsDelayed(int waitType, int sleepTime) {
 	ScriptThreadList::iterator threadIterator;
+
+	debug(3, "wakeUpThreads(%d, %d)", waitType, sleepTime);
 
 	for (threadIterator = _threadList.begin(); threadIterator != _threadList.end(); ++threadIterator) {
 		ScriptThread &thread = *threadIterator;
@@ -168,6 +174,8 @@ void Script::executeThreads(uint msec) {
 
 void Script::abortAllThreads() {
 	ScriptThreadList::iterator threadIterator;
+
+	debug(3, "abortAllThreads()");
 
 	threadIterator = _threadList.begin();
 

@@ -73,6 +73,10 @@ void GameDescriptor::setGUIOptions(uint32 guioptions) {
 		erase("guioptions");
 }
 
+void GameDescriptor::appendGUIOptions(const Common::String &str) {
+	setVal("guioptions", getVal("guioptions", "") + " " + str);
+}
+
 void GameDescriptor::updateDesc(const char *extra) {
 	// TODO: The format used here (LANG/PLATFORM/EXTRA) is not set in stone.
 	// We may want to change the order (PLATFORM/EXTRA/LANG, anybody?), or

@@ -109,10 +109,9 @@ void ScummEngine::loadCJKFont() {
 			numChar = 8192;
 			break;
 		case Common::ZH_TWN:
-			if (_game.id == GID_CMI) {
-				fontFile = "chinese.fnt";
-				numChar = 13630;
-			}
+			// Both The DIG and COMI use same font
+			fontFile = "chinese.fnt";
+			numChar = 13630;
 			break;
 		case Common::ZH_CNA:
 			if (_game.id == GID_FT || _game.id == GID_LOOM || _game.id == GID_INDY3 ||

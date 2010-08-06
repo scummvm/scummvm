@@ -49,11 +49,6 @@ class ResourceManager;
 /** Offset of this identifier */
 #define SCRIPT_OBJECT_MAGIC_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? -8 : 0)
 
-/** Script-relative offset of the species ID */
-#define SCRIPT_SPECIES_OFFSET 8 -8
-
-#define SCRIPT_SUPERCLASS_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 10 -8 : 12)
-
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL
 
@@ -69,115 +64,7 @@ struct Class {
 	reg_t reg; ///< offset; script-relative offset, segment: 0 if not instantiated
 };
 
-#define RAW_IS_OBJECT(datablock) (READ_SCI11ENDIAN_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
-
-/** Contains selector IDs for a few selected selectors */
-struct SelectorCache {
-	SelectorCache() {
-		memset(this, 0, sizeof(*this));
-	}
-
-	// Statically defined selectors, (almost the) same in all SCI versions
-	Selector y;
-	Selector x;
-	Selector view, loop, cel; ///< Description of a specific image
-	Selector underBits; ///< Used by the graphics subroutines to store backupped BG pic data
-	Selector nsTop, nsLeft, nsBottom, nsRight; ///< View boundaries ('now seen')
-	Selector lsTop, lsLeft, lsBottom, lsRight; ///< Used by Animate() subfunctions and scroll list controls
-	Selector signal; ///< Used by Animate() to control a view's behaviour
-	Selector illegalBits; ///< Used by CanBeHere
-	Selector brTop, brLeft, brBottom, brRight; ///< Bounding Rectangle
-	// name, key, time
-	Selector text; ///< Used by controls
-	Selector elements; ///< Used by SetSynonyms()
-	// color, back
-	Selector mode; ///< Used by text controls (-> DrawControl())
-	// style
-	Selector state, font, type;///< Used by controls
-	// window
-	Selector cursor, max; ///< Used by EditControl
-	// mark, who
-	Selector message; ///< Used by GetEvent
-	// edit
-	Selector play; ///< Play function (first function to be called)
-	Selector number;
-	Selector handle;	///< Replaced by nodePtr in SCI1+
-	Selector nodePtr;	///< Replaces handle in SCI1+
-	Selector client; ///< The object that wants to be moved
-	Selector dx, dy; ///< Deltas
-	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; ///< Various Bresenham vars
-	Selector xStep, yStep; ///< BR adjustments
-	Selector moveSpeed; ///< Used for DoBresen
-	Selector canBeHere; ///< Funcselector: Checks for movement validity in SCI0
-	Selector heading, mover; ///< Used in DoAvoider
-	Selector doit; ///< Called (!) by the Animate() system call
-	Selector isBlocked, looper;	///< Used in DoAvoider
-	Selector priority;
-	Selector modifiers; ///< Used by GetEvent
-	Selector replay; ///< Replay function
-	// setPri, at, next, done, width
-	Selector wordFail, syntaxFail; ///< Used by Parse()
-	// semanticFail, pragmaFail
-	// said
-	Selector claimed; ///< Used generally by the event mechanism
-	// value, save, restore, title, button, icon, draw
-	Selector delete_; ///< Called by Animate() to dispose a view object
-	Selector z;
-
-	// SCI1+ static selectors
-	Selector parseLang;
-	Selector printLang; ///< Used for i18n
-	Selector subtitleLang;
-	Selector size;
-	Selector points; ///< Used by AvoidPath()
-	Selector palette;
-	Selector dataInc;
-	// handle (in SCI1)
-	Selector min; ///< SMPTE time format
-	Selector sec;
-	Selector frame;
-	Selector vol;
-	Selector pri;
-	// perform
-	Selector moveDone;	///< used for DoBresen
-
-	// SCI1 selectors which have been moved a bit in SCI1.1, but otherwise static
-	Selector cantBeHere; ///< Checks for movement avoidance in SCI1+. Replaces canBeHere
-	Selector topString; ///< SCI1 scroll lists use this instead of lsTop
-	Selector flags;
-
-	// SCI1+ audio sync related selectors, not static. They're used for lip syncing in
-	// CD talkie games
-	Selector syncCue; ///< Used by DoSync()
-	Selector syncTime;
-
-	// SCI1.1 specific selectors
-	Selector scaleSignal; // < Used by Animate() for cel scaling (SCI1.1+)
-	Selector scaleX, scaleY;	///< SCI1.1 view scaling
-
-	// Used for auto detection purposes
-	Selector overlay;	///< Used to determine if a game is using old gfx functions or not
-
-	// SCI1.1 Mac icon bar selectors
-	Selector iconIndex; ///< Used to index icon bar objects
-
-#ifdef ENABLE_SCI32
-	Selector data; // Used by Array()/String()
-	Selector picture; // Used to hold the picture ID for SCI32 pictures
-
-	Selector plane;
-	Selector top;
-	Selector left;
-	Selector bottom;
-	Selector right;
-	Selector resX;
-	Selector resY;
-
-	Selector fore;
-	Selector back;
-	Selector dimmed;
-#endif
-};
+#define RAW_IS_OBJECT(datablock) (READ_SCI11ENDIAN_UINT16(((const byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 // A reference to an object's variable.
 // The object is stored as a reg_t, the variable as an index into _variables
@@ -210,8 +97,10 @@ struct ExecStack {
 	StackPtr variables_argp; // Argument pointer
 	SegmentId local_segment; // local variables etc
 
-	Selector selector;      // The selector which was used to call or -1 if not applicable
-	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
+	Selector debugSelector;   // The selector which was used to call or -1 if not applicable
+	int debugExportId;        // The exportId which was called or -1 if not applicable
+	int debugLocalCallOffset; // Local call offset or -1 if not applicable
+	int debugOrigin;          // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
 	reg_t* getVarPointer(SegManager *segMan) const;
@@ -229,6 +118,160 @@ enum {
 	GC_INTERVAL = 32768
 };
 
+// Opcode formats
+enum opcode_format {
+	Script_Invalid = -1,
+	Script_None = 0,
+	Script_Byte,
+	Script_SByte,
+	Script_Word,
+	Script_SWord,
+	Script_Variable,
+	Script_SVariable,
+	Script_SRelative,
+	Script_Property,
+	Script_Global,
+	Script_Local,
+	Script_Temp,
+	Script_Param,
+	Script_Offset,
+	Script_End
+};
+
+enum sci_opcodes {
+	op_bnot     = 0x00,	// 000
+	op_add      = 0x01,	// 001
+	op_sub      = 0x02,	// 002
+	op_mul      = 0x03,	// 003
+	op_div      = 0x04,	// 004
+	op_mod      = 0x05,	// 005
+	op_shr      = 0x06,	// 006
+	op_shl      = 0x07,	// 007
+	op_xor      = 0x08,	// 008
+	op_and      = 0x09,	// 009
+	op_or       = 0x0a,	// 010
+	op_neg      = 0x0b,	// 011
+	op_not      = 0x0c,	// 012
+	op_eq_      = 0x0d,	// 013
+	op_ne_      = 0x0e,	// 014
+	op_gt_      = 0x0f,	// 015
+	op_ge_      = 0x10,	// 016
+	op_lt_      = 0x11,	// 017
+	op_le_      = 0x12,	// 018
+	op_ugt_     = 0x13,	// 019
+	op_uge_     = 0x14,	// 020
+	op_ult_     = 0x15,	// 021
+	op_ule_     = 0x16,	// 022
+	op_bt       = 0x17,	// 023
+	op_bnt      = 0x18,	// 024
+	op_jmp      = 0x19,	// 025
+	op_ldi      = 0x1a,	// 026
+	op_push     = 0x1b,	// 027
+	op_pushi    = 0x1c,	// 028
+	op_toss     = 0x1d,	// 029
+	op_dup      = 0x1e,	// 030
+	op_link     = 0x1f,	// 031
+	op_call     = 0x20,	// 032
+	op_callk    = 0x21,	// 033
+	op_callb    = 0x22,	// 034
+	op_calle    = 0x23,	// 035
+	op_ret      = 0x24,	// 036
+	op_send     = 0x25,	// 037
+	// dummy      0x26,	// 038
+	// dummy      0x27,	// 039
+	op_class    = 0x28,	// 040
+	// dummy      0x29,	// 041
+	op_self     = 0x2a,	// 042
+	op_super    = 0x2b,	// 043
+	op_rest     = 0x2c,	// 044
+	op_lea      = 0x2d,	// 045
+	op_selfID   = 0x2e,	// 046
+	// dummy      0x2f	// 047
+	op_pprev    = 0x30,	// 048
+	op_pToa     = 0x31,	// 049
+	op_aTop     = 0x32,	// 050
+	op_pTos     = 0x33,	// 051
+	op_sTop     = 0x34,	// 052
+	op_ipToa    = 0x35,	// 053
+	op_dpToa    = 0x36,	// 054
+	op_ipTos    = 0x37,	// 055
+	op_dpTos    = 0x38,	// 056
+	op_lofsa    = 0x39,	// 057
+	op_lofss    = 0x3a,	// 058
+	op_push0    = 0x3b,	// 059
+	op_push1    = 0x3c,	// 060
+	op_push2    = 0x3d,	// 061
+	op_pushSelf = 0x3e,	// 062
+	op_line     = 0x3f,	// 063
+	op_lag      = 0x40,	// 064
+	op_lal      = 0x41,	// 065
+	op_lat      = 0x42,	// 066
+	op_lap      = 0x43,	// 067
+	op_lsg      = 0x44,	// 068
+	op_lsl      = 0x45,	// 069
+	op_lst      = 0x46,	// 070
+	op_lsp      = 0x47,	// 071
+	op_lagi     = 0x48,	// 072
+	op_lali     = 0x49,	// 073
+	op_lati     = 0x4a,	// 074
+	op_lapi     = 0x4b,	// 075
+	op_lsgi     = 0x4c,	// 076
+	op_lsli     = 0x4d,	// 077
+	op_lsti     = 0x4e,	// 078
+	op_lspi     = 0x4f,	// 079
+	op_sag      = 0x50,	// 080
+	op_sal      = 0x51,	// 081
+	op_sat      = 0x52,	// 082
+	op_sap      = 0x53,	// 083
+	op_ssg      = 0x54,	// 084
+	op_ssl      = 0x55,	// 085
+	op_sst      = 0x56,	// 086
+	op_ssp      = 0x57,	// 087
+	op_sagi     = 0x58,	// 088
+	op_sali     = 0x59,	// 089
+	op_sati     = 0x5a,	// 090
+	op_sapi     = 0x5b,	// 091
+	op_ssgi     = 0x5c,	// 092
+	op_ssli     = 0x5d,	// 093
+	op_ssti     = 0x5e,	// 094
+	op_sspi     = 0x5f,	// 095
+	op_plusag   = 0x60,	// 096
+	op_plusal   = 0x61,	// 097
+	op_plusat   = 0x62,	// 098
+	op_plusap   = 0x63,	// 099
+	op_plussg   = 0x64,	// 100
+	op_plussl   = 0x65,	// 101
+	op_plusst   = 0x66,	// 102
+	op_plussp   = 0x67,	// 103
+	op_plusagi  = 0x68,	// 104
+	op_plusali  = 0x69,	// 105
+	op_plusati  = 0x6a,	// 106
+	op_plusapi  = 0x6b,	// 107
+	op_plussgi  = 0x6c,	// 108
+	op_plussli  = 0x6d,	// 109
+	op_plussti  = 0x6e,	// 110
+	op_plusspi  = 0x6f,	// 111
+	op_minusag  = 0x70,	// 112
+	op_minusal  = 0x71,	// 113
+	op_minusat  = 0x72,	// 114
+	op_minusap  = 0x73,	// 115
+	op_minussg  = 0x74,	// 116
+	op_minussl  = 0x75,	// 117
+	op_minusst  = 0x76,	// 118
+	op_minussp  = 0x77,	// 119
+	op_minusagi = 0x78,	// 120
+	op_minusali = 0x79,	// 121
+	op_minusati = 0x7a,	// 122
+	op_minusapi = 0x7b,	// 123
+	op_minussgi = 0x7c,	// 124
+	op_minussli = 0x7d,	// 125
+	op_minussti = 0x7e,	// 126
+	op_minusspi = 0x7f	// 127
+};
+
+extern opcode_format g_opcode_formats[128][4];
+
+void script_adjust_opcode_formats();
 
 /**
  * Executes function pubfunct of the specified script.
@@ -272,23 +315,14 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
  * It executes the code on s->heap[pc] until it hits a 'ret' operation
  * while (stack_base == stack_pos). Requires s to be set up correctly.
  * @param[in] s			The state to use
- * @param[in] restoring	true if s has just been restored, false otherwise
  */
-void run_vm(EngineState *s, bool restoring);
+void run_vm(EngineState *s);
 
 /**
  * Debugger functionality
  * @param[in] s					The state at which debugging should take place
  */
 void script_debug(EngineState *s);
-
-/**
- * Initializes a EngineState block
- * @param[in] s	The state to initialize
- * @return		0 on success, 1 if vocab.996 (the class table) is missing
- * 				or corrupted
- */
-int script_init_engine(EngineState *);
 
 /**
  * Looks up a selector and returns its type and value
@@ -312,95 +346,6 @@ int script_init_engine(EngineState *);
  */
 SelectorType lookupSelector(SegManager *segMan, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
-
-/**
- * Makes sure that a script and its superclasses get loaded to the heap.
- * If the script already has been loaded, only the number of lockers is
- * increased. All scripts containing superclasses of this script are loaded
- * recursively as well, unless 'recursive' is set to zero. The
- * complementary function is "script_uninstantiate()" below.
- * @param[in] resMan		The resource manager
- * @param[in] segMan	The segment manager
- * @param[in] script_nr		The script number to load
- * @return					The script's segment ID or 0 if out of heap
- */
-int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr);
-
-/**
- * Decreases the numer of lockers of a script and unloads it if that number
- * reaches zero.
- * This function will recursively unload scripts containing its
- * superclasses, if those aren't locked by other scripts as well.
- * @param[in] segMan	The segment manager
- * @param[in] version		The SCI version to use
- * @param[in] script_nr	The script number that is requestet to be unloaded
- */
-void script_uninstantiate(SegManager *segMan, int script_nr);
-
-/**
- * Converts the builtin Sierra game IDs to the ones we use in ScummVM
- * @param[in] gameId		The internal game ID
- * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
- * @return					The equivalent ScummVM game id
- */
-Common::String convertSierraGameId(const char *gameId, uint32 *gameFlags, ResourceManager *resMan);
-
-/**
- * Initializes an SCI game
- * This function must be run before script_run() is executed. Graphics data
- * is initialized iff s->gfx_state != NULL.
- * @param[in] s	The state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_init(EngineState *s);
-
-#ifdef USE_OLD_MUSIC_FUNCTIONS
-/**
- * Initializes the sound part of an SCI game
- * This function may only be called if game_init() did not initialize
- * the sound data.
- * @param[in] s				The state to initialize the sound in
- * @param[in] sound_flags	Flags to pass to the sound subsystem
- * @param[in] soundVersion	sound-version that got detected during game init
- * @return					0 on success, 1 if an error occured
- */
-int game_init_sound(EngineState *s, int sound_flags, SciVersion soundVersion);
-#endif
-
-/**
- * Runs an SCI game
- * This is the main function for SCI games. It takes a valid state, loads
- * script 0 to it, finds the game object, allocates a stack, and runs the
- * init method of the game object. In layman's terms, this runs an SCI game.
- * Note that, EngineState *s may be changed during the game, e.g. if a game
- * state is restored.
- * @param[in] s	Pointer to the pointer of the state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_run(EngineState **s);
-
-/**
- * Restores an SCI game state and runs the game
- * This restores a savegame; otherwise, it behaves just like game_run().
- * @param[in] s				Pointer to the pointer of the state to
- * 							operate on
- * @param[in] savegame_name	Name of the savegame to restore
- * @return					0 on success, 1 if an error occured.
- */
-int game_restore(EngineState **s, char *savegame_name);
-
-/**
- * Uninitializes an initialized SCI game
- * This function should be run after each script_run() call.
- * @param[in] s	The state to operate on
- * @return		0 on success, 1 if an error occured.
- */
-int game_exit(EngineState *s);
-
-/**
- * Instructs the virtual machine to abort
- */
-void quit_vm(EngineState *s);
 
 /**
  * Read a PMachine instruction from a memory buffer and return its length.

@@ -26,15 +26,11 @@
 #ifndef GROOVIE_H
 #define GROOVIE_H
 
-#include "engines/engine.h"
-#include "graphics/surface.h"
-
-#include "groovie/cursor.h"
 #include "groovie/debug.h"
-#include "groovie/graphics.h"
-#include "groovie/player.h"
-#include "groovie/resource.h"
-#include "groovie/script.h"
+#include "groovie/font.h"
+
+#include "engines/engine.h"
+#include "graphics/pixelformat.h"
 
 namespace Common {
 	class MacResManager;
@@ -57,7 +53,12 @@ namespace Common {
  */
 namespace Groovie {
 
+class GraphicsMan;
+class GrvCursorMan;
 class MusicPlayer;
+class ResMan;
+class Script;
+class VideoPlayer;
 
 enum DebugLevels {
 	kGroovieDebugAll = 1 << 0,
@@ -80,6 +81,8 @@ class GroovieEngine : public Engine {
 public:
 	GroovieEngine(OSystem *syst, const GroovieGameDescription *gd);
 	~GroovieEngine();
+
+	Common::Platform getPlatform() const;
 
 protected:
 
@@ -106,6 +109,7 @@ public:
 	VideoPlayer *_videoPlayer;
 	MusicPlayer *_musicPlayer;
 	GraphicsMan *_graphicsMan;
+	const Graphics::Font *_font;
 
 	Common::MacResManager *_macResFork;
 
@@ -113,6 +117,7 @@ private:
 	const GroovieGameDescription *_gameDescription;
 	Debugger *_debugger;
 	bool _waitingForInput;
+	T7GFont _sphinxFont;
 };
 
 } // End of namespace Groovie

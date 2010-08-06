@@ -25,6 +25,7 @@
 
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
+#include "common/translation.h"
 #include "common/util.h"
 #ifdef USE_RGB_COLOR
 #include "common/list.h"
@@ -36,7 +37,7 @@
 #include "graphics/surface.h"
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
-	{"1x", "Normal (no scaling)", GFX_NORMAL},
+	{"1x", _s("Normal (no scaling)"), GFX_NORMAL},
 #ifdef USE_SCALERS
 	{"2x", "2x", GFX_DOUBLESIZE},
 	{"3x", "3x", GFX_TRIPLESIZE},
@@ -213,45 +214,54 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction() {
 }
 
 #ifdef USE_RGB_COLOR
-const Graphics::PixelFormat RGBList[] = {
+
+Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() const {
+	assert(!_supportedFormats.empty());
+	return _supportedFormats;
+}
+
+void OSystem_SDL::detectSupportedFormats() {
+
+	// Clear old list
+	_supportedFormats.clear();
+
+	// Some tables with standard formats that we always list
+	// as "supported". If frontend code tries to use one of
+	// these, we will perform the necessary format
+	// conversion in the background. Of course this incurs a
+	// performance hit, but on desktop ports this should not
+	// matter. We still push the currently active format to
+	// the front, so if frontend code just uses the first
+	// available format, it will get one that is "cheap" to
+	// use.
+	const Graphics::PixelFormat RGBList[] = {
 #ifdef ENABLE_32BIT
-	// RGBA8888, ARGB8888, RGB888
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
-	Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
+		// RGBA8888, ARGB8888, RGB888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
 #endif
-	// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
-	Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
-	Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
-	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
-	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
-	Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
-};
-const Graphics::PixelFormat BGRList[] = {
+		// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
+	};
+	const Graphics::PixelFormat BGRList[] = {
 #ifdef ENABLE_32BIT
-	// ABGR8888, BGRA8888, BGR888
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
-	Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
-	Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
+		// ABGR8888, BGRA8888, BGR888
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+		Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
+		Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
 #endif
-	// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
-	Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
-	Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
-	Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
-	Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
-	Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
-};
-
-// TODO: prioritize matching alpha masks
-Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
-	static Common::List<Graphics::PixelFormat> list;
-	static bool inited = false;
-
-	if (inited)
-		return list;
-
-	bool BGR = false;
-	int listLength = ARRAYSIZE(RGBList);
+		// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
+		Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
+		Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
+		Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
+		Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
+	};
 
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
 	if (_hwscreen) {
@@ -267,31 +277,32 @@ Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
 			format.aLoss = 8;
 
 		// Push it first, as the prefered format.
-		list.push_back(format);
-
-		if (format.bShift > format.rShift)
-			BGR = true;
-
-		// Mark that we don't need to do this any more.
-		inited = true;
+		_supportedFormats.push_back(format);
 	}
 
-	for (int i = 0; i < listLength; i++) {
-		if (inited && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
+	// TODO: prioritize matching alpha masks
+	int i;
+
+	// Push some RGB formats
+	for (i = 0; i < ARRAYSIZE(RGBList); i++) {
+		if (_hwscreen && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
-		if (BGR) {
-			if (BGRList[i] != format)
-				list.push_back(BGRList[i]);
-			list.push_back(RGBList[i]);
-		} else {
-			if (RGBList[i] != format)
-				list.push_back(RGBList[i]);
-			list.push_back(BGRList[i]);
-		}
+		if (RGBList[i] != format)
+			_supportedFormats.push_back(RGBList[i]);
 	}
-	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
-	return list;
+
+	// Push some BGR formats
+	for (i = 0; i < ARRAYSIZE(BGRList); i++) {
+		if (_hwscreen && (BGRList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (BGRList[i] != format)
+			_supportedFormats.push_back(BGRList[i]);
+	}
+
+	// Finally, we always supposed 8 bit palette graphics
+	_supportedFormats.push_back(Graphics::PixelFormat::createFormatCLUT8());
 }
+
 #endif
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
@@ -573,6 +584,10 @@ bool OSystem_SDL::loadGFXMode() {
 	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
+#ifdef USE_RGB_COLOR
+	detectSupportedFormats();
+#endif
+
 	if (_hwscreen == NULL) {
 		// DON'T use error(), as this tries to bring up the debug
 		// console, which WON'T WORK now that _hwscreen is hosed.
@@ -768,7 +783,8 @@ void OSystem_SDL::internUpdateScreen() {
 #endif
 
 	// If the shake position changed, fill the dirty area with blackness
-	if (_currentShakePos != _newShakePos) {
+	if (_currentShakePos != _newShakePos || 
+		(_mouseNeedsRedraw && _mouseBackup.y <= _currentShakePos)) {
 		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
 
 		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
@@ -1377,6 +1393,10 @@ void OSystem_SDL::setMousePos(int x, int y) {
 void OSystem_SDL::warpMouse(int x, int y) {
 	int y1 = y;
 
+	// Don't change mouse position, when mouse is outside of our window (in case of windowed mode)
+	if (!(SDL_GetAppState( ) & SDL_APPMOUSEFOCUS))
+		return;
+
 	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 		y1 = real2Aspect(y);
 
@@ -1662,7 +1682,7 @@ void OSystem_SDL::undrawMouse() {
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+		addDirtyRect(x, y - _currentShakePos, _mouseBackup.w, _mouseBackup.h);
 }
 
 void OSystem_SDL::drawMouse() {

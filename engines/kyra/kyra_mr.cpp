@@ -369,9 +369,7 @@ void KyraEngine_MR::playVQA(const char *name) {
 	VQAMovie vqa(this, _system);
 
 	char filename[20];
-	int size = 0;		// TODO: Movie size is 0, 1 or 2.
-
-	snprintf(filename, sizeof(filename), "%s%d.VQA", name, size);
+	snprintf(filename, sizeof(filename), "%s%d.VQA", name, _configVQAQuality);
 
 	if (vqa.open(filename)) {
 		for (int i = 0; i < 4; ++i) {
@@ -1129,7 +1127,7 @@ void KyraEngine_MR::updateWithText() {
 
 	restorePage3();
 	drawAnimObjects();
-	if (textEnabled() && _chatText) {
+	if (_chatTextEnabled && _chatText) {
 		int curPage = _screen->_curPage;
 		_screen->_curPage = 2;
 		objectChatPrintText(_chatText, _chatObject);
@@ -1460,6 +1458,8 @@ void KyraEngine_MR::registerDefaultSettings() {
 	ConfMan.registerDefault("studio_audience", true);
 	ConfMan.registerDefault("skip_support", true);
 	ConfMan.registerDefault("helium_mode", false);
+	// 0 - best, 1 - mid, 2 - low
+	ConfMan.registerDefault("video_quality", 0);
 }
 
 void KyraEngine_MR::writeSettings() {
@@ -1490,11 +1490,12 @@ void KyraEngine_MR::writeSettings() {
 }
 
 void KyraEngine_MR::readSettings() {
-	KyraEngine_v1::readSettings();
+	KyraEngine_v2::readSettings();
 
 	_configStudio = ConfMan.getBool("studio_audience");
 	_configSkip = ConfMan.getBool("skip_support");
 	_configHelium = ConfMan.getBool("helium_mode");
+	_configVQAQuality = CLIP(ConfMan.getInt("video_quality"), 0, 2);
 }
 
 } // End of namespace Kyra

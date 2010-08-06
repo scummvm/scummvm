@@ -28,7 +28,6 @@
  
 #include "common/scummsys.h" 
 #include "backends/platform/psp/audio.h"
-#include "backends/platform/psp/thread.h"
 
 //#define __PSP_DEBUG_FUNCS__	/* For debugging function calls */
 //#define __PSP_DEBUG_PRINT__	/* For debug printouts */
@@ -85,43 +84,13 @@ bool PspAudio::open(uint32 freq, uint32 numOfChannels, uint32 numOfSamples, call
 	_init = true;
 	_paused = true;	// start in paused mode
 	
-	createThread();
+	threadCreateAndStart("audioThread", PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD);	// start the consumer thread
 	
 	return true;
 }
-
-bool PspAudio::createThread() {
-	DEBUG_ENTER_FUNC();
-	int threadId = sceKernelCreateThread("audioThread", thread, PRIORITY_AUDIO_THREAD, STACK_AUDIO_THREAD, THREAD_ATTR_USER, 0); 
-	
-	if (threadId < 0) {	// error
-		PSP_ERROR("failed to create audio thread. Error code %d\n", threadId);
-		return false;
-	}
-	
-	PspAudio *_this = this;	// trick to get into context when the thread starts
-	
-	if (sceKernelStartThread(threadId, sizeof(uint32 *), &_this) < 0) {
-		PSP_ERROR("failed to start thread %d\n", threadId);
-		return false;
-	}
-	
-	PSP_DEBUG_PRINT("created audio thread[%x]\n", threadId);
-	
-	return true;
-}
-
-// Static function to be called upon thread startup. Will call a non-static function	
-int PspAudio::thread(SceSize, void *__this) {
-	DEBUG_ENTER_FUNC();
-	PspAudio *_this = *(PspAudio **)__this;		// get our this for the context
-	
-	_this->audioThread();
-	return 0;
-};
 
 // The real thread function
-void PspAudio::audioThread() {	
+void PspAudio::threadFunction() {	
 	assert(_callback);
 	PSP_DEBUG_PRINT_FUNC("audio thread started\n");
 
@@ -129,15 +98,15 @@ void PspAudio::audioThread() {
 		if (_paused)
 			PSP_DEBUG_PRINT("audio thread paused\n");
 		while (_paused) {	// delay until we stop pausing
-			sceKernelDelayThread(100000);	// 100ms
+			PspThread::delayMicros(100000);	// 100ms
 			if (!_paused)
 				PSP_DEBUG_PRINT("audio thread unpaused\n");
 		}
 
-		PSP_DEBUG_PRINT("remaining samples[%d]\n", remainingSamples);
+		PSP_DEBUG_PRINT("remaining samples[%d]\n", _remainingSamples);
 
 		PSP_DEBUG_PRINT("filling buffer[%d]\n", _bufferToFill);
-		_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in
+		_callback(_userData, _buffers[_bufferToFill], _bufferSize); // ask mixer to fill in data
 		nextBuffer(_bufferToFill);
 		
 		PSP_DEBUG_PRINT("playing buffer[%d].\n", _bufferToPlay);
@@ -151,7 +120,7 @@ void PspAudio::audioThread() {
 	PSP_DEBUG_PRINT("audio thread exiting. ****************************\n");
 }
 
-// Much faster than using %
+// Much faster than using %, especially with conditional moves (MIPS)
 inline void PspAudio::nextBuffer(int &bufferIdx) {
 	DEBUG_ENTER_FUNC();
 	bufferIdx++;
@@ -176,6 +145,6 @@ inline bool PspAudio::playBuffer() {
 }
 
 void PspAudio::close() {
-	PSP_DEBUG_PRINT("close had been called ***************\n");
+	PSP_DEBUG_PRINT("close has been called ***************\n");
 	_init = false; 
 }

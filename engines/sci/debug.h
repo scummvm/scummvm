@@ -26,8 +26,8 @@
 #ifndef SCI_DEBUG_H
 #define SCI_DEBUG_H
 
+#include "common/list.h"
 #include "sci/engine/vm_types.h"	// for StackPtr
-#include "sci/engine/vm.h"			// for ExecStack
 
 namespace Sci {
 
@@ -57,8 +57,8 @@ enum DebugSeeking {
 	kDebugSeekCallk = 1,        // Step forward until callk is found
 	kDebugSeekLevelRet = 2,     // Step forward until returned from this level
 	kDebugSeekSpecialCallk = 3, // Step forward until a /special/ callk is found
-	kDebugSeekSO = 4,           // Step forward until specified PC (after the send command) and stack depth
-	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
+	kDebugSeekGlobal = 4,       // Step forward until one specified global variable is modified
+	kDebugSeekStepOver = 5      // Step forward until we reach same stack-level again
 };
 
 struct DebugState {
@@ -79,7 +79,6 @@ struct DebugState {
 extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
-extern DebugState g_debugState;
 
 } // End of namespace Sci
 

@@ -39,12 +39,13 @@ class SpriteSlotSubset;
 
 class AnimMessage {
 public:
-	char msg[70];
+	int16 soundId;
+	char msg[64];
 	Common::Point pos;
 	RGB8 rgb1, rgb2;
-	int kernelMsgIndex;
-
+	uint16 flags;
 	int startFrame, endFrame;
+	int kernelMsgIndex;
 };
 
 class AnimFrameEntry {
@@ -57,6 +58,7 @@ public:
 class AnimMiscEntry {
 public:
 	int soundNum;
+	int msgIndex;
 	int numTicks;
 	Common::Point posAdjust;
 };
@@ -82,11 +84,13 @@ private:
 	int _spriteListIndex;
 	int _scrollX;
 	int _scrollY;
+	int _scrollTicks;
 	Common::String _interfaceFile;
 	Common::String _spriteSetNames[10];
 	Common::String _lbmFilename;
 	Common::String _spritesFilename;
 	Common::String _soundName;
+	Common::String _dsrName;
 	Common::Array<int> _spriteListIndexes;
 
 	int _currentFrame, _oldFrameEntry;
@@ -96,24 +100,28 @@ private:
 	int _unkIndex;
 	Common::Point _unkList[2];
 	uint32 _nextFrameTimer;
+	uint32 _nextScrollTimer;
 	int _messageCtr;
 	int _abortTimers;
 	AbortTimerMode _abortMode;
-	uint16 _actionNouns[3];
+	ActionDetails _actionNouns;
 
 	void load1(int frameNumber);
 	bool proc1(SpriteAsset &spriteSet, const Common::Point &pt, int frameNumber);
 	void loadInterface(M4Surface *&interfaceSurface, M4Surface *&depthSurface);
+	bool hasScroll() const { return (_scrollX != 0) || (_scrollY != 0); }
 public:
 	MadsAnimation(MadsM4Engine *vm, MadsView *view);
 	virtual ~MadsAnimation();
 
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *interfaceSurface, M4Surface *sceneSurface);
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface);
 	virtual void load(const Common::String &filename, int abortTimers);
 	virtual void update();
 	virtual void setCurrentFrame(int frameNumber);
+	virtual int getCurrentFrame();
 
 	bool freeFlag() const { return _freeFlag; }
+	bool getAnimMode() const { return _animMode; }
 	int roomNumber() const { return _roomNumber; }
 };
 

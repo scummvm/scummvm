@@ -27,7 +27,7 @@
 #include "backends/fs/ds/ds-fs.h"
 #include "dsmain.h" //for the isGBAMPAvailable() function
 
-DECLARE_SINGLETON(DSFilesystemFactory);
+DECLARE_SINGLETON(DSFilesystemFactory)
 
 AbstractFSNode *DSFilesystemFactory::makeRootFileNode() const {
 	if (DS::isGBAMPAvailable()) {

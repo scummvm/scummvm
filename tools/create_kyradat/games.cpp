@@ -411,6 +411,8 @@ const int kyra1TownsNeed[] = {
 	k1NewGameString,
 	k1ConfigStrings,
 
+	k1TownsMusicFadeTable,
+	k1TownsMusicFadeTable,
 	k1TownsSFXwdTable,
 	k1TownsSFXbtTable,
 	k1TownsCDATable,

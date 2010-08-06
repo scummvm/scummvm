@@ -611,14 +611,6 @@ void Screen::fadePalette(const Palette &pal, int delay, const UpdateFunctor *upF
 		_vm->delay((delayAcc >> 8) * 1000 / 60);
 		delayAcc &= 0xFF;
 	}
-
-	if (_vm->shouldQuit()) {
-		setScreenPalette(pal);
-		if (upFunc && upFunc->isValid())
-			(*upFunc)();
-		else
-			_system->updateScreen();
-	}
 }
 
 void Screen::getFadeParams(const Palette &pal, int delay, int &delayInc, int &diff) {

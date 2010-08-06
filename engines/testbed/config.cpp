@@ -61,12 +61,12 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 	_testListDisplay->setEditable(false);
 
 	if (selected > (tsList.size() - selected)) {
-		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Deselect All", kTestbedDeselectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Deselect All", 0, kTestbedDeselectAll, 0);
 	} else {
-		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Select All", kTestbedSelectAll, 0);
+		_selectButton = new GUI::ButtonWidget(this, "Browser.Up", "Select All", 0, kTestbedSelectAll, 0);
 	}
-	new GUI::ButtonWidget(this, "Browser.Cancel", "Run tests", GUI::kCloseCmd);
-	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", kTestbedQuitCmd);
+	new GUI::ButtonWidget(this, "Browser.Cancel", "Run tests", 0, GUI::kCloseCmd);
+	new GUI::ButtonWidget(this, "Browser.Choose", "Exit Testbed", 0, kTestbedQuitCmd);
 }
 
 TestbedOptionsDialog::~TestbedOptionsDialog() {}
@@ -141,7 +141,7 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 		xOffset = _xOffset;
 	}
 	_yOffset += yPadding;
-	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, xOffset, _yOffset, w, h, name, 0, cmd));
 	_yOffset += h;
 }
 
@@ -155,7 +155,7 @@ void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, Common::A
 }
 
 void TestbedInteractionDialog::addButtonXY(uint x, uint y, uint w, uint h, const Common::String name, uint32 cmd) {	
-	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, cmd));
+	_buttonArray.push_back(new GUI::ButtonWidget(this, x, _yOffset, w, h, name, 0, cmd));
 }
 
 void TestbedInteractionDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {

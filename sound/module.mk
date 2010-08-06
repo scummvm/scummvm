@@ -17,6 +17,7 @@ MODULE_OBJS := \
 	decoders/aiff.o \
 	decoders/flac.o \
 	decoders/iff_sound.o \
+	decoders/mac_snd.o \
 	decoders/mp3.o \
 	decoders/raw.o \
 	decoders/vag.o \
@@ -35,6 +36,10 @@ MODULE_OBJS := \
 	softsynth/opl/dbopl.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \
+	softsynth/fmtowns_pc98/towns_audio.o \
+	softsynth/fmtowns_pc98/towns_euphony.o \
+	softsynth/fmtowns_pc98/towns_pc98_driver.o \
+	softsynth/fmtowns_pc98/towns_pc98_fmsynth.o \
 	softsynth/ym2612.o \
 	softsynth/fluidsynth.o \
 	softsynth/mt32.o \

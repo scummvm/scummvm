@@ -418,7 +418,7 @@ Bits Operator::TemplateVolume(  ) {
 		}
 		//In sustain phase, but not sustaining, do regular release
 	case RELEASE:
-		vol += RateForward( releaseAdd );;
+		vol += RateForward( releaseAdd );
 		if ( GCC_UNLIKELY(vol >= ENV_MAX) ) {
 			volume = ENV_MAX;
 			SetState( OFF );

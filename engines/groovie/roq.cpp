@@ -26,8 +26,9 @@
 // ROQ video player based on this specification by Dr. Tim Ferguson:
 // http://www.csse.monash.edu.au/~timf/videocodec/idroq.txt
 
-#include "groovie/groovie.h"
 #include "groovie/roq.h"
+#include "groovie/graphics.h"
+#include "groovie/groovie.h"
 
 #include "graphics/jpeg.h"
 

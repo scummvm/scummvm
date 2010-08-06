@@ -29,37 +29,23 @@
 
 namespace Agi {
 
-static uint8 testObjRight(uint8, uint8, uint8, uint8, uint8);
-static uint8 testObjCentre(uint8, uint8, uint8, uint8, uint8);
-static uint8 testObjInBox(uint8, uint8, uint8, uint8, uint8);
-static uint8 testPosn(uint8, uint8, uint8, uint8, uint8);
-static uint8 testSaid(uint8, uint8 *);
-static uint8 testController(uint8);
-static uint8 testKeypressed();
-static uint8 testCompareStrings(uint8, uint8);
+#define ip (_game.logics[lognum].cIP)
+#define code (_game.logics[lognum].data)
 
-static AgiEngine *g_agi;
-#define game g_agi->_game
+#define testEqual(v1, v2)		(getvar(v1) == (v2))
+#define testLess(v1, v2)		(getvar(v1) < (v2))
+#define testGreater(v1, v2)	(getvar(v1) > (v2))
+#define testIsSet(flag)		(getflag(flag))
+#define testHas(obj)			(objectGetLocation(obj) == EGO_OWNED)
+#define testObjInRoom(obj, v)	(objectGetLocation(obj) == getvar(v))
 
-#define ip (game.logics[lognum].cIP)
-#define code (game.logics[lognum].data)
-
-#define testEqual(v1, v2)		(g_agi->getvar(v1) == (v2))
-#define testLess(v1, v2)		(g_agi->getvar(v1) < (v2))
-#define testGreater(v1, v2)	(g_agi->getvar(v1) > (v2))
-#define testIsSet(flag)		(g_agi->getflag(flag))
-#define testHas(obj)			(g_agi->objectGetLocation(obj) == EGO_OWNED)
-#define testObjInRoom(obj, v)	(g_agi->objectGetLocation(obj) == g_agi->getvar(v))
-
-extern int timerHack;		// For the timer loop in MH1 logic 153
-
-static uint8 testCompareStrings(uint8 s1, uint8 s2) {
+uint8 AgiEngine::testCompareStrings(uint8 s1, uint8 s2) {
 	char ms1[MAX_STRINGLEN];
 	char ms2[MAX_STRINGLEN];
 	int j, k, l;
 
-	strcpy(ms1, game.strings[s1]);
-	strcpy(ms2, game.strings[s2]);
+	strcpy(ms1, _game.strings[s1]);
+	strcpy(ms2, _game.strings[s2]);
 
 	l = strlen(ms1);
 	for (k = 0, j = 0; k < l; k++) {
@@ -106,16 +92,16 @@ static uint8 testCompareStrings(uint8 s1, uint8 s2) {
 	return !strcmp(ms1, ms2);
 }
 
-static uint8 testKeypressed() {
-	int x = game.keypress;
+uint8 AgiEngine::testKeypressed() {
+	int x = _game.keypress;
 
-	game.keypress = 0;
+	_game.keypress = 0;
 	if (!x) {
-		int mode = game.inputMode;
+		InputMode mode = _game.inputMode;
 
-		game.inputMode = INPUT_NONE;
-		g_agi->mainCycle();
-		game.inputMode = mode;
+		_game.inputMode = INPUT_NONE;
+		mainCycle();
+		_game.inputMode = mode;
 	}
 
 	if (x)
@@ -124,12 +110,12 @@ static uint8 testKeypressed() {
 	return x;
 }
 
-static uint8 testController(uint8 cont) {
-	return (game.controllerOccured[cont] ? 1 : 0);
+uint8 AgiEngine::testController(uint8 cont) {
+	return (_game.controllerOccured[cont] ? 1 : 0);
 }
 
-static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &game.viewTable[n];
+uint8 AgiEngine::testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	VtEntry *v = &_game.viewTable[n];
 	uint8 r;
 
 	r = v->xPos >= x1 && v->yPos >= y1 && v->xPos <= x2 && v->yPos <= y2;
@@ -139,35 +125,35 @@ static uint8 testPosn(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
 	return r;
 }
 
-static uint8 testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &game.viewTable[n];
+uint8 AgiEngine::testObjInBox(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	VtEntry *v = &_game.viewTable[n];
 
 	return v->xPos >= x1 &&
 	    v->yPos >= y1 && v->xPos + v->xSize - 1 <= x2 && v->yPos <= y2;
 }
 
 // if n is in centre of box
-static uint8 testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &game.viewTable[n];
+uint8 AgiEngine::testObjCentre(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	VtEntry *v = &_game.viewTable[n];
 
 	return v->xPos + v->xSize / 2 >= x1 &&
 			v->xPos + v->xSize / 2 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // if nect N is in right corner
-static uint8 testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
-	VtEntry *v = &game.viewTable[n];
+uint8 AgiEngine::testObjRight(uint8 n, uint8 x1, uint8 y1, uint8 x2, uint8 y2) {
+	VtEntry *v = &_game.viewTable[n];
 
 	return v->xPos + v->xSize - 1 >= x1 &&
 			v->xPos + v->xSize - 1 <= x2 && v->yPos >= y1 && v->yPos <= y2;
 }
 
 // When player has entered something, it is parsed elsewhere
-static uint8 testSaid(uint8 nwords, uint8 *cc) {
-	int c, n = game.numEgoWords;
+uint8 AgiEngine::testSaid(uint8 nwords, uint8 *cc) {
+	int c, n = _game.numEgoWords;
 	int z = 0;
 
-	if (g_agi->getflag(fSaidAcceptedInput) || !g_agi->getflag(fEnteredCli))
+	if (getflag(fSaidAcceptedInput) || !getflag(fEnteredCli))
 		return false;
 
 	// FR:
@@ -198,7 +184,7 @@ static uint8 testSaid(uint8 nwords, uint8 *cc) {
 		case 1:	// any word
 			break;
 		default:
-			if (game.egoWords[c].id != z)
+			if (_game.egoWords[c].id != z)
 				return false;
 			break;
 		}
@@ -213,13 +199,12 @@ static uint8 testSaid(uint8 nwords, uint8 *cc) {
 	if (nwords != 0 && READ_LE_UINT16(cc) != 9999)
 		return false;
 
-	g_agi->setflag(fSaidAcceptedInput, true);
+	setflag(fSaidAcceptedInput, true);
 
 	return true;
 }
 
 int AgiEngine::testIfCode(int lognum) {
-	g_agi = this;
 	int ec = true;
 	int retval = true;
 	uint8 op = 0;
@@ -263,32 +248,32 @@ int AgiEngine::testIfCode(int lognum) {
 		case 0x01:
 			ec = testEqual(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x02:
 			ec = testEqual(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x03:
 			ec = testLess(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x04:
 			ec = testLess(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x05:
 			ec = testGreater(p[0], p[1]);
 			if (p[0] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x06:
 			ec = testGreater(p[0], getvar(p[1]));
 			if (p[0] == 11 || p[1] == 11)
-				timerHack++;
+				_timerHack++;
 			break;
 		case 0x07:
 			ec = testIsSet(p[0]);
@@ -319,7 +304,7 @@ int AgiEngine::testIfCode(int lognum) {
 			ip++;	// skip num_words opcode
 			break;
 		case 0x0F:
-			debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", game.strings[p[0]], game.strings[p[1]]);
+			debugC(7, kDebugLevelScripts, "comparing [%s], [%s]", _game.strings[p[0]], _game.strings[p[1]]);
 			ec = testCompareStrings(p[0], p[1]);
 			break;
 		case 0x10:
@@ -338,7 +323,7 @@ int AgiEngine::testIfCode(int lognum) {
 			// This command is used at least in the Amiga version of Gold Rush! v2.05 1989-03-09
 			// (AGI 2.316) in logics 1, 3, 5, 6, 137 and 192 (Logic.192 revealed this command's nature).
 			// TODO: Check this command's implementation using disassembly just to be sure.
-			ec = game.viewTable[0].flags & ADJ_EGO_XY;
+			ec = _game.viewTable[0].flags & ADJ_EGO_XY;
 			debugC(7, kDebugLevelScripts, "op_test: in.motion.using.mouse = %s (Amiga-specific testcase 19)", ec ? "true" : "false");
 			break;
 		default:

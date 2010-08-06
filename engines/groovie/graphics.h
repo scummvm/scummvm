@@ -26,6 +26,8 @@
 #ifndef GROOVIE_GRAPHICS_H
 #define GROOVIE_GRAPHICS_H
 
+#include "graphics/surface.h"
+
 namespace Groovie {
 
 class GroovieEngine;

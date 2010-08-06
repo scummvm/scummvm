@@ -67,7 +67,7 @@ enum SegmentType {
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
-	SEG_TYPE_STRING_FRAG = 10,	// obsolete, we keep it to be able to load old saves
+	// 10 used to be string fragments, now obsolete
 
 #ifdef ENABLE_SCI32
 	SEG_TYPE_ARRAY = 11,
@@ -80,10 +80,9 @@ enum SegmentType {
 struct SegmentObj : public Common::Serializable {
 	SegmentType _type;
 
-	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
-
 public:
 	static SegmentObj *createSegmentObj(SegmentType type);
+	static const char *getSegmentTypeName(SegmentType type);
 
 public:
 	SegmentObj(SegmentType type) : _type(type) {}
@@ -106,6 +105,7 @@ public:
 
 	/**
 	 * Finds the canonic address associated with sub_reg.
+	 * Used by the garbage collector.
 	 *
 	 * For each valid address a, there exists a canonic address c(a) such that c(a) = c(c(a)).
 	 * This address "governs" a in the sense that deallocating c(a) will deallocate a.
@@ -116,29 +116,32 @@ public:
 
 	/**
 	 * Deallocates all memory associated with the specified address.
+	 * Used by the garbage collector.
 	 * @param sub_addr		address (within the given segment) to deallocate
 	 */
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {}
 
 	/**
-	 * Iterates over and reports all addresses within the current segment.
-	 * @param note		Invoked for each address on which free_at_address() makes sense
-	 * @param param		parameter passed to 'note'
+	 * Iterates over and reports all addresses within the segment.
+	 * Used by the garbage collector.
+	 * @return a list of addresses within the segment
 	 */
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {}
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+		return Common::Array<reg_t>();
+	}
 
 	/**
 	 * Iterates over all references reachable from the specified object.
-	 * @param object	object (within the current segment) to analyse
-	 * @param param		parameter passed to 'note'
-	 * @param note		Invoked for each outgoing reference within the object
-	 * Note: This function may also choose to report numbers (segment 0) as adresses
+	 * Used by the garbage collector.
+	 * @param  object	object (within the current segment) to analyse
+	 * @return a list of outgoing references within the object
+	 *
+	 * @note This function may also choose to report numbers (segment 0) as adresses
 	 */
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const {}
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const {
+		return Common::Array<reg_t>();
+	}
 };
-
-
-struct IntMapper;
 
 enum {
 	SYS_STRINGS_MAX = 4,
@@ -195,7 +198,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -331,199 +334,6 @@ private:
 	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 };
 
-struct CodeBlock {
-	reg_t pos;
-	int size;
-};
-
-typedef Common::HashMap<uint16, Object> ObjMap;
-
-class Script : public SegmentObj {
-public:
-	int _nr; /**< Script number */
-	byte *_buf; /**< Static data buffer, or NULL if not used */
-	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
-
-	uint32 getScriptSize() { return _scriptSize; }
-	uint32 getHeapSize() { return _heapSize; }
-	uint32 getBufSize() { return _bufSize; }
-
-protected:
-	int _lockers; /**< Number of classes and objects that require this script */
-
-private:
-	size_t _scriptSize;
-	size_t _heapSize;
-	size_t _bufSize;
-
-	const uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
-	uint16 _numExports; /**< Number of entries in the exports table */
-
-	const byte *_synonyms; /**< Synonyms block or 0 if not present*/
-	uint16 _numSynonyms; /**< Number of entries in the synonyms block */
-
-	Common::Array<CodeBlock> _codeBlocks;
-
-public:
-	/**
-	 * Table for objects, contains property variables.
-	 * Indexed by the TODO offset.
-	 */
-	ObjMap _objects;
-
-	int _localsOffset;
-	SegmentId _localsSegment; /**< The local variable segment */
-	LocalVariables *_localsBlock;
-
-	bool _markedAsDeleted;
-
-public:
-	Script();
-	~Script();
-
-	void freeScript();
-	void init(int script_nr, ResourceManager *resMan);
-	void load(ResourceManager *resMan);
-
-	virtual bool isValidOffset(uint16 offset) const;
-	virtual SegmentRef dereference(reg_t pointer);
-	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
-
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-
-	Object *allocateObject(uint16 offset);
-	Object *getObject(uint16 offset);
-	const Object *getObject(uint16 offset) const;
-
-	/**
-	 * Informs the segment manager that a code block must be relocated
-	 * @param location	Start of block to relocate
-	 */
-	void scriptAddCodeBlock(reg_t location);
-
-	/**
-	 * Initializes an object within the segment manager
-	 * @param obj_pos	Location (segment, offset) of the object. It must
-	 * 					point to the beginning of the script/class block
-	 * 					(as opposed to what the VM considers to be the
-	 * 					object location)
-	 * @returns			A newly created Object describing the object,
-	 * 					stored within the relevant script
-	 */
-	Object *scriptObjInit(reg_t obj_pos, bool fullObjectInit = true);
-
-	/**
-	 * Removes a script object
-	 * @param obj_pos	Location (segment, offset) of the object.
-	 */
-	void scriptObjRemove(reg_t obj_pos);
-
-	/**
-	 * Processes a relocation block witin a script
-	 *  This function is idempotent, but it must only be called after all
-	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
-	 * @return			Location of the relocation block
-	 */
-	void relocate(reg_t block);
-
-private:
-	bool relocateLocal(SegmentId segment, int location);
-
-public:
-	// script lock operations
-
-	/** Increments the number of lockers of this script by one. */
-	void incrementLockers();
-
-	/** Decrements the number of lockers of this script by one. */
-	void decrementLockers();
-
-	/**
-	 * Retrieves the number of locks held on this script.
-	 * @return the number of locks held on the previously identified script
-	 */
-	int getLockers() const;
-
-	/** Sets the number of locks held on this script. */
-	void setLockers(int lockers);
-
-	/**
-	 * Retrieves a pointer to the exports of this script
-	 * @return	pointer to the exports.
-	 */
-	const uint16 *getExportTable() const { return _exportTable; }
-
-	/**
-	 * Retrieves the number of exports of script.
-	 * @return	the number of exports of this script
-	 */
-	uint16 getExportsNr() const { return _numExports; }
-
-	/**
-	 * Retrieves a pointer to the synonyms associated with this script
-	 * @return	pointer to the synonyms, in non-parsed format.
-	 */
-	const byte *getSynonyms() const { return _synonyms; }
-
-	/**
-	 * Retrieves the number of synonyms associated with this script.
-	 * @return	the number of synonyms associated with this script
-	 */
-	uint16 getSynonymsNr() const { return _numSynonyms; }
-
-	/**
-	 * Validate whether the specified public function is exported by
-	 * the script in the specified segment.
-	 * @param pubfunct		Index of the function to validate
-	 * @return				NULL if the public function is invalid, its
-	 * 						offset into the script's segment otherwise
-	 */
-	uint16 validateExportFunc(int pubfunct);
-
-	/**
-	 * Marks the script as deleted.
-	 * This will not actually delete the script.  If references remain present on the
-	 * heap or the stack, the script will stay in memory in a quasi-deleted state until
-	 * either unreachable (resulting in its eventual deletion) or reloaded (resulting
-	 * in its data being updated).
-	 */
-	void markDeleted() {
-		_markedAsDeleted = true;
-	}
-
-	/**
-	 * Determines whether the script is marked as being deleted.
-	 */
-	bool isMarkedAsDeleted() const {
-		return _markedAsDeleted;
-	}
-
-	/**
-	 * Copies a byte string into a script's heap representation.
-	 * @param dst	script-relative offset of the destination area
-	 * @param src	pointer to the data source location
-	 * @param n		number of bytes to copy
-	 */
-	void mcpyInOut(int dst, const void *src, size_t n);
-
-
-	/**
-	 * Retrieves a 16 bit value from within a script's heap representation.
-	 * @param offset	offset to read from
-	 * @return the value read from the specified location
-	 */
-	int16 getHeap(uint16 offset) const;
-
-	/**
-	 * Finds the pointer where a block of a specific type starts from
-	 */
-	byte *findBlock(int type);
-};
-
 /** Data stack */
 struct DataStack : SegmentObj {
 	int _capacity; /**< Number of stack entries */
@@ -542,7 +352,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -630,10 +440,12 @@ public:
 		entries_used--;
 	}
 
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const {
+		Common::Array<reg_t> tmp;
 		for (uint i = 0; i < _table.size(); i++)
 			if (isValidEntry(i))
-				(*note)(param, make_reg(segId, i));
+				tmp.push_back(make_reg(segId, i));
+		return tmp;
 	}
 };
 
@@ -643,7 +455,7 @@ struct CloneTable : public Table<Clone> {
 	CloneTable() : Table<Clone>(SEG_TYPE_CLONES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -654,7 +466,7 @@ struct NodeTable : public Table<Node> {
 	NodeTable() : Table<Node>(SEG_TYPE_NODES) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -665,7 +477,7 @@ struct ListTable : public Table<List> {
 	ListTable() : Table<List>(SEG_TYPE_LISTS) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -678,7 +490,10 @@ struct HunkTable : public Table<Hunk> {
 	virtual void freeEntry(int idx) {
 		Table<Hunk>::freeEntry(idx);
 
+		if (!_table[idx].mem)
+			warning("Attempt to free an already freed hunk");
 		free(_table[idx].mem);
+		_table[idx].mem = 0;
 	}
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -701,7 +516,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) const;
-	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllDeallocatable(SegmentId segId) const;
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -811,6 +626,7 @@ public:
 	byte getType() const { return _type; }
 	uint32 getSize() const { return _size; }
 	T *getRawData() { return _data; }
+	const T *getRawData() const { return _data; }
 
 protected:
 	int8 _type;
@@ -834,7 +650,7 @@ struct ArrayTable : public Table<SciArray<reg_t> > {
 	ArrayTable() : Table<SciArray<reg_t> >(SEG_TYPE_ARRAY) {}
 
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) const;
+	virtual Common::Array<reg_t> listAllOutgoingReferences(reg_t object) const;
 
 	void saveLoadWithSerializer(Common::Serializer &ser);
 	SegmentRef dereference(reg_t pointer);

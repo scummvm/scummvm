@@ -24,6 +24,7 @@
  */
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
 #include "sci/engine/selector.h"
 
@@ -103,6 +104,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR2(b_incr, "b-incr");
 	FIND_SELECTOR(xStep);
 	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(xLast);
+	FIND_SELECTOR(yLast);
 	FIND_SELECTOR(moveSpeed);
 	FIND_SELECTOR(canBeHere);	// cantBeHere
 	FIND_SELECTOR(heading);
@@ -157,7 +160,11 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(scaleSignal);
 	FIND_SELECTOR(scaleX);
 	FIND_SELECTOR(scaleY);
+	FIND_SELECTOR(maxScale);
+	FIND_SELECTOR(vanishingX);
+	FIND_SELECTOR(vanishingY);
 	FIND_SELECTOR(iconIndex);
+	FIND_SELECTOR(port);
 
 #ifdef ENABLE_SCI32
 	FIND_SELECTOR(data);
@@ -172,6 +179,13 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(dimmed);
 	FIND_SELECTOR(fore);
 	FIND_SELECTOR(back);
+	FIND_SELECTOR(fixPriority);
+	FIND_SELECTOR(mirrored);
+	FIND_SELECTOR(useInsetRect);
+	FIND_SELECTOR(inTop);
+	FIND_SELECTOR(inLeft);
+	FIND_SELECTOR(inBottom);
+	FIND_SELECTOR(inRight);
 #endif
 }
 
@@ -188,42 +202,37 @@ void writeSelector(SegManager *segMan, reg_t object, Selector selectorId, reg_t 
 	ObjVarRef address;
 
 	if ((selectorId < 0) || (selectorId > (int)g_sci->getKernel()->getSelectorNamesSize())) {
-		warning("Attempt to write to invalid selector %d of"
+		error("Attempt to write to invalid selector %d of"
 		         " object at %04x:%04x.", selectorId, PRINT_REG(object));
 		return;
 	}
 
 	if (lookupSelector(segMan, object, selectorId, &address, NULL) != kSelectorVariable)
-		warning("Selector '%s' of object at %04x:%04x could not be"
+		error("Selector '%s' of object at %04x:%04x could not be"
 		         " written to", g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
 	else
 		*address.getPointer(segMan) = value;
 }
 
-int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
+void invokeSelector(EngineState *s, reg_t object, int selectorId, 
 	int k_argc, StackPtr k_argp, int argc, const reg_t *argv) {
 	int i;
 	int framesize = 2 + 1 * argc;
-	reg_t address;
 	int slc_type;
 	StackPtr stackframe = k_argp + k_argc;
 
 	stackframe[0] = make_reg(0, selectorId);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, &address);
+	slc_type = lookupSelector(s->_segMan, object, selectorId, NULL, NULL);
 
 	if (slc_type == kSelectorNone) {
-		warning("Selector '%s' of object at %04x:%04x could not be invoked",
+		error("Selector '%s' of object at %04x:%04x could not be invoked",
 		         g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-		if (noinvalid == kStopOnInvalidSelector)
-			error("[Kernel] Not recoverable: VM was halted");
-		return 1;
 	}
 	if (slc_type == kSelectorVariable) {
-		warning("Attempting to invoke variable selector %s of object %04x:%04x",
+		error("Attempting to invoke variable selector %s of object %04x:%04x",
 			g_sci->getKernel()->getSelectorName(selectorId).c_str(), PRINT_REG(object));
-		return 0;
 	}
 
 	for (i = 0; i < argc; i++)
@@ -237,25 +246,7 @@ int invokeSelectorArgv(EngineState *s, reg_t object, int selectorId, SelectorInv
 	xstack->sp += argc + 2;
 	xstack->fp += argc + 2;
 
-	run_vm(s, false); // Start a new vm
-
-	return 0;
-}
-
-int invokeSelector(EngineState *s, reg_t object, int selectorId, SelectorInvocation noinvalid,
-	int k_argc, StackPtr k_argp, int argc, ...) {
-	va_list argp;
-	reg_t *args = new reg_t[argc];
-
-	va_start(argp, argc);
-	for (int i = 0; i < argc; i++)
-		args[i] = va_arg(argp, reg_t);
-	va_end(argp);
-
-	int retval = invokeSelectorArgv(s, object, selectorId, noinvalid, k_argc, k_argp, argc, args);
-
-	delete[] args;
-	return retval;
+	run_vm(s); // Start a new vm
 }
 
 SelectorType lookupSelector(SegManager *segMan, reg_t obj_location, Selector selectorId, ObjVarRef *varp, reg_t *fptr) {

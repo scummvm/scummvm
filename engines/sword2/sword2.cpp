@@ -326,12 +326,20 @@ void Sword2Engine::registerDefaultSettings() {
 }
 
 void Sword2Engine::syncSoundSettings() {
-	// Sound settings. At the time of writing, not all of these can be set
-	// by the global options dialog, but it seems silly to split them up.
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
 	setSubtitles(ConfMan.getBool("subtitles"));
+
+	// Our own settings dialog can mute the music, speech and sound effects
+	// individually. ScummVM's settings dialog has one master mute setting.
+
+	if (ConfMan.getBool("mute")) {
+		ConfMan.setBool("music_mute", true);
+		ConfMan.setBool("speech_mute", true);
+		ConfMan.setBool("sfx_mute", true);
+	}
+
 	_sound->muteMusic(ConfMan.getBool("music_mute"));
 	_sound->muteSpeech(ConfMan.getBool("speech_mute"));
 	_sound->muteFx(ConfMan.getBool("sfx_mute"));
@@ -355,6 +363,13 @@ void Sword2Engine::writeSettings() {
 	ConfMan.setBool("subtitles", getSubtitles());
 	ConfMan.setBool("object_labels", _mouse->getObjectLabels());
 	ConfMan.setInt("reverse_stereo", _sound->isReverseStereo());
+
+	// If even one sound type is unmuted, we can't say that all sound is
+	// muted.
+
+	if (!_sound->isMusicMute() || !_sound->isSpeechMute() || !_sound->isFxMute()) {
+		ConfMan.setBool("mute", false);
+	}
 
 	ConfMan.flushToDisk();
 }
@@ -458,8 +473,7 @@ Common::Error Sword2Engine::run() {
 	_screen->initialiseRenderCycle();
 
 	while (1) {
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 #ifdef SWORD2_DEBUG
 		if (_stepOneCycle) {

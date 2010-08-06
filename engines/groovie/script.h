@@ -26,12 +26,16 @@
 #ifndef GROOVIE_SCRIPT_H
 #define GROOVIE_SCRIPT_H
 
-#include "common/file.h"
 #include "common/random.h"
 #include "common/rect.h"
 
-#include "groovie/font.h"
-#include "groovie/cell.h"
+namespace Common {
+class SeekableReadStream;
+}
+
+namespace Graphics {
+struct Surface;
+}
 
 namespace Groovie {
 
@@ -40,8 +44,9 @@ enum EngineVersion {
 	kGroovieV2
 };
 
-class GroovieEngine;
 class CellGame;
+class Debugger;
+class GroovieEngine;
 
 class Script {
 	friend class Debugger;
@@ -112,7 +117,6 @@ private:
 	uint16 _hotspotSlot;
 
 	// Video
-	Font *_font;
 	Common::SeekableReadStream *_videoFile;
 	uint32 _videoRef;
 	uint16 _bitflags;
@@ -140,6 +144,7 @@ private:
 	void loadgame(uint slot);
 	void savegame(uint slot);
 	bool playvideofromref(uint32 fileref);
+	void printString(Graphics::Surface *surface, const char *str);
 
 	// Opcodes
 	typedef void (Script::*OpcodeFunc)();

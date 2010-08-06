@@ -197,10 +197,8 @@ void RegisterActors(int num) {
 }
 
 void FreeActors() {
-	if (actorInfo) {
-		free(actorInfo);
-		actorInfo = NULL;
-	}
+	free(actorInfo);
+	actorInfo = NULL;
 }
 
 /**

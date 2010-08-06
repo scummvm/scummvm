@@ -25,7 +25,7 @@ ifeq "$(HAVE_GCC)" "1"
 	# Turn off some annoying and not-so-useful warnings
 	CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 	# Enable even more warnings...
-	CXXFLAGS+= -Wpointer-arith -Wcast-qual -Wcast-align
+	CXXFLAGS+= -Wpointer-arith -Wcast-qual
 	CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
 
 	# Currently we disable this gcc flag, since it will also warn in cases,

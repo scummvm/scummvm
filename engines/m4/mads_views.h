@@ -36,6 +36,69 @@ namespace M4 {
 
 class MadsView;
 
+enum MadsActionMode {ACTMODE_NONE = 0, ACTMODE_VERB = 1, ACTMODE_OBJECT = 3, ACTMODE_TALK = 6};
+enum MAdsActionMode2 {ACTMODE2_0 = 0, ACTMODE2_2 = 2, ACTMODE2_4 = 4, ACTMODE2_5 = 5};
+
+struct ActionDetails {
+	int verbId;
+	int objectNameId;
+	int indirectObjectId;
+};
+
+struct MadsActionSavedFields {
+	int articleNumber;
+	int actionMode;
+	int actionMode2;
+	bool lookFlag;
+	int selectedRow;
+};
+
+class MadsAction {
+private:
+	MadsView &_owner;
+	char _statusText[100];
+	char _dialogTitle[100];
+
+	void appendVocab(int vocabId, bool capitalise = false);
+public:
+	ActionDetails _action, _activeAction;
+	int _currentAction;
+	int8 _flags1, _flags2;
+	MadsActionMode _actionMode;
+	MAdsActionMode2 _actionMode2;
+	int _articleNumber;
+	bool _lookFlag;
+	int _selectedRow;
+	bool _textChanged;
+	int _selectedAction;
+	bool _startWalkFlag;
+	int _statusTextIndex;
+	int _hotspotId;
+	MadsActionSavedFields _savedFields;
+	bool _walkFlag;
+
+	// Unknown fields
+	int16 _v86F3A;
+	int16 _v86F42;
+	int16 _v86F4E;
+	bool _v86F4A;
+	int16 _v86F4C;
+	int _v83338;
+	bool _inProgress;
+	bool _v8453A;
+
+public:
+	MadsAction(MadsView &owner);
+
+	void clear();
+	void set();
+	const char *statusText() const { return _statusText; }
+	void refresh();
+	void startAction();
+	void checkAction();
+	bool isAction(int verbId, int objectNameId = 0, int indirectObjectId = 0);
+};
+
 enum AbortTimerMode {ABORTMODE_0 = 0, ABORTMODE_1 = 1, ABORTMODE_2 = 2};
 
 class SpriteSlotSubset {
@@ -92,13 +155,14 @@ public:
 	}
 
 	int getIndex();
-	int addSprites(const char *resName);
+	int addSprites(const char *resName, bool suppressErrors = false, int flags = 0);
+	int addSprites(SpriteAsset *spriteSet);
 	void deleteSprites(int listIndex);
 	void clear();
 	void deleteTimer(int seqIndex);
 
 	void drawBackground();
-	void drawForeground(View *view, int yOffset);
+	void drawForeground(M4Surface *viewport);
 	void setDirtyAreas();
 	void fullRefresh();
 	void cleanUp();
@@ -139,7 +203,7 @@ public:
 
 	int add(int xp, int yp, uint fontColour, int charSpacing, const char *msg, Font *font);
 	void clear();
-	void draw(View *view, int yOffset);
+	void draw(M4Surface *view);
 	void setDirtyAreas();
 	void setDirtyAreas2();
 	void cleanUp();
@@ -148,7 +212,7 @@ public:
 #define TIMED_TEXT_SIZE 10
 #define INDEFINITE_TIMEOUT 9999999
 
-enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_OWNER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
+enum KernelMessageFlags {KMSG_QUOTED = 1, KMSG_PLAYER_TIMEOUT = 2, KMSG_SEQ_ENTRY = 4, KMSG_SCROLL = 8, KMSG_RIGHT_ALIGN = 0x10, 
 	KMSG_CENTER_ALIGN = 0x20, KMSG_EXPIRE = 0x40, KMSG_ACTIVE = 0x80};
 
 class MadsKernelMessageEntry {
@@ -170,6 +234,10 @@ public:
 	AbortTimerMode abortMode;
 	uint16 actionNouns[3];
 	char msg[100];
+
+	MadsKernelMessageEntry() {
+		flags = 0;
+	}
 };
 
 class MadsKernelMessageList {
@@ -206,10 +274,20 @@ public:
 
 class ScreenObjects {
 private:
+	MadsView &_owner;
 	Common::Array<ScreenObjectEntry> _entries;
 public:
-	ScreenObjects() {}
+	int _v832EC;
+	int _v7FECA;
+	int _v7FED6;
+	int _v8332A;
+	int _yp;
+	int _v8333C;
+	int _selectedObject;
+	int _category;
+	int _objectIndex;
 
+	ScreenObjects(MadsView &owner);
 	ScreenObjectEntry &operator[](uint idx) {
 		assert(idx <= _entries.size());
 		return _entries[idx - 1];
@@ -221,6 +299,7 @@ public:
 	int scan(int xp, int yp, int layer);
 	int scanBackwards(int xp, int yp, int layer);
 	void setActive(int category, int idx, bool active);
+	void check(bool scanFlag, bool mouseClick);
 };
 
 class DynamicHotspot {
@@ -246,7 +325,7 @@ private:
 	Common::Array<DynamicHotspot> _entries;
 	int _count;
 public:
-	bool _flag;
+	bool _changed;
 public:
 	MadsDynamicHotspots(MadsView &owner);
 
@@ -256,6 +335,9 @@ public:
 	int set17(int index, int v);
 	void remove(int index);
 	void reset();
+	void refresh() {
+		// TODO
+	}
 };
 
 class MadsDirtyArea {
@@ -289,7 +371,8 @@ public:
 	void merge(int startIndex, int count);
 	bool intersects(int idx1, int idx2);
 	void mergeAreas(int idx1, int idx2);
-	void copy(M4Surface *dest, M4Surface *src, int yOffset);
+	void copy(M4Surface *dest, M4Surface *src, const Common::Point &posAdjust);
+	void clear();
 };
 
 enum SpriteAnimType {ANIMTYPE_CYCLED = 1, ANIMTYPE_REVERSIBLE = 2};
@@ -308,8 +391,7 @@ struct MadsSequenceSubEntries {
 struct MadsSequenceEntry {
 	int8 active;
 	int8 spriteListIndex;
-	
-	int field_2;
+	bool flipped;
 	
 	int frameIndex;
 	int frameStart;
@@ -349,9 +431,9 @@ public:
 	MadsSequenceEntry &operator[](int index) { return _entries[index]; }	
 	void clear();
 	bool addSubEntry(int index, SequenceSubEntryMode mode, int frameIndex, int abortVal);
-	int add(int spriteListIndex, int v0, int v1, int triggerCountdown, int delayTicks, int extraTicks, int numTicks, 
-		int msgX, int msgY, bool nonFixed, char scale, uint8 depth, int frameInc, SpriteAnimType animType, 
-		int numSprites, int frameStart);
+	int add(int spriteListIndex, bool flipped, int frameIndex, int triggerCountdown, int delayTicks, 
+		int extraTicks, int numTicks, int msgX, int msgY, bool nonFixed, char scale, uint8 depth,
+		int frameInc, SpriteAnimType animType, int numSprites, int frameStart);
 	void remove(int seqIndex);
 	void setSpriteSlot(int seqIndex, MadsSpriteSlot &spriteSlot);
 	bool loadSprites(int seqIndex);
@@ -359,6 +441,7 @@ public:
 	void delay(uint32 v1, uint32 v2);
 	void setAnimRange(int seqIndex, int startVal, int endVal);
 	void scan();
+	void setDepth(int seqIndex, int depth);
 };
 
 class Animation {
@@ -367,10 +450,11 @@ protected:
 public:
 	Animation(MadsM4Engine *vm);
 	virtual ~Animation();
-	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *walkSurface, M4Surface *sceneSurface) = 0;
+	virtual void initialise(const Common::String &filename, uint16 flags, M4Surface *surface, M4Surface *depthSurface) = 0;
 	virtual void load(const Common::String &filename, int v0) = 0;
 	virtual void update() = 0;
 	virtual void setCurrentFrame(int frameNumber) = 0;
+	virtual int getCurrentFrame() = 0;
 };
 	
 
@@ -386,9 +470,9 @@ public:
 	MadsDynamicHotspots _dynamicHotspots;
 	MadsSequenceList _sequenceList;
 	MadsDirtyAreas _dirtyAreas;
+	MadsAction _action;
 
 	int _textSpacing;
-	int _ticksAmount;
 	uint32 _newTimeout;
 	int _abortTimers;
 	int8 _abortTimers2;
@@ -398,12 +482,15 @@ public:
 
 	M4Surface *_depthSurface;
 	M4Surface *_bgSurface;
-	int _yOffset;
+	M4Surface *_viewport;
 public:
 	MadsView(View *view);
 	~MadsView();
 
 	void refresh();
+	void update();
+	void clearLists();
+	void setViewport(const Common::Rect &bounds);
 };
 
 }

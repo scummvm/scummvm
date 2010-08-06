@@ -103,8 +103,8 @@ bool Console::cmdListHotSpots(int argc, const char **argv) {
 	if (_vm->isM4()) {
 		DebugPrintf("Scene parallax\n");
 		_m4Vm->scene()->getSceneResources().parallax->dump();
-		DebugPrintf("Scene props\n");
-		_vm->_scene->getSceneResources().props->dump();
+		DebugPrintf("Scene dynamic hotspots\n");
+		_vm->_scene->getSceneResources().dynamicHotspots->dump();
 	}
 	return true;
 }
@@ -196,7 +196,7 @@ bool Console::cmdShowSprite(int argc, const char **argv) {
 			if (y >= bg->height())
 				break;
 
-			spr->copyTo(bg, x, y, (int)spr->getTransparentColor());
+			spr->copyTo(bg, x, y, (int)spr->getTransparencyIndex());
 
 			x += spr->width();
 			yMax = MAX(yMax, spr->height());
@@ -400,9 +400,9 @@ bool M4Console::cmdSceneInfo(int argc, const char **argv) {
 	DebugPrintf("Scene resources:\n");
 	DebugPrintf("artBase: %s\n", _m4Vm->scene()->getSceneResources().artBase);
 	DebugPrintf("pictureBase: %s\n", _m4Vm->scene()->getSceneResources().pictureBase);
-	DebugPrintf("hotspotCount: %i\n", _m4Vm->scene()->getSceneResources().hotspotCount);
+	DebugPrintf("hotspotCount: %i\n", _m4Vm->scene()->getSceneResources().hotspots->size());
 	DebugPrintf("parallaxCount: %i\n", _m4Vm->scene()->getSceneResources().parallaxCount);
-	DebugPrintf("propsCount: %i\n", _m4Vm->scene()->getSceneResources().propsCount);
+	DebugPrintf("dynHotspotCount: %i\n", _m4Vm->scene()->getSceneResources().dynamicHotspots->size());
 	DebugPrintf("frontY: %i\n", _m4Vm->scene()->getSceneResources().frontY);
 	DebugPrintf("backY: %i\n", _m4Vm->scene()->getSceneResources().backY);
 	DebugPrintf("frontScale: %i\n", _m4Vm->scene()->getSceneResources().frontScale);

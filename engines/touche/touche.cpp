@@ -28,6 +28,8 @@
 #include "common/debug-channels.h"
 #include "common/events.h"
 #include "common/EventRecorder.h"
+#include "common/file.h"
+#include "common/fs.h"
 #include "common/system.h"
 
 #include "engines/util.h"
@@ -69,6 +71,10 @@ ToucheEngine::ToucheEngine(OSystem *system, Common::Language language)
 	_fullRedrawCounter = 0;
 	_menuRedrawCounter = 0;
 	memset(_paletteBuffer, 0, sizeof(_paletteBuffer));
+
+	const Common::FSNode gameDataDir(ConfMan.get("path"));
+
+	SearchMan.addSubDirectoryMatching(gameDataDir, "database");
 
 	DebugMan.addDebugChannel(kDebugEngine,   "Engine",   "Engine debug level");
 	DebugMan.addDebugChannel(kDebugGraphics, "Graphics", "Graphics debug level");

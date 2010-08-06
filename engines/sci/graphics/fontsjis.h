@@ -26,9 +26,11 @@
 #ifndef SCI_GRAPHICS_FONTSJIS_H
 #define SCI_GRAPHICS_FONTSJIS_H
 
-#include "graphics/sjis.h"
-
 #include "sci/graphics/helpers.h"
+
+namespace Graphics {
+	class FontSJIS;
+}
 
 namespace Sci {
 

@@ -65,9 +65,16 @@ enum SpeechConstants {
 	kStandardSpeed = 60
 };
 
-// One fading phase is 50ms.
 enum FadeConstants {
-	kFadingTimeUnit = 50
+	// One fading phase called from the game scripts is 50ms.
+	kFadingTimeUnit = 50,
+	// Fading in/out when entering/leaving a location takes 15 iterations of (at least) 7ms each.
+	kBlackFadingIterations = 15,
+	kBlackFadingTimeUnit = 7
+};
+
+enum AnimationConstants {
+	kTimeUnit = 20
 };
 
 /** Inventory related magical constants */
@@ -255,6 +262,8 @@ public:
 	GameItem *getItem(int id) { return id >= 0 && id < (int) _info._numItems ? &_items[id] : NULL; }
 	GameItem *getCurrentItem() const { return _currentItem; }
 	void setCurrentItem(GameItem *item) { _currentItem = item; }
+	int getPreviousItemPosition() const { return _previousItemPosition; }
+	void setPreviousItemPosition(int pos) { _previousItemPosition = pos; }
 	void removeItem(GameItem *item);
 	void loadItemAnimation(GameItem *item);
 	void putItem(GameItem *item, int position);
@@ -292,6 +301,7 @@ public:
 	void inventoryDraw();
 	void inventoryDone();
 	void inventoryReload();
+	void inventorySwitch(int keycode);
 
 	void dialogueMenu(int dialogueID);
 	int dialogueDraw();
@@ -325,11 +335,13 @@ public:
 private:
 	void updateOrdinaryCursor();
 	void updateInventoryCursor();
+	int inventoryPositionFromMouse() const;
 	void handleOrdinaryLoop(int x, int y);
 	void handleInventoryLoop();
 	void handleDialogueLoop();
 	void updateTitle(int x, int y);
 	void updateCursor();
+	void fadePalette(bool fading_out);
 	void advanceAnimationsAndTestLoopExit();
 	void handleStatusChangeByMouse();
 
@@ -352,6 +364,10 @@ private:
 	GameItem *_items;
 	GameItem *_currentItem;
 	GameItem *_itemUnderCursor;
+
+	// Last position in the inventory of the item currently in the hands, resp. of the item that
+	// was last in our hands.
+	int _previousItemPosition;
 
 	GameItem *_inventory[kInventorySlots];
 

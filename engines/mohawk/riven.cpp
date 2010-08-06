@@ -29,6 +29,7 @@
 #include "common/keyboard.h"
 
 #include "mohawk/graphics.h"
+#include "mohawk/resource.h"
 #include "mohawk/riven.h"
 #include "mohawk/riven_external.h"
 #include "mohawk/riven_saveload.h"
@@ -37,10 +38,12 @@
 
 namespace Mohawk {
 
-Common::Rect *g_atrusJournalRectSolo;
-Common::Rect *g_atrusJournalRect;
-Common::Rect *g_cathJournalRect;
-Common::Rect *g_trapBookRect;
+Common::Rect *g_atrusJournalRect1;
+Common::Rect *g_atrusJournalRect2;
+Common::Rect *g_cathJournalRect2;
+Common::Rect *g_atrusJournalRect3;
+Common::Rect *g_cathJournalRect3;
+Common::Rect *g_trapBookRect3;
 
 MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescription *gamedesc) : MohawkEngine(syst, gamedesc) {
 	_showHotspots = false;
@@ -49,20 +52,27 @@ MohawkEngine_Riven::MohawkEngine_Riven(OSystem *syst, const MohawkGameDescriptio
 	_activatedSLST = false;
 	_ignoreNextMouseUp = false;
 	_extrasFile = NULL;
+	_curStack = aspit;
+	_hotspots = NULL;
 
-	// Attempt to let game run from the CDs
-	// NOTE: assets2 contains higher quality audio than assets1
+	// NOTE: We can never really support CD swapping. All of the music files
+	// (*_Sounds.mhk) are stored on disc 1. They are copied to the hard drive
+	// during install and used from there. The same goes for the extras.mhk
+	// file. The following directories allow Riven to be played directly
+	// from the DVD.
+
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
-
 	SearchMan.addSubDirectoryMatching(gameDataDir, "all");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "data");
 	SearchMan.addSubDirectoryMatching(gameDataDir, "exe");
-	SearchMan.addSubDirectoryMatching(gameDataDir, "assets2");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "assets1");
 
-	g_atrusJournalRectSolo = new Common::Rect(295, 402, 313, 426);
-	g_atrusJournalRect = new Common::Rect(222, 402, 240, 426);
-	g_cathJournalRect = new Common::Rect(291, 408, 311, 419);
-	g_trapBookRect = new Common::Rect(363, 396, 386, 432);
+	g_atrusJournalRect1 = new Common::Rect(295, 402, 313, 426);
+	g_atrusJournalRect2 = new Common::Rect(259, 402, 278, 426);
+	g_cathJournalRect2 = new Common::Rect(328, 408, 348, 419);
+	g_atrusJournalRect3 = new Common::Rect(222, 402, 240, 426);
+	g_cathJournalRect3 = new Common::Rect(291, 408, 311, 419);
+	g_trapBookRect3 = new Common::Rect(363, 396, 386, 432);
 }
 
 MohawkEngine_Riven::~MohawkEngine_Riven() {
@@ -71,15 +81,17 @@ MohawkEngine_Riven::~MohawkEngine_Riven() {
 	delete _externalScriptHandler;
 	delete _extrasFile;
 	delete _saveLoad;
+	delete _scriptMan;
 	delete[] _vars;
-	delete _loadDialog;
 	delete _optionsDialog;
 	delete _rnd;
-	delete g_atrusJournalRectSolo;
-	delete g_atrusJournalRect;
-	delete g_cathJournalRect;
-	delete g_trapBookRect;
-	_cardData.scripts.clear();
+	delete[] _hotspots;
+	delete g_atrusJournalRect1;
+	delete g_atrusJournalRect2;
+	delete g_cathJournalRect2;
+	delete g_atrusJournalRect3;
+	delete g_cathJournalRect3;
+	delete g_trapBookRect3;
 }
 
 GUI::Debugger *MohawkEngine_Riven::getDebugger() {
@@ -94,9 +106,8 @@ Common::Error MohawkEngine_Riven::run() {
 	_console = new RivenConsole(this);
 	_saveLoad = new RivenSaveLoad(this, _saveFileMan);
 	_externalScriptHandler = new RivenExternal(this);
-	_loadDialog = new GUI::SaveLoadChooser("Load Game:", "Load");
-	_loadDialog->setSaveMode(false);
 	_optionsDialog = new RivenOptionsDialog(this);
+	_scriptMan = new RivenScriptManager(this);
 
 	_rnd = new Common::RandomSource();
 	g_eventRec.registerRandomSource(*_rnd, "riven");
@@ -339,13 +350,13 @@ void MohawkEngine_Riven::refreshCard() {
 }
 
 void MohawkEngine_Riven::loadCard(uint16 id) {
-	// NOTE: Do not clear the card scripts because it may delete a currently running script!
+	// NOTE: The card scripts are cleared by the RivenScriptManager automatically.
 
 	Common::SeekableReadStream* inStream = getRawData(ID_CARD, id);
 
 	_cardData.name = inStream->readSint16BE();
 	_cardData.zipModePlace = inStream->readUint16BE();
-	_cardData.scripts = RivenScript::readScripts(this, inStream);
+	_cardData.scripts = _scriptMan->readScripts(inStream);
 	_cardData.hasData = true;
 
 	delete inStream;
@@ -363,7 +374,10 @@ void MohawkEngine_Riven::loadCard(uint16 id) {
 }
 
 void MohawkEngine_Riven::loadHotspots(uint16 id) {
-	// NOTE: Do not clear the hotspots because it may delete a currently running script!
+	// Clear old hotspots
+	delete[] _hotspots;
+	
+	// NOTE: The hotspot scripts are cleared by the RivenScriptManager automatically.
 
 	Common::SeekableReadStream* inStream = getRawData(ID_HSPT, id);
 
@@ -405,7 +419,7 @@ void MohawkEngine_Riven::loadHotspots(uint16 id) {
 		_hotspots[i].zipModeHotspot = inStream->readUint16BE();
 
 		// Read in the scripts now
-		_hotspots[i].scripts = RivenScript::readScripts(this, inStream);
+		_hotspots[i].scripts = _scriptMan->readScripts(inStream);
 	}
 
 	delete inStream;
@@ -480,26 +494,37 @@ void MohawkEngine_Riven::checkInventoryClick() {
 	*matchVarToString("returncardid") = _curCard;
 
 	// See RivenGraphics::showInventory() for an explanation
-	// of why only this variable is used.
+	// of the variables' meanings.
 	bool hasCathBook = *matchVarToString("acathbook") != 0;
+	bool hasTrapBook = *matchVarToString("atrapbook") != 0;
 
 	// Go to the book if a hotspot contains the mouse
 	if (!hasCathBook) {
-		if (g_atrusJournalRectSolo->contains(_mousePos)) {
+		if (g_atrusJournalRect1->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
 		}
-	} else {
-		if (g_atrusJournalRect->contains(_mousePos)) {
+	} else if (!hasTrapBook) {
+		if (g_atrusJournalRect2->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(5);
-		} else if (g_cathJournalRect->contains(_mousePos)) {
+		} else if (g_cathJournalRect2->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(6);
-		} else if (g_trapBookRect->contains(_mousePos)) {
+		}
+	} else {
+		if (g_atrusJournalRect3->contains(_mousePos)) {
+			_gfx->hideInventory();
+			changeToStack(aspit);
+			changeToCard(5);
+		} else if (g_cathJournalRect3->contains(_mousePos)) {
+			_gfx->hideInventory();
+			changeToStack(aspit);
+			changeToCard(6);
+		} else if (g_trapBookRect3->contains(_mousePos)) {
 			_gfx->hideInventory();
 			changeToStack(aspit);
 			changeToCard(7);
@@ -583,7 +608,19 @@ void MohawkEngine_Riven::runHotspotScript(uint16 hotspot, uint16 scriptType) {
 }
 
 void MohawkEngine_Riven::runLoadDialog() {
-	runDialog(*_loadDialog);
+	GUI::SaveLoadChooser slc("Load Game:", "Load");
+	slc.setSaveMode(false);
+
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int slot = slc.runModal(plugin, ConfMan.getActiveDomainName());
+	if (slot >= 0)
+		loadGameState(slot);
+
+	slc.close();
 }
 
 Common::Error MohawkEngine_Riven::loadGameState(int slot) {
@@ -618,4 +655,4 @@ bool ZipMode::operator== (const ZipMode &z) const {
 	return z.name == name && z.id == id;
 }
 
-}
+} // End of namespace Mohawk

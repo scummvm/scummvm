@@ -26,8 +26,6 @@
 #ifndef SCI_GRAPHICS_GFX_H
 #define SCI_GRAPHICS_GFX_H
 
-#include "sci/graphics/gui.h"
-
 #include "common/hashmap.h"
 
 namespace Sci {
@@ -44,7 +42,7 @@ public:
 
 	uint16 kernelOnControl(byte screenMask, const Common::Rect &rect);
 	void kernelSetNowSeen(reg_t objectReference);
-	bool kernelCanBeHere(reg_t curObject, reg_t listReference);
+	reg_t kernelCanBeHere(reg_t curObject, reg_t listReference);
 	bool kernelIsItSkip(GuiResourceId viewId, int16 loopNo, int16 celNo, Common::Point position);
 	void kernelBaseSetter(reg_t object);
 
@@ -62,7 +60,7 @@ private:
 	 * *different* from checkObject, has a brRect which is contained inside
 	 * checkRect.
 	 */
-	bool canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list);
+	reg_t canBeHereCheckRectList(reg_t checkObject, const Common::Rect &checkRect, List *list);
 };
 
 } // End of namespace Sci

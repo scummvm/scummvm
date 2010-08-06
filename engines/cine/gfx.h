@@ -197,7 +197,7 @@ public:
 
 	virtual void refreshPalette();
 	virtual void reloadPalette();
-	virtual void restorePalette(Common::SeekableReadStream &fHandle);
+	virtual void restorePalette(Common::SeekableReadStream &fHandle, int version);
 	virtual void savePalette(Common::OutSaveFile &fHandle);
 	virtual void rotatePalette(int a, int b, int c);
 	virtual void transformPalette(int first, int last, int r, int g, int b);
@@ -257,7 +257,7 @@ public:
 	const char *getBgName(uint idx = 0) const;
 
 	void reloadPalette();
-	void restorePalette(Common::SeekableReadStream &fHandle);
+	void restorePalette(Common::SeekableReadStream &fHandle, int version);
 	void savePalette(Common::OutSaveFile &fHandle);
 	void transformPalette(int first, int last, int r, int g, int b);
 

@@ -704,6 +704,7 @@ void MidiDriver_AdLib::setVelocityReg(int regOffset, int velocity, int kbScaleLe
 void MidiDriver_AdLib::setPatch(int voice, int patch) {
 	if ((patch < 0) || ((uint)patch >= _patches.size())) {
 		warning("ADLIB: Invalid patch %i requested", patch);
+		// Substitute instrument 0
 		patch = 0;
 	}
 
@@ -749,17 +750,24 @@ void MidiDriver_AdLib::playSwitch(bool play) {
 
 bool MidiDriver_AdLib::loadResource(const byte *data, uint size) {
 	if ((size != 1344) && (size != 2690) && (size != 5382)) {
-		warning("ADLIB: Unsupported patch format (%i bytes)", size);
+		error("ADLIB: Unsupported patch format (%i bytes)", size);
 		return false;
 	}
 
 	for (int i = 0; i < 48; i++)
 		loadInstrument(data + (28 * i));
 
-	if (size == 2690) {
+	if (size == 1344) {
+		byte dummy[28] = {0};
+
+		// Only 48 instruments, add dummies
+		for (int i = 0; i < 48; i++)
+			loadInstrument(dummy);
+	} else if (size == 2690) {
 		for (int i = 48; i < 96; i++)
 			loadInstrument(data + 2 + (28 * i));
-	} else if (size == 5382) {
+	} else {
+		// SCI1.1 and later
 		for (int i = 48; i < 190; i++)
 			loadInstrument(data + (28 * i));
 		_rhythmKeyMap = new byte[kRhythmKeys];

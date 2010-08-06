@@ -35,7 +35,7 @@
 #include "sound/audiocd.h"
 
 #ifdef USE_TREMOR
-#if defined(ANDROID) || defined(__GP32__) // custom libtremor locations
+#if defined(__GP32__) // custom libtremor locations
 #include <ivorbisfile.h>
 #else
 #include <tremor/ivorbisfile.h>

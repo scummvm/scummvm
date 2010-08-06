@@ -26,6 +26,8 @@
 #include "gui/dialog.h"
 #include "gui/GuiManager.h"
 
+#include "common/timer.h"
+
 namespace GUI {
 
 #define UP_DOWN_BOX_HEIGHT	(_w+1)
@@ -47,6 +49,28 @@ ScrollBarWidget::ScrollBarWidget(GuiObject *boss, int x, int y, int w, int h)
 	_currentPos = 0;
 }
 
+static void upArrowRepeater(void *ref) {
+	ScrollBarWidget *sb = (ScrollBarWidget *)ref;
+	int old_pos = sb->_currentPos;
+
+	sb->_currentPos -= 3;
+	sb->checkBounds(old_pos);
+
+	g_system->getTimerManager()->removeTimerProc(&upArrowRepeater);
+	g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/10, ref);
+}
+
+static void downArrowRepeater(void *ref) {
+	ScrollBarWidget *sb = (ScrollBarWidget *)ref;
+	int old_pos = sb->_currentPos;
+
+	sb->_currentPos += 3;
+	sb->checkBounds(old_pos);
+
+	g_system->getTimerManager()->removeTimerProc(&downArrowRepeater);
+	g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/10, ref);
+}
+
 void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 	int old_pos = _currentPos;
 
@@ -58,10 +82,12 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 		// Up arrow
 		_currentPos--;
 		_draggingPart = kUpArrowPart;
+		g_system->getTimerManager()->installTimerProc(&upArrowRepeater, 1000000/2, this);
 	} else if (y >= _h - UP_DOWN_BOX_HEIGHT) {
 		// Down arrow
 		_currentPos++;
 		_draggingPart = kDownArrowPart;
+		g_system->getTimerManager()->installTimerProc(&downArrowRepeater, 1000000/2, this);
 	} else if (y < _sliderPos) {
 		_currentPos -= _entriesPerPage - 1;
 	} else if (y >= _sliderPos + _sliderHeight) {
@@ -77,6 +103,9 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 
 void ScrollBarWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	_draggingPart = kNoPart;
+
+	g_system->getTimerManager()->removeTimerProc(&upArrowRepeater);
+	g_system->getTimerManager()->removeTimerProc(&downArrowRepeater);
 }
 
 void ScrollBarWidget::handleMouseWheel(int x, int y, int direction) {

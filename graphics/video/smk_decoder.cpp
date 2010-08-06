@@ -367,10 +367,10 @@ uint32 SmackerDecoder::getElapsedTime() const {
 	return VideoDecoder::getElapsedTime();
 }
 
-bool SmackerDecoder::load(Common::SeekableReadStream &stream) {
+bool SmackerDecoder::load(Common::SeekableReadStream *stream) {
 	close();
 
-	_fileStream = &stream;
+	_fileStream = stream;
 
 	// Seek to the first frame
 	_header.signature = _fileStream->readUint32BE();

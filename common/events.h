@@ -201,13 +201,14 @@ public:
 	 * Notifies the observer of an incoming event.
 	 *
 	 * An observer is supposed to eat the event, with returning true, when
-	 * it might want prevent other observers from preventing to receive
-	 * the event. An usage example here is the keymapper:
+	 * it wants to prevent other observers from receiving the event.
+	 * An usage example here is the keymapper:
 	 * If it processes an Event, it should 'eat' it and create a new
 	 * event, which the EventDispatcher will then catch.
 	 *
-	 * @param	event	the event, which is incoming.
-	 * @return	true if this observer uses this event, false otherwise.
+	 * @param   event   the event, which is incoming.
+	 * @return  true if the event should not be passed to other observers,
+	 *          false otherwise.
 	 */
 	virtual bool notifyEvent(const Event &event) = 0;
 };

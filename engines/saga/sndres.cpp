@@ -159,7 +159,7 @@ void SndRes::playSound(uint32 resourceId, int volume, bool loop) {
 		return;
 	}
 
-	_vm->_sound->playSound(buffer, volume, loop);
+	_vm->_sound->playSound(buffer, volume, loop, resourceId);
 }
 
 void SndRes::playVoice(uint32 resourceId) {

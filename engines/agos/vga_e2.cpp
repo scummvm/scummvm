@@ -265,7 +265,7 @@ void AGOSEngine::vc53_dissolveIn() {
 		*dst &= color;
 		*dst |= *src & 0xF;
 
-		 _system->unlockScreen();
+		_system->unlockScreen();
 
 		dissolveCount--;
 		if (!dissolveCount) {
@@ -319,7 +319,7 @@ void AGOSEngine::vc54_dissolveOut() {
 		dst += xoffs;
 		*dst = color;
 
-		 _system->unlockScreen();
+		_system->unlockScreen();
 
 		dissolveCount--;
 		if (!dissolveCount) {
@@ -388,7 +388,7 @@ void AGOSEngine::vc56_fullScreen() {
 		src += 320;
 		dst += screen->pitch;
 	}
-	 _system->unlockScreen();
+	_system->unlockScreen();
 
 	fullFade();
 }

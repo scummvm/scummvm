@@ -43,9 +43,9 @@ public:
 	DXADecoder();
 	virtual ~DXADecoder();
 
-	bool load(Common::SeekableReadStream &stream);
+	bool load(Common::SeekableReadStream *stream);
 	void close();
-	
+
 	bool isVideoLoaded() const { return _fileStream != 0; }
 	uint16 getWidth() const { return _width; }
 	uint16 getHeight() const { return _height; }

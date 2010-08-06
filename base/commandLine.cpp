@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/fs.h"
 
-#include "sound/mididrv.h"
-
 #include "gui/ThemeEngine.h"
 
 #define DETECTOR_TESTING_HACK
@@ -51,7 +49,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(PALMOS_MODE) || defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID)
+#if defined(__SYMBIAN32__) || defined(__GP32__) || defined(ANDROID)
 static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
 #else
 static const char HELP_STRING[] =
@@ -61,7 +59,7 @@ static const char HELP_STRING[] =
 	"  -h, --help               Display a brief help text and exit\n"
 	"  -z, --list-games         Display list of supported games and exit\n"
 	"  -t, --list-targets       Display list of configured targets and exit\n"
-	"  --list-saves=TARGET	    Display a list of savegames for the game (TARGET) specified\n"
+	"  --list-saves=TARGET      Display a list of savegames for the game (TARGET) specified\n"
 	"\n"
 	"  -c, --config=CONFIG      Use alternate configuration file\n"
 	"  -p, --path=PATH          Path to where the game is installed\n"
@@ -364,8 +362,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_OPTION('e', "music-driver")
-				if (MidiDriver::findMusicDriver(option) == 0)
-					usage("Unrecognized music driver '%s'", option);
 			END_OPTION
 
 			DO_LONG_OPTION_INT("output-rate")
@@ -948,7 +944,7 @@ Common::Error processSettings(Common::String &command, Common::StringMap &settin
 	// environment variable. This is weaker than a --savepath on the
 	// command line, but overrides the default savepath, hence it is
 	// handled here, just before the command line gets parsed.
-#if !defined(MACOS_CARBON) && !defined(_WIN32_WCE) && !defined(PALMOS_MODE) && !defined(__GP32__) && !defined(ANDROID)
+#if !defined(_WIN32_WCE) && !defined(__GP32__) && !defined(ANDROID)
 	if (!settings.contains("savepath")) {
 		const char *dir = getenv("SCUMMVM_SAVEPATH");
 		if (dir && *dir && strlen(dir) < MAXPATHLEN) {

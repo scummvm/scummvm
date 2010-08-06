@@ -183,68 +183,6 @@ void Screen_LoL::generateGrayOverlay(const Palette &srcPal, uint8 *grayOverlay, 
 		grayOverlay[i] = findLeastDifferentColor(tmpPal.getData() + 3 * i, srcPal, 0, lastColor, skipSpecialColors);
 }
 
-uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int opColor, int weight) {
-	if (!ovl)
-		return ovl;
-
-	if (weight > 255)
-		weight = 255;
-
-	const uint8 *srt = srcPal.getData();
-
-	uint16 r = srt[opColor * 3];
-	uint16 g = srt[opColor * 3 + 1];
-	uint16 b = srt[opColor * 3 + 2];
-
-	uint8 *d = ovl;
-	*d++ = 0;
-
-	for (int i = 1; i != 256; i++) {
-		uint16 a = srt[i * 3];
-		uint8 dr = a - ((((a - r) * (weight >> 1)) << 1) >> 8);
-		a = srt[i * 3 + 1];
-		uint8 dg = a - ((((a - g) * (weight >> 1)) << 1) >> 8);
-		a = srt[i * 3 + 2];
-		uint8 db = a - ((((a - b) * (weight >> 1)) << 1) >> 8);
-
-		int l = opColor;
-		int m = _use16ColorMode ? 0xffff : 0x7fff;
-		int ii = _use16ColorMode ? 255 : 127;
-		int x = 1;
-		const uint8 *s = srt + 3;
-
-		do {
-			if (!_use16ColorMode && i == x) {
-				s += 3;
-			} else {
-				int t = *s++ - dr;
-				int c = t * t;
-				t = *s++ - dg;
-				c += (t * t);
-				t = *s++ - db;
-				c += (t * t);
-
-				if (!c) {
-					l = x;
-					break;
-				}
-
-				if (c <= m) {
-					if (!_use16ColorMode || (x == opColor || i != x)) {
-						m = c;
-						l = x;
-					}
-				}
-			}
-			x++;
-		} while (--ii);
-
-		*d++ = l & 0xff;
-	}
-
-	return ovl;
-}
-
 void Screen_LoL::createTransparencyTablesIntern(const uint8 *ovl, int a, const uint8 *fxPal1, const uint8 *fxPal2, uint8 *outTable1, uint8 *outTable2, int b) {
 	Palette screenPal(256);
 	screenPal.copy(fxPal2, 0, 256);

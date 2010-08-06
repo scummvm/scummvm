@@ -110,7 +110,7 @@ public:
 
 	bool endOfData() const		{ return _state == MP3_STATE_EOS; }
 	bool isStereo() const		{ return MAD_NCHANNELS(&_header) == 2; }
-	int getRate() const			{ return _header.samplerate; }
+	int getRate() const			{ return _sampleRate; }
 
 	bool seek(const Timestamp &where);
 	Timestamp getLength() const { return _length; }

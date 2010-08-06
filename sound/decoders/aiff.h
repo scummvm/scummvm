@@ -34,6 +34,7 @@
 #define SOUND_AIFF_H
 
 #include "common/scummsys.h"
+#include "common/types.h"
 
 namespace Common { class SeekableReadStream; }
 
@@ -55,8 +56,14 @@ extern bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, in
  * from that data.
  *
  * This function uses loadAIFFFromStream() internally.
+ *
+ * @param stream			the SeekableReadStream from which to read the AIFF data
+ * @param disposeAfterUse	whether to delete the stream after use
+ * @return	a new SeekableAudioStream, or NULL, if an error occurred
  */
-SeekableAudioStream *makeAIFFStream(Common::SeekableReadStream &stream);
+SeekableAudioStream *makeAIFFStream(
+	Common::SeekableReadStream *stream,
+	DisposeAfterUse::Flag disposeAfterUse);
 
 } // End of namespace Audio
 

@@ -23,8 +23,9 @@
  *
  */
 
-#include "groovie/groovie.h"
 #include "groovie/graphics.h"
+#include "groovie/groovie.h"
+#include "common/system.h"
 
 namespace Groovie {
 

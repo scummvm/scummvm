@@ -65,7 +65,7 @@ struct DSREntry {
 struct DSRFile {
 	char fileName[20];
 	int entryCount;
-	Common::Array<DSREntry *> dsrEntries;
+	Common::Array<DSREntry> dsrEntries;
 };
 
 class MadsM4Engine;

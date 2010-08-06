@@ -179,7 +179,7 @@ long SqrtF16(long n) {
 	uint32 r = 0, s;
 	uint32 v = (uint32)n;
 
-	for (int i = 15; i <= 0; i--) {
+	for (int i = 15; i >= 0; --i) {
 		s = r + (1L << i * 2);
 		r >>= 1;
 		if (s <= v) {

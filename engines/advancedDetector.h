@@ -38,11 +38,14 @@ struct ADGameFileDescription {
 	int32 fileSize;  // Optional. Set to -1 to ignore.
 };
 
-#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, {NULL, 0, NULL, 0}}
-#define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, {NULL, 0, NULL, 0}}
+#define AD_LISTEND {NULL, 0, NULL, 0}
+
+#define AD_ENTRY1(f, x) {{ f, 0, x, -1}, AD_LISTEND}
+#define AD_ENTRY1s(f, x, s) {{ f, 0, x, s}, AD_LISTEND}
 
 enum ADGameFlags {
 	ADGF_NO_FLAGS = 0,
+	ADGF_ADDENGLISH = (1 << 24), // always add English as language option
 	ADGF_MACRESFORK = (1 << 25), // the md5 for this entry will be calculated from the resource fork
 	ADGF_USEEXTRAASTITLE = (1 << 26), // Extra field value will be used as main game title, not gameid
 	ADGF_KEEPMATCH = (1 << 27), // this entry is kept even when there are matched entries with more files
@@ -190,6 +193,21 @@ struct ADParams {
 	 * enum for the list.
 	 */
 	uint32 guioptions;
+
+	/**
+	 * Maximum depth of directories to look up
+	 * If set to 0, the depth is 1 level
+	 */
+	uint32 depth;
+
+	/**
+	 * Case-insensitive list of directory globs which could be used for
+	 * going deeper int directory structure.
+	 * @see String::matchString() method for format description.
+	 *
+	 * @note Last item must be 0
+	 */
+	const char **directoryGlobs;
 };
 
 

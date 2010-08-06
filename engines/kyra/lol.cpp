@@ -810,8 +810,8 @@ void LoLEngine::startup() {
 		pal.fill(0, 1, 0x3F);
 		pal.fill(2, 126, 0x3F);
 		pal.fill(192, 4, 0x3F);
-		_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96);
-		_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96, 254);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65, 254);
 		_screen->copyPalette(0, 1);
 	}
 

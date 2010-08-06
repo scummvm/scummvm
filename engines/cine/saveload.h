@@ -74,7 +74,7 @@ enum CineSaveGameFormat {
 static const uint32 TEMP_OS_FORMAT_ID = MKID_BE('TEMP');
 
 /** The current version number of Operation Stealth's savegame format. */
-static const uint32 CURRENT_OS_SAVE_VER = 0;
+static const uint32 CURRENT_OS_SAVE_VER = 1;
 
 /** Chunk header used by the temporary Operation Stealth savegame format. */
 struct ChunkHeader {

@@ -37,11 +37,13 @@ class MadsSceneLogic {
 private:
 	// Library interface methods
 	uint16 loadSpriteSet(uint16 suffixNum, uint16 sepChar);
-	uint16 startReversibleSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
-	uint16 startCycledSpriteSequence(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
-	uint16 startSpriteSequence3(uint16 srcSpriteIdx, int v0, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	uint16 startReversibleSpriteSequence(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	uint16 startCycledSpriteSequence(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
+	uint16 startSpriteSequence3(uint16 srcSpriteIdx, bool flipped, int numTicks, int triggerCountdown, int timeoutTicks, int extraTicks);
 	void activateHotspot(int idx, bool active);
 	void lowRoomsEntrySound();
+	void getPlayerSpritesPrefix();
+	void getPlayerSpritesPrefix2();
 private:
 	int _sceneNumber;
 	int16 _spriteIndexes[50];
@@ -50,13 +52,21 @@ private:
 	const char *formAnimName(char sepChar, int16 suffixNum);
 	void getSceneSpriteSet();
 	void getAnimName();
+
+	IntStorage &dataMap();
 public:
 	void selectScene(int sceneNum);
 
 	void setupScene();
 	void enterScene();
+	void doPreactions();
 	void doAction();
-	void sceneStep();
+	void doSceneStep();
+};
+
+class MadsGameLogic {
+public:
+	static void initialiseGlobals();
 };
 
 }

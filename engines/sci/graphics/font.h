@@ -32,14 +32,14 @@ namespace Sci {
 
 class GfxFont {
 public:
-	GfxFont() {};
-	virtual ~GfxFont() {};
+	GfxFont() {}
+	virtual ~GfxFont() {}
 
-	virtual GuiResourceId getResourceId() { return 0; };
-	virtual byte getHeight() { return 0; };
-	virtual bool isDoubleByte(uint16 chr) { return false; };
-	virtual byte getCharWidth(uint16 chr) { return 0; };
-	virtual void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {};
+	virtual GuiResourceId getResourceId() { return 0; }
+	virtual byte getHeight() { return 0; }
+	virtual bool isDoubleByte(uint16 chr) { return false; }
+	virtual byte getCharWidth(uint16 chr) { return 0; }
+	virtual void draw(uint16 chr, int16 top, int16 left, byte color, bool greyedOutput) {}
 };
 
 

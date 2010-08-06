@@ -81,6 +81,7 @@ class AnimviewView : public View, MadsView {
 private:
 	char _resourceName[80];
 	Common::SeekableReadStream *_script;
+	bool _scriptDone;
 	uint32 _previousUpdate;
 	char _currentLine[80];
 	M4Surface _backgroundSurface;
@@ -90,6 +91,8 @@ private:
 	RGBList *_palData;
 	int _transition;
 	MadsAnimation *_activeAnimation;
+	bool _bgLoadFlag;
+	int _startFrame;
 
 	void reset();
 	void readNextCommand();

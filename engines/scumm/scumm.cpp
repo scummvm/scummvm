@@ -1634,28 +1634,28 @@ void ScummEngine_v100he::resetScumm() {
 #endif
 
 void ScummEngine::setupMusic(int midi) {
-	MidiDriverType midiDriver = MidiDriver::detectMusicDriver(midi);
-	_native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(midi);
+	_native_mt32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
 
-	switch (midiDriver) {
-	case MD_NULL:
+	switch (MidiDriver::getMusicType(dev)) {
+	case MT_NULL:
 		_musicType = MDT_NONE;
 		break;
-	case MD_PCSPK:
-	case MD_PCJR:
+	case MT_PCSPK:
+	case MT_PCJR:
 		_musicType = MDT_PCSPK;
 		break;
-	case MD_CMS:
+	//case MT_CMS:
 #if 1
 		_musicType = MDT_ADLIB;
 #else
 		_musicType = MDT_CMS; // Still has number of bugs, disable by default
 #endif
 		break;
-	case MD_TOWNS:
+	case MT_TOWNS:
 		_musicType = MDT_TOWNS;
 		break;
-	case MD_ADLIB:
+	case MT_ADLIB:
 		_musicType = MDT_ADLIB;
 		break;
 	default:
@@ -1707,7 +1707,7 @@ void ScummEngine::setupMusic(int midi) {
 	if (!_mixer->isReady()) {
 		warning("Sound mixer initialization failed");
 		if (_musicType == MDT_ADLIB || _musicType == MDT_PCSPK || _musicType == MDT_CMS)	{
-			midiDriver = MD_NULL;
+			dev = 0;
 			_musicType = MDT_NONE;
 			warning("MIDI driver depends on sound mixer, switching to null MIDI driver");
 		}
@@ -1723,7 +1723,9 @@ void ScummEngine::setupMusic(int midi) {
 		_musicEngine = new Player_SID(this, _mixer);
 #endif
 	} else if (_game.platform == Common::kPlatformNES && _game.version == 1) {
+#ifndef DISABLE_NES_APU
 		_musicEngine = new Player_NES(this, _mixer);
+#endif
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 2) {
 		_musicEngine = new Player_V2A(this, _mixer);
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version == 3) {
@@ -1735,11 +1737,11 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
 		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
-		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V1(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_game.version <= 2) {
-		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if ((_musicType == MDT_PCSPK) && (_game.version > 2 && _game.version <= 4)) {
-		_musicEngine = new Player_V2(this, _mixer, midiDriver != MD_PCSPK);
+		_musicEngine = new Player_V2(this, _mixer, MidiDriver::getMusicType(dev) != MT_PCSPK);
 	} else if (_musicType == MDT_CMS) {
 		_musicEngine = new Player_V2CMS(this, _mixer);
 	} else if (_game.platform == Common::kPlatform3DO && _game.heversion <= 62) {
@@ -1749,12 +1751,12 @@ void ScummEngine::setupMusic(int midi) {
 		MidiDriver *adlibMidiDriver = 0;
 
 		if (_musicType != MDT_ADLIB)
-			nativeMidiDriver = MidiDriver::createMidi(midiDriver);
+			nativeMidiDriver = MidiDriver::createMidi(dev);
 		if (nativeMidiDriver != NULL && _native_mt32)
 			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 		bool multi_midi = ConfMan.getBool("multi_midi") && _musicType != MDT_NONE && (midi & MDT_ADLIB);
 		if (_musicType == MDT_ADLIB || multi_midi) {
-			adlibMidiDriver = MidiDriver_ADLIB_create();
+			adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB));
 			adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 		}
 
@@ -1769,7 +1771,7 @@ void ScummEngine::setupMusic(int midi) {
 			// YM2162 driver can't handle midi->getPercussionChannel(), NULL shouldn't init MT-32/GM/GS
 			if ((midi != MDT_TOWNS) && (midi != MDT_NONE)) {
 				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-				if (midiDriver != MD_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
+				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
 					_imuse->property(IMuse::PROP_GS, _enable_gs);
 			}
 			if (_game.heversion >= 60 || midi == MDT_TOWNS) {
@@ -1840,8 +1842,7 @@ Common::Error ScummEngine::go() {
 
 	while (!shouldQuit()) {
 
-		if (_debugger->isAttached())
-			_debugger->onFrame();
+		_debugger->onFrame();
 
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
@@ -2081,6 +2082,12 @@ void ScummEngine::scummLoop_updateScummVars() {
 	if (_game.version >= 7) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x;
 		VAR(VAR_CAMERA_POS_Y) = camera._cur.y;
+	} else if (_game.platform == Common::kPlatformNES) {
+		// WORKAROUND:
+		// Since there are 2 2-stripes wide borders in MM NES screen,
+		// we have to compensate for it here. This fixes paning effects.
+		// Fixes bug #1328120: "MANIACNES: Screen width incorrect, camera halts sometimes"
+		VAR(VAR_CAMERA_POS_X) = (camera._cur.x >> V12_X_SHIFT) + 2;
 	} else if (_game.version <= 2) {
 		VAR(VAR_CAMERA_POS_X) = camera._cur.x >> V12_X_SHIFT;
 	} else {

@@ -46,11 +46,6 @@ struct AgiDebug {
 class Console : public GUI::Debugger {
 public:
 	Console(AgiEngine *vm);
-	virtual ~Console();
-
-protected:
-	virtual void preEnter();
-	virtual void postEnter();
 
 private:
 	bool Cmd_SetVar(int argc, const char **argv);
@@ -80,10 +75,6 @@ public:
 	PreAGI_Console(PreAgiEngine *vm);
 	virtual ~PreAGI_Console() {}
 
-protected:
-	virtual void preEnter() {}
-	virtual void postEnter() {}
-
 private:
 	PreAgiEngine *_vm;
 };
@@ -93,10 +84,6 @@ class Mickey_Console : public PreAGI_Console {
 public:
 	Mickey_Console(PreAgiEngine *vm, Mickey *mickey);
 	virtual ~Mickey_Console() {}
-
-protected:
-	virtual void preEnter() {}
-	virtual void postEnter() {}
 
 private:
 	Mickey *_mickey;
@@ -111,10 +98,6 @@ class Winnie_Console : public PreAGI_Console {
 public:
 	Winnie_Console(PreAgiEngine *vm, Winnie *winnie);
 	virtual ~Winnie_Console() {}
-
-protected:
-	virtual void preEnter() {}
-	virtual void postEnter() {}
 
 private:
 	Winnie *_winnie;

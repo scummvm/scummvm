@@ -225,7 +225,7 @@ void LoLEngine::snd_processEnvironmentalSoundEffect(int soundId, int block) {
 
 		for (int i = 3; i > 0; i--) {
 			int dir = calcMonsterDirection(cbl & 0x1f, cbl >> 5, block & 0x1f, block >> 5);
-			cbl += blockShiftTable[dir];
+			cbl = (cbl + blockShiftTable[dir]) & 0x3ff;
 			if (cbl != block) {
 				if (testWallFlag(cbl, 0, 1))
 					_environmentSfxVol >>= 1;

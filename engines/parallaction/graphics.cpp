@@ -317,8 +317,10 @@ void Gfx::drawList(Graphics::Surface &surface, GfxObjArray &list) {
 
 void Gfx::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	if (_doubleBuffering) {
-		if (_overlayMode)
+		if (_overlayMode) {
 			x += _scrollPosX;
+			y += _scrollPosY;
+		}
 
 		byte *dst = (byte*)_backBuffer.getBasePtr(x, y);
 		for (int i = 0; i < h; i++) {
@@ -358,7 +360,7 @@ void Gfx::unlockScreen() {
 
 void Gfx::updateScreenIntern() {
 	if (_doubleBuffering) {
-		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPosX, 0);
+		byte *data = (byte*)_backBuffer.getBasePtr(_scrollPosX, _scrollPosY);
 		_vm->_system->copyRectToScreen(data, _backBuffer.pitch, 0, 0, _vm->_screenWidth, _vm->_screenHeight);
 	}
 
@@ -863,6 +865,8 @@ void Gfx::setBackground(uint type, BackgroundInfo *info) {
 
 	_minScrollX = 0;
 	_maxScrollX = MAX<int>(0, _backgroundInfo->width - _vm->_screenWidth);
+	_minScrollY = 0;
+	_maxScrollY = MAX<int>(0, _backgroundInfo->height - _vm->_screenHeight);
 }
 
 

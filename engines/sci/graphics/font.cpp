@@ -82,17 +82,18 @@ void GfxFontFromResource::draw(uint16 chr, int16 top, int16 left, byte color, bo
 	int charWidth = MIN<int>(getCharWidth(chr), _screen->getWidth() - left);
 	int charHeight = MIN<int>(getCharHeight(chr), _screen->getHeight() - top);
 	byte b = 0, mask = 0xFF;
-	int y = top;
+	int y = 0;
+	int16 greyedTop = top;
 
 	byte *pIn = getCharData(chr);
 	for (int i = 0; i < charHeight; i++, y++) {
 		if (greyedOutput)
-			mask = top++ % 2 ? 0xAA : 0x55;
+			mask = greyedTop++ % 2 ? 0xAA : 0x55;
 		for (int done = 0; done < charWidth; done++) {
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(pIn++) & mask;
 			if (b & 0x80) // if MSB is set - paint it
-				_screen->putPixel(left + done, y, 1, color, 0, 0);
+				_screen->putFontPixel(top, left + done, y, color);
 			b = b << 1;
 		}
 	}

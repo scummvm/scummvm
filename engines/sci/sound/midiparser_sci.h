@@ -53,12 +53,17 @@ namespace Sci {
  */
 class MidiParser_SCI : public MidiParser {
 public:
-	MidiParser_SCI(SciVersion soundVersion);
+	MidiParser_SCI(SciVersion soundVersion, SciMusic *music);
 	~MidiParser_SCI();
+
+	void mainThreadBegin();
+	void mainThreadEnd();
+
 	bool loadMusic(SoundResource::Track *track, MusicEntry *psnd, int channelFilterMask, SciVersion soundVersion);
 	bool loadMusic(byte *, uint32) {
 		return false;
 	}
+	void sendInitCommands();
 	void unloadMusic();
 	void setVolume(byte volume);
 	void stop() {
@@ -71,22 +76,28 @@ public:
 			jumpToTick(0);
 	}
 
-	void remapChannel(byte channel, byte newChannel) {
-		assert(channel < 0xF);		// don't touch special SCI channel 15
-		assert(newChannel < 0xF);	// don't touch special SCI channel 15
-		_channelRemap[channel] = newChannel;
+	void allNotesOff();
+
+	const byte *getMixedData() const { return _mixedData; }
+
+	void tryToOwnChannels();
+	void lostChannels();
+	void sendFromScriptToDriver(uint32 midi);
+	void sendToDriver(uint32 midi);
+	void sendToDriver(byte status, byte firstOp, byte secondOp) {
+		sendToDriver(status | ((uint32)firstOp << 8) | ((uint32)secondOp << 16));
 	}
 
-	void clearUsedChannels() { _channelsUsed = 0; }
-
 protected:
-	bool isChannelUsed(byte channel) const { return _channelsUsed & (1 << channel); }
-	void setChannelUsed(byte channel) { _channelsUsed |= (1 << channel); }
-
 	void parseNextEvent(EventInfo &info);
 	byte *midiMixChannels();
 	byte *midiFilterChannels(int channelMask);
 	byte midiGetNextChannel(long ticker);
+
+	SciMusic *_music;
+
+	// this is set, when main thread calls us -> we send commands to queue instead to driver
+	bool _mainThreadCalled;
 
 	SciVersion _soundVersion;
 	byte *_mixedData;
@@ -101,11 +112,10 @@ protected:
 	int16 _dataincToAdd;
 	bool _resetOnPause;
 
-	// A 16-bit mask, containing the channels used
-	// by the currently parsed song
-	uint16 _channelsUsed;
-
-	byte _channelRemap[16];
+	bool _channelUsed[16];
+	int16 _channelRemap[16];
+	bool _channelMuted[16];
+	byte _channelVolume[16];
 };
 
 } // End of namespace Sci

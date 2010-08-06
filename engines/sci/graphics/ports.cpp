@@ -27,7 +27,9 @@
 
 #include "sci/sci.h"
 #include "sci/engine/features.h"
+#include "sci/engine/kernel.h"
 #include "sci/engine/state.h"
+#include "sci/engine/selector.h"
 #include "sci/graphics/screen.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/animate.h"
@@ -50,15 +52,17 @@ GfxPorts::GfxPorts(SegManager *segMan, GfxScreen *screen)
 }
 
 GfxPorts::~GfxPorts() {
-	// TODO: Clear _windowList and delete all stuff in it?
+	// reset frees all windows but _picWind
+	reset();
+	freeWindow(_picWind);
+	delete _wmgrPort;
 	delete _menuPort;
 }
 
-void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16) {
+void GfxPorts::init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16) {
 	int16 offTop = 10;
 
 	_usesOldGfxFunctions = usesOldGfxFunctions;
-	_gui = gui;
 	_paint16 = paint16;
 	_text16 = text16;
 
@@ -85,35 +89,88 @@ void GfxPorts::init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, 
 	else
 		_styleUser = SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_TRANSPARENT;
 
-	// Jones, Slater and Hoyle 3 were called with parameter -Nw 0 0 200 320.
-	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use SetPort so we don't need to set the other fields.
+	// Jones, Slater, Hoyle 3&4 and Crazy Nicks Laura Bow/Kings Quest were
+	// called with parameter -Nw 0 0 200 320.
+	// Mother Goose (SCI1) uses -Nw 0 0 159 262. The game will later use
+	// SetPort so we don't need to set the other fields.
 	// This actually meant not skipping the first 10 pixellines in windowMgrPort
-	Common::String gameId = g_sci->getGameID();
-	if (gameId == "jones" || gameId == "slater" || gameId == "hoyle3" || (gameId == "mothergoose" && getSciVersion() == SCI_VERSION_1_EARLY))
+	switch (g_sci->getGameId()) {
+	case GID_JONES:
+	case GID_SLATER:
+	case GID_HOYLE3:
+	case GID_HOYLE4:
+	case GID_CNICK_LAURABOW:
+	case GID_CNICK_KQ:
 		offTop = 0;
+		break;
+	case GID_MOTHERGOOSE:
+		// TODO: if mother goose EGA also uses offTop we can simply remove this check altogether
+		switch (getSciVersion()) {
+		case SCI_VERSION_1_EARLY:
+		case SCI_VERSION_1_1:
+			offTop = 0;
+			break;
+		default:
+			break;
+		}
+		break;
+	case GID_FAIRYTALES:
+		// Mixed-Up Fairy Tales (& its demo) uses -w 26 0 200 320. If we don't
+		// also do this we will get not-fully-removed windows everywhere.
+		offTop = 26;
+		break;
+	default:
+		offTop = 10;
+		break;
+	}
 
 	openPort(_wmgrPort);
 	setPort(_wmgrPort);
 	// SCI0 games till kq4 (.502 - not including) did not adjust against _wmgrPort in kNewWindow
 	//  We leave _wmgrPort top at 0, so the adjustment wont get done
-	if (!g_sci->_features->usesOldGfxFunctions())
+	if (!g_sci->_features->usesOldGfxFunctions()) {
 		setOrigin(0, offTop);
-	_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+		_wmgrPort->rect.bottom = _screen->getHeight() - offTop;
+	} else {
+		_wmgrPort->rect.bottom = _screen->getHeight();
+	}
 	_wmgrPort->rect.right = _screen->getWidth();
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = newWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = addWindow(Common::Rect(0, offTop, _screen->getWidth(), _screen->getHeight()), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 	// For SCI0 games till kq4 (.502 - not including) we set _picWind top to offTop instead
 	//  Because of the menu/status bar
 	if (g_sci->_features->usesOldGfxFunctions())
 		_picWind->top = offTop;
 
-	priorityBandsMemoryActive = false;
-
 	kernelInitPriorityBands();
+}
+
+// Removes any windows from windowList
+//  is used when restoring/restarting the game
+//  Sierra SCI actually saved the whole windowList, it seems we don't need to do this at all
+//  but in some games there are still windows active when restoring. Leaving those windows open
+//  would create all sorts of issues, that's why we remove them
+void GfxPorts::reset() {
+	PortList::iterator it = _windowList.begin();
+	const PortList::iterator end = _windowList.end();
+
+	setPort(_picWind);
+
+	while (it != end) {
+		Port *pPort = *it;
+		if (pPort->id > 2) {
+			// found a window beyond _picWind
+			freeWindow((Window *)pPort);
+		}
+		it++;
+	}
+	_windowList.clear();
+	_windowList.push_front(_wmgrPort);
+	_windowList.push_back(_picWind);
 }
 
 void GfxPorts::kernelSetActive(uint16 portId) {
@@ -124,8 +181,13 @@ void GfxPorts::kernelSetActive(uint16 portId) {
 	case 0xFFFF:
 		setPort(_menuPort);
 		break;
-	default:
-		setPort(getPortById(portId));
+	default: {
+		Port *newPort = getPortById(portId);
+		if (newPort)
+			setPort(newPort);
+		else
+			error("GfxPorts::kernelSetActive was requested to set invalid port id %d", portId);
+	}
 	};
 }
 
@@ -150,10 +212,10 @@ reg_t GfxPorts::kernelGetActive() {
 reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	Window *wnd = NULL;
 
-	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
-		wnd = newWindow(dims, &restoreRect, title, style, priority, false);
+	if (restoreRect.bottom != 0 && restoreRect.right != 0)
+		wnd = addWindow(dims, &restoreRect, title, style, priority, false);
 	else
-		wnd = newWindow(dims, NULL, title, style, priority, false);
+		wnd = addWindow(dims, NULL, title, style, priority, false);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	drawWindow(wnd);
@@ -163,7 +225,36 @@ reg_t GfxPorts::kernelNewWindow(Common::Rect dims, Common::Rect restoreRect, uin
 
 void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 	Window *wnd = (Window *)getPortById(windowId);
-	disposeWindow(wnd, reanimate);
+	if (wnd)
+		removeWindow(wnd, reanimate);
+	else
+		error("GfxPorts::kernelDisposeWindow: Request to dispose invalid port id %d", windowId);
+
+	if ((g_sci->getGameId() == GID_HOYLE4) && (!g_sci->isDemo())) {
+		// WORKAROUND: hoyle 4 has a broken User::handleEvent implementation
+		//  first of all iconbar is always set and always gets called with
+		//  events checking if event got claimed got removed inside that code
+		//  and it will call handleEvent on gameObj afterwards. Iconbar windows
+		//  are handled inside iconbar as well including disposing
+		//  e.g. iconOK::doit, script 14) and claimed isn't even set. gameObj
+		//  handleEvent calling will result in coordinate adjust with a now
+		//  invalid port.
+		//  We fix this by adjusting the port variable to be global
+		//  again when hoyle4 is disposing windows.
+		//  This worked because sierra sci leaves old port data, so the pointer
+		//  was still valid for a short period of time
+		// TODO: maybe this could get implemented as script patch somehow
+		//  although this could get quite tricky to implement (script 996)
+		//  IconBar::handleEvent (script 937)
+		//  maybe inside export 8 of script 0, which is called by iconOK
+		//  and iconReplay
+		//  or inside GameControls::hide (script 978) which is called to
+		//  actually remove the window
+		reg_t eventObject = _segMan->findObjectByName("uEvt");
+		if (!eventObject.isNull()) {
+			writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
+		}
+	}
 }
 
 int16 GfxPorts::isFrontWindow(Window *pWnd) {
@@ -200,7 +291,7 @@ void GfxPorts::endUpdate(Window *wnd) {
 	setPort(oldPort);
 }
 
-Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
+Window *GfxPorts::addWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
 	// Find an unused window/port id
 	uint id = 1;
 	while (id < _windowsById.size() && _windowsById[id]) {
@@ -214,7 +305,7 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 	Common::Rect r;
 
 	if (!pwnd) {
-		warning("Can't open window!");
+		error("Can't open window!");
 		return 0;
 	}
 
@@ -227,8 +318,10 @@ Window *GfxPorts::newWindow(const Common::Rect &dims, const Common::Rect *restor
 
 	r = dims;
 	if (r.width() > _screen->getWidth()) {
-		// We get invalid dimensions at least at the end of sq3 (script bug!)
-		warning("fixing too large window, given left&right was %d, %d", dims.left, dims.right);
+		// We get invalid dimensions at least at the end of sq3 (script bug!).
+		// Same happens very often in lsl5, sierra sci didnt fix it but it looked awful.
+		// Also happens frequently in the demo of GK1.
+		warning("Fixing too large window, left: %d, right: %d", dims.left, dims.right);
 		r.left = 0;
 		r.right = _screen->getWidth() - 1;
 		if ((style != _styleUser) && !(style & SCI_WINDOWMGR_STYLE_NOFRAME))
@@ -343,12 +436,12 @@ void GfxPorts::drawWindow(Window *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_paint16->fillRect(r, GFX_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_paint16->bitsShow(pWnd->restoreRect);
+		_paint16->bitsShow(pWnd->dims);
 	}
 	setPort(oldport);
 }
 
-void GfxPorts::disposeWindow(Window *pWnd, bool reanimate) {
+void GfxPorts::removeWindow(Window *pWnd, bool reanimate) {
 	setPort(_wmgrPort);
 	_paint16->bitsRestore(pWnd->hSaved1);
 	_paint16->bitsRestore(pWnd->hSaved2);
@@ -358,6 +451,15 @@ void GfxPorts::disposeWindow(Window *pWnd, bool reanimate) {
 		_paint16->kernelGraphRedrawBox(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	setPort(_windowList.back());
+	_windowsById[pWnd->id] = NULL;
+	delete pWnd;
+}
+
+void GfxPorts::freeWindow(Window *pWnd) {
+	if (!pWnd->hSaved1.isNull())
+		_segMan->freeHunkEntry(pWnd->hSaved1);
+	if (!pWnd->hSaved2.isNull())
+		_segMan->freeHunkEntry(pWnd->hSaved1);
 	_windowsById[pWnd->id] = 0;
 	delete pWnd;
 }
@@ -378,12 +480,8 @@ void GfxPorts::updateWindow(Window *wnd) {
 }
 
 Port *GfxPorts::getPortById(uint16 id) {
-	if (id > _windowsById.size())
-		error("getPortById() received invalid id");
-	return _windowsById[id];
+	return (id < _windowsById.size()) ? _windowsById[id] : NULL;
 }
-
-
 
 Port *GfxPorts::setPort(Port *newPort) {
 	Port *oldPort = _curPort;
@@ -496,6 +594,11 @@ void GfxPorts::priorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	// We fill space that is left over with the highest band (hardcoded 200 limit, because this algo isnt meant to be used on hires)
 	for (y = _priorityBottom; y < 200; y++)
 		_priorityBands[y] = _priorityBandCount;
+
+	// adjust, if bottom is 200 (one over the actual screen range) - we could otherwise go possible out of bounds
+	//  sierra sci also adjust accordingly
+	if (_priorityBottom == 200)
+		_priorityBottom--;
 }
 
 void GfxPorts::priorityBandsInit(byte *data) {
@@ -511,22 +614,14 @@ void GfxPorts::priorityBandsInit(byte *data) {
 		_priorityBands[i++] = inx;
 }
 
-// Gets used by picture class to remember priority bands data from sci1.1 pictures that need to get applied when
-//  transitioning to that picture
-void GfxPorts::priorityBandsRemember(byte *data) {
-	int bandNo;
-	for (bandNo = 0; bandNo < 14; bandNo++) {
-		priorityBandsMemory[bandNo] = READ_LE_UINT16(data);
+// Gets used to read priority bands data from sci1.1 pictures
+void GfxPorts::priorityBandsInitSci11(byte *data) {
+	byte priorityBands[14];
+	for (int bandNo = 0; bandNo < 14; bandNo++) {
+		priorityBands[bandNo] = READ_LE_UINT16(data);
 		data += 2;
 	}
-	priorityBandsMemoryActive = true;
-}
-
-void GfxPorts::priorityBandsRecall() {
-	if (priorityBandsMemoryActive) {
-		priorityBandsInit((byte *)&priorityBandsMemory);
-		priorityBandsMemoryActive = false;
-	}
+	priorityBandsInit(priorityBands);
 }
 
 void GfxPorts::kernelInitPriorityBands() {

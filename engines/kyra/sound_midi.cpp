@@ -573,8 +573,12 @@ void SoundMidiPC::updateVolumeSettings() {
 	if (!_output)
 		return;
 
-	int newMusVol = ConfMan.getInt("music_volume");
-	_sfxVolume = ConfMan.getInt("sfx_volume");
+	bool mute = false;
+	if (ConfMan.hasKey("mute"))
+		mute = ConfMan.getBool("mute");
+
+	const int newMusVol = (mute ? 0 : ConfMan.getInt("music_volume"));
+	_sfxVolume = (mute ? 0 : ConfMan.getInt("sfx_volume"));
 
 	_output->setSourceVolume(0, newMusVol, newMusVol != _musicVolume);
 	_musicVolume = newMusVol;

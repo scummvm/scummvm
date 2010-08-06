@@ -30,45 +30,47 @@
 #include "sci/engine/selector.h"
 #include "sci/engine/kernel.h"
 #include "sci/graphics/animate.h"
+#include "sci/graphics/screen.h"
 
 namespace Sci {
 
-/*
-Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to (dx,dy), with gravity gy.
-The gravity is assumed to be non-negative.
-
-If this was ordinary continuous physics, we would compute the desired (floating point!)
-velocity vector (vx,vy) as follows, under the assumption that vx and vy are linearly correlated
-by some constant factor c, i.e. vy = c * vx:
-   dx = t * vx
-   dy = t * vy + gy * t^2 / 2
-=> dy = c * dx + gy * (dx/vx)^2 / 2
-=> |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
-Here, the sign of vx must be chosen equal to the sign of dx, obviously.
-
-Clearly, this square root only makes sense in our context if the denominator is positive,
-or equivalently, (dy - c * dx) must be positive. For simplicity and by symmetry
-along the x-axis, we assume dx to be positive for all computations, and only adjust for
-its sign in the end. Switching the sign of c appropriately, we set tmp := (dy + c * dx)
-and compute c so that this term becomes positive.
-
-Remark #1: If the jump is straight up, i.e. dx == 0, then we should not assume the above
-linear correlation vy = c * vx of the velocities (as vx will be 0, but vy shouldn't be,
-unless we drop).
-
-
-Remark #2: We are actually in a discrete setup. The motion is computed iteratively: each iteration,
-we add vx and vy to the position, then add gy to vy. So the real formula is the following
-(where t is ideally close to an int):
-
-  dx = t * vx
-  dy = t * vy + gy * t*(t-1) / 2
-
-But the solution resulting from that is a lot more complicated, so we use the above approximation instead.
-
-Still, what we compute in the end is of course not a real velocity anymore, but an integer approximation,
-used in an iterative stepping algorithm
-*/
+/**
+ * Compute "velocity" vector (xStep,yStep)=(vx,vy) for a jump from (0,0) to
+ * (dx,dy), with gravity constant gy. The gravity is assumed to be non-negative.
+ *
+ * If this was ordinary continuous physics, we would compute the desired
+ * (floating point!) velocity vector (vx,vy) as follows, under the assumption
+ * that vx and vy are linearly correlated by a constant c, i.e., vy = c * vx:
+ *    dx = t * vx
+ *    dy = t * vy + gy * t^2 / 2
+ * => dy = c * dx + gy * (dx/vx)^2 / 2
+ * => |vx| = sqrt( gy * dx^2 / (2 * (dy - c * dx)) )
+ * Here, the sign of vx must be chosen equal to the sign of dx, obviously.
+ *
+ * This square root only makes sense in our context if the denominator is
+ * positive, or equivalently, (dy - c * dx) must be positive. For simplicity
+ * and by symmetry along the x-axis, we assume dx to be positive for all
+ * computations, and only adjust for its sign in the end. Switching the sign of
+ * c appropriately, we set tmp := (dy + c * dx) and compute c so that this term
+ * becomes positive.
+ *
+ * Remark #1: If the jump is straight up, i.e. dx == 0, then we should not
+ * assume the above linear correlation vy = c * vx of the velocities (as vx
+ * will be 0, but vy shouldn't be, unless we drop down).
+ *
+ * Remark #2: We are actually in a discrete setup. The motion is computed
+ * iteratively: each iteration, we add vx and vy to the position, then add gy
+ * to vy. So the real formula is the following (where t ideally is close to an int):
+ *
+ *   dx = t * vx
+ *   dy = t * vy + gy * t*(t-1) / 2
+ *
+ * But the solution resulting from that is a lot more complicated, so we use
+ * the above approximation instead.
+ *
+ * Still, what we compute in the end is of course not a real velocity anymore,
+ * but an integer approximation, used in an iterative stepping algorithm.
+ */
 reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	// Input data
@@ -115,7 +117,7 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 			//tmp = dx * 3 / 2;  // ALMOST the resulting value, except for obvious rounding issues
 
 			// FIXME: Where is the 3 coming from? Maybe they hard/coded, by "accident", that usually gy=3 ?
-			// Then this choice of will make t equal to roughly sqrt(dx)
+			// Then this choice of scalar will make t equal to roughly sqrt(dx)
 		}
 	}
 	// POST: c >= 1
@@ -266,6 +268,15 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	bdelta = (int16)readSelectorValue(segMan, mover, SELECTOR(b_incr));
 	axis = (int16)readSelectorValue(segMan, mover, SELECTOR(b_xAxis));
 
+	if ((getSciVersion() >= SCI_VERSION_1_LATE)) {
+		// Mixed-Up Fairy Tales has no xLast/yLast selectors
+		if (SELECTOR(xLast) != -1) {
+			// save last position into mover
+			writeSelectorValue(segMan, mover, SELECTOR(xLast), x);
+			writeSelectorValue(segMan, mover, SELECTOR(yLast), y);
+		}
+	}
+
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (g_sci->_features->handleMoveCount()) {
@@ -303,8 +314,15 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	                || ((y == desty) && (abs(dy) >= abs(dx))) /* Moving fast, reached? */
 				))) {
 		// Whew... in short: If we have reached or passed our target position
-		x = destx;
-		y = desty;
+
+		// Sanity check: make sure that destx, desty are inside the screen coordinates.
+		// They can go off screen in some cases, e.g. in SQ5 while scrubbing the floor
+		if (destx < g_sci->_gfxScreen->getWidth() && desty < g_sci->_gfxScreen->getHeight()) {
+			x = destx;
+			y = desty;
+		} else {
+			warning("kDoBresen: destination x, y would be off-screen(%d, %d)", destx, desty);
+		}
 		completed = 1;
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x", PRINT_REG(mover));
@@ -315,14 +333,24 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d", x, y, bdi);
 
-	if (g_sci->getKernel()->_selectorCache.cantBeHere != -1) {
-		invokeSelector(INV_SEL(s, client, cantBeHere, kStopOnInvalidSelector), 0);
-		s->r_acc = make_reg(0, !s->r_acc.offset);
+	bool collision = false;
+	reg_t cantBeHere = NULL_REG;
+
+	if (SELECTOR(cantBeHere) != -1) {
+		// adding this here for hoyle 3 to get happy. CantBeHere is a dummy in hoyle 3 and acc is != 0 so we would
+		//  get a collision otherwise
+		s->r_acc = NULL_REG;
+		invokeSelector(s, client, SELECTOR(cantBeHere), argc, argv);
+		if (!s->r_acc.isNull())
+			collision = true;
+		cantBeHere = s->r_acc;
 	} else {
-		invokeSelector(INV_SEL(s, client, canBeHere, kStopOnInvalidSelector), 0);
+		invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
+		if (s->r_acc.isNull())
+			collision = true;
 	}
 
-	if (!s->r_acc.offset) { // Contains the return value
+	if (collision) {
 		signal = readSelectorValue(segMan, client, SELECTOR(signal));
 
 		writeSelectorValue(segMan, client, SELECTOR(x), oldx);
@@ -330,13 +358,16 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		writeSelectorValue(segMan, client, SELECTOR(signal), (signal | kSignalHitObstacle));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision", PRINT_REG(mover));
-		completed = 1;
+		// We shall not set completed in this case, sierra sci also doesn't do it
+		//  if we set call .moveDone in those cases qfg1 vga gate at the castle and lsl1 casino door will not work
 	}
 
 	if ((getSciVersion() >= SCI_VERSION_1_EGA))
 		if (completed)
-			invokeSelector(INV_SEL(s, mover, moveDone, kStopOnInvalidSelector), 0);
+			invokeSelector(s, mover, SELECTOR(moveDone), argc, argv);
 
+	if (SELECTOR(cantBeHere) != -1)
+		return cantBeHere;
 	return make_reg(0, completed);
 }
 
@@ -373,14 +404,14 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = SIGNAL_REG;
 
 	if (!s->_segMan->isHeapObject(avoider)) {
-		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
+		error("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = readSelector(segMan, avoider, SELECTOR(client));
 
 	if (!s->_segMan->isHeapObject(client)) {
-		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
+		error("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
@@ -389,7 +420,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	if (!s->_segMan->isHeapObject(mover)) {
 		if (mover.segment) {
-			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
+			error("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}
 		return s->r_acc;
 	}
@@ -399,20 +430,13 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)", PRINT_REG(avoider), destx, desty);
 
-	if (invokeSelector(INV_SEL(s, mover, doit, kContinueOnInvalidSelector) , 0)) {
-		error("Mover %04x:%04x of avoider %04x:%04x doesn't have a doit() funcselector", PRINT_REG(mover), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, mover, SELECTOR(doit), argc, argv);
 
 	mover = readSelector(segMan, client, SELECTOR(mover));
 	if (!mover.segment) // Mover has been disposed?
 		return s->r_acc; // Return gracefully.
 
-	if (invokeSelector(INV_SEL(s, client, isBlocked, kContinueOnInvalidSelector) , 0)) {
-		error("Client %04x:%04x of avoider %04x:%04x doesn't"
-		         " have an isBlocked() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-		return NULL_REG;
-	}
+	invokeSelector(s, client, SELECTOR(isBlocked), argc, argv);
 
 	dx = destx - readSelectorValue(segMan, client, SELECTOR(x));
 	dy = desty - readSelectorValue(segMan, client, SELECTOR(y));
@@ -421,7 +445,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
-		int rotation = (rand() & 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
+		int rotation = (g_sci->getRNG().getRandomBit() == 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
 		int oldx = readSelectorValue(segMan, client, SELECTOR(x));
 		int oldy = readSelectorValue(segMan, client, SELECTOR(y));
 		int xstep = readSelectorValue(segMan, client, SELECTOR(xStep));
@@ -439,11 +463,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)", oldx, oldy, angle, move_x, move_y);
 
-			if (invokeSelector(INV_SEL(s, client, canBeHere, kContinueOnInvalidSelector) , 0)) {
-				error("Client %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a canBeHere() funcselector", PRINT_REG(client), PRINT_REG(avoider));
-				return NULL_REG;
-			}
+			invokeSelector(s, client, SELECTOR(canBeHere), argc, argv);
 
 			writeSelectorValue(segMan, client, SELECTOR(x), oldx);
 			writeSelectorValue(segMan, client, SELECTOR(y), oldy);
@@ -461,7 +481,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 				angle -= 360;
 		}
 
-		warning("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
+		error("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
 	} else {
 		int heading = readSelectorValue(segMan, client, SELECTOR(heading));
 
@@ -472,12 +492,11 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 		s->r_acc = make_reg(0, angle);
 
+		reg_t params[2] = { make_reg(0, angle), client };
+
 		if (looper.segment) {
-			if (invokeSelector(INV_SEL(s, looper, doit, kContinueOnInvalidSelector), 2, angle, client)) {
-				error("Looper %04x:%04x of avoider %04x:%04x doesn't"
-				         " have a doit() funcselector", PRINT_REG(looper), PRINT_REG(avoider));
-			} else
-				return s->r_acc;
+			invokeSelector(s, looper, SELECTOR(doit), argc, argv, 2, params);
+			return s->r_acc;
 		} else {
 			// No looper? Fall back to DirLoop
 			_k_dirloop(client, (uint16)angle, s, argc, argv);

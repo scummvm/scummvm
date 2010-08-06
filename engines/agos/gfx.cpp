@@ -730,7 +730,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 		state->paletteMod = 208;
 	}
 
-	if (_backFlag == 1) {
+	if (_backFlag) {
 		drawBackGroundImage(state);
 	} else if (state->flags & kDFMasked) {
 		drawMaskedImage(state);
@@ -947,7 +947,7 @@ void AGOSEngine::drawImage(VC10_state *state) {
 	if (getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformAtariST && yoffs > 133)
 		state->palette = 208;
 
-	if (_backFlag == 1) {
+	if (_backFlag) {
 		drawBackGroundImage(state);
 	} else {
 		drawVertImage(state);
@@ -1351,7 +1351,7 @@ void AGOSEngine::setWindowImage(uint16 mode, uint16 vgaSpriteId, bool specialCas
 
 	if (getGameType() == GType_FF || getGameType() == GType_PP) {
 		fillBackGroundFromBack();
-		_syncFlag2 = 1;
+		_syncFlag2 = true;
 	} else {
 		_copyScnFlag = 2;
 		_vgaSpriteChanged++;

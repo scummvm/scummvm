@@ -191,8 +191,10 @@ Codec *QuickTimeDecoder::createCodec(uint32 codecTag, byte bitsPerPixel) {
 }
 
 void QuickTimeDecoder::startAudio() {
-	if (_audStream) // No audio/audio not supported
+	if (_audStream) { // No audio/audio not supported
+		updateAudioBuffer();
 		g_system->getMixer()->playStream(Audio::Mixer::kPlainSoundType, &_audHandle, _audStream);
+	}
 }
 
 void QuickTimeDecoder::stopAudio() {
@@ -204,7 +206,7 @@ void QuickTimeDecoder::stopAudio() {
 
 void QuickTimeDecoder::pauseVideoIntern(bool pause) {
 	if (_audStream)
-		g_system->getMixer()->pauseHandle(_audHandle, pause);		
+		g_system->getMixer()->pauseHandle(_audHandle, pause);
 }
 
 Surface *QuickTimeDecoder::decodeNextFrame() {
@@ -306,8 +308,8 @@ bool QuickTimeDecoder::loadFile(const Common::String &filename) {
 	return true;
 }
 
-bool QuickTimeDecoder::load(Common::SeekableReadStream &stream) {
-	_fd = &stream;
+bool QuickTimeDecoder::load(Common::SeekableReadStream *stream) {
+	_fd = stream;
 	_foundMOOV = _foundMDAT = false;
 	_numStreams = 0;
 	_partial = 0;
@@ -534,6 +536,8 @@ int QuickTimeDecoder::readCMOV(MOVatom atom) {
 	unsigned long dstLen = uncompressedSize;
 	if (!Common::uncompress(uncompressedData, &dstLen, compressedData, compressedSize)) {
 		warning ("Could not uncompress cmov chunk");
+		free(compressedData);
+		free(uncompressedData);
 		return -1;
 	}
 

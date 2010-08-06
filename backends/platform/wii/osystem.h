@@ -156,7 +156,7 @@ public:
 	virtual bool setGraphicsMode(int mode);
 #ifdef USE_RGB_COLOR
 	virtual Graphics::PixelFormat getScreenFormat() const;
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const;
 #endif
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height,

@@ -317,6 +317,8 @@ static const int interf_y[] = { 51, 51, 51, 51, 83, 83, 83 };
 
 struct RoomHandlers;
 
+class Console;
+
 class DrasculaEngine : public ::Engine {
 protected:
 	// Engine APIs
@@ -389,6 +391,7 @@ public:
 	// Graphics buffers/pointers
 	byte *bgSurface;
 	byte *backSurface;
+	byte *cursorSurface;
 	byte *drawSurface3;
 	byte *drawSurface2;
 	byte *tableSurface;
@@ -732,6 +735,8 @@ public:
 
 private:
 	int _lang;
+
+	Console *_console;
 
 	CharInfo *_charMap;
 	int _charMapSize;

@@ -71,6 +71,16 @@ const ADGameDescription gameDescriptions[] = {
 		GUIO_NONE
 	},
 
+	{
+		"draci",
+		0,
+		AD_ENTRY1s("INIT.DFW", "9a7115b91cdea361bcaff3e046ac7ded", 906),
+		Common::DE_DEU,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		GUIO_NONE
+	},
+
 	AD_TABLE_END_MARKER
 };
 
@@ -94,7 +104,11 @@ const ADParams detectionParams = {
 	// Flags
 	0,
 	// Global GUI options
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	// Maximum directory depth
+	1,
+	// List of directory globs
+	0
 };
 
 class DraciMetaEngine : public AdvancedMetaEngine {

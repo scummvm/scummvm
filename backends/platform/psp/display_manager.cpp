@@ -34,7 +34,6 @@
 #include "backends/platform/psp/default_display_client.h"
 #include "backends/platform/psp/cursor.h"
 #include "backends/platform/psp/pspkeyboard.h"
-#include "backends/platform/psp/thread.h"
 
 #define USE_DISPLAY_CALLBACK	// to use callback for finishing the render
 #include "backends/platform/psp/display_manager.h"
@@ -65,37 +64,24 @@ const OSystem::GraphicsMode DisplayManager::_supportedModes[] = {
 
 void MasterGuRenderer::setupCallbackThread() {
 	DEBUG_ENTER_FUNC();
-	int thid = sceKernelCreateThread("displayCbThread", guCallbackThread, PRIORITY_DISPLAY_THREAD, STACK_DISPLAY_THREAD, THREAD_ATTR_USER, 0);
 	
-	PSP_DEBUG_PRINT("Display CB thread id is %x\n", thid);
-	
-	// We want to pass the pointer to this, but we'll have to take address of this so use a little trick
-	MasterGuRenderer *_this = this;
-	
-	if (thid >= 0) {
-		sceKernelStartThread(thid, sizeof(uint32 *), &_this);
-	} else 
-		PSP_ERROR("failed to create display callback thread\n");
+	// start the thread that updates the display
+	threadCreateAndStart("DisplayCbThread", PRIORITY_DISPLAY_THREAD, STACK_DISPLAY_THREAD);		
 }
 
-// thread that reacts to the callback
-int MasterGuRenderer::guCallbackThread(SceSize, void *__this) {
+// this function gets called by PspThread when starting the new thread
+void MasterGuRenderer::threadFunction() {
 	DEBUG_ENTER_FUNC();
 	
-	// Dereferenced the copied value which was this
-	MasterGuRenderer *_this = *(MasterGuRenderer **)__this;
-	
 	// Create the callback. It should always get the pointer to MasterGuRenderer
-	_this->_callbackId = sceKernelCreateCallback("Display Callback", guCallback, _this);
-	if (_this->_callbackId < 0) {
-		PSP_ERROR("failed to create display callback\n");
-		return -1;
+	_callbackId = sceKernelCreateCallback("Display Callback", guCallback, this);
+	if (_callbackId < 0) {
+		PSP_ERROR("failed to create display callback\n");		
 	}
 	
 	PSP_DEBUG_PRINT("created callback. Going to sleep\n");
 
-	sceKernelSleepThreadCB();	// sleep until we get a callback
-	return 0;
+	sceKernelSleepThreadCB();	// sleep until we get a callback	
 }
 
 // This callback is called when the render is finished. It swaps the buffers
@@ -311,26 +297,28 @@ void DisplayManager::calculateScaleParams() {
 	}
 }
 
-void DisplayManager::renderAll() {
+// return true if we really rendered or no dirty. False otherwise
+bool DisplayManager::renderAll() {
 	DEBUG_ENTER_FUNC();
 
 #ifdef USE_DISPLAY_CALLBACK
 	if (!_masterGuRenderer.isRenderFinished()) {
 		PSP_DEBUG_PRINT("Callback render not finished.\n");
-		return;
+		return false;	// didn't render
 	}	
 #endif /* USE_DISPLAY_CALLBACK */
 	
-	if (!isTimeToUpdate()) 
-		return;
-
+	// This is cheaper than checking time, so we do it first
 	if (!_screen->isDirty() &&
 	        (!_overlay->isDirty()) &&
 	        (!_cursor->isDirty()) &&
 	        (!_keyboard->isDirty())) {
 		PSP_DEBUG_PRINT("Nothing dirty\n");
-		return;
+		return true;	// nothing to render
 	}
+
+	if (!isTimeToUpdate()) 
+		return false;	// didn't render
 
 	PSP_DEBUG_PRINT("screen[%s], overlay[%s], cursor[%s], keyboard[%s]\n",
 	                _screen->isDirty() ? "true" : "false",
@@ -361,6 +349,8 @@ void DisplayManager::renderAll() {
 	_keyboard->setClean();
 
 	_masterGuRenderer.guPostRender();
+	
+	return true;	// rendered successfully
 }
 
 inline bool DisplayManager::isTimeToUpdate() {
@@ -375,7 +365,7 @@ inline bool DisplayManager::isTimeToUpdate() {
 	return true;
 }
 
-Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() {
+Common::List<Graphics::PixelFormat> DisplayManager::getSupportedPixelFormats() const {
 	Common::List<Graphics::PixelFormat> list;
 
 	// In order of preference

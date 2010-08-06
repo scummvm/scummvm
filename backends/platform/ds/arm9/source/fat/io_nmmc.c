@@ -170,7 +170,7 @@ bool NMMC_IsInserted(void)	{
 
 	Neo_EnableMMC( true );		// Open SPI port to MMC card
 	Neo_SendMMCCommand(MMC_SEND_CSD, 0);
-	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occured
+	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occurred
 		Neo_EnableMMC( false );
 		return false;
 	}
@@ -227,14 +227,14 @@ bool NMMC_StartUp(void) {
 
 	// Set block length
 	Neo_SendMMCCommand(MMC_SET_BLOCKLEN, BYTE_PER_READ );
-	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occured
+	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occurred
 		Neo_EnableMMC( false );
 		return false;
 	}
 
 	// Check if we can use a higher SPI frequency
 	Neo_SendMMCCommand(MMC_SEND_CSD, 0);
-	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occured
+	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occurred
 		Neo_EnableMMC( false );
 		return false;
 	}
@@ -268,7 +268,7 @@ bool NMMC_WriteSectors (u32 sector, u8 numSecs, void* buffer)
 
 	Neo_EnableMMC( true );												// Open SPI port to MMC card
 	Neo_SendMMCCommand( 25, sector );
-	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occured
+	if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{				// Make sure no errors occurred
 		Neo_EnableMMC( false );
 		return false;
 	}
@@ -318,7 +318,7 @@ bool NMMC_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 
 	while (totalSecs--) {
 		Neo_SendMMCCommand(MMC_READ_BLOCK, sector );
-		if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{			// Make sure no errors occured
+		if( Neo_CheckMMCResponse( 0x00, 0xFF ) == false )	{			// Make sure no errors occurred
 			Neo_EnableMMC( false );
 			return false;
 		}

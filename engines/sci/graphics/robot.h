@@ -31,10 +31,10 @@ namespace Sci {
 #define ROBOT_FILE_STARTOFDATA 58
 
 #ifdef ENABLE_SCI32
-class Robot {
+class GfxRobot {
 public:
-	Robot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
-	~Robot();
+	GfxRobot(ResourceManager *resMan, GfxScreen *screen, GuiResourceId resourceId);
+	~GfxRobot();
 
 	void draw();
 
@@ -45,7 +45,6 @@ private:
 	GfxScreen *_screen;
 
 	GuiResourceId _resourceId;
-	Resource *_resource;
 	byte *_resourceData;
 
 	uint16 _width;

@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	system.o \
 	textconsole.o \
 	tokenizer.o \
+	translation.o \
 	unarj.o \
 	unzip.o \
 	util.o \

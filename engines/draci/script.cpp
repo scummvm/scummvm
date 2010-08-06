@@ -553,6 +553,7 @@ void Script::icoStat(const Common::Array<int> &params) {
 		// arrow leading outside a location), set it to standard.
 		if (_vm->_game->getCurrentItem() == item) {
 			_vm->_game->setCurrentItem(NULL);
+			_vm->_game->setPreviousItemPosition(-1);
 			if (_vm->_mouse->getCursorType() >= kItemCursor) {
 				_vm->_mouse->setCursorType(kNormalCursor);
 			}
@@ -561,6 +562,7 @@ void Script::icoStat(const Common::Array<int> &params) {
 	} else {
 		_vm->_game->loadItemAnimation(item);
 		_vm->_game->setCurrentItem(item);
+		_vm->_game->setPreviousItemPosition(0);		// next time, try to place the item from the beginning
 		_vm->_mouse->loadItemCursor(item, false);
 	}
 }
@@ -727,10 +729,10 @@ void Script::talk(const Common::Array<int> &params) {
 	// Speak the dubbing if possible
 	uint dubbingDuration = 0;
 	if (sample) {
-		dubbingDuration = (uint) (1000.0 * sample->_length / sample->_frequency + 500.0);
+		dubbingDuration = _vm->_sound->playVoice(sample);
 		debugC(3, kDraciSoundDebugLevel, "Playing sentence %d: %d+%d with duration %dms",
 			sentenceID, sample->_offset, sample->_length, dubbingDuration);
-		_vm->_sound->playVoice(sample);
+		dubbingDuration += 500;
 	}
 
 	// Record time
@@ -879,7 +881,7 @@ void Script::setPalette(const Common::Array<int> &params) {
 	}
 	// Immediately update the palette
 	_vm->_screen->copyToScreen();
-	_vm->_system->delayMillis(20);
+	_vm->_system->delayMillis(kTimeUnit);
 }
 
 void Script::quitGame(const Common::Array<int> &params) {

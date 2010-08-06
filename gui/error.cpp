@@ -27,6 +27,8 @@
 #include "gui/message.h"
 #include "gui/error.h"
 
+#include "common/translation.h"
+
 namespace GUI {
 
 void displayErrorDialog(const char *text) {
@@ -37,7 +39,7 @@ void displayErrorDialog(const char *text) {
 void displayErrorDialog(Common::Error error, const char *extraText) {
 	Common::String errorText(extraText);
 	errorText += " ";
-	errorText += Common::errorToString(error);
+	errorText += _(Common::errorToString(error));
 	GUI::MessageDialog alert(errorText);
 	alert.runModal();
 }

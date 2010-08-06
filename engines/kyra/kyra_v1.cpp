@@ -100,13 +100,14 @@ void KyraEngine_v1::pauseEngineIntern(bool pause) {
 
 Common::Error KyraEngine_v1::init() {
 	// Setup mixer
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, ConfMan.getInt("speech_volume"));
+	syncSoundSettings();
 
 	if (!_flags.useDigSound) {
-		// We prefer AdLib over MIDI, since generally AdLib is better supported
-		MidiDriverType midiDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_MIDI | MDT_ADLIB);
+		// We prefer AdLib over MIDI in Kyra 1, since it offers MT-32 support only, most users don't have a real
+		// MT-32/LAPC1/CM32L/CM64 device and AdLib sounds better than our incomplete MT-32 emulator and also better than
+		// MT-32/GM mapping. For Kyra 2 and LoL which have real GM tracks which sound better than AdLib tracks we prefer GM
+		// since most users have a GM compatible device.
+		MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_PCSPK | MDT_MIDI | MDT_ADLIB | ((_flags.gameID == GI_KYRA2 || _flags.gameID == GI_LOL) ? MDT_PREFER_GM : 0));
 
 		if (_flags.platform == Common::kPlatformFMTowns) {
 			if (_flags.gameID == GI_KYRA1)
@@ -120,24 +121,24 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (_flags.platform == Common::kPlatformAmiga) {
 			_sound = new SoundAmiga(this, _mixer);
-		} else if (midiDriver == MD_ADLIB) {
+		} else if (MidiDriver::getMusicType(dev) == MT_ADLIB) {
 			_sound = new SoundAdLibPC(this, _mixer);
 		} else {
 			Sound::kType type;
 
-			if (midiDriver == MD_PCSPK)
+			if (MidiDriver::getMusicType(dev) == MT_PCSPK)
 				type = Sound::kPCSpkr;
-			else if (midiDriver == MD_MT32 || ConfMan.getBool("native_mt32"))
+			else if (MidiDriver::getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32"))
 				type = Sound::kMidiMT32;
 			else
 				type = Sound::kMidiGM;
 
 			MidiDriver *driver = 0;
 
-			if (midiDriver == MD_PCSPK) {
+			if (MidiDriver::getMusicType(dev) == MT_PCSPK) {
 				driver = new MidiDriver_PCSpeaker(_mixer);
 			} else {
-				driver = MidiDriver::createMidi(midiDriver);
+				driver = MidiDriver::createMidi(dev);
 				if (type == Sound::kMidiMT32)
 					driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 			}
@@ -256,7 +257,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	int keys = 0;
 	int8 mouseWheel = 0;
 
-	while (_eventList.size()) {
+	while (!_eventList.empty()) {
 		Common::Event event = *_eventList.begin();
 		bool breakLoop = false;
 
@@ -280,6 +281,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					if (_debugger)
 						_debugger->attach();
+					breakLoop = true;
 				} else if (event.kbd.keycode == Common::KEYCODE_q) {
 					quitGame();
 				}
@@ -333,7 +335,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 			break;
 		}
 
-		if (_debugger && _debugger->isAttached())
+		if (_debugger)
 			_debugger->onFrame();
 
 		if (breakLoop)
@@ -622,6 +624,10 @@ uint8 KyraEngine_v1::getVolume(kVolumeEntry vol) {
 
 void KyraEngine_v1::syncSoundSettings() {
 	Engine::syncSoundSettings();
+
+	// We need to use this here to allow the subtitle options to be changed
+	// through the GMM's options dialog.
+	readSettings();
 
 	if (_sound)
 		_sound->updateVolumeSettings();

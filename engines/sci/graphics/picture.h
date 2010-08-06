@@ -56,14 +56,18 @@ public:
 
 #ifdef ENABLE_SCI32
 	int16 getSci32celCount();
-	void drawSci32Vga(int16 celNo = -1);
+	int16 getSci32celY(int16 celNo);
+	int16 getSci32celX(int16 celNo);
+	int16 getSci32celWidth(int16 celNo);
+	int16 getSci32celPriority(int16 celNo);
+	void drawSci32Vga(int16 celNo, int16 callerX, int16 callerY, int16 pictureX, bool mirrored);
 #endif
 
 private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY);
+	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 drawX, int16 drawY, int16 pictureX);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte pixel);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);

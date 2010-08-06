@@ -1,0 +1,1451 @@
+# LANGUAGE translation for ScummVM.
+# Copyright (C) 2010 ScummVM Team
+# This file is distributed under the same license as the ScummVM package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: ScummVM 1.2.0svn\n"
+"Report-Msgid-Bugs-To: scummvm-devel@lists.sf.net\n"
+"POT-Creation-Date: 2010-07-30 22:14+0100\n"
+"PO-Revision-Date: 2010-07-09 20:37+0100\n"
+"Last-Translator: Simon Sawatzki\n"
+"Language-Team: Lothar Serra Mari <Lothar@Windowsbase.de> & Simon Sawatzki "
+"<SimSaw@gmx.de>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: Deutsch\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: gui/about.cpp:96
+#, c-format
+msgid "(built on %s)"
+msgstr "(erstellt am %s)"
+
+#: gui/about.cpp:103
+msgid "Features compiled in:"
+msgstr "Verwendete Funktionen:"
+
+#: gui/about.cpp:112
+msgid "Available engines:"
+msgstr "Verfügbare Spiele-Engines:"
+
+#: gui/browser.cpp:69
+msgid "Go up"
+msgstr "Pfad hoch"
+
+#: gui/browser.cpp:69
+msgid "Go to previous directory level"
+msgstr "Zu höherer Pfadebene wechseln"
+
+#: gui/browser.cpp:70 gui/chooser.cpp:49 gui/KeysDialog.cpp:46
+#: gui/launcher.cpp:280 gui/massadd.cpp:95 gui/options.cpp:1029
+#: gui/saveload.cpp:65 gui/saveload.cpp:157 gui/themebrowser.cpp:56
+#: backends/platform/wii/options.cpp:48
+msgid "Cancel"
+msgstr "Abbrechen"
+
+#: gui/browser.cpp:71 gui/chooser.cpp:50 gui/themebrowser.cpp:57
+msgid "Choose"
+msgstr "Auswählen"
+
+#: gui/GuiManager.cpp:103 backends/keymapper/remap-dialog.cpp:54
+msgid "Close"
+msgstr "Schließen"
+
+#: gui/GuiManager.cpp:106
+msgid "Mouse click"
+msgstr "Mausklick"
+
+#: gui/GuiManager.cpp:109 base/main.cpp:285
+msgid "Display keyboard"
+msgstr "Tastatur anzeigen"
+
+#: gui/GuiManager.cpp:112 base/main.cpp:288
+msgid "Remap keys"
+msgstr "Tasten neu zuweisen"
+
+#: gui/KeysDialog.cpp:44
+msgid "Map"
+msgstr "Zuweisen"
+
+#: gui/KeysDialog.cpp:45 gui/launcher.cpp:281 gui/launcher.cpp:893
+#: gui/launcher.cpp:897 gui/massadd.cpp:92 gui/options.cpp:1030
+#: backends/platform/wii/options.cpp:47
+#: backends/platform/wince/CELauncherDialog.cpp:56
+msgid "OK"
+msgstr "OK"
+
+#: gui/KeysDialog.cpp:52
+msgid "Select an action and click 'Map'"
+msgstr "Aktion auswählen und \"Zuweisen\" klicken"
+
+#: gui/KeysDialog.cpp:83 gui/KeysDialog.cpp:105 gui/KeysDialog.cpp:144
+#, c-format
+msgid "Associated key : %s"
+msgstr "Zugewiesene Taste: %s"
+
+#: gui/KeysDialog.cpp:85 gui/KeysDialog.cpp:107 gui/KeysDialog.cpp:146
+#, c-format
+msgid "Associated key : none"
+msgstr "Zugewiesene Taste: keine"
+
+#: gui/KeysDialog.cpp:93
+msgid "Please select an action"
+msgstr "Bitte eine Aktion auswählen"
+
+#: gui/KeysDialog.cpp:109
+msgid "Press the key to associate"
+msgstr "Taste drücken, um sie zuzuweisen"
+
+#: gui/KeysDialog.cpp:148
+msgid "Choose an action to map"
+msgstr "Eine Aktion zum Zuweisen auswählen"
+
+#: gui/launcher.cpp:172
+msgid "Game"
+msgstr "Spiel"
+
+#: gui/launcher.cpp:175
+msgid "ID:"
+msgstr "Kennung:"
+
+#: gui/launcher.cpp:175 gui/launcher.cpp:176
+msgid ""
+"Short game identifier used for referring to savegames and running the game "
+"from the command line"
+msgstr ""
+"Kurzer Spielname, um die Spielstände zuzuordnen und das Spiel von der "
+"Kommandozeile aus starten zu können"
+
+#: gui/launcher.cpp:179
+msgid "Name:"
+msgstr "Name:"
+
+#: gui/launcher.cpp:179 gui/launcher.cpp:180
+msgid "Full title of the game"
+msgstr "Voller Name des Spiels"
+
+#: gui/launcher.cpp:183
+msgid "Language:"
+msgstr "Sprache:"
+
+#: gui/launcher.cpp:183 gui/launcher.cpp:184
+msgid ""
+"Language of the game. This will not turn your Spanish game version into "
+"English"
+msgstr ""
+"Sprache des Spiels. Diese Funktion wird nicht eine spanische Version des "
+"Spiels in eine deutsche verwandeln."
+
+#: gui/launcher.cpp:185 gui/launcher.cpp:196 gui/options.cpp:80
+#: gui/options.cpp:635 gui/options.cpp:645 gui/options.cpp:1000
+#: sound/null.cpp:42
+msgid "<default>"
+msgstr "<Standard>"
+
+#: gui/launcher.cpp:194
+msgid "Platform:"
+msgstr "Plattform:"
+
+#: gui/launcher.cpp:194 gui/launcher.cpp:195
+msgid "Platform the game was originally designed for"
+msgstr "Plattform, für die das Spiel ursprünglich erstellt wurde"
+
+#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+msgid "Graphics"
+msgstr "Grafik"
+
+#: gui/launcher.cpp:206 gui/options.cpp:898 gui/options.cpp:915
+msgid "GFX"
+msgstr "GFX"
+
+#: gui/launcher.cpp:208
+msgid "Override global graphic settings"
+msgstr "Globale Grafikeinstellungen übergehen"
+
+#: gui/launcher.cpp:215 gui/options.cpp:921
+msgid "Audio"
+msgstr "Audio"
+
+#: gui/launcher.cpp:217
+msgid "Override global audio settings"
+msgstr "Globale Audioeinstellungen übergehen"
+
+#: gui/launcher.cpp:225 gui/options.cpp:925
+msgid "Volume"
+msgstr "Lautstärke"
+
+#: gui/launcher.cpp:227
+msgid "Override global volume settings"
+msgstr "Globale Lautstärke-Einstellungen übergehen"
+
+#: gui/launcher.cpp:234 gui/options.cpp:933
+msgid "MIDI"
+msgstr "MIDI"
+
+#: gui/launcher.cpp:236
+msgid "Override global MIDI settings"
+msgstr "Globale MIDI-Einstellungen übergehen"
+
+#: gui/launcher.cpp:246 gui/options.cpp:939
+msgid "MT-32"
+msgstr ""
+
+#: gui/launcher.cpp:248
+#, fuzzy
+msgid "Override global MT-32 settings"
+msgstr "Globale MIDI-Einstellungen übergehen"
+
+#: gui/launcher.cpp:258 gui/options.cpp:945
+msgid "Paths"
+msgstr "Pfade"
+
+#: gui/launcher.cpp:264
+msgid "Game Path:"
+msgstr "Spielpfad:"
+
+#: gui/launcher.cpp:268 gui/options.cpp:958
+msgid "Extra Path:"
+msgstr "Extrapfad:"
+
+#: gui/launcher.cpp:268 gui/launcher.cpp:269
+msgid "Specifies path to additional data used the game"
+msgstr "Legt das Verzeichnis für zusätzliche Spieldateien fest."
+
+#: gui/launcher.cpp:272
+msgid "Save Path:"
+msgstr "Spielstände:"
+
+#: gui/launcher.cpp:272 gui/launcher.cpp:273 gui/options.cpp:952
+#: gui/options.cpp:953
+msgid "Specifies where your savegames are put"
+msgstr "Legt fest, wo die Spielstände abgelegt werden."
+
+#: gui/launcher.cpp:289 gui/launcher.cpp:369 gui/launcher.cpp:418
+#: gui/options.cpp:230 gui/options.cpp:399 gui/options.cpp:497
+#: gui/options.cpp:555 gui/options.cpp:732 gui/options.cpp:956
+#: gui/options.cpp:959 gui/options.cpp:963 gui/options.cpp:1053
+#: gui/options.cpp:1059 gui/options.cpp:1065 gui/options.cpp:1073
+#: gui/options.cpp:1097 gui/options.cpp:1101 gui/options.cpp:1107
+#: gui/options.cpp:1114 gui/options.cpp:1213
+msgid "None"
+msgstr "-"
+
+#: gui/launcher.cpp:294 gui/launcher.cpp:373
+#: backends/platform/wii/options.cpp:56
+msgid "Default"
+msgstr "Standard"
+
+#: gui/launcher.cpp:411 gui/options.cpp:1207
+msgid "Select SoundFont"
+msgstr "SoundFont auswählen"
+
+#: gui/launcher.cpp:430 gui/launcher.cpp:568
+msgid "Select directory with game data"
+msgstr "Verzeichnis mit Spieldateien auswählen"
+
+#: gui/launcher.cpp:448
+msgid "Select additional game directory"
+msgstr "Verzeichnis mit zusätzlichen Dateien auswählen"
+
+#: gui/launcher.cpp:460
+msgid "Select directory for saved games"
+msgstr "Verzeichnis für Spielstände auswählen"
+
+#: gui/launcher.cpp:479
+msgid "This game ID is already taken. Please choose another one."
+msgstr "Diese Spielkennung ist schon vergeben. Bitte eine andere wählen."
+
+#: gui/launcher.cpp:520 engines/dialogs.cpp:113
+msgid "~Q~uit"
+msgstr "~B~eenden"
+
+#: gui/launcher.cpp:520
+msgid "Quit ScummVM"
+msgstr "ScummVM beenden"
+
+#: gui/launcher.cpp:521
+msgid "A~b~out..."
+msgstr "Übe~r~"
+
+#: gui/launcher.cpp:521
+msgid "About ScummVM"
+msgstr "Über ScummVM"
+
+#: gui/launcher.cpp:522
+msgid "~O~ptions..."
+msgstr "~O~ptionen"
+
+#: gui/launcher.cpp:522
+msgid "Change global ScummVM options"
+msgstr "Globale ScummVM-Einstellungen bearbeiten"
+
+#: gui/launcher.cpp:524
+msgid "~S~tart"
+msgstr "~S~tarten"
+
+#: gui/launcher.cpp:524
+msgid "Start selected game"
+msgstr "Ausgewähltes Spiel starten"
+
+#: gui/launcher.cpp:527
+msgid "~L~oad..."
+msgstr "~L~aden..."
+
+#: gui/launcher.cpp:527
+msgid "Load savegame for selected game"
+msgstr "Spielstand für ausgewähltes Spiel laden"
+
+#: gui/launcher.cpp:531
+msgid "~A~dd Game..."
+msgstr "Spiel ~h~inzufügen"
+
+#: gui/launcher.cpp:531
+msgid "Hold Shift for Mass Add"
+msgstr ""
+"Umschalttaste (Shift) gedrückt halten, um Verzeichnisse nach Spielen zu "
+"durchsuchen"
+
+#: gui/launcher.cpp:533
+msgid "~E~dit Game..."
+msgstr "Spielo~p~tionen"
+
+#: gui/launcher.cpp:533
+msgid "Change game options"
+msgstr "Spieloptionen ändern"
+
+#: gui/launcher.cpp:535
+msgid "~R~emove Game"
+msgstr "Spiel ~e~ntfernen"
+
+#: gui/launcher.cpp:535
+msgid "Remove game from the list. The game data files stay intact"
+msgstr "Spiel aus der Liste entfernen. Die Spieldateien bleiben erhalten."
+
+#: gui/launcher.cpp:542
+msgid "Search in game list"
+msgstr "In Spieleliste suchen"
+
+#: gui/launcher.cpp:546 gui/launcher.cpp:1057
+msgid "Search:"
+msgstr "Suchen:"
+
+#: gui/launcher.cpp:549 gui/options.cpp:733
+msgid "Clear value"
+msgstr "Wert löschen"
+
+#: gui/launcher.cpp:571 engines/dialogs.cpp:117
+msgid "Load game:"
+msgstr "Spiel laden:"
+
+#: gui/launcher.cpp:571 engines/dialogs.cpp:117
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
+msgid "Load"
+msgstr "Laden"
+
+#: gui/launcher.cpp:680
+msgid ""
+"Do you really want to run the mass game detector? This could potentially add "
+"a huge number of games."
+msgstr ""
+"Möchten Sie wirklich den PC nach Spielen durchsuchen? Möglicherweise wird "
+"dabei eine größere Menge an Spielen hinzugefügt."
+
+#: gui/launcher.cpp:681 gui/launcher.cpp:830
+#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+#: backends/platform/wince/CELauncherDialog.cpp:104
+msgid "Yes"
+msgstr "Ja"
+
+#: gui/launcher.cpp:681 gui/launcher.cpp:830
+#: backends/platform/symbian/src/SymbianOS.cpp:446
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+#: backends/platform/wince/CELauncherDialog.cpp:104
+msgid "No"
+msgstr "Nein"
+
+#: gui/launcher.cpp:728
+msgid "ScummVM couldn't open the specified directory!"
+msgstr "ScummVM kann das gewählte Verzeichnis nicht öffnen!"
+
+#: gui/launcher.cpp:740
+msgid "ScummVM could not find any game in the specified directory!"
+msgstr "ScummVM kann in dem gewählten Verzeichnis kein Spiel finden!"
+
+#: gui/launcher.cpp:754
+msgid "Pick the game:"
+msgstr "Spiel auswählen:"
+
+#: gui/launcher.cpp:830
+msgid "Do you really want to remove this game configuration?"
+msgstr "Möchten Sie wirklich diese Spielkonfiguration entfernen?"
+
+#: gui/launcher.cpp:893
+msgid "This game does not support loading games from the launcher."
+msgstr ""
+"Für dieses Spiel wird das Laden aus der Spieleliste heraus nicht unterstützt."
+
+#: gui/launcher.cpp:897
+msgid "ScummVM could not find any engine capable of running the selected game!"
+msgstr "ScummVM konnte keine Engine finden, um das Spiel zu starten!"
+
+#: gui/launcher.cpp:1009
+msgid "Mass Add..."
+msgstr "Durchsuchen"
+
+#: gui/launcher.cpp:1010
+msgid "Add Game..."
+msgstr "Spiel hinzufügen"
+
+#: gui/massadd.cpp:79 gui/massadd.cpp:82
+msgid "... progress ..."
+msgstr "... läuft..."
+
+#: gui/massadd.cpp:244
+msgid "Scan complete!"
+msgstr "Suchlauf abgeschlossen!"
+
+#: gui/massadd.cpp:247
+#, c-format
+msgid "Discovered %d new games."
+msgstr "%d neue Spiele gefunden."
+
+#: gui/massadd.cpp:251
+#, c-format
+msgid "Scanned %d directories ..."
+msgstr "%d Ordner durchsucht..."
+
+#: gui/massadd.cpp:254
+#, c-format
+msgid "Discovered %d new games ..."
+msgstr "%d neue Spiele gefunden..."
+
+#: gui/options.cpp:78
+msgid "Never"
+msgstr "Niemals"
+
+#: gui/options.cpp:78
+msgid "every 5 mins"
+msgstr "alle 5 Minuten"
+
+#: gui/options.cpp:78
+msgid "every 10 mins"
+msgstr "alle 10 Minuten"
+
+#: gui/options.cpp:78
+msgid "every 15 mins"
+msgstr "alle 15 Minuten"
+
+#: gui/options.cpp:78
+msgid "every 30 mins"
+msgstr "alle 30 Minuten"
+
+#: gui/options.cpp:80
+msgid "8 kHz"
+msgstr "8 kHz"
+
+#: gui/options.cpp:80
+msgid "11kHz"
+msgstr "11 kHz"
+
+#: gui/options.cpp:80
+msgid "22 kHz"
+msgstr "22 kHz"
+
+#: gui/options.cpp:80
+msgid "44 kHz"
+msgstr "44 kHz"
+
+#: gui/options.cpp:80
+msgid "48 kHz"
+msgstr "48 kHz"
+
+#: gui/options.cpp:632
+msgid "Graphics mode:"
+msgstr "Grafikmodus:"
+
+#: gui/options.cpp:643
+msgid "Render mode:"
+msgstr "Render-Modus:"
+
+#: gui/options.cpp:643 gui/options.cpp:644
+msgid "Special dithering modes supported by some games"
+msgstr ""
+"Spezielle Farbmischungsmethoden werden von manchen Spielen unterstützt."
+
+#: gui/options.cpp:653
+msgid "Fullscreen mode"
+msgstr "Vollbildmodus"
+
+#: gui/options.cpp:656
+msgid "Aspect ratio correction"
+msgstr "Seitenverhältnis korrigieren"
+
+#: gui/options.cpp:656
+msgid "Correct aspect ratio for 320x200 games"
+msgstr "Seitenverhältnis für Spiele mit der Auflösung 320x200 korrigieren"
+
+#: gui/options.cpp:663
+msgid "Preferred Device:"
+msgstr "Standard-Gerät:"
+
+#: gui/options.cpp:663
+msgid "Music Device:"
+msgstr "Musikgerät:"
+
+#: gui/options.cpp:663
+msgid "Specifies preferred sound device or sound card emulator"
+msgstr ""
+"Legt das bevorzugte Tonwiedergabe-Gerät oder den Soundkarten-Emulator fest."
+
+#: gui/options.cpp:663 gui/options.cpp:664
+msgid "Specifies output sound device or sound card emulator"
+msgstr "Legt das Musikwiedergabe-Gerät oder den Soundkarten-Emulator fest."
+
+#: gui/options.cpp:688
+msgid "AdLib emulator:"
+msgstr "AdLib-Emulator"
+
+#: gui/options.cpp:688 gui/options.cpp:689
+msgid "AdLib is used for music in many games"
+msgstr "AdLib wird für die Musik in vielen Spielen verwendet."
+
+#: gui/options.cpp:699
+msgid "Output rate:"
+msgstr "Ausgabefrequenz:"
+
+#: gui/options.cpp:699 gui/options.cpp:700
+msgid ""
+"Higher value specifies better sound quality but may be not supported by your "
+"soundcard"
+msgstr ""
+"Höhere Werte bewirken eine bessere Soundqualität, werden aber möglicherweise "
+"nicht von jeder Soundkarte unterstützt."
+
+#: gui/options.cpp:710
+msgid "GM Device:"
+msgstr "GM-Gerät:"
+
+#: gui/options.cpp:710
+msgid "Specifies default sound device for General MIDI output"
+msgstr ""
+"Legt das standardmäßige Musikwiedergabe-Gerät für General-MIDI-Ausgabe fest."
+
+#: gui/options.cpp:731
+msgid "SoundFont:"
+msgstr "SoundFont:"
+
+#: gui/options.cpp:731 gui/options.cpp:732
+msgid "SoundFont is supported by some audio cards, Fluidsynth and Timidity"
+msgstr ""
+"SoundFont wird von einigen Soundkarten, Fluidsynth und Timidity unterstützt."
+
+#: gui/options.cpp:736
+msgid "Mixed AdLib/MIDI mode"
+msgstr "AdLib-/MIDI-Modus"
+
+#: gui/options.cpp:736
+msgid "Use both MIDI and AdLib sound generation"
+msgstr "Benutzt MIDI und AdLib zur Sounderzeugung."
+
+#: gui/options.cpp:739
+msgid "MIDI gain:"
+msgstr "MIDI-Lautstärke:"
+
+#: gui/options.cpp:749
+#, fuzzy
+msgid "MT-32 Device:"
+msgstr "MT32-Gerät:"
+
+#: gui/options.cpp:749
+msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
+msgstr ""
+"Legt das standardmäßige Tonwiedergabe-Gerät für die Ausgabe von Roland MT-32/"
+"LAPC1/CM32l/CM64 fest."
+
+#: gui/options.cpp:753
+msgid "True Roland MT-32 (disable GM emulation)"
+msgstr "Echte Roland-MT-32-Emulation (GM-Emulation deaktiviert)"
+
+#: gui/options.cpp:753
+msgid ""
+"Check if you want to use your real hardware Roland-compatible sound device "
+"connected to your computer"
+msgstr ""
+"Wählen Sie dies aus, wenn Sie Ihre echte Hardware, die mit einer Roland-"
+"kompatiblen Soundkarte verbunden ist, verwenden möchten."
+
+#: gui/options.cpp:756
+msgid "Enable Roland GS Mode"
+msgstr "Roland-GS-Modus"
+
+#: gui/options.cpp:756
+msgid "Turns off General MIDI mapping for games with Roland MT-32 soundtrack"
+msgstr ""
+"Schaltet die General-MIDI-Zuweisung für Spiele mit Roland-MT-32-Audiospur "
+"aus."
+
+#: gui/options.cpp:780
+msgid "Text and Speech:"
+msgstr "Text und Sprache:"
+
+#: gui/options.cpp:785 gui/options.cpp:791
+msgid "Speech"
+msgstr "Sprache"
+
+#: gui/options.cpp:786 gui/options.cpp:792
+msgid "Subtitles"
+msgstr "Untertitel"
+
+#: gui/options.cpp:787 gui/options.cpp:793
+msgid "Both"
+msgstr "Beides"
+
+#: gui/options.cpp:791
+msgid "Spch"
+msgstr "Spr."
+
+#: gui/options.cpp:792
+msgid "Subs"
+msgstr "Untert."
+
+#: gui/options.cpp:793
+msgid "Show subtitles and play speech"
+msgstr "Untertitel anzeigen und Sprachausgabe aktivieren"
+
+#: gui/options.cpp:797
+msgid "Subtitle speed:"
+msgstr "Untertitel-Tempo:"
+
+#: gui/options.cpp:809
+msgid "Music volume:"
+msgstr "Musiklautstärke:"
+
+#: gui/options.cpp:816
+msgid "Mute All"
+msgstr "Alles aus"
+
+#: gui/options.cpp:819
+msgid "SFX volume:"
+msgstr "Effektlautstärke:"
+
+#: gui/options.cpp:819 gui/options.cpp:820
+msgid "Special sound effects volume"
+msgstr "Lautstärke spezieller Soundeffekte"
+
+#: gui/options.cpp:826
+msgid "Speech volume:"
+msgstr "Sprachlautstärke:"
+
+#: gui/options.cpp:952
+msgid "Save Path: "
+msgstr "Spielstände: "
+
+#: gui/options.cpp:955
+msgid "Theme Path:"
+msgstr "Themenpfad:"
+
+#: gui/options.cpp:958 gui/options.cpp:959
+msgid "Specifies path to additional data used by all games or ScummVM"
+msgstr ""
+"Legt das Verzeichnis für zusätzliche Spieldateien für alle Spiele in ScummVM "
+"fest."
+
+#: gui/options.cpp:962
+msgid "Plugins Path:"
+msgstr "Plugin-Pfad:"
+
+#: gui/options.cpp:970
+msgid "Misc"
+msgstr "Sonstiges"
+
+#: gui/options.cpp:972
+msgid "Theme:"
+msgstr "Thema:"
+
+#: gui/options.cpp:976
+msgid "GUI Renderer:"
+msgstr "GUI-Renderer:"
+
+#: gui/options.cpp:982
+msgid "Autosave:"
+msgstr "Autom. Speichern:"
+
+#: gui/options.cpp:990
+msgid "Keys"
+msgstr "Tasten"
+
+#: gui/options.cpp:997
+msgid "GUI Language:"
+msgstr "GUI-Sprache:"
+
+#: gui/options.cpp:997
+msgid "Language of ScummVM GUI"
+msgstr "Sprache der ScummVM-Oberfläche"
+
+#: gui/options.cpp:1002
+msgid "English"
+msgstr "English"
+
+#: gui/options.cpp:1146
+msgid "You have to restart ScummVM to take the effect."
+msgstr "Sie müssen ScummVM neustarten, um die Einstellungen zu übernehmen."
+
+#: gui/options.cpp:1159
+msgid "Select directory for savegames"
+msgstr "Verzeichnis für Spielstände auswählen"
+
+#: gui/options.cpp:1166
+msgid "The chosen directory cannot be written to. Please select another one."
+msgstr ""
+"In das gewählte Verzeichnis kann nicht geschrieben werden. Bitte ein anderes "
+"auswählen."
+
+#: gui/options.cpp:1175
+msgid "Select directory for GUI themes"
+msgstr "Verzeichnis für Oberflächen-Themen"
+
+#: gui/options.cpp:1185
+msgid "Select directory for extra files"
+msgstr "Verzeichnis für zusätzliche Dateien auswählen"
+
+#: gui/options.cpp:1196
+msgid "Select directory for plugins"
+msgstr "Verzeichnis für Erweiterungen auswählen"
+
+#: gui/saveload.cpp:60 gui/saveload.cpp:241
+msgid "No date saved"
+msgstr "Kein Datum gespeichert"
+
+#: gui/saveload.cpp:61 gui/saveload.cpp:242
+msgid "No time saved"
+msgstr "Keine Zeit gespeichert"
+
+#: gui/saveload.cpp:62 gui/saveload.cpp:243
+msgid "No playtime saved"
+msgstr "Keine Spielzeit gespeichert"
+
+#: gui/saveload.cpp:69 gui/saveload.cpp:157
+msgid "Delete"
+msgstr "Löschen"
+
+#: gui/saveload.cpp:156
+msgid "Do you really want to delete this savegame?"
+msgstr "Diesen Spielstand wirklich löschen?"
+
+#: gui/saveload.cpp:265
+msgid "Date: "
+msgstr "Datum: "
+
+#: gui/saveload.cpp:268
+msgid "Time: "
+msgstr "Zeit: "
+
+#: gui/saveload.cpp:273
+msgid "Playtime: "
+msgstr "Spieldauer: "
+
+#: gui/saveload.cpp:286 gui/saveload.cpp:353
+msgid "Untitled savestate"
+msgstr "Unbenannt"
+
+#: gui/themebrowser.cpp:46
+msgid "Select a Theme"
+msgstr "Thema auswählen"
+
+#: gui/ThemeEngine.cpp:334
+msgid "Disabled GFX"
+msgstr "GFX ausgeschalten"
+
+#: gui/ThemeEngine.cpp:335
+msgid "Standard Renderer (16bpp)"
+msgstr "Standard-Renderer (16bpp)"
+
+#: gui/ThemeEngine.cpp:337
+msgid "Antialiased Renderer (16bpp)"
+msgstr "Kantenglättung (16bpp)"
+
+#: base/main.cpp:205
+#, c-format
+msgid "Engine does not support debug level '%s'"
+msgstr "Engine unterstützt den Debug-Level \"%s\" nicht"
+
+#: base/main.cpp:273
+msgid "Menu"
+msgstr "Menü"
+
+#: base/main.cpp:276 backends/platform/symbian/src/SymbianActions.cpp:48
+#: backends/platform/wince/CEActionsPocket.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:45
+msgid "Skip"
+msgstr "Überspringen"
+
+#: base/main.cpp:279 backends/platform/symbian/src/SymbianActions.cpp:53
+#: backends/platform/wince/CEActionsPocket.cpp:41
+msgid "Pause"
+msgstr "Pause"
+
+#: base/main.cpp:282
+msgid "Skip line"
+msgstr "Zeile überspringen"
+
+#: base/main.cpp:404
+msgid "Error running game:"
+msgstr "Fehler beim Ausführen des Spiels:"
+
+#: base/main.cpp:430 base/main.cpp:431
+msgid "Could not find any engine capable of running the selected game"
+msgstr "Kann keine Spiel-Engine finden, die dieses Spiel starten kann."
+
+#: common/error.cpp:43
+msgid "Invalid Path"
+msgstr "Ungültiges Verzeichnis"
+
+#: common/error.cpp:44
+msgid "Game Data not found"
+msgstr "Spieldaten nicht gefunden"
+
+#: common/error.cpp:45
+msgid "Game Id not supported"
+msgstr "Spielkennung nicht unterstützt"
+
+#: common/error.cpp:46
+msgid "Unsupported Color Mode"
+msgstr "Farbmodus nicht unterstützt"
+
+#: common/error.cpp:48
+msgid "Read permission denied"
+msgstr "Lese-Berechtigung nicht vorhanden"
+
+#: common/error.cpp:49
+msgid "Write permission denied"
+msgstr "Schreib-Berechtigung nicht vorhanden"
+
+#: common/error.cpp:52
+msgid "Path not exists"
+msgstr "Verzeichnis existiert nicht."
+
+#: common/error.cpp:53
+msgid "Path not a directory"
+msgstr "Ungültiges Verzeichnis"
+
+#: common/error.cpp:54
+msgid "Path not a file"
+msgstr "Pfad ist keine Datei."
+
+#: common/error.cpp:56
+msgid "Cannot create file"
+msgstr "Kann Datei nicht erstellen."
+
+#: common/error.cpp:57
+msgid "Reading failed"
+msgstr "Lesefehler aufgetreten"
+
+#: common/error.cpp:58
+msgid "Writing data failed"
+msgstr "Daten konnten nicht geschrieben werden."
+
+#: common/error.cpp:60 common/error.cpp:71
+msgid "Unknown Error"
+msgstr "Unbekannter Fehler"
+
+#: common/util.cpp:254
+msgid "Hercules Green"
+msgstr "Hercules-Grün"
+
+#: common/util.cpp:255
+msgid "Hercules Amber"
+msgstr "Hercules Bernsteingelb"
+
+#: engines/dialogs.cpp:89
+msgid "~R~esume"
+msgstr "~F~ortsetzen"
+
+#: engines/dialogs.cpp:91
+msgid "~L~oad"
+msgstr "~L~aden"
+
+#: engines/dialogs.cpp:95
+msgid "~S~ave"
+msgstr "~S~peichern"
+
+#: engines/dialogs.cpp:99
+msgid "~O~ptions"
+msgstr "~O~ptionen"
+
+#: engines/dialogs.cpp:104
+msgid "~H~elp"
+msgstr "~H~ilfe"
+
+#: engines/dialogs.cpp:107
+msgid "~A~bout"
+msgstr "Übe~r~"
+
+#: engines/dialogs.cpp:109
+msgid "~R~eturn to Launcher"
+msgstr "Zur Spiele~l~iste zurück"
+
+#: engines/dialogs.cpp:119
+msgid "Save game:"
+msgstr "Speichern:"
+
+#: engines/dialogs.cpp:119 backends/platform/symbian/src/SymbianActions.cpp:47
+#: backends/platform/wince/CEActionsPocket.cpp:42
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
+msgid "Save"
+msgstr "Speichern"
+
+#: engines/dialogs.cpp:301 engines/mohawk/dialogs.cpp:84
+#: engines/mohawk/dialogs.cpp:118
+msgid "~O~K"
+msgstr "~O~K"
+
+#: engines/dialogs.cpp:302 engines/mohawk/dialogs.cpp:85
+#: engines/mohawk/dialogs.cpp:119
+msgid "~C~ancel"
+msgstr "~A~bbrechen"
+
+#: engines/dialogs.cpp:305
+msgid "~K~eys"
+msgstr "~T~asten"
+
+#: engines/scumm/dialogs.cpp:287
+msgid "~P~revious"
+msgstr "~Z~urück"
+
+#: engines/scumm/dialogs.cpp:288
+msgid "~N~ext"
+msgstr "~W~eiter"
+
+#: engines/scumm/dialogs.cpp:289
+#: backends/platform/ds/arm9/source/dsoptions.cpp:59
+msgid "~C~lose"
+msgstr "~S~chließen"
+
+#: engines/mohawk/dialogs.cpp:81 engines/mohawk/dialogs.cpp:115
+msgid "~Z~ip Mode Activated"
+msgstr "~Z~ip-Modus aktiviert"
+
+#: engines/mohawk/dialogs.cpp:82
+msgid "~T~ransitions Enabled"
+msgstr "Über~g~änge aktiviert"
+
+#: engines/mohawk/dialogs.cpp:116
+msgid "~W~ater Effect Enabled"
+msgstr "~W~assereffekt aktiviert"
+
+#: sound/fmopl.cpp:51
+msgid "MAME OPL emulator"
+msgstr "MAME-OPL-Emulator"
+
+#: sound/fmopl.cpp:53
+msgid "DOSBox OPL emulator"
+msgstr "DOSBox-OPL-Emulator"
+
+#: sound/null.h:45
+msgid "No music"
+msgstr "Keine Musik"
+
+#: sound/softsynth/adlib.cpp:1590
+msgid "AdLib Emulator"
+msgstr "AdLib-Emulator"
+
+#: sound/softsynth/mt32.cpp:327
+msgid "Initialising MT-32 Emulator"
+msgstr "MT-32-Emulator wird gestartet..."
+
+#: sound/softsynth/mt32.cpp:541
+msgid "MT-32 Emulator"
+msgstr "MT-32-Emulation"
+
+#: sound/softsynth/pcspk.cpp:142
+msgid "PC Speaker Emulator"
+msgstr "PC-Lautsprecher-Emulator"
+
+#: sound/softsynth/pcspk.cpp:161
+msgid "IBM PCjr Emulator"
+msgstr "IBM-PCjr-Emulator"
+
+#: sound/softsynth/ym2612.cpp:762
+msgid "FM Towns Emulator"
+msgstr "FM-Towns-Emulator"
+
+#: backends/keymapper/remap-dialog.cpp:49
+msgid "Keymap:"
+msgstr "Tasten-Layout:"
+
+#: backends/keymapper/remap-dialog.cpp:66
+msgid " (Active)"
+msgstr " (Aktiv)"
+
+#: backends/keymapper/remap-dialog.cpp:100
+msgid " (Global)"
+msgstr " (Global)"
+
+#: backends/keymapper/remap-dialog.cpp:110
+msgid " (Game)"
+msgstr " (Spiel)"
+
+#: backends/midi/windows.cpp:157
+msgid "Windows MIDI"
+msgstr "Windows MIDI"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:60
+msgid "ScummVM Main Menu"
+msgstr "ScummVM-Hauptmenü"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:66
+msgid "~L~eft handed mode"
+msgstr "~L~inke-Hand-Modus"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:67
+msgid "~I~ndy fight controls"
+msgstr "~K~ampfsteuerung für Indiana Jones"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:68
+msgid "Show mouse cursor"
+msgstr "Mauszeiger anzeigen"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:69
+msgid "Snap to edges"
+msgstr "An Ecken anheften"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:71
+msgid "Touch X Offset"
+msgstr "Zu X-Position gehen"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:78
+msgid "Touch Y Offset"
+msgstr "Zu Y-Position gehen"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:90
+msgid "Use laptop trackpad-style cursor control"
+msgstr "Den Trackpad-Style für Maussteuerung benutzen"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:91
+msgid "Tap for left click, double tap right click"
+msgstr "Tippen für Linksklick, Doppeltippen für Rechtsklick"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:93
+msgid "Sensitivity"
+msgstr "Empfindlichkeit"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:102
+msgid "Initial top screen scale:"
+msgstr "Vergößerung des oberen Bildschirms:"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:108
+msgid "Main screen scaling:"
+msgstr "Hauptbildschirm-Skalierung:"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:110
+msgid "Hardware scale (fast, but low quality)"
+msgstr "Hardware-Skalierung (schnell, aber schlechte Qualität)"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:111
+msgid "Software scale (good quality, but slower)"
+msgstr "Software-Skalierung (gute Qualität, aber langsamer)"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:112
+msgid "Unscaled (you must scroll left and right)"
+msgstr "Nicht skalieren (Sie müssen nach links und nach rechts scrollen)"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:114
+msgid "Brightness:"
+msgstr "Helligkeit:"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:124
+msgid "High quality audio (slower) (reboot)"
+msgstr "Hohe Audioqualität (lansamer) (erfordert Neustart)"
+
+#: backends/platform/ds/arm9/source/dsoptions.cpp:125
+msgid "Disable power off"
+msgstr "Stromsparmodus abschalten"
+
+#: backends/platform/iphone/osys_events.cpp:339
+msgid "Touchpad mode enabled."
+msgstr "Touchpad-Modus aktiviert."
+
+#: backends/platform/iphone/osys_events.cpp:341
+msgid "Touchpad mode disabled."
+msgstr "Touchpad-Modus ausgeschaltet."
+
+#: backends/platform/sdl/graphics.cpp:40
+#: backends/platform/wince/wince-sdl.cpp:111
+#: backends/platform/wince/wince-sdl.cpp:118
+msgid "Normal (no scaling)"
+msgstr "Normal (keine Skalierung)"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:41
+#: backends/platform/wince/CEActionsSmartphone.cpp:38
+msgid "Up"
+msgstr "Hoch"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:42
+#: backends/platform/wince/CEActionsSmartphone.cpp:39
+msgid "Down"
+msgstr "Runter"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:40
+msgid "Left"
+msgstr "Links"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:44
+#: backends/platform/wince/CEActionsSmartphone.cpp:41
+msgid "Right"
+msgstr "Rechts"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:45
+#: backends/platform/wince/CEActionsPocket.cpp:59
+#: backends/platform/wince/CEActionsSmartphone.cpp:42
+msgid "Left Click"
+msgstr "Linksklick"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:46
+#: backends/platform/wince/CEActionsSmartphone.cpp:43
+msgid "Right Click"
+msgstr "Rechtsklick"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:49
+#: backends/platform/wince/CEActionsSmartphone.cpp:46
+msgid "Zone"
+msgstr "Zone"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:50
+#: backends/platform/wince/CEActionsPocket.cpp:53
+#: backends/platform/wince/CEActionsSmartphone.cpp:47
+msgid "Multi Function"
+msgstr "Multifunktion"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:51
+msgid "Swap character"
+msgstr "Figur wechseln"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:52
+msgid "Skip text"
+msgstr "Text überspringen"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:54
+msgid "Fast mode"
+msgstr "Schneller Modus"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:55
+#: backends/platform/wince/CEActionsPocket.cpp:43
+#: backends/platform/wince/CEActionsSmartphone.cpp:51
+msgid "Quit"
+msgstr "Beenden"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:56
+msgid "Debugger"
+msgstr "Debugger"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:57
+msgid "Global menu"
+msgstr "Hauptmenü"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:58
+msgid "Virtual keyboard"
+msgstr "Virtuelle Tastatur"
+
+#: backends/platform/symbian/src/SymbianActions.cpp:59
+msgid "Key mapper"
+msgstr "Tasten zuordnen"
+
+#: backends/platform/symbian/src/SymbianOS.cpp:446
+msgid "Do you want to quit ?"
+msgstr "Möchten Sie beenden?"
+
+#: backends/platform/wii/options.cpp:51
+msgid "Video"
+msgstr "Video"
+
+#: backends/platform/wii/options.cpp:54
+msgid "Current video mode:"
+msgstr "Aktueller Videomodus:"
+
+#: backends/platform/wii/options.cpp:56
+msgid "Double-strike"
+msgstr "Doppelzeilen (kein Zeilensprungverfahren)"
+
+#: backends/platform/wii/options.cpp:60
+msgid "Horizontal underscan:"
+msgstr "Horizontale Bildverkleinerung:"
+
+#: backends/platform/wii/options.cpp:66
+msgid "Vertical underscan:"
+msgstr "Vertikale Bildverkleinerung:"
+
+#: backends/platform/wii/options.cpp:71
+msgid "Input"
+msgstr "Eingabe"
+
+#: backends/platform/wii/options.cpp:74
+msgid "GC Pad sensitivity:"
+msgstr "GC-Pad-Empfindlichkeit:"
+
+#: backends/platform/wii/options.cpp:80
+msgid "GC Pad acceleration:"
+msgstr "GC-Pad-Beschleunigung:"
+
+#: backends/platform/wii/options.cpp:86
+msgid "DVD"
+msgstr "DVD"
+
+#: backends/platform/wii/options.cpp:89 backends/platform/wii/options.cpp:101
+msgid "Status:"
+msgstr "Status:"
+
+#: backends/platform/wii/options.cpp:90 backends/platform/wii/options.cpp:102
+msgid "Unknown"
+msgstr "Unbekannt"
+
+#: backends/platform/wii/options.cpp:93
+msgid "Mount DVD"
+msgstr "DVD einbinden"
+
+#: backends/platform/wii/options.cpp:94
+msgid "Unmount DVD"
+msgstr "DVD aushängen"
+
+#: backends/platform/wii/options.cpp:98
+msgid "SMB"
+msgstr "SMB"
+
+#: backends/platform/wii/options.cpp:106
+msgid "Server:"
+msgstr "Server:"
+
+#: backends/platform/wii/options.cpp:110
+msgid "Share:"
+msgstr "Öffentliches Verzeichnis:"
+
+#: backends/platform/wii/options.cpp:114
+msgid "Username:"
+msgstr "Benutzername:"
+
+#: backends/platform/wii/options.cpp:118
+msgid "Password:"
+msgstr "Passwort:"
+
+#: backends/platform/wii/options.cpp:121
+msgid "Init network"
+msgstr "Netzwerk starten"
+
+#: backends/platform/wii/options.cpp:123
+msgid "Mount SMB"
+msgstr "SMB einbinden"
+
+#: backends/platform/wii/options.cpp:124
+msgid "Unmount SMB"
+msgstr "SMB aushängen"
+
+#: backends/platform/wii/options.cpp:145
+msgid "DVD Mounted successfully"
+msgstr "DVD erfolgreich eingebunden"
+
+#: backends/platform/wii/options.cpp:148
+msgid "Error while mounting the DVD"
+msgstr "Fehler beim Einbinden der DVD"
+
+#: backends/platform/wii/options.cpp:150
+msgid "DVD not mounted"
+msgstr "DVD nicht eingebunden"
+
+#: backends/platform/wii/options.cpp:163
+msgid "Network up, share mounted"
+msgstr "Netzwerk gestartet, öffentliches Verzeichnis eingebunden"
+
+#: backends/platform/wii/options.cpp:165
+msgid "Network up"
+msgstr "Netzwerk gestartet"
+
+#: backends/platform/wii/options.cpp:168
+msgid ", error while mounting the share"
+msgstr ", Fehler beim Einbinden des öffentlichen Verzeichnisses"
+
+#: backends/platform/wii/options.cpp:170
+msgid ", share not mounted"
+msgstr ", öffentliches Verzeichnis nicht eingebunden"
+
+#: backends/platform/wii/options.cpp:176
+msgid "Network down"
+msgstr "Netzwerk ist aus."
+
+#: backends/platform/wii/options.cpp:180
+msgid "Initialising network"
+msgstr "Netzwerk wird gestartet..."
+
+#: backends/platform/wii/options.cpp:184
+msgid "Timeout while initialising network"
+msgstr "Zeitüberschreitung beim Starten des Netzwerks"
+
+#: backends/platform/wii/options.cpp:188
+#, c-format
+msgid "Network not initialsed (%d)"
+msgstr "Netzwerk nicht gestartet (%d)"
+
+#: backends/platform/wince/CEActionsPocket.cpp:45
+msgid "Hide Toolbar"
+msgstr "Werkzeugleiste verbergen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:46
+msgid "Show Keyboard"
+msgstr "Tastatur zeigen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:47
+msgid "Sound on/off"
+msgstr "Ton ein/aus"
+
+#: backends/platform/wince/CEActionsPocket.cpp:48
+msgid "Right click"
+msgstr "Rechtsklick"
+
+#: backends/platform/wince/CEActionsPocket.cpp:49
+msgid "Show/Hide Cursor"
+msgstr "Cursor zeigen/verbergen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:50
+msgid "Free look"
+msgstr "Freie Ansicht"
+
+#: backends/platform/wince/CEActionsPocket.cpp:51
+msgid "Zoom up"
+msgstr "Herauszoomen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:52
+msgid "Zoom down"
+msgstr "Hineinzoomen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:54
+#: backends/platform/wince/CEActionsSmartphone.cpp:48
+msgid "Bind Keys"
+msgstr "Tasten zuweisen"
+
+#: backends/platform/wince/CEActionsPocket.cpp:55
+msgid "Cursor Up"
+msgstr "Zeiger hoch"
+
+#: backends/platform/wince/CEActionsPocket.cpp:56
+msgid "Cursor Down"
+msgstr "Zeiger runter"
+
+#: backends/platform/wince/CEActionsPocket.cpp:57
+msgid "Cursor Left"
+msgstr "Zeiger nach links"
+
+#: backends/platform/wince/CEActionsPocket.cpp:58
+msgid "Cursor Right"
+msgstr "Zeiger nach rechts"
+
+#: backends/platform/wince/CEActionsPocket.cpp:263
+#: backends/platform/wince/CEActionsSmartphone.cpp:225
+msgid "Do you want to load or save the game?"
+msgstr "Möchten Sie ein Spiel laden oder speichern?"
+
+#: backends/platform/wince/CEActionsPocket.cpp:313
+#: backends/platform/wince/CEActionsSmartphone.cpp:272
+msgid "   Are you sure you want to quit ?   "
+msgstr "   Möchten Sie wirklich beenden?    "
+
+#: backends/platform/wince/CEActionsSmartphone.cpp:49
+msgid "Keyboard"
+msgstr "Tastatur"
+
+#: backends/platform/wince/CEActionsSmartphone.cpp:50
+msgid "Rotate"
+msgstr "Drehen"
+
+#: backends/platform/wince/CELauncherDialog.cpp:58
+msgid "Using SDL driver "
+msgstr "SDL-Treiber verwenden"
+
+#: backends/platform/wince/CELauncherDialog.cpp:62
+msgid "Display "
+msgstr "Anzeige"
+
+#: backends/platform/wince/CELauncherDialog.cpp:104
+msgid "Do you want to perform an automatic scan ?"
+msgstr "Möchten Sie eine automatische Durchsuchung vornehmen?"
+
+#~ msgid "Failed to load any GUI theme, aborting"
+#~ msgstr "Fehler: Konnte kein Benutzeroberflächen-Thema laden. Abbruch..."
+
+#~ msgid "User picked target '%s' (gameid '%s')...\n"
+#~ msgstr "Gewähltes Ziel: \"%s\" (Spielkennung \"%s\")...\n"
+
+#~ msgid "  Looking for a plugin supporting this gameid... "
+#~ msgstr ""
+#~ " Suche nach einer Erweiterung, die diese Spielkennung unterstützt..."
+
+#~ msgid "failed\n"
+#~ msgstr "fehlgeschlagen\n"
+
+#~ msgid ""
+#~ "%s is an invalid gameid. Use the --list-games option to list supported "
+#~ "gameid"
+#~ msgstr ""
+#~ "%s ist eine ungültige Spielkennung. Benutzen Sie die Option --list-games "
+#~ "zum Anzeigen der unterstützten Spielkennungen."
+
+#~ msgid "  Starting '%s'\n"
+#~ msgstr "  Starte \"%s\"\n"
+
+#~ msgid "%s failed to instantiate engine: %s (target '%s', path '%s')"
+#~ msgstr "%s konnte Engine nicht starten: %s (Ziel \"%s\", Pfad \"%s\")"
+
+#~ msgid "Ok"
+#~ msgstr "OK"
+
+#~ msgid "Music driver:"
+#~ msgstr "Musiktreiber:"
+
+#~ msgid "ALSA"
+#~ msgstr "ALSA"
+
+#~ msgid "Atari ST MIDI"
+#~ msgstr "Atari ST MIDI"
+
+#~ msgid "SEQ"
+#~ msgstr "SEQ"
+
+#~ msgid "DMedia"
+#~ msgstr "DMedia"
+
+#~ msgid "CAMD"
+#~ msgstr "CAMD"
+
+#~ msgid "CoreAudio"
+#~ msgstr "CoreAudio"
+
+#~ msgid "CoreMIDI"
+#~ msgstr "CoreMIDI"
+
+#~ msgid "Yamaha Pa1"
+#~ msgstr "Yamaha Pa1"
+
+#~ msgid "Tapwave Zodiac"
+#~ msgstr "Tapwave Zodiac"
+
+#~ msgid "FluidSynth"
+#~ msgstr "FluidSynth"
+
+#~ msgid "AdLib"
+#~ msgstr "AdLib"
+
+#~ msgid "IBM PCjr"
+#~ msgstr "IBM PCjr"
+
+#~ msgid "Creative Music System"
+#~ msgstr "Creative-Musik-System"
+
+#~ msgid "TiMidity"
+#~ msgstr "TiMidity"

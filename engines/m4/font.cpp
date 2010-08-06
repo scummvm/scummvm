@@ -35,27 +35,34 @@ FontManager::~FontManager() {
 	_entries.clear();
 }
 
-Font *FontManager::getFont(const Common::String &filename) {
+Font *FontManager::getFont(const char *filename) {
+	// Append an extension if the filename doesn't already have one
+	char buffer[20];
+	strncpy(buffer, filename, 19);
+	if (!strchr(buffer, '.'))
+		strcat(buffer, ".ff");
+
 	// Check if the font is already loaded
-	for (uint i = 0; i < _entries.size(); ++i)
-	{
-		if (_entries[i]->_filename.equals(filename))
+	for (uint i = 0; i < _entries.size(); ++i) {
+		if (!strcmp(_entries[i]->_filename, buffer))
 			return _entries[i];
 	}
 
-	Font *f = new Font(_vm, filename);
+	Font *f = new Font(_vm, buffer);
 	_entries.push_back(f);
 	return f;
 }
 
-void FontManager::setFont(const Common::String &filename) {
+void FontManager::setFont(const char *filename) {
 	_currentFont = getFont(filename);
 }
 
 //--------------------------------------------------------------------------
 
-Font::Font(MadsM4Engine *vm, const Common::String &filename) : _vm(vm), _filename(filename) {
+Font::Font(MadsM4Engine *vm, const char *filename) : _vm(vm) {
 	_sysFont = true;
+	strncpy(_filename, filename, 19);
+	_filename[19] = '\0';
 
 	//TODO: System font
 	_fontColors[0] = _vm->_palette->BLACK;
@@ -66,9 +73,9 @@ Font::Font(MadsM4Engine *vm, const Common::String &filename) : _vm(vm), _filenam
 	_sysFont = false;
 
 	if (_vm->isM4())
-		setFontM4(filename.c_str());
+		setFontM4(filename);
 	else
-		setFontMads(filename.c_str());
+		setFontMads(filename);
 }
 
 void Font::setFontM4(const char *filename) {

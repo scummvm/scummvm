@@ -88,6 +88,7 @@ private:
 	bool Cmd_DumpScript(int argc, const char **argv);
 	bool Cmd_ListZipCards(int argc, const char **argv);
 	bool Cmd_GetRMAP(int argc, const char **argv);
+	bool Cmd_Combos(int argc, const char **argv);
 };
 
 class LivingBooksConsole : public GUI::Debugger {

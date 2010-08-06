@@ -97,6 +97,9 @@ void KyraEngine_HoF::setTimer1DelaySecs(int secs) {
 }
 
 void KyraEngine_HoF::setWalkspeed(uint8 newSpeed) {
+	if (!_timer)
+		return;
+
 	if (newSpeed < 5)
 		newSpeed = 3;
 	else

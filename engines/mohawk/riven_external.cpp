@@ -284,9 +284,14 @@ void RivenExternal::xaatrusbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	if (_vm->getFeatures() & GF_DEMO)
+		_vm->_sound->playSound(4, false);
+	else
+		_vm->_sound->playSound(3, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -299,9 +304,14 @@ void RivenExternal::xaatrusbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	if (_vm->getFeatures() & GF_DEMO)
+		_vm->_sound->playSound(5, false);
+	else
+		_vm->_sound->playSound(4, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
@@ -349,9 +359,11 @@ void RivenExternal::xacathbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(5, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(3);
 	_vm->_gfx->updateScreen();
 }
 
@@ -364,9 +376,11 @@ void RivenExternal::xacathbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(6, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(2);
 	_vm->_gfx->updateScreen();
 }
 
@@ -380,12 +394,20 @@ void RivenExternal::xtrapbookback(uint16 argc, uint16 *argv) {
 void RivenExternal::xatrapbookclose(uint16 argc, uint16 *argv) {
 	// Close the trap book
 	*_vm->matchVarToString("atrap") = 0;
+
+	// Play the page turning sound
+	_vm->_sound->playSound(8, false);
+
 	_vm->refreshCard();
 }
 
 void RivenExternal::xatrapbookopen(uint16 argc, uint16 *argv) {
 	// Open the trap book
 	*_vm->matchVarToString("atrap") = 1;
+
+	// Play the page turning sound
+	_vm->_sound->playSound(9, false);
+
 	_vm->refreshCard();
 }
 
@@ -437,7 +459,11 @@ void RivenExternal::xblabbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
+	// Play the page turning sound
+	_vm->_sound->playSound(22, false);
+
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -450,7 +476,11 @@ void RivenExternal::xblabbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
+	// Play the page turning sound
+	_vm->_sound->playSound(23, false);
+
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
@@ -662,15 +692,17 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 	// Get the variable for the valve
 	uint32 *valve = _vm->matchVarToString("bvalve");
 
-	Common::Event event;
 	int changeX = 0;
 	int changeY = 0;
+	bool done = false;
 
 	// Set the cursor to the closed position
 	_vm->_gfx->changeCursor(2004);
 	_vm->_system->updateScreen();
 
-	for (;;) {
+	while (!done) {
+		Common::Event event;
+
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
 			switch (event.type) {
 			case Common::EVENT_MOUSEMOVE:
@@ -682,29 +714,52 @@ void RivenExternal::xvalvecontrol(uint16 argc, uint16 *argv) {
 				// FIXME: These values for changes in x/y could be tweaked.
 				if (*valve == 0 && changeY <= -10) {
 					*valve = 1;
-					// TODO: Play movie
+					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_video->playMovieBlocking(2);
 					_vm->refreshCard();
 				} else if (*valve == 1) {
 					if (changeX >= 0 && changeY >= 10) {
 						*valve = 0;
-						// TODO: Play movie
+						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_video->playMovieBlocking(3);
 						_vm->refreshCard();
 					} else if (changeX <= -10 && changeY <= 10) {
 						*valve = 2;
-						// TODO: Play movie
+						_vm->_gfx->changeCursor(kRivenHideCursor);
+						_vm->_video->playMovieBlocking(1);
 						_vm->refreshCard();
 					}
 				} else if (*valve == 2 && changeX >= 10) {
 					*valve = 1;
-					// TODO: Play movie
+					_vm->_gfx->changeCursor(kRivenHideCursor);
+					_vm->_video->playMovieBlocking(4);
 					_vm->refreshCard();
 				}
-				return;
+				done = true;
 			default:
 				break;
 			}
 		}
 		_vm->_system->delayMillis(10);
+	}
+
+	// If we changed state and the new state is that the valve is flowing to
+	// the boiler, we need to update the boiler state.
+	if (*valve == 1) {
+		if (*_vm->matchVarToString("bidvlv") == 1) { // Check which way the water is going at the boiler
+			if (*_vm->matchVarToString("bblrarm") == 1) {
+				// If the pipe is open, make sure the water is drained out
+				*_vm->matchVarToString("bheat") = 0;
+				*_vm->matchVarToString("bblrwtr") = 0;
+			} else {
+				// If the pipe is closed, fill the boiler again
+				*_vm->matchVarToString("bheat") = *_vm->matchVarToString("bblrvalve");
+				*_vm->matchVarToString("bblrwtr") = 1;
+			}
+		} else {
+			// Have the grating inside the boiler match the switch outside
+			*_vm->matchVarToString("bblrgrt") = (*_vm->matchVarToString("bblrsw") == 1) ? 0 : 1;
+		}
 	}
 }
 
@@ -960,33 +1015,60 @@ void RivenExternal::xjtunnel106_pictfix(uint16 argc, uint16 *argv) {
 }
 
 void RivenExternal::xvga1300_carriage(uint16 argc, uint16 *argv) {
-	// TODO: This function is supposed to do a lot more, something like this (pseudocode):
+	// Run the gallows's carriage
 
-	// Show level pull movie
-	// Set transition up
-	// Change to up card
-	// Show movie of carriage coming down
-	// Set transition down
-	// Change back to card 276
-	// Show movie of carriage coming down
-	// if jgallows == 0
-	//	Set up timer
-	// 	Enter new input loop
-	//	if you click within the time
-	//		move forward
-	//		set transition right
-	//		change to card right
-	//		show movie of ascending
-	//		change to card 263
-	//	else
-	//		show movie of carriage ascending only
-	// else
-	//	show movie of carriage ascending only
+	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+	_vm->_video->playMovieBlocking(1);                 // Play handle movie
+	_vm->_gfx->scheduleTransition(15);                 // Set pan down transition
+	_vm->changeToCard(_vm->matchRMAPToCard(0x18e77));  // Change to card facing up
+	_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor (again)
+	_vm->_video->playMovieBlocking(4);                 // Play carriage beginning to drop
+	_vm->_gfx->scheduleTransition(14);                 // Set pan up transition
+	_vm->changeToCard(_vm->matchRMAPToCard(0x183a9));  // Change to card looking straight again
+	_vm->_video->playMovieBlocking(2);
 
+	uint32 *gallows = _vm->matchVarToString("jgallows");
+	if (*gallows == 1) {
+		// If the gallows is open, play the up movie and return
+		_vm->_video->playMovieBlocking(3);
+		return;
+	}
 
-	// For now, if the gallows base is closed, assume ascension and move to that card.
-	if (*_vm->matchVarToString("jgallows") == 0)
-		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));
+	// Give the player 5 seconds to click (anywhere)
+	uint32 startTime = _vm->_system->getMillis();
+	bool gotClick = false;
+	while (_vm->_system->getMillis() - startTime <= 5000 && !gotClick) {
+		Common::Event event;
+		while (_vm->_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+			case Common::EVENT_MOUSEMOVE:
+				_vm->_system->updateScreen();
+				break;
+			case Common::EVENT_LBUTTONUP:
+				gotClick = true;
+				break;
+			default:
+				break;
+			}
+		}
+
+		_vm->_system->delayMillis(10);
+	}
+
+	_vm->_gfx->changeCursor(kRivenHideCursor);             // Hide the cursor
+
+	if (gotClick) {
+		_vm->_gfx->scheduleTransition(16);                 // Schedule dissolve transition
+		_vm->changeToCard(_vm->matchRMAPToCard(0x18d4d));  // Move forward
+		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_system->delayMillis(500);                    // Delay a half second before changing again
+		_vm->_gfx->scheduleTransition(12);                 // Schedule pan left transition
+		_vm->changeToCard(_vm->matchRMAPToCard(0x18ab5));  // Turn right
+		_vm->_gfx->changeCursor(kRivenHideCursor);         // Hide the cursor
+		_vm->_video->playMovieBlocking(1);                 // Play carriage ride movie
+		_vm->changeToCard(_vm->matchRMAPToCard(0x17167));  // We have arrived at the top
+	} else
+		_vm->_video->playMovieBlocking(3);                 // Too slow!
 }
 
 void RivenExternal::xjdome25_resetsliders(uint16 argc, uint16 *argv) {
@@ -1043,8 +1125,10 @@ int RivenExternal::jspitElevatorLoop() {
 void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	// If we've moved the handle down, go down a floor
 	if (changeLevel == -1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(1);
+		_vm->_video->playMovieBlocking(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1052,8 +1136,10 @@ void RivenExternal::xhandlecontrolup(uint16 argc, uint16 *argv) {
 void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	// If we've moved the handle up, go up a floor
 	if (changeLevel == 1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(1);
+		_vm->_video->playMovieBlocking(2);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e374));
 	}
 }
@@ -1061,11 +1147,29 @@ void RivenExternal::xhandlecontroldown(uint16 argc, uint16 *argv) {
 void RivenExternal::xhandlecontrolmid(uint16 argc, uint16 *argv) {
 	int changeLevel = jspitElevatorLoop();
 
+	if (changeLevel == 0)
+		return;
+
+	// Play the handle moving video
+	if (changeLevel == 1)
+		_vm->_video->playMovieBlocking(7);
+	else
+		_vm->_video->playMovieBlocking(6);
+
+	// If the whark's mouth is open, close it
+	uint32 *mouthVar = _vm->matchVarToString("jwmouth");
+	if (*mouthVar == 1) {
+		_vm->_video->playMovieBlocking(3);
+		_vm->_video->playMovieBlocking(8);
+		*mouthVar = 0;
+	}
+
+	// Play the elevator video and then change the card
 	if (changeLevel == 1) {
-		// TODO: Run movie
+		_vm->_video->playMovieBlocking(5);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e597));
-	} else if (changeLevel == -1) {
-		// TODO: Run movie
+	} else {
+		_vm->_video->playMovieBlocking(4);
 		_vm->changeToCard(_vm->matchRMAPToCard(0x1e29c));
 	}
 }
@@ -1196,9 +1300,11 @@ void RivenExternal::xogehnbookprevpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)--;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(12, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(1);
 	_vm->_gfx->updateScreen();
 }
 
@@ -1211,13 +1317,15 @@ void RivenExternal::xogehnbooknextpage(uint16 argc, uint16 *argv) {
 		return;
 	(*page)++;
 
-	// TODO: Play the page turning sound
+	// Play the page turning sound
+	_vm->_sound->playSound(13, false);
 
 	// Now update the screen :)
+	_vm->_gfx->scheduleTransition(0);
 	_vm->_gfx->updateScreen();
 }
 
-static uint16 getComboDigit(uint32 correctCombo, uint32 digit) {
+uint16 RivenExternal::getComboDigit(uint32 correctCombo, uint32 digit) {
 	static const uint32 powers[] = { 100000, 10000, 1000, 100, 10, 1 };
 	return (correctCombo % powers[digit]) / powers[digit + 1];
 }

@@ -161,11 +161,13 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		reader = new MessageReaderV4(res->data, res->size);
 		break;
 	default:
-		warning("Message: unsupported resource version %d", version);
+		error("Message: unsupported resource version %d", version);
 		return false;
 	}
 
 	if (!reader->init()) {
+		delete reader;
+
 		warning("Message: failed to read resource header");
 		return false;
 	}
@@ -180,6 +182,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 				continue;
 			}
 
+			delete reader;
 			return false;
 		}
 
@@ -193,6 +196,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 			}
 		}
 
+		delete reader;
 		return true;
 	}
 }
@@ -259,7 +263,7 @@ void MessageState::popCursorStack() {
 	if (!_cursorStackStack.empty())
 		_cursorStack = _cursorStackStack.pop();
 	else
-		warning("Message: attempt to pop from empty stack");
+		error("Message: attempt to pop from empty stack");
 }
 
 int MessageState::hexDigitToInt(char h) {
@@ -330,7 +334,8 @@ bool MessageState::stringStage(Common::String &outstr, const Common::String &inS
 		}
 
 		// If we find a lowercase character or a digit, it's not a stage direction
-		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9')))
+		// SCI32 seems to support having digits in stage directions
+		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9') && (getSciVersion() < SCI_VERSION_2)))
 			return false;
 	}
 
@@ -379,7 +384,14 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 		if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
 			_segMan->strcpy(buf, str.c_str());
 		} else {
-			warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+			// LSL6 sets an exit text here, but the buffer size allocated
+			// is too small. Don't display a warning in this case, as we
+			// don't use the exit text anyway - bug report #3035533
+			if (g_sci->getGameId() == GID_LSL6 && str.hasPrefix("\r\n(c) 1993 Sierra On-Line, Inc")) {
+				// LSL6 buggy exit text, don't show warning
+			} else {
+				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+			}
 
 			// Set buffer to empty string if possible
 			if (buffer_r.maxSize > 0)

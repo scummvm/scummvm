@@ -31,7 +31,7 @@
 namespace Scumm {
 
 /**
- * The area in which some click (or key press) occured and which is passed
+ * The area in which some click (or key press) occurred and which is passed
  * to the input script.
  */
 enum ClickArea {

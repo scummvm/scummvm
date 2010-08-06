@@ -35,33 +35,21 @@
 
 namespace Mohawk {
 
-RivenScript::RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType)
-	: _vm(vm), _stream(stream), _scriptType(scriptType) {
+RivenScript::RivenScript(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream, uint16 scriptType, uint16 parentStack, uint16 parentCard)
+	: _vm(vm), _stream(stream), _scriptType(scriptType), _parentStack(parentStack), _parentCard(parentCard) {
 	setupOpcodes();
+	_isRunning = false;
 }
 
 RivenScript::~RivenScript() {
 	delete _stream;
 }
 
-RivenScriptList RivenScript::readScripts(MohawkEngine_Riven *vm, Common::SeekableReadStream *stream) {
-	RivenScriptList scriptList;
-
-	uint16 scriptCount = stream->readUint16BE();
-	for (uint16 i = 0; i < scriptCount; i++) {
-		uint16 scriptType = stream->readUint16BE();
-		uint32 scriptSize = calculateScriptSize(stream);
-		scriptList.push_back(Common::SharedPtr<RivenScript>(new RivenScript(vm, stream->readStream(scriptSize), scriptType)));
-	}
-
-	return scriptList;
-}
-
 uint32 RivenScript::calculateCommandSize(Common::SeekableReadStream* script) {
 	uint16 command = script->readUint16BE();
 	uint32 commandSize = 2;
 	if (command == 8) {
-		if (script->readUint16BE() != 2)
+		if (script->readUint16BE() != 2) // Arg count?
 			warning ("if-then-else unknown value is not 2");
 		script->readUint16BE();								// variable to check against
 		uint16 logicBlockCount = script->readUint16BE();	// number of logic blocks
@@ -161,7 +149,7 @@ void RivenScript::setupOpcodes() {
 		OPCODE(activateFLST),
 		OPCODE(zipMode),
 		OPCODE(activateMLST),
-		OPCODE(activateSLSTWithVolume)
+		OPCODE(empty)                       // Activate an SLST with a volume parameter (not used)
 	};
 
 	_opcodes = riven_opcodes;
@@ -239,10 +227,13 @@ void RivenScript::dumpCommands(Common::StringArray varNames, Common::StringArray
 }
 
 void RivenScript::runScript() {
+	_isRunning = true;
+
 	if (_stream->pos() != 0)
 		_stream->seek(0);
 
 	processCommands(true);
+	_isRunning = false;
 }
 
 void RivenScript::processCommands(bool runCommands) {
@@ -610,9 +601,46 @@ void RivenScript::activateMLST(uint16 op, uint16 argc, uint16 *argv) {
 	_vm->_video->activateMLST(argv[0], _vm->getCurCard());
 }
 
-// Command 47: activate SLST record with a volume argument
-void RivenScript::activateSLSTWithVolume(uint16 op, uint16 argc, uint16 *argv) {
-	warning("STUB: activateSLSTWithVolume()");
+RivenScriptManager::RivenScriptManager(MohawkEngine_Riven *vm) {
+	_vm = vm;
+}
+
+RivenScriptManager::~RivenScriptManager() {
+	for (uint32 i = 0; i < _currentScripts.size(); i++)
+		delete _currentScripts[i];
+}
+
+RivenScriptList RivenScriptManager::readScripts(Common::SeekableReadStream *stream, bool garbageCollect) {
+	if (garbageCollect)
+		unloadUnusedScripts(); // Garbage collect!
+
+	RivenScriptList scriptList;
+
+	uint16 scriptCount = stream->readUint16BE();
+	for (uint16 i = 0; i < scriptCount; i++) {
+		uint16 scriptType = stream->readUint16BE();
+		uint32 scriptSize = RivenScript::calculateScriptSize(stream);
+		RivenScript *script = new RivenScript(_vm, stream->readStream(scriptSize), scriptType, _vm->getCurStack(), _vm->getCurCard());
+		scriptList.push_back(script);
+
+		// Only add it to the scripts that we will free later if it is requested.
+		// (ie. we don't want to store scripts from the dumpScript console command)
+		if (garbageCollect)
+			_currentScripts.push_back(script);
+	}
+
+	return scriptList;
+}
+
+void RivenScriptManager::unloadUnusedScripts() {
+	// Free any scripts that aren't part of the current card and aren't running
+	for (uint32 i = 0; i < _currentScripts.size(); i++) {
+		if ((_vm->getCurStack() != _currentScripts[i]->getParentStack() || _vm->getCurCard() != _currentScripts[i]->getParentCard()) && !_currentScripts[i]->isRunning()) {
+			delete _currentScripts[i];
+			_currentScripts.remove_at(i);
+			i--;
+		}
+	}
 }
 
 } // End of namespace Mohawk

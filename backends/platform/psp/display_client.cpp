@@ -340,11 +340,17 @@ void Buffer::copyFromRect(const byte *buf, uint32 pitch, int destX, int destY, u
 
 	if (pitch == realWidthInBytes && pitch == recWidthInBytes) {
 		//memcpy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
-		Copier::copy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), &_pixelFormat);
+		if (_pixelFormat.swapRB)
+			PspMemory::fastSwap(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth), _pixelFormat);
+		else
+			PspMemory::fastCopy(dst, buf, _pixelFormat.pixelsToBytes(recHeight * recWidth));
 	} else {
 		do {
 			//memcpy(dst, buf, recWidthInBytes);
-			Copier::copy(dst, buf, recWidthInBytes, &_pixelFormat);
+			if (_pixelFormat.swapRB)
+				PspMemory::fastSwap(dst, buf, recWidthInBytes, _pixelFormat);
+			else
+				PspMemory::fastCopy(dst, buf, recWidthInBytes);
 			buf += pitch;
 			dst += realWidthInBytes;
 		} while (--recHeight);
@@ -363,7 +369,10 @@ void Buffer::copyToArray(byte *dst, int pitch) {
 
 	do {
 		//memcpy(dst, src, sourceWidthInBytes);
-		Copier::copy(dst, src, sourceWidthInBytes, &_pixelFormat);
+		if (_pixelFormat.swapRB)
+			PspMemory::fastSwap(dst, src, sourceWidthInBytes, _pixelFormat);
+		else
+			PspMemory::fastCopy(dst, src, sourceWidthInBytes);
 		src += realWidthInBytes;
 		dst += pitch;
 	} while (--h);

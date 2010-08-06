@@ -46,11 +46,6 @@ const int SID::FIXP_MASK = 0xffff;
 WaveformGenerator::WaveformGenerator() {
 	sync_source = this;
 
-	wave__ST = wave6581__ST;
-	wave_P_T = wave6581_P_T;
-	wave_PS_ = wave6581_PS_;
-	wave_PST = wave6581_PST;
-
 	reset();
 }
 
@@ -226,19 +221,19 @@ RESID_INLINE reg12 WaveformGenerator::outputN___() {
 // Combined waveforms:
 
 RESID_INLINE reg12 WaveformGenerator::output__ST() {
-	return wave__ST[output__S_()] << 4;
+	return wave6581__ST[output__S_()] << 4;
 }
 
 RESID_INLINE reg12 WaveformGenerator::output_P_T() {
-	return (wave_P_T[output___T() >> 1] << 4) & output_P__();
+	return (wave6581_P_T[output___T() >> 1] << 4) & output_P__();
 }
 
 RESID_INLINE reg12 WaveformGenerator::output_PS_() {
-	return (wave_PS_[output__S_()] << 4) & output_P__();
+	return (wave6581_PS_[output__S_()] << 4) & output_P__();
 }
 
 RESID_INLINE reg12 WaveformGenerator::output_PST() {
-	return (wave_PST[output__S_()] << 4) & output_P__();
+	return (wave6581_PST[output__S_()] << 4) & output_P__();
 }
 
 // Combined waveforms including noise:
@@ -506,7 +501,7 @@ Filter::Filter() {
 		+ sizeof(f0_points_6581)/sizeof(*f0_points_6581) - 1,
 		PointPlotter<sound_sample>(f0_6581), 1.0);
 
-	mixer_DC = -0xfff*0xff/18 >> 7;
+	mixer_DC = (-0xfff*0xff/18) >> 7;
 
 	f0 = f0_6581;
 	f0_points = f0_points_6581;

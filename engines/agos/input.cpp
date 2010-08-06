@@ -99,7 +99,7 @@ void AGOSEngine::setup_cond_c_helper() {
 			animMax = 9;
 		}
 
-		_animatePointer = 0;
+		_animatePointer = false;
 		_mouseCursor = cursor;
 		_mouseAnimMax = animMax;
 		_mouseAnim = 1;
@@ -574,13 +574,13 @@ bool AGOSEngine::processSpecialKeys() {
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE)) ||
 			((getFeatures() & GF_TALKIE) && _language != Common::EN_ANY && _language != Common::DE_DEU)) {
 			if (_speech)
-				_subtitles ^= 1;
+				_subtitles = !_subtitles;
 		}
 		break;
 	case 'v':
 		if (getGameType() == GType_FF || (getGameType() == GType_SIMON2 && (getFeatures() & GF_TALKIE))) {
 			if (_subtitles)
-				_speech ^= 1;
+				_speech = !_speech;
 		}
 		break;
 	case '+':
@@ -598,22 +598,24 @@ bool AGOSEngine::processSpecialKeys() {
 		syncSoundSettings();
 		break;
 	case 'm':
-		_musicPaused ^= 1;
+		_musicPaused = !_musicPaused;
 		if (_midiEnabled) {
 			_midi.pause(_musicPaused);
 		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, (_musicPaused) ? 0 : ConfMan.getInt("music_volume"));
+		syncSoundSettings();
 		break;
 	case 's':
 		if (getGameId() == GID_SIMON1DOS) {
-			_midi._enable_sfx ^= 1;
+			_midi._enable_sfx = !_midi._enable_sfx;
 		} else {
-			_sound->effectsPause(_effectsPaused ^= 1);
+			_effectsPaused = !_effectsPaused;
+			_sound->effectsPause(_effectsPaused);
 		}
 		break;
 	case 'b':
 		if (getGameType() == GType_SIMON2) {
-			_sound->ambientPause(_ambientPaused ^= 1);
+			_ambientPaused = !_ambientPaused;
+			_sound->ambientPause(_ambientPaused);
 		}
 		break;
 	default:

@@ -28,6 +28,7 @@
 
 #include "common/endian.h"	// for READ_LE_UINT16
 #include "common/rect.h"
+#include "common/serializer.h"
 #include "sci/engine/vm_types.h"
 
 namespace Sci {

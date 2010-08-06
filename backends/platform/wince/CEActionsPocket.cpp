@@ -31,30 +31,32 @@
 #include "common/config-manager.h"
 #include "gui/KeysDialog.h"
 
+#include "common/translation.h"
+
 #ifdef _WIN32_WCE
 #define		KEY_ALL_SKIP	3457
 #endif
 
 const String pocketActionNames[] = {
-	"Pause",
-	"Save",
-	"Quit",
-	"Skip",
-	"Hide Toolbar",
-	"Show Keyboard",
-	"Sound on/off",
-	"Right click",
-	"Show/Hide Cursor",
-	"Free look",
-	"Zoom up",
-	"Zoom down",
-	"Multi Function",
-	"Bind Keys",
-	"Cursor Up",
-	"Cursor Down",
-	"Cursor Left",
-	"Cursor Right",
-	"Left Click",
+	_s("Pause"),
+	_s("Save"),
+	_s("Quit"),
+	_s("Skip"),
+	_s("Hide Toolbar"),
+	_s("Show Keyboard"),
+	_s("Sound on/off"),
+	_s("Right click"),
+	_s("Show/Hide Cursor"),
+	_s("Free look"),
+	_s("Zoom up"),
+	_s("Zoom down"),
+	_s("Multi Function"),
+	_s("Bind Keys"),
+	_s("Cursor Up"),
+	_s("Cursor Down"),
+	_s("Cursor Left"),
+	_s("Cursor Right"),
+	_s("Left Click")
 };
 
 void CEActionsPocket::init() {
@@ -63,7 +65,7 @@ void CEActionsPocket::init() {
 
 
 String CEActionsPocket::actionName(GUI::ActionType action) {
-	return pocketActionNames[action];
+	return _(pocketActionNames[action]);
 }
 
 int CEActionsPocket::size() {
@@ -258,7 +260,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 		if (action == POCKET_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
 			// FIXME: This is a temporary solution. The engine should handle its own menus.
 			// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
-			GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
+			GUI::MessageDialog alert(_("Do you want to load or save the game?"), _("Load"), _("Save"));
 			if (alert.runModal() == GUI::kMessageOK)
 				_key_action[action].setKey(SDLK_l);
 			else
@@ -308,7 +310,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	case POCKET_ACTION_QUIT:
 		if (!quitdialog) {
 			quitdialog = true;
-			GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
+			GUI::MessageDialog alert(_("   Are you sure you want to quit ?   "), _("Yes"), _("No"));
 			if (alert.runModal() == GUI::kMessageOK)
 				_mainSystem->quit();
 			quitdialog = false;

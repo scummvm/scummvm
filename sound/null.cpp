@@ -22,34 +22,9 @@
  * $Id$
  */
 
-#include "sound/musicplugin.h"
-#include "sound/mpu401.h"
+#include "sound/null.h"
 
-/* NULL driver */
-class MidiDriver_NULL : public MidiDriver_MPU401 {
-public:
-	int open() { return 0; }
-	void send(uint32 b) { }
-};
-
-
-// Plugin interface
-
-class NullMusicPlugin : public MusicPluginObject {
-public:
-	const char *getName() const {
-		return "No music";
-	}
-
-	const char *getId() const {
-		return "null";
-	}
-
-	MusicDevices getDevices() const;
-	Common::Error createInstance(MidiDriver **mididriver) const;
-};
-
-Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver) const {
+Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver, MidiDriver::DeviceHandle) const {
 	*mididriver = new MidiDriver_NULL();
 
 	return Common::kNoError;
@@ -57,28 +32,31 @@ Common::Error NullMusicPlugin::createInstance(MidiDriver **mididriver) const {
 
 MusicDevices NullMusicPlugin::getDevices() const {
 	MusicDevices devices;
-	// TODO: return a different music type?
-	devices.push_back(MusicDevice(this, "", MT_GM));
+	devices.push_back(MusicDevice(this, "", MT_NULL));
 	return devices;
 }
 
-MidiDriver *MidiDriver_NULL_create() {
-	MidiDriver *mididriver;
+class AutoMusicPlugin : public NullMusicPlugin {
+public:
+	const char *getName() const {
+		return _s("<default>");
+	}
 
-	NullMusicPlugin p;
-	p.createInstance(&mididriver);
+	const char *getId() const {
+		return "auto";
+	}
+	MusicDevices getDevices() const;
+};
 
-	return mididriver;
+MusicDevices AutoMusicPlugin::getDevices() const {
+	MusicDevices devices;
+	devices.push_back(MusicDevice(this, "", MT_AUTO));
+	return devices;
 }
-
-#ifdef DISABLE_ADLIB
-MidiDriver *MidiDriver_ADLIB_create() {
-	return MidiDriver_NULL_create();
-}
-#endif
 
 //#if PLUGIN_ENABLED_DYNAMIC(NULL)
 	//REGISTER_PLUGIN_DYNAMIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
 //#else
+	REGISTER_PLUGIN_STATIC(AUTO, PLUGIN_TYPE_MUSIC, AutoMusicPlugin);
 	REGISTER_PLUGIN_STATIC(NULL, PLUGIN_TYPE_MUSIC, NullMusicPlugin);
 //#endif

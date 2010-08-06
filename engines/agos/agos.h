@@ -393,7 +393,7 @@ protected:
 	Common::Point _mouseOld;
 
 	byte *_mouseData;
-	byte _animatePointer;
+	bool _animatePointer;
 	byte _maxCursorWidth, _maxCursorHeight;
 	byte _mouseAnim, _mouseAnimMax, _mouseCursor;
 	byte _currentMouseAnim, _currentMouseCursor;

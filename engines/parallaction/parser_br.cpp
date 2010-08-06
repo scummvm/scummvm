@@ -825,6 +825,16 @@ void LocationParser_br::parseHearData(ZonePtr z) {
 	}
 }
 
+void LocationParser_br::parseNoneData(ZonePtr z) {
+	/* the only case we have to handle here is that of "scende2", which is the only Animation with 
+	   a command list following the type marker.
+	*/
+	if (!scumm_stricmp(_tokens[0], "commands")) {
+		parseCommands(z->_commands);
+	} 
+}
+
+
 typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
 static ZoneTypeParser parsers[] = {
 	0,	// no type
@@ -836,7 +846,7 @@ static ZoneTypeParser parsers[] = {
 	&LocationParser_br::parseHearData,
 	0,	// feel
 	&LocationParser_br::parseSpeakData,
-	0,	// none
+	&LocationParser_br::parseNoneData,
 	0,	// trap
 	0,	// you
 	0,	// command
@@ -881,7 +891,6 @@ DECLARE_ANIM_PARSER(moveto)  {
 	ctxt.a->_moveTo.y = atoi(_tokens[2]);
 //	ctxt.a->_moveTo.z = atoi(_tokens[3]);
 }
-
 
 DECLARE_ANIM_PARSER(endanimation)  {
 	debugC(7, kDebugParser, "ANIM_PARSER(endanimation) ");

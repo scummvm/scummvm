@@ -166,10 +166,10 @@ void Animation::drawFrame(Surface *surface) {
 
 	const SoundSample *sample = _samples[_currentFrame];
 	if (_hasChangedFrame && sample) {
+		uint duration = _vm->_sound->playSound(sample, Audio::Mixer::kMaxChannelVolume, false);
 		debugC(3, kDraciSoundDebugLevel,
-			"Playing sample on animation %d, frame %d: %d+%d at %dHz",
-			_id, _currentFrame, sample->_offset, sample->_length, sample->_frequency);
-		_vm->_sound->playSound(sample, Audio::Mixer::kMaxChannelVolume, false);
+			"Playing sample on animation %d, frame %d: %d+%d at %dHz: %dms",
+			_id, _currentFrame, sample->_offset, sample->_length, sample->_frequency, duration);
 	}
 	_hasChangedFrame = false;
 }

@@ -446,7 +446,7 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 
 	MadsView::_bgSurface = &_backgroundSurface;
 	MadsView::_depthSurface = &_codeSurface;
-	MadsView::_yOffset = MADS_Y_OFFSET;
+	MadsView::setViewport(Common::Rect(0, MADS_Y_OFFSET, MADS_SURFACE_WIDTH, MADS_Y_OFFSET + MADS_SURFACE_HEIGHT));
 
 	_screenType = VIEWID_ANIMVIEW;
 	_screenFlags.layer = LAYER_BACKGROUND;
@@ -458,10 +458,18 @@ AnimviewView::AnimviewView(MadsM4Engine *vm):
 	_previousUpdate = 0;
 	_transition = kTransitionNone;
 	_activeAnimation = NULL;
+	_bgLoadFlag = true;
+	_startFrame = -1;
+	_scriptDone = false;
+
 	reset();
 
 	// Set up system palette colors
 	_vm->_palette->setMadsSystemPalette();
+
+	// Block reserved palette ranges
+	_vm->_palette->blockRange(16, 2);
+	_vm->_palette->blockRange(250, 4);
 
 	clear();
 	_backgroundSurface.clear();
@@ -510,7 +518,9 @@ bool AnimviewView::onEvent(M4EventType eventType, int32 param, int x, int y, boo
 }
 
 void AnimviewView::updateState() {
-	if (!_script)
+	MadsView::update();
+
+	if (!_script || _scriptDone)
 		return;
 
 	if (!_activeAnimation) {
@@ -524,19 +534,35 @@ void AnimviewView::updateState() {
 		delete _activeAnimation;
 		_activeAnimation = NULL;
 
-		if (_script->eos() ||  _script->err()) {
+		// Clear up current background and sprites
+		_backgroundSurface.reset();
+		clearLists();
+		
+		// Reset flags
+		_startFrame = -1;
+
+		readNextCommand();
+
+		// Check if script is finished
+		if (_scriptDone) {
 			scriptDone();
 			return;
 		}
-
-		readNextCommand();
 	}
 
 	refresh();
 }
 
 void AnimviewView::readNextCommand() {
+static bool tempFlag = true;//****DEBUG - Temporarily allow me to skip several intro scenes ****
+
 	while (!_script->eos() && !_script->err()) {
+		if (!tempFlag) {
+			tempFlag = true;
+			strncpy(_currentLine, _script->readLine().c_str(), 79);
+			strncpy(_currentLine, _script->readLine().c_str(), 79);
+		}
+
 		strncpy(_currentLine, _script->readLine().c_str(), 79);
 
 		// Process any switches on the line
@@ -564,15 +590,24 @@ void AnimviewView::readNextCommand() {
 			break;
 	}
 
+	if (!_currentLine[0]) {
+		// A blank line at this point means that the end of the animation has been reached
+		_scriptDone = true;
+		return;
+	}
+
 	if (strchr(_currentLine, '.') == NULL)
 		strcat(_currentLine, ".aa");
 
-	_activeAnimation = new MadsAnimation(_vm, this);
-	_activeAnimation->load(_currentLine, 0);
+	uint16 flags = 0;
+	if (_bgLoadFlag)
+		flags |= 0x100;
 
-	_backgroundSurface.loadBackground(_activeAnimation->roomNumber());
-	_codeSurface.setSize(_backgroundSurface.width(), _backgroundSurface.height());
-	_codeSurface.fillRect(_codeSurface.bounds(), 0xff);
+	_activeAnimation = new MadsAnimation(_vm, this);
+	_activeAnimation->initialise(_currentLine, flags, &_backgroundSurface, &_codeSurface);
+
+	if (_startFrame != -1)
+		_activeAnimation->setCurrentFrame(_startFrame);
 
 	_spriteSlots.fullRefresh();
 /*
@@ -627,6 +662,7 @@ return;
 Switches are: (taken from the help of the original executable)
   -b       Toggle background load status off/on.
   -c:char  Specify sound card id letter.
+  -f:num   Specify a specific starting frame number
   -g       Stay in graphics mode on exit.
   -h[:ex]  Disable EMS/XMS high memory support.
   -i       Switch sound interrupts mode off/on.
@@ -670,18 +706,39 @@ void AnimviewView::processCommand() {
 	str_upper(commandStr);
 	char *param = commandStr;
 
-	if (!strncmp(commandStr, "X", 1)) {
-		//printf("X ");
-	} else if (!strncmp(commandStr, "W", 1)) {
-		//printf("W ");
-	} else if (!strncmp(commandStr, "R", 1)) {
-		param = param + 2;
-		//printf("R:%s ", param);
-	} else if (!strncmp(commandStr, "O", 1)) {
+	switch (commandStr[0]) {
+	case 'B':
+		// Toggle background load flag
+		_bgLoadFlag = !_bgLoadFlag;
+		break;
+
+	case 'F':
+		// Start animation at a specific frame
+		++param;
+		assert(*param == ':');
+		_startFrame = atoi(++param);
+		break;
+
+	case 'O':
 		param = param + 2;
 		//printf("O:%i ", atoi(param));
 		_transition = atoi(param);
-	} else {
+		break;
+
+	case 'R':
+		param = param + 2;
+		//printf("R:%s ", param);
+		break;
+
+	case 'W':
+		//printf("W ");
+		break;
+
+	case 'X':
+		//printf("X ");
+		break;
+
+	default:
 		error("Unknown response command: '%s'", commandStr);
 	}
 }

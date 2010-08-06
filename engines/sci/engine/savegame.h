@@ -36,8 +36,8 @@ namespace Sci {
 struct EngineState;
 
 enum {
-	CURRENT_SAVEGAME_VERSION = 20,
-	MINIMUM_SAVEGAME_VERSION = 9
+	CURRENT_SAVEGAME_VERSION = 24,
+	MINIMUM_SAVEGAME_VERSION = 14
 };
 
 // Savegame metadata
@@ -47,6 +47,8 @@ struct SavegameMetadata {
 	Common::String game_version;
 	int savegame_date;
 	int savegame_time;
+	uint16 game_object_offset;
+	uint16 script0_size;
 };
 
 
@@ -57,7 +59,7 @@ struct SavegameMetadata {
  * @param savename	The description of the savegame
  * @return 0 on success, 1 otherwise
  */
-int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename, const char *version);
+bool gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename, const char *version);
 
 /**
  * Restores a game state from a directory.

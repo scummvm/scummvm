@@ -136,7 +136,7 @@ protected:
 	int _dialogSelectedLine;
 	Common::StringArray _saveList;
 
-	int _word_8502C;
+	int _v8502C;
 	int _selectedLine;
 	int _lineIndex;
 	bool _enterFlag;

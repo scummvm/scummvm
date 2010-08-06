@@ -46,6 +46,9 @@ protected:
 	int _tabWidth;
 	int _tabHeight;
 
+	int _bodyRP, _bodyTP, _bodyLP, _bodyBP;
+	ThemeEngine::DialogBackground _bodyBackgroundType;
+
 	int _titleVPad;
 
 	int _butRP, _butTP, _butW, _butH;

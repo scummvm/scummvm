@@ -180,6 +180,7 @@ static void SDLModToOSystemKeyFlags(SDLMod mod, Common::Event &event) {
 
 bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
+	ev.type = SDL_NOEVENT;
 
 	handleKbdMouse();
 

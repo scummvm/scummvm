@@ -4,13 +4,20 @@ AAPT = aapt
 DX = dx
 APKBUILDER = apkbuilder
 ADB = adb -e
-ANDROID_JAR = $(ANDROID_SDK)/platforms/android-1.6/android.jar
 JAVAC ?= javac
 JAVACFLAGS = -source 1.5 -target 1.5
 
 # FIXME: find/mark plugin entry points and add all this back again:
 #LDFLAGS += -Wl,--gc-sections
 #CXXFLAGS += -ffunction-sections -fdata-sections -fvisibility=hidden -fvisibility-inlines-hidden
+
+resources.ap_: $(srcdir)/dists/android/AndroidManifest.xml $(RESOURCES) $(ASSETS) $(ANDROID_JAR8) $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA)
+	$(INSTALL) -d build.tmp/assets/
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) build.tmp/assets/
+	$(AAPT) package -f -M $< -S $(srcdir)/dists/android/res -A build.tmp/assets -I $(ANDROID_JAR8) -F $@
+
+build.tmp/%/resources.ap_: build.tmp/%/AndroidManifest.xml build.stage/%/res/values/strings.xml build.stage/%/res/drawable/scummvm.png $(ANDROID_JAR8)
+	$(AAPT) package -f -M $< -S build.stage/$*/res -I $(ANDROID_JAR8) -F $@
 
 scummvm.apk: build.tmp/libscummvm.so resources.ap_ classes.dex
 	# Package installer won't delete old libscummvm.so on upgrade so

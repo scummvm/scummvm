@@ -234,6 +234,7 @@ Common::Error KyraEngine_LoK::init() {
 
 	_talkingCharNum = -1;
 	_charSayUnk3 = -1;
+	_disabledTalkAnimObject = _enabledTalkAnimObject = 0;
 	memset(_currSentenceColor, 0, 3);
 	_startSentencePalIndex = -1;
 	_fadeText = false;

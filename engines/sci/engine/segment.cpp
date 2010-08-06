@@ -86,175 +86,52 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	return mem;
 }
 
-Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
-	_nr = 0;
-	_buf = NULL;
-	_bufSize = 0;
-	_scriptSize = 0;
-	_heapSize = 0;
-
-	_synonyms = NULL;
-	_heapStart = NULL;
-	_exportTable = NULL;
-
-	_localsOffset = 0;
-	_localsSegment = 0;
-	_localsBlock = NULL;
-
-	_markedAsDeleted = false;
-}
-
-Script::~Script() {
-	freeScript();
-}
-
-void Script::freeScript() {
-	free(_buf);
-	_buf = NULL;
-	_bufSize = 0;
-
-	_objects.clear();
-	_codeBlocks.clear();
-}
-
-void Script::init(int script_nr, ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-
-	_localsOffset = 0;
-	_localsBlock = NULL;
-
-	_codeBlocks.clear();
-
-	_markedAsDeleted = false;
-
-	_nr = script_nr;
-	_buf = 0;
-	_heapStart = 0;
-
-	_scriptSize = script->size;
-	_bufSize = script->size;
-	_heapSize = 0;
-
-	_lockers = 1;
-
-	if (getSciVersion() == SCI_VERSION_0_EARLY) {
-		_bufSize += READ_LE_UINT16(script->data) * 2;
-	} else if (getSciVersion() >= SCI_VERSION_1_1) {
-		/**
-		 * In SCI11, the heap was in a separate space from the script.
-		 * We append it to the end of the script, and adjust addressing accordingly.
-		 * However, since we address the heap with a 16-bit pointer, the combined
-		 * size of the stack and the heap must be 64KB. So far this has worked
-		 * for SCI11, SCI2 and SCI21 games. SCI3 games use a different script format,
-		 * and theoretically they can exceed the 64KB boundary using relocation.
-		 */
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-		_bufSize += heap->size;
-		_heapSize = heap->size;
-
-		// Ensure that the start of the heap resource can be word-aligned.
-		if (script->size & 2) {
-			_bufSize++;
-			_scriptSize++;
-		}
-
-		// As mentioned above, the script and the heap together should not exceed 64KB
-		if (_bufSize > 65535)
-			error("Script and heap sizes combined exceed 64K. This means a fundamental "
-					"design bug was made regarding SCI1.1 and newer games.\nPlease "
-					"report this error to the ScummVM team");
+const char *SegmentObj::getSegmentTypeName(SegmentType type) {
+	switch (type) {
+	case SEG_TYPE_SCRIPT:
+		return "script";
+		break;
+	case SEG_TYPE_CLONES:
+		return "clones";
+		break;
+	case SEG_TYPE_LOCALS:
+		return "locals";
+		break;
+	case SEG_TYPE_SYS_STRINGS:
+		return "strings";
+		break;
+	case SEG_TYPE_STACK:
+		return "stack";
+		break;
+	case SEG_TYPE_HUNK:
+		return "hunk";
+		break;
+	case SEG_TYPE_LISTS:
+		return "lists";
+		break;
+	case SEG_TYPE_NODES:
+		return "nodes";
+		break;
+	case SEG_TYPE_DYNMEM:
+		return "dynmem";
+		break;
+#ifdef ENABLE_SCI32
+	case SEG_TYPE_ARRAY:
+		return "array";
+		break;
+	case SEG_TYPE_STRING:
+		return "string";
+		break;
+#endif
+	default:
+		error("Unknown SegmentObj type %d", type);
+		break;
 	}
-}
-
-void Script::load(ResourceManager *resMan) {
-	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, _nr), 0);
-	assert(script != 0);
-
-	_buf = (byte *)malloc(_bufSize);
-	assert(_buf);
-
-	assert(_bufSize >= script->size);
-	memcpy(_buf, script->data, script->size);
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, _nr), 0);
-		assert(heap != 0);
-
-		_heapStart = _buf + _scriptSize;
-
-		assert(_bufSize - _scriptSize <= heap->size);
-		memcpy(_heapStart, heap->data, heap->size);
-	}
-
-	_codeBlocks.clear();
-
-	_exportTable = 0;
-	_numExports = 0;
-	_synonyms = 0;
-	_numSynonyms = 0;
-	
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		if (READ_LE_UINT16(_buf + 1 + 5) > 0) {
-			_exportTable = (const uint16 *)(_buf + 1 + 5 + 2);
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable - 1);
-		}
-	} else {
-		_exportTable = (const uint16 *)findBlock(SCI_OBJ_EXPORTS);
-		if (_exportTable) {
-			_numExports = READ_SCI11ENDIAN_UINT16(_exportTable + 1);
-			_exportTable += 3;	// skip header plus 2 bytes (_exportTable is a uint16 pointer)
-		}
-		_synonyms = findBlock(SCI_OBJ_SYNONYMS);
-		if (_synonyms) {
-			_numSynonyms = READ_SCI11ENDIAN_UINT16(_synonyms + 2) / 4;
-			_synonyms += 4;	// skip header
-		}
-	}
-}
-
-Object *Script::allocateObject(uint16 offset) {
-	return &_objects[offset];
-}
-
-Object *Script::getObject(uint16 offset) {
-	if (_objects.contains(offset))
-		return &_objects[offset];
-	else
-		return 0;
-}
-
-const Object *Script::getObject(uint16 offset) const {
-	if (_objects.contains(offset))
-		return &_objects[offset];
-	else
-		return 0;
-}
-
-Object *Script::scriptObjInit(reg_t obj_pos, bool fullObjectInit) {
-	Object *obj;
-
-	if (getSciVersion() < SCI_VERSION_1_1 && fullObjectInit)
-		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
-
-	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
-
-	obj = allocateObject(obj_pos.offset);
-
-	VERIFY(obj_pos.offset + kOffsetFunctionArea < (int)_bufSize, "Function area pointer stored beyond end of script\n");
-
-	obj->init(_buf, obj_pos, fullObjectInit);
-
-	return obj;
-}
-
-void Script::scriptObjRemove(reg_t obj_pos) {
-	if (getSciVersion() < SCI_VERSION_1_1)
-		obj_pos.offset += 8;
-
-	_objects.erase(obj_pos.toUint16());
+	return NULL;
 }
 
 // This helper function is used by Script::relocateLocal and Object::relocate
+// Duplicate in segment.cpp and script.cpp
 static bool relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location, size_t scriptSize) {
 	int rel = location - block_location;
 
@@ -267,7 +144,7 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return false;
 
 	if (rel & 1) {
-		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
+		error("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return false;
 	}
 	block[idx].segment = segment; // Perform relocation
@@ -277,182 +154,12 @@ static bool relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 	return true;
 }
 
-bool Script::relocateLocal(SegmentId segment, int location) {
-	if (_localsBlock)
-		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location, _scriptSize);
-	else
-		return false;
-}
-
-void Script::scriptAddCodeBlock(reg_t location) {
-	CodeBlock cb;
-	cb.pos = location;
-	cb.size = READ_SCI11ENDIAN_UINT16(_buf + location.offset - 2);
-	_codeBlocks.push_back(cb);
-}
-
-void Script::relocate(reg_t block) {
-	byte *heap = _buf;
-	uint16 heapSize = (uint16)_bufSize;
-	uint16 heapOffset = 0;
-
-	if (getSciVersion() >= SCI_VERSION_1_1) {
-		heap = _heapStart;
-		heapSize = (uint16)_heapSize;
-		heapOffset = _scriptSize;
-	}
-
-	VERIFY(block.offset < (uint16)heapSize && READ_SCI11ENDIAN_UINT16(heap + block.offset) * 2 + block.offset < (uint16)heapSize,
-	       "Relocation block outside of script\n");
-
-	int count = READ_SCI11ENDIAN_UINT16(heap + block.offset);
-	int exportIndex = 0;
-
-	for (int i = 0; i < count; i++) {
-		int pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
-		// This occurs in SCI01/SCI1 games where every usually one export
-		// value is zero. It seems that in this situation, we should skip
-		// the export and move to the next one, though the total count
-		// of valid exports remains the same
-		if (!pos) {
-			exportIndex++;
-			pos = READ_SCI11ENDIAN_UINT16(heap + block.offset + 2 + (exportIndex * 2)) + heapOffset;
-			if (!pos)
-				error("Script::relocate(): Consecutive zero exports found");
-		}
-
-		if (!relocateLocal(block.segment, pos)) {
-			bool done = false;
-			uint k;
-
-			ObjMap::iterator it;
-			const ObjMap::iterator end = _objects.end();
-			for (it = _objects.begin(); !done && it != end; ++it) {
-				if (it->_value.relocate(block.segment, pos, _scriptSize))
-					done = true;
-			}
-
-			// Sanity check for SCI0-SCI1
-			if (getSciVersion() < SCI_VERSION_1_1) {
-				for (k = 0; !done && k < _codeBlocks.size(); k++) {
-					if (pos >= _codeBlocks[k].pos.offset &&
-							pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
-						done = true;
-				}
-			}
-
-			if (!done) {
-				debug("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				debug("Relocation failed for index %04x (%d/%d)\n", pos, exportIndex + 1, count);
-				if (_localsBlock)
-					debug("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
-				else
-					debug("- No locals\n");
-				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					debug("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
-				debug("Trying to continue anyway...\n");
-			}
-		}
-
-		exportIndex++;
-	}
-}
-
-void Script::incrementLockers() {
-	_lockers++;
-}
-
-void Script::decrementLockers() {
-	if (_lockers > 0)
-		_lockers--;
-}
-
-int Script::getLockers() const {
-	return _lockers;
-}
-
-void Script::setLockers(int lockers) {
-	_lockers = lockers;
-}
-
-uint16 Script::validateExportFunc(int pubfunct) {
-	bool exportsAreWide = (g_sci->_features->detectLofsType() == SCI_VERSION_1_MIDDLE);
-
-	if (_numExports <= pubfunct) {
-		warning("validateExportFunc(): pubfunct is invalid");
-		return 0;
-	}
-
-	if (exportsAreWide)
-		pubfunct *= 2;
-	uint16 offset = READ_SCI11ENDIAN_UINT16(_exportTable + pubfunct);
-	VERIFY(offset < _bufSize, "invalid export function pointer");
-
-	return offset;
-}
-
-byte *Script::findBlock(int type) {
-	byte *buf = _buf;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	if (oldScriptHeader)
-		buf += 2;
-
-	do {
-		int seekerType = READ_LE_UINT16(buf);
-
-		if (seekerType == 0)
-			break;
-		if (seekerType == type)
-			return buf;
-
-		int seekerSize = READ_LE_UINT16(buf + 2);
-		assert(seekerSize > 0);
-		buf += seekerSize;
-	} while (1);
-
-	return NULL;
-}
-
-
-// memory operations
-
-void Script::mcpyInOut(int dst, const void *src, size_t n) {
-	if (_buf) {
-		assert(dst + n <= _bufSize);
-		memcpy(_buf + dst, src, n);
-	}
-}
-
-int16 Script::getHeap(uint16 offset) const {
-	assert(offset + 1 < (int)_bufSize);
-	return READ_SCI11ENDIAN_UINT16(_buf + offset);
-//	return (_buf[offset] | (_buf[offset+1]) << 8);
-}
-
 SegmentRef SegmentObj::dereference(reg_t pointer) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
 	return SegmentRef();
 }
 
-bool Script::isValidOffset(uint16 offset) const {
-	return offset < _bufSize;
-}
-
-SegmentRef Script::dereference(reg_t pointer) {
-	if (pointer.offset > _bufSize) {
-		warning("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
-				  PRINT_REG(pointer), (uint)_bufSize);
-		return SegmentRef();
-	}
-
-	SegmentRef ret;
-	ret.isRaw = true;
-	ret.maxSize = _bufSize - pointer.offset;
-	ret.raw = _buf + pointer.offset;
-	return ret;
-}
 
 bool LocalVariables::isValidOffset(uint16 offset) const {
 	return offset < _locals.size() * 2;
@@ -471,7 +178,16 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	if (ret.maxSize > 0) {
 		ret.reg = &_locals[pointer.offset / 2];
 	} else {
-		warning("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		if ((g_sci->getEngineState()->currentRoomNumber() == 660 || g_sci->getEngineState()->currentRoomNumber() == 660)
+			&& g_sci->getGameId() == GID_LAURABOW2) {
+			// Happens in two places during the intro of LB2CD, both from kMemory(peek):
+			// - room 160: Heap 160 has 83 local variables (0-82), and the game
+			//   asks for variables at indices 83 - 90 too.
+			// - room 220: Heap 220 has 114 local variables (0-113), and the
+			//   game asks for variables at indices 114-120 too.
+		} else {
+			error("LocalVariables::dereference: Offset at end or out of bounds %04x:%04x", PRINT_REG(pointer));
+		}
 		ret.reg = 0;
 	}
 	return ret;
@@ -518,58 +234,21 @@ SegmentRef SystemStrings::dereference(reg_t pointer) {
 	if (isValidOffset(pointer.offset))
 		ret.raw = (byte *)(_strings[pointer.offset]._value);
 	else {
-		// This occurs in KQ5CD when interacting with certain objects
-		warning("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		if (g_sci->getGameId() == GID_KQ5) {
+			// This occurs in KQ5CD when interacting with certain objects
+		} else {
+			error("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		}
 	}
 
 	return ret;
 }
 
 
-//-------------------- script --------------------
-reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) const {
-	addr.offset = 0;
-	return addr;
-}
-
-void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
-	/*
-		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x", PRINT_REG(addr));
-		if (_localsSegment)
-			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000", _localsSegment);
-	*/
-
-	if (_markedAsDeleted)
-		segMan->deallocateScript(_nr);
-}
-
-void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
-	(*note)(param, make_reg(segId, 0));
-}
-
-void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
-	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
-		const Object *obj = getObject(addr.offset);
-		if (obj) {
-			// Note all local variables, if we have a local variable environment
-			if (_localsSegment)
-				(*note)(param, make_reg(_localsSegment, 0));
-
-			for (uint i = 0; i < obj->getVarCount(); i++)
-				(*note)(param, obj->getVariable(i));
-		} else {
-			warning("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
-		}
-	} else {
-		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/
-		/* Happens e.g. when we're looking into strings */
-	}
-}
-
-
 //-------------------- clones --------------------
 
-void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> CloneTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 //	assert(addr.segment == _segId);
 
 	if (!isValidEntry(addr.offset)) {
@@ -580,20 +259,20 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (uint i = 0; i < clone->getVarCount(); i++)
-		(*note)(param, clone->getVariable(i));
+		tmp.push_back(clone->getVariable(i));
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
-	(*note)(param, clone->getPos());
+	tmp.push_back(clone->getPos());
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x", PRINT_REG(clone->pos));
+
+	return tmp;
 }
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 #ifdef GC_DEBUG
-	Object *victim_obj;
+	//	assert(addr.segment == _segId);
 
-//	assert(addr.segment == _segId);
-
-	victim_obj = &(_table[addr.offset]);
+	Object *victim_obj = &(_table[addr.offset]);
 
 	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
 		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
@@ -620,11 +299,14 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return make_reg(owner_seg, 0);
 }
 
-void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> LocalVariables::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 //	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
-		(*note)(param, _locals[i]);
+		tmp.push_back(_locals[i]);
+
+	return tmp;
 }
 
 
@@ -634,11 +316,14 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return addr;
 }
 
-void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> DataStack::listAllOutgoingReferences(reg_t object) const {
+	Common::Array<reg_t> tmp;
 	fprintf(stderr, "Emitting %d stack entries\n", _capacity);
 	for (int i = 0; i < _capacity; i++)
-		(*note)(param, _entries[i]);
+		tmp.push_back(_entries[i]);
 	fprintf(stderr, "DONE");
+
+	return tmp;
 }
 
 
@@ -647,18 +332,20 @@ void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> ListTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
+		error("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
 
 	const List *list = &(_table[addr.offset]);
 
-	note(param, list->first);
-	note(param, list->last);
+	tmp.push_back(list->first);
+	tmp.push_back(list->last);
 	// We could probably get away with just one of them, but
 	// let's be conservative here.
+
+	return tmp;
 }
 
 
@@ -667,19 +354,21 @@ void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> NodeTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
+		error("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
 	const Node *node = &(_table[addr.offset]);
 
 	// We need all four here. Can't just stick with 'pred' OR 'succ' because node operations allow us
 	// to walk around from any given node
-	note(param, node->pred);
-	note(param, node->succ);
-	note(param, node->key);
-	note(param, node->value);
+	tmp.push_back(node->pred);
+	tmp.push_back(node->succ);
+	tmp.push_back(node->key);
+	tmp.push_back(node->value);
+
+	return tmp;
 }
 
 
@@ -743,7 +432,7 @@ int Object::propertyOffsetToId(SegManager *segMan, int propertyOffset) const {
 	int selectors = getVarCount();
 
 	if (propertyOffset < 0 || (propertyOffset >> 1) >= selectors) {
-		warning("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
+		error("Applied propertyOffsetToId to invalid property offset %x (property #%d not in [0..%d])",
 		          propertyOffset, propertyOffset >> 1, selectors - 1);
 		return -1;
 	}
@@ -800,8 +489,9 @@ reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) const {
 	return addr;
 }
 
-void DynMem::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) const {
-	(*note)(param, make_reg(segId, 0));
+Common::Array<reg_t> DynMem::listAllDeallocatable(SegmentId segId) const {
+	const reg_t r = make_reg(segId, 0);
+	return Common::Array<reg_t>(&r, 1);
 }
 
 #ifdef ENABLE_SCI32
@@ -819,10 +509,10 @@ void ArrayTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) const {
+Common::Array<reg_t> ArrayTable::listAllOutgoingReferences(reg_t addr) const {
+	Common::Array<reg_t> tmp;
 	if (!isValidEntry(addr.offset)) {
-		warning("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
-		return;
+		error("Invalid array referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 	}
 
 	const SciArray<reg_t> *array = &(_table[addr.offset]);
@@ -830,8 +520,10 @@ void ArrayTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 	for (uint32 i = 0; i < array->getSize(); i++) {
 		reg_t value = array->getValue(i);
 		if (value.segment != 0)
-			note(param, value);
+			tmp.push_back(value);
 	}
+
+	return tmp;
 }
 
 Common::String SciString::toString() const {

@@ -49,10 +49,8 @@ static int maxObj = 0;
 #endif
 
 void FreeObjectList() {
-	if (objectList) {
-		free(objectList);
-		objectList = NULL;
-	}
+	free(objectList);
+	objectList = NULL;
 }
 
 /**

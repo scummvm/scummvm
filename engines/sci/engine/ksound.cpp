@@ -39,12 +39,39 @@ namespace Sci {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
-	return s->_soundCmd->parseCommand(argc, argv, s->r_acc);
+	if (!s)
+		return make_reg(0, g_sci->_features->detectDoSoundType());
+	error("not supposed to call this");
 }
+
+#define CREATE_DOSOUND_FORWARD(_name_) reg_t k##_name_(EngineState *s, int argc, reg_t *argv) { return g_sci->_soundCmd->k##_name_(argc, argv, s->r_acc); }
+
+CREATE_DOSOUND_FORWARD(DoSoundInit)
+CREATE_DOSOUND_FORWARD(DoSoundPlay)
+CREATE_DOSOUND_FORWARD(DoSoundRestore)
+CREATE_DOSOUND_FORWARD(DoSoundDispose)
+CREATE_DOSOUND_FORWARD(DoSoundMute)
+CREATE_DOSOUND_FORWARD(DoSoundStop)
+CREATE_DOSOUND_FORWARD(DoSoundStopAll)
+CREATE_DOSOUND_FORWARD(DoSoundPause)
+CREATE_DOSOUND_FORWARD(DoSoundResumeAfterRestore)
+CREATE_DOSOUND_FORWARD(DoSoundMasterVolume)
+CREATE_DOSOUND_FORWARD(DoSoundUpdate)
+CREATE_DOSOUND_FORWARD(DoSoundFade)
+CREATE_DOSOUND_FORWARD(DoSoundGetPolyphony)
+CREATE_DOSOUND_FORWARD(DoSoundUpdateCues)
+CREATE_DOSOUND_FORWARD(DoSoundSendMidi)
+CREATE_DOSOUND_FORWARD(DoSoundReverb)
+CREATE_DOSOUND_FORWARD(DoSoundSetHold)
+CREATE_DOSOUND_FORWARD(DoSoundDummy)
+CREATE_DOSOUND_FORWARD(DoSoundGetAudioCapability)
+CREATE_DOSOUND_FORWARD(DoSoundSuspend)
+CREATE_DOSOUND_FORWARD(DoSoundSetVolume)
+CREATE_DOSOUND_FORWARD(DoSoundSetPriority)
+CREATE_DOSOUND_FORWARD(DoSoundSetLoop)
 
 reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
-	case kSciAudioWPlay:
 	case kSciAudioPlay: {
 		if (argc < 2)
 			return NULL_REG;
@@ -72,6 +99,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case kSciAudioPosition:
 		return make_reg(0, g_sci->_audio->audioCdPosition());
+	case kSciAudioWPlay: // CD Audio can't be preloaded
 	case kSciAudioRate: // No need to set the audio rate
 	case kSciAudioVolume: // The speech setting isn't used by CD Audio
 	case kSciAudioLanguage: // No need to set the language
@@ -80,7 +108,7 @@ reg_t kDoCdAudio(EngineState *s, int argc, reg_t *argv) {
 		// Init
 		return make_reg(0, 1);
 	default:
-		warning("kCdDoAudio: Unhandled case %d", argv[0].toUint16());
+		error("kCdDoAudio: Unhandled case %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -110,8 +138,10 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			number = argv[1].toUint16();
 		} else if (argc == 6 || argc == 8) {
 			module = argv[1].toUint16();
-			number = ((argv[2].toUint16() & 0xff) << 24) | ((argv[3].toUint16() & 0xff) << 16) |
-					 ((argv[4].toUint16() & 0xff) <<  8) | (argv[5].toUint16() & 0xff);
+			number = ((argv[2].toUint16() & 0xff) << 24) |
+			         ((argv[3].toUint16() & 0xff) << 16) |
+			         ((argv[4].toUint16() & 0xff) <<  8) |
+			          (argv[5].toUint16() & 0xff);
 			if (argc == 8)
 				warning("kDoAudio: Play called with SQ6 extra parameters");
 		} else {
@@ -119,46 +149,92 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 			return NULL_REG;
 		}
 
-		return make_reg(0, g_sci->_audio->startAudio(module, number)); // return sample length in ticks
+		debugC(2, kDebugLevelSound, "kDoAudio: play sample %d, module %d", number, module);
+
+		// return sample length in ticks
+		if (argv[0].toUint16() == kSciAudioWPlay)
+			return make_reg(0, g_sci->_audio->wPlayAudio(module, number));
+		else
+			return make_reg(0, g_sci->_audio->startAudio(module, number));
 	}
 	case kSciAudioStop:
+		debugC(2, kDebugLevelSound, "kDoAudio: stop");
 		g_sci->_audio->stopAudio();
 		break;
 	case kSciAudioPause:
+		debugC(2, kDebugLevelSound, "kDoAudio: pause");
 		g_sci->_audio->pauseAudio();
 		break;
 	case kSciAudioResume:
+		debugC(2, kDebugLevelSound, "kDoAudio: resume");
 		g_sci->_audio->resumeAudio();
 		break;
 	case kSciAudioPosition:
+		//debugC(2, kDebugLevelSound, "kDoAudio: get position");	// too verbose
 		return make_reg(0, g_sci->_audio->getAudioPosition());
 	case kSciAudioRate:
+		debugC(2, kDebugLevelSound, "kDoAudio: set audio rate to %d", argv[1].toUint16());
 		g_sci->_audio->setAudioRate(argv[1].toUint16());
 		break;
 	case kSciAudioVolume: {
 		int16 volume = argv[1].toUint16();
 		volume = CLIP<int16>(volume, 0, AUDIO_VOLUME_MAX);
+		debugC(2, kDebugLevelSound, "kDoAudio: set volume to %d", volume);
+#ifdef ENABLE_SCI32
+		if (getSciVersion() >= SCI_VERSION_2_1) {
+			int16 volumePrev = mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2;
+			volumePrev = CLIP<int16>(volumePrev, 0, AUDIO_VOLUME_MAX);
+			mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
+			return make_reg(0, volumePrev);
+		} else
+#endif
 		mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, volume * 2);
-		break;
 	}
 	case kSciAudioLanguage:
 		// In SCI1.1: tests for digital audio support
-		if (getSciVersion() == SCI_VERSION_1_1)
+		if (getSciVersion() == SCI_VERSION_1_1) {
+			debugC(2, kDebugLevelSound, "kDoAudio: audio capability test");
 			return make_reg(0, 1);
-		else {
+		} else {
 			int16 language = argv[1].toSint16();
+			debugC(2, kDebugLevelSound, "kDoAudio: set language to %d", language);
 
 			if (language != -1)
 				g_sci->getResMan()->setAudioLanguage(language);
 
-			return make_reg(0, g_sci->getSciLanguage());
+			kLanguage kLang = g_sci->getSciLanguage();
+			g_sci->setSciLanguage(kLang);
+
+			return make_reg(0, kLang);
 		}
 		break;
 	case kSciAudioCD:
-		return kDoCdAudio(s, argc - 1, argv + 1);
-	// TODO: There are 3 more functions used in Freddy Pharkas (11, 12 and 13) and new within sierra sci
-	//			Details currently unknown
-	// kDoAudio sits at seg026:038C
+
+		if (getSciVersion() <= SCI_VERSION_1_1) {
+			debugC(2, kDebugLevelSound, "kDoAudio: CD audio subop");
+			return kDoCdAudio(s, argc - 1, argv + 1);
+#ifdef ENABLE_SCI32
+		} else {
+			// TODO: This isn't CD Audio in SCI32 anymore
+			warning("kDoAudio: Unhandled case 10, %d extra arguments passed", argc - 1);
+			break;
+#endif
+		}
+
+		// 3 new subops in Pharkas. kDoAudio in Pharkas sits at seg026:038C
+	case 11:
+		// Not sure where this is used yet
+		warning("kDoAudio: Unhandled case 11, %d extra arguments passed", argc - 1);
+		break;
+	case 12:
+		// Seems to be some sort of audio sync, used in Pharkas. Silenced the
+		// warning due to the high level of spam it produces. (takes no params)
+		//warning("kDoAudio: Unhandled case 12, %d extra arguments passed", argc - 1);
+		break;
+	case 13:
+		// Used in Pharkas whenever a speech sample starts (takes no params)
+		//warning("kDoAudio: Unhandled case 13, %d extra arguments passed", argc - 1);
+		break;
 	default:
 		warning("kDoAudio: Unhandled case %d, %d extra arguments passed", argv[0].toUint16(), argc - 1);
 	}
@@ -195,7 +271,7 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		g_sci->_audio->stopSoundSync();
 		break;
 	default:
-		warning("DoSync: Unhandled subfunction %d", argv[0].toUint16());
+		error("DoSync: Unhandled subfunction %d", argv[0].toUint16());
 	}
 
 	return s->r_acc;

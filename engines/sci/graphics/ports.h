@@ -45,7 +45,8 @@ public:
 	GfxPorts(SegManager *segMan, GfxScreen *screen);
 	~GfxPorts();
 
-	void init(bool usesOldGfxFunctions, SciGui *gui, GfxPaint16 *paint16, GfxText16 *text16);
+	void init(bool usesOldGfxFunctions, GfxPaint16 *paint16, GfxText16 *text16);
+	void reset();
 
 	void kernelSetActive(uint16 portId);
 	Common::Rect kernelGetPicWindow(int16 &picTop, int16 &picLeft);
@@ -57,9 +58,10 @@ public:
 	int16 isFrontWindow(Window *wnd);
 	void beginUpdate(Window *wnd);
 	void endUpdate(Window *wnd);
-	Window *newWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
+	Window *addWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw);
 	void drawWindow(Window *wnd);
-	void disposeWindow(Window *pWnd, bool reanimate);
+	void removeWindow(Window *pWnd, bool reanimate);
+	void freeWindow(Window *pWnd);
 	void updateWindow(Window *wnd);
 
 	Port *getPortById(uint16 id);
@@ -81,8 +83,7 @@ public:
 
 	void priorityBandsInit(int16 bandCount, int16 top, int16 bottom);
 	void priorityBandsInit(byte *data);
-	void priorityBandsRemember(byte *data);
-	void priorityBandsRecall();
+	void priorityBandsInitSci11(byte *data);
 
 	void kernelInitPriorityBands();
 	void kernelGraphAdjustPriority(int top, int bottom);
@@ -102,7 +103,6 @@ private:
 	typedef Common::List<Port *> PortList;
 
 	SegManager *_segMan;
-	SciGui *_gui;
 	GfxPaint16 *_paint16;
 	GfxScreen *_screen;
 	GfxText16 *_text16;
@@ -122,9 +122,6 @@ private:
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
 	byte _priorityBands[200];
-
-	byte priorityBandsMemory[14];
-	bool priorityBandsMemoryActive;
 };
 
 } // End of namespace Sci

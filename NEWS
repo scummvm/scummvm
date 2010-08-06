@@ -5,15 +5,49 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  New Ports:
    - Added Android port.
 
+ General:
+   - Removed the outdated PalmOS port.
+   - Switched to the "fast" DOSBox OPL emulator.
+   - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
+   - Added support for more original media layouts.
+   - Added support for GUI localization.
+   - Improved GUI by adding tooltips and radiobuttons.
+   - Improved GUI usability by hiding more irrelevant options not supported by
+     specific games.
+
+ AGI:
+   - Fixed number of GFX glitches.
+   - Made PIC drawing code picture perfect.
+   - Added support of MIDI devices.
+   - Added support for accurate Tandy sound emulation. Switched to it as default.
+
+ Drascula:
+   - Fixed number of GFX glitches.
+   - Made many cutscenes smoother.
+   - Changed behavior of items menu. Now it shows up on mouse up.
+
+ Groovie:
+   - Added support for the Macintosh version of The 7th Guest.
+   - Added support for custom MT-32 instruments.
+
+ KYRA:
+   - Fixed some minor graphical glitches.
+   - Implemented formerly missing recreation of some in game items.
+
+ Parallaction:
+   - Made part one of The Big Red Adventure completable.
+
+ SAGA:
+   - Fixed graphics glitches in several scenes.
+
+ SCUMM:
+   - Several improvements in Maniac Mansion NES.
+
  PSP port:
    - Switched to new backend design which fixes minor graphical issues,
      speeds things up, and provides 16-bit support.
    - Enabled playback of MP3 files using the hardware decoder (ME). This means that
      the port is now optimized for MP3 playback (as opposed to OGG).
-
- General:
-   - Switched to the "fast" DOSBox OPL emulator.
-   - Fixed a crash in the rjp1 player code affecting the FOTAQ Amiga version.
 
 1.1.2 (????-??-??)
   Broken Sword 2

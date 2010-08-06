@@ -730,16 +730,12 @@ void BMVPlayer::FinishBMV() {
 		stream.close();
 
 	// Release the data buffer
-	if (bigBuffer != NULL) {
-		free(bigBuffer);
-		bigBuffer = NULL;
-	}
+	free(bigBuffer);
+	bigBuffer = NULL;
 
 	// Release the screen buffer
-	if (screenBuffer != NULL) {
-		free(screenBuffer);
-		screenBuffer = NULL;
-	}
+	free(screenBuffer);
+	screenBuffer = NULL;
 
 	// Ditch any text objects
 	for (i = 0; i < 2; i++) {

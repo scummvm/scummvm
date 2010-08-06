@@ -48,6 +48,17 @@ static const int SCROLLER_DELAY = 200;
 
 //--------------------------------------------------------------------------
 
+void SceneNode::load(Common::SeekableReadStream *stream) {
+	// Get the next data block
+	pt.x = stream->readUint16LE();
+	pt.y = stream->readUint16LE();
+
+	for (int i = 0; i < MAX_ROUTE_NODES; ++i)
+		indexes[i] = stream->readUint16LE();
+}
+
+//--------------------------------------------------------------------------
+
 MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResources), MadsView(this) {
 	_vm = vm;
 	_activeAnimation = NULL;
@@ -55,8 +66,8 @@ MadsScene::MadsScene(MadsEngine *vm): _sceneResources(), Scene(vm, &_sceneResour
 	MadsView::_bgSurface = Scene::_backgroundSurface;
 	MadsView::_depthSurface = Scene::_walkSurface;
 	_interfaceSurface = new MadsInterfaceView(vm);
-	for (int i = 0; i < 3; ++i)
-		actionNouns[i] = 0;
+	_showMousePos = false;
+	_mouseMsgIndex = -1;
 }
 
 MadsScene::~MadsScene() {
@@ -69,8 +80,10 @@ MadsScene::~MadsScene() {
 /**
  * Secondary scene loading code
  */
-void MadsScene::loadScene2(const char *aaName) {
+void MadsScene::loadScene2(const char *aaName, int sceneNumber) {
 	// TODO: Completely finish
+	_madsVm->globals()->previousScene = _madsVm->globals()->sceneNumber;
+	_madsVm->globals()->sceneNumber = sceneNumber;
 
 	_spriteSlots.clear();
 	_sequenceList.clear();
@@ -117,25 +130,57 @@ void MadsScene::loadScene(int sceneNumber) {
 
 	// Handle common scene setting
 	Scene::loadScene(sceneNumber);
-
-	_madsVm->globals()->previousScene = _madsVm->globals()->sceneNumber;
-	_madsVm->globals()->sceneNumber = sceneNumber;
+	_madsVm->globals()->_nextSceneId = sceneNumber;
 
 	// Existing ScummVM code that needs to be eventually replaced with MADS code
 	loadSceneTemporary();
 
+	_madsVm->_player._spritesChanged = true;
+	_madsVm->globals()->clearQuotes();
+	_dynamicHotspots.reset();
+
 	// Signal the script engine what scene is to be active
 	_sceneLogic.selectScene(sceneNumber);
-	_sceneLogic.setupScene();
 
 	// Add the scene if necessary to the list of scenes that have been visited
 	_vm->globals()->addVisitedScene(sceneNumber);
 
+	if (_vm->getGameType() == GType_RexNebular)
+		_sceneLogic.setupScene();
+
+	// TODO: Unknown code
+
 	// Secondary scene load routine
-	loadScene2("*I0.AA");
+	if (_vm->getGameType() == GType_RexNebular)
+		// Secondary scene load routine
+		loadScene2("*I0.AA", sceneNumber);
+
+	_madsVm->_player.loadSprites(NULL);
+
+	switch (_madsVm->globals()->_config.screenFades) {
+	case 0:
+		_abortTimers2 = 2;
+		break;
+	case 2:
+		_abortTimers2 = 21;
+		break;
+	default:
+		_abortTimers2 = 20;
+		break;
+	}
+	_abortTimers = 0;
+	_abortTimersMode2 = ABORTMODE_1;
+	
 
 	// Do any scene specific setup
-	_sceneLogic.enterScene();
+	if (_vm->getGameType() == GType_RexNebular)
+		_sceneLogic.enterScene();
+
+	// Miscellaneous player setup
+	_madsVm->_player._destPos = _madsVm->_player._destPos;
+	_madsVm->_player._newDirection = _madsVm->_player._direction;
+	_madsVm->_player.setupFrame();
+	_madsVm->_player.updateFrame();
 
 	// Purge resources
 	_vm->res()->purge();
@@ -150,24 +195,21 @@ void MadsScene::loadSceneHotspots(int sceneNumber) {
 	int hotspotCount = hotspotStream->readUint16LE();
 	delete hotspotStream;
 
-	_sceneResources.hotspotCount = hotspotCount;
-
 	hotspotStream = hotSpotData.getItemStream(1);
 
 	// Clear current hotspot lists
 	_sceneResources.hotspots->clear();
-
-	_sceneResources.hotspots->loadHotSpots(hotspotStream, _sceneResources.hotspotCount);
+	_sceneResources.hotspots->loadHotSpots(hotspotStream, hotspotCount);
 
 	delete hotspotStream;
 }
 
 void MadsScene::leaveScene() {
 	_sceneResources.hotspots->clear();
-	_sceneResources.props->clear();
+	_sceneResources.dynamicHotspots->clear();
 
 	delete _sceneResources.hotspots;
-	delete _sceneResources.props;
+	delete _sceneResources.dynamicHotspots;
 	delete _walkSurface;
 
 	if (_activeAnimation) {
@@ -196,57 +238,43 @@ void MadsScene::loadSceneCodes(int sceneNumber, int index) {
 	}
 }
 
-void MadsScene::checkHotspotAtMousePos(int x, int y) {
+void MadsScene::mouseMove(int x, int y) {
 	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
 	if (currentHotSpot != NULL) {
 		_vm->_mouse->setCursorNum(currentHotSpot->getCursor());
 
-		// This is the "easy" interface, which updates the status text when the mouse is moved
-		// TODO: toggle this code for easy/normal interface mode
-		char statusText[50];
-		int verbId = 0;//***DEBUG****_currentAction;
-		if (verbId == kVerbNone)
-			verbId = currentHotSpot->getVerbID();
-		if (verbId == kVerbNone)
-			verbId = kVerbWalkTo;
+		_action._selectedRow = -1;
+		_action._actionMode = ACTMODE_NONE;
+		_action._actionMode2 = ACTMODE2_4;
+		_action._hotspotId = currentHotSpot->getIndex();
 
-		sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(verbId), currentHotSpot->getVocab());
-
-		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setStatusText(statusText);
 	} else {
 		_vm->_mouse->setCursorNum(0);
-		setStatusText("");
 	}
 }
 
 void MadsScene::leftClick(int x, int y) {
-	HotSpot *currentHotSpot = _sceneResources.hotspots->findByXY(x, y);
-	if (currentHotSpot != NULL) {
-		char statusText[50];
-		if (currentHotSpot->getVerbID() != 0) {
-			sprintf(statusText, "%s %s\n", currentHotSpot->getVerb(), currentHotSpot->getVocab());
-		} else {
-			sprintf(statusText, "%s %s\n", _madsVm->globals()->getVocab(kVerbWalkTo), currentHotSpot->getVocab());
-		}
-
-		statusText[0] = toupper(statusText[0]);	// capitalize first letter
-		setStatusText(statusText);
-	}
+	// TODO: figure out the rest of Scene_leftClick, and implements relevant parts in the interface class
+	_action._v86F4C = -1;
+	_action._v86F4E = 0;
+	_customDest = _madsVm->_mouse->currentPos();
+	_action._selectedAction = -1;
+	_action._v86F4A = true;
 }
 
 void MadsScene::rightClick(int x, int y) {
-	// ***DEBUG*** - sample dialog display
-	int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
-	const char *msg = _madsVm->globals()->loadMessage(idx);
-	Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
-	_vm->_viewManager->addView(dlg);
-	_vm->_viewManager->moveToFront(dlg);
+	if (_vm->getGameType() == GType_RexNebular) {
+		// ***DEBUG*** - sample dialog display
+		int idx = 3; //_madsVm->_globals->messageIndexOf(0x277a);
+		const char *msg = _madsVm->globals()->loadMessage(idx);
+		Dialog *dlg = new Dialog(_vm, msg, "TEST DIALOG");
+		_vm->_viewManager->addView(dlg);
+		_vm->_viewManager->moveToFront(dlg);
+	}
 }
 
 void MadsScene::setAction(int action, int objectId) {
 	VALIDATE_MADS;
-	char statusText[50];
 
 	error("todo");
 	// TODO: Actually executing actions directly for objects. Also, some object actions are special in that
@@ -263,7 +291,7 @@ void MadsScene::setAction(int action, int objectId) {
 		_currentAction = action;
 	}
 */
-	setStatusText(statusText);
+//	setStatusText(statusText);
 }
 
 /**
@@ -282,35 +310,152 @@ void MadsScene::update() {
 	drawElements();
 
 	_action.set();
-	const char *sStatusText = _action.statusText();
-
-	// Handle display of any status text
-	if (sStatusText[0]) {
-		// Text colors are inverted in Dragonsphere
-		if (_vm->getGameType() == GType_DragonSphere)
-			_vm->_font->current()->setColours(_vm->_palette->BLACK, _vm->_palette->WHITE, _vm->_palette->BLACK);
-		else
-			_vm->_font->current()->setColours(_vm->_palette->WHITE, _vm->_palette->BLACK, _vm->_palette->BLACK);
-
-		_vm->_font->setFont(FONT_MAIN_MADS);
-		_vm->_font->current()->writeString(this, sStatusText, (width() - _vm->_font->current()->getWidth(sStatusText)) / 2, 142, 0);
-	}
 }
 
 void MadsScene::updateState() {
-	_sceneLogic.sceneStep();
-	_sequenceList.tick();
+	if (!_abortTimers && !_madsVm->_player._unk3) {
+		if (_dynamicHotspots._changed)
+			_dynamicHotspots.refresh();
 
+//		int v = (_madsVm->_player._stepEnabled && !_action._startWalkFlag && !_abortTimers2) ? 1 : 0;
+//		_screenObjects.check(v, false);
+	}
+
+	// Handle starting off any selected action
+	bool doPreAction = false;
+	if ((_action._selectedAction != 0) && _madsVm->_player._stepEnabled &&
+			!_action._startWalkFlag && !_abortTimers && !_madsVm->_player._unk3) {
+		// Start the action
+		_action.startAction();
+
+		if (_action._action.verbId == kVerbLookAt) {
+			_action._action.verbId = kVerbLook;
+			_action._savedFields.selectedRow = 0;
+		}
+		doPreAction = true;
+	}
+	if (doPreAction || ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_2)))
+		doPreactions();
+
+	checkStartWalk();
+
+	if (_action._inProgress && !_madsVm->_player._moving && !_action._startWalkFlag &&
+		(_madsVm->_player._newDirection == _madsVm->_player._direction)) {
+		// Reached the end of action movement, so ready to actually do action
+			doAction();
+	} else if ((_abortTimers != 0) && (_abortTimersMode == ABORTMODE_0))
+		// Do an action designated by scripts
+		doAction();
+
+	bool freeFlag = false;
+	if (_currentScene != _nextScene)
+		freeFlag = true;
+	else {
+		doSceneStep();
+
+		if (_currentScene != _nextScene)
+			freeFlag = true;
+		else {
+			// Update the player
+			_madsVm->_player.nextFrame();
+
+			// Handle updating the animation
+			if (!_abortTimers && (_activeAnimation))
+				_activeAnimation->update();
+
+			// Handle refreshing the mouse position display
+			if (_mouseMsgIndex != -1)
+				_madsVm->scene()->_kernelMessages.remove(_mouseMsgIndex);
+			if (_showMousePos) {
+				char buffer[20];
+				sprintf(buffer, "(%d,%d)", _madsVm->_mouse->currentPos().x, _madsVm->_mouse->currentPos().y);
+
+				_mouseMsgIndex = _madsVm->scene()->_kernelMessages.add(Common::Point(5, 5), 0x203, 0, 0, 1, buffer);
+			}
+		}
+	}
+
+	if (_madsVm->globals()->_config.easyMouse)
+		_action.refresh();
+	
 	if ((_activeAnimation) && !_abortTimers) {
 		_activeAnimation->update();
-		if (((MadsAnimation *) _activeAnimation)->freeFlag()) {
+		if (((MadsAnimation *) _activeAnimation)->freeFlag() || freeFlag) {
 			delete _activeAnimation;
 			_activeAnimation = NULL;
 		}
 	}
 
-	_kernelMessages.update();
+	MadsView::update();
+
+	// Remove the animation if it's been completed
+	if ((_activeAnimation) && ((MadsAnimation *)_activeAnimation)->freeFlag())
+		freeAnimation();
+
+	if ((_action._selectedAction != 0) || !_madsVm->_player._stepEnabled) {
+		_action.clear();
+		_action._selectedAction = 0;
+	}
 }
+
+void MadsScene::checkStartWalk() {
+	if (_action._startWalkFlag && _action._walkFlag) {
+		_madsVm->_player.setDest(_destPos.x, _destPos.y, _destFacing);
+		_action._startWalkFlag = false;
+	}
+}
+
+void MadsScene::doPreactions() {
+	if ((_screenObjects._v832EC == 0) || (_screenObjects._v832EC == 2)) {
+		_abortTimersMode2 = ABORTMODE_2;
+		_action.checkAction();
+
+		_sceneLogic.doPreactions();
+
+		if (_abortTimersMode == ABORTMODE_2)
+			_abortTimers = 0;
+	}
+}
+
+void MadsScene::doSceneStep() {
+	// Step through the scene
+	_sceneLogic.doSceneStep();
+
+	_madsVm->_player.step();
+	_madsVm->_player._unk3 = 0;
+
+	if (_abortTimersMode == ABORTMODE_1)
+		_abortTimers = 0;
+}
+
+void MadsScene::doAction() {
+	warning("TODO MadsScene::doAction");
+}
+
+
+/**
+ * Does extra work at cleaning up the animation, and then deletes it
+ */
+void MadsScene::freeAnimation() {
+	if (!_activeAnimation)
+		return;
+
+	MadsAnimation *anim = (MadsAnimation *)_activeAnimation;
+	if (anim->freeFlag()) {
+		_madsVm->scene()->_spriteSlots.clear();
+		_madsVm->scene()->_spriteSlots.fullRefresh();
+		_madsVm->scene()->_sequenceList.scan();
+	}
+
+	if (_madsVm->_player._visible) {
+		_madsVm->_player._forceRefresh = true;
+		_madsVm->_player.update();
+	}
+
+	delete _activeAnimation;
+	_activeAnimation = NULL;
+}
+
 
 int MadsScene::loadSceneSpriteSet(const char *setName) {
 	char resName[100];
@@ -321,27 +466,6 @@ int MadsScene::loadSceneSpriteSet(const char *setName) {
 		strcat(resName, ".SS");
 
 	return _spriteSlots.addSprites(resName);
-}
-
-void MadsScene::loadPlayerSprites(const char *prefix) {
-	const char suffixList[8] = { '8', '9', '6', '3', '2', '7', '4', '1' };
-	char setName[80];
-
-	strcpy(setName, "*");
-	strcat(setName, prefix);
-	strcat(setName, "_0.SS");
-	char *digitP = strchr(setName, '_') + 1;
-
-	for (int idx = 0; idx < 8; ++idx) {
-		*digitP = suffixList[idx];
-
-		if (_vm->res()->resourceExists(setName)) {
-			loadSceneSpriteSet(setName);
-			return;
-		}
-	}
-
-	error("Couldn't find player sprites");
 }
 
 enum boxSprites {
@@ -442,188 +566,29 @@ void MadsScene::showMADSV2TextBox(char *text, int x, int y, char *faceName) {
 	boxSprites->getFrame(bottomRight)->copyTo(_backgroundSurface, curX, curY + 1);
 }
 
-void MadsScene::loadAnimation(const Common::String &animName, int v0) {
+void MadsScene::loadAnimation(const Common::String &animName, int abortTimers) {
 	if (_activeAnimation)
 		error("Multiple active animations are not allowed");
 
 	MadsAnimation *anim = new MadsAnimation(_vm, this);
-	anim->load(animName.c_str(), 0);
+	anim->load(animName.c_str(), abortTimers);
 	_activeAnimation = anim;
 }
 
-/*--------------------------------------------------------------------------*/
+bool MadsScene::getDepthHighBit(const Common::Point &pt) {
+	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
+	if (_sceneResources._depthStyle == 2) 
+		return ((*p << 4) & 0x80) != 0;
 
-MadsAction::MadsAction() {
-	clear();
+	return (*p & 0x80) != 0;
 }
 
-void MadsAction::clear() {
-	_actionMode = ACTMODE_NONE;
-	_actionMode2 = ACTMODE2_0;
-	_word_86F42 = 0;
-	_word_86F4E = 0;
-	_articleNumber = 0;
-	_lookFlag = false;
-	_word_86F4A = 0;
-	_statusText[0] = '\0';
-	_selectedRow = -1;
-	_currentHotspot = -1;
-	_word_86F3A = -1;
-	_word_86F4C = -1;
-	//word_86F3A/word_86F4C
-	_currentAction = kVerbNone;
-	_objectNameId = -1;
-	_objectDescId = -1;
-	_word_83334 = -1;
-}
+bool MadsScene::getDepthHighBits(const Common::Point &pt) {
+	if (_sceneResources._depthStyle == 2)
+		return 0;
 
-void MadsAction::appendVocab(int vocabId, bool capitalise) {
-	char *s = _statusText + strlen(_statusText);
-	const char *vocabStr = _madsVm->globals()->getVocab(vocabId);
-	strcpy(s, vocabStr);
-	if (capitalise)
-		*s = toupper(*s);
-
-	strcat(s, " ");
-}
-
-void MadsAction::set() {
-	int hotspotCount = _madsVm->scene()->getSceneResources().hotspotCount;
-	bool flag = false;
-	_currentAction = -1;
-	_objectNameId = -1;
-	_objectDescId = -1;
-
-	if (_actionMode == ACTMODE_TALK) {
-		// Handle showing the conversation selection. Rex at least doesn't actually seem to use this
-		if (_selectedRow >= 0) {
-			const char *desc = _madsVm->_converse[_selectedRow].desc;
-			if (desc)
-				strcpy(_statusText, desc);
-		}
-	} else if (_lookFlag && (_selectedRow == 0)) {
-		// Two 'look' actions in succession, so the action becomes 'Look around'
-		strcpy(_statusText, lookAroundStr);
-	} else {
-		if ((_actionMode == ACTMODE_OBJECT) && (_selectedRow >= 0) && (_flags1 == 2) && (_flags2 == 0)) {
-			// Use/to action
-			int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-			MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
-			
-			_objectNameId = objEntry->descId;
-			_currentAction = objEntry->vocabList[_selectedRow].vocabId;
-
-			// Set up the status text stirng
-			strcpy(_statusText, useStr);
-			appendVocab(_objectNameId);
-			strcpy(_statusText, toStr);
-			appendVocab(_currentAction);
-		} else {
-			// Handling for if an action has been selected
-			if (_selectedRow >= 0) {
-				if (_actionMode == ACTMODE_VERB) {
-					// Standard verb action
-					_currentAction = verbList[_selectedRow].verb;
-				} else {
-					// Selected action on an inventory object
-					int selectedObject = _madsVm->scene()->getInterface()->getSelectedObject();
-					MadsObject *objEntry = _madsVm->globals()->getObject(selectedObject);
-
-					_currentAction = objEntry->vocabList[_selectedRow].vocabId;
-				}
-
-				appendVocab(_currentAction, true);
-
-				if (_currentAction == kVerbLook) {
-					// Add in the word 'add'
-					strcat(_statusText, atStr);
-					strcat(_statusText, " ");
-				}
-			}
-
-			// Handling for if a hotspot has been selected/highlighted
-			if ((_currentHotspot >= 0) && (_selectedRow >= 0) && (_articleNumber > 0) && (_flags1 == 2)) {
-				flag = true;
-
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
-				strcat(_statusText, " ");
-			}
-
-			if (_currentHotspot >= 0) {
-				if (_selectedRow < 0) {
-					int verbId;
-
-					if (_currentHotspot < hotspotCount) {
-						// Get the verb Id from the hotspot
-						verbId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVerbID();
-					} else {
-						// Get the verb Id from the scene object
-						verbId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot - hotspotCount].getVerbID();
-					}
-
-					if (verbId > 0) {
-						// Set the specified action
-						_currentAction = verbId;
-						appendVocab(_currentAction, true);
-					} else {
-						// Default to a standard 'walk to'
-						_currentAction = kVerbWalkTo;
-						strcat(_statusText, walkToStr);
-					}
-				}
-
-				if ((_actionMode2 == ACTMODE2_2) || (_actionMode2 == ACTMODE2_5)) {
-					// Get name from given inventory object
-					int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
-					_objectNameId = _madsVm->globals()->getObject(objectId)->descId;
-				} else if (_currentHotspot < hotspotCount) {
-					// Get name from scene hotspot
-					_objectNameId = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getVocabID();
-				} else {
-					// Get name from temporary scene hotspot
-					_objectNameId = (*_madsVm->scene()->getSceneResources().props)[_currentHotspot].getVocabID();
-				}
-			}
-		}
-
-		if ((_currentHotspot >= 0) && (_articleNumber > 0) && !flag) {
-			if (_articleNumber == -1) {
-				if (_word_86F3A >= 0) {
-					int articleNum = 0;
-
-					if ((_word_86F42 == 2) || (_word_86F42 == 5)) {
-						int objectId = _madsVm->scene()->getInterface()->getInventoryObject(_currentHotspot);
-						articleNum = _madsVm->globals()->getObject(objectId)->article;
-					} else if (_word_86F3A < hotspotCount) {
-						articleNum = (*_madsVm->scene()->getSceneResources().hotspots)[_currentHotspot].getArticle();
-					} else {
-
-					}
-				}
-
-			} else if ((_articleNumber == kVerbLook) || (_vm->getGameType() != GType_RexNebular) ||
-				(strcmp(_madsVm->globals()->getVocab(_objectDescId), fenceStr) != 0)) {
-				// Write out the article
-				strcat(_statusText, englishMADSArticleList[_articleNumber]);
-			} else {
-				// Special case for a 'fence' entry in Rex Nebular
-				strcat(_statusText, overStr);
-			}
-
-			strcat(_statusText, " ");
-		}
-
-		// Append object description if necessary
-		if (_word_86F3A >= 0)
-			appendVocab(_objectDescId);
-
-		// Remove any trailing space character
-		int statusLen = strlen(_statusText);
-		if ((statusLen > 0) && (_statusText[statusLen - 1] == ' '))
-			_statusText[statusLen - 1] = '\0';
-	}
-
-	_word_83334 = -1;
+	const byte *p = _depthSurface->getBasePtr(pt.x, pt.y);
+	return (*p & 0x70) >> 4;
 }
 
 /*--------------------------------------------------------------------------*/
@@ -637,7 +602,7 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	if (sceneNumber > 0) {
 		sceneName = MADSResourceManager::getResourceName(RESPREFIX_RM, sceneNumber, ".DAT");
 	} else {
-		strcat(buffer1, "*");
+		strcpy(buffer1, "*");
 		strcat(buffer1, resName);
 		sceneName = buffer1; // TODO: Check whether this needs to be converted to 'HAG form'
 	}
@@ -649,53 +614,75 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 	// Basic scene info
 	Common::SeekableReadStream *stream = sceneInfo.getItemStream(0);
 
-	int resSceneId = stream->readUint16LE();
-	assert(resSceneId == sceneNumber);
-	artFileNum = stream->readUint16LE();
-	drawStyle = stream->readUint16LE();
-	width = stream->readUint16LE();
-	height = stream->readUint16LE();
-	assert((width == 320) && (height == 156));
+	if (_vm->getGameType() == GType_RexNebular) {
+		int resSceneId = stream->readUint16LE();
+		assert(resSceneId == sceneNumber);
+	} else {
+		char roomFilename[10];
+		char roomFilenameExpected[10];
+		sprintf(roomFilenameExpected, "*RM%d", sceneNumber);
+
+		stream->read(roomFilename, 6);
+		roomFilename[6] = 0;
+		assert(!strcmp(roomFilename, roomFilenameExpected));
+	}
+
+	// TODO: The following is wrong for Phantom/Dragon
+	_artFileNum = stream->readUint16LE();
+	_depthStyle = stream->readUint16LE();
+	_width = stream->readUint16LE();
+	_height = stream->readUint16LE();
 	
 	stream->skip(24);
 
-	int objectCount = stream->readUint16LE();
-
-	stream->skip(40);
+	int nodeCount = stream->readUint16LE();
+	_yBandsEnd = stream->readUint16LE();
+	_yBandsStart = stream->readUint16LE();
+	_maxScale = stream->readSint16LE();
+	_minScale = stream->readSint16LE();
+	for (int i = 0; i < DEPTH_BANDS_SIZE; ++i)
+		_depthBands[i] = stream->readUint16LE();
+	stream->skip(2);
 
 	// Load in any scene objects
-	for (int i = 0; i < objectCount; ++i) {
-		MadsObject rec;
+	for (int i = 0; i < nodeCount; ++i) {
+		SceneNode rec;
 		rec.load(stream);
-		objects.push_back(rec);
+		_nodes.push_back(rec);
 	}
-	for (int i = 0; i < 20 - objectCount; ++i)
+	for (int i = 0; i < 20 - nodeCount; ++i)
 		stream->skip(48);
+
+	// Add two extra nodes in that will be used for player movement
+	for (int i = 0; i < 2; ++i) {
+		SceneNode rec;
+		_nodes.push_back(rec);
+	}
 
 	int setCount = stream->readUint16LE();
 	stream->readUint16LE();
 	for (int i = 0; i < setCount; ++i) {
 		char buffer2[64];
 		Common::String s(buffer2, 64);
-		setNames.push_back(s);
+		_setNames.push_back(s);
 	}
-	
+
+	delete stream;
+
 	// Initialise a copy of the surfaces if they weren't provided
 	bool dsFlag = false, ssFlag = false;
-	int gfxSize = width * height;
 	if (!surface) {
-		surface = new M4Surface(width, height);
+		surface = new M4Surface(_width, _height);
 		ssFlag = true;
-	}
-	int walkSize = gfxSize;
-	if (drawStyle == 2) {
-		width >>= 2;
-		walkSize = width * height;
-	}
+	} else if ((_width != surface->width()) || (_height != surface->height()))
+		surface->setSize(_width, _height);
+
 	if (!depthSurface) {
-		depthSurface = new M4Surface(width, height);
+		depthSurface = new M4Surface(_width, _height);
 		dsFlag = true;
-	}
+	} else if ((_width != depthSurface->width()) || (_height != depthSurface->height()))
+		depthSurface->setSize(_width, _height);
+
 
 	// For Rex Nebular, read in the scene's compressed walk surface information
 	if (_vm->getGameType() == GType_RexNebular) {
@@ -708,19 +695,32 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		byte *destP = depthSurface->getBasePtr(0, 0);
 		const byte *srcP = walkData;
 		byte runLength;
+
+		// Run length encoded depth data
 		while ((runLength = *srcP++) != 0) {
-			Common::set_to(destP, destP + runLength, *srcP++);
-			destP += runLength;
+			if (_depthStyle == 2) {
+				// 2-bit depth pixels
+				byte byteVal = *srcP++;
+				for (int byteCtr = 0; byteCtr < runLength; ++byteCtr) {
+					byte v = byteVal;
+					for (int bitCtr = 0; bitCtr < 4; ++bitCtr, v >>= 2)
+						*destP++ = (((v & 1) + 1) << 3) - 1;
+				}
+			} else {
+				// 8-bit depth pixels
+				Common::set_to(destP, destP + runLength, *srcP++);
+				destP += runLength;
+			}
 		}
 
-		delete walkData;
+		free(walkData);
 		delete stream;
 	}
 
 	_vm->_resourceManager->toss(sceneName);
 
 	// Load the surface artwork
-	surface->loadBackground(sceneNumber);
+	surface->loadBackground(_artFileNum);
 
 	// Final cleanup
 	if (ssFlag)
@@ -729,6 +729,84 @@ void MadsSceneResources::load(int sceneNumber, const char *resName, int v0, M4Su
 		delete depthSurface;
 }
 
+void MadsSceneResources::setRouteNode(int nodeIndex, const Common::Point &pt, M4Surface *depthSurface) {
+	int flags, hypotenuse;
+
+	_nodes[nodeIndex].pt = pt;
+
+	// Recalculate inter-node lengths
+	for (uint idx = 0; idx < _nodes.size(); ++idx) {
+		int entry;
+		if (idx == (uint)nodeIndex) {
+			entry = 0x3FFF;
+		} else {
+			// Process the node
+			flags = getRouteFlags(pt, _nodes[idx].pt, depthSurface);
+
+			int xDiff = ABS(_nodes[idx].pt.x - pt.x);
+			int yDiff = ABS(_nodes[idx].pt.y - pt.y);
+			hypotenuse = SqrtF16(xDiff * xDiff + yDiff * yDiff);
+
+			if (hypotenuse >= 0x3FFF)
+				// Shouldn't ever be this large
+				hypotenuse = 0x3FFF;
+			
+			entry = hypotenuse | flags;
+			_nodes[idx].indexes[nodeIndex] = entry;
+			_nodes[nodeIndex].indexes[idx] = entry;
+		}
+	}
+}
+
+int MadsSceneResources::getRouteFlags(const Common::Point &src, const Common::Point &dest, M4Surface *depthSurface) {
+	int result = 0x8000;
+	bool flag = false;
+
+	int xDiff = ABS(dest.x - src.x);
+	int yDiff = ABS(dest.y - src.y);
+	int xDirection = dest.x >= src.x ? 1 : -1;
+	int yDirection = dest.y >= src.y ? depthSurface->width() : -depthSurface->width();
+	int majorDiff = 0;
+	if (dest.x < src.x)
+		majorDiff = MAX(xDiff, yDiff);
+	++xDiff;
+	++yDiff;
+
+	byte *srcP = depthSurface->getBasePtr(src.x, src.y);
+	
+	int totalCtr = majorDiff;
+	for (int xCtr = 0; xCtr < xDiff; ++xCtr, srcP += xDirection) {
+		totalCtr += yDiff;
+
+		if ((*srcP & 0x80) == 0)
+			flag = false;
+		else if (!flag) {
+			flag = true;
+			result -= 0x4000;
+			if (result == 0)
+				break;
+		}
+
+		while (totalCtr >= xDiff) {
+			totalCtr -= xDiff;
+
+			if ((*srcP & 0x80) == 0)
+				flag = false;
+			else if (!flag) {
+				flag = true;
+				result -= 0x4000;
+				if (result == 0)
+					break;
+			}
+
+			srcP += yDirection;
+		}
+		if (result == 0)
+			break;
+	}
+
+	return result;
+}
 
 /*--------------------------------------------------------------------------*/
 
@@ -915,7 +993,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 		// Display object sprite. Note that the frame number isn't used directly, because it would result
 		// in too fast an animation
 		M4Sprite *spr = _objectSprites->getFrame(_objectFrameNumber / INV_ANIM_FRAME_SPEED);
-		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, 0);
+		spr->copyTo(destSurface, INVENTORY_X, INVENTORY_Y, TRANSPARENT_COLOUR_INDEX);
 
 		if (!_madsVm->globals()->_config.invObjectsStill && !dialogVisible) {
 			// If objects need to be animated, move to the next frame
@@ -943,7 +1021,7 @@ void MadsInterfaceView::onRefresh(RectList *rects, M4Surface *destSurface) {
 }
 
 bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int y, bool &captureEvents) {
-	MadsAction &act = _madsVm->scene()->getAction();
+	MadsAction &act = _madsVm->scene()->_action;
 
 	// If the mouse isn't being held down, then reset the repeated scroll timer
 	if (eventType != MEVENT_LEFT_HOLD)
@@ -990,7 +1068,7 @@ bool MadsInterfaceView::onEvent(M4EventType eventType, int32 param1, int x, int 
 					act._flags1 = obj->vocabList[1].flags1;
 					act._flags2 = obj->vocabList[1].flags2;
 
-					act._currentHotspot = _selectedObject;
+					act._action.verbId = _selectedObject;
 					act._articleNumber = act._flags2;
 				}
 			}
@@ -1043,8 +1121,13 @@ bool MadsInterfaceView::handleCheatKey(int32 keycode) {
 		// TODO: Move player to current destination
 		return true;
 
-	case Common::KEYCODE_t | (Common::KEYCODE_LALT):
-	case Common::KEYCODE_t | (Common::KEYCODE_RALT):
+	case Common::KEYCODE_c | (Common::KBD_CTRL << 24):
+		// Toggle display of mouse position
+		_madsVm->scene()->_showMousePos = !_madsVm->scene()->_showMousePos;
+		break;
+
+	case Common::KEYCODE_t | (Common::KEYCODE_LALT << 24):
+	case Common::KEYCODE_t | (Common::KEYCODE_RALT << 24):
 	{
 		// Teleport to room
 		//Scene *sceneView = (Scene *)vm->_viewManager->getView(VIEWID_SCENE);
@@ -1111,9 +1194,9 @@ bool MadsInterfaceView::handleKeypress(int32 keycode) {
 			warning("TODO: Activate sound");
 			break;
 
-		case Common::KEYCODE_u:
-			// Rotate player
-			warning("TODO: Rotate player");
+		case Common::KEYCODE_t:
+			// Rotate player - This was Ctrl-U in the original, but in ScummVM Ctrl-U is a global mute key
+			_madsVm->_player._newDirection = _madsVm->_player._directionListIndexes[_madsVm->_player._newDirection + 10];
 			break;
 
 		case Common::KEYCODE_v: {

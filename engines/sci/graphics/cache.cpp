@@ -90,11 +90,11 @@ GfxView *GfxCache::getView(GuiResourceId viewId) {
 }
 
 int16 GfxCache::kernelViewGetCelWidth(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return getView(viewId)->getCelInfo(loopNo, celNo)->width;
+	return getView(viewId)->getCelInfo(loopNo, celNo)->scriptWidth;
 }
 
 int16 GfxCache::kernelViewGetCelHeight(GuiResourceId viewId, int16 loopNo, int16 celNo) {
-	return getView(viewId)->getCelInfo(loopNo, celNo)->height;
+	return getView(viewId)->getCelInfo(loopNo, celNo)->scriptHeight;
 }
 
 int16 GfxCache::kernelViewGetLoopCount(GuiResourceId viewId) {
@@ -102,7 +102,7 @@ int16 GfxCache::kernelViewGetLoopCount(GuiResourceId viewId) {
 }
 
 int16 GfxCache::kernelViewGetCelCount(GuiResourceId viewId, int16 loopNo) {
-	return getView(viewId)->getLoopInfo(loopNo)->celCount;
+	return getView(viewId)->getCelCount(loopNo);
 }
 
 } // End of namespace Sci

@@ -170,14 +170,15 @@ public:
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
 		// static/dynamic plugin, like it's done for the engines
+		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
 		#if defined(WIN32) && !defined(_WIN32_WCE) && !defined(__SYMBIAN32__)
 		LINK_PLUGIN(WINDOWS)
 		#endif
-		#if defined(UNIX) && defined(USE_ALSA)
+		#if defined(USE_ALSA)
 		LINK_PLUGIN(ALSA)
 		#endif
-		#if defined(UNIX) && !defined(__BEOS__) && !defined(__MAEMO__) && !defined(__MINT__)
+		#if defined(USE_SEQ_MIDI)
 		LINK_PLUGIN(SEQ)
 		#endif
 		#if defined(__MINT__)
@@ -193,13 +194,6 @@ public:
 		LINK_PLUGIN(COREAUDIO)
 		LINK_PLUGIN(COREMIDI)
 		#endif
-		#if defined(PALMOS_MODE)
-		#  if defined(COMPILE_CLIE)
-		LINK_PLUGIN(YPA1)
-		#  elif defined(COMPILE_ZODIAC) && (!defined(ENABLE_SCUMM) || !defined(PALMOS_ARM))
-		LINK_PLUGIN(ZODIAC)
-		#  endif
-		#endif
 		#ifdef USE_FLUIDSYNTH
 		LINK_PLUGIN(FLUIDSYNTH)
 		#endif
@@ -207,6 +201,8 @@ public:
 		LINK_PLUGIN(MT32)
 		#endif
 		LINK_PLUGIN(ADLIB)
+		LINK_PLUGIN(PCSPK)
+		LINK_PLUGIN(PCJR)
 		LINK_PLUGIN(TOWNS)
 		#if defined (UNIX)
 		LINK_PLUGIN(TIMIDITY)

@@ -27,6 +27,7 @@
 
 #include "common/scummsys.h"
 #include "common/str.h"
+#include "common/str-array.h"
 #include "common/keyboard.h"
 #include "graphics/surface.h"
 #include "gui/object.h"
@@ -62,6 +63,7 @@ enum {
 	kEditTextWidget		= 'EDIT',
 	kButtonWidget		= 'BTTN',
 	kCheckboxWidget		= 'CHKB',
+	kRadiobuttonWidget	= 'RDBT',
 	kSliderWidget		= 'SLDE',
 	kListWidget			= 'LIST',
 	kScrollBarWidget	= 'SCRB',
@@ -85,6 +87,7 @@ protected:
 	uint16		_id;
 	bool		_hasFocus;
 	ThemeEngine::WidgetStateInfo _state;
+	const char	*_tooltip;
 
 private:
 	uint16		_flags;
@@ -94,8 +97,8 @@ public:
 	static Widget *findWidgetInChain(Widget *start, const char *name);
 
 public:
-	Widget(GuiObject *boss, int x, int y, int w, int h);
-	Widget(GuiObject *boss, const Common::String &name);
+	Widget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
+	Widget(GuiObject *boss, const Common::String &name, const char *tooltip = 0);
 	virtual ~Widget();
 
 	void init();
@@ -135,6 +138,11 @@ public:
 	void setVisible(bool e);
 	bool isVisible() const;
 
+	uint8 parseHotkey(const Common::String &label);
+	Common::String cleanupHotkey(const Common::String &label);
+
+	const char *getTooltip() const { return _tooltip; }
+
 protected:
 	void updateState(int oldFlags, int newFlags);
 
@@ -157,8 +165,8 @@ protected:
 	Common::String			_label;
 	Graphics::TextAlign		_align;
 public:
-	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align);
-	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text);
+	StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &text, Graphics::TextAlign align, const char *tooltip = 0);
+	StaticTextWidget(GuiObject *boss, const Common::String &name, const Common::String &text, const char *tooltip = 0);
 	void setValue(int value);
 	void setLabel(const Common::String &label);
 	const Common::String &getLabel() const		{ return _label; }
@@ -176,8 +184,8 @@ protected:
 	uint32	_cmd;
 	uint8	_hotkey;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void setCmd(uint32 cmd)				{ _cmd = cmd; }
 	uint32 getCmd() const				{ return _cmd; }
@@ -195,8 +203,8 @@ class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
 public:
-	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
-	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
+	CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::String &label, const char *tooltip = 0, uint32 cmd = 0, uint8 hotkey = 0);
 
 	void handleMouseUp(int x, int y, int button, int clickCount);
 	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
@@ -210,6 +218,55 @@ protected:
 	void drawWidget();
 };
 
+class RadiobuttonWidget;
+
+class RadiobuttonGroup : public CommandSender {
+public:
+	RadiobuttonGroup(GuiObject *boss, uint32 cmd = 0);
+	~RadiobuttonGroup() {}
+
+	void addButton(RadiobuttonWidget *button) { _buttons.push_back(button); }
+	Common::Array<RadiobuttonWidget *> getButtonList() const { return _buttons; }
+
+	void setValue(int state);
+	int getValue() const { return _value; }
+
+	void setEnabled(bool ena);
+
+	void setCmd(uint32 cmd)				{ _cmd = cmd; }
+	uint32 getCmd() const				{ return _cmd; }
+
+protected:
+	Common::Array<RadiobuttonWidget *> _buttons;
+	int _value;
+	uint32	_cmd;
+};
+
+/* RadiobuttonWidget */
+class RadiobuttonWidget : public ButtonWidget {
+protected:
+	bool	_state;
+	int _value;
+
+public:
+	RadiobuttonWidget(GuiObject *boss, int x, int y, int w, int h, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
+	RadiobuttonWidget(GuiObject *boss, const Common::String &name, RadiobuttonGroup *group, int value, const Common::String &label, const char *tooltip = 0, uint8 hotkey = 0);
+
+	void handleMouseUp(int x, int y, int button, int clickCount);
+	virtual void handleMouseEntered(int button)	{ setFlags(WIDGET_HILITED); draw(); }
+	virtual void handleMouseLeft(int button)	{ clearFlags(WIDGET_HILITED); draw(); }
+
+	void setState(bool state, bool setGroup = true);
+	void toggleState()			{ setState(!_state); }
+	bool getState() const		{ return _state; }
+	int getValue() const			{ return _value; }
+
+protected:
+	void drawWidget();
+
+	RadiobuttonGroup *_group;
+};
+
 /* SliderWidget */
 class SliderWidget : public Widget, public CommandSender {
 protected:
@@ -219,8 +276,8 @@ protected:
 	bool	_isDragging;
 	uint	_labelWidth;
 public:
-	SliderWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
-	SliderWidget(GuiObject *boss, const Common::String &name, uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0, uint32 cmd = 0);
+	SliderWidget(GuiObject *boss, const Common::String &name, const char *tooltip = 0, uint32 cmd = 0);
 
 	void setCmd(uint32 cmd)		{ _cmd = cmd; }
 	uint32 getCmd() const		{ return _cmd; }
@@ -251,8 +308,8 @@ protected:
 /* GraphicsWidget */
 class GraphicsWidget : public Widget {
 public:
-	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h);
-	GraphicsWidget(GuiObject *boss, const Common::String &name);
+	GraphicsWidget(GuiObject *boss, int x, int y, int w, int h, const char *tooltip = 0);
+	GraphicsWidget(GuiObject *boss, const Common::String &name, const char *tooltip = 0);
 	~GraphicsWidget();
 
 	void setGfx(const Graphics::Surface *gfx);

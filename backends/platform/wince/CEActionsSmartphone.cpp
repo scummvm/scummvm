@@ -30,23 +30,25 @@
 #include "common/config-manager.h"
 #include "gui/KeysDialog.h"
 
+#include "common/translation.h"
+
 #define		KEY_ALL_SKIP	3457
 
 const String smartphoneActionNames[] = {
-	"Up",
-	"Down",
-	"Left",
-	"Right",
-	"Left Click",
-	"Right Click",
-	"Save",
-	"Skip",
-	"Zone",
-	"Multi Function",
-	"Bind Keys",
-	"Keyboard",
-	"Rotate",
-	"Quit"
+	_s("Up"),
+	_s("Down"),
+	_s("Left"),
+	_s("Right"),
+	_s("Left Click"),
+	_s("Right Click"),
+	_s("Save"),
+	_s("Skip"),
+	_s("Zone"),
+	_s("Multi Function"),
+	_s("Bind Keys"),
+	_s("Keyboard"),
+	_s("Rotate"),
+	_s("Quit")
 };
 
 const int ACTIONS_SMARTPHONE_DEFAULT[] = { SDLK_UP, SDLK_DOWN, SDLK_LEFT, SDLK_RIGHT, SDLK_F1, SDLK_F2, SDLK_F3, SDLK_ESCAPE, SDLK_9, SDLK_8, SDLK_F4, SDLK_RETURN, SDLK_5, SDLK_0 };
@@ -57,7 +59,7 @@ void CEActionsSmartphone::init() {
 
 
 String CEActionsSmartphone::actionName(GUI::ActionType action) {
-	return smartphoneActionNames[action];
+	return _(smartphoneActionNames[action]);
 }
 
 int CEActionsSmartphone::size() {
@@ -220,7 +222,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 			if (action == SMARTPHONE_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
 				// FIXME: This is a temporary solution. The engine should handle its own menus.
 				// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
-				GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
+				GUI::MessageDialog alert(_("Do you want to load or save the game?"), _("Load"), _("Save"));
 				if (alert.runModal() == GUI::kMessageOK)
 					_key_action[action].setKey(SDLK_l);
 				else
@@ -267,7 +269,7 @@ bool CEActionsSmartphone::perform(GUI::ActionType action, bool pushed) {
 		case SMARTPHONE_ACTION_QUIT:
 			if (!quitdialog) {
 				quitdialog = true;
-				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
+				GUI::MessageDialog alert(_("   Are you sure you want to quit ?   "), _("Yes"), _("No"));
 				if (alert.runModal() == GUI::kMessageOK)
 					_mainSystem->quit();
 				quitdialog = false;

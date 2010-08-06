@@ -1,23 +1,23 @@
 MODULE := engines/teenagent
 
 MODULE_OBJS := \
-	detection.o \
-	teenagent.o \
-	resources.o \
-	pack.o \
-	segment.o \
-	scene.o \
+	actor.o \
 	animation.o \
+	callbacks.o \
+	console.o \
+	detection.o \
+	dialog.o \
 	font.o \
+	inventory.o \
+	music.o \
+	objects.o \
+	pack.o \
+	resources.o \
+	scene.o \
+	segment.o \
 	surface.o \
 	surface_list.o \
-	actor.o \
-	callbacks.o \
-	inventory.o \
-	objects.o \
-	music.o \
-	console.o \
-	dialog.o 
+	teenagent.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TEENAGENT), DYNAMIC_PLUGIN)

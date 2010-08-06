@@ -1201,6 +1201,12 @@ void Scene::endScene() {
 	_vm->_script->abortAllThreads();
 	_vm->_script->_skipSpeeches = false;
 
+	// WORKAROUND: Bug #2886151: "ITE: Mouse stops responding at Boar Castle"
+	// This is bug in original engine
+	if (_sceneNumber == 50) {
+		_vm->_interface->activate();
+	}
+
 	// Copy current screen to render buffer so inset rooms will get proper background
 	if (!(_sceneDescription.flags & kSceneFlagISO) && !_vm->_scene->isInIntro()) {
 		BGInfo bgInfo;
@@ -1425,6 +1431,8 @@ void Scene::clearPlacard() {
 	q_event = _vm->_events->chain(q_event, &event);
 }
 
+#ifdef ENABLE_IHNM
+
 void Scene::showPsychicProfile(const char *text) {
 	int textHeight;
 	static PalEntry cur_pal[PAL_ENTRIES];
@@ -1439,6 +1447,8 @@ void Scene::showPsychicProfile(const char *text) {
 	_vm->_interface->rememberMode();
 	_vm->_interface->setMode(kPanelPlacard);
 	_vm->_gfx->savePalette();
+
+	_vm->_events->clearList();
 
 	event.type = kEvTOneshot;
 	event.code = kCursorEvent;
@@ -1530,5 +1540,7 @@ void Scene::showIHNMDemoSpecialScreen() {
 	_vm->_interface->clearInventory();
 	_vm->_scene->changeScene(150, 0, kTransitionFade);
 }
+
+#endif // IHNM
 
 } // End of namespace Saga

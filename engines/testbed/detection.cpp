@@ -59,7 +59,9 @@ static const ADParams detectionParams = {
 	"testbed",
 	0,
 	ADGF_NO_FLAGS,
-	Common::GUIO_NONE
+	Common::GUIO_NONE,
+	1,
+	0
 };
 
 class TestbedMetaEngine : public AdvancedMetaEngine {

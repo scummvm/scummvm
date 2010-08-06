@@ -79,7 +79,6 @@ public:
 	Palette **generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs);
 
 	void generateGrayOverlay(const Palette &Pal, uint8 *grayOverlay, int factor, int addR, int addG, int addB, int lastColor, bool skipSpecialColors);
-	uint8 *generateLevelOverlay(const Palette &Pal, uint8 *ovl, int opColor, int weight);
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
 
 	void createTransparencyTablesIntern(const uint8 *ovl, int a, const uint8 *fxPal1, const uint8 *fxPal2, uint8 *outTable1, uint8 *outTable2, int b);

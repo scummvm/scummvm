@@ -63,15 +63,11 @@ const char *opcodeNames[] = {
 	   "-sli",      "-sti",     "-spi"
 };
 
-extern const char *selector_name(EngineState *s, int selector);
-
-DebugState g_debugState;
-
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	SegmentObj *mobj = s->_segMan->getSegment(pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
-	byte *scr;
+	const byte *scr;
 	int scr_size;
 	reg_t retval = make_reg(pos.segment, pos.offset + 1);
 	uint16 param_value;
@@ -84,7 +80,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	} else
 		script_entity = (Script *)mobj;
 
-	scr = script_entity->_buf;
+	scr = script_entity->getBuf();
 	scr_size = script_entity->getBufSize();
 
 	if (pos.offset >= scr_size) {
@@ -197,7 +193,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			if (!obj)
 				warning("Attempted to reference on non-object at %04x:%04x", PRINT_REG(s->xs->objp));
 			else
-				printf("	(%s)", selector_name(s, obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])));
+				printf("	(%s)", g_sci->getKernel()->getSelectorName(obj->propertyOffsetToId(s->_segMan, scr[pos.offset + 1])).c_str());
 		}
 	}
 
@@ -244,7 +240,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				printf("  %s::%s[", name, (selector > kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				printf("  %s::%s[", name, g_sci->getKernel()->getSelectorName(selector).c_str());
 
 				switch (lookupSelector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
@@ -279,90 +275,76 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 }
 
 
-void script_debug(EngineState *s) {
-	// Do we support a separate console?
-
-#if 0
-	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
-		printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-		disassemble(s, s->xs->addr.pc, 0, 1);
-		if (s->seeking == kDebugSeekGlobal)
-			printf("Global %d (0x%x) = %04x:%04x\n", s->seekSpecial,
-			          s->seekSpecial, PRINT_REG(s->script_000->_localsBlock->_locals[s->seekSpecial]));
-	}
-#endif
-
-#if 0
-	if (!g_debugState.debugging)
-		return;
-#endif
-
-	if (g_debugState.seeking && !g_debugState.breakpointWasHit) { // Are we looking for something special?
-		SegmentObj *mobj = s->_segMan->getSegment(s->xs->addr.pc.segment, SEG_TYPE_SCRIPT);
-
-		if (mobj) {
-			Script *scr = (Script *)mobj;
-			byte *code_buf = scr->_buf;
-			int code_buf_size = scr->getBufSize();
-			int opcode = s->xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset];
-			int op = opcode >> 1;
-			int paramb1 = s->xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[s->xs->addr.pc.offset + 1];
-			int paramf1 = (opcode & 1) ? paramb1 : (s->xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + s->xs->addr.pc.offset + 1));
-
-			switch (g_debugState.seeking) {
-			case kDebugSeekSpecialCallk:
-				if (paramb1 != g_debugState.seekSpecial)
-					return;
-
-			case kDebugSeekCallk: {
-				if (op != op_callk)
-					return;
-				break;
-			}
-
-			case kDebugSeekLevelRet: {
-				if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
-					return;
-				break;
-			}
-
-			case kDebugSeekGlobal:
-				if (op < op_sag)
-					return;
-				if ((op & 0x3) > 1)
-					return; // param or temp
-				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
-					return; // locals and not running in script.000
-				if (paramf1 != g_debugState.seekSpecial)
-					return; // CORRECT global?
-				break;
-
-			case kDebugSeekSO:
-				// FIXME: Unhandled?
-				break;
-
-			case kDebugSeekNothing:
-				// We seek nothing, so just continue
-				break;
-			}
-
-			g_debugState.seeking = kDebugSeekNothing;
-			// OK, found whatever we were looking for
+void SciEngine::scriptDebug() {
+	EngineState *s = _gamestate;
+	if (_debugState.seeking && !_debugState.breakpointWasHit) { // Are we looking for something special?
+		if (_debugState.seeking == kDebugSeekStepOver) {
+			// are we above seek-level? resume then
+			if (_debugState.seekLevel < (int)s->_executionStack.size())
+				return;
+			_debugState.seeking = kDebugSeekNothing;
 		}
+
+		if (_debugState.seeking != kDebugSeekNothing) {
+			const reg_t pc = s->xs->addr.pc;
+			SegmentObj *mobj = s->_segMan->getSegment(pc.segment, SEG_TYPE_SCRIPT);
+
+			if (mobj) {
+				Script *scr = (Script *)mobj;
+				const byte *code_buf = scr->getBuf();
+				int code_buf_size = scr->getBufSize();
+				int opcode = pc.offset >= code_buf_size ? 0 : code_buf[pc.offset];
+				int op = opcode >> 1;
+				int paramb1 = pc.offset + 1 >= code_buf_size ? 0 : code_buf[pc.offset + 1];
+				int paramf1 = (opcode & 1) ? paramb1 : (pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_SCI11ENDIAN_UINT16(code_buf + pc.offset + 1));
+
+				switch (_debugState.seeking) {
+				case kDebugSeekSpecialCallk:
+					if (paramb1 != _debugState.seekSpecial)
+						return;
+
+				case kDebugSeekCallk:
+					if (op != op_callk)
+						return;
+					break;
+
+				case kDebugSeekLevelRet:
+					if ((op != op_ret) || (_debugState.seekLevel < (int)s->_executionStack.size()-1))
+						return;
+					break;
+
+				case kDebugSeekGlobal:
+					if (op < op_sag)
+						return;
+					if ((op & 0x3) > 1)
+						return; // param or temp
+					if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
+						return; // locals and not running in script.000
+					if (paramf1 != _debugState.seekSpecial)
+						return; // CORRECT global?
+					break;
+
+				default:
+					break;
+				}
+
+				_debugState.seeking = kDebugSeekNothing;
+			}
+		}
+		// OK, found whatever we were looking for
 	}
 
-	printf("Step #%d\n", s->script_step_counter);
+	printf("Step #%d\n", s->scriptStepCounter);
 	disassemble(s, s->xs->addr.pc, 0, 1);
 
-	if (g_debugState.runningStep) {
-		g_debugState.runningStep--;
+	if (_debugState.runningStep) {
+		_debugState.runningStep--;
 		return;
 	}
 
-	g_debugState.debugging = false;
+	_debugState.debugging = false;
 
-	Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
-	con->attach();
+	_console->attach();
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {
@@ -491,106 +473,57 @@ void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 			dumpScriptObject((char *)script->data, seeker, objsize);
 			break;
 
-		case SCI_OBJ_CODE: {
+		case SCI_OBJ_CODE:
 			printf("Code\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case 3: {
+		case 3:
 			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_SAID: {
+		case SCI_OBJ_SAID:
 			printf("Said\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
 
 			printf("%04x: ", seeker);
-			while (seeker < _seeker) {
-				unsigned char nextitem = script->data [seeker++];
-				if (nextitem == 0xFF)
-					printf("\n%04x: ", seeker);
-				else if (nextitem >= 0xF0) {
-					switch (nextitem) {
-					case 0xf0:
-						printf(", ");
-						break;
-					case 0xf1:
-						printf("& ");
-						break;
-					case 0xf2:
-						printf("/ ");
-						break;
-					case 0xf3:
-						printf("( ");
-						break;
-					case 0xf4:
-						printf(") ");
-						break;
-					case 0xf5:
-						printf("[ ");
-						break;
-					case 0xf6:
-						printf("] ");
-						break;
-					case 0xf7:
-						printf("# ");
-						break;
-					case 0xf8:
-						printf("< ");
-						break;
-					case 0xf9:
-						printf("> ");
-						break;
-					}
-				} else {
-					nextitem = nextitem << 8 | script->data [seeker++];
-					printf("%s[%03x] ", vocab->getAnyWordFromGroup(nextitem), nextitem);
-				}
-			}
+			vocab->debugDecipherSaidBlock(script->data + seeker);
 			printf("\n");
-		}
-		break;
+			break;
 
-		case SCI_OBJ_STRINGS: {
+		case SCI_OBJ_STRINGS:
 			printf("Strings\n");
 			while (script->data [seeker]) {
 				printf("%04x: %s\n", seeker, script->data + seeker);
 				seeker += strlen((char *)script->data + seeker) + 1;
 			}
 			seeker++; // the ending zero byte
-		};
-		break;
+			break;
 
 		case SCI_OBJ_CLASS:
 			dumpScriptClass((char *)script->data, seeker, objsize);
 			break;
 
-		case SCI_OBJ_EXPORTS: {
+		case SCI_OBJ_EXPORTS:
 			printf("Exports\n");
 			Common::hexdump((unsigned char *)script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_POINTERS: {
+		case SCI_OBJ_POINTERS:
 			printf("Pointers\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case 9: {
+		case 9:
 			printf("<unknown>\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
-		case SCI_OBJ_LOCALVARS: {
+		case SCI_OBJ_LOCALVARS:
 			printf("Local vars\n");
 			Common::hexdump(script->data + seeker, objsize - 4, 16, seeker);
-		};
-		break;
+			break;
 
 		default:
 			printf("Unsupported!\n");

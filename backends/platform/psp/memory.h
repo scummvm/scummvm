@@ -27,17 +27,68 @@
 #ifndef PSP_MEMORY_H
 #define PSP_MEMORY_H
 
+#include "backends/platform/psp/psppixelformat.h"
+#include "common/list.h"
+
 #define UNCACHED(x)		((byte *)(((uint32)(x)) | 0x40000000))	/* make an uncached access */
 #define CACHED(x)		((byte *)(((uint32)(x)) & 0xBFFFFFFF))	/* make an uncached access into a cached one */
+
+#define MIN_AMOUNT_FOR_COMPLEX_COPY  8
+#define MIN_AMOUNT_FOR_MISALIGNED_COPY 8
+
+//#define __PSP_DEBUG_PRINT__
+
+#include "backends/platform/psp/trace.h"
 
 /**
  *	Class that does memory copying and swapping if needed
  */
-class Copier {
-public:
-	static void copy(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat *format = NULL);
-	static void copy8(byte *dst, const byte *src, uint32 bytes);
-	static void copy16(uint16 *dst, const uint16 *src, uint32 bytes, PSPPixelFormat *format = NULL);
+class PspMemory {
+private:
+	static void testCopy(const byte *debugDst, const byte *debugSrc, uint32 debugBytes);
+	static void testSwap(const uint16 *debugDst, const uint16 *debugSrc, uint32 debugBytes, PSPPixelFormat &format);
+	static void copy(byte *dst, const byte *src, uint32 bytes);
+	static void swap(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
+	static void copy32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes);
+	static void swap32Aligned(uint32 *dst32, const uint32 *src32, uint32 bytes, PSPPixelFormat &format);
+	static void copy32Misaligned(uint32 *dst32, const byte *src, uint32 bytes, uint32 alignSrc);
+	static void swap32Misaligned(uint32 *dst32, const uint16 *src16, uint32 bytes, PSPPixelFormat &format);
+	static void copy16(uint16 *dst, const uint16 *src, uint32 bytes);
+
+	// For swapping, we know that we have multiples of 16 bits
+	static void swap16(uint16 *dst16, const uint16 *src16, uint32 bytes, PSPPixelFormat &format) {
+		PSP_DEBUG_PRINT("swap16 called with dst16[%p], src16[%p], bytes[%d]\n", dst16, src16, bytes);
+		uint32 shorts = bytes >> 1;
+
+		while (shorts--) {
+			*dst16++ = format.swapRedBlue16(*src16++);
+		}
+	}
+	
+	static void copy8(byte *dst, const byte *src, uint32 bytes) {
+		PSP_DEBUG_PRINT("copy8 called with dst[%p], src[%p], bytes[%d]\n", dst, src, bytes);
+		while (bytes--) {
+			*dst++ = *src++;
+		}
+	}
+
+public:	
+	// This is the interface to the outside world
+	static void fastCopy(byte *dst, const byte *src, uint32 bytes) {
+		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY) {
+			copy8(dst, src, bytes);
+		} else {	// go to more powerful copy
+			copy(dst, src, bytes);
+		}
+	}
+
+	static void fastSwap(byte *dst, const byte *src, uint32 bytes, PSPPixelFormat &format) {
+		if (bytes < MIN_AMOUNT_FOR_COMPLEX_COPY * 2) {
+			swap16((uint16 *)dst, (uint16 *)src, bytes, format);
+		} else {	// go to more powerful copy
+			swap((uint16 *)dst, (uint16 *)src, bytes, format);
+		}
+	}
 };
 
 /**

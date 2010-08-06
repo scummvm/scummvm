@@ -30,13 +30,15 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/graphics/cache.h"
 #include "sci/graphics/maciconbar.h"
 #include "sci/graphics/palette.h"
 #include "sci/graphics/screen.h"
+#include "sci/graphics/view.h"
 
 namespace Sci {
 
-GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetPalette)
+GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool useMerging)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -57,23 +59,41 @@ GfxPalette::GfxPalette(ResourceManager *resMan, GfxScreen *screen, bool autoSetP
 	_sysPalette.colors[255].b = 255;
 
 	_sysPaletteChanged = false;
-	if (autoSetPalette) {
-		if (_resMan->getViewType() == kViewEga)
-			setEGA();
-		else if (_resMan->isAmiga32color())
-			setAmiga();
-		else
-			kernelSetFromResource(999, true);
-	}
+
+	// Quest for Glory 3 demo, Eco Quest 1 demo, Laura Bow 2 demo, Police Quest
+	// 1 vga and all Nick's Picks all use the older palette format and thus are
+	// not using the SCI1.1 palette merging (copying over all the colors) but
+	// the real merging done in earlier games. If we use the copying over, we
+	// will get issues because some views have marked all colors as being used
+	// and those will overwrite the current palette in that case
+	_useMerging = useMerging;
+
+	palVaryInit();
 }
 
 GfxPalette::~GfxPalette() {
+	if (_palVaryResourceId != -1)
+		palVaryRemoveTimer();
+}
+
+bool GfxPalette::isMerging() {
+	return _useMerging;
+}
+
+// meant to get called only once during init of engine
+void GfxPalette::setDefault() {
+	if (_resMan->getViewType() == kViewEga)
+		setEGA();
+	else if (_resMan->isAmiga32color())
+		setAmiga();
+	else
+		kernelSetFromResource(999, true);
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
+void GfxPalette::createFromData(byte *data, int bytesLeft, Palette *paletteOut) {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
@@ -81,10 +101,18 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 	int colorNo = 0;
 
 	memset(paletteOut, 0, sizeof(Palette));
-	// Setup default mapping
+	// Setup 1:1 mapping
 	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
 	}
+	if (bytesLeft < 37) {
+		// This happens when loading palette of picture 0 in sq5 - the resource is broken and doesn't contain a full
+		//  palette
+		debugC(2, "GfxPalette::createFromData() - not enough bytes in resource (%d), expected palette header", bytesLeft);
+		return;
+	}
+	// palette formats in here are not really version exclusive, we can not use sci-version to differentiate between them
+	//  they were just called that way, because they started appearing in sci1.1 for example
 	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0)) {
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
@@ -99,6 +127,11 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 	}
 	switch (palFormat) {
 		case SCI_PAL_FORMAT_CONSTANT:
+			// Check, if enough bytes left
+			if (bytesLeft < palOffset + (3 * palColorCount)) {
+				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+				return;
+			}
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = 1;
 				paletteOut->colors[colorNo].r = data[palOffset++];
@@ -107,6 +140,10 @@ void GfxPalette::createFromData(byte *data, Palette *paletteOut) {
 			}
 			break;
 		case SCI_PAL_FORMAT_VARIABLE:
+			if (bytesLeft < palOffset + (4 * palColorCount)) {
+				warning("GfxPalette::createFromData() - not enough bytes in resource, expected palette colors");
+				return;
+			}
 			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
 				paletteOut->colors[colorNo].used = data[palOffset++];
 				paletteOut->colors[colorNo].r = data[palOffset++];
@@ -180,112 +217,144 @@ void GfxPalette::setEGA() {
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
 	for (curColor = 0x10; curColor <= 0xFE; curColor++) {
-		_sysPalette.colors[curColor].used = curColor;
+		_sysPalette.colors[curColor].used = 1;
 		color1 = curColor & 0x0F; color2 = curColor >> 4;
 		_sysPalette.colors[curColor].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
 		_sysPalette.colors[curColor].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
 		_sysPalette.colors[curColor].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
 	}
+	_sysPalette.timestamp = 1;
 	setOnScreen();
 }
 
-void GfxPalette::set(Palette *sciPal, bool force, bool forceRealMerge) {
+void GfxPalette::set(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint32 systime = _sysPalette.timestamp;
 
-	if (force || sciPal->timestamp != systime) {
-		_sysPaletteChanged |= merge(sciPal, &_sysPalette, force, forceRealMerge);
-		sciPal->timestamp = _sysPalette.timestamp;
-		if (_sysPaletteChanged && _screen->_picNotValid == 0) { // && systime != _sysPalette.timestamp) {
-			// Removed timestamp checking, because this shouldnt be needed anymore. I'm leaving it commented just in
-			//  case this causes regressions
+	if (force || newPalette->timestamp != systime) {
+		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
+		//  There are some games with inbetween SCI1.1 interpreters, use real merging for them (e.g. laura bow 2 demo)
+		if ((forceRealMerge) || (_useMerging))
+			_sysPaletteChanged |= merge(newPalette, force, forceRealMerge);
+		else
+			_sysPaletteChanged |= insert(newPalette, &_sysPalette);
+
+		// Adjust timestamp on newPalette, so it wont get merged/inserted w/o need
+		newPalette->timestamp = _sysPalette.timestamp;
+
+		bool updatePalette = _sysPaletteChanged && _screen->_picNotValid == 0;
+
+		if (_palVaryResourceId != -1) {
+			// Pal-vary currently active, we don't set at any time, but also insert into origin palette
+			insert(newPalette, &_palVaryOriginPalette);
+			palVaryProcess(0, updatePalette);
+			return;
+		}
+
+		if (updatePalette) {
 			setOnScreen();
 			_sysPaletteChanged = false;
 		}
 	}
 }
 
-bool GfxPalette::merge(Palette *pFrom, Palette *pTo, bool force, bool forceRealMerge) {
+bool GfxPalette::insert(Palette *newPalette, Palette *destPalette) {
+	bool paletteChanged = false;
+
+	for (int i = 1; i < 255; i++) {
+		if (newPalette->colors[i].used) {
+			if ((newPalette->colors[i].r != destPalette->colors[i].r) || (newPalette->colors[i].g != destPalette->colors[i].g) || (newPalette->colors[i].b != destPalette->colors[i].b)) {
+				destPalette->colors[i].r = newPalette->colors[i].r;
+				destPalette->colors[i].g = newPalette->colors[i].g;
+				destPalette->colors[i].b = newPalette->colors[i].b;
+				paletteChanged = true;
+			}
+			destPalette->colors[i].used = newPalette->colors[i].used;
+			newPalette->mapping[i] = i;
+		}
+	}
+	// We don't update the timestamp for SCI1.1, it's only updated on kDrawPic calls
+	return paletteChanged;
+}
+
+bool GfxPalette::merge(Palette *newPalette, bool force, bool forceRealMerge) {
 	uint16 res;
 	int i,j;
 	bool paletteChanged = false;
 
-	if ((!forceRealMerge) && (getSciVersion() >= SCI_VERSION_1_1)) {
-		// SCI1.1+ doesnt do real merging anymore, but simply copying over the used colors from other palettes
-		for (i = 1; i < 255; i++) {
-			if (pFrom->colors[i].used) {
-				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
-					pTo->colors[i].r = pFrom->colors[i].r;
-					pTo->colors[i].g = pFrom->colors[i].g;
-					pTo->colors[i].b = pFrom->colors[i].b;
-					paletteChanged = true;
-				}
-				pTo->colors[i].used = pFrom->colors[i].used;
-				pFrom->mapping[i] = i;
+	// colors 0 (black) and 255 (white) are not affected by merging
+	for (i = 1 ; i < 255; i++) {
+		if (!newPalette->colors[i].used)// color is not used - so skip it
+			continue;
+		// forced palette merging or dest color is not used yet
+		if (force || (!_sysPalette.colors[i].used)) {
+			_sysPalette.colors[i].used = newPalette->colors[i].used;
+			if ((newPalette->colors[i].r != _sysPalette.colors[i].r) || (newPalette->colors[i].g != _sysPalette.colors[i].g) || (newPalette->colors[i].b != _sysPalette.colors[i].b)) {
+				_sysPalette.colors[i].r = newPalette->colors[i].r;
+				_sysPalette.colors[i].g = newPalette->colors[i].g;
+				_sysPalette.colors[i].b = newPalette->colors[i].b;
+				paletteChanged = true;
 			}
+			newPalette->mapping[i] = i;
+			continue;
 		}
-	} else {
-		// colors 0 (black) and 255 (white) are not affected by merging
-		for (i = 1 ; i < 255; i++) {
-			if (!pFrom->colors[i].used)// color is not used - so skip it
-				continue;
-			// forced palette merging or dest color is not used yet
-			if (force || (!pTo->colors[i].used)) {
-				pTo->colors[i].used = pFrom->colors[i].used;
-				if ((pFrom->colors[i].r != pTo->colors[i].r) || (pFrom->colors[i].g != pTo->colors[i].g) || (pFrom->colors[i].b != pTo->colors[i].b)) {
-					pTo->colors[i].r = pFrom->colors[i].r;
-					pTo->colors[i].g = pFrom->colors[i].g;
-					pTo->colors[i].b = pFrom->colors[i].b;
-					paletteChanged = true;
-				}
-				pFrom->mapping[i] = i;
-				continue;
+		// is the same color already at the same position? -> match it directly w/o lookup
+		//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
+		//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
+		if ((_sysPalette.colors[i].r == newPalette->colors[i].r) && (_sysPalette.colors[i].g == newPalette->colors[i].g) && (_sysPalette.colors[i].b == newPalette->colors[i].b)) {
+			newPalette->mapping[i] = i;
+			continue;
+		}
+		// check if exact color could be matched
+		res = matchColor(newPalette->colors[i].r, newPalette->colors[i].g, newPalette->colors[i].b);
+		if (res & 0x8000) { // exact match was found
+			newPalette->mapping[i] = res & 0xFF;
+			continue;
+		}
+		// no exact match - see if there is an unused color
+		for (j = 1; j < 256; j++)
+			if (!_sysPalette.colors[j].used) {
+				_sysPalette.colors[j].used = newPalette->colors[i].used;
+				_sysPalette.colors[j].r = newPalette->colors[i].r;
+				_sysPalette.colors[j].g = newPalette->colors[i].g;
+				_sysPalette.colors[j].b = newPalette->colors[i].b;
+				newPalette->mapping[i] = j;
+				paletteChanged = true;
+				break;
 			}
-			// is the same color already at the same position? -> match it directly w/o lookup
-			//  this fixes games like lsl1demo/sq5 where the same rgb color exists multiple times and where we would
-			//  otherwise match the wrong one (which would result into the pixels affected (or not) by palette changes)
-			if ((pTo->colors[i].r == pFrom->colors[i].r) && (pTo->colors[i].g == pFrom->colors[i].g) && (pTo->colors[i].b == pFrom->colors[i].b)) {
-				pFrom->mapping[i] = i;
-				continue;
-			}
-			// check if exact color could be matched
-			res = matchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
-			if (res & 0x8000) { // exact match was found
-				pFrom->mapping[i] = res & 0xFF;
-				continue;
-			}
-			// no exact match - see if there is an unused color
-			for (j = 1; j < 256; j++)
-				if (!pTo->colors[j].used) {
-					pTo->colors[j].used = pFrom->colors[i].used;
-					pTo->colors[j].r = pFrom->colors[i].r;
-					pTo->colors[j].g = pFrom->colors[i].g;
-					pTo->colors[j].b = pFrom->colors[i].b;
-					pFrom->mapping[i] = j;
-					paletteChanged = true;
-					break;
-				}
-			// if still no luck - set an approximate color
-			if (j == 256) {
-				pFrom->mapping[i] = res & 0xFF;
-				pTo->colors[res & 0xFF].used |= 0x10;
-			}
+		// if still no luck - set an approximate color
+		if (j == 256) {
+			newPalette->mapping[i] = res & 0xFF;
+			_sysPalette.colors[res & 0xFF].used |= 0x10;
 		}
 	}
-	pTo->timestamp = g_system->getMillis() * 60 / 1000;
+
+	if (!forceRealMerge)
+		_sysPalette.timestamp = g_system->getMillis() * 60 / 1000;
 	return paletteChanged;
 }
 
-uint16 GfxPalette::matchColor(Palette *pPal, byte r, byte g, byte b) {
+// This is called for SCI1.1, when kDrawPic got done. We update sysPalette timestamp this way for SCI1.1 and also load
+//  target-palette, if palvary is active
+void GfxPalette::drewPicture(GuiResourceId pictureId) {
+	if (!_useMerging) // Don't do this on inbetween SCI1.1 games
+		_sysPalette.timestamp++;
+
+	if (_palVaryResourceId != -1) {
+		palVaryLoadTargetPalette(pictureId);
+	}
+}
+
+uint16 GfxPalette::matchColor(byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
 
 	for (int i = 1; i < 255; i++) {
-		if ((!pPal->colors[i].used))
+		if ((!_sysPalette.colors[i].used))
 			continue;
-		dr = pPal->colors[i].r - r;
-		dg = pPal->colors[i].g - g;
-		db = pPal->colors[i].b - b;
+		dr = _sysPalette.colors[i].r - r;
+		dg = _sysPalette.colors[i].g - g;
+		db = _sysPalette.colors[i].b - b;
 //		minimum squares match
 		cdiff = (dr*dr) + (dg*dg) + (db*db);
 //		minimum sum match (Sierra's)
@@ -306,8 +375,6 @@ void GfxPalette::getSys(Palette *pal) {
 }
 
 void GfxPalette::setOnScreen() {
-//	if (pal != &_sysPalette)
-//		memcpy(&_sysPalette,pal,sizeof(Palette));
 	// We dont change palette at all times for amiga
 	if (_resMan->isAmiga32color())
 		return;
@@ -319,11 +386,11 @@ void GfxPalette::setOnScreen() {
 }
 
 bool GfxPalette::kernelSetFromResource(GuiResourceId resourceId, bool force) {
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
 	Palette palette;
 
 	if (palResource) {
-		createFromData(palResource->data, &palette);
+		createFromData(palResource->data, palResource->size, &palette);
 		set(&palette, force);
 		return true;
 	}
@@ -346,12 +413,18 @@ void GfxPalette::kernelUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) 
 
 void GfxPalette::kernelSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
-	if (setPalette)
+	if (setPalette) {
 		setOnScreen();
+		EngineState *state = g_sci->getEngineState();
+		// Call speed throttler from here as well just in case we need it
+		//  At least in kq6 intro the scripts call us in a tight loop for fadein/fadeout
+		state->speedThrottler(30);
+		state->_throttleTrigger = true;
+	}
 }
 
 int16 GfxPalette::kernelFindColor(uint16 r, uint16 g, uint16 b) {
-	return matchColor(&_sysPalette, r, g, b) & 0xFF;
+	return matchColor(r, g, b) & 0xFF;
 }
 
 // Returns true, if palette got changed
@@ -377,6 +450,8 @@ bool GfxPalette::kernelAnimate(byte fromColor, byte toColor, int speed) {
 		_schedules.push_back(newSchedule);
 		scheduleCount++;
 	}
+
+	g_sci->getEngineState()->_throttleTrigger = true;
 
 	for (scheduleNr = 0; scheduleNr < scheduleCount; scheduleNr++) {
 		if (_schedules[scheduleNr].from == fromColor) {
@@ -413,8 +488,58 @@ void GfxPalette::kernelAnimateSet() {
 	setOnScreen();
 }
 
+reg_t GfxPalette::kernelSave() {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	reg_t memoryId = segMan->allocateHunkEntry("kPalette(save)", 1024);
+	byte *memoryPtr = segMan->getHunkPointer(memoryId);
+	if (memoryPtr) {
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			*memoryPtr++ = _sysPalette.colors[colorNr].used;
+			*memoryPtr++ = _sysPalette.colors[colorNr].r;
+			*memoryPtr++ = _sysPalette.colors[colorNr].g;
+			*memoryPtr++ = _sysPalette.colors[colorNr].b;
+		}
+	}
+	return memoryId;
+}
+
+void GfxPalette::kernelRestore(reg_t memoryHandle) {
+	SegManager *segMan = g_sci->getEngineState()->_segMan;
+	if (!memoryHandle.isNull()) {
+		byte *memoryPtr = segMan->getHunkPointer(memoryHandle);
+		if (!memoryPtr)
+			error("Bad handle used for kPalette(restore)");
+
+		Palette restoredPalette;
+
+		restoredPalette.timestamp = 0;
+		for (int colorNr = 0; colorNr < 256; colorNr++) {
+			restoredPalette.colors[colorNr].used = *memoryPtr++;
+			restoredPalette.colors[colorNr].r = *memoryPtr++;
+			restoredPalette.colors[colorNr].g = *memoryPtr++;
+			restoredPalette.colors[colorNr].b = *memoryPtr++;
+		}
+
+		set(&restoredPalette, true);
+	}
+}
+
 void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
-	warning("kAssertPalette %d", resourceId);
+	// Sometimes invalid viewIds are asked for, ignore those (e.g. qfg1vga)
+	//if (!_resMan->testResource(ResourceId(kResourceTypeView, resourceId)))
+	//	return;
+	// maybe we took the wrong parameter before, if this causes invalid view again, enable to commented out code again
+
+	GfxView *view = g_sci->_gfxCache->getView(resourceId);
+	Palette *viewPalette = view->getPalette();
+	if (viewPalette) {
+		// merge/insert this palette
+		set(viewPalette, true);
+	}
+}
+
+void GfxPalette::kernelSyncScreenPalette() {
+	_screen->getPalette(&_sysPalette);
 }
 
 // palVary
@@ -443,40 +568,191 @@ void GfxPalette::kernelAssertPalette(GuiResourceId resourceId) {
 // Saving/restoring
 //         need to save start and target-palette, when palVaryOn = true
 
-void GfxPalette::startPalVary(uint16 paletteId, uint16 ticks) {
-	kernelSetFromResource(paletteId, true);
-	return;
-
-	if (_palVaryId >= 0)	// another palvary is taking place, return
-		return;
-
-	_palVaryId = paletteId;
-	_palVaryStart = g_system->getMillis();
-	_palVaryEnd = _palVaryStart + ticks * 1000 / 60;
-	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000 / 60, this);
+void GfxPalette::palVaryInit() {
+	_palVaryResourceId = -1;
+	_palVaryPaused = 0;
+	_palVarySignal = 0;
+	_palVaryStep = 0;
+	_palVaryStepStop = 0;
+	_palVaryDirection = 0;
+	_palVaryTicks = 0;
 }
 
-void GfxPalette::togglePalVary(bool pause) {
+bool GfxPalette::palVaryLoadTargetPalette(GuiResourceId resourceId) {
+	_palVaryResourceId = resourceId;
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
+	if (palResource) {
+		// Load and initialize destination palette
+		createFromData(palResource->data, palResource->size, &_palVaryTargetPalette);
+		return true;
+	}
+	return false;
+}
+
+void GfxPalette::palVaryInstallTimer() {
+	int16 ticks = _palVaryTicks > 0 ? _palVaryTicks : 1;
+	// Call signal increase every [ticks]
+	g_sci->getTimerManager()->installTimerProc(&palVaryCallback, 1000000 / 60 * ticks, this);
+}
+
+void GfxPalette::palVaryRemoveTimer() {
+	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
+}
+
+bool GfxPalette::kernelPalVaryInit(GuiResourceId resourceId, uint16 ticks, uint16 stepStop, uint16 direction) {
+	if (_palVaryResourceId != -1)	// another palvary is taking place, return
+		return false;
+
+	if (palVaryLoadTargetPalette(resourceId)) {
+		// Save current palette
+		memcpy(&_palVaryOriginPalette, &_sysPalette, sizeof(Palette));
+
+		_palVarySignal = 0;
+		_palVaryTicks = ticks;
+		_palVaryStep = 1;
+		_palVaryStepStop = stepStop;
+		_palVaryDirection = direction;
+		// if no ticks are given, jump directly to destination
+		if (!_palVaryTicks)
+			_palVaryDirection = stepStop;
+		palVaryInstallTimer();
+		return true;
+	}
+	return false;
+}
+
+int16 GfxPalette::kernelPalVaryReverse(int16 ticks, uint16 stepStop, int16 direction) {
+	if (_palVaryResourceId == -1)
+		return 0;
+
+	if (_palVaryStep > 64)
+		_palVaryStep = 64;
+	if (ticks != -1)
+		_palVaryTicks = ticks;
+	_palVaryStepStop = stepStop;
+	_palVaryDirection = direction != -1 ? -direction : -_palVaryDirection;
+
+	if (!_palVaryTicks)
+		_palVaryDirection = _palVaryStepStop - _palVaryStep;
+	palVaryInstallTimer();
+	return kernelPalVaryGetCurrentStep();
+}
+
+int16 GfxPalette::kernelPalVaryGetCurrentStep() {
+	if (_palVaryDirection >= 0)
+		return _palVaryStep;
+	return -_palVaryStep;
+}
+
+int16 GfxPalette::kernelPalVaryChangeTarget(GuiResourceId resourceId) {
+	if (_palVaryResourceId != -1) {
+		Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), false);
+		if (palResource) {
+			Palette insertPalette;
+			createFromData(palResource->data, palResource->size, &insertPalette);
+			// insert new palette into target
+			insert(&insertPalette, &_palVaryTargetPalette);
+			// update palette and set on screen
+			palVaryProcess(0, true);
+		}
+	}
+	return kernelPalVaryGetCurrentStep();
+}
+
+void GfxPalette::kernelPalVaryChangeTicks(uint16 ticks) {
+	_palVaryTicks = ticks;
+	if (_palVaryStep - _palVaryStepStop) {
+		palVaryRemoveTimer();
+		palVaryInstallTimer();
+	}
+}
+
+void GfxPalette::kernelPalVaryPause(bool pause) {
+	if (_palVaryResourceId == -1)
+		return;
 	// this call is actually counting states, so calling this 3 times with true will require calling it later
 	// 3 times with false to actually remove pause
-
-	// TODO
+	if (pause) {
+		_palVaryPaused++;
+	} else {
+		if (_palVaryPaused)
+			_palVaryPaused--;
+	}
 }
 
-void GfxPalette::stopPalVary() {
-	g_sci->getTimerManager()->removeTimerProc(&palVaryCallback);
-	_palVaryId = -1;	// invalidate the target palette
+void GfxPalette::kernelPalVaryDeinit() {
+	palVaryRemoveTimer();
 
-	// HACK: just set the target palette
-	kernelSetFromResource(_palVaryId, true);
+	_palVaryResourceId = -1;	// invalidate the target palette
 }
 
 void GfxPalette::palVaryCallback(void *refCon) {
-	((GfxPalette *)refCon)->doPalVary();
+	((GfxPalette *)refCon)->palVaryIncreaseSignal();
 }
 
-void GfxPalette::doPalVary() {
-	// TODO: do palette transition here...
+void GfxPalette::palVaryIncreaseSignal() {
+	if (!_palVaryPaused)
+		_palVarySignal++;
+}
+
+// Actually do the pal vary processing
+void GfxPalette::palVaryUpdate() {
+	if (_palVarySignal) {
+		palVaryProcess(_palVarySignal, true);
+		_palVarySignal = 0;
+	}
+}
+
+void GfxPalette::palVaryPrepareForTransition() {
+	if (_palVaryResourceId != -1) {
+		// Before doing transitions, we have to prepare palette
+		palVaryProcess(0, false);
+	}
+}
+
+// Processes pal vary updates
+void GfxPalette::palVaryProcess(int signal, bool setPalette) {
+	int16 stepChange = signal * _palVaryDirection;
+
+	_palVaryStep += stepChange;
+	if (stepChange > 0) {
+		if (_palVaryStep > _palVaryStepStop)
+			_palVaryStep = _palVaryStepStop;
+	} else {
+		if (_palVaryStep < _palVaryStepStop) {
+			if (signal)
+				_palVaryStep = _palVaryStepStop;
+		}
+	}
+
+	// We don't need updates anymore, if we reached end-position
+	if (_palVaryStep == _palVaryStepStop)
+		palVaryRemoveTimer();
+	if (_palVaryStep == 0)
+		_palVaryResourceId = -1;
+
+	// Calculate inbetween palette
+	Sci::Color inbetween;
+	int16 color;
+	for (int colorNr = 1; colorNr < 255; colorNr++) {
+		inbetween.used = _sysPalette.colors[colorNr].used;
+		color = _palVaryTargetPalette.colors[colorNr].r - _palVaryOriginPalette.colors[colorNr].r;
+		inbetween.r = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].r;
+		color = _palVaryTargetPalette.colors[colorNr].g - _palVaryOriginPalette.colors[colorNr].g;
+		inbetween.g = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].g;
+		color = _palVaryTargetPalette.colors[colorNr].b - _palVaryOriginPalette.colors[colorNr].b;
+		inbetween.b = ((color * _palVaryStep) / 64) + _palVaryOriginPalette.colors[colorNr].b;
+
+		if (memcmp(&inbetween, &_sysPalette.colors[colorNr], sizeof(Sci::Color))) {
+			_sysPalette.colors[colorNr] = inbetween;
+			_sysPaletteChanged = true;
+		}
+	}
+
+	if ((_sysPaletteChanged) && (setPalette) && (_screen->_picNotValid == 0)) {
+		setOnScreen();
+		_sysPaletteChanged = false;
+	}
 }
 
 } // End of namespace Sci

@@ -81,10 +81,10 @@ PSPIoStream::PSPIoStream(const Common::String &path, bool writeMode)
 PSPIoStream::~PSPIoStream() {
 	DEBUG_ENTER_FUNC();
 
-	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
-	PowerMan.unregisterSuspend(this); // Unregister with powermanager to be suspended
+	PowerMan.unregisterForSuspend(this); // Unregister with powermanager to be suspended
 									  // Must do this before fclose() or resume() will reopen.
 
 	fclose((FILE *)_handle);		  // We don't need a critical section. Worst case, the handle gets closed on its own
@@ -100,7 +100,7 @@ PSPIoStream::~PSPIoStream() {
  */
 void *PSPIoStream::open() {
 	DEBUG_ENTER_FUNC();
-	if (PowerMan.beginCriticalSection() == PowerManager::Blocked) {
+	if (PowerMan.beginCriticalSection()) {
 		// No need to open. Just return the _handle resume() already opened.
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 	}
@@ -118,7 +118,7 @@ void *PSPIoStream::open() {
 		_cache = (char *)memalign(64, CACHE_SIZE);
 	}
 
-	PowerMan.registerSuspend(this);	 // Register with the powermanager to be suspended
+	PowerMan.registerForSuspend(this);	 // Register with the powermanager to be suspended
 
 	PowerMan.endCriticalSection();
 
@@ -233,7 +233,7 @@ uint32 PSPIoStream::read(void *ptr, uint32 len) {
 		}		
 	}
 
-	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 	
 	
@@ -309,7 +309,7 @@ inline bool PSPIoStream::isOffsetInCache(uint32 offset) {
 uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 	DEBUG_ENTER_FUNC();
 	// Check if we can access the file
-	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	PSP_DEBUG_PRINT_FUNC("filename[%s], len[0x%x]\n", _path.c_str(), len);
@@ -346,7 +346,7 @@ uint32 PSPIoStream::write(const void *ptr, uint32 len) {
 bool PSPIoStream::flush() {
 	DEBUG_ENTER_FUNC();
 	// Enter critical section
-	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+	if (PowerMan.beginCriticalSection())
 		PSP_DEBUG_PRINT_FUNC("Suspended\n");
 
 	int ret = fflush((FILE *)_handle);

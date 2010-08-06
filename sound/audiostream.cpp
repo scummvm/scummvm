@@ -95,6 +95,12 @@ SeekableAudioStream *SeekableAudioStream::openStreamFile(const Common::String &b
 
 LoopingAudioStream::LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse)
     : _parent(stream), _disposeAfterUse(disposeAfterUse), _loops(loops), _completeIterations(0) {
+	assert(stream);
+
+	if (!stream->rewind()) {
+		// TODO: Properly indicate error
+		_loops = _completeIterations = 1;
+	}
 }
 
 LoopingAudioStream::~LoopingAudioStream() {
@@ -387,7 +393,7 @@ Timestamp convertTimeToStreamPos(const Timestamp &where, int rate, bool isStereo
 	//
 	// An example is when converting the timestamp 500ms to a 11025 Hz based
 	// stream. It would have an internal frame counter of 5512.5. Now when
-	// doing calculations at frame precision, this might lead to unexpected 
+	// doing calculations at frame precision, this might lead to unexpected
 	// results: The frame difference between a timestamp 1000ms and the above
 	// mentioned timestamp (both with 11025 as framerate) would be 5512,
 	// instead of 5513, which is what a frame-precision based code would expect.

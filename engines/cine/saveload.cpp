@@ -465,7 +465,7 @@ bool CineEngine::loadSaveDirectory() {
 	char tmp[80];
 
 	snprintf(tmp, 80, "%s.dir", _targetName.c_str());
-	fHandle = g_saveFileMan->openForLoading(tmp);
+	fHandle = _saveFileMan->openForLoading(tmp);
 
 	if (!fHandle) {
 		return false;
@@ -566,7 +566,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 	}
 
 	loadObjectTable(in);
-	renderer->restorePalette(in);
+	renderer->restorePalette(in, hdr.version);
 	globalVars.load(in, NUM_MAX_VAR);
 	loadZoneData(in);
 	loadCommandVariables(in);
@@ -698,7 +698,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	loadObjectTable(in);
 
 	// At 0x2043 (i.e. 0x005F + 2 * 2 + 255 * 32):
-	renderer->restorePalette(in);
+	renderer->restorePalette(in, 0);
 
 	// At 0x2083 (i.e. 0x2043 + 16 * 2 * 2):
 	globalVars.load(in, NUM_MAX_VAR);
@@ -771,7 +771,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 }
 
 bool CineEngine::makeLoad(char *saveName) {
-	Common::SharedPtr<Common::InSaveFile> saveFile(g_saveFileMan->openForLoading(saveName));
+	Common::SharedPtr<Common::InSaveFile> saveFile(_saveFileMan->openForLoading(saveName));
 
 	if (!saveFile) {
 		renderer->drawString(otherMessages[0], 0);
@@ -966,7 +966,7 @@ void CineEngine::makeSaveOS(Common::OutSaveFile &out) {
 }
 
 void CineEngine::makeSave(char *saveFileName) {
-	Common::SharedPtr<Common::OutSaveFile> fHandle(g_saveFileMan->openForSaving(saveFileName));
+	Common::SharedPtr<Common::OutSaveFile> fHandle(_saveFileMan->openForSaving(saveFileName));
 
 	setMouseCursor(MOUSE_CURSOR_DISK);
 
@@ -976,7 +976,7 @@ void CineEngine::makeSave(char *saveFileName) {
 		// restoreScreen();
 		checkDataDisk(-1);
 	} else {
-		if (g_cine->getGameType() == GType_FW) {
+		if (getGameType() == GType_FW) {
 			makeSaveFW(*fHandle);
 		} else {
 			makeSaveOS(*fHandle);

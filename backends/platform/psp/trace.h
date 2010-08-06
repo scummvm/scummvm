@@ -30,17 +30,19 @@
 
 #include "common/str.h"
 
+#define __PSP_PRINT_TO_FILE_AND_SCREEN__
+
 /* Choose to print to file/screen/both */
 #ifdef __PSP_PRINT_TO_FILE__
-	#define __PSP_PRINT__(format,...)			PSPDebugTrace(false, format, ## __VA_ARGS__)
+	#define __PSP_PRINT__(format,...)			PspDebugTrace(false, format, ## __VA_ARGS__)
 #elif defined __PSP_PRINT_TO_FILE_AND_SCREEN__
-	#define __PSP_PRINT__(format,...)			PSPDebugTrace(true, format, ## __VA_ARGS__)
+	#define __PSP_PRINT__(format,...)			PspDebugTrace(true, format, ## __VA_ARGS__)
 #else /* default - print to screen */
 	#define __PSP_PRINT__(format,...)			fprintf(stderr, format, ## __VA_ARGS__)
 #endif /* PSP_PRINT_TO_FILE/SCREEN */
 
-/* Error function */
-#define PSP_ERROR(format,...)					__PSP_PRINT__("Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
+/* Error function - always print to file as well */
+#define PSP_ERROR(format,...)					PspDebugTrace(true, "Error in %s: " format, __PRETTY_FUNCTION__, ## __VA_ARGS__)
 
 /* Do the indent */
 #define __PSP_INDENT__							for(int _i=psp_debug_indent; _i>0; _i--) \
@@ -52,7 +54,7 @@
 #define PSP_INFO_PRINT_INDENT(format,...)		{ __PSP_INDENT__; \
 												__PSP_PRINT__(format, ## __VA_ARGS__); }
 
-void PSPDebugTrace(bool alsoToScreen, const char *format, ...);
+void PspDebugTrace(bool alsoToScreen, const char *format, ...);
 
 extern int psp_debug_indent;
 
