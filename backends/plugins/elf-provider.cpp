@@ -31,6 +31,33 @@
 
 #if defined(DYNAMIC_MODULES) && defined(ELF_LOADER_TARGET)
 
+void (* ELFPlugin::findSymbol(const char *symbol))() {
+	void *func;
+	bool handleNull;
+	if (_dlHandle == NULL) {
+		func = NULL;
+		handleNull = true;
+	} else {
+		func = _dlHandle->symbol(symbol);
+	}
+	if (!func) {
+		if (handleNull) {
+			warning("Failed loading symbol '%s' from plugin '%s' (Handle is NULL)", symbol, _filename.c_str());
+		} else {
+			warning("Failed loading symbol '%s' from plugin '%s'", symbol, _filename.c_str());
+		}
+	}
+
+	// FIXME HACK: This is a HACK to circumvent a clash between the ISO C++
+	// standard and POSIX: ISO C++ disallows casting between function pointers
+	// and data pointers, but dlsym always returns a void pointer. For details,
+	// see e.g. <http://www.trilithium.com/johan/2004/12/problem-with-dlsym/>.
+	assert(sizeof(VoidFunc) == sizeof(func));
+	VoidFunc tmp;
+	memcpy(&tmp, &func, sizeof(VoidFunc));
+	return tmp;
+}
+
 bool ELFPlugin::loadPlugin() {
 	assert(!_dlHandle);
 	DLObject *obj = new DLObject(NULL);
