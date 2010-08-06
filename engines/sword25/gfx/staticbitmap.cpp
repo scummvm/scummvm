@@ -54,7 +54,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_StaticBitmap::BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const std::string& Filename) :
+BS_StaticBitmap::BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String& Filename) :
 	BS_Bitmap(ParentPtr, TYPE_STATICBITMAP)
 {
 	// Das BS_Bitmap konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
@@ -73,7 +73,7 @@ BS_StaticBitmap::BS_StaticBitmap(BS_InputPersistenceBlock & Reader, BS_RenderObj
 
 // -----------------------------------------------------------------------------
 
-bool BS_StaticBitmap::InitBitmapResource(const std::string & Filename)
+bool BS_StaticBitmap::InitBitmapResource(const Common::String & Filename)
 {
 	// Bild-Resource laden
 	BS_Resource* ResourcePtr = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(Filename);
@@ -225,7 +225,7 @@ bool BS_StaticBitmap::Unpersist(BS_InputPersistenceBlock & Reader)
 	bool Result = true;
 
 	Result &= BS_Bitmap::Unpersist(Reader);
-	std::string ResourceFilename;
+	Common::String ResourceFilename;
 	Reader.Read(ResourceFilename);
 	Result &= InitBitmapResource(ResourceFilename);
 

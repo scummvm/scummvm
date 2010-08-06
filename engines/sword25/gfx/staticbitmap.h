@@ -56,7 +56,7 @@ private:
 	/**
 		@remark Filename muss absoluter Pfad sein
 	*/
-	BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const std::string& Filename);
+	BS_StaticBitmap(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String& Filename);
 	BS_StaticBitmap(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
 public:
@@ -78,9 +78,9 @@ protected:
 	virtual bool	DoRender();
 
 private:
-	std::string m_ResourceFilename;
+	Common::String m_ResourceFilename;
 
-	bool InitBitmapResource(const std::string & Filename);
+	bool InitBitmapResource(const Common::String & Filename);
 };
 
 } // End of namespace Sword25

@@ -62,13 +62,13 @@ class BS_AnimationResource;
 class BS_AnimationTemplate : public BS_AnimationDescription
 {
 public:
-	static unsigned int Create(const std::string & SourceAnimation);
+	static unsigned int Create(const Common::String & SourceAnimation);
 	static unsigned int Create(const BS_AnimationTemplate & Other);
 	static unsigned int Create(BS_InputPersistenceBlock & Reader, unsigned int Handle);
 	BS_AnimationTemplate * ResolveHandle(unsigned int Handle) const;
 
 private:
-	BS_AnimationTemplate(const std::string & SourceAnimation);
+	BS_AnimationTemplate(const Common::String & SourceAnimation);
 	BS_AnimationTemplate(const BS_AnimationTemplate & Other);
 	BS_AnimationTemplate(BS_InputPersistenceBlock & Reader, unsigned int Handle);
 
@@ -117,7 +117,7 @@ private:
 	BS_AnimationResource *		m_SourceAnimationPtr;
 	bool						m_Valid;
 
-	BS_AnimationResource * RequestSourceAnimation(const std::string & SourceAnimation) const;
+	BS_AnimationResource * RequestSourceAnimation(const Common::String & SourceAnimation) const;
 	bool ValidateSourceIndex(unsigned int Index) const;
 	bool ValidateDestIndex(unsigned int Index) const;
 };

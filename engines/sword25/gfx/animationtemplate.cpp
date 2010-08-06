@@ -53,7 +53,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-unsigned int BS_AnimationTemplate::Create(const std::string & SourceAnimation)
+unsigned int BS_AnimationTemplate::Create(const Common::String & SourceAnimation)
 {
 	BS_AnimationTemplate * AnimationTemplatePtr = new BS_AnimationTemplate(SourceAnimation);
 
@@ -104,7 +104,7 @@ unsigned int BS_AnimationTemplate::Create(BS_InputPersistenceBlock & Reader, uns
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationTemplate::BS_AnimationTemplate(const std::string & SourceAnimation)
+BS_AnimationTemplate::BS_AnimationTemplate(const Common::String & SourceAnimation)
 {
 	// Objekt registrieren.
 	BS_AnimationTemplateRegistry::GetInstance().RegisterObject(this);
@@ -158,7 +158,7 @@ BS_AnimationTemplate::BS_AnimationTemplate(BS_InputPersistenceBlock & Reader, un
 
 // -----------------------------------------------------------------------------
 
-BS_AnimationResource * BS_AnimationTemplate::RequestSourceAnimation(const std::string & SourceAnimation) const
+BS_AnimationResource * BS_AnimationTemplate::RequestSourceAnimation(const Common::String & SourceAnimation) const
 {
 	BS_ResourceManager * RMPtr = BS_Kernel::GetInstance()->GetResourceManager();
 	BS_Resource * ResourcePtr;
@@ -300,7 +300,7 @@ bool BS_AnimationTemplate::Unpersist(BS_InputPersistenceBlock & Reader)
 	}
 
 	// Die Animations-Resource wird für die gesamte Lebensdauer des Objektes gelockt
-	std::string SourceAnimation;
+	Common::String SourceAnimation;
 	Reader.Read(SourceAnimation);
 	m_SourceAnimationPtr = RequestSourceAnimation(SourceAnimation);
 

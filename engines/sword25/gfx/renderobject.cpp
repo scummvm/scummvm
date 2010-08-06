@@ -332,7 +332,7 @@ void BS_RenderObject::SetVisible(bool Visible)
 // Objekterzeuger
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const std::string& Filename)
+BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const Common::String& Filename)
 {
 	BS_RenderObjectPtr<BS_Animation> AniPtr(new BS_Animation(this, Filename));
 	if (AniPtr.IsValid() && AniPtr->GetInitSuccess())
@@ -361,7 +361,7 @@ BS_RenderObjectPtr<BS_Animation> BS_RenderObject::AddAnimation(const BS_Animatio
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const std::string& Filename)
+BS_RenderObjectPtr<BS_Bitmap> BS_RenderObject::AddBitmap(const Common::String& Filename)
 {
 	BS_RenderObjectPtr<BS_Bitmap> BitmapPtr(new BS_StaticBitmap(this, Filename));
 	if (BitmapPtr.IsValid() && BitmapPtr->GetInitSuccess())
@@ -403,7 +403,7 @@ BS_RenderObjectPtr<BS_Panel> BS_RenderObject::AddPanel(int Width, int Height, un
 
 // -----------------------------------------------------------------------------
 
-BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const std::string & Font, const std::string & Text)
+BS_RenderObjectPtr<BS_Text> BS_RenderObject::AddText(const Common::String & Font, const std::string & Text)
 {
 	BS_RenderObjectPtr<BS_Text> TextPtr(new BS_Text(this));
 	if (TextPtr.IsValid() && TextPtr->GetInitSuccess() && TextPtr->SetFont(Font))

@@ -71,13 +71,13 @@ public:
 		@param Font der Dateiname der Fontdatei.
 		@return Gibt false zurück, wenn der Font nicht gefunden wurde.
 	*/
-	bool SetFont(const std::string & Font);
+	bool SetFont(const Common::String & Font);
 
 	/**
 		@brief Setzt den darzustellenden Text.
 		@param Text der darzustellende Text
 	*/
-	void SetText(const std::string & Text);
+	void SetText(const Common::String & Text);
 
 	/**
 		@brief Setzt den Alphawert des Textes.
@@ -105,12 +105,12 @@ public:
 	/**
 		@brief Gibt den dargestellten Text zurück.
 	*/
-	const std::string & GetText() { return m_Text; }
+	const Common::String & GetText() { return m_Text; }
 
 	/**
 	    @brief Gibt den Namen das momentan benutzten Fonts zurück.
 	*/
-	const std::string & GetFont() { return m_Font; }
+	const Common::String & GetFont() { return m_Font; }
 
 	/**
 		@brief Setzt die Farbe des Textes.
@@ -151,15 +151,15 @@ private:
 	BS_Text(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
 	unsigned int	m_ModulationColor;
-	std::string		m_Font;
-	std::string		m_Text;
+	Common::String		m_Font;
+	Common::String		m_Text;
 	bool			m_AutoWrap;
 	unsigned int	m_AutoWrapThreshold;
 
 	struct LINE
 	{
 		BS_Rect		BBox;
-		std::string	Text;
+		Common::String	Text;
 	};
 
 	std::vector<LINE>	m_Lines;

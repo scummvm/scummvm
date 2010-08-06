@@ -60,7 +60,7 @@ static const unsigned int DEFAULT_GAPWIDTH = 1;
 // Konstruktion / Destruktion
 // -----------------------------------------------------------------------------
 
-BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const std::string& FileName) :
+BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const Common::String& FileName) :
 	_pKernel(pKernel),
 	_Valid(false),
 	BS_Resource(FileName, BS_Resource::TYPE_FONT)
@@ -82,7 +82,7 @@ BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const std::string& FileName
 	}
 
 	// Font-Tag parsen
-	std::string BitmapFileName;
+	Common::String BitmapFileName;
 	if (!_ParseFontTag(*pElement, BitmapFileName, _LineHeight, _GapWidth))
 	{
 		BS_LOG_ERRORLN("An error occurred while parsing <font> tag in \"%s\".", GetFileName().c_str());
@@ -148,7 +148,7 @@ BS_FontResource::BS_FontResource(BS_Kernel* pKernel, const std::string& FileName
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseXMLDocument(const std::string & FileName, TiXmlDocument & Doc) const
+bool BS_FontResource::_ParseXMLDocument(const Common::String & FileName, TiXmlDocument & Doc) const
 {
 	// Pointer auf den Package-Manager bekommen
 	BS_ASSERT(_pKernel);
@@ -179,7 +179,7 @@ bool BS_FontResource::_ParseXMLDocument(const std::string & FileName, TiXmlDocum
 
 // -----------------------------------------------------------------------------
 
-bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, std::string & BitmapFileName, int & Lineheight, int & GapWidth) const
+bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, Common::String & BitmapFileName, int & Lineheight, int & GapWidth) const
 {
 	// Bitmap Attribut auslesen
 	const char * BitmapString = Tag.Attribute("bitmap");
@@ -192,7 +192,7 @@ bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, std::string & BitmapFile
 
 	// Lineheight Attribut auslesen
 	const char * LineheightString = Tag.Attribute("lineheight");
-	if (!LineheightString || !BS_String::ToInt(std::string(LineheightString), Lineheight) || Lineheight < 0)
+	if (!LineheightString || !BS_String::ToInt(Common::String(LineheightString), Lineheight) || Lineheight < 0)
 	{
 		BS_LOG_WARNINGLN("Illegal or missing lineheight attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 						 GetFileName().c_str(), DEFAULT_LINEHEIGHT);
@@ -202,7 +202,7 @@ bool BS_FontResource::_ParseFontTag(TiXmlElement & Tag, std::string & BitmapFile
 
 	// Gap Attribut auslesen
 	const char * GapString = Tag.Attribute("gap");
-	if (!GapString || !BS_String::ToInt(std::string(GapString), GapWidth) || GapWidth < 0)
+	if (!GapString || !BS_String::ToInt(Common::String(GapString), GapWidth) || GapWidth < 0)
 	{
 		BS_LOG_WARNINGLN("Illegal or missing gap attribute in <font> tag in \"%s\". Assuming default (\"%d\").",
 						 GetFileName().c_str(), DEFAULT_GAPWIDTH);
@@ -218,7 +218,7 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 {
 	// Code Attribut auslesen
 	const char * CodeString = Tag.Attribute("code");
-	if (!CodeString || !BS_String::ToInt(std::string(CodeString), Code) || Code < 0 || Code >= 256)
+	if (!CodeString || !BS_String::ToInt(Common::String(CodeString), Code) || Code < 0 || Code >= 256)
 	{
 		BS_LOG_ERRORLN("Illegal or missing code attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;
@@ -226,7 +226,7 @@ bool BS_FontResource::_ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect
 
 	// Left Attribut auslesen
 	const char * LeftString = Tag.Attribute("left");
-	if (!LeftString || !BS_String::ToInt(std::string(LeftString), Rect.left) || Rect.left < 0)
+	if (!LeftString || !BS_String::ToInt(Common::String(LeftString), Rect.left) || Rect.left < 0)
 	{
 		BS_LOG_ERRORLN("Illegal or missing left attribute in <character> tag in \"%s\".", GetFileName().c_str());
 		return false;

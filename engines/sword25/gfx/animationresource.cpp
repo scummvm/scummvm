@@ -65,7 +65,7 @@ namespace
 // Construction / Destruction
 // -----------------------------------------------------------------------------
 
-BS_AnimationResource::BS_AnimationResource(const std::string& FileName) :
+BS_AnimationResource::BS_AnimationResource(const Common::String& FileName) :
 	BS_Resource(FileName, BS_Resource::TYPE_ANIMATION),
 	m_Valid(false)
 {
@@ -122,11 +122,11 @@ BS_AnimationResource::BS_AnimationResource(const std::string& FileName) :
 	m_MillisPerFrame = 1000000 / m_FPS;
 
 	// In das Verzeichnis der Eingabedatei wechseln, da die Dateiverweise innerhalb der XML-Datei relativ zu diesem Verzeichnis sind.
-	std::string OldDirectory = PackagePtr->GetCurrentDirectory();
+	Common::String OldDirectory = PackagePtr->GetCurrentDirectory();
 	int LastSlash = GetFileName().rfind('/');
-	if (LastSlash != std::string::npos)
+	if (LastSlash != Common::String::npos)
 	{
-		std::string Dir = GetFileName().substr(0, LastSlash);
+		Common::String Dir = GetFileName().substr(0, LastSlash);
 		PackagePtr->ChangeDirectory(Dir);
 	}
 
@@ -184,7 +184,7 @@ bool BS_AnimationResource::ParseAnimationTag(TiXmlElement& AnimationTag, int& FP
 	if (FPSString = AnimationTag.Attribute("fps"))
 	{
 		int TempFPS;
-	if (!BS_String::ToInt(std::string(FPSString), TempFPS) || TempFPS < MIN_FPS || TempFPS > MAX_FPS)
+	if (!BS_String::ToInt(Common::String(FPSString), TempFPS) || TempFPS < MIN_FPS || TempFPS > MAX_FPS)
 		{
 			BS_LOG_WARNINGLN("Illegal fps value (\"%s\") in <animation> tag in \"%s\". Assuming default (\"%d\"). "
 							 "The fps value has to be between %d and %d.",
@@ -243,19 +243,19 @@ bool BS_AnimationResource::ParseFrameTag(TiXmlElement& FrameTag, Frame& Frame, B
 						 GetFileName().c_str());
 
 	Frame.HotspotX = 0;
-	if (HotspotxString && !BS_String::ToInt(std::string(HotspotxString), Frame.HotspotX))
+	if (HotspotxString && !BS_String::ToInt(Common::String(HotspotxString), Frame.HotspotX))
 		BS_LOG_WARNINGLN("Illegal hotspotx value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
 						 HotspotxString,GetFileName().c_str(), Frame.HotspotX);
 
 	Frame.HotspotY = 0;
-	if (HotspotyString && !BS_String::ToInt(std::string(HotspotyString), Frame.HotspotY))
+	if (HotspotyString && !BS_String::ToInt(Common::String(HotspotyString), Frame.HotspotY))
 		BS_LOG_WARNINGLN("Illegal hotspoty value (\"%s\") in frame tag in \"%s\". Assuming default (\"%s\").",
 						 HotspotyString, GetFileName().c_str(), Frame.HotspotY);
 
 	const char* FlipVString = FrameTag.Attribute("flipv");
 	if (FlipVString)
 	{
-	if (!BS_String::ToBool(std::string(FlipVString), Frame.FlipV))
+	if (!BS_String::ToBool(Common::String(FlipVString), Frame.FlipV))
 		{
 			BS_LOG_WARNINGLN("Illegal flipv value (\"%s\") in <frame> tag in \"%s\". Assuming default (\"false\").",
 							 FlipVString, GetFileName().c_str());

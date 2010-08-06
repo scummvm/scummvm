@@ -77,7 +77,7 @@ namespace
 	public:
 		ActionCallback(lua_State * L) : BS_LuaCallback(L) {};
 
-		std::string Action;
+		Common::String Action;
 
 	protected:
 		virtual int PreFunctionInvokation(lua_State * L)

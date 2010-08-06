@@ -65,7 +65,7 @@ class TiXmlElement;
 class BS_AnimationResource : public BS_Resource, public BS_AnimationDescription
 {
 public:
-	BS_AnimationResource(const std::string & FileName);
+	BS_AnimationResource(const Common::String & FileName);
 	virtual ~BS_AnimationResource();
 
 	virtual const Frame &	GetFrame(unsigned int Index) const { BS_ASSERT(Index < m_Frames.size()); return m_Frames[Index]; }

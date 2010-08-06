@@ -57,7 +57,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // --------------------------
 
-BS_Animation::BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const std::string & FileName) :
+BS_Animation::BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String & FileName) :
 	BS_TimedRenderObject(ParentPtr, BS_RenderObject::TYPE_ANIMATION)
 {
 	// Das BS_RenderObject konnte nicht erzeugt werden, daher muss an dieser Stelle abgebrochen werden.
@@ -109,7 +109,7 @@ BS_Animation::BS_Animation(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr
 
 // -----------------------------------------------------------------------------
 
-void BS_Animation::InitializeAnimationResource(const std::string &FileName)
+void BS_Animation::InitializeAnimationResource(const Common::String &FileName)
 {
 	// Die Resource wird für die gesamte Lebensdauer des Animations-Objektes gelockt.
 	BS_Resource * ResourcePtr = BS_Kernel::GetInstance()->GetResourceManager()->RequestResource(FileName);
@@ -633,7 +633,7 @@ void BS_Animation::SetScaleFactorY(float ScaleFactorY)
 
 // -----------------------------------------------------------------------------
 
-const std::string & BS_Animation::GetCurrentAction() const
+const Common::String & BS_Animation::GetCurrentAction() const
 {
 	BS_AnimationDescription * animationDescriptionPtr = GetAnimationDescription();
 	BS_ASSERT(animationDescriptionPtr);
@@ -776,7 +776,7 @@ void BS_Animation::UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, st
 	{
 		ANIMATION_CALLBACK_DATA CallbackData;
 
-		std::string CallbackFunctionName;
+		Common::String CallbackFunctionName;
 		Reader.Read(CallbackFunctionName);
 		CallbackData.Callback = reinterpret_cast<ANIMATION_CALLBACK>(BS_CallbackRegistry::GetInstance().ResolveCallbackFunction(CallbackFunctionName));
 		
@@ -861,7 +861,7 @@ bool BS_Animation::Unpersist(BS_InputPersistenceBlock & Reader)
 	Reader.Read(Marker);
 	if (Marker == 0)
 	{
-		std::string ResourceFilename;
+		Common::String ResourceFilename;
 		Reader.Read(ResourceFilename);
 		InitializeAnimationResource(ResourceFilename);
 	}

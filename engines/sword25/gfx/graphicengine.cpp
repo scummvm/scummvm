@@ -112,7 +112,7 @@ void  BS_GraphicEngine::UpdateLastFrameDuration()
 
 namespace
 {
-	bool DoSaveScreenshot(BS_GraphicEngine & GraphicEngine, const std::string & Filename, bool Thumbnail)
+	bool DoSaveScreenshot(BS_GraphicEngine & GraphicEngine, const Common::String & Filename, bool Thumbnail)
 	{
 		unsigned int Width;
 		unsigned int Height;
@@ -134,14 +134,14 @@ namespace
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveScreenshot(const std::string & Filename)
+bool BS_GraphicEngine::SaveScreenshot(const Common::String & Filename)
 {
 	return DoSaveScreenshot(*this, Filename, false);
 }
 
 // -----------------------------------------------------------------------------
 
-bool BS_GraphicEngine::SaveThumbnailScreenshot( const std::string & Filename )
+bool BS_GraphicEngine::SaveThumbnailScreenshot( const Common::String & Filename )
 {
 	return DoSaveScreenshot(*this, Filename, true);
 }

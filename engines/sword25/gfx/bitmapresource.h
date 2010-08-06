@@ -68,7 +68,7 @@ public:
 		FLIP_VH = FLIP_H | FLIP_V
 	};
 
-	BS_BitmapResource(const std::string & Filename, BS_Image * pImage);
+	BS_BitmapResource(const Common::String & Filename, BS_Image * pImage);
 	virtual ~BS_BitmapResource();
 
 	/**

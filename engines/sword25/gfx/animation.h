@@ -58,7 +58,7 @@ class BS_Animation : public BS_TimedRenderObject
 friend class BS_RenderObject;
 
 private:
-	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const std::string & FileName);
+	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const Common::String & FileName);
 	BS_Animation(BS_RenderObjectPtr<BS_RenderObject> ParentPtr, const BS_AnimationTemplate & Template);
 	BS_Animation(BS_InputPersistenceBlock & Reader, BS_RenderObjectPtr<BS_RenderObject> ParentPtr, unsigned int Handle);
 
@@ -145,7 +145,7 @@ public:
 	bool				IsAlphaAllowed() const;
 	bool				IsColorModulationAllowed() const;
 	unsigned int		GetCurrentFrame() const { return m_CurrentFrame; }
-	const std::string &	GetCurrentAction() const ;
+	const Common::String &	GetCurrentAction() const ;
 	bool				IsRunning() const { return m_Running; }
 
 	typedef bool (*ANIMATION_CALLBACK)(unsigned int);
@@ -220,7 +220,7 @@ private:
 	void PersistCallbackVector(BS_OutputPersistenceBlock & Writer, const std::vector<ANIMATION_CALLBACK_DATA> & Vector);
 	void UnpersistCallbackVector(BS_InputPersistenceBlock & Reader, std::vector<ANIMATION_CALLBACK_DATA> & Vector);
 	BS_AnimationDescription * GetAnimationDescription() const;
-	void InitializeAnimationResource(const std::string &FileName);
+	void InitializeAnimationResource(const Common::String &FileName);
 };
 
 } // End of namespace Sword25

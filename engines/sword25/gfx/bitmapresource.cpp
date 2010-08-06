@@ -47,7 +47,7 @@ namespace Sword25 {
 // Konstruktion / Destruktion
 // --------------------------
 
-BS_BitmapResource::BS_BitmapResource(const std::string & Filename, BS_Image * pImage) :
+BS_BitmapResource::BS_BitmapResource(const Common::String & Filename, BS_Image * pImage) :
 	m_Valid(false),
 	m_pImage(pImage),
 	BS_Resource(Filename, BS_Resource::TYPE_BITMAP)

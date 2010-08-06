@@ -66,7 +66,7 @@ public:
 		@param FileName der Dateiname der zu ladenen Resource
 		@remark Wenn der Konstruktor erfolgreich ausgeführt werden konnte gibt die Methode IsValid true zurück.
 	*/
-	BS_FontResource(BS_Kernel * pKernel, const std::string & FileName);
+	BS_FontResource(BS_Kernel * pKernel, const Common::String & FileName);
 
 	/**
 		@brief Gibt true zurück, wenn das Objekt korrekt initialisiert wurde.
@@ -99,12 +99,12 @@ public:
 	/**
 		@brief Gibt den Dateinamen der Charactermap zurück.
 	*/
-	const std::string & GetCharactermapFileName() const { return _BitmapFileName; }
+	const Common::String & GetCharactermapFileName() const { return _BitmapFileName; }
 
 private:
 	BS_Kernel * _pKernel;
 	bool		_Valid;
-	std::string	_BitmapFileName;
+	Common::String	_BitmapFileName;
 	int			_LineHeight;
 	int			_GapWidth;
 	BS_Rect		_CharacterRects[256];
@@ -113,8 +113,8 @@ private:
 	// Hilfsmethoden
 	// -----------------------------------------------------------------------------
 	
-	bool _ParseXMLDocument(const std::string & FileName, TiXmlDocument & Doc) const;
-	bool _ParseFontTag(TiXmlElement & Tag, std::string & BitmapFileName, int & LineHeight, int & GapWidth) const;
+	bool _ParseXMLDocument(const Common::String & FileName, TiXmlDocument & Doc) const;
+	bool _ParseFontTag(TiXmlElement & Tag, Common::String & BitmapFileName, int & LineHeight, int & GapWidth) const;
 	bool _ParseCharacterTag(TiXmlElement & Tag, int & Code, BS_Rect & Rect) const;
 };
 
