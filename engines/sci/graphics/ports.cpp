@@ -250,10 +250,10 @@ void GfxPorts::kernelDisposeWindow(uint16 windowId, bool reanimate) {
 		//  and iconReplay
 		//  or inside GameControls::hide (script 978) which is called to
 		//  actually remove the window
-		reg_t eventObject = _segMan->findObjectByName("uEvt");
-		if (!eventObject.isNull()) {
-			writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
-		}
+		//reg_t eventObject = _segMan->findObjectByName("uEvt");
+		//if (!eventObject.isNull()) {
+		//	writeSelectorValue(_segMan, eventObject, SELECTOR(port), 0);
+		//}
 	}
 }
 

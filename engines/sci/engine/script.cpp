@@ -119,6 +119,13 @@ void Script::init(int script_nr, ResourceManager *resMan) {
 //  - then another counter of bytes (0 for EOS)
 //  - if not EOS, an adjust offset and the actual bytes
 //  - rinse and repeat
+
+
+// this here gets called on entry and when going out of game windows
+//  uEvt::port will not get changed after kDisposeWindow but a bit later, so
+//  we would get an invalid port handle to a kSetPort call. We just patch in
+//  resetting of the port selector. We destroy the stop/fade code in there,
+//  it seems it isn't used at all in the game.
 const byte hoyle4SignaturePortFix[] = {
 	28,
 	0x39, 0x09,        // pushi 09
@@ -132,14 +139,22 @@ const byte hoyle4SignaturePortFix[] = {
 	0x38, 0xbc, 0x02,  // pushi 02bc
 	0x38, 0x20, 0x03,  // pushi 0320
 	0x46,              // calle [xxxx] [xxxx] [xx]
-	13, +5,            // [skip 5 bytes]
+	43, +5,            // [skip 5 bytes]
 	0x30, 0x27, 0x00,  // bnt 0027 -> end of routine
 	0x87, 0x00,        // lap 00
 	0x30, 0x19, 0x00,  // bnt 0019 -> fade out
 	0x87, 0x01,        // lap 01
 	0x30, 0x14, 0x00,  // bnt 0014 -> fade out
-	// [...]
-	10, +20,           // [skip 20 bytes]
+	0x38, 0xa7, 0x00,  // pushi 00a7
+	0x76,              // push0
+	0x80, 0x29, 0x01,  // lag 0129
+	0x4a, 0x04,        // send 04 (song::stop)
+	0x39, 0x27,        // pushi 27
+	0x78,              // push1
+	0x8f, 0x01,        // lsp 01
+	0x51, 0x54,        // class 54
+	0x4a, 0x06,        // send 06 (PlaySong::play)
+	0x33, 0x09,        // jmp 09 -> end of routine
 	0x38, 0xaa, 0x00,  // pushi 00aa
 	0x76,              // push0
 	0x80, 0x29, 0x01,  // lag 0129
@@ -148,8 +163,23 @@ const byte hoyle4SignaturePortFix[] = {
 	0
 };
 
-const int16 hoyle4PatchPortFix[] = {
-	0
+#define PATCH_END             0xFFFF
+#define PATCH_ADDTOOFFSET     0x8000
+#define PATCH_GETORIGINALBYTE 0x4000
+
+const uint16 hoyle4PatchPortFix[] = {
+	PATCH_ADDTOOFFSET | +33,
+	0x38, 0x31, 0x01,  // pushi 0131 (selector curEvent)
+	0x76,              // push0
+	0x80, 0x50, 0x00,  // lag 0050 (global var 80h, "User")
+	0x4a, 0x04,        // send 04 (read User::curEvent)
+
+	0x38, 0x93, 0x00,  // pushi 0093 (selector port)
+	0x78,              // push1
+	0x78,              // push1
+	0x4a, 0x06,        // send 06 (write 0 to that object::port)
+	0x48,              // ret
+	PATCH_END
 };
 
 //    script, description,                                   magic DWORD,                adjust
@@ -157,6 +187,25 @@ const SciScriptSignature hoyle4Signatures[] = {
     {      0, "port fix when disponsing windows",            CONSTANT_LE_32(0x00C83864),    -5, hoyle4SignaturePortFix,   hoyle4PatchPortFix },
     {      0, NULL,                                          0,                              0, NULL,                     NULL }
 };
+
+// will actually patch previously found signature area
+void Script::applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset) {
+	int32 offset = signatureOffset;
+	uint16 patchWord = *patch;
+
+	while (patchWord != PATCH_END) {
+		if (patchWord & PATCH_ADDTOOFFSET) {
+			offset += patchWord & ~PATCH_ADDTOOFFSET;
+		} else if (patchWord & PATCH_GETORIGINALBYTE) {
+			// TODO: implement this
+		} else {
+			scriptData[offset] = patchWord & 0xFF;
+			offset++;
+		}
+		patch++;
+		patchWord = *patch;
+	}	
+}
 
 // will return -1 if no match was found, otherwise an offset to the start of the signature match
 int32 Script::findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize) {
@@ -196,7 +245,7 @@ int32 Script::findSignature(const SciScriptSignature *signature, const byte *scr
 	return -1;
 }
 
-void Script::matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, const uint32 scriptSize) {
+void Script::matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize) {
 	if (g_sci->getGameId() == GID_HOYLE4) {
 		const SciScriptSignature *signatureTable = hoyle4Signatures;
 		while (signatureTable->data) {
@@ -204,6 +253,7 @@ void Script::matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, con
 			if (foundOffset != -1) {
 				// found, so apply the patch
 				warning("matched %s on script %d offset %d", signatureTable->description, scriptNr, foundOffset);
+				applyPatch(signatureTable->patch, scriptData, scriptSize, foundOffset);
 			}
 			signatureTable++;
 		}

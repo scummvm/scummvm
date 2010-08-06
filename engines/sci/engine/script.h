@@ -37,7 +37,7 @@ struct SciScriptSignature {
 	uint32 magicDWord;
 	int magicOffset;
 	const byte *data;
-	const int16 *patch;
+	const uint16 *patch;
 };
 
 struct EngineState;
@@ -109,8 +109,9 @@ public:
 	void init(int script_nr, ResourceManager *resMan);
 	void load(ResourceManager *resMan);
 
-	void matchSignatureAndPatch(uint16 scriptNr, const byte *scriptData, const uint32 scriptSize);
+	void matchSignatureAndPatch(uint16 scriptNr, byte *scriptData, const uint32 scriptSize);
 	int32 findSignature(const SciScriptSignature *signature, const byte *scriptData, const uint32 scriptSize);
+	void applyPatch(const uint16 *patch, byte *scriptData, const uint32 scriptSize, int32 signatureOffset);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual SegmentRef dereference(reg_t pointer);
